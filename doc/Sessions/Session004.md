@@ -11,7 +11,7 @@
   - /Users/oleksandroliinyk/.codex/AGENTS.md
   - AGENTS.md
 - Git commits:
-  - a2a5305 feat: v1.0.6 - ui decomposition and release
+  - afdbeb7 feat: v1.0.6 - ui decomposition and release
 - Next session plan:
   - Продолжить дробление крупных UI-модулей (SessionView, provider-picker) до появления новых кандидатов в предупреждениях.
   - Начать подготовку к выносу логики мультипровайдерских сценариев в отдельный фасад (план фазы 5).
