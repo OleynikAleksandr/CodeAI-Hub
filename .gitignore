@@ -16,4 +16,4 @@ lefthook.yml
 doc/tmp/
 doc/Sessions/
 doc/TODO/
-
+*.vsix

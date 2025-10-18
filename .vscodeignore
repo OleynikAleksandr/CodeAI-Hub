@@ -1,0 +1,11 @@
+node_modules/@anthropic-ai/**
+node_modules/@openai/**
+node_modules/@google/**
+.claude/**
+.vscode/**
+doc/**
+AGENTS.md
+biome.jsonc
+lefthook.yml
+doc/TODO/**
+scripts/**
