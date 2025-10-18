@@ -14,6 +14,8 @@ export class HomeViewProvider implements WebviewViewProvider {
   private readonly extensionUri: Uri;
   private readonly htmlGenerator: WebviewHtmlGenerator;
   private readonly messageRouter: HomeViewMessageRouter;
+  private currentView: WebviewView | null = null;
+  private pendingShowSettings = false;
 
   constructor(extensionUri: Uri) {
     this.extensionUri = extensionUri;
@@ -23,6 +25,7 @@ export class HomeViewProvider implements WebviewViewProvider {
 
   resolveWebviewView(webviewView: WebviewView): void {
     const { webview } = webviewView;
+    this.currentView = webviewView;
 
     webview.options = {
       enableScripts: true,
@@ -34,11 +37,35 @@ export class HomeViewProvider implements WebviewViewProvider {
     webview.onDidReceiveMessage((message: WebviewMessage) => {
       this.messageRouter.handleMessage(message, webview);
     });
+
+    if (this.pendingShowSettings) {
+      this.pendingShowSettings = false;
+      this.showSettingsInternal();
+    }
   }
 
   showSettingsPlaceholder(): void {
-    window.showInformationMessage(
-      "Settings panel will arrive in a later phase."
-    );
+    if (this.currentView) {
+      this.currentView.show?.(true);
+      this.showSettingsInternal();
+      return;
+    }
+
+    this.pendingShowSettings = true;
+    window.showInformationMessage("Settings view will open shortly…");
+  }
+
+  private showSettingsInternal(): void {
+    if (!this.currentView) {
+      return;
+    }
+
+    this.currentView.webview
+      .postMessage({ type: "ui:showSettings" })
+      .then(undefined, (error) => {
+        window.showWarningMessage(
+          `Failed to open settings: ${(error as Error).message}`
+        );
+      });
   }
 }

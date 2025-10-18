@@ -39,3 +39,15 @@ export const postVsCodeMessage = (message: unknown) => {
   }
   api.postMessage(message);
 };
+
+const vscodeInstance = getVsCodeApi();
+
+const fallbackApi: VsCodeApi = {
+  postMessage: () => {
+    /* no-op */
+  },
+};
+
+const vscode = vscodeInstance ?? fallbackApi;
+
+export default vscode;
