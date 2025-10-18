@@ -1,10 +1,26 @@
-import { StrictMode, useCallback, useEffect, useMemo, useState } from "react";
+import { StrictMode, useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import type {
   ProviderStackDescriptor,
   ProviderStackId,
 } from "../../../../types/provider";
-import { ProviderPicker } from "./provider-picker";
+import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
+import {
+  defaultPickerState,
+  ProviderPicker,
+  type ProviderPickerState,
+} from "./provider-picker";
+import {
+  buildProviderLabels,
+  createInitialSnapshot,
+  isSessionRecordCandidate,
+  mergeCatalog,
+  type ProviderCatalog,
+  parseProviderList,
+  removeSnapshot,
+} from "./session/helpers";
+import SessionView from "./session/session-view";
+import { postVsCodeMessage } from "./vscode";
 
 type ProviderPickerOpenMessage = {
   readonly type: "providerPicker:open";
@@ -13,38 +29,26 @@ type ProviderPickerOpenMessage = {
   };
 };
 
-type ProviderPickerConfirmMessage = {
-  readonly type: "providerPicker:confirm";
-  readonly payload: { readonly providerIds: readonly ProviderStackId[] };
+type SessionCreatedMessage = {
+  readonly type: "session:created";
+  readonly payload?: unknown;
 };
 
-type ProviderPickerCancelMessage = {
-  readonly type: "providerPicker:cancel";
+type SessionClearAllMessage = {
+  readonly type: "session:clearAll";
 };
 
-type OutgoingMessage =
-  | ProviderPickerConfirmMessage
-  | ProviderPickerCancelMessage;
-
-type ProviderPickerState = {
-  readonly visible: boolean;
-  readonly providers: readonly ProviderStackDescriptor[];
+type SessionFocusLastMessage = {
+  readonly type: "session:focusLast";
 };
 
-type VsCodeApi = {
-  postMessage: (message: unknown) => void;
-};
+type IncomingMessage =
+  | ProviderPickerOpenMessage
+  | SessionCreatedMessage
+  | SessionClearAllMessage
+  | SessionFocusLastMessage;
 
-const providerIdSet = new Set<ProviderStackId>([
-  "claudeCodeCli",
-  "codexCli",
-  "geminiCli",
-]);
-
-const defaultState: ProviderPickerState = Object.freeze({
-  visible: false,
-  providers: [],
-} satisfies ProviderPickerState);
+type SessionSnapshots = Record<string, SessionSnapshot>;
 
 const activateRoot = () => {
   const rootElement = document.getElementById("root");
@@ -53,159 +57,219 @@ const activateRoot = () => {
   }
 };
 
-const getVsCodeApi = (): VsCodeApi | undefined => {
-  const globalScope = window as typeof window & { vscode?: VsCodeApi };
-  if (globalScope.vscode) {
-    return globalScope.vscode;
-  }
+const AppHost = () => {
+  const [pickerState, setPickerState] =
+    useState<ProviderPickerState>(defaultPickerState);
+  const [catalog, setCatalog] = useState<ProviderCatalog>({});
+  const [sessions, setSessions] = useState<SessionRecord[]>([]);
+  const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
-  if (typeof globalScope.acquireVsCodeApi === "function") {
-    try {
-      const api = globalScope.acquireVsCodeApi();
-      globalScope.vscode = api;
-      return api;
-    } catch (_error) {
-      return;
-    }
-  }
-
-  return;
-};
-
-const vscodeApi = getVsCodeApi();
-
-const postMessage = (message: OutgoingMessage) => {
-  if (!vscodeApi) {
-    return;
-  }
-  vscodeApi.postMessage(message);
-};
-
-const isProviderDescriptorCandidate = (
-  value: unknown
-): value is ProviderStackDescriptor => {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  const candidate = value as Record<string, unknown>;
-
-  if (typeof candidate.id !== "string") {
-    return false;
-  }
-
-  const providerId = candidate.id as ProviderStackId;
-  if (!providerIdSet.has(providerId)) {
-    return false;
-  }
-
-  return (
-    typeof candidate.title === "string" &&
-    typeof candidate.description === "string" &&
-    typeof candidate.connected === "boolean"
-  );
-};
-
-const parseProviderList = (
-  candidates: unknown
-): readonly ProviderStackDescriptor[] => {
-  if (!Array.isArray(candidates)) {
-    return [];
-  }
-
-  const validProviders: ProviderStackDescriptor[] = [];
-  for (const candidate of candidates) {
-    if (isProviderDescriptorCandidate(candidate)) {
-      validProviders.push({
-        id: candidate.id,
-        title: candidate.title,
-        description: candidate.description,
-        connected: candidate.connected,
-      });
-    }
-  }
-
-  return validProviders;
-};
-
-const useProviderPickerState = (): [
-  ProviderPickerState,
-  (providers: readonly ProviderStackDescriptor[]) => void,
-  () => void,
-] => {
-  const [state, setState] = useState<ProviderPickerState>(defaultState);
-
-  const open = useCallback((providers: readonly ProviderStackDescriptor[]) => {
-    setState({
-      visible: true,
-      providers,
-    });
-  }, []);
-
-  const close = useCallback(() => {
-    setState(defaultState);
-  }, []);
-
-  return [state, open, close];
-};
-
-const ProviderPickerHost = () => {
-  const [state, open, close] = useProviderPickerState();
-
+  const sessionsRef = useRef<SessionRecord[]>([]);
   useEffect(() => {
-    const handleMessage = (event: MessageEvent<unknown>) => {
-      const message = event.data as ProviderPickerOpenMessage;
-      if (!message || typeof message !== "object") {
+    sessionsRef.current = sessions;
+  }, [sessions]);
+
+  const providerLabels = buildProviderLabels(catalog);
+
+  const openPicker = useCallback(
+    (providers: readonly ProviderStackDescriptor[]) => {
+      setCatalog((previous) => mergeCatalog(previous, providers));
+      setPickerState({
+        visible: true,
+        providers,
+      });
+    },
+    []
+  );
+
+  const handleSessionCreated = useCallback(
+    (session: SessionRecord) => {
+      activateRoot();
+      setPickerState(defaultPickerState);
+      setSessions((previous) => [...previous, session]);
+      setSnapshots((previous) => ({
+        ...previous,
+        [session.id]: createInitialSnapshot(session, providerLabels),
+      }));
+      setActiveSessionId(session.id);
+    },
+    [providerLabels]
+  );
+
+  const clearSessions = useCallback(() => {
+    setSessions([]);
+    setSnapshots({});
+    setActiveSessionId(null);
+  }, []);
+
+  const focusLastSession = useCallback(() => {
+    const last = sessionsRef.current.at(-1);
+    if (last) {
+      setActiveSessionId(last.id);
+    }
+  }, []);
+
+  const handleIncomingMessage = useCallback(
+    (event: MessageEvent<unknown>) => {
+      const message = event.data as IncomingMessage;
+      if (!message || typeof message !== "object" || !("type" in message)) {
         return;
       }
 
-      if (message.type === "providerPicker:open") {
-        const providers = parseProviderList(message.payload?.providers);
-        if (providers.length === 0) {
-          close();
-          return;
+      switch (message.type) {
+        case "providerPicker:open": {
+          const providers = parseProviderList(message.payload?.providers);
+          if (providers.length > 0) {
+            activateRoot();
+            openPicker(providers);
+          }
+          break;
         }
-        activateRoot();
-        open(providers);
+        case "session:created": {
+          if (isSessionRecordCandidate(message.payload)) {
+            handleSessionCreated(message.payload);
+          }
+          break;
+        }
+        case "session:clearAll": {
+          clearSessions();
+          break;
+        }
+        case "session:focusLast": {
+          focusLastSession();
+          break;
+        }
+        default:
+          break;
       }
-    };
+    },
+    [clearSessions, focusLastSession, handleSessionCreated, openPicker]
+  );
 
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [open, close]);
+  useEffect(() => {
+    window.addEventListener("message", handleIncomingMessage);
+    return () => window.removeEventListener("message", handleIncomingMessage);
+  }, [handleIncomingMessage]);
 
-  const confirmSelection = (providerIds: readonly ProviderStackId[]) => {
-    postMessage({
-      type: "providerPicker:confirm",
-      payload: { providerIds },
+  const handlePickerConfirm = useCallback(
+    (providerIds: readonly ProviderStackId[]) => {
+      postVsCodeMessage({
+        type: "providerPicker:confirm",
+        payload: { providerIds },
+      });
+      setPickerState(defaultPickerState);
+    },
+    []
+  );
+
+  const handlePickerCancel = useCallback(() => {
+    postVsCodeMessage({ type: "providerPicker:cancel" });
+    setPickerState(defaultPickerState);
+  }, []);
+
+  const handleSelectSession = useCallback((sessionId: string) => {
+    setActiveSessionId(sessionId);
+  }, []);
+
+  const handleCloseSession = useCallback((sessionId: string) => {
+    setSessions((previous) =>
+      previous.filter((session) => session.id !== sessionId)
+    );
+    setSnapshots((previous) => removeSnapshot(previous, sessionId));
+    setActiveSessionId((current) => {
+      if (current !== sessionId) {
+        return current;
+      }
+      const remaining = sessionsRef.current.filter(
+        (session) => session.id !== sessionId
+      );
+      const last = remaining.at(-1);
+      return last ? last.id : null;
     });
-    close();
-  };
+  }, []);
 
-  const cancelSelection = () => {
-    postMessage({
-      type: "providerPicker:cancel",
+  const handleToggleTodo = useCallback((sessionId: string, todoId: string) => {
+    setSnapshots((previous) => {
+      const current = previous[sessionId];
+      if (!current) {
+        return previous;
+      }
+      const todos = current.todos.map((todo) =>
+        todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+      );
+      return {
+        ...previous,
+        [sessionId]: { ...current, todos },
+      };
     });
-    close();
-  };
+  }, []);
 
-  const memoizedProviders = useMemo(() => state.providers, [state.providers]);
-  const pickerResetKey = useMemo(
-    () =>
-      `${state.visible ? "visible" : "hidden"}:${state.providers
-        .map((provider) => provider.id)
-        .join("|")}`,
-    [state.visible, state.providers]
+  const handleSendMessage = useCallback(
+    (sessionId: string, content: string) => {
+      setSnapshots((previous) => {
+        const current = previous[sessionId];
+        if (!current) {
+          return previous;
+        }
+        const timestamp = Date.now();
+        return {
+          ...previous,
+          [sessionId]: {
+            ...current,
+            draft: "",
+            messages: [
+              ...current.messages,
+              {
+                id: `message-${timestamp}`,
+                role: "user",
+                content,
+                createdAt: timestamp,
+              },
+              {
+                id: `message-${timestamp + 1}`,
+                role: "assistant",
+                content: `Awaiting orchestration response from ${current.status.providerSummary}.`,
+                createdAt: timestamp,
+              },
+            ],
+            status: {
+              ...current.status,
+              tokenUsage: {
+                ...current.status.tokenUsage,
+                used: Math.min(
+                  current.status.tokenUsage.limit,
+                  current.status.tokenUsage.used + content.length
+                ),
+              },
+              updatedAt: timestamp,
+            },
+          },
+        };
+      });
+    },
+    []
   );
 
   return (
-    <ProviderPicker
-      key={pickerResetKey}
-      onCancel={cancelSelection}
-      onConfirm={confirmSelection}
-      providers={memoizedProviders}
-      visible={state.visible}
-    />
+    <>
+      <SessionView
+        activeSessionId={activeSessionId}
+        onCloseSession={handleCloseSession}
+        onSelectSession={handleSelectSession}
+        onSendMessage={handleSendMessage}
+        onToggleTodo={handleToggleTodo}
+        providerLabels={providerLabels}
+        sessions={sessions}
+        snapshots={snapshots}
+      />
+      <ProviderPicker
+        onCancel={handlePickerCancel}
+        onConfirm={handlePickerConfirm}
+        providers={pickerState.providers}
+        visible={pickerState.visible}
+      />
+    </>
   );
 };
 
@@ -215,10 +279,12 @@ const mount = () => {
     return;
   }
 
+  activateRoot();
+
   const root = createRoot(rootElement);
   root.render(
     <StrictMode>
-      <ProviderPickerHost />
+      <AppHost />
     </StrictMode>
   );
 };

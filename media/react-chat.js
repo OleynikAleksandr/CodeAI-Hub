@@ -7281,12 +7281,16 @@
   });
 
   // src/webview/ui/src/index.tsx
-  var import_react2 = __toESM(require_react());
+  var import_react3 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/webview/ui/src/provider-picker.tsx
   var import_react = __toESM(require_react());
   var import_jsx_runtime = __toESM(require_jsx_runtime());
+  var defaultPickerState = {
+    visible: false,
+    providers: []
+  };
   var ProviderOption = ({
     provider,
     checked,
@@ -7327,6 +7331,11 @@
     (0, import_react.useEffect)(() => {
       if (visible && firstOptionRef.current) {
         firstOptionRef.current.focus();
+      }
+    }, [visible]);
+    (0, import_react.useEffect)(() => {
+      if (visible) {
+        setSelected(/* @__PURE__ */ new Set());
       }
     }, [visible]);
     const toggleProvider = (providerId) => {
@@ -7410,46 +7419,19 @@
     );
   };
 
-  // src/webview/ui/src/index.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  // src/webview/ui/src/session/helpers.ts
+  var mergeCatalog = (catalog, providers) => {
+    const nextCatalog = { ...catalog };
+    for (const provider of providers) {
+      nextCatalog[provider.id] = provider;
+    }
+    return nextCatalog;
+  };
   var providerIdSet = /* @__PURE__ */ new Set([
     "claudeCodeCli",
     "codexCli",
     "geminiCli"
   ]);
-  var defaultState = Object.freeze({
-    visible: false,
-    providers: []
-  });
-  var activateRoot = () => {
-    const rootElement = document.getElementById("root");
-    if (rootElement) {
-      rootElement.classList.add("active");
-    }
-  };
-  var getVsCodeApi = () => {
-    const globalScope = window;
-    if (globalScope.vscode) {
-      return globalScope.vscode;
-    }
-    if (typeof globalScope.acquireVsCodeApi === "function") {
-      try {
-        const api = globalScope.acquireVsCodeApi();
-        globalScope.vscode = api;
-        return api;
-      } catch (_error) {
-        return;
-      }
-    }
-    return;
-  };
-  var vscodeApi = getVsCodeApi();
-  var postMessage = (message) => {
-    if (!vscodeApi) {
-      return;
-    }
-    vscodeApi.postMessage(message);
-  };
   var isProviderDescriptorCandidate = (value) => {
     if (!value || typeof value !== "object") {
       return false;
@@ -7468,90 +7450,576 @@
     if (!Array.isArray(candidates)) {
       return [];
     }
-    const validProviders = [];
+    const result = [];
     for (const candidate of candidates) {
       if (isProviderDescriptorCandidate(candidate)) {
-        validProviders.push({
-          id: candidate.id,
-          title: candidate.title,
-          description: candidate.description,
-          connected: candidate.connected
-        });
+        result.push(candidate);
       }
     }
-    return validProviders;
+    return result;
   };
-  var useProviderPickerState = () => {
-    const [state, setState] = (0, import_react2.useState)(defaultState);
-    const open = (0, import_react2.useCallback)((providers) => {
-      setState({
-        visible: true,
-        providers
-      });
-    }, []);
-    const close = (0, import_react2.useCallback)(() => {
-      setState(defaultState);
-    }, []);
-    return [state, open, close];
+  var isSessionRecordCandidate = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    if (typeof candidate.id !== "string" || typeof candidate.title !== "string" || typeof candidate.createdAt !== "number" || !Array.isArray(candidate.providerIds)) {
+      return false;
+    }
+    for (const providerId of candidate.providerIds) {
+      if (!providerIdSet.has(providerId)) {
+        return false;
+      }
+    }
+    return true;
   };
-  var ProviderPickerHost = () => {
-    const [state, open, close] = useProviderPickerState();
+  var buildProviderLabels = (catalog) => {
+    const entries = Object.entries(catalog);
+    return new Map(entries.map(([id, descriptor]) => [id, descriptor.title]));
+  };
+  var createInitialSnapshot = (session, providerLabels) => {
+    const providersSummary = session.providerIds.map((providerId) => providerLabels.get(providerId) ?? providerId).join(" + ");
+    const now = Date.now();
+    const baseMessage = {
+      id: `message-${now}`,
+      createdAt: now
+    };
+    const messages = [
+      {
+        ...baseMessage,
+        role: "system",
+        content: `Session created with ${providersSummary}.`
+      },
+      {
+        id: `message-${now + 1}`,
+        createdAt: now,
+        role: "assistant",
+        content: "This is a placeholder environment. Real provider responses will appear here once the orchestrator is connected."
+      }
+    ];
+    const todos = [
+      {
+        id: `todo-${now}`,
+        title: "Draft the first request for the selected providers",
+        completed: false
+      },
+      {
+        id: `todo-${now + 1}`,
+        title: "Review provider outputs and capture key findings",
+        completed: false
+      }
+    ];
+    const status = {
+      providerSummary: providersSummary,
+      tokenUsage: {
+        used: 0,
+        limit: 2e5
+      },
+      connectionState: "idle",
+      updatedAt: now
+    };
+    return {
+      messages,
+      todos,
+      status,
+      draft: ""
+    };
+  };
+  var removeSnapshot = (snapshots, sessionId) => {
+    const { [sessionId]: _discarded, ...rest } = snapshots;
+    return rest;
+  };
+
+  // src/webview/ui/src/session/dialog-panel.tsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  var roleLabel = {
+    system: "System",
+    assistant: "Assistant",
+    user: "You"
+  };
+  var DialogPanel = ({ messages }) => {
+    if (messages.length === 0) {
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "session-dialog__scroll", children: messages.map((message) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+      "article",
+      {
+        className: `session-dialog__message session-dialog__message--${message.role}`,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("header", { className: "session-dialog__message-header", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "session-dialog__role", children: roleLabel[message.role] }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+              "time",
+              {
+                className: "session-dialog__timestamp",
+                dateTime: new Date(message.createdAt).toISOString(),
+                children: new Date(message.createdAt).toLocaleTimeString()
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "session-dialog__content", children: message.content })
+        ]
+      },
+      message.id
+    )) }) });
+  };
+  var dialog_panel_default = DialogPanel;
+
+  // src/webview/ui/src/session/empty-state.tsx
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "session-empty", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one or more providers in the picker to begin orchestrating them together." })
+  ] });
+  var empty_state_default = EmptyState;
+
+  // src/webview/ui/src/session/input-panel.tsx
+  var import_react2 = __toESM(require_react());
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  var InputPanel = ({ draft, onSubmit }) => {
+    const [value, setValue] = (0, import_react2.useState)(draft);
     (0, import_react2.useEffect)(() => {
-      const handleMessage = (event) => {
+      setValue(draft);
+    }, [draft]);
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      const trimmed = value.trim();
+      if (trimmed.length === 0) {
+        return;
+      }
+      onSubmit(trimmed);
+      setValue("");
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("form", { className: "session-input session-panel", onSubmit: handleSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        "textarea",
+        {
+          className: "session-input__textarea",
+          onChange: (event) => setValue(event.target.value),
+          placeholder: "Ask the providers anything...",
+          rows: 3,
+          value
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "session-input__footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for new line" }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { className: "session-input__send", type: "submit", children: "Send" })
+      ] })
+    ] });
+  };
+  var input_panel_default = InputPanel;
+
+  // src/webview/ui/src/session/session-tabs.tsx
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var SessionTabs = ({
+    sessions,
+    providerLabels,
+    activeSessionId,
+    onSelect,
+    onClose
+  }) => {
+    if (sessions.length === 0) {
+      return null;
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
+      const isActive = session.id === activeSessionId;
+      const summary = session.providerIds.map((providerId) => providerLabels.get(providerId) ?? providerId).join(" + ");
+      const tabClassName = isActive ? "session-tab session-tab--active" : "session-tab";
+      return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: tabClassName, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+          "button",
+          {
+            className: "session-tab__select",
+            onClick: () => onSelect(session.id),
+            type: "button",
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "session-tab__title", children: session.title }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "session-tab__providers", children: summary })
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+          "button",
+          {
+            "aria-label": `Close ${session.title}`,
+            className: "session-tab__close",
+            onClick: () => onClose(session.id),
+            type: "button",
+            children: "\xD7"
+          }
+        )
+      ] }, session.id);
+    }) });
+  };
+  var session_tabs_default = SessionTabs;
+
+  // src/webview/ui/src/session/status-panel.tsx
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var MAX_PERCENTAGE = 100;
+  var MIN_TOKEN_LIMIT = 1;
+  var PERCENT_SCALE = 100;
+  var StatusPanel = ({ status }) => {
+    const { providerSummary, tokenUsage, connectionState, updatedAt } = status;
+    const percentage = Math.min(
+      MAX_PERCENTAGE,
+      Math.round(
+        tokenUsage.used / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT) * PERCENT_SCALE
+      )
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("section", { className: "session-status session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-status__label", children: "Providers" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-status__value", children: providerSummary })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-status__label", children: "Tokens" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("span", { className: "session-status__value", children: [
+          tokenUsage.used.toLocaleString(),
+          " /",
+          " ",
+          tokenUsage.limit.toLocaleString(),
+          " (",
+          percentage,
+          "%)"
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-status__label", children: "Connection" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-status__value session-status__value--badge", children: connectionState.toUpperCase() })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-status__label", children: "Updated" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-status__value", children: new Date(updatedAt).toLocaleTimeString() })
+      ] })
+    ] });
+  };
+  var status_panel_default = StatusPanel;
+
+  // src/webview/ui/src/session/todo-panel.tsx
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var TodoPanel = ({ items, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("section", { className: "session-todos session-panel", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("header", { className: "session-todos__header", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { className: "session-todos__counter", children: [
+        items.filter((item) => item.completed).length,
+        "/",
+        items.length,
+        " done"
+      ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("ul", { className: "session-todos__list", children: items.map((item) => {
+      const textClassName = item.completed ? "session-todos__text session-todos__text--completed" : "session-todos__text";
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("label", { className: "session-todos__label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+          "input",
+          {
+            checked: item.completed,
+            onChange: () => onToggle(item.id),
+            type: "checkbox"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: textClassName, children: item.title })
+      ] }) }, item.id);
+    }) })
+  ] });
+  var todo_panel_default = TodoPanel;
+
+  // src/webview/ui/src/session/session-view.tsx
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var SessionView = ({
+    sessions,
+    providerLabels,
+    activeSessionId,
+    snapshots,
+    onSelectSession,
+    onCloseSession,
+    onSendMessage,
+    onToggleTodo
+  }) => {
+    const activeSession = activeSessionId && snapshots[activeSessionId] ? snapshots[activeSessionId] : null;
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-app", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+        session_tabs_default,
+        {
+          activeSessionId,
+          onClose: onCloseSession,
+          onSelect: onSelectSession,
+          providerLabels,
+          sessions
+        }
+      ),
+      !activeSession && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(empty_state_default, {}),
+      activeSession && activeSessionId && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(dialog_panel_default, { messages: activeSession.messages }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          todo_panel_default,
+          {
+            items: activeSession.todos,
+            onToggle: (todoId) => onToggleTodo(activeSessionId, todoId)
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          input_panel_default,
+          {
+            draft: activeSession.draft,
+            onSubmit: (text) => onSendMessage(activeSessionId, text)
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(status_panel_default, { status: activeSession.status })
+      ] })
+    ] });
+  };
+  var session_view_default = SessionView;
+
+  // src/webview/ui/src/vscode.ts
+  var cachedApi;
+  var getVsCodeApi = () => {
+    if (cachedApi) {
+      return cachedApi;
+    }
+    const globalScope = window;
+    if (globalScope.vscode) {
+      cachedApi = globalScope.vscode;
+      return cachedApi;
+    }
+    if (typeof globalScope.acquireVsCodeApi === "function") {
+      try {
+        cachedApi = globalScope.acquireVsCodeApi();
+        globalScope.vscode = cachedApi;
+        return cachedApi;
+      } catch (_error) {
+        return cachedApi;
+      }
+    }
+    return cachedApi;
+  };
+  var postVsCodeMessage = (message) => {
+    const api = getVsCodeApi();
+    if (!api) {
+      return;
+    }
+    api.postMessage(message);
+  };
+
+  // src/webview/ui/src/index.tsx
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var activateRoot = () => {
+    const rootElement = document.getElementById("root");
+    if (rootElement) {
+      rootElement.classList.add("active");
+    }
+  };
+  var AppHost = () => {
+    const [pickerState, setPickerState] = (0, import_react3.useState)(defaultPickerState);
+    const [catalog, setCatalog] = (0, import_react3.useState)({});
+    const [sessions, setSessions] = (0, import_react3.useState)([]);
+    const [snapshots, setSnapshots] = (0, import_react3.useState)({});
+    const [activeSessionId, setActiveSessionId] = (0, import_react3.useState)(null);
+    const sessionsRef = (0, import_react3.useRef)([]);
+    (0, import_react3.useEffect)(() => {
+      sessionsRef.current = sessions;
+    }, [sessions]);
+    const providerLabels = buildProviderLabels(catalog);
+    const openPicker = (0, import_react3.useCallback)(
+      (providers) => {
+        setCatalog((previous) => mergeCatalog(previous, providers));
+        setPickerState({
+          visible: true,
+          providers
+        });
+      },
+      []
+    );
+    const handleSessionCreated = (0, import_react3.useCallback)(
+      (session) => {
+        activateRoot();
+        setPickerState(defaultPickerState);
+        setSessions((previous) => [...previous, session]);
+        setSnapshots((previous) => ({
+          ...previous,
+          [session.id]: createInitialSnapshot(session, providerLabels)
+        }));
+        setActiveSessionId(session.id);
+      },
+      [providerLabels]
+    );
+    const clearSessions = (0, import_react3.useCallback)(() => {
+      setSessions([]);
+      setSnapshots({});
+      setActiveSessionId(null);
+    }, []);
+    const focusLastSession = (0, import_react3.useCallback)(() => {
+      const last = sessionsRef.current.at(-1);
+      if (last) {
+        setActiveSessionId(last.id);
+      }
+    }, []);
+    const handleIncomingMessage = (0, import_react3.useCallback)(
+      (event) => {
         const message = event.data;
-        if (!message || typeof message !== "object") {
+        if (!message || typeof message !== "object" || !("type" in message)) {
           return;
         }
-        if (message.type === "providerPicker:open") {
-          const providers = parseProviderList(message.payload?.providers);
-          if (providers.length === 0) {
-            close();
-            return;
+        switch (message.type) {
+          case "providerPicker:open": {
+            const providers = parseProviderList(message.payload?.providers);
+            if (providers.length > 0) {
+              activateRoot();
+              openPicker(providers);
+            }
+            break;
           }
-          activateRoot();
-          open(providers);
+          case "session:created": {
+            if (isSessionRecordCandidate(message.payload)) {
+              handleSessionCreated(message.payload);
+            }
+            break;
+          }
+          case "session:clearAll": {
+            clearSessions();
+            break;
+          }
+          case "session:focusLast": {
+            focusLastSession();
+            break;
+          }
+          default:
+            break;
         }
-      };
-      window.addEventListener("message", handleMessage);
-      return () => window.removeEventListener("message", handleMessage);
-    }, [open, close]);
-    const confirmSelection = (providerIds) => {
-      postMessage({
-        type: "providerPicker:confirm",
-        payload: { providerIds }
-      });
-      close();
-    };
-    const cancelSelection = () => {
-      postMessage({
-        type: "providerPicker:cancel"
-      });
-      close();
-    };
-    const memoizedProviders = (0, import_react2.useMemo)(() => state.providers, [state.providers]);
-    const pickerResetKey = (0, import_react2.useMemo)(
-      () => `${state.visible ? "visible" : "hidden"}:${state.providers.map((provider) => provider.id).join("|")}`,
-      [state.visible, state.providers]
-    );
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-      ProviderPicker,
-      {
-        onCancel: cancelSelection,
-        onConfirm: confirmSelection,
-        providers: memoizedProviders,
-        visible: state.visible
       },
-      pickerResetKey
+      [clearSessions, focusLastSession, handleSessionCreated, openPicker]
     );
+    (0, import_react3.useEffect)(() => {
+      window.addEventListener("message", handleIncomingMessage);
+      return () => window.removeEventListener("message", handleIncomingMessage);
+    }, [handleIncomingMessage]);
+    const handlePickerConfirm = (0, import_react3.useCallback)(
+      (providerIds) => {
+        postVsCodeMessage({
+          type: "providerPicker:confirm",
+          payload: { providerIds }
+        });
+        setPickerState(defaultPickerState);
+      },
+      []
+    );
+    const handlePickerCancel = (0, import_react3.useCallback)(() => {
+      postVsCodeMessage({ type: "providerPicker:cancel" });
+      setPickerState(defaultPickerState);
+    }, []);
+    const handleSelectSession = (0, import_react3.useCallback)((sessionId) => {
+      setActiveSessionId(sessionId);
+    }, []);
+    const handleCloseSession = (0, import_react3.useCallback)((sessionId) => {
+      setSessions(
+        (previous) => previous.filter((session) => session.id !== sessionId)
+      );
+      setSnapshots((previous) => removeSnapshot(previous, sessionId));
+      setActiveSessionId((current) => {
+        if (current !== sessionId) {
+          return current;
+        }
+        const remaining = sessionsRef.current.filter(
+          (session) => session.id !== sessionId
+        );
+        const last = remaining.at(-1);
+        return last ? last.id : null;
+      });
+    }, []);
+    const handleToggleTodo = (0, import_react3.useCallback)((sessionId, todoId) => {
+      setSnapshots((previous) => {
+        const current = previous[sessionId];
+        if (!current) {
+          return previous;
+        }
+        const todos = current.todos.map(
+          (todo) => todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+        );
+        return {
+          ...previous,
+          [sessionId]: { ...current, todos }
+        };
+      });
+    }, []);
+    const handleSendMessage = (0, import_react3.useCallback)(
+      (sessionId, content) => {
+        setSnapshots((previous) => {
+          const current = previous[sessionId];
+          if (!current) {
+            return previous;
+          }
+          const timestamp = Date.now();
+          return {
+            ...previous,
+            [sessionId]: {
+              ...current,
+              draft: "",
+              messages: [
+                ...current.messages,
+                {
+                  id: `message-${timestamp}`,
+                  role: "user",
+                  content,
+                  createdAt: timestamp
+                },
+                {
+                  id: `message-${timestamp + 1}`,
+                  role: "assistant",
+                  content: `Awaiting orchestration response from ${current.status.providerSummary}.`,
+                  createdAt: timestamp
+                }
+              ],
+              status: {
+                ...current.status,
+                tokenUsage: {
+                  ...current.status.tokenUsage,
+                  used: Math.min(
+                    current.status.tokenUsage.limit,
+                    current.status.tokenUsage.used + content.length
+                  )
+                },
+                updatedAt: timestamp
+              }
+            }
+          };
+        });
+      },
+      []
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        session_view_default,
+        {
+          activeSessionId,
+          onCloseSession: handleCloseSession,
+          onSelectSession: handleSelectSession,
+          onSendMessage: handleSendMessage,
+          onToggleTodo: handleToggleTodo,
+          providerLabels,
+          sessions,
+          snapshots
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        ProviderPicker,
+        {
+          onCancel: handlePickerCancel,
+          onConfirm: handlePickerConfirm,
+          providers: pickerState.providers,
+          visible: pickerState.visible
+        }
+      )
+    ] });
   };
   var mount = () => {
     const rootElement = document.getElementById("root");
     if (!rootElement) {
       return;
     }
+    activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_react2.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ProviderPickerHost, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_react3.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(AppHost, {}) })
     );
   };
   mount();
