@@ -12,6 +12,7 @@
   - AGENTS.md
 - Git commits:
   - afdbeb7 feat: v1.0.6 - ui decomposition and release
+  - 47677f0 docs: update session004 summary
 - Next session plan:
   - Продолжить дробление крупных UI-модулей (SessionView, provider-picker) до появления новых кандидатов в предупреждениях.
   - Начать подготовку к выносу логики мультипровайдерских сценариев в отдельный фасад (план фазы 5).
