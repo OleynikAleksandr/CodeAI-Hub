@@ -1,9 +1,59 @@
 {
   "name": "codeai-hub",
+  "displayName": "CodeAI Hub",
+  "description": "Unified VS Code extension for orchestrating AI providers.",
   "version": "1.0.0",
-  "main": "index.js",
-  "directories": {
-    "doc": "doc"
+  "publisher": "CodeAIHub",
+  "license": "ISC",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "icon": "media/icon.png",
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onView:codeaiHubView"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeai-hub-container",
+          "title": "CodeAI Hub",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codeai-hub-container": [
+        {
+          "type": "webview",
+          "id": "codeaiHubView",
+          "name": "CodeAI Hub",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "codeaiHub.openSettings",
+        "title": "Settings",
+        "category": "CodeAI Hub",
+        "icon": "$(settings-gear)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "codeaiHub.openSettings",
+          "when": "view == codeaiHubView",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "check:architecture": "./scripts/check-architecture.sh",
@@ -15,18 +65,30 @@
     "check:links": "bash -lc 'set -e; if command -v markdown-link-check >/dev/null; then find doc -name \"*.md\" -print0 | xargs -0 -n1 markdown-link-check -q; fi'",
     "quality": "npm run check:architecture && npm run lint",
     "setup:hooks": "npx lefthook install",
+    "compile": "tsc -p .",
     "test": "echo \"No automated tests defined yet\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "AI",
+    "assistant",
+    "multi-agent"
+  ],
+  "directories": {
+    "doc": "doc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/local/codeai-hub"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.2.6",
+    "@types/node": "^22.7.4",
+    "@types/vscode": "^1.85.0",
     "jscpd": "4.0.5",
     "lefthook": "^1.13.6",
     "markdown-link-check": "3.14.1",
     "ts-prune": "0.10.3",
+    "typescript": "^5.6.3",
     "ultracite": "^5.6.4"
   }
 }

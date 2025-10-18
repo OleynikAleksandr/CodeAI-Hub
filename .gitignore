@@ -7,3 +7,13 @@ npm-debug.log*
 .lefthook/
 coverage/
 tmp/
+.claude/
+.vscode/
+scripts/
+AGENTS.md
+biome.jsonc
+lefthook.yml
+doc/tmp/
+doc/Sessions/
+doc/TODO/
+

@@ -1,0 +1,11 @@
+#root {
+  color: var(--vscode-foreground, #dcdcdc);
+  font-size: 12px;
+  align-items: center;
+  justify-content: center;
+  display: none;
+}
+
+#root.active {
+  display: flex;
+}

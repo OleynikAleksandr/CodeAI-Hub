@@ -306,6 +306,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - `npx ultracite init` - Initialize Ultracite in your project
 - `npx ultracite fix` - Format and fix code automatically
 - `npx ultracite check` - Check for issues without fixing
+- `./scripts/build-release.sh <version>` - Build VSIX packages exclusively; no other tooling is permitted for packaging.
 
 ## Example: Error Handling
 ```typescript
