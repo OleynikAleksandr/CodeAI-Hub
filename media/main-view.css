@@ -160,3 +160,138 @@ body {
     min-width: 100%; /* Single column */
   }
 }
+.provider-picker {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+  border-radius: 6px;
+  padding: 16px;
+  color: var(--vscode-foreground, #cccccc);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.provider-picker__title {
+  font-size: 14px;
+  margin: 0 0 4px;
+  color: var(--vscode-foreground, #e6e6e6);
+}
+
+.provider-picker__description {
+  font-size: 12px;
+  margin: 0 0 12px;
+  color: #a6a6a6;
+}
+
+.provider-picker__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.provider-picker__fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.provider-picker__legend {
+  font-size: 12px;
+  font-weight: 600;
+  color: #d6d6d6;
+}
+
+.provider-picker__options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.provider-picker__option {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 8px;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.provider-picker__option:hover {
+  background-color: rgba(59, 117, 207, 0.12);
+  border-color: rgba(59, 117, 207, 0.4);
+}
+
+.provider-picker__checkbox {
+  margin-top: 2px;
+}
+
+.provider-picker__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.provider-picker__label-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vscode-foreground, #f2f2f2);
+}
+
+.provider-picker__label-description {
+  font-size: 11px;
+  color: #a0a0a0;
+}
+
+.provider-picker__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.provider-picker__primary,
+.provider-picker__secondary {
+  height: 28px;
+  padding: 0 16px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 12px;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.provider-picker__primary {
+  background-color: #3b75cf;
+  color: #ffffff;
+  border-color: rgba(118, 234, 255, 0.4);
+}
+
+.provider-picker__primary:hover:enabled {
+  background-color: #4b84dd;
+}
+
+.provider-picker__primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.provider-picker__secondary {
+  background-color: transparent;
+  color: #d0d0d0;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.provider-picker__secondary:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.provider-picker__status {
+  font-size: 11px;
+  color: #989898;
+}

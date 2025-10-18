@@ -35,11 +35,11 @@ Stacks (Private)          → приватные модули провайдер
 ```
 
 ### Webview bundling and assets
-- Build: `npm run webview:build:copy` (Vite → `src/webview/ui/dist` → copy to `media/webview/`).
-- Entrypoints: `media/webview/chat.js`, `media/webview/index.css`.
-- Extension HTML: генерируется `WebviewHtmlGenerator` (micro-class), подключающий двухрядный тулбар (`media/mainView.*`) и React-бандл `media/react-chat.*`.
-- Icons: `media/icon.png` (package.json `icon`) and `media/icon.svg`.
-- Imported core/types used by UI: `src/core/assistant-response-formatter-module/**`, `src/types/*.ts`.
+- Build: `npm run build:webview` (esbuild → `src/webview/ui/src/index.tsx` → `media/react-chat.js`).
+- Runtime bundle: статическая оболочка `media/main-view.*` + React-бандл `media/react-chat.js`; CSS для пикера провайдеров лежит рядом с оболочкой.
+- Extension HTML: генерируется `WebviewHtmlGenerator`, подключающий двухрядный тулбар и новый React-пакет для интерактивных элементов (Provider Picker и будущие экраны).
+- Provider Picker: `src/webview/ui/src/provider-picker.tsx` рендерит inline-диалог с чекбоксами и кнопками OK/Cancel прямо под панелью кнопок, состояние сбрасывается каждый раз при нажатии `New Session`.
+- Shared types: `src/types/provider.ts` (ID стеков, дескрипторы), переиспользуются core-слоем и React-компонентами.
 
 UI слой остаётся в open source репозитории и работает с унифицированным контрактом; слои Extension/Core обеспечивают мост между UI и модулями провайдеров.
 
@@ -129,7 +129,7 @@ Core-слой — центральный узел, к которому подк�
 
 ---
 
-### Provider Contract Draft *(Phase 0 — design skeleton)*
+### Provider Contract Draft 
 
 - **Lifecycle operations**: `initialize/installOrUpdate`, `checkAuth`, `createSession`, `resumeSession`, `sendMessage`, `stopSession`, `killSession`. Каждому вызову сопутствуют типизированные ошибки и метаданные (версия SDK, длительность операции).
 - **Session channel**: `createSession` возвращает временный ID и emitter/observable для событий `stream_event`, `assistant`, `system`, `result`, `user_input`, `sessionIdChanged`, `error`. После получения реального идентификатора провайдер обязан инициировать `sessionIdChanged`.
@@ -139,7 +139,7 @@ Core-слой — центральный узел, к которому подк�
 
 ---
 
-### Orchestrator Event Flow *(Phases 2–3)*
+### Orchestrator Event Flow 
 
 - `SessionOrchestratorFacade` подписывается на emitter `ProviderModule` и кеширует активные хендлы (`ProviderSessionHandle`).
 - События транслируются в extension через IPC: `provider:sessionEvent`, `provider:sessionError`, `provider:sessionIdChanged`.
