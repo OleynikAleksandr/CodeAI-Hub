@@ -1,0 +1,32 @@
+{
+  "name": "codeai-hub",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "check:architecture": "./scripts/check-architecture.sh",
+    "lint": "npx ultracite check",
+    "format:fix": "npx ultracite fix",
+    "format:check": "npx ultracite check",
+    "check:tsprune": "ts-prune",
+    "check:dup": "jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"",
+    "check:links": "bash -lc 'set -e; if command -v markdown-link-check >/dev/null; then find doc -name \"*.md\" -print0 | xargs -0 -n1 markdown-link-check -q; fi'",
+    "quality": "npm run check:architecture && npm run lint",
+    "setup:hooks": "npx lefthook install",
+    "test": "echo \"No automated tests defined yet\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.6",
+    "jscpd": "4.0.5",
+    "lefthook": "^1.13.6",
+    "markdown-link-check": "3.14.1",
+    "ts-prune": "0.10.3",
+    "ultracite": "^5.6.4"
+  }
+}

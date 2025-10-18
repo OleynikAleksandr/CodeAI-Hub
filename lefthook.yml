@@ -1,0 +1,19 @@
+pre-commit:
+  parallel: false
+  commands:
+    ultracite_fix:
+      run: npx ultracite fix
+      stage_fixed: true
+    architecture:
+      run: ./scripts/check-architecture.sh
+    lint:
+      run: npm run lint
+    tsprune:
+      run: npm run check:tsprune
+
+pre-push:
+  commands:
+    duplication:
+      run: npm run check:dup
+    links:
+      run: npm run check:links

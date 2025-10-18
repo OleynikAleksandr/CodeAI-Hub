@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "🔁 Running duplication check (jscpd)..."
+npm run -s check:dup || {
+  echo "❌ jscpd threshold exceeded (3%). Fix duplications or adjust scripts/check).";
+  exit 1;
+}
+
+echo "🔗 Checking markdown links..."
+npm run -s check:links || {
+  echo "❌ Markdown link check failed. Fix broken links in docs.";
+  exit 1;
+}
+
+echo "✅ Pre-push checks passed"
+

@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+./scripts/check-architecture.sh
+
+# Fast quality gates
+echo "🔎 Running ESLint..."
+npm run -s lint
+
+echo "🧹 Running Prettier check (advisory)..."
+npm run -s format:check || echo "⚠️  Prettier differences detected (advisory). Run: npx prettier --write src" >&2
+
+echo "🌲 ts-prune (unused exports)..."
+npm run -s check:tsprune
+
+echo "✅ Architecture check passed (pre-commit)"
