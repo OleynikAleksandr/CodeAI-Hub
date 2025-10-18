@@ -85,10 +85,13 @@ export class WebviewHtmlGenerator {
       flex-grow: 1;
       overflow: hidden;
       background-color: var(--vscode-editor-background, #1e1e1e);
+      padding: 12px;
+      box-sizing: border-box;
     }
     #root.active {
       display: flex;
       flex-direction: column;
+      gap: 16px;
     }
   </style>
 </head>

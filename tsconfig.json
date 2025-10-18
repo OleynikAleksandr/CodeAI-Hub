@@ -12,5 +12,6 @@
     "moduleResolution": "node",
     "types": ["node", "vscode"]
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/webview/ui/src/**/*"]
 }
