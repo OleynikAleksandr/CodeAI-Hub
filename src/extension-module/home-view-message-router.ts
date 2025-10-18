@@ -1,10 +1,14 @@
 import { type Webview, window } from "vscode";
 import { ProviderRegistry } from "../core/providers/provider-registry";
-import { SessionLauncher } from "../core/session/session-launcher";
+import {
+  SessionLauncher,
+  type SessionLaunchResult,
+} from "../core/session/session-launcher";
 import type {
   ProviderStackDescriptor,
   ProviderStackId,
 } from "../types/provider";
+import type { SessionRecord } from "../types/session";
 
 type WebviewCommand =
   | "newSession"
@@ -58,7 +62,7 @@ export class HomeViewMessageRouter {
     }
 
     if (this.isProviderPickerMessage(message)) {
-      this.handleProviderPickerMessage(message);
+      this.handleProviderPickerMessage(message, webview);
       return;
     }
 
@@ -73,12 +77,18 @@ export class HomeViewMessageRouter {
         this.handleNewSession(webview);
         break;
       case "lastSession":
+        this.notifyWebview(webview, {
+          type: "session:focusLast",
+        });
         window.showInformationMessage(
-          "Last session restore is not yet available."
+          "Selecting the most recent session (placeholder)."
         );
         break;
       case "clearSession":
-        window.showInformationMessage("Clearing sessions will be added soon.");
+        this.notifyWebview(webview, {
+          type: "session:clearAll",
+        });
+        window.showInformationMessage("All sessions cleared (placeholder).");
         break;
       case "oldSessions":
         window.showInformationMessage(
@@ -154,17 +164,16 @@ export class HomeViewMessageRouter {
       providers: stacks.map((stack) => this.toSerializableStack(stack)),
     };
 
-    webview
-      .postMessage({
-        type: "providerPicker:open",
-        payload,
-      })
-      .then(undefined, () => {
-        /* ignore postMessage rejection */
-      });
+    this.notifyWebview(webview, {
+      type: "providerPicker:open",
+      payload,
+    });
   }
 
-  private handleProviderPickerMessage(message: ProviderPickerMessage): void {
+  private handleProviderPickerMessage(
+    message: ProviderPickerMessage,
+    webview: Webview
+  ): void {
     if (message.type === "providerPicker:cancel") {
       window.showInformationMessage("Session creation cancelled.");
       return;
@@ -186,6 +195,7 @@ export class HomeViewMessageRouter {
       return;
     }
 
+    this.broadcastSessionCreated(result, webview);
     window.showInformationMessage(result.summary);
   }
 
@@ -223,5 +233,32 @@ export class HomeViewMessageRouter {
     }
 
     return sanitized;
+  }
+
+  private notifyWebview(
+    webview: Webview,
+    message: Record<string, unknown>
+  ): void {
+    webview.postMessage(message);
+  }
+
+  private broadcastSessionCreated(
+    result: Extract<SessionLaunchResult, { status: "ok" }>,
+    webview: Webview
+  ): void {
+    const session = this.toSerializableSession(result.session);
+    this.notifyWebview(webview, {
+      type: "session:created",
+      payload: session,
+    });
+  }
+
+  private toSerializableSession(session: SessionRecord): SessionRecord {
+    return {
+      id: session.id,
+      title: session.title,
+      providerIds: [...session.providerIds],
+      createdAt: session.createdAt,
+    };
   }
 }

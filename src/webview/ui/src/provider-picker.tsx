@@ -5,6 +5,16 @@ import type {
   ProviderStackId,
 } from "../../../../types/provider";
 
+export type ProviderPickerState = {
+  readonly visible: boolean;
+  readonly providers: readonly ProviderStackDescriptor[];
+};
+
+export const defaultPickerState: ProviderPickerState = {
+  visible: false,
+  providers: [],
+};
+
 type ProviderPickerProps = {
   readonly visible: boolean;
   readonly providers: readonly ProviderStackDescriptor[];
@@ -62,6 +72,12 @@ export const ProviderPicker = ({
   useEffect(() => {
     if (visible && firstOptionRef.current) {
       firstOptionRef.current.focus();
+    }
+  }, [visible]);
+
+  useEffect(() => {
+    if (visible) {
+      setSelected(new Set());
     }
   }, [visible]);
 

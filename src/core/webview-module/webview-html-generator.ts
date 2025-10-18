@@ -27,6 +27,9 @@ export class WebviewHtmlGenerator {
     const reactAppCssUri = webview.asWebviewUri(
       Uri.joinPath(extensionUri, "media", "react-chat.css")
     );
+    const sessionViewCssUri = webview.asWebviewUri(
+      Uri.joinPath(extensionUri, "media", "session-view.css")
+    );
 
     const nonce = this.getNonce();
     const csp = [
@@ -56,6 +59,7 @@ export class WebviewHtmlGenerator {
   </style>
   <link href="${mainViewCssUri}" rel="stylesheet">
   <link href="${reactAppCssUri}" rel="stylesheet">
+  <link href="${sessionViewCssUri}" rel="stylesheet">
   <title>CodeAI Hub</title>
   <style>
     html, body {

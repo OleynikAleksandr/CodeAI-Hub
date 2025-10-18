@@ -87,6 +87,8 @@ UI слой остаётся в open source репозитории и работ
 - **todos-block-module** — UI для TODO и структурированных задач.
 - **session-tabs-component** — стили и логика вкладок с провайдерными бейджами.
 - **drag-drop-module** — обработка drag&drop файлов, добавлены события маршрутизации к провайдерам.
+- **session-shell-lite** — упрощённый набор компонентов (`session-view`, `session-tabs`, `dialog-panel`, `todo-panel`, `status-panel`, `input-panel`) перенесён в CodeAI-Hub; отображает заглушки сообщений, TODO и статус выбранных провайдеров до подключения реального orchestrator'а.
+- **provider-picker** — лёгкий React-компонент для выбора одного или нескольких провайдеров при создании сессии; рендерится внутри статической оболочки и обнуляет состояние после подтверждения (коммит e300238).
 
 ---
 
@@ -109,6 +111,8 @@ Extension-слой остаётся тонким: тяжелая логика SD
 
 - **Webview Shell & Extension Facade Recovery** — реализовано в релизах `0.0.7–0.0.10`: восстановлены React webview, фасады расширения, drag & drop и релизный pipeline.
 - **Provider Registry & Session Orchestrator Foundation** — реализовано в фазах `0–3`: введён `ProviderRegistryFacade`, draft-контракт провайдера, orchestrator событий и подключён заглушечный `ClaudeProviderStub`.
+- **Provider Picker Dialog (Phase 1)** — завершено в коммите e300238: добавлен `ProviderRegistry` с заглушками CLI, `SessionLauncher`, а также webview-компонент `ProviderPicker`, запускаемый из `HomeViewMessageRouter`.
+- **Session Interface Skeleton (Phase 2, in progress)** — текущий коммит добавил статический UI для сессий (табов, диалога, TODO, статуса и поля ввода) с временными данными и реакцией на события `session:created/clearAll/focusLast`.
 
 ---
 
