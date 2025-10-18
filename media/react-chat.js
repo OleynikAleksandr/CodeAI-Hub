@@ -7281,616 +7281,18 @@
   });
 
   // src/webview/ui/src/index.tsx
-  var import_react6 = __toESM(require_react());
+  var import_react11 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/webview/ui/src/app-host.tsx
-  var import_react5 = __toESM(require_react());
+  var import_react10 = __toESM(require_react());
 
-  // src/webview/ui/src/components/settings-view.tsx
+  // src/webview/ui/src/app-host/provider-picker-state.ts
   var import_react2 = __toESM(require_react());
 
-  // src/webview/ui/src/vscode.ts
-  var cachedApi;
-  var getVsCodeApi = () => {
-    if (cachedApi) {
-      return cachedApi;
-    }
-    const globalScope = window;
-    if (globalScope.vscode) {
-      cachedApi = globalScope.vscode;
-      return cachedApi;
-    }
-    if (typeof globalScope.acquireVsCodeApi === "function") {
-      try {
-        cachedApi = globalScope.acquireVsCodeApi();
-        globalScope.vscode = cachedApi;
-        return cachedApi;
-      } catch (_error) {
-        return cachedApi;
-      }
-    }
-    return cachedApi;
-  };
-  var postVsCodeMessage = (message) => {
-    const api = getVsCodeApi();
-    if (!api) {
-      return;
-    }
-    api.postMessage(message);
-  };
-  var vscodeInstance = getVsCodeApi();
-  var fallbackApi = {
-    postMessage: () => {
-    }
-  };
-  var vscode = vscodeInstance ?? fallbackApi;
-  var vscode_default = vscode;
-
-  // src/webview/ui/src/components/settings/thinking-settings.tsx
+  // src/webview/ui/src/provider-picker.tsx
   var import_react = __toESM(require_react());
   var import_jsx_runtime = __toESM(require_jsx_runtime());
-  var hideSpinnerStyle = `
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-`;
-  var MIN_THINKING_TOKENS = 2e3;
-  var MAX_THINKING_TOKENS = 32e3;
-  var THINKING_TOKEN_STEP = 1e3;
-  var ThinkingSettings = ({
-    enabled,
-    maxTokens,
-    onChange
-  }) => {
-    const handleEnabledChange = (event) => {
-      onChange(event.target.checked, maxTokens);
-    };
-    const handleMaxTokensChange = (event) => {
-      const value = Number.parseInt(event.target.value, 10);
-      const constrainedValue = Math.min(
-        MAX_THINKING_TOKENS,
-        Math.max(MIN_THINKING_TOKENS, value || MIN_THINKING_TOKENS)
-      );
-      onChange(enabled, constrainedValue);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: "30px" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-        "h3",
-        {
-          style: {
-            fontSize: "14px",
-            fontWeight: 600,
-            marginBottom: "15px",
-            color: "#e0e0e0"
-          },
-          children: "Thinking Settings"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-        "div",
-        {
-          style: {
-            background: "#252526",
-            borderRadius: "6px",
-            padding: "15px",
-            border: "1px solid #3c3c3c"
-          },
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-              "label",
-              {
-                style: {
-                  display: "flex",
-                  alignItems: "flex-start",
-                  cursor: "pointer",
-                  gap: "12px",
-                  marginBottom: "20px"
-                },
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                    "input",
-                    {
-                      checked: enabled,
-                      onChange: handleEnabledChange,
-                      style: {
-                        marginTop: "2px",
-                        width: "16px",
-                        height: "16px",
-                        cursor: "pointer"
-                      },
-                      type: "checkbox"
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                      "div",
-                      {
-                        style: {
-                          fontSize: "13px",
-                          fontWeight: 500,
-                          marginBottom: "4px"
-                        },
-                        children: "Enable thinking mode"
-                      }
-                    ),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-                      "div",
-                      {
-                        style: {
-                          fontSize: "12px",
-                          color: "#999999",
-                          lineHeight: "1.4"
-                        },
-                        children: [
-                          "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-                          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
-                          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { style: { color: "#d4a36a" }, children: "Note:" }),
-                          " Changes take effect when creating a new session."
-                        ]
-                      }
-                    )
-                  ] })
-                ]
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-              "div",
-              {
-                style: {
-                  paddingLeft: "28px",
-                  borderTop: "1px solid #3c3c3c",
-                  paddingTop: "15px"
-                },
-                children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { style: { display: "block", marginBottom: "8px" }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                    "div",
-                    {
-                      style: {
-                        fontSize: "13px",
-                        fontWeight: 500,
-                        marginBottom: "8px"
-                      },
-                      children: "Maximum thinking tokens"
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-                    "div",
-                    {
-                      style: {
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px"
-                      },
-                      children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                          "button",
-                          {
-                            onClick: () => onChange(
-                              enabled,
-                              Math.max(
-                                MIN_THINKING_TOKENS,
-                                maxTokens - THINKING_TOKEN_STEP
-                              )
-                            ),
-                            style: {
-                              width: "28px",
-                              height: "28px",
-                              background: "#2d2d30",
-                              border: "1px solid #3c3c3c",
-                              borderRadius: "4px",
-                              color: "#cccccc",
-                              cursor: "pointer",
-                              fontSize: "16px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center"
-                            },
-                            title: "Decrease by 1000",
-                            type: "button",
-                            children: "\u2212"
-                          }
-                        ),
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                          "input",
-                          {
-                            max: MAX_THINKING_TOKENS,
-                            min: MIN_THINKING_TOKENS,
-                            onChange: handleMaxTokensChange,
-                            step: THINKING_TOKEN_STEP,
-                            style: {
-                              width: "100px",
-                              padding: "6px 8px",
-                              background: "#1e1e1e",
-                              border: "1px solid #3c3c3c",
-                              borderRadius: "4px",
-                              color: "#cccccc",
-                              fontSize: "13px",
-                              textAlign: "center",
-                              MozAppearance: "textfield",
-                              appearance: "textfield"
-                            },
-                            type: "number",
-                            value: maxTokens
-                          }
-                        ),
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                          "button",
-                          {
-                            onClick: () => onChange(
-                              enabled,
-                              Math.min(
-                                MAX_THINKING_TOKENS,
-                                maxTokens + THINKING_TOKEN_STEP
-                              )
-                            ),
-                            style: {
-                              width: "28px",
-                              height: "28px",
-                              background: "#2d2d30",
-                              border: "1px solid #3c3c3c",
-                              borderRadius: "4px",
-                              color: "#cccccc",
-                              cursor: "pointer",
-                              fontSize: "16px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center"
-                            },
-                            title: "Increase by 1000",
-                            type: "button",
-                            children: "+"
-                          }
-                        )
-                      ]
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-                    "div",
-                    {
-                      style: {
-                        fontSize: "12px",
-                        color: "#999999",
-                        marginTop: "8px",
-                        lineHeight: "1.4"
-                      },
-                      children: [
-                        "\u2022 Normal (4000): Standard reasoning depth",
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
-                        "\u2022 Hard (10000): Extended analysis for complex tasks",
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
-                        "\u2022 Ultra (32000): Maximum reasoning capacity"
-                      ]
-                    }
-                  )
-                ] })
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-              "div",
-              {
-                style: {
-                  marginTop: "20px",
-                  padding: "12px",
-                  background: "#1a1a1a",
-                  borderRadius: "4px",
-                  border: "1px solid #2d2d30"
-                },
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                    "div",
-                    {
-                      style: {
-                        fontSize: "12px",
-                        color: "#7ca9d3",
-                        fontWeight: 500,
-                        marginBottom: "4px"
-                      },
-                      children: "\u{1F4A1} Pro Tip"
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                    "div",
-                    {
-                      style: {
-                        fontSize: "12px",
-                        color: "#999999",
-                        lineHeight: "1.4"
-                      },
-                      children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.'
-                    }
-                  )
-                ]
-              }
-            )
-          ]
-        }
-      )
-    ] });
-  };
-  var thinking_settings_default = import_react.default.memo(ThinkingSettings);
-
-  // src/webview/ui/src/components/settings-view.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-  var RESET_DELAY_MS = 100;
-  var DEFAULT_THINKING_MAX_TOKENS = 4e3;
-  var DISABLED_OPACITY = 0.6;
-  var SettingsView = ({ onClose }) => {
-    const initialEnabled = (0, import_react2.useRef)(false);
-    const [settings, setSettings] = (0, import_react2.useState)({
-      thinking: {
-        enabled: false,
-        maxTokens: DEFAULT_THINKING_MAX_TOKENS
-      }
-    });
-    const [hasChanges, setHasChanges] = (0, import_react2.useState)(false);
-    const [saving, setSaving] = (0, import_react2.useState)(false);
-    const [resetting, setResetting] = (0, import_react2.useState)(false);
-    (0, import_react2.useEffect)(() => {
-      vscode_default.postMessage({
-        type: "settings:load"
-      });
-      const handleMessage = (event) => {
-        const message = event.data;
-        if (message.type === "settings:loaded") {
-          const loadedSettings = {
-            thinking: message.settings.thinking || {
-              enabled: false,
-              maxTokens: DEFAULT_THINKING_MAX_TOKENS
-            }
-          };
-          initialEnabled.current = loadedSettings.thinking.enabled;
-          setSettings(loadedSettings);
-          setResetting(false);
-          setHasChanges(false);
-        } else if (message.type === "settings:saved") {
-          if (message.settings?.thinking) {
-            initialEnabled.current = Boolean(message.settings.thinking.enabled);
-            setSettings({
-              thinking: {
-                enabled: Boolean(message.settings.thinking.enabled),
-                maxTokens: Number(message.settings.thinking.maxTokens) || DEFAULT_THINKING_MAX_TOKENS
-              }
-            });
-          }
-          setSaving(false);
-          setHasChanges(false);
-        }
-      };
-      window.addEventListener("message", handleMessage);
-      return () => window.removeEventListener("message", handleMessage);
-    }, []);
-    const handleThinkingSettingsChange = (enabled, maxTokens) => {
-      const nextSettings = {
-        thinking: {
-          enabled,
-          maxTokens
-        }
-      };
-      setSettings(nextSettings);
-      const enabledChanged = nextSettings.thinking.enabled !== initialEnabled.current;
-      setHasChanges(enabledChanged);
-    };
-    const handleSave = () => {
-      setSaving(true);
-      vscode_default.postMessage({
-        type: "settings:save",
-        settings
-      });
-    };
-    const handleReset = () => {
-      setResetting(true);
-      window.setTimeout(() => {
-        vscode_default.postMessage({
-          type: "settings:reset"
-        });
-      }, RESET_DELAY_MS);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-      "div",
-      {
-        style: {
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          background: "#1e1e1e",
-          color: "#cccccc"
-        },
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-            "div",
-            {
-              style: {
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "12px 16px",
-                borderBottom: "1px solid #2d2d30",
-                flexShrink: 0
-              },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                  "div",
-                  {
-                    style: {
-                      fontSize: "16px",
-                      fontWeight: 600
-                    },
-                    children: "Settings"
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                  "button",
-                  {
-                    "aria-label": "Close settings",
-                    onClick: onClose,
-                    style: {
-                      background: "transparent",
-                      border: "1px solid #3c3c3c",
-                      borderRadius: "4px",
-                      color: "#cccccc",
-                      cursor: "pointer",
-                      padding: "4px 8px",
-                      fontSize: "18px",
-                      width: "32px",
-                      height: "32px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center"
-                    },
-                    title: "Close settings",
-                    type: "button",
-                    children: "\xD7"
-                  }
-                )
-              ]
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-            "div",
-            {
-              style: {
-                flex: 1,
-                overflowY: "auto",
-                padding: "20px"
-              },
-              children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                thinking_settings_default,
-                {
-                  enabled: settings.thinking.enabled,
-                  maxTokens: settings.thinking.maxTokens,
-                  onChange: handleThinkingSettingsChange
-                }
-              )
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-            "div",
-            {
-              style: {
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "12px 20px",
-                borderTop: "1px solid #2d2d30",
-                flexShrink: 0
-              },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                  "button",
-                  {
-                    disabled: resetting,
-                    onClick: handleReset,
-                    onMouseEnter: (event) => {
-                      if (!resetting) {
-                        event.currentTarget.style.background = "#2d2d30";
-                        event.currentTarget.style.borderColor = "#4c4c4c";
-                      }
-                    },
-                    onMouseLeave: (event) => {
-                      if (!resetting) {
-                        event.currentTarget.style.background = "transparent";
-                        event.currentTarget.style.borderColor = "#3c3c3c";
-                      }
-                    },
-                    style: {
-                      padding: "6px 12px",
-                      background: resetting ? "#3c3c3c" : "transparent",
-                      border: "1px solid #3c3c3c",
-                      borderRadius: "4px",
-                      color: resetting ? "#808080" : "#cccccc",
-                      cursor: resetting ? "default" : "pointer",
-                      fontSize: "12px",
-                      transition: "all 0.2s ease",
-                      opacity: resetting ? DISABLED_OPACITY : 1
-                    },
-                    title: "Reset all settings to defaults",
-                    type: "button",
-                    children: resetting ? "Resetting..." : "Reset to Defaults"
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-                  "div",
-                  {
-                    style: {
-                      display: "flex",
-                      gap: "8px"
-                    },
-                    children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                        "button",
-                        {
-                          onClick: onClose,
-                          onMouseEnter: (event) => {
-                            event.currentTarget.style.background = "#2d2d30";
-                            event.currentTarget.style.borderColor = "#4c4c4c";
-                          },
-                          onMouseLeave: (event) => {
-                            event.currentTarget.style.background = "transparent";
-                            event.currentTarget.style.borderColor = "#3c3c3c";
-                          },
-                          style: {
-                            padding: "6px 16px",
-                            background: "transparent",
-                            border: "1px solid #3c3c3c",
-                            borderRadius: "4px",
-                            color: "#cccccc",
-                            cursor: "pointer",
-                            fontSize: "12px",
-                            transition: "all 0.2s ease"
-                          },
-                          type: "button",
-                          children: "Close"
-                        }
-                      ),
-                      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                        "button",
-                        {
-                          disabled: !hasChanges || saving,
-                          onClick: handleSave,
-                          onMouseEnter: (event) => {
-                            if (hasChanges && !saving) {
-                              event.currentTarget.style.background = "#1177bb";
-                            }
-                          },
-                          onMouseLeave: (event) => {
-                            if (hasChanges && !saving) {
-                              event.currentTarget.style.background = "#0e639c";
-                            }
-                          },
-                          style: {
-                            padding: "6px 16px",
-                            background: hasChanges && !saving ? "#0e639c" : "#3c3c3c",
-                            border: "none",
-                            borderRadius: "4px",
-                            color: hasChanges ? "#ffffff" : "#808080",
-                            cursor: hasChanges && !saving ? "pointer" : "default",
-                            fontSize: "12px",
-                            opacity: saving ? DISABLED_OPACITY : 1,
-                            transition: "all 0.2s ease"
-                          },
-                          type: "button",
-                          children: saving ? "Saving..." : "Save Changes"
-                        }
-                      )
-                    ]
-                  }
-                )
-              ]
-            }
-          )
-        ]
-      }
-    );
-  };
-  var settings_view_default = import_react2.default.memo(SettingsView);
-
-  // src/webview/ui/src/provider-picker.tsx
-  var import_react3 = __toESM(require_react());
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   var defaultPickerState = {
     visible: false,
     providers: []
@@ -7904,8 +7306,8 @@
     const handleChange = () => {
       onToggle(provider.id);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("label", { className: "provider-picker__option", htmlFor: provider.id, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "provider-picker__option", htmlFor: provider.id, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
         "input",
         {
           checked,
@@ -7916,9 +7318,9 @@
           type: "checkbox"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "provider-picker__label", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "provider-picker__label-title", children: provider.title }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "provider-picker__label-description", children: provider.description })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "provider-picker__label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "provider-picker__label-title", children: provider.title }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "provider-picker__label-description", children: provider.description })
       ] })
     ] });
   };
@@ -7928,16 +7330,16 @@
     onConfirm,
     onCancel
   }) => {
-    const [selected, setSelected] = (0, import_react3.useState)(
+    const [selected, setSelected] = (0, import_react.useState)(
       () => /* @__PURE__ */ new Set()
     );
-    const firstOptionRef = (0, import_react3.useRef)(null);
-    (0, import_react3.useEffect)(() => {
+    const firstOptionRef = (0, import_react.useRef)(null);
+    (0, import_react.useEffect)(() => {
       if (visible && firstOptionRef.current) {
         firstOptionRef.current.focus();
       }
     }, [visible]);
-    (0, import_react3.useEffect)(() => {
+    (0, import_react.useEffect)(() => {
       if (visible) {
         setSelected(/* @__PURE__ */ new Set());
       }
@@ -7953,7 +7355,7 @@
         return next;
       });
     };
-    const selectedIds = (0, import_react3.useMemo)(() => Array.from(selected.values()), [selected]);
+    const selectedIds = (0, import_react.useMemo)(() => Array.from(selected.values()), [selected]);
     const handleSubmit = (event) => {
       event.preventDefault();
       if (selectedIds.length === 0) {
@@ -7971,7 +7373,7 @@
       const refCallback = index === 0 ? (element) => {
         firstOptionRef.current = element;
       } : void 0;
-      return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
         ProviderOption,
         {
           checked: selected.has(provider.id),
@@ -7983,21 +7385,21 @@
       );
     };
     const isSubmitDisabled = selectedIds.length === 0;
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
       "section",
       {
         "aria-labelledby": "provider-picker-heading",
         className: "provider-picker",
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { className: "provider-picker__title", id: "provider-picker-heading", children: "Choose providers" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "provider-picker__description", children: "Select one or more providers to include in your new session. Combinations allow multi-agent orchestration." }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("form", { className: "provider-picker__form", onSubmit: handleSubmit, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("fieldset", { className: "provider-picker__fieldset", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("legend", { className: "provider-picker__legend", children: "Connected provider stacks" }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "provider-picker__options", children: providers.map((provider, index) => renderOption(provider, index)) })
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "provider-picker__title", id: "provider-picker-heading", children: "Choose providers" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "provider-picker__description", children: "Select one or more providers to include in your new session. Combinations allow multi-agent orchestration." }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", { className: "provider-picker__form", onSubmit: handleSubmit, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("fieldset", { className: "provider-picker__fieldset", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("legend", { className: "provider-picker__legend", children: "Connected provider stacks" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "provider-picker__options", children: providers.map((provider, index) => renderOption(provider, index)) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "provider-picker__actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "provider-picker__actions", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                 "button",
                 {
                   className: "provider-picker__primary",
@@ -8006,7 +7408,7 @@
                   children: "Start session"
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                 "button",
                 {
                   className: "provider-picker__secondary",
@@ -8016,7 +7418,7 @@
                 }
               )
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: isSubmitDisabled ? "Select at least one provider to continue." : `${selectedIds.length} provider${selectedIds.length > 1 ? "s" : ""} selected.` })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: isSubmitDisabled ? "Select at least one provider to continue." : `${selectedIds.length} provider${selectedIds.length > 1 ? "s" : ""} selected.` })
           ] })
         ]
       }
@@ -8134,8 +7536,883 @@
     return rest;
   };
 
-  // src/webview/ui/src/session/dialog-panel.tsx
+  // src/webview/ui/src/vscode.ts
+  var cachedApi;
+  var getVsCodeApi = () => {
+    if (cachedApi) {
+      return cachedApi;
+    }
+    const globalScope = window;
+    if (globalScope.vscode) {
+      cachedApi = globalScope.vscode;
+      return cachedApi;
+    }
+    if (typeof globalScope.acquireVsCodeApi === "function") {
+      try {
+        cachedApi = globalScope.acquireVsCodeApi();
+        globalScope.vscode = cachedApi;
+        return cachedApi;
+      } catch (_error) {
+        return cachedApi;
+      }
+    }
+    return cachedApi;
+  };
+  var postVsCodeMessage = (message) => {
+    const api = getVsCodeApi();
+    if (!api) {
+      return;
+    }
+    api.postMessage(message);
+  };
+  var vscodeInstance = getVsCodeApi();
+  var fallbackApi = {
+    postMessage: () => {
+    }
+  };
+  var vscode = vscodeInstance ?? fallbackApi;
+  var vscode_default = vscode;
+
+  // src/webview/ui/src/app-host/provider-picker-state.ts
+  var useProviderPickerState = () => {
+    const [pickerState, setPickerState] = (0, import_react2.useState)(defaultPickerState);
+    const [catalog, setCatalog] = (0, import_react2.useState)({});
+    const providerLabels = (0, import_react2.useMemo)(() => buildProviderLabels(catalog), [catalog]);
+    const resetPicker = (0, import_react2.useCallback)(() => {
+      setPickerState(defaultPickerState);
+    }, []);
+    const openPicker = (0, import_react2.useCallback)(
+      (providers) => {
+        setCatalog((previous) => mergeCatalog(previous, providers));
+        setPickerState({
+          visible: true,
+          providers
+        });
+      },
+      []
+    );
+    const confirmSelection = (0, import_react2.useCallback)(
+      (providerIds) => {
+        postVsCodeMessage({
+          type: "providerPicker:confirm",
+          payload: { providerIds }
+        });
+        resetPicker();
+      },
+      [resetPicker]
+    );
+    const cancelSelection = (0, import_react2.useCallback)(() => {
+      postVsCodeMessage({ type: "providerPicker:cancel" });
+      resetPicker();
+    }, [resetPicker]);
+    return {
+      pickerState,
+      providerLabels,
+      openPicker,
+      confirmSelection,
+      cancelSelection,
+      resetPicker
+    };
+  };
+
+  // src/webview/ui/src/app-host/session-store.ts
+  var import_react3 = __toESM(require_react());
+  var useSessionStore = (providerLabels) => {
+    const [sessions, setSessions] = (0, import_react3.useState)([]);
+    const [snapshots, setSnapshots] = (0, import_react3.useState)({});
+    const [activeSessionId, setActiveSessionId] = (0, import_react3.useState)(null);
+    const sessionsRef = (0, import_react3.useRef)([]);
+    const syncSessionsRef = (0, import_react3.useCallback)((current) => {
+      sessionsRef.current = current;
+    }, []);
+    const handleSessionCreated = (0, import_react3.useCallback)(
+      (session) => {
+        setSessions((previous) => {
+          const next = [...previous, session];
+          syncSessionsRef(next);
+          return next;
+        });
+        setSnapshots((previous) => ({
+          ...previous,
+          [session.id]: createInitialSnapshot(session, providerLabels)
+        }));
+        setActiveSessionId(session.id);
+      },
+      [providerLabels, syncSessionsRef]
+    );
+    const clearSessions = (0, import_react3.useCallback)(() => {
+      setSessions(() => {
+        syncSessionsRef([]);
+        return [];
+      });
+      setSnapshots({});
+      setActiveSessionId(null);
+    }, [syncSessionsRef]);
+    const focusLastSession = (0, import_react3.useCallback)(() => {
+      const last = sessionsRef.current.at(-1);
+      if (last) {
+        setActiveSessionId(last.id);
+      }
+    }, []);
+    const selectSession = (0, import_react3.useCallback)((sessionId) => {
+      setActiveSessionId(sessionId);
+    }, []);
+    const closeSession = (0, import_react3.useCallback)(
+      (sessionId) => {
+        setSessions((previous) => {
+          const next = previous.filter((session) => session.id !== sessionId);
+          syncSessionsRef(next);
+          return next;
+        });
+        setSnapshots((previous) => removeSnapshot(previous, sessionId));
+        setActiveSessionId((current) => {
+          if (current !== sessionId) {
+            return current;
+          }
+          const remaining = sessionsRef.current.filter(
+            (session) => session.id !== sessionId
+          );
+          const last = remaining.at(-1);
+          return last ? last.id : null;
+        });
+      },
+      [syncSessionsRef]
+    );
+    const toggleTodo = (0, import_react3.useCallback)((sessionId, todoId) => {
+      setSnapshots((previous) => {
+        const current = previous[sessionId];
+        if (!current) {
+          return previous;
+        }
+        const todos = current.todos.map(
+          (todo) => todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+        );
+        return {
+          ...previous,
+          [sessionId]: { ...current, todos }
+        };
+      });
+    }, []);
+    const sendMessage = (0, import_react3.useCallback)((sessionId, content) => {
+      setSnapshots((previous) => {
+        const current = previous[sessionId];
+        if (!current) {
+          return previous;
+        }
+        const timestamp = Date.now();
+        return {
+          ...previous,
+          [sessionId]: {
+            ...current,
+            draft: "",
+            messages: [
+              ...current.messages,
+              {
+                id: `message-${timestamp}`,
+                role: "user",
+                content,
+                createdAt: timestamp
+              },
+              {
+                id: `message-${timestamp + 1}`,
+                role: "assistant",
+                content: `Awaiting orchestration response from ${current.status.providerSummary}.`,
+                createdAt: timestamp
+              }
+            ],
+            status: {
+              ...current.status,
+              tokenUsage: {
+                ...current.status.tokenUsage,
+                used: Math.min(
+                  current.status.tokenUsage.limit,
+                  current.status.tokenUsage.used + content.length
+                )
+              },
+              updatedAt: timestamp
+            }
+          }
+        };
+      });
+    }, []);
+    return {
+      sessions,
+      snapshots,
+      activeSessionId,
+      handleSessionCreated,
+      clearSessions,
+      focusLastSession,
+      selectSession,
+      closeSession,
+      toggleTodo,
+      sendMessage
+    };
+  };
+
+  // src/webview/ui/src/app-host/settings-visibility.ts
+  var import_react4 = __toESM(require_react());
+  var useSettingsVisibility = () => {
+    const [settingsVisible, setSettingsVisible] = (0, import_react4.useState)(false);
+    const openSettings = (0, import_react4.useCallback)(() => {
+      setSettingsVisible(true);
+    }, []);
+    const closeSettings = (0, import_react4.useCallback)(() => {
+      setSettingsVisible(false);
+      postVsCodeMessage({ type: "settings:closed" });
+    }, []);
+    return {
+      settingsVisible,
+      openSettings,
+      closeSettings
+    };
+  };
+
+  // src/webview/ui/src/app-host/webview-message-handler.ts
+  var import_react5 = __toESM(require_react());
+  var isIncomingMessage = (value) => {
+    if (!value || typeof value !== "object" || !("type" in value)) {
+      return false;
+    }
+    return true;
+  };
+  var useWebviewMessageHandler = ({
+    onProviderPickerOpen,
+    onSessionCreated,
+    onSessionClearAll,
+    onSessionFocusLast,
+    onShowSettings
+  }) => {
+    (0, import_react5.useEffect)(() => {
+      const handleIncomingMessage = (event) => {
+        if (!isIncomingMessage(event.data)) {
+          return;
+        }
+        const message = event.data;
+        switch (message.type) {
+          case "providerPicker:open": {
+            const providers = parseProviderList(message.payload?.providers);
+            if (providers.length > 0) {
+              onProviderPickerOpen(providers);
+            }
+            break;
+          }
+          case "session:created": {
+            if (isSessionRecordCandidate(message.payload)) {
+              onSessionCreated(message.payload);
+            }
+            break;
+          }
+          case "session:clearAll": {
+            onSessionClearAll();
+            break;
+          }
+          case "session:focusLast": {
+            onSessionFocusLast();
+            break;
+          }
+          case "ui:showSettings": {
+            onShowSettings();
+            break;
+          }
+          default:
+            break;
+        }
+      };
+      window.addEventListener("message", handleIncomingMessage);
+      return () => {
+        window.removeEventListener("message", handleIncomingMessage);
+      };
+    }, [
+      onProviderPickerOpen,
+      onSessionCreated,
+      onSessionClearAll,
+      onSessionFocusLast,
+      onShowSettings
+    ]);
+  };
+
+  // src/webview/ui/src/components/settings-view.tsx
+  var import_react8 = __toESM(require_react());
+
+  // src/webview/ui/src/components/settings/settings-footer.tsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  var containerStyles = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "12px 20px",
+    borderTop: "1px solid #2d2d30",
+    flexShrink: 0
+  };
+  var resetButtonStyles = {
+    padding: "6px 12px",
+    background: "transparent",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    cursor: "pointer",
+    fontSize: "12px",
+    transition: "all 0.2s ease"
+  };
+  var closeButtonStyles = {
+    padding: "6px 16px",
+    background: "transparent",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    cursor: "pointer",
+    fontSize: "12px",
+    transition: "all 0.2s ease"
+  };
+  var saveButtonStyles = {
+    padding: "6px 16px",
+    background: "#3c3c3c",
+    border: "none",
+    borderRadius: "4px",
+    color: "#808080",
+    cursor: "default",
+    fontSize: "12px",
+    transition: "all 0.2s ease"
+  };
+  var buttonGroupStyles = {
+    display: "flex",
+    gap: "8px"
+  };
+  var DISABLED_OPACITY = 0.6;
+  var SettingsFooter = ({
+    hasChanges,
+    saving,
+    resetting,
+    onClose,
+    onSave,
+    onReset
+  }) => {
+    const handleResetMouseEnter = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = "#2d2d30";
+        event.currentTarget.style.borderColor = "#4c4c4c";
+      }
+    };
+    const handleResetMouseLeave = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = "transparent";
+        event.currentTarget.style.borderColor = "#3c3c3c";
+      }
+    };
+    const handleCloseMouseEnter = (event) => {
+      event.currentTarget.style.background = "#2d2d30";
+      event.currentTarget.style.borderColor = "#4c4c4c";
+    };
+    const handleCloseMouseLeave = (event) => {
+      event.currentTarget.style.background = "transparent";
+      event.currentTarget.style.borderColor = "#3c3c3c";
+    };
+    const handleSaveMouseEnter = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = "#1177bb";
+      }
+    };
+    const handleSaveMouseLeave = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = "#0e639c";
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { style: containerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+        "button",
+        {
+          disabled: resetting,
+          onClick: onReset,
+          onMouseEnter: handleResetMouseEnter,
+          onMouseLeave: handleResetMouseLeave,
+          style: {
+            ...resetButtonStyles,
+            background: resetting ? "#3c3c3c" : "transparent",
+            color: resetting ? "#808080" : "#cccccc",
+            cursor: resetting ? "default" : "pointer",
+            opacity: resetting ? DISABLED_OPACITY : 1
+          },
+          title: "Reset all settings to defaults",
+          type: "button",
+          children: resetting ? "Resetting..." : "Reset to Defaults"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+          "button",
+          {
+            onClick: onClose,
+            onMouseEnter: handleCloseMouseEnter,
+            onMouseLeave: handleCloseMouseLeave,
+            style: closeButtonStyles,
+            type: "button",
+            children: "Close"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+          "button",
+          {
+            disabled: !hasChanges || saving,
+            onClick: onSave,
+            onMouseEnter: handleSaveMouseEnter,
+            onMouseLeave: handleSaveMouseLeave,
+            style: {
+              ...saveButtonStyles,
+              background: hasChanges && !saving ? "#0e639c" : saveButtonStyles.background,
+              color: hasChanges ? "#ffffff" : saveButtonStyles.color,
+              cursor: hasChanges && !saving ? "pointer" : "default",
+              opacity: saving ? DISABLED_OPACITY : 1
+            },
+            type: "button",
+            children: saving ? "Saving..." : "Save Changes"
+          }
+        )
+      ] })
+    ] });
+  };
+  var settings_footer_default = SettingsFooter;
+
+  // src/webview/ui/src/components/settings/settings-header.tsx
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+  var headerStyles = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "12px 16px",
+    borderBottom: "1px solid #2d2d30",
+    flexShrink: 0
+  };
+  var titleStyles = {
+    fontSize: "16px",
+    fontWeight: 600
+  };
+  var closeButtonStyles2 = {
+    background: "transparent",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    cursor: "pointer",
+    padding: "4px 8px",
+    fontSize: "18px",
+    width: "32px",
+    height: "32px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  };
+  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: headerStyles, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: titleStyles, children: "Settings" }),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+      "button",
+      {
+        "aria-label": "Close settings",
+        onClick: onClose,
+        style: closeButtonStyles2,
+        title: "Close settings",
+        type: "button",
+        children: "\xD7"
+      }
+    )
+  ] });
+  var settings_header_default = SettingsHeader;
+
+  // src/webview/ui/src/components/settings/thinking-settings.tsx
+  var import_react6 = __toESM(require_react());
+
+  // src/webview/ui/src/components/settings/thinking/constants.ts
+  var MIN_THINKING_TOKENS = 2e3;
+  var MAX_THINKING_TOKENS = 32e3;
+  var THINKING_TOKEN_STEP = 1e3;
+  var hideSpinnerStyle = `
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`;
+
+  // src/webview/ui/src/components/settings/thinking/thinking-pro-tip.tsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  var containerStyles2 = {
+    marginTop: "20px",
+    padding: "12px",
+    background: "#1a1a1a",
+    borderRadius: "4px",
+    border: "1px solid #2d2d30"
+  };
+  var titleStyles2 = {
+    fontSize: "12px",
+    color: "#7ca9d3",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var descriptionStyles = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: "1.4"
+  };
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: containerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: titleStyles2, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: descriptionStyles, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  ] });
+  var thinking_pro_tip_default = ThinkingProTip;
+
+  // src/webview/ui/src/components/settings/thinking/thinking-toggle.tsx
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var toggleContainerStyles = {
+    display: "flex",
+    alignItems: "flex-start",
+    cursor: "pointer",
+    gap: "12px",
+    marginBottom: "20px"
+  };
+  var checkboxStyles = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var titleStyles3 = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var descriptionStyles2 = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: "1.4"
+  };
+  var noteStyles = {
+    color: "#d4a36a"
+  };
+  var ThinkingToggle = ({
+    enabled,
+    onToggle
+  }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { style: toggleContainerStyles, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      "input",
+      {
+        checked: enabled,
+        onChange: (event) => onToggle(event.target.checked),
+        style: checkboxStyles,
+        type: "checkbox"
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: titleStyles3, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: descriptionStyles2, children: [
+        "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { style: noteStyles, children: "Note:" }),
+        " Changes take effect when creating a new session."
+      ] })
+    ] })
+  ] });
+  var thinking_toggle_default = ThinkingToggle;
+
+  // src/webview/ui/src/components/settings/thinking/thinking-token-input.tsx
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var containerStyles3 = {
+    paddingLeft: "28px",
+    borderTop: "1px solid #3c3c3c",
+    paddingTop: "15px"
+  };
+  var titleStyles4 = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "8px"
+  };
+  var controlsStyles = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px"
+  };
+  var buttonStyles = {
+    width: "28px",
+    height: "28px",
+    background: "#2d2d30",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    cursor: "pointer",
+    fontSize: "16px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  };
+  var inputStyles = {
+    width: "100px",
+    padding: "6px 8px",
+    background: "#1e1e1e",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    fontSize: "13px",
+    textAlign: "center",
+    MozAppearance: "textfield",
+    appearance: "textfield"
+  };
+  var helperStyles = {
+    fontSize: "12px",
+    color: "#999999",
+    marginTop: "8px",
+    lineHeight: "1.4"
+  };
+  var ThinkingTokenInput = ({
+    value,
+    onChange
+  }) => {
+    const updateValue = (next) => {
+      const constrained = Math.min(
+        MAX_THINKING_TOKENS,
+        Math.max(MIN_THINKING_TOKENS, next)
+      );
+      onChange(constrained);
+    };
+    const handleInputChange = (event) => {
+      const parsed = Number.parseInt(event.target.value, 10);
+      updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: titleStyles4, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          "button",
+          {
+            onClick: () => updateValue(value - THINKING_TOKEN_STEP),
+            style: buttonStyles,
+            title: "Decrease by 1000",
+            type: "button",
+            children: "\u2212"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          "input",
+          {
+            max: MAX_THINKING_TOKENS,
+            min: MIN_THINKING_TOKENS,
+            onChange: handleInputChange,
+            step: THINKING_TOKEN_STEP,
+            style: inputStyles,
+            type: "number",
+            value
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          "button",
+          {
+            onClick: () => updateValue(value + THINKING_TOKEN_STEP),
+            style: buttonStyles,
+            title: "Increase by 1000",
+            type: "button",
+            children: "+"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: helperStyles, children: [
+        "\u2022 Normal (4000): Standard reasoning depth",
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("br", {}),
+        "\u2022 Hard (10000): Extended analysis for complex tasks",
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("br", {}),
+        "\u2022 Ultra (32000): Maximum reasoning capacity"
+      ] })
+    ] }) });
+  };
+  var thinking_token_input_default = ThinkingTokenInput;
+
+  // src/webview/ui/src/components/settings/thinking-settings.tsx
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var wrapperStyles = {
+    marginBottom: "30px"
+  };
+  var titleStyles5 = {
+    fontSize: "14px",
+    fontWeight: 600,
+    marginBottom: "15px",
+    color: "#e0e0e0"
+  };
+  var cardStyles = {
+    background: "#252526",
+    borderRadius: "6px",
+    padding: "15px",
+    border: "1px solid #3c3c3c"
+  };
+  var ThinkingSettings = ({
+    enabled,
+    maxTokens,
+    onChange
+  }) => {
+    const handleToggle = (nextEnabled) => {
+      onChange(nextEnabled, maxTokens);
+    };
+    const handleTokenChange = (nextValue) => {
+      onChange(enabled, nextValue);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: wrapperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { style: titleStyles5, children: "Thinking Settings" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: cardStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(thinking_pro_tip_default, {})
+      ] })
+    ] });
+  };
+  var thinking_settings_default = import_react6.default.memo(ThinkingSettings);
+
+  // src/webview/ui/src/components/settings/use-settings-state.ts
+  var import_react7 = __toESM(require_react());
+  var DEFAULT_THINKING_MAX_TOKENS = 4e3;
+  var RESET_DELAY_MS = 100;
+  var createDefaultSettings = () => ({
+    thinking: {
+      enabled: false,
+      maxTokens: DEFAULT_THINKING_MAX_TOKENS
+    }
+  });
+  var mapThinkingSettings = (value) => {
+    const numericValue = Number(value?.maxTokens);
+    return {
+      enabled: Boolean(value?.enabled),
+      maxTokens: Number.isFinite(numericValue) ? numericValue : DEFAULT_THINKING_MAX_TOKENS
+    };
+  };
+  var isIncomingMessage2 = (message) => {
+    if (!message || typeof message !== "object") {
+      return false;
+    }
+    const candidate = message;
+    return candidate.type === "settings:loaded" || candidate.type === "settings:saved";
+  };
+  var useSettingsState = () => {
+    const initialEnabledRef = (0, import_react7.useRef)(false);
+    const [settings, setSettings] = (0, import_react7.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react7.useState)(false);
+    const [saving, setSaving] = (0, import_react7.useState)(false);
+    const [resetting, setResetting] = (0, import_react7.useState)(false);
+    (0, import_react7.useEffect)(() => {
+      vscode_default.postMessage({
+        type: "settings:load"
+      });
+      const handleMessage = (event) => {
+        if (!isIncomingMessage2(event.data)) {
+          return;
+        }
+        if (event.data.type === "settings:loaded") {
+          const thinking = mapThinkingSettings(event.data.settings.thinking);
+          initialEnabledRef.current = thinking.enabled;
+          setSettings({
+            thinking
+          });
+          setResetting(false);
+          setHasChanges(false);
+        }
+        if (event.data.type === "settings:saved") {
+          const thinking = mapThinkingSettings(event.data.settings?.thinking);
+          initialEnabledRef.current = thinking.enabled;
+          setSettings({
+            thinking
+          });
+          setSaving(false);
+          setHasChanges(false);
+        }
+      };
+      window.addEventListener("message", handleMessage);
+      return () => {
+        window.removeEventListener("message", handleMessage);
+      };
+    }, []);
+    const handleThinkingSettingsChange = (0, import_react7.useCallback)(
+      (enabled, maxTokens) => {
+        const nextSettings = {
+          thinking: {
+            enabled,
+            maxTokens
+          }
+        };
+        setSettings(nextSettings);
+        const enabledChanged = enabled !== initialEnabledRef.current;
+        setHasChanges(enabledChanged);
+      },
+      []
+    );
+    const handleSave = (0, import_react7.useCallback)(() => {
+      setSaving(true);
+      vscode_default.postMessage({
+        type: "settings:save",
+        settings
+      });
+    }, [settings]);
+    const handleReset = (0, import_react7.useCallback)(() => {
+      setResetting(true);
+      window.setTimeout(() => {
+        vscode_default.postMessage({
+          type: "settings:reset"
+        });
+      }, RESET_DELAY_MS);
+    }, []);
+    return {
+      settings,
+      hasChanges,
+      saving,
+      resetting,
+      handleThinkingSettingsChange,
+      handleSave,
+      handleReset
+    };
+  };
+
+  // src/webview/ui/src/components/settings-view.tsx
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var containerStyles4 = {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    background: "#1e1e1e",
+    color: "#cccccc"
+  };
+  var contentStyles = {
+    flex: 1,
+    overflowY: "auto",
+    padding: "20px"
+  };
+  var SettingsView = ({ onClose }) => {
+    const {
+      settings,
+      hasChanges,
+      saving,
+      resetting,
+      handleThinkingSettingsChange,
+      handleSave,
+      handleReset
+    } = useSettingsState();
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: containerStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(settings_header_default, { onClose }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: contentStyles, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+        thinking_settings_default,
+        {
+          enabled: settings.thinking.enabled,
+          maxTokens: settings.thinking.maxTokens,
+          onChange: handleThinkingSettingsChange
+        }
+      ) }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+        settings_footer_default,
+        {
+          hasChanges,
+          onClose,
+          onReset: handleReset,
+          onSave: handleSave,
+          resetting,
+          saving
+        }
+      )
+    ] });
+  };
+  var settings_view_default = import_react8.default.memo(SettingsView);
+
+  // src/webview/ui/src/session/dialog-panel.tsx
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   var roleLabel = {
     system: "System",
     assistant: "Assistant",
@@ -8143,16 +8420,16 @@
   };
   var DialogPanel = ({ messages }) => {
     if (messages.length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "session-dialog__scroll", children: messages.map((message) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-dialog__scroll", children: messages.map((message) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
       "article",
       {
         className: `session-dialog__message session-dialog__message--${message.role}`,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("header", { className: "session-dialog__message-header", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__role", children: roleLabel[message.role] }),
-            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("header", { className: "session-dialog__message-header", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "session-dialog__role", children: roleLabel[message.role] }),
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               "time",
               {
                 className: "session-dialog__timestamp",
@@ -8161,7 +8438,7 @@
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "session-dialog__content", children: message.content })
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "session-dialog__content", children: message.content })
         ]
       },
       message.id
@@ -8170,19 +8447,19 @@
   var dialog_panel_default = DialogPanel;
 
   // src/webview/ui/src/session/empty-state.tsx
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
-  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "session-empty", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one or more providers in the picker to begin orchestrating them together." })
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "session-empty", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one or more providers in the picker to begin orchestrating them together." })
   ] });
   var empty_state_default = EmptyState;
 
   // src/webview/ui/src/session/input-panel.tsx
-  var import_react4 = __toESM(require_react());
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var import_react9 = __toESM(require_react());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   var InputPanel = ({ draft, onSubmit }) => {
-    const [value, setValue] = (0, import_react4.useState)(draft);
-    (0, import_react4.useEffect)(() => {
+    const [value, setValue] = (0, import_react9.useState)(draft);
+    (0, import_react9.useEffect)(() => {
       setValue(draft);
     }, [draft]);
     const handleSubmit = (event) => {
@@ -8194,8 +8471,8 @@
       onSubmit(trimmed);
       setValue("");
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("form", { className: "session-input session-panel", onSubmit: handleSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("form", { className: "session-input session-panel", onSubmit: handleSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         "textarea",
         {
           className: "session-input__textarea",
@@ -8205,16 +8482,16 @@
           value
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "session-input__footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for new line" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "session-input__send", type: "submit", children: "Send" })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-input__footer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for new line" }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "session-input__send", type: "submit", children: "Send" })
       ] })
     ] });
   };
   var input_panel_default = InputPanel;
 
   // src/webview/ui/src/session/session-tabs.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   var SessionTabs = ({
     sessions,
     providerLabels,
@@ -8225,24 +8502,24 @@
     if (sessions.length === 0) {
       return null;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
       const isActive = session.id === activeSessionId;
       const summary = session.providerIds.map((providerId) => providerLabels.get(providerId) ?? providerId).join(" + ");
       const tabClassName = isActive ? "session-tab session-tab--active" : "session-tab";
-      return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: tabClassName, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: tabClassName, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
           "button",
           {
             className: "session-tab__select",
             onClick: () => onSelect(session.id),
             type: "button",
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "session-tab__title", children: session.title }),
-              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "session-tab__providers", children: summary })
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-tab__title", children: session.title }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-tab__providers", children: summary })
             ]
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           "button",
           {
             "aria-label": `Close ${session.title}`,
@@ -8258,7 +8535,7 @@
   var session_tabs_default = SessionTabs;
 
   // src/webview/ui/src/session/status-panel.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   var MAX_PERCENTAGE = 100;
   var MIN_TOKEN_LIMIT = 1;
   var PERCENT_SCALE = 100;
@@ -8270,14 +8547,14 @@
         tokenUsage.used / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT) * PERCENT_SCALE
       )
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("section", { className: "session-status session-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-status__label", children: "Providers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-status__value", children: providerSummary })
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("section", { className: "session-status session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__label", children: "Providers" }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__value", children: providerSummary })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-status__label", children: "Tokens" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("span", { className: "session-status__value", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__label", children: "Tokens" }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "session-status__value", children: [
           tokenUsage.used.toLocaleString(),
           " /",
           " ",
@@ -8287,34 +8564,34 @@
           "%)"
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-status__label", children: "Connection" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-status__value session-status__value--badge", children: connectionState.toUpperCase() })
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__label", children: "Connection" }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__value session-status__value--badge", children: connectionState.toUpperCase() })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-status__label", children: "Updated" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-status__value", children: new Date(updatedAt).toLocaleTimeString() })
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__label", children: "Updated" }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__value", children: new Date(updatedAt).toLocaleTimeString() })
       ] })
     ] });
   };
   var status_panel_default = StatusPanel;
 
   // src/webview/ui/src/session/todo-panel.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-  var TodoPanel = ({ items, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("section", { className: "session-todos session-panel", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("header", { className: "session-todos__header", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { className: "session-todos__counter", children: [
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var TodoPanel = ({ items, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("section", { className: "session-todos session-panel", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("header", { className: "session-todos__header", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "session-todos__counter", children: [
         items.filter((item) => item.completed).length,
         "/",
         items.length,
         " done"
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("ul", { className: "session-todos__list", children: items.map((item) => {
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("ul", { className: "session-todos__list", children: items.map((item) => {
       const textClassName = item.completed ? "session-todos__text session-todos__text--completed" : "session-todos__text";
-      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "session-todos__label", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { className: "session-todos__label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           "input",
           {
             checked: item.completed,
@@ -8322,14 +8599,14 @@
             type: "checkbox"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: textClassName, children: item.title })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: textClassName, children: item.title })
       ] }) }, item.id);
     }) })
   ] });
   var todo_panel_default = TodoPanel;
 
   // src/webview/ui/src/session/session-view.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var SessionView = ({
     sessions,
     providerLabels,
@@ -8341,8 +8618,8 @@
     onToggleTodo
   }) => {
     const activeSession = activeSessionId && snapshots[activeSessionId] ? snapshots[activeSessionId] : null;
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "session-app", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "session-app", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
         session_tabs_default,
         {
           activeSessionId,
@@ -8352,31 +8629,31 @@
           sessions
         }
       ),
-      !activeSession && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(empty_state_default, {}),
-      activeSession && activeSessionId && /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "session-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(dialog_panel_default, { messages: activeSession.messages }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      !activeSession && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(empty_state_default, {}),
+      activeSession && activeSessionId && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "session-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(dialog_panel_default, { messages: activeSession.messages }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           todo_panel_default,
           {
             items: activeSession.todos,
             onToggle: (todoId) => onToggleTodo(activeSessionId, todoId)
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           input_panel_default,
           {
             draft: activeSession.draft,
             onSubmit: (text) => onSendMessage(activeSessionId, text)
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(status_panel_default, { status: activeSession.status })
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(status_panel_default, { status: activeSession.status })
       ] })
     ] });
   };
   var session_view_default = SessionView;
 
   // src/webview/ui/src/app-host.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var activateRoot = () => {
     const rootElement = document.getElementById("root");
     if (rootElement) {
@@ -8384,212 +8661,73 @@
     }
   };
   var AppHost = () => {
-    const [pickerState, setPickerState] = (0, import_react5.useState)(defaultPickerState);
-    const [catalog, setCatalog] = (0, import_react5.useState)({});
-    const [sessions, setSessions] = (0, import_react5.useState)([]);
-    const [snapshots, setSnapshots] = (0, import_react5.useState)({});
-    const [activeSessionId, setActiveSessionId] = (0, import_react5.useState)(null);
-    const [settingsVisible, setSettingsVisible] = (0, import_react5.useState)(false);
-    const sessionsRef = (0, import_react5.useRef)([]);
-    (0, import_react5.useEffect)(() => {
-      sessionsRef.current = sessions;
-    }, [sessions]);
-    const providerLabels = buildProviderLabels(catalog);
-    const openPicker = (0, import_react5.useCallback)(
+    const {
+      pickerState,
+      providerLabels,
+      openPicker,
+      confirmSelection,
+      cancelSelection,
+      resetPicker
+    } = useProviderPickerState();
+    const {
+      sessions,
+      snapshots,
+      activeSessionId,
+      handleSessionCreated,
+      clearSessions,
+      focusLastSession,
+      selectSession,
+      closeSession,
+      toggleTodo,
+      sendMessage
+    } = useSessionStore(providerLabels);
+    const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
+    const handleProviderPickerOpen = (0, import_react10.useCallback)(
       (providers) => {
-        setCatalog((previous) => mergeCatalog(previous, providers));
-        setPickerState({
-          visible: true,
-          providers
-        });
+        activateRoot();
+        openPicker(providers);
       },
-      []
+      [openPicker]
     );
-    const handleSessionCreated = (0, import_react5.useCallback)(
+    const handleSessionCreatedMessage = (0, import_react10.useCallback)(
       (session) => {
         activateRoot();
-        setPickerState(defaultPickerState);
-        setSessions((previous) => [...previous, session]);
-        setSnapshots((previous) => ({
-          ...previous,
-          [session.id]: createInitialSnapshot(session, providerLabels)
-        }));
-        setActiveSessionId(session.id);
+        resetPicker();
+        handleSessionCreated(session);
       },
-      [providerLabels]
+      [handleSessionCreated, resetPicker]
     );
-    const clearSessions = (0, import_react5.useCallback)(() => {
-      setSessions([]);
-      setSnapshots({});
-      setActiveSessionId(null);
-    }, []);
-    const focusLastSession = (0, import_react5.useCallback)(() => {
-      const last = sessionsRef.current.at(-1);
-      if (last) {
-        setActiveSessionId(last.id);
-      }
-    }, []);
-    const handleIncomingMessage = (0, import_react5.useCallback)(
-      (event) => {
-        const message = event.data;
-        if (!message || typeof message !== "object" || !("type" in message)) {
-          return;
-        }
-        switch (message.type) {
-          case "providerPicker:open": {
-            const providers = parseProviderList(message.payload?.providers);
-            if (providers.length > 0) {
-              activateRoot();
-              openPicker(providers);
-            }
-            break;
-          }
-          case "session:created": {
-            if (isSessionRecordCandidate(message.payload)) {
-              handleSessionCreated(message.payload);
-            }
-            break;
-          }
-          case "session:clearAll": {
-            clearSessions();
-            break;
-          }
-          case "session:focusLast": {
-            focusLastSession();
-            break;
-          }
-          case "ui:showSettings": {
-            activateRoot();
-            setSettingsVisible(true);
-            break;
-          }
-          default:
-            break;
-        }
-      },
-      [clearSessions, focusLastSession, handleSessionCreated, openPicker]
-    );
-    (0, import_react5.useEffect)(() => {
-      window.addEventListener("message", handleIncomingMessage);
-      return () => window.removeEventListener("message", handleIncomingMessage);
-    }, [handleIncomingMessage]);
-    const handlePickerConfirm = (0, import_react5.useCallback)(
-      (providerIds) => {
-        postVsCodeMessage({
-          type: "providerPicker:confirm",
-          payload: { providerIds }
-        });
-        setPickerState(defaultPickerState);
-      },
-      []
-    );
-    const handlePickerCancel = (0, import_react5.useCallback)(() => {
-      postVsCodeMessage({ type: "providerPicker:cancel" });
-      setPickerState(defaultPickerState);
-    }, []);
-    const handleSelectSession = (0, import_react5.useCallback)((sessionId) => {
-      setActiveSessionId(sessionId);
-    }, []);
-    const handleCloseSession = (0, import_react5.useCallback)((sessionId) => {
-      setSessions(
-        (previous) => previous.filter((session) => session.id !== sessionId)
-      );
-      setSnapshots((previous) => removeSnapshot(previous, sessionId));
-      setActiveSessionId((current) => {
-        if (current !== sessionId) {
-          return current;
-        }
-        const remaining = sessionsRef.current.filter(
-          (session) => session.id !== sessionId
-        );
-        const last = remaining.at(-1);
-        return last ? last.id : null;
-      });
-    }, []);
-    const handleToggleTodo = (0, import_react5.useCallback)((sessionId, todoId) => {
-      setSnapshots((previous) => {
-        const current = previous[sessionId];
-        if (!current) {
-          return previous;
-        }
-        const todos = current.todos.map(
-          (todo) => todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-        );
-        return {
-          ...previous,
-          [sessionId]: { ...current, todos }
-        };
-      });
-    }, []);
-    const handleSendMessage = (0, import_react5.useCallback)(
-      (sessionId, content) => {
-        setSnapshots((previous) => {
-          const current = previous[sessionId];
-          if (!current) {
-            return previous;
-          }
-          const timestamp = Date.now();
-          return {
-            ...previous,
-            [sessionId]: {
-              ...current,
-              draft: "",
-              messages: [
-                ...current.messages,
-                {
-                  id: `message-${timestamp}`,
-                  role: "user",
-                  content,
-                  createdAt: timestamp
-                },
-                {
-                  id: `message-${timestamp + 1}`,
-                  role: "assistant",
-                  content: `Awaiting orchestration response from ${current.status.providerSummary}.`,
-                  createdAt: timestamp
-                }
-              ],
-              status: {
-                ...current.status,
-                tokenUsage: {
-                  ...current.status.tokenUsage,
-                  used: Math.min(
-                    current.status.tokenUsage.limit,
-                    current.status.tokenUsage.used + content.length
-                  )
-                },
-                updatedAt: timestamp
-              }
-            }
-          };
-        });
-      },
-      []
-    );
-    const handleCloseSettings = (0, import_react5.useCallback)(() => {
-      setSettingsVisible(false);
-      postVsCodeMessage({ type: "settings:closed" });
-    }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    const handleShowSettings = (0, import_react10.useCallback)(() => {
+      activateRoot();
+      openSettings();
+    }, [openSettings]);
+    useWebviewMessageHandler({
+      onProviderPickerOpen: handleProviderPickerOpen,
+      onSessionCreated: handleSessionCreatedMessage,
+      onSessionClearAll: clearSessions,
+      onSessionFocusLast: focusLastSession,
+      onShowSettings: handleShowSettings
+    });
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         session_view_default,
         {
           activeSessionId,
-          onCloseSession: handleCloseSession,
-          onSelectSession: handleSelectSession,
-          onSendMessage: handleSendMessage,
-          onToggleTodo: handleToggleTodo,
+          onCloseSession: closeSession,
+          onSelectSession: selectSession,
+          onSendMessage: sendMessage,
+          onToggleTodo: toggleTodo,
           providerLabels,
           sessions,
           snapshots
         }
       ),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(settings_view_default, { onClose: handleCloseSettings }) }) }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         ProviderPicker,
         {
-          onCancel: handlePickerCancel,
-          onConfirm: handlePickerConfirm,
+          onCancel: cancelSelection,
+          onConfirm: confirmSelection,
           providers: pickerState.providers,
           visible: pickerState.visible
         }
@@ -8599,7 +8737,7 @@
   var app_host_default = AppHost;
 
   // src/webview/ui/src/index.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var mount = () => {
     const rootElement = document.getElementById("root");
     if (!rootElement) {
@@ -8608,7 +8746,7 @@
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react6.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(import_react11.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(app_host_default, {}) })
     );
   };
   mount();

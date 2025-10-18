@@ -33,10 +33,13 @@ echo "📏 Checking file sizes (max 300 lines)..."
 echo "-----------------------------------"
 
 LARGE_FILES=$(echo "$FILE_LENGTHS" | awk '$1 > 300 {print $2 " - " $1 " lines"}')
+LARGE_FILE_COUNT=$(echo "$FILE_LENGTHS" | awk '$1 > 300 {count++} END {if (count=="") {count=0} print count}')
 
 if [ ! -z "$LARGE_FILES" ]; then
     echo -e "${RED}❌ VIOLATION: Files exceeding 300 lines:${NC}"
     echo "$LARGE_FILES"
+    echo ""
+    echo "Total files over limit: $LARGE_FILE_COUNT"
     echo ""
     echo -e "${RED}⚠️  STOP! You MUST refactor these files before adding new features!${NC}"
     echo -e "${RED}Create new micro-classes instead of adding to existing large files!${NC}"
@@ -51,10 +54,13 @@ echo "⚠️  Checking files approaching limit (250+ lines)..."
 echo "-----------------------------------"
 
 WARNING_FILES=$(echo "$FILE_LENGTHS" | awk '$1 >= 250 && $1 <= 300 {print $2 " - " $1 " lines"}')
+WARNING_FILE_COUNT=$(echo "$FILE_LENGTHS" | awk '$1 >= 250 && $1 <= 300 {count++} END {if (count=="") {count=0} print count}')
 
 if [ ! -z "$WARNING_FILES" ]; then
     echo -e "${YELLOW}⚠️  WARNING: Files approaching 300 line limit:${NC}"
     echo "$WARNING_FILES"
+    echo ""
+    echo "Total files in warning zone: $WARNING_FILE_COUNT"
     echo -e "${YELLOW}Consider refactoring these files BEFORE adding new code!${NC}"
     HAS_WARNINGS=1
 else
@@ -116,6 +122,10 @@ fi
 # Final verdict
 echo ""
 echo "================================"
+echo "Summary:"
+echo "  >300 lines: $LARGE_FILE_COUNT file(s)"
+echo "  250-300 lines: $WARNING_FILE_COUNT file(s)"
+echo ""
 if [ $HAS_VIOLATIONS -eq 1 ]; then
     echo -e "${RED}❌ ARCHITECTURE CHECK FAILED!${NC}"
     echo -e "${RED}You have files over 300 lines. Refactor them first!${NC}"
