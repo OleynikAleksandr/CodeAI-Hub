@@ -255,6 +255,29 @@
   margin: 0;
 }
 
+.settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 20;
+}
+
+.settings-overlay__panel {
+  width: min(720px, 90%);
+  height: min(560px, 90%);
+  background-color: #1e1e1e;
+  border: 1px solid #2d2d30;
+  border-radius: 8px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
 @media (min-width: 980px) {
   .session-grid {
     grid-template-columns: 2fr 1fr;

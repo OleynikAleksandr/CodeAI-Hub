@@ -9,6 +9,10 @@ import type {
   ProviderStackId,
 } from "../types/provider";
 import type { SessionRecord } from "../types/session";
+import {
+  type SettingsMessage,
+  SettingsMessageHandler,
+} from "./message-handlers/settings-message-handler";
 
 type WebviewCommand =
   | "newSession"
@@ -41,18 +45,22 @@ export type WebviewMessage =
   | CommandMessage
   | LayoutMessage
   | ProviderPickerMessage
+  | SettingsMessage
   | GenericMessage;
 
 export class HomeViewMessageRouter {
   private readonly providerRegistry: ProviderRegistry;
   private readonly sessionLauncher: SessionLauncher;
+  private readonly settingsHandler: SettingsMessageHandler;
 
   constructor(
     providerRegistry: ProviderRegistry = new ProviderRegistry(),
-    sessionLauncher: SessionLauncher = new SessionLauncher()
+    sessionLauncher: SessionLauncher = new SessionLauncher(),
+    settingsHandler: SettingsMessageHandler = new SettingsMessageHandler()
   ) {
     this.providerRegistry = providerRegistry;
     this.sessionLauncher = sessionLauncher;
+    this.settingsHandler = settingsHandler;
   }
 
   handleMessage(message: WebviewMessage, webview: Webview): void {
@@ -63,6 +71,11 @@ export class HomeViewMessageRouter {
 
     if (this.isProviderPickerMessage(message)) {
       this.handleProviderPickerMessage(message, webview);
+      return;
+    }
+
+    if (this.settingsHandler.canHandle(message)) {
+      this.settingsHandler.handle(message, webview);
       return;
     }
 
