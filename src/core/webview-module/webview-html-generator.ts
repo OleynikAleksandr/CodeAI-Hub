@@ -97,7 +97,7 @@ export class WebviewHtmlGenerator {
       flex: 1 1 auto;
       min-height: 0;
       overflow: hidden;
-      background-color: rgba(37, 37, 40, 1);
+      background-color: rgba(37, 37, 40, 0);
       box-sizing: border-box;
     }
     #root.active {

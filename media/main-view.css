@@ -20,6 +20,10 @@ body {
   background-color: rgba(37, 37, 40, 1) !important;
 }
 
+#root {
+  background-color: rgba(37, 37, 40, 0);
+}
+
 .action-bar {
   background-color: rgba(37, 37, 40, 1);
   padding: 8px;
