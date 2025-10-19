@@ -87,7 +87,7 @@ export class WebviewHtmlGenerator {
     .session-region {
       flex: 1 1 auto;
       padding: 8px;
-      background-color: rgba(37, 37, 40, 1);
+      background-color: rgba(31, 31, 31, 1);
       display: flex;
       flex-direction: column;
       min-height: 0;
