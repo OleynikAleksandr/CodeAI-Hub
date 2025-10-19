@@ -13,7 +13,7 @@
   - Заметки: план — 1) вынести стили Input Panel в модуль стилей с классами `input-panel`, `input-panel__textarea`, `input-panel__hint`, применив оранжевый токен `--hub-focus-warning`; 2) внедрить `DragDropFacade` через хук `useInputDragDrop` с типизированным логгером `createUILogger('input-panel')`, отказавшись от `console`; 3) синхронизировать состояние панели с `SessionStateManager`, обновив bridge-команды в `MessageProviderMessageHandler` через `deps.log`.
 - [DONE] Проверить контракты расширение ↔ webview для команд `insertPath` и очистки буферов, записать необходимые изменения для CodeAI-Hub.
   - Заметки: требуется заменить `console.*` в `MessageProviderMessageHandler` на `deps.log`, добавить проверку payload в `parseWebviewMessage`, гарантировать ответ `insertPath` с уже форматированными путями и централизовать очистку буферов через `FileOperationsFacade`.
-- Commit: _pending
+- Commit: b441df2
 
 - [DONE] Переписать InputBlock с учётом требований: оранжевая рамка внутри, автоформат текста при росте, отсутствие недопустимых API и прямых inline-стилей.
   - Заметки: создан новый `session/input-panel.tsx` с CSS-классами и авто-ресайзом, заложен оранжевый фокус и overlay для Drag & Drop, лишние inline-стили удалены.
@@ -23,7 +23,7 @@
   - Заметки: командный роутер вызывает `FileOperationsFacade`, очищает кэш и отправляет `insertPath` вместе с `clearAllClipboards`.
 - [DONE] Встроить новую панель ввода в фасады сессии, проверить сохранение состояния и взаимодействие с остальными блоками.
   - Заметки: `SessionView` использует обновлённую панель, локальный стейт синхронизируется с `draft`, проверена совместимость с автосохранением.
-- Commit: _pending
+- Commit: b441df2
 
 ## Фаза 7 — Проверки и релиз (ответственный: Codex, обновлено: 2025-10-19)
 - [DONE] Запустить `npx ultracite check` и прочие проверки, устранить все замечания по мигрированным модулям.
@@ -34,7 +34,7 @@
 - [DONE] Повысить версию, собрать проект и выполнить `./scripts/build-release.sh <version>` для выпуска VSIX.
   - Заметки: версия обновлена до 1.0.9, `npm run compile` и `./scripts/build-release.sh 1.0.9` завершились успешно (VSIX: `codeai-hub-1.0.9.vsix`).
 - [BLOCKED] После сборки приостановить работу до получения обратной связи.
-- Commit: _pending
+- Commit: b441df2
 
 ## Backlog / Parking Lot
 - [TODO] Подготовить заглушки обнаружения провайдеров, соответствующие правилам Ultracite, после стабилизации панели ввода.
