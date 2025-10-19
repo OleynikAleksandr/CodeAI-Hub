@@ -9,7 +9,7 @@ type StatusPanelProps = {
 };
 
 const StatusPanel = ({ status }: StatusPanelProps) => {
-  const { providerSummary, tokenUsage, connectionState, updatedAt } = status;
+  const { providerSummary, tokenUsage } = status;
 
   const percentage = Math.min(
     MAX_PERCENTAGE,
@@ -30,18 +30,6 @@ const StatusPanel = ({ status }: StatusPanelProps) => {
         <span className="session-status__value">
           {tokenUsage.used.toLocaleString()} /{" "}
           {tokenUsage.limit.toLocaleString()} ({percentage}%)
-        </span>
-      </div>
-      <div className="session-status__row">
-        <span className="session-status__label">Connection</span>
-        <span className="session-status__value session-status__value--badge">
-          {connectionState.toUpperCase()}
-        </span>
-      </div>
-      <div className="session-status__row">
-        <span className="session-status__label">Updated</span>
-        <span className="session-status__value">
-          {new Date(updatedAt).toLocaleTimeString()}
         </span>
       </div>
     </section>
