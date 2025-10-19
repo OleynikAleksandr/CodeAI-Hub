@@ -364,6 +364,7 @@
   padding: 20px;
   text-align: center;
   color: #bdbdbd;
+  background-color: rgba(31, 31, 31, 1);
 }
 
 .session-empty__title {
