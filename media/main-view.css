@@ -9,7 +9,7 @@ body {
   font-family: var(--vscode-font-family);
   font-size: var(--vscode-font-size);
   color: var(--vscode-foreground);
-  background-color: var(--vscode-sideBar-background, #1e1e1e) !important;
+  background-color: rgba(37, 37, 40, 1) !important;
 }
 
 #app {
@@ -17,7 +17,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  background-color: var(--vscode-editor-background, #1e1e1e) !important;
+  background-color: rgba(37, 37, 40, 1) !important;
 }
 
 .action-bar {
