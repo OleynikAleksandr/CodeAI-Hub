@@ -262,6 +262,9 @@
   border-radius: 6px;
   background-color: rgba(37, 37, 38, 1);
   padding: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
@@ -309,6 +312,7 @@
   color: rgba(27, 27, 28, 1);
   font-size: 12px;
   font-weight: 500;
+  display: block;
   pointer-events: none;
   white-space: nowrap;
   z-index: 1;
