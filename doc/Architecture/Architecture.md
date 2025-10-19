@@ -22,6 +22,7 @@ CodeAI-Hub — модульное расширение VS Code с единым w
 - **Фаза 3 — Перенос окна настроек:** завершена, окно Settings перенесено (commit `6ad5d41 feat: v1.0.5 - settings panel migration`).
 - **Фаза 4 — Декомпозиция UI:** выполнена первичная разбивка. `AppHost` использует хуки (`useProviderPickerState`, `useSessionStore`, `useSettingsVisibility`, `useWebviewMessageHandler`), настройки разделены на `SettingsHeader`, `SettingsFooter`, `useSettingsState`, Thinking-блок превращён в набор компонентов (`ThinkingToggle`, `ThinkingTokenInput`, `ThinkingProTip`), маршрутизатор вынес в модульную структуру (`command-handler`, `provider-picker-handler`, `layout-utils`, `message-types`, `serialization`). Архитектурный чек проходит без предупреждений, релиз `v1.0.6` опубликован.
 - **Релиз 1.0.8 — Session Action Bar Refresh:** панель быстрых действий вынесена в отдельный `action-bar` контейнер (`37,37,40,1`), область сессии организована сеткой с фиксированными отступами: `DialogPanel` занимает всё оставшееся пространство, `TodoPanel`, `InputPanel`, `StatusPanel` привязаны к низу с интервалом 8 px, табы компактно отображают список провайдеров.
+- **Фаза 5 — Input Panel Migration (в работе):** `session/input-panel.tsx` заменён на ультрацит-совместимый компонент с авто-ресайзом, оранжевым фокусом и overlay для drag & drop; вынесены новые модули `modules/drag-drop-module/**`, а на extension-слое добавлен `file-operations/file-operations-facade.ts` для обработки `grabFilePathFromDrop`/`clearAllClipboards`.
 
 ## Архитектурные принципы
 
@@ -74,6 +75,7 @@ UI слой остаётся в open source репозитории и работ
 ### session-interface-module
 - **SessionInterfaceFacade** — монтируется только для активной сессии, передаёт идентификатор провайдера.
 - **Компоненты:** DialogManager, TodosManager, InputManager, StatusManager, SessionStateManager, SessionStateContainer, SessionUserActions, SessionMessageRouter.
+- **InputPanel v2:** `session/input-panel.tsx` управляет textarea без inline-стилей, использует `DragDropFacade`/`MessageHandler`/`FilePathProcessor` из `modules/drag-drop-module` и отображает overlay через `session-input__overlay`.
 - Модуль интегрирует провайдер-специфичные тулзы через реестр, не изменяя базовый рендер.
 
 ### dialog-renderer-module
@@ -102,16 +104,13 @@ UI слой остаётся в open source репозитории и работ
 
 ## Extension Layer — актуальные фасады
 
-- **ViewProviderFacade** (`src/extension-module/micro-classes/ViewProviderFacade.ts`) — регистрирует webview (`codeaiHub.controlCenter`), использует `WebviewProvider` и поднимает `MessageProviderRefactored`.
-- **WebviewProvider** — создаёт HTML через `WebviewHtmlGenerator`, настраивает CSP и маршрутизирует сообщения между вебвью и backend-частью.
-- **CommandRegistrar** — регистрирует команды `codeai-hub.openControlCenter` и `codeai-hub.openSettings`, прокидывает `ui:showSettings` в webview.
-- **MessageProviderRefactored** — facade-координатор, создаёт `MessageProviderMessageHandler`, логирует ключевые события в `OutputChannel` (`CodeAI Hub`), проксирует сообщения между webview и orchestrator, публикует `provider:*` события в UI.
-- **MessageProviderMessageHandler** (`src/extension-module/micro-classes/MessageProviderMessageHandler.ts`) — микрокласс с маршрутизацией команд (`ui:userInput`, `draft:*`, `settings:*`, drag & drop), управляющий сессиями и взаимодействием с orchestrator.
-- **SessionManager** — in-memory + workspace-state стор для сессий (создание, восстановление, сохранение диалогов, статусные апдейты).
-- **SettingsManager** — хранит и отдаёт настройки Thinking Mode через `globalState`, обеспечивает обработку `settings:load/save/reset`.
-- **FileOperationsFacade** — координирует drag & drop и черновики: работает с `FileDropHandler` и `DraftOperationsHandler`, форматирует пути и отдаёт их webview, сохраняет текстовые черновики вне workspace.
+- **HomeViewProvider** (`src/extension-module/home-view-provider.ts`) — регистрирует webview-представление `codeaiHubView`, генерирует HTML через `WebviewHtmlGenerator`, подписывается на сообщения webview и обеспечивает ленивое открытие настроек.
+- **HomeViewMessageRouter** (`src/extension-module/home-view-message-router.ts`) — маршрутизирует сообщения из webview: команды тулбара (`command-handler.ts`), подтверждение выбора провайдеров (`provider-picker-handler.ts`), события макета (`layout-utils.ts`), сообщения настроек. Внутри вызывает `FileOperationsFacade` для `grabFilePathFromDrop`/`clearAllClipboards`.
+- **SettingsMessageHandler** (`src/extension-module/message-handlers/settings-message-handler.ts`) — обрабатывает `settings:*`, синхронизирует состояние `showSettings` и работу модалки в webview.
+- **ProviderRegistry** и **SessionLauncher** — остаются заглушками для будущей интеграции SDK: первый хранит доступные стеки, второй создаёт сессии и передаёт их в UI.
+- **FileOperationsFacade** (`src/extension-module/file-operations/file-operations-facade.ts`) — новый фасад для drag & drop: использует `FilePathFacade` (кэш пути + clipboard), форматирует пути для webview и очищает кэш после `clearAllClipboards`.
 
-Extension-слой остаётся тонким: тяжелая логика SDK пока заменена заглушками, но структура фасадов сохранена для дальнейшего подключения реальных провайдеров.
+Extension-слой по-прежнему тонкий: orchestration SDK не подключён, но маршрутизатор и фасад файлов готовы принимать реальные реализации.
 
 ---
 

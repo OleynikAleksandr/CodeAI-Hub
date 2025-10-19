@@ -1,6 +1,8 @@
 import type { Webview } from "vscode";
+import { window } from "vscode";
 import { ProviderRegistry } from "../core/providers/provider-registry";
 import { SessionLauncher } from "../core/session/session-launcher";
+import { FileOperationsFacade } from "./file-operations/file-operations-facade";
 import { handleCommand } from "./home-view-message-router/command-handler";
 import { validateLayoutPayload } from "./home-view-message-router/layout-utils";
 import {
@@ -20,6 +22,7 @@ type Notifier = (message: Record<string, unknown>) => void;
 type CommandContext = {
   readonly providerRegistry: ProviderRegistry;
   readonly notifyWebview: Notifier;
+  readonly fileOperations: FileOperationsFacade;
 };
 
 type ProviderPickerContext = {
@@ -32,15 +35,18 @@ export class HomeViewMessageRouter {
   private readonly providerRegistry: ProviderRegistry;
   private readonly sessionLauncher: SessionLauncher;
   private readonly settingsHandler: SettingsMessageHandler;
+  private readonly fileOperations: FileOperationsFacade;
 
   constructor(
     providerRegistry: ProviderRegistry = new ProviderRegistry(),
     sessionLauncher: SessionLauncher = new SessionLauncher(),
-    settingsHandler: SettingsMessageHandler = new SettingsMessageHandler()
+    settingsHandler: SettingsMessageHandler = new SettingsMessageHandler(),
+    fileOperations: FileOperationsFacade = new FileOperationsFacade()
   ) {
     this.providerRegistry = providerRegistry;
     this.sessionLauncher = sessionLauncher;
     this.settingsHandler = settingsHandler;
+    this.fileOperations = fileOperations;
   }
 
   handleMessage(message: WebviewMessage, webview: Webview): void {
@@ -50,8 +56,13 @@ export class HomeViewMessageRouter {
       const context: CommandContext = {
         providerRegistry: this.providerRegistry,
         notifyWebview: notify,
+        fileOperations: this.fileOperations,
       };
-      handleCommand(message.command, context);
+      handleCommand(message.command, context).catch((error) => {
+        const reason =
+          error instanceof Error ? error.message : "Unknown error.";
+        window.showErrorMessage(`Command handling failed: ${reason}`);
+      });
       return;
     }
 

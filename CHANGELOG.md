@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.9] - 2025-10-19
+### Added
+- Migrated the Input Panel to a CSS-based component with orange focus state, auto-resize, and Shift+drop overlay borrowed from Claude Code Fusion.
+- Introduced a reusable `modules/drag-drop-module` cluster (facade, handler, processor, message bridge) for webview drag-and-drop.
+- Added `file-operations/file-operations-facade.ts` and the core `file-path-module` (cache, clipboard, platform handler) to service `grabFilePathFromDrop`.
+
+### Changed
+- Extended the home view message router to route new commands and rely on `FileOperationsFacade` instead of deprecated message providers.
+- Restyled `session-view` input container classes to remove inline styles and align focus colors with the new design tokens.
+
+### Build
+- Release packaged as `codeai-hub-1.0.9.vsix` via `./scripts/build-release.sh 1.0.9`.
+
 ## [1.0.8] - 2025-10-19
 ### Changed
 - Rebuilt the home action bar into a dedicated section with a unified `37,37,40` background and consistent padding.
@@ -61,6 +74,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Repository bootstrap with Ultracite configuration, quality scripts, and project documentation.
 
+[1.0.9]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.9
 [1.0.8]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.8
 [1.0.7]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.7
 [1.0.6]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.6
