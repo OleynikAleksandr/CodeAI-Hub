@@ -4,11 +4,11 @@ const NONCE_LENGTH = 32;
 
 /**
  * Generates the static HTML scaffold for the CodeAI Hub webview shell.
- * The shell renders two rows of buttons while the React application hydrates underneath.
+ * The shell renders the primary action buttons while the React application hydrates underneath.
  */
 export class WebviewHtmlGenerator {
   /**
-   * Compose HTML that mirrors the claude-code-fusion shell with two rows of buttons.
+   * Compose HTML that mirrors the claude-code-fusion shell with the primary button row.
    *
    * @param webview - Active VS Code webview instance.
    * @param extensionUri - Extension root URI for asset resolution.
@@ -105,7 +105,7 @@ export class WebviewHtmlGenerator {
       <div class="buttons-section" style="background-color: #272727 !important;">
         <div id="homeView" class="view-container" style="background-color: #272727 !important;">
           <div class="all-buttons-container" style="background-color: #272727 !important;">
-            <div class="main-buttons">
+            <div class="main-buttons main-buttons--cols-4">
               <button class="main-button" data-action="newSession">
                 <span class="button-line1">New</span>
                 <span class="button-line2">Session</span>
@@ -122,12 +122,6 @@ export class WebviewHtmlGenerator {
                 <span class="button-line1">Old</span>
                 <span class="button-line2">Sessions</span>
               </button>
-            </div>
-            <div class="custom-buttons">
-              <button class="custom-button" data-action="custom1"></button>
-              <button class="custom-button" data-action="custom2"></button>
-              <button class="custom-button" data-action="custom3"></button>
-              <button class="custom-button" data-action="custom4"></button>
             </div>
           </div>
         </div>

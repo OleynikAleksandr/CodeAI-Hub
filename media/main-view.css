@@ -50,16 +50,28 @@ body {
 
 /* Main Buttons Layout */
 .main-buttons {
-  display: flex;
+  display: grid;
   gap: 4px; /* Uniform gap between buttons */
-  flex-wrap: wrap;
+}
+
+.main-buttons--cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.main-buttons--cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.main-buttons--cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
 /* Main Button Styles */
 .main-button {
-  flex: 1;
-  min-width: calc(25% - 3px); /* 4 buttons with 4px gap */
+  min-width: 0;
   height: 32px;
+  padding: 4px 0;
+  box-sizing: border-box;
   background-color: #2d5177;
   color: #9e9e9e;
   border: 1px solid rgba(90, 162, 238, 0.4);
@@ -67,19 +79,23 @@ body {
   cursor: pointer;
   font-size: 12px;
   line-height: 1;
-  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0;
   transition: all 0.2s ease;
 }
 
 /* Two-line text in buttons */
 .button-line1,
 .button-line2 {
-  display: block;
-  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+  line-height: 1.05;
 }
 
 /* Hover state - 70% closer to active color */
@@ -104,62 +120,6 @@ body {
   border-color: rgba(118, 234, 255, 0.4);
 }
 
-/* Custom Buttons Layout */
-.custom-buttons {
-  display: flex;
-  gap: 4px; /* Uniform gap between buttons */
-  flex-wrap: wrap;
-}
-
-/* Custom Button Styles - Very dim blue */
-.custom-button {
-  flex: 1;
-  min-width: calc(25% - 3px); /* 4 buttons with 4px gap */
-  height: 32px;
-  background-color: #1a2433; /* Very dim blue */
-  border: 1px solid #344866;
-  border-radius: 4px;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.2s ease;
-  opacity: 0.5; /* Make it even more dim */
-}
-
-/* Hover state for custom buttons */
-.custom-button:hover {
-  background-color: #253445;
-  opacity: 0.7;
-  border-color: #4a688a;
-}
-
-/* Active state for custom buttons */
-.custom-button:active {
-  background-color: #2d5177;
-  opacity: 1;
-  border-color: #5aa2ee;
-}
-
-/* Focus state for custom buttons */
-.custom-button:focus {
-  outline: 1px solid #2d5177;
-  outline-offset: -1px;
-  border-color: #5aa2ee;
-}
-
-/* Responsive breakpoints */
-@media (max-width: 300px) {
-  .main-button,
-  .custom-button {
-    min-width: calc(50% - 1.5px); /* 2x2 layout */
-  }
-}
-
-@media (max-width: 200px) {
-  .main-button,
-  .custom-button {
-    min-width: 100%; /* Single column */
-  }
-}
 .provider-picker {
   background-color: #1e1e1e;
   border: 1px solid #333333;
