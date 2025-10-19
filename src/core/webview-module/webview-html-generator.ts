@@ -63,7 +63,7 @@ export class WebviewHtmlGenerator {
   <title>CodeAI Hub</title>
   <style>
     html, body {
-      background-color: var(--vscode-editor-background, #1e1e1e);
+      background-color: rgba(37, 37, 40, 1);
       color: var(--vscode-editor-foreground, #cccccc);
       margin: 0;
       padding: 0;
@@ -72,12 +72,11 @@ export class WebviewHtmlGenerator {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background-color: var(--vscode-editor-background, #1e1e1e);
+      background-color: rgba(37, 37, 40, 1);
     }
     .action-bar {
       background-color: rgba(37, 37, 40, 1);
       padding: 8px;
-      box-shadow: inset 0 -1px rgba(0, 0, 0, 0.4);
     }
     .action-bar__inner {
       display: flex;
@@ -87,17 +86,18 @@ export class WebviewHtmlGenerator {
     .session-region {
       flex: 1 1 auto;
       padding: 8px;
-      background-color: var(--vscode-editor-background, #1e1e1e);
+      background-color: rgba(37, 37, 40, 1);
       display: flex;
       flex-direction: column;
       min-height: 0;
+      margin-top: -1px;
     }
     #root {
       display: none;
       flex: 1 1 auto;
       min-height: 0;
       overflow: hidden;
-      background-color: var(--vscode-editor-background, #1e1e1e);
+      background-color: rgba(37, 37, 40, 1);
       box-sizing: border-box;
     }
     #root.active {
@@ -108,7 +108,7 @@ export class WebviewHtmlGenerator {
     }
   </style>
 </head>
-<body style="background-color: #1e1e1e !important;">
+<body style="background-color: rgba(37, 37, 40, 1) !important;">
   <div id="app">
     <section class="action-bar">
       <div class="action-bar__inner">
