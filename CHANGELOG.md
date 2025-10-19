@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.13] - 2025-10-19
+### Fixed
+- Restored the darker inactive session tab palette (`rgba(21, 21, 21, 1)` fill with `rgba(0, 0, 0, 1)` border) while keeping the refreshed active tab colours.
+
+### Build
+- Release packaged as `codeai-hub-1.0.13.vsix` via `./scripts/build-release.sh 1.0.13`.
+
 ## [1.0.12] - 2025-10-19
 ### Changed
 - Unified the session palette: tabs plus dialog, TODO, input, and status panels now share a `rgba(40, 41, 42, 1)` background with `rgba(67, 68, 70, 1)` borders.
@@ -99,6 +106,7 @@ All notable changes to this project will be documented in this file.
 [1.0.10]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.10
 [1.0.11]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.11
 [1.0.12]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.12
+[1.0.13]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.13
 [1.0.8]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.8
 [1.0.7]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.7
 [1.0.6]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.6
