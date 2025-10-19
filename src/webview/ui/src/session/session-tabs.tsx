@@ -24,7 +24,29 @@ const SessionTabs = ({
     <div className="session-tabs">
       {sessions.map((session) => {
         const isActive = session.id === activeSessionId;
-        const summary = session.providerIds
+        const providerNames = session.providerIds.map((providerId) => {
+          const label = providerLabels.get(providerId) ?? providerId;
+          const [primaryToken] = label.split(" ");
+          return primaryToken ?? label;
+        });
+        const hasTwoProviders = providerNames.length === 2;
+        let primaryLineLength: number;
+        if (hasTwoProviders) {
+          primaryLineLength = 2;
+        } else if (providerNames.length <= 2) {
+          primaryLineLength = 1;
+        } else {
+          primaryLineLength = Math.ceil(providerNames.length / 2);
+        }
+        const primaryLine = providerNames.slice(0, primaryLineLength).join("+");
+        const secondaryTokens = providerNames.slice(primaryLineLength);
+        const secondaryLine =
+          secondaryTokens.length > 0 ? `+${secondaryTokens.join("+")}` : "";
+        const displaySummary = secondaryLine
+          ? [primaryLine, secondaryLine]
+          : [primaryLine];
+        const spokenSummary = providerNames.join(", ");
+        const fullSummary = session.providerIds
           .map((providerId) => providerLabels.get(providerId) ?? providerId)
           .join(" + ");
 
@@ -35,15 +57,25 @@ const SessionTabs = ({
         return (
           <div className={tabClassName} key={session.id}>
             <button
+              aria-label={`Activate session for ${spokenSummary}`}
               className="session-tab__select"
               onClick={() => onSelect(session.id)}
+              title={fullSummary}
               type="button"
             >
-              <span className="session-tab__title">{session.title}</span>
-              <span className="session-tab__providers">{summary}</span>
+              <span className="session-tab__providers">
+                <span className="session-tab__providers-line session-tab__providers-line--primary">
+                  {displaySummary[0]}
+                </span>
+                {displaySummary[1] ? (
+                  <span className="session-tab__providers-line">
+                    {displaySummary[1]}
+                  </span>
+                ) : null}
+              </span>
             </button>
             <button
-              aria-label={`Close ${session.title}`}
+              aria-label={`Close session for ${spokenSummary}`}
               className="session-tab__close"
               onClick={() => onClose(session.id)}
               type="button"

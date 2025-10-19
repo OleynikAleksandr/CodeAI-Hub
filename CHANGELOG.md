@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.8] - 2025-10-19
+### Changed
+- Rebuilt the home action bar into a dedicated section with a unified `37,37,40` background and consistent padding.
+- Refactored the session layout so `DialogPanel` consumes remaining vertical space while TODO, Input, and Status panels keep 8px spacing and fixed stacking.
+- Simplified session tab labels to provider abbreviations with compact multi-line rendering.
+
+### Build
+- Release packaged as `codeai-hub-1.0.8.vsix` via `./scripts/build-release.sh 1.0.8`.
+
+## [1.0.7] - 2025-10-19
+### Changed
+- Updated session tabs to 32px height with new active/inactive colours, hover states, and compact provider labels.
+- Applied consistent panel styling across dialog, TODO, input, and status sections, aligning the close button hover behaviour.
+
+### Build
+- Release packaged as `codeai-hub-1.0.7.vsix`.
+
 ## [1.0.6] - 2025-10-18
 ### Added
 - Session host hooks for provider picker state, session storage, settings visibility, and webview message handling.
@@ -44,6 +61,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Repository bootstrap with Ultracite configuration, quality scripts, and project documentation.
 
+[1.0.8]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.8
+[1.0.7]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.7
 [1.0.6]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.6
 [1.0.5]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.5
 [1.0.4]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.4
