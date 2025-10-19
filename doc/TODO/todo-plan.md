@@ -32,6 +32,7 @@
 - [DONE] Обновить `doc/Architecture/Architecture.md` и связанные записи базы знаний по структуре Input Panel.
   - Заметки: добавлены сведения о `modules/drag-drop-module`, `file-operations-facade` и фазе миграции Input Panel.
 - [DONE] Повысить версию, собрать проект и выполнить `./scripts/build-release.sh <version>` для выпуска VSIX.
-  - Заметки: версия обновлена до 1.0.9, `npm run compile` и `./scripts/build-release.sh 1.0.9` завершились успешно (VSIX: `codeai-hub-1.0.9.vsix`).
+  - Заметки: версия обновлена до 1.0.12, `npm run compile` и `./scripts/build-release.sh 1.0.12` завершились успешно (VSIX: `codeai-hub-1.0.12.vsix`).
+- [DONE] Финализировать базовую палитру сессии (фон `rgba(40, 41, 42, 1)`, обводка `rgba(67, 68, 70, 1)` для табов и панелей) и убедиться, что пустое состояние не перекрывает фон.
 - [BLOCKED] После сборки приостановить работу до получения обратной связи.
 - Commit: b441df2

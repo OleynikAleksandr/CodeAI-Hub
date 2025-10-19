@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.12] - 2025-10-19
+### Changed
+- Unified the session palette: tabs plus dialog, TODO, input, and status panels now share a `rgba(40, 41, 42, 1)` background with `rgba(67, 68, 70, 1)` borders.
+
+### Build
+- Release packaged as `codeai-hub-1.0.12.vsix` via `./scripts/build-release.sh 1.0.12`.
+
+## [1.0.11] - 2025-10-19
+### Changed
+- Removed the dedicated background fill from the empty session container so the base `session-region` color shows through.
+
+### Build
+- Release packaged as `codeai-hub-1.0.11.vsix` via `./scripts/build-release.sh 1.0.11`.
+
+## [1.0.10] - 2025-10-19
+### Changed
+- Matched the empty state card background with the primary session region color to eliminate the darker inset block.
+
+### Build
+- Release packaged as `codeai-hub-1.0.10.vsix` via `./scripts/build-release.sh 1.0.10`.
+
 ## [1.0.9] - 2025-10-19
 ### Added
 - Migrated the Input Panel to a CSS-based component with orange focus state, auto-resize, and Shift+drop overlay borrowed from Claude Code Fusion.
@@ -75,6 +96,9 @@ All notable changes to this project will be documented in this file.
 - Repository bootstrap with Ultracite configuration, quality scripts, and project documentation.
 
 [1.0.9]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.9
+[1.0.10]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.10
+[1.0.11]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.11
+[1.0.12]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.12
 [1.0.8]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.8
 [1.0.7]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.7
 [1.0.6]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.6
