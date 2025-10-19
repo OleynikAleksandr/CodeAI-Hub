@@ -69,65 +69,72 @@ export class WebviewHtmlGenerator {
       padding: 0;
     }
     #app {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      height: 100vh;
       background-color: var(--vscode-editor-background, #1e1e1e);
     }
-    .main-view {
-      flex-shrink: 0;
-      background-color: #272727 !important;
+    .action-bar {
+      background-color: rgba(37, 37, 40, 1);
+      padding: 8px;
+      box-shadow: inset 0 -1px rgba(0, 0, 0, 0.4);
     }
-    .buttons-section {
-      background-color: #272727 !important;
+    .action-bar__inner {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    #homeView, .view-container, .all-buttons-container {
-      background-color: #272727 !important;
+    .session-region {
+      flex: 1 1 auto;
+      padding: 8px;
+      background-color: var(--vscode-editor-background, #1e1e1e);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
     #root {
       display: none;
-      flex-grow: 1;
+      flex: 1 1 auto;
+      min-height: 0;
       overflow: hidden;
       background-color: var(--vscode-editor-background, #1e1e1e);
-      padding: 12px;
       box-sizing: border-box;
     }
     #root.active {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 8px;
+      height: 100%;
     }
   </style>
 </head>
 <body style="background-color: #1e1e1e !important;">
-  <div id="app" style="background-color: #1e1e1e !important;">
-    <div class="main-view">
-      <div class="buttons-section" style="background-color: #272727 !important;">
-        <div id="homeView" class="view-container" style="background-color: #272727 !important;">
-          <div class="all-buttons-container" style="background-color: #272727 !important;">
-            <div class="main-buttons main-buttons--cols-4">
-              <button class="main-button" data-action="newSession">
-                <span class="button-line1">New</span>
-                <span class="button-line2">Session</span>
-              </button>
-              <button class="main-button" data-action="lastSession">
-                <span class="button-line1">Last</span>
-                <span class="button-line2">Session</span>
-              </button>
-              <button class="main-button" data-action="clearSession">
-                <span class="button-line1">Clear</span>
-                <span class="button-line2">Session</span>
-              </button>
-              <button class="main-button" data-action="oldSessions">
-                <span class="button-line1">Old</span>
-                <span class="button-line2">Sessions</span>
-              </button>
-            </div>
-          </div>
+  <div id="app">
+    <section class="action-bar">
+      <div class="action-bar__inner">
+        <div class="main-buttons main-buttons--cols-4">
+          <button class="main-button" data-action="newSession">
+            <span class="button-line1">New</span>
+            <span class="button-line2">Session</span>
+          </button>
+          <button class="main-button" data-action="lastSession">
+            <span class="button-line1">Last</span>
+            <span class="button-line2">Session</span>
+          </button>
+          <button class="main-button" data-action="clearSession">
+            <span class="button-line1">Clear</span>
+            <span class="button-line2">Session</span>
+          </button>
+          <button class="main-button" data-action="oldSessions">
+            <span class="button-line1">Old</span>
+            <span class="button-line2">Sessions</span>
+          </button>
         </div>
       </div>
-    </div>
-    <div id="root"${showChat ? ' class="active"' : ""}></div>
+    </section>
+    <section class="session-region">
+      <div id="root"${showChat ? ' class="active"' : ""}></div>
+    </section>
   </div>
 
   <script nonce="${nonce}">

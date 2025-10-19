@@ -1,6 +1,6 @@
 # Архитектура CodeAI-Hub (черновик)
 
-**Версия:** 0.1.4 (draft)
+**Версия:** 0.1.5 (draft)
 **Последнее обновление:** 2025-10-19
 **Статус:** Архитектурный ориентир (исходная структура)
 
@@ -21,6 +21,7 @@ CodeAI-Hub — модульное расширение VS Code с единым w
 - **Фаза 2 — Миграция интерфейса сессии:** завершена, функционал перенесён в репозиторий (commit `8b5d31f feat: v1.0.4 - session interface shell`).
 - **Фаза 3 — Перенос окна настроек:** завершена, окно Settings перенесено (commit `6ad5d41 feat: v1.0.5 - settings panel migration`).
 - **Фаза 4 — Декомпозиция UI:** выполнена первичная разбивка. `AppHost` использует хуки (`useProviderPickerState`, `useSessionStore`, `useSettingsVisibility`, `useWebviewMessageHandler`), настройки разделены на `SettingsHeader`, `SettingsFooter`, `useSettingsState`, Thinking-блок превращён в набор компонентов (`ThinkingToggle`, `ThinkingTokenInput`, `ThinkingProTip`), маршрутизатор вынес в модульную структуру (`command-handler`, `provider-picker-handler`, `layout-utils`, `message-types`, `serialization`). Архитектурный чек проходит без предупреждений, релиз `v1.0.6` опубликован.
+- **Релиз 1.0.8 — Session Action Bar Refresh:** панель быстрых действий вынесена в отдельный `action-bar` контейнер (`37,37,40,1`), область сессии организована сеткой с фиксированными отступами: `DialogPanel` занимает всё оставшееся пространство, `TodoPanel`, `InputPanel`, `StatusPanel` привязаны к низу с интервалом 8 px, табы компактно отображают список провайдеров.
 
 ## Архитектурные принципы
 
@@ -92,7 +93,7 @@ UI слой остаётся в open source репозитории и работ
 - **todos-block-module** — UI для TODO и структурированных задач.
 - **session-tabs-component** — стили и логика вкладок с провайдерными бейджами.
 - **drag-drop-module** — обработка drag&drop файлов, добавлены события маршрутизации к провайдерам.
-- **session-shell-lite** — упрощённый набор компонентов (`session-view`, `session-tabs`, `dialog-panel`, `todo-panel`, `status-panel`, `input-panel`) перенесён в CodeAI-Hub; отображает заглушки сообщений, TODO и статус выбранных провайдеров до подключения реального orchestrator'а.
+- **session-shell-lite** — упрощённый набор компонентов (`session-view`, `session-tabs`, `dialog-panel`, `todo-panel`, `status-panel`, `input-panel`) перенесён в CodeAI-Hub; в 1.0.8 дополнился статическим `action-bar` и сеткой `session-grid`, благодаря которым блок диалога занимает всю свободную высоту между панелями.
 - **provider-picker** — лёгкий React-компонент для выбора одного или нескольких провайдеров при создании сессии; рендерится внутри статической оболочки и обнуляет состояние после подтверждения (коммит e300238).
 - **app-host** — тонкий контейнер (`app-host.tsx`), объединяющий провайдер-пикер, сессионный UI и модальное окно настроек для webview-панели.
 - **settings-view** — React-компонент настроек, перенесённый без изменений из claude-code-fusion; отвечает за thinking-режим и сохраняет состояние через сообщения `settings:*`.

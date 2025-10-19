@@ -8501,25 +8501,39 @@
     }
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
       const isActive = session.id === activeSessionId;
-      const summary = session.providerIds.map((providerId) => providerLabels.get(providerId) ?? providerId).join(" + ");
+      const providerNames = session.providerIds.map((providerId) => {
+        const label = providerLabels.get(providerId) ?? providerId;
+        const [primaryToken] = label.split(" ");
+        return primaryToken ?? label;
+      });
+      const hasTwoProviders = providerNames.length === 2;
+      const primaryLineLength = hasTwoProviders ? 2 : providerNames.length <= 2 ? 1 : Math.ceil(providerNames.length / 2);
+      const primaryLine = providerNames.slice(0, primaryLineLength).join("+");
+      const secondaryTokens = providerNames.slice(primaryLineLength);
+      const secondaryLine = secondaryTokens.length > 0 ? `+${secondaryTokens.join("+")}` : "";
+      const displaySummary = secondaryLine ? [primaryLine, secondaryLine] : [primaryLine];
+      const spokenSummary = providerNames.join(", ");
+      const fullSummary = session.providerIds.map((providerId) => providerLabels.get(providerId) ?? providerId).join(" + ");
       const tabClassName = isActive ? "session-tab session-tab--active" : "session-tab";
       return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: tabClassName, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           "button",
           {
             className: "session-tab__select",
+            "aria-label": `Activate session for ${spokenSummary}`,
+            title: fullSummary,
             onClick: () => onSelect(session.id),
             type: "button",
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-tab__title", children: session.title }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-tab__providers", children: summary })
-            ]
+            children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "session-tab__providers", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
+              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
+            ] })
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           "button",
           {
-            "aria-label": `Close ${session.title}`,
+            "aria-label": `Close session for ${spokenSummary}`,
             className: "session-tab__close",
             onClick: () => onClose(session.id),
             type: "button",
