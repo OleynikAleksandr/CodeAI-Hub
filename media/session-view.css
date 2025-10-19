@@ -17,8 +17,8 @@
   display: flex;
   align-items: center;
   height: 32px;
-  background-color: rgba(27, 27, 28, 1);
-  border: 1px solid rgba(0, 0, 0, 1);
+  background-color: rgba(40, 41, 42, 1);
+  border: 1px solid rgba(67, 68, 70, 1);
   border-radius: 4px;
   overflow: hidden;
   color: rgba(78, 78, 78, 1);
@@ -29,8 +29,8 @@
 }
 
 .session-tab--active {
-  background-color: rgba(48, 48, 49, 1);
-  border-color: rgba(85, 84, 84, 1);
+  background-color: rgba(40, 41, 42, 1);
+  border-color: rgba(67, 68, 70, 1);
   color: rgba(204, 204, 204, 1);
 }
 
@@ -65,7 +65,7 @@
 }
 
 .session-tab__select:focus-visible {
-  outline: 2px solid rgba(85, 84, 84, 0.8);
+  outline: 2px solid rgba(67, 68, 70, 0.8);
   outline-offset: -2px;
 }
 
@@ -114,12 +114,12 @@
 }
 
 .session-tab--active .session-tab__close {
-  border-left: 1px solid rgba(85, 84, 84, 1);
+  border-left: 1px solid rgba(67, 68, 70, 1);
   color: rgba(204, 204, 204, 1);
 }
 
 .session-tab:not(.session-tab--active) .session-tab__close {
-  border-left: 1px solid rgba(0, 0, 0, 1);
+  border-left: 1px solid rgba(67, 68, 70, 1);
   color: rgba(78, 78, 78, 1);
 }
 
@@ -148,8 +148,8 @@
 }
 
 .session-panel {
-  background-color: rgba(48, 48, 49, 1);
-  border: 1px solid rgba(85, 84, 84, 1);
+  background-color: rgba(40, 41, 42, 1);
+  border: 1px solid rgba(67, 68, 70, 1);
   border-radius: 6px;
   padding: 8px;
   color: rgba(204, 204, 204, 1);
