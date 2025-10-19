@@ -1,11 +1,13 @@
 import { window } from "vscode";
 import type { ProviderRegistry } from "../../core/providers/provider-registry";
+import type { FileOperationsFacade } from "../file-operations/file-operations-facade";
 import type { WebviewCommand } from "./message-types";
 import { serializeStack } from "./serialization";
 
 type CommandContext = {
   readonly providerRegistry: ProviderRegistry;
   readonly notifyWebview: (message: Record<string, unknown>) => void;
+  readonly fileOperations: FileOperationsFacade;
 };
 
 const handleNewSession = (context: CommandContext): void => {
@@ -28,29 +30,51 @@ const handleNewSession = (context: CommandContext): void => {
   });
 };
 
-export const handleCommand = (
+const handleFileDropCommand = async (
+  context: CommandContext
+): Promise<void> => {
+  const paths = await context.fileOperations.handleFileDrop();
+  if (paths && paths.length > 0) {
+    const formatted = context.fileOperations.formatPathsForInsertion(paths);
+    context.notifyWebview({ command: "insertPath", path: formatted });
+    context.notifyWebview({ command: "clearAllClipboards" });
+    return;
+  }
+
+  window.showWarningMessage(
+    "Unable to detect the dropped file path. Please try again."
+  );
+};
+
+export const handleCommand = async (
   command: WebviewCommand,
   context: CommandContext
-): void => {
+): Promise<void> => {
   switch (command) {
     case "newSession":
       handleNewSession(context);
-      break;
+      return;
     case "lastSession":
       context.notifyWebview({ type: "session:focusLast" });
       window.showInformationMessage(
         "Selecting the most recent session (placeholder)."
       );
-      break;
+      return;
     case "clearSession":
       context.notifyWebview({ type: "session:clearAll" });
       window.showInformationMessage("All sessions cleared (placeholder).");
-      break;
+      return;
     case "oldSessions":
       window.showInformationMessage(
         "Session history view is under construction."
       );
-      break;
+      return;
+    case "grabFilePathFromDrop":
+      await handleFileDropCommand(context);
+      return;
+    case "clearAllClipboards":
+      context.fileOperations.clearFileDropCache();
+      return;
     case "custom1":
     case "custom2":
     case "custom3":
@@ -58,8 +82,8 @@ export const handleCommand = (
       window.showInformationMessage(
         "Custom quick actions will be defined later."
       );
-      break;
+      return;
     default:
-      break;
+      return;
   }
 };

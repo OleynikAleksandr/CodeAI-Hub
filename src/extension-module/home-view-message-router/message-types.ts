@@ -9,6 +9,8 @@ export type WebviewCommand =
   | "lastSession"
   | "clearSession"
   | "oldSessions"
+  | "grabFilePathFromDrop"
+  | "clearAllClipboards"
   | "custom1"
   | "custom2"
   | "custom3"

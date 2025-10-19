@@ -8453,37 +8453,553 @@
 
   // src/webview/ui/src/session/input-panel.tsx
   var import_react9 = __toESM(require_react());
+
+  // src/webview/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
+  var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
+  var LINE_SPLIT_REGEX = /\r?\n/;
+  var normalizeCandidate = (rawValue) => {
+    const value = rawValue.trim();
+    if (!value) {
+      return null;
+    }
+    if (value.startsWith("file://")) {
+      const withoutScheme = value.replace("file://", "");
+      try {
+        return decodeURIComponent(withoutScheme);
+      } catch {
+        return withoutScheme;
+      }
+    }
+    if (value.startsWith("/") || WINDOWS_PATH_PATTERN.test(value)) {
+      return value;
+    }
+    return null;
+  };
+  var forEachEntry = (raw, handler) => {
+    if (!raw) {
+      return;
+    }
+    const lines = raw.split(LINE_SPLIT_REGEX);
+    for (const line of lines) {
+      if (line.trim()) {
+        handler(line);
+      }
+    }
+  };
+  var extractFilePathsFromDataTransfer = (dataTransfer, options = {}) => {
+    if (!dataTransfer) {
+      return [];
+    }
+    const { logger, debug = false, logPrefix = "[DropDataExtractor]" } = options;
+    const seen = /* @__PURE__ */ new Set();
+    const results = [];
+    const logDebug = (message, ...details) => {
+      if (debug && logger) {
+        logger(`${logPrefix} ${message}`, ...details);
+      }
+    };
+    const acceptCandidate = (candidate, source) => {
+      if (!seen.has(candidate)) {
+        seen.add(candidate);
+        results.push(candidate);
+        logDebug(`accepted ${candidate} from ${source}`);
+      }
+    };
+    const inspectType = (mime) => {
+      try {
+        const payload = dataTransfer.getData(mime);
+        logDebug(`DataTransfer[${mime}]`, payload);
+        return payload;
+      } catch (error) {
+        logDebug(`failed to read DataTransfer[${mime}]`, error);
+        return null;
+      }
+    };
+    const mimeTypes = [
+      "application/vnd.code.uri-list",
+      "text/plain",
+      "text/uri-list"
+    ];
+    for (const mime of mimeTypes) {
+      const payload = inspectType(mime);
+      forEachEntry(payload, (entry) => {
+        const candidate = normalizeCandidate(entry);
+        if (candidate) {
+          acceptCandidate(candidate, mime);
+        } else {
+          logDebug(`ignored entry from ${mime}`, entry);
+        }
+      });
+    }
+    if (dataTransfer.files && dataTransfer.files.length > 0) {
+      for (const file of Array.from(dataTransfer.files)) {
+        const candidate = file.path;
+        if (!candidate) {
+          continue;
+        }
+        const normalised = normalizeCandidate(candidate);
+        if (normalised) {
+          acceptCandidate(normalised, "FileList");
+        } else {
+          logDebug("ignored FileList entry", candidate);
+        }
+      }
+    }
+    logDebug("extraction result", results);
+    return results;
+  };
+
+  // src/webview/ui/src/modules/drag-drop-module/drag-drop-handler.ts
+  var DragDropHandler = class {
+    constructor(options = {}) {
+      this.container = null;
+      this.callbacks = {};
+      this.logger = options.logger;
+      this.handleDragEnter = this.handleDragEnter.bind(this);
+      this.handleDragOver = this.handleDragOver.bind(this);
+      this.handleDragLeave = this.handleDragLeave.bind(this);
+      this.handleDrop = this.handleDrop.bind(this);
+    }
+    attach(container, callbacks) {
+      this.container = container;
+      this.callbacks = callbacks;
+      container.addEventListener("dragenter", this.handleDragEnter);
+      container.addEventListener("dragover", this.handleDragOver);
+      container.addEventListener("dragleave", this.handleDragLeave);
+      container.addEventListener("drop", this.handleDrop);
+    }
+    detach() {
+      if (!this.container) {
+        return;
+      }
+      this.container.removeEventListener("dragenter", this.handleDragEnter);
+      this.container.removeEventListener("dragover", this.handleDragOver);
+      this.container.removeEventListener("dragleave", this.handleDragLeave);
+      this.container.removeEventListener("drop", this.handleDrop);
+      this.container = null;
+      this.callbacks = {};
+    }
+    handleDragEnter(event) {
+      if (!event.shiftKey) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      this.callbacks.onDragEnter?.(true);
+      this.logger?.("dragenter", event.dataTransfer?.types ?? []);
+    }
+    handleDragOver(event) {
+      if (!event.shiftKey) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    handleDragLeave(event) {
+      const relatedTarget = event.relatedTarget;
+      if (this.container && relatedTarget && this.container.contains(relatedTarget)) {
+        return;
+      }
+      this.callbacks.onDragLeave?.();
+    }
+    handleDrop(event) {
+      if (!event.shiftKey) {
+        return;
+      }
+      event.preventDefault();
+      const filePaths = extractFilePathsFromDataTransfer(event.dataTransfer, {
+        debug: Boolean(this.logger),
+        logger: this.logger,
+        logPrefix: "[DragDropHandler]"
+      });
+      if (filePaths.length > 0) {
+        this.callbacks.onFileDrop?.(filePaths);
+      } else {
+        this.callbacks.onFallbackRequest?.();
+      }
+      this.callbacks.onDragLeave?.();
+    }
+  };
+
+  // src/webview/ui/src/modules/drag-drop-module/file-path-processor.ts
+  var WINDOWS_PATH_PATTERN2 = /^[a-zA-Z]:\\/;
+  var WINDOWS_POSIX_PATTERN = /^[a-zA-Z]:\//;
+  var FilePathProcessor = class {
+    constructor() {
+      this.lastInsertedPath = "";
+      this.lastInsertTime = 0;
+      this.duplicateThresholdMs = 1e3;
+    }
+    formatPaths(paths) {
+      if (paths.length === 0) {
+        return "";
+      }
+      const formattedPaths = paths.map((path) => `"${path}"`).join("\n");
+      return `${formattedPaths}
+`;
+    }
+    mergePaths(currentValue, formattedPaths) {
+      if (!formattedPaths) {
+        return currentValue;
+      }
+      if (currentValue && !currentValue.endsWith("\n")) {
+        return `${currentValue}
+${formattedPaths}`;
+      }
+      return currentValue + formattedPaths;
+    }
+    isDuplicate(path) {
+      const now = Date.now();
+      return path === this.lastInsertedPath && now - this.lastInsertTime < this.duplicateThresholdMs;
+    }
+    recordInsertion(path) {
+      this.lastInsertedPath = path;
+      this.lastInsertTime = Date.now();
+    }
+    processSinglePath(path, currentValue) {
+      if (!this.isValidPath(path) || this.isDuplicate(path)) {
+        return null;
+      }
+      this.recordInsertion(path);
+      const formatted = this.formatPaths([path]);
+      return this.mergePaths(currentValue, formatted);
+    }
+    processMultiplePaths(paths, currentValue) {
+      if (paths.length === 0) {
+        return null;
+      }
+      const validPaths = paths.filter((path) => this.isValidPath(path));
+      if (validPaths.length === 0) {
+        return null;
+      }
+      this.recordInsertion(validPaths[0]);
+      const formatted = this.formatPaths(validPaths);
+      return this.mergePaths(currentValue, formatted);
+    }
+    clear() {
+      this.lastInsertedPath = "";
+      this.lastInsertTime = 0;
+    }
+    isValidPath(path) {
+      if (!path) {
+        return false;
+      }
+      return path.startsWith("/") || WINDOWS_PATH_PATTERN2.test(path) || WINDOWS_POSIX_PATTERN.test(path);
+    }
+  };
+
+  // src/webview/ui/src/modules/drag-drop-module/message-handler.ts
+  var isRecord = (value) => typeof value === "object" && value !== null;
+  var MessageHandler = class {
+    constructor(logger) {
+      this.callbacks = {};
+      this.messageListener = null;
+      this.logger = logger;
+    }
+    startListening(callbacks) {
+      this.callbacks = callbacks;
+      this.messageListener = (event) => {
+        this.handleMessage(event.data);
+      };
+      window.addEventListener("message", this.messageListener);
+      this.logger?.("message-handler:start");
+    }
+    stopListening() {
+      if (this.messageListener) {
+        window.removeEventListener("message", this.messageListener);
+        this.messageListener = null;
+      }
+      this.callbacks = {};
+      this.logger?.("message-handler:stop");
+    }
+    requestFilePathGrab() {
+      const timestamp = Date.now();
+      this.sendMessage("grabFilePathFromDrop", { timestamp });
+    }
+    clearClipboards() {
+      this.sendMessage("clearAllClipboards");
+    }
+    sendMessage(command, payload) {
+      const message = { command };
+      if (payload) {
+        Object.assign(message, payload);
+      }
+      this.logger?.("message-handler:send", command, payload ?? null);
+      vscode_default.postMessage(message);
+    }
+    handleMessage(message) {
+      if (!isRecord(message) || typeof message.command !== "string") {
+        return;
+      }
+      if (message.command === "insertPath") {
+        this.handleInsertPath(
+          typeof message.path === "string" ? message.path : ""
+        );
+        return;
+      }
+      if (message.command === "clipboardContent") {
+        this.handleClipboardContent(
+          typeof message.content === "string" ? message.content : ""
+        );
+      }
+    }
+    handleInsertPath(path) {
+      if (!path) {
+        return;
+      }
+      this.logger?.("message-handler:insert-path", path);
+      this.callbacks.onPathInsert?.(path);
+      this.clearClipboards();
+    }
+    handleClipboardContent(content) {
+      if (!content) {
+        return;
+      }
+      this.logger?.("message-handler:clipboard", content);
+      this.callbacks.onClipboardContent?.(content);
+      this.clearClipboards();
+    }
+  };
+
+  // src/webview/ui/src/modules/drag-drop-module/drag-drop-facade.ts
+  var DragDropFacade = class {
+    constructor(logger) {
+      this.config = null;
+      this.isDragging = false;
+      this.dragHandler = new DragDropHandler({ logger });
+      this.pathProcessor = new FilePathProcessor();
+      this.messageHandler = new MessageHandler(logger);
+    }
+    initialize(config) {
+      this.config = config;
+      const callbacks = {
+        onDragEnter: (isShiftPressed) => this.handleDragEnter(isShiftPressed),
+        onDragLeave: () => this.handleDragLeave(),
+        onFileDrop: (paths) => this.handleFileDrop(paths),
+        onFallbackRequest: () => this.handleFallbackRequest()
+      };
+      this.dragHandler.attach(config.container, callbacks);
+      this.messageHandler.startListening({
+        onPathInsert: (path) => this.handlePathInsert(path),
+        onClipboardContent: (content) => this.handleClipboardContent(content)
+      });
+    }
+    destroy() {
+      this.dragHandler.detach();
+      this.messageHandler.stopListening();
+      this.pathProcessor.clear();
+      this.config = null;
+      this.isDragging = false;
+    }
+    getIsDragging() {
+      return this.isDragging;
+    }
+    handleDragEnter(isShiftPressed) {
+      if (!isShiftPressed) {
+        return;
+      }
+      this.isDragging = true;
+      this.config?.onDragStateChange?.(true);
+    }
+    handleDragLeave() {
+      this.isDragging = false;
+      this.config?.onDragStateChange?.(false);
+    }
+    handleFileDrop(paths) {
+      if (!this.config) {
+        return;
+      }
+      const currentValue = this.config.getCurrentValue();
+      const newValue = this.pathProcessor.processMultiplePaths(
+        paths,
+        currentValue
+      );
+      if (newValue !== null) {
+        this.config.onValueChange(newValue);
+      }
+    }
+    handleFallbackRequest() {
+      this.messageHandler.requestFilePathGrab();
+    }
+    handlePathInsert(path) {
+      if (!this.config) {
+        return;
+      }
+      const currentValue = this.config.getCurrentValue();
+      if (path.includes('"') && path.includes("\n")) {
+        const mergedValue = currentValue ? `${currentValue}
+${path}` : path;
+        this.config.onValueChange(mergedValue);
+        return;
+      }
+      const newValue = this.pathProcessor.processSinglePath(path, currentValue);
+      if (newValue !== null) {
+        this.config.onValueChange(newValue);
+      }
+    }
+    handleClipboardContent(content) {
+      if (!this.config) {
+        return;
+      }
+      const currentValue = this.config.getCurrentValue();
+      const newValue = this.pathProcessor.processSinglePath(
+        content,
+        currentValue
+      );
+      if (newValue !== null) {
+        this.config.onValueChange(newValue);
+      }
+    }
+  };
+
+  // src/webview/ui/src/session/input-panel.tsx
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var MAX_TEXTAREA_HEIGHT = 200;
+  var adjustTextareaHeight = (textarea) => {
+    if (!textarea) {
+      return;
+    }
+    const element = textarea;
+    element.style.height = "auto";
+    const { scrollHeight } = element;
+    const targetHeight = Math.min(scrollHeight, MAX_TEXTAREA_HEIGHT);
+    element.style.height = `${targetHeight}px`;
+  };
+  var focusTextareaEnd = (textarea) => {
+    if (!textarea) {
+      return;
+    }
+    const element = textarea;
+    element.focus();
+    const length = element.value.length;
+    element.setSelectionRange(length, length);
+  };
   var InputPanel = ({ draft, onSubmit }) => {
     const [value, setValue] = (0, import_react9.useState)(draft);
+    const [isDragging, setIsDragging] = (0, import_react9.useState)(false);
+    const [isFocused, setIsFocused] = (0, import_react9.useState)(false);
+    const textareaRef = (0, import_react9.useRef)(null);
+    const dropContainerRef = (0, import_react9.useRef)(null);
+    const dragDropFacadeRef = (0, import_react9.useRef)(null);
+    const updateValue = (0, import_react9.useCallback)((nextValue) => {
+      setValue(nextValue);
+      requestAnimationFrame(() => {
+        adjustTextareaHeight(textareaRef.current);
+      });
+    }, []);
     (0, import_react9.useEffect)(() => {
-      setValue(draft);
-    }, [draft]);
-    const handleSubmit = (event) => {
-      event.preventDefault();
+      updateValue(draft);
+    }, [draft, updateValue]);
+    const sendMessage = (0, import_react9.useCallback)(() => {
       const trimmed = value.trim();
-      if (trimmed.length === 0) {
+      if (!trimmed) {
         return;
       }
       onSubmit(trimmed);
-      setValue("");
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("form", { className: "session-input session-panel", onSubmit: handleSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-        "textarea",
-        {
-          className: "session-input__textarea",
-          onChange: (event) => setValue(event.target.value),
-          placeholder: "Ask the providers anything...",
-          rows: 3,
-          value
+      updateValue("");
+    }, [onSubmit, updateValue, value]);
+    const handleSubmit = (0, import_react9.useCallback)(
+      (event) => {
+        event.preventDefault();
+        sendMessage();
+      },
+      [sendMessage]
+    );
+    const handleKeyDown = (0, import_react9.useCallback)(
+      (event) => {
+        if (event.key !== "Enter") {
+          return;
         }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-input__footer", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for new line" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "session-input__send", type: "submit", children: "Send" })
-      ] })
-    ] });
+        if (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) {
+          return;
+        }
+        const nativeEvent = event.nativeEvent;
+        if (nativeEvent.isComposing) {
+          return;
+        }
+        event.preventDefault();
+        sendMessage();
+      },
+      [sendMessage]
+    );
+    const handleChange = (0, import_react9.useCallback)(
+      (event) => {
+        updateValue(event.target.value);
+      },
+      [updateValue]
+    );
+    const applyExternalValue = (0, import_react9.useCallback)(
+      (newValue) => {
+        updateValue(newValue);
+        requestAnimationFrame(() => {
+          const textarea = textareaRef.current;
+          focusTextareaEnd(textarea);
+        });
+      },
+      [updateValue]
+    );
+    (0, import_react9.useEffect)(() => {
+      const container = dropContainerRef.current;
+      const textarea = textareaRef.current;
+      if (!(container && textarea)) {
+        return;
+      }
+      const dragDropFacade = new DragDropFacade();
+      dragDropFacadeRef.current = dragDropFacade;
+      dragDropFacade.initialize({
+        container,
+        onValueChange: applyExternalValue,
+        getCurrentValue: () => textarea.value,
+        onDragStateChange: setIsDragging
+      });
+      return () => {
+        dragDropFacade.destroy();
+        dragDropFacadeRef.current = null;
+      };
+    }, [applyExternalValue]);
+    const overlayLabel = "Drop files here while holding Shift";
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+      "form",
+      {
+        "aria-label": "Message input",
+        className: "session-input session-panel",
+        onSubmit: handleSubmit,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+            "div",
+            {
+              className: [
+                "session-input__container",
+                isDragging ? "session-input__container--dragging" : ""
+              ].filter(Boolean).join(" "),
+              ref: dropContainerRef,
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+                  "textarea",
+                  {
+                    "aria-multiline": "true",
+                    className: [
+                      "session-input__textarea",
+                      isFocused ? "session-input__textarea--focused" : ""
+                    ].filter(Boolean).join(" "),
+                    onBlur: () => setIsFocused(false),
+                    onChange: handleChange,
+                    onFocus: () => setIsFocused(true),
+                    onKeyDown: handleKeyDown,
+                    placeholder: "Type your request or drag files with Shift held...",
+                    ref: textareaRef,
+                    rows: 1,
+                    value
+                  }
+                ),
+                isDragging && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("output", { className: "session-input__overlay", children: overlayLabel })
+              ]
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
+        ]
+      }
+    );
   };
   var input_panel_default = InputPanel;
 
@@ -8507,7 +9023,14 @@
         return primaryToken ?? label;
       });
       const hasTwoProviders = providerNames.length === 2;
-      const primaryLineLength = hasTwoProviders ? 2 : providerNames.length <= 2 ? 1 : Math.ceil(providerNames.length / 2);
+      let primaryLineLength;
+      if (hasTwoProviders) {
+        primaryLineLength = 2;
+      } else if (providerNames.length <= 2) {
+        primaryLineLength = 1;
+      } else {
+        primaryLineLength = Math.ceil(providerNames.length / 2);
+      }
       const primaryLine = providerNames.slice(0, primaryLineLength).join("+");
       const secondaryTokens = providerNames.slice(primaryLineLength);
       const secondaryLine = secondaryTokens.length > 0 ? `+${secondaryTokens.join("+")}` : "";
@@ -8519,10 +9042,10 @@
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           "button",
           {
-            className: "session-tab__select",
             "aria-label": `Activate session for ${spokenSummary}`,
-            title: fullSummary,
+            className: "session-tab__select",
             onClick: () => onSelect(session.id),
+            title: fullSummary,
             type: "button",
             children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "session-tab__providers", children: [
               /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),

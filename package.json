@@ -2,7 +2,7 @@
   "name": "codeai-hub",
   "displayName": "CodeAI Hub",
   "description": "Unified VS Code extension for orchestrating AI providers.",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "publisher": "CodeAIHub",
   "license": "ISC",
   "engines": {

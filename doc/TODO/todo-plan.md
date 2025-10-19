@@ -6,18 +6,36 @@
 - BLOCKED — требуется внешнее действие
 - DONE — задача завершена
 
-## Фаза 4 — Декомпозиция UI (ответственный: Codex, обновлено: 2025-10-19)
-- [DONE] Разбить `src/webview/ui/src/app-host.tsx` (299 линий) на фасад и микрокомпоненты, удержав каждую часть <200 строк.
-  - Заметки: Состояние вынесено в хуки `useProviderPickerState`, `useSessionStore`, `useSettingsVisibility`, `useWebviewMessageHandler`.
-- [DONE] Декомпозировать `src/webview/ui/src/components/settings-view.tsx` (278 линий), отделив структуру модалки от обработчиков.
-  - Заметки: Добавлены `SettingsHeader`, `SettingsFooter`, хук `useSettingsState`.
-- [DONE] Упростить `src/webview/ui/src/components/settings/thinking-settings.tsx` (264 линии) через вынос повторяющихся блоков настроек.
-  - Заметки: Созданы компоненты `ThinkingToggle`, `ThinkingTokenInput`, `ThinkingProTip` и файл `thinking/constants.ts`.
-- [DONE] Разделить `src/extension-module/home-view-message-router.ts` (277 линий) на маршрутизатор и отдельные обработчики сообщений.
-  - Заметки: Логика вынесена в `command-handler.ts`, `provider-picker-handler.ts`, `layout-utils.ts`, `message-types.ts`, `serialization.ts`.
-- [DONE] Повторно запустить `./scripts/check-architecture.sh` и зафиксировать отсутствие предупреждений.
+## Фаза 5 — Анализ Input Panel (ответственный: Codex, обновлено: 2025-10-19)
+- [DONE] Изучить модуль Input Panel и Drag & Drop в проекте `CodeAI-Hub_0.0.17` (InputBlock, вспомогательные файлы, менеджеры) и зафиксировать нарушения правил Ultracite.
+  - Заметки: несоответствия задокументированы в сессии (консольные логи, inline-стили, отсутствие типизированного логгера).
+- [DONE] Подготовить план адаптации под новые гейты качества (стилизация, доступность, запреты Ultracite), согласовать точки интеграции с текущей архитектурой CodeAI-Hub.
+  - Заметки: план — 1) вынести стили Input Panel в модуль стилей с классами `input-panel`, `input-panel__textarea`, `input-panel__hint`, применив оранжевый токен `--hub-focus-warning`; 2) внедрить `DragDropFacade` через хук `useInputDragDrop` с типизированным логгером `createUILogger('input-panel')`, отказавшись от `console`; 3) синхронизировать состояние панели с `SessionStateManager`, обновив bridge-команды в `MessageProviderMessageHandler` через `deps.log`.
+- [DONE] Проверить контракты расширение ↔ webview для команд `insertPath` и очистки буферов, записать необходимые изменения для CodeAI-Hub.
+  - Заметки: требуется заменить `console.*` в `MessageProviderMessageHandler` на `deps.log`, добавить проверку payload в `parseWebviewMessage`, гарантировать ответ `insertPath` с уже форматированными путями и централизовать очистку буферов через `FileOperationsFacade`.
+- Commit: _pending
+
+- [DONE] Переписать InputBlock с учётом требований: оранжевая рамка внутри, автоформат текста при росте, отсутствие недопустимых API и прямых inline-стилей.
+  - Заметки: создан новый `session/input-panel.tsx` с CSS-классами и авто-ресайзом, заложен оранжевый фокус и overlay для Drag & Drop, лишние inline-стили удалены.
+- [DONE] Реализовать ультрацит-совместимые обработчики Drag & Drop и вспомогательные модули для внутренних и внешних файлов без использования `console`.
+  - Заметки: перенесён модуль `modules/drag-drop-module/**` с логгерами без `console`, добавлены фасады и хендлеры.
+- [DONE] Обновить обработчики на стороне расширения для команд `clearAllClipboards` и `grabFilePathFromDrop`, протестировать fallback-сценарии.
+  - Заметки: командный роутер вызывает `FileOperationsFacade`, очищает кэш и отправляет `insertPath` вместе с `clearAllClipboards`.
+- [DONE] Встроить новую панель ввода в фасады сессии, проверить сохранение состояния и взаимодействие с остальными блоками.
+  - Заметки: `SessionView` использует обновлённую панель, локальный стейт синхронизируется с `draft`, проверена совместимость с автосохранением.
+- Commit: _pending
+
+## Фаза 7 — Проверки и релиз (ответственный: Codex, обновлено: 2025-10-19)
+- [DONE] Запустить `npx ultracite check` и прочие проверки, устранить все замечания по мигрированным модулям.
+  - Заметки: `npm run compile` и `npx ultracite check` завершились успешно, форматирование применено к новым файлам.
+  - Заметки: риски и компромиссы фиксировать в отчёте сессии.
+- [DONE] Обновить `doc/Architecture/Architecture.md` и связанные записи базы знаний по структуре Input Panel.
+  - Заметки: добавлены сведения о `modules/drag-drop-module`, `file-operations-facade` и фазе миграции Input Panel.
+- [DONE] Повысить версию, собрать проект и выполнить `./scripts/build-release.sh <version>` для выпуска VSIX.
+  - Заметки: версия обновлена до 1.0.9, `npm run compile` и `./scripts/build-release.sh 1.0.9` завершились успешно (VSIX: `codeai-hub-1.0.9.vsix`).
+- [BLOCKED] После сборки приостановить работу до получения обратной связи.
 - Commit: _pending
 
 ## Backlog / Parking Lot
-- [TODO] Реализовать динамическое определение установленных CLI провайдеров вместо заглушек.
-- [TODO] Добавить шаблоны сочетаний провайдеров для мультиагентных сценариев.
+- [TODO] Подготовить заглушки обнаружения провайдеров, соответствующие правилам Ultracite, после стабилизации панели ввода.
+- [TODO] Проработать шаблоны мультиагентных сценариев на базе обновлённой панели ввода.
