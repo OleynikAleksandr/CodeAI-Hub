@@ -9074,7 +9074,7 @@ ${path}` : path;
   var MIN_TOKEN_LIMIT = 1;
   var PERCENT_SCALE = 100;
   var StatusPanel = ({ status }) => {
-    const { providerSummary, tokenUsage, connectionState, updatedAt } = status;
+    const { providerSummary, tokenUsage } = status;
     const percentage = Math.min(
       MAX_PERCENTAGE,
       Math.round(
@@ -9097,14 +9097,6 @@ ${path}` : path;
           percentage,
           "%)"
         ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__label", children: "Connection" }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__value session-status__value--badge", children: connectionState.toUpperCase() })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__label", children: "Updated" }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-status__value", children: new Date(updatedAt).toLocaleTimeString() })
       ] })
     ] });
   };
