@@ -338,6 +338,10 @@
   margin-bottom: 6px;
 }
 
+.session-status__row:last-child {
+  margin-bottom: 0;
+}
+
 .session-status__label {
   color: #bdbdbd;
 }
