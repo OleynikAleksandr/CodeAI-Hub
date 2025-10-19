@@ -77,6 +77,7 @@ export class WebviewHtmlGenerator {
     .action-bar {
       background-color: rgba(37, 37, 40, 1);
       padding: 8px;
+      box-shadow: 0 1px rgba(255, 255, 255, 0.06);
     }
     .action-bar__inner {
       display: flex;
@@ -90,7 +91,6 @@ export class WebviewHtmlGenerator {
       display: flex;
       flex-direction: column;
       min-height: 0;
-      margin-top: -1px;
     }
     #root {
       display: none;
