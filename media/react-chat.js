@@ -8085,10 +8085,7 @@
   var noteStyles = {
     color: "#d4a36a"
   };
-  var ThinkingToggle = ({
-    enabled,
-    onToggle
-  }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { style: toggleContainerStyles, children: [
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { style: toggleContainerStyles, children: [
     /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
       "input",
       {
@@ -8258,7 +8255,7 @@
       ] })
     ] });
   };
-  var thinking_settings_default = import_react6.default.memo(ThinkingSettings);
+  var thinking_settings_default = (0, import_react6.memo)(ThinkingSettings);
 
   // src/webview/ui/src/components/settings/use-settings-state.ts
   var import_react7 = __toESM(require_react());

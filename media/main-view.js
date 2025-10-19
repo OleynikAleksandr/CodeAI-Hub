@@ -51,6 +51,62 @@
     },
   };
 
+  const MAIN_BUTTON_MIN_WIDTH = 80;
+  const MAIN_BUTTON_GAP = 4;
+  const MAIN_BUTTON_LAYOUT_CLASSES = [
+    "main-buttons--cols-4",
+    "main-buttons--cols-2",
+    "main-buttons--cols-1",
+  ];
+  const MAIN_BUTTON_COLUMNS_FULL = 4;
+  const MAIN_BUTTON_COLUMNS_HALF = 2;
+  const MAIN_BUTTON_COLUMNS_SINGLE = 1;
+  const MAIN_BUTTON_COLUMN_CANDIDATES = [
+    MAIN_BUTTON_COLUMNS_FULL,
+    MAIN_BUTTON_COLUMNS_HALF,
+    MAIN_BUTTON_COLUMNS_SINGLE,
+  ];
+  const MAIN_BUTTON_DEFAULT_COLUMNS = MAIN_BUTTON_COLUMNS_SINGLE;
+
+  const mainButtonLayoutState = {
+    columns: null,
+  };
+
+  const updateMainButtonLayout = () => {
+    const container = document.querySelector(".main-buttons");
+    if (!container) {
+      return;
+    }
+
+    const width = container.clientWidth;
+    if (width <= 0) {
+      return;
+    }
+
+    let selected = MAIN_BUTTON_DEFAULT_COLUMNS;
+
+    for (const candidate of MAIN_BUTTON_COLUMN_CANDIDATES) {
+      const totalGap = MAIN_BUTTON_GAP * (candidate - 1);
+      const usableWidth = width - totalGap;
+      const columnWidth = usableWidth / candidate;
+
+      if (columnWidth >= MAIN_BUTTON_MIN_WIDTH || candidate === 1) {
+        selected = candidate;
+        break;
+      }
+    }
+
+    if (mainButtonLayoutState.columns === selected) {
+      return;
+    }
+
+    mainButtonLayoutState.columns = selected;
+    for (const className of MAIN_BUTTON_LAYOUT_CLASSES) {
+      container.classList.remove(className);
+    }
+    container.classList.add(`main-buttons--cols-${selected}`);
+  };
+
   const geometryState = {
     last: null,
   };
@@ -102,6 +158,11 @@
     vscode.postMessage({ type: "ui:updateLayout", payload: bounds });
   };
 
+  const handleResize = () => {
+    postLayoutUpdate();
+    updateMainButtonLayout();
+  };
+
   const bindButtons = () => {
     const buttons = document.querySelectorAll("[data-action]");
     for (const button of buttons) {
@@ -118,6 +179,7 @@
 
   const initializeLayoutTracking = () => {
     postLayoutUpdate();
+    updateMainButtonLayout();
 
     if (typeof ResizeObserver === "function") {
       const target =
@@ -125,12 +187,12 @@
         document.body ||
         document.documentElement;
       if (target) {
-        const observer = new ResizeObserver(() => postLayoutUpdate());
+        const observer = new ResizeObserver(() => handleResize());
         observer.observe(target);
       }
     }
 
-    window.addEventListener("resize", postLayoutUpdate);
+    window.addEventListener("resize", handleResize);
   };
 
   const handleMessage = (event) => {
@@ -152,6 +214,7 @@
   const start = () => {
     bindButtons();
     initializeLayoutTracking();
+    updateMainButtonLayout();
   };
 
   if (document.readyState === "loading") {
