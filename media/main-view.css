@@ -23,6 +23,7 @@ body {
 .action-bar {
   background-color: rgba(37, 37, 40, 1);
   padding: 8px;
+  border-bottom: 1px solid rgba(37, 37, 40, 1);
 }
 
 .action-bar__inner {
