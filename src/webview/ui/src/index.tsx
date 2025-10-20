@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import AppHost, { activateRoot } from "./app-host";
+import AppHost from "./app-host";
+import { activateRoot } from "./root-dom";
 
 const mount = () => {
   const rootElement = document.getElementById("root");

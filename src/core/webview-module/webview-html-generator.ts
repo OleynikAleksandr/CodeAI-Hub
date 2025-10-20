@@ -18,9 +18,6 @@ export class WebviewHtmlGenerator {
     const mainViewCssUri = webview.asWebviewUri(
       Uri.joinPath(extensionUri, "media", "main-view.css")
     );
-    const mainViewJsUri = webview.asWebviewUri(
-      Uri.joinPath(extensionUri, "media", "main-view.js")
-    );
     const reactAppJsUri = webview.asWebviewUri(
       Uri.joinPath(extensionUri, "media", "react-chat.js")
     );
@@ -49,7 +46,7 @@ export class WebviewHtmlGenerator {
   <style>
     html { background-color: #1e1e1e !important; }
     body {
-      background-color: #1e1e1e !important;
+      background-color: rgba(40, 41, 42, 1) !important;
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
     }
@@ -110,31 +107,7 @@ export class WebviewHtmlGenerator {
 </head>
 <body style="background-color: rgba(37, 37, 40, 1) !important;">
   <div id="app">
-    <section class="action-bar">
-      <div class="action-bar__inner">
-        <div class="main-buttons main-buttons--cols-4">
-          <button class="main-button" data-action="newSession">
-            <span class="button-line1">New</span>
-            <span class="button-line2">Session</span>
-          </button>
-          <button class="main-button" data-action="lastSession">
-            <span class="button-line1">Last</span>
-            <span class="button-line2">Session</span>
-          </button>
-          <button class="main-button" data-action="clearSession">
-            <span class="button-line1">Clear</span>
-            <span class="button-line2">Session</span>
-          </button>
-          <button class="main-button" data-action="oldSessions">
-            <span class="button-line1">Old</span>
-            <span class="button-line2">Sessions</span>
-          </button>
-        </div>
-      </div>
-    </section>
-    <section class="session-region">
-      <div id="root"${showChat ? ' class="active"' : ""}></div>
-    </section>
+    <div id="root"${showChat ? ' class="active"' : ""}></div>
   </div>
 
   <script nonce="${nonce}">
@@ -168,7 +141,6 @@ export class WebviewHtmlGenerator {
       checkLinks();
     })();
   </script>
-  <script nonce="${nonce}" src="${mainViewJsUri}"></script>
   <script nonce="${nonce}" src="${reactAppJsUri}"></script>
 </body>
 </html>`;
