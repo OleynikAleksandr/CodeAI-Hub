@@ -154,28 +154,30 @@ export const ProviderPicker = ({
           </div>
         </fieldset>
         <div className="provider-picker__actions">
-          <button
-            className="provider-picker__primary"
-            disabled={isSubmitDisabled}
-            type="submit"
-          >
-            Start session
-          </button>
-          <button
-            className="provider-picker__secondary"
-            onClick={handleCancel}
-            type="button"
-          >
-            Cancel
-          </button>
+          <output aria-live="polite" className="provider-picker__status">
+            {isSubmitDisabled
+              ? "Select at least one provider to continue."
+              : `${selectedIds.length} provider${
+                  selectedIds.length > 1 ? "s" : ""
+                } selected.`}
+          </output>
+          <div className="provider-picker__action-buttons">
+            <button
+              className="provider-picker__secondary"
+              onClick={handleCancel}
+              type="button"
+            >
+              Cancel
+            </button>
+            <button
+              className="provider-picker__primary"
+              disabled={isSubmitDisabled}
+              type="submit"
+            >
+              Start session
+            </button>
+          </div>
         </div>
-        <output aria-live="polite" className="provider-picker__status">
-          {isSubmitDisabled
-            ? "Select at least one provider to continue."
-            : `${selectedIds.length} provider${
-                selectedIds.length > 1 ? "s" : ""
-              } selected.`}
-        </output>
       </form>
     </section>
   );

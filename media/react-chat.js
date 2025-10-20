@@ -7399,26 +7399,28 @@
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "provider-picker__options", children: providers.map((provider, index) => renderOption(provider, index)) })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "provider-picker__actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                "button",
-                {
-                  className: "provider-picker__primary",
-                  disabled: isSubmitDisabled,
-                  type: "submit",
-                  children: "Start session"
-                }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                "button",
-                {
-                  className: "provider-picker__secondary",
-                  onClick: handleCancel,
-                  type: "button",
-                  children: "Cancel"
-                }
-              )
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: isSubmitDisabled ? "Select at least one provider to continue." : `${selectedIds.length} provider${selectedIds.length > 1 ? "s" : ""} selected.` })
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: isSubmitDisabled ? "Select at least one provider to continue." : `${selectedIds.length} provider${selectedIds.length > 1 ? "s" : ""} selected.` }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "provider-picker__action-buttons", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  "button",
+                  {
+                    className: "provider-picker__secondary",
+                    onClick: handleCancel,
+                    type: "button",
+                    children: "Cancel"
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  "button",
+                  {
+                    className: "provider-picker__primary",
+                    disabled: isSubmitDisabled,
+                    type: "submit",
+                    children: "Start session"
+                  }
+                )
+              ] })
+            ] })
           ] })
         ]
       }

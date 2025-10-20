@@ -45,12 +45,12 @@ export class WebviewHtmlGenerator {
   <meta http-equiv="Content-Security-Policy" content="${csp}">
   <style>
     html {
-      background-color: rgba(40, 41, 42, 1) !important;
+      background-color: rgba(31, 31, 31, 1) !important;
     }
     body {
       margin: 0;
       padding: 0;
-      background-color: rgba(40, 41, 42, 1) !important;
+      background-color: rgba(31, 31, 31, 1) !important;
       color: var(--vscode-editor-foreground, #cccccc);
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
@@ -60,7 +60,7 @@ export class WebviewHtmlGenerator {
     }
     #app {
       min-height: 100vh;
-      background-color: rgba(40, 41, 42, 1);
+      background-color: rgba(31, 31, 31, 1);
     }
     #root {
       min-height: 100vh;

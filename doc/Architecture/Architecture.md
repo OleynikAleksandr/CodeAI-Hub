@@ -21,7 +21,8 @@ CodeAI-Hub — модульное расширение VS Code с единым w
 - **Фаза 2 — Миграция интерфейса сессии:** завершена, функционал перенесён в репозиторий (commit `8b5d31f feat: v1.0.4 - session interface shell`).
 - **Фаза 3 — Перенос окна настроек:** завершена, окно Settings перенесено (commit `6ad5d41 feat: v1.0.5 - settings panel migration`).
 - **Фаза 4 — Декомпозиция UI:** выполнена первичная разбивка. `AppHost` использует хуки (`useProviderPickerState`, `useSessionStore`, `useSettingsVisibility`, `useWebviewMessageHandler`), настройки разделены на `SettingsHeader`, `SettingsFooter`, `useSettingsState`, Thinking-блок превращён в набор компонентов (`ThinkingToggle`, `ThinkingTokenInput`, `ThinkingProTip`), маршрутизатор вынес в модульную структуру (`command-handler`, `provider-picker-handler`, `layout-utils`, `message-types`, `serialization`). Архитектурный чек проходит без предупреждений, релиз `v1.0.6` опубликован.
-- **Релиз 1.0.8 — Session Action Bar Refresh:** панель быстрых действий вынесена в отдельный `action-bar` контейнер (`37,37,40,1`), область сессии организована сеткой с фиксированными отступами: `DialogPanel` занимает всё оставшееся пространство, `TodoPanel`, `InputPanel`, `StatusPanel` привязаны к низу с интервалом 8 px, табы компактно отображают список провайдеров.
+- **Релиз 1.0.8 — Session Action Bar Refresh:** панель быстрых действий вынесена в отдельный `action-bar` контейнер, область сессии организована сеткой с фиксированными отступами: `DialogPanel` занимает всё оставшееся пространство, `TodoPanel`, `InputPanel`, `StatusPanel` привязаны к низу с интервалом 8 px, табы компактно отображают список провайдеров.
+- **Релиз 1.0.15 — Session chrome polish:** выровняли оболочку по краям webview (Action Bar теперь лежит «в ноль» без серых просветов, фон оболочки — `rgba(31, 31, 31, 1)`), обновили рельсы Action Bar с двухтона-градентом (`#505356 → #18191B`) и синхронизировали HTML-генератор с новыми цветами. Провели ревизию Provider Picker: кнопки `Cancel`/`Start session` закреплены справа одним блоком, статус выбора перемещён на левую ось, чтобы не увеличивать высоту диалога; сетка сессии зафиксирована в одном столбце при любой ширине.
 - **Фаза 5 — Input Panel Migration (в работе):** `session/input-panel.tsx` заменён на ультрацит-совместимый компонент с авто-ресайзом, оранжевым фокусом и overlay для drag & drop; вынесены новые модули `modules/drag-drop-module/**`, а на extension-слое добавлен `file-operations/file-operations-facade.ts` для обработки `grabFilePathFromDrop`/`clearAllClipboards`.
 
 ## Архитектурные принципы
@@ -45,7 +46,7 @@ Stacks (Private)          → приватные модули провайдер
 - Build: `npm run build:webview` (esbuild → `src/webview/ui/src/index.tsx` → `media/react-chat.js`).
 - Runtime bundle: статическая оболочка `media/main-view.*` + React-бандл `media/react-chat.js`; CSS для пикера провайдеров лежит рядом с оболочкой.
 - Extension HTML: генерируется `WebviewHtmlGenerator`, подключающий двухрядный тулбар и новый React-пакет для интерактивных элементов (Provider Picker и будущие экраны).
-- Provider Picker: `src/webview/ui/src/provider-picker.tsx` рендерит inline-диалог с чекбоксами и кнопками OK/Cancel прямо под панелью кнопок, состояние сбрасывается каждый раз при нажатии `New Session`.
+- Provider Picker: `src/webview/ui/src/provider-picker.tsx` рендерит inline-диалог с чекбоксами и блоком действий (статус слева, `Cancel`/`Start session` справа), состояние сбрасывается каждый раз при нажатии `New Session`.
 - Shared types: `src/types/provider.ts` (ID стеков, дескрипторы), переиспользуются core-слоем и React-компонентами.
 
 UI слой остаётся в open source репозитории и работает с унифицированным контрактом; слои Extension/Core обеспечивают мост между UI и модулями провайдеров.
