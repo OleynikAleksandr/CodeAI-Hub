@@ -7281,11 +7281,11 @@
   });
 
   // src/webview/ui/src/index.tsx
-  var import_react11 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/webview/ui/src/app-host.tsx
-  var import_react10 = __toESM(require_react());
+  var import_react11 = __toESM(require_react());
 
   // src/webview/ui/src/app-host/provider-picker-state.ts
   var import_react2 = __toESM(require_react());
@@ -9178,14 +9178,55 @@ ${path}` : path;
   };
   var session_view_default = SessionView;
 
-  // src/webview/ui/src/app-host.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  // src/webview/ui/src/components/action-bar/index.tsx
+  var import_react10 = __toESM(require_react());
+
+  // src/webview/ui/src/root-dom.ts
   var activateRoot = () => {
     const rootElement = document.getElementById("root");
     if (rootElement) {
       rootElement.classList.add("active");
     }
   };
+
+  // src/webview/ui/src/components/action-bar/index.tsx
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var BUTTONS = [
+    { id: "newSession", label: ["New", "Session"] },
+    { id: "lastSession", label: ["Last", "Session"], highlighted: true },
+    { id: "clearSession", label: ["Clear", "Session"] },
+    { id: "oldSessions", label: ["Old", "Sessions"] }
+  ];
+  var ActionBar = () => {
+    const handleClick = (0, import_react10.useCallback)((command) => {
+      if (command === "newSession") {
+        activateRoot();
+      }
+      postVsCodeMessage({ command });
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "action-bar__surface", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "action-bar__rail action-bar__rail--top", "aria-hidden": "true" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "action-bar__rail action-bar__rail--bottom", "aria-hidden": "true" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "action-bar__buttons", children: BUTTONS.map(({ id, label, highlighted }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+        "button",
+        {
+          "aria-label": `${label[0]} ${label[1]}`,
+          className: highlighted ? "action-bar__button action-bar__button--highlight" : "action-bar__button",
+          onClick: () => handleClick(id),
+          type: "button",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "action-bar__line", children: label[0] }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "action-bar__line", children: label[1] })
+          ]
+        },
+        id
+      )) })
+    ] }) });
+  };
+  var action_bar_default = ActionBar;
+
+  // src/webview/ui/src/app-host.tsx
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var AppHost = () => {
     const {
       pickerState,
@@ -9208,14 +9249,14 @@ ${path}` : path;
       sendMessage
     } = useSessionStore(providerLabels);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const handleProviderPickerOpen = (0, import_react10.useCallback)(
+    const handleProviderPickerOpen = (0, import_react11.useCallback)(
       (providers) => {
         activateRoot();
         openPicker(providers);
       },
       [openPicker]
     );
-    const handleSessionCreatedMessage = (0, import_react10.useCallback)(
+    const handleSessionCreatedMessage = (0, import_react11.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
@@ -9223,7 +9264,7 @@ ${path}` : path;
       },
       [handleSessionCreated, resetPicker]
     );
-    const handleShowSettings = (0, import_react10.useCallback)(() => {
+    const handleShowSettings = (0, import_react11.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
@@ -9234,36 +9275,40 @@ ${path}` : path;
       onSessionFocusLast: focusLastSession,
       onShowSettings: handleShowSettings
     });
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-        session_view_default,
-        {
-          activeSessionId,
-          onCloseSession: closeSession,
-          onSelectSession: selectSession,
-          onSendMessage: sendMessage,
-          onToggleTodo: toggleTodo,
-          providerLabels,
-          sessions,
-          snapshots
-        }
-      ),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-        ProviderPicker,
-        {
-          onCancel: cancelSelection,
-          onConfirm: confirmSelection,
-          providers: pickerState.providers,
-          visible: pickerState.visible
-        }
-      )
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(action_bar_default, {}),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "app-shell__session-region", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          ProviderPicker,
+          {
+            onCancel: cancelSelection,
+            onConfirm: confirmSelection,
+            providers: pickerState.providers,
+            visible: pickerState.visible
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          session_view_default,
+          {
+            activeSessionId,
+            onCloseSession: closeSession,
+            onSelectSession: selectSession,
+            onSendMessage: sendMessage,
+            onToggleTodo: toggleTodo,
+            providerLabels,
+            sessions,
+            showEmptyState: !pickerState.visible,
+            snapshots
+          }
+        )
+      ] }),
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
     ] });
   };
   var app_host_default = AppHost;
 
   // src/webview/ui/src/index.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var mount = () => {
     const rootElement = document.getElementById("root");
     if (!rootElement) {
@@ -9272,7 +9317,7 @@ ${path}` : path;
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(import_react11.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(import_react12.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(app_host_default, {}) })
     );
   };
   mount();
