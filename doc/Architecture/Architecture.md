@@ -1,7 +1,7 @@
 # Архитектура CodeAI-Hub (черновик)
 
-**Версия:** 0.1.5 (draft)
-**Последнее обновление:** 2025-10-19
+**Версия:** 0.1.6 (draft)
+**Последнее обновление:** 2025-10-20
 **Статус:** Архитектурный ориентир (исходная структура)
 
 ---
@@ -17,12 +17,13 @@ CodeAI-Hub — модульное расширение VS Code с единым w
 
 Документ описывает открытые (open source) слои расширения и их место в общей архитектуре: UI, extension-слой и core-слой, обеспечивающие платформу для подключаемых стеков провайдеров.
 
-## Актуальный статус (2025-10-19)
+## Актуальный статус (2025-10-20)
 - **Фаза 2 — Миграция интерфейса сессии:** завершена, функционал перенесён в репозиторий (commit `8b5d31f feat: v1.0.4 - session interface shell`).
 - **Фаза 3 — Перенос окна настроек:** завершена, окно Settings перенесено (commit `6ad5d41 feat: v1.0.5 - settings panel migration`).
 - **Фаза 4 — Декомпозиция UI:** выполнена первичная разбивка. `AppHost` использует хуки (`useProviderPickerState`, `useSessionStore`, `useSettingsVisibility`, `useWebviewMessageHandler`), настройки разделены на `SettingsHeader`, `SettingsFooter`, `useSettingsState`, Thinking-блок превращён в набор компонентов (`ThinkingToggle`, `ThinkingTokenInput`, `ThinkingProTip`), маршрутизатор вынес в модульную структуру (`command-handler`, `provider-picker-handler`, `layout-utils`, `message-types`, `serialization`). Архитектурный чек проходит без предупреждений, релиз `v1.0.6` опубликован.
 - **Релиз 1.0.8 — Session Action Bar Refresh:** панель быстрых действий вынесена в отдельный `action-bar` контейнер, область сессии организована сеткой с фиксированными отступами: `DialogPanel` занимает всё оставшееся пространство, `TodoPanel`, `InputPanel`, `StatusPanel` привязаны к низу с интервалом 8 px, табы компактно отображают список провайдеров.
-- **Релиз 1.0.15 — Session chrome polish:** выровняли оболочку по краям webview (Action Bar теперь лежит «в ноль» без серых просветов, фон оболочки — `rgba(31, 31, 31, 1)`), обновили рельсы Action Bar с двухтона-градентом (`#505356 → #18191B`) и синхронизировали HTML-генератор с новыми цветами. Провели ревизию Provider Picker: кнопки `Cancel`/`Start session` закреплены справа одним блоком, статус выбора перемещён на левую ось, чтобы не увеличивать высоту диалога; сетка сессии зафиксирована в одном столбце при любой ширине.
+- **Релиз 1.0.15 — Session chrome polish:** выровняли оболочку по краям webview (Action Bar теперь лежит «в ноль» без серых просветов, фон оболочки — `rgba(31, 31, 31, 1)`), обновили рельсы Action Bar с двухтона-градентом (`#56595C → #18191B`) и синхронизировали HTML-генератор с новыми цветами. Провели ревизию Provider Picker: кнопки `Cancel`/`Start session` закреплены справа одним блоком, статус выбора перемещён на левую ось, чтобы не увеличивать высоту диалога; сетка сессии зафиксирована в одном столбце при любой ширине.
+- **Релиз 1.0.17 — Action Bar React port:** перенесли верхний ряд кнопок в React-компонент `ActionBar`, вернули подсказку пустого состояния, ввели централизованные токены `--color-steelblue-*`, `--color-cornflowerblue`, `--color-deepskyblue` для action-кнопок и выпустили VSIX `1.0.17`.
 - **Фаза 5 — Input Panel Migration (в работе):** `session/input-panel.tsx` заменён на ультрацит-совместимый компонент с авто-ресайзом, оранжевым фокусом и overlay для drag & drop; вынесены новые модули `modules/drag-drop-module/**`, а на extension-слое добавлен `file-operations/file-operations-facade.ts` для обработки `grabFilePathFromDrop`/`clearAllClipboards`.
 
 ## Архитектурные принципы
@@ -44,8 +45,8 @@ Stacks (Private)          → приватные модули провайдер
 
 ### Webview bundling and assets
 - Build: `npm run build:webview` (esbuild → `src/webview/ui/src/index.tsx` → `media/react-chat.js`).
-- Runtime bundle: статическая оболочка `media/main-view.*` + React-бандл `media/react-chat.js`; CSS для пикера провайдеров лежит рядом с оболочкой.
-- Extension HTML: генерируется `WebviewHtmlGenerator`, подключающий двухрядный тулбар и новый React-пакет для интерактивных элементов (Provider Picker и будущие экраны).
+- Runtime bundle: `media/main-view.css`/`media/session-view.css` задают оболочку, `media/react-chat.js` содержит React-бандл (включая `ActionBar`, Provider Picker и session-компоненты); итоговая сборка живёт в `media/`.
+- Extension HTML: генерируется `WebviewHtmlGenerator`, который подключает стили и React-бандл, оставляя от HTML лишь корневой контейнер и fade-in; весь верхний ряд кнопок теперь рендерится в React.
 - Provider Picker: `src/webview/ui/src/provider-picker.tsx` рендерит inline-диалог с чекбоксами и блоком действий (статус слева, `Cancel`/`Start session` справа), состояние сбрасывается каждый раз при нажатии `New Session`.
 - Shared types: `src/types/provider.ts` (ID стеков, дескрипторы), переиспользуются core-слоем и React-компонентами.
 
@@ -96,8 +97,8 @@ UI слой остаётся в open source репозитории и работ
 - **todos-block-module** — UI для TODO и структурированных задач.
 - **session-tabs-component** — стили и логика вкладок с провайдерными бейджами.
 - **drag-drop-module** — обработка drag&drop файлов, добавлены события маршрутизации к провайдерам.
-- **session-shell-lite** — упрощённый набор компонентов (`session-view`, `session-tabs`, `dialog-panel`, `todo-panel`, `status-panel`, `input-panel`) перенесён в CodeAI-Hub; в 1.0.8 дополнился статическим `action-bar` и сеткой `session-grid`, благодаря которым блок диалога занимает всю свободную высоту между панелями.
-- **provider-picker** — лёгкий React-компонент для выбора одного или нескольких провайдеров при создании сессии; рендерится внутри статической оболочки и обнуляет состояние после подтверждения (коммит e300238).
+- **session-shell-lite** — упрощённый набор компонентов (`session-view`, `session-tabs`, `dialog-panel`, `todo-panel`, `status-panel`, `input-panel`) перенесён в CodeAI-Hub; в 1.0.8 дополнился `action-bar` и сеткой `session-grid`, а с 1.0.17 Action Bar целиком живёт в React-дереве, сохраняя высоту блока диалога.
+- **provider-picker** — лёгкий React-компонент для выбора одного или нескольких провайдеров при создании сессии; запускается из `ActionBar`/`HomeViewMessageRouter`, сбрасывает состояние после подтверждения (коммит e300238).
 - **app-host** — тонкий контейнер (`app-host.tsx`), объединяющий провайдер-пикер, сессионный UI и модальное окно настроек для webview-панели.
 - **settings-view** — React-компонент настроек, перенесённый без изменений из claude-code-fusion; отвечает за thinking-режим и сохраняет состояние через сообщения `settings:*`.
 
@@ -120,9 +121,9 @@ Extension-слой по-прежнему тонкий: orchestration SDK не п
 - **Webview Shell & Extension Facade Recovery** — реализовано в релизах `0.0.7–0.0.10`: восстановлены React webview, фасады расширения, drag & drop и релизный pipeline.
 - **Provider Registry & Session Orchestrator Foundation** — реализовано в фазах `0–3`: введён `ProviderRegistryFacade`, draft-контракт провайдера, orchestrator событий и подключён заглушечный `ClaudeProviderStub`.
 - **Provider Picker Dialog (Phase 1)** — завершено в коммите e300238: добавлен `ProviderRegistry` с заглушками CLI, `SessionLauncher`, а также webview-компонент `ProviderPicker`, запускаемый из `HomeViewMessageRouter`.
-- **Session Interface Skeleton (Phase 2)** — завершено в коммите 8b5d31f: добавлен статический каркас сессии (табы, поток сообщений, TODO/статус и поле ввода) с заглушками для мультипровайдерного сценария.
+- **Session Interface Skeleton (Phase 2)** — завершено в коммите 8b5d31f: добавлен каркас сессии (табы, поток сообщений, TODO/статус и поле ввода) с заглушками для мультипровайдерного сценария; последующие релизы довели блок до полной React-гидратации.
 - **Settings Panel Migration (Phase 3)** — текущий коммит переносит окно настроек и обработчики `settings:*`, добавляя `SettingsMessageHandler` и React-компоненты `settings-view`/`thinking-settings`.
-- **Session Interface Skeleton (Phase 2, in progress)** — текущий коммит добавил статический UI для сессий (табов, диалога, TODO, статуса и поля ввода) с временными данными и реакцией на события `session:created/clearAll/focusLast`.
+- **Action Bar React Port (Release 1.0.17)** — верхний ряд кнопок перенесён в компонент `ActionBar`, синхронизированы цветовые токены и возвращено пустое состояние; релиз упакован в VSIX `1.0.17`.
 
 ---
 

@@ -1,6 +1,6 @@
 # Глоссарий UI-блоков сессии
 
-- Action Bar | `WebviewHtmlGenerator` (static shell) | Контейнер быстрых действий над сессиями (New/Last/Clear/Old) | `src/core/webview-module/webview-html-generator.ts` |
+- Action Bar | `ActionBar` (React component) | Контейнер быстрых действий над сессиями (New/Last/Clear/Old) | `src/webview/ui/src/components/action-bar/index.tsx` |
 - Session Tabs | `SessionTabs` | Вкладки активных сессий: выбор, закрытие, отображение провайдеров | `src/webview/ui/src/session/session-tabs.tsx` |
 - Session Empty State | `EmptyState` | Заглушка, показывается, когда активная сессия не выбрана | `src/webview/ui/src/session/empty-state.tsx` |
 - Dialog Panel | `DialogPanel` | Основной поток сообщений диалога | `src/webview/ui/src/session/dialog-panel.tsx` |

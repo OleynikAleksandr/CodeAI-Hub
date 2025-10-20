@@ -7,14 +7,18 @@ html {
   --app-background: rgba(31, 31, 31, 1);
   --panel-background: rgba(31, 31, 31, 1);
   --surface-background: #2b2d30;
-  --rail-top-gradient: linear-gradient(180deg, #505356 0%, #18191b 85%);
-  --rail-bottom-gradient: linear-gradient(0deg, #505356 0%, #18191b 85%);
-  --action-button-bg: #2d5177;
-  --action-button-border: rgba(90, 162, 238, 0.4);
-  --action-button-hover-bg: #356bb5;
-  --action-button-hover-border: rgba(106, 214, 255, 0.4);
-  --action-button-active-bg: #3b75cf;
-  --action-button-active-border: rgba(118, 234, 255, 0.4);
+  --rail-top-gradient: linear-gradient(180deg, #515252 0%, #18191b);
+  --rail-bottom-gradient: linear-gradient(0deg, #515252 0%, #18191b);
+  --color-steelblue-100: #577ab3;
+  --color-steelblue-200: #295687;
+  --color-cornflowerblue: #2d7fcb;
+  --color-deepskyblue: #61aff6;
+  --action-button-bg: var(--color-steelblue-200);
+  --action-button-border: var(--color-steelblue-100);
+  --action-button-hover-bg: var(--color-cornflowerblue);
+  --action-button-hover-border: var(--color-deepskyblue);
+  --action-button-active-bg: var(--color-deepskyblue);
+  --action-button-active-border: var(--color-deepskyblue);
   --action-button-text: #9e9e9e;
   --action-button-text-strong: #d9d9d9;
 }
