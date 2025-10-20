@@ -2,9 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.0.17] - 2025-10-20
+### Changed
+- Ported the top action row to the `ActionBar` React component so it shares state with the provider picker and no longer depends on static HTML.
+- Restored the “Create your first session” helper when no sessions are open and aligned the empty container with the refreshed chrome.
+- Centralised button colour tokens in `media/main-view.css` (`--color-steelblue-*`, `--color-cornflowerblue`, `--color-deepskyblue`) to keep hover/active states consistent across the action bar and provider picker.
+
+### Build
+- Release packaged as `codeai-hub-1.0.17.vsix` via `./scripts/build-release.sh 1.0.17`.
+
+# [1.0.16] - 2025-10-20
+### Changed
+- Introduced interim styling updates for the action bar buttons ahead of the React port.
+
+### Build
+- Release packaged as `codeai-hub-1.0.16.vsix` via `./scripts/build-release.sh 1.0.16`.
+
 # [1.0.15] - 2025-10-20
 ### Changed
-- Polished the session chrome: unified the shell background (`rgba(31, 31, 31, 1)`), flattened Action Bar gaps, introduced dual-tone rails (`#505356 → #18191B`) and synced the webview HTML scaffold with the new palette.
+- Polished the session chrome: unified the shell background (`rgba(31, 31, 31, 1)`), flattened Action Bar gaps, introduced dual-tone rails (`#56595C → #18191B`) and synced the webview HTML scaffold with the new palette.
 - Reworked the provider picker footer so the selection status sits on the left while `Cancel` and `Start session` stay grouped on the right; locked the session panel grid to a single column regardless of viewport width.
 
 ### Build

@@ -1,6 +1,7 @@
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
+import EmptyState from "./empty-state";
 import InputPanel from "./input-panel";
 import SessionTabs from "./session-tabs";
 import StatusPanel from "./status-panel";
@@ -11,6 +12,7 @@ type SessionViewProps = {
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
   readonly activeSessionId: string | null;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
+  readonly showEmptyState: boolean;
   readonly onSelectSession: (sessionId: string) => void;
   readonly onCloseSession: (sessionId: string) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
@@ -22,6 +24,7 @@ const SessionView = ({
   providerLabels,
   activeSessionId,
   snapshots,
+  showEmptyState,
   onSelectSession,
   onCloseSession,
   onSendMessage,
@@ -31,6 +34,14 @@ const SessionView = ({
     activeSessionId && snapshots[activeSessionId]
       ? snapshots[activeSessionId]
       : null;
+
+  if (sessions.length === 0 && showEmptyState) {
+    return (
+      <div className="session-app">
+        <EmptyState />
+      </div>
+    );
+  }
 
   return (
     <div className="session-app">
