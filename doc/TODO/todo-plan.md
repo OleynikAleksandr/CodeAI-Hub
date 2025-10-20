@@ -1,38 +1,18 @@
-# План разработки
+# Development TODO Plan
 
-## Легенда
+## Legend
 - TODO — задача запланирована
 - IN_PROGRESS — работа ведётся
 - BLOCKED — требуется внешнее действие
 - DONE — задача завершена
 
-## Фаза 5 — Анализ Input Panel (ответственный: Codex, обновлено: 2025-10-19)
-- [DONE] Изучить модуль Input Panel и Drag & Drop в проекте `CodeAI-Hub_0.0.17` (InputBlock, вспомогательные файлы, менеджеры) и зафиксировать нарушения правил Ultracite.
-  - Заметки: несоответствия задокументированы в сессии (консольные логи, inline-стили, отсутствие типизированного логгера).
-- [DONE] Подготовить план адаптации под новые гейты качества (стилизация, доступность, запреты Ultracite), согласовать точки интеграции с текущей архитектурой CodeAI-Hub.
-  - Заметки: план — 1) вынести стили Input Panel в модуль стилей с классами `input-panel`, `input-panel__textarea`, `input-panel__hint`, применив оранжевый токен `--hub-focus-warning`; 2) внедрить `DragDropFacade` через хук `useInputDragDrop` с типизированным логгером `createUILogger('input-panel')`, отказавшись от `console`; 3) синхронизировать состояние панели с `SessionStateManager`, обновив bridge-команды в `MessageProviderMessageHandler` через `deps.log`.
-- [DONE] Проверить контракты расширение ↔ webview для команд `insertPath` и очистки буферов, записать необходимые изменения для CodeAI-Hub.
-  - Заметки: требуется заменить `console.*` в `MessageProviderMessageHandler` на `deps.log`, добавить проверку payload в `parseWebviewMessage`, гарантировать ответ `insertPath` с уже форматированными путями и централизовать очистку буферов через `FileOperationsFacade`.
-- Commit: b441df2
+## Phase 8 — Session chrome polish (owner: Codex, updated: 2025-10-20)
+- [DONE] Align Action Bar with webview edges, remove residual gutters and synchronise base background (`rgba(31, 31, 31, 1)`) across HTML, CSS and React bundle.
+  - Notes: Action Bar рельсы переведены на двутон `#505356 → #18191B`, `WebviewHtmlGenerator` обновлён, VSIX пересобран.
+- [DONE] Refine provider picker actions (status copy aligned left, `Cancel`/`Start session` grouped on the right) and lock session grid to a single column on any width.
+  - Notes: обновлены `provider-picker.tsx`, `media/main-view.css`, соответствующие изменения зафиксированы в архитектурной документации.
+- [TODO] Redesign empty state imagery to match the refreshed chrome once дизайн-бриф утверждён.
+  - Notes: требуется макет; на время ожидания использована прежняя прозрачная заглушка.
 
-- [DONE] Переписать InputBlock с учётом требований: оранжевая рамка внутри, автоформат текста при росте, отсутствие недопустимых API и прямых inline-стилей.
-  - Заметки: создан новый `session/input-panel.tsx` с CSS-классами и авто-ресайзом, заложен оранжевый фокус и overlay для Drag & Drop, лишние inline-стили удалены.
-- [DONE] Реализовать ультрацит-совместимые обработчики Drag & Drop и вспомогательные модули для внутренних и внешних файлов без использования `console`.
-  - Заметки: перенесён модуль `modules/drag-drop-module/**` с логгерами без `console`, добавлены фасады и хендлеры.
-- [DONE] Обновить обработчики на стороне расширения для команд `clearAllClipboards` и `grabFilePathFromDrop`, протестировать fallback-сценарии.
-  - Заметки: командный роутер вызывает `FileOperationsFacade`, очищает кэш и отправляет `insertPath` вместе с `clearAllClipboards`.
-- [DONE] Встроить новую панель ввода в фасады сессии, проверить сохранение состояния и взаимодействие с остальными блоками.
-  - Заметки: `SessionView` использует обновлённую панель, локальный стейт синхронизируется с `draft`, проверена совместимость с автосохранением.
-- Commit: b441df2
-
-## Фаза 7 — Проверки и релиз (ответственный: Codex, обновлено: 2025-10-19)
-- [DONE] Запустить `npx ultracite check` и прочие проверки, устранить все замечания по мигрированным модулям.
-  - Заметки: `npm run compile` и `npx ultracite check` завершились успешно, форматирование применено к новым файлам.
-  - Заметки: риски и компромиссы фиксировать в отчёте сессии.
-- [DONE] Обновить `doc/Architecture/Architecture.md` и связанные записи базы знаний по структуре Input Panel.
-  - Заметки: добавлены сведения о `modules/drag-drop-module`, `file-operations-facade` и фазе миграции Input Panel.
-- [DONE] Повысить версию, собрать проект и выполнить `./scripts/build-release.sh <version>` для выпуска VSIX.
-  - Заметки: версия обновлена до 1.0.13, `npm run compile` и `./scripts/build-release.sh 1.0.13` завершились успешно (VSIX: `codeai-hub-1.0.13.vsix`).
-- [DONE] Финализировать базовую палитру сессии: активные табы и панели — `rgba(40, 41, 42, 1)` / `rgba(67, 68, 70, 1)`, неактивные табы — `rgba(21, 21, 21, 1)` / `rgba(0, 0, 0, 1)`; пустое состояние остаётся прозрачным.
-- [BLOCKED] После сборки приостановить работу до получения обратной связи.
-- Commit: b441df2
+## Backlog / Parking Lot
+- [TODO] Уточнить roadmap по Thinking UI (новый фокус-паттерн и подсказки) после ревью цветовой схемы.

@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.0.15] - 2025-10-20
+### Changed
+- Polished the session chrome: unified the shell background (`rgba(31, 31, 31, 1)`), flattened Action Bar gaps, introduced dual-tone rails (`#505356 → #18191B`) and synced the webview HTML scaffold with the new palette.
+- Reworked the provider picker footer so the selection status sits on the left while `Cancel` and `Start session` stay grouped on the right; locked the session panel grid to a single column regardless of viewport width.
+
+### Build
+- Release packaged as `codeai-hub-1.0.15.vsix` via `./scripts/build-release.sh 1.0.15`.
+
+# [1.0.14] - 2025-10-20
+### Changed
+- Eliminated gutters around the Action Bar and session region, aligning the chrome flush with the container edges.
+- Tweaked Action Bar button styling so the highlighted state matches the rest of the palette when inactive.
+
+### Build
+- Release packaged as `codeai-hub-1.0.14.vsix` via `./scripts/build-release.sh 1.0.14`.
+
 ## [1.0.13] - 2025-10-19
 ### Fixed
 - Restored the darker inactive session tab palette (`rgba(21, 21, 21, 1)` fill with `rgba(0, 0, 0, 1)` border) while keeping the refreshed active tab colours.

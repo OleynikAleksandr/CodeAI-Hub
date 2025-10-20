@@ -4,11 +4,11 @@ html {
 }
 
 :root {
-  --app-background: rgba(40, 41, 42, 1);
+  --app-background: rgba(31, 31, 31, 1);
   --panel-background: rgba(31, 31, 31, 1);
   --surface-background: #2b2d30;
-  --rail-top-gradient: linear-gradient(180deg, #141516 0%, #6c7175 100%);
-  --rail-bottom-gradient: linear-gradient(0deg, #141516 0%, #6c7175 100%);
+  --rail-top-gradient: linear-gradient(180deg, #505356 0%, #18191b 85%);
+  --rail-bottom-gradient: linear-gradient(0deg, #505356 0%, #18191b 85%);
   --action-button-bg: #2d5177;
   --action-button-border: rgba(90, 162, 238, 0.4);
   --action-button-hover-bg: #356bb5;
@@ -50,22 +50,22 @@ body {
   flex-direction: column;
   min-height: 0;
   background-color: var(--app-background);
-  gap: 8px;
+  gap: 0;
 }
 
 .app-shell__session-region {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 0 8px 8px;
-  background-color: var(--panel-background);
+  gap: 0;
+  padding: 8px 8px 0;
+  background-color: rgba(31, 31, 31, 1);
   min-height: 0;
 }
 
 /* Action bar */
 .action-bar {
-  padding: 8px 0;
+  padding: 0;
   display: flex;
   justify-content: center;
   background-color: var(--app-background);
@@ -73,7 +73,7 @@ body {
 
 .action-bar__surface {
   position: relative;
-  width: min(100%, 581px);
+  width: 100%;
   padding: 16px 8px;
   background-color: var(--surface-background);
   box-shadow: 0 1px rgba(255, 255, 255, 0.06);
@@ -101,7 +101,7 @@ body {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 4px;
 }
 
@@ -141,14 +141,20 @@ body {
 }
 
 .action-bar__button--highlight {
-  background-color: var(--action-button-hover-bg);
-  border-color: var(--action-button-hover-border);
-  color: var(--action-button-text-strong);
+  background-color: var(--action-button-bg);
+  border-color: var(--action-button-border);
+  color: var(--action-button-text);
 }
 
 .action-bar__line {
   display: block;
   font-size: 12px;
+}
+
+@media (max-width: 520px) {
+  .action-bar__buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* Provider picker */
@@ -235,13 +241,16 @@ body {
 
 .provider-picker__actions {
   display: flex;
-  gap: 12px;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .provider-picker__action-buttons {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
