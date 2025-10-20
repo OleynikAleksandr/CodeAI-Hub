@@ -1,7 +1,6 @@
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
-import EmptyState from "./empty-state";
 import InputPanel from "./input-panel";
 import SessionTabs from "./session-tabs";
 import StatusPanel from "./status-panel";
@@ -42,8 +41,6 @@ const SessionView = ({
         providerLabels={providerLabels}
         sessions={sessions}
       />
-
-      {!activeSession && <EmptyState />}
 
       {activeSession && activeSessionId && (
         <div className="session-grid">
