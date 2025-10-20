@@ -7831,11 +7831,70 @@
     ]);
   };
 
+  // src/webview/ui/src/components/action-bar/index.tsx
+  var import_react6 = __toESM(require_react());
+
+  // src/webview/ui/src/root-dom.ts
+  var activateRoot = () => {
+    const rootElement = document.getElementById("root");
+    if (rootElement) {
+      rootElement.classList.add("active");
+    }
+  };
+
+  // src/webview/ui/src/components/action-bar/index.tsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  var BUTTONS = [
+    { id: "newSession", label: ["New", "Session"] },
+    { id: "lastSession", label: ["Last", "Session"], highlighted: true },
+    { id: "clearSession", label: ["Clear", "Session"] },
+    { id: "oldSessions", label: ["Old", "Sessions"] }
+  ];
+  var ActionBar = () => {
+    const handleClick = (0, import_react6.useCallback)((command) => {
+      if (command === "newSession") {
+        activateRoot();
+      }
+      postVsCodeMessage({ command });
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "action-bar__surface", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+        "div",
+        {
+          "aria-hidden": "true",
+          className: "action-bar__rail action-bar__rail--top"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+        "div",
+        {
+          "aria-hidden": "true",
+          className: "action-bar__rail action-bar__rail--bottom"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "action-bar__buttons", children: BUTTONS.map(({ id, label, highlighted }) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+        "button",
+        {
+          "aria-label": `${label[0]} ${label[1]}`,
+          className: highlighted ? "action-bar__button action-bar__button--highlight" : "action-bar__button",
+          onClick: () => handleClick(id),
+          type: "button",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "action-bar__line", children: label[0] }),
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "action-bar__line", children: label[1] })
+          ]
+        },
+        id
+      )) })
+    ] }) });
+  };
+  var action_bar_default = ActionBar;
+
   // src/webview/ui/src/components/settings-view.tsx
-  var import_react8 = __toESM(require_react());
+  var import_react9 = __toESM(require_react());
 
   // src/webview/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   var containerStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -7917,8 +7976,8 @@
         event.currentTarget.style.background = "#0e639c";
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { style: containerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: containerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
         "button",
         {
           disabled: resetting,
@@ -7937,8 +7996,8 @@
           children: resetting ? "Resetting..." : "Reset to Defaults"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "button",
           {
             onClick: onClose,
@@ -7949,7 +8008,7 @@
             children: "Close"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "button",
           {
             disabled: !hasChanges || saving,
@@ -7973,7 +8032,7 @@
   var settings_footer_default = SettingsFooter;
 
   // src/webview/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   var headerStyles = {
     display: "flex",
     alignItems: "center",
@@ -8000,9 +8059,9 @@
     alignItems: "center",
     justifyContent: "center"
   };
-  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: headerStyles, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: titleStyles, children: "Settings" }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: headerStyles, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: titleStyles, children: "Settings" }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
       "button",
       {
         "aria-label": "Close settings",
@@ -8017,7 +8076,7 @@
   var settings_header_default = SettingsHeader;
 
   // src/webview/ui/src/components/settings/thinking-settings.tsx
-  var import_react6 = __toESM(require_react());
+  var import_react7 = __toESM(require_react());
 
   // src/webview/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
@@ -8032,7 +8091,7 @@
 `;
 
   // src/webview/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
   var containerStyles2 = {
     marginTop: "20px",
     padding: "12px",
@@ -8051,14 +8110,14 @@
     color: "#999999",
     lineHeight: "1.4"
   };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: containerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: titleStyles2, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: descriptionStyles, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: containerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: titleStyles2, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: descriptionStyles, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
   ] });
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/webview/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
   var toggleContainerStyles = {
     display: "flex",
     alignItems: "flex-start",
@@ -8085,8 +8144,8 @@
   var noteStyles = {
     color: "#d4a36a"
   };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { style: toggleContainerStyles, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { style: toggleContainerStyles, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
       "input",
       {
         checked: enabled,
@@ -8095,12 +8154,12 @@
         type: "checkbox"
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: titleStyles3, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: descriptionStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: titleStyles3, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: descriptionStyles2, children: [
         "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { style: noteStyles, children: "Note:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { style: noteStyles, children: "Note:" }),
         " Changes take effect when creating a new session."
       ] })
     ] })
@@ -8108,7 +8167,7 @@
   var thinking_toggle_default = ThinkingToggle;
 
   // src/webview/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   var containerStyles3 = {
     paddingLeft: "28px",
     borderTop: "1px solid #3c3c3c",
@@ -8170,10 +8229,10 @@
       const parsed = Number.parseInt(event.target.value, 10);
       updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: titleStyles4, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: titleStyles4, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           "button",
           {
             onClick: () => updateValue(value - THINKING_TOKEN_STEP),
@@ -8183,7 +8242,7 @@
             children: "\u2212"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           "input",
           {
             max: MAX_THINKING_TOKENS,
@@ -8195,7 +8254,7 @@
             value
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
           "button",
           {
             onClick: () => updateValue(value + THINKING_TOKEN_STEP),
@@ -8206,11 +8265,11 @@
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: helperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: helperStyles, children: [
         "\u2022 Normal (4000): Standard reasoning depth",
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("br", {}),
         "\u2022 Hard (10000): Extended analysis for complex tasks",
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("br", {}),
         "\u2022 Ultra (32000): Maximum reasoning capacity"
       ] })
     ] }) });
@@ -8218,7 +8277,7 @@
   var thinking_token_input_default = ThinkingTokenInput;
 
   // src/webview/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     marginBottom: "30px"
   };
@@ -8245,20 +8304,20 @@
     const handleTokenChange = (nextValue) => {
       onChange(enabled, nextValue);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: wrapperStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { style: titleStyles5, children: "Thinking Settings" }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: cardStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(thinking_pro_tip_default, {})
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: wrapperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { style: titleStyles5, children: "Thinking Settings" }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: cardStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(thinking_pro_tip_default, {})
       ] })
     ] });
   };
-  var thinking_settings_default = (0, import_react6.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react7.memo)(ThinkingSettings);
 
   // src/webview/ui/src/components/settings/use-settings-state.ts
-  var import_react7 = __toESM(require_react());
+  var import_react8 = __toESM(require_react());
   var DEFAULT_THINKING_MAX_TOKENS = 4e3;
   var RESET_DELAY_MS = 100;
   var createDefaultSettings = () => ({
@@ -8282,12 +8341,12 @@
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved";
   };
   var useSettingsState = () => {
-    const initialEnabledRef = (0, import_react7.useRef)(false);
-    const [settings, setSettings] = (0, import_react7.useState)(createDefaultSettings);
-    const [hasChanges, setHasChanges] = (0, import_react7.useState)(false);
-    const [saving, setSaving] = (0, import_react7.useState)(false);
-    const [resetting, setResetting] = (0, import_react7.useState)(false);
-    (0, import_react7.useEffect)(() => {
+    const initialEnabledRef = (0, import_react8.useRef)(false);
+    const [settings, setSettings] = (0, import_react8.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react8.useState)(false);
+    const [saving, setSaving] = (0, import_react8.useState)(false);
+    const [resetting, setResetting] = (0, import_react8.useState)(false);
+    (0, import_react8.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
       });
@@ -8319,7 +8378,7 @@
         window.removeEventListener("message", handleMessage);
       };
     }, []);
-    const handleThinkingSettingsChange = (0, import_react7.useCallback)(
+    const handleThinkingSettingsChange = (0, import_react8.useCallback)(
       (enabled, maxTokens) => {
         const nextSettings = {
           thinking: {
@@ -8333,14 +8392,14 @@
       },
       []
     );
-    const handleSave = (0, import_react7.useCallback)(() => {
+    const handleSave = (0, import_react8.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
         type: "settings:save",
         settings
       });
     }, [settings]);
-    const handleReset = (0, import_react7.useCallback)(() => {
+    const handleReset = (0, import_react8.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
         vscode_default.postMessage({
@@ -8360,7 +8419,7 @@
   };
 
   // src/webview/ui/src/components/settings-view.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   var containerStyles4 = {
     height: "100%",
     display: "flex",
@@ -8383,9 +8442,9 @@
       handleSave,
       handleReset
     } = useSettingsState();
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: containerStyles4, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(settings_header_default, { onClose }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: contentStyles, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: containerStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(settings_header_default, { onClose }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { style: contentStyles, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         thinking_settings_default,
         {
           enabled: settings.thinking.enabled,
@@ -8393,7 +8452,7 @@
           onChange: handleThinkingSettingsChange
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         settings_footer_default,
         {
           hasChanges,
@@ -8406,10 +8465,10 @@
       )
     ] });
   };
-  var settings_view_default = import_react8.default.memo(SettingsView);
+  var settings_view_default = import_react9.default.memo(SettingsView);
 
   // src/webview/ui/src/session/dialog-panel.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var roleLabel = {
     system: "System",
     assistant: "Assistant",
@@ -8417,16 +8476,16 @@
   };
   var DialogPanel = ({ messages }) => {
     if (messages.length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-dialog__scroll", children: messages.map((message) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-dialog__scroll", children: messages.map((message) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
       "article",
       {
         className: `session-dialog__message session-dialog__message--${message.role}`,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("header", { className: "session-dialog__message-header", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "session-dialog__role", children: roleLabel[message.role] }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("header", { className: "session-dialog__message-header", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-dialog__role", children: roleLabel[message.role] }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
               "time",
               {
                 className: "session-dialog__timestamp",
@@ -8435,7 +8494,7 @@
               }
             )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "session-dialog__content", children: message.content })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "session-dialog__content", children: message.content })
         ]
       },
       message.id
@@ -8443,16 +8502,8 @@
   };
   var dialog_panel_default = DialogPanel;
 
-  // src/webview/ui/src/session/empty-state.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
-  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "session-empty", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one or more providers in the picker to begin orchestrating them together." })
-  ] });
-  var empty_state_default = EmptyState;
-
   // src/webview/ui/src/session/input-panel.tsx
-  var import_react9 = __toESM(require_react());
+  var import_react10 = __toESM(require_react());
 
   // src/webview/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
   var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
@@ -8875,22 +8926,22 @@ ${path}` : path;
     element.setSelectionRange(length, length);
   };
   var InputPanel = ({ draft, onSubmit }) => {
-    const [value, setValue] = (0, import_react9.useState)(draft);
-    const [isDragging, setIsDragging] = (0, import_react9.useState)(false);
-    const [isFocused, setIsFocused] = (0, import_react9.useState)(false);
-    const textareaRef = (0, import_react9.useRef)(null);
-    const dropContainerRef = (0, import_react9.useRef)(null);
-    const dragDropFacadeRef = (0, import_react9.useRef)(null);
-    const updateValue = (0, import_react9.useCallback)((nextValue) => {
+    const [value, setValue] = (0, import_react10.useState)(draft);
+    const [isDragging, setIsDragging] = (0, import_react10.useState)(false);
+    const [isFocused, setIsFocused] = (0, import_react10.useState)(false);
+    const textareaRef = (0, import_react10.useRef)(null);
+    const dropContainerRef = (0, import_react10.useRef)(null);
+    const dragDropFacadeRef = (0, import_react10.useRef)(null);
+    const updateValue = (0, import_react10.useCallback)((nextValue) => {
       setValue(nextValue);
       requestAnimationFrame(() => {
         adjustTextareaHeight(textareaRef.current);
       });
     }, []);
-    (0, import_react9.useEffect)(() => {
+    (0, import_react10.useEffect)(() => {
       updateValue(draft);
     }, [draft, updateValue]);
-    const sendMessage = (0, import_react9.useCallback)(() => {
+    const sendMessage = (0, import_react10.useCallback)(() => {
       const trimmed = value.trim();
       if (!trimmed) {
         return;
@@ -8898,14 +8949,14 @@ ${path}` : path;
       onSubmit(trimmed);
       updateValue("");
     }, [onSubmit, updateValue, value]);
-    const handleSubmit = (0, import_react9.useCallback)(
+    const handleSubmit = (0, import_react10.useCallback)(
       (event) => {
         event.preventDefault();
         sendMessage();
       },
       [sendMessage]
     );
-    const handleKeyDown = (0, import_react9.useCallback)(
+    const handleKeyDown = (0, import_react10.useCallback)(
       (event) => {
         if (event.key !== "Enter") {
           return;
@@ -8922,13 +8973,13 @@ ${path}` : path;
       },
       [sendMessage]
     );
-    const handleChange = (0, import_react9.useCallback)(
+    const handleChange = (0, import_react10.useCallback)(
       (event) => {
         updateValue(event.target.value);
       },
       [updateValue]
     );
-    const applyExternalValue = (0, import_react9.useCallback)(
+    const applyExternalValue = (0, import_react10.useCallback)(
       (newValue) => {
         updateValue(newValue);
         requestAnimationFrame(() => {
@@ -8938,7 +8989,7 @@ ${path}` : path;
       },
       [updateValue]
     );
-    (0, import_react9.useEffect)(() => {
+    (0, import_react10.useEffect)(() => {
       const container = dropContainerRef.current;
       const textarea = textareaRef.current;
       if (!(container && textarea)) {
@@ -9155,7 +9206,6 @@ ${path}` : path;
           sessions
         }
       ),
-      !activeSession && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(empty_state_default, {}),
       activeSession && activeSessionId && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "session-grid", children: [
         /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(dialog_panel_default, { messages: activeSession.messages }),
         /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
@@ -9178,55 +9228,8 @@ ${path}` : path;
   };
   var session_view_default = SessionView;
 
-  // src/webview/ui/src/components/action-bar/index.tsx
-  var import_react10 = __toESM(require_react());
-
-  // src/webview/ui/src/root-dom.ts
-  var activateRoot = () => {
-    const rootElement = document.getElementById("root");
-    if (rootElement) {
-      rootElement.classList.add("active");
-    }
-  };
-
-  // src/webview/ui/src/components/action-bar/index.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
-  var BUTTONS = [
-    { id: "newSession", label: ["New", "Session"] },
-    { id: "lastSession", label: ["Last", "Session"], highlighted: true },
-    { id: "clearSession", label: ["Clear", "Session"] },
-    { id: "oldSessions", label: ["Old", "Sessions"] }
-  ];
-  var ActionBar = () => {
-    const handleClick = (0, import_react10.useCallback)((command) => {
-      if (command === "newSession") {
-        activateRoot();
-      }
-      postVsCodeMessage({ command });
-    }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "action-bar__surface", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "action-bar__rail action-bar__rail--top", "aria-hidden": "true" }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "action-bar__rail action-bar__rail--bottom", "aria-hidden": "true" }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "action-bar__buttons", children: BUTTONS.map(({ id, label, highlighted }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
-        "button",
-        {
-          "aria-label": `${label[0]} ${label[1]}`,
-          className: highlighted ? "action-bar__button action-bar__button--highlight" : "action-bar__button",
-          onClick: () => handleClick(id),
-          type: "button",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "action-bar__line", children: label[0] }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "action-bar__line", children: label[1] })
-          ]
-        },
-        id
-      )) })
-    ] }) });
-  };
-  var action_bar_default = ActionBar;
-
   // src/webview/ui/src/app-host.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var AppHost = () => {
     const {
       pickerState,
@@ -9275,10 +9278,10 @@ ${path}` : path;
       onSessionFocusLast: focusLastSession,
       onShowSettings: handleShowSettings
     });
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(action_bar_default, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "app-shell__session-region", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(action_bar_default, {}),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "app-shell__session-region", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           ProviderPicker,
           {
             onCancel: cancelSelection,
@@ -9287,7 +9290,7 @@ ${path}` : path;
             visible: pickerState.visible
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           session_view_default,
           {
             activeSessionId,
@@ -9302,13 +9305,13 @@ ${path}` : path;
           }
         )
       ] }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
     ] });
   };
   var app_host_default = AppHost;
 
   // src/webview/ui/src/index.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var mount = () => {
     const rootElement = document.getElementById("root");
     if (!rootElement) {
@@ -9317,7 +9320,7 @@ ${path}` : path;
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(import_react12.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(import_react12.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(app_host_default, {}) })
     );
   };
   mount();

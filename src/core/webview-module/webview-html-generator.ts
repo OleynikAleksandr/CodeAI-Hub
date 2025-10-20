@@ -44,71 +44,35 @@ export class WebviewHtmlGenerator {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="${csp}">
   <style>
-    html { background-color: #1e1e1e !important; }
-    body {
+    html {
       background-color: rgba(40, 41, 42, 1) !important;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: rgba(40, 41, 42, 1) !important;
+      color: var(--vscode-editor-foreground, #cccccc);
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
     }
     body.loaded {
       opacity: 1;
     }
+    #app {
+      min-height: 100vh;
+      background-color: rgba(40, 41, 42, 1);
+    }
+    #root {
+      min-height: 100vh;
+    }
   </style>
   <link href="${mainViewCssUri}" rel="stylesheet">
   <link href="${reactAppCssUri}" rel="stylesheet">
   <link href="${sessionViewCssUri}" rel="stylesheet">
   <title>CodeAI Hub</title>
-  <style>
-    html, body {
-      background-color: rgba(37, 37, 40, 1);
-      color: var(--vscode-editor-foreground, #cccccc);
-      margin: 0;
-      padding: 0;
-    }
-    #app {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background-color: rgba(37, 37, 40, 1);
-    }
-    .action-bar {
-      background-color: rgba(37, 37, 40, 1);
-      padding: 8px;
-      box-shadow: 0 1px rgba(255, 255, 255, 0.06);
-    }
-    .action-bar__inner {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .session-region {
-      flex: 1 1 auto;
-      padding: 8px;
-      background-color: rgba(31, 31, 31, 1);
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-    }
-    #root {
-      display: none;
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow: hidden;
-      background-color: rgba(37, 37, 40, 0);
-      box-sizing: border-box;
-    }
-    #root.active {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      height: 100%;
-    }
-  </style>
 </head>
-<body style="background-color: rgba(37, 37, 40, 1) !important;">
-  <div id="app">
-    <div id="root"${showChat ? ' class="active"' : ""}></div>
-  </div>
+<body>
+  <div id="app"><div id="root"${showChat ? ' class="active"' : ""}></div></div>
 
   <script nonce="${nonce}">
     (function initFadeIn() {
