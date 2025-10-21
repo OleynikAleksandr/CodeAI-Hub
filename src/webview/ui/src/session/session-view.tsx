@@ -2,6 +2,7 @@ import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
 import EmptyState from "./empty-state";
+import InfoPanel from "./info-panel";
 import InputPanel from "./input-panel";
 import SessionTabs from "./session-tabs";
 import StatusPanel from "./status-panel";
@@ -53,20 +54,23 @@ const SessionView = ({
         sessions={sessions}
       />
 
-      {activeSession && activeSessionId && (
-        <div className="session-grid">
-          <DialogPanel messages={activeSession.messages} />
-          <TodoPanel
-            items={activeSession.todos}
-            onToggle={(todoId) => onToggleTodo(activeSessionId, todoId)}
-          />
-          <InputPanel
-            draft={activeSession.draft}
-            onSubmit={(text) => onSendMessage(activeSessionId, text)}
-          />
-          <StatusPanel status={activeSession.status} />
-        </div>
-      )}
+      {activeSession && activeSessionId ? (
+        <>
+          <InfoPanel />
+          <div className="session-grid">
+            <DialogPanel messages={activeSession.messages} />
+            <TodoPanel
+              items={activeSession.todos}
+              onToggle={(todoId) => onToggleTodo(activeSessionId, todoId)}
+            />
+            <InputPanel
+              draft={activeSession.draft}
+              onSubmit={(text) => onSendMessage(activeSessionId, text)}
+            />
+            <StatusPanel status={activeSession.status} />
+          </div>
+        </>
+      ) : null}
     </div>
   );
 };

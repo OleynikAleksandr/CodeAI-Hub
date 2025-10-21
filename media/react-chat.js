@@ -8512,6 +8512,13 @@
   ] });
   var empty_state_default = EmptyState;
 
+  // src/webview/ui/src/session/info-panel.tsx
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var InfoPanel = () => {
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("section", { className: "session-panel session-info", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-info__text", children: "Info Panel" }) });
+  };
+  var info_panel_default = InfoPanel;
+
   // src/webview/ui/src/session/input-panel.tsx
   var import_react10 = __toESM(require_react());
 
@@ -8914,7 +8921,7 @@ ${path}` : path;
   };
 
   // src/webview/ui/src/session/input-panel.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   var MAX_TEXTAREA_HEIGHT = 200;
   var adjustTextareaHeight = (textarea) => {
     if (!textarea) {
@@ -9019,14 +9026,14 @@ ${path}` : path;
       };
     }, [applyExternalValue]);
     const overlayLabel = "Drop files here while holding Shift";
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
       "form",
       {
         "aria-label": "Message input",
         className: "session-input session-panel",
         onSubmit: handleSubmit,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
             "div",
             {
               className: [
@@ -9035,7 +9042,7 @@ ${path}` : path;
               ].filter(Boolean).join(" "),
               ref: dropContainerRef,
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
                   "textarea",
                   {
                     "aria-multiline": "true",
@@ -9053,11 +9060,11 @@ ${path}` : path;
                     value
                   }
                 ),
-                isDragging && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("output", { className: "session-input__overlay", children: overlayLabel })
+                isDragging && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("output", { className: "session-input__overlay", children: overlayLabel })
               ]
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
         ]
       }
     );
@@ -9065,7 +9072,7 @@ ${path}` : path;
   var input_panel_default = InputPanel;
 
   // src/webview/ui/src/session/session-tabs.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   var SessionTabs = ({
     sessions,
     providerLabels,
@@ -9076,7 +9083,7 @@ ${path}` : path;
     if (sessions.length === 0) {
       return null;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
       const isActive = session.id === activeSessionId;
       const providerNames = session.providerIds.map((providerId) => {
         const label = providerLabels.get(providerId) ?? providerId;
@@ -9099,8 +9106,8 @@ ${path}` : path;
       const spokenSummary = providerNames.join(", ");
       const fullSummary = session.providerIds.map((providerId) => providerLabels.get(providerId) ?? providerId).join(" + ");
       const tabClassName = isActive ? "session-tab session-tab--active" : "session-tab";
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: tabClassName, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: tabClassName, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           "button",
           {
             "aria-label": `Activate session for ${spokenSummary}`,
@@ -9108,13 +9115,13 @@ ${path}` : path;
             onClick: () => onSelect(session.id),
             title: fullSummary,
             type: "button",
-            children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "session-tab__providers", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
-              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
+            children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "session-tab__providers", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
+              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
             ] })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
           "button",
           {
             "aria-label": `Close session for ${spokenSummary}`,
@@ -9130,7 +9137,7 @@ ${path}` : path;
   var session_tabs_default = SessionTabs;
 
   // src/webview/ui/src/session/status-panel.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var MAX_PERCENTAGE = 100;
   var MIN_TOKEN_LIMIT = 1;
   var PERCENT_SCALE = 100;
@@ -9142,14 +9149,14 @@ ${path}` : path;
         tokenUsage.used / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT) * PERCENT_SCALE
       )
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("section", { className: "session-status session-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__label", children: "Providers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__value", children: providerSummary })
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("section", { className: "session-status session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "session-status__label", children: "Providers" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "session-status__value", children: providerSummary })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__label", children: "Tokens" }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "session-status__value", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "session-status__label", children: "Tokens" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "session-status__value", children: [
           tokenUsage.used.toLocaleString(),
           " /",
           " ",
@@ -9164,21 +9171,21 @@ ${path}` : path;
   var status_panel_default = StatusPanel;
 
   // src/webview/ui/src/session/todo-panel.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
-  var TodoPanel = ({ items, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("section", { className: "session-todos session-panel", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("header", { className: "session-todos__header", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "session-todos__counter", children: [
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var TodoPanel = ({ items, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "session-todos session-panel", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("header", { className: "session-todos__header", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "session-todos__counter", children: [
         items.filter((item) => item.completed).length,
         "/",
         items.length,
         " done"
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("ul", { className: "session-todos__list", children: items.map((item) => {
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("ul", { className: "session-todos__list", children: items.map((item) => {
       const textClassName = item.completed ? "session-todos__text session-todos__text--completed" : "session-todos__text";
-      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "session-todos__label", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "session-todos__label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "input",
           {
             checked: item.completed,
@@ -9186,14 +9193,14 @@ ${path}` : path;
             type: "checkbox"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: textClassName, children: item.title })
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: textClassName, children: item.title })
       ] }) }, item.id);
     }) })
   ] });
   var todo_panel_default = TodoPanel;
 
   // src/webview/ui/src/session/session-view.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var SessionView = ({
     sessions,
     providerLabels,
@@ -9207,10 +9214,10 @@ ${path}` : path;
   }) => {
     const activeSession = activeSessionId && snapshots[activeSessionId] ? snapshots[activeSessionId] : null;
     if (sessions.length === 0 && showEmptyState) {
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(empty_state_default, {}) });
+      return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(empty_state_default, {}) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-app", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "session-app", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
         session_tabs_default,
         {
           activeSessionId,
@@ -9220,30 +9227,33 @@ ${path}` : path;
           sessions
         }
       ),
-      activeSession && activeSessionId && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(dialog_panel_default, { messages: activeSession.messages }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-          todo_panel_default,
-          {
-            items: activeSession.todos,
-            onToggle: (todoId) => onToggleTodo(activeSessionId, todoId)
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-          input_panel_default,
-          {
-            draft: activeSession.draft,
-            onSubmit: (text) => onSendMessage(activeSessionId, text)
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(status_panel_default, { status: activeSession.status })
-      ] })
+      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(info_panel_default, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "session-grid", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(dialog_panel_default, { messages: activeSession.messages }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+            todo_panel_default,
+            {
+              items: activeSession.todos,
+              onToggle: (todoId) => onToggleTodo(activeSessionId, todoId)
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+            input_panel_default,
+            {
+              draft: activeSession.draft,
+              onSubmit: (text) => onSendMessage(activeSessionId, text)
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(status_panel_default, { status: activeSession.status })
+        ] })
+      ] }) : null
     ] });
   };
   var session_view_default = SessionView;
 
   // src/webview/ui/src/app-host.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var AppHost = () => {
     const {
       pickerState,
@@ -9292,10 +9302,10 @@ ${path}` : path;
       onSessionFocusLast: focusLastSession,
       onShowSettings: handleShowSettings
     });
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(action_bar_default, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "app-shell__session-region", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(action_bar_default, {}),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "app-shell__session-region", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
           ProviderPicker,
           {
             onCancel: cancelSelection,
@@ -9304,7 +9314,7 @@ ${path}` : path;
             visible: pickerState.visible
           }
         ),
-        pickerState.visible ? null : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+        pickerState.visible ? null : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
           session_view_default,
           {
             activeSessionId,
@@ -9319,13 +9329,13 @@ ${path}` : path;
           }
         )
       ] }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
     ] });
   };
   var app_host_default = AppHost;
 
   // src/webview/ui/src/index.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   var mount = () => {
     const rootElement = document.getElementById("root");
     if (!rootElement) {
@@ -9334,7 +9344,7 @@ ${path}` : path;
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(import_react12.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(import_react12.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(app_host_default, {}) })
     );
   };
   mount();
