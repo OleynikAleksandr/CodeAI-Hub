@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.0.24] - 2025-10-21
+### Changed
+- Matched the Session Status panel font size with the TODO block (11 px) so all session chrome text feels consistent.
+
+### Build
+- Release packaged as `codeai-hub-1.0.24.vsix` via `./scripts/build-release.sh 1.0.24`.
+
 # [1.0.23] - 2025-10-21
 ### Changed
 - Reduced the Session TODO header and item font sizes by 1px to further compress panel height while keeping counters legible.
@@ -178,6 +185,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Repository bootstrap with Ultracite configuration, quality scripts, and project documentation.
 
+[1.0.24]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.24
 [1.0.23]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.23
 [1.0.22]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.22
 [1.0.21]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.21
