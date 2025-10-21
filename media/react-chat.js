@@ -9304,7 +9304,7 @@ ${path}` : path;
             visible: pickerState.visible
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+        pickerState.visible ? null : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
           session_view_default,
           {
             activeSessionId,
@@ -9314,7 +9314,7 @@ ${path}` : path;
             onToggleTodo: toggleTodo,
             providerLabels,
             sessions,
-            showEmptyState: !pickerState.visible,
+            showEmptyState: true,
             snapshots
           }
         )
