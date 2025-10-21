@@ -95,7 +95,7 @@ UI слой остаётся в open source репозитории и работ
 - **dialog-block-module** — композиция блока диалога, адаптирована под режим сравнения провайдеров.
 - **input-block-module** — ввод сообщений, выбор провайдера/режима, подсказки лимитов.
 - **status-block-module** — индикаторы статуса (кредиты, тип провайдера, состояние подключения Remote Bridge).
-- **todos-block-module** — UI для TODO и структурированных задач.
+- **todos-block-module** — UI для TODO и структурированных задач; с 1.0.22 добавлен локальный фильтр «только активные» и компактный хедер с переключателем.
 - **session-tabs-component** — стили и логика вкладок с провайдерными бейджами.
 - **drag-drop-module** — обработка drag&drop файлов, добавлены события маршрутизации к провайдерам.
 - **session-shell-lite** — упрощённый набор компонентов (`session-view`, `session-tabs`, `info-panel`, `dialog-panel`, `todo-panel`, `status-panel`, `input-panel`) перенесён в CodeAI-Hub; в 1.0.8 дополнился `action-bar` и сеткой `session-grid`, с 1.0.17 Action Bar целиком живёт в React-дереве, а с 1.0.20 Info Panel занимает свой слот над диалогом.
