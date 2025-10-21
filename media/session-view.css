@@ -157,6 +157,18 @@
   color: rgba(204, 204, 204, 1);
 }
 
+.session-info {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.session-info__text {
+  color: inherit;
+}
+
 .session-dialog {
   display: flex;
   flex-direction: column;
