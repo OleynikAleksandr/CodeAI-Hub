@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.0.23] - 2025-10-21
+### Changed
+- Reduced the Session TODO header and item font sizes by 1px to further compress panel height while keeping counters legible.
+
+### Build
+- Release packaged as `codeai-hub-1.0.23.vsix` via `./scripts/build-release.sh 1.0.23`.
+
 # [1.0.22] - 2025-10-21
 ### Changed
 - Added an inline toggle to show only active tasks in the Session TODO list and collapse completed items.
@@ -171,6 +178,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Repository bootstrap with Ultracite configuration, quality scripts, and project documentation.
 
+[1.0.23]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.23
 [1.0.22]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.22
 [1.0.21]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.21
 [1.0.20]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.20

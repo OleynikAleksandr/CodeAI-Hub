@@ -2,11 +2,11 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.0.22
+## Current Release — v1.0.23
 - **Todo focus toggle**: the Session TODO header now includes a drop-down control to collapse completed items and highlight only active work.
-- **Compact todo panel layout**: tightened top padding and title spacing keep the panel shorter while preserving readability.
+- **Slimmed todo typography**: header and task rows drop by 1px each, shaving panel height without sacrificing readability.
 - **Provider picker overlay polish**: the chooser inherits a darker shell (`#242A2F`) and temporarily hides the live session layout so tabs, dialog, and todos no longer flicker beneath it.
-- **Release artifact**: packaged as `codeai-hub-1.0.22.vsix` via the release script.
+- **Release artifact**: packaged as `codeai-hub-1.0.23.vsix` via the release script.
 
 ## Features
 - **React-driven command bar**: the extension view opens with a React-rendered quick-action row that mirrors the Claude Code Fusion UX.
