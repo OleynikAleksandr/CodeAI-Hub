@@ -75,17 +75,19 @@ const AppHost = () => {
           providers={pickerState.providers}
           visible={pickerState.visible}
         />
-        <SessionView
-          activeSessionId={activeSessionId}
-          onCloseSession={closeSession}
-          onSelectSession={selectSession}
-          onSendMessage={sendMessage}
-          onToggleTodo={toggleTodo}
-          providerLabels={providerLabels}
-          sessions={sessions}
-          showEmptyState={!pickerState.visible}
-          snapshots={snapshots}
-        />
+        {pickerState.visible ? null : (
+          <SessionView
+            activeSessionId={activeSessionId}
+            onCloseSession={closeSession}
+            onSelectSession={selectSession}
+            onSendMessage={sendMessage}
+            onToggleTodo={toggleTodo}
+            providerLabels={providerLabels}
+            sessions={sessions}
+            showEmptyState
+            snapshots={snapshots}
+          />
+        )}
       </div>
       {settingsVisible ? (
         <div className="settings-overlay">
