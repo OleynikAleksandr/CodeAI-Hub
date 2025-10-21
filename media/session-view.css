@@ -401,7 +401,7 @@
 .session-status__row {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 11px;
   margin-bottom: 6px;
 }
 
