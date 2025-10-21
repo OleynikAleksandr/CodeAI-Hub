@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.0.22] - 2025-10-21
+### Changed
+- Added an inline toggle to show only active tasks in the Session TODO list and collapse completed items.
+- Tightened the Session TODO header spacing so the panel height matches the refreshed chrome.
+
+### Build
+- Release packaged as `codeai-hub-1.0.22.vsix` via `./scripts/build-release.sh 1.0.22`.
+
 # [1.0.21] - 2025-10-21
 ### Changed
 - Aligned the new Info Panel with the status block layout, keeping the shared 56px rail while leaving a placeholder row for future metadata.
@@ -163,6 +171,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Repository bootstrap with Ultracite configuration, quality scripts, and project documentation.
 
+[1.0.22]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.22
 [1.0.21]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.21
 [1.0.20]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.20
 [1.0.19]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.19

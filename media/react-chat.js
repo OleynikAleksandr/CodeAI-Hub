@@ -7281,11 +7281,11 @@
   });
 
   // src/webview/ui/src/index.tsx
-  var import_react12 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/webview/ui/src/app-host.tsx
-  var import_react11 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
 
   // src/webview/ui/src/app-host/provider-picker-state.ts
   var import_react2 = __toESM(require_react());
@@ -9172,32 +9172,60 @@ ${path}` : path;
   var status_panel_default = StatusPanel;
 
   // src/webview/ui/src/session/todo-panel.tsx
+  var import_react11 = __toESM(require_react());
   var import_jsx_runtime16 = __toESM(require_jsx_runtime());
-  var TodoPanel = ({ items, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "session-todos session-panel", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("header", { className: "session-todos__header", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "session-todos__counter", children: [
-        items.filter((item) => item.completed).length,
-        "/",
-        items.length,
-        " done"
-      ] })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("ul", { className: "session-todos__list", children: items.map((item) => {
-      const textClassName = item.completed ? "session-todos__text session-todos__text--completed" : "session-todos__text";
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "session-todos__label", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-          "input",
-          {
-            checked: item.completed,
-            onChange: () => onToggle(item.id),
-            type: "checkbox"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: textClassName, children: item.title })
-      ] }) }, item.id);
-    }) })
-  ] });
+  var TodoPanel = ({ items, onToggle }) => {
+    const [showActiveOnly, setShowActiveOnly] = (0, import_react11.useState)(false);
+    const completedCount = (0, import_react11.useMemo)(
+      () => items.filter((item) => item.completed).length,
+      [items]
+    );
+    const visibleItems = (0, import_react11.useMemo)(
+      () => showActiveOnly ? items.filter((item) => !item.completed) : [...items],
+      [items, showActiveOnly]
+    );
+    const handleToggleFilter = () => {
+      setShowActiveOnly((previous) => !previous);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "session-todos session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("header", { className: "session-todos__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-todos__title-group", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            "button",
+            {
+              "aria-label": showActiveOnly ? "Show all tasks" : "Show only active tasks",
+              "aria-pressed": showActiveOnly,
+              className: showActiveOnly ? "session-todos__toggle session-todos__toggle--active" : "session-todos__toggle",
+              onClick: handleToggleFilter,
+              type: "button",
+              children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { "aria-hidden": true, className: "session-todos__toggle-icon", children: "\u25BE" })
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "session-todos__counter", children: [
+          completedCount,
+          "/",
+          items.length,
+          " done"
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("ul", { className: "session-todos__list", children: visibleItems.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("li", { className: "session-todos__empty", children: "All tasks complete" }) : visibleItems.map((item) => {
+        const textClassName = item.completed ? "session-todos__text session-todos__text--completed" : "session-todos__text";
+        return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "session-todos__label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            "input",
+            {
+              checked: item.completed,
+              onChange: () => onToggle(item.id),
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: textClassName, children: item.title })
+        ] }) }, item.id);
+      }) })
+    ] });
+  };
   var todo_panel_default = TodoPanel;
 
   // src/webview/ui/src/session/session-view.tsx
@@ -9277,14 +9305,14 @@ ${path}` : path;
       sendMessage
     } = useSessionStore(providerLabels);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const handleProviderPickerOpen = (0, import_react11.useCallback)(
+    const handleProviderPickerOpen = (0, import_react12.useCallback)(
       (providers) => {
         activateRoot();
         openPicker(providers);
       },
       [openPicker]
     );
-    const handleSessionCreatedMessage = (0, import_react11.useCallback)(
+    const handleSessionCreatedMessage = (0, import_react12.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
@@ -9292,7 +9320,7 @@ ${path}` : path;
       },
       [handleSessionCreated, resetPicker]
     );
-    const handleShowSettings = (0, import_react11.useCallback)(() => {
+    const handleShowSettings = (0, import_react12.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
@@ -9345,7 +9373,7 @@ ${path}` : path;
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(import_react12.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(import_react13.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(app_host_default, {}) })
     );
   };
   mount();
