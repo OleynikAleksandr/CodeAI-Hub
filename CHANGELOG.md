@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.0.21] - 2025-10-21
+### Changed
+- Aligned the new Info Panel with the status block layout, keeping the shared 56px rail while leaving a placeholder row for future metadata.
+- Finalised the provider picker overlay polish so the session grid stays hidden whenever the chooser is open.
+
+### Build
+- Release packaged as `codeai-hub-1.0.21.vsix` via `./scripts/build-release.sh 1.0.21`.
+
+# [1.0.20] - 2025-10-21
+### Added
+- Introduced the Info Panel scaffold between the session tabs and dialog to host forthcoming runtime insights.
+
+### Build
+- Release packaged as `codeai-hub-1.0.20.vsix` via `./scripts/build-release.sh 1.0.20`.
+
+# [1.0.19] - 2025-10-21
+### Changed
+- Retinted inactive session tabs to `#1D2F48`, improving contrast against the refreshed shell.
+
+### Build
+- Release packaged as `codeai-hub-1.0.19.vsix` via `./scripts/build-release.sh 1.0.19`.
+
+# [1.0.18] - 2025-10-21
+### Changed
+- Restyled the provider picker to use the darker `#242A2F` backdrop and hide the live session chrome while the dialog is active, preventing layout flicker.
+
+### Build
+- Release packaged as `codeai-hub-1.0.18.vsix` via `./scripts/build-release.sh 1.0.18`.
+
 # [1.0.17] - 2025-10-20
 ### Changed
 - Ported the top action row to the `ActionBar` React component so it shares state with the provider picker and no longer depends on static HTML.
@@ -134,6 +163,10 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Repository bootstrap with Ultracite configuration, quality scripts, and project documentation.
 
+[1.0.21]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.21
+[1.0.20]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.20
+[1.0.19]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.19
+[1.0.18]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.18
 [1.0.9]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.9
 [1.0.10]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.10
 [1.0.11]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.11
