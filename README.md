@@ -2,11 +2,11 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.0.17
-- **Action bar in React**: the quick-action row is now rendered by the `ActionBar` component, sharing state with the provider picker instead of relying on static HTML.
-- **Empty state returns**: the “Create your first session” helper resurfaces whenever no sessions are open and the picker is hidden.
-- **Unified color tokens**: button colors are centralized in `media/main-view.css` (`--color-steelblue-*`, `--color-cornflowerblue`, `--color-deepskyblue`) for hover/active states.
-- **Release artifact**: packaged as `codeai-hub-1.0.17.vsix` via the release script.
+## Current Release — v1.0.21
+- **Provider picker overlay polish**: the chooser inherits a darker shell (`#242A2F`) and temporarily hides the live session layout so tabs, dialog, and todos no longer flicker beneath it.
+- **Session tabs contrast**: inactive tabs adopt `#1D2F48`, keeping the active tab focus without losing legibility on the new chrome.
+- **Info panel scaffold**: a lightweight “Info Panel” now sits between the tab strip and dialog, using the same 56px rail as the status block so upcoming metadata slots have a home.
+- **Release artifact**: packaged as `codeai-hub-1.0.21.vsix` via the release script.
 
 ## Features
 - **React-driven command bar**: the extension view opens with a React-rendered quick-action row that mirrors the Claude Code Fusion UX.

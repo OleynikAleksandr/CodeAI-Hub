@@ -78,6 +78,7 @@ UI слой остаётся в open source репозитории и работ
 - **SessionInterfaceFacade** — монтируется только для активной сессии, передаёт идентификатор провайдера.
 - **Компоненты:** DialogManager, TodosManager, InputManager, StatusManager, SessionStateManager, SessionStateContainer, SessionUserActions, SessionMessageRouter.
 - **InputPanel v2:** `session/input-panel.tsx` управляет textarea без inline-стилей, использует `DragDropFacade`/`MessageHandler`/`FilePathProcessor` из `modules/drag-drop-module` и отображает overlay через `session-input__overlay`.
+- **InfoPanel (1.0.20+)** — промежуточная секция над диалогом, повторяющая сетку Status Panel (56 px), пока содержит заглушку «Info Panel» и зарезервирована под рантайм-метаданные.
 - Модуль интегрирует провайдер-специфичные тулзы через реестр, не изменяя базовый рендер.
 
 ### dialog-renderer-module
@@ -97,8 +98,8 @@ UI слой остаётся в open source репозитории и работ
 - **todos-block-module** — UI для TODO и структурированных задач.
 - **session-tabs-component** — стили и логика вкладок с провайдерными бейджами.
 - **drag-drop-module** — обработка drag&drop файлов, добавлены события маршрутизации к провайдерам.
-- **session-shell-lite** — упрощённый набор компонентов (`session-view`, `session-tabs`, `dialog-panel`, `todo-panel`, `status-panel`, `input-panel`) перенесён в CodeAI-Hub; в 1.0.8 дополнился `action-bar` и сеткой `session-grid`, а с 1.0.17 Action Bar целиком живёт в React-дереве, сохраняя высоту блока диалога.
-- **provider-picker** — лёгкий React-компонент для выбора одного или нескольких провайдеров при создании сессии; запускается из `ActionBar`/`HomeViewMessageRouter`, сбрасывает состояние после подтверждения (коммит e300238).
+- **session-shell-lite** — упрощённый набор компонентов (`session-view`, `session-tabs`, `info-panel`, `dialog-panel`, `todo-panel`, `status-panel`, `input-panel`) перенесён в CodeAI-Hub; в 1.0.8 дополнился `action-bar` и сеткой `session-grid`, с 1.0.17 Action Bar целиком живёт в React-дереве, а с 1.0.20 Info Panel занимает свой слот над диалогом.
+- **provider-picker** — лёгкий React-компонент для выбора одного или нескольких провайдеров при создании сессии; запускается из `ActionBar`/`HomeViewMessageRouter`, сбрасывает состояние после подтверждения (коммит e300238). C 1.0.18 получает фон `#242A2F` и блокирует отображение основной сетки, пока открыт диалог выбора.
 - **app-host** — тонкий контейнер (`app-host.tsx`), объединяющий провайдер-пикер, сессионный UI и модальное окно настроек для webview-панели.
 - **settings-view** — React-компонент настроек, перенесённый без изменений из claude-code-fusion; отвечает за thinking-режим и сохраняет состояние через сообщения `settings:*`.
 
