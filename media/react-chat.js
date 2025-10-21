@@ -8514,9 +8514,10 @@
 
   // src/webview/ui/src/session/info-panel.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  var InfoPanel = () => {
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("section", { className: "session-panel session-info", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-info__text", children: "Info Panel" }) });
-  };
+  var InfoPanel = () => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "session-panel session-info", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-info__text", children: "Info Panel" }) }),
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { "aria-hidden": true, className: "session-status__row session-info__spacer", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-info__text", children: "\xA0" }) })
+  ] });
   var info_panel_default = InfoPanel;
 
   // src/webview/ui/src/session/input-panel.tsx

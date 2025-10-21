@@ -159,14 +159,18 @@
 
 .session-info {
   display: flex;
-  align-items: center;
-  min-height: 56px;
-  font-size: 12px;
-  font-weight: 500;
+  flex-direction: column;
 }
 
 .session-info__text {
   color: inherit;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.session-info__spacer {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .session-dialog {
