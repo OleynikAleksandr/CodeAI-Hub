@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeAI Hub – Web Client</title>
+    <style>
+      :root {
+        --vscode-font-family: "SF Pro Text", "Segoe UI", sans-serif;
+        --vscode-font-size: 13px;
+        --vscode-foreground: #e5e5e5;
+        --vscode-editor-background: #1e1e1e;
+        --vscode-editorWidget-background: #252526;
+        --vscode-input-background: #1f1f1f;
+        --vscode-input-foreground: #f0f0f0;
+        --vscode-input-placeholderForeground: #9d9d9d;
+        --vscode-focusBorder: #3794ff;
+        --vscode-button-background: #0e639c;
+        --vscode-button-foreground: #ffffff;
+        --vscode-button-hoverBackground: #1177bb;
+        --vscode-list-hoverBackground: rgba(255, 255, 255, 0.08);
+        --vscode-dropdown-background: #1f1f1f;
+        --vscode-dropdown-foreground: #f0f0f0;
+        --vscode-checkbox-border: #3c3c3c;
+        --vscode-checkbox-background: #1f1f1f;
+        --vscode-settings-numberInputBorder: #3c3c3c;
+        --vscode-settings-dropdownListBorder: #3c3c3c;
+        --vscode-settings-textInputBorder: #3c3c3c;
+        --vscode-descriptionForeground: #9f9f9f;
+        --vscode-scrollbarSlider-background: rgba(121, 121, 121, 0.4);
+        --vscode-scrollbarSlider-hoverBackground: rgba(150, 150, 150, 0.7);
+        --vscode-scrollbarSlider-activeBackground: rgba(191, 191, 191, 0.4);
+        --vscode-editorLineNumber-foreground: #858585;
+        --vscode-tab-activeBackground: #1e1e1e;
+        --vscode-tab-inactiveBackground: #252526;
+        --vscode-badge-background: #264f78;
+        --vscode-badge-foreground: #ffffff;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--vscode-font-family);
+        font-size: var(--vscode-font-size);
+        color: var(--vscode-foreground);
+        background-color: var(--vscode-editor-background);
+      }
+
+      #app,
+      #root {
+        min-height: 100vh;
+      }
+    </style>
+    <!--theme:inject-->
+  </head>
+  <body>
+    <div id="app">
+      <div id="root">
+        <p
+          style="color:#ccc;font-family:var(--vscode-font-family);padding:16px"
+        >
+          Loading CodeAI Hub web client…
+        </p>
+      </div>
+    </div>
+    <script>
+      const showError = (message) => {
+        const container = document.getElementById("root");
+        if (container) {
+          container.innerHTML = "";
+          const panel = document.createElement("div");
+          panel.style.padding = "16px";
+          panel.style.fontFamily = "var(--vscode-font-family)";
+          panel.style.color = "#ff9b9b";
+          panel.style.background = "#2a2125";
+          panel.style.border = "1px solid #4a2727";
+          panel.textContent = `Web client failed to load: ${message}`;
+          container.appendChild(panel);
+        }
+      };
+      window.addEventListener("error", (event) => {
+        if (event?.message) {
+          showError(event.message);
+        }
+      });
+      window.addEventListener("unhandledrejection", (event) => {
+        const reason = event?.reason;
+        if (reason) {
+          const message = typeof reason === "string" ? reason : reason.message || String(reason);
+          showError(message);
+        }
+      });
+    </script>
+    <script src="./app.js"></script>
+  </body>
+</html>

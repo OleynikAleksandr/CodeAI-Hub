@@ -2,7 +2,7 @@
   "name": "codeai-hub",
   "displayName": "CodeAI Hub",
   "description": "Unified VS Code extension for orchestrating AI providers.",
-  "version": "1.0.24",
+  "version": "1.0.35",
   "publisher": "CodeAIHub",
   "license": "ISC",
   "engines": {
@@ -15,7 +15,8 @@
   "icon": "media/icon.png",
   "main": "./out/extension.js",
   "activationEvents": [
-    "onView:codeaiHubView"
+    "onView:codeaiHubView",
+    "onCommand:codeaiHub.launchWebClient"
   ],
   "contributes": {
     "viewsContainers": {
@@ -43,6 +44,11 @@
         "title": "Settings",
         "category": "CodeAI Hub",
         "icon": "$(settings-gear)"
+      },
+      {
+        "command": "codeaiHub.launchWebClient",
+        "title": "Launch Web Client",
+        "category": "CodeAI Hub"
       }
     ],
     "menus": {
@@ -66,7 +72,8 @@
     "quality": "npm run check:architecture && npm run lint",
     "setup:hooks": "npx lefthook install",
     "build:webview": "node ./scripts/build-webview.js",
-    "compile": "npm run build:webview && tsc -p .",
+    "build:web-client": "node ./scripts/build-web-client.js",
+    "compile": "npm run build:webview && npm run build:web-client && tsc -p .",
     "test": "echo \"No automated tests defined yet\""
   },
   "keywords": [
@@ -86,8 +93,8 @@
     "@types/node": "^22.7.4",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
-    "esbuild": "^0.23.0",
     "@types/vscode": "^1.85.0",
+    "esbuild": "^0.23.0",
     "jscpd": "4.0.5",
     "lefthook": "^1.13.6",
     "markdown-link-check": "3.14.1",

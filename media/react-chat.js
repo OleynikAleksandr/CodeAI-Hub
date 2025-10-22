@@ -7280,17 +7280,17 @@
     }
   });
 
-  // src/webview/ui/src/index.tsx
+  // src/client/ui/src/index.tsx
   var import_react13 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
-  // src/webview/ui/src/app-host.tsx
+  // src/client/ui/src/app-host.tsx
   var import_react12 = __toESM(require_react());
 
-  // src/webview/ui/src/app-host/provider-picker-state.ts
+  // src/client/ui/src/app-host/provider-picker-state.ts
   var import_react2 = __toESM(require_react());
 
-  // src/webview/ui/src/provider-picker.tsx
+  // src/client/ui/src/provider-picker.tsx
   var import_react = __toESM(require_react());
   var import_jsx_runtime = __toESM(require_jsx_runtime());
   var defaultPickerState = {
@@ -7427,7 +7427,7 @@
     );
   };
 
-  // src/webview/ui/src/session/helpers.ts
+  // src/client/ui/src/session/helpers.ts
   var mergeCatalog = (catalog, providers) => {
     const nextCatalog = { ...catalog };
     for (const provider of providers) {
@@ -7538,7 +7538,7 @@
     return rest;
   };
 
-  // src/webview/ui/src/vscode.ts
+  // src/client/ui/src/vscode.ts
   var cachedApi;
   var getVsCodeApi = () => {
     if (cachedApi) {
@@ -7575,7 +7575,7 @@
   var vscode = vscodeInstance ?? fallbackApi;
   var vscode_default = vscode;
 
-  // src/webview/ui/src/app-host/provider-picker-state.ts
+  // src/client/ui/src/app-host/provider-picker-state.ts
   var useProviderPickerState = () => {
     const [pickerState, setPickerState] = (0, import_react2.useState)(defaultPickerState);
     const [catalog, setCatalog] = (0, import_react2.useState)({});
@@ -7617,7 +7617,7 @@
     };
   };
 
-  // src/webview/ui/src/app-host/session-store.ts
+  // src/client/ui/src/app-host/session-store.ts
   var import_react3 = __toESM(require_react());
   var useSessionStore = (providerLabels) => {
     const [sessions, setSessions] = (0, import_react3.useState)([]);
@@ -7751,7 +7751,7 @@
     };
   };
 
-  // src/webview/ui/src/app-host/settings-visibility.ts
+  // src/client/ui/src/app-host/settings-visibility.ts
   var import_react4 = __toESM(require_react());
   var useSettingsVisibility = () => {
     const [settingsVisible, setSettingsVisible] = (0, import_react4.useState)(false);
@@ -7769,7 +7769,7 @@
     };
   };
 
-  // src/webview/ui/src/app-host/webview-message-handler.ts
+  // src/client/ui/src/app-host/webview-message-handler.ts
   var import_react5 = __toESM(require_react());
   var isIncomingMessage = (value) => {
     if (!value || typeof value !== "object" || !("type" in value)) {
@@ -7833,10 +7833,10 @@
     ]);
   };
 
-  // src/webview/ui/src/components/action-bar/index.tsx
+  // src/client/ui/src/components/action-bar/index.tsx
   var import_react6 = __toESM(require_react());
 
-  // src/webview/ui/src/root-dom.ts
+  // src/client/ui/src/root-dom.ts
   var activateRoot = () => {
     const rootElement = document.getElementById("root");
     if (rootElement) {
@@ -7844,12 +7844,12 @@
     }
   };
 
-  // src/webview/ui/src/components/action-bar/index.tsx
+  // src/client/ui/src/components/action-bar/index.tsx
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
   var BUTTONS = [
     { id: "newSession", label: ["New", "Session"] },
     { id: "lastSession", label: ["Last", "Session"], highlighted: true },
-    { id: "clearSession", label: ["Clear", "Session"] },
+    { id: "launchWebClient", label: ["UI", "Outside"] },
     { id: "oldSessions", label: ["Old", "Sessions"] }
   ];
   var ActionBar = () => {
@@ -7892,10 +7892,10 @@
   };
   var action_bar_default = ActionBar;
 
-  // src/webview/ui/src/components/settings-view.tsx
+  // src/client/ui/src/components/settings-view.tsx
   var import_react9 = __toESM(require_react());
 
-  // src/webview/ui/src/components/settings/settings-footer.tsx
+  // src/client/ui/src/components/settings/settings-footer.tsx
   var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   var containerStyles = {
     display: "flex",
@@ -8033,7 +8033,7 @@
   };
   var settings_footer_default = SettingsFooter;
 
-  // src/webview/ui/src/components/settings/settings-header.tsx
+  // src/client/ui/src/components/settings/settings-header.tsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   var headerStyles = {
     display: "flex",
@@ -8077,10 +8077,10 @@
   ] });
   var settings_header_default = SettingsHeader;
 
-  // src/webview/ui/src/components/settings/thinking-settings.tsx
+  // src/client/ui/src/components/settings/thinking-settings.tsx
   var import_react7 = __toESM(require_react());
 
-  // src/webview/ui/src/components/settings/thinking/constants.ts
+  // src/client/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
   var MAX_THINKING_TOKENS = 32e3;
   var THINKING_TOKEN_STEP = 1e3;
@@ -8092,7 +8092,7 @@
   }
 `;
 
-  // src/webview/ui/src/components/settings/thinking/thinking-pro-tip.tsx
+  // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
   var import_jsx_runtime5 = __toESM(require_jsx_runtime());
   var containerStyles2 = {
     marginTop: "20px",
@@ -8118,7 +8118,7 @@
   ] });
   var thinking_pro_tip_default = ThinkingProTip;
 
-  // src/webview/ui/src/components/settings/thinking/thinking-toggle.tsx
+  // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
   var toggleContainerStyles = {
     display: "flex",
@@ -8168,7 +8168,7 @@
   ] });
   var thinking_toggle_default = ThinkingToggle;
 
-  // src/webview/ui/src/components/settings/thinking/thinking-token-input.tsx
+  // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
   var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   var containerStyles3 = {
     paddingLeft: "28px",
@@ -8278,7 +8278,7 @@
   };
   var thinking_token_input_default = ThinkingTokenInput;
 
-  // src/webview/ui/src/components/settings/thinking-settings.tsx
+  // src/client/ui/src/components/settings/thinking-settings.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     marginBottom: "30px"
@@ -8318,7 +8318,7 @@
   };
   var thinking_settings_default = (0, import_react7.memo)(ThinkingSettings);
 
-  // src/webview/ui/src/components/settings/use-settings-state.ts
+  // src/client/ui/src/components/settings/use-settings-state.ts
   var import_react8 = __toESM(require_react());
   var DEFAULT_THINKING_MAX_TOKENS = 4e3;
   var RESET_DELAY_MS = 100;
@@ -8420,7 +8420,7 @@
     };
   };
 
-  // src/webview/ui/src/components/settings-view.tsx
+  // src/client/ui/src/components/settings-view.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   var containerStyles4 = {
     height: "100%",
@@ -8469,7 +8469,7 @@
   };
   var settings_view_default = import_react9.default.memo(SettingsView);
 
-  // src/webview/ui/src/session/dialog-panel.tsx
+  // src/client/ui/src/session/dialog-panel.tsx
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var roleLabel = {
     system: "System",
@@ -8504,7 +8504,7 @@
   };
   var dialog_panel_default = DialogPanel;
 
-  // src/webview/ui/src/session/empty-state.tsx
+  // src/client/ui/src/session/empty-state.tsx
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-empty", children: [
     /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
@@ -8512,7 +8512,7 @@
   ] });
   var empty_state_default = EmptyState;
 
-  // src/webview/ui/src/session/info-panel.tsx
+  // src/client/ui/src/session/info-panel.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   var InfoPanel = () => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "session-panel session-info", children: [
     /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-info__text", children: "Info Panel" }) }),
@@ -8520,10 +8520,10 @@
   ] });
   var info_panel_default = InfoPanel;
 
-  // src/webview/ui/src/session/input-panel.tsx
+  // src/client/ui/src/session/input-panel.tsx
   var import_react10 = __toESM(require_react());
 
-  // src/webview/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
+  // src/client/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
   var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
   var LINE_SPLIT_REGEX = /\r?\n/;
   var normalizeCandidate = (rawValue) => {
@@ -8618,7 +8618,7 @@
     return results;
   };
 
-  // src/webview/ui/src/modules/drag-drop-module/drag-drop-handler.ts
+  // src/client/ui/src/modules/drag-drop-module/drag-drop-handler.ts
   var DragDropHandler = class {
     constructor(options = {}) {
       this.container = null;
@@ -8690,7 +8690,7 @@
     }
   };
 
-  // src/webview/ui/src/modules/drag-drop-module/file-path-processor.ts
+  // src/client/ui/src/modules/drag-drop-module/file-path-processor.ts
   var WINDOWS_PATH_PATTERN2 = /^[a-zA-Z]:\\/;
   var WINDOWS_POSIX_PATTERN = /^[a-zA-Z]:\//;
   var FilePathProcessor = class {
@@ -8757,7 +8757,7 @@ ${formattedPaths}`;
     }
   };
 
-  // src/webview/ui/src/modules/drag-drop-module/message-handler.ts
+  // src/client/ui/src/modules/drag-drop-module/message-handler.ts
   var isRecord = (value) => typeof value === "object" && value !== null;
   var MessageHandler = class {
     constructor(logger) {
@@ -8830,7 +8830,7 @@ ${formattedPaths}`;
     }
   };
 
-  // src/webview/ui/src/modules/drag-drop-module/drag-drop-facade.ts
+  // src/client/ui/src/modules/drag-drop-module/drag-drop-facade.ts
   var DragDropFacade = class {
     constructor(logger) {
       this.config = null;
@@ -8921,7 +8921,7 @@ ${path}` : path;
     }
   };
 
-  // src/webview/ui/src/session/input-panel.tsx
+  // src/client/ui/src/session/input-panel.tsx
   var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   var MAX_TEXTAREA_HEIGHT = 200;
   var adjustTextareaHeight = (textarea) => {
@@ -9072,7 +9072,7 @@ ${path}` : path;
   };
   var input_panel_default = InputPanel;
 
-  // src/webview/ui/src/session/session-tabs.tsx
+  // src/client/ui/src/session/session-tabs.tsx
   var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   var SessionTabs = ({
     sessions,
@@ -9137,7 +9137,7 @@ ${path}` : path;
   };
   var session_tabs_default = SessionTabs;
 
-  // src/webview/ui/src/session/status-panel.tsx
+  // src/client/ui/src/session/status-panel.tsx
   var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var MAX_PERCENTAGE = 100;
   var MIN_TOKEN_LIMIT = 1;
@@ -9171,7 +9171,7 @@ ${path}` : path;
   };
   var status_panel_default = StatusPanel;
 
-  // src/webview/ui/src/session/todo-panel.tsx
+  // src/client/ui/src/session/todo-panel.tsx
   var import_react11 = __toESM(require_react());
   var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var TodoPanel = ({ items, onToggle }) => {
@@ -9228,7 +9228,7 @@ ${path}` : path;
   };
   var todo_panel_default = TodoPanel;
 
-  // src/webview/ui/src/session/session-view.tsx
+  // src/client/ui/src/session/session-view.tsx
   var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var SessionView = ({
     sessions,
@@ -9281,7 +9281,7 @@ ${path}` : path;
   };
   var session_view_default = SessionView;
 
-  // src/webview/ui/src/app-host.tsx
+  // src/client/ui/src/app-host.tsx
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var AppHost = () => {
     const {
@@ -9363,7 +9363,7 @@ ${path}` : path;
   };
   var app_host_default = AppHost;
 
-  // src/webview/ui/src/index.tsx
+  // src/client/ui/src/index.tsx
   var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   var mount = () => {
     const rootElement = document.getElementById("root");
