@@ -1,20 +1,27 @@
-# Development TODO Plan
+# План разработки
 
-## Legend
+## Легенда
 - TODO — задача запланирована
 - IN_PROGRESS — работа ведётся
 - BLOCKED — требуется внешнее действие
 - DONE — задача завершена
 
-## Phase 8 — Session chrome polish (owner: Codex, updated: 2025-10-20)
-- [DONE] Align Action Bar with webview edges, remove residual gutters and synchronise base background (`rgba(31, 31, 31, 1)`) across HTML, CSS and React bundle.
-  - Notes: Action Bar рельсы переведены на двутон `#56595C → #18191B`, `WebviewHtmlGenerator` обновлён, VSIX пересобран.
-- [DONE] Refine provider picker actions (status copy aligned left, `Cancel`/`Start session` grouped on the right) and lock session grid to a single column on any width.
-  - Notes: обновлены `provider-picker.tsx`, `media/main-view.css`, соответствующие изменения зафиксированы в архитектурной документации.
-- [DONE] Port Action Bar rendering to React (`ActionBar` component), restore empty state helper и синхронизировать цветовые токены кнопок (`--color-steelblue-*`, `--color-cornflowerblue`, `--color-deepskyblue`).
-  - Notes: изменения отражены в `media/main-view.css`, `session-view.tsx`, документация и README обновлены, релиз `v1.0.17` собран скриптом.
-- [TODO] Redesign empty state imagery to match the refreshed chrome once дизайн-бриф утверждён.
-  - Notes: требуется макет; на время ожидания использована прежняя прозрачная заглушка.
+## Фаза 9 — Старт автономного веб-клиента (ответственный: Codex, обновлено: 2025-10-22)
+- [DONE] Создать базовый пакет локального веб-клиента с заглушками, аналогичными текущему webview.
+  - Notes: подготовить `media/web-client/` (Vite + React), скопировать текущие компоненты без подключения к ядру.
+- [DONE] Настроить сборку и упаковку веб-клиента во VSIX.
+  - Notes: добавить скрипты сборки, убедиться, что бандл попадает в VSIX и доступен для запуска.
+- [DONE] Реализовать команду запуска веб-клиента (без связи с ядром) и обеспечить открытие в режиме приложения.
+  - Notes: команда `codeaiHub.launchWebClient`, запуск браузера в app mode, отображение заглушек.
+- [DONE] Автоматически создавать ярлыки веб-клиента на всех платформах и восстанавливать их при активации расширения.
+  - Notes: Windows `.lnk`, macOS `.app`, Linux `.desktop`; проверить права доступа.
+- [DONE] Обновить архитектурную документацию после внедрения автономного веб-клиента.
+  - Notes: актуализировать `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/Stacks/CoreOrchestrator.md` при необходимости.
+- [DONE] Синхронизировать тему и токены автономного веб-клиента с webview.
+  - Notes: вынести общие CSS-переменные (`--color-*`, `--vscode-*`) и подключить их в браузерном клиенте, чтобы внешний вид совпадал полностью.
+- [DONE] Реализовать локальный message router для автономного веб-клиента.
+  - Notes: обрабатывать `postVsCodeMessage` в браузере, открывать Provider Picker и формировать сессии/панели без ядра (статические заглушки).
 
 ## Backlog / Parking Lot
-- [TODO] Уточнить roadmap по Thinking UI (новый фокус-паттерн и подсказки) после ревью цветовой схемы.
+- [TODO] Подготовить контракт Remote UI Bridge для объединения webview и веб-клиента после запуска автономной версии.
+- [TODO] Уточнить дорожную карту по Thinking UI (новый фокус-паттерн и подсказки) после согласования цветовой схемы.

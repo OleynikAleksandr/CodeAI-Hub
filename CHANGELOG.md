@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.0.35] - 2025-10-22
+### Added
+- Shared the webview React UI with a standalone static web client bundle and exposed the `UI Outside` launcher command.
+- Automatically create OS-specific web client shortcuts (Windows `.lnk`, macOS `.app` launcher, Linux `.desktop`) during activation.
+- Added runtime diagnostics and default VS Code theming tokens so the standalone web client matches the in-editor appearance.
+
+### Build
+- Release packaged as `codeai-hub-1.0.35.vsix` via `./scripts/build-release.sh 1.0.35`.
+
 # [1.0.24] - 2025-10-21
 ### Changed
 - Matched the Session Status panel font size with the TODO block (11 px) so all session chrome text feels consistent.

@@ -216,7 +216,7 @@ const STYLES = `
 
 ## Related Files
 
-- `src/webview/ui/src/components/SessionTabs.tsx` - Working example
+- `src/client/ui/src/components/SessionTabs.tsx` - Working example
 - Session 008 commits: v1.21.7 → v1.22.3
 
 ---

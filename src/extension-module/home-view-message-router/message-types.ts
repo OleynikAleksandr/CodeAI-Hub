@@ -7,7 +7,7 @@ type ProviderPickerConfirmPayload = {
 export type WebviewCommand =
   | "newSession"
   | "lastSession"
-  | "clearSession"
+  | "launchWebClient"
   | "oldSessions"
   | "grabFilePathFromDrop"
   | "clearAllClipboards"

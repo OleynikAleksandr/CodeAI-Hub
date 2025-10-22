@@ -1,4 +1,4 @@
-import { window } from "vscode";
+import { commands, window } from "vscode";
 import type { ProviderRegistry } from "../../core/providers/provider-registry";
 import type { FileOperationsFacade } from "../file-operations/file-operations-facade";
 import type { WebviewCommand } from "./message-types";
@@ -60,9 +60,8 @@ export const handleCommand = async (
         "Selecting the most recent session (placeholder)."
       );
       return;
-    case "clearSession":
-      context.notifyWebview({ type: "session:clearAll" });
-      window.showInformationMessage("All sessions cleared (placeholder).");
+    case "launchWebClient":
+      await commands.executeCommand("codeaiHub.launchWebClient");
       return;
     case "oldSessions":
       window.showInformationMessage(

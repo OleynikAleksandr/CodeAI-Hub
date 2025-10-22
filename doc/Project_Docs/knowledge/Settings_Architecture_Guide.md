@@ -34,7 +34,7 @@ export interface ExtensionSettings {
 
 ### Frontend (React)
 
-**Location:** `src/webview/ui/src/components/`
+**Location:** `src/client/ui/src/components/`
 
 ```
 SettingsView.tsx               ← Main settings container

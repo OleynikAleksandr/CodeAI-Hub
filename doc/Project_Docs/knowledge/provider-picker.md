@@ -8,7 +8,7 @@
 ## Архитектурные аспекты
 - **Core**: `ProviderRegistry` (`src/core/providers/provider-registry.ts`) отдаёт список доступных стеков и статусы подключения. `SessionLauncher` (`src/core/session/session-launcher.ts`) получает список выбранных ID и возвращает результат запуска (пока stub c текстовым summary, но уже нормализует ID и обеспечивает уникальность).
 - **Extension**: `HomeViewMessageRouter` перехватывает команду `newSession`, запрашивает список стеков у `ProviderRegistry` и отправляет webview сообщение `providerPicker:open`. После подтверждения UI данные валидируются и передаются в `SessionLauncher`.
-- **Webview**: React-бандл `media/react-chat.js` (собирается через `npm run build:webview`) монтирует компонент `ProviderPicker` (`src/webview/ui/src/provider-picker.tsx`), который отображает чекбоксы, считает выбранные стеки и отправляет `providerPicker:confirm/cancel`.
+- **Webview**: React-бандл `media/react-chat.js` (собирается через `npm run build:webview`) монтирует компонент `ProviderPicker` (`src/client/ui/src/provider-picker.tsx`), который отображает чекбоксы, считает выбранные стеки и отправляет `providerPicker:confirm/cancel`.
 - **Статика**: панель кнопок остаётся в `media/main-view.*`; новый диалог рендерится под панелью, соблюдая стили и a11y-ограничения (фокус на первом чекбоксе, `role="status"` для подсказок).
 
 ## Поток взаимодействий

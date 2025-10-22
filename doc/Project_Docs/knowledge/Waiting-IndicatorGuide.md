@@ -21,8 +21,8 @@
 3. На табах первой и второй сессий загорится зелёная мигающая точка. После ответа пользователя цикл повторяется, но уже с `waiting=false`, что убирает индикатор.
 
 Эти изменения лежат в файлах:
-- `src/webview/ui/src/dialog-renderer-module/hooks/useFinalIndicatorState.ts`
-- `src/webview/ui/src/app-chat-module/facades/AppChatFacade.tsx`
-- `src/webview/ui/src/app-chat-module/micro-components/SessionWaitingIndicatorBridge.tsx`
-- `src/webview/ui/src/components/SessionTabs.tsx`
-- `src/webview/ui/src/dialog-renderer-module/hooks/useDialogMessages.ts`
+- `src/client/ui/src/dialog-renderer-module/hooks/useFinalIndicatorState.ts`
+- `src/client/ui/src/app-chat-module/facades/AppChatFacade.tsx`
+- `src/client/ui/src/app-chat-module/micro-components/SessionWaitingIndicatorBridge.tsx`
+- `src/client/ui/src/components/SessionTabs.tsx`
+- `src/client/ui/src/dialog-renderer-module/hooks/useDialogMessages.ts`

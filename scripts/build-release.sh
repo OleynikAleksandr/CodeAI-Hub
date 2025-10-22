@@ -31,7 +31,7 @@ echo ""
 echo "🧹 Step 1: Cleaning build cache..."
 rm -rf out/*
 rm -f *.vsix
-rm -rf media/webview
+rm -rf media/web-client/dist
 rm -rf node_modules/@anthropic-ai 2>/dev/null || true
 rm -rf node_modules/@openai 2>/dev/null || true
 rm -rf node_modules/@google 2>/dev/null || true
@@ -43,29 +43,12 @@ echo "📝 Step 2: Updating version to $VERSION..."
 sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" package.json
 echo "✅ Version updated"
 
-# Step 3: Build webview UI (if present)
+# Step 3: Pre-build UI bundles
 echo ""
-echo "⚛️ Step 3: Building webview UI..."
-if [ -d "src/webview/ui" ]; then
-  pushd src/webview/ui >/dev/null
-  if [ -f package.json ]; then
-    npm install
-    npm run build
-  else
-    echo "⚠️  package.json not found in src/webview/ui; skipping webview build"
-  fi
-  popd >/dev/null
-
-  if [ -d "src/webview/ui/dist" ]; then
-    mkdir -p media/webview
-    rsync -a src/webview/ui/dist/ media/webview/
-    echo "✅ Webview artifacts copied to media/webview"
-  else
-    echo "⚠️  Webview dist folder not found; ensure build output exists"
-  fi
-else
-  echo "⚠️  Webview directory src/webview/ui not found; skipping"
-fi
+echo "⚛️ Step 3: Building UI bundles..."
+npm run build:webview
+npm run build:web-client
+echo "✅ UI bundles ready"
 
 # Step 4: Architecture check
 echo ""

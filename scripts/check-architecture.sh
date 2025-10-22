@@ -105,10 +105,9 @@ npx jscpd \
   --threshold "$DUPLICATION_THRESHOLD" \
   --silent \
   --reporters console \
-  --ignore "src/webview/ui/dist/**" \
   src/core \
   src/extension-module \
-  src/webview/ui/src \
+  src/client/ui/src \
   src/types \
   scripts
 

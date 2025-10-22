@@ -5,7 +5,7 @@ import { postVsCodeMessage } from "../../vscode";
 type ActionBarCommand =
   | "newSession"
   | "lastSession"
-  | "clearSession"
+  | "launchWebClient"
   | "oldSessions";
 
 type ButtonDescriptor = {
@@ -17,7 +17,7 @@ type ButtonDescriptor = {
 const BUTTONS: readonly ButtonDescriptor[] = [
   { id: "newSession", label: ["New", "Session"] },
   { id: "lastSession", label: ["Last", "Session"], highlighted: true },
-  { id: "clearSession", label: ["Clear", "Session"] },
+  { id: "launchWebClient", label: ["UI", "Outside"] },
   { id: "oldSessions", label: ["Old", "Sessions"] },
 ];
 

@@ -50,7 +50,7 @@ npm install -D -E jscpd ts-prune markdown-link-check
 ## 6. Структура проекта и служебные каталоги
 Создайте основную структуру каталогов, чтобы архитектурный скрипт не ругался на отсутствие `src/`:
 ```bash
-mkdir -p src/core src/extension-module src/webview/ui/src src/types media
+mkdir -p src/core src/extension-module src/client/ui/src src/types media
 ```
 
 ## 7. Настройка `.gitignore`
