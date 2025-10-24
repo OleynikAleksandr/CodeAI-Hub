@@ -1,0 +1,4 @@
+#define IDS_APP_TITLE 101
+#define IDC_CODEAIHUBLAUNCHER 102
+
+#define IDS_APP_CLASS L"CodeAIHubLauncher"
