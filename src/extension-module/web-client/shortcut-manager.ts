@@ -2,7 +2,6 @@ import { execFile } from "node:child_process";
 import { promises as fs } from "node:fs";
 import { homedir, platform } from "node:os";
 import path from "node:path";
-import { Uri } from "vscode";
 
 const SHORTCUT_NAME = "CodeAI Hub Web Client";
 const EXECUTABLE_MODE = 0o755;
@@ -35,32 +34,57 @@ const runPowerShell = (command: string): Promise<void> =>
     );
   });
 
-const ensureWindowsShortcut = async (targetPath: string): Promise<void> => {
+type ShortcutTarget = {
+  readonly path: string;
+  readonly args: readonly string[];
+};
+
+const formatArgsForWindows = (args: readonly string[]): string =>
+  args.map((arg) => `"${arg.replace(/"/g, '""')}"`).join(" ");
+
+const ensureWindowsShortcut = async (target: ShortcutTarget): Promise<void> => {
   const desktopDir = path.join(homedir(), "Desktop");
   const shortcutPath = path.join(desktopDir, `${SHORTCUT_NAME}.lnk`);
 
   if (await pathExists(shortcutPath)) {
-    return;
+    await fs.rm(shortcutPath, { force: true }).catch(() => {
+      /* ignore */
+    });
   }
 
   await ensureDirectory(desktopDir);
 
-  const sanitizedTarget = targetPath.replace(/'/g, "''");
+  const sanitizedTarget = target.path.replace(/'/g, "''");
   const sanitizedShortcut = shortcutPath.replace(/'/g, "''");
-  const sanitizedWorkingDir = path.dirname(targetPath).replace(/'/g, "''");
+  const sanitizedWorkingDir = path.dirname(target.path).replace(/'/g, "''");
+  const argumentsString = formatArgsForWindows(target.args);
+  const sanitizedArguments = argumentsString.replace(/'/g, "''");
 
   const script = [
     "$shell = New-Object -ComObject WScript.Shell",
     `$shortcut = $shell.CreateShortcut('${sanitizedShortcut}')`,
     `$shortcut.TargetPath = '${sanitizedTarget}'`,
     `$shortcut.WorkingDirectory = '${sanitizedWorkingDir}'`,
+    target.args.length > 0
+      ? `$shortcut.Arguments = '${sanitizedArguments}'`
+      : "",
     "$shortcut.Save()",
-  ].join("; ");
+  ]
+    .filter(Boolean)
+    .join("; ");
 
   await runPowerShell(script);
 };
 
-const ensureMacShortcut = async (targetPath: string): Promise<void> => {
+const formatArgsForPosix = (args: readonly string[]): string =>
+  args
+    .map((arg) => {
+      const escaped = arg.replace(/"/g, '\\"');
+      return `"${escaped}"`;
+    })
+    .join(" ");
+
+const ensureMacShortcut = async (target: ShortcutTarget): Promise<void> => {
   const desktopDir = path.join(homedir(), "Desktop");
   const legacyCommand = path.join(desktopDir, `${SHORTCUT_NAME}.command`);
   const legacyWebloc = path.join(desktopDir, `${SHORTCUT_NAME}.webloc`);
@@ -80,7 +104,6 @@ const ensureMacShortcut = async (targetPath: string): Promise<void> => {
 
   await ensureDirectory(macOsDir);
 
-  const targetUrl = Uri.file(targetPath).toString();
   const infoPlist = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">',
@@ -103,12 +126,13 @@ const ensureMacShortcut = async (targetPath: string): Promise<void> => {
   });
 
   const launchScriptPath = path.join(macOsDir, "launch");
-  const launchScript = `#!/bin/bash\nopen "${targetUrl}"\n`;
+  const args = formatArgsForPosix(target.args);
+  const launchScript = `#!/bin/bash\n"${target.path}" ${args}\n`;
   await fs.writeFile(launchScriptPath, launchScript, { encoding: "utf8" });
   await fs.chmod(launchScriptPath, EXECUTABLE_MODE);
 };
 
-const ensureLinuxShortcut = async (targetPath: string): Promise<void> => {
+const ensureLinuxShortcut = async (target: ShortcutTarget): Promise<void> => {
   const applicationsDir = path.join(
     homedir(),
     ".local",
@@ -121,18 +145,21 @@ const ensureLinuxShortcut = async (targetPath: string): Promise<void> => {
   );
 
   if (await pathExists(shortcutPath)) {
-    return;
+    await fs.rm(shortcutPath, { force: true }).catch(() => {
+      /* ignore */
+    });
   }
 
   await ensureDirectory(applicationsDir);
 
-  const fileUrl = Uri.file(targetPath).toString();
+  const args = formatArgsForPosix(target.args);
+  const commandLine = [`"${target.path}"`, args].filter(Boolean).join(" ");
   const desktopEntry = [
     "[Desktop Entry]",
     "Type=Application",
     `Name=${SHORTCUT_NAME}`,
     "Comment=Standalone web client for CodeAI Hub",
-    `Exec=xdg-open "${fileUrl}"`,
+    `Exec=${commandLine}`,
     "Terminal=false",
     "Categories=Development;Utility;",
   ].join("\n");
@@ -143,30 +170,26 @@ const ensureLinuxShortcut = async (targetPath: string): Promise<void> => {
 };
 
 export const ensureWebClientShortcuts = async (
-  extensionUri: Uri
+  target?: ShortcutTarget
 ): Promise<void> => {
-  const targetPath = path.join(
-    extensionUri.fsPath,
-    "media",
-    "web-client",
-    "dist",
-    "index.html"
-  );
+  if (!target) {
+    return;
+  }
 
-  if (!(await pathExists(targetPath))) {
+  if (!(await pathExists(target.path))) {
     return;
   }
 
   try {
     switch (platform()) {
       case "win32":
-        await ensureWindowsShortcut(targetPath);
+        await ensureWindowsShortcut(target);
         break;
       case "darwin":
-        await ensureMacShortcut(targetPath);
+        await ensureMacShortcut(target);
         break;
       case "linux":
-        await ensureLinuxShortcut(targetPath);
+        await ensureLinuxShortcut(target);
         break;
       default:
         break;

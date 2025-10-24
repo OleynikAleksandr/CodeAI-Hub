@@ -9,3 +9,6 @@ biome.jsonc
 lefthook.yml
 doc/TODO/**
 scripts/**
+binaries/**
+*.tar.bz2
+dist/cef-launcher/**
