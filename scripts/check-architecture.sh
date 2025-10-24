@@ -72,19 +72,42 @@ echo ""
 echo "🏛️  Checking facade pattern compliance..."
 echo "-----------------------------------"
 
-# Count facade files
-FACADE_COUNT=$(find src -type f -name "*Facade.ts" -not -path "*/node_modules/*" | wc -l)
-echo "Found $FACADE_COUNT facade files"
+# Count facade files (case-insensitive, supports hyphenated names)
+FACADE_FILES=$(find src -type f \( -iname "*facade.ts" -o -iname "*facade.tsx" \) -not -path "*/node_modules/*")
+if [ -z "$FACADE_FILES" ]; then
+  FACADE_COUNT=0
+else
+  FACADE_COUNT=$(printf "%s\n" "$FACADE_FILES" | sed '/^$/d' | wc -l | awk '{print $1}')
+fi
+echo "Found $FACADE_COUNT facade file(s)"
+if [ "$FACADE_COUNT" -gt 0 ]; then
+  printf '%s\n' "$FACADE_FILES"
+fi
 
 # Check if large files are facades (facades can be slightly larger but should still be < 400)
-LARGE_NON_FACADES=$(echo "$FILE_LENGTHS" | awk '$1 > 300 && $2 !~ /Facade/ {print $2}' | head -5)
+LARGE_NON_FACADES=$(echo "$FILE_LENGTHS" | awk '$1 > 300 && $2 !~ /[Ff]acade/ {print $2}' | head -5)
 
 if [ ! -z "$LARGE_NON_FACADES" ]; then
     echo -e "${RED}❌ Non-facade files over 300 lines detected!${NC}"
     echo "These should be refactored into micro-classes with a facade"
 fi
 
-# Check 4: New files check (reminder)
+# Check 4: Empty directory detection
+echo ""
+echo "📁 Checking for empty directories..."
+echo "-----------------------------------"
+EMPTY_DIRECTORIES=$(find src packages -type d -empty -not -path "*/node_modules/*" -not -path "*/dist" -not -path "*/build" -not -path "*/.*")
+if [ -n "$EMPTY_DIRECTORIES" ]; then
+  EMPTY_DIR_COUNT=$(printf "%s\n" "$EMPTY_DIRECTORIES" | sed '/^$/d' | wc -l | awk '{print $1}')
+  echo -e "${YELLOW}⚠️  WARNING: Empty directories detected:${NC}"
+  printf '%s\n' "$EMPTY_DIRECTORIES"
+  HAS_WARNINGS=1
+else
+  EMPTY_DIR_COUNT=0
+  echo -e "${GREEN}✅ No empty directories found in src/ or packages/${NC}"
+fi
+
+# Check 5: New files check (reminder)
 echo ""
 echo "📝 Reminder for new code:"
 echo "-----------------------------------"
@@ -94,7 +117,7 @@ echo "2. ✅ Each micro-class should have single responsibility"
 echo "3. ✅ Use Facade pattern for module coordination"
 echo "4. ✅ Update Architecture.md after adding new classes"
 
-# Check 5: Duplication guard
+# Check 6: Duplication guard
 echo ""
 echo "🔁 Running duplication check (jscpd)..."
 echo "-----------------------------------"
@@ -124,6 +147,8 @@ echo "================================"
 echo "Summary:"
 echo "  >300 lines: $LARGE_FILE_COUNT file(s)"
 echo "  250-300 lines: $WARNING_FILE_COUNT file(s)"
+echo "  Facades detected: $FACADE_COUNT"
+echo "  Empty directories: $EMPTY_DIR_COUNT"
 echo ""
 if [ $HAS_VIOLATIONS -eq 1 ]; then
     echo -e "${RED}❌ ARCHITECTURE CHECK FAILED!${NC}"

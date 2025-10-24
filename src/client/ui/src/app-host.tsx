@@ -1,4 +1,6 @@
 import { useCallback } from "react";
+import type { ProviderStackDescriptor } from "../../../types/provider";
+import type { SessionRecord } from "../../../types/session";
 import { useProviderPickerState } from "./app-host/provider-picker-state";
 import { useSessionStore } from "./app-host/session-store";
 import { useSettingsVisibility } from "./app-host/settings-visibility";
@@ -36,7 +38,7 @@ const AppHost = () => {
     useSettingsVisibility();
 
   const handleProviderPickerOpen = useCallback(
-    (providers) => {
+    (providers: readonly ProviderStackDescriptor[]) => {
       activateRoot();
       openPicker(providers);
     },
@@ -44,7 +46,7 @@ const AppHost = () => {
   );
 
   const handleSessionCreatedMessage = useCallback(
-    (session) => {
+    (session: SessionRecord) => {
       activateRoot();
       resetPicker();
       handleSessionCreated(session);

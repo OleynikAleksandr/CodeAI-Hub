@@ -1,8 +1,5 @@
-import { homedir } from "node:os";
 import path from "node:path";
 import type { PlatformKey } from "./runtime-installer";
-
-const LAUNCHER_BASE_DIR = path.join(homedir(), ".codeai-hub", "cef-launcher");
 
 const MACOS_APP_BINARY = path.join(
   "CodeAIHubLauncher.app",
@@ -29,6 +26,3 @@ const platformExecutableMap: Record<PlatformKey, string> = {
 export const getLauncherExecutableRelativePath = (
   platform: PlatformKey
 ): string => platformExecutableMap[platform];
-
-export const getLauncherPlatformDir = (platform: PlatformKey): string =>
-  path.join(LAUNCHER_BASE_DIR, platform);

@@ -187,7 +187,13 @@ const performInstall = async (
 
   progress?.report({ message: "Downloading core orchestrator..." });
   const downloadUrl = `${manifest.baseUrl}v${manifestEntry.coreVersion}/${manifestEntry.package}`;
-  await downloadFile(downloadUrl, archivePath, progress);
+  await downloadFile({
+    url: downloadUrl,
+    destination: archivePath,
+    size: manifestEntry.size,
+    progress,
+    label: "Core orchestrator",
+  });
 
   progress?.report({ message: "Verifying download..." });
   if (manifestEntry.sha1) {

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.43] - 2025-10-24
+### Build
+- Smoke-built `codeai-hub-1.0.43.vsix` via `./scripts/build-release.sh 1.0.43` and refreshed launcher archive `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2` to verify toolchain updates.
+
 ## [1.0.41] - 2025-10-24
 ### Changed
 - Follow HTTP redirects when downloading launchers so GitHub CDN 302 responses no longer break installation.

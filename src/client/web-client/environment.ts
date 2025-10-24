@@ -50,6 +50,15 @@ const sanitizeProviderIds = (
   return sanitized;
 };
 
+const extractProviderIdentifiers = (payload: unknown): readonly unknown[] => {
+  if (!isRecord(payload)) {
+    return [];
+  }
+
+  const candidate = (payload as Record<string, unknown>).providerIds;
+  return Array.isArray(candidate) ? (candidate as readonly unknown[]) : [];
+};
+
 const createStandaloneRouter = () => {
   const providerRegistry = new ProviderRegistry();
   const sessionLauncher = new SessionLauncher();
@@ -97,9 +106,7 @@ const createStandaloneRouter = () => {
 
     const providerIds = sanitizeProviderIds(
       providerRegistry,
-      Array.isArray(message.payload?.providerIds)
-        ? (message.payload.providerIds as readonly unknown[])
-        : []
+      extractProviderIdentifiers(message.payload)
     );
 
     if (providerIds.length === 0) {

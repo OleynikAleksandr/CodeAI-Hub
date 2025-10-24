@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "baseUrl": "https://github.com/OleynikAleksandr/CodeAI-Hub/releases/download/v1.0.42/",
+  "baseUrl": "https://github.com/OleynikAleksandr/CodeAI-Hub/releases/download/v1.0.43/",
   "platforms": {
     "darwin-arm64": {
-      "launcherVersion": "1.0.42",
-      "package": "CodeAIHubLauncher-macos-arm64-1.0.42.tar.bz2",
-      "size": 241084831,
-      "sha1": "ad6348b0b2da449ae770ebf5760ec6029ac6cffd"
+      "launcherVersion": "1.0.43",
+      "package": "CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2",
+      "size": 241084421,
+      "sha1": "a86cc70a5af592cd75bd8eda8aa6506372467ece"
     }
   }
 }
