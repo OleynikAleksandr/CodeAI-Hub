@@ -5,6 +5,9 @@
   "version": "1.0.42",
   "publisher": "CodeAIHub",
   "license": "ISC",
+  "workspaces": [
+    "packages/*"
+  ],
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -73,6 +76,7 @@
     "setup:hooks": "npx lefthook install",
     "build:webview": "node ./scripts/build-webview.js",
     "build:web-client": "node ./scripts/build-web-client.js",
+    "build:core": "npm run build --workspace=@codeai-hub/core",
     "compile": "npm run build:webview && npm run build:web-client && tsc -p .",
     "test": "echo \"No automated tests defined yet\""
   },

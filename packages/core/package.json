@@ -1,0 +1,51 @@
+{
+  "name": "@codeai-hub/core",
+  "version": "0.1.0",
+  "description": "CodeAI Hub autonomous core orchestrator service",
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "pkg": "pkg . --compress Brotli --output ../../doc/tmp/releases/codeai-hub-core"
+  },
+  "bin": {
+    "codeai-hub-core": "dist/index.js"
+  },
+  "pkg": {
+    "targets": [
+      "node18-macos-arm64",
+      "node18-macos-x64",
+      "node18-win-x64",
+      "node18-linux-x64"
+    ],
+    "outputPath": "../../doc/tmp/releases/"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.16.0",
+    "cors": "^2.8.5",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/ws": "^8.5.10",
+    "@types/cors": "^2.8.17",
+    "@types/uuid": "^9.0.7",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0",
+    "pkg": "^5.8.1"
+  },
+  "keywords": [
+    "codeai-hub",
+    "orchestrator",
+    "ai-providers"
+  ],
+  "author": "CodeAI Hub",
+  "license": "ISC"
+}
