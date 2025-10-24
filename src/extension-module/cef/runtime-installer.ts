@@ -147,6 +147,7 @@ export const ensureCefRuntime = async (
   const runtimeDir = path.join(platformDir, manifestEntry.cefVersion);
 
   if (await verifyExistingInstall(runtimeDir, manifestEntry)) {
+    progress?.report({ message: "CEF runtime is up to date." });
     return { version: manifestEntry.cefVersion, platform, runtimeDir };
   }
 

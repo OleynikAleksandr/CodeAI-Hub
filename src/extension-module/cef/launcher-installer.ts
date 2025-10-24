@@ -196,6 +196,7 @@ export const ensureLauncherInstalled = async (
   const installDir = path.join(platformDir, manifestEntry.launcherVersion);
 
   if (await verifyExistingInstall(installDir, manifestEntry, platform)) {
+    progress?.report({ message: "CodeAIHubLauncher is up to date." });
     return {
       platform,
       version: manifestEntry.launcherVersion,
