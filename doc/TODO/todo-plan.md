@@ -1,38 +1,27 @@
-# План разработки
+# Development TODO Plan
 
-## Легенда
-- TODO — задача запланирована
-- IN_PROGRESS — работа ведётся
-- BLOCKED — требуется внешнее действие
-- DONE — задача завершена
+## Legend
+- TODO — task planned
+- IN_PROGRESS — work in progress
+- BLOCKED — external action required
+- DONE — task complete
 
-## Фаза 10 — Миграция локального веб-клиента на CEF (ответственный: Codex, обновлено: 2025-10-23)
-- [DONE] Зафиксировать текущее поведение локального веб-клиента и порядок запуска через Safari.
-  - Notes: doc/Project_Docs/Stacks/LocalWebClientSnapshot.md содержит детальный слепок текущего состояния.
-- [DONE] Исследовать и зафиксировать варианты поставки CEF-бинарей для Windows, macOS и Linux.
-  - Notes: doc/Project_Docs/Stacks/CEF_Distribution_Options.md описывает источники, размеры и структуру пакетов.
-- [DONE] Спроектировать процесс загрузки и обновления CEF-пакетов при установке расширения.
-  - Notes: doc/Project_Docs/Stacks/CEF_DeliveryPlan.md описывает директории, манифест и поток установки.
-- [DONE] Подготовить описание стартовой CEF-обёртки с заглушками UI.
-  - Notes: doc/Project_Docs/Stacks/CEF_Launcher_Spec.md фиксирует структуру лаунчера и режим stub.
-- [DONE] Определить изменения в механизме запуска и ярлыках для перехода с браузера на CEF.
-  - Notes: doc/Project_Docs/Stacks/CEF_Integration_Checklist.md описывает обновления команд и ярлыков.
-- [DONE] Реализовать установщик CEF и интегрировать загрузчик в расширение.
-  - Notes: assets/cef/manifest.json и src/extension-module/cef/runtime-installer.ts обеспечивают скачивание и распаковку.
-- [DONE] Перенастроить запуск клиента и ярлыки на использование cefclient.
-  - Notes: команда launchWebClient теперь вызывает ensureCefRuntime/launchCefClient, а shortcut-manager создаёт ярлыки для бинарника.
-- [DONE] Обновить документацию и собрать релиз VSIX 1.0.36.
-  - Notes: версия поднята до 1.0.36, выполнены `npm run compile` и `vsce package`.
+## Phase 10 — Core Orchestrator Architecture (owner: Codex, updated: 2025-10-24)
+- [TODO] Capture functional and non-functional requirements for the autonomous core. — Aggregate expectations from doc/Project_Docs/SystemArchitecture/SystemArchitecture.md and RemoteCoreBridge notes; list user journeys the service must support.
+- [TODO] Define module boundaries and responsibility map (Session Manager, Provider Registry, Module Loader, Remote UI Bridge, Config/Secrets, Telemetry). — Prepare high-level diagrams and outline the workspace structure.
+- [TODO] Design the Remote UI Bridge contract (HTTP + WebSocket) shared by webview and standalone client. — Describe message schemas, auth scheme, error handling, streaming rules.
+- [TODO] Update architecture/system documentation once the scheme is approved. — Apply changes to doc/Architecture/Architecture.md, doc/Project_Docs/SystemArchitecture/SystemArchitecture.md, and add a knowledge entry for the bridge contract.
 
-## Фаза 11 — Собственный CEF лаунчер (Stage 2) (ответственный: Codex, обновлено: 2025-10-24)
-- [IN_PROGRESS] Подготовить стабильный процесс сборки кастомного лаунчера (сейчас используется адаптированный `cefsimple`).
-  - Notes: `scripts/build-cef-launcher.sh` собирает бинарь, прописывает корректный `framework_dir_path`/`CEF_ICU_DATA_PATH` и размещает его в `~/.codeai-hub/cef-launcher/<platform>/`; нужно заменить sample на собственный код.
-- [TODO] Настроить поставку артефактов под Windows, macOS и Linux (ресурсы, подпись, публикация в репозитории бинарей).
-  - Notes: автоматизировать релиз и убедиться что бинарники не попадают в VSIX.
-- [IN_PROGRESS] Интегрировать установку кастомного лаунчера в расширение (заменить `cefclient`, обновить ярлыки, конфигурацию).
-  - Notes: macOS arm64 использует `ensureLauncherInstalled`, генерацию `config.json`, запуск helper-процессов без `--single-process`; подготовка происходит уже при активации расширения, поддержка CDN-редиректов добавлена, остальные платформы ожидают реализации.
-- [IN_PROGRESS] Обновить документацию и QA-план после перехода на собственный лаунчер.
-  - Notes: архитектурные документы обновлены, требуется дополнить QA-сценарии и описание поставки для Windows/Linux.
+## Phase 11 — Core Orchestrator Bootstrap (owner: Codex, updated: 2025-10-24)
+- [TODO] Create workspace/package scaffold for the core orchestrator. — Set up packages/core/, tsconfig, linting, build scripts, and wire into npm workspaces.
+- [TODO] Implement service entrypoint with module stubs and configuration loading. — Focus on lifecycle, logging, config discovery.
+- [TODO] Integrate core download pipeline into the extension. — Extend manifest/post-install to fetch the core release, verify checksum, and display status in UI.
+
+## Phase 12 — Remote UI Bridge Prototype (owner: Codex, updated: 2025-10-24)
+- [TODO] Build WebSocket hub with basic auth and session state broadcasting.
+- [TODO] Attach standalone web client to the bridge for live data, replacing local router when core is ready.
+- [TODO] Add message validation, error handling, and diagnostic logging.
 
 ## Backlog / Parking Lot
-- [TODO] Согласовать сроки реализации полноценного подключения CEF-клиента к будущему Remote UI Bridge.
+- [TODO] Define provider module packaging strategy (versioning, distribution, sandboxing) once orchestrator skeleton exists.
+- [TODO] Evaluate persistence options for session history and config (SQLite, JSONL, etc.).
