@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.41] - 2025-10-24
+### Changed
+- Follow HTTP redirects when downloading launchers so GitHub CDN 302 responses no longer break installation.
+
+### Build
+- Release packaged as `codeai-hub-1.0.41.vsix` via `./scripts/build-release.sh 1.0.41` (paired with `CodeAIHubLauncher-macos-arm64-1.0.41.tar.bz2`).
+
 ## [1.0.40] - 2025-10-24
 ### Changed
 - Download the CEF runtime and launcher during extension activation, ensuring the web client button launches without additional waits.
@@ -211,6 +218,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Repository bootstrap with Ultracite configuration, quality scripts, and project documentation.
 
+[1.0.41]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.41
 [1.0.40]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.40
 [1.0.39]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.39
 [1.0.24]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.24

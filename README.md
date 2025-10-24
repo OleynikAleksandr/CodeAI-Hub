@@ -2,11 +2,11 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.0.40
+## Current Release — v1.0.41
 - **Automatic CEF bootstrap**: the extension downloads or refreshes the CEF runtime and launcher during activation, so the `Launch Web Client` command starts instantly.
 - **GitHub-hosted launcher**: `assets/launcher/manifest.json` points at the public release archives (macOS arm64 today); the installer verifies SHA-1 hashes and replaces outdated builds automatically.
 - **Multi-process macOS launcher**: `CodeAIHubLauncher` now resolves ICU/resource paths correctly, avoids `--single-process`, and spawns helper processes reliably on macOS.
-- **Lean VSIX artifact**: heavy binaries are no longer bundled; `codeai-hub-1.0.40.vsix` contains only the extension code and UI assets.
+- **Lean VSIX artifact**: heavy binaries are no longer bundled; `codeai-hub-1.0.41.vsix` contains only the extension code and UI assets.
 
 ## Features
 - **React-driven command bar**: the extension view opens with a React-rendered quick-action row that mirrors the Claude Code Fusion UX.
