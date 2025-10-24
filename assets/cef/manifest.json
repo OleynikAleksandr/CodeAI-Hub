@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "baseUrl": "https://cef-builds.spotifycdn.com/",
+  "platforms": {
+    "darwin-arm64": {
+      "cefVersion": "141.0.10+g1d65b0d+chromium-141.0.7390.123",
+      "channel": "stable",
+      "package": "cef_binary_141.0.10+g1d65b0d+chromium-141.0.7390.123_macosarm64_minimal.tar.bz2",
+      "sha1": "dcfd635b34a41328ca3a63f2f3a2aa7f7b7eaa88",
+      "size": 113541297
+    },
+    "darwin-x64": {
+      "cefVersion": "141.0.10+g1d65b0d+chromium-141.0.7390.123",
+      "channel": "stable",
+      "package": "cef_binary_141.0.10+g1d65b0d+chromium-141.0.7390.123_macosx64_minimal.tar.bz2",
+      "sha1": "79fde774738422b81b32319cf8723c0f2c8ceb38",
+      "size": 118925695
+    },
+    "win32-x64": {
+      "cefVersion": "141.0.10+g1d65b0d+chromium-141.0.7390.123",
+      "channel": "stable",
+      "package": "cef_binary_141.0.10+g1d65b0d+chromium-141.0.7390.123_windows64_minimal.tar.bz2",
+      "sha1": "f41e11020344dbbebda8da469d45ebcb63238dd7",
+      "size": 149034936
+    },
+    "win32-arm64": {
+      "cefVersion": "141.0.10+g1d65b0d+chromium-141.0.7390.123",
+      "channel": "stable",
+      "package": "cef_binary_141.0.10+g1d65b0d+chromium-141.0.7390.123_windowsarm64_minimal.tar.bz2",
+      "sha1": "d6aac2a8480d53734e1e3426e650729b30870b0f",
+      "size": 146963836
+    },
+    "linux-x64": {
+      "cefVersion": "142.0.4+g8cfb2b2+chromium-142.0.7444.34",
+      "channel": "beta",
+      "package": "cef_binary_142.0.4+g8cfb2b2+chromium-142.0.7444.34_linux64_beta_minimal.tar.bz2",
+      "sha1": "e7753675b454729d6b5d3f344a80b40ea62005f7",
+      "size": 390350785
+    }
+  }
+}
