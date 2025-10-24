@@ -306,6 +306,9 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - `npx ultracite init` - Initialize Ultracite in your project
 - `npx ultracite fix` - Format and fix code automatically
 - `npx ultracite check` - Check for issues without fixing
+- `./scripts/build-release.sh <version>` - Build VSIX packages exclusively; no other tooling is permitted for packaging.
+- `doc/TODO/todo-plan.md` must reflect only the active phase. Immediately after completing a phase (once the final commit is made), wipe the file and capture the next plan before proceeding with new code.
+- Architecture updates belong in `doc/Architecture/Architecture.md`. After finishing each phase (before moving on to the next), document every new module/class/function with its current implementation status and reference the commits that introduced it.
 
 ## Example: Error Handling
 ```typescript
