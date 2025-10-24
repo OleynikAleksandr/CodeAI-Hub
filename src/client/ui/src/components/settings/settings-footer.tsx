@@ -1,4 +1,9 @@
-import type { CSSProperties, FC, MouseEvent as ReactMouseEvent } from "react";
+import type {
+  CSSProperties,
+  FC,
+  FocusEvent as ReactFocusEvent,
+  MouseEvent as ReactMouseEvent,
+} from "react";
 
 type SettingsFooterProps = {
   readonly hasChanges: boolean;
@@ -59,6 +64,7 @@ const buttonGroupStyles: CSSProperties = {
 const DISABLED_OPACITY = 0.6;
 
 type ButtonMouseEvent = ReactMouseEvent<HTMLButtonElement, MouseEvent>;
+type ButtonFocusEvent = ReactFocusEvent<HTMLButtonElement>;
 
 const SettingsFooter: FC<SettingsFooterProps> = ({
   hasChanges,
@@ -82,12 +88,36 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
     }
   };
 
+  const handleResetFocus = (event: ButtonFocusEvent) => {
+    if (!resetting) {
+      event.currentTarget.style.background = "#2d2d30";
+      event.currentTarget.style.borderColor = "#4c4c4c";
+    }
+  };
+
+  const handleResetBlur = (event: ButtonFocusEvent) => {
+    if (!resetting) {
+      event.currentTarget.style.background = "transparent";
+      event.currentTarget.style.borderColor = "#3c3c3c";
+    }
+  };
+
   const handleCloseMouseEnter = (event: ButtonMouseEvent) => {
     event.currentTarget.style.background = "#2d2d30";
     event.currentTarget.style.borderColor = "#4c4c4c";
   };
 
   const handleCloseMouseLeave = (event: ButtonMouseEvent) => {
+    event.currentTarget.style.background = "transparent";
+    event.currentTarget.style.borderColor = "#3c3c3c";
+  };
+
+  const handleCloseFocus = (event: ButtonFocusEvent) => {
+    event.currentTarget.style.background = "#2d2d30";
+    event.currentTarget.style.borderColor = "#4c4c4c";
+  };
+
+  const handleCloseBlur = (event: ButtonFocusEvent) => {
     event.currentTarget.style.background = "transparent";
     event.currentTarget.style.borderColor = "#3c3c3c";
   };
@@ -104,11 +134,25 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
     }
   };
 
+  const handleSaveFocus = (event: ButtonFocusEvent) => {
+    if (hasChanges && !saving) {
+      event.currentTarget.style.background = "#1177bb";
+    }
+  };
+
+  const handleSaveBlur = (event: ButtonFocusEvent) => {
+    if (hasChanges && !saving) {
+      event.currentTarget.style.background = "#0e639c";
+    }
+  };
+
   return (
     <div style={containerStyles}>
       <button
         disabled={resetting}
+        onBlur={handleResetBlur}
         onClick={onReset}
+        onFocus={handleResetFocus}
         onMouseEnter={handleResetMouseEnter}
         onMouseLeave={handleResetMouseLeave}
         style={{
@@ -126,7 +170,9 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
 
       <div style={buttonGroupStyles}>
         <button
+          onBlur={handleCloseBlur}
           onClick={onClose}
+          onFocus={handleCloseFocus}
           onMouseEnter={handleCloseMouseEnter}
           onMouseLeave={handleCloseMouseLeave}
           style={closeButtonStyles}
@@ -136,7 +182,9 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
         </button>
         <button
           disabled={!hasChanges || saving}
+          onBlur={handleSaveBlur}
           onClick={onSave}
+          onFocus={handleSaveFocus}
           onMouseEnter={handleSaveMouseEnter}
           onMouseLeave={handleSaveMouseLeave}
           style={{

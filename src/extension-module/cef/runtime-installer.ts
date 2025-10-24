@@ -190,7 +190,3 @@ export const ensureCefRuntime = async (
     runtimeDir,
   };
 };
-
-export const getCefRuntimePath = async (
-  context: ExtensionContext
-): Promise<CefRuntimeInfo> => ensureCefRuntime(context);

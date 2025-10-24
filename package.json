@@ -2,7 +2,7 @@
   "name": "codeai-hub",
   "displayName": "CodeAI Hub",
   "description": "Unified VS Code extension for orchestrating AI providers.",
-  "version": "1.0.42",
+  "version": "1.0.43",
   "publisher": "CodeAIHub",
   "license": "ISC",
   "workspaces": [
@@ -72,12 +72,13 @@
     "check:tsprune": "ts-prune",
     "check:dup": "jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"",
     "check:links": "bash -lc 'set -e; if command -v markdown-link-check >/dev/null; then find doc -name \"*.md\" -print0 | xargs -0 -n1 markdown-link-check -q; fi'",
-    "quality": "npm run check:architecture && npm run lint",
+    "typecheck:webview": "tsc -p tsconfig.webview.json --pretty false",
+    "quality": "npm run check:architecture && npm run lint && npm run typecheck:webview",
     "setup:hooks": "npx lefthook install",
     "build:webview": "node ./scripts/build-webview.js",
     "build:web-client": "node ./scripts/build-web-client.js",
     "build:core": "npm run build --workspace=@codeai-hub/core",
-    "compile": "npm run build:webview && npm run build:web-client && tsc -p .",
+    "compile": "npm run build:webview && npm run build:web-client && npm run typecheck:webview && tsc -p .",
     "test": "echo \"No automated tests defined yet\""
   },
   "keywords": [

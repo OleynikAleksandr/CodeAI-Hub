@@ -7960,11 +7960,31 @@
         event.currentTarget.style.borderColor = "#3c3c3c";
       }
     };
+    const handleResetFocus = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = "#2d2d30";
+        event.currentTarget.style.borderColor = "#4c4c4c";
+      }
+    };
+    const handleResetBlur = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = "transparent";
+        event.currentTarget.style.borderColor = "#3c3c3c";
+      }
+    };
     const handleCloseMouseEnter = (event) => {
       event.currentTarget.style.background = "#2d2d30";
       event.currentTarget.style.borderColor = "#4c4c4c";
     };
     const handleCloseMouseLeave = (event) => {
+      event.currentTarget.style.background = "transparent";
+      event.currentTarget.style.borderColor = "#3c3c3c";
+    };
+    const handleCloseFocus = (event) => {
+      event.currentTarget.style.background = "#2d2d30";
+      event.currentTarget.style.borderColor = "#4c4c4c";
+    };
+    const handleCloseBlur = (event) => {
       event.currentTarget.style.background = "transparent";
       event.currentTarget.style.borderColor = "#3c3c3c";
     };
@@ -7978,12 +7998,24 @@
         event.currentTarget.style.background = "#0e639c";
       }
     };
+    const handleSaveFocus = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = "#1177bb";
+      }
+    };
+    const handleSaveBlur = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = "#0e639c";
+      }
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: containerStyles, children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
         "button",
         {
           disabled: resetting,
+          onBlur: handleResetBlur,
           onClick: onReset,
+          onFocus: handleResetFocus,
           onMouseEnter: handleResetMouseEnter,
           onMouseLeave: handleResetMouseLeave,
           style: {
@@ -8002,7 +8034,9 @@
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "button",
           {
+            onBlur: handleCloseBlur,
             onClick: onClose,
+            onFocus: handleCloseFocus,
             onMouseEnter: handleCloseMouseEnter,
             onMouseLeave: handleCloseMouseLeave,
             style: closeButtonStyles,
@@ -8014,7 +8048,9 @@
           "button",
           {
             disabled: !hasChanges || saving,
+            onBlur: handleSaveBlur,
             onClick: onSave,
+            onFocus: handleSaveFocus,
             onMouseEnter: handleSaveMouseEnter,
             onMouseLeave: handleSaveMouseLeave,
             style: {
