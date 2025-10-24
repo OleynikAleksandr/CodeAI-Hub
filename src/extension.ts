@@ -17,7 +17,55 @@ import { ensureCefRuntime } from "./extension-module/cef/runtime-installer";
 import { HomeViewProvider } from "./extension-module/home-view-provider";
 import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut-manager";
 
-export function activate(context: ExtensionContext): void {
+export async function activate(context: ExtensionContext): Promise<void> {
+  const indexPath = path.join(
+    context.extensionUri.fsPath,
+    "media",
+    "web-client",
+    "dist",
+    "index.html"
+  );
+  const indexUri = Uri.file(indexPath);
+
+  try {
+    await workspace.fs.stat(indexUri);
+  } catch (error) {
+    const reason =
+      error instanceof Error ? error.message : "Web client bundle missing.";
+    window.showErrorMessage(`Unable to locate web client bundle: ${reason}`);
+    throw error instanceof Error ? error : new Error(String(error));
+  }
+
+  if (!env.remoteName) {
+    try {
+      await window.withProgress(
+        {
+          location: ProgressLocation.Notification,
+          cancellable: false,
+          title: "Preparing CodeAI Hub runtime",
+        },
+        async (progress) => {
+          progress.report({ message: "Ensuring CEF runtime…" });
+          await ensureCefRuntime(context, progress);
+          progress.report({ message: "Ensuring CodeAIHubLauncher…" });
+          const ensuredLauncher = await ensureLauncherInstalled(
+            context,
+            progress
+          );
+          const target = getCefClientTarget(ensuredLauncher, indexPath);
+          progress.report({ message: "Finalizing desktop shortcuts…" });
+          await ensureWebClientShortcuts(target);
+        }
+      );
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      window.showErrorMessage(
+        `Failed to prepare CodeAI Hub runtime: ${reason}`
+      );
+      throw error instanceof Error ? error : new Error(reason);
+    }
+  }
+
   const provider = new HomeViewProvider(context.extensionUri);
 
   context.subscriptions.push(
@@ -26,22 +74,9 @@ export function activate(context: ExtensionContext): void {
       provider.showSettingsPlaceholder();
     }),
     commands.registerCommand("codeaiHub.launchWebClient", async () => {
-      const indexPath = path.join(
-        context.extensionUri.fsPath,
-        "media",
-        "web-client",
-        "dist",
-        "index.html"
-      );
-      const indexUri = Uri.file(indexPath);
-
-      try {
-        await workspace.fs.stat(indexUri);
-      } catch (error) {
-        const reason =
-          error instanceof Error ? error.message : "Web client bundle missing.";
-        window.showErrorMessage(
-          `Unable to locate web client bundle: ${reason}`
+      if (env.remoteName) {
+        window.showWarningMessage(
+          "Launching the local CodeAI Hub client is not supported in remote workspaces."
         );
         return;
       }
@@ -75,40 +110,6 @@ export function activate(context: ExtensionContext): void {
       }
     })
   );
-
-  if (!env.remoteName) {
-    const prepareRuntime = async (): Promise<void> => {
-      const indexPath = path.join(
-        context.extensionUri.fsPath,
-        "media",
-        "web-client",
-        "dist",
-        "index.html"
-      );
-
-      try {
-        await workspace.fs.stat(Uri.file(indexPath));
-      } catch {
-        return;
-      }
-
-      try {
-        await ensureCefRuntime(context);
-        const installedLauncher = await ensureLauncherInstalled(context);
-        const target = getCefClientTarget(installedLauncher, indexPath);
-        await ensureWebClientShortcuts(target);
-      } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
-        window.showErrorMessage(
-          `Failed to prepare CodeAI Hub runtime: ${reason}`
-        );
-      }
-    };
-
-    prepareRuntime().catch(() => {
-      /* handled inside prepareRuntime */
-    });
-  }
 }
 
 export function deactivate(): void {
