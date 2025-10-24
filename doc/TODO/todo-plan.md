@@ -17,7 +17,7 @@
 - [DONE] Добавить модуль установщика ядра в src/extension-module/core/ (аналог cef/runtime-installer.ts)
 - [DONE] Протестировать локальный цикл сборки: npm run build:core → бинарники в doc/tmp/releases/
 
-**Коммит:** 283f1b5 - feat: Phase 10 - core orchestrator infrastructure
+**Коммит:** 2dbb8c2 - feat: Phase 10 - core orchestrator infrastructure
 
 ---
 
