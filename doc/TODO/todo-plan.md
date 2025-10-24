@@ -1,27 +1,109 @@
-# Development TODO Plan
+# План развития проекта (Development TODO Plan)
 
-## Legend
-- TODO — task planned
-- IN_PROGRESS — work in progress
-- BLOCKED — external action required
-- DONE — task complete
+## Легенда
+- TODO — задача запланирована
+- IN_PROGRESS — работа в процессе
+- BLOCKED — требуется внешнее действие
+- DONE — задача выполнена
 
-## Phase 10 — Core Orchestrator Architecture (owner: Codex, updated: 2025-10-24)
-- [TODO] Capture functional and non-functional requirements for the autonomous core. — Aggregate expectations from doc/Project_Docs/SystemArchitecture/SystemArchitecture.md and RemoteCoreBridge notes; list user journeys the service must support.
-- [TODO] Define module boundaries and responsibility map (Session Manager, Provider Registry, Module Loader, Remote UI Bridge, Config/Secrets, Telemetry). — Prepare high-level diagrams and outline the workspace structure.
-- [TODO] Design the Remote UI Bridge contract (HTTP + WebSocket) shared by webview and standalone client. — Describe message schemas, auth scheme, error handling, streaming rules.
-- [TODO] Update architecture/system documentation once the scheme is approved. — Apply changes to doc/Architecture/Architecture.md, doc/Project_Docs/SystemArchitecture/SystemArchitecture.md, and add a knowledge entry for the bridge contract.
+## Phase 10 — Инфраструктура Core Orchestrator (владелец: Codex, обновлено: 2025-10-24)
+**Цель:** Подготовить физическую структуру для разработки автономного ядра
 
-## Phase 11 — Core Orchestrator Bootstrap (owner: Codex, updated: 2025-10-24)
-- [TODO] Create workspace/package scaffold for the core orchestrator. — Set up packages/core/, tsconfig, linting, build scripts, and wire into npm workspaces.
-- [TODO] Implement service entrypoint with module stubs and configuration loading. — Focus on lifecycle, logging, config discovery.
-- [TODO] Integrate core download pipeline into the extension. — Extend manifest/post-install to fetch the core release, verify checksum, and display status in UI.
+- [DONE] Создать структуру директорий packages/core/ с поддиректориями src/
+- [DONE] Настроить packages/core/package.json с зависимостями (express, ws, pkg и т.д.)
+- [DONE] Настроить packages/core/tsconfig.json и интегрировать в npm workspaces
+- [DONE] Создать scripts/build-core.sh (аналог build-cef-launcher.sh) для компиляции pkg
+- [DONE] Создать assets/core/manifest.json для версионирования и распространения
+- [DONE] Добавить модуль установщика ядра в src/extension-module/core/ (аналог cef/runtime-installer.ts)
+- [DONE] Протестировать локальный цикл сборки: npm run build:core → бинарники в doc/tmp/releases/
 
-## Phase 12 — Remote UI Bridge Prototype (owner: Codex, updated: 2025-10-24)
-- [TODO] Build WebSocket hub with basic auth and session state broadcasting.
-- [TODO] Attach standalone web client to the bridge for live data, replacing local router when core is ready.
-- [TODO] Add message validation, error handling, and diagnostic logging.
+**Коммит:** 283f1b5 - feat: Phase 10 - core orchestrator infrastructure
 
-## Backlog / Parking Lot
-- [TODO] Define provider module packaging strategy (versioning, distribution, sandboxing) once orchestrator skeleton exists.
-- [TODO] Evaluate persistence options for session history and config (SQLite, JSONL, etc.).
+---
+
+## Phase 10А — Спецификация функций автономного ядра (владелец: Codex, обновлено: 2025-10-24)
+**Цель:** Детально описать функциональность и API ядра перед проектированием архитектуры
+
+- [TODO] Проанализировать текущий SystemArchitecture.md и выявить пробелы в описании
+- [TODO] Обсудить с пользователем ключевые сценарии использования ядра (user journeys)
+- [TODO] Создать документ doc/Project_Docs/Stacks/CoreOrchestrator_Specification.md с детальным описанием:
+  - Пользовательские сценарии и потоки взаимодействия
+  - API эндпойнты (HTTP/WebSocket) с полными схемами запросов/ответов
+  - Схемы данных, форматы сообщений и контракты
+  - Требования к безопасности (авторизация, шифрование, изоляция)
+  - Требования к производительности (latency, throughput, concurrency)
+  - Зависимости и внешние интеграции
+  - Стратегия обработки ошибок и восстановления
+- [TODO] Согласовать спецификацию с пользователем перед переходом к Phase 11
+
+**Коммит:** (будет записан после завершения фазы)
+
+---
+
+## Phase 11 — Проектирование архитектуры ядра (владелец: Codex, обновлено: 2025-10-24)
+**Цель:** Определить требования и границы модулей
+
+- [TODO] Зафиксировать функциональные и нефункциональные требования из SystemArchitecture.md
+- [TODO] Определить границы модулей: Session Manager, Provider Registry, Module Loader, Remote UI Bridge, Config/Secrets, Telemetry
+- [TODO] Создать высокоуровневые Mermaid-диаграммы взаимодействия модулей
+- [TODO] Спроектировать контракт Remote UI Bridge (HTTP + WebSocket): схемы сообщений, авторизация, обработка ошибок
+- [TODO] Обновить doc/Architecture/Architecture.md и SystemArchitecture.md с утверждённым дизайном
+
+**Коммит:** (будет записан после завершения фазы)
+
+---
+
+## Phase 12 — Загрузка Core Orchestrator (владелец: Codex, обновлено: 2025-10-24)
+**Цель:** Реализовать базовый запуск сервиса
+
+- [TODO] Реализовать точку входа сервиса (packages/core/src/index.ts) с управлением жизненным циклом
+- [TODO] Создать заглушки модулей: SessionManager, ProviderRegistry, ConfigLoader, Logger
+- [TODO] Реализовать загрузку конфигурации из ~/.codeai-hub/core/config.json
+- [TODO] Добавить базовый HTTP-сервер с эндпойнтом health check
+- [TODO] Протестировать ручной запуск и остановку ядра
+
+**Коммит:** (будет записан после завершения фазы)
+
+---
+
+## Phase 13 — Прототип Remote UI Bridge (владелец: Codex, обновлено: 2025-10-24)
+**Цель:** Связать клиенты с ядром через WebSocket
+
+- [TODO] Построить WebSocket-хаб с базовой токен-авторизацией
+- [TODO] Реализовать трансляцию состояния сессий подключённым клиентам
+- [TODO] Подключить VS Code webview к bridge (заменить локальный роутер)
+- [TODO] Подключить автономный CEF-клиент к bridge
+- [TODO] Добавить валидацию сообщений, обработку ошибок, диагностическое логирование
+
+**Коммит:** (будет записан после завершения фазы)
+
+---
+
+## Phase 14 — Интеграция и тестирование с заглушками (владелец: Codex, обновлено: 2025-10-24)
+**Цель:** Проверить полный цикл работы расширения + ядро + оба UI с mock-провайдерами
+
+- [TODO] Создать mock-провайдеры (Claude, Codex, Gemini) с заглушками для тестирования
+- [TODO] Обновить версию в package.json (минорный инкремент)
+- [TODO] Собрать релиз VSIX через scripts/build-release.sh
+- [TODO] Протестировать установку и запуск ядра при активации расширения
+- [TODO] Проверить работу VS Code webview UI с ядром:
+  - Создание сессии
+  - Отправка сообщений
+  - Получение mock-ответов от провайдеров
+  - Переключение между провайдерами
+- [TODO] Проверить работу локального CEF-клиента с ядром:
+  - Запуск через команду "Launch Web Client"
+  - Подключение к ядру через WebSocket
+  - Синхронизация состояния с webview
+  - Работа с mock-провайдерами
+- [TODO] Проверить одновременную работу обоих UI (webview + CEF) с одним ядром
+- [TODO] Проверить переживание перезапуска VS Code (ядро остаётся активным)
+- [TODO] Задокументировать найденные проблемы и edge cases
+
+**Коммит:** (будет записан после завершения фазы)
+
+---
+
+## Backlog / Отложенные задачи
+- [TODO] Определить стратегию упаковки провайдерных модулей (версионирование, распространение, изоляция) после создания скелета оркестратора
+- [TODO] Оценить варианты персистентности для истории сессий и конфигурации (SQLite, JSONL и т.д.)
