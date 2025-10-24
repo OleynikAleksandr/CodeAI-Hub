@@ -13,7 +13,7 @@
 Компоненты расширения делятся на три слоя:
 - **Extension Host Layer** — точка входа `src/extension.ts`, регистрирующая команды, инициализирующая webview и управляя запуском автономного ядра.
 - **VS Code Webview UI** — основной интерфейс, отображающий сессии внутри редактора.
-- **Local Web Client (PWA)** — статический бандл, поставляемый вместе с VSIX и запускаемый в отдельном окне браузера без chrome-оболочки.
+- **Local CEF Client** — статический UI-бандл, запускаемый через Chromium Embedded Framework (cefclient) вне VS Code.
 
 ```mermaid
 %%{init: {'themeVariables': { 'fontSize': '28px'}}}%%
@@ -21,7 +21,7 @@ graph TD
     User -->|invoke command| VSCodeHost[VS Code Extension Host]
     VSCodeHost -->|postMessage| WebviewUI
     VSCodeHost -->|launch| WebClientLauncher
-    WebClientLauncher --> WebClientApp[Local Web Client]
+    WebClientLauncher --> CefClient[Local CEF Client]
     WebviewUI -->|Remote UI API| RemoteBridge
     WebClientApp -->|WebSocket| RemoteBridge
     RemoteBridge --> CoreOrchestrator
@@ -41,11 +41,14 @@ graph TD
 - **Streaming Rendering**: `StreamingWordEmitter` и `useDialogMessages` формируют потоковый вывод без разрывов Markdown. Логика идентична в webview и локальном веб-клиенте.
 - **Accessibility**: все компоненты соответствуют правилам Ultracite (role, aria, tabindex), что позволяет без изменений переносить UI в браузерный клиент.
 
-## Local Web Client (PWA)
-- **Bundle**: расположен в `media/web-client/` (HTML + `app.js`). Бандл `app.js` собирается из тех же React-компонентов (`src/client/ui/src`) и содержит встроенный VS Code API stub для автономного запуска. При сборке `npm run build:web-client` основной HTML получает инлайн-версию `main-view.css`, `session-view.css`, `react-chat.css`, поэтому автономный UI визуально идентичен webview даже в браузерах без доступа к `vscode-resource:`.
-- **Startup**: кнопка «UI Outside» (`codeaiHub.launchWebClient`) открывает статический бандл `media/web-client/dist/index.html` во внешнем браузере. После интеграции автономного ядра запуск будет сопровождаться проверкой доступности Core Orchestrator.
-- **Installation**: первый запуск маркирует PWA как установленную, так что пользователь может закрепить ярлык из меню браузера. Дополнительно расширение создаёт системный ярлык автоматически.
-- **Synchronization**: текущая версия отображает заглушечный UI; после запуска Core Orchestrator оба интерфейса будут синхронизированы через Remote UI Bridge.
+## Local CEF Client
+- **Bundle**: UI продолжает собираться в `media/web-client/dist/` из общих React-компонентов (`src/client/ui/src`). HTML содержит встроенный stub VS Code API и инлайн-стили (`main-view.css`, `session-view.css`, `react-chat.css`), чтобы визуально совпадать с webview.
+- **Runtime Delivery**: `assets/cef/manifest.json` описывает CEF minimal-пакеты для Windows, macOS (x64/arm64) и Linux x64. Модуль `src/extension-module/cef/runtime-installer.ts` скачивает архивы в `~/.codeai-hub/cef/<platform>/<cefVersion>/`, проверяет SHA-1 и распаковывает `Release/`.
+- **Launcher Delivery**: `assets/launcher/manifest.json` фиксирует версии `CodeAIHubLauncher`. Модуль `src/extension-module/cef/launcher-installer.ts` скачивает архив лаунчера, распаковывает его в `~/.codeai-hub/cef-launcher/<platform>/<launcherVersion>/` и создаёт `install.json`. При наличии собранного бинаря (локальный fallback) установка пропускается.
+- **Launcher Execution**: команда `codeaiHub.launchWebClient` вызывает `ensureCefRuntime` и `ensureLauncherInstalled`, генерирует `config/config.json` рядом с бинарём и запускает `CodeAIHubLauncher` с флагами `--config` + `--url` + `--use-alloy-style`.
+- **Preload**: во время `activate` расширение без прогресса вызывает `ensureCefRuntime` и `ensureLauncherInstalled`, так что требуемые архивы подкачиваются или обновляются ещё до нажатия кнопки запуска.
+- **Shortcuts**: `shortcut-manager.ts` генерирует ярлыки на установленный `CodeAIHubLauncher` (`.app`/`.exe`/`codeai-hub-launcher`). После обновления лаунчера ярлыки пересоздаются.
+- **Stub Mode**: пока Remote UI Bridge не реализован, UI работает на локальных заглушках (`ProviderRegistry`, `SessionLauncher`). После запуска ядра CEF-клиент перейдёт в режим прямого подключения по WebSocket.
 
 ## Interaction with Core Orchestrator
 - Расширение выступает клиентом автономного ядра, используя API, описанные в `doc/Project_Docs/Stacks/CoreOrchestrator.md`.
@@ -54,11 +57,11 @@ graph TD
 - Extension host следит за состоянием соединения: при потере связи UI получает уведомление и предложение перезапустить ядро.
 
 ## Startup & Launch Flow
-1. Пользователь устанавливает VSIX. В директории расширений разворачиваются webview bundle и локальный веб-клиент.
-2. При первом запуске extension host проверяет наличие автономного ядра и провайдерных модулей. Недостающие компоненты скачиваются в `~/.codeai-hub`.
-3. После успешного bootstrap создаётся/обновляется ярлык локального веб-клиента (Windows Desktop, macOS Applications/Launchpad, Linux Desktop/XDG).
-4. Webview загружается по команде `CodeAI Hub: Open`. При необходимости пользователь может запустить локальный веб-клиент через кнопку «UI Outside» или системный ярлык.
-5. Оба интерфейса работают параллельно; закрытие VS Code не мешает веб-клиенту продолжать работу с ядром.
+1. Пользователь устанавливает VSIX. В директории расширений разворачиваются webview bundle и статический UI для локального клиента.
+2. При первом запуске команды `Launch Web Client` расширение считывает манифесты CEF и лаунчера, скачивает подходящие архивы в `~/.codeai-hub/cef/` и `~/.codeai-hub/cef-launcher/`, проверяет хэши и разворачивает содержимое.
+3. После успешной установки генерируется `config/config.json`, обновляются системные ярлыки (Windows Desktop, macOS `.app`, Linux `.desktop`) и записываются маркеры установки (`install.json`).
+4. Webview загружается по команде `CodeAI Hub: Open`. Локальный клиент стартует через `CodeAIHubLauncher` и открывает тот же `index.html` из `media/web-client/dist/`.
+5. Оба интерфейса работают параллельно; закрытие VS Code не мешает CEF-клиенту продолжать работу с ядром.
 
 ## Configuration & Storage
 - **VS Code storage**: UI-настройки (темы, предпочтения панелей, последняя активная сессия) хранятся через `vscode.Memento` в `globalStorage` расширения.
@@ -67,17 +70,18 @@ graph TD
 
 ## Security Considerations
 - Extension host не хранит провайдерские ключи в открытом виде; он взаимодействует с ядром через временные токены.
-- Пару ключ/токен для локального веб-клиента генерирует host при каждом запуске и передаёт в браузер через защищённый канал (command args / query string с одноразовой подписью).
+- Для stub-режима CEF клиенту не требуются токены; после включения Remote UI Bridge одноразовые ключи будут передаваться через конфигурацию запуска и защищённый канал обмена с ядром.
 - CSP webview запрещает выполнение inline-скриптов, все ресурсы грузятся из `vscode-resource:` и статических каталогов расширения.
 - Remote UI Bridge ограничивает число одновременных подключений и сбрасывает сессии после таймаута простоя.
 
 ## Dependencies & Tooling
 - **Build**: webview собирается в `media/react-chat.js`, автономный клиент — в `media/web-client/dist/app.js` (команда `npm run build:web-client`, скрипт `scripts/build-web-client.js`). Комбинированный пайплайн запускается `npm run compile` перед упаковкой VSIX.
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг; архитектурный скрипт контролирует структуру `src/` и `media/`.
-- **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Веб-клиент рассчитан на Chromium-браузеры с поддержкой PWA и WebSocket.
+- **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
 ## Related Documents
 - `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 - `doc/Project_Docs/Stacks/CoreOrchestrator.md`
 - `doc/tmp/RemoteCoreBridge.md`
+- `doc/Project_Docs/Stacks/CEF_Launcher_Build.md`
 - `doc/TODO/todo-plan.md`

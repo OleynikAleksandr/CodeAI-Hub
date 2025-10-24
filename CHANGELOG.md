@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.40] - 2025-10-24
+### Changed
+- Download the CEF runtime and launcher during extension activation, ensuring the web client button launches without additional waits.
+- Removed bundled binaries from the VSIX so it only carries the extension code and UI assets; large launchers stay in GitHub Releases.
+- Updated launcher delivery documentation and manifests to reference the new `CodeAIHubLauncher-macos-arm64-1.0.40.tar.bz2` artifact.
+
+### Build
+- Release packaged as `codeai-hub-1.0.40.vsix` via `./scripts/build-release.sh 1.0.40` (pair with `CodeAIHubLauncher-macos-arm64-1.0.40.tar.bz2`).
+
+## [1.0.39] - 2025-10-24
+### Fixed
+- Resolved the macOS launcher crash caused by missing ICU/resource paths and re-enabled multi-process mode by removing the `--single-process` flag.
+- Pointed the launcher manifest at the GitHub release archive and added SHA-1 verification for downloaded tarballs.
+
+### Build
+- Release packaged as `codeai-hub-1.0.39.vsix` via `./scripts/build-release.sh 1.0.39` (paired with `CodeAIHubLauncher-macos-arm64.tar.bz2`).
+
 # [1.0.35] - 2025-10-22
 ### Added
 - Shared the webview React UI with a standalone static web client bundle and exposed the `UI Outside` launcher command.
@@ -194,6 +211,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Repository bootstrap with Ultracite configuration, quality scripts, and project documentation.
 
+[1.0.40]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.40
+[1.0.39]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.39
 [1.0.24]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.24
 [1.0.23]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.23
 [1.0.22]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.22
