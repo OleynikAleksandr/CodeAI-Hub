@@ -7538,21 +7538,294 @@
     return rest;
   };
 
+  // src/client/ui/src/core-bridge/normalizers.ts
+  var toNumberTimestamp = (value) => {
+    if (!value) {
+      return Date.now();
+    }
+    const parsed = Date.parse(value);
+    return Number.isNaN(parsed) ? Date.now() : parsed;
+  };
+  var sanitizeProvider = (provider) => {
+    if (!provider || typeof provider.id !== "string") {
+      return null;
+    }
+    const providerId = provider.id;
+    if (!providerIdSet.has(providerId)) {
+      return null;
+    }
+    return {
+      id: providerId,
+      title: provider.name ?? provider.id,
+      description: provider.description ?? "",
+      connected: provider.status !== "inactive"
+    };
+  };
+  var sanitizeMessage = (message) => {
+    if (!message || typeof message.id !== "string" || typeof message.content !== "string") {
+      return null;
+    }
+    const role = message.role ?? "assistant";
+    if (!["assistant", "user", "system"].includes(role)) {
+      return null;
+    }
+    return {
+      id: message.id,
+      role,
+      content: message.content,
+      createdAt: toNumberTimestamp(message.timestamp)
+    };
+  };
+  var sanitizeSession = (session) => {
+    if (!session || typeof session.id !== "string" || typeof session.title !== "string" || typeof session.providerId !== "string") {
+      return null;
+    }
+    const providerId = session.providerId;
+    if (!providerIdSet.has(providerId)) {
+      return null;
+    }
+    const sessionId = session.id;
+    const record = {
+      id: sessionId,
+      title: session.title,
+      providerIds: [providerId],
+      createdAt: toNumberTimestamp(session.createdAt)
+    };
+    const messages = session.messages?.map((message) => sanitizeMessage(message)).filter((message) => Boolean(message)) ?? [];
+    return {
+      record,
+      messages
+    };
+  };
+  var convertStatusResponse = (status, fallbackProviders) => {
+    const providers = status.providers?.map((provider) => sanitizeProvider(provider)).filter((provider) => Boolean(provider)) ?? [...fallbackProviders];
+    const sessions = status.sessions?.map((session) => sanitizeSession(session)).filter((session) => Boolean(session)) ?? [];
+    return {
+      sessions,
+      providers
+    };
+  };
+
+  // src/client/ui/src/core-bridge/core-bridge.ts
+  var DEFAULT_CONFIG = {
+    httpUrl: "http://127.0.0.1:8080",
+    wsUrl: "ws://127.0.0.1:8080/api/v1/stream"
+  };
+  var globalScope = window;
+  var resolveConfig = () => {
+    const config = globalScope.__CODEAI_CORE_CONFIG;
+    if (!config || typeof config.httpUrl !== "string" || typeof config.wsUrl !== "string") {
+      return DEFAULT_CONFIG;
+    }
+    return config;
+  };
+  var notifyWindow = (message) => {
+    window.postMessage(message, "*");
+  };
+  var initialized = false;
+  var websocket = null;
+  var reconnectTimer;
+  var cachedProviders = [];
+  var pendingMessages = [];
+  var handleServerMessage = (raw) => {
+    let payload;
+    try {
+      payload = JSON.parse(raw);
+    } catch {
+      return;
+    }
+    if (!payload || typeof payload.type !== "string") {
+      return;
+    }
+    switch (payload.type) {
+      case "session:message": {
+        const candidate = payload.payload;
+        if (!candidate || typeof candidate.sessionId !== "string") {
+          return;
+        }
+        const normalized = sanitizeMessage(candidate);
+        if (!normalized) {
+          return;
+        }
+        notifyWindow({
+          type: "session:message",
+          payload: {
+            sessionId: candidate.sessionId,
+            message: normalized
+          }
+        });
+        break;
+      }
+      case "session:created": {
+        const normalized = sanitizeSession(payload.payload);
+        if (!normalized) {
+          return;
+        }
+        notifyWindow({
+          type: "session:created",
+          payload: normalized.record
+        });
+        break;
+      }
+      default:
+        break;
+    }
+  };
+  var flushPendingMessages = () => {
+    if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    while (pendingMessages.length > 0) {
+      const serialized = pendingMessages.shift();
+      if (serialized) {
+        websocket.send(serialized);
+      }
+    }
+  };
+  var enqueueMessage = (payload) => {
+    const serialized = JSON.stringify(payload);
+    pendingMessages.push(serialized);
+    flushPendingMessages();
+  };
+  var scheduleReconnect = (config) => {
+    if (reconnectTimer) {
+      return;
+    }
+    reconnectTimer = window.setTimeout(() => {
+      reconnectTimer = void 0;
+      connectWebSocket(config);
+    }, 2e3);
+  };
+  var connectWebSocket = (config) => {
+    if (websocket) {
+      websocket.close();
+      websocket = null;
+    }
+    websocket = new WebSocket(config.wsUrl);
+    websocket.addEventListener("open", () => {
+      flushPendingMessages();
+    });
+    websocket.addEventListener("message", (event) => {
+      handleServerMessage(String(event.data));
+    });
+    websocket.addEventListener("close", () => {
+      scheduleReconnect(config);
+    });
+    websocket.addEventListener("error", () => {
+      scheduleReconnect(config);
+    });
+  };
+  var fetchStatusSnapshot = async (config) => {
+    try {
+      const response = await fetch(`${config.httpUrl}/api/v1/status`, {
+        method: "GET"
+      });
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      const normalized = convertStatusResponse(data, cachedProviders);
+      cachedProviders = normalized.providers;
+      notifyWindow({
+        type: "core:state",
+        payload: normalized
+      });
+    } catch {
+    }
+  };
+  var ensureProvidersAvailable = async (config) => {
+    if (cachedProviders.length > 0) {
+      return cachedProviders;
+    }
+    await fetchStatusSnapshot(config);
+    return cachedProviders;
+  };
+  var openProviderPicker = async () => {
+    const config = resolveConfig();
+    const providers = await ensureProvidersAvailable(config);
+    if (providers.length === 0) {
+      notifyWindow({
+        type: "ui:providerPickerError",
+        payload: { reason: "Core orchestrator is unavailable. Retry shortly." }
+      });
+      return;
+    }
+    notifyWindow({
+      type: "providerPicker:open",
+      payload: { providers }
+    });
+  };
+  var createSession = (providerIds) => {
+    const providerId = providerIds[0];
+    if (!providerId) {
+      notifyWindow({
+        type: "ui:providerPickerError",
+        payload: { reason: "Select at least one provider to continue." }
+      });
+      return;
+    }
+    enqueueMessage({
+      type: "session:create",
+      payload: { providerId }
+    });
+  };
+  var sendChatMessage = (sessionId, content) => {
+    if (!content.trim()) {
+      return;
+    }
+    enqueueMessage({
+      type: "session:message",
+      payload: {
+        sessionId,
+        content
+      }
+    });
+  };
+  var handleOutgoingVsCodeMessage = (message) => {
+    if (!message || typeof message !== "object") {
+      return false;
+    }
+    const candidate = message;
+    if (typeof candidate.command === "string") {
+      if (candidate.command === "newSession") {
+        void openProviderPicker();
+        return true;
+      }
+      return false;
+    }
+    if (candidate.type === "providerPicker:confirm") {
+      const payload = candidate.payload;
+      const providerIds = payload?.providerIds ?? [];
+      createSession(providerIds);
+      return true;
+    }
+    return false;
+  };
+  var initializeCoreBridge = () => {
+    if (initialized || typeof window === "undefined") {
+      return;
+    }
+    initialized = true;
+    const config = resolveConfig();
+    void fetchStatusSnapshot(config);
+    connectWebSocket(config);
+  };
+
   // src/client/ui/src/vscode.ts
   var cachedApi;
   var getVsCodeApi = () => {
     if (cachedApi) {
       return cachedApi;
     }
-    const globalScope = window;
-    if (globalScope.vscode) {
-      cachedApi = globalScope.vscode;
+    const globalScope2 = window;
+    if (globalScope2.vscode) {
+      cachedApi = globalScope2.vscode;
       return cachedApi;
     }
-    if (typeof globalScope.acquireVsCodeApi === "function") {
+    if (typeof globalScope2.acquireVsCodeApi === "function") {
       try {
-        cachedApi = globalScope.acquireVsCodeApi();
-        globalScope.vscode = cachedApi;
+        cachedApi = globalScope2.acquireVsCodeApi();
+        globalScope2.vscode = cachedApi;
         return cachedApi;
       } catch (_error) {
         return cachedApi;
@@ -7561,6 +7834,9 @@
     return cachedApi;
   };
   var postVsCodeMessage = (message) => {
+    if (handleOutgoingVsCodeMessage(message)) {
+      return;
+    }
     const api = getVsCodeApi();
     if (!api) {
       return;
@@ -7619,6 +7895,26 @@
 
   // src/client/ui/src/app-host/session-store.ts
   var import_react3 = __toESM(require_react());
+  var buildSnapshotFromMessages = (session, providerLabels, messages) => {
+    const base = createInitialSnapshot(session, providerLabels);
+    const updatedAt = messages.at(-1)?.createdAt ?? base.status.updatedAt;
+    const tokenUsage = messages.reduce(
+      (total, message) => total + message.content.length,
+      0
+    );
+    return {
+      ...base,
+      messages: [...messages],
+      status: {
+        ...base.status,
+        updatedAt,
+        tokenUsage: {
+          ...base.status.tokenUsage,
+          used: Math.min(base.status.tokenUsage.limit, tokenUsage)
+        }
+      }
+    };
+  };
   var useSessionStore = (providerLabels) => {
     const [sessions, setSessions] = (0, import_react3.useState)([]);
     const [snapshots, setSnapshots] = (0, import_react3.useState)({});
@@ -7641,6 +7937,55 @@
         setActiveSessionId(session.id);
       },
       [providerLabels, syncSessionsRef]
+    );
+    const hydrateFromCoreState = (0, import_react3.useCallback)(
+      (payload) => {
+        const nextSessions = payload.sessions.map((entry) => entry.record);
+        syncSessionsRef(nextSessions);
+        setSessions(nextSessions);
+        const nextSnapshots = {};
+        for (const entry of payload.sessions) {
+          nextSnapshots[entry.record.id] = buildSnapshotFromMessages(
+            entry.record,
+            providerLabels,
+            entry.messages
+          );
+        }
+        setSnapshots(nextSnapshots);
+        setActiveSessionId((current) => {
+          if (current) {
+            return current;
+          }
+          return nextSessions.at(-1)?.id ?? null;
+        });
+      },
+      [providerLabels, syncSessionsRef]
+    );
+    const handleSessionMessageEvent = (0, import_react3.useCallback)(
+      (payload) => {
+        setSnapshots((previous) => {
+          const session = sessionsRef.current.find(
+            (item) => item.id === payload.sessionId
+          );
+          if (!session) {
+            return previous;
+          }
+          const current = previous[payload.sessionId] ?? {
+            ...createInitialSnapshot(session, providerLabels),
+            messages: []
+          };
+          const nextMessages = [...current.messages, payload.message];
+          return {
+            ...previous,
+            [payload.sessionId]: buildSnapshotFromMessages(
+              session,
+              providerLabels,
+              nextMessages
+            )
+          };
+        });
+      },
+      [providerLabels, sessionsRef]
     );
     const clearSessions = (0, import_react3.useCallback)(() => {
       setSessions(() => {
@@ -7701,47 +8046,23 @@
         if (!current) {
           return previous;
         }
-        const timestamp = Date.now();
         return {
           ...previous,
           [sessionId]: {
             ...current,
-            draft: "",
-            messages: [
-              ...current.messages,
-              {
-                id: `message-${timestamp}`,
-                role: "user",
-                content,
-                createdAt: timestamp
-              },
-              {
-                id: `message-${timestamp + 1}`,
-                role: "assistant",
-                content: `Awaiting orchestration response from ${current.status.providerSummary}.`,
-                createdAt: timestamp
-              }
-            ],
-            status: {
-              ...current.status,
-              tokenUsage: {
-                ...current.status.tokenUsage,
-                used: Math.min(
-                  current.status.tokenUsage.limit,
-                  current.status.tokenUsage.used + content.length
-                )
-              },
-              updatedAt: timestamp
-            }
+            draft: ""
           }
         };
       });
+      sendChatMessage(sessionId, content);
     }, []);
     return {
       sessions,
       snapshots,
       activeSessionId,
       handleSessionCreated,
+      hydrateFromCoreState,
+      handleSessionMessageEvent,
       clearSessions,
       focusLastSession,
       selectSession,
@@ -7771,6 +8092,28 @@
 
   // src/client/ui/src/app-host/webview-message-handler.ts
   var import_react5 = __toESM(require_react());
+  var isCoreBridgeStatePayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return Array.isArray(candidate.sessions) && Array.isArray(candidate.providers);
+  };
+  var isSessionMessagePayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    if (typeof candidate.sessionId !== "string") {
+      return false;
+    }
+    const message = candidate.message;
+    if (!message || typeof message !== "object") {
+      return false;
+    }
+    const messageCandidate = message;
+    return typeof messageCandidate.id === "string" && typeof messageCandidate.content === "string" && typeof messageCandidate.createdAt === "number";
+  };
   var isIncomingMessage = (value) => {
     if (!value || typeof value !== "object" || !("type" in value)) {
       return false;
@@ -7782,7 +8125,9 @@
     onSessionCreated,
     onSessionClearAll,
     onSessionFocusLast,
-    onShowSettings
+    onShowSettings,
+    onCoreState,
+    onSessionMessage
   }) => {
     (0, import_react5.useEffect)(() => {
       const handleIncomingMessage = (event) => {
@@ -7816,6 +8161,18 @@
             onShowSettings();
             break;
           }
+          case "core:state": {
+            if (onCoreState && isCoreBridgeStatePayload(message.payload)) {
+              onCoreState(message.payload);
+            }
+            break;
+          }
+          case "session:message": {
+            if (onSessionMessage && isSessionMessagePayload(message.payload)) {
+              onSessionMessage(message.payload);
+            }
+            break;
+          }
           default:
             break;
         }
@@ -7829,7 +8186,9 @@
       onSessionCreated,
       onSessionClearAll,
       onSessionFocusLast,
-      onShowSettings
+      onShowSettings,
+      onCoreState,
+      onSessionMessage
     ]);
   };
 
@@ -9333,6 +9692,8 @@ ${path}` : path;
       snapshots,
       activeSessionId,
       handleSessionCreated,
+      hydrateFromCoreState,
+      handleSessionMessageEvent,
       clearSessions,
       focusLastSession,
       selectSession,
@@ -9360,12 +9721,28 @@ ${path}` : path;
       activateRoot();
       openSettings();
     }, [openSettings]);
+    const handleCoreState = (0, import_react12.useCallback)(
+      (payload) => {
+        activateRoot();
+        hydrateFromCoreState(payload);
+      },
+      [hydrateFromCoreState]
+    );
+    const handleSessionMessage = (0, import_react12.useCallback)(
+      (payload) => {
+        activateRoot();
+        handleSessionMessageEvent(payload);
+      },
+      [handleSessionMessageEvent]
+    );
     useWebviewMessageHandler({
       onProviderPickerOpen: handleProviderPickerOpen,
       onSessionCreated: handleSessionCreatedMessage,
       onSessionClearAll: clearSessions,
       onSessionFocusLast: focusLastSession,
-      onShowSettings: handleShowSettings
+      onShowSettings: handleShowSettings,
+      onCoreState: handleCoreState,
+      onSessionMessage: handleSessionMessage
     });
     return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "app-shell", children: [
       /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(action_bar_default, {}),
@@ -9401,6 +9778,7 @@ ${path}` : path;
 
   // src/client/ui/src/index.tsx
   var import_jsx_runtime19 = __toESM(require_jsx_runtime());
+  initializeCoreBridge();
   var mount = () => {
     const rootElement = document.getElementById("root");
     if (!rootElement) {

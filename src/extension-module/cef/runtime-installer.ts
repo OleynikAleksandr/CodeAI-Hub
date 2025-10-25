@@ -156,14 +156,14 @@ export const ensureCefRuntime = async (
   await ensureDirectory(platformDir);
   const downloadsDir = await prepareDownload(platformDir);
   const archivePath = path.join(downloadsDir, manifestEntry.package);
-  const downloadUrl = new URL(
-    manifestEntry.package,
-    manifest.baseUrl
-  ).toString();
-
   if (await verifySha1(archivePath, manifestEntry.sha1)) {
     progress?.report({ message: "Using cached CEF archive" });
   } else {
+    const downloadUrl = new URL(
+      manifestEntry.package,
+      manifest.baseUrl
+    ).toString();
+
     await downloadFile({
       url: downloadUrl,
       destination: archivePath,

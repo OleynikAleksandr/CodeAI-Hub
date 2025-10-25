@@ -7,6 +7,10 @@ import { useSettingsVisibility } from "./app-host/settings-visibility";
 import { useWebviewMessageHandler } from "./app-host/webview-message-handler";
 import ActionBar from "./components/action-bar";
 import SettingsView from "./components/settings-view";
+import type {
+  CoreBridgeSessionMessagePayload,
+  CoreBridgeStatePayload,
+} from "./core-bridge/types";
 import { ProviderPicker } from "./provider-picker";
 import { activateRoot } from "./root-dom";
 import SessionView from "./session/session-view";
@@ -26,6 +30,8 @@ const AppHost = () => {
     snapshots,
     activeSessionId,
     handleSessionCreated,
+    hydrateFromCoreState,
+    handleSessionMessageEvent,
     clearSessions,
     focusLastSession,
     selectSession,
@@ -59,12 +65,30 @@ const AppHost = () => {
     openSettings();
   }, [openSettings]);
 
+  const handleCoreState = useCallback(
+    (payload: CoreBridgeStatePayload) => {
+      activateRoot();
+      hydrateFromCoreState(payload);
+    },
+    [hydrateFromCoreState]
+  );
+
+  const handleSessionMessage = useCallback(
+    (payload: CoreBridgeSessionMessagePayload) => {
+      activateRoot();
+      handleSessionMessageEvent(payload);
+    },
+    [handleSessionMessageEvent]
+  );
+
   useWebviewMessageHandler({
     onProviderPickerOpen: handleProviderPickerOpen,
     onSessionCreated: handleSessionCreatedMessage,
     onSessionClearAll: clearSessions,
     onSessionFocusLast: focusLastSession,
     onShowSettings: handleShowSettings,
+    onCoreState: handleCoreState,
+    onSessionMessage: handleSessionMessage,
   });
 
   return (

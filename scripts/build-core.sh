@@ -6,6 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$SCRIPT_DIR/..")"
 CORE_PROJECT_DIR="$REPO_ROOT/packages/core"
 DIST_ROOT="$REPO_ROOT/doc/tmp/releases"
+MANIFEST_PATH="$REPO_ROOT/assets/core/manifest.json"
 
 usage() {
   cat <<USAGE
@@ -67,6 +68,24 @@ fi
 
 UNAME_S=$(uname -s)
 UNAME_M=$(uname -m)
+
+get_file_size() {
+  local target="$1"
+  if [[ "$UNAME_S" == "Darwin" ]]; then
+    stat -f%z "$target"
+  else
+    stat -c%s "$target"
+  fi
+}
+
+compute_sha1() {
+  local target="$1"
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 1 "$target" | awk '{print $1}'
+  else
+    sha1sum "$target" | awk '{print $1}'
+  fi
+}
 
 case "$UNAME_S" in
   Darwin)
@@ -144,6 +163,44 @@ INSTALL_JSON
 
   echo "✅ Installed to $TARGET_BASE"
   echo "✅ Distribution copy at $DIST_ROOT/$BINARY_NAME"
+
+  ARCHIVE_NAME="codeai-hub-core-$PLATFORM_KEY-$CORE_VERSION.tar.bz2"
+  ARCHIVE_PATH="$DIST_ROOT/$ARCHIVE_NAME"
+  TEMP_DIR="$(mktemp -d)"
+  cp "$DIST_ROOT/$BINARY_NAME" "$TEMP_DIR/codeai-hub-core"
+  (cd "$TEMP_DIR" && tar -cjf "$ARCHIVE_PATH" "codeai-hub-core")
+  rm -rf "$TEMP_DIR"
+
+  PACKAGE_SIZE=$(get_file_size "$ARCHIVE_PATH")
+  PACKAGE_SHA1=$(compute_sha1 "$ARCHIVE_PATH")
+
+  CORE_PACKAGE_NAME="$ARCHIVE_NAME" \
+  CORE_PACKAGE_SIZE="$PACKAGE_SIZE" \
+  CORE_PACKAGE_SHA1="$PACKAGE_SHA1" \
+  CORE_VERSION="$CORE_VERSION" \
+  PLATFORM_KEY="$PLATFORM_KEY" \
+  MANIFEST_PATH="$MANIFEST_PATH" \
+    node <<'EOF'
+const fs = require("node:fs");
+const manifestPath = process.env.MANIFEST_PATH;
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+const key = process.env.PLATFORM_KEY;
+if (!manifest.platforms[key]) {
+  manifest.platforms[key] = {};
+}
+manifest.platforms[key].coreVersion = process.env.CORE_VERSION;
+manifest.platforms[key].package = process.env.CORE_PACKAGE_NAME;
+manifest.platforms[key].size = Number(process.env.CORE_PACKAGE_SIZE);
+manifest.platforms[key].sha1 = process.env.CORE_PACKAGE_SHA1;
+fs.writeFileSync(
+  manifestPath,
+  `${JSON.stringify(manifest, null, 2)}\n`,
+  "utf8"
+);
+EOF
+
+  echo "📦 Archive created at $ARCHIVE_PATH"
+  echo "🗂  Updated manifest for $PLATFORM_KEY"
 else
   echo "❌ Binary not found at $DIST_ROOT/$BINARY_NAME" >&2
   exit 1
@@ -157,4 +214,6 @@ fi
 echo "🎉 Core orchestrator binary ready"
 echo "📦 Runtime location: $TARGET_BASE"
 echo "📦 Distribution copy: $DIST_ROOT"
+echo "📦 Archive: $DIST_ROOT/codeai-hub-core-$PLATFORM_KEY-$CORE_VERSION.tar.bz2"
+echo "📝 Manifest updated: $MANIFEST_PATH"
 echo "ℹ️  You can now test with: $TARGET_BASE/codeai-hub-core"

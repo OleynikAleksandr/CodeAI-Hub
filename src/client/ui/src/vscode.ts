@@ -32,7 +32,12 @@ export const getVsCodeApi = (): VsCodeApi | undefined => {
   return cachedApi;
 };
 
+import { handleOutgoingVsCodeMessage } from "./core-bridge/core-bridge";
+
 export const postVsCodeMessage = (message: unknown) => {
+  if (handleOutgoingVsCodeMessage(message)) {
+    return;
+  }
   const api = getVsCodeApi();
   if (!api) {
     return;

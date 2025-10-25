@@ -1,5 +1,10 @@
 import { Uri, type Webview } from "vscode";
 
+type CoreBridgeConfig = {
+  readonly httpUrl: string;
+  readonly wsUrl: string;
+};
+
 const NONCE_LENGTH = 32;
 
 /**
@@ -14,7 +19,15 @@ export class WebviewHtmlGenerator {
    * @param extensionUri - Extension root URI for asset resolution.
    * @param showChat - When true the React container is marked as active on load.
    */
-  generate(webview: Webview, extensionUri: Uri, showChat = false): string {
+  generate(
+    webview: Webview,
+    extensionUri: Uri,
+    options: {
+      readonly showChat?: boolean;
+      readonly coreBridgeConfig?: CoreBridgeConfig;
+    } = {}
+  ): string {
+    const { showChat = false, coreBridgeConfig } = options;
     const mainViewCssUri = webview.asWebviewUri(
       Uri.joinPath(extensionUri, "media", "main-view.css")
     );
@@ -34,8 +47,13 @@ export class WebviewHtmlGenerator {
       `img-src ${webview.cspSource} https: data:`,
       `style-src ${webview.cspSource} 'unsafe-inline'`,
       `font-src ${webview.cspSource}`,
+      `connect-src ${webview.cspSource} https: http://127.0.0.1:* ws://127.0.0.1:*`,
       `script-src 'nonce-${nonce}'`,
     ].join("; ");
+
+    const configScript = coreBridgeConfig
+      ? `<script nonce="${nonce}">window.__CODEAI_CORE_CONFIG = ${this.serializeConfig(coreBridgeConfig)};</script>`
+      : "";
 
     return `<!DOCTYPE html>
 <html lang="en" style="background-color: #1e1e1e !important;">
@@ -105,9 +123,14 @@ export class WebviewHtmlGenerator {
       checkLinks();
     })();
   </script>
+  ${configScript}
   <script nonce="${nonce}" src="${reactAppJsUri}"></script>
 </body>
 </html>`;
+  }
+
+  private serializeConfig(config: CoreBridgeConfig): string {
+    return JSON.stringify(config).replace(/</g, "\\u003c");
   }
 
   private getNonce(): string {

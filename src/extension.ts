@@ -14,8 +14,18 @@ import {
 } from "./extension-module/cef/launcher";
 import { ensureLauncherInstalled } from "./extension-module/cef/launcher-installer";
 import { ensureCefRuntime } from "./extension-module/cef/runtime-installer";
+import {
+  type CoreRuntimeInfo,
+  ensureCoreInstalled,
+} from "./extension-module/core/core-installer";
+import {
+  CoreProcessManager,
+  getDefaultCoreConnectionInfo,
+} from "./extension-module/core/core-process-manager";
 import { HomeViewProvider } from "./extension-module/home-view-provider";
 import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut-manager";
+
+let coreProcessManager: CoreProcessManager | null = null;
 
 export async function activate(context: ExtensionContext): Promise<void> {
   const indexPath = path.join(
@@ -36,6 +46,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
     throw error instanceof Error ? error : new Error(String(error));
   }
 
+  const coreConnectionInfo = getDefaultCoreConnectionInfo();
+  let ensuredCore: CoreRuntimeInfo | null = null;
+
   if (!env.remoteName) {
     try {
       await window.withProgress(
@@ -55,6 +68,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
           const target = getCefClientTarget(ensuredLauncher, indexPath);
           progress.report({ message: "Finalizing desktop shortcuts…" });
           await ensureWebClientShortcuts(target);
+          progress.report({ message: "Ensuring CodeAI Hub core…" });
+          ensuredCore = await ensureCoreInstalled(context, progress);
         }
       );
     } catch (error) {
@@ -64,9 +79,15 @@ export async function activate(context: ExtensionContext): Promise<void> {
       );
       throw error instanceof Error ? error : new Error(reason);
     }
+
+    coreProcessManager = new CoreProcessManager(context);
+    await coreProcessManager.ensureStarted(ensuredCore ?? undefined);
   }
 
-  const provider = new HomeViewProvider(context.extensionUri);
+  const provider = new HomeViewProvider(
+    context.extensionUri,
+    coreConnectionInfo
+  );
 
   context.subscriptions.push(
     window.registerWebviewViewProvider(HomeViewProvider.viewType, provider),
@@ -113,5 +134,5 @@ export async function activate(context: ExtensionContext): Promise<void> {
 }
 
 export function deactivate(): void {
-  // Nothing to clean up yet.
+  coreProcessManager?.dispose();
 }

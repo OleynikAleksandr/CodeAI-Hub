@@ -1,5 +1,14 @@
 import { useCallback, useRef, useState } from "react";
-import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
+import type {
+  SessionMessage,
+  SessionRecord,
+  SessionSnapshot,
+} from "../../../../types/session";
+import { sendChatMessage } from "../core-bridge/core-bridge";
+import type {
+  CoreBridgeSessionMessagePayload,
+  CoreBridgeStatePayload,
+} from "../core-bridge/types";
 import { createInitialSnapshot, removeSnapshot } from "../session/helpers";
 import type { ProviderLabels } from "./provider-picker-state";
 
@@ -18,18 +27,48 @@ type FocusLastSessionHandler = () => void;
 type ClearSessionsHandler = () => void;
 
 type SessionCreatedHandler = (session: SessionRecord) => void;
+type CoreStateHandler = (payload: CoreBridgeStatePayload) => void;
+type SessionMessageHandler = (payload: CoreBridgeSessionMessagePayload) => void;
 
 export type UseSessionStoreResult = {
   readonly sessions: readonly SessionRecord[];
   readonly snapshots: SessionSnapshots;
   readonly activeSessionId: string | null;
   readonly handleSessionCreated: SessionCreatedHandler;
+  readonly hydrateFromCoreState: CoreStateHandler;
+  readonly handleSessionMessageEvent: SessionMessageHandler;
   readonly clearSessions: ClearSessionsHandler;
   readonly focusLastSession: FocusLastSessionHandler;
   readonly selectSession: SelectSessionHandler;
   readonly closeSession: CloseSessionHandler;
   readonly toggleTodo: ToggleTodoHandler;
   readonly sendMessage: SendMessageHandler;
+};
+
+const buildSnapshotFromMessages = (
+  session: SessionRecord,
+  providerLabels: ProviderLabels,
+  messages: readonly SessionMessage[]
+): SessionSnapshot => {
+  const base = createInitialSnapshot(session, providerLabels);
+  const updatedAt = messages.at(-1)?.createdAt ?? base.status.updatedAt;
+  const tokenUsage = messages.reduce(
+    (total, message) => total + message.content.length,
+    0
+  );
+
+  return {
+    ...base,
+    messages: [...messages],
+    status: {
+      ...base.status,
+      updatedAt,
+      tokenUsage: {
+        ...base.status.tokenUsage,
+        used: Math.min(base.status.tokenUsage.limit, tokenUsage),
+      },
+    },
+  };
 };
 
 export const useSessionStore = (
@@ -58,6 +97,61 @@ export const useSessionStore = (
       setActiveSessionId(session.id);
     },
     [providerLabels, syncSessionsRef]
+  );
+
+  const hydrateFromCoreState = useCallback<CoreStateHandler>(
+    (payload) => {
+      const nextSessions = payload.sessions.map((entry) => entry.record);
+      syncSessionsRef(nextSessions);
+      setSessions(nextSessions);
+
+      const nextSnapshots: SessionSnapshots = {};
+      for (const entry of payload.sessions) {
+        nextSnapshots[entry.record.id] = buildSnapshotFromMessages(
+          entry.record,
+          providerLabels,
+          entry.messages
+        );
+      }
+      setSnapshots(nextSnapshots);
+
+      setActiveSessionId((current) => {
+        if (current) {
+          return current;
+        }
+        return nextSessions.at(-1)?.id ?? null;
+      });
+    },
+    [providerLabels, syncSessionsRef]
+  );
+
+  const handleSessionMessageEvent = useCallback<SessionMessageHandler>(
+    (payload) => {
+      setSnapshots((previous) => {
+        const session = sessionsRef.current.find(
+          (item) => item.id === payload.sessionId
+        );
+        if (!session) {
+          return previous;
+        }
+
+        const current = previous[payload.sessionId] ?? {
+          ...createInitialSnapshot(session, providerLabels),
+          messages: [],
+        };
+
+        const nextMessages = [...current.messages, payload.message];
+        return {
+          ...previous,
+          [payload.sessionId]: buildSnapshotFromMessages(
+            session,
+            providerLabels,
+            nextMessages
+          ),
+        };
+      });
+    },
+    [providerLabels]
   );
 
   const clearSessions = useCallback<ClearSessionsHandler>(() => {
@@ -124,41 +218,16 @@ export const useSessionStore = (
       if (!current) {
         return previous;
       }
-      const timestamp = Date.now();
       return {
         ...previous,
         [sessionId]: {
           ...current,
           draft: "",
-          messages: [
-            ...current.messages,
-            {
-              id: `message-${timestamp}`,
-              role: "user",
-              content,
-              createdAt: timestamp,
-            },
-            {
-              id: `message-${timestamp + 1}`,
-              role: "assistant",
-              content: `Awaiting orchestration response from ${current.status.providerSummary}.`,
-              createdAt: timestamp,
-            },
-          ],
-          status: {
-            ...current.status,
-            tokenUsage: {
-              ...current.status.tokenUsage,
-              used: Math.min(
-                current.status.tokenUsage.limit,
-                current.status.tokenUsage.used + content.length
-              ),
-            },
-            updatedAt: timestamp,
-          },
         },
       };
     });
+
+    sendChatMessage(sessionId, content);
   }, []);
 
   return {
@@ -166,6 +235,8 @@ export const useSessionStore = (
     snapshots,
     activeSessionId,
     handleSessionCreated,
+    hydrateFromCoreState,
+    handleSessionMessageEvent,
     clearSessions,
     focusLastSession,
     selectSession,
