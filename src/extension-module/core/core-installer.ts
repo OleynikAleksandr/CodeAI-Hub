@@ -151,6 +151,22 @@ const prepareDownload = async (platformDir: string): Promise<string> => {
   return downloadsDir;
 };
 
+const downloadFromBaseUrl = async (
+  baseUrl: string,
+  entry: ManifestEntry,
+  destination: string,
+  progress?: ProgressReporter
+): Promise<void> => {
+  const downloadUrl = new URL(entry.package, baseUrl).toString();
+  await downloadFile({
+    url: downloadUrl,
+    destination,
+    size: entry.size,
+    progress,
+    label: "Core orchestrator",
+  });
+};
+
 const performInstall = async (
   manifest: CoreManifest,
   platform: PlatformKey,
@@ -185,15 +201,27 @@ const performInstall = async (
   const downloadsDir = await prepareDownload(platformDir);
   const archivePath = path.join(downloadsDir, manifestEntry.package);
 
-  progress?.report({ message: "Downloading core orchestrator..." });
-  const downloadUrl = `${manifest.baseUrl}v${manifestEntry.coreVersion}/${manifestEntry.package}`;
-  await downloadFile({
-    url: downloadUrl,
-    destination: archivePath,
-    size: manifestEntry.size,
-    progress,
-    label: "Core orchestrator",
-  });
+  let lastError: unknown;
+  const urlsToTry = Array.isArray(manifest.baseUrl)
+    ? manifest.baseUrl
+    : [manifest.baseUrl];
+
+  for (const baseUrl of urlsToTry) {
+    try {
+      progress?.report({
+        message: `Downloading core orchestrator from ${baseUrl}...`,
+      });
+      await downloadFromBaseUrl(baseUrl, manifestEntry, archivePath, progress);
+      lastError = undefined;
+      break;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (lastError) {
+    throw lastError;
+  }
 
   progress?.report({ message: "Verifying download..." });
   if (manifestEntry.sha1) {

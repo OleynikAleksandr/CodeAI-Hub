@@ -14,13 +14,18 @@ export class HomeViewProvider implements WebviewViewProvider {
   private readonly extensionUri: Uri;
   private readonly htmlGenerator: WebviewHtmlGenerator;
   private readonly messageRouter: HomeViewMessageRouter;
+  private readonly coreConfig?: { httpUrl: string; wsUrl: string };
   private currentView: WebviewView | null = null;
   private pendingShowSettings = false;
 
-  constructor(extensionUri: Uri) {
+  constructor(
+    extensionUri: Uri,
+    coreConfig?: { httpUrl: string; wsUrl: string }
+  ) {
     this.extensionUri = extensionUri;
     this.htmlGenerator = new WebviewHtmlGenerator();
     this.messageRouter = new HomeViewMessageRouter();
+    this.coreConfig = coreConfig;
   }
 
   resolveWebviewView(webviewView: WebviewView): void {
@@ -32,7 +37,9 @@ export class HomeViewProvider implements WebviewViewProvider {
       localResourceRoots: [Uri.joinPath(this.extensionUri, "media")],
     };
 
-    webview.html = this.htmlGenerator.generate(webview, this.extensionUri);
+    webview.html = this.htmlGenerator.generate(webview, this.extensionUri, {
+      coreBridgeConfig: this.coreConfig,
+    });
 
     webview.onDidReceiveMessage((message: WebviewMessage) => {
       this.messageRouter.handleMessage(message, webview);

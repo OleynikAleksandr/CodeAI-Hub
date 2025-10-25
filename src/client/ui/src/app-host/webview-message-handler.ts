@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionRecord } from "../../../../types/session";
+import type {
+  CoreBridgeSessionMessagePayload,
+  CoreBridgeStatePayload,
+} from "../core-bridge/types";
 import {
   isSessionRecordCandidate,
   parseProviderList,
@@ -30,12 +34,24 @@ type ShowSettingsMessage = {
   readonly type: "ui:showSettings";
 };
 
+type CoreStateMessage = {
+  readonly type: "core:state";
+  readonly payload?: unknown;
+};
+
+type SessionMessageEvent = {
+  readonly type: "session:message";
+  readonly payload?: unknown;
+};
+
 type IncomingMessage =
   | ProviderPickerOpenMessage
   | SessionCreatedMessage
   | SessionClearAllMessage
   | SessionFocusLastMessage
-  | ShowSettingsMessage;
+  | ShowSettingsMessage
+  | CoreStateMessage
+  | SessionMessageEvent;
 
 type ProviderPickerOpenHandler = (
   providers: readonly ProviderStackDescriptor[]
@@ -45,12 +61,91 @@ type SessionCreatedHandler = (session: SessionRecord) => void;
 
 type VoidHandler = () => void;
 
+const isCoreBridgeStatePayload = (
+  value: unknown
+): value is CoreBridgeStatePayload => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    Array.isArray(candidate.sessions) && Array.isArray(candidate.providers)
+  );
+};
+
+const isSessionMessagePayload = (
+  value: unknown
+): value is CoreBridgeSessionMessagePayload => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  if (typeof candidate.sessionId !== "string") {
+    return false;
+  }
+  const message = candidate.message;
+  if (!message || typeof message !== "object") {
+    return false;
+  }
+  const messageCandidate = message as Record<string, unknown>;
+  return (
+    typeof messageCandidate.id === "string" &&
+    typeof messageCandidate.content === "string" &&
+    typeof messageCandidate.createdAt === "number"
+  );
+};
+
+const handleProviderPickerOpenMessage = (
+  message: ProviderPickerOpenMessage,
+  onProviderPickerOpen: ProviderPickerOpenHandler
+): void => {
+  const providers = parseProviderList(message.payload?.providers);
+  if (providers.length > 0) {
+    onProviderPickerOpen(providers);
+  }
+};
+
+const handleSessionCreatedMessage = (
+  message: SessionCreatedMessage,
+  onSessionCreated: SessionCreatedHandler
+): void => {
+  if (isSessionRecordCandidate(message.payload)) {
+    onSessionCreated(message.payload);
+  }
+};
+
+const handleCoreStateMessage = (
+  message: CoreStateMessage,
+  onCoreState?: (payload: CoreBridgeStatePayload) => void
+): void => {
+  if (!(onCoreState && isCoreBridgeStatePayload(message.payload))) {
+    return;
+  }
+
+  onCoreState(message.payload);
+};
+
+const handleSessionMessageEvent = (
+  message: SessionMessageEvent,
+  onSessionMessage?: (payload: CoreBridgeSessionMessagePayload) => void
+): void => {
+  if (!(onSessionMessage && isSessionMessagePayload(message.payload))) {
+    return;
+  }
+
+  onSessionMessage(message.payload);
+};
+
 export type WebviewMessageHandlers = {
   readonly onProviderPickerOpen: ProviderPickerOpenHandler;
   readonly onSessionCreated: SessionCreatedHandler;
   readonly onSessionClearAll: VoidHandler;
   readonly onSessionFocusLast: VoidHandler;
   readonly onShowSettings: VoidHandler;
+  readonly onCoreState?: (payload: CoreBridgeStatePayload) => void;
+  readonly onSessionMessage?: (
+    payload: CoreBridgeSessionMessagePayload
+  ) => void;
 };
 
 const isIncomingMessage = (value: unknown): value is IncomingMessage => {
@@ -66,6 +161,8 @@ export const useWebviewMessageHandler = ({
   onSessionClearAll,
   onSessionFocusLast,
   onShowSettings,
+  onCoreState,
+  onSessionMessage,
 }: WebviewMessageHandlers) => {
   useEffect(() => {
     const handleIncomingMessage = (event: MessageEvent<unknown>) => {
@@ -76,33 +173,29 @@ export const useWebviewMessageHandler = ({
       const message = event.data;
 
       switch (message.type) {
-        case "providerPicker:open": {
-          const providers = parseProviderList(message.payload?.providers);
-          if (providers.length > 0) {
-            onProviderPickerOpen(providers);
-          }
-          break;
-        }
-        case "session:created": {
-          if (isSessionRecordCandidate(message.payload)) {
-            onSessionCreated(message.payload);
-          }
-          break;
-        }
-        case "session:clearAll": {
+        case "providerPicker:open":
+          handleProviderPickerOpenMessage(message, onProviderPickerOpen);
+          return;
+        case "session:created":
+          handleSessionCreatedMessage(message, onSessionCreated);
+          return;
+        case "session:clearAll":
           onSessionClearAll();
-          break;
-        }
-        case "session:focusLast": {
+          return;
+        case "session:focusLast":
           onSessionFocusLast();
-          break;
-        }
-        case "ui:showSettings": {
+          return;
+        case "ui:showSettings":
           onShowSettings();
-          break;
-        }
+          return;
+        case "core:state":
+          handleCoreStateMessage(message, onCoreState);
+          return;
+        case "session:message":
+          handleSessionMessageEvent(message, onSessionMessage);
+          return;
         default:
-          break;
+          return;
       }
     };
 
@@ -116,5 +209,7 @@ export const useWebviewMessageHandler = ({
     onSessionClearAll,
     onSessionFocusLast,
     onShowSettings,
+    onCoreState,
+    onSessionMessage,
   ]);
 };

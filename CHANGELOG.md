@@ -244,3 +244,17 @@ All notable changes to this project will be documented in this file.
 [1.0.4]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.4
 [1.0.2]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.2
 [1.0.0]: https://github.com/OleynikAleksandr/CodeAI-Hub/releases/tag/v1.0.0
+## [1.1.6] - 2025-10-25
+### Added
+- Autonomous core bootstrap: the extension now downloads/verifies `codeai-hub-core` binaries from GitHub Releases, launches the process, and exposes its health/status HTTP endpoints.
+- Remote UI bridge: both the VS Code webview and the standalone CEF client talk to the core over WebSocket, so new sessions/messages stay in sync.
+
+### Fixed
+- Updated all installer manifests (CEF, launcher, core) to follow redirects and use the Release mirrors so GitHub CDN hiccups no longer break activation.
+- Relaxed the webview CSP to allow `http://127.0.0.1` HTTP/WS connections; the UI can now reach the local core without hacks.
+
+### Known Issues
+- Deleting a session inside the VS Code webview does **not** yet broadcast to the standalone client. Creation and messaging are synchronized, but deletion events will be addressed in Phase 11 follow-up.
+
+### Build
+- Release packaged as `codeai-hub-1.1.6.vsix` via `./scripts/build-release.sh 1.1.6` (paired with `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2` and `codeai-hub-core-darwin-arm64-0.1.0.tar.bz2`).
