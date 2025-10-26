@@ -92,6 +92,19 @@ const handleServerMessage = (raw: string): void => {
       });
       break;
     }
+    case "session:deleted": {
+      const candidate = payload.payload as
+        | { readonly sessionId?: string }
+        | undefined;
+      if (!candidate || typeof candidate.sessionId !== "string") {
+        return;
+      }
+      notifyWindow({
+        type: "session:deleted",
+        payload: { sessionId: candidate.sessionId },
+      });
+      break;
+    }
     default:
       break;
   }
@@ -222,6 +235,15 @@ export const sendChatMessage = (sessionId: string, content: string): void => {
     payload: {
       sessionId,
       content,
+    },
+  });
+};
+
+export const deleteSession = (sessionId: string): void => {
+  enqueueMessage({
+    type: "session:delete",
+    payload: {
+      sessionId,
     },
   });
 };

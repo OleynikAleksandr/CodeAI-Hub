@@ -4,7 +4,10 @@ import type {
   SessionRecord,
   SessionSnapshot,
 } from "../../../../types/session";
-import { sendChatMessage } from "../core-bridge/core-bridge";
+import {
+  deleteSession as deleteSessionOnServer,
+  sendChatMessage,
+} from "../core-bridge/core-bridge";
 import type {
   CoreBridgeSessionMessagePayload,
   CoreBridgeStatePayload,
@@ -29,6 +32,7 @@ type ClearSessionsHandler = () => void;
 type SessionCreatedHandler = (session: SessionRecord) => void;
 type CoreStateHandler = (payload: CoreBridgeStatePayload) => void;
 type SessionMessageHandler = (payload: CoreBridgeSessionMessagePayload) => void;
+type SessionDeletedHandler = (payload: { readonly sessionId: string }) => void;
 
 export type UseSessionStoreResult = {
   readonly sessions: readonly SessionRecord[];
@@ -37,6 +41,7 @@ export type UseSessionStoreResult = {
   readonly handleSessionCreated: SessionCreatedHandler;
   readonly hydrateFromCoreState: CoreStateHandler;
   readonly handleSessionMessageEvent: SessionMessageHandler;
+  readonly handleSessionDeleted: SessionDeletedHandler;
   readonly clearSessions: ClearSessionsHandler;
   readonly focusLastSession: FocusLastSessionHandler;
   readonly selectSession: SelectSessionHandler;
@@ -174,8 +179,9 @@ export const useSessionStore = (
     setActiveSessionId(sessionId);
   }, []);
 
-  const closeSession = useCallback<CloseSessionHandler>(
-    (sessionId) => {
+  const handleSessionDeleted = useCallback<SessionDeletedHandler>(
+    (payload) => {
+      const { sessionId } = payload;
       setSessions((previous) => {
         const next = previous.filter((session) => session.id !== sessionId);
         syncSessionsRef(next);
@@ -195,6 +201,10 @@ export const useSessionStore = (
     },
     [syncSessionsRef]
   );
+
+  const closeSession = useCallback<CloseSessionHandler>((sessionId) => {
+    deleteSessionOnServer(sessionId);
+  }, []);
 
   const toggleTodo = useCallback<ToggleTodoHandler>((sessionId, todoId) => {
     setSnapshots((previous) => {
@@ -237,6 +247,7 @@ export const useSessionStore = (
     handleSessionCreated,
     hydrateFromCoreState,
     handleSessionMessageEvent,
+    handleSessionDeleted,
     clearSessions,
     focusLastSession,
     selectSession,

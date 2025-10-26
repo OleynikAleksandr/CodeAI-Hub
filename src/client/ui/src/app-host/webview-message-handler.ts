@@ -44,6 +44,11 @@ type SessionMessageEvent = {
   readonly payload?: unknown;
 };
 
+type SessionDeletedMessage = {
+  readonly type: "session:deleted";
+  readonly payload?: unknown;
+};
+
 type IncomingMessage =
   | ProviderPickerOpenMessage
   | SessionCreatedMessage
@@ -51,7 +56,8 @@ type IncomingMessage =
   | SessionFocusLastMessage
   | ShowSettingsMessage
   | CoreStateMessage
-  | SessionMessageEvent;
+  | SessionMessageEvent
+  | SessionDeletedMessage;
 
 type ProviderPickerOpenHandler = (
   providers: readonly ProviderStackDescriptor[]
@@ -95,6 +101,16 @@ const isSessionMessagePayload = (
   );
 };
 
+const isSessionDeletedPayload = (
+  value: unknown
+): value is { readonly sessionId: string } => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return typeof candidate.sessionId === "string";
+};
+
 const handleProviderPickerOpenMessage = (
   message: ProviderPickerOpenMessage,
   onProviderPickerOpen: ProviderPickerOpenHandler
@@ -136,6 +152,17 @@ const handleSessionMessageEvent = (
   onSessionMessage(message.payload);
 };
 
+const handleSessionDeletedMessage = (
+  message: SessionDeletedMessage,
+  onSessionDeleted?: (payload: { readonly sessionId: string }) => void
+): void => {
+  if (!(onSessionDeleted && isSessionDeletedPayload(message.payload))) {
+    return;
+  }
+
+  onSessionDeleted(message.payload);
+};
+
 export type WebviewMessageHandlers = {
   readonly onProviderPickerOpen: ProviderPickerOpenHandler;
   readonly onSessionCreated: SessionCreatedHandler;
@@ -146,6 +173,7 @@ export type WebviewMessageHandlers = {
   readonly onSessionMessage?: (
     payload: CoreBridgeSessionMessagePayload
   ) => void;
+  readonly onSessionDeleted?: (payload: { readonly sessionId: string }) => void;
 };
 
 const isIncomingMessage = (value: unknown): value is IncomingMessage => {
@@ -163,6 +191,7 @@ export const useWebviewMessageHandler = ({
   onShowSettings,
   onCoreState,
   onSessionMessage,
+  onSessionDeleted,
 }: WebviewMessageHandlers) => {
   useEffect(() => {
     const handleIncomingMessage = (event: MessageEvent<unknown>) => {
@@ -194,6 +223,9 @@ export const useWebviewMessageHandler = ({
         case "session:message":
           handleSessionMessageEvent(message, onSessionMessage);
           return;
+        case "session:deleted":
+          handleSessionDeletedMessage(message, onSessionDeleted);
+          return;
         default:
           return;
       }
@@ -211,5 +243,6 @@ export const useWebviewMessageHandler = ({
     onShowSettings,
     onCoreState,
     onSessionMessage,
+    onSessionDeleted,
   ]);
 };
