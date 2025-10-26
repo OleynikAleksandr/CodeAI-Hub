@@ -9,21 +9,27 @@ PROJECT_NAME="CodeAI Hub"
 # Ensure we run from repo root regardless of where script is invoked
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$SCRIPT_DIR/..")"
+source "$SCRIPT_DIR/release-utils.sh"
 cd "$REPO_ROOT"
 
 PACKAGE_NAME=$(node -p "require('./package.json').name")
+DIST_ROOT="$REPO_ROOT/doc/tmp/releases"
+
+CURRENT_VERSION=$(node -p "require('./package.json').version")
+NEW_VERSION=$(node <<'EOF'
+const pkg = require('./package.json');
+const parts = pkg.version.split('.').map((part) => Number(part));
+if (parts.length !== 3 || parts.some(Number.isNaN)) {
+  throw new Error(`Invalid semver ${pkg.version}`);
+}
+parts[2] += 1;
+console.log(parts.join('.'));
+EOF
+)
+VERSION=$NEW_VERSION
 
 echo "🔧 ${PROJECT_NAME} - Release Build Script"
 echo "============================================"
-
-if [ -z "$1" ]; then
-    echo "❌ Error: Version number required!"
-    echo "Usage: ./build-release.sh <version>"
-    echo "Example: ./build-release.sh 0.1.0"
-    exit 1
-fi
-
-VERSION=$1
 echo "📦 Building version: $VERSION"
 
 # Step 1: Clean build artifacts
@@ -40,7 +46,7 @@ echo "✅ Cache cleaned"
 # Step 2: Update version in package.json
 echo ""
 echo "📝 Step 2: Updating version to $VERSION..."
-sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" package.json
+npm version "$VERSION" --no-git-tag-version >/dev/null
 echo "✅ Version updated"
 
 # Step 3: Pre-build UI bundles
@@ -108,6 +114,8 @@ if [ ! -f "$VSIX_FILE" ]; then
   echo "❌ VSIX file not found!"
   exit 1
 fi
+
+clean_release_dir "$DIST_ROOT"
 
 # Step 10: Check package size
 echo ""

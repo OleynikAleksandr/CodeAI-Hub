@@ -2,6 +2,85 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.16] - 2025-10-26
+### Fixed
+- Claude Module теперь передаёт SDK абсолютный путь до установленного CLI (`~/.npm-global/bin/claude` на Unix, `%APPDATA%\npm\claude.cmd` на Windows). Благодаря этому процесс `claude-agent-sdk` запускается через обычный `claude` бинарь с shebang, а не через `pkg`-runtime Node 18, что устраняет ошибку `ERR_REQUIRE_ESM` при старте Claude Code.
+- `SDKInstaller` корректно вычисляет глобальный префикс npm (`.npm-global`, `%APPDATA%\npm`) и проверяет наличие как `sdk.mjs`, так и самого CLI перед инициализацией.
+
+### Build
+- Claude Module v0.1.5 → `claude-module-0.1.5.tar.bz2`
+- Core v0.2.5 → `codeai-hub-core-darwin-arm64-0.2.5.tar.bz2`
+- VSIX → `codeai-hub-1.1.16.vsix`
+
+## [1.1.15] - 2025-10-26
+### Fixed
+- Core теперь использует тот же slug проекта, что и Claude Code CLI (с ведущим дефисом), поэтому SDK повторно использует существующий каталог `~/.claude/projects/-Users-...` вместо создания нового пути без дефиса.
+- Из селектора провайдеров убраны фиктивные записи Codex/Gemini — отображается только активный Claude Agent SDK.
+
+### Build
+- Core v0.2.4 → `codeai-hub-core-darwin-arm64-0.2.4.tar.bz2`
+- VSIX → `codeai-hub-1.1.15.vsix`
+
+## [1.1.14] - 2025-10-26
+### Fixed
+- Claude provider теперь загружает точный `sdk.mjs` внутри `@anthropic-ai/claude-agent-sdk`, поэтому core больше не падает с `ERR_UNSUPPORTED_DIR_IMPORT` при инициализации SDK.
+
+### Build
+- Claude Module v0.1.3 → `claude-module-0.1.3.tar.bz2`
+- Core v0.2.3 → `codeai-hub-core-darwin-arm64-0.2.3.tar.bz2`
+- VSIX → `codeai-hub-1.1.14.vsix`
+
+## [1.1.13] - 2025-10-26
+### Added
+- `assets/core/manifest.json` и `assets/providers/claude/manifest.json` теперь всегда используют `https://github.com/.../releases/latest/download/`, поэтому новое расширение автоматически подтягивает свежие бинарники независимо от номера релиза.
+- Инструкция `doc/Project_Docs/knowledge/Инструкция_по_созданию_релизов.md` обновлена: базовый URL всегда `latest`, а не конкретный тег.
+
+### Build
+- VSIX → `codeai-hub-1.1.13.vsix` (переупаковка с новым манифестом)
+
+## [1.1.12] - 2025-10-26
+### Changed
+- Обновлены manifest-строки для core/Claude module в VSIX 1.1.12 после пересборки (без функциональных изменений в коде).
+
+### Build
+- VSIX → `codeai-hub-1.1.12.vsix`
+
+## [1.1.11] - 2025-10-26
+### Added
+- CEF manifest внутри VSIX теперь использует URL-encoded имена архивов (`%2B`), что устраняет 404 при скачивании.
+
+### Build
+- VSIX → `codeai-hub-1.1.11.vsix`
+
+## [1.1.9] - 2025-10-26
+### Added
+- Automated release pipeline for Claude Module/Core VSIX: `build-claude-module.sh`, `build-core.sh`, and `build-release.sh` теперь сами повышают версии, вычищают старые артефакты и публикуют свежие архивы в `doc/tmp/releases/` (остаются только `CodeAIHubLauncher-macos-arm64`, `codeai-hub-core-darwin-arm64-<ver>` и `claude-module-<ver>`).
+- `assets/providers/claude/manifest.json` + новый установщик в VSIX гарантируют скачивание Claude Module при первом запуске и установку в `~/.codeai-hub/providers/claude/<version>/`.
+
+### Changed
+- Core стартует с `CLAUDE_MODULE_PATH`, считанным из `~/.codeai-hub/providers/claude/latest`, поэтому горячие обновления провайдера не требуют пересборки ядра.
+- Manifestы ядра/провайдера указывают на релиз `v1.1.9`, чтобы все бинарники поднимались из одного GitHub Release.
+
+### Build
+- Claude Module v0.1.1 → `claude-module-0.1.1.tar.bz2`
+- Core v0.2.1 → `codeai-hub-core-darwin-arm64-0.2.1.tar.bz2`
+- VSIX → `codeai-hub-1.1.9.vsix`
+
+## [1.1.8] - 2025-10-26
+### Added
+- **Claude provider module**: New `packages/Claude_Module` workspace delivers the Claude Agent SDK integration (installer, auth, session lifecycle, streaming processor, JSONL logger).
+- **Core Claude adapter**: ProviderRegistry now boots a `ClaudeProviderAdapter` which initializes the SDK, handles `/context` bootstrapping, and exposes `create/send/subscribe/close`.
+- **Streaming events**: RemoteBridge and Claude module propagate real-time `stream_event` payloads plus assistant/system/result messages to all connected clients.
+
+### Changed
+- **Core config/env**: The extension now exports `CLAUDE_WORKSPACE_PATH` when launching the core; the orchestrator slugifies it for `.claude/projects/<slug>` access.
+- **Remote bridge**: WebSocket handling is fully async, provider bindings are tracked per session, and all outgoing messages come from live Claude responses instead of mock timers.
+- **Logging**: Claude sessions are persisted under `~/.codeai-hub/logs/claude/session-*.jsonl`, with automatic renames once the real `claudeSessionId` is resolved.
+
+### Build
+- Core bumped to **v0.2.0** (pkg target `codeai-hub-core-<platform>-0.2.0.tar.bz2`).
+- Release will be packaged as `codeai-hub-1.1.8.vsix` via `./scripts/build-release.sh 1.1.8`.
+
 ## [1.1.7] - 2025-10-26
 ### Added
 - **Session deletion sync**: Closing a session in one UI (webview or CEF) now instantly removes it from all connected clients.

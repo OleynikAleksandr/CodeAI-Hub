@@ -21,10 +21,12 @@ type BridgeEvent =
       readonly type: "session:deleted";
       readonly payload: { readonly sessionId: string };
     }
+  | {
+      readonly type: "session:stream";
+      readonly payload: { readonly sessionId: string; readonly event: unknown };
+    }
   | { readonly type: "session:error"; readonly payload: unknown }
   | { readonly type: "core:notification"; readonly payload: unknown };
-
-const MOCK_RESPONSE_DELAY_MS = 500;
 
 type CoreStatePayload = {
   readonly sessions: ReturnType<SessionManager["listSessions"]>;
@@ -55,6 +57,12 @@ type IncomingMessage =
       };
     };
 
+type ProviderSessionBinding = {
+  readonly providerId: string;
+  providerSessionId: string;
+  readonly unsubscribe: () => void;
+};
+
 export class RemoteBridge {
   private readonly config: CoreConfig;
 
@@ -75,6 +83,8 @@ export class RemoteBridge {
   private wsServer?: WebSocketServer;
 
   private readonly clients: Map<string, ClientSocket> = new Map();
+
+  private readonly providerSessions = new Map<string, ProviderSessionBinding>();
 
   constructor(options: {
     readonly config: CoreConfig;
@@ -204,9 +214,9 @@ export class RemoteBridge {
     this.logger.info("Client connected", { clientId });
     this.hooks.onClientConnected?.(clientId, this.getActiveClientCount());
 
-    socket.on("message", (data) => {
+    socket.on("message", async (data) => {
       try {
-        this.handleIncomingMessage(clientId, socket, data.toString());
+        await this.handleIncomingMessage(clientId, socket, data.toString());
       } catch (error) {
         this.logger.error("Failed to process client message", error as Error, {
           clientId,
@@ -235,11 +245,15 @@ export class RemoteBridge {
     };
   }
 
-  private handleIncomingMessage(
+  private getDefaultProviderId(): string {
+    return this.providerRegistry.listProviders()[0]?.id ?? "claudeCodeCli";
+  }
+
+  private async handleIncomingMessage(
     clientId: string,
     socket: WebSocket,
     rawMessage: string
-  ): void {
+  ): Promise<void> {
     let incoming: IncomingMessage;
     try {
       incoming = JSON.parse(rawMessage) as IncomingMessage;
@@ -255,16 +269,16 @@ export class RemoteBridge {
 
     switch (incoming.type) {
       case "session:create":
-        this.handleSessionCreate(incoming.payload?.providerId);
+        await this.handleSessionCreate(incoming.payload?.providerId);
         break;
       case "session:message":
-        this.handleSessionMessage(
+        await this.handleSessionMessage(
           incoming.payload.sessionId,
           incoming.payload.content
         );
         break;
       case "session:delete":
-        this.handleSessionDelete(incoming.payload.sessionId);
+        await this.handleSessionDelete(incoming.payload.sessionId);
         break;
       default:
         this.logger.warn("Unsupported message", { clientId, incoming });
@@ -272,16 +286,39 @@ export class RemoteBridge {
     }
   }
 
-  private handleSessionCreate(providerId?: string): void {
-    const actualProviderId = providerId ?? "codex";
+  private async handleSessionCreate(providerId?: string): Promise<void> {
+    const actualProviderId = providerId ?? this.getDefaultProviderId();
+    const adapter = this.providerRegistry.getAdapter(actualProviderId);
+    if (!adapter) {
+      this.broadcast({
+        type: "session:error",
+        payload: { message: `Provider ${actualProviderId} unavailable` },
+      });
+      return;
+    }
+    const providerSessionId = await adapter.createSession();
     const session = this.sessionManager.createSession(actualProviderId);
+    const unsubscribe = adapter.subscribe(
+      providerSessionId,
+      (event: unknown) => {
+        this.handleProviderEvent(session.id, event);
+      }
+    );
+    this.providerSessions.set(session.id, {
+      providerId: actualProviderId,
+      providerSessionId,
+      unsubscribe,
+    });
     this.broadcast({
       type: "session:created",
       payload: session,
     });
   }
 
-  private handleSessionMessage(sessionId: string, content: string): void {
+  private async handleSessionMessage(
+    sessionId: string,
+    content: string
+  ): Promise<void> {
     const userMessage = this.sessionManager.appendMessage(
       sessionId,
       "user",
@@ -303,28 +340,27 @@ export class RemoteBridge {
       payload: userMessage,
     });
 
-    const session = this.sessionManager.getSession(sessionId);
-    if (!session) {
+    const binding = this.providerSessions.get(sessionId);
+    if (!binding) {
+      this.logger.warn("Provider binding missing for session", { sessionId });
       return;
     }
-
-    setTimeout(() => {
-      const assistantMessage = this.sessionManager.appendMessage(
-        sessionId,
-        "assistant",
-        `Mock response from ${session.providerId}: ${content}`
-      );
-
-      if (assistantMessage) {
-        this.broadcast({
-          type: "session:message",
-          payload: assistantMessage,
-        });
-      }
-    }, MOCK_RESPONSE_DELAY_MS);
+    const adapter = this.providerRegistry.getAdapter(binding.providerId);
+    if (!adapter) {
+      this.logger.warn("Adapter missing for provider", { binding });
+      return;
+    }
+    await adapter.sendMessage(binding.providerSessionId, content);
   }
 
-  private handleSessionDelete(sessionId: string): void {
+  private async handleSessionDelete(sessionId: string): Promise<void> {
+    const binding = this.providerSessions.get(sessionId);
+    if (binding) {
+      const adapter = this.providerRegistry.getAdapter(binding.providerId);
+      binding.unsubscribe();
+      this.providerSessions.delete(sessionId);
+      await adapter?.closeSession(binding.providerSessionId);
+    }
     const deleted = this.sessionManager.deleteSession(sessionId);
     if (!deleted) {
       this.broadcast({
@@ -341,5 +377,79 @@ export class RemoteBridge {
       type: "session:deleted",
       payload: { sessionId },
     });
+  }
+
+  private handleProviderEvent(sessionId: string, event: unknown): void {
+    if (!event || typeof event !== "object") {
+      return;
+    }
+    const typed = event as { readonly type?: string; readonly payload?: any };
+    if (typed.type === "sessionIdChanged" && typed.payload) {
+      this.updateProviderBinding(sessionId, typed.payload.newId);
+      return;
+    }
+    if (typed.type === "stream_event") {
+      this.broadcast({
+        type: "session:stream",
+        payload: { sessionId, event: typed },
+      });
+      return;
+    }
+    if (typed.type === "assistant" || typed.type === "system") {
+      const role = typed.type === "assistant" ? "assistant" : "system";
+      this.appendProviderMessage(sessionId, role, typed);
+      return;
+    }
+    if (typed.type === "result") {
+      this.appendProviderMessage(sessionId, "assistant", typed);
+    }
+  }
+
+  private appendProviderMessage(
+    sessionId: string,
+    role: "assistant" | "system",
+    event: unknown
+  ): void {
+    const content = this.extractMessageContent(event);
+    if (!content) {
+      return;
+    }
+    const message = this.sessionManager.appendMessage(sessionId, role, content);
+    if (message) {
+      this.broadcast({ type: "session:message", payload: message });
+    }
+  }
+
+  private extractMessageContent(event: unknown): string | null {
+    if (!event || typeof event !== "object") {
+      return null;
+    }
+    const typed = event as {
+      readonly content?: unknown;
+      readonly data?: unknown;
+    };
+    if (typeof typed.content === "string") {
+      return typed.content;
+    }
+    if (typed.content && typeof typed.content === "object") {
+      return JSON.stringify(typed.content);
+    }
+    if (typed.data) {
+      return JSON.stringify(typed.data);
+    }
+    return null;
+  }
+
+  private updateProviderBinding(
+    sessionId: string,
+    providerSessionId?: string
+  ): void {
+    if (!providerSessionId) {
+      return;
+    }
+    const binding = this.providerSessions.get(sessionId);
+    if (binding) {
+      binding.providerSessionId = providerSessionId;
+    }
   }
 }

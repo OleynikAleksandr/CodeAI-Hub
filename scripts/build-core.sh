@@ -4,6 +4,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$SCRIPT_DIR/..")"
+source "$SCRIPT_DIR/release-utils.sh"
 CORE_PROJECT_DIR="$REPO_ROOT/packages/core"
 DIST_ROOT="$REPO_ROOT/doc/tmp/releases"
 MANIFEST_PATH="$REPO_ROOT/assets/core/manifest.json"
@@ -199,8 +200,9 @@ fs.writeFileSync(
 );
 EOF
 
-  echo "📦 Archive created at $ARCHIVE_PATH"
-  echo "🗂  Updated manifest for $PLATFORM_KEY"
+echo "📦 Archive created at $ARCHIVE_PATH"
+echo "🗂  Updated manifest for $PLATFORM_KEY"
+clean_release_dir "$DIST_ROOT"
 else
   echo "❌ Binary not found at $DIST_ROOT/$BINARY_NAME" >&2
   exit 1

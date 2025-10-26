@@ -1,6 +1,9 @@
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
 import http from "node:http";
-import { type ExtensionContext, window } from "vscode";
+import { homedir } from "node:os";
+import path from "node:path";
+import { type ExtensionContext, window, workspace } from "vscode";
 import type { CoreRuntimeInfo } from "./core-installer";
 import { ensureCoreInstalled } from "./core-installer";
 
@@ -63,12 +66,19 @@ export class CoreProcessManager {
     }
 
     this.channel.appendLine("Starting CodeAI Hub core orchestrator...");
+    const workspacePath = this.resolveWorkspacePath();
+    const claudeModulePath = this.resolveClaudeModulePath();
+    const envVars: NodeJS.ProcessEnv = {
+      ...process.env,
+      CORE_HOST,
+      CORE_PORT: `${CORE_PORT}`,
+      CLAUDE_WORKSPACE_PATH: workspacePath,
+    };
+    if (claudeModulePath) {
+      envVars.CLAUDE_MODULE_PATH = claudeModulePath;
+    }
     this.child = spawn(this.runtimeInfo.binaryPath, [], {
-      env: {
-        ...process.env,
-        CORE_HOST,
-        CORE_PORT: `${CORE_PORT}`,
-      },
+      env: envVars,
       stdio: "pipe",
     });
 
@@ -118,5 +128,34 @@ export class CoreProcessManager {
       this.child = null;
     }
     this.channel.dispose();
+  }
+
+  private resolveWorkspacePath(): string {
+    const folder = workspace.workspaceFolders?.[0];
+    if (folder) {
+      return folder.uri.fsPath;
+    }
+    return process.cwd();
+  }
+
+  private resolveClaudeModulePath(): string | null {
+    const root = path.join(homedir(), ".codeai-hub", "providers", "claude");
+    try {
+      const latestPath = path.join(root, "latest");
+      if (!existsSync(latestPath)) {
+        return null;
+      }
+      const version = readFileSync(latestPath, "utf8").trim();
+      if (!version) {
+        return null;
+      }
+      const candidate = path.join(root, version);
+      if (existsSync(candidate)) {
+        return candidate;
+      }
+    } catch {
+      return null;
+    }
+    return null;
   }
 }
