@@ -70,4 +70,8 @@ export class SessionManager {
     session.updatedAt = message.timestamp;
     return message;
   }
+
+  deleteSession(sessionId: string): boolean {
+    return this.sessions.delete(sessionId);
+  }
 }

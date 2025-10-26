@@ -17,6 +17,10 @@ type BridgeEvent =
   | { readonly type: "core:state"; readonly payload: CoreStatePayload }
   | { readonly type: "session:created"; readonly payload: unknown }
   | { readonly type: "session:message"; readonly payload: unknown }
+  | {
+      readonly type: "session:deleted";
+      readonly payload: { readonly sessionId: string };
+    }
   | { readonly type: "session:error"; readonly payload: unknown }
   | { readonly type: "core:notification"; readonly payload: unknown };
 
@@ -42,6 +46,12 @@ type IncomingMessage =
       readonly payload: {
         readonly sessionId: string;
         readonly content: string;
+      };
+    }
+  | {
+      readonly type: "session:delete";
+      readonly payload: {
+        readonly sessionId: string;
       };
     };
 
@@ -103,7 +113,10 @@ export class RemoteBridge {
       try {
         this.handleClientConnection(socket);
       } catch (error) {
-        this.logger.error("Failed to handle websocket connection", error);
+        this.logger.error(
+          "Failed to handle websocket connection",
+          error as Error
+        );
       }
     });
 
@@ -250,6 +263,9 @@ export class RemoteBridge {
           incoming.payload.content
         );
         break;
+      case "session:delete":
+        this.handleSessionDelete(incoming.payload.sessionId);
+        break;
       default:
         this.logger.warn("Unsupported message", { clientId, incoming });
         break;
@@ -306,5 +322,24 @@ export class RemoteBridge {
         });
       }
     }, MOCK_RESPONSE_DELAY_MS);
+  }
+
+  private handleSessionDelete(sessionId: string): void {
+    const deleted = this.sessionManager.deleteSession(sessionId);
+    if (!deleted) {
+      this.broadcast({
+        type: "session:error",
+        payload: {
+          sessionId,
+          message: "Session not found",
+        },
+      });
+      return;
+    }
+
+    this.broadcast({
+      type: "session:deleted",
+      payload: { sessionId },
+    });
   }
 }

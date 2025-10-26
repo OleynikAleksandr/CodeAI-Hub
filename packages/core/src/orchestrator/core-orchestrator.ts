@@ -1,9 +1,11 @@
-import pkg from "../../package.json" with { type: "json" };
 import { type CoreConfig, loadConfig } from "../config";
 import { ProviderRegistry } from "../provider-registry";
 import { RemoteBridge } from "../remote-bridge";
 import { SessionManager } from "../session-manager";
 import { Logger } from "../telemetry/logger";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pkg = require("../../package.json") as { version: string };
 
 export class CoreOrchestrator {
   private readonly config: CoreConfig;

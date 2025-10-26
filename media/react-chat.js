@@ -7598,7 +7598,9 @@
     };
   };
   var convertStatusResponse = (status, fallbackProviders) => {
-    const providers = status.providers?.map((provider) => sanitizeProvider(provider)).filter((provider) => Boolean(provider)) ?? [...fallbackProviders];
+    const providers = status.providers?.map((provider) => sanitizeProvider(provider)).filter(
+      (provider) => Boolean(provider)
+    ) ?? [...fallbackProviders];
     const sessions = status.sessions?.map((session) => sanitizeSession(session)).filter((session) => Boolean(session)) ?? [];
     return {
       sessions,
@@ -7611,6 +7613,7 @@
     httpUrl: "http://127.0.0.1:8080",
     wsUrl: "ws://127.0.0.1:8080/api/v1/stream"
   };
+  var RECONNECT_DELAY_MS = 2e3;
   var globalScope = window;
   var resolveConfig = () => {
     const config = globalScope.__CODEAI_CORE_CONFIG;
@@ -7657,13 +7660,26 @@
         break;
       }
       case "session:created": {
-        const normalized = sanitizeSession(payload.payload);
+        const normalized = sanitizeSession(
+          payload.payload
+        );
         if (!normalized) {
           return;
         }
         notifyWindow({
           type: "session:created",
           payload: normalized.record
+        });
+        break;
+      }
+      case "session:deleted": {
+        const candidate = payload.payload;
+        if (!candidate || typeof candidate.sessionId !== "string") {
+          return;
+        }
+        notifyWindow({
+          type: "session:deleted",
+          payload: { sessionId: candidate.sessionId }
         });
         break;
       }
@@ -7694,7 +7710,7 @@
     reconnectTimer = window.setTimeout(() => {
       reconnectTimer = void 0;
       connectWebSocket(config);
-    }, 2e3);
+    }, RECONNECT_DELAY_MS);
   };
   var connectWebSocket = (config) => {
     if (websocket) {
@@ -7781,6 +7797,14 @@
       }
     });
   };
+  var deleteSession = (sessionId) => {
+    enqueueMessage({
+      type: "session:delete",
+      payload: {
+        sessionId
+      }
+    });
+  };
   var handleOutgoingVsCodeMessage = (message) => {
     if (!message || typeof message !== "object") {
       return false;
@@ -7788,7 +7812,12 @@
     const candidate = message;
     if (typeof candidate.command === "string") {
       if (candidate.command === "newSession") {
-        void openProviderPicker();
+        openProviderPicker().catch((error) => {
+          notifyWindow({
+            type: "session:error",
+            payload: { message: String(error) }
+          });
+        });
         return true;
       }
       return false;
@@ -7807,7 +7836,12 @@
     }
     initialized = true;
     const config = resolveConfig();
-    void fetchStatusSnapshot(config);
+    fetchStatusSnapshot(config).catch((error) => {
+      notifyWindow({
+        type: "session:error",
+        payload: { message: String(error) }
+      });
+    });
     connectWebSocket(config);
   };
 
@@ -7961,7 +7995,7 @@
       },
       [providerLabels, syncSessionsRef]
     );
-    const handleSessionMessageEvent = (0, import_react3.useCallback)(
+    const handleSessionMessageEvent2 = (0, import_react3.useCallback)(
       (payload) => {
         setSnapshots((previous) => {
           const session = sessionsRef.current.find(
@@ -7985,7 +8019,7 @@
           };
         });
       },
-      [providerLabels, sessionsRef]
+      [providerLabels]
     );
     const clearSessions = (0, import_react3.useCallback)(() => {
       setSessions(() => {
@@ -8004,8 +8038,9 @@
     const selectSession = (0, import_react3.useCallback)((sessionId) => {
       setActiveSessionId(sessionId);
     }, []);
-    const closeSession = (0, import_react3.useCallback)(
-      (sessionId) => {
+    const handleSessionDeleted = (0, import_react3.useCallback)(
+      (payload) => {
+        const { sessionId } = payload;
         setSessions((previous) => {
           const next = previous.filter((session) => session.id !== sessionId);
           syncSessionsRef(next);
@@ -8024,6 +8059,12 @@
         });
       },
       [syncSessionsRef]
+    );
+    const closeSession = (0, import_react3.useCallback)(
+      (sessionId) => {
+        deleteSession(sessionId);
+      },
+      []
     );
     const toggleTodo = (0, import_react3.useCallback)((sessionId, todoId) => {
       setSnapshots((previous) => {
@@ -8062,7 +8103,8 @@
       activeSessionId,
       handleSessionCreated,
       hydrateFromCoreState,
-      handleSessionMessageEvent,
+      handleSessionMessageEvent: handleSessionMessageEvent2,
+      handleSessionDeleted,
       clearSessions,
       focusLastSession,
       selectSession,
@@ -8114,6 +8156,42 @@
     const messageCandidate = message;
     return typeof messageCandidate.id === "string" && typeof messageCandidate.content === "string" && typeof messageCandidate.createdAt === "number";
   };
+  var isSessionDeletedPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.sessionId === "string";
+  };
+  var handleProviderPickerOpenMessage = (message, onProviderPickerOpen) => {
+    const providers = parseProviderList(message.payload?.providers);
+    if (providers.length > 0) {
+      onProviderPickerOpen(providers);
+    }
+  };
+  var handleSessionCreatedMessage = (message, onSessionCreated) => {
+    if (isSessionRecordCandidate(message.payload)) {
+      onSessionCreated(message.payload);
+    }
+  };
+  var handleCoreStateMessage = (message, onCoreState) => {
+    if (!(onCoreState && isCoreBridgeStatePayload(message.payload))) {
+      return;
+    }
+    onCoreState(message.payload);
+  };
+  var handleSessionMessageEvent = (message, onSessionMessage) => {
+    if (!(onSessionMessage && isSessionMessagePayload(message.payload))) {
+      return;
+    }
+    onSessionMessage(message.payload);
+  };
+  var handleSessionDeletedMessage = (message, onSessionDeleted) => {
+    if (!(onSessionDeleted && isSessionDeletedPayload(message.payload))) {
+      return;
+    }
+    onSessionDeleted(message.payload);
+  };
   var isIncomingMessage = (value) => {
     if (!value || typeof value !== "object" || !("type" in value)) {
       return false;
@@ -8127,7 +8205,8 @@
     onSessionFocusLast,
     onShowSettings,
     onCoreState,
-    onSessionMessage
+    onSessionMessage,
+    onSessionDeleted
   }) => {
     (0, import_react5.useEffect)(() => {
       const handleIncomingMessage = (event) => {
@@ -8136,45 +8215,32 @@
         }
         const message = event.data;
         switch (message.type) {
-          case "providerPicker:open": {
-            const providers = parseProviderList(message.payload?.providers);
-            if (providers.length > 0) {
-              onProviderPickerOpen(providers);
-            }
-            break;
-          }
-          case "session:created": {
-            if (isSessionRecordCandidate(message.payload)) {
-              onSessionCreated(message.payload);
-            }
-            break;
-          }
-          case "session:clearAll": {
+          case "providerPicker:open":
+            handleProviderPickerOpenMessage(message, onProviderPickerOpen);
+            return;
+          case "session:created":
+            handleSessionCreatedMessage(message, onSessionCreated);
+            return;
+          case "session:clearAll":
             onSessionClearAll();
-            break;
-          }
-          case "session:focusLast": {
+            return;
+          case "session:focusLast":
             onSessionFocusLast();
-            break;
-          }
-          case "ui:showSettings": {
+            return;
+          case "ui:showSettings":
             onShowSettings();
-            break;
-          }
-          case "core:state": {
-            if (onCoreState && isCoreBridgeStatePayload(message.payload)) {
-              onCoreState(message.payload);
-            }
-            break;
-          }
-          case "session:message": {
-            if (onSessionMessage && isSessionMessagePayload(message.payload)) {
-              onSessionMessage(message.payload);
-            }
-            break;
-          }
+            return;
+          case "core:state":
+            handleCoreStateMessage(message, onCoreState);
+            return;
+          case "session:message":
+            handleSessionMessageEvent(message, onSessionMessage);
+            return;
+          case "session:deleted":
+            handleSessionDeletedMessage(message, onSessionDeleted);
+            return;
           default:
-            break;
+            return;
         }
       };
       window.addEventListener("message", handleIncomingMessage);
@@ -8188,7 +8254,8 @@
       onSessionFocusLast,
       onShowSettings,
       onCoreState,
-      onSessionMessage
+      onSessionMessage,
+      onSessionDeleted
     ]);
   };
 
@@ -9693,7 +9760,8 @@ ${path}` : path;
       activeSessionId,
       handleSessionCreated,
       hydrateFromCoreState,
-      handleSessionMessageEvent,
+      handleSessionMessageEvent: handleSessionMessageEvent2,
+      handleSessionDeleted,
       clearSessions,
       focusLastSession,
       selectSession,
@@ -9709,7 +9777,7 @@ ${path}` : path;
       },
       [openPicker]
     );
-    const handleSessionCreatedMessage = (0, import_react12.useCallback)(
+    const handleSessionCreatedMessage2 = (0, import_react12.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
@@ -9731,18 +9799,26 @@ ${path}` : path;
     const handleSessionMessage = (0, import_react12.useCallback)(
       (payload) => {
         activateRoot();
-        handleSessionMessageEvent(payload);
+        handleSessionMessageEvent2(payload);
       },
-      [handleSessionMessageEvent]
+      [handleSessionMessageEvent2]
+    );
+    const handleSessionDeletedMessage2 = (0, import_react12.useCallback)(
+      (payload) => {
+        activateRoot();
+        handleSessionDeleted(payload);
+      },
+      [handleSessionDeleted]
     );
     useWebviewMessageHandler({
       onProviderPickerOpen: handleProviderPickerOpen,
-      onSessionCreated: handleSessionCreatedMessage,
+      onSessionCreated: handleSessionCreatedMessage2,
       onSessionClearAll: clearSessions,
       onSessionFocusLast: focusLastSession,
       onShowSettings: handleShowSettings,
       onCoreState: handleCoreState,
-      onSessionMessage: handleSessionMessage
+      onSessionMessage: handleSessionMessage,
+      onSessionDeleted: handleSessionDeletedMessage2
     });
     return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "app-shell", children: [
       /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(action_bar_default, {}),

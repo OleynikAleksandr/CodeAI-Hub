@@ -2,12 +2,12 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.6
-- **Autonomous core bootstrap**: the extension now downloads, verifies, and launches `codeai-hub-core` the moment the view opens. Installers read `assets/core/manifest.json`/`assets/launcher/manifest.json` and fall back across mirrors to avoid 404s.
-- **Dual-client sync**: both the VS Code webview and the standalone CEF client connect to the same local core (HTTP `:8080`, WS `/api/v1/stream`). New sessions and messages broadcast instantly across clients.
+## Current Release — v1.1.7
+- **Session deletion sync**: session deletion now propagates across all connected clients in real-time. Core v0.1.1 adds `SessionManager.deleteSession()` and broadcasts `session:deleted` events through RemoteBridge.
+- **Autonomous core bootstrap**: the extension downloads, verifies, and launches `codeai-hub-core` the moment the view opens. Installers read `assets/core/manifest.json`/`assets/launcher/manifest.json` and fall back across mirrors to avoid 404s.
+- **Dual-client sync**: both the VS Code webview and the standalone CEF client connect to the same local core (HTTP `:8080`, WS `/api/v1/stream`). Sessions, messages, and deletions broadcast instantly across clients.
 - **Security + CSP fixes**: the webview explicitly allows `http://127.0.0.1` HTTP/WS connections, so the UI can reach the local core without workarounds.
-- **Release artifacts**: `codeai-hub-1.1.6.vsix` ships alongside `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2` and `codeai-hub-core-darwin-arm64-0.1.0.tar.bz2`. CEF continues to stream from Spotify’s CDN.
-- **Known limitation**: deleting a session in one client does not yet propagate to the other. The issue is tracked for the next session (broadcast pipeline work).
+- **Release artifacts**: `codeai-hub-1.1.7.vsix` ships alongside `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2` and `codeai-hub-core-darwin-arm64-0.1.1.tar.bz2`. CEF continues to stream from Spotify's CDN.
 
 ## Features
 - **React-driven command bar**: the extension view opens with a React-rendered quick-action row that mirrors the Claude Code Fusion UX.

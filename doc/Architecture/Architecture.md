@@ -1,7 +1,7 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.3.0  
-**Last Updated:** 2025-10-25  
+**Version:** 0.3.1
+**Last Updated:** 2025-10-26
 **Status:** Active reference
 
 ---
@@ -79,8 +79,13 @@ graph TD
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг; архитектурный скрипт контролирует структуру `src/` и `media/`.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
-## Known Limitations (2025-10-25)
-- **Session deletion sync**: удаление сессии в VS Code webview пока не отправляет событие `session:deleted` в автономный клиент. Создание и обмен сообщениями синхронизируются через ядро, но удаление останется в Phase 11 backlog до внедрения полноценного broadcast.
+## Recent Changes (v1.1.7 - 2025-10-26)
+- **Session deletion sync implemented**: удаление сессии теперь синхронизируется между всеми подключёнными клиентами (webview и CEF). Ядро v0.1.1 добавляет `SessionManager.deleteSession()` и транслирует событие `session:deleted` через `RemoteBridge`. Оба UI обрабатывают это событие и удаляют сессию из локального состояния.
+- **Core v0.1.1**: добавлен метод `SessionManager.deleteSession()`, обработчик `session:delete` в `RemoteBridge` и broadcast события `session:deleted`.
+- **UI handlers**: `core-bridge` теперь обрабатывает входящие `session:deleted` события, `session-store` добавляет `handleSessionDeleted` для синхронизации локального state.
+
+## Known Limitations (2025-10-26)
+- No current major limitations. Session creation, messaging, and deletion all sync across clients.
 
 ## Related Documents
 - `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`

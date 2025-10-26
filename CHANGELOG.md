@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.7] - 2025-10-26
+### Added
+- **Session deletion sync**: Closing a session in one UI (webview or CEF) now instantly removes it from all connected clients.
+- **Core v0.1.1**: Added `SessionManager.deleteSession()` method to handle session removal.
+- **RemoteBridge events**: Added `session:delete` incoming handler and `session:deleted` broadcast event.
+- **UI handlers**: Both webview and standalone clients now handle `session:deleted` events and update their local state.
+- **Release documentation**: Created comprehensive release build guide in `doc/Project_Docs/knowledge/Инструкция_по_созданию_релизов.md` covering Core, Extension, and Launcher versioning workflows.
+
+### Fixed
+- Core archive packaging now correctly contains `codeai-hub-core` binary (without platform suffix) to match installer expectations.
+- TypeScript import compatibility fixed by switching from `import with { type: "json" }` to `require()` for package.json in CommonJS modules.
+
+### Build
+- Release packaged as `codeai-hub-1.1.7.vsix` via `./scripts/build-release.sh 1.1.7`
+- Core binary: `codeai-hub-core-darwin-arm64-0.1.1.tar.bz2` (SHA-1: `fa946f1b8bdcd42ab8c3a3f539cb7f3f69b1c522`)
+- Launcher unchanged: `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`
+
+## [1.1.6] - 2025-10-25
+### Added
+- **Autonomous core orchestrator**: Extension now downloads and launches `codeai-hub-core` automatically on first run.
+- **Dual-client synchronization**: VS Code webview and standalone CEF client both connect to same local core (`:8080`, WS `/api/v1/stream`).
+- **Core installers**: Added `CoreInstaller` and `LauncherInstaller` with manifest-based download, SHA-1 verification, and mirror fallback.
+- **Session/message broadcast**: Sessions and messages created in one client appear instantly in the other.
+
+### Changed
+- Updated CSP to allow `http://127.0.0.1:8080` HTTP/WebSocket connections for core communication.
+- Reorganized core bridge architecture with `core-bridge.ts` handling all WebSocket communication.
+
+### Known Issues
+- Session deletion does not propagate between clients (fixed in v1.1.7).
+
+### Build
+- Release packaged as `codeai-hub-1.1.6.vsix` via `./scripts/build-release.sh 1.1.6`
+- Core binary: `codeai-hub-core-darwin-arm64-0.1.0.tar.bz2`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`
+
 ## [1.0.43] - 2025-10-24
 ### Build
 - Smoke-built `codeai-hub-1.0.43.vsix` via `./scripts/build-release.sh 1.0.43` and refreshed launcher archive `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2` to verify toolchain updates.

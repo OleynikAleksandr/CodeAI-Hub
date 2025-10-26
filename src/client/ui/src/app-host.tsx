@@ -32,6 +32,7 @@ const AppHost = () => {
     handleSessionCreated,
     hydrateFromCoreState,
     handleSessionMessageEvent,
+    handleSessionDeleted,
     clearSessions,
     focusLastSession,
     selectSession,
@@ -81,6 +82,14 @@ const AppHost = () => {
     [handleSessionMessageEvent]
   );
 
+  const handleSessionDeletedMessage = useCallback(
+    (payload: { readonly sessionId: string }) => {
+      activateRoot();
+      handleSessionDeleted(payload);
+    },
+    [handleSessionDeleted]
+  );
+
   useWebviewMessageHandler({
     onProviderPickerOpen: handleProviderPickerOpen,
     onSessionCreated: handleSessionCreatedMessage,
@@ -89,6 +98,7 @@ const AppHost = () => {
     onShowSettings: handleShowSettings,
     onCoreState: handleCoreState,
     onSessionMessage: handleSessionMessage,
+    onSessionDeleted: handleSessionDeletedMessage,
   });
 
   return (
