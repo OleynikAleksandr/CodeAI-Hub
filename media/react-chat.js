@@ -8060,12 +8060,9 @@
       },
       [syncSessionsRef]
     );
-    const closeSession = (0, import_react3.useCallback)(
-      (sessionId) => {
-        deleteSession(sessionId);
-      },
-      []
-    );
+    const closeSession = (0, import_react3.useCallback)((sessionId) => {
+      deleteSession(sessionId);
+    }, []);
     const toggleTodo = (0, import_react3.useCallback)((sessionId, todoId) => {
       setSnapshots((previous) => {
         const current = previous[sessionId];

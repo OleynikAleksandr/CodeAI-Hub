@@ -79,13 +79,14 @@ graph TD
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг; архитектурный скрипт контролирует структуру `src/` и `media/`.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
-## Recent Changes (v1.1.7 - 2025-10-26)
-- **Session deletion sync implemented**: удаление сессии теперь синхронизируется между всеми подключёнными клиентами (webview и CEF). Ядро v0.1.1 добавляет `SessionManager.deleteSession()` и транслирует событие `session:deleted` через `RemoteBridge`. Оба UI обрабатывают это событие и удаляют сессию из локального состояния.
-- **Core v0.1.1**: добавлен метод `SessionManager.deleteSession()`, обработчик `session:delete` в `RemoteBridge` и broadcast события `session:deleted`.
-- **UI handlers**: `core-bridge` теперь обрабатывает входящие `session:deleted` события, `session-store` добавляет `handleSessionDeleted` для синхронизации локального state.
+## Recent Changes (v1.1.16 - 2025-10-26)
+- **Claude module auto-updates**: VSIX теперь распространяет только манифест `assets/providers/claude/manifest.json`. При запуске расширение скачивает `claude-module-<version>.tar.bz2`, ставит его в `~/.codeai-hub/providers/claude/<version>/` и прокидывает путь в `CLAUDE_MODULE_PATH`, поэтому Core подхватывает свежий адаптер без пересборки.
+- **CLI bootstrap fixes**: `SDKInstaller` вычисляет глобальный npm prefix (`~/.npm-global` / `%APPDATA%\npm`) и хранит путь до реального бинаря `claude`. `ClaudeSDKManager` передаёт этот путь в SDK (`pathToClaudeCodeExecutable`), устраняя крах `ERR_REQUIRE_ESM`, который возникал при запуске CLI через pkg-Node 18.
+- **Slug parity**: Core сохраняет ведущий дефис в `claudeProjectSlug`, благодаря чему SDK пишет в те же каталоги `~/.claude/projects/-<slug>` что и Claude Code CLI. Это важно для resume/JSONL-лога.
+- **Provider registry hygiene**: `ProviderRegistry` объявляет только активный Claude-провайдер; заглушки Codex/Gemini удалены, UI больше их не показывает.
 
 ## Known Limitations (2025-10-26)
-- No current major limitations. Session creation, messaging, and deletion all sync across clients.
+- `packages/Claude_Module` пока не приведён к полному набору стайлгайдов Ultracite (публичные модификаторы, порядок импортов). Release 1.1.16 закрывает блокер запуска, но линтинг предстоит в отдельной фазе.
 
 ## Related Documents
 - `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`

@@ -26,7 +26,10 @@ export class CoreOrchestrator {
     this.config = loadConfig();
     this.logger = new Logger();
     this.sessionManager = new SessionManager();
-    this.providerRegistry = new ProviderRegistry();
+    this.providerRegistry = new ProviderRegistry({
+      config: this.config,
+      logger: this.logger,
+    });
     this.remoteBridge = new RemoteBridge({
       config: this.config,
       providerRegistry: this.providerRegistry,
@@ -43,6 +46,7 @@ export class CoreOrchestrator {
   }
 
   async start(): Promise<void> {
+    await this.providerRegistry.initialize();
     await this.remoteBridge.start();
     this.logger.info("Core orchestrator started", {
       host: this.config.host,
