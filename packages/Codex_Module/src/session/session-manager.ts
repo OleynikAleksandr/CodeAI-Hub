@@ -18,9 +18,7 @@ export class CodexSessionManager {
     this.lifecycle = options?.lifecycle ?? new CodexSessionLifecycle();
   }
 
-  public createSession(
-    logger: SessionLogger | null = null
-  ): SessionCreationResult {
+  createSession(logger: SessionLogger | null = null): SessionCreationResult {
     const controller = this.lifecycle.createMessageController();
     const eventEmitter = this.lifecycle.createEventEmitter();
     const tempId = this.lifecycle.generateTemporaryId();
@@ -39,19 +37,19 @@ export class CodexSessionManager {
     return { tempId, session };
   }
 
-  public getSession(sessionId: string): ActiveSession | undefined {
+  getSession(sessionId: string): ActiveSession | undefined {
     return this.registry.get(sessionId);
   }
 
-  public listSessions(): readonly ActiveSession[] {
+  listSessions(): readonly ActiveSession[] {
     return this.registry.listSessions();
   }
 
-  public updateSessionId(tempId: string, realId: string): void {
+  updateSessionId(tempId: string, realId: string): void {
     this.registry.updateSessionId(tempId, realId);
   }
 
-  public async closeSession(sessionId: string): Promise<void> {
+  async closeSession(sessionId: string): Promise<void> {
     const session = this.registry.get(sessionId);
     if (!session) {
       return;

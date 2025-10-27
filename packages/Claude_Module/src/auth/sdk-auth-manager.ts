@@ -10,21 +10,20 @@ const CLAUDE_LOGIN_HINT =
 export class SDKAuthManager {
   private readonly npxExecutable =
     process.platform === "win32" ? "npx.cmd" : "npx";
-  private isAuthenticated = false;
 
-  public async ensureSubscriptionAuth(): Promise<void> {
+  async ensureSubscriptionAuth(): Promise<void> {
     const authenticated = await this.checkAuthentication();
     if (!authenticated) {
       throw new Error(CLAUDE_LOGIN_HINT);
     }
   }
 
-  public getAuthEnvironment(): NodeJS.ProcessEnv {
+  getAuthEnvironment(): NodeJS.ProcessEnv {
     const baseEnv = { ...process.env };
     baseEnv.HOME = homedir();
     baseEnv.CLAUDE_USE_CLI_AUTH = "true";
     baseEnv.CLAUDE_SUBSCRIPTION_MODE = "true";
-    delete baseEnv.ANTHROPIC_API_KEY;
+    baseEnv.ANTHROPIC_API_KEY = undefined;
     return baseEnv;
   }
 
@@ -40,9 +39,7 @@ export class SDKAuthManager {
         }
       );
       const output = `${stdout}${stderr}`.toLowerCase();
-      const authenticated = output.includes("claude");
-      this.isAuthenticated = authenticated;
-      return authenticated;
+      return output.includes("claude");
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       const needsLogin =
@@ -50,7 +47,6 @@ export class SDKAuthManager {
         message.includes("not authenticated") ||
         message.includes("authentication");
       if (needsLogin) {
-        this.isAuthenticated = false;
         return false;
       }
       throw error;

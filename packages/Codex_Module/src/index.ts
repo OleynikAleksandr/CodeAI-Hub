@@ -1,4 +1,30 @@
-export { CodexProviderAdapter } from "./provider/codex-provider-adapter";
+import { CodexProviderAdapter as CodexProviderAdapterImpl } from "./provider/codex-provider-adapter";
+import type {
+  CodexApprovalMode as CodexApprovalModeType,
+  CodexInstallerPaths as CodexInstallerPathsType,
+  CodexModuleOptions as CodexModuleOptionsType,
+  CodexSandboxMode as CodexSandboxModeType,
+  CodexThreadEvent as CodexThreadEventType,
+  CodexThreadItem as CodexThreadItemType,
+  CodexThreadOptions as CodexThreadOptionsType,
+  CodexTurnOptions as CodexTurnOptionsType,
+  CodexWorkspaceOptions as CodexWorkspaceOptionsType,
+  ModuleReporter as ModuleReporterType,
+} from "./types";
+
+const CodexProviderAdapter = CodexProviderAdapterImpl;
+type CodexApprovalMode = CodexApprovalModeType;
+type CodexInstallerPaths = CodexInstallerPathsType;
+type CodexModuleOptions = CodexModuleOptionsType;
+type CodexSandboxMode = CodexSandboxModeType;
+type CodexThreadEvent = CodexThreadEventType;
+type CodexThreadItem = CodexThreadItemType;
+type CodexThreadOptions = CodexThreadOptionsType;
+type CodexTurnOptions = CodexTurnOptionsType;
+type CodexWorkspaceOptions = CodexWorkspaceOptionsType;
+type ModuleReporter = ModuleReporterType;
+
+export { CodexProviderAdapter };
 export type {
   CodexApprovalMode,
   CodexInstallerPaths,
@@ -10,4 +36,4 @@ export type {
   CodexTurnOptions,
   CodexWorkspaceOptions,
   ModuleReporter,
-} from "./types";
+};

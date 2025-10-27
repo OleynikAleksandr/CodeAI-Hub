@@ -8,29 +8,31 @@ const LOG_ROOT = path.join(homedir(), ".codeai-hub", "logs", "codex");
 export class CodexSessionLogger implements SessionLogger {
   private logFilePath: string | null = null;
 
-  public start(sessionId: string): void {
+  start(sessionId: string): void {
     this.logFilePath = this.resolveLogPath(sessionId);
-    void fs
-      .mkdir(LOG_ROOT, { recursive: true })
+    fs.mkdir(LOG_ROOT, { recursive: true })
       .then(() => fs.writeFile(this.logFilePath as string, "", { flag: "w" }))
-      .catch(() => {});
+      .catch(() => {
+        /* ignore log initialization errors */
+      });
     this.append({ type: "session_start", sessionId, timestamp: Date.now() });
   }
 
-  public end(): void {
+  end(): void {
     this.append({ type: "session_end", timestamp: Date.now() });
     this.logFilePath = null;
   }
 
-  public renameSession(oldId: string, newId: string): void {
+  renameSession(oldId: string, newId: string): void {
     if (!this.logFilePath) {
       return;
     }
     const nextPath = this.resolveLogPath(newId);
-    void fs
-      .mkdir(LOG_ROOT, { recursive: true })
+    fs.mkdir(LOG_ROOT, { recursive: true })
       .then(() => fs.rename(this.logFilePath as string, nextPath))
-      .catch(() => {});
+      .catch(() => {
+        /* ignore log rename errors */
+      });
     this.logFilePath = nextPath;
     this.append({
       type: "session_promoted",
@@ -40,15 +42,15 @@ export class CodexSessionLogger implements SessionLogger {
     });
   }
 
-  public logUserInput(content: string): void {
+  logUserInput(content: string): void {
     this.append({ type: "user_input", content, timestamp: Date.now() });
   }
 
-  public logSDKEvent(scope: string, payload: unknown): void {
+  logSDKEvent(scope: string, payload: unknown): void {
     this.append({ type: `sdk:${scope}`, payload, timestamp: Date.now() });
   }
 
-  public logAssistantResponse(payload: unknown): void {
+  logAssistantResponse(payload: unknown): void {
     this.append({ type: "assistant", payload, timestamp: Date.now() });
   }
 
@@ -62,6 +64,8 @@ export class CodexSessionLogger implements SessionLogger {
       return;
     }
     const line = `${JSON.stringify(entry)}\n`;
-    void fs.appendFile(this.logFilePath, line, "utf8").catch(() => {});
+    fs.appendFile(this.logFilePath, line, "utf8").catch(() => {
+      /* ignore log append errors */
+    });
   }
 }

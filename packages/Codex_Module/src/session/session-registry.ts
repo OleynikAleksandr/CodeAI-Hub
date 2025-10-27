@@ -3,19 +3,19 @@ import type { ActiveSession } from "./types";
 export class CodexSessionRegistry {
   private readonly sessions = new Map<string, ActiveSession>();
 
-  public add(session: ActiveSession): void {
+  add(session: ActiveSession): void {
     this.sessions.set(session.sessionId, session);
   }
 
-  public get(sessionId: string): ActiveSession | undefined {
+  get(sessionId: string): ActiveSession | undefined {
     return this.sessions.get(sessionId);
   }
 
-  public delete(sessionId: string): boolean {
+  delete(sessionId: string): boolean {
     return this.sessions.delete(sessionId);
   }
 
-  public updateSessionId(oldId: string, newId: string): void {
+  updateSessionId(oldId: string, newId: string): void {
     if (oldId === newId) {
       return;
     }
@@ -28,7 +28,7 @@ export class CodexSessionRegistry {
     this.sessions.set(newId, snapshot);
   }
 
-  public listSessions(): readonly ActiveSession[] {
+  listSessions(): readonly ActiveSession[] {
     return [...this.sessions.values()];
   }
 }

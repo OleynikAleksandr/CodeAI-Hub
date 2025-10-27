@@ -2,9 +2,9 @@
   "schema": 1,
   "baseUrl": "https://github.com/OleynikAleksandr/CodeAI-Hub/releases/latest/download/",
   "module": {
-    "version": "0.1.6",
-    "package": "claude-module-0.1.6.tar.bz2",
-    "size": 16154,
-    "sha1": "73f49770c927aa99d38e839d87177fe8196f6cf8"
+    "version": "0.1.7",
+    "package": "claude-module-0.1.7.tar.bz2",
+    "size": 16488,
+    "sha1": "817dc59a9fa68c31486c889a4de8f79d4773fd75"
   }
 }

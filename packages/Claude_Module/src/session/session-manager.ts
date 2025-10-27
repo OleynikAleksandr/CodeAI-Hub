@@ -19,9 +19,7 @@ export class SDKSessionManager {
     this.lifecycle = options?.lifecycle ?? new SDKSessionLifecycle();
   }
 
-  public createSession(
-    logger: SessionLogger | null = null
-  ): SessionCreationResult {
+  createSession(logger: SessionLogger | null = null): SessionCreationResult {
     const controller = this.lifecycle.createMessageController();
     const eventEmitter = this.lifecycle.createEventEmitter();
     const tempId = this.lifecycle.generateTemporaryId();
@@ -39,15 +37,15 @@ export class SDKSessionManager {
     return { tempId, session };
   }
 
-  public updateSessionId(tempId: string, realId: string): void {
+  updateSessionId(tempId: string, realId: string): void {
     this.registry.updateSessionId(tempId, realId);
   }
 
-  public getSession(sessionId: string): ActiveSession | undefined {
+  getSession(sessionId: string): ActiveSession | undefined {
     return this.registry.get(sessionId);
   }
 
-  public async closeSession(sessionId: string): Promise<void> {
+  async closeSession(sessionId: string): Promise<void> {
     const session = this.registry.get(sessionId);
     if (!session) {
       return;
@@ -57,7 +55,7 @@ export class SDKSessionManager {
     this.registry.delete(sessionId);
   }
 
-  public listSessions(): readonly ActiveSession[] {
+  listSessions(): readonly ActiveSession[] {
     return this.registry.listSessions();
   }
 }

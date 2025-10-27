@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import type { ExtensionContext, Progress } from "vscode";
+import { type PlatformKey, resolvePlatformKey } from "../cef/platform";
 import {
   DownloadError,
   downloadFile,
@@ -14,12 +15,6 @@ type ProgressReporter = Progress<{
   message?: string;
   increment?: number;
 }>;
-
-export type PlatformKey =
-  | "darwin-arm64"
-  | "darwin-x64"
-  | "win32-x64"
-  | "linux-x64";
 
 export type CoreRuntimeInfo = {
   readonly version: string;
@@ -50,26 +45,6 @@ type InstallMarker = {
   readonly coreVersion: string;
   readonly installedAt: string;
   readonly package: string;
-};
-
-const resolvePlatformKey = (): PlatformKey => {
-  const platform = process.platform;
-  const arch = process.arch;
-
-  if (platform === "darwin") {
-    if (arch === "arm64") {
-      return "darwin-arm64";
-    }
-    if (arch === "x64") {
-      return "darwin-x64";
-    }
-  } else if (platform === "win32" && arch === "x64") {
-    return "win32-x64";
-  } else if (platform === "linux" && arch === "x64") {
-    return "linux-x64";
-  }
-
-  throw new Error(`Unsupported platform: ${platform}-${arch}`);
 };
 
 const readManifest = async (
@@ -152,81 +127,151 @@ const prepareDownload = async (platformDir: string): Promise<string> => {
   return downloadsDir;
 };
 
+const getManifestEntryOrThrow = (
+  manifest: CoreManifest,
+  platform: PlatformKey
+): ManifestEntry => {
+  const manifestEntry = manifest.platforms[platform];
+  if (!manifestEntry) {
+    throw new Error(`No manifest entry for platform: ${platform}`);
+  }
+  return manifestEntry;
+};
+
+const buildRuntimeInfo = (
+  manifestEntry: ManifestEntry,
+  runtimeDir: string,
+  platform: PlatformKey
+): CoreRuntimeInfo => {
+  const binaryPath = path.join(runtimeDir, "codeai-hub-core");
+  return {
+    version: manifestEntry.coreVersion,
+    platform,
+    runtimeDir,
+    binaryPath,
+  };
+};
+
+const tryReuseExistingInstall = async (
+  runtimeDir: string,
+  manifestEntry: ManifestEntry,
+  platform: PlatformKey,
+  progress?: ProgressReporter
+): Promise<CoreRuntimeInfo | null> => {
+  const existingIsValid = await verifyExistingInstall(
+    runtimeDir,
+    manifestEntry
+  );
+  if (!existingIsValid) {
+    return null;
+  }
+  progress?.report({ message: "Using existing core installation" });
+  return buildRuntimeInfo(manifestEntry, runtimeDir, platform);
+};
+
+const formatDownloadFailure = (
+  error: unknown,
+  fallbackLabel: string
+): string => {
+  if (error instanceof DownloadError) {
+    const status = error.statusCode ?? "unknown";
+    return `${error.label} (HTTP ${status}) ${error.url}`;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return `${fallbackLabel}: ${String(error)}`;
+};
+
+const ensureArchiveAvailable = async (
+  manifest: CoreManifest,
+  manifestEntry: ManifestEntry,
+  downloadsDir: string,
+  progress?: ProgressReporter
+): Promise<string> => {
+  const archivePath = path.join(downloadsDir, manifestEntry.package);
+  if (await verifySha1(archivePath, manifestEntry.sha1)) {
+    progress?.report({ message: "Using cached core archive" });
+    return archivePath;
+  }
+
+  const downloadUrl = new URL(
+    manifestEntry.package,
+    manifest.baseUrl
+  ).toString();
+  const localFallbacks = [
+    archivePath,
+    path.join(
+      process.env.HOME ?? tmpdir(),
+      ".codeai-hub",
+      "releases",
+      manifestEntry.package
+    ),
+  ];
+
+  try {
+    await downloadFile({
+      url: downloadUrl,
+      destination: archivePath,
+      size: manifestEntry.size,
+      progress,
+      label: "Core orchestrator",
+      localFallbacks,
+    });
+  } catch (error) {
+    const details = formatDownloadFailure(
+      error,
+      "Unknown core orchestrator download error"
+    );
+    throw new Error(`Core orchestrator download failed: ${details}`);
+  }
+
+  return archivePath;
+};
+
+const verifyChecksumIfNeeded = async (
+  archivePath: string,
+  manifestEntry: ManifestEntry
+): Promise<void> => {
+  if (!manifestEntry.sha1) {
+    return;
+  }
+  const checksumValid = await verifySha1(archivePath, manifestEntry.sha1);
+  if (!checksumValid) {
+    throw new Error("SHA-1 checksum verification failed");
+  }
+};
+
 const performInstall = async (
   manifest: CoreManifest,
   platform: PlatformKey,
   baseDir: string,
   progress?: ProgressReporter
 ): Promise<CoreRuntimeInfo> => {
-  const manifestEntry = manifest.platforms[platform];
-  if (!manifestEntry) {
-    throw new Error(`No manifest entry for platform: ${platform}`);
-  }
-
+  const manifestEntry = getManifestEntryOrThrow(manifest, platform);
   const platformDir = path.join(baseDir, platform);
   const runtimeDir = path.join(platformDir, manifestEntry.coreVersion);
 
-  const existingIsValid = await verifyExistingInstall(
+  const reused = await tryReuseExistingInstall(
     runtimeDir,
-    manifestEntry
+    manifestEntry,
+    platform,
+    progress
   );
-  if (existingIsValid) {
-    progress?.report({ message: "Using existing core installation" });
-    const binaryPath = path.join(runtimeDir, "codeai-hub-core");
-    return {
-      version: manifestEntry.coreVersion,
-      platform,
-      runtimeDir,
-      binaryPath,
-    };
+  if (reused) {
+    return reused;
   }
 
   await ensureDirectory(runtimeDir);
 
   const downloadsDir = await prepareDownload(platformDir);
-  const archivePath = path.join(downloadsDir, manifestEntry.package);
-
-  if (await verifySha1(archivePath, manifestEntry.sha1)) {
-    progress?.report({ message: "Using cached core archive" });
-  } else {
-    const downloadUrl = new URL(
-      manifestEntry.package,
-      manifest.baseUrl
-    ).toString();
-    const localFallbacks = [
-      path.join(downloadsDir, manifestEntry.package),
-      path.join(
-        process.env.HOME ?? tmpdir(),
-        ".codeai-hub",
-        "releases",
-        manifestEntry.package
-      ),
-    ];
-    try {
-      await downloadFile({
-        url: downloadUrl,
-        destination: archivePath,
-        size: manifestEntry.size,
-        progress,
-        label: "Core orchestrator",
-        localFallbacks,
-      });
-    } catch (error) {
-      const details =
-        error instanceof DownloadError
-          ? `${error.label} (HTTP ${error.statusCode ?? "unknown"}) ${error.url}`
-          : error instanceof Error
-            ? error.message
-            : String(error);
-      throw new Error(`Core orchestrator download failed: ${details}`);
-    }
-  }
-  if (manifestEntry.sha1) {
-    const checksumValid = await verifySha1(archivePath, manifestEntry.sha1);
-    if (!checksumValid) {
-      throw new Error("SHA-1 checksum verification failed");
-    }
-  }
+  const archivePath = await ensureArchiveAvailable(
+    manifest,
+    manifestEntry,
+    downloadsDir,
+    progress
+  );
+  await verifyChecksumIfNeeded(archivePath, manifestEntry);
 
   progress?.report({ message: "Extracting core orchestrator..." });
   await extractArchive(archivePath, runtimeDir);
@@ -238,12 +283,7 @@ const performInstall = async (
 
   progress?.report({ message: "Core orchestrator installed successfully" });
 
-  return {
-    version: manifestEntry.coreVersion,
-    platform,
-    runtimeDir,
-    binaryPath,
-  };
+  return buildRuntimeInfo(manifestEntry, runtimeDir, platform);
 };
 
 export const ensureCoreInstalled = async (

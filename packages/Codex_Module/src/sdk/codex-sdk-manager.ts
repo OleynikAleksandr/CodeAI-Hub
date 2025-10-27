@@ -11,22 +11,25 @@ import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type { CodexWorkspaceOptions, ModuleReporter } from "../types";
 
+type CodexManagerDependencies = {
+  readonly installer: CodexInstaller;
+  readonly authManager: CodexAuthManager;
+  readonly sessions: CodexSessionManager;
+  readonly processor: CodexMessageProcessor;
+  readonly workspace: CodexWorkspaceOptions;
+  readonly reporter?: ModuleReporter;
+};
+
 export class CodexSDKManager {
   private codexInstance: CodexCtor | null = null;
   private initialized = false;
+  private readonly deps: CodexManagerDependencies;
 
-  constructor(
-    private readonly deps: {
-      readonly installer: CodexInstaller;
-      readonly authManager: CodexAuthManager;
-      readonly sessions: CodexSessionManager;
-      readonly processor: CodexMessageProcessor;
-      readonly workspace: CodexWorkspaceOptions;
-      readonly reporter?: ModuleReporter;
-    }
-  ) {}
+  constructor(deps: CodexManagerDependencies) {
+    this.deps = deps;
+  }
 
-  public async initialize(): Promise<void> {
+  async initialize(): Promise<void> {
     if (this.initialized) {
       return;
     }
@@ -43,7 +46,7 @@ export class CodexSDKManager {
     this.initialized = true;
   }
 
-  public async createSession(): Promise<string> {
+  async createSession(): Promise<string> {
     await this.initialize();
     const logger = new CodexSessionLogger();
     const { tempId, session } = this.deps.sessions.createSession(logger);
@@ -53,15 +56,15 @@ export class CodexSDKManager {
     return tempId;
   }
 
-  public async closeSession(sessionId: string): Promise<void> {
+  async closeSession(sessionId: string): Promise<void> {
     await this.deps.sessions.closeSession(sessionId);
   }
 
-  public getSession(sessionId: string): ActiveSession | undefined {
+  getSession(sessionId: string): ActiveSession | undefined {
     return this.deps.sessions.getSession(sessionId);
   }
 
-  public async sendMessage(sessionId: string, content: string): Promise<void> {
+  async sendMessage(sessionId: string, content: string): Promise<void> {
     await this.initialize();
     this.deps.processor.enqueueMessage(sessionId, content);
   }

@@ -7,20 +7,19 @@ const CODEX_LOGIN_HINT =
 
 export class CodexAuthManager {
   private readonly codexHome: string;
-  private isAuthenticated = false;
 
   constructor() {
     this.codexHome = process.env.CODEX_HOME ?? path.join(homedir(), ".codex");
   }
 
-  public async ensureAuthenticated(): Promise<void> {
+  async ensureAuthenticated(): Promise<void> {
     const authenticated = await this.checkAuthentication();
     if (!authenticated) {
       throw new Error(CODEX_LOGIN_HINT);
     }
   }
 
-  public getAuthEnvironment(): NodeJS.ProcessEnv {
+  getAuthEnvironment(): NodeJS.ProcessEnv {
     const env = { ...process.env };
     env.CODEX_HOME = this.codexHome;
     return env;
@@ -29,10 +28,8 @@ export class CodexAuthManager {
   private async checkAuthentication(): Promise<boolean> {
     try {
       await access(path.join(this.codexHome, "auth.json"));
-      this.isAuthenticated = true;
       return true;
     } catch {
-      this.isAuthenticated = false;
       return false;
     }
   }

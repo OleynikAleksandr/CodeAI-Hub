@@ -2,22 +2,22 @@ import { EventEmitter } from "node:events";
 import type { ActiveSession, MessageController } from "./types";
 
 export class SDKSessionLifecycle {
-  public generateTemporaryId(): string {
+  generateTemporaryId(): string {
     return `temp_${Date.now()}`;
   }
 
-  public createEventEmitter(): EventEmitter {
+  createEventEmitter(): EventEmitter {
     return new EventEmitter();
   }
 
-  public createMessageController(): MessageController {
+  createMessageController(): MessageController {
     return {
       pendingMessages: [],
       resolveNext: null,
     };
   }
 
-  public createMessageGenerator(
+  createMessageGenerator(
     controller: MessageController
   ): AsyncGenerator<unknown> {
     const generator = async function* generate() {
@@ -39,7 +39,7 @@ export class SDKSessionLifecycle {
     return generator();
   }
 
-  public async closeSession(session: ActiveSession): Promise<void> {
+  async closeSession(session: ActiveSession): Promise<void> {
     if (session.messageController.resolveNext) {
       session.messageController.resolveNext(null);
     } else {
