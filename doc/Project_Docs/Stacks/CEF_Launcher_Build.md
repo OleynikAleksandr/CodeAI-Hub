@@ -13,7 +13,7 @@ This document captures the work-in-progress plan for Stage 2 миграции л
 ## Текущий прогресс
 - Расширение автоматически вызывает `ensureLauncherInstalled`, который читает `assets/launcher/manifest.json`, скачивает архив лаунчера и разворачивает его в `~/.codeai-hub/cef-launcher/<platform>/<launcherVersion>/` (macOS arm64).
 - Реализован fallback: если бинарь уже установлен вручную (через `scripts/build-cef-launcher.sh`), установщик создаёт `install.json` и использует локальный артефакт без повторного скачивания.
-- Скрипт `scripts/build-cef-launcher.sh` по-прежнему собирает `CodeAIHubLauncher`, устанавливает его в `~/.codeai-hub/cef-launcher/<platform>/` и складывает копию в `binaries/cef-launcher/<platform>/` для публикации.
+- Скрипт `scripts/build-cef-launcher.sh` собирает `CodeAIHubLauncher`, устанавливает его в `~/.codeai-hub/cef-launcher/<platform>/` и упаковывает архив в `doc/tmp/releases/`, одновременно обновляя манифест и кеши `~/.codeai-hub/releases` / `~/.codeai-hub/cef-launcher/<platform>/downloads/`.
 - Лаунчер корректно инициализирует CEF: `framework_dir_path` указывает на сам `Chromium Embedded Framework.framework`, `CEF_ICU_DATA_PATH` прокидывается до `icudtl.dat`, хелпер запускается через `browser_subprocess_path`, а флаг `--single-process` удалён.
 
 ## Структура размещения

@@ -20,7 +20,7 @@
 - `./scripts/build-claude-module.sh --version <semver>` — устанавливает модуль Claude и кладёт архив в `downloads/`.
 - `./scripts/build-codex-module.sh --version <semver>` — делает то же для Codex.
 - `./scripts/build-core.sh --version <semver>` — собирает core и складывает архив в локальные кеши.
-- `./scripts/build-cef-launcher.sh [--cef-version <версия>]` — пересобирает лаунчер и помещает архив в `~/.codeai-hub/cef-launcher/<platform>/downloads/`.
+- `./scripts/build-cef-launcher.sh [--cef-version <версия>]` — пересобирает лаунчер, обновляет `doc/tmp/releases/CodeAIHubLauncher-*.tar.bz2` и кеши `~/.codeai-hub/releases/` + `~/.codeai-hub/cef-launcher/<platform>/downloads/`.
 
 ## Порядок поиска артефактов
 
