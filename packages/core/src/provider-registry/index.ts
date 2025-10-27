@@ -6,6 +6,11 @@ import type {
   ClaudeProviderAdapter as ClaudeProviderAdapterType,
   ModuleReporter,
 } from "@codeai-hub/claude-module";
+import type {
+  CodexInstallerPaths,
+  CodexModuleOptions,
+  CodexProviderAdapter as CodexProviderAdapterType,
+} from "@codeai-hub/codex-module";
 import type { CoreConfig } from "../config";
 import type { Logger } from "../telemetry/logger";
 
@@ -16,8 +21,10 @@ export type Provider = {
   readonly status: "active" | "inactive";
 };
 
+type ProviderAdapter = ClaudeProviderAdapterType | CodexProviderAdapterType;
+
 export type ProviderDescriptor = Provider & {
-  readonly adapter?: ClaudeProviderAdapterType;
+  readonly adapter?: ProviderAdapter;
 };
 
 const CLAUDE_INSTALLER_PATHS: ClaudeInstallerPaths = {
@@ -28,9 +35,21 @@ const CLAUDE_INSTALLER_PATHS: ClaudeInstallerPaths = {
     "%USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-agent-sdk\\",
 };
 
+const CODEX_INSTALLER_PATHS: CodexInstallerPaths = {
+  macOS:
+    "/Users/oleksandroliinyk/.npm-global/lib/node_modules/@openai/codex-sdk/",
+  linux: "~/.npm-global/lib/node_modules/@openai/codex-sdk/",
+  windows:
+    "%USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex-sdk\\",
+};
+
 type ClaudeAdapterCtor = new (
   options: ClaudeModuleOptions
 ) => ClaudeProviderAdapterType;
+
+type CodexAdapterCtor = new (
+  options: CodexModuleOptions
+) => CodexProviderAdapterType;
 
 const requireModule = createRequire(__filename);
 const dynamicRequire = (specifier: string): unknown => requireModule(specifier);
@@ -66,9 +85,41 @@ const loadClaudeAdapterCtor = (
   return bundled.ClaudeProviderAdapter;
 };
 
+const loadCodexAdapterCtor = (
+  overridePath: string | undefined,
+  logger: Logger
+): CodexAdapterCtor => {
+  if (overridePath) {
+    try {
+      const overrideEntry = path.join(overridePath, "dist", "index.js");
+      const loaded = dynamicRequire(overrideEntry) as {
+        readonly CodexProviderAdapter?: CodexAdapterCtor;
+      };
+      if (loaded?.CodexProviderAdapter) {
+        logger.info("Loaded Codex module from override path", {
+          overridePath,
+        });
+        return loaded.CodexProviderAdapter;
+      }
+      logger.warn("Override path missing CodexProviderAdapter export", {
+        overridePath,
+      });
+    } catch (error) {
+      logger.error("Failed to load Codex module override", error as Error, {
+        overridePath,
+      });
+    }
+  }
+  const bundled = dynamicRequire("@codeai-hub/codex-module") as {
+    readonly CodexProviderAdapter: CodexAdapterCtor;
+  };
+  return bundled.CodexProviderAdapter;
+};
+
 export class ProviderRegistry {
   private readonly providers: ProviderDescriptor[];
   private readonly claudeAdapterCtor: ClaudeAdapterCtor;
+  private readonly codexAdapterCtor: CodexAdapterCtor;
   private readonly options: {
     readonly config: CoreConfig;
     readonly logger: Logger;
@@ -81,6 +132,10 @@ export class ProviderRegistry {
     this.options = options;
     this.claudeAdapterCtor = loadClaudeAdapterCtor(
       process.env.CLAUDE_MODULE_PATH,
+      this.options.logger
+    );
+    this.codexAdapterCtor = loadCodexAdapterCtor(
+      process.env.CODEX_MODULE_PATH,
       this.options.logger
     );
     this.providers = this.initializeProviders();
@@ -96,7 +151,7 @@ export class ProviderRegistry {
     return this.providers.map(({ adapter, ...rest }) => rest);
   }
 
-  getAdapter(providerId: string): ClaudeProviderAdapterType | undefined {
+  getAdapter(providerId: string): ProviderAdapter | undefined {
     return this.providers.find((provider) => provider.id === providerId)
       ?.adapter;
   }
@@ -111,6 +166,26 @@ export class ProviderRegistry {
       reporter: this.createReporter("claude"),
     });
 
+    const {
+      codexWorkspacePath,
+      codexSandboxMode,
+      codexApprovalMode,
+      codexDefaultModel,
+      codexSkipGitRepoCheck,
+    } = this.options.config;
+
+    const codexAdapter = new this.codexAdapterCtor({
+      installerPaths: CODEX_INSTALLER_PATHS,
+      workspace: {
+        workspacePath: codexWorkspacePath,
+        defaultSandboxMode: codexSandboxMode,
+        defaultApprovalMode: codexApprovalMode,
+        defaultModel: codexDefaultModel,
+        skipGitRepoCheck: codexSkipGitRepoCheck,
+      },
+      reporter: this.createReporter("codex"),
+    });
+
     return [
       {
         id: "claudeCodeCli",
@@ -118,6 +193,13 @@ export class ProviderRegistry {
         description: "Anthropic Claude via Agent SDK",
         status: "active",
         adapter: claudeAdapter,
+      },
+      {
+        id: "codexCli",
+        name: "Codex SDK",
+        description: "OpenAI Codex via local CLI",
+        status: "active",
+        adapter: codexAdapter,
       },
     ];
   }

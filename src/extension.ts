@@ -24,6 +24,7 @@ import {
 } from "./extension-module/core/core-process-manager";
 import { HomeViewProvider } from "./extension-module/home-view-provider";
 import { ensureClaudeModuleInstalled } from "./extension-module/provider/claude/claude-module-installer";
+import { ensureCodexModuleInstalled } from "./extension-module/provider/codex/codex-module-installer";
 import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut-manager";
 
 let coreProcessManager: CoreProcessManager | null = null;
@@ -73,6 +74,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
           ensuredCore = await ensureCoreInstalled(context, progress);
           progress.report({ message: "Ensuring Claude provider module…" });
           await ensureClaudeModuleInstalled(context, progress);
+          progress.report({ message: "Ensuring Codex provider module…" });
+          await ensureCodexModuleInstalled(context, progress);
         }
       );
     } catch (error) {

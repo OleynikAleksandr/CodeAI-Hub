@@ -402,6 +402,7 @@ export class RemoteBridge {
     }
     if (typed.type === "result") {
       this.appendProviderMessage(sessionId, "assistant", typed);
+      return;
     }
   }
 

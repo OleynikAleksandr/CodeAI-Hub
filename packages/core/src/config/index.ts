@@ -6,6 +6,18 @@ export type CoreConfig = {
   readonly shutdownGracePeriodMs: number;
   readonly claudeWorkspacePath: string;
   readonly claudeProjectSlug: string;
+  readonly codexWorkspacePath: string;
+  readonly codexSandboxMode?:
+    | "read-only"
+    | "workspace-write"
+    | "danger-full-access";
+  readonly codexApprovalMode?:
+    | "never"
+    | "on-request"
+    | "on-failure"
+    | "untrusted";
+  readonly codexSkipGitRepoCheck: boolean;
+  readonly codexDefaultModel?: string;
 };
 
 const DEFAULT_PORT = 8080;
@@ -13,6 +25,7 @@ const DEFAULT_GRACE_MS = 60_000;
 const NON_ALPHANUMERIC_REGEX = /[^a-zA-Z0-9]/g;
 const MULTIPLE_DASHES_REGEX = /-+/g;
 const TRAILING_DASH_REGEX = /-$/;
+const BOOLEAN_TRUTHY = new Set(["1", "true", "yes", "on"]);
 
 const toNumber = (value: string | undefined, fallback: number): number => {
   if (!value) {
@@ -34,6 +47,48 @@ const sanitizeSlug = (input: string): string =>
     .replace(TRAILING_DASH_REGEX, "")
     .trim() || "default-workspace";
 
+const toBoolean = (value: string | undefined, fallback: boolean): boolean => {
+  if (!value) {
+    return fallback;
+  }
+  return BOOLEAN_TRUTHY.has(value.trim().toLowerCase());
+};
+
+const toSandboxMode = (
+  value: string | undefined
+): CoreConfig["codexSandboxMode"] => {
+  if (!value) {
+    return;
+  }
+  const normalized = value.trim().toLowerCase();
+  if (
+    normalized === "read-only" ||
+    normalized === "workspace-write" ||
+    normalized === "danger-full-access"
+  ) {
+    return normalized;
+  }
+  return;
+};
+
+const toApprovalMode = (
+  value: string | undefined
+): CoreConfig["codexApprovalMode"] => {
+  if (!value) {
+    return;
+  }
+  const normalized = value.trim().toLowerCase();
+  if (
+    normalized === "never" ||
+    normalized === "on-request" ||
+    normalized === "on-failure" ||
+    normalized === "untrusted"
+  ) {
+    return normalized;
+  }
+  return;
+};
+
 export const loadConfig = (): CoreConfig => {
   const host = process.env.CORE_HOST ?? "127.0.0.1";
   const port = toNumber(process.env.CORE_PORT, DEFAULT_PORT);
@@ -46,6 +101,14 @@ export const loadConfig = (): CoreConfig => {
   const slug =
     process.env.CLAUDE_PROJECT_SLUG ??
     sanitizeSlug(workspacePath.replace(/[^a-zA-Z0-9]/g, "-"));
+  const codexWorkspacePath = process.env.CODEX_WORKSPACE_PATH ?? workspacePath;
+  const codexSandboxMode = toSandboxMode(process.env.CODEX_SANDBOX_MODE);
+  const codexApprovalMode = toApprovalMode(process.env.CODEX_APPROVAL_MODE);
+  const codexSkipGitRepoCheck = toBoolean(
+    process.env.CODEX_SKIP_GIT_REPO_CHECK,
+    false
+  );
+  const codexDefaultModel = process.env.CODEX_DEFAULT_MODEL ?? undefined;
 
   return {
     host,
@@ -53,5 +116,10 @@ export const loadConfig = (): CoreConfig => {
     shutdownGracePeriodMs,
     claudeWorkspacePath: workspacePath,
     claudeProjectSlug: slug,
+    codexWorkspacePath,
+    codexSandboxMode,
+    codexApprovalMode,
+    codexSkipGitRepoCheck,
+    codexDefaultModel,
   };
 };

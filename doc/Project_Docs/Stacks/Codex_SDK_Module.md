@@ -1,0 +1,231 @@
+# Codex SDK Module
+
+**Updated:** 2025-10-27  
+**Owner:** Codex  
+**Source Reference:** `https://github.com/openai/codex/tree/main/sdk/typescript`
+
+---
+
+## 1. Purpose & Scope
+- Document the structure and behaviour of the Codex TypeScript SDK so we can implement a first-class provider module inside CodeAI-Hub Core.
+- Capture the CLI/SDK contract (events, items, options) that we must adapt for RemoteBridge and UI streaming.
+- List integration prerequisites (authentication, binaries, storage layout) required to bootstrap Codex alongside the Claude module.
+
+Key capabilities we must preserve when porting:
+1. Streaming JSONL event bridge on top of `codex exec --experimental-json`.
+2. Support for threaded conversations with resume semantics via `~/.codex/sessions`.
+3. Mixed text/image inputs and structured JSON outputs per turn.
+4. Sandbox controls (`read-only`, `workspace-write`, `danger-full-access`) and optional Git repository enforcement.
+5. Authentication via ChatGPT login or API key override (`CODEX_API_KEY`), with persistence under `~/.codex`.
+6. Graceful error propagation when CLI exits non-zero (surface `turn.failed`, `error` events, or exit messages).
+
+---
+
+## 2. Repository Map (openai/codex)
+| Area | Path | Notes |
+| --- | --- | --- |
+| SDK entrypoint | `sdk/typescript/src/index.ts` | Re-exports Codex class, thread types, and event/item unions. |
+| Thread orchestration | `sdk/typescript/src/thread.ts` | Implements `Thread.run` and `Thread.runStreamed`, normalizes inputs, tracks thread IDs. |
+| CLI wrapper | `sdk/typescript/src/exec.ts` | Spawns bundled `codex` binary, assembles flags, manages env vars, streams stdout lines. |
+| Event model | `sdk/typescript/src/events.ts` | Defines `ThreadEvent` union (`thread.started`, `turn.*`, `item.*`, `error`). |
+| Item model | `sdk/typescript/src/items.ts` | Describes `agent_message`, `reasoning`, `command_execution`, `file_change`, `mcp_tool_call`, `web_search`, `todo_list`, `error`. |
+| Options | `sdk/typescript/src/codexOptions.ts`, `threadOptions.ts`, `turnOptions.ts` | Codex constructor + thread/turn configuration, exported types `ApprovalMode`, `SandboxMode`. |
+| Output schema helper | `sdk/typescript/src/outputSchemaFile.ts` | Persists JSON schema to temp directory before invoking CLI. |
+| Bundled binaries | `sdk/typescript/vendor/<target triple>/codex` | Platform-specific executables shipped with the SDK. |
+| Documentation | `docs/exec.md`, `docs/authentication.md`, `docs/sandbox.md`, `docs/config.md` | CLI usage, JSON mode, auth flows, configuration, sandbox semantics. |
+| GitHub Action | `codex-action/` | Official automation example (runs CLI in CI). |
+
+Local installation snapshot:
+- SDK: `/Users/oleksandroliinyk/.npm-global/lib/node_modules/@openai/codex-sdk/` (version 0.46.0).
+- CLI binary: `/Users/oleksandroliinyk/.npm-global/bin/codex` (installed via npm global prefix).
+
+---
+
+## 3. High-Level Architecture
+```
+CodeAI-Hub Core  →  Codex Provider Adapter  →  @openai/codex-sdk  →  codex exec (CLI)
+                                                          ↓
+                                                JSONL events (stdout)
+                                                          ↓
+                                           RemoteBridge / UI event bus
+```
+- The `Codex` class encapsulates a `CodexExec` instance that spawns the CLI per turn.
+- `Thread` objects maintain conversation identity (`thread_id`), multiplexing consecutive turns over the same CLI command by passing `resume` arguments.
+- Event streaming is line-oriented: each stdout line is JSON encoded `ThreadEvent`. The SDK already parses lines and raises typed unions.
+- The CLI writes artifacts (sessions, config, auth) to `$CODEX_HOME` (defaults to `~/.codex`). Our provider must respect and, if needed, override this directory via environment variables.
+
+---
+
+## 4. Execution Flow & Options
+1. `const codex = new Codex({ baseUrl?, apiKey?, codexPathOverride? })` – optional overrides; `codexPathOverride` lets us point to a managed binary.
+2. `const thread = codex.startThread({ model?, sandboxMode?, workingDirectory?, skipGitRepoCheck? })` – sandbox defaults to `read-only`; Git repo check can be disabled explicitly.
+3. `await thread.run(input, { outputSchema? })` – buffers events until turn completion; throws if `turn.failed` emitted.
+4. `await thread.runStreamed(input)` – returns `{ events }` where `events` is an `AsyncGenerator<ThreadEvent>`; consumer must iterate to receive updates.
+5. `CodexExec.run()` constructs CLI arguments:
+   - `codex exec --experimental-json [--model ...] [--sandbox ...] [--cd ...] [--skip-git-repo-check] [--output-schema ...] [--image path...]`.
+   - If resuming, appends `resume <thread_id>`.
+   - Populates env (`CODEX_INTERNAL_ORIGINATOR_OVERRIDE=codex_sdk_ts`, optional `OPENAI_BASE_URL`, `CODEX_API_KEY`).
+6. Inputs may be a simple prompt (`string`) or an array of `{ type: "text" | "local_image" }`. Text entries are concatenated; image paths are converted to repeated `--image` flags.
+7. Structured outputs require passing a JSON schema per turn; the SDK writes it to a temp file and cleans up afterward.
+
+Error handling:
+- CLI non-zero exit → SDK rejects with aggregated stderr (`Codex Exec exited with code ...`).
+- `turn.failed` events propagate as `Error(message)` from `Thread.run` and should be forwarded to RemoteBridge.
+
+---
+
+## 5. Event & Item Model
+| Event | Payload | Notes |
+| --- | --- | --- |
+| `thread.started` | `{ thread_id }` | Emitted once per new thread or resume; update provider session mapping. |
+| `turn.started` | none | Marks beginning of a turn. |
+| `turn.completed` | `{ usage }` | Token usage (input, cached_input, output). |
+| `turn.failed` | `{ error: { message } }` | Terminal failure; no further events for the turn. |
+| `item.started` / `item.updated` / `item.completed` | `{ item }` | Wraps one of the ThreadItem variants below. |
+| `error` | `{ message }` | Fatal stream error (distinct from `turn.failed`). |
+
+Thread items exposed via `event.item`:
+- `agent_message`: assistant response (natural language or JSON string when structured output).
+- `reasoning`: high-level plan/summary.
+- `command_execution`: shell command Invocations, with stdout/stderr aggregation and exit codes.
+- `file_change`: patch outcome; includes per-file operations and final status.
+- `mcp_tool_call`: invocation lifecycle for Model Context Protocol tools (server, tool, status).
+- `web_search`: search queries initiated by Codex.
+- `todo_list`: dynamic plan entries with completion status.
+- `error`: non-fatal issues surfaced as items.
+
+These structures mirror the JSONL emitted by the CLI. CodeAI-Hub must translate them into our existing `session:stream` schema (either by extending Provider Event Adapter or by wrapping `ThreadEvent` directly).
+
+---
+
+## 6. Authentication & Storage
+- Primary flow: interactive ChatGPT login (`codex login`) storing credentials in `~/.codex/auth.json`.
+- Alternative: usage-based billing via API key – pass `CODEX_API_KEY` env or `codex login --with-api-key`. Requires Responses API write access.
+- Configurations live in `~/.codex/config.toml`; sessions persisted under `~/.codex/sessions/` (thread JSONL transcripts).
+- CLI expects a Git repository by default; global `skip git repo check` toggle via config or per-thread option.
+- Remote/headless login patterns: forward port 1455 or copy `auth.json` across machines (see docs/authentication.md).
+
+Implications for CodeAI-Hub:
+- Provider installer must ensure CLI is logged in (detect `auth.json`); if missing, surface instruction via RemoteBridge notifications.
+- Respect existing `CODEX_HOME` / `CODEX_CONFIG_DIR` overrides if we set them before spawning.
+
+---
+
+## 7. Sandbox, Approvals & Safety Flags
+- `SandboxMode` options map to CLI `--sandbox` (`read-only`, `workspace-write`, `danger-full-access`).
+- Approvals: CLI exposes `--approval-mode` flags (`never`, `on-request`, `on-failure`, `untrusted`). The type is exported but not yet wired inside `ThreadOptions`; we may need to pass it via env/config until the SDK adds direct support.
+- Default (no sandbox flag) prohibits file edits/privileged commands; CodeAI-Hub should align with its own approval policy UI when invoking Codex.
+
+---
+
+## 8. Installation & Binary Management
+- `@openai/codex-sdk` ships prebuilt binaries under `vendor/<target triple>/codex/` for macOS (x86_64, arm64), Linux (x86_64, arm64), Windows (x86_64, arm64).
+- `CodexExec` auto-detects the current platform and selects the bundled binary; override via `codexPathOverride` to use a managed installation (e.g., CodeAI-Hub controlled path).
+- Global CLI installs place the executable at `${npm prefix}/bin/codex` (`/Users/oleksandroliinyk/.npm-global/bin/codex` locally).
+- Binary updates follow npm package versioning; ensure our provider checks installed version vs manifest (`installed-versions.json` once Phase 13 lands).
+
+---
+
+## 9. Integration Guidelines for CodeAI-Hub
+1. Wrap the SDK inside `packages/Codex_Module/` mirroring Claude module layout (facades, installer, session manager, message processor).
+2. Provide an installer that either relies on bundled binaries or downloads official releases when absent, verifying integrity.
+3. Expose a Provider Adapter that:
+   - Creates/manages `Thread` instances per CodeAI-Hub session.
+   - Pipes user prompts (string or structured input) into `runStreamed`.
+   - Normalizes `ThreadEvent` → Hub event contract, including token usage and command/file telemetry.
+4. Implement resume support by storing `thread.id` in hub session state and calling `codex.resumeThread(id)`.
+5. Surface CLI/environment errors through RemoteBridge notifications (e.g., missing auth, unsupported sandbox mode).
+6. Ensure sandbox + approval selections from UI are translated into Codex options/env prior to launching the turn.
+7. Log Codex JSONL to `~/.codeai-hub/logs/codex/` for auditing and future replay (align with Phase 13 persistence plan).
+
+---
+
+## 10. Known Gaps & Risks
+- Approval mode currently lacks a direct setter in the SDK; may require manual flag injection (custom CLI wrapper or config edits) until bindings land.
+- Bundled binary approach increases package size; ensure our distribution strategy (manifests vs. direct bundling) stays compliant with project rules.
+- CLI expects Git repositories; non-repo workspaces must set `skipGitRepoCheck`, otherwise Codex exits early.
+- MCP tooling requires separate configuration (`~/.codex/config.toml`); our provider should tolerate missing servers.
+- Potential conflicts with CodeAI-Hub sandbox model (we must reconcile workspace-write vs. danger-full-access semantics before enabling destructive operations by default).
+
+---
+
+## 11. Next Steps for Phase 12
+1. Mirror directory scaffolding from `packages/Claude_Module` for Codex (facades, installer, session lifecycle, message processor).
+2. Define Provider Event Adapter transformations from `ThreadEvent`/`ThreadItem` to our unified message schema (basis for cross-provider wrapper).
+3. Implement authentication checks (detect `auth.json`, guide user through login).
+4. Add smoke tests invoking `thread.runStreamed` against a fixture workspace; capture sample event logs for wrapper design.
+5. Update `doc/TODO/todo-plan_Codex_Module.md` once module scaffolding is ready (Phase 12 tracking).
+6. Capture protocol diffs vs. Claude in a comparison matrix to inform wrapper design.
+
+---
+
+## 12. Reference Links
+- Codex SDK overview: https://developers.openai.com/codex/sdk
+- TypeScript SDK docs: https://developers.openai.com/codex/sdk#typescript-library
+- GitHub repository: https://github.com/openai/codex
+- SDK source (TypeScript): https://github.com/openai/codex/tree/main/sdk/typescript
+- Non-interactive JSON mode: https://github.com/openai/codex/blob/main/docs/exec.md
+- Authentication guide: https://github.com/openai/codex/blob/main/docs/authentication.md
+- Sandbox & approvals: https://github.com/openai/codex/blob/main/docs/sandbox.md
+- GitHub Action example: https://github.com/openai/codex-action
+
+---
+
+## 13. Proposed Module Layout
+| Area | Path | Responsibility |
+| --- | --- | --- |
+| SDK entry | `packages/Codex_Module/src/index.ts` | Re-export `CodexProviderAdapter` and shared option types. |
+| Provider adapter | `packages/Codex_Module/src/provider/codex-provider-adapter.ts` | Public facade for Core: session lifecycle orchestration, listener registry, bootstrap commands. |
+| Installer | `packages/Codex_Module/src/installer/*` | `codex-installer.ts` (binary acquisition + integrity checks), `npm-runner.ts` (fallback to global npm), `codex-paths.ts` (manifest-driven paths). |
+| Auth | `packages/Codex_Module/src/auth/*` | `sdk-auth-manager.ts` detects `auth.json`, prompts RemoteBridge for login guidance, exposes environment variables. |
+| Session management | `packages/Codex_Module/src/session/*` | Registry, lifecycle, controller types; mirrors Claude structures with Codex-specific resume hooks. |
+| Messaging | `packages/Codex_Module/src/messaging/*` | `message-processor.ts` pumps user prompts into `runStreamed`, normalizes `ThreadEvent` payloads, handles resume + sandbox flags. |
+| Logging | `packages/Codex_Module/src/logging/*` | Session logger writing Codex JSONL transcripts under `~/.codeai-hub/logs/codex/`. |
+| CLI bridge | `packages/Codex_Module/src/cli/*` | Thin wrapper around `@openai/codex-sdk` (thread factory, stream subscriptions, structured output helpers). |
+| Types | `packages/Codex_Module/src/types/*` | Shared types (`CodexModuleOptions`, `CodexInstallerPaths`, normalized event/item shapes, reporter interface). |
+
+Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source layout. A dedicated `package.json` and `tsconfig.json` will align with existing module conventions.
+
+---
+
+## 14. Installer & Provider Adapter Plan
+**Installer (`codex-installer.ts`):**
+- Read manifest (`assets/providers/codex/manifest.json`) describing versions and download URLs (mirrors Claude delivery).
+- Resolve platform-specific target triple; prefer managed cache under `~/.codeai-hub/providers/codex/<version>/codex`.
+- Verify SHA-256 before extraction; fall back to bundled vendor binary if checksum fails.
+- Detect existing installations: check `codexPathOverride`, managed cache, then global npm prefix (`npm root -g` + `@openai/codex-sdk/vendor`).
+- Provide `getExecutablePath()` returning the resolved binary plus metadata (version, source).
+- Expose `ensureInstalled()` to download on demand and `loadSDK()` to import `@openai/codex-sdk/dist/index.js` from the managed location with `createRequire`.
+
+**Auth manager (`sdk-auth-manager.ts`):**
+- Locate `$CODEX_HOME/auth.json` (default `~/.codex/auth.json`, allow override via env).
+- Surface missing-auth diagnostics through `ModuleReporter.warn` and RemoteBridge notifications (`provider:codex:authRequired`).
+- Provide `ensureAuth()` returning env overrides (`CODEX_API_KEY`, `CODEX_HOME`, `CODEX_CONFIG_DIR`) for the provider.
+
+**Provider adapter (`codex-provider-adapter.ts`):**
+- Lazily instantiate `Codex` SDK via installer and auth manager; maintain `Thread` objects keyed by CodeAI-Hub session IDs.
+- On `createSession()` → call `codex.startThread(threadOptions)`; persist mapping `{ hubSessionId → thread }`; start background task streaming events to `RemoteBridge`.
+- Normalize `ThreadEvent` into Hub payloads:
+  - `item.*` → emit structured messages (agent/command/file/etc.).
+  - `turn.completed` → usage stats.
+  - `turn.failed` / `error` → propagate to error channel.
+- Handle resume: on real `thread.started` events, capture `thread_id`; support `resumeSession(threadId)` for future reconnects.
+- Provide sandbox orchestration: map Hub approvals to CLI `--sandbox` + (future) approval mode using config file edits until official flag is exposed.
+- Issue bootstrap commands if required (e.g., optional `/status` or repository scan) via `thread.runStreamed`.
+
+**Message processor (`message-processor.ts`):**
+- Maintain per-session outbound queue feeding `thread.runStreamed`.
+- Support structured inputs: convert attachments (files/images) to `--image` flags, attach JSON schema when UI requests structured output.
+- Fan-out streamed events to session logger and listener registry; preserve chronological ordering as they arrive from SDK.
+
+---
+
+## 15. Build & Distribution
+- Build script: `./scripts/build-codex-module.sh [--version <semver>] [--clean]`.
+  - Compiles `packages/Codex_Module`, installs artifacts under `~/.codeai-hub/providers/codex/<version>/`, and creates `codex-module-<version>.tar.bz2` in `doc/tmp/releases/`.
+  - Manifest auto-update: `assets/providers/codex/manifest.json` is rewritten with the archive name, size, and SHA-1 after each build.
+- Managed installs: extension activation calls `ensureCodexModuleInstalled`, which reads the manifest from the VSIX, downloads missing archives, and writes `<installRoot>/latest` so `CODEX_MODULE_PATH` can point core to the freshest module.
+- Release checklist:
+  1. Run `npm run build --workspace=@codeai-hub/codex-module`.
+  2. Execute `./scripts/build-codex-module.sh --version <semver>`.
+  3. Publish the archive alongside the core/launcher assets in GitHub Releases so the manifest URL remains valid.

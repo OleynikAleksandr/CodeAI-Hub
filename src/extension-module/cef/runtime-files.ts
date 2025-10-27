@@ -17,6 +17,7 @@ type DownloadRequest = {
   readonly size: number;
   readonly progress?: ProgressReporter;
   readonly label?: string;
+  readonly localFallbacks?: readonly string[];
 };
 
 type StreamOptions = {
@@ -142,14 +143,61 @@ const resolveRedirectLocation = (
   return new URL(location, currentUrl).toString();
 };
 
+export class DownloadError extends Error {
+  public readonly statusCode?: number;
+  public readonly url: string;
+  public readonly label: string;
+
+  constructor(options: {
+    readonly label: string;
+    readonly url: string;
+    readonly statusCode?: number;
+    readonly cause?: unknown;
+  }) {
+    const statusPart =
+      typeof options.statusCode === "number"
+        ? ` (HTTP ${options.statusCode})`
+        : "";
+    super(`${options.label} download failed${statusPart}: ${options.url}`);
+    if (options.cause !== undefined) {
+      (this as Partial<Error> & { cause?: unknown }).cause = options.cause;
+    }
+    this.name = "DownloadError";
+    this.statusCode = options.statusCode;
+    this.url = options.url;
+    this.label = options.label;
+  }
+}
+
 export const downloadFile = async ({
   url,
   destination,
   size,
   progress,
   label = "CEF archive",
+  localFallbacks = [],
 }: DownloadRequest): Promise<void> => {
   await ensureDirectory(path.dirname(destination));
+
+  for (const candidate of localFallbacks) {
+    if (!candidate) {
+      continue;
+    }
+    try {
+      const stats = await fs.stat(candidate);
+      if (!stats.isFile()) {
+        continue;
+      }
+      await fs.copyFile(candidate, destination);
+      progress?.report?.({
+        message: `Using cached ${label} from ${candidate}`,
+        increment: ONE_HUNDRED_PERCENT,
+      });
+      return;
+    } catch {
+      // Ignore missing candidate; proceed to download.
+    }
+  }
 
   let currentUrl = url;
 
@@ -165,7 +213,11 @@ export const downloadFile = async ({
 
     if (statusCode !== HTTP_STATUS_OK) {
       response.resume();
-      throw new Error(`CEF download failed: HTTP ${statusCode}`);
+      throw new DownloadError({
+        label,
+        url: currentUrl,
+        statusCode,
+      });
     }
 
     const contentLength = Number.parseInt(
@@ -184,7 +236,11 @@ export const downloadFile = async ({
     return;
   }
 
-  throw new Error("CEF download failed: too many redirects");
+  throw new DownloadError({
+    label,
+    url,
+    cause: new Error("Too many redirects"),
+  });
 };
 
 const extractWithTar = async ({

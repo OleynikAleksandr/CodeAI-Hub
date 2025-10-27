@@ -35,6 +35,7 @@ USAGE
 
 CLEAN_FLAG="false"
 CUSTOM_VERSION=""
+LOCAL_RELEASE_DIR="$HOME/.codeai-hub/releases"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -165,12 +166,18 @@ INSTALL_JSON
   echo "✅ Installed to $TARGET_BASE"
   echo "✅ Distribution copy at $DIST_ROOT/$BINARY_NAME"
 
-  ARCHIVE_NAME="codeai-hub-core-$PLATFORM_KEY-$CORE_VERSION.tar.bz2"
-  ARCHIVE_PATH="$DIST_ROOT/$ARCHIVE_NAME"
-  TEMP_DIR="$(mktemp -d)"
-  cp "$DIST_ROOT/$BINARY_NAME" "$TEMP_DIR/codeai-hub-core"
-  (cd "$TEMP_DIR" && tar -cjf "$ARCHIVE_PATH" "codeai-hub-core")
-  rm -rf "$TEMP_DIR"
+ARCHIVE_NAME="codeai-hub-core-$PLATFORM_KEY-$CORE_VERSION.tar.bz2"
+ARCHIVE_PATH="$DIST_ROOT/$ARCHIVE_NAME"
+mkdir -p "$DIST_ROOT"
+mkdir -p "$LOCAL_RELEASE_DIR"
+PLATFORM_DOWNLOAD_DIR="$HOME/.codeai-hub/core/$PLATFORM_KEY/downloads"
+mkdir -p "$PLATFORM_DOWNLOAD_DIR"
+TEMP_DIR="$(mktemp -d)"
+cp "$DIST_ROOT/$BINARY_NAME" "$TEMP_DIR/codeai-hub-core"
+(cd "$TEMP_DIR" && tar -cjf "$ARCHIVE_PATH" "codeai-hub-core")
+cp "$ARCHIVE_PATH" "$LOCAL_RELEASE_DIR/$ARCHIVE_NAME"
+cp "$ARCHIVE_PATH" "$PLATFORM_DOWNLOAD_DIR/$ARCHIVE_NAME"
+rm -rf "$TEMP_DIR"
 
   PACKAGE_SIZE=$(get_file_size "$ARCHIVE_PATH")
   PACKAGE_SHA1=$(compute_sha1 "$ARCHIVE_PATH")
@@ -201,6 +208,8 @@ fs.writeFileSync(
 EOF
 
 echo "📦 Archive created at $ARCHIVE_PATH"
+echo "📂 Local cache: $LOCAL_RELEASE_DIR/$ARCHIVE_NAME"
+echo "📂 Platform cache: $PLATFORM_DOWNLOAD_DIR/$ARCHIVE_NAME"
 echo "🗂  Updated manifest for $PLATFORM_KEY"
 clean_release_dir "$DIST_ROOT"
 else

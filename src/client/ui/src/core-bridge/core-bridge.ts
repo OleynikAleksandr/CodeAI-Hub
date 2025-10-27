@@ -2,18 +2,9 @@ import type {
   ProviderStackDescriptor,
   ProviderStackId,
 } from "../../../../types/provider";
-import {
-  convertStatusResponse,
-  sanitizeMessage,
-  sanitizeSession,
-} from "./normalizers";
-import type {
-  CoreBridgeConfig,
-  CoreBridgeSessionMessagePayload,
-  ServerSession,
-  ServerSessionMessage,
-  ServerStatusResponse,
-} from "./types";
+import { convertStatusResponse } from "./normalizers";
+import { createServerMessageHandler } from "./server-message-handler";
+import type { CoreBridgeConfig, ServerStatusResponse } from "./types";
 
 const DEFAULT_CONFIG: CoreBridgeConfig = {
   httpUrl: "http://127.0.0.1:8080",
@@ -48,67 +39,7 @@ let reconnectTimer: number | undefined;
 let cachedProviders: ProviderStackDescriptor[] = [];
 const pendingMessages: string[] = [];
 
-const handleServerMessage = (raw: string): void => {
-  let payload: { readonly type?: string; readonly payload?: unknown };
-  try {
-    payload = JSON.parse(raw) as { type?: string; payload?: unknown };
-  } catch {
-    return;
-  }
-
-  if (!payload || typeof payload.type !== "string") {
-    return;
-  }
-
-  switch (payload.type) {
-    case "session:message": {
-      const candidate = payload.payload as ServerSessionMessage | undefined;
-      if (!candidate || typeof candidate.sessionId !== "string") {
-        return;
-      }
-      const normalized = sanitizeMessage(candidate);
-      if (!normalized) {
-        return;
-      }
-      notifyWindow({
-        type: "session:message",
-        payload: {
-          sessionId: candidate.sessionId,
-          message: normalized,
-        } satisfies CoreBridgeSessionMessagePayload,
-      });
-      break;
-    }
-    case "session:created": {
-      const normalized = sanitizeSession(
-        payload.payload as ServerSession | undefined
-      );
-      if (!normalized) {
-        return;
-      }
-      notifyWindow({
-        type: "session:created",
-        payload: normalized.record,
-      });
-      break;
-    }
-    case "session:deleted": {
-      const candidate = payload.payload as
-        | { readonly sessionId?: string }
-        | undefined;
-      if (!candidate || typeof candidate.sessionId !== "string") {
-        return;
-      }
-      notifyWindow({
-        type: "session:deleted",
-        payload: { sessionId: candidate.sessionId },
-      });
-      break;
-    }
-    default:
-      break;
-  }
-};
+const handleServerMessage = createServerMessageHandler(notifyWindow);
 
 const flushPendingMessages = (): void => {
   if (!websocket || websocket.readyState !== WebSocket.OPEN) {
