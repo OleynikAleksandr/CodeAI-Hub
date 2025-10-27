@@ -166,6 +166,6 @@ Stage 2 (текущая реализация для macOS arm64 / план дл�
 - Логирование в `~/.codeai-hub/logs/cef-installer.log`.
 
 ## 10. Следующие шаги
-- Исполнять `scripts/build-cef-launcher.sh` для генерации артефактов: скрипт размещает бинарии в `binaries/cef-launcher/<platform>/` и в `~/.codeai-hub/cef-launcher/<platform>/`.
+- Исполнять `scripts/build-cef-launcher.sh` для генерации артефактов: скрипт устанавливает лаунчер в `~/.codeai-hub/cef-launcher/<platform>/`, формирует архив в `doc/tmp/releases/` и обновляет кеши `~/.codeai-hub/cef-launcher/<platform>/downloads/` и `~/.codeai-hub/releases/`.
 - Реализовать кэширование скачанного архива для повторного использования.
 - Добавить в архитектурную документацию ссылки на данный план.
