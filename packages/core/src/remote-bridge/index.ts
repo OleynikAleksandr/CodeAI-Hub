@@ -63,6 +63,22 @@ type ProviderSessionBinding = {
   readonly unsubscribe: () => void;
 };
 
+type ProviderEventEnvelope = {
+  readonly type?: string;
+  readonly payload?: unknown;
+};
+
+type SessionIdChangedPayload = {
+  readonly newId?: string;
+};
+
+const isSessionIdChangedPayload = (
+  value: unknown
+): value is SessionIdChangedPayload =>
+  typeof value === "object" &&
+  value !== null &&
+  typeof (value as { readonly newId?: unknown }).newId === "string";
+
 export class RemoteBridge {
   private readonly config: CoreConfig;
 
@@ -383,8 +399,11 @@ export class RemoteBridge {
     if (!event || typeof event !== "object") {
       return;
     }
-    const typed = event as { readonly type?: string; readonly payload?: any };
-    if (typed.type === "sessionIdChanged" && typed.payload) {
+    const typed = event as ProviderEventEnvelope;
+    if (
+      typed.type === "sessionIdChanged" &&
+      isSessionIdChangedPayload(typed.payload)
+    ) {
       this.updateProviderBinding(sessionId, typed.payload.newId);
       return;
     }

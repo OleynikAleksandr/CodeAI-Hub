@@ -31,11 +31,11 @@ export class CodexProviderAdapter {
     });
   }
 
-  public async initialize(): Promise<void> {
+  async initialize(): Promise<void> {
     await this.sdkManager.initialize();
   }
 
-  public async createSession(): Promise<string> {
+  async createSession(): Promise<string> {
     const sessionId = await this.sdkManager.createSession();
     const session = this.sdkManager.getSession(sessionId);
     if (session) {
@@ -44,16 +44,16 @@ export class CodexProviderAdapter {
     return sessionId;
   }
 
-  public async closeSession(sessionId: string): Promise<void> {
+  async closeSession(sessionId: string): Promise<void> {
     await this.sdkManager.closeSession(sessionId);
     this.listeners.delete(sessionId);
   }
 
-  public async sendMessage(sessionId: string, content: string): Promise<void> {
+  async sendMessage(sessionId: string, content: string): Promise<void> {
     await this.sdkManager.sendMessage(sessionId, content);
   }
 
-  public subscribe(sessionId: string, listener: SessionListener): () => void {
+  subscribe(sessionId: string, listener: SessionListener): () => void {
     const bucket = this.listeners.get(sessionId) ?? new Set<SessionListener>();
     bucket.add(listener);
     this.listeners.set(sessionId, bucket);

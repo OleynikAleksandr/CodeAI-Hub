@@ -3,13 +3,11 @@ import path from "node:path";
 import type {
   ClaudeInstallerPaths,
   ClaudeModuleOptions,
-  ClaudeProviderAdapter as ClaudeProviderAdapterType,
   ModuleReporter,
 } from "@codeai-hub/claude-module";
 import type {
   CodexInstallerPaths,
   CodexModuleOptions,
-  CodexProviderAdapter as CodexProviderAdapterType,
 } from "@codeai-hub/codex-module";
 import type { CoreConfig } from "../config";
 import type { Logger } from "../telemetry/logger";
@@ -21,7 +19,16 @@ export type Provider = {
   readonly status: "active" | "inactive";
 };
 
-type ProviderAdapter = ClaudeProviderAdapterType | CodexProviderAdapterType;
+type ProviderAdapter = {
+  initialize(): Promise<void>;
+  createSession(): Promise<string>;
+  closeSession(sessionId: string): Promise<void>;
+  sendMessage(sessionId: string, content: string): Promise<void>;
+  subscribe(
+    sessionId: string,
+    listener: (payload: unknown) => void
+  ): () => void;
+};
 
 export type ProviderDescriptor = Provider & {
   readonly adapter?: ProviderAdapter;
@@ -43,13 +50,9 @@ const CODEX_INSTALLER_PATHS: CodexInstallerPaths = {
     "%USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex-sdk\\",
 };
 
-type ClaudeAdapterCtor = new (
-  options: ClaudeModuleOptions
-) => ClaudeProviderAdapterType;
+type ClaudeAdapterCtor = new (options: ClaudeModuleOptions) => ProviderAdapter;
 
-type CodexAdapterCtor = new (
-  options: CodexModuleOptions
-) => CodexProviderAdapterType;
+type CodexAdapterCtor = new (options: CodexModuleOptions) => ProviderAdapter;
 
 const requireModule = createRequire(__filename);
 const dynamicRequire = (specifier: string): unknown => requireModule(specifier);

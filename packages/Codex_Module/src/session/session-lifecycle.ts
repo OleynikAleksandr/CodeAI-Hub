@@ -2,22 +2,22 @@ import { EventEmitter } from "node:events";
 import type { MessageController } from "./types";
 
 export class CodexSessionLifecycle {
-  public generateTemporaryId(): string {
+  generateTemporaryId(): string {
     return `codex_${Date.now()}`;
   }
 
-  public createEventEmitter(): EventEmitter {
+  createEventEmitter(): EventEmitter {
     return new EventEmitter();
   }
 
-  public createMessageController(): MessageController {
+  createMessageController(): MessageController {
     return {
       pendingMessages: [],
       resolveNext: null,
     };
   }
 
-  public createMessageGenerator(
+  createMessageGenerator(
     controller: MessageController
   ): AsyncGenerator<unknown> {
     const generator = async function* generate() {
@@ -39,7 +39,7 @@ export class CodexSessionLifecycle {
     return generator();
   }
 
-  public async closeSession(controller: MessageController): Promise<void> {
+  closeSession(controller: MessageController): void {
     if (controller.resolveNext) {
       controller.resolveNext(null);
       controller.resolveNext = null;

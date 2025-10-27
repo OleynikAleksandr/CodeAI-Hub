@@ -19,24 +19,29 @@ export type QueryFunction = (payload: {
   interrupt?: () => Promise<void>;
 };
 
+const SHORT_ID_LENGTH = 8;
+
+type ClaudeManagerDependencies = {
+  readonly installer: SDKInstaller;
+  readonly authManager: SDKAuthManager;
+  readonly sessions: SDKSessionManager;
+  readonly processor: SDKMessageProcessor;
+  readonly workspace: ClaudeWorkspaceOptions;
+  readonly reporter?: ModuleReporter;
+  readonly enableDebugStreams?: boolean;
+};
+
 export class ClaudeSDKManager {
   private sdkModule: { readonly query: QueryFunction } | null = null;
   private queryFunction: QueryFunction | null = null;
   private initialized = false;
+  private readonly deps: ClaudeManagerDependencies;
 
-  constructor(
-    private readonly deps: {
-      readonly installer: SDKInstaller;
-      readonly authManager: SDKAuthManager;
-      readonly sessions: SDKSessionManager;
-      readonly processor: SDKMessageProcessor;
-      readonly workspace: ClaudeWorkspaceOptions;
-      readonly reporter?: ModuleReporter;
-      readonly enableDebugStreams?: boolean;
-    }
-  ) {}
+  constructor(deps: ClaudeManagerDependencies) {
+    this.deps = deps;
+  }
 
-  public async initialize(): Promise<void> {
+  async initialize(): Promise<void> {
     if (this.initialized) {
       return;
     }
@@ -49,7 +54,7 @@ export class ClaudeSDKManager {
     this.initialized = true;
   }
 
-  public async createSession(): Promise<string> {
+  async createSession(): Promise<string> {
     await this.initialize();
     const filesBefore = this.deps.processor.getSDKFilesBefore();
     const { tempId, session } = this.deps.sessions.createSession(
@@ -57,17 +62,24 @@ export class ClaudeSDKManager {
     );
     const queryInstance = this.invokeQuery(session);
     session.queryInstance = queryInstance;
-    void this.deps.processor.processResponses({
-      sessionId: tempId,
-      iterator: queryInstance,
-      onRealSessionId: (realId) => this.promoteSessionId(tempId, realId),
-    });
-    void this.deps.processor
+    this.deps.processor
+      .processResponses({
+        sessionId: tempId,
+        iterator: queryInstance,
+        onRealSessionId: (realId) => this.promoteSessionId(tempId, realId),
+      })
+      .catch((error) => {
+        this.deps.reporter?.error?.("Claude response processing failed", error);
+      });
+    this.deps.processor
       .getSessionIdFromSDKFiles(filesBefore)
       .then((fileSessionId) => {
         if (fileSessionId) {
           session.eventEmitter.emit("realSessionId", fileSessionId);
         }
+      })
+      .catch((error) => {
+        this.deps.reporter?.error?.("Failed to read SDK session files", error);
       });
     session.eventEmitter.once("realSessionId", (realId: string) => {
       if (!realId || realId === tempId) {
@@ -78,15 +90,15 @@ export class ClaudeSDKManager {
     return tempId;
   }
 
-  public async sendMessage(sessionId: string, content: string): Promise<void> {
+  async sendMessage(sessionId: string, content: string): Promise<void> {
     await this.deps.processor.send(sessionId, content);
   }
 
-  public async closeSession(sessionId: string): Promise<void> {
+  async closeSession(sessionId: string): Promise<void> {
     await this.deps.sessions.closeSession(sessionId);
   }
 
-  public getSession(sessionId: string): ActiveSession | undefined {
+  getSession(sessionId: string): ActiveSession | undefined {
     return this.deps.sessions.getSession(sessionId);
   }
 
@@ -100,7 +112,7 @@ export class ClaudeSDKManager {
     targetSession?.eventEmitter.emit("sessionIdChanged", {
       oldId: tempId,
       newId: realId,
-      shortId: realId.slice(0, 8),
+      shortId: realId.slice(0, SHORT_ID_LENGTH),
     });
     targetSession?.logger?.renameSession?.(tempId, realId);
   }

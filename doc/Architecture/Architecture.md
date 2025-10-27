@@ -1,7 +1,7 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.3.1
-**Last Updated:** 2025-10-26
+**Version:** 0.3.2
+**Last Updated:** 2025-10-27
 **Status:** Active reference
 
 ---
@@ -31,7 +31,7 @@ graph TD
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, административные действия) и инициализирует `HomeViewProvider`.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP.
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
-- **Core Bootstrap**: при старте расширение проверяет наличие автономного ядра и вспомогательных компонентов. `CoreProcessManager` скачивает CEF, лаунчер и бинарник ядра из GitHub Releases, проверяет SHA-1, разворачивает их в `~/.codeai-hub/**` и запускает `codeai-hub-core` на `127.0.0.1:8080`. Если компоненты отсутствуют или версия устарела, запускается загрузчик (см. `doc/Project_Docs/Stacks/CoreOrchestrator.md`).
+- **Core Bootstrap**: при старте расширение проверяет наличие автономного ядра и вспомогательных компонентов. `CoreProcessManager` скачивает CEF, лаунчер и бинарник ядра из GitHub Releases, проверяет SHA-1, разворачивает их в `~/.codeai-hub/**` и запускает `codeai-hub-core` на `127.0.0.1:8080`. Если компоненты отсутствуют или версия устарела, запускается загрузчик (см. `doc/Project_Docs/Stacks/CoreOrchestrator.md`). Инсталляторы используют общие хелперы `runtime-files` и `launcher-install-helpers`, которые переиспользуют локальные кеши, валидируют контрольные суммы и удерживают файлы в пределах архитектурного лимита в 300 строк.
 - **Shortcut Service**: модуль `src/extension-module/web-client/shortcut-manager.ts` при активации проверяет наличие ярлыка веб-клиента и при необходимости пересоздаёт его (Windows `.lnk` на Desktop, macOS `.app`-launcher на Desktop, Linux `.desktop` в `~/.local/share/applications`), пропуская выполнение в удалённых средах.
 
 ## VS Code Webview UI

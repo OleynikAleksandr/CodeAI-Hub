@@ -3,7 +3,6 @@ import { homedir } from "node:os";
 import path from "node:path";
 import type { ExtensionContext, Progress } from "vscode";
 import {
-  DownloadError,
   downloadFile,
   ensureDirectory,
   extractArchive,
@@ -25,6 +24,13 @@ const MANIFEST_RELATIVE_PATH = path.join(
   "codex",
   "manifest.json"
 );
+
+const toErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
+};
 
 type ManifestEntry = {
   readonly version: string;
@@ -88,12 +94,7 @@ export const ensureCodexModuleInstalled = async (
       ],
     });
   } catch (error) {
-    const message =
-      error instanceof DownloadError
-        ? error.message
-        : error instanceof Error
-          ? error.message
-          : String(error);
+    const message = toErrorMessage(error);
     throw new Error(`Codex module download failed: ${message}`);
   }
 

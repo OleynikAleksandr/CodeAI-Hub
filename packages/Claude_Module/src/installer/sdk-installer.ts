@@ -9,6 +9,8 @@ import { runNpmCommand } from "./npm-runner";
 const PACKAGE_NAME = "@anthropic-ai/claude-agent-sdk";
 const REGISTRY_URL =
   "https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk/latest";
+const HOME_DIRECTORY_PATTERN = /^~(?=$|\/|\\)/u;
+const USERPROFILE_PATTERN = /%USERPROFILE%/giu;
 const SDK_ENTRY_FILENAME = "sdk.mjs";
 const CLI_EXECUTABLE_UNIX = "claude";
 const CLI_EXECUTABLE_WINDOWS = "claude.cmd";
@@ -46,19 +48,19 @@ export class SDKInstaller {
       (process.platform === "win32" ? "npm.cmd" : "npm");
   }
 
-  public getCurrentVersion(): string | null {
+  getCurrentVersion(): string | null {
     return this.currentVersion;
   }
 
-  public getModulePath(): string {
+  getModulePath(): string {
     return this.moduleEntryPath;
   }
 
-  public getExecutablePath(): string {
+  getExecutablePath(): string {
     return this.cliExecutablePath;
   }
 
-  public async loadModule<TModule = unknown>(): Promise<TModule> {
+  loadModule<TModule = unknown>(): Promise<TModule> {
     const moduleUrl = pathToFileURL(this.moduleEntryPath).href;
     const dynamicImport = new Function("url", "return import(url);") as (
       url: string
@@ -66,7 +68,7 @@ export class SDKInstaller {
     return dynamicImport(moduleUrl);
   }
 
-  public async ensureInstalled(): Promise<void> {
+  async ensureInstalled(): Promise<void> {
     await this.ensurePrefixDirectories();
     const installed = await this.checkGlobalInstallation();
     if (installed) {
@@ -80,8 +82,8 @@ export class SDKInstaller {
   private normalizeInstallerPath(paths: ClaudeInstallerPaths): string {
     const rawPath = this.selectPlatformPath(paths);
     const expanded = rawPath
-      .replace(/^~(?=$|\/|\\)/u, homedir())
-      .replace(/%USERPROFILE%/giu, process.env.USERPROFILE ?? homedir());
+      .replace(HOME_DIRECTORY_PATTERN, homedir())
+      .replace(USERPROFILE_PATTERN, process.env.USERPROFILE ?? homedir());
     return path.resolve(expanded);
   }
 
@@ -176,7 +178,7 @@ export class SDKInstaller {
     await this.checkGlobalInstallation();
   }
 
-  private async getLatestVersion(): Promise<string | null> {
+  private getLatestVersion(): Promise<string | null> {
     return new Promise((resolve) => {
       https
         .get(REGISTRY_URL, (response) => {
@@ -201,7 +203,7 @@ export class SDKInstaller {
     });
   }
 
-  private async runNpm(
+  private runNpm(
     args: readonly string[]
   ): Promise<{ readonly stdout: string; readonly stderr: string }> {
     const env = {

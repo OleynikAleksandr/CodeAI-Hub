@@ -15,6 +15,7 @@ import type { ActiveSession } from "../session/types";
 import type { CodexTurnOptions, ModuleReporter } from "../types";
 
 const PROVIDER = "codex";
+const THREAD_ID_SHORT_LENGTH = 8;
 
 type EnqueuedMessage = {
   readonly type: "user_input";
@@ -28,15 +29,23 @@ type ProcessTurnContext = {
   readonly message: EnqueuedMessage;
 };
 
-export class CodexMessageProcessor {
-  constructor(
-    private readonly sessionManager: CodexSessionManager,
-    private readonly options?: {
-      readonly reporter?: ModuleReporter;
-    }
-  ) {}
+type MessageProcessorOptions = {
+  readonly reporter?: ModuleReporter;
+};
 
-  public initializeSession(session: ActiveSession, thread: Thread): void {
+export class CodexMessageProcessor {
+  private readonly sessionManager: CodexSessionManager;
+  private readonly options?: MessageProcessorOptions;
+
+  constructor(
+    sessionManager: CodexSessionManager,
+    options?: MessageProcessorOptions
+  ) {
+    this.sessionManager = sessionManager;
+    this.options = options;
+  }
+
+  initializeSession(session: ActiveSession, thread: Thread): void {
     session.thread = thread;
     const generator = session.messageGenerator;
     if (!generator) {
@@ -49,7 +58,7 @@ export class CodexMessageProcessor {
     });
   }
 
-  public enqueueMessage(
+  enqueueMessage(
     sessionId: string,
     content: string,
     turnOptions?: CodexTurnOptions
@@ -172,7 +181,7 @@ export class CodexMessageProcessor {
         oldId: previousId,
         newId: threadId,
         provider: PROVIDER,
-        shortId: threadId.slice(0, 8),
+        shortId: threadId.slice(0, THREAD_ID_SHORT_LENGTH),
       });
     }
     this.emitMessage(session, {

@@ -12,16 +12,27 @@ type ProcessResponseOptions = {
   readonly onRealSessionId: (sessionId: string) => void;
 };
 
-export class SDKMessageProcessor {
-  constructor(
-    private readonly sessionManager: SDKSessionManager,
-    private readonly options: {
-      readonly projectPath: string;
-      readonly reporter?: ModuleReporter;
-    }
-  ) {}
+type MessageProcessorOptions = {
+  readonly projectPath: string;
+  readonly reporter?: ModuleReporter;
+};
 
-  public async send(sessionId: string, content: string): Promise<void> {
+const SESSION_DISCOVERY_DELAY_MS = 1000;
+const SESSION_FILE_EXTENSION = ".jsonl";
+
+export class SDKMessageProcessor {
+  private readonly sessionManager: SDKSessionManager;
+  private readonly options: MessageProcessorOptions;
+
+  constructor(
+    sessionManager: SDKSessionManager,
+    options: MessageProcessorOptions
+  ) {
+    this.sessionManager = sessionManager;
+    this.options = options;
+  }
+
+  send(sessionId: string, content: string): void {
     const targetSession = this.sessionManager.getSession(sessionId);
     if (!targetSession) {
       throw new Error(`Session ${sessionId} not found`);
@@ -52,9 +63,7 @@ export class SDKMessageProcessor {
     });
   }
 
-  public async processResponses(
-    options: ProcessResponseOptions
-  ): Promise<void> {
+  async processResponses(options: ProcessResponseOptions): Promise<void> {
     let promotedSessionId: string | null = null;
     try {
       for await (const message of options.iterator) {
@@ -159,7 +168,7 @@ export class SDKMessageProcessor {
     }
   }
 
-  public getSDKFilesBefore(): string[] {
+  getSDKFilesBefore(): string[] {
     if (!fs.existsSync(this.options.projectPath)) {
       this.options.reporter?.warn?.(
         `Claude project path missing: ${this.options.projectPath}`
@@ -168,20 +177,20 @@ export class SDKMessageProcessor {
     }
     return fs
       .readdirSync(this.options.projectPath)
-      .filter((fileName) => fileName.endsWith(".jsonl"))
+      .filter((fileName) => fileName.endsWith(SESSION_FILE_EXTENSION))
       .map((fileName) => path.join(this.options.projectPath, fileName));
   }
 
-  public async getSessionIdFromSDKFiles(
+  async getSessionIdFromSDKFiles(
     previousFiles: string[]
   ): Promise<string | null> {
     if (!fs.existsSync(this.options.projectPath)) {
       return null;
     }
-    await delay(1000);
+    await delay(SESSION_DISCOVERY_DELAY_MS);
     const filesAfter = fs
       .readdirSync(this.options.projectPath)
-      .filter((fileName) => fileName.endsWith(".jsonl"))
+      .filter((fileName) => fileName.endsWith(SESSION_FILE_EXTENSION))
       .map((fileName) => path.join(this.options.projectPath, fileName));
     const newFile = filesAfter.find(
       (filePath) => !previousFiles.includes(filePath)

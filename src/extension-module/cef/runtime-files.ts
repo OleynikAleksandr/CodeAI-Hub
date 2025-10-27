@@ -143,10 +143,90 @@ const resolveRedirectLocation = (
   return new URL(location, currentUrl).toString();
 };
 
+const copyFromLocalFallbacks = async (
+  destination: string,
+  label: string,
+  progress: ProgressReporter | undefined,
+  localFallbacks: readonly string[]
+): Promise<boolean> => {
+  for (const candidate of localFallbacks) {
+    if (!candidate) {
+      continue;
+    }
+    try {
+      const stats = await fs.stat(candidate);
+      if (!stats.isFile()) {
+        continue;
+      }
+      await fs.copyFile(candidate, destination);
+      progress?.report?.({
+        message: `Using cached ${label} from ${candidate}`,
+        increment: ONE_HUNDRED_PERCENT,
+      });
+      return true;
+    } catch {
+      /* ignore missing fallback */
+    }
+  }
+  return false;
+};
+
+const performHttpDownload = async (
+  url: string,
+  request: {
+    readonly destination: string;
+    readonly size: number;
+    readonly progress?: ProgressReporter;
+    readonly label: string;
+  },
+  attempt = 0
+): Promise<void> => {
+  if (attempt > MAX_HTTP_REDIRECTS) {
+    throw new DownloadError({
+      label: request.label,
+      url,
+      cause: new Error("Too many redirects"),
+    });
+  }
+
+  const response = await getResponse(url);
+  const statusCode = response.statusCode ?? 0;
+
+  if (REDIRECT_STATUS_CODES.has(statusCode)) {
+    response.resume();
+    const nextUrl = resolveRedirectLocation(url, response);
+    await performHttpDownload(nextUrl, request, attempt + 1);
+    return;
+  }
+
+  if (statusCode !== HTTP_STATUS_OK) {
+    response.resume();
+    throw new DownloadError({
+      label: request.label,
+      url,
+      statusCode,
+    });
+  }
+
+  const contentLength = Number.parseInt(
+    response.headers["content-length"] ?? "0",
+    10
+  );
+  const totalBytes = request.size > 0 ? request.size : contentLength;
+
+  await streamResponseToFile({
+    response,
+    destination: request.destination,
+    totalBytes,
+    progress: request.progress,
+    label: request.label,
+  });
+};
+
 export class DownloadError extends Error {
-  public readonly statusCode?: number;
-  public readonly url: string;
-  public readonly label: string;
+  readonly statusCode?: number;
+  readonly url: string;
+  readonly label: string;
 
   constructor(options: {
     readonly label: string;
@@ -178,69 +258,17 @@ export const downloadFile = async ({
   localFallbacks = [],
 }: DownloadRequest): Promise<void> => {
   await ensureDirectory(path.dirname(destination));
-
-  for (const candidate of localFallbacks) {
-    if (!candidate) {
-      continue;
-    }
-    try {
-      const stats = await fs.stat(candidate);
-      if (!stats.isFile()) {
-        continue;
-      }
-      await fs.copyFile(candidate, destination);
-      progress?.report?.({
-        message: `Using cached ${label} from ${candidate}`,
-        increment: ONE_HUNDRED_PERCENT,
-      });
-      return;
-    } catch {
-      // Ignore missing candidate; proceed to download.
-    }
-  }
-
-  let currentUrl = url;
-
-  for (let attempt = 0; attempt <= MAX_HTTP_REDIRECTS; attempt += 1) {
-    const response = await getResponse(currentUrl);
-    const statusCode = response.statusCode ?? 0;
-
-    if (REDIRECT_STATUS_CODES.has(statusCode)) {
-      response.resume();
-      currentUrl = resolveRedirectLocation(currentUrl, response);
-      continue;
-    }
-
-    if (statusCode !== HTTP_STATUS_OK) {
-      response.resume();
-      throw new DownloadError({
-        label,
-        url: currentUrl,
-        statusCode,
-      });
-    }
-
-    const contentLength = Number.parseInt(
-      response.headers["content-length"] ?? "0",
-      10
-    );
-    const totalBytes = size > 0 ? size : contentLength;
-
-    await streamResponseToFile({
-      response,
-      destination,
-      totalBytes,
-      progress,
-      label,
-    });
+  const copied = await copyFromLocalFallbacks(
+    destination,
+    label,
+    progress,
+    localFallbacks
+  );
+  if (copied) {
     return;
   }
 
-  throw new DownloadError({
-    label,
-    url,
-    cause: new Error("Too many redirects"),
-  });
+  await performHttpDownload(url, { destination, size, progress, label });
 };
 
 const extractWithTar = async ({
@@ -268,6 +296,5 @@ export const extractArchive = async (
   destination: string,
   progress?: ProgressReporter,
   label = "CEF runtime"
-): Promise<void> => {
-  await extractWithTar({ archivePath, destination, progress, label });
-};
+): Promise<void> =>
+  extractWithTar({ archivePath, destination, progress, label });

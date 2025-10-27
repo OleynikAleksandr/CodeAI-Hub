@@ -3,10 +3,10 @@
   "baseUrl": "https://github.com/OleynikAleksandr/CodeAI-Hub/releases/latest/download/",
   "platforms": {
     "darwin-arm64": {
-      "coreVersion": "0.2.6",
-      "package": "codeai-hub-core-darwin-arm64-0.2.6.tar.bz2",
-      "size": 16340023,
-      "sha1": "b0321e4992d69fc3ad4fa8b797f848583909a27e"
+      "coreVersion": "0.2.7",
+      "package": "codeai-hub-core-darwin-arm64-0.2.7.tar.bz2",
+      "size": 16341095,
+      "sha1": "e5b704065364539e0da339355e08e036d00d0b34"
     },
     "darwin-x64": {
       "coreVersion": "0.1.0",

@@ -7609,77 +7609,84 @@
   };
 
   // src/client/ui/src/core-bridge/server-message-handler.ts
+  var parseEnvelope = (raw) => {
+    try {
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed.type !== "string") {
+        return null;
+      }
+      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream") {
+        return { type: parsed.type, payload: parsed.payload };
+      }
+    } catch {
+      return null;
+    }
+    return null;
+  };
+  var isDeletedPayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string";
+  var isStreamPayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string";
   var createServerMessageHandler = (notify) => {
+    const handleSessionMessage = (payload) => {
+      const candidate = payload;
+      if (!candidate || typeof candidate.sessionId !== "string") {
+        return;
+      }
+      const normalized = sanitizeMessage(candidate);
+      if (!normalized) {
+        return;
+      }
+      notify({
+        type: "session:message",
+        payload: {
+          sessionId: candidate.sessionId,
+          message: normalized
+        }
+      });
+    };
+    const handleSessionCreated = (payload) => {
+      const normalized = sanitizeSession(payload);
+      if (!normalized) {
+        return;
+      }
+      notify({
+        type: "session:created",
+        payload: normalized.record
+      });
+    };
+    const handleSessionDeleted = (payload) => {
+      if (!isDeletedPayload(payload)) {
+        return;
+      }
+      notify({
+        type: "session:deleted",
+        payload: { sessionId: payload.sessionId }
+      });
+    };
+    const handleSessionStream = (payload) => {
+      if (!isStreamPayload(payload)) {
+        return;
+      }
+      notify({
+        type: "session:stream",
+        payload: {
+          sessionId: payload.sessionId,
+          event: payload.event
+        }
+      });
+    };
+    const handlers = {
+      "session:message": handleSessionMessage,
+      "session:created": handleSessionCreated,
+      "session:deleted": handleSessionDeleted,
+      "session:stream": handleSessionStream
+    };
     return (raw) => {
-      let payload;
-      try {
-        payload = JSON.parse(raw);
-      } catch {
+      const envelope = parseEnvelope(raw);
+      if (!envelope) {
         return;
       }
-      if (!payload || typeof payload.type !== "string") {
-        return;
-      }
-      switch (payload.type) {
-        case "session:message": {
-          const candidate = payload.payload;
-          if (!candidate || typeof candidate.sessionId !== "string") {
-            return;
-          }
-          const normalized = sanitizeMessage(candidate);
-          if (!normalized) {
-            return;
-          }
-          notify({
-            type: "session:message",
-            payload: {
-              sessionId: candidate.sessionId,
-              message: normalized
-            }
-          });
-          break;
-        }
-        case "session:created": {
-          const normalized = sanitizeSession(
-            payload.payload
-          );
-          if (!normalized) {
-            return;
-          }
-          notify({
-            type: "session:created",
-            payload: normalized.record
-          });
-          break;
-        }
-        case "session:deleted": {
-          const candidate = payload.payload;
-          if (!candidate || typeof candidate.sessionId !== "string") {
-            return;
-          }
-          notify({
-            type: "session:deleted",
-            payload: { sessionId: candidate.sessionId }
-          });
-          break;
-        }
-        case "session:stream": {
-          const candidate = payload.payload;
-          if (!candidate || typeof candidate.sessionId !== "string") {
-            return;
-          }
-          notify({
-            type: "session:stream",
-            payload: {
-              sessionId: candidate.sessionId,
-              event: candidate.event
-            }
-          });
-          break;
-        }
-        default:
-          break;
-      }
+      const handler = handlers[envelope.type];
+      handler(envelope.payload);
     };
   };
 

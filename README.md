@@ -2,12 +2,12 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.23
-- **Codex SDK provider**: новый workspace `packages/Codex_Module` поставляет установщик, адаптер и message processor, Core регистрирует `codexCli`, а UI отображает реальные ответы Codex наряду с Claude.
-- **Офлайн-режим разработчика**: build-скрипты сохраняют все архивы (core, модули, launcher, CEF) в `~/.codeai-hub/**/downloads/` и `~/.codeai-hub/releases/`, а установщики сначала проверяют локальный кеш и только после этого обращаются к CDN/GitHub. Сообщения об ошибках теперь называют конкретный компонент.
-- **Launcher & CEF**: `build-cef-launcher.sh` пересобирает `CodeAIHubLauncher.app`, CEF архивы скачиваются с проверкой SHA-1; манифесты обновлены до `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`, `codeai-hub-core-darwin-arm64-0.2.6.tar.bz2`, `claude-module-0.1.6.tar.bz2`, `codex-module-0.1.0.tar.bz2`.
-- **Документация**: добавлена инструкция `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md` (обязательна к чтению), обновлены Architecture/SystemArchitecture.
-- **Release artifacts**: `codeai-hub-1.1.23.vsix`, `codeai-hub-core-darwin-arm64-0.2.6.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`, `claude-module-0.1.6.tar.bz2`, `codex-module-0.1.0.tar.bz2`.
+## Current Release — v1.1.26
+- **Launcher installer helpers**: extracted reusable helpers for manifest lookup, archive reuse, and marker management so launcher installs stay under the 300-line architecture limit and resume cleanly from local caches.
+- **Robust runtime downloads**: the core installer and shared runtime utilities now share checksum verification, fallback archive discovery, and richer error messaging for reliable offline builds.
+- **Provider module hardening**: Claude and Codex adapters reorganize session lifecycles, message processors, and logging to satisfy Ultracite typing rules while emitting consistent telemetry during streaming responses.
+- **Typed core bridge events**: the remote bridge and React webview now parse server envelopes, bubble stream events, and handle session ID promotion consistently across clients.
+- **Release artifacts**: `codeai-hub-1.1.26.vsix`, `codeai-hub-core-darwin-arm64-0.2.7.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`, `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`.
 
 ## Features
 - **React-driven command bar**: the extension view opens with a React-rendered quick-action row that mirrors the Claude Code Fusion UX.

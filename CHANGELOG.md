@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.26] - 2025-10-27
+### Fixed
+- Reduced `src/extension-module/cef/runtime-files.ts` to 299 lines so the architecture gate passes after the installer refactor and reran the release packaging workflow end-to-end.
+
+### Build
+- VSIX → `codeai-hub-1.1.26.vsix` (core/launcher/providers remain `0.2.7` / `1.0.43` / `0.1.7` / `0.1.1`)
+
+## [1.1.25] - 2025-10-27
+### Changed
+- Refactored the core and launcher installers into dedicated helper modules, keeping each file within the 300-line architecture limit and improving readability.
+- Unified artifact downloads: `downloadFile` now prefers local caches, handles redirects, and surfaces actionable error messages for offline-first flows.
+- Updated the Codex and Claude modules to match Ultracite requirements (no `public`, no barrel exports, explicit dependency containers) and emitted richer logging.
+
+### Build
+- VSIX → `codeai-hub-1.1.25.vsix`
+- Core v0.2.7 → `codeai-hub-core-darwin-arm64-0.2.7.tar.bz2`
+- Claude Module v0.1.7 → `claude-module-0.1.7.tar.bz2`
+- Codex Module v0.1.1 → `codex-module-0.1.1.tar.bz2`
+
 ## [1.1.23] - 2025-10-27
 ### Added
 - Подключён Codex SDK: новый модуль `packages/Codex_Module` (инсталлятор, auth manager, session/message processor) и интеграция в Core/RemoteBridge/UI. Provider picker теперь предлагает `codexCli`, а события Codex корректно отображаются в интерфейсе.

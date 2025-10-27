@@ -13,6 +13,8 @@ const CLI_REGISTRY_URL = "https://registry.npmjs.org/@openai/codex/latest";
 const SDK_ENTRY_FILENAME = "dist/index.js";
 const CLI_EXECUTABLE_UNIX = "codex";
 const CLI_EXECUTABLE_WINDOWS = "codex.cmd";
+const HOME_DIRECTORY_PATTERN = /^~(?=$|\/|\\)/u;
+const USERPROFILE_PATTERN = /%USERPROFILE%/giu;
 
 export type InstallerEvent =
   | { readonly type: "status"; readonly message: string }
@@ -48,23 +50,23 @@ export class CodexInstaller {
       (process.platform === "win32" ? "npm.cmd" : "npm");
   }
 
-  public getModulePath(): string {
+  getModulePath(): string {
     return this.moduleEntryPath;
   }
 
-  public getExecutablePath(): string {
+  getExecutablePath(): string {
     return this.cliExecutablePath;
   }
 
-  public getCurrentSdkVersion(): string | null {
+  getCurrentSdkVersion(): string | null {
     return this.currentSdkVersion;
   }
 
-  public getCurrentCliVersion(): string | null {
+  getCurrentCliVersion(): string | null {
     return this.currentCliVersion;
   }
 
-  public async loadModule<TModule = unknown>(): Promise<TModule> {
+  loadModule<TModule = unknown>(): Promise<TModule> {
     const moduleUrl = pathToFileURL(this.moduleEntryPath).href;
     const dynamicImport = new Function("url", "return import(url);") as (
       url: string
@@ -72,7 +74,7 @@ export class CodexInstaller {
     return dynamicImport(moduleUrl);
   }
 
-  public async ensureInstalled(): Promise<void> {
+  async ensureInstalled(): Promise<void> {
     await this.ensurePrefixDirectories();
     const sdkInstalled = await this.checkPackageInstalled(
       SDK_PACKAGE_NAME,
@@ -100,8 +102,8 @@ export class CodexInstaller {
   private normalizeInstallerPath(paths: CodexInstallerPaths): string {
     const rawPath = this.selectPlatformPath(paths);
     const expanded = rawPath
-      .replace(/^~(?=$|\/|\\)/u, homedir())
-      .replace(/%USERPROFILE%/giu, process.env.USERPROFILE ?? homedir());
+      .replace(HOME_DIRECTORY_PATTERN, homedir())
+      .replace(USERPROFILE_PATTERN, process.env.USERPROFILE ?? homedir());
     return path.resolve(expanded);
   }
 
@@ -220,7 +222,7 @@ export class CodexInstaller {
     return kind === "sdk" ? SDK_REGISTRY_URL : CLI_REGISTRY_URL;
   }
 
-  private async getLatestVersion(kind: "sdk" | "cli"): Promise<string | null> {
+  private getLatestVersion(kind: "sdk" | "cli"): Promise<string | null> {
     const registryUrl = this.getRegistryUrl(kind);
     return new Promise((resolve) => {
       https
@@ -246,7 +248,7 @@ export class CodexInstaller {
     });
   }
 
-  private async runNpm(
+  private runNpm(
     args: readonly string[]
   ): Promise<{ readonly stdout: string; readonly stderr: string }> {
     const env = {
