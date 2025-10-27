@@ -7608,6 +7608,81 @@
     };
   };
 
+  // src/client/ui/src/core-bridge/server-message-handler.ts
+  var createServerMessageHandler = (notify) => {
+    return (raw) => {
+      let payload;
+      try {
+        payload = JSON.parse(raw);
+      } catch {
+        return;
+      }
+      if (!payload || typeof payload.type !== "string") {
+        return;
+      }
+      switch (payload.type) {
+        case "session:message": {
+          const candidate = payload.payload;
+          if (!candidate || typeof candidate.sessionId !== "string") {
+            return;
+          }
+          const normalized = sanitizeMessage(candidate);
+          if (!normalized) {
+            return;
+          }
+          notify({
+            type: "session:message",
+            payload: {
+              sessionId: candidate.sessionId,
+              message: normalized
+            }
+          });
+          break;
+        }
+        case "session:created": {
+          const normalized = sanitizeSession(
+            payload.payload
+          );
+          if (!normalized) {
+            return;
+          }
+          notify({
+            type: "session:created",
+            payload: normalized.record
+          });
+          break;
+        }
+        case "session:deleted": {
+          const candidate = payload.payload;
+          if (!candidate || typeof candidate.sessionId !== "string") {
+            return;
+          }
+          notify({
+            type: "session:deleted",
+            payload: { sessionId: candidate.sessionId }
+          });
+          break;
+        }
+        case "session:stream": {
+          const candidate = payload.payload;
+          if (!candidate || typeof candidate.sessionId !== "string") {
+            return;
+          }
+          notify({
+            type: "session:stream",
+            payload: {
+              sessionId: candidate.sessionId,
+              event: candidate.event
+            }
+          });
+          break;
+        }
+        default:
+          break;
+      }
+    };
+  };
+
   // src/client/ui/src/core-bridge/core-bridge.ts
   var DEFAULT_CONFIG = {
     httpUrl: "http://127.0.0.1:8080",
@@ -7630,63 +7705,7 @@
   var reconnectTimer;
   var cachedProviders = [];
   var pendingMessages = [];
-  var handleServerMessage = (raw) => {
-    let payload;
-    try {
-      payload = JSON.parse(raw);
-    } catch {
-      return;
-    }
-    if (!payload || typeof payload.type !== "string") {
-      return;
-    }
-    switch (payload.type) {
-      case "session:message": {
-        const candidate = payload.payload;
-        if (!candidate || typeof candidate.sessionId !== "string") {
-          return;
-        }
-        const normalized = sanitizeMessage(candidate);
-        if (!normalized) {
-          return;
-        }
-        notifyWindow({
-          type: "session:message",
-          payload: {
-            sessionId: candidate.sessionId,
-            message: normalized
-          }
-        });
-        break;
-      }
-      case "session:created": {
-        const normalized = sanitizeSession(
-          payload.payload
-        );
-        if (!normalized) {
-          return;
-        }
-        notifyWindow({
-          type: "session:created",
-          payload: normalized.record
-        });
-        break;
-      }
-      case "session:deleted": {
-        const candidate = payload.payload;
-        if (!candidate || typeof candidate.sessionId !== "string") {
-          return;
-        }
-        notifyWindow({
-          type: "session:deleted",
-          payload: { sessionId: candidate.sessionId }
-        });
-        break;
-      }
-      default:
-        break;
-    }
-  };
+  var handleServerMessage = createServerMessageHandler(notifyWindow);
   var flushPendingMessages = () => {
     if (!websocket || websocket.readyState !== WebSocket.OPEN) {
       return;

@@ -8,6 +8,7 @@ import { getLauncherExecutableRelativePath } from "./launcher-paths";
 import type { PlatformKey } from "./platform";
 import { resolvePlatformKey } from "./platform";
 import {
+  DownloadError,
   downloadFile,
   ensureDirectory,
   extractArchive,
@@ -233,13 +234,33 @@ export const ensureLauncherInstalled = async (
   if (hasArchive) {
     progress?.report({ message: "Using cached CodeAIHubLauncher archive" });
   } else {
-    await downloadFile({
-      url: downloadUrl,
-      destination: archivePath,
-      size: manifestEntry.size,
-      progress,
-      label: LAUNCHER_LABEL,
-    });
+    const fallbackPaths = [
+      archivePath,
+      path.join(
+        process.env.HOME ?? tmpdir(),
+        ".codeai-hub",
+        "releases",
+        manifestEntry.package
+      ),
+    ];
+    try {
+      await downloadFile({
+        url: downloadUrl,
+        destination: archivePath,
+        size: manifestEntry.size,
+        progress,
+        label: LAUNCHER_LABEL,
+        localFallbacks: fallbackPaths,
+      });
+    } catch (error) {
+      const reason =
+        error instanceof DownloadError
+          ? error.message
+          : error instanceof Error
+            ? error.message
+            : String(error);
+      throw new Error(`Launcher download failed: ${reason}`);
+    }
 
     if (manifestEntry.sha1) {
       const checksumMatches = await verifySha1(archivePath, manifestEntry.sha1);

@@ -9,7 +9,6 @@ coverage/
 tmp/
 .claude/
 .vscode/
-scripts/
 AGENTS.md
 biome.jsonc
 lefthook.yml
@@ -18,3 +17,8 @@ doc/Sessions/
 doc/TODO/
 *.vsix
 doc/sdk-sessions/
+scripts/*
+!scripts/build-release.sh
+!scripts/build-codex-module.sh
+!scripts/release-utils.sh
+binaries/

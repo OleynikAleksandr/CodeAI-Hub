@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import type { ExtensionContext, Progress } from "vscode";
 import {
+  DownloadError,
   downloadFile,
   ensureDirectory,
   extractArchive,
@@ -151,22 +152,6 @@ const prepareDownload = async (platformDir: string): Promise<string> => {
   return downloadsDir;
 };
 
-const downloadFromBaseUrl = async (
-  baseUrl: string,
-  entry: ManifestEntry,
-  destination: string,
-  progress?: ProgressReporter
-): Promise<void> => {
-  const downloadUrl = new URL(entry.package, baseUrl).toString();
-  await downloadFile({
-    url: downloadUrl,
-    destination,
-    size: entry.size,
-    progress,
-    label: "Core orchestrator",
-  });
-};
-
 const performInstall = async (
   manifest: CoreManifest,
   platform: PlatformKey,
@@ -201,29 +186,41 @@ const performInstall = async (
   const downloadsDir = await prepareDownload(platformDir);
   const archivePath = path.join(downloadsDir, manifestEntry.package);
 
-  let lastError: unknown;
-  const urlsToTry = Array.isArray(manifest.baseUrl)
-    ? manifest.baseUrl
-    : [manifest.baseUrl];
-
-  for (const baseUrl of urlsToTry) {
+  if (await verifySha1(archivePath, manifestEntry.sha1)) {
+    progress?.report({ message: "Using cached core archive" });
+  } else {
+    const downloadUrl = new URL(
+      manifestEntry.package,
+      manifest.baseUrl
+    ).toString();
+    const localFallbacks = [
+      path.join(downloadsDir, manifestEntry.package),
+      path.join(
+        process.env.HOME ?? tmpdir(),
+        ".codeai-hub",
+        "releases",
+        manifestEntry.package
+      ),
+    ];
     try {
-      progress?.report({
-        message: `Downloading core orchestrator from ${baseUrl}...`,
+      await downloadFile({
+        url: downloadUrl,
+        destination: archivePath,
+        size: manifestEntry.size,
+        progress,
+        label: "Core orchestrator",
+        localFallbacks,
       });
-      await downloadFromBaseUrl(baseUrl, manifestEntry, archivePath, progress);
-      lastError = undefined;
-      break;
     } catch (error) {
-      lastError = error;
+      const details =
+        error instanceof DownloadError
+          ? `${error.label} (HTTP ${error.statusCode ?? "unknown"}) ${error.url}`
+          : error instanceof Error
+            ? error.message
+            : String(error);
+      throw new Error(`Core orchestrator download failed: ${details}`);
     }
   }
-
-  if (lastError) {
-    throw lastError;
-  }
-
-  progress?.report({ message: "Verifying download..." });
   if (manifestEntry.sha1) {
     const checksumValid = await verifySha1(archivePath, manifestEntry.sha1);
     if (!checksumValid) {

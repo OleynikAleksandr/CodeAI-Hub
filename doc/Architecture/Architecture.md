@@ -94,3 +94,4 @@ graph TD
 - `doc/tmp/RemoteCoreBridge.md`
 - `doc/Project_Docs/Stacks/CEF_Launcher_Build.md`
 - `doc/TODO/todo-plan.md`
+- `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`

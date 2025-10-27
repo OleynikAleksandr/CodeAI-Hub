@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.23] - 2025-10-27
+### Added
+- Подключён Codex SDK: новый модуль `packages/Codex_Module` (инсталлятор, auth manager, session/message processor) и интеграция в Core/RemoteBridge/UI. Provider picker теперь предлагает `codexCli`, а события Codex корректно отображаются в интерфейсе.
+- Добавлен knowledge-base документ `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`, описывающий офлайн-цикл сборки и обязательный к прочтению перед началом сессии. Architecture/SystemArchitecture обновлены с ссылкой на него.
+- Новый helper `src/client/ui/src/core-bridge/server-message-handler.ts` сократил размер файла `core-bridge.ts` и упростил переиспользование логики разбора сообщений.
+
+### Changed
+- Все установщики (CEF/runtime/launcher/Claude/Codex) сначала ищут артефакты в `~/.codeai-hub/**/downloads/` и `~/.codeai-hub/releases/`, лишь затем обращаются к CDN/GitHub. Ошибки скачивания теперь указывают конкретный компонент.
+- Скрипты сборки (`build-core.sh`, `build-claude-module.sh`, `build-codex-module.sh`, `build-cef-launcher.sh`) автоматически копируют архивы в локальный кеш и выводят путь до него. Пакеты Claude/Core/Codex обновлены до 0.1.6 / 0.2.6 / 0.1.0.
+- README обновлён новым релизом, а `.gitignore` разрешает отслеживать скрипты.
+
+### Build
+- Core v0.2.6 → `codeai-hub-core-darwin-arm64-0.2.6.tar.bz2`
+- Claude Module v0.1.6 → `claude-module-0.1.6.tar.bz2`
+- Codex Module v0.1.0 → `codex-module-0.1.0.tar.bz2`
+- Launcher v1.0.43 → `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`
+- VSIX → `codeai-hub-1.1.23.vsix`
+
 ## [1.1.16] - 2025-10-26
 ### Fixed
 - Claude Module теперь передаёт SDK абсолютный путь до установленного CLI (`~/.npm-global/bin/claude` на Unix, `%APPDATA%\npm\claude.cmd` на Windows). Благодаря этому процесс `claude-agent-sdk` запускается через обычный `claude` бинарь с shebang, а не через `pkg`-runtime Node 18, что устраняет ошибку `ERR_REQUIRE_ESM` при старте Claude Code.

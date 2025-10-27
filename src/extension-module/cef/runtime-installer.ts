@@ -164,13 +164,24 @@ export const ensureCefRuntime = async (
       manifest.baseUrl
     ).toString();
 
-    await downloadFile({
-      url: downloadUrl,
-      destination: archivePath,
-      size: manifestEntry.size,
-      progress,
-      label: "CEF runtime",
-    });
+    try {
+      await downloadFile({
+        url: downloadUrl,
+        destination: archivePath,
+        size: manifestEntry.size,
+        progress,
+        label: "CEF runtime",
+        localFallbacks: [
+          path.join(platformDir, DOWNLOADS_DIR_NAME, manifestEntry.package),
+        ],
+      });
+    } catch (error) {
+      throw new Error(
+        `CEF runtime download failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+    }
   }
 
   if (!(await verifySha1(archivePath, manifestEntry.sha1))) {

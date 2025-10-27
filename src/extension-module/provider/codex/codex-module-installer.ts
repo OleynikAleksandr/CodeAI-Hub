@@ -15,14 +15,14 @@ type ProgressReporter = Progress<{
   increment?: number;
 }>;
 
-const INSTALL_ROOT = path.join(homedir(), ".codeai-hub", "providers", "claude");
+const INSTALL_ROOT = path.join(homedir(), ".codeai-hub", "providers", "codex");
 const DOWNLOADS_DIR = path.join(INSTALL_ROOT, "downloads");
 const LATEST_FILE = "latest";
 const INSTALL_MARKER = "install.json";
 const MANIFEST_RELATIVE_PATH = path.join(
   "assets",
   "providers",
-  "claude",
+  "codex",
   "manifest.json"
 );
 
@@ -33,7 +33,7 @@ type ManifestEntry = {
   readonly sha1: string;
 };
 
-type ClaudeModuleManifest = {
+type CodexModuleManifest = {
   readonly schema: number;
   readonly baseUrl: string;
   readonly module: ManifestEntry;
@@ -44,7 +44,7 @@ type InstallMarker = {
   readonly installedAt: string;
 };
 
-export const ensureClaudeModuleInstalled = async (
+export const ensureCodexModuleInstalled = async (
   context: ExtensionContext,
   progress?: ProgressReporter
 ): Promise<string> => {
@@ -56,7 +56,7 @@ export const ensureClaudeModuleInstalled = async (
     return targetDir;
   }
 
-  progress?.report?.({ message: "Installing Claude provider module…" });
+  progress?.report?.({ message: "Installing Codex provider module…" });
 
   await ensureDirectory(INSTALL_ROOT);
   await ensureDirectory(DOWNLOADS_DIR);
@@ -75,7 +75,7 @@ export const ensureClaudeModuleInstalled = async (
       url: downloadUrl,
       destination: archivePath,
       size: manifest.module.size,
-      label: "Claude Module",
+      label: "Codex Module",
       progress,
       localFallbacks: [
         archivePath,
@@ -94,12 +94,12 @@ export const ensureClaudeModuleInstalled = async (
         : error instanceof Error
           ? error.message
           : String(error);
-    throw new Error(`Claude module download failed: ${message}`);
+    throw new Error(`Codex module download failed: ${message}`);
   }
 
   const checksumValid = await verifySha1(archivePath, manifest.module.sha1);
   if (!checksumValid) {
-    throw new Error("Claude module checksum verification failed");
+    throw new Error("Codex module checksum verification failed");
   }
   await extractArchive(archivePath, targetDir);
 
@@ -118,10 +118,10 @@ export const ensureClaudeModuleInstalled = async (
 
 const readManifest = async (
   context: ExtensionContext
-): Promise<ClaudeModuleManifest> => {
+): Promise<CodexModuleManifest> => {
   const manifestPath = path.join(context.extensionPath, MANIFEST_RELATIVE_PATH);
   const contents = await fs.readFile(manifestPath, "utf8");
-  return JSON.parse(contents) as ClaudeModuleManifest;
+  return JSON.parse(contents) as CodexModuleManifest;
 };
 
 const isInstallValid = async (

@@ -1,0 +1,42 @@
+import type {
+  ApprovalMode,
+  SandboxMode,
+  ThreadEvent,
+  ThreadItem,
+  ThreadOptions,
+  TurnOptions,
+} from "@openai/codex-sdk";
+
+export type CodexInstallerPaths = {
+  readonly macOS: string;
+  readonly linux: string;
+  readonly windows: string;
+};
+
+export type CodexWorkspaceOptions = {
+  readonly workspacePath: string;
+  readonly defaultSandboxMode?: SandboxMode;
+  readonly defaultApprovalMode?: ApprovalMode;
+  readonly defaultModel?: string;
+  readonly skipGitRepoCheck?: boolean;
+};
+
+export type ModuleReporter = {
+  readonly info?: (message: string) => void;
+  readonly warn?: (message: string) => void;
+  readonly error?: (message: string, error?: unknown) => void;
+};
+
+export type CodexModuleOptions = {
+  readonly installerPaths: CodexInstallerPaths;
+  readonly workspace: CodexWorkspaceOptions;
+  readonly reporter?: ModuleReporter;
+  readonly enableDebugStreams?: boolean;
+};
+
+export type CodexThreadEvent = ThreadEvent;
+export type CodexThreadItem = ThreadItem;
+export type CodexThreadOptions = ThreadOptions;
+export type CodexTurnOptions = TurnOptions;
+export type CodexSandboxMode = SandboxMode;
+export type CodexApprovalMode = ApprovalMode;

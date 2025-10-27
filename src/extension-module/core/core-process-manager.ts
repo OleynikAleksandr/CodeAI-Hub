@@ -67,15 +67,21 @@ export class CoreProcessManager {
 
     this.channel.appendLine("Starting CodeAI Hub core orchestrator...");
     const workspacePath = this.resolveWorkspacePath();
-    const claudeModulePath = this.resolveClaudeModulePath();
+    const claudeModulePath = this.resolveProviderModulePath("claude");
+    const codexModulePath = this.resolveProviderModulePath("codex");
     const envVars: NodeJS.ProcessEnv = {
       ...process.env,
       CORE_HOST,
       CORE_PORT: `${CORE_PORT}`,
       CLAUDE_WORKSPACE_PATH: workspacePath,
+      CODEX_WORKSPACE_PATH: workspacePath,
+      CODEX_SKIP_GIT_REPO_CHECK: "true",
     };
     if (claudeModulePath) {
       envVars.CLAUDE_MODULE_PATH = claudeModulePath;
+    }
+    if (codexModulePath) {
+      envVars.CODEX_MODULE_PATH = codexModulePath;
     }
     this.child = spawn(this.runtimeInfo.binaryPath, [], {
       env: envVars,
@@ -138,8 +144,8 @@ export class CoreProcessManager {
     return process.cwd();
   }
 
-  private resolveClaudeModulePath(): string | null {
-    const root = path.join(homedir(), ".codeai-hub", "providers", "claude");
+  private resolveProviderModulePath(providerId: string): string | null {
+    const root = path.join(homedir(), ".codeai-hub", "providers", providerId);
     try {
       const latestPath = path.join(root, "latest");
       if (!existsSync(latestPath)) {
