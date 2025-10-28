@@ -2,7 +2,7 @@ import { GeminiInstaller } from "../installer/gemini-installer";
 import { GeminiSessionLogger } from "../logging/session-logger";
 import { GeminiMessageProcessor } from "../messaging/message-processor";
 import { GeminiSessionManager } from "../session/gemini-session-manager";
-import type { GeminiModuleOptions, GeminiSessionEvent } from "../types";
+import type { GeminiModuleOptions } from "../types";
 
 export type SessionListener = (payload: unknown) => void;
 
@@ -26,7 +26,10 @@ export class GeminiProviderAdapter {
       credentialsDirectory: options.credentials?.directory,
     });
     this.sessionManager = new GeminiSessionManager();
-    this.messageProcessor = new GeminiMessageProcessor(this.sessionManager);
+    this.messageProcessor = new GeminiMessageProcessor({
+      reporter: options.reporter,
+    });
+    this.sessionManager.setMessageProcessor(this.messageProcessor);
   }
 
   async initialize(): Promise<void> {
@@ -38,35 +41,49 @@ export class GeminiProviderAdapter {
     });
   }
 
-  async createSession(): Promise<string> {
-    await Promise.resolve();
-    const { sessionId, session } = this.sessionManager.createSession();
-    session.logger = new GeminiSessionLogger(this.options.reporter);
-    session.logger.start(sessionId);
-    const dispatch = (payload: unknown): void => {
+  createSession(): Promise<string> {
+    const logger = new GeminiSessionLogger(this.options.reporter);
+    const { sessionId, session } = this.sessionManager.createSession({
+      binaryPath: this.installer.getBinaryPath(),
+      model: this.options.workspace.defaultModel,
+      cwd: this.options.workspace.workspacePath,
+      reporter: this.options.reporter,
+      logger,
+    });
+    const forwardMessage = (payload: unknown): void => {
       this.dispatchMessage(sessionId, payload);
     };
-    session.eventEmitter.on("message", dispatch);
-    return sessionId;
+    const forwardError = (payload: unknown): void => {
+      this.dispatchMessage(sessionId, payload);
+    };
+    session.eventEmitter.on("message", forwardMessage);
+    session.eventEmitter.on("error", forwardError);
+    session.eventEmitter.emit("message", {
+      type: "system",
+      provider: "gemini",
+      content: `Gemini CLI session started (model: ${session.model ?? "default"})`,
+    });
+    return Promise.resolve(sessionId);
   }
 
   async closeSession(sessionId: string): Promise<void> {
-    const session = this.sessionManager.getSession(sessionId);
-    if (session) {
-      session.logger?.end();
-      session.eventEmitter.removeAllListeners();
-    }
     await this.sessionManager.closeSession(sessionId);
     this.listeners.delete(sessionId);
   }
 
   async sendMessage(sessionId: string, content: string): Promise<void> {
-    await Promise.resolve();
-    const event: GeminiSessionEvent = {
-      type: "user_input",
-      payload: { content },
-    };
-    this.messageProcessor.handleEvent(sessionId, event);
+    try {
+      await this.sessionManager.sendMessage(sessionId, content);
+    } catch (error) {
+      this.options.reporter?.error?.(
+        "Failed to send message to Gemini CLI",
+        error,
+        {
+          sessionId,
+        }
+      );
+      throw error;
+    }
   }
 
   subscribe(sessionId: string, listener: SessionListener): () => void {
