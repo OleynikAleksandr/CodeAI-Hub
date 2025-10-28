@@ -15,9 +15,9 @@
 - [DONE] Шаг 2: Реализовать Gemini CLI Installer (поиск бинаря, проверка версии, валидация OAuth-токена, логирование).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: 4dc3502 — feat: implement gemini installer
-- [TODO] Шаг 3: Реализовать `GeminiSessionManager`, JSON message processor и `GeminiProviderAdapter` (запуск `gemini -o json`, подписка на stdout/stderr, преобразование ответов).
+- [DONE] Шаг 3: Реализовать `GeminiSessionManager`, JSON message processor и `GeminiProviderAdapter` (запуск `gemini -o json`, подписка на stdout/stderr, преобразование ответов).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: pending
+  - Commit: 74a4b3e — feat: implement gemini session pipeline
 - [TODO] Шаг 4: Подключить модуль к ядру (`packages/core`): обновить `ProviderRegistry`, конфигурацию и Remote Bridge для работы с Gemini.
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: pending
