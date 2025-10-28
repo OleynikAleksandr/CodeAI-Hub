@@ -38,6 +38,10 @@ export type ProviderDescriptor = Provider & {
   readonly adapter?: ProviderAdapter;
 };
 
+type MutableProviderDescriptor = {
+  -readonly [Key in keyof ProviderDescriptor]: ProviderDescriptor[Key];
+};
+
 const CLAUDE_INSTALLER_PATHS: ClaudeInstallerPaths = {
   macOS:
     "/Users/oleksandroliinyk/.npm-global/lib/node_modules/@anthropic-ai/claude-agent-sdk/",
@@ -196,7 +200,23 @@ export class ProviderRegistry {
 
   async initialize(): Promise<void> {
     await Promise.all(
-      this.providers.map(async (provider) => provider.adapter?.initialize())
+      this.providers.map(async (provider) => {
+        if (!provider.adapter) {
+          return;
+        }
+        try {
+          await provider.adapter.initialize();
+        } catch (error) {
+          this.options.logger.error(
+            "Provider initialization failed",
+            error instanceof Error ? error : new Error(String(error)),
+            { providerId: provider.id }
+          );
+          const mutable = provider as MutableProviderDescriptor;
+          mutable.status = "inactive";
+          mutable.adapter = undefined;
+        }
+      })
     );
   }
 

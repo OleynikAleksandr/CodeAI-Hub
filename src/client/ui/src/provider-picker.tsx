@@ -35,15 +35,30 @@ const ProviderOption = ({
   onToggle,
   inputRef,
 }: ProviderOptionProps) => {
+  const disabled = !provider.connected;
+  const statusLabel = provider.connected ? "Connected" : "Not connected";
+  const statusClassName = provider.connected
+    ? "provider-picker__label-status provider-picker__label-status--connected"
+    : "provider-picker__label-status provider-picker__label-status--disconnected";
+
   const handleChange = () => {
     onToggle(provider.id);
   };
 
   return (
-    <label className="provider-picker__option" htmlFor={provider.id}>
+    <label
+      aria-disabled={disabled}
+      className={
+        disabled
+          ? "provider-picker__option provider-picker__option--disabled"
+          : "provider-picker__option"
+      }
+      htmlFor={provider.id}
+    >
       <input
         checked={checked}
         className="provider-picker__checkbox"
+        disabled={disabled}
         id={provider.id}
         onChange={handleChange}
         ref={inputRef}
@@ -54,6 +69,7 @@ const ProviderOption = ({
         <span className="provider-picker__label-description">
           {provider.description}
         </span>
+        <span className={statusClassName}>{statusLabel}</span>
       </span>
     </label>
   );

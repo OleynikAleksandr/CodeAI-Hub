@@ -222,6 +222,16 @@ body {
   border-color: rgba(59, 117, 207, 0.4);
 }
 
+.provider-picker__option--disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.provider-picker__option--disabled:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
 .provider-picker__checkbox {
   margin-top: 2px;
 }
@@ -241,6 +251,24 @@ body {
 .provider-picker__label-description {
   font-size: 11px;
   color: #a0a0a0;
+}
+
+.provider-picker__label-status {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.provider-picker__label-status--connected {
+  color: #8fda7f;
+}
+
+.provider-picker__label-status--disconnected {
+  color: #ff8a80;
 }
 
 .provider-picker__actions {
