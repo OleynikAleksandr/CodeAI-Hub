@@ -7303,26 +7303,39 @@
     onToggle,
     inputRef
   }) => {
+    const disabled = !provider.connected;
+    const statusLabel = provider.connected ? "Connected" : "Not connected";
+    const statusClassName = provider.connected ? "provider-picker__label-status provider-picker__label-status--connected" : "provider-picker__label-status provider-picker__label-status--disconnected";
     const handleChange = () => {
       onToggle(provider.id);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "provider-picker__option", htmlFor: provider.id, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-        "input",
-        {
-          checked,
-          className: "provider-picker__checkbox",
-          id: provider.id,
-          onChange: handleChange,
-          ref: inputRef,
-          type: "checkbox"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "provider-picker__label", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "provider-picker__label-title", children: provider.title }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "provider-picker__label-description", children: provider.description })
-      ] })
-    ] });
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+      "label",
+      {
+        "aria-disabled": disabled,
+        className: disabled ? "provider-picker__option provider-picker__option--disabled" : "provider-picker__option",
+        htmlFor: provider.id,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "input",
+            {
+              checked,
+              className: "provider-picker__checkbox",
+              disabled,
+              id: provider.id,
+              onChange: handleChange,
+              ref: inputRef,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "provider-picker__label", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "provider-picker__label-title", children: provider.title }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "provider-picker__label-description", children: provider.description }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: statusClassName, children: statusLabel })
+          ] })
+        ]
+      }
+    );
   };
   var ProviderPicker = ({
     visible,
