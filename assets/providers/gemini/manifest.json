@@ -2,9 +2,9 @@
   "schema": 1,
   "baseUrl": "https://github.com/OleynikAleksandr/CodeAI-Hub/releases/latest/download/",
   "module": {
-    "version": "0.1.0",
-    "package": "gemini-module-0.1.0.tar.bz2",
-    "size": 14038,
-    "sha1": "21a54a8bdbf05887bfd22f2e334c3ab504601e0c"
+    "version": "0.1.2",
+    "package": "gemini-module-0.1.2.tar.bz2",
+    "size": 14221,
+    "sha1": "f9902f19773d5c900e5e7ea81cdeb27ed3046573"
   }
 }

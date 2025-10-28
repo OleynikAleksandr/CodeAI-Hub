@@ -2,12 +2,11 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.26
-- **Launcher installer helpers**: extracted reusable helpers for manifest lookup, archive reuse, and marker management so launcher installs stay under the 300-line architecture limit and resume cleanly from local caches.
-- **Robust runtime downloads**: the core installer and shared runtime utilities now share checksum verification, fallback archive discovery, and richer error messaging for reliable offline builds.
-- **Provider module hardening**: Claude and Codex adapters reorganize session lifecycles, message processors, and logging to satisfy Ultracite typing rules while emitting consistent telemetry during streaming responses.
-- **Typed core bridge events**: the remote bridge and React webview now parse server envelopes, bubble stream events, and handle session ID promotion consistently across clients.
-- **Release artifacts**: `codeai-hub-1.1.26.vsix`, `codeai-hub-core-darwin-arm64-0.2.7.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`, `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`.
+## Current Release — v1.1.31
+- **Gemini module 0.1.2**: the installer now accepts missing `credentials.json`, logs a warning, and keeps the provider in a recoverable `Not connected` state instead of aborting core startup.
+- **Core orchestrator 0.2.9**: rebuilt snapshot bundles the refreshed Gemini adapter from the workspace so the runtime no longer loads the stale `/snapshot/...` codepath during provider initialization.
+- **Manifest parity**: Gemini and core manifests reference the new tarballs (`gemini-module-0.1.2.tar.bz2`, `codeai-hub-core-darwin-arm64-0.2.9.tar.bz2`) with updated sizes and SHA-1 hashes, ensuring installers fetch the corrected artifacts.
+- **Release artifacts**: `codeai-hub-1.1.31.vsix`, `codeai-hub-core-darwin-arm64-0.2.9.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`, `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`, `gemini-module-0.1.2.tar.bz2`.
 
 ## Features
 - **React-driven command bar**: the extension view opens with a React-rendered quick-action row that mirrors the Claude Code Fusion UX.

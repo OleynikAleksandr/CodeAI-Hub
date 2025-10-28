@@ -72,11 +72,21 @@ export class GeminiInstaller {
     await this.verifyBinary(binaryPath);
     const version = await this.verifyVersion(binaryPath);
     const credentialFile = await this.verifyCredentials();
-    this.reporter?.info?.("Gemini CLI verified", {
-      binaryPath,
-      version,
-      credentials: credentialFile,
-    });
+    if (credentialFile) {
+      this.reporter?.info?.("Gemini CLI verified", {
+        binaryPath,
+        version,
+        credentials: credentialFile,
+      });
+    } else {
+      this.reporter?.warn?.(
+        "Gemini CLI credentials not detected during startup. Continuing without preflight auth check.",
+        {
+          credentialDirectory: this.credentialsDirectory,
+          expectedFiles: this.credentialFiles,
+        }
+      );
+    }
   }
 
   getBinaryPath(): string {
@@ -97,13 +107,7 @@ export class GeminiInstaller {
   }
 
   async hasCredentials(): Promise<boolean> {
-    for (const relative of this.credentialFiles) {
-      const target = path.join(this.credentialsDirectory, relative);
-      if (await this.fileExists(target)) {
-        return true;
-      }
-    }
-    return false;
+    return (await this.verifyCredentials()) !== null;
   }
 
   private async resolveBinaryPath(): Promise<string> {
@@ -166,20 +170,14 @@ export class GeminiInstaller {
     return result;
   }
 
-  private async verifyCredentials(): Promise<string> {
+  private async verifyCredentials(): Promise<string | null> {
     for (const relative of this.credentialFiles) {
       const candidate = path.join(this.credentialsDirectory, relative);
       if (await this.fileExists(candidate)) {
         return candidate;
       }
     }
-    const message =
-      "Gemini CLI credentials not found. Run `gemini login` to authenticate before using CodeAI Hub.";
-    this.reporter?.warn?.(message, {
-      credentialDirectory: this.credentialsDirectory,
-      expectedFiles: this.credentialFiles,
-    });
-    throw new Error(message);
+    return null;
   }
 
   private buildBinaryCandidates(): readonly string[] {
