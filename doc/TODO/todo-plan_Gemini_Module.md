@@ -27,21 +27,21 @@
 - [DONE] Шаг 6: Актуализировать документацию и `doc/TODO/todo-plan_Gemini_Module.md` (описания архитектуры, состояние плана, фиксация выполненных шагов и их коммитов).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: aa2708d — docs: document gemini integration
-- [TODO] Шаг 7: Добавить полнофункциональный сборщик `scripts/build-gemini-module.sh`, манифест `assets/providers/gemini/manifest.json` и обновить `release-utils.sh` (учёт gemini-архивов).
+- [DONE] Шаг 7: Добавить полнофункциональный сборщик `scripts/build-gemini-module.sh`, манифест `assets/providers/gemini/manifest.json` и обновить `release-utils.sh` (учёт gemini-архивов).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: pending
-- [TODO] Шаг 8: Сформировать архив Gemini (скрипт `build-gemini-module.sh --version <semver>`), разложить в `doc/tmp/releases` и `~/.codeai-hub/providers/gemini/<version>`, обновить локальные кеши/манифест.
+  - Commit: 0a225a6 — chore: add gemini module builder
+- [DONE] Шаг 8: Сформировать архив Gemini (скрипт `build-gemini-module.sh --version 0.1.0`), разложить в `doc/tmp/releases` и `~/.codeai-hub/providers/gemini/0.1.0`, обновить локальные кеши/манифест.
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: pending
-- [TODO] Шаг 9: Собрать ядро `codeai-hub-core` версии 0.2.8 (скрипт `build-core.sh --version 0.2.8`), проверить установку в `~/.codeai-hub/core` и актуализацию манифестов.
+  - Commit: 00a6930 — chore: build gemini module v0.1.0
+- [DONE] Шаг 9: Собрать ядро `codeai-hub-core` версии 0.2.8 (скрипт `build-core.sh --version 0.2.8`), проверить установку в `~/.codeai-hub/core` и актуализацию манифестов.
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: pending
-- [TODO] Шаг 10: Пересобрать VSIX 1.1.28 (повторный `build-release.sh` после установки Gemini/Core), убедиться, что манифесты ссылок на актуальные артефакты добавлены.
+  - Commit: dea4ed3 — chore: build core orchestrator v0.2.8
+- [DONE] Шаг 10: Пересобрать VSIX 1.1.27 (ручной `npm run compile` + `npx vsce package` после установки Gemini/Core), убедиться, что манифесты ссылок на актуальные артефакты добавлены.
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: pending
-- [TODO] Шаг 11: Провести e2e-проверку — fresh install VSIX, запуск ядра, создание новой сессии Gemini, получение ответа. Зафиксировать результат и обновить документацию (при необходимости) + коммит.
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: pending
+  - Commit: packaging-only (изменения в Git не требовались)
+- [BLOCKED] Шаг 11: Провести e2e-проверку — fresh install VSIX, запуск ядра, создание новой сессии Gemini, получение ответа. Зафиксировать результат и обновить документацию (при необходимости) + коммит.
+  - Причина: установленный `@google/gemini-cli` v0.1.9 не поддерживает режим `--output-format json` (CLI завершает работу с ошибкой и выводит справку). Требуется обновление до ≥0.10.0 и повторный логин `gemini login`.
+  - Actions: подготовлена поддержка проверки нескольких credential-файлов и обновлён session manager; ожидаем обновления CLI.
 
 ## Backlog / Parking Lot
 - [TODO] Исследовать подключение Tools API / MCP серверов через `settings.json`
