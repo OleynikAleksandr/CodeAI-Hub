@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.31] - 2025-10-28
+### Changed
+- Rebuilt `@codeai-hub/gemini-module` as v0.1.2 so the installer accepts missing OAuth credentials, emits warnings, and continues initialization.
+- Repackaged the core orchestrator (v0.2.9) to bundle the refreshed Gemini adapter and updated manifests, preventing the runtime from loading outdated snapshot code.
+### Build
+- VSIX → `codeai-hub-1.1.31.vsix`
+- Core v0.2.9 → `codeai-hub-core-darwin-arm64-0.2.9.tar.bz2`
+- Gemini Module v0.1.2 → `gemini-module-0.1.2.tar.bz2`
+
 ## [1.1.27] - 2025-10-28
 ### Added
 - Introduced `@codeai-hub/gemini-module` (installer, session manager, message processor, provider adapter) and exposed Gemini in the provider selector across webview and CEF clients.
