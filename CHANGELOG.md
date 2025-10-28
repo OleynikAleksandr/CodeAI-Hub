@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.32] - 2025-10-28
+### Changed
+- Gemini provider now keeps CLI sessions alive between messages, automatically restarts crashed processes, and records the actual Gemini session id coming from the CLI.
+- Core orchestrator rebuilt as v0.2.10 so the bundled snapshot matches the new Gemini module logic.
+- VSIX updated to ship Gemini module v0.1.3 and point the manifest to the new tarball.
+### Build
+- VSIX → `codeai-hub-1.1.32.vsix`
+- Core v0.2.10 → `codeai-hub-core-darwin-arm64-0.2.10.tar.bz2`
+- Gemini Module v0.1.3 → `gemini-module-0.1.3.tar.bz2`
+
 ## [1.1.31] - 2025-10-28
 ### Changed
 - Rebuilt `@codeai-hub/gemini-module` as v0.1.2 so the installer accepts missing OAuth credentials, emits warnings, and continues initialization.

@@ -15,12 +15,20 @@ export type ActiveSession = {
   sessionId: string;
   readonly createdAt: number;
   readonly eventEmitter: EventEmitter;
-  readonly process: ChildProcessWithoutNullStreams;
+  process: ChildProcessWithoutNullStreams | null;
   stdoutBuffer: string;
   status: "running" | "closing" | "closed";
   model: string | null;
   logger?: GeminiSessionLogger;
   reporter?: ModuleReporter;
+  readonly runtimeOptions: SessionRuntimeOptions;
+  realSessionId: string | null;
+  handshakePending: boolean;
+  handshakePromise: Promise<void> | null;
+  projectHash: string | null;
+  logsPath: string | null;
+  lastLogEntryCount: number;
+  markedForDeletion: boolean;
 };
 
 export type SessionCreationOptions = {
@@ -30,6 +38,13 @@ export type SessionCreationOptions = {
   readonly env?: NodeJS.ProcessEnv;
   readonly reporter?: ModuleReporter;
   readonly logger?: GeminiSessionLogger | null;
+};
+
+export type SessionRuntimeOptions = {
+  readonly binaryPath: string;
+  readonly model?: string;
+  readonly cwd?: string;
+  readonly env?: NodeJS.ProcessEnv;
 };
 
 export type SessionCreationResult = {
