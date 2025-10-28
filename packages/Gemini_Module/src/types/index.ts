@@ -37,5 +37,8 @@ export type GeminiModuleOptions = {
 
 export type GeminiSessionEvent = {
   readonly type: string;
+  readonly provider?: string;
+  readonly content?: string;
+  readonly data?: unknown;
   readonly payload?: unknown;
 };
