@@ -1,0 +1,23 @@
+{
+  "name": "@codeai-hub/gemini-module",
+  "version": "0.1.0",
+  "description": "Gemini CLI integration for CodeAI Hub core",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "codeai-hub",
+    "gemini",
+    "provider"
+  ],
+  "author": "CodeAI Hub",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
+}
