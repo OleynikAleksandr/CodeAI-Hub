@@ -27,6 +27,21 @@
 - [DONE] Шаг 6: Актуализировать документацию и `doc/TODO/todo-plan_Gemini_Module.md` (описания архитектуры, состояние плана, фиксация выполненных шагов и их коммитов).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: aa2708d — docs: document gemini integration
+- [TODO] Шаг 7: Добавить полнофункциональный сборщик `scripts/build-gemini-module.sh`, манифест `assets/providers/gemini/manifest.json` и обновить `release-utils.sh` (учёт gemini-архивов).
+  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
+  - Commit: pending
+- [TODO] Шаг 8: Сформировать архив Gemini (скрипт `build-gemini-module.sh --version <semver>`), разложить в `doc/tmp/releases` и `~/.codeai-hub/providers/gemini/<version>`, обновить локальные кеши/манифест.
+  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
+  - Commit: pending
+- [TODO] Шаг 9: Собрать ядро `codeai-hub-core` версии 0.2.8 (скрипт `build-core.sh --version 0.2.8`), проверить установку в `~/.codeai-hub/core` и актуализацию манифестов.
+  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
+  - Commit: pending
+- [TODO] Шаг 10: Пересобрать VSIX 1.1.28 (повторный `build-release.sh` после установки Gemini/Core), убедиться, что манифесты ссылок на актуальные артефакты добавлены.
+  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
+  - Commit: pending
+- [TODO] Шаг 11: Провести e2e-проверку — fresh install VSIX, запуск ядра, создание новой сессии Gemini, получение ответа. Зафиксировать результат и обновить документацию (при необходимости) + коммит.
+  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
+  - Commit: pending
 
 ## Backlog / Parking Lot
 - [TODO] Исследовать подключение Tools API / MCP серверов через `settings.json`
