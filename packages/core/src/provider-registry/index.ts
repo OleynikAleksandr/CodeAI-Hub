@@ -9,6 +9,10 @@ import type {
   CodexInstallerPaths,
   CodexModuleOptions,
 } from "@codeai-hub/codex-module";
+import type {
+  GeminiInstallerPaths,
+  GeminiModuleOptions,
+} from "@codeai-hub/gemini-module";
 import type { CoreConfig } from "../config";
 import type { Logger } from "../telemetry/logger";
 
@@ -50,9 +54,19 @@ const CODEX_INSTALLER_PATHS: CodexInstallerPaths = {
     "%USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex-sdk\\",
 };
 
+const GEMINI_INSTALLER_PATHS: GeminiInstallerPaths = {
+  macOS:
+    "/Users/oleksandroliinyk/.npm-global/lib/node_modules/@google/gemini-cli/",
+  linux: "~/.npm-global/lib/node_modules/@google/gemini-cli/",
+  windows:
+    "%USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\@google\\gemini-cli\\",
+};
+
 type ClaudeAdapterCtor = new (options: ClaudeModuleOptions) => ProviderAdapter;
 
 type CodexAdapterCtor = new (options: CodexModuleOptions) => ProviderAdapter;
+
+type GeminiAdapterCtor = new (options: GeminiModuleOptions) => ProviderAdapter;
 
 const requireModule = createRequire(__filename);
 const dynamicRequire = (specifier: string): unknown => requireModule(specifier);
@@ -119,10 +133,42 @@ const loadCodexAdapterCtor = (
   return bundled.CodexProviderAdapter;
 };
 
+const loadGeminiAdapterCtor = (
+  overridePath: string | undefined,
+  logger: Logger
+): GeminiAdapterCtor => {
+  if (overridePath) {
+    try {
+      const overrideEntry = path.join(overridePath, "dist", "index.js");
+      const loaded = dynamicRequire(overrideEntry) as {
+        readonly GeminiProviderAdapter?: GeminiAdapterCtor;
+      };
+      if (loaded?.GeminiProviderAdapter) {
+        logger.info("Loaded Gemini module from override path", {
+          overridePath,
+        });
+        return loaded.GeminiProviderAdapter;
+      }
+      logger.warn("Override path missing GeminiProviderAdapter export", {
+        overridePath,
+      });
+    } catch (error) {
+      logger.error("Failed to load Gemini module override", error as Error, {
+        overridePath,
+      });
+    }
+  }
+  const bundled = dynamicRequire("@codeai-hub/gemini-module") as {
+    readonly GeminiProviderAdapter: GeminiAdapterCtor;
+  };
+  return bundled.GeminiProviderAdapter;
+};
+
 export class ProviderRegistry {
   private readonly providers: ProviderDescriptor[];
   private readonly claudeAdapterCtor: ClaudeAdapterCtor;
   private readonly codexAdapterCtor: CodexAdapterCtor;
+  private readonly geminiAdapterCtor: GeminiAdapterCtor;
   private readonly options: {
     readonly config: CoreConfig;
     readonly logger: Logger;
@@ -139,6 +185,10 @@ export class ProviderRegistry {
     );
     this.codexAdapterCtor = loadCodexAdapterCtor(
       process.env.CODEX_MODULE_PATH,
+      this.options.logger
+    );
+    this.geminiAdapterCtor = loadGeminiAdapterCtor(
+      process.env.GEMINI_MODULE_PATH,
       this.options.logger
     );
     this.providers = this.initializeProviders();
@@ -175,6 +225,11 @@ export class ProviderRegistry {
       codexApprovalMode,
       codexDefaultModel,
       codexSkipGitRepoCheck,
+      geminiWorkspacePath,
+      geminiDefaultModel,
+      geminiBinaryPathOverride,
+      geminiCredentialsDirectory,
+      geminiMinimumVersion,
     } = this.options.config;
 
     const codexAdapter = new this.codexAdapterCtor({
@@ -187,6 +242,25 @@ export class ProviderRegistry {
         skipGitRepoCheck: codexSkipGitRepoCheck,
       },
       reporter: this.createReporter("codex"),
+    });
+
+    const geminiCredentials = geminiCredentialsDirectory
+      ? {
+          directory: geminiCredentialsDirectory,
+          requiredFiles: ["credentials.json"],
+        }
+      : undefined;
+
+    const geminiAdapter = new this.geminiAdapterCtor({
+      installerPaths: GEMINI_INSTALLER_PATHS,
+      workspace: {
+        workspacePath: geminiWorkspacePath,
+        defaultModel: geminiDefaultModel,
+        binaryPathOverride: geminiBinaryPathOverride,
+      },
+      reporter: this.createReporter("gemini"),
+      minimumVersion: geminiMinimumVersion,
+      credentials: geminiCredentials,
     });
 
     return [
@@ -203,6 +277,13 @@ export class ProviderRegistry {
         description: "OpenAI Codex via local CLI",
         status: "active",
         adapter: codexAdapter,
+      },
+      {
+        id: "geminiCli",
+        name: "Gemini CLI",
+        description: "Google Gemini via official CLI",
+        status: "active",
+        adapter: geminiAdapter,
       },
     ];
   }

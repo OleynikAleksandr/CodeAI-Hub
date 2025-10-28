@@ -18,6 +18,11 @@ export type CoreConfig = {
     | "untrusted";
   readonly codexSkipGitRepoCheck: boolean;
   readonly codexDefaultModel?: string;
+  readonly geminiWorkspacePath: string;
+  readonly geminiDefaultModel?: string;
+  readonly geminiBinaryPathOverride?: string;
+  readonly geminiCredentialsDirectory?: string;
+  readonly geminiMinimumVersion?: string;
 };
 
 const DEFAULT_PORT = 8080;
@@ -109,6 +114,15 @@ export const loadConfig = (): CoreConfig => {
     false
   );
   const codexDefaultModel = process.env.CODEX_DEFAULT_MODEL ?? undefined;
+  const geminiWorkspacePath =
+    process.env.GEMINI_WORKSPACE_PATH ?? workspacePath;
+  const geminiDefaultModel = process.env.GEMINI_DEFAULT_MODEL ?? undefined;
+  const geminiBinaryPathOverride = process.env.GEMINI_BINARY_PATH ?? undefined;
+  const geminiCredentialsDirectory =
+    process.env.GEMINI_CREDENTIALS_DIRECTORY ??
+    process.env.GEMINI_CREDENTIALS_DIR ??
+    undefined;
+  const geminiMinimumVersion = process.env.GEMINI_MINIMUM_VERSION ?? undefined;
 
   return {
     host,
@@ -121,5 +135,10 @@ export const loadConfig = (): CoreConfig => {
     codexApprovalMode,
     codexSkipGitRepoCheck,
     codexDefaultModel,
+    geminiWorkspacePath,
+    geminiDefaultModel,
+    geminiBinaryPathOverride,
+    geminiCredentialsDirectory,
+    geminiMinimumVersion,
   };
 };
