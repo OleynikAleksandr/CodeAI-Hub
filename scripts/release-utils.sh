@@ -10,6 +10,7 @@ clean_release_dir() {
     "codeai-hub-core-darwin-arm64-*.tar.bz2"
     "claude-module-*.tar.bz2"
     "codex-module-*.tar.bz2"
+    "gemini-module-*.tar.bz2"
   )
 
   for pattern in "${keep_patterns[@]}"; do
