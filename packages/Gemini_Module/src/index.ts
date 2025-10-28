@@ -1,5 +1,6 @@
 import { GeminiProviderAdapter as GeminiProviderAdapterImpl } from "./provider/gemini-provider-adapter";
 import type {
+  GeminiCredentialsOptions as GeminiCredentialsOptionsType,
   GeminiInstallerPaths as GeminiInstallerPathsType,
   GeminiModuleOptions as GeminiModuleOptionsType,
   GeminiSessionEvent as GeminiSessionEventType,
@@ -13,9 +14,11 @@ type GeminiModuleOptions = GeminiModuleOptionsType;
 type GeminiSessionEvent = GeminiSessionEventType;
 type GeminiWorkspaceOptions = GeminiWorkspaceOptionsType;
 type ModuleReporter = ModuleReporterType;
+type GeminiCredentialsOptions = GeminiCredentialsOptionsType;
 
 export { GeminiProviderAdapter };
 export type {
+  GeminiCredentialsOptions,
   GeminiInstallerPaths,
   GeminiModuleOptions,
   GeminiSessionEvent,

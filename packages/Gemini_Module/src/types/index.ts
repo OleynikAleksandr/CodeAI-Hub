@@ -11,6 +11,11 @@ export type GeminiWorkspaceOptions = {
   readonly binaryPathOverride?: string;
 };
 
+export type GeminiCredentialsOptions = {
+  readonly directory?: string;
+  readonly requiredFiles?: readonly string[];
+};
+
 export type ModuleReporter = {
   readonly info?: (message: string, metadata?: Record<string, unknown>) => void;
   readonly warn?: (message: string, metadata?: Record<string, unknown>) => void;
@@ -26,6 +31,8 @@ export type GeminiModuleOptions = {
   readonly workspace: GeminiWorkspaceOptions;
   readonly reporter?: ModuleReporter;
   readonly enableDebugLogging?: boolean;
+  readonly minimumVersion?: string;
+  readonly credentials?: GeminiCredentialsOptions;
 };
 
 export type GeminiSessionEvent = {
