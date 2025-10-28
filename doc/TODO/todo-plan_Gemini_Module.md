@@ -12,9 +12,9 @@
 - [DONE] Шаг 1: Подготовить каркас пакета `packages/Gemini_Module` (структура каталогов, `package.json`, `tsconfig.json`, `src/index.ts`, базовые типы и заглушки).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: 851c8d8 — feat: add gemini module skeleton
-- [TODO] Шаг 2: Реализовать Gemini CLI Installer (поиск бинаря, проверка версии, валидация OAuth-токена, логирование).
+- [DONE] Шаг 2: Реализовать Gemini CLI Installer (поиск бинаря, проверка версии, валидация OAuth-токена, логирование).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: pending
+  - Commit: 4dc3502 — feat: implement gemini installer
 - [TODO] Шаг 3: Реализовать `GeminiSessionManager`, JSON message processor и `GeminiProviderAdapter` (запуск `gemini -o json`, подписка на stdout/stderr, преобразование ответов).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: pending
