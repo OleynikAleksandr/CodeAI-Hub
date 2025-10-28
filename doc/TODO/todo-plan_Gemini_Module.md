@@ -24,9 +24,9 @@
 - [DONE] Шаг 5: Обновить UI/extension/standalone слои для выбора и отображения статуса Gemini (provider picker, настройки, сообщения).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: 14cbfb3 — feat: surface gemini provider in ui
-- [TODO] Шаг 6: Актуализировать документацию и `doc/TODO/todo-plan_Gemini_Module.md` (описания архитектуры, состояние плана, фиксация выполненных шагов и их коммитов).
+- [DONE] Шаг 6: Актуализировать документацию и `doc/TODO/todo-plan_Gemini_Module.md` (описания архитектуры, состояние плана, фиксация выполненных шагов и их коммитов).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: pending
+  - Commit: aa2708d — docs: document gemini integration
 
 ## Backlog / Parking Lot
 - [TODO] Исследовать подключение Tools API / MCP серверов через `settings.json`
