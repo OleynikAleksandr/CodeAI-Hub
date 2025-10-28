@@ -14,19 +14,21 @@ export class ProviderRegistry {
     {
       id: "claudeCodeCli",
       title: "Claude Code CLI",
-      description: "Anthropic Claude CLI bridge (stubbed connection).",
+      description:
+        "Anthropic Claude Agent SDK integration. Requires global Claude CLI install.",
       connected: true,
     },
     {
       id: "codexCli",
       title: "Codex CLI",
-      description: "OpenAI Codex CLI bridge (stubbed connection).",
+      description: "OpenAI Codex CLI integration with local sandbox controls.",
       connected: true,
     },
     {
       id: "geminiCli",
       title: "Gemini CLI",
-      description: "Google Gemini CLI bridge (stubbed connection).",
+      description:
+        "Google Gemini CLI with OAuth login and JSON output pipeline.",
       connected: true,
     },
   ];
