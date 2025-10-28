@@ -264,12 +264,17 @@ export class ProviderRegistry {
       reporter: this.createReporter("codex"),
     });
 
-    const geminiCredentials = geminiCredentialsDirectory
-      ? {
-          directory: geminiCredentialsDirectory,
-          requiredFiles: ["credentials.json"],
-        }
-      : undefined;
+    const geminiCredentials =
+      geminiCredentialsDirectory ||
+      geminiMinimumVersion ||
+      geminiBinaryPathOverride
+        ? {
+            directory: geminiCredentialsDirectory,
+            requiredFiles: ["oauth_creds.json", "credentials.json"],
+          }
+        : {
+            requiredFiles: ["oauth_creds.json", "credentials.json"],
+          };
 
     const geminiAdapter = new this.geminiAdapterCtor({
       installerPaths: GEMINI_INSTALLER_PATHS,

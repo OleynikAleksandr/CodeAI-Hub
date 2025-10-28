@@ -15,6 +15,10 @@ const VERSION_REGEX = /(\d+\.\d+\.\d+)/u;
 const VERSION_SPLIT_REGEX = /[.-]/u;
 const LIB_SUFFIX = `${path.sep}lib` as const;
 const LIB_SUFFIX_LENGTH = LIB_SUFFIX.length;
+const DEFAULT_CREDENTIAL_FILES = [
+  "oauth_creds.json",
+  "credentials.json",
+] as const;
 
 const execFileAsync = promisify(execFile);
 
@@ -23,6 +27,7 @@ export type GeminiInstallerOptions = {
   readonly binaryPathOverride?: string;
   readonly minimumVersion?: string;
   readonly credentialsDirectory?: string;
+  readonly requiredCredentialFiles?: readonly string[];
 };
 
 export class GeminiInstaller {
@@ -40,6 +45,8 @@ export class GeminiInstaller {
 
   private detectedVersion: string | null = null;
 
+  private readonly credentialFiles: readonly string[];
+
   constructor(
     paths: GeminiInstallerPaths,
     options: GeminiInstallerOptions = {}
@@ -53,17 +60,22 @@ export class GeminiInstaller {
     this.credentialsDirectory = options.credentialsDirectory
       ? this.expandPath(options.credentialsDirectory)
       : path.join(homedir(), ".gemini");
+    this.credentialFiles =
+      options.requiredCredentialFiles &&
+      options.requiredCredentialFiles.length > 0
+        ? options.requiredCredentialFiles
+        : DEFAULT_CREDENTIAL_FILES;
   }
 
   async ensureInstalled(): Promise<void> {
     const binaryPath = await this.resolveBinaryPath();
     await this.verifyBinary(binaryPath);
     const version = await this.verifyVersion(binaryPath);
-    await this.verifyCredentials();
+    const credentialFile = await this.verifyCredentials();
     this.reporter?.info?.("Gemini CLI verified", {
       binaryPath,
       version,
-      credentials: path.join(this.credentialsDirectory, "credentials.json"),
+      credentials: credentialFile,
     });
   }
 
@@ -85,15 +97,13 @@ export class GeminiInstaller {
   }
 
   async hasCredentials(): Promise<boolean> {
-    try {
-      await access(
-        path.join(this.credentialsDirectory, "credentials.json"),
-        constants.F_OK
-      );
-      return true;
-    } catch {
-      return false;
+    for (const relative of this.credentialFiles) {
+      const target = path.join(this.credentialsDirectory, relative);
+      if (await this.fileExists(target)) {
+        return true;
+      }
     }
+    return false;
   }
 
   private async resolveBinaryPath(): Promise<string> {
@@ -156,19 +166,20 @@ export class GeminiInstaller {
     return result;
   }
 
-  private async verifyCredentials(): Promise<void> {
-    const credentialFile = path.join(
-      this.credentialsDirectory,
-      "credentials.json"
-    );
-    try {
-      await access(credentialFile, constants.F_OK);
-    } catch {
-      const message =
-        "Gemini CLI credentials not found. Run `gemini login` to authenticate before using CodeAI Hub.";
-      this.reporter?.warn?.(message, { credentialFile });
-      throw new Error(message);
+  private async verifyCredentials(): Promise<string> {
+    for (const relative of this.credentialFiles) {
+      const candidate = path.join(this.credentialsDirectory, relative);
+      if (await this.fileExists(candidate)) {
+        return candidate;
+      }
     }
+    const message =
+      "Gemini CLI credentials not found. Run `gemini login` to authenticate before using CodeAI Hub.";
+    this.reporter?.warn?.(message, {
+      credentialDirectory: this.credentialsDirectory,
+      expectedFiles: this.credentialFiles,
+    });
+    throw new Error(message);
   }
 
   private buildBinaryCandidates(): readonly string[] {
@@ -330,5 +341,14 @@ export class GeminiInstaller {
       .split(VERSION_SPLIT_REGEX)
       .map((segment) => Number.parseInt(segment, 10))
       .filter((part) => Number.isFinite(part) && part >= 0);
+  }
+
+  private async fileExists(target: string): Promise<boolean> {
+    try {
+      await access(target, constants.F_OK);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

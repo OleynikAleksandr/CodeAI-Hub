@@ -24,6 +24,7 @@ export class GeminiProviderAdapter {
       binaryPathOverride: options.workspace.binaryPathOverride,
       minimumVersion: options.minimumVersion,
       credentialsDirectory: options.credentials?.directory,
+      requiredCredentialFiles: options.credentials?.requiredFiles,
     });
     this.sessionManager = new GeminiSessionManager();
     this.messageProcessor = new GeminiMessageProcessor({
