@@ -14,7 +14,13 @@ CodeAI-Hub — это автономная платформа управлени
 
 ## Локальные артефакты при разработке
 - Все скрипты сборки укладывают артефакты в директорию `~/.codeai-hub/**`, чтобы их можно было переиспользовать офлайн. Подробности и чек-лист приведены в документе `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md` (обязателен к прочтению перед стартом сессии).
+- Провайдерные пакеты раскладываются в `~/.codeai-hub/providers/<stack>/<version>/`; для нового Gemini модуля — `~/.codeai-hub/providers/gemini/<версия>/`.
 - Инсталляторы VS Code сначала проверяют локальные установки и кэшированные архивы (`downloads/`, `~/.codeai-hub/releases/`) и только затем обращаются к URL из манифестов. Ошибки скачивания теперь указывают компонент (`CEF runtime`, `Claude module`, `Codex module`, `Core orchestrator`).
+
+## Обновления релиза 1.1.27 (2025-10-28)
+- Реализован пакет `packages/Gemini_Module` (installer, session manager, message processor, provider adapter) и зарегистрирован в ядре. При отсутствии CLI или токенов провайдер переводится в состояние `inactive`, поэтому запуск core больше не прерывается.
+- Селектор провайдеров (webview и локальный CEF клиент) показывает статус подключения и запрещает выбор Gemini, если ядро вернуло `inactive`.
+- В `ProviderRegistry` добавлены пути поиска `@google/gemini-cli`, поддержка переменных окружения `GEMINI_BINARY_PATH`, `GEMINI_CREDENTIALS_DIRECTORY`, `GEMINI_MINIMUM_VERSION`.
 
 ## Обновления релиза 1.1.16 (2025-10-26)
 - **Манифестная доставка Claude Module**: в VSIX хранится только `assets/providers/claude/manifest.json`. Extension host скачивает `claude-module-<version>.tar.bz2` во время активации, устанавливает его в `~/.codeai-hub/providers/claude/<version>/` и сообщает путь ядру через `CLAUDE_MODULE_PATH`.
