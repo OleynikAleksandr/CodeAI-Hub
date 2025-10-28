@@ -21,9 +21,9 @@
 - [DONE] Шаг 4: Подключить модуль к ядру (`packages/core`): обновить `ProviderRegistry`, конфигурацию и Remote Bridge для работы с Gemini.
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: 36dcd0e — feat: register gemini provider in core
-- [TODO] Шаг 5: Обновить UI/extension/standalone слои для выбора и отображения статуса Gemini (provider picker, настройки, сообщения).
+- [DONE] Шаг 5: Обновить UI/extension/standalone слои для выбора и отображения статуса Gemini (provider picker, настройки, сообщения).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: pending
+  - Commit: 14cbfb3 — feat: surface gemini provider in ui
 - [TODO] Шаг 6: Актуализировать документацию и `doc/TODO/todo-plan_Gemini_Module.md` (описания архитектуры, состояние плана, фиксация выполненных шагов и их коммитов).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: pending
