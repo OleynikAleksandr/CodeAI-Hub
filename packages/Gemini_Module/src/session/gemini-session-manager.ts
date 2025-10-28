@@ -138,7 +138,7 @@ export class GeminiSessionManager {
   }
 
   private buildArgs(options: SessionCreationOptions): string[] {
-    const args = ["-o", "json"];
+    const args = ["--output-format", "json"];
     const model = options.model ?? DEFAULT_MODEL;
     if (model) {
       args.push("-m", model);
