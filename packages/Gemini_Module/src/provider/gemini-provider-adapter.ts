@@ -22,6 +22,8 @@ export class GeminiProviderAdapter {
     this.installer = new GeminiInstaller(options.installerPaths, {
       reporter: options.reporter,
       binaryPathOverride: options.workspace.binaryPathOverride,
+      minimumVersion: options.minimumVersion,
+      credentialsDirectory: options.credentials?.directory,
     });
     this.sessionManager = new GeminiSessionManager();
     this.messageProcessor = new GeminiMessageProcessor(this.sessionManager);
@@ -29,7 +31,11 @@ export class GeminiProviderAdapter {
 
   async initialize(): Promise<void> {
     await this.installer.ensureInstalled();
-    this.options.reporter?.info?.("Gemini provider initialized");
+    const binaryPath = this.installer.getBinaryPath();
+    this.options.reporter?.info?.("Gemini provider initialized", {
+      binaryPath,
+      version: this.installer.getDetectedVersion(),
+    });
   }
 
   async createSession(): Promise<string> {
