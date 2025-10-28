@@ -28,6 +28,7 @@
   "dependencies": {
     "@codeai-hub/claude-module": "file:../Claude_Module",
     "@codeai-hub/codex-module": "file:../Codex_Module",
+    "@codeai-hub/gemini-module": "file:../Gemini_Module",
     "express": "^4.18.2",
     "ws": "^8.16.0",
     "cors": "^2.8.5",
