@@ -18,9 +18,9 @@
 - [DONE] Шаг 3: Реализовать `GeminiSessionManager`, JSON message processor и `GeminiProviderAdapter` (запуск `gemini -o json`, подписка на stdout/stderr, преобразование ответов).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: 74a4b3e — feat: implement gemini session pipeline
-- [TODO] Шаг 4: Подключить модуль к ядру (`packages/core`): обновить `ProviderRegistry`, конфигурацию и Remote Bridge для работы с Gemini.
+- [DONE] Шаг 4: Подключить модуль к ядру (`packages/core`): обновить `ProviderRegistry`, конфигурацию и Remote Bridge для работы с Gemini.
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: pending
+  - Commit: 36dcd0e — feat: register gemini provider in core
 - [TODO] Шаг 5: Обновить UI/extension/standalone слои для выбора и отображения статуса Gemini (provider picker, настройки, сообщения).
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: pending
