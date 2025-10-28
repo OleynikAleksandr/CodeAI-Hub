@@ -1,6 +1,6 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.3.4
+**Version:** 0.3.5
 **Last Updated:** 2025-10-28
 **Status:** Active reference
 
@@ -79,10 +79,10 @@ graph TD
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг; архитектурный скрипт контролирует структуру `src/` и `media/`.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
-## Recent Changes (v1.1.31 - 2025-10-28)
-- **Gemini module v0.1.2**: обновлённый установщик больше не прерывает запуск ядра при отсутствии `credentials.json`, логгирует предупреждение и продолжает инициализацию так, чтобы UI показывал состояние `Not connected`.
-- **Core v0.2.9 bundle**: пересобранный `codeai-hub-core` подтягивает свежий Gemini-модуль из workspace и обновлённые манифесты, исключая попадание устаревшего snapshot-бандла в релизные архивы.
-- **Release manifests**: `assets/providers/gemini/manifest.json` и `assets/core/manifest.json` указывают на новые артефакты (`gemini-module-0.1.2.tar.bz2`, `codeai-hub-core-darwin-arm64-0.2.9.tar.bz2`), что снимает блокировки при установке.
+## Recent Changes (v1.1.32 - 2025-10-28)
+- **Gemini module v0.1.3**: менеджер сессий перезапускает CLI прозрачно, кэширует подписчиков, подтягивает реальный идентификатор сессии из логов и не падает при повторных сообщениях.
+- **Core v0.2.10 bundle**: новый snapshot включает обновлённый Gemini-модуль, поэтому автономный бинарь использует ту же логику удержания сессий, что и workspace.
+- **Manifest refresh**: VSIX теперь раздаёт `gemini-module-0.1.3.tar.bz2` и `codeai-hub-core-darwin-arm64-0.2.10.tar.bz2`, что гарантирует использование актуальных артефактов.
 
 ## Previous Changes (v1.1.27 - 2025-10-28)
 - **Gemini CLI provider**: новый пакет `@codeai-hub/gemini-module` подключён к Core и UI. Installer проверяет версию CLI, наличие OAuth-токенов и публикует адаптер в `ProviderRegistry`.

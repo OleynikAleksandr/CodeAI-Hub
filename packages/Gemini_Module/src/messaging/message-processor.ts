@@ -61,6 +61,13 @@ export class GeminiMessageProcessor {
   }
 
   private emitAssistantEvent(session: ActiveSession, payload: unknown): void {
+    if (session.handshakePending) {
+      session.logger?.logEvent({
+        direction: "incoming",
+        suppressed: "handshake",
+      });
+      return;
+    }
     const content = this.extractText(payload);
     session.logger?.logEvent({ direction: "incoming", content });
     session.eventEmitter.emit("message", {

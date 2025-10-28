@@ -40,7 +40,7 @@
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Commit: packaging-only (изменения в Git не требовались)
 - [IN_PROGRESS] Шаг 11: Провести e2e-проверку — fresh install VSIX, запуск ядра, создание новой сессии Gemini, получение ответа. Зафиксировать результат и обновить документацию (при необходимости) + коммит.
-  - Notes: CLI обновлён до `@google/gemini-cli@0.10.0`, модуль пересобран как `0.1.2`, ядро обновлено до `0.2.9`. Завершаем ручной прогон UI после выпуска VSIX 1.1.31.
+  - Notes: CLI `@google/gemini-cli@0.10.0`, модуль `0.1.3`, core `0.2.10`, VSIX 1.1.32. После публикации артефактов повторить ручной прогон UI и задокументировать результат.
 
 ## Backlog / Parking Lot
 - [TODO] Исследовать подключение Tools API / MCP серверов через `settings.json`
