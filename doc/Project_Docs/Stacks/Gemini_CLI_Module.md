@@ -1,8 +1,8 @@
 # Gemini CLI Module Integration Guide
 
-**Status:** Draft
+**Status:** In Progress
 
-**Last Updated:** 2025-10-27
+**Last Updated:** 2025-10-28
 
 **Maintainer:** Codex / CodeAI Hub Core Team
 
@@ -80,29 +80,13 @@ Important flags:
 
 ---
 
-## 7. Planned Module Structure
-1. **Installer (`packages/Gemini_Module/src/installer/gemini-installer.ts`)**
-   - Locate `gemini` binary (`env.PATH`, known npm prefixes).
-   - Validate version ≥ required baseline.
-   - Ensure credentials exist.
-   - Optionally cache binary path to avoid repeated lookups.
-2. **Auth Manager**
-   - For now, rely entirely on CLI-managed OAuth tokens.
-   - Expose status check (valid/expired) per session start.
-3. **Session Manager**
-   - Spawn `gemini -o json -m <model>` as a persistent subprocess.
-   - Pipe user input (line-by-line) into stdin.
-   - Parse JSON responses from stdout and emit `SessionMessage` events.
-   - Handle `/exit` or process termination gracefully.
-4. **Message Processor**
-   - Convert CLI JSON into CodeAI Hub message format (role, text, metadata, usage).
-   - Support multi-part responses (text + tool invocations once available).
-5. **Provider Adapter**
-   - Bridge between core `ProviderRegistry` and the CLI session manager.
-   - Manage subscription/unsubscription to session events.
-   - Provide send/create/close semantics identical to Claude/Codex modules.
-6. **Logging**
-   - Store CLI stdout/stderr for debugging (per session). Ideal path: `~/.codeai-hub/logs/gemini-cli/<session>.log`.
+## 7. Implementation Status
+- ✅ **Installer (`packages/Gemini_Module/src/installer/gemini-installer.ts`)** — resolves the CLI binary (override via `GEMINI_BINARY_PATH`), enforces a minimum version, checks for `~/.gemini/credentials.json`, and falls back to status `inactive` instead of aborting the core start when validation fails.
+- ✅ **Session Manager (`packages/Gemini_Module/src/session/gemini-session-manager.ts`)** — maintains long-lived `gemini -o json` processes, streams user input, detects crashes, and emits structured lifecycle events for RemoteBridge.
+- ✅ **Message Processor (`packages/Gemini_Module/src/messaging/message-processor.ts`)** — parses JSON lines into assistant messages, guards against malformed payloads, and preserves the raw payload for downstream tooling.
+- ✅ **Provider Adapter (`packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`)** — wires the installer/session/message stack into the core `ProviderRegistry`, exposes subscribe/send/close, and surfaces session start/system events.
+- ✅ **UI Integration** — provider picker now lists “Gemini CLI” with connection badges, and the extension propagates status updates from the core.
+- 🚧 **Auth Manager & Advanced Logging** — OAuth lifecycle still delegated to the CLI; richer log persistence (`~/.codeai-hub/logs/gemini-cli/`) tracked for a later milestone.
 
 ---
 
@@ -120,8 +104,8 @@ Important flags:
 - `gemini --version` outputs expected version.
 - `printf "ping\n/exit\n" | gemini -o json` completes with code 0.
 - Multiple sessions run concurrently without leaking descriptors.
-- Installer handles missing CLI gracefully (actionable error message).
-- Session manager recovers if CLI crashes or auth expires.
+- Installer handles missing CLI gracefully (adapter downgraded to `inactive`, core keeps running).
+- Session manager recovers if CLI crashes or auth expires; RemoteBridge broadcasts system message with exit reason.
 - Manual validation that CLI works for macOS (arm64/x64) and Linux (x64). Windows support will require additional QA.
 
 ---
@@ -143,4 +127,5 @@ Important flags:
 ---
 
 ## 12. Change Log
+- **2025-10-28:** Implemented installer/session/message/provider adapters, added graceful downgrade path when CLI is absent, and exposed Gemini in the provider picker UI.
 - **2025-10-27:** Initial draft outlining CLI usage, integration hooks, and TODOs.

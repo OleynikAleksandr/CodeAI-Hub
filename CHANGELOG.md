@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.27] - 2025-10-28
+### Added
+- Introduced `@codeai-hub/gemini-module` (installer, session manager, message processor, provider adapter) and exposed Gemini in the provider selector across webview and CEF clients.
+### Changed
+- `ProviderRegistry` now downgrades providers to `inactive` when CLI detection or credential validation fails, so the core keeps running and the UI shows connection status badges.
+### Build
+- Packaging pipeline pending — VSIX/Core/Module artifacts will be published together with the 1.1.27 release bundle.
+
 ## [1.1.26] - 2025-10-27
 ### Fixed
 - Reduced `src/extension-module/cef/runtime-files.ts` to 299 lines so the architecture gate passes after the installer refactor and reran the release packaging workflow end-to-end.
