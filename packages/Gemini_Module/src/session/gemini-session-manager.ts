@@ -1,168 +1,74 @@
-import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
-import { createHash, randomUUID } from "node:crypto";
-import { EventEmitter, once } from "node:events";
-import { readdir, readFile } from "node:fs/promises";
-import os from "node:os";
-import path from "node:path";
-import { setTimeout as delay } from "node:timers/promises";
-import type { GeminiMessageProcessor } from "../messaging/message-processor";
+import { randomUUID } from "node:crypto";
+import { EventEmitter } from "node:events";
+import {
+  type CliArgs,
+  loadCliConfig,
+} from "@google/gemini-cli/dist/src/config/config.js";
+import {
+  loadSettings,
+  migrateDeprecatedSettings,
+} from "@google/gemini-cli/dist/src/config/settings.js";
+import { AuthType } from "@google/gemini-cli-core/dist/src/core/contentGenerator.js";
+import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler.js";
+import { executeToolCall } from "@google/gemini-cli-core/dist/src/core/nonInteractiveToolExecutor.js";
+import type {
+  ServerGeminiStreamEvent,
+  ToolCallRequestInfo,
+} from "@google/gemini-cli-core/dist/src/core/turn.js";
+import type { Part, UsageMetadata } from "@google/genai";
+import { GeminiMessageProcessor } from "../messaging/message-processor.js";
+import type { GeminiSessionEvent } from "../types/index.js";
 import type {
   ActiveSession,
   SessionCreationOptions,
   SessionCreationResult,
-  SessionRuntimeOptions,
-} from "./types";
+} from "./types.js";
 
-const EXIT_TIMEOUT_MS = 2000;
-const FORCE_EXIT_TIMEOUT_MS = 1000;
-const TIMEOUT_TOKEN = Symbol("gemini_exit_timeout");
-const DEFAULT_MODEL = "gemini-2.5-pro";
-const GEMINI_DIR_NAME = ".gemini";
-const TMP_DIR_NAME = "tmp";
-const LOGS_FILE_NAME = "logs.json";
-const HANDSHAKE_COMMAND = "/stats";
-const HANDSHAKE_TIMEOUT_MS = 5000;
-const HANDSHAKE_INTERVAL_MS = 250;
-const SESSION_FILE_PREFIX = "session-";
+const GEMINI_ENV_KEYS_TO_CLEAR = [
+  "GOOGLE_CLOUD_PROJECT",
+  "GOOGLE_CLOUD_PROJECT_ID",
+  "GOOGLE_CLOUD_LOCATION",
+  "GOOGLE_API_KEY",
+] as const;
 
-type GeminiLogEntry = {
-  readonly sessionId?: unknown;
+const TOOL_RESPONSE_FALLBACK =
+  "Gemini tool execution completed without response parts.";
+
+const MAX_TOOL_CALL_CHAIN_DEPTH = 8;
+
+type GeminiTurnResult = {
+  readonly responseText: string;
+  readonly usage?: UsageMetadata;
+  readonly citations: readonly string[];
+  readonly toolRequests: readonly ToolCallRequestInfo[];
+};
+
+type ToolExecutionOutcome = {
+  readonly parts: Part[];
+  readonly events: GeminiSessionEvent[];
+  readonly completedCalls: CompletedToolCall[];
+};
+
+type ConversationResult = {
+  readonly text: string;
+  readonly citations: readonly string[];
+  readonly usage?: UsageMetadata;
+  readonly depthExceeded: boolean;
+};
+
+type ProcessTurnContext = {
+  readonly session: ActiveSession;
+  readonly parts: Part[];
+  readonly promptId: string;
+  readonly signal: AbortSignal;
+  readonly depth: number;
 };
 
 export class GeminiSessionManager {
   private readonly sessions = new Map<string, ActiveSession>();
 
-  private messageProcessor: GeminiMessageProcessor | null = null;
-
-  setMessageProcessor(processor: GeminiMessageProcessor): void {
-    this.messageProcessor = processor;
-  }
-
-  private async performHandshake(session: ActiveSession): Promise<void> {
-    if (!(session.process && session.logsPath)) {
-      return;
-    }
-
-    try {
-      await this.writeToProcess(session.process, `${HANDSHAKE_COMMAND}\n`);
-    } catch (error) {
-      session.reporter?.warn?.("Failed to send Gemini handshake command", {
-        sessionId: session.sessionId,
-        message: error instanceof Error ? error.message : String(error),
-      });
-      return;
-    }
-
-    const deadline = Date.now() + HANDSHAKE_TIMEOUT_MS;
-    while (Date.now() < deadline) {
-      const entries = await this.readLogEntries(session.logsPath);
-      if (entries.length > session.lastLogEntryCount) {
-        session.lastLogEntryCount = entries.length;
-        const latest = entries.at(-1);
-        if (latest && typeof latest.sessionId === "string") {
-          session.realSessionId = latest.sessionId;
-          session.reporter?.info?.("Gemini CLI session ready", {
-            sessionId: session.sessionId,
-            geminiSessionId: session.realSessionId,
-          });
-          return;
-        }
-      }
-      await delay(HANDSHAKE_INTERVAL_MS);
-    }
-
-    session.reporter?.warn?.("Unable to determine Gemini CLI session id", {
-      sessionId: session.sessionId,
-    });
-  }
-
-  private async readLogEntries(logsPath: string): Promise<GeminiLogEntry[]> {
-    try {
-      const payload = await readFile(logsPath, "utf8");
-      if (payload.trim().length === 0) {
-        return [];
-      }
-      const parsed = JSON.parse(payload);
-      if (Array.isArray(parsed)) {
-        return parsed as GeminiLogEntry[];
-      }
-    } catch {
-      // ignore parse errors and treat as empty for handshake polling
-    }
-    return [];
-  }
-
-  private async countLogEntries(logsPath: string): Promise<number> {
-    const entries = await this.readLogEntries(logsPath);
-    return entries.length;
-  }
-
-  private async populateSessionIdFromChats(
-    session: ActiveSession
-  ): Promise<void> {
-    if (session.realSessionId || !session.projectHash) {
-      return;
-    }
-    const chatsDir = this.resolveChatsDirectory(session.projectHash);
-    let entries: string[];
-    try {
-      entries = await readdir(chatsDir);
-    } catch {
-      return;
-    }
-    const candidates = entries
-      .filter(
-        (entry) =>
-          entry.startsWith(SESSION_FILE_PREFIX) && entry.endsWith(".json")
-      )
-      .sort()
-      .reverse();
-    const latest = candidates[0];
-    if (!latest) {
-      return;
-    }
-    const filePath = path.join(chatsDir, latest);
-    const contents = await readFile(filePath, "utf8");
-    const parsed = JSON.parse(contents) as { sessionId?: unknown };
-    if (parsed && typeof parsed.sessionId === "string") {
-      session.realSessionId = parsed.sessionId;
-      session.reporter?.info?.("Gemini CLI session identified", {
-        sessionId: session.sessionId,
-        geminiSessionId: session.realSessionId,
-      });
-    }
-  }
-
-  private async writeToProcess(
-    process: ChildProcessWithoutNullStreams,
-    payload: string
-  ): Promise<void> {
-    await new Promise<void>((resolve, reject) => {
-      process.stdin.write(payload, (error) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
-
-  private computeProjectHash(workspacePath: string): string {
-    return createHash("sha256").update(workspacePath).digest("hex");
-  }
-
-  private resolveProjectTempDir(projectHash: string): string {
-    const home = os.homedir() || os.tmpdir();
-    return path.join(home, GEMINI_DIR_NAME, TMP_DIR_NAME, projectHash);
-  }
-
-  private resolveLogsPath(projectHash: string): string {
-    return path.join(this.resolveProjectTempDir(projectHash), LOGS_FILE_NAME);
-  }
-
-  private resolveChatsDirectory(projectHash: string): string {
-    return path.join(this.resolveProjectTempDir(projectHash), "chats");
+  constructor() {
+    this.sanitizeEnvironment();
   }
 
   listSessions(): readonly ActiveSession[] {
@@ -173,126 +79,171 @@ export class GeminiSessionManager {
     return this.sessions.get(sessionId);
   }
 
-  createSession(options: SessionCreationOptions): SessionCreationResult {
+  async createSession(
+    options: SessionCreationOptions
+  ): Promise<SessionCreationResult> {
+    const workspacePath = options.workspacePath;
     const sessionId = randomUUID();
-    const eventEmitter = new EventEmitter();
-    const runtimeOptions: SessionRuntimeOptions = {
-      binaryPath: options.binaryPath,
-      model: options.model,
-      cwd: options.cwd,
-      env: options.env,
-    };
-    const workspacePath = runtimeOptions.cwd ?? process.cwd();
-    const projectHash = this.computeProjectHash(workspacePath);
-    const logsPath = this.resolveLogsPath(projectHash);
 
+    const settings = loadSettings(workspacePath);
+    migrateDeprecatedSettings(settings, workspacePath);
+
+    const argv = this.createArgv(options);
+    const config = await loadCliConfig(
+      settings.merged,
+      [],
+      sessionId,
+      argv,
+      workspacePath
+    );
+
+    const authType = this.resolveAuthType(
+      settings.merged.security?.auth?.selectedType
+    );
+
+    try {
+      await config.refreshAuth(authType);
+    } catch (error) {
+      options.reporter?.error?.("Gemini authentication failed", error);
+      throw error;
+    }
+
+    if (options.defaultModel) {
+      config.setModel(options.defaultModel);
+    }
+
+    await config.initialize();
+    const client = config.getGeminiClient();
+
+    const eventEmitter = new EventEmitter();
     const session: ActiveSession = {
       sessionId,
       createdAt: Date.now(),
       eventEmitter,
-      process: null,
-      stdoutBuffer: "",
-      status: "closed",
-      model: options.model ?? DEFAULT_MODEL,
-      logger: options.logger ?? undefined,
+      config,
+      client,
+      workspacePath,
+      status: "idle",
+      abortController: null,
       reporter: options.reporter,
-      runtimeOptions,
-      realSessionId: null,
-      handshakePending: false,
-      handshakePromise: null,
-      projectHash,
-      logsPath,
-      lastLogEntryCount: 0,
-      markedForDeletion: false,
+      logger: options.logger ?? undefined,
     };
 
+    session.logger?.start(sessionId);
     this.sessions.set(sessionId, session);
-    this.startSessionProcess(session).catch((error) => {
-      session.reporter?.error?.(
-        "Failed to start Gemini CLI session",
-        error instanceof Error ? error : new Error(String(error)),
-        { sessionId }
-      );
-    });
+
+    this.emitEvents(session, [
+      {
+        type: "system",
+        provider: "gemini",
+        content: `Gemini session initialized (model: ${config.getModel()}).`,
+      },
+    ]);
+    eventEmitter.emit("realSessionId", config.getSessionId());
+
     return { sessionId, session };
   }
 
-  private async ensureSessionRunning(session: ActiveSession): Promise<void> {
-    if (session.status === "running" && session.process) {
-      if (session.handshakePromise) {
-        await session.handshakePromise.catch(() => {
-          /* noop */
-        });
-      }
-      return;
+  async sendMessage(sessionId: string, content: string): Promise<void> {
+    const session = this.requireSession(sessionId);
+    if (session.status === "streaming") {
+      throw new Error("Gemini session already has an in-flight request.");
     }
-    await this.startSessionProcess(session);
-  }
-
-  private async startSessionProcess(session: ActiveSession): Promise<void> {
-    if (session.handshakePromise) {
-      await session.handshakePromise.catch(() => {
-        /* noop */
-      });
-      if (session.status === "running" && session.process) {
-        return;
-      }
+    if (session.status === "closed") {
+      throw new Error("Gemini session is closed.");
     }
 
-    const launchPromise = (async () => {
-      const process = this.spawnProcess(session.runtimeOptions);
-      session.process = process;
-      session.status = "running";
-      session.stdoutBuffer = "";
-      session.handshakePending = true;
-      session.logger?.start(session.sessionId);
-      this.bindProcess(session);
+    const trimmed = content.trim();
+    if (trimmed.length === 0) {
+      throw new Error("Cannot send empty Gemini prompt.");
+    }
 
-      session.lastLogEntryCount = session.logsPath
-        ? await this.countLogEntries(session.logsPath)
-        : 0;
+    const promptId = randomUUID();
+    const abortController = new AbortController();
+    session.abortController = abortController;
+    session.status = "streaming";
 
-      try {
-        await this.performHandshake(session);
-      } catch (error) {
-        session.reporter?.warn?.("Gemini CLI handshake failed", {
-          sessionId: session.sessionId,
-          message: error instanceof Error ? error.message : String(error),
-        });
-      } finally {
-        session.handshakePending = false;
-      }
-    })();
-
-    session.handshakePromise = launchPromise.finally(() => {
-      session.handshakePromise = null;
+    const timestamp = new Date().toISOString();
+    session.logger?.logUserInput({
+      promptId,
+      content: trimmed,
+      timestamp,
     });
 
-    await session.handshakePromise;
-  }
+    this.emitEvents(session, [
+      {
+        type: "user_input",
+        provider: "gemini",
+        content: trimmed,
+        data: {
+          promptId,
+          timestamp,
+        },
+      },
+    ]);
 
-  async sendMessage(sessionId: string, content: string): Promise<void> {
-    const session = this.sessions.get(sessionId);
-    if (!session) {
-      throw new Error(`Gemini session ${sessionId} not found`);
-    }
-    if (session.status === "closing") {
-      throw new Error(`Gemini session ${sessionId} is not accepting input`);
-    }
-    await this.ensureSessionRunning(session);
-    if (!session.process) {
-      throw new Error(`Gemini session ${sessionId} is not accepting input`);
-    }
-    const payload = content.endsWith("\n") ? content : `${content}\n`;
-    session.logger?.logUserInput?.({ content });
-    await this.writeToProcess(session.process, payload);
-    if (!session.realSessionId) {
-      this.populateSessionIdFromChats(session).catch((error) => {
-        session.reporter?.warn?.("Failed to resolve Gemini session id", {
-          sessionId,
-          message: error instanceof Error ? error.message : String(error),
-        });
+    try {
+      const result = await this.processTurns({
+        session,
+        parts: [{ text: trimmed }],
+        promptId,
+        signal: abortController.signal,
+        depth: 0,
       });
+
+      if (result.depthExceeded) {
+        this.emitEvents(session, [
+          {
+            type: "system",
+            provider: "gemini",
+            content:
+              "Exceeded maximum tool execution chain depth. Stopping conversation.",
+          },
+        ]);
+      }
+
+      const finalText = result.text.trim();
+      const finalCitations = [...result.citations];
+
+      session.logger?.logEvent({
+        type: "assistant_response",
+        promptId,
+        content: finalText,
+        citations: finalCitations,
+      });
+
+      this.emitEvents(session, [
+        {
+          type: "assistant",
+          provider: "gemini",
+          content: finalText,
+          data: {
+            promptId,
+            usage: result.usage,
+            citations: finalCitations,
+          },
+        },
+      ]);
+    } catch (error) {
+      session.logger?.logError({
+        error,
+        promptId,
+        stage: "send",
+      });
+      this.emitEvents(session, [
+        {
+          type: "error",
+          provider: "gemini",
+          content: error instanceof Error ? error.message : String(error),
+        },
+      ]);
+      throw error;
+    } finally {
+      if (session.abortController && !session.abortController.signal.aborted) {
+        session.abortController.abort();
+      }
+      session.abortController = null;
+      session.status = "idle";
     }
   }
 
@@ -301,169 +252,273 @@ export class GeminiSessionManager {
     if (!session) {
       return;
     }
-    if (session.process === null) {
-      this.sessions.delete(sessionId);
-      session.eventEmitter.removeAllListeners();
-      return;
-    }
 
     session.status = "closing";
-    session.markedForDeletion = true;
+    session.abortController?.abort();
+
     try {
-      await this.writeToProcess(session.process, "/exit\n");
-      session.logger?.logEvent({ type: "control", command: "/exit" });
+      await session.client.resetChat();
     } catch (error) {
-      session.logger?.logError?.({ error, stage: "send_exit" });
+      session.reporter?.warn?.("Failed to reset Gemini chat", {
+        message: error instanceof Error ? error.message : String(error),
+      });
     }
 
-    const graceful = await this.waitForExit(session, EXIT_TIMEOUT_MS);
-    if (!graceful && session.process) {
-      session.reporter?.warn?.("Gemini CLI did not exit gracefully", {
-        sessionId,
-      });
-      session.process.kill("SIGTERM");
-      const terminated = await this.waitForExit(session, FORCE_EXIT_TIMEOUT_MS);
-      if (!terminated && session.process) {
-        session.reporter?.warn?.("Force killing Gemini CLI", { sessionId });
-        session.process.kill("SIGKILL");
-        await this.waitForExit(session, FORCE_EXIT_TIMEOUT_MS);
-      }
-    }
-  }
-
-  private spawnProcess(
-    options: SessionRuntimeOptions
-  ): ChildProcessWithoutNullStreams {
-    const args = this.buildArgs(options);
-    const child = spawn(options.binaryPath, args, {
-      cwd: options.cwd,
-      env: {
-        ...process.env,
-        NO_COLOR: "1",
-        ...options.env,
-      },
-      stdio: ["pipe", "pipe", "pipe"],
-    });
-
-    if (!(child.stdin && child.stdout && child.stderr)) {
-      child.kill("SIGKILL");
-      throw new Error("Gemini CLI returned null stdio streams");
-    }
-
-    child.stdout.setEncoding("utf8");
-    child.stderr.setEncoding("utf8");
-    child.stdin.setDefaultEncoding("utf8");
-    return child as ChildProcessWithoutNullStreams;
-  }
-
-  private buildArgs(options: SessionRuntimeOptions): string[] {
-    const args = ["--output-format", "json"];
-    const model = options.model ?? DEFAULT_MODEL;
-    if (model) {
-      args.push("-m", model);
-    }
-    return args;
-  }
-
-  private bindProcess(session: ActiveSession): void {
-    const child = session.process;
-    if (!child) {
-      throw new Error("Gemini CLI process not attached");
-    }
-    const { eventEmitter } = session;
-    child.stdout.on("data", (chunk: Buffer | string) => {
-      const buffer =
-        typeof chunk === "string" ? Buffer.from(chunk, "utf8") : chunk;
-      session.logger?.logCliOutput?.({ stream: "stdout", size: buffer.length });
-      if (this.messageProcessor) {
-        this.messageProcessor.handleStdout(session, buffer);
-      } else {
-        session.stdoutBuffer += buffer.toString("utf8");
-      }
-    });
-
-    child.stderr.on("data", (chunk: Buffer | string) => {
-      const text = typeof chunk === "string" ? chunk : chunk.toString("utf8");
-      session.logger?.logCliOutput?.({ stream: "stderr", text });
-      session.reporter?.warn?.("Gemini CLI stderr", {
-        sessionId: session.sessionId,
-        text,
-      });
-      eventEmitter.emit("error", {
-        type: "stderr",
-        provider: "gemini",
-        payload: { text },
-      });
-    });
-
-    child.once("exit", (code: number | null, signal: NodeJS.Signals | null) => {
-      this.finalizeSession(session, { code, signal });
-    });
-
-    child.once("error", (error) => {
-      session.logger?.logError?.({ error, stage: "process" });
-      session.reporter?.error?.("Gemini CLI process error", error, {
-        sessionId: session.sessionId,
-      });
-      eventEmitter.emit("error", {
-        type: "process_error",
-        provider: "gemini",
-        payload: { message: error.message },
-      });
-    });
-  }
-
-  private finalizeSession(
-    session: ActiveSession,
-    details: { code: number | null; signal: NodeJS.Signals | null }
-  ): void {
-    session.status = "closed";
-    session.handshakePending = false;
-    session.handshakePromise = null;
-    session.stdoutBuffer = "";
     session.logger?.end();
-    session.eventEmitter.emit("message", {
-      type: "system",
-      provider: "gemini",
-      content: this.describeExit(details),
-      payload: details,
-    });
-    this.messageProcessor?.handleProcessExit(session, details);
-    if (session.process) {
-      session.process.stdout.removeAllListeners();
-      session.process.stderr.removeAllListeners();
-      session.process.removeAllListeners();
-    }
-    session.process = null;
-
-    if (session.markedForDeletion) {
-      this.sessions.delete(session.sessionId);
-      session.eventEmitter.removeAllListeners();
-      session.markedForDeletion = false;
-    }
-  }
-
-  private describeExit(details: {
-    code: number | null;
-    signal: NodeJS.Signals | null;
-  }): string {
-    if (details.signal) {
-      return `Gemini CLI exited via signal ${details.signal}`;
-    }
-    return `Gemini CLI exited with code ${details.code ?? "unknown"}`;
-  }
-
-  private async waitForExit(
-    session: ActiveSession,
-    timeoutMs: number
-  ): Promise<boolean> {
-    if (!session.process) {
-      return true;
-    }
-    const result = await Promise.race([
-      once(session.process, "exit"),
-      delay(timeoutMs, TIMEOUT_TOKEN),
+    session.status = "closed";
+    this.sessions.delete(sessionId);
+    this.emitEvents(session, [
+      {
+        type: "system",
+        provider: "gemini",
+        content: "Gemini session closed.",
+      },
     ]);
-    return result !== TIMEOUT_TOKEN;
+  }
+
+  private async runTurn(
+    session: ActiveSession,
+    parts: readonly Part[],
+    promptId: string,
+    signal: AbortSignal
+  ): Promise<GeminiTurnResult> {
+    const messageProcessor = new GeminiMessageProcessor({
+      reporter: session.reporter,
+    });
+    const accumulator = messageProcessor.createAccumulator(promptId);
+
+    const stream = session.client.sendMessageStream(
+      Array.from(parts) as Part[],
+      signal,
+      promptId
+    );
+
+    for await (const event of stream as AsyncGenerator<ServerGeminiStreamEvent>) {
+      const outcome = messageProcessor.handleEvent(session, event, accumulator);
+      this.emitEvents(session, outcome.events);
+    }
+
+    return messageProcessor.finalize(accumulator);
+  }
+
+  private async processTurns(
+    context: ProcessTurnContext
+  ): Promise<ConversationResult> {
+    const { session, parts, promptId, signal, depth } = context;
+    if (depth >= MAX_TOOL_CALL_CHAIN_DEPTH) {
+      return {
+        text: "",
+        citations: [],
+        usage: undefined,
+        depthExceeded: true,
+      };
+    }
+
+    const turnResult = await this.runTurn(session, parts, promptId, signal);
+    let responseText = turnResult.responseText;
+    let citations = [...turnResult.citations];
+    let usage = turnResult.usage;
+    let depthExceeded = false;
+
+    if (turnResult.toolRequests.length === 0) {
+      return {
+        text: responseText,
+        citations,
+        usage,
+        depthExceeded,
+      };
+    }
+
+    const outcome = await this.executeToolCalls(
+      session,
+      turnResult.toolRequests,
+      signal
+    );
+    this.emitEvents(session, outcome.events);
+
+    try {
+      const model =
+        session.client.getCurrentSequenceModel() ?? session.config.getModel();
+      session.client
+        .getChat()
+        .recordCompletedToolCalls(model, outcome.completedCalls);
+    } catch (error) {
+      session.reporter?.warn?.("Failed to record Gemini tool calls", {
+        message: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    const nextParts =
+      outcome.parts.length > 0
+        ? outcome.parts
+        : [
+            {
+              text: TOOL_RESPONSE_FALLBACK,
+            },
+          ];
+
+    const nested = await this.processTurns({
+      session,
+      parts: nextParts,
+      promptId,
+      signal,
+      depth: depth + 1,
+    });
+
+    responseText += nested.text;
+    citations = citations.concat(nested.citations);
+    usage = nested.usage ?? usage;
+    depthExceeded = nested.depthExceeded;
+
+    return {
+      text: responseText,
+      citations,
+      usage,
+      depthExceeded,
+    };
+  }
+
+  private async executeToolCalls(
+    session: ActiveSession,
+    requests: readonly ToolCallRequestInfo[],
+    signal: AbortSignal
+  ): Promise<ToolExecutionOutcome> {
+    const events: GeminiSessionEvent[] = [];
+    const responseParts: Part[] = [];
+    const completedCalls: CompletedToolCall[] = [];
+
+    for (const request of requests) {
+      session.logger?.logEvent({
+        type: "tool_execution_start",
+        tool: request.name,
+        callId: request.callId,
+      });
+
+      events.push({
+        type: "system",
+        provider: "gemini",
+        content: `Executing tool "${request.name}" (call ${request.callId}).`,
+        data: {
+          callId: request.callId,
+          tool: request.name,
+          args: request.args,
+        },
+      });
+
+      const completedCall = await executeToolCall(
+        session.config,
+        request,
+        signal
+      );
+      completedCalls.push(completedCall);
+
+      const toolResponse = completedCall.response;
+      if (Array.isArray(toolResponse?.responseParts)) {
+        responseParts.push(...toolResponse.responseParts);
+      } else if (typeof toolResponse?.resultDisplay === "string") {
+        responseParts.push({ text: toolResponse.resultDisplay });
+      }
+
+      events.push({
+        type: "system",
+        provider: "gemini",
+        content: toolResponse?.error
+          ? `Tool "${request.name}" returned an error.`
+          : `Tool "${request.name}" completed successfully.`,
+        data: {
+          callId: request.callId,
+          status: completedCall.status,
+          error: toolResponse?.error,
+        },
+      });
+
+      if (toolResponse?.error) {
+        session.logger?.logError({
+          error: toolResponse.error,
+          callId: request.callId,
+          tool: request.name,
+        });
+      } else {
+        session.logger?.logEvent({
+          type: "tool_execution_complete",
+          tool: request.name,
+          callId: request.callId,
+        });
+      }
+    }
+
+    return {
+      parts: responseParts,
+      events,
+      completedCalls,
+    };
+  }
+
+  private sanitizeEnvironment(): void {
+    for (const key of GEMINI_ENV_KEYS_TO_CLEAR) {
+      if (process.env[key]) {
+        delete process.env[key];
+      }
+    }
+  }
+
+  private createArgv(options: SessionCreationOptions): CliArgs {
+    return {
+      query: undefined,
+      model: options.defaultModel,
+      sandbox: undefined,
+      debug: false,
+      prompt: undefined,
+      promptInteractive: undefined,
+      yolo: false,
+      approvalMode: undefined,
+      allowedMcpServerNames: undefined,
+      allowedTools: undefined,
+      experimentalAcp: false,
+      extensions: undefined,
+      listExtensions: false,
+      includeDirectories: [],
+      screenReader: undefined,
+      useSmartEdit: undefined,
+      useWriteTodos: undefined,
+      outputFormat: "json",
+    };
+  }
+
+  private resolveAuthType(selected?: string): AuthType {
+    switch (selected) {
+      case AuthType.LOGIN_WITH_GOOGLE:
+      case "oauth-personal":
+      case "login_with_google":
+        return AuthType.LOGIN_WITH_GOOGLE;
+      case AuthType.USE_GEMINI:
+      case "gemini-api-key":
+        return AuthType.USE_GEMINI;
+      case AuthType.USE_VERTEX_AI:
+      case "vertex-ai":
+        return AuthType.USE_VERTEX_AI;
+      case AuthType.CLOUD_SHELL:
+      case "cloud-shell":
+        return AuthType.CLOUD_SHELL;
+      default:
+        return AuthType.LOGIN_WITH_GOOGLE;
+    }
+  }
+
+  private emitEvents(
+    session: ActiveSession,
+    events: readonly GeminiSessionEvent[]
+  ): void {
+    for (const event of events) {
+      session.eventEmitter.emit("message", event);
+    }
+  }
+
+  private requireSession(sessionId: string): ActiveSession {
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      throw new Error(`Gemini session ${sessionId} not found.`);
+    }
+    return session;
   }
 }
