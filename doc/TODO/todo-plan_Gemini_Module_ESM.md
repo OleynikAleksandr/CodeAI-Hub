@@ -9,15 +9,15 @@
 ## Gemini Module ESM Migration (owner: Codex, updated: 2025-10-29)
 **Цель:** Перевести `packages/Gemini_Module` на ESM и прямую работу с `@google/gemini-cli-core`, сохранив интерфейсы для ядра и UI без изменений для других провайдеров.
 
-- [TODO] Шаг 1: Уточнить объём миграции — зафиксировать переход на ESM, список зависимостей (`@google/gemini-cli-core`, вспомогательные пакеты), оценить текущие CJS-ограничения и обновить архитектурные документы рисками.
+- [DONE] Шаг 1: Уточнить объём миграции — зафиксировать переход на ESM, список зависимостей (`@google/gemini-cli-core`, вспомогательные пакеты), оценить текущие CJS-ограничения и обновить архитектурные документы рисками.
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Notes: Подготовить короткое резюме для `doc/Architecture/Architecture.md` и `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` до старта разработки.
-  - Commit: (pending)
-- [TODO] Шаг 2: Перевести конфигурацию пакета на ESM — обновить `package.json` (`type: "module"`, exports), пересобрать `tsconfig.json`, настроить сборку (`dist/esm`), добавить зависимости на CLI core.
+  - Commit: f717d20 — docs: outline gemini esm migration scope
+- [DONE] Шаг 2: Перевести конфигурацию пакета на ESM — обновить `package.json` (`type: "module"`, exports), пересобрать `tsconfig.json`, настроить сборку (`dist/esm`), добавить зависимости на CLI core.
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Notes: Убедиться, что импорты в ядре корректно подхватывают новые entrypoints.
   - Commit: (pending)
-- [TODO] Шаг 3: Переписать провайдер на `loadSettings`/`loadCliConfig` — реализовать ESM-слой сессий, адаптер стриминга и mock extension manager для интеграции с `GeminiClient`.
+- [IN_PROGRESS] Шаг 3: Переписать провайдер на `loadSettings`/`loadCliConfig` — реализовать ESM-слой сессий, адаптер стриминга и mock extension manager для интеграции с `GeminiClient`.
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Notes: Сохранить контракты событий для RemoteBridge и описать обработку ошибок.
   - Commit: (pending)
