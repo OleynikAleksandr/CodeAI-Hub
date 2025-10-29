@@ -17,6 +17,11 @@ CodeAI-Hub — это автономная платформа управлени
 - Провайдерные пакеты раскладываются в `~/.codeai-hub/providers/<stack>/<version>/`; для нового Gemini модуля — `~/.codeai-hub/providers/gemini/<версия>/`.
 - Инсталляторы VS Code сначала проверяют локальные установки и кэшированные архивы (`downloads/`, `~/.codeai-hub/releases/`) и только затем обращаются к URL из манифестов. Ошибки скачивания теперь указывают компонент (`CEF runtime`, `Claude module`, `Codex module`, `Core orchestrator`).
 
+## Обновления релиза 1.1.33 (2025-10-29)
+- Gemini-модуль обновлён до `0.2.0`: пакет поставляется как ESM, напрямую использует `@google/gemini-cli-core`, а провайдер ядра создаёт сессии без запуска CLI-процесса.
+- Сборочный скрипт `build-gemini-module.sh` теперь устанавливает runtime-зависимости в архив, а манифест `assets/providers/gemini/manifest.json` указывает на `gemini-module-0.2.0.tar.bz2`.
+- Core orchestrator пересобран как `0.2.11` (darwin-arm64), загрузка провайдера Gemini переведена на асинхронный импорт; манифест `assets/core/manifest.json` ссылается на новый архив.
+
 ## Обновления релиза 1.1.32 (2025-10-28)
 - Gemini-модуль обновлён до `0.1.3`: процесс CLI автоматически перезапускается, subscribers не теряются, а реальный `sessionId` подтягивается из `logs.json`/чата.
 - Core orchestrator пересобран до `0.2.10`, чтобы в snapshot попала новая логика Gemini-модуля и автономный запуск не расходился с workspace-версией.

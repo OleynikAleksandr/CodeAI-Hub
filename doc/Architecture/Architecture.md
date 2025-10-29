@@ -95,14 +95,19 @@ graph TD
 - **Slug parity**: Core сохраняет ведущий дефис в `claudeProjectSlug`, благодаря чему SDK пишет в те же каталоги `~/.claude/projects/-<slug>` что и Claude Code CLI. Это важно для resume/JSONL-лога.
 - **Provider registry hygiene**: `ProviderRegistry` объявляет только активный Claude-провайдер; заглушки Codex/Gemini удалены, UI больше их не показывает.
 
-## Known Limitations (2025-10-28)
+## Recent Changes (v1.1.33 - 2025-10-29)
+- Gemini module rebuilt as ESM on top of `@google/gemini-cli-core`; provider registry now resolves the adapter asynchronously and no longer shells out to the CLI bridge.
+- Release tooling (`build-gemini-module.sh`) installs runtime `node_modules` into the published tarball, and manifests reference `gemini-module-0.2.0.tar.bz2`.
+- Core orchestrator updated to load providers lazily and ships as v0.2.11 in the release manifest for darwin-arm64.
+
+## Known Limitations (2025-10-29)
 - `packages/Claude_Module` пока не приведён к полному набору стайлгайдов Ultracite (публичные модификаторы, порядок импортов). Release 1.1.16 закрывает блокер запуска, но линтинг предстоит в отдельной фазе.
-- `@codeai-hub/gemini-module` полагается на предварительно установленный `@google/gemini-cli` и ручной OAuth-логин. Windows-поддержка и расширенный логгинг CLI запланированы отдельно.
+- Gemini модуль по-прежнему зависит от предварительной авторизации OAuth в `~/.gemini`; поддержка Windows и расширенный логгер остаются в планах.
 
 ## Upcoming Work (2025-10-29)
-- Migrate `packages/Gemini_Module` to ESM and integrate directly with `@google/gemini-cli-core`, removing the long-lived CLI process bridge while keeping existing core/UI contracts stable.
-- Update Gemini installer/build pipeline to ship `node_modules` assets for the new ESM bundle and refresh provider manifests plus release tooling.
-- Re-validate RemoteBridge streaming with the ESM provider and document telemetry adjustments once end-to-end testing is complete.
+- Расширить сборку ядра 0.2.11 на остальные платформы (darwin-x64, win32-x64, linux-x64) и обновить соответствующие записи в манифесте.
+- Провести e2e-регрессию UI/RemoteBridge с обновлённым ESM-провайдером и задокументировать выводы в Telemetry checklist.
+- Подготовить план тестирования Windows-пакета для ESM Gemini модуля после подтверждения работоспособности macOS/Linux.
 
 ## Related Documents
 - `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`

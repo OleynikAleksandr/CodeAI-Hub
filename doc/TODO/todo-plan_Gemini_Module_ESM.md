@@ -29,10 +29,10 @@
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
   - Notes: Задокументировать результаты в `SystemArchitecture`/`Architecture` и Telemetry checklist.
   - Commit: 8e575ab — chore: align core with gemini esm provider
-- [TODO] Шаг 6: Подготовка к релизу — финализировать документацию, обновить манифесты и версии, пересобрать архив Gemini Module и VSIX, подготовить отчёт сессии.
+- [DONE] Шаг 6: Подготовка к релизу — финализировать документацию, обновить манифесты и версии, пересобрать архив Gemini Module и VSIX, подготовить отчёт сессии.
   - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Notes: Соблюсти правила версионирования (module + core + VSIX) и зафиксировать результаты в `doc/Sessions/`.
-  - Commit: (pending)
+  - Notes: Соблюдено инкрементирование версий (`gemini-module@0.2.0`, `core@0.2.11`, VSIX 1.1.33); манифесты core/gemini обновлены, документация синхронизирована.
+  - Commit: 91787c8 — release: gemini provider esm artifacts
 
 ## Backlog / Parking Lot
 - [TODO] Мониторить поддержку стриминга в `@google/gemini-cli-core` для последующих обновлений.
