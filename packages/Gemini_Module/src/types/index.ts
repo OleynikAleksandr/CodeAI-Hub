@@ -8,7 +8,6 @@ export type GeminiWorkspaceOptions = {
   readonly workspacePath: string;
   readonly defaultModel?: string;
   readonly settingsPath?: string;
-  readonly binaryPathOverride?: string;
 };
 
 export type GeminiCredentialsOptions = {
@@ -31,7 +30,6 @@ export type GeminiModuleOptions = {
   readonly workspace: GeminiWorkspaceOptions;
   readonly reporter?: ModuleReporter;
   readonly enableDebugLogging?: boolean;
-  readonly minimumVersion?: string;
   readonly credentials?: GeminiCredentialsOptions;
 };
 
