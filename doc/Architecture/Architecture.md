@@ -1,7 +1,7 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.3.5
-**Last Updated:** 2025-10-28
+**Version:** 0.3.6
+**Last Updated:** 2025-10-29
 **Status:** Active reference
 
 ---
@@ -98,6 +98,11 @@ graph TD
 ## Known Limitations (2025-10-28)
 - `packages/Claude_Module` пока не приведён к полному набору стайлгайдов Ultracite (публичные модификаторы, порядок импортов). Release 1.1.16 закрывает блокер запуска, но линтинг предстоит в отдельной фазе.
 - `@codeai-hub/gemini-module` полагается на предварительно установленный `@google/gemini-cli` и ручной OAuth-логин. Windows-поддержка и расширенный логгинг CLI запланированы отдельно.
+
+## Upcoming Work (2025-10-29)
+- Migrate `packages/Gemini_Module` to ESM and integrate directly with `@google/gemini-cli-core`, removing the long-lived CLI process bridge while keeping existing core/UI contracts stable.
+- Update Gemini installer/build pipeline to ship `node_modules` assets for the new ESM bundle and refresh provider manifests plus release tooling.
+- Re-validate RemoteBridge streaming with the ESM provider and document telemetry adjustments once end-to-end testing is complete.
 
 ## Related Documents
 - `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
