@@ -103,6 +103,12 @@ echo ""
 echo "🔁 Checking code duplication (jscpd)..."
 npm run -s check:dup || echo "⚠️  Duplication threshold exceeded (advisory)"
 
+# Step 8.5: Prune dev dependencies before packaging
+echo ""
+echo "🧼 Removing dev dependencies before packaging..."
+npm prune --omit=dev >/dev/null
+echo "✅ Production dependency tree ready"
+
 # Step 9: Package extension
 echo ""
 echo "📦 Step 9: Creating VSIX package..."
