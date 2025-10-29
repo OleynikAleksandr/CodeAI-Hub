@@ -247,9 +247,7 @@ export class ProviderRegistry {
       codexSkipGitRepoCheck,
       geminiWorkspacePath,
       geminiDefaultModel,
-      geminiBinaryPathOverride,
       geminiCredentialsDirectory,
-      geminiMinimumVersion,
     } = this.options.config;
 
     const codexAdapter = new this.codexAdapterCtor({
@@ -264,27 +262,22 @@ export class ProviderRegistry {
       reporter: this.createReporter("codex"),
     });
 
-    const geminiCredentials =
-      geminiCredentialsDirectory ||
-      geminiMinimumVersion ||
-      geminiBinaryPathOverride
-        ? {
-            directory: geminiCredentialsDirectory,
-            requiredFiles: ["oauth_creds.json", "credentials.json"],
-          }
-        : {
-            requiredFiles: ["oauth_creds.json", "credentials.json"],
-          };
+    const geminiCredentials = geminiCredentialsDirectory
+      ? {
+          directory: geminiCredentialsDirectory,
+          requiredFiles: ["oauth_creds.json", "credentials.json"],
+        }
+      : {
+          requiredFiles: ["oauth_creds.json", "credentials.json"],
+        };
 
     const geminiAdapter = new this.geminiAdapterCtor({
       installerPaths: GEMINI_INSTALLER_PATHS,
       workspace: {
         workspacePath: geminiWorkspacePath,
         defaultModel: geminiDefaultModel,
-        binaryPathOverride: geminiBinaryPathOverride,
       },
       reporter: this.createReporter("gemini"),
-      minimumVersion: geminiMinimumVersion,
       credentials: geminiCredentials,
     });
 
