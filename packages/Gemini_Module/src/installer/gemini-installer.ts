@@ -4,7 +4,7 @@ import { access } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import type { GeminiInstallerPaths, ModuleReporter } from "../types";
+import type { GeminiInstallerPaths, ModuleReporter } from "../types/index.js";
 
 const HOME_DIRECTORY_PATTERN = /^~(?=$|\/|\\)/u;
 const USERPROFILE_PATTERN = /%USERPROFILE%/giu;

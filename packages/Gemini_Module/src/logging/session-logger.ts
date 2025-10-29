@@ -1,4 +1,4 @@
-import type { ModuleReporter } from "../types";
+import type { ModuleReporter } from "../types/index.js";
 
 export class GeminiSessionLogger {
   private readonly reporter?: ModuleReporter;

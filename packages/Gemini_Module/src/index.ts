@@ -1,4 +1,4 @@
-import { GeminiProviderAdapter as GeminiProviderAdapterImpl } from "./provider/gemini-provider-adapter";
+import { GeminiProviderAdapter as GeminiProviderAdapterImpl } from "./provider/gemini-provider-adapter.js";
 import type {
   GeminiCredentialsOptions as GeminiCredentialsOptionsType,
   GeminiInstallerPaths as GeminiInstallerPathsType,
@@ -6,7 +6,7 @@ import type {
   GeminiSessionEvent as GeminiSessionEventType,
   GeminiWorkspaceOptions as GeminiWorkspaceOptionsType,
   ModuleReporter as ModuleReporterType,
-} from "./types";
+} from "./types/index.js";
 
 const GeminiProviderAdapter = GeminiProviderAdapterImpl;
 type GeminiInstallerPaths = GeminiInstallerPathsType;

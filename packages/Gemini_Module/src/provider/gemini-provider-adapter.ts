@@ -1,8 +1,7 @@
-import { GeminiInstaller } from "../installer/gemini-installer";
-import { GeminiSessionLogger } from "../logging/session-logger";
-import { GeminiMessageProcessor } from "../messaging/message-processor";
-import { GeminiSessionManager } from "../session/gemini-session-manager";
-import type { GeminiModuleOptions } from "../types";
+import { GeminiInstaller } from "../installer/gemini-installer.js";
+import { GeminiSessionLogger } from "../logging/session-logger.js";
+import { GeminiSessionManager } from "../session/gemini-session-manager.js";
+import type { GeminiModuleOptions } from "../types/index.js";
 
 export type SessionListener = (payload: unknown) => void;
 
@@ -10,8 +9,6 @@ export class GeminiProviderAdapter {
   private readonly installer: GeminiInstaller;
 
   private readonly sessionManager: GeminiSessionManager;
-
-  private readonly messageProcessor: GeminiMessageProcessor;
 
   private readonly listeners = new Map<string, Set<SessionListener>>();
 
@@ -27,27 +24,20 @@ export class GeminiProviderAdapter {
       requiredCredentialFiles: options.credentials?.requiredFiles,
     });
     this.sessionManager = new GeminiSessionManager();
-    this.messageProcessor = new GeminiMessageProcessor({
-      reporter: options.reporter,
-    });
-    this.sessionManager.setMessageProcessor(this.messageProcessor);
   }
 
   async initialize(): Promise<void> {
     await this.installer.ensureInstalled();
-    const binaryPath = this.installer.getBinaryPath();
     this.options.reporter?.info?.("Gemini provider initialized", {
-      binaryPath,
       version: this.installer.getDetectedVersion(),
     });
   }
 
-  createSession(): Promise<string> {
+  async createSession(): Promise<string> {
     const logger = new GeminiSessionLogger(this.options.reporter);
-    const { sessionId, session } = this.sessionManager.createSession({
-      binaryPath: this.installer.getBinaryPath(),
-      model: this.options.workspace.defaultModel,
-      cwd: this.options.workspace.workspacePath,
+    const { sessionId, session } = await this.sessionManager.createSession({
+      workspacePath: this.options.workspace.workspacePath,
+      defaultModel: this.options.workspace.defaultModel,
       reporter: this.options.reporter,
       logger,
     });
@@ -59,12 +49,8 @@ export class GeminiProviderAdapter {
     };
     session.eventEmitter.on("message", forwardMessage);
     session.eventEmitter.on("error", forwardError);
-    session.eventEmitter.emit("message", {
-      type: "system",
-      provider: "gemini",
-      content: `Gemini CLI session started (model: ${session.model ?? "default"})`,
-    });
-    return Promise.resolve(sessionId);
+    session.eventEmitter.on("realSessionId", forwardMessage);
+    return sessionId;
   }
 
   async closeSession(sessionId: string): Promise<void> {
@@ -77,7 +63,7 @@ export class GeminiProviderAdapter {
       await this.sessionManager.sendMessage(sessionId, content);
     } catch (error) {
       this.options.reporter?.error?.(
-        "Failed to send message to Gemini CLI",
+        "Failed to send message to Gemini provider",
         error,
         {
           sessionId,

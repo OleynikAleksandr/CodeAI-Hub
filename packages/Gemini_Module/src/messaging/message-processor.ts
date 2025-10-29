@@ -1,200 +1,364 @@
-import type { ActiveSession } from "../session/types";
-import type { ModuleReporter } from "../types";
+import {
+  GeminiEventType,
+  type ServerGeminiStreamEvent,
+  type ToolCallRequestInfo,
+} from "@google/gemini-cli-core/dist/src/core/turn.js";
+import type { ThoughtSummary } from "@google/gemini-cli-core/dist/src/utils/thoughtUtils.js";
+import type { UsageMetadata } from "@google/genai";
+import type { ActiveSession } from "../session/types.js";
+import type { GeminiSessionEvent, ModuleReporter } from "../types/index.js";
 
-const MAX_RECURSION_DEPTH = 6;
+type TurnAccumulator = {
+  readonly promptId: string;
+  responseChunks: string[];
+  citations: string[];
+  toolRequests: ToolCallRequestInfo[];
+  usage?: UsageMetadata;
+};
+
+type HandleEventOutcome = {
+  readonly events: readonly GeminiSessionEvent[];
+};
+
+type GeminiTurnEvent = ServerGeminiStreamEvent;
 
 type GeminiMessageProcessorOptions = {
   readonly reporter?: ModuleReporter;
 };
 
+type EventHandler = (
+  session: ActiveSession,
+  event: ServerGeminiStreamEvent,
+  accumulator: TurnAccumulator
+) => readonly GeminiSessionEvent[];
+
 export class GeminiMessageProcessor {
   private readonly reporter?: ModuleReporter;
 
-  constructor(options?: GeminiMessageProcessorOptions) {
-    this.reporter = options?.reporter;
+  private readonly eventHandlers: Map<GeminiEventType, EventHandler>;
+
+  constructor(options: GeminiMessageProcessorOptions = {}) {
+    this.reporter = options.reporter;
+    this.eventHandlers = new Map<GeminiEventType, EventHandler>([
+      [GeminiEventType.Content, this.handleContentEvent.bind(this)],
+      [GeminiEventType.Citation, this.handleCitationEvent.bind(this)],
+      [
+        GeminiEventType.ToolCallRequest,
+        this.handleToolCallRequestEvent.bind(this),
+      ],
+      [
+        GeminiEventType.ToolCallResponse,
+        this.handleToolCallResponseEvent.bind(this),
+      ],
+      [
+        GeminiEventType.ToolCallConfirmation,
+        this.handleToolCallConfirmationEvent.bind(this),
+      ],
+      [
+        GeminiEventType.ChatCompressed,
+        this.handleChatCompressedEvent.bind(this),
+      ],
+      [
+        GeminiEventType.ContextWindowWillOverflow,
+        this.handleContextOverflowEvent.bind(this),
+      ],
+      [GeminiEventType.Retry, this.handleRetryEvent.bind(this)],
+      [GeminiEventType.Thought, this.handleThoughtEvent.bind(this)],
+      [
+        GeminiEventType.MaxSessionTurns,
+        this.handleMaxSessionTurnsEvent.bind(this),
+      ],
+      [GeminiEventType.LoopDetected, this.handleLoopDetectedEvent.bind(this)],
+      [GeminiEventType.InvalidStream, this.handleInvalidStreamEvent.bind(this)],
+      [GeminiEventType.Finished, this.handleFinishedEvent.bind(this)],
+    ]);
   }
 
-  handleStdout(session: ActiveSession, chunk: Buffer): void {
-    session.stdoutBuffer += chunk.toString("utf8");
-    let newlineIndex = session.stdoutBuffer.indexOf("\n");
-    while (newlineIndex !== -1) {
-      const raw = session.stdoutBuffer.slice(0, newlineIndex).trim();
-      session.stdoutBuffer = session.stdoutBuffer.slice(newlineIndex + 1);
-      if (raw.length > 0) {
-        this.processLine(session, raw);
-      }
-      newlineIndex = session.stdoutBuffer.indexOf("\n");
-    }
+  createAccumulator(promptId: string): TurnAccumulator {
+    return {
+      promptId,
+      responseChunks: [],
+      citations: [],
+      toolRequests: [],
+    };
   }
 
-  handleProcessExit(
+  handleEvent(
     session: ActiveSession,
-    details: { code: number | null; signal: NodeJS.Signals | null }
-  ): void {
-    if (session.stdoutBuffer.trim().length > 0) {
-      this.processLine(session, session.stdoutBuffer.trim());
-      session.stdoutBuffer = "";
+    event: GeminiTurnEvent,
+    accumulator: TurnAccumulator
+  ): HandleEventOutcome {
+    const handler = this.eventHandlers.get(event.type);
+    if (handler) {
+      return { events: handler(session, event, accumulator) };
     }
-    session.logger?.logEvent({ type: "gemini_exit", details });
+
+    if (event.type === GeminiEventType.Error) {
+      throw this.toError(event.value);
+    }
+
+    if (event.type === GeminiEventType.UserCancelled) {
+      throw new Error("Gemini cancelled the request.");
+    }
+
+    return { events: [] };
   }
 
-  private processLine(session: ActiveSession, raw: string): void {
-    try {
-      const parsed = JSON.parse(raw) as unknown;
-      session.logger?.logCliOutput?.({ stream: "stdout", raw });
-      this.emitAssistantEvent(session, parsed);
-    } catch (error) {
-      this.reporter?.warn?.("Failed to parse Gemini CLI output", {
-        sessionId: session.sessionId,
-        raw,
-      });
-      session.logger?.logError?.({ error, raw, stage: "parse" });
-      session.eventEmitter.emit("error", {
-        type: "parse_error",
-        provider: "gemini",
-        payload: {
-          raw,
-          message: error instanceof Error ? error.message : String(error),
-        },
-      });
-    }
+  finalize(accumulator: TurnAccumulator): {
+    readonly responseText: string;
+    readonly citations: readonly string[];
+    readonly usage?: UsageMetadata;
+    readonly toolRequests: readonly ToolCallRequestInfo[];
+  } {
+    return {
+      responseText: accumulator.responseChunks.join(""),
+      citations: accumulator.citations,
+      usage: accumulator.usage,
+      toolRequests: accumulator.toolRequests,
+    };
   }
 
-  private emitAssistantEvent(session: ActiveSession, payload: unknown): void {
-    if (session.handshakePending) {
-      session.logger?.logEvent({
-        direction: "incoming",
-        suppressed: "handshake",
-      });
-      return;
+  private handleContentEvent(
+    session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event);
+    const chunk = typeof value === "string" ? value : "";
+    if (chunk.length > 0) {
+      accumulator.responseChunks.push(chunk);
+      session.logger?.logEvent({ direction: "incoming", chunk });
     }
-    const content = this.extractText(payload);
-    session.logger?.logEvent({ direction: "incoming", content });
-    session.eventEmitter.emit("message", {
-      type: "assistant",
-      provider: "gemini",
-      content,
-      data: payload,
+    return [];
+  }
+
+  private handleCitationEvent(
+    _session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event);
+    if (typeof value === "string") {
+      accumulator.citations.push(value);
+    }
+    return [];
+  }
+
+  private handleToolCallRequestEvent(
+    session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event);
+    if (!this.isToolCallRequestInfo(value)) {
+      return [];
+    }
+
+    accumulator.toolRequests.push(value);
+    session.logger?.logEvent({
+      type: "tool_call_request",
+      promptId: accumulator.promptId,
+      tool: value.name,
+      callId: value.callId,
     });
-  }
 
-  private extractText(payload: unknown): string {
-    const visited = new Set<unknown>();
-    const stack: Array<{ value: unknown; depth: number }> = [
-      { value: payload, depth: 0 },
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content: `Gemini requested tool "${value.name}" (call ${value.callId}).`,
+        data: {
+          callId: value.callId,
+          tool: value.name,
+          args: value.args,
+        },
+      },
     ];
-
-    while (stack.length > 0) {
-      const current = stack.pop();
-      if (!current) {
-        break;
-      }
-      const { value, depth } = current;
-      if (this.shouldSkipNode(value, depth)) {
-        continue;
-      }
-
-      const directString = this.tryExtractString(value);
-      if (directString) {
-        return directString;
-      }
-
-      const collectionResult = this.processCollection(
-        stack,
-        value,
-        depth,
-        visited
-      );
-      if (collectionResult.text) {
-        return collectionResult.text;
-      }
-    }
-
-    return this.safeStringify(payload);
   }
 
-  private shouldSkipNode(value: unknown, depth: number): boolean {
-    return value === null || depth > MAX_RECURSION_DEPTH;
+  private handleToolCallResponseEvent(
+    _session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    _accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event);
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content: "Gemini received tool response.",
+        data: value ? { response: value } : undefined,
+      },
+    ];
   }
 
-  private tryExtractString(candidate: unknown): string | null {
-    if (typeof candidate !== "string") {
-      return null;
-    }
-    const trimmed = candidate.trim();
-    return trimmed.length > 0 ? trimmed : null;
+  private handleToolCallConfirmationEvent(
+    _session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    _accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event);
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content: "Gemini confirmed tool execution.",
+        data: value ? { confirmation: value } : undefined,
+      },
+    ];
   }
 
-  private enqueueArrayChildren(
-    stack: Array<{ value: unknown; depth: number }>,
-    source: readonly unknown[],
-    depth: number
-  ): void {
-    for (let index = source.length - 1; index >= 0; index -= 1) {
-      stack.push({ value: source[index], depth: depth + 1 });
-    }
+  private handleChatCompressedEvent(
+    _session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    _accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event);
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content:
+          "Gemini compressed conversation context to remain within token limits.",
+        data: value ? { compression: value } : undefined,
+      },
+    ];
   }
 
-  private enqueueObjectChildren(
-    stack: Array<{ value: unknown; depth: number }>,
-    source: Record<string, unknown>,
-    depth: number
-  ): void {
-    const keys = Object.keys(source);
-    for (let index = keys.length - 1; index >= 0; index -= 1) {
-      const key = keys[index];
-      stack.push({ value: source[key], depth: depth + 1 });
-    }
+  private handleContextOverflowEvent(
+    _session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    _accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event);
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content: "Gemini detected the context window is nearly full.",
+        data: value ? { context: value } : undefined,
+      },
+    ];
   }
 
-  private processCollection(
-    stack: Array<{ value: unknown; depth: number }>,
-    candidate: unknown,
-    depth: number,
-    visited: Set<unknown>
-  ): { readonly handled: boolean; readonly text?: string } {
-    if (Array.isArray(candidate)) {
-      this.enqueueArrayChildren(stack, candidate, depth);
-      return { handled: true };
-    }
+  private handleRetryEvent(
+    _session: ActiveSession,
+    _event: ServerGeminiStreamEvent,
+    accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    accumulator.responseChunks = [];
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content: "Gemini is retrying the request due to stream inconsistency.",
+      },
+    ];
+  }
 
-    if (typeof candidate !== "object" || candidate === null) {
-      return { handled: false };
+  private handleThoughtEvent(
+    _session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    _accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event);
+    if (!value || typeof value !== "object") {
+      return [];
     }
+    const thought = value as ThoughtSummary;
+    const description =
+      typeof thought.description === "string" ? thought.description : undefined;
+    const subject =
+      typeof thought.subject === "string" ? thought.subject : undefined;
+    const content = subject
+      ? `Gemini shared a thought: ${subject}`
+      : "Gemini shared an intermediate thought.";
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content,
+        data: {
+          subject,
+          description,
+        },
+      },
+    ];
+  }
 
-    if (visited.has(candidate)) {
-      return { handled: true };
+  private handleMaxSessionTurnsEvent(): readonly GeminiSessionEvent[] {
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content: "Gemini reached the maximum allowed session turns.",
+      },
+    ];
+  }
+
+  private handleLoopDetectedEvent(): readonly GeminiSessionEvent[] {
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content:
+          "Gemini detected a potential instruction loop and stopped the turn.",
+      },
+    ];
+  }
+
+  private handleInvalidStreamEvent(): readonly GeminiSessionEvent[] {
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content: "Gemini reported an invalid stream and will retry.",
+      },
+    ];
+  }
+
+  private handleFinishedEvent(
+    _session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event);
+    const metadata =
+      typeof value === "object" && value
+        ? (value as { usageMetadata?: UsageMetadata }).usageMetadata
+        : undefined;
+    accumulator.usage = metadata;
+    return [];
+  }
+
+  private isToolCallRequestInfo(
+    candidate: unknown
+  ): candidate is ToolCallRequestInfo {
+    if (!candidate || typeof candidate !== "object") {
+      return false;
     }
-    visited.add(candidate);
-
     const record = candidate as Record<string, unknown>;
-    const textFromFields = this.pickTextField(record);
-    if (textFromFields) {
-      return { handled: true, text: textFromFields };
-    }
-    this.enqueueObjectChildren(stack, record, depth);
-    return { handled: true };
+    return typeof record.callId === "string" && typeof record.name === "string";
   }
 
-  private pickTextField(candidate: Record<string, unknown>): string | null {
-    const textLikeKeys = ["text", "content", "message", "output"];
-    for (const key of textLikeKeys) {
-      const value = candidate[key];
-      if (typeof value === "string") {
-        const trimmed = value.trim();
-        if (trimmed.length > 0) {
-          return trimmed;
-        }
+  private toError(payload: unknown): Error {
+    if (payload && typeof payload === "object" && "error" in payload) {
+      const raw = (payload as { error?: unknown }).error;
+      if (raw && typeof raw === "object" && "message" in raw) {
+        const message = String((raw as { message?: unknown }).message ?? "");
+        return new Error(
+          message.length > 0 ? message : "Gemini reported an error."
+        );
       }
     }
-    return null;
+    const fallback = new Error("Gemini reported an unknown error.");
+    this.reporter?.error?.("Gemini stream error", fallback, {
+      payload,
+    });
+    return fallback;
   }
 
-  private safeStringify(payload: unknown): string {
-    try {
-      return JSON.stringify(payload);
-    } catch {
-      return String(payload);
-    }
+  private getEventValue(event: ServerGeminiStreamEvent): unknown {
+    return (event as { value?: unknown }).value;
   }
 }
