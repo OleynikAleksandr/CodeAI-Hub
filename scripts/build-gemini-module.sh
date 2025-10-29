@@ -86,7 +86,9 @@ STAGE_DIR="$(mktemp -d)"
 mkdir -p "$STAGE_DIR/dist"
 cp -R dist/* "$STAGE_DIR/dist/"
 cp package.json "$STAGE_DIR/package.json"
-cp package-lock.json "$STAGE_DIR/package-lock.json"
+if [[ -f package-lock.json ]]; then
+  cp package-lock.json "$STAGE_DIR/package-lock.json"
+fi
 
 echo "📦 Installing runtime dependencies..."
 (cd "$STAGE_DIR" && npm install --omit=dev --ignore-scripts >/dev/null)
