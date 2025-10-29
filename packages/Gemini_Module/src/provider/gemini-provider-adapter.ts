@@ -18,8 +18,6 @@ export class GeminiProviderAdapter {
     this.options = options;
     this.installer = new GeminiInstaller(options.installerPaths, {
       reporter: options.reporter,
-      binaryPathOverride: options.workspace.binaryPathOverride,
-      minimumVersion: options.minimumVersion,
       credentialsDirectory: options.credentials?.directory,
       requiredCredentialFiles: options.credentials?.requiredFiles,
     });

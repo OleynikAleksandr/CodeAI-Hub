@@ -86,8 +86,13 @@ STAGE_DIR="$(mktemp -d)"
 mkdir -p "$STAGE_DIR/dist"
 cp -R dist/* "$STAGE_DIR/dist/"
 cp package.json "$STAGE_DIR/package.json"
+cp package-lock.json "$STAGE_DIR/package-lock.json"
+
+echo "📦 Installing runtime dependencies..."
+(cd "$STAGE_DIR" && npm install --omit=dev --ignore-scripts >/dev/null)
 
 TARGET_DIR="$INSTALL_ROOT/$MODULE_VERSION"
+rm -rf "$TARGET_DIR"
 mkdir -p "$TARGET_DIR"
 cp -R "$STAGE_DIR"/* "$TARGET_DIR"
 echo -n "$MODULE_VERSION" > "$INSTALL_ROOT/latest"
