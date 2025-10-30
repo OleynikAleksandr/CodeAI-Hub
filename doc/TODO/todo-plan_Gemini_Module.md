@@ -1,52 +1,34 @@
-# Development TODO Plan — Gemini CLI Module
+# Development TODO Plan — Gemini Module (Node 20 + CLI Bridge)
 
-## Легенда
+## Legend
 - TODO — задача запланирована
 - IN_PROGRESS — работа ведётся
 - BLOCKED — требуется внешнее действие
 - DONE — задача завершена
 
-## Gemini CLI Module — Интеграция Google Gemini CLI (owner: Codex, updated: 2025-10-28)
-**Цель:** Подключить официальный `@google/gemini-cli` к CodeAI Hub: обнаружение CLI, управление OAuth, потоковая работа через stdin/stdout и единый формат сообщений.
+## Status Overview
+- Module version: `@codeai-hub/gemini-module@0.3.1`
+- Core version: `@codeai-hub/core@0.2.21`
+- VSIX version: `codeai-hub@1.1.73`
+- Runtime staging: `~/.codeai-hub/providers/gemini/0.3.1` (dist + vendor), официальные CLI пакеты подтягиваются при инициализации
 
-- [DONE] Шаг 1: Подготовить каркас пакета `packages/Gemini_Module` (структура каталогов, `package.json`, `tsconfig.json`, `src/index.ts`, базовые типы и заглушки).
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: 851c8d8 — feat: add gemini module skeleton
-- [DONE] Шаг 2: Реализовать Gemini CLI Installer (поиск бинаря, проверка версии, валидация OAuth-токена, логирование).
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: 4dc3502 — feat: implement gemini installer
-- [DONE] Шаг 3: Реализовать `GeminiSessionManager`, JSON message processor и `GeminiProviderAdapter` (запуск `gemini -o json`, подписка на stdout/stderr, преобразование ответов).
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: 74a4b3e — feat: implement gemini session pipeline
-- [DONE] Шаг 4: Подключить модуль к ядру (`packages/core`): обновить `ProviderRegistry`, конфигурацию и Remote Bridge для работы с Gemini.
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: 36dcd0e — feat: register gemini provider in core
-- [DONE] Шаг 5: Обновить UI/extension/standalone слои для выбора и отображения статуса Gemini (provider picker, настройки, сообщения).
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: 14cbfb3 — feat: surface gemini provider in ui
-- [DONE] Шаг 6: Актуализировать документацию и `doc/TODO/todo-plan_Gemini_Module.md` (описания архитектуры, состояние плана, фиксация выполненных шагов и их коммитов).
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: aa2708d — docs: document gemini integration
-- [DONE] Шаг 7: Добавить полнофункциональный сборщик `scripts/build-gemini-module.sh`, манифест `assets/providers/gemini/manifest.json` и обновить `release-utils.sh` (учёт gemini-архивов).
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: 0a225a6 — chore: add gemini module builder
-- [DONE] Шаг 8: Сформировать архив Gemini (скрипт `build-gemini-module.sh --version 0.1.0`), разложить в `doc/tmp/releases` и `~/.codeai-hub/providers/gemini/0.1.0`, обновить локальные кеши/манифест.
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: 00a6930 — chore: build gemini module v0.1.0
-- [DONE] Шаг 9: Собрать ядро `codeai-hub-core` версии 0.2.8 (скрипт `build-core.sh --version 0.2.8`), проверить установку в `~/.codeai-hub/core` и актуализацию манифестов.
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: dea4ed3 — chore: build core orchestrator v0.2.8
-- [DONE] Шаг 10: Пересобрать VSIX 1.1.27 (ручной `npm run compile` + `npx vsce package` после установки Gemini/Core), убедиться, что манифесты ссылок на актуальные артефакты добавлены.
-  - Checks: `npx ultracite fix` → `scripts/check-architecture.sh` → `npm run lint` → `npm run check:tsprune`
-  - Commit: packaging-only (изменения в Git не требовались)
-- [IN_PROGRESS] Шаг 11: Провести e2e-проверку — fresh install VSIX, запуск ядра, создание новой сессии Gemini, получение ответа. Зафиксировать результат и обновить документацию (при необходимости) + коммит.
-  - Notes: CLI `@google/gemini-cli@0.10.0`, модуль `0.1.3`, core `0.2.10`, VSIX 1.1.32. После публикации артефактов повторить ручной прогон UI и задокументировать результат.
-- [TODO] Шаг 12: Перенести runtime-зависимости Gemini Module из VSIX в внешние артефакты (`~/.codeai-hub/providers/gemini/<version>/node_modules`) по аналогии с CEF, обновить скрипты установки и проверок.
-  - Notes: Требуется пересмотреть `build-gemini-module.sh`, пакеты `@google/gemini-cli*` не должны попадать в VSIX напрямую.
-- [TODO] Шаг 13: Обновить release-пайплайн VSIX (скрипт `build-release.sh`, `.vscodeignore`) так, чтобы перед упаковкой удалялись рабочие `node_modules` провайдеров и гарантированно исключались из публикации.
-  - Notes: Цель — вернуть размер VSIX к прежнему уровню, оставив в пакете только манифесты и UI артефакты.
+## Phase 1 — Architecture Reset (owner: Codex, updated: 2025-10-30)
+- [DONE] Выделить новую архитектуру: чистый CJS-модуль, поставка Node 20 runtime, хранение всех артефактов в `~/.codeai-hub`. (docs обновлены)
+
+## Phase 2 — Adapter & Installer (owner: Codex, updated: 2025-10-30)
+- [DONE] Адаптер переписан на CJS, взаимодействует с CLI bridge.
+- [DONE] Инсталлятор качает официальные `@google/gemini-cli(-core)` в `vendor/node_modules`, манифесты указывают на локальный `file://` кеш.
+
+## Phase 3 — Core & Extension Integration (owner: Codex, updated: 2025-10-30)
+- [DONE] Core запускается через Node20 (JS bundle + runtime). Extension пробрасывает пути и окружение.
+
+## Phase 4 — Validation & Outstanding Issues (owner: Codex, updated: 2025-10-30)
+- [DONE] Реализован асинхронный мост на динамическом `import()`, CLI и CLI Core подтягиваются в CJS за счёт `Function(\"return import(...)\")`.
+- [DONE] Инсталлятор теперь устанавливает зависимости `npm install --omit=dev`, что позволяет ESM-модулям корректно тянуть `yargs`, `@opentelemetry/*` и др.
+- [TODO] Повторить e2e (fresh VSIX → автоустановка CLI → сессия Gemini) после реализации моста.
+- [TODO] Добавить автоматическую проверку зависимостей CLI перед запуском ядра (health-check).
 
 ## Backlog / Parking Lot
-- [TODO] Исследовать подключение Tools API / MCP серверов через `settings.json`
-- [TODO] Проработать fallback сценарий с Gemini API key (AI Studio) на случай отсутствия CLI
-- [TODO] Рассмотреть Windows-поддержку (PowerShell, пути установки npm)
+- [TODO] Реализовать worker-процесс для ESM в отдельном Node20 или полноценный bundle CLI Core в CJS.
+- [TODO] Автоматизировать проверку обновлений CLI через npm registry.
+- [TODO] Расширить документацию по инсталлятору и Node runtime в SystemArchitecture.

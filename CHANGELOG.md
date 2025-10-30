@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.73] - 2025-10-30
+### Fixed
+- Gemini provider no longer throws `ERR_REQUIRE_ESM`: the bridge loads `@google/gemini-cli` and `@google/gemini-cli-core` via an asynchronous dynamic `import()` helper while keeping the module surface CommonJS-friendly for the core orchestrator.
+
+### Changed
+- Gemini installer now installs CLI dependencies (`npm install --omit=dev`) inside `vendor/node_modules`, guaranteeing that `yargs`, `@opentelemetry/*`, and other runtime packages are present before the provider boots.
+- Provider registry, remote bridge, and installer facades were polished to satisfy Ultracite rules (organized imports, simplified arrow returns, consistent formatting).
+
+### Build
+- VSIX → `codeai-hub-1.1.73.vsix`
+- Core v0.2.21 → `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`
+- Gemini Module v0.3.1 → `gemini-module-0.3.1.tar.bz2`
+
 ## [1.1.32] - 2025-10-28
 ### Changed
 - Gemini provider now keeps CLI sessions alive between messages, automatically restarts crashed processes, and records the actual Gemini session id coming from the CLI.

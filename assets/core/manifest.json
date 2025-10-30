@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "baseUrl": "https://github.com/OleynikAleksandr/CodeAI-Hub/releases/latest/download/",
+  "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "platforms": {
     "darwin-arm64": {
-      "coreVersion": "0.2.11",
-      "package": "codeai-hub-core-darwin-arm64-0.2.11.tar.bz2",
-      "size": 16345281,
-      "sha1": "851389fb0f7ecd05a51dda4fc9b66e9bbc9264f9"
+      "coreVersion": "0.2.21",
+      "package": "codeai-hub-core-darwin-arm64-0.2.21.tar.bz2",
+      "size": 36868959,
+      "sha1": "baf69f2bac08ed7448465cb4c926d02f3aa8c593"
     },
     "darwin-x64": {
       "coreVersion": "0.1.0",
