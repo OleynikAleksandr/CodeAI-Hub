@@ -1,7 +1,7 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.3.6
-**Last Updated:** 2025-10-29
+**Version:** 0.3.7
+**Last Updated:** 2025-10-30
 **Status:** Active reference
 
 ---
@@ -31,7 +31,7 @@ graph TD
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, административные действия) и инициализирует `HomeViewProvider`.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP.
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
-- **Core Bootstrap**: при старте расширение проверяет наличие автономного ядра и вспомогательных компонентов. `CoreProcessManager` скачивает CEF, лаунчер и бинарник ядра из GitHub Releases, проверяет SHA-1, разворачивает их в `~/.codeai-hub/**` и запускает `codeai-hub-core` на `127.0.0.1:8080`. Если компоненты отсутствуют или версия устарела, запускается загрузчик (см. `doc/Project_Docs/Stacks/CoreOrchestrator.md`). Инсталляторы используют общие хелперы `runtime-files` и `launcher-install-helpers`, которые переиспользуют локальные кеши, валидируют контрольные суммы и удерживают файлы в пределах архитектурного лимита в 300 строк.
+- **Core Bootstrap**: при старте расширение проверяет наличие автономного ядра и вспомогательных компонентов. В разработке все наши артефакты (Node runtime, JS-бандл `@codeai-hub/core`, модули провайдеров, архивы CEF) уже собраны скриптами и лежат в `~/.codeai-hub/**`; манифесты (`assets/**/manifest.json`) указывают на локальный `file://$HOME/.codeai-hub/releases/`, поэтому скачивания с GitHub не происходит. `CoreProcessManager` запускает ядро командой `<runtime>/node/bin/node <app>/dist/index.js`, пробрасывая переменные окружения и пути к установленным модулям. Для релиза перед публикацией манифесты возвращаются к GitHub Releases, чтобы VSIX мог получать артефакты оттуда. Инсталляторы используют общие хелперы `runtime-files` и `launcher-install-helpers`, которые переиспользуют локальные кеши, валидируют контрольные суммы и удерживают файлы в пределах архитектурного лимита в 300 строк.
 - **Shortcut Service**: модуль `src/extension-module/web-client/shortcut-manager.ts` при активации проверяет наличие ярлыка веб-клиента и при необходимости пересоздаёт его (Windows `.lnk` на Desktop, macOS `.app`-launcher на Desktop, Linux `.desktop` в `~/.local/share/applications`), пропуская выполнение в удалённых средах.
 
 ## VS Code Webview UI
@@ -79,13 +79,18 @@ graph TD
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг; архитектурный скрипт контролирует структуру `src/` и `media/`.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
-## Recent Changes (v1.1.32 - 2025-10-28)
+## Recent Changes (v1.1.73 - 2025-10-30)
+- **Gemini module v0.3.1**: `cli-bridge` перешёл на динамический `import()` через runtime-замыкание (`Function("return import(...)")`), благодаря чему ESM-пакеты `@google/gemini-cli(-core)` грузятся из CommonJS без `ERR_REQUIRE_ESM`.
+- **Installer upgrades**: `GeminiInstaller.installIfNeeded` теперь после распаковки запускает `npm install --omit=dev --no-audit --no-fund`, гарантируя наличие зависимостей (`yargs`, `@opentelemetry/*`, и др.) в `vendor/node_modules`.
+- **Release chain**: VSIX `codeai-hub@1.1.73` ссылается на `gemini-module-0.3.1.tar.bz2` в локальном кэше `file:///Users/oleksandroliinyk/.codeai-hub/releases/`; core остаётся на 0.2.21 (Node 20 runtime).
+
+## Previous Changes (v1.1.32 - 2025-10-28)
 - **Gemini module v0.1.3**: менеджер сессий перезапускает CLI прозрачно, кэширует подписчиков, подтягивает реальный идентификатор сессии из логов и не падает при повторных сообщениях.
 - **Core v0.2.10 bundle**: новый snapshot включает обновлённый Gemini-модуль, поэтому автономный бинарь использует ту же логику удержания сессий, что и workspace.
-- **Manifest refresh**: VSIX теперь раздаёт `gemini-module-0.1.3.tar.bz2` и `codeai-hub-core-darwin-arm64-0.2.10.tar.bz2`, что гарантирует использование актуальных артефактов.
+- **Manifest refresh**: VSIX раздаёт `gemini-module-0.1.3.tar.bz2` и `codeai-hub-core-darwin-arm64-0.2.10.tar.bz2`, что гарантирует использование актуальных артефактов.
 
-## Previous Changes (v1.1.27 - 2025-10-28)
-- **Gemini CLI provider**: новый пакет `@codeai-hub/gemini-module` подключён к Core и UI. Installer проверяет версию CLI, наличие OAuth-токенов и публикует адаптер в `ProviderRegistry`.
+## Earlier Changes (v1.1.27 - 2025-10-28)
+- **Gemini CLI provider**: пакет `@codeai-hub/gemini-module` подключён к Core и UI. `GeminiInstaller` при первом запуске скачивает `@google/gemini-cli` в штатный `~/.gemini` (для повторного использования авторизационных токенов) и `@google/gemini-cli-core` в `~/.codeai-hub/providers/gemini/<version>/vendor/node_modules`, сверяет SHA-1 и публикует адаптер в `ProviderRegistry`.
 - **UI status badges**: селектор провайдеров отображает статус подключения (`Connected` / `Not connected`) и дизейблит выбор, если стек помечен как `inactive` ядром.
 - **Graceful provider downgrade**: при ошибке инициализации (например, отсутствует CLI) провайдер переводится в `inactive`, Core продолжает работу и транслирует состояние в клиенты.
 
@@ -95,10 +100,10 @@ graph TD
 - **Slug parity**: Core сохраняет ведущий дефис в `claudeProjectSlug`, благодаря чему SDK пишет в те же каталоги `~/.claude/projects/-<slug>` что и Claude Code CLI. Это важно для resume/JSONL-лога.
 - **Provider registry hygiene**: `ProviderRegistry` объявляет только активный Claude-провайдер; заглушки Codex/Gemini удалены, UI больше их не показывает.
 
-## Recent Changes (v1.1.33 - 2025-10-29)
-- Gemini module rebuilt as ESM on top of `@google/gemini-cli-core`; provider registry now resolves the adapter asynchronously and no longer shells out to the CLI bridge.
-- Release tooling (`build-gemini-module.sh`) installs runtime `node_modules` into the published tarball, and manifests reference `gemini-module-0.2.0.tar.bz2`.
-- Core orchestrator updated to load providers lazily and ships as v0.2.11 in the release manifest for darwin-arm64.
+## Archived Changes (v1.1.33 - 2025-10-29)
+- Первичная попытка перевести Gemini модуль на чистый ESM показала, что ядро на Node 18 не справляется с `require()` ESM-пакетов (`ERR_REQUIRE_ESM`). Эти наработки сохранены для истории, но заменены текущим CJS-мостом на Node 20.
+- Скрипты публикации tarball по-прежнему формируют `gemini-module-*.tar.bz2` и обновляют манифесты, однако рабочей считается цепочка c версией 0.3.x и Node 20 runtime.
+- Core orchestrator перешёл на ленивую загрузку провайдеров; в актуальной поставке (0.2.21) изменения совмещены с новым Node 20 runtime.
 
 ## Known Limitations (2025-10-29)
 - `packages/Claude_Module` пока не приведён к полному набору стайлгайдов Ultracite (публичные модификаторы, порядок импортов). Release 1.1.16 закрывает блокер запуска, но линтинг предстоит в отдельной фазе.

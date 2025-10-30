@@ -2,10 +2,11 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.32
-- **Gemini module 0.1.3**: automatically restarts CLI sessions, keeps event listeners alive, and backfills the real Gemini `sessionId` from logs/chat artifacts.
-- **Core orchestrator 0.2.10**: rebuilt snapshot bundles the refreshed Gemini module, so the standalone binary matches the workspace implementation.
-- **Updated artifacts**: `codeai-hub-1.1.32.vsix`, `codeai-hub-core-darwin-arm64-0.2.10.tar.bz2`, `gemini-module-0.1.3.tar.bz2`, plus unchanged `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`, `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`.
+## Current Release — v1.1.73
+- **Gemini module 0.3.1**: CommonJS bridge now loads the official `@google/gemini-cli(-core)` ESM packages through a dynamic `import()` wrapper, fixes the `ERR_REQUIRE_ESM` crash, and keeps the CLI session live for the core orchestrator.
+- **Installer upgrades**: Gemini installer runs `npm install --omit=dev` inside the vendored CLI directories, so runtime dependencies (`yargs`, `@opentelemetry/*`, etc.) are present without manual intervention.
+- **Core orchestrator 0.2.21**: ships as a Node 20 runtime bundle; ProviderRegistry resolves the Gemini adapter asynchronously and tolerates both CJS and ESM entry points.
+- **Updated artifacts**: `codeai-hub-1.1.73.vsix`, `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`, `gemini-module-0.3.1.tar.bz2`, plus unchanged `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`, `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`.
 
 ## Features
 - **React-driven command bar**: the extension view opens with a React-rendered quick-action row that mirrors the Claude Code Fusion UX.
