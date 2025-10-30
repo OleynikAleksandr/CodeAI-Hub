@@ -9,10 +9,11 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Updated artifacts**: `codeai-hub-1.1.73.vsix`, `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`, `gemini-module-0.3.1.tar.bz2`, plus unchanged `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`, `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`.
 
 ## Features
-- **React-driven command bar**: the extension view opens with a React-rendered quick-action row that mirrors the Claude Code Fusion UX.
-- **Type-safe extension host**: webview messages are routed through facades and hooks with zero usage of `any`.
-- **Quality gates out of the box**: architecture checks, duplication scanning, Ultracite linting, and TypeScript compilation run on every commit.
-- **Scripted releases**: a single `scripts/build-release.sh` command bumps the version, builds the shell, validates the codebase, and packages a VSIX.
+- **Autonomous Node 20 core**: the VS Code extension ships with a self-contained core bundle (`@codeai-hub/core@0.2.21`) plus the official Node runtime staged under `~/.codeai-hub/core/<platform>/<version>/`.
+- **Pluggable provider modules**: Claude, Codex, and Gemini are delivered as versioned packages in `~/.codeai-hub/providers/<provider>/<version>/`, installed automatically, and managed through a unified core API.
+- **Offline-first delivery**: all manifests (`assets/**/manifest.json`) point to the local cache at `file://$HOME/.codeai-hub/releases/`, so builds and tests do not require network access.
+- **Installer-managed dependencies**: build scripts and the extension download official CLI/SDK archives, validate SHA-1 checksums, and prepare provider `node_modules` before the first launch.
+- **Strict quality gates**: Ultracite, the architecture checker, jscpd, and ts-prune run in pre-commit/pre-push hooks to enforce consistent code quality.
 
 ## Getting Started
 ```bash
@@ -22,14 +23,19 @@ npm install
 ```
 
 ## Development Workflow
-1. **Create or modify code** under `src/`. Keep files below 300 lines and prefer micro-classes plus facades.
-2. **Run quality checks** before committing:
+1. **Install dependencies**
    ```bash
-   npm run quality        # architecture check + Ultracite lint
-   npm run check:tsprune  # optional: detect unused exports
-   npm run compile        # ensure TypeScript output builds
+   npm install
+   npm run setup:hooks    # optional: installs lefthook locally
    ```
-3. **Commit**; pre-commit hooks re-run the same gates automatically.
+2. **Implement changes** in `src/` and `packages/**`, keeping files under 300 lines and leaning on micro-classes plus facades.
+3. **Run quality checks** before committing:
+   ```bash
+   npm run quality        # architecture gate + Ultracite lint
+   npm run check:tsprune  # detect unused exports
+   npm run compile        # ensure TypeScript builds cleanly
+   ```
+4. **Commit**; the pre-commit hook reruns the same gates automatically.
 
 ## Building a Release
 Always use the provided script to create a VSIX:
