@@ -1,10 +1,10 @@
-import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createReadStream, createWriteStream, promises as fs } from "node:fs";
 import type { IncomingMessage } from "node:http";
 import https from "node:https";
 import path from "node:path";
 import type { Progress } from "vscode";
+import { extractArchiveWithTar } from "./tar-utils";
 
 type ProgressReporter = Progress<{
   message?: string;
@@ -24,13 +24,6 @@ type StreamOptions = {
   readonly response: IncomingMessage;
   readonly destination: string;
   readonly totalBytes: number;
-  readonly progress?: ProgressReporter;
-  readonly label: string;
-};
-
-type ExtractOptions = {
-  readonly archivePath: string;
-  readonly destination: string;
   readonly progress?: ProgressReporter;
   readonly label: string;
 };
@@ -271,30 +264,17 @@ export const downloadFile = async ({
   await performHttpDownload(url, { destination, size, progress, label });
 };
 
-const extractWithTar = async ({
-  archivePath,
-  destination,
-  progress,
-  label,
-}: ExtractOptions): Promise<void> => {
-  progress?.report({ message: `Extracting ${label}…` });
-  await ensureDirectory(destination);
-
-  await new Promise<void>((resolve, reject) => {
-    execFile("tar", ["-xjf", archivePath, "-C", destination], (error) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve();
-    });
-  });
-};
-
 export const extractArchive = async (
   archivePath: string,
   destination: string,
   progress?: ProgressReporter,
   label = "CEF runtime"
-): Promise<void> =>
-  extractWithTar({ archivePath, destination, progress, label });
+): Promise<void> => {
+  await ensureDirectory(destination);
+  await extractArchiveWithTar({
+    archivePath,
+    destination,
+    label,
+    onProgress: (message) => progress?.report({ message }),
+  });
+};

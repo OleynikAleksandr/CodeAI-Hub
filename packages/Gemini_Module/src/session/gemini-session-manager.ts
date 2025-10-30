@@ -1,28 +1,21 @@
 import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
-import {
-  type CliArgs,
-  loadCliConfig,
-} from "@google/gemini-cli/dist/src/config/config.js";
-import {
-  loadSettings,
-  migrateDeprecatedSettings,
-} from "@google/gemini-cli/dist/src/config/settings.js";
-import { AuthType } from "@google/gemini-cli-core/dist/src/core/contentGenerator.js";
-import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler.js";
-import { executeToolCall } from "@google/gemini-cli-core/dist/src/core/nonInteractiveToolExecutor.js";
+import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
+import type { AuthType as AuthTypeEnum } from "@google/gemini-cli-core/dist/src/core/contentGenerator";
+import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
 import type {
   ServerGeminiStreamEvent,
   ToolCallRequestInfo,
-} from "@google/gemini-cli-core/dist/src/core/turn.js";
+} from "@google/gemini-cli-core/dist/src/core/turn";
 import type { Part, UsageMetadata } from "@google/genai";
-import { GeminiMessageProcessor } from "../messaging/message-processor.js";
-import type { GeminiSessionEvent } from "../types/index.js";
+import { GeminiMessageProcessor } from "../messaging/message-processor";
+import type { GeminiCliModules } from "../runtime/cli-types";
+import type { GeminiSessionEvent } from "../types";
 import type {
   ActiveSession,
   SessionCreationOptions,
   SessionCreationResult,
-} from "./types.js";
+} from "./types";
 
 const GEMINI_ENV_KEYS_TO_CLEAR = [
   "GOOGLE_CLOUD_PROJECT",
@@ -67,7 +60,10 @@ type ProcessTurnContext = {
 export class GeminiSessionManager {
   private readonly sessions = new Map<string, ActiveSession>();
 
-  constructor() {
+  private readonly modules: GeminiCliModules;
+
+  constructor(modules: GeminiCliModules) {
+    this.modules = modules;
     this.sanitizeEnvironment();
   }
 
@@ -85,11 +81,11 @@ export class GeminiSessionManager {
     const workspacePath = options.workspacePath;
     const sessionId = randomUUID();
 
-    const settings = loadSettings(workspacePath);
-    migrateDeprecatedSettings(settings, workspacePath);
+    const settings = this.modules.settings.loadSettings(workspacePath);
+    this.modules.settings.migrateDeprecatedSettings(settings, workspacePath);
 
     const argv = this.createArgv(options);
-    const config = await loadCliConfig(
+    const config = await this.modules.config.loadCliConfig(
       settings.merged,
       [],
       sessionId,
@@ -276,31 +272,6 @@ export class GeminiSessionManager {
     ]);
   }
 
-  private async runTurn(
-    session: ActiveSession,
-    parts: readonly Part[],
-    promptId: string,
-    signal: AbortSignal
-  ): Promise<GeminiTurnResult> {
-    const messageProcessor = new GeminiMessageProcessor({
-      reporter: session.reporter,
-    });
-    const accumulator = messageProcessor.createAccumulator(promptId);
-
-    const stream = session.client.sendMessageStream(
-      Array.from(parts) as Part[],
-      signal,
-      promptId
-    );
-
-    for await (const event of stream as AsyncGenerator<ServerGeminiStreamEvent>) {
-      const outcome = messageProcessor.handleEvent(session, event, accumulator);
-      this.emitEvents(session, outcome.events);
-    }
-
-    return messageProcessor.finalize(accumulator);
-  }
-
   private async processTurns(
     context: ProcessTurnContext
   ): Promise<ConversationResult> {
@@ -378,6 +349,32 @@ export class GeminiSessionManager {
     };
   }
 
+  private async runTurn(
+    session: ActiveSession,
+    parts: readonly Part[],
+    promptId: string,
+    signal: AbortSignal
+  ): Promise<GeminiTurnResult> {
+    const messageProcessor = new GeminiMessageProcessor({
+      reporter: session.reporter,
+      modules: this.modules,
+    });
+    const accumulator = messageProcessor.createAccumulator(promptId);
+
+    const stream = session.client.sendMessageStream(
+      Array.from(parts) as Part[],
+      signal,
+      promptId
+    );
+
+    for await (const event of stream as AsyncGenerator<ServerGeminiStreamEvent>) {
+      const outcome = messageProcessor.handleEvent(session, event, accumulator);
+      this.emitEvents(session, outcome.events);
+    }
+
+    return messageProcessor.finalize(accumulator);
+  }
+
   private async executeToolCalls(
     session: ActiveSession,
     requests: readonly ToolCallRequestInfo[],
@@ -405,44 +402,57 @@ export class GeminiSessionManager {
         },
       });
 
-      const completedCall = await executeToolCall(
-        session.config,
-        request,
-        signal
-      );
-      completedCalls.push(completedCall);
+      try {
+        const completedCall = await this.modules.toolExecutor.executeToolCall(
+          session.config,
+          request,
+          signal
+        );
+        completedCalls.push(completedCall);
 
-      const toolResponse = completedCall.response;
-      if (Array.isArray(toolResponse?.responseParts)) {
-        responseParts.push(...toolResponse.responseParts);
-      } else if (typeof toolResponse?.resultDisplay === "string") {
-        responseParts.push({ text: toolResponse.resultDisplay });
-      }
+        const toolResponse = completedCall.response;
+        if (Array.isArray(toolResponse?.responseParts)) {
+          responseParts.push(...toolResponse.responseParts);
+        } else if (typeof toolResponse?.resultDisplay === "string") {
+          responseParts.push({ text: toolResponse.resultDisplay });
+        }
 
-      events.push({
-        type: "system",
-        provider: "gemini",
-        content: toolResponse?.error
-          ? `Tool "${request.name}" returned an error.`
-          : `Tool "${request.name}" completed successfully.`,
-        data: {
-          callId: request.callId,
-          status: completedCall.status,
-          error: toolResponse?.error,
-        },
-      });
-
-      if (toolResponse?.error) {
-        session.logger?.logError({
-          error: toolResponse.error,
-          callId: request.callId,
-          tool: request.name,
+        events.push({
+          type: "system",
+          provider: "gemini",
+          content: toolResponse?.error
+            ? `Tool "${request.name}" returned an error.`
+            : `Tool "${request.name}" completed successfully.`,
+          data: {
+            callId: request.callId,
+            status: completedCall.status,
+            error: toolResponse?.error,
+          },
         });
-      } else {
-        session.logger?.logEvent({
-          type: "tool_execution_complete",
-          tool: request.name,
-          callId: request.callId,
+
+        if (toolResponse?.error) {
+          session.logger?.logError({
+            error: toolResponse.error,
+            callId: request.callId,
+            tool: request.name,
+          });
+        } else {
+          session.logger?.logEvent({
+            type: "tool_execution_complete",
+            tool: request.name,
+            callId: request.callId,
+          });
+        }
+      } catch (error) {
+        session.logger?.logError({
+          error,
+          promptId: request.callId,
+          stage: "tool",
+        });
+        events.push({
+          type: "error",
+          provider: "gemini",
+          content: error instanceof Error ? error.message : String(error),
         });
       }
     }
@@ -454,38 +464,28 @@ export class GeminiSessionManager {
     };
   }
 
+  private emitEvents(
+    session: ActiveSession,
+    events: readonly GeminiSessionEvent[]
+  ): void {
+    if (events.length === 0) {
+      return;
+    }
+    for (const event of events) {
+      session.eventEmitter.emit("message", event);
+    }
+  }
+
   private sanitizeEnvironment(): void {
     for (const key of GEMINI_ENV_KEYS_TO_CLEAR) {
-      if (process.env[key]) {
+      if (key in process.env) {
         delete process.env[key];
       }
     }
   }
 
-  private createArgv(options: SessionCreationOptions): CliArgs {
-    return {
-      query: undefined,
-      model: options.defaultModel,
-      sandbox: undefined,
-      debug: false,
-      prompt: undefined,
-      promptInteractive: undefined,
-      yolo: false,
-      approvalMode: undefined,
-      allowedMcpServerNames: undefined,
-      allowedTools: undefined,
-      experimentalAcp: false,
-      extensions: undefined,
-      listExtensions: false,
-      includeDirectories: [],
-      screenReader: undefined,
-      useSmartEdit: undefined,
-      useWriteTodos: undefined,
-      outputFormat: "json",
-    };
-  }
-
-  private resolveAuthType(selected?: string): AuthType {
+  private resolveAuthType(selected?: string): AuthTypeEnum {
+    const { AuthType } = this.modules.contentGenerator;
     switch (selected) {
       case AuthType.LOGIN_WITH_GOOGLE:
       case "oauth-personal":
@@ -505,19 +505,33 @@ export class GeminiSessionManager {
     }
   }
 
-  private emitEvents(
-    session: ActiveSession,
-    events: readonly GeminiSessionEvent[]
-  ): void {
-    for (const event of events) {
-      session.eventEmitter.emit("message", event);
-    }
+  private createArgv(options: SessionCreationOptions): CliArgs {
+    return {
+      query: undefined,
+      model: options.defaultModel,
+      sandbox: undefined,
+      debug: options.logger !== undefined,
+      prompt: undefined,
+      promptInteractive: undefined,
+      yolo: false,
+      approvalMode: undefined,
+      allowedMcpServerNames: undefined,
+      allowedTools: undefined,
+      experimentalAcp: false,
+      extensions: undefined,
+      listExtensions: false,
+      includeDirectories: [],
+      screenReader: undefined,
+      useSmartEdit: undefined,
+      useWriteTodos: undefined,
+      outputFormat: "json",
+    } as CliArgs;
   }
 
   private requireSession(sessionId: string): ActiveSession {
     const session = this.sessions.get(sessionId);
     if (!session) {
-      throw new Error(`Gemini session ${sessionId} not found.`);
+      throw new Error(`Gemini session ${sessionId} not found`);
     }
     return session;
   }

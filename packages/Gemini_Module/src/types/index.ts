@@ -40,3 +40,9 @@ export type GeminiSessionEvent = {
   readonly data?: unknown;
   readonly payload?: unknown;
 };
+
+export type GeminiCliBridgeMetadata = {
+  readonly version: string;
+  readonly preparedAt: string;
+  readonly source: string;
+};

@@ -69,6 +69,7 @@ export class CoreProcessManager {
     const workspacePath = this.resolveWorkspacePath();
     const claudeModulePath = this.resolveProviderModulePath("claude");
     const codexModulePath = this.resolveProviderModulePath("codex");
+    const geminiModulePath = this.resolveProviderModulePath("gemini");
     const envVars: NodeJS.ProcessEnv = {
       ...process.env,
       CORE_HOST,
@@ -76,17 +77,31 @@ export class CoreProcessManager {
       CLAUDE_WORKSPACE_PATH: workspacePath,
       CODEX_WORKSPACE_PATH: workspacePath,
       CODEX_SKIP_GIT_REPO_CHECK: "true",
+      CODEAI_HUB_RUNTIME_DIR: this.runtimeInfo.runtimeDir,
+      CODEAI_HUB_APP_DIR: path.join(this.runtimeInfo.runtimeDir, "app"),
     };
+    if (!envVars.NODE_ENV) {
+      envVars.NODE_ENV = "production";
+    }
     if (claudeModulePath) {
       envVars.CLAUDE_MODULE_PATH = claudeModulePath;
     }
     if (codexModulePath) {
       envVars.CODEX_MODULE_PATH = codexModulePath;
     }
-    this.child = spawn(this.runtimeInfo.binaryPath, [], {
-      env: envVars,
-      stdio: "pipe",
-    });
+    if (geminiModulePath) {
+      envVars.GEMINI_MODULE_PATH = geminiModulePath;
+    }
+    const appCwd = path.join(this.runtimeInfo.runtimeDir, "app");
+    this.child = spawn(
+      this.runtimeInfo.nodePath,
+      [this.runtimeInfo.entryPoint],
+      {
+        env: envVars,
+        stdio: "pipe",
+        cwd: appCwd,
+      }
+    );
 
     this.child.stdout.on("data", (chunk) => {
       this.channel.append(chunk.toString());

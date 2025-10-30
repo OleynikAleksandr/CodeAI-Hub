@@ -96,18 +96,21 @@ const dynamicRequire = (specifier: string): unknown => requireModule(specifier);
 const dynamicImportModule = <T>(specifier: string): Promise<T> =>
   Function("specifier", "return import(specifier);")(specifier) as Promise<T>;
 
-const resolveGeminiAdapter = (
-  loaded: unknown
-): GeminiAdapterCtor | undefined => {
-  if (!loaded || typeof loaded !== "object") {
-    return;
+const extractGeminiAdapterCtor = (
+  candidate: unknown
+): GeminiAdapterCtor | null => {
+  if (typeof candidate === "function") {
+    return candidate as GeminiAdapterCtor;
   }
-  const direct = (loaded as { GeminiProviderAdapter?: unknown })
+  if (!candidate || typeof candidate !== "object") {
+    return null;
+  }
+  const direct = (candidate as { GeminiProviderAdapter?: unknown })
     .GeminiProviderAdapter;
   if (typeof direct === "function") {
     return direct as GeminiAdapterCtor;
   }
-  const fallback = (loaded as { default?: unknown }).default;
+  const fallback = (candidate as { default?: unknown }).default;
   if (fallback && typeof fallback === "object") {
     const nested = (fallback as { GeminiProviderAdapter?: unknown })
       .GeminiProviderAdapter;
@@ -115,7 +118,72 @@ const resolveGeminiAdapter = (
       return nested as GeminiAdapterCtor;
     }
   }
-  return;
+  return null;
+};
+
+type GeminiAdapterResolution =
+  | { readonly kind: "ctor"; readonly ctor: GeminiAdapterCtor }
+  | { readonly kind: "loader"; readonly loader: () => Promise<unknown> };
+
+const resolveGeminiAdapter = (
+  loaded: unknown
+): GeminiAdapterResolution | null => {
+  const direct = extractGeminiAdapterCtor(loaded);
+  if (direct) {
+    return { kind: "ctor", ctor: direct };
+  }
+
+  if (!loaded || typeof loaded !== "object") {
+    return null;
+  }
+
+  const loader = (loaded as { loadGeminiProviderAdapter?: unknown })
+    .loadGeminiProviderAdapter;
+  if (typeof loader === "function") {
+    return {
+      kind: "loader",
+      loader: loader as () => Promise<unknown>,
+    };
+  }
+
+  const fallback = (loaded as { default?: unknown }).default;
+  if (fallback && typeof fallback === "object") {
+    const nestedLoader = (fallback as { loadGeminiProviderAdapter?: unknown })
+      .loadGeminiProviderAdapter;
+    if (typeof nestedLoader === "function") {
+      return {
+        kind: "loader",
+        loader: nestedLoader as () => Promise<unknown>,
+      };
+    }
+  }
+
+  return null;
+};
+
+const materializeAdapterResolution = async (
+  resolution: GeminiAdapterResolution | null,
+  logger: Logger
+): Promise<GeminiAdapterCtor | null> => {
+  if (!resolution) {
+    return null;
+  }
+  if (resolution.kind === "ctor") {
+    return resolution.ctor;
+  }
+  try {
+    const loaded = await resolution.loader();
+    const ctor = extractGeminiAdapterCtor(loaded);
+    if (!ctor) {
+      logger.warn("Gemini adapter loader returned unexpected payload");
+    }
+    return ctor;
+  } catch (error) {
+    logger.warn("Gemini adapter loader invocation failed", {
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
 };
 
 const loadClaudeAdapterCtor = (
@@ -189,9 +257,10 @@ const loadGeminiAdapterCtor = async (
   ): Promise<GeminiAdapterCtor | null> => {
     try {
       const loaded = await dynamicImportModule<unknown>(specifier);
-      return resolveGeminiAdapter(loaded) ?? null;
+      const resolution = resolveGeminiAdapter(loaded);
+      return await materializeAdapterResolution(resolution, logger);
     } catch (importError) {
-      logger.debug("Dynamic import failed", {
+      logger.warn("Dynamic import failed", {
         specifier,
         message:
           importError instanceof Error
@@ -202,10 +271,13 @@ const loadGeminiAdapterCtor = async (
     }
   };
 
-  const requireAndResolve = (specifier: string): GeminiAdapterCtor | null => {
+  const requireAndResolve = async (
+    specifier: string
+  ): Promise<GeminiAdapterCtor | null> => {
     try {
       const loaded = dynamicRequire(specifier);
-      return resolveGeminiAdapter(loaded) ?? null;
+      const resolution = resolveGeminiAdapter(loaded);
+      return await materializeAdapterResolution(resolution, logger);
     } catch (requireError) {
       logger.debug("Require fallback failed", {
         specifier,
@@ -229,15 +301,17 @@ const loadGeminiAdapterCtor = async (
     if (!allowRequireFallback) {
       return null;
     }
-    return requireAndResolve(specifier);
+    return await requireAndResolve(specifier);
   };
 
   if (overridePath) {
-    const overrideEntry = path.join(overridePath, "dist", "index.js");
-    const overrideUrl = pathToFileURL(overrideEntry).href;
+    const overrideEsmEntry = path.join(overridePath, "dist", "index.js");
+    const overrideEsmUrl = pathToFileURL(overrideEsmEntry).href;
+    const overrideCjsEntry = path.join(overridePath, "dist", "index.cjs");
     const adapter =
-      (await tryResolve(overrideUrl, true)) ??
-      (await tryResolve(overrideEntry, true));
+      (await tryResolve(overrideCjsEntry, true)) ??
+      (await tryResolve(overrideEsmUrl)) ??
+      (await tryResolve(overrideEsmEntry, true));
     if (adapter) {
       logger.info("Loaded Gemini module from override path", {
         overridePath,

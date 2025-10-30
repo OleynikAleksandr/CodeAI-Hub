@@ -10,6 +10,7 @@ import {
   extractArchive,
   verifySha1,
 } from "../cef/runtime-files";
+import { resolveEntryPoint, resolveNodeExecutable } from "./runtime-paths";
 
 type ProgressReporter = Progress<{
   message?: string;
@@ -20,7 +21,8 @@ export type CoreRuntimeInfo = {
   readonly version: string;
   readonly platform: PlatformKey;
   readonly runtimeDir: string;
-  readonly binaryPath: string;
+  readonly nodePath: string;
+  readonly entryPoint: string;
 };
 
 type ManifestEntry = {
@@ -38,7 +40,6 @@ type CoreManifest = {
 
 const INSTALL_MARKER_FILE = "install.json";
 const DOWNLOADS_DIR_NAME = "downloads";
-const BINARY_EXECUTABLE_MODE = 0o755;
 
 type InstallMarker = {
   readonly platform: PlatformKey;
@@ -81,21 +82,22 @@ const loadInstallMarker = async (
 
 const verifyExistingInstall = async (
   runtimeDir: string,
-  manifestEntry: ManifestEntry
+  manifestEntry: ManifestEntry,
+  platform: PlatformKey
 ): Promise<boolean> => {
   const marker = await loadInstallMarker(runtimeDir);
-  if (!marker) {
-    return false;
-  }
-
-  if (marker.coreVersion !== manifestEntry.coreVersion) {
+  if (!marker || marker.coreVersion !== manifestEntry.coreVersion) {
     return false;
   }
 
   try {
-    const binaryPath = path.join(runtimeDir, "codeai-hub-core");
-    const stat = await fs.stat(binaryPath);
-    return stat.isFile();
+    const nodePath = resolveNodeExecutable(runtimeDir, platform);
+    const entryPoint = resolveEntryPoint(runtimeDir);
+    const [nodeStat, entryStat] = await Promise.all([
+      fs.stat(nodePath),
+      fs.stat(entryPoint),
+    ]);
+    return nodeStat.isFile() && entryStat.isFile();
   } catch {
     return false;
   }
@@ -142,15 +144,13 @@ const buildRuntimeInfo = (
   manifestEntry: ManifestEntry,
   runtimeDir: string,
   platform: PlatformKey
-): CoreRuntimeInfo => {
-  const binaryPath = path.join(runtimeDir, "codeai-hub-core");
-  return {
-    version: manifestEntry.coreVersion,
-    platform,
-    runtimeDir,
-    binaryPath,
-  };
-};
+): CoreRuntimeInfo => ({
+  version: manifestEntry.coreVersion,
+  platform,
+  runtimeDir,
+  nodePath: resolveNodeExecutable(runtimeDir, platform),
+  entryPoint: resolveEntryPoint(runtimeDir),
+});
 
 const tryReuseExistingInstall = async (
   runtimeDir: string,
@@ -160,7 +160,8 @@ const tryReuseExistingInstall = async (
 ): Promise<CoreRuntimeInfo | null> => {
   const existingIsValid = await verifyExistingInstall(
     runtimeDir,
-    manifestEntry
+    manifestEntry,
+    platform
   );
   if (!existingIsValid) {
     return null;
@@ -277,9 +278,6 @@ const performInstall = async (
   await extractArchive(archivePath, runtimeDir);
 
   await writeInstallMarker(runtimeDir, platform, manifestEntry);
-
-  const binaryPath = path.join(runtimeDir, "codeai-hub-core");
-  await fs.chmod(binaryPath, BINARY_EXECUTABLE_MODE);
 
   progress?.report({ message: "Core orchestrator installed successfully" });
 
