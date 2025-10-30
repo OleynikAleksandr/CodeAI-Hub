@@ -10,20 +10,20 @@ type ProgressReporter = Progress<{
 const MANIFEST_RELATIVE_PATH = path.join(
   "assets",
   "providers",
-  "claude",
+  "gemini",
   "manifest.json"
 );
 
-export const ensureClaudeModuleInstalled = (
+export const ensureGeminiModuleInstalled = (
   context: ExtensionContext,
   progress?: ProgressReporter
 ): Promise<string> =>
   ensureProviderModuleInstalled(
     context,
     {
-      providerId: "claude",
+      providerId: "gemini",
       manifestRelativePath: MANIFEST_RELATIVE_PATH,
-      label: "Claude",
+      label: "Gemini",
       entryPoints: [path.join("dist", "index.js")],
     },
     progress

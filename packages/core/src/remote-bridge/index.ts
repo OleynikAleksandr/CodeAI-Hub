@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import http from "node:http";
 import cors from "cors";
+import type { Request, Response } from "express";
 import express from "express";
 import { WebSocket, WebSocketServer } from "ws";
 import type { CoreConfig } from "../config";
@@ -135,7 +136,7 @@ export class RemoteBridge {
       path: "/api/v1/stream",
     });
 
-    this.wsServer.on("connection", (socket) => {
+    this.wsServer.on("connection", (socket: WebSocket) => {
       try {
         this.handleClientConnection(socket);
       } catch (error) {
@@ -200,7 +201,7 @@ export class RemoteBridge {
       return;
     }
 
-    this.app.get("/api/v1/health", (_req, res) => {
+    this.app.get("/api/v1/health", (_req: Request, res: Response) => {
       res.json({
         status: "ok",
         version: this.version,
@@ -209,7 +210,7 @@ export class RemoteBridge {
       });
     });
 
-    this.app.get("/api/v1/status", (_req, res) => {
+    this.app.get("/api/v1/status", (_req: Request, res: Response) => {
       res.json({
         core: {
           version: this.version,

@@ -9,6 +9,7 @@ MODULE_DIR="$REPO_ROOT/packages/Gemini_Module"
 DIST_ROOT="$REPO_ROOT/doc/tmp/releases"
 INSTALL_ROOT="$HOME/.codeai-hub/providers/gemini"
 MANIFEST_PATH="$REPO_ROOT/assets/providers/gemini/manifest.json"
+LOCAL_RELEASE_BASE="file://$HOME/.codeai-hub/releases/"
 LOCAL_RELEASE_DIR="$HOME/.codeai-hub/releases"
 PROVIDER_DOWNLOAD_DIR="$HOME/.codeai-hub/providers/gemini/downloads"
 
@@ -76,22 +77,24 @@ fi
 
 echo "📦 Building Gemini module v$MODULE_VERSION"
 
-echo "📥 Installing deps..."
-npm install >/dev/null
+echo "🧹 Resetting build output..."
+rm -rf dist
 
 echo "🔧 Compiling TypeScript..."
 npm run build >/dev/null
 
+if [[ ! -d "dist" ]]; then
+  echo "❌ Missing build output"
+  exit 1
+fi
+
 STAGE_DIR="$(mktemp -d)"
-mkdir -p "$STAGE_DIR/dist"
-cp -R dist/* "$STAGE_DIR/dist/"
+mkdir -p "$STAGE_DIR"
+cp -R dist "$STAGE_DIR/dist"
 cp package.json "$STAGE_DIR/package.json"
 if [[ -f package-lock.json ]]; then
   cp package-lock.json "$STAGE_DIR/package-lock.json"
 fi
-
-echo "📦 Installing runtime dependencies..."
-(cd "$STAGE_DIR" && npm install --omit=dev --ignore-scripts >/dev/null)
 
 TARGET_DIR="$INSTALL_ROOT/$MODULE_VERSION"
 rm -rf "$TARGET_DIR"
@@ -106,7 +109,10 @@ mkdir -p "$DIST_ROOT" "$LOCAL_RELEASE_DIR" "$PROVIDER_DOWNLOAD_DIR"
 ARCHIVE_NAME="gemini-module-$MODULE_VERSION.tar.bz2"
 ARCHIVE_PATH="$DIST_ROOT/$ARCHIVE_NAME"
 
-(cd "$STAGE_DIR" && tar -cjf "$ARCHIVE_PATH" .)
+(
+  cd "$STAGE_DIR"
+  tar -cjf "$ARCHIVE_PATH" .
+)
 cp "$ARCHIVE_PATH" "$LOCAL_RELEASE_DIR/$ARCHIVE_NAME"
 cp "$ARCHIVE_PATH" "$PROVIDER_DOWNLOAD_DIR/$ARCHIVE_NAME"
 
@@ -120,6 +126,7 @@ GEMINI_PACKAGE_SIZE="$PACKAGE_SIZE" \
 GEMINI_PACKAGE_SHA1="$PACKAGE_SHA1" \
 GEMINI_MODULE_VERSION="$MODULE_VERSION" \
 MANIFEST_PATH="$MANIFEST_PATH" \
+LOCAL_RELEASE_BASE="$LOCAL_RELEASE_BASE" \
   node <<'NODE'
 const fs = require("node:fs");
 const manifestPath = process.env.MANIFEST_PATH;
@@ -130,6 +137,7 @@ manifest.module = {
   size: Number(process.env.GEMINI_PACKAGE_SIZE),
   sha1: process.env.GEMINI_PACKAGE_SHA1,
 };
+manifest.baseUrl = process.env.LOCAL_RELEASE_BASE;
 fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 NODE
 

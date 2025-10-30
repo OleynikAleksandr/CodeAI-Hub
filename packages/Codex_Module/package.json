@@ -20,6 +20,7 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "@openai/codex-sdk": "0.46.0"
+    "@openai/codex-sdk": "0.46.0",
+    "@types/node": "^20.11.0"
   }
 }

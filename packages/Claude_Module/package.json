@@ -17,5 +17,8 @@
     "provider"
   ],
   "author": "CodeAI Hub",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.0"
+  }
 }

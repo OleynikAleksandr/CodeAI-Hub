@@ -1,27 +1,21 @@
-import { GeminiProviderAdapter as GeminiProviderAdapterImpl } from "./provider/gemini-provider-adapter.js";
+import type { SessionListener as BaseSessionListener } from "./provider/gemini-provider-adapter";
+import { GeminiProviderAdapter as BaseGeminiProviderAdapter } from "./provider/gemini-provider-adapter";
 import type {
-  GeminiCredentialsOptions as GeminiCredentialsOptionsType,
-  GeminiInstallerPaths as GeminiInstallerPathsType,
-  GeminiModuleOptions as GeminiModuleOptionsType,
-  GeminiSessionEvent as GeminiSessionEventType,
-  GeminiWorkspaceOptions as GeminiWorkspaceOptionsType,
-  ModuleReporter as ModuleReporterType,
-} from "./types/index.js";
+  GeminiCredentialsOptions as BaseGeminiCredentialsOptions,
+  GeminiInstallerPaths as BaseGeminiInstallerPaths,
+  GeminiModuleOptions as BaseGeminiModuleOptions,
+  GeminiSessionEvent as BaseGeminiSessionEvent,
+  GeminiWorkspaceOptions as BaseGeminiWorkspaceOptions,
+  ModuleReporter as BaseModuleReporter,
+} from "./types";
 
-const GeminiProviderAdapter = GeminiProviderAdapterImpl;
-type GeminiInstallerPaths = GeminiInstallerPathsType;
-type GeminiModuleOptions = GeminiModuleOptionsType;
-type GeminiSessionEvent = GeminiSessionEventType;
-type GeminiWorkspaceOptions = GeminiWorkspaceOptionsType;
-type ModuleReporter = ModuleReporterType;
-type GeminiCredentialsOptions = GeminiCredentialsOptionsType;
+export class GeminiProviderAdapter extends BaseGeminiProviderAdapter {}
+export type SessionListener = BaseSessionListener;
+export type GeminiInstallerPaths = BaseGeminiInstallerPaths;
+export type GeminiModuleOptions = BaseGeminiModuleOptions;
+export type GeminiWorkspaceOptions = BaseGeminiWorkspaceOptions;
+export type GeminiCredentialsOptions = BaseGeminiCredentialsOptions;
+export type GeminiSessionEvent = BaseGeminiSessionEvent;
+export type ModuleReporter = BaseModuleReporter;
 
-export { GeminiProviderAdapter };
-export type {
-  GeminiCredentialsOptions,
-  GeminiInstallerPaths,
-  GeminiModuleOptions,
-  GeminiSessionEvent,
-  GeminiWorkspaceOptions,
-  ModuleReporter,
-};
+export const GEMINI_MODULE_BRIDGE_READY = true;

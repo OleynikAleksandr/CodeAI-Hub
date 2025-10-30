@@ -77,9 +77,22 @@ echo "✅ TypeScript compiled"
 # Step 7: Verify SDK exclusions
 echo ""
 echo "🔍 Step 7: Verifying SDK exclusions..."
-if [ -d "node_modules/@anthropic-ai" ] || [ -d "node_modules/@openai" ] || [ -d "node_modules/@google" ]; then
+if [ -d "node_modules/@anthropic-ai" ] || [ -d "node_modules/@openai" ] || [ -d "node_modules/@google" ] || [ -d "node_modules/@google-cloud" ] || [ -d "node_modules/@modelcontextprotocol" ] || [ -d "node_modules/@opentelemetry" ] || [ -d "node_modules/@codeai-hub" ] || [ -d "node_modules/googleapis" ] || [ -d "node_modules/google-auth-library" ] || [ -d "node_modules/google-gax" ] || [ -d "node_modules/google-logging-utils" ] || [ -d "node_modules/tree-sitter-bash" ] || [ -d "node_modules/web-tree-sitter" ]; then
   echo "⚠️  Warning: Provider SDK found in node_modules, removing..."
-  rm -rf node_modules/@anthropic-ai node_modules/@openai node_modules/@google
+  rm -rf \
+    node_modules/@anthropic-ai \
+    node_modules/@openai \
+    node_modules/@google \
+    node_modules/@google-cloud \
+    node_modules/@modelcontextprotocol \
+    node_modules/@opentelemetry \
+    node_modules/@codeai-hub \
+    node_modules/googleapis \
+    node_modules/google-auth-library \
+    node_modules/google-gax \
+    node_modules/google-logging-utils \
+    node_modules/tree-sitter-bash \
+    node_modules/web-tree-sitter
 fi
 
 if ! grep -q "node_modules/@anthropic-ai" .vscodeignore 2>/dev/null; then
@@ -91,6 +104,39 @@ fi
 if ! grep -q "node_modules/@google" .vscodeignore 2>/dev/null; then
   echo "node_modules/@google/**" >> .vscodeignore
 fi
+if ! grep -q "node_modules/@google-cloud" .vscodeignore 2>/dev/null; then
+  echo "node_modules/@google-cloud/**" >> .vscodeignore
+fi
+if [ -d "node_modules/@codeai-hub/claude-module" ] || [ -d "node_modules/@codeai-hub/codex-module" ] || [ -d "node_modules/@codeai-hub/gemini-module" ]; then
+  echo "⚠️  Warning: Bundled provider modules detected, removing..."
+  rm -rf node_modules/@codeai-hub/claude-module node_modules/@codeai-hub/codex-module node_modules/@codeai-hub/gemini-module
+fi
+if ! grep -q "node_modules/@codeai-hub/claude-module" .vscodeignore 2>/dev/null; then
+  echo "node_modules/@codeai-hub/claude-module/**" >> .vscodeignore
+fi
+if ! grep -q "node_modules/@codeai-hub/codex-module" .vscodeignore 2>/dev/null; then
+  echo "node_modules/@codeai-hub/codex-module/**" >> .vscodeignore
+fi
+if ! grep -q "node_modules/@codeai-hub/gemini-module" .vscodeignore 2>/dev/null; then
+  echo "node_modules/@codeai-hub/gemini-module/**" >> .vscodeignore
+fi
+if ! grep -q "packages/Claude_Module" .vscodeignore 2>/dev/null; then
+  echo "packages/Claude_Module/**" >> .vscodeignore
+fi
+if ! grep -q "packages/Codex_Module" .vscodeignore 2>/dev/null; then
+  echo "packages/Codex_Module/**" >> .vscodeignore
+fi
+if ! grep -q "packages/Gemini_Module" .vscodeignore 2>/dev/null; then
+  echo "packages/Gemini_Module/**" >> .vscodeignore
+fi
+
+clean_temp_dirs() {
+  rm -rf codeai-hub-*/ 
+  rm -rf dist
+  rm -rf doc/tmp/build
+}
+
+clean_temp_dirs
 
 echo "✅ SDK exclusions verified"
 

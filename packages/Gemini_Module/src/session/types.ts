@@ -1,8 +1,8 @@
 import type { EventEmitter } from "node:events";
-import type { Config } from "@google/gemini-cli-core/dist/src/config/config.js";
-import type { GeminiClient } from "@google/gemini-cli-core/dist/src/core/client.js";
-import type { GeminiSessionLogger } from "../logging/session-logger.js";
-import type { ModuleReporter } from "../types/index.js";
+import type { Config } from "@google/gemini-cli-core/dist/src/config/config";
+import type { GeminiClient } from "@google/gemini-cli-core/dist/src/core/client";
+import type { GeminiSessionLogger } from "../logging/session-logger";
+import type { ModuleReporter } from "../types";
 
 export type ActiveSession = {
   readonly sessionId: string;
