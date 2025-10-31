@@ -5,12 +5,12 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Компоненты системы
 - **Автономное ядро** — Node.js сервис, теперь упакованный как JS-бандл + официальный Node 20 runtime. В dev-сборках скрипты (`scripts/build-core.sh`) кладут ядро в `~/.codeai-hub/core/<platform>/<version>/`, а манифест (`assets/core/manifest.json`) указывает на `file://$HOME/.codeai-hub/releases/`. Extension запускает ядро командой `<runtime>/node/bin/node <app>/dist/index.js`, пробрасывая переменные окружения и пути к провайдерам. В релизах манифест переключается обратно на GitHub Releases.
-- **Клиентские интерфейсы**: webview VS Code, локальный CEF клиент, облачный/Mobile UI. Все они подключаются к ядру через HTTP/WebSocket API (Remote Bridge).
+- **Клиентские интерфейсы**: webview VS Code, локальный CEF клиент, облачный/Mobile UI. Все они подключаются к ядру через HTTP/WebSocket API (Remote Bridge). Маковский лаунчер теперь использует `window_state_persistence` + `window_state_tracker`, чтобы мгновенно сохранять размер и позицию окна — повторный запуск восстанавливает layout без рывков.
 - **Провайдерные модули**: устанавливаются в `~/.codeai-hub/providers/<stack>/<version>/`. В dev-режиме сборочные скрипты сразу публикуют туда архивы, чтобы VSIX ничего не качал извне; официальные SDK/CLI подтягиваются при запуске через npm или инсталляторы.
 - **Внешние зависимые CLI/SDK**: например, `@google/gemini-cli`, `@google/gemini-cli-core`, `@anthropic-ai/sdk`. Установка происходит автоматически при первом запуске соответствующего модуля, версии и контрольные суммы фиксируются в метаданных.
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.73
+- VSIX: `codeai-hub` 1.1.79
 - Autonomное ядро: `@codeai-hub/core` 0.2.21
 - Claude module: 0.1.7
 - Codex module: 0.1.1
@@ -37,6 +37,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 │       └── install.json
 └── releases/
     ├── codeai-hub-core-darwin-arm64-0.2.21.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.0.46.tar.bz2
     └── gemini-module-0.3.1.tar.bz2
 ```
 

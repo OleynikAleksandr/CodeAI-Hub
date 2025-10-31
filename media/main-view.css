@@ -198,6 +198,10 @@ body {
   gap: 8px;
 }
 
+.provider-picker__spacer {
+  height: 8px;
+}
+
 .provider-picker__options {
   display: flex;
   flex-direction: column;
@@ -250,6 +254,11 @@ body {
 }
 
 .provider-picker__label-description {
+  font-size: 11px;
+  color: #a0a0a0;
+}
+
+.provider-picker__label-description-inline {
   font-size: 11px;
   color: #a0a0a0;
 }

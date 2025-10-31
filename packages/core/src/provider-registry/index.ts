@@ -435,22 +435,22 @@ export class ProviderRegistry {
     return [
       {
         id: "claudeCodeCli",
-        name: "Claude Agent SDK",
-        description: "Anthropic Claude via Agent SDK",
+        name: "Claude",
+        description: "Using your authentication Claude Code CLI",
         status: "active",
         adapter: claudeAdapter,
       },
       {
         id: "codexCli",
-        name: "Codex SDK",
-        description: "OpenAI Codex via local CLI",
+        name: "Codex",
+        description: "Using your authentication Codex CLI",
         status: "active",
         adapter: codexAdapter,
       },
       {
         id: "geminiCli",
-        name: "Gemini CLI",
-        description: "Google Gemini via official CLI",
+        name: "Gemini",
+        description: "Using your authentication Gemini CLI",
         status: "active",
       },
     ];

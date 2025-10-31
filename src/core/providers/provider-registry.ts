@@ -1,4 +1,8 @@
-import type { ProviderStackDescriptor } from "../../types/provider";
+import {
+  getDefaultProviderDescription,
+  getDefaultProviderTitle,
+  type ProviderStackDescriptor,
+} from "../../types/provider";
 
 /**
  * Describes the set of provider stacks currently available to the extension.
@@ -13,20 +17,20 @@ export class ProviderRegistry {
   private readonly stacks: readonly ProviderStackDescriptor[] = [
     {
       id: "claudeCodeCli",
-      title: "Claude",
-      description: "Using your authentication Claude CLI.",
+      title: getDefaultProviderTitle("claudeCodeCli"),
+      description: getDefaultProviderDescription("claudeCodeCli"),
       connected: true,
     },
     {
       id: "codexCli",
-      title: "Codex",
-      description: "Using your authentication Codex CLI.",
+      title: getDefaultProviderTitle("codexCli"),
+      description: getDefaultProviderDescription("codexCli"),
       connected: true,
     },
     {
       id: "geminiCli",
-      title: "Gemini",
-      description: "Using your authentication Gemini CLI.",
+      title: getDefaultProviderTitle("geminiCli"),
+      description: getDefaultProviderDescription("geminiCli"),
       connected: true,
     },
   ];

@@ -2,18 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.73
-- **Gemini module 0.3.1**: CommonJS bridge now loads the official `@google/gemini-cli(-core)` ESM packages through a dynamic `import()` wrapper, fixes the `ERR_REQUIRE_ESM` crash, and keeps the CLI session live for the core orchestrator.
-- **Installer upgrades**: Gemini installer runs `npm install --omit=dev` inside the vendored CLI directories, so runtime dependencies (`yargs`, `@opentelemetry/*`, etc.) are present without manual intervention.
-- **Core orchestrator 0.2.21**: ships as a Node 20 runtime bundle; ProviderRegistry resolves the Gemini adapter asynchronously and tolerates both CJS and ESM entry points.
-- **Updated artifacts**: `codeai-hub-1.1.73.vsix`, `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`, `gemini-module-0.3.1.tar.bz2`, plus unchanged `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2`, `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`.
+## Current Release — v1.1.79
+- **CodeAIHubLauncher 1.0.46**: macOS standalone window now remembers both position and size thanks to a dedicated `WindowStatePersistence`/`WindowStateTracker` pair. State changes persist immediately, supporting future multi-window layouts.
+- **Provider picker UX**: new-session dialog enforces single-provider selection with radio buttons, highlights CLI prerequisites, and standardises card labels (Claude/Codex/Gemini) across VS Code and the standalone client.
+- **Session titles in sync**: both the extension webview and the CEF client now generate identical tab names, so sessions opened in either surface use the same provider captions.
+- **Tooling tidy-up**: launcher manifest points to the local `CodeAIHubLauncher-macos-arm64-1.0.46.tar.bz2`, the build script writes install metadata automatically, and docs were refreshed for the 1.1.79 release.
+
+**Artifact bundle**
+- VSIX: `codeai-hub-1.1.79.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.46.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`
+- Providers: `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`, `gemini-module-0.3.1.tar.bz2`
 
 ## Features
-- **Autonomous Node 20 core**: the VS Code extension ships with a self-contained core bundle (`@codeai-hub/core@0.2.21`) plus the official Node runtime staged under `~/.codeai-hub/core/<platform>/<version>/`.
-- **Pluggable provider modules**: Claude, Codex, and Gemini are delivered as versioned packages in `~/.codeai-hub/providers/<provider>/<version>/`, installed automatically, and managed through a unified core API.
-- **Offline-first delivery**: all manifests (`assets/**/manifest.json`) point to the local cache at `file://$HOME/.codeai-hub/releases/`, so builds and tests do not require network access.
-- **Installer-managed dependencies**: build scripts and the extension download official CLI/SDK archives, validate SHA-1 checksums, and prepare provider `node_modules` before the first launch.
-- **Strict quality gates**: Ultracite, the architecture checker, jscpd, and ts-prune run in pre-commit/pre-push hooks to enforce consistent code quality.
+- **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
+- **Persistent standalone UI**: the macOS launcher (CEF) stores window position and size in real time, so the web client reopens exactly where you left it—even across monitor changes.
+- **Offline-first packaging**: manifests point to the local `~/.codeai-hub/releases/` cache, and build scripts publish fresh tarballs for core, launcher, and provider modules without relying on GitHub downloads.
+- **Automated installer pipeline**: module installers download official SDK/CLI payloads, verify checksums, and stage runtime dependencies (`npm install --omit=dev`) before the core spins up a provider.
+- **Quality guardrails**: Ultracite architecture rules, jscpd duplication scans, ts-prune export checks, and Biome formatting run through Lefthook to keep the codebase healthy.
 
 ## Getting Started
 ```bash
