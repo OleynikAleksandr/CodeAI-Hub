@@ -29,6 +29,8 @@ type ProviderOptionProps = {
   readonly inputRef?: (element: HTMLInputElement | null) => void;
 };
 
+const RADIO_GROUP_NAME = "provider-picker";
+
 const ProviderOption = ({
   provider,
   checked,
@@ -60,9 +62,10 @@ const ProviderOption = ({
         className="provider-picker__checkbox"
         disabled={disabled}
         id={provider.id}
+        name={RADIO_GROUP_NAME}
         onChange={handleChange}
         ref={inputRef}
-        type="checkbox"
+        type="radio"
       />
       <span className="provider-picker__label">
         <span className="provider-picker__label-title">{provider.title}</span>
@@ -98,18 +101,14 @@ export const ProviderPicker = ({
   }, [visible]);
 
   const toggleProvider = (providerId: ProviderStackId) => {
-    setSelected((previous) => {
-      const next = new Set(previous);
-      if (next.has(providerId)) {
-        next.delete(providerId);
-      } else {
-        next.add(providerId);
-      }
-      return next;
-    });
+    setSelected(new Set([providerId]));
   };
 
   const selectedIds = useMemo(() => Array.from(selected.values()), [selected]);
+  const selectedProvider = useMemo(
+    () => providers.find((provider) => selectedIds[0] === provider.id),
+    [providers, selectedIds]
+  );
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -154,11 +153,11 @@ export const ProviderPicker = ({
       className="provider-picker"
     >
       <h2 className="provider-picker__title" id="provider-picker-heading">
-        Choose providers
+        Choose a provider
       </h2>
       <p className="provider-picker__description">
-        Select one or more providers to include in your new session.
-        Combinations allow multi-agent orchestration.
+        Select one provider for your new session. Make sure the matching CLI is
+        installed, signed in, and ready before you continue.
       </p>
       <form className="provider-picker__form" onSubmit={handleSubmit}>
         <fieldset className="provider-picker__fieldset">
@@ -172,10 +171,8 @@ export const ProviderPicker = ({
         <div className="provider-picker__actions">
           <output aria-live="polite" className="provider-picker__status">
             {isSubmitDisabled
-              ? "Select at least one provider to continue."
-              : `${selectedIds.length} provider${
-                  selectedIds.length > 1 ? "s" : ""
-                } selected.`}
+              ? "Select a provider to continue."
+              : `${selectedProvider?.title ?? "Provider"} selected.`}
           </output>
           <div className="provider-picker__action-buttons">
             <button

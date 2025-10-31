@@ -13,22 +13,20 @@ export class ProviderRegistry {
   private readonly stacks: readonly ProviderStackDescriptor[] = [
     {
       id: "claudeCodeCli",
-      title: "Claude Code CLI",
-      description:
-        "Anthropic Claude Agent SDK integration. Requires global Claude CLI install.",
+      title: "Claude",
+      description: "Using your authentication Claude CLI.",
       connected: true,
     },
     {
       id: "codexCli",
-      title: "Codex CLI",
-      description: "OpenAI Codex CLI integration with local sandbox controls.",
+      title: "Codex",
+      description: "Using your authentication Codex CLI.",
       connected: true,
     },
     {
       id: "geminiCli",
-      title: "Gemini CLI",
-      description:
-        "Google Gemini CLI with OAuth login and JSON output pipeline.",
+      title: "Gemini",
+      description: "Using your authentication Gemini CLI.",
       connected: true,
     },
   ];
