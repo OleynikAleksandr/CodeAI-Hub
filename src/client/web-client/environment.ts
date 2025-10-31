@@ -113,7 +113,7 @@ const createStandaloneRouter = () => {
       notifyWebview({
         type: "ui:providerPickerError",
         payload: {
-          reason: "Select at least one provider to start a session.",
+          reason: "Select a provider to start a session.",
         },
       });
       return;
