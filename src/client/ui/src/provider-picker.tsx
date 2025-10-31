@@ -68,9 +68,14 @@ const ProviderOption = ({
         type="radio"
       />
       <span className="provider-picker__label">
-        <span className="provider-picker__label-title">{provider.title}</span>
-        <span className="provider-picker__label-description">
-          {provider.description}
+        <span className="provider-picker__label-title">
+          {provider.title}
+          {provider.description ? (
+            <span className="provider-picker__label-description-inline">
+              {" "}
+              ({provider.description})
+            </span>
+          ) : null}
         </span>
         <span className={statusClassName}>{statusLabel}</span>
       </span>
@@ -153,17 +158,18 @@ export const ProviderPicker = ({
       className="provider-picker"
     >
       <h2 className="provider-picker__title" id="provider-picker-heading">
-        Choose a provider
+        Choose providers
       </h2>
       <p className="provider-picker__description">
-        Select one provider for your new session. Make sure the matching CLI is
-        installed, signed in, and ready before you continue.
+        Select exactly one provider for your new session. Install and
+        authenticate each CLI before continuing.
       </p>
       <form className="provider-picker__form" onSubmit={handleSubmit}>
         <fieldset className="provider-picker__fieldset">
           <legend className="provider-picker__legend">
             Connected provider stacks
           </legend>
+          <div aria-hidden="true" className="provider-picker__spacer" />
           <div className="provider-picker__options">
             {providers.map((provider, index) => renderOption(provider, index))}
           </div>

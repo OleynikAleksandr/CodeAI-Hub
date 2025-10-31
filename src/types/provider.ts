@@ -15,3 +15,12 @@ const PROVIDER_TITLE_MAP: Record<ProviderStackId, string> = {
 
 export const getDefaultProviderTitle = (providerId: ProviderStackId): string =>
   PROVIDER_TITLE_MAP[providerId] ?? providerId;
+const PROVIDER_DESCRIPTION_MAP: Record<ProviderStackId, string> = {
+  claudeCodeCli: "Using your authentication Claude Code CLI",
+  codexCli: "Using your authentication Codex CLI",
+  geminiCli: "Using your authentication Gemini CLI",
+};
+
+export const getDefaultProviderDescription = (
+  providerId: ProviderStackId
+): string => PROVIDER_DESCRIPTION_MAP[providerId] ?? "";

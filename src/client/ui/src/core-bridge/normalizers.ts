@@ -1,6 +1,8 @@
-import type {
-  ProviderStackDescriptor,
-  ProviderStackId,
+import {
+  getDefaultProviderDescription,
+  getDefaultProviderTitle,
+  type ProviderStackDescriptor,
+  type ProviderStackId,
 } from "../../../../types/provider";
 import type { SessionMessage } from "../../../../types/session";
 import { providerIdSet } from "../session/helpers";
@@ -35,8 +37,9 @@ const sanitizeProvider = (
 
   return {
     id: providerId,
-    title: provider.name ?? provider.id,
-    description: provider.description ?? "",
+    title: provider.name ?? getDefaultProviderTitle(providerId),
+    description:
+      provider.description ?? getDefaultProviderDescription(providerId),
     connected: provider.status !== "inactive",
   };
 };

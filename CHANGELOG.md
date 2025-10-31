@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.79] - 2025-10-31
+### Added
+- macOS launcher now persists window position and size via the new `WindowStatePersistence`/`WindowStateTracker` Objective-C modules, keeping future multi-window layouts viable.
+
+### Changed
+- Provider picker enforces single-provider selection with radio buttons, adds a CLI readiness reminder, and standardises card labels for Claude, Codex, and Gemini across VS Code and the standalone client.
+- Session tabs now derive provider titles from shared defaults, so extension and standalone sessions render identical captions.
+- Launcher build script writes `install.json` metadata automatically; README and supporting docs were refreshed for release 1.1.79.
+
+### Build
+- VSIX → `codeai-hub-1.1.79.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.0.46.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`
+- Providers → `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`, `gemini-module-0.3.1.tar.bz2`
+
 ## [1.1.73] - 2025-10-30
 ### Fixed
 - Gemini provider no longer throws `ERR_REQUIRE_ESM`: the bridge loads `@google/gemini-cli` and `@google/gemini-cli-core` via an asynchronous dynamic `import()` helper while keeping the module surface CommonJS-friendly for the core orchestrator.

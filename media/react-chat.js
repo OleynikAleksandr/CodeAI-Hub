@@ -7331,8 +7331,15 @@
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "provider-picker__label", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "provider-picker__label-title", children: provider.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "provider-picker__label-description", children: provider.description }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "provider-picker__label-title", children: [
+              provider.title,
+              provider.description ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "provider-picker__label-description-inline", children: [
+                " ",
+                "(",
+                provider.description,
+                ")"
+              ] }) : null
+            ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: statusClassName, children: statusLabel })
           ] })
         ]
@@ -7402,11 +7409,12 @@
         "aria-labelledby": "provider-picker-heading",
         className: "provider-picker",
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "provider-picker__title", id: "provider-picker-heading", children: "Choose a provider" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "provider-picker__description", children: "Select one provider for your new session. Make sure the matching CLI is installed, signed in, and ready before you continue." }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "provider-picker__title", id: "provider-picker-heading", children: "Choose providers" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "provider-picker__description", children: "Select exactly one provider for your new session. Install and authenticate each CLI before continuing." }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", { className: "provider-picker__form", onSubmit: handleSubmit, children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("fieldset", { className: "provider-picker__fieldset", children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("legend", { className: "provider-picker__legend", children: "Connected provider stacks" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { "aria-hidden": "true", className: "provider-picker__spacer" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "provider-picker__options", children: providers.map((provider, index) => renderOption(provider, index)) })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "provider-picker__actions", children: [
@@ -7445,6 +7453,12 @@
     geminiCli: "Gemini"
   };
   var getDefaultProviderTitle = (providerId) => PROVIDER_TITLE_MAP[providerId] ?? providerId;
+  var PROVIDER_DESCRIPTION_MAP = {
+    claudeCodeCli: "Using your authentication Claude Code CLI",
+    codexCli: "Using your authentication Codex CLI",
+    geminiCli: "Using your authentication Gemini CLI"
+  };
+  var getDefaultProviderDescription = (providerId) => PROVIDER_DESCRIPTION_MAP[providerId] ?? "";
 
   // src/client/ui/src/session/helpers.ts
   var mergeCatalog = (catalog, providers) => {
@@ -7582,8 +7596,8 @@
     }
     return {
       id: providerId,
-      title: provider.name ?? provider.id,
-      description: provider.description ?? "",
+      title: provider.name ?? getDefaultProviderTitle(providerId),
+      description: provider.description ?? getDefaultProviderDescription(providerId),
       connected: provider.status !== "inactive"
     };
   };

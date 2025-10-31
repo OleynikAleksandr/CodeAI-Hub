@@ -51,6 +51,8 @@ if(APPLE)
   set(PLATFORM_SOURCES
     src/platform/mac/app_main_mac.mm
     src/platform/mac/launcher_handler_mac.mm
+    src/platform/mac/window_state_tracker.mm
+    src/platform/mac/window_state_persistence.mm
   )
   set(MAC_HELPER_SOURCES
     src/platform/mac/process_helper_mac.cc
@@ -67,6 +69,12 @@ if(APPLE)
     COMPILE_FLAGS "-fobjc-arc"
   )
   set_source_files_properties(src/platform/mac/launcher_handler_mac.mm PROPERTIES
+    COMPILE_FLAGS "-fobjc-arc"
+  )
+  set_source_files_properties(src/platform/mac/window_state_tracker.mm PROPERTIES
+    COMPILE_FLAGS "-fobjc-arc"
+  )
+  set_source_files_properties(src/platform/mac/window_state_persistence.mm PROPERTIES
     COMPILE_FLAGS "-fobjc-arc"
   )
   set_target_properties(CodeAIHubLauncher PROPERTIES
