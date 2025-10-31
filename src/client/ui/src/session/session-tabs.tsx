@@ -1,4 +1,5 @@
 import type { ProviderStackId } from "../../../../types/provider";
+import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionRecord } from "../../../../types/session";
 
 type SessionTabsProps = {
@@ -25,7 +26,9 @@ const SessionTabs = ({
       {sessions.map((session) => {
         const isActive = session.id === activeSessionId;
         const providerNames = session.providerIds.map((providerId) => {
-          const label = providerLabels.get(providerId) ?? providerId;
+          const label =
+            providerLabels.get(providerId) ??
+            getDefaultProviderTitle(providerId);
           const [primaryToken] = label.split(" ");
           return primaryToken ?? label;
         });
@@ -47,7 +50,11 @@ const SessionTabs = ({
           : [primaryLine];
         const spokenSummary = providerNames.join(", ");
         const fullSummary = session.providerIds
-          .map((providerId) => providerLabels.get(providerId) ?? providerId)
+          .map(
+            (providerId) =>
+              providerLabels.get(providerId) ??
+              getDefaultProviderTitle(providerId)
+          )
           .join(" + ");
 
         const tabClassName = isActive

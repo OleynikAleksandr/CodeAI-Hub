@@ -2,6 +2,7 @@ import type {
   ProviderStackDescriptor,
   ProviderStackId,
 } from "../../../../types/provider";
+import { getDefaultProviderTitle } from "../../../../types/provider";
 import type {
   SessionMessage,
   SessionRecord,
@@ -108,7 +109,12 @@ export const buildProviderLabels = (
     ProviderStackDescriptor,
   ][];
 
-  return new Map(entries.map(([id, descriptor]) => [id, descriptor.title]));
+  return new Map(
+    entries.map(([id, descriptor]) => [
+      id,
+      descriptor.title ?? getDefaultProviderTitle(id),
+    ])
+  );
 };
 
 export const createInitialSnapshot = (
@@ -116,7 +122,10 @@ export const createInitialSnapshot = (
   providerLabels: ReadonlyMap<ProviderStackId, string>
 ): SessionSnapshot => {
   const providersSummary = session.providerIds
-    .map((providerId) => providerLabels.get(providerId) ?? providerId)
+    .map(
+      (providerId) =>
+        providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId)
+    )
     .join(" + ");
 
   const now = Date.now();

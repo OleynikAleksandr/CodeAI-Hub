@@ -7438,6 +7438,14 @@
     );
   };
 
+  // src/types/provider.ts
+  var PROVIDER_TITLE_MAP = {
+    claudeCodeCli: "Claude",
+    codexCli: "Codex",
+    geminiCli: "Gemini"
+  };
+  var getDefaultProviderTitle = (providerId) => PROVIDER_TITLE_MAP[providerId] ?? providerId;
+
   // src/client/ui/src/session/helpers.ts
   var mergeCatalog = (catalog, providers) => {
     const nextCatalog = { ...catalog };
@@ -7494,10 +7502,17 @@
   };
   var buildProviderLabels = (catalog) => {
     const entries = Object.entries(catalog);
-    return new Map(entries.map(([id, descriptor]) => [id, descriptor.title]));
+    return new Map(
+      entries.map(([id, descriptor]) => [
+        id,
+        descriptor.title ?? getDefaultProviderTitle(id)
+      ])
+    );
   };
   var createInitialSnapshot = (session, providerLabels) => {
-    const providersSummary = session.providerIds.map((providerId) => providerLabels.get(providerId) ?? providerId).join(" + ");
+    const providersSummary = session.providerIds.map(
+      (providerId) => providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId)
+    ).join(" + ");
     const now = Date.now();
     const baseMessage = {
       id: `message-${now}`,
@@ -9586,7 +9601,7 @@ ${path}` : path;
     return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
       const isActive = session.id === activeSessionId;
       const providerNames = session.providerIds.map((providerId) => {
-        const label = providerLabels.get(providerId) ?? providerId;
+        const label = providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);
         const [primaryToken] = label.split(" ");
         return primaryToken ?? label;
       });
@@ -9604,7 +9619,9 @@ ${path}` : path;
       const secondaryLine = secondaryTokens.length > 0 ? `+${secondaryTokens.join("+")}` : "";
       const displaySummary = secondaryLine ? [primaryLine, secondaryLine] : [primaryLine];
       const spokenSummary = providerNames.join(", ");
-      const fullSummary = session.providerIds.map((providerId) => providerLabels.get(providerId) ?? providerId).join(" + ");
+      const fullSummary = session.providerIds.map(
+        (providerId) => providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId)
+      ).join(" + ");
       const tabClassName = isActive ? "session-tab session-tab--active" : "session-tab";
       return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: tabClassName, children: [
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(

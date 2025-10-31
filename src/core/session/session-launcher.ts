@@ -1,4 +1,5 @@
 import type { ProviderStackId } from "../../types/provider";
+import { getDefaultProviderTitle } from "../../types/provider";
 import type { SessionRecord } from "../../types/session";
 
 export type SessionLaunchRequest = {
@@ -33,9 +34,13 @@ export class SessionLauncher {
 
     const session = this.createSessionRecord(uniqueProviders);
 
+    const providerSummary = uniqueProviders
+      .map((providerId) => getDefaultProviderTitle(providerId))
+      .join(", ");
+
     return {
       status: "ok",
-      summary: `Session requested for providers: ${uniqueProviders.join(", ")}`,
+      summary: `Session requested for providers: ${providerSummary}`,
       session,
     };
   }
