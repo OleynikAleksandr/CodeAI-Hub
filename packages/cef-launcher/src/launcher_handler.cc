@@ -54,6 +54,7 @@ void LauncherHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
 void LauncherHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
   browser_list_.push_back(browser);
+  PlatformShowWindow(browser);
 }
 
 bool LauncherHandler::DoClose(CefRefPtr<CefBrowser> browser) {
