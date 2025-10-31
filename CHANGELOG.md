@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.83] - 2025-10-31
+### Added
+- Provider setup guide (`doc/Project_Docs/knowledge/ProviderSetupGuide.md`) outlining manual installation and authentication steps for Claude, Codex, and Gemini CLI tools.
+
+### Changed
+- macOS launcher bumped to 1.0.48 and now relies on AppKit autosave instead of custom Objective-C state trackers.
+- Architecture/SystemArchitecture docs consolidated with module-specific pages in `doc/Project_Docs/Stacks/`; legacy TODO plans cleaned up and replaced with `todo-plan_.md` for upcoming work.
+- README refreshed with manual provider requirements and updated artifact list for v1.1.83.
+
+### Build
+- VSIX → `codeai-hub-1.1.83.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.0.48.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`
+- Providers → `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`, `gemini-module-0.3.1.tar.bz2`
+
 ## [1.1.79] - 2025-10-31
 ### Added
 - macOS launcher now persists window position and size via the new `WindowStatePersistence`/`WindowStateTracker` Objective-C modules, keeping future multi-window layouts viable.

@@ -21,6 +21,21 @@ const buildLaunchArgs = (
   return args;
 };
 
+const readExistingConfig = async (
+  configPath: string
+): Promise<Record<string, unknown>> => {
+  try {
+    const raw = await fs.readFile(configPath, { encoding: "utf8" });
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    if (parsed && typeof parsed === "object") {
+      return parsed;
+    }
+  } catch {
+    /* ignore missing or invalid config */
+  }
+  return {};
+};
+
 const ensureLauncherConfig = async (
   launcher: LauncherInstallInfo,
   indexFilePath: string
@@ -29,7 +44,10 @@ const ensureLauncherConfig = async (
   await ensureDirectory(configDir);
 
   const configPath = path.join(configDir, CONFIG_FILE_NAME);
+  const existingConfig = await readExistingConfig(configPath);
+
   const config = {
+    ...existingConfig,
     uiRoot: path.dirname(indexFilePath),
     entry: path.basename(indexFilePath),
     url: Uri.file(indexFilePath).toString(),

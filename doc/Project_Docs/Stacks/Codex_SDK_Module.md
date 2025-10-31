@@ -1,13 +1,13 @@
 # Codex SDK Module
 
-**Updated:** 2025-10-27  
+**Updated:** 2025-10-31  
 **Owner:** Codex  
 **Source Reference:** `https://github.com/openai/codex/tree/main/sdk/typescript`
 
 ---
 
 ## 1. Purpose & Scope
-- Document the structure and behaviour of the Codex TypeScript SDK so we can implement a first-class provider module inside CodeAI-Hub Core.
+- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@0.1.1` inside CodeAI-Hub Core.
 - Capture the CLI/SDK contract (events, items, options) that we must adapt for RemoteBridge and UI streaming.
 - List integration prerequisites (authentication, binaries, storage layout) required to bootstrap Codex alongside the Claude module.
 

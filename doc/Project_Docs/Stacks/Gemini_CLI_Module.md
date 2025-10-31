@@ -1,8 +1,8 @@
 # Gemini CLI Module Integration Guide
 
-**Status:** In Progress
+**Status:** Active (CommonJS bridge)
 
-**Last Updated:** 2025-10-28
+**Last Updated:** 2025-10-31
 
 **Maintainer:** Codex / CodeAI Hub Core Team
 
@@ -28,16 +28,14 @@ Additional references to monitor:
 ---
 
 ## 3. Installation & Environment
-- **Global install:** `npm install -g @google/gemini-cli`
-- **Binary location:** `~/.npm-global/lib/node_modules/@google/gemini-cli/` (macOS default); add `$HOME/.npm-global/bin` to `PATH` to expose the `gemini` executable.
-- **Runtime requirements:** Node.js ≥ 20.0.0, macOS/Linux/Windows supported.
-- **Update check:** `gemini --version` → expect ≥ 0.10.x for stable Tools API.
+- **Managed install:** `packages/Gemini_Module/src/installer/gemini-installer.ts` скачивает `@google/gemini-cli` и `@google/gemini-cli-core` из npm и раскладывает их в `dist/vendor/node_modules/@google/…` внутри установленного модуля (`~/.codeai-hub/providers/gemini/0.3.1`).
+- **Runtime requirements:** Node.js ≥ 20.0.0 (используется bundled runtime ядра), macOS/Linux/Windows поддерживаются CLI.
+- **Version pinning:** manifest `codeaiHub` внутри `package.json` модуля (0.3.1) фиксирует версии `geminiCliVersion` и `geminiCliCoreVersion` (0.11.0). Контрольные суммы проверяются при скачивании.
 - **Credential store:** `~/.gemini/`
-  - `credentials.json` — OAuth tokens (refresh/access).
-  - `config.json` — project selection, CLI metadata.
-  - `settings.json` — UI preferences, default model, tooling config.
-
-> Note: If CLI was installed with a different prefix, `command -v gemini` should resolve the effective binary used. The installer must accept user-specific paths.
+  - `credentials.json` — OAuth токены (refresh/access).
+  - `config.json` — project metadata и выбранные расширения.
+  - `settings.json` — модель по умолчанию, настройки sandbox/tools.
+- **Fallback CLI:** пользователь может иметь глобально установленный CLI (`npm install -g @google/gemini-cli`); приоритет — управляемая копия в vendor. Инсталлятор проверяет наличие и при необходимости переустанавливает.
 
 ---
 
@@ -81,12 +79,12 @@ Important flags:
 ---
 
 ## 7. Implementation Status
-- ✅ **Installer (`packages/Gemini_Module/src/installer/gemini-installer.ts`)** — resolves the CLI binary (override via `GEMINI_BINARY_PATH`), enforces a minimum version, checks for `~/.gemini/credentials.json`, and falls back to status `inactive` instead of aborting the core start when validation fails.
-- ✅ **Session Manager (`packages/Gemini_Module/src/session/gemini-session-manager.ts`)** — maintains long-lived `gemini -o json` processes, streams user input, detects crashes, and emits structured lifecycle events for RemoteBridge.
-- ✅ **Message Processor (`packages/Gemini_Module/src/messaging/message-processor.ts`)** — parses JSON lines into assistant messages, guards against malformed payloads, and preserves the raw payload for downstream tooling.
-- ✅ **Provider Adapter (`packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`)** — wires the installer/session/message stack into the core `ProviderRegistry`, exposes subscribe/send/close, and surfaces session start/system events.
-- ✅ **UI Integration** — provider picker now lists “Gemini CLI” with connection badges, and the extension propagates status updates from the core.
-- 🚧 **Auth Manager & Advanced Logging** — OAuth lifecycle still delegated to the CLI; richer log persistence (`~/.codeai-hub/logs/gemini-cli/`) tracked for a later milestone.
+- ✅ **Installer** — скачивает CLI/Core из npm, проверяет SHA-1, устанавливает зависимости (`npm install --omit=dev --no-audit --no-fund`) в vendor, генерирует `cli-bridge.json` с метаданными.
+- ✅ **CLI Bridge (`src/runtime/cli-bridge.ts`)** — использует динамический `import()` через `Function("return import(specifier);")`, конвертирует пути в file URL и загружает ESM-модули CLI/Core без `require()` (устранён `ERR_REQUIRE_ESM`).
+- ✅ **Session Manager** — работает поверх официального CLI Core (`contentGenerator`, `toolScheduler` и т.д.), управляет потоками, журналирует события, очищает окружение от конфликтующих `GOOGLE_*` переменных.
+- ✅ **Provider Adapter** — интегрирован с `ProviderRegistry`, отправляет события, обрабатывает подписчиков, транслирует системные сообщения (инициализация, ошибки аутентификации).
+- ✅ **UI Integration** — provider picker отображает статус Gemini; при ошибке инициализации модуль переводится в `inactive`, ядро продолжает работу.
+- 🚧 **Расширенный логгер/health-check** — основная аутентификация по-прежнему вручена CLI (`gemini login`), сбор логов и health-check до запуска ядра в планах.
 
 ---
 

@@ -8,6 +8,7 @@
 namespace {
 
 NSString* const kWindowStateKey = @"CodeAIHubStandaloneWindowState";
+NSString* const kWindowAutosaveName = @"CodeAIHubMainWindow";
 
 constexpr CGFloat kMinWindowWidth = 960.0;
 constexpr CGFloat kMinWindowHeight = 640.0;
@@ -30,12 +31,22 @@ static CGFloat Clamp(CGFloat value, CGFloat minimum, CGFloat maximum) {
   return value;
 }
 
-static NSScreen* ResolveScreen(NSWindow* window) {
-  NSScreen* windowScreen = [window screen];
-  if (windowScreen) {
-    return windowScreen;
+static void EnsureAutosaveConfigured(NSWindow* window) {
+  if (!window) {
+    return;
   }
-  return [NSScreen mainScreen];
+  NSString* autosaveName = [window frameAutosaveName];
+  if (![autosaveName isEqualToString:kWindowAutosaveName]) {
+    [window setFrameAutosaveName:kWindowAutosaveName];
+  }
+}
+
+static void SaveFrameUsingAutosave(NSWindow* window) {
+  if (!window) {
+    return;
+  }
+  EnsureAutosaveConfigured(window);
+  [window saveFrameUsingName:kWindowAutosaveName];
 }
 
 static NSRect ComputeSafeFrame(NSRect frame, NSScreen* screen) {
@@ -61,7 +72,7 @@ static NSRect ComputeSafeFrame(NSRect frame, NSScreen* screen) {
   return NSMakeRect(x, y, width, height);
 }
 
-static NSRect ConvertFrameToStorage(NSRect frame, NSScreen* screen) {
+static NSRect NormalizeFrameToCocoa(NSRect frame, NSScreen* screen) {
   const NSScreen* targetScreen = screen ?: [NSScreen mainScreen];
   if (!targetScreen) {
     return frame;
@@ -73,7 +84,7 @@ static NSRect ConvertFrameToStorage(NSRect frame, NSScreen* screen) {
   return frame;
 }
 
-static NSRect ConvertFrameFromStorage(NSRect frame, NSScreen* screen) {
+static NSRect DenormalizeFrameFromCocoa(NSRect frame, NSScreen* screen) {
   const NSScreen* targetScreen = screen ?: [NSScreen mainScreen];
   if (!targetScreen) {
     return frame;
@@ -83,6 +94,17 @@ static NSRect ConvertFrameFromStorage(NSRect frame, NSScreen* screen) {
   frame.origin.y = screenFrame.origin.y + screenFrame.size.height -
                    frame.origin.y - frame.size.height;
   return frame;
+}
+
+static bool RestoreUsingAutosave(NSWindow* window) {
+  if (!window) {
+    return false;
+  }
+  EnsureAutosaveConfigured(window);
+  if ([window respondsToSelector:@selector(setFrameUsingName:)]) {
+    return [window setFrameUsingName:kWindowAutosaveName];
+  }
+  return false;
 }
 
 }  // namespace
@@ -91,6 +113,10 @@ static NSRect ConvertFrameFromStorage(NSRect frame, NSScreen* screen) {
 
 + (void)restoreWindow:(NSWindow*)window {
   if (!window) {
+    return;
+  }
+
+  if (RestoreUsingAutosave(window)) {
     return;
   }
 
@@ -113,11 +139,12 @@ static NSRect ConvertFrameFromStorage(NSRect frame, NSScreen* screen) {
                               [widthValue doubleValue],
                               [heightValue doubleValue]);
 
-  NSScreen* screen = ResolveScreen(window);
-  desired = ComputeSafeFrame(desired, screen);
-  desired = ConvertFrameFromStorage(desired, screen);
+  NSScreen* windowScreen = [window screen] ?: [NSScreen mainScreen];
+  desired = ComputeSafeFrame(desired, windowScreen);
+  desired = DenormalizeFrameFromCocoa(desired, windowScreen);
 
   [window setFrame:desired display:YES animate:NO];
+  SaveFrameUsingAutosave(window);
 }
 
 + (void)persistWindow:(NSWindow*)window {
@@ -125,11 +152,13 @@ static NSRect ConvertFrameFromStorage(NSRect frame, NSScreen* screen) {
     return;
   }
 
-  NSScreen* screen = ResolveScreen(window);
+  NSScreen* windowScreen = [window screen] ?: [NSScreen mainScreen];
   NSRect frame = [window frame];
 
-  frame = ConvertFrameToStorage(frame, screen);
-  frame = ComputeSafeFrame(frame, screen);
+  SaveFrameUsingAutosave(window);
+
+  frame = NormalizeFrameToCocoa(frame, windowScreen);
+  frame = ComputeSafeFrame(frame, windowScreen);
 
   NSDictionary* payload = @{
     @"x" : @(frame.origin.x),
