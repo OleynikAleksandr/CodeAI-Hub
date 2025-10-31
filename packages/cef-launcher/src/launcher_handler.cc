@@ -59,6 +59,7 @@ void LauncherHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
 bool LauncherHandler::DoClose(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
   if (browser_list_.size() == 1) {
+    PlatformPersistWindowState(browser);
     is_closing_ = true;
   }
   return false;
@@ -142,5 +143,10 @@ void LauncherHandler::CloseAllBrowsers(bool force_close) {
 #if !defined(__APPLE__)
 void LauncherHandler::PlatformShowWindow(CefRefPtr<CefBrowser> browser) {
   NOTIMPLEMENTED();
+}
+
+void LauncherHandler::PlatformPersistWindowState(
+    CefRefPtr<CefBrowser> browser) {
+  // No-op on non-macOS platforms for now.
 }
 #endif

@@ -8,10 +8,6 @@ import type {
   ProviderStackDescriptor,
   ProviderStackId,
 } from "../../types/provider";
-import {
-  persistStandaloneWindowState,
-  restoreStandaloneWindowState,
-} from "./window-state";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
@@ -184,8 +180,6 @@ export const initializeStandaloneEnvironment = (): void => {
     return;
   }
 
-  restoreStandaloneWindowState();
-
   const routeMessage = createStandaloneRouter();
 
   const vsCodeApi = {
@@ -200,7 +194,4 @@ export const initializeStandaloneEnvironment = (): void => {
 
   globalScope.acquireVsCodeApi = () => vsCodeApi;
   globalScope.vscode = vsCodeApi;
-
-  window.addEventListener("beforeunload", persistStandaloneWindowState);
-  window.addEventListener("unload", persistStandaloneWindowState);
 };
