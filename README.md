@@ -2,15 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.79
-- **CodeAIHubLauncher 1.0.46**: macOS standalone window now remembers both position and size thanks to a dedicated `WindowStatePersistence`/`WindowStateTracker` pair. State changes persist immediately, supporting future multi-window layouts.
-- **Provider picker UX**: new-session dialog enforces single-provider selection with radio buttons, highlights CLI prerequisites, and standardises card labels (Claude/Codex/Gemini) across VS Code and the standalone client.
-- **Session titles in sync**: both the extension webview and the CEF client now generate identical tab names, so sessions opened in either surface use the same provider captions.
-- **Tooling tidy-up**: launcher manifest points to the local `CodeAIHubLauncher-macos-arm64-1.0.46.tar.bz2`, the build script writes install metadata automatically, and docs were refreshed for the 1.1.79 release.
+## Current Release — v1.1.83
+- **CodeAIHubLauncher 1.0.48**: macOS launcher now relies on AppKit autosave (`setFrameAutosaveName("CodeAIHubMainWindow")`), so window geometry is preserved without the custom Objective‑C shim; the packaged archive is `CodeAIHubLauncher-macos-arm64-1.0.48.tar.bz2`.
+- **Manual provider setup**: `doc/Project_Docs/knowledge/ProviderSetupGuide.md` documents how users install and authenticate Claude, Codex, and Gemini CLI tooling on their own before launching the extension.
+- **Documentation cleanup**: module specs live under `doc/Project_Docs/Stacks/`, `Architecture.md` and `SystemArchitecture.md` were refreshed, and legacy TODO plans were removed.
+- **Release workflow**: `doc/TODO/todo-plan_.md` tracks upcoming work for CLI detection, provider settings, and the mandatory rebuild of modules plus VSIX packaging.
 
 **Artifact bundle**
-- VSIX: `codeai-hub-1.1.79.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.46.tar.bz2`
+- VSIX: `codeai-hub-1.1.83.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.48.tar.bz2`
 - Core: `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`
 - Providers: `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`, `gemini-module-0.3.1.tar.bz2`
 
@@ -18,7 +18,7 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
 - **Persistent standalone UI**: the macOS launcher (CEF) stores window position and size in real time, so the web client reopens exactly where you left it—even across monitor changes.
 - **Offline-first packaging**: manifests point to the local `~/.codeai-hub/releases/` cache, and build scripts publish fresh tarballs for core, launcher, and provider modules without relying on GitHub downloads.
-- **Automated installer pipeline**: module installers download official SDK/CLI payloads, verify checksums, and stage runtime dependencies (`npm install --omit=dev`) before the core spins up a provider.
+- **Provider readiness**: users install and configure CLI tools themselves (see the guide below); upcoming diagnostics and status toggles are outlined in `doc/TODO/todo-plan_.md`.
 - **Quality guardrails**: Ultracite architecture rules, jscpd duplication scans, ts-prune export checks, and Biome formatting run through Lefthook to keep the codebase healthy.
 
 ## Getting Started
@@ -27,6 +27,8 @@ git clone https://github.com/OleynikAleksandr/CodeAI-Hub.git
 cd CodeAI-Hub
 npm install
 ```
+
+Перед запуском прочитайте [Provider Setup Guide](doc/Project_Docs/knowledge/ProviderSetupGuide.md) и установите/аутентифицируйте необходимые CLI под своей учётной записью.
 
 ## Development Workflow
 1. **Install dependencies**

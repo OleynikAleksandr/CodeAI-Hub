@@ -1,7 +1,7 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.3.7
-**Last Updated:** 2025-10-30
+**Version:** 0.3.8
+**Last Updated:** 2025-10-31
 **Status:** Active reference
 
 ---
@@ -46,7 +46,7 @@ graph TD
 - **Runtime Delivery**: `assets/cef/manifest.json` описывает CEF minimal-пакеты для Windows, macOS (x64/arm64) и Linux x64. Модуль `src/extension-module/cef/runtime-installer.ts` скачивает архивы в `~/.codeai-hub/cef/<platform>/<cefVersion>/`, проверяет SHA-1 и распаковывает `Release/`.
 - **Launcher Delivery**: `assets/launcher/manifest.json` фиксирует версии `CodeAIHubLauncher`. Модуль `src/extension-module/cef/launcher-installer.ts` скачивает архив лаунчера, распаковывает его в `~/.codeai-hub/cef-launcher/<platform>/<launcherVersion>/` и создаёт `install.json`. При наличии собранного бинаря (локальный fallback) установка пропускается.
 - **Launcher Execution**: команда `codeaiHub.launchWebClient` вызывает `ensureCefRuntime` и `ensureLauncherInstalled`, генерирует `config/config.json` рядом с бинарём и запускает `CodeAIHubLauncher` с флагами `--config` + `--url` + `--use-alloy-style`.
-- **Window state persistence**: на macOS бинари `CodeAIHubLauncher` подключает микро-модуль `window_state_persistence.mm` + `window_state_tracker.mm`, который отслеживает события перемещения/ресайза окна и сразу записывает нормализованные координаты в `NSUserDefaults`. Следующий запуск восстанавливает и положение, и размеры, что готовит почву для будущих многооконных сценариев.
+- **Window state persistence**: на macOS бинарь `CodeAIHubLauncher` теперь вызывает `setFrameAutosaveName(@"CodeAIHubMainWindow")` и полагается на стандартный autosave AppKit. Миграционный слой `window_state_persistence.mm` по-прежнему конвертирует старый словарь `CodeAIHubStandaloneWindowState`, но фактические размеры/позиция живут в `~/Library/Preferences/com.codeaihub.launcher.plist`.
 - **Preload**: во время `activate` расширение без прогресса вызывает `ensureCefRuntime` и `ensureLauncherInstalled`, так что требуемые архивы подкачиваются или обновляются ещё до нажатия кнопки запуска.
 - **Shortcuts**: `shortcut-manager.ts` генерирует ярлыки на установленный `CodeAIHubLauncher` (`.app`/`.exe`/`codeai-hub-launcher`). После обновления лаунчера ярлыки пересоздаются.
 - **Stub Mode**: пока Remote UI Bridge не реализован, UI работает на локальных заглушках (`ProviderRegistry`, `SessionLauncher`). После запуска ядра CEF-клиент перейдёт в режим прямого подключения по WebSocket.
@@ -80,10 +80,12 @@ graph TD
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг; архитектурный скрипт контролирует структуру `src/` и `media/`.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
-## Recent Changes (v1.1.73 - 2025-10-30)
-- **Gemini module v0.3.1**: `cli-bridge` перешёл на динамический `import()` через runtime-замыкание (`Function("return import(...)")`), благодаря чему ESM-пакеты `@google/gemini-cli(-core)` грузятся из CommonJS без `ERR_REQUIRE_ESM`.
-- **Installer upgrades**: `GeminiInstaller.installIfNeeded` теперь после распаковки запускает `npm install --omit=dev --no-audit --no-fund`, гарантируя наличие зависимостей (`yargs`, `@opentelemetry/*`, и др.) в `vendor/node_modules`.
-- **Release chain**: VSIX `codeai-hub@1.1.73` ссылается на `gemini-module-0.3.1.tar.bz2` в локальном кэше `file:///Users/oleksandroliinyk/.codeai-hub/releases/`; core остаётся на 0.2.21 (Node 20 runtime).
+## Recent Changes (v1.1.83 - 2025-10-31)
+- **macOS launcher autosave**: оконный слой теперь вызывает `setFrameAutosaveName(@"CodeAIHubMainWindow")` и отдаёт управление AppKit. Размер/позиция читаются напрямую из `~/Library/Preferences/com.codeaihub.launcher.plist`, а старый словарь служит только миграцией.
+- **Launcher package 1.0.48**: пересобранный `CodeAIHubLauncher` выложен как `CodeAIHubLauncher-macos-arm64-1.0.48.tar.bz2`, манифест и инсталлятор обновлены под новый хэш/размер.
+- **Gemini module v0.3.1**: `cli-bridge` остаётся на динамическом `import()` через runtime-замыкание (`Function("return import(...)")`), устраняя `ERR_REQUIRE_ESM`.
+- **Installer upgrades**: `GeminiInstaller.installIfNeeded` после распаковки выполняет `npm install --omit=dev --no-audit --no-fund`, чтобы `vendor/node_modules` содержал все зависимости (`yargs`, `@opentelemetry/*`, и др.).
+- **Release chain**: VSIX `codeai-hub@1.1.83` указывает на `gemini-module-0.3.1.tar.bz2` и новый лаунчер 1.0.48 в локальном кэше `file:///Users/oleksandroliinyk/.codeai-hub/releases/`; core остаётся на 0.2.21 (Node 20 runtime).
 
 ## Previous Changes (v1.1.32 - 2025-10-28)
 - **Gemini module v0.1.3**: менеджер сессий перезапускает CLI прозрачно, кэширует подписчиков, подтягивает реальный идентификатор сессии из логов и не падает при повторных сообщениях.
@@ -119,6 +121,6 @@ graph TD
 - `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 - `doc/Project_Docs/Stacks/CoreOrchestrator.md`
 - `doc/tmp/RemoteCoreBridge.md`
-- `doc/Project_Docs/Stacks/CEF_Launcher_Build.md`
+- `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
 - `doc/TODO/todo-plan.md`
 - `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`
