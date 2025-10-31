@@ -44,6 +44,7 @@ class LauncherHandler : public CefClient,
   void PlatformTitleChange(CefRefPtr<CefBrowser> browser,
                            const CefString& title);
   void PlatformShowWindow(CefRefPtr<CefBrowser> browser);
+  void PlatformPersistWindowState(CefRefPtr<CefBrowser> browser);
 
   const bool use_views_style_;
 
