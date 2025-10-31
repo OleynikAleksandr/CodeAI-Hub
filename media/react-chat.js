@@ -7297,6 +7297,7 @@
     visible: false,
     providers: []
   };
+  var RADIO_GROUP_NAME = "provider-picker";
   var ProviderOption = ({
     provider,
     checked,
@@ -7323,9 +7324,10 @@
               className: "provider-picker__checkbox",
               disabled,
               id: provider.id,
+              name: RADIO_GROUP_NAME,
               onChange: handleChange,
               ref: inputRef,
-              type: "checkbox"
+              type: "radio"
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "provider-picker__label", children: [
@@ -7358,17 +7360,13 @@
       }
     }, [visible]);
     const toggleProvider = (providerId) => {
-      setSelected((previous) => {
-        const next = new Set(previous);
-        if (next.has(providerId)) {
-          next.delete(providerId);
-        } else {
-          next.add(providerId);
-        }
-        return next;
-      });
+      setSelected(/* @__PURE__ */ new Set([providerId]));
     };
     const selectedIds = (0, import_react.useMemo)(() => Array.from(selected.values()), [selected]);
+    const selectedProvider = (0, import_react.useMemo)(
+      () => providers.find((provider) => selectedIds[0] === provider.id),
+      [providers, selectedIds]
+    );
     const handleSubmit = (event) => {
       event.preventDefault();
       if (selectedIds.length === 0) {
@@ -7404,15 +7402,15 @@
         "aria-labelledby": "provider-picker-heading",
         className: "provider-picker",
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "provider-picker__title", id: "provider-picker-heading", children: "Choose providers" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "provider-picker__description", children: "Select one or more providers to include in your new session. Combinations allow multi-agent orchestration." }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "provider-picker__title", id: "provider-picker-heading", children: "Choose a provider" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "provider-picker__description", children: "Select one provider for your new session. Make sure the matching CLI is installed, signed in, and ready before you continue." }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", { className: "provider-picker__form", onSubmit: handleSubmit, children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("fieldset", { className: "provider-picker__fieldset", children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("legend", { className: "provider-picker__legend", children: "Connected provider stacks" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "provider-picker__options", children: providers.map((provider, index) => renderOption(provider, index)) })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "provider-picker__actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: isSubmitDisabled ? "Select at least one provider to continue." : `${selectedIds.length} provider${selectedIds.length > 1 ? "s" : ""} selected.` }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: isSubmitDisabled ? "Select a provider to continue." : `${selectedProvider?.title ?? "Provider"} selected.` }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "provider-picker__action-buttons", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                   "button",
@@ -8311,13 +8309,16 @@
   var BUTTONS = [
     { id: "newSession", label: ["New", "Session"] },
     { id: "lastSession", label: ["Last", "Session"], highlighted: true },
-    { id: "launchWebClient", label: ["UI", "Outside"] },
+    { id: "launchWebClient", label: ["Clear", "Session"] },
     { id: "oldSessions", label: ["Old", "Sessions"] }
   ];
   var ActionBar = () => {
     const handleClick = (0, import_react6.useCallback)((command) => {
       if (command === "newSession") {
         activateRoot();
+      }
+      if (command === "launchWebClient") {
+        return;
       }
       postVsCodeMessage({ command });
     }, []);

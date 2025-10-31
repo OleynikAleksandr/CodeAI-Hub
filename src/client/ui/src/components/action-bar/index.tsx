@@ -17,7 +17,7 @@ type ButtonDescriptor = {
 const BUTTONS: readonly ButtonDescriptor[] = [
   { id: "newSession", label: ["New", "Session"] },
   { id: "lastSession", label: ["Last", "Session"], highlighted: true },
-  { id: "launchWebClient", label: ["UI", "Outside"] },
+  { id: "launchWebClient", label: ["Clear", "Session"] },
   { id: "oldSessions", label: ["Old", "Sessions"] },
 ];
 
@@ -25,6 +25,10 @@ const ActionBar = () => {
   const handleClick = useCallback((command: ActionBarCommand) => {
     if (command === "newSession") {
       activateRoot();
+    }
+
+    if (command === "launchWebClient") {
+      return;
     }
 
     postVsCodeMessage({ command });

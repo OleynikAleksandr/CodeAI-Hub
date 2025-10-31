@@ -58,14 +58,16 @@ export const handleProviderPickerMessage = (
     message.payload?.providerIds ?? []
   );
 
-  if (providerIds.length === 0) {
-    window.showWarningMessage(
-      "Select at least one provider to start a session."
-    );
+  const primaryProviderId = providerIds[0];
+
+  if (!primaryProviderId) {
+    window.showWarningMessage("Select a provider to start a session.");
     return;
   }
 
-  const result = launchSession(context.sessionLauncher, { providerIds });
+  const result = launchSession(context.sessionLauncher, {
+    providerIds: [primaryProviderId],
+  });
   if (!isSuccessfulLaunch(result)) {
     window.showWarningMessage(result.summary);
     return;
