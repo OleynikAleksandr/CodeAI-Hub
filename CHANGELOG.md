@@ -6,14 +6,15 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
-## [1.1.96] - 2025-11-01
+## [1.1.98] - 2025-11-01
 ### Fixed
 - Standalone launcher now boots the core orchestrator automatically, so the web client overlay clears even when VS Code stays closed.
 - Launcher and core emit logs to `~/.codeai-hub/logs/{launcher,core}/`, simplifying standalone diagnostics.
+- Runtime discovery skips transient cache directories, so the launcher always picks a real `install.json` runtime instead of `downloads`.
 
 ### Build
-- VSIX → `codeai-hub-1.1.96.vsix`
-- Launcher → `CodeAIHubLauncher-macos-arm64-1.0.50.tar.bz2`
+- VSIX → `codeai-hub-1.1.98.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.0.51.tar.bz2`
 - Core → `codeai-hub-core-darwin-arm64-0.2.23.tar.bz2`
 - Providers → `claude-module-0.1.8.tar.bz2`, `codex-module-0.1.2.tar.bz2`, `gemini-module-0.3.5.tar.bz2`
 
