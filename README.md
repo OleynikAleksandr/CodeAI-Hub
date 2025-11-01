@@ -2,15 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.95
+## Current Release — v1.1.96
 - **Standalone parity**: the macOS launcher now boots the core orchestrator on its own and forwards provider paths, so the startup overlay clears even when VS Code stays closed.
-- **Calm startup overlay**: the splash cycles through friendly status lines on a timer, keeps Action Bar disabled while work is in flight, and disappears the moment the UI is actually available.
+- **Structured logging**: launcher and core stream diagnostics to `~/.codeai-hub/logs/{launcher,core}/`, simplifying troubleshooting when the standalone client runs без VS Code.
 - **Quiet bootstrap**: VS Code progress notifications are gone — the extension prepares CEF, core, and provider modules silently, surfacing status only inside the webview.
 
 **Artifact bundle**
-- VSIX: `codeai-hub-1.1.95.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.49.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-0.2.22.tar.bz2`
+- VSIX: `codeai-hub-1.1.96.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.50.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-0.2.23.tar.bz2`
 - Providers: `claude-module-0.1.8.tar.bz2`, `codex-module-0.1.2.tar.bz2`, `gemini-module-0.3.5.tar.bz2`
 
 ## Features
