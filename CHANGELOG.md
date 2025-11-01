@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.104] - 2025-11-02
+### Fixed
+- Gemini CLI configuration now loads extension overrides correctly by passing the actual enabled extensions list to `loadCliConfig`, preventing session creation failures in standalone and VS Code.
+
+### Build
+- VSIX → `codeai-hub-1.1.104.vsix`
+- Providers → `claude-module-0.1.9.tar.bz2`, `codex-module-0.1.3.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
+
 ## [1.1.103] - 2025-11-02
 ### Fixed
 - Gemini sessions resume creation in standalone/core: ExtensionEnablementManager now initialises correctly without expecting a config directory argument.
