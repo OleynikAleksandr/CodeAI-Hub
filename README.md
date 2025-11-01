@@ -2,16 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.102
+## Current Release — v1.1.103
 - **Deterministic provider logging**: Claude, Codex, and Gemini modules now emit jsonl files named `<provider>-<sessionId>.jsonl` only after receiving the real session identifier—no more transient `session-*` artifacts.
 - **Codex streaming chunks**: assistant responses arrive incrementally via `item.updated` events, keeping the UI and logs in sync with live output.
-- **Unified diagnostics**: Gemini gained the same file-based logger as other providers, while the toolchain moved to Ultracite 6.1.0 for updated Biome rules.
+- **Gemini session fix**: provider bootstrap no longer fails when discovering extension overrides; CLI bridge initialises cleanly across standalone/core.
 
 **Artifact bundle**
-- VSIX: `codeai-hub-1.1.102.vsix`
+- VSIX: `codeai-hub-1.1.103.vsix`
 - Launcher: `CodeAIHubLauncher-macos-arm64-1.0.52.tar.bz2`
 - Core: `codeai-hub-core-darwin-arm64-0.2.23.tar.bz2`
-- Providers: `claude-module-0.1.9.tar.bz2`, `codex-module-0.1.3.tar.bz2`, `gemini-module-0.3.6.tar.bz2`
+- Providers: `claude-module-0.1.9.tar.bz2`, `codex-module-0.1.3.tar.bz2`, `gemini-module-0.3.7.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
