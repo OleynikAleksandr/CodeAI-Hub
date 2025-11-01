@@ -1,9 +1,12 @@
 #include "launcher_app.h"
 
+#include <cstdio>
+
 #include "cef_browser.h"
 #include "cef_command_line.h"
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
+#include "core_launcher.h"
 #include "launcher_handler.h"
 #include "wrapper/cef_helpers.h"
 
@@ -79,6 +82,13 @@ void LauncherApp::OnContextInitialized() {
   CEF_REQUIRE_UI_THREAD();
 
   CefRefPtr<CefCommandLine> command_line = CefCommandLine::GetGlobalCommandLine();
+
+  if (!codeai::launcher::EnsureCoreProcessRunning()) {
+    std::fprintf(
+        stderr,
+        "CodeAIHubLauncher: standalone core bootstrap reported a failure; "
+        "UI will retry connections in the background.\n");
+  }
 
   const bool use_views = !command_line->HasSwitch("use-native");
   const bool use_alloy = command_line->HasSwitch("use-alloy-style");
