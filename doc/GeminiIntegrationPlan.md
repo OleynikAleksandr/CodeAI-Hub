@@ -59,8 +59,8 @@ console.log('Ответ:', response.candidates?.[0]?.content?.parts?.map((part) 
 ## 3. План действий (следующая сессия)
 1. **Структура модуля**
    - Переписать `packages/Gemini_Module` на ESM/TypeScript (`module: "esnext"`, `type: "module"` в package.json).
-   - Запланировать установку `@google/gemini-cli-core` (и, возможно, `@google/gemini-cli`) в `packages/Gemini_Module` через `dependencies` (чтобы автосборщик мог вытянуть нужные файлы при упаковке).
-   - Обновить скрипты сборки (`build-gemini-module.sh`) так, чтобы в каталог установки копировались `node_modules/@google/gemini-cli*` (по аналогии с core/SDK).
+   - Запланировать установку `@google/gemini-cli-core` в `packages/Gemini_Module` через `dependencies` (чтобы автосборщик мог вытянуть нужные файлы при упаковке). Сам CLI (`@google/gemini-cli`) остаётся глобальной зависимостью пользователя; модуль лишь валидирует его наличие.
+   - Обновить скрипты сборки (`build-gemini-module.sh`), чтобы в каталог установки копировались только файлы `@google/gemini-cli-core` (по аналогии с core/SDK), а следы CLI удалялись во время упаковки.
 
 2. **Инициализация**
    - В новом `GeminiProvider`/`GeminiSession` использовать `loadSettings`, `loadCliConfig`, `config.refreshAuth`, `config.initialize`.
@@ -90,4 +90,4 @@ console.log('Ответ:', response.candidates?.[0]?.content?.parts?.map((part) 
 - Прототип подтверждает жизнеспособность подхода через `@google/gemini-cli-core`.
 - В следующей сессии: переводим модуль на ESM, импортируем `loadSettings`/`loadCliConfig`, строим новую реализацию `GeminiProvider`, проводим e2e-тест.
 - Все тяжёлые зависимости живут вне VSIX (в ~/.codeai-hub), как и остальные провайдеры.
-
+- Реализована `reporter.progress`, поэтому UI показывает этапы скачивания/установки Gemini компонентов и подчёркивает, что долгий этап выполняется только при первой установке.

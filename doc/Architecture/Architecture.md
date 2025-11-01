@@ -1,7 +1,7 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.3.8
-**Last Updated:** 2025-10-31
+**Version:** 0.3.9
+**Last Updated:** 2025-11-01
 **Status:** Active reference
 
 ---
@@ -80,12 +80,10 @@ graph TD
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг; архитектурный скрипт контролирует структуру `src/` и `media/`.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
-## Recent Changes (v1.1.83 - 2025-10-31)
-- **macOS launcher autosave**: оконный слой теперь вызывает `setFrameAutosaveName(@"CodeAIHubMainWindow")` и отдаёт управление AppKit. Размер/позиция читаются напрямую из `~/Library/Preferences/com.codeaihub.launcher.plist`, а старый словарь служит только миграцией.
-- **Launcher package 1.0.48**: пересобранный `CodeAIHubLauncher` выложен как `CodeAIHubLauncher-macos-arm64-1.0.48.tar.bz2`, манифест и инсталлятор обновлены под новый хэш/размер.
-- **Gemini module v0.3.1**: `cli-bridge` остаётся на динамическом `import()` через runtime-замыкание (`Function("return import(...)")`), устраняя `ERR_REQUIRE_ESM`.
-- **Installer upgrades**: `GeminiInstaller.installIfNeeded` после распаковки выполняет `npm install --omit=dev --no-audit --no-fund`, чтобы `vendor/node_modules` содержал все зависимости (`yargs`, `@opentelemetry/*`, и др.).
-- **Release chain**: VSIX `codeai-hub@1.1.83` указывает на `gemini-module-0.3.1.tar.bz2` и новый лаунчер 1.0.48 в локальном кэше `file:///Users/oleksandroliinyk/.codeai-hub/releases/`; core остаётся на 0.2.21 (Node 20 runtime).
+## Recent Changes (v1.1.94 - 2025-11-01)
+- **Overlay messaging**: AppHost крутит заранее подготовленные подсказки (core/Claude/Codex/Gemini) с таймером, скрывает Action Bar до фактического завершения загрузки и сразу убирает оверлей после финального статуса.
+- **Silent bootstrap**: `extension.ts` больше не показывает VS Code notifications — подготовка CEF, лаунчера, core и модулей проходит в фоне, а статусы транслируются только в webview.
+- **Local artefact cache**: скрипты `build-*-module.sh` и `build-core.sh` кладут свежие tar.bz2 в `~/.codeai-hub/releases/`, удаляют старые версии и не оставляют мусора в `doc/tmp`.
 
 ## Previous Changes (v1.1.32 - 2025-10-28)
 - **Gemini module v0.1.3**: менеджер сессий перезапускает CLI прозрачно, кэширует подписчиков, подтягивает реальный идентификатор сессии из логов и не падает при повторных сообщениях.
@@ -93,7 +91,7 @@ graph TD
 - **Manifest refresh**: VSIX раздаёт `gemini-module-0.1.3.tar.bz2` и `codeai-hub-core-darwin-arm64-0.2.10.tar.bz2`, что гарантирует использование актуальных артефактов.
 
 ## Earlier Changes (v1.1.27 - 2025-10-28)
-- **Gemini CLI provider**: пакет `@codeai-hub/gemini-module` подключён к Core и UI. `GeminiInstaller` при первом запуске скачивает `@google/gemini-cli` в штатный `~/.gemini` (для повторного использования авторизационных токенов) и `@google/gemini-cli-core` в `~/.codeai-hub/providers/gemini/<version>/vendor/node_modules`, сверяет SHA-1 и публикует адаптер в `ProviderRegistry`.
+- **Gemini CLI provider**: пакет `@codeai-hub/gemini-module` подключён к Core и UI. `GeminiInstaller` при первом запуске подготавливает `@google/gemini-cli-core` в `~/.codeai-hub/providers/gemini/<version>/vendor/node_modules`, а сам CLI (`@google/gemini-cli`) ожидается как глобальная установка пользователя (используется для авторизации и конфигурации). Перед инициализацией адаптер валидирует наличие CLI и публикует модуль в `ProviderRegistry`.
 - **UI status badges**: селектор провайдеров отображает статус подключения (`Connected` / `Not connected`) и дизейблит выбор, если стек помечен как `inactive` ядром.
 - **Graceful provider downgrade**: при ошибке инициализации (например, отсутствует CLI) провайдер переводится в `inactive`, Core продолжает работу и транслирует состояние в клиенты.
 

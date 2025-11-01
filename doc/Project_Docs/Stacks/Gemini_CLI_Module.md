@@ -2,7 +2,7 @@
 
 **Status:** Active (CommonJS bridge)
 
-**Last Updated:** 2025-10-31
+**Last Updated:** 2025-11-01
 
 **Maintainer:** Codex / CodeAI Hub Core Team
 
@@ -28,14 +28,14 @@ Additional references to monitor:
 ---
 
 ## 3. Installation & Environment
-- **Managed install:** `packages/Gemini_Module/src/installer/gemini-installer.ts` скачивает `@google/gemini-cli` и `@google/gemini-cli-core` из npm и раскладывает их в `dist/vendor/node_modules/@google/…` внутри установленного модуля (`~/.codeai-hub/providers/gemini/0.3.1`).
+- **Managed install:** `packages/Gemini_Module/src/installer/gemini-installer.ts` теперь подготавливает только `@google/gemini-cli-core`, складывая его в `dist/vendor/node_modules/@google/…` внутри установленного модуля (`~/.codeai-hub/providers/gemini/<version>`). Сам CLI (`@google/gemini-cli`) пользователь устанавливает глобально (например, `npm install -g @google/gemini-cli`); во время инициализации `cli-bridge` сканирует PATH, npm prefix (включая `.npm-global`) и стандартные каталоги, чтобы определить расположение и версию инструмента. Во время скачивания/установки `GeminiInstaller` отправляет `reporter.progress` (в том числе с флагом `firstRun`), чтобы UI показывал конкретный шаг.
 - **Runtime requirements:** Node.js ≥ 20.0.0 (используется bundled runtime ядра), macOS/Linux/Windows поддерживаются CLI.
-- **Version pinning:** manifest `codeaiHub` внутри `package.json` модуля (0.3.1) фиксирует версии `geminiCliVersion` и `geminiCliCoreVersion` (0.11.0). Контрольные суммы проверяются при скачивании.
+- **Version pinning:** manifest `codeaiHub` внутри `package.json` модуля (0.3.5) фиксирует версии `geminiCliVersion` и `geminiCliCoreVersion` (0.11.0). Контрольные суммы проверяются при скачивании.
 - **Credential store:** `~/.gemini/`
   - `credentials.json` — OAuth токены (refresh/access).
   - `config.json` — project metadata и выбранные расширения.
   - `settings.json` — модель по умолчанию, настройки sandbox/tools.
-- **Fallback CLI:** пользователь может иметь глобально установленный CLI (`npm install -g @google/gemini-cli`); приоритет — управляемая копия в vendor. Инсталлятор проверяет наличие и при необходимости переустанавливает.
+- **CLI availability:** health-check и инициализация провайдера проверяют, что глобальный CLI доступен и соответствует минимальной версии; при отсутствии — возвращается статус `missing/auth_required` с инструкциями для пользователя.
 
 ---
 
@@ -79,7 +79,7 @@ Important flags:
 ---
 
 ## 7. Implementation Status
-- ✅ **Installer** — скачивает CLI/Core из npm, проверяет SHA-1, устанавливает зависимости (`npm install --omit=dev --no-audit --no-fund`) в vendor, генерирует `cli-bridge.json` с метаданными.
+- ✅ **Installer** — подготавливает `@google/gemini-cli-core` в vendor, удаляет устаревшие копии CLI и генерирует `cli-bridge.json` с контрольной информацией (ожидаемая версия инструмента, фактическая версия core и путь найденного `gemini`). Emit'ит `reporter.progress`, чтобы RemoteBridge мог транслировать стадии «загрузка», «подготовка зависимостей», «готово».
 - ✅ **CLI Bridge (`src/runtime/cli-bridge.ts`)** — использует динамический `import()` через `Function("return import(specifier);")`, конвертирует пути в file URL и загружает ESM-модули CLI/Core без `require()` (устранён `ERR_REQUIRE_ESM`).
 - ✅ **Session Manager** — работает поверх официального CLI Core (`contentGenerator`, `toolScheduler` и т.д.), управляет потоками, журналирует события, очищает окружение от конфликтующих `GOOGLE_*` переменных.
 - ✅ **Provider Adapter** — интегрирован с `ProviderRegistry`, отправляет события, обрабатывает подписчиков, транслирует системные сообщения (инициализация, ошибки аутентификации).
