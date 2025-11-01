@@ -55,3 +55,12 @@ export type CoreBridgeSessionMessagePayload = {
   readonly sessionId: string;
   readonly message: SessionMessage;
 };
+
+export type CoreRuntimeStatusPayload = {
+  readonly phase?: string;
+  readonly label?: string;
+  readonly detail?: string;
+  readonly scope?: string;
+  readonly firstRun?: boolean;
+  readonly timestamp?: string;
+};

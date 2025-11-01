@@ -2,6 +2,7 @@ import { type CoreConfig, loadConfig } from "../config";
 import { ProviderRegistry } from "../provider-registry";
 import { RemoteBridge } from "../remote-bridge";
 import { SessionManager } from "../session-manager";
+import { RuntimeStatusReporter } from "../status/runtime-status-reporter";
 import { Logger } from "../telemetry/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -18,6 +19,8 @@ export class CoreOrchestrator {
 
   private readonly remoteBridge: RemoteBridge;
 
+  private readonly statusReporter: RuntimeStatusReporter;
+
   private activeClients = 0;
 
   private shutdownTimer?: NodeJS.Timeout;
@@ -26,9 +29,11 @@ export class CoreOrchestrator {
     this.config = loadConfig();
     this.logger = new Logger();
     this.sessionManager = new SessionManager();
+    this.statusReporter = new RuntimeStatusReporter();
     this.providerRegistry = new ProviderRegistry({
       config: this.config,
       logger: this.logger,
+      statusReporter: this.statusReporter,
     });
     this.remoteBridge = new RemoteBridge({
       config: this.config,
@@ -36,6 +41,7 @@ export class CoreOrchestrator {
       sessionManager: this.sessionManager,
       logger: this.logger,
       version: pkg.version,
+      statusReporter: this.statusReporter,
       hooks: {
         onClientConnected: (_clientId, total) =>
           this.handleClientIncrease(total),
@@ -46,8 +52,19 @@ export class CoreOrchestrator {
   }
 
   async start(): Promise<void> {
-    await this.providerRegistry.initialize();
+    this.statusReporter.emit({
+      phase: "boot",
+      scope: "core",
+      label: "Initializing the CodeAI Hub core...",
+    });
     await this.remoteBridge.start();
+    await this.providerRegistry.initialize();
+    this.statusReporter.emit({
+      phase: "finalize",
+      scope: "core",
+      label: "CodeAI Hub is ready.",
+      detail: "You can start a new session.",
+    });
     this.logger.info("Core orchestrator started", {
       host: this.config.host,
       port: this.config.port,

@@ -23,6 +23,7 @@ export type ModuleReporter = {
     error?: unknown,
     metadata?: Record<string, unknown>
   ) => void;
+  readonly progress?: (event: ModuleProgressEvent) => void;
 };
 
 export type GeminiModuleOptions = {
@@ -45,4 +46,22 @@ export type GeminiCliBridgeMetadata = {
   readonly version: string;
   readonly preparedAt: string;
   readonly source: string;
+  readonly cli?: {
+    readonly package: string;
+    readonly requiredVersion?: string;
+    readonly resolvedVersion?: string;
+    readonly location?: string;
+  };
+  readonly cliCore?: {
+    readonly package: string;
+    readonly version: string;
+  };
+};
+
+export type ModuleProgressEvent = {
+  readonly label: string;
+  readonly detail?: string;
+  readonly scope?: string;
+  readonly phase?: "install" | "provider" | "finalize";
+  readonly firstRun?: boolean;
 };

@@ -25,6 +25,7 @@ export type ModuleReporter = {
   readonly info?: (message: string) => void;
   readonly warn?: (message: string) => void;
   readonly error?: (message: string, error?: unknown) => void;
+  readonly progress?: (event: ModuleProgressEvent) => void;
 };
 
 export type CodexModuleOptions = {
@@ -40,3 +41,11 @@ export type CodexThreadOptions = ThreadOptions;
 export type CodexTurnOptions = TurnOptions;
 export type CodexSandboxMode = SandboxMode;
 export type CodexApprovalMode = ApprovalMode;
+
+export type ModuleProgressEvent = {
+  readonly label: string;
+  readonly detail?: string;
+  readonly scope?: string;
+  readonly phase?: "install" | "provider" | "finalize";
+  readonly firstRun?: boolean;
+};
