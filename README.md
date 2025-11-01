@@ -2,14 +2,14 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.98
-- **Standalone parity**: the macOS launcher now resolves installed core runtimes correctly (skipping cache directories) and auto-starts them, so the standalone client drops the loading overlay and stays in sync with VS Code.
-- **Structured logging**: launcher and core stream logs to `~/.codeai-hub/logs/{launcher,core}/`, making troubleshooting possible even when VS Code is closed.
-- **Quiet bootstrap**: VS Code progress notifications remain disabled — all status updates flow through the webview and standalone UI.
+## Current Release — v1.1.100
+- **Standalone parity**: the macOS launcher now finds the installed core correctly (skipping caches and prefixing `PATH` with `node/bin`), so the standalone client starts cleanly and sees every provider.
+- **Structured logging**: launcher and core continue to stream logs to `~/.codeai-hub/logs/{launcher,core}/`, making troubleshooting possible without VS Code.
+- **Quiet bootstrap**: VS Code progress notifications remain disabled — status updates live inside the webview/standalone UI only.
 
 **Artifact bundle**
-- VSIX: `codeai-hub-1.1.98.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.51.tar.bz2`
+- VSIX: `codeai-hub-1.1.100.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.52.tar.bz2`
 - Core: `codeai-hub-core-darwin-arm64-0.2.23.tar.bz2`
 - Providers: `claude-module-0.1.8.tar.bz2`, `codex-module-0.1.2.tar.bz2`, `gemini-module-0.3.5.tar.bz2`
 
