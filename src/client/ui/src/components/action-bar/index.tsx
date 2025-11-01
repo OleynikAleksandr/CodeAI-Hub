@@ -21,18 +21,29 @@ const BUTTONS: readonly ButtonDescriptor[] = [
   { id: "oldSessions", label: ["Old", "Sessions"] },
 ];
 
-const ActionBar = () => {
-  const handleClick = useCallback((command: ActionBarCommand) => {
-    if (command === "newSession") {
-      activateRoot();
-    }
+type ActionBarProps = {
+  readonly disabled?: boolean;
+};
 
-    if (command === "launchWebClient") {
-      return;
-    }
+const ActionBar = ({ disabled = false }: ActionBarProps) => {
+  const handleClick = useCallback(
+    (command: ActionBarCommand) => {
+      if (disabled) {
+        return;
+      }
 
-    postVsCodeMessage({ command });
-  }, []);
+      if (command === "newSession") {
+        activateRoot();
+      }
+
+      if (command === "launchWebClient") {
+        return;
+      }
+
+      postVsCodeMessage({ command });
+    },
+    [disabled]
+  );
 
   return (
     <header className="action-bar">
@@ -54,6 +65,7 @@ const ActionBar = () => {
                   ? "action-bar__button action-bar__button--highlight"
                   : "action-bar__button"
               }
+              disabled={disabled}
               key={id}
               onClick={() => handleClick(id)}
               type="button"

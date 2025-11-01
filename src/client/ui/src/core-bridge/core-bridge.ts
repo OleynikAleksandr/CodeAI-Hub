@@ -1,6 +1,8 @@
-import type {
-  ProviderStackDescriptor,
-  ProviderStackId,
+import {
+  getDefaultProviderDescription,
+  getDefaultProviderTitle,
+  type ProviderStackDescriptor,
+  type ProviderStackId,
 } from "../../../../types/provider";
 import { convertStatusResponse } from "./normalizers";
 import { createServerMessageHandler } from "./server-message-handler";
@@ -16,6 +18,29 @@ const RECONNECT_DELAY_MS = 2000;
 const globalScope = window as typeof window & {
   __CODEAI_CORE_CONFIG?: CoreBridgeConfig;
 };
+
+const FALLBACK_PROVIDERS: ProviderStackDescriptor[] = [
+  {
+    id: "claudeCodeCli",
+    title: getDefaultProviderTitle("claudeCodeCli"),
+    description: getDefaultProviderDescription("claudeCodeCli"),
+    connected: true,
+  },
+  {
+    id: "codexCli",
+    title: getDefaultProviderTitle("codexCli"),
+    description: getDefaultProviderDescription("codexCli"),
+    connected: true,
+  },
+  {
+    id: "geminiCli",
+    title: getDefaultProviderTitle("geminiCli"),
+    description: getDefaultProviderDescription("geminiCli"),
+    connected: true,
+  },
+];
+
+type CoreConnectionStatus = "connecting" | "ready" | "error";
 
 const resolveConfig = (): CoreBridgeConfig => {
   const config = globalScope.__CODEAI_CORE_CONFIG;
@@ -34,10 +59,23 @@ const notifyWindow = (message: Record<string, unknown>): void => {
 };
 
 let initialized = false;
+let hasSuccessfulConnection = false;
 let websocket: WebSocket | null = null;
 let reconnectTimer: number | undefined;
-let cachedProviders: ProviderStackDescriptor[] = [];
+let cachedProviders: ProviderStackDescriptor[] = [...FALLBACK_PROVIDERS];
 const pendingMessages: string[] = [];
+let currentConnectionStatus: CoreConnectionStatus | "idle" = "idle";
+
+const notifyConnectionStatus = (status: CoreConnectionStatus): void => {
+  if (currentConnectionStatus === status) {
+    return;
+  }
+  currentConnectionStatus = status;
+  notifyWindow({
+    type: "core:connection",
+    payload: { status },
+  });
+};
 
 const handleServerMessage = createServerMessageHandler(notifyWindow);
 
@@ -64,6 +102,7 @@ const scheduleReconnect = (config: CoreBridgeConfig): void => {
   if (reconnectTimer) {
     return;
   }
+  notifyConnectionStatus("connecting");
   reconnectTimer = window.setTimeout(() => {
     reconnectTimer = undefined;
     connectWebSocket(config);
@@ -78,6 +117,11 @@ const connectWebSocket = (config: CoreBridgeConfig): void => {
 
   websocket = new WebSocket(config.wsUrl);
   websocket.addEventListener("open", () => {
+    hasSuccessfulConnection = true;
+    notifyConnectionStatus("ready");
+    fetchStatusSnapshot(config).catch(() => {
+      // ignore, we'll retry on demand
+    });
     flushPendingMessages();
   });
   websocket.addEventListener("message", (event) => {
@@ -87,6 +131,11 @@ const connectWebSocket = (config: CoreBridgeConfig): void => {
     scheduleReconnect(config);
   });
   websocket.addEventListener("error", () => {
+    if (hasSuccessfulConnection) {
+      notifyConnectionStatus("error");
+    } else {
+      notifyConnectionStatus("connecting");
+    }
     scheduleReconnect(config);
   });
 };
@@ -97,16 +146,24 @@ const fetchStatusSnapshot = async (config: CoreBridgeConfig): Promise<void> => {
       method: "GET",
     });
     if (!response.ok) {
+      if (!hasSuccessfulConnection) {
+        notifyConnectionStatus("connecting");
+      }
       return;
     }
     const data = (await response.json()) as ServerStatusResponse;
     const normalized = convertStatusResponse(data, cachedProviders);
     cachedProviders = normalized.providers as ProviderStackDescriptor[];
+    hasSuccessfulConnection = true;
+    notifyConnectionStatus("ready");
     notifyWindow({
       type: "core:state",
       payload: normalized,
     });
   } catch {
+    if (!hasSuccessfulConnection) {
+      notifyConnectionStatus("connecting");
+    }
     // Ignore status fetch failures; the UI will retry when the user interacts.
   }
 };
@@ -217,8 +274,12 @@ export const initializeCoreBridge = (): void => {
   }
 
   initialized = true;
+  notifyConnectionStatus("connecting");
   const config = resolveConfig();
   fetchStatusSnapshot(config).catch((error) => {
+    if (hasSuccessfulConnection) {
+      notifyConnectionStatus("error");
+    }
     notifyWindow({
       type: "session:error",
       payload: { message: String(error) },

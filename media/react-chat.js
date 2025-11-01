@@ -7287,6 +7287,61 @@
   // src/client/ui/src/app-host.tsx
   var import_react12 = __toESM(require_react());
 
+  // src/client/ui/src/app-host/loading-messages.ts
+  var MESSAGE_ORDER = [
+    "core",
+    "claude",
+    "codex",
+    "gemini"
+  ];
+  var MESSAGE_ROTATION_INTERVAL_MS = 2800;
+  var DEFAULT_MESSAGES = {
+    core: {
+      id: "core",
+      status: "Checking CodeAI Hub services...",
+      detail: "Validating local components."
+    },
+    claude: {
+      id: "claude",
+      status: "Preparing Claude tools...",
+      detail: "Making sure everything is authenticated."
+    },
+    codex: {
+      id: "codex",
+      status: "Preparing Codex tools...",
+      detail: "Verifying your CLI installation."
+    },
+    gemini: {
+      id: "gemini",
+      status: "Preparing Gemini tools...",
+      detail: "This may take a little longer the first time."
+    }
+  };
+  var createDefaultMessages = () => ({
+    core: { ...DEFAULT_MESSAGES.core },
+    claude: { ...DEFAULT_MESSAGES.claude },
+    codex: { ...DEFAULT_MESSAGES.codex },
+    gemini: { ...DEFAULT_MESSAGES.gemini }
+  });
+  var resolveMessageId = (scope, phase) => {
+    if (!scope) {
+      return phase === "provider" ? "core" : "core";
+    }
+    if (scope === "core" || scope === "providers") {
+      return "core";
+    }
+    if (scope.includes("claude")) {
+      return "claude";
+    }
+    if (scope.includes("codex")) {
+      return "codex";
+    }
+    if (scope.includes("gemini")) {
+      return "gemini";
+    }
+    return null;
+  };
+
   // src/client/ui/src/app-host/provider-picker-state.ts
   var import_react2 = __toESM(require_react());
 
@@ -7655,7 +7710,7 @@
       if (!parsed || typeof parsed.type !== "string") {
         return null;
       }
-      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream") {
+      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "core:loading-status") {
         return { type: parsed.type, payload: parsed.payload };
       }
     } catch {
@@ -7718,7 +7773,13 @@
       "session:message": handleSessionMessage,
       "session:created": handleSessionCreated,
       "session:deleted": handleSessionDeleted,
-      "session:stream": handleSessionStream
+      "session:stream": handleSessionStream,
+      "core:loading-status": (payload) => {
+        notify({
+          type: "core:loading-status",
+          payload
+        });
+      }
     };
     return (raw) => {
       const envelope = parseEnvelope(raw);
@@ -7737,6 +7798,26 @@
   };
   var RECONNECT_DELAY_MS = 2e3;
   var globalScope = window;
+  var FALLBACK_PROVIDERS = [
+    {
+      id: "claudeCodeCli",
+      title: getDefaultProviderTitle("claudeCodeCli"),
+      description: getDefaultProviderDescription("claudeCodeCli"),
+      connected: true
+    },
+    {
+      id: "codexCli",
+      title: getDefaultProviderTitle("codexCli"),
+      description: getDefaultProviderDescription("codexCli"),
+      connected: true
+    },
+    {
+      id: "geminiCli",
+      title: getDefaultProviderTitle("geminiCli"),
+      description: getDefaultProviderDescription("geminiCli"),
+      connected: true
+    }
+  ];
   var resolveConfig = () => {
     const config = globalScope.__CODEAI_CORE_CONFIG;
     if (!config || typeof config.httpUrl !== "string" || typeof config.wsUrl !== "string") {
@@ -7748,10 +7829,22 @@
     window.postMessage(message, "*");
   };
   var initialized = false;
+  var hasSuccessfulConnection = false;
   var websocket = null;
   var reconnectTimer;
-  var cachedProviders = [];
+  var cachedProviders = [...FALLBACK_PROVIDERS];
   var pendingMessages = [];
+  var currentConnectionStatus = "idle";
+  var notifyConnectionStatus = (status) => {
+    if (currentConnectionStatus === status) {
+      return;
+    }
+    currentConnectionStatus = status;
+    notifyWindow({
+      type: "core:connection",
+      payload: { status }
+    });
+  };
   var handleServerMessage = createServerMessageHandler(notifyWindow);
   var flushPendingMessages = () => {
     if (!websocket || websocket.readyState !== WebSocket.OPEN) {
@@ -7773,6 +7866,7 @@
     if (reconnectTimer) {
       return;
     }
+    notifyConnectionStatus("connecting");
     reconnectTimer = window.setTimeout(() => {
       reconnectTimer = void 0;
       connectWebSocket(config);
@@ -7785,6 +7879,10 @@
     }
     websocket = new WebSocket(config.wsUrl);
     websocket.addEventListener("open", () => {
+      hasSuccessfulConnection = true;
+      notifyConnectionStatus("ready");
+      fetchStatusSnapshot(config).catch(() => {
+      });
       flushPendingMessages();
     });
     websocket.addEventListener("message", (event) => {
@@ -7794,6 +7892,11 @@
       scheduleReconnect(config);
     });
     websocket.addEventListener("error", () => {
+      if (hasSuccessfulConnection) {
+        notifyConnectionStatus("error");
+      } else {
+        notifyConnectionStatus("connecting");
+      }
       scheduleReconnect(config);
     });
   };
@@ -7803,16 +7906,24 @@
         method: "GET"
       });
       if (!response.ok) {
+        if (!hasSuccessfulConnection) {
+          notifyConnectionStatus("connecting");
+        }
         return;
       }
       const data = await response.json();
       const normalized = convertStatusResponse(data, cachedProviders);
       cachedProviders = normalized.providers;
+      hasSuccessfulConnection = true;
+      notifyConnectionStatus("ready");
       notifyWindow({
         type: "core:state",
         payload: normalized
       });
     } catch {
+      if (!hasSuccessfulConnection) {
+        notifyConnectionStatus("connecting");
+      }
     }
   };
   var ensureProvidersAvailable = async (config) => {
@@ -7901,8 +8012,12 @@
       return;
     }
     initialized = true;
+    notifyConnectionStatus("connecting");
     const config = resolveConfig();
     fetchStatusSnapshot(config).catch((error) => {
+      if (hasSuccessfulConnection) {
+        notifyConnectionStatus("error");
+      }
       notifyWindow({
         type: "session:error",
         payload: { message: String(error) }
@@ -8197,6 +8312,9 @@
 
   // src/client/ui/src/app-host/webview-message-handler.ts
   var import_react5 = __toESM(require_react());
+
+  // src/client/ui/src/app-host/webview-message-types.ts
+  var isIncomingMessage = (value) => Boolean(value && typeof value === "object" && "type" in value);
   var isCoreBridgeStatePayload = (value) => {
     if (!value || typeof value !== "object") {
       return false;
@@ -8226,6 +8344,15 @@
     const candidate = value;
     return typeof candidate.sessionId === "string";
   };
+  var isCoreRuntimeStatusPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.label === "string";
+  };
+
+  // src/client/ui/src/app-host/webview-message-dispatcher.ts
   var handleProviderPickerOpenMessage = (message, onProviderPickerOpen) => {
     const providers = parseProviderList(message.payload?.providers);
     if (providers.length > 0) {
@@ -8255,12 +8382,75 @@
     }
     onSessionDeleted(message.payload);
   };
-  var isIncomingMessage = (value) => {
-    if (!value || typeof value !== "object" || !("type" in value)) {
-      return false;
+  var handleCoreLoadingStatusMessage = (message, onCoreLoadingStatus) => {
+    if (!(onCoreLoadingStatus && isCoreRuntimeStatusPayload(message.payload))) {
+      return;
     }
-    return true;
+    onCoreLoadingStatus(message.payload);
   };
+  var dispatchSessionMessage = (message, handlers) => {
+    switch (message.type) {
+      case "session:created":
+        handleSessionCreatedMessage(message, handlers.onSessionCreated);
+        return true;
+      case "session:clearAll":
+        handlers.onSessionClearAll();
+        return true;
+      case "session:focusLast":
+        handlers.onSessionFocusLast();
+        return true;
+      case "session:message":
+        handleSessionMessageEvent(message, handlers.onSessionMessage);
+        return true;
+      case "session:deleted":
+        handleSessionDeletedMessage(message, handlers.onSessionDeleted);
+        return true;
+      default:
+        return false;
+    }
+  };
+  var dispatchWebviewMessage = (rawMessage, handlers) => {
+    if (!isIncomingMessage(rawMessage)) {
+      return;
+    }
+    const message = rawMessage;
+    if (message.type === "core:connection") {
+      if (handlers.onCoreConnectionStatus && message.payload) {
+        const candidate = message.payload;
+        const status = candidate.status;
+        if (typeof status === "string") {
+          handlers.onCoreConnectionStatus(status);
+        }
+      }
+      return;
+    }
+    if (dispatchSessionMessage(message, {
+      onSessionCreated: handlers.onSessionCreated,
+      onSessionClearAll: handlers.onSessionClearAll,
+      onSessionFocusLast: handlers.onSessionFocusLast,
+      onSessionMessage: handlers.onSessionMessage,
+      onSessionDeleted: handlers.onSessionDeleted
+    })) {
+      return;
+    }
+    if (message.type === "providerPicker:open") {
+      handleProviderPickerOpenMessage(message, handlers.onProviderPickerOpen);
+      return;
+    }
+    if (message.type === "ui:showSettings") {
+      handlers.onShowSettings();
+      return;
+    }
+    if (message.type === "core:state") {
+      handleCoreStateMessage(message, handlers.onCoreState);
+      return;
+    }
+    if (message.type === "core:loading-status") {
+      handleCoreLoadingStatusMessage(message, handlers.onCoreLoadingStatus);
+    }
+  };
+
+  // src/client/ui/src/app-host/webview-message-handler.ts
   var useWebviewMessageHandler = ({
     onProviderPickerOpen,
     onSessionCreated,
@@ -8268,43 +8458,25 @@
     onSessionFocusLast,
     onShowSettings,
     onCoreState,
+    onCoreConnectionStatus,
+    onCoreLoadingStatus,
     onSessionMessage,
     onSessionDeleted
   }) => {
     (0, import_react5.useEffect)(() => {
       const handleIncomingMessage = (event) => {
-        if (!isIncomingMessage(event.data)) {
-          return;
-        }
-        const message = event.data;
-        switch (message.type) {
-          case "providerPicker:open":
-            handleProviderPickerOpenMessage(message, onProviderPickerOpen);
-            return;
-          case "session:created":
-            handleSessionCreatedMessage(message, onSessionCreated);
-            return;
-          case "session:clearAll":
-            onSessionClearAll();
-            return;
-          case "session:focusLast":
-            onSessionFocusLast();
-            return;
-          case "ui:showSettings":
-            onShowSettings();
-            return;
-          case "core:state":
-            handleCoreStateMessage(message, onCoreState);
-            return;
-          case "session:message":
-            handleSessionMessageEvent(message, onSessionMessage);
-            return;
-          case "session:deleted":
-            handleSessionDeletedMessage(message, onSessionDeleted);
-            return;
-          default:
-            return;
-        }
+        dispatchWebviewMessage(event.data, {
+          onProviderPickerOpen,
+          onSessionCreated,
+          onSessionClearAll,
+          onSessionFocusLast,
+          onShowSettings,
+          onCoreState,
+          onCoreConnectionStatus,
+          onCoreLoadingStatus,
+          onSessionMessage,
+          onSessionDeleted
+        });
       };
       window.addEventListener("message", handleIncomingMessage);
       return () => {
@@ -8317,6 +8489,8 @@
       onSessionFocusLast,
       onShowSettings,
       onCoreState,
+      onCoreConnectionStatus,
+      onCoreLoadingStatus,
       onSessionMessage,
       onSessionDeleted
     ]);
@@ -8341,16 +8515,22 @@
     { id: "launchWebClient", label: ["Clear", "Session"] },
     { id: "oldSessions", label: ["Old", "Sessions"] }
   ];
-  var ActionBar = () => {
-    const handleClick = (0, import_react6.useCallback)((command) => {
-      if (command === "newSession") {
-        activateRoot();
-      }
-      if (command === "launchWebClient") {
-        return;
-      }
-      postVsCodeMessage({ command });
-    }, []);
+  var ActionBar = ({ disabled = false }) => {
+    const handleClick = (0, import_react6.useCallback)(
+      (command) => {
+        if (disabled) {
+          return;
+        }
+        if (command === "newSession") {
+          activateRoot();
+        }
+        if (command === "launchWebClient") {
+          return;
+        }
+        postVsCodeMessage({ command });
+      },
+      [disabled]
+    );
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "action-bar__surface", children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
         "div",
@@ -8371,6 +8551,7 @@
         {
           "aria-label": `${label[0]} ${label[1]}`,
           className: highlighted ? "action-bar__button action-bar__button--highlight" : "action-bar__button",
+          disabled,
           onClick: () => handleClick(id),
           type: "button",
           children: [
@@ -9814,6 +9995,12 @@ ${path}` : path;
   // src/client/ui/src/app-host.tsx
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var AppHost = () => {
+    const [coreStatus, setCoreStatus] = (0, import_react12.useState)("connecting");
+    const [coreFinalized, setCoreFinalized] = (0, import_react12.useState)(false);
+    const [messages, setMessages] = (0, import_react12.useState)(
+      createDefaultMessages
+    );
+    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react12.useState)(0);
     const {
       pickerState,
       providerLabels,
@@ -9885,11 +10072,75 @@ ${path}` : path;
       onSessionFocusLast: focusLastSession,
       onShowSettings: handleShowSettings,
       onCoreState: handleCoreState,
+      onCoreConnectionStatus: (status) => {
+        if (status === "connecting" || status === "ready" || status === "error") {
+          setCoreStatus(status);
+          if (status === "connecting") {
+            setCoreFinalized(false);
+            setMessages(createDefaultMessages());
+            setActiveMessageIndex(0);
+          }
+        }
+      },
+      onCoreLoadingStatus: (status) => {
+        if (status.phase === "finalize") {
+          setCoreFinalized(true);
+          return;
+        }
+        const scopeValue = typeof status.scope === "string" ? status.scope : void 0;
+        const messageId = resolveMessageId(scopeValue, status.phase);
+        if (!messageId) {
+          return;
+        }
+        setMessages((prev) => {
+          const next = { ...prev };
+          const fallback = { ...DEFAULT_MESSAGES[messageId] };
+          const detail = status.detail ?? (status.firstRun ? "This may take a little longer on the first run." : next[messageId]?.detail ?? fallback.detail);
+          next[messageId] = {
+            id: messageId,
+            status: status.label ?? next[messageId]?.status ?? fallback.status,
+            detail
+          };
+          return next;
+        });
+      },
       onSessionMessage: handleSessionMessage,
       onSessionDeleted: handleSessionDeletedMessage2
     });
+    const isCoreReady = coreStatus === "ready" && coreFinalized;
+    (0, import_react12.useEffect)(() => {
+      if (isCoreReady) {
+        return;
+      }
+      const timer = window.setInterval(() => {
+        setActiveMessageIndex(
+          (previous) => (previous + 1) % MESSAGE_ORDER.length
+        );
+      }, MESSAGE_ROTATION_INTERVAL_MS);
+      return () => {
+        window.clearInterval(timer);
+      };
+    }, [isCoreReady]);
+    const currentMessage = (0, import_react12.useMemo)(() => {
+      const messageId = MESSAGE_ORDER[activeMessageIndex];
+      return messages[messageId] ?? DEFAULT_MESSAGES[messageId];
+    }, [activeMessageIndex, messages]);
+    const { headlineText, statusLine, detailLine } = (0, import_react12.useMemo)(() => {
+      if (coreStatus === "error") {
+        return {
+          headlineText: "Please hold on - we are getting CodeAI Hub ready.",
+          statusLine: "Unable to reach CodeAI Hub core. Retrying...",
+          detailLine: void 0
+        };
+      }
+      return {
+        headlineText: "Please hold on - we are getting CodeAI Hub ready.",
+        statusLine: currentMessage.status,
+        detailLine: currentMessage.detail
+      };
+    }, [coreStatus, currentMessage]);
     return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(action_bar_default, {}),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(action_bar_default, { disabled: !isCoreReady }),
       /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "app-shell__session-region", children: [
         /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
           ProviderPicker,
@@ -9915,6 +10166,14 @@ ${path}` : path;
           }
         )
       ] }),
+      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "app-shell__status-text", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
+          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
+        ] })
+      ] }) }),
       settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
     ] });
   };
