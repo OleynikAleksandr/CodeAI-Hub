@@ -49,6 +49,13 @@ constexpr const char* kLauncherLogDirectory = "launcher";
 constexpr const char* kLauncherLogFilename = "launcher.log";
 constexpr const char* kCoreLogDirectory = "core";
 constexpr const char* kCoreLogFilename = "core.log";
+constexpr char kPathSeparator =
+#ifdef _WIN32
+  ';'
+#else
+  ':'
+#endif
+;
 
 std::filesystem::path GetHomeDirectory();
 
@@ -133,6 +140,19 @@ int ParsePort(const std::string& value, int fallback) {
 
 std::string FormatEndpoint(const std::string& host, int port) {
   return host + ":" + std::to_string(port);
+}
+
+std::string PrependPathSegment(
+  const std::filesystem::path& segment,
+  const std::string& existing
+) {
+  if (segment.empty()) {
+    return existing;
+  }
+  if (existing.empty()) {
+    return segment.string();
+  }
+  return segment.string() + kPathSeparator + existing;
 }
 
 #ifdef _WIN32
@@ -366,6 +386,13 @@ void EnsureGlobalEnvironment(
   const std::filesystem::path appDir = runtimeDir / "app";
   SetEnv("CODEAI_HUB_RUNTIME_DIR", runtimeDir.string());
   SetEnv("CODEAI_HUB_APP_DIR", appDir.string());
+
+  const std::filesystem::path nodeBin = runtimeDir / "node" / "bin";
+  const std::string existingPath = GetEnvOrDefault("PATH", "");
+  const std::string updatedPath =
+    PrependPathSegment(nodeBin, existingPath);
+  SetEnv("PATH", updatedPath);
+  LogLauncherInfo("PATH updated for core bootstrap: " + updatedPath);
 
   const std::filesystem::path logsRoot = home / kLogsRoot;
   const std::filesystem::path coreLogDir =
