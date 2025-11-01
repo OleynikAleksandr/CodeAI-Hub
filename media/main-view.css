@@ -55,6 +55,7 @@ body {
   min-height: 0;
   background-color: var(--app-background);
   gap: 0;
+  position: relative;
 }
 
 .app-shell__session-region {
@@ -144,6 +145,21 @@ body {
   outline-offset: -1px;
 }
 
+.action-bar__button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background-color: var(--action-button-bg);
+  border-color: var(--action-button-border);
+  color: var(--action-button-text);
+}
+
+.action-bar__button:disabled:hover,
+.action-bar__button:disabled:active {
+  background-color: var(--action-button-bg);
+  border-color: var(--action-button-border);
+  color: var(--action-button-text);
+}
+
 .action-bar__button--highlight {
   background-color: var(--action-button-bg);
   border-color: var(--action-button-border);
@@ -158,6 +174,68 @@ body {
 @media (max-width: 520px) {
   .action-bar__buttons {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.app-shell__status-overlay {
+  position: absolute;
+  inset: 64px 16px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.app-shell__status-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 6px;
+  background-color: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(96, 96, 96, 0.6);
+  color: var(--vscode-foreground, #e6e6e6);
+  font-size: 13px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.app-shell__status-indicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #f5f5f5;
+  border-right-color: #f5f5f5;
+  animation: app-shell-spin 0.9s linear infinite;
+}
+
+.app-shell__status-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: normal;
+  max-width: min(340px, 60vw);
+}
+
+.app-shell__status-line {
+  display: block;
+  line-height: 1.35;
+}
+
+.app-shell__status-line:first-child {
+  font-weight: 600;
+}
+
+.app-shell__status-line--muted {
+  color: rgba(230, 230, 230, 0.78);
+}
+
+@keyframes app-shell-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
