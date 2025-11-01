@@ -11,8 +11,10 @@ export type SessionListener = (payload: unknown) => void;
 export class CodexProviderAdapter {
   private readonly sdkManager: CodexSDKManager;
   private readonly listeners = new Map<string, Set<SessionListener>>();
+  private readonly options: CodexModuleOptions;
 
   constructor(options: CodexModuleOptions) {
+    this.options = options;
     const installer = new CodexInstaller(options.installerPaths, {
       logger: options.reporter,
     });
@@ -40,6 +42,12 @@ export class CodexProviderAdapter {
     const session = this.sdkManager.getSession(sessionId);
     if (session) {
       this.bindSessionEvents(session);
+      this.sendBootstrapCommand(session.sessionId).catch((error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.options.reporter?.warn?.(
+          `Codex bootstrap command failed: ${message}`
+        );
+      });
     }
     return sessionId;
   }
@@ -119,5 +127,11 @@ export class CodexProviderAdapter {
       destination.add(listener);
     }
     this.listeners.set(newId, destination);
+  }
+
+  private async sendBootstrapCommand(sessionId: string): Promise<void> {
+    await this.sdkManager.sendMessage(sessionId, "/status", {
+      internal: true,
+    });
   }
 }

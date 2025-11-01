@@ -25,6 +25,7 @@ export type ActiveSession = {
   thread?: Thread;
   codexThreadId: string | null;
   processingLoop?: Promise<void>;
+  internalTurn?: boolean;
 };
 
 export type SessionCreationResult = {

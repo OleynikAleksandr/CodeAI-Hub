@@ -29,6 +29,7 @@ export class CodexSessionManager {
       messageController: controller,
       logger,
       codexThreadId: null,
+      internalTurn: false,
     };
     session.messageGenerator =
       this.lifecycle.createMessageGenerator(controller);

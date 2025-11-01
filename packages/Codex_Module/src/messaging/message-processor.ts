@@ -21,6 +21,7 @@ type EnqueuedMessage = {
   readonly type: "user_input";
   readonly content: string;
   readonly turnOptions?: CodexTurnOptions;
+  readonly internal?: boolean;
 };
 
 type ProcessTurnContext = {
@@ -61,33 +62,40 @@ export class CodexMessageProcessor {
   enqueueMessage(
     sessionId: string,
     content: string,
-    turnOptions?: CodexTurnOptions
+    turnOptions?: CodexTurnOptions,
+    options?: { readonly internal?: boolean }
   ): void {
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);
     }
-    session.logger?.logUserInput(content);
+    const internal = options?.internal ?? false;
+    if (!internal) {
+      session.logger?.logUserInput(content);
+    }
     const controller = session.messageController;
     controller.pendingMessages.push({
       type: "user_input",
       content,
       turnOptions,
+      internal,
     });
     if (controller.resolveNext) {
       const resolver = controller.resolveNext;
       controller.resolveNext = null;
       resolver(controller.pendingMessages.shift() ?? null);
     }
-    session.eventEmitter.emit("message", {
-      type: "user_input",
-      provider: PROVIDER,
-      sessionId,
-      threadId: session.codexThreadId,
-      content,
-      uuid: crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
-    });
+    if (!internal) {
+      session.eventEmitter.emit("message", {
+        type: "user_input",
+        provider: PROVIDER,
+        sessionId,
+        threadId: session.codexThreadId,
+        content,
+        uuid: crypto.randomUUID(),
+        timestamp: new Date().toISOString(),
+      });
+    }
   }
 
   private async consumeQueue(
@@ -105,6 +113,7 @@ export class CodexMessageProcessor {
 
   private async processTurn(context: ProcessTurnContext): Promise<void> {
     const { session, thread, message } = context;
+    session.internalTurn = message.internal ?? false;
     try {
       const { events } = await thread.runStreamed(
         message.content,
@@ -117,6 +126,8 @@ export class CodexMessageProcessor {
         type: "turn_execution",
         error,
       });
+    } finally {
+      session.internalTurn = false;
     }
   }
 
@@ -244,6 +255,9 @@ export class CodexMessageProcessor {
       return;
     }
     if (event.type === "item.updated") {
+      if (session.internalTurn) {
+        return;
+      }
       this.emitMessage(session, {
         type: "stream_event",
         provider: PROVIDER,
@@ -259,6 +273,9 @@ export class CodexMessageProcessor {
       return;
     }
     if (event.type !== "item.completed") {
+      return;
+    }
+    if (session.internalTurn) {
       return;
     }
     session.logger?.logAssistantResponse?.(item);
@@ -277,6 +294,14 @@ export class CodexMessageProcessor {
     session: ActiveSession,
     payload: Record<string, unknown>
   ): void {
+    const type = typeof payload.type === "string" ? payload.type : undefined;
+    if (
+      session.internalTurn &&
+      type &&
+      CodexMessageProcessor.INTERNAL_SUPPRESSED_EVENTS.has(type)
+    ) {
+      return;
+    }
     session.eventEmitter.emit("message", payload);
   }
 
@@ -291,4 +316,14 @@ export class CodexMessageProcessor {
       candidate.content.length > 0
     );
   }
+
+  private static readonly INTERNAL_SUPPRESSED_EVENTS = new Set<string>([
+    "user_input",
+    "turn_started",
+    "turn_completed",
+    "turn_failed",
+    "stream_error",
+    "assistant",
+    "stream_event",
+  ]);
 }
