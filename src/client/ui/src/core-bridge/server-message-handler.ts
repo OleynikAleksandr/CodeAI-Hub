@@ -11,7 +11,8 @@ type ServerEventType =
   | "session:message"
   | "session:created"
   | "session:deleted"
-  | "session:stream";
+  | "session:stream"
+  | "core:loading-status";
 
 type ServerEnvelope = {
   readonly type: ServerEventType;
@@ -34,7 +35,8 @@ const parseEnvelope = (raw: string): ServerEnvelope | null => {
       parsed.type === "session:message" ||
       parsed.type === "session:created" ||
       parsed.type === "session:deleted" ||
-      parsed.type === "session:stream"
+      parsed.type === "session:stream" ||
+      parsed.type === "core:loading-status"
     ) {
       return { type: parsed.type, payload: parsed.payload };
     }
@@ -114,6 +116,12 @@ export const createServerMessageHandler = (
     "session:created": handleSessionCreated,
     "session:deleted": handleSessionDeleted,
     "session:stream": handleSessionStream,
+    "core:loading-status": (payload) => {
+      notify({
+        type: "core:loading-status",
+        payload,
+      });
+    },
   };
 
   return (raw: string) => {

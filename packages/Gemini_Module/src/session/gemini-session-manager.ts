@@ -85,9 +85,33 @@ export class GeminiSessionManager {
     this.modules.settings.migrateDeprecatedSettings(settings, workspacePath);
 
     const argv = this.createArgv(options);
-    const config = await this.modules.config.loadCliConfig(
+    const extensionRoot =
+      this.modules.extension.ExtensionStorage.getUserExtensionsDir();
+    const ExtensionEnablementManagerClass = this.modules.extensionEnablement
+      .ExtensionEnablementManager as unknown as new (
+      configDir: string,
+      enabledExtensionNames?: string[]
+    ) => unknown;
+    const extensionManager = new ExtensionEnablementManagerClass(extensionRoot);
+
+    type LoadCliConfigFn = (
+      ...args: [
+        cliSettings: unknown,
+        extensionList: unknown[],
+        enablementManager: unknown,
+        sessionIdentifier: string,
+        cliArgs: CliArgs,
+        cwd?: string,
+      ]
+    ) => ReturnType<typeof this.modules.config.loadCliConfig>;
+
+    const loadCliConfig = this.modules.config
+      .loadCliConfig as unknown as LoadCliConfigFn;
+
+    const config = await loadCliConfig(
       settings.merged,
       [],
+      extensionManager,
       sessionId,
       argv,
       workspacePath

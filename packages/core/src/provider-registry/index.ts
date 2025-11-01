@@ -11,6 +11,11 @@ import type {
   CodexModuleOptions,
 } from "@codeai-hub/codex-module";
 import type { CoreConfig } from "../config";
+import type {
+  RuntimeStatusEvent,
+  RuntimeStatusPhase,
+  RuntimeStatusReporter,
+} from "../status/runtime-status-reporter";
 import type { Logger } from "../telemetry/logger";
 
 type GeminiInstallerPaths = {
@@ -344,13 +349,18 @@ export class ProviderRegistry {
   private readonly options: {
     readonly config: CoreConfig;
     readonly logger: Logger;
+    readonly statusReporter: RuntimeStatusReporter;
   };
+
+  private readonly statusReporter: RuntimeStatusReporter;
 
   constructor(options: {
     readonly config: CoreConfig;
     readonly logger: Logger;
+    readonly statusReporter: RuntimeStatusReporter;
   }) {
     this.options = options;
+    this.statusReporter = options.statusReporter;
     this.claudeAdapterCtor = loadClaudeAdapterCtor(
       process.env.CLAUDE_MODULE_PATH,
       this.options.logger
@@ -371,20 +381,40 @@ export class ProviderRegistry {
   }
 
   async initialize(): Promise<void> {
+    this.emitStatus({
+      phase: "provider",
+      scope: "providers",
+      label: "Connecting provider modules...",
+    });
     await this.ensureGeminiAdapter();
     await Promise.all(
       this.providers.map(async (provider) => {
         if (!provider.adapter) {
           return;
         }
+        this.emitStatus({
+          phase: "provider",
+          scope: provider.id,
+          label: `Preparing ${provider.name} module...`,
+        });
         try {
           await provider.adapter.initialize();
+          this.emitStatus({
+            phase: "provider",
+            scope: provider.id,
+            label: `${provider.name} is ready.`,
+          });
         } catch (error) {
           this.options.logger.error(
             "Provider initialization failed",
             error instanceof Error ? error : new Error(String(error)),
             { providerId: provider.id }
           );
+          this.emitStatus({
+            phase: "provider",
+            scope: provider.id,
+            label: `Failed to initialize ${provider.name}.`,
+          });
           const mutable = provider as MutableProviderDescriptor;
           mutable.status = "inactive";
           mutable.adapter = undefined;
@@ -468,6 +498,11 @@ export class ProviderRegistry {
     }
 
     const mutable = descriptor as MutableProviderDescriptor;
+    this.emitStatus({
+      phase: "provider",
+      scope: "geminiCli",
+      label: "Loading Gemini module...",
+    });
     try {
       const GeminiAdapter = await this.geminiAdapterCtorPromise;
       const credentials = this.geminiCredentialsDirectory
@@ -488,13 +523,31 @@ export class ProviderRegistry {
         credentials,
       });
       mutable.adapter = adapter;
+      this.emitStatus({
+        phase: "provider",
+        scope: "geminiCli",
+        label: "Gemini module loaded.",
+      });
     } catch (error) {
       this.options.logger.error(
         "Failed to load Gemini provider module",
         error instanceof Error ? error : new Error(String(error))
       );
+      this.emitStatus({
+        phase: "provider",
+        scope: "geminiCli",
+        label: "Gemini module failed to load.",
+      });
       mutable.status = "inactive";
     }
+  }
+
+  private emitStatus(
+    event: Omit<RuntimeStatusEvent, "timestamp" | "phase"> & {
+      readonly phase: RuntimeStatusPhase;
+    }
+  ): void {
+    this.statusReporter.emit(event);
   }
 
   private createReporter(scope: string): ModuleReporter {
@@ -506,6 +559,15 @@ export class ProviderRegistry {
           `[${scope}] ${message}`,
           error instanceof Error ? error : new Error(String(error))
         ),
+      progress: (event) => {
+        this.statusReporter.emit({
+          phase: event.phase ?? "provider",
+          scope: event.scope ?? scope,
+          label: event.label,
+          detail: event.detail,
+          firstRun: event.firstRun,
+        });
+      },
     };
   }
 }

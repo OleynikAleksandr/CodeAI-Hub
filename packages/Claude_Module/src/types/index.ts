@@ -13,6 +13,7 @@ export type ModuleReporter = {
   readonly info?: (message: string) => void;
   readonly warn?: (message: string) => void;
   readonly error?: (message: string, error?: unknown) => void;
+  readonly progress?: (event: ModuleProgressEvent) => void;
 };
 
 export type ClaudeModuleOptions = {
@@ -40,3 +41,11 @@ export type ClaudeStreamMessage = {
   readonly num_turns?: number;
   readonly timestamp?: string;
 } & Record<string, unknown>;
+
+export type ModuleProgressEvent = {
+  readonly label: string;
+  readonly detail?: string;
+  readonly scope?: string;
+  readonly phase?: "install" | "provider" | "finalize";
+  readonly firstRun?: boolean;
+};

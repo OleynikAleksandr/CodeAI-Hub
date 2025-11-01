@@ -264,12 +264,15 @@ export class GeminiInstaller {
       return this.bridge;
     }
 
-    await this.ensureVendorArtifacts();
-    this.bridge = await loadCliBridgeFromVendor();
+    const metadata = await this.ensureVendorArtifacts();
+    this.bridge = await loadCliBridgeFromVendor({
+      expectedCliVersion: metadata.geminiCliVersion,
+      reporter: this.reporter,
+    });
     return this.bridge;
   }
 
-  private async ensureVendorArtifacts(): Promise<void> {
+  private async ensureVendorArtifacts(): Promise<ModuleMetadata> {
     const metadata = await readModuleMetadata(this.moduleRoot);
     const vendorRoot = await ensureDirectoryChain(
       this.moduleRoot,
@@ -282,13 +285,11 @@ export class GeminiInstaller {
       NODE_MODULES_DIR
     );
 
-    await this.installIfNeeded({
-      name: GEMINI_CLI_PACKAGE,
-      version: metadata.geminiCliVersion,
-      label: "Gemini CLI",
-      downloadsDir,
+    const legacyCliDir = path.join(
       nodeModulesDir,
-    });
+      ...GEMINI_CLI_PACKAGE.split("/")
+    );
+    await removeDirectoryIfExists(legacyCliDir);
 
     await this.installIfNeeded({
       name: GEMINI_CLI_CORE_PACKAGE,
@@ -305,7 +306,7 @@ export class GeminiInstaller {
       source: "npm",
       cli: {
         package: GEMINI_CLI_PACKAGE,
-        version: metadata.geminiCliVersion,
+        requiredVersion: metadata.geminiCliVersion,
       },
       cliCore: {
         package: GEMINI_CLI_CORE_PACKAGE,
@@ -317,6 +318,8 @@ export class GeminiInstaller {
       `${JSON.stringify(bridgeMetadata, null, 2)}\n`,
       "utf8"
     );
+
+    return metadata;
   }
 
   private async installIfNeeded({
@@ -336,10 +339,12 @@ export class GeminiInstaller {
     const pkgJsonPath = path.join(targetDir, "package.json");
     const nodeModulesPath = path.join(targetDir, "node_modules");
 
+    let firstInstall = true;
     try {
       const existing = await readJsonFile<{ readonly version?: string }>(
         pkgJsonPath
       );
+      firstInstall = false;
       if (existing.version === version) {
         try {
           await fs.access(nodeModulesPath);
@@ -348,12 +353,25 @@ export class GeminiInstaller {
           this.reporter?.info?.(
             `Repairing dependencies for ${label} ${version}`
           );
+          firstInstall = false;
         }
+      } else {
+        firstInstall = false;
       }
     } catch {
       // not installed yet
     }
 
+    this.reporter?.progress?.({
+      phase: "install",
+      label: firstInstall
+        ? "Downloading required Gemini components for the first run..."
+        : "Updating Gemini components...",
+      detail: firstInstall
+        ? "This may take a little longer during the first setup."
+        : "Fetching the latest improvements.",
+      firstRun: firstInstall,
+    });
     this.reporter?.info?.(`Installing ${label} ${version}`);
 
     const { tarball, shasum } = await fetchRegistryMetadata(name, version);
@@ -369,11 +387,25 @@ export class GeminiInstaller {
       const packageDir = path.join(tempDir, "package");
       await ensureDirectory(path.dirname(targetDir));
       await safeRename(packageDir, targetDir);
+      this.reporter?.progress?.({
+        phase: "install",
+        label: "Preparing Gemini dependencies...",
+        detail: "Configuring local tools.",
+        firstRun: firstInstall,
+      });
       await installDependencies(targetDir, label, this.reporter);
     } finally {
       await removeDirectoryIfExists(tempDir);
     }
 
+    this.reporter?.progress?.({
+      phase: "install",
+      label: "Gemini components installed.",
+      detail: firstInstall
+        ? "Initial setup complete."
+        : "Components updated successfully.",
+      firstRun: firstInstall,
+    });
     this.reporter?.info?.(`${label} ${version} installed`);
   }
 }

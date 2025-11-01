@@ -29,6 +29,23 @@ export class SDKInstaller {
   private readonly reporter?: (event: InstallerEvent) => void;
   private readonly logger?: ModuleReporter;
 
+  private emitProgress(
+    label: string,
+    options?: {
+      readonly phase?: "install" | "provider";
+      readonly firstRun?: boolean;
+      readonly detail?: string;
+    }
+  ): void {
+    this.logger?.progress?.({
+      phase: options?.phase ?? "install",
+      label,
+      scope: "claudeCodeCli",
+      firstRun: options?.firstRun,
+      detail: options?.detail,
+    });
+  }
+
   constructor(
     paths: ClaudeInstallerPaths,
     options?: {
@@ -72,10 +89,16 @@ export class SDKInstaller {
     await this.ensurePrefixDirectories();
     const installed = await this.checkGlobalInstallation();
     if (installed) {
+      this.emitProgress("Checking Claude components...");
       await this.checkAndUpdateSDK();
     } else {
+      this.emitProgress("Downloading Claude components for the first run...", {
+        firstRun: true,
+        detail: "This may take a little longer the very first time.",
+      });
       await this.installGlobalSDK();
     }
+    this.emitProgress("Claude components ready.", { phase: "provider" });
     await this.verifyModulePath();
   }
 
@@ -173,6 +196,9 @@ export class SDKInstaller {
     ) {
       return;
     }
+    this.emitProgress("Updating Claude components...", {
+      detail: "Applying the latest improvements.",
+    });
     this.reportStatus(`Updating Claude Agent SDK to v${latestVersion}`);
     await this.runNpm(["install", "-g", `${PACKAGE_NAME}@latest`, "--force"]);
     await this.checkGlobalInstallation();

@@ -7,6 +7,10 @@ import { WebSocket, WebSocketServer } from "ws";
 import type { CoreConfig } from "../config";
 import type { ProviderRegistry } from "../provider-registry";
 import type { SessionManager } from "../session-manager";
+import type {
+  RuntimeStatusEvent,
+  RuntimeStatusReporter,
+} from "../status/runtime-status-reporter";
 import type { Logger } from "../telemetry/logger";
 
 type ClientSocket = {
@@ -27,7 +31,11 @@ type BridgeEvent =
       readonly payload: { readonly sessionId: string; readonly event: unknown };
     }
   | { readonly type: "session:error"; readonly payload: unknown }
-  | { readonly type: "core:notification"; readonly payload: unknown };
+  | { readonly type: "core:notification"; readonly payload: unknown }
+  | {
+      readonly type: "core:loading-status";
+      readonly payload: RuntimeStatusEvent;
+    };
 
 type CoreStatePayload = {
   readonly sessions: ReturnType<SessionManager["listSessions"]>;
@@ -93,6 +101,12 @@ export class RemoteBridge {
 
   private readonly hooks: RemoteBridgeHooks;
 
+  private readonly statusReporter: RuntimeStatusReporter;
+
+  private latestStatus: RuntimeStatusEvent | null = null;
+
+  private unsubscribeStatus?: () => void;
+
   private app?: express.Express;
 
   private httpServer?: http.Server;
@@ -110,6 +124,7 @@ export class RemoteBridge {
     readonly logger: Logger;
     readonly version: string;
     readonly hooks?: RemoteBridgeHooks;
+    readonly statusReporter: RuntimeStatusReporter;
   }) {
     this.config = options.config;
     this.sessionManager = options.sessionManager;
@@ -117,6 +132,14 @@ export class RemoteBridge {
     this.logger = options.logger;
     this.version = options.version;
     this.hooks = options.hooks ?? {};
+    this.statusReporter = options.statusReporter;
+    this.unsubscribeStatus = this.statusReporter.subscribe((event) => {
+      this.latestStatus = event;
+      this.broadcast({
+        type: "core:loading-status",
+        payload: event,
+      });
+    });
   }
 
   async start(): Promise<void> {
@@ -159,6 +182,8 @@ export class RemoteBridge {
   }
 
   async stop(): Promise<void> {
+    this.unsubscribeStatus?.();
+    this.unsubscribeStatus = undefined;
     for (const { socket } of this.clients.values()) {
       try {
         socket.close();
@@ -253,6 +278,14 @@ export class RemoteBridge {
         payload: this.buildInitialState(),
       })
     );
+    if (this.latestStatus) {
+      socket.send(
+        JSON.stringify({
+          type: "core:loading-status",
+          payload: this.latestStatus,
+        })
+      );
+    }
   }
 
   private buildInitialState(): CoreStatePayload {

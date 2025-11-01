@@ -31,6 +31,23 @@ export class CodexInstaller {
   private currentSdkVersion: string | null = null;
   private currentCliVersion: string | null = null;
 
+  private emitProgress(
+    label: string,
+    options?: {
+      readonly phase?: "install" | "provider";
+      readonly firstRun?: boolean;
+      readonly detail?: string;
+    }
+  ): void {
+    this.logger?.progress?.({
+      phase: options?.phase ?? "install",
+      label,
+      scope: "codexCli",
+      firstRun: options?.firstRun,
+      detail: options?.detail,
+    });
+  }
+
   constructor(
     paths: CodexInstallerPaths,
     options?: {
@@ -81,8 +98,13 @@ export class CodexInstaller {
       "sdk"
     );
     if (sdkInstalled) {
+      this.emitProgress("Checking Codex components...");
       await this.updatePackageIfNeeded(SDK_PACKAGE_NAME, "sdk");
     } else {
+      this.emitProgress("Downloading Codex components for the first run...", {
+        firstRun: true,
+        detail: "This may take a little longer the very first time.",
+      });
       await this.installPackage(SDK_PACKAGE_NAME, "sdk");
     }
 
@@ -91,11 +113,17 @@ export class CodexInstaller {
       "cli"
     );
     if (cliInstalled) {
+      this.emitProgress("Refreshing Codex components...");
       await this.updatePackageIfNeeded(CLI_PACKAGE_NAME, "cli");
     } else {
+      this.emitProgress("Finishing Codex setup...", {
+        firstRun: true,
+        detail: "Almost done — this step only runs once.",
+      });
       await this.installPackage(CLI_PACKAGE_NAME, "cli");
     }
 
+    this.emitProgress("Codex components ready.", { phase: "provider" });
     await this.verifyInstallation();
   }
 
@@ -214,6 +242,9 @@ export class CodexInstaller {
     this.reportStatus(
       `Updating ${this.describePackage(kind)} to v${latestVersion}`
     );
+    this.emitProgress("Updating Codex components...", {
+      detail: "Applying the latest improvements.",
+    });
     await this.runNpm(["install", "-g", `${packageName}@latest`, "--force"]);
     await this.checkPackageInstalled(packageName, kind);
   }
