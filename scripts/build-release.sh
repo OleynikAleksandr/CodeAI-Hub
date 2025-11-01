@@ -169,6 +169,11 @@ fi
 
 clean_release_dir "$DIST_ROOT"
 
+echo ""
+echo "🔁 Restoring development dependencies..."
+npm install >/dev/null
+echo "✅ Development dependencies restored"
+
 # Step 10: Check package size
 echo ""
 echo "📊 Step 10: Verifying package size..."
