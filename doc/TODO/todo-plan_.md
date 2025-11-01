@@ -6,13 +6,14 @@
 - BLOCKED — требуется внешнее действие
 - DONE — задача завершена
 
-## Phase 1 — CLI Presence Detection (owner: Codex, updated: 2025-10-31)
+## Phase 1 — CLI Presence Detection (owner: Codex, updated: 2025-11-01)
 **Цель:** перед запуском модулей убедиться, что пользователь уже установил официальные CLI/SDK и прошёл аутентификацию.
 - [TODO] Сформировать перечень минимальных требований по каждому провайдеру (Anthropic Claude, OpenAI Codex, Google Gemini) — пути, бинарники, конфиги, команды проверки.
 - [TODO] Реализовать сервис проверки (`packages/core` + `packages/*_Module`): асинхронный health-check, возвращающий статус `installed/authenticated/missing`.
 - [TODO] Добавить в ядро обработку статуса провайдера при инициализации и в ответах `/health` / `/metrics`.
-- [TODO] Расширить RemoteBridge сообщениями предупреждений для UI (webview + CEF) с конкретными инструкциями.
-- [TODO] Подготовить пользовательское руководство "Manual Provider Setup" (описание установки CLI, команд аутентификации, tip по отказу от провайдера).
+- [IN_PROGRESS] Расширить RemoteBridge сообщениями предупреждений для UI (webview + CEF) с конкретными инструкциями.
+  - Notes: `core:loading-status` уже транслирует стадии загрузки и first-run подсказки; осталось добавить явные проверки наличия инструментов и текстовые инструкции.
+  - [TODO] Подготовить пользовательское руководство "Manual Provider Setup" (описание установки CLI, команд аутентификации, tip по отказу от провайдера).
 
 ## Phase 2 — Settings Integration & Provider Management (owner: Codex, updated: 2025-10-31)
 **Цель:** предоставить UI для управления доступными провайдерами и реакции на отсутствие CLI.

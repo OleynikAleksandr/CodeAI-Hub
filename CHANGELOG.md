@@ -2,6 +2,104 @@
 
 All notable changes to this project will be documented in this file.
 
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [1.1.94] - 2025-11-01
+### Changed
+- Startup overlay now rotates calm, pre-scripted status lines until the core finishes; the UI unlocks instantly with no lingering “ready” banner.
+- Core/bootstrap scripts stop using VS Code progress notifications, so all feedback is surfaced only inside the webview overlay.
+- Provider/core build scripts target `~/.codeai-hub/releases/`, trimming old versions and cleaning staging folders automatically during development builds.
+
+### Build
+- VSIX → `codeai-hub-1.1.94.vsix`
+- Core → `codeai-hub-core-darwin-arm64-0.2.22.tar.bz2`
+- Providers → `claude-module-0.1.8.tar.bz2`, `codex-module-0.1.2.tar.bz2`, `gemini-module-0.3.5.tar.bz2`
+
+## [1.1.91] - 2025-11-01
+### Added
+- Runtime status reporter streams boot/install/provider milestones from the core to RemoteBridge, giving the webview overlay precise updates instead of a generic spinner.
+- Claude, Codex, and Gemini installers emit structured progress events (0.1.8 / 0.1.2 / 0.3.5), including first-run hints when components are being downloaded for the first time.
+
+### Changed
+- RemoteBridge now broadcasts `core:loading-status` over WebSocket; the React overlay renders multi-line status text with muted detail lines and stays locked until the final “ready” phase.
+- Core orchestrator starts the bridge before provider initialization so users can see progress immediately, and the UI headline has been rewritten in plain language (no CLI/SDK wording).
+
+### Build
+- VSIX → `codeai-hub-1.1.91.vsix`
+- Core → `codeai-hub-core-darwin-arm64-0.2.22.tar.bz2`
+- Providers → `claude-module-0.1.8.tar.bz2`, `codex-module-0.1.2.tar.bz2`, `gemini-module-0.3.5.tar.bz2`
+
+## [1.1.89] - 2025-11-01
+### Fixed
+- Gemini sessions no longer crash during startup: the provider ships a version-agnostic enablement manager and tolerates newer `@google/gemini-cli` builds.
+
+### Added
+- Core bridge overlay blocks ActionBar until the first provider snapshot arrives and shows retry messaging when the socket reconnects mid-launch.
+
+### Changed
+- Gemini module bumped to 0.3.4 with an extended PATH/npm prefix search plus diagnostics logging for the resolved CLI location.
+- Documentation refreshed (README, Architecture, SystemArchitecture, Gemini stack) to match the restored Gemini workflow.
+
+### Build
+- VSIX → `codeai-hub-1.1.89.vsix`
+- Core → `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`
+- Providers → `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`, `gemini-module-0.3.4.tar.bz2`
+
+## [1.1.88] - 2025-11-01
+### Fixed
+- Gemini sessions launch again: the bridge now supplies a no-op extension enablement manager to `loadCliConfig`, matching the latest `@google/gemini-cli` contract and unblocking session startup.
+
+### Added
+- Startup overlay still clears on the first WebSocket handshake and shows retry messaging if the core restarts mid-launch.
+
+### Build
+- VSIX → `codeai-hub-1.1.88.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.0.48.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`
+- Providers → `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`, `gemini-module-0.3.4.tar.bz2`
+
+## [1.1.87] - 2025-11-01
+### Added
+- Startup overlay now unblocks as soon as the WebSocket connects and shows clear "Retrying…" messaging while the core is still warming up, so first-run installs no longer look frozen.
+- Fallback provider catalogue is bundled in the webview, letting the picker render immediately even if the first `/status` fetch is delayed or intercepted by a service worker.
+
+### Changed
+- Gemini provider continues shipping as `@codeai-hub/gemini-module@0.3.3`; CLI discovery covers PATH binaries, custom npm prefixes (`npm config prefix`, `.npm-global`), and keeps recording the resolved location for diagnostics.
+- Documentation (Architecture/SystemArchitecture/Stacks) refreshed to match the new UX flow.
+
+### Build
+- VSIX → `codeai-hub-1.1.87.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.0.48.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`
+- Providers → `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`, `gemini-module-0.3.3.tar.bz2`
+
+## [1.1.86] - 2025-10-31
+### Added
+- Webview overlay that surfaces core initialization progress, disables session actions until the backend is ready, and keeps retrying with clear messaging when the core is unreachable.
+
+### Changed
+- Gemini provider now ships as `@codeai-hub/gemini-module@0.3.3`, staging only `@google/gemini-cli-core` and automatically detecting the user-installed `@google/gemini-cli` via PATH/NPM prefixes (including custom global directories).
+- Documentation and manifests updated to reflect the new startup UX and Gemini detection flow.
+
+### Build
+- VSIX → `codeai-hub-1.1.86.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.0.48.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`
+- Providers → `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`, `gemini-module-0.3.3.tar.bz2`
+
+## [1.1.84] - 2025-10-31
+### Changed
+- Gemini provider no longer bundles a private copy of `@google/gemini-cli`; the installer now stages only `@google/gemini-cli-core` while the runtime discovers the user-installed CLI and validates its version.
+- Updated Gemini documentation and system architecture notes to reflect user-managed CLI installs and the new vendor layout.
+
+### Build
+- VSIX → `codeai-hub-1.1.84.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.0.48.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-0.2.21.tar.bz2`
+- Providers → `claude-module-0.1.7.tar.bz2`, `codex-module-0.1.1.tar.bz2`, `gemini-module-0.3.2.tar.bz2`
+
 ## [1.1.83] - 2025-10-31
 ### Added
 - Provider setup guide (`doc/Project_Docs/knowledge/ProviderSetupGuide.md`) outlining manual installation and authentication steps for Claude, Codex, and Gemini CLI tools.
