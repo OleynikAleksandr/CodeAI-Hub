@@ -213,13 +213,18 @@ std::optional<std::filesystem::path> ResolveCoreRuntimeDirectory(
     if (!entry.is_directory()) {
       continue;
     }
-    if (!latest.has_value()) {
-      latest = entry.path();
+    const auto& candidate = entry.path();
+    const std::string name = candidate.filename().string();
+    if (name == "downloads" || name == "tmp" || name.empty()) {
       continue;
     }
-    if (entry.path().filename().string() >
-        latest->filename().string()) {
-      latest = entry.path();
+    const std::filesystem::path installMarker = candidate / "install.json";
+    if (!std::filesystem::exists(installMarker)) {
+      continue;
+    }
+    if (!latest.has_value() ||
+        candidate.filename().string() > latest->filename().string()) {
+      latest = candidate;
     }
   }
   return latest;
