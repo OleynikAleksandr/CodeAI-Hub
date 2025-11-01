@@ -240,7 +240,25 @@ export class CodexMessageProcessor {
     event: ItemStartedEvent | ItemUpdatedEvent | ItemCompletedEvent
   ): void {
     const item = event.item as ThreadItem;
-    if (item.type !== "agent_message" || event.type !== "item.completed") {
+    if (item.type !== "agent_message") {
+      return;
+    }
+    if (event.type === "item.updated") {
+      this.emitMessage(session, {
+        type: "stream_event",
+        provider: PROVIDER,
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        data: {
+          kind: "assistant_chunk",
+          itemId: item.id,
+          text: item.text,
+        },
+        timestamp: new Date().toISOString(),
+      });
+      return;
+    }
+    if (event.type !== "item.completed") {
       return;
     }
     session.logger?.logAssistantResponse?.(item);

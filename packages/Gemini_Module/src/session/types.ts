@@ -5,7 +5,7 @@ import type { GeminiSessionLogger } from "../logging/session-logger";
 import type { ModuleReporter } from "../types";
 
 export type ActiveSession = {
-  readonly sessionId: string;
+  sessionId: string;
   readonly createdAt: number;
   readonly eventEmitter: EventEmitter;
   readonly config: Config;

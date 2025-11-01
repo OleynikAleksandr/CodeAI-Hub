@@ -14,12 +14,7 @@ const HEALTH_TIMEOUT_MS = 1000;
 const HTTP_STATUS_OK = 200;
 
 const resolveCoreLogFilePath = (): string => {
-  const logDir = path.join(
-    homedir(),
-    ".codeai-hub",
-    "logs",
-    "core"
-  );
+  const logDir = path.join(homedir(), ".codeai-hub", "logs", "core");
   try {
     mkdirSync(logDir, { recursive: true });
   } catch {
