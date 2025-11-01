@@ -17,11 +17,6 @@
   ],
   "icon": "media/icon.png",
   "main": "./out/extension.js",
-  "activationEvents": [
-    "onView:codeaiHubView",
-    "onCommand:codeaiHub.openSettings",
-    "onCommand:codeaiHub.launchWebClient"
-  ],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
