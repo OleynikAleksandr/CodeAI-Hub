@@ -7,11 +7,9 @@ REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo 
 source "$SCRIPT_DIR/release-utils.sh"
 
 CORE_PROJECT_DIR="$REPO_ROOT/packages/core"
-DIST_ROOT="$REPO_ROOT/doc/tmp/releases"
-DOWNLOAD_ROOT="$REPO_ROOT/doc/tmp/downloads"
+RELEASE_ROOT="$HOME/.codeai-hub/releases"
 MANIFEST_PATH="$REPO_ROOT/assets/core/manifest.json"
 LOCAL_RELEASE_BASE="file://$HOME/.codeai-hub/releases/"
-PACK_DIR="$REPO_ROOT/doc/tmp/tarballs"
 
 NODE_VERSION="20.11.1"
 NODE_DIST_BASE="https://nodejs.org/dist/v${NODE_VERSION}"
@@ -25,7 +23,7 @@ Usage:
 
 Options:
   --version   Override core version (default: from package.json)
-  --clean     Remove staging artifacts after completion
+  --clean     Remove temporary artefacts after completion
 USAGE
 }
 
@@ -94,7 +92,6 @@ case "$UNAME_S" in
     echo "❌ Unsupported platform: $UNAME_S" >&2
     exit 1
     ;;
-
 esac
 
 if [[ -z "$CUSTOM_VERSION" ]]; then
@@ -105,33 +102,34 @@ fi
 
 echo "📦 Building CodeAI Hub Core v$CORE_VERSION for $PLATFORM_KEY (Node $NODE_VERSION)"
 
-mkdir -p "$DIST_ROOT" "$DOWNLOAD_ROOT" "$PACK_DIR"
+STAGING_DIR="$(mktemp -d)"
+trap 'rm -rf "$STAGING_DIR"' EXIT
+APP_STAGE="$STAGING_DIR/app"
+NODE_STAGE="$STAGING_DIR/node"
+TARBALL_STAGE="$STAGING_DIR/tarballs"
+DOWNLOAD_STAGE="$STAGING_DIR/downloads"
+mkdir -p "$APP_STAGE" "$NODE_STAGE" "$TARBALL_STAGE" "$DOWNLOAD_STAGE"
 
-# Build dependent packages
+echo "🔧 Building workspace packages..."
 npm run build --workspace=@codeai-hub/claude-module >/dev/null
 npm run build --workspace=@codeai-hub/codex-module >/dev/null
 npm run build --workspace=@codeai-hub/gemini-module >/dev/null || true
 npm run build --workspace=@codeai-hub/core >/dev/null
 
-# Stage tarballs for local modules
-CLAUDE_TARBALL=$(npm pack --workspace=@codeai-hub/claude-module --pack-destination "$PACK_DIR" | tail -n1)
-CODEX_TARBALL=$(npm pack --workspace=@codeai-hub/codex-module --pack-destination "$PACK_DIR" | tail -n1)
-GEMINI_TARBALL=$(npm pack --workspace=@codeai-hub/gemini-module --pack-destination "$PACK_DIR" | tail -n1)
-
-STAGING_DIR=$(mktemp -d)
-APP_STAGE="$STAGING_DIR/app"
-NODE_STAGE="$STAGING_DIR/node"
-mkdir -p "$APP_STAGE" "$NODE_STAGE" "$APP_STAGE/tarballs"
-
-cp "$PACK_DIR/$CLAUDE_TARBALL" "$APP_STAGE/tarballs/"
-cp "$PACK_DIR/$CODEX_TARBALL" "$APP_STAGE/tarballs/"
-cp "$PACK_DIR/$GEMINI_TARBALL" "$APP_STAGE/tarballs/"
+echo "📦 Packing provider tarballs..."
+CLAUDE_TARBALL=$(npm pack --workspace=@codeai-hub/claude-module --pack-destination "$TARBALL_STAGE" | tail -n1)
+CODEX_TARBALL=$(npm pack --workspace=@codeai-hub/codex-module --pack-destination "$TARBALL_STAGE" | tail -n1)
+GEMINI_TARBALL=$(npm pack --workspace=@codeai-hub/gemini-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 
 cp "$CORE_PROJECT_DIR/package.json" "$APP_STAGE/package.json"
 if [[ -f "$CORE_PROJECT_DIR/package-lock.json" ]]; then
   cp "$CORE_PROJECT_DIR/package-lock.json" "$APP_STAGE/package-lock.json"
 fi
 rsync -a "$CORE_PROJECT_DIR/dist" "$APP_STAGE/"
+mkdir -p "$APP_STAGE/tarballs"
+cp "$TARBALL_STAGE/$CLAUDE_TARBALL" "$APP_STAGE/tarballs/"
+cp "$TARBALL_STAGE/$CODEX_TARBALL" "$APP_STAGE/tarballs/"
+cp "$TARBALL_STAGE/$GEMINI_TARBALL" "$APP_STAGE/tarballs/"
 
 APP_STAGE_DIR="$APP_STAGE" node <<'NODE'
 const fs = require("node:fs");
@@ -159,12 +157,9 @@ NODE
 (cd "$APP_STAGE" && npm install --omit=dev --ignore-scripts --no-audit --no-fund >/dev/null)
 rm -rf "$APP_STAGE/tarballs"
 
-# Download Node runtime
-NODE_ARCHIVE_PATH="$DOWNLOAD_ROOT/$NODE_ARCHIVE"
-if [[ ! -f "$NODE_ARCHIVE_PATH" ]]; then
-  echo "⬇️  Downloading $NODE_ARCHIVE"
-  curl -fsSL "$NODE_DIST_BASE/$NODE_ARCHIVE" -o "$NODE_ARCHIVE_PATH"
-fi
+NODE_ARCHIVE_PATH="$DOWNLOAD_STAGE/$NODE_ARCHIVE"
+echo "⬇️  Fetching Node runtime $NODE_ARCHIVE"
+curl -fsSL "$NODE_DIST_BASE/$NODE_ARCHIVE" -o "$NODE_ARCHIVE_PATH"
 
 case "$NODE_ARCHIVE" in
   *.tar.gz)
@@ -203,24 +198,19 @@ INSTALL_JSON
 
 touch "$INSTALL_ROOT/.complete"
 
+find "$(dirname "$INSTALL_ROOT")" -mindepth 1 -maxdepth 1 -type d ! -name "$CORE_VERSION" -exec rm -rf {} +
+
 ARCHIVE_NAME="codeai-hub-core-$PLATFORM_KEY-$CORE_VERSION.tar.bz2"
-ARCHIVE_PATH="$DIST_ROOT/$ARCHIVE_NAME"
-rm -f "$ARCHIVE_PATH"
+ARCHIVE_PATH="$RELEASE_ROOT/$ARCHIVE_NAME"
+mkdir -p "$RELEASE_ROOT"
 (
   cd "$INSTALL_ROOT"/..
   tar -cjf "$ARCHIVE_PATH" "$CORE_VERSION"
 )
+find "$RELEASE_ROOT" -maxdepth 1 -type f -name "codeai-hub-core-$PLATFORM_KEY-*.tar.bz2" ! -name "$ARCHIVE_NAME" -exec rm -f {} +
 
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  PACKAGE_SIZE=$(stat -f%z "$ARCHIVE_PATH")
-else
-  PACKAGE_SIZE=$(stat -c%s "$ARCHIVE_PATH")
-fi
-if command -v shasum >/dev/null 2>&1; then
-  PACKAGE_SHA1=$(shasum -a 1 "$ARCHIVE_PATH" | awk '{print $1}')
-else
-  PACKAGE_SHA1=$(sha1sum "$ARCHIVE_PATH" | awk '{print $1}')
-fi
+PACKAGE_SIZE=$(file_size "$ARCHIVE_PATH")
+PACKAGE_SHA1=$(sha1_file "$ARCHIVE_PATH")
 
 CORE_PACKAGE_NAME="$ARCHIVE_NAME" \
 CORE_PACKAGE_SIZE="$PACKAGE_SIZE" \
@@ -246,7 +236,7 @@ fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8")
 NODE
 
 if [[ "$CLEAN_FLAG" == "true" ]]; then
-  rm -rf "$STAGING_DIR"
+  rm -rf "$CORE_PROJECT_DIR/dist"
 fi
 
 echo "✅ Core runtime ready at $INSTALL_ROOT"

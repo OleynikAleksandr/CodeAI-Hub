@@ -44,3 +44,21 @@ clean_release_dir() {
     fi
   done
 }
+
+file_size() {
+  local target="$1"
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    stat -f%z "$target"
+  else
+    stat -c%s "$target"
+  fi
+}
+
+sha1_file() {
+  local target="$1"
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 1 "$target" | awk '{print $1}'
+  else
+    sha1sum "$target" | awk '{print $1}'
+  fi
+}

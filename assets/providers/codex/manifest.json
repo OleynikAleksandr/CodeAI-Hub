@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "baseUrl": "https://github.com/OleynikAleksandr/CodeAI-Hub/releases/latest/download/",
+  "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "module": {
-    "version": "0.1.1",
-    "package": "codex-module-0.1.1.tar.bz2",
-    "size": 16058,
-    "sha1": "b96305a75d089ea70477a0e2645359abe3f4c4ef"
+    "version": "0.1.2",
+    "package": "codex-module-0.1.2.tar.bz2",
+    "size": 16614,
+    "sha1": "4d42f328a007a09c469e499106184dbdc75263c4"
   }
 }

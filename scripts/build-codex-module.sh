@@ -4,39 +4,21 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$SCRIPT_DIR/..")"
 source "$SCRIPT_DIR/release-utils.sh"
+
 MODULE_DIR="$REPO_ROOT/packages/Codex_Module"
-DIST_ROOT="$REPO_ROOT/doc/tmp/releases"
 INSTALL_ROOT="$HOME/.codeai-hub/providers/codex"
+RELEASE_ROOT="$HOME/.codeai-hub/releases"
 MANIFEST_PATH="$REPO_ROOT/assets/providers/codex/manifest.json"
 
-usage(){
+usage() {
   cat <<USAGE
-Codex Module build script
+Codex Module build script (developer mode)
 Usage: ./scripts/build-codex-module.sh [--version <semver>] [--clean]
 USAGE
 }
 
 CLEAN=false
 CUSTOM_VERSION=""
-LOCAL_RELEASE_DIR="$HOME/.codeai-hub/releases"
-
-get_file_size() {
-  local target="$1"
-  if [[ "$(uname -s)" == "Darwin" ]]; then
-    stat -f%z "$target"
-  else
-    stat -c%s "$target"
-  fi
-}
-
-compute_sha1() {
-  local target="$1"
-  if command -v shasum >/dev/null 2>&1; then
-    shasum -a 1 "$target" | awk '{print $1}'
-  else
-    sha1sum "$target" | awk '{print $1}'
-  fi
-}
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -44,18 +26,24 @@ while [[ $# -gt 0 ]]; do
       shift
       CUSTOM_VERSION=${1:-}
       if [[ -z "$CUSTOM_VERSION" ]]; then
-        echo "Missing value for --version" >&2; exit 1;
+        echo "Missing value for --version" >&2
+        exit 1
       fi
       ;;
     --clean)
       CLEAN=true
       ;;
     -h|--help)
-      usage; exit 0;;
-    *) echo "Unknown arg $1" >&2; usage; exit 1;;
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown arg $1" >&2
+      usage
+      exit 1
+      ;;
   esac
   shift
-
 done
 
 cd "$MODULE_DIR"
@@ -66,7 +54,6 @@ else
 fi
 
 echo "📦 Building Codex module v$MODULE_VERSION"
-
 echo "📥 Installing deps..."
 npm install >/dev/null
 
@@ -74,6 +61,8 @@ echo "🔧 Compiling TypeScript..."
 npm run build >/dev/null
 
 STAGE_DIR="$(mktemp -d)"
+trap 'rm -rf "$STAGE_DIR"' EXIT
+
 mkdir -p "$STAGE_DIR/dist"
 cp -R dist/* "$STAGE_DIR/dist/"
 cp package.json "$STAGE_DIR/package.json"
@@ -83,21 +72,17 @@ mkdir -p "$TARGET_DIR"
 cp -R "$STAGE_DIR"/* "$TARGET_DIR"
 echo -n "$MODULE_VERSION" > "$INSTALL_ROOT/latest"
 
-echo "✅ Installed to $TARGET_DIR"
+find "$INSTALL_ROOT" -mindepth 1 -maxdepth 1 -type d ! -name "$MODULE_VERSION" -exec rm -rf {} +
+rm -rf "$INSTALL_ROOT/downloads"
 
 ARCHIVE_NAME="codex-module-$MODULE_VERSION.tar.bz2"
-ARCHIVE_PATH="$DIST_ROOT/$ARCHIVE_NAME"
-mkdir -p "$DIST_ROOT"
-mkdir -p "$LOCAL_RELEASE_DIR"
-PROVIDER_DOWNLOAD_DIR="$HOME/.codeai-hub/providers/codex/downloads"
-mkdir -p "$PROVIDER_DOWNLOAD_DIR"
+ARCHIVE_PATH="$RELEASE_ROOT/$ARCHIVE_NAME"
+mkdir -p "$RELEASE_ROOT"
 (cd "$STAGE_DIR" && tar -cjf "$ARCHIVE_PATH" .)
-cp "$ARCHIVE_PATH" "$LOCAL_RELEASE_DIR/$ARCHIVE_NAME"
-cp "$ARCHIVE_PATH" "$PROVIDER_DOWNLOAD_DIR/$ARCHIVE_NAME"
-clean_release_dir "$DIST_ROOT"
+find "$RELEASE_ROOT" -maxdepth 1 -type f -name "codex-module-*.tar.bz2" ! -name "$ARCHIVE_NAME" -exec rm -f {} +
 
-PACKAGE_SIZE=$(get_file_size "$ARCHIVE_PATH")
-PACKAGE_SHA1=$(compute_sha1 "$ARCHIVE_PATH")
+PACKAGE_SIZE=$(file_size "$ARCHIVE_PATH")
+PACKAGE_SHA1=$(sha1_file "$ARCHIVE_PATH")
 
 CODEX_PACKAGE_NAME="$ARCHIVE_NAME" \
 CODEX_PACKAGE_SIZE="$PACKAGE_SIZE" \
@@ -121,8 +106,5 @@ if [[ "$CLEAN" == "true" ]]; then
   rm -rf dist
 fi
 
-rm -rf "$STAGE_DIR"
-
+echo "✅ Installed to $TARGET_DIR"
 echo "📦 Archive ready: $ARCHIVE_PATH"
-echo "📂 Local cache: $LOCAL_RELEASE_DIR/$ARCHIVE_NAME"
-echo "📂 Provider cache: $PROVIDER_DOWNLOAD_DIR/$ARCHIVE_NAME"
