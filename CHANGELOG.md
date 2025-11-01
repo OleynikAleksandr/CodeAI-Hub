@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.105] - 2025-11-02
+### Changed
+- Codex provider автоматически выполняет `/status` после старта, моментально продвигая `sessionId` и инициализируя логи без временных файлов.
+
+### Build
+- VSIX → `codeai-hub-1.1.105.vsix`
+- Providers → `claude-module-0.1.9.tar.bz2`, `codex-module-0.1.4.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
+
 ## [1.1.104] - 2025-11-02
 ### Fixed
 - Gemini CLI configuration now loads extension overrides correctly by passing the actual enabled extensions list to `loadCliConfig`, preventing session creation failures in standalone and VS Code.
