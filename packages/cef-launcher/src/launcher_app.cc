@@ -83,7 +83,10 @@ void LauncherApp::OnContextInitialized() {
 
   CefRefPtr<CefCommandLine> command_line = CefCommandLine::GetGlobalCommandLine();
 
+  codeai::launcher::LogLauncherInfo("Launcher context initialised");
   if (!codeai::launcher::EnsureCoreProcessRunning()) {
+    codeai::launcher::LogLauncherError(
+      "Standalone core bootstrap failed; UI will retry in background");
     std::fprintf(
         stderr,
         "CodeAIHubLauncher: standalone core bootstrap reported a failure; "

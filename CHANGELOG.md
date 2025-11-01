@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ## [1.1.95] - 2025-11-01
 ### Fixed
 - Standalone launcher now boots the core orchestrator automatically, so the web client overlay clears even when VS Code stays closed.
+- Launcher and core emit logs to `~/.codeai-hub/logs/{launcher,core}/`, simplifying standalone diagnostics.
 
 ### Build
 - VSIX → `codeai-hub-1.1.95.vsix`

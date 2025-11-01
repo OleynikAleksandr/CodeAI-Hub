@@ -1,3 +1,6 @@
+import { appendFileSync, mkdirSync } from "node:fs";
+import path from "node:path";
+
 export type LogLevel = "debug" | "info" | "warn" | "error";
 
 const LOG_LEVELS: LogLevel[] = ["debug", "info", "warn", "error"];
@@ -24,6 +27,9 @@ const normalizeLevel = (value?: string): LogLevel => {
 
 export class Logger {
   private readonly minLevel: LogLevel;
+  private static logFilePath: string | null =
+    process.env.CODEAI_CORE_LOG_FILE ?? null;
+  private static logFileInitialized = false;
 
   constructor(level?: string) {
     this.minLevel = normalizeLevel(level ?? process.env.CORE_LOG_LEVEL);
@@ -66,13 +72,35 @@ export class Logger {
     }
 
     const timestamp = new Date().toISOString();
-    process.stdout.write(
-      `${JSON.stringify({
-        timestamp,
-        level,
-        message,
-        ...context,
-      })}\n`
-    );
+    const entry = JSON.stringify({
+      timestamp,
+      level,
+      message,
+      ...context,
+    });
+    process.stdout.write(`${entry}\n`);
+    Logger.appendToFile(entry);
+  }
+
+  private static appendToFile(entry: string): void {
+    if (!Logger.logFilePath) {
+      return;
+    }
+
+    if (!Logger.logFileInitialized) {
+      try {
+        mkdirSync(path.dirname(Logger.logFilePath), { recursive: true });
+        Logger.logFileInitialized = true;
+      } catch {
+        Logger.logFilePath = null;
+        return;
+      }
+    }
+
+    try {
+      appendFileSync(Logger.logFilePath, `${entry}\n`, "utf8");
+    } catch {
+      Logger.logFilePath = null;
+    }
   }
 }

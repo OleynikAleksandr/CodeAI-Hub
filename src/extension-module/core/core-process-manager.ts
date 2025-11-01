@@ -1,5 +1,5 @@
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import http from "node:http";
 import { homedir } from "node:os";
 import path from "node:path";
@@ -12,6 +12,21 @@ const DEFAULT_CORE_PORT = 8080;
 const HEALTH_PATH = "/api/v1/health";
 const HEALTH_TIMEOUT_MS = 1000;
 const HTTP_STATUS_OK = 200;
+
+const resolveCoreLogFilePath = (): string => {
+  const logDir = path.join(
+    homedir(),
+    ".codeai-hub",
+    "logs",
+    "core"
+  );
+  try {
+    mkdirSync(logDir, { recursive: true });
+  } catch {
+    // ignore directory creation failures; logging will fall back to stdout
+  }
+  return path.join(logDir, "core.log");
+};
 
 export const CORE_HOST = process.env.CODEAI_CORE_HOST ?? DEFAULT_CORE_HOST;
 export const CORE_PORT = Number(
@@ -92,6 +107,7 @@ export class CoreProcessManager {
     if (geminiModulePath) {
       envVars.GEMINI_MODULE_PATH = geminiModulePath;
     }
+    envVars.CODEAI_CORE_LOG_FILE = resolveCoreLogFilePath();
     const appCwd = path.join(this.runtimeInfo.runtimeDir, "app");
     this.child = spawn(
       this.runtimeInfo.nodePath,
