@@ -12,4 +12,8 @@ bool EnsureCoreProcessRunning();
 // Exposed for tests/platform code to check whether an active core is listening.
 bool IsCoreListening(const std::string& host, int port);
 
+void LogLauncherInfo(const std::string& message);
+void LogLauncherWarn(const std::string& message);
+void LogLauncherError(const std::string& message);
+
 }  // namespace codeai::launcher
