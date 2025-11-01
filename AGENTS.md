@@ -302,6 +302,9 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Make sure the assertion function, like expect, is placed inside an it() function call.
 - Don't use disabled tests.
 
+### Release Discipline
+- After every code change requiring visual verification, rebuild all affected binaries with project scripts (`./scripts/build-*-module.sh`, `./scripts/build-core.sh`, `./scripts/build-cef-launcher.sh`) and create a fresh VSIX via `./scripts/build-release.sh`, ensuring manifests reference the new artefacts.
+
 ## Common Tasks
 - `npx ultracite init` - Initialize Ultracite in your project
 - `npx ultracite fix` - Format and fix code automatically
