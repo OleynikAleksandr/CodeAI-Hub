@@ -38,6 +38,8 @@ add_subdirectory("${CEF_ROOT}/libcef_dll" libcef_dll_wrapper_build)
 add_library(codeai_hub_libcef_wrapper ALIAS libcef_dll_wrapper)
 
 set(COMMON_SOURCES
+  src/core_launcher.cc
+  src/core_launcher.h
   src/launcher_app.cc
   src/launcher_app.h
   src/launcher_handler.cc

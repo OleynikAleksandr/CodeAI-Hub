@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.95] - 2025-11-01
+### Fixed
+- Standalone launcher now boots the core orchestrator automatically, so the web client overlay clears even when VS Code stays closed.
+
+### Build
+- VSIX → `codeai-hub-1.1.95.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.0.49.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-0.2.22.tar.bz2`
+- Providers → `claude-module-0.1.8.tar.bz2`, `codex-module-0.1.2.tar.bz2`, `gemini-module-0.3.5.tar.bz2`
+
 ## [1.1.94] - 2025-11-01
 ### Changed
 - Startup overlay now rotates calm, pre-scripted status lines until the core finishes; the UI unlocks instantly with no lingering “ready” banner.
