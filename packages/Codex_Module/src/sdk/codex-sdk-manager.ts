@@ -64,9 +64,13 @@ export class CodexSDKManager {
     return this.deps.sessions.getSession(sessionId);
   }
 
-  async sendMessage(sessionId: string, content: string): Promise<void> {
+  async sendMessage(
+    sessionId: string,
+    content: string,
+    options?: { readonly internal?: boolean }
+  ): Promise<void> {
     await this.initialize();
-    this.deps.processor.enqueueMessage(sessionId, content);
+    this.deps.processor.enqueueMessage(sessionId, content, undefined, options);
   }
 
   private createThread(): Thread {
