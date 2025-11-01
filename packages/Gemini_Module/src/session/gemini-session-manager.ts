@@ -159,9 +159,33 @@ export class GeminiSessionManager {
         content: `Gemini session initialized (model: ${config.getModel()}).`,
       },
     ]);
-    eventEmitter.emit("realSessionId", config.getSessionId());
+    let resolvedSessionId: string = sessionId;
+    const providerSessionId = config.getSessionId();
+    if (providerSessionId && providerSessionId.length > 0) {
+      resolvedSessionId = this.promoteSessionId(
+        sessionId,
+        providerSessionId,
+        session
+      );
+    } else {
+      session.logger?.renameSession?.(sessionId, sessionId);
+    }
+    queueMicrotask(() => {
+      eventEmitter.emit("realSessionId", resolvedSessionId);
+      if (
+        providerSessionId &&
+        providerSessionId.length > 0 &&
+        providerSessionId !== sessionId
+      ) {
+        eventEmitter.emit("sessionIdChanged", {
+          oldId: sessionId,
+          newId: resolvedSessionId,
+          provider: "gemini",
+        });
+      }
+    });
 
-    return { sessionId, session };
+    return { sessionId: resolvedSessionId, session };
   }
 
   async sendMessage(sessionId: string, content: string): Promise<void> {
@@ -294,6 +318,23 @@ export class GeminiSessionManager {
         content: "Gemini session closed.",
       },
     ]);
+  }
+
+  private promoteSessionId(
+    previousId: string,
+    nextId: string,
+    session: ActiveSession
+  ): string {
+    if (nextId === previousId) {
+      session.sessionId = nextId;
+      session.logger?.renameSession?.(previousId, nextId);
+      return nextId;
+    }
+    this.sessions.delete(previousId);
+    session.sessionId = nextId;
+    this.sessions.set(nextId, session);
+    session.logger?.renameSession?.(previousId, nextId);
+    return nextId;
   }
 
   private async processTurns(

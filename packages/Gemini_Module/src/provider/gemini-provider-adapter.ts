@@ -42,15 +42,30 @@ export class GeminiProviderAdapter {
       reporter: this.options.reporter,
       logger,
     });
+    let currentSessionId = sessionId;
     const forwardMessage = (payload: unknown): void => {
-      this.dispatchMessage(sessionId, payload);
+      this.dispatchMessage(currentSessionId, payload);
     };
     const forwardError = (payload: unknown): void => {
-      this.dispatchMessage(sessionId, payload);
+      this.dispatchMessage(currentSessionId, payload);
     };
     session.eventEmitter.on("message", forwardMessage);
     session.eventEmitter.on("error", forwardError);
     session.eventEmitter.on("realSessionId", forwardMessage);
+    session.eventEmitter.on("sessionIdChanged", (payload) => {
+      const candidate = payload as {
+        readonly oldId?: string;
+        readonly newId?: string;
+      };
+      if (candidate?.oldId && candidate?.newId) {
+        this.reassignListeners(candidate.oldId, candidate.newId);
+        currentSessionId = candidate.newId;
+        this.dispatchMessage(candidate.newId, {
+          type: "sessionIdChanged",
+          payload: candidate,
+        });
+      }
+    });
     return sessionId;
   }
 
@@ -100,6 +115,22 @@ export class GeminiProviderAdapter {
     for (const listener of listeners) {
       listener(payload);
     }
+  }
+
+  private reassignListeners(oldId: string, newId: string): void {
+    if (oldId === newId) {
+      return;
+    }
+    const listeners = this.listeners.get(oldId);
+    if (!listeners) {
+      return;
+    }
+    this.listeners.delete(oldId);
+    const target = this.listeners.get(newId) ?? new Set<SessionListener>();
+    for (const listener of listeners) {
+      target.add(listener);
+    }
+    this.listeners.set(newId, target);
   }
 
   private requireSessionManager(): GeminiSessionManager {
