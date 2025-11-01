@@ -3,7 +3,6 @@ import {
   commands,
   type ExtensionContext,
   env,
-  ProgressLocation,
   Uri,
   window,
   workspace,
@@ -54,33 +53,14 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   if (!env.remoteName) {
     try {
-      await window.withProgress(
-        {
-          location: ProgressLocation.Notification,
-          cancellable: false,
-          title: "Preparing CodeAI Hub runtime",
-        },
-        async (progress) => {
-          progress.report({ message: "Ensuring CEF runtime…" });
-          await ensureCefRuntime(context, progress);
-          progress.report({ message: "Ensuring CodeAIHubLauncher…" });
-          const ensuredLauncher = await ensureLauncherInstalled(
-            context,
-            progress
-          );
-          const target = getCefClientTarget(ensuredLauncher, indexPath);
-          progress.report({ message: "Finalizing desktop shortcuts…" });
-          await ensureWebClientShortcuts(target);
-          progress.report({ message: "Ensuring CodeAI Hub core…" });
-          ensuredCore = await ensureCoreInstalled(context, progress);
-          progress.report({ message: "Ensuring Claude provider module…" });
-          await ensureClaudeModuleInstalled(context, progress);
-          progress.report({ message: "Ensuring Codex provider module…" });
-          await ensureCodexModuleInstalled(context, progress);
-          progress.report({ message: "Ensuring Gemini provider module…" });
-          await ensureGeminiModuleInstalled(context, progress);
-        }
-      );
+      await ensureCefRuntime(context);
+      const ensuredLauncher = await ensureLauncherInstalled(context);
+      const launcherTarget = getCefClientTarget(ensuredLauncher, indexPath);
+      await ensureWebClientShortcuts(launcherTarget);
+      ensuredCore = await ensureCoreInstalled(context);
+      await ensureClaudeModuleInstalled(context);
+      await ensureCodexModuleInstalled(context);
+      await ensureGeminiModuleInstalled(context);
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
       window.showErrorMessage(
@@ -112,25 +92,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
       }
 
       try {
-        const { launcher } = await window.withProgress(
-          {
-            location: ProgressLocation.Notification,
-            cancellable: false,
-            title: "Preparing CodeAI Hub client",
-          },
-          async (progress) => {
-            await ensureCefRuntime(context, progress);
-            const ensuredLauncher = await ensureLauncherInstalled(
-              context,
-              progress
-            );
-            return { launcher: ensuredLauncher };
-          }
-        );
-
-        await launchCefClient(launcher, indexPath);
-
-        const target = getCefClientTarget(launcher, indexPath);
+        await ensureCefRuntime(context);
+        const ensuredLauncher = await ensureLauncherInstalled(context);
+        await launchCefClient(ensuredLauncher, indexPath);
+        const target = getCefClientTarget(ensuredLauncher, indexPath);
         await ensureWebClientShortcuts(target);
       } catch (error) {
         const reason = error instanceof Error ? error.message : String(error);
