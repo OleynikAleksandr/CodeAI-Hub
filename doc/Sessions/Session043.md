@@ -1,15 +1,15 @@
-# Session 043 — Provider logging & v1.1.102 release
+# Session 043 — Provider logging & v1.1.103 release
 
 **Дата:** 2 ноября 2025 — Madrid (UTC+1)
 **Время:** 17:05 – 19:05
 **Ветка:** main
-**Версии:** 1.1.100 → 1.1.102
+**Версии:** 1.1.100 → 1.1.103
 
 ---
 
 ## Артефакты, обязательные к изучению
-- `README.md` (Current Release — v1.1.102)
-- `CHANGELOG.md` (entry 1.1.102)
+- `README.md` (Current Release — v1.1.103)
+- `CHANGELOG.md` (entry 1.1.103)
 - `doc/Architecture/Architecture.md`
 - `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 - `AGENTS.md`
@@ -20,13 +20,13 @@
 ## Что сделано
 1. Нормализованы SDK-журналы Claude/Codex/Gemini: файлы создаются после получения реального sessionId, имена — `<provider>-<sessionId>.jsonl`, добавлена буферизация и потоковые чанки Codex.
 2. Gemini-провайдер получил файловый логгер, поддержку смены sessionId и обновлённый мост в адаптере; скорректирован `core-process-manager` для аккуратного пути логов.
-3. Обновлены Ultracite/нарратив (6.1.0), документация и README; выпущены новые модули (`claude-module-0.1.9`, `codex-module-0.1.3`, `gemini-module-0.3.6`) и VSIX `codeai-hub-1.1.102.vsix` через `./scripts/build-release.sh`.
+3. Обновлены Ultracite/нарратив (6.1.0), документация и README; выпущены новые модули (`claude-module-0.1.9`, `codex-module-0.1.3`, `gemini-module-0.3.7`) и VSIX `codeai-hub-1.1.103.vsix` через `./scripts/build-release.sh`.
 
 ---
 
 ## Текущее состояние
 - `~/.codeai-hub/logs/{claude,codex,gemini}` содержат только финальные jsonl-файлы с фактическими sessionId.
-- Provider manifests указывают на свежие тарболы; VSIX 1.1.102 готов в корне репозитория.
+- Provider manifests указывают на свежие тарболы; VSIX 1.1.103 готов в корне репозитория.
 - todo-plan_providers.md отражает завершённые шаги аудита и логической переработки; автозапрос `/status` для Codex помечен как In Progress.
 
 ---
