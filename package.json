@@ -2,7 +2,7 @@
   "name": "codeai-hub",
   "displayName": "CodeAI Hub",
   "description": "Unified VS Code extension for orchestrating AI providers.",
-  "version": "1.1.100",
+  "version": "1.1.102",
   "publisher": "CodeAIHub",
   "license": "ISC",
   "workspaces": [
@@ -11,6 +11,9 @@
   "engines": {
     "vscode": "^1.85.0"
   },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "categories": [
     "AI",
     "Other"
@@ -105,7 +108,7 @@
     "react-dom": "^18.3.1",
     "ts-prune": "0.10.3",
     "typescript": "^5.6.3",
-    "ultracite": "^5.6.4",
+    "ultracite": "^6.1.0",
     "zod-to-json-schema": "^3.24.6"
   }
 }

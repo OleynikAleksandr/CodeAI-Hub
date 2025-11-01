@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.102] - 2025-11-02
+### Changed
+- Provider SDK loggers now create files only after receiving the real session identifier and switch to the `<provider>-<sessionId>.jsonl` naming pattern, eliminating transient `session-*` artifacts.
+- Codex streaming emits assistant chunks via `item.updated` events, so UI and diagnostics receive incremental responses.
+- Gemini module writes structured jsonl logs alongside Claude/Codex and promotes session IDs fetched from the CLI bridge.
+- Development toolchain upgraded to Ultracite 6.1.0 / Biome 1.9 ruleset for linting consistency.
+
+### Build
+- VSIX → `codeai-hub-1.1.102.vsix`
+- Providers → `claude-module-0.1.9.tar.bz2`, `codex-module-0.1.3.tar.bz2`, `gemini-module-0.3.6.tar.bz2`
+
 ## [1.1.100] - 2025-11-01
 ### Fixed
 - Standalone launcher now boots the core orchestrator automatically, so the web client overlay clears even when VS Code stays closed.
