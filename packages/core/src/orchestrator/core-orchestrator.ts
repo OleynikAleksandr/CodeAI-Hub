@@ -1,4 +1,5 @@
 import { type CoreConfig, loadConfig } from "../config";
+import { FileDropService } from "../file-drop/file-drop-service";
 import { ProviderRegistry } from "../provider-registry";
 import { RemoteBridge } from "../remote-bridge";
 import { SessionManager } from "../session-manager";
@@ -21,6 +22,8 @@ export class CoreOrchestrator {
 
   private readonly statusReporter: RuntimeStatusReporter;
 
+  private readonly fileDropService: FileDropService;
+
   private activeClients = 0;
 
   private shutdownTimer?: NodeJS.Timeout;
@@ -35,6 +38,7 @@ export class CoreOrchestrator {
       logger: this.logger,
       statusReporter: this.statusReporter,
     });
+    this.fileDropService = new FileDropService();
     this.remoteBridge = new RemoteBridge({
       config: this.config,
       providerRegistry: this.providerRegistry,
@@ -42,6 +46,7 @@ export class CoreOrchestrator {
       logger: this.logger,
       version: pkg.version,
       statusReporter: this.statusReporter,
+      fileDropService: this.fileDropService,
       hooks: {
         onClientConnected: (_clientId, total) =>
           this.handleClientIncrease(total),

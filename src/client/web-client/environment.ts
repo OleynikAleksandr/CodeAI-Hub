@@ -8,6 +8,7 @@ import type {
   ProviderStackDescriptor,
   ProviderStackId,
 } from "../../types/provider";
+import type { CoreBridgeConfig } from "../ui/src/core-bridge/types";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
@@ -63,11 +64,68 @@ const createStandaloneRouter = () => {
   const providerRegistry = new ProviderRegistry();
   const sessionLauncher = new SessionLauncher();
 
+  const HTTP_NO_CONTENT = 204;
+
+  const resolveCoreConfig = (): CoreBridgeConfig => {
+    const globalScope = window as typeof window & {
+      __CODEAI_CORE_CONFIG?: CoreBridgeConfig;
+    };
+    const fallback: CoreBridgeConfig = {
+      httpUrl: "http://127.0.0.1:8080",
+      wsUrl: "ws://127.0.0.1:8080/api/v1/stream",
+    };
+    const candidate = globalScope.__CODEAI_CORE_CONFIG;
+    if (
+      !candidate ||
+      typeof candidate.httpUrl !== "string" ||
+      typeof candidate.wsUrl !== "string"
+    ) {
+      return fallback;
+    }
+    return candidate;
+  };
+
   const notifyWebview = (message: Record<string, unknown>) => {
     window.postMessage(message, "*");
   };
 
-  const handleCommand = (command: string) => {
+  const handleFileDropRequest = async (): Promise<void> => {
+    const config = resolveCoreConfig();
+    try {
+      const response = await fetch(`${config.httpUrl}/api/v1/file-drop`, {
+        method: "POST",
+      });
+      if (response.status === HTTP_NO_CONTENT) {
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const payload = (await response.json()) as {
+        readonly formatted?: unknown;
+      };
+      const formatted =
+        typeof payload.formatted === "string" ? payload.formatted : null;
+      if (formatted) {
+        notifyWebview({ command: "insertPath", path: formatted });
+      }
+    } catch (_error) {
+      // Intentionally ignored: the UI stays idle if file detection fails.
+    }
+  };
+
+  const handleClearFileDropCache = async (): Promise<void> => {
+    const config = resolveCoreConfig();
+    try {
+      await fetch(`${config.httpUrl}/api/v1/file-drop`, {
+        method: "DELETE",
+      });
+    } catch (_error) {
+      // Intentionally ignored: cache cleanup failure does not affect UX.
+    }
+  };
+
+  const handleCommand = async (command: string): Promise<void> => {
     switch (command) {
       case "newSession": {
         const stacks = providerRegistry
@@ -87,6 +145,14 @@ const createStandaloneRouter = () => {
       }
       case "oldSessions": {
         // Placeholder: history view not implemented.
+        break;
+      }
+      case "grabFilePathFromDrop": {
+        await handleFileDropRequest();
+        break;
+      }
+      case "clearAllClipboards": {
+        await handleClearFileDropCache();
         break;
       }
       default:
@@ -147,7 +213,13 @@ const createStandaloneRouter = () => {
     }
 
     if (typeof message.command === "string") {
-      handleCommand(message.command);
+      (async () => {
+        try {
+          await handleCommand(message.command);
+        } catch {
+          /* no-op */
+        }
+      })();
       return;
     }
 
