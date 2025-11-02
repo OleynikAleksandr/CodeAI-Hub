@@ -9356,7 +9356,7 @@
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-empty", children: [
     /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
-    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one or more providers in the picker to begin orchestrating them together." })
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
   ] });
   var empty_state_default = EmptyState;
 
