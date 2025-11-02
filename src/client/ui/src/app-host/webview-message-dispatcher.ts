@@ -191,6 +191,7 @@ export const dispatchWebviewMessage = (
       onSessionFocusLast: handlers.onSessionFocusLast,
       onSessionMessage: handlers.onSessionMessage,
       onSessionDeleted: handlers.onSessionDeleted,
+      onSessionBinding: handlers.onSessionBinding,
     })
   ) {
     return;

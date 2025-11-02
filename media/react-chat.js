@@ -8564,7 +8564,8 @@
       onSessionClearAll: handlers.onSessionClearAll,
       onSessionFocusLast: handlers.onSessionFocusLast,
       onSessionMessage: handlers.onSessionMessage,
-      onSessionDeleted: handlers.onSessionDeleted
+      onSessionDeleted: handlers.onSessionDeleted,
+      onSessionBinding: handlers.onSessionBinding
     })) {
       return;
     }
