@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.109] - 2025-11-02
+### Fixed
+- Info Panel теперь всегда ждёт подтверждённый `sessionId` Claude/Codex — временные UUID не попадают в UI, статус остаётся `pending` до финального ответа SDK.
+- RemoteBridge фильтрует события `sessionIdChanged`, `realSessionId` и строковые уведомления провайдеров, чтобы обновлять привязку только по реальному идентификатору.
+- Webview store применяет отложенные binding-события, пришедшие до создания снапшота, поэтому Info Panel мгновенно обновляется после подтверждения провайдера.
+
+### Build
+- VSIX → `codeai-hub-1.1.109.vsix`
+- Core → `codeai-hub-core-darwin-arm64-0.2.26.tar.bz2`
+- Providers → `claude-module-0.1.9.tar.bz2`, `codex-module-0.1.4.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
+
 ## [1.1.107] - 2025-11-02
 ### Fixed
 - Info Panel больше не показывает временные идентификаторы сессий от Claude/Codex; статус остаётся `pending`, пока SDK не подтвердит реальный `sessionId`.

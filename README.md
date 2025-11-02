@@ -2,15 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.107
-- **Confirmed provider IDs**: Info Panel больше не показывает временные UUID от Claude/Codex — привязка помечается как `pending`, пока SDK не вернёт реальный `sessionId`.
-- **Binding replay safeguards**: RemoteBridge фильтрует событие `session:binding`, обновляя статус только при подтверждённом ID и скрывая промежуточные значения.
-- **API consistency**: сериализация сессий в extension host и core всегда включает binding-метаданные, что синхронизирует статус во всех клиентах (VS Code, CEF, будущий PWA).
+## Current Release — v1.1.109
+- **Confirmed provider IDs**: Info Panel скрывает временные UUID от Claude/Codex — статус остаётся `pending`, пока SDK не подтвердит реальный `sessionId`.
+- **Binding replay safeguards**: RemoteBridge обновляет привязку только по событиям с подтверждённым ID (`sessionIdChanged`, `realSessionId`, строковые уведомления), предотвращая миграцию временных значений в UI.
+- **API consistency**: сериализация сессий в extension host и core всегда включает binding-метаданные, что синхронизирует состояние во всех клиентах (VS Code, CEF, будущий PWA).
 
 **Artifact bundle**
-- VSIX: `codeai-hub-1.1.107.vsix`
+- VSIX: `codeai-hub-1.1.109.vsix`
 - Launcher: `CodeAIHubLauncher-macos-arm64-1.0.52.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-0.2.25.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-0.2.26.tar.bz2`
 - Providers: `claude-module-0.1.9.tar.bz2`, `codex-module-0.1.4.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
 
 ## Features

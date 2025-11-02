@@ -8187,33 +8187,49 @@
     const [snapshots, setSnapshots] = (0, import_react3.useState)({});
     const [activeSessionId, setActiveSessionId] = (0, import_react3.useState)(null);
     const sessionsRef = (0, import_react3.useRef)([]);
+    const pendingBindingsRef = (0, import_react3.useRef)({});
     const syncSessionsRef = (0, import_react3.useCallback)((current) => {
       sessionsRef.current = current;
     }, []);
+    const applyPendingBinding = (0, import_react3.useCallback)(
+      (session) => {
+        const pending = pendingBindingsRef.current[session.id];
+        if (!pending) {
+          return session;
+        }
+        delete pendingBindingsRef.current[session.id];
+        return { ...session, binding: pending };
+      },
+      []
+    );
     const handleSessionCreated = (0, import_react3.useCallback)(
       (session) => {
+        const sessionWithBinding = applyPendingBinding(session);
         setSessions((previous) => {
-          const next = [...previous, session];
+          const next = [...previous, sessionWithBinding];
           syncSessionsRef(next);
           return next;
         });
         setSnapshots((previous) => ({
           ...previous,
-          [session.id]: createInitialSnapshot(session, providerLabels)
+          [session.id]: createInitialSnapshot(sessionWithBinding, providerLabels)
         }));
         setActiveSessionId(session.id);
       },
-      [providerLabels, syncSessionsRef]
+      [applyPendingBinding, providerLabels, syncSessionsRef]
     );
     const hydrateFromCoreState = (0, import_react3.useCallback)(
       (payload) => {
-        const nextSessions = payload.sessions.map((entry) => entry.record);
+        const nextSessions = payload.sessions.map(
+          (entry) => applyPendingBinding(entry.record)
+        );
         syncSessionsRef(nextSessions);
         setSessions(nextSessions);
         const nextSnapshots = {};
         for (const entry of payload.sessions) {
+          const recordWithBinding = applyPendingBinding(entry.record);
           nextSnapshots[entry.record.id] = buildSnapshotFromMessages(
-            entry.record,
+            recordWithBinding,
             providerLabels,
             entry.messages
           );
@@ -8226,7 +8242,7 @@
           return nextSessions.at(-1)?.id ?? null;
         });
       },
-      [providerLabels, syncSessionsRef]
+      [applyPendingBinding, providerLabels, syncSessionsRef]
     );
     const handleSessionMessageEvent2 = (0, import_react3.useCallback)(
       (payload) => {
@@ -8260,16 +8276,26 @@
           providerSessionId: payload.providerSessionId,
           status: payload.status
         });
-        setSessions((previous) => {
-          const next = previous.map(
-            (session) => session.id === payload.sessionId ? { ...session, binding } : session
-          );
+        setSessions((current) => {
+          let updated = false;
+          const next = current.map((session) => {
+            if (session.id !== payload.sessionId) {
+              return session;
+            }
+            updated = true;
+            return { ...session, binding };
+          });
+          if (!updated) {
+            pendingBindingsRef.current[payload.sessionId] = binding;
+            return current;
+          }
           syncSessionsRef(next);
           return next;
         });
         setSnapshots((previous) => {
           const current = previous[payload.sessionId];
           if (!current) {
+            pendingBindingsRef.current[payload.sessionId] = binding;
             return previous;
           }
           return {
