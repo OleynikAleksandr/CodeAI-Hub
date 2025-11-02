@@ -20,13 +20,13 @@
 ## Что сделано
 1. RemoteBridge обновлён: сессия остаётся в состоянии `pending`, пока провайдер не пришлёт подтверждённый идентификатор; события `sessionIdChanged`, `realSessionId` и строковые уведомления переводят binding в `ready` (`packages/core/src/remote-bridge/index.ts`).
 2. UI хранит отложенные привязки: `session-store` сохраняет binding, пришедший до создания снапшота, поэтому Info Panel сразу отображает реальный `sessionId` для Claude/Codex.
-3. Выпущен релиз `v1.1.109`: README/CHANGELOG обновлены, SystemArchitecture синхронизирована, core пересобран до `0.2.26`, VSIX `codeai-hub-1.1.109.vsix` положен в корень.
+3. Выпущен релиз `v1.1.110`: README/CHANGELOG обновлены, SystemArchitecture синхронизирована, core пересобран до `0.2.27`, VSIX `codeai-hub-1.1.110.vsix` положен в корень.
 
 ---
 
 ## Текущее состояние
 - Info Panel показывает только подтверждённые `providerSessionId`; временные UUID не появляются.
-- `~/.codeai-hub/releases/` содержит `codeai-hub-core-darwin-arm64-0.2.26.tar.bz2`, в репозитории — `codeai-hub-1.1.109.vsix`.
+- `~/.codeai-hub/releases/` содержит `codeai-hub-core-darwin-arm64-0.2.27.tar.bz2`, в репозитории — `codeai-hub-1.1.110.vsix`.
 - TODO-план фиксирует, что `session:binding` скрывает временные ID, впереди — health-check CLI.
 
 ---
