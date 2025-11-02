@@ -355,7 +355,14 @@ export class RemoteBridge {
       return;
     }
     const providerSessionId = await adapter.createSession();
-    const session = this.sessionManager.createSession(actualProviderId);
+    const supportsImmediateBinding =
+      typeof providerSessionId === "string" &&
+      providerSessionId.length > 0 &&
+      actualProviderId === "geminiCli";
+    const session = this.sessionManager.createSession(
+      actualProviderId,
+      supportsImmediateBinding ? providerSessionId : undefined
+    );
     const unsubscribe = adapter.subscribe(
       providerSessionId,
       (event: unknown) => {
@@ -367,6 +374,9 @@ export class RemoteBridge {
       providerSessionId,
       unsubscribe,
     });
+    if (supportsImmediateBinding) {
+      this.updateProviderBinding(session.id, providerSessionId);
+    }
     this.broadcast({
       type: "session:created",
       payload: session,
