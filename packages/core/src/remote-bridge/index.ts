@@ -5,6 +5,7 @@ import type { Request, Response } from "express";
 import express from "express";
 import { WebSocket, WebSocketServer } from "ws";
 import type { CoreConfig } from "../config";
+import type { FileDropService } from "../file-drop/file-drop-service";
 import type { ProviderRegistry } from "../provider-registry";
 import type { SessionManager } from "../session-manager";
 import type {
@@ -96,6 +97,9 @@ const isSessionIdChangedPayload = (
   value !== null &&
   typeof (value as { readonly newId?: unknown }).newId === "string";
 
+const HTTP_NO_CONTENT = 204;
+const HTTP_INTERNAL_ERROR = 500;
+
 export class RemoteBridge {
   private readonly config: CoreConfig;
 
@@ -110,6 +114,8 @@ export class RemoteBridge {
   private readonly hooks: RemoteBridgeHooks;
 
   private readonly statusReporter: RuntimeStatusReporter;
+
+  private readonly fileDropService: FileDropService;
 
   private latestStatus: RuntimeStatusEvent | null = null;
 
@@ -133,6 +139,7 @@ export class RemoteBridge {
     readonly version: string;
     readonly hooks?: RemoteBridgeHooks;
     readonly statusReporter: RuntimeStatusReporter;
+    readonly fileDropService: FileDropService;
   }) {
     this.config = options.config;
     this.sessionManager = options.sessionManager;
@@ -141,6 +148,7 @@ export class RemoteBridge {
     this.version = options.version;
     this.hooks = options.hooks ?? {};
     this.statusReporter = options.statusReporter;
+    this.fileDropService = options.fileDropService;
     this.unsubscribeStatus = this.statusReporter.subscribe((event) => {
       this.latestStatus = event;
       this.broadcast({
@@ -255,6 +263,30 @@ export class RemoteBridge {
         sessions: this.sessionManager.listSessions(),
         providers: this.providerRegistry.listProviders(),
       });
+    });
+
+    this.app.post("/api/v1/file-drop", async (_req: Request, res: Response) => {
+      try {
+        const snapshot = await this.fileDropService.collect();
+        if (!snapshot) {
+          res.status(HTTP_NO_CONTENT).end();
+          return;
+        }
+        res.json({
+          paths: snapshot.paths,
+          formatted: snapshot.formatted,
+        });
+      } catch (error) {
+        this.logger.error("File drop capture failed", error as Error);
+        res.status(HTTP_INTERNAL_ERROR).json({
+          error: "Unable to capture file drop data",
+        });
+      }
+    });
+
+    this.app.delete("/api/v1/file-drop", (_req: Request, res: Response) => {
+      this.fileDropService.clear();
+      res.status(HTTP_NO_CONTENT).end();
     });
   }
 

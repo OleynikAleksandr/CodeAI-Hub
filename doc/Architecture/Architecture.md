@@ -54,6 +54,7 @@ graph TD
 - **Preload**: во время `activate` расширение без прогресса вызывает `ensureCefRuntime` и `ensureLauncherInstalled`, так что требуемые архивы подкачиваются или обновляются ещё до нажатия кнопки запуска.
 - **Shortcuts**: `shortcut-manager.ts` генерирует ярлыки на установленный `CodeAIHubLauncher` (`.app`/`.exe`/`codeai-hub-launcher`). После обновления лаунчера ярлыки пересоздаются.
 - **Stub Mode**: пока Remote UI Bridge не реализован, UI работает на локальных заглушках (`ProviderRegistry`, `SessionLauncher`). После запуска ядра CEF-клиент перейдёт в режим прямого подключения по WebSocket.
+- **File drop parity**: `RemoteBridge` теперь публикует `POST /api/v1/file-drop` и `DELETE /api/v1/file-drop`, которые опрашивают нативный `FileDropService` (AppleScript/Finder, PowerShell Explorer, xclip) для получения путей выбранных файлов. Standalone UI вызывает эти маршруты через dnd-модуль, поэтому Input Panel в CEF полностью повторяет поведение webview (Shift+drop, мультиссылки, clipboard-интеграция).
 
 ## Interaction with Core Orchestrator
 - Расширение выступает клиентом автономного ядра, используя API, описанные в `doc/Project_Docs/Stacks/CoreOrchestrator.md`.
