@@ -13,8 +13,8 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Внешние пользовательские инструменты**: например, `@google/gemini-cli`, `@google/gemini-cli-core`, `@anthropic-ai/sdk`. Пользователь ставит их у себя (инсталляторы ядра лишь проверяют наличие и версию), а вендорные части модулей хранят только необходимый runtime (`gemini-cli-core`, Node runtime и пр.).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.107
-- Autonomное ядро: `@codeai-hub/core` 0.2.25
+- VSIX: `codeai-hub` 1.1.109
+- Autономное ядро: `@codeai-hub/core` 0.2.26
 - Claude module: 0.1.9
 - Codex module: 0.1.4
 - Gemini module: 0.3.8 (CommonJS bridge → ESM tooling)
@@ -24,7 +24,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 0.2.25/
+│       └── 0.2.26/
 │           ├── node/           # официальный Node 20 runtime
 │           ├── app/            # JS-бандл core + tarballs зависимостей
 │           └── install.json
@@ -39,7 +39,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 │       │   └── vendor/node_modules/@google/gemini-cli-core
 │       └── install.json
 └── releases/
-    ├── codeai-hub-core-darwin-arm64-0.2.25.tar.bz2
+    ├── codeai-hub-core-darwin-arm64-0.2.26.tar.bz2
     ├── CodeAIHubLauncher-macos-arm64-1.0.52.tar.bz2
     └── gemini-module-0.3.8.tar.bz2
 ```
