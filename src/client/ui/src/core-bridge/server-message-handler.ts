@@ -1,5 +1,6 @@
 import { sanitizeMessage, sanitizeSession } from "./normalizers";
 import type {
+  CoreBridgeSessionBindingPayload,
   CoreBridgeSessionMessagePayload,
   ServerSession,
   ServerSessionMessage,
@@ -12,7 +13,8 @@ type ServerEventType =
   | "session:created"
   | "session:deleted"
   | "session:stream"
-  | "core:loading-status";
+  | "core:loading-status"
+  | "session:binding";
 
 type ServerEnvelope = {
   readonly type: ServerEventType;
@@ -21,6 +23,11 @@ type ServerEnvelope = {
 
 type DeletedPayload = { readonly sessionId: string };
 type StreamPayload = { readonly sessionId: string; readonly event?: unknown };
+type BindingPayload = {
+  readonly sessionId: string;
+  readonly providerSessionId?: string | null;
+  readonly status?: string;
+};
 
 const parseEnvelope = (raw: string): ServerEnvelope | null => {
   try {
@@ -36,7 +43,8 @@ const parseEnvelope = (raw: string): ServerEnvelope | null => {
       parsed.type === "session:created" ||
       parsed.type === "session:deleted" ||
       parsed.type === "session:stream" ||
-      parsed.type === "core:loading-status"
+      parsed.type === "core:loading-status" ||
+      parsed.type === "session:binding"
     ) {
       return { type: parsed.type, payload: parsed.payload };
     }
@@ -55,6 +63,33 @@ const isStreamPayload = (payload: unknown): payload is StreamPayload =>
   typeof payload === "object" &&
   payload !== null &&
   typeof (payload as { readonly sessionId?: unknown }).sessionId === "string";
+
+const isBindingPayload = (payload: unknown): payload is BindingPayload => {
+  if (
+    typeof payload !== "object" ||
+    payload === null ||
+    typeof (payload as { readonly sessionId?: unknown }).sessionId !== "string"
+  ) {
+    return false;
+  }
+  const candidate = payload as BindingPayload;
+  if (
+    candidate.providerSessionId !== null &&
+    typeof candidate.providerSessionId !== "string" &&
+    typeof candidate.providerSessionId !== "undefined"
+  ) {
+    return false;
+  }
+  if (
+    candidate.status &&
+    candidate.status !== "pending" &&
+    candidate.status !== "ready" &&
+    candidate.status !== "failed"
+  ) {
+    return false;
+  }
+  return true;
+};
 
 export const createServerMessageHandler = (
   notify: MessageNotifier
@@ -120,6 +155,27 @@ export const createServerMessageHandler = (
       notify({
         type: "core:loading-status",
         payload,
+      });
+    },
+    "session:binding": (payload) => {
+      if (!isBindingPayload(payload)) {
+        return;
+      }
+      notify({
+        type: "session:binding",
+        payload: {
+          sessionId: payload.sessionId,
+          providerSessionId:
+            typeof payload.providerSessionId === "string"
+              ? payload.providerSessionId
+              : null,
+          status:
+            payload.status === "ready" ||
+            payload.status === "failed" ||
+            payload.status === "pending"
+              ? payload.status
+              : "pending",
+        } satisfies CoreBridgeSessionBindingPayload,
       });
     },
   };

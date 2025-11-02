@@ -16,6 +16,10 @@ export const serializeSession = (session: SessionRecord): SessionRecord => ({
   title: session.title,
   providerIds: [...session.providerIds],
   createdAt: session.createdAt,
+  binding: {
+    providerSessionId: session.binding.providerSessionId,
+    status: session.binding.status,
+  },
 });
 
 export const isSuccessfulLaunch = (

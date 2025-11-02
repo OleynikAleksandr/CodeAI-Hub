@@ -21,6 +21,7 @@ export const useWebviewMessageHandler = ({
   onCoreLoadingStatus,
   onSessionMessage,
   onSessionDeleted,
+  onSessionBinding,
 }: WebviewMessageHandlers) => {
   useEffect(() => {
     const handleIncomingMessage = (event: MessageEvent<unknown>) => {
@@ -35,6 +36,7 @@ export const useWebviewMessageHandler = ({
         onCoreLoadingStatus,
         onSessionMessage,
         onSessionDeleted,
+        onSessionBinding,
       });
     };
 
@@ -53,5 +55,6 @@ export const useWebviewMessageHandler = ({
     onCoreLoadingStatus,
     onSessionMessage,
     onSessionDeleted,
+    onSessionBinding,
   ]);
 };

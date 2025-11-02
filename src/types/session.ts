@@ -9,6 +9,11 @@ export type SessionMessage = {
   readonly createdAt: number;
 };
 
+export type SessionBindingInfo = {
+  readonly providerSessionId: string | null;
+  readonly status: "pending" | "ready" | "failed";
+};
+
 export type SessionTodoItem = {
   readonly id: string;
   readonly title: string;
@@ -30,6 +35,7 @@ export type SessionRecord = {
   readonly title: string;
   readonly providerIds: readonly ProviderStackId[];
   readonly createdAt: number;
+  readonly binding: SessionBindingInfo;
 };
 
 export type SessionSnapshot = {
@@ -37,4 +43,5 @@ export type SessionSnapshot = {
   readonly todos: readonly SessionTodoItem[];
   readonly status: SessionStatusInfo;
   readonly draft: string;
+  readonly binding: SessionBindingInfo;
 };

@@ -1,6 +1,7 @@
 import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionRecord } from "../../../../types/session";
 import type {
+  CoreBridgeSessionBindingPayload,
   CoreBridgeSessionMessagePayload,
   CoreBridgeStatePayload,
   CoreRuntimeStatusPayload,
@@ -14,6 +15,7 @@ import type {
   CoreStateMessage,
   IncomingMessage,
   ProviderPickerOpenMessage,
+  SessionBindingMessage,
   SessionCreatedMessage,
   SessionDeletedMessage,
   SessionMessageEvent,
@@ -22,6 +24,7 @@ import {
   isCoreBridgeStatePayload,
   isCoreRuntimeStatusPayload,
   isIncomingMessage,
+  isSessionBindingPayload,
   isSessionDeletedPayload,
   isSessionMessagePayload,
 } from "./webview-message-types";
@@ -42,6 +45,9 @@ type SessionDispatchHandlers = {
     payload: CoreBridgeSessionMessagePayload
   ) => void;
   readonly onSessionDeleted?: (payload: { readonly sessionId: string }) => void;
+  readonly onSessionBinding?: (
+    payload: CoreBridgeSessionBindingPayload
+  ) => void;
 };
 
 type WebviewDispatchHandlers = SessionDispatchHandlers & {
@@ -104,6 +110,17 @@ const handleSessionDeletedMessage = (
   onSessionDeleted(message.payload);
 };
 
+const handleSessionBindingMessage = (
+  message: SessionBindingMessage,
+  onSessionBinding?: (payload: CoreBridgeSessionBindingPayload) => void
+): void => {
+  if (!(onSessionBinding && isSessionBindingPayload(message.payload))) {
+    return;
+  }
+
+  onSessionBinding(message.payload);
+};
+
 const handleCoreLoadingStatusMessage = (
   message: CoreLoadingStatusMessage,
   onCoreLoadingStatus?: (payload: CoreRuntimeStatusPayload) => void
@@ -134,6 +151,9 @@ const dispatchSessionMessage = (
       return true;
     case "session:deleted":
       handleSessionDeletedMessage(message, handlers.onSessionDeleted);
+      return true;
+    case "session:binding":
+      handleSessionBindingMessage(message, handlers.onSessionBinding);
       return true;
     default:
       return false;

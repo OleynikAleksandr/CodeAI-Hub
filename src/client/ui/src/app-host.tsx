@@ -17,6 +17,7 @@ import { useWebviewMessageHandler } from "./app-host/webview-message-handler";
 import ActionBar from "./components/action-bar";
 import SettingsView from "./components/settings-view";
 import type {
+  CoreBridgeSessionBindingPayload,
   CoreBridgeSessionMessagePayload,
   CoreBridgeStatePayload,
 } from "./core-bridge/types";
@@ -51,6 +52,7 @@ const AppHost = () => {
     hydrateFromCoreState,
     handleSessionMessageEvent,
     handleSessionDeleted,
+    handleSessionBindingUpdate,
     clearSessions,
     focusLastSession,
     selectSession,
@@ -108,6 +110,14 @@ const AppHost = () => {
     [handleSessionDeleted]
   );
 
+  const handleSessionBindingMessage = useCallback(
+    (payload: CoreBridgeSessionBindingPayload) => {
+      activateRoot();
+      handleSessionBindingUpdate(payload);
+    },
+    [handleSessionBindingUpdate]
+  );
+
   useWebviewMessageHandler({
     onProviderPickerOpen: handleProviderPickerOpen,
     onSessionCreated: handleSessionCreatedMessage,
@@ -156,6 +166,7 @@ const AppHost = () => {
     },
     onSessionMessage: handleSessionMessage,
     onSessionDeleted: handleSessionDeletedMessage,
+    onSessionBinding: handleSessionBindingMessage,
   });
 
   const isCoreReady = coreStatus === "ready" && coreFinalized;

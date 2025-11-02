@@ -17,6 +17,8 @@ export type Session = {
   readonly createdAt: string;
   updatedAt: string;
   messages: SessionMessage[];
+  providerSessionId?: string;
+  providerSessionStatus: "pending" | "ready" | "failed";
 };
 
 const SESSION_TITLE_PREFIX_LENGTH = 4;
@@ -32,7 +34,7 @@ export class SessionManager {
     return this.sessions.get(sessionId);
   }
 
-  createSession(providerId: string): Session {
+  createSession(providerId: string, providerSessionId?: string): Session {
     const id = randomUUID();
     const now = new Date().toISOString();
     const session: Session = {
@@ -42,6 +44,8 @@ export class SessionManager {
       createdAt: now,
       updatedAt: now,
       messages: [],
+      providerSessionId,
+      providerSessionStatus: providerSessionId ? "ready" : "pending",
     };
 
     this.sessions.set(id, session);
@@ -69,6 +73,25 @@ export class SessionManager {
     session.messages.push(message);
     session.updatedAt = message.timestamp;
     return message;
+  }
+
+  updateProviderSessionId(sessionId: string, providerSessionId: string): void {
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      return;
+    }
+    session.providerSessionId = providerSessionId;
+    session.providerSessionStatus = "ready";
+    session.updatedAt = new Date().toISOString();
+  }
+
+  markProviderSessionFailed(sessionId: string): void {
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      return;
+    }
+    session.providerSessionStatus = "failed";
+    session.updatedAt = new Date().toISOString();
   }
 
   deleteSession(sessionId: string): boolean {

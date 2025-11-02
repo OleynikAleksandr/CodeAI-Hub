@@ -56,7 +56,7 @@ const SessionView = ({
 
       {activeSession && activeSessionId ? (
         <>
-          <InfoPanel />
+          <InfoPanel binding={activeSession.binding} />
           <div className="session-grid">
             <DialogPanel messages={activeSession.messages} />
             <TodoPanel

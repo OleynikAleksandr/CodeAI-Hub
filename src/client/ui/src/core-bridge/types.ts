@@ -34,6 +34,8 @@ export type ServerSession = {
   readonly title?: string;
   readonly createdAt?: string;
   readonly messages?: readonly ServerSessionMessage[];
+  readonly providerSessionId?: string | null;
+  readonly providerSessionStatus?: "pending" | "ready" | "failed";
 };
 
 export type ServerStatusResponse = {
@@ -54,6 +56,12 @@ export type CoreBridgeStatePayload = {
 export type CoreBridgeSessionMessagePayload = {
   readonly sessionId: string;
   readonly message: SessionMessage;
+};
+
+export type CoreBridgeSessionBindingPayload = {
+  readonly sessionId: string;
+  readonly providerSessionId: string | null;
+  readonly status: "pending" | "ready" | "failed";
 };
 
 export type CoreRuntimeStatusPayload = {

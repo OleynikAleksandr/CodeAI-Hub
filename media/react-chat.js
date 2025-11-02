@@ -7528,6 +7528,19 @@
     "codexCli",
     "geminiCli"
   ]);
+  var createDefaultBinding = () => ({
+    providerSessionId: null,
+    status: "pending"
+  });
+  var normalizeBinding = (binding) => {
+    if (!binding) {
+      return createDefaultBinding();
+    }
+    return {
+      providerSessionId: binding.providerSessionId ?? null,
+      status: binding.status === "ready" || binding.status === "failed" ? binding.status : "pending"
+    };
+  };
   var isProviderDescriptorCandidate = (value) => {
     if (!value || typeof value !== "object") {
       return false;
@@ -7567,7 +7580,14 @@
         return false;
       }
     }
-    return true;
+    if (!candidate.binding || typeof candidate.binding !== "object" || !("status" in candidate.binding)) {
+      return false;
+    }
+    const binding = candidate.binding;
+    if (binding.providerSessionId !== null && typeof binding.providerSessionId !== "string") {
+      return false;
+    }
+    return binding.status === "pending" || binding.status === "ready" || binding.status === "failed";
   };
   var buildProviderLabels = (catalog) => {
     const entries = Object.entries(catalog);
@@ -7625,7 +7645,28 @@
       messages,
       todos,
       status,
+      binding: normalizeBinding(session.binding),
       draft: ""
+    };
+  };
+  var buildSnapshotFromMessages = (session, providerLabels, messages) => {
+    const base = createInitialSnapshot(session, providerLabels);
+    const updatedAt = messages.at(-1)?.createdAt ?? base.status.updatedAt;
+    const tokenUsage = messages.reduce(
+      (total, message) => total + message.content.length,
+      0
+    );
+    return {
+      ...base,
+      messages: [...messages],
+      status: {
+        ...base.status,
+        updatedAt,
+        tokenUsage: {
+          ...base.status.tokenUsage,
+          used: Math.min(base.status.tokenUsage.limit, tokenUsage)
+        }
+      }
     };
   };
   var removeSnapshot = (snapshots, sessionId) => {
@@ -7680,11 +7721,16 @@
       return null;
     }
     const sessionId = session.id;
+    const bindingCandidate = {
+      providerSessionId: typeof session.providerSessionId === "string" ? session.providerSessionId : null,
+      status: session.providerSessionStatus === "ready" || session.providerSessionStatus === "failed" ? session.providerSessionStatus : "pending"
+    };
     const record = {
       id: sessionId,
       title: session.title,
       providerIds: [providerId],
-      createdAt: toNumberTimestamp(session.createdAt)
+      createdAt: toNumberTimestamp(session.createdAt),
+      binding: normalizeBinding(bindingCandidate)
     };
     const messages = session.messages?.map((message) => sanitizeMessage(message)).filter((message) => Boolean(message)) ?? [];
     return {
@@ -7710,7 +7756,7 @@
       if (!parsed || typeof parsed.type !== "string") {
         return null;
       }
-      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "core:loading-status") {
+      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "core:loading-status" || parsed.type === "session:binding") {
         return { type: parsed.type, payload: parsed.payload };
       }
     } catch {
@@ -7720,6 +7766,19 @@
   };
   var isDeletedPayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string";
   var isStreamPayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string";
+  var isBindingPayload = (payload) => {
+    if (typeof payload !== "object" || payload === null || typeof payload.sessionId !== "string") {
+      return false;
+    }
+    const candidate = payload;
+    if (candidate.providerSessionId !== null && typeof candidate.providerSessionId !== "string" && typeof candidate.providerSessionId !== "undefined") {
+      return false;
+    }
+    if (candidate.status && candidate.status !== "pending" && candidate.status !== "ready" && candidate.status !== "failed") {
+      return false;
+    }
+    return true;
+  };
   var createServerMessageHandler = (notify) => {
     const handleSessionMessage = (payload) => {
       const candidate = payload;
@@ -7778,6 +7837,19 @@
         notify({
           type: "core:loading-status",
           payload
+        });
+      },
+      "session:binding": (payload) => {
+        if (!isBindingPayload(payload)) {
+          return;
+        }
+        notify({
+          type: "session:binding",
+          payload: {
+            sessionId: payload.sessionId,
+            providerSessionId: typeof payload.providerSessionId === "string" ? payload.providerSessionId : null,
+            status: payload.status === "ready" || payload.status === "failed" || payload.status === "pending" ? payload.status : "pending"
+          }
         });
       }
     };
@@ -8110,26 +8182,6 @@
 
   // src/client/ui/src/app-host/session-store.ts
   var import_react3 = __toESM(require_react());
-  var buildSnapshotFromMessages = (session, providerLabels, messages) => {
-    const base = createInitialSnapshot(session, providerLabels);
-    const updatedAt = messages.at(-1)?.createdAt ?? base.status.updatedAt;
-    const tokenUsage = messages.reduce(
-      (total, message) => total + message.content.length,
-      0
-    );
-    return {
-      ...base,
-      messages: [...messages],
-      status: {
-        ...base.status,
-        updatedAt,
-        tokenUsage: {
-          ...base.status.tokenUsage,
-          used: Math.min(base.status.tokenUsage.limit, tokenUsage)
-        }
-      }
-    };
-  };
   var useSessionStore = (providerLabels) => {
     const [sessions, setSessions] = (0, import_react3.useState)([]);
     const [snapshots, setSnapshots] = (0, import_react3.useState)({});
@@ -8201,6 +8253,35 @@
         });
       },
       [providerLabels]
+    );
+    const handleSessionBindingUpdate = (0, import_react3.useCallback)(
+      (payload) => {
+        const binding = normalizeBinding({
+          providerSessionId: payload.providerSessionId,
+          status: payload.status
+        });
+        setSessions((previous) => {
+          const next = previous.map(
+            (session) => session.id === payload.sessionId ? { ...session, binding } : session
+          );
+          syncSessionsRef(next);
+          return next;
+        });
+        setSnapshots((previous) => {
+          const current = previous[payload.sessionId];
+          if (!current) {
+            return previous;
+          }
+          return {
+            ...previous,
+            [payload.sessionId]: {
+              ...current,
+              binding
+            }
+          };
+        });
+      },
+      [syncSessionsRef]
     );
     const clearSessions = (0, import_react3.useCallback)(() => {
       setSessions(() => {
@@ -8283,6 +8364,7 @@
       hydrateFromCoreState,
       handleSessionMessageEvent: handleSessionMessageEvent2,
       handleSessionDeleted,
+      handleSessionBindingUpdate,
       clearSessions,
       focusLastSession,
       selectSession,
@@ -8351,6 +8433,24 @@
     const candidate = value;
     return typeof candidate.label === "string";
   };
+  var isSessionBindingPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    if (typeof candidate.sessionId !== "string") {
+      return false;
+    }
+    const status = candidate.status;
+    if (status !== "pending" && status !== "ready" && status !== "failed") {
+      return false;
+    }
+    const providerSessionId = candidate.providerSessionId;
+    if (providerSessionId !== null && typeof providerSessionId !== "string") {
+      return false;
+    }
+    return true;
+  };
 
   // src/client/ui/src/app-host/webview-message-dispatcher.ts
   var handleProviderPickerOpenMessage = (message, onProviderPickerOpen) => {
@@ -8382,6 +8482,12 @@
     }
     onSessionDeleted(message.payload);
   };
+  var handleSessionBindingMessage = (message, onSessionBinding) => {
+    if (!(onSessionBinding && isSessionBindingPayload(message.payload))) {
+      return;
+    }
+    onSessionBinding(message.payload);
+  };
   var handleCoreLoadingStatusMessage = (message, onCoreLoadingStatus) => {
     if (!(onCoreLoadingStatus && isCoreRuntimeStatusPayload(message.payload))) {
       return;
@@ -8404,6 +8510,9 @@
         return true;
       case "session:deleted":
         handleSessionDeletedMessage(message, handlers.onSessionDeleted);
+        return true;
+      case "session:binding":
+        handleSessionBindingMessage(message, handlers.onSessionBinding);
         return true;
       default:
         return false;
@@ -8461,7 +8570,8 @@
     onCoreConnectionStatus,
     onCoreLoadingStatus,
     onSessionMessage,
-    onSessionDeleted
+    onSessionDeleted,
+    onSessionBinding
   }) => {
     (0, import_react5.useEffect)(() => {
       const handleIncomingMessage = (event) => {
@@ -8475,7 +8585,8 @@
           onCoreConnectionStatus,
           onCoreLoadingStatus,
           onSessionMessage,
-          onSessionDeleted
+          onSessionDeleted,
+          onSessionBinding
         });
       };
       window.addEventListener("message", handleIncomingMessage);
@@ -8492,7 +8603,8 @@
       onCoreConnectionStatus,
       onCoreLoadingStatus,
       onSessionMessage,
-      onSessionDeleted
+      onSessionDeleted,
+      onSessionBinding
     ]);
   };
 
@@ -9223,10 +9335,33 @@
 
   // src/client/ui/src/session/info-panel.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  var InfoPanel = () => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "session-panel session-info", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-info__text", children: "Info Panel" }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { "aria-hidden": true, className: "session-status__row session-info__spacer", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-info__text", children: "\xA0" }) })
-  ] });
+  var InfoPanel = ({ binding }) => {
+    let primaryText = "Session information unavailable";
+    let secondaryText = "Provider session state is unknown.";
+    let secondaryTitle;
+    if (binding.status === "ready" && binding.providerSessionId) {
+      primaryText = "Session ID";
+      secondaryText = binding.providerSessionId;
+      secondaryTitle = binding.providerSessionId;
+    } else if (binding.status === "pending") {
+      primaryText = "Waiting for provider session ID\u2026";
+      secondaryText = "The provider has not confirmed the session yet.";
+    } else if (binding.status === "failed") {
+      primaryText = "Session failed to initialize";
+      secondaryText = "Provider session ID unavailable. Check CLI logs.";
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "session-panel session-info", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-info__text", children: primaryText }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        "span",
+        {
+          className: "session-info__text",
+          title: secondaryTitle,
+          children: secondaryText
+        }
+      ) })
+    ] });
+  };
   var info_panel_default = InfoPanel;
 
   // src/client/ui/src/session/input-panel.tsx
@@ -9968,7 +10103,7 @@ ${path}` : path;
         }
       ),
       activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(info_panel_default, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(info_panel_default, { binding: activeSession.binding }),
         /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "session-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(dialog_panel_default, { messages: activeSession.messages }),
           /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
@@ -10017,6 +10152,7 @@ ${path}` : path;
       hydrateFromCoreState,
       handleSessionMessageEvent: handleSessionMessageEvent2,
       handleSessionDeleted,
+      handleSessionBindingUpdate,
       clearSessions,
       focusLastSession,
       selectSession,
@@ -10065,6 +10201,13 @@ ${path}` : path;
       },
       [handleSessionDeleted]
     );
+    const handleSessionBindingMessage2 = (0, import_react12.useCallback)(
+      (payload) => {
+        activateRoot();
+        handleSessionBindingUpdate(payload);
+      },
+      [handleSessionBindingUpdate]
+    );
     useWebviewMessageHandler({
       onProviderPickerOpen: handleProviderPickerOpen,
       onSessionCreated: handleSessionCreatedMessage2,
@@ -10105,7 +10248,8 @@ ${path}` : path;
         });
       },
       onSessionMessage: handleSessionMessage,
-      onSessionDeleted: handleSessionDeletedMessage2
+      onSessionDeleted: handleSessionDeletedMessage2,
+      onSessionBinding: handleSessionBindingMessage2
     });
     const isCoreReady = coreStatus === "ready" && coreFinalized;
     (0, import_react12.useEffect)(() => {

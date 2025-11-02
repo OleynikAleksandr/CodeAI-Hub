@@ -4,8 +4,11 @@ import {
   type ProviderStackDescriptor,
   type ProviderStackId,
 } from "../../../../types/provider";
-import type { SessionMessage } from "../../../../types/session";
-import { providerIdSet } from "../session/helpers";
+import type {
+  SessionBindingInfo,
+  SessionMessage,
+} from "../../../../types/session";
+import { normalizeBinding, providerIdSet } from "../session/helpers";
 import type {
   CoreBridgeSession,
   CoreBridgeStatePayload,
@@ -86,12 +89,24 @@ export const sanitizeSession = (
   }
 
   const sessionId = session.id;
+  const bindingCandidate: SessionBindingInfo = {
+    providerSessionId:
+      typeof session.providerSessionId === "string"
+        ? session.providerSessionId
+        : null,
+    status:
+      session.providerSessionStatus === "ready" ||
+      session.providerSessionStatus === "failed"
+        ? session.providerSessionStatus
+        : "pending",
+  };
 
   const record = {
     id: sessionId,
     title: session.title,
     providerIds: [providerId],
     createdAt: toNumberTimestamp(session.createdAt),
+    binding: normalizeBinding(bindingCandidate),
   };
 
   const messages =

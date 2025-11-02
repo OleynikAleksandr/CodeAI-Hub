@@ -23,6 +23,14 @@ type BridgeEvent =
   | { readonly type: "session:created"; readonly payload: unknown }
   | { readonly type: "session:message"; readonly payload: unknown }
   | {
+      readonly type: "session:binding";
+      readonly payload: {
+        readonly sessionId: string;
+        readonly providerSessionId: string | null;
+        readonly status: "pending" | "ready" | "failed";
+      };
+    }
+  | {
       readonly type: "session:deleted";
       readonly payload: { readonly sessionId: string };
     }
@@ -347,7 +355,10 @@ export class RemoteBridge {
       return;
     }
     const providerSessionId = await adapter.createSession();
-    const session = this.sessionManager.createSession(actualProviderId);
+    const session = this.sessionManager.createSession(
+      actualProviderId,
+      providerSessionId
+    );
     const unsubscribe = adapter.subscribe(
       providerSessionId,
       (event: unknown) => {
@@ -363,6 +374,7 @@ export class RemoteBridge {
       type: "session:created",
       payload: session,
     });
+    this.broadcastSessionBinding(session.id);
   }
 
   private async handleSessionMessage(
@@ -438,7 +450,15 @@ export class RemoteBridge {
       typed.type === "sessionIdChanged" &&
       isSessionIdChangedPayload(typed.payload)
     ) {
-      this.updateProviderBinding(sessionId, typed.payload.newId);
+      const newProviderSessionId = typed.payload.newId;
+      if (newProviderSessionId) {
+        this.updateProviderBinding(sessionId, newProviderSessionId);
+        this.sessionManager.updateProviderSessionId(
+          sessionId,
+          newProviderSessionId
+        );
+      }
+      this.broadcastSessionBinding(sessionId);
       return;
     }
     if (typed.type === "stream_event") {
@@ -505,5 +525,20 @@ export class RemoteBridge {
     if (binding) {
       binding.providerSessionId = providerSessionId;
     }
+  }
+
+  private broadcastSessionBinding(sessionId: string): void {
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      return;
+    }
+    this.broadcast({
+      type: "session:binding",
+      payload: {
+        sessionId,
+        providerSessionId: session.providerSessionId ?? null,
+        status: session.providerSessionStatus,
+      },
+    });
   }
 }

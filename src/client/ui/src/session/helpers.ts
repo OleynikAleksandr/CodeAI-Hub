@@ -4,6 +4,7 @@ import type {
 } from "../../../../types/provider";
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type {
+  SessionBindingInfo,
   SessionMessage,
   SessionRecord,
   SessionSnapshot,
@@ -31,6 +32,26 @@ export const providerIdSet = new Set<ProviderStackId>([
   "codexCli",
   "geminiCli",
 ]);
+
+export const createDefaultBinding = (): SessionBindingInfo => ({
+  providerSessionId: null,
+  status: "pending",
+});
+
+export const normalizeBinding = (
+  binding: SessionBindingInfo | undefined
+): SessionBindingInfo => {
+  if (!binding) {
+    return createDefaultBinding();
+  }
+  return {
+    providerSessionId: binding.providerSessionId ?? null,
+    status:
+      binding.status === "ready" || binding.status === "failed"
+        ? binding.status
+        : "pending",
+  };
+};
 
 export const isProviderDescriptorCandidate = (
   value: unknown
@@ -97,8 +118,29 @@ export const isSessionRecordCandidate = (
       return false;
     }
   }
+  if (
+    !candidate.binding ||
+    typeof candidate.binding !== "object" ||
+    !("status" in candidate.binding)
+  ) {
+    return false;
+  }
 
-  return true;
+  const binding = candidate.binding as {
+    readonly providerSessionId?: unknown;
+    readonly status?: unknown;
+  };
+  if (
+    binding.providerSessionId !== null &&
+    typeof binding.providerSessionId !== "string"
+  ) {
+    return false;
+  }
+  return (
+    binding.status === "pending" ||
+    binding.status === "ready" ||
+    binding.status === "failed"
+  );
 };
 
 export const buildProviderLabels = (
@@ -176,7 +218,34 @@ export const createInitialSnapshot = (
     messages,
     todos,
     status,
+    binding: normalizeBinding(session.binding),
     draft: "",
+  };
+};
+
+export const buildSnapshotFromMessages = (
+  session: SessionRecord,
+  providerLabels: ReadonlyMap<ProviderStackId, string>,
+  messages: readonly SessionMessage[]
+): SessionSnapshot => {
+  const base = createInitialSnapshot(session, providerLabels);
+  const updatedAt = messages.at(-1)?.createdAt ?? base.status.updatedAt;
+  const tokenUsage = messages.reduce(
+    (total, message) => total + message.content.length,
+    0
+  );
+
+  return {
+    ...base,
+    messages: [...messages],
+    status: {
+      ...base.status,
+      updatedAt,
+      tokenUsage: {
+        ...base.status.tokenUsage,
+        used: Math.min(base.status.tokenUsage.limit, tokenUsage),
+      },
+    },
   };
 };
 

@@ -1,18 +1,20 @@
 import { useCallback, useRef, useState } from "react";
-import type {
-  SessionMessage,
-  SessionRecord,
-  SessionSnapshot,
-} from "../../../../types/session";
+import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import {
   deleteSession as deleteSessionOnServer,
   sendChatMessage,
 } from "../core-bridge/core-bridge";
 import type {
+  CoreBridgeSessionBindingPayload,
   CoreBridgeSessionMessagePayload,
   CoreBridgeStatePayload,
 } from "../core-bridge/types";
-import { createInitialSnapshot, removeSnapshot } from "../session/helpers";
+import {
+  buildSnapshotFromMessages,
+  createInitialSnapshot,
+  normalizeBinding,
+  removeSnapshot,
+} from "../session/helpers";
 import type { ProviderLabels } from "./provider-picker-state";
 
 type SessionSnapshots = Record<string, SessionSnapshot>;
@@ -33,6 +35,7 @@ type SessionCreatedHandler = (session: SessionRecord) => void;
 type CoreStateHandler = (payload: CoreBridgeStatePayload) => void;
 type SessionMessageHandler = (payload: CoreBridgeSessionMessagePayload) => void;
 type SessionDeletedHandler = (payload: { readonly sessionId: string }) => void;
+type SessionBindingHandler = (payload: CoreBridgeSessionBindingPayload) => void;
 
 export type UseSessionStoreResult = {
   readonly sessions: readonly SessionRecord[];
@@ -42,38 +45,13 @@ export type UseSessionStoreResult = {
   readonly hydrateFromCoreState: CoreStateHandler;
   readonly handleSessionMessageEvent: SessionMessageHandler;
   readonly handleSessionDeleted: SessionDeletedHandler;
+  readonly handleSessionBindingUpdate: SessionBindingHandler;
   readonly clearSessions: ClearSessionsHandler;
   readonly focusLastSession: FocusLastSessionHandler;
   readonly selectSession: SelectSessionHandler;
   readonly closeSession: CloseSessionHandler;
   readonly toggleTodo: ToggleTodoHandler;
   readonly sendMessage: SendMessageHandler;
-};
-
-const buildSnapshotFromMessages = (
-  session: SessionRecord,
-  providerLabels: ProviderLabels,
-  messages: readonly SessionMessage[]
-): SessionSnapshot => {
-  const base = createInitialSnapshot(session, providerLabels);
-  const updatedAt = messages.at(-1)?.createdAt ?? base.status.updatedAt;
-  const tokenUsage = messages.reduce(
-    (total, message) => total + message.content.length,
-    0
-  );
-
-  return {
-    ...base,
-    messages: [...messages],
-    status: {
-      ...base.status,
-      updatedAt,
-      tokenUsage: {
-        ...base.status.tokenUsage,
-        used: Math.min(base.status.tokenUsage.limit, tokenUsage),
-      },
-    },
-  };
 };
 
 export const useSessionStore = (
@@ -157,6 +135,38 @@ export const useSessionStore = (
       });
     },
     [providerLabels]
+  );
+
+  const handleSessionBindingUpdate = useCallback<SessionBindingHandler>(
+    (payload) => {
+      const binding = normalizeBinding({
+        providerSessionId: payload.providerSessionId,
+        status: payload.status,
+      });
+
+      setSessions((previous) => {
+        const next = previous.map((session) =>
+          session.id === payload.sessionId ? { ...session, binding } : session
+        );
+        syncSessionsRef(next);
+        return next;
+      });
+
+      setSnapshots((previous) => {
+        const current = previous[payload.sessionId];
+        if (!current) {
+          return previous;
+        }
+        return {
+          ...previous,
+          [payload.sessionId]: {
+            ...current,
+            binding,
+          },
+        };
+      });
+    },
+    [syncSessionsRef]
   );
 
   const clearSessions = useCallback<ClearSessionsHandler>(() => {
@@ -248,6 +258,7 @@ export const useSessionStore = (
     hydrateFromCoreState,
     handleSessionMessageEvent,
     handleSessionDeleted,
+    handleSessionBindingUpdate,
     clearSessions,
     focusLastSession,
     selectSession,
