@@ -9352,14 +9352,7 @@
     }
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "session-panel session-info", children: [
       /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-info__text", children: primaryText }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-        "span",
-        {
-          className: "session-info__text",
-          title: secondaryTitle,
-          children: secondaryText
-        }
-      ) })
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-info__text", title: secondaryTitle, children: secondaryText }) })
     ] });
   };
   var info_panel_default = InfoPanel;

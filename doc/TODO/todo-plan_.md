@@ -12,7 +12,7 @@
 - [TODO] Реализовать сервис проверки (`packages/core` + `packages/*_Module`): асинхронный health-check, возвращающий статус `installed/authenticated/missing`.
 - [TODO] Добавить в ядро обработку статуса провайдера при инициализации и в ответах `/health` / `/metrics`.
 - [IN_PROGRESS] Расширить RemoteBridge сообщениями предупреждений для UI (webview + CEF) с конкретными инструкциями.
-  - Notes: `core:loading-status` уже транслирует стадии загрузки и first-run подсказки; добавлен `session:binding` для оперативного отображения `providerSessionId` в Info Panel. Следующий шаг — явные проверки наличия CLI и текстовые инструкции при отрицательном результате.
+  - Notes: `core:loading-status` уже транслирует стадии загрузки и first-run подсказки; `session:binding` теперь скрывает временные UUID и показывает только подтверждённые `providerSessionId`. Следующий шаг — явные проверки наличия CLI и текстовые инструкции при отрицательном результате.
   - [TODO] Подготовить пользовательское руководство "Manual Provider Setup" (описание установки CLI, команд аутентификации, tip по отказу от провайдера).
 
 ## Phase 2 — Settings Integration & Provider Management (owner: Codex, updated: 2025-10-31)
