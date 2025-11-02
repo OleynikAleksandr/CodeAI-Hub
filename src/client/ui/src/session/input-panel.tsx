@@ -96,6 +96,68 @@ const InputPanel = ({ draft, onSubmit }: InputPanelProps) => {
     [updateValue]
   );
 
+  const insertTextAtSelection = useCallback(
+    (text: string) => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+
+      const [selectionStart, selectionEnd] = [
+        textarea.selectionStart ?? textarea.value.length,
+        textarea.selectionEnd ?? textarea.value.length,
+      ];
+
+      const currentValue = textarea.value;
+      const nextValue =
+        currentValue.slice(0, selectionStart) +
+        text +
+        currentValue.slice(selectionEnd);
+
+      updateValue(nextValue);
+      requestAnimationFrame(() => {
+        const position = selectionStart + text.length;
+        textarea.selectionStart = position;
+        textarea.selectionEnd = position;
+        adjustTextareaHeight(textarea);
+        textarea.focus();
+      });
+    },
+    [updateValue]
+  );
+
+  const handlePaste = useCallback(
+    (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const clipboardText =
+        event.clipboardData.getData("text") ||
+        event.clipboardData.getData("text/plain");
+
+      if (clipboardText) {
+        event.preventDefault();
+        insertTextAtSelection(clipboardText);
+        return;
+      }
+
+      if (
+        navigator.clipboard &&
+        typeof navigator.clipboard.readText === "function"
+      ) {
+        event.preventDefault();
+        navigator.clipboard
+          .readText()
+          .then((text) => {
+            if (text) {
+              insertTextAtSelection(text);
+            }
+          })
+          .catch(() => {
+            /* clipboard read not available */
+          });
+      }
+    },
+    [insertTextAtSelection]
+  );
+
   const applyExternalValue = useCallback(
     (newValue: string) => {
       updateValue(newValue);
@@ -159,6 +221,7 @@ const InputPanel = ({ draft, onSubmit }: InputPanelProps) => {
           onChange={handleChange}
           onFocus={() => setIsFocused(true)}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
           placeholder="Type your request or drag files with Shift held..."
           ref={textareaRef}
           rows={1}
