@@ -128,9 +128,11 @@ const InputPanel = ({ draft, onSubmit }: InputPanelProps) => {
 
   const handlePaste = useCallback(
     (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const dataTransfer = event.clipboardData;
       const clipboardText =
-        event.clipboardData.getData("text") ||
-        event.clipboardData.getData("text/plain");
+        dataTransfer?.getData("text/plain") ||
+        dataTransfer?.getData("text") ||
+        "";
 
       if (clipboardText) {
         event.preventDefault();
