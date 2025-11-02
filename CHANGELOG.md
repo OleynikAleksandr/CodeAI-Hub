@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.107] - 2025-11-02
+### Fixed
+- Info Panel больше не показывает временные идентификаторы сессий от Claude/Codex; статус остаётся `pending`, пока SDK не подтвердит реальный `sessionId`.
+- RemoteBridge корректно обрабатывает события `realSessionId` и строковые уведомления провайдера, чтобы менять привязку только при финальном идентификаторе.
+
+### Build
+- VSIX → `codeai-hub-1.1.107.vsix`
+- Core → `codeai-hub-core-darwin-arm64-0.2.25.tar.bz2`
+- Providers → `claude-module-0.1.9.tar.bz2`, `codex-module-0.1.4.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
+
 ## [1.1.106] - 2025-11-02
 ### Added
 - RemoteBridge теперь транслирует событие `session:binding`, синхронизируя реальный `providerSessionId` и состояние привязки (`pending`, `ready`, `failed`) между core, extension host и UI.
