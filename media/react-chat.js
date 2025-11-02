@@ -9886,7 +9886,8 @@ ${path}` : path;
     );
     const handlePaste = (0, import_react10.useCallback)(
       (event) => {
-        const clipboardText = event.clipboardData.getData("text") || event.clipboardData.getData("text/plain");
+        const dataTransfer = event.clipboardData;
+        const clipboardText = dataTransfer?.getData("text/plain") || dataTransfer?.getData("text") || "";
         if (clipboardText) {
           event.preventDefault();
           insertTextAtSelection(clipboardText);
