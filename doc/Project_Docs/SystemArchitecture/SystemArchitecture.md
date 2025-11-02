@@ -12,9 +12,10 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **FileDropService**: новый сервис ядра повторно использует платформенные скрипты (AppleScript для Finder, PowerShell для Explorer, xclip для Linux), кеширует последнюю выборку и отдаёт пути через REST-эндпоинт `/api/v1/file-drop`. Благодаря этому Input Panel standalone-клиента вставляет пути к файлам так же, как webview (Shift+drop, мультивставка, clipboard fallback).
 - **Привязка сессий**: RemoteBridge транслирует событие `session:binding` при создании и смене идентификатора провайдера. Состояние (`pending`, `ready`, `failed`) и фактический `providerSessionId` попадают в Info Panel webview/CEF, что позволяет сразу видеть, удалось ли SDK подтвердить сессию и какой ID назначен.
 - **Внешние пользовательские инструменты**: например, `@google/gemini-cli`, `@google/gemini-cli-core`, `@anthropic-ai/sdk`. Пользователь ставит их у себя (инсталляторы ядра лишь проверяют наличие и версию), а вендорные части модулей хранят только необходимый runtime (`gemini-cli-core`, Node runtime и пр.).
+- **macOS меню**: лаунчер CEF создаёт системное меню `Edit` с командами Copy/Paste/Select All, поэтому стандартные шорткаты работают в standalone окне без костылей.
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.120
+- VSIX: `codeai-hub` 1.1.121
 - Autономное ядро: `@codeai-hub/core` 0.2.30
 - Claude module: 0.1.10
 - Codex module: 0.1.5
@@ -41,7 +42,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 │       └── install.json
 └── releases/
     ├── codeai-hub-core-darwin-arm64-0.2.30.tar.bz2
-    ├── CodeAIHubLauncher-macos-arm64-1.0.52.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.0.53.tar.bz2
     └── gemini-module-0.3.8.tar.bz2
 ```
 

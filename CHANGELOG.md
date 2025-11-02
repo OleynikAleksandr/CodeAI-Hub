@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.121] - 2025-11-02
+### Fixed
+- macOS лаунчер создаёт системное меню с командами Copy/Paste/Select All, благодаря чему Command-шорткаты работают в standalone CEF окне.
+- Clipboard handlers объединены в модуль: вставка Superwhisper и Command+C/V обновляют caret и высоту textarea без перехватов контекстного меню.
+
+### Build
+- VSIX → `codeai-hub-1.1.121.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.0.53.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-0.2.30.tar.bz2`
+- Providers → `claude-module-0.1.10.tar.bz2`, `codex-module-0.1.5.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
+
 ## [1.1.120] - 2025-11-02
 ### Fixed
 - Standalone Input Panel использует отдельный модуль обработчиков clipboard: Command+C/V и Superwhisper работают без обходных меню, textarea синхронизирует высоту сразу после вставки.

@@ -5,6 +5,52 @@
 #include "wrapper/cef_library_loader.h"
 #include "launcher_app.h"
 
+namespace {
+
+void CreateApplicationMenu() {
+  NSApplication* app = [NSApplication sharedApplication];
+  if ([app mainMenu] != nil) {
+    return;
+  }
+
+  NSMenu* menubar = [[NSMenu alloc] initWithTitle:@""];
+  [app setMainMenu:menubar];
+
+  NSMenuItem* appMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
+  [menubar addItem:appMenuItem];
+
+  NSMenu* appMenu = [[NSMenu alloc] initWithTitle:@""];
+  NSString* appName = [[NSProcessInfo processInfo] processName];
+  NSString* quitTitle = [NSString stringWithFormat:@"Quit %@", appName];
+  NSMenuItem* quitItem = [[NSMenuItem alloc] initWithTitle:quitTitle
+                                                    action:@selector(terminate:)
+                                             keyEquivalent:@"q"];
+  [quitItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
+  [appMenu addItem:quitItem];
+  [appMenuItem setSubmenu:appMenu];
+
+  NSMenuItem* editMenuItem = [[NSMenuItem alloc] initWithTitle:@"Edit" action:nil keyEquivalent:@""];
+  [menubar addItem:editMenuItem];
+
+  NSMenu* editMenu = [[NSMenu alloc] initWithTitle:@"Edit"];
+
+  auto addEditCommand = ^(NSString* title, SEL action, NSString* key) {
+    NSMenuItem* item = [[NSMenuItem alloc] initWithTitle:title action:action keyEquivalent:key];
+    [item setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
+    [item setTarget:nil];
+    [editMenu addItem:item];
+  };
+
+  addEditCommand(@"Cut", @selector(cut:), @"x");
+  addEditCommand(@"Copy", @selector(copy:), @"c");
+  addEditCommand(@"Paste", @selector(paste:), @"v");
+  addEditCommand(@"Select All", @selector(selectAll:), @"a");
+
+  [editMenuItem setSubmenu:editMenu];
+}
+
+}  // namespace
+
 int main(int argc, char* argv[]) {
   CefScopedLibraryLoader library_loader;
   if (!library_loader.LoadInMain()) {
@@ -85,6 +131,7 @@ int main(int argc, char* argv[]) {
     return CefGetExitCode();
   }
   fprintf(stderr, "CodeAIHubLauncher: CefInitialize succeeded\n");
+  CreateApplicationMenu();
   CefRunMessageLoop();
   CefShutdown();
   fprintf(stderr, "CodeAIHubLauncher: shutdown complete\n");
