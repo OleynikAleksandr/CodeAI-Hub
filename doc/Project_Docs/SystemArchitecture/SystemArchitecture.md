@@ -15,25 +15,25 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **macOS меню**: лаунчер CEF создаёт системное меню `Edit` с командами Copy/Paste/Select All, поэтому стандартные шорткаты работают в standalone окне без костылей.
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.121
-- Autономное ядро: `@codeai-hub/core` 0.2.30
-- Claude module: 0.1.10
-- Codex module: 0.1.5
-- Gemini module: 0.3.8 (CommonJS bridge → ESM tooling)
+- VSIX: `codeai-hub` 1.1.123
+- Autономное ядро: `@codeai-hub/core` 1.1.123
+- Claude module: 1.1.123
+- Codex module: 1.1.123
+- Gemini module: 1.1.123 (CommonJS bridge → ESM tooling)
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 0.2.30/
+│       └── 1.1.123/
 │           ├── node/           # официальный Node 20 runtime
 │           ├── app/            # JS-бандл core + tarballs зависимостей
 │           └── install.json
 ├── providers/
-│   ├── claude/0.1.10/
-│   ├── codex/0.1.5/
-│   └── gemini/0.3.8/
+│   ├── claude/1.1.123/
+│   ├── codex/1.1.123/
+│   └── gemini/1.1.123/
 │       ├── dist/
 │       │   ├── index.js
 │       │   ├── installer/
@@ -41,9 +41,9 @@ CodeAI-Hub — автономная платформа управления AI-�
 │       │   └── vendor/node_modules/@google/gemini-cli-core
 │       └── install.json
 └── releases/
-    ├── codeai-hub-core-darwin-arm64-0.2.30.tar.bz2
-    ├── CodeAIHubLauncher-macos-arm64-1.0.53.tar.bz2
-    └── gemini-module-0.3.8.tar.bz2
+    ├── codeai-hub-core-darwin-arm64-1.1.123.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.123.tar.bz2
+    └── gemini-module-1.1.123.tar.bz2
 ```
 
 ## Провайдеры
