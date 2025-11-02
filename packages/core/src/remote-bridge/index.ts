@@ -519,13 +519,18 @@ export class RemoteBridge {
     if (!session) {
       return;
     }
+    const payload = {
+      sessionId,
+      providerSessionId: session.providerSessionId ?? null,
+      status: session.providerSessionStatus,
+    } as const;
     this.broadcast({
       type: "session:binding",
-      payload: {
-        sessionId,
-        providerSessionId: session.providerSessionId ?? null,
-        status: session.providerSessionStatus,
-      },
+      payload,
+    });
+    this.broadcast({
+      type: "core:state",
+      payload: this.buildInitialState(),
     });
   }
 

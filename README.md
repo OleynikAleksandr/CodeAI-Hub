@@ -2,15 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.110
+## Current Release — v1.1.112
 - **Confirmed provider IDs**: Info Panel скрывает временные UUID от Claude/Codex и обновляется только после подтверждённого `sessionId`.
-- **Binding replay safeguards**: RemoteBridge и SDK-адаптеры буферизуют события `sessionIdChanged`, чтобы даже ранние ответы SDK продвигали привязку в UI.
-- **API consistency**: сериализация сессий в extension host и core всегда включает binding-метаданные, что синхронизирует состояние во всех клиентах (VS Code, CEF, будущий PWA).
+- **Binding replay safeguards**: RemoteBridge и SDK-адаптеры буферизуют события `sessionIdChanged`, гарантируя, что даже ранние ответы SDK продвигают привязку в UI.
+- **Live state refresh**: После подтверждения ID RemoteBridge рассылает обновлённый `core:state`, поэтому UI получает реальный `sessionId` без ручного рефреша.
 
 **Artifact bundle**
-- VSIX: `codeai-hub-1.1.110.vsix`
+- VSIX: `codeai-hub-1.1.112.vsix`
 - Launcher: `CodeAIHubLauncher-macos-arm64-1.0.52.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-0.2.27.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-0.2.28.tar.bz2`
 - Providers: `claude-module-0.1.10.tar.bz2`, `codex-module-0.1.5.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
 
 ## Features
