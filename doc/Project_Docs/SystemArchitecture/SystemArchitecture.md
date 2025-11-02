@@ -39,7 +39,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 │       │   └── vendor/node_modules/@google/gemini-cli-core
 │       └── install.json
 └── releases/
-    ├── codeai-hub-core-darwin-arm64-0.2.27.tar.bz2
+    ├── codeai-hub-core-darwin-arm64-0.2.28.tar.bz2
     ├── CodeAIHubLauncher-macos-arm64-1.0.52.tar.bz2
     └── gemini-module-0.3.8.tar.bz2
 ```
