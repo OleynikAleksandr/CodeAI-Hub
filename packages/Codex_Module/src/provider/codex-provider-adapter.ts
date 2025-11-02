@@ -11,6 +11,8 @@ export type SessionListener = (payload: unknown) => void;
 export class CodexProviderAdapter {
   private readonly sdkManager: CodexSDKManager;
   private readonly listeners = new Map<string, Set<SessionListener>>();
+  private readonly pendingEvents = new Map<string, unknown[]>();
+  private readonly sessionIdAliases = new Map<string, string>();
   private readonly options: CodexModuleOptions;
 
   constructor(options: CodexModuleOptions) {
@@ -62,17 +64,23 @@ export class CodexProviderAdapter {
   }
 
   subscribe(sessionId: string, listener: SessionListener): () => void {
-    const bucket = this.listeners.get(sessionId) ?? new Set<SessionListener>();
+    const resolvedId = this.resolveSessionAlias(sessionId);
+    const bucket = this.listeners.get(resolvedId) ?? new Set<SessionListener>();
     bucket.add(listener);
-    this.listeners.set(sessionId, bucket);
+    this.listeners.set(resolvedId, bucket);
+    this.flushPendingEvents(resolvedId);
+    if (resolvedId !== sessionId) {
+      this.sessionIdAliases.set(sessionId, resolvedId);
+      this.flushPendingEvents(sessionId);
+    }
     return () => {
-      const current = this.listeners.get(sessionId);
+      const current = this.listeners.get(resolvedId);
       if (!current) {
         return;
       }
       current.delete(listener);
       if (current.size === 0) {
-        this.listeners.delete(sessionId);
+        this.listeners.delete(resolvedId);
       }
     };
   }
@@ -95,6 +103,8 @@ export class CodexProviderAdapter {
       };
       if (candidate?.oldId && candidate?.newId) {
         this.reassignListeners(candidate.oldId, candidate.newId);
+        this.sessionIdAliases.set(candidate.oldId, candidate.newId);
+        this.flushPendingEvents(candidate.newId);
         this.dispatchMessage(candidate.newId, {
           type: "sessionIdChanged",
           payload: candidate,
@@ -106,6 +116,9 @@ export class CodexProviderAdapter {
   private dispatchMessage(sessionId: string, payload: unknown): void {
     const bucket = this.listeners.get(sessionId);
     if (!bucket) {
+      const queue = this.pendingEvents.get(sessionId) ?? [];
+      queue.push(payload);
+      this.pendingEvents.set(sessionId, queue);
       return;
     }
     for (const listener of bucket) {
@@ -127,11 +140,43 @@ export class CodexProviderAdapter {
       destination.add(listener);
     }
     this.listeners.set(newId, destination);
+    this.flushPendingEvents(newId);
   }
 
   private async sendBootstrapCommand(sessionId: string): Promise<void> {
     await this.sdkManager.sendMessage(sessionId, "/status", {
       internal: true,
     });
+  }
+
+  private resolveSessionAlias(sessionId: string): string {
+    let current = sessionId;
+    const visited = new Set<string>();
+    while (this.sessionIdAliases.has(current) && !visited.has(current)) {
+      visited.add(current);
+      const next = this.sessionIdAliases.get(current);
+      if (!next) {
+        break;
+      }
+      current = next;
+    }
+    return current;
+  }
+
+  private flushPendingEvents(sessionId: string): void {
+    const events = this.pendingEvents.get(sessionId);
+    if (!events || events.length === 0) {
+      return;
+    }
+    const listeners = this.listeners.get(sessionId);
+    if (!listeners || listeners.size === 0) {
+      return;
+    }
+    this.pendingEvents.delete(sessionId);
+    for (const event of events) {
+      for (const listener of listeners) {
+        listener(event);
+      }
+    }
   }
 }

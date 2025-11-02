@@ -13,6 +13,8 @@ export type SessionListener = (payload: unknown) => void;
 export class ClaudeProviderAdapter {
   private readonly sdkManager: ClaudeSDKManager;
   private readonly listeners = new Map<string, Set<SessionListener>>();
+  private readonly pendingEvents = new Map<string, unknown[]>();
+  private readonly sessionIdAliases = new Map<string, string>();
 
   constructor(options: ClaudeModuleOptions) {
     const reporter = options.reporter;
@@ -63,18 +65,23 @@ export class ClaudeProviderAdapter {
   }
 
   subscribe(sessionId: string, listener: SessionListener): () => void {
-    const existing =
-      this.listeners.get(sessionId) ?? new Set<SessionListener>();
-    existing.add(listener);
-    this.listeners.set(sessionId, existing);
+    const resolvedId = this.resolveSessionAlias(sessionId);
+    const bucket = this.listeners.get(resolvedId) ?? new Set<SessionListener>();
+    bucket.add(listener);
+    this.listeners.set(resolvedId, bucket);
+    this.flushPendingEvents(resolvedId);
+    if (resolvedId !== sessionId) {
+      this.sessionIdAliases.set(sessionId, resolvedId);
+      this.flushPendingEvents(sessionId);
+    }
     return () => {
-      const target = this.listeners.get(sessionId);
+      const target = this.listeners.get(resolvedId);
       if (!target) {
         return;
       }
       target.delete(listener);
       if (target.size === 0) {
-        this.listeners.delete(sessionId);
+        this.listeners.delete(resolvedId);
       }
     };
   }
@@ -86,8 +93,10 @@ export class ClaudeProviderAdapter {
     session.eventEmitter.on("sessionIdChanged", (payload) => {
       if (payload?.oldId && payload?.newId) {
         this.reassignListeners(payload.oldId, payload.newId);
+        this.sessionIdAliases.set(payload.oldId, payload.newId);
       }
-      this.dispatchMessage(payload?.newId ?? session.sessionId, {
+      const targetId = payload?.newId ?? session.sessionId;
+      this.dispatchMessage(targetId, {
         type: "sessionIdChanged",
         payload,
       });
@@ -97,6 +106,9 @@ export class ClaudeProviderAdapter {
   private dispatchMessage(sessionId: string, payload: unknown): void {
     const target = this.listeners.get(sessionId);
     if (!target) {
+      const queue = this.pendingEvents.get(sessionId) ?? [];
+      queue.push(payload);
+      this.pendingEvents.set(sessionId, queue);
       return;
     }
     for (const listener of target) {
@@ -109,15 +121,16 @@ export class ClaudeProviderAdapter {
       return;
     }
     const set = this.listeners.get(oldId);
-    if (!set) {
-      return;
+    if (set) {
+      this.listeners.delete(oldId);
+      const destination =
+        this.listeners.get(newId) ?? new Set<SessionListener>();
+      for (const listener of set) {
+        destination.add(listener);
+      }
+      this.listeners.set(newId, destination);
     }
-    this.listeners.delete(oldId);
-    const destination = this.listeners.get(newId) ?? new Set<SessionListener>();
-    for (const listener of set) {
-      destination.add(listener);
-    }
-    this.listeners.set(newId, destination);
+    this.flushPendingEvents(newId);
   }
 
   private async sendBootstrapCommand(sessionId: string): Promise<void> {
@@ -126,5 +139,36 @@ export class ClaudeProviderAdapter {
 
   private resolveProjectPath(slug: string): string {
     return path.join(homedir(), ".claude", "projects", slug);
+  }
+
+  private resolveSessionAlias(sessionId: string): string {
+    let current = sessionId;
+    const visited = new Set<string>();
+    while (this.sessionIdAliases.has(current) && !visited.has(current)) {
+      visited.add(current);
+      const next = this.sessionIdAliases.get(current);
+      if (!next) {
+        break;
+      }
+      current = next;
+    }
+    return current;
+  }
+
+  private flushPendingEvents(sessionId: string): void {
+    const events = this.pendingEvents.get(sessionId);
+    if (!events || events.length === 0) {
+      return;
+    }
+    const listeners = this.listeners.get(sessionId);
+    if (!listeners || listeners.size === 0) {
+      return;
+    }
+    this.pendingEvents.delete(sessionId);
+    for (const event of events) {
+      for (const listener of listeners) {
+        listener(event);
+      }
+    }
   }
 }
