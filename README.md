@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.121
+## Current Release — v1.1.123
 - **Clipboard module**: Input Panel в standalone использует выделенный обработчик — Command+C/V и Superwhisper вставляют текст без обходных меню, caret и высота textarea синхронизируются автоматически.
-- **macOS menu integration**: лаунчер CEF создаёт системное меню с командой Edit → Copy/Paste, поэтому шорткаты работают на уровне платформы.
+- **macOS menu integration**: лаунчер CEF добавляет системное меню Edit → Copy/Paste/Select All, поэтому шорткаты работают нативно.
 - **Drag & drop parity**: Shift+drop в standalone продолжает использовать FileDropService, повторяя webview-пайплайн текстовых путей.
-- **Documentation parity**: README и System Architecture отражают релиз 1.1.121 и актуальные артефакты.
+- **Release tooling**: `scripts/build-all.sh` пересобирает core, лаунчер, провайдеры и VSIX одним шагом, гарантируя синхронные версии.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.121.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.53.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-0.2.30.tar.bz2`
-- Providers: `claude-module-0.1.10.tar.bz2`, `codex-module-0.1.5.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
+- VSIX: `codeai-hub-1.1.123.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.123.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.123.tar.bz2`
+- Providers: `claude-module-1.1.123.tar.bz2`, `codex-module-1.1.123.tar.bz2`, `gemini-module-1.1.123.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
