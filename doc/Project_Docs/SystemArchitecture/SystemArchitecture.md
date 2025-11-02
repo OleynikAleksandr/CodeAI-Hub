@@ -9,14 +9,15 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Клиентские интерфейсы**: webview VS Code, локальный CEF клиент, облачный/Mobile UI. Все они подключаются к ядру через HTTP/WebSocket API (Remote Bridge). Маковский лаунчер сохраняет геометрию через `setFrameAutosaveName("CodeAIHubMainWindow")`, а слой `window_state_persistence` служит миграцией со старого формата. Начиная с версии 1.1.95 лаунчер сам проверяет наличие запущенного core и, при необходимости, стартует bundled Node runtime, поэтому автономный интерфейс больше не зависит от активированного расширения.
 - **Провайдерные модули**: устанавливаются в `~/.codeai-hub/providers/<stack>/<version>/`. В dev-режиме сборочные скрипты сразу публикуют туда архивы, чтобы VSIX ничего не качал извне; официальные SDK/CLI подтягиваются при запуске через npm или инсталляторы.
 - **Пайплайн статусов загрузки**: `RuntimeStatusReporter` в ядре собирает прогресс (boot, установка компонентов, готовность провайдеров), RemoteBridge ретранслирует `core:loading-status`, а webview/CEF рендерят человеко-понятные сообщения с подсказкой о первом запуске.
+- **Привязка сессий**: RemoteBridge транслирует событие `session:binding` при создании и смене идентификатора провайдера. Состояние (`pending`, `ready`, `failed`) и фактический `providerSessionId` попадают в Info Panel webview/CEF, что позволяет сразу видеть, удалось ли SDK подтвердить сессию и какой ID назначен.
 - **Внешние пользовательские инструменты**: например, `@google/gemini-cli`, `@google/gemini-cli-core`, `@anthropic-ai/sdk`. Пользователь ставит их у себя (инсталляторы ядра лишь проверяют наличие и версию), а вендорные части модулей хранят только необходимый runtime (`gemini-cli-core`, Node runtime и пр.).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.94
-- Autonomное ядро: `@codeai-hub/core` 0.2.22
-- Claude module: 0.1.8
-- Codex module: 0.1.2
-- Gemini module: 0.3.5 (CommonJS bridge → ESM tooling)
+- VSIX: `codeai-hub` 1.1.105
+- Autonomное ядро: `@codeai-hub/core` 0.2.24
+- Claude module: 0.1.9
+- Codex module: 0.1.4
+- Gemini module: 0.3.8 (CommonJS bridge → ESM tooling)
 
 ## Структура артефактов
 ```

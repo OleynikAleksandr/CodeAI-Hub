@@ -48,15 +48,20 @@ export class SessionLauncher {
   private createSessionRecord(
     providerIds: readonly ProviderStackId[]
   ): SessionRecord {
-    const id = `session-${Date.now()}-${this.sequence}`;
+    const now = Date.now();
+    const id = `session-${now}-${this.sequence}`;
     const title = `Session ${this.sequence}`;
     this.sequence += 1;
 
     return {
       id,
       providerIds,
-      createdAt: Date.now(),
+      createdAt: now,
       title,
+      binding: {
+        providerSessionId: null,
+        status: "pending",
+      },
     };
   }
 

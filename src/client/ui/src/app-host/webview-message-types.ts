@@ -1,4 +1,5 @@
 import type {
+  CoreBridgeSessionBindingPayload,
   CoreBridgeSessionMessagePayload,
   CoreBridgeStatePayload,
   CoreRuntimeStatusPayload,
@@ -47,11 +48,17 @@ export type SessionDeletedMessage = {
   readonly payload?: unknown;
 };
 
+export type SessionBindingMessage = {
+  readonly type: "session:binding";
+  readonly payload?: unknown;
+};
+
 export type IncomingMessage =
   | ProviderPickerOpenMessage
   | SessionCreatedMessage
   | SessionClearAllMessage
   | SessionFocusLastMessage
+  | SessionBindingMessage
   | ShowSettingsMessage
   | CoreStateMessage
   | CoreConnectionMessage
@@ -114,4 +121,24 @@ export const isCoreRuntimeStatusPayload = (
   }
   const candidate = value as Record<string, unknown>;
   return typeof candidate.label === "string";
+};
+export const isSessionBindingPayload = (
+  value: unknown
+): value is CoreBridgeSessionBindingPayload => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  if (typeof candidate.sessionId !== "string") {
+    return false;
+  }
+  const status = candidate.status;
+  if (status !== "pending" && status !== "ready" && status !== "failed") {
+    return false;
+  }
+  const providerSessionId = candidate.providerSessionId;
+  if (providerSessionId !== null && typeof providerSessionId !== "string") {
+    return false;
+  }
+  return true;
 };

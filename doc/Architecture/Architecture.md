@@ -1,7 +1,7 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.3.9
-**Last Updated:** 2025-11-01
+**Version:** 0.4.0
+**Last Updated:** 2025-11-02
 **Status:** Active reference
 
 ---
@@ -37,6 +37,7 @@ graph TD
 ## VS Code Webview UI
 - **AppHost**: корневой React-компонент управляет состоянием сессий (через hooks `useSessionStore`, `useProviderPickerState`, `useSettingsState`) и синхронизирует его с extension host через `message-handler`. Весь UI-код живёт в `src/client/ui/src` и переиспользуется веб-клиентом без дублирования. Модуль `core-bridge` напрямую подключается к локальному ядру (HTTP `/api/v1/status`, WebSocket `/api/v1/stream`), поэтому создание/стриминг сессий не зависят от extension host round-trip.
 - **Layout**: сетка `session-grid` объединяет панели `ActionBar`, `DialogPanel`, `TodoPanel`, `StatusPanel`, `InputPanel`. Все панели используют общие дизайн-токены и CSS переменные (`media/main-view.css`).
+- **Session Binding**: `InfoPanel` отображает состояние привязки к провайдеру — ожидается ли реальный `sessionId`, удалось ли его получить, либо инициализация провалилась. После подтверждения от SDK панель выводит полный идентификатор сессии (и подсказку в `title`), помогая отлаживать CLI-интеграции.
 - **Provider Picker & Settings**: отдельные модули `provider-picker`, `settings/view` позволяют выбирать провайдеров (Claude, Codex, Gemini) и менять конфигурацию визардов. UI отображает статус подключения каждого стека (connected / offline) и синхронизирует выбор с extension host через события ядра.
 - **Streaming Rendering**: `StreamingWordEmitter` и `useDialogMessages` формируют потоковый вывод без разрывов Markdown. Логика идентична в webview и локальном веб-клиенте.
 - **Accessibility**: все компоненты соответствуют правилам Ultracite (role, aria, tabindex), что позволяет без изменений переносить UI в браузерный клиент.
