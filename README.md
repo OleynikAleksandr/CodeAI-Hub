@@ -2,15 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.120
-- **Clipboard parity**: Input Panel в standalone использует общий модуль обработчиков — Command+C/V и Superwhisper вставляют текст в caret, а высота textarea синхронизируется автоматически.
-- **Drag & drop parity**: Shift+drop в CEF повторяет webview — FileDropService ядра преобразует ссылки и файлы в текстовые пути.
-- **Core HTTP bridge**: RemoteBridge 0.2.30 по-прежнему отдаёт `/api/v1/file-drop`, сохраняя единый канал для clipboard/dnd между клиентами.
-- **Documentation parity**: README и System Architecture обновлены под релиз 1.1.120 с актуальными артефактами и пайплайном.
+## Current Release — v1.1.121
+- **Clipboard module**: Input Panel в standalone использует выделенный обработчик — Command+C/V и Superwhisper вставляют текст без обходных меню, caret и высота textarea синхронизируются автоматически.
+- **macOS menu integration**: лаунчер CEF создаёт системное меню с командой Edit → Copy/Paste, поэтому шорткаты работают на уровне платформы.
+- **Drag & drop parity**: Shift+drop в standalone продолжает использовать FileDropService, повторяя webview-пайплайн текстовых путей.
+- **Documentation parity**: README и System Architecture отражают релиз 1.1.121 и актуальные артефакты.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.120.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.52.tar.bz2`
+- VSIX: `codeai-hub-1.1.121.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.0.53.tar.bz2`
 - Core: `codeai-hub-core-darwin-arm64-0.2.30.tar.bz2`
 - Providers: `claude-module-0.1.10.tar.bz2`, `codex-module-0.1.5.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
 
