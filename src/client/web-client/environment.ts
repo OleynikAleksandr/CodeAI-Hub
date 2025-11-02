@@ -213,9 +213,10 @@ const createStandaloneRouter = () => {
     }
 
     if (typeof message.command === "string") {
+      const command = message.command;
       (async () => {
         try {
-          await handleCommand(message.command);
+          await handleCommand(command);
         } catch {
           /* no-op */
         }

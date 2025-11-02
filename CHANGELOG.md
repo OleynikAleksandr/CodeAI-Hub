@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.116] - 2025-11-02
+### Added
+- Standalone Input Panel теперь поддерживает drag & drop и вставку из буфера так же, как webview: новый FileDropService ядра преобразует все источники в текстовые пути и передаёт их в UI.
+
+### Changed
+- RemoteBridge 0.2.30 публикует REST-эндпоинты `/api/v1/file-drop`, кеширует выборку Finder/Explorer и синхронизирует её с клиентами.
+
+### Build
+- VSIX → `codeai-hub-1.1.116.vsix`
+- Core → `codeai-hub-core-darwin-arm64-0.2.30.tar.bz2`
+- Providers → `claude-module-0.1.10.tar.bz2`, `codex-module-0.1.5.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
+
 ## [1.1.115] - 2025-11-02
 ### Fixed
 - Core 0.2.29 сразу помечает Gemini-сессии как `ready`, поэтому Info Panel больше не зависает на сообщении ожидания.
