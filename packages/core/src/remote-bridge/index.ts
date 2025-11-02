@@ -355,10 +355,7 @@ export class RemoteBridge {
       return;
     }
     const providerSessionId = await adapter.createSession();
-    const session = this.sessionManager.createSession(
-      actualProviderId,
-      providerSessionId
-    );
+    const session = this.sessionManager.createSession(actualProviderId);
     const unsubscribe = adapter.subscribe(
       providerSessionId,
       (event: unknown) => {
@@ -442,41 +439,14 @@ export class RemoteBridge {
   }
 
   private handleProviderEvent(sessionId: string, event: unknown): void {
+    if (typeof event === "string") {
+      this.updateBindingWithResolvedId(sessionId, event);
+      return;
+    }
     if (!event || typeof event !== "object") {
       return;
     }
-    const typed = event as ProviderEventEnvelope;
-    if (
-      typed.type === "sessionIdChanged" &&
-      isSessionIdChangedPayload(typed.payload)
-    ) {
-      const newProviderSessionId = typed.payload.newId;
-      if (newProviderSessionId) {
-        this.updateProviderBinding(sessionId, newProviderSessionId);
-        this.sessionManager.updateProviderSessionId(
-          sessionId,
-          newProviderSessionId
-        );
-      }
-      this.broadcastSessionBinding(sessionId);
-      return;
-    }
-    if (typed.type === "stream_event") {
-      this.broadcast({
-        type: "session:stream",
-        payload: { sessionId, event: typed },
-      });
-      return;
-    }
-    if (typed.type === "assistant" || typed.type === "system") {
-      const role = typed.type === "assistant" ? "assistant" : "system";
-      this.appendProviderMessage(sessionId, role, typed);
-      return;
-    }
-    if (typed.type === "result") {
-      this.appendProviderMessage(sessionId, "assistant", typed);
-      return;
-    }
+    this.handleTypedProviderEvent(sessionId, event as ProviderEventEnvelope);
   }
 
   private appendProviderMessage(
@@ -527,6 +497,23 @@ export class RemoteBridge {
     }
   }
 
+  private updateBindingWithResolvedId(
+    sessionId: string,
+    providerSessionId: string
+  ): void {
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      return;
+    }
+    const alreadyReady = session.providerSessionStatus === "ready";
+    if (alreadyReady && session.providerSessionId === providerSessionId) {
+      return;
+    }
+    this.sessionManager.updateProviderSessionId(sessionId, providerSessionId);
+    this.updateProviderBinding(sessionId, providerSessionId);
+    this.broadcastSessionBinding(sessionId);
+  }
+
   private broadcastSessionBinding(sessionId: string): void {
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
@@ -540,5 +527,64 @@ export class RemoteBridge {
         status: session.providerSessionStatus,
       },
     });
+  }
+
+  private handleTypedProviderEvent(
+    sessionId: string,
+    event: ProviderEventEnvelope
+  ): void {
+    switch (event.type) {
+      case "sessionIdChanged":
+        this.handleSessionIdChangedEvent(sessionId, event.payload);
+        return;
+      case "realSessionId":
+        this.handleRealSessionIdEvent(sessionId, event.payload);
+        return;
+      case "stream_event":
+        this.broadcast({
+          type: "session:stream",
+          payload: { sessionId, event },
+        });
+        return;
+      case "assistant":
+      case "system": {
+        const role = event.type === "assistant" ? "assistant" : "system";
+        this.appendProviderMessage(sessionId, role, event);
+        return;
+      }
+      case "result":
+        this.appendProviderMessage(sessionId, "assistant", event);
+        return;
+      default:
+        return;
+    }
+  }
+
+  private handleSessionIdChangedEvent(
+    sessionId: string,
+    payload: unknown
+  ): void {
+    if (!isSessionIdChangedPayload(payload)) {
+      return;
+    }
+    const { newId } = payload;
+    if (newId) {
+      this.updateBindingWithResolvedId(sessionId, newId);
+    }
+  }
+
+  private handleRealSessionIdEvent(sessionId: string, payload: unknown): void {
+    const nextId = this.extractSessionIdFromPayload(payload);
+    if (nextId) {
+      this.updateBindingWithResolvedId(sessionId, nextId);
+    }
+  }
+
+  private extractSessionIdFromPayload(payload: unknown): string | null {
+    if (!payload || typeof payload !== "object") {
+      return null;
+    }
+    const candidate = payload as { readonly sessionId?: unknown };
+    return typeof candidate.sessionId === "string" ? candidate.sessionId : null;
   }
 }
