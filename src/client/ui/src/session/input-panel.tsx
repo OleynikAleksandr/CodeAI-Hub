@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DragDropFacade } from "../modules/drag-drop-module/drag-drop-facade";
+import { createClipboardHandlers } from "./input-panel-clipboard";
 
 type InputPanelProps = {
   readonly draft: string;
@@ -126,38 +127,22 @@ const InputPanel = ({ draft, onSubmit }: InputPanelProps) => {
     [updateValue]
   );
 
-  const handlePaste = useCallback(
-    (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
-      const dataTransfer = event.clipboardData;
-      const clipboardText =
-        dataTransfer?.getData("text/plain") ||
-        dataTransfer?.getData("text") ||
-        "";
+  const syncTextareaValue = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      return;
+    }
+    updateValue(textarea.value);
+  }, [updateValue]);
 
-      if (clipboardText) {
-        event.preventDefault();
-        insertTextAtSelection(clipboardText);
-        return;
-      }
-
-      if (
-        navigator.clipboard &&
-        typeof navigator.clipboard.readText === "function"
-      ) {
-        event.preventDefault();
-        navigator.clipboard
-          .readText()
-          .then((text) => {
-            if (text) {
-              insertTextAtSelection(text);
-            }
-          })
-          .catch(() => {
-            /* clipboard read not available */
-          });
-      }
-    },
-    [insertTextAtSelection]
+  const { handlePaste, handleCopy } = useMemo(
+    () =>
+      createClipboardHandlers({
+        textareaRef,
+        insertTextAtSelection,
+        syncTextareaValue,
+      }),
+    [insertTextAtSelection, syncTextareaValue]
   );
 
   const applyExternalValue = useCallback(
@@ -221,6 +206,7 @@ const InputPanel = ({ draft, onSubmit }: InputPanelProps) => {
             .join(" ")}
           onBlur={() => setIsFocused(false)}
           onChange={handleChange}
+          onCopy={handleCopy}
           onFocus={() => setIsFocused(true)}
           onKeyDown={handleKeyDown}
           onPaste={handlePaste}
