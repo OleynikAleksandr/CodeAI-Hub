@@ -9785,6 +9785,104 @@ ${path}` : path;
     }
   };
 
+  // src/client/ui/src/session/input-panel-clipboard.ts
+  var handlePlainTextPaste = (event, insertText) => {
+    const dataTransfer = event.clipboardData;
+    if (!dataTransfer) {
+      return false;
+    }
+    const plainText = dataTransfer.getData("text/plain");
+    if (plainText) {
+      event.preventDefault();
+      insertText(plainText);
+      return true;
+    }
+    if (typeof dataTransfer.items !== "undefined") {
+      const stringItem = Array.from(dataTransfer.items).find(
+        (item) => item.kind === "string"
+      );
+      if (stringItem) {
+        event.preventDefault();
+        stringItem.getAsString((text) => {
+          if (text) {
+            insertText(text);
+          }
+        });
+        return true;
+      }
+    }
+    return false;
+  };
+  var tryReadFromNavigator = async (insertText) => {
+    if (typeof navigator === "undefined" || !navigator.clipboard || typeof navigator.clipboard.readText !== "function") {
+      return false;
+    }
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        insertText(text);
+        return true;
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  };
+  var copySelectionToClipboard = (event, textarea, selection) => {
+    if (event.clipboardData) {
+      event.preventDefault();
+      event.clipboardData.setData("text/plain", selection);
+      return;
+    }
+    if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      event.preventDefault();
+      navigator.clipboard.writeText(selection).catch(() => {
+      });
+      return;
+    }
+    textarea.select();
+  };
+  var createClipboardHandlers = ({
+    textareaRef,
+    insertTextAtSelection,
+    syncTextareaValue
+  }) => {
+    const handlePaste = (event) => {
+      const handled = handlePlainTextPaste(event, insertTextAtSelection);
+      if (handled) {
+        return;
+      }
+      tryReadFromNavigator(insertTextAtSelection).then((success) => {
+        if (success) {
+          return;
+        }
+        requestAnimationFrame(syncTextareaValue);
+      }).catch(() => {
+        requestAnimationFrame(syncTextareaValue);
+      });
+    };
+    const handleCopy = (event) => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      const start = textarea.selectionStart ?? 0;
+      const end = textarea.selectionEnd ?? 0;
+      if (start === end) {
+        return;
+      }
+      const selection = textarea.value.slice(start, end);
+      if (!selection) {
+        return;
+      }
+      copySelectionToClipboard(event, textarea, selection);
+    };
+    return {
+      handlePaste,
+      handleCopy
+    };
+  };
+
   // src/client/ui/src/session/input-panel.tsx
   var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   var MAX_TEXTAREA_HEIGHT = 200;
@@ -9884,26 +9982,20 @@ ${path}` : path;
       },
       [updateValue]
     );
-    const handlePaste = (0, import_react10.useCallback)(
-      (event) => {
-        const dataTransfer = event.clipboardData;
-        const clipboardText = dataTransfer?.getData("text/plain") || dataTransfer?.getData("text") || "";
-        if (clipboardText) {
-          event.preventDefault();
-          insertTextAtSelection(clipboardText);
-          return;
-        }
-        if (navigator.clipboard && typeof navigator.clipboard.readText === "function") {
-          event.preventDefault();
-          navigator.clipboard.readText().then((text) => {
-            if (text) {
-              insertTextAtSelection(text);
-            }
-          }).catch(() => {
-          });
-        }
-      },
-      [insertTextAtSelection]
+    const syncTextareaValue = (0, import_react10.useCallback)(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      updateValue(textarea.value);
+    }, [updateValue]);
+    const { handlePaste, handleCopy } = (0, import_react10.useMemo)(
+      () => createClipboardHandlers({
+        textareaRef,
+        insertTextAtSelection,
+        syncTextareaValue
+      }),
+      [insertTextAtSelection, syncTextareaValue]
     );
     const applyExternalValue = (0, import_react10.useCallback)(
       (newValue) => {
@@ -9961,6 +10053,7 @@ ${path}` : path;
                     ].filter(Boolean).join(" "),
                     onBlur: () => setIsFocused(false),
                     onChange: handleChange,
+                    onCopy: handleCopy,
                     onFocus: () => setIsFocused(true),
                     onKeyDown: handleKeyDown,
                     onPaste: handlePaste,

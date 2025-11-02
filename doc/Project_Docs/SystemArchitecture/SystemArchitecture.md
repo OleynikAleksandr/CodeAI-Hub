@@ -14,7 +14,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Внешние пользовательские инструменты**: например, `@google/gemini-cli`, `@google/gemini-cli-core`, `@anthropic-ai/sdk`. Пользователь ставит их у себя (инсталляторы ядра лишь проверяют наличие и версию), а вендорные части модулей хранят только необходимый runtime (`gemini-cli-core`, Node runtime и пр.).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.118
+- VSIX: `codeai-hub` 1.1.120
 - Autономное ядро: `@codeai-hub/core` 0.2.30
 - Claude module: 0.1.10
 - Codex module: 0.1.5
