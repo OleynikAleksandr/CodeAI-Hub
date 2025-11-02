@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.113] - 2025-11-02
+### Fixed
+- Webview message dispatcher теперь проксирует события `session:binding`, поэтому Info Panel мгновенно показывает подтверждённый `sessionId` без смены фокуса.
+
+### Build
+- VSIX → `codeai-hub-1.1.113.vsix`
+- Core → `codeai-hub-core-darwin-arm64-0.2.28.tar.bz2`
+- Providers → `claude-module-0.1.10.tar.bz2`, `codex-module-0.1.5.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
+
 ## [1.1.112] - 2025-11-02
 ### Fixed
 - Info Panel обновляется мгновенно — RemoteBridge после подтверждения `sessionId` рассылает актуальный `core:state`, поэтому UI не требует ручного рефреша.
