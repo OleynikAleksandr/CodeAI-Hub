@@ -2,16 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.115
-- **Gemini session ID ready on launch**: core 0.2.29 сразу помечает сессию как `ready`, поэтому Info Panel мгновенно показывает реальный `sessionId`.
-- **Immediate binding refresh**: webview-диспетчер обрабатывает `session:binding` напрямую, поэтому Info Panel моментально показывает подтверждённый `sessionId` без переключения вкладок.
-- **Confirmed provider IDs**: Info Panel скрывает временные UUID от Claude/Codex и обновляется только после подтверждённого `sessionId`.
-- **Binding replay safeguards**: RemoteBridge и SDK-адаптеры буферизуют события `sessionIdChanged`, гарантируя, что ранние ответы SDK продвигают привязку в UI.
+## Current Release — v1.1.116
+- **Standalone drag & drop parity**: Input Panel в CEF-клиенте повторяет webview — Shift+drop и мультиматериалы переводятся в текстовые пути через новый FileDropService ядра.
+- **Clipboard fallback everywhere**: локальный клиент обращается к `/api/v1/file-drop`, поэтому вставка из буфера работает даже без drag & drop.
+- **Core HTTP bridge refresh**: RemoteBridge 0.2.30 публикует REST-эндпоинты для dnd-данных, кеширует выборку Finder/Explorer и синхронизирует её с UI.
+- **Documentation parity**: архитектурные профили фиксируют новый пайплайн захвата файлов, чтобы кросс-платформенные клиенты могли использовать общий контракт.
 
 **Artifact bundle**
-- VSIX: `codeai-hub-1.1.115.vsix`
+- VSIX: `codeai-hub-1.1.116.vsix`
 - Launcher: `CodeAIHubLauncher-macos-arm64-1.0.52.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-0.2.29.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-0.2.30.tar.bz2`
 - Providers: `claude-module-0.1.10.tar.bz2`, `codex-module-0.1.5.tar.bz2`, `gemini-module-0.3.8.tar.bz2`
 
 ## Features
