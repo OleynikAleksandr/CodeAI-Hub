@@ -9861,6 +9861,49 @@ ${path}` : path;
       },
       [updateValue]
     );
+    const insertTextAtSelection = (0, import_react10.useCallback)(
+      (text) => {
+        const textarea = textareaRef.current;
+        if (!textarea) {
+          return;
+        }
+        const [selectionStart, selectionEnd] = [
+          textarea.selectionStart ?? textarea.value.length,
+          textarea.selectionEnd ?? textarea.value.length
+        ];
+        const currentValue = textarea.value;
+        const nextValue = currentValue.slice(0, selectionStart) + text + currentValue.slice(selectionEnd);
+        updateValue(nextValue);
+        requestAnimationFrame(() => {
+          const position = selectionStart + text.length;
+          textarea.selectionStart = position;
+          textarea.selectionEnd = position;
+          adjustTextareaHeight(textarea);
+          textarea.focus();
+        });
+      },
+      [updateValue]
+    );
+    const handlePaste = (0, import_react10.useCallback)(
+      (event) => {
+        const clipboardText = event.clipboardData.getData("text") || event.clipboardData.getData("text/plain");
+        if (clipboardText) {
+          event.preventDefault();
+          insertTextAtSelection(clipboardText);
+          return;
+        }
+        if (navigator.clipboard && typeof navigator.clipboard.readText === "function") {
+          event.preventDefault();
+          navigator.clipboard.readText().then((text) => {
+            if (text) {
+              insertTextAtSelection(text);
+            }
+          }).catch(() => {
+          });
+        }
+      },
+      [insertTextAtSelection]
+    );
     const applyExternalValue = (0, import_react10.useCallback)(
       (newValue) => {
         updateValue(newValue);
@@ -9919,6 +9962,7 @@ ${path}` : path;
                     onChange: handleChange,
                     onFocus: () => setIsFocused(true),
                     onKeyDown: handleKeyDown,
+                    onPaste: handlePaste,
                     placeholder: "Type your request or drag files with Shift held...",
                     ref: textareaRef,
                     rows: 1,
