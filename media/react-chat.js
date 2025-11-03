@@ -8215,8 +8215,11 @@
       },
       [applyPendingBinding, providerLabels, syncSessionsRef]
     );
-    const handleSessionMessageEvent2 = (0, import_react3.useCallback)((_payload) => {
-    }, []);
+    const handleSessionMessageEvent2 = (0, import_react3.useCallback)(
+      (_payload) => {
+      },
+      []
+    );
     const handleSessionBindingUpdate = (0, import_react3.useCallback)(
       (payload) => {
         const binding = normalizeBinding({
