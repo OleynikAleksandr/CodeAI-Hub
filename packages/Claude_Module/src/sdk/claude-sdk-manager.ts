@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import type { SDKAuthManager } from "../auth/sdk-auth-manager";
@@ -29,6 +30,11 @@ type ClaudeManagerDependencies = {
   readonly workspace: ClaudeWorkspaceOptions;
   readonly reporter?: ModuleReporter;
   readonly enableDebugStreams?: boolean;
+};
+
+type ThinkingSettings = {
+  readonly enabled: boolean;
+  readonly maxTokens: number;
 };
 
 export class ClaudeSDKManager {
@@ -130,11 +136,12 @@ export class ClaudeSDKManager {
       cwd: this.deps.workspace.workspacePath,
       permissionMode: "bypassPermissions",
       additionalDirectories: [this.deps.workspace.workspacePath],
-      includePartialMessages: true,
+      includePartialMessages: false,
       projectPath,
       settingSources: ["user", "project", "local"],
       environment: this.deps.authManager.getAuthEnvironment(),
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
+      ...this.resolveThinkingOptions(),
     };
     const queryInstance = this.queryFunction({
       prompt: session.messageGenerator as AsyncGenerator<unknown>,
@@ -150,5 +157,45 @@ export class ClaudeSDKManager {
       "projects",
       this.deps.workspace.claudeProjectSlug
     );
+  }
+
+  private resolveThinkingOptions(): {
+    readonly maxThinkingTokens?: number;
+  } {
+    const payload = this.loadThinkingSettings();
+    if (!payload?.enabled) {
+      return {};
+    }
+    return { maxThinkingTokens: payload.maxTokens };
+  }
+
+  private loadThinkingSettings(): ThinkingSettings | null {
+    const settingsPath = this.deps.workspace.settingsPath;
+    if (!settingsPath) {
+      return null;
+    }
+    try {
+      const raw = readFileSync(settingsPath, "utf8");
+      const parsed = JSON.parse(raw) as {
+        readonly thinking?: {
+          readonly enabled?: unknown;
+          readonly maxTokens?: unknown;
+        };
+      };
+      const candidate = parsed?.thinking;
+      if (
+        candidate &&
+        typeof candidate.enabled === "boolean" &&
+        typeof candidate.maxTokens === "number"
+      ) {
+        return {
+          enabled: candidate.enabled,
+          maxTokens: candidate.maxTokens,
+        };
+      }
+    } catch {
+      // ignore malformed settings
+    }
+    return null;
   }
 }

@@ -9106,7 +9106,7 @@
     };
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: wrapperStyles, children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { style: titleStyles5, children: "Thinking Settings" }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { style: titleStyles5, children: "Claude Thinking Settings" }),
       /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: cardStyles, children: [
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
