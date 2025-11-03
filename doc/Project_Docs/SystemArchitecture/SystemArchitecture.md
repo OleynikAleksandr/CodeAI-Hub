@@ -5,7 +5,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Компоненты системы
 - **Автономное ядро** — Node.js сервис, теперь упакованный как JS-бандл + официальный Node 20 runtime. В dev-сборках скрипты (`scripts/build-core.sh`) кладут ядро в `~/.codeai-hub/core/<platform>/<version>/`, а манифест (`assets/core/manifest.json`) указывает на `file://$HOME/.codeai-hub/releases/`. Extension запускает ядро командой `<runtime>/node/bin/node <app>/dist/index.js`, пробрасывая переменные окружения и пути к провайдерам. В релизах манифест переключается обратно на GitHub Releases.
-- **Логирование и окружение**: `CodeAIHubLauncher` пишет события в `~/.codeai-hub/logs/launcher/launcher.log`, перед запуском дописывает `node/bin` из установленного core в `PATH`, а оркестратор выводит JSON-записи в `~/.codeai-hub/logs/core/core.log` (путь задаётся `CODEAI_CORE_LOG_FILE`). Провайдерные модули сохраняют потоковые jsonl-журналы по схеме `~/.codeai-hub/logs/<provider>/<provider>-<sessionId>.jsonl` после получения реального идентификатора сессии, поэтому временных файлов с префиксом `session-` больше не появляется.
+- **Логирование и окружение**: `CodeAIHubLauncher` пишет события в `~/.codeai-hub/logs/launcher/launcher.log`, перед запуском дописывает `node/bin` из установленного core в `PATH`, а оркестратор выводит JSON-записи в `~/.codeai-hub/logs/core/core.log` (путь задаётся `CODEAI_CORE_LOG_FILE`). Провайдерные модули сохраняют потоковые jsonl-журналы по схеме `~/.codeai-hub/logs/<provider>/<provider>-<sessionId>.jsonl` после получения реального идентификатора сессии, поэтому временных файлов с префиксом `session-` больше не появляется. Gemini-адаптер дополнительно пишет `raw_event` для каждого CLI-события, чтобы подготовить унифицированный парсер.
 - **Клиентские интерфейсы**: webview VS Code, локальный CEF клиент, облачный/Mobile UI. Все они подключаются к ядру через HTTP/WebSocket API (Remote Bridge). Маковский лаунчер сохраняет геометрию через `setFrameAutosaveName("CodeAIHubMainWindow")`, а слой `window_state_persistence` служит миграцией со старого формата. Начиная с версии 1.1.95 лаунчер сам проверяет наличие запущенного core и, при необходимости, стартует bundled Node runtime, поэтому автономный интерфейс больше не зависит от активированного расширения.
 - **Провайдерные модули**: устанавливаются в `~/.codeai-hub/providers/<stack>/<version>/`. В dev-режиме сборочные скрипты сразу публикуют туда архивы, чтобы VSIX ничего не качал извне; официальные SDK/CLI подтягиваются при запуске через npm или инсталляторы.
 - **Пайплайн статусов загрузки**: `RuntimeStatusReporter` в ядре собирает прогресс (boot, установка компонентов, готовность провайдеров), RemoteBridge ретранслирует `core:loading-status`, а webview/CEF рендерят человеко-понятные сообщения с подсказкой о первом запуске.
@@ -15,25 +15,25 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **macOS меню**: лаунчер CEF создаёт системное меню `Edit` с командами Copy/Paste/Select All, поэтому стандартные шорткаты работают в standalone окне без костылей.
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.123
-- Autономное ядро: `@codeai-hub/core` 1.1.123
-- Claude module: 1.1.123
-- Codex module: 1.1.123
-- Gemini module: 1.1.123 (CommonJS bridge → ESM tooling)
+- VSIX: `codeai-hub` 1.1.124
+- Autономное ядро: `@codeai-hub/core` 1.1.124
+- Claude module: 1.1.124
+- Codex module: 1.1.124
+- Gemini module: 1.1.124 (CommonJS bridge → ESM tooling)
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.123/
+│       └── 1.1.124/
 │           ├── node/           # официальный Node 20 runtime
 │           ├── app/            # JS-бандл core + tarballs зависимостей
 │           └── install.json
 ├── providers/
-│   ├── claude/1.1.123/
-│   ├── codex/1.1.123/
-│   └── gemini/1.1.123/
+│   ├── claude/1.1.124/
+│   ├── codex/1.1.124/
+│   └── gemini/1.1.124/
 │       ├── dist/
 │       │   ├── index.js
 │       │   ├── installer/

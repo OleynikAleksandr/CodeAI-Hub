@@ -2,17 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.123
-- **Clipboard module**: Input Panel в standalone использует выделенный обработчик — Command+C/V и Superwhisper вставляют текст без обходных меню, caret и высота textarea синхронизируются автоматически.
-- **macOS menu integration**: лаунчер CEF добавляет системное меню Edit → Copy/Paste/Select All, поэтому шорткаты работают нативно.
-- **Drag & drop parity**: Shift+drop в standalone продолжает использовать FileDropService, повторяя webview-пайплайн текстовых путей.
-- **Release tooling**: `scripts/build-all.sh` пересобирает core, лаунчер, провайдеры и VSIX одним шагом, гарантируя синхронные версии.
+## Current Release — v1.1.124
+- **Session timeline suspension**: webview и standalone больше не показывают placeholder-сообщения и суррогатные system-events — диалоговый поток появится только после нормализующего врапера.
+- **Raw Gemini stream capture**: логгер провайдера теперь пишет каждый event CLI как есть, что готовит почву для единого парсера JSONL.
+- **Provider docs refresh**: архитектурный план и TODO обновлены под новую стратегию нормализации логов и фазу исследования SDK.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.123.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.123.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.123.tar.bz2`
-- Providers: `claude-module-1.1.123.tar.bz2`, `codex-module-1.1.123.tar.bz2`, `gemini-module-1.1.123.tar.bz2`
+- VSIX: `codeai-hub-1.1.124.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.124.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.124.tar.bz2`
+- Providers: `claude-module-1.1.124.tar.bz2`, `codex-module-1.1.124.tar.bz2`, `gemini-module-1.1.124.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
