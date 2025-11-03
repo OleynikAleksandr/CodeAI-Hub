@@ -13,37 +13,40 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Привязка сессий**: RemoteBridge транслирует событие `session:binding` при создании и смене идентификатора провайдера. Состояние (`pending`, `ready`, `failed`) и фактический `providerSessionId` попадают в Info Panel webview/CEF, что позволяет сразу видеть, удалось ли SDK подтвердить сессию и какой ID назначен.
 - **Внешние пользовательские инструменты**: например, `@google/gemini-cli`, `@google/gemini-cli-core`, `@anthropic-ai/sdk`. Пользователь ставит их у себя (инсталляторы ядра лишь проверяют наличие и версию), а вендорные части модулей хранят только необходимый runtime (`gemini-cli-core`, Node runtime и пр.).
 - **macOS меню**: лаунчер CEF создаёт системное меню `Edit` с командами Copy/Paste/Select All, поэтому стандартные шорткаты работают в standalone окне без костылей.
+- **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/claude.json`, а core передаёт путь в модуль, чтобы каждая сессия использовала актуальный лимит.
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.124
-- Autономное ядро: `@codeai-hub/core` 1.1.124
-- Claude module: 1.1.124
-- Codex module: 1.1.124
-- Gemini module: 1.1.124 (CommonJS bridge → ESM tooling)
+- VSIX: `codeai-hub` 1.1.125
+- Autономное ядро: `@codeai-hub/core` 1.1.125
+- Claude module: 1.1.125
+- Codex module: 1.1.125
+- Gemini module: 1.1.125 (CommonJS bridge → ESM tooling)
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.124/
+│       └── 1.1.125/
 │           ├── node/           # официальный Node 20 runtime
 │           ├── app/            # JS-бандл core + tarballs зависимостей
 │           └── install.json
 ├── providers/
-│   ├── claude/1.1.124/
-│   ├── codex/1.1.124/
-│   └── gemini/1.1.124/
+│   ├── claude/1.1.125/
+│   ├── codex/1.1.125/
+│   └── gemini/1.1.125/
 │       ├── dist/
 │       │   ├── index.js
 │       │   ├── installer/
 │       │   ├── runtime/
 │       │   └── vendor/node_modules/@google/gemini-cli-core
 │       └── install.json
+├── settings/
+│   └── claude.json
 └── releases/
-    ├── codeai-hub-core-darwin-arm64-1.1.123.tar.bz2
-    ├── CodeAIHubLauncher-macos-arm64-1.1.123.tar.bz2
-    └── gemini-module-1.1.123.tar.bz2
+    ├── codeai-hub-core-darwin-arm64-1.1.125.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.125.tar.bz2
+    └── gemini-module-1.1.125.tar.bz2
 ```
 
 ## Провайдеры

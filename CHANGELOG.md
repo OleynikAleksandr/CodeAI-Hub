@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.125] - 2025-11-03
+### Added
+- Settings view now exposes "Claude Thinking Settings" и сохраняет выбранный лимит thinking tokens в общий конфиг.
+- Claude модуль читает настройки перед запуском запроса и отключает частичное стриминг-поведение.
+
+### Build
+- VSIX → `codeai-hub-1.1.125.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.125.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.125.tar.bz2`
+- Providers → `claude-module-1.1.125.tar.bz2`, `codex-module-1.1.125.tar.bz2`, `gemini-module-1.1.125.tar.bz2`
+
 ## [1.1.124] - 2025-11-03
 ### Changed
 - Webview и standalone клиент больше не добавляют placeholder и служебные сообщения напрямую из SDK — интерфейс ждёт нормализованный поток.

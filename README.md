@@ -2,16 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.124
-- **Session timeline suspension**: webview и standalone больше не показывают placeholder-сообщения и суррогатные system-events — диалоговый поток появится только после нормализующего врапера.
-- **Raw Gemini stream capture**: логгер провайдера теперь пишет каждый event CLI как есть, что готовит почву для единого парсера JSONL.
-- **Provider docs refresh**: архитектурный план и TODO обновлены под новую стратегию нормализации логов и фазу исследования SDK.
+## Current Release — v1.1.125
+- **Claude thinking controls**: панель настроек переименована в "Claude Thinking Settings", а выбранный лимит thinking tokens сохраняется в общую конфигурацию.
+- **SDK integration**: Claude модуль читает сохранённые значения перед запуском сессии и больше не запрашивает потоковые partial-сообщения, чтобы вести себя так же, как остальные провайдеры.
+- **Config refresh**: core/манивесты получают путь к файлу настроек Claude и синхронизированы с релизом 1.1.125.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.124.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.124.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.124.tar.bz2`
-- Providers: `claude-module-1.1.124.tar.bz2`, `codex-module-1.1.124.tar.bz2`, `gemini-module-1.1.124.tar.bz2`
+- VSIX: `codeai-hub-1.1.125.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.125.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.125.tar.bz2`
+- Providers: `claude-module-1.1.125.tar.bz2`, `codex-module-1.1.125.tar.bz2`, `gemini-module-1.1.125.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
