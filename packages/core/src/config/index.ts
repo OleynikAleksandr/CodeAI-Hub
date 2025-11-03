@@ -1,3 +1,4 @@
+import { homedir } from "node:os";
 import path from "node:path";
 
 export type CoreConfig = {
@@ -6,6 +7,7 @@ export type CoreConfig = {
   readonly shutdownGracePeriodMs: number;
   readonly claudeWorkspacePath: string;
   readonly claudeProjectSlug: string;
+  readonly claudeSettingsPath: string;
   readonly codexWorkspacePath: string;
   readonly codexSandboxMode?:
     | "read-only"
@@ -25,6 +27,12 @@ export type CoreConfig = {
 
 const DEFAULT_PORT = 8080;
 const DEFAULT_GRACE_MS = 60_000;
+const DEFAULT_SETTINGS_PATH = path.join(
+  homedir(),
+  ".codeai-hub",
+  "settings",
+  "claude.json"
+);
 const NON_ALPHANUMERIC_REGEX = /[^a-zA-Z0-9]/g;
 const MULTIPLE_DASHES_REGEX = /-+/g;
 const TRAILING_DASH_REGEX = /-$/;
@@ -105,6 +113,8 @@ export const loadConfig = (): CoreConfig => {
     process.env.CLAUDE_PROJECT_SLUG ??
     sanitizeSlug(workspacePath.replace(/[^a-zA-Z0-9]/g, "-"));
   const codexWorkspacePath = process.env.CODEX_WORKSPACE_PATH ?? workspacePath;
+  const claudeSettingsPath =
+    process.env.CLAUDE_SETTINGS_PATH ?? DEFAULT_SETTINGS_PATH;
   const codexSandboxMode = toSandboxMode(process.env.CODEX_SANDBOX_MODE);
   const codexApprovalMode = toApprovalMode(process.env.CODEX_APPROVAL_MODE);
   const codexSkipGitRepoCheck = toBoolean(
@@ -126,6 +136,7 @@ export const loadConfig = (): CoreConfig => {
     shutdownGracePeriodMs,
     claudeWorkspacePath: workspacePath,
     claudeProjectSlug: slug,
+    claudeSettingsPath,
     codexWorkspacePath,
     codexSandboxMode,
     codexApprovalMode,

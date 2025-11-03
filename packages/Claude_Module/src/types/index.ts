@@ -7,6 +7,7 @@ export type ClaudeInstallerPaths = {
 export type ClaudeWorkspaceOptions = {
   readonly workspacePath: string;
   readonly claudeProjectSlug: string;
+  readonly settingsPath?: string;
 };
 
 export type ModuleReporter = {

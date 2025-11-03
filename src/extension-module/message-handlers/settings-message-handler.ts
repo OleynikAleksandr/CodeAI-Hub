@@ -1,4 +1,12 @@
 import { type Webview, window } from "vscode";
+import {
+  loadClaudeThinkingSettings,
+  persistClaudeThinkingSettings,
+} from "../settings/claude-thinking-storage";
+import {
+  DEFAULT_SETTINGS_SNAPSHOT,
+  type SettingsSnapshot,
+} from "../settings/types";
 
 export type SettingsMessage =
   | { type: "settings:load" }
@@ -6,26 +14,12 @@ export type SettingsMessage =
   | { type: "settings:reset" }
   | { type: "settings:closed" };
 
-export type SettingsSnapshot = {
-  readonly thinking: {
-    readonly enabled: boolean;
-    readonly maxTokens: number;
-  };
-};
-
-const DEFAULT_SETTINGS: SettingsSnapshot = {
-  thinking: {
-    enabled: false,
-    maxTokens: 4000,
-  },
-};
-
 const STATUS_MESSAGE_TIMEOUT = 2000;
 const MIN_SETTINGS_TOKENS = 2000;
 const MAX_SETTINGS_TOKENS = 32_000;
 
 export class SettingsMessageHandler {
-  private settingsState: SettingsSnapshot = DEFAULT_SETTINGS;
+  private settingsState: SettingsSnapshot = loadClaudeThinkingSettings();
 
   canHandle(message: unknown): message is SettingsMessage {
     if (!message || typeof message !== "object") {
@@ -57,12 +51,18 @@ export class SettingsMessageHandler {
           return;
         }
         this.settingsState = nextSettings;
+        persistClaudeThinkingSettings(this.settingsState).catch(() => {
+          /* ignore persistence errors */
+        });
         this.postSavedNotification(webview);
         window.showInformationMessage("Settings saved (stub implementation).");
         break;
       }
       case "settings:reset": {
-        this.settingsState = DEFAULT_SETTINGS;
+        this.settingsState = DEFAULT_SETTINGS_SNAPSHOT;
+        persistClaudeThinkingSettings(this.settingsState).catch(() => {
+          /* ignore persistence errors */
+        });
         this.postSettings(webview);
         window.showInformationMessage("Settings reset to defaults.");
         break;

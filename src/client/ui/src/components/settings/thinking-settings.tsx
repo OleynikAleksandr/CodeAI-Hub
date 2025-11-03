@@ -45,7 +45,7 @@ const ThinkingSettings: FC<ThinkingSettingsProps> = ({
   return (
     <div style={wrapperStyles}>
       <style>{hideSpinnerStyle}</style>
-      <h3 style={titleStyles}>Thinking Settings</h3>
+      <h3 style={titleStyles}>Claude Thinking Settings</h3>
       <div style={cardStyles}>
         <ThinkingToggle enabled={enabled} onToggle={handleToggle} />
         <ThinkingTokenInput onChange={handleTokenChange} value={maxTokens} />
