@@ -9,7 +9,6 @@ import type {
   SessionRecord,
   SessionSnapshot,
   SessionStatusInfo,
-  SessionTodoItem,
 } from "../../../../types/session";
 
 export type ProviderCatalog = Partial<
@@ -171,38 +170,6 @@ export const createInitialSnapshot = (
     .join(" + ");
 
   const now = Date.now();
-  const baseMessage = {
-    id: `message-${now}`,
-    createdAt: now,
-  } as const;
-
-  const messages: SessionMessage[] = [
-    {
-      ...baseMessage,
-      role: "system",
-      content: `Session created with ${providersSummary}.`,
-    },
-    {
-      id: `message-${now + 1}`,
-      createdAt: now,
-      role: "assistant",
-      content:
-        "This is a placeholder environment. Real provider responses will appear here once the orchestrator is connected.",
-    },
-  ];
-
-  const todos: SessionTodoItem[] = [
-    {
-      id: `todo-${now}`,
-      title: "Draft the first request for the selected providers",
-      completed: false,
-    },
-    {
-      id: `todo-${now + 1}`,
-      title: "Review provider outputs and capture key findings",
-      completed: false,
-    },
-  ];
 
   const status: SessionStatusInfo = {
     providerSummary: providersSummary,
@@ -215,8 +182,8 @@ export const createInitialSnapshot = (
   };
 
   return {
-    messages,
-    todos,
+    messages: [],
+    todos: [],
     status,
     binding: normalizeBinding(session.binding),
     draft: "",

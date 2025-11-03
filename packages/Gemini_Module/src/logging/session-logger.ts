@@ -38,6 +38,11 @@ type LogEntry =
       readonly type: "error";
       readonly payload: Record<string, unknown>;
       readonly timestamp: number;
+    }
+  | {
+      readonly type: "raw_event";
+      readonly payload: unknown;
+      readonly timestamp: number;
     };
 
 const serializeError = (candidate: unknown): Record<string, unknown> => {
@@ -121,6 +126,14 @@ export class GeminiSessionLogger {
     this.reporter?.info?.("Gemini session event", event);
     this.queueEntry({
       type: "event",
+      payload: event,
+      timestamp: Date.now(),
+    });
+  }
+
+  logRawEvent(event: unknown): void {
+    this.queueEntry({
+      type: "raw_event",
       payload: event,
       timestamp: Date.now(),
     });

@@ -130,32 +130,10 @@ export const useSessionStore = (
   );
 
   const handleSessionMessageEvent = useCallback<SessionMessageHandler>(
-    (payload) => {
-      setSnapshots((previous) => {
-        const session = sessionsRef.current.find(
-          (item) => item.id === payload.sessionId
-        );
-        if (!session) {
-          return previous;
-        }
-
-        const current = previous[payload.sessionId] ?? {
-          ...createInitialSnapshot(session, providerLabels),
-          messages: [],
-        };
-
-        const nextMessages = [...current.messages, payload.message];
-        return {
-          ...previous,
-          [payload.sessionId]: buildSnapshotFromMessages(
-            session,
-            providerLabels,
-            nextMessages
-          ),
-        };
-      });
+    (_payload) => {
+      // Temporarily suppress incoming session messages in the UI.
     },
-    [providerLabels]
+    []
   );
 
   const handleSessionBindingUpdate = useCallback<SessionBindingHandler>(

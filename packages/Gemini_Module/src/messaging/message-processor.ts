@@ -89,6 +89,8 @@ export class GeminiMessageProcessor {
     event: ServerGeminiStreamEvent,
     accumulator: TurnAccumulator
   ): HandleEventOutcome {
+    session.logger?.logRawEvent(event);
+
     const handler = this.eventHandlers.get(event.type as GeminiEventType);
     if (handler) {
       return { events: handler(session, event, accumulator) };
