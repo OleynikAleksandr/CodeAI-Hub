@@ -7603,35 +7603,6 @@
       (providerId) => providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId)
     ).join(" + ");
     const now = Date.now();
-    const baseMessage = {
-      id: `message-${now}`,
-      createdAt: now
-    };
-    const messages = [
-      {
-        ...baseMessage,
-        role: "system",
-        content: `Session created with ${providersSummary}.`
-      },
-      {
-        id: `message-${now + 1}`,
-        createdAt: now,
-        role: "assistant",
-        content: "This is a placeholder environment. Real provider responses will appear here once the orchestrator is connected."
-      }
-    ];
-    const todos = [
-      {
-        id: `todo-${now}`,
-        title: "Draft the first request for the selected providers",
-        completed: false
-      },
-      {
-        id: `todo-${now + 1}`,
-        title: "Review provider outputs and capture key findings",
-        completed: false
-      }
-    ];
     const status = {
       providerSummary: providersSummary,
       tokenUsage: {
@@ -7642,8 +7613,8 @@
       updatedAt: now
     };
     return {
-      messages,
-      todos,
+      messages: [],
+      todos: [],
       status,
       binding: normalizeBinding(session.binding),
       draft: ""
@@ -8244,32 +8215,8 @@
       },
       [applyPendingBinding, providerLabels, syncSessionsRef]
     );
-    const handleSessionMessageEvent2 = (0, import_react3.useCallback)(
-      (payload) => {
-        setSnapshots((previous) => {
-          const session = sessionsRef.current.find(
-            (item) => item.id === payload.sessionId
-          );
-          if (!session) {
-            return previous;
-          }
-          const current = previous[payload.sessionId] ?? {
-            ...createInitialSnapshot(session, providerLabels),
-            messages: []
-          };
-          const nextMessages = [...current.messages, payload.message];
-          return {
-            ...previous,
-            [payload.sessionId]: buildSnapshotFromMessages(
-              session,
-              providerLabels,
-              nextMessages
-            )
-          };
-        });
-      },
-      [providerLabels]
-    );
+    const handleSessionMessageEvent2 = (0, import_react3.useCallback)((_payload) => {
+    }, []);
     const handleSessionBindingUpdate = (0, import_react3.useCallback)(
       (payload) => {
         const binding = normalizeBinding({
