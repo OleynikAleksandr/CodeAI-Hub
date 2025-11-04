@@ -117,7 +117,6 @@ export class SDKMessageProcessor {
         });
         break;
       case "assistant":
-        session?.logger?.logAssistantResponse?.(message);
         emitter.emit("message", {
           type: "assistant",
           content: message.message?.content ?? message,
@@ -132,7 +131,6 @@ export class SDKMessageProcessor {
         });
         break;
       case "system":
-        session?.logger?.logSystemMessage?.(message);
         emitter.emit("message", {
           type: "system",
           content: message.content ?? message,
@@ -140,7 +138,6 @@ export class SDKMessageProcessor {
         });
         break;
       case "result": {
-        session?.logger?.logResultMessage?.(message);
         const uuid = crypto.randomUUID();
         emitter.emit("message", {
           type: "result",

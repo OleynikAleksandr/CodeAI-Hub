@@ -278,7 +278,6 @@ export class CodexMessageProcessor {
     if (session.internalTurn) {
       return;
     }
-    session.logger?.logAssistantResponse?.(item);
     this.emitMessage(session, {
       type: "assistant",
       provider: PROVIDER,

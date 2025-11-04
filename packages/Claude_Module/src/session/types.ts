@@ -10,9 +10,6 @@ export type SessionLogger = {
   readonly end: () => void;
   readonly logUserInput: (content: string) => void;
   readonly logSDKMessage: (type: string, payload: unknown) => void;
-  readonly logSystemMessage?: (payload: unknown) => void;
-  readonly logResultMessage?: (payload: unknown) => void;
-  readonly logAssistantResponse?: (payload: unknown) => void;
   readonly renameSession?: (oldId: string, newId: string) => void;
 };
 

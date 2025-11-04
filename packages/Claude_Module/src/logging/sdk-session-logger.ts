@@ -4,7 +4,7 @@ import path from "node:path";
 import type { SessionLogger } from "../session/types";
 
 const LOG_ROOT = path.join(homedir(), ".codeai-hub", "logs", "claude");
-const FILE_PREFIX = "claude";
+const FILE_PREFIX = "sdk-claude";
 const PROVISIONAL_PREFIXES = ["temp_"];
 
 export class SDKSessionLoggerFacade implements SessionLogger {
@@ -69,18 +69,6 @@ export class SDKSessionLoggerFacade implements SessionLogger {
 
   logSDKMessage(type: string, payload: unknown): void {
     this.queueEntry({ type: `sdk:${type}`, payload, timestamp: Date.now() });
-  }
-
-  logSystemMessage(payload: unknown): void {
-    this.queueEntry({ type: "system", payload, timestamp: Date.now() });
-  }
-
-  logResultMessage(payload: unknown): void {
-    this.queueEntry({ type: "result", payload, timestamp: Date.now() });
-  }
-
-  logAssistantResponse(payload: unknown): void {
-    this.queueEntry({ type: "assistant", payload, timestamp: Date.now() });
   }
 
   private isProvisional(sessionId: string): boolean {

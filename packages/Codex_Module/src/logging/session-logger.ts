@@ -4,7 +4,7 @@ import path from "node:path";
 import type { SessionLogger } from "../session/types";
 
 const LOG_ROOT = path.join(homedir(), ".codeai-hub", "logs", "codex");
-const FILE_PREFIX = "codex";
+const FILE_PREFIX = "sdk-codex";
 const PROVISIONAL_PREFIXES = ["codex_"];
 
 export class CodexSessionLogger implements SessionLogger {
@@ -69,10 +69,6 @@ export class CodexSessionLogger implements SessionLogger {
 
   logSDKEvent(scope: string, payload: unknown): void {
     this.queueEntry({ type: `sdk:${scope}`, payload, timestamp: Date.now() });
-  }
-
-  logAssistantResponse(payload: unknown): void {
-    this.queueEntry({ type: "assistant", payload, timestamp: Date.now() });
   }
 
   private isProvisional(sessionId: string): boolean {
