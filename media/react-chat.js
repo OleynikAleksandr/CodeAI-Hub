@@ -7620,26 +7620,6 @@
       draft: ""
     };
   };
-  var buildSnapshotFromMessages = (session, providerLabels, messages) => {
-    const base = createInitialSnapshot(session, providerLabels);
-    const updatedAt = messages.at(-1)?.createdAt ?? base.status.updatedAt;
-    const tokenUsage = messages.reduce(
-      (total, message) => total + message.content.length,
-      0
-    );
-    return {
-      ...base,
-      messages: [...messages],
-      status: {
-        ...base.status,
-        updatedAt,
-        tokenUsage: {
-          ...base.status.tokenUsage,
-          used: Math.min(base.status.tokenUsage.limit, tokenUsage)
-        }
-      }
-    };
-  };
   var removeSnapshot = (snapshots, sessionId) => {
     const { [sessionId]: _discarded, ...rest } = snapshots;
     return rest;
@@ -7696,17 +7676,12 @@
       providerSessionId: typeof session.providerSessionId === "string" ? session.providerSessionId : null,
       status: session.providerSessionStatus === "ready" || session.providerSessionStatus === "failed" ? session.providerSessionStatus : "pending"
     };
-    const record = {
+    return {
       id: sessionId,
       title: session.title,
       providerIds: [providerId],
       createdAt: toNumberTimestamp(session.createdAt),
       binding: normalizeBinding(bindingCandidate)
-    };
-    const messages = session.messages?.map((message) => sanitizeMessage(message)).filter((message) => Boolean(message)) ?? [];
-    return {
-      record,
-      messages
     };
   };
   var convertStatusResponse = (status, fallbackProviders) => {
@@ -7775,7 +7750,7 @@
       }
       notify({
         type: "session:created",
-        payload: normalized.record
+        payload: normalized
       });
     };
     const handleSessionDeleted = (payload) => {
@@ -8192,17 +8167,15 @@
     const hydrateFromCoreState = (0, import_react3.useCallback)(
       (payload) => {
         const nextSessions = payload.sessions.map(
-          (entry) => applyPendingBinding(entry.record)
+          (record) => applyPendingBinding(record)
         );
         syncSessionsRef(nextSessions);
         setSessions(nextSessions);
         const nextSnapshots = {};
-        for (const entry of payload.sessions) {
-          const recordWithBinding = applyPendingBinding(entry.record);
-          nextSnapshots[entry.record.id] = buildSnapshotFromMessages(
-            recordWithBinding,
-            providerLabels,
-            entry.messages
+        for (const session of nextSessions) {
+          nextSnapshots[session.id] = createInitialSnapshot(
+            session,
+            providerLabels
           );
         }
         setSnapshots(nextSnapshots);

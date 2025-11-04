@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.127] - 2025-11-03
+### Changed
+- Core `/api/v1/status` и `core:state` больше не возвращают историю сообщений: UI при рефреше опирается только на live-поток и готовится читать унифицированные JSONL.
+- Session store пересоздаёт снапшоты без встроенных сообщений, а документация `UnifiedSessionArchitecture.md` и SystemArchitecture обновлены под новую схему.
+
+### Build
+- VSIX → `codeai-hub-1.1.127.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.127.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.127.tar.bz2`
+- Providers → `claude-module-1.1.127.tar.bz2`, `codex-module-1.1.127.tar.bz2`, `gemini-module-1.1.127.tar.bz2`
+
 ## [1.1.125] - 2025-11-03
 ### Added
 - Settings view now exposes "Claude Thinking Settings" и сохраняет выбранный лимит thinking tokens в общий конфиг.
