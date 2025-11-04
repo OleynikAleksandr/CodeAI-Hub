@@ -50,7 +50,6 @@ export class ClaudeProviderAdapter {
     const session = this.sdkManager.getSession(sessionId);
     if (session) {
       this.bindSessionEvents(session);
-      await this.sendBootstrapCommand(session.sessionId);
     }
     return sessionId;
   }
@@ -131,10 +130,6 @@ export class ClaudeProviderAdapter {
       this.listeners.set(newId, destination);
     }
     this.flushPendingEvents(newId);
-  }
-
-  private async sendBootstrapCommand(sessionId: string): Promise<void> {
-    await this.sdkManager.sendMessage(sessionId, "/context");
   }
 
   private resolveProjectPath(slug: string): string {

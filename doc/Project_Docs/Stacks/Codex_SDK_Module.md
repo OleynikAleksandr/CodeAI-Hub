@@ -175,7 +175,7 @@ Implications for CodeAI-Hub:
 | Area | Path | Responsibility |
 | --- | --- | --- |
 | SDK entry | `packages/Codex_Module/src/index.ts` | Re-export `CodexProviderAdapter` and shared option types. |
-| Provider adapter | `packages/Codex_Module/src/provider/codex-provider-adapter.ts` | Public facade for Core: session lifecycle orchestration, listener registry, bootstrap commands. |
+| Provider adapter | `packages/Codex_Module/src/provider/codex-provider-adapter.ts` | Public facade for Core: session lifecycle orchestration, listener registry, deferred start until the first user message. |
 | Installer | `packages/Codex_Module/src/installer/*` | `codex-installer.ts` (binary acquisition + integrity checks), `npm-runner.ts` (fallback to global npm), `codex-paths.ts` (manifest-driven paths). |
 | Auth | `packages/Codex_Module/src/auth/*` | `sdk-auth-manager.ts` detects `auth.json`, prompts RemoteBridge for login guidance, exposes environment variables. |
 | Session management | `packages/Codex_Module/src/session/*` | Registry, lifecycle, controller types; mirrors Claude structures with Codex-specific resume hooks. |
@@ -211,7 +211,7 @@ Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source 
   - `turn.failed` / `error` → propagate to error channel.
 - Handle resume: on real `thread.started` events, capture `thread_id`; support `resumeSession(threadId)` for future reconnects.
 - Provide sandbox orchestration: map Hub approvals to CLI `--sandbox` + (future) approval mode using config file edits until official flag is exposed.
-- Issue bootstrap commands if required (e.g., optional `/status` or repository scan) via `thread.runStreamed`.
+- При необходимости поддерживать сервисные проверки (например, `/status`), они отправляются вручную; по умолчанию Codex ждёт реального пользовательского сообщения перед запуском первой turn.
 
 **Message processor (`message-processor.ts`):**
 - Maintain per-session outbound queue feeding `thread.runStreamed`.
