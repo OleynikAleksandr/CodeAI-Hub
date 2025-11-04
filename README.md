@@ -2,15 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.132
-- **Raw SDK transcripts**: Claude, Codex и Gemini теперь сохраняют только неизменённые SDK события в `sdk-<provider>-<sessionId>.jsonl`, избавляясь от дублей `assistant/system/result` и готовя почву для унифицированного парсера.
-- **Normalized log staging**: `norm-*` файлы зарезервированы за будущими враперами — текущие сборки фиксируют только сырой поток, чтобы UI мог воспроизводить данные ровно в том виде, как их отдал провайдер.
+## Current Release — v1.1.134
+- **Dialog stream bootstrap**: все провайдеры нормализуют первые три типа сообщений (`user`, `thinking`, `assistant`), поэтому Dialog Panel сразу отражает ввод пользователя, ход мыслей и финальный ответ без промежуточных JSONL обходов.
+- **Reasoning hooks**: Claude извлекает `thinking` блоки из SDK, Codex поднимает `reasoning` записи CLI, Gemini транслирует `ThoughtSummary`. Эти же события станут источником для SIM-переводов.
+- **SIM blueprint**: добавлен стек-документ Service Intelligence Module (SIM) — единый слой, через который пойдут переводы reasoning и будущие сценарии анализа.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.132.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.132.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.132.tar.bz2`
-- Providers: `claude-module-1.1.132.tar.bz2`, `codex-module-1.1.132.tar.bz2`, `gemini-module-1.1.132.tar.bz2`
+- VSIX: `codeai-hub-1.1.134.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.134.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.134.tar.bz2`
+- Providers: `claude-module-1.1.134.tar.bz2`, `codex-module-1.1.134.tar.bz2`, `gemini-module-1.1.134.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
