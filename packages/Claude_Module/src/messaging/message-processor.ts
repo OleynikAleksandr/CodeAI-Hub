@@ -107,21 +107,15 @@ export class SDKMessageProcessor {
     session?.logger?.logSDKMessage(message.type, message);
 
     switch (message.type) {
-      case "stream_event":
-        emitter.emit("message", {
-          type: "stream_event",
-          uuid: message.uuid,
-          claudeSessionId: message.session_id,
-          event: message.event,
-          timestamp: new Date().toISOString(),
-        });
-        break;
       case "assistant": {
         this.emitThinkingChunks(session, message);
         const assistantText = this.extractAssistantText(message);
+        if (!assistantText) {
+          return;
+        }
         emitter.emit("message", {
           type: "assistant",
-          content: assistantText ?? message.message?.content ?? message,
+          content: assistantText,
           uuid: message.uuid,
           claudeSessionId: message.session_id,
           data: message,
@@ -133,37 +127,7 @@ export class SDKMessageProcessor {
         });
         break;
       }
-      case "system":
-        emitter.emit("message", {
-          type: "system",
-          content: message.content ?? message,
-          metadata: message,
-        });
-        break;
-      case "result": {
-        const uuid = crypto.randomUUID();
-        emitter.emit("message", {
-          type: "result",
-          content: message.result ?? message.content ?? message,
-          uuid,
-          data: {
-            total_cost_usd: message.total_cost_usd,
-            usage: message.usage,
-            duration_ms: message.duration_ms,
-            duration_api_ms: message.duration_api_ms,
-            num_turns: message.num_turns,
-            session_id: message.session_id,
-          },
-          claudeSessionId: message.session_id,
-          timestamp: message.timestamp,
-        });
-        break;
-      }
       default:
-        emitter.emit("message", {
-          type: message.type,
-          content: message,
-        });
         break;
     }
   }
