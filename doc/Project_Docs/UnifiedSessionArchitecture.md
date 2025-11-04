@@ -67,7 +67,7 @@
 ```
 
 **Назначение:** UI отображение (real-time, refresh, resume)
-**Формат:** Унифицированный JSONL (детали в Codex_ChatLogArchitecture.md)
+**Формат:** Унифицированный JSONL (см. раздел «Формат JSONL» ниже)
 **Наши действия:** Пишем через wrapper, читаем одним парсером
 
 ---
@@ -137,7 +137,7 @@ ProviderWrapper.normalize() → UnifiedMessage
 3. **Итеративная разработка формата**
    - Unified формат будет эволюционировать
    - По мере изучения добавляем необходимые поля
-   - Версионирование формата (см. Codex_ChatLogArchitecture.md)
+   - Версионирование формата (см. раздел «Формат JSONL»)
 
 ### Компоненты (общее представление)
 
@@ -145,7 +145,7 @@ ProviderWrapper.normalize() → UnifiedMessage
 - **ProviderWrapper** - для каждого провайдера (нормализация SDK → Unified)
 - **SessionStorage** - запись/чтение наших JSONL файлов
 - **SessionManager** - управление lifecycle сессий
-- **UnifiedFormat** - интерфейсы и типы (детали в Codex_ChatLogArchitecture.md)
+- **UnifiedFormat** - интерфейсы и типы (детали описаны в разделе «Формат JSONL»)
 
 Детальная архитектура компонентов будет описана отдельно после изучения SDK.
 
