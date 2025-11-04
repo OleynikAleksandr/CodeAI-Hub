@@ -18,11 +18,11 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/claude.json`, а core передаёт путь в модуль, чтобы каждая сессия использовала актуальный лимит.
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.136
-- Autономное ядро: `@codeai-hub/core` 1.1.136
-- Claude module: 1.1.136
-- Codex module: 1.1.136
-- Gemini module: 1.1.136 (CommonJS bridge → ESM tooling)
+- VSIX: `codeai-hub` 1.1.138
+- Autономное ядро: `@codeai-hub/core` 1.1.138
+- Claude module: 1.1.138
+- Codex module: 1.1.138
+- Gemini module: 1.1.138 (CommonJS bridge → ESM tooling)
 
 ## Структура артефактов
 ```
