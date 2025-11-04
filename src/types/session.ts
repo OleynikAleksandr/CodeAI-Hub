@@ -1,6 +1,6 @@
 import type { ProviderStackId } from "./provider";
 
-export type SessionMessageRole = "system" | "assistant" | "user";
+export type SessionMessageRole = "system" | "assistant" | "user" | "thinking";
 
 export type SessionMessage = {
   readonly id: string;

@@ -116,10 +116,12 @@ export class SDKMessageProcessor {
           timestamp: new Date().toISOString(),
         });
         break;
-      case "assistant":
+      case "assistant": {
+        this.emitThinkingChunks(session, message);
+        const assistantText = this.extractAssistantText(message);
         emitter.emit("message", {
           type: "assistant",
-          content: message.message?.content ?? message,
+          content: assistantText ?? message.message?.content ?? message,
           uuid: message.uuid,
           claudeSessionId: message.session_id,
           data: message,
@@ -130,6 +132,7 @@ export class SDKMessageProcessor {
           },
         });
         break;
+      }
       case "system":
         emitter.emit("message", {
           type: "system",
@@ -163,6 +166,65 @@ export class SDKMessageProcessor {
         });
         break;
     }
+  }
+
+  private emitThinkingChunks(
+    session: ActiveSession | undefined,
+    message: ClaudeStreamMessage
+  ): void {
+    if (!session) {
+      return;
+    }
+    const content = message.message?.content;
+    if (!Array.isArray(content)) {
+      return;
+    }
+    for (const block of content) {
+      if (
+        block &&
+        typeof block === "object" &&
+        (block as { readonly type?: string }).type === "thinking" &&
+        typeof (block as { readonly thinking?: unknown }).thinking === "string"
+      ) {
+        session.eventEmitter.emit("message", {
+          type: "dialog_message",
+          role: "thinking",
+          content: (block as { readonly thinking: string }).thinking,
+          uuid: `${message.uuid ?? crypto.randomUUID()}::thinking`,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    }
+  }
+
+  private extractAssistantText(message: ClaudeStreamMessage): string | null {
+    const blocks = message.message?.content;
+    if (!Array.isArray(blocks)) {
+      return null;
+    }
+    const parts: string[] = [];
+    for (const block of blocks) {
+      if (!block || typeof block !== "object") {
+        continue;
+      }
+      const kind = (block as { readonly type?: string }).type;
+      if (
+        kind === "text" &&
+        typeof (block as { readonly text?: unknown }).text === "string"
+      ) {
+        parts.push((block as { readonly text: string }).text);
+      } else if (
+        kind === "output_text" &&
+        typeof (block as { readonly output_text?: unknown }).output_text ===
+          "string"
+      ) {
+        parts.push((block as { readonly output_text: string }).output_text);
+      }
+    }
+    if (parts.length === 0) {
+      return null;
+    }
+    return parts.join("\n\n");
   }
 
   getSDKFilesBefore(): string[] {

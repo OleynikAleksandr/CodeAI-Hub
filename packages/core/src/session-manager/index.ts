@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-export type SessionRole = "user" | "assistant" | "system";
+export type SessionRole = "user" | "assistant" | "system" | "thinking";
 
 export type SessionMessage = {
   readonly id: string;
@@ -55,7 +55,8 @@ export class SessionManager {
   appendMessage(
     sessionId: string,
     role: SessionRole,
-    content: string
+    content: string,
+    timestamp?: string
   ): SessionMessage | null {
     const session = this.sessions.get(sessionId);
     if (!session) {
@@ -67,7 +68,7 @@ export class SessionManager {
       role,
       content,
       sessionId,
-      timestamp: new Date().toISOString(),
+      timestamp: timestamp ?? new Date().toISOString(),
     };
 
     session.messages.push(message);

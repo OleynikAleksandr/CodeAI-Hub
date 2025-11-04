@@ -127,8 +127,21 @@ export const useSessionStore = (
   );
 
   const handleSessionMessageEvent = useCallback<SessionMessageHandler>(
-    (_payload) => {
-      // Temporarily suppress incoming session messages in the UI.
+    (payload) => {
+      setSnapshots((previous) => {
+        const snapshot = previous[payload.sessionId];
+        if (!snapshot) {
+          return previous;
+        }
+        const nextMessages = [...snapshot.messages, payload.message];
+        return {
+          ...previous,
+          [payload.sessionId]: {
+            ...snapshot,
+            messages: nextMessages,
+          },
+        } satisfies SessionSnapshots;
+      });
     },
     []
   );

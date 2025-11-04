@@ -96,6 +96,12 @@ type ProviderEventEnvelope = {
   readonly payload?: unknown;
 };
 
+type DialogMessagePayload = {
+  readonly role?: string;
+  readonly content?: unknown;
+  readonly timestamp?: string;
+};
+
 type SessionIdChangedPayload = {
   readonly newId?: string;
 };
@@ -521,7 +527,7 @@ export class RemoteBridge {
 
   private appendProviderMessage(
     sessionId: string,
-    role: "assistant" | "system",
+    role: "assistant" | "system" | "thinking",
     event: unknown
   ): void {
     const content = this.extractMessageContent(event);
@@ -529,6 +535,34 @@ export class RemoteBridge {
       return;
     }
     const message = this.sessionManager.appendMessage(sessionId, role, content);
+    if (message) {
+      this.broadcast({ type: "session:message", payload: message });
+    }
+  }
+
+  private appendDialogMessage(
+    sessionId: string,
+    payload: DialogMessagePayload
+  ): void {
+    if (
+      !payload ||
+      typeof payload !== "object" ||
+      typeof payload.content !== "string"
+    ) {
+      return;
+    }
+    const role =
+      payload.role === "user" ||
+      payload.role === "assistant" ||
+      payload.role === "thinking"
+        ? payload.role
+        : "assistant";
+    const message = this.sessionManager.appendMessage(
+      sessionId,
+      role,
+      payload.content,
+      payload.timestamp
+    );
     if (message) {
       this.broadcast({ type: "session:message", payload: message });
     }
@@ -627,6 +661,12 @@ export class RemoteBridge {
         this.appendProviderMessage(sessionId, role, event);
         return;
       }
+      case "thinking":
+        this.appendProviderMessage(sessionId, "thinking", event);
+        return;
+      case "dialog_message":
+        this.appendDialogMessage(sessionId, event as DialogMessagePayload);
+        return;
       case "result":
         this.appendProviderMessage(sessionId, "assistant", event);
         return;

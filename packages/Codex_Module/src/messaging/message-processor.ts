@@ -251,6 +251,10 @@ export class CodexMessageProcessor {
     event: ItemStartedEvent | ItemUpdatedEvent | ItemCompletedEvent
   ): void {
     const item = event.item as ThreadItem;
+    if (item.type === "reasoning" && typeof item.text === "string") {
+      this.emitDialogMessage(session, "thinking", item.text, item.id);
+      return;
+    }
     if (item.type !== "agent_message") {
       return;
     }
@@ -302,6 +306,24 @@ export class CodexMessageProcessor {
       return;
     }
     session.eventEmitter.emit("message", payload);
+  }
+
+  private emitDialogMessage(
+    session: ActiveSession,
+    role: "assistant" | "thinking" | "user",
+    content: string,
+    id?: string
+  ): void {
+    if (!content || content.trim().length === 0) {
+      return;
+    }
+    session.eventEmitter.emit("message", {
+      type: "dialog_message",
+      role,
+      content,
+      uuid: id ?? crypto.randomUUID(),
+      timestamp: new Date().toISOString(),
+    });
   }
 
   private isEnqueuedMessage(value: unknown): value is EnqueuedMessage {
