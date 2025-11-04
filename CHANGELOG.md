@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.128] - 2025-11-04
+### Changed
+- Codex и Claude провайдеры больше не выполняют автоматические slash-команды при создании сессии; реальные threadId подставляются только после первого пользовательского сообщения через событие `session:binding`.
+- SystemArchitecture и Codex stack docs обновлены: UI видит временные ID до handoff, Info панель перестраивается сразу после прихода реального идентификатора; Gemini продолжает сообщать ID немедленно.
+
+### Build
+- VSIX → `codeai-hub-1.1.128.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.128.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.128.tar.bz2`
+- Providers → `claude-module-1.1.128.tar.bz2`, `codex-module-1.1.128.tar.bz2`, `gemini-module-1.1.128.tar.bz2`
+
 ## [1.1.127] - 2025-11-03
 ### Changed
 - Core `/api/v1/status` и `core:state` больше не возвращают историю сообщений: UI при рефреше опирается только на live-поток и готовится читать унифицированные JSONL.
