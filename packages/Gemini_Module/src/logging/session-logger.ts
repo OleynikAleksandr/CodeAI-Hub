@@ -4,7 +4,7 @@ import path from "node:path";
 import type { ModuleReporter } from "../types";
 
 const LOG_ROOT = path.join(homedir(), ".codeai-hub", "logs", "gemini");
-const FILE_PREFIX = "gemini";
+const FILE_PREFIX = "sdk-gemini";
 
 type LogEntry =
   | {
@@ -20,44 +20,10 @@ type LogEntry =
       readonly timestamp: number;
     }
   | {
-      readonly type: "user_input";
-      readonly payload: Record<string, unknown>;
-      readonly timestamp: number;
-    }
-  | {
-      readonly type: "event";
-      readonly payload: Record<string, unknown>;
-      readonly timestamp: number;
-    }
-  | {
-      readonly type: "cli_output";
-      readonly payload: Record<string, unknown>;
-      readonly timestamp: number;
-    }
-  | {
-      readonly type: "error";
-      readonly payload: Record<string, unknown>;
-      readonly timestamp: number;
-    }
-  | {
       readonly type: "raw_event";
       readonly payload: unknown;
       readonly timestamp: number;
     };
-
-const serializeError = (candidate: unknown): Record<string, unknown> => {
-  if (candidate instanceof Error) {
-    return {
-      name: candidate.name,
-      message: candidate.message,
-      stack: candidate.stack,
-    };
-  }
-  if (!candidate || typeof candidate !== "object") {
-    return { message: String(candidate) };
-  }
-  return candidate as Record<string, unknown>;
-};
 
 export class GeminiSessionLogger {
   private readonly reporter?: ModuleReporter;
@@ -124,11 +90,6 @@ export class GeminiSessionLogger {
 
   logEvent(event: Record<string, unknown>): void {
     this.reporter?.info?.("Gemini session event", event);
-    this.queueEntry({
-      type: "event",
-      payload: event,
-      timestamp: Date.now(),
-    });
   }
 
   logRawEvent(event: unknown): void {
@@ -141,37 +102,18 @@ export class GeminiSessionLogger {
 
   logUserInput(payload: Record<string, unknown>): void {
     this.reporter?.info?.("Gemini user input", payload);
-    this.queueEntry({
-      type: "user_input",
-      payload,
-      timestamp: Date.now(),
-    });
   }
 
   logCliOutput(payload: Record<string, unknown>): void {
     this.reporter?.info?.("Gemini CLI output", payload);
-    this.queueEntry({
-      type: "cli_output",
-      payload,
-      timestamp: Date.now(),
-    });
   }
 
   logError(payload: Record<string, unknown>): void {
-    const normalized = {
-      ...payload,
-      error: serializeError(payload.error),
-    };
     const errorObject =
       payload.error instanceof Error
         ? payload.error
         : new Error(String(payload.error ?? "unknown"));
     this.reporter?.error?.("Gemini session error", errorObject, payload);
-    this.queueEntry({
-      type: "error",
-      payload: normalized,
-      timestamp: Date.now(),
-    });
   }
 
   private commitSession(sessionId: string): void {
