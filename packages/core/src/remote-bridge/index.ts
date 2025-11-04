@@ -7,7 +7,7 @@ import { WebSocket, WebSocketServer } from "ws";
 import type { CoreConfig } from "../config";
 import type { FileDropService } from "../file-drop/file-drop-service";
 import type { ProviderRegistry } from "../provider-registry";
-import type { SessionManager } from "../session-manager";
+import type { Session, SessionManager } from "../session-manager";
 import type {
   RuntimeStatusEvent,
   RuntimeStatusReporter,
@@ -46,8 +46,18 @@ type BridgeEvent =
       readonly payload: RuntimeStatusEvent;
     };
 
+type SerializedSession = {
+  readonly id: string;
+  readonly providerId: string;
+  readonly title: string;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+  readonly providerSessionId: string | null;
+  readonly providerSessionStatus: "pending" | "ready" | "failed";
+};
+
 type CoreStatePayload = {
-  readonly sessions: ReturnType<SessionManager["listSessions"]>;
+  readonly sessions: readonly SerializedSession[];
   readonly providers: ReturnType<ProviderRegistry["listProviders"]>;
 };
 
@@ -260,7 +270,7 @@ export class RemoteBridge {
           port: this.config.port,
           clients: this.getActiveClientCount(),
         },
-        sessions: this.sessionManager.listSessions(),
+        sessions: this.serializeSessions(),
         providers: this.providerRegistry.listProviders(),
       });
     });
@@ -330,8 +340,26 @@ export class RemoteBridge {
 
   private buildInitialState(): CoreStatePayload {
     return {
-      sessions: this.sessionManager.listSessions(),
+      sessions: this.serializeSessions(),
       providers: this.providerRegistry.listProviders(),
+    };
+  }
+
+  private serializeSessions(): readonly SerializedSession[] {
+    return this.sessionManager
+      .listSessions()
+      .map((session) => this.serializeSession(session));
+  }
+
+  private serializeSession(session: Session): SerializedSession {
+    return {
+      id: session.id,
+      providerId: session.providerId,
+      title: session.title,
+      createdAt: session.createdAt,
+      updatedAt: session.updatedAt,
+      providerSessionId: session.providerSessionId ?? null,
+      providerSessionStatus: session.providerSessionStatus,
     };
   }
 
@@ -411,7 +439,7 @@ export class RemoteBridge {
     }
     this.broadcast({
       type: "session:created",
-      payload: session,
+      payload: this.serializeSession(session),
     });
     this.broadcastSessionBinding(session.id);
   }
