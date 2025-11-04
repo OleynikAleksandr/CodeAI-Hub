@@ -59,7 +59,11 @@ export const sanitizeMessage = (
   }
 
   const role = message.role ?? "assistant";
-  if (!(["assistant", "user", "system"] as const).includes(role as never)) {
+  if (
+    !(["assistant", "user", "system", "thinking"] as const).includes(
+      role as never
+    )
+  ) {
     return null;
   }
 

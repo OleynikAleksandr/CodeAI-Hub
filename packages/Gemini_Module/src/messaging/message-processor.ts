@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import type {
   GeminiEventType,
   ServerGeminiStreamEvent,
@@ -277,6 +278,16 @@ export class GeminiMessageProcessor {
       promptId: accumulator.promptId,
       summary: value,
     });
+    const formatted =
+      value.subject && value.subject.trim().length > 0
+        ? `${value.subject.trim()}: ${value.description}`
+        : value.description;
+    this.emitDialogMessage(
+      session,
+      "thinking",
+      formatted,
+      accumulator.promptId
+    );
     return [
       {
         type: "system",
@@ -373,6 +384,28 @@ export class GeminiMessageProcessor {
     const fallback = new Error("Gemini reported an error.");
     this.reporter?.error?.("Gemini stream error", fallback, { payload: value });
     return fallback;
+  }
+
+  private emitDialogMessage(
+    session: ActiveSession,
+    role: "assistant" | "thinking" | "user",
+    content: string,
+    seed?: string
+  ): void {
+    if (!content || content.trim().length === 0) {
+      return;
+    }
+    const uuid =
+      seed && seed.length > 0
+        ? `${seed}-${role}-${crypto.randomUUID()}`
+        : crypto.randomUUID();
+    session.eventEmitter.emit("message", {
+      type: "dialog_message",
+      role,
+      content,
+      uuid,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   private isToolCallRequestInfo(value: unknown): value is ToolCallRequestInfo {

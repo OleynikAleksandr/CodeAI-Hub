@@ -72,7 +72,9 @@ export class ClaudeSDKManager {
       .processResponses({
         sessionId: tempId,
         iterator: queryInstance,
-        onRealSessionId: (realId) => this.promoteSessionId(tempId, realId),
+        onRealSessionId: () => {
+          /* sessionId promotion is handled via realSessionId event */
+        },
       })
       .catch((error) => {
         this.deps.reporter?.error?.("Claude response processing failed", error);

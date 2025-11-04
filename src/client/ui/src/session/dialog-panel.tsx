@@ -8,6 +8,7 @@ const roleLabel: Record<SessionMessage["role"], string> = {
   system: "System",
   assistant: "Assistant",
   user: "You",
+  thinking: "Thinking",
 };
 
 const DialogPanel = ({ messages }: DialogPanelProps) => {
