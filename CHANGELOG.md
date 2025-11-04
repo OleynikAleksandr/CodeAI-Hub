@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.134] - 2025-11-04
+### Added
+- Dialog Panel now получает нормализованные `user/thinking/assistant` сообщения от Claude, Codex и Gemini, поэтому первые шаги диалога сразу отображаются в UI и сохраняются в JSONL.
+- Claude/Codex/Gemini враперы поднимают reasoning-чунки в единый формат `dialog_message`, готовя поток для SIM-переводов.
+- Добавлен стек-документ `ServiceIntelligenceModule.md`, описывающий архитектуру Service Intelligence Module (SIM) и цели Phase A.
+
+### Build
+- VSIX → `codeai-hub-1.1.134.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.134.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.134.tar.bz2`
+- Providers → `claude-module-1.1.134.tar.bz2`, `codex-module-1.1.134.tar.bz2`, `gemini-module-1.1.134.tar.bz2`
+
 ## [1.1.132] - 2025-11-04
 ### Changed
 - Provider loggers now persist only the untouched SDK stream under `~/.codeai-hub/logs/<provider>/sdk-<provider>-<sessionId>.jsonl`, removing duplicate `assistant/system/result` events and reserving `norm-*` files for the future unified wrappers.

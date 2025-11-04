@@ -7653,7 +7653,9 @@
       return null;
     }
     const role = message.role ?? "assistant";
-    if (!["assistant", "user", "system"].includes(role)) {
+    if (!["assistant", "user", "system", "thinking"].includes(
+      role
+    )) {
       return null;
     }
     return {
@@ -8189,7 +8191,21 @@
       [applyPendingBinding, providerLabels, syncSessionsRef]
     );
     const handleSessionMessageEvent2 = (0, import_react3.useCallback)(
-      (_payload) => {
+      (payload) => {
+        setSnapshots((previous) => {
+          const snapshot = previous[payload.sessionId];
+          if (!snapshot) {
+            return previous;
+          }
+          const nextMessages = [...snapshot.messages, payload.message];
+          return {
+            ...previous,
+            [payload.sessionId]: {
+              ...snapshot,
+              messages: nextMessages
+            }
+          };
+        });
       },
       []
     );
@@ -9245,7 +9261,8 @@
   var roleLabel = {
     system: "System",
     assistant: "Assistant",
-    user: "You"
+    user: "You",
+    thinking: "Thinking"
   };
   var DialogPanel = ({ messages }) => {
     if (messages.length === 0) {
