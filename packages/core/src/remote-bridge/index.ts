@@ -656,19 +656,13 @@ export class RemoteBridge {
         });
         return;
       case "assistant":
-      case "system": {
-        const role = event.type === "assistant" ? "assistant" : "system";
-        this.appendProviderMessage(sessionId, role, event);
+        this.appendProviderMessage(sessionId, "assistant", event);
         return;
-      }
       case "thinking":
         this.appendProviderMessage(sessionId, "thinking", event);
         return;
       case "dialog_message":
         this.appendDialogMessage(sessionId, event as DialogMessagePayload);
-        return;
-      case "result":
-        this.appendProviderMessage(sessionId, "assistant", event);
         return;
       default:
         return;

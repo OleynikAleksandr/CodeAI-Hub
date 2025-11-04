@@ -528,9 +528,15 @@ export class GeminiSessionManager {
       return;
     }
     for (const event of events) {
-      session.eventEmitter.emit("message", event);
+      if (GeminiSessionManager.ALLOWED_EVENT_TYPES.has(event.type)) {
+        session.eventEmitter.emit("message", event);
+      }
     }
   }
+
+  private static readonly ALLOWED_EVENT_TYPES = new Set<
+    GeminiSessionEvent["type"]
+  >(["assistant"]);
 
   private sanitizeEnvironment(): void {
     for (const key of GEMINI_ENV_KEYS_TO_CLEAR) {
