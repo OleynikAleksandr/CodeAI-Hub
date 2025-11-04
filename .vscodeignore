@@ -20,6 +20,7 @@ dist/**
 .vsix/**
 .claude/**
 .vscode/**
+.gemini/**
 doc/**
 AGENTS.md
 biome.jsonc
