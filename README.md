@@ -2,16 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.134
-- **Dialog stream bootstrap**: все провайдеры нормализуют первые три типа сообщений (`user`, `thinking`, `assistant`), поэтому Dialog Panel сразу отражает ввод пользователя, ход мыслей и финальный ответ без промежуточных JSONL обходов.
-- **Reasoning hooks**: Claude извлекает `thinking` блоки из SDK, Codex поднимает `reasoning` записи CLI, Gemini транслирует `ThoughtSummary`. Эти же события станут источником для SIM-переводов.
-- **SIM blueprint**: добавлен стек-документ Service Intelligence Module (SIM) — единый слой, через который пойдут переводы reasoning и будущие сценарии анализа.
+## Current Release — v1.1.136
+- **Dialog filtering**: Claude больше не вываливает системные init-пакеты и дубли ассистента, а Gemini подавляет сервисные сообщения о tool-коллах — в Диалог панели остаются только `user → thinking → assistant`.
+- **SIM prep**: единый поток reasoning по-прежнему формируется во враперах и готов для дальнейшего подключения Service Intelligence Module.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.134.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.134.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.134.tar.bz2`
-- Providers: `claude-module-1.1.134.tar.bz2`, `codex-module-1.1.134.tar.bz2`, `gemini-module-1.1.134.tar.bz2`
+- VSIX: `codeai-hub-1.1.136.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.136.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.136.tar.bz2`
+- Providers: `claude-module-1.1.136.tar.bz2`, `codex-module-1.1.136.tar.bz2`, `gemini-module-1.1.136.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
