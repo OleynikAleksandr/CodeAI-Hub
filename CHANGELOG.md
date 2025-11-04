@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.138] - 2025-11-04
+### Fixed
+- Claude врапер теперь отправляет в Dialog Panel только текст ассистента и отдельные thinking блоки — структурные массивы SDK больше не попадают в журнал и UI.
+- Gemini уже скрывал tool-эвенты; релиз подтверждает единый `user → thinking → assistant` поток для всех провайдеров.
+
+### Build
+- VSIX → `codeai-hub-1.1.138.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.138.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.138.tar.bz2`
+- Providers → `claude-module-1.1.138.tar.bz2`, `codex-module-1.1.138.tar.bz2`, `gemini-module-1.1.138.tar.bz2`
+
 ## [1.1.136] - 2025-11-04
 ### Fixed
 - Remote Bridge перестал ретранслировать `system`/`result` события провайдеров, поэтому Claude больше не показывает init-пакеты и дубли ответов в Dialog Panel.
