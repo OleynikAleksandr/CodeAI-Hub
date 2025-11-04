@@ -33,7 +33,7 @@ export type ServerSession = {
   readonly providerId?: ProviderStackId | string;
   readonly title?: string;
   readonly createdAt?: string;
-  readonly messages?: readonly ServerSessionMessage[];
+  readonly updatedAt?: string;
   readonly providerSessionId?: string | null;
   readonly providerSessionStatus?: "pending" | "ready" | "failed";
 };
@@ -43,13 +43,8 @@ export type ServerStatusResponse = {
   readonly providers?: readonly ServerProvider[];
 };
 
-export type CoreBridgeSession = {
-  readonly record: SessionRecord;
-  readonly messages: readonly SessionMessage[];
-};
-
 export type CoreBridgeStatePayload = {
-  readonly sessions: readonly CoreBridgeSession[];
+  readonly sessions: readonly SessionRecord[];
   readonly providers: readonly ProviderStackDescriptor[];
 };
 

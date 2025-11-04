@@ -7,10 +7,10 @@ import {
 import type {
   SessionBindingInfo,
   SessionMessage,
+  SessionRecord,
 } from "../../../../types/session";
 import { normalizeBinding, providerIdSet } from "../session/helpers";
 import type {
-  CoreBridgeSession,
   CoreBridgeStatePayload,
   ServerProvider,
   ServerSession,
@@ -73,7 +73,7 @@ export const sanitizeMessage = (
 
 export const sanitizeSession = (
   session: ServerSession | undefined
-): CoreBridgeSession | null => {
+): SessionRecord | null => {
   if (
     !session ||
     typeof session.id !== "string" ||
@@ -101,22 +101,12 @@ export const sanitizeSession = (
         : "pending",
   };
 
-  const record = {
+  return {
     id: sessionId,
     title: session.title,
     providerIds: [providerId],
     createdAt: toNumberTimestamp(session.createdAt),
     binding: normalizeBinding(bindingCandidate),
-  };
-
-  const messages =
-    session.messages
-      ?.map((message) => sanitizeMessage(message))
-      .filter((message): message is SessionMessage => Boolean(message)) ?? [];
-
-  return {
-    record,
-    messages,
   };
 };
 
@@ -133,8 +123,7 @@ export const convertStatusResponse = (
   const sessions =
     status.sessions
       ?.map((session) => sanitizeSession(session))
-      .filter((session): session is CoreBridgeSession => Boolean(session)) ??
-    [];
+      .filter((session): session is SessionRecord => Boolean(session)) ?? [];
 
   return {
     sessions,

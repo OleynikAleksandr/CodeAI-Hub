@@ -14,7 +14,6 @@ import type {
   CoreBridgeStatePayload,
 } from "../core-bridge/types";
 import {
-  buildSnapshotFromMessages,
   createInitialSnapshot,
   normalizeBinding,
   removeSnapshot,
@@ -102,19 +101,17 @@ export const useSessionStore = (
 
   const hydrateFromCoreState = useCallback<CoreStateHandler>(
     (payload) => {
-      const nextSessions = payload.sessions.map((entry) =>
-        applyPendingBinding(entry.record)
+      const nextSessions = payload.sessions.map((record) =>
+        applyPendingBinding(record)
       );
       syncSessionsRef(nextSessions);
       setSessions(nextSessions);
 
       const nextSnapshots: SessionSnapshots = {};
-      for (const entry of payload.sessions) {
-        const recordWithBinding = applyPendingBinding(entry.record);
-        nextSnapshots[entry.record.id] = buildSnapshotFromMessages(
-          recordWithBinding,
-          providerLabels,
-          entry.messages
+      for (const session of nextSessions) {
+        nextSnapshots[session.id] = createInitialSnapshot(
+          session,
+          providerLabels
         );
       }
       setSnapshots(nextSnapshots);

@@ -5,7 +5,6 @@ import type {
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type {
   SessionBindingInfo,
-  SessionMessage,
   SessionRecord,
   SessionSnapshot,
   SessionStatusInfo,
@@ -187,32 +186,6 @@ export const createInitialSnapshot = (
     status,
     binding: normalizeBinding(session.binding),
     draft: "",
-  };
-};
-
-export const buildSnapshotFromMessages = (
-  session: SessionRecord,
-  providerLabels: ReadonlyMap<ProviderStackId, string>,
-  messages: readonly SessionMessage[]
-): SessionSnapshot => {
-  const base = createInitialSnapshot(session, providerLabels);
-  const updatedAt = messages.at(-1)?.createdAt ?? base.status.updatedAt;
-  const tokenUsage = messages.reduce(
-    (total, message) => total + message.content.length,
-    0
-  );
-
-  return {
-    ...base,
-    messages: [...messages],
-    status: {
-      ...base.status,
-      updatedAt,
-      tokenUsage: {
-        ...base.status.tokenUsage,
-        used: Math.min(base.status.tokenUsage.limit, tokenUsage),
-      },
-    },
   };
 };
 

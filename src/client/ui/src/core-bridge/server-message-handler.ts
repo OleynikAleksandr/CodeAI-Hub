@@ -119,7 +119,7 @@ export const createServerMessageHandler = (
     }
     notify({
       type: "session:created",
-      payload: normalized.record,
+      payload: normalized,
     });
   };
 
