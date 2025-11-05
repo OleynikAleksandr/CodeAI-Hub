@@ -9251,7 +9251,7 @@
     color: "#999999",
     padding: "10px 0"
   };
-  var TABS = [
+  var settingsTabs = [
     { id: "claude", label: "Claude" },
     { id: "codex", label: "Codex" },
     { id: "gemini", label: "Gemini" },
@@ -9270,7 +9270,7 @@
     } = useSettingsState();
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: containerStyles4, children: [
       /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(settings_header_default, { onClose }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { style: tabBarStyles, children: TABS.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         "button",
         {
           onClick: () => setActiveTab(tab.id),
