@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.142] - 2025-11-04
+### Changed
+- Session dialog cards now render provider-specific shells: user сообщения смещены вправо, плашки Claude/Codex/Gemini получают фирменные фоны и метки, reasoning блок `Thinking` скрыт по умолчанию и разворачивается по клику.
+
+### Build
+- VSIX → `codeai-hub-1.1.142.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.142.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.142.tar.bz2`
+- Providers → `claude-module-1.1.142.tar.bz2`, `codex-module-1.1.142.tar.bz2`, `gemini-module-1.1.142.tar.bz2`
+
 ## [1.1.141] - 2025-11-04
 ### Fixed
 - Claude sessionId promotion now happens as soon as the SDK emits the first message; the redundant 1s JSONL polling delay has been removed.
