@@ -108,3 +108,5 @@ fi
 
 echo "✅ Installed to $TARGET_DIR"
 echo "📦 Archive ready: $ARCHIVE_PATH"
+
+cleanup_workspace_tarballs "$REPO_ROOT"

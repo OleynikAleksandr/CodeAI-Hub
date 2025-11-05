@@ -241,3 +241,5 @@ fi
 
 echo "✅ Core runtime ready at $INSTALL_ROOT"
 echo "📦 Archive: $ARCHIVE_PATH"
+
+cleanup_workspace_tarballs "$REPO_ROOT"

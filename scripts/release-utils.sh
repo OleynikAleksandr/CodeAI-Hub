@@ -62,3 +62,11 @@ sha1_file() {
     sha1sum "$target" | awk '{print $1}'
   fi
 }
+
+cleanup_workspace_tarballs() {
+  local workspace_root="$1"
+  if [[ -z "$workspace_root" || ! -d "$workspace_root" ]]; then
+    return
+  fi
+  find "$workspace_root" -maxdepth 1 -type f -name "codeai-hub-*.tgz" -exec rm -f {} +
+}
