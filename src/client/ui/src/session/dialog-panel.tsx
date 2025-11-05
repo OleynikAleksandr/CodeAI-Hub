@@ -1,17 +1,61 @@
+import { useEffect, useState } from "react";
 import type { SessionMessage } from "../../../../types/session";
+
+type ProviderTheme = "claude" | "codex" | "gemini";
 
 type DialogPanelProps = {
   readonly messages: readonly SessionMessage[];
+  readonly providerTheme?: ProviderTheme | null;
+  readonly providerLabel?: string | null;
 };
 
-const roleLabel: Record<SessionMessage["role"], string> = {
-  system: "System",
-  assistant: "Assistant",
-  user: "You",
-  thinking: "Thinking",
+type ThinkingMessageProps = {
+  readonly message: SessionMessage;
+  readonly expanded: boolean;
+  readonly onToggle: (messageId: string) => void;
+  readonly label: string;
+  readonly className: string;
 };
 
-const DialogPanel = ({ messages }: DialogPanelProps) => {
+type StandardMessageProps = {
+  readonly message: SessionMessage;
+  readonly label: string;
+  readonly className: string;
+};
+
+const DialogPanel = ({
+  messages,
+  providerTheme = null,
+  providerLabel = null,
+}: DialogPanelProps) => {
+  const [expandedThinking, setExpandedThinking] = useState<
+    Record<string, boolean>
+  >({});
+
+  useEffect(() => {
+    setExpandedThinking((previous) => {
+      let hasChanges = false;
+      const nextState = { ...previous };
+      for (const message of messages) {
+        if (
+          message.role === "thinking" &&
+          nextState[message.id] === undefined
+        ) {
+          nextState[message.id] = false;
+          hasChanges = true;
+        }
+      }
+      return hasChanges ? nextState : previous;
+    });
+  }, [messages]);
+
+  const toggleThinking = (messageId: string) => {
+    setExpandedThinking((previous) => ({
+      ...previous,
+      [messageId]: !previous[messageId],
+    }));
+  };
+
   if (messages.length === 0) {
     return (
       <div className="session-dialog session-panel">
@@ -23,28 +67,123 @@ const DialogPanel = ({ messages }: DialogPanelProps) => {
   return (
     <div className="session-dialog session-panel">
       <div className="session-dialog__scroll">
-        {messages.map((message) => (
-          <article
-            className={`session-dialog__message session-dialog__message--${message.role}`}
-            key={message.id}
-          >
-            <header className="session-dialog__message-header">
-              <span className="session-dialog__role">
-                {roleLabel[message.role]}
-              </span>
-              <time
-                className="session-dialog__timestamp"
-                dateTime={new Date(message.createdAt).toISOString()}
-              >
-                {new Date(message.createdAt).toLocaleTimeString()}
-              </time>
-            </header>
-            <p className="session-dialog__content">{message.content}</p>
-          </article>
-        ))}
+        {messages.map((message) => {
+          const className = buildMessageClassNames(message, providerTheme);
+          const label = resolveRoleLabel(message, providerLabel);
+          if (message.role === "thinking") {
+            const expanded = expandedThinking[message.id] ?? false;
+            return (
+              <ThinkingMessage
+                className={className}
+                expanded={expanded}
+                key={message.id}
+                label={label}
+                message={message}
+                onToggle={toggleThinking}
+              />
+            );
+          }
+
+          return (
+            <StandardMessage
+              className={className}
+              key={message.id}
+              label={label}
+              message={message}
+            />
+          );
+        })}
       </div>
     </div>
   );
 };
 
 export default DialogPanel;
+
+const buildMessageClassNames = (
+  message: SessionMessage,
+  providerTheme: ProviderTheme | null
+): string => {
+  const classes = [
+    "session-dialog__message",
+    `session-dialog__message--${message.role}`,
+  ];
+  if (message.role === "assistant" && providerTheme) {
+    classes.push(`session-dialog__message--assistant-${providerTheme}`);
+  }
+  return classes.join(" ");
+};
+
+const resolveRoleLabel = (
+  message: SessionMessage,
+  providerLabel: string | null
+): string => {
+  if (message.role === "assistant") {
+    return providerLabel ?? "Assistant";
+  }
+  if (message.role === "user") {
+    return "User";
+  }
+  if (message.role === "thinking") {
+    return "Thinking";
+  }
+  return "System";
+};
+
+const ThinkingMessage = ({
+  message,
+  expanded,
+  onToggle,
+  label,
+  className,
+}: ThinkingMessageProps) => (
+  <article className={className}>
+    <header className="session-dialog__message-header session-dialog__message-header--thinking">
+      <button
+        aria-controls={`thinking-${message.id}`}
+        aria-expanded={expanded}
+        className={
+          expanded
+            ? "session-dialog__thinking-toggle session-dialog__thinking-toggle--expanded"
+            : "session-dialog__thinking-toggle"
+        }
+        onClick={() => onToggle(message.id)}
+        title={expanded ? "Hide reasoning" : "Show reasoning"}
+        type="button"
+      >
+        {expanded ? "▾" : "▸"}
+      </button>
+      <span className="session-dialog__role">{label}</span>
+    </header>
+    {expanded ? (
+      <p
+        className="session-dialog__content session-dialog__content--thinking"
+        id={`thinking-${message.id}`}
+      >
+        {message.content}
+      </p>
+    ) : null}
+  </article>
+);
+
+const StandardMessage = ({
+  message,
+  label,
+  className,
+}: StandardMessageProps) => {
+  const messageDate = new Date(message.createdAt);
+  return (
+    <article className={className}>
+      <header className="session-dialog__message-header">
+        <span className="session-dialog__role">{label}</span>
+        <time
+          className="session-dialog__timestamp"
+          dateTime={messageDate.toISOString()}
+        >
+          {messageDate.toLocaleTimeString()}
+        </time>
+      </header>
+      <p className="session-dialog__content">{message.content}</p>
+    </article>
+  );
+};

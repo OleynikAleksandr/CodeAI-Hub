@@ -1,4 +1,5 @@
 import type { ProviderStackId } from "../../../../types/provider";
+import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
 import EmptyState from "./empty-state";
@@ -35,6 +36,16 @@ const SessionView = ({
     activeSessionId && snapshots[activeSessionId]
       ? snapshots[activeSessionId]
       : null;
+  const activeRecord = sessions.find(
+    (session) => session.id === activeSessionId
+  );
+  const primaryProviderId = activeRecord?.providerIds[0] ?? null;
+  const providerTheme = mapProviderTheme(primaryProviderId);
+  const providerDisplayLabel =
+    primaryProviderId != null
+      ? (providerLabels.get(primaryProviderId) ??
+        getDefaultProviderTitle(primaryProviderId))
+      : null;
 
   if (sessions.length === 0 && showEmptyState) {
     return (
@@ -58,7 +69,11 @@ const SessionView = ({
         <>
           <InfoPanel binding={activeSession.binding} />
           <div className="session-grid">
-            <DialogPanel messages={activeSession.messages} />
+            <DialogPanel
+              messages={activeSession.messages}
+              providerLabel={providerDisplayLabel}
+              providerTheme={providerTheme}
+            />
             <TodoPanel
               items={activeSession.todos}
               onToggle={(todoId) => onToggleTodo(activeSessionId, todoId)}
@@ -76,3 +91,18 @@ const SessionView = ({
 };
 
 export default SessionView;
+
+const mapProviderTheme = (
+  providerId: ProviderStackId | null
+): "claude" | "codex" | "gemini" | null => {
+  switch (providerId) {
+    case "claudeCodeCli":
+      return "claude";
+    case "codexCli":
+      return "codex";
+    case "geminiCli":
+      return "gemini";
+    default:
+      return null;
+  }
+};
