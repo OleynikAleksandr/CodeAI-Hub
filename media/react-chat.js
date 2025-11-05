@@ -7281,11 +7281,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react13 = __toESM(require_react());
+  var import_react14 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host.tsx
-  var import_react12 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
 
   // src/client/ui/src/app-host/loading-messages.ts
   var MESSAGE_ORDER = [
@@ -9307,40 +9307,139 @@
   var settings_view_default = import_react9.default.memo(SettingsView);
 
   // src/client/ui/src/session/dialog-panel.tsx
+  var import_react10 = __toESM(require_react());
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
-  var roleLabel = {
-    system: "System",
-    assistant: "Assistant",
-    user: "You",
-    thinking: "Thinking"
-  };
-  var DialogPanel = ({ messages }) => {
+  var DialogPanel = ({
+    messages,
+    providerTheme = null,
+    providerLabel = null
+  }) => {
+    const [expandedThinking, setExpandedThinking] = (0, import_react10.useState)({});
+    (0, import_react10.useEffect)(() => {
+      setExpandedThinking((previous) => {
+        let hasChanges = false;
+        const nextState = { ...previous };
+        for (const message of messages) {
+          if (message.role === "thinking" && nextState[message.id] === void 0) {
+            nextState[message.id] = false;
+            hasChanges = true;
+          }
+        }
+        return hasChanges ? nextState : previous;
+      });
+    }, [messages]);
+    const toggleThinking = (messageId) => {
+      setExpandedThinking((previous) => ({
+        ...previous,
+        [messageId]: !previous[messageId]
+      }));
+    };
     if (messages.length === 0) {
       return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-dialog__scroll", children: messages.map((message) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
-      "article",
-      {
-        className: `session-dialog__message session-dialog__message--${message.role}`,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("header", { className: "session-dialog__message-header", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-dialog__role", children: roleLabel[message.role] }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-              "time",
-              {
-                className: "session-dialog__timestamp",
-                dateTime: new Date(message.createdAt).toISOString(),
-                children: new Date(message.createdAt).toLocaleTimeString()
-              }
-            )
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "session-dialog__content", children: message.content })
-        ]
-      },
-      message.id
-    )) }) });
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-dialog__scroll", children: messages.map((message) => {
+      const className = buildMessageClassNames(message, providerTheme);
+      const label = resolveRoleLabel(message, providerLabel);
+      if (message.role === "thinking") {
+        const expanded = expandedThinking[message.id] ?? false;
+        return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          ThinkingMessage,
+          {
+            className,
+            expanded,
+            label,
+            message,
+            onToggle: toggleThinking
+          },
+          message.id
+        );
+      }
+      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        StandardMessage,
+        {
+          className,
+          label,
+          message
+        },
+        message.id
+      );
+    }) }) });
   };
   var dialog_panel_default = DialogPanel;
+  var buildMessageClassNames = (message, providerTheme) => {
+    const classes = [
+      "session-dialog__message",
+      `session-dialog__message--${message.role}`
+    ];
+    if (message.role === "assistant" && providerTheme) {
+      classes.push(`session-dialog__message--assistant-${providerTheme}`);
+    }
+    return classes.join(" ");
+  };
+  var resolveRoleLabel = (message, providerLabel) => {
+    if (message.role === "assistant") {
+      return providerLabel ?? "Assistant";
+    }
+    if (message.role === "user") {
+      return "User";
+    }
+    if (message.role === "thinking") {
+      return "Thinking";
+    }
+    return "System";
+  };
+  var ThinkingMessage = ({
+    message,
+    expanded,
+    onToggle,
+    label,
+    className
+  }) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("article", { className, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("header", { className: "session-dialog__message-header session-dialog__message-header--thinking", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        "button",
+        {
+          "aria-controls": `thinking-${message.id}`,
+          "aria-expanded": expanded,
+          className: expanded ? "session-dialog__thinking-toggle session-dialog__thinking-toggle--expanded" : "session-dialog__thinking-toggle",
+          onClick: () => onToggle(message.id),
+          title: expanded ? "Hide reasoning" : "Show reasoning",
+          type: "button",
+          children: expanded ? "\u25BE" : "\u25B8"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-dialog__role", children: label })
+    ] }),
+    expanded ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      "p",
+      {
+        className: "session-dialog__content session-dialog__content--thinking",
+        id: `thinking-${message.id}`,
+        children: message.content
+      }
+    ) : null
+  ] });
+  var StandardMessage = ({
+    message,
+    label,
+    className
+  }) => {
+    const messageDate = new Date(message.createdAt);
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("article", { className, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("header", { className: "session-dialog__message-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-dialog__role", children: label }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          "time",
+          {
+            className: "session-dialog__timestamp",
+            dateTime: messageDate.toISOString(),
+            children: messageDate.toLocaleTimeString()
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "session-dialog__content", children: message.content })
+    ] });
+  };
 
   // src/client/ui/src/session/empty-state.tsx
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
@@ -9375,7 +9474,7 @@
   var info_panel_default = InfoPanel;
 
   // src/client/ui/src/session/input-panel.tsx
-  var import_react10 = __toESM(require_react());
+  var import_react11 = __toESM(require_react());
 
   // src/client/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
   var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
@@ -9896,22 +9995,22 @@ ${path}` : path;
     element.setSelectionRange(length, length);
   };
   var InputPanel = ({ draft, onSubmit }) => {
-    const [value, setValue] = (0, import_react10.useState)(draft);
-    const [isDragging, setIsDragging] = (0, import_react10.useState)(false);
-    const [isFocused, setIsFocused] = (0, import_react10.useState)(false);
-    const textareaRef = (0, import_react10.useRef)(null);
-    const dropContainerRef = (0, import_react10.useRef)(null);
-    const dragDropFacadeRef = (0, import_react10.useRef)(null);
-    const updateValue = (0, import_react10.useCallback)((nextValue) => {
+    const [value, setValue] = (0, import_react11.useState)(draft);
+    const [isDragging, setIsDragging] = (0, import_react11.useState)(false);
+    const [isFocused, setIsFocused] = (0, import_react11.useState)(false);
+    const textareaRef = (0, import_react11.useRef)(null);
+    const dropContainerRef = (0, import_react11.useRef)(null);
+    const dragDropFacadeRef = (0, import_react11.useRef)(null);
+    const updateValue = (0, import_react11.useCallback)((nextValue) => {
       setValue(nextValue);
       requestAnimationFrame(() => {
         adjustTextareaHeight(textareaRef.current);
       });
     }, []);
-    (0, import_react10.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       updateValue(draft);
     }, [draft, updateValue]);
-    const sendMessage = (0, import_react10.useCallback)(() => {
+    const sendMessage = (0, import_react11.useCallback)(() => {
       const trimmed = value.trim();
       if (!trimmed) {
         return;
@@ -9919,14 +10018,14 @@ ${path}` : path;
       onSubmit(trimmed);
       updateValue("");
     }, [onSubmit, updateValue, value]);
-    const handleSubmit = (0, import_react10.useCallback)(
+    const handleSubmit = (0, import_react11.useCallback)(
       (event) => {
         event.preventDefault();
         sendMessage();
       },
       [sendMessage]
     );
-    const handleKeyDown = (0, import_react10.useCallback)(
+    const handleKeyDown = (0, import_react11.useCallback)(
       (event) => {
         if (event.key !== "Enter") {
           return;
@@ -9943,13 +10042,13 @@ ${path}` : path;
       },
       [sendMessage]
     );
-    const handleChange = (0, import_react10.useCallback)(
+    const handleChange = (0, import_react11.useCallback)(
       (event) => {
         updateValue(event.target.value);
       },
       [updateValue]
     );
-    const insertTextAtSelection = (0, import_react10.useCallback)(
+    const insertTextAtSelection = (0, import_react11.useCallback)(
       (text) => {
         const textarea = textareaRef.current;
         if (!textarea) {
@@ -9972,14 +10071,14 @@ ${path}` : path;
       },
       [updateValue]
     );
-    const syncTextareaValue = (0, import_react10.useCallback)(() => {
+    const syncTextareaValue = (0, import_react11.useCallback)(() => {
       const textarea = textareaRef.current;
       if (!textarea) {
         return;
       }
       updateValue(textarea.value);
     }, [updateValue]);
-    const { handlePaste, handleCopy } = (0, import_react10.useMemo)(
+    const { handlePaste, handleCopy } = (0, import_react11.useMemo)(
       () => createClipboardHandlers({
         textareaRef,
         insertTextAtSelection,
@@ -9987,7 +10086,7 @@ ${path}` : path;
       }),
       [insertTextAtSelection, syncTextareaValue]
     );
-    const applyExternalValue = (0, import_react10.useCallback)(
+    const applyExternalValue = (0, import_react11.useCallback)(
       (newValue) => {
         updateValue(newValue);
         requestAnimationFrame(() => {
@@ -9997,7 +10096,7 @@ ${path}` : path;
       },
       [updateValue]
     );
-    (0, import_react10.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       const container = dropContainerRef.current;
       const textarea = textareaRef.current;
       if (!(container && textarea)) {
@@ -10166,15 +10265,15 @@ ${path}` : path;
   var status_panel_default = StatusPanel;
 
   // src/client/ui/src/session/todo-panel.tsx
-  var import_react11 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
   var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var TodoPanel = ({ items, onToggle }) => {
-    const [showActiveOnly, setShowActiveOnly] = (0, import_react11.useState)(false);
-    const completedCount = (0, import_react11.useMemo)(
+    const [showActiveOnly, setShowActiveOnly] = (0, import_react12.useState)(false);
+    const completedCount = (0, import_react12.useMemo)(
       () => items.filter((item) => item.completed).length,
       [items]
     );
-    const visibleItems = (0, import_react11.useMemo)(
+    const visibleItems = (0, import_react12.useMemo)(
       () => showActiveOnly ? items.filter((item) => !item.completed) : [...items],
       [items, showActiveOnly]
     );
@@ -10236,6 +10335,12 @@ ${path}` : path;
     onToggleTodo
   }) => {
     const activeSession = activeSessionId && snapshots[activeSessionId] ? snapshots[activeSessionId] : null;
+    const activeRecord = sessions.find(
+      (session) => session.id === activeSessionId
+    );
+    const primaryProviderId = activeRecord?.providerIds[0] ?? null;
+    const providerTheme = mapProviderTheme(primaryProviderId);
+    const providerDisplayLabel = primaryProviderId != null ? providerLabels.get(primaryProviderId) ?? getDefaultProviderTitle(primaryProviderId) : null;
     if (sessions.length === 0 && showEmptyState) {
       return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(empty_state_default, {}) });
     }
@@ -10253,7 +10358,14 @@ ${path}` : path;
       activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
         /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(info_panel_default, { binding: activeSession.binding }),
         /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "session-grid", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(dialog_panel_default, { messages: activeSession.messages }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+            dialog_panel_default,
+            {
+              messages: activeSession.messages,
+              providerLabel: providerDisplayLabel,
+              providerTheme
+            }
+          ),
           /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
             todo_panel_default,
             {
@@ -10274,16 +10386,28 @@ ${path}` : path;
     ] });
   };
   var session_view_default = SessionView;
+  var mapProviderTheme = (providerId) => {
+    switch (providerId) {
+      case "claudeCodeCli":
+        return "claude";
+      case "codexCli":
+        return "codex";
+      case "geminiCli":
+        return "gemini";
+      default:
+        return null;
+    }
+  };
 
   // src/client/ui/src/app-host.tsx
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var AppHost = () => {
-    const [coreStatus, setCoreStatus] = (0, import_react12.useState)("connecting");
-    const [coreFinalized, setCoreFinalized] = (0, import_react12.useState)(false);
-    const [messages, setMessages] = (0, import_react12.useState)(
+    const [coreStatus, setCoreStatus] = (0, import_react13.useState)("connecting");
+    const [coreFinalized, setCoreFinalized] = (0, import_react13.useState)(false);
+    const [messages, setMessages] = (0, import_react13.useState)(
       createDefaultMessages
     );
-    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react12.useState)(0);
+    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react13.useState)(0);
     const {
       pickerState,
       providerLabels,
@@ -10309,14 +10433,14 @@ ${path}` : path;
       sendMessage
     } = useSessionStore(providerLabels);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const handleProviderPickerOpen = (0, import_react12.useCallback)(
+    const handleProviderPickerOpen = (0, import_react13.useCallback)(
       (providers) => {
         activateRoot();
         openPicker(providers);
       },
       [openPicker]
     );
-    const handleSessionCreatedMessage2 = (0, import_react12.useCallback)(
+    const handleSessionCreatedMessage2 = (0, import_react13.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
@@ -10324,32 +10448,32 @@ ${path}` : path;
       },
       [handleSessionCreated, resetPicker]
     );
-    const handleShowSettings = (0, import_react12.useCallback)(() => {
+    const handleShowSettings = (0, import_react13.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    const handleCoreState = (0, import_react12.useCallback)(
+    const handleCoreState = (0, import_react13.useCallback)(
       (payload) => {
         activateRoot();
         hydrateFromCoreState(payload);
       },
       [hydrateFromCoreState]
     );
-    const handleSessionMessage = (0, import_react12.useCallback)(
+    const handleSessionMessage = (0, import_react13.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionMessageEvent2(payload);
       },
       [handleSessionMessageEvent2]
     );
-    const handleSessionDeletedMessage2 = (0, import_react12.useCallback)(
+    const handleSessionDeletedMessage2 = (0, import_react13.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionDeleted(payload);
       },
       [handleSessionDeleted]
     );
-    const handleSessionBindingMessage2 = (0, import_react12.useCallback)(
+    const handleSessionBindingMessage2 = (0, import_react13.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionBindingUpdate(payload);
@@ -10400,7 +10524,7 @@ ${path}` : path;
       onSessionBinding: handleSessionBindingMessage2
     });
     const isCoreReady = coreStatus === "ready" && coreFinalized;
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       if (isCoreReady) {
         return;
       }
@@ -10413,11 +10537,11 @@ ${path}` : path;
         window.clearInterval(timer);
       };
     }, [isCoreReady]);
-    const currentMessage = (0, import_react12.useMemo)(() => {
+    const currentMessage = (0, import_react13.useMemo)(() => {
       const messageId = MESSAGE_ORDER[activeMessageIndex];
       return messages[messageId] ?? DEFAULT_MESSAGES[messageId];
     }, [activeMessageIndex, messages]);
-    const { headlineText, statusLine, detailLine } = (0, import_react12.useMemo)(() => {
+    const { headlineText, statusLine, detailLine } = (0, import_react13.useMemo)(() => {
       if (coreStatus === "error") {
         return {
           headlineText: "Please hold on - we are getting CodeAI Hub ready.",
@@ -10482,7 +10606,7 @@ ${path}` : path;
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(import_react13.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(import_react14.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(app_host_default, {}) })
     );
   };
   mount();
