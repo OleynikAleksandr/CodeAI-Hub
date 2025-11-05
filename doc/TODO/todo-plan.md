@@ -9,7 +9,7 @@
 - [DONE] Design storage paths — workspace slug берём из `claudeProjectSlug`, файлы пишем в `~/.codeai-hub/sessions/{slug}/{provider}/{providerSessionId}.jsonl`
 - [DONE] Implement writer facade — пакет `@codeai-hub/unified-session` создаёт `session-open`/`message`/`session-close` записи и поддерживает JSON-метаданные
 - [DONE] Wire provider adapters — RemoteBridge подключает `UnifiedSessionStorage`, пишет user/thinking/assistant события после биндинга (Claude, Codex, Gemini)
-- Commit: — IN_PROGRESS (expected: feat: unified-storage-writer)
+- Commit: d658511 — feat: unified session writer
 
 ## Phase 2 — Reader & refresh integration (owner: Codex, updated: 2025-11-05)
 - [TODO] Implement reader API — load history from disk for a given workspace/provider/session
