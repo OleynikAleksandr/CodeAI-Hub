@@ -303,18 +303,17 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use disabled tests.
 
 ### Release Discipline
-- Независимо от того, какие файлы менялись, всегда выпускаем полный комплект артефактов с единым номером.
-- Используй только `./scripts/build-all.sh`: скрипт очищает `~/.codeai-hub`, пересобирает провайдеры, core, лаунчер и VSIX, обновляет manifest’ы и синхронизирует версии.
-- После сборки обязательно обновляй README, CHANGELOG и SystemArchitecture с описанием релиза и списком артефактов.
-- Каждый релиз фиксируй отдельным коммитом формата `feat: vX.Y.Z - <summary>` и сразу пушь в `main`.
-- Частичные скрипты (`build-core.sh`, `build-release.sh` и т.п.) вручную не запускаем — только единый сценарий.
-- Пока ведётся активная разработка, **категорически запрещено** выгружать tarball’ы из `doc/tmp/releases/` во внешние репозитории или GitHub Releases — они остаются только в локальном кэше.
+1. Убедись, что `git status` пустой и все зависимости установлены (`npm install`).
+2. Запусти `./scripts/build-all.sh` — скрипт сам подбирает следующий семвер, чистит локальный кеш, пересобирает провайдеры/core/launcher/VSIX и обновляет все манифесты.
+3. Проверяй артефакты в `doc/tmp/releases/` и выполняй смоук-тесты на свежих tarball/VSIX.
+4. Обнови документацию релиза (README, CHANGELOG, SystemArchitecture, отчёт сессии) и зафиксируй изменения статуса в `doc/TODO/todo-plan.md`.
+5. Выполни `git add .`, `git commit -m "feat: vX.Y.Z - <summary>"`, `git push origin main`. Другие сборочные скрипты не используем; tarball’ы из `doc/tmp/releases/` остаются только локально.
 
 ## Common Tasks
 - `npx ultracite init` - Initialize Ultracite in your project
 - `npx ultracite fix` - Format and fix code automatically
 - `npx ultracite check` - Check for issues without fixing
-- `./scripts/build-release.sh <version>` - Build VSIX packages exclusively; no other tooling is permitted for packaging.
+- `./scripts/build-all.sh` - Полная пересборка всех артефактов (провайдеры, core, launcher, VSIX) с единым номером версии.
 - `doc/TODO/todo-plan.md` must reflect only the active phase. Immediately after completing a phase (once the final commit is made), wipe the file and capture the next plan before proceeding with new code.
 - Architecture updates belong in `doc/Architecture/Architecture.md`. After finishing each phase (before moving on to the next), document every new module/class/function with its current implementation status and reference the commits that introduced it.
 
