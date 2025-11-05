@@ -51,6 +51,8 @@ echo "🔧 ${PROJECT_NAME} - Release Build Script"
 echo "============================================"
 echo "📦 Building version: $VERSION"
 
+cleanup_workspace_tarballs "$REPO_ROOT"
+
 # Step 1: Clean build artifacts
 echo ""
 echo "🧹 Step 1: Cleaning build cache..."
@@ -155,7 +157,7 @@ if ! grep -q "packages/Gemini_Module" .vscodeignore 2>/dev/null; then
 fi
 
 clean_temp_dirs() {
-  rm -rf codeai-hub-*/ 
+  cleanup_workspace_tarballs "$REPO_ROOT"
   rm -rf dist
   rm -rf doc/tmp/build
 }
@@ -163,6 +165,106 @@ clean_temp_dirs() {
 clean_temp_dirs
 
 echo "✅ SDK exclusions verified"
+
+# Step 7.5: Validate locally built modules and runtime artefacts
+echo ""
+echo "🗂️  Step 7.5: Validating local artefacts..."
+UNAME_S=$(uname -s)
+UNAME_M=$(uname -m)
+case "$UNAME_S" in
+  Darwin)
+    case "$UNAME_M" in
+      arm64)
+        CORE_PLATFORM_KEY="darwin-arm64"
+        LAUNCHER_FILE_PLATFORM="macos-arm64"
+        LAUNCHER_MANIFEST_KEY="darwin-arm64"
+        ;;
+      x86_64)
+        CORE_PLATFORM_KEY="darwin-x64"
+        LAUNCHER_FILE_PLATFORM="macos-x64"
+        LAUNCHER_MANIFEST_KEY="darwin-x64"
+        ;;
+      *)
+        echo "❌ Unsupported macOS architecture: $UNAME_M" >&2
+        exit 1
+        ;;
+    esac
+    ;;
+  Linux)
+    if [[ "$UNAME_M" != "x86_64" ]]; then
+      echo "❌ Unsupported Linux architecture: $UNAME_M" >&2
+      exit 1
+    fi
+    CORE_PLATFORM_KEY="linux-x64"
+    LAUNCHER_FILE_PLATFORM="linux-x64"
+    LAUNCHER_MANIFEST_KEY="linux-x64"
+    ;;
+  MINGW*|MSYS*|CYGWIN*)
+    CORE_PLATFORM_KEY="win32-x64"
+    LAUNCHER_FILE_PLATFORM="win-x64"
+    LAUNCHER_MANIFEST_KEY="win32-x64"
+    ;;
+  *)
+    echo "❌ Unsupported platform: $UNAME_S" >&2
+    exit 1
+    ;;
+esac
+
+RELEASE_CACHE="$HOME/.codeai-hub/releases"
+declare -a REQUIRED_FILES=(
+  "claude-module-${VERSION}.tar.bz2"
+  "codex-module-${VERSION}.tar.bz2"
+  "gemini-module-${VERSION}.tar.bz2"
+  "codeai-hub-core-${CORE_PLATFORM_KEY}-${VERSION}.tar.bz2"
+  "CodeAIHubLauncher-${LAUNCHER_FILE_PLATFORM}-${VERSION}.tar.bz2"
+)
+
+for artefact in "${REQUIRED_FILES[@]}"; do
+  if [[ ! -f "$RELEASE_CACHE/$artefact" ]]; then
+    echo "❌ Missing artefact $artefact in $RELEASE_CACHE" >&2
+    exit 1
+  fi
+done
+
+if ! VERSION="$VERSION" \
+CORE_KEY="$CORE_PLATFORM_KEY" \
+LAUNCHER_KEY="$LAUNCHER_MANIFEST_KEY" \
+node <<'NODE'
+const { readFileSync } = require("node:fs");
+const version = process.env.VERSION;
+const coreKey = process.env.CORE_KEY;
+const launcherKey = process.env.LAUNCHER_KEY;
+const manifestChecks = [
+  ["assets/core/manifest.json", (manifest) => manifest.platforms?.[coreKey]?.coreVersion],
+  ["assets/launcher/manifest.json", (manifest) => manifest.platforms?.[launcherKey]?.launcherVersion],
+  ["assets/providers/claude/manifest.json", (manifest) => manifest.module?.version],
+  ["assets/providers/codex/manifest.json", (manifest) => manifest.module?.version],
+  ["assets/providers/gemini/manifest.json", (manifest) => manifest.module?.version],
+];
+
+const mismatches = manifestChecks
+  .map(([path, selector]) => {
+    const data = JSON.parse(readFileSync(path, "utf8"));
+    const value = selector(data);
+    return value === version ? null : { path, value };
+  })
+  .filter(Boolean);
+
+if (mismatches.length > 0) {
+  const formatted = mismatches.map(({ path, value }) => `${path} -> ${value ?? "undefined"}`).join("\n");
+  throw new Error(`Manifest version mismatch:\n${formatted}`);
+}
+NODE
+then
+  exit 1
+fi
+
+mkdir -p "$DIST_ROOT"
+for artefact in "${REQUIRED_FILES[@]}"; do
+  cp "$RELEASE_CACHE/$artefact" "$DIST_ROOT/$artefact"
+done
+clean_release_dir "$DIST_ROOT"
+echo "✅ Artefacts validated"
 
 # Step 8: Docs link check & duplication check (advisory)
 echo ""
@@ -197,6 +299,8 @@ echo ""
 echo "🔁 Restoring development dependencies..."
 npm install >/dev/null
 echo "✅ Development dependencies restored"
+
+cleanup_workspace_tarballs "$REPO_ROOT"
 
 # Step 10: Check package size
 echo ""
