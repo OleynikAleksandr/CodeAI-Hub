@@ -48,7 +48,7 @@
 
 **Структура каталогов:**
 ```
-~/.codeai-hub/sessions/
+~/.codeai-hub/sessions/{workspace-slug}/
 ├── claude/{sessionId}.jsonl
 ├── codex/{sessionId}.jsonl
 ├── gemini/{sessionId}.jsonl
@@ -61,14 +61,16 @@
 
 **Примеры:**
 ```
-~/.codeai-hub/sessions/claude/abc123.jsonl
-~/.codeai-hub/sessions/codex/xyz789.jsonl
-~/.codeai-hub/sessions/gemini/def456.jsonl
+~/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub/claude/abc123.jsonl
+~/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub/codex/xyz789.jsonl
+~/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub/gemini/def456.jsonl
 ```
 
 **Назначение:** UI отображение (real-time, refresh, resume)
 **Формат:** Унифицированный JSONL (см. раздел «Формат JSONL» ниже)
 **Наши действия:** Пишем через wrapper, читаем одним парсером
+
+> Папка `{workspace-slug}` — это нормализованный путь рабочей директории (тот же, что используется при генерации `claudeProjectSlug`). Она гарантирует, что разные проекты не смешают артефакты между собой даже при одновременном запуске.
 
 ---
 
@@ -83,7 +85,7 @@ Provider SDK Stream (их формат)
     ↓
 ProviderWrapper.normalize() → UnifiedMessage
     ↓
-    ├─→ UnifiedSessionStorage.append() → наш JSONL
+    ├─→ UnifiedSessionStorage.append(workspace) → наш JSONL
     └─→ UI.display() → показываем в интерфейсе
 ```
 
@@ -120,6 +122,7 @@ ProviderWrapper.normalize() → UnifiedMessage
 - Завершение сессии фиксируется записью `session-close`, после чего writer освобождает ресурсы; повторное открытие той же сессии в UI воспроизводит файл целиком или инкрементально, если известен смещённый хвост.
 - Политика хранения/очистки будет сформулирована отдельно; по умолчанию файлы остаются на диске, пока пользователь или обслуживающий сценарий явно их не удалит.
 - Refresh ядра не выполняет дополнительного чтения: core опирается только на события, которые уже прошли через врапер. UI инициирует повторное отображение, перечитывая unified JSONL напрямую (через API/reader, которые появятся на следующем этапе).
+- Каждая запись содержит только те поля, которые необходимы UI: `timestamp`, `role`, `content`, опциональные `metadata` для thinking/tool событий и идентификатор провайдера. Сырые SDK payload'ы и внутренние детали провайдера не сохраняются, чтобы не тянуть в JSONL лишние структуры.
 
 ---
 
