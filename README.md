@@ -2,15 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.140
-- **Provider-specific settings**: Settings view теперь открывается с горизонтальными вкладками `Claude`, `Codex`, `Gemini`, `General`, а настройки мыслей перенесены в раздел Claude.
-- **Thinking token persistence**: изменение лимита thinking tokens сразу активирует `Save Changes`, поэтому новые значения применяются к следующей Claude-сессии без обходных манипуляций.
+## Current Release — v1.1.141
+- **Faster Claude binding**: промоушн sessionId теперь происходит сразу по первому событию потока, без обязательной секундной паузы на чтение JSONL.
+- **Settings tabs**: интерфейс настроек разделён на горизонтальные вкладки `Claude`, `Codex`, `Gemini`, `General`, а thinking-параметры живут в разделе Claude.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.140.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.140.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.140.tar.bz2`
-- Providers: `claude-module-1.1.140.tar.bz2`, `codex-module-1.1.140.tar.bz2`, `gemini-module-1.1.140.tar.bz2`
+- VSIX: `codeai-hub-1.1.141.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.141.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.141.tar.bz2`
+- Providers: `claude-module-1.1.141.tar.bz2`, `codex-module-1.1.141.tar.bz2`, `gemini-module-1.1.141.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
