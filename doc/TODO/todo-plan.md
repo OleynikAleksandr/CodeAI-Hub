@@ -1,22 +1,22 @@
-# Development TODO Plan — Unified Session Storage
+# План разработки — Unified Session Storage
 
-## Legend
-- TODO — task is planned
-- IN_PROGRESS — work in progress
-- DONE — task is complete
+## Легенда
+- TODO — задача запланирована
+- IN_PROGRESS — работа ведётся
+- DONE — задача завершена
 
-## Phase 1 — Storage writer bootstrap (owner: Codex, updated: 2025-11-05)
-- [DONE] Design storage paths — workspace slug берём из `claudeProjectSlug`, файлы пишем в `~/.codeai-hub/sessions/{slug}/{provider}/{providerSessionId}.jsonl`
-- [DONE] Implement writer facade — пакет `@codeai-hub/unified-session` создаёт `session-open`/`message`/`session-close` записи и поддерживает JSON-метаданные
-- [DONE] Wire provider adapters — RemoteBridge подключает `UnifiedSessionStorage`, пишет user/thinking/assistant события после биндинга (Claude, Codex, Gemini)
-- Commit: d658511 — feat: unified session writer
+## Фаза 1 — Запуск storage writer (owner: Codex, обновлено: 2025-11-05)
+- [DONE] Спроектировать пути хранения — workspace slug берём из `claudeProjectSlug`, файлы пишем в `~/.codeai-hub/sessions/{slug}/{provider}/{providerSessionId}.jsonl`
+- [DONE] Реализовать фасад writer’a — пакет `@codeai-hub/unified-session` создаёт записи `session-open`/`message`/`session-close` и поддерживает JSON-метаданные
+- [DONE] Подключить адаптеры провайдеров — RemoteBridge использует `UnifiedSessionStorage`, пишет события user/thinking/assistant после биндинга (Claude, Codex, Gemini)
+- Коммит: d658511 — feat: unified session writer
 
-## Phase 2 — Reader & refresh integration (owner: Codex, updated: 2025-11-05)
-- [TODO] Implement reader API — load history from disk for a given workspace/provider/session
-- [TODO] Hook refresh flow — hydrate session store in webview from unified JSONL on reload/resume
-- [TODO] Add smoke tests/manual checklist — verify history persists after VS Code reload and core restart
-- Commit: — TODO (expected: feat: unified-storage-reader)
+## Фаза 2 — Интеграция чтения и refresh (owner: Codex, обновлено: 2025-11-05)
+- [TODO] Реализовать reader API — загружать историю с диска для выбранных workspace/provider/session
+- [TODO] Подключить refresh-флоу — наполнять store webview из unified JSONL при перезагрузке/возобновлении
+- [TODO] Добавить smoke-тесты/чек-лист — проверить сохранность истории после перезапуска VS Code и core
+- Коммит: — TODO (ожидается: feat: unified-storage-reader)
 
-## Backlog / Next types
-- [TODO] Extend writer/reader with additional event types (tool calls, errors, system messages)
-- [TODO] Combined session timelines (`combined/` folders) once multi-provider orchestration lands
+## Backlog / Следующие типы
+- [TODO] Расширить writer/reader дополнительными типами событий (tool, error, system и т.д.)
+- [TODO] Собирать объединённые ленты (`combined/` каталоги) после появления мульти-провайдерной оркестрации
