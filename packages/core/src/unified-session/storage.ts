@@ -1,7 +1,9 @@
 import { homedir } from "node:os";
 import path from "node:path";
 import {
+  buildSessionFilePath,
   type JsonObject,
+  readSessionEvents,
   sanitizeWorkspaceSlug,
   UnifiedSessionWriter,
 } from "@codeai-hub/unified-session";
@@ -109,6 +111,52 @@ export class UnifiedSessionStorage {
         );
       });
     }
+  }
+
+  async readMessages(session: Session): Promise<SessionMessage[]> {
+    const entry = this.sessions.get(session.id);
+    const providerSessionId =
+      entry?.providerSessionId ?? session.providerSessionId;
+    if (!providerSessionId) {
+      return [];
+    }
+
+    if (entry?.writer) {
+      await this.flushQueue(entry).catch((error: unknown) => {
+        this.logger.error(
+          "Failed to flush unified session record",
+          error as Error,
+          {
+            sessionId: session.id,
+            providerId: entry.providerId,
+          }
+        );
+      });
+    }
+
+    const sanitizedProviderSessionId = sanitizeSessionId(providerSessionId);
+    const filePath = buildSessionFilePath({
+      rootDirectory: this.rootDirectory,
+      workspaceSlug: this.workspaceSlug,
+      provider: session.providerId,
+      sessionId: sanitizedProviderSessionId,
+    });
+
+    const records = await readSessionEvents(filePath);
+    const messages: SessionMessage[] = [];
+    for (const record of records) {
+      if (record.type !== "message") {
+        continue;
+      }
+      messages.push({
+        id: record.messageId,
+        role: record.role,
+        content: record.content,
+        sessionId: session.id,
+        timestamp: record.timestamp,
+      });
+    }
+    return messages;
   }
 
   private initializeWriter(

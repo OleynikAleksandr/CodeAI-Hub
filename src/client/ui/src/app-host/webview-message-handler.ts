@@ -22,6 +22,7 @@ export const useWebviewMessageHandler = ({
   onSessionMessage,
   onSessionDeleted,
   onSessionBinding,
+  onSessionHistory,
 }: WebviewMessageHandlers) => {
   useEffect(() => {
     const handleIncomingMessage = (event: MessageEvent<unknown>) => {
@@ -37,6 +38,7 @@ export const useWebviewMessageHandler = ({
         onSessionMessage,
         onSessionDeleted,
         onSessionBinding,
+        onSessionHistory,
       });
     };
 
@@ -56,5 +58,6 @@ export const useWebviewMessageHandler = ({
     onSessionMessage,
     onSessionDeleted,
     onSessionBinding,
+    onSessionHistory,
   ]);
 };

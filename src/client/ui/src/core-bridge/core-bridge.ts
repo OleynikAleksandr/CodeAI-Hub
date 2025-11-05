@@ -6,6 +6,7 @@ import {
 } from "../../../../types/provider";
 import { convertStatusResponse } from "./normalizers";
 import { createServerMessageHandler } from "./server-message-handler";
+import { loadSessionHistories } from "./session-history";
 import type { CoreBridgeConfig, ServerStatusResponse } from "./types";
 
 const DEFAULT_CONFIG: CoreBridgeConfig = {
@@ -159,6 +160,14 @@ const fetchStatusSnapshot = async (config: CoreBridgeConfig): Promise<void> => {
     notifyWindow({
       type: "core:state",
       payload: normalized,
+    });
+    loadSessionHistories(config, normalized.sessions, (payload) => {
+      notifyWindow({
+        type: "session:history",
+        payload,
+      });
+    }).catch(() => {
+      // Ignore history hydration failures; live stream will populate messages.
     });
   } catch {
     if (!hasSuccessfulConnection) {

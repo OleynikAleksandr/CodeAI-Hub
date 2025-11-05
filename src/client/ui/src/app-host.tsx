@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ProviderStackDescriptor } from "../../../types/provider";
-import type { SessionRecord } from "../../../types/session";
+import type { SessionMessage, SessionRecord } from "../../../types/session";
 import {
   createDefaultMessages,
   DEFAULT_MESSAGES,
@@ -51,6 +51,7 @@ const AppHost = () => {
     handleSessionCreated,
     hydrateFromCoreState,
     handleSessionMessageEvent,
+    handleSessionHistoryEvent,
     handleSessionDeleted,
     handleSessionBindingUpdate,
     clearSessions,
@@ -100,6 +101,17 @@ const AppHost = () => {
       handleSessionMessageEvent(payload);
     },
     [handleSessionMessageEvent]
+  );
+
+  const handleSessionHistory = useCallback(
+    (payload: {
+      readonly sessionId: string;
+      readonly messages: readonly SessionMessage[];
+    }) => {
+      activateRoot();
+      handleSessionHistoryEvent(payload);
+    },
+    [handleSessionHistoryEvent]
   );
 
   const handleSessionDeletedMessage = useCallback(
@@ -167,6 +179,7 @@ const AppHost = () => {
     onSessionMessage: handleSessionMessage,
     onSessionDeleted: handleSessionDeletedMessage,
     onSessionBinding: handleSessionBindingMessage,
+    onSessionHistory: handleSessionHistory,
   });
 
   const isCoreReady = coreStatus === "ready" && coreFinalized;

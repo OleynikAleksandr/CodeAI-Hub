@@ -53,6 +53,11 @@ export type SessionBindingMessage = {
   readonly payload?: unknown;
 };
 
+export type SessionHistoryMessage = {
+  readonly type: "session:history";
+  readonly payload?: unknown;
+};
+
 export type IncomingMessage =
   | ProviderPickerOpenMessage
   | SessionCreatedMessage
@@ -64,7 +69,8 @@ export type IncomingMessage =
   | CoreConnectionMessage
   | CoreLoadingStatusMessage
   | SessionMessageEvent
-  | SessionDeletedMessage;
+  | SessionDeletedMessage
+  | SessionHistoryMessage;
 
 export const isIncomingMessage = (value: unknown): value is IncomingMessage =>
   Boolean(value && typeof value === "object" && "type" in value);
@@ -121,6 +127,21 @@ export const isCoreRuntimeStatusPayload = (
   }
   const candidate = value as Record<string, unknown>;
   return typeof candidate.label === "string";
+};
+
+export const isSessionHistoryPayload = (
+  value: unknown
+): value is {
+  readonly sessionId: string;
+  readonly messages: readonly unknown[];
+} => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.sessionId === "string" && Array.isArray(candidate.messages)
+  );
 };
 export const isSessionBindingPayload = (
   value: unknown

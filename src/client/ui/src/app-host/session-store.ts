@@ -1,8 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import type {
   SessionBindingInfo,
+  SessionMessage,
   SessionRecord,
-  SessionSnapshot,
 } from "../../../../types/session";
 import {
   deleteSession as deleteSessionOnServer,
@@ -14,13 +14,15 @@ import type {
   CoreBridgeStatePayload,
 } from "../core-bridge/types";
 import {
+  appendMessageToSnapshots,
   createInitialSnapshot,
+  mergeHistoryIntoSnapshots,
   normalizeBinding,
   removeSnapshot,
+  type SessionSnapshots,
+  toggleTodoInSnapshots,
 } from "../session/helpers";
 import type { ProviderLabels } from "./provider-picker-state";
-
-type SessionSnapshots = Record<string, SessionSnapshot>;
 
 type ToggleTodoHandler = (sessionId: string, todoId: string) => void;
 
@@ -39,6 +41,10 @@ type CoreStateHandler = (payload: CoreBridgeStatePayload) => void;
 type SessionMessageHandler = (payload: CoreBridgeSessionMessagePayload) => void;
 type SessionDeletedHandler = (payload: { readonly sessionId: string }) => void;
 type SessionBindingHandler = (payload: CoreBridgeSessionBindingPayload) => void;
+type SessionHistoryHandler = (payload: {
+  readonly sessionId: string;
+  readonly messages: readonly SessionMessage[];
+}) => void;
 
 export type UseSessionStoreResult = {
   readonly sessions: readonly SessionRecord[];
@@ -47,6 +53,7 @@ export type UseSessionStoreResult = {
   readonly handleSessionCreated: SessionCreatedHandler;
   readonly hydrateFromCoreState: CoreStateHandler;
   readonly handleSessionMessageEvent: SessionMessageHandler;
+  readonly handleSessionHistoryEvent: SessionHistoryHandler;
   readonly handleSessionDeleted: SessionDeletedHandler;
   readonly handleSessionBindingUpdate: SessionBindingHandler;
   readonly clearSessions: ClearSessionsHandler;
@@ -128,20 +135,14 @@ export const useSessionStore = (
 
   const handleSessionMessageEvent = useCallback<SessionMessageHandler>(
     (payload) => {
-      setSnapshots((previous) => {
-        const snapshot = previous[payload.sessionId];
-        if (!snapshot) {
-          return previous;
-        }
-        const nextMessages = [...snapshot.messages, payload.message];
-        return {
-          ...previous,
-          [payload.sessionId]: {
-            ...snapshot,
-            messages: nextMessages,
-          },
-        } satisfies SessionSnapshots;
-      });
+      setSnapshots((previous) => appendMessageToSnapshots(previous, payload));
+    },
+    []
+  );
+
+  const handleSessionHistoryEvent = useCallback<SessionHistoryHandler>(
+    (payload) => {
+      setSnapshots((previous) => mergeHistoryIntoSnapshots(previous, payload));
     },
     []
   );
@@ -236,19 +237,9 @@ export const useSessionStore = (
   }, []);
 
   const toggleTodo = useCallback<ToggleTodoHandler>((sessionId, todoId) => {
-    setSnapshots((previous) => {
-      const current = previous[sessionId];
-      if (!current) {
-        return previous;
-      }
-      const todos = current.todos.map((todo) =>
-        todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-      );
-      return {
-        ...previous,
-        [sessionId]: { ...current, todos },
-      };
-    });
+    setSnapshots((previous) =>
+      toggleTodoInSnapshots(previous, sessionId, todoId)
+    );
   }, []);
 
   const sendMessage = useCallback<SendMessageHandler>((sessionId, content) => {
@@ -276,6 +267,7 @@ export const useSessionStore = (
     handleSessionCreated,
     hydrateFromCoreState,
     handleSessionMessageEvent,
+    handleSessionHistoryEvent,
     handleSessionDeleted,
     handleSessionBindingUpdate,
     clearSessions,
