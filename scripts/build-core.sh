@@ -114,6 +114,7 @@ echo "🔧 Building workspace packages..."
 npm run build --workspace=@codeai-hub/claude-module >/dev/null
 npm run build --workspace=@codeai-hub/codex-module >/dev/null
 npm run build --workspace=@codeai-hub/gemini-module >/dev/null || true
+npm run build --workspace=@codeai-hub/unified-session >/dev/null
 npm run build --workspace=@codeai-hub/core >/dev/null
 
 echo "📦 Packing provider tarballs..."
