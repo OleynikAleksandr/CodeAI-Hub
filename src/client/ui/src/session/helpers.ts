@@ -5,10 +5,12 @@ import type {
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type {
   SessionBindingInfo,
+  SessionMessage,
   SessionRecord,
   SessionSnapshot,
   SessionStatusInfo,
 } from "../../../../types/session";
+import type { CoreBridgeSessionMessagePayload } from "../core-bridge/types";
 
 export type ProviderCatalog = Partial<
   Record<ProviderStackId, ProviderStackDescriptor>
@@ -195,4 +197,74 @@ export const removeSnapshot = (
 ): Record<string, SessionSnapshot> => {
   const { [sessionId]: _discarded, ...rest } = snapshots;
   return rest;
+};
+
+export type SessionSnapshots = Record<string, SessionSnapshot>;
+
+export const appendMessageToSnapshots = (
+  snapshots: SessionSnapshots,
+  payload: CoreBridgeSessionMessagePayload
+): SessionSnapshots => {
+  const snapshot = snapshots[payload.sessionId];
+  if (!snapshot) {
+    return snapshots;
+  }
+  return {
+    ...snapshots,
+    [payload.sessionId]: {
+      ...snapshot,
+      messages: [...snapshot.messages, payload.message],
+    },
+  } satisfies SessionSnapshots;
+};
+
+export const mergeHistoryIntoSnapshots = (
+  snapshots: SessionSnapshots,
+  payload: {
+    readonly sessionId: string;
+    readonly messages: readonly SessionMessage[];
+  }
+): SessionSnapshots => {
+  const snapshot = snapshots[payload.sessionId];
+  if (!snapshot) {
+    return snapshots;
+  }
+  const merged = new Map<string, SessionMessage>();
+  for (const message of snapshot.messages) {
+    merged.set(message.id, message);
+  }
+  for (const message of payload.messages) {
+    merged.set(message.id, message);
+  }
+  const ordered = Array.from(merged.values()).sort(
+    (a, b) => a.createdAt - b.createdAt
+  );
+  return {
+    ...snapshots,
+    [payload.sessionId]: {
+      ...snapshot,
+      messages: ordered,
+    },
+  } satisfies SessionSnapshots;
+};
+
+export const toggleTodoInSnapshots = (
+  snapshots: SessionSnapshots,
+  sessionId: string,
+  todoId: string
+): SessionSnapshots => {
+  const snapshot = snapshots[sessionId];
+  if (!snapshot) {
+    return snapshots;
+  }
+  const todos = snapshot.todos.map((todo) =>
+    todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+  );
+  return {
+    ...snapshots,
+    [sessionId]: {
+      ...snapshot,
+      todos,
+    },
+  } satisfies SessionSnapshots;
 };

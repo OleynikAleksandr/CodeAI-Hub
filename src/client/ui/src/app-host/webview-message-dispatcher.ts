@@ -1,10 +1,12 @@
 import type { ProviderStackDescriptor } from "../../../../types/provider";
-import type { SessionRecord } from "../../../../types/session";
+import type { SessionMessage, SessionRecord } from "../../../../types/session";
+import { sanitizeMessage } from "../core-bridge/normalizers";
 import type {
   CoreBridgeSessionBindingPayload,
   CoreBridgeSessionMessagePayload,
   CoreBridgeStatePayload,
   CoreRuntimeStatusPayload,
+  ServerSessionMessage,
 } from "../core-bridge/types";
 import {
   isSessionRecordCandidate,
@@ -26,6 +28,7 @@ import {
   isIncomingMessage,
   isSessionBindingPayload,
   isSessionDeletedPayload,
+  isSessionHistoryPayload,
   isSessionMessagePayload,
 } from "./webview-message-types";
 
@@ -48,6 +51,10 @@ type SessionDispatchHandlers = {
   readonly onSessionBinding?: (
     payload: CoreBridgeSessionBindingPayload
   ) => void;
+  readonly onSessionHistory?: (payload: {
+    readonly sessionId: string;
+    readonly messages: readonly SessionMessage[];
+  }) => void;
 };
 
 type WebviewDispatchHandlers = SessionDispatchHandlers & {
@@ -97,6 +104,29 @@ const handleSessionMessageEvent = (
   }
 
   onSessionMessage(message.payload);
+};
+
+const handleSessionHistoryMessage = (
+  message: IncomingMessage,
+  onSessionHistory?: (payload: {
+    readonly sessionId: string;
+    readonly messages: readonly SessionMessage[];
+  }) => void
+): void => {
+  if (!(onSessionHistory && message.type === "session:history")) {
+    return;
+  }
+  const payload = message.payload;
+  if (!isSessionHistoryPayload(payload)) {
+    return;
+  }
+  const normalized = payload.messages
+    .map((candidate) => sanitizeMessage(candidate as ServerSessionMessage))
+    .filter((entry): entry is SessionMessage => Boolean(entry));
+  onSessionHistory({
+    sessionId: payload.sessionId,
+    messages: normalized,
+  });
 };
 
 const handleSessionDeletedMessage = (
@@ -155,6 +185,9 @@ const dispatchSessionMessage = (
     case "session:binding":
       handleSessionBindingMessage(message, handlers.onSessionBinding);
       return true;
+    case "session:history":
+      handleSessionHistoryMessage(message, handlers.onSessionHistory);
+      return true;
     default:
       return false;
   }
@@ -192,6 +225,7 @@ export const dispatchWebviewMessage = (
       onSessionMessage: handlers.onSessionMessage,
       onSessionDeleted: handlers.onSessionDeleted,
       onSessionBinding: handlers.onSessionBinding,
+      onSessionHistory: handlers.onSessionHistory,
     })
   ) {
     return;

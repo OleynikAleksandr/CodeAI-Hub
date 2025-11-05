@@ -12,8 +12,8 @@
 - Коммит: d658511 — feat: unified session writer
 
 ## Фаза 2 — Интеграция чтения и refresh (owner: Codex, обновлено: 2025-11-05)
-- [TODO] Реализовать reader API — загружать историю с диска для выбранных workspace/provider/session
-- [TODO] Подключить refresh-флоу — наполнять store webview из unified JSONL при перезагрузке/возобновлении
+- [DONE] Реализовать reader API — core выдаёт `/api/v1/sessions/:id/history`, читая JSONL через `UnifiedSessionStorage`
+- [DONE] Подключить refresh-флоу — webview после `core:state` подтягивает историю и публикует `session:history`
 - [TODO] Добавить smoke-тесты/чек-лист — проверить сохранность истории после перезапуска VS Code и core
 - Коммит: — TODO (ожидается: feat: unified-storage-reader)
 

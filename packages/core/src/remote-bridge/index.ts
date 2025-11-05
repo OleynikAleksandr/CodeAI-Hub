@@ -116,6 +116,7 @@ const isSessionIdChangedPayload = (
 
 const HTTP_NO_CONTENT = 204;
 const HTTP_INTERNAL_ERROR = 500;
+const HTTP_NOT_FOUND = 404;
 
 export class RemoteBridge {
   private readonly config: CoreConfig;
@@ -287,6 +288,40 @@ export class RemoteBridge {
         providers: this.providerRegistry.listProviders(),
       });
     });
+
+    this.app.get(
+      "/api/v1/sessions/:sessionId/history",
+      async (req: Request, res: Response) => {
+        const sessionId = req.params.sessionId;
+        const session = this.sessionManager.getSession(sessionId);
+        if (!session) {
+          res.status(HTTP_NOT_FOUND).json({
+            error: `Session ${sessionId} not found`,
+          });
+          return;
+        }
+        try {
+          const messages = await this.sessionStorage.readMessages(session);
+          res.json({
+            sessionId: session.id,
+            messages: messages.map((message) => ({
+              id: message.id,
+              role: message.role,
+              content: message.content,
+              timestamp: message.timestamp,
+              sessionId: message.sessionId,
+            })),
+          });
+        } catch (error) {
+          this.logger.error("Failed to read session history", error as Error, {
+            sessionId: session.id,
+          });
+          res.status(HTTP_INTERNAL_ERROR).json({
+            error: "Unable to read session history",
+          });
+        }
+      }
+    );
 
     this.app.post("/api/v1/file-drop", async (_req: Request, res: Response) => {
       try {
