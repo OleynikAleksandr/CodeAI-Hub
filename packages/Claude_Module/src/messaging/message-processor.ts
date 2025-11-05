@@ -17,7 +17,8 @@ type MessageProcessorOptions = {
   readonly reporter?: ModuleReporter;
 };
 
-const SESSION_DISCOVERY_DELAY_MS = 1000;
+const SESSION_DISCOVERY_TIMEOUT_MS = 1000;
+const SESSION_DISCOVERY_POLL_INTERVAL_MS = 50;
 const SESSION_FILE_EXTENSION = ".jsonl";
 
 export class SDKMessageProcessor {
@@ -210,34 +211,39 @@ export class SDKMessageProcessor {
     if (!fs.existsSync(this.options.projectPath)) {
       return null;
     }
-    await delay(SESSION_DISCOVERY_DELAY_MS);
-    const filesAfter = fs
-      .readdirSync(this.options.projectPath)
-      .filter((fileName) => fileName.endsWith(SESSION_FILE_EXTENSION))
-      .map((fileName) => path.join(this.options.projectPath, fileName));
-    const newFile = filesAfter.find(
-      (filePath) => !previousFiles.includes(filePath)
-    );
-    if (!newFile) {
-      return null;
-    }
-    const sessionId = path.basename(newFile, ".jsonl");
-    try {
-      const content = fs.readFileSync(newFile, "utf8");
-      const firstLine = content
-        .split("\n")
-        .find((line) => line.trim().length > 0);
-      if (!firstLine) {
-        return sessionId;
-      }
-      const parsed = JSON.parse(firstLine) as { readonly sessionId?: string };
-      return parsed.sessionId ?? sessionId;
-    } catch (error) {
-      this.options.reporter?.error?.(
-        "Failed to inspect SDK session file",
-        error
+    const deadline = Date.now() + SESSION_DISCOVERY_TIMEOUT_MS;
+    while (Date.now() < deadline) {
+      const filesAfter = fs
+        .readdirSync(this.options.projectPath)
+        .filter((fileName) => fileName.endsWith(SESSION_FILE_EXTENSION))
+        .map((fileName) => path.join(this.options.projectPath, fileName));
+      const newFile = filesAfter.find(
+        (filePath) => !previousFiles.includes(filePath)
       );
-      return sessionId;
+      if (newFile) {
+        const sessionId = path.basename(newFile, ".jsonl");
+        try {
+          const content = fs.readFileSync(newFile, "utf8");
+          const firstLine = content
+            .split("\n")
+            .find((line) => line.trim().length > 0);
+          if (!firstLine) {
+            return sessionId;
+          }
+          const parsed = JSON.parse(firstLine) as {
+            readonly sessionId?: string;
+          };
+          return parsed.sessionId ?? sessionId;
+        } catch (error) {
+          this.options.reporter?.error?.(
+            "Failed to inspect SDK session file",
+            error
+          );
+          return sessionId;
+        }
+      }
+      await delay(SESSION_DISCOVERY_POLL_INTERVAL_MS);
     }
+    return null;
   }
 }
