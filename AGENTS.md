@@ -308,6 +308,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - После сборки обязательно обновляй README, CHANGELOG и SystemArchitecture с описанием релиза и списком артефактов.
 - Каждый релиз фиксируй отдельным коммитом формата `feat: vX.Y.Z - <summary>` и сразу пушь в `main`.
 - Частичные скрипты (`build-core.sh`, `build-release.sh` и т.п.) вручную не запускаем — только единый сценарий.
+- Пока ведётся активная разработка, **категорически запрещено** выгружать tarball’ы из `doc/tmp/releases/` во внешние репозитории или GitHub Releases — они остаются только в локальном кэше.
 
 ## Common Tasks
 - `npx ultracite init` - Initialize Ultracite in your project
