@@ -158,7 +158,7 @@ echo "🏗️  Building CEF launcher..."
 "$SCRIPT_DIR/build-cef-launcher.sh" --launcher-version "$new_version"
 
 echo "🏗️  Building VSIX..."
-"$SCRIPT_DIR/build-release.sh"
+"$SCRIPT_DIR/build-release.sh" --use-current-version
 
 echo ""
 echo "✅ Unified build complete."

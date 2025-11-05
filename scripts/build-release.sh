@@ -12,11 +12,30 @@ REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo 
 source "$SCRIPT_DIR/release-utils.sh"
 cd "$REPO_ROOT"
 
+USE_CURRENT_VERSION=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --use-current-version)
+      USE_CURRENT_VERSION=true
+      shift
+      ;;
+    *)
+      echo "❌ Unknown option: $1" >&2
+      exit 1
+      ;;
+  esac
+done
+
 PACKAGE_NAME=$(node -p "require('./package.json').name")
 DIST_ROOT="$REPO_ROOT/doc/tmp/releases"
 
 CURRENT_VERSION=$(node -p "require('./package.json').version")
-NEW_VERSION=$(node <<'EOF'
+
+if $USE_CURRENT_VERSION; then
+  VERSION=$CURRENT_VERSION
+else
+  VERSION=$(node <<'EOF'
 const pkg = require('./package.json');
 const parts = pkg.version.split('.').map((part) => Number(part));
 if (parts.length !== 3 || parts.some(Number.isNaN)) {
@@ -26,7 +45,7 @@ parts[2] += 1;
 console.log(parts.join('.'));
 EOF
 )
-VERSION=$NEW_VERSION
+fi
 
 echo "🔧 ${PROJECT_NAME} - Release Build Script"
 echo "============================================"
@@ -45,9 +64,14 @@ echo "✅ Cache cleaned"
 
 # Step 2: Update version in package.json
 echo ""
-echo "📝 Step 2: Updating version to $VERSION..."
-npm version "$VERSION" --no-git-tag-version >/dev/null
-echo "✅ Version updated"
+if $USE_CURRENT_VERSION; then
+  echo "📝 Step 2: Skipping version bump (using current version $VERSION)..."
+  echo "✅ Version preserved"
+else
+  echo "📝 Step 2: Updating version to $VERSION..."
+  npm version "$VERSION" --no-git-tag-version >/dev/null
+  echo "✅ Version updated"
+fi
 
 # Step 3: Pre-build UI bundles
 echo ""
