@@ -13,6 +13,7 @@ import type {
   RuntimeStatusReporter,
 } from "../status/runtime-status-reporter";
 import type { Logger } from "../telemetry/logger";
+import { UnifiedSessionStorage } from "../unified-session/storage";
 
 type ClientSocket = {
   readonly id: string;
@@ -147,6 +148,8 @@ export class RemoteBridge {
 
   private readonly providerSessions = new Map<string, ProviderSessionBinding>();
 
+  private readonly sessionStorage: UnifiedSessionStorage;
+
   constructor(options: {
     readonly config: CoreConfig;
     readonly sessionManager: SessionManager;
@@ -165,6 +168,10 @@ export class RemoteBridge {
     this.hooks = options.hooks ?? {};
     this.statusReporter = options.statusReporter;
     this.fileDropService = options.fileDropService;
+    this.sessionStorage = new UnifiedSessionStorage({
+      workspaceSlug: this.config.claudeProjectSlug,
+      logger: this.logger,
+    });
     this.unsubscribeStatus = this.statusReporter.subscribe((event) => {
       this.latestStatus = event;
       this.broadcast({
@@ -429,6 +436,7 @@ export class RemoteBridge {
       actualProviderId,
       supportsImmediateBinding ? providerSessionId : undefined
     );
+    this.sessionStorage.register(session);
     const unsubscribe = adapter.subscribe(
       providerSessionId,
       (event: unknown) => {
@@ -470,6 +478,7 @@ export class RemoteBridge {
       return;
     }
 
+    this.sessionStorage.appendMessage(sessionId, userMessage);
     this.broadcast({
       type: "session:message",
       payload: userMessage,
@@ -508,6 +517,7 @@ export class RemoteBridge {
       return;
     }
 
+    this.sessionStorage.close(sessionId, "session-deleted");
     this.broadcast({
       type: "session:deleted",
       payload: { sessionId },
@@ -536,6 +546,7 @@ export class RemoteBridge {
     }
     const message = this.sessionManager.appendMessage(sessionId, role, content);
     if (message) {
+      this.sessionStorage.appendMessage(sessionId, message);
       this.broadcast({ type: "session:message", payload: message });
     }
   }
@@ -564,6 +575,7 @@ export class RemoteBridge {
       payload.timestamp
     );
     if (message) {
+      this.sessionStorage.appendMessage(sessionId, message);
       this.broadcast({ type: "session:message", payload: message });
     }
   }
@@ -614,6 +626,7 @@ export class RemoteBridge {
       return;
     }
     this.sessionManager.updateProviderSessionId(sessionId, providerSessionId);
+    this.sessionStorage.promote(sessionId, providerSessionId);
     this.updateProviderBinding(sessionId, providerSessionId);
     this.broadcastSessionBinding(sessionId);
   }

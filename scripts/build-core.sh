@@ -120,6 +120,7 @@ echo "📦 Packing provider tarballs..."
 CLAUDE_TARBALL=$(npm pack --workspace=@codeai-hub/claude-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 CODEX_TARBALL=$(npm pack --workspace=@codeai-hub/codex-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 GEMINI_TARBALL=$(npm pack --workspace=@codeai-hub/gemini-module --pack-destination "$TARBALL_STAGE" | tail -n1)
+UNIFIED_SESSION_TARBALL=$(npm pack --workspace=@codeai-hub/unified-session --pack-destination "$TARBALL_STAGE" | tail -n1)
 
 cp "$CORE_PROJECT_DIR/package.json" "$APP_STAGE/package.json"
 if [[ -f "$CORE_PROJECT_DIR/package-lock.json" ]]; then
@@ -130,6 +131,7 @@ mkdir -p "$APP_STAGE/tarballs"
 cp "$TARBALL_STAGE/$CLAUDE_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$CODEX_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$GEMINI_TARBALL" "$APP_STAGE/tarballs/"
+cp "$TARBALL_STAGE/$UNIFIED_SESSION_TARBALL" "$APP_STAGE/tarballs/"
 
 APP_STAGE_DIR="$APP_STAGE" node <<'NODE'
 const fs = require("node:fs");
@@ -142,6 +144,7 @@ const rewrite = new Map([
   ["@codeai-hub/claude-module", "codeai-hub-claude-module"],
   ["@codeai-hub/codex-module", "codeai-hub-codex-module"],
   ["@codeai-hub/gemini-module", "codeai-hub-gemini-module"],
+  ["@codeai-hub/unified-session", "codeai-hub-unified-session"],
 ]);
 for (const [dep, base] of rewrite) {
   if (pkg.dependencies && pkg.dependencies[dep]) {
