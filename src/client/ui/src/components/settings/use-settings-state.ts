@@ -77,7 +77,7 @@ export type UseSettingsStateResult = {
 };
 
 export const useSettingsState = (): UseSettingsStateResult => {
-  const initialEnabledRef = useRef(false);
+  const initialSettingsRef = useRef<Settings>(createDefaultSettings());
   const [settings, setSettings] = useState<Settings>(createDefaultSettings);
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -95,7 +95,9 @@ export const useSettingsState = (): UseSettingsStateResult => {
 
       if (event.data.type === "settings:loaded") {
         const thinking = mapThinkingSettings(event.data.settings.thinking);
-        initialEnabledRef.current = thinking.enabled;
+        initialSettingsRef.current = {
+          thinking,
+        };
         setSettings({
           thinking,
         });
@@ -105,7 +107,9 @@ export const useSettingsState = (): UseSettingsStateResult => {
 
       if (event.data.type === "settings:saved") {
         const thinking = mapThinkingSettings(event.data.settings?.thinking);
-        initialEnabledRef.current = thinking.enabled;
+        initialSettingsRef.current = {
+          thinking,
+        };
         setSettings({
           thinking,
         });
@@ -130,8 +134,10 @@ export const useSettingsState = (): UseSettingsStateResult => {
       };
       setSettings(nextSettings);
 
-      const enabledChanged = enabled !== initialEnabledRef.current;
-      setHasChanges(enabledChanged);
+      const initialThinking = initialSettingsRef.current.thinking;
+      const enabledChanged = enabled !== initialThinking.enabled;
+      const tokensChanged = maxTokens !== initialThinking.maxTokens;
+      setHasChanges(enabledChanged || tokensChanged);
     },
     []
   );

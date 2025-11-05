@@ -42,6 +42,11 @@ SettingsView.tsx               ← Main settings container
     └── ThinkingSettings.tsx   ← Thinking mode settings component
 ```
 
+### Tab Layout (v1.1.140+)
+- Horizontal navigation exposes provider-specific buckets: `Claude`, `Codex`, `Gemini`, `General`.
+- Each tab owns its own content area; currently only `Claude` renders `ThinkingSettings`.
+- Placeholder copy (`"Provider settings will appear here."`) keeps empty tabs accessible until new forms arrive.
+
 ---
 
 ## Save Logic
@@ -50,33 +55,35 @@ SettingsView.tsx               ← Main settings container
 
 **CRITICAL RULE:** The Save Changes button appears **ONLY** when settings that actually affect behavior change.
 
-#### Current Implementation (v1.21.6)
+#### Current Implementation (v1.1.140+)
 
 **Thinking Settings:**
-- Button appears: When `enabled` checkbox is toggled
-- Button does NOT appear: When `maxTokens` changes while `enabled = false`
+- Button appears: When `enabled` checkbox toggles value
+- Button appears: When `maxTokens` changes (even if `enabled` stays the same)
 
-**Why?** Changing token values when thinking mode is disabled has no effect. Saving meaningless changes is illogical.
+**Why?** Any modification to the stored snapshot (flag or cap) must be persisted, so the footer reacts to either type of change.
 
 #### Implementation Details
 
 ```typescript
-// SettingsView.tsx
-const initialEnabled = React.useRef<boolean>(false);
+// use-settings-state.ts
+const initialSettingsRef = useRef<Settings>(createDefaultSettings());
 
-// Track initial state on load
-initialEnabled.current = loadedSettings.thinking.enabled;
+// Track initial snapshot on load/save
+initialSettingsRef.current = { thinking };
 
-// Only mark as changed if enabled checkbox changed
-const enabledChanged = enabled !== initialEnabled.current;
-setHasChanges(enabledChanged);
+// Mark footer as dirty if any field deviates
+const initialThinking = initialSettingsRef.current.thinking;
+const enabledChanged = enabled !== initialThinking.enabled;
+const tokensChanged = maxTokens !== initialThinking.maxTokens;
+setHasChanges(enabledChanged || tokensChanged);
 ```
 
 **Key Points:**
-1. Use `useRef` to track initial value of meaningful settings
-2. Compare current vs initial in `handleThinkingSettingsChange`
-3. Only set `hasChanges = true` if meaningful settings changed
-4. Update ref after successful save
+1. Track the entire `thinking` snapshot, not just the toggle flag
+2. Compare both `enabled` and `maxTokens` inside the change handler
+3. Reset the ref after successful `settings:loaded` / `settings:saved` events
+4. Footer reuses the single `hasChanges` flag for Save button state
 
 ---
 

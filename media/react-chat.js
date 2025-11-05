@@ -9130,7 +9130,7 @@
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved";
   };
   var useSettingsState = () => {
-    const initialEnabledRef = (0, import_react8.useRef)(false);
+    const initialSettingsRef = (0, import_react8.useRef)(createDefaultSettings());
     const [settings, setSettings] = (0, import_react8.useState)(createDefaultSettings);
     const [hasChanges, setHasChanges] = (0, import_react8.useState)(false);
     const [saving, setSaving] = (0, import_react8.useState)(false);
@@ -9145,7 +9145,9 @@
         }
         if (event.data.type === "settings:loaded") {
           const thinking = mapThinkingSettings(event.data.settings.thinking);
-          initialEnabledRef.current = thinking.enabled;
+          initialSettingsRef.current = {
+            thinking
+          };
           setSettings({
             thinking
           });
@@ -9154,7 +9156,9 @@
         }
         if (event.data.type === "settings:saved") {
           const thinking = mapThinkingSettings(event.data.settings?.thinking);
-          initialEnabledRef.current = thinking.enabled;
+          initialSettingsRef.current = {
+            thinking
+          };
           setSettings({
             thinking
           });
@@ -9176,8 +9180,10 @@
           }
         };
         setSettings(nextSettings);
-        const enabledChanged = enabled !== initialEnabledRef.current;
-        setHasChanges(enabledChanged);
+        const initialThinking = initialSettingsRef.current.thinking;
+        const enabledChanged = enabled !== initialThinking.enabled;
+        const tokensChanged = maxTokens !== initialThinking.maxTokens;
+        setHasChanges(enabledChanged || tokensChanged);
       },
       []
     );
@@ -9216,12 +9222,43 @@
     background: "#1e1e1e",
     color: "#cccccc"
   };
+  var tabBarStyles = {
+    display: "flex",
+    borderBottom: "1px solid #2d2d30",
+    padding: "0 20px",
+    gap: "8px"
+  };
+  var tabButtonStyles = {
+    border: "none",
+    background: "transparent",
+    color: "#cccccc",
+    fontSize: "12px",
+    padding: "10px 14px",
+    cursor: "pointer",
+    borderBottom: "2px solid transparent"
+  };
+  var activeTabStyles = {
+    color: "#ffffff",
+    borderBottomColor: "#0e639c"
+  };
   var contentStyles = {
     flex: 1,
     overflowY: "auto",
     padding: "20px"
   };
+  var placeholderStyles = {
+    fontSize: "13px",
+    color: "#999999",
+    padding: "10px 0"
+  };
+  var TABS = [
+    { id: "claude", label: "Claude" },
+    { id: "codex", label: "Codex" },
+    { id: "gemini", label: "Gemini" },
+    { id: "general", label: "General" }
+  ];
   var SettingsView = ({ onClose }) => {
+    const [activeTab, setActiveTab] = (0, import_react9.useState)("claude");
     const {
       settings,
       hasChanges,
@@ -9233,14 +9270,27 @@
     } = useSettingsState();
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: containerStyles4, children: [
       /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(settings_header_default, { onClose }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { style: contentStyles, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { style: tabBarStyles, children: TABS.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        "button",
+        {
+          onClick: () => setActiveTab(tab.id),
+          style: {
+            ...tabButtonStyles,
+            ...activeTab === tab.id ? activeTabStyles : null
+          },
+          type: "button",
+          children: tab.label
+        },
+        tab.id
+      )) }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { style: contentStyles, children: activeTab === "claude" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         thinking_settings_default,
         {
           enabled: settings.thinking.enabled,
           maxTokens: settings.thinking.maxTokens,
           onChange: handleThinkingSettingsChange
         }
-      ) }),
+      ) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { style: placeholderStyles, children: "Provider settings will appear here." }) }),
       /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         settings_footer_default,
         {
