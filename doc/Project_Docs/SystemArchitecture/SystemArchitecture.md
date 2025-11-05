@@ -18,25 +18,25 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/claude.json`, а core передаёт путь в модуль, чтобы каждая сессия использовала актуальный лимит.
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.138
-- Autономное ядро: `@codeai-hub/core` 1.1.138
-- Claude module: 1.1.138
-- Codex module: 1.1.138
-- Gemini module: 1.1.138 (CommonJS bridge → ESM tooling)
+- VSIX: `codeai-hub` 1.1.150
+- Autономное ядро: `@codeai-hub/core` 1.1.150
+- Claude module: 1.1.150
+- Codex module: 1.1.150
+- Gemini module: 1.1.150 (CommonJS bridge → ESM tooling)
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.125/
+│       └── 1.1.150/
 │           ├── node/           # официальный Node 20 runtime
 │           ├── app/            # JS-бандл core + tarballs зависимостей
 │           └── install.json
 ├── providers/
-│   ├── claude/1.1.125/
-│   ├── codex/1.1.125/
-│   └── gemini/1.1.125/
+│   ├── claude/1.1.150/
+│   ├── codex/1.1.150/
+│   └── gemini/1.1.150/
 │       ├── dist/
 │       │   ├── index.js
 │       │   ├── installer/
@@ -46,9 +46,11 @@ CodeAI-Hub — автономная платформа управления AI-�
 ├── settings/
 │   └── claude.json
 └── releases/
-    ├── codeai-hub-core-darwin-arm64-1.1.125.tar.bz2
-    ├── CodeAIHubLauncher-macos-arm64-1.1.125.tar.bz2
-    └── gemini-module-1.1.125.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.150.tar.bz2
+    ├── claude-module-1.1.150.tar.bz2
+    ├── codex-module-1.1.150.tar.bz2
+    ├── gemini-module-1.1.150.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.150.tar.bz2
 ```
 
 ## Провайдеры

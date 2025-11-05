@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.150] - 2025-11-05
+### Changed
+- Hardened the launcher/core/provider build scripts to drop temporary tarballs from the workspace and consistently publish archives into `~/.codeai-hub/releases/`.
+- Updated `build-release.sh` to validate locally built artefacts, enforce manifest/version parity, and copy the 1.1.150 tarballs into `doc/tmp/releases/` before packaging.
+
+### Build
+- VSIX → `codeai-hub-1.1.150.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.150.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.150.tar.bz2`
+- Providers → `claude-module-1.1.150.tar.bz2`, `codex-module-1.1.150.tar.bz2`, `gemini-module-1.1.150.tar.bz2`
+
 ## [1.1.142] - 2025-11-04
 ### Changed
 - Session dialog cards now render provider-specific shells: user сообщения смещены вправо, плашки Claude/Codex/Gemini получают фирменные фоны и метки, reasoning блок `Thinking` скрыт по умолчанию и разворачивается по клику.
