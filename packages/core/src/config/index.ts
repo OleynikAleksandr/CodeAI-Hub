@@ -5,6 +5,7 @@ export type CoreConfig = {
   readonly host: string;
   readonly port: number;
   readonly shutdownGracePeriodMs: number;
+  readonly managedMode: string | null;
   readonly claudeWorkspacePath: string;
   readonly claudeProjectSlug: string;
   readonly claudeSettingsPath: string;
@@ -107,6 +108,7 @@ export const loadConfig = (): CoreConfig => {
     process.env.CORE_SHUTDOWN_GRACE_MS,
     DEFAULT_GRACE_MS
   );
+  const managedMode = process.env.CORE_MANAGED_MODE ?? null;
   const workspacePath =
     process.env.CLAUDE_WORKSPACE_PATH ?? path.resolve(process.cwd());
   const slug =
@@ -134,6 +136,7 @@ export const loadConfig = (): CoreConfig => {
     host,
     port,
     shutdownGracePeriodMs,
+    managedMode,
     claudeWorkspacePath: workspacePath,
     claudeProjectSlug: slug,
     claudeSettingsPath,
