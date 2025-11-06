@@ -2,7 +2,6 @@ import { homedir } from "node:os";
 import path from "node:path";
 import {
   buildSessionFilePath,
-  type JsonObject,
   readSessionEvents,
   sanitizeWorkspaceSlug,
   UnifiedSessionWriter,
@@ -96,11 +95,7 @@ export class UnifiedSessionStorage {
     this.sessions.delete(sessionId);
     const writer = entry.writer;
     if (writer) {
-      const metadata: JsonObject = {
-        coreSessionId: sessionId,
-        providerSessionId: entry.providerSessionId ?? null,
-      };
-      writer.close({ reason, metadata }).catch((error: unknown) => {
+      writer.close({ reason }).catch((error: unknown) => {
         this.logger.error(
           "Failed to close unified session writer",
           error as Error,
@@ -200,16 +195,11 @@ export class UnifiedSessionStorage {
       entry.writerSessionId = undefined;
     }
 
-    const metadata: JsonObject = {
-      coreSessionId: sessionId,
-      providerSessionId,
-    };
     entry.writer = new UnifiedSessionWriter({
       rootDirectory: this.rootDirectory,
       workspaceSlug: this.workspaceSlug,
       provider: entry.providerId,
       sessionId: sanitizedProviderSessionId,
-      metadata,
     });
     entry.writerSessionId = sanitizedProviderSessionId;
     this.flushQueue(entry).catch((error: unknown) => {
@@ -258,9 +248,6 @@ export class UnifiedSessionStorage {
       role: message.role,
       content: message.content,
       timestamp: message.timestamp,
-      metadata: {
-        coreSessionId: message.sessionId,
-      },
     });
   }
 }

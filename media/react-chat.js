@@ -7624,6 +7624,58 @@
     const { [sessionId]: _discarded, ...rest } = snapshots;
     return rest;
   };
+  var appendMessageToSnapshots = (snapshots, payload) => {
+    const snapshot = snapshots[payload.sessionId];
+    if (!snapshot) {
+      return snapshots;
+    }
+    return {
+      ...snapshots,
+      [payload.sessionId]: {
+        ...snapshot,
+        messages: [...snapshot.messages, payload.message]
+      }
+    };
+  };
+  var mergeHistoryIntoSnapshots = (snapshots, payload) => {
+    const snapshot = snapshots[payload.sessionId];
+    if (!snapshot) {
+      return snapshots;
+    }
+    const merged = /* @__PURE__ */ new Map();
+    for (const message of snapshot.messages) {
+      merged.set(message.id, message);
+    }
+    for (const message of payload.messages) {
+      merged.set(message.id, message);
+    }
+    const ordered = Array.from(merged.values()).sort(
+      (a, b) => a.createdAt - b.createdAt
+    );
+    return {
+      ...snapshots,
+      [payload.sessionId]: {
+        ...snapshot,
+        messages: ordered
+      }
+    };
+  };
+  var toggleTodoInSnapshots = (snapshots, sessionId, todoId) => {
+    const snapshot = snapshots[sessionId];
+    if (!snapshot) {
+      return snapshots;
+    }
+    const todos = snapshot.todos.map(
+      (todo) => todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+    );
+    return {
+      ...snapshots,
+      [sessionId]: {
+        ...snapshot,
+        todos
+      }
+    };
+  };
 
   // src/client/ui/src/core-bridge/normalizers.ts
   var toNumberTimestamp = (value) => {
@@ -7811,6 +7863,32 @@
     };
   };
 
+  // src/client/ui/src/core-bridge/session-history.ts
+  var fetchSessionHistory = async (config, sessionId, notify) => {
+    try {
+      const response = await fetch(
+        `${config.httpUrl}/api/v1/sessions/${sessionId}/history`,
+        { method: "GET" }
+      );
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      const historySessionId = typeof data.sessionId === "string" ? data.sessionId : sessionId;
+      const messages = Array.isArray(data.messages) ? data.messages : [];
+      notify({
+        sessionId: historySessionId,
+        messages
+      });
+    } catch {
+    }
+  };
+  var loadSessionHistories = async (config, sessions, notify) => {
+    await Promise.all(
+      sessions.map((session) => fetchSessionHistory(config, session.id, notify))
+    );
+  };
+
   // src/client/ui/src/core-bridge/core-bridge.ts
   var DEFAULT_CONFIG = {
     httpUrl: "http://127.0.0.1:8080",
@@ -7939,6 +8017,13 @@
       notifyWindow({
         type: "core:state",
         payload: normalized
+      });
+      loadSessionHistories(config, normalized.sessions, (payload) => {
+        notifyWindow({
+          type: "session:history",
+          payload
+        });
+      }).catch(() => {
       });
     } catch {
       if (!hasSuccessfulConnection) {
@@ -8192,20 +8277,13 @@
     );
     const handleSessionMessageEvent2 = (0, import_react3.useCallback)(
       (payload) => {
-        setSnapshots((previous) => {
-          const snapshot = previous[payload.sessionId];
-          if (!snapshot) {
-            return previous;
-          }
-          const nextMessages = [...snapshot.messages, payload.message];
-          return {
-            ...previous,
-            [payload.sessionId]: {
-              ...snapshot,
-              messages: nextMessages
-            }
-          };
-        });
+        setSnapshots((previous) => appendMessageToSnapshots(previous, payload));
+      },
+      []
+    );
+    const handleSessionHistoryEvent = (0, import_react3.useCallback)(
+      (payload) => {
+        setSnapshots((previous) => mergeHistoryIntoSnapshots(previous, payload));
       },
       []
     );
@@ -8291,19 +8369,9 @@
       deleteSession(sessionId);
     }, []);
     const toggleTodo = (0, import_react3.useCallback)((sessionId, todoId) => {
-      setSnapshots((previous) => {
-        const current = previous[sessionId];
-        if (!current) {
-          return previous;
-        }
-        const todos = current.todos.map(
-          (todo) => todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-        );
-        return {
-          ...previous,
-          [sessionId]: { ...current, todos }
-        };
-      });
+      setSnapshots(
+        (previous) => toggleTodoInSnapshots(previous, sessionId, todoId)
+      );
     }, []);
     const sendMessage = (0, import_react3.useCallback)((sessionId, content) => {
       setSnapshots((previous) => {
@@ -8328,6 +8396,7 @@
       handleSessionCreated,
       hydrateFromCoreState,
       handleSessionMessageEvent: handleSessionMessageEvent2,
+      handleSessionHistoryEvent,
       handleSessionDeleted,
       handleSessionBindingUpdate,
       clearSessions,
@@ -8398,6 +8467,13 @@
     const candidate = value;
     return typeof candidate.label === "string";
   };
+  var isSessionHistoryPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.sessionId === "string" && Array.isArray(candidate.messages);
+  };
   var isSessionBindingPayload = (value) => {
     if (!value || typeof value !== "object") {
       return false;
@@ -8441,6 +8517,20 @@
     }
     onSessionMessage(message.payload);
   };
+  var handleSessionHistoryMessage = (message, onSessionHistory) => {
+    if (!(onSessionHistory && message.type === "session:history")) {
+      return;
+    }
+    const payload = message.payload;
+    if (!isSessionHistoryPayload(payload)) {
+      return;
+    }
+    const normalized = payload.messages.map((candidate) => sanitizeMessage(candidate)).filter((entry) => Boolean(entry));
+    onSessionHistory({
+      sessionId: payload.sessionId,
+      messages: normalized
+    });
+  };
   var handleSessionDeletedMessage = (message, onSessionDeleted) => {
     if (!(onSessionDeleted && isSessionDeletedPayload(message.payload))) {
       return;
@@ -8479,6 +8569,9 @@
       case "session:binding":
         handleSessionBindingMessage(message, handlers.onSessionBinding);
         return true;
+      case "session:history":
+        handleSessionHistoryMessage(message, handlers.onSessionHistory);
+        return true;
       default:
         return false;
     }
@@ -8504,7 +8597,8 @@
       onSessionFocusLast: handlers.onSessionFocusLast,
       onSessionMessage: handlers.onSessionMessage,
       onSessionDeleted: handlers.onSessionDeleted,
-      onSessionBinding: handlers.onSessionBinding
+      onSessionBinding: handlers.onSessionBinding,
+      onSessionHistory: handlers.onSessionHistory
     })) {
       return;
     }
@@ -8537,7 +8631,8 @@
     onCoreLoadingStatus,
     onSessionMessage,
     onSessionDeleted,
-    onSessionBinding
+    onSessionBinding,
+    onSessionHistory
   }) => {
     (0, import_react5.useEffect)(() => {
       const handleIncomingMessage = (event) => {
@@ -8552,7 +8647,8 @@
           onCoreLoadingStatus,
           onSessionMessage,
           onSessionDeleted,
-          onSessionBinding
+          onSessionBinding,
+          onSessionHistory
         });
       };
       window.addEventListener("message", handleIncomingMessage);
@@ -8570,7 +8666,8 @@
       onCoreLoadingStatus,
       onSessionMessage,
       onSessionDeleted,
-      onSessionBinding
+      onSessionBinding,
+      onSessionHistory
     ]);
   };
 
@@ -10423,6 +10520,7 @@ ${path}` : path;
       handleSessionCreated,
       hydrateFromCoreState,
       handleSessionMessageEvent: handleSessionMessageEvent2,
+      handleSessionHistoryEvent,
       handleSessionDeleted,
       handleSessionBindingUpdate,
       clearSessions,
@@ -10465,6 +10563,13 @@ ${path}` : path;
         handleSessionMessageEvent2(payload);
       },
       [handleSessionMessageEvent2]
+    );
+    const handleSessionHistory = (0, import_react13.useCallback)(
+      (payload) => {
+        activateRoot();
+        handleSessionHistoryEvent(payload);
+      },
+      [handleSessionHistoryEvent]
     );
     const handleSessionDeletedMessage2 = (0, import_react13.useCallback)(
       (payload) => {
@@ -10521,7 +10626,8 @@ ${path}` : path;
       },
       onSessionMessage: handleSessionMessage,
       onSessionDeleted: handleSessionDeletedMessage2,
-      onSessionBinding: handleSessionBindingMessage2
+      onSessionBinding: handleSessionBindingMessage2,
+      onSessionHistory: handleSessionHistory
     });
     const isCoreReady = coreStatus === "ready" && coreFinalized;
     (0, import_react13.useEffect)(() => {
