@@ -15,7 +15,6 @@ const DEFAULT_CONFIG: CoreBridgeConfig = {
 };
 
 const RECONNECT_DELAY_MS = 2000;
-
 const globalScope = window as typeof window & {
   __CODEAI_CORE_CONFIG?: CoreBridgeConfig;
 };
@@ -79,7 +78,6 @@ const notifyConnectionStatus = (status: CoreConnectionStatus): void => {
 };
 
 const handleServerMessage = createServerMessageHandler(notifyWindow);
-
 const flushPendingMessages = (): void => {
   if (!websocket || websocket.readyState !== WebSocket.OPEN) {
     return;
@@ -98,17 +96,27 @@ const enqueueMessage = (payload: unknown): void => {
   pendingMessages.push(serialized);
   flushPendingMessages();
 };
-
 const scheduleReconnect = (config: CoreBridgeConfig): void => {
-  if (reconnectTimer) return;
+  if (reconnectTimer) {
+    return;
+  }
   notifyConnectionStatus("connecting");
   if (!hasSuccessfulConnection) {
     try {
-      type VsCodeWindow = typeof window & { acquireVsCodeApi?: () => { postMessage: (m: unknown) => void } };
-      (window as VsCodeWindow).acquireVsCodeApi?.().postMessage({ type: "core:restart-request" });
-    } catch { /* noop */ }
+      type VsCodeWindow = typeof window & {
+        acquireVsCodeApi?: () => { postMessage: (m: unknown) => void };
+      };
+      (window as VsCodeWindow)
+        .acquireVsCodeApi?.()
+        .postMessage({ type: "core:restart-request" });
+    } catch {
+      /* noop */
+    }
   }
-  reconnectTimer = window.setTimeout(() => { reconnectTimer = undefined; connectWebSocket(config); }, RECONNECT_DELAY_MS);
+  reconnectTimer = window.setTimeout(() => {
+    reconnectTimer = undefined;
+    connectWebSocket(config);
+  }, RECONNECT_DELAY_MS);
 };
 
 const connectWebSocket = (config: CoreBridgeConfig): void => {
@@ -122,7 +130,7 @@ const connectWebSocket = (config: CoreBridgeConfig): void => {
     hasSuccessfulConnection = true;
     notifyConnectionStatus("ready");
     fetchStatusSnapshot(config).catch(() => {
-      // ignore, we'll retry on demand
+      /* ignore, we'll retry on demand */
     });
     flushPendingMessages();
   });
@@ -141,7 +149,6 @@ const connectWebSocket = (config: CoreBridgeConfig): void => {
     scheduleReconnect(config);
   });
 };
-
 const fetchStatusSnapshot = async (config: CoreBridgeConfig): Promise<void> => {
   try {
     const response = await fetch(`${config.httpUrl}/api/v1/status`, {
@@ -163,21 +170,17 @@ const fetchStatusSnapshot = async (config: CoreBridgeConfig): Promise<void> => {
       payload: normalized,
     });
     loadSessionHistories(config, normalized.sessions, (payload) => {
-      notifyWindow({
-        type: "session:history",
-        payload,
-      });
+      notifyWindow({ type: "session:history", payload });
     }).catch(() => {
-      // Ignore history hydration failures; live stream will populate messages.
+      /* Ignore history hydration failures; live stream will populate messages. */
     });
   } catch {
     if (!hasSuccessfulConnection) {
       notifyConnectionStatus("connecting");
     }
-    // Ignore status fetch failures; the UI will retry when the user interacts.
+    /* Ignore status fetch failures; the UI will retry when the user interacts. */
   }
 };
-
 const ensureProvidersAvailable = async (
   config: CoreBridgeConfig
 ): Promise<readonly ProviderStackDescriptor[]> => {
@@ -206,7 +209,6 @@ const openProviderPicker = async (): Promise<void> => {
     payload: { providers },
   });
 };
-
 const createSession = (providerIds: readonly ProviderStackId[]): void => {
   const providerId = providerIds[0];
   if (!providerId) {
@@ -222,7 +224,6 @@ const createSession = (providerIds: readonly ProviderStackId[]): void => {
     payload: { providerId },
   });
 };
-
 export const sendChatMessage = (sessionId: string, content: string): void => {
   if (!content.trim()) {
     return;
@@ -236,7 +237,6 @@ export const sendChatMessage = (sessionId: string, content: string): void => {
     },
   });
 };
-
 export const deleteSession = (sessionId: string): void => {
   enqueueMessage({
     type: "session:delete",
