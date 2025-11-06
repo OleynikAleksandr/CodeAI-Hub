@@ -5,6 +5,7 @@ import {
   window,
 } from "vscode";
 import { WebviewHtmlGenerator } from "../core/webview-module/webview-html-generator";
+import type { CoreProcessManager } from "./core/core-process-manager";
 import type { WebviewMessage } from "./home-view-message-router";
 import { HomeViewMessageRouter } from "./home-view-message-router";
 
@@ -20,11 +21,12 @@ export class HomeViewProvider implements WebviewViewProvider {
 
   constructor(
     extensionUri: Uri,
-    coreConfig?: { httpUrl: string; wsUrl: string }
+    coreConfig?: { httpUrl: string; wsUrl: string },
+    coreProcessManager?: CoreProcessManager
   ) {
     this.extensionUri = extensionUri;
     this.htmlGenerator = new WebviewHtmlGenerator();
-    this.messageRouter = new HomeViewMessageRouter();
+    this.messageRouter = new HomeViewMessageRouter(coreProcessManager);
     this.coreConfig = coreConfig;
   }
 

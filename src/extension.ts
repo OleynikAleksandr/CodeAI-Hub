@@ -75,7 +75,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   const provider = new HomeViewProvider(
     context.extensionUri,
-    coreConnectionInfo
+    coreConnectionInfo,
+    coreProcessManager ?? undefined
   );
 
   context.subscriptions.push(

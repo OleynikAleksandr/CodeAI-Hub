@@ -7961,10 +7961,14 @@
     flushPendingMessages();
   };
   var scheduleReconnect = (config) => {
-    if (reconnectTimer) {
-      return;
-    }
+    if (reconnectTimer) return;
     notifyConnectionStatus("connecting");
+    if (!hasSuccessfulConnection) {
+      try {
+        window.acquireVsCodeApi?.().postMessage({ type: "core:restart-request" });
+      } catch {
+      }
+    }
     reconnectTimer = window.setTimeout(() => {
       reconnectTimer = void 0;
       connectWebSocket(config);

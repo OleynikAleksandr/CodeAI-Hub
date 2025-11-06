@@ -100,14 +100,15 @@ const enqueueMessage = (payload: unknown): void => {
 };
 
 const scheduleReconnect = (config: CoreBridgeConfig): void => {
-  if (reconnectTimer) {
-    return;
-  }
+  if (reconnectTimer) return;
   notifyConnectionStatus("connecting");
-  reconnectTimer = window.setTimeout(() => {
-    reconnectTimer = undefined;
-    connectWebSocket(config);
-  }, RECONNECT_DELAY_MS);
+  if (!hasSuccessfulConnection) {
+    try {
+      type VsCodeWindow = typeof window & { acquireVsCodeApi?: () => { postMessage: (m: unknown) => void } };
+      (window as VsCodeWindow).acquireVsCodeApi?.().postMessage({ type: "core:restart-request" });
+    } catch { /* noop */ }
+  }
+  reconnectTimer = window.setTimeout(() => { reconnectTimer = undefined; connectWebSocket(config); }, RECONNECT_DELAY_MS);
 };
 
 const connectWebSocket = (config: CoreBridgeConfig): void => {

@@ -120,6 +120,13 @@ export class CoreOrchestrator {
       return;
     }
 
+    if (this.config.managedMode) {
+      this.logger.info("Managed mode active, skipping auto-shutdown", {
+        managedBy: this.config.managedMode,
+      });
+      return;
+    }
+
     this.logger.info("No active clients, scheduling shutdown", {
       delayMs: this.config.shutdownGracePeriodMs,
     });

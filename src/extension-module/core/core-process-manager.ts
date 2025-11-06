@@ -84,6 +84,7 @@ export class CoreProcessManager {
       ...process.env,
       CORE_HOST,
       CORE_PORT: `${CORE_PORT}`,
+      CORE_MANAGED_MODE: "vscode",
       CLAUDE_WORKSPACE_PATH: workspacePath,
       CODEX_WORKSPACE_PATH: workspacePath,
       CODEX_SKIP_GIT_REPO_CHECK: "true",
