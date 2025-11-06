@@ -7961,7 +7961,9 @@
     flushPendingMessages();
   };
   var scheduleReconnect = (config) => {
-    if (reconnectTimer) return;
+    if (reconnectTimer) {
+      return;
+    }
     notifyConnectionStatus("connecting");
     if (!hasSuccessfulConnection) {
       try {
@@ -8023,10 +8025,7 @@
         payload: normalized
       });
       loadSessionHistories(config, normalized.sessions, (payload) => {
-        notifyWindow({
-          type: "session:history",
-          payload
-        });
+        notifyWindow({ type: "session:history", payload });
       }).catch(() => {
       });
     } catch {
