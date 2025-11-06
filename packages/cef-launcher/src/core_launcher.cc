@@ -16,6 +16,10 @@
 #include <thread>
 #include <vector>
 
+#include "base/cef_callback.h"
+#include "include/cef_task.h"
+#include "include/wrapper/cef_closure_task.h"
+
 #ifdef _WIN32
 #include <Windows.h>
 #include <ShlObj.h>
@@ -44,6 +48,7 @@ constexpr int kDefaultPort = 8080;
 constexpr int kConnectTimeoutMs = 800;
 constexpr int kReadyPollAttempts = 25;
 constexpr int kReadyPollDelayMs = 200;
+constexpr int kCoreMonitoringIntervalMs = 5000;
 constexpr const char* kLogsRoot = ".codeai-hub/logs";
 constexpr const char* kLauncherLogDirectory = "launcher";
 constexpr const char* kLauncherLogFilename = "launcher.log";
@@ -416,10 +421,15 @@ void EnsureGlobalEnvironment(
   SetEnv("GEMINI_WORKSPACE_PATH", workspace);
   SetEnv("CODEX_SKIP_GIT_REPO_CHECK", "true");
 
+  SetEnv("CORE_MANAGED_MODE", "launcher");
+  LogLauncherInfo("Core managed mode set to: launcher");
+
   if (GetEnvOrDefault("NODE_ENV", "") .empty()) {
     SetEnv("NODE_ENV", "production");
   }
 }
+
+void MonitorCoreHealth();
 
 }  // namespace
 
@@ -594,5 +604,36 @@ bool EnsureCoreProcessRunning() {
     "CodeAIHubLauncher: core did not become ready within timeout\n");
   return false;
 }
+
+void StartCoreMonitoring() {
+  LogLauncherInfo("Starting core health monitoring");
+  CefPostDelayedTask(
+    TID_UI,
+    base::BindOnce(&MonitorCoreHealth),
+    kCoreMonitoringIntervalMs);
+}
+
+namespace {
+
+void MonitorCoreHealth() {
+  const std::string host = GetEnvOrDefault("CORE_HOST", kDefaultHost);
+  const int port = ParsePort(
+    GetEnvOrDefault("CORE_PORT", std::to_string(kDefaultPort)),
+    kDefaultPort);
+
+  if (!IsCoreListening(host, port)) {
+    LogLauncherWarn(
+      "Core monitoring detected core is unreachable on " +
+      FormatEndpoint(host, port) + ", attempting restart");
+    EnsureCoreProcessRunning();
+  }
+
+  CefPostDelayedTask(
+    TID_UI,
+    base::BindOnce(&MonitorCoreHealth),
+    kCoreMonitoringIntervalMs);
+}
+
+}  // namespace
 
 }  // namespace codeai::launcher
