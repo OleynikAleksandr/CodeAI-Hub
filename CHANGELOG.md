@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.152] - 2025-11-06
+### Changed
+- Simplified the unified session JSONL format to three record types without `workspaceSlug` or metadata fields, reducing file size and aligning the `/api/v1/sessions/:id/history` payload with the live stream.
+- Updated the release toolchain to rely exclusively on `./scripts/build-all.sh`, which now bumps all workspace versions and rebuilds provider/core/launcher artefacts before packaging the VSIX.
+
+### Build
+- VSIX → `codeai-hub-1.1.152.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.152.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.152.tar.bz2`
+- Providers → `claude-module-1.1.152.tar.bz2`, `codex-module-1.1.152.tar.bz2`, `gemini-module-1.1.152.tar.bz2`
+
 ## [1.1.150] - 2025-11-05
 ### Changed
 - Hardened the launcher/core/provider build scripts to drop temporary tarballs from the workspace and consistently publish archives into `~/.codeai-hub/releases/`.

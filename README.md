@@ -2,15 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.150
-- **Manual artefact refresh**: пересобраны launcher, core и все провайдеры на 1.1.150; скрипты `build-*-module.sh` и `build-core.sh` теперь очищают временные tarball’ы и укладывают архивы строго в `~/.codeai-hub/releases/`.
-- **Release guardrails**: `build-release.sh` проверяет наличие локальных артефактов, сравнивает версии манифестов с текущим релизом и подхватывает свежие tarball’ы в `doc/tmp/releases/` перед упаковкой VSIX.
+## Current Release — v1.1.152
+- **Unified JSONL format**: `@codeai-hub/unified-session` записывает только три типа событий (`session-open`, `message`, `session-close`) без лишних метаданных; каждое сообщение содержит ровно `messageId`, `role`, `content`, что упрощает чтение истории и снижает размер логов.
+- **Core refresh pipeline**: ядро и Remote Bridge работают с новым форматом без доп. полей, поэтому `/api/v1/sessions/:id/history` возвращает компактную ленту сообщений; refresh UI больше не зависит от временных `workspaceSlug`/`metadata` полей.
+- **Single-step release flow**: `./scripts/build-all.sh` подбирает следующий семвер, пересобирает провайдеры, core, launcher и VSIX и обновляет все манифесты в одном проходе.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.150.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.150.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.150.tar.bz2`
-- Providers: `claude-module-1.1.150.tar.bz2`, `codex-module-1.1.150.tar.bz2`, `gemini-module-1.1.150.tar.bz2`
+- VSIX: `codeai-hub-1.1.152.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.152.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.152.tar.bz2`
+- Providers: `claude-module-1.1.152.tar.bz2`, `codex-module-1.1.152.tar.bz2`, `gemini-module-1.1.152.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
@@ -44,17 +45,17 @@ npm install
 4. **Commit**; the pre-commit hook reruns the same gates automatically.
 
 ## Building a Release
-Always use the provided script to create a VSIX:
+Always use the unified script to generate a release:
 ```bash
-./scripts/build-release.sh <version>
+./scripts/build-all.sh
 ```
 The script performs:
-- cache cleanup and version bump in `package.json`;
-- optional webview UI build (if a bundled React app exists);
-- architecture, duplication, lint, and type checks;
-- VSIX packaging via `vsce`.
+- enforces a clean git tree, bumps versions across root and workspaces and syncs manifests;
+- wipes the local `~/.codeai-hub/{core,providers,cef-launcher,releases}` caches before rebuilding;
+- rebuilds provider modules, core runtime, CEF launcher и VSIX, прогоняя архитектурные/линт чекеры;
+- копирует свежие tar.bz2 артефакты в `doc/tmp/releases/` и оставляет итоговый VSIX в корне репозитория.
 
-Artifacts such as `.claude`, `.vscode`, `doc/**`, and other local assets are excluded through `.vscodeignore`. After the script finishes, upload **three** assets to the GitHub Release whose tag matches the version: the VSIX, the launcher tarball, and the core tarball. (CEF is still downloaded from the public CDN.)
+По завершении обновляйте README, CHANGELOG, SystemArchitecture и `doc/TODO/todo-plan.md`, фиксируйте релиз коммитом `feat: vX.Y.Z - <summary>` и пушьте в `main`.
 
 ### Verifying the core runtime
 ```bash
