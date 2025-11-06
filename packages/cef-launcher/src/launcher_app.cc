@@ -93,6 +93,8 @@ void LauncherApp::OnContextInitialized() {
         "UI will retry connections in the background.\n");
   }
 
+  codeai::launcher::StartCoreMonitoring();
+
   const bool use_views = !command_line->HasSwitch("use-native");
   const bool use_alloy = command_line->HasSwitch("use-alloy-style");
   cef_runtime_style_t runtime_style = use_alloy ? CEF_RUNTIME_STYLE_ALLOY : CEF_RUNTIME_STYLE_CHROME;

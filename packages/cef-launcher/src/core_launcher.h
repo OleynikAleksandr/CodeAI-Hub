@@ -12,6 +12,10 @@ bool EnsureCoreProcessRunning();
 // Exposed for tests/platform code to check whether an active core is listening.
 bool IsCoreListening(const std::string& host, int port);
 
+// Starts periodic core health monitoring with automatic restart.
+// Should be called once during launcher initialization.
+void StartCoreMonitoring();
+
 void LogLauncherInfo(const std::string& message);
 void LogLauncherWarn(const std::string& message);
 void LogLauncherError(const std::string& message);

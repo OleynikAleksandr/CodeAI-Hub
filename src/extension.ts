@@ -29,6 +29,71 @@ import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut
 
 let coreProcessManager: CoreProcessManager | null = null;
 
+async function ensureLocalRuntimeComponents(
+  context: ExtensionContext,
+  indexPath: string
+): Promise<CoreRuntimeInfo | null> {
+  await ensureCefRuntime(context);
+  const ensuredLauncher = await ensureLauncherInstalled(context);
+  const launcherTarget = getCefClientTarget(ensuredLauncher, indexPath);
+  await ensureWebClientShortcuts(launcherTarget);
+  const ensuredCore = await ensureCoreInstalled(context);
+  await ensureClaudeModuleInstalled(context);
+  await ensureCodexModuleInstalled(context);
+  await ensureGeminiModuleInstalled(context);
+  return ensuredCore;
+}
+
+async function handleLaunchWebClientCommand(
+  context: ExtensionContext,
+  indexPath: string
+): Promise<void> {
+  await ensureCefRuntime(context);
+  const ensuredLauncher = await ensureLauncherInstalled(context);
+  await launchCefClient(ensuredLauncher, indexPath);
+  const target = getCefClientTarget(ensuredLauncher, indexPath);
+  await ensureWebClientShortcuts(target);
+}
+
+async function initializeCoreManager(
+  context: ExtensionContext,
+  indexPath: string
+): Promise<void> {
+  const ensuredCore = await ensureLocalRuntimeComponents(context, indexPath);
+  coreProcessManager = new CoreProcessManager(context);
+  await coreProcessManager.ensureStarted(ensuredCore ?? undefined);
+}
+
+function registerCommands(
+  context: ExtensionContext,
+  provider: HomeViewProvider,
+  indexPath: string
+): void {
+  context.subscriptions.push(
+    window.registerWebviewViewProvider(HomeViewProvider.viewType, provider),
+    commands.registerCommand("codeaiHub.openSettings", () => {
+      provider.showSettingsPlaceholder();
+    }),
+    commands.registerCommand("codeaiHub.launchWebClient", async () => {
+      if (env.remoteName) {
+        window.showWarningMessage(
+          "Launching the local CodeAI Hub client is not supported in remote workspaces."
+        );
+        return;
+      }
+
+      try {
+        await handleLaunchWebClientCommand(context, indexPath);
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        window.showErrorMessage(
+          `Failed to launch CodeAI Hub client: ${reason}`
+        );
+      }
+    })
+  );
+}
+
 export async function activate(context: ExtensionContext): Promise<void> {
   const indexPath = path.join(
     context.extensionUri.fsPath,
@@ -49,18 +114,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
   }
 
   const coreConnectionInfo = getDefaultCoreConnectionInfo();
-  let ensuredCore: CoreRuntimeInfo | null = null;
 
   if (!env.remoteName) {
     try {
-      await ensureCefRuntime(context);
-      const ensuredLauncher = await ensureLauncherInstalled(context);
-      const launcherTarget = getCefClientTarget(ensuredLauncher, indexPath);
-      await ensureWebClientShortcuts(launcherTarget);
-      ensuredCore = await ensureCoreInstalled(context);
-      await ensureClaudeModuleInstalled(context);
-      await ensureCodexModuleInstalled(context);
-      await ensureGeminiModuleInstalled(context);
+      await initializeCoreManager(context, indexPath);
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
       window.showErrorMessage(
@@ -68,9 +125,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
       );
       throw error instanceof Error ? error : new Error(reason);
     }
-
-    coreProcessManager = new CoreProcessManager(context);
-    await coreProcessManager.ensureStarted(ensuredCore ?? undefined);
   }
 
   const provider = new HomeViewProvider(
@@ -79,33 +133,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     coreProcessManager ?? undefined
   );
 
-  context.subscriptions.push(
-    window.registerWebviewViewProvider(HomeViewProvider.viewType, provider),
-    commands.registerCommand("codeaiHub.openSettings", () => {
-      provider.showSettingsPlaceholder();
-    }),
-    commands.registerCommand("codeaiHub.launchWebClient", async () => {
-      if (env.remoteName) {
-        window.showWarningMessage(
-          "Launching the local CodeAI Hub client is not supported in remote workspaces."
-        );
-        return;
-      }
-
-      try {
-        await ensureCefRuntime(context);
-        const ensuredLauncher = await ensureLauncherInstalled(context);
-        await launchCefClient(ensuredLauncher, indexPath);
-        const target = getCefClientTarget(ensuredLauncher, indexPath);
-        await ensureWebClientShortcuts(target);
-      } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
-        window.showErrorMessage(
-          `Failed to launch CodeAI Hub client: ${reason}`
-        );
-      }
-    })
-  );
+  registerCommands(context, provider, indexPath);
 }
 
 export function deactivate(): void {
