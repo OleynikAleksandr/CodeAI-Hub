@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.159] - 2025-11-07
+### Fixed
+- VS Code extension now persists the current workspace path into `~/.codeai-hub/state/workspace-path`, and the launcher consumes it before spawning the core. Even если standalone UI запущен без VS Code, нормализованные JSONL пишутся в slug рабочего каталога, а не в домашнюю директорию.
+
+### Build
+- VSIX → `codeai-hub-1.1.159.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.159.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.159.tar.bz2`
+- Providers → `claude-module-1.1.159.tar.bz2`, `codex-module-1.1.159.tar.bz2`, `gemini-module-1.1.159.tar.bz2`
+
 ## [1.1.158] - 2025-11-07
 ### Fixed
 - Launcher bootstrap now reuses the workspace path captured by the VS Code extension, so normalized JSONL files always land under the project slug even if the core was restarted outside VS Code.
