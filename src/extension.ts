@@ -161,14 +161,16 @@ export async function activate(context: ExtensionContext): Promise<void> {
     extensionPath: context.extensionUri.fsPath,
   });
 
-  const coreConnectionInfo = getDefaultCoreConnectionInfo();
   const workspacePath = resolveWorkspacePath();
 
   await prepareLocalRuntime(context, indexPath, workspacePath);
 
+  const resolvedConnectionInfo =
+    coreProcessManager?.getConnectionInfo() ?? getDefaultCoreConnectionInfo();
+
   const provider = new HomeViewProvider(
     context.extensionUri,
-    coreConnectionInfo,
+    resolvedConnectionInfo,
     coreProcessManager ?? undefined
   );
 

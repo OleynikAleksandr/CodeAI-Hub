@@ -11,9 +11,16 @@ type RuntimeComponentEntry = {
   readonly updatedAt: string;
 };
 
+type NetworkState = {
+  readonly corePort?: number;
+  readonly updatedAt: string;
+};
+
 type RuntimeRegistry = Partial<
   Record<RegistryComponent, RuntimeComponentEntry>
->;
+> & {
+  network?: NetworkState;
+};
 
 const STATE_DIR = path.join(homedir(), ".codeai-hub", "state");
 const REGISTRY_FILE = path.join(STATE_DIR, "runtime-registry.json");
@@ -109,3 +116,19 @@ export const recordVsixVersion = async (options: {
 
 export const readRuntimeRegistry = async (): Promise<RuntimeRegistry> =>
   readRegistry();
+
+export const readPreferredCorePort = async (): Promise<number | undefined> => {
+  const registry = await readRegistry();
+  const port = registry.network?.corePort;
+  return typeof port === "number" && Number.isFinite(port) ? port : undefined;
+};
+
+export const recordCorePortPreference = async (port: number): Promise<void> => {
+  const registry = await readRegistry();
+  registry.network = {
+    ...registry.network,
+    corePort: port,
+    updatedAt: new Date().toISOString(),
+  };
+  await writeRegistry(registry);
+};

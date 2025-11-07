@@ -65,6 +65,7 @@ type CoreStatePayload = {
 type RemoteBridgeHooks = {
   readonly onClientConnected?: (clientId: string, total: number) => void;
   readonly onClientDisconnected?: (clientId: string, total: number) => void;
+  readonly onShutdownRequested?: () => void;
 };
 
 type IncomingMessage =
@@ -117,6 +118,7 @@ const isSessionIdChangedPayload = (
 const HTTP_NO_CONTENT = 204;
 const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_FOUND = 404;
+const HTTP_ACCEPTED = 202;
 
 export class RemoteBridge {
   private readonly config: CoreConfig;
@@ -273,6 +275,7 @@ export class RemoteBridge {
         uptime: process.uptime(),
         clients: this.getActiveClientCount(),
         managedMode: this.config.managedMode,
+        pid: process.pid,
       });
     });
 
@@ -285,9 +288,20 @@ export class RemoteBridge {
           port: this.config.port,
           clients: this.getActiveClientCount(),
           managedMode: this.config.managedMode,
+          pid: process.pid,
         },
         sessions: this.serializeSessions(),
         providers: this.providerRegistry.listProviders(),
+      });
+    });
+
+    this.app.post("/api/v1/shutdown", (_req: Request, res: Response) => {
+      this.logger.info("Shutdown request received via API");
+      res
+        .status(HTTP_ACCEPTED)
+        .json({ status: "shutting-down", pid: process.pid });
+      setImmediate(() => {
+        this.hooks.onShutdownRequested?.();
       });
     });
 
@@ -464,7 +478,13 @@ export class RemoteBridge {
       });
       return;
     }
-    const providerSessionId = await adapter.createSession();
+    let providerSessionId: string | undefined;
+    try {
+      providerSessionId = await adapter.createSession();
+    } catch (error) {
+      this.handleProviderFailure(actualProviderId, error);
+      return;
+    }
     const supportsImmediateBinding =
       typeof providerSessionId === "string" &&
       providerSessionId.length > 0 &&
@@ -531,7 +551,11 @@ export class RemoteBridge {
       this.logger.warn("Adapter missing for provider", { binding });
       return;
     }
-    await adapter.sendMessage(binding.providerSessionId, content);
+    try {
+      await adapter.sendMessage(binding.providerSessionId, content);
+    } catch (error) {
+      this.handleProviderFailure(binding.providerId, error, sessionId);
+    }
   }
 
   private async handleSessionDelete(sessionId: string): Promise<void> {
@@ -540,7 +564,11 @@ export class RemoteBridge {
       const adapter = this.providerRegistry.getAdapter(binding.providerId);
       binding.unsubscribe();
       this.providerSessions.delete(sessionId);
-      await adapter?.closeSession(binding.providerSessionId);
+      try {
+        await adapter?.closeSession(binding.providerSessionId);
+      } catch (error) {
+        this.handleProviderFailure(binding.providerId, error, sessionId);
+      }
     }
     const deleted = this.sessionManager.deleteSession(sessionId);
     if (!deleted) {
@@ -570,6 +598,49 @@ export class RemoteBridge {
       return;
     }
     this.handleTypedProviderEvent(sessionId, event as ProviderEventEnvelope);
+  }
+
+  private handleProviderFailure(
+    providerId: string,
+    error: unknown,
+    sessionId?: string
+  ): void {
+    this.logger.error(
+      "Provider operation failed",
+      error instanceof Error ? error : new Error(String(error)),
+      { providerId }
+    );
+    this.providerRegistry.handleRuntimeFailure(providerId, error);
+    let emittedState = false;
+    if (sessionId) {
+      const binding = this.providerSessions.get(sessionId);
+      if (binding) {
+        binding.unsubscribe();
+        this.providerSessions.delete(sessionId);
+      }
+      this.sessionManager.markProviderSessionFailed(sessionId);
+      this.sessionStorage.close(sessionId, "provider-failure");
+      this.broadcastSessionBinding(sessionId);
+      emittedState = true;
+    }
+    const message =
+      error instanceof Error && error.message
+        ? error.message
+        : "Provider is unavailable.";
+    this.broadcast({
+      type: "session:error",
+      payload: {
+        sessionId: sessionId ?? null,
+        providerId,
+        message,
+      },
+    });
+    if (!emittedState) {
+      this.broadcast({
+        type: "core:state",
+        payload: this.buildInitialState(),
+      });
+    }
   }
 
   private appendProviderMessage(

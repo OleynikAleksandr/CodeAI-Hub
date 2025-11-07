@@ -1,21 +1,16 @@
-import { Buffer } from "node:buffer";
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
-import http from "node:http";
 import { homedir } from "node:os";
 import path from "node:path";
 import { type ExtensionContext, window, workspace } from "vscode";
+import { recordCorePortPreference } from "../runtime/runtime-registry";
 import type { CoreRuntimeInfo } from "./core-installer";
 import { ensureCoreInstalled } from "./core-installer";
 import { CoreManagerLock } from "./core-manager-lock";
+import { CorePortManager } from "./core-port-manager";
 
 const DEFAULT_CORE_HOST = "127.0.0.1";
 const DEFAULT_CORE_PORT = 8080;
-const HEALTH_PATH = "/api/v1/health";
-const HEALTH_TIMEOUT_MS = 1000;
-const HTTP_STATUS_OK = 200;
-const VERSION_MISMATCH_WAIT_MS = 5000;
-const VERSION_MISMATCH_POLL_MS = 250;
 
 const resolveCoreLogFilePath = (): string => {
   const logDir = path.join(homedir(), ".codeai-hub", "logs", "core");
@@ -27,20 +22,18 @@ const resolveCoreLogFilePath = (): string => {
   return path.join(logDir, "core.log");
 };
 
-export const CORE_HOST = process.env.CODEAI_CORE_HOST ?? DEFAULT_CORE_HOST;
-export const CORE_PORT = Number(
-  process.env.CODEAI_CORE_PORT ?? DEFAULT_CORE_PORT
-);
+const CORE_HOST = process.env.CODEAI_CORE_HOST ?? DEFAULT_CORE_HOST;
+const ENV_CORE_PORT = Number(process.env.CODEAI_CORE_PORT ?? DEFAULT_CORE_PORT);
 
-const createConnectionUrls = () => ({
-  httpUrl: `http://${CORE_HOST}:${CORE_PORT}`,
-  wsUrl: `ws://${CORE_HOST}:${CORE_PORT}/api/v1/stream`,
+const createConnectionUrls = (port: number, host = CORE_HOST) => ({
+  httpUrl: `http://${host}:${port}`,
+  wsUrl: `ws://${host}:${port}/api/v1/stream`,
 });
 
 export type CoreConnectionInfo = ReturnType<typeof createConnectionUrls>;
 
 export const getDefaultCoreConnectionInfo = (): CoreConnectionInfo =>
-  createConnectionUrls();
+  createConnectionUrls(ENV_CORE_PORT);
 
 export class CoreProcessManager {
   private child: ChildProcessWithoutNullStreams | null = null;
@@ -53,8 +46,28 @@ export class CoreProcessManager {
 
   private readonly managerLock = new CoreManagerLock("vscode-extension");
 
+  private readonly host = CORE_HOST;
+
+  private readonly envPort: number;
+
+  private currentPort: number;
+
+  private connectionInfo: CoreConnectionInfo;
+
+  private readonly portManager: CorePortManager;
+
   constructor(context: ExtensionContext) {
     this.context = context;
+    this.envPort = Number.isFinite(ENV_CORE_PORT)
+      ? ENV_CORE_PORT
+      : DEFAULT_CORE_PORT;
+    this.currentPort = this.envPort;
+    this.connectionInfo = createConnectionUrls(this.currentPort, this.host);
+    this.portManager = new CorePortManager({
+      host: this.host,
+      envPort: this.envPort,
+      channel: this.channel,
+    });
   }
 
   async ensureStarted(runtimeInfo?: CoreRuntimeInfo): Promise<void> {
@@ -63,31 +76,24 @@ export class CoreProcessManager {
     } else if (!this.runtimeInfo) {
       this.runtimeInfo = await ensureCoreInstalled(this.context);
     }
-    const health = await this.fetchCoreHealth();
-    if (health) {
-      if (this.runtimeInfo && health.version === this.runtimeInfo.version) {
-        this.channel.appendLine("CodeAI Hub core already running.");
-        return;
-      }
-      this.channel.appendLine(
-        `CodeAI Hub core v${health.version ?? "unknown"} is already running. Waiting for shutdown to apply v${this.runtimeInfo?.version ?? "unknown"}...`
-      );
-      const available = await this.waitForCoreAvailability();
-      if (!available) {
-        throw new Error(
-          "Existing CodeAI Hub core instance is running with a different version. Close other clients and retry."
-        );
-      }
-      const refreshed = await this.fetchCoreHealth();
-      if (
-        refreshed &&
-        this.runtimeInfo &&
-        refreshed.version === this.runtimeInfo.version
-      ) {
-        this.channel.appendLine("CodeAI Hub core already running.");
-        return;
-      }
+    if (!this.runtimeInfo) {
+      throw new Error("Unable to resolve CodeAI Hub core runtime information.");
     }
+
+    const decision = await this.portManager.resolve(
+      this.runtimeInfo.version,
+      this.currentPort
+    );
+    if (decision.kind === "running") {
+      this.updateConnectionInfo(decision.port);
+      this.channel.appendLine("CodeAI Hub core already running.");
+      return;
+    }
+
+    this.updateConnectionInfo(decision.port);
+    this.channel.appendLine(
+      `Preparing to launch CodeAI Hub core on port ${decision.port}...`
+    );
 
     const acquisition = this.managerLock.acquire();
     if (!acquisition.acquired) {
@@ -102,7 +108,12 @@ export class CoreProcessManager {
   }
 
   getConnectionInfo(): CoreConnectionInfo {
-    return createConnectionUrls();
+    return this.connectionInfo;
+  }
+
+  private updateConnectionInfo(port: number): void {
+    this.currentPort = port;
+    this.connectionInfo = createConnectionUrls(port, this.host);
   }
 
   private launch(): void {
@@ -117,8 +128,8 @@ export class CoreProcessManager {
     const geminiModulePath = this.resolveProviderModulePath("gemini");
     const envVars: NodeJS.ProcessEnv = {
       ...process.env,
-      CORE_HOST,
-      CORE_PORT: `${CORE_PORT}`,
+      CORE_HOST: this.host,
+      CORE_PORT: `${this.currentPort}`,
       CLAUDE_WORKSPACE_PATH: workspacePath,
       CODEX_WORKSPACE_PATH: workspacePath,
       CODEX_SKIP_GIT_REPO_CHECK: "true",
@@ -153,6 +164,13 @@ export class CoreProcessManager {
       this.managerLock.release();
       throw error;
     }
+    recordCorePortPreference(this.currentPort).catch((error) => {
+      this.channel.appendLine(
+        `Failed to record core port preference: ${
+          error instanceof Error ? error.message : String(error)
+        }.`
+      );
+    });
 
     this.child.stdout.on("data", (chunk) => {
       this.channel.append(chunk.toString());
@@ -169,60 +187,6 @@ export class CoreProcessManager {
       );
       this.managerLock.release();
     });
-  }
-
-  private async fetchCoreHealth(): Promise<{ version?: string } | null> {
-    return await new Promise((resolve) => {
-      const request = http.get(
-        {
-          host: CORE_HOST,
-          port: CORE_PORT,
-          path: HEALTH_PATH,
-          timeout: HEALTH_TIMEOUT_MS,
-        },
-        (response) => {
-          if (response.statusCode !== HTTP_STATUS_OK) {
-            response.resume();
-            resolve(null);
-            return;
-          }
-          const chunks: Buffer[] = [];
-          response.on("data", (chunk) => chunks.push(chunk));
-          response.on("end", () => {
-            try {
-              const payload = JSON.parse(
-                Buffer.concat(chunks).toString("utf8")
-              ) as { version?: string };
-              resolve(payload);
-            } catch {
-              resolve(null);
-            }
-          });
-        }
-      );
-      request.on("error", () => resolve(null));
-      request.on("timeout", () => {
-        request.destroy();
-        resolve(null);
-      });
-    });
-  }
-
-  private async waitForCoreAvailability(): Promise<boolean> {
-    const deadline = Date.now() + VERSION_MISMATCH_WAIT_MS;
-    while (Date.now() < deadline) {
-      const health = await this.fetchCoreHealth();
-      if (!health) {
-        return true;
-      }
-      if (this.runtimeInfo && health.version === this.runtimeInfo.version) {
-        return true;
-      }
-      await new Promise((resolve) =>
-        setTimeout(resolve, VERSION_MISMATCH_POLL_MS)
-      );
-    }
-    return false;
   }
 
   dispose(): void {

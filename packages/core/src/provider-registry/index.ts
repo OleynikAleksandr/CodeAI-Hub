@@ -412,6 +412,28 @@ export class ProviderRegistry {
       ?.adapter;
   }
 
+  handleRuntimeFailure(providerId: string, error: unknown): void {
+    const descriptor = this.providers.find(
+      (provider) => provider.id === providerId
+    );
+    if (!descriptor) {
+      return;
+    }
+    this.options.logger.error(
+      "Provider runtime failure detected",
+      error instanceof Error ? error : new Error(String(error)),
+      { providerId }
+    );
+    const mutable = descriptor as MutableProviderDescriptor;
+    this.markProviderInactive(mutable, error);
+    this.emitStatus({
+      phase: "provider",
+      scope: providerId,
+      label: `${descriptor.name} became unavailable.`,
+    });
+    this.scheduleRetry(providerId);
+  }
+
   private initializeProviders(): ProviderDescriptor[] {
     return [
       this.buildClaudeDescriptor(),

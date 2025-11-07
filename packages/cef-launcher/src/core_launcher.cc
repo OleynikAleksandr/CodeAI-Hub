@@ -62,6 +62,11 @@ constexpr const char* kStateRoot = ".codeai-hub/state";
 constexpr const char* kManagerLockFilename = "core-manager.lock";
 constexpr const char* kWorkspaceStateFilename = "workspace-path";
 constexpr const char* kCurrentPointerFilename = "current";
+constexpr int kPortCandidatePool[] = {
+  8080, 8081, 8082, 8083, 8084, 8085, 8086, 8087, 8088, 8089, 8090, 8091, 8092
+};
+constexpr int kShutdownWaitMs = 5000;
+constexpr int kShutdownPollDelayMs = 200;
 constexpr char kPathSeparator =
 #ifdef _WIN32
   ';'
@@ -760,6 +765,385 @@ void RegisterWorkspaceFromConfig(const std::string& configPath) {
   LogLauncherInfo("Workspace override captured: " + g_workspace_override);
 }
 
+std::optional<std::string> ExtractJsonStringField(
+  const std::string& json,
+  const std::string& key
+) {
+  const std::string pattern = "\"" + key + "\"";
+  const auto keyPos = json.find(pattern);
+  if (keyPos == std::string::npos) {
+    return std::nullopt;
+  }
+  const auto colonPos = json.find(':', keyPos + pattern.size());
+  if (colonPos == std::string::npos) {
+    return std::nullopt;
+  }
+  auto quoteStart = json.find('"', colonPos + 1);
+  if (quoteStart == std::string::npos) {
+    return std::nullopt;
+  }
+  auto quoteEnd = json.find('"', quoteStart + 1);
+  if (quoteEnd == std::string::npos || quoteEnd <= quoteStart + 1) {
+    return std::nullopt;
+  }
+  return json.substr(quoteStart + 1, quoteEnd - quoteStart - 1);
+}
+
+std::optional<int> ExtractJsonIntField(
+  const std::string& json,
+  const std::string& key
+) {
+  const std::string pattern = "\"" + key + "\"";
+  const auto keyPos = json.find(pattern);
+  if (keyPos == std::string::npos) {
+    return std::nullopt;
+  }
+  const auto colonPos = json.find(':', keyPos + pattern.size());
+  if (colonPos == std::string::npos) {
+    return std::nullopt;
+  }
+  size_t index = colonPos + 1;
+  while (
+    index < json.size() &&
+    std::isspace(static_cast<unsigned char>(json[index])) != 0
+  ) {
+    ++index;
+  }
+  size_t end = index;
+  while (
+    end < json.size() &&
+    std::isdigit(static_cast<unsigned char>(json[end])) != 0
+  ) {
+    ++end;
+  }
+  if (end == index) {
+    return std::nullopt;
+  }
+  try {
+    const int value = std::stoi(json.substr(index, end - index));
+    return value;
+  } catch (...) {
+    return std::nullopt;
+  }
+}
+
+std::optional<std::string> ReadCoreVersion(
+  const std::filesystem::path& runtimeDir
+) {
+  const std::filesystem::path installFile = runtimeDir / "install.json";
+  std::ifstream stream(installFile);
+  if (!stream.is_open()) {
+    return std::nullopt;
+  }
+  std::string content(
+    (std::istreambuf_iterator<char>(stream)),
+    std::istreambuf_iterator<char>());
+  stream.close();
+  return ExtractJsonStringField(content, "coreVersion");
+}
+
+std::optional<int> ReadPreferredCorePort(const std::filesystem::path& home) {
+  const std::filesystem::path registryPath =
+    home / ".codeai-hub" / "state" / "runtime-registry.json";
+  std::ifstream stream(registryPath);
+  if (!stream.is_open()) {
+    return std::nullopt;
+  }
+  std::string content(
+    (std::istreambuf_iterator<char>(stream)),
+    std::istreambuf_iterator<char>());
+  stream.close();
+  return ExtractJsonIntField(content, "corePort");
+}
+
+std::vector<int> BuildPortCandidates(
+  int envPort,
+  const std::optional<int>& storedPort
+) {
+  std::vector<int> candidates;
+  const auto append = [&candidates](int candidate) {
+    if (candidate <= 0) {
+      return;
+    }
+    if (
+      std::find(candidates.begin(), candidates.end(), candidate) ==
+      candidates.end()
+    ) {
+      candidates.push_back(candidate);
+    }
+  };
+
+  append(envPort);
+  if (storedPort.has_value()) {
+    append(*storedPort);
+  }
+  for (int candidate : kPortCandidatePool) {
+    append(candidate);
+  }
+  return candidates;
+}
+
+struct HttpResponse {
+  int status = -1;
+  std::string body;
+};
+
+struct CoreHealthInfo {
+  std::string version;
+  int pid = 0;
+};
+
+#ifdef _WIN32
+bool SendAll(SOCKET sock, const std::string& data) {
+  size_t total = 0;
+  while (total < data.size()) {
+    const int sent = send(
+      sock,
+      data.data() + total,
+      static_cast<int>(data.size() - total),
+      0);
+    if (sent <= 0) {
+      return false;
+    }
+    total += static_cast<size_t>(sent);
+  }
+  return true;
+}
+
+bool ReceiveAll(SOCKET sock, std::string& buffer) {
+  char chunk[1024];
+  int received = 0;
+  while ((received = recv(sock, chunk, sizeof(chunk), 0)) > 0) {
+    buffer.append(chunk, received);
+  }
+  return !buffer.empty();
+}
+#else
+bool SendAll(int sock, const std::string& data) {
+  size_t total = 0;
+  while (total < data.size()) {
+    const ssize_t sent = send(
+      sock,
+      data.data() + total,
+      data.size() - total,
+      0);
+    if (sent <= 0) {
+      return false;
+    }
+    total += static_cast<size_t>(sent);
+  }
+  return true;
+}
+
+bool ReceiveAll(int sock, std::string& buffer) {
+  char chunk[1024];
+  ssize_t received = 0;
+  while ((received = recv(sock, chunk, sizeof(chunk), 0)) > 0) {
+    buffer.append(chunk, received);
+  }
+  return !buffer.empty();
+}
+#endif
+
+std::optional<HttpResponse> PerformHttpRequest(
+  const std::string& host,
+  int port,
+  const std::string& requestPayload
+) {
+  const std::string portString = std::to_string(port);
+#ifdef _WIN32
+  WSADATA wsaData;
+  if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+    return std::nullopt;
+  }
+#endif
+  addrinfo hints = {};
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_protocol = IPPROTO_TCP;
+
+  addrinfo* result = nullptr;
+  if (
+    getaddrinfo(host.c_str(), portString.c_str(), &hints, &result) != 0 ||
+    !result
+  ) {
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    return std::nullopt;
+  }
+
+  std::optional<HttpResponse> response;
+  for (addrinfo* ptr = result; ptr != nullptr; ptr = ptr->ai_next) {
+#ifdef _WIN32
+    SOCKET sock = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+    if (sock == INVALID_SOCKET) {
+      continue;
+    }
+    DWORD timeout = kConnectTimeoutMs;
+    setsockopt(
+      sock,
+      SOL_SOCKET,
+      SO_RCVTIMEO,
+      reinterpret_cast<const char*>(&timeout),
+      sizeof(timeout));
+    setsockopt(
+      sock,
+      SOL_SOCKET,
+      SO_SNDTIMEO,
+      reinterpret_cast<const char*>(&timeout),
+      sizeof(timeout));
+    if (::connect(sock, ptr->ai_addr, static_cast<int>(ptr->ai_addrlen)) != 0) {
+      closesocket(sock);
+      continue;
+    }
+    std::string raw;
+    if (!SendAll(sock, requestPayload) || !ReceiveAll(sock, raw)) {
+      closesocket(sock);
+      continue;
+    }
+    closesocket(sock);
+#else
+    int sock = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+    if (sock < 0) {
+      continue;
+    }
+    timeval timeout{};
+    timeout.tv_sec = kConnectTimeoutMs / 1000;
+    timeout.tv_usec = (kConnectTimeoutMs % 1000) * 1000;
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+    setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+    if (::connect(sock, ptr->ai_addr, ptr->ai_addrlen) != 0) {
+      close(sock);
+      continue;
+    }
+    std::string raw;
+    if (!SendAll(sock, requestPayload) || !ReceiveAll(sock, raw)) {
+      close(sock);
+      continue;
+    }
+    close(sock);
+#endif
+    const auto headerEnd = raw.find("\r\n\r\n");
+    if (headerEnd == std::string::npos) {
+      continue;
+    }
+    const std::string header = raw.substr(0, headerEnd);
+    const std::string body = raw.substr(headerEnd + 4);
+    int status = -1;
+    const auto firstSpace = header.find(' ');
+    if (firstSpace != std::string::npos) {
+      const auto secondSpace = header.find(' ', firstSpace + 1);
+      if (secondSpace != std::string::npos && secondSpace > firstSpace + 1) {
+        try {
+          status = std::stoi(
+            header.substr(firstSpace + 1, secondSpace - firstSpace - 1));
+        } catch (...) {
+          status = -1;
+        }
+      }
+    }
+    response = HttpResponse{status, body};
+    break;
+  }
+
+  freeaddrinfo(result);
+#ifdef _WIN32
+  WSACleanup();
+#endif
+  return response;
+}
+
+std::optional<CoreHealthInfo> QueryCoreHealth(
+  const std::string& host,
+  int port
+) {
+  const std::string request =
+    "GET /api/v1/health HTTP/1.1\r\nHost: " + host + ":" +
+    std::to_string(port) +
+    "\r\nConnection: close\r\n\r\n";
+  const auto response = PerformHttpRequest(host, port, request);
+  if (!response.has_value() || response->status != 200) {
+    return std::nullopt;
+  }
+
+  CoreHealthInfo info;
+  const auto version = ExtractJsonStringField(response->body, "version");
+  if (version.has_value()) {
+    info.version = *version;
+  }
+  const auto pid = ExtractJsonIntField(response->body, "pid");
+  if (pid.has_value()) {
+    info.pid = *pid;
+  }
+  return info;
+}
+
+bool RequestCoreShutdown(const std::string& host, int port) {
+  const std::string request =
+    "POST /api/v1/shutdown HTTP/1.1\r\nHost: " + host + ":" +
+    std::to_string(port) +
+    "\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+  const auto response = PerformHttpRequest(host, port, request);
+  if (!response.has_value()) {
+    return false;
+  }
+  return response->status == 200 || response->status == 202;
+}
+
+bool WaitForPortRelease(const std::string& host, int port) {
+  const auto deadline = std::chrono::steady_clock::now() +
+    std::chrono::milliseconds(kShutdownWaitMs);
+  while (std::chrono::steady_clock::now() < deadline) {
+    if (!IsCoreListening(host, port)) {
+      return true;
+    }
+    std::this_thread::sleep_for(
+      std::chrono::milliseconds(kShutdownPollDelayMs));
+  }
+  return false;
+}
+
+bool ForceKillProcess(int pid) {
+  if (pid <= 0) {
+    return false;
+  }
+#ifdef _WIN32
+  HANDLE process = OpenProcess(PROCESS_TERMINATE, FALSE, static_cast<DWORD>(pid));
+  if (!process) {
+    return false;
+  }
+  const BOOL terminated = TerminateProcess(process, 1);
+  CloseHandle(process);
+  return terminated == TRUE;
+#else
+  if (kill(static_cast<pid_t>(pid), SIGKILL) == 0) {
+    return true;
+  }
+  return errno == EPERM;
+#endif
+}
+
+bool TryShutdownExistingCore(
+  const std::string& host,
+  int port,
+  int pid
+) {
+  LogLauncherInfo(
+    "Requesting shutdown of running CodeAI Hub core on " +
+    FormatEndpoint(host, port));
+  if (RequestCoreShutdown(host, port) && WaitForPortRelease(host, port)) {
+    LogLauncherInfo("Existing core stopped gracefully.");
+    return true;
+  }
+  if (pid > 0 && ForceKillProcess(pid) && WaitForPortRelease(host, port)) {
+    LogLauncherWarn("Forced termination of existing core process.");
+    return true;
+  }
+  LogLauncherWarn("Failed to stop existing core instance.");
+  return false;
+}
+
 void LogLauncherInfo(const std::string& message) {
   AppendLauncherLog("INFO", message);
 }
@@ -853,18 +1237,9 @@ bool IsCoreListening(const std::string& host, int port) {
 
 bool EnsureCoreProcessRunning() {
   const std::string host = GetEnvOrDefault("CORE_HOST", kDefaultHost);
-  const int port = ParsePort(
-    GetEnvOrDefault("CORE_PORT", std::to_string(kDefaultPort)),
-    kDefaultPort);
-  LogLauncherInfo(
-    "Ensuring core orchestrator is reachable on " +
-    FormatEndpoint(host, port));
-  if (IsCoreListening(host, port)) {
-    LogLauncherInfo(
-      "Core orchestrator already listening on " +
-      FormatEndpoint(host, port));
-    return true;
-  }
+  const std::string envPortValue =
+    GetEnvOrDefault("CORE_PORT", std::to_string(kDefaultPort));
+  const int envPort = ParsePort(envPortValue, kDefaultPort);
 
   const std::filesystem::path home = GetHomeDirectory();
   const auto runtimeDir = ResolveCoreRuntimeDirectory(home);
@@ -879,6 +1254,46 @@ bool EnsureCoreProcessRunning() {
     return false;
   }
   LogLauncherInfo("Using core runtime at " + runtimeDir->string());
+
+  const auto desiredVersion = ReadCoreVersion(*runtimeDir);
+  const auto storedPort = ReadPreferredCorePort(home);
+  const std::vector<int> portCandidates =
+    BuildPortCandidates(envPort, storedPort);
+
+  int selectedPort = -1;
+  for (int candidate : portCandidates) {
+    const auto health = QueryCoreHealth(host, candidate);
+    if (health.has_value()) {
+      if (
+        !desiredVersion.has_value() ||
+        (health->version == *desiredVersion)
+      ) {
+        LogLauncherInfo(
+          "Core orchestrator already listening on " +
+          FormatEndpoint(host, candidate));
+        SetEnv("CORE_PORT", std::to_string(candidate));
+        return true;
+      }
+      if (TryShutdownExistingCore(host, candidate, health->pid)) {
+        selectedPort = candidate;
+        break;
+      }
+      continue;
+    }
+    selectedPort = candidate;
+    break;
+  }
+
+  if (selectedPort < 0) {
+    LogLauncherError(
+      "Unable to locate an available port for CodeAI Hub core startup.");
+    return false;
+  }
+
+  LogLauncherInfo(
+    "Selected port " + std::to_string(selectedPort) +
+    " for CodeAI Hub core startup.");
+  SetEnv("CORE_PORT", std::to_string(selectedPort));
 
   const std::filesystem::path nodeExecutable = ResolveNodeExecutable(*runtimeDir);
   const std::filesystem::path entryPoint = ResolveEntryPoint(*runtimeDir);
@@ -934,10 +1349,10 @@ bool EnsureCoreProcessRunning() {
   LogLauncherInfo("Waiting for core orchestrator readiness...");
   for (int attempt = 0; attempt < kReadyPollAttempts; ++attempt) {
     std::this_thread::sleep_for(std::chrono::milliseconds(kReadyPollDelayMs));
-    if (IsCoreListening(host, port)) {
+    if (IsCoreListening(host, selectedPort)) {
       LogLauncherInfo(
         "Core orchestrator is ready on " +
-        FormatEndpoint(host, port));
+        FormatEndpoint(host, selectedPort));
       return true;
     }
   }
