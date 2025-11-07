@@ -2,16 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.159
-- **Workspace-aware session storage**: VS Code extension сохраняет `workspacePath` в `~/.codeai-hub/state/workspace-path`, а launcher читает его даже при автономном запуске, поэтому нормализованные JSONL всегда появляются в `~/.codeai-hub/sessions/-<slug>/<provider>/`.
-- **Launcher config propagation**: CEF-клиент продолжает обновлять `config/config.json`, а bootstrap ядра уважает этот slug при каждом старте независимо от того, кто поднял core.
+## Current Release — v1.1.161
+- **Runtime registry & relinking**: VSIX и launcher теперь ведут единый `runtime-registry.json` + `current`-указатели, поэтому обновлённые core/launcher/CEF и сам VSIX подхватываются сразу после установки релиза без «ручной» перелинковки.
+- **Immediate core lifecycle**: ядро стартует только при появлении первого клиента и выключается сразу после ухода последнего; версии сверяются через `/api/v1/health`, и extension перезапускает core при любом несоответствии.
 - **Release automation**: `./scripts/build-all.sh` по-прежнему инкрементирует версии всех пакетов и публикует обновлённые tarball/VSIX, что ускоряет smoke-тесты и доставку фиксов.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.159.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.159.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.159.tar.bz2`
-- Providers: `claude-module-1.1.159.tar.bz2`, `codex-module-1.1.159.tar.bz2`, `gemini-module-1.1.159.tar.bz2`
+- VSIX: `codeai-hub-1.1.161.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.161.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.161.tar.bz2`
+- Providers: `claude-module-1.1.161.tar.bz2`, `codex-module-1.1.161.tar.bz2`, `gemini-module-1.1.161.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
