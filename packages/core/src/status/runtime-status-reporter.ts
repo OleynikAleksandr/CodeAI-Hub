@@ -1,4 +1,9 @@
-export type RuntimeStatusPhase = "boot" | "install" | "provider" | "finalize";
+export type RuntimeStatusPhase =
+  | "boot"
+  | "install"
+  | "provider"
+  | "finalize"
+  | "shutdown";
 
 export type RuntimeStatusEvent = {
   readonly phase: RuntimeStatusPhase;
