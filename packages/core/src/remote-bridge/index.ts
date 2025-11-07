@@ -272,6 +272,7 @@ export class RemoteBridge {
         version: this.version,
         uptime: process.uptime(),
         clients: this.getActiveClientCount(),
+        managedMode: this.config.managedMode,
       });
     });
 
@@ -283,6 +284,7 @@ export class RemoteBridge {
           host: this.config.host,
           port: this.config.port,
           clients: this.getActiveClientCount(),
+          managedMode: this.config.managedMode,
         },
         sessions: this.serializeSessions(),
         providers: this.providerRegistry.listProviders(),
