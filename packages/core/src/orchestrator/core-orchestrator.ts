@@ -82,11 +82,6 @@ export class CoreOrchestrator {
 
   async stop(): Promise<void> {
     this.logger.info("Stopping core orchestrator...");
-    if (this.shutdownTimer) {
-      clearTimeout(this.shutdownTimer);
-      this.shutdownTimer = undefined;
-    }
-
     await this.remoteBridge.stop();
     this.logger.info("Core orchestrator stopped");
   }
