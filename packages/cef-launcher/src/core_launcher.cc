@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
+#include <limits>
 #include <optional>
 #include <string>
 #include <sstream>
@@ -789,6 +790,24 @@ std::optional<std::string> ExtractJsonStringField(
   return json.substr(quoteStart + 1, quoteEnd - quoteStart - 1);
 }
 
+std::optional<int> TryParseInt(const std::string& value) {
+  if (value.empty()) {
+    return std::nullopt;
+  }
+  char* end = nullptr;
+  const long parsed = std::strtol(value.c_str(), &end, 10);
+  if (end == value.c_str() || (end && *end != '\0')) {
+    return std::nullopt;
+  }
+  if (
+    parsed < std::numeric_limits<int>::min() ||
+    parsed > std::numeric_limits<int>::max()
+  ) {
+    return std::nullopt;
+  }
+  return static_cast<int>(parsed);
+}
+
 std::optional<int> ExtractJsonIntField(
   const std::string& json,
   const std::string& key
@@ -819,12 +838,8 @@ std::optional<int> ExtractJsonIntField(
   if (end == index) {
     return std::nullopt;
   }
-  try {
-    const int value = std::stoi(json.substr(index, end - index));
-    return value;
-  } catch (...) {
-    return std::nullopt;
-  }
+  const auto slice = json.substr(index, end - index);
+  return TryParseInt(slice);
 }
 
 std::optional<std::string> ReadCoreVersion(
@@ -1035,12 +1050,10 @@ std::optional<HttpResponse> PerformHttpRequest(
     if (firstSpace != std::string::npos) {
       const auto secondSpace = header.find(' ', firstSpace + 1);
       if (secondSpace != std::string::npos && secondSpace > firstSpace + 1) {
-        try {
-          status = std::stoi(
-            header.substr(firstSpace + 1, secondSpace - firstSpace - 1));
-        } catch (...) {
-          status = -1;
-        }
+        const auto slice =
+          header.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+        const auto parsed = TryParseInt(slice);
+        status = parsed.value_or(-1);
       }
     }
     response = HttpResponse{status, body};
