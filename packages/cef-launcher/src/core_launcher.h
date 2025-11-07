@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 namespace codeai::launcher {
@@ -19,6 +20,7 @@ void StartCoreMonitoring();
 // Reads launcher config (if available) to capture the workspace path that
 // should be propagated to the core process when VS Code is not managing it.
 void RegisterWorkspaceFromConfig(const std::string& configPath);
+void RegisterWorkspaceFromState(const std::filesystem::path& home);
 
 void LogLauncherInfo(const std::string& message);
 void LogLauncherWarn(const std::string& message);
