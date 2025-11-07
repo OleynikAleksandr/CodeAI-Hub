@@ -50,7 +50,9 @@ async function handleLaunchWebClientCommand(
 ): Promise<void> {
   await ensureCefRuntime(context);
   const ensuredLauncher = await ensureLauncherInstalled(context);
-  await launchCefClient(ensuredLauncher, indexPath);
+  const workspacePath =
+    workspace.workspaceFolders?.[0]?.uri.fsPath ?? process.cwd();
+  await launchCefClient(ensuredLauncher, indexPath, workspacePath);
   const target = getCefClientTarget(ensuredLauncher, indexPath);
   await ensureWebClientShortcuts(target);
 }

@@ -38,7 +38,8 @@ const readExistingConfig = async (
 
 const ensureLauncherConfig = async (
   launcher: LauncherInstallInfo,
-  indexFilePath: string
+  indexFilePath: string,
+  workspacePath?: string
 ): Promise<string> => {
   const configDir = path.join(launcher.installDir, "config");
   await ensureDirectory(configDir);
@@ -52,6 +53,7 @@ const ensureLauncherConfig = async (
     entry: path.basename(indexFilePath),
     url: Uri.file(indexFilePath).toString(),
     generatedAt: new Date().toISOString(),
+    workspacePath: workspacePath ?? existingConfig.workspacePath,
   };
 
   await fs.writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`, {
@@ -63,7 +65,8 @@ const ensureLauncherConfig = async (
 
 export const launchCefClient = async (
   launcher: LauncherInstallInfo,
-  indexFilePath: string
+  indexFilePath: string,
+  workspacePath?: string
 ): Promise<void> => {
   const { executablePath: binaryPath } = launcher;
 
@@ -75,14 +78,28 @@ export const launchCefClient = async (
     );
   }
 
-  const configPath = await ensureLauncherConfig(launcher, indexFilePath);
+  const configPath = await ensureLauncherConfig(
+    launcher,
+    indexFilePath,
+    workspacePath
+  );
   const args = buildLaunchArgs(indexFilePath, configPath);
   const workingDir = path.dirname(binaryPath);
+
+  const envVars: NodeJS.ProcessEnv = {
+    ...process.env,
+  };
+  if (workspacePath) {
+    envVars.CLAUDE_WORKSPACE_PATH = workspacePath;
+    envVars.CODEX_WORKSPACE_PATH = workspacePath;
+    envVars.GEMINI_WORKSPACE_PATH = workspacePath;
+  }
 
   const child = spawn(binaryPath, args, {
     cwd: workingDir,
     detached: true,
     stdio: "ignore",
+    env: envVars,
   });
 
   child.unref();
