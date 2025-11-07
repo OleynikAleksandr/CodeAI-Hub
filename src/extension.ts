@@ -26,6 +26,7 @@ import { HomeViewProvider } from "./extension-module/home-view-provider";
 import { ensureClaudeModuleInstalled } from "./extension-module/provider/claude/claude-module-installer";
 import { ensureCodexModuleInstalled } from "./extension-module/provider/codex/codex-module-installer";
 import { ensureGeminiModuleInstalled } from "./extension-module/provider/gemini/gemini-module-installer";
+import { recordVsixVersion } from "./extension-module/runtime/runtime-registry";
 import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut-manager";
 
 let coreProcessManager: CoreProcessManager | null = null;
@@ -85,6 +86,24 @@ async function initializeCoreManager(
   await coreProcessManager.ensureStarted(ensuredCore ?? undefined);
 }
 
+async function prepareLocalRuntime(
+  context: ExtensionContext,
+  indexPath: string,
+  workspacePath: string
+): Promise<void> {
+  if (env.remoteName) {
+    return;
+  }
+
+  try {
+    await initializeCoreManager(context, indexPath, workspacePath);
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    window.showErrorMessage(`Failed to prepare CodeAI Hub runtime: ${reason}`);
+    throw error instanceof Error ? error : new Error(reason);
+  }
+}
+
 function registerCommands(
   context: ExtensionContext,
   provider: HomeViewProvider,
@@ -134,20 +153,18 @@ export async function activate(context: ExtensionContext): Promise<void> {
     throw error instanceof Error ? error : new Error(String(error));
   }
 
+  const extensionVersion =
+    (context.extension.packageJSON as { readonly version?: string } | undefined)
+      ?.version ?? "0.0.0";
+  await recordVsixVersion({
+    version: extensionVersion,
+    extensionPath: context.extensionUri.fsPath,
+  });
+
   const coreConnectionInfo = getDefaultCoreConnectionInfo();
   const workspacePath = resolveWorkspacePath();
 
-  if (!env.remoteName) {
-    try {
-      await initializeCoreManager(context, indexPath, workspacePath);
-    } catch (error) {
-      const reason = error instanceof Error ? error.message : String(error);
-      window.showErrorMessage(
-        `Failed to prepare CodeAI Hub runtime: ${reason}`
-      );
-      throw error instanceof Error ? error : new Error(reason);
-    }
-  }
+  await prepareLocalRuntime(context, indexPath, workspacePath);
 
   const provider = new HomeViewProvider(
     context.extensionUri,

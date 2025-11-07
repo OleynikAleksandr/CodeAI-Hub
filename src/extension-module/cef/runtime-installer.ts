@@ -2,6 +2,10 @@ import { promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import type { ExtensionContext, Progress } from "vscode";
+import {
+  recordCefInstall,
+  writeCurrentPointer,
+} from "../runtime/runtime-registry";
 import { type ManifestEntry, readManifest } from "./manifest";
 import { type PlatformKey, resolvePlatformKey } from "./platform";
 import {
@@ -130,6 +134,23 @@ const installRuntimeFromArchive = async (
   }
 };
 
+const finalizeCefSetup = async (options: {
+  readonly platformDir: string;
+  readonly platform: PlatformKey;
+  readonly runtimeDir: string;
+  readonly manifestEntry: ManifestEntry;
+}): Promise<void> => {
+  await writeCurrentPointer(
+    options.platformDir,
+    options.manifestEntry.cefVersion
+  );
+  await recordCefInstall({
+    platform: options.platform,
+    version: options.manifestEntry.cefVersion,
+    runtimeDir: options.runtimeDir,
+  });
+};
+
 export const ensureCefRuntime = async (
   context: ExtensionContext,
   progress?: ProgressReporter
@@ -148,6 +169,12 @@ export const ensureCefRuntime = async (
 
   if (await verifyExistingInstall(runtimeDir, manifestEntry)) {
     progress?.report({ message: "CEF runtime is up to date." });
+    await finalizeCefSetup({
+      platformDir,
+      platform,
+      runtimeDir,
+      manifestEntry,
+    });
     return { version: manifestEntry.cefVersion, platform, runtimeDir };
   }
 
@@ -193,6 +220,13 @@ export const ensureCefRuntime = async (
 
   await fs.rm(archivePath, { force: true }).catch(() => {
     /* ignore */
+  });
+
+  await finalizeCefSetup({
+    platformDir,
+    platform,
+    runtimeDir,
+    manifestEntry,
   });
 
   return {

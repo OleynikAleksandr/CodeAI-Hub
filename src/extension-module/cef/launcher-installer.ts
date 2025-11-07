@@ -2,6 +2,10 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { ExtensionContext } from "vscode";
 import {
+  recordLauncherInstall,
+  writeCurrentPointer,
+} from "../runtime/runtime-registry";
+import {
   buildInstallInfo,
   ensureArchiveAvailable,
   getBaseInstallDir,
@@ -20,6 +24,23 @@ export type LauncherInstallInfo = ReturnType<typeof buildInstallInfo>;
 
 const resolveBaseUrlOverride = (): string | undefined =>
   process.env.CODEAI_HUB_LAUNCHER_BASE_URL;
+
+const finalizeLauncherSetup = async (options: {
+  readonly platformDir: string;
+  readonly platform: PlatformKey;
+  readonly manifestEntry: LauncherManifestEntry;
+  readonly installDir: string;
+}): Promise<void> => {
+  await writeCurrentPointer(
+    options.platformDir,
+    options.manifestEntry.launcherVersion
+  );
+  await recordLauncherInstall({
+    platform: options.platform,
+    version: options.manifestEntry.launcherVersion,
+    installDir: options.installDir,
+  });
+};
 
 export const ensureLauncherInstalled = async (
   context: ExtensionContext,
@@ -40,6 +61,12 @@ export const ensureLauncherInstalled = async (
     progress
   );
   if (reused) {
+    await finalizeLauncherSetup({
+      platformDir,
+      platform,
+      manifestEntry,
+      installDir,
+    });
     return reused;
   }
 
@@ -76,5 +103,14 @@ export const ensureLauncherInstalled = async (
     /* ignore */
   });
 
-  return buildInstallInfo(platform, manifestEntry, installDir);
+  const installInfo = buildInstallInfo(platform, manifestEntry, installDir);
+
+  await finalizeLauncherSetup({
+    platformDir,
+    platform,
+    manifestEntry,
+    installDir,
+  });
+
+  return installInfo;
 };
