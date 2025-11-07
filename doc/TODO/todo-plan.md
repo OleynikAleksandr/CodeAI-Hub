@@ -24,13 +24,13 @@
   - Notes: каждая правка сопровождается релизом и фиксацией хэша в списке коммитов
 - [DONE] Диагностировать регрессию нормализованных JSONL после разделения менеджеров ядра
   - Notes: подтверждена проблема с workspaceSlug — при рестарте ядра из launcher окружение сбрасывалось к `~` и writer уходил в `~/.codeai-hub/sessions/-Users-oleksandroliinyk/*`; требуется закрепить фактический workspace через конфиг/ENV.
-  - Commit: Pending — `fix: trace normalized jsonl regression`
-- [IN_PROGRESS] Восстановить создание norm JSONL в `~/.codeai-hub/sessions/<workspace>/<provider>/`
+  - Commit: c330a1b — `fix: trace normalized jsonl regression`
+- [DONE] Восстановить создание norm JSONL в `~/.codeai-hub/sessions/<workspace>/<provider>/`
   - Notes: launcher теперь получает `workspacePath` от extension (`launchCefClient`) и прокидывает его через ENV + config; `EnsureGlobalEnvironment` уважает переданное значение, поэтому writer снова пишет в `.../-Users-oleksandroliinyk-VSCODE-CodeAI-Hub/*`.
-  - Commit: Pending — `fix: restore normalized session writers`
-- [TODO] Провести валидацию и обновить документацию по unified session storage
-  - Notes: ручной прогон сценариев с обоими UI, приложить пути к созданным JSONL в отчёте, обновить `doc/Project_Docs/knowledge/unified-session-streams.md` и архитектурное описание; результат оформить отдельным коммитом.
-  - Commit: Pending — `chore: document normalized session storage`
+  - Commit: 8c9ba88 — `fix: restore normalized session writers`
+- [DONE] Провести валидацию и обновить документацию по unified session storage
+  - Notes: вручную проверены оба UI, обновлены README/Architecture/CHANGELOG, зафиксированы пути к новым артефактам.
+  - Commit: 1715d3d — `chore: document normalized session storage`
 
 ## Коммиты фазы
 - 6691823 — feat: handle provider cli degradation
