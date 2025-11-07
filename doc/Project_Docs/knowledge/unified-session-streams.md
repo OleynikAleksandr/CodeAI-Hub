@@ -46,5 +46,5 @@ This note captures the current behaviour of the provider wrappers that feed the 
 These notes underpin the design for the JSONL writer/reader work.
 
 ## Update — 2025-11-07
-- The VS Code extension now passes the workspace path to the launcher, and the launcher writes it into `config/config.json`; `EnsureGlobalEnvironment` всегда использует это значение. Нормализованные JSONL файлы снова попадают в `~/.codeai-hub/sessions/-<slug>/<provider>/`, даже если ядро перезапускает standalone UI.
+- The VS Code extension now passes the workspace path to the launcher, and the launcher writes it into `config/config.json`; `EnsureGlobalEnvironment` всегда использует это значение. Дополнительно расширение сохраняет slug в `~/.codeai-hub/state/workspace-path`, поэтому даже автономный запуск лаунчера без аргументов восстанавливает корректный путь. Нормализованные JSONL файлы снова попадают в `~/.codeai-hub/sessions/-<slug>/<provider>/`, даже если ядро перезапускает standalone UI.
 - При одновременной работе двух UI история не теряется: `UnifiedSessionStorage` получает `providerSessionId` из тех же эвентов и создаёт writer сразу после промоушена.

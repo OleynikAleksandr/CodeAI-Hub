@@ -37,4 +37,5 @@
 - aa8f37d — feat: v1.1.156 - provider cli resilience (release build)
 - d7c6593 — feat: coordinate core managers and self-test
 - 34791d5 — feat: v1.1.157 - core manager coordination (release build)
+- f47101a — fix: persist workspace slug for launcher
 - Pending — новые хэши будут добавляться после каждой задачи
