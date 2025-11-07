@@ -29,7 +29,7 @@ export class CoreOrchestrator {
 
   private activeClients = 0;
 
-  private shutdownTimer?: NodeJS.Timeout;
+  private shuttingDown = false;
 
   constructor() {
     this.config = loadConfig();
@@ -93,17 +93,9 @@ export class CoreOrchestrator {
 
   private handleClientIncrease(total: number): void {
     this.activeClients = total;
-    if (this.shutdownTimer) {
-      clearTimeout(this.shutdownTimer);
-      this.shutdownTimer = undefined;
-      this.logger.info("Shutdown timer cancelled - clients reconnected", {
-        activeClients: this.activeClients,
-      });
-    } else {
-      this.logger.info("Client count increased", {
-        activeClients: this.activeClients,
-      });
-    }
+    this.logger.info("Client count increased", {
+      activeClients: this.activeClients,
+    });
   }
 
   private handleClientDecrease(total: number): void {
@@ -112,38 +104,24 @@ export class CoreOrchestrator {
       activeClients: this.activeClients,
     });
 
-    if (this.activeClients > 0) {
-      return;
+    if (this.activeClients === 0) {
+      this.shutdownNow();
     }
-
-    this.scheduleShutdown();
   }
 
-  private scheduleShutdown(): void {
-    if (this.shutdownTimer) {
+  private shutdownNow(): void {
+    if (this.shuttingDown) {
       return;
     }
+    this.shuttingDown = true;
 
-    if (this.config.managedMode) {
-      this.logger.info("Managed mode active, skipping auto-shutdown", {
-        managedBy: this.config.managedMode,
+    this.logger.info("No active clients, shutting down core immediately");
+    this.stop()
+      .then(() => process.exit(0))
+      .catch((error) => {
+        this.logger.error("Failed to stop orchestrator", error);
+        process.exit(1);
       });
-      return;
-    }
-
-    this.logger.info("No active clients, scheduling shutdown", {
-      delayMs: this.config.shutdownGracePeriodMs,
-    });
-    this.shutdownTimer = setTimeout(() => {
-      this.shutdownTimer = undefined;
-      this.logger.info("Grace period elapsed, shutting down");
-      this.stop()
-        .then(() => process.exit(0))
-        .catch((error) => {
-          this.logger.error("Failed to stop orchestrator", error);
-          process.exit(1);
-        });
-    }, this.config.shutdownGracePeriodMs);
   }
 
   private async runStartupSelfTest(): Promise<void> {
