@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import GeneralSettings from "./settings/general-settings";
 import SettingsFooter from "./settings/settings-footer";
 import SettingsHeader from "./settings/settings-header";
 import ThinkingSettings from "./settings/thinking-settings";
@@ -93,17 +94,25 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
         ))}
       </div>
       <div style={contentStyles}>
-        {activeTab === "claude" ? (
-          <ThinkingSettings
-            enabled={settings.thinking.enabled}
-            maxTokens={settings.thinking.maxTokens}
-            onChange={handleThinkingSettingsChange}
-          />
-        ) : (
-          <div style={placeholderStyles}>
-            Provider settings will appear here.
-          </div>
-        )}
+        {(() => {
+          if (activeTab === "claude") {
+            return (
+              <ThinkingSettings
+                enabled={settings.thinking.enabled}
+                maxTokens={settings.thinking.maxTokens}
+                onChange={handleThinkingSettingsChange}
+              />
+            );
+          }
+          if (activeTab === "general") {
+            return <GeneralSettings />;
+          }
+          return (
+            <div style={placeholderStyles}>
+              Provider settings will appear here.
+            </div>
+          );
+        })()}
       </div>
       <SettingsFooter
         hasChanges={hasChanges}

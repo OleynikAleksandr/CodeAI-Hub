@@ -20,18 +20,21 @@ export class ProviderRegistry {
       title: getDefaultProviderTitle("claudeCodeCli"),
       description: getDefaultProviderDescription("claudeCodeCli"),
       connected: true,
+      statusMessage: null,
     },
     {
       id: "codexCli",
       title: getDefaultProviderTitle("codexCli"),
       description: getDefaultProviderDescription("codexCli"),
       connected: true,
+      statusMessage: null,
     },
     {
       id: "geminiCli",
       title: getDefaultProviderTitle("geminiCli"),
       description: getDefaultProviderDescription("geminiCli"),
       connected: true,
+      statusMessage: null,
     },
   ];
 }

@@ -42,6 +42,7 @@ const ProviderOption = ({
   const statusClassName = provider.connected
     ? "provider-picker__label-status provider-picker__label-status--connected"
     : "provider-picker__label-status provider-picker__label-status--disconnected";
+  const warning = provider.statusMessage;
 
   const handleChange = () => {
     onToggle(provider.id);
@@ -78,6 +79,9 @@ const ProviderOption = ({
           ) : null}
         </span>
         <span className={statusClassName}>{statusLabel}</span>
+        {warning ? (
+          <span className="provider-picker__warning">{warning}</span>
+        ) : null}
       </span>
     </label>
   );

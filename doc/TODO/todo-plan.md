@@ -1,13 +1,19 @@
-# Development TODO Plan — Unified Session Storage
+# План разработки — устойчивость ядра
 
-## Legend
+## Легенда
 - TODO — задача запланирована
 - IN_PROGRESS — работа ведётся
+- BLOCKED — требуется внешнее действие
 - DONE — задача завершена
+- Каждая задача завершается отдельным коммитом и сборкой через `./scripts/build-all.sh` для проверки.
 
-## Phase 3 — Unified storage hardening (owner: Codex, updated: 2025-11-06)
-- [TODO] Draft smoke checklist for session history restore after restarting VS Code and core (target release: 1.1.153)
-- [TODO] Define acceptance criteria for tool/error/system record types before extending the JSONL schema
+## Фаза 1 — Core lifecycle hardening (owner: Codex, обновлено: 2025-11-06)
+- [DONE] Обновить стратегию работы с CLI провайдеров: деградация без падения, предупреждения в UI, фоновый retry
+  - Notes: перенастроены health-check, UI показывает предупреждения, добавлена кнопка «Перезапустить ядро»
+- [TODO] Устранить конкуренцию менеджеров процесса (VS Code extension vs Launcher) и добавить самотест ядра перед активацией
+  - Notes: нужна синхронизация через маркеры/IPC + pre-flight проверки манифестов, CLI, runtime
+- [TODO] Подготовить UX и документацию: disable провайдеров в picker, инструкции пользователю, обновления в knowledge base
+  - Notes: каждая правка сопровождается релизом и фиксацией хэша в списке коммитов
 
-## Backlog / Parking Lot
-- [TODO] Implement combined feeds under `combined/` once multi-provider orchestration is ready
+## Коммиты фазы
+- Pending — новые хэши будут добавляться после каждой задачи

@@ -71,10 +71,16 @@ export const isProviderDescriptorCandidate = (
     return false;
   }
 
+  const hasValidStatusMessage =
+    candidate.statusMessage === undefined ||
+    candidate.statusMessage === null ||
+    typeof candidate.statusMessage === "string";
+
   return (
     typeof candidate.title === "string" &&
     typeof candidate.description === "string" &&
-    typeof candidate.connected === "boolean"
+    typeof candidate.connected === "boolean" &&
+    hasValidStatusMessage
   );
 };
 
