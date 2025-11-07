@@ -61,6 +61,7 @@ constexpr const char* kCoreLogFilename = "core.log";
 constexpr const char* kStateRoot = ".codeai-hub/state";
 constexpr const char* kManagerLockFilename = "core-manager.lock";
 constexpr const char* kWorkspaceStateFilename = "workspace-path";
+constexpr const char* kCurrentPointerFilename = "current";
 constexpr char kPathSeparator =
 #ifdef _WIN32
   ';'
@@ -428,6 +429,23 @@ std::string Trim(const std::string& value) {
   return std::string(start, end);
 }
 
+std::optional<std::string> ReadPointerFile(
+  const std::filesystem::path& pointerPath
+) {
+  std::ifstream stream(pointerPath);
+  if (!stream.is_open()) {
+    return std::nullopt;
+  }
+  std::string line;
+  std::getline(stream, line);
+  stream.close();
+  line = Trim(line);
+  if (line.empty()) {
+    return std::nullopt;
+  }
+  return line;
+}
+
 std::optional<std::filesystem::path> ResolveCoreRuntimeDirectory(
   const std::filesystem::path& home
 ) {
@@ -436,6 +454,20 @@ std::optional<std::filesystem::path> ResolveCoreRuntimeDirectory(
     home / ".codeai-hub" / "core" / platformKey;
   if (!std::filesystem::exists(base) || !std::filesystem::is_directory(base)) {
     return std::nullopt;
+  }
+
+  const std::filesystem::path pointer =
+    base / kCurrentPointerFilename;
+  const auto currentVersion = ReadPointerFile(pointer);
+  if (currentVersion && !currentVersion->empty()) {
+    const std::filesystem::path candidate = base / *currentVersion;
+    const std::filesystem::path installMarker = candidate / "install.json";
+    if (
+      std::filesystem::exists(candidate) &&
+      std::filesystem::exists(installMarker)
+    ) {
+      return candidate;
+    }
   }
 
   std::optional<std::filesystem::path> latest;
