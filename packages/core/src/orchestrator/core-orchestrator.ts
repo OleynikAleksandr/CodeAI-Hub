@@ -1,3 +1,6 @@
+import { promises as fs } from "node:fs";
+import { homedir } from "node:os";
+import path from "node:path";
 import { type CoreConfig, loadConfig } from "../config";
 import { FileDropService } from "../file-drop/file-drop-service";
 import { ProviderRegistry } from "../provider-registry";
@@ -62,6 +65,7 @@ export class CoreOrchestrator {
       scope: "core",
       label: "Initializing the CodeAI Hub core...",
     });
+    await this.runStartupSelfTest();
     await this.remoteBridge.start();
     await this.providerRegistry.initialize();
     this.statusReporter.emit({
@@ -140,5 +144,30 @@ export class CoreOrchestrator {
           process.exit(1);
         });
     }, this.config.shutdownGracePeriodMs);
+  }
+
+  private async runStartupSelfTest(): Promise<void> {
+    this.statusReporter.emit({
+      phase: "boot",
+      scope: "core",
+      label: "Running startup self-test...",
+    });
+    const sessionsRoot = path.join(
+      homedir(),
+      ".codeai-hub",
+      "sessions",
+      this.config.claudeProjectSlug
+    );
+    try {
+      await fs.mkdir(sessionsRoot, { recursive: true });
+      this.logger.info("Self-test: session storage ready", {
+        path: sessionsRoot,
+      });
+    } catch (error) {
+      this.logger.warn("Self-test failed to ensure session storage directory", {
+        error: error instanceof Error ? error.message : String(error),
+        path: sessionsRoot,
+      });
+    }
   }
 }

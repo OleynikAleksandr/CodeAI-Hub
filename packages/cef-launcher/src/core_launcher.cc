@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cerrno>
 #include <ctime>
 #include <cctype>
 #include <cstdio>
@@ -36,6 +37,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <signal.h>
 extern char** environ;
 #endif
 
@@ -54,6 +57,8 @@ constexpr const char* kLauncherLogDirectory = "launcher";
 constexpr const char* kLauncherLogFilename = "launcher.log";
 constexpr const char* kCoreLogDirectory = "core";
 constexpr const char* kCoreLogFilename = "core.log";
+constexpr const char* kStateRoot = ".codeai-hub/state";
+constexpr const char* kManagerLockFilename = "core-manager.lock";
 constexpr char kPathSeparator =
 #ifdef _WIN32
   ';'
@@ -61,6 +66,16 @@ constexpr char kPathSeparator =
   ':'
 #endif
 ;
+
+struct ManagerClaim {
+  std::string manager;
+  int pid = 0;
+  long long timestamp = 0;
+};
+
+bool g_manager_lock_acquired = false;
+std::filesystem::path g_manager_lock_path;
+const std::string kLauncherManagerId = "launcher";
 
 std::filesystem::path GetHomeDirectory();
 
@@ -158,6 +173,175 @@ std::string PrependPathSegment(
     return segment.string();
   }
   return segment.string() + kPathSeparator + existing;
+}
+
+#ifdef _WIN32
+bool IsManagerProcessAlive(int pid) {
+  if (pid <= 0) {
+    return false;
+  }
+  HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, static_cast<DWORD>(pid));
+  if (!process) {
+    return false;
+  }
+  const DWORD waitResult = WaitForSingleObject(process, 0);
+  CloseHandle(process);
+  return waitResult == WAIT_TIMEOUT;
+}
+#else
+bool IsManagerProcessAlive(int pid) {
+  if (pid <= 0) {
+    return false;
+  }
+  if (kill(static_cast<pid_t>(pid), 0) == 0) {
+    return true;
+  }
+  return errno == EPERM;
+}
+#endif
+
+std::filesystem::path ResolveManagerLockPath(
+  const std::filesystem::path& home
+) {
+  const std::filesystem::path lockDir = home / kStateRoot;
+  std::error_code ec;
+  std::filesystem::create_directories(lockDir, ec);
+  return lockDir / kManagerLockFilename;
+}
+
+std::optional<ManagerClaim> ReadManagerClaim(
+  const std::filesystem::path& lockFile
+) {
+  std::ifstream stream(lockFile);
+  if (!stream) {
+    return std::nullopt;
+  }
+  ManagerClaim claim;
+  std::string line;
+  while (std::getline(stream, line)) {
+    const auto separator = line.find('=');
+    if (separator == std::string::npos) {
+      continue;
+    }
+    const std::string key = line.substr(0, separator);
+    const std::string value = line.substr(separator + 1);
+    if (key == "manager") {
+      claim.manager = value;
+    } else if (key == "pid") {
+      claim.pid = std::stoi(value);
+    } else if (key == "timestamp") {
+      claim.timestamp = std::stoll(value);
+    }
+  }
+  if (claim.manager.empty() || claim.pid <= 0) {
+    return std::nullopt;
+  }
+  return claim;
+}
+
+std::string SerializeManagerClaim(int pid) {
+  const long long timestamp = std::chrono::duration_cast<
+    std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()
+  ).count();
+  std::ostringstream payload;
+  payload << "manager=" << kLauncherManagerId << "\n";
+  payload << "pid=" << pid << "\n";
+  payload << "timestamp=" << timestamp << "\n";
+  return payload.str();
+}
+
+bool TryWriteManagerClaim(
+  const std::filesystem::path& lockFile,
+  int pid
+) {
+  const std::string payload = SerializeManagerClaim(pid);
+#ifdef _WIN32
+  HANDLE handle = CreateFileW(
+    lockFile.wstring().c_str(),
+    GENERIC_WRITE,
+    0,
+    nullptr,
+    CREATE_NEW,
+    FILE_ATTRIBUTE_NORMAL,
+    nullptr
+  );
+  if (handle == INVALID_HANDLE_VALUE) {
+    return false;
+  }
+  DWORD written = 0;
+  const BOOL success = WriteFile(
+    handle,
+    payload.c_str(),
+    static_cast<DWORD>(payload.size()),
+    &written,
+    nullptr
+  );
+  CloseHandle(handle);
+  return success == TRUE;
+#else
+  const std::string lockPath = lockFile.string();
+  const int fd = open(lockPath.c_str(), O_CREAT | O_EXCL | O_WRONLY, 0644);
+  if (fd < 0) {
+    return false;
+  }
+  const ssize_t result = write(fd, payload.c_str(), payload.size());
+  close(fd);
+  return result == static_cast<ssize_t>(payload.size());
+#endif
+}
+
+LockAcquisitionResult AcquireManagerLock(const std::filesystem::path& home) {
+  LockAcquisitionResult result;
+  if (g_manager_lock_acquired) {
+    result.acquired = true;
+    return result;
+  }
+  const std::filesystem::path lockFile = ResolveManagerLockPath(home);
+#ifdef _WIN32
+  const int currentPid = static_cast<int>(GetCurrentProcessId());
+#else
+  const int currentPid = static_cast<int>(getpid());
+#endif
+  for (int attempt = 0; attempt < 2; ++attempt) {
+    if (TryWriteManagerClaim(lockFile, currentPid)) {
+      g_manager_lock_acquired = true;
+      g_manager_lock_path = lockFile;
+      std::atexit(ReleaseManagerLock);
+      result.acquired = true;
+      return result;
+    }
+    const auto claim = ReadManagerClaim(lockFile);
+    if (!claim.has_value()) {
+      std::error_code removeError;
+      std::filesystem::remove(lockFile, removeError);
+      continue;
+    }
+    if (claim->manager == kLauncherManagerId && claim->pid == currentPid) {
+      g_manager_lock_acquired = true;
+      g_manager_lock_path = lockFile;
+      result.acquired = true;
+      return result;
+    }
+    if (!IsManagerProcessAlive(claim->pid)) {
+      std::error_code removeError;
+      std::filesystem::remove(lockFile, removeError);
+      continue;
+    }
+    result.owner = claim->manager;
+    return result;
+  }
+  return result;
+}
+
+void ReleaseManagerLock() {
+  if (!g_manager_lock_acquired) {
+    return;
+  }
+  if (!g_manager_lock_path.empty()) {
+    std::error_code ec;
+    std::filesystem::remove(g_manager_lock_path, ec);
+  }
+  g_manager_lock_acquired = false;
 }
 
 #ifdef _WIN32
@@ -578,11 +762,29 @@ bool EnsureCoreProcessRunning() {
   EnsureGlobalEnvironment(*runtimeDir, home);
   ExportProviderEnvironment(home);
 
+  const bool hadManagerLock = g_manager_lock_acquired;
+  bool acquiredThisRun = false;
+  if (!hadManagerLock) {
+    const LockAcquisitionResult lockResult = AcquireManagerLock(home);
+    if (!lockResult.acquired) {
+      LogLauncherWarn(
+        "Core manager lock held by " +
+        (lockResult.owner.empty() ? std::string("another manager")
+                                  : lockResult.owner) +
+        ". Skipping launch.");
+      return false;
+    }
+    acquiredThisRun = true;
+  }
+
   LogLauncherInfo(
     "Launching core orchestrator using " +
     nodeExecutable.string() + " " + entryPoint.string());
   if (!LaunchProcess(nodeExecutable, entryPoint)) {
     LogLauncherError("Failed to spawn core orchestrator process");
+    if (acquiredThisRun) {
+      ReleaseManagerLock();
+    }
     return false;
   }
 
@@ -602,6 +804,9 @@ bool EnsureCoreProcessRunning() {
   std::fprintf(
     stderr,
     "CodeAIHubLauncher: core did not become ready within timeout\n");
+  if (acquiredThisRun) {
+    ReleaseManagerLock();
+  }
   return false;
 }
 

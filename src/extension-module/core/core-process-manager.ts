@@ -6,6 +6,7 @@ import path from "node:path";
 import { type ExtensionContext, window, workspace } from "vscode";
 import type { CoreRuntimeInfo } from "./core-installer";
 import { ensureCoreInstalled } from "./core-installer";
+import { CoreManagerLock } from "./core-manager-lock";
 
 const DEFAULT_CORE_HOST = "127.0.0.1";
 const DEFAULT_CORE_PORT = 8080;
@@ -47,6 +48,8 @@ export class CoreProcessManager {
 
   private readonly context: ExtensionContext;
 
+  private readonly managerLock = new CoreManagerLock("vscode-extension");
+
   constructor(context: ExtensionContext) {
     this.context = context;
   }
@@ -60,6 +63,15 @@ export class CoreProcessManager {
 
     if (await this.isCoreHealthy()) {
       this.channel.appendLine("CodeAI Hub core already running.");
+      return;
+    }
+
+    const acquisition = this.managerLock.acquire();
+    if (!acquisition.acquired) {
+      const owner = acquisition.owner ?? "another manager";
+      this.channel.appendLine(
+        `CodeAI Hub core is managed by ${owner}, skipping local launch.`
+      );
       return;
     }
 
@@ -84,7 +96,6 @@ export class CoreProcessManager {
       ...process.env,
       CORE_HOST,
       CORE_PORT: `${CORE_PORT}`,
-      CORE_MANAGED_MODE: "vscode",
       CLAUDE_WORKSPACE_PATH: workspacePath,
       CODEX_WORKSPACE_PATH: workspacePath,
       CODEX_SKIP_GIT_REPO_CHECK: "true",
@@ -105,15 +116,20 @@ export class CoreProcessManager {
     }
     envVars.CODEAI_CORE_LOG_FILE = resolveCoreLogFilePath();
     const appCwd = path.join(this.runtimeInfo.runtimeDir, "app");
-    this.child = spawn(
-      this.runtimeInfo.nodePath,
-      [this.runtimeInfo.entryPoint],
-      {
-        env: envVars,
-        stdio: "pipe",
-        cwd: appCwd,
-      }
-    );
+    try {
+      this.child = spawn(
+        this.runtimeInfo.nodePath,
+        [this.runtimeInfo.entryPoint],
+        {
+          env: envVars,
+          stdio: "pipe",
+          cwd: appCwd,
+        }
+      );
+    } catch (error) {
+      this.managerLock.release();
+      throw error;
+    }
 
     this.child.stdout.on("data", (chunk) => {
       this.channel.append(chunk.toString());
@@ -128,6 +144,7 @@ export class CoreProcessManager {
       this.channel.appendLine(
         `Core orchestrator exited with code ${code ?? 0}.`
       );
+      this.managerLock.release();
     });
   }
 
@@ -157,9 +174,12 @@ export class CoreProcessManager {
 
   dispose(): void {
     if (this.child) {
-      this.child.kill();
+      this.child.stdout?.removeAllListeners("data");
+      this.child.stderr?.removeAllListeners("data");
+      this.child.unref?.();
       this.child = null;
     }
+    this.managerLock.release();
     this.channel.dispose();
   }
 
