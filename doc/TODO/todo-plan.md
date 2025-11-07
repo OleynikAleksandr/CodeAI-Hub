@@ -10,10 +10,13 @@
 ## Фаза 1 — Core lifecycle hardening (owner: Codex, обновлено: 2025-11-06)
 - [DONE] Обновить стратегию работы с CLI провайдеров: деградация без падения, предупреждения в UI, фоновый retry
   - Notes: перенастроены health-check, UI показывает предупреждения, добавлена кнопка «Перезапустить ядро»
+  - Commit: 6691823 — "feat: handle provider cli degradation"
 - [TODO] Устранить конкуренцию менеджеров процесса (VS Code extension vs Launcher) и добавить самотест ядра перед активацией
   - Notes: нужна синхронизация через маркеры/IPC + pre-flight проверки манифестов, CLI, runtime
 - [TODO] Подготовить UX и документацию: disable провайдеров в picker, инструкции пользователю, обновления в knowledge base
   - Notes: каждая правка сопровождается релизом и фиксацией хэша в списке коммитов
 
 ## Коммиты фазы
+- 6691823 — feat: handle provider cli degradation
+- fc40260 — feat: v1.1.156 - provider cli resilience (release build)
 - Pending — новые хэши будут добавляться после каждой задачи
