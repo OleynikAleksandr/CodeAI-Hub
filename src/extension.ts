@@ -8,6 +8,7 @@ import {
   workspace,
 } from "vscode";
 import {
+  ensureLauncherWorkspaceConfig,
   getCefClientTarget,
   launchCefClient,
 } from "./extension-module/cef/launcher";
@@ -29,12 +30,26 @@ import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut
 
 let coreProcessManager: CoreProcessManager | null = null;
 
+const resolveWorkspacePath = (): string => {
+  const folder = workspace.workspaceFolders?.[0];
+  if (folder) {
+    return folder.uri.fsPath;
+  }
+  return process.cwd();
+};
+
 async function ensureLocalRuntimeComponents(
   context: ExtensionContext,
-  indexPath: string
+  indexPath: string,
+  workspacePath: string
 ): Promise<CoreRuntimeInfo | null> {
   await ensureCefRuntime(context);
   const ensuredLauncher = await ensureLauncherInstalled(context);
+  await ensureLauncherWorkspaceConfig(
+    ensuredLauncher,
+    indexPath,
+    workspacePath
+  );
   const launcherTarget = getCefClientTarget(ensuredLauncher, indexPath);
   await ensureWebClientShortcuts(launcherTarget);
   const ensuredCore = await ensureCoreInstalled(context);
@@ -50,8 +65,7 @@ async function handleLaunchWebClientCommand(
 ): Promise<void> {
   await ensureCefRuntime(context);
   const ensuredLauncher = await ensureLauncherInstalled(context);
-  const workspacePath =
-    workspace.workspaceFolders?.[0]?.uri.fsPath ?? process.cwd();
+  const workspacePath = resolveWorkspacePath();
   await launchCefClient(ensuredLauncher, indexPath, workspacePath);
   const target = getCefClientTarget(ensuredLauncher, indexPath);
   await ensureWebClientShortcuts(target);
@@ -59,9 +73,14 @@ async function handleLaunchWebClientCommand(
 
 async function initializeCoreManager(
   context: ExtensionContext,
-  indexPath: string
+  indexPath: string,
+  workspacePath: string
 ): Promise<void> {
-  const ensuredCore = await ensureLocalRuntimeComponents(context, indexPath);
+  const ensuredCore = await ensureLocalRuntimeComponents(
+    context,
+    indexPath,
+    workspacePath
+  );
   coreProcessManager = new CoreProcessManager(context);
   await coreProcessManager.ensureStarted(ensuredCore ?? undefined);
 }
@@ -116,10 +135,11 @@ export async function activate(context: ExtensionContext): Promise<void> {
   }
 
   const coreConnectionInfo = getDefaultCoreConnectionInfo();
+  const workspacePath = resolveWorkspacePath();
 
   if (!env.remoteName) {
     try {
-      await initializeCoreManager(context, indexPath);
+      await initializeCoreManager(context, indexPath, workspacePath);
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
       window.showErrorMessage(

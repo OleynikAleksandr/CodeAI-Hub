@@ -60,6 +60,7 @@ constexpr const char* kCoreLogDirectory = "core";
 constexpr const char* kCoreLogFilename = "core.log";
 constexpr const char* kStateRoot = ".codeai-hub/state";
 constexpr const char* kManagerLockFilename = "core-manager.lock";
+constexpr const char* kWorkspaceStateFilename = "workspace-path";
 constexpr char kPathSeparator =
 #ifdef _WIN32
   ';'
@@ -619,6 +620,7 @@ void EnsureGlobalEnvironment(
       "Core log file configured at " + coreLogFile.string());
   }
 
+  RegisterWorkspaceFromState(home);
   const std::string workspace = ResolveWorkspacePath(home);
   SetEnv("CLAUDE_WORKSPACE_PATH", workspace);
   const std::string codexWorkspace =
@@ -676,6 +678,36 @@ std::optional<std::string> ExtractWorkspacePath(
     return std::nullopt;
   }
   return raw;
+}
+
+std::optional<std::string> ReadWorkspaceState(
+  const std::filesystem::path& home
+) {
+  const std::filesystem::path stateFile =
+    home / kStateRoot / kWorkspaceStateFilename;
+  std::ifstream stream(stateFile);
+  if (!stream.is_open()) {
+    return std::nullopt;
+  }
+  std::string line;
+  std::getline(stream, line);
+  stream.close();
+  line = Trim(line);
+  if (line.empty()) {
+    return std::nullopt;
+  }
+  return line;
+}
+
+void RegisterWorkspaceFromState(const std::filesystem::path& home) {
+  if (!g_workspace_override.empty()) {
+    return;
+  }
+  const auto stored = ReadWorkspaceState(home);
+  if (stored && !stored->empty()) {
+    g_workspace_override = *stored;
+    LogLauncherInfo("Workspace override loaded from state file.");
+  }
 }
 
 
