@@ -160,7 +160,18 @@ echo "🏗️  Building CEF launcher..."
 "$SCRIPT_DIR/build-cef-launcher.sh" --launcher-version "$new_version"
 
 echo "🏗️  Building VSIX..."
+rm -f "$REPO_ROOT"/codeai-hub-*.vsix 2>/dev/null || true
 "$SCRIPT_DIR/build-release.sh" --use-current-version
+
+VSIX_FILE="codeai-hub-${new_version}.vsix"
+DIST_VSIX="$REPO_ROOT/doc/tmp/releases/$VSIX_FILE"
+if [[ -f "$DIST_VSIX" ]]; then
+  mv "$DIST_VSIX" "$REPO_ROOT/$VSIX_FILE"
+fi
+if [[ ! -f "$REPO_ROOT/$VSIX_FILE" ]]; then
+  echo "❌ VSIX $VSIX_FILE not found after build." >&2
+  exit 1
+fi
 
 echo ""
 echo "✅ Unified build complete."
