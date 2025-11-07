@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import http from "node:http";
@@ -13,6 +14,8 @@ const DEFAULT_CORE_PORT = 8080;
 const HEALTH_PATH = "/api/v1/health";
 const HEALTH_TIMEOUT_MS = 1000;
 const HTTP_STATUS_OK = 200;
+const VERSION_MISMATCH_WAIT_MS = 5000;
+const VERSION_MISMATCH_POLL_MS = 250;
 
 const resolveCoreLogFilePath = (): string => {
   const logDir = path.join(homedir(), ".codeai-hub", "logs", "core");
@@ -60,10 +63,30 @@ export class CoreProcessManager {
     } else if (!this.runtimeInfo) {
       this.runtimeInfo = await ensureCoreInstalled(this.context);
     }
-
-    if (await this.isCoreHealthy()) {
-      this.channel.appendLine("CodeAI Hub core already running.");
-      return;
+    const health = await this.fetchCoreHealth();
+    if (health) {
+      if (this.runtimeInfo && health.version === this.runtimeInfo.version) {
+        this.channel.appendLine("CodeAI Hub core already running.");
+        return;
+      }
+      this.channel.appendLine(
+        `CodeAI Hub core v${health.version ?? "unknown"} is already running. Waiting for shutdown to apply v${this.runtimeInfo?.version ?? "unknown"}...`
+      );
+      const available = await this.waitForCoreAvailability();
+      if (!available) {
+        throw new Error(
+          "Existing CodeAI Hub core instance is running with a different version. Close other clients and retry."
+        );
+      }
+      const refreshed = await this.fetchCoreHealth();
+      if (
+        refreshed &&
+        this.runtimeInfo &&
+        refreshed.version === this.runtimeInfo.version
+      ) {
+        this.channel.appendLine("CodeAI Hub core already running.");
+        return;
+      }
     }
 
     const acquisition = this.managerLock.acquire();
@@ -148,28 +171,58 @@ export class CoreProcessManager {
     });
   }
 
-  private async isCoreHealthy(): Promise<boolean> {
-    return await new Promise<boolean>((resolve) => {
-      const request = http
-        .get(
-          {
-            host: CORE_HOST,
-            port: CORE_PORT,
-            path: HEALTH_PATH,
-            timeout: HEALTH_TIMEOUT_MS,
-          },
-          (response) => {
+  private async fetchCoreHealth(): Promise<{ version?: string } | null> {
+    return await new Promise((resolve) => {
+      const request = http.get(
+        {
+          host: CORE_HOST,
+          port: CORE_PORT,
+          path: HEALTH_PATH,
+          timeout: HEALTH_TIMEOUT_MS,
+        },
+        (response) => {
+          if (response.statusCode !== HTTP_STATUS_OK) {
             response.resume();
-            resolve(response.statusCode === HTTP_STATUS_OK);
+            resolve(null);
+            return;
           }
-        )
-        .on("error", () => resolve(false));
-
+          const chunks: Buffer[] = [];
+          response.on("data", (chunk) => chunks.push(chunk));
+          response.on("end", () => {
+            try {
+              const payload = JSON.parse(
+                Buffer.concat(chunks).toString("utf8")
+              ) as { version?: string };
+              resolve(payload);
+            } catch {
+              resolve(null);
+            }
+          });
+        }
+      );
+      request.on("error", () => resolve(null));
       request.on("timeout", () => {
         request.destroy();
-        resolve(false);
+        resolve(null);
       });
     });
+  }
+
+  private async waitForCoreAvailability(): Promise<boolean> {
+    const deadline = Date.now() + VERSION_MISMATCH_WAIT_MS;
+    while (Date.now() < deadline) {
+      const health = await this.fetchCoreHealth();
+      if (!health) {
+        return true;
+      }
+      if (this.runtimeInfo && health.version === this.runtimeInfo.version) {
+        return true;
+      }
+      await new Promise((resolve) =>
+        setTimeout(resolve, VERSION_MISMATCH_POLL_MS)
+      );
+    }
+    return false;
   }
 
   dispose(): void {
