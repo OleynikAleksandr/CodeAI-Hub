@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.161] - 2025-11-07
+### Changed
+- VSIX и launcher теперь ведут единый runtime registry (`runtime-registry.json` + `current` указатели), поэтому core/launcher/CEF и сам VSIX моментально перелинковываются при установке нового релиза.
+- Core менеджеры сравнивают версию `/api/v1/health`, ожидают остановки устаревшего рантайма и немедленно запускают актуальный; orchestrator выключается сразу после ухода последнего клиента.
+
+### Build
+- VSIX → `codeai-hub-1.1.161.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.161.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.161.tar.bz2`
+- Providers → `claude-module-1.1.161.tar.bz2`, `codex-module-1.1.161.tar.bz2`, `gemini-module-1.1.161.tar.bz2`
+
 ## [1.1.159] - 2025-11-07
 ### Fixed
 - VS Code extension now persists the current workspace path into `~/.codeai-hub/state/workspace-path`, and the launcher consumes it before spawning the core. Even если standalone UI запущен без VS Code, нормализованные JSONL пишутся в slug рабочего каталога, а не в домашнюю директорию.
