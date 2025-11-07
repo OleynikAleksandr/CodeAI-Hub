@@ -8,6 +8,70 @@ cd "$REPO_ROOT"
 
 source "$SCRIPT_DIR/release-utils.sh"
 
+detect_platform_keys() {
+  local uname_s
+  local uname_m
+  uname_s="$(uname -s)"
+  uname_m="$(uname -m)"
+  case "$uname_s" in
+    Darwin)
+      case "$uname_m" in
+        arm64)
+          CORE_PLATFORM_KEY="darwin-arm64"
+          LAUNCHER_FILE_PLATFORM="macos-arm64"
+          ;;
+        x86_64)
+          CORE_PLATFORM_KEY="darwin-x64"
+          LAUNCHER_FILE_PLATFORM="macos-x64"
+          ;;
+        *)
+          echo "❌ Unsupported macOS architecture: $uname_m" >&2
+          exit 1
+          ;;
+      esac
+      ;;
+    Linux)
+      if [[ "$uname_m" != "x86_64" ]]; then
+        echo "❌ Unsupported Linux architecture: $uname_m" >&2
+        exit 1
+      fi
+      CORE_PLATFORM_KEY="linux-x64"
+      LAUNCHER_FILE_PLATFORM="linux-x64"
+      ;;
+    *)
+      echo "❌ Unsupported platform: $uname_s" >&2
+      exit 1
+      ;;
+  esac
+}
+
+copy_release_artifacts() {
+  local version="$1"
+  detect_platform_keys
+  local release_cache="$HOME/.codeai-hub/releases"
+  local doc_releases="$REPO_ROOT/doc/tmp/releases"
+  local required=(
+    "claude-module-${version}.tar.bz2"
+    "codex-module-${version}.tar.bz2"
+    "gemini-module-${version}.tar.bz2"
+    "codeai-hub-core-${CORE_PLATFORM_KEY}-${version}.tar.bz2"
+    "CodeAIHubLauncher-${LAUNCHER_FILE_PLATFORM}-${version}.tar.bz2"
+  )
+
+  for artefact in "${required[@]}"; do
+    if [[ ! -f "$release_cache/$artefact" ]]; then
+      echo "❌ Missing artefact $artefact in $release_cache" >&2
+      exit 1
+    fi
+  done
+
+  mkdir -p "$doc_releases"
+  for artefact in "${required[@]}"; do
+    cp "$release_cache/$artefact" "$doc_releases/$artefact"
+  done
+  clean_release_dir "$doc_releases"
+}
+
 VERSION_SOURCES=(
   "package.json::version"
   "packages/core/package.json::version"
@@ -172,6 +236,8 @@ if [[ ! -f "$REPO_ROOT/$VSIX_FILE" ]]; then
   echo "❌ VSIX $VSIX_FILE not found after build." >&2
   exit 1
 fi
+
+copy_release_artifacts "$new_version"
 
 echo ""
 echo "✅ Unified build complete."
