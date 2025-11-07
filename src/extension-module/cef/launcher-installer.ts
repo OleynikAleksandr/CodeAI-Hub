@@ -17,8 +17,11 @@ import {
   tryReuseExistingLauncher,
   writeInstallMarker,
 } from "./launcher-install-helpers";
-import { readLauncherManifest } from "./launcher-manifest";
-import { resolvePlatformKey } from "./platform";
+import {
+  type LauncherManifestEntry,
+  readLauncherManifest,
+} from "./launcher-manifest";
+import { type PlatformKey, resolvePlatformKey } from "./platform";
 
 export type LauncherInstallInfo = ReturnType<typeof buildInstallInfo>;
 
