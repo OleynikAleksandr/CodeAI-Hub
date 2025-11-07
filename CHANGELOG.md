@@ -7,6 +7,19 @@ All notable changes to this project will be documented in this file.
 All notable changes to this project will be documented in this file.
 
 ## [1.1.161] - 2025-11-07
+## [1.1.162] - 2025-11-07
+### Fixed
+- Extension и launcher перед стартом новой версии отправляют `/api/v1/shutdown`, при необходимости добивают PID и автоматически выбирают свободный порт (записывая его в `runtime-registry.json`), поэтому обновлённый core больше не блокируется «залипшим» процессом.
+- Remote Bridge оборачивает операции провайдеров в защиту: падение Claude/Codex/Gemini CLI переводит только конкретный провайдер в `failed`, помечает активные сессии и оставляет orchestrator/остальные провайдеры в строю.
+- Проверены slug-пути unified session storage — свежие smoke-сессии из VSIX и launcher пишут JSONL в `~/.codeai-hub/sessions/-<workspace>/provider/*.jsonl` без дополнительных настроек.
+
+### Build
+- VSIX → `codeai-hub-1.1.162.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.162.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.162.tar.bz2`
+- Providers → `claude-module-1.1.162.tar.bz2`, `codex-module-1.1.162.tar.bz2`, `gemini-module-1.1.162.tar.bz2`
+
+## [1.1.161] - 2025-11-07
 ### Changed
 - VSIX и launcher теперь ведут единый runtime registry (`runtime-registry.json` + `current` указатели), поэтому core/launcher/CEF и сам VSIX моментально перелинковываются при установке нового релиза.
 - Core менеджеры сравнивают версию `/api/v1/health`, ожидают остановки устаревшего рантайма и немедленно запускают актуальный; orchestrator выключается сразу после ухода последнего клиента.

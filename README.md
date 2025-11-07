@@ -2,16 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.161
-- **Runtime registry & relinking**: VSIX и launcher теперь ведут единый `runtime-registry.json` + `current`-указатели, поэтому обновлённые core/launcher/CEF и сам VSIX подхватываются сразу после установки релиза без «ручной» перелинковки.
-- **Immediate core lifecycle**: ядро стартует только при появлении первого клиента и выключается сразу после ухода последнего; версии сверяются через `/api/v1/health`, и extension перезапускает core при любом несоответствии.
-- **Release automation**: `./scripts/build-all.sh` по-прежнему инкрементирует версии всех пакетов и публикует обновлённые tarball/VSIX, что ускоряет smoke-тесты и доставку фиксов.
+## Current Release — v1.1.162
+- **Auto-shutdown & port ownership**: перед запуском новой версии extension/launcher шлют `/api/v1/shutdown`, ждут graceful stop и при необходимости добивают PID. Если порт занят, менеджер перебирает пул `8080…8092`, фиксирует выбор в `runtime-registry.json` и сразу подключает все клиенты к свободному сокету.
+- **Provider isolation**: любые падения Claude/Codex/Gemini CLI теперь деградируют только соответствующий провайдер — Remote Bridge помечает его `inactive`, сессии получают статус `failed`, а orchestrator продолжает обслуживать остальных клиентов.
+- **Unified session watchdog**: slug маршруты для JSONL журналов валидированы как в VSIX, так и в launcher; свежие smoke-сессии подтверждают запись в `~/.codeai-hub/sessions/-<workspace>/provider/*.jsonl` без ручной настройки.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.161.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.161.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.161.tar.bz2`
-- Providers: `claude-module-1.1.161.tar.bz2`, `codex-module-1.1.161.tar.bz2`, `gemini-module-1.1.161.tar.bz2`
+- VSIX: `codeai-hub-1.1.162.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.162.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.162.tar.bz2`
+- Providers: `claude-module-1.1.162.tar.bz2`, `codex-module-1.1.162.tar.bz2`, `gemini-module-1.1.162.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

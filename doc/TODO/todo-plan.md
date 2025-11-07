@@ -1,7 +1,11 @@
-# Todo Overview (Updated 2025-11-07)
+# Development TODO Plan
 
-Tasks разделены на два файла:
-- `doc/TODO/todo-critical.md` — P0 багфиксы, без которых релиз 1.1.161+ не может считаться стабильным.
-- `doc/TODO/todo-roadmap.md` — P1/P2 развитие и UX-улучшения.
+## Phase 2 — Diagnostics & Session UX (owner: Codex, updated: 2025-11-07)
+- [TODO] Surface CLI/SDK readiness in RuntimeStatusReporter and the UI so users immediately see degraded providers (ref: `doc/TODO/todo-roadmap.md#Diagnostics & Workspace Control`).
+- [TODO] Add manual workspace selector + prevent empty VS Code windows from overwriting `workspace-path` (ref: `doc/TODO/todo-roadmap.md#Diagnostics & Workspace Control`).
+- [TODO] Launcher webview should consume unified JSONL history and support refresh/restore flows identical to VSIX (ref: `doc/TODO/todo-roadmap.md#Session Experience & Launcher Parity`).
 
-При старте новой сессии сначала закрываем элементы из critical-плана, затем переходим к roadmap.
+## Phase 1 — Runtime Hardening (owner: Codex, updated: 2025-11-07)
+- [DONE] Auto-shutdown + dynamic port ownership across extension and launcher.
+- [DONE] Provider isolation so CLI crashes no longer terminate the orchestrator.
+- [DONE] Unified session slug validation for VSIX and launcher JSONL.
