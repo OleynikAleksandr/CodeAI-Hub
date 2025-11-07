@@ -16,6 +16,7 @@
 #include <system_error>
 #include <thread>
 #include <vector>
+#include <iterator>
 
 #include "base/cef_callback.h"
 #include "include/cef_task.h"
@@ -73,11 +74,18 @@ struct ManagerClaim {
   long long timestamp = 0;
 };
 
+struct LockAcquisitionResult {
+  bool acquired = false;
+  std::string owner;
+};
+
 bool g_manager_lock_acquired = false;
 std::filesystem::path g_manager_lock_path;
 const std::string kLauncherManagerId = "launcher";
+std::string g_workspace_override;
 
 std::filesystem::path GetHomeDirectory();
+void ReleaseManagerLock();
 
 std::string CurrentTimestamp() {
   const auto now = std::chrono::system_clock::now();
@@ -141,6 +149,18 @@ std::string GetEnvOrDefault(const char* key, const std::string& fallback) {
     return fallback;
   }
   return value;
+}
+
+std::string ResolveWorkspacePath(const std::filesystem::path& home) {
+  const std::string envWorkspace =
+    GetEnvOrDefault("CLAUDE_WORKSPACE_PATH", "");
+  if (!envWorkspace.empty()) {
+    return envWorkspace;
+  }
+  if (!g_workspace_override.empty()) {
+    return g_workspace_override;
+  }
+  return home.string();
 }
 
 int ParsePort(const std::string& value, int fallback) {
@@ -599,10 +619,14 @@ void EnsureGlobalEnvironment(
       "Core log file configured at " + coreLogFile.string());
   }
 
-  const std::string workspace = home.string();
+  const std::string workspace = ResolveWorkspacePath(home);
   SetEnv("CLAUDE_WORKSPACE_PATH", workspace);
-  SetEnv("CODEX_WORKSPACE_PATH", workspace);
-  SetEnv("GEMINI_WORKSPACE_PATH", workspace);
+  const std::string codexWorkspace =
+    GetEnvOrDefault("CODEX_WORKSPACE_PATH", workspace);
+  SetEnv("CODEX_WORKSPACE_PATH", codexWorkspace);
+  const std::string geminiWorkspace =
+    GetEnvOrDefault("GEMINI_WORKSPACE_PATH", workspace);
+  SetEnv("GEMINI_WORKSPACE_PATH", geminiWorkspace);
   SetEnv("CODEX_SKIP_GIT_REPO_CHECK", "true");
 
   SetEnv("CORE_MANAGED_MODE", "launcher");
@@ -616,6 +640,61 @@ void EnsureGlobalEnvironment(
 void MonitorCoreHealth();
 
 }  // namespace
+
+std::optional<std::string> ExtractWorkspacePath(
+  const std::filesystem::path& configPath
+) {
+  std::ifstream stream(configPath);
+  if (!stream.is_open()) {
+    return std::nullopt;
+  }
+  const std::string content(
+    (std::istreambuf_iterator<char>(stream)),
+    std::istreambuf_iterator<char>()
+  );
+  const std::string key = "\"workspacePath\"";
+  const size_t keyPos = content.find(key);
+  if (keyPos == std::string::npos) {
+    return std::nullopt;
+  }
+  const size_t colonPos = content.find(':', keyPos + key.size());
+  if (colonPos == std::string::npos) {
+    return std::nullopt;
+  }
+  size_t firstQuote = content.find('"', colonPos);
+  if (firstQuote == std::string::npos) {
+    return std::nullopt;
+  }
+  firstQuote += 1;
+  size_t secondQuote = content.find('"', firstQuote);
+  if (secondQuote == std::string::npos || secondQuote <= firstQuote) {
+    return std::nullopt;
+  }
+  std::string raw = content.substr(firstQuote, secondQuote - firstQuote);
+  raw = Trim(raw);
+  if (raw.empty()) {
+    return std::nullopt;
+  }
+  return raw;
+}
+
+
+void RegisterWorkspaceFromConfig(const std::string& configPath) {
+  if (configPath.empty()) {
+    return;
+  }
+  std::error_code ec;
+  std::filesystem::path resolved(configPath);
+  if (!std::filesystem::exists(resolved, ec)) {
+    return;
+  }
+  const auto workspace = ExtractWorkspacePath(resolved);
+  if (!workspace || workspace->empty()) {
+    return;
+  }
+  g_workspace_override = *workspace;
+  LogLauncherInfo("Workspace override captured: " + g_workspace_override);
+}
 
 void LogLauncherInfo(const std::string& message) {
   AppendLauncherLog("INFO", message);
