@@ -44,6 +44,10 @@ const sanitizeProvider = (
     description:
       provider.description ?? getDefaultProviderDescription(providerId),
     connected: provider.status !== "inactive",
+    statusMessage:
+      typeof provider.statusMessage === "string"
+        ? provider.statusMessage
+        : null,
   };
 };
 

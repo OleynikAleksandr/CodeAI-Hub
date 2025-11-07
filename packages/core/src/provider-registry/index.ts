@@ -44,6 +44,7 @@ export type Provider = {
   readonly name: string;
   readonly description: string;
   readonly status: "active" | "inactive";
+  readonly statusMessage?: string;
 };
 
 type ProviderAdapter = {
@@ -88,6 +89,8 @@ const GEMINI_INSTALLER_PATHS: GeminiInstallerPaths = {
   windows:
     "%USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\@google\\gemini-cli\\",
 };
+
+const PROVIDER_RECOVERY_INTERVAL_MS = 60_000;
 
 type ClaudeAdapterCtor = new (options: ClaudeModuleOptions) => ProviderAdapter;
 
@@ -353,6 +356,8 @@ export class ProviderRegistry {
   };
 
   private readonly statusReporter: RuntimeStatusReporter;
+  private readonly retryTimers = new Map<string, NodeJS.Timeout>();
+  private readonly pendingRetryProviders = new Set<string>();
 
   constructor(options: {
     readonly config: CoreConfig;
@@ -378,6 +383,10 @@ export class ProviderRegistry {
     this.geminiCredentialsDirectory =
       this.options.config.geminiCredentialsDirectory;
     this.providers = this.initializeProviders();
+    for (const providerId of this.pendingRetryProviders) {
+      this.scheduleRetry(providerId);
+    }
+    this.pendingRetryProviders.clear();
   }
 
   async initialize(): Promise<void> {
@@ -388,38 +397,9 @@ export class ProviderRegistry {
     });
     await this.ensureGeminiAdapter();
     await Promise.all(
-      this.providers.map(async (provider) => {
-        if (!provider.adapter) {
-          return;
-        }
-        this.emitStatus({
-          phase: "provider",
-          scope: provider.id,
-          label: `Preparing ${provider.name} module...`,
-        });
-        try {
-          await provider.adapter.initialize();
-          this.emitStatus({
-            phase: "provider",
-            scope: provider.id,
-            label: `${provider.name} is ready.`,
-          });
-        } catch (error) {
-          this.options.logger.error(
-            "Provider initialization failed",
-            error instanceof Error ? error : new Error(String(error)),
-            { providerId: provider.id }
-          );
-          this.emitStatus({
-            phase: "provider",
-            scope: provider.id,
-            label: `Failed to initialize ${provider.name}.`,
-          });
-          const mutable = provider as MutableProviderDescriptor;
-          mutable.status = "inactive";
-          mutable.adapter = undefined;
-        }
-      })
+      this.providers.map((provider) =>
+        this.prepareProvider(provider as MutableProviderDescriptor)
+      )
     );
   }
 
@@ -433,58 +413,50 @@ export class ProviderRegistry {
   }
 
   private initializeProviders(): ProviderDescriptor[] {
-    const claudeAdapter = new this.claudeAdapterCtor({
-      installerPaths: CLAUDE_INSTALLER_PATHS,
-      workspace: {
-        workspacePath: this.options.config.claudeWorkspacePath,
-        claudeProjectSlug: this.options.config.claudeProjectSlug,
-        settingsPath: this.options.config.claudeSettingsPath,
-      },
-      reporter: this.createReporter("claude"),
-    });
-
-    const {
-      codexWorkspacePath,
-      codexSandboxMode,
-      codexApprovalMode,
-      codexDefaultModel,
-      codexSkipGitRepoCheck,
-    } = this.options.config;
-
-    const codexAdapter = new this.codexAdapterCtor({
-      installerPaths: CODEX_INSTALLER_PATHS,
-      workspace: {
-        workspacePath: codexWorkspacePath,
-        defaultSandboxMode: codexSandboxMode,
-        defaultApprovalMode: codexApprovalMode,
-        defaultModel: codexDefaultModel,
-        skipGitRepoCheck: codexSkipGitRepoCheck,
-      },
-      reporter: this.createReporter("codex"),
-    });
-
     return [
-      {
-        id: "claudeCodeCli",
-        name: "Claude",
-        description: "Using your authentication Claude Code CLI",
-        status: "active",
-        adapter: claudeAdapter,
-      },
-      {
-        id: "codexCli",
-        name: "Codex",
-        description: "Using your authentication Codex CLI",
-        status: "active",
-        adapter: codexAdapter,
-      },
-      {
-        id: "geminiCli",
-        name: "Gemini",
-        description: "Using your authentication Gemini CLI",
-        status: "active",
-      },
+      this.buildClaudeDescriptor(),
+      this.buildCodexDescriptor(),
+      this.buildGeminiDescriptor(),
     ];
+  }
+
+  private buildClaudeDescriptor(): ProviderDescriptor {
+    const descriptor: MutableProviderDescriptor = {
+      id: "claudeCodeCli",
+      name: "Claude",
+      description: "Using your authentication Claude Code CLI",
+      status: "active",
+    };
+    this.tryAttachAdapter(
+      () => this.createClaudeAdapter(),
+      descriptor,
+      "Claude CLI components are unavailable."
+    );
+    return descriptor;
+  }
+
+  private buildCodexDescriptor(): ProviderDescriptor {
+    const descriptor: MutableProviderDescriptor = {
+      id: "codexCli",
+      name: "Codex",
+      description: "Using your authentication Codex CLI",
+      status: "active",
+    };
+    this.tryAttachAdapter(
+      () => this.createCodexAdapter(),
+      descriptor,
+      "Codex CLI components are unavailable."
+    );
+    return descriptor;
+  }
+
+  private buildGeminiDescriptor(): ProviderDescriptor {
+    return {
+      id: "geminiCli",
+      name: "Gemini",
+      description: "Using your authentication Gemini CLI",
+      status: "active",
+    };
   }
 
   private async ensureGeminiAdapter(): Promise<void> {
@@ -539,7 +511,8 @@ export class ProviderRegistry {
         scope: "geminiCli",
         label: "Gemini module failed to load.",
       });
-      mutable.status = "inactive";
+      this.markProviderInactive(mutable, error);
+      this.scheduleRetry("geminiCli");
     }
   }
 
@@ -570,5 +543,210 @@ export class ProviderRegistry {
         });
       },
     };
+  }
+
+  private tryAttachAdapter(
+    factory: () => ProviderAdapter,
+    descriptor: MutableProviderDescriptor,
+    failureLabel: string
+  ): void {
+    try {
+      descriptor.adapter = factory();
+    } catch (error) {
+      this.handleAdapterConstructionFailure(descriptor, error, failureLabel);
+    }
+  }
+
+  private createClaudeAdapter(): ProviderAdapter {
+    return new this.claudeAdapterCtor({
+      installerPaths: CLAUDE_INSTALLER_PATHS,
+      workspace: {
+        workspacePath: this.options.config.claudeWorkspacePath,
+        claudeProjectSlug: this.options.config.claudeProjectSlug,
+        settingsPath: this.options.config.claudeSettingsPath,
+      },
+      reporter: this.createReporter("claude"),
+    });
+  }
+
+  private createCodexAdapter(): ProviderAdapter {
+    const {
+      codexWorkspacePath,
+      codexSandboxMode,
+      codexApprovalMode,
+      codexDefaultModel,
+      codexSkipGitRepoCheck,
+    } = this.options.config;
+
+    return new this.codexAdapterCtor({
+      installerPaths: CODEX_INSTALLER_PATHS,
+      workspace: {
+        workspacePath: codexWorkspacePath,
+        defaultSandboxMode: codexSandboxMode,
+        defaultApprovalMode: codexApprovalMode,
+        defaultModel: codexDefaultModel,
+        skipGitRepoCheck: codexSkipGitRepoCheck,
+      },
+      reporter: this.createReporter("codex"),
+    });
+  }
+
+  private async prepareProvider(
+    descriptor: MutableProviderDescriptor
+  ): Promise<void> {
+    if (!descriptor.adapter) {
+      return;
+    }
+    this.emitStatus({
+      phase: "provider",
+      scope: descriptor.id,
+      label: `Preparing ${descriptor.name} module...`,
+    });
+    try {
+      await descriptor.adapter.initialize();
+      this.markProviderActive(descriptor);
+      this.emitStatus({
+        phase: "provider",
+        scope: descriptor.id,
+        label: `${descriptor.name} is ready.`,
+      });
+    } catch (error) {
+      this.options.logger.error(
+        "Provider initialization failed",
+        error instanceof Error ? error : new Error(String(error)),
+        { providerId: descriptor.id }
+      );
+      this.markProviderInactive(descriptor, error);
+      this.emitStatus({
+        phase: "provider",
+        scope: descriptor.id,
+        label: `Failed to initialize ${descriptor.name}.`,
+      });
+      this.scheduleRetry(descriptor.id);
+    }
+  }
+
+  private handleAdapterConstructionFailure(
+    descriptor: MutableProviderDescriptor,
+    error: unknown,
+    failureLabel: string
+  ): void {
+    this.options.logger.error(
+      "Provider adapter construction failed",
+      error instanceof Error ? error : new Error(String(error)),
+      { providerId: descriptor.id }
+    );
+    this.markProviderInactive(descriptor, error);
+    this.pendingRetryProviders.add(descriptor.id);
+    this.emitStatus({
+      phase: "provider",
+      scope: descriptor.id,
+      label: failureLabel,
+    });
+  }
+
+  private markProviderInactive(
+    descriptor: MutableProviderDescriptor,
+    error: unknown
+  ): void {
+    descriptor.status = "inactive";
+    descriptor.statusMessage = this.formatProviderError(descriptor.id, error);
+    descriptor.adapter = undefined;
+  }
+
+  private markProviderActive(descriptor: MutableProviderDescriptor): void {
+    descriptor.status = "active";
+    descriptor.statusMessage = undefined;
+    this.clearRetry(descriptor.id);
+  }
+
+  private formatProviderError(providerId: string, error: unknown): string {
+    const reason =
+      error instanceof Error && error.message
+        ? error.message
+        : String(error ?? "Unknown error");
+    const hint = this.getProviderRecoveryHint(providerId);
+    return `${hint} (Reason: ${reason})`;
+  }
+
+  private getProviderRecoveryHint(providerId: string): string {
+    switch (providerId) {
+      case "codexCli":
+        return "Codex CLI is unavailable. Re-authenticate the CLI, verify your limits, then use Settings → General → Restart Core to retry";
+      case "geminiCli":
+        return "Gemini CLI is unavailable. Run `gemini login`, confirm credentials, then use Settings → General → Restart Core to retry";
+      default:
+        return "Claude CLI is unavailable. Run `claude login`, check your limits, then use Settings → General → Restart Core to retry";
+    }
+  }
+
+  private clearRetry(providerId: string): void {
+    const timer = this.retryTimers.get(providerId);
+    if (timer) {
+      clearTimeout(timer);
+      this.retryTimers.delete(providerId);
+    }
+  }
+
+  private scheduleRetry(providerId: string): void {
+    if (this.retryTimers.has(providerId)) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      this.retryTimers.delete(providerId);
+      this.attemptProviderRecovery(providerId).catch((error) => {
+        this.options.logger.warn("Provider retry failed", {
+          providerId,
+          message: error instanceof Error ? error.message : String(error),
+        });
+        this.scheduleRetry(providerId);
+      });
+    }, PROVIDER_RECOVERY_INTERVAL_MS);
+    this.retryTimers.set(providerId, timer);
+  }
+
+  private async attemptProviderRecovery(providerId: string): Promise<void> {
+    const descriptor = this.providers.find(
+      (provider) => provider.id === providerId
+    );
+    if (!descriptor) {
+      return;
+    }
+    const mutable = descriptor as MutableProviderDescriptor;
+
+    if (providerId === "geminiCli") {
+      await this.ensureGeminiAdapter();
+      if (!mutable.adapter) {
+        this.scheduleRetry(providerId);
+        return;
+      }
+      await this.prepareProvider(mutable);
+      return;
+    }
+
+    if (!mutable.adapter) {
+      try {
+        mutable.adapter =
+          providerId === "claudeCodeCli"
+            ? this.createClaudeAdapter()
+            : this.createCodexAdapter();
+      } catch (error) {
+        this.options.logger.error(
+          "Provider adapter construction failed during retry",
+          error instanceof Error ? error : new Error(String(error)),
+          { providerId }
+        );
+        this.markProviderInactive(mutable, error);
+        this.emitStatus({
+          phase: "provider",
+          scope: providerId,
+          label: `${descriptor.name} CLI components are unavailable.`,
+        });
+        this.scheduleRetry(providerId);
+        return;
+      }
+    }
+
+    await this.prepareProvider(mutable);
   }
 }

@@ -359,6 +359,14 @@ body {
   color: #ff8a80;
 }
 
+.provider-picker__warning {
+  display: block;
+  font-size: 11px;
+  color: #f5c06f;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
 .provider-picker__actions {
   display: flex;
   flex-direction: row;

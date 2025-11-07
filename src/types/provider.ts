@@ -5,6 +5,7 @@ export type ProviderStackDescriptor = {
   readonly title: string;
   readonly description: string;
   readonly connected: boolean;
+  readonly statusMessage?: string | null;
 };
 
 const PROVIDER_TITLE_MAP: Record<ProviderStackId, string> = {

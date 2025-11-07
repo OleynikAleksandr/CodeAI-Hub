@@ -18,6 +18,7 @@ export type ServerProvider = {
   readonly name?: string;
   readonly description?: string;
   readonly status?: string;
+  readonly statusMessage?: string | null;
 };
 
 export type ServerSessionMessage = {
