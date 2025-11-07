@@ -55,6 +55,7 @@ export class CoreOrchestrator {
           this.handleClientIncrease(total),
         onClientDisconnected: (_clientId, total) =>
           this.handleClientDecrease(total),
+        onShutdownRequested: () => this.requestShutdown("api-request"),
       },
     });
   }
@@ -100,17 +101,26 @@ export class CoreOrchestrator {
     });
 
     if (this.activeClients === 0) {
-      this.shutdownNow();
+      this.requestShutdown("idle");
     }
   }
 
-  private shutdownNow(): void {
+  private requestShutdown(reason: "idle" | "api-request"): void {
     if (this.shuttingDown) {
       return;
     }
     this.shuttingDown = true;
 
-    this.logger.info("No active clients, shutting down core immediately");
+    this.logger.info("Shutting down core orchestrator", { reason });
+    this.statusReporter.emit({
+      phase: "shutdown",
+      scope: "core",
+      label: "Shutting down CodeAI Hub core...",
+      detail:
+        reason === "api-request"
+          ? "Shutdown requested by manager."
+          : "No active clients remain.",
+    });
     this.stop()
       .then(() => process.exit(0))
       .catch((error) => {
