@@ -38,6 +38,17 @@ const loadEsmModule = async <T>(
   return loaded as T;
 };
 
+const loadOptionalEsmModule = async <T>(
+  root: string,
+  ...segments: readonly string[]
+): Promise<T | undefined> => {
+  try {
+    return await loadEsmModule<T>(root, ...segments);
+  } catch {
+    return;
+  }
+};
+
 const readMetadata = async (): Promise<GeminiCliBridgeMetadata | null> => {
   try {
     const raw = await fs.readFile(METADATA_FILE, "utf8");
@@ -201,6 +212,7 @@ const loadGeminiModules = async (
     toolExecutor,
     turn,
     thoughtUtils,
+    extensionManager,
   ] = await Promise.all([
     loadEsmModule<typeof import("@google/gemini-cli/dist/src/config/config")>(
       cliRoot,
@@ -241,12 +253,16 @@ const loadGeminiModules = async (
     loadEsmModule<
       typeof import("@google/gemini-cli-core/dist/src/utils/thoughtUtils")
     >(CLI_CORE_DIR, "dist", "src", "utils", "thoughtUtils.js"),
+    loadOptionalEsmModule<
+      typeof import("@google/gemini-cli/dist/src/config/extension-manager")
+    >(cliRoot, "dist", "src", "config", "extension-manager.js"),
   ]);
 
   return {
     config,
     settings,
     extension,
+    extensionManager,
     extensionEnablement,
     contentGenerator,
     toolScheduler,
