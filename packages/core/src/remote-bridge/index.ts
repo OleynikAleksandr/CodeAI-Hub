@@ -175,6 +175,7 @@ export class RemoteBridge {
       workspaceSlug: this.config.claudeProjectSlug,
       logger: this.logger,
     });
+    this.latestStatus = this.statusReporter.snapshot();
     this.unsubscribeStatus = this.statusReporter.subscribe((event) => {
       this.latestStatus = event;
       this.broadcast({
@@ -392,11 +393,12 @@ export class RemoteBridge {
         payload: this.buildInitialState(),
       })
     );
-    if (this.latestStatus) {
+    const latestStatus = this.latestStatus ?? this.statusReporter.snapshot();
+    if (latestStatus) {
       socket.send(
         JSON.stringify({
           type: "core:loading-status",
-          payload: this.latestStatus,
+          payload: latestStatus,
         })
       );
     }
