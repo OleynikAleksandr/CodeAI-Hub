@@ -1,6 +1,5 @@
 import type * as CliConfigModule from "@google/gemini-cli/dist/src/config/config";
 import type * as CliExtensionModule from "@google/gemini-cli/dist/src/config/extension";
-import type * as CliExtensionManagerModule from "@google/gemini-cli/dist/src/config/extension-manager";
 import type * as CliExtensionEnablementModule from "@google/gemini-cli/dist/src/config/extensions/extensionEnablement";
 import type * as CliSettingsModule from "@google/gemini-cli/dist/src/config/settings";
 import type * as CoreContentModule from "@google/gemini-cli-core/dist/src/core/contentGenerator";
@@ -14,7 +13,6 @@ export type GeminiCliModules = {
   readonly config: typeof CliConfigModule;
   readonly settings: typeof CliSettingsModule;
   readonly extension: typeof CliExtensionModule;
-  readonly extensionManager?: typeof CliExtensionManagerModule;
   readonly extensionEnablement: typeof CliExtensionEnablementModule;
   readonly contentGenerator: typeof CoreContentModule;
   readonly toolScheduler: typeof ToolSchedulerModule;

@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
 import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
-import type { GeminiCLIExtension } from "@google/gemini-cli-core/dist/src/config/config";
 import type { AuthType as AuthTypeEnum } from "@google/gemini-cli-core/dist/src/core/contentGenerator";
 import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
 import type {
@@ -11,7 +10,7 @@ import type {
 import type { Part, UsageMetadata } from "@google/genai";
 import { GeminiMessageProcessor } from "../messaging/message-processor";
 import type { GeminiCliModules } from "../runtime/cli-types";
-import type { GeminiSessionEvent, ModuleReporter } from "../types";
+import type { GeminiSessionEvent } from "../types";
 import type {
   ActiveSession,
   SessionCreationOptions,
@@ -87,28 +86,16 @@ export class GeminiSessionManager {
     this.modules.settings.migrateDeprecatedSettings(settings, workspacePath);
 
     const argv = this.createArgv(options);
-    type GeminiExtensionEnablementManager = InstanceType<
-      typeof this.modules.extensionEnablement.ExtensionEnablementManager
-    >;
-    const ExtensionEnablementManagerClass = this.modules.extensionEnablement
-      .ExtensionEnablementManager as unknown as {
-      new (extensions?: readonly string[]): GeminiExtensionEnablementManager;
-    };
-    const enablementManager = new ExtensionEnablementManagerClass(
-      argv.extensions
-    );
-    const installedExtensions = await this.loadInstalledExtensions({
-      workspacePath,
-      argv,
-      settings,
-      enablementManager,
-      eventEmitter,
-      reporter: options.reporter,
-    });
 
-    const config = await this.modules.config.loadCliConfig(
+    const loadCliConfig = this.modules.config.loadCliConfig as unknown as (
+      mergedSettings: typeof settings.merged,
+      sessionIdentifier: string,
+      cliArguments: CliArgs,
+      cwd?: string
+    ) => Promise<Awaited<ReturnType<typeof this.modules.config.loadCliConfig>>>;
+
+    const config = await loadCliConfig(
       settings.merged,
-      installedExtensions,
       sessionId,
       argv,
       workspacePath
@@ -522,55 +509,6 @@ export class GeminiSessionManager {
       events,
       completedCalls,
     };
-  }
-
-  private async loadInstalledExtensions(options: {
-    readonly workspacePath: string;
-    readonly argv: CliArgs;
-    readonly settings: ReturnType<GeminiCliModules["settings"]["loadSettings"]>;
-    readonly enablementManager: unknown;
-    readonly eventEmitter: EventEmitter;
-    readonly reporter?: ModuleReporter;
-  }): Promise<GeminiCLIExtension[]> {
-    if (typeof this.modules.extension.loadExtensions === "function") {
-      try {
-        return this.modules.extension.loadExtensions(
-          options.enablementManager as InstanceType<
-            typeof this.modules.extensionEnablement.ExtensionEnablementManager
-          >,
-          options.workspacePath
-        );
-      } catch (error) {
-        options.reporter?.warn?.("Failed to load Gemini extensions", {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
-    }
-
-    const managerModule = this.modules.extensionManager;
-    if (managerModule?.ExtensionManager) {
-      try {
-        const manager = new managerModule.ExtensionManager({
-          settings: options.settings,
-          requestConsent: async () => true,
-          requestSetting: undefined,
-          workspaceDir: options.workspacePath,
-          enabledExtensionOverrides: options.argv.extensions,
-          eventEmitter: options.eventEmitter,
-        });
-        await manager.loadExtensions();
-        return Array.from(manager.getExtensions());
-      } catch (error) {
-        options.reporter?.warn?.(
-          "Gemini ExtensionManager failed to load extensions",
-          {
-            error: error instanceof Error ? error.message : String(error),
-          }
-        );
-      }
-    }
-
-    return [];
   }
 
   private emitEvents(
