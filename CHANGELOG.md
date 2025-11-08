@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.166] - 2025-11-08
+### Fixed
+- Gemini session manager переключён на новое `loadCliConfig(settings, sessionId, argv)` API (`@google/gemini-cli` 0.11.x), поэтому CLI больше не падает с `ERR_INVALID_ARG_TYPE`.
+- При runtime-сбоях Gemini провайдер сразу переводится в `inactive`, а picker показывает причину (кнопка отключается).
+
+### Build
+- VSIX → `codeai-hub-1.1.166.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.166.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.166.tar.bz2`
+- Providers → `claude-module-1.1.166.tar.bz2`, `codex-module-1.1.166.tar.bz2`, `gemini-module-1.1.166.tar.bz2`
+
 ## [1.1.165] - 2025-11-08
 ### Fixed
 - Gemini provider снова создаёт сессии на `@google/gemini-cli` 0.11.x: модуль умеет подключаться к новому `extension-manager`, fallback-логика логирует предупреждения вместо немого падения.
