@@ -1,6 +1,7 @@
 # Development TODO Plan
 
-## Phase 2 — Diagnostics & Session UX (owner: Codex, updated: 2025-11-07)
+## Phase 2 — Diagnostics & Session UX (owner: Codex, updated: 2025-11-08)
+- _Note (2025-11-08): Release 1.1.163 собран как контрольная точка перед отладкой портов/diagnostics._
 - [TODO] Surface CLI/SDK readiness in RuntimeStatusReporter and the UI so users immediately see degraded providers (ref: `doc/TODO/todo-roadmap.md#Diagnostics & Workspace Control`).
 - [TODO] Add manual workspace selector + prevent empty VS Code windows from overwriting `workspace-path` (ref: `doc/TODO/todo-roadmap.md#Diagnostics & Workspace Control`).
 - [TODO] Launcher webview should consume unified JSONL history and support refresh/restore flows identical to VSIX (ref: `doc/TODO/todo-roadmap.md#Session Experience & Launcher Parity`).
