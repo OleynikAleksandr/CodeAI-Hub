@@ -1,26 +1,17 @@
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import { type ExtensionContext, window, workspace } from "vscode";
 import { recordCorePortPreference } from "../runtime/runtime-registry";
 import type { CoreRuntimeInfo } from "./core-installer";
 import { ensureCoreInstalled } from "./core-installer";
+import { resolveCoreLogFilePath } from "./core-log-path";
 import { CoreManagerLock } from "./core-manager-lock";
 import { CorePortManager } from "./core-port-manager";
 
 const DEFAULT_CORE_HOST = "127.0.0.1";
 const DEFAULT_CORE_PORT = 8080;
-
-const resolveCoreLogFilePath = (): string => {
-  const logDir = path.join(homedir(), ".codeai-hub", "logs", "core");
-  try {
-    mkdirSync(logDir, { recursive: true });
-  } catch {
-    // ignore directory creation failures; logging will fall back to stdout
-  }
-  return path.join(logDir, "core.log");
-};
 
 const CORE_HOST = process.env.CODEAI_CORE_HOST ?? DEFAULT_CORE_HOST;
 const ENV_CORE_PORT = Number(process.env.CODEAI_CORE_PORT ?? DEFAULT_CORE_PORT);
@@ -77,7 +68,10 @@ export class CoreProcessManager {
     });
   }
 
-  async ensureStarted(runtimeInfo?: CoreRuntimeInfo): Promise<void> {
+  async ensureStarted(
+    runtimeInfo?: CoreRuntimeInfo,
+    options?: { readonly forceRestart?: boolean }
+  ): Promise<void> {
     if (runtimeInfo) {
       this.runtimeInfo = runtimeInfo;
     } else if (!this.runtimeInfo) {
@@ -85,6 +79,24 @@ export class CoreProcessManager {
     }
     if (!this.runtimeInfo) {
       throw new Error("Unable to resolve CodeAI Hub core runtime information.");
+    }
+
+    if (!options?.forceRestart) {
+      const running = await this.portManager.detectRunning(
+        this.runtimeInfo.version,
+        this.currentPort
+      );
+      if (running) {
+        this.updateConnectionInfo(running.port);
+        if (running.kind === "mismatch") {
+          this.channel.appendLine(
+            `Detected running CodeAI Hub core (version ${running.version ?? "unknown"}). Attaching without restart.`
+          );
+        } else {
+          this.channel.appendLine("CodeAI Hub core already running.");
+        }
+        return;
+      }
     }
 
     const decision = await this.portManager.resolve(

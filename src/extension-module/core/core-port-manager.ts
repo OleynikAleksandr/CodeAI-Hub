@@ -25,6 +25,14 @@ type CoreHealthPayload = {
   readonly pid?: number;
 };
 
+export type RunningCoreInfo =
+  | { readonly kind: "match"; readonly port: number; readonly version?: string }
+  | {
+      readonly kind: "mismatch";
+      readonly port: number;
+      readonly version?: string;
+    };
+
 export type PortDecision =
   | { readonly kind: "running"; readonly port: number }
   | { readonly kind: "launch"; readonly port: number };
@@ -73,6 +81,24 @@ export class CorePortManager {
     throw new Error(
       "Unable to find an available port for CodeAI Hub core. Close running instances and retry."
     );
+  }
+
+  async detectRunning(
+    targetVersion: string | undefined,
+    preferredPort?: number
+  ): Promise<RunningCoreInfo | null> {
+    const candidates = await this.buildPortCandidates(preferredPort);
+    for (const port of candidates) {
+      const health = await this.fetchCoreHealth(port);
+      if (!health) {
+        continue;
+      }
+      if (!targetVersion || health.version === targetVersion) {
+        return { kind: "match", port, version: health.version };
+      }
+      return { kind: "mismatch", port, version: health.version };
+    }
+    return null;
   }
 
   private async buildPortCandidates(preferredPort?: number): Promise<number[]> {
