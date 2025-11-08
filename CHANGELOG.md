@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.169] - 2025-11-09
+### Fixed
+- VS Code extension больше не вызывает `ensureStarted()` при каждом фокусе webview: sticky keepalive запускается при активации редактора и удерживает ядро до закрытия приложения.
+- Orchestrator вводит grace-период перед `idle` shutdown, поэтому кратковременные разрывы websocket’ов (переключение UI, reconnection) не приводят к мгновенной остановке core.
+
+### Build
+- VSIX → `codeai-hub-1.1.169.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.169.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.169.tar.bz2`
+- Providers → `claude-module-1.1.169.tar.bz2`, `codex-module-1.1.169.tar.bz2`, `gemini-module-1.1.169.tar.bz2`
+
 ## [1.1.168] - 2025-11-09
 ### Fixed
 - VSIX теперь включает `node_modules/ws`, поэтому `CoreKeepAlive` успешно загружает WebSocket-клиент и ядро не падает при активации расширения.
