@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.167] - 2025-11-09
+### Added
+- Extension host включает `CoreKeepAlive`, который держит фоновое WebSocket-подключение к ядру и инициирует `ensureStarted()` при завершении процесса или обрывах, поэтому idle shutdown больше не срабатывает из-за свернутого webview.
+- `HomeViewProvider` и команда `codeaiHub.launchWebClient` запускают ядро перед любым UI, поэтому простое разворачивание панели VS Code или CEF клиента гарантированно поднимает orchestrator.
+
+### Build
+- VSIX → `codeai-hub-1.1.167.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.167.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.167.tar.bz2`
+- Providers → `claude-module-1.1.167.tar.bz2`, `codex-module-1.1.167.tar.bz2`, `gemini-module-1.1.167.tar.bz2`
+
 ## [1.1.166] - 2025-11-08
 ### Fixed
 - Gemini session manager переключён на новое `loadCliConfig(settings, sessionId, argv)` API (`@google/gemini-cli` 0.11.x), поэтому CLI больше не падает с `ERR_INVALID_ARG_TYPE`.
