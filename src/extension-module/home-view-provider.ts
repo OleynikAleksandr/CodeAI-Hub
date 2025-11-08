@@ -16,7 +16,6 @@ export class HomeViewProvider implements WebviewViewProvider {
   private readonly htmlGenerator: WebviewHtmlGenerator;
   private readonly messageRouter: HomeViewMessageRouter;
   private readonly coreConfig?: { httpUrl: string; wsUrl: string };
-  private readonly coreProcessManager?: CoreProcessManager;
   private currentView: WebviewView | null = null;
   private pendingShowSettings = false;
 
@@ -29,13 +28,11 @@ export class HomeViewProvider implements WebviewViewProvider {
     this.htmlGenerator = new WebviewHtmlGenerator();
     this.messageRouter = new HomeViewMessageRouter(coreProcessManager);
     this.coreConfig = coreConfig;
-    this.coreProcessManager = coreProcessManager;
   }
 
   resolveWebviewView(webviewView: WebviewView): void {
     const { webview } = webviewView;
     this.currentView = webviewView;
-    this.ensureCoreActive();
 
     webview.options = {
       enableScripts: true,
@@ -57,7 +54,6 @@ export class HomeViewProvider implements WebviewViewProvider {
   }
 
   showSettingsPlaceholder(): void {
-    this.ensureCoreActive();
     if (this.currentView) {
       this.currentView.show?.(true);
       this.showSettingsInternal();
@@ -80,17 +76,5 @@ export class HomeViewProvider implements WebviewViewProvider {
           `Failed to open settings: ${(error as Error).message}`
         );
       });
-  }
-
-  private ensureCoreActive(): void {
-    if (!this.coreProcessManager) {
-      return;
-    }
-    this.coreProcessManager.ensureStarted().catch((error) => {
-      const reason = error instanceof Error ? error.message : String(error);
-      window.showWarningMessage(
-        `Failed to reactivate CodeAI Hub core: ${reason}`
-      );
-    });
   }
 }

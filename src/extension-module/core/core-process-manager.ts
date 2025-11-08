@@ -134,6 +134,9 @@ export class CoreProcessManager {
   }
 
   private updateConnectionInfo(port: number): void {
+    if (this.currentPort === port) {
+      return;
+    }
     this.currentPort = port;
     this.connectionInfo = createConnectionUrls(port, this.host);
     this.notifyConnectionInfoChange();
