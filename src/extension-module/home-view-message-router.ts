@@ -100,10 +100,12 @@ export class HomeViewMessageRouter {
       return;
     }
 
-    this.coreProcessManager.ensureStarted().catch((error) => {
-      const reason = error instanceof Error ? error.message : String(error);
-      window.showErrorMessage(`Failed to restart core: ${reason}`);
-    });
+    this.coreProcessManager
+      .ensureStarted(undefined, { forceRestart: true })
+      .catch((error) => {
+        const reason = error instanceof Error ? error.message : String(error);
+        window.showErrorMessage(`Failed to restart core: ${reason}`);
+      });
   }
 
   private notifyWebview(
