@@ -74,7 +74,7 @@ export class CoreProcessManager {
     runtimeInfo?: CoreRuntimeInfo,
     options?: { readonly forceRestart?: boolean }
   ): Promise<void> {
-    await this.ensureRuntimeInfo(runtimeInfo);
+    const resolvedRuntime = await this.ensureRuntimeInfo(runtimeInfo);
 
     if (!options?.forceRestart) {
       const attached = await this.tryAttachToRunningCore();
@@ -84,7 +84,7 @@ export class CoreProcessManager {
     }
 
     const decision = await this.portManager.resolve(
-      this.runtimeInfo.version,
+      resolvedRuntime.version,
       this.currentPort
     );
     if (decision.kind === "running") {
@@ -140,10 +140,10 @@ export class CoreProcessManager {
 
   private async ensureRuntimeInfo(
     runtimeInfo?: CoreRuntimeInfo
-  ): Promise<void> {
+  ): Promise<CoreRuntimeInfo> {
     if (runtimeInfo) {
       this.runtimeInfo = runtimeInfo;
-      return;
+      return runtimeInfo;
     }
     if (!this.runtimeInfo) {
       this.runtimeInfo = await ensureCoreInstalled(this.context);
@@ -151,6 +151,7 @@ export class CoreProcessManager {
     if (!this.runtimeInfo) {
       throw new Error("Unable to resolve CodeAI Hub core runtime information.");
     }
+    return this.runtimeInfo;
   }
 
   private async tryAttachToRunningCore(): Promise<boolean> {
