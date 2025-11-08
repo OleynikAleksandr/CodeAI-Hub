@@ -18,6 +18,7 @@ import {
   type CoreRuntimeInfo,
   ensureCoreInstalled,
 } from "./extension-module/core/core-installer";
+import { CoreKeepAlive } from "./extension-module/core/core-keep-alive";
 import {
   CoreProcessManager,
   getDefaultCoreConnectionInfo,
@@ -30,6 +31,7 @@ import { recordVsixVersion } from "./extension-module/runtime/runtime-registry";
 import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut-manager";
 
 let coreProcessManager: CoreProcessManager | null = null;
+let coreKeepAlive: CoreKeepAlive | null = null;
 
 const resolveWorkspacePath = (): string => {
   const folder = workspace.workspaceFolders?.[0];
@@ -67,6 +69,16 @@ async function handleLaunchWebClientCommand(
   await ensureCefRuntime(context);
   const ensuredLauncher = await ensureLauncherInstalled(context);
   const workspacePath = resolveWorkspacePath();
+  if (coreProcessManager) {
+    try {
+      await coreProcessManager.ensureStarted();
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      window.showWarningMessage(
+        `CodeAI Hub core restart failed before launching web client: ${reason}`
+      );
+    }
+  }
   await launchCefClient(ensuredLauncher, indexPath, workspacePath);
   const target = getCefClientTarget(ensuredLauncher, indexPath);
   await ensureWebClientShortcuts(target);
@@ -164,6 +176,16 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const workspacePath = resolveWorkspacePath();
 
   await prepareLocalRuntime(context, indexPath, workspacePath);
+  if (!coreKeepAlive && coreProcessManager) {
+    coreKeepAlive = new CoreKeepAlive(coreProcessManager);
+    coreKeepAlive.start();
+    context.subscriptions.push({
+      dispose: () => {
+        coreKeepAlive?.dispose();
+        coreKeepAlive = null;
+      },
+    });
+  }
 
   const resolvedConnectionInfo =
     coreProcessManager?.getConnectionInfo() ?? getDefaultCoreConnectionInfo();
@@ -178,5 +200,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 }
 
 export function deactivate(): void {
+  coreKeepAlive?.dispose();
+  coreKeepAlive = null;
   coreProcessManager?.dispose();
 }
