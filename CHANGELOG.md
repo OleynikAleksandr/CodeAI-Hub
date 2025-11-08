@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.170] - 2025-11-09
+### Fixed
+- VS Code повторно используeт уже запущенное ядро (например, когда первым стартовал лаунчер) и больше не перезапускает orchestrator без явного `Restart Core`.
+
+### Build
+- VSIX → `codeai-hub-1.1.170.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.170.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.170.tar.bz2`
+- Providers → `claude-module-1.1.170.tar.bz2`, `codex-module-1.1.170.tar.bz2`, `gemini-module-1.1.170.tar.bz2`
+
 ## [1.1.169] - 2025-11-09
 ### Fixed
 - VS Code extension больше не вызывает `ensureStarted()` при каждом фокусе webview: sticky keepalive запускается при активации редактора и удерживает ядро до закрытия приложения.
