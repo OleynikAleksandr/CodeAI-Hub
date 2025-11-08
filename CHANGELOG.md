@@ -6,7 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
-## [1.1.161] - 2025-11-07
+## [1.1.163] - 2025-11-08
+### Changed
+- `doc/TODO/todo-critical.md` переведён на русский и дополняет требования к владению core/портом и обязательным коммитам для каждого критического исправления.
+- Прогнан полный `./scripts/build-all.sh` конвейер, чтобы выпустить контрольный релиз 1.1.163 и синхронизировать локальные артефакты (VSIX, core, launcher, provider tarballs) перед работой над портовыми багами.
+
+### Build
+- VSIX → `codeai-hub-1.1.163.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.163.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.163.tar.bz2`
+- Providers → `claude-module-1.1.163.tar.bz2`, `codex-module-1.1.163.tar.bz2`, `gemini-module-1.1.163.tar.bz2`
+
 ## [1.1.162] - 2025-11-07
 ### Fixed
 - Extension и launcher перед стартом новой версии отправляют `/api/v1/shutdown`, при необходимости добивают PID и автоматически выбирают свободный порт (записывая его в `runtime-registry.json`), поэтому обновлённый core больше не блокируется «залипшим» процессом.
