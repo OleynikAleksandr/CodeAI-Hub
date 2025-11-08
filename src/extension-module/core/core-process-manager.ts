@@ -1,14 +1,16 @@
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
-import { homedir } from "node:os";
 import path from "node:path";
-import { type ExtensionContext, window, workspace } from "vscode";
+import { type ExtensionContext, window } from "vscode";
 import { recordCorePortPreference } from "../runtime/runtime-registry";
 import type { CoreRuntimeInfo } from "./core-installer";
 import { ensureCoreInstalled } from "./core-installer";
 import { resolveCoreLogFilePath } from "./core-log-path";
 import { CoreManagerLock } from "./core-manager-lock";
 import { CorePortManager } from "./core-port-manager";
+import {
+  resolveProviderModulePath,
+  resolveWorkspacePath,
+} from "./core-workspace";
 
 const DEFAULT_CORE_HOST = "127.0.0.1";
 const DEFAULT_CORE_PORT = 8080;
@@ -72,29 +74,11 @@ export class CoreProcessManager {
     runtimeInfo?: CoreRuntimeInfo,
     options?: { readonly forceRestart?: boolean }
   ): Promise<void> {
-    if (runtimeInfo) {
-      this.runtimeInfo = runtimeInfo;
-    } else if (!this.runtimeInfo) {
-      this.runtimeInfo = await ensureCoreInstalled(this.context);
-    }
-    if (!this.runtimeInfo) {
-      throw new Error("Unable to resolve CodeAI Hub core runtime information.");
-    }
+    await this.ensureRuntimeInfo(runtimeInfo);
 
     if (!options?.forceRestart) {
-      const running = await this.portManager.detectRunning(
-        this.runtimeInfo.version,
-        this.currentPort
-      );
-      if (running) {
-        this.updateConnectionInfo(running.port);
-        if (running.kind === "mismatch") {
-          this.channel.appendLine(
-            `Detected running CodeAI Hub core (version ${running.version ?? "unknown"}). Attaching without restart.`
-          );
-        } else {
-          this.channel.appendLine("CodeAI Hub core already running.");
-        }
+      const attached = await this.tryAttachToRunningCore();
+      if (attached) {
         return;
       }
     }
@@ -154,16 +138,64 @@ export class CoreProcessManager {
     this.notifyConnectionInfoChange();
   }
 
+  private async ensureRuntimeInfo(
+    runtimeInfo?: CoreRuntimeInfo
+  ): Promise<void> {
+    if (runtimeInfo) {
+      this.runtimeInfo = runtimeInfo;
+      return;
+    }
+    if (!this.runtimeInfo) {
+      this.runtimeInfo = await ensureCoreInstalled(this.context);
+    }
+    if (!this.runtimeInfo) {
+      throw new Error("Unable to resolve CodeAI Hub core runtime information.");
+    }
+  }
+
+  private async tryAttachToRunningCore(): Promise<boolean> {
+    if (!this.runtimeInfo) {
+      return false;
+    }
+    const running = await this.portManager.detectRunning(
+      this.runtimeInfo.version,
+      this.currentPort
+    );
+    if (!running) {
+      return false;
+    }
+    if (running.kind === "mismatch") {
+      this.channel.appendLine(
+        `Detected outdated CodeAI Hub core (version ${running.version ?? "unknown"}) on port ${running.port}. Requesting shutdown...`
+      );
+      const stopped = await this.portManager.stopRunningCore(
+        running.port,
+        running.pid
+      );
+      if (stopped) {
+        this.channel.appendLine("Outdated core stopped successfully.");
+      } else {
+        this.channel.appendLine(
+          "Unable to stop outdated core automatically. Falling back to new port."
+        );
+      }
+      return false;
+    }
+    this.updateConnectionInfo(running.port);
+    this.channel.appendLine("CodeAI Hub core already running.");
+    return true;
+  }
+
   private launch(): void {
     if (this.child || !this.runtimeInfo) {
       return;
     }
 
     this.channel.appendLine("Starting CodeAI Hub core orchestrator...");
-    const workspacePath = this.resolveWorkspacePath();
-    const claudeModulePath = this.resolveProviderModulePath("claude");
-    const codexModulePath = this.resolveProviderModulePath("codex");
-    const geminiModulePath = this.resolveProviderModulePath("gemini");
+    const workspacePath = resolveWorkspacePath();
+    const claudeModulePath = resolveProviderModulePath("claude");
+    const codexModulePath = resolveProviderModulePath("codex");
+    const geminiModulePath = resolveProviderModulePath("gemini");
     const envVars: NodeJS.ProcessEnv = {
       ...process.env,
       CORE_HOST: this.host,
@@ -237,35 +269,6 @@ export class CoreProcessManager {
     }
     this.managerLock.release();
     this.channel.dispose();
-  }
-
-  private resolveWorkspacePath(): string {
-    const folder = workspace.workspaceFolders?.[0];
-    if (folder) {
-      return folder.uri.fsPath;
-    }
-    return process.cwd();
-  }
-
-  private resolveProviderModulePath(providerId: string): string | null {
-    const root = path.join(homedir(), ".codeai-hub", "providers", providerId);
-    try {
-      const latestPath = path.join(root, "latest");
-      if (!existsSync(latestPath)) {
-        return null;
-      }
-      const version = readFileSync(latestPath, "utf8").trim();
-      if (!version) {
-        return null;
-      }
-      const candidate = path.join(root, version);
-      if (existsSync(candidate)) {
-        return candidate;
-      }
-    } catch {
-      return null;
-    }
-    return null;
   }
 
   private notifyConnectionInfoChange(): void {

@@ -2,7 +2,7 @@ import { Buffer } from "node:buffer";
 import http from "node:http";
 import net from "node:net";
 import type { OutputChannel } from "vscode";
-import { readPreferredCorePort } from "../runtime/runtime-registry";
+import { buildPortCandidates } from "./core-port-candidates";
 
 const HEALTH_PATH = "/api/v1/health";
 const SHUTDOWN_PATH = "/api/v1/shutdown";
@@ -13,24 +13,23 @@ const HTTP_STATUS_ACCEPTED = 202;
 const VERSION_MISMATCH_WAIT_MS = 5000;
 const VERSION_MISMATCH_POLL_MS = 250;
 
-const PORT_FALLBACK_START = 8080;
-const PORT_FALLBACK_COUNT = 13;
-const PORT_CANDIDATE_POOL: readonly number[] = Array.from(
-  { length: PORT_FALLBACK_COUNT },
-  (_, index) => PORT_FALLBACK_START + index
-);
-
 type CoreHealthPayload = {
   readonly version?: string;
   readonly pid?: number;
 };
 
 export type RunningCoreInfo =
-  | { readonly kind: "match"; readonly port: number; readonly version?: string }
+  | {
+      readonly kind: "match";
+      readonly port: number;
+      readonly version?: string;
+      readonly pid?: number;
+    }
   | {
       readonly kind: "mismatch";
       readonly port: number;
       readonly version?: string;
+      readonly pid?: number;
     };
 
 export type PortDecision =
@@ -60,7 +59,7 @@ export class CorePortManager {
     targetVersion: string | undefined,
     preferredPort?: number
   ): Promise<PortDecision> {
-    const candidates = await this.buildPortCandidates(preferredPort);
+    const candidates = await buildPortCandidates(this.envPort, preferredPort);
     for (const port of candidates) {
       const health = await this.fetchCoreHealth(port);
       if (health) {
@@ -87,43 +86,32 @@ export class CorePortManager {
     targetVersion: string | undefined,
     preferredPort?: number
   ): Promise<RunningCoreInfo | null> {
-    const candidates = await this.buildPortCandidates(preferredPort);
+    const candidates = await buildPortCandidates(this.envPort, preferredPort);
     for (const port of candidates) {
       const health = await this.fetchCoreHealth(port);
       if (!health) {
         continue;
       }
       if (!targetVersion || health.version === targetVersion) {
-        return { kind: "match", port, version: health.version };
+        return {
+          kind: "match",
+          port,
+          version: health.version,
+          pid: health.pid,
+        };
       }
-      return { kind: "mismatch", port, version: health.version };
+      return {
+        kind: "mismatch",
+        port,
+        version: health.version,
+        pid: health.pid,
+      };
     }
     return null;
   }
 
-  private async buildPortCandidates(preferredPort?: number): Promise<number[]> {
-    const ordered: number[] = [];
-    const seen = new Set<number>();
-    const push = (candidate?: number): void => {
-      if (!Number.isFinite(candidate)) {
-        return;
-      }
-      const normalized = Number(candidate);
-      if (normalized <= 0 || seen.has(normalized)) {
-        return;
-      }
-      seen.add(normalized);
-      ordered.push(normalized);
-    };
-
-    push(preferredPort);
-    push(this.envPort);
-    const stored = await readPreferredCorePort();
-    push(stored);
-    for (const fallback of PORT_CANDIDATE_POOL) {
-      push(fallback);
-    }
-    return ordered;
+  async stopRunningCore(port: number, pid?: number): Promise<boolean> {
+    return await this.shutdownExistingCore(port, pid);
   }
 
   private async shutdownExistingCore(
