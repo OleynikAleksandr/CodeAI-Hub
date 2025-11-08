@@ -35,6 +35,9 @@ export type CoreConnectionInfo = ReturnType<typeof createConnectionUrls>;
 export const getDefaultCoreConnectionInfo = (): CoreConnectionInfo =>
   createConnectionUrls(ENV_CORE_PORT);
 
+type ConnectionListener = (info: CoreConnectionInfo) => void;
+type VoidListener = () => void;
+
 export class CoreProcessManager {
   private child: ChildProcessWithoutNullStreams | null = null;
 
@@ -55,6 +58,10 @@ export class CoreProcessManager {
   private connectionInfo: CoreConnectionInfo;
 
   private readonly portManager: CorePortManager;
+
+  private readonly connectionListeners = new Set<ConnectionListener>();
+
+  private readonly exitListeners = new Set<VoidListener>();
 
   constructor(context: ExtensionContext) {
     this.context = context;
@@ -111,9 +118,25 @@ export class CoreProcessManager {
     return this.connectionInfo;
   }
 
+  onConnectionInfoChange(listener: ConnectionListener): () => void {
+    this.connectionListeners.add(listener);
+    listener(this.connectionInfo);
+    return () => {
+      this.connectionListeners.delete(listener);
+    };
+  }
+
+  onProcessExit(listener: VoidListener): () => void {
+    this.exitListeners.add(listener);
+    return () => {
+      this.exitListeners.delete(listener);
+    };
+  }
+
   private updateConnectionInfo(port: number): void {
     this.currentPort = port;
     this.connectionInfo = createConnectionUrls(port, this.host);
+    this.notifyConnectionInfoChange();
   }
 
   private launch(): void {
@@ -186,6 +209,7 @@ export class CoreProcessManager {
         `Core orchestrator exited with code ${code ?? 0}.`
       );
       this.managerLock.release();
+      this.notifyProcessExit();
     });
   }
 
@@ -227,5 +251,31 @@ export class CoreProcessManager {
       return null;
     }
     return null;
+  }
+
+  private notifyConnectionInfoChange(): void {
+    for (const listener of this.connectionListeners) {
+      try {
+        listener(this.connectionInfo);
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        this.channel.appendLine(
+          `Connection listener failed: ${reason ?? "unknown error"}.`
+        );
+      }
+    }
+  }
+
+  private notifyProcessExit(): void {
+    for (const listener of this.exitListeners) {
+      try {
+        listener();
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        this.channel.appendLine(
+          `Process exit listener failed: ${reason ?? "unknown error"}.`
+        );
+      }
+    }
   }
 }
