@@ -2,16 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.163
-- **Critical plan localization**: `doc/TODO/todo-critical.md` теперь ведётся на русском языке и фиксирует договорённости по владению core/портами и обязательным коммитам для каждого P0-фикса.
-- **Release pipeline refresh**: full `build-all` прогнан для 1.1.163; VSIX, core, launcher и provider tarballs синхронизированы с локальным кэшем `~/.codeai-hub/releases/` и готовы к smoke-тестам.
-- **Baseline stability**: кодовая база не менялась, поэтому функционал 1.1.162 сохранён; релиз служит контрольной точкой перед исправлением порт- и shutdown-багов.
+## Current Release — v1.1.165
+- **Gemini CLI compatibility**: Gemini provider теперь использует новый `ExtensionManager` API (`@google/gemini-cli` 0.11.x) и корректно загружает расширения даже после апстримных изменений.
+- **Fallback diagnostics**: если CLI не предоставляет старые entrypoints, модуль переключается на новый менеджер и логирует предупредительные события вместо немого падения, поэтому UI больше не зависает при создании сессии Gemini.
+- **Release refresh**: `build-all.sh` пересобрал все артефакты (VSIX, core, launcher, tarball’ы провайдеров) под версией 1.1.165; локальные кеши `~/.codeai-hub/releases/` обновлены синхронно.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.163.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.163.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.163.tar.bz2`
-- Providers: `claude-module-1.1.163.tar.bz2`, `codex-module-1.1.163.tar.bz2`, `gemini-module-1.1.163.tar.bz2`
+- VSIX: `codeai-hub-1.1.165.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.165.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.165.tar.bz2`
+- Providers: `claude-module-1.1.165.tar.bz2`, `codex-module-1.1.165.tar.bz2`, `gemini-module-1.1.165.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

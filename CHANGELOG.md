@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.165] - 2025-11-08
+### Fixed
+- Gemini provider снова создаёт сессии на `@google/gemini-cli` 0.11.x: модуль умеет подключаться к новому `extension-manager`, fallback-логика логирует предупреждения вместо немого падения.
+- CLI/Javascript-адаптеры теперь безопасно переключаются между старым `loadExtensions` и новым ExtensionManager API, поэтому webview/launcher больше не зависают при выборе Gemini.
+
+### Build
+- VSIX → `codeai-hub-1.1.165.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.165.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.165.tar.bz2`
+- Providers → `claude-module-1.1.165.tar.bz2`, `codex-module-1.1.165.tar.bz2`, `gemini-module-1.1.165.tar.bz2`
+
 ## [1.1.163] - 2025-11-08
 ### Changed
 - `doc/TODO/todo-critical.md` переведён на русский и дополняет требования к владению core/портом и обязательным коммитам для каждого критического исправления.
