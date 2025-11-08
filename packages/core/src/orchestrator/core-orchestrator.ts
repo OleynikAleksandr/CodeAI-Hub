@@ -31,6 +31,8 @@ export class CoreOrchestrator {
 
   private shuttingDown = false;
 
+  private idleShutdownTimer: NodeJS.Timeout | null = null;
+
   constructor() {
     this.config = loadConfig();
     this.logger = new Logger();
@@ -92,6 +94,7 @@ export class CoreOrchestrator {
     this.logger.info("Client count increased", {
       activeClients: this.activeClients,
     });
+    this.clearIdleShutdownTimer();
   }
 
   private handleClientDecrease(total: number): void {
@@ -101,7 +104,7 @@ export class CoreOrchestrator {
     });
 
     if (this.activeClients === 0) {
-      this.requestShutdown("idle");
+      this.scheduleIdleShutdown();
     }
   }
 
@@ -110,6 +113,7 @@ export class CoreOrchestrator {
       return;
     }
     this.shuttingDown = true;
+    this.clearIdleShutdownTimer();
 
     this.logger.info("Shutting down core orchestrator", { reason });
     this.statusReporter.emit({
@@ -152,5 +156,32 @@ export class CoreOrchestrator {
         path: sessionsRoot,
       });
     }
+  }
+
+  private scheduleIdleShutdown(): void {
+    if (this.idleShutdownTimer || this.shuttingDown) {
+      return;
+    }
+    if (this.config.shutdownGracePeriodMs <= 0) {
+      this.requestShutdown("idle");
+      return;
+    }
+    this.logger.info("Scheduling idle shutdown", {
+      delayMs: this.config.shutdownGracePeriodMs,
+    });
+    this.idleShutdownTimer = setTimeout(() => {
+      this.idleShutdownTimer = null;
+      if (this.activeClients === 0 && !this.shuttingDown) {
+        this.requestShutdown("idle");
+      }
+    }, this.config.shutdownGracePeriodMs);
+  }
+
+  private clearIdleShutdownTimer(): void {
+    if (!this.idleShutdownTimer) {
+      return;
+    }
+    clearTimeout(this.idleShutdownTimer);
+    this.idleShutdownTimer = null;
   }
 }
