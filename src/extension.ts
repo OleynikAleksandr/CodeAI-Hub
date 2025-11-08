@@ -12,8 +12,16 @@ import {
   getCefClientTarget,
   launchCefClient,
 } from "./extension-module/cef/launcher";
-import { ensureLauncherInstalled } from "./extension-module/cef/launcher-installer";
+import {
+  ensureLauncherInstalled,
+  type LauncherInstallInfo,
+} from "./extension-module/cef/launcher-installer";
+import { resolvePlatformKey } from "./extension-module/cef/platform";
 import { ensureCefRuntime } from "./extension-module/cef/runtime-installer";
+import {
+  getManifestEntryOrThrow,
+  readCoreManifest,
+} from "./extension-module/core/core-install-helpers";
 import {
   type CoreRuntimeInfo,
   ensureCoreInstalled,
@@ -41,11 +49,11 @@ const resolveWorkspacePath = (): string => {
   return process.cwd();
 };
 
-async function ensureLocalRuntimeComponents(
+async function ensureLauncherDependencies(
   context: ExtensionContext,
   indexPath: string,
   workspacePath: string
-): Promise<CoreRuntimeInfo | null> {
+): Promise<LauncherInstallInfo> {
   await ensureCefRuntime(context);
   const ensuredLauncher = await ensureLauncherInstalled(context);
   await ensureLauncherWorkspaceConfig(
@@ -55,6 +63,12 @@ async function ensureLocalRuntimeComponents(
   );
   const launcherTarget = getCefClientTarget(ensuredLauncher, indexPath);
   await ensureWebClientShortcuts(launcherTarget);
+  return ensuredLauncher;
+}
+
+async function ensureCoreAndProviderComponents(
+  context: ExtensionContext
+): Promise<CoreRuntimeInfo> {
   const ensuredCore = await ensureCoreInstalled(context);
   await ensureClaudeModuleInstalled(context);
   await ensureCodexModuleInstalled(context);
@@ -62,13 +76,25 @@ async function ensureLocalRuntimeComponents(
   return ensuredCore;
 }
 
+async function resolveDeclaredCoreVersion(
+  context: ExtensionContext
+): Promise<string> {
+  const manifest = await readCoreManifest(context);
+  const platform = resolvePlatformKey();
+  const manifestEntry = getManifestEntryOrThrow(manifest, platform);
+  return manifestEntry.coreVersion;
+}
+
 async function handleLaunchWebClientCommand(
   context: ExtensionContext,
   indexPath: string
 ): Promise<void> {
-  await ensureCefRuntime(context);
-  const ensuredLauncher = await ensureLauncherInstalled(context);
   const workspacePath = resolveWorkspacePath();
+  const ensuredLauncher = await ensureLauncherDependencies(
+    context,
+    indexPath,
+    workspacePath
+  );
   if (coreProcessManager) {
     try {
       await coreProcessManager.ensureStarted();
@@ -80,35 +106,35 @@ async function handleLaunchWebClientCommand(
     }
   }
   await launchCefClient(ensuredLauncher, indexPath, workspacePath);
-  const target = getCefClientTarget(ensuredLauncher, indexPath);
-  await ensureWebClientShortcuts(target);
 }
 
-async function initializeCoreManager(
-  context: ExtensionContext,
-  indexPath: string,
-  workspacePath: string
-): Promise<void> {
-  const ensuredCore = await ensureLocalRuntimeComponents(
-    context,
-    indexPath,
-    workspacePath
-  );
+async function initializeCoreManager(context: ExtensionContext): Promise<void> {
+  const declaredVersion = await resolveDeclaredCoreVersion(context);
   coreProcessManager = new CoreProcessManager(context);
-  await coreProcessManager.ensureStarted(ensuredCore ?? undefined);
+  coreProcessManager.setDeclaredVersion(declaredVersion);
+  const attached =
+    await coreProcessManager.attachToRunningCore(declaredVersion);
+  if (attached) {
+    return;
+  }
+  const ensuredCore = await ensureCoreAndProviderComponents(context);
+  await coreProcessManager.ensureStarted(ensuredCore, {
+    targetVersion: declaredVersion,
+  });
 }
 
 async function prepareLocalRuntime(
   context: ExtensionContext,
-  indexPath: string,
-  workspacePath: string
+  indexPath: string
 ): Promise<void> {
   if (env.remoteName) {
     return;
   }
 
   try {
-    await initializeCoreManager(context, indexPath, workspacePath);
+    const workspacePath = resolveWorkspacePath();
+    await ensureLauncherDependencies(context, indexPath, workspacePath);
+    await initializeCoreManager(context);
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     window.showErrorMessage(`Failed to prepare CodeAI Hub runtime: ${reason}`);
@@ -173,9 +199,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     extensionPath: context.extensionUri.fsPath,
   });
 
-  const workspacePath = resolveWorkspacePath();
-
-  await prepareLocalRuntime(context, indexPath, workspacePath);
+  await prepareLocalRuntime(context, indexPath);
   if (!coreKeepAlive && coreProcessManager) {
     coreKeepAlive = new CoreKeepAlive(coreProcessManager);
     coreKeepAlive.start();

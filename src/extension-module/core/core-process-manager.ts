@@ -1,3 +1,4 @@
+// biome-ignore assist:organizeImports: manual ordering required for historical reasons
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import path from "node:path";
 import { type ExtensionContext, window } from "vscode";
@@ -14,48 +15,35 @@ import {
 
 const DEFAULT_CORE_HOST = "127.0.0.1";
 const DEFAULT_CORE_PORT = 8080;
-
 const CORE_HOST = process.env.CODEAI_CORE_HOST ?? DEFAULT_CORE_HOST;
 const ENV_CORE_PORT = Number(process.env.CODEAI_CORE_PORT ?? DEFAULT_CORE_PORT);
-
 const createConnectionUrls = (port: number, host = CORE_HOST) => ({
   httpUrl: `http://${host}:${port}`,
   wsUrl: `ws://${host}:${port}/api/v1/stream`,
 });
-
 export type CoreConnectionInfo = ReturnType<typeof createConnectionUrls>;
-
 export const getDefaultCoreConnectionInfo = (): CoreConnectionInfo =>
   createConnectionUrls(ENV_CORE_PORT);
-
 type ConnectionListener = (info: CoreConnectionInfo) => void;
 type VoidListener = () => void;
-
+type EnsureStartedOptions = {
+  readonly forceRestart?: boolean;
+  readonly targetVersion?: string;
+};
 export class CoreProcessManager {
   private child: ChildProcessWithoutNullStreams | null = null;
-
   private runtimeInfo: CoreRuntimeInfo | null = null;
-
+  private declaredVersion?: string;
   private readonly channel = window.createOutputChannel("CodeAI Hub Core");
-
   private readonly context: ExtensionContext;
-
   private readonly managerLock = new CoreManagerLock("vscode-extension");
-
   private readonly host = CORE_HOST;
-
   private readonly envPort: number;
-
   private currentPort: number;
-
   private connectionInfo: CoreConnectionInfo;
-
   private readonly portManager: CorePortManager;
-
   private readonly connectionListeners = new Set<ConnectionListener>();
-
   private readonly exitListeners = new Set<VoidListener>();
-
   constructor(context: ExtensionContext) {
     this.context = context;
     this.envPort = Number.isFinite(ENV_CORE_PORT)
@@ -69,20 +57,27 @@ export class CoreProcessManager {
       channel: this.channel,
     });
   }
-
   async ensureStarted(
     runtimeInfo?: CoreRuntimeInfo,
-    options?: { readonly forceRestart?: boolean }
+    options?: EnsureStartedOptions
   ): Promise<void> {
-    const resolvedRuntime = await this.ensureRuntimeInfo(runtimeInfo);
-
+    let runtime = runtimeInfo ?? this.runtimeInfo ?? null;
+    let targetVersion =
+      options?.targetVersion ?? runtime?.version ?? this.declaredVersion;
+    if (!targetVersion) {
+      runtime = await this.ensureRuntimeInfo(runtimeInfo);
+      targetVersion = runtime.version;
+    }
+    this.declaredVersion = targetVersion;
     if (!options?.forceRestart) {
-      const attached = await this.tryAttachToRunningCore();
+      const attached = await this.tryAttachToRunningCore(targetVersion);
       if (attached) {
         return;
       }
     }
-
+    const resolvedRuntime =
+      runtime ?? (await this.ensureRuntimeInfo(runtimeInfo));
+    this.declaredVersion = resolvedRuntime.version;
     const decision = await this.portManager.resolve(
       resolvedRuntime.version,
       this.currentPort
@@ -92,12 +87,10 @@ export class CoreProcessManager {
       this.channel.appendLine("CodeAI Hub core already running.");
       return;
     }
-
     this.updateConnectionInfo(decision.port);
     this.channel.appendLine(
       `Preparing to launch CodeAI Hub core on port ${decision.port}...`
     );
-
     const acquisition = this.managerLock.acquire();
     if (!acquisition.acquired) {
       const owner = acquisition.owner ?? "another manager";
@@ -106,14 +99,23 @@ export class CoreProcessManager {
       );
       return;
     }
-
     this.launch();
   }
-
+  setDeclaredVersion(version: string): void {
+    this.declaredVersion = version;
+  }
+  attachToRunningCore(targetVersion?: string): Promise<boolean> {
+    const version =
+      targetVersion ?? this.declaredVersion ?? this.runtimeInfo?.version;
+    if (!version) {
+      return Promise.resolve(false);
+    }
+    this.declaredVersion = version;
+    return this.tryAttachToRunningCore(version);
+  }
   getConnectionInfo(): CoreConnectionInfo {
     return this.connectionInfo;
   }
-
   onConnectionInfoChange(listener: ConnectionListener): () => void {
     this.connectionListeners.add(listener);
     listener(this.connectionInfo);
@@ -121,14 +123,12 @@ export class CoreProcessManager {
       this.connectionListeners.delete(listener);
     };
   }
-
   onProcessExit(listener: VoidListener): () => void {
     this.exitListeners.add(listener);
     return () => {
       this.exitListeners.delete(listener);
     };
   }
-
   private updateConnectionInfo(port: number): void {
     if (this.currentPort === port) {
       return;
@@ -137,29 +137,30 @@ export class CoreProcessManager {
     this.connectionInfo = createConnectionUrls(port, this.host);
     this.notifyConnectionInfoChange();
   }
-
   private async ensureRuntimeInfo(
     runtimeInfo?: CoreRuntimeInfo
   ): Promise<CoreRuntimeInfo> {
     if (runtimeInfo) {
       this.runtimeInfo = runtimeInfo;
+      this.declaredVersion = runtimeInfo.version;
       return runtimeInfo;
     }
     if (!this.runtimeInfo) {
       this.runtimeInfo = await ensureCoreInstalled(this.context);
+      if (this.runtimeInfo) {
+        this.declaredVersion = this.runtimeInfo.version;
+      }
     }
     if (!this.runtimeInfo) {
       throw new Error("Unable to resolve CodeAI Hub core runtime information.");
     }
     return this.runtimeInfo;
   }
-
-  private async tryAttachToRunningCore(): Promise<boolean> {
-    if (!this.runtimeInfo) {
-      return false;
-    }
+  private async tryAttachToRunningCore(
+    targetVersion: string
+  ): Promise<boolean> {
     const running = await this.portManager.detectRunning(
-      this.runtimeInfo.version,
+      targetVersion,
       this.currentPort
     );
     if (!running) {
@@ -186,12 +187,10 @@ export class CoreProcessManager {
     this.channel.appendLine("CodeAI Hub core already running.");
     return true;
   }
-
   private launch(): void {
     if (this.child || !this.runtimeInfo) {
       return;
     }
-
     this.channel.appendLine("Starting CodeAI Hub core orchestrator...");
     const workspacePath = resolveWorkspacePath();
     const claudeModulePath = resolveProviderModulePath("claude");
@@ -242,15 +241,12 @@ export class CoreProcessManager {
         }.`
       );
     });
-
     this.child.stdout.on("data", (chunk) => {
       this.channel.append(chunk.toString());
     });
-
     this.child.stderr.on("data", (chunk) => {
       this.channel.append(chunk.toString());
     });
-
     this.child.on("exit", (code) => {
       this.child = null;
       this.channel.appendLine(
@@ -260,7 +256,6 @@ export class CoreProcessManager {
       this.notifyProcessExit();
     });
   }
-
   dispose(): void {
     if (this.child) {
       this.child.stdout?.removeAllListeners("data");
@@ -271,7 +266,6 @@ export class CoreProcessManager {
     this.managerLock.release();
     this.channel.dispose();
   }
-
   private notifyConnectionInfoChange(): void {
     for (const listener of this.connectionListeners) {
       try {
@@ -284,7 +278,6 @@ export class CoreProcessManager {
       }
     }
   }
-
   private notifyProcessExit(): void {
     for (const listener of this.exitListeners) {
       try {
