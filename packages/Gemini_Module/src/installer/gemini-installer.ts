@@ -2,12 +2,16 @@ import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createReadStream, createWriteStream, promises as fs } from "node:fs";
 import https from "node:https";
-import { tmpdir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
+
 import { loadCliBridgeFromVendor } from "../runtime/cli-bridge";
+
 import type { GeminiCliBridge } from "../runtime/cli-types";
 import type { GeminiInstallerPaths, ModuleReporter } from "../types";
+
+import { runNpmCommand } from "./npm-runner";
 
 const REGISTRY_BASE = "https://registry.npmjs.org";
 const VENDOR_DIR = "vendor";
@@ -17,6 +21,11 @@ const GEMINI_CONFIG_KEY = "codeaiHub";
 const GEMINI_CLI_CORE_PACKAGE = "@google/gemini-cli-core";
 const GEMINI_CLI_PACKAGE = "@google/gemini-cli";
 const HTTP_ERROR_STATUS_THRESHOLD = 400;
+const CLI_EXECUTABLE_UNIX = "gemini";
+const CLI_EXECUTABLE_WINDOWS = "gemini.cmd";
+const CLI_REGISTRY_URL = "https://registry.npmjs.org/@google/gemini-cli/latest";
+const HOME_DIRECTORY_PATTERN = /^~(?=$|\/|\\)/u;
+const USERPROFILE_PATTERN = /%USERPROFILE%/giu;
 
 const ensureDirectory = async (target: string): Promise<void> => {
   await fs.mkdir(target, { recursive: true });
@@ -249,6 +258,12 @@ export class GeminiInstaller {
 
   private readonly moduleRoot: string;
 
+  private readonly installerDirectory: string;
+  private readonly npmPrefix: string;
+  private readonly cliExecutablePath: string;
+  private readonly npmExecutable: string;
+  private currentCliVersion: string | null = null;
+
   private bridge: GeminiCliBridge | null = null;
 
   constructor(
@@ -257,6 +272,10 @@ export class GeminiInstaller {
   ) {
     this.reporter = options.reporter;
     this.moduleRoot = path.resolve(__dirname, "..", "..");
+    this.installerDirectory = this.normalizeInstallerPath(_paths);
+    this.npmPrefix = this.computePrefix(this.installerDirectory);
+    this.cliExecutablePath = this.resolveCliExecutablePath();
+    this.npmExecutable = process.platform === "win32" ? "npm.cmd" : "npm";
   }
 
   async ensureCliBridge(): Promise<GeminiCliBridge> {
@@ -265,6 +284,7 @@ export class GeminiInstaller {
     }
 
     const metadata = await this.ensureVendorArtifacts();
+    await this.ensureCliPackageInstalled(metadata.geminiCliVersion);
     this.bridge = await loadCliBridgeFromVendor({
       expectedCliVersion: metadata.geminiCliVersion,
       reporter: this.reporter,
@@ -407,5 +427,197 @@ export class GeminiInstaller {
       firstRun: firstInstall,
     });
     this.reporter?.info?.(`${label} ${version} installed`);
+  }
+
+  private emitProgress(
+    label: string,
+    options?: {
+      readonly phase?: "install" | "provider";
+      readonly detail?: string;
+      readonly firstRun?: boolean;
+    }
+  ): void {
+    this.reporter?.progress?.({
+      label,
+      scope: "geminiCli",
+      phase: options?.phase ?? "install",
+      detail: options?.detail,
+      firstRun: options?.firstRun,
+    });
+  }
+
+  private reportStatus(
+    message: string,
+    metadata?: Record<string, unknown>
+  ): void {
+    this.reporter?.info?.(message, metadata);
+  }
+
+  private async ensureCliPackageInstalled(
+    requiredVersion?: string
+  ): Promise<void> {
+    await this.ensureCliPrefixDirectories();
+    const installed = await this.checkCliInstalled();
+    if (installed) {
+      this.emitProgress("Checking Gemini CLI components...");
+      await this.updateCliIfNeeded(requiredVersion);
+    } else {
+      this.emitProgress(
+        "Downloading Gemini CLI components for the first run...",
+        {
+          detail: "This may take a little longer during the first setup.",
+          firstRun: true,
+        }
+      );
+      await this.installCliPackage(requiredVersion);
+    }
+    this.emitProgress("Gemini CLI components ready.", { phase: "provider" });
+    await this.verifyCliExecutable();
+  }
+
+  private async ensureCliPrefixDirectories(): Promise<void> {
+    const libDir = path.join(this.npmPrefix, "lib", "node_modules");
+    await fs.mkdir(libDir, { recursive: true });
+  }
+
+  private async verifyCliExecutable(): Promise<void> {
+    await fs.access(this.cliExecutablePath);
+  }
+
+  private buildNpmEnv(): NodeJS.ProcessEnv {
+    return {
+      ...process.env,
+      NPM_CONFIG_PREFIX: this.npmPrefix,
+      npm_config_prefix: this.npmPrefix,
+    };
+  }
+
+  private async checkCliInstalled(): Promise<boolean> {
+    try {
+      const { stdout } = await runNpmCommand(
+        ["list", "-g", GEMINI_CLI_PACKAGE, "--json"],
+        {
+          npmExecutable: this.npmExecutable,
+          env: this.buildNpmEnv(),
+        }
+      );
+      const parsed = JSON.parse(stdout || "{}") as {
+        readonly dependencies?: Record<string, { readonly version?: string }>;
+      };
+      const version =
+        parsed.dependencies?.[GEMINI_CLI_PACKAGE]?.version ?? null;
+      if (version) {
+        this.currentCliVersion = version;
+        this.reportStatus(`Detected Gemini CLI v${version}`);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      this.reporter?.warn?.(
+        "Failed to detect existing Gemini CLI installation",
+        {
+          error: error instanceof Error ? error : new Error(String(error)),
+        }
+      );
+      return false;
+    }
+  }
+
+  private async installCliPackage(version?: string): Promise<void> {
+    const specifier = version
+      ? `${GEMINI_CLI_PACKAGE}@${version}`
+      : `${GEMINI_CLI_PACKAGE}@latest`;
+    await runNpmCommand(["install", "-g", specifier, "--force"], {
+      npmExecutable: this.npmExecutable,
+      env: this.buildNpmEnv(),
+    });
+    await this.checkCliInstalled();
+  }
+
+  private async updateCliIfNeeded(requiredVersion?: string): Promise<void> {
+    if (requiredVersion && this.currentCliVersion === requiredVersion) {
+      return;
+    }
+    if (requiredVersion && this.currentCliVersion !== requiredVersion) {
+      this.reportStatus(`Updating Gemini CLI to v${requiredVersion}`);
+      await this.installCliPackage(requiredVersion);
+      return;
+    }
+    const latestVersion = await this.getLatestCliVersion();
+    if (
+      !(latestVersion && this.currentCliVersion) ||
+      this.currentCliVersion === latestVersion
+    ) {
+      return;
+    }
+    this.reportStatus(`Updating Gemini CLI to v${latestVersion}`);
+    await this.installCliPackage(latestVersion);
+  }
+
+  private getLatestCliVersion(): Promise<string | null> {
+    return new Promise((resolve) => {
+      https
+        .get(CLI_REGISTRY_URL, (response) => {
+          let body = "";
+          response.setEncoding("utf8");
+          response.on("data", (chunk) => {
+            body += chunk;
+          });
+          response.on("end", () => {
+            try {
+              const parsed = JSON.parse(body) as { readonly version?: string };
+              resolve(parsed.version ?? null);
+            } catch {
+              resolve(null);
+            }
+          });
+        })
+        .on("error", () => {
+          resolve(null);
+        });
+    });
+  }
+
+  private normalizeInstallerPath(paths: GeminiInstallerPaths): string {
+    const rawPath = this.selectPlatformPath(paths);
+    const expanded = rawPath
+      .replace(HOME_DIRECTORY_PATTERN, homedir())
+      .replace(USERPROFILE_PATTERN, process.env.USERPROFILE ?? homedir());
+    return path.resolve(expanded);
+  }
+
+  private selectPlatformPath(paths: GeminiInstallerPaths): string {
+    if (process.platform === "darwin") {
+      return paths.macOS;
+    }
+    if (process.platform === "win32") {
+      return paths.windows;
+    }
+    return paths.linux;
+  }
+
+  private computePrefix(moduleDirectory: string): string {
+    const separator = path.sep;
+    const marker = `${separator}node_modules${separator}`;
+    const markerIndex = moduleDirectory.indexOf(marker);
+    if (markerIndex === -1) {
+      return path.resolve(moduleDirectory, "..", "..");
+    }
+    const beforeNodeModules = moduleDirectory.slice(0, markerIndex);
+    const libSuffix = `${separator}lib`;
+    if (beforeNodeModules.endsWith(libSuffix)) {
+      return beforeNodeModules.slice(
+        0,
+        beforeNodeModules.length - libSuffix.length
+      );
+    }
+    return beforeNodeModules;
+  }
+
+  private resolveCliExecutablePath(): string {
+    if (process.platform === "win32") {
+      return path.join(this.npmPrefix, CLI_EXECUTABLE_WINDOWS);
+    }
+    return path.join(this.npmPrefix, "bin", CLI_EXECUTABLE_UNIX);
   }
 }

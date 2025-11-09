@@ -239,8 +239,8 @@ const handleNewFeatureChange = (enabled: boolean) => {
 ❌ Don't skip validation in SettingsSaver  
 ❌ Don't save settings when thinking mode is disabled (tokens example)  
 
-### Core lifecycle reminder (v1.1.174)
-- The 1.1.174 release ensures the orchestrator is reused if a running node process reports the same version, so the settings UI must not trigger redundant restarts. Prefer reading `CoreKeepAlive` connection state and, if the user really needs a restart, expose the `core:restart-request` action instead of invoking `ensureStarted()` manually.
+### Core lifecycle reminder (v1.1.175)
+- The 1.1.175 release ensures the orchestrator is reused if a running node process reports the same version, so the settings UI must not trigger redundant restarts. In addition, Gemini sessions no longer regress when the CLI is missing because the orchestrator automatically installs `@google/gemini-cli` before wiring the provider up. Prefer reading `CoreKeepAlive` connection state and, if the user really needs a restart, expose the `core:restart-request` action instead of invoking `ensureStarted()` manually.
 
 ---
 
