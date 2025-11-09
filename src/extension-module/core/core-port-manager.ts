@@ -63,12 +63,14 @@ export class CorePortManager {
     for (const port of candidates) {
       const health = await this.fetchCoreHealth(port);
       if (health) {
-        if (!targetVersion || health.version === targetVersion) {
+        if (this.canReuseCore(health.version, targetVersion)) {
           return { kind: "running", port };
         }
-        const stopped = await this.shutdownExistingCore(port, health.pid);
-        if (stopped) {
-          return { kind: "launch", port };
+        if (this.shouldRestartCore(health.version, targetVersion)) {
+          const stopped = await this.shutdownExistingCore(port, health.pid);
+          if (stopped) {
+            return { kind: "launch", port };
+          }
         }
         continue;
       }
@@ -264,6 +266,30 @@ export class CorePortManager {
       this.log(`Failed to terminate process ${pid}: ${reason}.`);
       return false;
     }
+  }
+
+  private canReuseCore(
+    healthVersion: string | undefined,
+    targetVersion?: string
+  ): boolean {
+    const expectedVersion = targetVersion ?? healthVersion;
+    return (
+      typeof healthVersion === "string" &&
+      typeof expectedVersion === "string" &&
+      healthVersion === expectedVersion
+    );
+  }
+
+  private shouldRestartCore(
+    healthVersion: string | undefined,
+    targetVersion?: string
+  ): boolean {
+    const expectedVersion = targetVersion ?? healthVersion;
+    return (
+      typeof healthVersion === "string" &&
+      typeof expectedVersion === "string" &&
+      healthVersion !== expectedVersion
+    );
   }
 
   private log(message: string): void {
