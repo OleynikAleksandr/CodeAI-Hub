@@ -1,31 +1,27 @@
-// biome-ignore assist:organizeImports: manual ordering required for historical reasons
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import path from "node:path";
 import { type ExtensionContext, window } from "vscode";
 import { recordCorePortPreference } from "../runtime/runtime-registry";
-import type { CoreRuntimeInfo } from "./core-installer";
-import { ensureCoreInstalled } from "./core-installer";
+import {
+  CORE_HOST,
+  type CoreConnectionInfo,
+  createConnectionUrls,
+  DEFAULT_CORE_PORT,
+  ENV_CORE_PORT,
+} from "./core-connection-info";
+import { type CoreRuntimeInfo, ensureCoreInstalled } from "./core-installer";
 import { resolveCoreLogFilePath } from "./core-log-path";
 import { CoreManagerLock } from "./core-manager-lock";
-import { CorePortManager } from "./core-port-manager";
+import { CorePortManager, type RunningCoreInfo } from "./core-port-manager";
+import {
+  notifyConnectionListeners,
+  notifyExitListeners,
+} from "./core-process-notifiers";
 import {
   resolveProviderModulePath,
   resolveWorkspacePath,
 } from "./core-workspace";
 
-const DEFAULT_CORE_HOST = "127.0.0.1";
-const DEFAULT_CORE_PORT = 8080;
-const CORE_HOST = process.env.CODEAI_CORE_HOST ?? DEFAULT_CORE_HOST;
-const ENV_CORE_PORT = Number(process.env.CODEAI_CORE_PORT ?? DEFAULT_CORE_PORT);
-const createConnectionUrls = (port: number, host = CORE_HOST) => ({
-  httpUrl: `http://${host}:${port}`,
-  wsUrl: `ws://${host}:${port}/api/v1/stream`,
-});
-export type CoreConnectionInfo = ReturnType<typeof createConnectionUrls>;
-export const getDefaultCoreConnectionInfo = (): CoreConnectionInfo =>
-  createConnectionUrls(ENV_CORE_PORT);
-type ConnectionListener = (info: CoreConnectionInfo) => void;
-type VoidListener = () => void;
 type EnsureStartedOptions = {
   readonly forceRestart?: boolean;
   readonly targetVersion?: string;
@@ -42,8 +38,10 @@ export class CoreProcessManager {
   private currentPort: number;
   private connectionInfo: CoreConnectionInfo;
   private readonly portManager: CorePortManager;
-  private readonly connectionListeners = new Set<ConnectionListener>();
-  private readonly exitListeners = new Set<VoidListener>();
+  private readonly connectionListeners = new Set<
+    (info: CoreConnectionInfo) => void
+  >();
+  private readonly exitListeners = new Set<() => void>();
   constructor(context: ExtensionContext) {
     this.context = context;
     this.envPort = Number.isFinite(ENV_CORE_PORT)
@@ -63,7 +61,7 @@ export class CoreProcessManager {
   ): Promise<void> {
     let runtime = runtimeInfo ?? this.runtimeInfo ?? null;
     let targetVersion =
-      options?.targetVersion ?? runtime?.version ?? this.declaredVersion;
+      options?.targetVersion ?? this.declaredVersion ?? runtime?.version;
     if (!targetVersion) {
       runtime = await this.ensureRuntimeInfo(runtimeInfo);
       targetVersion = runtime.version;
@@ -116,14 +114,16 @@ export class CoreProcessManager {
   getConnectionInfo(): CoreConnectionInfo {
     return this.connectionInfo;
   }
-  onConnectionInfoChange(listener: ConnectionListener): () => void {
+  onConnectionInfoChange(
+    listener: (info: CoreConnectionInfo) => void
+  ): () => void {
     this.connectionListeners.add(listener);
     listener(this.connectionInfo);
     return () => {
       this.connectionListeners.delete(listener);
     };
   }
-  onProcessExit(listener: VoidListener): () => void {
+  onProcessExit(listener: () => void): () => void {
     this.exitListeners.add(listener);
     return () => {
       this.exitListeners.delete(listener);
@@ -135,7 +135,11 @@ export class CoreProcessManager {
     }
     this.currentPort = port;
     this.connectionInfo = createConnectionUrls(port, this.host);
-    this.notifyConnectionInfoChange();
+    notifyConnectionListeners(
+      this.connectionListeners,
+      this.connectionInfo,
+      this.channel
+    );
   }
   private async ensureRuntimeInfo(
     runtimeInfo?: CoreRuntimeInfo
@@ -159,33 +163,46 @@ export class CoreProcessManager {
   private async tryAttachToRunningCore(
     targetVersion: string
   ): Promise<boolean> {
+    const running = await this.detectRunningCore(targetVersion);
+    if (!running) {
+      return false;
+    }
+    if (running.kind === "match") {
+      this.channel.appendLine("CodeAI Hub core already running.");
+      return true;
+    }
+    await this.handleDetectedMismatch(running);
+    return false;
+  }
+  private async detectRunningCore(
+    targetVersion: string
+  ): Promise<RunningCoreInfo | null> {
     const running = await this.portManager.detectRunning(
       targetVersion,
       this.currentPort
     );
-    if (!running) {
-      return false;
+    if (running?.kind === "match") {
+      this.updateConnectionInfo(running.port);
     }
-    if (running.kind === "mismatch") {
+    return running;
+  }
+  private async handleDetectedMismatch(
+    running: RunningCoreInfo
+  ): Promise<void> {
+    this.channel.appendLine(
+      `Detected outdated CodeAI Hub core (version ${running.version ?? "unknown"}) on port ${running.port}. Requesting shutdown...`
+    );
+    const stopped = await this.portManager.stopRunningCore(
+      running.port,
+      running.pid
+    );
+    if (stopped) {
+      this.channel.appendLine("Outdated core stopped successfully.");
+    } else {
       this.channel.appendLine(
-        `Detected outdated CodeAI Hub core (version ${running.version ?? "unknown"}) on port ${running.port}. Requesting shutdown...`
+        "Unable to stop outdated core automatically. Falling back to new port."
       );
-      const stopped = await this.portManager.stopRunningCore(
-        running.port,
-        running.pid
-      );
-      if (stopped) {
-        this.channel.appendLine("Outdated core stopped successfully.");
-      } else {
-        this.channel.appendLine(
-          "Unable to stop outdated core automatically. Falling back to new port."
-        );
-      }
-      return false;
     }
-    this.updateConnectionInfo(running.port);
-    this.channel.appendLine("CodeAI Hub core already running.");
-    return true;
   }
   private launch(): void {
     if (this.child || !this.runtimeInfo) {
@@ -253,7 +270,7 @@ export class CoreProcessManager {
         `Core orchestrator exited with code ${code ?? 0}.`
       );
       this.managerLock.release();
-      this.notifyProcessExit();
+      notifyExitListeners(this.exitListeners, this.channel);
     });
   }
   dispose(): void {
@@ -265,29 +282,5 @@ export class CoreProcessManager {
     }
     this.managerLock.release();
     this.channel.dispose();
-  }
-  private notifyConnectionInfoChange(): void {
-    for (const listener of this.connectionListeners) {
-      try {
-        listener(this.connectionInfo);
-      } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
-        this.channel.appendLine(
-          `Connection listener failed: ${reason ?? "unknown error"}.`
-        );
-      }
-    }
-  }
-  private notifyProcessExit(): void {
-    for (const listener of this.exitListeners) {
-      try {
-        listener();
-      } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
-        this.channel.appendLine(
-          `Process exit listener failed: ${reason ?? "unknown error"}.`
-        );
-      }
-    }
   }
 }

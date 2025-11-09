@@ -18,6 +18,7 @@ import {
 } from "./extension-module/cef/launcher-installer";
 import { resolvePlatformKey } from "./extension-module/cef/platform";
 import { ensureCefRuntime } from "./extension-module/cef/runtime-installer";
+import { getDefaultCoreConnectionInfo } from "./extension-module/core/core-connection-info";
 import {
   getManifestEntryOrThrow,
   readCoreManifest,
@@ -27,10 +28,7 @@ import {
   ensureCoreInstalled,
 } from "./extension-module/core/core-installer";
 import { CoreKeepAlive } from "./extension-module/core/core-keep-alive";
-import {
-  CoreProcessManager,
-  getDefaultCoreConnectionInfo,
-} from "./extension-module/core/core-process-manager";
+import { CoreProcessManager } from "./extension-module/core/core-process-manager";
 import { HomeViewProvider } from "./extension-module/home-view-provider";
 import { ensureClaudeModuleInstalled } from "./extension-module/provider/claude/claude-module-installer";
 import { ensureCodexModuleInstalled } from "./extension-module/provider/codex/codex-module-installer";

@@ -1,9 +1,7 @@
 import { window } from "vscode";
 import WebSocket from "ws";
-import type {
-  CoreConnectionInfo,
-  CoreProcessManager,
-} from "./core-process-manager";
+import type { CoreConnectionInfo } from "./core-connection-info";
+import type { CoreProcessManager } from "./core-process-manager";
 
 const RECONNECT_DELAY_MS = 2000;
 
