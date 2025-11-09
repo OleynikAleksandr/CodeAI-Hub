@@ -2,9 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-# Changelog
+## [1.1.172] - 2025-11-08
+### Fixed
+- Split `ensure` vs `attach` so VS Code and the launcher call `attachToRunningCore()` first; when the running core already matches the manifest version, we leave providers untouched and merely reconnect to existing sessions while outdated releases still trigger the orderly shutdown/install cycle.
 
-All notable changes to this project will be documented in this file.
+### Build
+- VSIX → `codeai-hub-1.1.172.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.172.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.172.tar.bz2`
+- Providers → `claude-module-1.1.172.tar.bz2`, `codex-module-1.1.172.tar.bz2`, `gemini-module-1.1.172.tar.bz2`
 
 ## [1.1.171] - 2025-11-09
 ### Fixed
