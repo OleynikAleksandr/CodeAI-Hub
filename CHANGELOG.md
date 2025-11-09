@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.175] - 2025-11-09
+### Fixed
+- The Gemini provider no longer drops to `inactive` when `@google/gemini-cli` was removed from the global prefix: a new install step runs `npm install -g @google/gemini-cli` (with progress hints) whenever the CLI is missing or outdated, and the orchestrator reuses the existing core when `detectRunning()` reports a matching version so sessions survive restarts.
+
+### Build
+- VSIX → `codeai-hub-1.1.175.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.175.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.175.tar.bz2`
+- Providers → `claude-module-1.1.175.tar.bz2`, `codex-module-1.1.175.tar.bz2`, `gemini-module-1.1.175.tar.bz2`
+
 ## [1.1.174] - 2025-11-09
 ### Fixed
 - `CoreProcessManager` now exits `ensureStarted()` as soon as `detectRunning()` reports a matching version, so VS Code and the launcher only reconnect to the running orchestrator instead of tearing down provider directories when they restart. The running core therefore remains alive until the machine or user explicitly restarts it, protecting launcher sessions from accidental shutdowns.
