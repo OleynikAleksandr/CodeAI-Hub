@@ -239,6 +239,9 @@ const handleNewFeatureChange = (enabled: boolean) => {
 ❌ Don't skip validation in SettingsSaver  
 ❌ Don't save settings when thinking mode is disabled (tokens example)  
 
+### Core lifecycle reminder (v1.1.174)
+- The 1.1.174 release ensures the orchestrator is reused if a running node process reports the same version, so the settings UI must not trigger redundant restarts. Prefer reading `CoreKeepAlive` connection state and, if the user really needs a restart, expose the `core:restart-request` action instead of invoking `ensureStarted()` manually.
+
 ---
 
 ## Fresh Config Pattern

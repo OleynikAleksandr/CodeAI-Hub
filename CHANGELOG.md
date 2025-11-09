@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.174] - 2025-11-09
+### Fixed
+- `CoreProcessManager` now exits `ensureStarted()` as soon as `detectRunning()` reports a matching version, so VS Code and the launcher only reconnect to the running orchestrator instead of tearing down provider directories when they restart. The running core therefore remains alive until the machine or user explicitly restarts it, protecting launcher sessions from accidental shutdowns.
+
+### Build
+- VSIX → `codeai-hub-1.1.174.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.174.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.174.tar.bz2`
+- Providers → `claude-module-1.1.174.tar.bz2`, `codex-module-1.1.174.tar.bz2`, `gemini-module-1.1.174.tar.bz2`
+
 ## [1.1.173] - 2025-11-09
 ### Fixed
 - Prevented VS Code from issuing a shutdown sequence when the detected running core already matches the manifest version; `attachToRunningCore()` now keeps provider directories alive so launcher sessions survive VS Code restarts unless a real version mismatch occurs.
