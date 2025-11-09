@@ -1,12 +1,7 @@
 # Development TODO Plan
 
-## Phase 2 — Diagnostics & Session UX (owner: Codex, updated: 2025-11-09)
-- _Note (2025-11-09): Release 1.1.171 собран (outdated core shutdown). Дальше — диагностика портов и UI-parity._
-- [TODO] Surface CLI/SDK readiness in RuntimeStatusReporter and the UI so users immediately see degraded providers (ref: `doc/TODO/todo-roadmap.md#Diagnostics & Workspace Control`).
-- [TODO] Add manual workspace selector + prevent empty VS Code windows from overwriting `workspace-path` (ref: `doc/TODO/todo-roadmap.md#Diagnostics & Workspace Control`).
-- [TODO] Launcher webview should consume unified JSONL history and support refresh/restore flows identical to VSIX (ref: `doc/TODO/todo-roadmap.md#Session Experience & Launcher Parity`).
-
-## Phase 1 — Runtime Hardening (owner: Codex, updated: 2025-11-07)
-- [DONE] Auto-shutdown + dynamic port ownership across extension and launcher.
-- [DONE] Provider isolation so CLI crashes no longer terminate the orchestrator.
-- [DONE] Unified session slug validation for VSIX and launcher JSONL.
+## Phase 3 — Port Ownership & Unified Sessions (owner: Codex, updated: 2025-11-08)
+- _Note (2025-11-08): Release 1.1.172 adds the ensure/attach separation so VS Code and the launcher only reinstall when the manifest version does not match the running orchestrator._
+- [IN_PROGRESS] Harden port/lock sequencing so the launcher respects the manager lock, avoids killing owners, and VS Code attaches to the same core when the manifest version matches instead of reinstalling (`doc/TODO/todo-critical.md#Автоостановка и владение портом`).
+- [TODO] Complete provider isolation so Claude/Codex/Gemini CLI failures degrade individual providers without terminating the orchestrator; propagate the degraded state to both UIs (`doc/TODO/todo-critical.md#Изоляция провайдеров`).
+- [TODO] Validate unified session slug storage for both clients and document the JSONL paths/restore steps after launcher → VS Code handoffs (`doc/TODO/todo-critical.md#Регрессия в Unified Session`).

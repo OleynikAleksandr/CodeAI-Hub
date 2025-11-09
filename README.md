@@ -2,16 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.171
-- **Outdated core shutdown**: при старте VS Code мы корректно гасим только наши устаревшие ядра (через `/shutdown` + PID), а чужие процессы не трогаем — если порт занят сторонним приложением, переключаемся на следующий.
-- **Core reuse + idle grace**: как и прежде, живой core переиспользуется без рестарта, а orchestrator ждёт `shutdownGracePeriodMs`, поэтому краткие разрывы соединения не гасят процесс.
-- **Artifacts bundled**: VSIX содержит `node_modules/ws`, все manifests и tarball’ы собраны единым `./scripts/build-all.sh`.
+## Current Release — v1.1.172
+- **Attach-first workflow**: VS Code and the launcher now call `attachToRunningCore()` before triggering any reinstall; when the manifest-selected core version matches the running instance, both clients simply connect and surface the existing sessions instead of tearing down providers.
+- **Two-stage ensure**: `CoreProcessManager.ensureStarted()` continues to boot new binaries only when the running core is missing or outdated, so idle windows and focus changes never reinstall the runtime while allowing stale versions to shut down cleanly.
+- **Artifacts bundled**: `./scripts/build-all.sh` still packs providers, core, launcher, and VSIX together, keeping the offline cache consistent.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.171.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.171.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.171.tar.bz2`
-- Providers: `claude-module-1.1.171.tar.bz2`, `codex-module-1.1.171.tar.bz2`, `gemini-module-1.1.171.tar.bz2`
+- VSIX: `codeai-hub-1.1.172.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.172.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.172.tar.bz2`
+- Providers: `claude-module-1.1.172.tar.bz2`, `codex-module-1.1.172.tar.bz2`, `gemini-module-1.1.172.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
