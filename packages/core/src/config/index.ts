@@ -27,7 +27,7 @@ export type CoreConfig = {
 };
 
 const DEFAULT_PORT = 8080;
-const DEFAULT_GRACE_MS = 60_000;
+const DEFAULT_GRACE_MS = 3_600_000;
 const DEFAULT_SETTINGS_PATH = path.join(
   homedir(),
   ".codeai-hub",
