@@ -30,6 +30,10 @@ import {
 import { CoreKeepAlive } from "./extension-module/core/core-keep-alive";
 import { CoreProcessManager } from "./extension-module/core/core-process-manager";
 import { HomeViewProvider } from "./extension-module/home-view-provider";
+import {
+  disposeExtensionLogger,
+  getExtensionLogger,
+} from "./extension-module/logging/extension-logger";
 import { ensureClaudeModuleInstalled } from "./extension-module/provider/claude/claude-module-installer";
 import { ensureCodexModuleInstalled } from "./extension-module/provider/codex/codex-module-installer";
 import { ensureGeminiModuleInstalled } from "./extension-module/provider/gemini/gemini-module-installer";
@@ -108,15 +112,32 @@ async function handleLaunchWebClientCommand(
 
 async function initializeCoreManager(context: ExtensionContext): Promise<void> {
   const declaredVersion = await resolveDeclaredCoreVersion(context);
+  const logger = getExtensionLogger();
+  logger.log("core-manager:init", { declaredVersion });
   coreProcessManager = new CoreProcessManager(context);
   coreProcessManager.setDeclaredVersion(declaredVersion);
+  logger.log("core-manager:attachToRunningCore:start", {
+    targetVersion: declaredVersion,
+  });
   const attached =
     await coreProcessManager.attachToRunningCore(declaredVersion);
   if (attached) {
+    logger.log("core-manager:attachToRunningCore:attached", {
+      targetVersion: declaredVersion,
+    });
     return;
   }
+  logger.log("core-manager:attachToRunningCore:miss", {
+    targetVersion: declaredVersion,
+  });
   const ensuredCore = await ensureCoreAndProviderComponents(context);
+  logger.log("core-manager:ensureCoreAndProviders:done", {
+    runtimeVersion: ensuredCore.version,
+  });
   await coreProcessManager.ensureStarted(ensuredCore, {
+    targetVersion: declaredVersion,
+  });
+  logger.log("core-manager:ensureStarted:done", {
     targetVersion: declaredVersion,
   });
 }
@@ -171,6 +192,7 @@ function registerCommands(
 }
 
 export async function activate(context: ExtensionContext): Promise<void> {
+  const logger = getExtensionLogger();
   const indexPath = path.join(
     context.extensionUri.fsPath,
     "media",
@@ -192,6 +214,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const extensionVersion =
     (context.extension.packageJSON as { readonly version?: string } | undefined)
       ?.version ?? "0.0.0";
+  logger.log("extension:activate:start", {
+    version: extensionVersion,
+    remoteName: env.remoteName ?? null,
+  });
   await recordVsixVersion({
     version: extensionVersion,
     extensionPath: context.extensionUri.fsPath,
@@ -211,6 +237,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   const resolvedConnectionInfo =
     coreProcessManager?.getConnectionInfo() ?? getDefaultCoreConnectionInfo();
+  logger.log("extension:activate:connectionInfo", {
+    httpUrl: resolvedConnectionInfo.httpUrl,
+    wsUrl: resolvedConnectionInfo.wsUrl,
+  });
 
   const provider = new HomeViewProvider(
     context.extensionUri,
@@ -222,7 +252,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
 }
 
 export function deactivate(): void {
+  const logger = getExtensionLogger();
+  logger.log("extension:deactivate", {});
   coreKeepAlive?.dispose();
   coreKeepAlive = null;
   coreProcessManager?.dispose();
+  disposeExtensionLogger();
 }
