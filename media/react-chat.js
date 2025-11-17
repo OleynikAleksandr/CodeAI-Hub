@@ -7680,6 +7680,23 @@
     };
   };
 
+  // src/client/ui/src/core-bridge/constants.ts
+  var DEFAULT_CONFIG = {
+    httpUrl: "http://127.0.0.1:8080",
+    wsUrl: "ws://127.0.0.1:8080/api/v1/stream"
+  };
+  var DEFAULT_PROVIDER_IDS = [
+    "claudeCodeCli",
+    "codexCli",
+    "geminiCli"
+  ];
+  var FALLBACK_PROVIDERS = DEFAULT_PROVIDER_IDS.map((providerId) => ({
+    id: providerId,
+    title: getDefaultProviderTitle(providerId),
+    description: getDefaultProviderDescription(providerId),
+    connected: true
+  }));
+
   // src/client/ui/src/core-bridge/normalizers.ts
   var toNumberTimestamp = (value) => {
     if (!value) {
@@ -7894,32 +7911,8 @@
   };
 
   // src/client/ui/src/core-bridge/core-bridge.ts
-  var DEFAULT_CONFIG = {
-    httpUrl: "http://127.0.0.1:8080",
-    wsUrl: "ws://127.0.0.1:8080/api/v1/stream"
-  };
   var RECONNECT_DELAY_MS = 2e3;
   var globalScope = window;
-  var FALLBACK_PROVIDERS = [
-    {
-      id: "claudeCodeCli",
-      title: getDefaultProviderTitle("claudeCodeCli"),
-      description: getDefaultProviderDescription("claudeCodeCli"),
-      connected: true
-    },
-    {
-      id: "codexCli",
-      title: getDefaultProviderTitle("codexCli"),
-      description: getDefaultProviderDescription("codexCli"),
-      connected: true
-    },
-    {
-      id: "geminiCli",
-      title: getDefaultProviderTitle("geminiCli"),
-      description: getDefaultProviderDescription("geminiCli"),
-      connected: true
-    }
-  ];
   var resolveConfig = () => {
     const config = globalScope.__CODEAI_CORE_CONFIG;
     if (!config || typeof config.httpUrl !== "string" || typeof config.wsUrl !== "string") {
@@ -7927,9 +7920,7 @@
     }
     return config;
   };
-  var notifyWindow = (message) => {
-    window.postMessage(message, "*");
-  };
+  var notifyWindow = (message) => window.postMessage(message, "*");
   var initialized = false;
   var hasSuccessfulConnection = false;
   var websocket = null;
@@ -7937,14 +7928,16 @@
   var cachedProviders = [...FALLBACK_PROVIDERS];
   var pendingMessages = [];
   var currentConnectionStatus = "idle";
-  var notifyConnectionStatus = (status) => {
-    if (currentConnectionStatus === status) {
+  var currentConnectionDetail;
+  var notifyConnectionStatus = (status, detail) => {
+    if (currentConnectionStatus === status && currentConnectionDetail === detail) {
       return;
     }
     currentConnectionStatus = status;
+    currentConnectionDetail = detail;
     notifyWindow({
       type: "core:connection",
-      payload: { status }
+      payload: { status, detail }
     });
   };
   var handleServerMessage = createServerMessageHandler(notifyWindow);
@@ -7968,7 +7961,10 @@
     if (reconnectTimer) {
       return;
     }
-    notifyConnectionStatus("connecting");
+    notifyConnectionStatus(
+      "connecting",
+      hasSuccessfulConnection ? "Reconnecting to CodeAI Hub core\u2026" : "Starting CodeAI Hub core via Supervisor\u2026"
+    );
     if (!hasSuccessfulConnection) {
       try {
         window.acquireVsCodeApi?.().postMessage({ type: "core:restart-request" });
@@ -8001,9 +7997,15 @@
     });
     websocket.addEventListener("error", () => {
       if (hasSuccessfulConnection) {
-        notifyConnectionStatus("error");
+        notifyConnectionStatus(
+          "error",
+          "Unable to reach CodeAI Hub core. Supervisor will retry automatically."
+        );
       } else {
-        notifyConnectionStatus("connecting");
+        notifyConnectionStatus(
+          "connecting",
+          "Waiting for CodeAI Hub core to respond\u2026"
+        );
       }
       scheduleReconnect(config);
     });
@@ -8015,7 +8017,10 @@
       });
       if (!response.ok) {
         if (!hasSuccessfulConnection) {
-          notifyConnectionStatus("connecting");
+          notifyConnectionStatus(
+            "connecting",
+            "Waiting for status response from CodeAI Hub core\u2026"
+          );
         }
         return;
       }
@@ -8034,15 +8039,17 @@
       });
     } catch {
       if (!hasSuccessfulConnection) {
-        notifyConnectionStatus("connecting");
+        notifyConnectionStatus(
+          "connecting",
+          "Waiting for status response from CodeAI Hub core\u2026"
+        );
       }
     }
   };
   var ensureProvidersAvailable = async (config) => {
-    if (cachedProviders.length > 0) {
-      return cachedProviders;
+    if (cachedProviders.length === 0) {
+      await fetchStatusSnapshot(config);
     }
-    await fetchStatusSnapshot(config);
     return cachedProviders;
   };
   var openProviderPicker = async () => {
@@ -8588,16 +8595,6 @@
       return;
     }
     const message = rawMessage;
-    if (message.type === "core:connection") {
-      if (handlers.onCoreConnectionStatus && message.payload) {
-        const candidate = message.payload;
-        const status = candidate.status;
-        if (typeof status === "string") {
-          handlers.onCoreConnectionStatus(status);
-        }
-      }
-      return;
-    }
     if (dispatchSessionMessage(message, {
       onSessionCreated: handlers.onSessionCreated,
       onSessionClearAll: handlers.onSessionClearAll,
@@ -8609,20 +8606,32 @@
     })) {
       return;
     }
-    if (message.type === "providerPicker:open") {
-      handleProviderPickerOpenMessage(message, handlers.onProviderPickerOpen);
-      return;
-    }
-    if (message.type === "ui:showSettings") {
-      handlers.onShowSettings();
-      return;
-    }
-    if (message.type === "core:state") {
-      handleCoreStateMessage(message, handlers.onCoreState);
-      return;
-    }
-    if (message.type === "core:loading-status") {
-      handleCoreLoadingStatusMessage(message, handlers.onCoreLoadingStatus);
+    switch (message.type) {
+      case "core:connection": {
+        if (handlers.onCoreConnectionStatus && message.payload) {
+          const candidate = message.payload;
+          const status = candidate.status;
+          if (typeof status === "string") {
+            const detail = typeof candidate.detail === "string" ? candidate.detail : void 0;
+            handlers.onCoreConnectionStatus(status, detail);
+          }
+        }
+        return;
+      }
+      case "providerPicker:open":
+        handleProviderPickerOpenMessage(message, handlers.onProviderPickerOpen);
+        return;
+      case "ui:showSettings":
+        handlers.onShowSettings();
+        return;
+      case "core:state":
+        handleCoreStateMessage(message, handlers.onCoreState);
+        return;
+      case "core:loading-status":
+        handleCoreLoadingStatusMessage(message, handlers.onCoreLoadingStatus);
+        return;
+      default:
+        return;
     }
   };
 
@@ -10383,7 +10392,21 @@ ${path}` : path;
   var MAX_PERCENTAGE = 100;
   var MIN_TOKEN_LIMIT = 1;
   var PERCENT_SCALE = 100;
-  var StatusPanel = ({ status }) => {
+  var SUPERVISOR_LABEL = "Core Supervisor";
+  var StatusPanel = ({
+    status,
+    connectionStatus,
+    connectionDetail
+  }) => {
+    if (!status || connectionStatus !== "ready") {
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "session-status session-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-status__row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__label", children: SUPERVISOR_LABEL }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__value", children: describeConnectionStatus(connectionStatus) })
+        ] }),
+        connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "session-status__row session-status__row--muted", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__value", children: connectionDetail }) }) : null
+      ] });
+    }
     const { providerSummary, tokenUsage } = status;
     const percentage = Math.min(
       MAX_PERCENTAGE,
@@ -10411,6 +10434,16 @@ ${path}` : path;
     ] });
   };
   var status_panel_default = StatusPanel;
+  var describeConnectionStatus = (status) => {
+    switch (status) {
+      case "ready":
+        return "Core online";
+      case "error":
+        return "Core unavailable";
+      default:
+        return "Starting core\u2026";
+    }
+  };
 
   // src/client/ui/src/session/todo-panel.tsx
   var import_react13 = __toESM(require_react());
@@ -10477,6 +10510,8 @@ ${path}` : path;
     activeSessionId,
     snapshots,
     showEmptyState,
+    coreConnectionStatus,
+    coreConnectionDetail,
     onSelectSession,
     onCloseSession,
     onSendMessage,
@@ -10528,7 +10563,14 @@ ${path}` : path;
               onSubmit: (text) => onSendMessage(activeSessionId, text)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(status_panel_default, { status: activeSession.status })
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+            status_panel_default,
+            {
+              connectionDetail: coreConnectionDetail,
+              connectionStatus: coreConnectionStatus,
+              status: activeSession.status
+            }
+          )
         ] })
       ] }) : null
     ] });
@@ -10551,6 +10593,9 @@ ${path}` : path;
   var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   var AppHost = () => {
     const [coreStatus, setCoreStatus] = (0, import_react14.useState)("connecting");
+    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react14.useState)(
+      void 0
+    );
     const [coreFinalized, setCoreFinalized] = (0, import_react14.useState)(false);
     const [messages, setMessages] = (0, import_react14.useState)(
       createDefaultMessages
@@ -10643,9 +10688,10 @@ ${path}` : path;
       onSessionFocusLast: focusLastSession,
       onShowSettings: handleShowSettings,
       onCoreState: handleCoreState,
-      onCoreConnectionStatus: (status) => {
+      onCoreConnectionStatus: (status, detail) => {
         if (status === "connecting" || status === "ready" || status === "error") {
           setCoreStatus(status);
+          setCoreStatusDetail(detail);
           if (status === "connecting") {
             setCoreFinalized(false);
             setMessages(createDefaultMessages());
@@ -10702,16 +10748,16 @@ ${path}` : path;
       if (coreStatus === "error") {
         return {
           headlineText: "Please hold on - we are getting CodeAI Hub ready.",
-          statusLine: "Unable to reach CodeAI Hub core. Retrying...",
+          statusLine: coreStatusDetail ?? "Unable to reach CodeAI Hub core. Retrying...",
           detailLine: void 0
         };
       }
       return {
         headlineText: "Please hold on - we are getting CodeAI Hub ready.",
         statusLine: currentMessage.status,
-        detailLine: currentMessage.detail
+        detailLine: coreStatusDetail ?? currentMessage.detail
       };
-    }, [coreStatus, currentMessage]);
+    }, [coreStatus, coreStatusDetail, currentMessage]);
     return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "app-shell", children: [
       /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(action_bar_default, { disabled: !isCoreReady }),
       /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "app-shell__session-region", children: [
@@ -10728,6 +10774,8 @@ ${path}` : path;
           session_view_default,
           {
             activeSessionId,
+            coreConnectionDetail: coreStatusDetail,
+            coreConnectionStatus: coreStatus,
             onCloseSession: closeSession,
             onSelectSession: selectSession,
             onSendMessage: sendMessage,
