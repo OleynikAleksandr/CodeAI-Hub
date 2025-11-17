@@ -24,6 +24,7 @@ type CommandContext = {
   readonly providerRegistry: ProviderRegistry;
   readonly notifyWebview: Notifier;
   readonly fileOperations: FileOperationsFacade;
+  readonly coreProcessManager?: CoreProcessManager;
 };
 
 type ProviderPickerContext = {
@@ -66,6 +67,7 @@ export class HomeViewMessageRouter {
         providerRegistry: this.providerRegistry,
         notifyWebview: notify,
         fileOperations: this.fileOperations,
+        coreProcessManager: this.coreProcessManager,
       };
       handleCommand(message.command, context).catch((error) => {
         const reason =
