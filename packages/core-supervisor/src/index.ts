@@ -22,6 +22,14 @@ type HealthResponse = {
   readonly pid?: number;
 };
 
+export type SupervisorClientOptions = CliOptions;
+export type SupervisorHealth = HealthResponse;
+
+export type SupervisorLogger = {
+  readonly info?: (message: string) => void;
+  readonly error?: (message: string) => void;
+};
+
 type OptionName = "host" | "port";
 type OptionMatch = {
   readonly name: OptionName;
@@ -44,6 +52,39 @@ const FLAG_NAME_MAP: Record<string, OptionName> = {
   "-H": "host",
   "--port": "port",
   "-p": "port",
+};
+
+const appendNewlineIfMissing = (
+  writer: (chunk: string) => void,
+  message: string
+): void => {
+  if (message.endsWith("\n")) {
+    writer(message);
+    return;
+  }
+  writer(`${message}\n`);
+};
+
+const logInfo = (
+  logger: SupervisorLogger | undefined,
+  message: string
+): void => {
+  if (logger?.info) {
+    logger.info(message);
+    return;
+  }
+  appendNewlineIfMissing((chunk) => process.stdout.write(chunk), message);
+};
+
+const logError = (
+  logger: SupervisorLogger | undefined,
+  message: string
+): void => {
+  if (logger?.error) {
+    logger.error(message);
+    return;
+  }
+  appendNewlineIfMissing((chunk) => process.stderr.write(chunk), message);
 };
 
 const parseCommand = (): { command: Command; options: CliOptions } => {
@@ -196,7 +237,7 @@ const fetchWithTimeout = async (
   }
 };
 
-const readHealth = async (
+export const readHealth = async (
   options: CliOptions
 ): Promise<HealthResponse | null> => {
   try {
@@ -227,11 +268,15 @@ const waitForHealthy = async (
   return false;
 };
 
-const startCore = async (options: CliOptions): Promise<void> => {
+export const startCore = async (
+  options: CliOptions,
+  logger?: SupervisorLogger
+): Promise<void> => {
   const alreadyRunning = await readHealth(options);
   if (alreadyRunning?.status === "ok") {
-    process.stdout.write(
-      `[core-supervisor] Core already running at http://${options.host}:${options.port} (pid ${alreadyRunning.pid ?? "unknown"}).\n`
+    logInfo(
+      logger,
+      `[core-supervisor] Core already running at http://${options.host}:${options.port} (pid ${alreadyRunning.pid ?? "unknown"}).`
     );
     await recordCorePortPreference(options.port);
     return;
@@ -240,8 +285,9 @@ const startCore = async (options: CliOptions): Promise<void> => {
   const lock = new CoreManagerLock("core-supervisor-cli");
   const acquisition = lock.acquire();
   if (!acquisition.acquired) {
-    process.stdout.write(
-      `[core-supervisor] Core start skipped: managed by ${acquisition.owner ?? "another manager"}.\n`
+    logInfo(
+      logger,
+      `[core-supervisor] Core start skipped: managed by ${acquisition.owner ?? "another manager"}.`
     );
     return;
   }
@@ -260,8 +306,9 @@ const startCore = async (options: CliOptions): Promise<void> => {
     });
     child.unref();
 
-    process.stdout.write(
-      `[core-supervisor] Starting CodeAI Hub core (pid ${child.pid ?? "unknown"})...\n`
+    logInfo(
+      logger,
+      `[core-supervisor] Starting CodeAI Hub core (pid ${child.pid ?? "unknown"})...`
     );
 
     const ready = await waitForHealthy(options);
@@ -271,25 +318,31 @@ const startCore = async (options: CliOptions): Promise<void> => {
       );
     }
     await recordCorePortPreference(options.port);
-    process.stdout.write(
-      `[core-supervisor] Core is ready at http://${options.host}:${options.port}.\n`
+    logInfo(
+      logger,
+      `[core-supervisor] Core is ready at http://${options.host}:${options.port}.`
     );
   } finally {
     lock.release();
   }
 };
 
-const stopCore = async (options: CliOptions): Promise<void> => {
+export const stopCore = async (
+  options: CliOptions,
+  logger?: SupervisorLogger
+): Promise<void> => {
   const healthBefore = await readHealth(options);
   if (!healthBefore) {
-    process.stdout.write(
-      `[core-supervisor] Core is not running at http://${options.host}:${options.port}.\n`
+    logInfo(
+      logger,
+      `[core-supervisor] Core is not running at http://${options.host}:${options.port}.`
     );
     return;
   }
 
-  process.stdout.write(
-    `[core-supervisor] Requesting shutdown for pid ${healthBefore.pid ?? "unknown"}...\n`
+  logInfo(
+    logger,
+    `[core-supervisor] Requesting shutdown for pid ${healthBefore.pid ?? "unknown"}...`
   );
   const response = await fetchWithTimeout(
     `http://${options.host}:${options.port}${SHUTDOWN_PATH}`,
@@ -306,27 +359,32 @@ const stopCore = async (options: CliOptions): Promise<void> => {
     throw new Error("Core did not stop gracefully within the expected window.");
   }
   await clearCorePortPreference();
-  process.stdout.write("[core-supervisor] Core stopped successfully.\n");
+  logInfo(logger, "[core-supervisor] Core stopped successfully.");
 };
 
-const printStatus = async (options: CliOptions): Promise<void> => {
+const printStatus = async (
+  options: CliOptions,
+  logger?: SupervisorLogger
+): Promise<void> => {
   const health = await readHealth(options);
   if (!health) {
-    process.stdout.write(
-      `[core-supervisor] Core is not reachable at http://${options.host}:${options.port}.\n`
+    logInfo(
+      logger,
+      `[core-supervisor] Core is not reachable at http://${options.host}:${options.port}.`
     );
     return;
   }
 
-  process.stdout.write(
-    `${JSON.stringify(
+  logInfo(
+    logger,
+    JSON.stringify(
       {
         endpoint: `http://${options.host}:${options.port}`,
         ...health,
       },
       null,
       2
-    )}\n`
+    )
   );
 };
 
@@ -363,9 +421,14 @@ const main = async (): Promise<void> => {
   }
 };
 
-main().catch((error) => {
-  process.stderr.write(
-    `[core-supervisor] ${error instanceof Error ? error.message : String(error)}\n`
-  );
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    logError(
+      undefined,
+      `[core-supervisor] ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+    process.exit(1);
+  });
+}
