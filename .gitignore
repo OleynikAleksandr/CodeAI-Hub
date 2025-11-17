@@ -18,7 +18,6 @@ doc/Sessions/
 doc/TODO/
 *.vsix
 doc/sdk-sessions/
-scripts/*
 !scripts/build-release.sh
 !scripts/build-codex-module.sh
 !scripts/release-utils.sh
