@@ -15,6 +15,8 @@ type SessionViewProps = {
   readonly activeSessionId: string | null;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
   readonly showEmptyState: boolean;
+  readonly coreConnectionStatus: "connecting" | "ready" | "error";
+  readonly coreConnectionDetail?: string;
   readonly onSelectSession: (sessionId: string) => void;
   readonly onCloseSession: (sessionId: string) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
@@ -27,6 +29,8 @@ const SessionView = ({
   activeSessionId,
   snapshots,
   showEmptyState,
+  coreConnectionStatus,
+  coreConnectionDetail,
   onSelectSession,
   onCloseSession,
   onSendMessage,
@@ -82,7 +86,11 @@ const SessionView = ({
               draft={activeSession.draft}
               onSubmit={(text) => onSendMessage(activeSessionId, text)}
             />
-            <StatusPanel status={activeSession.status} />
+            <StatusPanel
+              connectionDetail={coreConnectionDetail}
+              connectionStatus={coreConnectionStatus}
+              status={activeSession.status}
+            />
           </div>
         </>
       ) : null}
