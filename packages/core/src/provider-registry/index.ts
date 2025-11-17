@@ -1,4 +1,6 @@
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { homedir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type {
@@ -91,6 +93,7 @@ const GEMINI_INSTALLER_PATHS: GeminiInstallerPaths = {
 };
 
 const PROVIDER_RECOVERY_INTERVAL_MS = 60_000;
+const PROVIDERS_ROOT = path.join(homedir(), ".codeai-hub", "providers");
 
 type ClaudeAdapterCtor = new (options: ClaudeModuleOptions) => ProviderAdapter;
 
@@ -341,6 +344,99 @@ const loadGeminiAdapterCtor = async (
   return bundledAdapter;
 };
 
+const resolveInstalledProviderPathFromPointer = (
+  providerRoot: string
+): string | null => {
+  const latestPath = path.join(providerRoot, "latest");
+  if (!existsSync(latestPath)) {
+    return null;
+  }
+  try {
+    const raw = readFileSync(latestPath, "utf8").trim();
+    if (!raw) {
+      return null;
+    }
+    const installDir = path.join(providerRoot, raw);
+    const installMarker = path.join(installDir, "install.json");
+    if (!existsSync(installMarker)) {
+      return null;
+    }
+    return installDir;
+  } catch {
+    return null;
+  }
+};
+
+const resolveInstalledProviderPathByScan = (
+  providerRoot: string
+): string | null => {
+  try {
+    const entries = readdirSync(providerRoot, { withFileTypes: true });
+    let bestVersion: string | null = null;
+    for (const entry of entries) {
+      if (!entry.isDirectory()) {
+        continue;
+      }
+      const candidateVersion = entry.name;
+      const markerPath = path.join(
+        providerRoot,
+        candidateVersion,
+        "install.json"
+      );
+      if (!existsSync(markerPath)) {
+        continue;
+      }
+      if (!bestVersion || candidateVersion > bestVersion) {
+        bestVersion = candidateVersion;
+      }
+    }
+    if (!bestVersion) {
+      return null;
+    }
+    return path.join(providerRoot, bestVersion);
+  } catch {
+    return null;
+  }
+};
+
+const resolveInstalledProviderPath = (providerId: string): string | null => {
+  const providerRoot = path.join(PROVIDERS_ROOT, providerId);
+  if (!existsSync(providerRoot)) {
+    return null;
+  }
+  return (
+    resolveInstalledProviderPathFromPointer(providerRoot) ??
+    resolveInstalledProviderPathByScan(providerRoot)
+  );
+};
+
+const resolveClaudeModulePath = (): string | undefined => {
+  const override = process.env.CLAUDE_MODULE_PATH;
+  if (override?.trim()) {
+    return override;
+  }
+  const installed = resolveInstalledProviderPath("claude");
+  return installed ?? undefined;
+};
+
+const resolveCodexModulePath = (): string | undefined => {
+  const override = process.env.CODEX_MODULE_PATH;
+  if (override?.trim()) {
+    return override;
+  }
+  const installed = resolveInstalledProviderPath("codex");
+  return installed ?? undefined;
+};
+
+const resolveGeminiModulePath = (): string | undefined => {
+  const override = process.env.GEMINI_MODULE_PATH;
+  if (override?.trim()) {
+    return override;
+  }
+  const installed = resolveInstalledProviderPath("gemini");
+  return installed ?? undefined;
+};
+
 export class ProviderRegistry {
   private readonly providers: ProviderDescriptor[];
   private readonly claudeAdapterCtor: ClaudeAdapterCtor;
@@ -367,15 +463,15 @@ export class ProviderRegistry {
     this.options = options;
     this.statusReporter = options.statusReporter;
     this.claudeAdapterCtor = loadClaudeAdapterCtor(
-      process.env.CLAUDE_MODULE_PATH,
+      resolveClaudeModulePath(),
       this.options.logger
     );
     this.codexAdapterCtor = loadCodexAdapterCtor(
-      process.env.CODEX_MODULE_PATH,
+      resolveCodexModulePath(),
       this.options.logger
     );
     this.geminiAdapterCtorPromise = loadGeminiAdapterCtor(
-      process.env.GEMINI_MODULE_PATH,
+      resolveGeminiModulePath(),
       this.options.logger
     );
     this.geminiWorkspacePath = this.options.config.geminiWorkspacePath;
