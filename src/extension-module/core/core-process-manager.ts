@@ -1,7 +1,10 @@
-import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
-import path from "node:path";
-import { type ExtensionContext, window } from "vscode";
-import { recordCorePortPreference } from "../runtime/runtime-registry";
+import type { SupervisorLogger } from "@codeai-hub/core-supervisor";
+import {
+  startCore as supervisorStartCore,
+  stopCore as supervisorStopCore,
+} from "@codeai-hub/core-supervisor";
+import { window } from "vscode";
+import { getExtensionLogger } from "../logging/extension-logger";
 import {
   CORE_HOST,
   type CoreConnectionInfo,
@@ -9,30 +12,19 @@ import {
   DEFAULT_CORE_PORT,
   ENV_CORE_PORT,
 } from "./core-connection-info";
-import { type CoreRuntimeInfo, ensureCoreInstalled } from "./core-installer";
-import { resolveCoreLogFilePath } from "./core-log-path";
-import { CoreManagerLock } from "./core-manager-lock";
+import type { CoreRuntimeInfo } from "./core-installer";
 import { CorePortManager, type RunningCoreInfo } from "./core-port-manager";
-import {
-  notifyConnectionListeners,
-  notifyExitListeners,
-} from "./core-process-notifiers";
-import {
-  resolveProviderModulePath,
-  resolveWorkspacePath,
-} from "./core-workspace";
+import { notifyConnectionListeners } from "./core-process-notifiers";
+
+const SUPERVISOR_LOG_TRIM_PATTERN = /\s+$/u;
 
 type EnsureStartedOptions = {
   readonly forceRestart?: boolean;
   readonly targetVersion?: string;
 };
 export class CoreProcessManager {
-  private child: ChildProcessWithoutNullStreams | null = null;
-  private runtimeInfo: CoreRuntimeInfo | null = null;
   private declaredVersion?: string;
   private readonly channel = window.createOutputChannel("CodeAI Hub Core");
-  private readonly context: ExtensionContext;
-  private readonly managerLock = new CoreManagerLock("vscode-extension");
   private readonly host = CORE_HOST;
   private readonly envPort: number;
   private currentPort: number;
@@ -41,9 +33,9 @@ export class CoreProcessManager {
   private readonly connectionListeners = new Set<
     (info: CoreConnectionInfo) => void
   >();
-  private readonly exitListeners = new Set<() => void>();
-  constructor(context: ExtensionContext) {
-    this.context = context;
+  private readonly extensionLogger = getExtensionLogger();
+  private readonly supervisorLogger: SupervisorLogger;
+  constructor() {
     this.envPort = Number.isFinite(ENV_CORE_PORT)
       ? ENV_CORE_PORT
       : DEFAULT_CORE_PORT;
@@ -54,61 +46,64 @@ export class CoreProcessManager {
       envPort: this.envPort,
       channel: this.channel,
     });
+    this.supervisorLogger = {
+      info: (message) => {
+        this.channel.appendLine(this.normalizeSupervisorMessage(message));
+      },
+      error: (message) => {
+        this.channel.appendLine(this.normalizeSupervisorMessage(message));
+      },
+    };
   }
   async ensureStarted(
     runtimeInfo?: CoreRuntimeInfo,
     options?: EnsureStartedOptions
   ): Promise<void> {
-    let runtime = runtimeInfo ?? this.runtimeInfo ?? null;
-    let targetVersion =
-      options?.targetVersion ?? this.declaredVersion ?? runtime?.version;
-    if (!targetVersion) {
-      runtime = await this.ensureRuntimeInfo(runtimeInfo);
-      targetVersion = runtime.version;
+    const declaredVersionCandidate =
+      options?.targetVersion ?? this.declaredVersion ?? runtimeInfo?.version;
+    if (declaredVersionCandidate) {
+      this.declaredVersion = declaredVersionCandidate;
     }
-    this.declaredVersion = targetVersion;
+
+    const targetVersion = this.declaredVersion;
     if (!options?.forceRestart) {
       const attached = await this.tryAttachToRunningCore(targetVersion);
       if (attached) {
         return;
       }
     }
-    const resolvedRuntime =
-      runtime ?? (await this.ensureRuntimeInfo(runtimeInfo));
-    this.declaredVersion = resolvedRuntime.version;
+
     const decision = await this.portManager.resolve(
-      resolvedRuntime.version,
+      targetVersion,
       this.currentPort
     );
+    this.updateConnectionInfo(decision.port);
+
     if (decision.kind === "running") {
-      this.updateConnectionInfo(decision.port);
+      if (options?.forceRestart) {
+        await this.restartViaSupervisor(decision.port, targetVersion);
+        return;
+      }
       this.channel.appendLine("CodeAI Hub core already running.");
       return;
     }
-    this.updateConnectionInfo(decision.port);
-    this.channel.appendLine(
-      `Preparing to launch CodeAI Hub core on port ${decision.port}...`
-    );
-    const acquisition = this.managerLock.acquire();
-    if (!acquisition.acquired) {
-      const owner = acquisition.owner ?? "another manager";
-      this.channel.appendLine(
-        `CodeAI Hub core is managed by ${owner}, skipping local launch.`
+
+    await this.startViaSupervisor(decision.port, targetVersion);
+    const attached = await this.tryAttachToRunningCore(targetVersion);
+    if (!attached) {
+      throw new Error(
+        "Core supervisor reported ready, but no running core instance was detected."
       );
-      return;
     }
-    this.launch();
   }
   setDeclaredVersion(version: string): void {
     this.declaredVersion = version;
   }
   attachToRunningCore(targetVersion?: string): Promise<boolean> {
-    const version =
-      targetVersion ?? this.declaredVersion ?? this.runtimeInfo?.version;
-    if (!version) {
-      return Promise.resolve(false);
+    const version = targetVersion ?? this.declaredVersion;
+    if (version) {
+      this.declaredVersion = version;
     }
-    this.declaredVersion = version;
     return this.tryAttachToRunningCore(version);
   }
   getConnectionInfo(): CoreConnectionInfo {
@@ -123,12 +118,6 @@ export class CoreProcessManager {
       this.connectionListeners.delete(listener);
     };
   }
-  onProcessExit(listener: () => void): () => void {
-    this.exitListeners.add(listener);
-    return () => {
-      this.exitListeners.delete(listener);
-    };
-  }
   private updateConnectionInfo(port: number): void {
     if (this.currentPort === port) {
       return;
@@ -141,27 +130,8 @@ export class CoreProcessManager {
       this.channel
     );
   }
-  private async ensureRuntimeInfo(
-    runtimeInfo?: CoreRuntimeInfo
-  ): Promise<CoreRuntimeInfo> {
-    if (runtimeInfo) {
-      this.runtimeInfo = runtimeInfo;
-      this.declaredVersion = runtimeInfo.version;
-      return runtimeInfo;
-    }
-    if (!this.runtimeInfo) {
-      this.runtimeInfo = await ensureCoreInstalled(this.context);
-      if (this.runtimeInfo) {
-        this.declaredVersion = this.runtimeInfo.version;
-      }
-    }
-    if (!this.runtimeInfo) {
-      throw new Error("Unable to resolve CodeAI Hub core runtime information.");
-    }
-    return this.runtimeInfo;
-  }
   private async tryAttachToRunningCore(
-    targetVersion: string
+    targetVersion?: string
   ): Promise<boolean> {
     const running = await this.detectRunningCore(targetVersion);
     if (!running) {
@@ -175,7 +145,7 @@ export class CoreProcessManager {
     return false;
   }
   private async detectRunningCore(
-    targetVersion: string
+    targetVersion?: string
   ): Promise<RunningCoreInfo | null> {
     const running = await this.portManager.detectRunning(
       targetVersion,
@@ -192,95 +162,122 @@ export class CoreProcessManager {
     this.channel.appendLine(
       `Detected outdated CodeAI Hub core (version ${running.version ?? "unknown"}) on port ${running.port}. Requesting shutdown...`
     );
-    const stopped = await this.portManager.stopRunningCore(
-      running.port,
-      running.pid
-    );
-    if (stopped) {
+    try {
+      await this.stopViaSupervisor(running.port);
       this.channel.appendLine("Outdated core stopped successfully.");
-    } else {
+    } catch {
       this.channel.appendLine(
         "Unable to stop outdated core automatically. Falling back to new port."
       );
     }
   }
-  private launch(): void {
-    if (this.child || !this.runtimeInfo) {
-      return;
-    }
-    this.channel.appendLine("Starting CodeAI Hub core orchestrator...");
-    const workspacePath = resolveWorkspacePath();
-    const claudeModulePath = resolveProviderModulePath("claude");
-    const codexModulePath = resolveProviderModulePath("codex");
-    const geminiModulePath = resolveProviderModulePath("gemini");
-    const envVars: NodeJS.ProcessEnv = {
-      ...process.env,
-      CORE_HOST: this.host,
-      CORE_PORT: `${this.currentPort}`,
-      CLAUDE_WORKSPACE_PATH: workspacePath,
-      CODEX_WORKSPACE_PATH: workspacePath,
-      CODEX_SKIP_GIT_REPO_CHECK: "true",
-      CODEAI_HUB_RUNTIME_DIR: this.runtimeInfo.runtimeDir,
-      CODEAI_HUB_APP_DIR: path.join(this.runtimeInfo.runtimeDir, "app"),
-    };
-    if (!envVars.NODE_ENV) {
-      envVars.NODE_ENV = "production";
-    }
-    if (claudeModulePath) {
-      envVars.CLAUDE_MODULE_PATH = claudeModulePath;
-    }
-    if (codexModulePath) {
-      envVars.CODEX_MODULE_PATH = codexModulePath;
-    }
-    if (geminiModulePath) {
-      envVars.GEMINI_MODULE_PATH = geminiModulePath;
-    }
-    envVars.CODEAI_CORE_LOG_FILE = resolveCoreLogFilePath();
-    const appCwd = path.join(this.runtimeInfo.runtimeDir, "app");
+
+  private async startViaSupervisor(
+    port: number,
+    targetVersion?: string
+  ): Promise<void> {
+    this.logSupervisorEvent("core-manager:supervisor:start:request", {
+      port,
+      targetVersion: targetVersion ?? null,
+    });
     try {
-      this.child = spawn(
-        this.runtimeInfo.nodePath,
-        [this.runtimeInfo.entryPoint],
+      await supervisorStartCore(
         {
-          env: envVars,
-          stdio: "pipe",
-          cwd: appCwd,
-        }
+          host: this.host,
+          port,
+        },
+        this.supervisorLogger
       );
+      this.logSupervisorEvent("core-manager:supervisor:start:success", {
+        port,
+        targetVersion: targetVersion ?? null,
+      });
     } catch (error) {
-      this.managerLock.release();
+      this.logSupervisorEvent(
+        "core-manager:supervisor:start:error",
+        {
+          port,
+          targetVersion: targetVersion ?? null,
+          reason: this.describeError(error),
+        },
+        "error"
+      );
       throw error;
     }
-    recordCorePortPreference(this.currentPort).catch((error) => {
-      this.channel.appendLine(
-        `Failed to record core port preference: ${
-          error instanceof Error ? error.message : String(error)
-        }.`
-      );
-    });
-    this.child.stdout.on("data", (chunk) => {
-      this.channel.append(chunk.toString());
-    });
-    this.child.stderr.on("data", (chunk) => {
-      this.channel.append(chunk.toString());
-    });
-    this.child.on("exit", (code) => {
-      this.child = null;
-      this.channel.appendLine(
-        `Core orchestrator exited with code ${code ?? 0}.`
-      );
-      this.managerLock.release();
-      notifyExitListeners(this.exitListeners, this.channel);
-    });
   }
-  dispose(): void {
-    if (this.child) {
-      this.child.stdout?.removeAllListeners("data");
-      this.child.stderr?.removeAllListeners("data");
-      this.child.unref?.();
-      this.child = null;
+
+  private async stopViaSupervisor(port: number): Promise<void> {
+    this.logSupervisorEvent("core-manager:supervisor:stop:request", { port });
+    try {
+      await supervisorStopCore(
+        {
+          host: this.host,
+          port,
+        },
+        this.supervisorLogger
+      );
+      this.logSupervisorEvent("core-manager:supervisor:stop:success", {
+        port,
+      });
+    } catch (error) {
+      this.logSupervisorEvent(
+        "core-manager:supervisor:stop:error",
+        {
+          port,
+          reason: this.describeError(error),
+        },
+        "error"
+      );
+      throw error;
     }
-    this.managerLock.release();
+  }
+
+  private async restartViaSupervisor(
+    port: number,
+    targetVersion?: string
+  ): Promise<void> {
+    await this.stopViaSupervisor(port);
+    await this.startViaSupervisor(port, targetVersion);
+  }
+
+  private logSupervisorEvent(
+    event: string,
+    payload?: Record<string, unknown>,
+    level: "info" | "warn" | "error" | "debug" = "info"
+  ): void {
+    const entry = {
+      host: this.host,
+      currentPort: this.currentPort,
+      ...payload,
+    };
+    switch (level) {
+      case "error":
+        this.extensionLogger.error(event, entry);
+        return;
+      case "warn":
+        this.extensionLogger.warn(event, entry);
+        return;
+      case "debug":
+        this.extensionLogger.debug(event, entry);
+        return;
+      default:
+        this.extensionLogger.info(event, entry);
+        return;
+    }
+  }
+
+  private normalizeSupervisorMessage(message: string): string {
+    return message.replace(SUPERVISOR_LOG_TRIM_PATTERN, "");
+  }
+
+  private describeError(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    return String(error);
+  }
+
+  dispose(): void {
     this.channel.dispose();
   }
 }
