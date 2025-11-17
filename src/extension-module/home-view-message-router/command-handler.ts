@@ -1,5 +1,6 @@
 import { commands, window } from "vscode";
 import type { ProviderRegistry } from "../../core/providers/provider-registry";
+import type { CoreProcessManager } from "../core/core-process-manager";
 import type { FileOperationsFacade } from "../file-operations/file-operations-facade";
 import type { WebviewCommand } from "./message-types";
 import { serializeStack } from "./serialization";
@@ -8,6 +9,7 @@ type CommandContext = {
   readonly providerRegistry: ProviderRegistry;
   readonly notifyWebview: (message: Record<string, unknown>) => void;
   readonly fileOperations: FileOperationsFacade;
+  readonly coreProcessManager?: CoreProcessManager;
 };
 
 const handleNewSession = (context: CommandContext): void => {
@@ -61,6 +63,18 @@ export const handleCommand = async (
       );
       return;
     case "launchWebClient":
+      if (context.coreProcessManager) {
+        try {
+          await context.coreProcessManager.ensureStarted();
+        } catch (error) {
+          const reason =
+            error instanceof Error ? error.message : "Unknown error.";
+          window.showErrorMessage(
+            `Core Supervisor failed to start the core: ${reason}`
+          );
+          return;
+        }
+      }
       await commands.executeCommand("codeaiHub.launchWebClient");
       return;
     case "oldSessions":
