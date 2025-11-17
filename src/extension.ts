@@ -34,9 +34,6 @@ import {
   disposeExtensionLogger,
   getExtensionLogger,
 } from "./extension-module/logging/extension-logger";
-import { ensureClaudeModuleInstalled } from "./extension-module/provider/claude/claude-module-installer";
-import { ensureCodexModuleInstalled } from "./extension-module/provider/codex/codex-module-installer";
-import { ensureGeminiModuleInstalled } from "./extension-module/provider/gemini/gemini-module-installer";
 import { recordVsixVersion } from "./extension-module/runtime/runtime-registry";
 import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut-manager";
 
@@ -69,14 +66,10 @@ async function ensureLauncherDependencies(
   return ensuredLauncher;
 }
 
-async function ensureCoreAndProviderComponents(
+function ensureCoreAndProviderComponents(
   context: ExtensionContext
 ): Promise<CoreRuntimeInfo> {
-  const ensuredCore = await ensureCoreInstalled(context);
-  await ensureClaudeModuleInstalled(context);
-  await ensureCodexModuleInstalled(context);
-  await ensureGeminiModuleInstalled(context);
-  return ensuredCore;
+  return ensureCoreInstalled(context);
 }
 
 async function resolveDeclaredCoreVersion(
