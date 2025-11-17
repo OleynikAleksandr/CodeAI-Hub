@@ -45,7 +45,7 @@ export type Provider = {
   readonly id: string;
   readonly name: string;
   readonly description: string;
-  readonly status: "active" | "inactive";
+  readonly status: "active" | "inactive" | "degraded";
   readonly statusMessage?: string;
 };
 
@@ -521,7 +521,7 @@ export class ProviderRegistry {
       { providerId }
     );
     const mutable = descriptor as MutableProviderDescriptor;
-    this.markProviderInactive(mutable, error);
+    this.markProviderDegraded(mutable, error);
     this.emitStatus({
       phase: "provider",
       scope: providerId,
@@ -775,6 +775,15 @@ export class ProviderRegistry {
   private markProviderActive(descriptor: MutableProviderDescriptor): void {
     descriptor.status = "active";
     descriptor.statusMessage = undefined;
+    this.clearRetry(descriptor.id);
+  }
+
+  private markProviderDegraded(
+    descriptor: MutableProviderDescriptor,
+    error: unknown
+  ): void {
+    descriptor.status = "degraded";
+    descriptor.statusMessage = this.formatProviderError(descriptor.id, error);
     this.clearRetry(descriptor.id);
   }
 
