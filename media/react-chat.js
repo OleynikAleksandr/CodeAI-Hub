@@ -7360,7 +7360,7 @@
     inputRef
   }) => {
     const disabled = !provider.connected;
-    const statusLabel = provider.connected ? "Connected" : "Not connected";
+    const statusLabel = provider.connected ? "Available" : "Unavailable";
     const statusClassName = provider.connected ? "provider-picker__label-status provider-picker__label-status--connected" : "provider-picker__label-status provider-picker__label-status--disconnected";
     const warning = provider.statusMessage;
     const handleChange = () => {
@@ -7713,11 +7713,12 @@
     if (!providerIdSet.has(providerId)) {
       return null;
     }
+    const isActive = provider.status === "active";
     return {
       id: providerId,
       title: provider.name ?? getDefaultProviderTitle(providerId),
       description: provider.description ?? getDefaultProviderDescription(providerId),
-      connected: provider.status !== "inactive",
+      connected: isActive,
       statusMessage: typeof provider.statusMessage === "string" ? provider.statusMessage : null
     };
   };
@@ -10418,6 +10419,10 @@ ${path}` : path;
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-status__row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__label", children: "Providers" }),
         /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__value", children: providerSummary })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-status__row session-status__row--muted", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__label", children: "Status" }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__value", children: "Inactive or degraded providers are disabled in the picker." })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-status__row", children: [
         /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__label", children: "Tokens" }),
