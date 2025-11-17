@@ -39,6 +39,22 @@ class ExtensionLogger {
     }
   }
 
+  info(event: string, payload?: ExtensionLogPayload): void {
+    this.log(event, payload, "info");
+  }
+
+  warn(event: string, payload?: ExtensionLogPayload): void {
+    this.log(event, payload, "warn");
+  }
+
+  error(event: string, payload?: ExtensionLogPayload): void {
+    this.log(event, payload, "error");
+  }
+
+  debug(event: string, payload?: ExtensionLogPayload): void {
+    this.log(event, payload, "debug");
+  }
+
   dispose(): void {
     try {
       this.stream.end();
