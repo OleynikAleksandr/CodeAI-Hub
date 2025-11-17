@@ -5,6 +5,7 @@ export type CoreConfig = {
   readonly host: string;
   readonly port: number;
   readonly shutdownGracePeriodMs: number;
+  readonly idleTtlMinutes: number | null;
   readonly managedMode: string | null;
   readonly claudeWorkspacePath: string;
   readonly claudeProjectSlug: string;
@@ -28,6 +29,7 @@ export type CoreConfig = {
 
 const DEFAULT_PORT = 8080;
 const DEFAULT_GRACE_MS = 3_600_000;
+const MILLISECONDS_IN_MINUTE = 60_000;
 const DEFAULT_SETTINGS_PATH = path.join(
   homedir(),
   ".codeai-hub",
@@ -108,6 +110,10 @@ export const loadConfig = (): CoreConfig => {
     process.env.CORE_SHUTDOWN_GRACE_MS,
     DEFAULT_GRACE_MS
   );
+  const idleTtlMinutes =
+    shutdownGracePeriodMs <= 0
+      ? null
+      : Math.round(shutdownGracePeriodMs / MILLISECONDS_IN_MINUTE);
   const managedMode = process.env.CORE_MANAGED_MODE ?? null;
   const workspacePath =
     process.env.CLAUDE_WORKSPACE_PATH ?? path.resolve(process.cwd());
@@ -136,6 +142,7 @@ export const loadConfig = (): CoreConfig => {
     host,
     port,
     shutdownGracePeriodMs,
+    idleTtlMinutes,
     managedMode,
     claudeWorkspacePath: workspacePath,
     claudeProjectSlug: slug,

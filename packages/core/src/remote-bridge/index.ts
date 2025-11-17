@@ -62,6 +62,13 @@ type CoreStatePayload = {
   readonly providers: ReturnType<ProviderRegistry["listProviders"]>;
 };
 
+export type CoreTtlState = {
+  readonly idleTtlMs: number | null;
+  readonly lastActivityAt: string | null;
+  readonly idleSince: string | null;
+  readonly secondsUntilShutdown: number | null;
+};
+
 type RemoteBridgeHooks = {
   readonly onClientConnected?: (clientId: string, total: number) => void;
   readonly onClientDisconnected?: (clientId: string, total: number) => void;
@@ -119,6 +126,7 @@ const HTTP_NO_CONTENT = 204;
 const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_FOUND = 404;
 const HTTP_ACCEPTED = 202;
+const MILLISECONDS_IN_SECOND = 1000;
 
 export class RemoteBridge {
   private readonly config: CoreConfig;
@@ -134,6 +142,8 @@ export class RemoteBridge {
   private readonly hooks: RemoteBridgeHooks;
 
   private readonly statusReporter: RuntimeStatusReporter;
+
+  private readonly getTtlState?: () => CoreTtlState;
 
   private readonly fileDropService: FileDropService;
 
@@ -161,6 +171,7 @@ export class RemoteBridge {
     readonly version: string;
     readonly hooks?: RemoteBridgeHooks;
     readonly statusReporter: RuntimeStatusReporter;
+    readonly getTtlState?: () => CoreTtlState;
     readonly fileDropService: FileDropService;
   }) {
     this.config = options.config;
@@ -170,6 +181,7 @@ export class RemoteBridge {
     this.version = options.version;
     this.hooks = options.hooks ?? {};
     this.statusReporter = options.statusReporter;
+    this.getTtlState = options.getTtlState;
     this.fileDropService = options.fileDropService;
     this.sessionStorage = new UnifiedSessionStorage({
       workspaceSlug: this.config.claudeProjectSlug,
@@ -281,6 +293,8 @@ export class RemoteBridge {
     });
 
     this.app.get("/api/v1/status", (_req: Request, res: Response) => {
+      const ttlState = this.getTtlState?.();
+
       res.json({
         core: {
           version: this.version,
@@ -290,6 +304,19 @@ export class RemoteBridge {
           clients: this.getActiveClientCount(),
           managedMode: this.config.managedMode,
           pid: process.pid,
+          ttl:
+            ttlState == null
+              ? undefined
+              : {
+                  mode: ttlState.idleTtlMs === null ? "infinite" : "finite",
+                  idleTtlSeconds:
+                    ttlState.idleTtlMs === null
+                      ? null
+                      : Math.round(ttlState.idleTtlMs / MILLISECONDS_IN_SECOND),
+                  lastActivityAt: ttlState.lastActivityAt,
+                  idleSince: ttlState.idleSince,
+                  secondsUntilShutdown: ttlState.secondsUntilShutdown,
+                },
         },
         sessions: this.serializeSessions(),
         providers: this.providerRegistry.listProviders(),
