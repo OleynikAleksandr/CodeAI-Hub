@@ -38,7 +38,7 @@ const ProviderOption = ({
   inputRef,
 }: ProviderOptionProps) => {
   const disabled = !provider.connected;
-  const statusLabel = provider.connected ? "Connected" : "Not connected";
+  const statusLabel = provider.connected ? "Available" : "Unavailable";
   const statusClassName = provider.connected
     ? "provider-picker__label-status provider-picker__label-status--connected"
     : "provider-picker__label-status provider-picker__label-status--disconnected";
