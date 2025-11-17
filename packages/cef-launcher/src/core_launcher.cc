@@ -89,6 +89,8 @@ struct LockAcquisitionResult {
 
 bool g_manager_lock_acquired = false;
 std::filesystem::path g_manager_lock_path;
+
+void ReleaseManagerLock();
 const std::string kLauncherManagerId = "launcher";
 
 std::string g_workspace_override;
@@ -318,7 +320,9 @@ bool TryWriteManagerClaim(
 #endif
 }
 
-LockAcquisitionResult AcquireManagerLock(const std::filesystem::path& home) {
+[[maybe_unused]] LockAcquisitionResult AcquireManagerLock(
+  const std::filesystem::path& home
+) {
   LockAcquisitionResult result;
   if (g_manager_lock_acquired) {
     result.acquired = true;
@@ -498,7 +502,7 @@ std::optional<std::filesystem::path> ResolveCoreRuntimeDirectory(
   return latest;
 }
 
-std::filesystem::path ResolveNodeExecutable(
+[[maybe_unused]] std::filesystem::path ResolveNodeExecutable(
   const std::filesystem::path& runtimeDir
 ) {
 #ifdef _WIN32
@@ -508,7 +512,7 @@ std::filesystem::path ResolveNodeExecutable(
 #endif
 }
 
-std::filesystem::path ResolveEntryPoint(
+[[maybe_unused]] std::filesystem::path ResolveEntryPoint(
   const std::filesystem::path& runtimeDir
 ) {
   return runtimeDir / "app" / "dist" / "index.js";
@@ -562,7 +566,7 @@ void ExportProviderEnvironment(
 }
 
 #ifdef _WIN32
-bool LaunchProcess(
+[[maybe_unused]] bool LaunchProcess(
   const std::filesystem::path& executable,
   const std::filesystem::path& entryPoint
 ) {
@@ -646,7 +650,7 @@ bool LaunchSupervisorStart(
   return true;
 }
 #else
-bool LaunchProcess(
+[[maybe_unused]] bool LaunchProcess(
   const std::filesystem::path& executable,
   const std::filesystem::path& entryPoint
 ) {
