@@ -44,7 +44,6 @@ export class CoreProcessManager {
     this.portManager = new CorePortManager({
       host: this.host,
       envPort: this.envPort,
-      channel: this.channel,
     });
     this.supervisorLogger = {
       info: (message) => {
