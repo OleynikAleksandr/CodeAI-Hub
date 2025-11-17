@@ -28,9 +28,14 @@ export type CoreStateMessage = {
   readonly payload?: unknown;
 };
 
+export type CoreConnectionPayload = {
+  readonly status: string;
+  readonly detail?: string;
+};
+
 export type CoreConnectionMessage = {
   readonly type: "core:connection";
-  readonly payload?: unknown;
+  readonly payload?: CoreConnectionPayload;
 };
 
 export type CoreLoadingStatusMessage = {

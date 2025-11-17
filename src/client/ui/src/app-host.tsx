@@ -29,6 +29,9 @@ const AppHost = () => {
   const [coreStatus, setCoreStatus] = useState<
     "connecting" | "ready" | "error"
   >("connecting");
+  const [coreStatusDetail, setCoreStatusDetail] = useState<string | undefined>(
+    undefined
+  );
   const [coreFinalized, setCoreFinalized] = useState(false);
   const [messages, setMessages] = useState<Record<MessageId, LoadingMessage>>(
     createDefaultMessages
@@ -137,9 +140,10 @@ const AppHost = () => {
     onSessionFocusLast: focusLastSession,
     onShowSettings: handleShowSettings,
     onCoreState: handleCoreState,
-    onCoreConnectionStatus: (status) => {
+    onCoreConnectionStatus: (status, detail) => {
       if (status === "connecting" || status === "ready" || status === "error") {
         setCoreStatus(status);
+        setCoreStatusDetail(detail);
         if (status === "connecting") {
           setCoreFinalized(false);
           setMessages(createDefaultMessages());
@@ -207,16 +211,17 @@ const AppHost = () => {
     if (coreStatus === "error") {
       return {
         headlineText: "Please hold on - we are getting CodeAI Hub ready.",
-        statusLine: "Unable to reach CodeAI Hub core. Retrying...",
+        statusLine:
+          coreStatusDetail ?? "Unable to reach CodeAI Hub core. Retrying...",
         detailLine: undefined,
       };
     }
     return {
       headlineText: "Please hold on - we are getting CodeAI Hub ready.",
       statusLine: currentMessage.status,
-      detailLine: currentMessage.detail,
+      detailLine: coreStatusDetail ?? currentMessage.detail,
     };
-  }, [coreStatus, currentMessage]);
+  }, [coreStatus, coreStatusDetail, currentMessage]);
 
   return (
     <div className="app-shell">
@@ -231,6 +236,8 @@ const AppHost = () => {
         {pickerState.visible ? null : (
           <SessionView
             activeSessionId={activeSessionId}
+            coreConnectionDetail={coreStatusDetail}
+            coreConnectionStatus={coreStatus}
             onCloseSession={closeSession}
             onSelectSession={selectSession}
             onSendMessage={sendMessage}
