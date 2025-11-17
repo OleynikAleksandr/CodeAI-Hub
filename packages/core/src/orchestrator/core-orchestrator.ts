@@ -4,13 +4,15 @@ import path from "node:path";
 import { type CoreConfig, loadConfig } from "../config";
 import { FileDropService } from "../file-drop/file-drop-service";
 import { ProviderRegistry } from "../provider-registry";
-import { RemoteBridge } from "../remote-bridge";
+import { type CoreTtlState, RemoteBridge } from "../remote-bridge";
 import { SessionManager } from "../session-manager";
 import { RuntimeStatusReporter } from "../status/runtime-status-reporter";
 import { Logger } from "../telemetry/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require("../../package.json") as { version: string };
+
+const MILLISECONDS_IN_SECOND = 1000;
 
 export class CoreOrchestrator {
   private readonly config: CoreConfig;
@@ -33,6 +35,12 @@ export class CoreOrchestrator {
 
   private idleShutdownTimer: NodeJS.Timeout | null = null;
 
+  private readonly idleTtlMs: number | null;
+
+  private lastActivityAt: Date;
+
+  private idleSince: Date | null = null;
+
   constructor() {
     this.config = loadConfig();
     this.logger = new Logger();
@@ -44,6 +52,11 @@ export class CoreOrchestrator {
       statusReporter: this.statusReporter,
     });
     this.fileDropService = new FileDropService();
+    this.idleTtlMs =
+      this.config.shutdownGracePeriodMs <= 0
+        ? null
+        : this.config.shutdownGracePeriodMs;
+    this.lastActivityAt = new Date();
     this.remoteBridge = new RemoteBridge({
       config: this.config,
       providerRegistry: this.providerRegistry,
@@ -59,6 +72,7 @@ export class CoreOrchestrator {
           this.handleClientDecrease(total),
         onShutdownRequested: () => this.requestShutdown("api-request"),
       },
+      getTtlState: () => this.buildTtlState(),
     });
   }
 
@@ -91,6 +105,8 @@ export class CoreOrchestrator {
 
   private handleClientIncrease(total: number): void {
     this.activeClients = total;
+    this.lastActivityAt = new Date();
+    this.idleSince = null;
     this.logger.info("Client count increased", {
       activeClients: this.activeClients,
     });
@@ -99,11 +115,14 @@ export class CoreOrchestrator {
 
   private handleClientDecrease(total: number): void {
     this.activeClients = total;
+    const now = new Date();
+    this.lastActivityAt = now;
     this.logger.info("Client disconnected", {
       activeClients: this.activeClients,
     });
 
     if (this.activeClients === 0) {
+      this.idleSince = now;
       this.scheduleIdleShutdown();
     }
   }
@@ -162,19 +181,19 @@ export class CoreOrchestrator {
     if (this.idleShutdownTimer || this.shuttingDown) {
       return;
     }
-    if (this.config.shutdownGracePeriodMs <= 0) {
-      this.requestShutdown("idle");
+    if (this.idleTtlMs === null) {
+      this.logger.info("Idle shutdown is disabled because TTL is infinite");
       return;
     }
     this.logger.info("Scheduling idle shutdown", {
-      delayMs: this.config.shutdownGracePeriodMs,
+      delayMs: this.idleTtlMs,
     });
     this.idleShutdownTimer = setTimeout(() => {
       this.idleShutdownTimer = null;
       if (this.activeClients === 0 && !this.shuttingDown) {
         this.requestShutdown("idle");
       }
-    }, this.config.shutdownGracePeriodMs);
+    }, this.idleTtlMs);
   }
 
   private clearIdleShutdownTimer(): void {
@@ -183,5 +202,43 @@ export class CoreOrchestrator {
     }
     clearTimeout(this.idleShutdownTimer);
     this.idleShutdownTimer = null;
+  }
+
+  private buildTtlState(): CoreTtlState {
+    const lastActivityAt =
+      this.lastActivityAt != null ? this.lastActivityAt.toISOString() : null;
+    const idleSince = this.idleSince ? this.idleSince.toISOString() : null;
+
+    if (this.idleTtlMs === null) {
+      return {
+        idleTtlMs: null,
+        lastActivityAt,
+        idleSince,
+        secondsUntilShutdown: null,
+      };
+    }
+
+    if (!this.idleSince) {
+      return {
+        idleTtlMs: this.idleTtlMs,
+        lastActivityAt,
+        idleSince,
+        secondsUntilShutdown: null,
+      };
+    }
+
+    const now = Date.now();
+    const elapsedMs = now - this.idleSince.getTime();
+    const remainingMs = Math.max(this.idleTtlMs - elapsedMs, 0);
+    const secondsUntilShutdown = Math.round(
+      remainingMs / MILLISECONDS_IN_SECOND
+    );
+
+    return {
+      idleTtlMs: this.idleTtlMs,
+      lastActivityAt,
+      idleSince,
+      secondsUntilShutdown,
+    };
   }
 }
