@@ -30,6 +30,7 @@ const DEFAULT_PORT = Number.parseInt(
   10
 );
 const HEALTH_PATH = "/api/v1/health";
+const SHUTDOWN_PATH = "/api/v1/shutdown";
 const HTTP_TIMEOUT_MS = 2000;
 const supervisorRequire = createRequire(__filename);
 const INLINE_OPTION_REGEX = /^--(?<name>host|port)=(?<value>.+)$/u;
@@ -258,8 +259,69 @@ const startCore = async (options: CliOptions): Promise<void> => {
   );
 };
 
-const notImplemented = (command: Command): void => {
-  throw new Error(`Command "${command}" is not implemented yet.`);
+const stopCore = async (options: CliOptions): Promise<void> => {
+  const healthBefore = await readHealth(options);
+  if (!healthBefore) {
+    process.stdout.write(
+      `[core-supervisor] Core is not running at http://${options.host}:${options.port}.\n`
+    );
+    return;
+  }
+
+  process.stdout.write(
+    `[core-supervisor] Requesting shutdown for pid ${healthBefore.pid ?? "unknown"}...\n`
+  );
+  const response = await fetchWithTimeout(
+    `http://${options.host}:${options.port}${SHUTDOWN_PATH}`,
+    {
+      method: "POST",
+    }
+  );
+  if (!response.ok) {
+    throw new Error(`Shutdown request failed with status ${response.status}.`);
+  }
+
+  const stopped = await waitForShutdown(options);
+  if (!stopped) {
+    throw new Error("Core did not stop gracefully within the expected window.");
+  }
+  process.stdout.write("[core-supervisor] Core stopped successfully.\n");
+};
+
+const printStatus = async (options: CliOptions): Promise<void> => {
+  const health = await readHealth(options);
+  if (!health) {
+    process.stdout.write(
+      `[core-supervisor] Core is not reachable at http://${options.host}:${options.port}.\n`
+    );
+    return;
+  }
+
+  process.stdout.write(
+    `${JSON.stringify(
+      {
+        endpoint: `http://${options.host}:${options.port}`,
+        ...health,
+      },
+      null,
+      2
+    )}\n`
+  );
+};
+
+const waitForShutdown = async (
+  options: CliOptions,
+  attempts = 20,
+  delayMs = 500
+): Promise<boolean> => {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const health = await readHealth(options);
+    if (!health || health.status !== "ok") {
+      return true;
+    }
+    await delay(delayMs);
+  }
+  return false;
 };
 
 const main = async (): Promise<void> => {
@@ -269,10 +331,10 @@ const main = async (): Promise<void> => {
       await startCore(options);
       break;
     case "stop":
-      await notImplemented(command);
+      await stopCore(options);
       break;
     case "status":
-      await notImplemented(command);
+      await printStatus(options);
       break;
     default:
       printUsage();
