@@ -1,3 +1,4 @@
+import { readHealth } from "@codeai-hub/core-supervisor";
 import { window } from "vscode";
 import WebSocket from "ws";
 import type { CoreConnectionInfo } from "./core-connection-info";
@@ -22,10 +23,6 @@ export class CoreKeepAlive {
 
   private unsubscribeConnectionChange?: () => void;
 
-  private unsubscribeProcessExit?: () => void;
-
-  private pendingEnsure: Promise<void> | null = null;
-
   constructor(manager: CoreProcessManager) {
     this.manager = manager;
   }
@@ -43,11 +40,6 @@ export class CoreKeepAlive {
         this.scheduleReconnect(true);
       }
     );
-    this.unsubscribeProcessExit = this.manager.onProcessExit(() => {
-      this.log("Core process exited. Scheduling restart.");
-      this.scheduleReconnect(true);
-    });
-
     this.connectionInfo = this.manager.getConnectionInfo();
     this.scheduleReconnect(true);
   }
@@ -59,7 +51,6 @@ export class CoreKeepAlive {
 
     this.disposed = true;
     this.unsubscribeConnectionChange?.();
-    this.unsubscribeProcessExit?.();
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = undefined;
@@ -94,7 +85,6 @@ export class CoreKeepAlive {
       return;
     }
 
-    await this.ensureCoreAvailable();
     this.cleanupSocket();
     if (this.disposed) {
       return;
@@ -107,6 +97,7 @@ export class CoreKeepAlive {
       this.log(
         `Failed to initialize keepalive socket: ${this.describeError(error)}`
       );
+      await this.reportSupervisorStatus();
       this.scheduleReconnect();
       return;
     }
@@ -117,6 +108,9 @@ export class CoreKeepAlive {
 
     this.socket.on("close", () => {
       this.log("Keepalive connection closed.");
+      this.reportSupervisorStatus().catch(() => {
+        /* status logging already handled inside reportSupervisorStatus */
+      });
       this.scheduleReconnect();
     });
 
@@ -125,23 +119,48 @@ export class CoreKeepAlive {
     });
   }
 
-  private async ensureCoreAvailable(): Promise<void> {
-    if (!this.pendingEnsure) {
-      this.pendingEnsure = this.manager
-        .ensureStarted()
-        .catch((error) => {
-          this.log(
-            `Failed to ensure core availability: ${this.describeError(error)}`
-          );
-        })
-        .finally(() => {
-          this.pendingEnsure = null;
-        });
+  private async reportSupervisorStatus(): Promise<void> {
+    const options = this.resolveConnectionOptions();
+    if (!options) {
+      return;
     }
+    try {
+      const health = await readHealth(options);
+      if (health?.status === "ok") {
+        this.log(
+          `[Supervisor] Core reachable (pid ${
+            health.pid ?? "unknown"
+          }, version ${health.version ?? "unknown"}).`
+        );
+      } else {
+        this.log(
+          `[Supervisor] Core is not reachable at http://${options.host}:${options.port}.`
+        );
+      }
+    } catch (error) {
+      this.log(
+        `[Supervisor] Status check failed: ${this.describeError(error)}`
+      );
+    }
+  }
 
-    const pending = this.pendingEnsure;
-    if (pending) {
-      await pending;
+  private resolveConnectionOptions(): { host: string; port: number } | null {
+    const info = this.connectionInfo;
+    if (!info) {
+      return null;
+    }
+    try {
+      const url = new URL(info.httpUrl);
+      const port = Number.parseInt(url.port, 10);
+      if (!Number.isFinite(port) || port <= 0) {
+        return null;
+      }
+      return {
+        host: url.hostname,
+        port,
+      };
+    } catch {
+      return null;
     }
   }
 
