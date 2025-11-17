@@ -1,4 +1,7 @@
-import type { ProviderStackDescriptor } from "../../../../types/provider";
+import type {
+  ProviderStackDescriptor,
+  ProviderStackId,
+} from "../../../../types/provider";
 import { DEFAULT_CONFIG, FALLBACK_PROVIDERS } from "./constants";
 import { convertStatusResponse } from "./normalizers";
 import { createServerMessageHandler } from "./server-message-handler";
