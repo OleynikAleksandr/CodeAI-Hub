@@ -1,14 +1,11 @@
 import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
-import { homedir } from "node:os";
 import path from "node:path";
 import { Uri } from "vscode";
 import type { LauncherInstallInfo } from "./launcher-installer";
 import { ensureDirectory } from "./runtime-files";
 
 const CONFIG_FILE_NAME = "config.json";
-const WORKSPACE_STATE_DIR = path.join(homedir(), ".codeai-hub", "state");
-const WORKSPACE_STATE_FILE = path.join(WORKSPACE_STATE_DIR, "workspace-path");
 
 const buildLaunchArgs = (
   indexFilePath: string,
@@ -66,26 +63,12 @@ const ensureLauncherConfig = async (
   return configPath;
 };
 
-const persistWorkspaceState = async (workspacePath?: string): Promise<void> => {
-  if (!workspacePath) {
-    return;
-  }
-  try {
-    await ensureDirectory(WORKSPACE_STATE_DIR);
-    await fs.writeFile(WORKSPACE_STATE_FILE, `${workspacePath}\n`, "utf8");
-  } catch {
-    // best-effort persistence; ignore failures
-  }
-};
-
-export const ensureLauncherWorkspaceConfig = async (
+export const ensureLauncherWorkspaceConfig = (
   launcher: LauncherInstallInfo,
   indexFilePath: string,
   workspacePath?: string
-): Promise<string> => {
-  await persistWorkspaceState(workspacePath);
-  return ensureLauncherConfig(launcher, indexFilePath, workspacePath);
-};
+): Promise<string> =>
+  ensureLauncherConfig(launcher, indexFilePath, workspacePath);
 
 export const launchCefClient = async (
   launcher: LauncherInstallInfo,
