@@ -7,6 +7,8 @@ node_modules/@google-cloud/**
 node_modules/@modelcontextprotocol/**
 node_modules/@opentelemetry/**
 node_modules/@codeai-hub/**
+!node_modules/@codeai-hub/core-supervisor/**
+!node_modules/@codeai-hub/core/**
 node_modules/googleapis/**
 node_modules/google-auth-library/**
 node_modules/google-gax/**
