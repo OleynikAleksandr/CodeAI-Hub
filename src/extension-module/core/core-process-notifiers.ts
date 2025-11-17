@@ -17,19 +17,3 @@ export function notifyConnectionListeners(
     }
   }
 }
-
-export function notifyExitListeners(
-  subscribers: Iterable<() => void>,
-  channel: OutputChannel
-): void {
-  for (const subscriber of subscribers) {
-    try {
-      subscriber();
-    } catch (error) {
-      const reason = error instanceof Error ? error.message : String(error);
-      channel.appendLine(
-        `Process exit listener failed: ${reason ?? "unknown error"}.`
-      );
-    }
-  }
-}
