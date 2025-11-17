@@ -42,6 +42,7 @@ import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut
 
 let coreProcessManager: CoreProcessManager | null = null;
 let coreKeepAlive: CoreKeepAlive | null = null;
+let cachedLauncherInstallInfo: LauncherInstallInfo | null = null;
 
 const resolveWorkspacePath = (): string => {
   const folder = workspace.workspaceFolders?.[0];
@@ -88,15 +89,16 @@ async function resolveDeclaredCoreVersion(
 }
 
 async function handleLaunchWebClientCommand(
-  context: ExtensionContext,
+  _context: ExtensionContext,
   indexPath: string
 ): Promise<void> {
   const workspacePath = resolveWorkspacePath();
-  const ensuredLauncher = await ensureLauncherDependencies(
-    context,
-    indexPath,
-    workspacePath
-  );
+  if (!cachedLauncherInstallInfo) {
+    window.showWarningMessage(
+      "CodeAI Hub launcher is not configured. Reload the extension to install required components."
+    );
+    return;
+  }
   if (coreProcessManager) {
     try {
       await coreProcessManager.ensureStarted();
@@ -107,14 +109,14 @@ async function handleLaunchWebClientCommand(
       );
     }
   }
-  await launchCefClient(ensuredLauncher, indexPath, workspacePath);
+  await launchCefClient(cachedLauncherInstallInfo, indexPath, workspacePath);
 }
 
 async function initializeCoreManager(context: ExtensionContext): Promise<void> {
   const declaredVersion = await resolveDeclaredCoreVersion(context);
   const logger = getExtensionLogger();
   logger.log("core-manager:init", { declaredVersion });
-  coreProcessManager = new CoreProcessManager(context);
+  coreProcessManager = new CoreProcessManager();
   coreProcessManager.setDeclaredVersion(declaredVersion);
   logger.log("core-manager:attachToRunningCore:start", {
     targetVersion: declaredVersion,
@@ -152,7 +154,11 @@ async function prepareLocalRuntime(
 
   try {
     const workspacePath = resolveWorkspacePath();
-    await ensureLauncherDependencies(context, indexPath, workspacePath);
+    cachedLauncherInstallInfo = await ensureLauncherDependencies(
+      context,
+      indexPath,
+      workspacePath
+    );
     await initializeCoreManager(context);
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
