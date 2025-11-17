@@ -3,6 +3,11 @@
 import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import path from "node:path";
+import { CoreManagerLock } from "./state/core-lock";
+import {
+  clearCorePortPreference,
+  recordCorePortPreference,
+} from "./state/runtime-registry";
 
 type Command = "start" | "stop" | "status" | "help";
 
@@ -228,35 +233,50 @@ const startCore = async (options: CliOptions): Promise<void> => {
     process.stdout.write(
       `[core-supervisor] Core already running at http://${options.host}:${options.port} (pid ${alreadyRunning.pid ?? "unknown"}).\n`
     );
+    await recordCorePortPreference(options.port);
     return;
   }
 
-  const entryPoint = resolveCoreEntryPoint();
-  const child = spawn(process.execPath, [entryPoint], {
-    detached: true,
-    stdio: "ignore",
-    env: {
-      ...process.env,
-      CORE_HOST: options.host,
-      CORE_PORT: `${options.port}`,
-      CORE_MANAGED_MODE: "cli",
-    },
-  });
-  child.unref();
-
-  process.stdout.write(
-    `[core-supervisor] Starting CodeAI Hub core (pid ${child.pid ?? "unknown"})...\n`
-  );
-
-  const ready = await waitForHealthy(options);
-  if (!ready) {
-    throw new Error(
-      `Core did not become healthy via ${HEALTH_PATH}. Check logs and try again.`
+  const lock = new CoreManagerLock("core-supervisor-cli");
+  const acquisition = lock.acquire();
+  if (!acquisition.acquired) {
+    process.stdout.write(
+      `[core-supervisor] Core start skipped: managed by ${acquisition.owner ?? "another manager"}.\n`
     );
+    return;
   }
-  process.stdout.write(
-    `[core-supervisor] Core is ready at http://${options.host}:${options.port}.\n`
-  );
+
+  try {
+    const entryPoint = resolveCoreEntryPoint();
+    const child = spawn(process.execPath, [entryPoint], {
+      detached: true,
+      stdio: "ignore",
+      env: {
+        ...process.env,
+        CORE_HOST: options.host,
+        CORE_PORT: `${options.port}`,
+        CORE_MANAGED_MODE: "cli",
+      },
+    });
+    child.unref();
+
+    process.stdout.write(
+      `[core-supervisor] Starting CodeAI Hub core (pid ${child.pid ?? "unknown"})...\n`
+    );
+
+    const ready = await waitForHealthy(options);
+    if (!ready) {
+      throw new Error(
+        `Core did not become healthy via ${HEALTH_PATH}. Check logs and try again.`
+      );
+    }
+    await recordCorePortPreference(options.port);
+    process.stdout.write(
+      `[core-supervisor] Core is ready at http://${options.host}:${options.port}.\n`
+    );
+  } finally {
+    lock.release();
+  }
 };
 
 const stopCore = async (options: CliOptions): Promise<void> => {
@@ -285,6 +305,7 @@ const stopCore = async (options: CliOptions): Promise<void> => {
   if (!stopped) {
     throw new Error("Core did not stop gracefully within the expected window.");
   }
+  await clearCorePortPreference();
   process.stdout.write("[core-supervisor] Core stopped successfully.\n");
 };
 
