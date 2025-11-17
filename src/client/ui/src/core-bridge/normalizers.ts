@@ -38,12 +38,14 @@ const sanitizeProvider = (
     return null;
   }
 
+  const isActive = provider.status === "active";
+
   return {
     id: providerId,
     title: provider.name ?? getDefaultProviderTitle(providerId),
     description:
       provider.description ?? getDefaultProviderDescription(providerId),
-    connected: provider.status !== "inactive",
+    connected: isActive,
     statusMessage:
       typeof provider.statusMessage === "string"
         ? provider.statusMessage

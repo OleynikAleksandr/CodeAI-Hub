@@ -52,6 +52,12 @@ const StatusPanel = ({
         <span className="session-status__label">Providers</span>
         <span className="session-status__value">{providerSummary}</span>
       </div>
+      <div className="session-status__row session-status__row--muted">
+        <span className="session-status__label">Status</span>
+        <span className="session-status__value">
+          Inactive or degraded providers are disabled in the picker.
+        </span>
+      </div>
       <div className="session-status__row">
         <span className="session-status__label">Tokens</span>
         <span className="session-status__value">
