@@ -61,7 +61,7 @@ type WebviewDispatchHandlers = SessionDispatchHandlers & {
   readonly onProviderPickerOpen: ProviderPickerOpenHandler;
   readonly onShowSettings: VoidHandler;
   readonly onCoreState?: (payload: CoreBridgeStatePayload) => void;
-  readonly onCoreConnectionStatus?: (status: string) => void;
+  readonly onCoreConnectionStatus?: (status: string, detail?: string) => void;
   readonly onCoreLoadingStatus?: (payload: CoreRuntimeStatusPayload) => void;
 };
 
@@ -206,17 +206,6 @@ export const dispatchWebviewMessage = (
 
   const message = rawMessage;
 
-  if (message.type === "core:connection") {
-    if (handlers.onCoreConnectionStatus && message.payload) {
-      const candidate = message.payload as Record<string, unknown>;
-      const status = candidate.status;
-      if (typeof status === "string") {
-        handlers.onCoreConnectionStatus(status);
-      }
-    }
-    return;
-  }
-
   if (
     dispatchSessionMessage(message, {
       onSessionCreated: handlers.onSessionCreated,
@@ -231,22 +220,32 @@ export const dispatchWebviewMessage = (
     return;
   }
 
-  if (message.type === "providerPicker:open") {
-    handleProviderPickerOpenMessage(message, handlers.onProviderPickerOpen);
-    return;
-  }
-
-  if (message.type === "ui:showSettings") {
-    handlers.onShowSettings();
-    return;
-  }
-
-  if (message.type === "core:state") {
-    handleCoreStateMessage(message, handlers.onCoreState);
-    return;
-  }
-
-  if (message.type === "core:loading-status") {
-    handleCoreLoadingStatusMessage(message, handlers.onCoreLoadingStatus);
+  switch (message.type) {
+    case "core:connection": {
+      if (handlers.onCoreConnectionStatus && message.payload) {
+        const candidate = message.payload as Record<string, unknown>;
+        const status = candidate.status;
+        if (typeof status === "string") {
+          const detail =
+            typeof candidate.detail === "string" ? candidate.detail : undefined;
+          handlers.onCoreConnectionStatus(status, detail);
+        }
+      }
+      return;
+    }
+    case "providerPicker:open":
+      handleProviderPickerOpenMessage(message, handlers.onProviderPickerOpen);
+      return;
+    case "ui:showSettings":
+      handlers.onShowSettings();
+      return;
+    case "core:state":
+      handleCoreStateMessage(message, handlers.onCoreState);
+      return;
+    case "core:loading-status":
+      handleCoreLoadingStatusMessage(message, handlers.onCoreLoadingStatus);
+      return;
+    default:
+      return;
   }
 };
