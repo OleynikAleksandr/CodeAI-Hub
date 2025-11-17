@@ -8,6 +8,7 @@
 #include "cef_parser.h"
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
+#include "core_launcher.h"
 #include "wrapper/cef_closure_task.h"
 #include "wrapper/cef_helpers.h"
 
@@ -98,9 +99,17 @@ void LauncherHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
 
   std::stringstream ss;
   ss << "<html><body bgcolor=\"white\">"
-        "<h2>Failed to load URL "
-     << failed_url.ToString() << " with error " << error_text.ToString() << " ("
-     << error_code << ").</h2></body></html>";
+        "<h2>Unable to load CodeAI Hub UI</h2>"
+        "<p>Failed to load URL <code>"
+     << failed_url.ToString()
+     << "</code> with error "
+     << error_text.ToString() << " (" << error_code
+     << ").</p>"
+        "<p>The core process is managed by the Core Supervisor. "
+        "Please check the core runtime status at "
+        "<code>/api/v1/status</code> or consult the launcher logs under "
+        "<code>~/.codeai-hub/logs/launcher/launcher.log</code>.</p>"
+        "</body></html>";
 
   frame->LoadURL(ToDataUri(ss.str(), "text/html"));
 }

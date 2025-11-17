@@ -90,10 +90,10 @@ struct LockAcquisitionResult {
 bool g_manager_lock_acquired = false;
 std::filesystem::path g_manager_lock_path;
 const std::string kLauncherManagerId = "launcher";
+
 std::string g_workspace_override;
 
 std::filesystem::path GetHomeDirectory();
-void ReleaseManagerLock();
 
 std::string CurrentTimestamp() {
   const auto now = std::chrono::system_clock::now();
@@ -601,6 +601,50 @@ bool LaunchProcess(
   CloseHandle(processInfo.hThread);
   return true;
 }
+
+bool LaunchSupervisorStart(
+  const std::string& host,
+  int port
+) {
+  const std::wstring hostWide(host.begin(), host.end());
+  const std::wstring portWide = std::to_wstring(port);
+  std::wstring command =
+    L"codeai-core start --host " + hostWide + L" --port " + portWide;
+
+  STARTUPINFOW startupInfo;
+  PROCESS_INFORMATION processInfo;
+  ZeroMemory(&startupInfo, sizeof(startupInfo));
+  ZeroMemory(&processInfo, sizeof(processInfo));
+  startupInfo.cb = sizeof(startupInfo);
+
+  BOOL success = CreateProcessW(
+    nullptr,
+    command.data(),
+    nullptr,
+    nullptr,
+    FALSE,
+    CREATE_NO_WINDOW,
+    nullptr,
+    nullptr,
+    &startupInfo,
+    &processInfo);
+
+  if (!success) {
+    DWORD error = GetLastError();
+    LogLauncherError(
+      "CreateProcessW failed for codeai-core with error code " +
+      std::to_string(error));
+    std::fprintf(
+      stderr,
+      "CodeAIHubLauncher: failed to start core supervisor (error %lu)\n",
+      error);
+    return false;
+  }
+
+  CloseHandle(processInfo.hProcess);
+  CloseHandle(processInfo.hThread);
+  return true;
+}
 #else
 bool LaunchProcess(
   const std::filesystem::path& executable,
@@ -619,7 +663,48 @@ bool LaunchProcess(
       "posix_spawn failed with status " + std::to_string(status));
     std::fprintf(
       stderr,
-      "CodeAIHubLauncher: posix_spawn failed to start core (status %d)\n",
+  "CodeAIHubLauncher: posix_spawn failed to start core (status %d)\n",
+      status);
+    return false;
+  }
+  return true;
+}
+
+bool LaunchSupervisorStart(
+  const std::string& host,
+  int port
+) {
+  std::vector<std::string> args;
+  args.emplace_back("codeai-core");
+  args.emplace_back("start");
+  args.emplace_back("--host");
+  args.push_back(host);
+  args.emplace_back("--port");
+  args.push_back(std::to_string(port));
+
+  std::vector<char*> argv;
+  argv.reserve(args.size() + 1);
+  for (std::string& arg : args) {
+    argv.push_back(arg.data());
+  }
+  argv.push_back(nullptr);
+
+  pid_t pid;
+  const int status = posix_spawnp(
+    &pid,
+    "codeai-core",
+    nullptr,
+    nullptr,
+    argv.data(),
+    environ
+  );
+  if (status != 0) {
+    LogLauncherError(
+      "posix_spawnp failed for codeai-core with status " +
+      std::to_string(status));
+    std::fprintf(
+      stderr,
+      "CodeAIHubLauncher: posix_spawnp failed to start core supervisor (status %d)\n",
       status);
     return false;
   }
@@ -908,6 +993,10 @@ struct CoreHealthInfo {
   int pid = 0;
 };
 
+struct CoreStatusSummary {
+  bool healthy = false;
+};
+
 #ifdef _WIN32
 bool SendAll(SOCKET sock, const std::string& data) {
   size_t total = 0;
@@ -1090,6 +1179,24 @@ std::optional<CoreHealthInfo> QueryCoreHealth(
     info.pid = *pid;
   }
   return info;
+}
+
+std::optional<CoreStatusSummary> QueryCoreStatus(
+  const std::string& host,
+  int port
+) {
+  const std::string request =
+    "GET /api/v1/status HTTP/1.1\r\nHost: " + host + ":" +
+    std::to_string(port) +
+    "\r\nConnection: close\r\n\r\n";
+  const auto response = PerformHttpRequest(host, port, request);
+  if (!response.has_value() || response->status != 200) {
+    return std::nullopt;
+  }
+
+  CoreStatusSummary summary;
+  summary.healthy = true;
+  return summary;
 }
 
 bool RequestCoreShutdown(const std::string& host, int port) {
@@ -1308,54 +1415,14 @@ bool EnsureCoreProcessRunning() {
     " for CodeAI Hub core startup.");
   SetEnv("CORE_PORT", std::to_string(selectedPort));
 
-  const std::filesystem::path nodeExecutable = ResolveNodeExecutable(*runtimeDir);
-  const std::filesystem::path entryPoint = ResolveEntryPoint(*runtimeDir);
-
-  if (!std::filesystem::exists(nodeExecutable)) {
-    LogLauncherError(
-      "Node executable missing at " + nodeExecutable.string());
-    std::fprintf(
-      stderr,
-      "CodeAIHubLauncher: node executable missing at %s\n",
-      nodeExecutable.string().c_str());
-    return false;
-  }
-  if (!std::filesystem::exists(entryPoint)) {
-    LogLauncherError(
-      "Core entry point missing at " + entryPoint.string());
-    std::fprintf(
-      stderr,
-      "CodeAIHubLauncher: entry point missing at %s\n",
-      entryPoint.string().c_str());
-    return false;
-  }
-
   EnsureGlobalEnvironment(*runtimeDir, home);
   ExportProviderEnvironment(home);
 
-  const bool hadManagerLock = g_manager_lock_acquired;
-  bool acquiredThisRun = false;
-  if (!hadManagerLock) {
-    const LockAcquisitionResult lockResult = AcquireManagerLock(home);
-    if (!lockResult.acquired) {
-      LogLauncherWarn(
-        "Core manager lock held by " +
-        (lockResult.owner.empty() ? std::string("another manager")
-                                  : lockResult.owner) +
-        ". Skipping launch.");
-      return false;
-    }
-    acquiredThisRun = true;
-  }
-
   LogLauncherInfo(
-    "Launching core orchestrator using " +
-    nodeExecutable.string() + " " + entryPoint.string());
-  if (!LaunchProcess(nodeExecutable, entryPoint)) {
-    LogLauncherError("Failed to spawn core orchestrator process");
-    if (acquiredThisRun) {
-      ReleaseManagerLock();
-    }
+    "Requesting CodeAI Hub core startup via Supervisor on " +
+    FormatEndpoint(host, selectedPort));
+  if (!LaunchSupervisorStart(host, selectedPort)) {
+    LogLauncherError("Failed to start core via Supervisor CLI");
     return false;
   }
 
@@ -1375,9 +1442,6 @@ bool EnsureCoreProcessRunning() {
   std::fprintf(
     stderr,
     "CodeAIHubLauncher: core did not become ready within timeout\n");
-  if (acquiredThisRun) {
-    ReleaseManagerLock();
-  }
   return false;
 }
 
@@ -1397,11 +1461,13 @@ void MonitorCoreHealth() {
     GetEnvOrDefault("CORE_PORT", std::to_string(kDefaultPort)),
     kDefaultPort);
 
-  if (!IsCoreListening(host, port)) {
+  const auto status = QueryCoreStatus(host, port);
+  if (!status.has_value() || !status->healthy) {
     LogLauncherWarn(
       "Core monitoring detected core is unreachable on " +
-      FormatEndpoint(host, port) + ", attempting restart");
-    EnsureCoreProcessRunning();
+      FormatEndpoint(host, port) +
+      "; core will not be restarted automatically. "
+      "Check /api/v1/status for details.");
   }
 
   CefPostDelayedTask(
