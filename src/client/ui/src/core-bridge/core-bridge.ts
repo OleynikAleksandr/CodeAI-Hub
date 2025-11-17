@@ -1,44 +1,14 @@
-import {
-  getDefaultProviderDescription,
-  getDefaultProviderTitle,
-  type ProviderStackDescriptor,
-  type ProviderStackId,
-} from "../../../../types/provider";
+import type { ProviderStackDescriptor } from "../../../../types/provider";
+import { DEFAULT_CONFIG, FALLBACK_PROVIDERS } from "./constants";
 import { convertStatusResponse } from "./normalizers";
 import { createServerMessageHandler } from "./server-message-handler";
 import { loadSessionHistories } from "./session-history";
 import type { CoreBridgeConfig, ServerStatusResponse } from "./types";
 
-const DEFAULT_CONFIG: CoreBridgeConfig = {
-  httpUrl: "http://127.0.0.1:8080",
-  wsUrl: "ws://127.0.0.1:8080/api/v1/stream",
-};
-
 const RECONNECT_DELAY_MS = 2000;
 const globalScope = window as typeof window & {
   __CODEAI_CORE_CONFIG?: CoreBridgeConfig;
 };
-
-const FALLBACK_PROVIDERS: ProviderStackDescriptor[] = [
-  {
-    id: "claudeCodeCli",
-    title: getDefaultProviderTitle("claudeCodeCli"),
-    description: getDefaultProviderDescription("claudeCodeCli"),
-    connected: true,
-  },
-  {
-    id: "codexCli",
-    title: getDefaultProviderTitle("codexCli"),
-    description: getDefaultProviderDescription("codexCli"),
-    connected: true,
-  },
-  {
-    id: "geminiCli",
-    title: getDefaultProviderTitle("geminiCli"),
-    description: getDefaultProviderDescription("geminiCli"),
-    connected: true,
-  },
-];
 
 type CoreConnectionStatus = "connecting" | "ready" | "error";
 
@@ -54,9 +24,8 @@ const resolveConfig = (): CoreBridgeConfig => {
   return config;
 };
 
-const notifyWindow = (message: Record<string, unknown>): void => {
+const notifyWindow = (message: Record<string, unknown>): void =>
   window.postMessage(message, "*");
-};
 
 let initialized = false;
 let hasSuccessfulConnection = false;
@@ -65,15 +34,23 @@ let reconnectTimer: number | undefined;
 let cachedProviders: ProviderStackDescriptor[] = [...FALLBACK_PROVIDERS];
 const pendingMessages: string[] = [];
 let currentConnectionStatus: CoreConnectionStatus | "idle" = "idle";
+let currentConnectionDetail: string | undefined;
 
-const notifyConnectionStatus = (status: CoreConnectionStatus): void => {
-  if (currentConnectionStatus === status) {
+const notifyConnectionStatus = (
+  status: CoreConnectionStatus,
+  detail?: string
+): void => {
+  if (
+    currentConnectionStatus === status &&
+    currentConnectionDetail === detail
+  ) {
     return;
   }
   currentConnectionStatus = status;
+  currentConnectionDetail = detail;
   notifyWindow({
     type: "core:connection",
-    payload: { status },
+    payload: { status, detail },
   });
 };
 
@@ -100,7 +77,12 @@ const scheduleReconnect = (config: CoreBridgeConfig): void => {
   if (reconnectTimer) {
     return;
   }
-  notifyConnectionStatus("connecting");
+  notifyConnectionStatus(
+    "connecting",
+    hasSuccessfulConnection
+      ? "Reconnecting to CodeAI Hub core…"
+      : "Starting CodeAI Hub core via Supervisor…"
+  );
   if (!hasSuccessfulConnection) {
     try {
       type VsCodeWindow = typeof window & {
@@ -142,9 +124,15 @@ const connectWebSocket = (config: CoreBridgeConfig): void => {
   });
   websocket.addEventListener("error", () => {
     if (hasSuccessfulConnection) {
-      notifyConnectionStatus("error");
+      notifyConnectionStatus(
+        "error",
+        "Unable to reach CodeAI Hub core. Supervisor will retry automatically."
+      );
     } else {
-      notifyConnectionStatus("connecting");
+      notifyConnectionStatus(
+        "connecting",
+        "Waiting for CodeAI Hub core to respond…"
+      );
     }
     scheduleReconnect(config);
   });
@@ -156,7 +144,10 @@ const fetchStatusSnapshot = async (config: CoreBridgeConfig): Promise<void> => {
     });
     if (!response.ok) {
       if (!hasSuccessfulConnection) {
-        notifyConnectionStatus("connecting");
+        notifyConnectionStatus(
+          "connecting",
+          "Waiting for status response from CodeAI Hub core…"
+        );
       }
       return;
     }
@@ -176,7 +167,10 @@ const fetchStatusSnapshot = async (config: CoreBridgeConfig): Promise<void> => {
     });
   } catch {
     if (!hasSuccessfulConnection) {
-      notifyConnectionStatus("connecting");
+      notifyConnectionStatus(
+        "connecting",
+        "Waiting for status response from CodeAI Hub core…"
+      );
     }
     /* Ignore status fetch failures; the UI will retry when the user interacts. */
   }
@@ -184,11 +178,9 @@ const fetchStatusSnapshot = async (config: CoreBridgeConfig): Promise<void> => {
 const ensureProvidersAvailable = async (
   config: CoreBridgeConfig
 ): Promise<readonly ProviderStackDescriptor[]> => {
-  if (cachedProviders.length > 0) {
-    return cachedProviders;
+  if (cachedProviders.length === 0) {
+    await fetchStatusSnapshot(config);
   }
-
-  await fetchStatusSnapshot(config);
   return cachedProviders;
 };
 
