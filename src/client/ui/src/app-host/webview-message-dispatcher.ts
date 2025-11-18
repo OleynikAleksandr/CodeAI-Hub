@@ -14,7 +14,6 @@ import {
 } from "../session/helpers";
 import type {
   CoreLoadingStatusMessage,
-  CoreShutdownMessage,
   CoreStateMessage,
   IncomingMessage,
   ProviderPickerOpenMessage,
@@ -22,7 +21,6 @@ import type {
   SessionCreatedMessage,
   SessionDeletedMessage,
   SessionMessageEvent,
-  SessionWindowStateMessage,
 } from "./webview-message-types";
 import {
   isCoreBridgeStatePayload,
@@ -32,7 +30,6 @@ import {
   isSessionDeletedPayload,
   isSessionHistoryPayload,
   isSessionMessagePayload,
-  isSessionWindowStatePayload,
 } from "./webview-message-types";
 
 type ProviderPickerOpenHandler = (
@@ -58,19 +55,14 @@ type SessionDispatchHandlers = {
     readonly sessionId: string;
     readonly messages: readonly SessionMessage[];
   }) => void;
-  readonly onSessionWindowState?: (payload: {
-    readonly sessionId: string;
-    readonly mode: "attached" | "detached";
-  }) => void;
 };
 
 type WebviewDispatchHandlers = SessionDispatchHandlers & {
   readonly onProviderPickerOpen: ProviderPickerOpenHandler;
   readonly onShowSettings: VoidHandler;
   readonly onCoreState?: (payload: CoreBridgeStatePayload) => void;
-  readonly onCoreConnectionStatus?: (status: string) => void;
+  readonly onCoreConnectionStatus?: (status: string, detail?: string) => void;
   readonly onCoreLoadingStatus?: (payload: CoreRuntimeStatusPayload) => void;
-  readonly onCoreShutdown?: (payload: unknown) => void;
 };
 
 const handleProviderPickerOpenMessage = (
@@ -159,20 +151,6 @@ const handleSessionBindingMessage = (
   onSessionBinding(message.payload);
 };
 
-const handleSessionWindowStateMessage = (
-  message: SessionWindowStateMessage,
-  onSessionWindowState?: (payload: {
-    readonly sessionId: string;
-    readonly mode: "attached" | "detached";
-  }) => void
-): void => {
-  if (!(onSessionWindowState && isSessionWindowStatePayload(message.payload))) {
-    return;
-  }
-
-  onSessionWindowState(message.payload);
-};
-
 const handleCoreLoadingStatusMessage = (
   message: CoreLoadingStatusMessage,
   onCoreLoadingStatus?: (payload: CoreRuntimeStatusPayload) => void
@@ -210,9 +188,6 @@ const dispatchSessionMessage = (
     case "session:history":
       handleSessionHistoryMessage(message, handlers.onSessionHistory);
       return true;
-    case "session:windowState":
-      handleSessionWindowStateMessage(message, handlers.onSessionWindowState);
-      return true;
     default:
       return false;
   }
@@ -231,17 +206,6 @@ export const dispatchWebviewMessage = (
 
   const message = rawMessage;
 
-  if (message.type === "core:connection") {
-    if (handlers.onCoreConnectionStatus && message.payload) {
-      const candidate = message.payload as Record<string, unknown>;
-      const status = candidate.status;
-      if (typeof status === "string") {
-        handlers.onCoreConnectionStatus(status);
-      }
-    }
-    return;
-  }
-
   if (
     dispatchSessionMessage(message, {
       onSessionCreated: handlers.onSessionCreated,
@@ -251,34 +215,37 @@ export const dispatchWebviewMessage = (
       onSessionDeleted: handlers.onSessionDeleted,
       onSessionBinding: handlers.onSessionBinding,
       onSessionHistory: handlers.onSessionHistory,
-      onSessionWindowState: handlers.onSessionWindowState,
     })
   ) {
     return;
   }
 
-  if (message.type === "providerPicker:open") {
-    handleProviderPickerOpenMessage(message, handlers.onProviderPickerOpen);
-    return;
-  }
-
-  if (message.type === "ui:showSettings") {
-    handlers.onShowSettings();
-    return;
-  }
-
-  if (message.type === "core:state") {
-    handleCoreStateMessage(message, handlers.onCoreState);
-    return;
-  }
-
-  if (message.type === "core:loading-status") {
-    handleCoreLoadingStatusMessage(message, handlers.onCoreLoadingStatus);
-    return;
-  }
-
-  if (message.type === "core:shutdown") {
-    const shutdownMessage = message as CoreShutdownMessage;
-    handlers.onCoreShutdown?.(shutdownMessage.payload);
+  switch (message.type) {
+    case "core:connection": {
+      if (handlers.onCoreConnectionStatus && message.payload) {
+        const candidate = message.payload as Record<string, unknown>;
+        const status = candidate.status;
+        if (typeof status === "string") {
+          const detail =
+            typeof candidate.detail === "string" ? candidate.detail : undefined;
+          handlers.onCoreConnectionStatus(status, detail);
+        }
+      }
+      return;
+    }
+    case "providerPicker:open":
+      handleProviderPickerOpenMessage(message, handlers.onProviderPickerOpen);
+      return;
+    case "ui:showSettings":
+      handlers.onShowSettings();
+      return;
+    case "core:state":
+      handleCoreStateMessage(message, handlers.onCoreState);
+      return;
+    case "core:loading-status":
+      handleCoreLoadingStatusMessage(message, handlers.onCoreLoadingStatus);
+      return;
+    default:
+      return;
   }
 };

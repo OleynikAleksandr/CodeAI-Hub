@@ -21,19 +21,17 @@ import type {
   CoreBridgeSessionMessagePayload,
   CoreBridgeStatePayload,
 } from "./core-bridge/types";
-import { getWindowContext, isStandaloneClient } from "./environment";
 import { ProviderPicker } from "./provider-picker";
 import { activateRoot } from "./root-dom";
-import { requestSessionDetach } from "./session/detach-actions";
 import SessionView from "./session/session-view";
 
 const AppHost = () => {
-  const windowContext = useMemo(() => getWindowContext(), []);
-  const isDetachedWindow = windowContext.mode === "detached";
-  const isStandalone = isStandaloneClient();
   const [coreStatus, setCoreStatus] = useState<
     "connecting" | "ready" | "error"
   >("connecting");
+  const [coreStatusDetail, setCoreStatusDetail] = useState<string | undefined>(
+    undefined
+  );
   const [coreFinalized, setCoreFinalized] = useState(false);
   const [messages, setMessages] = useState<Record<MessageId, LoadingMessage>>(
     createDefaultMessages
@@ -53,14 +51,12 @@ const AppHost = () => {
     sessions,
     snapshots,
     activeSessionId,
-    detachedSessionIds,
     handleSessionCreated,
     hydrateFromCoreState,
     handleSessionMessageEvent,
     handleSessionHistoryEvent,
     handleSessionDeleted,
     handleSessionBindingUpdate,
-    handleSessionWindowState,
     clearSessions,
     focusLastSession,
     selectSession,
@@ -68,11 +64,10 @@ const AppHost = () => {
     toggleTodo,
     sendMessage,
   } = useSessionStore(providerLabels);
+
   const { settingsVisible, openSettings, closeSettings } =
     useSettingsVisibility();
-  const handleDetachSession = useCallback((sessionId: string) => {
-    requestSessionDetach(sessionId);
-  }, []);
+
   const handleProviderPickerOpen = useCallback(
     (providers: readonly ProviderStackDescriptor[]) => {
       activateRoot();
@@ -110,6 +105,7 @@ const AppHost = () => {
     },
     [handleSessionMessageEvent]
   );
+
   const handleSessionHistory = useCallback(
     (payload: {
       readonly sessionId: string;
@@ -120,6 +116,7 @@ const AppHost = () => {
     },
     [handleSessionHistoryEvent]
   );
+
   const handleSessionDeletedMessage = useCallback(
     (payload: { readonly sessionId: string }) => {
       activateRoot();
@@ -127,22 +124,13 @@ const AppHost = () => {
     },
     [handleSessionDeleted]
   );
+
   const handleSessionBindingMessage = useCallback(
     (payload: CoreBridgeSessionBindingPayload) => {
       activateRoot();
       handleSessionBindingUpdate(payload);
     },
     [handleSessionBindingUpdate]
-  );
-  const handleSessionWindowStateMessage = useCallback(
-    (payload: {
-      readonly sessionId: string;
-      readonly mode: "attached" | "detached";
-    }) => {
-      activateRoot();
-      handleSessionWindowState(payload);
-    },
-    [handleSessionWindowState]
   );
 
   useWebviewMessageHandler({
@@ -152,9 +140,10 @@ const AppHost = () => {
     onSessionFocusLast: focusLastSession,
     onShowSettings: handleShowSettings,
     onCoreState: handleCoreState,
-    onCoreConnectionStatus: (status) => {
+    onCoreConnectionStatus: (status, detail) => {
       if (status === "connecting" || status === "ready" || status === "error") {
         setCoreStatus(status);
+        setCoreStatusDetail(detail);
         if (status === "connecting") {
           setCoreFinalized(false);
           setMessages(createDefaultMessages());
@@ -195,12 +184,6 @@ const AppHost = () => {
     onSessionDeleted: handleSessionDeletedMessage,
     onSessionBinding: handleSessionBindingMessage,
     onSessionHistory: handleSessionHistory,
-    onSessionWindowState: handleSessionWindowStateMessage,
-    onCoreShutdown: () => {
-      if (isDetachedWindow) {
-        window.close();
-      }
-    },
   });
 
   const isCoreReady = coreStatus === "ready" && coreFinalized;
@@ -228,22 +211,21 @@ const AppHost = () => {
     if (coreStatus === "error") {
       return {
         headlineText: "Please hold on - we are getting CodeAI Hub ready.",
-        statusLine: "Unable to reach CodeAI Hub core. Retrying...",
+        statusLine:
+          coreStatusDetail ?? "Unable to reach CodeAI Hub core. Retrying...",
         detailLine: undefined,
       };
     }
     return {
       headlineText: "Please hold on - we are getting CodeAI Hub ready.",
       statusLine: currentMessage.status,
-      detailLine: currentMessage.detail,
+      detailLine: coreStatusDetail ?? currentMessage.detail,
     };
-  }, [coreStatus, currentMessage]);
-
-  const showActionBar = !(isStandalone || isDetachedWindow);
+  }, [coreStatus, coreStatusDetail, currentMessage]);
 
   return (
     <div className="app-shell">
-      {showActionBar ? <ActionBar disabled={!isCoreReady} /> : null}
+      <ActionBar disabled={!isCoreReady} />
       <div className="app-shell__session-region">
         <ProviderPicker
           onCancel={cancelSelection}
@@ -254,9 +236,9 @@ const AppHost = () => {
         {pickerState.visible ? null : (
           <SessionView
             activeSessionId={activeSessionId}
-            detachedSessionIds={detachedSessionIds}
+            coreConnectionDetail={coreStatusDetail}
+            coreConnectionStatus={coreStatus}
             onCloseSession={closeSession}
-            onDetachSession={handleDetachSession}
             onSelectSession={selectSession}
             onSendMessage={sendMessage}
             onToggleTodo={toggleTodo}

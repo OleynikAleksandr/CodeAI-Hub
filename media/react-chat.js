@@ -7281,11 +7281,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react19 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host.tsx
-  var import_react18 = __toESM(require_react());
+  var import_react14 = __toESM(require_react());
 
   // src/client/ui/src/app-host/loading-messages.ts
   var MESSAGE_ORDER = [
@@ -7348,11 +7348,6 @@
   // src/client/ui/src/provider-picker.tsx
   var import_react = __toESM(require_react());
   var import_jsx_runtime = __toESM(require_jsx_runtime());
-  var RECOVERY_HINTS = {
-    claudeCodeCli: "Claude CLI disconnected. Check your usage limits, run `claude whoami` in the terminal, then run `claude logout && claude login` before retrying.",
-    codexCli: "Codex CLI disconnected. Check your usage limits, run `codex whoami` (or any request) in the terminal, then run `codex logout && codex login` before retrying.",
-    geminiCli: "Gemini CLI disconnected. Check your usage limits, run `gemini whoami` in the terminal, then run `gemini logout && gemini login` before retrying."
-  };
   var defaultPickerState = {
     visible: false,
     providers: []
@@ -7365,9 +7360,9 @@
     inputRef
   }) => {
     const disabled = !provider.connected;
-    const statusLabel = provider.connected ? "Connected" : "Not connected";
+    const statusLabel = provider.connected ? "Available" : "Unavailable";
     const statusClassName = provider.connected ? "provider-picker__label-status provider-picker__label-status--connected" : "provider-picker__label-status provider-picker__label-status--disconnected";
-    const warning = disabled ? provider.statusMessage?.trim() || RECOVERY_HINTS[provider.id] : null;
+    const warning = provider.statusMessage;
     const handleChange = () => {
       onToggle(provider.id);
     };
@@ -7685,99 +7680,22 @@
     };
   };
 
-  // src/client/ui/src/diagnostics/log.ts
-  var logUiDiagnostic = (message) => {
-    try {
-      const payload = {
-        type: "ui:diagnostic-log",
-        payload: { message }
-      };
-      postVsCodeMessage(payload);
-    } catch {
-    }
+  // src/client/ui/src/core-bridge/constants.ts
+  var DEFAULT_CONFIG = {
+    httpUrl: "http://127.0.0.1:8080",
+    wsUrl: "ws://127.0.0.1:8080/api/v1/stream"
   };
-
-  // src/client/ui/src/core-bridge/fallback-providers.ts
-  var FALLBACK_PROVIDERS = [
-    {
-      id: "claudeCodeCli",
-      title: getDefaultProviderTitle("claudeCodeCli"),
-      description: getDefaultProviderDescription("claudeCodeCli"),
-      connected: true
-    },
-    {
-      id: "codexCli",
-      title: getDefaultProviderTitle("codexCli"),
-      description: getDefaultProviderDescription("codexCli"),
-      connected: true
-    },
-    {
-      id: "geminiCli",
-      title: getDefaultProviderTitle("geminiCli"),
-      description: getDefaultProviderDescription("geminiCli"),
-      connected: true
-    }
+  var DEFAULT_PROVIDER_IDS = [
+    "claudeCodeCli",
+    "codexCli",
+    "geminiCli"
   ];
-
-  // src/client/ui/src/core-bridge/session-history.ts
-  var fetchSessionHistory = async (config, sessionId, notify) => {
-    try {
-      const response = await fetch(
-        `${config.httpUrl}/api/v1/sessions/${sessionId}/history`,
-        { method: "GET" }
-      );
-      if (!response.ok) {
-        return;
-      }
-      const data = await response.json();
-      const historySessionId = typeof data.sessionId === "string" ? data.sessionId : sessionId;
-      const messages = Array.isArray(data.messages) ? data.messages : [];
-      notify({
-        sessionId: historySessionId,
-        messages
-      });
-    } catch {
-    }
-  };
-  var loadSessionHistories = async (config, sessions, notify) => {
-    await Promise.all(
-      sessions.map((session) => fetchSessionHistory(config, session.id, notify))
-    );
-  };
-
-  // src/client/ui/src/core-bridge/history-hydrator.ts
-  var createHistoryHydrator = (notify) => {
-    let shouldHydrateHistory = true;
-    const hydrate = (config, sessions, options = {}) => {
-      const force = Boolean(options.force);
-      if (!(force || shouldHydrateHistory)) {
-        return;
-      }
-      if (sessions.length === 0) {
-        if (!force) {
-          shouldHydrateHistory = false;
-        }
-        return;
-      }
-      loadSessionHistories(config, sessions, (payload) => {
-        notify({ type: "session:history", payload });
-      }).catch(() => {
-      }).finally(() => {
-        if (!force) {
-          shouldHydrateHistory = false;
-        }
-      });
-    };
-    return {
-      hydrate,
-      markStale: () => {
-        shouldHydrateHistory = true;
-      },
-      reset: () => {
-        shouldHydrateHistory = false;
-      }
-    };
-  };
+  var FALLBACK_PROVIDERS = DEFAULT_PROVIDER_IDS.map((providerId) => ({
+    id: providerId,
+    title: getDefaultProviderTitle(providerId),
+    description: getDefaultProviderDescription(providerId),
+    connected: true
+  }));
 
   // src/client/ui/src/core-bridge/normalizers.ts
   var toNumberTimestamp = (value) => {
@@ -7795,13 +7713,13 @@
     if (!providerIdSet.has(providerId)) {
       return null;
     }
+    const isActive = provider.status === "active";
     return {
       id: providerId,
       title: provider.name ?? getDefaultProviderTitle(providerId),
       description: provider.description ?? getDefaultProviderDescription(providerId),
-      connected: provider.status !== "inactive",
-      statusMessage: typeof provider.statusMessage === "string" ? provider.statusMessage : null,
-      versionInfo: provider.versionInfo
+      connected: isActive,
+      statusMessage: typeof provider.statusMessage === "string" ? provider.statusMessage : null
     };
   };
   var sanitizeMessage = (message) => {
@@ -7847,39 +7765,11 @@
       (provider) => Boolean(provider)
     ) ?? [...fallbackProviders];
     const sessions = status.sessions?.map((session) => sanitizeSession(session)).filter((session) => Boolean(session)) ?? [];
-    const detachedSessions = status.detachedSessions?.filter(
-      (sessionId) => typeof sessionId === "string"
-    ).map((sessionId) => sessionId).filter(
-      (sessionId, index, array) => array.indexOf(sessionId) === index
-    ) ?? [];
     return {
       sessions,
-      providers,
-      detachedSessions
+      providers
     };
   };
-
-  // src/client/ui/src/core-bridge/provider-runtime-actions.ts
-  var createProviderRuntimeActions = (send) => ({
-    refresh: (providerId) => {
-      send({
-        type: "provider:refresh-versions",
-        payload: { providerId }
-      });
-    },
-    installVendor: (providerId) => {
-      send({
-        type: "provider:install-vendor-runtime",
-        payload: { providerId }
-      });
-    },
-    restoreVetted: (providerId) => {
-      send({
-        type: "provider:restore-runtime",
-        payload: { providerId }
-      });
-    }
-  });
 
   // src/client/ui/src/core-bridge/server-message-handler.ts
   var parseEnvelope = (raw) => {
@@ -7888,7 +7778,7 @@
       if (!parsed || typeof parsed.type !== "string") {
         return null;
       }
-      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "core:shutdown" || parsed.type === "core:loading-status" || parsed.type === "session:binding" || parsed.type === "provider:operation" || parsed.type === "core:clients" || parsed.type === "session:windowState" || parsed.type === "core:state") {
+      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "core:loading-status" || parsed.type === "session:binding") {
         return { type: parsed.type, payload: parsed.payload };
       }
     } catch {
@@ -7911,7 +7801,7 @@
     }
     return true;
   };
-  var createServerMessageHandler = (notify, normalizeCoreState) => {
+  var createServerMessageHandler = (notify) => {
     const handleSessionMessage = (payload) => {
       const candidate = payload;
       if (!candidate || typeof candidate.sessionId !== "string") {
@@ -7960,30 +7850,11 @@
         }
       });
     };
-    const handleCoreState = (payload) => {
-      if (!normalizeCoreState) {
-        return;
-      }
-      const normalized = normalizeCoreState(payload);
-      if (!normalized) {
-        return;
-      }
-      notify({
-        type: "core:state",
-        payload: normalized
-      });
-    };
     const handlers = {
       "session:message": handleSessionMessage,
       "session:created": handleSessionCreated,
       "session:deleted": handleSessionDeleted,
       "session:stream": handleSessionStream,
-      "core:shutdown": (payload) => {
-        notify({
-          type: "core:shutdown",
-          payload
-        });
-      },
       "core:loading-status": (payload) => {
         notify({
           type: "core:loading-status",
@@ -8002,26 +7873,7 @@
             status: payload.status === "ready" || payload.status === "failed" || payload.status === "pending" ? payload.status : "pending"
           }
         });
-      },
-      "provider:operation": (payload) => {
-        notify({
-          type: "provider:operation",
-          payload
-        });
-      },
-      "core:clients": (payload) => {
-        notify({
-          type: "core:clients",
-          payload
-        });
-      },
-      "session:windowState": (payload) => {
-        notify({
-          type: "session:windowState",
-          payload
-        });
-      },
-      "core:state": handleCoreState
+      }
     };
     return (raw) => {
       const envelope = parseEnvelope(raw);
@@ -8033,118 +7885,35 @@
     };
   };
 
-  // src/client/ui/src/core-bridge/ui-actions.ts
-  var ensureProvidersAvailable = async (deps) => {
-    const cached = deps.getCachedProviders();
-    if (cached.length > 0) {
-      return cached;
-    }
-    const config = deps.resolveConfig();
-    await deps.fetchStatusSnapshot(config);
-    return deps.getCachedProviders();
-  };
-  var openProviderPicker = async (deps) => {
-    const providers = await ensureProvidersAvailable(deps);
-    if (providers.length === 0) {
-      deps.notifyWindow({
-        type: "ui:providerPickerError",
-        payload: { reason: "Core orchestrator is unavailable. Retry shortly." }
-      });
-      return;
-    }
-    deps.notifyWindow({
-      type: "providerPicker:open",
-      payload: { providers }
-    });
-  };
-  var createSession = (deps, providerIds) => {
-    const providerId = providerIds[0];
-    if (!providerId) {
-      deps.notifyWindow({
-        type: "ui:providerPickerError",
-        payload: { reason: "Select at least one provider to continue." }
-      });
-      return;
-    }
-    deps.enqueueMessage({
-      type: "session:create",
-      payload: { providerId }
-    });
-  };
-  var createCoreBridgeUiActions = (deps) => ({
-    sendChatMessage: (sessionId, content) => {
-      if (!content.trim()) {
+  // src/client/ui/src/core-bridge/session-history.ts
+  var fetchSessionHistory = async (config, sessionId, notify) => {
+    try {
+      const response = await fetch(
+        `${config.httpUrl}/api/v1/sessions/${sessionId}/history`,
+        { method: "GET" }
+      );
+      if (!response.ok) {
         return;
       }
-      deps.enqueueMessage({
-        type: "session:message",
-        payload: {
-          sessionId,
-          content
-        }
+      const data = await response.json();
+      const historySessionId = typeof data.sessionId === "string" ? data.sessionId : sessionId;
+      const messages = Array.isArray(data.messages) ? data.messages : [];
+      notify({
+        sessionId: historySessionId,
+        messages
       });
-    },
-    deleteSession: (sessionId) => {
-      deps.enqueueMessage({
-        type: "session:delete",
-        payload: {
-          sessionId
-        }
-      });
-    },
-    refreshProviderVersions: (providerId) => {
-      deps.runtimeActions.refresh(providerId);
-    },
-    installProviderVendorRuntime: (providerId) => {
-      deps.runtimeActions.installVendor(providerId);
-    },
-    restoreProviderRuntime: (providerId) => {
-      deps.runtimeActions.restoreVetted(providerId);
-    },
-    requestStatusSnapshot: () => {
-      const config = deps.resolveConfig();
-      deps.fetchStatusSnapshot(config).catch(() => {
-      });
-    },
-    handleOutgoingVsCodeMessage: (message) => {
-      if (!message || typeof message !== "object") {
-        return false;
-      }
-      const candidate = message;
-      if (typeof candidate.command === "string") {
-        if (candidate.command === "newSession") {
-          openProviderPicker(deps).catch((error) => {
-            deps.notifyWindow({
-              type: "session:error",
-              payload: { message: String(error) }
-            });
-          });
-          return true;
-        }
-        return false;
-      }
-      if (candidate.type === "providerPicker:confirm") {
-        const payload = candidate.payload;
-        const providerIds = payload?.providerIds ?? [];
-        createSession(deps, providerIds);
-        return true;
-      }
-      return false;
+    } catch {
     }
-  });
+  };
+  var loadSessionHistories = async (config, sessions, notify) => {
+    await Promise.all(
+      sessions.map((session) => fetchSessionHistory(config, session.id, notify))
+    );
+  };
 
   // src/client/ui/src/core-bridge/core-bridge.ts
-  var DEFAULT_CONFIG = {
-    httpUrl: "http://127.0.0.1:8080",
-    wsUrl: "ws://127.0.0.1:8080/api/v1/stream"
-  };
   var RECONNECT_DELAY_MS = 2e3;
-  var STATUS_SNAPSHOT_RETRY_LIMIT = 3;
-  var STATUS_SNAPSHOT_RETRY_DELAY_MS = 1500;
   var globalScope = window;
-  var delay = (durationMs) => new Promise((resolve) => {
-    window.setTimeout(resolve, durationMs);
-  });
   var resolveConfig = () => {
     const config = globalScope.__CODEAI_CORE_CONFIG;
     if (!config || typeof config.httpUrl !== "string" || typeof config.wsUrl !== "string") {
@@ -8152,9 +7921,7 @@
     }
     return config;
   };
-  var notifyWindow = (message) => {
-    window.postMessage(message, "*");
-  };
+  var notifyWindow = (message) => window.postMessage(message, "*");
   var initialized = false;
   var hasSuccessfulConnection = false;
   var websocket = null;
@@ -8162,34 +7929,19 @@
   var cachedProviders = [...FALLBACK_PROVIDERS];
   var pendingMessages = [];
   var currentConnectionStatus = "idle";
-  var notifyConnectionStatus = (status) => {
-    if (currentConnectionStatus === status) {
+  var currentConnectionDetail;
+  var notifyConnectionStatus = (status, detail) => {
+    if (currentConnectionStatus === status && currentConnectionDetail === detail) {
       return;
     }
     currentConnectionStatus = status;
+    currentConnectionDetail = detail;
     notifyWindow({
       type: "core:connection",
-      payload: { status }
+      payload: { status, detail }
     });
   };
-  var historyHydrator = createHistoryHydrator(notifyWindow);
-  var normalizeCoreStateFromWebsocket = (payload) => {
-    const config = resolveConfig();
-    const candidate = payload && typeof payload === "object" ? payload : {};
-    const normalized = convertStatusResponse(candidate, cachedProviders);
-    cachedProviders = normalized.providers.slice();
-    hasSuccessfulConnection = true;
-    notifyConnectionStatus("ready");
-    logUiDiagnostic(
-      `[CoreBridge] WebSocket snapshot received (sessions=${normalized.sessions.length}, providers=${cachedProviders.length}).`
-    );
-    historyHydrator.hydrate(config, normalized.sessions);
-    return normalized;
-  };
-  var handleServerMessage = createServerMessageHandler(
-    notifyWindow,
-    normalizeCoreStateFromWebsocket
-  );
+  var handleServerMessage = createServerMessageHandler(notifyWindow);
   var flushPendingMessages = () => {
     if (!websocket || websocket.readyState !== WebSocket.OPEN) {
       return;
@@ -8206,13 +7958,20 @@
     pendingMessages.push(serialized);
     flushPendingMessages();
   };
-  var runtimeActions = createProviderRuntimeActions(enqueueMessage);
   var scheduleReconnect = (config) => {
     if (reconnectTimer) {
       return;
     }
-    logUiDiagnostic("[CoreBridge] Scheduling reconnect to core WebSocket.");
-    notifyConnectionStatus("connecting");
+    notifyConnectionStatus(
+      "connecting",
+      hasSuccessfulConnection ? "Reconnecting to CodeAI Hub core\u2026" : "Starting CodeAI Hub core via Supervisor\u2026"
+    );
+    if (!hasSuccessfulConnection) {
+      try {
+        window.acquireVsCodeApi?.().postMessage({ type: "core:restart-request" });
+      } catch {
+      }
+    }
     reconnectTimer = window.setTimeout(() => {
       reconnectTimer = void 0;
       connectWebSocket(config);
@@ -8226,7 +7985,6 @@
     websocket = new WebSocket(config.wsUrl);
     websocket.addEventListener("open", () => {
       hasSuccessfulConnection = true;
-      logUiDiagnostic("[CoreBridge] WebSocket connection established.");
       notifyConnectionStatus("ready");
       fetchStatusSnapshot(config).catch(() => {
       });
@@ -8236,78 +7994,139 @@
       handleServerMessage(String(event.data));
     });
     websocket.addEventListener("close", () => {
-      historyHydrator.markStale();
-      logUiDiagnostic("[CoreBridge] WebSocket closed. Scheduling reconnect...");
       scheduleReconnect(config);
     });
     websocket.addEventListener("error", () => {
-      historyHydrator.markStale();
       if (hasSuccessfulConnection) {
-        notifyConnectionStatus("error");
+        notifyConnectionStatus(
+          "error",
+          "Unable to reach CodeAI Hub core. Supervisor will retry automatically."
+        );
       } else {
-        notifyConnectionStatus("connecting");
+        notifyConnectionStatus(
+          "connecting",
+          "Waiting for CodeAI Hub core to respond\u2026"
+        );
       }
       scheduleReconnect(config);
     });
   };
-  var fetchStatusSnapshot = async (config, attempt = 1) => {
+  var fetchStatusSnapshot = async (config) => {
     try {
-      logUiDiagnostic(
-        `[CoreBridge] Fetching status snapshot (attempt ${attempt}/${STATUS_SNAPSHOT_RETRY_LIMIT}).`
-      );
       const response = await fetch(`${config.httpUrl}/api/v1/status`, {
         method: "GET"
       });
       if (!response.ok) {
-        throw new Error(
-          `Snapshot request failed (${response.status} ${response.statusText})`
-        );
+        if (!hasSuccessfulConnection) {
+          notifyConnectionStatus(
+            "connecting",
+            "Waiting for status response from CodeAI Hub core\u2026"
+          );
+        }
+        return;
       }
       const data = await response.json();
       const normalized = convertStatusResponse(data, cachedProviders);
-      cachedProviders = normalized.providers.slice();
+      cachedProviders = normalized.providers;
       hasSuccessfulConnection = true;
       notifyConnectionStatus("ready");
-      logUiDiagnostic(
-        `[CoreBridge] Status snapshot received (sessions=${normalized.sessions.length}, providers=${cachedProviders.length}).`
-      );
       notifyWindow({
         type: "core:state",
         payload: normalized
       });
-      historyHydrator.hydrate(config, normalized.sessions, { force: true });
-      historyHydrator.reset();
-    } catch (error) {
-      historyHydrator.markStale();
-      const reason = error instanceof Error ? error.message : String(error);
-      logUiDiagnostic(
-        `[CoreBridge] Failed to fetch status snapshot from ${config.httpUrl}/api/v1/status (attempt ${attempt}/${STATUS_SNAPSHOT_RETRY_LIMIT}): ${reason}`
-      );
+      loadSessionHistories(config, normalized.sessions, (payload) => {
+        notifyWindow({ type: "session:history", payload });
+      }).catch(() => {
+      });
+    } catch {
       if (!hasSuccessfulConnection) {
-        notifyConnectionStatus("connecting");
-      }
-      if (attempt < STATUS_SNAPSHOT_RETRY_LIMIT) {
-        await delay(STATUS_SNAPSHOT_RETRY_DELAY_MS);
-        await fetchStatusSnapshot(config, attempt + 1);
-        return;
+        notifyConnectionStatus(
+          "connecting",
+          "Waiting for status response from CodeAI Hub core\u2026"
+        );
       }
     }
   };
-  var uiActions = createCoreBridgeUiActions({
-    notifyWindow,
-    resolveConfig,
-    getCachedProviders: () => cachedProviders,
-    fetchStatusSnapshot,
-    enqueueMessage,
-    runtimeActions
-  });
-  var sendChatMessage = uiActions.sendChatMessage;
-  var deleteSession = uiActions.deleteSession;
-  var refreshProviderVersions = uiActions.refreshProviderVersions;
-  var installProviderVendorRuntime = uiActions.installProviderVendorRuntime;
-  var restoreProviderRuntime = uiActions.restoreProviderRuntime;
-  var requestStatusSnapshot = uiActions.requestStatusSnapshot;
-  var handleOutgoingVsCodeMessage = uiActions.handleOutgoingVsCodeMessage;
+  var ensureProvidersAvailable = async (config) => {
+    if (cachedProviders.length === 0) {
+      await fetchStatusSnapshot(config);
+    }
+    return cachedProviders;
+  };
+  var openProviderPicker = async () => {
+    const config = resolveConfig();
+    const providers = await ensureProvidersAvailable(config);
+    if (providers.length === 0) {
+      notifyWindow({
+        type: "ui:providerPickerError",
+        payload: { reason: "Core orchestrator is unavailable. Retry shortly." }
+      });
+      return;
+    }
+    notifyWindow({
+      type: "providerPicker:open",
+      payload: { providers }
+    });
+  };
+  var createSession = (providerIds) => {
+    const providerId = providerIds[0];
+    if (!providerId) {
+      notifyWindow({
+        type: "ui:providerPickerError",
+        payload: { reason: "Select at least one provider to continue." }
+      });
+      return;
+    }
+    enqueueMessage({
+      type: "session:create",
+      payload: { providerId }
+    });
+  };
+  var sendChatMessage = (sessionId, content) => {
+    if (!content.trim()) {
+      return;
+    }
+    enqueueMessage({
+      type: "session:message",
+      payload: {
+        sessionId,
+        content
+      }
+    });
+  };
+  var deleteSession = (sessionId) => {
+    enqueueMessage({
+      type: "session:delete",
+      payload: {
+        sessionId
+      }
+    });
+  };
+  var handleOutgoingVsCodeMessage = (message) => {
+    if (!message || typeof message !== "object") {
+      return false;
+    }
+    const candidate = message;
+    if (typeof candidate.command === "string") {
+      if (candidate.command === "newSession") {
+        openProviderPicker().catch((error) => {
+          notifyWindow({
+            type: "session:error",
+            payload: { message: String(error) }
+          });
+        });
+        return true;
+      }
+      return false;
+    }
+    if (candidate.type === "providerPicker:confirm") {
+      const payload = candidate.payload;
+      const providerIds = payload?.providerIds ?? [];
+      createSession(providerIds);
+      return true;
+    }
+    return false;
+  };
   var initializeCoreBridge = () => {
     if (initialized || typeof window === "undefined") {
       return;
@@ -8410,198 +8229,29 @@
   };
 
   // src/client/ui/src/app-host/session-store.ts
-  var import_react6 = __toESM(require_react());
-
-  // src/client/ui/src/app-host/session-store-actions.ts
   var import_react3 = __toESM(require_react());
-  var useSessionActionHandlers = (deps) => {
-    const {
-      acceptsSession,
-      filteredSessionId,
-      shouldFilterSessions,
-      sessionsRef,
-      detachedSessionsRef,
-      setSessions,
-      setSnapshots,
-      setActiveSessionId,
-      setDetachedSessionIds,
-      syncSessionsRef
-    } = deps;
-    const clearSessions = (0, import_react3.useCallback)(() => {
-      setSessions(() => {
-        syncSessionsRef([]);
-        return [];
-      });
-      setSnapshots({});
-      setActiveSessionId(shouldFilterSessions ? filteredSessionId : null);
-      setDetachedSessionIds(/* @__PURE__ */ new Set());
-      detachedSessionsRef.current = /* @__PURE__ */ new Set();
-    }, [
-      filteredSessionId,
-      detachedSessionsRef,
-      setActiveSessionId,
-      setSessions,
-      setSnapshots,
-      setDetachedSessionIds,
-      shouldFilterSessions,
-      syncSessionsRef
-    ]);
-    const focusLastSession = (0, import_react3.useCallback)(() => {
-      if (shouldFilterSessions && filteredSessionId) {
-        setActiveSessionId(filteredSessionId);
-        return;
-      }
-      const last = sessionsRef.current.at(-1);
-      if (last) {
-        setActiveSessionId(last.id);
-      }
-    }, [
-      filteredSessionId,
-      setActiveSessionId,
-      sessionsRef,
-      shouldFilterSessions
-    ]);
-    const selectSession = (0, import_react3.useCallback)(
-      (sessionId) => {
-        if (shouldFilterSessions) {
-          return;
-        }
-        setActiveSessionId(sessionId);
-      },
-      [setActiveSessionId, shouldFilterSessions]
-    );
-    const handleSessionDeleted = (0, import_react3.useCallback)(
-      (payload) => {
-        const { sessionId } = payload;
-        setSessions((previous) => {
-          const next = previous.filter((session) => session.id !== sessionId);
-          syncSessionsRef(next);
-          return next;
-        });
-        setSnapshots((previous) => removeSnapshot(previous, sessionId));
-        if (detachedSessionsRef.current.has(sessionId)) {
-          const nextDetached = new Set(detachedSessionsRef.current);
-          nextDetached.delete(sessionId);
-          setDetachedSessionIds(nextDetached);
-        }
-        setActiveSessionId((current) => {
-          if (shouldFilterSessions) {
-            return filteredSessionId === sessionId ? null : current;
-          }
-          if (current !== sessionId) {
-            return current;
-          }
-          const remaining = sessionsRef.current.filter(
-            (session) => session.id !== sessionId
-          );
-          const last = remaining.at(-1);
-          return last ? last.id : null;
-        });
-      },
-      [
-        filteredSessionId,
-        detachedSessionsRef,
-        setActiveSessionId,
-        setSessions,
-        setSnapshots,
-        sessionsRef,
-        setDetachedSessionIds,
-        shouldFilterSessions,
-        syncSessionsRef
-      ]
-    );
-    const closeSession = (0, import_react3.useCallback)(
-      (sessionId) => {
-        if (shouldFilterSessions) {
-          return;
-        }
-        deleteSession(sessionId);
-      },
-      [shouldFilterSessions]
-    );
-    const toggleTodo = (0, import_react3.useCallback)(
-      (sessionId, todoId) => {
-        if (!acceptsSession(sessionId)) {
-          return;
-        }
-        setSnapshots(
-          (previous) => toggleTodoInSnapshots(previous, sessionId, todoId)
-        );
-      },
-      [acceptsSession, setSnapshots]
-    );
-    const sendMessage = (0, import_react3.useCallback)(
-      (sessionId, content) => {
-        if (!acceptsSession(sessionId)) {
-          return;
-        }
-        setSnapshots((previous) => {
-          const current = previous[sessionId];
-          if (!current) {
-            return previous;
-          }
-          return {
-            ...previous,
-            [sessionId]: {
-              ...current,
-              draft: ""
-            }
-          };
-        });
-        sendChatMessage(sessionId, content);
-      },
-      [acceptsSession, setSnapshots]
-    );
-    return {
-      clearSessions,
-      focusLastSession,
-      selectSession,
-      handleSessionDeleted,
-      closeSession,
-      toggleTodo,
-      sendMessage
-    };
-  };
-
-  // src/client/ui/src/app-host/session-store-events.ts
-  var import_react4 = __toESM(require_react());
-  var findFallbackSessionId = (targetSessionId, sessions, detachedSessionIds) => {
-    for (let index = sessions.length - 1; index >= 0; index -= 1) {
-      const candidate = sessions[index];
-      if (!candidate || candidate.id === targetSessionId) {
-        continue;
-      }
-      if (detachedSessionIds.has(candidate.id)) {
-        continue;
-      }
-      return candidate.id;
-    }
-    return null;
-  };
-  var useSessionEventHandlers = (deps) => {
-    const {
-      providerLabels,
-      acceptsSession,
-      applyPendingBinding,
-      filteredSessionId,
-      shouldFilterSessions,
-      sessionsRef,
-      detachedSessionsRef,
-      setSessions,
-      setSnapshots,
-      setActiveSessionId,
-      setDetachedSessionIds,
-      syncSessionsRef,
-      pendingBindingsRef
-    } = deps;
-    const handleSessionCreated = (0, import_react4.useCallback)(
+  var useSessionStore = (providerLabels) => {
+    const [sessions, setSessions] = (0, import_react3.useState)([]);
+    const [snapshots, setSnapshots] = (0, import_react3.useState)({});
+    const [activeSessionId, setActiveSessionId] = (0, import_react3.useState)(null);
+    const sessionsRef = (0, import_react3.useRef)([]);
+    const pendingBindingsRef = (0, import_react3.useRef)({});
+    const syncSessionsRef = (0, import_react3.useCallback)((current) => {
+      sessionsRef.current = current;
+    }, []);
+    const applyPendingBinding = (0, import_react3.useCallback)(
       (session) => {
-        logUiDiagnostic(
-          `[SessionStore] Session created event received for ${session.id}.`
-        );
-        if (!acceptsSession(session.id)) {
-          return;
+        const pending = pendingBindingsRef.current[session.id];
+        if (!pending) {
+          return session;
         }
+        delete pendingBindingsRef.current[session.id];
+        return { ...session, binding: pending };
+      },
+      []
+    );
+    const handleSessionCreated = (0, import_react3.useCallback)(
+      (session) => {
         const sessionWithBinding = applyPendingBinding(session);
         setSessions((previous) => {
           const next = [...previous, sessionWithBinding];
@@ -8614,96 +8264,46 @@
         }));
         setActiveSessionId(session.id);
       },
-      [
-        acceptsSession,
-        applyPendingBinding,
-        providerLabels,
-        setActiveSessionId,
-        setSessions,
-        setSnapshots,
-        syncSessionsRef
-      ]
+      [applyPendingBinding, providerLabels, syncSessionsRef]
     );
-    const hydrateFromCoreState = (0, import_react4.useCallback)(
+    const hydrateFromCoreState = (0, import_react3.useCallback)(
       (payload) => {
         const nextSessions = payload.sessions.map(
           (record) => applyPendingBinding(record)
         );
-        const filteredSessions = nextSessions.filter(
-          (session) => acceptsSession(session.id)
-        );
-        logUiDiagnostic(
-          `[SessionStore] Hydrating from core snapshot: total=${nextSessions.length}, accepted=${filteredSessions.length}.`
-        );
-        syncSessionsRef(filteredSessions);
-        setSessions(filteredSessions);
+        syncSessionsRef(nextSessions);
+        setSessions(nextSessions);
         const nextSnapshots = {};
-        for (const session of filteredSessions) {
+        for (const session of nextSessions) {
           nextSnapshots[session.id] = createInitialSnapshot(
             session,
             providerLabels
           );
         }
         setSnapshots(nextSnapshots);
-        const detachedFromPayload = /* @__PURE__ */ new Set();
-        if (Array.isArray(payload.detachedSessions)) {
-          for (const sessionId of payload.detachedSessions) {
-            if (typeof sessionId !== "string") {
-              continue;
-            }
-            const sessionExists = filteredSessions.findIndex((session) => session.id === sessionId) >= 0;
-            if (sessionExists) {
-              detachedFromPayload.add(sessionId);
-            }
-          }
-        }
-        setDetachedSessionIds(detachedFromPayload);
         setActiveSessionId((current) => {
-          if (shouldFilterSessions && filteredSessionId) {
-            return filteredSessionId;
-          }
           if (current) {
             return current;
           }
-          return filteredSessions.at(-1)?.id ?? null;
+          return nextSessions.at(-1)?.id ?? null;
         });
       },
-      [
-        acceptsSession,
-        applyPendingBinding,
-        filteredSessionId,
-        providerLabels,
-        setActiveSessionId,
-        setDetachedSessionIds,
-        setSessions,
-        setSnapshots,
-        shouldFilterSessions,
-        syncSessionsRef
-      ]
+      [applyPendingBinding, providerLabels, syncSessionsRef]
     );
-    const handleSessionMessageEvent2 = (0, import_react4.useCallback)(
+    const handleSessionMessageEvent2 = (0, import_react3.useCallback)(
       (payload) => {
-        if (!acceptsSession(payload.sessionId)) {
-          return;
-        }
         setSnapshots((previous) => appendMessageToSnapshots(previous, payload));
       },
-      [acceptsSession, setSnapshots]
+      []
     );
-    const handleSessionHistoryEvent = (0, import_react4.useCallback)(
+    const handleSessionHistoryEvent = (0, import_react3.useCallback)(
       (payload) => {
-        if (!acceptsSession(payload.sessionId)) {
-          return;
-        }
         setSnapshots((previous) => mergeHistoryIntoSnapshots(previous, payload));
       },
-      [acceptsSession, setSnapshots]
+      []
     );
-    const handleSessionBindingUpdate = (0, import_react4.useCallback)(
+    const handleSessionBindingUpdate = (0, import_react3.useCallback)(
       (payload) => {
-        if (!acceptsSession(payload.sessionId)) {
-          return;
-        }
         const binding = normalizeBinding({
           providerSessionId: payload.providerSessionId,
           status: payload.status
@@ -8739,216 +8339,81 @@
           };
         });
       },
-      [
-        acceptsSession,
-        pendingBindingsRef,
-        setSessions,
-        setSnapshots,
-        syncSessionsRef
-      ]
+      [syncSessionsRef]
     );
-    const handleSessionWindowState = (0, import_react4.useCallback)(
+    const clearSessions = (0, import_react3.useCallback)(() => {
+      setSessions(() => {
+        syncSessionsRef([]);
+        return [];
+      });
+      setSnapshots({});
+      setActiveSessionId(null);
+    }, [syncSessionsRef]);
+    const focusLastSession = (0, import_react3.useCallback)(() => {
+      const last = sessionsRef.current.at(-1);
+      if (last) {
+        setActiveSessionId(last.id);
+      }
+    }, []);
+    const selectSession = (0, import_react3.useCallback)((sessionId) => {
+      setActiveSessionId(sessionId);
+    }, []);
+    const handleSessionDeleted = (0, import_react3.useCallback)(
       (payload) => {
-        if (!acceptsSession(payload.sessionId)) {
-          return;
-        }
-        const mode = payload.mode === "detached" ? "detached" : "attached";
-        const nextDetached = new Set(detachedSessionsRef.current);
-        if (mode === "detached") {
-          nextDetached.add(payload.sessionId);
-        } else {
-          nextDetached.delete(payload.sessionId);
-        }
-        setDetachedSessionIds(nextDetached);
-        if (shouldFilterSessions) {
-          return;
-        }
-        if (mode === "detached") {
-          setActiveSessionId((current) => {
-            if (current !== payload.sessionId) {
-              return current;
-            }
-            const fallback = findFallbackSessionId(
-              payload.sessionId,
-              sessionsRef.current,
-              nextDetached
-            );
-            return fallback;
-          });
-          return;
-        }
-        setActiveSessionId((current) => current ?? payload.sessionId);
+        const { sessionId } = payload;
+        setSessions((previous) => {
+          const next = previous.filter((session) => session.id !== sessionId);
+          syncSessionsRef(next);
+          return next;
+        });
+        setSnapshots((previous) => removeSnapshot(previous, sessionId));
+        setActiveSessionId((current) => {
+          if (current !== sessionId) {
+            return current;
+          }
+          const remaining = sessionsRef.current.filter(
+            (session) => session.id !== sessionId
+          );
+          const last = remaining.at(-1);
+          return last ? last.id : null;
+        });
       },
-      [
-        acceptsSession,
-        detachedSessionsRef,
-        sessionsRef,
-        setActiveSessionId,
-        setDetachedSessionIds,
-        shouldFilterSessions
-      ]
+      [syncSessionsRef]
     );
-    return {
-      handleSessionCreated,
-      hydrateFromCoreState,
-      handleSessionMessageEvent: handleSessionMessageEvent2,
-      handleSessionHistoryEvent,
-      handleSessionBindingUpdate,
-      handleSessionWindowState
-    };
-  };
-
-  // src/client/ui/src/app-host/session-store-handlers.ts
-  var useSessionStoreHandlers = (deps) => {
-    const eventHandlers = useSessionEventHandlers(deps);
-    const actionHandlers = useSessionActionHandlers(deps);
-    return {
-      ...eventHandlers,
-      ...actionHandlers
-    };
-  };
-
-  // src/client/ui/src/app-host/session-window-scope.ts
-  var import_react5 = __toESM(require_react());
-
-  // src/client/ui/src/environment.ts
-  var DEFAULT_WINDOW_CONTEXT = {
-    mode: "main",
-    sessionId: null
-  };
-  var cachedClientContext;
-  var cachedWindowContext;
-  var resolveClientContext = () => {
-    if (cachedClientContext) {
-      return cachedClientContext;
-    }
-    if (typeof window === "undefined") {
-      cachedClientContext = "vscode";
-      return cachedClientContext;
-    }
-    const globalScope2 = window;
-    cachedClientContext = globalScope2.__CODEAI_CLIENT_CONTEXT === "standalone" ? "standalone" : "vscode";
-    return cachedClientContext;
-  };
-  var resolveWindowContext = () => {
-    if (cachedWindowContext) {
-      return cachedWindowContext;
-    }
-    if (typeof window === "undefined") {
-      cachedWindowContext = DEFAULT_WINDOW_CONTEXT;
-      return cachedWindowContext;
-    }
-    const globalScope2 = window;
-    const candidate = globalScope2.__CODEAI_WINDOW_CONTEXT;
-    if (!candidate || candidate.mode !== "detached" && candidate.mode !== "main") {
-      cachedWindowContext = DEFAULT_WINDOW_CONTEXT;
-      return cachedWindowContext;
-    }
-    const sessionId = typeof candidate.sessionId === "string" && candidate.sessionId.length > 0 ? candidate.sessionId : null;
-    cachedWindowContext = {
-      mode: candidate.mode,
-      sessionId
-    };
-    return cachedWindowContext;
-  };
-  var isStandaloneClient = () => resolveClientContext() === "standalone";
-  var getWindowContext = () => resolveWindowContext();
-  var isDetachedWindow = () => resolveWindowContext().mode === "detached";
-
-  // src/client/ui/src/app-host/session-window-scope.ts
-  var useSessionWindowScope = () => {
-    const windowContext = (0, import_react5.useMemo)(() => getWindowContext(), []);
-    const filteredSessionId = windowContext.mode === "detached" && windowContext.sessionId ? windowContext.sessionId : null;
-    const shouldFilterSessions = Boolean(
-      windowContext.mode === "detached" && filteredSessionId
-    );
-    const acceptsSession = (0, import_react5.useCallback)(
-      (sessionId) => {
-        if (!(shouldFilterSessions && filteredSessionId)) {
-          return true;
-        }
-        return sessionId === filteredSessionId;
-      },
-      [filteredSessionId, shouldFilterSessions]
-    );
-    return {
-      filteredSessionId,
-      shouldFilterSessions,
-      acceptsSession
-    };
-  };
-
-  // src/client/ui/src/app-host/session-store.ts
-  var useSessionStore = (providerLabels) => {
-    const { acceptsSession, filteredSessionId, shouldFilterSessions } = useSessionWindowScope();
-    const [sessions, setSessions] = (0, import_react6.useState)([]);
-    const [snapshots, setSnapshots] = (0, import_react6.useState)({});
-    const [activeSessionId, setActiveSessionId] = (0, import_react6.useState)(
-      shouldFilterSessions ? filteredSessionId : null
-    );
-    const sessionsRef = (0, import_react6.useRef)([]);
-    const pendingBindingsRef = (0, import_react6.useRef)({});
-    const detachedSessionsRef = (0, import_react6.useRef)(/* @__PURE__ */ new Set());
-    const [detachedSessionIds, setDetachedSessionIdsState] = (0, import_react6.useState)(() => /* @__PURE__ */ new Set());
-    const syncSessionsRef = (0, import_react6.useCallback)((current) => {
-      sessionsRef.current = current;
+    const closeSession = (0, import_react3.useCallback)((sessionId) => {
+      deleteSession(sessionId);
     }, []);
-    const setDetachedSessionIds = (0, import_react6.useCallback)((next) => {
-      detachedSessionsRef.current = next;
-      setDetachedSessionIdsState(new Set(next));
+    const toggleTodo = (0, import_react3.useCallback)((sessionId, todoId) => {
+      setSnapshots(
+        (previous) => toggleTodoInSnapshots(previous, sessionId, todoId)
+      );
     }, []);
-    const applyPendingBinding = (0, import_react6.useCallback)(
-      (session) => {
-        const pending = pendingBindingsRef.current[session.id];
-        if (!pending) {
-          return session;
+    const sendMessage = (0, import_react3.useCallback)((sessionId, content) => {
+      setSnapshots((previous) => {
+        const current = previous[sessionId];
+        if (!current) {
+          return previous;
         }
-        delete pendingBindingsRef.current[session.id];
-        return { ...session, binding: pending };
-      },
-      []
-    );
-    const {
-      handleSessionCreated,
-      hydrateFromCoreState,
-      handleSessionMessageEvent: handleSessionMessageEvent2,
-      handleSessionHistoryEvent,
-      handleSessionBindingUpdate,
-      handleSessionWindowState,
-      clearSessions,
-      focusLastSession,
-      selectSession,
-      handleSessionDeleted,
-      closeSession,
-      toggleTodo,
-      sendMessage
-    } = useSessionStoreHandlers({
-      providerLabels,
-      acceptsSession,
-      applyPendingBinding,
-      filteredSessionId,
-      shouldFilterSessions,
-      sessionsRef,
-      pendingBindingsRef,
-      detachedSessionsRef,
-      setSessions,
-      setSnapshots,
-      setActiveSessionId,
-      setDetachedSessionIds,
-      syncSessionsRef
-    });
+        return {
+          ...previous,
+          [sessionId]: {
+            ...current,
+            draft: ""
+          }
+        };
+      });
+      sendChatMessage(sessionId, content);
+    }, []);
     return {
       sessions,
       snapshots,
       activeSessionId,
-      detachedSessionIds,
       handleSessionCreated,
       hydrateFromCoreState,
       handleSessionMessageEvent: handleSessionMessageEvent2,
       handleSessionHistoryEvent,
       handleSessionDeleted,
       handleSessionBindingUpdate,
-      handleSessionWindowState,
       clearSessions,
       focusLastSession,
       selectSession,
@@ -8959,13 +8424,13 @@
   };
 
   // src/client/ui/src/app-host/settings-visibility.ts
-  var import_react7 = __toESM(require_react());
+  var import_react4 = __toESM(require_react());
   var useSettingsVisibility = () => {
-    const [settingsVisible, setSettingsVisible] = (0, import_react7.useState)(false);
-    const openSettings = (0, import_react7.useCallback)(() => {
+    const [settingsVisible, setSettingsVisible] = (0, import_react4.useState)(false);
+    const openSettings = (0, import_react4.useCallback)(() => {
       setSettingsVisible(true);
     }, []);
-    const closeSettings = (0, import_react7.useCallback)(() => {
+    const closeSettings = (0, import_react4.useCallback)(() => {
       setSettingsVisible(false);
       postVsCodeMessage({ type: "settings:closed" });
     }, []);
@@ -8977,7 +8442,7 @@
   };
 
   // src/client/ui/src/app-host/webview-message-handler.ts
-  var import_react8 = __toESM(require_react());
+  var import_react5 = __toESM(require_react());
 
   // src/client/ui/src/app-host/webview-message-types.ts
   var isIncomingMessage = (value) => Boolean(value && typeof value === "object" && "type" in value);
@@ -8986,16 +8451,7 @@
       return false;
     }
     const candidate = value;
-    if (!Array.isArray(candidate.sessions)) {
-      return false;
-    }
-    if (!Array.isArray(candidate.providers)) {
-      return false;
-    }
-    if (candidate.detachedSessions !== void 0 && !Array.isArray(candidate.detachedSessions)) {
-      return false;
-    }
-    return true;
+    return Array.isArray(candidate.sessions) && Array.isArray(candidate.providers);
   };
   var isSessionMessagePayload = (value) => {
     if (!value || typeof value !== "object") {
@@ -9051,16 +8507,6 @@
     }
     return true;
   };
-  var isSessionWindowStatePayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    if (typeof candidate.sessionId !== "string") {
-      return false;
-    }
-    return candidate.mode === "attached" || candidate.mode === "detached";
-  };
 
   // src/client/ui/src/app-host/webview-message-dispatcher.ts
   var handleProviderPickerOpenMessage = (message, onProviderPickerOpen) => {
@@ -9112,12 +8558,6 @@
     }
     onSessionBinding(message.payload);
   };
-  var handleSessionWindowStateMessage = (message, onSessionWindowState) => {
-    if (!(onSessionWindowState && isSessionWindowStatePayload(message.payload))) {
-      return;
-    }
-    onSessionWindowState(message.payload);
-  };
   var handleCoreLoadingStatusMessage = (message, onCoreLoadingStatus) => {
     if (!(onCoreLoadingStatus && isCoreRuntimeStatusPayload(message.payload))) {
       return;
@@ -9147,9 +8587,6 @@
       case "session:history":
         handleSessionHistoryMessage(message, handlers.onSessionHistory);
         return true;
-      case "session:windowState":
-        handleSessionWindowStateMessage(message, handlers.onSessionWindowState);
-        return true;
       default:
         return false;
     }
@@ -9159,16 +8596,6 @@
       return;
     }
     const message = rawMessage;
-    if (message.type === "core:connection") {
-      if (handlers.onCoreConnectionStatus && message.payload) {
-        const candidate = message.payload;
-        const status = candidate.status;
-        if (typeof status === "string") {
-          handlers.onCoreConnectionStatus(status);
-        }
-      }
-      return;
-    }
     if (dispatchSessionMessage(message, {
       onSessionCreated: handlers.onSessionCreated,
       onSessionClearAll: handlers.onSessionClearAll,
@@ -9176,30 +8603,36 @@
       onSessionMessage: handlers.onSessionMessage,
       onSessionDeleted: handlers.onSessionDeleted,
       onSessionBinding: handlers.onSessionBinding,
-      onSessionHistory: handlers.onSessionHistory,
-      onSessionWindowState: handlers.onSessionWindowState
+      onSessionHistory: handlers.onSessionHistory
     })) {
       return;
     }
-    if (message.type === "providerPicker:open") {
-      handleProviderPickerOpenMessage(message, handlers.onProviderPickerOpen);
-      return;
-    }
-    if (message.type === "ui:showSettings") {
-      handlers.onShowSettings();
-      return;
-    }
-    if (message.type === "core:state") {
-      handleCoreStateMessage(message, handlers.onCoreState);
-      return;
-    }
-    if (message.type === "core:loading-status") {
-      handleCoreLoadingStatusMessage(message, handlers.onCoreLoadingStatus);
-      return;
-    }
-    if (message.type === "core:shutdown") {
-      const shutdownMessage = message;
-      handlers.onCoreShutdown?.(shutdownMessage.payload);
+    switch (message.type) {
+      case "core:connection": {
+        if (handlers.onCoreConnectionStatus && message.payload) {
+          const candidate = message.payload;
+          const status = candidate.status;
+          if (typeof status === "string") {
+            const detail = typeof candidate.detail === "string" ? candidate.detail : void 0;
+            handlers.onCoreConnectionStatus(status, detail);
+          }
+        }
+        return;
+      }
+      case "providerPicker:open":
+        handleProviderPickerOpenMessage(message, handlers.onProviderPickerOpen);
+        return;
+      case "ui:showSettings":
+        handlers.onShowSettings();
+        return;
+      case "core:state":
+        handleCoreStateMessage(message, handlers.onCoreState);
+        return;
+      case "core:loading-status":
+        handleCoreLoadingStatusMessage(message, handlers.onCoreLoadingStatus);
+        return;
+      default:
+        return;
     }
   };
 
@@ -9213,14 +8646,12 @@
     onCoreState,
     onCoreConnectionStatus,
     onCoreLoadingStatus,
-    onCoreShutdown,
     onSessionMessage,
     onSessionDeleted,
     onSessionBinding,
-    onSessionHistory,
-    onSessionWindowState
+    onSessionHistory
   }) => {
-    (0, import_react8.useEffect)(() => {
+    (0, import_react5.useEffect)(() => {
       const handleIncomingMessage = (event) => {
         dispatchWebviewMessage(event.data, {
           onProviderPickerOpen,
@@ -9231,12 +8662,10 @@
           onCoreState,
           onCoreConnectionStatus,
           onCoreLoadingStatus,
-          onCoreShutdown,
           onSessionMessage,
           onSessionDeleted,
           onSessionBinding,
-          onSessionHistory,
-          onSessionWindowState
+          onSessionHistory
         });
       };
       window.addEventListener("message", handleIncomingMessage);
@@ -9252,17 +8681,15 @@
       onCoreState,
       onCoreConnectionStatus,
       onCoreLoadingStatus,
-      onCoreShutdown,
       onSessionMessage,
       onSessionDeleted,
       onSessionBinding,
-      onSessionHistory,
-      onSessionWindowState
+      onSessionHistory
     ]);
   };
 
   // src/client/ui/src/components/action-bar/index.tsx
-  var import_react9 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
 
   // src/client/ui/src/root-dom.ts
   var activateRoot = () => {
@@ -9277,17 +8704,20 @@
   var BUTTONS = [
     { id: "newSession", label: ["New", "Session"] },
     { id: "lastSession", label: ["Last", "Session"], highlighted: true },
-    { id: "clearSessions", label: ["Clear", "Session"] },
+    { id: "launchWebClient", label: ["Clear", "Session"] },
     { id: "oldSessions", label: ["Old", "Sessions"] }
   ];
   var ActionBar = ({ disabled = false }) => {
-    const handleClick = (0, import_react9.useCallback)(
+    const handleClick = (0, import_react6.useCallback)(
       (command) => {
         if (disabled) {
           return;
         }
         if (command === "newSession") {
           activateRoot();
+        }
+        if (command === "launchWebClient") {
+          return;
         }
         postVsCodeMessage({ command });
       },
@@ -9328,12 +8758,11 @@
   var action_bar_default = ActionBar;
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_react14 = __toESM(require_react());
+  var import_react10 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_react11 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/general-settings-styles.ts
+  var import_react7 = __toESM(require_react());
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   var sectionStyles = {
     display: "flex",
     flexDirection: "column",
@@ -9345,706 +8774,30 @@
     lineHeight: 1.4,
     margin: 0
   };
-  var buttonBaseStyles = {
+  var buttonStyles = {
     alignSelf: "flex-start",
     border: "1px solid #3a3d41",
+    background: "#0e639c",
     color: "#ffffff",
     padding: "8px 16px",
     borderRadius: "4px",
-    fontSize: "12px",
-    transition: "background 120ms ease, transform 80ms ease",
-    background: "#0e639c",
-    cursor: "pointer"
-  };
-  var buttonStateStyles = {
-    hover: { background: "#1290d8" },
-    active: { background: "#094771", transform: "scale(0.98)" },
-    pending: { background: "#3a3d41", cursor: "progress", opacity: 0.8 },
-    success: { background: "#2d8a3a" }
-  };
-  var statusStyles = {
-    fontSize: "12px",
-    color: "#cccccc",
-    margin: 0
-  };
-
-  // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react10 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/provider-version-styles.tsx
-  var providerCardStyles = {
-    border: "1px solid #2d2d30",
-    borderRadius: "8px",
-    padding: "14px",
-    background: "#161616",
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px"
-  };
-  var providerHeaderStyles = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "10px"
-  };
-  var providerTitleStyles = {
-    fontSize: "13px",
-    fontWeight: 600
-  };
-  var providerStatusStyles = {
-    fontSize: "12px",
-    color: "#cccccc",
-    margin: 0
-  };
-  var versionSectionsStyles = {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-    gap: "12px"
-  };
-  var versionSectionStyles = {
-    border: "1px solid #2a2a2d",
-    borderRadius: "6px",
-    padding: "10px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px",
-    minHeight: "80px"
-  };
-  var detailLabelStyles = {
-    fontSize: "11px",
-    textTransform: "uppercase",
-    letterSpacing: "0.05em",
-    color: "#777",
-    margin: 0
-  };
-  var detailValueStyles = {
-    margin: 0,
-    fontSize: "13px",
-    color: "#dddddd",
-    wordBreak: "break-all"
-  };
-  var pathStyles = {
-    margin: 0,
-    fontSize: "11px",
-    color: "#7b7b7b",
-    wordBreak: "break-all"
-  };
-  var buttonStyles = {
-    borderRadius: "4px",
-    border: "1px solid #3a3d41",
-    background: "transparent",
-    color: "#ffffff",
-    padding: "4px 10px",
     cursor: "pointer",
-    fontSize: "11px",
-    textTransform: "uppercase",
-    letterSpacing: "0.08em",
-    alignSelf: "flex-start"
-  };
-  var actionsContainerStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px"
-  };
-  var actionButtonStyles = {
-    borderRadius: "4px",
-    border: "1px solid #3a3d41",
-    background: "#0e639c",
-    color: "#ffffff",
-    padding: "6px 14px",
-    cursor: "pointer",
-    fontSize: "12px",
-    fontWeight: 600,
-    letterSpacing: "0.05em",
-    textTransform: "uppercase"
-  };
-  var dangerButtonStyles = {
-    ...actionButtonStyles,
-    background: "#8c2020",
-    borderColor: "#b22222"
-  };
-  var operationStatusStyles = {
-    fontSize: "12px",
-    color: "#cccccc",
-    margin: 0
-  };
-  var operationErrorStyles = {
-    ...operationStatusStyles,
-    color: "#ff7676"
-  };
-  var riskWarningStyles = {
-    fontSize: "11px",
-    color: "#ffcc66",
-    margin: "0",
-    lineHeight: 1.4
-  };
-  var badgeStyles = {
-    borderRadius: "12px",
-    border: "1px solid #c4a000",
-    padding: "2px 8px",
-    fontSize: "11px",
-    color: "#f1c232",
-    textTransform: "uppercase",
-    letterSpacing: "0.05em"
-  };
-  var uncheckedBadgeStyles = {
-    ...badgeStyles,
-    borderColor: "#d9534f",
-    color: "#ffb3b0"
-  };
-
-  // src/client/ui/src/components/settings/provider-runtime-actions.tsx
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-  var ProviderRuntimeActionsPanel = ({
-    showInstall,
-    showRestore,
-    installPending,
-    restorePending,
-    statusInfo,
-    pendingAction,
-    onInstall,
-    onRestore
-  }) => {
-    if (!(showInstall || showRestore || statusInfo.message)) {
-      return null;
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: actionsContainerStyles, children: [
-      renderInstallButton({
-        showInstall,
-        installPending,
-        pendingAction,
-        onInstall
-      }),
-      renderRestoreButton({
-        showRestore,
-        restorePending,
-        pendingAction,
-        onRestore
-      }),
-      statusInfo.message ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        "p",
-        {
-          style: statusInfo.isError ? operationErrorStyles : operationStatusStyles,
-          children: statusInfo.message
-        }
-      ) : null,
-      pendingAction === "install" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { style: riskWarningStyles, children: "Unchecked vendor versions are not vetted by CodeAI Hub. Confirm only if you trust the source, understand the risks, and reviewed the provider runtime policy in the documentation." }) : null
-    ] });
-  };
-  var renderInstallButton = ({
-    showInstall,
-    installPending,
-    pendingAction,
-    onInstall
-  }) => {
-    if (!showInstall) {
-      return null;
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-      "button",
-      {
-        disabled: installPending,
-        onClick: onInstall,
-        style: actionButtonStyles,
-        type: "button",
-        children: resolveInstallLabel(installPending, pendingAction)
-      }
-    );
-  };
-  var renderRestoreButton = ({
-    showRestore,
-    restorePending,
-    pendingAction,
-    onRestore
-  }) => {
-    if (!showRestore) {
-      return null;
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-      "button",
-      {
-        disabled: restorePending,
-        onClick: onRestore,
-        style: dangerButtonStyles,
-        type: "button",
-        children: resolveRestoreLabel(restorePending, pendingAction)
-      }
-    );
-  };
-  var useProviderRuntimeActions = ({
-    operation,
-    onInstallVendor,
-    onRestoreRuntime,
-    providerId,
-    pendingAction,
-    setPendingAction
-  }) => {
-    const installPending = operation?.status === "pending" && operation.operation === "installVendor";
-    const restorePending = operation?.status === "pending" && operation.operation === "restoreVetted";
-    const statusInfo = resolveOperationStatus(operation);
-    const handleInstallVendorClick = () => {
-      if (installPending) {
-        return;
-      }
-      if (pendingAction === "install") {
-        setPendingAction(null);
-        onInstallVendor(providerId);
-        return;
-      }
-      setPendingAction("install");
-    };
-    const handleRestoreRuntimeClick = () => {
-      if (restorePending) {
-        return;
-      }
-      if (pendingAction === "restore") {
-        setPendingAction(null);
-        onRestoreRuntime(providerId);
-        return;
-      }
-      setPendingAction("restore");
-    };
-    return {
-      installPending,
-      restorePending,
-      statusInfo,
-      handleInstallVendorClick,
-      handleRestoreRuntimeClick
-    };
-  };
-  var resolveOperationStatus = (operation) => {
-    if (!operation) {
-      return { message: null, isError: false };
-    }
-    if (operation.status === "pending") {
-      const message = operation.operation === "installVendor" ? "Installing vendor runtime\u2026" : "Restoring vetted runtime\u2026";
-      return { message, isError: false };
-    }
-    if (operation.status === "success") {
-      const message = operation.operation === "installVendor" ? "Vendor runtime installed." : "CodeAI Hub runtime restored.";
-      return { message, isError: false };
-    }
-    return {
-      message: operation.message ?? "Runtime update failed.",
-      isError: true
-    };
-  };
-  var resolveInstallLabel = (installPending, pendingAction) => {
-    if (installPending) {
-      return "Installing\u2026";
-    }
-    if (pendingAction === "install") {
-      return "Confirm vendor install";
-    }
-    return "Install vendor version";
-  };
-  var resolveRestoreLabel = (restorePending, pendingAction) => {
-    if (restorePending) {
-      return "Restoring\u2026";
-    }
-    if (pendingAction === "restore") {
-      return "Confirm runtime restore";
-    }
-    return "Restore CodeAI Hub runtime";
-  };
-
-  // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-  var ProviderVersionRow = ({
-    provider,
-    operation,
-    onInstallVendor,
-    onRestoreRuntime
-  }) => {
-    const [pendingAction, setPendingAction] = (0, import_react10.useState)(null);
-    const versionInfo = provider.versionInfo;
-    const codeAiHubDetail = versionInfo?.codeAiHub;
-    const vendorDetail = versionInfo?.vendor;
-    const globalDetail = versionInfo?.global;
-    const lastChecked = formatCheckedAt(versionInfo?.lastCheckedAt);
-    const updateAvailable = Boolean(
-      codeAiHubDetail?.version && vendorDetail?.version && codeAiHubDetail.version !== vendorDetail.version
-    );
-    const isUnchecked = Boolean(codeAiHubDetail?.unchecked);
-    const badge = resolveBadge(updateAvailable, isUnchecked);
-    const providerId = provider.id;
-    const {
-      installPending,
-      restorePending,
-      statusInfo,
-      handleInstallVendorClick,
-      handleRestoreRuntimeClick
-    } = useProviderRuntimeActions({
-      operation,
-      onInstallVendor,
-      onRestoreRuntime,
-      providerId,
-      pendingAction,
-      setPendingAction
-    });
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: providerCardStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: providerHeaderStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: providerTitleStyles, children: provider.title }),
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { style: providerStatusStyles, children: provider.statusMessage ?? (provider.connected ? "Connected" : "Inactive") })
-        ] }),
-        badge
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: versionSectionsStyles, children: [
-        renderVersionSection({
-          title: "CodeAI Hub runtime",
-          detail: codeAiHubDetail,
-          allowCopy: true
-        }),
-        renderVersionSection({
-          title: "Vendor latest (npm)",
-          detail: vendorDetail
-        }),
-        renderVersionSection({
-          title: "Global CLI installation",
-          detail: globalDetail
-        })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        ProviderRuntimeActionsPanel,
-        {
-          installPending,
-          onInstall: handleInstallVendorClick,
-          onRestore: handleRestoreRuntimeClick,
-          pendingAction,
-          restorePending,
-          showInstall: updateAvailable,
-          showRestore: isUnchecked,
-          statusInfo
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { style: detailLabelStyles, children: "Last checked" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { style: detailValueStyles, children: lastChecked })
-      ] })
-    ] });
-  };
-  var resolveBadge = (isUpdateAvailable, isUnchecked) => {
-    if (isUnchecked) {
-      return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { style: uncheckedBadgeStyles, children: "Unchecked runtime" });
-    }
-    if (isUpdateAvailable) {
-      return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { style: badgeStyles, children: "Update available" });
-    }
-    return null;
-  };
-  var renderVersionSection = ({
-    title,
-    detail,
-    allowCopy
-  }) => {
-    const versionLabel = detail?.version ?? "Not detected";
-    const path = detail?.cliPath;
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: versionSectionStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { style: detailLabelStyles, children: title }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { style: detailValueStyles, children: versionLabel }),
-      path ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { style: pathStyles, children: path }) : null,
-      allowCopy && path ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "button",
-        {
-          onClick: () => copyToClipboard(path),
-          style: buttonStyles,
-          type: "button",
-          children: "Copy CLI path"
-        }
-      ) : null
-    ] });
-  };
-  var formatCheckedAt = (value) => {
-    if (!value) {
-      return "Not checked yet";
-    }
-    try {
-      return new Date(value).toLocaleString();
-    } catch {
-      return value;
-    }
-  };
-  var copyToClipboard = async (value) => {
-    if (!value) {
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(value);
-    } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = value;
-      textarea.style.position = "fixed";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-    }
-  };
-  var provider_version_row_default = ProviderVersionRow;
-
-  // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
-  var panelStyles = {
-    marginTop: "32px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px"
-  };
-  var headingStyles = {
-    margin: 0,
-    fontSize: "15px",
-    color: "#ffffff"
-  };
-  var descriptionStyles2 = {
-    margin: 0,
-    fontSize: "13px",
-    color: "#999999",
-    lineHeight: 1.4
-  };
-  var statusStyles2 = {
-    fontSize: "12px",
-    color: "#cccccc",
-    margin: 0
-  };
-  var ProviderVersionsPanel = ({
-    providers,
-    operations,
-    onInstallVendor,
-    onRestoreRuntime
-  }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("section", { style: panelStyles, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h3", { style: headingStyles, children: "Provider Runtime Versions" }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: descriptionStyles2, children: "CodeAI Hub automatically compares its bundled runtime with the latest vendor release and any globally installed CLI." }),
-    providers.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: statusStyles2, children: "Waiting for core status\u2026" }) : providers.map((provider) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-      provider_version_row_default,
-      {
-        onInstallVendor,
-        onRestoreRuntime,
-        operation: operations[provider.id],
-        provider
-      },
-      provider.id
-    ))
-  ] });
-  var provider_versions_default = ProviderVersionsPanel;
-
-  // src/client/ui/src/components/settings/general-settings.tsx
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-  var RESTART_PENDING_DELAY_MS = 1500;
-  var RESTART_RESET_DELAY_MS = 2500;
-  var isProviderOperationPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    if (candidate.operation !== "installVendor" && candidate.operation !== "restoreVetted") {
-      return false;
-    }
-    if (candidate.status !== "started" && candidate.status !== "success" && candidate.status !== "error") {
-      return false;
-    }
-    return typeof candidate.providerId === "string";
-  };
-  var buildOperationState = (payload) => {
-    if (payload.status === "started") {
-      return {
-        status: "pending",
-        operation: payload.operation
-      };
-    }
-    if (payload.status === "success") {
-      return {
-        status: "success",
-        operation: payload.operation
-      };
-    }
-    return {
-      status: "error",
-      operation: payload.operation,
-      message: payload.message ?? "Runtime update failed."
-    };
-  };
-  var extractProviderOperationState = (payload) => {
-    if (!isProviderOperationPayload(payload)) {
-      return null;
-    }
-    return {
-      providerId: payload.providerId,
-      state: buildOperationState(payload)
-    };
+    fontSize: "12px"
   };
   var GeneralSettings = () => {
-    const [buttonState, setButtonState] = (0, import_react11.useState)("idle");
-    const [statusMessage, setStatusMessage] = (0, import_react11.useState)(null);
-    const pendingTimerRef = (0, import_react11.useRef)(null);
-    const resetTimerRef = (0, import_react11.useRef)(null);
-    const [providers, setProviders] = (0, import_react11.useState)(FALLBACK_PROVIDERS);
-    const [providerOperations, setProviderOperations] = (0, import_react11.useState)({});
-    const hasRequestedInitialRefreshRef = (0, import_react11.useRef)(false);
-    (0, import_react11.useEffect)(
-      () => () => {
-        if (pendingTimerRef.current) {
-          clearTimeout(pendingTimerRef.current);
-        }
-        if (resetTimerRef.current) {
-          clearTimeout(resetTimerRef.current);
-        }
-      },
-      []
-    );
-    (0, import_react11.useEffect)(() => {
-      const handleCoreState = (event) => {
-        const raw = event.data;
-        if (!raw || typeof raw !== "object") {
-          return;
-        }
-        const candidate = raw;
-        if (candidate.type !== "core:state") {
-          return;
-        }
-        const payload = candidate.payload;
-        if (!isCoreBridgeStatePayload(payload)) {
-          return;
-        }
-        setProviders(payload.providers);
-      };
-      window.addEventListener("message", handleCoreState);
-      return () => {
-        window.removeEventListener("message", handleCoreState);
-      };
-    }, []);
-    (0, import_react11.useEffect)(() => {
-      const handleProviderOperation = (event) => {
-        const raw = event.data;
-        if (!raw || typeof raw !== "object") {
-          return;
-        }
-        const candidate = raw;
-        if (candidate.type !== "provider:operation") {
-          return;
-        }
-        const resolved = extractProviderOperationState(candidate.payload);
-        if (!resolved) {
-          return;
-        }
-        setProviderOperations((prev) => ({
-          ...prev,
-          [resolved.providerId]: resolved.state
-        }));
-        if (resolved.state.status !== "pending") {
-          refreshProviderVersions(resolved.providerId);
-        }
-      };
-      window.addEventListener("message", handleProviderOperation);
-      return () => {
-        window.removeEventListener("message", handleProviderOperation);
-      };
-    }, []);
-    (0, import_react11.useEffect)(() => {
-      if (hasRequestedInitialRefreshRef.current) {
-        return;
-      }
-      hasRequestedInitialRefreshRef.current = true;
-      requestStatusSnapshot();
-      refreshProviderVersions();
-    }, []);
-    const transitionToIdle = (0, import_react11.useCallback)(() => {
-      setButtonState("idle");
-      setStatusMessage(null);
-    }, []);
-    const handleRestartCore = (0, import_react11.useCallback)(() => {
-      if (buttonState === "pending") {
-        return;
-      }
-      setButtonState("pending");
-      setStatusMessage("Restarting core\u2026");
+    const handleRestartCore = () => {
       postVsCodeMessage({ type: "core:restart-request" });
-      pendingTimerRef.current = setTimeout(() => {
-        setButtonState("success");
-        setStatusMessage(
-          "Restart command sent. Waiting for CodeAI Hub to reconnect."
-        );
-        resetTimerRef.current = setTimeout(
-          transitionToIdle,
-          RESTART_RESET_DELAY_MS
-        );
-      }, RESTART_PENDING_DELAY_MS);
-    }, [buttonState, transitionToIdle]);
-    const handleInstallVendorRuntime = (0, import_react11.useCallback)(
-      (providerId) => {
-        setProviderOperations((prev) => ({
-          ...prev,
-          [providerId]: { status: "pending", operation: "installVendor" }
-        }));
-        installProviderVendorRuntime(providerId);
-      },
-      []
-    );
-    const handleRestoreRuntime = (0, import_react11.useCallback)((providerId) => {
-      setProviderOperations((prev) => ({
-        ...prev,
-        [providerId]: { status: "pending", operation: "restoreVetted" }
-      }));
-      restoreProviderRuntime(providerId);
-    }, []);
-    const applyVisualState = (next) => {
-      if (buttonState === "pending") {
-        return;
-      }
-      if (buttonState === "success" && next !== "idle") {
-        return;
-      }
-      setButtonState(next);
     };
-    const getButtonStyles = () => {
-      if (buttonState === "idle") {
-        return buttonBaseStyles;
-      }
-      const variant = buttonStateStyles[buttonState];
-      return variant ? { ...buttonBaseStyles, ...variant } : buttonBaseStyles;
-    };
-    const resolveButtonLabel = () => {
-      if (buttonState === "pending") {
-        return "Restarting\u2026";
-      }
-      if (buttonState === "success") {
-        return "Restart requested";
-      }
-      return "Restart Core";
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("section", { style: sectionStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h3", { children: "Core Controls" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: descriptionStyles, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-        "button",
-        {
-          disabled: buttonState === "pending",
-          onClick: handleRestartCore,
-          onMouseDown: () => applyVisualState("active"),
-          onMouseEnter: () => applyVisualState("hover"),
-          onMouseLeave: () => applyVisualState("idle"),
-          onMouseUp: () => applyVisualState("hover"),
-          style: getButtonStyles(),
-          type: "button",
-          children: resolveButtonLabel()
-        }
-      ),
-      statusMessage ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("output", { style: statusStyles, children: statusMessage }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-        provider_versions_default,
-        {
-          onInstallVendor: handleInstallVendorRuntime,
-          onRestoreRuntime: handleRestoreRuntime,
-          operations: providerOperations,
-          providers
-        }
-      )
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { style: sectionStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { children: "Core Controls" }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { style: descriptionStyles, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: handleRestartCore, style: buttonStyles, type: "button", children: "Restart Core" })
     ] });
   };
-  var general_settings_default = (0, import_react11.memo)(GeneralSettings);
+  var general_settings_default = (0, import_react7.memo)(GeneralSettings);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   var containerStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -10156,8 +8909,8 @@
         event.currentTarget.style.background = "#0e639c";
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: containerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: containerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         "button",
         {
           disabled: resetting,
@@ -10178,8 +8931,8 @@
           children: resetting ? "Resetting..." : "Reset to Defaults"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
           "button",
           {
             onBlur: handleCloseBlur,
@@ -10192,7 +8945,7 @@
             children: "Close"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
           "button",
           {
             disabled: !hasChanges || saving,
@@ -10218,7 +8971,7 @@
   var settings_footer_default = SettingsFooter;
 
   // src/client/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
   var headerStyles = {
     display: "flex",
     alignItems: "center",
@@ -10245,9 +8998,9 @@
     alignItems: "center",
     justifyContent: "center"
   };
-  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: headerStyles, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: titleStyles, children: "Settings" }),
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: headerStyles, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: titleStyles, children: "Settings" }),
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
       "button",
       {
         "aria-label": "Close settings",
@@ -10262,7 +9015,7 @@
   var settings_header_default = SettingsHeader;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react12 = __toESM(require_react());
+  var import_react8 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
@@ -10277,7 +9030,7 @@
 `;
 
   // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
   var containerStyles2 = {
     marginTop: "20px",
     padding: "12px",
@@ -10291,19 +9044,19 @@
     fontWeight: 500,
     marginBottom: "4px"
   };
-  var descriptionStyles3 = {
+  var descriptionStyles2 = {
     fontSize: "12px",
     color: "#999999",
     lineHeight: "1.4"
   };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: containerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { style: titleStyles2, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: containerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: titleStyles2, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: descriptionStyles2, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
   ] });
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   var toggleContainerStyles = {
     display: "flex",
     alignItems: "flex-start",
@@ -10322,7 +9075,7 @@
     fontWeight: 500,
     marginBottom: "4px"
   };
-  var descriptionStyles4 = {
+  var descriptionStyles3 = {
     fontSize: "12px",
     color: "#999999",
     lineHeight: "1.4"
@@ -10330,8 +9083,8 @@
   var noteStyles = {
     color: "#d4a36a"
   };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { style: toggleContainerStyles, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("label", { style: toggleContainerStyles, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
       "input",
       {
         checked: enabled,
@@ -10340,12 +9093,12 @@
         type: "checkbox"
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: titleStyles3, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: descriptionStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: titleStyles3, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: descriptionStyles3, children: [
         "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("strong", { style: noteStyles, children: "Note:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("strong", { style: noteStyles, children: "Note:" }),
         " Changes take effect when creating a new session."
       ] })
     ] })
@@ -10353,7 +9106,7 @@
   var thinking_toggle_default = ThinkingToggle;
 
   // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   var containerStyles3 = {
     paddingLeft: "28px",
     borderTop: "1px solid #3c3c3c",
@@ -10415,10 +9168,10 @@
       const parsed = Number.parseInt(event.target.value, 10);
       updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: titleStyles4, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: titleStyles4, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           "button",
           {
             onClick: () => updateValue(value - THINKING_TOKEN_STEP),
@@ -10428,7 +9181,7 @@
             children: "\u2212"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           "input",
           {
             max: MAX_THINKING_TOKENS,
@@ -10440,7 +9193,7 @@
             value
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           "button",
           {
             onClick: () => updateValue(value + THINKING_TOKEN_STEP),
@@ -10451,11 +9204,11 @@
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: helperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: helperStyles, children: [
         "\u2022 Normal (4000): Standard reasoning depth",
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("br", {}),
         "\u2022 Hard (10000): Extended analysis for complex tasks",
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("br", {}),
         "\u2022 Ultra (32000): Maximum reasoning capacity"
       ] })
     ] }) });
@@ -10463,7 +9216,7 @@
   var thinking_token_input_default = ThinkingTokenInput;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     marginBottom: "30px"
   };
@@ -10490,20 +9243,20 @@
     const handleTokenChange = (nextValue) => {
       onChange(enabled, nextValue);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: wrapperStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h3", { style: titleStyles5, children: "Claude Thinking Settings" }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: cardStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(thinking_pro_tip_default, {})
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: wrapperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { style: titleStyles5, children: "Claude Thinking Settings" }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: cardStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(thinking_pro_tip_default, {})
       ] })
     ] });
   };
-  var thinking_settings_default = (0, import_react12.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react8.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var import_react13 = __toESM(require_react());
+  var import_react9 = __toESM(require_react());
   var DEFAULT_THINKING_MAX_TOKENS = 4e3;
   var RESET_DELAY_MS = 100;
   var createDefaultSettings = () => ({
@@ -10527,12 +9280,12 @@
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved";
   };
   var useSettingsState = () => {
-    const initialSettingsRef = (0, import_react13.useRef)(createDefaultSettings());
-    const [settings, setSettings] = (0, import_react13.useState)(createDefaultSettings);
-    const [hasChanges, setHasChanges] = (0, import_react13.useState)(false);
-    const [saving, setSaving] = (0, import_react13.useState)(false);
-    const [resetting, setResetting] = (0, import_react13.useState)(false);
-    (0, import_react13.useEffect)(() => {
+    const initialSettingsRef = (0, import_react9.useRef)(createDefaultSettings());
+    const [settings, setSettings] = (0, import_react9.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react9.useState)(false);
+    const [saving, setSaving] = (0, import_react9.useState)(false);
+    const [resetting, setResetting] = (0, import_react9.useState)(false);
+    (0, import_react9.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
       });
@@ -10568,7 +9321,7 @@
         window.removeEventListener("message", handleMessage);
       };
     }, []);
-    const handleThinkingSettingsChange = (0, import_react13.useCallback)(
+    const handleThinkingSettingsChange = (0, import_react9.useCallback)(
       (enabled, maxTokens) => {
         const nextSettings = {
           thinking: {
@@ -10584,14 +9337,14 @@
       },
       []
     );
-    const handleSave = (0, import_react13.useCallback)(() => {
+    const handleSave = (0, import_react9.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
         type: "settings:save",
         settings
       });
     }, [settings]);
-    const handleReset = (0, import_react13.useCallback)(() => {
+    const handleReset = (0, import_react9.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
         vscode_default.postMessage({
@@ -10611,7 +9364,7 @@
   };
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var containerStyles4 = {
     height: "100%",
     display: "flex",
@@ -10655,7 +9408,7 @@
     { id: "general", label: "General" }
   ];
   var SettingsView = ({ onClose }) => {
-    const [activeTab, setActiveTab] = (0, import_react14.useState)("claude");
+    const [activeTab, setActiveTab] = (0, import_react10.useState)("claude");
     const {
       settings,
       hasChanges,
@@ -10665,9 +9418,9 @@
       handleSave,
       handleReset
     } = useSettingsState();
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: containerStyles4, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(settings_header_default, { onClose }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: containerStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(settings_header_default, { onClose }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         "button",
         {
           onClick: () => setActiveTab(tab.id),
@@ -10680,9 +9433,9 @@
         },
         tab.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: contentStyles, children: (() => {
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: contentStyles, children: (() => {
         if (activeTab === "claude") {
-          return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             thinking_settings_default,
             {
               enabled: settings.thinking.enabled,
@@ -10692,11 +9445,11 @@
           );
         }
         if (activeTab === "general") {
-          return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(general_settings_default, {});
+          return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(general_settings_default, {});
         }
-        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: placeholderStyles, children: "Provider settings will appear here." });
+        return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: placeholderStyles, children: "Provider settings will appear here." });
       })() }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         settings_footer_default,
         {
           hasChanges,
@@ -10709,43 +9462,22 @@
       )
     ] });
   };
-  var settings_view_default = import_react14.default.memo(SettingsView);
-
-  // src/client/ui/src/session/detach-actions.ts
-  var SESSION_DETACH_MESSAGE = "session:detach";
-  var isValidSessionId = (sessionId) => typeof sessionId === "string" && sessionId.length > 0;
-  var requestSessionDetach = (sessionId) => {
-    if (!isValidSessionId(sessionId)) {
-      return;
-    }
-    postVsCodeMessage({
-      type: SESSION_DETACH_MESSAGE,
-      payload: { sessionId }
-    });
-  };
+  var settings_view_default = import_react10.default.memo(SettingsView);
 
   // src/client/ui/src/session/dialog-panel.tsx
-  var import_react15 = __toESM(require_react());
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
-  var AUTO_SCROLL_EPSILON = 32;
+  var import_react11 = __toESM(require_react());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   var DialogPanel = ({
     messages,
     providerTheme = null,
     providerLabel = null
   }) => {
-    const scrollContainerRef = (0, import_react15.useRef)(null);
-    const displayMessages = (0, import_react15.useMemo)(
-      () => mergeThinkingSegments(messages),
-      [messages]
-    );
-    const lastMessageKey = displayMessages.length > 0 ? displayMessages.at(-1)?.id ?? null : null;
-    const [expandedThinking, setExpandedThinking] = (0, import_react15.useState)({});
-    const [pinnedToBottom, setPinnedToBottom] = (0, import_react15.useState)(true);
-    (0, import_react15.useEffect)(() => {
+    const [expandedThinking, setExpandedThinking] = (0, import_react11.useState)({});
+    (0, import_react11.useEffect)(() => {
       setExpandedThinking((previous) => {
         let hasChanges = false;
         const nextState = { ...previous };
-        for (const message of displayMessages) {
+        for (const message of messages) {
           if (message.role === "thinking" && nextState[message.id] === void 0) {
             nextState[message.id] = false;
             hasChanges = true;
@@ -10753,76 +9485,43 @@
         }
         return hasChanges ? nextState : previous;
       });
-    }, [displayMessages]);
+    }, [messages]);
     const toggleThinking = (messageId) => {
       setExpandedThinking((previous) => ({
         ...previous,
         [messageId]: !previous[messageId]
       }));
     };
-    const updatePinnedState = () => {
-      const container = scrollContainerRef.current;
-      if (!container) {
-        return;
-      }
-      const distanceFromBottom = container.scrollHeight - (container.scrollTop + container.clientHeight);
-      const nextPinned = distanceFromBottom <= AUTO_SCROLL_EPSILON;
-      setPinnedToBottom(
-        (current) => current === nextPinned ? current : nextPinned
-      );
-    };
-    (0, import_react15.useLayoutEffect)(() => {
-      if (!pinnedToBottom) {
-        return;
-      }
-      const container = scrollContainerRef.current;
-      if (!container) {
-        return;
-      }
-      if (lastMessageKey === null) {
-        container.scrollTop = container.scrollHeight;
-        return;
-      }
-      container.scrollTop = container.scrollHeight;
-    }, [lastMessageKey, pinnedToBottom]);
-    if (displayMessages.length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
+    if (messages.length === 0) {
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-      "div",
-      {
-        className: "session-dialog__scroll",
-        onScroll: updatePinnedState,
-        ref: scrollContainerRef,
-        children: displayMessages.map((message) => {
-          const className = buildMessageClassNames(message, providerTheme);
-          const label = resolveRoleLabel(message, providerLabel);
-          if (message.role === "thinking") {
-            const expanded = expandedThinking[message.id] ?? false;
-            return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-              ThinkingMessage,
-              {
-                className,
-                expanded,
-                label,
-                message,
-                onToggle: toggleThinking
-              },
-              message.id
-            );
-          }
-          return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-            StandardMessage,
-            {
-              className,
-              label,
-              message
-            },
-            message.id
-          );
-        })
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-dialog__scroll", children: messages.map((message) => {
+      const className = buildMessageClassNames(message, providerTheme);
+      const label = resolveRoleLabel(message, providerLabel);
+      if (message.role === "thinking") {
+        const expanded = expandedThinking[message.id] ?? false;
+        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          ThinkingMessage,
+          {
+            className,
+            expanded,
+            label,
+            message,
+            onToggle: toggleThinking
+          },
+          message.id
+        );
       }
-    ) });
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        StandardMessage,
+        {
+          className,
+          label,
+          message
+        },
+        message.id
+      );
+    }) }) });
   };
   var dialog_panel_default = DialogPanel;
   var buildMessageClassNames = (message, providerTheme) => {
@@ -10853,9 +9552,9 @@
     onToggle,
     label,
     className
-  }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("article", { className, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("header", { className: "session-dialog__message-header session-dialog__message-header--thinking", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+  }) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("article", { className, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("header", { className: "session-dialog__message-header session-dialog__message-header--thinking", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         "button",
         {
           "aria-controls": `thinking-${message.id}`,
@@ -10867,9 +9566,9 @@
           children: expanded ? "\u25BE" : "\u25B8"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-dialog__role", children: label })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-dialog__role", children: label })
     ] }),
-    expanded ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    expanded ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
       "p",
       {
         className: "session-dialog__content session-dialog__content--thinking",
@@ -10884,10 +9583,10 @@
     className
   }) => {
     const messageDate = new Date(message.createdAt);
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("article", { className, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("header", { className: "session-dialog__message-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-dialog__role", children: label }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("article", { className, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("header", { className: "session-dialog__message-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-dialog__role", children: label }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
           "time",
           {
             className: "session-dialog__timestamp",
@@ -10896,80 +9595,28 @@
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "session-dialog__content", children: message.content })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "session-dialog__content", children: message.content })
     ] });
-  };
-  var mergeThinkingSegments = (messages) => {
-    const merged = [];
-    let pending = null;
-    for (const message of messages) {
-      if (message.role === "thinking") {
-        if (pending) {
-          const combinedThinking = {
-            ...pending,
-            content: `${pending.content}
-
-${message.content}`,
-            createdAt: message.createdAt
-          };
-          pending = combinedThinking;
-        } else {
-          pending = { ...message };
-        }
-        continue;
-      }
-      if (pending) {
-        merged.push(pending);
-        pending = null;
-      }
-      merged.push(message);
-    }
-    if (pending) {
-      merged.push(pending);
-    }
-    return merged;
   };
 
   // src/client/ui/src/session/empty-state.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
-  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "session-empty", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-empty", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
   ] });
   var empty_state_default = EmptyState;
 
-  // src/client/ui/src/utils/provisional-session-id.ts
-  var PROVISIONAL_PREFIXES = [
-    "temp_",
-    "temp-",
-    "session_",
-    "session-",
-    "codex_",
-    "codex-",
-    "claude_",
-    "claude-"
-  ];
-  var isProvisionalProviderSessionId = (value) => {
-    if (!value) {
-      return false;
-    }
-    const normalized = value.toLowerCase();
-    return PROVISIONAL_PREFIXES.some((prefix) => normalized.startsWith(prefix));
-  };
-
   // src/client/ui/src/session/info-panel.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   var InfoPanel = ({ binding }) => {
     let primaryText = "Session information unavailable";
     let secondaryText = "Provider session state is unknown.";
     let secondaryTitle;
-    if (binding.status === "ready" && binding.providerSessionId && !isProvisionalProviderSessionId(binding.providerSessionId)) {
+    if (binding.status === "ready" && binding.providerSessionId) {
       primaryText = "Session ID";
       secondaryText = binding.providerSessionId;
       secondaryTitle = binding.providerSessionId;
-    } else if (binding.status === "ready") {
-      primaryText = "Waiting for provider session ID\u2026";
-      secondaryText = "The provider has not confirmed the session yet.";
     } else if (binding.status === "pending") {
       primaryText = "Waiting for provider session ID\u2026";
       secondaryText = "The provider has not confirmed the session yet.";
@@ -10977,15 +9624,15 @@ ${message.content}`,
       primaryText = "Session failed to initialize";
       secondaryText = "Provider session ID unavailable. Check CLI logs.";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "session-panel session-info", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-info__text", children: primaryText }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-info__text", title: secondaryTitle, children: secondaryText }) })
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("section", { className: "session-panel session-info", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-info__text", children: primaryText }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-info__text", title: secondaryTitle, children: secondaryText }) })
     ] });
   };
   var info_panel_default = InfoPanel;
 
   // src/client/ui/src/session/input-panel.tsx
-  var import_react16 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
 
   // src/client/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
   var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
@@ -11484,7 +10131,7 @@ ${path}` : path;
   };
 
   // src/client/ui/src/session/input-panel.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   var MAX_TEXTAREA_HEIGHT = 200;
   var adjustTextareaHeight = (textarea) => {
     if (!textarea) {
@@ -11506,22 +10153,22 @@ ${path}` : path;
     element.setSelectionRange(length, length);
   };
   var InputPanel = ({ draft, onSubmit }) => {
-    const [value, setValue] = (0, import_react16.useState)(draft);
-    const [isDragging, setIsDragging] = (0, import_react16.useState)(false);
-    const [isFocused, setIsFocused] = (0, import_react16.useState)(false);
-    const textareaRef = (0, import_react16.useRef)(null);
-    const dropContainerRef = (0, import_react16.useRef)(null);
-    const dragDropFacadeRef = (0, import_react16.useRef)(null);
-    const updateValue = (0, import_react16.useCallback)((nextValue) => {
+    const [value, setValue] = (0, import_react12.useState)(draft);
+    const [isDragging, setIsDragging] = (0, import_react12.useState)(false);
+    const [isFocused, setIsFocused] = (0, import_react12.useState)(false);
+    const textareaRef = (0, import_react12.useRef)(null);
+    const dropContainerRef = (0, import_react12.useRef)(null);
+    const dragDropFacadeRef = (0, import_react12.useRef)(null);
+    const updateValue = (0, import_react12.useCallback)((nextValue) => {
       setValue(nextValue);
       requestAnimationFrame(() => {
         adjustTextareaHeight(textareaRef.current);
       });
     }, []);
-    (0, import_react16.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       updateValue(draft);
     }, [draft, updateValue]);
-    const sendMessage = (0, import_react16.useCallback)(() => {
+    const sendMessage = (0, import_react12.useCallback)(() => {
       const trimmed = value.trim();
       if (!trimmed) {
         return;
@@ -11529,14 +10176,14 @@ ${path}` : path;
       onSubmit(trimmed);
       updateValue("");
     }, [onSubmit, updateValue, value]);
-    const handleSubmit = (0, import_react16.useCallback)(
+    const handleSubmit = (0, import_react12.useCallback)(
       (event) => {
         event.preventDefault();
         sendMessage();
       },
       [sendMessage]
     );
-    const handleKeyDown = (0, import_react16.useCallback)(
+    const handleKeyDown = (0, import_react12.useCallback)(
       (event) => {
         if (event.key !== "Enter") {
           return;
@@ -11553,13 +10200,13 @@ ${path}` : path;
       },
       [sendMessage]
     );
-    const handleChange = (0, import_react16.useCallback)(
+    const handleChange = (0, import_react12.useCallback)(
       (event) => {
         updateValue(event.target.value);
       },
       [updateValue]
     );
-    const insertTextAtSelection = (0, import_react16.useCallback)(
+    const insertTextAtSelection = (0, import_react12.useCallback)(
       (text) => {
         const textarea = textareaRef.current;
         if (!textarea) {
@@ -11582,14 +10229,14 @@ ${path}` : path;
       },
       [updateValue]
     );
-    const syncTextareaValue = (0, import_react16.useCallback)(() => {
+    const syncTextareaValue = (0, import_react12.useCallback)(() => {
       const textarea = textareaRef.current;
       if (!textarea) {
         return;
       }
       updateValue(textarea.value);
     }, [updateValue]);
-    const { handlePaste, handleCopy } = (0, import_react16.useMemo)(
+    const { handlePaste, handleCopy } = (0, import_react12.useMemo)(
       () => createClipboardHandlers({
         textareaRef,
         insertTextAtSelection,
@@ -11597,7 +10244,7 @@ ${path}` : path;
       }),
       [insertTextAtSelection, syncTextareaValue]
     );
-    const applyExternalValue = (0, import_react16.useCallback)(
+    const applyExternalValue = (0, import_react12.useCallback)(
       (newValue) => {
         updateValue(newValue);
         requestAnimationFrame(() => {
@@ -11607,7 +10254,7 @@ ${path}` : path;
       },
       [updateValue]
     );
-    (0, import_react16.useEffect)(() => {
+    (0, import_react12.useEffect)(() => {
       const container = dropContainerRef.current;
       const textarea = textareaRef.current;
       if (!(container && textarea)) {
@@ -11627,14 +10274,14 @@ ${path}` : path;
       };
     }, [applyExternalValue]);
     const overlayLabel = "Drop files here while holding Shift";
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
       "form",
       {
         "aria-label": "Message input",
         className: "session-input session-panel",
         onSubmit: handleSubmit,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
             "div",
             {
               className: [
@@ -11643,7 +10290,7 @@ ${path}` : path;
               ].filter(Boolean).join(" "),
               ref: dropContainerRef,
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
                   "textarea",
                   {
                     "aria-multiline": "true",
@@ -11663,11 +10310,11 @@ ${path}` : path;
                     value
                   }
                 ),
-                isDragging && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("output", { className: "session-input__overlay", children: overlayLabel })
+                isDragging && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("output", { className: "session-input__overlay", children: overlayLabel })
               ]
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
         ]
       }
     );
@@ -11675,23 +10322,18 @@ ${path}` : path;
   var input_panel_default = InputPanel;
 
   // src/client/ui/src/session/session-tabs.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var SessionTabs = ({
     sessions,
     providerLabels,
     activeSessionId,
-    detachedSessionIds,
     onSelect,
-    onClose,
-    onDetach
+    onClose
   }) => {
-    const visibleSessions = sessions.filter(
-      (session) => !detachedSessionIds.has(session.id)
-    );
-    if (visibleSessions.length === 0) {
+    if (sessions.length === 0) {
       return null;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "session-tabs", children: visibleSessions.map((session) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
       const isActive = session.id === activeSessionId;
       const providerNames = session.providerIds.map((providerId) => {
         const label = providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);
@@ -11716,71 +10358,22 @@ ${path}` : path;
         (providerId) => providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId)
       ).join(" + ");
       const tabClassName = isActive ? "session-tab session-tab--active" : "session-tab";
-      const handleDragStart = (event) => {
-        if (!event.shiftKey) {
-          return;
-        }
-        event.preventDefault();
-        onDetach(session.id);
-      };
-      return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: tabClassName, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-          "button",
-          {
-            "aria-label": `Detach session for ${spokenSummary}`,
-            className: "session-tab__detach",
-            onClick: () => onDetach(session.id),
-            title: "Detach this session (Shift + drag to quick-detach)",
-            type: "button",
-            children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
-              "svg",
-              {
-                "aria-hidden": "true",
-                className: "session-tab__detach-icon",
-                fill: "none",
-                focusable: "false",
-                stroke: "currentColor",
-                strokeLinecap: "round",
-                strokeLinejoin: "round",
-                strokeWidth: "1.25",
-                viewBox: "0 0 16 16",
-                xmlns: "http://www.w3.org/2000/svg",
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-                    "rect",
-                    {
-                      height: "7.5",
-                      rx: "1.25",
-                      ry: "1.25",
-                      width: "7.5",
-                      x: "2.75",
-                      y: "6.75"
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("path", { d: "M9.75 2.25h4v4" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("path", { d: "M13.25 2.25 7 8.5" })
-                ]
-              }
-            )
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: tabClassName, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           "button",
           {
             "aria-label": `Activate session for ${spokenSummary}`,
             className: "session-tab__select",
-            draggable: true,
             onClick: () => onSelect(session.id),
-            onDragStart: handleDragStart,
             title: fullSummary,
             type: "button",
-            children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "session-tab__providers", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
-              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
+            children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "session-tab__providers", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
+              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
             ] })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           "button",
           {
             "aria-label": `Close session for ${spokenSummary}`,
@@ -11796,11 +10389,25 @@ ${path}` : path;
   var session_tabs_default = SessionTabs;
 
   // src/client/ui/src/session/status-panel.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var MAX_PERCENTAGE = 100;
   var MIN_TOKEN_LIMIT = 1;
   var PERCENT_SCALE = 100;
-  var StatusPanel = ({ status }) => {
+  var SUPERVISOR_LABEL = "Core Supervisor";
+  var StatusPanel = ({
+    status,
+    connectionStatus,
+    connectionDetail
+  }) => {
+    if (!status || connectionStatus !== "ready") {
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "session-status session-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-status__row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__label", children: SUPERVISOR_LABEL }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__value", children: describeConnectionStatus(connectionStatus) })
+        ] }),
+        connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "session-status__row session-status__row--muted", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__value", children: connectionDetail }) }) : null
+      ] });
+    }
     const { providerSummary, tokenUsage } = status;
     const percentage = Math.min(
       MAX_PERCENTAGE,
@@ -11808,14 +10415,18 @@ ${path}` : path;
         tokenUsage.used / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT) * PERCENT_SCALE
       )
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { className: "session-status session-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "session-status__label", children: "Providers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "session-status__value", children: providerSummary })
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "session-status session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__label", children: "Providers" }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__value", children: providerSummary })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "session-status__label", children: "Tokens" }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { className: "session-status__value", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-status__row session-status__row--muted", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__label", children: "Status" }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__value", children: "Inactive or degraded providers are disabled in the picker." })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "session-status__label", children: "Tokens" }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "session-status__value", children: [
           tokenUsage.used.toLocaleString(),
           " /",
           " ",
@@ -11828,28 +10439,38 @@ ${path}` : path;
     ] });
   };
   var status_panel_default = StatusPanel;
+  var describeConnectionStatus = (status) => {
+    switch (status) {
+      case "ready":
+        return "Core online";
+      case "error":
+        return "Core unavailable";
+      default:
+        return "Starting core\u2026";
+    }
+  };
 
   // src/client/ui/src/session/todo-panel.tsx
-  var import_react17 = __toESM(require_react());
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var import_react13 = __toESM(require_react());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var TodoPanel = ({ items, onToggle }) => {
-    const [showActiveOnly, setShowActiveOnly] = (0, import_react17.useState)(false);
-    const completedCount = (0, import_react17.useMemo)(
+    const [showActiveOnly, setShowActiveOnly] = (0, import_react13.useState)(false);
+    const completedCount = (0, import_react13.useMemo)(
       () => items.filter((item) => item.completed).length,
       [items]
     );
-    const visibleItems = (0, import_react17.useMemo)(
+    const visibleItems = (0, import_react13.useMemo)(
       () => showActiveOnly ? items.filter((item) => !item.completed) : [...items],
       [items, showActiveOnly]
     );
     const handleToggleFilter = () => {
       setShowActiveOnly((previous) => !previous);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("section", { className: "session-todos session-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("header", { className: "session-todos__header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "session-todos__title-group", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "session-todos session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("header", { className: "session-todos__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "session-todos__title-group", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
             "button",
             {
               "aria-label": showActiveOnly ? "Show all tasks" : "Show only active tasks",
@@ -11857,21 +10478,21 @@ ${path}` : path;
               className: showActiveOnly ? "session-todos__toggle session-todos__toggle--active" : "session-todos__toggle",
               onClick: handleToggleFilter,
               type: "button",
-              children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { "aria-hidden": true, className: "session-todos__toggle-icon", children: "\u25BE" })
+              children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": true, className: "session-todos__toggle-icon", children: "\u25BE" })
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "session-todos__counter", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "session-todos__counter", children: [
           completedCount,
           "/",
           items.length,
           " done"
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("ul", { className: "session-todos__list", children: visibleItems.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("li", { className: "session-todos__empty", children: "All tasks complete" }) : visibleItems.map((item) => {
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("ul", { className: "session-todos__list", children: visibleItems.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("li", { className: "session-todos__empty", children: "All tasks complete" }) : visibleItems.map((item) => {
         const textClassName = item.completed ? "session-todos__text session-todos__text--completed" : "session-todos__text";
-        return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { className: "session-todos__label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "session-todos__label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
             "input",
             {
               checked: item.completed,
@@ -11879,7 +10500,7 @@ ${path}` : path;
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: textClassName, children: item.title })
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: textClassName, children: item.title })
         ] }) }, item.id);
       }) })
     ] });
@@ -11887,21 +10508,20 @@ ${path}` : path;
   var todo_panel_default = TodoPanel;
 
   // src/client/ui/src/session/session-view.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var SessionView = ({
     sessions,
     providerLabels,
     activeSessionId,
-    detachedSessionIds,
     snapshots,
     showEmptyState,
+    coreConnectionStatus,
+    coreConnectionDetail,
     onSelectSession,
     onCloseSession,
-    onDetachSession,
     onSendMessage,
     onToggleTodo
   }) => {
-    const detachedWindow = isDetachedWindow();
     const activeSession = activeSessionId && snapshots[activeSessionId] ? snapshots[activeSessionId] : null;
     const activeRecord = sessions.find(
       (session) => session.id === activeSessionId
@@ -11909,62 +10529,58 @@ ${path}` : path;
     const primaryProviderId = activeRecord?.providerIds[0] ?? null;
     const providerTheme = mapProviderTheme(primaryProviderId);
     const providerDisplayLabel = primaryProviderId != null ? providerLabels.get(primaryProviderId) ?? getDefaultProviderTitle(primaryProviderId) : null;
-    const isDetachedSession = activeSessionId ? detachedSessionIds.has(activeSessionId) : false;
     if (sessions.length === 0 && showEmptyState) {
-      return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(empty_state_default, {}) });
+      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(empty_state_default, {}) });
     }
-    const showDetachBanner = detachedWindow || isDetachedSession;
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "session-app", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "session-app__header", children: [
-        detachedWindow ? null : /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-          session_tabs_default,
-          {
-            activeSessionId,
-            detachedSessionIds,
-            onClose: onCloseSession,
-            onDetach: onDetachSession,
-            onSelect: onSelectSession,
-            providerLabels,
-            sessions
-          }
-        ),
-        showDetachBanner && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(DetachedIndicator, {}),
-        activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(info_panel_default, { binding: activeSession.binding }) : null
-      ] }),
-      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "session-app__content", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-          dialog_panel_default,
-          {
-            messages: activeSession.messages,
-            providerLabel: providerDisplayLabel,
-            providerTheme
-          }
-        ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "session-app__rails", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "session-app", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+        session_tabs_default,
+        {
+          activeSessionId,
+          onClose: onCloseSession,
+          onSelect: onSelectSession,
+          providerLabels,
+          sessions
+        }
+      ),
+      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(info_panel_default, { binding: activeSession.binding }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "session-grid", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+            dialog_panel_default,
+            {
+              messages: activeSession.messages,
+              providerLabel: providerDisplayLabel,
+              providerTheme
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
             todo_panel_default,
             {
               items: activeSession.todos,
               onToggle: (todoId) => onToggleTodo(activeSessionId, todoId)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
             input_panel_default,
             {
               draft: activeSession.draft,
               onSubmit: (text) => onSendMessage(activeSessionId, text)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(status_panel_default, { status: activeSession.status })
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+            status_panel_default,
+            {
+              connectionDetail: coreConnectionDetail,
+              connectionStatus: coreConnectionStatus,
+              status: activeSession.status
+            }
+          )
         ] })
       ] }) : null
     ] });
   };
   var session_view_default = SessionView;
-  var DetachedIndicator = () => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "session-detach-banner", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "session-detach-banner__indicator", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "session-detach-banner__label", children: "Detached" }),
-    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "session-detach-banner__detail", children: "This session lives in a separate window and will reattach automatically." })
-  ] }) });
   var mapProviderTheme = (providerId) => {
     switch (providerId) {
       case "claudeCodeCli":
@@ -11979,17 +10595,17 @@ ${path}` : path;
   };
 
   // src/client/ui/src/app-host.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   var AppHost = () => {
-    const windowContext = (0, import_react18.useMemo)(() => getWindowContext(), []);
-    const isDetachedWindow2 = windowContext.mode === "detached";
-    const isStandalone = isStandaloneClient();
-    const [coreStatus, setCoreStatus] = (0, import_react18.useState)("connecting");
-    const [coreFinalized, setCoreFinalized] = (0, import_react18.useState)(false);
-    const [messages, setMessages] = (0, import_react18.useState)(
+    const [coreStatus, setCoreStatus] = (0, import_react14.useState)("connecting");
+    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react14.useState)(
+      void 0
+    );
+    const [coreFinalized, setCoreFinalized] = (0, import_react14.useState)(false);
+    const [messages, setMessages] = (0, import_react14.useState)(
       createDefaultMessages
     );
-    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react18.useState)(0);
+    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react14.useState)(0);
     const {
       pickerState,
       providerLabels,
@@ -12002,14 +10618,12 @@ ${path}` : path;
       sessions,
       snapshots,
       activeSessionId,
-      detachedSessionIds,
       handleSessionCreated,
       hydrateFromCoreState,
       handleSessionMessageEvent: handleSessionMessageEvent2,
       handleSessionHistoryEvent,
       handleSessionDeleted,
       handleSessionBindingUpdate,
-      handleSessionWindowState,
       clearSessions,
       focusLastSession,
       selectSession,
@@ -12018,17 +10632,14 @@ ${path}` : path;
       sendMessage
     } = useSessionStore(providerLabels);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const handleDetachSession = (0, import_react18.useCallback)((sessionId) => {
-      requestSessionDetach(sessionId);
-    }, []);
-    const handleProviderPickerOpen = (0, import_react18.useCallback)(
+    const handleProviderPickerOpen = (0, import_react14.useCallback)(
       (providers) => {
         activateRoot();
         openPicker(providers);
       },
       [openPicker]
     );
-    const handleSessionCreatedMessage2 = (0, import_react18.useCallback)(
+    const handleSessionCreatedMessage2 = (0, import_react14.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
@@ -12036,51 +10647,44 @@ ${path}` : path;
       },
       [handleSessionCreated, resetPicker]
     );
-    const handleShowSettings = (0, import_react18.useCallback)(() => {
+    const handleShowSettings = (0, import_react14.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    const handleCoreState = (0, import_react18.useCallback)(
+    const handleCoreState = (0, import_react14.useCallback)(
       (payload) => {
         activateRoot();
         hydrateFromCoreState(payload);
       },
       [hydrateFromCoreState]
     );
-    const handleSessionMessage = (0, import_react18.useCallback)(
+    const handleSessionMessage = (0, import_react14.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionMessageEvent2(payload);
       },
       [handleSessionMessageEvent2]
     );
-    const handleSessionHistory = (0, import_react18.useCallback)(
+    const handleSessionHistory = (0, import_react14.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionHistoryEvent(payload);
       },
       [handleSessionHistoryEvent]
     );
-    const handleSessionDeletedMessage2 = (0, import_react18.useCallback)(
+    const handleSessionDeletedMessage2 = (0, import_react14.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionDeleted(payload);
       },
       [handleSessionDeleted]
     );
-    const handleSessionBindingMessage2 = (0, import_react18.useCallback)(
+    const handleSessionBindingMessage2 = (0, import_react14.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionBindingUpdate(payload);
       },
       [handleSessionBindingUpdate]
-    );
-    const handleSessionWindowStateMessage2 = (0, import_react18.useCallback)(
-      (payload) => {
-        activateRoot();
-        handleSessionWindowState(payload);
-      },
-      [handleSessionWindowState]
     );
     useWebviewMessageHandler({
       onProviderPickerOpen: handleProviderPickerOpen,
@@ -12089,9 +10693,10 @@ ${path}` : path;
       onSessionFocusLast: focusLastSession,
       onShowSettings: handleShowSettings,
       onCoreState: handleCoreState,
-      onCoreConnectionStatus: (status) => {
+      onCoreConnectionStatus: (status, detail) => {
         if (status === "connecting" || status === "ready" || status === "error") {
           setCoreStatus(status);
+          setCoreStatusDetail(detail);
           if (status === "connecting") {
             setCoreFinalized(false);
             setMessages(createDefaultMessages());
@@ -12124,16 +10729,10 @@ ${path}` : path;
       onSessionMessage: handleSessionMessage,
       onSessionDeleted: handleSessionDeletedMessage2,
       onSessionBinding: handleSessionBindingMessage2,
-      onSessionHistory: handleSessionHistory,
-      onSessionWindowState: handleSessionWindowStateMessage2,
-      onCoreShutdown: () => {
-        if (isDetachedWindow2) {
-          window.close();
-        }
-      }
+      onSessionHistory: handleSessionHistory
     });
     const isCoreReady = coreStatus === "ready" && coreFinalized;
-    (0, import_react18.useEffect)(() => {
+    (0, import_react14.useEffect)(() => {
       if (isCoreReady) {
         return;
       }
@@ -12146,29 +10745,28 @@ ${path}` : path;
         window.clearInterval(timer);
       };
     }, [isCoreReady]);
-    const currentMessage = (0, import_react18.useMemo)(() => {
+    const currentMessage = (0, import_react14.useMemo)(() => {
       const messageId = MESSAGE_ORDER[activeMessageIndex];
       return messages[messageId] ?? DEFAULT_MESSAGES[messageId];
     }, [activeMessageIndex, messages]);
-    const { headlineText, statusLine, detailLine } = (0, import_react18.useMemo)(() => {
+    const { headlineText, statusLine, detailLine } = (0, import_react14.useMemo)(() => {
       if (coreStatus === "error") {
         return {
           headlineText: "Please hold on - we are getting CodeAI Hub ready.",
-          statusLine: "Unable to reach CodeAI Hub core. Retrying...",
+          statusLine: coreStatusDetail ?? "Unable to reach CodeAI Hub core. Retrying...",
           detailLine: void 0
         };
       }
       return {
         headlineText: "Please hold on - we are getting CodeAI Hub ready.",
         statusLine: currentMessage.status,
-        detailLine: currentMessage.detail
+        detailLine: coreStatusDetail ?? currentMessage.detail
       };
-    }, [coreStatus, currentMessage]);
-    const showActionBar = !(isStandalone || isDetachedWindow2);
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "app-shell", children: [
-      showActionBar ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(action_bar_default, { disabled: !isCoreReady }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "app-shell__session-region", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+    }, [coreStatus, coreStatusDetail, currentMessage]);
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(action_bar_default, { disabled: !isCoreReady }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "app-shell__session-region", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
           ProviderPicker,
           {
             onCancel: cancelSelection,
@@ -12177,13 +10775,13 @@ ${path}` : path;
             visible: pickerState.visible
           }
         ),
-        pickerState.visible ? null : /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+        pickerState.visible ? null : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
           session_view_default,
           {
             activeSessionId,
-            detachedSessionIds,
+            coreConnectionDetail: coreStatusDetail,
+            coreConnectionStatus: coreStatus,
             onCloseSession: closeSession,
-            onDetachSession: handleDetachSession,
             onSelectSession: selectSession,
             onSendMessage: sendMessage,
             onToggleTodo: toggleTodo,
@@ -12194,21 +10792,21 @@ ${path}` : path;
           }
         )
       ] }),
-      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "app-shell__status-text", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
-          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
+      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { className: "app-shell__status-text", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
+          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
         ] })
       ] }) }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
     ] });
   };
   var app_host_default = AppHost;
 
   // src/client/ui/src/index.tsx
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   initializeCoreBridge();
   var mount = () => {
     const rootElement = document.getElementById("root");
@@ -12218,7 +10816,7 @@ ${path}` : path;
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(import_react19.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(import_react15.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(app_host_default, {}) })
     );
   };
   mount();

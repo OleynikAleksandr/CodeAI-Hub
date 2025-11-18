@@ -19,12 +19,10 @@ export const useWebviewMessageHandler = ({
   onCoreState,
   onCoreConnectionStatus,
   onCoreLoadingStatus,
-  onCoreShutdown,
   onSessionMessage,
   onSessionDeleted,
   onSessionBinding,
   onSessionHistory,
-  onSessionWindowState,
 }: WebviewMessageHandlers) => {
   useEffect(() => {
     const handleIncomingMessage = (event: MessageEvent<unknown>) => {
@@ -37,12 +35,10 @@ export const useWebviewMessageHandler = ({
         onCoreState,
         onCoreConnectionStatus,
         onCoreLoadingStatus,
-        onCoreShutdown,
         onSessionMessage,
         onSessionDeleted,
         onSessionBinding,
         onSessionHistory,
-        onSessionWindowState,
       });
     };
 
@@ -59,11 +55,9 @@ export const useWebviewMessageHandler = ({
     onCoreState,
     onCoreConnectionStatus,
     onCoreLoadingStatus,
-    onCoreShutdown,
     onSessionMessage,
     onSessionDeleted,
     onSessionBinding,
     onSessionHistory,
-    onSessionWindowState,
   ]);
 };

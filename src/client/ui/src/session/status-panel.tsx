@@ -3,12 +3,39 @@ import type { SessionStatusInfo } from "../../../../types/session";
 const MAX_PERCENTAGE = 100;
 const MIN_TOKEN_LIMIT = 1;
 const PERCENT_SCALE = 100;
+const SUPERVISOR_LABEL = "Core Supervisor";
+
+type CoreConnectionStatus = "connecting" | "ready" | "error";
 
 type StatusPanelProps = {
-  readonly status: SessionStatusInfo;
+  readonly status: SessionStatusInfo | null;
+  readonly connectionStatus: CoreConnectionStatus;
+  readonly connectionDetail?: string;
 };
 
-const StatusPanel = ({ status }: StatusPanelProps) => {
+const StatusPanel = ({
+  status,
+  connectionStatus,
+  connectionDetail,
+}: StatusPanelProps) => {
+  if (!status || connectionStatus !== "ready") {
+    return (
+      <section className="session-status session-panel">
+        <div className="session-status__row">
+          <span className="session-status__label">{SUPERVISOR_LABEL}</span>
+          <span className="session-status__value">
+            {describeConnectionStatus(connectionStatus)}
+          </span>
+        </div>
+        {connectionDetail ? (
+          <div className="session-status__row session-status__row--muted">
+            <span className="session-status__value">{connectionDetail}</span>
+          </div>
+        ) : null}
+      </section>
+    );
+  }
+
   const { providerSummary, tokenUsage } = status;
 
   const percentage = Math.min(
@@ -25,6 +52,12 @@ const StatusPanel = ({ status }: StatusPanelProps) => {
         <span className="session-status__label">Providers</span>
         <span className="session-status__value">{providerSummary}</span>
       </div>
+      <div className="session-status__row session-status__row--muted">
+        <span className="session-status__label">Status</span>
+        <span className="session-status__value">
+          Inactive or degraded providers are disabled in the picker.
+        </span>
+      </div>
       <div className="session-status__row">
         <span className="session-status__label">Tokens</span>
         <span className="session-status__value">
@@ -37,3 +70,14 @@ const StatusPanel = ({ status }: StatusPanelProps) => {
 };
 
 export default StatusPanel;
+
+const describeConnectionStatus = (status: CoreConnectionStatus): string => {
+  switch (status) {
+    case "ready":
+      return "Core online";
+    case "error":
+      return "Core unavailable";
+    default:
+      return "Starting core…";
+  }
+};

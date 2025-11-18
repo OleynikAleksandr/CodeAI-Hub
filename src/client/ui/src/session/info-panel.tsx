@@ -1,5 +1,4 @@
 import type { SessionBindingInfo } from "../../../../types/session";
-import { isProvisionalProviderSessionId } from "../utils/provisional-session-id";
 
 type InfoPanelProps = {
   readonly binding: SessionBindingInfo;
@@ -10,17 +9,10 @@ const InfoPanel = ({ binding }: InfoPanelProps) => {
   let secondaryText = "Provider session state is unknown.";
   let secondaryTitle: string | undefined;
 
-  if (
-    binding.status === "ready" &&
-    binding.providerSessionId &&
-    !isProvisionalProviderSessionId(binding.providerSessionId)
-  ) {
+  if (binding.status === "ready" && binding.providerSessionId) {
     primaryText = "Session ID";
     secondaryText = binding.providerSessionId;
     secondaryTitle = binding.providerSessionId;
-  } else if (binding.status === "ready") {
-    primaryText = "Waiting for provider session ID…";
-    secondaryText = "The provider has not confirmed the session yet.";
   } else if (binding.status === "pending") {
     primaryText = "Waiting for provider session ID…";
     secondaryText = "The provider has not confirmed the session yet.";
