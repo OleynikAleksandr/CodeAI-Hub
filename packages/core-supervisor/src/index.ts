@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 import { spawn } from "node:child_process";
+import { existsSync, readdirSync } from "node:fs";
 import { createRequire } from "node:module";
+import os from "node:os";
 import path from "node:path";
 import { CoreManagerLock } from "./state/core-lock";
 import {
@@ -36,6 +38,8 @@ type OptionMatch = {
   readonly value: string;
 };
 
+const SEMVER_DIRECTORY_PATTERN = /^\d+\.\d+\.\d+$/u;
+const SEMVER_PART_COUNT = 3;
 const DEFAULT_HOST = process.env.CORE_HOST ?? "127.0.0.1";
 const DEFAULT_PORT_FALLBACK = 8080;
 const DEFAULT_PORT = Number.parseInt(
@@ -43,6 +47,7 @@ const DEFAULT_PORT = Number.parseInt(
   10
 );
 const HEALTH_PATH = "/api/v1/health";
+const CORE_RUNTIME_ROOT = path.join(os.homedir(), ".codeai-hub", "core");
 const SHUTDOWN_PATH = "/api/v1/shutdown";
 const HTTP_TIMEOUT_MS = 2000;
 const supervisorRequire = createRequire(__filename);
@@ -200,6 +205,104 @@ const printUsage = (): void => {
   );
 };
 
+const buildCoreProcessEnv = (options: CliOptions): NodeJS.ProcessEnv => ({
+  ...process.env,
+  CORE_HOST: options.host,
+  CORE_PORT: `${options.port}`,
+  CORE_MANAGED_MODE: "cli",
+});
+
+type CoreRuntimeInfo = {
+  readonly platformKey: string;
+  readonly version: string;
+  readonly runtimeDir: string;
+  readonly nodePath: string;
+  readonly appDir: string;
+  readonly entryPoint: string;
+};
+
+const detectPlatformKey = (): string | null => {
+  const platform = process.platform;
+  const arch = process.arch;
+  if (platform === "darwin" && arch === "arm64") {
+    return "darwin-arm64";
+  }
+  if (platform === "darwin" && arch === "x64") {
+    return "darwin-x64";
+  }
+  if (platform === "linux" && arch === "x64") {
+    return "linux-x64";
+  }
+  if (platform === "win32" && arch === "x64") {
+    return "win32-x64";
+  }
+  return null;
+};
+
+const isSemverDirectory = (name: string): boolean =>
+  SEMVER_DIRECTORY_PATTERN.test(name);
+
+const compareSemver = (a: string, b: string): number => {
+  const pa = a.split(".").map((value) => Number.parseInt(value, 10));
+  const pb = b.split(".").map((value) => Number.parseInt(value, 10));
+  for (let index = 0; index < SEMVER_PART_COUNT; index += 1) {
+    const av = pa[index] ?? 0;
+    const bv = pb[index] ?? 0;
+    if (av !== bv) {
+      return av - bv;
+    }
+  }
+  return 0;
+};
+
+const tryResolveCoreRuntime = (): CoreRuntimeInfo | null => {
+  const platformKey = detectPlatformKey();
+  if (!platformKey) {
+    return null;
+  }
+
+  const platformRoot = path.join(CORE_RUNTIME_ROOT, platformKey);
+  let entries: string[];
+  try {
+    entries = readdirSync(platformRoot, {
+      withFileTypes: true,
+    })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .filter(isSemverDirectory)
+      .sort(compareSemver);
+  } catch {
+    return null;
+  }
+
+  if (entries.length === 0) {
+    return null;
+  }
+
+  const version = entries.at(-1) as string;
+  const runtimeDir = path.join(platformRoot, version);
+  const appDir = path.join(runtimeDir, "app");
+  const entryPoint = path.join(appDir, "dist", "index.js");
+
+  const nodeBinary =
+    platformKey === "win32-x64"
+      ? path.join(runtimeDir, "node", "node.exe")
+      : path.join(runtimeDir, "node", "bin", "node");
+
+  if (!(existsSync(nodeBinary) && existsSync(entryPoint))) {
+    return null;
+  }
+
+  return {
+    platformKey,
+    version,
+    runtimeDir,
+    nodePath: nodeBinary,
+    appDir,
+    entryPoint,
+  };
+};
+
 const resolveCoreEntryPoint = (): string => {
   try {
     const packagePath = supervisorRequire.resolve(
@@ -293,22 +396,38 @@ export const startCore = async (
   }
 
   try {
-    const entryPoint = resolveCoreEntryPoint();
-    const child = spawn(process.execPath, [entryPoint], {
-      detached: true,
-      stdio: "ignore",
-      env: {
-        ...process.env,
-        CORE_HOST: options.host,
-        CORE_PORT: `${options.port}`,
-        CORE_MANAGED_MODE: "cli",
-      },
-    });
+    const runtime = tryResolveCoreRuntime();
+    let child: ReturnType<typeof spawn>;
+
+    if (runtime) {
+      child = spawn(runtime.nodePath, [runtime.entryPoint], {
+        detached: true,
+        stdio: "ignore",
+        cwd: runtime.appDir,
+        env: buildCoreProcessEnv(options),
+      });
+      logInfo(
+        logger,
+        `[core-supervisor] Starting CodeAI Hub core runtime ${runtime.version} (${runtime.platformKey}) from ${runtime.runtimeDir}...`
+      );
+    } else {
+      const entryPoint = resolveCoreEntryPoint();
+      child = spawn(process.execPath, [entryPoint], {
+        detached: true,
+        stdio: "ignore",
+        env: buildCoreProcessEnv(options),
+      });
+      logInfo(
+        logger,
+        "[core-supervisor] Starting CodeAI Hub core from @codeai-hub/core workspace entry point..."
+      );
+    }
+
     child.unref();
 
     logInfo(
       logger,
-      `[core-supervisor] Starting CodeAI Hub core (pid ${child.pid ?? "unknown"})...`
+      `[core-supervisor] Core process launched (pid ${child.pid ?? "unknown"}). Waiting for health checks...`
     );
 
     const ready = await waitForHealthy(options);
