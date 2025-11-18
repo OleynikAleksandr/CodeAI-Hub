@@ -205,12 +205,34 @@ const printUsage = (): void => {
   );
 };
 
-const buildCoreProcessEnv = (options: CliOptions): NodeJS.ProcessEnv => ({
-  ...process.env,
-  CORE_HOST: options.host,
-  CORE_PORT: `${options.port}`,
-  CORE_MANAGED_MODE: "cli",
-});
+const buildCoreProcessEnv = (
+  options: CliOptions,
+  runtime?: CoreRuntimeInfo
+): NodeJS.ProcessEnv => {
+  const home = os.homedir();
+  const defaultWorkspace = path.join(home, "VSCODE", "CodeAI-Hub");
+  const version = runtime?.version;
+
+  const env: NodeJS.ProcessEnv = {
+    ...process.env,
+    CORE_HOST: options.host,
+    CORE_PORT: `${options.port}`,
+    CORE_MANAGED_MODE: "cli",
+    CLAUDE_WORKSPACE_PATH: defaultWorkspace,
+    CODEX_WORKSPACE_PATH: defaultWorkspace,
+    GEMINI_WORKSPACE_PATH: defaultWorkspace,
+    CODEX_SKIP_GIT_REPO_CHECK: "true",
+  };
+
+  if (version) {
+    const providersRoot = path.join(home, ".codeai-hub", "providers");
+    env.CLAUDE_MODULE_PATH = path.join(providersRoot, "claude", version);
+    env.CODEX_MODULE_PATH = path.join(providersRoot, "codex", version);
+    env.GEMINI_MODULE_PATH = path.join(providersRoot, "gemini", version);
+  }
+
+  return env;
+};
 
 type CoreRuntimeInfo = {
   readonly platformKey: string;
@@ -404,7 +426,7 @@ export const startCore = async (
         detached: true,
         stdio: "ignore",
         cwd: runtime.appDir,
-        env: buildCoreProcessEnv(options),
+        env: buildCoreProcessEnv(options, runtime),
       });
       logInfo(
         logger,
