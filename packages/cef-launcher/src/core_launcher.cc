@@ -1426,8 +1426,31 @@ bool EnsureCoreProcessRunning() {
     "Requesting CodeAI Hub core startup via Supervisor on " +
     FormatEndpoint(host, selectedPort));
   if (!LaunchSupervisorStart(host, selectedPort)) {
-    LogLauncherError("Failed to start core via Supervisor CLI");
-    return false;
+    LogLauncherError(
+      "Failed to start core via Supervisor CLI, falling back to direct core "
+      "startup.");
+
+    const std::filesystem::path nodeExecutable =
+      *runtimeDir / "node" / "bin" / "node";
+    const std::filesystem::path appEntry =
+      *runtimeDir / "app" / "dist" / "index.js";
+
+    if (!std::filesystem::exists(nodeExecutable)) {
+      LogLauncherError(
+        "Core runtime is missing node executable at " +
+        nodeExecutable.string());
+      return false;
+    }
+    if (!std::filesystem::exists(appEntry)) {
+      LogLauncherError(
+        "Core runtime is missing entry point at " + appEntry.string());
+      return false;
+    }
+
+    if (!LaunchProcess(nodeExecutable, appEntry)) {
+      LogLauncherError("Direct core process launch failed.");
+      return false;
+    }
   }
 
   LogLauncherInfo("Waiting for core orchestrator readiness...");
