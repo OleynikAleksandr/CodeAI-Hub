@@ -14,6 +14,26 @@ All notable changes to this project will be documented in this file.
 - Core → `codeai-hub-core-darwin-arm64-1.1.273.tar.bz2`
 - Providers → `claude-module-1.1.273.tar.bz2`, `codex-module-1.1.273.tar.bz2`, `gemini-module-1.1.273.tar.bz2`
 
+## [1.1.277] - 2025-11-18
+### Changed
+- Thinking cards were tightened up visually (reduced padding and toned down typography) after merging consecutive reasoning chunks, keeping the dialog timeline compact even when models stream multi-part “thinking” payloads.
+
+### Build
+- VSIX → `codeai-hub-1.1.277.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.277.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.277.tar.bz2`
+- Providers → `claude-module-1.1.277.tar.bz2`, `codex-module-1.1.277.tar.bz2`, `gemini-module-1.1.277.tar.bz2`
+
+## [1.1.276] - 2025-11-18
+### Changed
+- Consecutive `thinking` events within a session now collapse into a single card with expandable reasoning, and the dialog renders auto-scroll/Markdown spacing consistently regardless of newline formatting. The VS Code webview and standalone client share the same behavior.
+
+### Build
+- VSIX → `codeai-hub-1.1.276.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.276.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.276.tar.bz2`
+- Providers → `claude-module-1.1.276.tar.bz2`, `codex-module-1.1.276.tar.bz2`, `gemini-module-1.1.276.tar.bz2`
+
 ## [1.1.175] - 2025-11-09
 ### Fixed
 - The Gemini provider no longer drops to `inactive` when `@google/gemini-cli` was removed from the global prefix: a new install step runs `npm install -g @google/gemini-cli` (with progress hints) whenever the CLI is missing or outdated, and the orchestrator reuses the existing core when `detectRunning()` reports a matching version so sessions survive restarts.
