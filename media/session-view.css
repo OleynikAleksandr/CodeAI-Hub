@@ -5,37 +5,6 @@
   flex: 1 1 auto;
   height: 100%;
   min-height: 0;
-  padding: 0 0 8px;
-  box-sizing: border-box;
-}
-
-.session-app__header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.session-app__content {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  gap: 8px;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.session-app__dialog {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-}
-
-.session-app__rails {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex-shrink: 0;
 }
 
 .session-tabs {
@@ -135,8 +104,7 @@
   cursor: pointer;
   font-size: 14px;
   height: 100%;
-  padding: 0 7px;
-  min-width: 27px;
+  padding: 0 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -168,117 +136,17 @@
 .session-tab:not(.session-tab--active):hover .session-tab__close:not(:hover) {
   color: rgba(78, 78, 78, 1);
 }
-.session-tab__detach {
-  background: transparent;
-  border: none;
-  color: rgba(78, 78, 78, 1);
-  cursor: pointer;
+.session-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 1fr) auto auto auto;
+  grid-auto-flow: row;
+  gap: 8px;
+  flex: 1 1 auto;
   height: 100%;
-  padding: 0 7px;
-  min-width: 27px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid rgba(0, 0, 0, 1);
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.session-tab--active .session-tab__detach {
-  border-right-color: rgba(67, 68, 70, 1);
-  color: rgba(204, 204, 204, 1);
-}
-
-.session-tab__detach:hover {
-  background-color: rgba(76, 175, 80, 0.25);
-  color: rgba(210, 255, 220, 1);
-}
-
-.session-tab:not(.session-tab--active):hover .session-tab__detach:not(:hover) {
-  color: rgba(78, 78, 78, 1);
-}
-
-.session-tab__detach:focus-visible {
-  outline: 2px solid rgba(80, 120, 255, 0.6);
-  outline-offset: -2px;
-}
-
-.session-tab__detach:disabled {
-  color: rgba(78, 78, 78, 0.5);
-  cursor: not-allowed;
-}
-
-.session-tab__detach-icon {
-  width: 14px;
-  height: 14px;
-}
-
-.session-tab__detach-icon rect,
-.session-tab__detach-icon path {
-  vector-effect: non-scaling-stroke;
-}
-
-.session-detach-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
-  background-color: rgba(28, 30, 34, 1);
-  border: 1px solid rgba(67, 68, 70, 1);
-  border-radius: 6px;
-  color: rgba(204, 204, 204, 1);
-}
-
-.session-detach-banner__indicator {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.session-detach-banner__label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(150, 180, 255, 1);
-}
-
-.session-detach-banner__detail {
-  font-size: 12px;
-  color: rgba(170, 170, 170, 1);
-}
-
-.session-detach-banner__action {
-  background-color: rgba(80, 120, 255, 0.15);
-  border: 1px solid rgba(80, 120, 255, 0.5);
-  border-radius: 4px;
-  color: rgba(200, 220, 255, 1);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.session-detach-banner__action:hover {
-  background-color: rgba(80, 120, 255, 0.3);
-  border-color: rgba(80, 120, 255, 0.9);
-}
-
-.session-detach-banner__action:focus-visible {
-  outline: 2px solid rgba(80, 120, 255, 0.6);
-  outline-offset: 2px;
-}
-
-.session-detach-banner__action:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  min-height: 0;
+  padding: 0 0 8px;
+  box-sizing: border-box;
 }
 
 .session-panel {
@@ -308,7 +176,6 @@
 .session-dialog {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
 }
@@ -321,7 +188,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-bottom: 18px;
 }
 
 .session-dialog__message {

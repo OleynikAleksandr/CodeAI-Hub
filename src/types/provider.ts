@@ -1,25 +1,11 @@
 export type ProviderStackId = "claudeCodeCli" | "codexCli" | "geminiCli";
 
-export type ProviderVersionDetail = {
-  readonly version?: string;
-  readonly cliPath?: string;
-  readonly unchecked?: boolean;
-};
-
-export type ProviderVersionInfo = {
-  readonly codeAiHub?: ProviderVersionDetail;
-  readonly vendor: ProviderVersionDetail;
-  readonly global?: ProviderVersionDetail;
-  readonly lastCheckedAt?: string;
-};
-
 export type ProviderStackDescriptor = {
   readonly id: ProviderStackId;
   readonly title: string;
   readonly description: string;
   readonly connected: boolean;
   readonly statusMessage?: string | null;
-  readonly versionInfo?: ProviderVersionInfo;
 };
 
 const PROVIDER_TITLE_MAP: Record<ProviderStackId, string> = {
