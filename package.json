@@ -113,6 +113,8 @@
   },
   "dependencies": {
     "@codeai-hub/core-supervisor": "file:packages/core-supervisor",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "ws": "^8.18.3"
   }
 }

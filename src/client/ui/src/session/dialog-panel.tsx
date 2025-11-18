@@ -1,4 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { SessionMessage } from "../../../../types/session";
 
 type ProviderTheme = "claude" | "codex" | "gemini";
@@ -193,12 +195,11 @@ const ThinkingMessage = ({
       <span className="session-dialog__role">{label}</span>
     </header>
     {expanded ? (
-      <p
+      <MarkdownContent
         className="session-dialog__content session-dialog__content--thinking"
+        content={message.content}
         id={`thinking-${message.id}`}
-      >
-        {message.content}
-      </p>
+      />
     ) : null}
   </article>
 );
@@ -220,7 +221,35 @@ const StandardMessage = ({
           {messageDate.toLocaleTimeString()}
         </time>
       </header>
-      <p className="session-dialog__content">{message.content}</p>
+      <MarkdownContent
+        className="session-dialog__content"
+        content={message.content}
+      />
     </article>
   );
 };
+
+type MarkdownContentProps = {
+  readonly className?: string;
+  readonly content: string;
+  readonly id?: string;
+};
+
+const MarkdownContent = ({ className, content, id }: MarkdownContentProps) => (
+  <div className={className} id={id}>
+    <ReactMarkdown
+      components={{
+        a: ({ node: _node, href, ...props }) => (
+          <a {...props} href={href ?? "#"} rel="noreferrer" target="_blank" />
+        ),
+        p: ({ node: _node, ...props }) => <p {...props} />,
+        strong: ({ node: _node, ...props }) => <strong {...props} />,
+        em: ({ node: _node, ...props }) => <em {...props} />,
+      }}
+      remarkPlugins={[remarkGfm]}
+      skipHtml
+    >
+      {content}
+    </ReactMarkdown>
+  </div>
+);
