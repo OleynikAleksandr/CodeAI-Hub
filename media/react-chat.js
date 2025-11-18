@@ -9467,12 +9467,16 @@
   // src/client/ui/src/session/dialog-panel.tsx
   var import_react11 = __toESM(require_react());
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var AUTO_SCROLL_EPSILON = 32;
   var DialogPanel = ({
     messages,
     providerTheme = null,
     providerLabel = null
   }) => {
+    const scrollContainerRef = (0, import_react11.useRef)(null);
+    const lastMessageKey = messages.length > 0 ? messages[messages.length - 1]?.id ?? null : null;
     const [expandedThinking, setExpandedThinking] = (0, import_react11.useState)({});
+    const [pinnedToBottom, setPinnedToBottom] = (0, import_react11.useState)(true);
     (0, import_react11.useEffect)(() => {
       setExpandedThinking((previous) => {
         let hasChanges = false;
@@ -9492,36 +9496,65 @@
         [messageId]: !previous[messageId]
       }));
     };
+    const updatePinnedState = () => {
+      const container = scrollContainerRef.current;
+      if (!container) {
+        return;
+      }
+      const distanceFromBottom = container.scrollHeight - (container.scrollTop + container.clientHeight);
+      const nextPinned = distanceFromBottom <= AUTO_SCROLL_EPSILON;
+      setPinnedToBottom(
+        (current) => current === nextPinned ? current : nextPinned
+      );
+    };
+    (0, import_react11.useLayoutEffect)(() => {
+      if (!pinnedToBottom) {
+        return;
+      }
+      const container = scrollContainerRef.current;
+      if (!container) {
+        return;
+      }
+      container.scrollTop = container.scrollHeight;
+    }, [lastMessageKey, pinnedToBottom]);
     if (messages.length === 0) {
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-dialog__scroll", children: messages.map((message) => {
-      const className = buildMessageClassNames(message, providerTheme);
-      const label = resolveRoleLabel(message, providerLabel);
-      if (message.role === "thinking") {
-        const expanded = expandedThinking[message.id] ?? false;
-        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-          ThinkingMessage,
-          {
-            className,
-            expanded,
-            label,
-            message,
-            onToggle: toggleThinking
-          },
-          message.id
-        );
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      "div",
+      {
+        className: "session-dialog__scroll",
+        onScroll: updatePinnedState,
+        ref: scrollContainerRef,
+        children: messages.map((message) => {
+          const className = buildMessageClassNames(message, providerTheme);
+          const label = resolveRoleLabel(message, providerLabel);
+          if (message.role === "thinking") {
+            const expanded = expandedThinking[message.id] ?? false;
+            return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+              ThinkingMessage,
+              {
+                className,
+                expanded,
+                label,
+                message,
+                onToggle: toggleThinking
+              },
+              message.id
+            );
+          }
+          return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+            StandardMessage,
+            {
+              className,
+              label,
+              message
+            },
+            message.id
+          );
+        })
       }
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-        StandardMessage,
-        {
-          className,
-          label,
-          message
-        },
-        message.id
-      );
-    }) }) });
+    ) });
   };
   var dialog_panel_default = DialogPanel;
   var buildMessageClassNames = (message, providerTheme) => {
@@ -10533,27 +10566,29 @@ ${path}` : path;
       return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(empty_state_default, {}) });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "session-app", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-        session_tabs_default,
-        {
-          activeSessionId,
-          onClose: onCloseSession,
-          onSelect: onSelectSession,
-          providerLabels,
-          sessions
-        }
-      ),
-      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(info_panel_default, { binding: activeSession.binding }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "session-grid", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-            dialog_panel_default,
-            {
-              messages: activeSession.messages,
-              providerLabel: providerDisplayLabel,
-              providerTheme
-            }
-          ),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "session-app__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          session_tabs_default,
+          {
+            activeSessionId,
+            onClose: onCloseSession,
+            onSelect: onSelectSession,
+            providerLabels,
+            sessions
+          }
+        ),
+        activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(info_panel_default, { binding: activeSession.binding }) : null
+      ] }),
+      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "session-app__content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          dialog_panel_default,
+          {
+            messages: activeSession.messages,
+            providerLabel: providerDisplayLabel,
+            providerTheme
+          }
+        ) }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "session-app__rails", children: [
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
             todo_panel_default,
             {

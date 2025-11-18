@@ -61,23 +61,29 @@ const SessionView = ({
 
   return (
     <div className="session-app">
-      <SessionTabs
-        activeSessionId={activeSessionId}
-        onClose={onCloseSession}
-        onSelect={onSelectSession}
-        providerLabels={providerLabels}
-        sessions={sessions}
-      />
+      <div className="session-app__header">
+        <SessionTabs
+          activeSessionId={activeSessionId}
+          onClose={onCloseSession}
+          onSelect={onSelectSession}
+          providerLabels={providerLabels}
+          sessions={sessions}
+        />
+        {activeSession && activeSessionId ? (
+          <InfoPanel binding={activeSession.binding} />
+        ) : null}
+      </div>
 
       {activeSession && activeSessionId ? (
-        <>
-          <InfoPanel binding={activeSession.binding} />
-          <div className="session-grid">
+        <div className="session-app__content">
+          <div className="session-app__dialog">
             <DialogPanel
               messages={activeSession.messages}
               providerLabel={providerDisplayLabel}
               providerTheme={providerTheme}
             />
+          </div>
+          <div className="session-app__rails">
             <TodoPanel
               items={activeSession.todos}
               onToggle={(todoId) => onToggleTodo(activeSessionId, todoId)}
@@ -92,7 +98,7 @@ const SessionView = ({
               status={activeSession.status}
             />
           </div>
-        </>
+        </div>
       ) : null}
     </div>
   );
