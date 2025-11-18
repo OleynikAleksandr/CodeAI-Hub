@@ -22455,13 +22455,17 @@
     providerLabel = null
   }) => {
     const scrollContainerRef = (0, import_react12.useRef)(null);
+    const displayMessages = (0, import_react12.useMemo)(
+      () => mergeThinkingMessages(messages),
+      [messages]
+    );
     const [expandedThinking, setExpandedThinking] = (0, import_react12.useState)({});
     const [pinnedToBottom, setPinnedToBottom] = (0, import_react12.useState)(true);
     (0, import_react12.useEffect)(() => {
       setExpandedThinking((previous3) => {
         let hasChanges = false;
         const nextState = { ...previous3 };
-        for (const message of messages) {
+        for (const message of displayMessages) {
           if (message.role === "thinking" && nextState[message.id] === void 0) {
             nextState[message.id] = false;
             hasChanges = true;
@@ -22469,7 +22473,7 @@
         }
         return hasChanges ? nextState : previous3;
       });
-    }, [messages]);
+    }, [displayMessages]);
     const toggleThinking = (messageId) => {
       setExpandedThinking((previous3) => ({
         ...previous3,
@@ -22487,7 +22491,7 @@
         (current) => current === nextPinned ? current : nextPinned
       );
     };
-    const messageCount = messages.length;
+    const messageCount = displayMessages.length;
     (0, import_react12.useLayoutEffect)(() => {
       if (!pinnedToBottom) {
         return;
@@ -22502,7 +22506,7 @@
       }
       container.scrollTop = container.scrollHeight;
     }, [messageCount, pinnedToBottom]);
-    if (messages.length === 0) {
+    if (displayMessages.length === 0) {
       return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
@@ -22511,7 +22515,7 @@
         className: "session-dialog__scroll",
         onScroll: updatePinnedState,
         ref: scrollContainerRef,
-        children: messages.map((message) => {
+        children: displayMessages.map((message) => {
           const className = buildMessageClassNames(message, providerTheme);
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
@@ -22636,6 +22640,26 @@
       children: content3
     }
   ) });
+  var mergeThinkingMessages = (source) => {
+    const result = [];
+    for (const message of source) {
+      if (message.role === "thinking") {
+        const previous3 = result.at(-1);
+        if (previous3?.role === "thinking") {
+          result[result.length - 1] = {
+            ...previous3,
+            content: `${previous3.content}
+${message.content}`
+          };
+          continue;
+        }
+        result.push({ ...message });
+        continue;
+      }
+      result.push(message);
+    }
+    return result;
+  };
 
   // src/client/ui/src/session/empty-state.tsx
   var import_jsx_runtime13 = __toESM(require_jsx_runtime());

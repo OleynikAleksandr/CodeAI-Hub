@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { SessionMessage } from "../../../../types/session";
@@ -32,6 +32,10 @@ const DialogPanel = ({
   providerLabel = null,
 }: DialogPanelProps) => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const displayMessages = useMemo(
+    () => mergeThinkingMessages(messages),
+    [messages]
+  );
   const [expandedThinking, setExpandedThinking] = useState<
     Record<string, boolean>
   >({});
@@ -41,7 +45,7 @@ const DialogPanel = ({
     setExpandedThinking((previous) => {
       let hasChanges = false;
       const nextState = { ...previous };
-      for (const message of messages) {
+      for (const message of displayMessages) {
         if (
           message.role === "thinking" &&
           nextState[message.id] === undefined
@@ -52,7 +56,7 @@ const DialogPanel = ({
       }
       return hasChanges ? nextState : previous;
     });
-  }, [messages]);
+  }, [displayMessages]);
 
   const toggleThinking = (messageId: string) => {
     setExpandedThinking((previous) => ({
@@ -74,7 +78,7 @@ const DialogPanel = ({
     );
   };
 
-  const messageCount = messages.length;
+  const messageCount = displayMessages.length;
 
   useLayoutEffect(() => {
     if (!pinnedToBottom) {
@@ -91,7 +95,7 @@ const DialogPanel = ({
     container.scrollTop = container.scrollHeight;
   }, [messageCount, pinnedToBottom]);
 
-  if (messages.length === 0) {
+  if (displayMessages.length === 0) {
     return (
       <div className="session-dialog session-panel">
         <p className="session-dialog__empty">No messages yet.</p>
@@ -106,7 +110,7 @@ const DialogPanel = ({
         onScroll={updatePinnedState}
         ref={scrollContainerRef}
       >
-        {messages.map((message) => {
+        {displayMessages.map((message) => {
           const className = buildMessageClassNames(message, providerTheme);
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
@@ -253,3 +257,25 @@ const MarkdownContent = ({ className, content, id }: MarkdownContentProps) => (
     </ReactMarkdown>
   </div>
 );
+
+const mergeThinkingMessages = (
+  source: readonly SessionMessage[]
+): SessionMessage[] => {
+  const result: SessionMessage[] = [];
+  for (const message of source) {
+    if (message.role === "thinking") {
+      const previous = result.at(-1);
+      if (previous?.role === "thinking") {
+        result[result.length - 1] = {
+          ...previous,
+          content: `${previous.content}\n${message.content}`,
+        };
+        continue;
+      }
+      result.push({ ...message });
+      continue;
+    }
+    result.push(message);
+  }
+  return result;
+};
