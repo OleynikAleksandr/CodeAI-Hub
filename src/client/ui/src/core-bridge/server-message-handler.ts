@@ -2,6 +2,7 @@ import { sanitizeMessage, sanitizeSession } from "./normalizers";
 import type {
   CoreBridgeSessionBindingPayload,
   CoreBridgeSessionMessagePayload,
+  CoreBridgeStatePayload,
   ServerSession,
   ServerSessionMessage,
 } from "./types";
@@ -13,8 +14,13 @@ type ServerEventType =
   | "session:created"
   | "session:deleted"
   | "session:stream"
+  | "core:shutdown"
   | "core:loading-status"
-  | "session:binding";
+  | "session:binding"
+  | "provider:operation"
+  | "core:clients"
+  | "session:windowState"
+  | "core:state";
 
 type ServerEnvelope = {
   readonly type: ServerEventType;
@@ -43,8 +49,13 @@ const parseEnvelope = (raw: string): ServerEnvelope | null => {
       parsed.type === "session:created" ||
       parsed.type === "session:deleted" ||
       parsed.type === "session:stream" ||
+      parsed.type === "core:shutdown" ||
       parsed.type === "core:loading-status" ||
-      parsed.type === "session:binding"
+      parsed.type === "session:binding" ||
+      parsed.type === "provider:operation" ||
+      parsed.type === "core:clients" ||
+      parsed.type === "session:windowState" ||
+      parsed.type === "core:state"
     ) {
       return { type: parsed.type, payload: parsed.payload };
     }
@@ -91,8 +102,11 @@ const isBindingPayload = (payload: unknown): payload is BindingPayload => {
   return true;
 };
 
+type CoreStateNormalizer = (payload: unknown) => CoreBridgeStatePayload | null;
+
 export const createServerMessageHandler = (
-  notify: MessageNotifier
+  notify: MessageNotifier,
+  normalizeCoreState?: CoreStateNormalizer
 ): ((raw: string) => void) => {
   const handleSessionMessage = (payload: unknown): void => {
     const candidate = payload as ServerSessionMessage | undefined;
@@ -146,11 +160,31 @@ export const createServerMessageHandler = (
     });
   };
 
+  const handleCoreState = (payload: unknown): void => {
+    if (!normalizeCoreState) {
+      return;
+    }
+    const normalized = normalizeCoreState(payload);
+    if (!normalized) {
+      return;
+    }
+    notify({
+      type: "core:state",
+      payload: normalized,
+    });
+  };
+
   const handlers: Record<ServerEventType, (payload: unknown) => void> = {
     "session:message": handleSessionMessage,
     "session:created": handleSessionCreated,
     "session:deleted": handleSessionDeleted,
     "session:stream": handleSessionStream,
+    "core:shutdown": (payload) => {
+      notify({
+        type: "core:shutdown",
+        payload,
+      });
+    },
     "core:loading-status": (payload) => {
       notify({
         type: "core:loading-status",
@@ -178,6 +212,25 @@ export const createServerMessageHandler = (
         } satisfies CoreBridgeSessionBindingPayload,
       });
     },
+    "provider:operation": (payload) => {
+      notify({
+        type: "provider:operation",
+        payload,
+      });
+    },
+    "core:clients": (payload) => {
+      notify({
+        type: "core:clients",
+        payload,
+      });
+    },
+    "session:windowState": (payload) => {
+      notify({
+        type: "session:windowState",
+        payload,
+      });
+    },
+    "core:state": handleCoreState,
   };
 
   return (raw: string) => {

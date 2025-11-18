@@ -5,7 +5,7 @@ import { postVsCodeMessage } from "../../vscode";
 type ActionBarCommand =
   | "newSession"
   | "lastSession"
-  | "launchWebClient"
+  | "clearSessions"
   | "oldSessions";
 
 type ButtonDescriptor = {
@@ -17,7 +17,7 @@ type ButtonDescriptor = {
 const BUTTONS: readonly ButtonDescriptor[] = [
   { id: "newSession", label: ["New", "Session"] },
   { id: "lastSession", label: ["Last", "Session"], highlighted: true },
-  { id: "launchWebClient", label: ["Clear", "Session"] },
+  { id: "clearSessions", label: ["Clear", "Session"] },
   { id: "oldSessions", label: ["Old", "Sessions"] },
 ];
 
@@ -34,10 +34,6 @@ const ActionBar = ({ disabled = false }: ActionBarProps) => {
 
       if (command === "newSession") {
         activateRoot();
-      }
-
-      if (command === "launchWebClient") {
-        return;
       }
 
       postVsCodeMessage({ command });

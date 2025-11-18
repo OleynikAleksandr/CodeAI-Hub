@@ -28,18 +28,18 @@ export type CoreStateMessage = {
   readonly payload?: unknown;
 };
 
-export type CoreConnectionPayload = {
-  readonly status: string;
-  readonly detail?: string;
-};
-
 export type CoreConnectionMessage = {
   readonly type: "core:connection";
-  readonly payload?: CoreConnectionPayload;
+  readonly payload?: unknown;
 };
 
 export type CoreLoadingStatusMessage = {
   readonly type: "core:loading-status";
+  readonly payload?: unknown;
+};
+
+export type CoreShutdownMessage = {
+  readonly type: "core:shutdown";
   readonly payload?: unknown;
 };
 
@@ -63,6 +63,11 @@ export type SessionHistoryMessage = {
   readonly payload?: unknown;
 };
 
+export type SessionWindowStateMessage = {
+  readonly type: "session:windowState";
+  readonly payload?: unknown;
+};
+
 export type IncomingMessage =
   | ProviderPickerOpenMessage
   | SessionCreatedMessage
@@ -73,9 +78,11 @@ export type IncomingMessage =
   | CoreStateMessage
   | CoreConnectionMessage
   | CoreLoadingStatusMessage
+  | CoreShutdownMessage
   | SessionMessageEvent
   | SessionDeletedMessage
-  | SessionHistoryMessage;
+  | SessionHistoryMessage
+  | SessionWindowStateMessage;
 
 export const isIncomingMessage = (value: unknown): value is IncomingMessage =>
   Boolean(value && typeof value === "object" && "type" in value);
@@ -87,9 +94,19 @@ export const isCoreBridgeStatePayload = (
     return false;
   }
   const candidate = value as Record<string, unknown>;
-  return (
-    Array.isArray(candidate.sessions) && Array.isArray(candidate.providers)
-  );
+  if (!Array.isArray(candidate.sessions)) {
+    return false;
+  }
+  if (!Array.isArray(candidate.providers)) {
+    return false;
+  }
+  if (
+    candidate.detachedSessions !== undefined &&
+    !Array.isArray(candidate.detachedSessions)
+  ) {
+    return false;
+  }
+  return true;
 };
 
 export const isSessionMessagePayload = (
@@ -167,4 +184,20 @@ export const isSessionBindingPayload = (
     return false;
   }
   return true;
+};
+
+export const isSessionWindowStatePayload = (
+  value: unknown
+): value is {
+  readonly sessionId: string;
+  readonly mode: "attached" | "detached";
+} => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  if (typeof candidate.sessionId !== "string") {
+    return false;
+  }
+  return candidate.mode === "attached" || candidate.mode === "detached";
 };

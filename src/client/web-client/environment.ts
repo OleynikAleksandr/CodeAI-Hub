@@ -9,6 +9,7 @@ import type {
   ProviderStackId,
 } from "../../types/provider";
 import type { CoreBridgeConfig } from "../ui/src/core-bridge/types";
+import { deriveStandaloneCoreConfig } from "./standalone-config";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
@@ -246,12 +247,23 @@ export const initializeStandaloneEnvironment = (): void => {
       setState?: (state: unknown) => void;
       getState?: () => unknown;
     };
+    __CODEAI_CORE_CONFIG?: CoreBridgeConfig;
+    __CODEAI_CLIENT_CONTEXT?: "standalone" | "vscode";
   };
 
   if (typeof globalScope.acquireVsCodeApi === "function") {
     // Already running inside VS Code webview – nothing to override.
     return;
   }
+
+  if (!globalScope.__CODEAI_CORE_CONFIG) {
+    const derived = deriveStandaloneCoreConfig();
+    if (derived) {
+      globalScope.__CODEAI_CORE_CONFIG = derived;
+    }
+  }
+
+  globalScope.__CODEAI_CLIENT_CONTEXT = "standalone";
 
   const routeMessage = createStandaloneRouter();
 

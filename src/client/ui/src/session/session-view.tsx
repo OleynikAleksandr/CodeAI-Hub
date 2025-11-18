@@ -1,6 +1,7 @@
 import type { ProviderStackId } from "../../../../types/provider";
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
+import { isDetachedWindow } from "../environment";
 import DialogPanel from "./dialog-panel";
 import EmptyState from "./empty-state";
 import InfoPanel from "./info-panel";
@@ -13,12 +14,12 @@ type SessionViewProps = {
   readonly sessions: readonly SessionRecord[];
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
   readonly activeSessionId: string | null;
+  readonly detachedSessionIds: ReadonlySet<string>;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
   readonly showEmptyState: boolean;
-  readonly coreConnectionStatus: "connecting" | "ready" | "error";
-  readonly coreConnectionDetail?: string;
   readonly onSelectSession: (sessionId: string) => void;
   readonly onCloseSession: (sessionId: string) => void;
+  readonly onDetachSession: (sessionId: string) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
   readonly onToggleTodo: (sessionId: string, todoId: string) => void;
 };
@@ -27,15 +28,16 @@ const SessionView = ({
   sessions,
   providerLabels,
   activeSessionId,
+  detachedSessionIds,
   snapshots,
   showEmptyState,
-  coreConnectionStatus,
-  coreConnectionDetail,
   onSelectSession,
   onCloseSession,
+  onDetachSession,
   onSendMessage,
   onToggleTodo,
 }: SessionViewProps) => {
+  const detachedWindow = isDetachedWindow();
   const activeSession =
     activeSessionId && snapshots[activeSessionId]
       ? snapshots[activeSessionId]
@@ -50,6 +52,9 @@ const SessionView = ({
       ? (providerLabels.get(primaryProviderId) ??
         getDefaultProviderTitle(primaryProviderId))
       : null;
+  const isDetachedSession = activeSessionId
+    ? detachedSessionIds.has(activeSessionId)
+    : false;
 
   if (sessions.length === 0 && showEmptyState) {
     return (
@@ -59,25 +64,41 @@ const SessionView = ({
     );
   }
 
+  const showDetachBanner = detachedWindow || isDetachedSession;
+
   return (
     <div className="session-app">
-      <SessionTabs
-        activeSessionId={activeSessionId}
-        onClose={onCloseSession}
-        onSelect={onSelectSession}
-        providerLabels={providerLabels}
-        sessions={sessions}
-      />
+      <div className="session-app__header">
+        {detachedWindow ? null : (
+          <SessionTabs
+            activeSessionId={activeSessionId}
+            detachedSessionIds={detachedSessionIds}
+            onClose={onCloseSession}
+            onDetach={onDetachSession}
+            onSelect={onSelectSession}
+            providerLabels={providerLabels}
+            sessions={sessions}
+          />
+        )}
+
+        {showDetachBanner && <DetachedIndicator />}
+
+        {activeSession && activeSessionId ? (
+          <InfoPanel binding={activeSession.binding} />
+        ) : null}
+      </div>
 
       {activeSession && activeSessionId ? (
-        <>
-          <InfoPanel binding={activeSession.binding} />
-          <div className="session-grid">
+        <div className="session-app__content">
+          <div className="session-app__dialog">
             <DialogPanel
               messages={activeSession.messages}
               providerLabel={providerDisplayLabel}
               providerTheme={providerTheme}
             />
+          </div>
+
+          <div className="session-app__rails">
             <TodoPanel
               items={activeSession.todos}
               onToggle={(todoId) => onToggleTodo(activeSessionId, todoId)}
@@ -86,19 +107,26 @@ const SessionView = ({
               draft={activeSession.draft}
               onSubmit={(text) => onSendMessage(activeSessionId, text)}
             />
-            <StatusPanel
-              connectionDetail={coreConnectionDetail}
-              connectionStatus={coreConnectionStatus}
-              status={activeSession.status}
-            />
+            <StatusPanel status={activeSession.status} />
           </div>
-        </>
+        </div>
       ) : null}
     </div>
   );
 };
 
 export default SessionView;
+
+const DetachedIndicator = () => (
+  <div className="session-detach-banner">
+    <div className="session-detach-banner__indicator">
+      <span className="session-detach-banner__label">Detached</span>
+      <span className="session-detach-banner__detail">
+        This session lives in a separate window and will reattach automatically.
+      </span>
+    </div>
+  </div>
+);
 
 const mapProviderTheme = (
   providerId: ProviderStackId | null

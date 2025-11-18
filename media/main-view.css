@@ -30,6 +30,8 @@ body {
   font-size: var(--vscode-font-size);
   color: var(--vscode-foreground);
   background-color: var(--app-background);
+  height: 100vh;
+  overflow: hidden;
 }
 
 #app {
@@ -39,8 +41,10 @@ body {
 #root {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 0;
   background-color: transparent;
+  overflow: hidden;
 }
 
 #root.active {
@@ -66,6 +70,7 @@ body {
   padding: 8px 8px 0;
   background-color: rgba(31, 31, 31, 1);
   min-height: 0;
+  overflow: hidden;
 }
 
 /* Action bar */

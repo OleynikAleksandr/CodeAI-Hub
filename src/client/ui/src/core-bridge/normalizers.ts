@@ -38,18 +38,17 @@ const sanitizeProvider = (
     return null;
   }
 
-  const isActive = provider.status === "active";
-
   return {
     id: providerId,
     title: provider.name ?? getDefaultProviderTitle(providerId),
     description:
       provider.description ?? getDefaultProviderDescription(providerId),
-    connected: isActive,
+    connected: provider.status !== "inactive",
     statusMessage:
       typeof provider.statusMessage === "string"
         ? provider.statusMessage
         : null,
+    versionInfo: provider.versionInfo,
   };
 };
 
@@ -135,8 +134,19 @@ export const convertStatusResponse = (
       ?.map((session) => sanitizeSession(session))
       .filter((session): session is SessionRecord => Boolean(session)) ?? [];
 
+  const detachedSessions =
+    status.detachedSessions
+      ?.filter(
+        (sessionId): sessionId is string => typeof sessionId === "string"
+      )
+      .map((sessionId) => sessionId)
+      .filter(
+        (sessionId, index, array) => array.indexOf(sessionId) === index
+      ) ?? [];
+
   return {
     sessions,
     providers,
+    detachedSessions,
   };
 };
