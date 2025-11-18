@@ -5,6 +5,37 @@
   flex: 1 1 auto;
   height: 100%;
   min-height: 0;
+  padding: 0 0 8px;
+  box-sizing: border-box;
+}
+
+.session-app__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.session-app__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.session-app__dialog {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+
+.session-app__rails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .session-tabs {
@@ -136,18 +167,6 @@
 .session-tab:not(.session-tab--active):hover .session-tab__close:not(:hover) {
   color: rgba(78, 78, 78, 1);
 }
-.session-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: minmax(0, 1fr) auto auto auto;
-  grid-auto-flow: row;
-  gap: 8px;
-  flex: 1 1 auto;
-  height: 100%;
-  min-height: 0;
-  padding: 0 0 8px;
-  box-sizing: border-box;
-}
 
 .session-panel {
   background-color: rgba(40, 41, 42, 1);
@@ -176,6 +195,7 @@
 .session-dialog {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
 }
@@ -188,6 +208,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-bottom: 18px;
 }
 
 .session-dialog__message {

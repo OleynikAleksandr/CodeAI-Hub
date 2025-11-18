@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { SessionMessage } from "../../../../types/session";
 
 type ProviderTheme = "claude" | "codex" | "gemini";
+const AUTO_SCROLL_EPSILON = 32;
 
 type DialogPanelProps = {
   readonly messages: readonly SessionMessage[];
@@ -28,9 +29,11 @@ const DialogPanel = ({
   providerTheme = null,
   providerLabel = null,
 }: DialogPanelProps) => {
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [expandedThinking, setExpandedThinking] = useState<
     Record<string, boolean>
   >({});
+  const [pinnedToBottom, setPinnedToBottom] = useState(true);
 
   useEffect(() => {
     setExpandedThinking((previous) => {
@@ -56,6 +59,36 @@ const DialogPanel = ({
     }));
   };
 
+  const updatePinnedState = () => {
+    const container = scrollContainerRef.current;
+    if (!container) {
+      return;
+    }
+    const distanceFromBottom =
+      container.scrollHeight - (container.scrollTop + container.clientHeight);
+    const nextPinned = distanceFromBottom <= AUTO_SCROLL_EPSILON;
+    setPinnedToBottom((current) =>
+      current === nextPinned ? current : nextPinned
+    );
+  };
+
+  const messageCount = messages.length;
+
+  useLayoutEffect(() => {
+    if (!pinnedToBottom) {
+      return;
+    }
+    const container = scrollContainerRef.current;
+    if (!container) {
+      return;
+    }
+    if (messageCount === 0) {
+      container.scrollTop = 0;
+      return;
+    }
+    container.scrollTop = container.scrollHeight;
+  }, [messageCount, pinnedToBottom]);
+
   if (messages.length === 0) {
     return (
       <div className="session-dialog session-panel">
@@ -66,7 +99,11 @@ const DialogPanel = ({
 
   return (
     <div className="session-dialog session-panel">
-      <div className="session-dialog__scroll">
+      <div
+        className="session-dialog__scroll"
+        onScroll={updatePinnedState}
+        ref={scrollContainerRef}
+      >
         {messages.map((message) => {
           const className = buildMessageClassNames(message, providerTheme);
           const label = resolveRoleLabel(message, providerLabel);
