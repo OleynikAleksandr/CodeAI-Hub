@@ -22622,20 +22622,15 @@
       )
     ] });
   };
-  var MarkdownContent = ({
-    className,
-    content: content3,
-    id
-  }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className, id, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+  var MarkdownContent = ({ className, content: content3, id }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className, id, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
     Markdown,
     {
       components: {
-        a: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { ...props, rel: "noreferrer", target: "_blank" }),
+        a: ({ node: _node, href, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { ...props, href: href ?? "#", rel: "noreferrer", target: "_blank" }),
         p: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { ...props }),
         strong: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { ...props }),
         em: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("em", { ...props })
       },
-      linkTarget: "_blank",
       remarkPlugins: [remarkGfm],
       skipHtml: true,
       children: content3
