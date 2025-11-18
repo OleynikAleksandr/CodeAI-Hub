@@ -1,8 +1,8 @@
 # Архитектура автономного ядра CodeAI-Hub
 
-**Версия документа:** 0.1 (draft)
-**Дата:** 2025-11-17
-**Статус:** Проект целевой архитектуры (Autonomous Core)
+**Версия документа:** 0.2
+**Дата:** 2025-11-18
+**Статус:** Актуальная архитектура Autonomous Core (реализация релизов 1.1.266–1.1.267)
 
 Этот документ описывает целевую архитектуру CodeAI-Hub, в которой ядро системы (Core Orchestrator) становится автономным, независимым от UI-клиентов (VS Code Extension, CEF Launcher, CLI), а все клиенты и модули-провайдеры рассматриваются как подключаемые компоненты к уже работающему ядру.
 
@@ -63,15 +63,16 @@
 
 ### 2.2. Core Supervisor (надзорный процесс ядра)
 
-- Отдельный процесс/скрипт, эволюция текущего `codeai-core-control.js`.
+- Отдельный процесс/модуль (`@codeai-hub/core-supervisor`, CLI `codeai-core`), эволюция текущего `codeai-core-control.js`.
 - Обязанности:
   - гарантировать, что ядро запущено (команда `start`);
   - корректно останавливать ядро (команда `stop`);
   - предоставлять однозначный статус (команда `status` → `running | starting | stopped | failed`).
 - Знает:
-  - где находится runtime и бинарь/бандл ядра (`~/.codeai-hub/core/<platform>/<version>`);
-  - какой порт/host использует ядро;
-  - где хранится lock-файл/registry (`~/.codeai-hub/state/runtime-registry.json`).
+  - где находится установленный runtime ядра (`~/.codeai-hub/core/<platform>/<version>`);
+  - какой порт/host использует ядро (через `runtime-registry.json`);
+  - где хранится lock-файл/registry (`~/.codeai-hub/state/core-manager.lock`, `~/.codeai-hub/state/runtime-registry.json`);
+  - как выровнять окружение старта с CLI‑скриптом (`CORE_HOST/CORE_PORT/CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`).
 
 ### 2.3. UI-клиенты
 
@@ -167,8 +168,8 @@ graph TD
 2. Core Supervisor:
    - проверяет по lock-файлу и/или `runtime-registry`:
      - если ядро уже запущено и отвечает по `/api/v1/health` → возвращает `running`/`ready` без действий;
-     - если ядро не запущено → запускает новый процесс core.
-   - ждёт ответа от эндпоинта готовности ядра (`/api/v1/status`/`/health`);
+     - если ядро не запущено → выбирает установленный runtime (`~/.codeai-hub/core/<platform>/<version>`) и запускает новый процесс core.
+   - ждёт ответа от эндпоинта готовности ядра (`/api/v1/health`);
    - при успешном старте обновляет `runtime-registry.json` и возвращает клиенту `ready`.
 
 3. Ядро при старте:

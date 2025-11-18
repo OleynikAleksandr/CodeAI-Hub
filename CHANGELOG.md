@@ -73,6 +73,28 @@ All notable changes to this project will be documented in this file.
 - Core → `codeai-hub-core-darwin-arm64-1.1.168.tar.bz2`
 - Providers → `claude-module-1.1.168.tar.bz2`, `codex-module-1.1.168.tar.bz2`, `gemini-module-1.1.168.tar.bz2`
 
+## [1.1.266] - 2025-11-18
+### Changed
+- Core Supervisor now prefers the installed core runtime under `~/.codeai-hub/core/<platform>/<version>/` and launches it with the same environment as the `codeai-core-control.js` script (`CORE_HOST/CORE_PORT/CORE_MANAGED_MODE`, aligned workspace paths and `*_MODULE_PATH` overrides), so VS Code and CLI share a single, consistent startup path.
+- The core’s provider registry no longer crashes when the Gemini provider module is missing or misconfigured: the Gemini provider is marked `inactive` with a detailed status message, while the core stays `running` and continues serving Claude/Codex sessions.
+
+### Build
+- VSIX → `codeai-hub-1.1.266.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.266.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.266.tar.bz2`
+- Providers → `claude-module-1.1.266.tar.bz2`, `codex-module-1.1.266.tar.bz2`, `gemini-module-1.1.266.tar.bz2`
+
+## [1.1.267] - 2025-11-18
+### Fixed
+- The CEF launcher now reliably bootstraps the core via Core Supervisor when the `codeai-core` CLI is available, and falls back to starting the installed core runtime directly (`<runtime>/node/bin/node app/dist/index.js`) when the CLI is missing from `PATH`, using the same environment as VS Code and the CLI script.
+- Launcher health monitoring continues to rely on `/api/v1/status` without attempting to restart the core automatically, so VS Code, the launcher and external tools all attach to the same long‑lived core instance until TTL or explicit shutdown.
+
+### Build
+- VSIX → `codeai-hub-1.1.267.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.267.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.267.tar.bz2`
+- Providers → `claude-module-1.1.267.tar.bz2`, `codex-module-1.1.267.tar.bz2`, `gemini-module-1.1.267.tar.bz2`
+
 ## [1.1.167] - 2025-11-09
 ### Added
 - Extension host включает `CoreKeepAlive`, который держит фоновое WebSocket-подключение к ядру и инициирует `ensureStarted()` при завершении процесса или обрывах, поэтому idle shutdown больше не срабатывает из-за свернутого webview.
