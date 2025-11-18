@@ -9474,7 +9474,6 @@
     providerLabel = null
   }) => {
     const scrollContainerRef = (0, import_react11.useRef)(null);
-    const lastMessageKey = messages.length > 0 ? messages[messages.length - 1]?.id ?? null : null;
     const [expandedThinking, setExpandedThinking] = (0, import_react11.useState)({});
     const [pinnedToBottom, setPinnedToBottom] = (0, import_react11.useState)(true);
     (0, import_react11.useEffect)(() => {
@@ -9507,6 +9506,7 @@
         (current) => current === nextPinned ? current : nextPinned
       );
     };
+    const messageCount = messages.length;
     (0, import_react11.useLayoutEffect)(() => {
       if (!pinnedToBottom) {
         return;
@@ -9515,8 +9515,12 @@
       if (!container) {
         return;
       }
+      if (messageCount === 0) {
+        container.scrollTop = 0;
+        return;
+      }
       container.scrollTop = container.scrollHeight;
-    }, [lastMessageKey, pinnedToBottom]);
+    }, [messageCount, pinnedToBottom]);
     if (messages.length === 0) {
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
     }
