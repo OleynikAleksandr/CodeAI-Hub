@@ -240,9 +240,9 @@
 }
 
 .session-dialog__role {
-  font-size: 13px;
-  font-weight: 200;
-  letter-spacing: 0.2px;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.15px;
 }
 
 .session-dialog__timestamp {
@@ -253,26 +253,29 @@
 
 .session-dialog__content {
   font-size: 13px;
-  line-height: 1.3;
+  line-height: 1.25;
   white-space: pre-wrap;
   color: #adb2ba;
 }
 .session-dialog__content p,
 .session-dialog__content ul,
 .session-dialog__content ol {
-  margin: 0 0 6px;
+  margin: 0;
   line-height: inherit;
   padding: 0;
 }
-.session-dialog__content p:last-child,
-.session-dialog__content ul:last-child,
-.session-dialog__content ol:last-child {
-  margin-bottom: 0;
+.session-dialog__content p + *,
+.session-dialog__content ul + *,
+.session-dialog__content ol + * {
+  margin-top: 6px;
 }
 .session-dialog__content ul,
 .session-dialog__content ol {
   padding-left: 16px;
   list-style-position: inside;
+}
+.session-dialog__content li + li {
+  margin-top: 2px;
 }
 .session-dialog__content strong {
   font-weight: 600;
