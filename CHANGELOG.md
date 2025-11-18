@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.273] - 2025-11-18
+### Changed
+- The session UI now mirrors the legacy layout: tabs and info/status rails stay fixed, todos/input sit at the bottom, and only the dialog column scrolls. Auto-scroll keeps the view pinned to the latest message until the user scrolls upward, preventing jitter while streaming.
+- Dialog rendering switched to Markdown via `react-markdown` + `remark-gfm`, so bold text, inline code, lists and links render straight from JSONL history in both the VS Code webview and the standalone client.
+- Spacing around headings, lists and plain `\n` breaks was normalised, eliminating multi-line gaps after section titles and uneven spacing between bullet points.
+
+### Build
+- VSIX → `codeai-hub-1.1.273.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.273.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.273.tar.bz2`
+- Providers → `claude-module-1.1.273.tar.bz2`, `codex-module-1.1.273.tar.bz2`, `gemini-module-1.1.273.tar.bz2`
+
 ## [1.1.175] - 2025-11-09
 ### Fixed
 - The Gemini provider no longer drops to `inactive` when `@google/gemini-cli` was removed from the global prefix: a new install step runs `npm install -g @google/gemini-cli` (with progress hints) whenever the CLI is missing or outdated, and the orchestrator reuses the existing core when `detectRunning()` reports a matching version so sessions survive restarts.

@@ -3,7 +3,7 @@
 **Version:** 0.5.0
 **Last Updated:** 2025-11-18
 **Status:** Active reference  
-**Release Focus:** v1.1.267 — Autonomous Core с TTL/idle‑моделью, Core Supervisor как единая точка старта ядра для VS Code и CEF Launcher, файловый реестр провайдеров и выравнивание окружения Supervisor с CLI‑скриптом.
+**Release Focus:** v1.1.273 — Autonomous Core с TTL/idle‑моделью, Core Supervisor как единая точка старта ядра для VS Code и CEF Launcher, файловый реестр провайдеров и обновлённый session UI (фиксированные панели, отдельная прокрутка, Markdown‑рендеринг и авто‑scroll диалога).
 
 ---
 
