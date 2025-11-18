@@ -262,7 +262,7 @@ const loadCodexAdapterCtor = (
 const loadGeminiAdapterCtor = async (
   overridePath: string | undefined,
   logger: Logger
-): Promise<GeminiAdapterCtor> => {
+): Promise<GeminiAdapterCtor | null> => {
   const importAndResolve = async (
     specifier: string
   ): Promise<GeminiAdapterCtor | null> => {
@@ -338,7 +338,10 @@ const loadGeminiAdapterCtor = async (
   const bundledAdapter = await tryResolve("@codeai-hub/gemini-module", true);
 
   if (!bundledAdapter) {
-    throw new Error("GeminiProviderAdapter export not found in bundled module");
+    logger.warn(
+      "Gemini provider module is not available; Gemini provider will be inactive."
+    );
+    return null;
   }
 
   return bundledAdapter;
@@ -441,7 +444,7 @@ export class ProviderRegistry {
   private readonly providers: ProviderDescriptor[];
   private readonly claudeAdapterCtor: ClaudeAdapterCtor;
   private readonly codexAdapterCtor: CodexAdapterCtor;
-  private readonly geminiAdapterCtorPromise: Promise<GeminiAdapterCtor>;
+  private readonly geminiAdapterCtorPromise: Promise<GeminiAdapterCtor | null>;
   private readonly geminiWorkspacePath: string;
   private readonly geminiDefaultModel?: string;
   private readonly geminiCredentialsDirectory?: string;
@@ -596,6 +599,17 @@ export class ProviderRegistry {
     });
     try {
       const GeminiAdapter = await this.geminiAdapterCtorPromise;
+      if (!GeminiAdapter) {
+        this.options.logger.warn(
+          "Gemini provider adapter is not available; marking provider as inactive."
+        );
+        this.markProviderInactive(
+          mutable,
+          new Error("Gemini provider module is not installed")
+        );
+        this.scheduleRetry("geminiCli");
+        return;
+      }
       const credentials = this.geminiCredentialsDirectory
         ? {
             directory: this.geminiCredentialsDirectory,
