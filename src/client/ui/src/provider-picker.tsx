@@ -5,6 +5,15 @@ import type {
   ProviderStackId,
 } from "../../../types/provider";
 
+const RECOVERY_HINTS: Record<ProviderStackId, string> = {
+  claudeCodeCli:
+    "Claude CLI disconnected. Check your usage limits, run `claude whoami` in the terminal, then run `claude logout && claude login` before retrying.",
+  codexCli:
+    "Codex CLI disconnected. Check your usage limits, run `codex whoami` (or any request) in the terminal, then run `codex logout && codex login` before retrying.",
+  geminiCli:
+    "Gemini CLI disconnected. Check your usage limits, run `gemini whoami` in the terminal, then run `gemini logout && gemini login` before retrying.",
+};
+
 export type ProviderPickerState = {
   readonly visible: boolean;
   readonly providers: readonly ProviderStackDescriptor[];
@@ -38,11 +47,13 @@ const ProviderOption = ({
   inputRef,
 }: ProviderOptionProps) => {
   const disabled = !provider.connected;
-  const statusLabel = provider.connected ? "Available" : "Unavailable";
+  const statusLabel = provider.connected ? "Connected" : "Not connected";
   const statusClassName = provider.connected
     ? "provider-picker__label-status provider-picker__label-status--connected"
     : "provider-picker__label-status provider-picker__label-status--disconnected";
-  const warning = provider.statusMessage;
+  const warning = disabled
+    ? provider.statusMessage?.trim() || RECOVERY_HINTS[provider.id]
+    : null;
 
   const handleChange = () => {
     onToggle(provider.id);

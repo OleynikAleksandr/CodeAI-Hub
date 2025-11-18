@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SessionMessage } from "../../../../types/session";
 
 type ProviderTheme = "claude" | "codex" | "gemini";
+
+const AUTO_SCROLL_EPSILON = 32;
 
 type DialogPanelProps = {
   readonly messages: readonly SessionMessage[];
@@ -28,15 +30,23 @@ const DialogPanel = ({
   providerTheme = null,
   providerLabel = null,
 }: DialogPanelProps) => {
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const displayMessages = useMemo(
+    () => mergeThinkingSegments(messages),
+    [messages]
+  );
+  const lastMessageKey =
+    displayMessages.length > 0 ? (displayMessages.at(-1)?.id ?? null) : null;
   const [expandedThinking, setExpandedThinking] = useState<
     Record<string, boolean>
   >({});
+  const [pinnedToBottom, setPinnedToBottom] = useState(true);
 
   useEffect(() => {
     setExpandedThinking((previous) => {
       let hasChanges = false;
       const nextState = { ...previous };
-      for (const message of messages) {
+      for (const message of displayMessages) {
         if (
           message.role === "thinking" &&
           nextState[message.id] === undefined
@@ -47,7 +57,7 @@ const DialogPanel = ({
       }
       return hasChanges ? nextState : previous;
     });
-  }, [messages]);
+  }, [displayMessages]);
 
   const toggleThinking = (messageId: string) => {
     setExpandedThinking((previous) => ({
@@ -56,7 +66,35 @@ const DialogPanel = ({
     }));
   };
 
-  if (messages.length === 0) {
+  const updatePinnedState = () => {
+    const container = scrollContainerRef.current;
+    if (!container) {
+      return;
+    }
+    const distanceFromBottom =
+      container.scrollHeight - (container.scrollTop + container.clientHeight);
+    const nextPinned = distanceFromBottom <= AUTO_SCROLL_EPSILON;
+    setPinnedToBottom((current) =>
+      current === nextPinned ? current : nextPinned
+    );
+  };
+
+  useLayoutEffect(() => {
+    if (!pinnedToBottom) {
+      return;
+    }
+    const container = scrollContainerRef.current;
+    if (!container) {
+      return;
+    }
+    if (lastMessageKey === null) {
+      container.scrollTop = container.scrollHeight;
+      return;
+    }
+    container.scrollTop = container.scrollHeight;
+  }, [lastMessageKey, pinnedToBottom]);
+
+  if (displayMessages.length === 0) {
     return (
       <div className="session-dialog session-panel">
         <p className="session-dialog__empty">No messages yet.</p>
@@ -66,8 +104,12 @@ const DialogPanel = ({
 
   return (
     <div className="session-dialog session-panel">
-      <div className="session-dialog__scroll">
-        {messages.map((message) => {
+      <div
+        className="session-dialog__scroll"
+        onScroll={updatePinnedState}
+        ref={scrollContainerRef}
+      >
+        {displayMessages.map((message) => {
           const className = buildMessageClassNames(message, providerTheme);
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
@@ -186,4 +228,38 @@ const StandardMessage = ({
       <p className="session-dialog__content">{message.content}</p>
     </article>
   );
+};
+
+const mergeThinkingSegments = (
+  messages: readonly SessionMessage[]
+): SessionMessage[] => {
+  const merged: SessionMessage[] = [];
+  let pending: SessionMessage | null = null;
+
+  for (const message of messages) {
+    if (message.role === "thinking") {
+      if (pending) {
+        const combinedThinking: SessionMessage = {
+          ...pending,
+          content: `${pending.content}\n\n${message.content}`,
+          createdAt: message.createdAt,
+        };
+        pending = combinedThinking;
+      } else {
+        pending = { ...message };
+      }
+      continue;
+    }
+    if (pending) {
+      merged.push(pending);
+      pending = null;
+    }
+    merged.push(message);
+  }
+
+  if (pending) {
+    merged.push(pending);
+  }
+
+  return merged;
 };

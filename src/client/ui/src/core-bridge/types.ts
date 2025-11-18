@@ -1,6 +1,7 @@
 import type {
   ProviderStackDescriptor,
   ProviderStackId,
+  ProviderVersionInfo,
 } from "../../../../types/provider";
 import type {
   SessionMessage,
@@ -19,6 +20,7 @@ export type ServerProvider = {
   readonly description?: string;
   readonly status?: string;
   readonly statusMessage?: string | null;
+  readonly versionInfo?: ProviderVersionInfo;
 };
 
 export type ServerSessionMessage = {
@@ -42,11 +44,20 @@ export type ServerSession = {
 export type ServerStatusResponse = {
   readonly sessions?: readonly ServerSession[];
   readonly providers?: readonly ServerProvider[];
+  readonly detachedSessions?: readonly string[];
 };
 
 export type CoreBridgeStatePayload = {
   readonly sessions: readonly SessionRecord[];
   readonly providers: readonly ProviderStackDescriptor[];
+  readonly detachedSessions: readonly string[];
+};
+
+export type ProviderOperationPayload = {
+  readonly providerId: ProviderStackId;
+  readonly operation: "installVendor" | "restoreVetted";
+  readonly status: "started" | "success" | "error";
+  readonly message?: string | null;
 };
 
 export type CoreBridgeSessionMessagePayload = {
