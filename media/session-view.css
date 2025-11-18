@@ -240,9 +240,9 @@
 }
 
 .session-dialog__role {
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.15px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 .session-dialog__timestamp {
@@ -256,6 +256,7 @@
   line-height: 1.25;
   white-space: normal;
   color: #adb2ba;
+  font-weight: 300;
 }
 .session-dialog__content p,
 .session-dialog__content ul,
@@ -267,7 +268,7 @@
 .session-dialog__content p + *,
 .session-dialog__content ul + *,
 .session-dialog__content ol + * {
-  margin-top: 3px;
+  margin-top: 6px;
 }
 .session-dialog__content p,
 .session-dialog__content li {
