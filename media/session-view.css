@@ -267,7 +267,7 @@
 .session-dialog__content p + *,
 .session-dialog__content ul + *,
 .session-dialog__content ol + * {
-  margin-top: 6px;
+  margin-top: 3px;
 }
 .session-dialog__content ul,
 .session-dialog__content ol {
