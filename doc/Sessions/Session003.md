@@ -27,6 +27,9 @@
 3. **Core logging restore + release 1.1.281**
    - `packages/core-supervisor/src/index.ts`, manifests, README, changelog.
    - Supervisor now sets `CODEAI_CORE_LOG_FILE`, so autonomous core instances launched from VS Code resume writing to `~/.codeai-hub/logs/core/core.log`. Rebuilt artifacts via `./scripts/build-all.sh`, yielding `codeai-hub-1.1.281.vsix` and updated tarballs, plus changelog/README refresh.
+4. **Gemini CLI signature fix + release 1.1.282**
+   - `packages/Gemini_Module/src/session/gemini-session-manager.ts`, manifests, README, changelog.
+   - Adapted the provider to pass the new `extensions` argument to `loadCliConfig`, unblocking session creation on CLI `0.11.x`. Ran `./scripts/build-all.sh` for v1.1.282 and synced documentation/artifacts.
 
 ---
 
@@ -42,3 +45,4 @@
 - `4431dcf` — `feat: v1.1.280 - gemini cli compatibility`
 - `b3453a9` — `fix(supervisor): restore core logging`
 - `cff03aa` — `feat: v1.1.281 - core logging restore`
+- `f8774e4` — `fix(gemini): adapt cli config signature`
