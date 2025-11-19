@@ -2,8 +2,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { SessionMessage } from "../../../../types/session";
+import type { ProviderTheme } from "./helpers";
 
-type ProviderTheme = "claude" | "codex" | "gemini";
 const AUTO_SCROLL_EPSILON = 32;
 
 type DialogPanelProps = {
