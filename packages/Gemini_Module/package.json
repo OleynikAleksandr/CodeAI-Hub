@@ -13,8 +13,8 @@
     "node": ">=18.19.0"
   },
   "devDependencies": {
-    "@google/gemini-cli": "^0.11.0",
-    "@google/gemini-cli-core": "^0.11.0",
+    "@google/gemini-cli": "^0.16.0",
+    "@google/gemini-cli-core": "^0.16.0",
     "@types/node": "^20.11.0",
     "rimraf": "^6.0.1",
     "typescript": "^5.6.3"
@@ -28,7 +28,7 @@
   "author": "CodeAI Hub",
   "license": "ISC",
   "codeaiHub": {
-    "geminiCliCoreVersion": "0.11.0",
-    "geminiCliVersion": "0.11.0"
+    "geminiCliCoreVersion": "0.16.0",
+    "geminiCliVersion": "0.16.0"
   }
 }
