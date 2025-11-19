@@ -141,8 +141,16 @@ async function prepareLocalRuntime(
   context: ExtensionContext,
   indexPath: string
 ): Promise<void> {
+  // In Antigravity (and potentially other remote envs), we DO want to start the core.
+  // The previous check `if (env.remoteName) { return; }` prevented this.
+  // We now allow execution to proceed, assuming the remote env has Node.js and write access.
   if (env.remoteName) {
-    return;
+    const logger = getExtensionLogger();
+    logger.log("extension:prepareLocalRuntime:remote", {
+      remoteName: env.remoteName,
+      message:
+        "Proceeding with local runtime preparation in remote environment.",
+    });
   }
 
   try {

@@ -7,18 +7,24 @@ type ExtensionLogLevel = "info" | "warn" | "error" | "debug";
 type ExtensionLogPayload = Record<string, unknown> | undefined;
 
 class ExtensionLogger {
-  private readonly stream: fs.WriteStream;
+  private readonly stream?: fs.WriteStream;
 
   constructor() {
-    const logsRoot = path.join(
-      os.homedir(),
-      ".codeai-hub",
-      "logs",
-      "extension"
-    );
-    fs.mkdirSync(logsRoot, { recursive: true });
-    const filePath = path.join(logsRoot, "extension.log");
-    this.stream = fs.createWriteStream(filePath, { flags: "a" });
+    try {
+      const logsRoot = path.join(
+        os.homedir(),
+        ".codeai-hub",
+        "logs",
+        "extension"
+      );
+      fs.mkdirSync(logsRoot, { recursive: true });
+      const filePath = path.join(logsRoot, "extension.log");
+      this.stream = fs.createWriteStream(filePath, { flags: "a" });
+    } catch (_error) {
+      // Fallback to a no-op stream or similar if FS is not writable
+      // For now, we just leave this.stream undefined and handle it in log()
+      // console.error("Failed to initialize extension logger:", error);
+    }
   }
 
   log(
@@ -33,7 +39,9 @@ class ExtensionLogger {
       ...payload,
     };
     try {
-      this.stream.write(`${JSON.stringify(entry)}\n`);
+      if (this.stream) {
+        this.stream.write(`${JSON.stringify(entry)}\n`);
+      }
     } catch {
       // Ignore logging failures to avoid impacting extension behavior.
     }
@@ -57,7 +65,7 @@ class ExtensionLogger {
 
   dispose(): void {
     try {
-      this.stream.end();
+      this.stream?.end();
     } catch {
       // Ignore disposal failures.
     }
