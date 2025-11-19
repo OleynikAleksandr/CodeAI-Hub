@@ -1,8 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import type { SessionMessage } from "../../../../types/session";
 import type { ProviderTheme } from "./helpers";
+import MarkdownContent from "./markdown-content";
 
 const AUTO_SCROLL_EPSILON = 32;
 
@@ -200,7 +199,8 @@ const ThinkingMessage = ({
     </header>
     {expanded ? (
       <MarkdownContent
-        className="session-dialog__content session-dialog__content--thinking"
+        allowEmphasis={false}
+        className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
         content={message.content}
         id={`thinking-${message.id}`}
       />
@@ -232,31 +232,6 @@ const StandardMessage = ({
     </article>
   );
 };
-
-type MarkdownContentProps = {
-  readonly className?: string;
-  readonly content: string;
-  readonly id?: string;
-};
-
-const MarkdownContent = ({ className, content, id }: MarkdownContentProps) => (
-  <div className={className} id={id}>
-    <ReactMarkdown
-      components={{
-        a: ({ node: _node, href, ...props }) => (
-          <a {...props} href={href ?? "#"} rel="noreferrer" target="_blank" />
-        ),
-        p: ({ node: _node, ...props }) => <p {...props} />,
-        strong: ({ node: _node, ...props }) => <strong {...props} />,
-        em: ({ node: _node, ...props }) => <em {...props} />,
-      }}
-      remarkPlugins={[remarkGfm]}
-      skipHtml
-    >
-      {content}
-    </ReactMarkdown>
-  </div>
-);
 
 const mergeThinkingMessages = (
   source: readonly SessionMessage[]

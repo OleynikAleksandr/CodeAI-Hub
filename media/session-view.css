@@ -305,6 +305,10 @@
   margin-top: 4px;
 }
 
+.session-dialog__content--thinking-expanded {
+  padding-bottom: 6px;
+}
+
 .session-dialog__empty {
   font-size: 13px;
   color: #a0a0a0;
