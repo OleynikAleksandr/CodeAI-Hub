@@ -30,6 +30,9 @@
 4. **Gemini CLI signature fix + release 1.1.282**
    - `packages/Gemini_Module/src/session/gemini-session-manager.ts`, manifests, README, changelog.
    - Adapted the provider to pass the new `extensions` argument to `loadCliConfig`, unblocking session creation on CLI `0.11.x`. Ran `./scripts/build-all.sh` for v1.1.282 and synced documentation/artifacts.
+5. **Gemini CLI 0.16 bump + release 1.1.283**
+   - `package*.json`, `packages/Gemini_Module/**`, docs.
+   - Pinned `@google/gemini-cli` / `cli-core` to 0.16.0, updated the session manager to ignore legacy extension migrations and satisfy the new CLI arg surface, then rebuilt all artifacts via `./scripts/build-all.sh` for v1.1.283.
 
 ---
 
@@ -47,3 +50,4 @@
 - `cff03aa` — `feat: v1.1.281 - core logging restore`
 - `f8774e4` — `fix(gemini): adapt cli config signature`
 - `9d89c53` — `feat: v1.1.282 - gemini cli compatibility`
+- `0247b7d` — `fix(gemini): align with cli 0.16`
