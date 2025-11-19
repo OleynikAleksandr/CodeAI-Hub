@@ -1,6 +1,7 @@
 import type { ProviderStackId } from "../../../../types/provider";
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionRecord } from "../../../../types/session";
+import { mapProviderTheme } from "./helpers";
 
 type SessionTabsProps = {
   readonly sessions: readonly SessionRecord[];
@@ -57,9 +58,15 @@ const SessionTabs = ({
           )
           .join(" + ");
 
-        const tabClassName = isActive
-          ? "session-tab session-tab--active"
-          : "session-tab";
+        const primaryProviderId = session.providerIds[0] ?? null;
+        const tabProviderTheme = mapProviderTheme(primaryProviderId);
+        const tabClassName = [
+          "session-tab",
+          isActive ? "session-tab--active" : null,
+          tabProviderTheme ? `session-tab--${tabProviderTheme}` : null,
+        ]
+          .filter(Boolean)
+          .join(" ");
 
         return (
           <div className={tabClassName} key={session.id}>

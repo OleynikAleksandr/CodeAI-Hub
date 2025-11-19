@@ -274,3 +274,20 @@ export const toggleTodoInSnapshots = (
     },
   } satisfies SessionSnapshots;
 };
+
+export type ProviderTheme = "claude" | "codex" | "gemini";
+
+export const mapProviderTheme = (
+  providerId: ProviderStackId | null
+): ProviderTheme | null => {
+  switch (providerId) {
+    case "claudeCodeCli":
+      return "claude";
+    case "codexCli":
+      return "codex";
+    case "geminiCli":
+      return "gemini";
+    default:
+      return null;
+  }
+};

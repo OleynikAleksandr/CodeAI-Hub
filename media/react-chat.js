@@ -8012,6 +8012,18 @@
       }
     };
   };
+  var mapProviderTheme = (providerId) => {
+    switch (providerId) {
+      case "claudeCodeCli":
+        return "claude";
+      case "codexCli":
+        return "codex";
+      case "geminiCli":
+        return "gemini";
+      default:
+        return null;
+    }
+  };
 
   // src/client/ui/src/core-bridge/constants.ts
   var DEFAULT_CONFIG = {
@@ -23419,7 +23431,13 @@ ${path2}` : path2;
       const fullSummary = session.providerIds.map(
         (providerId) => providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId)
       ).join(" + ");
-      const tabClassName = isActive ? "session-tab session-tab--active" : "session-tab";
+      const primaryProviderId = session.providerIds[0] ?? null;
+      const tabProviderTheme = mapProviderTheme(primaryProviderId);
+      const tabClassName = [
+        "session-tab",
+        isActive ? "session-tab--active" : null,
+        tabProviderTheme ? `session-tab--${tabProviderTheme}` : null
+      ].filter(Boolean).join(" ");
       return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: tabClassName, children: [
         /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
@@ -23645,18 +23663,6 @@ ${path2}` : path2;
     ] });
   };
   var session_view_default = SessionView;
-  var mapProviderTheme = (providerId) => {
-    switch (providerId) {
-      case "claudeCodeCli":
-        return "claude";
-      case "codexCli":
-        return "codex";
-      case "geminiCli":
-        return "gemini";
-      default:
-        return null;
-    }
-  };
 
   // src/client/ui/src/app-host.tsx
   var import_jsx_runtime20 = __toESM(require_jsx_runtime());

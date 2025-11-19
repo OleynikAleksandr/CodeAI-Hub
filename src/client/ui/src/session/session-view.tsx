@@ -3,6 +3,7 @@ import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
 import EmptyState from "./empty-state";
+import { mapProviderTheme } from "./helpers";
 import InfoPanel from "./info-panel";
 import InputPanel from "./input-panel";
 import SessionTabs from "./session-tabs";
@@ -105,18 +106,3 @@ const SessionView = ({
 };
 
 export default SessionView;
-
-const mapProviderTheme = (
-  providerId: ProviderStackId | null
-): "claude" | "codex" | "gemini" | null => {
-  switch (providerId) {
-    case "claudeCodeCli":
-      return "claude";
-    case "codexCli":
-      return "codex";
-    case "geminiCli":
-      return "gemini";
-    default:
-      return null;
-  }
-};

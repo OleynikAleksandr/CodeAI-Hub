@@ -128,6 +128,18 @@
   color: rgba(204, 204, 204, 1);
 }
 
+.session-tab.session-tab--claude .session-tab__providers-line {
+  color: #ff9105;
+}
+
+.session-tab.session-tab--codex .session-tab__providers-line {
+  color: #01f0d8;
+}
+
+.session-tab.session-tab--gemini .session-tab__providers-line {
+  color: #ab34cb;
+}
+
 .session-tab__close {
   background: transparent;
   border: none;
@@ -289,6 +301,8 @@
 .session-dialog__content--thinking {
   font-size: 12px;
   line-height: 1.05;
+  font-weight: 200;
+  margin-top: 4px;
 }
 
 .session-dialog__empty {
@@ -341,7 +355,8 @@
 
 .session-dialog__message--thinking {
   margin: 0 80px -18px 30px;
-  padding: 4px 10px;
+  padding: 0 10px;
+  gap: 0;
   background-color: #313233;
   border-color: #46474a;
   border-radius: 4px 4px 0 0;
@@ -351,6 +366,7 @@
 
 .session-dialog__message--thinking .session-dialog__role {
   color: #727272;
+  font-weight: 200;
 }
 
 .session-dialog__thinking-toggle {
@@ -358,12 +374,12 @@
   border: none;
   background: transparent;
   color: #727272;
-  font-size: 18px;
+  font-size: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 27px;
-  height: 27px;
+  width: 22px;
+  height: 22px;
   cursor: pointer;
   padding: 0;
   margin-left: -12px;
