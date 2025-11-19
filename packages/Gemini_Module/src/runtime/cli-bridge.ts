@@ -38,6 +38,25 @@ const loadEsmModule = async <T>(
   return loaded as T;
 };
 
+const findAndLoadModule = async <T>(
+  root: string,
+  candidates: readonly (readonly string[])[]
+): Promise<T> => {
+  const errors: unknown[] = [];
+  for (const segments of candidates) {
+    try {
+      return await loadEsmModule<T>(root, ...segments);
+    } catch (error) {
+      errors.push(error);
+    }
+  }
+  throw new Error(
+    `Failed to load module from any candidate path:\n${errors
+      .map((e) => String(e))
+      .join("\n")}`
+  );
+};
+
 const readMetadata = async (): Promise<GeminiCliBridgeMetadata | null> => {
   try {
     const raw = await fs.readFile(METADATA_FILE, "utf8");
@@ -202,45 +221,60 @@ const loadGeminiModules = async (
     turn,
     thoughtUtils,
   ] = await Promise.all([
-    loadEsmModule<typeof import("@google/gemini-cli/dist/src/config/config")>(
-      cliRoot,
-      "dist",
-      "src",
-      "config",
-      "config.js"
-    ),
-    loadEsmModule<typeof import("@google/gemini-cli/dist/src/config/settings")>(
-      cliRoot,
-      "dist",
-      "src",
-      "config",
-      "settings.js"
-    ),
-    loadEsmModule<
+    findAndLoadModule<
+      typeof import("@google/gemini-cli/dist/src/config/config")
+    >(cliRoot, [
+      ["dist", "src", "config", "config.js"],
+      ["dist", "config", "config.js"],
+    ]),
+    findAndLoadModule<
+      typeof import("@google/gemini-cli/dist/src/config/settings")
+    >(cliRoot, [
+      ["dist", "src", "config", "settings.js"],
+      ["dist", "config", "settings.js"],
+    ]),
+    findAndLoadModule<
       typeof import("@google/gemini-cli/dist/src/config/extension")
-    >(cliRoot, "dist", "src", "config", "extension.js"),
-    loadEsmModule<
+    >(cliRoot, [
+      ["dist", "src", "config", "extension.js"],
+      ["dist", "config", "extension.js"],
+    ]),
+    findAndLoadModule<
       typeof import("@google/gemini-cli/dist/src/config/extensions/extensionEnablement")
-    >(cliRoot, "dist", "src", "config", "extensions", "extensionEnablement.js"),
-    loadEsmModule<
+    >(cliRoot, [
+      ["dist", "src", "config", "extensions", "extensionEnablement.js"],
+      ["dist", "config", "extensions", "extensionEnablement.js"],
+    ]),
+    findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/contentGenerator")
-    >(CLI_CORE_DIR, "dist", "src", "core", "contentGenerator.js"),
-    loadEsmModule<
+    >(CLI_CORE_DIR, [
+      ["dist", "src", "core", "contentGenerator.js"],
+      ["dist", "core", "contentGenerator.js"],
+    ]),
+    findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/coreToolScheduler")
-    >(CLI_CORE_DIR, "dist", "src", "core", "coreToolScheduler.js"),
-    loadEsmModule<
+    >(CLI_CORE_DIR, [
+      ["dist", "src", "core", "coreToolScheduler.js"],
+      ["dist", "core", "coreToolScheduler.js"],
+    ]),
+    findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/nonInteractiveToolExecutor")
-    >(CLI_CORE_DIR, "dist", "src", "core", "nonInteractiveToolExecutor.js"),
-    loadEsmModule<typeof import("@google/gemini-cli-core/dist/src/core/turn")>(
-      CLI_CORE_DIR,
-      "dist",
-      "src",
-      "core",
-      "turn.js"
-    ),
-    loadEsmModule<
+    >(CLI_CORE_DIR, [
+      ["dist", "src", "core", "nonInteractiveToolExecutor.js"],
+      ["dist", "core", "nonInteractiveToolExecutor.js"],
+    ]),
+    findAndLoadModule<
+      typeof import("@google/gemini-cli-core/dist/src/core/turn")
+    >(CLI_CORE_DIR, [
+      ["dist", "src", "core", "turn.js"],
+      ["dist", "core", "turn.js"],
+    ]),
+    findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/utils/thoughtUtils")
-    >(CLI_CORE_DIR, "dist", "src", "utils", "thoughtUtils.js"),
+    >(CLI_CORE_DIR, [
+      ["dist", "src", "utils", "thoughtUtils.js"],
+      ["dist", "utils", "thoughtUtils.js"],
+    ]),
   ]);
 
   return {
