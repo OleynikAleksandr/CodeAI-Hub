@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
 import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
+import type { GeminiCLIExtension } from "@google/gemini-cli-core/dist/src/config/config";
 import type { AuthType as AuthTypeEnum } from "@google/gemini-cli-core/dist/src/core/contentGenerator";
 import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
 import type {
@@ -89,6 +90,7 @@ export class GeminiSessionManager {
 
     const loadCliConfig = this.modules.config.loadCliConfig as unknown as (
       mergedSettings: typeof settings.merged,
+      extensions: readonly GeminiCLIExtension[],
       sessionIdentifier: string,
       cliArguments: CliArgs,
       cwd?: string
@@ -96,6 +98,7 @@ export class GeminiSessionManager {
 
     const config = await loadCliConfig(
       settings.merged,
+      [],
       sessionId,
       argv,
       workspacePath
