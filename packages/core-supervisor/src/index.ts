@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from "node:child_process";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import os from "node:os";
 import path from "node:path";
@@ -223,6 +223,14 @@ const buildCoreProcessEnv = (
     GEMINI_WORKSPACE_PATH: defaultWorkspace,
     CODEX_SKIP_GIT_REPO_CHECK: "true",
   };
+
+  const logDir = path.join(home, ".codeai-hub", "logs", "core");
+  try {
+    mkdirSync(logDir, { recursive: true });
+    env.CODEAI_CORE_LOG_FILE = path.join(logDir, "core.log");
+  } catch {
+    // fall back to stdout-only logging
+  }
 
   if (version) {
     const providersRoot = path.join(home, ".codeai-hub", "providers");
