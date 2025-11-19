@@ -1,7 +1,7 @@
 # Core Orchestrator Module
 
 ## Overview
-Core Orchestrator — автономный Node.js сервис (`@codeai-hub/core@1.1.267`, Node 20 runtime) обрабатывающий все сессии, провайдерные модули и клиенты CodeAI Hub. Ядро запускается через Core Supervisor (CLI `codeai-core`) или вспомогательные скрипты, но продолжает работать после закрытия VS Code и лаунчера и предоставляет HTTP/WebSocket API для всех интерфейсов (webview, CEF‑клиент, будущие удалённые клиенты).
+Core Orchestrator — автономный Node.js сервис (`@codeai-hub/core@1.1.283`, Node 20 runtime) обрабатывающий все сессии, провайдерные модули и клиенты CodeAI Hub. Ядро запускается через Core Supervisor (CLI `codeai-core`) или вспомогательные скрипты, но продолжает работать после закрытия VS Code и лаунчера и предоставляет HTTP/WebSocket API для всех интерфейсов (webview, CEF‑клиент, будущие удалённые клиенты).
 
 - **Исполняемый путь:** `~/.codeai-hub/core/<platform>/<version>/`
 - **Runtime:** комплектный Node 20 + бандл `app/dist/index.js`
@@ -18,7 +18,7 @@ Core Orchestrator — автономный Node.js сервис (`@codeai-hub/co
 - **Session Manager** — управляет жизненным циклом сессий: создание, стриминг, история JSONL, черновики, восстановление после перезапуска.
 - **Workflow Layer** — обрабатывает визарды и multi-agent сценарии, опираясь на унифицированные DTO провайдеров.
 - **Config & Secrets Service** — хранит настройки, пути к CLI, секреты (взаимодействие с VS Code SecretStorage/OS keychain).
-- **Telemetry & Diagnostics** — ведёт журналы (`core.log`, `providers/<name>.log`, `bridge.log`), отдаёт диагностические события клиентам.
+- **Telemetry & Diagnostics** — ведёт журналы (`core.log`, `providers/<name>.log`, `bridge.log`), отдаёт диагностические события клиентам. Начиная с 1.1.281 Supervisor всегда прокидывает переменную `CODEAI_CORE_LOG_FILE`, поэтому экземпляры, запущенные из VSIX/launcher, снова пишут JSON‑логи в `~/.codeai-hub/logs/core/core.log` так же, как автономное ядро.
 
 ## Старт и обновления
 1. Скрипты сборки (`scripts/build-core.sh`, `scripts/build-all.sh`) кладут установленный runtime в `~/.codeai-hub/core/<platform>/<version>/` и обновляют `assets/core/manifest.json` и `~/.codeai-hub/releases/*.tar.bz2`.

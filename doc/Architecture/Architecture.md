@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.5.0
-**Last Updated:** 2025-11-18
+**Version:** 0.5.1
+**Last Updated:** 2025-11-19
 **Status:** Active reference  
-**Release Focus:** v1.1.273 — Autonomous Core с TTL/idle‑моделью, Core Supervisor как единая точка старта ядра для VS Code и CEF Launcher, файловый реестр провайдеров и обновлённый session UI (фиксированные панели, отдельная прокрутка, Markdown‑рендеринг и авто‑scroll диалога).
+**Release Focus:** v1.1.283 — Supervisor гарантированно прокидывает `CODEAI_CORE_LOG_FILE` (core.log в `~/.codeai-hub/logs/core/` снова синхронизирован с VSIX/launcher), а Gemini provider обновлён до CLI/Core 0.16.0 с новой сигнатурой `loadCliConfig` и свежими артефактами в внутренних vendor-папках.
 
 ---
 
