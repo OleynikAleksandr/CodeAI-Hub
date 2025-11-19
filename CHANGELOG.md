@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.278] - 2025-11-18
+### Changed
+- Thinking badges now use the same ultra-light typography for Claude, Codex and Gemini, the toggle chevron shrinks to match, and the pill loses its vertical padding so the reasoning header reads as a slim divider rather than a full card.
+- Session tab titles adopt the same provider accent colors that label assistant responses (orange for Claude, teal for Codex, violet for Gemini), making it easier to visually match tabs and dialog cards.
+
+### Build
+- VSIX → `codeai-hub-1.1.278.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.278.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.278.tar.bz2`
+- Providers → `claude-module-1.1.278.tar.bz2`, `codex-module-1.1.278.tar.bz2`, `gemini-module-1.1.278.tar.bz2`
+
 ## [1.1.273] - 2025-11-18
 ### Changed
 - The session UI now mirrors the legacy layout: tabs and info/status rails stay fixed, todos/input sit at the bottom, and only the dialog column scrolls. Auto-scroll keeps the view pinned to the latest message until the user scrolls upward, preventing jitter while streaming.
