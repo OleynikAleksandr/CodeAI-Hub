@@ -24,6 +24,9 @@
 2. **Release 1.1.280 build**
    - Root/package manifests, provider manifests, README, changelog.
    - Executed `./scripts/build-all.sh`, producing VSIX + tarballs, bumping versions, and syncing manifests. Documented the release in `CHANGELOG.md` and refreshed `README.md` artifacts.
+3. **Core logging restore + release 1.1.281**
+   - `packages/core-supervisor/src/index.ts`, manifests, README, changelog.
+   - Supervisor now sets `CODEAI_CORE_LOG_FILE`, so autonomous core instances launched from VS Code resume writing to `~/.codeai-hub/logs/core/core.log`. Rebuilt artifacts via `./scripts/build-all.sh`, yielding `codeai-hub-1.1.281.vsix` and updated tarballs, plus changelog/README refresh.
 
 ---
 
@@ -37,3 +40,5 @@
 ## Git commits
 - `9b728e1` — `fix(gemini): support fallback cli layout`
 - `4431dcf` — `feat: v1.1.280 - gemini cli compatibility`
+- `b3453a9` — `fix(supervisor): restore core logging`
+- `cff03aa` — `feat: v1.1.281 - core logging restore`
