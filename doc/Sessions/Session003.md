@@ -46,3 +46,4 @@
 - `b3453a9` — `fix(supervisor): restore core logging`
 - `cff03aa` — `feat: v1.1.281 - core logging restore`
 - `f8774e4` — `fix(gemini): adapt cli config signature`
+- `9d89c53` — `feat: v1.1.282 - gemini cli compatibility`
