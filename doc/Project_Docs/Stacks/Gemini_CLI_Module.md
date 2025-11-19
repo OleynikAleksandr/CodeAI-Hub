@@ -30,7 +30,7 @@ Additional references to monitor:
 ## 3. Installation & Environment
 - **Managed install:** `packages/Gemini_Module/src/installer/gemini-installer.ts` теперь подготавливает только `@google/gemini-cli-core`, складывая его в `dist/vendor/node_modules/@google/…` внутри установленного модуля (`~/.codeai-hub/providers/gemini/<version>`). Сам CLI (`@google/gemini-cli`) пользователь устанавливает глобально (например, `npm install -g @google/gemini-cli`); во время инициализации `cli-bridge` сканирует PATH, npm prefix (включая `.npm-global`) и стандартные каталоги, чтобы определить расположение и версию инструмента. Во время скачивания/установки `GeminiInstaller` отправляет `reporter.progress` (в том числе с флагом `firstRun`), чтобы UI показывал конкретный шаг.
 - **Runtime requirements:** Node.js ≥ 20.0.0 (используется bundled runtime ядра), macOS/Linux/Windows поддерживаются CLI.
-- **Version pinning:** manifest `codeaiHub` внутри `package.json` модуля (0.3.5) фиксирует версии `geminiCliVersion` и `geminiCliCoreVersion` (0.11.0). Контрольные суммы проверяются при скачивании.
+- **Version pinning:** manifest `codeaiHub` внутри `package.json` модуля (0.3.5) фиксирует версии `geminiCliVersion` и `geminiCliCoreVersion` (0.16.0). Контрольные суммы проверяются при скачивании.
 - **Credential store:** `~/.gemini/`
   - `credentials.json` — OAuth токены (refresh/access).
   - `config.json` — project metadata и выбранные расширения.

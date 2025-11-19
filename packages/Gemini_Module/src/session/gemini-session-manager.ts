@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
 import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
-import type { GeminiCLIExtension } from "@google/gemini-cli-core/dist/src/config/config";
 import type { AuthType as AuthTypeEnum } from "@google/gemini-cli-core/dist/src/core/contentGenerator";
 import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
 import type {
@@ -84,21 +83,29 @@ export class GeminiSessionManager {
     const eventEmitter = new EventEmitter();
 
     const settings = this.modules.settings.loadSettings(workspacePath);
-    this.modules.settings.migrateDeprecatedSettings(settings, workspacePath);
+    const migrateDeprecatedSettings = this.modules.settings
+      .migrateDeprecatedSettings as unknown;
+    if (typeof migrateDeprecatedSettings === "function") {
+      (
+        migrateDeprecatedSettings as (
+          loadedSettings: unknown,
+          extensionManager?: unknown
+        ) => void
+      )(settings, {
+        // Extensions are not supported inside the CodeAI Hub bridge yet.
+        disableExtension: async () => {
+          /* noop */
+        },
+      });
+    }
 
     const argv = this.createArgv(options);
 
-    const loadCliConfig = this.modules.config.loadCliConfig as unknown as (
-      mergedSettings: typeof settings.merged,
-      extensions: readonly GeminiCLIExtension[],
-      sessionIdentifier: string,
-      cliArguments: CliArgs,
-      cwd?: string
-    ) => Promise<Awaited<ReturnType<typeof this.modules.config.loadCliConfig>>>;
+    const loadCliConfig = this.modules.config
+      .loadCliConfig as typeof this.modules.config.loadCliConfig;
 
     const config = await loadCliConfig(
       settings.merged,
-      [],
       sessionId,
       argv,
       workspacePath
@@ -576,12 +583,17 @@ export class GeminiSessionManager {
       experimentalAcp: false,
       extensions: undefined,
       listExtensions: false,
+      resume: undefined,
+      listSessions: false,
+      deleteSession: undefined,
       includeDirectories: [],
       screenReader: undefined,
       useSmartEdit: undefined,
       useWriteTodos: undefined,
       outputFormat: "json",
-    } as CliArgs;
+      fakeResponses: undefined,
+      recordResponses: undefined,
+    };
   }
 
   private requireSession(sessionId: string): ActiveSession {
