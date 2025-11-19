@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.279] - 2025-11-19
+### Changed
+- Thinking cards now ignore Markdown emphasis (bold/italic) so Claude, Codex, and Gemini reasoning text always uses the same ultra-light weight regardless of provider output.
+- Expanded thinking panels add 6 px of bottom padding to keep the final line clear of the assistant card shadow without altering the collapsed height.
+
+### Build
+- VSIX → `codeai-hub-1.1.279.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.279.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.279.tar.bz2`
+- Providers → `claude-module-1.1.279.tar.bz2`, `codex-module-1.1.279.tar.bz2`, `gemini-module-1.1.279.tar.bz2`
+
 ## [1.1.278] - 2025-11-18
 ### Changed
 - Thinking badges now use the same ultra-light typography for Claude, Codex and Gemini, the toggle chevron shrinks to match, and the pill loses its vertical padding so the reasoning header reads as a slim divider rather than a full card.
