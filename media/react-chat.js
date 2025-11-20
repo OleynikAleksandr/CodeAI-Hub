@@ -9335,8 +9335,44 @@
     fontSize: "12px",
     color: "#b7b7b7"
   };
+  var providerBannerStyles = (provider) => {
+    if (provider === "claude") {
+      return {
+        background: "#312d2a",
+        border: "1px solid #ff9105",
+        color: "#ffb76f"
+      };
+    }
+    if (provider === "codex") {
+      return {
+        background: "#293230",
+        border: "1px solid #01f0d8",
+        color: "#9cf8ef"
+      };
+    }
+    return {
+      background: "#2c2a2d",
+      border: "1px solid #ab34cb",
+      color: "#e7b3f5"
+    };
+  };
+  var formatCheckedAt = (value) => {
+    if (!value) {
+      return null;
+    }
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+    const year = parsed.getFullYear();
+    const month = String(parsed.getMonth() + 1).padStart(2, "0");
+    const day = String(parsed.getDate()).padStart(2, "0");
+    const hours = String(parsed.getHours()).padStart(2, "0");
+    const minutes = String(parsed.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  };
   var GeminiNotice = () => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: infoStyles, children: "Updates for Gemini are handled by application developers." });
-  var WarningBanner = () => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: warningStyles, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
+  var WarningBanner = ({ provider }) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: { ...warningStyles, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
   var ProviderVersions = ({
     provider,
     versions,
@@ -9424,11 +9460,11 @@
       {
         action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("span", { style: metadataTextStyles, children: [
           "Checked: ",
-          snapshot.checkedAt
+          formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
         ] }) : null,
         title,
         children: [
-          provider !== "gemini" ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(WarningBanner, {}) : /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(GeminiNotice, {}),
+          provider !== "gemini" ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(WarningBanner, { provider }) : /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(GeminiNotice, {}),
           versions.error ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: errorStyles, children: versions.error }) : null,
           versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
           pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,

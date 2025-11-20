@@ -57,14 +57,52 @@ const metadataTextStyles: CSSProperties = {
   color: "#b7b7b7",
 };
 
+const providerBannerStyles = (provider: Provider): CSSProperties => {
+  if (provider === "claude") {
+    return {
+      background: "#312d2a",
+      border: "1px solid #ff9105",
+      color: "#ffb76f",
+    };
+  }
+  if (provider === "codex") {
+    return {
+      background: "#293230",
+      border: "1px solid #01f0d8",
+      color: "#9cf8ef",
+    };
+  }
+  return {
+    background: "#2c2a2d",
+    border: "1px solid #ab34cb",
+    color: "#e7b3f5",
+  };
+};
+
+const formatCheckedAt = (value?: string): string | null => {
+  if (!value) {
+    return null;
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  const hours = String(parsed.getHours()).padStart(2, "0");
+  const minutes = String(parsed.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
+};
+
 const GeminiNotice = () => (
   <div style={infoStyles}>
     Updates for Gemini are handled by application developers.
   </div>
 );
 
-const WarningBanner = () => (
-  <div style={warningStyles}>
+const WarningBanner = ({ provider }: { readonly provider: Provider }) => (
+  <div style={{ ...warningStyles, ...providerBannerStyles(provider) }}>
     Warning: Updating is at your own risk. New versions may be incompatible.
     Updating will close active sessions.
   </div>
@@ -167,12 +205,18 @@ const ProviderVersions = ({
     <SettingsCard
       action={
         snapshot?.checkedAt ? (
-          <span style={metadataTextStyles}>Checked: {snapshot.checkedAt}</span>
+          <span style={metadataTextStyles}>
+            Checked: {formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt}
+          </span>
         ) : null
       }
       title={title}
     >
-      {provider !== "gemini" ? <WarningBanner /> : <GeminiNotice />}
+      {provider !== "gemini" ? (
+        <WarningBanner provider={provider} />
+      ) : (
+        <GeminiNotice />
+      )}
       {versions.error ? <p style={errorStyles}>{versions.error}</p> : null}
       {versions.loading && !hasProviderVersions ? (
         <p style={statusStyles}>Loading version information…</p>
