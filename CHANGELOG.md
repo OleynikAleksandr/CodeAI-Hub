@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.286] - 2025-11-20
+### Changed
+- Settings provider warnings now reuse Claude/Codex/Gemini accent colors from the dialog panel, and “Checked” timestamps render in local `YYYY-MM-DD HH:MM` format.
+
+### Build
+- VSIX → `codeai-hub-1.1.286.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.286.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.286.tar.bz2`
+- Providers → `claude-module-1.1.286.tar.bz2`, `codex-module-1.1.286.tar.bz2`, `gemini-module-1.1.286.tar.bz2`
+
+## [1.1.285] - 2025-11-20
+### Added
+- Settings surface provider version cards for Claude/Codex (CLI + SDK) and Gemini CLI Core, sourced from the core snapshot, with update buttons that run `npm install -g ...@latest`, warnings about closing active sessions, and confirmation on second click.
+- After updates, the core refreshes provider status and pushes the latest versions back to the UI without reopening Settings.
+
+### Build
+- VSIX → `codeai-hub-1.1.285.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.285.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.285.tar.bz2`
+- Providers → `claude-module-1.1.285.tar.bz2`, `codex-module-1.1.285.tar.bz2`, `gemini-module-1.1.285.tar.bz2`
+
 ## [1.1.283] - 2025-11-19
 ### Changed
 - Gemini module now pins `@google/gemini-cli` / `@google/gemini-cli-core` 0.16.0, adapts to the updated config/CLI types, and ignores legacy extension migrations so session startup works with the latest upstream tooling.
