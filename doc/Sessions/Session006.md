@@ -15,7 +15,7 @@
 
 ## Work summary
 - Added provider-specific warning banners and cleaner timestamp formatting in Settings version cards (Claude/Codex/Gemini); warnings reuse session provider colors, timestamps now local `YYYY-MM-DD HH:MM`.
-- Built and packaged release 1.1.286 via `./scripts/build-all.sh` (VSIX + core/providers/launcher artifacts updated).</n
+- Built and packaged release 1.1.286 via `./scripts/build-all.sh` (VSIX + core/providers/launcher artifacts updated).
 ---
 
 ## Plans for next session
