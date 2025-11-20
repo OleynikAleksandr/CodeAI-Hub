@@ -23,3 +23,4 @@ doc/sdk-sessions/
 !scripts/release-utils.sh
 !scripts/build-all.sh
 binaries/
+.agent/rules/
