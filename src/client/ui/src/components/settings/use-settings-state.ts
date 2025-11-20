@@ -10,6 +10,36 @@ export type Settings = {
   readonly thinking: ThinkingSettings;
 };
 
+export type VersionEntry = {
+  readonly packageName: string;
+  readonly currentVersion: string | null;
+  readonly latestVersion: string | null;
+  readonly source: "global";
+  readonly error?: string | null;
+};
+
+export type ProviderVersions = {
+  readonly claude: {
+    readonly cli: VersionEntry;
+    readonly sdk: VersionEntry;
+  };
+  readonly codex: {
+    readonly cli: VersionEntry;
+    readonly sdk: VersionEntry;
+  };
+  readonly gemini: {
+    readonly core: VersionEntry;
+  };
+  readonly checkedAt?: string;
+};
+
+type VersionsState = {
+  readonly data: ProviderVersions | null;
+  readonly loading: boolean;
+  readonly error?: string | null;
+  readonly updatingTargets: readonly string[];
+};
+
 type SettingsLoadedMessage = {
   readonly type: "settings:loaded";
   readonly settings: {
@@ -24,7 +54,16 @@ type SettingsSavedMessage = {
   };
 };
 
-type IncomingMessage = SettingsLoadedMessage | SettingsSavedMessage;
+type VersionsLoadedMessage = {
+  readonly type: "settings:versions";
+  readonly versions?: ProviderVersions;
+  readonly error?: string;
+};
+
+type IncomingMessage =
+  | SettingsLoadedMessage
+  | SettingsSavedMessage
+  | VersionsLoadedMessage;
 type RawThinkingSettings = {
   readonly enabled?: unknown;
   readonly maxTokens?: unknown;
@@ -38,6 +77,13 @@ const createDefaultSettings = (): Settings => ({
     enabled: false,
     maxTokens: DEFAULT_THINKING_MAX_TOKENS,
   },
+});
+
+const createDefaultVersionsState = (): VersionsState => ({
+  data: null,
+  loading: true,
+  error: null,
+  updatingTargets: [],
 });
 
 const mapThinkingSettings = (
@@ -59,7 +105,9 @@ const isIncomingMessage = (message: unknown): message is IncomingMessage => {
 
   const candidate = message as { type?: unknown };
   return (
-    candidate.type === "settings:loaded" || candidate.type === "settings:saved"
+    candidate.type === "settings:loaded" ||
+    candidate.type === "settings:saved" ||
+    candidate.type === "settings:versions"
   );
 };
 
@@ -68,12 +116,17 @@ export type UseSettingsStateResult = {
   readonly hasChanges: boolean;
   readonly saving: boolean;
   readonly resetting: boolean;
+  readonly versions: VersionsState;
   readonly handleThinkingSettingsChange: (
     enabled: boolean,
     maxTokens: number
   ) => void;
   readonly handleSave: () => void;
   readonly handleReset: () => void;
+  readonly handleUpdateProvider: (
+    provider: "claude" | "codex",
+    target: "cli" | "sdk"
+  ) => void;
 };
 
 export const useSettingsState = (): UseSettingsStateResult => {
@@ -82,6 +135,9 @@ export const useSettingsState = (): UseSettingsStateResult => {
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [versions, setVersions] = useState<VersionsState>(
+    createDefaultVersionsState
+  );
 
   useEffect(() => {
     vscode.postMessage({
@@ -115,6 +171,16 @@ export const useSettingsState = (): UseSettingsStateResult => {
         });
         setSaving(false);
         setHasChanges(false);
+      }
+
+      if (event.data.type === "settings:versions") {
+        const incomingVersions = event.data.versions ?? null;
+        setVersions({
+          data: incomingVersions,
+          loading: false,
+          error: event.data.error ?? null,
+          updatingTargets: [],
+        });
       }
     };
 
@@ -159,13 +225,31 @@ export const useSettingsState = (): UseSettingsStateResult => {
     }, RESET_DELAY_MS);
   }, []);
 
+  const handleUpdateProvider = useCallback(
+    (provider: "claude" | "codex", target: "cli" | "sdk") => {
+      const targetKey = `${provider}:${target}`;
+      setVersions((prev) => ({
+        ...prev,
+        updatingTargets: [...new Set([...prev.updatingTargets, targetKey])],
+      }));
+      vscode.postMessage({
+        type: "settings:update-provider",
+        provider,
+        target,
+      });
+    },
+    []
+  );
+
   return {
     settings,
     hasChanges,
     saving,
     resetting,
+    versions,
     handleThinkingSettingsChange,
     handleSave,
     handleReset,
+    handleUpdateProvider,
   };
 };
