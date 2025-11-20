@@ -6,11 +6,11 @@
 
 ## Фаза 1 — Карточки версий в Settings (owner: Codex, updated: 2026-02-05)
 ### Stream: Provider versions
-1. [IN_PROGRESS] Экспортировать из ядра используемые/глобальные версии и latest (@latest) для Claude (CLI + SDK) и Codex (CLI + SDK); добавить используемую/latest для gemini-cli-core. (scope: core status/API; коммит обязателен, сообщение: "feat: expose provider version status")
-2. [TODO] Отрендерить в Settings версии с предупреждением и карточками; поднять блок версий Claude над “Claude Thinking Settings”; добавить кнопки статусов (up-to-date/Update → target) для Claude/Codex; Gemini — только инфо. (scope: settings UI; коммит обязателен, сообщение: "feat: settings version cards and update UI")
-3. [TODO] Реализовать действия обновления для Claude/Codex через `npm install -g ...@latest`, предупредить о закрытии активных сессий; по завершении ядро обновляет провайдер и статус для UI. (scope: core update wiring; коммит обязателен, сообщение: "feat: provider version update actions")
+1. [DONE] Экспортировать из ядра используемые/глобальные версии и latest (@latest) для Claude (CLI + SDK) и Codex (CLI + SDK); добавить используемую/latest для gemini-cli-core. (scope: core status/API; коммит обязателен, сообщение: "feat: expose provider version status", commit: 483ce6e)
+2. [IN_PROGRESS] Отрендерить в Settings версии с предупреждением и карточками; поднять блок версий Claude над “Claude Thinking Settings”; добавить кнопки статусов (up-to-date/Update → target) для Claude/Codex; Gemini — только инфо. (scope: settings UI; коммит обязателен, сообщение: "feat: settings version cards and update UI")
+3. [IN_PROGRESS] Реализовать действия обновления для Claude/Codex через `npm install -g ...@latest`, предупредить о закрытии активных сессий; по завершении ядро обновляет провайдер и статус для UI. (scope: core update wiring; коммит обязателен, сообщение: "feat: provider version update actions")
 ### Stream: Gemini info
-4. [TODO] Показать используемую и latest версии gemini-cli-core, указать что обновление выполняют разработчики (без кнопки). (scope: settings UI; коммит обязателен, сообщение: "feat: settings gemini version info")
+4. [IN_PROGRESS] Показать используемую и latest версии gemini-cli-core, указать что обновление выполняют разработчики (без кнопки). (scope: settings UI; коммит обязателен, сообщение: "feat: settings gemini version info")
 
 ## Финальные действия
 - Выполнить сборку нового пакета по инструкции (перед запуском сборки рабочее дерево должно быть чистым).
