@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import GeneralSettings from "./settings/general-settings";
+import ProviderVersions from "./settings/provider-versions";
 import SettingsFooter from "./settings/settings-footer";
 import SettingsHeader from "./settings/settings-header";
 import ThinkingSettings from "./settings/thinking-settings";
@@ -47,10 +48,10 @@ const contentStyles: React.CSSProperties = {
   padding: "20px",
 };
 
-const placeholderStyles: React.CSSProperties = {
-  fontSize: "13px",
-  color: "#999999",
-  padding: "10px 0",
+const stackStyles: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "16px",
 };
 
 const settingsTabs: ReadonlyArray<{
@@ -70,9 +71,11 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
     hasChanges,
     saving,
     resetting,
+    versions,
     handleThinkingSettingsChange,
     handleSave,
     handleReset,
+    handleUpdateProvider,
   } = useSettingsState();
 
   return (
@@ -97,19 +100,45 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
         {(() => {
           if (activeTab === "claude") {
             return (
-              <ThinkingSettings
-                enabled={settings.thinking.enabled}
-                maxTokens={settings.thinking.maxTokens}
-                onChange={handleThinkingSettingsChange}
-              />
+              <div style={stackStyles}>
+                <ProviderVersions
+                  onUpdate={handleUpdateProvider}
+                  provider="claude"
+                  versions={versions}
+                />
+                <ThinkingSettings
+                  enabled={settings.thinking.enabled}
+                  maxTokens={settings.thinking.maxTokens}
+                  onChange={handleThinkingSettingsChange}
+                />
+              </div>
             );
           }
           if (activeTab === "general") {
-            return <GeneralSettings />;
+            return (
+              <div style={stackStyles}>
+                <GeneralSettings />
+              </div>
+            );
+          }
+          if (activeTab === "codex") {
+            return (
+              <div style={stackStyles}>
+                <ProviderVersions
+                  onUpdate={handleUpdateProvider}
+                  provider="codex"
+                  versions={versions}
+                />
+              </div>
+            );
           }
           return (
-            <div style={placeholderStyles}>
-              Provider settings will appear here.
+            <div style={stackStyles}>
+              <ProviderVersions
+                onUpdate={handleUpdateProvider}
+                provider="gemini"
+                versions={versions}
+              />
             </div>
           );
         })()}
