@@ -1,6 +1,3 @@
----
-description: Концепция Shared State Architecture для синхронизации агентов
----
 
 # Hive Mind Protocol: Архитектура Коллективного Разума для AI-Агентов
 
