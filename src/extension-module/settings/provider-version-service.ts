@@ -54,7 +54,7 @@ type PackageDescriptor = {
   readonly packageName: string;
 };
 
-type PackageVersionResult = {
+export type PackageVersionResult = {
   readonly packageName: string;
   readonly currentVersion: string | null;
   readonly latestVersion: string | null;
@@ -214,7 +214,6 @@ const buildSnapshot = (
 import { GeminiVersionReader } from "./gemini-version-reader";
 
 export class ProviderVersionService {
-  private readonly extensionPath: string;
   private readonly geminiReader: GeminiVersionReader;
 
   constructor(extensionPath: string) {
