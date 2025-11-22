@@ -2,7 +2,7 @@
 
 **Status:** Active (CommonJS bridge)
 
-**Last Updated:** 2025-11-01
+**Last Updated:** 2025-11-22
 
 **Maintainer:** Codex / CodeAI Hub Core Team
 
@@ -30,7 +30,8 @@ Additional references to monitor:
 ## 3. Installation & Environment
 - **Managed install:** `packages/Gemini_Module/src/installer/gemini-installer.ts` теперь подготавливает только `@google/gemini-cli-core`, складывая его в `dist/vendor/node_modules/@google/…` внутри установленного модуля (`~/.codeai-hub/providers/gemini/<version>`). Сам CLI (`@google/gemini-cli`) пользователь устанавливает глобально (например, `npm install -g @google/gemini-cli`); во время инициализации `cli-bridge` сканирует PATH, npm prefix (включая `.npm-global`) и стандартные каталоги, чтобы определить расположение и версию инструмента. Во время скачивания/установки `GeminiInstaller` отправляет `reporter.progress` (в том числе с флагом `firstRun`), чтобы UI показывал конкретный шаг.
 - **Runtime requirements:** Node.js ≥ 20.0.0 (используется bundled runtime ядра), macOS/Linux/Windows поддерживаются CLI.
-- **Version pinning:** manifest `codeaiHub` внутри `package.json` модуля (0.3.5) фиксирует версии `geminiCliVersion` и `geminiCliCoreVersion` (0.16.0). Контрольные суммы проверяются при скачивании.
+- **Version pinning:** manifest `codeaiHub` внутри `package.json` модуля (1.1.300) фиксирует версии `geminiCliVersion` и `geminiCliCoreVersion` (0.16.0). Контрольные суммы проверяются при скачивании.
+- **Settings telemetry (1.1.300+)**: ProviderVersionService читает `assets/providers/gemini/manifest.json` внутри VSIX и сравнивает его с локальным `~/.codeai-hub/providers/gemini/<version>/dist/vendor/node_modules/@google/gemini-cli-core/package.json`. Поэтому необходимо поддерживать синхронные значения версий и гарантировать наличие `package.json` в vendor-каталоге, иначе карточка Gemini в Settings UI будет показывать `Not detected`.
 - **Credential store:** `~/.gemini/`
   - `credentials.json` — OAuth токены (refresh/access).
   - `config.json` — project metadata и выбранные расширения.
