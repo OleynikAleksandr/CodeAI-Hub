@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.300] - 2025-11-22
+### Fixed
+- Settings now resolves the installed `@google/gemini-cli-core` version by reading the shipped Gemini manifest plus the cached provider bundle under `~/.codeai-hub`, so the Gemini card shows your actual version instead of “Not detected”.
+- The home view injects its `extensionPath` into the settings handler/provider version service and the supervisor logger now enforces string-only writes, keeping provider diagnostics and status messages consistent across VS Code and the launcher.
+
+### Build
+- VSIX → `codeai-hub-1.1.300.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.300.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.300.tar.bz2`
+- Providers → `claude-module-1.1.300.tar.bz2`, `codex-module-1.1.300.tar.bz2`, `gemini-module-1.1.300.tar.bz2`
+
 ## [1.1.286] - 2025-11-20
 ### Changed
 - Settings provider warnings now reuse Claude/Codex/Gemini accent colors from the dialog panel, and “Checked” timestamps render in local `YYYY-MM-DD HH:MM` format.

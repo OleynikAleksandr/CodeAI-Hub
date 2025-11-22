@@ -2,16 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.286
-- **Provider version cards**: Settings now show Claude/Codex CLI+SDK and Gemini CLI Core versions with provider-colored warning banners, local “Checked” timestamps, and update buttons that run global `npm install -g …@latest` (double-click confirmation, active sessions will close).
-- **Safer updates**: after a successful update the core refreshes provider info and replays the latest snapshot back to the UI so versions stay in sync without reopening Settings.
-- **Consistent artifacts**: `./scripts/build-all.sh` rebuilt providers, core, launcher, and VSIX for 1.1.286, keeping manifests and offline caches aligned.
+## Current Release — v1.1.300
+- **Gemini CLI insight**: Settings now resolve the installed `@google/gemini-cli-core` version by reading the bundled manifest and your `~/.codeai-hub/providers/gemini/**` cache, so the Gemini card no longer sticks on “Not detected” when the CLI is already present.
+- **Extension wiring cleanup**: the home view passes its `extensionPath` through the settings handler and provider version service, ensuring every provider card can tap into local manifests and future UI work has direct access to packaged assets.
+- **Aligned artifacts**: `./scripts/build-all.sh` refreshed the VSIX, launcher, core, and provider tarballs for 1.1.300 so offline bundles and manifests all reference the same bits.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.286.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.286.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.286.tar.bz2`
-- Providers: `claude-module-1.1.286.tar.bz2`, `codex-module-1.1.286.tar.bz2`, `gemini-module-1.1.286.tar.bz2`
+- VSIX: `codeai-hub-1.1.300.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.300.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.300.tar.bz2`
+- Providers: `claude-module-1.1.300.tar.bz2`, `codex-module-1.1.300.tar.bz2`, `gemini-module-1.1.300.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
