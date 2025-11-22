@@ -26,7 +26,10 @@ export class HomeViewProvider implements WebviewViewProvider {
   ) {
     this.extensionUri = extensionUri;
     this.htmlGenerator = new WebviewHtmlGenerator();
-    this.messageRouter = new HomeViewMessageRouter(coreProcessManager);
+    this.messageRouter = new HomeViewMessageRouter(
+      extensionUri.fsPath,
+      coreProcessManager
+    );
     this.coreConfig = coreConfig;
   }
 

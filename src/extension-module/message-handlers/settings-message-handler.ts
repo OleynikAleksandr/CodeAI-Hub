@@ -14,10 +14,10 @@ export type SettingsMessage =
   | { type: "settings:save"; settings?: unknown }
   | { type: "settings:reset" }
   | {
-      type: "settings:update-provider";
-      provider: "claude" | "codex";
-      target: "cli" | "sdk";
-    }
+    type: "settings:update-provider";
+    provider: "claude" | "codex";
+    target: "cli" | "sdk";
+  }
   | { type: "settings:closed" };
 
 const STATUS_MESSAGE_TIMEOUT = 2000;
@@ -26,7 +26,11 @@ const MAX_SETTINGS_TOKENS = 32_000;
 
 export class SettingsMessageHandler {
   private settingsState: SettingsSnapshot = loadClaudeThinkingSettings();
-  private readonly versionService = new ProviderVersionService();
+  private readonly versionService: ProviderVersionService;
+
+  constructor(extensionPath: string) {
+    this.versionService = new ProviderVersionService(extensionPath);
+  }
 
   canHandle(message: unknown): message is SettingsMessage {
     if (!message || typeof message !== "object") {

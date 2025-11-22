@@ -8,7 +8,7 @@ const BYTES_PER_MEGABYTE = 1_048_576;
 const NPM_MAX_BUFFER_MB = 10;
 const EXEC_MAX_BUFFER_BYTES = NPM_MAX_BUFFER_MB * BYTES_PER_MEGABYTE;
 
-const PACKAGE_MAP = {
+export const PACKAGE_MAP = {
   claude: {
     cli: "@anthropic-ai/claude-code",
     sdk: "@anthropic-ai/claude-agent-sdk",
@@ -139,7 +139,7 @@ const readInstalledVersion = async (
   }
 };
 
-const readLatestVersion = async (
+export const readLatestVersion = async (
   packageName: string
 ): Promise<{ version: string | null; error?: string }> => {
   try {
@@ -211,11 +211,24 @@ const buildSnapshot = (
   };
 };
 
+import { GeminiVersionReader } from "./gemini-version-reader";
+
 export class ProviderVersionService {
+  private readonly extensionPath: string;
+  private readonly geminiReader: GeminiVersionReader;
+
+  constructor(extensionPath: string) {
+    this.extensionPath = extensionPath;
+    this.geminiReader = new GeminiVersionReader(extensionPath);
+  }
+
   async loadSnapshot(): Promise<ProviderVersionsSnapshot> {
     const descriptors = resolveDescriptors();
     const results = await Promise.all(
-      descriptors.map(async ({ packageName }) => {
+      descriptors.map(async ({ packageName, provider, target }) => {
+        if (provider === "gemini" && target === "core") {
+          return this.geminiReader.read();
+        }
         const installed = await readInstalledVersion(packageName);
         const latest = await readLatestVersion(packageName);
         return {
