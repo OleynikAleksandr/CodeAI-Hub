@@ -46,10 +46,10 @@ export class CoreProcessManager {
       envPort: this.envPort,
     });
     this.supervisorLogger = {
-      info: (message) => {
+      info: (message: string) => {
         this.channel.appendLine(this.normalizeSupervisorMessage(message));
       },
-      error: (message) => {
+      error: (message: string) => {
         this.channel.appendLine(this.normalizeSupervisorMessage(message));
       },
     };
