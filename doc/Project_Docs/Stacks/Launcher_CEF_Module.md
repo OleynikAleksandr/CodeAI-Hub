@@ -3,14 +3,14 @@
 ## Overview
 CodeAI Hub uses a dedicated Chromium Embedded Framework (CEF) launcher to run the standalone web client outside VS Code. The launcher ships as a platform-specific binary (`CodeAIHubLauncher`) and is coupled with the official CEF minimal runtime published by Spotify CDN. The extension downloads, installs, and upgrades the launcher automatically based on `assets/launcher/manifest.json`.
 
-- **Current launcher version:** `CodeAIHubLauncher` 1.1.267 (macOS arm64)
+- **Current launcher version:** `CodeAIHubLauncher` 1.1.300 (macOS arm64)
 - **CEF distribution:** minimal build `141.0.10+g1d65b0d+chromium-141.0.7390.123`
 - **Bundle output:** `~/.codeai-hub/cef-launcher/<platform>/<version>/`
 
 ## Runtime Delivery
 1. On activation the extension calls `ensureCefRuntime` and `ensureLauncherInstalled`.
-2. The manifest entry (`baseUrl` → `file:///Users/oleksandroliinyk/.codeai-hub/releases/`) is resolved to a tarball (`CodeAIHubLauncher-macos-arm64-1.1.267.tar.bz2`).
-3. The archive is downloaded or reused from the local cache, verified via SHA-1 and unpacked into `~/.codeai-hub/cef-launcher/darwin-arm64/1.1.267/`.
+2. The manifest entry (`baseUrl` → `file:///Users/oleksandroliinyk/.codeai-hub/releases/`) is resolved to a tarball (`CodeAIHubLauncher-macos-arm64-1.1.300.tar.bz2`).
+3. The archive is downloaded or reused from the local cache, verified via SHA-1 and unpacked into `~/.codeai-hub/cef-launcher/darwin-arm64/1.1.300/`.
 4. Installation metadata is written to `install.json`, and downloads are mirrored under `downloads/` for reuse.
 5. The extension generates `config/config.json` next to the binary, preserving any existing keys and updating `uiRoot`, `entry`, `url`, `generatedAt`.
 6. Launch relies on `CodeAIHubLauncher.app/Contents/MacOS/CodeAIHubLauncher` with arguments `--config=<path>` `--url=file://...` `--use-alloy-style`.
@@ -30,15 +30,15 @@ CodeAI Hub uses a dedicated Chromium Embedded Framework (CEF) launcher to run th
   cef-launcher/
     manifest.json
     darwin-arm64/
-      1.1.267/
+      1.1.300/
         CodeAIHubLauncher.app
         config/
           config.json
         install.json
       downloads/
-        CodeAIHubLauncher-macos-arm64-1.1.267.tar.bz2
+        CodeAIHubLauncher-macos-arm64-1.1.300.tar.bz2
   releases/
-    CodeAIHubLauncher-macos-arm64-1.1.267.tar.bz2
+    CodeAIHubLauncher-macos-arm64-1.1.300.tar.bz2
 ```
 
 ## Build & Release Pipeline

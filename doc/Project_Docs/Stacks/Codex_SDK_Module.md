@@ -7,7 +7,7 @@
 ---
 
 ## 1. Purpose & Scope
-- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@0.1.1` inside CodeAI-Hub Core.
+- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.300` inside CodeAI-Hub Core.
 - Capture the CLI/SDK contract (events, items, options) that we must adapt for RemoteBridge and UI streaming.
 - List integration prerequisites (authentication, binaries, storage layout) required to bootstrap Codex alongside the Claude module.
 
@@ -137,6 +137,7 @@ Implications for CodeAI-Hub:
 5. Surface CLI/environment errors through RemoteBridge notifications (e.g., missing auth, unsupported sandbox mode).
 6. Ensure sandbox + approval selections from UI are translated into Codex options/env prior to launching the turn.
 7. Log Codex JSONL to `~/.codeai-hub/logs/codex/` for auditing and future replay (align with Phase 13 persistence plan).
+8. (1.1.300+) Keep `packages/Codex_Module/package.json` и `assets/providers/codex/manifest.json` в одном значении версии — Settings UI читает manifest через `ProviderVersionService`, чтобы показывать фактический статус провайдера.
 
 ---
 
