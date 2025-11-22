@@ -40,10 +40,7 @@ export class HomeViewMessageRouter {
   private readonly fileOperations: FileOperationsFacade;
   private readonly coreProcessManager?: CoreProcessManager;
 
-  constructor(
-    extensionPath: string,
-    coreProcessManager?: CoreProcessManager
-  ) {
+  constructor(extensionPath: string, coreProcessManager?: CoreProcessManager) {
     this.providerRegistry = new ProviderRegistry();
     this.sessionLauncher = new SessionLauncher();
     this.settingsHandler = new SettingsMessageHandler(extensionPath);
