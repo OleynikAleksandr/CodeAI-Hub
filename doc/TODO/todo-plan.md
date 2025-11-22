@@ -12,5 +12,9 @@
 ### Stream: Gemini info
 4. [DONE] Показать используемую и latest версии gemini-cli-core, указать что обновление выполняют разработчики (без кнопки). (scope: settings UI; коммит обязателен, сообщение: "feat: settings gemini version info", commit: 8ca3bbb)
 
+## Фаза 2 — Fixes & Polish (owner: Antigravity, updated: 2025-11-22)
+### Stream: Bugfixes
+1. [TODO] Исправить отображение локальной версии Gemini CLI (сейчас "Not detected"). (scope: core/gemini-module)
+
 ## Финальные действия
 - Выполнить сборку нового пакета по инструкции (перед запуском сборки рабочее дерево должно быть чистым).
