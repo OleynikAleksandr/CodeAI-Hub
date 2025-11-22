@@ -14,7 +14,7 @@
 
 ## Фаза 2 — Fixes & Polish (owner: Antigravity, updated: 2025-11-22)
 ### Stream: Bugfixes
-1. [TODO] Исправить отображение локальной версии Gemini CLI (сейчас "Not detected"). (scope: core/gemini-module)
+1. [DONE] Исправить отображение локальной версии Gemini CLI (сейчас "Not detected"). (scope: core/gemini-module)
 
 ## Финальные действия
 - Выполнить сборку нового пакета по инструкции (перед запуском сборки рабочее дерево должно быть чистым).
