@@ -217,7 +217,6 @@ export class ProviderVersionService {
   private readonly geminiReader: GeminiVersionReader;
 
   constructor(extensionPath: string) {
-    this.extensionPath = extensionPath;
     this.geminiReader = new GeminiVersionReader(extensionPath);
   }
 
