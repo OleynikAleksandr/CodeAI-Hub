@@ -56,6 +56,8 @@ copy_release_artifacts() {
     "gemini-module-${version}.tar.bz2"
     "codeai-hub-core-${CORE_PLATFORM_KEY}-${version}.tar.bz2"
     "CodeAIHubLauncher-${LAUNCHER_FILE_PLATFORM}-${version}.tar.bz2"
+    "vscode-webview-${version}.tar.bz2"
+    "web-client-${version}.tar.bz2"
   )
 
   for artefact in "${required[@]}"; do
@@ -220,6 +222,10 @@ echo "🏗️  Building provider modules..."
 echo "🏗️  Building core..."
 "$SCRIPT_DIR/build-core.sh" --version "$new_version"
 
+echo "🏗️  Building UI bundles..."
+"$SCRIPT_DIR/build-ui-bundle.sh" vscode-webview "$new_version"
+"$SCRIPT_DIR/build-ui-bundle.sh" web-client "$new_version"
+
 echo "🏗️  Building CEF launcher..."
 "$SCRIPT_DIR/build-cef-launcher.sh" --launcher-version "$new_version"
 
@@ -245,5 +251,6 @@ echo "📦 VSIX: codeai-hub-${new_version}.vsix"
 echo "📦 Core: codeai-hub-core-darwin-arm64-${new_version}.tar.bz2"
 echo "📦 Launcher: CodeAIHubLauncher-macos-arm64-${new_version}.tar.bz2"
 echo "📦 Providers: claude/codex/gemini-module-${new_version}.tar.bz2"
+echo "📦 UI: vscode-webview-${new_version}.tar.bz2, web-client-${new_version}.tar.bz2"
 echo ""
 echo "⚠️  Reminder: update README/CHANGELOG/SystemArchitecture manually to describe the release."
