@@ -37,3 +37,6 @@ packages/Claude_Module/**
 packages/Codex_Module/**
 packages/Gemini_Module/**
 packages/**
+media/react-chat.js
+media/*.css
+media/web-client/**
