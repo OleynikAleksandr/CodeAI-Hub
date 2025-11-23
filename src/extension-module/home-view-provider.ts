@@ -13,6 +13,7 @@ export class HomeViewProvider implements WebviewViewProvider {
   static readonly viewType = "codeaiHubView";
 
   private readonly extensionUri: Uri;
+  private readonly webviewUIRootPath: string;
   private readonly htmlGenerator: WebviewHtmlGenerator;
   private readonly messageRouter: HomeViewMessageRouter;
   private readonly coreConfig?: { httpUrl: string; wsUrl: string };
@@ -21,10 +22,12 @@ export class HomeViewProvider implements WebviewViewProvider {
 
   constructor(
     extensionUri: Uri,
+    webviewUIRootPath: string,
     coreConfig?: { httpUrl: string; wsUrl: string },
     coreProcessManager?: CoreProcessManager
   ) {
     this.extensionUri = extensionUri;
+    this.webviewUIRootPath = webviewUIRootPath;
     this.htmlGenerator = new WebviewHtmlGenerator();
     this.messageRouter = new HomeViewMessageRouter(
       extensionUri.fsPath,
@@ -39,12 +42,20 @@ export class HomeViewProvider implements WebviewViewProvider {
 
     webview.options = {
       enableScripts: true,
-      localResourceRoots: [Uri.joinPath(this.extensionUri, "media")],
+      localResourceRoots: [
+        Uri.file(this.webviewUIRootPath),
+        Uri.joinPath(this.extensionUri, "media"),
+      ],
     };
 
-    webview.html = this.htmlGenerator.generate(webview, this.extensionUri, {
-      coreBridgeConfig: this.coreConfig,
-    });
+    webview.html = this.htmlGenerator.generate(
+      webview,
+      this.extensionUri,
+      this.webviewUIRootPath,
+      {
+        coreBridgeConfig: this.coreConfig,
+      }
+    );
 
     webview.onDidReceiveMessage((message: WebviewMessage) => {
       this.messageRouter.handleMessage(message, webview);

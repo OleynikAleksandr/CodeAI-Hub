@@ -21,24 +21,26 @@ export class WebviewHtmlGenerator {
    */
   generate(
     webview: Webview,
-    extensionUri: Uri,
+    _extensionUri: Uri,
+    webviewUIRootPath: string,
     options: {
       readonly showChat?: boolean;
       readonly coreBridgeConfig?: CoreBridgeConfig;
     } = {}
   ): string {
     const { showChat = false, coreBridgeConfig } = options;
+    const uiRootUri = Uri.file(webviewUIRootPath);
     const mainViewCssUri = webview.asWebviewUri(
-      Uri.joinPath(extensionUri, "media", "main-view.css")
+      Uri.joinPath(uiRootUri, "main-view.css")
     );
     const reactAppJsUri = webview.asWebviewUri(
-      Uri.joinPath(extensionUri, "media", "react-chat.js")
+      Uri.joinPath(uiRootUri, "react-chat.js")
     );
     const reactAppCssUri = webview.asWebviewUri(
-      Uri.joinPath(extensionUri, "media", "react-chat.css")
+      Uri.joinPath(uiRootUri, "react-chat.css")
     );
     const sessionViewCssUri = webview.asWebviewUri(
-      Uri.joinPath(extensionUri, "media", "session-view.css")
+      Uri.joinPath(uiRootUri, "session-view.css")
     );
 
     const nonce = this.getNonce();

@@ -35,19 +35,14 @@ import {
   getExtensionLogger,
 } from "./extension-module/logging/extension-logger";
 import { recordVsixVersion } from "./extension-module/runtime/runtime-registry";
+import { resolveUIBundlePath } from "./extension-module/ui/ui-path-resolver";
 import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut-manager";
 
 let coreProcessManager: CoreProcessManager | null = null;
 let coreKeepAlive: CoreKeepAlive | null = null;
 let cachedLauncherInstallInfo: LauncherInstallInfo | null = null;
-
-const resolveWorkspacePath = (): string => {
-  const folder = workspace.workspaceFolders?.[0];
-  if (folder) {
-    return folder.uri.fsPath;
-  }
-  return process.cwd();
-};
+const resolveWorkspacePath = (): string =>
+  workspace.workspaceFolders?.[0]?.uri.fsPath ?? process.cwd();
 
 async function ensureLauncherDependencies(
   context: ExtensionContext,
@@ -141,9 +136,6 @@ async function prepareLocalRuntime(
   context: ExtensionContext,
   indexPath: string
 ): Promise<void> {
-  // In Antigravity (and potentially other remote envs), we DO want to start the core.
-  // The previous check `if (env.remoteName) { return; }` prevented this.
-  // We now allow execution to proceed, assuming the remote env has Node.js and write access.
   if (env.remoteName) {
     const logger = getExtensionLogger();
     logger.log("extension:prepareLocalRuntime:remote", {
@@ -198,8 +190,47 @@ function registerCommands(
   );
 }
 
+type ResolvedUIBundle = {
+  readonly rootPath: string;
+  readonly source: "installed" | "embedded";
+};
+
+async function resolveWebviewUIBundle(
+  context: ExtensionContext,
+  logger: ReturnType<typeof getExtensionLogger>
+): Promise<ResolvedUIBundle> {
+  const embeddedWebviewRootPath = path.join(
+    context.extensionUri.fsPath,
+    "media"
+  );
+  try {
+    const resolved = await resolveUIBundlePath(
+      "vscode-webview",
+      embeddedWebviewRootPath
+    );
+    const rootPath = resolved.path;
+    logger.log("extension:activate:ui-resolved", {
+      bundleId: "vscode-webview",
+      source: resolved.source,
+      path: path.join(rootPath, "react-chat.js"),
+    });
+    return { rootPath, source: resolved.source };
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    window.showErrorMessage(`Failed to resolve webview UI: ${reason}`);
+    throw error instanceof Error ? error : new Error(String(error));
+  }
+}
+
 export async function activate(context: ExtensionContext): Promise<void> {
   const logger = getExtensionLogger();
+
+  // Resolve webview UI path (with fallback to embedded for development)
+  const { rootPath: webviewUIRootPath } = await resolveWebviewUIBundle(
+    context,
+    logger
+  );
+
   const indexPath = path.join(
     context.extensionUri.fsPath,
     "media",
@@ -251,6 +282,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   const provider = new HomeViewProvider(
     context.extensionUri,
+    webviewUIRootPath,
     resolvedConnectionInfo,
     coreProcessManager ?? undefined
   );
