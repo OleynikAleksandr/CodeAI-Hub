@@ -42,9 +42,36 @@ export const toErrorMessage = (error: unknown): string =>
 
 export const getBaseInstallDir = async (): Promise<string> => {
   const homeDir = process.env.HOME ?? tmpdir();
-  const baseDir = path.join(homeDir, ".codeai-hub", "cef-launcher");
+  const baseDir = path.join(homeDir, ".codeai-hub", "packages", "launcher");
   await ensureDirectory(baseDir);
   return baseDir;
+};
+
+export const getLegacyBaseInstallDir = async (): Promise<string> => {
+  const homeDir = process.env.HOME ?? tmpdir();
+  const legacyDir = path.join(homeDir, ".codeai-hub", "cef-launcher");
+  await ensureDirectory(legacyDir);
+  return legacyDir;
+};
+
+export const getInstallPaths = async (
+  platform: PlatformKey,
+  version: string
+): Promise<{
+  readonly platformDir: string;
+  readonly installDir: string;
+  readonly legacyPlatformDir: string;
+  readonly legacyInstallDir: string;
+}> => {
+  const baseDir = await getBaseInstallDir();
+  const legacyBaseDir = await getLegacyBaseInstallDir();
+
+  const platformDir = path.join(baseDir, platform);
+  const installDir = path.join(platformDir, version);
+  const legacyPlatformDir = path.join(legacyBaseDir, platform);
+  const legacyInstallDir = path.join(legacyPlatformDir, version);
+
+  return { platformDir, installDir, legacyPlatformDir, legacyInstallDir };
 };
 
 export const loadInstallMarker = async (
@@ -112,17 +139,26 @@ export const prepareDownloadDir = async (
 export const resolveLegacyInstall = async (
   platformDir: string,
   platform: PlatformKey,
-  manifestEntry: LauncherManifestEntry
+  manifestEntry: LauncherManifestEntry,
+  legacyPlatformDir?: string
 ): Promise<ReturnType<typeof buildInstallInfo> | null> => {
-  const executablePath = path.join(
-    platformDir,
-    getLauncherExecutableRelativePath(platform)
-  );
-  if (!(await pathExists(executablePath))) {
-    return null;
+  const candidates = [platformDir, legacyPlatformDir].filter(
+    Boolean
+  ) as string[];
+
+  for (const candidate of candidates) {
+    const executablePath = path.join(
+      candidate,
+      getLauncherExecutableRelativePath(platform)
+    );
+    if (!(await pathExists(executablePath))) {
+      continue;
+    }
+    await writeInstallMarker(candidate, platform, manifestEntry);
+    return buildInstallInfo(platform, manifestEntry, candidate);
   }
-  await writeInstallMarker(platformDir, platform, manifestEntry);
-  return buildInstallInfo(platform, manifestEntry, platformDir);
+
+  return null;
 };
 
 export const installFromArchive = async (
