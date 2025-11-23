@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import type { UIBundleId, UIRegistryEntry, UIRegistryFile } from "./ui-types";
@@ -42,15 +42,14 @@ export class UIRegistry {
   }
 
   /**
-   * Saves the current registry state to disk.
+   * Saves the current registry state to disk atomically.
    */
   async save(): Promise<void> {
     await mkdir(dirname(this.registryPath), { recursive: true });
-    await writeFile(
-      this.registryPath,
-      JSON.stringify(this.current, null, 2),
-      "utf-8"
-    );
+    const tempPath = `${this.registryPath}.tmp`;
+    await writeFile(tempPath, JSON.stringify(this.current, null, 2), "utf-8");
+    // Atomic rename
+    await rename(tempPath, this.registryPath);
   }
 
   /**
@@ -61,10 +60,27 @@ export class UIRegistry {
   }
 
   /**
+   * Returns a list of all installed bundles.
+   */
+  listBundles(): UIRegistryEntry[] {
+    return Object.values(this.current.installed);
+  }
+
+  /**
    * Registers a new bundle installation and saves the registry.
    */
   async registerBundle(entry: UIRegistryEntry): Promise<void> {
     this.current.installed[entry.bundleId] = entry;
     await this.save();
+  }
+
+  /**
+   * Unregisters a bundle and saves the registry.
+   */
+  async unregisterBundle(bundleId: UIBundleId): Promise<void> {
+    if (this.current.installed[bundleId]) {
+      delete this.current.installed[bundleId];
+      await this.save();
+    }
   }
 }

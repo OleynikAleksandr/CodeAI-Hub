@@ -19,7 +19,7 @@
 4. [DONE] Покрыть `UIManifestReader` модульными тестами — scope: `src/__tests__/ui-manifest-reader.test.ts`; target commit: `test: cover ui manifest reader` (24173b6)
 
 ### Stream: UI registry & local state (реестр UI и локальное состояние)
-1. [TODO] Реализовать `UIRegistry` для локального `~/.codeai-hub/ui/manifest.json` — scope: `src/extension-module/ui/ui-registry.ts`, `src/extension-module/ui/ui-types.ts`; target commit: `feat: add ui registry`
+1. [DONE] Реализовать `UIRegistry` для локального `~/.codeai-hub/ui/registry.json` — scope: `src/extension-module/ui/ui-registry.ts`, `src/extension-module/ui/ui-types.ts`; target commit: `feat: add ui registry` (c74c483)
 2. [TODO] Добавить вспомогательные функции для атомарной записи файла реестра UI — scope: `src/extension-module/ui/ui-registry.ts`; target commit: `feat: ensure atomic ui registry writes`
 3. [TODO] Реализовать семантику `getInstalled`/`registerInstallation`/`unregister` — scope: `src/extension-module/ui/ui-registry.ts`; target commit: `feat: finalize ui registry api`
 4. [TODO] Добавить тесты для `UIRegistry` (happy-path и обработка повреждённого состояния) — scope: `src/__tests__/ui-registry.test.ts`; target commit: `test: add ui registry tests`
