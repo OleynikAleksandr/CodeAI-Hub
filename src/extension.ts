@@ -35,7 +35,7 @@ import {
   getExtensionLogger,
 } from "./extension-module/logging/extension-logger";
 import { recordVsixVersion } from "./extension-module/runtime/runtime-registry";
-import { resolveUIBundlePath } from "./extension-module/ui/ui-path-resolver";
+import { prepareUIBundles } from "./extension-module/ui/ui-activation";
 import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut-manager";
 
 let coreProcessManager: CoreProcessManager | null = null;
@@ -190,54 +190,13 @@ function registerCommands(
   );
 }
 
-type ResolvedUIBundle = {
-  readonly rootPath: string;
-  readonly source: "installed" | "embedded";
-};
-
-async function resolveWebviewUIBundle(
-  context: ExtensionContext,
-  logger: ReturnType<typeof getExtensionLogger>
-): Promise<ResolvedUIBundle> {
-  const embeddedWebviewRootPath = path.join(
-    context.extensionUri.fsPath,
-    "media"
-  );
-  try {
-    const resolved = await resolveUIBundlePath(
-      "vscode-webview",
-      embeddedWebviewRootPath
-    );
-    const rootPath = resolved.path;
-    logger.log("extension:activate:ui-resolved", {
-      bundleId: "vscode-webview",
-      source: resolved.source,
-      path: path.join(rootPath, "react-chat.js"),
-    });
-    return { rootPath, source: resolved.source };
-  } catch (error) {
-    const reason = error instanceof Error ? error.message : String(error);
-    window.showErrorMessage(`Failed to resolve webview UI: ${reason}`);
-    throw error instanceof Error ? error : new Error(String(error));
-  }
-}
-
 export async function activate(context: ExtensionContext): Promise<void> {
   const logger = getExtensionLogger();
 
-  // Resolve webview UI path (with fallback to embedded for development)
-  const { rootPath: webviewUIRootPath } = await resolveWebviewUIBundle(
-    context,
-    logger
-  );
+  const { webview, webClient } = await prepareUIBundles(context, logger);
+  const webviewUIRootPath = webview.path;
 
-  const indexPath = path.join(
-    context.extensionUri.fsPath,
-    "media",
-    "web-client",
-    "dist",
-    "index.html"
-  );
+  const indexPath = path.join(webClient.path, "index.html");
   const indexUri = Uri.file(indexPath);
 
   try {
