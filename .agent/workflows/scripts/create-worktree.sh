@@ -7,7 +7,7 @@
 cd "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub" || exit 1
 
 # Get existing numeric suffixes of worktrees
-existing=$(git worktree list --porcelain | awk '/^worktree/ {print $2}' | grep -E '-[0-9]{3}$' | sed -E 's/.*-([0-9]{3})$/\1/')
+existing=$(git worktree list --porcelain | awk '/^worktree/ {print $2}' | grep -E -- '-[0-9]{3}$' | sed -E 's/.*-([0-9]{3})$/\1/')
 
 if [ -z "$existing" ]; then
   next=001
