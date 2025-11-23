@@ -22,7 +22,7 @@
 1. [DONE] Реализовать `UIRegistry` для локального `~/.codeai-hub/ui/registry.json` — scope: `src/extension-module/ui/ui-registry.ts`, `src/extension-module/ui/ui-types.ts`; target commit: `feat: add ui registry` (c74c483)
 2. [DONE] Добавить вспомогательные функции для атомарной записи файла реестра UI — scope: `src/extension-module/ui/ui-registry.ts`; target commit: `feat: ensure atomic ui registry writes` (5f5c4e5)
 3. [DONE] Реализовать семантику `getInstalled`/`registerInstallation`/`unregister` — scope: `src/extension-module/ui/ui-registry.ts`; target commit: `feat: finalize ui registry api` (5f5c4e5)
-4. [TODO] Добавить тесты для `UIRegistry` (happy-path и обработка повреждённого состояния) — scope: `src/__tests__/ui-registry.test.ts`; target commit: `test: add ui registry tests`
+4. [DONE] Добавить тесты для `UIRegistry` (happy-path и обработка повреждённого состояния) — scope: `src/__tests__/ui-registry.test.ts`; target commit: `test: add ui registry tests` (d12d637)
 
 ### Stream: UI bundle installer (one-shot, offline) (установщик UI-бандлов, одноразовый, офлайн)
 1. [TODO] Создать каркас класса `UIBundleInstaller` и его публичного API — scope: `src/extension-module/ui/ui-bundle-installer.ts`, `src/extension-module/ui/ui-types.ts`; target commit: `feat: scaffold ui bundle installer`
