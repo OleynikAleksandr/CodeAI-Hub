@@ -15,7 +15,7 @@
 ### Stream: UI manifest & types (манифест и типы UI)
 1. [DONE] Определить схему UI-манифеста и создать начальный `assets/ui/manifest.json` — scope: `assets/ui/manifest.json`; target commit: `feat: add ui manifest schema` (3346056)
 2. [DONE] Ввести общие типы для UI и публичную точку входа модуля — scope: `src/extension-module/ui/ui-types.ts`, `src/extension-module/ui/index.ts`; target commit: `feat: add ui module types and entrypoint` (4741aa3)
-3. [TODO] Реализовать `readUIManifest` с базовой валидацией — scope: `src/extension-module/ui/ui-manifest-reader.ts`, `src/extension-module/ui/ui-types.ts`; target commit: `feat: add ui manifest reader`
+3. [DONE] Реализовать `readUIManifest` с базовой валидацией — scope: `src/extension-module/ui/ui-manifest-reader.ts`, `src/extension-module/ui/ui-types.ts`; target commit: `feat: add ui manifest reader` (976dbb4)
 4. [TODO] Покрыть `UIManifestReader` модульными тестами — scope: `src/__tests__/ui-manifest-reader.test.ts`; target commit: `test: cover ui manifest reader`
 
 ### Stream: UI registry & local state (реестр UI и локальное состояние)
