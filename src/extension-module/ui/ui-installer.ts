@@ -24,8 +24,12 @@ export class UIBundleInstaller {
     for (const [bundleId, bundle] of Object.entries(this.manifest.bundles)) {
       const existing = this.registry.getBundle(bundleId as UIBundleId);
 
-      // Skip if already installed with the correct version
-      if (existing && existing.version === bundle.version) {
+      // Skip if already installed with the correct version and layouts exist
+      if (
+        existing &&
+        existing.version === bundle.version &&
+        (await this.hasRequiredLayouts(bundleId as UIBundleId, existing.path))
+      ) {
         continue;
       }
 
@@ -89,6 +93,38 @@ export class UIBundleInstaller {
       return Promise.resolve(true);
     }
     return verifySha1(path, expectedSha1);
+  }
+
+  private async hasRequiredLayouts(
+    bundleId: UIBundleId,
+    legacyPath?: string
+  ): Promise<boolean> {
+    const packagesCurrent = join(
+      homedir(),
+      ".codeai-hub",
+      "packages",
+      "ui",
+      bundleId,
+      "current"
+    );
+
+    try {
+      await access(packagesCurrent);
+      return true;
+    } catch {
+      /* continue */
+    }
+
+    if (legacyPath) {
+      try {
+        await access(legacyPath);
+        return true;
+      } catch {
+        /* ignore */
+      }
+    }
+
+    return false;
   }
 
   /**
