@@ -8,12 +8,13 @@
 
 - `~/.codeai-hub/cef/<platform>/<version>/` — распакованный CEF runtime
 - `~/.codeai-hub/cef/<platform>/downloads/<archive>` — кешированный архив CEF (`*.tar.bz2`)
-- `~/.codeai-hub/cef-launcher/<platform>/<version>/` — установленный `CodeAIHubLauncher`
+- `~/.codeai-hub/packages/launcher/<platform>/<version>/` — установленный `CodeAIHubLauncher` (основной layout; зеркалируется в `~/.codeai-hub/cef-launcher/**` для совместимости)
 - `~/.codeai-hub/core/<platform>/<version>/` — собранный бинарь core orchestrator
 - `~/.codeai-hub/providers/claude/<version>/` — модуль Claude
 - `~/.codeai-hub/providers/codex/<version>/` — модуль Codex
 - `~/.codeai-hub/providers/*/downloads/<archive>` — кеши архивов провайдеров
 - `~/.codeai-hub/releases/` — общий кеш для архивов, которые должны быть доступны всем установщикам
+- `~/.codeai-hub/packages/ui/<bundle>/<version>/` — UI-бандлы (`vscode-webview`, `web-client`) с symlink `current` на актуальную версию (legacy `~/.codeai-hub/ui/**` поддерживается на время миграции)
 - `~/.codeai-hub/packages/**` — целевой unified layout для лаунчера, UI и других пакетов (см. UI Modularization Architecture и Launcher CEF Module); на этапе миграции поддерживается параллельно с существующими каталогами `cef-launcher/`, `ui/` и т.п.
 
 Скрипты уже автоматически заполняют эти каталоги:
