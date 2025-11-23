@@ -45,9 +45,9 @@
 
 ### Stream: Packages layout migration (`~/.codeai-hub/packages/**`) (миграция в layout packages)
 1. [DONE] Реализовать первичное зеркалирование из `~/.codeai-hub/ui/**` в `~/.codeai-hub/packages/ui/**` в инсталлере — scope: `src/extension-module/ui/ui-bundle-installer.ts`; target commit: `feat: mirror ui bundles into packages layout` (COMMIT_HASH)
-2. [SKIPPED] Обновить установщик/конфиг Launcher CEF для чтения лаунчера из `~/.codeai-hub/packages/launcher/**` (с сохранением совместимости со старым layout) — scope: `src/extension-module/cef/launcher-installer.ts`, `src/extension-module/cef/launcher.ts`; target commit: `feat: support launcher packages layout`
-3. [SKIPPED] Согласовать `Local_Artifacts_Workflow.md` с семантикой layout  `packages` (core/providers/launcher/ui) — scope: `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`; target commit: `docs: document packages layout for artifacts`
-4. [SKIPPED] Добавить валидацию в `UIRegistry`/installer для поддержки смешанного layout `ui/` и `packages/ui/` во время миграции — scope: `src/extension-module/ui/ui-registry.ts`, `src/extension-module/ui/ui-bundle-installer.ts`; target commit: `feat: support dual ui layouts during migration`
+2. [DONE] Обновить установщик/конфиг Launcher CEF для чтения лаунчера из `~/.codeai-hub/packages/launcher/**` (с сохранением совместимости со старым layout) — scope: `src/extension-module/cef/launcher-installer.ts`, `src/extension-module/cef/launcher.ts`; target commit: `feat: support launcher packages layout` (b9cacb1)
+3. [DONE] Согласовать `Local_Artifacts_Workflow.md` с семантикой layout  `packages` (core/providers/launcher/ui) — scope: `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`; target commit: `docs: document packages layout for artifacts` (TBD)
+4. [DONE] Добавить валидацию в `UIRegistry`/installer для поддержки смешанного layout `ui/` и `packages/ui/` во время миграции — scope: `src/extension-module/ui/ui-registry.ts`, `src/extension-module/ui/ui-bundle-installer.ts`; target commit: `feat: harden ui bundle layout resolution` (f4da74f)
 
 ### Stream: Documentation & architecture alignment (документация и синхронизация архитектуры)
 1. [TODO] Завершить стек-документ `UI_Modules` для UI-пакетов — scope: `doc/Project_Docs/Stacks/UI_Modules.md`; target commit: `docs: add ui modules stack`
