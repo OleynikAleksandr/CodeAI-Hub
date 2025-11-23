@@ -41,6 +41,39 @@ CodeAI Hub uses a dedicated Chromium Embedded Framework (CEF) launcher to run th
     CodeAIHubLauncher-macos-arm64-1.1.300.tar.bz2
 ```
 
+### Planned consolidated packages layout
+
+As the UI modularization plan evolves, the launcher and UI bundles move towards a unified package layout under `~/.codeai-hub/packages/**`. The goal is that the VSIX no longer ships any embedded UI; instead, both VS Code webview and the standalone client read their assets from the same local package tree as the core and providers:
+
+```
+~/.codeai-hub/
+  packages/
+    launcher/
+      darwin-arm64/
+        1.1.300/
+          CodeAIHubLauncher.app
+          config/
+            config.json
+          install.json
+    ui/
+      vscode-webview/
+        1.1.300/
+          index.html
+          dist/
+          assets/
+          manifest.json
+          install.json
+      web-client/
+        1.1.300/
+          index.html
+          dist/
+          assets/
+          manifest.json
+          install.json
+```
+
+The existing `~/.codeai-hub/cef-launcher/**` layout remains valid while the migration is in progress. Build scripts and installers are responsible for keeping `packages/launcher/**` and `packages/ui/**` in sync with the tarballs under `~/.codeai-hub/releases/` and for updating `config.json` so that the launcher always points at the packaged UI rather than any embedded assets inside the VSIX.
+
 ## Build & Release Pipeline
 - `scripts/build-cef-launcher.sh --launcher-version <semver>` assembles the launcher, stages it under `~/.codeai-hub/cef-launcher/<platform>/<version>/`, produces a tarball in `doc/tmp/releases/`, and updates the manifest + local caches.
 - The script downloads the official CEF minimal archive, configures the project via CMake, and copies required frameworks/resources (macOS bundles include helper apps).

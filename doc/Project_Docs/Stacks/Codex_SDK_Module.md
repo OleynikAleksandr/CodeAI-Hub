@@ -223,10 +223,10 @@ Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source 
 
 ## 15. Build & Distribution
 - Build script: `./scripts/build-codex-module.sh [--version <semver>] [--clean]`.
-  - Compiles `packages/Codex_Module`, installs artifacts under `~/.codeai-hub/providers/codex/<version>/`, and creates `codex-module-<version>.tar.bz2` in `doc/tmp/releases/`.
-  - Manifest auto-update: `assets/providers/codex/manifest.json` is rewritten with the archive name, size, and SHA-1 after each build.
-- Managed installs: extension activation calls `ensureCodexModuleInstalled`, which reads the manifest from the VSIX, downloads missing archives, and writes `<installRoot>/latest` so `CODEX_MODULE_PATH` can point core to the freshest module.
+  - Compiles `packages/Codex_Module`, installs artifacts under `~/.codeai-hub/providers/codex/<version>/`, and creates `codex-module-<version>.tar.bz2` in `doc/tmp/releases/` and the shared local cache `~/.codeai-hub/releases/`.
+  - Manifest auto-update: `assets/providers/codex/manifest.json` is rewritten with the archive name, size, and SHA-1 after each build; `baseUrl` in dev и внутренних релизах указывает на локальный cache `file://$HOME/.codeai-hub/releases/` (на основной dev‑машине — `file:///Users/oleksandroliinyk/.codeai-hub/releases/`).
+- Managed installs: extension activation (или Core Supervisor в целевой архитектуре) вызывает `ensureCodexModuleInstalled`, который читает манифест из VSIX, ищет архивы в локальных кешах (`downloads/` модуля, затем `~/.codeai-hub/releases/`) и только при необходимости обращается к удалённому URL. В текущей схеме разработки `baseUrl` всегда указывает на локальный `file://` cache, поэтому сетевые загрузки для Codex модуля не используются.
 - Release checklist:
   1. Run `npm run build --workspace=@codeai-hub/codex-module`.
   2. Execute `./scripts/build-codex-module.sh --version <semver>`.
-  3. Publish the archive alongside the core/launcher assets in GitHub Releases so the manifest URL remains valid.
+  3. For public distribution, publish the archive alongside the core/launcher assets in GitHub Releases so the manifest URL remains valid; для внутренних dev-сборок достаточно убедиться, что архив присутствует в `~/.codeai-hub/releases/` и манифест указывает на локальный `file://` путь.
