@@ -13,14 +13,5 @@ tmp/
 AGENTS.md
 biome.jsonc
 lefthook.yml
-doc/tmp/
-doc/Sessions/
-doc/TODO/
 *.vsix
-doc/sdk-sessions/
-!scripts/build-release.sh
-!scripts/build-codex-module.sh
-!scripts/release-utils.sh
-!scripts/build-all.sh
 binaries/
-
