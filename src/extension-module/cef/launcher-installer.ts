@@ -8,7 +8,7 @@ import {
 import {
   buildInstallInfo,
   ensureArchiveAvailable,
-  getBaseInstallDir,
+  getInstallPaths,
   getManifestEntryOrThrow,
   installFromArchive,
   type ProgressReporter,
@@ -30,6 +30,7 @@ const resolveBaseUrlOverride = (): string | undefined =>
 
 const finalizeLauncherSetup = async (options: {
   readonly platformDir: string;
+  readonly legacyPlatformDir?: string;
   readonly platform: PlatformKey;
   readonly manifestEntry: LauncherManifestEntry;
   readonly installDir: string;
@@ -38,11 +39,49 @@ const finalizeLauncherSetup = async (options: {
     options.platformDir,
     options.manifestEntry.launcherVersion
   );
+  if (options.legacyPlatformDir) {
+    await writeCurrentPointer(
+      options.legacyPlatformDir,
+      options.manifestEntry.launcherVersion
+    ).catch(() => {
+      /* best-effort */
+    });
+  }
   await recordLauncherInstall({
     platform: options.platform,
     version: options.manifestEntry.launcherVersion,
     installDir: options.installDir,
   });
+};
+
+const mirrorLegacyInstall = async (
+  sourceDir: string,
+  legacyInstallDir: string
+): Promise<void> => {
+  if (sourceDir === legacyInstallDir) {
+    return;
+  }
+  await fs.mkdir(path.dirname(legacyInstallDir), { recursive: true });
+  await fs.rm(legacyInstallDir, { recursive: true, force: true });
+  try {
+    await fs.symlink(sourceDir, legacyInstallDir, "junction");
+    return;
+  } catch {
+    // Fall back to copying if symlink is not permitted (Windows without admin)
+  }
+  await fs.cp(sourceDir, legacyInstallDir, { recursive: true });
+};
+
+const copyLegacyToPrimary = async (
+  legacyInstallDir: string,
+  installDir: string
+): Promise<void> => {
+  if (legacyInstallDir === installDir) {
+    return;
+  }
+  await fs.rm(installDir, { recursive: true, force: true });
+  await fs.mkdir(path.dirname(installDir), { recursive: true });
+  await fs.cp(legacyInstallDir, installDir, { recursive: true });
 };
 
 export const ensureLauncherInstalled = async (
@@ -53,9 +92,8 @@ export const ensureLauncherInstalled = async (
   const platform = resolvePlatformKey();
   const manifestEntry = getManifestEntryOrThrow(manifest, platform);
 
-  const baseDir = await getBaseInstallDir();
-  const platformDir = path.join(baseDir, platform);
-  const installDir = path.join(platformDir, manifestEntry.launcherVersion);
+  const { platformDir, installDir, legacyPlatformDir, legacyInstallDir } =
+    await getInstallPaths(platform, manifestEntry.launcherVersion);
 
   const reused = await tryReuseExistingLauncher(
     installDir,
@@ -66,20 +104,51 @@ export const ensureLauncherInstalled = async (
   if (reused) {
     await finalizeLauncherSetup({
       platformDir,
+      legacyPlatformDir,
       platform,
       manifestEntry,
       installDir,
     });
+    await mirrorLegacyInstall(installDir, legacyInstallDir);
     return reused;
+  }
+
+  const reusedLegacy = await tryReuseExistingLauncher(
+    legacyInstallDir,
+    manifestEntry,
+    platform,
+    progress
+  );
+  if (reusedLegacy) {
+    await copyLegacyToPrimary(legacyInstallDir, installDir);
+    await finalizeLauncherSetup({
+      platformDir,
+      legacyPlatformDir,
+      platform,
+      manifestEntry,
+      installDir,
+    });
+    await mirrorLegacyInstall(installDir, legacyInstallDir);
+    return buildInstallInfo(platform, manifestEntry, installDir);
   }
 
   const legacyInstall = await resolveLegacyInstall(
     platformDir,
     platform,
-    manifestEntry
+    manifestEntry,
+    legacyPlatformDir
   );
   if (legacyInstall) {
-    return legacyInstall;
+    await copyLegacyToPrimary(legacyInstall.installDir, installDir);
+    await finalizeLauncherSetup({
+      platformDir,
+      legacyPlatformDir,
+      platform,
+      manifestEntry,
+      installDir,
+    });
+    await mirrorLegacyInstall(installDir, legacyInstallDir);
+    return buildInstallInfo(platform, manifestEntry, installDir);
   }
 
   progress?.report({ message: "Preparing CodeAIHubLauncher…" });
@@ -110,10 +179,12 @@ export const ensureLauncherInstalled = async (
 
   await finalizeLauncherSetup({
     platformDir,
+    legacyPlatformDir,
     platform,
     manifestEntry,
     installDir,
   });
+  await mirrorLegacyInstall(installDir, legacyInstallDir);
 
   return installInfo;
 };
