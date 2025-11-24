@@ -84,52 +84,16 @@ const formatArgsForPosix = (args: readonly string[]): string =>
     })
     .join(" ");
 
-const ensureMacShortcut = async (target: ShortcutTarget): Promise<void> => {
-  const desktopDir = path.join(homedir(), "Desktop");
-  const legacyCommand = path.join(desktopDir, `${SHORTCUT_NAME}.command`);
-  const legacyWebloc = path.join(desktopDir, `${SHORTCUT_NAME}.webloc`);
-  const appDir = path.join(desktopDir, `${SHORTCUT_NAME}.app`);
-  const contentsDir = path.join(appDir, "Contents");
-  const macOsDir = path.join(contentsDir, "MacOS");
+import { ensureMacShortcut as ensureMacShortcutService } from "./mac-shortcut-service";
 
-  await fs.rm(legacyCommand, { force: true }).catch(() => {
-    /* no-op */
-  });
-  await fs.rm(legacyWebloc, { force: true }).catch(() => {
-    /* no-op */
-  });
-  await fs.rm(appDir, { recursive: true, force: true }).catch(() => {
-    /* no-op */
-  });
+// ... (keep existing imports and types)
 
-  await ensureDirectory(macOsDir);
-
-  const infoPlist = [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">',
-    '<plist version="1.0">',
-    "  <dict>",
-    "    <key>CFBundleExecutable</key>",
-    "    <string>launch</string>",
-    "    <key>CFBundleIdentifier</key>",
-    "    <string>com.codeaihub.webclient</string>",
-    "    <key>CFBundleName</key>",
-    `    <string>${SHORTCUT_NAME}</string>`,
-    "    <key>CFBundlePackageType</key>",
-    "    <string>APPL</string>",
-    "  </dict>",
-    "</plist>",
-  ].join("\n");
-
-  await fs.writeFile(path.join(contentsDir, "Info.plist"), infoPlist, {
-    encoding: "utf8",
-  });
-
-  const launchScriptPath = path.join(macOsDir, "launch");
-  const args = formatArgsForPosix(target.args);
-  const launchScript = `#!/bin/bash\n"${target.path}" ${args}\n`;
-  await fs.writeFile(launchScriptPath, launchScript, { encoding: "utf8" });
-  await fs.chmod(launchScriptPath, EXECUTABLE_MODE);
+const ensureMacShortcut = async (
+  target: ShortcutTarget,
+  shortcutName: string,
+  bundleIdentifier: string
+): Promise<void> => {
+  await ensureMacShortcutService(target, shortcutName, bundleIdentifier);
 };
 
 const ensureLinuxShortcut = async (target: ShortcutTarget): Promise<void> => {
@@ -183,12 +147,18 @@ export const ensureWebClientShortcuts = async (
   try {
     switch (platform()) {
       case "win32":
+        // Windows support for custom names is not yet refactored, using default
         await ensureWindowsShortcut(target);
         break;
       case "darwin":
-        await ensureMacShortcut(target);
+        await ensureMacShortcut(
+          target,
+          SHORTCUT_NAME,
+          "com.codeaihub.webclient"
+        );
         break;
       case "linux":
+        // Linux support for custom names is not yet refactored, using default
         await ensureLinuxShortcut(target);
         break;
       default:
@@ -196,5 +166,34 @@ export const ensureWebClientShortcuts = async (
     }
   } catch {
     // Silently ignore failures to avoid interrupting activation flow.
+  }
+};
+
+export const ensureProjectManagerShortcuts = async (
+  target?: ShortcutTarget
+): Promise<void> => {
+  if (!target) {
+    return;
+  }
+
+  if (!(await pathExists(target.path))) {
+    return;
+  }
+
+  try {
+    switch (platform()) {
+      case "darwin":
+        await ensureMacShortcut(
+          target,
+          "CodeAI Hub Project Manager",
+          "com.codeaihub.projectmanager"
+        );
+        break;
+      default:
+        // Only macOS supported for now as per requirements
+        break;
+    }
+  } catch {
+    // Silently ignore failures
   }
 };

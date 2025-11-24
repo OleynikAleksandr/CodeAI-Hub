@@ -13,6 +13,7 @@ UI Modules — это набор пакетов, отвечающих за ви�
 ### Key Components
 - **vscode-webview**: React-приложение для панели в VS Code.
 - **web-client**: PWA-версия для запуска в автономном окне (CEF/Browser).
+- **project-manager**: Standalone UI для управления проектами (CEF).
 - **Shared UI Library**: общие компоненты, хуки и стили (`src/client/ui/src`), обеспечивающие идентичный UX.
 
 ---
@@ -55,6 +56,13 @@ web-client-<version>/
 ├── index.html          # Точка входа (PWA shell)
 ├── app.js              # Скомпилированное приложение
 └── ...assets           # Иконки, манифесты PWA
+```
+
+### project-manager
+```
+project-manager-<version>/
+├── index.html          # Точка входа
+└── styles.css          # Стили
 ```
 
 ---

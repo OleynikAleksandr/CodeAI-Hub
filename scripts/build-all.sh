@@ -58,6 +58,7 @@ copy_release_artifacts() {
     "CodeAIHubLauncher-${LAUNCHER_FILE_PLATFORM}-${version}.tar.bz2"
     "vscode-webview-${version}.tar.bz2"
     "web-client-${version}.tar.bz2"
+    "project-manager-${version}.tar.bz2"
   )
 
   for artefact in "${required[@]}"; do
@@ -226,6 +227,7 @@ echo "🏗️  Building core..."
 echo "🏗️  Building UI bundles..."
 "$SCRIPT_DIR/build-ui-bundle.sh" vscode-webview "$new_version"
 "$SCRIPT_DIR/build-ui-bundle.sh" web-client "$new_version"
+"$SCRIPT_DIR/build-ui-bundle.sh" project-manager "$new_version"
 
 echo "🏗️  Building CEF launcher..."
 "$SCRIPT_DIR/build-cef-launcher.sh" --launcher-version "$new_version"
