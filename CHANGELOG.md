@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.313] - 2025-11-24
+### Added
+- **Independent Launcher Windows**: The macOS launcher now uses a "Binary Copy" strategy to create lightweight `.app` wrappers for each application (Web Client, Project Manager). This ensures each app has a unique Bundle ID, enabling independent window state persistence (size and position) via standard macOS `NSUserDefaults`.
+- **Project Manager**: Introduced a new UI bundle `project-manager` for managing projects, distributed and updated independently like the web client.
+- **Unified Build**: `build-all.sh` now orchestrates the entire build process, including version bumping, artifact generation for Core, Launcher, Providers, and all UI bundles, ensuring strict synchronization.
+
+### Changed
+- **UI Modularization**: Finalized the separation of UI components. VSIX no longer contains heavy assets. `vscode-webview`, `web-client`, and `project-manager` are installed into `~/.codeai-hub/packages/ui/` from local release tarballs or remote sources.
+- **Artifacts**: VSIX size reduced significantly (~370KB). All components (Core, Launcher, UI, Providers) are now standardized artifacts in `~/.codeai-hub/releases/`.
+
+### Build
+- VSIX → `codeai-hub-1.1.313.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.313.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.313.tar.bz2`
+- Providers → `claude-module-1.1.313.tar.bz2`, `codex-module-1.1.313.tar.bz2`, `gemini-module-1.1.313.tar.bz2`
+- UI → `vscode-webview-1.1.313.tar.bz2`, `web-client-1.1.313.tar.bz2`, `project-manager-1.1.313.tar.bz2`
+
 ## [1.1.305] - 2025-11-24
 ### Added
 - **UI Modularization**: The UI is now fully decoupled from the extension and launcher. It is distributed as a separate `vscode-webview` and `web-client` bundle, installed into `~/.codeai-hub/packages/ui/<version>/`.

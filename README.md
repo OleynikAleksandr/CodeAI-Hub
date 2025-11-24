@@ -2,17 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.305
-- **UI Modularization**: The UI is now fully decoupled from the extension and launcher. It is distributed as a separate `vscode-webview` and `web-client` bundle, installed into `~/.codeai-hub/packages/ui/<version>/`.
+## Current Release — v1.1.313
+- **UI Modularization**: The UI is now fully decoupled from the extension and launcher. It is distributed as separate `vscode-webview`, `web-client`, and `project-manager` bundles, installed into `~/.codeai-hub/packages/ui/<version>/`.
+- **Independent Windows**: The launcher now supports independent window state persistence for multiple applications (Web Client, Project Manager) using a "Binary Copy" strategy.
 - **Packages Layout**: Migrated local artifacts to a structured `~/.codeai-hub/packages/{core,launcher,providers,ui}` layout, improving organization and version management.
 - **Offline UI Installer**: New `UIBundleInstaller` ensures UI assets are provisioned offline from the local release cache, removing runtime dependencies on embedded assets.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.305.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.305.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.305.tar.bz2`
-- Providers: `claude-module-1.1.305.tar.bz2`, `codex-module-1.1.305.tar.bz2`, `gemini-module-1.1.305.tar.bz2`
-- UI: `vscode-webview-1.1.305.tar.bz2`, `web-client-1.1.305.tar.bz2`
+- VSIX: `codeai-hub-1.1.313.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.313.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.313.tar.bz2`
+- Providers: `claude-module-1.1.313.tar.bz2`, `codex-module-1.1.313.tar.bz2`, `gemini-module-1.1.313.tar.bz2`
+- UI: `vscode-webview-1.1.313.tar.bz2`, `web-client-1.1.313.tar.bz2`, `project-manager-1.1.313.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
