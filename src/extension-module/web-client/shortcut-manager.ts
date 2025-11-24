@@ -95,7 +95,10 @@ const ensureMacShortcut = async (
   const appDir = path.join(desktopDir, `${shortcutName}.app`);
   const contentsDir = path.join(appDir, "Contents");
   const macOsDir = path.join(contentsDir, "MacOS");
+  const frameworksDir = path.join(contentsDir, "Frameworks");
+  const resourcesDir = path.join(contentsDir, "Resources");
 
+  // Clean up legacy shortcuts
   await fs.rm(legacyCommand, { force: true }).catch(() => {
     /* no-op */
   });
@@ -108,6 +111,24 @@ const ensureMacShortcut = async (
 
   await ensureDirectory(macOsDir);
 
+  // Identify original bundle paths
+  // target.path is .../CodeAIHubLauncher.app/Contents/MacOS/CodeAIHubLauncher
+  const originalBinaryPath = target.path;
+  const originalMacOsDir = path.dirname(originalBinaryPath);
+  const originalContentsDir = path.dirname(originalMacOsDir);
+  const originalFrameworksDir = path.join(originalContentsDir, "Frameworks");
+  const originalResourcesDir = path.join(originalContentsDir, "Resources");
+
+  // Create symlinks for heavy resources (Thin Bundle strategy)
+  try {
+    await fs.symlink(originalFrameworksDir, frameworksDir);
+    await fs.symlink(originalResourcesDir, resourcesDir);
+  } catch (_e) {
+    // If symlinking fails (e.g. original doesn't have Frameworks?), log/ignore
+    // But for CEF launcher they should exist.
+  }
+
+  // Create Info.plist with unique Bundle ID
   const infoPlist = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">',
@@ -121,6 +142,10 @@ const ensureMacShortcut = async (
     `    <string>${shortcutName}</string>`,
     "    <key>CFBundlePackageType</key>",
     "    <string>APPL</string>",
+    "    <key>CFBundleIconFile</key>",
+    "    <string>app.icns</string>",
+    "    <key>LSUIElement</key>",
+    "    <false/>",
     "  </dict>",
     "</plist>",
   ].join("\n");
@@ -129,9 +154,15 @@ const ensureMacShortcut = async (
     encoding: "utf8",
   });
 
+  // Create wrapper script
   const launchScriptPath = path.join(macOsDir, "launch");
   const args = formatArgsForPosix(target.args);
-  const launchScript = `#!/bin/bash\n"${target.path}" ${args}\n`;
+
+  // We execute the original binary directly.
+  // By running it as a child of this "launch" script inside the new bundle,
+  // and with the new Info.plist, macOS should attribute the process to this new Bundle ID.
+  const launchScript = `#!/bin/bash\nexec "${originalBinaryPath}" ${args}\n`;
+
   await fs.writeFile(launchScriptPath, launchScript, { encoding: "utf8" });
   await fs.chmod(launchScriptPath, EXECUTABLE_MODE);
 };

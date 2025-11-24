@@ -102,6 +102,16 @@ To support running multiple independent applications (e.g., Web Client and Proje
 
 This is achieved by passing the `--user-data-dir=<path>` argument to the launcher binary.
 
+## Window State Persistence (Thin Bundle)
+The C++ Launcher uses `NSUserDefaults` (on macOS) to store window position and size, keyed by the application's Bundle Identifier. To ensure that the Web Client and Project Manager remember their window states independently, we employ a **Thin Bundle** strategy:
+
+1.  **Wrapper .app**: We create a lightweight `.app` structure for each client (e.g., `CodeAI Hub Project Manager.app`).
+2.  **Unique Bundle ID**: Each wrapper has its own `Info.plist` with a unique `CFBundleIdentifier` (e.g., `com.codeaihub.projectmanager`).
+3.  **Symlinked Resources**: Heavy resources (`Frameworks`, `Resources`) are symlinked from the main `CodeAIHubLauncher.app` to save space (~600MB per instance saved).
+4.  **Wrapper Script**: A small shell script (`MacOS/launch`) executes the original binary with the correct arguments.
+
+This forces macOS to treat them as distinct applications with separate preference storage (`~/Library/Preferences/com.codeaihub.projectmanager.plist`), solving the window state conflict.
+
 ## Future Work
 - **Multi-Tab Support**: The current architecture spawns a separate process for each "app". Future versions of the launcher may support opening multiple tabs or windows within a single process instance if they share the same `userDataDir`.
 - **Remote Bridge**: Migrate from `file://` to custom `codeaihub://` scheme and enable remote bridge mode.
