@@ -1,5 +1,5 @@
 import path from "node:path";
-import { type ExtensionContext, window } from "vscode";
+import type { ExtensionContext } from "vscode";
 import type { ExtensionLogger } from "../logging/extension-logger";
 import { UIBundleInstaller } from "./ui-installer";
 import { readUIManifest } from "./ui-manifest-reader";
@@ -15,7 +15,33 @@ export type UIActivationResult = {
     path: string;
     source: "installed" | "embedded";
   };
+  projectManager: {
+    path: string;
+    source: "installed" | "embedded";
+  };
 };
+
+// Actually, the logic differs slightly per bundle.
+// webview: installed -> path, embedded -> dirname(path)
+// web-client: installed -> path/index.html, embedded -> path
+// project-manager: installed -> path/index.html, embedded -> path
+
+// Let's just extract the try-catch block and resolution.
+
+async function tryResolveBundle(
+  bundleId: "vscode-webview" | "web-client" | "project-manager",
+  embeddedPath: string,
+  logger: ExtensionLogger
+): Promise<{ path: string; source: "installed" | "embedded" }> {
+  try {
+    return await resolveUIBundlePath(bundleId, embeddedPath);
+  } catch (error) {
+    logger.log(`extension:activate:ui-resolved:${bundleId}:failed`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return { path: embeddedPath, source: "embedded" };
+  }
+}
 
 export async function prepareUIBundles(
   context: ExtensionContext,
@@ -40,7 +66,6 @@ export async function prepareUIBundles(
     logger.log("extension:activate:install-bundles:failed", {
       error: error instanceof Error ? error.message : String(error),
     });
-    // Continue execution, hoping fallback paths work
   }
 
   // 2. Resolve vscode-webview bundle
@@ -50,30 +75,26 @@ export async function prepareUIBundles(
     "react-chat.js"
   );
 
+  const webviewResolved = await tryResolveBundle(
+    "vscode-webview",
+    embeddedWebviewPath,
+    logger
+  );
   let webviewUIRoot: string;
-  let webviewSource: "installed" | "embedded";
+  if (webviewResolved.source === "installed") {
+    webviewUIRoot = webviewResolved.path;
+  } else {
+    // For embedded, we need the directory for some reason?
+    // Original code: webviewUIRoot = path.dirname(resolved.path);
+    // But resolved.path is embeddedWebviewPath which is .../react-chat.js
+    webviewUIRoot = path.dirname(webviewResolved.path);
+  }
 
-  try {
-    const resolved = await resolveUIBundlePath(
-      "vscode-webview",
-      embeddedWebviewPath
-    );
-
-    if (resolved.source === "installed") {
-      webviewUIRoot = resolved.path;
-    } else {
-      webviewUIRoot = path.dirname(resolved.path);
-    }
-    webviewSource = resolved.source;
-
+  if (webviewResolved.source !== "embedded") {
     logger.log("extension:activate:ui-resolved:vscode-webview", {
-      source: resolved.source,
+      source: webviewResolved.source,
       path: webviewUIRoot,
     });
-  } catch (error) {
-    const reason = error instanceof Error ? error.message : String(error);
-    window.showErrorMessage(`Failed to resolve webview UI: ${reason}`);
-    throw error instanceof Error ? error : new Error(String(error));
   }
 
   // 3. Resolve web-client bundle
@@ -85,37 +106,59 @@ export async function prepareUIBundles(
     "index.html"
   );
 
+  const webClientResolved = await tryResolveBundle(
+    "web-client",
+    embeddedWebClientPath,
+    logger
+  );
   let webClientIndexPath: string;
-  let webClientSource: "installed" | "embedded";
+  if (webClientResolved.source === "installed") {
+    webClientIndexPath = path.join(webClientResolved.path, "index.html");
+  } else {
+    webClientIndexPath = webClientResolved.path;
+  }
 
-  try {
-    const resolved = await resolveUIBundlePath(
-      "web-client",
-      embeddedWebClientPath
-    );
-
-    if (resolved.source === "installed") {
-      webClientIndexPath = path.join(resolved.path, "index.html");
-    } else {
-      webClientIndexPath = resolved.path;
-    }
-    webClientSource = resolved.source;
-
+  if (webClientResolved.source !== "embedded") {
     logger.log("extension:activate:ui-resolved:web-client", {
-      source: resolved.source,
+      source: webClientResolved.source,
       path: webClientIndexPath,
     });
-  } catch (error) {
-    // Non-fatal for extension activation, but launcher won't work
-    logger.log("extension:activate:ui-resolved:web-client:failed", {
-      error: error instanceof Error ? error.message : String(error),
+  }
+
+  // 4. Resolve project-manager bundle
+  const embeddedProjectManagerPath = path.join(
+    context.extensionUri.fsPath,
+    "packages",
+    "ui",
+    "project-manager",
+    "index.html"
+  );
+
+  const pmResolved = await tryResolveBundle(
+    "project-manager",
+    embeddedProjectManagerPath,
+    logger
+  );
+  let projectManagerIndexPath: string;
+  if (pmResolved.source === "installed") {
+    projectManagerIndexPath = path.join(pmResolved.path, "index.html");
+  } else {
+    projectManagerIndexPath = pmResolved.path;
+  }
+
+  if (pmResolved.source !== "embedded") {
+    logger.log("extension:activate:ui-resolved:project-manager", {
+      source: pmResolved.source,
+      path: projectManagerIndexPath,
     });
-    webClientIndexPath = embeddedWebClientPath;
-    webClientSource = "embedded";
   }
 
   return {
-    webview: { path: webviewUIRoot, source: webviewSource },
-    webClient: { path: webClientIndexPath, source: webClientSource },
+    webview: { path: webviewUIRoot, source: webviewResolved.source },
+    webClient: { path: webClientIndexPath, source: webClientResolved.source },
+    projectManager: {
+      path: projectManagerIndexPath,
+      source: pmResolved.source,
+    },
   };
 }
