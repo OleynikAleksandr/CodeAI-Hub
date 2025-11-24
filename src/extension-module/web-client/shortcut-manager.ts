@@ -84,11 +84,15 @@ const formatArgsForPosix = (args: readonly string[]): string =>
     })
     .join(" ");
 
-const ensureMacShortcut = async (target: ShortcutTarget): Promise<void> => {
+const ensureMacShortcut = async (
+  target: ShortcutTarget,
+  shortcutName: string,
+  bundleIdentifier: string
+): Promise<void> => {
   const desktopDir = path.join(homedir(), "Desktop");
-  const legacyCommand = path.join(desktopDir, `${SHORTCUT_NAME}.command`);
-  const legacyWebloc = path.join(desktopDir, `${SHORTCUT_NAME}.webloc`);
-  const appDir = path.join(desktopDir, `${SHORTCUT_NAME}.app`);
+  const legacyCommand = path.join(desktopDir, `${shortcutName}.command`);
+  const legacyWebloc = path.join(desktopDir, `${shortcutName}.webloc`);
+  const appDir = path.join(desktopDir, `${shortcutName}.app`);
   const contentsDir = path.join(appDir, "Contents");
   const macOsDir = path.join(contentsDir, "MacOS");
 
@@ -112,9 +116,9 @@ const ensureMacShortcut = async (target: ShortcutTarget): Promise<void> => {
     "    <key>CFBundleExecutable</key>",
     "    <string>launch</string>",
     "    <key>CFBundleIdentifier</key>",
-    "    <string>com.codeaihub.webclient</string>",
+    `    <string>${bundleIdentifier}</string>`,
     "    <key>CFBundleName</key>",
-    `    <string>${SHORTCUT_NAME}</string>`,
+    `    <string>${shortcutName}</string>`,
     "    <key>CFBundlePackageType</key>",
     "    <string>APPL</string>",
     "  </dict>",
@@ -183,12 +187,18 @@ export const ensureWebClientShortcuts = async (
   try {
     switch (platform()) {
       case "win32":
+        // Windows support for custom names is not yet refactored, using default
         await ensureWindowsShortcut(target);
         break;
       case "darwin":
-        await ensureMacShortcut(target);
+        await ensureMacShortcut(
+          target,
+          SHORTCUT_NAME,
+          "com.codeaihub.webclient"
+        );
         break;
       case "linux":
+        // Linux support for custom names is not yet refactored, using default
         await ensureLinuxShortcut(target);
         break;
       default:
@@ -196,5 +206,34 @@ export const ensureWebClientShortcuts = async (
     }
   } catch {
     // Silently ignore failures to avoid interrupting activation flow.
+  }
+};
+
+export const ensureProjectManagerShortcuts = async (
+  target?: ShortcutTarget
+): Promise<void> => {
+  if (!target) {
+    return;
+  }
+
+  if (!(await pathExists(target.path))) {
+    return;
+  }
+
+  try {
+    switch (platform()) {
+      case "darwin":
+        await ensureMacShortcut(
+          target,
+          "CodeAI Hub Project Manager",
+          "com.codeaihub.projectmanager"
+        );
+        break;
+      default:
+        // Only macOS supported for now as per requirements
+        break;
+    }
+  } catch {
+    // Silently ignore failures
   }
 };

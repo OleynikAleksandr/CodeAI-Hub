@@ -39,12 +39,13 @@ const readExistingConfig = async (
 const ensureLauncherConfig = async (
   launcher: LauncherInstallInfo,
   indexFilePath: string,
-  workspacePath?: string
+  workspacePath?: string,
+  configFileName: string = CONFIG_FILE_NAME
 ): Promise<string> => {
   const configDir = path.join(launcher.installDir, "config");
   await ensureDirectory(configDir);
 
-  const configPath = path.join(configDir, CONFIG_FILE_NAME);
+  const configPath = path.join(configDir, configFileName);
   const existingConfig = await readExistingConfig(configPath);
 
   const config = {
@@ -69,6 +70,18 @@ export const ensureLauncherWorkspaceConfig = (
   workspacePath?: string
 ): Promise<string> =>
   ensureLauncherConfig(launcher, indexFilePath, workspacePath);
+
+export const ensureProjectManagerConfig = (
+  launcher: LauncherInstallInfo,
+  indexFilePath: string,
+  workspacePath?: string
+): Promise<string> =>
+  ensureLauncherConfig(
+    launcher,
+    indexFilePath,
+    workspacePath,
+    "project-manager.json"
+  );
 
 export const launchCefClient = async (
   launcher: LauncherInstallInfo,
