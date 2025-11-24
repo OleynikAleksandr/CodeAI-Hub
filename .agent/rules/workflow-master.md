@@ -111,4 +111,4 @@ trigger: always_on
 - **НИКОГДА** не редактируй версии в `package.json` вручную (используй `build-all.sh`).
 - **ВСЕГДА** держи `Architecture.md` в синхронизации с изменениями кода (в том же коммите).
 
-## 6. Родные артефакты - implementation_plan.md, task.md - составляй всегда на Русском языке!
+## 6. Родные артефакты - implementation_plan.md, task.md и walkthrough.md- составляй всегда на Русском языке!
