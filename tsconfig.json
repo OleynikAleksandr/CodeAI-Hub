@@ -13,5 +13,9 @@
     "types": ["node", "vscode"]
   },
   "include": ["src"],
-  "exclude": ["src/client/ui/src/**/*", "src/client/web-client/**/*"]
+  "exclude": [
+    "src/client/ui/src/**/*",
+    "src/client/web-client/**/*",
+    "src/client/project-manager/**/*"
+  ]
 }
