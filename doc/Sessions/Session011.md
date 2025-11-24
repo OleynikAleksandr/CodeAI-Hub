@@ -12,7 +12,8 @@
 - Merged `Agent-001` branch into `main`.
 - Removed `Agent-001` worktree and branch.
 - Verified git status and consolidated workspace.
-- Ran full build cycle (`./scripts/build-all.sh`) to generate release artifacts.
+- Ran full build cycle (`./scripts/build-all.sh`) to generate release artifacts (v1.1.304).
+- Re-ran build cycle upon user request to verify assembly stability (v1.1.305).
 
 ## Git commits
 - (To be filled after commit)
