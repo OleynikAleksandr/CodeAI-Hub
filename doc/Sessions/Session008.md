@@ -106,10 +106,11 @@
 2. Завершить `UI_Modules.md`.
 
 ## Testing
-1. Провести ручной e2e тест (IN PROGRESS):
-   - Установить VSIX `codeai-hub-1.1.302.vsix`
-   - Проверить что UI бандлы устанавливаются в `~/.codeai-hub/packages/ui/`
-   - Проверить работу Webview и Launcher
+1. ✅ Проведен ручной e2e тест (SUCCESS):
+   - Установлен VSIX `codeai-hub-1.1.302.vsix`
+   - Подтверждено: VSIX уменьшился с ~700KB до ~370KB
+   - Подтверждено: UI бандлы корректно распаковались в `~/.codeai-hub/packages/ui/`
+   - Подтверждено: Webview и Launcher работают корректно
 
 ---
 
