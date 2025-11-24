@@ -33,5 +33,5 @@
 3. [DONE] Update architecture docs with multi-instance/tab notes — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
 
 ### Stream: Window State Persistence (Binary Copy)
-1. [TODO] Refactor `shortcut-manager.ts` to implement Binary Copy strategy — scope: `src/extension-module/web-client/shortcut-manager.ts`
-2. [TODO] Update architecture docs to document Binary Copy — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
+1. [DONE] Refactor `shortcut-manager.ts` to implement Binary Copy strategy — scope: `src/extension-module/web-client/shortcut-manager.ts`
+2. [DONE] Update architecture docs to document Binary Copy — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`

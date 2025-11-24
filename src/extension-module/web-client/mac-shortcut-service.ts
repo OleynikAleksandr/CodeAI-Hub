@@ -13,6 +13,9 @@ export type ShortcutTarget = {
 const formatArgsForPosix = (args: readonly string[]): string =>
   args.map((arg) => `"${arg}"`).join(" ");
 
+const BUNDLE_ID_REGEX =
+  /<key>CFBundleIdentifier<\/key>\s*<string>([^<]+)<\/string>/;
+
 export const ensureMacShortcut = async (
   target: ShortcutTarget,
   shortcutName: string,
@@ -46,13 +49,61 @@ export const ensureMacShortcut = async (
   const originalContentsDir = path.dirname(originalMacOsDir);
   const originalFrameworksDir = path.join(originalContentsDir, "Frameworks");
   const originalResourcesDir = path.join(originalContentsDir, "Resources");
+  const originalInfoPlist = path.join(originalContentsDir, "Info.plist");
 
-  // Create symlinks for heavy resources (Thin Bundle strategy)
+  // Read original Bundle ID
+  let originalBundleId = "com.codeaihub.launcher"; // Fallback
   try {
-    await fs.symlink(originalFrameworksDir, frameworksDir);
+    const infoContent = await fs.readFile(originalInfoPlist, "utf8");
+    const match = infoContent.match(BUNDLE_ID_REGEX);
+    if (match) {
+      originalBundleId = match[1];
+    }
+  } catch (_e) {
+    // Ignore error, use fallback
+  }
+
+  // Create symlinks for heavy resources
+  try {
     await fs.symlink(originalResourcesDir, resourcesDir);
   } catch (_e) {
-    // If symlinking fails (e.g. original doesn't have Frameworks?), log/ignore
+    // Ignore
+  }
+
+  // Handle Frameworks: Symlink heavy framework, COPY and PATCH helpers
+  await ensureDirectory(frameworksDir);
+  try {
+    const items = await fs.readdir(originalFrameworksDir);
+    for (const item of items) {
+      const srcPath = path.join(originalFrameworksDir, item);
+      const destPath = path.join(frameworksDir, item);
+
+      if (item.endsWith(".framework")) {
+        // Symlink heavy frameworks
+        await fs.symlink(srcPath, destPath);
+      } else if (item.endsWith(".app")) {
+        // Copy helper apps recursively
+        await fs.cp(srcPath, destPath, { recursive: true });
+
+        // Patch Helper Info.plist
+        const helperInfoPlist = path.join(destPath, "Contents", "Info.plist");
+        try {
+          const content = await fs.readFile(helperInfoPlist, "utf8");
+          const newContent = content.replace(
+            originalBundleId,
+            bundleIdentifier
+          );
+          await fs.writeFile(helperInfoPlist, newContent, "utf8");
+        } catch (_e) {
+          // Ignore if Info.plist missing (unlikely)
+        }
+      } else {
+        // Symlink other files (libraries, etc.)
+        await fs.symlink(srcPath, destPath);
+      }
+    }
+  } catch (_e) {
+    // Fallback if Frameworks dir doesn't exist or fails
   }
 
   // Copy the binary (Binary Copy strategy)
