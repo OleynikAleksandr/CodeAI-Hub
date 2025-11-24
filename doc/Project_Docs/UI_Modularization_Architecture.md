@@ -1,8 +1,8 @@
 # UI Modularization Architecture
 
-**Версия:** 1.1.0
+**Версия:** 1.2.0
 **Дата обновления:** 2025-11-24
-**Статус:** Implemented (v1.1.302)
+**Статус:** Implemented (v1.1.313)
 **Реализация:** `src/extension-module/ui/`
 **Stack Doc:** `doc/Project_Docs/Stacks/UI_Modules.md`
 
@@ -14,7 +14,7 @@
 Ранее UI бандлы были встроены в VSIX, что увеличивало его размер и требовало полной переустановки расширения для обновления интерфейса.
 
 ### Решение
-В версии 1.1.302 UI бандлы (`vscode-webview`, `web-client`) вынесены в отдельные модули. VSIX содержит только манифест `assets/ui/manifest.json`. При старте расширение проверяет наличие UI в `~/.codeai-hub/packages/ui/` и при необходимости устанавливает их из локальных архивов (в dev-режиме) или скачивает (в будущем).
+В версии 1.1.302+ UI бандлы (`vscode-webview`, `web-client`, `project-manager`) вынесены в отдельные модули. VSIX содержит только манифест `assets/ui/manifest.json`. При старте расширение проверяет наличие UI в `~/.codeai-hub/packages/ui/` и при необходимости устанавливает их из локальных архивов (в dev-режиме) или скачивает (в будущем).
 
 ### Результат
 - ✅ VSIX уменьшен с ~700KB до ~370KB.
@@ -33,21 +33,28 @@ UI модули устанавливаются в унифицированную
 ├── packages/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.302/
+│       │   ├── 1.1.313/
 │       │   │   ├── index.html
 │       │   │   ├── dist/
 │       │   │   ├── assets/
 │       │   │   └── manifest.json
-│       │   └── current -> 1.1.302
-│       └── web-client/
-│           ├── 1.1.302/
+│       │   └── current -> 1.1.313
+│       ├── web-client/
+│       │   ├── 1.1.313/
+│       │   │   ├── index.html
+│       │   │   ├── dist/
+│       │   │   └── manifest.json
+│       │   └── current -> 1.1.313
+│       └── project-manager/
+│           ├── 1.1.313/
 │           │   ├── index.html
 │           │   ├── dist/
 │           │   └── manifest.json
-│           └── current -> 1.1.302
+│           └── current -> 1.1.313
 └── releases/
-    ├── vscode-webview-1.1.302.tar.bz2
-    └── web-client-1.1.302.tar.bz2
+    ├── vscode-webview-1.1.313.tar.bz2
+    ├── web-client-1.1.313.tar.bz2
+    └── project-manager-1.1.313.tar.bz2
 ```
 
 ### 2.2 Компоненты
@@ -58,7 +65,7 @@ UI модули устанавливаются в унифицированную
 - Инициализирует `UIBundleInstaller`.
 - Вызывает `prepareUIBundles()`, который:
     1. Читает `assets/ui/manifest.json`.
-    2. Для каждого бандла (`vscode-webview`, `web-client`) вызывает `installer.ensureInstalled()`.
+    2. Для каждого бандла (`vscode-webview`, `web-client`, `project-manager`) вызывает `installer.ensureInstalled()`.
     3. Возвращает пути к `current` версиям.
 - Логирует результат (Installed vs Embedded fallback).
 
@@ -84,18 +91,25 @@ UI модули устанавливаются в унифицированную
   "baseUrl": "file:///Users/user/.codeai-hub/releases/",
   "bundles": {
     "vscode-webview": {
-      "version": "1.1.302",
-      "archive": "vscode-webview-1.1.302.tar.bz2",
+      "version": "1.1.313",
+      "archive": "vscode-webview-1.1.313.tar.bz2",
       "sha1": "...",
       "sizeBytes": 123456,
       "required": true
     },
     "web-client": {
-      "version": "1.1.302",
-      "archive": "web-client-1.1.302.tar.bz2",
+      "version": "1.1.313",
+      "archive": "web-client-1.1.313.tar.bz2",
       "sha1": "...",
       "sizeBytes": 123456,
       "required": true
+    },
+    "project-manager": {
+      "version": "1.1.313",
+      "archive": "project-manager-1.1.313.tar.bz2",
+      "sha1": "...",
+      "sizeBytes": 123456,
+      "required": false
     }
   }
 }
@@ -118,7 +132,7 @@ UI модули устанавливаются в унифицированную
     6. Обновляет `assets/ui/manifest.json` в исходниках расширения.
 
 - `scripts/build-all.sh`:
-    - Вызывает `build-ui-bundle.sh` для обоих бандлов перед упаковкой VSIX.
+    - Вызывает `build-ui-bundle.sh` для всех бандлов перед упаковкой VSIX.
 
 ### 3.2 VSIX Packaging
 - `.vscodeignore` исключает тяжелые папки `media/` (кроме необходимых заглушек), так как они теперь поставляются отдельно.
@@ -135,7 +149,7 @@ UI модули устанавливаются в унифицированную
 
 ### 4.2 CEF Launcher
 `CodeAIHubLauncher` получает путь к UI через `config.json`.
-- `extension.ts` формирует конфиг, указывая `uiRoot` на `packages/ui/web-client/current`.
+- `extension.ts` формирует конфиг, указывая `uiRoot` на `packages/ui/web-client/current` (или `project-manager/current`).
 - Launcher загружает `index.html` из этого пути.
 
 ---
@@ -144,3 +158,4 @@ UI модули устанавливаются в унифицированную
 - **Remote Updates**: Переключение `baseUrl` на GitHub Releases для публичных обновлений.
 - **Background Updates**: Проверка новых версий UI в фоне без перезапуска расширения (hot swap для Webview возможен при переоткрытии).
 - **Admin Panel**: Добавление третьего бандла для администрирования.
+
