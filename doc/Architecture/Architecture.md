@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.5.2  
-**Last Updated:** 2025-11-22  
-**Status:** Active reference  
-**Release Focus:** v1.1.300 — Settings provider cards теперь читают версии Gemini CLI Core напрямую из упакованных manifest + пользовательского кеша `~/.codeai-hub/providers/gemini/**`, а extension host прокидывает `extensionPath` во все settings/installer фасады, чтобы UI и провайдеры работали с локальными артефактами без расхождений.
+**Version:** 0.5.3
+**Last Updated:** 2025-11-24
+**Status:** Active reference
+**Release Focus:** v1.1.302 — UI Modularization Complete. VS Code Webview и CEF Launcher теперь загружают UI из независимых пакетов (`~/.codeai-hub/packages/ui/**`), устанавливаемых при старте. VSIX больше не содержит тяжелых JS/CSS ассетов.
 
 ---
 
@@ -30,7 +30,7 @@ graph TD
 
 ## Extension Host Layer
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, административные действия) и инициализирует `HomeViewProvider`.
-- **UI bundle bootstrap**: `prepareUIBundles` читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/current`, логирует источник (`installed`/`embedded`) и прокидывает пути в `HomeViewProvider` и CEF launcher. VSIX больше не несёт `media/react-chat.js`/`media/web-client/dist/`, embedded ассеты остаются только dev fallback’ом.
+- **UI bundle bootstrap (v1.1.302)**: `ui-activation.ts` (вызывается из `activate`) читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current` и логирует источник (`installed`/`embedded`). VSIX больше не несёт `media/react-chat.js`/`media/web-client/dist/`, embedded ассеты остаются только dev fallback’ом.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
 - **Core Bootstrap**: при старте расширение проверяет наличие автономного ядра и вспомогательных компонентов. Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/providers/gemini/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…` (на основной dev‑машине — `file:///Users/oleksandroliinyk/.codeai-hub/releases/`), поэтому установка и запуск полностью офлайн и не зависят от GitHub Releases. Переключение `baseUrl` на удалённое хранилище (GitHub Releases/CDN) рассматривается как отдельная задача для этапа публичных релизов и в эту версию сознательно не входит. Core Supervisor (`@codeai-hub/core-supervisor`, CLI `codeai-core`), который выбирает установленный runtime и запускает ядро с нужным окружением (`CORE_HOST/CORE_PORT/CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`). Исторически предполагалось, что для публичных релизов `baseUrl` в манифестах будет переключаться на GitHub Releases, но на текущем этапе разработки это намеренно не используется и будет возвращено в отдельной фазе, когда появится внешняя инфраструктура релизов. Инсталляторы используют общие хелперы `runtime-files` и `launcher-install-helpers`, которые переиспользуют локальные кеши, валидируют контрольные суммы и удерживают файлы в пределах архитектурного лимита. Менеджеры (VS Code и launcher) разделяют “ensure” и “attach” потоки: `CoreProcessManager.attachToRunningCore()` подключается к уже запущенному orchestrator’у, если версия совпадает, не трогая провайдерные директории, а `ensureStarted()` через Supervisor стартует новое ядро только при отсутствии или устаревании текущего экземпляра; ядро живёт до явного `shutdown` или истечения TTL.
@@ -56,7 +56,7 @@ graph TD
 ## Local CEF Client
 - **Bundle**: UI ставится в `~/.codeai-hub/packages/ui/web-client/current` из release tar.bz2 (dev fallback — `media/web-client/dist/`), собранного из общих React-компонентов (`src/client/ui/src`). HTML содержит встроенный stub VS Code API и инлайн-стили (`main-view.css`, `session-view.css`, `react-chat.css`), чтобы визуально совпадать с webview.
 - **Runtime Delivery**: `assets/cef/manifest.json` описывает CEF minimal-пакеты для Windows, macOS (x64/arm64) и Linux x64. Модуль `src/extension-module/cef/runtime-installer.ts` скачивает архивы в `~/.codeai-hub/cef/<platform>/<cefVersion>/`, проверяет SHA-1 и распаковывает `Release/`.
-- **Launcher Delivery**: `assets/launcher/manifest.json` фиксирует версии `CodeAIHubLauncher`. Модуль `src/extension-module/cef/launcher-installer.ts` скачивает архив лаунчера, распаковывает его в `~/.codeai-hub/cef-launcher/<platform>/<launcherVersion>/` и создаёт `install.json`. При наличии собранного бинаря (локальный fallback) установка пропускается.
+- **Launcher Delivery**: `assets/launcher/manifest.json` фиксирует версии `CodeAIHubLauncher`. Модуль `src/extension-module/cef/launcher-installer.ts` скачивает архив лаунчера, распаковывает его в `~/.codeai-hub/packages/launcher/<platform>/<launcherVersion>/` (packages layout) и создаёт `install.json`. При наличии собранного бинаря (локальный fallback) установка пропускается.
 - **Launcher Execution**: команда `codeaiHub.launchWebClient` вызывает `ensureCefRuntime` и `ensureLauncherInstalled`, генерирует `config/config.json` рядом с бинарём и запускает `CodeAIHubLauncher` с флагами `--config` + `--url` + `--use-alloy-style`.
 - **Standalone bootstrap**: при запуске `CodeAIHubLauncher` внутри приложения встраивается проверка core. Если оркестратор ещё не запущен, лаунчер поднимает bundled Node runtime (`~/.codeai-hub/core/<platform>/<version>/node/bin/node`) и стартует `app/dist/index.js`, прокидывая те же переменные окружения, что и VS Code расширение. Это гарантирует, что автономный интерфейс получает финальный `core:loading-status` и снимает оверлей без участия редактора.
 - **Logging**: лаунчер пишет ротационный лог в `~/.codeai-hub/logs/launcher/launcher.log`, а ядро — JSON-журнал в `~/.codeai-hub/logs/core/core.log` (путь прокидывается через `CODEAI_CORE_LOG_FILE`). Провайдеры Claude/Codex/Gemini ведут потоковые jsonl-журналы в формате `~/.codeai-hub/logs/<provider>/sdk-<provider>-<sessionId>.jsonl`, где сохраняется только сырой поток событий SDK; нормализованные `norm-*` файлы появятся вместе с враперами.
@@ -75,7 +75,7 @@ graph TD
 
 ## Startup & Launch Flow
 1. Пользователь устанавливает VSIX. При первой активации `prepareUIBundles` ставит `vscode-webview` и `web-client` из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/**`, логирует источник (`installed`/`embedded`) и готовит реестр. VSIX несёт только манифесты; embedded `media/` остаётся dev fallback’ом.
-2. При подготовке команды `Launch Web Client` расширение считывает манифесты CEF и лаунчера, скачивает подходящие архивы в `~/.codeai-hub/cef/` и `~/.codeai-hub/cef-launcher/`, проверяет хэши и разворачивает содержимое.
+2. При подготовке команды `Launch Web Client` расширение считывает манифесты CEF и лаунчера, скачивает подходящие архивы в `~/.codeai-hub/cef/` и `~/.codeai-hub/packages/launcher/`, проверяет хэши и разворачивает содержимое.
 3. После успешной установки генерируется `config/config.json`, обновляются системные ярлыки (Windows Desktop, macOS `.app`, Linux `.desktop`) и записываются маркеры установки (`install.json`).
 4. Webview загружается из `~/.codeai-hub/packages/ui/vscode-webview/current` (команда `CodeAI Hub: Open`). Локальный клиент стартует через `CodeAIHubLauncher` и открывает `index.html` из `~/.codeai-hub/packages/ui/web-client/current` (dev fallback — `media/web-client/dist/`).
 5. Оба интерфейса работают параллельно; закрытие VS Code не мешает CEF-клиенту продолжать работу с ядром.
@@ -92,9 +92,14 @@ graph TD
 - Remote UI Bridge ограничивает число одновременных подключений и сбрасывает сессии после таймаута простоя.
 
 ## Dependencies & Tooling
-- **Build**: webview собирается в `media/react-chat.js`, автономный клиент — в `media/web-client/dist/app.js` (команда `npm run build:web-client`, скрипт `scripts/build-web-client.js`). Комбинированный пайплайн запускается `npm run compile` перед упаковкой VSIX.
+- **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг; архитектурный скрипт контролирует структуру `src/` и `media/`.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
+
+## Recent Changes (v1.1.302 - 2025-11-24)
+- **UI Modularization**: VS Code Webview и CEF Launcher переведены на использование внешних UI бандлов. VSIX пакет уменьшен с ~700KB до ~370KB.
+- **Packages Layout**: Внедрена унифицированная структура `~/.codeai-hub/packages/` для хранения компонентов (core, launcher, ui, providers).
+- **UI Installer**: Реализован механизм установки и обновления UI бандлов при старте расширения.
 
 ## Recent Changes (v1.1.300 - 2025-11-22)
 - Settings provider cards теперь используют `ProviderVersionService`, который читает Gemini manifest внутри VSIX и сравнивает его с установленным кэшем `~/.codeai-hub/providers/gemini/**`, поэтому локальная версия `@google/gemini-cli-core` больше не отображается как `Not detected`.
@@ -142,3 +147,4 @@ graph TD
 - `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
 - `doc/TODO/todo-plan.md`
 - `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`
+- `doc/Project_Docs/Stacks/UI_Modules.md`
