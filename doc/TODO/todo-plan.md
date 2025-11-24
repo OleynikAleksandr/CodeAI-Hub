@@ -50,10 +50,10 @@
 4. [DONE] Добавить валидацию в `UIRegistry`/installer для поддержки смешанного layout `ui/` и `packages/ui/` во время миграции — scope: `src/extension-module/ui/ui-registry.ts`, `src/extension-module/ui/ui-bundle-installer.ts`; target commit: `feat: harden ui bundle layout resolution` (f4da74f)
 
 ### Stream: Documentation & architecture alignment (документация и синхронизация архитектуры)
-1. [TODO] Завершить стек-документ `UI_Modules` для UI-пакетов — scope: `doc/Project_Docs/Stacks/UI_Modules.md`; target commit: `docs: add ui modules stack`
-2. [TODO] Синхронизировать UI-раздел в `Architecture.md` с планом модульного UI и офлайн-ограничениями — scope: `doc/Architecture/Architecture.md`; target commit: `docs: align architecture with ui modularization`
-3. [TODO] Синхронизировать `SystemArchitecture.md` с UI-бандлами и layout `packages` (core/providers/launcher/ui) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; target commit: `docs: describe ui bundles in system architecture`
-4. [TODO] Убедиться, что `UI_Modularization_Architecture.md` отражает фактически реализованные installer/update-потоки — scope: `doc/Project_Docs/UI_Modularization_Architecture.md`; target commit: `docs: update ui modularization architecture post-implementation`
+1. [DONE] Завершить стек-документ `UI_Modules` для UI-пакетов — scope: `doc/Project_Docs/Stacks/UI_Modules.md`; target commit: `docs: add ui modules stack`
+2. [DONE] Синхронизировать UI-раздел в `Architecture.md` с планом модульного UI и офлайн-ограничениями — scope: `doc/Architecture/Architecture.md`; target commit: `docs: align architecture with ui modularization`
+3. [DONE] Синхронизировать `SystemArchitecture.md` с UI-бандлами и layout `packages` (core/providers/launcher/ui) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; target commit: `docs: describe ui bundles in system architecture`
+4. [DONE] Убедиться, что `UI_Modularization_Architecture.md` отражает фактически реализованные installer/update-потоки — scope: `doc/Project_Docs/UI_Modularization_Architecture.md`; target commit: `docs: update ui modularization architecture post-implementation`
 
 ### Stream: End-to-end verification & release prep (e2e-проверка и подготовка релиза)
 1. [DONE] Запустить таргетные сборки для UI-воркспейсов и webview (`npm run build --workspace <ui packages>`, `npm run build:webview`, `npm run typecheck:webview`) — scope: `package.json`, CI/build notes`; target commit: `chore: verify ui builds and typechecking`
