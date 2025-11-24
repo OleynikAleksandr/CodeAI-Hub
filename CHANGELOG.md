@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.305] - 2025-11-24
+### Added
+- **UI Modularization**: The UI is now fully decoupled from the extension and launcher. It is distributed as a separate `vscode-webview` and `web-client` bundle, installed into `~/.codeai-hub/packages/ui/<version>/`.
+- **Packages Layout**: Migrated local artifacts to a structured `~/.codeai-hub/packages/{core,launcher,providers,ui}` layout, improving organization and version management.
+- **Offline UI Installer**: New `UIBundleInstaller` ensures UI assets are provisioned offline from the local release cache, removing runtime dependencies on embedded assets.
+
+### Changed
+- **Launcher**: Updated to support the new `packages` layout, enabling it to locate and load the standalone web client from the shared UI package.
+- **Build Pipeline**: `build-all.sh` now generates and packages UI bundles (`vscode-webview-*.tar.bz2`, `web-client-*.tar.bz2`) alongside core and providers.
+
+### Build
+- VSIX → `codeai-hub-1.1.305.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.305.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.305.tar.bz2`
+- Providers → `claude-module-1.1.305.tar.bz2`, `codex-module-1.1.305.tar.bz2`, `gemini-module-1.1.305.tar.bz2`
+- UI → `vscode-webview-1.1.305.tar.bz2`, `web-client-1.1.305.tar.bz2`
+
 ## [1.1.300] - 2025-11-22
 ### Fixed
 - Settings now resolves the installed `@google/gemini-cli-core` version by reading the shipped Gemini manifest plus the cached provider bundle under `~/.codeai-hub`, so the Gemini card shows your actual version instead of “Not detected”.
