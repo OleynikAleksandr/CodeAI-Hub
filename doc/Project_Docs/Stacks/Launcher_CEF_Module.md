@@ -94,7 +94,15 @@ The existing `~/.codeai-hub/cef-launcher/**` layout remains valid while the migr
 - When started without a pre-running core, the launcher first attempts to invoke the Supervisor CLI (`codeai-core start --host … --port …`); if the CLI is not available in `PATH`, it falls back to launching the core runtime directly via `<runtime>/node/bin/node app/dist/index.js`, using the same environment variables as the extension/CLI.
 - DevTools can be toggled via CLI flag (add `--devtools` when launching manually).
 
+## Multi-Instance Architecture
+To support running multiple independent applications (e.g., Web Client and Project Manager) simultaneously, each application instance must use a unique User Data Directory. This prevents locking conflicts within the underlying Chromium process.
+
+- **Web Client**: Uses `~/.codeai-hub/data/web-client`
+- **Project Manager**: Uses `~/.codeai-hub/data/project-manager`
+
+This is achieved by passing the `--user-data-dir=<path>` argument to the launcher binary.
+
 ## Future Work
-- Publish launcher binaries for macOS x64, Windows x64/arm64, Linux x64 with the same manifest layout.
-- Migrate from `file://` to custom `codeaihub://` scheme and enable remote bridge mode.
-- Automate signing and distribution once public release infrastructure is ready.
+- **Multi-Tab Support**: The current architecture spawns a separate process for each "app". Future versions of the launcher may support opening multiple tabs or windows within a single process instance if they share the same `userDataDir`.
+- **Remote Bridge**: Migrate from `file://` to custom `codeaihub://` scheme and enable remote bridge mode.
+- **Distribution**: Automate signing and distribution once public release infrastructure is ready.
