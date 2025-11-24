@@ -12,7 +12,7 @@ export type UIManifest = {
 /**
  * Unique identifiers for supported UI bundles.
  */
-export type UIBundleId = "vscode-webview" | "web-client";
+export type UIBundleId = "vscode-webview" | "web-client" | "project-manager";
 
 /**
  * Describes a single UI bundle artifact.
