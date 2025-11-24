@@ -20,4 +20,9 @@
 ### Stream: Project Manager Launcher Integration
 1. [DONE] Update `LauncherInstaller` to deploy PM config (`config/project-manager.json`) — scope: `src/extension-module/cef/launcher-installer.ts`
 2. [DONE] Implement shortcut creation for `CodeAI Hub Project Manager.app` — scope: `src/extension-module/web-client/shortcut-manager.ts`
-3. [IN_PROGRESS] Verify standalone launch and core connection — scope: `manual verification`
+3. [IN_PROGRESS] Verify standalone launch and core connection — scope: `manual verification` (Ready for user testing)
+
+### Stream: Project Manager UI Upgrade
+1. [DONE] Scaffold `src/client/project-manager` (React App) — scope: `src/client/project-manager/**`
+2. [DONE] Create `scripts/build-project-manager.js` and update `package.json` — scope: `scripts/**`, `package.json`
+3. [DONE] Update `scripts/build-ui-bundle.sh` to package the React app — scope: `scripts/build-ui-bundle.sh`
