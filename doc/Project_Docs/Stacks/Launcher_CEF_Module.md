@@ -12,13 +12,13 @@ CodeAI Hub uses a dedicated Chromium Embedded Framework (CEF) launcher to run th
 2. The manifest entry (`baseUrl` → `file:///Users/oleksandroliinyk/.codeai-hub/releases/`) is resolved to a tarball (`CodeAIHubLauncher-macos-arm64-1.1.300.tar.bz2`).
 3. The archive is downloaded or reused from the local cache, verified via SHA-1 and unpacked into `~/.codeai-hub/cef-launcher/darwin-arm64/1.1.300/`.
 4. Installation metadata is written to `install.json`, and downloads are mirrored under `downloads/` for reuse.
-5. The extension generates `config/config.json` next to the binary, preserving any existing keys and updating `uiRoot`, `entry`, `url`, `generatedAt`.
+5. The extension generates `config/config.json` (for Web Client) and `config/project-manager.json` (for Project Manager) next to the binary, preserving any existing keys and updating `uiRoot`, `entry`, `url`, `generatedAt`.
 6. Launch relies on `CodeAIHubLauncher.app/Contents/MacOS/CodeAIHubLauncher` with arguments `--config=<path>` `--url=file://...` `--use-alloy-style`.
 
 ## Configuration & Autosave
 - On macOS the launcher calls `setFrameAutosaveName(@"CodeAIHubMainWindow")`. Window geometry is handled by AppKit and stored in `~/Library/Preferences/com.codeaihub.launcher.plist`.
 - Legacy coordinates (`CodeAIHubStandaloneWindowState`) are migrated once and then ignored.
-- The launcher reads `config/config.json` for:
+- The launcher reads `config/config.json` (or `config/project-manager.json`) for:
   - `uiRoot` — absolute path to `media/web-client/dist`
   - `entry` — `index.html`
   - `url` — resolved `file://` URL (fallback until dedicated scheme is shipped)
@@ -54,6 +54,7 @@ As the UI modularization plan evolves, the launcher and UI bundles move towards 
           CodeAIHubLauncher.app
           config/
             config.json
+            project-manager.json
           install.json
     ui/
       vscode-webview/
