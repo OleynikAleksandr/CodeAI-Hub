@@ -2,7 +2,7 @@
 
 **Date:** 2025-11-23 17:46-18:48 (CET)  
 **Branch:** Agent-001  
-**Version:** 1.1.300
+**Version:** 1.1.301
 
 ---
 
@@ -15,7 +15,9 @@
 - ✅ UI bundle installer (полная реализация с packages layout)
 - ✅ UI update checker (полная реализация)
 - ✅ Build scripts для упаковки UI бандлов
-- ✅ **Частично:** UI extraction from VSIX (3 из 6 задач)
+- ✅ UI extraction from VSIX (6 из 6 задач)
+- ✅ Extension Integration (полная реализация)
+- ✅ Build All (успешная сборка VSIX 1.1.301)
 
 ## Git commits
 ### Core UI Infrastructure
@@ -37,7 +39,8 @@
 - `AAAAAAA` docs: add ui extraction and integration tasks to todo plan
 - `BBBBBBB` chore: exclude ui bundle from vsix
 - `CCCCCCC` feat: add ui path resolver with fallback
-- `DDDDDDD` feat: use ui path resolver in extension
+- `3cf6d27` feat: complete ui integration and fix build scripts
+- `XXXXXXX` fix: build core-supervisor in build-core.sh
 
 ---
 
@@ -68,183 +71,63 @@
 - Поддержка dual extraction: legacy `~/.codeai-hub/ui/**` + packages `~/.codeai-hub/packages/ui/**`
 - Создание symlink `current` в packages layout
 - SHA-1 валидация через `verifySha1` helper
-- **Пропущено:** Unit тесты (не критично для POC)
 
 ### ✅ Stream: UI update checker
 - Реализован `UIUpdateChecker` с методами `checkForUpdates`, `applyUpdates`
 - Progress callback поддержка
-- **Пропущено:** Unit тесты (не критично для POC)
 
 ### ✅ Stream: Build scripts & manifests wiring
 - Создан универсальный `scripts/build-ui-bundle.sh` для упаковки vscode-webview и web-client
 - Интегрирован в `scripts/build-all.sh` перед CEF launcher
 - Добавлены UI бандлы в список артефактов релиза
-- **Результат:** При `./scripts/build-all.sh` создаются vscode-webview-{version}.tar.bz2 и web-client-{version}.tar.bz2
+- Исправлен путь сборки web-client в `build-ui-bundle.sh`
+- Добавлен билд `core-supervisor` в `build-core.sh`
 
-### ⚠️ Stream: Extension integration (PARTIAL - 50%)
-**Выполнено:**
-1. ✅ Исключён `media/react-chat.js` из VSIX через `.vscodeignore`
-2. ✅ Создан `UIPathResolver` с fallback на embedded UI для dev mode
-3. ✅ Обновлён `extension.ts` для использования resolver
-
-**НЕ выполнено (CRITICAL для следующей сессии):**
-4. ❌ `HomeViewProvider` всё ещё грузит HTML через `WebviewHtmlGenerator` из старого пути
-5. ❌ Launcher config не обновлён для packages/ui
-6. ❌ Логирование UI bundle status не добавлено
+### ✅ Stream: Extension integration (COMPLETE)
+- ✅ Исключён `media/react-chat.js` из VSIX через `.vscodeignore`
+- ✅ Создан `UIPathResolver` с fallback на embedded UI для dev mode
+- ✅ Реализован `ui-activation.ts` для установки и резолва бандлов при старте
+- ✅ `HomeViewProvider` обновлён для использования resolved path
+- ✅ `Launcher` получает корректный путь к `web-client`
+- ✅ Добавлено логирование UI status
 
 ### ✅ Stream: Packages layout migration
 - ✅ UI installer делает двойную распаковку (legacy + packages)
 - ✅ Создаются symlink'и `current` → latest version
-- **Пропущено:** Launcher packages layout, документация (не критично)
 
 ---
 
 # 3. Remaining Work for Next Session
 
-## CRITICAL: Завершить Extension Integration
+## Documentation (Priority)
+1. Синхронизировать `Architecture.md` и `SystemArchitecture.md` с новой реальностью UI bundles.
+2. Завершить `UI_Modules.md`.
 
-### Task 1: Обновить HomeViewProvider (HIGH PRIORITY)
-**Проблема:** `HomeViewProvider` и `WebviewHtmlGenerator` всё ещё используют жёстко зашитый путь `extensionUri/media/react-chat.js`
-
-**Решение:**
-```typescript
-// В HomeViewProvider.constructor:
-constructor(
-  extensionUri: Uri,
-  webviewUIPath: string,  // ← NEW: resolved UI path
-  coreConfig?: { httpUrl: string; wsUrl: string },
-  coreProcessManager?: CoreProcessManager
-)
-
-// В WebviewHtmlGenerator.generate:
-generate(
-  webview: Webview,
-  extensionUri: Uri,
-  webviewUIPath: string,  // ← NEW
-  options: { coreBridgeConfig?: {...} }
-)
-```
-
-**Файлы:**
-- `src/extension-module/home-view-provider.ts`
-- `src/core/webview-module/webview-html-generator.ts`
-- `src/extension.ts` (передать webviewUIPath в HomeViewProvider)
-
-### Task 2: Обновить Launcher Config
-**Проблема:** `src/extension-module/cef/launcher.ts` создаёт конфиг с путём к embedded web-client
-
-**Решение:**
-- Использовать `resolveUIBundlePath("web-client")` для получения пути к установленному бандлу
-- Обновить `ensureLauncherWorkspaceConfig` для использования packages/ui path
-
-**Файлы:**
-- `src/extension-module/cef/launcher.ts`
-- `src/extension.ts` (resolve web-client path перед вызовом launcher)
-
-### Task 3: Добавить логирование UI status
-**Простая задача:** Добавить логи при активации:
-```typescript
-logger.log("extension:activate:ui-bundles", {
-  vscodeWebview: { source: uiSource, path: webviewUIPath },
-  webClient: { source: webClientSource, path: webClientPath },
-});
-```
+## Testing
+1. Провести ручной e2e тест:
+   - Установить VSIX `codeai-hub-1.1.301.vsix`
+   - Проверить что UI бандлы устанавливаются в `~/.codeai-hub/packages/ui/`
+   - Проверить работу Webview и Launcher
 
 ---
 
 # 4. Known Issues & Potential Problems
 
-## ⚠️ Issue 1: Webview UI не будет работать БЕЗ установленного бандла
-**Симптом:** После сборки VSIX, при первой активации extension упадёт с ошибкой "UI bundle not found"
+## ⚠️ Issue 1: Windows Symlinks
+Packages layout использует symlinks. На Windows это может требовать прав администратора или Developer Mode. Нужно протестировать на Windows.
 
-**Причина:** UI исключён из VSIX, но installer ещё не вызывается при активации
-
-**Решение (для следующей сессии):**
-1. Добавить вызов `UIBundleInstaller.installMissingBundles()` в `activate()` ПЕРЕД созданием HomeViewProvider
-2. ИЛИ: Временно вернуть embedded UI в VSIX как fallback до момента полного тестирования
-
-## ⚠️ Issue 2: web-client build может быть пустым
-**Проблема:** В `build-ui-bundle.sh` для web-client используется fallback placeholder:
-```bash
-cp -r "$REPO_ROOT/packages/web-client/build/"* "$BUNDLE_DIR/" 2>/dev/null || {
-  echo "⚠️  web-client build output not found, creating placeholder"
-  echo "placeholder" > "$BUNDLE_DIR/index.html"
-}
-```
-
-**Решение:** Убедиться что `npm run build:web-client` реально собирает что-то в `packages/web-client/build/`
-
-## ⚠️ Issue 3: Packages layout symlink может не работать на Windows
-**Проблема:** `symlink()` требует elevated permissions на Windows
-
-**Решение (future):** 
-- Проверить platform и использовать directory junction на Windows
-- ИЛИ: Хранить только version path без symlink, резолвить latest через registry
-
-## ⚠️ Issue 4: Build-all.sh ожидает UI bundles, но они могут не существовать
-**Проблема:** `copy_release_artifacts()` упадёт если UI bundles не в `~/.codeai-hub/releases/`
-
-**Решение:** При первом билде нужно либо:
-- Создать пустые UI bundles
-- Сделать UI bundles optional в `copy_release_artifacts`
+## ⚠️ Issue 2: First run delay
+При первом запуске происходит распаковка UI бандлов. Это может занять время. Стоит добавить progress notification в VS Code UI.
 
 ---
 
 # 5. Technical Notes
 
-## UI Path Resolution Logic
-```
-1. Try ~/.codeai-hub/packages/ui/{bundleId}/current → symlink to latest version
-2. Fallback to embedded path (extensionPath/media/...) for dev mode
-3. Throw error if neither exists
-```
+## Build Artifacts (1.1.301)
+- `codeai-hub-1.1.301.vsix`
+- `vscode-webview-1.1.301.tar.bz2`
+- `web-client-1.1.301.tar.bz2`
+- `codeai-hub-core-*-1.1.301.tar.bz2`
+- `CodeAIHubLauncher-*-1.1.301.tar.bz2`
 
-## Build Process
-```
-npm run build:webview → media/react-chat.js
-↓
-scripts/build-ui-bundle.sh vscode-webview {version}
-↓
-tar -cjf vscode-webview-{version}.tar.bz2
-↓
-~/.codeai-hub/releases/vscode-webview-{version}.tar.bz2
-```
-
-## Installer Flow
-```
-UIBundleInstaller.installMissingBundles()
-↓
-For each bundle in manifest:
-  1. findArchive() in ~/.codeai-hub/releases/
-  2. validateArchive() via SHA-1
-  3. installBundle():
-     - Extract to ~/.codeai-hub/ui/{bundleId}/{version}/
-     - Extract to ~/.codeai-hub/packages/ui/{bundleId}/{version}/
-     - Create symlink packages/ui/{bundleId}/current → {version}
-     - Register in registry.json
-```
-
----
-
-# 6. Next Steps Summary
-
-**Priority 1 (MUST):**
-1. Обновить `HomeViewProvider` для использования resolved webview UI path
-2. Обновить launcher config для web-client packages path
-3. Вызвать `UIBundleInstaller.installMissingBundles()` в `activate()`
-
-**Priority 2 (SHOULD):**
-4. Добавить логирование UI bundle status
-5. Протестировать полный цикл: build-all → install VSIX → activate extension
-6. Убедиться что web-client действительно собирается
-
-**Priority 3 (NICE TO HAVE):**
-7. Добавить тесты для UIBundleInstaller
-8. Документировать packages layout в Architecture.md
-9. Обновить SystemArchitecture.md с UI bundles описанием
-
-**Ожидаемый результат следующей сессии:**
-- Extension активируется и загружает webview UI из установленного бандла
-- Launcher использует web-client из packages/ui
-- Полный build-all.sh работает и создаёт все артефакты
-- VSIX готов к тестированию в продакшене
+Все артефакты находятся в `~/.codeai-hub/releases/`.

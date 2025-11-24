@@ -35,8 +35,8 @@
 1. [DONE] Создать универсальный `scripts/build-ui-bundle.sh` для упаковки UI бандлов — scope: `scripts/build-ui-bundle.sh`; target commit: `chore: update ui bundle build pipeline` (dfef274)
 2. [DONE] Интегрировать UI builds в `scripts/build-all.sh` — scope: `scripts/build-all.sh`; target commit: `chore: update ui bundle build pipeline` (dfef274)
 
-### Stream: Extension integration (webview & launcher) (интеграция в расширение и лаунчер)
-1. [DONE] Исключить `media/react-chat.js` из VSIX — scope: `.vscodeignore`; target commit: `chore: update ui bundle build pipeline` (dfef274)
+### Stream: Extension integration (интеграция в расширение)
+1. [DONE] Исключить UI bundle из VSIX (.vscodeignore) — scope: `.vscodeignore`; target commit: `chore: exclude ui bundle from vsix` (808d721)
 2. [DONE] Добавить helper для резолва UI bundle path с fallback на embedded UI — scope: `src/extension-module/ui/ui-path-resolver.ts`, `src/extension-module/ui/index.ts`; target commit: `feat: add ui bundle helpers` (5c4eacc)
 3. [DONE] Обновить `extension.ts` для использования UI path resolver — scope: `src/extension.ts`; target commit: `feat: install ui bundles during activation` (c674990)
 4. [DONE] Обновить `HomeViewProvider` для загрузки UI из resolved path — scope: `src/extension-module/home-view-provider.ts`, `src/core/webview-module/webview-html-generator.ts`; target commit: `feat: use resolved ui bundle for webview` (42c43a8)
@@ -56,7 +56,7 @@
 4. [TODO] Убедиться, что `UI_Modularization_Architecture.md` отражает фактически реализованные installer/update-потоки — scope: `doc/Project_Docs/UI_Modularization_Architecture.md`; target commit: `docs: update ui modularization architecture post-implementation`
 
 ### Stream: End-to-end verification & release prep (e2e-проверка и подготовка релиза)
-1. [TODO] Запустить таргетные сборки для UI-воркспейсов и webview (`npm run build --workspace <ui packages>`, `npm run build:webview`, `npm run typecheck:webview`) — scope: `package.json`, CI/build notes`; target commit: `chore: verify ui builds and typechecking`
+1. [DONE] Запустить таргетные сборки для UI-воркспейсов и webview (`npm run build --workspace <ui packages>`, `npm run build:webview`, `npm run typecheck:webview`) — scope: `package.json`, CI/build notes`; target commit: `chore: verify ui builds and typechecking`
 2. [TODO] Провести ручной e2e: свежая установка VSIX при наличии локальных UI-бандлов в `~/.codeai-hub/releases/` — scope: `doc/Sessions/SessionXXX.md`; target commit: `docs: record ui modularization e2e results`
 3. [TODO] Проверить, что лаунчер и VS Code webview оба читают UI из `~/.codeai-hub/packages/ui/**`, не опираясь на встроенные ассеты — scope: `doc/Sessions/SessionXXX.md`, `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`; target commit: `docs: confirm ui shared packages layout`
 4. [TODO] Закрыть Фазу 3, выполнив `./scripts/build-all.sh` на чистом дереве, и зафиксировать итоговые версии/tarball’ы — scope: `doc/Sessions/SessionXXX.md`, `doc/tmp/releases/**`; target commit: `chore: ui modularization phase 3 complete`
