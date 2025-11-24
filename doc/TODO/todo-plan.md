@@ -57,6 +57,6 @@
 
 ### Stream: End-to-end verification & release prep (e2e-проверка и подготовка релиза)
 1. [DONE] Запустить таргетные сборки для UI-воркспейсов и webview (`npm run build --workspace <ui packages>`, `npm run build:webview`, `npm run typecheck:webview`) — scope: `package.json`, CI/build notes`; target commit: `chore: verify ui builds and typechecking`
-2. [TODO] Провести ручной e2e: свежая установка VSIX при наличии локальных UI-бандлов в `~/.codeai-hub/releases/` — scope: `doc/Sessions/SessionXXX.md`; target commit: `docs: record ui modularization e2e results`
+2. [IN_PROGRESS] Провести ручной e2e: свежая установка VSIX при наличии локальных UI-бандлов в `~/.codeai-hub/releases/` — scope: `doc/Sessions/SessionXXX.md`; target commit: `docs: record ui modularization e2e results`
 3. [TODO] Проверить, что лаунчер и VS Code webview оба читают UI из `~/.codeai-hub/packages/ui/**`, не опираясь на встроенные ассеты — scope: `doc/Sessions/SessionXXX.md`, `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`; target commit: `docs: confirm ui shared packages layout`
-4. [TODO] Закрыть Фазу 3, выполнив `./scripts/build-all.sh` на чистом дереве, и зафиксировать итоговые версии/tarball’ы — scope: `doc/Sessions/SessionXXX.md`, `doc/tmp/releases/**`; target commit: `chore: ui modularization phase 3 complete`
+4. [DONE] Закрыть Фазу 3, выполнив `./scripts/build-all.sh` на чистом дереве, и зафиксировать итоговые версии/tarball’ы — scope: `doc/Sessions/SessionXXX.md`, `doc/tmp/releases/**`; target commit: `chore: ui modularization phase 3 complete`
