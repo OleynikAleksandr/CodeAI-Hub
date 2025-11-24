@@ -5,17 +5,10 @@ import {
   window,
   workspace,
 } from "vscode";
-import {
-  ensureLauncherWorkspaceConfig,
-  getCefClientTarget,
-  launchCefClient,
-} from "./extension-module/cef/launcher";
-import {
-  ensureLauncherInstalled,
-  type LauncherInstallInfo,
-} from "./extension-module/cef/launcher-installer";
+import { launchCefClient } from "./extension-module/cef/launcher";
+import type { LauncherInstallInfo } from "./extension-module/cef/launcher-installer";
+import { ensureLauncherDependencies } from "./extension-module/cef/launcher-setup";
 import { resolvePlatformKey } from "./extension-module/cef/platform";
-import { ensureCefRuntime } from "./extension-module/cef/runtime-installer";
 import { getDefaultCoreConnectionInfo } from "./extension-module/core/core-connection-info";
 import {
   getManifestEntryOrThrow,
@@ -34,30 +27,12 @@ import {
 } from "./extension-module/logging/extension-logger";
 import { recordVsixVersion } from "./extension-module/runtime/runtime-registry";
 import { prepareUIBundles } from "./extension-module/ui/ui-activation";
-import { ensureWebClientShortcuts } from "./extension-module/web-client/shortcut-manager";
 
 let coreProcessManager: CoreProcessManager | null = null;
 let coreKeepAlive: CoreKeepAlive | null = null;
 let cachedLauncherInstallInfo: LauncherInstallInfo | null = null;
 const resolveWorkspacePath = (): string =>
   workspace.workspaceFolders?.[0]?.uri.fsPath ?? process.cwd();
-
-async function ensureLauncherDependencies(
-  context: ExtensionContext,
-  indexPath: string,
-  workspacePath: string
-): Promise<LauncherInstallInfo> {
-  await ensureCefRuntime(context);
-  const ensuredLauncher = await ensureLauncherInstalled(context);
-  await ensureLauncherWorkspaceConfig(
-    ensuredLauncher,
-    indexPath,
-    workspacePath
-  );
-  const launcherTarget = getCefClientTarget(ensuredLauncher, indexPath);
-  await ensureWebClientShortcuts(launcherTarget);
-  return ensuredLauncher;
-}
 
 function ensureCoreAndProviderComponents(
   context: ExtensionContext
@@ -132,7 +107,8 @@ async function initializeCoreManager(context: ExtensionContext): Promise<void> {
 
 async function prepareLocalRuntime(
   context: ExtensionContext,
-  indexPath: string
+  indexPath: string,
+  projectManagerIndexPath: string
 ): Promise<void> {
   if (env.remoteName) {
     const logger = getExtensionLogger();
@@ -148,6 +124,7 @@ async function prepareLocalRuntime(
     cachedLauncherInstallInfo = await ensureLauncherDependencies(
       context,
       indexPath,
+      projectManagerIndexPath,
       workspacePath
     );
     await initializeCoreManager(context);
@@ -192,9 +169,13 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const logger = getExtensionLogger();
 
   // Prepare UI bundles
-  const { webview, webClient } = await prepareUIBundles(context, logger);
+  const { webview, webClient, projectManager } = await prepareUIBundles(
+    context,
+    logger
+  );
   const webviewUIRoot = webview.path;
   const webClientIndexPath = webClient.path;
+  const projectManagerIndexPath = projectManager.path;
 
   const extensionVersion =
     (context.extension.packageJSON as { readonly version?: string } | undefined)
@@ -210,7 +191,11 @@ export async function activate(context: ExtensionContext): Promise<void> {
     extensionPath: context.extensionUri.fsPath,
   });
 
-  await prepareLocalRuntime(context, webClientIndexPath);
+  await prepareLocalRuntime(
+    context,
+    webClientIndexPath,
+    projectManagerIndexPath
+  );
   if (!coreKeepAlive && coreProcessManager) {
     coreKeepAlive = new CoreKeepAlive(coreProcessManager);
     coreKeepAlive.start();
