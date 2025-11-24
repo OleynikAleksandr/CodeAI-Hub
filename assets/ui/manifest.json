@@ -13,6 +13,12 @@
       "package": "web-client-1.1.305.tar.bz2",
       "size": 143913,
       "sha1": "d0826d3aafa180f0ca8d79bd4fd7fe27bb820aa3"
+    },
+    "project-manager": {
+      "version": "1.1.305",
+      "package": "project-manager-1.1.305.tar.bz2",
+      "size": 1179,
+      "sha1": "c70423478ad91ee5434e9f9679a66187e95ea0fb"
     }
   }
 }
