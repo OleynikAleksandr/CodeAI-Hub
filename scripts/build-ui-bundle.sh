@@ -92,14 +92,14 @@ case "$BUNDLE_NAME" in
     ;;
 
   project-manager)
-    echo "🏗️  Building project-manager UI bundle..."
-    # No build step for now, just copy static files
+    echo "📦 Building project-manager..."
+    npm run build:project-manager
     
     BUNDLE_DIR="$REPO_ROOT/dist/ui/project-manager-$VERSION"
     mkdir -p "$BUNDLE_DIR"
     
-    # Copy project-manager assets
-    cp -r "$REPO_ROOT/packages/ui/project-manager/"* "$BUNDLE_DIR/"
+    # Copy built project-manager assets
+    cp -r "$REPO_ROOT/packages/ui/project-manager/dist/"* "$BUNDLE_DIR/"
     
     # Create archive
     cd "$REPO_ROOT/dist/ui"
