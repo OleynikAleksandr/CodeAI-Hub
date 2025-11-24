@@ -9,7 +9,8 @@ const CONFIG_FILE_NAME = "config.json";
 
 const buildLaunchArgs = (
   indexFilePath: string,
-  configPath: string
+  configPath: string,
+  userDataDir?: string
 ): string[] => {
   const fileUrl = Uri.file(indexFilePath).toString();
   const args = [
@@ -17,6 +18,10 @@ const buildLaunchArgs = (
     `--url=${fileUrl}`,
     "--use-alloy-style",
   ];
+
+  if (userDataDir) {
+    args.push(`--user-data-dir=${userDataDir}`);
+  }
 
   return args;
 };
@@ -86,7 +91,8 @@ export const ensureProjectManagerConfig = (
 export const launchCefClient = async (
   launcher: LauncherInstallInfo,
   indexFilePath: string,
-  workspacePath?: string
+  workspacePath?: string,
+  userDataDir?: string
 ): Promise<void> => {
   const { executablePath: binaryPath } = launcher;
 
@@ -103,7 +109,7 @@ export const launchCefClient = async (
     indexFilePath,
     workspacePath
   );
-  const args = buildLaunchArgs(indexFilePath, configPath);
+  const args = buildLaunchArgs(indexFilePath, configPath, userDataDir);
   const workingDir = path.dirname(binaryPath);
 
   const envVars: NodeJS.ProcessEnv = {
@@ -127,9 +133,10 @@ export const launchCefClient = async (
 
 export const getCefClientTarget = (
   launcher: LauncherInstallInfo,
-  indexFilePath: string
+  indexFilePath: string,
+  userDataDir?: string
 ): { path: string; args: readonly string[] } => {
   const configPath = path.join(launcher.installDir, "config", CONFIG_FILE_NAME);
-  const args = buildLaunchArgs(indexFilePath, configPath);
+  const args = buildLaunchArgs(indexFilePath, configPath, userDataDir);
   return { path: launcher.executablePath, args };
 };

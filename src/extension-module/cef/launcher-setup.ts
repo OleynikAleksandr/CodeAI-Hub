@@ -1,3 +1,4 @@
+import path from "node:path";
 import { type ExtensionContext, Uri } from "vscode";
 import {
   ensureProjectManagerShortcuts,
@@ -23,13 +24,23 @@ export async function ensureLauncherDependencies(
   await ensureCefRuntime(context);
   const ensuredLauncher = await ensureLauncherInstalled(context);
 
+  // Define unique data directories
+  const homeDir = process.env.HOME || process.env.USERPROFILE || "";
+  const baseDataDir = path.join(homeDir, ".codeai-hub", "data");
+  const webClientDataDir = path.join(baseDataDir, "web-client");
+  const projectManagerDataDir = path.join(baseDataDir, "project-manager");
+
   // Web Client Config & Shortcut
   await ensureLauncherWorkspaceConfig(
     ensuredLauncher,
     indexPath,
     workspacePath
   );
-  const launcherTarget = getCefClientTarget(ensuredLauncher, indexPath);
+  const launcherTarget = getCefClientTarget(
+    ensuredLauncher,
+    indexPath,
+    webClientDataDir
+  );
   await ensureWebClientShortcuts(launcherTarget);
 
   // Project Manager Config & Shortcut
@@ -43,6 +54,7 @@ export async function ensureLauncherDependencies(
     `--config=${pmConfigPath}`,
     `--url=${Uri.file(projectManagerIndexPath).toString()}`,
     "--use-alloy-style",
+    `--user-data-dir=${projectManagerDataDir}`,
   ];
 
   await ensureProjectManagerShortcuts({

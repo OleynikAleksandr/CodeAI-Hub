@@ -26,3 +26,8 @@
 1. [DONE] Scaffold `src/client/project-manager` (React App) — scope: `src/client/project-manager/**`
 2. [DONE] Create `scripts/build-project-manager.js` and update `package.json` — scope: `scripts/**`, `package.json`
 3. [DONE] Update `scripts/build-ui-bundle.sh` to package the React app — scope: `scripts/build-ui-bundle.sh`
+
+### Stream: Multi-Instance Support
+1. [TODO] Update `launcher.ts` to support `userDataDir` argument — scope: `src/extension-module/cef/launcher.ts`
+2. [TODO] Update `launcher-setup.ts` to pass unique data dirs — scope: `src/extension-module/cef/launcher-setup.ts`
+3. [TODO] Update architecture docs with multi-instance/tab notes — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
