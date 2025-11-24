@@ -2,7 +2,7 @@
 
 **Date:** 2025-11-23 17:46-18:48 (CET)  
 **Branch:** Agent-001  
-**Version:** 1.1.301
+**Version:** 1.1.302
 
 ---
 
@@ -17,7 +17,7 @@
 - ✅ Build scripts для упаковки UI бандлов
 - ✅ UI extraction from VSIX (6 из 6 задач)
 - ✅ Extension Integration (полная реализация)
-- ✅ Build All (успешная сборка VSIX 1.1.301)
+- ✅ Build All (успешная сборка VSIX 1.1.302)
 
 ## Git commits
 ### Core UI Infrastructure
@@ -41,6 +41,7 @@
 - `CCCCCCC` feat: add ui path resolver with fallback
 - `3cf6d27` feat: complete ui integration and fix build scripts
 - `XXXXXXX` fix: build core-supervisor in build-core.sh
+- `aade812` chore: release 1.1.302 (fix ui bundle installation)
 
 ---
 
@@ -82,6 +83,7 @@
 - Добавлены UI бандлы в список артефактов релиза
 - Исправлен путь сборки web-client в `build-ui-bundle.sh`
 - Добавлен билд `core-supervisor` в `build-core.sh`
+- **FIX:** `build-ui-bundle.sh` теперь устанавливает бандлы в `packages/ui` и обновляет манифест
 
 ### ✅ Stream: Extension integration (COMPLETE)
 - ✅ Исключён `media/react-chat.js` из VSIX через `.vscodeignore`
@@ -104,8 +106,8 @@
 2. Завершить `UI_Modules.md`.
 
 ## Testing
-1. Провести ручной e2e тест:
-   - Установить VSIX `codeai-hub-1.1.301.vsix`
+1. Провести ручной e2e тест (IN PROGRESS):
+   - Установить VSIX `codeai-hub-1.1.302.vsix`
    - Проверить что UI бандлы устанавливаются в `~/.codeai-hub/packages/ui/`
    - Проверить работу Webview и Launcher
 
@@ -123,11 +125,11 @@ Packages layout использует symlinks. На Windows это может т
 
 # 5. Technical Notes
 
-## Build Artifacts (1.1.301)
-- `codeai-hub-1.1.301.vsix`
-- `vscode-webview-1.1.301.tar.bz2`
-- `web-client-1.1.301.tar.bz2`
-- `codeai-hub-core-*-1.1.301.tar.bz2`
-- `CodeAIHubLauncher-*-1.1.301.tar.bz2`
+## Build Artifacts (1.1.302)
+- `codeai-hub-1.1.302.vsix`
+- `vscode-webview-1.1.302.tar.bz2`
+- `web-client-1.1.302.tar.bz2`
+- `codeai-hub-core-*-1.1.302.tar.bz2`
+- `CodeAIHubLauncher-*-1.1.302.tar.bz2`
 
 Все артефакты находятся в `~/.codeai-hub/releases/`.
