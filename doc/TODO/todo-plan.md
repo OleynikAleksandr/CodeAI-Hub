@@ -28,6 +28,10 @@
 3. [DONE] Update `scripts/build-ui-bundle.sh` to package the React app — scope: `scripts/build-ui-bundle.sh`
 
 ### Stream: Multi-Instance Support
-1. [TODO] Update `launcher.ts` to support `userDataDir` argument — scope: `src/extension-module/cef/launcher.ts`
-2. [TODO] Update `launcher-setup.ts` to pass unique data dirs — scope: `src/extension-module/cef/launcher-setup.ts`
-3. [TODO] Update architecture docs with multi-instance/tab notes — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
+1. [DONE] Update `launcher.ts` to support `userDataDir` argument — scope: `src/extension-module/cef/launcher.ts`
+2. [DONE] Update `launcher-setup.ts` to pass unique data dirs — scope: `src/extension-module/cef/launcher-setup.ts`
+3. [DONE] Update architecture docs with multi-instance/tab notes — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
+
+### Stream: Window State Persistence (Thin Bundle)
+1. [TODO] Refactor `shortcut-manager.ts` to implement Thin Bundle strategy — scope: `src/extension-module/web-client/shortcut-manager.ts`
+2. [TODO] Update architecture docs to document Thin Bundle — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
