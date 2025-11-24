@@ -42,7 +42,7 @@ case "$BUNDLE_NAME" in
     mkdir -p "$BUNDLE_DIR"
     
     # Copy built web-client assets
-    cp -r "$REPO_ROOT/packages/web-client/build/"* "$BUNDLE_DIR/" 2>/dev/null || {
+    cp -r "$REPO_ROOT/media/web-client/dist/"* "$BUNDLE_DIR/" 2>/dev/null || {
       echo "⚠️  web-client build output not found, creating placeholder"
       echo "placeholder" > "$BUNDLE_DIR/index.html"
     }

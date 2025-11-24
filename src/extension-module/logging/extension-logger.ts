@@ -6,7 +6,7 @@ type ExtensionLogLevel = "info" | "warn" | "error" | "debug";
 
 type ExtensionLogPayload = Record<string, unknown> | undefined;
 
-class ExtensionLogger {
+export class ExtensionLogger {
   private readonly stream?: fs.WriteStream;
 
   constructor() {

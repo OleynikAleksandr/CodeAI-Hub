@@ -1,9 +1,7 @@
-import path from "node:path";
 import {
   commands,
   type ExtensionContext,
   env,
-  Uri,
   window,
   workspace,
 } from "vscode";
@@ -193,34 +191,26 @@ function registerCommands(
 export async function activate(context: ExtensionContext): Promise<void> {
   const logger = getExtensionLogger();
 
+  // Prepare UI bundles
   const { webview, webClient } = await prepareUIBundles(context, logger);
-  const webviewUIRootPath = webview.path;
-
-  const indexPath = path.join(webClient.path, "index.html");
-  const indexUri = Uri.file(indexPath);
-
-  try {
-    await workspace.fs.stat(indexUri);
-  } catch (error) {
-    const reason =
-      error instanceof Error ? error.message : "Web client bundle missing.";
-    window.showErrorMessage(`Unable to locate web client bundle: ${reason}`);
-    throw error instanceof Error ? error : new Error(String(error));
-  }
+  const webviewUIRoot = webview.path;
+  const webClientIndexPath = webClient.path;
 
   const extensionVersion =
     (context.extension.packageJSON as { readonly version?: string } | undefined)
       ?.version ?? "0.0.0";
+
   logger.log("extension:activate:start", {
     version: extensionVersion,
     remoteName: env.remoteName ?? null,
   });
+
   await recordVsixVersion({
     version: extensionVersion,
     extensionPath: context.extensionUri.fsPath,
   });
 
-  await prepareLocalRuntime(context, indexPath);
+  await prepareLocalRuntime(context, webClientIndexPath);
   if (!coreKeepAlive && coreProcessManager) {
     coreKeepAlive = new CoreKeepAlive(coreProcessManager);
     coreKeepAlive.start();
@@ -241,12 +231,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   const provider = new HomeViewProvider(
     context.extensionUri,
-    webviewUIRootPath,
+    webviewUIRoot,
     resolvedConnectionInfo,
     coreProcessManager ?? undefined
   );
 
-  registerCommands(context, provider, indexPath);
+  registerCommands(context, provider, webClientIndexPath);
 }
 
 export function deactivate(): void {
