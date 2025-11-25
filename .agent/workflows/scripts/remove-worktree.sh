@@ -93,10 +93,10 @@ for idx in "${to_remove_indices[@]}"; do
   echo -e "    Path: ${paths[$idx]}"
 done
 
-echo -e "\n${YELLOW}Are you sure? This action cannot be undone! (yes/no):${NC}"
+echo -e "\n${YELLOW}Are you sure? This action cannot be undone! (Y/N):${NC}"
 read -r confirmation
 
-if [[ "$confirmation" != "yes" && "$confirmation" != "YES" ]]; then
+if [[ "$confirmation" != "Y" && "$confirmation" != "YES" ]]; then
   echo -e "${BLUE}Cancelled.${NC}"
   exit 0
 fi
