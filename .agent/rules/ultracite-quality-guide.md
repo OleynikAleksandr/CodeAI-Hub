@@ -5,6 +5,7 @@ trigger: always_on
 # Ultracite Quality Guide
 
 Ultracite (Biome) enforces linting, formatting, a11y, and architectural limits across the entire repo. Всегда запускай проверки локально — pre-commit hook не пропустит изменения со 100+ файлов назад.
+Внес изменения или создал новых ДО 3-х файлов - обязательный Git Commit, который запустит автоматом проверку качества кода.
 
 ## Code Style & Linting Rules
 1. **Организация импортов**: Biome выполняет `source.organizeImports` как assist и не поддерживает `biome-ignore`. Следи за порядком (внешние пакеты → workspace alias → относительные импорты) и пустыми строками между группами.
