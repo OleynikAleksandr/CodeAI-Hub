@@ -13,12 +13,8 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "strictNullChecks": true
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
