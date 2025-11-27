@@ -155,11 +155,10 @@ increment_patch() {
 }
 
 ensure_clean_worktree() {
-  # if [[ -n "$(git status --porcelain)" ]]; then
-  #   echo "❌ Working tree has uncommitted changes. Commit or stash before running build-all." >&2
-  #   exit 1
-  # fi
-  true
+  if [[ -n "$(git status --porcelain)" ]]; then
+    echo "❌ Working tree has uncommitted changes. Commit or stash before running build-all." >&2
+    exit 1
+  fi
 }
 
 update_workspace_version() {
@@ -232,28 +231,17 @@ echo "🏗️  Building UI bundles..."
 echo "🏗️  Building CEF launcher..."
 "$SCRIPT_DIR/build-cef-launcher.sh" --launcher-version "$new_version"
 
-echo "🏗️  Building VSIX..."
-rm -f "$REPO_ROOT"/codeai-hub-*.vsix 2>/dev/null || true
-"$SCRIPT_DIR/build-release.sh" --use-current-version
-
-VSIX_FILE="codeai-hub-${new_version}.vsix"
-DIST_VSIX="$REPO_ROOT/doc/tmp/releases/$VSIX_FILE"
-if [[ -f "$DIST_VSIX" ]]; then
-  mv "$DIST_VSIX" "$REPO_ROOT/$VSIX_FILE"
-fi
-if [[ ! -f "$REPO_ROOT/$VSIX_FILE" ]]; then
-  echo "❌ VSIX $VSIX_FILE not found after build." >&2
-  exit 1
-fi
-
 copy_release_artifacts "$new_version"
 
 echo ""
-echo "✅ Unified build complete."
-echo "📦 VSIX: codeai-hub-${new_version}.vsix"
-echo "📦 Core: codeai-hub-core-darwin-arm64-${new_version}.tar.bz2"
-echo "📦 Launcher: CodeAIHubLauncher-macos-arm64-${new_version}.tar.bz2"
+echo "✅ Unified provider/core/UI build complete."
 echo "📦 Providers: claude/codex/gemini-module-${new_version}.tar.bz2"
-echo "📦 UI: vscode-webview-${new_version}.tar.bz2, web-client-${new_version}.tar.bz2"
+echo "📦 Core: codeai-hub-core-<platform>-${new_version}.tar.bz2"
+echo "📦 Launcher: CodeAIHubLauncher-<platform>-${new_version}.tar.bz2"
+echo "📦 UI: vscode-webview-${new_version}.tar.bz2, web-client-${new_version}.tar.bz2, project-manager-${new_version}.tar.bz2"
+echo ""
+echo "Next:"
+echo "  1) Ensure git status is clean."
+echo "  2) Run ./scripts/build-release.sh --use-current-version to build VSIX."
 echo ""
 echo "⚠️  Reminder: update README/CHANGELOG/SystemArchitecture manually to describe the release."

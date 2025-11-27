@@ -28,19 +28,24 @@
     "@codeai-hub/claude-module": "file:../Claude_Module",
     "@codeai-hub/codex-module": "file:../Codex_Module",
     "@codeai-hub/unified-session": "file:../unified-session",
-    "express": "^4.18.2",
-    "ws": "^8.16.0",
     "cors": "^2.8.5",
-    "uuid": "^9.0.1"
+    "express": "^4.18.2",
+    "uuid": "^9.0.1",
+    "ws": "^8.16.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/ws": "^8.5.10",
+    "@biomejs/biome": "^2.3.7",
     "@types/cors": "^2.8.17",
-    "@types/uuid": "^9.0.7",
+    "@types/express": "^4.17.21",
     "@types/node": "^20.11.0",
+    "@types/uuid": "^9.0.7",
+    "@types/ws": "^8.5.10",
+    "husky": "^9.1.7",
+    "lefthook": "^2.0.4",
+    "lint-staged": "^16.2.7",
+    "tsx": "^4.7.0",
     "typescript": "^5.3.3",
-    "tsx": "^4.7.0"
+    "ultracite": "^6.3.7"
   },
   "keywords": [
     "codeai-hub",
