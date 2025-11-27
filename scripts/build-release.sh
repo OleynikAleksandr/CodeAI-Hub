@@ -12,6 +12,12 @@ REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo 
 source "$SCRIPT_DIR/release-utils.sh"
 cd "$REPO_ROOT"
 
+# Ensure clean working tree before release build
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "❌ Working tree has uncommitted changes. Commit or stash before running build-release.sh." >&2
+  exit 1
+fi
+
 USE_CURRENT_VERSION=false
 
 while [[ $# -gt 0 ]]; do
