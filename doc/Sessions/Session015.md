@@ -29,9 +29,8 @@
 - Все артефакты скопированы в `doc/tmp/releases/`
 
 ## Git commits
-(Коммитов в этой сессии не было - только сборка релиза)
-- `5667ae8 docs: move implemented architecture docs to SystemArchitecture`
-- `1e1918f docs: add future ideas and move SIM design`
+- `2bcdc0e chore: update manifests and package versions after build v1.1.314`
+- `4c8e619 docs: add Session015 report - release build v1.1.314`
 
 ---
 
