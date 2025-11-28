@@ -1,8 +1,8 @@
 import { Uri, type Webview } from "vscode";
 
 type CoreBridgeConfig = {
-  readonly httpUrl: string;
-  readonly wsUrl: string;
+	readonly httpUrl: string;
+	readonly wsUrl: string;
 };
 
 const NONCE_LENGTH = 32;
@@ -12,52 +12,52 @@ const NONCE_LENGTH = 32;
  * The shell renders the primary action buttons while the React application hydrates underneath.
  */
 export class WebviewHtmlGenerator {
-  /**
-   * Compose HTML that mirrors the claude-code-fusion shell with the primary button row.
-   *
-   * @param webview - Active VS Code webview instance.
-   * @param extensionUri - Extension root URI for asset resolution.
-   * @param showChat - When true the React container is marked as active on load.
-   */
-  generate(
-    webview: Webview,
-    _extensionUri: Uri,
-    webviewUIRootPath: string,
-    options: {
-      readonly showChat?: boolean;
-      readonly coreBridgeConfig?: CoreBridgeConfig;
-    } = {}
-  ): string {
-    const { showChat = false, coreBridgeConfig } = options;
-    const uiRootUri = Uri.file(webviewUIRootPath);
-    const mainViewCssUri = webview.asWebviewUri(
-      Uri.joinPath(uiRootUri, "main-view.css")
-    );
-    const reactAppJsUri = webview.asWebviewUri(
-      Uri.joinPath(uiRootUri, "react-chat.js")
-    );
-    const reactAppCssUri = webview.asWebviewUri(
-      Uri.joinPath(uiRootUri, "react-chat.css")
-    );
-    const sessionViewCssUri = webview.asWebviewUri(
-      Uri.joinPath(uiRootUri, "session-view.css")
-    );
+	/**
+	 * Compose HTML that mirrors the claude-code-fusion shell with the primary button row.
+	 *
+	 * @param webview - Active VS Code webview instance.
+	 * @param extensionUri - Extension root URI for asset resolution.
+	 * @param showChat - When true the React container is marked as active on load.
+	 */
+	generate(
+		webview: Webview,
+		_extensionUri: Uri,
+		webviewUIRootPath: string,
+		options: {
+			readonly showChat?: boolean;
+			readonly coreBridgeConfig?: CoreBridgeConfig;
+		} = {},
+	): string {
+		const { showChat = false, coreBridgeConfig } = options;
+		const uiRootUri = Uri.file(webviewUIRootPath);
+		const mainViewCssUri = webview.asWebviewUri(
+			Uri.joinPath(uiRootUri, "main-view.css"),
+		);
+		const reactAppJsUri = webview.asWebviewUri(
+			Uri.joinPath(uiRootUri, "react-chat.js"),
+		);
+		const reactAppCssUri = webview.asWebviewUri(
+			Uri.joinPath(uiRootUri, "react-chat.css"),
+		);
+		const sessionViewCssUri = webview.asWebviewUri(
+			Uri.joinPath(uiRootUri, "session-view.css"),
+		);
 
-    const nonce = this.getNonce();
-    const csp = [
-      "default-src 'none'",
-      `img-src ${webview.cspSource} https: data:`,
-      `style-src ${webview.cspSource} 'unsafe-inline'`,
-      `font-src ${webview.cspSource}`,
-      `connect-src ${webview.cspSource} https: http://127.0.0.1:* ws://127.0.0.1:*`,
-      `script-src 'nonce-${nonce}'`,
-    ].join("; ");
+		const nonce = this.getNonce();
+		const csp = [
+			"default-src 'none'",
+			`img-src ${webview.cspSource} https: data:`,
+			`style-src ${webview.cspSource} 'unsafe-inline'`,
+			`font-src ${webview.cspSource}`,
+			`connect-src ${webview.cspSource} https: http://127.0.0.1:* ws://127.0.0.1:*`,
+			`script-src 'nonce-${nonce}'`,
+		].join("; ");
 
-    const configScript = coreBridgeConfig
-      ? `<script nonce="${nonce}">window.__CODEAI_CORE_CONFIG = ${this.serializeConfig(coreBridgeConfig)};</script>`
-      : "";
+		const configScript = coreBridgeConfig
+			? `<script nonce="${nonce}">window.__CODEAI_CORE_CONFIG = ${this.serializeConfig(coreBridgeConfig)};</script>`
+			: "";
 
-    return `<!DOCTYPE html>
+		return `<!DOCTYPE html>
 <html lang="en" style="background-color: #1e1e1e !important;">
 <head>
   <meta charset="UTF-8">
@@ -129,23 +129,23 @@ export class WebviewHtmlGenerator {
   <script nonce="${nonce}" src="${reactAppJsUri}"></script>
 </body>
 </html>`;
-  }
+	}
 
-  private serializeConfig(config: CoreBridgeConfig): string {
-    return JSON.stringify(config).replace(/</g, "\\u003c");
-  }
+	private serializeConfig(config: CoreBridgeConfig): string {
+		return JSON.stringify(config).replace(/</g, "\\u003c");
+	}
 
-  private getNonce(): string {
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const length = characters.length;
-    let text = "";
+	private getNonce(): string {
+		const characters =
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		const length = characters.length;
+		let text = "";
 
-    for (let index = 0; index < NONCE_LENGTH; index += 1) {
-      const randomIndex = Math.floor(Math.random() * length);
-      text += characters.charAt(randomIndex);
-    }
+		for (let index = 0; index < NONCE_LENGTH; index += 1) {
+			const randomIndex = Math.floor(Math.random() * length);
+			text += characters.charAt(randomIndex);
+		}
 
-    return text;
-  }
+		return text;
+	}
 }

@@ -1,67 +1,67 @@
 export type GeminiInstallerPaths = {
-  readonly macOS: string;
-  readonly linux: string;
-  readonly windows: string;
+	readonly macOS: string;
+	readonly linux: string;
+	readonly windows: string;
 };
 
 export type GeminiWorkspaceOptions = {
-  readonly workspacePath: string;
-  readonly defaultModel?: string;
-  readonly settingsPath?: string;
+	readonly workspacePath: string;
+	readonly defaultModel?: string;
+	readonly settingsPath?: string;
 };
 
 export type GeminiCredentialsOptions = {
-  readonly directory?: string;
-  readonly requiredFiles?: readonly string[];
+	readonly directory?: string;
+	readonly requiredFiles?: readonly string[];
 };
 
 export type ModuleReporter = {
-  readonly info?: (message: string, metadata?: Record<string, unknown>) => void;
-  readonly warn?: (message: string, metadata?: Record<string, unknown>) => void;
-  readonly error?: (
-    message: string,
-    error?: unknown,
-    metadata?: Record<string, unknown>
-  ) => void;
-  readonly progress?: (event: ModuleProgressEvent) => void;
+	readonly info?: (message: string, metadata?: Record<string, unknown>) => void;
+	readonly warn?: (message: string, metadata?: Record<string, unknown>) => void;
+	readonly error?: (
+		message: string,
+		error?: unknown,
+		metadata?: Record<string, unknown>,
+	) => void;
+	readonly progress?: (event: ModuleProgressEvent) => void;
 };
 
 export type GeminiModuleOptions = {
-  readonly installerPaths: GeminiInstallerPaths;
-  readonly workspace: GeminiWorkspaceOptions;
-  readonly reporter?: ModuleReporter;
-  readonly enableDebugLogging?: boolean;
-  readonly credentials?: GeminiCredentialsOptions;
+	readonly installerPaths: GeminiInstallerPaths;
+	readonly workspace: GeminiWorkspaceOptions;
+	readonly reporter?: ModuleReporter;
+	readonly enableDebugLogging?: boolean;
+	readonly credentials?: GeminiCredentialsOptions;
 };
 
 export type GeminiSessionEvent = {
-  readonly type: string;
-  readonly provider?: string;
-  readonly content?: string;
-  readonly data?: unknown;
-  readonly payload?: unknown;
+	readonly type: string;
+	readonly provider?: string;
+	readonly content?: string;
+	readonly data?: unknown;
+	readonly payload?: unknown;
 };
 
 export type GeminiCliBridgeMetadata = {
-  readonly version: string;
-  readonly preparedAt: string;
-  readonly source: string;
-  readonly cli?: {
-    readonly package: string;
-    readonly requiredVersion?: string;
-    readonly resolvedVersion?: string;
-    readonly location?: string;
-  };
-  readonly cliCore?: {
-    readonly package: string;
-    readonly version: string;
-  };
+	readonly version: string;
+	readonly preparedAt: string;
+	readonly source: string;
+	readonly cli?: {
+		readonly package: string;
+		readonly requiredVersion?: string;
+		readonly resolvedVersion?: string;
+		readonly location?: string;
+	};
+	readonly cliCore?: {
+		readonly package: string;
+		readonly version: string;
+	};
 };
 
 export type ModuleProgressEvent = {
-  readonly label: string;
-  readonly detail?: string;
-  readonly scope?: string;
-  readonly phase?: "install" | "provider" | "finalize";
-  readonly firstRun?: boolean;
+	readonly label: string;
+	readonly detail?: string;
+	readonly scope?: string;
+	readonly phase?: "install" | "provider" | "finalize";
+	readonly firstRun?: boolean;
 };

@@ -7,152 +7,152 @@ import ThinkingSettings from "./settings/thinking-settings";
 import { useSettingsState } from "./settings/use-settings-state";
 
 type SettingsViewProps = {
-  readonly onClose: () => void;
+	readonly onClose: () => void;
 };
 
 type SettingsTab = "claude" | "codex" | "gemini" | "general";
 
 const containerStyles: React.CSSProperties = {
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-  background: "#1e1e1e",
-  color: "#cccccc",
+	height: "100%",
+	display: "flex",
+	flexDirection: "column",
+	background: "#1e1e1e",
+	color: "#cccccc",
 };
 
 const tabBarStyles: React.CSSProperties = {
-  display: "flex",
-  borderBottom: "1px solid #2d2d30",
-  padding: "0 20px",
-  gap: "8px",
+	display: "flex",
+	borderBottom: "1px solid #2d2d30",
+	padding: "0 20px",
+	gap: "8px",
 };
 
 const tabButtonStyles: React.CSSProperties = {
-  border: "none",
-  background: "transparent",
-  color: "#cccccc",
-  fontSize: "12px",
-  padding: "10px 14px",
-  cursor: "pointer",
-  borderBottom: "2px solid transparent",
+	border: "none",
+	background: "transparent",
+	color: "#cccccc",
+	fontSize: "12px",
+	padding: "10px 14px",
+	cursor: "pointer",
+	borderBottom: "2px solid transparent",
 };
 
 const activeTabStyles: React.CSSProperties = {
-  color: "#ffffff",
-  borderBottomColor: "#0e639c",
+	color: "#ffffff",
+	borderBottomColor: "#0e639c",
 };
 
 const contentStyles: React.CSSProperties = {
-  flex: 1,
-  overflowY: "auto",
-  padding: "20px",
+	flex: 1,
+	overflowY: "auto",
+	padding: "20px",
 };
 
 const stackStyles: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "16px",
+	display: "flex",
+	flexDirection: "column",
+	gap: "16px",
 };
 
 const settingsTabs: ReadonlyArray<{
-  readonly id: SettingsTab;
-  readonly label: string;
+	readonly id: SettingsTab;
+	readonly label: string;
 }> = [
-  { id: "claude", label: "Claude" },
-  { id: "codex", label: "Codex" },
-  { id: "gemini", label: "Gemini" },
-  { id: "general", label: "General" },
+	{ id: "claude", label: "Claude" },
+	{ id: "codex", label: "Codex" },
+	{ id: "gemini", label: "Gemini" },
+	{ id: "general", label: "General" },
 ];
 
 const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
-  const [activeTab, setActiveTab] = useState<SettingsTab>("claude");
-  const {
-    settings,
-    hasChanges,
-    saving,
-    resetting,
-    versions,
-    handleThinkingSettingsChange,
-    handleSave,
-    handleReset,
-    handleUpdateProvider,
-  } = useSettingsState();
+	const [activeTab, setActiveTab] = useState<SettingsTab>("claude");
+	const {
+		settings,
+		hasChanges,
+		saving,
+		resetting,
+		versions,
+		handleThinkingSettingsChange,
+		handleSave,
+		handleReset,
+		handleUpdateProvider,
+	} = useSettingsState();
 
-  return (
-    <div style={containerStyles}>
-      <SettingsHeader onClose={onClose} />
-      <div style={tabBarStyles}>
-        {settingsTabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            style={{
-              ...tabButtonStyles,
-              ...(activeTab === tab.id ? activeTabStyles : null),
-            }}
-            type="button"
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-      <div style={contentStyles}>
-        {(() => {
-          if (activeTab === "claude") {
-            return (
-              <div style={stackStyles}>
-                <ProviderVersions
-                  onUpdate={handleUpdateProvider}
-                  provider="claude"
-                  versions={versions}
-                />
-                <ThinkingSettings
-                  enabled={settings.thinking.enabled}
-                  maxTokens={settings.thinking.maxTokens}
-                  onChange={handleThinkingSettingsChange}
-                />
-              </div>
-            );
-          }
-          if (activeTab === "general") {
-            return (
-              <div style={stackStyles}>
-                <GeneralSettings />
-              </div>
-            );
-          }
-          if (activeTab === "codex") {
-            return (
-              <div style={stackStyles}>
-                <ProviderVersions
-                  onUpdate={handleUpdateProvider}
-                  provider="codex"
-                  versions={versions}
-                />
-              </div>
-            );
-          }
-          return (
-            <div style={stackStyles}>
-              <ProviderVersions
-                onUpdate={handleUpdateProvider}
-                provider="gemini"
-                versions={versions}
-              />
-            </div>
-          );
-        })()}
-      </div>
-      <SettingsFooter
-        hasChanges={hasChanges}
-        onClose={onClose}
-        onReset={handleReset}
-        onSave={handleSave}
-        resetting={resetting}
-        saving={saving}
-      />
-    </div>
-  );
+	return (
+		<div style={containerStyles}>
+			<SettingsHeader onClose={onClose} />
+			<div style={tabBarStyles}>
+				{settingsTabs.map((tab) => (
+					<button
+						key={tab.id}
+						onClick={() => setActiveTab(tab.id)}
+						style={{
+							...tabButtonStyles,
+							...(activeTab === tab.id ? activeTabStyles : null),
+						}}
+						type="button"
+					>
+						{tab.label}
+					</button>
+				))}
+			</div>
+			<div style={contentStyles}>
+				{(() => {
+					if (activeTab === "claude") {
+						return (
+							<div style={stackStyles}>
+								<ProviderVersions
+									onUpdate={handleUpdateProvider}
+									provider="claude"
+									versions={versions}
+								/>
+								<ThinkingSettings
+									enabled={settings.thinking.enabled}
+									maxTokens={settings.thinking.maxTokens}
+									onChange={handleThinkingSettingsChange}
+								/>
+							</div>
+						);
+					}
+					if (activeTab === "general") {
+						return (
+							<div style={stackStyles}>
+								<GeneralSettings />
+							</div>
+						);
+					}
+					if (activeTab === "codex") {
+						return (
+							<div style={stackStyles}>
+								<ProviderVersions
+									onUpdate={handleUpdateProvider}
+									provider="codex"
+									versions={versions}
+								/>
+							</div>
+						);
+					}
+					return (
+						<div style={stackStyles}>
+							<ProviderVersions
+								onUpdate={handleUpdateProvider}
+								provider="gemini"
+								versions={versions}
+							/>
+						</div>
+					);
+				})()}
+			</div>
+			<SettingsFooter
+				hasChanges={hasChanges}
+				onClose={onClose}
+				onReset={handleReset}
+				onSave={handleSave}
+				resetting={resetting}
+				saving={saving}
+			/>
+		</div>
+	);
 };
 
 export default React.memo(SettingsView);
