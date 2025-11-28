@@ -27,58 +27,66 @@
 
 ### Stream 1: Базовая инфраструктура (hooks + styles)
 
-1. [TODO] Создать хуки для управления состоянием
+1. [DONE] Создать хуки для управления состоянием
    - Файлы: `src/client/project-manager/hooks/use-sidebar-state.ts`, `use-panel-sizes.ts`
-   - Commit: `feat(project-manager): add state management hooks`
+   - Commit: `ffe25f4` — feat(project-manager): add 6-section layout implementation
 
-2. [TODO] Создать CSS стили для layout
+2. [DONE] Создать CSS стили для layout
    - Файлы: `src/client/project-manager/styles/layout.css`, `packages/ui/project-manager/styles.css`
-   - Commit: `feat(project-manager): add layout CSS with theme tokens`
+   - Commit: `ffe25f4` — feat(project-manager): add 6-section layout implementation
 
 ---
 
 ### Stream 2: SVG иконки
 
-3. [TODO] Создать компоненты иконок
+3. [DONE] Создать компоненты иконок
    - Файлы: `src/client/project-manager/components/icons/collapse-icon.tsx`, `expand-icon.tsx`, `settings-icon.tsx`
-   - Commit: `feat(project-manager): add icon components`
+   - Commit: `ffe25f4` — feat(project-manager): add 6-section layout implementation
 
 ---
 
 ### Stream 3: Layout компоненты (часть 1)
 
-4. [TODO] Создать MainLayout и Sidebar
+4. [DONE] Создать MainLayout и Sidebar
    - Файлы: `src/client/project-manager/components/layout/main-layout.tsx`, `sidebar.tsx`
-   - Commit: `feat(project-manager): add MainLayout and Sidebar components`
+   - Commit: `ffe25f4` — feat(project-manager): add 6-section layout implementation
 
-5. [TODO] Создать MainArea и Toolbar
+5. [DONE] Создать MainArea и Toolbar
    - Файлы: `src/client/project-manager/components/layout/main-area.tsx`, `toolbar.tsx`
-   - Commit: `feat(project-manager): add MainArea and Toolbar components`
+   - Commit: `ffe25f4` — feat(project-manager): add 6-section layout implementation
 
 ---
 
 ### Stream 4: Layout компоненты (часть 2)
 
-6. [TODO] Создать VerticalResizer
+6. [DONE] Создать VerticalResizer
    - Файлы: `src/client/project-manager/components/resizer/vertical-resizer.tsx`
-   - Commit: `feat(project-manager): add VerticalResizer component`
+   - Commit: `ffe25f4` — feat(project-manager): add 6-section layout implementation
 
-7. [TODO] Создать PanelContainer
+7. [DONE] Создать PanelContainer
    - Файлы: `src/client/project-manager/components/layout/panel-container.tsx`
-   - Commit: `feat(project-manager): add PanelContainer with resizable panels`
+   - Commit: `ffe25f4` — feat(project-manager): add 6-section layout implementation
 
 ---
 
 ### Stream 5: Интеграция
 
-8. [TODO] Интегрировать все компоненты в App
+8. [IN_PROGRESS] Интегрировать все компоненты в App
    - Файлы: `src/client/project-manager/app.tsx`, `index.tsx`
-   - Commit: `feat(project-manager): integrate layout components into App`
+   - Commit: pending
 
 ---
 
+### Stream 6: Финальная сборка и релиз
 
+9. [TODO] Запустить полную сборку и создать релиз
+   - Действия: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`
+   - Файлы: `doc/Architecture/Architecture.md`, `doc/Sessions/SessionXXX.md`
+   - Commit: pending
+
+---
 
 ## История изменений
 
 - 2025-11-28 — План создан, инициализация todo-plan.md
+- 2025-11-28 — Streams 1-4 выполнены, commit `ffe25f4`
