@@ -16,6 +16,10 @@
     "baseUrl": ".",
     "strictNullChecks": true
   },
-  "include": ["src/client/ui/src/**/*", "src/client/web-client/**/*"],
+  "include": [
+    "src/client/ui/src/**/*",
+    "src/client/web-client/**/*",
+    "src/client/project-manager/**/*"
+  ],
   "exclude": ["src/client/web-client/dist"]
 }
