@@ -2,18 +2,18 @@ import type { OutputChannel } from "vscode";
 import type { CoreConnectionInfo } from "./core-connection-info";
 
 export function notifyConnectionListeners(
-	subscribers: Iterable<(info: CoreConnectionInfo) => void>,
-	connectionInfo: CoreConnectionInfo,
-	channel: OutputChannel,
+  subscribers: Iterable<(info: CoreConnectionInfo) => void>,
+  connectionInfo: CoreConnectionInfo,
+  channel: OutputChannel
 ): void {
-	for (const subscriber of subscribers) {
-		try {
-			subscriber(connectionInfo);
-		} catch (error) {
-			const reason = error instanceof Error ? error.message : String(error);
-			channel.appendLine(
-				`Connection listener failed: ${reason ?? "unknown error"}.`,
-			);
-		}
-	}
+  for (const subscriber of subscribers) {
+    try {
+      subscriber(connectionInfo);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      channel.appendLine(
+        `Connection listener failed: ${reason ?? "unknown error"}.`
+      );
+    }
+  }
 }

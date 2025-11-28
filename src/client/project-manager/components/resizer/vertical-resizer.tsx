@@ -2,59 +2,59 @@ import type React from "react";
 import { useCallback, useRef, useState } from "react";
 
 interface VerticalResizerProps {
-	index: 0 | 1;
-	onResize: (index: 0 | 1, deltaX: number) => void;
+  index: 0 | 1;
+  onResize: (index: 0 | 1, deltaX: number) => void;
 }
 
 /**
  * Vertical resizer component for dragging between panels
  */
 export const VerticalResizer: React.FC<VerticalResizerProps> = ({
-	index,
-	onResize,
+  index,
+  onResize,
 }) => {
-	const [isDragging, setIsDragging] = useState(false);
-	const startXRef = useRef(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startXRef = useRef(0);
 
-	const handleMouseDown = useCallback(
-		(e: React.MouseEvent) => {
-			e.preventDefault();
-			setIsDragging(true);
-			startXRef.current = e.clientX;
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      setIsDragging(true);
+      startXRef.current = e.clientX;
 
-			const handleMouseMove = (moveEvent: MouseEvent) => {
-				const deltaX = moveEvent.clientX - startXRef.current;
-				if (deltaX !== 0) {
-					onResize(index, deltaX);
-					startXRef.current = moveEvent.clientX;
-				}
-			};
+      const handleMouseMove = (moveEvent: MouseEvent) => {
+        const deltaX = moveEvent.clientX - startXRef.current;
+        if (deltaX !== 0) {
+          onResize(index, deltaX);
+          startXRef.current = moveEvent.clientX;
+        }
+      };
 
-			const handleMouseUp = () => {
-				setIsDragging(false);
-				document.removeEventListener("mousemove", handleMouseMove);
-				document.removeEventListener("mouseup", handleMouseUp);
-			};
+      const handleMouseUp = () => {
+        setIsDragging(false);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
 
-			document.addEventListener("mousemove", handleMouseMove);
-			document.addEventListener("mouseup", handleMouseUp);
-		},
-		[index, onResize],
-	);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    },
+    [index, onResize]
+  );
 
-	const className = isDragging ? "pm-resizer pm-resizer--active" : "pm-resizer";
+  const className = isDragging ? "pm-resizer pm-resizer--active" : "pm-resizer";
 
-	return (
-		<div
-			className={className}
-			onMouseDown={handleMouseDown}
-			role="slider"
-			aria-valuenow={50}
-			aria-valuemin={0}
-			aria-valuemax={100}
-			aria-label={`Resize panels ${index + 1} and ${index + 2}`}
-			title={`Drag to resize panels ${index + 1} and ${index + 2}`}
-			tabIndex={0}
-		/>
-	);
+  return (
+    <div
+      aria-label={`Resize panels ${index + 1} and ${index + 2}`}
+      aria-valuemax={100}
+      aria-valuemin={0}
+      aria-valuenow={50}
+      className={className}
+      onMouseDown={handleMouseDown}
+      role="slider"
+      tabIndex={0}
+      title={`Drag to resize panels ${index + 1} and ${index + 2}`}
+    />
+  );
 };

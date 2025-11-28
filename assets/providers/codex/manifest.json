@@ -1,10 +1,10 @@
 {
-	"schema": 1,
-	"baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
-	"module": {
-		"version": "1.1.316",
-		"package": "codex-module-1.1.316.tar.bz2",
-		"size": 18309,
-		"sha1": "deaf993cad15c677eb92699e02dc539e552e0245"
-	}
+  "schema": 1,
+  "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
+  "module": {
+    "version": "1.1.317",
+    "package": "codex-module-1.1.317.tar.bz2",
+    "size": 18322,
+    "sha1": "14a389e10a61e970aeae7e4876f0597101a5b7cf"
+  }
 }

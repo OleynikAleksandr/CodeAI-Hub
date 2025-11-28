@@ -8,17 +8,17 @@ import { Sidebar } from "./sidebar";
  * Main layout component (Grid container for Section 1 + Section 2)
  */
 export const MainLayout: React.FC = () => {
-	const { collapsed, toggle } = useSidebarState();
-	const { sizes, updateSize } = usePanelSizes();
+  const { collapsed, toggle } = useSidebarState();
+  const { sizes, updateSize } = usePanelSizes();
 
-	const layoutClass = collapsed
-		? "pm-layout pm-layout--collapsed"
-		: "pm-layout pm-layout--expanded";
+  const layoutClass = collapsed
+    ? "pm-layout pm-layout--collapsed"
+    : "pm-layout pm-layout--expanded";
 
-	return (
-		<div className={layoutClass}>
-			<Sidebar collapsed={collapsed} onToggle={toggle} />
-			<MainArea sizes={sizes} onSizeChange={updateSize} />
-		</div>
-	);
+  return (
+    <div className={layoutClass}>
+      <Sidebar collapsed={collapsed} onToggle={toggle} />
+      <MainArea onSizeChange={updateSize} sizes={sizes} />
+    </div>
+  );
 };

@@ -1,39 +1,39 @@
 {
-	"name": "@codeai-hub/gemini-module",
-	"version": "1.1.316",
-	"description": "Gemini provider integration for CodeAI Hub core (CJS bridge)",
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"type": "commonjs",
-	"scripts": {
-		"build": "tsc -p tsconfig.json",
-		"clean": "rimraf dist"
-	},
-	"engines": {
-		"node": ">=18.19.0"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.3.7",
-		"@google/gemini-cli": "^0.16.0",
-		"@google/gemini-cli-core": "^0.16.0",
-		"@types/node": "^20.11.0",
-		"husky": "^9.1.7",
-		"lefthook": "^2.0.4",
-		"lint-staged": "^16.2.7",
-		"rimraf": "^6.0.1",
-		"typescript": "^5.6.3",
-		"ultracite": "^6.3.7"
-	},
-	"keywords": [
-		"codeai-hub",
-		"gemini",
-		"provider",
-		"cli"
-	],
-	"author": "CodeAI Hub",
-	"license": "ISC",
-	"codeaiHub": {
-		"geminiCliCoreVersion": "0.16.0",
-		"geminiCliVersion": "0.16.0"
-	}
+  "name": "@codeai-hub/gemini-module",
+  "version": "1.1.317",
+  "description": "Gemini provider integration for CodeAI Hub core (CJS bridge)",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist"
+  },
+  "engines": {
+    "node": ">=18.19.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.7",
+    "@google/gemini-cli": "^0.16.0",
+    "@google/gemini-cli-core": "^0.16.0",
+    "@types/node": "^20.11.0",
+    "husky": "^9.1.7",
+    "lefthook": "^2.0.4",
+    "lint-staged": "^16.2.7",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3",
+    "ultracite": "^6.3.7"
+  },
+  "keywords": [
+    "codeai-hub",
+    "gemini",
+    "provider",
+    "cli"
+  ],
+  "author": "CodeAI Hub",
+  "license": "ISC",
+  "codeaiHub": {
+    "geminiCliCoreVersion": "0.16.0",
+    "geminiCliVersion": "0.16.0"
+  }
 }

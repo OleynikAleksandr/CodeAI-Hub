@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 const STORAGE_KEY = "pm-sidebar-collapsed";
 
 interface SidebarState {
-	collapsed: boolean;
-	toggle: () => void;
+  collapsed: boolean;
+  toggle: () => void;
 }
 
 /**
@@ -12,26 +12,26 @@ interface SidebarState {
  * State is persisted to localStorage.
  */
 export function useSidebarState(): SidebarState {
-	const [collapsed, setCollapsed] = useState<boolean>(() => {
-		try {
-			const stored = localStorage.getItem(STORAGE_KEY);
-			return stored === "true";
-		} catch {
-			return false;
-		}
-	});
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored === "true";
+    } catch {
+      return false;
+    }
+  });
 
-	useEffect(() => {
-		try {
-			localStorage.setItem(STORAGE_KEY, String(collapsed));
-		} catch {
-			// localStorage not available
-		}
-	}, [collapsed]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, String(collapsed));
+    } catch {
+      // localStorage not available
+    }
+  }, [collapsed]);
 
-	const toggle = useCallback(() => {
-		setCollapsed((prev) => !prev);
-	}, []);
+  const toggle = useCallback(() => {
+    setCollapsed((prev) => !prev);
+  }, []);
 
-	return { collapsed, toggle };
+  return { collapsed, toggle };
 }
