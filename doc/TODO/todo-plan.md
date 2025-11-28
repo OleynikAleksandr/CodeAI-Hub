@@ -71,15 +71,15 @@
 
 ### Stream 5: Интеграция
 
-8. [IN_PROGRESS] Интегрировать все компоненты в App
-   - Файлы: `src/client/project-manager/app.tsx`, `index.tsx`
-   - Commit: pending
+8. [DONE] Интегрировать все компоненты в App
+   - Файлы: `src/client/project-manager/app.tsx`
+   - Commit: `f320e83` — feat(project-manager): integrate layout into App (Stream 5)
 
 ---
 
 ### Stream 6: Финальная сборка и релиз
 
-9. [TODO] Запустить полную сборку и создать релиз
+9. [IN_PROGRESS] Запустить полную сборку и создать релиз
    - Действия: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`
    - Файлы: `doc/Architecture/Architecture.md`, `doc/Sessions/SessionXXX.md`
    - Commit: pending
