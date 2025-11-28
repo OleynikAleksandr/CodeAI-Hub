@@ -1,10 +1,10 @@
 {
-	"schema": 1,
-	"baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
-	"module": {
-		"version": "1.1.315",
-		"package": "gemini-module-1.1.315.tar.bz2",
-		"size": 15441,
-		"sha1": "c443523a2213881e321a6ea2d8d83c55b1bd6224"
-	}
+  "schema": 1,
+  "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
+  "module": {
+    "version": "1.1.316",
+    "package": "gemini-module-1.1.316.tar.bz2",
+    "size": 15465,
+    "sha1": "5c9c56f46793b5d220964ab884a42d436ebc40f9"
+  }
 }
