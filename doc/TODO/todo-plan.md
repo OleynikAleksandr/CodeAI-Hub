@@ -11,5 +11,5 @@
   - **Real-time Документация**: 
 Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/Architecture/Architecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
   - Phase завершается на чистом дереве: 
-запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
+запускаем `./scripts/build-all.sh` (он поднимает версии и пересобирает модули/core/UI/launcher), затем на чистом дереве запускаем `./scripts/build-release.sh --use-current-version` для сборки VSIX, переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
   - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.

@@ -86,16 +86,14 @@ doc/TODO/Archive/
 
   ## Правила выполнения (Execution Rules):
   - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое колличество - Stream (стрим), в каждом Стриме - некоторое кол-во подзадач.
-  - Каждая подзадача должна затрагивать не более 3 файлов.
+  - Каждая подзадача должна затрагивать не более 3 файлов - это критическое правило.
   - Если по факту разработки оказывается, что конкретная подзазача Stream затрагивает больше 3 файлов - такая задача должна быть разбита на более мелкие и список задач в Стриме переписывается.
-  - **Gates**: после выполнения каждой подзадачи прогоняется Гейт Качества -
-`scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем выполняем таргетную сборку (`npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`).
-  - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
-  - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке (например, Claude → Codex → core), чтобы локализовать ошибки без запуска `build-all`.
+  - **Gates**: после выполнения каждой подзадачи — ОБЯЗАТЕЛЬНО!!!! Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш). Только тогда подзадача считается выполненной. ЭТО Критически важное правило! Нарушать его категорически запрещено.
+  - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами.
   - **Real-time Документация**: 
 Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/Architecture/Architecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
   - Phase завершается на чистом дереве: 
-запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
+запускаем `./scripts/build-all.sh` (он повышает версии) затем делаешь опять коммит и вызываеш `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
   - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
 
   ## Phase <N> — <описание> (owner: <имя>, updated: YYYY-MM-DD)
@@ -142,3 +140,14 @@ doc/TODO/Archive/
 
 ### 7.2. Язык
 - Все артефакты (`task.md`, отчеты сессий, архитектурные доки) составляй **ВСЕГДА на Русском языке**!
+
+## 8. Release Build Checklist
+0. Перед началом убедись, что `npm install` выполнен — отсутствие зависимостей ломает `build:webview`/`build:web-client`.
+1. Закрой все микро‑задачи/стримы: для затронутых пакетов должны пройти таргетные `npm run build --workspace …` (или `npm run build:webview`, `npm run typecheck:webview`) + полный набор гейтов (архитектура, Ultracite, ts-prune, jscpd, check:links). Только после этого чистим рабочее дерево.
+2. Проверь, что `git status` пустой (никаких staged/unstaged). Версии пакетов/манифестов руками не меняем — это сделает скрипт.
+3. Выполни `./scripts/build-all.sh` из корня. Скрипт поднимет версии, пересоберёт Claude/Codex/Gemini, core, CEF launcher, UI и соберёт tarball’ы в `~/.codeai-hub/releases` и `doc/tmp/releases/`. Если что-то упало — исправь проблему и перезапусти **только** `build-all.sh`.
+4. Снова убедись, что `git status` пустой (все изменения от `build-all.sh` закоммичены, если это отдельная итерация).
+5. Выполни `./scripts/build-release.sh --use-current-version`. Скрипт использует текущую версию из `package.json`, прогоняет финальные гейты (архитектура, type-check, compile, SDK exclusions, prune dev deps) и собирает VSIX. При падении повторно запускаем **только** `build-release.sh` после исправления причин.
+6. После успеха проверь вывод `scripts/build-release.sh`: должны появиться строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`. Забери `codeai-hub-<version>.vsix` из корня и при необходимости скопируй свежие tarball’ы из `~/.codeai-hub/releases` в `doc/tmp/releases/`.
+7. Зафиксируй изменения (включая версии и манифесты), обнови `doc/TODO/todo-plan.md`, создай новый `doc/Sessions/SessionXXX.md`.
+8. Только после этого передавай VSIX или делись релизом.

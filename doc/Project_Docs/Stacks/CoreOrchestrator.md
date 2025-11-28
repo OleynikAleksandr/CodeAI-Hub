@@ -1,7 +1,7 @@
 # Core Orchestrator Module
 
 ## Overview
-Core Orchestrator — автономный Node.js сервис (`@codeai-hub/core@1.1.300`, Node 20 runtime) обрабатывающий все сессии, провайдерные модули и клиенты CodeAI Hub. Ядро запускается через Core Supervisor (CLI `codeai-core`) или вспомогательные скрипты, но продолжает работать после закрытия VS Code и лаунчера и предоставляет HTTP/WebSocket API для всех интерфейсов (webview, CEF‑клиент, будущие удалённые клиенты).
+Core Orchestrator — автономный Node.js сервис (`@codeai-hub/core@1.1.315`, Node 20 runtime) обрабатывающий все сессии, провайдерные модули и клиенты CodeAI Hub. Ядро запускается через Core Supervisor (CLI `codeai-core`) или вспомогательные скрипты, но продолжает работать после закрытия VS Code и лаунчера и предоставляет HTTP/WebSocket API для всех интерфейсов (webview, CEF‑клиент, будущие удалённые клиенты).
 
 - **Исполняемый путь:** `~/.codeai-hub/core/<platform>/<version>/`
 - **Runtime:** комплектный Node 20 + бандл `app/dist/index.js`
@@ -24,7 +24,7 @@ Core Orchestrator — автономный Node.js сервис (`@codeai-hub/co
 1. Скрипты сборки (`scripts/build-core.sh`, `scripts/build-all.sh`) кладут установленный runtime в `~/.codeai-hub/core/<platform>/<version>/` и обновляют `assets/core/manifest.json` и `~/.codeai-hub/releases/*.tar.bz2`.
 2. При запуске VS Code или лаунчера Core Supervisor (CLI `codeai-core`) выбирает runtime по манифесту/реестру, запускает процесс `node app/dist/index.js`, прокидывая `CORE_HOST/CORE_PORT/CORE_MANAGED_MODE`, пути к рабочему каталогу (`CLAUDE_WORKSPACE_PATH`, `CODEX_WORKSPACE_PATH`, `GEMINI_WORKSPACE_PATH`) и `*_MODULE_PATH` для провайдеров.
 3. Во время запуска ядро валидирует целостность файлов, поднимает RemoteBridge и ProviderRegistry, инициализирует провайдеры и публикует состояние через `/api/v1/status` (включая `core.ttl` и список провайдеров).
-4. При выходе новой версии `scripts/build-all.sh` поднимает unified версию, пересобирает core/провайдеры/лаунчер/VSIX и обновляет манифесты; клиенты переезжают на новый runtime через Supervisor, а старые версии остаются доступными для отката.
+4. При выходе новой версии `scripts/build-all.sh` поднимает unified версию, пересобирает core/провайдеры/лаунчер/UI‑bundles и обновляет манифесты, а `scripts/build-release.sh` собирает VSIX. Клиенты переезжают на новый runtime через Supervisor, а старые версии остаются доступными для отката.
 
 ## API
 - **HTTP**

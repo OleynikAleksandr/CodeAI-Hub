@@ -1,7 +1,7 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.5.4
-**Last Updated:** 2025-11-24
+**Version:** 0.5.5
+**Last Updated:** 2025-11-28
 **Status:** Active reference
 **Release Focus:** v1.1.313 — UI Modularization & Independent Launcher Windows. UI бандлы (`vscode-webview`, `web-client`, `project-manager`) вынесены из VSIX. Launcher поддерживает запуск независимых приложений (Web Client, Project Manager) с сохранением размеров окон.
 
@@ -94,8 +94,11 @@ graph TD
 
 ## Dependencies & Tooling
 - **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`, `project-manager.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
-- **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг; архитектурный скрипт контролирует структуру `src/` и `media/`.
+- **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
+
+## Recent Changes (v1.1.315 - 2025-11-28)
+- **Unified Quality Gates**: Lefthook заменён на Husky в качестве единственного оркестратора Git‑хуков. Pre-commit выполняет архитектурный чек, ts-prune и `npx ultracite fix` по staged‑файлам; pre-push — jscpd и проверку Markdown‑ссылок. Скрипты `build-all.sh` и `build-release.sh` требуют чистый Git и разделены на два логических шага (build vs release).
 
 ## Recent Changes (v1.1.313 - 2025-11-24)
 - **Independent Launcher Windows**: Реализована стратегия "Binary Copy" для создания независимых `.app` оберток для каждого приложения (Web Client, Project Manager). Это позволяет сохранять размеры и позицию окон независимо друг от друга.

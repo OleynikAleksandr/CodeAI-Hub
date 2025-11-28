@@ -2,25 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.313
-- **UI Modularization**: The UI is now fully decoupled from the extension and launcher. It is distributed as separate `vscode-webview`, `web-client`, and `project-manager` bundles, installed into `~/.codeai-hub/packages/ui/<version>/`.
-- **Independent Windows**: The launcher now supports independent window state persistence for multiple applications (Web Client, Project Manager) using a "Binary Copy" strategy.
-- **Packages Layout**: Migrated local artifacts to a structured `~/.codeai-hub/packages/{core,launcher,providers,ui}` layout, improving organization and version management.
-- **Offline UI Installer**: New `UIBundleInstaller` ensures UI assets are provisioned offline from the local release cache, removing runtime dependencies on embedded assets.
+## Current Release — v1.1.315
+- **Unified Quality Gates**: The project now uses Husky as the single Git hook orchestrator. Pre-commit runs architecture checks, a fast Ultracite/Biome pass and `ts-prune`, then formats staged files via `npx ultracite fix`. Pre-push runs jscpd duplication checks and Markdown link validation.
+- **Split Build Pipeline**: The previous monolithic `build-all.sh` has been split into two steps: `build-all.sh` bumps versions and rebuilds core, providers, UI bundles and the CEF launcher; `build-release.sh --use-current-version` runs final gates and packages the VSIX on a clean git tree.
+- **Ultracite 6.x Integration**: The repo is aligned with the latest Ultracite/Biome preset, including `strictNullChecks` in TS configs and explicit ignores for heavy bundles (`media/react-chat.js`, `media/web-client/dist/**`), making global `npx ultracite fix` safe for the full workspace.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.313.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.313.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.313.tar.bz2`
-- Providers: `claude-module-1.1.313.tar.bz2`, `codex-module-1.1.313.tar.bz2`, `gemini-module-1.1.313.tar.bz2`
-- UI: `vscode-webview-1.1.313.tar.bz2`, `web-client-1.1.313.tar.bz2`, `project-manager-1.1.313.tar.bz2`
+- VSIX: `codeai-hub-1.1.315.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.315.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.315.tar.bz2`
+- Providers: `claude-module-1.1.315.tar.bz2`, `codex-module-1.1.315.tar.bz2`, `gemini-module-1.1.315.tar.bz2`
+- UI: `vscode-webview-1.1.315.tar.bz2`, `web-client-1.1.315.tar.bz2`, `project-manager-1.1.315.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
 - **Persistent standalone UI**: the macOS launcher (CEF) stores window position and size in real time, so the web client reopens exactly where you left it—even across monitor changes.
 - **Offline-first packaging**: manifests point to the local `~/.codeai-hub/releases/` cache, and build scripts publish fresh tarballs for core, launcher, and provider modules without relying on GitHub downloads.
 - **Provider readiness**: users install and configure CLI tools themselves (see the guide below); upcoming diagnostics and status toggles are outlined in `doc/TODO/todo-plan_.md`.
-- **Quality guardrails**: Ultracite architecture rules, jscpd duplication scans, ts-prune export checks, and Biome formatting run through Lefthook to keep the codebase healthy.
+- **Quality guardrails**: Ultracite architecture rules, jscpd duplication scans, ts-prune export checks, and Biome formatting are orchestrated through Husky pre-commit/pre-push hooks to keep the codebase healthy.
 
 ## Getting Started
 ```bash
@@ -35,7 +34,7 @@ npm install
 1. **Install dependencies**
    ```bash
    npm install
-   npm run setup:hooks    # optional: installs lefthook locally
+   npm run setup:hooks    # installs Husky git hooks
    ```
 2. **Implement changes** in `src/` and `packages/**`, keeping files under 300 lines and leaning on micro-classes plus facades.
 3. **Run quality checks** before committing:
@@ -47,15 +46,21 @@ npm install
 4. **Commit**; the pre-commit hook reruns the same gates automatically.
 
 ## Building a Release
-Always use the unified script to generate a release:
+Always use the split build pipeline to generate a release:
 ```bash
 ./scripts/build-all.sh
+./scripts/build-release.sh --use-current-version
 ```
-The script performs:
+`build-all.sh`:
 - enforces a clean git tree, bumps versions across root and workspaces and syncs manifests;
 - wipes the local `~/.codeai-hub/{core,providers,cef-launcher,releases}` caches before rebuilding;
-- rebuilds provider modules, core runtime, CEF launcher и VSIX, прогоняя архитектурные/линт чекеры;
-- копирует свежие tar.bz2 артефакты в `doc/tmp/releases/` и оставляет итоговый VSIX в корне репозитория.
+- rebuilds provider modules, core runtime, CEF launcher and UI bundles, прогоняя архитектурные/линт чекеры;
+- копирует свежие tar.bz2 артефакты в `doc/tmp/releases/`.
+
+`build-release.sh --use-current-version`:
+- требует чистый git tree перед стартом;
+- прогоняет финальные гейты (архитектура, type-check, compile, SDK exclusions, advisory link/dup checks);
+- временно удаляет dev-зависимости и создаёт VSIX (оставляя `codeai-hub-<version>.vsix` в корне), затем восстанавливает dev-deps.
 
 По завершении обновляйте README, CHANGELOG, SystemArchitecture и `doc/TODO/todo-plan.md`, фиксируйте релиз коммитом `feat: vX.Y.Z - <summary>` и пушьте в `main`.
 
