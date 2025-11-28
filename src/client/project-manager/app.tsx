@@ -1,8 +1,7 @@
 import type React from "react";
+import { MainLayout } from "./components/layout/main-layout";
 
-export const App: React.FC = () => (
-	<div className="project-manager-app">
-		<h1>Project Manager</h1>
-		<p>Welcome to CodeAI Hub Project Manager</p>
-	</div>
-);
+/**
+ * Project Manager root application component
+ */
+export const App: React.FC = () => <MainLayout />;
