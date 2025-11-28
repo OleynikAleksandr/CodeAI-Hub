@@ -1,10 +1,10 @@
 {
-  "schema": 1,
-  "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
-  "module": {
-    "version": "1.1.315",
-    "package": "claude-module-1.1.315.tar.bz2",
-    "size": 18684,
-    "sha1": "97845b014e4e5f728088f9c9e52eaca53d80de83"
-  }
+	"schema": 1,
+	"baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
+	"module": {
+		"version": "1.1.315",
+		"package": "claude-module-1.1.315.tar.bz2",
+		"size": 18684,
+		"sha1": "97845b014e4e5f728088f9c9e52eaca53d80de83"
+	}
 }
