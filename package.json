@@ -1,124 +1,124 @@
 {
-	"name": "codeai-hub",
-	"displayName": "CodeAI Hub",
-	"description": "Unified VS Code extension for orchestrating AI providers.",
-	"version": "1.1.316",
-	"publisher": "CodeAIHub",
-	"license": "ISC",
-	"workspaces": [
-		"packages/*"
-	],
-	"engines": {
-		"vscode": "^1.85.0"
-	},
-	"activationEvents": [
-		"onStartupFinished"
-	],
-	"categories": [
-		"AI",
-		"Other"
-	],
-	"icon": "media/icon.png",
-	"main": "./out/extension.js",
-	"contributes": {
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "codeai-hub-container",
-					"title": "CodeAI Hub",
-					"icon": "media/icon.svg"
-				}
-			]
-		},
-		"views": {
-			"codeai-hub-container": [
-				{
-					"type": "webview",
-					"id": "codeaiHubView",
-					"name": "CodeAI Hub",
-					"icon": "media/icon.svg"
-				}
-			]
-		},
-		"commands": [
-			{
-				"command": "codeaiHub.openSettings",
-				"title": "Settings",
-				"category": "CodeAI Hub",
-				"icon": "$(settings-gear)"
-			},
-			{
-				"command": "codeaiHub.launchWebClient",
-				"title": "Launch Web Client",
-				"category": "CodeAI Hub"
-			}
-		],
-		"menus": {
-			"view/title": [
-				{
-					"command": "codeaiHub.openSettings",
-					"when": "view == codeaiHubView",
-					"group": "navigation"
-				}
-			]
-		}
-	},
-	"scripts": {
-		"check:architecture": "./scripts/check-architecture.sh",
-		"lint": "echo \"lint script not configured yet\"",
-		"check:tsprune": "ts-prune",
-		"check:dup": "jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"",
-		"check:links": "bash -lc 'set -e; if command -v markdown-link-check >/dev/null; then find doc -name \"*.md\" -print0 | xargs -0 -n1 markdown-link-check -q; fi'",
-		"typecheck:webview": "tsc -p tsconfig.webview.json --pretty false",
-		"quality": "npm run check:architecture && npm run lint && npm run typecheck:webview",
-		"setup:hooks": "npx lefthook install",
-		"build:webview": "node ./scripts/build-webview.js",
-		"build:web-client": "node ./scripts/build-web-client.js",
-		"build:project-manager": "node ./scripts/build-project-manager.js",
-		"build:core": "npm run build --workspace=@codeai-hub/core",
-		"compile": "npm run build:webview && npm run build:web-client && npm run typecheck:webview && tsc -p .",
-		"test": "echo \"No automated tests defined yet\"",
-		"format:check": "echo \"format check script not configured yet\"",
-		"prepare": "husky"
-	},
-	"keywords": [
-		"AI",
-		"assistant",
-		"multi-agent"
-	],
-	"directories": {
-		"doc": "doc"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/local/codeai-hub"
-	},
-	"devDependencies": {
-		"@google/gemini-cli": "^0.16.0",
-		"@google/gemini-cli-core": "^0.16.0",
-		"@types/node": "^22.7.4",
-		"@types/react": "^18.3.5",
-		"@types/react-dom": "^18.3.0",
-		"@types/vscode": "^1.85.0",
-		"esbuild": "^0.23.0",
-		"jscpd": "4.0.5",
-		"lefthook": "^1.13.6",
-		"markdown-link-check": "3.14.1",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1",
-		"ts-prune": "0.10.3",
-		"typescript": "^5.6.3",
-		"zod-to-json-schema": "^3.24.6"
-	},
-	"dependencies": {
-		"@codeai-hub/core-supervisor": "file:packages/core-supervisor",
-		"react-markdown": "^10.1.0",
-		"remark-gfm": "^4.0.1",
-		"ws": "^8.18.3"
-	},
-	"lint-staged": {
-		"*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
-			"npx ultracite fix"
-		]
-	}
+  "name": "codeai-hub",
+  "displayName": "CodeAI Hub",
+  "description": "Unified VS Code extension for orchestrating AI providers.",
+  "version": "1.1.317",
+  "publisher": "CodeAIHub",
+  "license": "ISC",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "icon": "media/icon.png",
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeai-hub-container",
+          "title": "CodeAI Hub",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codeai-hub-container": [
+        {
+          "type": "webview",
+          "id": "codeaiHubView",
+          "name": "CodeAI Hub",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "codeaiHub.openSettings",
+        "title": "Settings",
+        "category": "CodeAI Hub",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "codeaiHub.launchWebClient",
+        "title": "Launch Web Client",
+        "category": "CodeAI Hub"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "codeaiHub.openSettings",
+          "when": "view == codeaiHubView",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "check:architecture": "./scripts/check-architecture.sh",
+    "lint": "echo \"lint script not configured yet\"",
+    "check:tsprune": "ts-prune",
+    "check:dup": "jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"",
+    "check:links": "bash -lc 'set -e; if command -v markdown-link-check >/dev/null; then find doc -name \"*.md\" -print0 | xargs -0 -n1 markdown-link-check -q; fi'",
+    "typecheck:webview": "tsc -p tsconfig.webview.json --pretty false",
+    "quality": "npm run check:architecture && npm run lint && npm run typecheck:webview",
+    "setup:hooks": "npx lefthook install",
+    "build:webview": "node ./scripts/build-webview.js",
+    "build:web-client": "node ./scripts/build-web-client.js",
+    "build:project-manager": "node ./scripts/build-project-manager.js",
+    "build:core": "npm run build --workspace=@codeai-hub/core",
+    "compile": "npm run build:webview && npm run build:web-client && npm run typecheck:webview && tsc -p .",
+    "test": "echo \"No automated tests defined yet\"",
+    "format:check": "echo \"format check script not configured yet\"",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "AI",
+    "assistant",
+    "multi-agent"
+  ],
+  "directories": {
+    "doc": "doc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/local/codeai-hub"
+  },
+  "devDependencies": {
+    "@google/gemini-cli": "^0.16.0",
+    "@google/gemini-cli-core": "^0.16.0",
+    "@types/node": "^22.7.4",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.23.0",
+    "jscpd": "4.0.5",
+    "lefthook": "^1.13.6",
+    "markdown-link-check": "3.14.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ts-prune": "0.10.3",
+    "typescript": "^5.6.3",
+    "zod-to-json-schema": "^3.24.6"
+  },
+  "dependencies": {
+    "@codeai-hub/core-supervisor": "file:packages/core-supervisor",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "ws": "^8.18.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
+      "npx ultracite fix"
+    ]
+  }
 }
