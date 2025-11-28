@@ -129,4 +129,3 @@ Most formatting and common issues are automatically fixed by Biome. Run `npx ult
 ## Полезные ссылки
 - Ultracite Docs: https://www.ultracite.ai/introduction/
 - Ultracite GitHub: https://github.com/haydenbleasel/ultracite
-- Biome Suppressions: https://biomejs.dev/linter/suppressions/
