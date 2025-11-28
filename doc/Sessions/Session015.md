@@ -48,6 +48,4 @@
 9. `doc/Sessions/Session015.md` (THIS REPORT)
 
 ## Plans for next session
-- Исправить битую ссылку в `doc/Project_Docs/SystemArchitecture/ProjectStructureMap.md` (ссылка на ../Stacks/ServiceIntelligenceModule.md)
-- Рассмотреть рефакторинг 13 файлов, находящихся в предупредительной зоне (250-300 строк)
-- Выбрать приоритетное направление для следующей фазы разработки (provider switching, consilium или Service Intelligence Module) и обновить `doc/TODO/todo-plan.md`
+
