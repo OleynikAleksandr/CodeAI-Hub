@@ -11,7 +11,7 @@ tmp/
 .vscode/
 .gemini/
 AGENTS.md
-biome.jsonc
+
 lefthook.yml
 *.vsix
 binaries/
