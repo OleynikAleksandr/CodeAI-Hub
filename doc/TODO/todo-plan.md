@@ -79,10 +79,10 @@
 
 ### Stream 6: Финальная сборка и релиз
 
-9. [IN_PROGRESS] Запустить полную сборку и создать релиз
+9. [DONE] Запустить полную сборку и создать релиз
    - Действия: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`
-   - Файлы: `doc/Architecture/Architecture.md`, `doc/Sessions/SessionXXX.md`
-   - Commit: pending
+   - Результат: `codeai-hub-1.1.316.vsix` (388K)
+   - Commit: `ab2af78` — chore: bump version to 1.1.316
 
 ---
 
@@ -90,3 +90,9 @@
 
 - 2025-11-28 — План создан, инициализация todo-plan.md
 - 2025-11-28 — Streams 1-4 выполнены, commit `ffe25f4`
+- 2025-11-28 — Stream 5 выполнен, commit `f320e83`
+- 2025-11-28 — Stream 6 выполнен, VSIX 1.1.316 создан, commit `ab2af78`
+
+---
+
+## Phase 1 — COMPLETED ✅
