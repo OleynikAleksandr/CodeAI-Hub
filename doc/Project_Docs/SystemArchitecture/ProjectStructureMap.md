@@ -79,8 +79,8 @@ graph TD
 - **Ключевые функции**: WebSocket сервер, Health check API, Session management.
 
 **Service Intelligence Module (SIM)**
-Модуль аналитики и улучшения контекста (в разработке).
-- **Документация**: [ServiceIntelligenceModule.md](../Stacks/ServiceIntelligenceModule.md)
+Модуль аналитики и улучшения контекста (зарезервирован для будущих фаз; сейчас не реализован).
+- **Документация**: в разработке
 
 ### 2. Clients & UI (Клиенты и Интерфейс)
 
