@@ -1,6 +1,6 @@
 # Quality Gate Manager — Project Bootstrap Guide
 
-Документ описывает полный цикл запуска нового проекта CodeAI‑Hub «с нуля», чтобы сразу включить автоматические гейты качества: Ultracite (Biome), архитектурный скрипт, Lefthook, дублирование и проверку ссылок. Следуя шагам, можно разворачивать рабочее окружение без дополнительного контекста.
+Документ описывает полный цикл запуска нового проекта CodeAI‑Hub «с нуля», чтобы сразу включить автоматические гейты качества: Ultracite (Biome), архитектурный скрипт, Husky, дублирование и проверку ссылок. Следуя шагам, можно разворачивать рабочее окружение без дополнительного контекста.
 
 ## 1. Предварительные требования
 - macOS / Linux с установленными `git`, `node >= 20`, `npm >= 10`.
@@ -22,12 +22,12 @@
    ```
 
 ## 3. Установка Ultracite и базовой конфигурации
-1. Запустите мастер установки Ultracite (добавит `biome.jsonc`, `.vscode/settings.json`, `lefthook.yml`):
+1. Запустите мастер установки Ultracite (добавит `biome.jsonc`, `.vscode/settings.json`, Husky‑хуки и файлы правил для агентов):
    ```bash
-   npx ultracite init --pm npm --editors vscode --rules claude codex --integrations lefthook
+   npx ultracite@latest init --pm npm --editors vscode --rules claude codex gemini-cli --hooks claude --integrations husky
    ```
-   > Если нужны другие AI-правила или интеграции, перечислите их через пробел (`--rules cursor windsorf`, `--integrations husky`).
-2. Проверьте, что созданы файлы: `.vscode/settings.json`, `biome.jsonc`, `lefthook.yml`, `package-lock.json` и установлен dev-зависимости (`ultracite`, `@biomejs/biome`, `lefthook`).
+   > Если нужны другие AI-правила или интеграции, перечислите их через пробел (`--rules cursor windsurf`, `--integrations lefthook` и т.п.).
+2. Проверьте, что созданы файлы: `.vscode/settings.json`, `biome.jsonc`, `.husky/pre-commit`, `.husky/pre-push`, `.claude/CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `package-lock.json` и установлены dev-зависимости (`ultracite`, `@biomejs/biome`, `husky`).
 
 ## 4. Дополнительные dev-зависимости
 Установите инструменты, которые использует архитектурный скрипт и pre-push гейты:
@@ -43,8 +43,8 @@ npm install -D -E jscpd ts-prune markdown-link-check
    или (если находитесь в действующем репозитории) используйте локальную копию `scripts/`.
 2. Убедитесь, что файлы исполняемые:
    ```bash
-   chmod +x scripts/check-architecture.sh scripts/build-release.sh
-   chmod -R +x scripts/githooks
+   chmod +x scripts/check-architecture.sh scripts/build-all.sh scripts/build-release.sh
+   chmod +x scripts/build-core.sh scripts/build-claude-module.sh scripts/build-codex-module.sh scripts/build-gemini-module.sh scripts/build-ui-bundle.sh scripts/build-cef-launcher.sh
    ```
 
 ## 6. Структура проекта и служебные каталоги
@@ -74,42 +74,31 @@ tmp/
 {
   "scripts": {
     "check:architecture": "./scripts/check-architecture.sh",
-    "lint": "npx ultracite check",
-    "format:fix": "npx ultracite fix",
-    "format:check": "npx ultracite check",
+    "lint": "echo \"lint script not configured yet\"",
     "check:tsprune": "ts-prune",
     "check:dup": "jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"",
     "check:links": "bash -lc 'set -e; if command -v markdown-link-check >/dev/null; then find doc -name \"*.md\" -print0 | xargs -0 -n1 markdown-link-check -q; fi'",
-    "quality": "npm run check:architecture && npm run lint",
-    "setup:hooks": "npx lefthook install"
+    "quality": "npm run check:architecture && npm run lint && npm run check:tsprune",
+    "setup:hooks": "npx husky install"
   }
 }
 ```
-Также убедитесь, что в `devDependencies` присутствуют пакеты `@biomejs/biome`, `ultracite`, `lefthook`, `jscpd`, `ts-prune`, `markdown-link-check` (если `npm install` ещё не добавил их автоматически).
+Также убедитесь, что в `devDependencies` присутствуют пакеты `@biomejs/biome`, `ultracite`, `husky`, `jscpd`, `ts-prune`, `markdown-link-check` (если `npm install` ещё не добавил их автоматически).
 
-## 9. Обновление `lefthook.yml`
-Замените содержимое файла на конфигурацию, которая вызывала гейты в текущем проекте:
-```yaml
-pre-commit:
-  parallel: false
-  commands:
-    ultracite_fix:
-      run: npx ultracite fix
-      stage_fixed: true
-    architecture:
-      run: ./scripts/check-architecture.sh
-    lint:
-      run: npm run lint
-    tsprune:
-      run: npm run check:tsprune
+## 9. Настройка Husky‑хуков
+Husky использует файлы в `.husky/` в качестве источника Git‑хуков. Для воспроизведения текущей схемы гейтов:
 
-pre-push:
-  commands:
-    duplication:
-      run: npm run check:dup
-    links:
-      run: npm run check:links
-```
+- `.husky/pre-commit` должен вызывать:
+  - `npm test`;
+  - `./scripts/check-architecture.sh`;
+  - `npm run lint`;
+  - `npm run check:tsprune`;
+  - затем `npx ultracite fix` по staged‑файлам (со стэшем/рестейджем).
+- `.husky/pre-push` должен вызывать:
+  - `npm run -s check:dup`;
+  - `npm run -s check:links`.
+
+В основном репозитории CodeAI-Hub эти файлы уже настроены; для новых проектов их можно скопировать и адаптировать под свою структуру.
 
 ## 10. Активация Lefthook и первичная проверка
 1. Установите git-хуки:
@@ -127,7 +116,7 @@ pre-push:
    npm run check:dup
    npm run check:links
    ```
-4. Убедитесь, что `npx lefthook run pre-commit` и `npx lefthook run pre-push` выполняются без ошибок.
+4. Убедитесь, что `git commit` и `git push` проходят гейты pre-commit / pre-push без ошибок (Husky будет запускать их автоматически).
 
 ## 11. Финальная фиксация
 1. Добавьте все файлы в Git и создайте коммит:
@@ -181,7 +170,7 @@ pre-push:
 
 ## 14. Троблшутинг
 - **Уязвимости после `npm install`** — проверьте `npm audit`; если проблемы в инструментах lint/format, обычно достаточно следить за обновлениями и фиксить во время планового обновления dev-зависимостей.
-- **Lefthook жалуется на отсутствующий `HEAD`** — это нормально до первого коммита; сделайте начальный коммит, после чего pre-push команды смогут получить ревизию.
+- **Husky или гейты жалуются на отсутствующий `HEAD`** — это нормально до первого коммита; сделайте начальный коммит, после чего pre-push команды смогут получить ревизию.
 - **Архитектурный скрипт ругается на отсутствие файлов** — убедитесь, что директории из шага 6 созданы; при необходимости временно создайте заглушки `.keep` в пустых папках.
 - **Ultracite форматирует `.vscode/settings.json`** — просто запустите `npm run format:fix`, чтобы принять форматирование.
 

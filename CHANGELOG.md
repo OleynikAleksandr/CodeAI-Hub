@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.315] - 2025-11-28
+### Changed
+- **Unified Quality Gates**: Switched from Lefthook to Husky as the single Git hook orchestrator. Pre-commit now runs the architecture check, a fast Ultracite/Biome pass and `ts-prune` before formatting staged files with `npx ultracite fix`. Pre-push runs jscpd duplication checks and Markdown link validation.
+- **Split Build Pipeline**: `build-all.sh` no longer packages the VSIX. Instead, it bumps versions and rebuilds core, providers, UI bundles and the CEF launcher, while `build-release.sh --use-current-version` runs final gates and produces the VSIX on a clean git tree.
+- **Ultracite 6.x Alignment**: Updated Biome/Ultracite configuration to add `strictNullChecks` and ignore heavy bundles (`media/react-chat.js`, `media/web-client/dist/**`), making global `npx ultracite fix` viable across the entire workspace.
+
+### Build
+- VSIX → `codeai-hub-1.1.315.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.315.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.315.tar.bz2`
+- Providers → `claude-module-1.1.315.tar.bz2`, `codex-module-1.1.315.tar.bz2`, `gemini-module-1.1.315.tar.bz2`
+- UI → `vscode-webview-1.1.315.tar.bz2`, `web-client-1.1.315.tar.bz2`, `project-manager-1.1.315.tar.bz2`
+
 ## [1.1.313] - 2025-11-24
 ### Added
 - **Independent Launcher Windows**: The macOS launcher now uses a "Binary Copy" strategy to create lightweight `.app` wrappers for each application (Web Client, Project Manager). This ensures each app has a unique Bundle ID, enabling independent window state persistence (size and position) via standard macOS `NSUserDefaults`.

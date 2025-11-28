@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.313 (24.11.2025) — UI Modularization & Independent Windows. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager.
+**Состояние:** релиз 1.1.315 (28.11.2025) — Unified Quality Gates & Split Build Pipeline. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
 
 ## Обзор
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
@@ -30,50 +30,50 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/claude.json`.
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.313
-- Автономное ядро: `@codeai-hub/core` 1.1.313
-- UI Bundles: 1.1.313
-- Claude module: 1.1.313
-- Codex module: 1.1.313
-- Gemini module: 1.1.313
+- VSIX: `codeai-hub` 1.1.315
+- Автономное ядро: `@codeai-hub/core` 1.1.315
+- UI Bundles: 1.1.315
+- Claude module: 1.1.315
+- Codex module: 1.1.315
+- Gemini module: 1.1.315
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.313/
+│       └── 1.1.315/
 │           ├── node/
 │           ├── app/
 │           └── install.json
 ├── packages/
 │   ├── launcher/
-│   │   └── macos-arm64/1.1.313/
+│   │   └── macos-arm64/1.1.315/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.313/
-│       │   └── current -> 1.1.313
+│       │   ├── 1.1.315/
+│       │   └── current -> 1.1.315
 │       ├── web-client/
-│       │   ├── 1.1.313/
-│       │   └── current -> 1.1.313
+│       │   ├── 1.1.315/
+│       │   └── current -> 1.1.315
 │       └── project-manager/
-│           ├── 1.1.313/
-│           └── current -> 1.1.313
+│           ├── 1.1.315/
+│           └── current -> 1.1.315
 ├── providers/
-│   ├── claude/1.1.313/
-│   ├── codex/1.1.313/
-│   └── gemini/1.1.313/
+│   ├── claude/1.1.315/
+│   ├── codex/1.1.315/
+│   └── gemini/1.1.315/
 ├── settings/
 │   └── claude.json
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.313.tar.bz2
-    ├── vscode-webview-1.1.313.tar.bz2
-    ├── web-client-1.1.313.tar.bz2
-    ├── project-manager-1.1.313.tar.bz2
-    ├── claude-module-1.1.313.tar.bz2
-    ├── codex-module-1.1.313.tar.bz2
-    ├── gemini-module-1.1.313.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.313.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.315.tar.bz2
+    ├── vscode-webview-1.1.315.tar.bz2
+    ├── web-client-1.1.315.tar.bz2
+    ├── project-manager-1.1.315.tar.bz2
+    ├── claude-module-1.1.315.tar.bz2
+    ├── codex-module-1.1.315.tar.bz2
+    ├── gemini-module-1.1.315.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.315.tar.bz2
 ```
 
 ## Провайдеры
