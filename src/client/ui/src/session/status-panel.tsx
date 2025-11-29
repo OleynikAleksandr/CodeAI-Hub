@@ -8,76 +8,76 @@ const SUPERVISOR_LABEL = "Core Supervisor";
 type CoreConnectionStatus = "connecting" | "ready" | "error";
 
 type StatusPanelProps = {
-  readonly status: SessionStatusInfo | null;
-  readonly connectionStatus: CoreConnectionStatus;
-  readonly connectionDetail?: string;
+	readonly status: SessionStatusInfo | null;
+	readonly connectionStatus: CoreConnectionStatus;
+	readonly connectionDetail?: string;
 };
 
 const StatusPanel = ({
-  status,
-  connectionStatus,
-  connectionDetail,
+	status,
+	connectionStatus,
+	connectionDetail,
 }: StatusPanelProps) => {
-  if (!status || connectionStatus !== "ready") {
-    return (
-      <section className="session-status session-panel">
-        <div className="session-status__row">
-          <span className="session-status__label">{SUPERVISOR_LABEL}</span>
-          <span className="session-status__value">
-            {describeConnectionStatus(connectionStatus)}
-          </span>
-        </div>
-        {connectionDetail ? (
-          <div className="session-status__row session-status__row--muted">
-            <span className="session-status__value">{connectionDetail}</span>
-          </div>
-        ) : null}
-      </section>
-    );
-  }
+	if (!status || connectionStatus !== "ready") {
+		return (
+			<section className="session-status session-panel">
+				<div className="session-status__row">
+					<span className="session-status__label">{SUPERVISOR_LABEL}</span>
+					<span className="session-status__value">
+						{describeConnectionStatus(connectionStatus)}
+					</span>
+				</div>
+				{connectionDetail ? (
+					<div className="session-status__row session-status__row--muted">
+						<span className="session-status__value">{connectionDetail}</span>
+					</div>
+				) : null}
+			</section>
+		);
+	}
 
-  const { providerSummary, tokenUsage } = status;
+	const { providerSummary, tokenUsage } = status;
 
-  const percentage = Math.min(
-    MAX_PERCENTAGE,
-    Math.round(
-      (tokenUsage.used / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT)) *
-        PERCENT_SCALE
-    )
-  );
+	const percentage = Math.min(
+		MAX_PERCENTAGE,
+		Math.round(
+			(tokenUsage.used / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT)) *
+				PERCENT_SCALE,
+		),
+	);
 
-  return (
-    <section className="session-status session-panel">
-      <div className="session-status__row">
-        <span className="session-status__label">Providers</span>
-        <span className="session-status__value">{providerSummary}</span>
-      </div>
-      <div className="session-status__row session-status__row--muted">
-        <span className="session-status__label">Status</span>
-        <span className="session-status__value">
-          Inactive or degraded providers are disabled in the picker.
-        </span>
-      </div>
-      <div className="session-status__row">
-        <span className="session-status__label">Tokens</span>
-        <span className="session-status__value">
-          {tokenUsage.used.toLocaleString()} /{" "}
-          {tokenUsage.limit.toLocaleString()} ({percentage}%)
-        </span>
-      </div>
-    </section>
-  );
+	return (
+		<section className="session-status session-panel">
+			<div className="session-status__row">
+				<span className="session-status__label">Providers</span>
+				<span className="session-status__value">{providerSummary}</span>
+			</div>
+			<div className="session-status__row session-status__row--muted">
+				<span className="session-status__label">Status</span>
+				<span className="session-status__value">
+					Inactive or degraded providers are disabled in the picker.
+				</span>
+			</div>
+			<div className="session-status__row">
+				<span className="session-status__label">Tokens</span>
+				<span className="session-status__value">
+					{tokenUsage.used.toLocaleString()} /{" "}
+					{tokenUsage.limit.toLocaleString()} ({percentage}%)
+				</span>
+			</div>
+		</section>
+	);
 };
 
 export default StatusPanel;
 
 const describeConnectionStatus = (status: CoreConnectionStatus): string => {
-  switch (status) {
-    case "ready":
-      return "Core online";
-    case "error":
-      return "Core unavailable";
-    default:
-      return "Starting core…";
-  }
+	switch (status) {
+		case "ready":
+			return "Core online";
+		case "error":
+			return "Core unavailable";
+		default:
+			return "Starting core…";
+	}
 };

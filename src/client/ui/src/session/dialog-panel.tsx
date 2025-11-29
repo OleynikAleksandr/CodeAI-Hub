@@ -6,251 +6,251 @@ import MarkdownContent from "./markdown-content";
 const AUTO_SCROLL_EPSILON = 32;
 
 type DialogPanelProps = {
-  readonly messages: readonly SessionMessage[];
-  readonly providerTheme?: ProviderTheme | null;
-  readonly providerLabel?: string | null;
+	readonly messages: readonly SessionMessage[];
+	readonly providerTheme?: ProviderTheme | null;
+	readonly providerLabel?: string | null;
 };
 
 type ThinkingMessageProps = {
-  readonly message: SessionMessage;
-  readonly expanded: boolean;
-  readonly onToggle: (messageId: string) => void;
-  readonly label: string;
-  readonly className: string;
+	readonly message: SessionMessage;
+	readonly expanded: boolean;
+	readonly onToggle: (messageId: string) => void;
+	readonly label: string;
+	readonly className: string;
 };
 
 type StandardMessageProps = {
-  readonly message: SessionMessage;
-  readonly label: string;
-  readonly className: string;
+	readonly message: SessionMessage;
+	readonly label: string;
+	readonly className: string;
 };
 
 const DialogPanel = ({
-  messages,
-  providerTheme = null,
-  providerLabel = null,
+	messages,
+	providerTheme = null,
+	providerLabel = null,
 }: DialogPanelProps) => {
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const displayMessages = useMemo(
-    () => mergeThinkingMessages(messages),
-    [messages]
-  );
-  const [expandedThinking, setExpandedThinking] = useState<
-    Record<string, boolean>
-  >({});
-  const [pinnedToBottom, setPinnedToBottom] = useState(true);
+	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+	const displayMessages = useMemo(
+		() => mergeThinkingMessages(messages),
+		[messages],
+	);
+	const [expandedThinking, setExpandedThinking] = useState<
+		Record<string, boolean>
+	>({});
+	const [pinnedToBottom, setPinnedToBottom] = useState(true);
 
-  useEffect(() => {
-    setExpandedThinking((previous) => {
-      let hasChanges = false;
-      const nextState = { ...previous };
-      for (const message of displayMessages) {
-        if (
-          message.role === "thinking" &&
-          nextState[message.id] === undefined
-        ) {
-          nextState[message.id] = false;
-          hasChanges = true;
-        }
-      }
-      return hasChanges ? nextState : previous;
-    });
-  }, [displayMessages]);
+	useEffect(() => {
+		setExpandedThinking((previous) => {
+			let hasChanges = false;
+			const nextState = { ...previous };
+			for (const message of displayMessages) {
+				if (
+					message.role === "thinking" &&
+					nextState[message.id] === undefined
+				) {
+					nextState[message.id] = false;
+					hasChanges = true;
+				}
+			}
+			return hasChanges ? nextState : previous;
+		});
+	}, [displayMessages]);
 
-  const toggleThinking = (messageId: string) => {
-    setExpandedThinking((previous) => ({
-      ...previous,
-      [messageId]: !previous[messageId],
-    }));
-  };
+	const toggleThinking = (messageId: string) => {
+		setExpandedThinking((previous) => ({
+			...previous,
+			[messageId]: !previous[messageId],
+		}));
+	};
 
-  const updatePinnedState = () => {
-    const container = scrollContainerRef.current;
-    if (!container) {
-      return;
-    }
-    const distanceFromBottom =
-      container.scrollHeight - (container.scrollTop + container.clientHeight);
-    const nextPinned = distanceFromBottom <= AUTO_SCROLL_EPSILON;
-    setPinnedToBottom((current) =>
-      current === nextPinned ? current : nextPinned
-    );
-  };
+	const updatePinnedState = () => {
+		const container = scrollContainerRef.current;
+		if (!container) {
+			return;
+		}
+		const distanceFromBottom =
+			container.scrollHeight - (container.scrollTop + container.clientHeight);
+		const nextPinned = distanceFromBottom <= AUTO_SCROLL_EPSILON;
+		setPinnedToBottom((current) =>
+			current === nextPinned ? current : nextPinned,
+		);
+	};
 
-  const messageCount = displayMessages.length;
+	const messageCount = displayMessages.length;
 
-  useLayoutEffect(() => {
-    if (!pinnedToBottom) {
-      return;
-    }
-    const container = scrollContainerRef.current;
-    if (!container) {
-      return;
-    }
-    if (messageCount === 0) {
-      container.scrollTop = 0;
-      return;
-    }
-    container.scrollTop = container.scrollHeight;
-  }, [messageCount, pinnedToBottom]);
+	useLayoutEffect(() => {
+		if (!pinnedToBottom) {
+			return;
+		}
+		const container = scrollContainerRef.current;
+		if (!container) {
+			return;
+		}
+		if (messageCount === 0) {
+			container.scrollTop = 0;
+			return;
+		}
+		container.scrollTop = container.scrollHeight;
+	}, [messageCount, pinnedToBottom]);
 
-  if (displayMessages.length === 0) {
-    return (
-      <div className="session-dialog session-panel">
-        <p className="session-dialog__empty">No messages yet.</p>
-      </div>
-    );
-  }
+	if (displayMessages.length === 0) {
+		return (
+			<div className="session-dialog session-panel">
+				<p className="session-dialog__empty">No messages yet.</p>
+			</div>
+		);
+	}
 
-  return (
-    <div className="session-dialog session-panel">
-      <div
-        className="session-dialog__scroll"
-        onScroll={updatePinnedState}
-        ref={scrollContainerRef}
-      >
-        {displayMessages.map((message) => {
-          const className = buildMessageClassNames(message, providerTheme);
-          const label = resolveRoleLabel(message, providerLabel);
-          if (message.role === "thinking") {
-            const expanded = expandedThinking[message.id] ?? false;
-            return (
-              <ThinkingMessage
-                className={className}
-                expanded={expanded}
-                key={message.id}
-                label={label}
-                message={message}
-                onToggle={toggleThinking}
-              />
-            );
-          }
+	return (
+		<div className="session-dialog session-panel">
+			<div
+				className="session-dialog__scroll"
+				onScroll={updatePinnedState}
+				ref={scrollContainerRef}
+			>
+				{displayMessages.map((message) => {
+					const className = buildMessageClassNames(message, providerTheme);
+					const label = resolveRoleLabel(message, providerLabel);
+					if (message.role === "thinking") {
+						const expanded = expandedThinking[message.id] ?? false;
+						return (
+							<ThinkingMessage
+								className={className}
+								expanded={expanded}
+								key={message.id}
+								label={label}
+								message={message}
+								onToggle={toggleThinking}
+							/>
+						);
+					}
 
-          return (
-            <StandardMessage
-              className={className}
-              key={message.id}
-              label={label}
-              message={message}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
+					return (
+						<StandardMessage
+							className={className}
+							key={message.id}
+							label={label}
+							message={message}
+						/>
+					);
+				})}
+			</div>
+		</div>
+	);
 };
 
 export default DialogPanel;
 
 const buildMessageClassNames = (
-  message: SessionMessage,
-  providerTheme: ProviderTheme | null
+	message: SessionMessage,
+	providerTheme: ProviderTheme | null,
 ): string => {
-  const classes = [
-    "session-dialog__message",
-    `session-dialog__message--${message.role}`,
-  ];
-  if (message.role === "assistant" && providerTheme) {
-    classes.push(`session-dialog__message--assistant-${providerTheme}`);
-  }
-  return classes.join(" ");
+	const classes = [
+		"session-dialog__message",
+		`session-dialog__message--${message.role}`,
+	];
+	if (message.role === "assistant" && providerTheme) {
+		classes.push(`session-dialog__message--assistant-${providerTheme}`);
+	}
+	return classes.join(" ");
 };
 
 const resolveRoleLabel = (
-  message: SessionMessage,
-  providerLabel: string | null
+	message: SessionMessage,
+	providerLabel: string | null,
 ): string => {
-  if (message.role === "assistant") {
-    return providerLabel ?? "Assistant";
-  }
-  if (message.role === "user") {
-    return "User";
-  }
-  if (message.role === "thinking") {
-    return "Thinking";
-  }
-  return "System";
+	if (message.role === "assistant") {
+		return providerLabel ?? "Assistant";
+	}
+	if (message.role === "user") {
+		return "User";
+	}
+	if (message.role === "thinking") {
+		return "Thinking";
+	}
+	return "System";
 };
 
 const ThinkingMessage = ({
-  message,
-  expanded,
-  onToggle,
-  label,
-  className,
+	message,
+	expanded,
+	onToggle,
+	label,
+	className,
 }: ThinkingMessageProps) => (
-  <article className={className}>
-    <header className="session-dialog__message-header session-dialog__message-header--thinking">
-      <button
-        aria-controls={`thinking-${message.id}`}
-        aria-expanded={expanded}
-        className={
-          expanded
-            ? "session-dialog__thinking-toggle session-dialog__thinking-toggle--expanded"
-            : "session-dialog__thinking-toggle"
-        }
-        onClick={() => onToggle(message.id)}
-        title={expanded ? "Hide reasoning" : "Show reasoning"}
-        type="button"
-      >
-        {expanded ? "▾" : "▸"}
-      </button>
-      <span className="session-dialog__role">{label}</span>
-    </header>
-    {expanded ? (
-      <MarkdownContent
-        allowEmphasis={false}
-        className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
-        content={message.content}
-        id={`thinking-${message.id}`}
-      />
-    ) : null}
-  </article>
+	<article className={className}>
+		<header className="session-dialog__message-header session-dialog__message-header--thinking">
+			<button
+				aria-controls={`thinking-${message.id}`}
+				aria-expanded={expanded}
+				className={
+					expanded
+						? "session-dialog__thinking-toggle session-dialog__thinking-toggle--expanded"
+						: "session-dialog__thinking-toggle"
+				}
+				onClick={() => onToggle(message.id)}
+				title={expanded ? "Hide reasoning" : "Show reasoning"}
+				type="button"
+			>
+				{expanded ? "▾" : "▸"}
+			</button>
+			<span className="session-dialog__role">{label}</span>
+		</header>
+		{expanded ? (
+			<MarkdownContent
+				allowEmphasis={false}
+				className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
+				content={message.content}
+				id={`thinking-${message.id}`}
+			/>
+		) : null}
+	</article>
 );
 
 const StandardMessage = ({
-  message,
-  label,
-  className,
+	message,
+	label,
+	className,
 }: StandardMessageProps) => {
-  const messageDate = new Date(message.createdAt);
-  return (
-    <article className={className}>
-      <header className="session-dialog__message-header">
-        <span className="session-dialog__role">{label}</span>
-        <time
-          className="session-dialog__timestamp"
-          dateTime={messageDate.toISOString()}
-        >
-          {messageDate.toLocaleTimeString()}
-        </time>
-      </header>
-      <MarkdownContent
-        className="session-dialog__content"
-        content={message.content}
-      />
-    </article>
-  );
+	const messageDate = new Date(message.createdAt);
+	return (
+		<article className={className}>
+			<header className="session-dialog__message-header">
+				<span className="session-dialog__role">{label}</span>
+				<time
+					className="session-dialog__timestamp"
+					dateTime={messageDate.toISOString()}
+				>
+					{messageDate.toLocaleTimeString()}
+				</time>
+			</header>
+			<MarkdownContent
+				className="session-dialog__content"
+				content={message.content}
+			/>
+		</article>
+	);
 };
 
 const mergeThinkingMessages = (
-  source: readonly SessionMessage[]
+	source: readonly SessionMessage[],
 ): SessionMessage[] => {
-  const result: SessionMessage[] = [];
-  for (const message of source) {
-    if (message.role === "thinking") {
-      const previous = result.at(-1);
-      if (previous?.role === "thinking") {
-        result[result.length - 1] = {
-          ...previous,
-          content: `${previous.content}\n${message.content}`,
-        };
-        continue;
-      }
-      result.push({ ...message });
-      continue;
-    }
-    result.push(message);
-  }
-  return result;
+	const result: SessionMessage[] = [];
+	for (const message of source) {
+		if (message.role === "thinking") {
+			const previous = result.at(-1);
+			if (previous?.role === "thinking") {
+				result[result.length - 1] = {
+					...previous,
+					content: `${previous.content}\n${message.content}`,
+				};
+				continue;
+			}
+			result.push({ ...message });
+			continue;
+		}
+		result.push(message);
+	}
+	return result;
 };

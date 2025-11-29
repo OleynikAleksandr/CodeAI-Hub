@@ -3,142 +3,142 @@ import type { ExtensionContext } from "vscode";
 import { type PlatformKey, resolvePlatformKey } from "../cef/platform";
 import { ensureDirectory, extractArchive } from "../cef/runtime-files";
 import {
-  recordCoreInstall,
-  writeCurrentPointer,
+	recordCoreInstall,
+	writeCurrentPointer,
 } from "../runtime/runtime-registry";
 import {
-  type CoreManifest,
-  ensureCoreArchiveAvailable,
-  getBaseCoreInstallDir,
-  getManifestEntryOrThrow,
-  type ManifestEntry,
-  type ProgressReporter,
-  prepareCoreDownloadDir,
-  readCoreManifest,
-  verifyCoreChecksumIfNeeded,
-  verifyExistingCoreInstall,
-  writeCoreInstallMarker,
+	type CoreManifest,
+	ensureCoreArchiveAvailable,
+	getBaseCoreInstallDir,
+	getManifestEntryOrThrow,
+	type ManifestEntry,
+	type ProgressReporter,
+	prepareCoreDownloadDir,
+	readCoreManifest,
+	verifyCoreChecksumIfNeeded,
+	verifyExistingCoreInstall,
+	writeCoreInstallMarker,
 } from "./core-install-helpers";
 import { resolveEntryPoint, resolveNodeExecutable } from "./runtime-paths";
 
 export type CoreRuntimeInfo = {
-  readonly version: string;
-  readonly platform: PlatformKey;
-  readonly runtimeDir: string;
-  readonly nodePath: string;
-  readonly entryPoint: string;
+	readonly version: string;
+	readonly platform: PlatformKey;
+	readonly runtimeDir: string;
+	readonly nodePath: string;
+	readonly entryPoint: string;
 };
 
 const buildRuntimeInfo = (
-  manifestEntry: ManifestEntry,
-  runtimeDir: string,
-  platform: PlatformKey
+	manifestEntry: ManifestEntry,
+	runtimeDir: string,
+	platform: PlatformKey,
 ): CoreRuntimeInfo => ({
-  version: manifestEntry.coreVersion,
-  platform,
-  runtimeDir,
-  nodePath: resolveNodeExecutable(runtimeDir, platform),
-  entryPoint: resolveEntryPoint(runtimeDir),
+	version: manifestEntry.coreVersion,
+	platform,
+	runtimeDir,
+	nodePath: resolveNodeExecutable(runtimeDir, platform),
+	entryPoint: resolveEntryPoint(runtimeDir),
 });
 
 const tryReuseExistingInstall = async (
-  runtimeDir: string,
-  manifestEntry: ManifestEntry,
-  platform: PlatformKey,
-  progress?: ProgressReporter
+	runtimeDir: string,
+	manifestEntry: ManifestEntry,
+	platform: PlatformKey,
+	progress?: ProgressReporter,
 ): Promise<CoreRuntimeInfo | null> => {
-  const existingIsValid = await verifyExistingCoreInstall(
-    runtimeDir,
-    manifestEntry,
-    platform
-  );
-  if (!existingIsValid) {
-    return null;
-  }
-  progress?.report({ message: "Using existing core installation" });
-  return buildRuntimeInfo(manifestEntry, runtimeDir, platform);
+	const existingIsValid = await verifyExistingCoreInstall(
+		runtimeDir,
+		manifestEntry,
+		platform,
+	);
+	if (!existingIsValid) {
+		return null;
+	}
+	progress?.report({ message: "Using existing core installation" });
+	return buildRuntimeInfo(manifestEntry, runtimeDir, platform);
 };
 
 const finalizeCoreSetup = async (options: {
-  readonly platformDir: string;
-  readonly platform: PlatformKey;
-  readonly runtimeDir: string;
-  readonly manifestEntry: ManifestEntry;
+	readonly platformDir: string;
+	readonly platform: PlatformKey;
+	readonly runtimeDir: string;
+	readonly manifestEntry: ManifestEntry;
 }): Promise<void> => {
-  await writeCurrentPointer(
-    options.platformDir,
-    options.manifestEntry.coreVersion
-  );
-  await recordCoreInstall({
-    platform: options.platform,
-    version: options.manifestEntry.coreVersion,
-    runtimeDir: options.runtimeDir,
-  });
+	await writeCurrentPointer(
+		options.platformDir,
+		options.manifestEntry.coreVersion,
+	);
+	await recordCoreInstall({
+		platform: options.platform,
+		version: options.manifestEntry.coreVersion,
+		runtimeDir: options.runtimeDir,
+	});
 };
 
 const performInstall = async (
-  manifest: CoreManifest,
-  platform: PlatformKey,
-  baseDir: string,
-  progress?: ProgressReporter
+	manifest: CoreManifest,
+	platform: PlatformKey,
+	baseDir: string,
+	progress?: ProgressReporter,
 ): Promise<CoreRuntimeInfo> => {
-  const manifestEntry = getManifestEntryOrThrow(manifest, platform);
-  const platformDir = path.join(baseDir, platform);
-  const runtimeDir = path.join(platformDir, manifestEntry.coreVersion);
+	const manifestEntry = getManifestEntryOrThrow(manifest, platform);
+	const platformDir = path.join(baseDir, platform);
+	const runtimeDir = path.join(platformDir, manifestEntry.coreVersion);
 
-  const reused = await tryReuseExistingInstall(
-    runtimeDir,
-    manifestEntry,
-    platform,
-    progress
-  );
-  if (reused) {
-    await finalizeCoreSetup({
-      platformDir,
-      platform,
-      runtimeDir,
-      manifestEntry,
-    });
-    return reused;
-  }
+	const reused = await tryReuseExistingInstall(
+		runtimeDir,
+		manifestEntry,
+		platform,
+		progress,
+	);
+	if (reused) {
+		await finalizeCoreSetup({
+			platformDir,
+			platform,
+			runtimeDir,
+			manifestEntry,
+		});
+		return reused;
+	}
 
-  await ensureDirectory(runtimeDir);
+	await ensureDirectory(runtimeDir);
 
-  const downloadsDir = await prepareCoreDownloadDir(platformDir);
-  const archivePath = await ensureCoreArchiveAvailable(
-    manifest,
-    manifestEntry,
-    downloadsDir,
-    progress
-  );
-  await verifyCoreChecksumIfNeeded(archivePath, manifestEntry);
+	const downloadsDir = await prepareCoreDownloadDir(platformDir);
+	const archivePath = await ensureCoreArchiveAvailable(
+		manifest,
+		manifestEntry,
+		downloadsDir,
+		progress,
+	);
+	await verifyCoreChecksumIfNeeded(archivePath, manifestEntry);
 
-  progress?.report({ message: "Extracting core orchestrator..." });
-  await extractArchive(archivePath, runtimeDir);
+	progress?.report({ message: "Extracting core orchestrator..." });
+	await extractArchive(archivePath, runtimeDir);
 
-  await writeCoreInstallMarker(runtimeDir, platform, manifestEntry);
+	await writeCoreInstallMarker(runtimeDir, platform, manifestEntry);
 
-  progress?.report({ message: "Core orchestrator installed successfully" });
+	progress?.report({ message: "Core orchestrator installed successfully" });
 
-  const runtimeInfo = buildRuntimeInfo(manifestEntry, runtimeDir, platform);
+	const runtimeInfo = buildRuntimeInfo(manifestEntry, runtimeDir, platform);
 
-  await finalizeCoreSetup({
-    platformDir,
-    platform,
-    runtimeDir,
-    manifestEntry,
-  });
+	await finalizeCoreSetup({
+		platformDir,
+		platform,
+		runtimeDir,
+		manifestEntry,
+	});
 
-  return runtimeInfo;
+	return runtimeInfo;
 };
 
 export const ensureCoreInstalled = async (
-  context: ExtensionContext,
-  progress?: ProgressReporter
+	context: ExtensionContext,
+	progress?: ProgressReporter,
 ): Promise<CoreRuntimeInfo> => {
-  const platform = resolvePlatformKey();
-  const manifest = await readCoreManifest(context);
-  const baseDir = await getBaseCoreInstallDir();
+	const platform = resolvePlatformKey();
+	const manifest = await readCoreManifest(context);
+	const baseDir = await getBaseCoreInstallDir();
 
-  return await performInstall(manifest, platform, baseDir, progress);
+	return await performInstall(manifest, platform, baseDir, progress);
 };

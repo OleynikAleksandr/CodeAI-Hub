@@ -126,6 +126,7 @@ graph TD
 
 ## Earlier Changes (v1.1.27 - 2025-10-28)
 - **Gemini CLI provider**: пакет `@codeai-hub/gemini-module` подключён к Core и UI. `GeminiInstaller` при первом запуске подготавливает `@google/gemini-cli-core` в `~/.codeai-hub/providers/gemini/<version>/vendor/node_modules`, а сам CLI (`@google/gemini-cli`) ожидается как глобальная установка пользователя (используется для авторизации и конфигурации). Перед инициализацией адаптер валидирует наличие CLI и публикует модуль в `ProviderRegistry`.
+- **Gemini CLI isolation (v1.1.316)**: Gemini CLI is now installed in an isolated directory `~/.codeai-hub/providers/gemini/` instead of the global npm prefix (`~/.npm-global`). This prevents the extension from overwriting user's global Gemini CLI installation. The CLI binary is located at `~/.codeai-hub/providers/gemini/bin/gemini`.
 - **UI status badges**: селектор провайдеров отображает статус подключения (`Connected` / `Not connected`) и дизейблит выбор, если стек помечен как `inactive` ядром.
 - **Graceful provider downgrade**: при ошибке инициализации (например, отсутствует CLI) провайдер переводится в `inactive`, Core продолжает работу и транслирует состояние в клиенты.
 

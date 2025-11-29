@@ -29,18 +29,8 @@
 ## Required documents to review before work
 1. `doc/Architecture/Architecture.md`  
 2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`  
-3. `doc/Project_Docs/Stacks/CoreOrchestrator.md`  
-4. `doc/Project_Docs/knowledge/Quality Gate Manager/Quality_Gate_Manager_Current_State.md`  
-5. `doc/Project_Docs/knowledge/Quality Gate Manager/Quality_Gate_Manager_Future_Vision.md`  
-6. `doc/Project_Docs/knowledge/Quality Gate Manager/Project_Bootstrap_Quality_Guide.md`  
-7. `doc/TODO/todo-plan.md`  
-8. `doc/Sessions/Session016.md` (THIS REPORT)  
+3. `doc/Project_Docs/Stacks/CoreOrchestrator.md` 
+4. `doc/Sessions/Session016.md` (THIS REPORT)  
 
-## Plans for next session
-- Спроектировать формат `quality-gate.config.json` и CLI-интерфейс `quality-gate init/doctor` для будущего модуля Quality_Gate_Manager:
-  - описать адаптеры для TS/JS (Ultracite), C++ (CEF launcher), C# (на будущее);
-  - определить, какие гейты должны быть blocking (pre-commit/pre-push) и какие advisory (manual/CI).
-- Добавить в репозиторий первые заглушки/скелет модуля Quality_Gate_Manager (без функционала): структура пакета, место для CLI, конфиг и интеграция с `.agent/rules`.
-- Пересмотреть и при необходимости формализовать lint‑скрипт (`npm run lint`) поверх Ultracite (`npx ultracite check`) вместо текущей заглушки.
-- Подготовить краткое описание релиза 1.1.315 в CHANGELOG/README (акцент на unified quality gates, Husky‑хуки и разделённый build/release пайплайн) и убедиться, что все ссылки и команды в документации синхронизированы с новым процессом.
+
 

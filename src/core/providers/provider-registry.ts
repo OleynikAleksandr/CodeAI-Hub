@@ -1,7 +1,7 @@
 import {
-  getDefaultProviderDescription,
-  getDefaultProviderTitle,
-  type ProviderStackDescriptor,
+	getDefaultProviderDescription,
+	getDefaultProviderTitle,
+	type ProviderStackDescriptor,
 } from "../../types/provider";
 
 /**
@@ -10,31 +10,31 @@ import {
  * returns static stubs that mark the stacks as connected.
  */
 export class ProviderRegistry {
-  listStacks(): readonly ProviderStackDescriptor[] {
-    return this.stacks;
-  }
+	listStacks(): readonly ProviderStackDescriptor[] {
+		return this.stacks;
+	}
 
-  private readonly stacks: readonly ProviderStackDescriptor[] = [
-    {
-      id: "claudeCodeCli",
-      title: getDefaultProviderTitle("claudeCodeCli"),
-      description: getDefaultProviderDescription("claudeCodeCli"),
-      connected: true,
-      statusMessage: null,
-    },
-    {
-      id: "codexCli",
-      title: getDefaultProviderTitle("codexCli"),
-      description: getDefaultProviderDescription("codexCli"),
-      connected: true,
-      statusMessage: null,
-    },
-    {
-      id: "geminiCli",
-      title: getDefaultProviderTitle("geminiCli"),
-      description: getDefaultProviderDescription("geminiCli"),
-      connected: true,
-      statusMessage: null,
-    },
-  ];
+	private readonly stacks: readonly ProviderStackDescriptor[] = [
+		{
+			id: "claudeCodeCli",
+			title: getDefaultProviderTitle("claudeCodeCli"),
+			description: getDefaultProviderDescription("claudeCodeCli"),
+			connected: true,
+			statusMessage: null,
+		},
+		{
+			id: "codexCli",
+			title: getDefaultProviderTitle("codexCli"),
+			description: getDefaultProviderDescription("codexCli"),
+			connected: true,
+			statusMessage: null,
+		},
+		{
+			id: "geminiCli",
+			title: getDefaultProviderTitle("geminiCli"),
+			description: getDefaultProviderDescription("geminiCli"),
+			connected: true,
+			statusMessage: null,
+		},
+	];
 }
