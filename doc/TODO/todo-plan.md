@@ -156,3 +156,27 @@
    - Папки `bin/` и `lib/` НЕ существуют (структура уже правильная)
    - Текущая структура: `~/.codeai-hub/providers/gemini/1.1.317/`
    - Статус: cleanup не требуется
+
+   ### Phase 8 — Документация и Релиз (owner: Claude, updated: 2025-11-29)
+
+#### Stream 8.1: Обновление архитектурной документации
+1. [DONE] Обновить `doc/Architecture/Architecture.md`
+   - Добавлено описание механизма Gemini Update
+   - Документированы vendor vs global пути установки
+   - Обновлена секция Settings UI с описанием строк Gemini
+   - Обновлён `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
+
+#### Stream 8.2: Обновление README и CHANGELOG
+1. [DONE] Обновить `README.md`
+   - Добавлена фича обновления Gemini CLI/Core в список функций
+   - Обновлён Current Release на v1.1.320
+2. [DONE] Обновить `CHANGELOG.md`
+   - Добавлена запись v1.1.320 со всеми изменениями Phase 5-7
+
+#### Stream 8.3: Git Push и GitHub Release
+1. [IN_PROGRESS] Разрешить расхождение веток (локально 18 коммитов vs remote 10)
+   - Просмотреть изменения на remote
+   - Выполнить merge или rebase
+2. [ ] Push на GitHub
+3. [ ] Создать GitHub release v1.1.320 с VSIX
+

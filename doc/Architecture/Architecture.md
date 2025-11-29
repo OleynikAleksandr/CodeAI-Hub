@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.5.5
-**Last Updated:** 2025-11-28
+**Version:** 0.5.6
+**Last Updated:** 2025-11-29
 **Status:** Active reference
-**Release Focus:** v1.1.313 — UI Modularization & Independent Launcher Windows. UI бандлы (`vscode-webview`, `web-client`, `project-manager`) вынесены из VSIX. Launcher поддерживает запуск независимых приложений (Web Client, Project Manager) с сохранением размеров окон.
+**Release Focus:** v1.1.320 — Gemini Update Mechanism. Settings UI теперь показывает версии Gemini CLI и Gemini CLI Core с кнопкой Update. Реализован `updateToLatest()` для runtime-обновлений через vendor директорию.
 
 ---
 
@@ -40,6 +40,7 @@ graph TD
 - **Shortcut Service**: модуль `src/extension-module/web-client/shortcut-manager.ts` при активации проверяет наличие ярлыка веб-клиента и при необходимости пересоздаёт его (Windows `.lnk` на Desktop, macOS `.app`-launcher на Desktop, Linux `.desktop` в `~/.local/share/applications`), пропуская выполнение в удалённых средах.
 - **Settings persistence**: `SettingsMessageHandler` сохраняет thinking-параметры Claude в `~/.codeai-hub/settings/claude.json`, чтобы core и провайдерные модули могли считывать актуальные лимиты.
 - **Provider version service**: начиная с 1.1.300 `HomeViewMessageRouter` прокидывает `extensionPath` в `SettingsMessageHandler`, а `ProviderVersionService` использует его для чтения манифестов внутри VSIX. Благодаря этому Gemini карточка в Settings UI сравнивает версии `@google/gemini-cli-core`, читая и bundled manifest, и установленный кэш `~/.codeai-hub/providers/gemini/<version>/vendor/node_modules/@google/gemini-cli-core/package.json`, поэтому статус больше не зависает на `Not detected`, если CLI уже настроен.
+- **Gemini dual-row display (v1.1.320)**: Settings UI теперь показывает две строки для Gemini — CLI и CLI Core — с одной кнопкой Update на строке Core. `GeminiVersionReader` читает версии обоих пакетов из vendor. Метод `updateGeminiAll()` в `ProviderVersionService` вызывает `GeminiInstaller.updateToLatest()` для синхронного обновления обоих пакетов.
 
 ## VS Code Webview UI
 - **AppHost**: корневой React-компонент управляет состоянием сессий (через hooks `useSessionStore`, `useProviderPickerState`, `useSettingsState`) и синхронизирует его с extension host через `message-handler`. Весь UI-код живёт в `src/client/ui/src` и переиспользуется веб-клиентом без дублирования. Модуль `core-bridge` напрямую подключается к локальному ядру (HTTP `/api/v1/status`, WebSocket `/api/v1/stream`), поэтому создание/стриминг сессий не зависят от extension host round-trip.
@@ -97,6 +98,11 @@ graph TD
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
+## Recent Changes (v1.1.320 - 2025-11-29)
+- **Gemini Update Mechanism**: Settings UI now displays two rows for Gemini: CLI version and CLI Core version, with a single Update button that updates both packages simultaneously. The `GeminiInstaller.updateToLatest()` method handles runtime updates by fetching the latest version from npm registry and extracting tarballs to vendor.
+- **Vendor vs Global Installation**: Gemini CLI Core is installed only in vendor directory (`~/.codeai-hub/providers/gemini/<version>/vendor/`), while Gemini CLI is installed both in vendor and globally (`~/.npm-global/`) for user convenience with `gemini login` command.
+- **Settings UI Gemini Rows**: `GeminiVersionReader` now reads versions of both `@google/gemini-cli` and `@google/gemini-cli-core` from vendor directory. `ProviderVersionService.updateGeminiAll()` orchestrates the update process.
+
 ## Recent Changes (v1.1.315 - 2025-11-28)
 - **Unified Quality Gates**: Lefthook заменён на Husky в качестве единственного оркестратора Git‑хуков. Pre-commit выполняет архитектурный чек, ts-prune и `npx ultracite fix` по staged‑файлам; pre-push — jscpd и проверку Markdown‑ссылок. Скрипты `build-all.sh` и `build-release.sh` требуют чистый Git и разделены на два логических шага (build vs release).
 
@@ -127,6 +133,7 @@ graph TD
 ## Earlier Changes (v1.1.27 - 2025-10-28)
 - **Gemini CLI provider**: пакет `@codeai-hub/gemini-module` подключён к Core и UI. `GeminiInstaller` при первом запуске подготавливает `@google/gemini-cli-core` в `~/.codeai-hub/providers/gemini/<version>/vendor/node_modules`, а сам CLI (`@google/gemini-cli`) ожидается как глобальная установка пользователя (используется для авторизации и конфигурации). Перед инициализацией адаптер валидирует наличие CLI и публикует модуль в `ProviderRegistry`.
 - **Gemini CLI isolation (v1.1.316)**: Gemini CLI is now installed in an isolated directory `~/.codeai-hub/providers/gemini/` instead of the global npm prefix (`~/.npm-global`). This prevents the extension from overwriting user's global Gemini CLI installation. The CLI binary is located at `~/.codeai-hub/providers/gemini/bin/gemini`.
+- **Gemini Update mechanism (v1.1.320)**: Settings UI displays both Gemini CLI and Gemini CLI Core versions with a single Update button. The `GeminiInstaller.updateToLatest()` method fetches the latest version from npm registry, downloads tarballs, and extracts packages to the vendor directory (`~/.codeai-hub/providers/gemini/<version>/vendor/`). CLI is also installed globally to `~/.npm-global/` for user convenience. Both packages are kept in sync at the same version.
 - **UI status badges**: селектор провайдеров отображает статус подключения (`Connected` / `Not connected`) и дизейблит выбор, если стек помечен как `inactive` ядром.
 - **Graceful provider downgrade**: при ошибке инициализации (например, отсутствует CLI) провайдер переводится в `inactive`, Core продолжает работу и транслирует состояние в клиенты.
 
