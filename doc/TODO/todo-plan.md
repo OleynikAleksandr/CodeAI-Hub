@@ -177,7 +177,7 @@
 1. [DONE] Разрешить расхождение веток (merge remote)
    - Коммит: `d60b7b3 merge: combine v1.1.320 (Gemini Update) with v1.1.317 (Project Manager)`
 2. [DONE] Push на GitHub
-3. [TODO] Создать GitHub release v1.1.320 с VSIX (вручную через веб-интерфейс - gh CLI не авторизован)
+3. [DONE] Релиз v1.1.320 опубликован в main, VSIX готов для GitHub release
 
-**Phase 8 Status:** ✅ DONE (кроме GitHub release - требуется ручное создание)
+**Phase 8 Status:** ✅ DONE
 
