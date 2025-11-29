@@ -339,8 +339,8 @@ export class GeminiInstaller {
 			forceVersion: latestVersion,
 		});
 
-		// 5. Update global gemini-cli
-		await this.installCliPackage(latestVersion);
+		// 5. Update global gemini-cli (to ~/.npm-global, not isolated path)
+		await this.installCliGlobally(latestVersion);
 
 		return {
 			cliVersion: latestVersion,
@@ -599,6 +599,18 @@ export class GeminiInstaller {
 			env: this.buildNpmEnv(),
 		});
 		await this.checkCliInstalled();
+	}
+
+	private async installCliGlobally(version: string): Promise<void> {
+		const specifier = `${GEMINI_CLI_PACKAGE}@${version}`;
+		// Clear NPM_CONFIG_PREFIX to install to real global (~/.npm-global)
+		const cleanEnv = { ...process.env };
+		delete cleanEnv.NPM_CONFIG_PREFIX;
+		delete cleanEnv.npm_config_prefix;
+		await runNpmCommand(["install", "-g", specifier], {
+			npmExecutable: this.npmExecutable,
+			env: cleanEnv,
+		});
 	}
 
 	private async updateCliIfNeeded(requiredVersion?: string): Promise<void> {
