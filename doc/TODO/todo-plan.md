@@ -87,7 +87,11 @@
 ## Phase 3 — Fix Gemini Update Mechanism (owner: Claude, updated: 2025-11-29)
 
 **Цель:** Исправить механизм обновления Gemini CLI и Gemini CLI Core через Settings UI
-**Статус:** ✅ DONE
+**Статус:** ✅ DONE (v1.1.320)
+
+**Финальные коммиты:**
+- `9280d2c` fix(gemini): install CLI globally to ~/.npm-global
+- `2cafc4a` fix(settings): use GeminiInstaller.updateToLatest() for vendor updates
 
 **Проблема:** Текущая реализация использует `npm install -g` который ставит в глобальную директорию, но расширение использует vendor директорию внутри модуля.
 
