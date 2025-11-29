@@ -174,9 +174,10 @@
    - Добавлена запись v1.1.320 со всеми изменениями Phase 5-7
 
 #### Stream 8.3: Git Push и GitHub Release
-1. [IN_PROGRESS] Разрешить расхождение веток (локально 18 коммитов vs remote 10)
-   - Просмотреть изменения на remote
-   - Выполнить merge или rebase
-2. [ ] Push на GitHub
-3. [ ] Создать GitHub release v1.1.320 с VSIX
+1. [DONE] Разрешить расхождение веток (merge remote)
+   - Коммит: `d60b7b3 merge: combine v1.1.320 (Gemini Update) with v1.1.317 (Project Manager)`
+2. [DONE] Push на GitHub
+3. [TODO] Создать GitHub release v1.1.320 с VSIX (вручную через веб-интерфейс - gh CLI не авторизован)
+
+**Phase 8 Status:** ✅ DONE (кроме GitHub release - требуется ручное создание)
 
