@@ -1,26 +1,12 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
-	"files": {
-		"includes": [
-			"src/**",
-			"packages/**",
-			"!**/node_modules",
-			"!**/dist",
-			"!**/out",
-			"!**/vendor",
-			"!media/react-chat.js",
-			"!media/web-client/dist",
-			"!packages/ui/project-manager/dist",
-			"!packages/ui/vscode-webview/dist",
-			"!packages/ui/web-client/dist",
-			"!**/*.min.js",
-			"!**/*.bundle.js"
-		]
-	},
-	"formatter": {
-		"indentStyle": "tab"
-	},
-	"linter": {
-		"enabled": true
-	}
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite/core", "ultracite/react"],
+  "files": {
+    "includes": [
+      "**/*",
+      "!!media/react-chat.js",
+      "!!media/web-client/dist",
+      "!!src/client/project-manager"
+    ]
+  }
 }

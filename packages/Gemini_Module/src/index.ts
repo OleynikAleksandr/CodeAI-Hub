@@ -1,17 +1,17 @@
 import {
-	GeminiInstaller as BaseGeminiInstaller,
-	type GeminiInstallerOptions as BaseGeminiInstallerOptions,
+  GeminiInstaller as BaseGeminiInstaller,
+  type GeminiInstallerOptions as BaseGeminiInstallerOptions,
 } from "./installer/gemini-installer";
 import type { SessionListener as BaseSessionListener } from "./provider/gemini-provider-adapter";
 import { GeminiProviderAdapter as BaseGeminiProviderAdapter } from "./provider/gemini-provider-adapter";
 import type {
-	GeminiCredentialsOptions as BaseGeminiCredentialsOptions,
-	GeminiInstallerPaths as BaseGeminiInstallerPaths,
-	GeminiModuleOptions as BaseGeminiModuleOptions,
-	GeminiSessionEvent as BaseGeminiSessionEvent,
-	GeminiUpdateResult as BaseGeminiUpdateResult,
-	GeminiWorkspaceOptions as BaseGeminiWorkspaceOptions,
-	ModuleReporter as BaseModuleReporter,
+  GeminiCredentialsOptions as BaseGeminiCredentialsOptions,
+  GeminiInstallerPaths as BaseGeminiInstallerPaths,
+  GeminiModuleOptions as BaseGeminiModuleOptions,
+  GeminiSessionEvent as BaseGeminiSessionEvent,
+  GeminiUpdateResult as BaseGeminiUpdateResult,
+  GeminiWorkspaceOptions as BaseGeminiWorkspaceOptions,
+  ModuleReporter as BaseModuleReporter,
 } from "./types";
 
 export class GeminiProviderAdapter extends BaseGeminiProviderAdapter {}

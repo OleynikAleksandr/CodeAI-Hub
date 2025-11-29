@@ -7,19 +7,19 @@ import { activateRoot } from "./root-dom";
 initializeCoreBridge();
 
 const mount = () => {
-	const rootElement = document.getElementById("root");
-	if (!rootElement) {
-		return;
-	}
+  const rootElement = document.getElementById("root");
+  if (!rootElement) {
+    return;
+  }
 
-	activateRoot();
+  activateRoot();
 
-	const root = createRoot(rootElement);
-	root.render(
-		<StrictMode>
-			<AppHost />
-		</StrictMode>,
-	);
+  const root = createRoot(rootElement);
+  root.render(
+    <StrictMode>
+      <AppHost />
+    </StrictMode>
+  );
 };
 
 mount();

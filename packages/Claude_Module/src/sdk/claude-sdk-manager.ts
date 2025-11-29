@@ -8,196 +8,196 @@ import type { SDKMessageProcessor } from "../messaging/message-processor";
 import type { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type {
-	ClaudeStreamMessage,
-	ClaudeWorkspaceOptions,
-	ModuleReporter,
+  ClaudeStreamMessage,
+  ClaudeWorkspaceOptions,
+  ModuleReporter,
 } from "../types";
 
 export type QueryFunction = (payload: {
-	readonly prompt: AsyncGenerator<unknown>;
-	readonly options: Record<string, unknown>;
+  readonly prompt: AsyncGenerator<unknown>;
+  readonly options: Record<string, unknown>;
 }) => AsyncIterableIterator<ClaudeStreamMessage> & {
-	interrupt?: () => Promise<void>;
+  interrupt?: () => Promise<void>;
 };
 
 const SHORT_ID_LENGTH = 8;
 
 type ClaudeManagerDependencies = {
-	readonly installer: SDKInstaller;
-	readonly authManager: SDKAuthManager;
-	readonly sessions: SDKSessionManager;
-	readonly processor: SDKMessageProcessor;
-	readonly workspace: ClaudeWorkspaceOptions;
-	readonly reporter?: ModuleReporter;
-	readonly enableDebugStreams?: boolean;
+  readonly installer: SDKInstaller;
+  readonly authManager: SDKAuthManager;
+  readonly sessions: SDKSessionManager;
+  readonly processor: SDKMessageProcessor;
+  readonly workspace: ClaudeWorkspaceOptions;
+  readonly reporter?: ModuleReporter;
+  readonly enableDebugStreams?: boolean;
 };
 
 type ThinkingSettings = {
-	readonly enabled: boolean;
-	readonly maxTokens: number;
+  readonly enabled: boolean;
+  readonly maxTokens: number;
 };
 
 export class ClaudeSDKManager {
-	private sdkModule: { readonly query: QueryFunction } | null = null;
-	private queryFunction: QueryFunction | null = null;
-	private initialized = false;
-	private readonly deps: ClaudeManagerDependencies;
+  private sdkModule: { readonly query: QueryFunction } | null = null;
+  private queryFunction: QueryFunction | null = null;
+  private initialized = false;
+  private readonly deps: ClaudeManagerDependencies;
 
-	constructor(deps: ClaudeManagerDependencies) {
-		this.deps = deps;
-	}
+  constructor(deps: ClaudeManagerDependencies) {
+    this.deps = deps;
+  }
 
-	async initialize(): Promise<void> {
-		if (this.initialized) {
-			return;
-		}
-		await this.deps.installer.ensureInstalled();
-		await this.deps.authManager.ensureSubscriptionAuth();
-		this.sdkModule = await this.deps.installer.loadModule<{
-			readonly query: QueryFunction;
-		}>();
-		this.queryFunction = this.sdkModule.query;
-		this.initialized = true;
-	}
+  async initialize(): Promise<void> {
+    if (this.initialized) {
+      return;
+    }
+    await this.deps.installer.ensureInstalled();
+    await this.deps.authManager.ensureSubscriptionAuth();
+    this.sdkModule = await this.deps.installer.loadModule<{
+      readonly query: QueryFunction;
+    }>();
+    this.queryFunction = this.sdkModule.query;
+    this.initialized = true;
+  }
 
-	async createSession(): Promise<string> {
-		await this.initialize();
-		const filesBefore = this.deps.processor.getSDKFilesBefore();
-		const { tempId, session } = this.deps.sessions.createSession(
-			new SDKSessionLoggerFacade(),
-		);
-		const queryInstance = this.invokeQuery(session);
-		session.queryInstance = queryInstance;
-		this.deps.processor
-			.processResponses({
-				sessionId: tempId,
-				iterator: queryInstance,
-				onRealSessionId: () => {
-					/* sessionId promotion is handled via realSessionId event */
-				},
-			})
-			.catch((error) => {
-				this.deps.reporter?.error?.("Claude response processing failed", error);
-			});
-		this.deps.processor
-			.getSessionIdFromSDKFiles(filesBefore)
-			.then((fileSessionId) => {
-				if (fileSessionId) {
-					session.eventEmitter.emit("realSessionId", fileSessionId);
-				}
-			})
-			.catch((error) => {
-				this.deps.reporter?.error?.("Failed to read SDK session files", error);
-			});
-		session.eventEmitter.once("realSessionId", (realId: string) => {
-			if (!realId || realId === tempId) {
-				return;
-			}
-			this.promoteSessionId(tempId, realId, session);
-		});
-		return tempId;
-	}
+  async createSession(): Promise<string> {
+    await this.initialize();
+    const filesBefore = this.deps.processor.getSDKFilesBefore();
+    const { tempId, session } = this.deps.sessions.createSession(
+      new SDKSessionLoggerFacade()
+    );
+    const queryInstance = this.invokeQuery(session);
+    session.queryInstance = queryInstance;
+    this.deps.processor
+      .processResponses({
+        sessionId: tempId,
+        iterator: queryInstance,
+        onRealSessionId: () => {
+          /* sessionId promotion is handled via realSessionId event */
+        },
+      })
+      .catch((error) => {
+        this.deps.reporter?.error?.("Claude response processing failed", error);
+      });
+    this.deps.processor
+      .getSessionIdFromSDKFiles(filesBefore)
+      .then((fileSessionId) => {
+        if (fileSessionId) {
+          session.eventEmitter.emit("realSessionId", fileSessionId);
+        }
+      })
+      .catch((error) => {
+        this.deps.reporter?.error?.("Failed to read SDK session files", error);
+      });
+    session.eventEmitter.once("realSessionId", (realId: string) => {
+      if (!realId || realId === tempId) {
+        return;
+      }
+      this.promoteSessionId(tempId, realId, session);
+    });
+    return tempId;
+  }
 
-	async sendMessage(sessionId: string, content: string): Promise<void> {
-		await this.deps.processor.send(sessionId, content);
-	}
+  async sendMessage(sessionId: string, content: string): Promise<void> {
+    await this.deps.processor.send(sessionId, content);
+  }
 
-	async closeSession(sessionId: string): Promise<void> {
-		await this.deps.sessions.closeSession(sessionId);
-	}
+  async closeSession(sessionId: string): Promise<void> {
+    await this.deps.sessions.closeSession(sessionId);
+  }
 
-	getSession(sessionId: string): ActiveSession | undefined {
-		return this.deps.sessions.getSession(sessionId);
-	}
+  getSession(sessionId: string): ActiveSession | undefined {
+    return this.deps.sessions.getSession(sessionId);
+  }
 
-	private promoteSessionId(
-		tempId: string,
-		realId: string,
-		session?: ActiveSession,
-	): void {
-		this.deps.sessions.updateSessionId(tempId, realId);
-		const targetSession = session ?? this.deps.sessions.getSession(realId);
-		targetSession?.eventEmitter.emit("sessionIdChanged", {
-			oldId: tempId,
-			newId: realId,
-			shortId: realId.slice(0, SHORT_ID_LENGTH),
-		});
-		targetSession?.logger?.renameSession?.(tempId, realId);
-	}
+  private promoteSessionId(
+    tempId: string,
+    realId: string,
+    session?: ActiveSession
+  ): void {
+    this.deps.sessions.updateSessionId(tempId, realId);
+    const targetSession = session ?? this.deps.sessions.getSession(realId);
+    targetSession?.eventEmitter.emit("sessionIdChanged", {
+      oldId: tempId,
+      newId: realId,
+      shortId: realId.slice(0, SHORT_ID_LENGTH),
+    });
+    targetSession?.logger?.renameSession?.(tempId, realId);
+  }
 
-	private invokeQuery(
-		session: ActiveSession,
-	): AsyncIterableIterator<ClaudeStreamMessage> & {
-		interrupt?: () => Promise<void>;
-	} {
-		if (!(this.queryFunction && session.messageGenerator)) {
-			throw new Error("SDK query function not initialized");
-		}
-		const projectPath = this.resolveProjectPath();
-		const options = {
-			cwd: this.deps.workspace.workspacePath,
-			permissionMode: "bypassPermissions",
-			additionalDirectories: [this.deps.workspace.workspacePath],
-			includePartialMessages: false,
-			projectPath,
-			settingSources: ["user", "project", "local"],
-			environment: this.deps.authManager.getAuthEnvironment(),
-			pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
-			...this.resolveThinkingOptions(),
-		};
-		const queryInstance = this.queryFunction({
-			prompt: session.messageGenerator as AsyncGenerator<unknown>,
-			options,
-		});
-		return queryInstance;
-	}
+  private invokeQuery(
+    session: ActiveSession
+  ): AsyncIterableIterator<ClaudeStreamMessage> & {
+    interrupt?: () => Promise<void>;
+  } {
+    if (!(this.queryFunction && session.messageGenerator)) {
+      throw new Error("SDK query function not initialized");
+    }
+    const projectPath = this.resolveProjectPath();
+    const options = {
+      cwd: this.deps.workspace.workspacePath,
+      permissionMode: "bypassPermissions",
+      additionalDirectories: [this.deps.workspace.workspacePath],
+      includePartialMessages: false,
+      projectPath,
+      settingSources: ["user", "project", "local"],
+      environment: this.deps.authManager.getAuthEnvironment(),
+      pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
+      ...this.resolveThinkingOptions(),
+    };
+    const queryInstance = this.queryFunction({
+      prompt: session.messageGenerator as AsyncGenerator<unknown>,
+      options,
+    });
+    return queryInstance;
+  }
 
-	private resolveProjectPath(): string {
-		return join(
-			homedir(),
-			".claude",
-			"projects",
-			this.deps.workspace.claudeProjectSlug,
-		);
-	}
+  private resolveProjectPath(): string {
+    return join(
+      homedir(),
+      ".claude",
+      "projects",
+      this.deps.workspace.claudeProjectSlug
+    );
+  }
 
-	private resolveThinkingOptions(): {
-		readonly maxThinkingTokens?: number;
-	} {
-		const payload = this.loadThinkingSettings();
-		if (!payload?.enabled) {
-			return {};
-		}
-		return { maxThinkingTokens: payload.maxTokens };
-	}
+  private resolveThinkingOptions(): {
+    readonly maxThinkingTokens?: number;
+  } {
+    const payload = this.loadThinkingSettings();
+    if (!payload?.enabled) {
+      return {};
+    }
+    return { maxThinkingTokens: payload.maxTokens };
+  }
 
-	private loadThinkingSettings(): ThinkingSettings | null {
-		const settingsPath = this.deps.workspace.settingsPath;
-		if (!settingsPath) {
-			return null;
-		}
-		try {
-			const raw = readFileSync(settingsPath, "utf8");
-			const parsed = JSON.parse(raw) as {
-				readonly thinking?: {
-					readonly enabled?: unknown;
-					readonly maxTokens?: unknown;
-				};
-			};
-			const candidate = parsed?.thinking;
-			if (
-				candidate &&
-				typeof candidate.enabled === "boolean" &&
-				typeof candidate.maxTokens === "number"
-			) {
-				return {
-					enabled: candidate.enabled,
-					maxTokens: candidate.maxTokens,
-				};
-			}
-		} catch {
-			// ignore malformed settings
-		}
-		return null;
-	}
+  private loadThinkingSettings(): ThinkingSettings | null {
+    const settingsPath = this.deps.workspace.settingsPath;
+    if (!settingsPath) {
+      return null;
+    }
+    try {
+      const raw = readFileSync(settingsPath, "utf8");
+      const parsed = JSON.parse(raw) as {
+        readonly thinking?: {
+          readonly enabled?: unknown;
+          readonly maxTokens?: unknown;
+        };
+      };
+      const candidate = parsed?.thinking;
+      if (
+        candidate &&
+        typeof candidate.enabled === "boolean" &&
+        typeof candidate.maxTokens === "number"
+      ) {
+        return {
+          enabled: candidate.enabled,
+          maxTokens: candidate.maxTokens,
+        };
+      }
+    } catch {
+      // ignore malformed settings
+    }
+    return null;
+  }
 }

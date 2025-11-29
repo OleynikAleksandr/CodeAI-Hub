@@ -1,38 +1,38 @@
 import type {
-	ApprovalMode,
-	SandboxMode,
-	ThreadEvent,
-	ThreadItem,
-	ThreadOptions,
-	TurnOptions,
+  ApprovalMode,
+  SandboxMode,
+  ThreadEvent,
+  ThreadItem,
+  ThreadOptions,
+  TurnOptions,
 } from "@openai/codex-sdk";
 
 export type CodexInstallerPaths = {
-	readonly macOS: string;
-	readonly linux: string;
-	readonly windows: string;
+  readonly macOS: string;
+  readonly linux: string;
+  readonly windows: string;
 };
 
 export type CodexWorkspaceOptions = {
-	readonly workspacePath: string;
-	readonly defaultSandboxMode?: SandboxMode;
-	readonly defaultApprovalMode?: ApprovalMode;
-	readonly defaultModel?: string;
-	readonly skipGitRepoCheck?: boolean;
+  readonly workspacePath: string;
+  readonly defaultSandboxMode?: SandboxMode;
+  readonly defaultApprovalMode?: ApprovalMode;
+  readonly defaultModel?: string;
+  readonly skipGitRepoCheck?: boolean;
 };
 
 export type ModuleReporter = {
-	readonly info?: (message: string) => void;
-	readonly warn?: (message: string) => void;
-	readonly error?: (message: string, error?: unknown) => void;
-	readonly progress?: (event: ModuleProgressEvent) => void;
+  readonly info?: (message: string) => void;
+  readonly warn?: (message: string) => void;
+  readonly error?: (message: string, error?: unknown) => void;
+  readonly progress?: (event: ModuleProgressEvent) => void;
 };
 
 export type CodexModuleOptions = {
-	readonly installerPaths: CodexInstallerPaths;
-	readonly workspace: CodexWorkspaceOptions;
-	readonly reporter?: ModuleReporter;
-	readonly enableDebugStreams?: boolean;
+  readonly installerPaths: CodexInstallerPaths;
+  readonly workspace: CodexWorkspaceOptions;
+  readonly reporter?: ModuleReporter;
+  readonly enableDebugStreams?: boolean;
 };
 
 export type CodexThreadEvent = ThreadEvent;
@@ -43,9 +43,9 @@ export type CodexSandboxMode = SandboxMode;
 export type CodexApprovalMode = ApprovalMode;
 
 export type ModuleProgressEvent = {
-	readonly label: string;
-	readonly detail?: string;
-	readonly scope?: string;
-	readonly phase?: "install" | "provider" | "finalize";
-	readonly firstRun?: boolean;
+  readonly label: string;
+  readonly detail?: string;
+  readonly scope?: string;
+  readonly phase?: "install" | "provider" | "finalize";
+  readonly firstRun?: boolean;
 };

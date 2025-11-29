@@ -11,6 +11,7 @@ tmp/
 .vscode/
 .gemini/
 AGENTS.md
+
 lefthook.yml
 *.vsix
 binaries/

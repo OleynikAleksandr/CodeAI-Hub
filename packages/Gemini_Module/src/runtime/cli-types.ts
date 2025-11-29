@@ -10,18 +10,18 @@ import type * as ThoughtUtilsModule from "@google/gemini-cli-core/dist/src/utils
 import type { GeminiCliBridgeMetadata } from "../types";
 
 export type GeminiCliModules = {
-	readonly config: typeof CliConfigModule;
-	readonly settings: typeof CliSettingsModule;
-	readonly extension: typeof CliExtensionModule;
-	readonly extensionEnablement: typeof CliExtensionEnablementModule;
-	readonly contentGenerator: typeof CoreContentModule;
-	readonly toolScheduler: typeof ToolSchedulerModule;
-	readonly toolExecutor: typeof ToolExecutorModule;
-	readonly turn: typeof TurnModule;
-	readonly thoughtUtils: typeof ThoughtUtilsModule;
+  readonly config: typeof CliConfigModule;
+  readonly settings: typeof CliSettingsModule;
+  readonly extension: typeof CliExtensionModule;
+  readonly extensionEnablement: typeof CliExtensionEnablementModule;
+  readonly contentGenerator: typeof CoreContentModule;
+  readonly toolScheduler: typeof ToolSchedulerModule;
+  readonly toolExecutor: typeof ToolExecutorModule;
+  readonly turn: typeof TurnModule;
+  readonly thoughtUtils: typeof ThoughtUtilsModule;
 };
 
 export type GeminiCliBridge = {
-	readonly modules: GeminiCliModules;
-	readonly metadata: GeminiCliBridgeMetadata;
+  readonly modules: GeminiCliModules;
+  readonly metadata: GeminiCliBridgeMetadata;
 };
