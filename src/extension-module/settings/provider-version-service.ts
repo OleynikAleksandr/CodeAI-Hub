@@ -1,12 +1,19 @@
 import { exec } from "node:child_process";
+import { promises as fs } from "node:fs";
+import { homedir } from "node:os";
+import path from "node:path";
 import { promisify } from "node:util";
 
 const execAsync = promisify(exec);
 
+const GEMINI_INSTALLER_PATHS = {
+	macOS: "~/.codeai-hub/providers/gemini/cli/",
+	linux: "~/.codeai-hub/providers/gemini/cli/",
+	windows: "%USERPROFILE%\\.codeai-hub\\providers\\gemini\\cli\\",
+};
+
 const NPM_COMMAND = process.platform === "win32" ? "npm.cmd" : "npm";
-const BYTES_PER_MEGABYTE = 1_048_576;
-const NPM_MAX_BUFFER_MB = 10;
-const EXEC_MAX_BUFFER_BYTES = NPM_MAX_BUFFER_MB * BYTES_PER_MEGABYTE;
+const EXEC_MAX_BUFFER_BYTES = 10 * 1_048_576;
 
 export const PACKAGE_MAP = {
 	claude: {
@@ -263,32 +270,30 @@ export class ProviderVersionService {
 	}
 
 	async updateGeminiAll(): Promise<ProviderVersionsSnapshot> {
-		await execAsync(
-			`${NPM_COMMAND} install -g @google/gemini-cli-core@latest`,
-			{
-				maxBuffer: EXEC_MAX_BUFFER_BYTES,
-			},
+		const modulePath = await this.resolveGeminiModulePath();
+		if (!modulePath) {
+			throw new Error("Gemini module not installed");
+		}
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		const { GeminiInstaller } = require(
+			path.join(modulePath, "dist", "index.js"),
 		);
-		await execAsync(`${NPM_COMMAND} install -g @google/gemini-cli@latest`, {
-			maxBuffer: EXEC_MAX_BUFFER_BYTES,
-		});
+		const installer = new GeminiInstaller(GEMINI_INSTALLER_PATHS);
+		await installer.updateToLatest();
 		return this.loadSnapshot();
 	}
 
-	async updateGeminiCli(): Promise<ProviderVersionsSnapshot> {
-		await execAsync(`${NPM_COMMAND} install -g @google/gemini-cli@latest`, {
-			maxBuffer: EXEC_MAX_BUFFER_BYTES,
-		});
-		return this.loadSnapshot();
-	}
-
-	async updateGeminiCore(): Promise<ProviderVersionsSnapshot> {
-		await execAsync(
-			`${NPM_COMMAND} install -g @google/gemini-cli-core@latest`,
-			{
-				maxBuffer: EXEC_MAX_BUFFER_BYTES,
-			},
-		);
-		return this.loadSnapshot();
+	private async resolveGeminiModulePath(): Promise<string | null> {
+		const root = path.join(homedir(), ".codeai-hub", "providers", "gemini");
+		try {
+			const version = (
+				await fs.readFile(path.join(root, "latest"), "utf8")
+			).trim();
+			const modulePath = path.join(root, version);
+			await fs.access(path.join(modulePath, "dist", "index.js"));
+			return modulePath;
+		} catch {
+			return null;
+		}
 	}
 }
