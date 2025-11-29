@@ -7,6 +7,7 @@ export type VersionRow = {
 	readonly currentVersion?: string | null;
 	readonly latestVersion?: string | null;
 	readonly target?: "cli" | "sdk" | "core";
+	readonly showUpdateButton?: boolean;
 };
 
 type VersionRowItemProps = {
@@ -121,6 +122,8 @@ const VersionRowItemComponent = ({
 		resolvedButtonStyle = buttonStyles;
 	}
 
+	const shouldShowButton = row.showUpdateButton ?? true;
+
 	return (
 		<div style={rowStyles}>
 			<div style={labelStyles}>
@@ -129,7 +132,7 @@ const VersionRowItemComponent = ({
 					Current: {currentLabel} <span style={chipStyles}>{latestLabel}</span>
 				</p>
 			</div>
-			{row.target ? (
+			{row.target && shouldShowButton ? (
 				<button
 					disabled={disabled || !hasUpdate}
 					onClick={onClick}

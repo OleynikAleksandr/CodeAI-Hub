@@ -28,6 +28,7 @@ export type ProviderVersions = {
 		readonly sdk: VersionEntry;
 	};
 	readonly gemini: {
+		readonly cli: VersionEntry;
 		readonly core: VersionEntry;
 	};
 	readonly checkedAt?: string;

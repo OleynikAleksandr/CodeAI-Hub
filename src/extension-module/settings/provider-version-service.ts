@@ -253,15 +253,23 @@ export class ProviderVersionService {
 		target: VersionTarget,
 	): Promise<ProviderVersionsSnapshot> {
 		if (provider === "gemini") {
-			if (target === "cli") {
-				return this.updateGeminiCli();
-			}
-			if (target === "core") {
-				return this.updateGeminiCore();
-			}
+			return this.updateGeminiAll();
 		}
 		const packageName = resolvePackageName(provider, target);
 		await execAsync(`${NPM_COMMAND} install -g ${packageName}@latest`, {
+			maxBuffer: EXEC_MAX_BUFFER_BYTES,
+		});
+		return this.loadSnapshot();
+	}
+
+	async updateGeminiAll(): Promise<ProviderVersionsSnapshot> {
+		await execAsync(
+			`${NPM_COMMAND} install -g @google/gemini-cli-core@latest`,
+			{
+				maxBuffer: EXEC_MAX_BUFFER_BYTES,
+			},
+		);
+		await execAsync(`${NPM_COMMAND} install -g @google/gemini-cli@latest`, {
 			maxBuffer: EXEC_MAX_BUFFER_BYTES,
 		});
 		return this.loadSnapshot();
