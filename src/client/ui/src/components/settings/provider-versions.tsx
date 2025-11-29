@@ -110,11 +110,20 @@ const ProviderVersions = ({
 			}
 			return [
 				{
+					label: "Gemini CLI",
+					packageName: geminiSnapshot.cli.packageName,
+					currentVersion: geminiSnapshot.cli.currentVersion,
+					latestVersion: geminiSnapshot.cli.latestVersion,
+					target: undefined,
+					showUpdateButton: false,
+				},
+				{
 					label: "Gemini CLI Core",
 					packageName: geminiSnapshot.core.packageName,
 					currentVersion: geminiSnapshot.core.currentVersion,
 					latestVersion: geminiSnapshot.core.latestVersion,
 					target: "core" as const,
+					showUpdateButton: true,
 				},
 			];
 		}
