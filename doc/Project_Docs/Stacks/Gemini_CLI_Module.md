@@ -2,7 +2,7 @@
 
 **Status:** Active (CommonJS bridge)
 
-**Last Updated:** 2025-11-22
+**Last Updated:** 2025-11-29
 
 **Maintainer:** Codex / CodeAI Hub Core Team
 
@@ -29,6 +29,7 @@ Additional references to monitor:
 
 ## 3. Installation & Environment
 - **Managed install:** `packages/Gemini_Module/src/installer/gemini-installer.ts` теперь подготавливает только `@google/gemini-cli-core`, складывая его в `dist/vendor/node_modules/@google/…` внутри установленного модуля (`~/.codeai-hub/providers/gemini/<version>`). Сам CLI (`@google/gemini-cli`) пользователь устанавливает глобально (например, `npm install -g @google/gemini-cli`); во время инициализации `cli-bridge` сканирует PATH, npm prefix (включая `.npm-global`) и стандартные каталоги, чтобы определить расположение и версию инструмента. Во время скачивания/установки `GeminiInstaller` отправляет `reporter.progress` (в том числе с флагом `firstRun`), чтобы UI показывал конкретный шаг.
+- **Runtime updates (v1.1.320):** Метод `GeminiInstaller.updateToLatest()` позволяет обновлять Gemini CLI и CLI Core во время работы расширения. Он запрашивает latest версию из npm registry, скачивает tarballs обоих пакетов и распаковывает их в vendor директорию. CLI также устанавливается глобально в `~/.npm-global/` для удобства использования команды `gemini login`. Settings UI вызывает этот метод через `ProviderVersionService.updateGeminiAll()`.
 - **Runtime requirements:** Node.js ≥ 20.0.0 (используется bundled runtime ядра), macOS/Linux/Windows поддерживаются CLI.
 - **Version pinning:** manifest `codeaiHub` внутри `package.json` модуля (1.1.300) фиксирует версии `geminiCliVersion` и `geminiCliCoreVersion` (0.16.0). Контрольные суммы проверяются при скачивании.
 - **Settings telemetry (1.1.300+)**: ProviderVersionService читает `assets/providers/gemini/manifest.json` внутри VSIX и сравнивает его с локальным `~/.codeai-hub/providers/gemini/<version>/dist/vendor/node_modules/@google/gemini-cli-core/package.json`. Поэтому необходимо поддерживать синхронные значения версий и гарантировать наличие `package.json` в vendor-каталоге, иначе карточка Gemini в Settings UI будет показывать `Not detected`.
@@ -81,6 +82,7 @@ Important flags:
 
 ## 7. Implementation Status
 - ✅ **Installer** — подготавливает `@google/gemini-cli-core` в vendor, удаляет устаревшие копии CLI и генерирует `cli-bridge.json` с контрольной информацией (ожидаемая версия инструмента, фактическая версия core и путь найденного `gemini`). Emit'ит `reporter.progress`, чтобы RemoteBridge мог транслировать стадии «загрузка», «подготовка зависимостей», «готово».
+- ✅ **Runtime Updater (v1.1.320)** — метод `updateToLatest()` позволяет обновлять оба пакета (CLI и Core) из Settings UI без перезапуска расширения. Скачивает tarballs из npm registry, распаковывает в vendor, устанавливает CLI глобально.
 - ✅ **CLI Bridge (`src/runtime/cli-bridge.ts`)** — использует динамический `import()` через `Function("return import(specifier);")`, конвертирует пути в file URL и загружает ESM-модули CLI/Core без `require()` (устранён `ERR_REQUIRE_ESM`).
 - ✅ **Session Manager** — работает поверх официального CLI Core (`contentGenerator`, `toolScheduler` и т.д.), управляет потоками, журналирует события, очищает окружение от конфликтующих `GOOGLE_*` переменных.
 - ✅ **Provider Adapter** — интегрирован с `ProviderRegistry`, отправляет события, обрабатывает подписчиков, транслирует системные сообщения (инициализация, ошибки аутентификации).
@@ -126,6 +128,7 @@ Important flags:
 ---
 
 ## 12. Change Log
+- **2025-11-29:** Released v1.1.320 — implemented `updateToLatest()` method for runtime CLI/Core updates. Settings UI now displays both Gemini CLI and CLI Core versions with a single Update button. CLI is installed globally to `~/.npm-global/` for user convenience.
 - **2025-10-28:** Released v0.1.3 — session manager now restarts CLI transparently, hydrates the real session id from logs/chat files, and keeps subscribers alive across restarts; core manifest обновлён на `codeai-hub-core-darwin-arm64-0.2.10`.
 - **2025-10-28:** Rebuilt the module as v0.1.2, updated core manifests (core v0.2.9) and Gemini installer logs to warn on missing credentials instead of aborting startup.
 - **2025-10-28:** Implemented installer/session/message/provider adapters, added graceful downgrade path when CLI is absent, and exposed Gemini in the provider picker UI.

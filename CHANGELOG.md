@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.320] - 2025-11-29
+### Added
+- **Gemini Update Mechanism**: Settings UI now displays both Gemini CLI and Gemini CLI Core versions with a single Update button. The `GeminiInstaller.updateToLatest()` method handles runtime updates by fetching the latest version from npm registry and extracting tarballs to the vendor directory.
+- **GeminiVersionReader**: Extended to read versions of both `@google/gemini-cli` and `@google/gemini-cli-core` from vendor directory.
+- **updateGeminiAll()**: New method in `ProviderVersionService` that orchestrates the update process for both Gemini packages.
+
+### Changed
+- **Gemini CLI Core**: Updated from v0.16.0 to v0.17.0 (bundled), with runtime updates to v0.18.4 available via Settings.
+- **Vendor vs Global Installation**: Gemini CLI Core is installed only in vendor directory (`~/.codeai-hub/providers/gemini/<version>/vendor/`), while Gemini CLI is installed both in vendor and globally (`~/.npm-global/`) for user convenience with `gemini login` command.
+- **Settings UI**: Two rows for Gemini (CLI and CLI Core) with a single Update button on the Core row.
+
+### Build
+- VSIX → `codeai-hub-1.1.320.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.320.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.320.tar.bz2`
+- Providers → `claude-module-1.1.320.tar.bz2`, `codex-module-1.1.320.tar.bz2`, `gemini-module-1.1.320.tar.bz2`
+- UI → `vscode-webview-1.1.320.tar.bz2`, `web-client-1.1.320.tar.bz2`, `project-manager-1.1.320.tar.bz2`
+
 ## [1.1.315] - 2025-11-28
 ### Changed
 - **Unified Quality Gates**: Switched from Lefthook to Husky as the single Git hook orchestrator. Pre-commit now runs the architecture check, a fast Ultracite/Biome pass and `ts-prune` before formatting staged files with `npx ultracite fix`. Pre-push runs jscpd duplication checks and Markdown link validation.
