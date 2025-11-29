@@ -16,12 +16,12 @@
 
 ---
 
-## Phase 1 — Gemini CLI Path Isolation & Version Update (owner: Claude, updated: 2025-11-29)
+## Phase 5 — Gemini CLI Path Isolation & Version Update (owner: Claude, updated: 2025-11-29)
 
 **Цель:** Изолировать установку Gemini CLI от глобальной npm директории и обновить gemini-cli-core до 0.17.0
 **Статус:** ✅ DONE
 
-### Stream 1.1: Isolate GEMINI_INSTALLER_PATHS
+### Stream 5.1: Isolate GEMINI_INSTALLER_PATHS
 1. [DONE] Изменить `GEMINI_INSTALLER_PATHS` в `packages/core/src/provider-registry/index.ts`
    - **Было:** `~/.npm-global/lib/node_modules/@google/gemini-cli/`
    - **Стало:** `~/.codeai-hub/providers/gemini/cli/`
@@ -31,7 +31,7 @@
    - Проверено: новый путь корректно обрабатывается (без /node_modules/ → возвращает 2 уровня вверх)
    - Результат: npm prefix = `~/.codeai-hub/providers/gemini/`
 
-### Stream 1.2: Update gemini-cli-core to 0.17.0
+### Stream 5.2: Update gemini-cli-core to 0.17.0
 1. [DONE] Обновить версии в `packages/Gemini_Module/package.json`
    - `codeaiHub.geminiCliCoreVersion`: `0.16.0` → `0.17.0`
    - `codeaiHub.geminiCliVersion`: `0.16.0` → `0.17.0`
@@ -43,12 +43,12 @@
 
 ---
 
-## Phase 2 — Gemini Update Button in Settings UI (owner: Claude, updated: 2025-11-29)
+## Phase 6 — Gemini Update Button in Settings UI (owner: Claude, updated: 2025-11-29)
 
 **Цель:** Добавить кнопку обновления Gemini в интерфейс Settings (аналогично Claude/Codex)
 **Статус:** ✅ DONE
 
-### Stream 2.1: Extend Message Types & Handler
+### Stream 6.1: Extend Message Types & Handler
 1. [DONE] Расширить `SettingsMessage` тип для поддержки gemini
    - Добавлен `"gemini"` в union type `provider`
    - Добавлен `"core"` в union type `target`
@@ -58,7 +58,7 @@
    - Добавлена валидация для gemini и core
    - Файлы: `src/extension-module/message-handlers/settings-message-handler.ts`
 
-### Stream 2.2: Add updateGeminiCore to ProviderVersionService
+### Stream 6.2: Add updateGeminiCore to ProviderVersionService
 1. [DONE] Добавить метод `updateGeminiCore()` в `ProviderVersionService`
    - Метод выполняет `npm install -g @google/gemini-cli-core@latest`
    - Файлы: `src/extension-module/settings/provider-version-service.ts`
@@ -67,7 +67,7 @@
    - Добавлена специальная логика для `provider === "gemini" && target === "core"`
    - Файлы: `src/extension-module/settings/provider-version-service.ts`
 
-### Stream 2.3: Update Settings UI Components
+### Stream 6.3: Update Settings UI Components
 1. [DONE] Убрать `GeminiNotice` и добавить кнопку Update
    - Удалён компонент `GeminiNotice`
    - Добавлена кнопка Update для Gemini Core
@@ -84,7 +84,7 @@
 
 ---
 
-## Phase 3 — Fix Gemini Update Mechanism (owner: Claude, updated: 2025-11-29)
+## Phase 7 — Fix Gemini Update Mechanism (owner: Claude, updated: 2025-11-29)
 
 **Цель:** Исправить механизм обновления Gemini CLI и Gemini CLI Core через Settings UI
 **Статус:** ✅ DONE (v1.1.320)
@@ -103,7 +103,7 @@
 - gemini-cli-core ставится: только локально (vendor)
 - Расширение использует ТОЛЬКО локальные версии из vendor
 
-### Stream 3.1: Add updateToLatest() to GeminiInstaller
+### Stream 7.1: Add updateToLatest() to GeminiInstaller
 1. [DONE] Добавить метод `getLatestVersionFromRegistry()` в `gemini-installer.ts`
    - Получает latest версию из npm registry
    - Файлы: `packages/Gemini_Module/src/installer/gemini-installer.ts`
@@ -123,7 +123,7 @@
    - Файлы: `packages/Gemini_Module/src/index.ts`, `packages/Gemini_Module/src/types/index.ts`, `packages/Gemini_Module/src/installer/gemini-installer.ts`
    - Коммит: `31f285a feat(gemini): export updateToLatest() through module public API`
 
-### Stream 3.2: Update GeminiVersionReader for both packages
+### Stream 7.2: Update GeminiVersionReader for both packages
 1. [DONE] Расширить `GeminiVersionReader` для чтения версий обоих пакетов
    - Читать версию gemini-cli из vendor
    - Читать версию gemini-cli-core из vendor
@@ -137,7 +137,7 @@
    - Файлы: `src/extension-module/settings/provider-version-service.ts`
    - Коммит: `a11214b`
 
-### Stream 3.3: Update Settings UI for Gemini
+### Stream 7.3: Update Settings UI for Gemini
 1. [DONE] Показывать две строки для Gemini в Settings
    - Gemini CLI (версия из vendor) - без кнопки Update
    - Gemini CLI Core (версия из vendor) - с кнопкой Update для обоих
@@ -151,7 +151,7 @@
    - Файлы: `src/extension-module/settings/provider-version-service.ts`
    - Коммит: `2c2f4f9`
 
-### Stream 3.4: Cleanup incorrect paths
+### Stream 7.4: Cleanup incorrect paths
 1. [DONE] Проверка мусорных папок `~/.codeai-hub/providers/`
    - Папки `bin/` и `lib/` НЕ существуют (структура уже правильная)
    - Текущая структура: `~/.codeai-hub/providers/gemini/1.1.317/`
