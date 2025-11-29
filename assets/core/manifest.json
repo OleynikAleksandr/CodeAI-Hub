@@ -1,30 +1,30 @@
 {
-	"schema": 1,
-	"baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
-	"platforms": {
-		"darwin-arm64": {
-			"coreVersion": "1.1.315",
-			"package": "codeai-hub-core-darwin-arm64-1.1.315.tar.bz2",
-			"size": 37219192,
-			"sha1": "c1e65a03c7746d1f1a6591a141c1bed7fe6da34c"
-		},
-		"darwin-x64": {
-			"coreVersion": "0.1.0",
-			"package": "codeai-hub-core-darwin-x64-0.1.0.tar.bz2",
-			"size": 0,
-			"sha1": ""
-		},
-		"win32-x64": {
-			"coreVersion": "0.1.0",
-			"package": "codeai-hub-core-win32-x64-0.1.0.tar.bz2",
-			"size": 0,
-			"sha1": ""
-		},
-		"linux-x64": {
-			"coreVersion": "0.1.0",
-			"package": "codeai-hub-core-linux-x64-0.1.0.tar.bz2",
-			"size": 0,
-			"sha1": ""
-		}
-	}
+  "schema": 1,
+  "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
+  "platforms": {
+    "darwin-arm64": {
+      "coreVersion": "1.1.317",
+      "package": "codeai-hub-core-darwin-arm64-1.1.317.tar.bz2",
+      "size": 37215317,
+      "sha1": "04fb3142ba21cae20820c031fd51375bd57b08a8"
+    },
+    "darwin-x64": {
+      "coreVersion": "0.1.0",
+      "package": "codeai-hub-core-darwin-x64-0.1.0.tar.bz2",
+      "size": 0,
+      "sha1": ""
+    },
+    "win32-x64": {
+      "coreVersion": "0.1.0",
+      "package": "codeai-hub-core-win32-x64-0.1.0.tar.bz2",
+      "size": 0,
+      "sha1": ""
+    },
+    "linux-x64": {
+      "coreVersion": "0.1.0",
+      "package": "codeai-hub-core-linux-x64-0.1.0.tar.bz2",
+      "size": 0,
+      "sha1": ""
+    }
+  }
 }
