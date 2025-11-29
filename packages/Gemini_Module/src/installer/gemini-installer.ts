@@ -23,7 +23,6 @@ const GEMINI_CLI_PACKAGE = "@google/gemini-cli";
 const HTTP_ERROR_STATUS_THRESHOLD = 400;
 const CLI_EXECUTABLE_UNIX = "gemini";
 const CLI_EXECUTABLE_WINDOWS = "gemini.cmd";
-const CLI_REGISTRY_URL = "https://registry.npmjs.org/@google/gemini-cli/latest";
 const HOME_DIRECTORY_PATTERN = /^~(?=$|\/|\\)/u;
 const USERPROFILE_PATTERN = /%USERPROFILE%/giu;
 
@@ -294,6 +293,60 @@ export class GeminiInstaller {
 		return this.bridge;
 	}
 
+	async updateToLatest(): Promise<{
+		cliVersion: string;
+		coreVersion: string;
+	}> {
+		// 1. Fetch latest version from npm registry
+		const latestVersion =
+			await this.getLatestVersionFromRegistry(GEMINI_CLI_PACKAGE);
+		if (!latestVersion) {
+			throw new Error(
+				"Failed to fetch latest Gemini CLI version from npm registry",
+			);
+		}
+
+		// 2. Prepare vendor directories
+		const vendorRoot = await ensureDirectoryChain(
+			this.moduleRoot,
+			"dist",
+			VENDOR_DIR,
+		);
+		const downloadsDir = await ensureDirectoryChain(vendorRoot, DOWNLOADS_DIR);
+		const nodeModulesDir = await ensureDirectoryChain(
+			vendorRoot,
+			NODE_MODULES_DIR,
+		);
+
+		// 3. Install gemini-cli-core in vendor (forced update to latest)
+		await this.installIfNeeded({
+			name: GEMINI_CLI_CORE_PACKAGE,
+			version: latestVersion,
+			label: "Gemini CLI Core",
+			downloadsDir,
+			nodeModulesDir,
+			forceVersion: latestVersion,
+		});
+
+		// 4. Install gemini-cli in vendor (forced update to latest)
+		await this.installIfNeeded({
+			name: GEMINI_CLI_PACKAGE,
+			version: latestVersion,
+			label: "Gemini CLI",
+			downloadsDir,
+			nodeModulesDir,
+			forceVersion: latestVersion,
+		});
+
+		// 5. Update global gemini-cli
+		await this.installCliPackage(latestVersion);
+
+		return {
+			cliVersion: latestVersion,
+			coreVersion: latestVersion,
+		};
+	}
+
 	private async ensureVendorArtifacts(): Promise<ModuleMetadata> {
 		const metadata = await readModuleMetadata(this.moduleRoot);
 		const vendorRoot = await ensureDirectoryChain(
@@ -307,16 +360,18 @@ export class GeminiInstaller {
 			NODE_MODULES_DIR,
 		);
 
-		const legacyCliDir = path.join(
-			nodeModulesDir,
-			...GEMINI_CLI_PACKAGE.split("/"),
-		);
-		await removeDirectoryIfExists(legacyCliDir);
-
 		await this.installIfNeeded({
 			name: GEMINI_CLI_CORE_PACKAGE,
 			version: metadata.geminiCliCoreVersion,
 			label: "Gemini CLI Core",
+			downloadsDir,
+			nodeModulesDir,
+		});
+
+		await this.installIfNeeded({
+			name: GEMINI_CLI_PACKAGE,
+			version: metadata.geminiCliVersion,
+			label: "Gemini CLI",
 			downloadsDir,
 			nodeModulesDir,
 		});
@@ -350,13 +405,16 @@ export class GeminiInstaller {
 		label,
 		downloadsDir,
 		nodeModulesDir,
+		forceVersion,
 	}: {
 		readonly name: string;
 		readonly version: string;
 		readonly label: string;
 		readonly downloadsDir: string;
 		readonly nodeModulesDir: string;
+		readonly forceVersion?: string;
 	}): Promise<void> {
+		const targetVersion = forceVersion ?? version;
 		const targetDir = path.join(nodeModulesDir, ...name.split("/"));
 		const pkgJsonPath = path.join(targetDir, "package.json");
 		const nodeModulesPath = path.join(targetDir, "node_modules");
@@ -367,13 +425,16 @@ export class GeminiInstaller {
 				pkgJsonPath,
 			);
 			firstInstall = false;
-			if (existing.version === version) {
+			if (forceVersion) {
+				// Forced update - skip version check
+				firstInstall = false;
+			} else if (existing.version === targetVersion) {
 				try {
 					await fs.access(nodeModulesPath);
 					return;
 				} catch {
 					this.reporter?.info?.(
-						`Repairing dependencies for ${label} ${version}`,
+						`Repairing dependencies for ${label} ${targetVersion}`,
 					);
 					firstInstall = false;
 				}
@@ -394,9 +455,12 @@ export class GeminiInstaller {
 				: "Fetching the latest improvements.",
 			firstRun: firstInstall,
 		});
-		this.reporter?.info?.(`Installing ${label} ${version}`);
+		this.reporter?.info?.(`Installing ${label} ${targetVersion}`);
 
-		const { tarball, shasum } = await fetchRegistryMetadata(name, version);
+		const { tarball, shasum } = await fetchRegistryMetadata(
+			name,
+			targetVersion,
+		);
 		const archiveName = path.basename(tarball);
 		const archivePath = path.join(downloadsDir, archiveName);
 
@@ -428,7 +492,7 @@ export class GeminiInstaller {
 				: "Components updated successfully.",
 			firstRun: firstInstall,
 		});
-		this.reporter?.info?.(`${label} ${version} installed`);
+		this.reporter?.info?.(`${label} ${targetVersion} installed`);
 	}
 
 	private emitProgress(
@@ -556,10 +620,15 @@ export class GeminiInstaller {
 		await this.installCliPackage(latestVersion);
 	}
 
-	private getLatestCliVersion(): Promise<string | null> {
+	private getLatestVersionFromRegistry(
+		packageName: string,
+	): Promise<string | null> {
+		const encodedName = packageName.replace("/", "%2f");
+		const url = `https://registry.npmjs.org/${encodedName}/latest`;
+
 		return new Promise((resolve) => {
 			https
-				.get(CLI_REGISTRY_URL, (response) => {
+				.get(url, (response) => {
 					let body = "";
 					response.setEncoding("utf8");
 					response.on("data", (chunk) => {
@@ -578,6 +647,10 @@ export class GeminiInstaller {
 					resolve(null);
 				});
 		});
+	}
+
+	private getLatestCliVersion(): Promise<string | null> {
+		return this.getLatestVersionFromRegistry(GEMINI_CLI_PACKAGE);
 	}
 
 	private normalizeInstallerPath(paths: GeminiInstallerPaths): string {
