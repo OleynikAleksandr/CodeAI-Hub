@@ -560,9 +560,9 @@ export class GeminiSessionManager {
 			case AuthType.USE_VERTEX_AI:
 			case "vertex-ai":
 				return AuthType.USE_VERTEX_AI;
-			case AuthType.CLOUD_SHELL:
+			case AuthType.LEGACY_CLOUD_SHELL:
 			case "cloud-shell":
-				return AuthType.CLOUD_SHELL;
+				return AuthType.LEGACY_CLOUD_SHELL;
 			default:
 				return AuthType.LOGIN_WITH_GOOGLE;
 		}
