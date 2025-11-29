@@ -3,81 +3,81 @@ import { activateRoot } from "../../root-dom";
 import { postVsCodeMessage } from "../../vscode";
 
 type ActionBarCommand =
-  | "newSession"
-  | "lastSession"
-  | "launchWebClient"
-  | "oldSessions";
+	| "newSession"
+	| "lastSession"
+	| "launchWebClient"
+	| "oldSessions";
 
 type ButtonDescriptor = {
-  readonly id: ActionBarCommand;
-  readonly label: readonly [string, string];
-  readonly highlighted?: boolean;
+	readonly id: ActionBarCommand;
+	readonly label: readonly [string, string];
+	readonly highlighted?: boolean;
 };
 
 const BUTTONS: readonly ButtonDescriptor[] = [
-  { id: "newSession", label: ["New", "Session"] },
-  { id: "lastSession", label: ["Last", "Session"], highlighted: true },
-  { id: "launchWebClient", label: ["Clear", "Session"] },
-  { id: "oldSessions", label: ["Old", "Sessions"] },
+	{ id: "newSession", label: ["New", "Session"] },
+	{ id: "lastSession", label: ["Last", "Session"], highlighted: true },
+	{ id: "launchWebClient", label: ["Clear", "Session"] },
+	{ id: "oldSessions", label: ["Old", "Sessions"] },
 ];
 
 type ActionBarProps = {
-  readonly disabled?: boolean;
+	readonly disabled?: boolean;
 };
 
 const ActionBar = ({ disabled = false }: ActionBarProps) => {
-  const handleClick = useCallback(
-    (command: ActionBarCommand) => {
-      if (disabled) {
-        return;
-      }
+	const handleClick = useCallback(
+		(command: ActionBarCommand) => {
+			if (disabled) {
+				return;
+			}
 
-      if (command === "newSession") {
-        activateRoot();
-      }
+			if (command === "newSession") {
+				activateRoot();
+			}
 
-      if (command === "launchWebClient") {
-        return;
-      }
+			if (command === "launchWebClient") {
+				return;
+			}
 
-      postVsCodeMessage({ command });
-    },
-    [disabled]
-  );
+			postVsCodeMessage({ command });
+		},
+		[disabled],
+	);
 
-  return (
-    <header className="action-bar">
-      <div className="action-bar__surface">
-        <div
-          aria-hidden="true"
-          className="action-bar__rail action-bar__rail--top"
-        />
-        <div
-          aria-hidden="true"
-          className="action-bar__rail action-bar__rail--bottom"
-        />
-        <div className="action-bar__buttons">
-          {BUTTONS.map(({ id, label, highlighted }) => (
-            <button
-              aria-label={`${label[0]} ${label[1]}`}
-              className={
-                highlighted
-                  ? "action-bar__button action-bar__button--highlight"
-                  : "action-bar__button"
-              }
-              disabled={disabled}
-              key={id}
-              onClick={() => handleClick(id)}
-              type="button"
-            >
-              <span className="action-bar__line">{label[0]}</span>
-              <span className="action-bar__line">{label[1]}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </header>
-  );
+	return (
+		<header className="action-bar">
+			<div className="action-bar__surface">
+				<div
+					aria-hidden="true"
+					className="action-bar__rail action-bar__rail--top"
+				/>
+				<div
+					aria-hidden="true"
+					className="action-bar__rail action-bar__rail--bottom"
+				/>
+				<div className="action-bar__buttons">
+					{BUTTONS.map(({ id, label, highlighted }) => (
+						<button
+							aria-label={`${label[0]} ${label[1]}`}
+							className={
+								highlighted
+									? "action-bar__button action-bar__button--highlight"
+									: "action-bar__button"
+							}
+							disabled={disabled}
+							key={id}
+							onClick={() => handleClick(id)}
+							type="button"
+						>
+							<span className="action-bar__line">{label[0]}</span>
+							<span className="action-bar__line">{label[1]}</span>
+						</button>
+					))}
+				</div>
+			</div>
+		</header>
+	);
 };
 
 export default ActionBar;

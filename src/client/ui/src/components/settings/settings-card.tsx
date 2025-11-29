@@ -1,48 +1,48 @@
 import type { CSSProperties, PropsWithChildren, ReactNode } from "react";
 
 const cardStyles: CSSProperties = {
-  background: "#252526",
-  borderRadius: "6px",
-  padding: "16px",
-  border: "1px solid #3c3c3c",
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px",
+	background: "#252526",
+	borderRadius: "6px",
+	padding: "16px",
+	border: "1px solid #3c3c3c",
+	display: "flex",
+	flexDirection: "column",
+	gap: "10px",
 };
 
 const headerStyles: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: "12px",
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "space-between",
+	gap: "12px",
 };
 
 const titleStyles: CSSProperties = {
-  fontSize: "14px",
-  fontWeight: 600,
-  margin: 0,
-  color: "#e0e0e0",
+	fontSize: "14px",
+	fontWeight: 600,
+	margin: 0,
+	color: "#e0e0e0",
 };
 
 type SettingsCardProps = {
-  readonly title?: string;
-  readonly action?: ReactNode;
+	readonly title?: string;
+	readonly action?: ReactNode;
 };
 
 const SettingsCard = ({
-  title,
-  action,
-  children,
+	title,
+	action,
+	children,
 }: PropsWithChildren<SettingsCardProps>) => (
-  <div style={cardStyles}>
-    {title ? (
-      <div style={headerStyles}>
-        <h3 style={titleStyles}>{title}</h3>
-        {action}
-      </div>
-    ) : null}
-    {children}
-  </div>
+	<div style={cardStyles}>
+		{title ? (
+			<div style={headerStyles}>
+				<h3 style={titleStyles}>{title}</h3>
+				{action}
+			</div>
+		) : null}
+		{children}
+	</div>
 );
 
 export default SettingsCard;

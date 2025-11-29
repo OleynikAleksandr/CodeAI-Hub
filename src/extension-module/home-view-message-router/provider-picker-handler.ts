@@ -1,82 +1,82 @@
 import { window } from "vscode";
 import type { ProviderRegistry } from "../../core/providers/provider-registry";
 import type {
-  SessionLauncher,
-  SessionLaunchRequest,
-  SessionLaunchResult,
+	SessionLauncher,
+	SessionLaunchRequest,
+	SessionLaunchResult,
 } from "../../core/session/session-launcher";
 import type { ProviderStackId } from "../../types/provider";
 import type { ProviderPickerMessage } from "./message-types";
 import { isSuccessfulLaunch, serializeSession } from "./serialization";
 
 type ProviderPickerContext = {
-  readonly providerRegistry: ProviderRegistry;
-  readonly sessionLauncher: SessionLauncher;
-  readonly notifyWebview: (message: Record<string, unknown>) => void;
+	readonly providerRegistry: ProviderRegistry;
+	readonly sessionLauncher: SessionLauncher;
+	readonly notifyWebview: (message: Record<string, unknown>) => void;
 };
 
 const sanitizeProviderIds = (
-  providerRegistry: ProviderRegistry,
-  identifiers: readonly unknown[]
+	providerRegistry: ProviderRegistry,
+	identifiers: readonly unknown[],
 ): ProviderStackId[] => {
-  const knownStacks = providerRegistry.listStacks().map((stack) => stack.id);
-  const knownSet = new Set<ProviderStackId>(knownStacks);
-  const sanitized: ProviderStackId[] = [];
+	const knownStacks = providerRegistry.listStacks().map((stack) => stack.id);
+	const knownSet = new Set<ProviderStackId>(knownStacks);
+	const sanitized: ProviderStackId[] = [];
 
-  for (const identifier of identifiers) {
-    if (typeof identifier !== "string") {
-      continue;
-    }
+	for (const identifier of identifiers) {
+		if (typeof identifier !== "string") {
+			continue;
+		}
 
-    const candidate = identifier as ProviderStackId;
-    if (!knownSet.has(candidate)) {
-      continue;
-    }
+		const candidate = identifier as ProviderStackId;
+		if (!knownSet.has(candidate)) {
+			continue;
+		}
 
-    sanitized.push(candidate);
-  }
+		sanitized.push(candidate);
+	}
 
-  return sanitized;
+	return sanitized;
 };
 
 const launchSession = (
-  sessionLauncher: SessionLauncher,
-  request: SessionLaunchRequest
+	sessionLauncher: SessionLauncher,
+	request: SessionLaunchRequest,
 ): SessionLaunchResult => sessionLauncher.launch(request);
 
 export const handleProviderPickerMessage = (
-  message: ProviderPickerMessage,
-  context: ProviderPickerContext
+	message: ProviderPickerMessage,
+	context: ProviderPickerContext,
 ): void => {
-  if (message.type === "providerPicker:cancel") {
-    window.showInformationMessage("Session creation cancelled.");
-    return;
-  }
+	if (message.type === "providerPicker:cancel") {
+		window.showInformationMessage("Session creation cancelled.");
+		return;
+	}
 
-  const providerIds = sanitizeProviderIds(
-    context.providerRegistry,
-    message.payload?.providerIds ?? []
-  );
+	const providerIds = sanitizeProviderIds(
+		context.providerRegistry,
+		message.payload?.providerIds ?? [],
+	);
 
-  const primaryProviderId = providerIds[0];
+	const primaryProviderId = providerIds[0];
 
-  if (!primaryProviderId) {
-    window.showWarningMessage("Select a provider to start a session.");
-    return;
-  }
+	if (!primaryProviderId) {
+		window.showWarningMessage("Select a provider to start a session.");
+		return;
+	}
 
-  const result = launchSession(context.sessionLauncher, {
-    providerIds: [primaryProviderId],
-  });
-  if (!isSuccessfulLaunch(result)) {
-    window.showWarningMessage(result.summary);
-    return;
-  }
+	const result = launchSession(context.sessionLauncher, {
+		providerIds: [primaryProviderId],
+	});
+	if (!isSuccessfulLaunch(result)) {
+		window.showWarningMessage(result.summary);
+		return;
+	}
 
-  context.notifyWebview({
-    type: "session:created",
-    payload: serializeSession(result.session),
-  });
+	context.notifyWebview({
+		type: "session:created",
+		payload: serializeSession(result.session),
+	});
 
-  window.showInformationMessage(result.summary);
+	window.showInformationMessage(result.summary);
 };

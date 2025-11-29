@@ -1,22 +1,22 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["ES2020"],
-    "outDir": "out",
-    "rootDir": "src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "types": ["node", "vscode"],
-    "strictNullChecks": true
-  },
-  "include": ["src"],
-  "exclude": [
-    "src/client/ui/src/**/*",
-    "src/client/web-client/**/*",
-    "src/client/project-manager/**/*"
-  ]
+	"compilerOptions": {
+		"target": "ES2020",
+		"module": "commonjs",
+		"lib": ["ES2020"],
+		"outDir": "out",
+		"rootDir": "src",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"moduleResolution": "node",
+		"types": ["node", "vscode"],
+		"strictNullChecks": true
+	},
+	"include": ["src"],
+	"exclude": [
+		"src/client/ui/src/**/*",
+		"src/client/web-client/**/*",
+		"src/client/project-manager/**/*"
+	]
 }
