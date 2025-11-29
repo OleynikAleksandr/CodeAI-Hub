@@ -9272,6 +9272,7 @@
     } else if (hasUpdate && !disabled) {
       resolvedButtonStyle = buttonStyles2;
     }
+    const shouldShowButton = row.showUpdateButton ?? true;
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: rowStyles, children: [
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: labelStyles, children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: nameStyles, children: row.label }),
@@ -9282,7 +9283,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: chipStyles, children: latestLabel })
         ] })
       ] }),
-      row.target ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
         "button",
         {
           disabled: disabled || !hasUpdate,
@@ -9381,11 +9382,20 @@
         }
         return [
           {
+            label: "Gemini CLI",
+            packageName: geminiSnapshot.cli.packageName,
+            currentVersion: geminiSnapshot.cli.currentVersion,
+            latestVersion: geminiSnapshot.cli.latestVersion,
+            target: void 0,
+            showUpdateButton: false
+          },
+          {
             label: "Gemini CLI Core",
             packageName: geminiSnapshot.core.packageName,
             currentVersion: geminiSnapshot.core.currentVersion,
             latestVersion: geminiSnapshot.core.latestVersion,
-            target: "core"
+            target: "core",
+            showUpdateButton: true
           }
         ];
       }

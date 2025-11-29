@@ -120,30 +120,32 @@
    - Коммит: `31f285a feat(gemini): export updateToLatest() through module public API`
 
 ### Stream 3.2: Update GeminiVersionReader for both packages
-1. [TODO] Расширить `GeminiVersionReader` для чтения версий обоих пакетов
+1. [DONE] Расширить `GeminiVersionReader` для чтения версий обоих пакетов
    - Читать версию gemini-cli из vendor
    - Читать версию gemini-cli-core из vendor
    - Возвращать обе версии
    - Файлы: `src/extension-module/settings/gemini-version-reader.ts`
-   - **После завершения:** `npm run build`, гейты, коммит
+   - Коммит: `a11214b feat(settings): extend GeminiVersionReader to read both CLI and Core versions`
 
-2. [TODO] Обновить `ProviderVersionsSnapshot` тип
-   - Добавить `gemini.cli` рядом с `gemini.core`
+2. [DONE] Обновить `ProviderVersionsSnapshot` тип
+   - Добавлен `gemini.cli` рядом с `gemini.core`
+   - Добавлен `updateGeminiCli()` метод
    - Файлы: `src/extension-module/settings/provider-version-service.ts`
-   - **После завершения:** `npm run build`, гейты, коммит
+   - Коммит: `a11214b`
 
 ### Stream 3.3: Update Settings UI for Gemini
-1. [TODO] Показывать две строки для Gemini в Settings
-   - Gemini CLI (версия из vendor)
-   - Gemini CLI Core (версия из vendor)
-   - Одна кнопка Update обновляет оба
-   - Файлы: `src/client/ui/src/components/settings/provider-versions.tsx`
-   - **После завершения:** `npm run build:webview`, `npm run typecheck:webview`, гейты, коммит
+1. [DONE] Показывать две строки для Gemini в Settings
+   - Gemini CLI (версия из vendor) - без кнопки Update
+   - Gemini CLI Core (версия из vendor) - с кнопкой Update для обоих
+   - Добавлен prop `showUpdateButton` в VersionRow
+   - Файлы: `src/client/ui/src/components/settings/provider-versions.tsx`, `provider-version-row.tsx`
+   - Коммит: `2c2f4f9 feat(settings): show both Gemini CLI and Core in Settings UI with single Update button`
 
-2. [TODO] Подключить вызов `updateToLatest()` к кнопке Update
-   - Интегрировать с ProviderVersionService
+2. [DONE] Подключить `updateGeminiAll()` к кнопке Update
+   - Создан метод `updateGeminiAll()` который обновляет оба пакета
+   - `updateTarget()` для gemini всегда вызывает `updateGeminiAll()`
    - Файлы: `src/extension-module/settings/provider-version-service.ts`
-   - **После завершения:** `npm run build`, гейты, коммит
+   - Коммит: `2c2f4f9`
 
 ### Stream 3.4: Cleanup incorrect paths
 1. [TODO] Удалить мусорные папки из `~/.codeai-hub/providers/`
