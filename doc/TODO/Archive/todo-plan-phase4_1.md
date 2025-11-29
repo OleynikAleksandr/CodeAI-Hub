@@ -17,7 +17,7 @@
 
 ---
 
-## Phase 5 — Project Manager Layout Implementation (owner: Claude, updated: 2025-11-28)
+## Phase 4_1 — Project Manager Layout Implementation (owner: Claude, updated: 2025-11-28)
 
 **Цель**: Реализовать 6-секционный layout согласно `doc/Project_Docs/NewFeature_Architecture.md`
 
