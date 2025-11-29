@@ -87,7 +87,7 @@
 ## Phase 3 — Fix Gemini Update Mechanism (owner: Claude, updated: 2025-11-29)
 
 **Цель:** Исправить механизм обновления Gemini CLI и Gemini CLI Core через Settings UI
-**Статус:** 🔄 IN_PROGRESS
+**Статус:** ✅ DONE
 
 **Проблема:** Текущая реализация использует `npm install -g` который ставит в глобальную директорию, но расширение использует vendor директорию внутри модуля.
 
@@ -148,7 +148,7 @@
    - Коммит: `2c2f4f9`
 
 ### Stream 3.4: Cleanup incorrect paths
-1. [TODO] Удалить мусорные папки из `~/.codeai-hub/providers/`
-   - Удалить `bin/` и `lib/` из `~/.codeai-hub/providers/`
-   - Эти папки должны быть внутри `~/.codeai-hub/providers/gemini/cli/`
-   - **После завершения:** проверка путей, коммит
+1. [DONE] Проверка мусорных папок `~/.codeai-hub/providers/`
+   - Папки `bin/` и `lib/` НЕ существуют (структура уже правильная)
+   - Текущая структура: `~/.codeai-hub/providers/gemini/1.1.317/`
+   - Статус: cleanup не требуется
