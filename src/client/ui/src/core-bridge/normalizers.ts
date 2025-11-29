@@ -1,142 +1,142 @@
 import {
-	getDefaultProviderDescription,
-	getDefaultProviderTitle,
-	type ProviderStackDescriptor,
-	type ProviderStackId,
+  getDefaultProviderDescription,
+  getDefaultProviderTitle,
+  type ProviderStackDescriptor,
+  type ProviderStackId,
 } from "../../../../types/provider";
 import type {
-	SessionBindingInfo,
-	SessionMessage,
-	SessionRecord,
+  SessionBindingInfo,
+  SessionMessage,
+  SessionRecord,
 } from "../../../../types/session";
 import { normalizeBinding, providerIdSet } from "../session/helpers";
 import type {
-	CoreBridgeStatePayload,
-	ServerProvider,
-	ServerSession,
-	ServerSessionMessage,
-	ServerStatusResponse,
+  CoreBridgeStatePayload,
+  ServerProvider,
+  ServerSession,
+  ServerSessionMessage,
+  ServerStatusResponse,
 } from "./types";
 
 const toNumberTimestamp = (value?: string): number => {
-	if (!value) {
-		return Date.now();
-	}
-	const parsed = Date.parse(value);
-	return Number.isNaN(parsed) ? Date.now() : parsed;
+  if (!value) {
+    return Date.now();
+  }
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? Date.now() : parsed;
 };
 
 const sanitizeProvider = (
-	provider: ServerProvider | undefined,
+  provider: ServerProvider | undefined
 ): ProviderStackDescriptor | null => {
-	if (!provider || typeof provider.id !== "string") {
-		return null;
-	}
+  if (!provider || typeof provider.id !== "string") {
+    return null;
+  }
 
-	const providerId = provider.id as ProviderStackId;
-	if (!providerIdSet.has(providerId)) {
-		return null;
-	}
+  const providerId = provider.id as ProviderStackId;
+  if (!providerIdSet.has(providerId)) {
+    return null;
+  }
 
-	const isActive = provider.status === "active";
+  const isActive = provider.status === "active";
 
-	return {
-		id: providerId,
-		title: provider.name ?? getDefaultProviderTitle(providerId),
-		description:
-			provider.description ?? getDefaultProviderDescription(providerId),
-		connected: isActive,
-		statusMessage:
-			typeof provider.statusMessage === "string"
-				? provider.statusMessage
-				: null,
-	};
+  return {
+    id: providerId,
+    title: provider.name ?? getDefaultProviderTitle(providerId),
+    description:
+      provider.description ?? getDefaultProviderDescription(providerId),
+    connected: isActive,
+    statusMessage:
+      typeof provider.statusMessage === "string"
+        ? provider.statusMessage
+        : null,
+  };
 };
 
 export const sanitizeMessage = (
-	message: ServerSessionMessage | undefined,
+  message: ServerSessionMessage | undefined
 ): SessionMessage | null => {
-	if (
-		!message ||
-		typeof message.id !== "string" ||
-		typeof message.content !== "string"
-	) {
-		return null;
-	}
+  if (
+    !message ||
+    typeof message.id !== "string" ||
+    typeof message.content !== "string"
+  ) {
+    return null;
+  }
 
-	const role = message.role ?? "assistant";
-	if (
-		!(["assistant", "user", "system", "thinking"] as const).includes(
-			role as never,
-		)
-	) {
-		return null;
-	}
+  const role = message.role ?? "assistant";
+  if (
+    !(["assistant", "user", "system", "thinking"] as const).includes(
+      role as never
+    )
+  ) {
+    return null;
+  }
 
-	return {
-		id: message.id,
-		role,
-		content: message.content,
-		createdAt: toNumberTimestamp(message.timestamp),
-	};
+  return {
+    id: message.id,
+    role,
+    content: message.content,
+    createdAt: toNumberTimestamp(message.timestamp),
+  };
 };
 
 export const sanitizeSession = (
-	session: ServerSession | undefined,
+  session: ServerSession | undefined
 ): SessionRecord | null => {
-	if (
-		!session ||
-		typeof session.id !== "string" ||
-		typeof session.title !== "string" ||
-		typeof session.providerId !== "string"
-	) {
-		return null;
-	}
+  if (
+    !session ||
+    typeof session.id !== "string" ||
+    typeof session.title !== "string" ||
+    typeof session.providerId !== "string"
+  ) {
+    return null;
+  }
 
-	const providerId = session.providerId as ProviderStackId;
-	if (!providerIdSet.has(providerId)) {
-		return null;
-	}
+  const providerId = session.providerId as ProviderStackId;
+  if (!providerIdSet.has(providerId)) {
+    return null;
+  }
 
-	const sessionId = session.id;
-	const bindingCandidate: SessionBindingInfo = {
-		providerSessionId:
-			typeof session.providerSessionId === "string"
-				? session.providerSessionId
-				: null,
-		status:
-			session.providerSessionStatus === "ready" ||
-			session.providerSessionStatus === "failed"
-				? session.providerSessionStatus
-				: "pending",
-	};
+  const sessionId = session.id;
+  const bindingCandidate: SessionBindingInfo = {
+    providerSessionId:
+      typeof session.providerSessionId === "string"
+        ? session.providerSessionId
+        : null,
+    status:
+      session.providerSessionStatus === "ready" ||
+      session.providerSessionStatus === "failed"
+        ? session.providerSessionStatus
+        : "pending",
+  };
 
-	return {
-		id: sessionId,
-		title: session.title,
-		providerIds: [providerId],
-		createdAt: toNumberTimestamp(session.createdAt),
-		binding: normalizeBinding(bindingCandidate),
-	};
+  return {
+    id: sessionId,
+    title: session.title,
+    providerIds: [providerId],
+    createdAt: toNumberTimestamp(session.createdAt),
+    binding: normalizeBinding(bindingCandidate),
+  };
 };
 
 export const convertStatusResponse = (
-	status: ServerStatusResponse,
-	fallbackProviders: readonly ProviderStackDescriptor[],
+  status: ServerStatusResponse,
+  fallbackProviders: readonly ProviderStackDescriptor[]
 ): CoreBridgeStatePayload => {
-	const providers = status.providers
-		?.map((provider) => sanitizeProvider(provider))
-		.filter((provider): provider is ProviderStackDescriptor =>
-			Boolean(provider),
-		) ?? [...fallbackProviders];
+  const providers = status.providers
+    ?.map((provider) => sanitizeProvider(provider))
+    .filter((provider): provider is ProviderStackDescriptor =>
+      Boolean(provider)
+    ) ?? [...fallbackProviders];
 
-	const sessions =
-		status.sessions
-			?.map((session) => sanitizeSession(session))
-			.filter((session): session is SessionRecord => Boolean(session)) ?? [];
+  const sessions =
+    status.sessions
+      ?.map((session) => sanitizeSession(session))
+      .filter((session): session is SessionRecord => Boolean(session)) ?? [];
 
-	return {
-		sessions,
-		providers,
-	};
+  return {
+    sessions,
+    providers,
+  };
 };
