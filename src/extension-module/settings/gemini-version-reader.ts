@@ -14,9 +14,17 @@ export class GeminiVersionReader {
 		this.extensionPath = extensionPath;
 	}
 
-	async read(): Promise<PackageVersionResult> {
-		const packageName = PACKAGE_MAP.gemini.core;
-		const latest = await readLatestVersion(packageName);
+	async read(): Promise<{
+		cli: PackageVersionResult;
+		core: PackageVersionResult;
+	}> {
+		const cliPackageName = PACKAGE_MAP.gemini.cli;
+		const corePackageName = PACKAGE_MAP.gemini.core;
+
+		const [cliLatest, coreLatest] = await Promise.all([
+			readLatestVersion(cliPackageName),
+			readLatestVersion(corePackageName),
+		]);
 
 		try {
 			const manifestPath = path.join(
@@ -32,7 +40,7 @@ export class GeminiVersionReader {
 			};
 			const moduleVersion = manifest.module.version;
 
-			const geminiCorePackageJsonPath = path.join(
+			const vendorPath = path.join(
 				homedir(),
 				".codeai-hub",
 				"providers",
@@ -42,28 +50,63 @@ export class GeminiVersionReader {
 				"vendor",
 				"node_modules",
 				"@google",
+			);
+
+			const geminiCliPackageJsonPath = path.join(
+				vendorPath,
+				"gemini-cli",
+				"package.json",
+			);
+			const geminiCorePackageJsonPath = path.join(
+				vendorPath,
 				"gemini-cli-core",
 				"package.json",
 			);
 
-			const packageJsonContent = await fs.readFile(
-				geminiCorePackageJsonPath,
-				"utf8",
+			const [cliPackageJsonContent, corePackageJsonContent] = await Promise.all(
+				[
+					fs.readFile(geminiCliPackageJsonPath, "utf8"),
+					fs.readFile(geminiCorePackageJsonPath, "utf8"),
+				],
 			);
-			const packageJson = JSON.parse(packageJsonContent) as { version: string };
+
+			const cliPackageJson = JSON.parse(cliPackageJsonContent) as {
+				version: string;
+			};
+			const corePackageJson = JSON.parse(corePackageJsonContent) as {
+				version: string;
+			};
 
 			return {
-				packageName,
-				currentVersion: packageJson.version,
-				latestVersion: latest.version,
-				error: latest.error,
+				cli: {
+					packageName: cliPackageName,
+					currentVersion: cliPackageJson.version,
+					latestVersion: cliLatest.version,
+					error: cliLatest.error,
+				},
+				core: {
+					packageName: corePackageName,
+					currentVersion: corePackageJson.version,
+					latestVersion: coreLatest.version,
+					error: coreLatest.error,
+				},
 			};
 		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : String(error);
 			return {
-				packageName,
-				currentVersion: null,
-				latestVersion: latest.version,
-				error: error instanceof Error ? error.message : String(error),
+				cli: {
+					packageName: cliPackageName,
+					currentVersion: null,
+					latestVersion: cliLatest.version,
+					error: errorMessage,
+				},
+				core: {
+					packageName: corePackageName,
+					currentVersion: null,
+					latestVersion: coreLatest.version,
+					error: errorMessage,
+				},
 			};
 		}
 	}

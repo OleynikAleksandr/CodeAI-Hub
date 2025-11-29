@@ -18,6 +18,7 @@ export const PACKAGE_MAP = {
 		sdk: "@openai/codex-sdk",
 	},
 	gemini: {
+		cli: "@google/gemini-cli",
 		core: "@google/gemini-cli-core",
 	},
 } as const;
@@ -43,6 +44,7 @@ export type ProviderVersionsSnapshot = {
 		readonly sdk: VersionEntry;
 	};
 	readonly gemini: {
+		readonly cli: VersionEntry;
 		readonly core: VersionEntry;
 	};
 	readonly checkedAt: string;
@@ -205,6 +207,7 @@ const buildSnapshot = (
 			sdk: get("codex", "sdk"),
 		},
 		gemini: {
+			cli: get("gemini", "cli"),
 			core: get("gemini", "core"),
 		},
 		checkedAt: nowIso(),
@@ -222,10 +225,15 @@ export class ProviderVersionService {
 
 	async loadSnapshot(): Promise<ProviderVersionsSnapshot> {
 		const descriptors = resolveDescriptors();
+		const geminiVersions = await this.geminiReader.read();
+
 		const results = await Promise.all(
 			descriptors.map(async ({ packageName, provider, target }) => {
+				if (provider === "gemini" && target === "cli") {
+					return geminiVersions.cli;
+				}
 				if (provider === "gemini" && target === "core") {
-					return this.geminiReader.read();
+					return geminiVersions.core;
 				}
 				const installed = await readInstalledVersion(packageName);
 				const latest = await readLatestVersion(packageName);
@@ -244,11 +252,23 @@ export class ProviderVersionService {
 		provider: ProviderId,
 		target: VersionTarget,
 	): Promise<ProviderVersionsSnapshot> {
-		if (provider === "gemini" && target === "core") {
-			return this.updateGeminiCore();
+		if (provider === "gemini") {
+			if (target === "cli") {
+				return this.updateGeminiCli();
+			}
+			if (target === "core") {
+				return this.updateGeminiCore();
+			}
 		}
 		const packageName = resolvePackageName(provider, target);
 		await execAsync(`${NPM_COMMAND} install -g ${packageName}@latest`, {
+			maxBuffer: EXEC_MAX_BUFFER_BYTES,
+		});
+		return this.loadSnapshot();
+	}
+
+	async updateGeminiCli(): Promise<ProviderVersionsSnapshot> {
+		await execAsync(`${NPM_COMMAND} install -g @google/gemini-cli@latest`, {
 			maxBuffer: EXEC_MAX_BUFFER_BYTES,
 		});
 		return this.loadSnapshot();
