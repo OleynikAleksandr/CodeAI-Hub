@@ -9,7 +9,11 @@ import { pipeline } from "node:stream/promises";
 import { loadCliBridgeFromVendor } from "../runtime/cli-bridge";
 
 import type { GeminiCliBridge } from "../runtime/cli-types";
-import type { GeminiInstallerPaths, ModuleReporter } from "../types";
+import type {
+	GeminiInstallerPaths,
+	GeminiUpdateResult,
+	ModuleReporter,
+} from "../types";
 
 import { runNpmCommand } from "./npm-runner";
 
@@ -293,10 +297,7 @@ export class GeminiInstaller {
 		return this.bridge;
 	}
 
-	async updateToLatest(): Promise<{
-		cliVersion: string;
-		coreVersion: string;
-	}> {
+	async updateToLatest(): Promise<GeminiUpdateResult> {
 		// 1. Fetch latest version from npm registry
 		const latestVersion =
 			await this.getLatestVersionFromRegistry(GEMINI_CLI_PACKAGE);

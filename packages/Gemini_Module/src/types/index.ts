@@ -65,3 +65,8 @@ export type ModuleProgressEvent = {
 	readonly phase?: "install" | "provider" | "finalize";
 	readonly firstRun?: boolean;
 };
+
+export type GeminiUpdateResult = {
+	readonly cliVersion: string;
+	readonly coreVersion: string;
+};
