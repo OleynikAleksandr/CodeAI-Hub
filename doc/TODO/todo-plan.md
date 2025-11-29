@@ -81,3 +81,72 @@
 3. [DONE] Обновить тип `VersionRow`
    - Добавлен `"core"` в target union type
    - Файлы: `src/client/ui/src/components/settings/provider-version-row.tsx`
+
+---
+
+## Phase 3 — Fix Gemini Update Mechanism (owner: Claude, updated: 2025-11-29)
+
+**Цель:** Исправить механизм обновления Gemini CLI и Gemini CLI Core через Settings UI
+**Статус:** 🔄 IN_PROGRESS
+
+**Проблема:** Текущая реализация использует `npm install -g` который ставит в глобальную директорию, но расширение использует vendor директорию внутри модуля.
+
+**Требования:**
+- gemini-cli и gemini-cli-core должны быть ОДНОЙ версии
+- В Settings показывать ОБА пакета с версиями
+- Кнопка Update обновляет ОБА пакета одновременно
+- gemini-cli ставится: глобально (~/.npm-global/) + локально (vendor)
+- gemini-cli-core ставится: только локально (vendor)
+- Расширение использует ТОЛЬКО локальные версии из vendor
+
+### Stream 3.1: Add updateToLatest() to GeminiInstaller
+1. [DONE] Добавить метод `getLatestVersionFromRegistry()` в `gemini-installer.ts`
+   - Получает latest версию из npm registry
+   - Файлы: `packages/Gemini_Module/src/installer/gemini-installer.ts`
+   - Коммит: `c6c39a1 feat(gemini): add updateToLatest() method for runtime CLI updates`
+
+2. [DONE] Добавить метод `updateToLatest()` в `gemini-installer.ts`
+   - Скачивает и распаковывает gemini-cli в vendor (через tarball)
+   - Скачивает и распаковывает gemini-cli-core в vendor (через tarball)
+   - Обновляет глобальную gemini-cli через `npm install -g @google/gemini-cli@{version}`
+   - Файлы: `packages/Gemini_Module/src/installer/gemini-installer.ts`
+   - Коммит: `c6c39a1`
+
+3. [DONE] Экспортировать `updateToLatest()` через Gemini Module API
+   - Экспортирован класс GeminiInstaller через index.ts
+   - Добавлен тип GeminiUpdateResult для возвращаемого значения
+   - Экспортирован GeminiInstallerOptions для правильного использования API
+   - Файлы: `packages/Gemini_Module/src/index.ts`, `packages/Gemini_Module/src/types/index.ts`, `packages/Gemini_Module/src/installer/gemini-installer.ts`
+   - Коммит: `31f285a feat(gemini): export updateToLatest() through module public API`
+
+### Stream 3.2: Update GeminiVersionReader for both packages
+1. [TODO] Расширить `GeminiVersionReader` для чтения версий обоих пакетов
+   - Читать версию gemini-cli из vendor
+   - Читать версию gemini-cli-core из vendor
+   - Возвращать обе версии
+   - Файлы: `src/extension-module/settings/gemini-version-reader.ts`
+   - **После завершения:** `npm run build`, гейты, коммит
+
+2. [TODO] Обновить `ProviderVersionsSnapshot` тип
+   - Добавить `gemini.cli` рядом с `gemini.core`
+   - Файлы: `src/extension-module/settings/provider-version-service.ts`
+   - **После завершения:** `npm run build`, гейты, коммит
+
+### Stream 3.3: Update Settings UI for Gemini
+1. [TODO] Показывать две строки для Gemini в Settings
+   - Gemini CLI (версия из vendor)
+   - Gemini CLI Core (версия из vendor)
+   - Одна кнопка Update обновляет оба
+   - Файлы: `src/client/ui/src/components/settings/provider-versions.tsx`
+   - **После завершения:** `npm run build:webview`, `npm run typecheck:webview`, гейты, коммит
+
+2. [TODO] Подключить вызов `updateToLatest()` к кнопке Update
+   - Интегрировать с ProviderVersionService
+   - Файлы: `src/extension-module/settings/provider-version-service.ts`
+   - **После завершения:** `npm run build`, гейты, коммит
+
+### Stream 3.4: Cleanup incorrect paths
+1. [TODO] Удалить мусорные папки из `~/.codeai-hub/providers/`
+   - Удалить `bin/` и `lib/` из `~/.codeai-hub/providers/`
+   - Эти папки должны быть внутри `~/.codeai-hub/providers/gemini/cli/`
+   - **После завершения:** проверка путей, коммит
