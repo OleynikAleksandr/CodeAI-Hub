@@ -192,20 +192,20 @@ mkdir -p "$INSTALL_ROOT"
 rsync -a "$NODE_STAGE/runtime/" "$INSTALL_ROOT/node/"
 rsync -a "$APP_STAGE/" "$INSTALL_ROOT/app/"
 
-cat > "$INSTALL_ROOT/install.json" <<INSTALL_JSON
-{
-  "platform": "$PLATFORM_KEY",
-  "version": "$CORE_VERSION",
-  "nodeVersion": "$NODE_VERSION",
-  "installedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-}
-INSTALL_JSON
-
 touch "$INSTALL_ROOT/.complete"
 
 find "$(dirname "$INSTALL_ROOT")" -mindepth 1 -maxdepth 1 -type d ! -name "$CORE_VERSION" -exec rm -rf {} +
 
 ARCHIVE_NAME="codeai-hub-core-$PLATFORM_KEY-$CORE_VERSION.tar.bz2"
+
+cat > "$INSTALL_ROOT/install.json" <<INSTALL_JSON
+{
+  "platform": "$PLATFORM_KEY",
+  "coreVersion": "$CORE_VERSION",
+  "package": "$ARCHIVE_NAME",
+  "installedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+}
+INSTALL_JSON
 ARCHIVE_PATH="$RELEASE_ROOT/$ARCHIVE_NAME"
 mkdir -p "$RELEASE_ROOT"
 (
