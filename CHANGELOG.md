@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.325] - 2025-12-19
+### Fixed
+- **file:// URL Protocol Support**: Runtime file downloader (`runtime-files.ts`) now handles `file://` URLs by converting them to filesystem paths and copying locally. This enables offline Core and Launcher installation from `~/.codeai-hub/releases/` cache during development, eliminating network dependency.
+- **Core Archive Extraction**: Implemented temp-extract-rename pattern in `core-installer.ts` (matching Launcher installer) to properly handle nested directory structures. Core now extracts correctly to `~/.codeai-hub/core/darwin-arm64/<version>/` instead of creating nested `<version>/<version>/` paths.
+- **install.json Format Mismatch**: Fixed `build-core.sh` to create `install.json` with correct field names matching TypeScript `InstallMarker` interface. Changed `"version"` → `"coreVersion"` and added `"package"` field with archive filename. This ensures `verifyExistingCoreInstall()` recognizes pre-installed Core, eliminating unnecessary reinstallation at first extension launch.
+
+### Changed
+- **Fast Startup**: Core runtime now installs during `build-all.sh` execution and is properly detected at extension startup, significantly reducing first-launch delay. Previously Core was reinstalled on every startup due to format mismatch.
+- **Consistent Installation Flow**: Core installation now uses the same temp-extract-rename pattern as Launcher and CEF installers, ensuring reliable extraction regardless of archive internal structure.
+
+### Technical Details
+- Modified files: `src/extension-module/cef/runtime-files.ts` (298 lines), `src/extension-module/core/core-installer.ts` (145 lines), `scripts/build-core.sh` (lines 201-208)
+- Quality gates: All passed (architecture check, Ultracite, ts-prune, jscpd, link check, targeted builds)
+- Git commits: `bc7e3e2`, `a7640d1`, `384fd25`, `f731179`, `95a1897`, `00c078c`, `0e953ef`
+
+### Build
+- VSIX → `codeai-hub-1.1.325.vsix` (396KB)
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.325.tar.bz2` (230MB)
+- Core → `codeai-hub-core-darwin-arm64-1.1.325.tar.bz2` (35MB)
+- Providers → `claude-module-1.1.325.tar.bz2` (18KB), `codex-module-1.1.325.tar.bz2` (18KB), `gemini-module-1.1.325.tar.bz2` (15KB)
+- UI → `vscode-webview-1.1.325.tar.bz2` (134KB), `web-client-1.1.325.tar.bz2` (141KB), `project-manager-1.1.325.tar.bz2` (49KB)
+
 ## [1.1.320] - 2025-11-29
 ### Added
 - **Gemini Update Mechanism**: Settings UI now displays both Gemini CLI and Gemini CLI Core versions with a single Update button. The `GeminiInstaller.updateToLatest()` method handles runtime updates by fetching the latest version from npm registry and extracting tarballs to the vendor directory.
