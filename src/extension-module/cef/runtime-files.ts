@@ -45,6 +45,8 @@ const REDIRECT_STATUS_CODES = new Set<number>([
   HTTP_STATUS_PERMANENT_REDIRECT,
 ]);
 
+const FILE_PROTOCOL_REGEX = /^file:\/\//;
+
 export const ensureDirectory = async (target: string): Promise<void> => {
   await fs.mkdir(target, { recursive: true });
 };
@@ -259,6 +261,22 @@ export const downloadFile = async ({
   );
   if (copied) {
     return;
+  }
+
+  // Handle file:// URLs by converting to filesystem path
+  if (url.startsWith("file://")) {
+    const filePath = decodeURIComponent(url.replace(FILE_PROTOCOL_REGEX, ""));
+    try {
+      await fs.copyFile(filePath, destination);
+      progress?.report({
+        message: `Using local ${label} from ${filePath}`,
+        increment: ONE_HUNDRED_PERCENT,
+      });
+      return;
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to copy local ${label}: ${msg}`);
+    }
   }
 
   await performHttpDownload(url, { destination, size, progress, label });
