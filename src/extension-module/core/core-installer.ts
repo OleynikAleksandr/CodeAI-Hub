@@ -1,3 +1,4 @@
+import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { ExtensionContext } from "vscode";
 import { type PlatformKey, resolvePlatformKey } from "../cef/platform";
@@ -102,8 +103,6 @@ const performInstall = async (
     return reused;
   }
 
-  await ensureDirectory(runtimeDir);
-
   const downloadsDir = await prepareCoreDownloadDir(platformDir);
   const archivePath = await ensureCoreArchiveAvailable(
     manifest,
@@ -114,7 +113,23 @@ const performInstall = async (
   await verifyCoreChecksumIfNeeded(archivePath, manifestEntry);
 
   progress?.report({ message: "Extracting core orchestrator..." });
-  await extractArchive(archivePath, runtimeDir);
+  const parentDir = path.dirname(runtimeDir);
+  await ensureDirectory(parentDir);
+  const extractRoot = await fs.mkdtemp(path.join(parentDir, "core-extract-"));
+  try {
+    await extractArchive(archivePath, extractRoot);
+    const extractedEntries = await fs.readdir(extractRoot);
+    if (extractedEntries.length === 0) {
+      throw new Error("Core archive extraction produced no files");
+    }
+    const extractedRoot = path.join(extractRoot, extractedEntries[0]);
+    await fs.rm(runtimeDir, { recursive: true, force: true });
+    await fs.rename(extractedRoot, runtimeDir);
+  } finally {
+    await fs.rm(extractRoot, { recursive: true, force: true }).catch(() => {
+      /* ignore cleanup errors */
+    });
+  }
 
   await writeCoreInstallMarker(runtimeDir, platform, manifestEntry);
 
