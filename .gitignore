@@ -15,3 +15,6 @@ AGENTS.md
 lefthook.yml
 *.vsix
 binaries/
+
+# Auto Claude data directory
+.auto-claude/

@@ -79,6 +79,7 @@
     "compile": "npm run build:webview && npm run build:web-client && npm run typecheck:webview && tsc -p .",
     "test": "echo \"No automated tests defined yet\"",
     "format:check": "echo \"format check script not configured yet\"",
+    "fetch:models": "npx tsx scripts/fetch-available-models.ts",
     "prepare": "husky"
   },
   "keywords": [
