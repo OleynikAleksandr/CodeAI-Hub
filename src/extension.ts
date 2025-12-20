@@ -26,6 +26,8 @@ import {
   getExtensionLogger,
 } from "./extension-module/logging/extension-logger";
 import { recordVsixVersion } from "./extension-module/runtime/runtime-registry";
+import { ProviderAutoUpdateService } from "./extension-module/settings/provider-auto-update-service";
+import { loadSettingsSnapshot } from "./extension-module/settings/settings-storage";
 import { prepareUIBundles } from "./extension-module/ui/ui-activation";
 
 let coreProcessManager: CoreProcessManager | null = null;
@@ -110,8 +112,8 @@ async function prepareLocalRuntime(
   indexPath: string,
   projectManagerIndexPath: string
 ): Promise<void> {
+  const logger = getExtensionLogger();
   if (env.remoteName) {
-    const logger = getExtensionLogger();
     logger.log("extension:prepareLocalRuntime:remote", {
       remoteName: env.remoteName,
       message:
@@ -127,6 +129,17 @@ async function prepareLocalRuntime(
       projectManagerIndexPath,
       workspacePath
     );
+    const autoUpdateService = new ProviderAutoUpdateService(
+      context.extensionUri.fsPath
+    );
+    const settingsSnapshot = loadSettingsSnapshot();
+    try {
+      await autoUpdateService.run(settingsSnapshot);
+    } catch (error) {
+      logger.warn("extension:auto-update:error", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
     await initializeCoreManager(context);
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);

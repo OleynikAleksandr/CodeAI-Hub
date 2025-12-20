@@ -98,6 +98,11 @@ graph TD
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
+## Recent Changes (v1.1.325 - 2025-12-20)
+- **Provider Auto Update Service**: при старте ядра выполняется проверка свежих версий CLI/SDK для Claude/Codex/Gemini и, если включено автообновление, происходит глобальный апдейт через npm.
+- **Gemini Global Installation**: `@google/gemini-cli` и `@google/gemini-cli-core` устанавливаются только глобально в npm prefix (например, `~/.npm-global/lib/node_modules/@google`); vendor-каталоги внутри `~/.codeai-hub/providers/gemini` больше не используются.
+- **Settings UI Gemini Rows**: `GeminiVersionReader` читает текущие и latest версии через глобальный npm (`npm list -g` / `npm view`), а `ProviderVersionService.updateGeminiAll()` обновляет оба пакета глобально.
+
 ## Recent Changes (v1.1.320 - 2025-11-29)
 - **Gemini Update Mechanism**: Settings UI now displays two rows for Gemini: CLI version and CLI Core version, with a single Update button that updates both packages simultaneously. The `GeminiInstaller.updateToLatest()` method handles runtime updates by fetching the latest version from npm registry and extracting tarballs to vendor.
 - **Vendor vs Global Installation**: Gemini CLI Core is installed only in vendor directory (`~/.codeai-hub/providers/gemini/<version>/vendor/`), while Gemini CLI is installed both in vendor and globally (`~/.npm-global/`) for user convenience with `gemini login` command.

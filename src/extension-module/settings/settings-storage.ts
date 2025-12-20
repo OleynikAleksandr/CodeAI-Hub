@@ -1,0 +1,127 @@
+import { promises as fs, readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import path from "node:path";
+import {
+  type ClaudeThinkingSettings,
+  DEFAULT_CLAUDE_SETTINGS,
+  normalizeClaudeSettings,
+  normalizeClaudeThinkingSettings,
+} from "./claude-settings";
+import { normalizeCodexSettings } from "./codex-settings";
+import { normalizeGeminiSettings } from "./gemini-settings";
+import { normalizeGeneralSettings } from "./general-settings";
+import { isRecord } from "./settings-utils";
+import { DEFAULT_SETTINGS_SNAPSHOT, type SettingsSnapshot } from "./types";
+
+const SETTINGS_DIR = path.join(homedir(), ".codeai-hub", "settings");
+const SETTINGS_FILE = path.join(SETTINGS_DIR, "settings.json");
+const LEGACY_CLAUDE_SETTINGS_FILE = path.join(SETTINGS_DIR, "claude.json");
+
+type LegacyClaudeSettingsFile = {
+  readonly thinking?: unknown;
+};
+
+const normalizeSnapshotForStorage = (
+  value: unknown
+): SettingsSnapshot | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const providers = isRecord(value.providers) ? value.providers : {};
+  const general = isRecord(value.general) ? value.general : {};
+
+  return {
+    general: normalizeGeneralSettings(general),
+    providers: {
+      claude: normalizeClaudeSettings(providers.claude),
+      codex: normalizeCodexSettings(providers.codex),
+      gemini: normalizeGeminiSettings(providers.gemini),
+    },
+  };
+};
+
+const extractLegacyClaudeThinking = (): ClaudeThinkingSettings | null => {
+  try {
+    const raw = readFileSync(LEGACY_CLAUDE_SETTINGS_FILE, "utf8");
+    const parsed = JSON.parse(raw) as LegacyClaudeSettingsFile;
+    if (!(parsed && isRecord(parsed) && isRecord(parsed.thinking))) {
+      return null;
+    }
+    return normalizeClaudeThinkingSettings(parsed.thinking);
+  } catch {
+    return null;
+  }
+};
+
+export const parseSettingsSnapshot = (
+  value: unknown
+): SettingsSnapshot | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  if (!(isRecord(value.providers) && isRecord(value.general))) {
+    return null;
+  }
+
+  const providers = value.providers;
+  return {
+    general: normalizeGeneralSettings(value.general),
+    providers: {
+      claude: normalizeClaudeSettings(providers.claude),
+      codex: normalizeCodexSettings(providers.codex),
+      gemini: normalizeGeminiSettings(providers.gemini),
+    },
+  };
+};
+
+export const loadSettingsSnapshot = (): SettingsSnapshot => {
+  try {
+    const raw = readFileSync(SETTINGS_FILE, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    const normalized = normalizeSnapshotForStorage(parsed);
+    if (normalized) {
+      return normalized;
+    }
+  } catch {
+    // ignore missing/invalid files and fall back to defaults
+  }
+
+  const legacyThinking = extractLegacyClaudeThinking();
+  if (legacyThinking) {
+    const migrated: SettingsSnapshot = {
+      ...DEFAULT_SETTINGS_SNAPSHOT,
+      providers: {
+        ...DEFAULT_SETTINGS_SNAPSHOT.providers,
+        claude: {
+          ...DEFAULT_CLAUDE_SETTINGS,
+          thinking: legacyThinking,
+        },
+      },
+    };
+    persistSettingsSnapshot(migrated).catch(() => {
+      /* ignore persistence errors */
+    });
+    return migrated;
+  }
+
+  return DEFAULT_SETTINGS_SNAPSHOT;
+};
+
+export const persistSettingsSnapshot = async (
+  snapshot: SettingsSnapshot
+): Promise<void> => {
+  try {
+    await fs.mkdir(SETTINGS_DIR, { recursive: true });
+    await fs.writeFile(
+      SETTINGS_FILE,
+      `${JSON.stringify(snapshot, null, 2)}\n`,
+      "utf8"
+    );
+  } catch {
+    // swallow persistence errors; settings UI will continue to function with in-memory state
+  }
+};
+
+export const getSettingsPath = (): string => SETTINGS_FILE;

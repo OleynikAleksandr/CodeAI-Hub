@@ -1,13 +1,13 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.315 (28.11.2025) — Unified Quality Gates & Split Build Pipeline. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
+**Состояние:** релиз 1.1.325 (20.12.2025) — Provider Auto Update Service и глобальная установка CLI/SDK. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
 
 ## Обзор
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
 
 ## Компоненты системы
-- **Автономное ядро** — Node.js сервис (`@codeai-hub/core@1.1.313`), упакованный как JS‑бандл + официальный Node 20 runtime. В dev/локальных сборках скрипт `scripts/build-core.sh` кладёт ядро в `~/.codeai-hub/core/<platform>/<version>/`, а манифест (`assets/core/manifest.json`) указывает на локальный cache `file://$HOME/.codeai-hub/releases/`. Core Supervisor (`@codeai-hub/core-supervisor`, CLI `codeai-core`) выбирает установленный runtime, запускает его через `<runtime>/node/bin/node <app>/dist/index.js`, пробрасывая `CORE_HOST/CORE_PORT/CORE_MANAGED_MODE`, рабочий каталог (`CLAUDE_WORKSPACE_PATH`, `CODEX_WORKSPACE_PATH`, `GEMINI_WORKSPACE_PATH`) и пути к провайдерам (`*_MODULE_PATH` под `~/.codeai-hub/providers/**`). Результаты установки и выбранный порт фиксируются в `~/.codeai-hub/state/runtime-registry.json`.
-- **UI Bundles (v1.1.313)** — интерфейсы вынесены из VSIX в отдельные пакеты:
+- **Автономное ядро** — Node.js сервис (`@codeai-hub/core@1.1.325`), упакованный как JS‑бандл + официальный Node 20 runtime. В dev/локальных сборках скрипт `scripts/build-core.sh` кладёт ядро в `~/.codeai-hub/core/<platform>/<version>/`, а манифест (`assets/core/manifest.json`) указывает на локальный cache `file://$HOME/.codeai-hub/releases/`. Core Supervisor (`@codeai-hub/core-supervisor`, CLI `codeai-core`) выбирает установленный runtime, запускает его через `<runtime>/node/bin/node <app>/dist/index.js`, пробрасывая `CORE_HOST/CORE_PORT/CORE_MANAGED_MODE`, рабочий каталог (`CLAUDE_WORKSPACE_PATH`, `CODEX_WORKSPACE_PATH`, `GEMINI_WORKSPACE_PATH`) и пути к провайдерам (`*_MODULE_PATH` под `~/.codeai-hub/providers/**`). Результаты установки и выбранный порт фиксируются в `~/.codeai-hub/state/runtime-registry.json`.
+- **UI Bundles (v1.1.325)** — интерфейсы вынесены из VSIX в отдельные пакеты:
     - `vscode-webview`: React-приложение для панели VS Code.
     - `web-client`: Статическая сборка для CEF Launcher (Web Client).
     - `project-manager`: Статическая сборка для CEF Launcher (Project Manager).
@@ -15,7 +15,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **TTL и graceful shutdown** — ядро имеет явную TTL/idle‑модель: параметр `CORE_SHUTDOWN_GRACE_MS` задаёт интервал ожидания после ухода последнего клиента. Пока есть WebSocket‑клиенты, ядро работает бесконечно; после ухода последнего клиента отсчитывается TTL, по истечении которого инициируется `POST /api/v1/shutdown`.
 - **Порты и владение ядром** — `CorePortManager` и Supervisor используют `runtime-registry.json` (`network.corePort`) как единый источник порта. Перед стартом клиенты вызывают `detectRunning()`: если версия ядра совпадает с ожидаемой, VS Code и лаунчер просто attach‑ятся к живому orchestrator’у.
 - **Sticky клиенты и автопереподключение** — VS Code расширение держит невидимое WebSocket‑подключение (`CoreKeepAlive`) к `RemoteBridge`, поэтому ядро остаётся активным, даже если webview свернуто.
-- **Provider version telemetry** — `HomeViewMessageRouter` передаёт `extensionPath` в `SettingsMessageHandler`, а `ProviderVersionService` использует его для чтения манифестов.
+- **Provider version telemetry** — `ProviderVersionService` читает версии CLI/SDK через глобальный npm (`npm list -g`/`npm view`) и отдаёт их в Settings UI вместе с latest.
 - **Логирование и окружение**: `CodeAIHubLauncher` пишет события в `~/.codeai-hub/logs/launcher/launcher.log`. Orchestrator выводит JSON‑записи в `~/.codeai-hub/logs/core/core.log`. VS Code extension ведёт `~/.codeai-hub/logs/extension/extension.log`.
 - **Клиентские интерфейсы**: webview VS Code, локальный CEF клиент. Все они подключаются к ядру через HTTP/WebSocket API (Remote Bridge).
 - **Session snapshot API**: `/api/v1/status` и стартовый `core:state` содержат только метаданные сессий. История сообщений читается из JSONL логов.
@@ -25,55 +25,55 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Пайплайн статусов загрузки**: `RuntimeStatusReporter` в ядре собирает прогресс, RemoteBridge ретранслирует `core:loading-status`.
 - **FileDropService**: сервис ядра отдаёт пути через REST-эндпоинт `/api/v1/file-drop`, обеспечивая работу Drag & Drop в standalone-клиенте.
 - **Привязка сессий**: RemoteBridge транслирует событие `session:binding` при создании и смене идентификатора провайдера.
-- **Внешние пользовательские инструменты**: `@google/gemini-cli`, `@google/gemini-cli-core`, `@anthropic-ai/sdk` ставятся пользователем или подтягиваются инсталляторами.
+- **Внешние пользовательские инструменты**: `@google/gemini-cli`, `@google/gemini-cli-core`, `@anthropic-ai/claude-agent-sdk`, `@openai/codex`, `@openai/codex-sdk` устанавливаются глобально в npm prefix и могут автообновляться при старте ядра (если включено в настройках).
 - **macOS меню**: лаунчер CEF создаёт системное меню `Edit` с командами Copy/Paste/Select All.
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/claude.json`.
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.315
-- Автономное ядро: `@codeai-hub/core` 1.1.315
-- UI Bundles: 1.1.315
-- Claude module: 1.1.315
-- Codex module: 1.1.315
-- Gemini module: 1.1.315
+- VSIX: `codeai-hub` 1.1.325
+- Автономное ядро: `@codeai-hub/core` 1.1.325
+- UI Bundles: 1.1.325
+- Claude module: 1.1.325
+- Codex module: 1.1.325
+- Gemini module: 1.1.325
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.315/
+│       └── 1.1.325/
 │           ├── node/
 │           ├── app/
 │           └── install.json
 ├── packages/
 │   ├── launcher/
-│   │   └── macos-arm64/1.1.315/
+│   │   └── macos-arm64/1.1.325/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.315/
-│       │   └── current -> 1.1.315
+│       │   ├── 1.1.325/
+│       │   └── current -> 1.1.325
 │       ├── web-client/
-│       │   ├── 1.1.315/
-│       │   └── current -> 1.1.315
+│       │   ├── 1.1.325/
+│       │   └── current -> 1.1.325
 │       └── project-manager/
-│           ├── 1.1.315/
-│           └── current -> 1.1.315
+│           ├── 1.1.325/
+│           └── current -> 1.1.325
 ├── providers/
-│   ├── claude/1.1.315/
-│   ├── codex/1.1.315/
-│   └── gemini/1.1.315/
+│   ├── claude/1.1.325/
+│   ├── codex/1.1.325/
+│   └── gemini/1.1.325/
 ├── settings/
 │   └── claude.json
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.315.tar.bz2
-    ├── vscode-webview-1.1.315.tar.bz2
-    ├── web-client-1.1.315.tar.bz2
-    ├── project-manager-1.1.315.tar.bz2
-    ├── claude-module-1.1.315.tar.bz2
-    ├── codex-module-1.1.315.tar.bz2
-    ├── gemini-module-1.1.315.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.315.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.325.tar.bz2
+    ├── vscode-webview-1.1.325.tar.bz2
+    ├── web-client-1.1.325.tar.bz2
+    ├── project-manager-1.1.325.tar.bz2
+    ├── claude-module-1.1.325.tar.bz2
+    ├── codex-module-1.1.325.tar.bz2
+    ├── gemini-module-1.1.325.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.325.tar.bz2
 ```
 
 ## Провайдеры
@@ -83,7 +83,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ### Gemini (актуальный статус)
 - Модуль остаётся CommonJS, но `cli-bridge` использует динамический `import()` для ESM-пакетов.
-- Инсталлятор подготавливает `@google/gemini-cli-core`.
+- Инсталлятор обеспечивает глобальную установку `@google/gemini-cli` и `@google/gemini-cli-core` и может обновлять их до latest через Auto Update Service.
 
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.

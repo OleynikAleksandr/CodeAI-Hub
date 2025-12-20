@@ -73,6 +73,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
     resetting,
     versions,
     handleThinkingSettingsChange,
+    handleProviderAutoUpdateChange,
     handleSave,
     handleReset,
     handleUpdateProvider,
@@ -102,13 +103,17 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
             return (
               <div style={stackStyles}>
                 <ProviderVersions
+                  autoUpdateEnabled={
+                    settings.providers.claude.autoUpdate.enabled
+                  }
+                  onAutoUpdateChange={handleProviderAutoUpdateChange}
                   onUpdate={handleUpdateProvider}
                   provider="claude"
                   versions={versions}
                 />
                 <ThinkingSettings
-                  enabled={settings.thinking.enabled}
-                  maxTokens={settings.thinking.maxTokens}
+                  enabled={settings.providers.claude.thinking.enabled}
+                  maxTokens={settings.providers.claude.thinking.maxTokens}
                   onChange={handleThinkingSettingsChange}
                 />
               </div>
@@ -125,6 +130,10 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
             return (
               <div style={stackStyles}>
                 <ProviderVersions
+                  autoUpdateEnabled={
+                    settings.providers.codex.autoUpdate.enabled
+                  }
+                  onAutoUpdateChange={handleProviderAutoUpdateChange}
                   onUpdate={handleUpdateProvider}
                   provider="codex"
                   versions={versions}
@@ -135,6 +144,8 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
           return (
             <div style={stackStyles}>
               <ProviderVersions
+                autoUpdateEnabled={settings.providers.gemini.autoUpdate.enabled}
+                onAutoUpdateChange={handleProviderAutoUpdateChange}
                 onUpdate={handleUpdateProvider}
                 provider="gemini"
                 versions={versions}

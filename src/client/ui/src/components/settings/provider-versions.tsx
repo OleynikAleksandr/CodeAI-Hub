@@ -1,27 +1,25 @@
 import type { CSSProperties } from "react";
 import { memo, useEffect, useMemo, useState } from "react";
 import { type VersionRow, VersionRowItem } from "./provider-version-row";
+import {
+  AutoUpdateToggle,
+  formatCheckedAt,
+  type Provider,
+  resolveTargetLabel,
+  WarningBanner,
+} from "./provider-versions-ui";
 import SettingsCard from "./settings-card";
 import type { UseSettingsStateResult } from "./use-settings-state";
 
-type Provider = "claude" | "codex" | "gemini";
 type ProviderVersionsProps = {
   readonly provider: Provider;
   readonly versions: UseSettingsStateResult["versions"];
+  readonly autoUpdateEnabled: boolean;
+  readonly onAutoUpdateChange: (provider: Provider, enabled: boolean) => void;
   readonly onUpdate: (
     provider: Provider,
     target: "cli" | "sdk" | "core"
   ) => void;
-};
-
-const warningStyles: CSSProperties = {
-  background: "#3a2a1f",
-  border: "1px solid #9b6b3d",
-  color: "#ffd7a3",
-  borderRadius: "4px",
-  padding: "8px 10px",
-  fontSize: "12px",
-  lineHeight: 1.5,
 };
 
 const rowsContainerStyles: CSSProperties = {
@@ -47,54 +45,11 @@ const metadataTextStyles: CSSProperties = {
   color: "#b7b7b7",
 };
 
-const providerBannerStyles = (provider: Provider): CSSProperties => {
-  if (provider === "claude") {
-    return {
-      background: "#312d2a",
-      border: "1px solid #ff9105",
-      color: "#ffb76f",
-    };
-  }
-  if (provider === "codex") {
-    return {
-      background: "#293230",
-      border: "1px solid #01f0d8",
-      color: "#9cf8ef",
-    };
-  }
-  return {
-    background: "#2c2a2d",
-    border: "1px solid #ab34cb",
-    color: "#e7b3f5",
-  };
-};
-
-const formatCheckedAt = (value?: string): string | null => {
-  if (!value) {
-    return null;
-  }
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
-  const year = parsed.getFullYear();
-  const month = String(parsed.getMonth() + 1).padStart(2, "0");
-  const day = String(parsed.getDate()).padStart(2, "0");
-  const hours = String(parsed.getHours()).padStart(2, "0");
-  const minutes = String(parsed.getMinutes()).padStart(2, "0");
-  return `${year}-${month}-${day} ${hours}:${minutes}`;
-};
-
-const WarningBanner = ({ provider }: { readonly provider: Provider }) => (
-  <div style={{ ...warningStyles, ...providerBannerStyles(provider) }}>
-    Warning: Updating is at your own risk. New versions may be incompatible.
-    Updating will close active sessions.
-  </div>
-);
-
 const ProviderVersions = ({
   provider,
   versions,
+  autoUpdateEnabled,
+  onAutoUpdateChange,
   onUpdate,
 }: ProviderVersionsProps) => {
   const [pendingTarget, setPendingTarget] = useState<string | null>(null);
@@ -169,6 +124,23 @@ const ProviderVersions = ({
   const isPending = (target: "cli" | "sdk" | "core") =>
     pendingTarget === `${provider}:${target}`;
 
+  const providerUpdateTargets = useMemo(() => {
+    const prefix = `${provider}:`;
+    return versions.updatingTargets
+      .filter((target) => target.startsWith(prefix))
+      .map((target) => target.slice(prefix.length) as "cli" | "sdk" | "core");
+  }, [provider, versions.updatingTargets]);
+
+  const manualUpdateStatus = useMemo(() => {
+    if (providerUpdateTargets.length === 0) {
+      return null;
+    }
+    const labels = providerUpdateTargets.map((target) =>
+      resolveTargetLabel(provider, target)
+    );
+    return `Manual update in progress: ${labels.join(", ")}`;
+  }, [provider, providerUpdateTargets]);
+
   useEffect(() => {
     if (versions.updatingTargets.length === 0) {
       setPendingTarget(null);
@@ -204,6 +176,12 @@ const ProviderVersions = ({
       title={title}
     >
       <WarningBanner provider={provider} />
+      <AutoUpdateToggle
+        disabled={versions.loading}
+        enabled={autoUpdateEnabled}
+        onToggle={(enabled) => onAutoUpdateChange(provider, enabled)}
+        provider={provider}
+      />
       {versions.error ? <p style={errorStyles}>{versions.error}</p> : null}
       {versions.loading && !hasProviderVersions ? (
         <p style={statusStyles}>Loading version information…</p>
@@ -213,6 +191,9 @@ const ProviderVersions = ({
           Click the highlighted button again to confirm update. Active sessions
           will close.
         </p>
+      ) : null}
+      {manualUpdateStatus ? (
+        <p style={statusStyles}>{manualUpdateStatus}</p>
       ) : null}
       <div style={rowsContainerStyles}>
         {rows.map((row) => (

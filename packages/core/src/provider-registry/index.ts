@@ -85,9 +85,10 @@ const CODEX_INSTALLER_PATHS: CodexInstallerPaths = {
 };
 
 const GEMINI_INSTALLER_PATHS: GeminiInstallerPaths = {
-  macOS: "~/.codeai-hub/providers/gemini/cli/",
-  linux: "~/.codeai-hub/providers/gemini/cli/",
-  windows: "%USERPROFILE%\\.codeai-hub\\providers\\gemini\\cli\\",
+  macOS: "~/.npm-global/lib/node_modules/@google/gemini-cli/",
+  linux: "~/.npm-global/lib/node_modules/@google/gemini-cli/",
+  windows:
+    "%USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\@google\\gemini-cli\\",
 };
 
 const PROVIDER_RECOVERY_INTERVAL_MS = 60_000;

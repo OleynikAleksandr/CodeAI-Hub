@@ -1,38 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import vscode from "../../vscode";
-
-type ThinkingSettings = {
-  readonly enabled: boolean;
-  readonly maxTokens: number;
-};
-
-export type Settings = {
-  readonly thinking: ThinkingSettings;
-};
-
-export type VersionEntry = {
-  readonly packageName: string;
-  readonly currentVersion: string | null;
-  readonly latestVersion: string | null;
-  readonly source: "global";
-  readonly error?: string | null;
-};
-
-export type ProviderVersions = {
-  readonly claude: {
-    readonly cli: VersionEntry;
-    readonly sdk: VersionEntry;
-  };
-  readonly codex: {
-    readonly cli: VersionEntry;
-    readonly sdk: VersionEntry;
-  };
-  readonly gemini: {
-    readonly cli: VersionEntry;
-    readonly core: VersionEntry;
-  };
-  readonly checkedAt?: string;
-};
+import {
+  areSettingsEqual,
+  createDefaultSettings,
+  mapSettingsSnapshot,
+  type ProviderId,
+  type ProviderVersions,
+  type RawSettingsSnapshot,
+  type Settings,
+} from "./settings-state-model";
 
 type VersionsState = {
   readonly data: ProviderVersions | null;
@@ -43,16 +19,12 @@ type VersionsState = {
 
 type SettingsLoadedMessage = {
   readonly type: "settings:loaded";
-  readonly settings: {
-    readonly thinking?: RawThinkingSettings;
-  };
+  readonly settings: RawSettingsSnapshot;
 };
 
 type SettingsSavedMessage = {
   readonly type: "settings:saved";
-  readonly settings?: {
-    readonly thinking?: RawThinkingSettings;
-  };
+  readonly settings?: RawSettingsSnapshot;
 };
 
 type VersionsLoadedMessage = {
@@ -65,20 +37,8 @@ type IncomingMessage =
   | SettingsLoadedMessage
   | SettingsSavedMessage
   | VersionsLoadedMessage;
-type RawThinkingSettings = {
-  readonly enabled?: unknown;
-  readonly maxTokens?: unknown;
-};
 
-const DEFAULT_THINKING_MAX_TOKENS = 4000;
 const RESET_DELAY_MS = 100;
-
-const createDefaultSettings = (): Settings => ({
-  thinking: {
-    enabled: false,
-    maxTokens: DEFAULT_THINKING_MAX_TOKENS,
-  },
-});
 
 const createDefaultVersionsState = (): VersionsState => ({
   data: null,
@@ -86,18 +46,6 @@ const createDefaultVersionsState = (): VersionsState => ({
   error: null,
   updatingTargets: [],
 });
-
-const mapThinkingSettings = (
-  value: RawThinkingSettings | undefined
-): ThinkingSettings => {
-  const numericValue = Number(value?.maxTokens);
-  return {
-    enabled: Boolean(value?.enabled),
-    maxTokens: Number.isFinite(numericValue)
-      ? numericValue
-      : DEFAULT_THINKING_MAX_TOKENS,
-  };
-};
 
 const isIncomingMessage = (message: unknown): message is IncomingMessage => {
   if (!message || typeof message !== "object") {
@@ -122,10 +70,14 @@ export type UseSettingsStateResult = {
     enabled: boolean,
     maxTokens: number
   ) => void;
+  readonly handleProviderAutoUpdateChange: (
+    provider: ProviderId,
+    enabled: boolean
+  ) => void;
   readonly handleSave: () => void;
   readonly handleReset: () => void;
   readonly handleUpdateProvider: (
-    provider: "claude" | "codex" | "gemini",
+    provider: ProviderId,
     target: "cli" | "sdk" | "core"
   ) => void;
 };
@@ -151,25 +103,17 @@ export const useSettingsState = (): UseSettingsStateResult => {
       }
 
       if (event.data.type === "settings:loaded") {
-        const thinking = mapThinkingSettings(event.data.settings.thinking);
-        initialSettingsRef.current = {
-          thinking,
-        };
-        setSettings({
-          thinking,
-        });
+        const nextSettings = mapSettingsSnapshot(event.data.settings);
+        initialSettingsRef.current = nextSettings;
+        setSettings(nextSettings);
         setResetting(false);
         setHasChanges(false);
       }
 
       if (event.data.type === "settings:saved") {
-        const thinking = mapThinkingSettings(event.data.settings?.thinking);
-        initialSettingsRef.current = {
-          thinking,
-        };
-        setSettings({
-          thinking,
-        });
+        const nextSettings = mapSettingsSnapshot(event.data.settings);
+        initialSettingsRef.current = nextSettings;
+        setSettings(nextSettings);
         setSaving(false);
         setHasChanges(false);
       }
@@ -191,22 +135,48 @@ export const useSettingsState = (): UseSettingsStateResult => {
     };
   }, []);
 
+  const updateSettings = useCallback((nextSettings: Settings) => {
+    setSettings(nextSettings);
+    setHasChanges(!areSettingsEqual(nextSettings, initialSettingsRef.current));
+  }, []);
+
   const handleThinkingSettingsChange = useCallback(
     (enabled: boolean, maxTokens: number) => {
       const nextSettings: Settings = {
-        thinking: {
-          enabled,
-          maxTokens,
+        ...settings,
+        providers: {
+          ...settings.providers,
+          claude: {
+            ...settings.providers.claude,
+            thinking: {
+              enabled,
+              maxTokens,
+            },
+          },
         },
       };
-      setSettings(nextSettings);
-
-      const initialThinking = initialSettingsRef.current.thinking;
-      const enabledChanged = enabled !== initialThinking.enabled;
-      const tokensChanged = maxTokens !== initialThinking.maxTokens;
-      setHasChanges(enabledChanged || tokensChanged);
+      updateSettings(nextSettings);
     },
-    []
+    [settings, updateSettings]
+  );
+
+  const handleProviderAutoUpdateChange = useCallback(
+    (provider: ProviderId, enabled: boolean) => {
+      const nextSettings: Settings = {
+        ...settings,
+        providers: {
+          ...settings.providers,
+          [provider]: {
+            ...settings.providers[provider],
+            autoUpdate: {
+              enabled,
+            },
+          },
+        },
+      };
+      updateSettings(nextSettings);
+    },
+    [settings, updateSettings]
   );
 
   const handleSave = useCallback(() => {
@@ -227,10 +197,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
   }, []);
 
   const handleUpdateProvider = useCallback(
-    (
-      provider: "claude" | "codex" | "gemini",
-      target: "cli" | "sdk" | "core"
-    ) => {
+    (provider: ProviderId, target: "cli" | "sdk" | "core") => {
       const targetKey = `${provider}:${target}`;
       setVersions((prev) => ({
         ...prev,
@@ -252,6 +219,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     resetting,
     versions,
     handleThinkingSettingsChange,
+    handleProviderAutoUpdateChange,
     handleSave,
     handleReset,
     handleUpdateProvider,

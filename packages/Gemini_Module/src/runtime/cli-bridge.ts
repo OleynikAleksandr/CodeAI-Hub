@@ -11,11 +11,8 @@ const moduleGlobalPaths =
   (nodeModule as unknown as { globalPaths?: readonly string[] }).globalPaths ??
   [];
 
-const CLI_VENDOR_ROOT = path.resolve(__dirname, "..", "vendor");
-const NODE_MODULES_ROOT = path.join(CLI_VENDOR_ROOT, "node_modules");
-const CLI_CORE_DIR = path.join(NODE_MODULES_ROOT, "@google", "gemini-cli-core");
-const METADATA_FILE = path.join(CLI_VENDOR_ROOT, "cli-bridge.json");
 const GEMINI_CLI_PACKAGE = "@google/gemini-cli";
+const GEMINI_CLI_CORE_PACKAGE = "@google/gemini-cli-core";
 const GEMINI_BINARY_NAMES =
   process.platform === "win32"
     ? ["gemini.cmd", "gemini.exe", "gemini.bat", "gemini"]
@@ -57,19 +54,6 @@ const findAndLoadModule = async <T>(
   );
 };
 
-const readMetadata = async (): Promise<GeminiCliBridgeMetadata | null> => {
-  try {
-    const raw = await fs.readFile(METADATA_FILE, "utf8");
-    return JSON.parse(raw) as GeminiCliBridgeMetadata;
-  } catch {
-    return null;
-  }
-};
-
-const ensureDirectoryExists = async (target: string): Promise<void> => {
-  await fs.access(target);
-};
-
 const normalizeCandidate = (candidate: string): string => {
   if (candidate.endsWith("package.json")) {
     return path.dirname(candidate);
@@ -77,7 +61,7 @@ const normalizeCandidate = (candidate: string): string => {
   return candidate;
 };
 
-const candidateRootsFromEnv = (): readonly string[] => {
+const candidateRootsFromEnv = (packageName: string): readonly string[] => {
   const nodePath = process.env.NODE_PATH;
   if (!nodePath) {
     return [];
@@ -85,7 +69,7 @@ const candidateRootsFromEnv = (): readonly string[] => {
   return nodePath
     .split(path.delimiter)
     .filter(Boolean)
-    .map((entry) => path.join(entry, GEMINI_CLI_PACKAGE));
+    .map((entry) => path.join(entry, packageName));
 };
 
 const candidateRootsFromBinaryPath = async (): Promise<string[]> => {
@@ -116,7 +100,7 @@ const candidateRootsFromBinaryPath = async (): Promise<string[]> => {
   return results;
 };
 
-const readCliPackageMetadata = async (
+const readPackageMetadata = async (
   root: string
 ): Promise<{ readonly version: string } | null> => {
   const packageJsonPath = path.join(root, "package.json");
@@ -172,7 +156,7 @@ const resolveGeminiCliRoot = async (): Promise<{
     }
   }
 
-  candidates.push(...candidateRootsFromEnv());
+  candidates.push(...candidateRootsFromEnv(GEMINI_CLI_PACKAGE));
   candidates.push(
     path.join(process.cwd(), "node_modules", "@google", "gemini-cli")
   );
@@ -196,7 +180,7 @@ const resolveGeminiCliRoot = async (): Promise<{
       continue;
     }
     seen.add(normalized);
-    const metadata = await readCliPackageMetadata(normalized);
+    const metadata = await readPackageMetadata(normalized);
     if (metadata) {
       return { root: normalized, version: metadata.version };
     }
@@ -207,8 +191,92 @@ const resolveGeminiCliRoot = async (): Promise<{
   );
 };
 
-const loadGeminiModules = async (
+const resolveGeminiCliCoreRoot = async (
   cliRoot: string
+): Promise<{ readonly root: string; readonly version: string }> => {
+  const seen = new Set<string>();
+  const candidates: string[] = [];
+
+  try {
+    const requireFromCli = createRequire(path.join(cliRoot, "package.json"));
+    const resolved = requireFromCli.resolve(
+      `${GEMINI_CLI_CORE_PACKAGE}/package.json`
+    );
+    candidates.push(resolved);
+  } catch {
+    // ignore resolution errors
+  }
+
+  const npmPrefix =
+    process.env.NPM_CONFIG_PREFIX ?? process.env.npm_config_prefix;
+  if (npmPrefix) {
+    candidates.push(
+      path.join(npmPrefix, "lib", "node_modules", GEMINI_CLI_CORE_PACKAGE)
+    );
+    candidates.push(
+      path.join(npmPrefix, "node_modules", GEMINI_CLI_CORE_PACKAGE)
+    );
+  }
+
+  try {
+    const requireFromHere = createRequire(__filename);
+    const resolved = requireFromHere.resolve(
+      `${GEMINI_CLI_CORE_PACKAGE}/package.json`
+    );
+    candidates.push(resolved);
+  } catch {
+    // ignore resolution errors
+  }
+
+  for (const globalPath of moduleGlobalPaths) {
+    if (globalPath) {
+      candidates.push(path.join(globalPath, GEMINI_CLI_CORE_PACKAGE));
+    }
+  }
+
+  candidates.push(...candidateRootsFromEnv(GEMINI_CLI_CORE_PACKAGE));
+  candidates.push(
+    path.join(process.cwd(), "node_modules", "@google", "gemini-cli-core")
+  );
+  const homeDirectory = homedir();
+  candidates.push(
+    path.join(
+      homeDirectory,
+      ".npm-global",
+      "lib",
+      "node_modules",
+      GEMINI_CLI_CORE_PACKAGE
+    )
+  );
+  candidates.push(
+    path.join(
+      homeDirectory,
+      ".npm-global",
+      "node_modules",
+      GEMINI_CLI_CORE_PACKAGE
+    )
+  );
+
+  for (const candidate of candidates) {
+    const normalized = path.resolve(normalizeCandidate(candidate));
+    if (seen.has(normalized)) {
+      continue;
+    }
+    seen.add(normalized);
+    const metadata = await readPackageMetadata(normalized);
+    if (metadata) {
+      return { root: normalized, version: metadata.version };
+    }
+  }
+
+  throw new Error(
+    "Gemini CLI Core package not found. Install it with `npm install -g @google/gemini-cli-core`."
+  );
+};
+
+const loadGeminiModules = async (
+  cliRoot: string,
+  cliCoreRoot: string
 ): Promise<GeminiCliModules> => {
   const [
     config,
@@ -247,31 +315,31 @@ const loadGeminiModules = async (
     ]),
     findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/contentGenerator")
-    >(CLI_CORE_DIR, [
+    >(cliCoreRoot, [
       ["dist", "src", "core", "contentGenerator.js"],
       ["dist", "core", "contentGenerator.js"],
     ]),
     findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/coreToolScheduler")
-    >(CLI_CORE_DIR, [
+    >(cliCoreRoot, [
       ["dist", "src", "core", "coreToolScheduler.js"],
       ["dist", "core", "coreToolScheduler.js"],
     ]),
     findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/nonInteractiveToolExecutor")
-    >(CLI_CORE_DIR, [
+    >(cliCoreRoot, [
       ["dist", "src", "core", "nonInteractiveToolExecutor.js"],
       ["dist", "core", "nonInteractiveToolExecutor.js"],
     ]),
     findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/turn")
-    >(CLI_CORE_DIR, [
+    >(cliCoreRoot, [
       ["dist", "src", "core", "turn.js"],
       ["dist", "core", "turn.js"],
     ]),
     findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/utils/thoughtUtils")
-    >(CLI_CORE_DIR, [
+    >(cliCoreRoot, [
       ["dist", "src", "utils", "thoughtUtils.js"],
       ["dist", "utils", "thoughtUtils.js"],
     ]),
@@ -292,14 +360,13 @@ const loadGeminiModules = async (
 
 export type LoadCliBridgeOptions = {
   readonly expectedCliVersion?: string;
+  readonly expectedCoreVersion?: string;
   readonly reporter?: ModuleReporter;
 };
 
-export const loadCliBridgeFromVendor = async (
+export const loadCliBridgeFromGlobal = async (
   options: LoadCliBridgeOptions = {}
 ): Promise<GeminiCliBridge> => {
-  await ensureDirectoryExists(CLI_CORE_DIR);
-
   const { root: cliRoot, version: resolvedCliVersion } =
     await resolveGeminiCliRoot().catch((error: unknown) => {
       options.reporter?.error?.(
@@ -309,20 +376,28 @@ export const loadCliBridgeFromVendor = async (
       throw error;
     });
 
-  const metadataFromFile = (await readMetadata()) ?? {
-    version: "unknown",
-    preparedAt: new Date(0).toISOString(),
-    source: "vendor",
-  };
+  const { root: cliCoreRoot, version: resolvedCoreVersion } =
+    await resolveGeminiCliCoreRoot(cliRoot).catch((error: unknown) => {
+      options.reporter?.error?.(
+        "Gemini CLI Core is not installed or could not be located",
+        error instanceof Error ? error : String(error)
+      );
+      throw error;
+    });
 
   const metadata: GeminiCliBridgeMetadata = {
-    ...metadataFromFile,
+    version: resolvedCliVersion,
+    preparedAt: new Date().toISOString(),
+    source: "global",
     cli: {
-      package: metadataFromFile.cli?.package ?? GEMINI_CLI_PACKAGE,
-      requiredVersion:
-        metadataFromFile.cli?.requiredVersion ?? options.expectedCliVersion,
+      package: GEMINI_CLI_PACKAGE,
+      requiredVersion: options.expectedCliVersion,
       resolvedVersion: resolvedCliVersion,
       location: cliRoot,
+    },
+    cliCore: {
+      package: GEMINI_CLI_CORE_PACKAGE,
+      version: resolvedCoreVersion,
     },
   };
 
@@ -335,7 +410,18 @@ export const loadCliBridgeFromVendor = async (
     });
   }
 
-  const modules = await loadGeminiModules(cliRoot);
+  if (
+    options.expectedCoreVersion &&
+    options.expectedCoreVersion !== resolvedCoreVersion
+  ) {
+    options.reporter?.warn?.("Gemini CLI Core version mismatch detected", {
+      expected: options.expectedCoreVersion,
+      found: resolvedCoreVersion,
+      location: cliCoreRoot,
+    });
+  }
+
+  const modules = await loadGeminiModules(cliRoot, cliCoreRoot);
 
   return {
     modules,
