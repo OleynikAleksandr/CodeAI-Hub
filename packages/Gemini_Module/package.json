@@ -31,9 +31,5 @@
     "cli"
   ],
   "author": "CodeAI Hub",
-  "license": "ISC",
-  "codeaiHub": {
-    "geminiCliCoreVersion": "0.17.0",
-    "geminiCliVersion": "0.17.0"
-  }
+  "license": "ISC"
 }

@@ -1,13 +1,13 @@
 # Codex SDK Module
 
-**Updated:** 2025-10-31  
+**Updated:** 2025-12-20  
 **Owner:** Codex  
 **Source Reference:** `https://github.com/openai/codex/tree/main/sdk/typescript`
 
 ---
 
 ## 1. Purpose & Scope
-- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.300` inside CodeAI-Hub Core.
+- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.325` inside CodeAI-Hub Core.
 - Capture the CLI/SDK contract (events, items, options) that we must adapt for RemoteBridge and UI streaming.
 - List integration prerequisites (authentication, binaries, storage layout) required to bootstrap Codex alongside the Claude module.
 
@@ -122,7 +122,7 @@ Implications for CodeAI-Hub:
 - `@openai/codex-sdk` ships prebuilt binaries under `vendor/<target triple>/codex/` for macOS (x86_64, arm64), Linux (x86_64, arm64), Windows (x86_64, arm64).
 - `CodexExec` auto-detects the current platform and selects the bundled binary; override via `codexPathOverride` to use a managed installation (e.g., CodeAI-Hub controlled path).
 - Global CLI installs place the executable at `${npm prefix}/bin/codex` (`/Users/oleksandroliinyk/.npm-global/bin/codex` locally).
-- Binary updates follow npm package versioning; ensure our provider checks installed version vs manifest (`installed-versions.json` once Phase 13 lands).
+- Binary updates follow npm package versioning; Auto Update Service проверяет latest на старте и Settings UI показывает текущую/последнюю версии через глобальный npm.
 
 ---
 
@@ -137,7 +137,7 @@ Implications for CodeAI-Hub:
 5. Surface CLI/environment errors through RemoteBridge notifications (e.g., missing auth, unsupported sandbox mode).
 6. Ensure sandbox + approval selections from UI are translated into Codex options/env prior to launching the turn.
 7. Log Codex JSONL to `~/.codeai-hub/logs/codex/` for auditing and future replay (align with Phase 13 persistence plan).
-8. (1.1.300+) Keep `packages/Codex_Module/package.json` и `assets/providers/codex/manifest.json` в одном значении версии — Settings UI читает manifest через `ProviderVersionService`, чтобы показывать фактический статус провайдера.
+8. (1.1.325+) ProviderVersionService читает версии CLI/SDK из глобального npm; манифесты провайдера используются только для установки модуля.
 
 ---
 

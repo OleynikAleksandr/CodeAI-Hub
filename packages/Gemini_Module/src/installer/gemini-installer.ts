@@ -1,13 +1,9 @@
-import { execFile } from "node:child_process";
-import { createHash } from "node:crypto";
-import { createReadStream, createWriteStream, promises as fs } from "node:fs";
+import { promises as fs } from "node:fs";
 import https from "node:https";
-import { homedir, tmpdir } from "node:os";
+import { homedir } from "node:os";
 import path from "node:path";
-import { pipeline } from "node:stream/promises";
 
-import { loadCliBridgeFromVendor } from "../runtime/cli-bridge";
-
+import { loadCliBridgeFromGlobal } from "../runtime/cli-bridge";
 import type { GeminiCliBridge } from "../runtime/cli-types";
 import type {
   GeminiInstallerPaths,
@@ -17,11 +13,6 @@ import type {
 
 import { runNpmCommand } from "./npm-runner";
 
-const REGISTRY_BASE = "https://registry.npmjs.org";
-const VENDOR_DIR = "vendor";
-const NODE_MODULES_DIR = "node_modules";
-const DOWNLOADS_DIR = "downloads";
-const GEMINI_CONFIG_KEY = "codeaiHub";
 const GEMINI_CLI_CORE_PACKAGE = "@google/gemini-cli-core";
 const GEMINI_CLI_PACKAGE = "@google/gemini-cli";
 const HTTP_ERROR_STATUS_THRESHOLD = 400;
@@ -30,242 +21,18 @@ const CLI_EXECUTABLE_WINDOWS = "gemini.cmd";
 const HOME_DIRECTORY_PATTERN = /^~(?=$|\/|\\)/u;
 const USERPROFILE_PATTERN = /%USERPROFILE%/giu;
 
-const ensureDirectory = async (target: string): Promise<void> => {
-  await fs.mkdir(target, { recursive: true });
-};
-
-const ensureDirectoryChain = async (...segments: string[]): Promise<string> => {
-  const target = path.join(...segments);
-  await ensureDirectory(target);
-  return target;
-};
-
-const readJsonFile = async <T>(filePath: string): Promise<T> => {
-  const contents = await fs.readFile(filePath, "utf8");
-  return JSON.parse(contents) as T;
-};
-
-const fetchRegistryMetadata = async (
-  packageName: string,
-  version: string
-): Promise<{
-  readonly tarball: string;
-  readonly shasum?: string;
-}> => {
-  const encoded = packageName.replace("/", "%2f");
-  const url = `${REGISTRY_BASE}/${encoded}`;
-
-  const response = await new Promise<string>((resolve, reject) => {
-    https
-      .get(url, (res) => {
-        if (res.statusCode && res.statusCode >= HTTP_ERROR_STATUS_THRESHOLD) {
-          reject(
-            new Error(
-              `Failed to fetch ${packageName}@${version} metadata (HTTP ${res.statusCode})`
-            )
-          );
-          res.resume();
-          return;
-        }
-
-        const chunks: Buffer[] = [];
-        res.on("data", (chunk) => {
-          chunks.push(chunk as Buffer);
-        });
-        res.on("end", () => {
-          resolve(Buffer.concat(chunks).toString("utf8"));
-        });
-        res.on("error", reject);
-      })
-      .on("error", reject);
-  });
-
-  const meta = JSON.parse(response) as {
-    readonly versions?: Record<
-      string,
-      {
-        readonly dist?: {
-          readonly tarball?: string;
-          readonly shasum?: string;
-        };
-      }
-    >;
-  };
-
-  const distInfo = meta.versions?.[version]?.dist;
-  if (!distInfo?.tarball) {
-    throw new Error(
-      `Package ${packageName}@${version} dist information missing`
-    );
-  }
-
-  return {
-    tarball: distInfo.tarball,
-    shasum: distInfo.shasum,
-  };
-};
-
-const downloadToFile = async (
-  url: string,
-  destination: string
-): Promise<void> => {
-  await new Promise<void>((resolve, reject) => {
-    https
-      .get(url, async (response) => {
-        if (
-          response.statusCode &&
-          response.statusCode >= HTTP_ERROR_STATUS_THRESHOLD
-        ) {
-          reject(
-            new Error(`Failed to download ${url} (HTTP ${response.statusCode})`)
-          );
-          response.resume();
-          return;
-        }
-
-        try {
-          await pipeline(response, createWriteStream(destination));
-          resolve();
-        } catch (error) {
-          reject(error);
-        }
-      })
-      .on("error", reject);
-  });
-};
-
-const computeSha1 = async (filePath: string): Promise<string> =>
-  await new Promise<string>((resolve, reject) => {
-    const hash = createHash("sha1");
-    const stream = createReadStream(filePath);
-
-    stream.on("data", (chunk) => {
-      hash.update(chunk);
-    });
-
-    stream.on("end", () => {
-      resolve(hash.digest("hex"));
-    });
-
-    stream.on("error", reject);
-  });
-
-const verifySha1IfPresent = async (
-  filePath: string,
-  expected?: string
-): Promise<void> => {
-  if (!expected) {
-    return;
-  }
-  const actual = await computeSha1(filePath);
-  if (actual.toLowerCase() !== expected.toLowerCase()) {
-    throw new Error(`Checksum mismatch for ${path.basename(filePath)}`);
-  }
-};
-
-const extractTarArchive = async (
-  archivePath: string,
-  destination: string
-): Promise<void> => {
-  await ensureDirectory(destination);
-  const args = (() => {
-    if (archivePath.endsWith(".tar.gz") || archivePath.endsWith(".tgz")) {
-      return ["-xzf", archivePath, "-C", destination];
-    }
-    if (archivePath.endsWith(".tar.bz2")) {
-      return ["-xjf", archivePath, "-C", destination];
-    }
-    throw new Error(`Unsupported archive format: ${archivePath}`);
-  })();
-
-  await new Promise<void>((resolve, reject) => {
-    execFile("tar", args, (error) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve();
-    });
-  });
-};
-
-const removeDirectoryIfExists = async (target: string): Promise<void> => {
-  await fs.rm(target, { recursive: true, force: true });
-};
-
-const safeRename = async (
-  source: string,
-  destination: string
-): Promise<void> => {
-  await removeDirectoryIfExists(destination);
-  await fs.rename(source, destination);
-};
-
-const installDependencies = async (
-  targetDir: string,
-  label: string,
-  reporter?: ModuleReporter
-): Promise<void> => {
-  reporter?.info?.(`Installing dependencies for ${label}`);
-  await new Promise<void>((resolve, reject) => {
-    execFile(
-      "npm",
-      ["install", "--omit=dev", "--no-audit", "--no-fund"],
-      { cwd: targetDir },
-      (error) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve();
-      }
-    );
-  });
-};
-
-type ModuleMetadata = {
-  readonly version: string;
-  readonly geminiCliCoreVersion: string;
-  readonly geminiCliVersion: string;
-};
-
-const readModuleMetadata = async (
-  moduleRoot: string
-): Promise<ModuleMetadata> => {
-  const pkg = await readJsonFile<{
-    readonly version: string;
-    readonly [GEMINI_CONFIG_KEY]?: {
-      readonly geminiCliCoreVersion?: string;
-      readonly geminiCliVersion?: string;
-    };
-  }>(path.join(moduleRoot, "package.json"));
-
-  const config = pkg[GEMINI_CONFIG_KEY] ?? {};
-  if (!(config.geminiCliCoreVersion && config.geminiCliVersion)) {
-    throw new Error("Gemini module metadata missing CLI version configuration");
-  }
-
-  return {
-    version: pkg.version,
-    geminiCliCoreVersion: config.geminiCliCoreVersion,
-    geminiCliVersion: config.geminiCliVersion,
-  };
-};
-
 export type GeminiInstallerOptions = {
   readonly reporter?: ModuleReporter;
 };
 
 export class GeminiInstaller {
   private readonly reporter?: ModuleReporter;
-
-  private readonly moduleRoot: string;
-
   private readonly installerDirectory: string;
   private readonly npmPrefix: string;
   private readonly cliExecutablePath: string;
   private readonly npmExecutable: string;
   private currentCliVersion: string | null = null;
+  private currentCoreVersion: string | null = null;
 
   private bridge: GeminiCliBridge | null = null;
 
@@ -274,7 +41,6 @@ export class GeminiInstaller {
     options: GeminiInstallerOptions = {}
   ) {
     this.reporter = options.reporter;
-    this.moduleRoot = path.resolve(__dirname, "..", "..");
     this.installerDirectory = this.normalizeInstallerPath(_paths);
     this.npmPrefix = this.computePrefix(this.installerDirectory);
     this.cliExecutablePath = this.resolveCliExecutablePath();
@@ -286,212 +52,44 @@ export class GeminiInstaller {
       return this.bridge;
     }
 
-    const metadata = await this.ensureVendorArtifacts();
-    await this.ensureCliPackageInstalled(metadata.geminiCliVersion);
-    this.bridge = await loadCliBridgeFromVendor({
-      expectedCliVersion: metadata.geminiCliVersion,
+    await this.ensureCliPrefixDirectories();
+    await this.ensurePackageInstalled(GEMINI_CLI_CORE_PACKAGE, "core");
+    await this.ensurePackageInstalled(GEMINI_CLI_PACKAGE, "cli");
+    this.emitProgress("Gemini CLI components ready.", { phase: "provider" });
+    await this.verifyCliExecutable();
+
+    this.bridge = await loadCliBridgeFromGlobal({
+      expectedCliVersion: this.currentCliVersion ?? undefined,
+      expectedCoreVersion: this.currentCoreVersion ?? undefined,
       reporter: this.reporter,
     });
     return this.bridge;
   }
 
   async updateToLatest(): Promise<GeminiUpdateResult> {
-    // 1. Fetch latest version from npm registry
-    const latestVersion =
-      await this.getLatestVersionFromRegistry(GEMINI_CLI_PACKAGE);
-    if (!latestVersion) {
+    const [latestCliVersion, latestCoreVersion] = await Promise.all([
+      this.getLatestVersionFromRegistry(GEMINI_CLI_PACKAGE),
+      this.getLatestVersionFromRegistry(GEMINI_CLI_CORE_PACKAGE),
+    ]);
+
+    if (!(latestCliVersion && latestCoreVersion)) {
       throw new Error(
-        "Failed to fetch latest Gemini CLI version from npm registry"
+        "Failed to fetch latest Gemini CLI versions from npm registry"
       );
     }
 
-    // 2. Prepare vendor directories
-    const vendorRoot = await ensureDirectoryChain(
-      this.moduleRoot,
-      "dist",
-      VENDOR_DIR
+    await this.ensureCliPrefixDirectories();
+    await this.installPackage(
+      GEMINI_CLI_CORE_PACKAGE,
+      latestCoreVersion,
+      "core"
     );
-    const downloadsDir = await ensureDirectoryChain(vendorRoot, DOWNLOADS_DIR);
-    const nodeModulesDir = await ensureDirectoryChain(
-      vendorRoot,
-      NODE_MODULES_DIR
-    );
-
-    // 3. Install gemini-cli-core in vendor (forced update to latest)
-    await this.installIfNeeded({
-      name: GEMINI_CLI_CORE_PACKAGE,
-      version: latestVersion,
-      label: "Gemini CLI Core",
-      downloadsDir,
-      nodeModulesDir,
-      forceVersion: latestVersion,
-    });
-
-    // 4. Install gemini-cli in vendor (forced update to latest)
-    await this.installIfNeeded({
-      name: GEMINI_CLI_PACKAGE,
-      version: latestVersion,
-      label: "Gemini CLI",
-      downloadsDir,
-      nodeModulesDir,
-      forceVersion: latestVersion,
-    });
-
-    // 5. Update global gemini-cli (to ~/.npm-global, not isolated path)
-    await this.installCliGlobally(latestVersion);
+    await this.installPackage(GEMINI_CLI_PACKAGE, latestCliVersion, "cli");
 
     return {
-      cliVersion: latestVersion,
-      coreVersion: latestVersion,
+      cliVersion: latestCliVersion,
+      coreVersion: latestCoreVersion,
     };
-  }
-
-  private async ensureVendorArtifacts(): Promise<ModuleMetadata> {
-    const metadata = await readModuleMetadata(this.moduleRoot);
-    const vendorRoot = await ensureDirectoryChain(
-      this.moduleRoot,
-      "dist",
-      VENDOR_DIR
-    );
-    const downloadsDir = await ensureDirectoryChain(vendorRoot, DOWNLOADS_DIR);
-    const nodeModulesDir = await ensureDirectoryChain(
-      vendorRoot,
-      NODE_MODULES_DIR
-    );
-
-    await this.installIfNeeded({
-      name: GEMINI_CLI_CORE_PACKAGE,
-      version: metadata.geminiCliCoreVersion,
-      label: "Gemini CLI Core",
-      downloadsDir,
-      nodeModulesDir,
-    });
-
-    await this.installIfNeeded({
-      name: GEMINI_CLI_PACKAGE,
-      version: metadata.geminiCliVersion,
-      label: "Gemini CLI",
-      downloadsDir,
-      nodeModulesDir,
-    });
-
-    const metadataPath = path.join(vendorRoot, "cli-bridge.json");
-    const bridgeMetadata = {
-      version: metadata.version,
-      preparedAt: new Date().toISOString(),
-      source: "npm",
-      cli: {
-        package: GEMINI_CLI_PACKAGE,
-        requiredVersion: metadata.geminiCliVersion,
-      },
-      cliCore: {
-        package: GEMINI_CLI_CORE_PACKAGE,
-        version: metadata.geminiCliCoreVersion,
-      },
-    };
-    await fs.writeFile(
-      metadataPath,
-      `${JSON.stringify(bridgeMetadata, null, 2)}\n`,
-      "utf8"
-    );
-
-    return metadata;
-  }
-
-  private async installIfNeeded({
-    name,
-    version,
-    label,
-    downloadsDir,
-    nodeModulesDir,
-    forceVersion,
-  }: {
-    readonly name: string;
-    readonly version: string;
-    readonly label: string;
-    readonly downloadsDir: string;
-    readonly nodeModulesDir: string;
-    readonly forceVersion?: string;
-  }): Promise<void> {
-    const targetVersion = forceVersion ?? version;
-    const targetDir = path.join(nodeModulesDir, ...name.split("/"));
-    const pkgJsonPath = path.join(targetDir, "package.json");
-    const nodeModulesPath = path.join(targetDir, "node_modules");
-
-    let firstInstall = true;
-    try {
-      const existing = await readJsonFile<{ readonly version?: string }>(
-        pkgJsonPath
-      );
-      firstInstall = false;
-      if (forceVersion) {
-        // Forced update - skip version check
-        firstInstall = false;
-      } else if (existing.version === targetVersion) {
-        try {
-          await fs.access(nodeModulesPath);
-          return;
-        } catch {
-          this.reporter?.info?.(
-            `Repairing dependencies for ${label} ${targetVersion}`
-          );
-          firstInstall = false;
-        }
-      } else {
-        firstInstall = false;
-      }
-    } catch {
-      // not installed yet
-    }
-
-    this.reporter?.progress?.({
-      phase: "install",
-      label: firstInstall
-        ? "Downloading required Gemini components for the first run..."
-        : "Updating Gemini components...",
-      detail: firstInstall
-        ? "This may take a little longer during the first setup."
-        : "Fetching the latest improvements.",
-      firstRun: firstInstall,
-    });
-    this.reporter?.info?.(`Installing ${label} ${targetVersion}`);
-
-    const { tarball, shasum } = await fetchRegistryMetadata(
-      name,
-      targetVersion
-    );
-    const archiveName = path.basename(tarball);
-    const archivePath = path.join(downloadsDir, archiveName);
-
-    await downloadToFile(tarball, archivePath);
-    await verifySha1IfPresent(archivePath, shasum);
-
-    const tempDir = await fs.mkdtemp(path.join(tmpdir(), "gemini-cli-"));
-    try {
-      await extractTarArchive(archivePath, tempDir);
-      const packageDir = path.join(tempDir, "package");
-      await ensureDirectory(path.dirname(targetDir));
-      await safeRename(packageDir, targetDir);
-      this.reporter?.progress?.({
-        phase: "install",
-        label: "Preparing Gemini dependencies...",
-        detail: "Configuring local tools.",
-        firstRun: firstInstall,
-      });
-      await installDependencies(targetDir, label, this.reporter);
-    } finally {
-      await removeDirectoryIfExists(tempDir);
-    }
-
-    this.reporter?.progress?.({
-      phase: "install",
-      label: "Gemini components installed.",
-      detail: firstInstall
-        ? "Initial setup complete."
-        : "Components updated successfully.",
-      firstRun: firstInstall,
-    });
-    this.reporter?.info?.(`${label} ${targetVersion} installed`);
   }
 
   private emitProgress(
@@ -518,26 +116,25 @@ export class GeminiInstaller {
     this.reporter?.info?.(message, metadata);
   }
 
-  private async ensureCliPackageInstalled(
-    requiredVersion?: string
+  private async ensurePackageInstalled(
+    packageName: string,
+    kind: "cli" | "core"
   ): Promise<void> {
-    await this.ensureCliPrefixDirectories();
-    const installed = await this.checkCliInstalled();
+    const installed = await this.checkPackageInstalled(packageName, kind);
     if (installed) {
-      this.emitProgress("Checking Gemini CLI components...");
-      await this.updateCliIfNeeded(requiredVersion);
-    } else {
-      this.emitProgress(
-        "Downloading Gemini CLI components for the first run...",
-        {
-          detail: "This may take a little longer during the first setup.",
-          firstRun: true,
-        }
-      );
-      await this.installCliPackage(requiredVersion);
+      this.emitProgress(`Checking ${this.describePackage(kind)} components...`);
+      await this.updatePackageIfNeeded(packageName, kind);
+      return;
     }
-    this.emitProgress("Gemini CLI components ready.", { phase: "provider" });
-    await this.verifyCliExecutable();
+
+    this.emitProgress(
+      `Downloading ${this.describePackage(kind)} components for the first run...`,
+      {
+        detail: "This may take a little longer during the first setup.",
+        firstRun: true,
+      }
+    );
+    await this.installPackage(packageName, "latest", kind);
   }
 
   private async ensureCliPrefixDirectories(): Promise<void> {
@@ -557,29 +154,34 @@ export class GeminiInstaller {
     };
   }
 
-  private async checkCliInstalled(): Promise<boolean> {
+  private async checkPackageInstalled(
+    packageName: string,
+    kind: "cli" | "core"
+  ): Promise<boolean> {
     try {
-      const { stdout } = await runNpmCommand(
-        ["list", "-g", GEMINI_CLI_PACKAGE, "--json"],
-        {
-          npmExecutable: this.npmExecutable,
-          env: this.buildNpmEnv(),
-        }
-      );
+      const { stdout } = await this.runNpm([
+        "list",
+        "-g",
+        packageName,
+        "--json",
+      ]);
       const parsed = JSON.parse(stdout || "{}") as {
         readonly dependencies?: Record<string, { readonly version?: string }>;
       };
-      const version =
-        parsed.dependencies?.[GEMINI_CLI_PACKAGE]?.version ?? null;
+      const version = parsed.dependencies?.[packageName]?.version ?? null;
       if (version) {
-        this.currentCliVersion = version;
-        this.reportStatus(`Detected Gemini CLI v${version}`);
+        if (kind === "cli") {
+          this.currentCliVersion = version;
+        } else {
+          this.currentCoreVersion = version;
+        }
+        this.reportStatus(`Detected ${this.describePackage(kind)} v${version}`);
         return true;
       }
       return false;
     } catch (error) {
       this.reporter?.warn?.(
-        "Failed to detect existing Gemini CLI installation",
+        `Failed to detect existing ${this.describePackage(kind)} installation`,
         {
           error: error instanceof Error ? error : new Error(String(error)),
         }
@@ -588,47 +190,43 @@ export class GeminiInstaller {
     }
   }
 
-  private async installCliPackage(version?: string): Promise<void> {
-    const specifier = version
-      ? `${GEMINI_CLI_PACKAGE}@${version}`
-      : `${GEMINI_CLI_PACKAGE}@latest`;
-    await runNpmCommand(["install", "-g", specifier, "--force"], {
-      npmExecutable: this.npmExecutable,
-      env: this.buildNpmEnv(),
-    });
-    await this.checkCliInstalled();
+  private async installPackage(
+    packageName: string,
+    version: string,
+    kind: "cli" | "core"
+  ): Promise<void> {
+    const specifier =
+      version === "latest"
+        ? `${packageName}@latest`
+        : `${packageName}@${version}`;
+    const versionLabel = version === "latest" ? "latest" : `v${version}`;
+    this.reportStatus(
+      `Installing ${this.describePackage(kind)} ${versionLabel}`
+    );
+    await this.runNpm(["install", "-g", specifier, "--force"]);
+    await this.checkPackageInstalled(packageName, kind);
   }
 
-  private async installCliGlobally(version: string): Promise<void> {
-    const specifier = `${GEMINI_CLI_PACKAGE}@${version}`;
-    // Clear NPM_CONFIG_PREFIX to install to real global (~/.npm-global)
-    const cleanEnv = { ...process.env };
-    cleanEnv.NPM_CONFIG_PREFIX = undefined;
-    cleanEnv.npm_config_prefix = undefined;
-    await runNpmCommand(["install", "-g", specifier], {
-      npmExecutable: this.npmExecutable,
-      env: cleanEnv,
-    });
-  }
-
-  private async updateCliIfNeeded(requiredVersion?: string): Promise<void> {
-    if (requiredVersion && this.currentCliVersion === requiredVersion) {
-      return;
-    }
-    if (requiredVersion && this.currentCliVersion !== requiredVersion) {
-      this.reportStatus(`Updating Gemini CLI to v${requiredVersion}`);
-      await this.installCliPackage(requiredVersion);
-      return;
-    }
-    const latestVersion = await this.getLatestCliVersion();
+  private async updatePackageIfNeeded(
+    packageName: string,
+    kind: "cli" | "core"
+  ): Promise<void> {
+    const currentVersion =
+      kind === "cli" ? this.currentCliVersion : this.currentCoreVersion;
+    const latestVersion = await this.getLatestVersionFromRegistry(packageName);
     if (
-      !(latestVersion && this.currentCliVersion) ||
-      this.currentCliVersion === latestVersion
+      !(latestVersion && currentVersion) ||
+      currentVersion === latestVersion
     ) {
       return;
     }
-    this.reportStatus(`Updating Gemini CLI to v${latestVersion}`);
-    await this.installCliPackage(latestVersion);
+    this.reportStatus(
+      `Updating ${this.describePackage(kind)} to v${latestVersion}`
+    );
+    this.emitProgress(`Updating ${this.describePackage(kind)}...`, {
+      detail: "Fetching the latest improvements.",
+    });
+    await this.installPackage(packageName, latestVersion, kind);
   }
 
   private getLatestVersionFromRegistry(
@@ -640,6 +238,14 @@ export class GeminiInstaller {
     return new Promise((resolve) => {
       https
         .get(url, (response) => {
+          if (
+            response.statusCode &&
+            response.statusCode >= HTTP_ERROR_STATUS_THRESHOLD
+          ) {
+            resolve(null);
+            response.resume();
+            return;
+          }
           let body = "";
           response.setEncoding("utf8");
           response.on("data", (chunk) => {
@@ -658,10 +264,6 @@ export class GeminiInstaller {
           resolve(null);
         });
     });
-  }
-
-  private getLatestCliVersion(): Promise<string | null> {
-    return this.getLatestVersionFromRegistry(GEMINI_CLI_PACKAGE);
   }
 
   private normalizeInstallerPath(paths: GeminiInstallerPaths): string {
@@ -705,5 +307,18 @@ export class GeminiInstaller {
       return path.join(this.npmPrefix, CLI_EXECUTABLE_WINDOWS);
     }
     return path.join(this.npmPrefix, "bin", CLI_EXECUTABLE_UNIX);
+  }
+
+  private describePackage(kind: "cli" | "core"): string {
+    return kind === "cli" ? "Gemini CLI" : "Gemini CLI Core";
+  }
+
+  private runNpm(
+    args: readonly string[]
+  ): Promise<{ readonly stdout: string; readonly stderr: string }> {
+    return runNpmCommand(args, {
+      npmExecutable: this.npmExecutable,
+      env: this.buildNpmEnv(),
+    });
   }
 }

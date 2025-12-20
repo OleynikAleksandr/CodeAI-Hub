@@ -122,3 +122,4 @@ graph TD
 - **`sessions/`**: Логи сессий в формате JSONL.
 - **`settings/`**: Пользовательские настройки.
 - **`releases/`**: Кеш скачанных tar.bz2 архивов.
+- **`~/.npm-global/`**: Глобальные CLI/SDK пакеты провайдеров (Claude/Codex/Gemini), обновляются Auto Update Service при старте ядра.
