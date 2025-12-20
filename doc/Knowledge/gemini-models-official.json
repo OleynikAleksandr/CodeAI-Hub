@@ -1,0 +1,130 @@
+{
+  "timestamp": "2025-12-20T17:30:00.000Z",
+  "source": "Gemini CLI v0.21.2 + Official Google Documentation",
+  "method": "CLI interactive model selector + web research",
+  "current_models": [
+    {
+      "id": "gemini-3-pro-preview",
+      "displayName": "Gemini 3 Pro Preview",
+      "family": "gemini-3",
+      "tier": "pro",
+      "status": "preview",
+      "description": "Most advanced reasoning Gemini model for complex problems",
+      "context_window": "1M tokens",
+      "knowledge_cutoff": "January 2025",
+      "features": [
+        "1M token context window",
+        "Multimodal (text, audio, images, video, PDFs, code)",
+        "Thinking level parameter (low, high)",
+        "Media resolution parameter (low, medium, high)",
+        "Streaming function calling",
+        "Improved multi-turn function calling"
+      ],
+      "benchmarks": {
+        "LMArena": "1501 Elo (top score)",
+        "SWE-bench_verified": "78%"
+      },
+      "best_for": "Complex reasoning, PhD-level problems, advanced coding"
+    },
+    {
+      "id": "gemini-3-flash-preview",
+      "displayName": "Gemini 3 Flash Preview",
+      "family": "gemini-3",
+      "tier": "flash",
+      "status": "preview",
+      "description": "Pro-grade reasoning with Flash-level latency and cost",
+      "context_window": "1M tokens",
+      "knowledge_cutoff": "January 2025",
+      "features": [
+        "3x faster than 2.5 Pro at fraction of cost",
+        "Thinking levels (minimal, low, medium, high)",
+        "Advanced visual and spatial reasoning",
+        "Code execution for visual inputs",
+        "Multimodal processing"
+      ],
+      "benchmarks": {
+        "GPQA_Diamond": "90.4%",
+        "Humanity's_Last_Exam": "33.7% (without tools)",
+        "MMMU-Pro": "81.2%"
+      },
+      "pricing": {
+        "input": "$0.50 / 1M tokens",
+        "output": "$3.00 / 1M tokens"
+      },
+      "best_for": "High-frequency workflows, fast reasoning, cost efficiency"
+    },
+    {
+      "id": "gemini-2.5-pro",
+      "displayName": "Gemini 2.5 Pro",
+      "family": "gemini-2.5",
+      "tier": "pro",
+      "status": "generally_available",
+      "description": "Deep reasoning model with Think mode for complex use cases",
+      "context_window": "1M tokens",
+      "features": [
+        "Deep Think mode",
+        "Controllable thinking budgets",
+        "Grounding with Google Search",
+        "Code Execution",
+        "URL Context",
+        "Multimodal input"
+      ],
+      "best_for": "Complex math, advanced coding, deep reasoning tasks"
+    },
+    {
+      "id": "gemini-2.5-flash",
+      "displayName": "Gemini 2.5 Flash",
+      "family": "gemini-2.5",
+      "tier": "flash",
+      "status": "generally_available",
+      "description": "High-throughput model for enterprise tasks",
+      "context_window": "1M tokens",
+      "features": [
+        "Controllable thinking budgets",
+        "Grounding with Google Search",
+        "Code Execution",
+        "URL Context",
+        "Multimodal input"
+      ],
+      "best_for": "Large-scale summarization, chat applications, data extraction"
+    },
+    {
+      "id": "gemini-2.5-flash-lite",
+      "displayName": "Gemini 2.5 Flash Lite",
+      "family": "gemini-2.5",
+      "tier": "flash-lite",
+      "status": "generally_available",
+      "description": "Most cost-efficient and fastest 2.5 model",
+      "context_window": "1M tokens",
+      "features": [
+        "Lowest latency in 2.5 family",
+        "Controllable thinking budgets",
+        "Grounding with Google Search",
+        "Code Execution",
+        "Multimodal input"
+      ],
+      "pricing": {
+        "input": "$0.10 / 1M tokens",
+        "output": "$0.40 / 1M tokens"
+      },
+      "best_for": "Translation, classification, high-volume tasks"
+    }
+  ],
+  "thinking_levels": {
+    "description": "Control internal reasoning depth",
+    "gemini_3_pro": ["low", "high"],
+    "gemini_3_flash": ["minimal", "low", "medium", "high"],
+    "gemini_2_5_models": "Controllable thinking budgets (Deep Think mode for Pro)"
+  },
+  "usage": {
+    "cli": {
+      "select_model": "gemini -m <model_id>",
+      "interactive": "Use /model command during session",
+      "startup": "gemini --model gemini-3-flash-preview"
+    },
+    "config": {
+      "file": "~/.gemini/settings.json",
+      "note": "Model selection primarily via CLI flags and interactive selector"
+    }
+  }
+}
