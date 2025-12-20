@@ -1,0 +1,125 @@
+{
+  "timestamp": "2025-12-20T17:00:00.000Z",
+  "source": "https://developers.openai.com/codex/models/",
+  "method": "Official Codex documentation",
+  "recommended_models": [
+    {
+      "id": "gpt-5.2-codex",
+      "displayName": "GPT-5.2-Codex",
+      "description": "Most advanced agentic coding model for real-world engineering",
+      "platforms": ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      "status": "active",
+      "tier": "flagship"
+    },
+    {
+      "id": "gpt-5.1-codex-max",
+      "displayName": "GPT-5.1-Codex-Max",
+      "description": "Optimized for long-horizon, agentic coding tasks in Codex",
+      "platforms": ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      "status": "active",
+      "tier": "max"
+    },
+    {
+      "id": "gpt-5.1-codex-mini",
+      "displayName": "GPT-5.1-Codex-Mini",
+      "description": "Smaller, more cost-effective, less-capable version of GPT-5.1-Codex",
+      "platforms": ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      "status": "active",
+      "tier": "mini"
+    },
+    {
+      "id": "gpt-5.2",
+      "displayName": "GPT-5.2",
+      "description": "Best general agentic model for tasks across industries",
+      "platforms": ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      "status": "active",
+      "tier": "general"
+    }
+  ],
+  "legacy_models": [
+    {
+      "id": "gpt-5.1",
+      "displayName": "GPT-5.1",
+      "description": "For coding and agentic tasks",
+      "status": "succeeded_by",
+      "successor": "gpt-5.2"
+    },
+    {
+      "id": "gpt-5.1-codex",
+      "displayName": "GPT-5.1-Codex",
+      "description": "Optimized for long-running agentic coding",
+      "status": "succeeded_by",
+      "successor": "gpt-5.1-codex-max"
+    },
+    {
+      "id": "gpt-5-codex",
+      "displayName": "GPT-5-Codex",
+      "description": "Tuned for long-running agentic coding",
+      "status": "succeeded_by",
+      "successor": "gpt-5.1-codex"
+    },
+    {
+      "id": "gpt-5-codex-mini",
+      "displayName": "GPT-5-Codex-Mini",
+      "description": "Cost-effective predecessor",
+      "status": "succeeded_by",
+      "successor": "gpt-5.1-codex-mini"
+    },
+    {
+      "id": "gpt-5",
+      "displayName": "GPT-5",
+      "description": "Reasoning model for coding tasks",
+      "status": "succeeded_by",
+      "successor": "gpt-5.1"
+    }
+  ],
+  "reasoning_levels": {
+    "description": "Available reasoning effort levels for Codex models",
+    "config_key": "model_reasoning_effort",
+    "levels": [
+      {
+        "name": "low",
+        "description": "Fast responses with lighter reasoning",
+        "use_case": "Quick tasks, simple queries",
+        "default": false
+      },
+      {
+        "name": "medium",
+        "description": "Balances speed and reasoning depth for everyday tasks",
+        "use_case": "Most development tasks",
+        "default": true
+      },
+      {
+        "name": "high",
+        "description": "Greater reasoning depth for complex problems",
+        "use_case": "Complex refactoring, architecture decisions",
+        "default": false
+      },
+      {
+        "name": "xhigh",
+        "description": "Extra high reasoning depth for complex problems",
+        "use_case": "Very complex problems requiring deep analysis",
+        "default": false
+      }
+    ]
+  },
+  "usage": {
+    "cli": {
+      "select_model": "codex -m <model_id>",
+      "example": "codex -m gpt-5.2-codex",
+      "interactive": "Use /model command during session"
+    },
+    "config": {
+      "file": "~/.codex/config.toml",
+      "model_key": "model",
+      "reasoning_key": "model_reasoning_effort",
+      "example": "model = \"gpt-5.2-codex\"\nmodel_reasoning_effort = \"medium\""
+    },
+    "sdk": {
+      "thread_options": {
+        "model": "Specify model ID",
+        "example": "codex.startThread({ model: 'gpt-5.2-codex' })"
+      }
+    }
+  }
+}
