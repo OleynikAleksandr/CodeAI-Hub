@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.327] - 2025-12-21
+### Added
+- **Codex Default Model & Reasoning**: Settings UI now supports default model selection and per-model reasoning profiles stored in `~/.codeai-hub/settings/settings.json`.
+- **Codex Model Registry**: Added a curated registry of recommended and legacy Codex models plus reasoning tiers.
+- **Codex Reasoning Config**: Codex SDK syncs `model_reasoning_effort` into `~/.codeai-hub/codex/config.toml`.
+
+### Changed
+- **Codex Runtime Defaults**: Core reads Codex defaults from `settings.json` and passes them to the SDK on startup.
+
+### Fixed
+- **Settings Type Guards**: Normalized Codex settings guards to keep type-checks green.
+
+### Build
+- VSIX → `codeai-hub-1.1.327.vsix` (426K)
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.327.tar.bz2` (230M)
+- Core → `codeai-hub-core-darwin-arm64-1.1.327.tar.bz2` (35M)
+- Providers → `claude-module-1.1.327.tar.bz2` (18K), `codex-module-1.1.327.tar.bz2` (19K), `gemini-module-1.1.327.tar.bz2` (14K)
+- UI → `vscode-webview-1.1.327.tar.bz2` (137K), `web-client-1.1.327.tar.bz2` (144K), `project-manager-1.1.327.tar.bz2` (49K)
+
 ## [1.1.326] - 2025-12-21
 ### Added
 - **Provider Auto-Update Service**: At core startup, checks latest CLI/SDK versions for Claude, Codex, and Gemini, with per-provider toggles in Settings.
