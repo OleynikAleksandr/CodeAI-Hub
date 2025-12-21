@@ -129,9 +129,7 @@ async function prepareLocalRuntime(
       projectManagerIndexPath,
       workspacePath
     );
-    const autoUpdateService = new ProviderAutoUpdateService(
-      context.extensionUri.fsPath
-    );
+    const autoUpdateService = new ProviderAutoUpdateService();
     const settingsSnapshot = loadSettingsSnapshot();
     try {
       await autoUpdateService.run(settingsSnapshot);
