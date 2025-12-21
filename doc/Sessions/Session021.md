@@ -13,9 +13,12 @@
 - Исправлены тип-гуарды Codex настроек (TS) для чистого build-release.
 - Собран релиз v1.1.327 по чеклисту: `build-all.sh` + `build-release.sh --use-current-version`, артефакты перенесены в `doc/tmp/releases/`.
 - Документация обновлена под релиз (README, CHANGELOG, Architecture, SystemArchitecture).
+- Пересобраны UI-бандлы через `build-ui-bundle.sh`, обновлён `assets/ui/manifest.json`.
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
+- `1413685 chore: refresh ui manifest for v1.1.327`
+- `5081ddc docs: add session 21 report`
 - `93239b7 feat: v1.1.327 - codex defaults`
 - `5dcd35d fix: loosen codex settings guards`
 - `200b351 fix: codex settings reasoning guard`
