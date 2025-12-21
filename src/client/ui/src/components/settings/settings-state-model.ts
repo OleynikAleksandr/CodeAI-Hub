@@ -129,8 +129,10 @@ export type RawSettingsSnapshot = {
 const DEFAULT_THINKING_MAX_TOKENS = 4000;
 const DEFAULT_AUTO_UPDATE_ENABLED = true;
 const DEFAULT_CORE_RESTART_ENABLED = true;
-const CODEX_MODEL_IDS = new Set(CODEX_ALL_MODELS.map((model) => model.id));
-const CODEX_REASONING_LEVEL_SET = new Set(
+const CODEX_MODEL_IDS = new Set<string>(
+  CODEX_ALL_MODELS.map((model) => model.id)
+);
+const CODEX_REASONING_LEVEL_SET = new Set<string>(
   CODEX_REASONING_LEVELS.map((level) => level.name)
 );
 const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_ALL_MODELS.reduce<

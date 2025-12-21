@@ -132,7 +132,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
   const [activeModelId, setActiveModelId] = useState<CodexModelId | null>(null);
 
   const recommendedModelIds = useMemo(
-    () => new Set(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
+    () => new Set<string>(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
     []
   );
 
