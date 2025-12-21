@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.5.8
+**Version:** 0.5.9
 **Last Updated:** 2025-12-21
 **Status:** Active reference
-**Release Focus:** v1.1.326 — Provider Auto Update & Global Gemini CLI/Core. На старте ядра выполняется автообновление CLI/SDK (Claude/Codex/Gemini) с управлением через Settings UI, а `@google/gemini-cli` и `@google/gemini-cli-core` резолвятся только из глобального npm prefix.
+**Release Focus:** v1.1.327 — Codex default model & reasoning profiles. В Settings UI можно выбрать дефолтную модель и уровень reasoning для каждой модели; ядро читает `~/.codeai-hub/settings/settings.json` и прокидывает значения в Codex SDK/CLI.
 
 ---
 
@@ -38,7 +38,7 @@ graph TD
 - **Port negotiation & shutdown**: перед запуском новой версии и расширение, и лаунчер отправляют `POST /api/v1/shutdown` действующему ядру, ждут graceful-stop и при необходимости добивают процесс по PID из `/api/v1/health`. Если порт занят посторонним приложением, менеджеры перебирают пул `8080 → 8081 → 8082 → … → 8092`, выбирают первый свободный вариант и фиксируют его в `~/.codeai-hub/state/runtime-registry.json (network.corePort)` и `CORE_PORT`, поэтому последующие клиенты мгновенно подключаются к актуальному сокету. Это же значение используется в health-мониторинге launcher’а и в UI, поэтому одновременный запуск Standalone + VSIX больше не блокирует обновления.
 - **Sticky keepalive & restart flow**: `CoreKeepAlive` (extension-level модуль поверх `CoreProcessManager`) запускается при активации VS Code и держит скрытое WebSocket-подключение к `ws://<host>:<port>/api/v1/stream`, поэтому ядро не зависит от состояния webview. При любом `child.on("exit")` или обрыве соединения keepalive инициирует `ensureStarted()` и переподключение, а orchestrator ждёт `shutdownGracePeriodMs` перед `idle` остановкой, что позволяет кратким разрывам (переключение UI, reconnection) проходить без перезапуска. Команда `codeaiHub.launchWebClient` лишь прогревает ядро перед запуском CEF, но не рестартит его каждый раз. Релиз v1.1.175 закрепил оптимизацию: `ensureStarted()` завершает работу сразу после `detectRunning()` при совпадении версии, поэтому `CoreKeepAlive` и launcher просто переподключаются к существующему процессу. Для Gemini модуль при необходимости инициирует `npm install -g @google/gemini-cli`, чтобы провайдер автоматически переходил в `active` без ручной подготовки.
 - **Shortcut Service**: модуль `src/extension-module/web-client/shortcut-manager.ts` при активации проверяет наличие ярлыка веб-клиента и при необходимости пересоздаёт его (Windows `.lnk` на Desktop, macOS `.app`-launcher на Desktop, Linux `.desktop` в `~/.local/share/applications`), пропуская выполнение в удалённых средах.
-- **Settings persistence**: `SettingsMessageHandler` сохраняет thinking-параметры Claude в `~/.codeai-hub/settings/claude.json`, чтобы core и провайдерные модули могли считывать актуальные лимиты.
+- **Settings persistence**: `SettingsMessageHandler` сохраняет общие и провайдерские настройки в `~/.codeai-hub/settings/settings.json` (Claude thinking, Codex default model/reasoning, auto-update). При наличии legacy `claude.json` выполняется миграция.
 - **Provider version service**: начиная с 1.1.326 `ProviderVersionService` читает версии CLI/SDK из глобального npm (`npm list -g` / `npm view`), а манифесты внутри VSIX используются только для установки провайдерных модулей. Настройки автообновления управляют запуском глобальных апдейтов при старте ядра.
 - **Gemini dual-row display (v1.1.320)**: Settings UI показывает две строки для Gemini — CLI и CLI Core — с одной кнопкой Update на строке Core. `GeminiVersionReader` читает версии обоих пакетов из глобального npm, а `updateGeminiAll()` обновляет оба пакета через `npm install -g`.
 
@@ -97,6 +97,11 @@ graph TD
 - **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`, `project-manager.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
+
+## Recent Changes (v1.1.327 - 2025-12-21)
+- **Codex default model & reasoning**: Settings UI позволяет выбрать дефолтную модель и reasoning-профиль; значения сохраняются в settings.json и применяются при создании новых сессий.
+- **Codex model registry**: Добавлен реестр рекомендованных и legacy моделей Codex, плюс справочник уровней reasoning.
+- **Codex runtime defaults**: Core читает настройки Codex из settings.json, передаёт default model/reasoning в SDK, а Codex SDK синхронизирует `model_reasoning_effort` в config.toml.
 
 ## Recent Changes (v1.1.326 - 2025-12-21)
 - **Provider Auto Update Service**: при старте ядра выполняется проверка свежих версий CLI/SDK для Claude/Codex/Gemini и, если включено автообновление, происходит глобальный апдейт через npm (настройки доступны в Settings UI).

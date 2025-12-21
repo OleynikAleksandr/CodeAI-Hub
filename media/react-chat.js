@@ -10533,7 +10533,9 @@
   var DEFAULT_THINKING_MAX_TOKENS = 4e3;
   var DEFAULT_AUTO_UPDATE_ENABLED = true;
   var DEFAULT_CORE_RESTART_ENABLED = true;
-  var CODEX_MODEL_IDS = new Set(CODEX_ALL_MODELS.map((model) => model.id));
+  var CODEX_MODEL_IDS = new Set(
+    CODEX_ALL_MODELS.map((model) => model.id)
+  );
   var CODEX_REASONING_LEVEL_SET = new Set(
     CODEX_REASONING_LEVELS.map((level) => level.name)
   );
