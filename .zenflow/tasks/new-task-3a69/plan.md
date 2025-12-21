@@ -22,7 +22,8 @@
 
 Обязательный коммит: `docs: add codex default model requirements`
 
-### [ ] Шаг: Техническая спецификация
+### [x] Шаг: Техническая спецификация
+<!-- chat-id: cdbe290e-cea7-4613-ba55-41a15c0ea80e -->
 
 Создать техническую спецификацию на основе `{@artifacts_path}/requirements.md`.
 
