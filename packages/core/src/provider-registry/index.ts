@@ -706,6 +706,7 @@ export class ProviderRegistry {
       codexSandboxMode,
       codexApprovalMode,
       codexDefaultModel,
+      codexDefaultReasoningEffort,
       codexSkipGitRepoCheck,
     } = this.options.config;
 
@@ -716,6 +717,7 @@ export class ProviderRegistry {
         defaultSandboxMode: codexSandboxMode,
         defaultApprovalMode: codexApprovalMode,
         defaultModel: codexDefaultModel,
+        defaultReasoningEffort: codexDefaultReasoningEffort,
         skipGitRepoCheck: codexSkipGitRepoCheck,
       },
       reporter: this.createReporter("codex"),

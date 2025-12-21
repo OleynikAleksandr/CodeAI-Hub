@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 
@@ -22,10 +23,13 @@ export type CoreConfig = {
     | "untrusted";
   readonly codexSkipGitRepoCheck: boolean;
   readonly codexDefaultModel?: string;
+  readonly codexDefaultReasoningEffort?: CodexReasoningEffort;
   readonly geminiWorkspacePath: string;
   readonly geminiDefaultModel?: string;
   readonly geminiCredentialsDirectory?: string;
 };
+
+type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
 
 const DEFAULT_PORT = 8080;
 const DEFAULT_GRACE_MS = 3_600_000;
@@ -36,10 +40,40 @@ const DEFAULT_SETTINGS_PATH = path.join(
   "settings",
   "claude.json"
 );
+const CODEX_SETTINGS_PATH = path.join(
+  homedir(),
+  ".codeai-hub",
+  "settings",
+  "settings.json"
+);
+const DEFAULT_CODEX_MODEL_ID = "gpt-5.2-codex";
+const DEFAULT_CODEX_REASONING_EFFORT: CodexReasoningEffort = "medium";
+const CODEX_MODEL_IDS = new Set([
+  "gpt-5.2-codex",
+  "gpt-5.1-codex-max",
+  "gpt-5.1-codex-mini",
+  "gpt-5.2",
+  "gpt-5.1",
+  "gpt-5.1-codex",
+  "gpt-5-codex",
+  "gpt-5-codex-mini",
+  "gpt-5",
+]);
+const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
+  "low",
+  "medium",
+  "high",
+  "xhigh",
+]);
 const NON_ALPHANUMERIC_REGEX = /[^a-zA-Z0-9]/g;
 const MULTIPLE_DASHES_REGEX = /-+/g;
 const TRAILING_DASH_REGEX = /-$/;
 const BOOLEAN_TRUTHY = new Set(["1", "true", "yes", "on"]);
+
+type CodexSettingsSnapshot = {
+  readonly defaultModel?: unknown;
+  readonly reasoningByModel?: unknown;
+};
 
 const toNumber = (value: string | undefined, fallback: number): number => {
   if (!value) {
@@ -66,6 +100,64 @@ const toBoolean = (value: string | undefined, fallback: boolean): boolean => {
     return fallback;
   }
   return BOOLEAN_TRUTHY.has(value.trim().toLowerCase());
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const normalizeCodexReasoningEffort = (
+  value: unknown
+): CodexReasoningEffort | undefined =>
+  typeof value === "string" &&
+  CODEX_REASONING_EFFORTS.has(value as CodexReasoningEffort)
+    ? (value as CodexReasoningEffort)
+    : undefined;
+
+const normalizeCodexModelFromSettings = (
+  value: unknown
+): string | undefined =>
+  typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : undefined;
+
+const normalizeOptionalString = (value: string | undefined): string | undefined =>
+  value?.trim() ? value.trim() : undefined;
+
+const loadCodexSettingsSnapshot = (): CodexSettingsSnapshot | null => {
+  try {
+    const raw = readFileSync(CODEX_SETTINGS_PATH, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    if (!isRecord(parsed)) {
+      return null;
+    }
+    const providers = isRecord(parsed.providers) ? parsed.providers : null;
+    const codex = providers && isRecord(providers.codex) ? providers.codex : null;
+    if (!codex) {
+      return null;
+    }
+    return {
+      defaultModel: codex.defaultModel,
+      reasoningByModel: codex.reasoningByModel,
+    };
+  } catch {
+    return null;
+  }
+};
+
+const resolveCodexReasoningFromSettings = (
+  value: unknown
+): Record<string, CodexReasoningEffort> => {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  const normalized: Record<string, CodexReasoningEffort> = {};
+  for (const [modelId, reasoning] of Object.entries(value)) {
+    const normalizedReasoning = normalizeCodexReasoningEffort(reasoning);
+    if (normalizedReasoning) {
+      normalized[modelId] = normalizedReasoning;
+    }
+  }
+
+  return normalized;
 };
 
 const toSandboxMode = (
@@ -129,7 +221,23 @@ export const loadConfig = (): CoreConfig => {
     process.env.CODEX_SKIP_GIT_REPO_CHECK,
     false
   );
-  const codexDefaultModel = process.env.CODEX_DEFAULT_MODEL ?? undefined;
+  const codexSettings = loadCodexSettingsSnapshot();
+  const codexSettingsDefaultModel = normalizeCodexModelFromSettings(
+    codexSettings?.defaultModel
+  );
+  const codexSettingsReasoningByModel = resolveCodexReasoningFromSettings(
+    codexSettings?.reasoningByModel
+  );
+  const codexDefaultModel =
+    normalizeOptionalString(process.env.CODEX_DEFAULT_MODEL) ??
+    codexSettingsDefaultModel ??
+    DEFAULT_CODEX_MODEL_ID;
+  const codexDefaultReasoningEffort =
+    normalizeCodexReasoningEffort(
+      process.env.CODEX_DEFAULT_REASONING_EFFORT
+    ) ??
+    codexSettingsReasoningByModel[codexDefaultModel] ??
+    DEFAULT_CODEX_REASONING_EFFORT;
   const geminiWorkspacePath =
     process.env.GEMINI_WORKSPACE_PATH ?? workspacePath;
   const geminiDefaultModel = process.env.GEMINI_DEFAULT_MODEL ?? undefined;
@@ -152,6 +260,7 @@ export const loadConfig = (): CoreConfig => {
     codexApprovalMode,
     codexSkipGitRepoCheck,
     codexDefaultModel,
+    codexDefaultReasoningEffort,
     geminiWorkspacePath,
     geminiDefaultModel,
     geminiCredentialsDirectory,

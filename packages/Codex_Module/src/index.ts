@@ -3,6 +3,7 @@ import type {
   CodexApprovalMode as CodexApprovalModeType,
   CodexInstallerPaths as CodexInstallerPathsType,
   CodexModuleOptions as CodexModuleOptionsType,
+  CodexReasoningEffort as CodexReasoningEffortType,
   CodexSandboxMode as CodexSandboxModeType,
   CodexThreadEvent as CodexThreadEventType,
   CodexThreadItem as CodexThreadItemType,
@@ -16,6 +17,7 @@ const CodexProviderAdapter = CodexProviderAdapterImpl;
 type CodexApprovalMode = CodexApprovalModeType;
 type CodexInstallerPaths = CodexInstallerPathsType;
 type CodexModuleOptions = CodexModuleOptionsType;
+type CodexReasoningEffort = CodexReasoningEffortType;
 type CodexSandboxMode = CodexSandboxModeType;
 type CodexThreadEvent = CodexThreadEventType;
 type CodexThreadItem = CodexThreadItemType;
@@ -29,6 +31,7 @@ export type {
   CodexApprovalMode,
   CodexInstallerPaths,
   CodexModuleOptions,
+  CodexReasoningEffort,
   CodexSandboxMode,
   CodexThreadEvent,
   CodexThreadItem,

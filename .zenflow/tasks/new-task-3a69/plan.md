@@ -83,7 +83,8 @@
 - Проверка: открыть Settings → Codex, выбрать модель, открыть отдельное окно reasoning, сохранить уровень и убедиться, что он отображается в карточке.
 - Обязательный коммит: `feat: add codex default model ui`
 
-### [ ] Step: Интеграция с core/Codex Module
+### [x] Step: Интеграция с core/Codex Module
+<!-- chat-id: bd0e66ac-b2cc-46a0-80e4-dae3fb1f4835 -->
 
 - Контракты: `{@artifacts_path}/spec.md` (defaultModel + reasoningByModel + ThreadOptions).
 - Задачи: прочитать значения в `packages/core/src/config/index.ts`, пробросить через `packages/core/src/provider-registry/index.ts`, обновить `packages/Codex_Module/src/types/index.ts` и `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` для передачи model/reasoning в ThreadOptions.
