@@ -2,18 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.325
-- **Runtime Installation Fixes**: Critical fixes for offline-first development workflow. Core runtime now installs correctly during `build-all.sh` instead of at first extension launch, significantly improving startup performance.
-- **file:// URL Support**: Runtime downloader now handles `file://` URLs for local Core/Launcher installation from `~/.codeai-hub/releases/` cache, eliminating network dependency during development.
-- **Archive Extraction**: Implemented temp-extract-rename pattern in Core installer to handle nested directory structures, matching Launcher installation behavior.
-- **Type Safety**: Fixed `install.json` format mismatch between build scripts and TypeScript `InstallMarker` type, ensuring proper version detection.
+## Current Release — v1.1.326
+- **Provider Auto-Update**: On core startup, checks and optionally обновляет глобальные CLI/SDK для Claude, Codex и Gemini.
+- **Global Gemini CLI/Core**: `@google/gemini-cli` и `@google/gemini-cli-core` теперь резолвятся только из глобальной npm-установки, без vendor-каталогов.
+- **Settings UI Controls**: В настройках появились тумблеры автообновления провайдеров и статусы ручного апдейта.
+- **Provider Model References**: Добавлены справочники по моделям и утилита `npm run fetch:models` для актуальных списков.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.325.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.325.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.325.tar.bz2`
-- Providers: `claude-module-1.1.325.tar.bz2`, `codex-module-1.1.325.tar.bz2`, `gemini-module-1.1.325.tar.bz2`
-- UI: `vscode-webview-1.1.325.tar.bz2`, `web-client-1.1.325.tar.bz2`, `project-manager-1.1.325.tar.bz2`
+- VSIX: `codeai-hub-1.1.326.vsix`
+- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.326.tar.bz2`
+- Core: `codeai-hub-core-darwin-arm64-1.1.326.tar.bz2`
+- Providers: `claude-module-1.1.326.tar.bz2`, `codex-module-1.1.326.tar.bz2`, `gemini-module-1.1.326.tar.bz2`
+- UI: `vscode-webview-1.1.326.tar.bz2`, `web-client-1.1.326.tar.bz2`, `project-manager-1.1.326.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

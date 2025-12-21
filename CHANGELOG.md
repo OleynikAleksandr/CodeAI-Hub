@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.326] - 2025-12-21
+### Added
+- **Provider Auto-Update Service**: At core startup, checks latest CLI/SDK versions for Claude, Codex, and Gemini, with per-provider toggles in Settings.
+- **Settings Auto-Update Controls**: New toggles and inline status for manual provider updates in Settings UI.
+- **Provider Model References**: Added curated model reference docs plus `npm run fetch:models` utility.
+
+### Changed
+- **Global Gemini CLI/Core**: Gemini CLI and CLI Core are now resolved and updated only from the global npm prefix (vendor bundles removed).
+- **Provider Version Resolution**: Unified npm-based version checks for Claude/Codex/Gemini in the Settings backend.
+
+### Fixed
+- **Auto-Update Init**: Provider auto-update service now initializes correctly without an extension path argument.
+
+### Build
+- VSIX → `codeai-hub-1.1.326.vsix` (416K)
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.326.tar.bz2` (230M)
+- Core → `codeai-hub-core-darwin-arm64-1.1.326.tar.bz2` (35M)
+- Providers → `claude-module-1.1.326.tar.bz2` (18K), `codex-module-1.1.326.tar.bz2` (18K), `gemini-module-1.1.326.tar.bz2` (14K)
+- UI → `vscode-webview-1.1.326.tar.bz2` (134K), `web-client-1.1.326.tar.bz2` (141K), `project-manager-1.1.326.tar.bz2` (49K)
+
 ## [1.1.325] - 2025-12-19
 ### Fixed
 - **file:// URL Protocol Support**: Runtime file downloader (`runtime-files.ts`) now handles `file://` URLs by converting them to filesystem paths and copying locally. This enables offline Core and Launcher installation from `~/.codeai-hub/releases/` cache during development, eliminating network dependency.
