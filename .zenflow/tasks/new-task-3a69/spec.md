@@ -25,7 +25,7 @@
 - Core/Codex Module:
   - `packages/core/src/config/index.ts` — чтение default model/reasoning (env или settings.json);
   - `packages/core/src/provider-registry/index.ts` — проброс в Codex workspace options;
-  - `packages/Codex_Module/src/types/index.ts` и `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` — передача reasoning в `ThreadOptions`.
+  - `packages/Codex_Module/src/types/index.ts` и `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` — передача reasoning в `ThreadOptions` и запись `model_reasoning_effort` в `config.toml` (через `CODEX_HOME`).
 
 ## Изменения в данных/API/интерфейсах
 - `settings.json`:
@@ -37,6 +37,8 @@
 - Core:
   - новый параметр `codexDefaultReasoningEffort` (рассчитан по `reasoningByModel[defaultModel]`);
   - `ThreadOptions` получают `model` и `modelReasoningEffort` (ключ уточнить по типам SDK).
+- Codex CLI config:
+  - `CODEX_HOME/config.toml` содержит строку `model_reasoning_effort = "<level>"` при включённом reasoning.
 - Если сохранённая модель отсутствует в реестре — показать warning и использовать `gpt-5.2-codex` + `medium`.
 
 ## Фазы поставки
@@ -47,4 +49,5 @@
 ## Стратегия верификации
 - Открыть Settings → Codex, выбрать модель и reasoning, сохранить и проверить восстановление после перезапуска UI.
 - Создать новую Codex-сессию и проверить, что `ThreadOptions` используют выбранные значения.
+- Убедиться, что `CODEX_HOME/config.toml` содержит `model_reasoning_effort` для выбранной модели.
 - Запустить `npx ultracite check`.
