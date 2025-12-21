@@ -75,7 +75,8 @@
 - Проверка: изменить модель в UI и проверить сохранение `defaultModel`/`reasoningByModel` в `~/.codeai-hub/settings/settings.json`, включая fallback для неизвестной модели.
 - Обязательный коммит: `feat: extend codex settings schema`
 
-### [ ] Step: UI карточка и окно reasoning
+### [x] Step: UI карточка и окно reasoning
+<!-- chat-id: 509c45b9-6d9b-4a3b-a844-4d1dc5024f23 -->
 
 - Контракты: UX требования из `{@artifacts_path}/requirements.md`.
 - Задачи: добавить компоненты `src/client/ui/src/components/settings/codex-default-model/`, подключить карточку и кнопку Configure reasoning в `src/client/ui/src/components/settings-view.tsx`, реализовать отдельное окно с уровнями reasoning и описаниями.
