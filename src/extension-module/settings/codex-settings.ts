@@ -24,7 +24,7 @@ export type CodexSettings = {
 };
 
 const CODEX_MODEL_IDS = new Set(CODEX_ALL_MODELS.map((model) => model.id));
-const CODEX_REASONING_LEVEL_SET = new Set(
+const CODEX_REASONING_LEVEL_SET = new Set<string>(
   CODEX_REASONING_LEVELS.map((level) => level.name)
 );
 
