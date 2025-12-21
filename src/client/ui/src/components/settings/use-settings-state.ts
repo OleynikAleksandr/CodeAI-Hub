@@ -2,10 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import vscode from "../../vscode";
 import {
   areSettingsEqual,
-  createDefaultSettings,
-  mapSettingsSnapshot,
   type CodexModelId,
   type CodexReasoningLevel,
+  createDefaultSettings,
+  mapSettingsSnapshot,
   type ProviderId,
   type ProviderVersions,
   type RawSettingsSnapshot,

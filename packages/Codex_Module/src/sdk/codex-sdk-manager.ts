@@ -18,8 +18,7 @@ const CODEX_HOME_ENV = "CODEX_HOME";
 const CODEX_CONFIG_FILE = "config.toml";
 const DEFAULT_CODEX_HOME = path.join(homedir(), ".codeai-hub", "codex");
 const MODEL_REASONING_KEY = "model_reasoning_effort";
-const MODEL_REASONING_REGEX =
-  /^model_reasoning_effort\s*=.*$/m;
+const MODEL_REASONING_REGEX = /^model_reasoning_effort\s*=.*$/m;
 
 type CodexManagerDependencies = {
   readonly installer: CodexInstaller;
@@ -118,8 +117,7 @@ export class CodexSDKManager {
       const nextConfig = this.updateReasoningConfig(existing, configLine);
       await fs.writeFile(configPath, nextConfig, "utf8");
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : String(error);
+      const message = error instanceof Error ? error.message : String(error);
       this.deps.reporter?.warn?.(
         `Failed to persist Codex reasoning configuration: ${message}`
       );
@@ -147,10 +145,7 @@ export class CodexSDKManager {
     }
   }
 
-  private updateReasoningConfig(
-    existing: string,
-    configLine: string
-  ): string {
+  private updateReasoningConfig(existing: string, configLine: string): string {
     if (!existing.trim()) {
       return `${configLine}\n`;
     }

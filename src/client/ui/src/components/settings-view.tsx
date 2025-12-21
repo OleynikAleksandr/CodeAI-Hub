@@ -1,11 +1,11 @@
 import React, { useState } from "react";
+import CodexDefaultModelCard from "./settings/codex-default-model/codex-default-model-card";
 import GeneralSettings from "./settings/general-settings";
 import ProviderVersions from "./settings/provider-versions";
 import SettingsFooter from "./settings/settings-footer";
 import SettingsHeader from "./settings/settings-header";
 import ThinkingSettings from "./settings/thinking-settings";
 import { useSettingsState } from "./settings/use-settings-state";
-import CodexDefaultModelCard from "./settings/codex-default-model/codex-default-model-card";
 
 type SettingsViewProps = {
   readonly onClose: () => void;

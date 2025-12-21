@@ -2,13 +2,13 @@ import type { CSSProperties, FC } from "react";
 import { memo, useMemo, useState } from "react";
 import {
   CODEX_RECOMMENDED_MODELS,
-  DEFAULT_CODEX_MODEL_ID,
-  DEFAULT_CODEX_REASONING_LEVEL,
   type CodexModelId,
   type CodexReasoningLevel,
+  DEFAULT_CODEX_MODEL_ID,
+  DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../../../types/codex-model-registry";
-import type { CodexReasoningByModel } from "../settings-state-model";
 import SettingsCard from "../settings-card";
+import type { CodexReasoningByModel } from "../settings-state-model";
 import CodexReasoningDialog from "./codex-reasoning-dialog";
 
 type CodexDefaultModelCardProps = {
@@ -129,8 +129,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
   onDefaultModelChange,
   onReasoningChange,
 }) => {
-  const [activeModelId, setActiveModelId] =
-    useState<CodexModelId | null>(null);
+  const [activeModelId, setActiveModelId] = useState<CodexModelId | null>(null);
 
   const recommendedModelIds = useMemo(
     () => new Set(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),

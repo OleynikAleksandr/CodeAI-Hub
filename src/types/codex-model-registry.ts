@@ -18,7 +18,7 @@ export type CodexRecommendedModelDescriptor = {
   readonly id: string;
   readonly displayName: string;
   readonly description: string;
-  readonly platforms: ReadonlyArray<CodexModelPlatform>;
+  readonly platforms: readonly CodexModelPlatform[];
   readonly status: CodexModelStatus;
   readonly tier: CodexModelTier;
 };
@@ -27,7 +27,8 @@ export const CODEX_RECOMMENDED_MODELS = [
   {
     id: "gpt-5.2-codex",
     displayName: "GPT-5.2-Codex",
-    description: "Most advanced agentic coding model for real-world engineering",
+    description:
+      "Most advanced agentic coding model for real-world engineering",
     platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
     status: "active",
     tier: "flagship",
@@ -57,7 +58,7 @@ export const CODEX_RECOMMENDED_MODELS = [
     status: "active",
     tier: "general",
   },
-] as const satisfies ReadonlyArray<CodexRecommendedModelDescriptor>;
+] as const satisfies readonly CodexRecommendedModelDescriptor[];
 
 export type CodexRecommendedModelId =
   (typeof CODEX_RECOMMENDED_MODELS)[number]["id"];
@@ -106,10 +107,9 @@ export const CODEX_LEGACY_MODELS = [
     status: "succeeded_by",
     successor: "gpt-5.1",
   },
-] as const satisfies ReadonlyArray<CodexLegacyModelDescriptor>;
+] as const satisfies readonly CodexLegacyModelDescriptor[];
 
-export type CodexLegacyModelId =
-  (typeof CODEX_LEGACY_MODELS)[number]["id"];
+export type CodexLegacyModelId = (typeof CODEX_LEGACY_MODELS)[number]["id"];
 
 export type CodexModelId = CodexRecommendedModelId | CodexLegacyModelId;
 
@@ -117,7 +117,7 @@ export type CodexModelDescriptor =
   | CodexRecommendedModelDescriptor
   | CodexLegacyModelDescriptor;
 
-export const CODEX_ALL_MODELS: ReadonlyArray<CodexModelDescriptor> = [
+export const CODEX_ALL_MODELS: readonly CodexModelDescriptor[] = [
   ...CODEX_RECOMMENDED_MODELS,
   ...CODEX_LEGACY_MODELS,
 ];
@@ -158,6 +158,6 @@ export const CODEX_REASONING_LEVELS = [
     useCase: "Very complex problems requiring deep analysis",
     default: false,
   },
-] as const satisfies ReadonlyArray<CodexReasoningLevelDescriptor>;
+] as const satisfies readonly CodexReasoningLevelDescriptor[];
 
 export const DEFAULT_CODEX_REASONING_LEVEL: CodexReasoningLevel = "medium";
