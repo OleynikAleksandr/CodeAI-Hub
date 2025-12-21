@@ -1,56 +1,68 @@
-# Full SDD workflow
+# Полный SDD workflow
 
-## Configuration
-- **Artifacts Path**: {@artifacts_path} → `.zenflow/tasks/{task_id}`
+## Конфигурация
+- **Путь артефактов**: {@artifacts_path} → `.zenflow/tasks/{task_id}`
 
 ---
 
-## Workflow Steps
+## Шаги workflow
 
-### [x] Step: Requirements
+### [x] Шаг: Требования
 <!-- chat-id: a70b3fbb-9665-4377-ab31-d432a9069cdf -->
 
-Create a Product Requirements Document (PRD) based on the feature description.
+Создать документ требований (PRD) на основе описания фичи.
 
-1. Review existing codebase to understand current architecture and patterns
-2. Analyze the feature definition and identify unclear aspects
-3. Ask the user for clarifications on aspects that significantly impact scope or user experience
-4. Make reasonable decisions for minor details based on context and conventions
-5. If user can't clarify, make a decision, state the assumption, and continue
+1. Просмотреть текущую архитектуру и паттерны
+2. Проанализировать фичу и выявить неясные аспекты
+3. Запросить уточнения, влияющие на UX/объём работ
+4. Принять решения по мелким деталям и зафиксировать допущения
+5. Если уточнений нет, зафиксировать допущения и продолжить
 
-Save the PRD to `{@artifacts_path}/requirements.md`.
+Сохранить PRD в `{@artifacts_path}/requirements.md`.
 
-### [ ] Step: Technical Specification
+Обязательный коммит: `docs: add codex default model requirements`
 
-Create a technical specification based on the PRD in `{@artifacts_path}/requirements.md`.
+### [ ] Шаг: Техническая спецификация
 
-1. Review existing codebase architecture and identify reusable components
-2. Define the implementation approach
+Создать техническую спецификацию на основе `{@artifacts_path}/requirements.md`.
 
-Save to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach referencing existing code patterns
-- Source code structure changes
-- Data model / API / interface changes
-- Delivery phases (incremental, testable milestones)
-- Verification approach using project lint/test commands
+1. Зафиксировать контекст (языки, зависимости)
+2. Описать подход к реализации с опорой на текущие паттерны
 
-### [ ] Step: Planning
+Сохранить в `{@artifacts_path}/spec.md` с разделами:
+- технический контекст
+- подход к реализации
+- изменения в структуре исходников
+- изменения в данных/API/интерфейсах
+- фазы поставки (инкрементальные, проверяемые)
+- стратегия верификации (lint/test)
 
-Create a detailed implementation plan based on `{@artifacts_path}/spec.md`.
+Обязательный коммит: `docs: add codex default model spec`
 
-1. Break down the work into concrete tasks
-2. Each task should reference relevant contracts and include verification steps
-3. Replace the Implementation step below with the planned tasks
+### [ ] Шаг: Планирование
 
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function) or too broad (entire feature).
+Создать детальный план реализации на основе `{@artifacts_path}/spec.md`.
 
-If the feature is trivial and doesn't warrant full specification, update this workflow to remove unnecessary steps and explain the reasoning to the user.
+1. Разбить работу на конкретные задачи
+2. Каждая задача должна ссылаться на контракты и включать шаги проверки
+3. Заменить шаг "Реализация" ниже на полученные задачи
 
-Save to `{@artifacts_path}/plan.md`.
+Правило: шаг должен быть цельным блоком работ (например, компонент/эндпоинт/тесты),
+избегать слишком мелких или слишком больших шагов.
 
-### [ ] Step: Implementation
+Если фича тривиальная и не требует полного SDD, удалить лишние шаги и
+объяснить причину в плане.
 
-This step should be replaced with detailed implementation tasks from the Planning step.
+Сохранить в `{@artifacts_path}/plan.md`.
 
-If Planning didn't replace this step, execute the tasks in `{@artifacts_path}/plan.md`, updating checkboxes as you go. Run planned tests/lint and record results in plan.md.
+Обязательный коммит: `docs: add codex default model plan`
+
+### [ ] Шаг: Реализация
+
+Этот шаг должен быть заменён на задачи из шага "Планирование".
+
+Если шаг "Планирование" не заменил блок реализации, выполнять задачи из
+`{@artifacts_path}/plan.md`, отмечая чекбоксы. Запустить запланированные
+проверки (lint/test) и зафиксировать результаты в плане.
+
+Обязательный коммит: `feat: add codex default model settings`
