@@ -58,8 +58,8 @@ export class ProviderAutoUpdateService {
   private readonly versionService: ProviderVersionService;
   private readonly logger = getExtensionLogger();
 
-  constructor(extensionPath: string) {
-    this.versionService = new ProviderVersionService(extensionPath);
+  constructor() {
+    this.versionService = new ProviderVersionService();
   }
 
   async run(settings: SettingsSnapshot): Promise<void> {
