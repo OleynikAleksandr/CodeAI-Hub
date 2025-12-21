@@ -91,7 +91,8 @@
 - Проверка: создать новую Codex-сессию и убедиться, что `ThreadOptions` используют выбранные значения.
 - Обязательный коммит: `feat: wire codex default model in core`
 
-### [ ] Step: Верификация и lint
+### [x] Step: Верификация и lint
+<!-- chat-id: 1ae32446-dcc1-4de4-8d6b-8cfb2502d69b -->
 
 - Контракты: стратегия верификации из `{@artifacts_path}/spec.md`.
 - Задачи: выполнить `npx ultracite check`.
