@@ -64,29 +64,34 @@
 - Контракты: `doc/Knowledge/codex-models-official.json`, `doc/Knowledge/Codex_Model_Selection.md`.
 - Задачи: создать общий модуль `src/types/codex-model-registry.ts` с типами моделей/уровней reasoning, списком рекомендованных моделей, описаниями уровней и дефолтами.
 - Проверка: убедиться, что модуль используется в UI/extension без дублирования списка.
+- Обязательный коммит: `feat: add codex model registry`
 
 ### [ ] Step: Расширение схемы настроек Codex
 
 - Контракты: `settings.json` и поля из `{@artifacts_path}/spec.md`.
 - Задачи: обновить `src/extension-module/settings/types.ts`, `src/extension-module/settings/settings-storage.ts`, `src/extension-module/settings/codex-settings.ts`, а также UI-состояние `src/client/ui/src/settings/settings-state-model.ts` и `src/client/ui/src/hooks/use-settings-state.ts`.
 - Проверка: изменить модель в UI и проверить сохранение `defaultModel`/`reasoningByModel` в `~/.codeai-hub/settings/settings.json`, включая fallback для неизвестной модели.
+- Обязательный коммит: `feat: extend codex settings schema`
 
 ### [ ] Step: UI карточка и окно reasoning
 
 - Контракты: UX требования из `{@artifacts_path}/requirements.md`.
 - Задачи: добавить компоненты `src/client/ui/src/components/settings/codex-default-model/`, подключить карточку и кнопку Configure reasoning в `src/client/ui/src/components/settings-view.tsx`, реализовать отдельное окно с уровнями reasoning и описаниями.
 - Проверка: открыть Settings → Codex, выбрать модель, открыть отдельное окно reasoning, сохранить уровень и убедиться, что он отображается в карточке.
+- Обязательный коммит: `feat: add codex default model ui`
 
 ### [ ] Step: Интеграция с core/Codex Module
 
 - Контракты: `{@artifacts_path}/spec.md` (defaultModel + reasoningByModel + ThreadOptions).
 - Задачи: прочитать значения в `packages/core/src/config/index.ts`, пробросить через `packages/core/src/provider-registry/index.ts`, обновить `packages/Codex_Module/src/types/index.ts` и `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` для передачи model/reasoning в ThreadOptions.
 - Проверка: создать новую Codex-сессию и убедиться, что `ThreadOptions` используют выбранные значения.
+- Обязательный коммит: `feat: wire codex default model in core`
 
 ### [ ] Step: Верификация и lint
 
 - Контракты: стратегия верификации из `{@artifacts_path}/spec.md`.
 - Задачи: выполнить `npx ultracite check`.
 - Проверка: lint проходит без ошибок.
+- Обязательный коммит: `chore: run ultracite check`
 
 Обязательный коммит: `feat: add codex default model settings`
