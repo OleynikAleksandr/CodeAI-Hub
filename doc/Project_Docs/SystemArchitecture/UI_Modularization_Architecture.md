@@ -1,8 +1,8 @@
 # UI Modularization Architecture
 
 **Версия:** 1.2.0
-**Дата обновления:** 2025-11-24
-**Статус:** Implemented (v1.1.313)
+**Дата обновления:** 2025-12-21
+**Статус:** Implemented (v1.1.326)
 **Реализация:** `src/extension-module/ui/`
 **Stack Doc:** `doc/Project_Docs/Stacks/UI_Modules.md`
 
@@ -33,28 +33,28 @@ UI модули устанавливаются в унифицированную
 ├── packages/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.313/
+│       │   ├── 1.1.326/
 │       │   │   ├── index.html
 │       │   │   ├── dist/
 │       │   │   ├── assets/
 │       │   │   └── manifest.json
-│       │   └── current -> 1.1.313
+│       │   └── current -> 1.1.326
 │       ├── web-client/
-│       │   ├── 1.1.313/
+│       │   ├── 1.1.326/
 │       │   │   ├── index.html
 │       │   │   ├── dist/
 │       │   │   └── manifest.json
-│       │   └── current -> 1.1.313
+│       │   └── current -> 1.1.326
 │       └── project-manager/
-│           ├── 1.1.313/
+│           ├── 1.1.326/
 │           │   ├── index.html
 │           │   ├── dist/
 │           │   └── manifest.json
-│           └── current -> 1.1.313
+│           └── current -> 1.1.326
 └── releases/
-    ├── vscode-webview-1.1.313.tar.bz2
-    ├── web-client-1.1.313.tar.bz2
-    └── project-manager-1.1.313.tar.bz2
+    ├── vscode-webview-1.1.326.tar.bz2
+    ├── web-client-1.1.326.tar.bz2
+    └── project-manager-1.1.326.tar.bz2
 ```
 
 ### 2.2 Компоненты
@@ -91,25 +91,22 @@ UI модули устанавливаются в унифицированную
   "baseUrl": "file:///Users/user/.codeai-hub/releases/",
   "bundles": {
     "vscode-webview": {
-      "version": "1.1.313",
-      "archive": "vscode-webview-1.1.313.tar.bz2",
-      "sha1": "...",
-      "sizeBytes": 123456,
-      "required": true
+      "version": "1.1.326",
+      "package": "vscode-webview-1.1.326.tar.bz2",
+      "size": 123456,
+      "sha1": "..."
     },
     "web-client": {
-      "version": "1.1.313",
-      "archive": "web-client-1.1.313.tar.bz2",
-      "sha1": "...",
-      "sizeBytes": 123456,
-      "required": true
+      "version": "1.1.326",
+      "package": "web-client-1.1.326.tar.bz2",
+      "size": 123456,
+      "sha1": "..."
     },
     "project-manager": {
-      "version": "1.1.313",
-      "archive": "project-manager-1.1.313.tar.bz2",
-      "sha1": "...",
-      "sizeBytes": 123456,
-      "required": false
+      "version": "1.1.326",
+      "package": "project-manager-1.1.326.tar.bz2",
+      "size": 123456,
+      "sha1": "..."
     }
   }
 }
@@ -132,7 +129,7 @@ UI модули устанавливаются в унифицированную
     6. Обновляет `assets/ui/manifest.json` в исходниках расширения.
 
 - `scripts/build-all.sh`:
-    - Вызывает `build-ui-bundle.sh` для всех бандлов перед упаковкой VSIX.
+    - Вызывает `build-ui-bundle.sh` для `vscode-webview`, `web-client` и `project-manager` перед упаковкой VSIX.
 
 ### 3.2 VSIX Packaging
 - `.vscodeignore` исключает тяжелые папки `media/` (кроме необходимых заглушек), так как они теперь поставляются отдельно.
@@ -158,4 +155,3 @@ UI модули устанавливаются в унифицированную
 - **Remote Updates**: Переключение `baseUrl` на GitHub Releases для публичных обновлений.
 - **Background Updates**: Проверка новых версий UI в фоне без перезапуска расширения (hot swap для Webview возможен при переоткрытии).
 - **Admin Panel**: Добавление третьего бандла для администрирования.
-

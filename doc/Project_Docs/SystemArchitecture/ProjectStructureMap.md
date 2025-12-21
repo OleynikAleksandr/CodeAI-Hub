@@ -11,6 +11,7 @@ graph TD
         Launcher["CEF Launcher"]
         Webview["VS Code Webview"]
         WebClient["Standalone Web Client"]
+        ProjectManager["Project Manager"]
     end
 
     subgraph "Core Service (Business Logic)"
@@ -38,6 +39,7 @@ graph TD
     Launcher -->|Spawns/Connects| Supervisor
     Webview -->|WebSocket| Bridge
     WebClient -->|WebSocket| Bridge
+    ProjectManager -->|WebSocket| Bridge
 
     %% Core Internal Flow
     Supervisor -->|Manages| Orchestrator
@@ -87,7 +89,7 @@ graph TD
 **UI Modules**
 Набор пакетов пользовательского интерфейса, отделенных от основной логики расширения. Включает React-приложение для Webview и статический клиент для Launcher.
 - **Документация**: [UI_Modules.md](../Stacks/UI_Modules.md)
-- **Компоненты**: `vscode-webview`, `web-client`.
+- **Компоненты**: `vscode-webview`, `web-client`, `project-manager`.
 
 **Launcher CEF**
 Автономный запускатор на базе Chromium Embedded Framework (CEF) для macOS. Позволяет использовать CodeAI Hub без запущенного VS Code.

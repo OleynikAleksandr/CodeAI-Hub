@@ -2,7 +2,7 @@
 
 **Status:** Active (CommonJS bridge)
 
-**Last Updated:** 2025-12-20
+**Last Updated:** 2025-12-21
 
 **Maintainer:** Codex / CodeAI Hub Core Team
 
@@ -29,10 +29,10 @@ Additional references to monitor:
 
 ## 3. Installation & Environment
 - **Managed install:** `packages/Gemini_Module/src/installer/gemini-installer.ts` устанавливает `@google/gemini-cli` и `@google/gemini-cli-core` только глобально (npm prefix, по умолчанию `~/.npm-global`). Vendor-каталог внутри `~/.codeai-hub/providers/gemini/<version>` больше не используется. Во время инициализации `cli-bridge` резолвит глобальный prefix (PATH + `module.globalPaths` + `.npm-global`) и подхватывает ESM-модули из `lib/node_modules/@google`. Во время установки `GeminiInstaller` отправляет `reporter.progress` (в том числе с флагом `firstRun`), чтобы UI показывал конкретный шаг.
-- **Runtime updates (v1.1.325):** при каждом старте ядра Auto Update Service проверяет свежие версии (по настройкам автообновления) и вызывает `GeminiInstaller.updateToLatest()` для глобального обновления CLI/Core. Settings UI по‑прежнему может запускать обновление вручную через `ProviderVersionService.updateGeminiAll()`.
+- **Runtime updates (v1.1.326):** при каждом старте ядра Auto Update Service проверяет свежие версии (по настройкам автообновления) и вызывает `GeminiInstaller.updateToLatest()` для глобального обновления CLI/Core. Settings UI по‑прежнему может запускать обновление вручную через `ProviderVersionService.updateGeminiAll()`.
 - **Runtime requirements:** Node.js ≥ 20.0.0 (используется bundled runtime ядра), macOS/Linux/Windows поддерживаются CLI.
 - **Version policy:** фиксированной версии нет — используются глобально установленные пакеты. Если registry недоступен или автообновление выключено, остаётся текущая версия из глобального npm.
-- **Settings telemetry (1.1.325+)**: ProviderVersionService читает установленные версии напрямую из глобального npm prefix (через `npm list -g` и `npm view`) и больше не зависит от vendor-кэша внутри `.codeai-hub`.
+- **Settings telemetry (1.1.326+)**: ProviderVersionService читает установленные версии напрямую из глобального npm prefix (через `npm list -g` и `npm view`) и больше не зависит от vendor-кэша внутри `.codeai-hub`.
 - **Credential store:** `~/.gemini/`
   - `credentials.json` — OAuth токены (refresh/access).
   - `config.json` — project metadata и выбранные расширения.
@@ -82,7 +82,7 @@ Important flags:
 
 ## 7. Implementation Status
 - ✅ **Installer** — обеспечивает глобальную установку `@google/gemini-cli` и `@google/gemini-cli-core` в npm prefix, валидирует доступность бинаря `gemini` и загружает `cli-bridge` напрямую из глобального `node_modules`. Эмитит `reporter.progress`, чтобы RemoteBridge показывал стадии «загрузка», «подготовка зависимостей», «готово».
-- ✅ **Runtime Updater (v1.1.325)** — `updateToLatest()` обновляет оба пакета через `npm install -g` и используется автообновлением при старте ядра или вручную из Settings UI.
+- ✅ **Runtime Updater (v1.1.326)** — `updateToLatest()` обновляет оба пакета через `npm install -g` и используется автообновлением при старте ядра или вручную из Settings UI.
 - ✅ **CLI Bridge (`src/runtime/cli-bridge.ts`)** — использует динамический `import()` через `Function("return import(specifier);")`, конвертирует пути в file URL и загружает ESM-модули CLI/Core без `require()` (устранён `ERR_REQUIRE_ESM`).
 - ✅ **Session Manager** — работает поверх официального CLI Core (`contentGenerator`, `toolScheduler` и т.д.), управляет потоками, журналирует события, очищает окружение от конфликтующих `GOOGLE_*` переменных.
 - ✅ **Provider Adapter** — интегрирован с `ProviderRegistry`, отправляет события, обрабатывает подписчиков, транслирует системные сообщения (инициализация, ошибки аутентификации).
@@ -128,6 +128,7 @@ Important flags:
 ---
 
 ## 12. Change Log
+- **2025-12-21:** Released v1.1.326 — подтверждена глобальная установка CLI/Core, автообновление при старте и корректная инициализация сервиса обновлений.
 - **2025-12-20:** Released v1.1.325 — switched Gemini CLI/Core to global-only installs (no vendor cache) and added startup auto-update checks driven by provider auto-update settings. Settings UI now reads versions from global npm.
 - **2025-11-29:** Released v1.1.320 — implemented `updateToLatest()` method for runtime CLI/Core updates. Settings UI now displays both Gemini CLI and CLI Core versions with a single Update button. CLI is installed globally to `~/.npm-global/` for user convenience.
 - **2025-10-28:** Released v0.1.3 — session manager now restarts CLI transparently, hydrates the real session id from logs/chat files, and keeps subscribers alive across restarts; core manifest обновлён на `codeai-hub-core-darwin-arm64-0.2.10`.
