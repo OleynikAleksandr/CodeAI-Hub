@@ -59,7 +59,8 @@
 
 Обязательный коммит: `docs: add codex default model plan`
 
-### [ ] Step: Реестр моделей Codex и уровней reasoning
+### [x] Step: Реестр моделей Codex и уровней reasoning
+<!-- chat-id: f75d307d-b01f-46a8-a4ba-7539c4894ccf -->
 
 - Контракты: `doc/Knowledge/codex-models-official.json`, `doc/Knowledge/Codex_Model_Selection.md`.
 - Задачи: создать общий модуль `src/types/codex-model-registry.ts` с типами моделей/уровней reasoning, списком рекомендованных моделей, описаниями уровней и дефолтами.
