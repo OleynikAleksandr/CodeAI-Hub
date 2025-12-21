@@ -5,6 +5,7 @@ import SettingsFooter from "./settings/settings-footer";
 import SettingsHeader from "./settings/settings-header";
 import ThinkingSettings from "./settings/thinking-settings";
 import { useSettingsState } from "./settings/use-settings-state";
+import CodexDefaultModelCard from "./settings/codex-default-model/codex-default-model-card";
 
 type SettingsViewProps = {
   readonly onClose: () => void;
@@ -73,6 +74,8 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
     resetting,
     versions,
     handleThinkingSettingsChange,
+    handleCodexDefaultModelChange,
+    handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
     handleSave,
     handleReset,
@@ -129,6 +132,12 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
           if (activeTab === "codex") {
             return (
               <div style={stackStyles}>
+                <CodexDefaultModelCard
+                  defaultModel={settings.providers.codex.defaultModel}
+                  onDefaultModelChange={handleCodexDefaultModelChange}
+                  onReasoningChange={handleCodexReasoningChange}
+                  reasoningByModel={settings.providers.codex.reasoningByModel}
+                />
                 <ProviderVersions
                   autoUpdateEnabled={
                     settings.providers.codex.autoUpdate.enabled
