@@ -9,6 +9,7 @@ import type { CodexMessageProcessor } from "../messaging/message-processor";
 import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type {
+  CodexReasoningEffort,
   CodexThreadOptions,
   CodexWorkspaceOptions,
   ModuleReporter,
@@ -16,9 +17,26 @@ import type {
 
 const CODEX_HOME_ENV = "CODEX_HOME";
 const CODEX_CONFIG_FILE = "config.toml";
+const CODEX_SETTINGS_FILE = path.join(
+  homedir(),
+  ".codeai-hub",
+  "settings",
+  "settings.json"
+);
 const DEFAULT_CODEX_HOME = path.join(homedir(), ".codeai-hub", "codex");
 const MODEL_REASONING_KEY = "model_reasoning_effort";
 const MODEL_REASONING_REGEX = /^model_reasoning_effort\s*=.*$/m;
+const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
+  "low",
+  "medium",
+  "high",
+  "xhigh",
+]);
+
+type CodexSettingsSnapshot = {
+  readonly defaultModel?: string;
+  readonly reasoningByModel: Record<string, CodexReasoningEffort>;
+};
 
 type CodexManagerDependencies = {
   readonly installer: CodexInstaller;
@@ -29,20 +47,55 @@ type CodexManagerDependencies = {
   readonly reporter?: ModuleReporter;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const normalizeOptionalString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim() ? value.trim() : undefined;
+
+const normalizeCodexReasoningEffort = (
+  value: unknown
+): CodexReasoningEffort | undefined =>
+  typeof value === "string" &&
+  CODEX_REASONING_EFFORTS.has(value as CodexReasoningEffort)
+    ? (value as CodexReasoningEffort)
+    : undefined;
+
+const normalizeCodexReasoningByModel = (
+  value: unknown
+): Record<string, CodexReasoningEffort> => {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  const normalized: Record<string, CodexReasoningEffort> = {};
+  for (const [modelId, reasoning] of Object.entries(value)) {
+    const normalizedReasoning = normalizeCodexReasoningEffort(reasoning);
+    if (normalizedReasoning) {
+      normalized[modelId] = normalizedReasoning;
+    }
+  }
+
+  return normalized;
+};
+
 export class CodexSDKManager {
   private codexInstance: CodexCtor | null = null;
   private initialized = false;
   private readonly deps: CodexManagerDependencies;
+  private workspaceDefaults: CodexWorkspaceOptions;
 
   constructor(deps: CodexManagerDependencies) {
     this.deps = deps;
+    this.workspaceDefaults = { ...deps.workspace };
   }
 
   async initialize(): Promise<void> {
+    await this.refreshWorkspaceDefaults();
+    await this.ensureReasoningConfig();
     if (this.initialized) {
       return;
     }
-    await this.ensureReasoningConfig();
     await this.deps.installer.ensureInstalled();
     await this.deps.authManager.ensureAuthenticated();
     this.applyAuthEnvironment();
@@ -93,16 +146,16 @@ export class CodexSDKManager {
 
   private resolveThreadOptions(): CodexThreadOptions {
     return {
-      model: this.deps.workspace.defaultModel,
-      modelReasoningEffort: this.deps.workspace.defaultReasoningEffort,
-      sandboxMode: this.deps.workspace.defaultSandboxMode,
-      workingDirectory: this.deps.workspace.workspacePath,
-      skipGitRepoCheck: this.deps.workspace.skipGitRepoCheck,
+      model: this.workspaceDefaults.defaultModel,
+      modelReasoningEffort: this.workspaceDefaults.defaultReasoningEffort,
+      sandboxMode: this.workspaceDefaults.defaultSandboxMode,
+      workingDirectory: this.workspaceDefaults.workspacePath,
+      skipGitRepoCheck: this.workspaceDefaults.skipGitRepoCheck,
     };
   }
 
   private async ensureReasoningConfig(): Promise<void> {
-    const reasoningEffort = this.deps.workspace.defaultReasoningEffort;
+    const reasoningEffort = this.workspaceDefaults.defaultReasoningEffort;
     if (!reasoningEffort) {
       return;
     }
@@ -156,6 +209,68 @@ export class CodexSDKManager {
     }
 
     return `${existing.trimEnd()}\n${configLine}\n`;
+  }
+
+  private async refreshWorkspaceDefaults(): Promise<void> {
+    const settings = await this.loadCodexSettingsSnapshot();
+    const envDefaultModel = normalizeOptionalString(
+      process.env.CODEX_DEFAULT_MODEL
+    );
+    const envReasoningEffort = normalizeCodexReasoningEffort(
+      process.env.CODEX_DEFAULT_REASONING_EFFORT
+    );
+    const settingsDefaultModel = settings?.defaultModel;
+    const resolvedDefaultModel =
+      envDefaultModel ??
+      settingsDefaultModel ??
+      this.deps.workspace.defaultModel;
+    const settingsReasoningEffort = resolvedDefaultModel
+      ? settings?.reasoningByModel[resolvedDefaultModel]
+      : undefined;
+    const resolvedReasoningEffort =
+      envReasoningEffort ??
+      settingsReasoningEffort ??
+      this.deps.workspace.defaultReasoningEffort;
+
+    this.workspaceDefaults = {
+      ...this.deps.workspace,
+      defaultModel: resolvedDefaultModel,
+      defaultReasoningEffort: resolvedReasoningEffort,
+    };
+  }
+
+  private async loadCodexSettingsSnapshot(): Promise<CodexSettingsSnapshot | null> {
+    try {
+      const raw = await fs.readFile(CODEX_SETTINGS_FILE, "utf8");
+      const parsed = JSON.parse(raw) as unknown;
+      return this.parseCodexSettingsSnapshot(parsed);
+    } catch (error) {
+      const candidate = error as NodeJS.ErrnoException;
+      if (candidate.code === "ENOENT") {
+        return null;
+      }
+      return null;
+    }
+  }
+
+  private parseCodexSettingsSnapshot(
+    value: unknown
+  ): CodexSettingsSnapshot | null {
+    if (!isRecord(value)) {
+      return null;
+    }
+
+    const providers = isRecord(value.providers) ? value.providers : null;
+    const codex =
+      providers && isRecord(providers.codex) ? providers.codex : null;
+    if (!codex) {
+      return null;
+    }
+
+    return {
+      defaultModel: normalizeOptionalString(codex.defaultModel),
+      reasoningByModel: normalizeCodexReasoningByModel(codex.reasoningByModel),
+    };
   }
 
   private applyAuthEnvironment(): void {
