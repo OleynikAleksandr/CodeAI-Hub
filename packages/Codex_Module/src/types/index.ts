@@ -13,11 +13,14 @@ export type CodexInstallerPaths = {
   readonly windows: string;
 };
 
+export type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
+
 export type CodexWorkspaceOptions = {
   readonly workspacePath: string;
   readonly defaultSandboxMode?: SandboxMode;
   readonly defaultApprovalMode?: ApprovalMode;
   readonly defaultModel?: string;
+  readonly defaultReasoningEffort?: CodexReasoningEffort;
   readonly skipGitRepoCheck?: boolean;
 };
 
@@ -37,7 +40,9 @@ export type CodexModuleOptions = {
 
 export type CodexThreadEvent = ThreadEvent;
 export type CodexThreadItem = ThreadItem;
-export type CodexThreadOptions = ThreadOptions;
+export type CodexThreadOptions = ThreadOptions & {
+  readonly modelReasoningEffort?: CodexReasoningEffort;
+};
 export type CodexTurnOptions = TurnOptions;
 export type CodexSandboxMode = SandboxMode;
 export type CodexApprovalMode = ApprovalMode;
