@@ -4,6 +4,8 @@ import {
   areSettingsEqual,
   createDefaultSettings,
   mapSettingsSnapshot,
+  type CodexModelId,
+  type CodexReasoningLevel,
   type ProviderId,
   type ProviderVersions,
   type RawSettingsSnapshot,
@@ -69,6 +71,11 @@ export type UseSettingsStateResult = {
   readonly handleThinkingSettingsChange: (
     enabled: boolean,
     maxTokens: number
+  ) => void;
+  readonly handleCodexDefaultModelChange: (modelId: CodexModelId) => void;
+  readonly handleCodexReasoningChange: (
+    modelId: CodexModelId,
+    reasoning: CodexReasoningLevel
   ) => void;
   readonly handleProviderAutoUpdateChange: (
     provider: ProviderId,
@@ -160,6 +167,43 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
+  const handleCodexDefaultModelChange = useCallback(
+    (modelId: CodexModelId) => {
+      const nextSettings: Settings = {
+        ...settings,
+        providers: {
+          ...settings.providers,
+          codex: {
+            ...settings.providers.codex,
+            defaultModel: modelId,
+          },
+        },
+      };
+      updateSettings(nextSettings);
+    },
+    [settings, updateSettings]
+  );
+
+  const handleCodexReasoningChange = useCallback(
+    (modelId: CodexModelId, reasoning: CodexReasoningLevel) => {
+      const nextSettings: Settings = {
+        ...settings,
+        providers: {
+          ...settings.providers,
+          codex: {
+            ...settings.providers.codex,
+            reasoningByModel: {
+              ...settings.providers.codex.reasoningByModel,
+              [modelId]: reasoning,
+            },
+          },
+        },
+      };
+      updateSettings(nextSettings);
+    },
+    [settings, updateSettings]
+  );
+
   const handleProviderAutoUpdateChange = useCallback(
     (provider: ProviderId, enabled: boolean) => {
       const nextSettings: Settings = {
@@ -219,6 +263,8 @@ export const useSettingsState = (): UseSettingsStateResult => {
     resetting,
     versions,
     handleThinkingSettingsChange,
+    handleCodexDefaultModelChange,
+    handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
     handleSave,
     handleReset,

@@ -1,3 +1,14 @@
+import {
+  CODEX_ALL_MODELS,
+  CODEX_REASONING_LEVELS,
+  DEFAULT_CODEX_MODEL_ID,
+  DEFAULT_CODEX_REASONING_LEVEL,
+  type CodexModelId,
+  type CodexReasoningLevel,
+} from "../../../../../types/codex-model-registry";
+
+export type { CodexModelId, CodexReasoningLevel };
+
 export type ProviderId = "claude" | "codex" | "gemini";
 
 type ThinkingSettings = {
@@ -22,8 +33,14 @@ type ClaudeSettings = {
   readonly autoUpdate: AutoUpdateSettings;
 };
 
+export type CodexReasoningByModel = Readonly<
+  Record<string, CodexReasoningLevel>
+>;
+
 type CodexSettings = {
   readonly autoUpdate: AutoUpdateSettings;
+  readonly defaultModel: CodexModelId;
+  readonly reasoningByModel: CodexReasoningByModel;
 };
 
 type GeminiSettings = {
@@ -79,6 +96,8 @@ type RawClaudeSettings = {
 
 type RawCodexSettings = {
   readonly autoUpdate?: RawAutoUpdateSettings;
+  readonly defaultModel?: unknown;
+  readonly reasoningByModel?: Record<string, unknown>;
 };
 
 type RawGeminiSettings = {
@@ -105,6 +124,19 @@ export type RawSettingsSnapshot = {
 const DEFAULT_THINKING_MAX_TOKENS = 4000;
 const DEFAULT_AUTO_UPDATE_ENABLED = true;
 const DEFAULT_CORE_RESTART_ENABLED = true;
+const CODEX_MODEL_IDS = new Set(CODEX_ALL_MODELS.map((model) => model.id));
+const CODEX_REASONING_LEVEL_SET = new Set(
+  CODEX_REASONING_LEVELS.map((level) => level.name)
+);
+const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_ALL_MODELS.reduce<
+  Record<string, CodexReasoningLevel>
+>((accumulator, model) => {
+  accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
+  return accumulator;
+}, {});
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
 
 const mapThinkingSettings = (
   value: RawThinkingSettings | undefined
@@ -145,10 +177,40 @@ const mapClaudeSettings = (
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
 });
 
+const resolveCodexModelId = (value: unknown): CodexModelId =>
+  typeof value === "string" && CODEX_MODEL_IDS.has(value)
+    ? (value as CodexModelId)
+    : DEFAULT_CODEX_MODEL_ID;
+
+const mapCodexReasoningByModel = (
+  value: unknown
+): CodexReasoningByModel => {
+  const nextReasoningByModel = {
+    ...DEFAULT_CODEX_REASONING_BY_MODEL,
+  };
+
+  if (!isRecord(value)) {
+    return nextReasoningByModel;
+  }
+
+  for (const [modelId, reasoning] of Object.entries(value)) {
+    if (
+      typeof reasoning === "string" &&
+      CODEX_REASONING_LEVEL_SET.has(reasoning)
+    ) {
+      nextReasoningByModel[modelId] = reasoning as CodexReasoningLevel;
+    }
+  }
+
+  return nextReasoningByModel;
+};
+
 const mapCodexSettings = (
   value: RawCodexSettings | undefined
 ): CodexSettings => ({
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
+  defaultModel: resolveCodexModelId(value?.defaultModel),
+  reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
 });
 
 const mapGeminiSettings = (
@@ -182,6 +244,20 @@ const areThinkingSettingsEqual = (
 ): boolean =>
   left.enabled === right.enabled && left.maxTokens === right.maxTokens;
 
+const areReasoningByModelEqual = (
+  left: CodexReasoningByModel,
+  right: CodexReasoningByModel
+): boolean => {
+  const leftEntries = Object.entries(left);
+  if (leftEntries.length !== Object.keys(right).length) {
+    return false;
+  }
+
+  return leftEntries.every(
+    ([modelId, reasoning]) => right[modelId] === reasoning
+  );
+};
+
 const areGeneralSettingsEqual = (
   left: GeneralSettings,
   right: GeneralSettings
@@ -198,7 +274,10 @@ const areClaudeSettingsEqual = (
 const areCodexSettingsEqual = (
   left: CodexSettings,
   right: CodexSettings
-): boolean => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate);
+): boolean =>
+  areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
+  left.defaultModel === right.defaultModel &&
+  areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel);
 
 const areGeminiSettingsEqual = (
   left: GeminiSettings,

@@ -67,7 +67,8 @@
 - Проверка: убедиться, что модуль используется в UI/extension без дублирования списка.
 - Обязательный коммит: `feat: add codex model registry`
 
-### [ ] Step: Расширение схемы настроек Codex
+### [x] Step: Расширение схемы настроек Codex
+<!-- chat-id: 1cf4db57-2314-4442-b948-03ad34704518 -->
 
 - Контракты: `settings.json` и поля из `{@artifacts_path}/spec.md`.
 - Задачи: обновить `src/extension-module/settings/types.ts`, `src/extension-module/settings/settings-storage.ts`, `src/extension-module/settings/codex-settings.ts`, а также UI-состояние `src/client/ui/src/settings/settings-state-model.ts` и `src/client/ui/src/hooks/use-settings-state.ts`.
