@@ -5,20 +5,20 @@
     "vscode-webview": {
       "version": "1.1.327",
       "package": "vscode-webview-1.1.327.tar.bz2",
-      "size": 140361,
-      "sha1": "adb84402b0c565600db0e2654c721becfce1438a"
+      "size": 140316,
+      "sha1": "4402ee6c72e342cfb48ebe8738fd4f94cda302e6"
     },
     "web-client": {
       "version": "1.1.327",
       "package": "web-client-1.1.327.tar.bz2",
-      "size": 147733,
-      "sha1": "fdb3be5390ef9943e88758d011699af8426feca0"
+      "size": 147787,
+      "sha1": "5fefbe1fb6d4bea4192d50c2b9091f042747e120"
     },
     "project-manager": {
       "version": "1.1.327",
       "package": "project-manager-1.1.327.tar.bz2",
-      "size": 49764,
-      "sha1": "df6bb66acfe4064224346fc54b2de041427295ae"
+      "size": 49776,
+      "sha1": "9349b50622956015f9d657144fb6c118a24270da"
     }
   }
 }
