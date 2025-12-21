@@ -113,13 +113,12 @@ const normalizeCodexReasoningEffort = (
     ? (value as CodexReasoningEffort)
     : undefined;
 
-const normalizeCodexModelFromSettings = (
-  value: unknown
-): string | undefined =>
+const normalizeCodexModelFromSettings = (value: unknown): string | undefined =>
   typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : undefined;
 
-const normalizeOptionalString = (value: string | undefined): string | undefined =>
-  value?.trim() ? value.trim() : undefined;
+const normalizeOptionalString = (
+  value: string | undefined
+): string | undefined => (value?.trim() ? value.trim() : undefined);
 
 const loadCodexSettingsSnapshot = (): CodexSettingsSnapshot | null => {
   try {
@@ -129,7 +128,8 @@ const loadCodexSettingsSnapshot = (): CodexSettingsSnapshot | null => {
       return null;
     }
     const providers = isRecord(parsed.providers) ? parsed.providers : null;
-    const codex = providers && isRecord(providers.codex) ? providers.codex : null;
+    const codex =
+      providers && isRecord(providers.codex) ? providers.codex : null;
     if (!codex) {
       return null;
     }
@@ -233,9 +233,7 @@ export const loadConfig = (): CoreConfig => {
     codexSettingsDefaultModel ??
     DEFAULT_CODEX_MODEL_ID;
   const codexDefaultReasoningEffort =
-    normalizeCodexReasoningEffort(
-      process.env.CODEX_DEFAULT_REASONING_EFFORT
-    ) ??
+    normalizeCodexReasoningEffort(process.env.CODEX_DEFAULT_REASONING_EFFORT) ??
     codexSettingsReasoningByModel[codexDefaultModel] ??
     DEFAULT_CODEX_REASONING_EFFORT;
   const geminiWorkspacePath =

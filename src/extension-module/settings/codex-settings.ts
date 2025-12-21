@@ -1,16 +1,16 @@
 import {
+  CODEX_ALL_MODELS,
+  CODEX_REASONING_LEVELS,
+  type CodexModelId,
+  type CodexReasoningLevel,
+  DEFAULT_CODEX_MODEL_ID,
+  DEFAULT_CODEX_REASONING_LEVEL,
+} from "../../types/codex-model-registry";
+import {
   type AutoUpdateSettings,
   DEFAULT_AUTO_UPDATE_SETTINGS,
   normalizeAutoUpdateSettings,
 } from "./auto-update-settings";
-import {
-  CODEX_ALL_MODELS,
-  CODEX_REASONING_LEVELS,
-  DEFAULT_CODEX_MODEL_ID,
-  DEFAULT_CODEX_REASONING_LEVEL,
-  type CodexModelId,
-  type CodexReasoningLevel,
-} from "../../types/codex-model-registry";
 import { isRecord } from "./settings-utils";
 
 export type CodexReasoningByModel = Readonly<
@@ -48,9 +48,8 @@ export const DEFAULT_CODEX_SETTINGS: CodexSettings = {
 const isCodexModelId = (value: string): value is CodexModelId =>
   CODEX_MODEL_IDS.has(value);
 
-const isCodexReasoningLevel = (
-  value: string
-): value is CodexReasoningLevel => CODEX_REASONING_LEVEL_SET.has(value);
+const isCodexReasoningLevel = (value: string): value is CodexReasoningLevel =>
+  CODEX_REASONING_LEVEL_SET.has(value);
 
 const normalizeCodexDefaultModel = (value: unknown): CodexModelId =>
   typeof value === "string" && isCodexModelId(value)

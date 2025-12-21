@@ -1,13 +1,18 @@
+import type {
+  CodexModelId,
+  CodexReasoningLevel,
+} from "../../../../../types/codex-model-registry";
 import {
   CODEX_ALL_MODELS,
   CODEX_REASONING_LEVELS,
   DEFAULT_CODEX_MODEL_ID,
   DEFAULT_CODEX_REASONING_LEVEL,
-  type CodexModelId,
-  type CodexReasoningLevel,
 } from "../../../../../types/codex-model-registry";
 
-export type { CodexModelId, CodexReasoningLevel };
+export type {
+  CodexModelId,
+  CodexReasoningLevel,
+} from "../../../../../types/codex-model-registry";
 
 export type ProviderId = "claude" | "codex" | "gemini";
 
@@ -182,9 +187,7 @@ const resolveCodexModelId = (value: unknown): CodexModelId =>
     ? (value as CodexModelId)
     : DEFAULT_CODEX_MODEL_ID;
 
-const mapCodexReasoningByModel = (
-  value: unknown
-): CodexReasoningByModel => {
+const mapCodexReasoningByModel = (value: unknown): CodexReasoningByModel => {
   const nextReasoningByModel = {
     ...DEFAULT_CODEX_REASONING_BY_MODEL,
   };
