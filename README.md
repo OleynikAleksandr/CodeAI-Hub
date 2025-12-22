@@ -3,17 +3,16 @@
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
 ## Current Release — v1.1.331
-- **Codex Default Model & Reasoning**: В настройках Codex можно выбрать дефолтную модель и уровень reasoning для каждой модели (применяется к новым сессиям).
-- **Codex Settings Snapshot**: Значения сохраняются в `~/.codeai-hub/settings/settings.json` и подхватываются ядром при старте.
-- **Codex Reasoning Overrides**: Reasoning применяется через CLI `--config model_reasoning_effort=...` во время запуска, без правки `~/.codex/config.toml`.
-- **Provider Auto-Update**: On core startup, checks and optionally обновляет глобальные CLI/SDK для Claude, Codex и Gemini.
+- **Codex Reasoning Overrides**: Заданные в настройках значения `reasoningByModel` прикладываются при старте каждой сессии через CLI `--config model_reasoning_effort=...`, без редактирования `~/.codex/config.toml`.
+- **Codex Settings UI polish**: У каждой модели свой быстрый переключатель reasoning, а у невыбранных карточек больше нет лишних обводок — только состояния `selected`/`unselected`.
+- **Инфраструктура релиза**: Provider Auto-Update по-прежнему проверяет и предлагает обновить глобальные CLI для Claude, Codex и Gemini, а артефакты лежат в `doc/tmp/releases/`.
 
 - **Artifact bundle**
-- VSIX: `codeai-hub-1.1.331.vsix`
-- Launcher: `CodeAIHubLauncher-macos-arm64-1.1.331.tar.bz2`
-- Core: `codeai-hub-core-darwin-arm64-1.1.331.tar.bz2`
-- Providers: `claude-module-1.1.331.tar.bz2`, `codex-module-1.1.331.tar.bz2`, `gemini-module-1.1.331.tar.bz2`
-- UI: `vscode-webview-1.1.331.tar.bz2`, `web-client-1.1.331.tar.bz2`, `project-manager-1.1.331.tar.bz2`
+  - VSIX: `codeai-hub-1.1.331.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.331.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.331.tar.bz2`
+  - Providers: `claude-module-1.1.331.tar.bz2`, `codex-module-1.1.331.tar.bz2`, `gemini-module-1.1.331.tar.bz2`
+  - UI: `vscode-webview-1.1.331.tar.bz2`, `web-client-1.1.331.tar.bz2`, `project-manager-1.1.331.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

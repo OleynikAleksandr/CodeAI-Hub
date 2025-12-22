@@ -3,8 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.1.331] - 2025-12-22
-### Changed
-- **Codex Reasoning Overrides**: Reasoning effort is applied via CLI `--config model_reasoning_effort=...` using saved per-model settings, without editing `~/.codex/config.toml`.
+### Added
+- **Codex Reasoning Overrides**: Saved per-model `reasoningByModel` values are applied through CLI `--config model_reasoning_effort=...` while launching sessions, so CodeAI Hub no longer writes `~/.codex/config.toml`.
 
 ### Fixed
 - **Codex Settings Focus Rings**: Removed focus/outline rings from non-selected model cards so only selected/unselected states remain.
