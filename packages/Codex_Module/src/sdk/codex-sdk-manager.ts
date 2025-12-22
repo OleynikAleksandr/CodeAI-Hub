@@ -14,18 +14,17 @@ import type {
   CodexWorkspaceOptions,
   ModuleReporter,
 } from "../types";
+import {
+  patchCodexExecRun,
+  patchCodexThreadPrototype,
+} from "./codex-sdk-patches";
 
-const CODEX_HOME_ENV = "CODEX_HOME";
-const CODEX_CONFIG_FILE = "config.toml";
 const CODEX_SETTINGS_FILE = path.join(
   homedir(),
   ".codeai-hub",
   "settings",
   "settings.json"
 );
-const DEFAULT_CODEX_HOME = path.join(homedir(), ".codeai-hub", "codex");
-const MODEL_REASONING_KEY = "model_reasoning_effort";
-const MODEL_REASONING_REGEX = /^model_reasoning_effort\s*=.*$/m;
 const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "low",
   "medium",
@@ -92,7 +91,6 @@ export class CodexSDKManager {
 
   async initialize(): Promise<void> {
     await this.refreshWorkspaceDefaults();
-    await this.ensureReasoningConfig();
     if (this.initialized) {
       return;
     }
@@ -101,11 +99,16 @@ export class CodexSDKManager {
     this.applyAuthEnvironment();
     const loaded = await this.deps.installer.loadModule<{
       readonly Codex: typeof CodexCtor;
+      readonly Thread: typeof import("@openai/codex-sdk").Thread;
     }>();
     if (!loaded?.Codex) {
       throw new Error("Codex SDK module missing Codex export");
     }
+    patchCodexThreadPrototype(loaded.Thread);
     this.codexInstance = new loaded.Codex();
+    patchCodexExecRun(
+      (this.codexInstance as unknown as { exec?: unknown }).exec
+    );
     this.initialized = true;
   }
 
@@ -152,63 +155,6 @@ export class CodexSDKManager {
       workingDirectory: this.workspaceDefaults.workspacePath,
       skipGitRepoCheck: this.workspaceDefaults.skipGitRepoCheck,
     };
-  }
-
-  private async ensureReasoningConfig(): Promise<void> {
-    const reasoningEffort = this.workspaceDefaults.defaultReasoningEffort;
-    if (!reasoningEffort) {
-      return;
-    }
-
-    const codexHome = this.resolveCodexHome();
-    const configPath = path.join(codexHome, CODEX_CONFIG_FILE);
-    const configLine = `${MODEL_REASONING_KEY} = "${reasoningEffort}"`;
-
-    try {
-      await fs.mkdir(codexHome, { recursive: true });
-      const existing = await this.readConfigFile(configPath);
-      const nextConfig = this.updateReasoningConfig(existing, configLine);
-      await fs.writeFile(configPath, nextConfig, "utf8");
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      this.deps.reporter?.warn?.(
-        `Failed to persist Codex reasoning configuration: ${message}`
-      );
-    }
-  }
-
-  private resolveCodexHome(): string {
-    const existing = process.env[CODEX_HOME_ENV];
-    if (existing?.trim()) {
-      return existing.trim();
-    }
-    process.env[CODEX_HOME_ENV] = DEFAULT_CODEX_HOME;
-    return DEFAULT_CODEX_HOME;
-  }
-
-  private async readConfigFile(pathname: string): Promise<string> {
-    try {
-      return await fs.readFile(pathname, "utf8");
-    } catch (error) {
-      const candidate = error as NodeJS.ErrnoException;
-      if (candidate.code === "ENOENT") {
-        return "";
-      }
-      throw error;
-    }
-  }
-
-  private updateReasoningConfig(existing: string, configLine: string): string {
-    if (!existing.trim()) {
-      return `${configLine}\n`;
-    }
-
-    if (MODEL_REASONING_REGEX.test(existing)) {
-      const updated = existing.replace(MODEL_REASONING_REGEX, configLine);
-      return updated.endsWith("\n") ? updated : `${updated}\n`;
-    }
-
-    return `${existing.trimEnd()}\n${configLine}\n`;
   }
 
   private async refreshWorkspaceDefaults(): Promise<void> {
