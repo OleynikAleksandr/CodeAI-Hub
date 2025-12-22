@@ -1,41 +1,31 @@
-# Session 004 — Gemini CLI 0.16 rollout & release 1.1.283
+# Session 29 — Полный релиз v1.1.332
 
-**Date:** 19 November 2025, 12:03 (CET)
+**Date:** 2025-12-22 15:20 (CET)
 **Branch:** main
-**Version:** 1.1.282 → 1.1.283
+**Version:** 1.1.332
 
 ---
 
-## Required documents reviewed before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/CoreOrchestrator.md`
-3. `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
-4. `doc/Architecture/Architecture.md`
-5. `doc/Project_Docs/UnifiedSessionArchitecture.md`
-6. `AGENTS.md`
-7. `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`
-
----
+# 1. Work Done in This Session
 
 ## Work summary
-1. **Gemini CLI 0.16 alignment**
-   - `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `package*.json`, `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`.
-   - Переписан вызов `loadCliConfig` и аргументы `CliArgs` под новую сигнатуру CLI 0.16, добавлен безопасный обработчик `migrateDeprecatedSettings`, пины `@google/gemini-cli*` подняты до 0.16.0; вендорные зависимости пересобраны через `npm install` и таргетная сборка `npm run build --workspace @codeai-hub/gemini-module`.
-2. **Release 1.1.283 build & docs**
-   - README/CHANGELOG обновлены, архитектурные документы (`SystemArchitecture`, `Architecture`, `CoreOrchestrator`) синхронизированы с новым статусом (`core.log` restore + Gemini 0.16); `./scripts/build-all.sh` выпущен `codeai-hub-1.1.283.vsix` и tarball’ы.
-3. **Repo hygiene**
-   - Удалены устаревшие ветки `feature/stable-core-ui` и `renaissance`, чтобы продолжать разработку только от актуального `main`.
-
----
-
-## Plans for next session
-- Smoke-тесты Gemini 0.16 на разных рабочих каталогах/конфигурациях (в частности, проверка fallback’а на глобальный CLI при отсутствии вендора).
-- Вернуть и актуализировать `doc/TODO/todo-plan.md`, чтобы formally вести план развития (сейчас документа нет).
-- Продолжить UI backlog (Info/Status/Todo rails) после подтверждения стабильности провайдеров.
-
----
+- Синхронизировал README/CHANGELOG и архитектурные документы со сборкой v1.1.332, чтобы релизная страница VSIX показывала правильное описание Codex reasoning override и соответствующие артефакты.
+- Пересобрал релиз: `./scripts/build-all.sh` поднял версии провайдеров, ядра и UI до 1.1.332, а `./scripts/build-release.sh --use-current-version` упаковал свежий VSIX и прогнал архитектурный чек, ts-prune, jscpd, typecheck и дополнительные гейты.
+- Результат: `codeai-hub-1.1.332.vsix`, `CodeAIHubLauncher-macos-arm64-1.1.332.tar.bz2`, 1.1.332-артефакты для Claude/Codex/Gemini и UI лежат в `~/.codeai-hub/releases/` и будут включены в следующий релизный бандл.
 
 ## Git commits
-- `0247b7d` — `fix(gemini): align with cli 0.16`
-- `1ecac3f` — `feat: v1.1.283 - gemini cli refresh`
-- `b113edb` — `docs: extend session003 for v1.1.283`
+- `d578e7c feat: v1.1.332 - release docs & packaging`
+
+---
+
+# 2. Instructions for Next Session
+
+## Required documents to review before work
+1. `doc/Architecture/Architecture.md`
+2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/TODO/todo-plan.md`
+4. `doc/Sessions/Session029.md` (THIS REPORT)
+
+## Plans for next session
+- Установить свежий `codeai-hub-1.1.332.vsix` в чистую VS Code (или релизную среду) и проверить, что на странице расширения отображается актуальное описание и список артефактов.
+- Переключиться к следующей фазе `todo-plan.md`, проверив, какие стримы готовы к запуску после завершения 1.1.332 (например, подготовка новых задач или архитектурных артефактов).
