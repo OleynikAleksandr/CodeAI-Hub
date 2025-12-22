@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.334] - 2025-12-22
+### Fixed
+- **Codex Default model UI**: Prevented the non-selected cards from inheriting focus-within border color so only selected/unselected states remain.
+
+### Build
+- VSIX → `codeai-hub-1.1.334.vsix` (TBD)
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.334.tar.bz2` (TBD)
+- Core → `codeai-hub-core-darwin-arm64-1.1.334.tar.bz2` (TBD)
+- Providers → `claude-module-1.1.334.tar.bz2` (TBD), `codex-module-1.1.334.tar.bz2` (TBD), `gemini-module-1.1.334.tar.bz2` (TBD)
+- UI → `vscode-webview-1.1.334.tar.bz2` (TBD), `web-client-1.1.334.tar.bz2` (TBD), `project-manager-1.1.334.tar.bz2` (TBD)
+
 ## [1.1.333] - 2025-12-22
 ### Fixed
 - **Codex Default model UI**: Removed the lingering focus ring/white stroke on previously selected model cards so only selected/unselected states remain.

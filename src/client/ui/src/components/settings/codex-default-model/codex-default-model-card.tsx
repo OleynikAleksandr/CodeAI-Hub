@@ -133,6 +133,16 @@ const focusResetStyles = `
     outline: none !important;
     box-shadow: none !important;
   }
+  .codex-model-row:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  .codex-model-row[data-selected="false"]:focus-within {
+    border-color: #2f2f2f !important;
+  }
+  .codex-model-row[data-selected="true"]:focus-within {
+    border-color: #0e639c !important;
+  }
 `;
 const blurActiveElement = () => {
   if (typeof document === "undefined") {
@@ -202,6 +212,8 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
             }
             return (
               <div
+                className="codex-model-row"
+                data-selected={isSelected}
                 key={model.id}
                 style={{
                   ...modelRowStyles,
