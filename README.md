@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.332
+## Current Release — v1.1.333
 - **Codex Reasoning Overrides**: В настройках сохранённые `reasoningByModel`-значения применяются при старте каждой сессии через CLI `--config model_reasoning_effort=...`, без редактирования `~/.codex/config.toml`.
-- **Codex Settings UI polish**: Каждая модель получает отдельную кнопку reasoning, у невыбранных карточек больше нет лишних фокусных обводок — только состояния `selected`/`unselected`.
-- **Релиз 1.1.332**: Документация и пакеты пересобраны, чтобы VSIX содержал текущее описание и набор артефактов из `doc/tmp/releases/`.
+- **Codex Settings UI fix**: Убрана белая фокусная обводка у ранее выбранных карточек в Codex Default model — остаются только `selected`/`unselected`.
+- **Релиз 1.1.333**: Документация и пакеты пересобраны, чтобы VSIX содержал актуальный список артефактов из `doc/tmp/releases/`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.332.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.332.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.332.tar.bz2`
-  - Providers: `claude-module-1.1.332.tar.bz2`, `codex-module-1.1.332.tar.bz2`, `gemini-module-1.1.332.tar.bz2`
-  - UI: `vscode-webview-1.1.332.tar.bz2`, `web-client-1.1.332.tar.bz2`, `project-manager-1.1.332.tar.bz2`
+  - VSIX: `codeai-hub-1.1.333.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.333.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.333.tar.bz2`
+  - Providers: `claude-module-1.1.333.tar.bz2`, `codex-module-1.1.333.tar.bz2`, `gemini-module-1.1.333.tar.bz2`
+  - UI: `vscode-webview-1.1.333.tar.bz2`, `web-client-1.1.333.tar.bz2`, `project-manager-1.1.333.tar.bz2`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

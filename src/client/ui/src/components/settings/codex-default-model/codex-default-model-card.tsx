@@ -1,4 +1,4 @@
-import type { CSSProperties, FC } from "react";
+import type { CSSProperties } from "react";
 import { memo, useMemo, useState } from "react";
 import {
   CODEX_RECOMMENDED_MODELS,
@@ -20,14 +20,12 @@ type CodexDefaultModelCardProps = {
     reasoning: CodexReasoningLevel
   ) => void;
 };
-
 const descriptionStyles: CSSProperties = {
   fontSize: "12px",
   color: "#b0b0b0",
   margin: 0,
   lineHeight: 1.5,
 };
-
 const warningStyles: CSSProperties = {
   background: "#3a2a1f",
   border: "1px solid #9b6b3d",
@@ -37,13 +35,11 @@ const warningStyles: CSSProperties = {
   fontSize: "12px",
   lineHeight: 1.5,
 };
-
 const modelListStyles: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   gap: "10px",
 };
-
 const modelRowStyles: CSSProperties = {
   display: "flex",
   gap: "12px",
@@ -55,12 +51,10 @@ const modelRowStyles: CSSProperties = {
   outline: "none",
   boxShadow: "none",
 };
-
 const modelRowSelectedStyles: CSSProperties = {
   borderColor: "#0e639c",
   background: "#1f2a33",
 };
-
 const radioStyles: CSSProperties = {
   marginTop: "3px",
   width: "16px",
@@ -69,7 +63,6 @@ const radioStyles: CSSProperties = {
   outline: "none",
   boxShadow: "none",
 };
-
 const modelLabelStyles: CSSProperties = {
   display: "flex",
   gap: "12px",
@@ -77,44 +70,37 @@ const modelLabelStyles: CSSProperties = {
   outline: "none",
   width: "100%",
 };
-
 const modelTitleStyles: CSSProperties = {
   fontSize: "13px",
   fontWeight: 600,
   color: "#e5e5e5",
 };
-
 const modelIdStyles: CSSProperties = {
   fontSize: "11px",
   color: "#8c8c8c",
 };
-
 const modelDescriptionStyles: CSSProperties = {
   fontSize: "12px",
   color: "#a8a8a8",
   margin: "4px 0 0",
   lineHeight: 1.4,
 };
-
 const modelBodyStyles: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   gap: "8px",
   flex: 1,
 };
-
 const reasoningRowStyles: CSSProperties = {
   display: "flex",
   alignItems: "center",
   gap: "8px",
   paddingLeft: "28px",
 };
-
 const reasoningLabelStyles: CSSProperties = {
   fontSize: "11px",
   color: "#8f8f8f",
 };
-
 const reasoningButtonStyles: CSSProperties = {
   border: "1px solid #3a3d41",
   background: "transparent",
@@ -125,25 +111,21 @@ const reasoningButtonStyles: CSSProperties = {
   fontSize: "11px",
   outline: "none",
 };
-
 const reasoningButtonHoverStyles: CSSProperties = {
   borderColor: "#5a5a5a",
   background: "#2b2f33",
   color: "#ffffff",
 };
-
 const reasoningButtonActiveStyles: CSSProperties = {
   borderColor: "#0e639c",
   background: "#0e639c",
   color: "#ffffff",
 };
-
 const noteStyles: CSSProperties = {
   fontSize: "11px",
   color: "#8f8f8f",
   margin: 0,
 };
-
 const focusResetStyles = `
   .codex-model-selector *:focus,
   .codex-model-selector *:focus-visible,
@@ -152,7 +134,15 @@ const focusResetStyles = `
     box-shadow: none !important;
   }
 `;
-
+const blurActiveElement = () => {
+  if (typeof document === "undefined") {
+    return;
+  }
+  const activeElement = document.activeElement;
+  if (activeElement instanceof HTMLElement) {
+    activeElement.blur();
+  }
+};
 const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
   defaultModel,
   reasoningByModel,
@@ -224,9 +214,9 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
                       checked={isSelected}
                       id={inputId}
                       name="codex-default-model"
-                      onChange={(event) => {
+                      onChange={() => {
                         onDefaultModelChange(model.id);
-                        event.currentTarget.blur();
+                        requestAnimationFrame(blurActiveElement);
                       }}
                       style={radioStyles}
                       type="radio"

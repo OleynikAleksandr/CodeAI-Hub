@@ -1,53 +1,31 @@
-# Session 003 — Gemini CLI fallback & release 1.1.280
+# Session 28 — Codex docs sync for v1.1.331
 
-**Date:** 19 November 2025, 10:14 (CET)
+**Date:** 2025-12-22 11:42 (CET)
 **Branch:** main
-**Version:** 1.1.279 → 1.1.280
+**Version:** 1.1.331
 
 ---
 
-## Required documents reviewed before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/CoreOrchestrator.md`
-3. `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
-4. `doc/Architecture/Architecture.md`
-5. `doc/Project_Docs/UnifiedSessionArchitecture.md`
-6. `AGENTS.md`
-7. `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`
-
----
+# 1. Work Done in This Session
 
 ## Work summary
-1. **Gemini CLI bridge fallback**
-   - `packages/Gemini_Module/src/runtime/cli-bridge.ts`
-   - Added resilient loader that tries both `dist/src/**` and `dist/**` layouts for Google’s CLI + core modules, so upstream packaging changes no longer break initialization. Reran the full gate stack and committed fix.
-2. **Release 1.1.280 build**
-   - Root/package manifests, provider manifests, README, changelog.
-   - Executed `./scripts/build-all.sh`, producing VSIX + tarballs, bumping versions, and syncing manifests. Documented the release in `CHANGELOG.md` and refreshed `README.md` artifacts.
-3. **Core logging restore + release 1.1.281**
-   - `packages/core-supervisor/src/index.ts`, manifests, README, changelog.
-   - Supervisor now sets `CODEAI_CORE_LOG_FILE`, so autonomous core instances launched from VS Code resume writing to `~/.codeai-hub/logs/core/core.log`. Rebuilt artifacts via `./scripts/build-all.sh`, yielding `codeai-hub-1.1.281.vsix` and updated tarballs, plus changelog/README refresh.
-4. **Gemini CLI signature fix + release 1.1.282**
-   - `packages/Gemini_Module/src/session/gemini-session-manager.ts`, manifests, README, changelog.
-   - Adapted the provider to pass the new `extensions` argument to `loadCliConfig`, unblocking session creation on CLI `0.11.x`. Ran `./scripts/build-all.sh` for v1.1.282 and synced documentation/artifacts.
-5. **Gemini CLI 0.16 bump + release 1.1.283**
-   - `package*.json`, `packages/Gemini_Module/**`, docs.
-   - Pinned `@google/gemini-cli` / `cli-core` to 0.16.0, updated the session manager to ignore legacy extension migrations and satisfy the new CLI arg surface, then rebuilt all artifacts via `./scripts/build-all.sh` for v1.1.283.
-
----
-
-## Plans for next session
-- Smoke-test the updated Gemini module on all supported platforms/CLIs to confirm the fallback paths cover npm global and custom NODE_PATH layouts.
-- Resume UI polish backlog (Info/Status/Todo panels) so their accents and typography match the new Thinking/tab treatments.
-- Reintroduce the project TODO plan document to track Unified Session stabilization streams once Gemini verification is complete.
-
----
+- Обновил Codex документацию: CLI reasoning override через `--config model_reasoning_effort=...`, без правок `~/.codex/config.toml`.
+- Синхронизировал Architecture/SystemArchitecture/Codex SDK Module с текущим поведением settings.json.
+- Актуализировал README и CHANGELOG под релиз v1.1.331.
 
 ## Git commits
-- `9b728e1` — `fix(gemini): support fallback cli layout`
-- `4431dcf` — `feat: v1.1.280 - gemini cli compatibility`
-- `b3453a9` — `fix(supervisor): restore core logging`
-- `cff03aa` — `feat: v1.1.281 - core logging restore`
-- `f8774e4` — `fix(gemini): adapt cli config signature`
-- `9d89c53` — `feat: v1.1.282 - gemini cli compatibility`
-- `0247b7d` — `fix(gemini): align with cli 0.16`
+- `a03d23e docs: update codex reasoning docs for v1.1.331`
+
+---
+
+# 2. Instructions for Next Session
+
+## Required documents to review before work
+1. `doc/Architecture/Architecture.md`
+2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/TODO/todo-plan.md`
+4. `doc/Sessions/Session028.md` (THIS REPORT)
+
+## Plans for next session
+- Проверить, что release notes на GitHub отражают v1.1.331 и соответствуют текущим артефактам.
+- Если потребуется, запустить повторный полный релиз по чеклисту.
