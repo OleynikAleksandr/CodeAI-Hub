@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.333
+## Current Release — v1.1.334
 - **Codex Reasoning Overrides**: В настройках сохранённые `reasoningByModel`-значения применяются при старте каждой сессии через CLI `--config model_reasoning_effort=...`, без редактирования `~/.codex/config.toml`.
 - **Codex Settings UI fix**: Убрана белая фокусная обводка у ранее выбранных карточек в Codex Default model — остаются только `selected`/`unselected`.
-- **Релиз 1.1.333**: Документация и пакеты пересобраны, чтобы VSIX содержал актуальный список артефактов из `doc/tmp/releases/`.
+- **Релиз 1.1.334**: Документация и пакеты пересобраны, чтобы VSIX содержал актуальный список артефактов из `doc/tmp/releases/`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.333.vsix` (427K)
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.333.tar.bz2` (230M)
-  - Core: `codeai-hub-core-darwin-arm64-1.1.333.tar.bz2` (35M)
-  - Providers: `claude-module-1.1.333.tar.bz2` (18K), `codex-module-1.1.333.tar.bz2` (22K), `gemini-module-1.1.333.tar.bz2` (14K)
-  - UI: `vscode-webview-1.1.333.tar.bz2` (137K), `web-client-1.1.333.tar.bz2` (145K), `project-manager-1.1.333.tar.bz2` (49K)
+  - VSIX: `codeai-hub-1.1.334.vsix` (TBD)
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.334.tar.bz2` (TBD)
+  - Core: `codeai-hub-core-darwin-arm64-1.1.334.tar.bz2` (TBD)
+  - Providers: `claude-module-1.1.334.tar.bz2` (TBD), `codex-module-1.1.334.tar.bz2` (TBD), `gemini-module-1.1.334.tar.bz2` (TBD)
+  - UI: `vscode-webview-1.1.334.tar.bz2` (TBD), `web-client-1.1.334.tar.bz2` (TBD), `project-manager-1.1.334.tar.bz2` (TBD)
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
