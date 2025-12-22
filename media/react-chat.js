@@ -9610,7 +9610,10 @@
                       checked: isSelected,
                       id: inputId,
                       name: "codex-default-model",
-                      onChange: () => onDefaultModelChange(model.id),
+                      onChange: (event) => {
+                        onDefaultModelChange(model.id);
+                        event.currentTarget.blur();
+                      },
                       style: radioStyles2,
                       type: "radio"
                     }

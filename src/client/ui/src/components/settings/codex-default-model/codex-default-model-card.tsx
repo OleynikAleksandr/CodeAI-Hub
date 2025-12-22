@@ -214,7 +214,10 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
                       checked={isSelected}
                       id={inputId}
                       name="codex-default-model"
-                      onChange={() => onDefaultModelChange(model.id)}
+                      onChange={(event) => {
+                        onDefaultModelChange(model.id);
+                        event.currentTarget.blur();
+                      }}
                       style={radioStyles}
                       type="radio"
                     />
