@@ -144,6 +144,15 @@ const noteStyles: CSSProperties = {
   margin: 0,
 };
 
+const focusResetStyles = `
+  .codex-model-selector *:focus,
+  .codex-model-selector *:focus-visible,
+  .codex-model-selector *:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+`;
+
 const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
   defaultModel,
   reasoningByModel,
@@ -176,6 +185,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
 
   return (
     <>
+      <style>{focusResetStyles}</style>
       <SettingsCard title="Codex Default model">
         <p style={descriptionStyles}>
           Select which Codex model to use when starting new sessions. Each model
@@ -187,7 +197,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
             GPT-5.2-Codex.
           </div>
         ) : null}
-        <div style={modelListStyles}>
+        <div className="codex-model-selector" style={modelListStyles}>
           {CODEX_RECOMMENDED_MODELS.map((model) => {
             const isSelected = selectedModelId === model.id;
             const inputId = `codex-default-model-${model.id}`;
