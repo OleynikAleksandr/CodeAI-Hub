@@ -52,6 +52,8 @@ const modelRowStyles: CSSProperties = {
   borderRadius: "6px",
   padding: "12px",
   background: "#252526",
+  outline: "none",
+  boxShadow: "none",
 };
 
 const modelRowSelectedStyles: CSSProperties = {
@@ -64,13 +66,16 @@ const radioStyles: CSSProperties = {
   width: "16px",
   height: "16px",
   cursor: "pointer",
+  outline: "none",
+  boxShadow: "none",
 };
 
 const modelLabelStyles: CSSProperties = {
   display: "flex",
-  flex: 1,
   gap: "12px",
   cursor: "pointer",
+  outline: "none",
+  width: "100%",
 };
 
 const modelTitleStyles: CSSProperties = {
@@ -91,30 +96,46 @@ const modelDescriptionStyles: CSSProperties = {
   lineHeight: 1.4,
 };
 
-const modelMetaStyles: CSSProperties = {
+const modelBodyStyles: CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "8px",
+  flex: 1,
+};
+
+const reasoningRowStyles: CSSProperties = {
   display: "flex",
   alignItems: "center",
-  gap: "10px",
-  flexWrap: "wrap",
-  marginTop: "8px",
+  gap: "8px",
+  paddingLeft: "28px",
 };
 
-const reasoningBadgeStyles: CSSProperties = {
+const reasoningLabelStyles: CSSProperties = {
   fontSize: "11px",
-  background: "#2d2d2d",
-  color: "#dcdcdc",
-  padding: "2px 6px",
-  borderRadius: "4px",
+  color: "#8f8f8f",
 };
 
-const configureButtonStyles: CSSProperties = {
+const reasoningButtonStyles: CSSProperties = {
   border: "1px solid #3a3d41",
   background: "transparent",
-  color: "#6cb6ff",
+  color: "#d7d7d7",
   padding: "4px 10px",
   borderRadius: "4px",
   cursor: "pointer",
   fontSize: "11px",
+  outline: "none",
+};
+
+const reasoningButtonHoverStyles: CSSProperties = {
+  borderColor: "#5a5a5a",
+  background: "#2b2f33",
+  color: "#ffffff",
+};
+
+const reasoningButtonActiveStyles: CSSProperties = {
+  borderColor: "#0e639c",
+  background: "#0e639c",
+  color: "#ffffff",
 };
 
 const noteStyles: CSSProperties = {
@@ -130,6 +151,12 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
   onReasoningChange,
 }) => {
   const [activeModelId, setActiveModelId] = useState<CodexModelId | null>(null);
+  const [hoveredModelId, setHoveredModelId] = useState<CodexModelId | null>(
+    null
+  );
+  const [pressedModelId, setPressedModelId] = useState<CodexModelId | null>(
+    null
+  );
 
   const recommendedModelIds = useMemo(
     () => new Set<string>(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
@@ -164,6 +191,15 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
           {CODEX_RECOMMENDED_MODELS.map((model) => {
             const isSelected = selectedModelId === model.id;
             const inputId = `codex-default-model-${model.id}`;
+            const reasoningLevel = resolveReasoning(model.id);
+            const isHovered = hoveredModelId === model.id;
+            const isPressed = pressedModelId === model.id;
+            let reasoningStateStyles: CSSProperties | null = null;
+            if (isPressed) {
+              reasoningStateStyles = reasoningButtonActiveStyles;
+            } else if (isHovered) {
+              reasoningStateStyles = reasoningButtonHoverStyles;
+            }
             return (
               <div
                 key={model.id}
@@ -172,34 +208,52 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
                   ...(isSelected ? modelRowSelectedStyles : null),
                 }}
               >
-                <label htmlFor={inputId} style={modelLabelStyles}>
-                  <input
-                    checked={isSelected}
-                    id={inputId}
-                    name="codex-default-model"
-                    onChange={() => onDefaultModelChange(model.id)}
-                    style={radioStyles}
-                    type="radio"
-                  />
-                  <div style={{ flex: 1 }}>
-                    <div style={modelTitleStyles}>{model.displayName}</div>
-                    <div style={modelIdStyles}>{model.id}</div>
-                    <p style={modelDescriptionStyles}>{model.description}</p>
-                    <div style={modelMetaStyles}>
-                      <span style={reasoningBadgeStyles}>
-                        Reasoning: {resolveReasoning(model.id)}
-                      </span>
+                <div style={modelBodyStyles}>
+                  <label htmlFor={inputId} style={modelLabelStyles}>
+                    <input
+                      checked={isSelected}
+                      id={inputId}
+                      name="codex-default-model"
+                      onChange={() => onDefaultModelChange(model.id)}
+                      style={radioStyles}
+                      type="radio"
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div style={modelTitleStyles}>{model.displayName}</div>
+                      <div style={modelIdStyles}>{model.id}</div>
+                      <p style={modelDescriptionStyles}>{model.description}</p>
                     </div>
+                  </label>
+                  <div style={reasoningRowStyles}>
+                    <span style={reasoningLabelStyles}>
+                      Configure reasoning:
+                    </span>
+                    <button
+                      onClick={() => setActiveModelId(model.id)}
+                      onMouseDown={() => setPressedModelId(model.id)}
+                      onMouseEnter={() => setHoveredModelId(model.id)}
+                      onMouseLeave={() => {
+                        setHoveredModelId((current) =>
+                          current === model.id ? null : current
+                        );
+                        setPressedModelId((current) =>
+                          current === model.id ? null : current
+                        );
+                      }}
+                      onMouseUp={() => {
+                        setPressedModelId((current) =>
+                          current === model.id ? null : current
+                        );
+                      }}
+                      style={{
+                        ...reasoningButtonStyles,
+                        ...(reasoningStateStyles ?? {}),
+                      }}
+                      type="button"
+                    >
+                      {reasoningLevel}
+                    </button>
                   </div>
-                </label>
-                <div>
-                  <button
-                    onClick={() => setActiveModelId(model.id)}
-                    style={configureButtonStyles}
-                    type="button"
-                  >
-                    Configure reasoning
-                  </button>
                 </div>
               </div>
             );

@@ -9477,7 +9477,9 @@
     border: "1px solid #2f2f2f",
     borderRadius: "6px",
     padding: "12px",
-    background: "#252526"
+    background: "#252526",
+    outline: "none",
+    boxShadow: "none"
   };
   var modelRowSelectedStyles = {
     borderColor: "#0e639c",
@@ -9487,13 +9489,16 @@
     marginTop: "3px",
     width: "16px",
     height: "16px",
-    cursor: "pointer"
+    cursor: "pointer",
+    outline: "none",
+    boxShadow: "none"
   };
   var modelLabelStyles = {
     display: "flex",
-    flex: 1,
     gap: "12px",
-    cursor: "pointer"
+    cursor: "pointer",
+    outline: "none",
+    width: "100%"
   };
   var modelTitleStyles = {
     fontSize: "13px",
@@ -9510,28 +9515,41 @@
     margin: "4px 0 0",
     lineHeight: 1.4
   };
-  var modelMetaStyles = {
+  var modelBodyStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    flex: 1
+  };
+  var reasoningRowStyles = {
     display: "flex",
     alignItems: "center",
-    gap: "10px",
-    flexWrap: "wrap",
-    marginTop: "8px"
+    gap: "8px",
+    paddingLeft: "28px"
   };
-  var reasoningBadgeStyles = {
+  var reasoningLabelStyles = {
     fontSize: "11px",
-    background: "#2d2d2d",
-    color: "#dcdcdc",
-    padding: "2px 6px",
-    borderRadius: "4px"
+    color: "#8f8f8f"
   };
-  var configureButtonStyles = {
+  var reasoningButtonStyles = {
     border: "1px solid #3a3d41",
     background: "transparent",
-    color: "#6cb6ff",
+    color: "#d7d7d7",
     padding: "4px 10px",
     borderRadius: "4px",
     cursor: "pointer",
-    fontSize: "11px"
+    fontSize: "11px",
+    outline: "none"
+  };
+  var reasoningButtonHoverStyles = {
+    borderColor: "#5a5a5a",
+    background: "#2b2f33",
+    color: "#ffffff"
+  };
+  var reasoningButtonActiveStyles = {
+    borderColor: "#0e639c",
+    background: "#0e639c",
+    color: "#ffffff"
   };
   var noteStyles = {
     fontSize: "11px",
@@ -9545,6 +9563,12 @@
     onReasoningChange
   }) => {
     const [activeModelId, setActiveModelId] = (0, import_react8.useState)(null);
+    const [hoveredModelId, setHoveredModelId] = (0, import_react8.useState)(
+      null
+    );
+    const [pressedModelId, setPressedModelId] = (0, import_react8.useState)(
+      null
+    );
     const recommendedModelIds = (0, import_react8.useMemo)(
       () => new Set(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
       []
@@ -9562,14 +9586,23 @@
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelListStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
           const isSelected = selectedModelId === model.id;
           const inputId = `codex-default-model-${model.id}`;
-          return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+          const reasoningLevel = resolveReasoning(model.id);
+          const isHovered = hoveredModelId === model.id;
+          const isPressed = pressedModelId === model.id;
+          let reasoningStateStyles = null;
+          if (isPressed) {
+            reasoningStateStyles = reasoningButtonActiveStyles;
+          } else if (isHovered) {
+            reasoningStateStyles = reasoningButtonHoverStyles;
+          }
+          return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
             "div",
             {
               style: {
                 ...modelRowStyles,
                 ...isSelected ? modelRowSelectedStyles : null
               },
-              children: [
+              children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelBodyStyles, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { htmlFor: inputId, style: modelLabelStyles, children: [
                   /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
                     "input",
@@ -9585,23 +9618,40 @@
                   /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: { flex: 1 }, children: [
                     /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
                     /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelIdStyles, children: model.id }),
-                    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: modelDescriptionStyles, children: model.description }),
-                    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelMetaStyles, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { style: reasoningBadgeStyles, children: [
-                      "Reasoning: ",
-                      resolveReasoning(model.id)
-                    ] }) })
+                    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                   ] })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-                  "button",
-                  {
-                    onClick: () => setActiveModelId(model.id),
-                    style: configureButtonStyles,
-                    type: "button",
-                    children: "Configure reasoning"
-                  }
-                ) })
-              ]
+                /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: reasoningRowStyles, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+                    "button",
+                    {
+                      onClick: () => setActiveModelId(model.id),
+                      onMouseDown: () => setPressedModelId(model.id),
+                      onMouseEnter: () => setHoveredModelId(model.id),
+                      onMouseLeave: () => {
+                        setHoveredModelId(
+                          (current) => current === model.id ? null : current
+                        );
+                        setPressedModelId(
+                          (current) => current === model.id ? null : current
+                        );
+                      },
+                      onMouseUp: () => {
+                        setPressedModelId(
+                          (current) => current === model.id ? null : current
+                        );
+                      },
+                      style: {
+                        ...reasoningButtonStyles,
+                        ...reasoningStateStyles ?? {}
+                      },
+                      type: "button",
+                      children: reasoningLevel
+                    }
+                  )
+                ] })
+              ] })
             },
             model.id
           );
