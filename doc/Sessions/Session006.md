@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Исправил белую обводку у невыбранных карточек Codex Default model: добавлены селекторы `focus-within` с жёстким контролем `border-color` для выбранных/невыбранных карточек.
+- Попытка №3 исправить белую обводку в Codex Default model (через `focus-within` + контроль `border-color`) не дала результата: в релизе 1.1.334 проблема осталась.
 - Обновлены README/CHANGELOG и архитектурные документы под релиз 1.1.334.
 - Выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, собран `codeai-hub-1.1.334.vsix` и tarball'ы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
 
@@ -29,5 +29,5 @@
 4. `doc/Sessions/Session006.md` (THIS REPORT)
 
 ## Plans for next session
-- Установить `codeai-hub-1.1.334.vsix` и проверить Settings → Codex → Default model (нет белой обводки у невыбранных карточек).
-- При необходимости зафиксировать результаты ручной проверки и обновить документацию.
+- Продолжить расследование: 3 попытки исправления белой обводки не дали результата.
+- Найти реальный источник белой рамки в UI (возможно, не из React-стилей, а из VS Code webview/host CSS), зафиксировать в документации и только затем править.
