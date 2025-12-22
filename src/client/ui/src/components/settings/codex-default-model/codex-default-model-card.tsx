@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, FC } from "react";
 import { memo, useMemo, useState } from "react";
 import {
   CODEX_RECOMMENDED_MODELS,
