@@ -3,7 +3,7 @@
 **Version:** 0.5.9
 **Last Updated:** 2025-12-22
 **Status:** Active reference
-**Release Focus:** v1.1.331 — Codex model selection UI с per-model reasoning кнопками и runtime `--config model_reasoning_effort=...` (без правок `~/.codex/config.toml`), плюс устранение лишних focus-обводок.
+**Release Focus:** v1.1.332 — полная пересборка VSIX, чтобы описания и артефакты совпадали с Codex reasoning override + focus-ring polish.
 
 ---
 
@@ -98,7 +98,8 @@ graph TD
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
-## Recent Changes (v1.1.331 - 2025-12-22)
+## Recent Changes (v1.1.332 - 2025-12-22)
+- **Docs-aligned release**: VSIX пересобран вместе с README/CHANGELOG, чтобы страница расширения отображала версию 1.1.332 и актуальный список артефактов.
 - **Codex reasoning overrides**: ядро применяет `model_reasoning_effort` через CLI `--config` при старте сессий, не редактируя `~/.codex/config.toml`.
 - **Codex Settings UI polish**: у каждой модели своя кнопка reasoning, старые focus-обводки для невыбранных карточек убраны (только выбран/не выбран).
 
