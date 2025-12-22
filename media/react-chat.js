@@ -9564,6 +9564,15 @@
     box-shadow: none !important;
   }
 `;
+  var blurActiveElement = () => {
+    if (typeof document === "undefined") {
+      return;
+    }
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement) {
+      activeElement.blur();
+    }
+  };
   var CodexDefaultModelCard = ({
     defaultModel,
     reasoningByModel,
@@ -9619,9 +9628,9 @@
                       checked: isSelected,
                       id: inputId,
                       name: "codex-default-model",
-                      onChange: (event) => {
+                      onChange: () => {
                         onDefaultModelChange(model.id);
-                        event.currentTarget.blur();
+                        requestAnimationFrame(blurActiveElement);
                       },
                       style: radioStyles2,
                       type: "radio"
