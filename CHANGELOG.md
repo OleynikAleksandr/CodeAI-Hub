@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.331] - 2025-12-22
+### Changed
+- **Codex Reasoning Overrides**: Reasoning effort is applied via CLI `--config model_reasoning_effort=...` using saved per-model settings, without editing `~/.codex/config.toml`.
+
+### Fixed
+- **Codex Settings Focus Rings**: Removed focus/outline rings from non-selected model cards so only selected/unselected states remain.
+
+### Build
+- VSIX → `codeai-hub-1.1.331.vsix` (427K)
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.331.tar.bz2` (230M)
+- Core → `codeai-hub-core-darwin-arm64-1.1.331.tar.bz2` (35M)
+- Providers → `claude-module-1.1.331.tar.bz2` (18K), `codex-module-1.1.331.tar.bz2` (22K), `gemini-module-1.1.331.tar.bz2` (14K)
+- UI → `vscode-webview-1.1.331.tar.bz2` (137K), `web-client-1.1.331.tar.bz2` (145K), `project-manager-1.1.331.tar.bz2` (49K)
+
 ## [1.1.327] - 2025-12-21
 ### Added
 - **Codex Default Model & Reasoning**: Settings UI now supports default model selection and per-model reasoning profiles stored in `~/.codeai-hub/settings/settings.json`.

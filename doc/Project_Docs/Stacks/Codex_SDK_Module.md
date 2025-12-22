@@ -1,13 +1,13 @@
 # Codex SDK Module
 
-**Updated:** 2025-12-21  
+**Updated:** 2025-12-22  
 **Owner:** Codex  
 **Source Reference:** `https://github.com/openai/codex/tree/main/sdk/typescript`
 
 ---
 
 ## 1. Purpose & Scope
-- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.326` inside CodeAI-Hub Core.
+- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.331` inside CodeAI-Hub Core.
 - Capture the CLI/SDK contract (events, items, options) that we must adapt for RemoteBridge and UI streaming.
 - List integration prerequisites (authentication, binaries, storage layout) required to bootstrap Codex alongside the Claude module.
 
@@ -62,9 +62,10 @@ CodeAI-Hub Core  →  Codex Provider Adapter  →  @openai/codex-sdk  →  codex
 3. `await thread.run(input, { outputSchema? })` – buffers events until turn completion; throws if `turn.failed` emitted.
 4. `await thread.runStreamed(input)` – returns `{ events }` where `events` is an `AsyncGenerator<ThreadEvent>`; consumer must iterate to receive updates.
 5. `CodexExec.run()` constructs CLI arguments:
-   - `codex exec --experimental-json [--model ...] [--sandbox ...] [--cd ...] [--skip-git-repo-check] [--output-schema ...] [--image path...]`.
+   - `codex exec --experimental-json [--model ...] [--config model_reasoning_effort=...] [--sandbox ...] [--cd ...] [--skip-git-repo-check] [--output-schema ...] [--image path...]`.
    - If resuming, appends `resume <thread_id>`.
    - Populates env (`CODEX_INTERNAL_ORIGINATOR_OVERRIDE=codex_sdk_ts`, optional `OPENAI_BASE_URL`, `CODEX_API_KEY`).
+   - When CodeAI Hub has a saved per-model reasoning level, it passes `--config model_reasoning_effort=<level>` per turn (runtime override, no edits to `~/.codex/config.toml`).
 6. Inputs may be a simple prompt (`string`) or an array of `{ type: "text" | "local_image" }`. Text entries are concatenated; image paths are converted to repeated `--image` flags.
 7. Structured outputs require passing a JSON schema per turn; the SDK writes it to a temp file and cleans up afterward.
 
@@ -101,7 +102,7 @@ These structures mirror the JSONL emitted by the CLI. CodeAI-Hub must translate 
 ## 6. Authentication & Storage
 - Primary flow: interactive ChatGPT login (`codex login`) storing credentials in `~/.codex/auth.json`.
 - Alternative: usage-based billing via API key – pass `CODEX_API_KEY` env or `codex login --with-api-key`. Requires Responses API write access.
-- Configurations live in `~/.codex/config.toml`; sessions persisted under `~/.codex/sessions/` (thread JSONL transcripts).
+- Codex CLI defaults live in `~/.codex/config.toml`; CodeAI Hub does not edit this file and instead uses runtime `--config` overrides. Sessions persist under `~/.codex/sessions/` (thread JSONL transcripts).
 - CLI expects a Git repository by default; global `skip git repo check` toggle via config or per-thread option.
 - Remote/headless login patterns: forward port 1455 or copy `auth.json` across machines (see docs/authentication.md).
 
@@ -136,8 +137,9 @@ Implications for CodeAI-Hub:
 4. Implement resume support by storing `thread.id` in hub session state and calling `codex.resumeThread(id)`.
 5. Surface CLI/environment errors through RemoteBridge notifications (e.g., missing auth, unsupported sandbox mode).
 6. Ensure sandbox + approval selections from UI are translated into Codex options/env prior to launching the turn.
-7. Log Codex JSONL to `~/.codeai-hub/logs/codex/` for auditing and future replay (align with Phase 13 persistence plan).
-8. (1.1.326+) ProviderVersionService читает версии CLI/SDK из глобального npm; манифесты провайдера используются только для установки модуля.
+7. Read `defaultModel` + `reasoningByModel` from `~/.codeai-hub/settings/settings.json` and pass reasoning via `--config model_reasoning_effort=...` when starting turns.
+8. Log Codex JSONL to `~/.codeai-hub/logs/codex/` for auditing and future replay (align with Phase 13 persistence plan).
+9. (1.1.331+) ProviderVersionService читает версии CLI/SDK из глобального npm; манифесты провайдера используются только для установки модуля.
 
 ---
 
