@@ -9556,6 +9556,14 @@
     color: "#8f8f8f",
     margin: 0
   };
+  var focusResetStyles = `
+  .codex-model-selector *:focus,
+  .codex-model-selector *:focus-visible,
+  .codex-model-selector *:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+`;
   var CodexDefaultModelCard = ({
     defaultModel,
     reasoningByModel,
@@ -9580,10 +9588,11 @@
     );
     const resolveReasoning = (modelId) => reasoningByModel[modelId] ?? DEFAULT_CODEX_REASONING_LEVEL;
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("style", { children: focusResetStyles }),
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(settings_card_default, { title: "Codex Default model", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
         hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: warningStyles, children: "The saved default model is no longer available. Falling back to GPT-5.2-Codex." }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelListStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "codex-model-selector", style: modelListStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
           const isSelected = selectedModelId === model.id;
           const inputId = `codex-default-model-${model.id}`;
           const reasoningLevel = resolveReasoning(model.id);
