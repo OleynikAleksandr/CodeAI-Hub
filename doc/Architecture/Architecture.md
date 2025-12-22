@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.5.9
-**Last Updated:** 2025-12-21
+**Last Updated:** 2025-12-22
 **Status:** Active reference
-**Release Focus:** v1.1.327 — Codex default model & reasoning profiles. В Settings UI можно выбрать дефолтную модель и уровень reasoning для каждой модели; ядро читает `~/.codeai-hub/settings/settings.json` и прокидывает значения в Codex SDK/CLI.
+**Release Focus:** v1.1.331 — Codex model selection UI с per-model reasoning кнопками и runtime `--config model_reasoning_effort=...` (без правок `~/.codex/config.toml`), плюс устранение лишних focus-обводок.
 
 ---
 
@@ -98,10 +98,14 @@ graph TD
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
+## Recent Changes (v1.1.331 - 2025-12-22)
+- **Codex reasoning overrides**: ядро применяет `model_reasoning_effort` через CLI `--config` при старте сессий, не редактируя `~/.codex/config.toml`.
+- **Codex Settings UI polish**: у каждой модели своя кнопка reasoning, старые focus-обводки для невыбранных карточек убраны (только выбран/не выбран).
+
 ## Recent Changes (v1.1.327 - 2025-12-21)
 - **Codex default model & reasoning**: Settings UI позволяет выбрать дефолтную модель и reasoning-профиль; значения сохраняются в settings.json и применяются при создании новых сессий.
 - **Codex model registry**: Добавлен реестр рекомендованных и legacy моделей Codex, плюс справочник уровней reasoning.
-- **Codex runtime defaults**: Core читает настройки Codex из settings.json, передаёт default model/reasoning в SDK, а Codex SDK синхронизирует `model_reasoning_effort` в config.toml.
+- **Codex runtime defaults**: Core читает настройки Codex из settings.json, передаёт default model/reasoning при старте сессий.
 
 ## Recent Changes (v1.1.326 - 2025-12-21)
 - **Provider Auto Update Service**: при старте ядра выполняется проверка свежих версий CLI/SDK для Claude/Codex/Gemini и, если включено автообновление, происходит глобальный апдейт через npm (настройки доступны в Settings UI).

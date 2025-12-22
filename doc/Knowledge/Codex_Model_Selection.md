@@ -1,11 +1,11 @@
 # Codex Model Selection Guide
 
-**Last Updated:** 2025-12-20  
+**Last Updated:** 2025-12-22  
 **Source:** [Official Codex Documentation](https://developers.openai.com/codex/models/)
 
 ## Overview
 
-Codex supports multiple GPT-5 series models optimized for different coding scenarios. This guide helps you select the right model for your needs.
+Codex supports multiple GPT-5 series models optimized for different coding scenarios. This guide helps you select the right model and reasoning level. In CodeAI Hub, the default model and per-model reasoning levels are stored in `~/.codeai-hub/settings/settings.json` and passed to the Codex CLI via runtime `--config` overrides (no direct edits to `~/.codex/config.toml`).
 
 ## Available Models (December 2025)
 
@@ -41,25 +41,50 @@ Codex models support 4 reasoning effort levels that control the depth of analysi
 | `high`   | Greater reasoning depth               | Complex refactoring, architecture    | No      |
 | `xhigh`  | Extra high reasoning depth            | Very complex problems                | No      |
 
+In CodeAI Hub, each model keeps its own reasoning level, and the saved value is applied when that model is selected as the default.
+
 ## Usage Examples
+
+### CodeAI Hub Settings (Recommended)
+
+Use Settings → Codex to pick the default model and per-model reasoning. Stored in `~/.codeai-hub/settings/settings.json`:
+
+```json
+{
+  "providers": {
+    "codex": {
+      "defaultModel": "gpt-5.2-codex",
+      "reasoningByModel": {
+        "gpt-5.2-codex": "high",
+        "gpt-5.1-codex-max": "medium",
+        "gpt-5.1-codex-mini": "low"
+      }
+    }
+  }
+}
+```
 
 ### CLI
 
 ```bash
 # Select model via command line flag
-codex -m gpt-5.2-codex
+codex --model gpt-5.2-codex
 
 # With custom reasoning effort
-codex -c model_reasoning_effort=high -m gpt-5.2-codex
+codex --model gpt-5.2-codex --config model_reasoning_effort=high
+
+# Non-interactive example
+codex exec --model gpt-5.2-codex --config model_reasoning_effort=high \
+  --sandbox read-only "Checking reasoning"
 
 # Interactive model selection
 codex
 # Then use: /model
 ```
 
-### Configuration File
+### Standalone Configuration File (Optional)
 
-Edit `~/.codex/config.toml`:
+For standalone Codex CLI usage (CodeAI Hub does not edit this file), you can set defaults in `~/.codex/config.toml`:
 
 ```toml
 model = "gpt-5.2-codex"
@@ -81,6 +106,8 @@ const thread = codex.startThread({
 const result = await thread.exec("Your prompt here");
 ```
 
+Note: In CodeAI Hub, the reasoning effort is applied by the CLI runner using `--config model_reasoning_effort=...`, so SDK usage does not require editing `~/.codex/config.toml`.
+
 ## Model Selection Strategy
 
 ### For Production Code
@@ -98,9 +125,10 @@ const result = await thread.exec("Your prompt here");
 ## Important Notes
 
 1. **Model Availability**: All models are available across CLI, SDK, IDE Extension, Cloud, and API
-2. **Default Model**: Varies by platform (check `~/.codex/config.toml`)
-3. **Custom Providers**: Codex supports custom providers with Chat Completions or Responses APIs
-4. **Dynamic Discovery**: For programmatic model discovery, use [official Codex documentation](https://developers.openai.com/codex/models/) as the source of truth
+2. **Default Model**: In CodeAI Hub, stored in `~/.codeai-hub/settings/settings.json` and applied to new sessions
+3. **Per-Model Reasoning**: CodeAI Hub stores `reasoningByModel` and passes the selected level to the CLI via `--config model_reasoning_effort=...`
+4. **Custom Providers**: Codex supports custom providers with Chat Completions or Responses APIs
+5. **Dynamic Discovery**: For programmatic model discovery, use [official Codex documentation](https://developers.openai.com/codex/models/) as the source of truth
 
 ## Programmatic Model Discovery
 
