@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.332] - 2025-12-22
+### Added
+- **Docs-aligned release**: Rebuilt the entire VSIX so the packaged README/CHANGELOG reflect the Codex reasoning override and focus-ring polish that shipped in 1.1.331.
+
+### Fixed
+- **VSIX metadata sync**: The extension’s published description now matches the actual 1.1.331 behavior (per-model `reasoningByModel` + focus states) instead of the stale 1.1.327 text.
+
+### Build
+- VSIX → `codeai-hub-1.1.332.vsix` (427K)
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.332.tar.bz2` (230M)
+- Core → `codeai-hub-core-darwin-arm64-1.1.332.tar.bz2` (35M)
+- Providers → `claude-module-1.1.332.tar.bz2` (18K), `codex-module-1.1.332.tar.bz2` (22K), `gemini-module-1.1.332.tar.bz2` (14K)
+- UI → `vscode-webview-1.1.332.tar.bz2` (137K), `web-client-1.1.332.tar.bz2` (145K), `project-manager-1.1.332.tar.bz2` (49K)
+
 ## [1.1.331] - 2025-12-22
 ### Added
 - **Codex Reasoning Overrides**: Saved per-model `reasoningByModel` values are applied through CLI `--config model_reasoning_effort=...` while launching sessions, so CodeAI Hub no longer writes `~/.codex/config.toml`.
