@@ -306,7 +306,7 @@ const patchedThreadRunStreamedInternal: ThreadRunStreamedInternal =
 export const patchCodexThreadPrototype = (
   ThreadCtor: ThreadConstructor
 ): void => {
-  const prototype = (ThreadCtor.prototype as unknown) as {
+  const prototype = ThreadCtor.prototype as unknown as {
     runStreamedInternal: ThreadRunStreamedInternal;
   } & { [THREAD_PATCHED]: boolean };
   if (prototype[THREAD_PATCHED]) {
