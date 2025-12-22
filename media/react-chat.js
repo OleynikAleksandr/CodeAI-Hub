@@ -9563,6 +9563,16 @@
     outline: none !important;
     box-shadow: none !important;
   }
+  .codex-model-row:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  .codex-model-row[data-selected="false"]:focus-within {
+    border-color: #2f2f2f !important;
+  }
+  .codex-model-row[data-selected="true"]:focus-within {
+    border-color: #0e639c !important;
+  }
 `;
   var blurActiveElement = () => {
     if (typeof document === "undefined") {
@@ -9616,6 +9626,8 @@
           return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
             "div",
             {
+              className: "codex-model-row",
+              "data-selected": isSelected,
               style: {
                 ...modelRowStyles,
                 ...isSelected ? modelRowSelectedStyles : null
