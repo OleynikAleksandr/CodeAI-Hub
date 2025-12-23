@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.334
-- **Codex Reasoning Overrides**: В настройках сохранённые `reasoningByModel`-значения применяются при старте каждой сессии через CLI `--config model_reasoning_effort=...`, без редактирования `~/.codex/config.toml`.
-- **Codex Settings UI fix**: Убрана белая фокусная обводка у ранее выбранных карточек в Codex Default model — остаются только `selected`/`unselected`.
-- **Релиз 1.1.334**: Документация и пакеты пересобраны, чтобы VSIX содержал актуальный список артефактов из `doc/tmp/releases/`.
+## Current Release — v1.1.335
+- **Codex Default Model UI Fix**: Полностью переписан компонент выбора модели — удалены нативные `<input type="radio">` и все хаки focus-ring, добавлены кликабельные div-карточки с кастомным CSS-индикатором `RadioCircle`. Белая обводка на ранее выбранных карточках больше не появляется.
+- **Релиз 1.1.335**: Документация и пакеты пересобраны с обновлённым Codex Settings UI.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.334.vsix` (427K)
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.334.tar.bz2` (230M)
-  - Core: `codeai-hub-core-darwin-arm64-1.1.334.tar.bz2` (35M)
-  - Providers: `claude-module-1.1.334.tar.bz2` (18K), `codex-module-1.1.334.tar.bz2` (22K), `gemini-module-1.1.334.tar.bz2` (14K)
-  - UI: `vscode-webview-1.1.334.tar.bz2` (137K), `web-client-1.1.334.tar.bz2` (145K), `project-manager-1.1.334.tar.bz2` (49K)
+  - VSIX: `codeai-hub-1.1.335.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.335.tar.bz2` (230M)
+  - Core: `codeai-hub-core-darwin-arm64-1.1.335.tar.bz2` (35M)
+  - Providers: `claude-module-1.1.335.tar.bz2`, `codex-module-1.1.335.tar.bz2`, `gemini-module-1.1.335.tar.bz2`
+  - UI: `vscode-webview-1.1.335.tar.bz2`, `web-client-1.1.335.tar.bz2`, `project-manager-1.1.335.tar.bz2`
+
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
