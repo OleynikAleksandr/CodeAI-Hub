@@ -3,7 +3,7 @@
 **Version:** 0.5.9
 **Last Updated:** 2025-12-23
 **Status:** Active reference
-**Release Focus:** v1.1.338 — добавление карточки Claude Default model и синхронизация alias (default/sonnet/opus/haiku) через переменную окружения `CLAUDE_DEFAULT_MODEL`.
+**Release Focus:** v1.1.339 — синхронизация `settings.json` → `CLAUDE_DEFAULT_MODEL` → Core/Claude SDK и новый пакет релиза 1.1.339 с обновлёнными дилерами.
 
 ---
 
@@ -99,6 +99,10 @@ graph TD
 - **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`, `project-manager.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
+
+## Recent Changes (v1.1.339 - 2025-12-23)
+- **Claude Default model deployment**: `settings.json` теперь дублируется в `CLAUDE_DEFAULT_MODEL`, Claude SDK читает alias/thinking сразу перед вызовом `query`, и все релизные tarball’ы/core/launcher/UI/VSIX пересобраны для версии 1.1.339.
+- **Release 1.1.339**: Артефакты v1.1.339 задеплоены в `~/.codeai-hub/releases/` и `doc/tmp/releases/`, VSIX `codeai-hub-1.1.339.vsix` собран и готов для публикации.
 
 ## Recent Changes (v1.1.338 - 2025-12-23)
 - **Claude Default model selector**: Корректно сохраняется alias (`default/sonnet`, `opus`, `haiku`) в `settings.json`, расширение дублирует значение в `CLAUDE_DEFAULT_MODEL`, а Core/Claude SDK используют alias при создании новых сессий.

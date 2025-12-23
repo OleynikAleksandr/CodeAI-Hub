@@ -19,6 +19,6 @@
 ## Phase 1 — Claude Default Model release (owner: CodeAI Hub Team, updated: 2025-12-23)
 ### Stream: Claude Default Model release
 1. [DONE] Синхронизировать выбор alias из Settings → Claude с `CLAUDE_DEFAULT_MODEL`, обновить UI/extension/core, документацию (`doc/Knowledge/Claude_Model_Aliases.md`, `doc/Architecture/Architecture.md`) и собрать релиз 1.1.338 (scope: `src/client/ui/src/components/settings/**`, `src/extension-module/**`, `packages/**`, `assets/**`, `media/react-chat.js`, `doc/Knowledge/Claude_Model_Aliases.md`, `doc/Architecture/Architecture.md`, `doc/tmp/releases/`, `codeai-hub-1.1.338.vsix`); target commit message `feat: release v1.1.338 - Claude default model`.
-
+2. [DONE] Собрать релиз 1.1.339 (scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `package.json`/`package-lock.json` версии, `assets/**/manifest.json`, `doc/tmp/releases/`, `codeai-hub-1.1.339.vsix`); target commit `feat: release v1.1.339 - Claude default model`.
 
 
