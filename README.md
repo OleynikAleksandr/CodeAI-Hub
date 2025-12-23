@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.339
-- **Claude Default Model Selector**: Новая карточка в разделе Settings → Claude позволяет выбрать alias (`default/sonnet`, `opus`, `haiku`), сохраняет выбор в `providers.claude.defaultModel` и синхронизирует его через `CLAUDE_DEFAULT_MODEL`, чтобы Core/Claude модуль запускали сессии с выбранным alias.
-- **Релиз 1.1.339**: Пересобраны все модули в v1.1.339 с новым поведением `CLAUDE_DEFAULT_MODEL` (settings.json → env → SDK) и готов VSIX/launcher/core/UI пакеты.
-- **Релиз 1.1.338**: Собраны все модули (`build-all.sh`) и упакован VSIX (`build-release.sh --use-current-version`); готово для публикации.
+## Current Release — v1.1.340
+- **Unified model cards**: Claude and Codex Default model panels now reuse `src/client/ui/src/components/settings/shared-model-card-styles.ts`, so every card renders the same border/hover/selection colors, radio circle, and `tabIndex={-1}`/`role="radio"` plumbing that prevents VS Code focus outlines.
+- **Release 1.1.340**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` once the shared style module and docs were updated; the Claude selector docs now mention the shared alias metadata and identical styling.
+- **Previous release (1.1.339)**: `CLAUDE_DEFAULT_MODEL` values were synced from settings storage through Core/Claude SDK on session start, and 1.1.339 packages remain in the release history for reference.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.339.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.339.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.339.tar.bz2`
-  - Providers: `claude-module-1.1.339.tar.bz2`, `codex-module-1.1.339.tar.bz2`, `gemini-module-1.1.339.tar.bz2`
-  - UI: `vscode-webview-1.1.339.tar.bz2`, `web-client-1.1.339.tar.bz2`, `project-manager-1.1.339.tar.bz2`
+  - VSIX: `codeai-hub-1.1.340.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.340.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.340.tar.bz2`
+  - Providers: `claude-module-1.1.340.tar.bz2`, `codex-module-1.1.340.tar.bz2`, `gemini-module-1.1.340.tar.bz2`
+  - UI: `vscode-webview-1.1.340.tar.bz2`, `web-client-1.1.340.tar.bz2`, `project-manager-1.1.340.tar.bz2`
 
 
 ## Features
