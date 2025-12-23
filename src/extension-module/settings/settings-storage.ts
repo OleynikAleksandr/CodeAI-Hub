@@ -124,4 +124,10 @@ export const persistSettingsSnapshot = async (
   }
 };
 
+export const applyClaudeDefaultModelEnv = (
+  snapshot: SettingsSnapshot
+): void => {
+  process.env.CLAUDE_DEFAULT_MODEL = snapshot.providers.claude.defaultModel;
+};
+
 export const getSettingsPath = (): string => SETTINGS_FILE;

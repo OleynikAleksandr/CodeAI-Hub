@@ -168,6 +168,12 @@ This file contains:
 }
 ```
 
+### CodeAI Hub Settings
+
+The Settings view now exposes a dedicated `Claude Default model` card in the Claude tab (Settings → Claude). It renders the same alias list as the knowledge base and saves the selected alias into `~/.codeai-hub/settings/settings.json` under `providers.claude.defaultModel`.
+
+When the extension loads or after the card is saved/reset, the alias is mirrored into the environment variable `CLAUDE_DEFAULT_MODEL`. The Core orchestrator reads this variable, flows it into `packages/core/src/provider-registry`, and lets the Claude module pass it as the `model` option to the Claude Agent SDK. As a result, every new Claude session starts with the user-chosen alias without hardcoding a full model ID.
+
 ## Recommendations
 
 ### For Production Code

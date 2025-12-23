@@ -1,4 +1,9 @@
 import {
+  CLAUDE_MODEL_ALIAS_SET,
+  type ClaudeModelAliasId,
+  DEFAULT_CLAUDE_MODEL_ALIAS,
+} from "../../types/claude-model-registry";
+import {
   type AutoUpdateSettings,
   DEFAULT_AUTO_UPDATE_SETTINGS,
   normalizeAutoUpdateSettings,
@@ -13,6 +18,7 @@ export type ClaudeThinkingSettings = {
 export type ClaudeSettings = {
   readonly thinking: ClaudeThinkingSettings;
   readonly autoUpdate: AutoUpdateSettings;
+  readonly defaultModel: ClaudeModelAliasId;
 };
 
 export const MIN_THINKING_TOKENS = 2000;
@@ -26,6 +32,7 @@ export const DEFAULT_CLAUDE_THINKING_SETTINGS: ClaudeThinkingSettings = {
 export const DEFAULT_CLAUDE_SETTINGS: ClaudeSettings = {
   thinking: DEFAULT_CLAUDE_THINKING_SETTINGS,
   autoUpdate: DEFAULT_AUTO_UPDATE_SETTINGS,
+  defaultModel: DEFAULT_CLAUDE_MODEL_ALIAS,
 };
 
 const clampThinkingTokens = (value: number): number =>
@@ -53,6 +60,11 @@ export const normalizeClaudeThinkingSettings = (
   };
 };
 
+const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId =>
+  typeof value === "string" && CLAUDE_MODEL_ALIAS_SET.has(value)
+    ? (value as ClaudeModelAliasId)
+    : DEFAULT_CLAUDE_MODEL_ALIAS;
+
 export const normalizeClaudeSettings = (value: unknown): ClaudeSettings => {
   if (!isRecord(value)) {
     return DEFAULT_CLAUDE_SETTINGS;
@@ -61,5 +73,6 @@ export const normalizeClaudeSettings = (value: unknown): ClaudeSettings => {
   return {
     thinking: normalizeClaudeThinkingSettings(value.thinking),
     autoUpdate: normalizeAutoUpdateSettings(value.autoUpdate),
+    defaultModel: resolveClaudeDefaultModel(value.defaultModel),
   };
 };
