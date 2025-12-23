@@ -152,7 +152,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
                 onMouseLeave={() => setHoveredRowId(null)}
                 role="radio"
                 style={rowStyle}
-                tabIndex={0}
+                tabIndex={-1}
               >
                 <RadioCircle checked={isSelected} />
                 <div style={modelBodyStyles}>

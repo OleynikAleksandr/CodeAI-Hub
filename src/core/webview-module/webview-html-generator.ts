@@ -85,6 +85,17 @@ export class WebviewHtmlGenerator {
     #root {
       min-height: 100vh;
     }
+    /* Aggressive focus reset for Settings model cards */
+    [role="radio"]:focus,
+    [role="radio"]:focus-visible,
+    [role="radio"]:focus-within {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    /* Also reset any potential VS Code webview focus injection */
+    *:focus:not(input):not(textarea):not(button) {
+      outline: none !important;
+    }
   </style>
   <link href="${mainViewCssUri}" rel="stylesheet">
   <link href="${reactAppCssUri}" rel="stylesheet">
