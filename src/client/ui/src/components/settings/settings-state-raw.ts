@@ -1,0 +1,34 @@
+export type RawThinkingSettings = {
+  readonly enabled?: unknown;
+  readonly maxTokens?: unknown;
+};
+export type RawAutoUpdateSettings = {
+  readonly enabled?: unknown;
+};
+export type RawClaudeSettings = {
+  readonly thinking?: RawThinkingSettings;
+  readonly autoUpdate?: RawAutoUpdateSettings;
+  readonly defaultModel?: unknown;
+};
+export type RawCodexSettings = {
+  readonly autoUpdate?: RawAutoUpdateSettings;
+  readonly defaultModel?: unknown;
+  readonly reasoningByModel?: Record<string, unknown>;
+};
+export type RawGeminiSettings = {
+  readonly autoUpdate?: RawAutoUpdateSettings;
+};
+export type RawCoreControlsSettings = {
+  readonly allowRestart?: unknown;
+};
+export type RawGeneralSettings = {
+  readonly coreControls?: RawCoreControlsSettings;
+};
+export type RawSettingsSnapshot = {
+  readonly general?: RawGeneralSettings;
+  readonly providers?: {
+    readonly claude?: RawClaudeSettings;
+    readonly codex?: RawCodexSettings;
+    readonly gemini?: RawGeminiSettings;
+  };
+};

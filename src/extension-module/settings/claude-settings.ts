@@ -60,10 +60,16 @@ export const normalizeClaudeThinkingSettings = (
   };
 };
 
-const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId =>
-  typeof value === "string" && CLAUDE_MODEL_ALIAS_SET.has(value)
-    ? (value as ClaudeModelAliasId)
+const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId => {
+  if (typeof value !== "string") {
+    return DEFAULT_CLAUDE_MODEL_ALIAS;
+  }
+
+  const alias = value as ClaudeModelAliasId;
+  return CLAUDE_MODEL_ALIAS_SET.has(alias)
+    ? alias
     : DEFAULT_CLAUDE_MODEL_ALIAS;
+};
 
 export const normalizeClaudeSettings = (value: unknown): ClaudeSettings => {
   if (!isRecord(value)) {

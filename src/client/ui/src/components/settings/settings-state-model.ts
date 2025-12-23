@@ -14,12 +14,25 @@ import {
   DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../../types/codex-model-registry";
 
+import type {
+  RawAutoUpdateSettings,
+  RawClaudeSettings,
+  RawCodexSettings,
+  RawCoreControlsSettings,
+  RawGeminiSettings,
+  RawGeneralSettings,
+  RawSettingsSnapshot,
+  RawThinkingSettings,
+} from "./settings-state-raw";
+
 export type {
   CodexModelId,
   CodexReasoningLevel,
 } from "../../../../../types/codex-model-registry";
 
 export type ProviderId = "claude" | "codex" | "gemini";
+
+export type { RawSettingsSnapshot } from "./settings-state-raw";
 
 type ThinkingSettings = {
   readonly enabled: boolean;
@@ -83,42 +96,6 @@ export type ProviderVersions = {
     readonly core: VersionEntry;
   };
   readonly checkedAt?: string;
-};
-
-type RawThinkingSettings = {
-  readonly enabled?: unknown;
-  readonly maxTokens?: unknown;
-};
-type RawAutoUpdateSettings = {
-  readonly enabled?: unknown;
-};
-type RawClaudeSettings = {
-  readonly thinking?: RawThinkingSettings;
-  readonly autoUpdate?: RawAutoUpdateSettings;
-  readonly defaultModel?: unknown;
-};
-type RawCodexSettings = {
-  readonly autoUpdate?: RawAutoUpdateSettings;
-  readonly defaultModel?: unknown;
-  readonly reasoningByModel?: Record<string, unknown>;
-};
-type RawGeminiSettings = {
-  readonly autoUpdate?: RawAutoUpdateSettings;
-};
-type RawCoreControlsSettings = {
-  readonly allowRestart?: unknown;
-};
-type RawGeneralSettings = {
-  readonly coreControls?: RawCoreControlsSettings;
-};
-
-export type RawSettingsSnapshot = {
-  readonly general?: RawGeneralSettings;
-  readonly providers?: {
-    readonly claude?: RawClaudeSettings;
-    readonly codex?: RawCodexSettings;
-    readonly gemini?: RawGeminiSettings;
-  };
 };
 
 const DEFAULT_THINKING_MAX_TOKENS = 4000;
@@ -185,10 +162,16 @@ const resolveCodexModelId = (value: unknown): CodexModelId =>
     ? (value as CodexModelId)
     : DEFAULT_CODEX_MODEL_ID;
 
-const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId =>
-  typeof value === "string" && CLAUDE_MODEL_ALIAS_SET.has(value)
-    ? (value as ClaudeModelAliasId)
+const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId => {
+  if (typeof value !== "string") {
+    return DEFAULT_CLAUDE_MODEL_ALIAS;
+  }
+
+  const alias = value as ClaudeModelAliasId;
+  return CLAUDE_MODEL_ALIAS_SET.has(alias)
+    ? alias
     : DEFAULT_CLAUDE_MODEL_ALIAS;
+};
 
 const mapCodexReasoningByModel = (value: unknown): CodexReasoningByModel => {
   const nextReasoningByModel = {

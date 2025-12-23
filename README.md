@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.337
-- **Codex Default Model UI Fix**: Явные borderWidth/borderStyle/borderColor + tabIndex={-1} для предотвращения VS Code webview focus styling.
-- **Релиз 1.1.337**: Полная сборка всех модулей.
-- **Релиз 1.1.335**: Документация и пакеты пересобраны с обновлённым Codex Settings UI.
+## Current Release — v1.1.338
+- **Claude Default Model Selector**: Новая карточка в разделе Settings → Claude позволяет выбрать alias (`default/sonnet`, `opus`, `haiku`), сохраняет выбор в `providers.claude.defaultModel` и синхронизирует его через `CLAUDE_DEFAULT_MODEL`, чтобы Core/Claude модуль запускали сессии с выбранным alias.
+- **Релиз 1.1.338**: Собраны все модули (`build-all.sh`) и упакован VSIX (`build-release.sh --use-current-version`); готово для публикации.
+- **Релиз 1.1.337**: Полная сборка всех модулей после оптимизации карточек Codex Default Model UI.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.335.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.335.tar.bz2` (230M)
-  - Core: `codeai-hub-core-darwin-arm64-1.1.335.tar.bz2` (35M)
-  - Providers: `claude-module-1.1.335.tar.bz2`, `codex-module-1.1.335.tar.bz2`, `gemini-module-1.1.335.tar.bz2`
-  - UI: `vscode-webview-1.1.335.tar.bz2`, `web-client-1.1.335.tar.bz2`, `project-manager-1.1.335.tar.bz2`
+  - VSIX: `codeai-hub-1.1.338.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.338.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.338.tar.bz2`
+  - Providers: `claude-module-1.1.338.tar.bz2`, `codex-module-1.1.338.tar.bz2`, `gemini-module-1.1.338.tar.bz2`
+  - UI: `vscode-webview-1.1.338.tar.bz2`, `web-client-1.1.338.tar.bz2`, `project-manager-1.1.338.tar.bz2`
 
 
 ## Features
