@@ -1,4 +1,4 @@
-import type { CSSProperties, FC, KeyboardEvent } from "react";
+import type { CSSProperties, FC } from "react";
 import { memo, useState } from "react";
 import {
   CLAUDE_MODEL_ALIASES,
@@ -46,6 +46,12 @@ const rowSelectedStyles: CSSProperties = {
 
 const rowHoverStyles: CSSProperties = {
   borderColor: "#4a4a4a",
+};
+
+const rowButtonResetStyles: CSSProperties = {
+  appearance: "none",
+  outline: "none",
+  textAlign: "left",
 };
 
 const modelInfoStyles: CSSProperties = {
@@ -109,16 +115,6 @@ const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
     null
   );
 
-  const handleRowKeyDown = (
-    event: KeyboardEvent<HTMLDivElement>,
-    alias: ClaudeModelAliasId
-  ) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      onDefaultModelChange(alias);
-    }
-  };
-
   return (
     <SettingsCard title="Claude Default model">
       <p style={descriptionStyles}>
@@ -131,23 +127,23 @@ const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
           const isSelected = defaultModel === model.alias;
           const rowStyle: CSSProperties = {
             ...rowBaseStyles,
+            ...rowButtonResetStyles,
             ...(isSelected ? rowSelectedStyles : {}),
             ...(!isSelected && hoveredAlias === model.alias
               ? rowHoverStyles
               : {}),
           };
           return (
-            // biome-ignore lint/a11y/useSemanticElements: custom radio cards to avoid native radio focus styles
-            <div
+            // biome-ignore lint/a11y/useSemanticElements: custom radio buttons to avoid native focus styles
+            <button
               aria-checked={isSelected}
               key={model.alias}
               onClick={() => onDefaultModelChange(model.alias)}
-              onKeyDown={(event) => handleRowKeyDown(event, model.alias)}
               onMouseEnter={() => setHoveredAlias(model.alias)}
               onMouseLeave={() => setHoveredAlias(null)}
               role="radio"
               style={rowStyle}
-              tabIndex={-1}
+              type="button"
             >
               <div
                 style={{
@@ -162,7 +158,7 @@ const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
                 <div style={aliasStyles}>{model.alias}</div>
                 <p style={modelDescriptionStyles}>{model.description}</p>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>

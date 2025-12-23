@@ -14,9 +14,11 @@
 запускаем `./scripts/build-all.sh` (он поднимает версии и пересобирает модули/core/UI/launcher), затем на чистом дереве запускаем `./scripts/build-release.sh --use-current-version` для сборки VSIX, переносим tarball'ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
   - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
 
----
+--- 
 
-
+## Phase 1 — Claude Default Model release (owner: CodeAI Hub Team, updated: 2025-12-23)
+### Stream: Claude Default Model release
+1. [DONE] Синхронизировать выбор alias из Settings → Claude с `CLAUDE_DEFAULT_MODEL`, обновить UI/extension/core, документацию (`doc/Knowledge/Claude_Model_Aliases.md`, `doc/Architecture/Architecture.md`) и собрать релиз 1.1.338 (scope: `src/client/ui/src/components/settings/**`, `src/extension-module/**`, `packages/**`, `assets/**`, `media/react-chat.js`, `doc/Knowledge/Claude_Model_Aliases.md`, `doc/Architecture/Architecture.md`, `doc/tmp/releases/`, `codeai-hub-1.1.338.vsix`); target commit message `feat: release v1.1.338 - Claude default model`.
 
 
 

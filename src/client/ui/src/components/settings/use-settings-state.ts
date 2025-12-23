@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { ClaudeModelAliasId } from "../../../../../types/claude-model-registry";
 import vscode from "../../vscode";
 import {
   areSettingsEqual,
@@ -71,6 +72,9 @@ export type UseSettingsStateResult = {
   readonly handleThinkingSettingsChange: (
     enabled: boolean,
     maxTokens: number
+  ) => void;
+  readonly handleClaudeDefaultModelChange: (
+    modelId: ClaudeModelAliasId
   ) => void;
   readonly handleCodexDefaultModelChange: (modelId: CodexModelId) => void;
   readonly handleCodexReasoningChange: (
@@ -159,6 +163,23 @@ export const useSettingsState = (): UseSettingsStateResult => {
               enabled,
               maxTokens,
             },
+          },
+        },
+      };
+      updateSettings(nextSettings);
+    },
+    [settings, updateSettings]
+  );
+
+  const handleClaudeDefaultModelChange = useCallback(
+    (modelId: ClaudeModelAliasId) => {
+      const nextSettings: Settings = {
+        ...settings,
+        providers: {
+          ...settings.providers,
+          claude: {
+            ...settings.providers.claude,
+            defaultModel: modelId,
           },
         },
       };
@@ -263,6 +284,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     resetting,
     versions,
     handleThinkingSettingsChange,
+    handleClaudeDefaultModelChange,
     handleCodexDefaultModelChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
