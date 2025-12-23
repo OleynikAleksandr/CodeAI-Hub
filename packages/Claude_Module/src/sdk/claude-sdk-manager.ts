@@ -143,6 +143,9 @@ export class ClaudeSDKManager {
       settingSources: ["user", "project", "local"],
       environment: this.deps.authManager.getAuthEnvironment(),
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
+      ...(this.deps.workspace.defaultModel
+        ? { model: this.deps.workspace.defaultModel }
+        : {}),
       ...this.resolveThinkingOptions(),
     };
     const queryInstance = this.queryFunction({

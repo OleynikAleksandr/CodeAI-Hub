@@ -3,7 +3,7 @@ import { memo, useState } from "react";
 import {
   CLAUDE_MODEL_ALIASES,
   type ClaudeModelAliasId,
-} from "../../../../../types/claude-model-registry";
+} from "../../../../../../types/claude-model-registry";
 import SettingsCard from "../settings-card";
 
 const descriptionStyles: CSSProperties = {

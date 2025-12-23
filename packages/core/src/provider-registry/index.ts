@@ -695,6 +695,7 @@ export class ProviderRegistry {
         workspacePath: this.options.config.claudeWorkspacePath,
         claudeProjectSlug: this.options.config.claudeProjectSlug,
         settingsPath: this.options.config.claudeSettingsPath,
+        defaultModel: this.options.config.claudeDefaultModel,
       },
       reporter: this.createReporter("claude"),
     });

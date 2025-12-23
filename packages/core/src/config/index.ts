@@ -27,6 +27,7 @@ export type CoreConfig = {
   readonly geminiWorkspacePath: string;
   readonly geminiDefaultModel?: string;
   readonly geminiCredentialsDirectory?: string;
+  readonly claudeDefaultModel: string;
 };
 
 type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
@@ -65,6 +66,12 @@ const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "high",
   "xhigh",
 ]);
+const CLAUDE_MODEL_ALIAS_SET = new Set(["default", "sonnet", "opus", "haiku"]);
+const DEFAULT_CLAUDE_MODEL_ALIAS = "default";
+const resolveClaudeDefaultModel = (value: string | undefined): string =>
+  value && CLAUDE_MODEL_ALIAS_SET.has(value)
+    ? value
+    : DEFAULT_CLAUDE_MODEL_ALIAS;
 const NON_ALPHANUMERIC_REGEX = /[^a-zA-Z0-9]/g;
 const MULTIPLE_DASHES_REGEX = /-+/g;
 const TRAILING_DASH_REGEX = /-$/;
@@ -215,6 +222,9 @@ export const loadConfig = (): CoreConfig => {
   const codexWorkspacePath = process.env.CODEX_WORKSPACE_PATH ?? workspacePath;
   const claudeSettingsPath =
     process.env.CLAUDE_SETTINGS_PATH ?? DEFAULT_SETTINGS_PATH;
+  const claudeDefaultModel = resolveClaudeDefaultModel(
+    process.env.CLAUDE_DEFAULT_MODEL
+  );
   const codexSandboxMode = toSandboxMode(process.env.CODEX_SANDBOX_MODE);
   const codexApprovalMode = toApprovalMode(process.env.CODEX_APPROVAL_MODE);
   const codexSkipGitRepoCheck = toBoolean(
@@ -253,6 +263,7 @@ export const loadConfig = (): CoreConfig => {
     claudeWorkspacePath: workspacePath,
     claudeProjectSlug: slug,
     claudeSettingsPath,
+    claudeDefaultModel,
     codexWorkspacePath,
     codexSandboxMode,
     codexApprovalMode,

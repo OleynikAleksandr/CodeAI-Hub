@@ -8,6 +8,7 @@ export type ClaudeWorkspaceOptions = {
   readonly workspacePath: string;
   readonly claudeProjectSlug: string;
   readonly settingsPath?: string;
+  readonly defaultModel?: string;
 };
 
 export type ModuleReporter = {
