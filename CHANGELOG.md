@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.335] - 2025-12-23
+### Fixed
+- **Codex Default Model UI**: Completely rewrote the model selector component to eliminate the stuck white border focus issue. Replaced native `<input type="radio">` elements with custom clickable div cards and a pure CSS `RadioCircle` indicator, removing all browser focus-ring artifacts.
+
+### Changed
+- Extracted model card styles into a dedicated `codex-model-card-styles.ts` module for architecture compliance (300-line limit).
+
+### Build
+- VSIX → `codeai-hub-1.1.335.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.335.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.335.tar.bz2`
+- Providers → `claude-module-1.1.335.tar.bz2`, `codex-module-1.1.335.tar.bz2`, `gemini-module-1.1.335.tar.bz2`
+- UI → `vscode-webview-1.1.335.tar.bz2`, `web-client-1.1.335.tar.bz2`, `project-manager-1.1.335.tar.bz2`
+
 ## [1.1.334] - 2025-12-22
 ### Fixed
 - **Codex Default model UI**: Prevented the non-selected cards from inheriting focus-within border color so only selected/unselected states remain.
