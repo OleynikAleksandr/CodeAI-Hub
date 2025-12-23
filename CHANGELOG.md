@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.337] - 2025-12-23
+### Fixed
+- **Codex Default Model UI**: Replaced shorthand `border` with explicit `borderWidth`, `borderStyle`, `borderColor` properties and set `tabIndex={-1}` to prevent focus acquisition and VS Code webview focus styling.
+
 ## [1.1.336] - 2025-12-23
 ### Fixed
 - **Codex Default Model UI**: Added explicit `outline: none` and `boxShadow: none` to model cards to fully suppress any browser/VS Code focus styling artifacts.
