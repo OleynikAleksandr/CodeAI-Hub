@@ -9269,7 +9269,9 @@
     display: "flex",
     gap: "12px",
     alignItems: "flex-start",
-    border: "1px solid #2f2f2f",
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: "#2f2f2f",
     borderRadius: "6px",
     padding: "12px",
     background: "#252526",
@@ -9654,7 +9656,7 @@
                 onMouseLeave: () => setHoveredRowId(null),
                 role: "radio",
                 style: rowStyle,
-                tabIndex: 0,
+                tabIndex: -1,
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(RadioCircle, { checked: isSelected }),
                   /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelBodyStyles, children: [
