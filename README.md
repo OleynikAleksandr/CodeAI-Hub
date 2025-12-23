@@ -2,8 +2,9 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.336
-- **Codex Default Model UI Fix**: Дополнительный фикс — добавлены явные `outline: none` и `boxShadow: none` для полного подавления browser/VS Code focus-стилей.
+## Current Release — v1.1.337
+- **Codex Default Model UI Fix**: Явные borderWidth/borderStyle/borderColor + tabIndex={-1} для предотвращения VS Code webview focus styling.
+- **Релиз 1.1.337**: Полная сборка всех модулей.
 - **Релиз 1.1.335**: Документация и пакеты пересобраны с обновлённым Codex Settings UI.
 
 - **Artifact bundle**
