@@ -24,6 +24,8 @@
 4. **Запуск сессии**: создаётся `sessionId`, открывается поток SDK, запускаются адаптеры streaming/resume.
 5. **Эксплуатация**: модуль поддерживает мультисессионность, персистентность вкладок и resume после перезапуска VS Code.
 6. **Дефолтная модель**: с версии 1.1.339 Settings UI сохраняет alias в `~/.codeai-hub/settings/settings.json` → `providers.claude.defaultModel`, расширение одновременно обновляет `CLAUDE_DEFAULT_MODEL` и `CLAUDE_SETTINGS_PATH`, core передаёт alias в `ClaudeWorkspaceOptions`, а SDK перечитывает JSON перед каждым `query`, чтобы alias и thinking-настройки применялись на следующих сессиях без ручного вмешательства.
+   - Значения, отображаемые в карточках, берутся из `CLAUDE_MODEL_ALIASES` (`src/types/claude-model-registry.ts`): `default`/Sonnet 4.5, `opus`/Opus 4.5 и `haiku`/Haiku 4.5, с теми же описаниями что и в интерфейсе.
+   - `claude-default-model-card.tsx` переиспользует `shared-model-card-styles.ts` (`src/client/ui/src/components/settings/shared-model-card-styles.ts`): те же цвета/паддинги, hover/selected states, `tabIndex={-1}`/`role="radio"`, `outline: none`/`boxShadow: none` и логика `rowButtonResetStyles`, что применяются и для Codex, потому изменений в `doc/Knowledge/css-border-shorthand-react-inline-styles.md` уже достаточно, и карточка выглядит идентично, как и карточки Codex.
 7. **Обновления**: при старте CodeAI-Hub Auto Update Service проверяет latest CLI/SDK и, если включено автообновление, инициирует глобальный апдейт.
 8. **Завершение**: при остановке сессии освобождаются ресурсы SDK, сохраняются финальные JSONL и черновики, очищаются временные файлы.
 

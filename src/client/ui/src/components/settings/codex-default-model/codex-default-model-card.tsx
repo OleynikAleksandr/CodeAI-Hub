@@ -11,19 +11,22 @@ import SettingsCard from "../settings-card";
 import type { CodexReasoningByModel } from "../settings-state-model";
 import {
   descriptionStyles,
-  modelBodyStyles,
+  listStyles,
   modelDescriptionStyles,
-  modelIdStyles,
   modelInfoStyles,
-  modelListStyles,
-  modelRowHoverStyles,
-  modelRowSelectedStyles,
-  modelRowStyles,
   modelTitleStyles,
   noteStyles,
   radioCircleInnerStyles,
   radioCircleSelectedStyles,
   radioCircleStyles,
+  rowBaseStyles,
+  rowButtonResetStyles,
+  rowHoverStyles,
+  rowSelectedStyles,
+} from "../shared-model-card-styles";
+import {
+  modelBodyStyles,
+  modelIdStyles,
   reasoningButtonActiveStyles,
   reasoningButtonHoverStyles,
   reasoningButtonStyles,
@@ -120,7 +123,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
             GPT-5.2-Codex.
           </div>
         ) : null}
-        <div style={modelListStyles}>
+        <div style={listStyles}>
           {CODEX_RECOMMENDED_MODELS.map((model) => {
             const isSelected = selectedModelId === model.id;
             const isRowHovered = hoveredRowId === model.id;
@@ -136,9 +139,10 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
             }
 
             const rowStyle: CSSProperties = {
-              ...modelRowStyles,
-              ...(isSelected ? modelRowSelectedStyles : {}),
-              ...(!isSelected && isRowHovered ? modelRowHoverStyles : {}),
+              ...rowBaseStyles,
+              ...rowButtonResetStyles,
+              ...(isSelected ? rowSelectedStyles : {}),
+              ...(!isSelected && isRowHovered ? rowHoverStyles : {}),
             };
 
             return (

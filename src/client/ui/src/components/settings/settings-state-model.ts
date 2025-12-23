@@ -18,7 +18,6 @@ import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
   RawCodexSettings,
-  RawCoreControlsSettings,
   RawGeminiSettings,
   RawGeneralSettings,
   RawSettingsSnapshot,
@@ -168,9 +167,7 @@ const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId => {
   }
 
   const alias = value as ClaudeModelAliasId;
-  return CLAUDE_MODEL_ALIAS_SET.has(alias)
-    ? alias
-    : DEFAULT_CLAUDE_MODEL_ALIAS;
+  return CLAUDE_MODEL_ALIAS_SET.has(alias) ? alias : DEFAULT_CLAUDE_MODEL_ALIAS;
 };
 
 const mapCodexReasoningByModel = (value: unknown): CodexReasoningByModel => {
