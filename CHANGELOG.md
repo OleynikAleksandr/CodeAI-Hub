@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.336] - 2025-12-23
+### Fixed
+- **Codex Default Model UI**: Added explicit `outline: none` and `boxShadow: none` to model cards to fully suppress any browser/VS Code focus styling artifacts.
+
 ## [1.1.335] - 2025-12-23
 ### Fixed
 - **Codex Default Model UI**: Completely rewrote the model selector component to eliminate the stuck white border focus issue. Replaced native `<input type="radio">` elements with custom clickable div cards and a pure CSS `RadioCircle` indicator, removing all browser focus-ring artifacts.
