@@ -34,6 +34,7 @@ export const modelRowStyles: CSSProperties = {
   cursor: "pointer",
   transition: "border-color 0.15s, background 0.15s",
   outline: "none",
+  boxShadow: "none",
 };
 
 export const modelRowSelectedStyles: CSSProperties = {
