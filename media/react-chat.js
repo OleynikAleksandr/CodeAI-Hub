@@ -9244,6 +9244,128 @@
   ] });
   var settings_card_default = SettingsCard;
 
+  // src/client/ui/src/components/settings/codex-default-model/codex-model-card-styles.ts
+  var descriptionStyles = {
+    fontSize: "12px",
+    color: "#b0b0b0",
+    margin: 0,
+    lineHeight: 1.5
+  };
+  var warningStyles = {
+    background: "#3a2a1f",
+    border: "1px solid #9b6b3d",
+    color: "#ffd7a3",
+    borderRadius: "4px",
+    padding: "8px 10px",
+    fontSize: "12px",
+    lineHeight: 1.5
+  };
+  var modelListStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var modelRowStyles = {
+    display: "flex",
+    gap: "12px",
+    alignItems: "flex-start",
+    border: "1px solid #2f2f2f",
+    borderRadius: "6px",
+    padding: "12px",
+    background: "#252526",
+    cursor: "pointer",
+    transition: "border-color 0.15s, background 0.15s"
+  };
+  var modelRowSelectedStyles = {
+    borderColor: "#0e639c",
+    background: "#1f2a33"
+  };
+  var modelRowHoverStyles = {
+    borderColor: "#4a4a4a"
+  };
+  var radioCircleStyles = {
+    width: "16px",
+    height: "16px",
+    minWidth: "16px",
+    borderRadius: "50%",
+    border: "2px solid #5a5a5a",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "3px",
+    transition: "border-color 0.15s"
+  };
+  var radioCircleSelectedStyles = {
+    borderColor: "#0e639c"
+  };
+  var radioCircleInnerStyles = {
+    width: "8px",
+    height: "8px",
+    borderRadius: "50%",
+    background: "#0e639c"
+  };
+  var modelInfoStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "2px",
+    flex: 1
+  };
+  var modelTitleStyles = {
+    fontSize: "13px",
+    fontWeight: 600,
+    color: "#e5e5e5"
+  };
+  var modelIdStyles = {
+    fontSize: "11px",
+    color: "#8c8c8c"
+  };
+  var modelDescriptionStyles = {
+    fontSize: "12px",
+    color: "#a8a8a8",
+    margin: "4px 0 0",
+    lineHeight: 1.4
+  };
+  var modelBodyStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    flex: 1
+  };
+  var reasoningRowStyles = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    paddingLeft: "28px"
+  };
+  var reasoningLabelStyles = {
+    fontSize: "11px",
+    color: "#8f8f8f"
+  };
+  var reasoningButtonStyles = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    padding: "4px 10px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "11px"
+  };
+  var reasoningButtonHoverStyles = {
+    borderColor: "#5a5a5a",
+    background: "#2b2f33",
+    color: "#ffffff"
+  };
+  var reasoningButtonActiveStyles = {
+    borderColor: "#0e639c",
+    background: "#0e639c",
+    color: "#ffffff"
+  };
+  var noteStyles = {
+    fontSize: "11px",
+    color: "#8f8f8f",
+    margin: 0
+  };
+
   // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
   var import_react7 = __toESM(require_react());
   var import_jsx_runtime4 = __toESM(require_jsx_runtime());
@@ -9450,139 +9572,16 @@
 
   // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
   var import_jsx_runtime5 = __toESM(require_jsx_runtime());
-  var descriptionStyles = {
-    fontSize: "12px",
-    color: "#b0b0b0",
-    margin: 0,
-    lineHeight: 1.5
-  };
-  var warningStyles = {
-    background: "#3a2a1f",
-    border: "1px solid #9b6b3d",
-    color: "#ffd7a3",
-    borderRadius: "4px",
-    padding: "8px 10px",
-    fontSize: "12px",
-    lineHeight: 1.5
-  };
-  var modelListStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var modelRowStyles = {
-    display: "flex",
-    gap: "12px",
-    alignItems: "flex-start",
-    border: "1px solid #2f2f2f",
-    borderRadius: "6px",
-    padding: "12px",
-    background: "#252526",
-    outline: "none",
-    boxShadow: "none"
-  };
-  var modelRowSelectedStyles = {
-    borderColor: "#0e639c",
-    background: "#1f2a33"
-  };
-  var radioStyles2 = {
-    marginTop: "3px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer",
-    outline: "none",
-    boxShadow: "none"
-  };
-  var modelLabelStyles = {
-    display: "flex",
-    gap: "12px",
-    cursor: "pointer",
-    outline: "none",
-    width: "100%"
-  };
-  var modelTitleStyles = {
-    fontSize: "13px",
-    fontWeight: 600,
-    color: "#e5e5e5"
-  };
-  var modelIdStyles = {
-    fontSize: "11px",
-    color: "#8c8c8c"
-  };
-  var modelDescriptionStyles = {
-    fontSize: "12px",
-    color: "#a8a8a8",
-    margin: "4px 0 0",
-    lineHeight: 1.4
-  };
-  var modelBodyStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    flex: 1
-  };
-  var reasoningRowStyles = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    paddingLeft: "28px"
-  };
-  var reasoningLabelStyles = {
-    fontSize: "11px",
-    color: "#8f8f8f"
-  };
-  var reasoningButtonStyles = {
-    border: "1px solid #3a3d41",
-    background: "transparent",
-    color: "#d7d7d7",
-    padding: "4px 10px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "11px",
-    outline: "none"
-  };
-  var reasoningButtonHoverStyles = {
-    borderColor: "#5a5a5a",
-    background: "#2b2f33",
-    color: "#ffffff"
-  };
-  var reasoningButtonActiveStyles = {
-    borderColor: "#0e639c",
-    background: "#0e639c",
-    color: "#ffffff"
-  };
-  var noteStyles = {
-    fontSize: "11px",
-    color: "#8f8f8f",
-    margin: 0
-  };
-  var focusResetStyles = `
-  .codex-model-selector *:focus,
-  .codex-model-selector *:focus-visible,
-  .codex-model-selector *:focus-within {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-  .codex-model-row:focus-within {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-  .codex-model-row[data-selected="false"]:focus-within {
-    border-color: #2f2f2f !important;
-  }
-  .codex-model-row[data-selected="true"]:focus-within {
-    border-color: #0e639c !important;
-  }
-`;
-  var blurActiveElement = () => {
-    if (typeof document === "undefined") {
-      return;
+  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    "div",
+    {
+      style: {
+        ...radioCircleStyles,
+        ...checked ? radioCircleSelectedStyles : {}
+      },
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: radioCircleInnerStyles }) : null
     }
-    const activeElement = document.activeElement;
-    if (activeElement instanceof HTMLElement) {
-      activeElement.blur();
-    }
-  };
+  );
   var CodexDefaultModelCard = ({
     defaultModel,
     reasoningByModel,
@@ -9590,10 +9589,11 @@
     onReasoningChange
   }) => {
     const [activeModelId, setActiveModelId] = (0, import_react8.useState)(null);
-    const [hoveredModelId, setHoveredModelId] = (0, import_react8.useState)(
+    const [hoveredRowId, setHoveredRowId] = (0, import_react8.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react8.useState)(
       null
     );
-    const [pressedModelId, setPressedModelId] = (0, import_react8.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react8.useState)(
       null
     );
     const recommendedModelIds = (0, import_react8.useMemo)(
@@ -9606,87 +9606,88 @@
       (model) => model.id === activeModelId
     );
     const resolveReasoning = (modelId) => reasoningByModel[modelId] ?? DEFAULT_CODEX_REASONING_LEVEL;
+    const handleRowClick = (modelId) => {
+      onDefaultModelChange(modelId);
+    };
+    const handleRowKeyDown = (event, modelId) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onDefaultModelChange(modelId);
+      }
+    };
+    const handleReasoningButtonClick = (event, modelId) => {
+      event.stopPropagation();
+      setActiveModelId(modelId);
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("style", { children: focusResetStyles }),
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(settings_card_default, { title: "Codex Default model", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
         hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: warningStyles, children: "The saved default model is no longer available. Falling back to GPT-5.2-Codex." }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "codex-model-selector", style: modelListStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelListStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
           const isSelected = selectedModelId === model.id;
-          const inputId = `codex-default-model-${model.id}`;
+          const isRowHovered = hoveredRowId === model.id;
           const reasoningLevel = resolveReasoning(model.id);
-          const isHovered = hoveredModelId === model.id;
-          const isPressed = pressedModelId === model.id;
-          let reasoningStateStyles = null;
-          if (isPressed) {
+          const isButtonHovered = hoveredButtonId === model.id;
+          const isButtonPressed = pressedButtonId === model.id;
+          let reasoningStateStyles = {};
+          if (isButtonPressed) {
             reasoningStateStyles = reasoningButtonActiveStyles;
-          } else if (isHovered) {
+          } else if (isButtonHovered) {
             reasoningStateStyles = reasoningButtonHoverStyles;
           }
-          return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-            "div",
-            {
-              className: "codex-model-row",
-              "data-selected": isSelected,
-              style: {
-                ...modelRowStyles,
-                ...isSelected ? modelRowSelectedStyles : null
-              },
-              children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelBodyStyles, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { htmlFor: inputId, style: modelLabelStyles, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-                    "input",
-                    {
-                      checked: isSelected,
-                      id: inputId,
-                      name: "codex-default-model",
-                      onChange: () => {
-                        onDefaultModelChange(model.id);
-                        requestAnimationFrame(blurActiveElement);
-                      },
-                      style: radioStyles2,
-                      type: "radio"
-                    }
-                  ),
-                  /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: { flex: 1 }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelIdStyles, children: model.id }),
-                    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+          const rowStyle = {
+            ...modelRowStyles,
+            ...isSelected ? modelRowSelectedStyles : {},
+            ...!isSelected && isRowHovered ? modelRowHoverStyles : {}
+          };
+          return (
+            // biome-ignore lint/a11y/useSemanticElements: Custom radio to avoid browser focus styles on native input
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+              "div",
+              {
+                "aria-checked": isSelected,
+                onClick: () => handleRowClick(model.id),
+                onKeyDown: (e) => handleRowKeyDown(e, model.id),
+                onMouseEnter: () => setHoveredRowId(model.id),
+                onMouseLeave: () => setHoveredRowId(null),
+                role: "radio",
+                style: rowStyle,
+                tabIndex: 0,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(RadioCircle, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelBodyStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelIdStyles, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: reasoningRowStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+                        "button",
+                        {
+                          onClick: (e) => handleReasoningButtonClick(e, model.id),
+                          onMouseDown: () => setPressedButtonId(model.id),
+                          onMouseEnter: () => setHoveredButtonId(model.id),
+                          onMouseLeave: () => {
+                            setHoveredButtonId(null);
+                            setPressedButtonId(null);
+                          },
+                          onMouseUp: () => setPressedButtonId(null),
+                          style: {
+                            ...reasoningButtonStyles,
+                            ...reasoningStateStyles
+                          },
+                          type: "button",
+                          children: reasoningLevel
+                        }
+                      )
+                    ] })
                   ] })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: reasoningRowStyles, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-                    "button",
-                    {
-                      onClick: () => setActiveModelId(model.id),
-                      onMouseDown: () => setPressedModelId(model.id),
-                      onMouseEnter: () => setHoveredModelId(model.id),
-                      onMouseLeave: () => {
-                        setHoveredModelId(
-                          (current) => current === model.id ? null : current
-                        );
-                        setPressedModelId(
-                          (current) => current === model.id ? null : current
-                        );
-                      },
-                      onMouseUp: () => {
-                        setPressedModelId(
-                          (current) => current === model.id ? null : current
-                        );
-                      },
-                      style: {
-                        ...reasoningButtonStyles,
-                        ...reasoningStateStyles ?? {}
-                      },
-                      type: "button",
-                      children: reasoningLevel
-                    }
-                  )
-                ] })
-              ] })
-            },
-            model.id
+                ]
+              },
+              model.id
+            )
           );
         }) }),
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })

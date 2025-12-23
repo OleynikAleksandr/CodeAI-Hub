@@ -16,13 +16,7 @@
 
 ---
 
-## Phase 9 — TBD (owner: Claude, updated: 2025-11-29)
 
-**Цель:** TBD
-**Статус:** TODO
-
-### Stream 9.1: TBD
-1. [TODO] TBD
 
 
 
