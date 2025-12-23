@@ -9166,8 +9166,7 @@
   ] });
   var settings_card_default = SettingsCard;
 
-  // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  // src/client/ui/src/components/settings/shared-model-card-styles.ts
   var descriptionStyles = {
     margin: 0,
     color: "#b0b0b0",
@@ -9187,7 +9186,7 @@
   var rowBaseStyles = {
     display: "flex",
     gap: "12px",
-    alignItems: "center",
+    alignItems: "flex-start",
     borderWidth: "1px",
     borderStyle: "solid",
     borderColor: "#2f2f2f",
@@ -9195,7 +9194,9 @@
     padding: "12px",
     background: "#252526",
     cursor: "pointer",
-    transition: "border-color 0.15s, background 0.15s"
+    transition: "border-color 0.15s, background 0.15s",
+    outline: "none",
+    boxShadow: "none"
   };
   var rowSelectedStyles = {
     borderColor: "#0e639c",
@@ -9234,12 +9235,16 @@
     height: "16px",
     minWidth: "16px",
     borderRadius: "50%",
-    border: "2px solid #5a5a5a",
+    borderWidth: "2px",
+    borderStyle: "solid",
+    borderColor: "#5a5a5a",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     marginTop: "3px",
-    transition: "border-color 0.15s"
+    transition: "border-color 0.15s",
+    outline: "none",
+    boxShadow: "none"
   };
   var radioCircleSelectedStyles = {
     borderColor: "#0e639c"
@@ -9250,6 +9255,9 @@
     borderRadius: "50%",
     background: "#0e639c"
   };
+
+  // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   var ClaudeDefaultModelCard = ({
     defaultModel,
     onDefaultModelChange
@@ -9257,6 +9265,15 @@
     const [hoveredAlias, setHoveredAlias] = (0, import_react7.useState)(
       null
     );
+    const handleRowClick = (model) => {
+      onDefaultModelChange(model);
+    };
+    const handleRowKeyDown = (event, model) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onDefaultModelChange(model);
+      }
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(settings_card_default, { title: "Claude Default model", children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/Knowledge/Claude_Model_Aliases.md" }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
@@ -9268,17 +9285,18 @@
           ...!isSelected && hoveredAlias === model.alias ? rowHoverStyles : {}
         };
         return (
-          // biome-ignore lint/a11y/useSemanticElements: custom radio buttons to avoid native focus styles
+          // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
           /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
-            "button",
+            "div",
             {
               "aria-checked": isSelected,
-              onClick: () => onDefaultModelChange(model.alias),
+              onClick: () => handleRowClick(model.alias),
+              onKeyDown: (event) => handleRowKeyDown(event, model.alias),
               onMouseEnter: () => setHoveredAlias(model.alias),
               onMouseLeave: () => setHoveredAlias(null),
               role: "radio",
               style: rowStyle,
-              type: "button",
+              tabIndex: -1,
               children: [
                 /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
                   "div",
@@ -9415,12 +9433,6 @@
   var DEFAULT_CODEX_REASONING_LEVEL = "medium";
 
   // src/client/ui/src/components/settings/codex-default-model/codex-model-card-styles.ts
-  var descriptionStyles2 = {
-    fontSize: "12px",
-    color: "#b0b0b0",
-    margin: 0,
-    lineHeight: 1.5
-  };
   var warningStyles = {
     background: "#3a2a1f",
     border: "1px solid #9b6b3d",
@@ -9430,80 +9442,15 @@
     fontSize: "12px",
     lineHeight: 1.5
   };
-  var modelListStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var modelRowStyles = {
-    display: "flex",
-    gap: "12px",
-    alignItems: "flex-start",
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: "#2f2f2f",
-    borderRadius: "6px",
-    padding: "12px",
-    background: "#252526",
-    cursor: "pointer",
-    transition: "border-color 0.15s, background 0.15s",
-    outline: "none",
-    boxShadow: "none"
-  };
-  var modelRowSelectedStyles = {
-    borderColor: "#0e639c",
-    background: "#1f2a33"
-  };
-  var modelRowHoverStyles = {
-    borderColor: "#4a4a4a"
-  };
-  var radioCircleStyles2 = {
-    width: "16px",
-    height: "16px",
-    minWidth: "16px",
-    borderRadius: "50%",
-    border: "2px solid #5a5a5a",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: "3px",
-    transition: "border-color 0.15s"
-  };
-  var radioCircleSelectedStyles2 = {
-    borderColor: "#0e639c"
-  };
-  var radioCircleInnerStyles2 = {
-    width: "8px",
-    height: "8px",
-    borderRadius: "50%",
-    background: "#0e639c"
-  };
-  var modelInfoStyles2 = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "2px",
-    flex: 1
-  };
-  var modelTitleStyles2 = {
-    fontSize: "13px",
-    fontWeight: 600,
-    color: "#e5e5e5"
-  };
-  var modelIdStyles = {
-    fontSize: "11px",
-    color: "#8c8c8c"
-  };
-  var modelDescriptionStyles2 = {
-    fontSize: "12px",
-    color: "#a8a8a8",
-    margin: "4px 0 0",
-    lineHeight: 1.4
-  };
   var modelBodyStyles = {
     display: "flex",
     flexDirection: "column",
     gap: "8px",
     flex: 1
+  };
+  var modelIdStyles = {
+    fontSize: "11px",
+    color: "#8c8c8c"
   };
   var reasoningRowStyles = {
     display: "flex",
@@ -9533,11 +9480,6 @@
     borderColor: "#0e639c",
     background: "#0e639c",
     color: "#ffffff"
-  };
-  var noteStyles2 = {
-    fontSize: "11px",
-    color: "#8f8f8f",
-    margin: 0
   };
 
   // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
@@ -9750,10 +9692,10 @@
     "div",
     {
       style: {
-        ...radioCircleStyles2,
-        ...checked ? radioCircleSelectedStyles2 : {}
+        ...radioCircleStyles,
+        ...checked ? radioCircleSelectedStyles : {}
       },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: radioCircleInnerStyles2 }) : null
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: radioCircleInnerStyles }) : null
     }
   );
   var CodexDefaultModelCard = ({
@@ -9795,9 +9737,9 @@
     };
     return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(settings_card_default, { title: "Codex Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: descriptionStyles2, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
         hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: warningStyles, children: "The saved default model is no longer available. Falling back to GPT-5.2-Codex." }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: modelListStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: listStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
           const isSelected = selectedModelId === model.id;
           const isRowHovered = hoveredRowId === model.id;
           const reasoningLevel = resolveReasoning(model.id);
@@ -9810,9 +9752,10 @@
             reasoningStateStyles = reasoningButtonHoverStyles;
           }
           const rowStyle = {
-            ...modelRowStyles,
-            ...isSelected ? modelRowSelectedStyles : {},
-            ...!isSelected && isRowHovered ? modelRowHoverStyles : {}
+            ...rowBaseStyles,
+            ...rowButtonResetStyles,
+            ...isSelected ? rowSelectedStyles : {},
+            ...!isSelected && isRowHovered ? rowHoverStyles : {}
           };
           return (
             // biome-ignore lint/a11y/useSemanticElements: Custom radio to avoid browser focus styles on native input
@@ -9830,10 +9773,10 @@
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(RadioCircle, { checked: isSelected }),
                   /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: modelBodyStyles, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: modelInfoStyles2, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: modelTitleStyles2, children: model.displayName }),
+                    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
                       /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: modelIdStyles, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: modelDescriptionStyles2, children: model.description })
+                      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: reasoningRowStyles, children: [
                       /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
@@ -9864,7 +9807,7 @@
             )
           );
         }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: noteStyles2, children: "Changes apply when creating a new Codex session." })
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
       ] }),
       activeModel ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
         codex_reasoning_dialog_default,
@@ -9888,7 +9831,7 @@
   var wrapperStyles = {
     marginBottom: "30px"
   };
-  var descriptionStyles3 = {
+  var descriptionStyles2 = {
     fontSize: "13px",
     color: "#bbbbbb",
     lineHeight: 1.4,
@@ -9909,7 +9852,7 @@
       postVsCodeMessage({ type: "core:restart-request" });
     };
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: wrapperStyles, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(settings_card_default, { title: "Core Controls", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: descriptionStyles3, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: handleRestartCore, style: buttonStyles, type: "button", children: "Restart Core" })
     ] }) });
   };
@@ -10586,14 +10529,14 @@
     fontWeight: 500,
     marginBottom: "4px"
   };
-  var descriptionStyles4 = {
+  var descriptionStyles3 = {
     fontSize: "12px",
     color: "#999999",
     lineHeight: "1.4"
   };
   var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: containerStyles2, children: [
     /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: titleStyles4, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: descriptionStyles4, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
   ] });
   var thinking_pro_tip_default = ThinkingProTip;
 
@@ -10617,12 +10560,12 @@
     fontWeight: 500,
     marginBottom: "4px"
   };
-  var descriptionStyles5 = {
+  var descriptionStyles4 = {
     fontSize: "12px",
     color: "#999999",
     lineHeight: "1.4"
   };
-  var noteStyles3 = {
+  var noteStyles2 = {
     color: "#d4a36a"
   };
   var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { style: toggleContainerStyles2, children: [
@@ -10637,10 +10580,10 @@
     ),
     /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: { flex: 1 }, children: [
       /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: titleStyles5, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: descriptionStyles5, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: descriptionStyles4, children: [
         "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { style: noteStyles3, children: "Note:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { style: noteStyles2, children: "Note:" }),
         " Changes take effect when creating a new session."
       ] })
     ] })

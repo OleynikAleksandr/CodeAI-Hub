@@ -177,6 +177,10 @@ Release `1.1.339` formalised the full path that backs the Claude picker:
 
 Thanks to this chain, new Claude sessions launched via UI/CLI, the VS Code webview, or the CEF launcher all inherit the alias without embedding a hardcoded full model ID.
 
+### UI alias metadata
+
+The values rendered in the Claude settings block come straight from `src/types/claude-model-registry.ts`. In 1.1.339 `CLAUDE_MODEL_ALIASES` lists `default` (Sonnet 4.5), `opus` (Opus 4.5), and `haiku` (Haiku 4.5), together with the same display names and descriptions shown on the cards. The picker component `src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx` iterates over that array, reuses the shared `src/client/ui/src/components/settings/shared-model-card-styles.ts` constants (no shorthand borders, hover/selected colors, `tabIndex={-1}` rows, `role="radio"`, `outline: none` / `boxShadow: none`), which also backs the Codex cards, and pushes the selected alias into the shared `settings.json` entry that backs `CLAUDE_DEFAULT_MODEL`.
+
 ## Recommendations
 
 ### For Production Code

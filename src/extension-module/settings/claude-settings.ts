@@ -66,9 +66,7 @@ const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId => {
   }
 
   const alias = value as ClaudeModelAliasId;
-  return CLAUDE_MODEL_ALIAS_SET.has(alias)
-    ? alias
-    : DEFAULT_CLAUDE_MODEL_ALIAS;
+  return CLAUDE_MODEL_ALIAS_SET.has(alias) ? alias : DEFAULT_CLAUDE_MODEL_ALIAS;
 };
 
 export const normalizeClaudeSettings = (value: unknown): ClaudeSettings => {

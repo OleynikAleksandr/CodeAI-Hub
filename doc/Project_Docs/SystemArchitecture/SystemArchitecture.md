@@ -95,7 +95,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Release 1.1.339**: packaging done via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`, lots recorded in `doc/tmp/releases/` and release doc.
 
 ## Recent Changes (v1.1.338 - 2025-12-23)
-- **Claude Default model selector**: новый блок в Settings → Claude сохраняет alias (`default/sonnet`, `opus`, `haiku`) в `providers.claude.defaultModel`, копирует выбор в `CLAUDE_DEFAULT_MODEL`, и Core/Claude module используют alias при старте сессий.
+- **Claude Default model selector**: новый блок в Settings → Claude рендерит карточки из `CLAUDE_MODEL_ALIASES` (`src/types/claude-model-registry.ts`) и переиспользует `shared-model-card-styles.ts` (`src/client/ui/src/components/settings/shared-model-card-styles.ts`) для border/hover/selected цветов, `tabIndex={-1}` rows, `role="radio"` и `outline: none`/`boxShadow: none`, что делает оформление идентичным карточкам Codex и соответствует рекомендациям из `doc/Knowledge/css-border-shorthand-react-inline-styles.md`. Выбранный alias (`default/sonnet`, `opus`, `haiku`) сохраняется в `providers.claude.defaultModel`, копируется в `CLAUDE_SETTINGS_PATH`/`CLAUDE_DEFAULT_MODEL`, и Core/Claude module используют alias при старте сессий.
 
 ## TODO / Next Steps
 - Пройти e2e (fresh VSIX → ручная установка CLI пользователем → запуск сессии Gemini) и задокументировать результат.
