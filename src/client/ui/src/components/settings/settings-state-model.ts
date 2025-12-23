@@ -1,3 +1,8 @@
+import {
+  CLAUDE_MODEL_ALIAS_SET,
+  type ClaudeModelAliasId,
+  DEFAULT_CLAUDE_MODEL_ALIAS,
+} from "../../../../../types/claude-model-registry";
 import type {
   CodexModelId,
   CodexReasoningLevel,
@@ -20,34 +25,29 @@ type ThinkingSettings = {
   readonly enabled: boolean;
   readonly maxTokens: number;
 };
-
 type AutoUpdateSettings = {
   readonly enabled: boolean;
 };
-
 type CoreControlsSettings = {
   readonly allowRestart: boolean;
 };
-
 type GeneralSettings = {
   readonly coreControls: CoreControlsSettings;
 };
-
 type ClaudeSettings = {
   readonly thinking: ThinkingSettings;
   readonly autoUpdate: AutoUpdateSettings;
+  readonly defaultModel: ClaudeModelAliasId;
 };
 
 export type CodexReasoningByModel = Readonly<
   Record<string, CodexReasoningLevel>
 >;
-
 type CodexSettings = {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: CodexModelId;
   readonly reasoningByModel: CodexReasoningByModel;
 };
-
 type GeminiSettings = {
   readonly autoUpdate: AutoUpdateSettings;
 };
@@ -89,30 +89,25 @@ type RawThinkingSettings = {
   readonly enabled?: unknown;
   readonly maxTokens?: unknown;
 };
-
 type RawAutoUpdateSettings = {
   readonly enabled?: unknown;
 };
-
 type RawClaudeSettings = {
   readonly thinking?: RawThinkingSettings;
   readonly autoUpdate?: RawAutoUpdateSettings;
+  readonly defaultModel?: unknown;
 };
-
 type RawCodexSettings = {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
   readonly reasoningByModel?: Record<string, unknown>;
 };
-
 type RawGeminiSettings = {
   readonly autoUpdate?: RawAutoUpdateSettings;
 };
-
 type RawCoreControlsSettings = {
   readonly allowRestart?: unknown;
 };
-
 type RawGeneralSettings = {
   readonly coreControls?: RawCoreControlsSettings;
 };
@@ -182,12 +177,18 @@ const mapClaudeSettings = (
 ): ClaudeSettings => ({
   thinking: mapThinkingSettings(value?.thinking),
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
+  defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
 });
 
 const resolveCodexModelId = (value: unknown): CodexModelId =>
   typeof value === "string" && CODEX_MODEL_IDS.has(value)
     ? (value as CodexModelId)
     : DEFAULT_CODEX_MODEL_ID;
+
+const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId =>
+  typeof value === "string" && CLAUDE_MODEL_ALIAS_SET.has(value)
+    ? (value as ClaudeModelAliasId)
+    : DEFAULT_CLAUDE_MODEL_ALIAS;
 
 const mapCodexReasoningByModel = (value: unknown): CodexReasoningByModel => {
   const nextReasoningByModel = {
@@ -274,7 +275,8 @@ const areClaudeSettingsEqual = (
   right: ClaudeSettings
 ): boolean =>
   areThinkingSettingsEqual(left.thinking, right.thinking) &&
-  areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate);
+  areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
+  left.defaultModel === right.defaultModel;
 
 const areCodexSettingsEqual = (
   left: CodexSettings,
