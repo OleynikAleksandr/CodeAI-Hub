@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.340] - 2025-12-23
+### Fixed
+- **Claude/Codex Default Model UI parity**: Both selectors now import `shared-model-card-styles.ts` so borders, hover/selected states, radio circles, and `tabIndex={-1}`/`role="radio"` semantics match exactly; the knowledge base and system architecture docs were refreshed to describe the shared alias metadata and styling pipeline.
+### Build
+- VSIX → `codeai-hub-1.1.340.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.340.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.340.tar.bz2`
+- Providers → `claude-module-1.1.340.tar.bz2`, `codex-module-1.1.340.tar.bz2`, `gemini-module-1.1.340.tar.bz2`
+- UI → `vscode-webview-1.1.340.tar.bz2`, `web-client-1.1.340.tar.bz2`, `project-manager-1.1.340.tar.bz2`
+
 ## [1.1.339] - 2025-12-23
 ### Added
 - **Claude Default Model release**: Библиотека settings/storage теперь дублирует `settings.json` → `CLAUDE_DEFAULT_MODEL`, а Claude SDK синхронно считывает alias/thinking на старте сессии; сборка 1.1.339 размещает v1.1.339 артефакты для всех модулей.

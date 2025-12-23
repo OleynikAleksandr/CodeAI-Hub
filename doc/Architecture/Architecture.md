@@ -3,7 +3,7 @@
 **Version:** 0.5.9
 **Last Updated:** 2025-12-23
 **Status:** Active reference
-**Release Focus:** v1.1.339 — синхронизация `settings.json` → `CLAUDE_DEFAULT_MODEL` → Core/Claude SDK и новый пакет релиза 1.1.339 с обновлёнными дилерами.
+**Release Focus:** v1.1.340 — унификация карточек Claude/Codex через `shared-model-card-styles.ts`, документация ссылается на тот же набор alias + стилей, и все релизные артефакты (VSIX, launcher, core, providers, UI) собраны заново.
 
 ---
 
@@ -99,6 +99,9 @@ graph TD
 - **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`, `project-manager.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
+
+## Recent Changes (v1.1.340 - 2025-12-23)
+- **Shared model card styling**: Claude and Codex selectors now reuse `shared-model-card-styles.ts` so both render the same border/hover/selected palette, radio-circle semantics, and `tabIndex={-1}`/`role="radio"` structure that avoids VS Code focus artifacts. Associated knowledge/architecture docs point out the common alias metadata (`CLAUDE_MODEL_ALIASES`) and refer to the CSS border shorthand doc for why explicit properties are required. Release 1.1.340 bundles the updated VSIX, launcher, core, provider tarballs, and UI bundles.
 
 ## Recent Changes (v1.1.339 - 2025-12-23)
 - **Claude Default model deployment**: `settings.json` теперь дублируется в `CLAUDE_DEFAULT_MODEL`, Claude SDK читает alias/thinking сразу перед вызовом `query`, и все релизные tarball’ы/core/launcher/UI/VSIX пересобраны для версии 1.1.339.
