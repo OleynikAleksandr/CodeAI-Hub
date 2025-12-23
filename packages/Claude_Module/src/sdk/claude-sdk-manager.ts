@@ -37,6 +37,23 @@ type ThinkingSettings = {
   readonly maxTokens: number;
 };
 
+type ClaudeSettingsSnapshot = {
+  readonly thinking?: {
+    readonly enabled?: unknown;
+    readonly maxTokens?: unknown;
+  };
+  readonly providers?: {
+    readonly claude?: {
+      readonly thinking?: {
+        readonly enabled?: unknown;
+        readonly maxTokens?: unknown;
+      };
+      readonly defaultModel?: unknown;
+    };
+  };
+  readonly defaultModel?: unknown;
+};
+
 export class ClaudeSDKManager {
   private sdkModule: { readonly query: QueryFunction } | null = null;
   private queryFunction: QueryFunction | null = null;
@@ -134,6 +151,12 @@ export class ClaudeSDKManager {
       throw new Error("SDK query function not initialized");
     }
     const projectPath = this.resolveProjectPath();
+    const settingsSnapshot = this.loadClaudeSettingsSnapshot();
+    const defaultModelOverride =
+      this.resolveDefaultModelFromSnapshot(settingsSnapshot);
+    const thinkingOptions = this.resolveThinkingOptions(settingsSnapshot);
+    const resolvedModel =
+      defaultModelOverride ?? this.deps.workspace.defaultModel;
     const options = {
       cwd: this.deps.workspace.workspacePath,
       permissionMode: "bypassPermissions",
@@ -143,10 +166,8 @@ export class ClaudeSDKManager {
       settingSources: ["user", "project", "local"],
       environment: this.deps.authManager.getAuthEnvironment(),
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
-      ...(this.deps.workspace.defaultModel
-        ? { model: this.deps.workspace.defaultModel }
-        : {}),
-      ...this.resolveThinkingOptions(),
+      ...(resolvedModel ? { model: resolvedModel } : {}),
+      ...thinkingOptions,
     };
     const queryInstance = this.queryFunction({
       prompt: session.messageGenerator as AsyncGenerator<unknown>,
@@ -164,43 +185,55 @@ export class ClaudeSDKManager {
     );
   }
 
-  private resolveThinkingOptions(): {
+  private resolveThinkingOptions(snapshot: ClaudeSettingsSnapshot | null): {
     readonly maxThinkingTokens?: number;
   } {
-    const payload = this.loadThinkingSettings();
+    const payload = this.resolveThinkingSettings(snapshot);
     if (!payload?.enabled) {
       return {};
     }
     return { maxThinkingTokens: payload.maxTokens };
   }
 
-  private loadThinkingSettings(): ThinkingSettings | null {
+  private resolveThinkingSettings(
+    snapshot: ClaudeSettingsSnapshot | null
+  ): ThinkingSettings | null {
+    const candidate =
+      snapshot?.providers?.claude?.thinking ?? snapshot?.thinking;
+    if (
+      !candidate ||
+      typeof candidate.enabled !== "boolean" ||
+      typeof candidate.maxTokens !== "number"
+    ) {
+      return null;
+    }
+    return {
+      enabled: candidate.enabled,
+      maxTokens: candidate.maxTokens,
+    };
+  }
+
+  private resolveDefaultModelFromSnapshot(
+    snapshot: ClaudeSettingsSnapshot | null
+  ): string | undefined {
+    const candidate =
+      snapshot?.providers?.claude?.defaultModel ?? snapshot?.defaultModel;
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
+    return;
+  }
+
+  private loadClaudeSettingsSnapshot(): ClaudeSettingsSnapshot | null {
     const settingsPath = this.deps.workspace.settingsPath;
     if (!settingsPath) {
       return null;
     }
     try {
       const raw = readFileSync(settingsPath, "utf8");
-      const parsed = JSON.parse(raw) as {
-        readonly thinking?: {
-          readonly enabled?: unknown;
-          readonly maxTokens?: unknown;
-        };
-      };
-      const candidate = parsed?.thinking;
-      if (
-        candidate &&
-        typeof candidate.enabled === "boolean" &&
-        typeof candidate.maxTokens === "number"
-      ) {
-        return {
-          enabled: candidate.enabled,
-          maxTokens: candidate.maxTokens,
-        };
-      }
+      return JSON.parse(raw) as ClaudeSettingsSnapshot;
     } catch {
-      // ignore malformed settings
+      return null;
     }
-    return null;
   }
 }

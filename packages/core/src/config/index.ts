@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 
@@ -35,10 +35,10 @@ type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
 const DEFAULT_PORT = 8080;
 const DEFAULT_GRACE_MS = 3_600_000;
 const MILLISECONDS_IN_MINUTE = 60_000;
-const DEFAULT_SETTINGS_PATH = path.join(
-  homedir(),
-  ".codeai-hub",
-  "settings",
+const CLAUDE_SETTINGS_DIR = path.join(homedir(), ".codeai-hub", "settings");
+const CLAUDE_SETTINGS_FILE = path.join(CLAUDE_SETTINGS_DIR, "settings.json");
+const LEGACY_CLAUDE_SETTINGS_FILE = path.join(
+  CLAUDE_SETTINGS_DIR,
   "claude.json"
 );
 const CODEX_SETTINGS_PATH = path.join(
@@ -221,7 +221,10 @@ export const loadConfig = (): CoreConfig => {
     sanitizeSlug(workspacePath.replace(/[^a-zA-Z0-9]/g, "-"));
   const codexWorkspacePath = process.env.CODEX_WORKSPACE_PATH ?? workspacePath;
   const claudeSettingsPath =
-    process.env.CLAUDE_SETTINGS_PATH ?? DEFAULT_SETTINGS_PATH;
+    process.env.CLAUDE_SETTINGS_PATH ??
+    (existsSync(CLAUDE_SETTINGS_FILE)
+      ? CLAUDE_SETTINGS_FILE
+      : LEGACY_CLAUDE_SETTINGS_FILE);
   const claudeDefaultModel = resolveClaudeDefaultModel(
     process.env.CLAUDE_DEFAULT_MODEL
   );

@@ -128,6 +128,7 @@ export const applyClaudeDefaultModelEnv = (
   snapshot: SettingsSnapshot
 ): void => {
   process.env.CLAUDE_DEFAULT_MODEL = snapshot.providers.claude.defaultModel;
+  process.env.CLAUDE_SETTINGS_PATH = SETTINGS_FILE;
 };
 
 export const getSettingsPath = (): string => SETTINGS_FILE;
