@@ -9274,7 +9274,8 @@
     padding: "12px",
     background: "#252526",
     cursor: "pointer",
-    transition: "border-color 0.15s, background 0.15s"
+    transition: "border-color 0.15s, background 0.15s",
+    outline: "none"
   };
   var modelRowSelectedStyles = {
     borderColor: "#0e639c",
