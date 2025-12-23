@@ -170,9 +170,12 @@ This file contains:
 
 ### CodeAI Hub Settings
 
-The Settings view now exposes a dedicated `Claude Default model` card in the Claude tab (Settings → Claude). It renders the same alias list as the knowledge base and saves the selected alias into `~/.codeai-hub/settings/settings.json` under `providers.claude.defaultModel`.
+Release `1.1.339` formalised the full path that backs the Claude picker:
+1. The Claude card simply renders the alias list from `doc/Knowledge/Claude_Model_Aliases.md` and persists the chosen value in `~/.codeai-hub/settings/settings.json` under `providers.claude.defaultModel`.
+2. The extension mirror this file into `CLAUDE_SETTINGS_PATH` (always pointing to the cached settings JSON) and updates `CLAUDE_DEFAULT_MODEL` immediately, so any subsequent `loadConfig()` read sees the same alias.
+3. Core's provider registry picks up `claudeDefaultModel` from that env variable, passes it to `ClaudeWorkspaceOptions`, and the Claude SDK manager re-reads `settings.json` every time `query()` is invoked to honour both alias and thinking options (`maxThinkingTokens`) before streaming a new session.
 
-When the extension loads or after the card is saved/reset, the alias is mirrored into the environment variable `CLAUDE_DEFAULT_MODEL`. The Core orchestrator reads this variable, flows it into `packages/core/src/provider-registry`, and lets the Claude module pass it as the `model` option to the Claude Agent SDK. As a result, every new Claude session starts with the user-chosen alias without hardcoding a full model ID.
+Thanks to this chain, new Claude sessions launched via UI/CLI, the VS Code webview, or the CEF launcher all inherit the alias without embedding a hardcoded full model ID.
 
 ## Recommendations
 

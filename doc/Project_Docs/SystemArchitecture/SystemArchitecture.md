@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.334 (22.12.2025) — дефолтная модель Codex и уровни reasoning, реестр моделей Codex и настройки в UI. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
+**Состояние:** релиз 1.1.339 (23.12.2025) — синхронизация `~/.codeai-hub/settings/settings.json` → `CLAUDE_DEFAULT_MODEL` → Core/Claude SDK; обновлённые версии manifest`ов и артефакты VSIX/launcher/core/UI. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
 
 ## Обзор
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
@@ -16,7 +16,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Порты и владение ядром** — `CorePortManager` и Supervisor используют `runtime-registry.json` (`network.corePort`) как единый источник порта. Перед стартом клиенты вызывают `detectRunning()`: если версия ядра совпадает с ожидаемой, VS Code и лаунчер просто attach‑ятся к живому orchestrator’у.
 - **Sticky клиенты и автопереподключение** — VS Code расширение держит невидимое WebSocket‑подключение (`CoreKeepAlive`) к `RemoteBridge`, поэтому ядро остаётся активным, даже если webview свернуто.
 - **Provider version telemetry** — `ProviderVersionService` читает версии CLI/SDK через глобальный npm (`npm list -g`/`npm view`) и отдаёт их в Settings UI вместе с latest.
-- **Codex defaults** — ядро читает `~/.codeai-hub/settings/settings.json` (default model + reasoning) и передаёт значения в Codex SDK/CLI; reasoning применяется через CLI `--config model_reasoning_effort=...` без правки `~/.codex/config.toml`.
+- **Claude defaults** — `~/.codeai-hub/settings/settings.json` теперь хранит `providers.claude.defaultModel`; extension synchronizes this file with `CLAUDE_SETTINGS_PATH`/`CLAUDE_DEFAULT_MODEL`, core passes the alias into `ClaudeWorkspaceOptions`, and the Claire SDK re-reads the JSON before each `query` so new Claude sessions honor the selected alias and thinking tokens without hardcoding a full model ID.
 - **Логирование и окружение**: `CodeAIHubLauncher` пишет события в `~/.codeai-hub/logs/launcher/launcher.log`. Orchestrator выводит JSON‑записи в `~/.codeai-hub/logs/core/core.log`. VS Code extension ведёт `~/.codeai-hub/logs/extension/extension.log`.
 - **Клиентские интерфейсы**: webview VS Code, локальный CEF клиент. Все они подключаются к ядру через HTTP/WebSocket API (Remote Bridge).
 - **Session snapshot API**: `/api/v1/status` и стартовый `core:state` содержат только метаданные сессий. История сообщений читается из JSONL логов.
@@ -31,12 +31,12 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.334
-- Автономное ядро: `@codeai-hub/core` 1.1.334
-- UI Bundles: 1.1.334
-- Claude module: 1.1.334
-- Codex module: 1.1.334
-- Gemini module: 1.1.334
+- VSIX: `codeai-hub` 1.1.339
+- Автономное ядро: `@codeai-hub/core` 1.1.339
+- UI Bundles: 1.1.339
+- Claude module: 1.1.339
+- Codex module: 1.1.339
+- Gemini module: 1.1.339
 
 ## Структура артефактов
 ```
@@ -61,20 +61,21 @@ CodeAI-Hub — автономная платформа управления AI-�
 │           ├── 1.1.334/
 │           └── current -> 1.1.334
 ├── providers/
-│   ├── claude/1.1.334/
-│   ├── codex/1.1.334/
-│   └── gemini/1.1.334/
+│   ├── claude/1.1.339/
+│   ├── codex/1.1.339/
+│   └── gemini/1.1.339/
 ├── settings/
-│   └── claude.json
+│   ├── claude.json          # legacy thinking settings migrated to settings.json
+│   └── settings.json        # current source of truth for providers.{claude,codex,gemini}
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.334.tar.bz2
-    ├── vscode-webview-1.1.334.tar.bz2
-    ├── web-client-1.1.334.tar.bz2
-    ├── project-manager-1.1.334.tar.bz2
-    ├── claude-module-1.1.334.tar.bz2
-    ├── codex-module-1.1.334.tar.bz2
-    ├── gemini-module-1.1.334.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.334.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.339.tar.bz2
+    ├── vscode-webview-1.1.339.tar.bz2
+    ├── web-client-1.1.339.tar.bz2
+    ├── project-manager-1.1.339.tar.bz2
+    ├── claude-module-1.1.339.tar.bz2
+    ├── codex-module-1.1.339.tar.bz2
+    ├── gemini-module-1.1.339.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.339.tar.bz2
 ```
 
 ## Провайдеры
@@ -89,8 +90,12 @@ CodeAI-Hub — автономная платформа управления AI-�
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
 
-## Recent Changes (v1.1.334 - 2025-12-22)
-- **Codex Default model UI**: устранено наследование focus-within border у невыбранных карточек, остались только `selected`/`unselected` состояния.
+## Recent Changes (v1.1.339 - 2025-12-23)
+- **Claude default model pipeline**: `settings.json` → `CLAUDE_SETTINGS_PATH`/`CLAUDE_DEFAULT_MODEL` → Core config → Claude SDK (re-read before each `query`) обеспечивает применение выбранного alias и thinking-настроек, а сборка 1.1.339 публикует свежие `codeai-hub-1.1.339.vsix`, `Core`, `Launcher` и provider tarball’ы.
+- **Release 1.1.339**: packaging done via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`, lots recorded in `doc/tmp/releases/` and release doc.
+
+## Recent Changes (v1.1.338 - 2025-12-23)
+- **Claude Default model selector**: новый блок в Settings → Claude сохраняет alias (`default/sonnet`, `opus`, `haiku`) в `providers.claude.defaultModel`, копирует выбор в `CLAUDE_DEFAULT_MODEL`, и Core/Claude module используют alias при старте сессий.
 
 ## TODO / Next Steps
 - Пройти e2e (fresh VSIX → ручная установка CLI пользователем → запуск сессии Gemini) и задокументировать результат.
