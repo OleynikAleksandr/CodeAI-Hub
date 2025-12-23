@@ -1,7 +1,7 @@
 # Стек Claude для CodeAI-Hub
 
 ## Обзор
-Приватный модуль стека Claude (`@codeai-hub/claude-module@1.1.326`) предоставляет серверную интеграцию для CodeAI-Hub: управляет установкой CLI/SDK Anthropic, авторизацией пользователя и адаптацией потоковых событий Claude к унифицированному контракту расширения. Фронтенд вебвью наследуется из open source проекта `claude-code-fusion`, а стек Claude фокусируется на бэкенде и совместимости с мультистековой архитектурой. Начиная с релиза 1.1.326 ProviderVersionService читает версии CLI/SDK из глобального npm; манифест `assets/providers/claude/manifest.json` используется только для установки провайдера.
+Приватный модуль стека Claude (`@codeai-hub/claude-module@1.1.339`) предоставляет серверную интеграцию для CodeAI-Hub: управляет установкой CLI/SDK Anthropic, авторизацией пользователя и адаптацией потоковых событий Claude к унифицированному контракту расширения. Фронтенд вебвью наследуется из open source проекта `claude-code-fusion`, а стек Claude фокусируется на бэкенде и совместимости с мультистековой архитектурой. Начиная с релиза 1.1.326 ProviderVersionService читает версии CLI/SDK из глобального npm; манифест `assets/providers/claude/manifest.json` используется только для установки провайдера.
 
 ## Взаимодействие с CodeAI-Hub
 - **Open source расширение** переиспользует React-вебвью и фасады состояния из `claude-code-fusion`, модифицируя их под общий UI.
@@ -23,8 +23,9 @@
 3. **Конфигурация**: ядро передаёт settings (регион, лимиты, режимы stream/thinking). Модуль валидирует параметры и загружает defaults из `claude-code-fusion`.
 4. **Запуск сессии**: создаётся `sessionId`, открывается поток SDK, запускаются адаптеры streaming/resume.
 5. **Эксплуатация**: модуль поддерживает мультисессионность, персистентность вкладок и resume после перезапуска VS Code.
-6. **Обновления**: при старте CodeAI-Hub Auto Update Service проверяет latest CLI/SDK и, если включено автообновление, инициирует глобальный апдейт.
-7. **Завершение**: при остановке сессии освобождаются ресурсы SDK, сохраняются финальные JSONL и черновики, очищаются временные файлы.
+6. **Дефолтная модель**: с версии 1.1.339 Settings UI сохраняет alias в `~/.codeai-hub/settings/settings.json` → `providers.claude.defaultModel`, расширение одновременно обновляет `CLAUDE_DEFAULT_MODEL` и `CLAUDE_SETTINGS_PATH`, core передаёт alias в `ClaudeWorkspaceOptions`, а SDK перечитывает JSON перед каждым `query`, чтобы alias и thinking-настройки применялись на следующих сессиях без ручного вмешательства.
+7. **Обновления**: при старте CodeAI-Hub Auto Update Service проверяет latest CLI/SDK и, если включено автообновление, инициирует глобальный апдейт.
+8. **Завершение**: при остановке сессии освобождаются ресурсы SDK, сохраняются финальные JSONL и черновики, очищаются временные файлы.
 
 ## Контракт с ядром
 - `installOrUpdate(context)` – возвращает состояние установки, список действий (установлено, обновлено, требуется авторизация).
@@ -36,7 +37,8 @@
 
 ## Хранение и конфигурация
 - **CLI/SDK**: глобальная установка через `npm`/`brew` (в зависимости от ОС); версии управляются автообновлением (latest из npm при включённом флаге).
-- **Конфиги модуля**: `~/.config/Code/User/globalStorage/codeai-hub/claude/` (метаданные, кеш, telemetry).
+- **Конфиги модуля**: `~/.config/Code/User/globalStorage/codeai-hub/claude/` (метаданные, кеш, telemetry) и `~/.codeai-hub/settings/settings.json` — файл, который хранит `providers.claude.defaultModel`.
+- **Стандартный поток параметров**: при загрузке extension host читает `settings.json`, выставляет `CLAUDE_SETTINGS_PATH`, синхронизирует `CLAUDE_DEFAULT_MODEL`, и Core/Claude SDK используют эти значения, чтобы alias и thinking-настройки сразу применялись к новым сессиям. Этот путь на 1.1.339 — новая точка входа для выбранной модели и thinking-конфигурации, поэтому `doc/Knowledge/Claude_Model_Aliases.md` теперь описывает точную copy/paste цепочку.
 - **Данные провайдера**: `~/.claude/projects/` (JSONL истории, вложения), отдельный namespace для CodeAI-Hub.
 - **Секреты**: системный keychain/VS Code Secret Storage, доступ через core-сервис `SecretsFacade`.
 - **Логи**: `~/Library/Logs/CodeAI-Hub/claude/` (macOS пример), ротация и сбор по запросу пользователя.
