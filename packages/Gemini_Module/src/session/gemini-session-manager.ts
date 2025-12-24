@@ -697,6 +697,7 @@ export class GeminiSessionManager {
       const chat = await originalStartChat(...args);
 
       if (chat?.generationConfig) {
+
         const thinkingConfig = this.resolveThinkingConfig(modelId, level);
         if (thinkingConfig) {
           chat.generationConfig.thinkingConfig = thinkingConfig;
