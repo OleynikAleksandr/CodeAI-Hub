@@ -36,9 +36,15 @@ export class GeminiProviderAdapter {
   async createSession(): Promise<string> {
     const manager = this.requireSessionManager();
     const logger = new GeminiSessionLogger(this.options.reporter);
+    const defaultModel = this.options.workspace.defaultModel;
+    const thinkingLevel = defaultModel
+      ? this.options.workspace.thinkingLevelByModel?.[defaultModel]
+      : undefined;
+
     const { sessionId, session } = await manager.createSession({
       workspacePath: this.options.workspace.workspacePath,
-      defaultModel: this.options.workspace.defaultModel,
+      defaultModel,
+      thinkingLevel,
       settingsPath: this.options.workspace.settingsPath,
       reporter: this.options.reporter,
       logger,
