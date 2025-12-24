@@ -124,10 +124,10 @@ export const persistSettingsSnapshot = async (
   }
 };
 
-export const applyClaudeDefaultModelEnv = (
-  snapshot: SettingsSnapshot
-): void => {
+export const applyDefaultModelsEnv = (snapshot: SettingsSnapshot): void => {
   process.env.CLAUDE_DEFAULT_MODEL = snapshot.providers.claude.defaultModel;
+  process.env.CODEX_DEFAULT_MODEL = snapshot.providers.codex.defaultModel;
+  process.env.GEMINI_DEFAULT_MODEL = snapshot.providers.gemini.defaultModel;
   process.env.CLAUDE_SETTINGS_PATH = SETTINGS_FILE;
 };
 

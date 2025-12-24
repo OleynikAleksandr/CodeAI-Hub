@@ -28,7 +28,7 @@ import {
 import { recordVsixVersion } from "./extension-module/runtime/runtime-registry";
 import { ProviderAutoUpdateService } from "./extension-module/settings/provider-auto-update-service";
 import {
-  applyClaudeDefaultModelEnv,
+  applyDefaultModelsEnv,
   loadSettingsSnapshot,
 } from "./extension-module/settings/settings-storage";
 import { prepareUIBundles } from "./extension-module/ui/ui-activation";
@@ -134,7 +134,7 @@ async function prepareLocalRuntime(
     );
     const autoUpdateService = new ProviderAutoUpdateService();
     const settingsSnapshot = loadSettingsSnapshot();
-    applyClaudeDefaultModelEnv(settingsSnapshot);
+    applyDefaultModelsEnv(settingsSnapshot);
     try {
       await autoUpdateService.run(settingsSnapshot);
     } catch (error) {
