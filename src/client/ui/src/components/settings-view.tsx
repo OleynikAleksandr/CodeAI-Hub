@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ClaudeDefaultModelCard from "./settings/claude-default-model/claude-default-model-card";
 import CodexDefaultModelCard from "./settings/codex-default-model/codex-default-model-card";
+import GeminiDefaultModelCard from "./settings/gemini-default-model/gemini-default-model-card";
 import GeneralSettings from "./settings/general-settings";
 import ProviderVersions from "./settings/provider-versions";
 import SettingsFooter from "./settings/settings-footer";
@@ -77,6 +78,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
     handleThinkingSettingsChange,
     handleCodexDefaultModelChange,
     handleClaudeDefaultModelChange,
+    handleGeminiDefaultModelChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
     handleSave,
@@ -158,6 +160,10 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
           }
           return (
             <div style={stackStyles}>
+              <GeminiDefaultModelCard
+                defaultModel={settings.providers.gemini.defaultModel}
+                onDefaultModelChange={handleGeminiDefaultModelChange}
+              />
               <ProviderVersions
                 autoUpdateEnabled={settings.providers.gemini.autoUpdate.enabled}
                 onAutoUpdateChange={handleProviderAutoUpdateChange}
