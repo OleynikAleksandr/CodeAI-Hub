@@ -31,6 +31,7 @@ type GeminiModuleOptions = {
   readonly workspace: {
     readonly workspacePath: string;
     readonly defaultModel?: string;
+    readonly thinkingLevelByModel?: Record<string, string>;
     readonly settingsPath?: string;
   };
   readonly reporter?: ModuleReporter;
