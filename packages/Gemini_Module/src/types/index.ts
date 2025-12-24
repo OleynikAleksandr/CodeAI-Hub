@@ -7,6 +7,7 @@ export type GeminiInstallerPaths = {
 export type GeminiWorkspaceOptions = {
   readonly workspacePath: string;
   readonly defaultModel?: string;
+  readonly thinkingLevelByModel?: Record<string, string>;
   readonly settingsPath?: string;
 };
 
