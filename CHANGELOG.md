@@ -1,6 +1,19 @@
-## [1.1.342] - 2025-12-24
-### Fixed
-- **Gemini Model persistence**: Resolved an issue where Gemini sessions would ignore the default model selected in Settings and fall back to `gemini-3-pro-preview`. The Gemini module now dynamically re-reads `settings.json` before each session creation, matching the reliable pattern used by the Claude module.
+## [1.1.343] - 2025-12-24
+### Added
+- **Gemini Thinking configuration**: Users can now configure the reasoning depth (Thinking level) for each Gemini model individually.
+- **Thinking UI**: Added a "Configure thinking" button to Gemini model cards and a dedicated dialog for selecting levels (minimal, low, medium, high, off), matching the Codex user experience.
+## [1.1.343] - 2025-12-24
+### Added
+- **Gemini Thinking configuration**: Users can now configure the reasoning depth (Thinking level) for each Gemini model individually.
+- **Thinking UI**: Added a "Configure thinking" button to Gemini model cards and a dedicated dialog for selecting levels (minimal, low, medium, high, off), matching the Codex user experience.
+- **Dynamic Application**: The selected thinking level is dynamically loaded and applied to each new Gemini session via the core runtime.
+
+### Build
+- VSIX → `codeai-hub-1.1.343.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.343.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.343.tar.bz2`
+- Providers → `claude-module-1.1.343.tar.bz2`, `codex-module-1.1.343.tar.bz2`, `gemini-module-1.1.343.tar.bz2`
+- UI → `vscode-webview-1.1.343.tar.bz2`, `web-client-1.1.343.tar.bz2`, `project-manager-1.1.343.tar.bz2`
 
 ## [1.1.342] - 2025-12-24
 ### Fixed
