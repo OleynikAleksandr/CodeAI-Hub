@@ -1,7 +1,22 @@
-## [1.1.343] - 2025-12-24
-### Added
-- **Gemini Thinking configuration**: Users can now configure the reasoning depth (Thinking level) for each Gemini model individually.
-- **Thinking UI**: Added a "Configure thinking" button to Gemini model cards and a dedicated dialog for selecting levels (minimal, low, medium, high, off), matching the Codex user experience.
+## [1.1.346] - 2025-12-24
+### Changed
+- **Intelligent Gemini Thinking**: Thinking configuration now adapts strictly to each model's capabilities.
+  - Gemini 3 Flash: Supports `minimal`, `low`, `medium`, `high`.
+## [1.1.346] - 2025-12-24
+### Changed
+- **Intelligent Gemini Thinking**: Thinking configuration now adapts strictly to each model's capabilities.
+  - Gemini 3 Flash: Supports `minimal`, `low`, `medium`, `high`.
+  - Gemini 3 Pro: Supports `low`, `high`.
+  - Gemini 2.5: Supports `off` (0 tokens), `low` (4000 tokens), `high` (16000 tokens).
+- **Technical Bridge**: Implemented internal mapping that translates user-selected levels into either `thinkingLevel` strings (Gemini 3) or `thinkingBudget` integers (Gemini 2.5) for the Gemini SDK.
+
+### Build
+- VSIX → `codeai-hub-1.1.346.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.346.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.346.tar.bz2`
+- Providers → `claude-module-1.1.346.tar.bz2`, `codex-module-1.1.346.tar.bz2`, `gemini-module-1.1.346.tar.bz2`
+- UI → `vscode-webview-1.1.346.tar.bz2`, `web-client-1.1.346.tar.bz2`, `project-manager-1.1.346.tar.bz2`
+
 ## [1.1.343] - 2025-12-24
 ### Added
 - **Gemini Thinking configuration**: Users can now configure the reasoning depth (Thinking level) for each Gemini model individually.
