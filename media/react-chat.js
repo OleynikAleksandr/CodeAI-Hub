@@ -7609,11 +7609,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react22 = __toESM(require_react());
+  var import_react23 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host.tsx
-  var import_react21 = __toESM(require_react());
+  var import_react22 = __toESM(require_react());
 
   // src/client/ui/src/app-host/loading-messages.ts
   var MESSAGE_ORDER = [
@@ -9098,7 +9098,7 @@
   var action_bar_default = ActionBar;
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_react16 = __toESM(require_react());
+  var import_react17 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
   var import_react7 = __toESM(require_react());
@@ -9826,7 +9826,7 @@
   var codex_default_model_card_default = (0, import_react9.memo)(CodexDefaultModelCard);
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_react10 = __toESM(require_react());
+  var import_react11 = __toESM(require_react());
 
   // src/types/gemini-model-registry.ts
   var GEMINI_RECOMMENDED_MODELS = [
@@ -9835,53 +9835,352 @@
       displayName: "Gemini 3 Pro Preview",
       description: "Most advanced reasoning Gemini model for complex problems.",
       status: "preview",
-      family: "gemini-3"
+      family: "gemini-3",
+      supportedThinkingLevels: ["off", "low", "high"]
     },
     {
       id: "gemini-3-flash-preview",
       displayName: "Gemini 3 Flash Preview",
       description: "Pro-grade reasoning with Flash-level latency and cost.",
       status: "preview",
-      family: "gemini-3"
+      family: "gemini-3",
+      supportedThinkingLevels: ["off", "minimal", "low", "medium", "high"]
     },
     {
       id: "gemini-2.5-pro",
       displayName: "Gemini 2.5 Pro",
       description: "Deep reasoning model with Think mode for complex use cases.",
       status: "generally_available",
-      family: "gemini-2.5"
+      family: "gemini-2.5",
+      supportedThinkingLevels: ["off", "low", "medium", "high"]
     },
     {
       id: "gemini-2.5-flash",
       displayName: "Gemini 2.5 Flash",
       description: "High-throughput model for enterprise tasks.",
       status: "generally_available",
-      family: "gemini-2.5"
+      family: "gemini-2.5",
+      supportedThinkingLevels: ["off", "low", "medium", "high"]
     },
     {
       id: "gemini-2.5-flash-lite",
       displayName: "Gemini 2.5 Flash Lite",
       description: "Most cost-efficient and fastest 2.5 model.",
       status: "generally_available",
-      family: "gemini-2.5"
+      family: "gemini-2.5",
+      supportedThinkingLevels: ["off", "low", "medium", "high"]
     }
   ];
   var GEMINI_MODEL_ID_SET = new Set(
     GEMINI_RECOMMENDED_MODELS.map((model) => model.id)
   );
   var DEFAULT_GEMINI_MODEL_ID = "gemini-3-pro-preview";
+  var DEFAULT_GEMINI_THINKING_LEVEL = "low";
+  var GEMINI_THINKING_LEVELS = [
+    {
+      name: "off",
+      description: "Thinking is disabled. Standard response mode.",
+      useCase: "Basic tasks without complex reasoning."
+    },
+    {
+      name: "minimal",
+      description: "Fastest, minimal reasoning overhead.",
+      useCase: "Straightforward answers, low latency."
+    },
+    {
+      name: "low",
+      description: "Faster responses with lighter reasoning.",
+      useCase: "Quick coding tasks, simple queries."
+    },
+    {
+      name: "medium",
+      description: "Balanced reasoning and speed.",
+      useCase: "General development and problem solving."
+    },
+    {
+      name: "high",
+      description: "Maximum reasoning depth for complex problems.",
+      useCase: "Complex refactoring, architecture, and PhD-level tasks."
+    }
+  ];
+
+  // src/client/ui/src/components/settings/gemini-default-model/gemini-model-card-styles.ts
+  var modelBodyStyles2 = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    flex: 1
+  };
+  var modelIdStyles2 = {
+    fontSize: "11px",
+    color: "#8c8c8c"
+  };
+  var reasoningRowStyles2 = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    paddingLeft: "28px"
+  };
+  var reasoningLabelStyles2 = {
+    fontSize: "11px",
+    color: "#8f8f8f"
+  };
+  var reasoningButtonStyles2 = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    padding: "4px 10px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "11px"
+  };
+  var reasoningButtonHoverStyles2 = {
+    borderColor: "#5a5a5a",
+    background: "#2b2f33",
+    color: "#ffffff"
+  };
+  var reasoningButtonActiveStyles2 = {
+    borderColor: "#0e639c",
+    background: "#0e639c",
+    color: "#ffffff"
+  };
+
+  // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
+  var import_react10 = __toESM(require_react());
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var overlayStyles2 = {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0, 0, 0, 0.6)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1e3
+  };
+  var dialogStyles2 = {
+    width: "560px",
+    maxWidth: "90vw",
+    maxHeight: "85vh",
+    overflowY: "auto",
+    background: "#1e1e1e",
+    borderRadius: "8px",
+    border: "1px solid #3c3c3c",
+    padding: "20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px"
+  };
+  var headerStyles3 = {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: "12px"
+  };
+  var titleStyles3 = {
+    fontSize: "16px",
+    margin: 0,
+    color: "#ffffff"
+  };
+  var subtitleStyles2 = {
+    fontSize: "12px",
+    color: "#a0a0a0",
+    margin: 0
+  };
+  var closeButtonStyles2 = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    borderRadius: "4px",
+    padding: "4px 10px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var optionListStyles2 = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var optionRowStyles2 = {
+    display: "flex",
+    gap: "12px",
+    alignItems: "flex-start",
+    border: "1px solid #2f2f2f",
+    borderRadius: "6px",
+    padding: "12px",
+    background: "#252526",
+    cursor: "pointer"
+  };
+  var optionSelectedStyles2 = {
+    borderColor: "#0e639c",
+    background: "#1f2a33"
+  };
+  var radioStyles2 = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var optionTitleStyles2 = {
+    fontSize: "13px",
+    fontWeight: 600,
+    color: "#e5e5e5",
+    marginBottom: "4px",
+    textTransform: "uppercase"
+  };
+  var defaultBadgeStyles2 = {
+    fontSize: "10px",
+    color: "#0e639c",
+    background: "rgba(14, 99, 156, 0.2)",
+    borderRadius: "4px",
+    padding: "2px 6px",
+    marginLeft: "8px",
+    textTransform: "none"
+  };
+  var optionDescriptionStyles2 = {
+    fontSize: "12px",
+    color: "#b6b6b6",
+    margin: 0,
+    lineHeight: 1.4
+  };
+  var optionUseCaseStyles2 = {
+    fontSize: "12px",
+    color: "#8f8f8f",
+    margin: "6px 0 0"
+  };
+  var footerStyles2 = {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "10px"
+  };
+  var cancelButtonStyles2 = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    padding: "8px 14px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var saveButtonStyles2 = {
+    border: "1px solid #0e639c",
+    background: "#0e639c",
+    color: "#ffffff",
+    padding: "8px 14px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var GeminiThinkingDialog = ({
+    model,
+    initialLevel,
+    onSave,
+    onCancel
+  }) => {
+    const [selectedLevel, setSelectedLevel] = (0, import_react10.useState)(initialLevel);
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: overlayStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+      "div",
+      {
+        "aria-label": `Thinking level for ${model.displayName}`,
+        "aria-modal": "true",
+        role: "dialog",
+        style: dialogStyles2,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: headerStyles3, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("h3", { style: titleStyles3, children: [
+                model.displayName,
+                " thinking"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: subtitleStyles2, children: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session." })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: onCancel, style: closeButtonStyles2, type: "button", children: "Close" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: optionListStyles2, children: GEMINI_THINKING_LEVELS.filter(
+            (level) => model.supportedThinkingLevels.includes(level.name)
+          ).map((level) => {
+            const isSelected = level.name === selectedLevel;
+            return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+              "label",
+              {
+                style: {
+                  ...optionRowStyles2,
+                  ...isSelected ? optionSelectedStyles2 : null
+                },
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+                    "input",
+                    {
+                      checked: isSelected,
+                      name: "gemini-thinking",
+                      onChange: () => setSelectedLevel(level.name),
+                      style: radioStyles2,
+                      type: "radio"
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: optionTitleStyles2, children: [
+                      level.name,
+                      level.name === DEFAULT_GEMINI_THINKING_LEVEL ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: defaultBadgeStyles2, children: "Default" }) : null
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: optionDescriptionStyles2, children: level.description }),
+                    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("p", { style: optionUseCaseStyles2, children: [
+                      "Use case: ",
+                      level.useCase
+                    ] })
+                  ] })
+                ]
+              },
+              level.name
+            );
+          }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: footerStyles2, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+              "button",
+              {
+                onClick: () => onSave(selectedLevel),
+                style: saveButtonStyles2,
+                type: "button",
+                children: "Save"
+              }
+            )
+          ] })
+        ]
+      }
+    ) });
+  };
+  var gemini_thinking_dialog_default = GeminiThinkingDialog;
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
-  var aliasStyles2 = {
-    fontSize: "11px",
-    color: "#9b9b9b"
-  };
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    "div",
+    {
+      style: {
+        ...radioCircleStyles,
+        ...checked ? radioCircleSelectedStyles : {}
+      },
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: radioCircleInnerStyles }) : null
+    }
+  );
   var GeminiDefaultModelCard = ({
     defaultModel,
-    onDefaultModelChange
+    thinkingLevelByModel,
+    onDefaultModelChange,
+    onThinkingChange
   }) => {
-    const [hoveredModel, setHoveredModel] = (0, import_react10.useState)(null);
+    const [activeModelId, setActiveModelId] = (0, import_react11.useState)(null);
+    const [hoveredRowId, setHoveredRowId] = (0, import_react11.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react11.useState)(
+      null
+    );
+    const [pressedButtonId, setPressedButtonId] = (0, import_react11.useState)(
+      null
+    );
+    const activeModel = GEMINI_RECOMMENDED_MODELS.find(
+      (model) => model.id === activeModelId
+    );
+    const resolveThinkingLevel = (modelId) => thinkingLevelByModel[modelId] ?? DEFAULT_GEMINI_THINKING_LEVEL;
     const handleRowClick = (model) => {
       onDefaultModelChange(model);
     };
@@ -9891,59 +10190,102 @@
         onDefaultModelChange(model);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. More details in the knowledge base: doc/Knowledge/Gemini_Model_Selection.md" }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
-        const isSelected = defaultModel === model.id;
-        const rowStyle = {
-          ...rowBaseStyles,
-          ...rowButtonResetStyles,
-          ...isSelected ? rowSelectedStyles : {},
-          ...!isSelected && hoveredModel === model.id ? rowHoverStyles : {}
-        };
-        return (
-          // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
-            "div",
-            {
-              "aria-checked": isSelected,
-              onClick: () => handleRowClick(model.id),
-              onKeyDown: (event) => handleRowKeyDown(event, model.id),
-              onMouseEnter: () => setHoveredModel(model.id),
-              onMouseLeave: () => setHoveredModel(null),
-              role: "radio",
-              style: rowStyle,
-              tabIndex: -1,
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-                  "div",
-                  {
-                    style: {
-                      ...radioCircleStyles,
-                      ...isSelected ? radioCircleSelectedStyles : {}
-                    },
-                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: radioCircleInnerStyles }) : null
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelInfoStyles, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                  /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: aliasStyles2, children: model.id }),
-                  /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: modelDescriptionStyles, children: model.description })
-                ] })
-              ]
-            },
-            model.id
-          )
-        );
-      }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
+    const handleThinkingButtonClick = (event, modelId) => {
+      event.stopPropagation();
+      setActiveModelId(modelId);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(import_jsx_runtime8.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/Knowledge/Gemini_Model_Selection.md" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
+          const isSelected = defaultModel === model.id;
+          const isRowHovered = hoveredRowId === model.id;
+          const thinkingLevel = resolveThinkingLevel(model.id);
+          const isButtonHovered = hoveredButtonId === model.id;
+          const isButtonPressed = pressedButtonId === model.id;
+          let thinkingStateStyles = {};
+          if (isButtonPressed) {
+            thinkingStateStyles = reasoningButtonActiveStyles2;
+          } else if (isButtonHovered) {
+            thinkingStateStyles = reasoningButtonHoverStyles2;
+          }
+          const rowStyle = {
+            ...rowBaseStyles,
+            ...rowButtonResetStyles,
+            ...isSelected ? rowSelectedStyles : {},
+            ...!isSelected && isRowHovered ? rowHoverStyles : {}
+          };
+          return (
+            // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+              "div",
+              {
+                "aria-checked": isSelected,
+                onClick: () => handleRowClick(model.id),
+                onKeyDown: (event) => handleRowKeyDown(event, model.id),
+                onMouseEnter: () => setHoveredRowId(model.id),
+                onMouseLeave: () => setHoveredRowId(null),
+                role: "radio",
+                style: rowStyle,
+                tabIndex: -1,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(RadioCircle2, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: modelBodyStyles2, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: modelIdStyles2, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: reasoningRowStyles2, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: reasoningLabelStyles2, children: "Configure thinking:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+                        "button",
+                        {
+                          onClick: (e) => handleThinkingButtonClick(e, model.id),
+                          onMouseDown: () => setPressedButtonId(model.id),
+                          onMouseEnter: () => setHoveredButtonId(model.id),
+                          onMouseLeave: () => {
+                            setHoveredButtonId(null);
+                            setPressedButtonId(null);
+                          },
+                          onMouseUp: () => setPressedButtonId(null),
+                          style: {
+                            ...reasoningButtonStyles2,
+                            ...thinkingStateStyles
+                          },
+                          type: "button",
+                          children: thinkingLevel
+                        }
+                      )
+                    ] })
+                  ] })
+                ]
+              },
+              model.id
+            )
+          );
+        }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
+      ] }),
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+        gemini_thinking_dialog_default,
+        {
+          initialLevel: resolveThinkingLevel(activeModel.id),
+          model: activeModel,
+          onCancel: () => setActiveModelId(null),
+          onSave: (level) => {
+            onThinkingChange(activeModel.id, level);
+            setActiveModelId(null);
+          }
+        }
+      ) : null
     ] });
   };
-  var gemini_default_model_card_default = (0, import_react10.memo)(GeminiDefaultModelCard);
+  var gemini_default_model_card_default = (0, import_react11.memo)(GeminiDefaultModelCard);
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_react11 = __toESM(require_react());
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var import_react12 = __toESM(require_react());
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     marginBottom: "30px"
   };
@@ -9967,19 +10309,19 @@
     const handleRestartCore = () => {
       postVsCodeMessage({ type: "core:restart-request" });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: wrapperStyles, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(settings_card_default, { title: "Core Controls", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { onClick: handleRestartCore, style: buttonStyles, type: "button", children: "Restart Core" })
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { style: wrapperStyles, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(settings_card_default, { title: "Core Controls", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: handleRestartCore, style: buttonStyles, type: "button", children: "Restart Core" })
     ] }) });
   };
-  var general_settings_default = (0, import_react11.memo)(GeneralSettings);
+  var general_settings_default = (0, import_react12.memo)(GeneralSettings);
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_react13 = __toESM(require_react());
+  var import_react14 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react12 = __toESM(require_react());
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var import_react13 = __toESM(require_react());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var rowStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -10071,17 +10413,17 @@
       resolvedButtonStyle = buttonStyles2;
     }
     const shouldShowButton = row.showUpdateButton ?? true;
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: rowStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: labelStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { style: nameStyles, children: row.label }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("p", { style: versionTextStyles, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: rowStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: labelStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: nameStyles, children: row.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: versionTextStyles, children: [
           "Current: ",
           currentLabel,
           " ",
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { style: chipStyles, children: latestLabel })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { style: chipStyles, children: latestLabel })
         ] })
       ] }),
-      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         "button",
         {
           disabled: disabled || !hasUpdate,
@@ -10090,13 +10432,13 @@
           type: "button",
           children: buttonLabel
         }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { style: chipStyles, children: latestLabel })
+      ) : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { style: chipStyles, children: latestLabel })
     ] });
   };
-  var VersionRowItem = (0, import_react12.memo)(VersionRowItemComponent);
+  var VersionRowItem = (0, import_react13.memo)(VersionRowItemComponent);
 
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   var warningStyles2 = {
     background: "#3a2a1f",
     border: "1px solid #9b6b3d",
@@ -10188,7 +10530,7 @@
   };
   var WarningBanner = ({
     provider
-  }) => /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
+  }) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
   var AutoUpdateToggle = ({
     provider,
     enabled,
@@ -10197,7 +10539,7 @@
   }) => {
     const providerLabel = resolveProviderLabel(provider);
     const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
       "label",
       {
         style: {
@@ -10206,7 +10548,7 @@
           cursor: disabled ? "not-allowed" : "pointer"
         },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             "input",
             {
               checked: enabled,
@@ -10216,12 +10558,12 @@
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: toggleTitleStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: toggleTitleStyles, children: [
               "Auto-update ",
               providerLabel
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: toggleDescriptionStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { style: toggleDescriptionStyles, children: [
               "Automatically check and update the ",
               packageLabel,
               " on core start. Manual updates remain available below."
@@ -10233,7 +10575,7 @@
   };
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   var rowsContainerStyles = {
     display: "flex",
     flexDirection: "column",
@@ -10260,9 +10602,9 @@
     onAutoUpdateChange,
     onUpdate
   }) => {
-    const [pendingTarget, setPendingTarget] = (0, import_react13.useState)(null);
+    const [pendingTarget, setPendingTarget] = (0, import_react14.useState)(null);
     const snapshot = versions.data;
-    const rows = (0, import_react13.useMemo)(() => {
+    const rows = (0, import_react14.useMemo)(() => {
       if (!snapshot) {
         return [];
       }
@@ -10312,7 +10654,7 @@
         }
       ];
     }, [provider, snapshot]);
-    const hasProviderVersions = (0, import_react13.useMemo)(() => {
+    const hasProviderVersions = (0, import_react14.useMemo)(() => {
       if (!snapshot) {
         return false;
       }
@@ -10324,11 +10666,11 @@
     const isBusy = versions.loading || versions.updatingTargets.length > 0;
     const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
     const isPending = (target) => pendingTarget === `${provider}:${target}`;
-    const providerUpdateTargets = (0, import_react13.useMemo)(() => {
+    const providerUpdateTargets = (0, import_react14.useMemo)(() => {
       const prefix = `${provider}:`;
       return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
     }, [provider, versions.updatingTargets]);
-    const manualUpdateStatus = (0, import_react13.useMemo)(() => {
+    const manualUpdateStatus = (0, import_react14.useMemo)(() => {
       if (providerUpdateTargets.length === 0) {
         return null;
       }
@@ -10337,7 +10679,7 @@
       );
       return `Manual update in progress: ${labels.join(", ")}`;
     }, [provider, providerUpdateTargets]);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react14.useEffect)(() => {
       if (versions.updatingTargets.length === 0) {
         setPendingTarget(null);
       }
@@ -10357,17 +10699,17 @@
     } else if (provider === "codex") {
       title = "Codex Versions";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
       settings_card_default,
       {
-        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { style: metadataTextStyles, children: [
+        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { style: metadataTextStyles, children: [
           "Checked: ",
           formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
         ] }) : null,
         title,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(WarningBanner, { provider }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(WarningBanner, { provider }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             AutoUpdateToggle,
             {
               disabled: versions.loading,
@@ -10376,11 +10718,11 @@
               provider
             }
           ),
-          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: errorStyles, children: versions.error }) : null,
-          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
-          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
-          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: errorStyles, children: versions.error }) : null,
+          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
+          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
+          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             VersionRowItem,
             {
               disabled: isBusy,
@@ -10395,10 +10737,10 @@
       }
     );
   };
-  var provider_versions_default = (0, import_react13.memo)(ProviderVersions);
+  var provider_versions_default = (0, import_react14.memo)(ProviderVersions);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   var containerStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -10417,7 +10759,7 @@
     fontSize: "12px",
     transition: "all 0.2s ease"
   };
-  var closeButtonStyles2 = {
+  var closeButtonStyles3 = {
     padding: "6px 16px",
     background: "transparent",
     border: "1px solid #3c3c3c",
@@ -10427,7 +10769,7 @@
     fontSize: "12px",
     transition: "all 0.2s ease"
   };
-  var saveButtonStyles2 = {
+  var saveButtonStyles3 = {
     padding: "6px 16px",
     background: "#3c3c3c",
     border: "none",
@@ -10510,8 +10852,8 @@
         event.currentTarget.style.background = "#0e639c";
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: containerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: containerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
         "button",
         {
           disabled: resetting,
@@ -10532,8 +10874,8 @@
           children: resetting ? "Resetting..." : "Reset to Defaults"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
           "button",
           {
             onBlur: handleCloseBlur,
@@ -10541,12 +10883,12 @@
             onFocus: handleCloseFocus,
             onMouseEnter: handleCloseMouseEnter,
             onMouseLeave: handleCloseMouseLeave,
-            style: closeButtonStyles2,
+            style: closeButtonStyles3,
             type: "button",
             children: "Close"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
           "button",
           {
             disabled: !hasChanges || saving,
@@ -10556,9 +10898,9 @@
             onMouseEnter: handleSaveMouseEnter,
             onMouseLeave: handleSaveMouseLeave,
             style: {
-              ...saveButtonStyles2,
-              background: hasChanges && !saving ? "#0e639c" : saveButtonStyles2.background,
-              color: hasChanges ? "#ffffff" : saveButtonStyles2.color,
+              ...saveButtonStyles3,
+              background: hasChanges && !saving ? "#0e639c" : saveButtonStyles3.background,
+              color: hasChanges ? "#ffffff" : saveButtonStyles3.color,
               cursor: hasChanges && !saving ? "pointer" : "default",
               opacity: saving ? DISABLED_OPACITY : 1
             },
@@ -10572,8 +10914,8 @@
   var settings_footer_default = SettingsFooter;
 
   // src/client/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
-  var headerStyles3 = {
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var headerStyles4 = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
@@ -10581,11 +10923,11 @@
     borderBottom: "1px solid #2d2d30",
     flexShrink: 0
   };
-  var titleStyles3 = {
+  var titleStyles4 = {
     fontSize: "16px",
     fontWeight: 600
   };
-  var closeButtonStyles3 = {
+  var closeButtonStyles4 = {
     background: "transparent",
     border: "1px solid #3c3c3c",
     borderRadius: "4px",
@@ -10599,14 +10941,14 @@
     alignItems: "center",
     justifyContent: "center"
   };
-  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: headerStyles3, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: titleStyles3, children: "Settings" }),
-    /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: headerStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: titleStyles4, children: "Settings" }),
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
       "button",
       {
         "aria-label": "Close settings",
         onClick: onClose,
-        style: closeButtonStyles3,
+        style: closeButtonStyles4,
         title: "Close settings",
         type: "button",
         children: "\xD7"
@@ -10616,7 +10958,7 @@
   var settings_header_default = SettingsHeader;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react14 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
@@ -10631,7 +10973,7 @@
 `;
 
   // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var containerStyles2 = {
     marginTop: "20px",
     padding: "12px",
@@ -10639,7 +10981,7 @@
     borderRadius: "4px",
     border: "1px solid #2d2d30"
   };
-  var titleStyles4 = {
+  var titleStyles5 = {
     fontSize: "12px",
     color: "#7ca9d3",
     fontWeight: 500,
@@ -10650,14 +10992,14 @@
     color: "#999999",
     lineHeight: "1.4"
   };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: containerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: titleStyles4, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: containerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
   ] });
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var toggleContainerStyles2 = {
     display: "flex",
     alignItems: "flex-start",
@@ -10671,7 +11013,7 @@
     height: "16px",
     cursor: "pointer"
   };
-  var titleStyles5 = {
+  var titleStyles6 = {
     fontSize: "13px",
     fontWeight: 500,
     marginBottom: "4px"
@@ -10684,8 +11026,8 @@
   var noteStyles2 = {
     color: "#d4a36a"
   };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { style: toggleContainerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { style: toggleContainerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
       "input",
       {
         checked: enabled,
@@ -10694,12 +11036,12 @@
         type: "checkbox"
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: titleStyles5, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: descriptionStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: descriptionStyles4, children: [
         "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { style: noteStyles2, children: "Note:" }),
         " Changes take effect when creating a new session."
       ] })
     ] })
@@ -10707,13 +11049,13 @@
   var thinking_toggle_default = ThinkingToggle;
 
   // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var containerStyles3 = {
     paddingLeft: "28px",
     borderTop: "1px solid #3c3c3c",
     paddingTop: "15px"
   };
-  var titleStyles6 = {
+  var titleStyles7 = {
     fontSize: "13px",
     fontWeight: 500,
     marginBottom: "8px"
@@ -10769,10 +11111,10 @@
       const parsed = Number.parseInt(event.target.value, 10);
       updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: titleStyles6, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
           "button",
           {
             onClick: () => updateValue(value - THINKING_TOKEN_STEP),
@@ -10782,7 +11124,7 @@
             children: "\u2212"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
           "input",
           {
             max: MAX_THINKING_TOKENS,
@@ -10794,7 +11136,7 @@
             value
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
           "button",
           {
             onClick: () => updateValue(value + THINKING_TOKEN_STEP),
@@ -10805,11 +11147,11 @@
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: helperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: helperStyles, children: [
         "\u2022 Normal (4000): Standard reasoning depth",
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("br", {}),
         "\u2022 Hard (10000): Extended analysis for complex tasks",
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("br", {}),
         "\u2022 Ultra (32000): Maximum reasoning capacity"
       ] })
     ] }) });
@@ -10817,7 +11159,7 @@
   var thinking_token_input_default = ThinkingTokenInput;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var wrapperStyles2 = {
     marginBottom: "30px"
   };
@@ -10832,19 +11174,19 @@
     const handleTokenChange = (nextValue) => {
       onChange(enabled, nextValue);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: wrapperStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(thinking_pro_tip_default, {})
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: wrapperStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(thinking_pro_tip_default, {})
       ] })
     ] });
   };
-  var thinking_settings_default = (0, import_react14.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react15.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var import_react15 = __toESM(require_react());
+  var import_react16 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/settings-state-helpers.ts
   var updateThinkingSettings = (settings, enabled, maxTokens) => ({
@@ -10915,6 +11257,19 @@
       }
     }
   });
+  var updateGeminiThinking = (settings, modelId, level) => ({
+    ...settings,
+    providers: {
+      ...settings.providers,
+      gemini: {
+        ...settings.providers.gemini,
+        thinkingLevelByModel: {
+          ...settings.providers.gemini.thinkingLevelByModel,
+          [modelId]: level
+        }
+      }
+    }
+  });
 
   // src/client/ui/src/components/settings/settings-state-model.ts
   var DEFAULT_THINKING_MAX_TOKENS = 4e3;
@@ -10928,6 +11283,13 @@
   );
   var DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_ALL_MODELS.reduce((accumulator, model) => {
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
+    return accumulator;
+  }, {});
+  var GEMINI_THINKING_LEVEL_SET = new Set(
+    GEMINI_THINKING_LEVELS.map((level) => level.name)
+  );
+  var DEFAULT_GEMINI_THINKING_BY_MODEL = GEMINI_RECOMMENDED_MODELS.reduce((accumulator, model) => {
+    accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
   var isRecord = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -10985,9 +11347,26 @@
     const alias = value;
     return GEMINI_MODEL_ID_SET.has(alias) ? alias : DEFAULT_GEMINI_MODEL_ID;
   };
+  var mapGeminiThinkingLevelByModel = (value) => {
+    const nextThinkingLevelByModel = {
+      ...DEFAULT_GEMINI_THINKING_BY_MODEL
+    };
+    if (!isRecord(value)) {
+      return nextThinkingLevelByModel;
+    }
+    for (const [modelId, level] of Object.entries(value)) {
+      if (typeof level === "string" && GEMINI_THINKING_LEVEL_SET.has(level)) {
+        nextThinkingLevelByModel[modelId] = level;
+      }
+    }
+    return nextThinkingLevelByModel;
+  };
   var mapGeminiSettings = (value) => ({
     autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
-    defaultModel: resolveGeminiModelId(value?.defaultModel)
+    defaultModel: resolveGeminiModelId(value?.defaultModel),
+    thinkingLevelByModel: mapGeminiThinkingLevelByModel(
+      value?.thinkingLevelByModel
+    )
   });
   var mapSettingsSnapshot = (value) => ({
     general: mapGeneralSettings(value?.general),
@@ -11012,7 +11391,19 @@
   var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart;
   var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel;
   var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel);
-  var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel;
+  var areGeminiThinkingLevelByModelEqual = (left, right) => {
+    const leftEntries = Object.entries(left);
+    if (leftEntries.length !== Object.keys(right).length) {
+      return false;
+    }
+    return leftEntries.every(
+      ([modelId, level]) => right[modelId] === level
+    );
+  };
+  var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
+    left.thinkingLevelByModel,
+    right.thinkingLevelByModel
+  );
   var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini);
 
   // src/client/ui/src/components/settings/use-settings-state.ts
@@ -11031,15 +11422,15 @@
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions";
   };
   var useSettingsState = () => {
-    const initialSettingsRef = (0, import_react15.useRef)(createDefaultSettings());
-    const [settings, setSettings] = (0, import_react15.useState)(createDefaultSettings);
-    const [hasChanges, setHasChanges] = (0, import_react15.useState)(false);
-    const [saving, setSaving] = (0, import_react15.useState)(false);
-    const [resetting, setResetting] = (0, import_react15.useState)(false);
-    const [versions, setVersions] = (0, import_react15.useState)(
+    const initialSettingsRef = (0, import_react16.useRef)(createDefaultSettings());
+    const [settings, setSettings] = (0, import_react16.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react16.useState)(false);
+    const [saving, setSaving] = (0, import_react16.useState)(false);
+    const [resetting, setResetting] = (0, import_react16.useState)(false);
+    const [versions, setVersions] = (0, import_react16.useState)(
       createDefaultVersionsState
     );
-    (0, import_react15.useEffect)(() => {
+    (0, import_react16.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
       });
@@ -11076,54 +11467,60 @@
         window.removeEventListener("message", handleMessage);
       };
     }, []);
-    const updateSettings = (0, import_react15.useCallback)((nextSettings) => {
+    const updateSettings = (0, import_react16.useCallback)((nextSettings) => {
       setSettings(nextSettings);
       setHasChanges(!areSettingsEqual(nextSettings, initialSettingsRef.current));
     }, []);
-    const handleThinkingSettingsChange = (0, import_react15.useCallback)(
+    const handleThinkingSettingsChange = (0, import_react16.useCallback)(
       (enabled, maxTokens) => {
         updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
       },
       [settings, updateSettings]
     );
-    const handleClaudeDefaultModelChange = (0, import_react15.useCallback)(
+    const handleClaudeDefaultModelChange = (0, import_react16.useCallback)(
       (modelId) => {
         updateSettings(updateClaudeDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexDefaultModelChange = (0, import_react15.useCallback)(
+    const handleCodexDefaultModelChange = (0, import_react16.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexReasoningChange = (0, import_react15.useCallback)(
+    const handleCodexReasoningChange = (0, import_react16.useCallback)(
       (modelId, reasoning) => {
         updateSettings(updateCodexReasoning(settings, modelId, reasoning));
       },
       [settings, updateSettings]
     );
-    const handleProviderAutoUpdateChange = (0, import_react15.useCallback)(
+    const handleProviderAutoUpdateChange = (0, import_react16.useCallback)(
       (provider, enabled) => {
         updateSettings(updateProviderAutoUpdate(settings, provider, enabled));
       },
       [settings, updateSettings]
     );
-    const handleGeminiDefaultModelChange = (0, import_react15.useCallback)(
+    const handleGeminiDefaultModelChange = (0, import_react16.useCallback)(
       (modelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleSave = (0, import_react15.useCallback)(() => {
+    const handleGeminiThinkingChange = (0, import_react16.useCallback)(
+      (modelId, level) => {
+        updateSettings(updateGeminiThinking(settings, modelId, level));
+      },
+      [settings, updateSettings]
+    );
+    const handleSave = (0, import_react16.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
         type: "settings:save",
         settings
       });
     }, [settings]);
-    const handleReset = (0, import_react15.useCallback)(() => {
+    const handleReset = (0, import_react16.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
         vscode_default.postMessage({
@@ -11131,7 +11528,7 @@
         });
       }, RESET_DELAY_MS);
     }, []);
-    const handleUpdateProvider = (0, import_react15.useCallback)(
+    const handleUpdateProvider = (0, import_react16.useCallback)(
       (provider, target) => {
         const targetKey = `${provider}:${target}`;
         setVersions((prev) => ({
@@ -11156,6 +11553,7 @@
       handleClaudeDefaultModelChange,
       handleCodexDefaultModelChange,
       handleGeminiDefaultModelChange,
+      handleGeminiThinkingChange,
       handleCodexReasoningChange,
       handleProviderAutoUpdateChange,
       handleSave,
@@ -11165,7 +11563,7 @@
   };
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   var containerStyles4 = {
     height: "100%",
     display: "flex",
@@ -11209,7 +11607,7 @@
     { id: "general", label: "General" }
   ];
   var SettingsView = ({ onClose }) => {
-    const [activeTab, setActiveTab] = (0, import_react16.useState)("claude");
+    const [activeTab, setActiveTab] = (0, import_react17.useState)("claude");
     const {
       settings,
       hasChanges,
@@ -11220,15 +11618,16 @@
       handleCodexDefaultModelChange,
       handleClaudeDefaultModelChange,
       handleGeminiDefaultModelChange,
+      handleGeminiThinkingChange,
       handleCodexReasoningChange,
       handleProviderAutoUpdateChange,
       handleSave,
       handleReset,
       handleUpdateProvider
     } = useSettingsState();
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: containerStyles4, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(settings_header_default, { onClose }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab2) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: containerStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(settings_header_default, { onClose }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab2) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         "button",
         {
           onClick: () => setActiveTab(tab2.id),
@@ -11241,17 +11640,17 @@
         },
         tab2.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: contentStyles, children: (() => {
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: contentStyles, children: (() => {
         if (activeTab === "claude") {
-          return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
               claude_default_model_card_default,
               {
                 defaultModel: settings.providers.claude.defaultModel,
                 onDefaultModelChange: handleClaudeDefaultModelChange
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.claude.autoUpdate.enabled,
@@ -11261,7 +11660,7 @@
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
               thinking_settings_default,
               {
                 enabled: settings.providers.claude.thinking.enabled,
@@ -11272,11 +11671,11 @@
           ] });
         }
         if (activeTab === "general") {
-          return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(general_settings_default, {}) });
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(general_settings_default, {}) });
         }
         if (activeTab === "codex") {
-          return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
               codex_default_model_card_default,
               {
                 defaultModel: settings.providers.codex.defaultModel,
@@ -11285,7 +11684,7 @@
                 reasoningByModel: settings.providers.codex.reasoningByModel
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.codex.autoUpdate.enabled,
@@ -11297,15 +11696,17 @@
             )
           ] });
         }
-        return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: stackStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: stackStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
             gemini_default_model_card_default,
             {
               defaultModel: settings.providers.gemini.defaultModel,
-              onDefaultModelChange: handleGeminiDefaultModelChange
+              onDefaultModelChange: handleGeminiDefaultModelChange,
+              onThinkingChange: handleGeminiThinkingChange,
+              thinkingLevelByModel: settings.providers.gemini.thinkingLevelByModel
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
             provider_versions_default,
             {
               autoUpdateEnabled: settings.providers.gemini.autoUpdate.enabled,
@@ -11317,7 +11718,7 @@
           )
         ] });
       })() }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         settings_footer_default,
         {
           hasChanges,
@@ -11330,10 +11731,10 @@
       )
     ] });
   };
-  var settings_view_default = import_react16.default.memo(SettingsView);
+  var settings_view_default = import_react17.default.memo(SettingsView);
 
   // src/client/ui/src/session/dialog-panel.tsx
-  var import_react18 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
 
   // node_modules/devlop/lib/default.js
   function ok() {
@@ -12958,11 +13359,11 @@
       }
     }
   }
-  function productionCreate(_, jsx31, jsxs29) {
+  function productionCreate(_, jsx32, jsxs30) {
     return create2;
     function create2(_2, type, props, key) {
       const isStaticChildren = Array.isArray(props.children);
-      const fn = isStaticChildren ? jsxs29 : jsx31;
+      const fn = isStaticChildren ? jsxs30 : jsx32;
       return key ? fn(type, props, key) : fn(type, props);
     }
   }
@@ -13207,8 +13608,8 @@
   };
 
   // node_modules/react-markdown/lib/index.js
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
-  var import_react17 = __toESM(require_react(), 1);
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
+  var import_react18 = __toESM(require_react(), 1);
 
   // node_modules/mdast-util-to-string/lib/index.js
   var emptyOptions2 = {};
@@ -20871,11 +21272,11 @@
     }
     visit(tree, transform);
     return toJsxRuntime(tree, {
-      Fragment: import_jsx_runtime19.Fragment,
+      Fragment: import_jsx_runtime20.Fragment,
       components,
       ignoreInvalidStyle: true,
-      jsx: import_jsx_runtime19.jsx,
-      jsxs: import_jsx_runtime19.jsxs,
+      jsx: import_jsx_runtime20.jsx,
+      jsxs: import_jsx_runtime20.jsxs,
       passKeys: true,
       passNode: true
     });
@@ -23983,7 +24384,7 @@
   }
 
   // src/client/ui/src/session/markdown-content.tsx
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
   var MarkdownContent = ({
     className,
     content: content3,
@@ -23995,7 +24396,7 @@
       ...props
     }) => {
       const { style: _ignoredStyle, ...rest } = props;
-      return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
         "span",
         {
           ...rest,
@@ -24006,14 +24407,14 @@
         }
       );
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className, id, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className, id, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
       Markdown,
       {
         components: {
-          a: ({ node: _node, href, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("a", { ...props, href: href ?? "#", rel: "noreferrer", target: "_blank" }),
-          p: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { ...props }),
-          strong: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("strong", { ...props }) : renderPlainText,
-          em: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("em", { ...props }) : renderPlainText
+          a: ({ node: _node, href, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("a", { ...props, href: href ?? "#", rel: "noreferrer", target: "_blank" }),
+          p: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { ...props }),
+          strong: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("strong", { ...props }) : renderPlainText,
+          em: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("em", { ...props }) : renderPlainText
         },
         remarkPlugins: [remarkGfm],
         skipHtml: true,
@@ -24024,21 +24425,21 @@
   var markdown_content_default = MarkdownContent;
 
   // src/client/ui/src/session/dialog-panel.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   var AUTO_SCROLL_EPSILON = 32;
   var DialogPanel = ({
     messages,
     providerTheme = null,
     providerLabel = null
   }) => {
-    const scrollContainerRef = (0, import_react18.useRef)(null);
-    const displayMessages = (0, import_react18.useMemo)(
+    const scrollContainerRef = (0, import_react19.useRef)(null);
+    const displayMessages = (0, import_react19.useMemo)(
       () => mergeThinkingMessages(messages),
       [messages]
     );
-    const [expandedThinking, setExpandedThinking] = (0, import_react18.useState)({});
-    const [pinnedToBottom, setPinnedToBottom] = (0, import_react18.useState)(true);
-    (0, import_react18.useEffect)(() => {
+    const [expandedThinking, setExpandedThinking] = (0, import_react19.useState)({});
+    const [pinnedToBottom, setPinnedToBottom] = (0, import_react19.useState)(true);
+    (0, import_react19.useEffect)(() => {
       setExpandedThinking((previous3) => {
         let hasChanges = false;
         const nextState = { ...previous3 };
@@ -24069,7 +24470,7 @@
       );
     };
     const messageCount = displayMessages.length;
-    (0, import_react18.useLayoutEffect)(() => {
+    (0, import_react19.useLayoutEffect)(() => {
       if (!pinnedToBottom) {
         return;
       }
@@ -24084,9 +24485,9 @@
       container.scrollTop = container.scrollHeight;
     }, [messageCount, pinnedToBottom]);
     if (displayMessages.length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
       "div",
       {
         className: "session-dialog__scroll",
@@ -24097,7 +24498,7 @@
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
-            return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+            return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
               ThinkingMessage,
               {
                 className,
@@ -24109,7 +24510,7 @@
               message.id
             );
           }
-          return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
             StandardMessage,
             {
               className,
@@ -24151,9 +24552,9 @@
     onToggle,
     label,
     className
-  }) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("article", { className, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("header", { className: "session-dialog__message-header session-dialog__message-header--thinking", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+  }) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("article", { className, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("header", { className: "session-dialog__message-header session-dialog__message-header--thinking", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
         "button",
         {
           "aria-controls": `thinking-${message.id}`,
@@ -24165,9 +24566,9 @@
           children: expanded ? "\u25BE" : "\u25B8"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "session-dialog__role", children: label })
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "session-dialog__role", children: label })
     ] }),
-    expanded ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+    expanded ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
       markdown_content_default,
       {
         allowEmphasis: false,
@@ -24183,10 +24584,10 @@
     className
   }) => {
     const messageDate = new Date(message.createdAt);
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("article", { className, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("header", { className: "session-dialog__message-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "session-dialog__role", children: label }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("article", { className, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("header", { className: "session-dialog__message-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "session-dialog__role", children: label }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           "time",
           {
             className: "session-dialog__timestamp",
@@ -24195,7 +24596,7 @@
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
         markdown_content_default,
         {
           className: "session-dialog__content",
@@ -24226,15 +24627,15 @@ ${message.content}`
   };
 
   // src/client/ui/src/session/empty-state.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
-  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "session-empty", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
-    /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "session-empty", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
+    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
   ] });
   var empty_state_default = EmptyState;
 
   // src/client/ui/src/session/info-panel.tsx
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
   var InfoPanel = ({ binding }) => {
     let primaryText = "Session information unavailable";
     let secondaryText = "Provider session state is unknown.";
@@ -24250,15 +24651,15 @@ ${message.content}`
       primaryText = "Session failed to initialize";
       secondaryText = "Provider session ID unavailable. Check CLI logs.";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("section", { className: "session-panel session-info", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "session-info__text", children: primaryText }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "session-info__text", title: secondaryTitle, children: secondaryText }) })
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("section", { className: "session-panel session-info", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "session-info__text", children: primaryText }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "session-info__text", title: secondaryTitle, children: secondaryText }) })
     ] });
   };
   var info_panel_default = InfoPanel;
 
   // src/client/ui/src/session/input-panel.tsx
-  var import_react19 = __toESM(require_react());
+  var import_react20 = __toESM(require_react());
 
   // src/client/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
   var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
@@ -24757,7 +25158,7 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/session/input-panel.tsx
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
   var MAX_TEXTAREA_HEIGHT = 200;
   var adjustTextareaHeight = (textarea) => {
     if (!textarea) {
@@ -24779,22 +25180,22 @@ ${path2}` : path2;
     element3.setSelectionRange(length, length);
   };
   var InputPanel = ({ draft, onSubmit }) => {
-    const [value, setValue] = (0, import_react19.useState)(draft);
-    const [isDragging, setIsDragging] = (0, import_react19.useState)(false);
-    const [isFocused, setIsFocused] = (0, import_react19.useState)(false);
-    const textareaRef = (0, import_react19.useRef)(null);
-    const dropContainerRef = (0, import_react19.useRef)(null);
-    const dragDropFacadeRef = (0, import_react19.useRef)(null);
-    const updateValue = (0, import_react19.useCallback)((nextValue) => {
+    const [value, setValue] = (0, import_react20.useState)(draft);
+    const [isDragging, setIsDragging] = (0, import_react20.useState)(false);
+    const [isFocused, setIsFocused] = (0, import_react20.useState)(false);
+    const textareaRef = (0, import_react20.useRef)(null);
+    const dropContainerRef = (0, import_react20.useRef)(null);
+    const dragDropFacadeRef = (0, import_react20.useRef)(null);
+    const updateValue = (0, import_react20.useCallback)((nextValue) => {
       setValue(nextValue);
       requestAnimationFrame(() => {
         adjustTextareaHeight(textareaRef.current);
       });
     }, []);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react20.useEffect)(() => {
       updateValue(draft);
     }, [draft, updateValue]);
-    const sendMessage = (0, import_react19.useCallback)(() => {
+    const sendMessage = (0, import_react20.useCallback)(() => {
       const trimmed = value.trim();
       if (!trimmed) {
         return;
@@ -24802,14 +25203,14 @@ ${path2}` : path2;
       onSubmit(trimmed);
       updateValue("");
     }, [onSubmit, updateValue, value]);
-    const handleSubmit = (0, import_react19.useCallback)(
+    const handleSubmit = (0, import_react20.useCallback)(
       (event) => {
         event.preventDefault();
         sendMessage();
       },
       [sendMessage]
     );
-    const handleKeyDown = (0, import_react19.useCallback)(
+    const handleKeyDown = (0, import_react20.useCallback)(
       (event) => {
         if (event.key !== "Enter") {
           return;
@@ -24826,13 +25227,13 @@ ${path2}` : path2;
       },
       [sendMessage]
     );
-    const handleChange = (0, import_react19.useCallback)(
+    const handleChange = (0, import_react20.useCallback)(
       (event) => {
         updateValue(event.target.value);
       },
       [updateValue]
     );
-    const insertTextAtSelection = (0, import_react19.useCallback)(
+    const insertTextAtSelection = (0, import_react20.useCallback)(
       (text7) => {
         const textarea = textareaRef.current;
         if (!textarea) {
@@ -24855,14 +25256,14 @@ ${path2}` : path2;
       },
       [updateValue]
     );
-    const syncTextareaValue = (0, import_react19.useCallback)(() => {
+    const syncTextareaValue = (0, import_react20.useCallback)(() => {
       const textarea = textareaRef.current;
       if (!textarea) {
         return;
       }
       updateValue(textarea.value);
     }, [updateValue]);
-    const { handlePaste, handleCopy } = (0, import_react19.useMemo)(
+    const { handlePaste, handleCopy } = (0, import_react20.useMemo)(
       () => createClipboardHandlers({
         textareaRef,
         insertTextAtSelection,
@@ -24870,7 +25271,7 @@ ${path2}` : path2;
       }),
       [insertTextAtSelection, syncTextareaValue]
     );
-    const applyExternalValue = (0, import_react19.useCallback)(
+    const applyExternalValue = (0, import_react20.useCallback)(
       (newValue) => {
         updateValue(newValue);
         requestAnimationFrame(() => {
@@ -24880,7 +25281,7 @@ ${path2}` : path2;
       },
       [updateValue]
     );
-    (0, import_react19.useEffect)(() => {
+    (0, import_react20.useEffect)(() => {
       const container = dropContainerRef.current;
       const textarea = textareaRef.current;
       if (!(container && textarea)) {
@@ -24900,14 +25301,14 @@ ${path2}` : path2;
       };
     }, [applyExternalValue]);
     const overlayLabel = "Drop files here while holding Shift";
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
       "form",
       {
         "aria-label": "Message input",
         className: "session-input session-panel",
         onSubmit: handleSubmit,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
             "div",
             {
               className: [
@@ -24916,7 +25317,7 @@ ${path2}` : path2;
               ].filter(Boolean).join(" "),
               ref: dropContainerRef,
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
                   "textarea",
                   {
                     "aria-multiline": "true",
@@ -24936,11 +25337,11 @@ ${path2}` : path2;
                     value
                   }
                 ),
-                isDragging && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("output", { className: "session-input__overlay", children: overlayLabel })
+                isDragging && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("output", { className: "session-input__overlay", children: overlayLabel })
               ]
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
         ]
       }
     );
@@ -24948,7 +25349,7 @@ ${path2}` : path2;
   var input_panel_default = InputPanel;
 
   // src/client/ui/src/session/session-tabs.tsx
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
   var SessionTabs = ({
     sessions,
     providerLabels,
@@ -24959,7 +25360,7 @@ ${path2}` : path2;
     if (sessions.length === 0) {
       return null;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
       const isActive = session.id === activeSessionId;
       const providerNames = session.providerIds.map((providerId) => {
         const label = providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);
@@ -24990,8 +25391,8 @@ ${path2}` : path2;
         isActive ? "session-tab--active" : null,
         tabProviderTheme ? `session-tab--${tabProviderTheme}` : null
       ].filter(Boolean).join(" ");
-      return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: tabClassName, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: tabClassName, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
           "button",
           {
             "aria-label": `Activate session for ${spokenSummary}`,
@@ -24999,13 +25400,13 @@ ${path2}` : path2;
             onClick: () => onSelect(session.id),
             title: fullSummary,
             type: "button",
-            children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("span", { className: "session-tab__providers", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
-              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
+            children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "session-tab__providers", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
+              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
             ] })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
           "button",
           {
             "aria-label": `Close session for ${spokenSummary}`,
@@ -25021,7 +25422,7 @@ ${path2}` : path2;
   var session_tabs_default = SessionTabs;
 
   // src/client/ui/src/session/status-panel.tsx
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
   var MAX_PERCENTAGE = 100;
   var MIN_TOKEN_LIMIT = 1;
   var PERCENT_SCALE = 100;
@@ -25032,12 +25433,12 @@ ${path2}` : path2;
     connectionDetail
   }) => {
     if (!status || connectionStatus !== "ready") {
-      return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("section", { className: "session-status session-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "session-status__row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "session-status__label", children: SUPERVISOR_LABEL }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "session-status__value", children: describeConnectionStatus(connectionStatus) })
+      return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("section", { className: "session-status session-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "session-status__row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "session-status__label", children: SUPERVISOR_LABEL }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "session-status__value", children: describeConnectionStatus(connectionStatus) })
         ] }),
-        connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "session-status__row session-status__row--muted", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "session-status__value", children: connectionDetail }) }) : null
+        connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "session-status__row session-status__row--muted", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "session-status__value", children: connectionDetail }) }) : null
       ] });
     }
     const { providerSummary, tokenUsage } = status;
@@ -25047,18 +25448,18 @@ ${path2}` : path2;
         tokenUsage.used / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT) * PERCENT_SCALE
       )
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("section", { className: "session-status session-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "session-status__label", children: "Providers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "session-status__value", children: providerSummary })
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("section", { className: "session-status session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "session-status__label", children: "Providers" }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "session-status__value", children: providerSummary })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "session-status__row session-status__row--muted", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "session-status__label", children: "Status" }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "session-status__value", children: "Inactive or degraded providers are disabled in the picker." })
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "session-status__row session-status__row--muted", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "session-status__label", children: "Status" }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "session-status__value", children: "Inactive or degraded providers are disabled in the picker." })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "session-status__label", children: "Tokens" }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "session-status__value", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "session-status__label", children: "Tokens" }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "session-status__value", children: [
           tokenUsage.used.toLocaleString(),
           " /",
           " ",
@@ -25083,26 +25484,26 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/session/todo-panel.tsx
-  var import_react20 = __toESM(require_react());
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
+  var import_react21 = __toESM(require_react());
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
   var TodoPanel = ({ items, onToggle }) => {
-    const [showActiveOnly, setShowActiveOnly] = (0, import_react20.useState)(false);
-    const completedCount = (0, import_react20.useMemo)(
+    const [showActiveOnly, setShowActiveOnly] = (0, import_react21.useState)(false);
+    const completedCount = (0, import_react21.useMemo)(
       () => items.filter((item) => item.completed).length,
       [items]
     );
-    const visibleItems = (0, import_react20.useMemo)(
+    const visibleItems = (0, import_react21.useMemo)(
       () => showActiveOnly ? items.filter((item) => !item.completed) : [...items],
       [items, showActiveOnly]
     );
     const handleToggleFilter = () => {
       setShowActiveOnly((previous3) => !previous3);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("section", { className: "session-todos session-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("header", { className: "session-todos__header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "session-todos__title-group", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("section", { className: "session-todos session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("header", { className: "session-todos__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "session-todos__title-group", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
             "button",
             {
               "aria-label": showActiveOnly ? "Show all tasks" : "Show only active tasks",
@@ -25110,21 +25511,21 @@ ${path2}` : path2;
               className: showActiveOnly ? "session-todos__toggle session-todos__toggle--active" : "session-todos__toggle",
               onClick: handleToggleFilter,
               type: "button",
-              children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { "aria-hidden": true, className: "session-todos__toggle-icon", children: "\u25BE" })
+              children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { "aria-hidden": true, className: "session-todos__toggle-icon", children: "\u25BE" })
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "session-todos__counter", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { className: "session-todos__counter", children: [
           completedCount,
           "/",
           items.length,
           " done"
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("ul", { className: "session-todos__list", children: visibleItems.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("li", { className: "session-todos__empty", children: "All tasks complete" }) : visibleItems.map((item) => {
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("ul", { className: "session-todos__list", children: visibleItems.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("li", { className: "session-todos__empty", children: "All tasks complete" }) : visibleItems.map((item) => {
         const textClassName = item.completed ? "session-todos__text session-todos__text--completed" : "session-todos__text";
-        return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { className: "session-todos__label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("label", { className: "session-todos__label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
             "input",
             {
               checked: item.completed,
@@ -25132,7 +25533,7 @@ ${path2}` : path2;
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: textClassName, children: item.title })
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { className: textClassName, children: item.title })
         ] }) }, item.id);
       }) })
     ] });
@@ -25140,7 +25541,7 @@ ${path2}` : path2;
   var todo_panel_default = TodoPanel;
 
   // src/client/ui/src/session/session-view.tsx
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime());
   var SessionView = ({
     sessions,
     providerLabels,
@@ -25162,11 +25563,11 @@ ${path2}` : path2;
     const providerTheme = mapProviderTheme(primaryProviderId);
     const providerDisplayLabel = primaryProviderId != null ? providerLabels.get(primaryProviderId) ?? getDefaultProviderTitle(primaryProviderId) : null;
     if (sessions.length === 0 && showEmptyState) {
-      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(empty_state_default, {}) });
+      return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(empty_state_default, {}) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "session-app", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "session-app__header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "session-app", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "session-app__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
           session_tabs_default,
           {
             activeSessionId,
@@ -25176,10 +25577,10 @@ ${path2}` : path2;
             sessions
           }
         ),
-        activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(info_panel_default, { binding: activeSession.binding }) : null
+        activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(info_panel_default, { binding: activeSession.binding }) : null
       ] }),
-      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "session-app__content", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "session-app__content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
           dialog_panel_default,
           {
             messages: activeSession.messages,
@@ -25187,22 +25588,22 @@ ${path2}` : path2;
             providerTheme
           }
         ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "session-app__rails", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "session-app__rails", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
             todo_panel_default,
             {
               items: activeSession.todos,
               onToggle: (todoId) => onToggleTodo(activeSessionId, todoId)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
             input_panel_default,
             {
               draft: activeSession.draft,
               onSubmit: (text7) => onSendMessage(activeSessionId, text7)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
             status_panel_default,
             {
               connectionDetail: coreConnectionDetail,
@@ -25217,17 +25618,17 @@ ${path2}` : path2;
   var session_view_default = SessionView;
 
   // src/client/ui/src/app-host.tsx
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime());
   var AppHost = () => {
-    const [coreStatus, setCoreStatus] = (0, import_react21.useState)("connecting");
-    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react21.useState)(
+    const [coreStatus, setCoreStatus] = (0, import_react22.useState)("connecting");
+    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react22.useState)(
       void 0
     );
-    const [coreFinalized, setCoreFinalized] = (0, import_react21.useState)(false);
-    const [messages, setMessages] = (0, import_react21.useState)(
+    const [coreFinalized, setCoreFinalized] = (0, import_react22.useState)(false);
+    const [messages, setMessages] = (0, import_react22.useState)(
       createDefaultMessages
     );
-    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react21.useState)(0);
+    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react22.useState)(0);
     const {
       pickerState,
       providerLabels,
@@ -25254,14 +25655,14 @@ ${path2}` : path2;
       sendMessage
     } = useSessionStore(providerLabels);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const handleProviderPickerOpen = (0, import_react21.useCallback)(
+    const handleProviderPickerOpen = (0, import_react22.useCallback)(
       (providers) => {
         activateRoot();
         openPicker(providers);
       },
       [openPicker]
     );
-    const handleSessionCreatedMessage2 = (0, import_react21.useCallback)(
+    const handleSessionCreatedMessage2 = (0, import_react22.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
@@ -25269,39 +25670,39 @@ ${path2}` : path2;
       },
       [handleSessionCreated, resetPicker]
     );
-    const handleShowSettings = (0, import_react21.useCallback)(() => {
+    const handleShowSettings = (0, import_react22.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    const handleCoreState = (0, import_react21.useCallback)(
+    const handleCoreState = (0, import_react22.useCallback)(
       (payload) => {
         activateRoot();
         hydrateFromCoreState(payload);
       },
       [hydrateFromCoreState]
     );
-    const handleSessionMessage = (0, import_react21.useCallback)(
+    const handleSessionMessage = (0, import_react22.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionMessageEvent2(payload);
       },
       [handleSessionMessageEvent2]
     );
-    const handleSessionHistory = (0, import_react21.useCallback)(
+    const handleSessionHistory = (0, import_react22.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionHistoryEvent(payload);
       },
       [handleSessionHistoryEvent]
     );
-    const handleSessionDeletedMessage2 = (0, import_react21.useCallback)(
+    const handleSessionDeletedMessage2 = (0, import_react22.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionDeleted(payload);
       },
       [handleSessionDeleted]
     );
-    const handleSessionBindingMessage2 = (0, import_react21.useCallback)(
+    const handleSessionBindingMessage2 = (0, import_react22.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionBindingUpdate(payload);
@@ -25354,7 +25755,7 @@ ${path2}` : path2;
       onSessionHistory: handleSessionHistory
     });
     const isCoreReady = coreStatus === "ready" && coreFinalized;
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       if (isCoreReady) {
         return;
       }
@@ -25367,11 +25768,11 @@ ${path2}` : path2;
         window.clearInterval(timer);
       };
     }, [isCoreReady]);
-    const currentMessage = (0, import_react21.useMemo)(() => {
+    const currentMessage = (0, import_react22.useMemo)(() => {
       const messageId = MESSAGE_ORDER[activeMessageIndex];
       return messages[messageId] ?? DEFAULT_MESSAGES[messageId];
     }, [activeMessageIndex, messages]);
-    const { headlineText, statusLine, detailLine } = (0, import_react21.useMemo)(() => {
+    const { headlineText, statusLine, detailLine } = (0, import_react22.useMemo)(() => {
       if (coreStatus === "error") {
         return {
           headlineText: "Please hold on - we are getting CodeAI Hub ready.",
@@ -25385,10 +25786,10 @@ ${path2}` : path2;
         detailLine: coreStatusDetail ?? currentMessage.detail
       };
     }, [coreStatus, coreStatusDetail, currentMessage]);
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(action_bar_default, { disabled: !isCoreReady }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "app-shell__session-region", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(action_bar_default, { disabled: !isCoreReady }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "app-shell__session-region", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
           ProviderPicker,
           {
             onCancel: cancelSelection,
@@ -25397,7 +25798,7 @@ ${path2}` : path2;
             visible: pickerState.visible
           }
         ),
-        pickerState.visible ? null : /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+        pickerState.visible ? null : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
           session_view_default,
           {
             activeSessionId,
@@ -25414,21 +25815,21 @@ ${path2}` : path2;
           }
         )
       ] }),
-      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "app-shell__status-text", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
-          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
+      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "app-shell__status-text", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
+          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
         ] })
       ] }) }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
     ] });
   };
   var app_host_default = AppHost;
 
   // src/client/ui/src/index.tsx
-  var import_jsx_runtime30 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime31 = __toESM(require_jsx_runtime());
   initializeCoreBridge();
   var mount = () => {
     const rootElement = document.getElementById("root");
@@ -25438,7 +25839,7 @@ ${path2}` : path2;
     activateRoot();
     const root4 = (0, import_client.createRoot)(rootElement);
     root4.render(
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(import_react22.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(import_react23.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(app_host_default, {}) })
     );
   };
   mount();
