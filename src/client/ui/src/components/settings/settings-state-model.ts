@@ -15,9 +15,9 @@ import {
 } from "../../../../../types/codex-model-registry";
 
 import {
+  DEFAULT_GEMINI_MODEL_ID,
   GEMINI_MODEL_ID_SET,
   type GeminiModelId,
-  DEFAULT_GEMINI_MODEL_ID,
 } from "../../../../../types/gemini-model-registry";
 
 import type {

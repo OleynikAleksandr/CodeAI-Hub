@@ -31,9 +31,7 @@ export class SettingsMessageHandler {
 
   constructor(_extensionPath: string) {
     this.versionService = new ProviderVersionService();
-    applyDefaultModelsEnv,
-
-(this.settingsState);
+    applyDefaultModelsEnv(this.settingsState);
   }
 
   canHandle(message: unknown): message is SettingsMessage {
@@ -70,9 +68,7 @@ export class SettingsMessageHandler {
           return;
         }
         this.settingsState = nextSettings;
-        applyDefaultModelsEnv,
-
-(this.settingsState);
+        applyDefaultModelsEnv(this.settingsState);
         persistSettingsSnapshot(this.settingsState).catch(() => {
           /* ignore persistence errors */
         });
@@ -82,9 +78,7 @@ export class SettingsMessageHandler {
       }
       case "settings:reset": {
         this.settingsState = DEFAULT_SETTINGS_SNAPSHOT;
-        applyDefaultModelsEnv,
-
-(this.settingsState);
+        applyDefaultModelsEnv(this.settingsState);
         persistSettingsSnapshot(this.settingsState).catch(() => {
           /* ignore persistence errors */
         });
