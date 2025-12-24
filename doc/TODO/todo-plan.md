@@ -21,11 +21,11 @@
 4. [DONE] Git Commit: feat(ui): add gemini thinking change handler
 
 ### Stream 4: Gemini Module Implementation
-1. [TODO] Обновить `SessionCreationOptions` в `packages/Gemini_Module/src/session/types.ts`: добавить `thinkingLevel`.
-2. [TODO] Реализовать применение `thinkingLevel` в `GeminiSessionManager.createSession`.
-3. [TODO] Git Commit: feat(gemini): apply thinking level to gemini session
+1. [DONE] Обновить `SessionCreationOptions` в `packages/Gemini_Module/src/session/types.ts`: добавить `thinkingLevel`.
+2. [DONE] Реализовать применение `thinkingLevel` в `GeminiSessionManager.createSession`.
+3. [DONE] Git Commit: feat(gemini): apply thinking level to gemini session
 
 ### Stream 5: Verification & Release
 1. [TODO] Проверить работу Thinking для Gemini 3 Pro/Flash.
-2. [TODO] Собрать релиз 1.1.343.
-3. [TODO] Git Commit: chore: release v1.1.343 - Gemini thinking support
+2. [DONE] Собрать релиз 1.1.343.
+3. [DONE] Git Commit: chore: release v1.1.343 - Gemini thinking support
