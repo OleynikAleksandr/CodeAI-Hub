@@ -724,7 +724,7 @@ export class GeminiSessionManager {
           budget = 4000;
           break;
         case "high":
-          budget = 16000;
+          budget = 16_000;
           break;
         default:
           budget = 0;
