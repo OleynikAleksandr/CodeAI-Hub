@@ -54,8 +54,8 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
   return (
     <SettingsCard title="Gemini Default model">
       <p style={descriptionStyles}>
-        Select the Gemini model to use for new sessions.
-        More details in the knowledge base: doc/Knowledge/Gemini_Model_Selection.md
+        Select the Gemini model to use for new sessions. More details in the
+        knowledge base: doc/Knowledge/Gemini_Model_Selection.md
       </p>
       <div style={listStyles}>
         {GEMINI_RECOMMENDED_MODELS.map((model) => {
