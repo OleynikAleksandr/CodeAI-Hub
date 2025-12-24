@@ -1,5 +1,10 @@
-import type { ClaudeModelAliasId } from "../../../../../types/claude-model-registry";
-import type { GeminiModelId } from "../../../../../types/gemini-model-registry";
+import {
+  type ClaudeModelAliasId,
+} from "../../../../../types/claude-model-registry";
+import {
+  type GeminiModelId,
+  type GeminiThinkingLevel,
+} from "../../../../../types/gemini-model-registry";
 import type {
   CodexModelId,
   CodexReasoningLevel,
@@ -98,6 +103,24 @@ export const updateGeminiDefaultModel = (
     gemini: {
       ...settings.providers.gemini,
       defaultModel: modelId,
+    },
+  },
+});
+
+export const updateGeminiThinking = (
+  settings: Settings,
+  modelId: GeminiModelId,
+  level: GeminiThinkingLevel
+): Settings => ({
+  ...settings,
+  providers: {
+    ...settings.providers,
+    gemini: {
+      ...settings.providers.gemini,
+      thinkingLevelByModel: {
+        ...settings.providers.gemini.thinkingLevelByModel,
+        [modelId]: level,
+      },
     },
   },
 });

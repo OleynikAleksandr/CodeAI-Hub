@@ -7,6 +7,7 @@ import {
   updateCodexDefaultModel,
   updateCodexReasoning,
   updateGeminiDefaultModel,
+  updateGeminiThinking,
   updateProviderAutoUpdate,
   updateThinkingSettings,
 } from "./settings-state-helpers";
@@ -87,6 +88,10 @@ export type UseSettingsStateResult = {
   ) => void;
   readonly handleCodexDefaultModelChange: (modelId: CodexModelId) => void;
   readonly handleGeminiDefaultModelChange: (modelId: GeminiModelId) => void;
+  readonly handleGeminiThinkingChange: (
+    modelId: GeminiModelId,
+    level: GeminiThinkingLevel
+  ) => void;
   readonly handleCodexReasoningChange: (
     modelId: CodexModelId,
     reasoning: CodexReasoningLevel
@@ -203,6 +208,13 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
+  const handleGeminiThinkingChange = useCallback(
+    (modelId: GeminiModelId, level: GeminiThinkingLevel) => {
+      updateSettings(updateGeminiThinking(settings, modelId, level));
+    },
+    [settings, updateSettings]
+  );
+
   const handleSave = useCallback(() => {
     setSaving(true);
     vscode.postMessage({
@@ -246,6 +258,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleClaudeDefaultModelChange,
     handleCodexDefaultModelChange,
     handleGeminiDefaultModelChange,
+    handleGeminiThinkingChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
     handleSave,
