@@ -1,19 +1,17 @@
 # План разработки (Development TODO Plan)
 
-## Phase 5 — Intelligent Gemini Thinking Configuration (owner: Gemini, updated: 2025-12-24)
+## Phase 6 — Fix Gemini Thinking Hardcode (owner: Gemini, updated: 2025-12-24)
 
-### Stream 1: Registry Refinement
-1. [DONE] Обновить `src/types/gemini-model-registry.ts`: установить строгие списки уровней для каждого семейства.
-2. [DONE] Git Commit: feat(types): align gemini thinking levels with model capabilities
+### Stream 1: Implementation of the Fix
+1. [TODO] Обновить `gemini-session-manager.ts`: реализовать `monkeyPatchGeminiClient` для перехвата `startChat`.
+2. [TODO] Внедрить применение патча в `createSession` до инициализации конфигурации.
+3. [TODO] Git Commit: fix(gemini): monkey-patch startChat to enforce thinking configuration and bypass library hardcode
 
-### Stream 2: Manager Logic (The Bridge)
-1. [DONE] Обновить `GeminiSessionManager.ts`: реализовать маппинг уровней в `thinkingLevel` (для G3) или `thinkingBudget` (для G2.5).
-2. [DONE] Git Commit: feat(gemini): implement intelligent thinking mapping (level to budget)
+### Stream 2: Registry Alignment
+1. [TODO] Обновить реестр моделей Gemini: убедиться в полноте и точности списков уровней.
+2. [TODO] Git Commit: feat(gemini): polish thinking levels registry for patched implementation
 
-### Stream 3: UI Description Polish
-1. [DONE] Обновить описания `GEMINI_THINKING_LEVELS` для универсальности.
-2. [DONE] Git Commit: chore(ui): polish thinking level descriptions
-
-### Stream 4: Verification & Release
-1. [TODO] Собрать релиз 1.1.346.
-2. [TODO] Git Commit: chore: release v1.1.346 - intelligent gemini thinking config
+### Stream 3: Verification & Release
+1. [TODO] Проверить работу фикса через логи SDK.
+2. [TODO] Собрать релиз 1.1.347.
+3. [TODO] Git Commit: chore: release v1.1.347 - Gemini thinking persistence fix
