@@ -1,7 +1,19 @@
-## [1.1.347] - 2025-12-24
+## [1.1.348] - 2025-12-24
 ### Fixed
-- **Gemini Thinking persistence (Reliable Fix)**: Implemented a robust monkey-patch for the `GeminiClient` to bypass internal hardcoded thinking defaults in the `@google/gemini-cli-core` library.
-- **True "Thinking: Off"**: Selecting the "off" level now correctly disables reasoning for all Gemini models by setting `includeThoughts: false` and `thinkingBudget: 0`.
+- **Strict Gemini Thinking**: Removed the "Thinking: Off" option for Gemini 3 models (Pro/Flash) as it is not supported by the underlying API. Users should select "Minimal" (for Flash) or "Low" (for Pro) for the lightest reasoning behavior.
+- **Protocol Stability**: Fixed a potential issue where invalid `thinkingBudget` parameters were being sent to Gemini 3 models, ensuring strict adherence to the API contract.
+## [1.1.348] - 2025-12-24
+### Fixed
+- **Strict Gemini Thinking**: Removed the "Thinking: Off" option for Gemini 3 models (Pro/Flash) as it is not supported by the underlying API. Users should select "Minimal" (for Flash) or "Low" (for Pro) for the lightest reasoning behavior.
+- **Protocol Stability**: Fixed a potential issue where invalid `thinkingBudget` parameters were being sent to Gemini 3 models, ensuring strict adherence to the API contract.
+
+### Build
+- VSIX → `codeai-hub-1.1.348.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.348.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.348.tar.bz2`
+- Providers → `claude-module-1.1.348.tar.bz2`, `codex-module-1.1.348.tar.bz2`, `gemini-module-1.1.348.tar.bz2`
+- UI → `vscode-webview-1.1.348.tar.bz2`, `web-client-1.1.348.tar.bz2`, `project-manager-1.1.348.tar.bz2`
+
 ## [1.1.347] - 2025-12-24
 ### Fixed
 - **Gemini Thinking persistence (Reliable Fix)**: Implemented a robust monkey-patch for the `GeminiClient` to bypass internal hardcoded thinking defaults in the `@google/gemini-cli-core` library.
