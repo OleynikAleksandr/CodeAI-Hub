@@ -2,8 +2,6 @@ import { type Webview, window } from "vscode";
 import { ProviderVersionService } from "../settings/provider-version-service";
 import {
   applyDefaultModelsEnv,
-
-,
   loadSettingsSnapshot,
   parseSettingsSnapshot,
   persistSettingsSnapshot,
