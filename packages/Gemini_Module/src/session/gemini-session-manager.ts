@@ -1,6 +1,6 @@
-import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
+import { readFileSync } from "node:fs";
 import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
 import type { AuthType as AuthTypeEnum } from "@google/gemini-cli-core/dist/src/core/contentGenerator";
 import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
