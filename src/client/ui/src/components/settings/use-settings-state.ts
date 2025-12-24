@@ -3,6 +3,14 @@ import type { ClaudeModelAliasId } from "../../../../../types/claude-model-regis
 import type { GeminiModelId } from "../../../../../types/gemini-model-registry";
 import vscode from "../../vscode";
 import {
+  updateClaudeDefaultModel,
+  updateCodexDefaultModel,
+  updateCodexReasoning,
+  updateGeminiDefaultModel,
+  updateProviderAutoUpdate,
+  updateThinkingSettings,
+} from "./settings-state-helpers";
+import {
   areSettingsEqual,
   type CodexModelId,
   type CodexReasoningLevel,
@@ -155,110 +163,42 @@ export const useSettingsState = (): UseSettingsStateResult => {
 
   const handleThinkingSettingsChange = useCallback(
     (enabled: boolean, maxTokens: number) => {
-      const nextSettings: Settings = {
-        ...settings,
-        providers: {
-          ...settings.providers,
-          claude: {
-            ...settings.providers.claude,
-            thinking: {
-              enabled,
-              maxTokens,
-            },
-          },
-        },
-      };
-      updateSettings(nextSettings);
+      updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
     },
     [settings, updateSettings]
   );
 
   const handleClaudeDefaultModelChange = useCallback(
     (modelId: ClaudeModelAliasId) => {
-      const nextSettings: Settings = {
-        ...settings,
-        providers: {
-          ...settings.providers,
-          claude: {
-            ...settings.providers.claude,
-            defaultModel: modelId,
-          },
-        },
-      };
-      updateSettings(nextSettings);
+      updateSettings(updateClaudeDefaultModel(settings, modelId));
     },
     [settings, updateSettings]
   );
 
   const handleCodexDefaultModelChange = useCallback(
     (modelId: CodexModelId) => {
-      const nextSettings: Settings = {
-        ...settings,
-        providers: {
-          ...settings.providers,
-          codex: {
-            ...settings.providers.codex,
-            defaultModel: modelId,
-          },
-        },
-      };
-      updateSettings(nextSettings);
+      updateSettings(updateCodexDefaultModel(settings, modelId));
     },
     [settings, updateSettings]
   );
 
   const handleCodexReasoningChange = useCallback(
     (modelId: CodexModelId, reasoning: CodexReasoningLevel) => {
-      const nextSettings: Settings = {
-        ...settings,
-        providers: {
-          ...settings.providers,
-          codex: {
-            ...settings.providers.codex,
-            reasoningByModel: {
-              ...settings.providers.codex.reasoningByModel,
-              [modelId]: reasoning,
-            },
-          },
-        },
-      };
-      updateSettings(nextSettings);
-    },
-    [settings, updateSettings]
-  );
-
-  const handleGeminiDefaultModelChange = useCallback(
-    (modelId: GeminiModelId) => {
-      const nextSettings: Settings = {
-        ...settings,
-        providers: {
-          ...settings.providers,
-          gemini: {
-            ...settings.providers.gemini,
-            defaultModel: modelId,
-          },
-        },
-      };
-      updateSettings(nextSettings);
+      updateSettings(updateCodexReasoning(settings, modelId, reasoning));
     },
     [settings, updateSettings]
   );
 
   const handleProviderAutoUpdateChange = useCallback(
     (provider: ProviderId, enabled: boolean) => {
-      const nextSettings: Settings = {
-        ...settings,
-        providers: {
-          ...settings.providers,
-          [provider]: {
-            ...settings.providers[provider],
-            autoUpdate: {
-              enabled,
-            },
-          },
-        },
-      };
-      updateSettings(nextSettings);
+      updateSettings(updateProviderAutoUpdate(settings, provider, enabled));
+    },
+    [settings, updateSettings]
+  );
+
+  const handleGeminiDefaultModelChange = useCallback(
+    (modelId: GeminiModelId) => {
+      updateSettings(updateGeminiDefaultModel(settings, modelId));
     },
     [settings, updateSettings]
   );
