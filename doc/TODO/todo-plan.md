@@ -17,16 +17,16 @@
 ## Phase 2 — Gemini Model Selection UI (owner: Gemini, updated: 2025-12-24)
 
 ### Stream 1: Core Registry & Extensions Types
-1. [TODO] Создать реестр моделей Gemini в `src/types/gemini-model-registry.ts` на основе `doc/Knowledge/gemini-models-official.json`.
-2. [TODO] Git Commit: feat(types): add gemini model registry
-3. [TODO] Обновить типы и константы в расширении (`src/extension-module/settings/gemini-settings.ts`) для поддержки `defaultModel`.
-4. [TODO] Git Commit: feat(extension): support gemini default model in settings
-5. [TODO] Обновить маппинг настроек в расширении (`src/extension-module/settings/settings-storage.ts`), чтобы переменная окружения `GEMINI_DEFAULT_MODEL` обновлялась при сохранении.
-6. [TODO] Git Commit: feat(extension): sync gemini default model environment variable
+1. [DONE] Создать реестр моделей Gemini в `src/types/gemini-model-registry.ts` на основе `doc/Knowledge/gemini-models-official.json`.
+2. [DONE] Git Commit: feat(types): add gemini model registry
+3. [DONE] Обновить типы и константы в расширении (`src/extension-module/settings/gemini-settings.ts`) для поддержки `defaultModel`.
+4. [DONE] Git Commit: feat(extension): support gemini default model in settings
+5. [DONE] Обновить маппинг настроек в расширении (`src/extension-module/settings/settings-storage.ts`), чтобы переменная окружения `GEMINI_DEFAULT_MODEL` обновлялась при сохранении.
+6. [DONE] Git Commit: feat(extension): sync gemini default model environment variable
 
 ### Stream 2: UI State & Model Mapping
-1. [TODO] Обновить `src/client/ui/src/components/settings/settings-state-raw.ts`, добавив `defaultModel` в `RawGeminiSettings`.
-2. [TODO] Git Commit: feat(ui): add gemini default model to raw state
+1. [DONE] Обновить `src/client/ui/src/components/settings/settings-state-raw.ts`, добавив `defaultModel` в `RawGeminiSettings`.
+2. [DONE] Git Commit: feat(ui): add gemini default model to raw state
 3. [TODO] Обновить `src/client/ui/src/components/settings/settings-state-model.ts`, добавив типизацию и маппинг для `defaultModel` в Gemini.
 4. [TODO] Git Commit: feat(ui): map gemini default model in state model
 5. [TODO] Обновить `src/client/ui/src/components/settings/use-settings-state.ts`, чтобы включить обработчик изменения модели Gemini.
