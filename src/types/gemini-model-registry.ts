@@ -23,7 +23,7 @@ export const GEMINI_RECOMMENDED_MODELS: readonly GeminiModelDescriptor[] = [
     description: "Most advanced reasoning Gemini model for complex problems.",
     status: "preview",
     family: "gemini-3",
-    supportedThinkingLevels: ["off", "low", "high"],
+    supportedThinkingLevels: ["low", "high"],
   },
   {
     id: "gemini-3-flash-preview",
@@ -31,7 +31,7 @@ export const GEMINI_RECOMMENDED_MODELS: readonly GeminiModelDescriptor[] = [
     description: "Pro-grade reasoning with Flash-level latency and cost.",
     status: "preview",
     family: "gemini-3",
-    supportedThinkingLevels: ["off", "minimal", "low", "medium", "high"],
+    supportedThinkingLevels: ["minimal", "low", "medium", "high"],
   },
   {
     id: "gemini-2.5-pro",
@@ -39,7 +39,7 @@ export const GEMINI_RECOMMENDED_MODELS: readonly GeminiModelDescriptor[] = [
     description: "Deep reasoning model with Think mode for complex use cases.",
     status: "generally_available",
     family: "gemini-2.5",
-    supportedThinkingLevels: ["off", "low", "medium", "high"],
+    supportedThinkingLevels: ["off", "low", "high"],
   },
   {
     id: "gemini-2.5-flash",
@@ -47,7 +47,7 @@ export const GEMINI_RECOMMENDED_MODELS: readonly GeminiModelDescriptor[] = [
     description: "High-throughput model for enterprise tasks.",
     status: "generally_available",
     family: "gemini-2.5",
-    supportedThinkingLevels: ["off", "low", "medium", "high"],
+    supportedThinkingLevels: ["off", "low", "high"],
   },
   {
     id: "gemini-2.5-flash-lite",
@@ -55,7 +55,7 @@ export const GEMINI_RECOMMENDED_MODELS: readonly GeminiModelDescriptor[] = [
     description: "Most cost-efficient and fastest 2.5 model.",
     status: "generally_available",
     family: "gemini-2.5",
-    supportedThinkingLevels: ["off", "low", "medium", "high"],
+    supportedThinkingLevels: ["off", "low", "high"],
   },
 ] as const;
 
@@ -73,31 +73,30 @@ export type GeminiThinkingLevelDescriptor = {
   readonly useCase: string;
 };
 
-export const GEMINI_THINKING_LEVELS: readonly GeminiThinkingLevelDescriptor[] =
-  [
-    {
-      name: "off",
-      description: "Thinking is disabled. Standard response mode.",
-      useCase: "Basic tasks without complex reasoning.",
-    },
-    {
-      name: "minimal",
-      description: "Fastest, minimal reasoning overhead.",
-      useCase: "Straightforward answers, low latency.",
-    },
-    {
-      name: "low",
-      description: "Faster responses with lighter reasoning.",
-      useCase: "Quick coding tasks, simple queries.",
-    },
-    {
-      name: "medium",
-      description: "Balanced reasoning and speed.",
-      useCase: "General development and problem solving.",
-    },
-    {
-      name: "high",
-      description: "Maximum reasoning depth for complex problems.",
-      useCase: "Complex refactoring, architecture, and PhD-level tasks.",
-    },
-  ] as const;
+export const GEMINI_THINKING_LEVELS: readonly GeminiThinkingLevelDescriptor[] = [
+  {
+    name: "off",
+    description: "Disable model's internal thinking process.",
+    useCase: "Basic tasks, fastest response.",
+  },
+  {
+    name: "minimal",
+    description: "Absolute minimum reasoning tokens.",
+    useCase: "Low-complexity tasks, very low latency.",
+  },
+  {
+    name: "low",
+    description: "Balanced reasoning for simpler tasks.",
+    useCase: "General coding and quick queries.",
+  },
+  {
+    name: "medium",
+    description: "Advanced reasoning for moderate complexity.",
+    useCase: "Standard development and problem solving.",
+  },
+  {
+    name: "high",
+    description: "Maximum reasoning depth.",
+    useCase: "Complex refactoring and PhD-level research.",
+  },
+] as const;
