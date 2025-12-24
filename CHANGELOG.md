@@ -1,3 +1,7 @@
+## [1.1.351] - 2025-12-24
+### Fixed
+- **Gemini Thinking "Off" Logic**: Strict fix for Gemini 2.5 Flash. Now explicitly *deletes* the `thinkingConfig` from the API request when "Thinking: Off" is selected, instead of sending a zero budget (which the API was ignoring). This ensures the model reverts to its default non-thinking behavior.
+
 ## [1.1.350] - 2025-12-24
 ### Fixed
 - **Gemini Thinking persistence (Monkey-Patch)**: Detailed fixing of the issue where the "Reflections" (Thinking) setting was not being applied because the `gemini-cli-core` initialization reset the client. Moved the "monkey-patch" application to occur *after* `config.initialize()`, ensuring user preferences for thinking budget/levels are strictly enforced.
