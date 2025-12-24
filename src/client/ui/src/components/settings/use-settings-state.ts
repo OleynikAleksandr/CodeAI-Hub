@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ClaudeModelAliasId } from "../../../../../types/claude-model-registry";
-import type { GeminiModelId } from "../../../../../types/gemini-model-registry";
+import type {
+  GeminiModelId,
+  GeminiThinkingLevel,
+} from "../../../../../types/gemini-model-registry";
 import vscode from "../../vscode";
 import {
   updateClaudeDefaultModel,
