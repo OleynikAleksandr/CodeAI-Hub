@@ -7,8 +7,8 @@
 2. [DONE] Git Commit: feat(types): align gemini thinking levels with model capabilities
 
 ### Stream 2: Manager Logic (The Bridge)
-1. [TODO] Обновить `GeminiSessionManager.ts`: реализовать маппинг уровней в `thinkingLevel` (для G3) или `thinkingBudget` (для G2.5).
-2. [TODO] Git Commit: feat(gemini): implement intelligent thinking mapping (level to budget)
+1. [DONE] Обновить `GeminiSessionManager.ts`: реализовать маппинг уровней в `thinkingLevel` (для G3) или `thinkingBudget` (для G2.5).
+2. [DONE] Git Commit: feat(gemini): implement intelligent thinking mapping (level to budget)
 
 ### Stream 3: UI Description Polish
 1. [TODO] Обновить описания `GEMINI_THINKING_LEVELS` для универсальности.
