@@ -151,17 +151,16 @@ export class GeminiSessionManager {
       config.setModel(resolvedModel);
     }
 
+    await config.initialize();
+    const client = config.getGeminiClient();
+
     if (resolvedThinkingLevel) {
-      const client = config.getGeminiClient();
       this.monkeyPatchGeminiClient(
         client,
         resolvedModel ?? "",
         resolvedThinkingLevel
       );
     }
-
-    await config.initialize();
-    const client = config.getGeminiClient();
     const session: ActiveSession = {
       sessionId,
       createdAt: Date.now(),
@@ -654,282 +653,98 @@ export class GeminiSessionManager {
     }
   }
 
-    private resolveDefaultModelFromSnapshot(
+  private resolveDefaultModelFromSnapshot(
+    snapshot: GeminiSettingsSnapshot | null
+  ): string | undefined {
+    const candidate = snapshot?.providers?.gemini?.defaultModel;
 
-      snapshot: GeminiSettingsSnapshot | null
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
 
-    ): string | undefined {
+    return;
+  }
 
-      const candidate = snapshot?.providers?.gemini?.defaultModel;
+  private resolveThinkingLevelFromSnapshot(
+    snapshot: GeminiSettingsSnapshot | null,
 
-      if (typeof candidate === "string" && candidate.trim().length > 0) {
+    modelId: string
+  ): string | undefined {
+    const candidate =
+      snapshot?.providers?.gemini?.thinkingLevelByModel?.[modelId];
 
-        return candidate.trim();
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
 
-      }
+    return;
+  }
 
+  private monkeyPatchGeminiClient(
+    // biome-ignore lint/suspicious/noExplicitAny: library client typing is not exposed here
+    client: any,
+    modelId: string,
+    level: string
+  ): void {
+    if (!client || typeof client.startChat !== "function") {
       return;
-
     }
 
-  
+    const originalStartChat = client.startChat.bind(client);
 
-      private resolveThinkingLevelFromSnapshot(
+    // biome-ignore lint/suspicious/noExplicitAny: overriding library method
+    client.startChat = async (...args: any[]) => {
+      const chat = await originalStartChat(...args);
 
-  
-
-        snapshot: GeminiSettingsSnapshot | null,
-
-  
-
-        modelId: string
-
-  
-
-      ): string | undefined {
-
-  
-
-        const candidate =
-
-  
-
-          snapshot?.providers?.gemini?.thinkingLevelByModel?.[modelId];
-
-  
-
-        if (typeof candidate === "string" && candidate.trim().length > 0) {
-
-  
-
-          return candidate.trim();
-
-  
-
+      if (chat?.generationConfig) {
+        const thinkingConfig = this.resolveThinkingConfig(modelId, level);
+        if (thinkingConfig) {
+          chat.generationConfig.thinkingConfig = thinkingConfig;
         }
+      }
+      return chat;
+    };
+  }
 
-  
-
-        return;
-
-  
-
+  private resolveThinkingConfig(
+    modelId: string,
+    level: string
+  ):
+    | {
+        includeThoughts: boolean;
+        thinkingBudget?: number;
+        thinkingLevel?: string;
+      }
+    | undefined {
+    if (modelId.startsWith("gemini-2.5-")) {
+      // Gemini 2.5 family uses thinkingBudget
+      let budget = 0;
+      switch (level) {
+        case "low":
+          budget = 4000;
+          break;
+        case "high":
+          budget = 16000;
+          break;
+        default:
+          budget = 0;
+          break;
       }
 
-  
-
-    
-
-  
-
-      private monkeyPatchGeminiClient(
-
-  
-
-        client: any,
-
-  
-
-        modelId: string,
-
-  
-
-        level: string
-
-  
-
-      ): void {
-
-  
-
-        if (!client || typeof client.startChat !== "function") {
-
-  
-
-          return;
-
-  
-
-        }
-
-  
-
-    
-
-  
-
-        const originalStartChat = client.startChat.bind(client);
-
-  
-
-    
-
-  
-
-        // biome-ignore lint/suspicious/noExplicitAny: overriding library method
-
-  
-
-        client.startChat = async (...args: any[]) => {
-
-  
-
-          const chat = await originalStartChat(...args);
-
-  
-
-    
-
-  
-
-          if (chat && chat.generationConfig) {
-
-  
-
-            // Gemini 2.5 family uses thinkingBudget (integer tokens)
-
-  
-
-            if (modelId.startsWith("gemini-2.5-")) {
-
-  
-
-              let budget = 0;
-
-  
-
-              switch (level) {
-
-  
-
-                case "low":
-
-  
-
-                  budget = 4000;
-
-  
-
-                  break;
-
-  
-
-                case "high":
-
-  
-
-                  budget = 16000;
-
-  
-
-                  break;
-
-  
-
-                case "off":
-
-  
-
-                default:
-
-  
-
-                  budget = 0;
-
-  
-
-                  break;
-
-  
-
-              }
-
-  
-
-              chat.generationConfig.thinkingConfig = {
-
-  
-
-                includeThoughts: budget > 0,
-
-  
-
-                thinkingBudget: budget,
-
-  
-
-              };
-
-  
-
-                    } else if (modelId.startsWith("gemini-3-")) {
-
-  
-
-                      // Gemini 3 family uses thinkingLevel (string)
-
-  
-
-                      // "off" is not supported for G3 models, so we only apply valid levels.
-
-  
-
-                      if (level && level !== "off") {
-
-  
-
-                        chat.generationConfig.thinkingConfig = {
-
-  
-
-                          includeThoughts: true,
-
-  
-
-                          thinkingLevel: level,
-
-  
-
-                        };
-
-  
-
-                      }
-
-  
-
-                    }
-
-  
-
-                  }
-
-  
-
-            
-
-  
-
-    
-
-  
-
-          return chat;
-
-  
-
-        };
-
-  
-
-      }
-
-  
-
+      return {
+        includeThoughts: budget > 0,
+        thinkingBudget: budget,
+      };
     }
 
-  
+    if (modelId.startsWith("gemini-3-") && level && level !== "off") {
+      // Gemini 3 family uses thinkingLevel
+      return {
+        includeThoughts: true,
+        thinkingLevel: level,
+      };
+    }
 
-    
-
-  
+    return;
+  }
+}
