@@ -63,11 +63,15 @@ export const mapGeminiThinkingLevelByModel = (
 
 export const mapGeminiSettings = (
   value: RawGeminiSettings | undefined,
-  mapAutoUpdate: (v: RawAutoUpdateSettings | undefined) => { readonly enabled: boolean }
+  mapAutoUpdate: (v: RawAutoUpdateSettings | undefined) => {
+    readonly enabled: boolean;
+  }
 ): GeminiSettings => ({
   autoUpdate: mapAutoUpdate(value?.autoUpdate),
   defaultModel: resolveGeminiModelId(value?.defaultModel),
-  thinkingLevelByModel: mapGeminiThinkingLevelByModel(value?.thinkingLevelByModel),
+  thinkingLevelByModel: mapGeminiThinkingLevelByModel(
+    value?.thinkingLevelByModel
+  ),
 });
 
 export const areGeminiThinkingLevelByModelEqual = (

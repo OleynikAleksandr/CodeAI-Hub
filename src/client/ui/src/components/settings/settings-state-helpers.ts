@@ -1,9 +1,7 @@
-import {
-  type ClaudeModelAliasId,
-} from "../../../../../types/claude-model-registry";
-import {
-  type GeminiModelId,
-  type GeminiThinkingLevel,
+import type { ClaudeModelAliasId } from "../../../../../types/claude-model-registry";
+import type {
+  GeminiModelId,
+  GeminiThinkingLevel,
 } from "../../../../../types/gemini-model-registry";
 import type {
   CodexModelId,

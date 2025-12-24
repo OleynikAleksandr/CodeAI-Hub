@@ -1,9 +1,8 @@
 import {
+  DEFAULT_GEMINI_MODEL_ID,
   GEMINI_MODEL_ID_SET,
   type GeminiModelId,
-  DEFAULT_GEMINI_MODEL_ID,
   type GeminiThinkingLevel,
-  DEFAULT_GEMINI_THINKING_LEVEL,
 } from "../../types/gemini-model-registry";
 import {
   type AutoUpdateSettings,

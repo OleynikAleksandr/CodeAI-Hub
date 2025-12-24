@@ -1,13 +1,13 @@
 import type { CSSProperties, FC, KeyboardEvent } from "react";
 import { memo, useState } from "react";
 import {
+  DEFAULT_GEMINI_THINKING_LEVEL,
   GEMINI_RECOMMENDED_MODELS,
   type GeminiModelId,
   type GeminiThinkingLevel,
-  DEFAULT_GEMINI_THINKING_LEVEL,
 } from "../../../../../../types/gemini-model-registry";
-import SettingsCard from "../settings-card";
 import type { GeminiThinkingByModel } from "../gemini-mapping";
+import SettingsCard from "../settings-card";
 import {
   descriptionStyles,
   listStyles,
@@ -61,7 +61,9 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
   onDefaultModelChange,
   onThinkingChange,
 }) => {
-  const [activeModelId, setActiveModelId] = useState<GeminiModelId | null>(null);
+  const [activeModelId, setActiveModelId] = useState<GeminiModelId | null>(
+    null
+  );
   const [hoveredRowId, setHoveredRowId] = useState<GeminiModelId | null>(null);
   const [hoveredButtonId, setHoveredButtonId] = useState<GeminiModelId | null>(
     null
