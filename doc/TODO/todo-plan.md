@@ -27,8 +27,8 @@
 ### Stream 2: UI State & Model Mapping
 1. [DONE] Обновить `src/client/ui/src/components/settings/settings-state-raw.ts`, добавив `defaultModel` в `RawGeminiSettings`.
 2. [DONE] Git Commit: feat(ui): add gemini default model to raw state
-3. [TODO] Обновить `src/client/ui/src/components/settings/settings-state-model.ts`, добавив типизацию и маппинг для `defaultModel` в Gemini.
-4. [TODO] Git Commit: feat(ui): map gemini default model in state model
+3. [DONE] Обновить `src/client/ui/src/components/settings/settings-state-model.ts`, добавив типизацию и маппинг для `defaultModel` в Gemini.
+4. [DONE] Git Commit: feat(ui): map gemini default model in state model
 5. [TODO] Обновить `src/client/ui/src/components/settings/use-settings-state.ts`, чтобы включить обработчик изменения модели Gemini.
 6. [TODO] Git Commit: feat(ui): add gemini model change handler to useSettingsState
 
