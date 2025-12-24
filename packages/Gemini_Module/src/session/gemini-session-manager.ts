@@ -62,6 +62,7 @@ type GeminiSettingsSnapshot = {
   readonly providers?: {
     readonly gemini?: {
       readonly defaultModel?: unknown;
+      readonly thinkingLevelByModel?: Record<string, unknown>;
     };
   };
 };
@@ -113,9 +114,16 @@ export class GeminiSessionManager {
       this.resolveDefaultModelFromSnapshot(settingsSnapshot);
     const resolvedModel = defaultModelOverride ?? options.defaultModel;
 
+    const thinkingLevelOverride = resolvedModel
+      ? this.resolveThinkingLevelFromSnapshot(settingsSnapshot, resolvedModel)
+      : undefined;
+    const resolvedThinkingLevel =
+      thinkingLevelOverride ?? options.thinkingLevel;
+
     const argv = this.createArgv({
       ...options,
       defaultModel: resolvedModel,
+      thinkingLevel: resolvedThinkingLevel,
     });
 
     const loadCliConfig = this.modules.config
@@ -141,6 +149,13 @@ export class GeminiSessionManager {
 
     if (resolvedModel) {
       config.setModel(resolvedModel);
+    }
+
+    if (resolvedThinkingLevel) {
+      const configAny = config as any;
+      if (typeof configAny.setThinkingLevel === "function") {
+        configAny.setThinkingLevel(resolvedThinkingLevel);
+      }
     }
 
     await config.initialize();
@@ -589,6 +604,7 @@ export class GeminiSessionManager {
     return {
       query: undefined,
       model: options.defaultModel,
+      thinkingLevel: options.thinkingLevel as any,
       sandbox: undefined,
       debug: options.logger !== undefined,
       prompt: undefined,
@@ -639,6 +655,17 @@ export class GeminiSessionManager {
     snapshot: GeminiSettingsSnapshot | null
   ): string | undefined {
     const candidate = snapshot?.providers?.gemini?.defaultModel;
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
+    return;
+  }
+
+  private resolveThinkingLevelFromSnapshot(
+    snapshot: GeminiSettingsSnapshot | null,
+    modelId: string
+  ): string | undefined {
+    const candidate = snapshot?.providers?.gemini?.thinkingLevelByModel?.[modelId];
     if (typeof candidate === "string" && candidate.trim().length > 0) {
       return candidate.trim();
     }
