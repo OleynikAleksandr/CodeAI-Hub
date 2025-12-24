@@ -9860,7 +9860,7 @@
       description: "High-throughput model for enterprise tasks.",
       status: "generally_available",
       family: "gemini-2.5",
-      supportedThinkingLevels: ["off", "low", "high"]
+      supportedThinkingLevels: ["low", "high"]
     },
     {
       id: "gemini-2.5-flash-lite",
@@ -9868,7 +9868,7 @@
       description: "Most cost-efficient and fastest 2.5 model.",
       status: "generally_available",
       family: "gemini-2.5",
-      supportedThinkingLevels: ["off", "low", "high"]
+      supportedThinkingLevels: ["low", "high"]
     }
   ];
   var GEMINI_MODEL_ID_SET = new Set(
