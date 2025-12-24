@@ -1,7 +1,22 @@
-## [1.1.346] - 2025-12-24
-### Changed
-- **Intelligent Gemini Thinking**: Thinking configuration now adapts strictly to each model's capabilities.
-  - Gemini 3 Flash: Supports `minimal`, `low`, `medium`, `high`.
+## [1.1.347] - 2025-12-24
+### Fixed
+- **Gemini Thinking persistence (Reliable Fix)**: Implemented a robust monkey-patch for the `GeminiClient` to bypass internal hardcoded thinking defaults in the `@google/gemini-cli-core` library.
+- **True "Thinking: Off"**: Selecting the "off" level now correctly disables reasoning for all Gemini models by setting `includeThoughts: false` and `thinkingBudget: 0`.
+## [1.1.347] - 2025-12-24
+### Fixed
+- **Gemini Thinking persistence (Reliable Fix)**: Implemented a robust monkey-patch for the `GeminiClient` to bypass internal hardcoded thinking defaults in the `@google/gemini-cli-core` library.
+- **True "Thinking: Off"**: Selecting the "off" level now correctly disables reasoning for all Gemini models by setting `includeThoughts: false` and `thinkingBudget: 0`.
+- **Intelligent Family Mapping**:
+  - Gemini 3 models correctly receive `thinkingLevel` strings.
+  - Gemini 2.5 models receive precise `thinkingBudget` token counts.
+
+### Build
+- VSIX → `codeai-hub-1.1.347.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.347.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.347.tar.bz2`
+- Providers → `claude-module-1.1.347.tar.bz2`, `codex-module-1.1.347.tar.bz2`, `gemini-module-1.1.347.tar.bz2`
+- UI → `vscode-webview-1.1.347.tar.bz2`, `web-client-1.1.347.tar.bz2`, `project-manager-1.1.347.tar.bz2`
+
 ## [1.1.346] - 2025-12-24
 ### Changed
 - **Intelligent Gemini Thinking**: Thinking configuration now adapts strictly to each model's capabilities.
