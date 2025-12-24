@@ -1,17 +1,31 @@
-# Phase 3 — Fix Gemini Model Selection persistence
+# План разработки (Development TODO Plan)
 
-## Stream 1: Update Gemini Module Types and Manager
-1. [DONE] Добавить `settingsPath` в `SessionCreationOptions` в `packages/Gemini_Module/src/session/types.ts`.
-2. [DONE] Реализовать чтение `defaultModel` из `settings.json` в `GeminiSessionManager.createSession` (`packages/Gemini_Module/src/session/gemini-session-manager.ts`).
-3. [DONE] Git Commit: feat(gemini): support dynamic default model loading from settings.json
+## Phase 4 — Gemini Thinking Configuration (owner: Gemini, updated: 2025-12-24)
 
-## Stream 2: Update Provider Adapter and Core
-1. [DONE] Прокинуть `settingsPath` через `GeminiProviderAdapter.createSession` (`packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`).
-2. [DONE] Обновить `CoreConfig` и `loadConfig`, чтобы включить `geminiSettingsPath` (или использовать общий `settingsPath`) в `packages/core/src/config/index.ts`.
-3. [DONE] Обновить `ProviderRegistry`, чтобы передавать `settingsPath` в `GeminiAdapter` (`packages/core/src/provider-registry/index.ts`).
-4. [DONE] Git Commit: feat(core): pass settings path to gemini provider for dynamic model loading
+### Stream 1: Types & Core Support
+1. [TODO] Обновить `src/types/gemini-model-registry.ts`: добавить список поддерживаемых уровней мышления для каждой модели.
+2. [TODO] Git Commit: feat(types): add supported thinking levels to gemini registry
+3. [TODO] Обновить типы в расширении (`src/extension-module/settings/gemini-settings.ts`): добавить `thinkingLevelByModel`.
+4. [TODO] Git Commit: feat(extension): add thinkingLevelByModel to gemini settings
 
-## Stream 3: Verification
-1. [DONE] Запустить сборку и гейты качества.
-2. [DONE] Собрать новый релиз 1.1.342.
-3. [DONE] Git Commit: chore: release v1.1.342 - fix gemini model selection
+### Stream 2: UI State & Dialog
+1. [TODO] Обновить `settings-state-raw.ts` и `settings-state-model.ts`: добавить маппинг `thinkingLevelByModel`.
+2. [TODO] Git Commit: feat(ui): map gemini thinking levels in settings state
+3. [TODO] Создать `src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx`.
+4. [TODO] Git Commit: feat(ui): implement GeminiThinkingDialog
+
+### Stream 3: UI Integration & Logic
+1. [TODO] Обновить `GeminiDefaultModelCard.tsx`: добавить кнопку «Configure Thinking» и логику открытия диалога.
+2. [TODO] Git Commit: feat(ui): integrate thinking selection into Gemini model cards
+3. [TODO] Обновить `use-settings-state.ts` и `settings-state-helpers.ts`: добавить хендлер `handleGeminiThinkingChange`.
+4. [TODO] Git Commit: feat(ui): add gemini thinking change handler
+
+### Stream 4: Gemini Module Implementation
+1. [TODO] Обновить `SessionCreationOptions` в `packages/Gemini_Module/src/session/types.ts`: добавить `thinkingLevel`.
+2. [TODO] Реализовать применение `thinkingLevel` в `GeminiSessionManager.createSession`.
+3. [TODO] Git Commit: feat(gemini): apply thinking level to gemini session
+
+### Stream 5: Verification & Release
+1. [TODO] Проверить работу Thinking для Gemini 3 Pro/Flash.
+2. [TODO] Собрать релиз 1.1.343.
+3. [TODO] Git Commit: chore: release v1.1.343 - Gemini thinking support
