@@ -3,8 +3,8 @@
 ## Phase 4 — Gemini Thinking Configuration (owner: Gemini, updated: 2025-12-24)
 
 ### Stream 1: Types & Core Support
-1. [TODO] Обновить `src/types/gemini-model-registry.ts`: добавить список поддерживаемых уровней мышления для каждой модели.
-2. [TODO] Git Commit: feat(types): add supported thinking levels to gemini registry
+1. [DONE] Обновить `src/types/gemini-model-registry.ts`: добавить список поддерживаемых уровней мышления для каждой модели.
+2. [DONE] Git Commit: feat(types): add supported thinking levels to gemini registry
 3. [TODO] Обновить типы в расширении (`src/extension-module/settings/gemini-settings.ts`): добавить `thinkingLevelByModel`.
 4. [TODO] Git Commit: feat(extension): add thinkingLevelByModel to gemini settings
 
