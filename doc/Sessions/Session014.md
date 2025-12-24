@@ -1,34 +1,29 @@
-# Session 14 — Gemini model selection UI & persistence fix
+# Session 14 — Gemini model selection & Thinking configuration
 
-**Date:** 2025-12-24 10:45 (CET)
+**Date:** 2025-12-24 11:35 (CET)
 **Branch:** main
-**Version:** 1.1.342
+**Version:** 1.1.346
 
 ---
 
 # 1. Work Done in This Session
 
 ## Work summary
-- **Gemini Model Selection**: Добавлен выбор моделей в раздел Settings -> Gemini. Рендерятся карточки для семейств `gemini-3` и `gemini-2.5` с использованием `shared-model-card-styles.ts`, обеспечивая 100% визуальное соответствие карточкам Codex и Claude.
-- **Environment Sync**: Выбранный алиас модели Gemini теперь сохраняется в `settings.json` и синхронизируется с переменной окружения `GEMINI_DEFAULT_MODEL`.
-- **Gemini Model Persistence Fix**: Исправлена критическая ошибка, при которой Ядро игнорировало выбранную модель Gemini и всегда использовало `gemini-3-pro-preview`. Теперь модуль Gemini динамически перечитывает `settings.json` перед каждой сессией (аналогично Claude).
-- **Architecture Compliance**: Проведен рефакторинг `useSettingsState.ts`: логика обновления стейта вынесена в `settings-state-helpers.ts`. Размер сокращен до 255 строк.
-- **Release Build**: Успешно собрана версия 1.1.342. Все гейты качества пройдены. Создан `codeai-hub-1.1.342.vsix`.
+- **Gemini Model Selection**: Добавлен выбор моделей в раздел Settings -> Gemini. Обеспечено полное визуальное соответствие карточкам Codex и Claude.
+- **Intelligent Thinking Configuration**: Реализована адаптивная настройка Thinking для каждой модели.
+  - Для Gemini 3 используются строковые уровни (minimal, low, medium, high) согласно API.
+  - Для Gemini 2.5 уровни (off, low, high) маппятся в числовой бюджет токенов (0, 4000, 16000) "за кадром".
+- **Dynamic Application**: Исправлена ошибка персистентности — теперь все настройки Thinking перечитываются из `settings.json` перед стартом каждой новой сессии.
+- **Architecture & Quality**: Проведен рефакторинг UI-слоя (вынос маппинга в `gemini-mapping.ts`), чтобы соблюсти лимит 300 строк. Все гейты качества пройдены.
+- **Release Build**: Собрана версия 1.1.346.
 
 ## Git commits
 - `5a92092` feat(types): add gemini model registry
-- `7edcb40` feat(extension): support gemini default model in settings
-- `193988b` feat(extension): sync gemini default model environment variable
-- `fcc949e` feat(ui): add gemini default model to raw state
-- `fe4648b` feat(ui): map gemini default model in state model
-- `817200c` feat(ui): add gemini model change handler to useSettingsState
-- `ef72e60` feat(ui): implement GeminiDefaultModelCard
-- `9d6b2e5` feat(ui): integrate gemini model selection into settings view
-- `7b7ac79` refactor(ui): split useSettingsState logic to helpers
-- `3b85de7` fix: remove redundant comma in settings-message-handler
 - `b9b3b63` feat(gemini): support dynamic default model loading from settings.json
-- `eb0456c` feat(core): pass settings path to gemini provider for dynamic model loading
-- `ac63b44` chore: bump version to 1.1.342
+- `3e8f6a5` feat(types): align gemini thinking levels with model capabilities
+- `24c0e26` feat(gemini): implement intelligent thinking mapping (level to budget)
+- `7f40b6b` refactor(ui): extract gemini mapping to reduce settings-state-model size
+- `00fa812` chore: bump version to 1.1.346
 
 ---
 
@@ -36,10 +31,9 @@
 
 ## Required documents to review before work
 1. `doc/Architecture/Architecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-3. `doc/TODO/todo-plan.md`
-4. `doc/Sessions/Session014.md` (THIS REPORT)
+2. `doc/TODO/todo-plan.md`
+3. `doc/Sessions/Session014.md` (THIS REPORT)
 
 ## Plans for next session
-- Проверить работоспособность выбора моделей Gemini в реальной среде.
-- Убедиться, что для Codex не требуется аналогичного исправления (проверить динамическое чтение настроек в Codex модуле).
+- Проверить работу Thinking уровней в реальных сессиях.
+- Уточнить необходимость добавления настройки Thinking Budget для Gemini 2.5 как отдельного числового параметра (как у Claude).
