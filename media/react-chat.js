@@ -10169,7 +10169,9 @@
     onDefaultModelChange,
     onThinkingChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react11.useState)(null);
+    const [activeModelId, setActiveModelId] = (0, import_react11.useState)(
+      null
+    );
     const [hoveredRowId, setHoveredRowId] = (0, import_react11.useState)(null);
     const [hoveredButtonId, setHoveredButtonId] = (0, import_react11.useState)(
       null
@@ -11271,6 +11273,45 @@
     }
   });
 
+  // src/client/ui/src/components/settings/gemini-mapping.ts
+  var GEMINI_THINKING_LEVEL_SET = new Set(
+    GEMINI_THINKING_LEVELS.map((level) => level.name)
+  );
+  var DEFAULT_GEMINI_THINKING_BY_MODEL = GEMINI_RECOMMENDED_MODELS.reduce((accumulator, model) => {
+    accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
+    return accumulator;
+  }, {});
+  var isRecord = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
+  var mapGeminiThinkingLevelByModel = (value) => {
+    const nextThinkingLevelByModel = {
+      ...DEFAULT_GEMINI_THINKING_BY_MODEL
+    };
+    if (!isRecord(value)) {
+      return nextThinkingLevelByModel;
+    }
+    for (const [modelId, level] of Object.entries(value)) {
+      if (typeof level === "string" && GEMINI_THINKING_LEVEL_SET.has(level)) {
+        nextThinkingLevelByModel[modelId] = level;
+      }
+    }
+    return nextThinkingLevelByModel;
+  };
+  var mapGeminiSettings = (value, mapAutoUpdate) => ({
+    autoUpdate: mapAutoUpdate(value?.autoUpdate),
+    defaultModel: resolveGeminiModelId(value?.defaultModel),
+    thinkingLevelByModel: mapGeminiThinkingLevelByModel(
+      value?.thinkingLevelByModel
+    )
+  });
+  var areGeminiThinkingLevelByModelEqual = (left, right) => {
+    const leftEntries = Object.entries(left);
+    if (leftEntries.length !== Object.keys(right).length) {
+      return false;
+    }
+    return leftEntries.every(([modelId, level]) => right[modelId] === level);
+  };
+
   // src/client/ui/src/components/settings/settings-state-model.ts
   var DEFAULT_THINKING_MAX_TOKENS = 4e3;
   var DEFAULT_AUTO_UPDATE_ENABLED = true;
@@ -11285,14 +11326,7 @@
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var GEMINI_THINKING_LEVEL_SET = new Set(
-    GEMINI_THINKING_LEVELS.map((level) => level.name)
-  );
-  var DEFAULT_GEMINI_THINKING_BY_MODEL = GEMINI_RECOMMENDED_MODELS.reduce((accumulator, model) => {
-    accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
-    return accumulator;
-  }, {});
-  var isRecord = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord2 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -11325,7 +11359,7 @@
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord(value)) {
+    if (!isRecord2(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -11340,40 +11374,12 @@
     defaultModel: resolveCodexModelId(value?.defaultModel),
     reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel)
   });
-  var resolveGeminiModelId = (value) => {
-    if (typeof value !== "string") {
-      return DEFAULT_GEMINI_MODEL_ID;
-    }
-    const alias = value;
-    return GEMINI_MODEL_ID_SET.has(alias) ? alias : DEFAULT_GEMINI_MODEL_ID;
-  };
-  var mapGeminiThinkingLevelByModel = (value) => {
-    const nextThinkingLevelByModel = {
-      ...DEFAULT_GEMINI_THINKING_BY_MODEL
-    };
-    if (!isRecord(value)) {
-      return nextThinkingLevelByModel;
-    }
-    for (const [modelId, level] of Object.entries(value)) {
-      if (typeof level === "string" && GEMINI_THINKING_LEVEL_SET.has(level)) {
-        nextThinkingLevelByModel[modelId] = level;
-      }
-    }
-    return nextThinkingLevelByModel;
-  };
-  var mapGeminiSettings = (value) => ({
-    autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
-    defaultModel: resolveGeminiModelId(value?.defaultModel),
-    thinkingLevelByModel: mapGeminiThinkingLevelByModel(
-      value?.thinkingLevelByModel
-    )
-  });
   var mapSettingsSnapshot = (value) => ({
     general: mapGeneralSettings(value?.general),
     providers: {
       claude: mapClaudeSettings(value?.providers?.claude),
       codex: mapCodexSettings(value?.providers?.codex),
-      gemini: mapGeminiSettings(value?.providers?.gemini)
+      gemini: mapGeminiSettings(value?.providers?.gemini, mapAutoUpdateSettings)
     }
   });
   var createDefaultSettings = () => mapSettingsSnapshot(void 0);
@@ -11391,15 +11397,6 @@
   var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart;
   var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel;
   var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel);
-  var areGeminiThinkingLevelByModelEqual = (left, right) => {
-    const leftEntries = Object.entries(left);
-    if (leftEntries.length !== Object.keys(right).length) {
-      return false;
-    }
-    return leftEntries.every(
-      ([modelId, level]) => right[modelId] === level
-    );
-  };
   var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
     right.thinkingLevelByModel
@@ -24896,7 +24893,7 @@ ${formattedPaths}`;
   };
 
   // src/client/ui/src/modules/drag-drop-module/message-handler.ts
-  var isRecord2 = (value) => typeof value === "object" && value !== null;
+  var isRecord3 = (value) => typeof value === "object" && value !== null;
   var MessageHandler = class {
     constructor(logger) {
       this.callbacks = {};
@@ -24935,7 +24932,7 @@ ${formattedPaths}`;
       vscode_default.postMessage(message);
     }
     handleMessage(message) {
-      if (!isRecord2(message) || typeof message.command !== "string") {
+      if (!isRecord3(message) || typeof message.command !== "string") {
         return;
       }
       if (message.command === "insertPath") {
