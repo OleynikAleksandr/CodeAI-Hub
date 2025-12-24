@@ -18,6 +18,7 @@ export type RawCodexSettings = {
 export type RawGeminiSettings = {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
+  readonly thinkingLevelByModel?: Record<string, unknown>;
 };
 export type RawCoreControlsSettings = {
   readonly allowRestart?: unknown;
