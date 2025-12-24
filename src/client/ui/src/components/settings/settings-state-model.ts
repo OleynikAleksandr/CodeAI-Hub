@@ -14,6 +14,12 @@ import {
   DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../../types/codex-model-registry";
 
+import {
+  GEMINI_MODEL_ID_SET,
+  type GeminiModelId,
+  DEFAULT_GEMINI_MODEL_ID,
+} from "../../../../../types/gemini-model-registry";
+
 import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
@@ -62,6 +68,7 @@ type CodexSettings = {
 };
 type GeminiSettings = {
   readonly autoUpdate: AutoUpdateSettings;
+  readonly defaultModel: GeminiModelId;
 };
 
 export type Settings = {
@@ -199,10 +206,19 @@ const mapCodexSettings = (
   reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
 });
 
+const resolveGeminiModelId = (value: unknown): GeminiModelId => {
+  if (typeof value !== "string") {
+    return DEFAULT_GEMINI_MODEL_ID;
+  }
+  const alias = value as GeminiModelId;
+  return GEMINI_MODEL_ID_SET.has(alias) ? alias : DEFAULT_GEMINI_MODEL_ID;
+};
+
 const mapGeminiSettings = (
   value: RawGeminiSettings | undefined
 ): GeminiSettings => ({
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
+  defaultModel: resolveGeminiModelId(value?.defaultModel),
 });
 
 export const mapSettingsSnapshot = (
@@ -269,7 +285,9 @@ const areCodexSettingsEqual = (
 const areGeminiSettingsEqual = (
   left: GeminiSettings,
   right: GeminiSettings
-): boolean => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate);
+): boolean =>
+  areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
+  left.defaultModel === right.defaultModel;
 
 export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areGeneralSettingsEqual(left.general, right.general) &&
