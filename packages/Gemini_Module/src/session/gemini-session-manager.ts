@@ -152,7 +152,12 @@ export class GeminiSessionManager {
     }
 
     if (resolvedThinkingLevel) {
-      this.applyThinkingConfig(config, resolvedModel ?? "", resolvedThinkingLevel);
+      const client = config.getGeminiClient();
+      this.monkeyPatchGeminiClient(
+        client,
+        resolvedModel ?? "",
+        resolvedThinkingLevel
+      );
     }
 
     await config.initialize();
@@ -669,100 +674,274 @@ export class GeminiSessionManager {
 
   
 
-    private resolveThinkingLevelFromSnapshot(
+      private resolveThinkingLevelFromSnapshot(
 
-      snapshot: GeminiSettingsSnapshot | null,
+  
 
-      modelId: string
+        snapshot: GeminiSettingsSnapshot | null,
 
-    ): string | undefined {
+  
 
-      const candidate = snapshot?.providers?.gemini?.thinkingLevelByModel?.[modelId];
+        modelId: string
 
-      if (typeof candidate === "string" && candidate.trim().length > 0) {
+  
 
-        return candidate.trim();
+      ): string | undefined {
+
+  
+
+        const candidate =
+
+  
+
+          snapshot?.providers?.gemini?.thinkingLevelByModel?.[modelId];
+
+  
+
+        if (typeof candidate === "string" && candidate.trim().length > 0) {
+
+  
+
+          return candidate.trim();
+
+  
+
+        }
+
+  
+
+        return;
+
+  
 
       }
 
-      return;
+  
+
+    
+
+  
+
+      private monkeyPatchGeminiClient(
+
+  
+
+        client: any,
+
+  
+
+        modelId: string,
+
+  
+
+        level: string
+
+  
+
+      ): void {
+
+  
+
+        if (!client || typeof client.startChat !== "function") {
+
+  
+
+          return;
+
+  
+
+        }
+
+  
+
+    
+
+  
+
+        const originalStartChat = client.startChat.bind(client);
+
+  
+
+    
+
+  
+
+        // biome-ignore lint/suspicious/noExplicitAny: overriding library method
+
+  
+
+        client.startChat = async (...args: any[]) => {
+
+  
+
+          const chat = await originalStartChat(...args);
+
+  
+
+    
+
+  
+
+          if (chat && chat.generationConfig) {
+
+  
+
+            // Gemini 2.5 family uses thinkingBudget (integer tokens)
+
+  
+
+            if (modelId.startsWith("gemini-2.5-")) {
+
+  
+
+              let budget = 0;
+
+  
+
+              switch (level) {
+
+  
+
+                case "low":
+
+  
+
+                  budget = 4000;
+
+  
+
+                  break;
+
+  
+
+                case "high":
+
+  
+
+                  budget = 16000;
+
+  
+
+                  break;
+
+  
+
+                case "off":
+
+  
+
+                default:
+
+  
+
+                  budget = 0;
+
+  
+
+                  break;
+
+  
+
+              }
+
+  
+
+              chat.generationConfig.thinkingConfig = {
+
+  
+
+                includeThoughts: budget > 0,
+
+  
+
+                thinkingBudget: budget,
+
+  
+
+              };
+
+  
+
+            } else if (modelId.startsWith("gemini-3-")) {
+
+  
+
+              // Gemini 3 family uses thinkingLevel (string)
+
+  
+
+              if (level === "off") {
+
+  
+
+                chat.generationConfig.thinkingConfig = {
+
+  
+
+                  includeThoughts: false,
+
+  
+
+                  thinkingBudget: 0,
+
+  
+
+                };
+
+  
+
+              } else {
+
+  
+
+                chat.generationConfig.thinkingConfig = {
+
+  
+
+                  includeThoughts: true,
+
+  
+
+                  thinkingLevel: level,
+
+  
+
+                };
+
+  
+
+              }
+
+  
+
+            }
+
+  
+
+          }
+
+  
+
+    
+
+  
+
+          return chat;
+
+  
+
+        };
+
+  
+
+      }
+
+  
 
     }
 
   
 
-    private applyThinkingConfig(
-
-      config: any,
-
-      modelId: string,
-
-      level: string
-
-    ): void {
-
-      // Gemini 2.5 family uses thinkingBudget (integer tokens)
-
-      if (modelId.startsWith("gemini-2.5-")) {
-
-        let budget = 0;
-
-        switch (level) {
-
-          case "low":
-
-            budget = 4000;
-
-            break;
-
-          case "high":
-
-            budget = 16000;
-
-            break;
-
-          case "off":
-
-          default:
-
-            budget = 0;
-
-            break;
-
-        }
-
-        if (typeof config.setThinkingBudget === "function") {
-
-          config.setThinkingBudget(budget);
-
-        }
-
-        return;
-
-      }
-
-  
-
-      // Gemini 3 family uses thinkingLevel (string)
-
-      // Note: 'off' is not supported for G3, so we just don't set it or use 'minimal'
-
-      if (level === "off") {
-
-        return;
-
-      }
-
-  
-
-      if (typeof config.setThinkingLevel === "function") {
-
-        config.setThinkingLevel(level);
-
-      }
-
-    }
-
-  }
+    
 
   
