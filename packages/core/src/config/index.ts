@@ -26,6 +26,7 @@ export type CoreConfig = {
   readonly codexDefaultReasoningEffort?: CodexReasoningEffort;
   readonly geminiWorkspacePath: string;
   readonly geminiDefaultModel?: string;
+  readonly geminiSettingsPath: string;
   readonly geminiCredentialsDirectory?: string;
   readonly claudeDefaultModel: string;
 };
@@ -252,6 +253,7 @@ export const loadConfig = (): CoreConfig => {
   const geminiWorkspacePath =
     process.env.GEMINI_WORKSPACE_PATH ?? workspacePath;
   const geminiDefaultModel = process.env.GEMINI_DEFAULT_MODEL ?? undefined;
+  const geminiSettingsPath = claudeSettingsPath;
   const geminiCredentialsDirectory =
     process.env.GEMINI_CREDENTIALS_DIRECTORY ??
     process.env.GEMINI_CREDENTIALS_DIR ??
@@ -275,6 +277,7 @@ export const loadConfig = (): CoreConfig => {
     codexDefaultReasoningEffort,
     geminiWorkspacePath,
     geminiDefaultModel,
+    geminiSettingsPath,
     geminiCredentialsDirectory,
   };
 };
