@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ClaudeModelAliasId } from "../../../../../types/claude-model-registry";
+import type { GeminiModelId } from "../../../../../types/gemini-model-registry";
 import vscode from "../../vscode";
 import {
   areSettingsEqual,
@@ -77,6 +78,7 @@ export type UseSettingsStateResult = {
     modelId: ClaudeModelAliasId
   ) => void;
   readonly handleCodexDefaultModelChange: (modelId: CodexModelId) => void;
+  readonly handleGeminiDefaultModelChange: (modelId: GeminiModelId) => void;
   readonly handleCodexReasoningChange: (
     modelId: CodexModelId,
     reasoning: CodexReasoningLevel
@@ -225,6 +227,23 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
+  const handleGeminiDefaultModelChange = useCallback(
+    (modelId: GeminiModelId) => {
+      const nextSettings: Settings = {
+        ...settings,
+        providers: {
+          ...settings.providers,
+          gemini: {
+            ...settings.providers.gemini,
+            defaultModel: modelId,
+          },
+        },
+      };
+      updateSettings(nextSettings);
+    },
+    [settings, updateSettings]
+  );
+
   const handleProviderAutoUpdateChange = useCallback(
     (provider: ProviderId, enabled: boolean) => {
       const nextSettings: Settings = {
@@ -286,6 +305,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleThinkingSettingsChange,
     handleClaudeDefaultModelChange,
     handleCodexDefaultModelChange,
+    handleGeminiDefaultModelChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
     handleSave,
