@@ -8,8 +8,8 @@
 3. [DONE] Git Commit: fix(gemini): monkey-patch startChat to enforce thinking configuration and bypass library hardcode
 
 ### Stream 2: Registry Alignment
-1. [TODO] Обновить реестр моделей Gemini: убедиться в полноте и точности списков уровней.
-2. [TODO] Git Commit: feat(gemini): polish thinking levels registry for patched implementation
+1. [DONE] Обновить реестр моделей Gemini: убедиться в полноте и точности списков уровней.
+2. [DONE] Git Commit: feat(gemini): polish thinking levels registry for patched implementation
 
 ### Stream 3: Verification & Release
 1. [TODO] Проверить работу фикса через логи SDK.
