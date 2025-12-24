@@ -1,3 +1,7 @@
+## [1.1.352] - 2025-12-24
+### Changed
+- **Gemini 2.5 Flash Constraints**: Removed the "Thinking: Off" option from the UI for `gemini-2.5-flash` and `gemini-2.5-flash-lite`, as these are inherently thinking models and do not support disabling the thinking process via the API. Users must select at least "Low" thinking level.
+
 ## [1.1.351] - 2025-12-24
 ### Fixed
 - **Gemini Thinking "Off" Logic**: Strict fix for Gemini 2.5 Flash. Now explicitly *deletes* the `thinkingConfig` from the API request when "Thinking: Off" is selected, instead of sending a zero budget (which the API was ignoring). This ensures the model reverts to its default non-thinking behavior.
