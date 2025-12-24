@@ -33,8 +33,8 @@
 6. [DONE] Git Commit: feat(ui): add gemini model change handler to useSettingsState
 
 ### Stream 3: Gemini Model Cards UI
-1. [TODO] Создать компонент `GeminiDefaultModelCard` в `src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx`, используя `shared-model-card-styles.ts`.
-2. [TODO] Git Commit: feat(ui): implement GeminiDefaultModelCard
+1. [DONE] Создать компонент `GeminiDefaultModelCard` в `src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx`, используя `shared-model-card-styles.ts`.
+2. [DONE] Git Commit: feat(ui): implement GeminiDefaultModelCard
 3. [TODO] Интегрировать `GeminiDefaultModelCard` в основной экран настроек `src/client/ui/src/components/settings/general-settings.tsx`.
 4. [TODO] Git Commit: feat(ui): integrate gemini model selection into settings view
 5. [TODO] Проверить визуальное соответствие карточек Gemini карточкам Codex и Claude, выполнить финальные гейты качества.
