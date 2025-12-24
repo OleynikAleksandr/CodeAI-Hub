@@ -7,8 +7,8 @@
 2. [DONE] Git Commit: fix(types): remove unsupported 'off' thinking level for Gemini 3
 
 ### Stream 2: Logic Correction
-1. [TODO] Обновить `gemini-session-manager.ts`: исправить патч, чтобы для Gemini 3 никогда не передавался `thinkingBudget`, а предыдущая конфигурация очищалась корректно.
-2. [TODO] Git Commit: fix(gemini): prevent sending thinkingBudget to Gemini 3 models
+1. [DONE] Обновить `gemini-session-manager.ts`: исправить патч, чтобы для Gemini 3 никогда не передавался `thinkingBudget`, а предыдущая конфигурация очищалась корректно.
+2. [DONE] Git Commit: fix(gemini): prevent sending thinkingBudget to Gemini 3 models
 
 ### Stream 3: Verification & Release
 1. [TODO] Собрать релиз 1.1.348.
