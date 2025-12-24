@@ -1,7 +1,9 @@
 import { type Webview, window } from "vscode";
 import { ProviderVersionService } from "../settings/provider-version-service";
 import {
-  applyClaudeDefaultModelEnv,
+  applyDefaultModelsEnv,
+
+,
   loadSettingsSnapshot,
   parseSettingsSnapshot,
   persistSettingsSnapshot,
@@ -29,7 +31,9 @@ export class SettingsMessageHandler {
 
   constructor(_extensionPath: string) {
     this.versionService = new ProviderVersionService();
-    applyClaudeDefaultModelEnv(this.settingsState);
+    applyDefaultModelsEnv,
+
+(this.settingsState);
   }
 
   canHandle(message: unknown): message is SettingsMessage {
@@ -66,7 +70,9 @@ export class SettingsMessageHandler {
           return;
         }
         this.settingsState = nextSettings;
-        applyClaudeDefaultModelEnv(this.settingsState);
+        applyDefaultModelsEnv,
+
+(this.settingsState);
         persistSettingsSnapshot(this.settingsState).catch(() => {
           /* ignore persistence errors */
         });
@@ -76,7 +82,9 @@ export class SettingsMessageHandler {
       }
       case "settings:reset": {
         this.settingsState = DEFAULT_SETTINGS_SNAPSHOT;
-        applyClaudeDefaultModelEnv(this.settingsState);
+        applyDefaultModelsEnv,
+
+(this.settingsState);
         persistSettingsSnapshot(this.settingsState).catch(() => {
           /* ignore persistence errors */
         });
