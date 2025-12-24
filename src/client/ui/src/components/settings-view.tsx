@@ -165,7 +165,9 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
                 defaultModel={settings.providers.gemini.defaultModel}
                 onDefaultModelChange={handleGeminiDefaultModelChange}
                 onThinkingChange={handleGeminiThinkingChange}
-                thinkingLevelByModel={settings.providers.gemini.thinkingLevelByModel}
+                thinkingLevelByModel={
+                  settings.providers.gemini.thinkingLevelByModel
+                }
               />
               <ProviderVersions
                 autoUpdateEnabled={settings.providers.gemini.autoUpdate.enabled}

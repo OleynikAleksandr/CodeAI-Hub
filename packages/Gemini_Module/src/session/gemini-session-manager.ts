@@ -152,6 +152,7 @@ export class GeminiSessionManager {
     }
 
     if (resolvedThinkingLevel) {
+      // biome-ignore lint/suspicious/noExplicitAny: thinkingLevel is not yet in official types
       const configAny = config as any;
       if (typeof configAny.setThinkingLevel === "function") {
         configAny.setThinkingLevel(resolvedThinkingLevel);
@@ -626,6 +627,7 @@ export class GeminiSessionManager {
       fakeResponses: undefined,
       recordResponses: undefined,
       thinkingLevel: options.thinkingLevel,
+      // biome-ignore lint/suspicious/noExplicitAny: custom property thinkingLevel
     } as any as CliArgs;
   }
 
@@ -665,7 +667,8 @@ export class GeminiSessionManager {
     snapshot: GeminiSettingsSnapshot | null,
     modelId: string
   ): string | undefined {
-    const candidate = snapshot?.providers?.gemini?.thinkingLevelByModel?.[modelId];
+    const candidate =
+      snapshot?.providers?.gemini?.thinkingLevelByModel?.[modelId];
     if (typeof candidate === "string" && candidate.trim().length > 0) {
       return candidate.trim();
     }

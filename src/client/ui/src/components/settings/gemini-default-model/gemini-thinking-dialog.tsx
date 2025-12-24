@@ -1,10 +1,10 @@
 import type { CSSProperties, FC } from "react";
 import { useState } from "react";
 import {
-  GEMINI_THINKING_LEVELS,
-  type GeminiThinkingLevel,
-  type GeminiModelDescriptor,
   DEFAULT_GEMINI_THINKING_LEVEL,
+  GEMINI_THINKING_LEVELS,
+  type GeminiModelDescriptor,
+  type GeminiThinkingLevel,
 } from "../../../../../../types/gemini-model-registry";
 
 type GeminiThinkingDialogProps = {

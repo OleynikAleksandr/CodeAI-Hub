@@ -13,22 +13,19 @@ import {
   DEFAULT_CODEX_MODEL_ID,
   DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../../types/codex-model-registry";
-
+import {
+  areGeminiThinkingLevelByModelEqual,
+  type GeminiSettings,
+  mapGeminiSettings,
+} from "./gemini-mapping";
 import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
   RawCodexSettings,
-  RawGeminiSettings,
   RawGeneralSettings,
   RawSettingsSnapshot,
   RawThinkingSettings,
 } from "./settings-state-raw";
-
-import {
-  areGeminiThinkingLevelByModelEqual,
-  mapGeminiSettings,
-  type GeminiSettings,
-} from "./gemini-mapping";
 
 export type {
   CodexModelId,

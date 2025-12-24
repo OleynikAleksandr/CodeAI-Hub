@@ -73,30 +73,31 @@ export type GeminiThinkingLevelDescriptor = {
   readonly useCase: string;
 };
 
-export const GEMINI_THINKING_LEVELS: readonly GeminiThinkingLevelDescriptor[] = [
-  {
-    name: "off",
-    description: "Thinking is disabled. Standard response mode.",
-    useCase: "Basic tasks without complex reasoning.",
-  },
-  {
-    name: "minimal",
-    description: "Fastest, minimal reasoning overhead.",
-    useCase: "Straightforward answers, low latency.",
-  },
-  {
-    name: "low",
-    description: "Faster responses with lighter reasoning.",
-    useCase: "Quick coding tasks, simple queries.",
-  },
-  {
-    name: "medium",
-    description: "Balanced reasoning and speed.",
-    useCase: "General development and problem solving.",
-  },
-  {
-    name: "high",
-    description: "Maximum reasoning depth for complex problems.",
-    useCase: "Complex refactoring, architecture, and PhD-level tasks.",
-  },
-] as const;
+export const GEMINI_THINKING_LEVELS: readonly GeminiThinkingLevelDescriptor[] =
+  [
+    {
+      name: "off",
+      description: "Thinking is disabled. Standard response mode.",
+      useCase: "Basic tasks without complex reasoning.",
+    },
+    {
+      name: "minimal",
+      description: "Fastest, minimal reasoning overhead.",
+      useCase: "Straightforward answers, low latency.",
+    },
+    {
+      name: "low",
+      description: "Faster responses with lighter reasoning.",
+      useCase: "Quick coding tasks, simple queries.",
+    },
+    {
+      name: "medium",
+      description: "Balanced reasoning and speed.",
+      useCase: "General development and problem solving.",
+    },
+    {
+      name: "high",
+      description: "Maximum reasoning depth for complex problems.",
+      useCase: "Complex refactoring, architecture, and PhD-level tasks.",
+    },
+  ] as const;
