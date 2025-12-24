@@ -29,8 +29,8 @@
 2. [DONE] Git Commit: feat(ui): add gemini default model to raw state
 3. [DONE] Обновить `src/client/ui/src/components/settings/settings-state-model.ts`, добавив типизацию и маппинг для `defaultModel` в Gemini.
 4. [DONE] Git Commit: feat(ui): map gemini default model in state model
-5. [TODO] Обновить `src/client/ui/src/components/settings/use-settings-state.ts`, чтобы включить обработчик изменения модели Gemini.
-6. [TODO] Git Commit: feat(ui): add gemini model change handler to useSettingsState
+5. [DONE] Обновить `src/client/ui/src/components/settings/use-settings-state.ts`, чтобы включить обработчик изменения модели Gemini.
+6. [DONE] Git Commit: feat(ui): add gemini model change handler to useSettingsState
 
 ### Stream 3: Gemini Model Cards UI
 1. [TODO] Создать компонент `GeminiDefaultModelCard` в `src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx`, используя `shared-model-card-styles.ts`.
