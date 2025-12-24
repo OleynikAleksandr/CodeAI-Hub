@@ -1,3 +1,14 @@
+## [1.1.350] - 2025-12-24
+### Fixed
+- **Gemini Thinking persistence (Monkey-Patch)**: Detailed fixing of the issue where the "Reflections" (Thinking) setting was not being applied because the `gemini-cli-core` initialization reset the client. Moved the "monkey-patch" application to occur *after* `config.initialize()`, ensuring user preferences for thinking budget/levels are strictly enforced.
+
+### Build
+- VSIX → `codeai-hub-1.1.350.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.350.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.350.tar.bz2`
+- Providers → `claude-module-1.1.350.tar.bz2`, `codex-module-1.1.350.tar.bz2`, `gemini-module-1.1.350.tar.bz2`
+- UI → `vscode-webview-1.1.350.tar.bz2`, `web-client-1.1.350.tar.bz2`, `project-manager-1.1.350.tar.bz2`
+
 ## [1.1.349] - 2025-12-24
 ### Fixed
 - **Gemini 2.5 Pro Constraints**: Removed the "Thinking: Off" option for Gemini 2.5 Pro because this model enforces a minimum thinking budget of 128 tokens and cannot be fully disabled. Users should select "Low" for minimal reasoning.
