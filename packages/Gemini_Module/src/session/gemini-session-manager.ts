@@ -731,7 +731,7 @@ export class GeminiSessionManager {
           budget = 16_000;
           break;
         default:
-          return undefined; // "off" should result in no config being sent
+          return; // "off" should result in no config being sent
       }
 
       return {
