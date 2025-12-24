@@ -3,8 +3,8 @@
 ## Phase 5 — Intelligent Gemini Thinking Configuration (owner: Gemini, updated: 2025-12-24)
 
 ### Stream 1: Registry Refinement
-1. [TODO] Обновить `src/types/gemini-model-registry.ts`: установить строгие списки уровней для каждого семейства.
-2. [TODO] Git Commit: feat(types): align gemini thinking levels with model capabilities
+1. [DONE] Обновить `src/types/gemini-model-registry.ts`: установить строгие списки уровней для каждого семейства.
+2. [DONE] Git Commit: feat(types): align gemini thinking levels with model capabilities
 
 ### Stream 2: Manager Logic (The Bridge)
 1. [TODO] Обновить `GeminiSessionManager.ts`: реализовать маппинг уровней в `thinkingLevel` (для G3) или `thinkingBudget` (для G2.5).
