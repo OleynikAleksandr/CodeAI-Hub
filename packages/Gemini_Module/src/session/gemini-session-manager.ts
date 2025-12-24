@@ -604,7 +604,6 @@ export class GeminiSessionManager {
     return {
       query: undefined,
       model: options.defaultModel,
-      thinkingLevel: options.thinkingLevel as any,
       sandbox: undefined,
       debug: options.logger !== undefined,
       prompt: undefined,
@@ -626,7 +625,8 @@ export class GeminiSessionManager {
       outputFormat: "json",
       fakeResponses: undefined,
       recordResponses: undefined,
-    };
+      thinkingLevel: options.thinkingLevel,
+    } as any as CliArgs;
   }
 
   private requireSession(sessionId: string): ActiveSession {
