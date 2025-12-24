@@ -37,5 +37,5 @@
 2. [DONE] Git Commit: feat(ui): implement GeminiDefaultModelCard
 3. [DONE] Интегрировать `GeminiDefaultModelCard` в основной экран настроек `src/client/ui/src/components/settings/general-settings.tsx`.
 4. [DONE] Git Commit: feat(ui): integrate gemini model selection into settings view
-5. [TODO] Проверить визуальное соответствие карточек Gemini карточкам Codex и Claude, выполнить финальные гейты качества.
-6. [TODO] Git Commit: chore: final polish and quality gates for Gemini model selection
+5. [DONE] Проверить визуальное соответствие карточек Gemini карточкам Codex и Claude, выполнить финальные гейты качества.
+6. [DONE] Git Commit: chore: final polish and quality gates for Gemini model selection
