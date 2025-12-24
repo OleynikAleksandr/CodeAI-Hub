@@ -23,7 +23,7 @@ export const GEMINI_RECOMMENDED_MODELS: readonly GeminiModelDescriptor[] = [
     description: "Most advanced reasoning Gemini model for complex problems.",
     status: "preview",
     family: "gemini-3",
-    supportedThinkingLevels: ["low", "high"],
+    supportedThinkingLevels: ["off", "low", "high"],
   },
   {
     id: "gemini-3-flash-preview",
@@ -31,7 +31,7 @@ export const GEMINI_RECOMMENDED_MODELS: readonly GeminiModelDescriptor[] = [
     description: "Pro-grade reasoning with Flash-level latency and cost.",
     status: "preview",
     family: "gemini-3",
-    supportedThinkingLevels: ["minimal", "low", "medium", "high"],
+    supportedThinkingLevels: ["off", "minimal", "low", "medium", "high"],
   },
   {
     id: "gemini-2.5-pro",
