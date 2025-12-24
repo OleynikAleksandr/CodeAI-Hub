@@ -1,15 +1,11 @@
 # План разработки (Development TODO Plan)
 
-## Phase 7 — Fix Gemini Thinking Configuration Accuracy (owner: Gemini, updated: 2025-12-24)
+## Phase 8 — Fix Gemini 2.5 Pro Thinking Constraints (owner: Gemini, updated: 2025-12-24)
 
 ### Stream 1: Registry Correction
-1. [DONE] Обновить `src/types/gemini-model-registry.ts`: убрать `off` из списков Gemini 3, так как эти модели не поддерживают полное отключение.
-2. [DONE] Git Commit: fix(types): remove unsupported 'off' thinking level for Gemini 3
+1. [TODO] Обновить `src/types/gemini-model-registry.ts`: убрать `off` из `gemini-2.5-pro`, так как минимум 128 токенов.
+2. [TODO] Git Commit: fix(types): remove unsupported 'off' level for Gemini 2.5 Pro
 
-### Stream 2: Logic Correction
-1. [DONE] Обновить `gemini-session-manager.ts`: исправить патч, чтобы для Gemini 3 никогда не передавался `thinkingBudget`, а предыдущая конфигурация очищалась корректно.
-2. [DONE] Git Commit: fix(gemini): prevent sending thinkingBudget to Gemini 3 models
-
-### Stream 3: Verification & Release
-1. [TODO] Собрать релиз 1.1.348.
-2. [TODO] Git Commit: chore: release v1.1.348 - strict thinking levels fix
+### Stream 2: Verification & Release
+1. [TODO] Собрать релиз 1.1.349.
+2. [TODO] Git Commit: chore: release v1.1.349 - strict thinking constraints for 2.5 Pro
