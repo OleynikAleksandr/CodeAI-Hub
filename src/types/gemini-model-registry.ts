@@ -39,7 +39,7 @@ export const GEMINI_RECOMMENDED_MODELS: readonly GeminiModelDescriptor[] = [
     description: "Deep reasoning model with Think mode for complex use cases.",
     status: "generally_available",
     family: "gemini-2.5",
-    supportedThinkingLevels: ["off", "low", "high"],
+    supportedThinkingLevels: ["low", "high"],
   },
   {
     id: "gemini-2.5-flash",
