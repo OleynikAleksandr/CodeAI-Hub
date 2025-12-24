@@ -862,63 +862,51 @@ export class GeminiSessionManager {
 
   
 
-            } else if (modelId.startsWith("gemini-3-")) {
+                    } else if (modelId.startsWith("gemini-3-")) {
 
   
 
-              // Gemini 3 family uses thinkingLevel (string)
+                      // Gemini 3 family uses thinkingLevel (string)
 
   
 
-              if (level === "off") {
+                      // "off" is not supported for G3 models, so we only apply valid levels.
 
   
 
-                chat.generationConfig.thinkingConfig = {
+                      if (level && level !== "off") {
 
   
 
-                  includeThoughts: false,
+                        chat.generationConfig.thinkingConfig = {
 
   
 
-                  thinkingBudget: 0,
+                          includeThoughts: true,
 
   
 
-                };
+                          thinkingLevel: level,
 
   
 
-              } else {
+                        };
 
   
 
-                chat.generationConfig.thinkingConfig = {
+                      }
 
   
 
-                  includeThoughts: true,
+                    }
 
   
 
-                  thinkingLevel: level,
+                  }
 
   
 
-                };
-
-  
-
-              }
-
-  
-
-            }
-
-  
-
-          }
+            
 
   
 
