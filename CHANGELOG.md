@@ -1,6 +1,17 @@
-# Changelog
+## [1.1.342] - 2025-12-24
+### Fixed
+- **Gemini Model persistence**: Resolved an issue where Gemini sessions would ignore the default model selected in Settings and fall back to `gemini-3-pro-preview`. The Gemini module now dynamically re-reads `settings.json` before each session creation, matching the reliable pattern used by the Claude module.
 
-All notable changes to this project will be documented in this file.
+## [1.1.342] - 2025-12-24
+### Fixed
+- **Gemini Model persistence**: Resolved an issue where Gemini sessions would ignore the default model selected in Settings and fall back to `gemini-3-pro-preview`. The Gemini module now dynamically re-reads `settings.json` before each session creation, matching the reliable pattern used by the Claude module.
+
+### Build
+- VSIX → `codeai-hub-1.1.342.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.342.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.342.tar.bz2`
+- Providers → `claude-module-1.1.342.tar.bz2`, `codex-module-1.1.342.tar.bz2`, `gemini-module-1.1.342.tar.bz2`
+- UI → `vscode-webview-1.1.342.tar.bz2`, `web-client-1.1.342.tar.bz2`, `project-manager-1.1.342.tar.bz2`
 
 ## [1.1.341] - 2025-12-24
 ### Added
