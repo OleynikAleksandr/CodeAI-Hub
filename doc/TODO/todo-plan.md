@@ -15,10 +15,10 @@
 4. [DONE] Git Commit: feat(ui): implement GeminiThinkingDialog
 
 ### Stream 3: UI Integration & Logic
-1. [TODO] Обновить `GeminiDefaultModelCard.tsx`: добавить кнопку «Configure Thinking» и логику открытия диалога.
-2. [TODO] Git Commit: feat(ui): integrate thinking selection into Gemini model cards
-3. [TODO] Обновить `use-settings-state.ts` и `settings-state-helpers.ts`: добавить хендлер `handleGeminiThinkingChange`.
-4. [TODO] Git Commit: feat(ui): add gemini thinking change handler
+1. [DONE] Обновить `GeminiDefaultModelCard.tsx`: добавить кнопку «Configure Thinking» и логику открытия диалога.
+2. [DONE] Git Commit: feat(ui): integrate thinking selection into Gemini model cards
+3. [DONE] Обновить `use-settings-state.ts` и `settings-state-helpers.ts`: добавить хендлер `handleGeminiThinkingChange`.
+4. [DONE] Git Commit: feat(ui): add gemini thinking change handler
 
 ### Stream 4: Gemini Module Implementation
 1. [TODO] Обновить `SessionCreationOptions` в `packages/Gemini_Module/src/session/types.ts`: добавить `thinkingLevel`.
