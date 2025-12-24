@@ -79,6 +79,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
     handleCodexDefaultModelChange,
     handleClaudeDefaultModelChange,
     handleGeminiDefaultModelChange,
+    handleGeminiThinkingChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
     handleSave,
@@ -163,6 +164,8 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
               <GeminiDefaultModelCard
                 defaultModel={settings.providers.gemini.defaultModel}
                 onDefaultModelChange={handleGeminiDefaultModelChange}
+                onThinkingChange={handleGeminiThinkingChange}
+                thinkingLevelByModel={settings.providers.gemini.thinkingLevelByModel}
               />
               <ProviderVersions
                 autoUpdateEnabled={settings.providers.gemini.autoUpdate.enabled}
