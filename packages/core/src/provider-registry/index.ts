@@ -446,6 +446,7 @@ export class ProviderRegistry {
   private readonly geminiAdapterCtorPromise: Promise<GeminiAdapterCtor | null>;
   private readonly geminiWorkspacePath: string;
   private readonly geminiDefaultModel?: string;
+  private readonly geminiSettingsPath: string;
   private readonly geminiCredentialsDirectory?: string;
   private readonly options: {
     readonly config: CoreConfig;
@@ -478,6 +479,7 @@ export class ProviderRegistry {
     );
     this.geminiWorkspacePath = this.options.config.geminiWorkspacePath;
     this.geminiDefaultModel = this.options.config.geminiDefaultModel;
+    this.geminiSettingsPath = this.options.config.geminiSettingsPath;
     this.geminiCredentialsDirectory =
       this.options.config.geminiCredentialsDirectory;
     this.providers = this.initializeProviders();
@@ -622,6 +624,7 @@ export class ProviderRegistry {
         workspace: {
           workspacePath: this.geminiWorkspacePath,
           defaultModel: this.geminiDefaultModel,
+          settingsPath: this.geminiSettingsPath,
         },
         reporter: this.createReporter("gemini"),
         credentials,
