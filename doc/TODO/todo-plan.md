@@ -9,8 +9,8 @@
 4. [DONE] Git Commit: feat(extension): add thinkingLevelByModel to gemini settings
 
 ### Stream 2: UI State & Dialog
-1. [TODO] Обновить `settings-state-raw.ts` и `settings-state-model.ts`: добавить маппинг `thinkingLevelByModel`.
-2. [TODO] Git Commit: feat(ui): map gemini thinking levels in settings state
+1. [DONE] Обновить `settings-state-raw.ts` и `settings-state-model.ts`: добавить маппинг `thinkingLevelByModel`.
+2. [DONE] Git Commit: feat(ui): map gemini thinking levels in settings state
 3. [TODO] Создать `src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx`.
 4. [TODO] Git Commit: feat(ui): implement GeminiThinkingDialog
 
