@@ -5,8 +5,8 @@
 ### Stream 1: Types & Core Support
 1. [DONE] Обновить `src/types/gemini-model-registry.ts`: добавить список поддерживаемых уровней мышления для каждой модели.
 2. [DONE] Git Commit: feat(types): add supported thinking levels to gemini registry
-3. [TODO] Обновить типы в расширении (`src/extension-module/settings/gemini-settings.ts`): добавить `thinkingLevelByModel`.
-4. [TODO] Git Commit: feat(extension): add thinkingLevelByModel to gemini settings
+3. [DONE] Обновить типы в расширении (`src/extension-module/settings/gemini-settings.ts`): добавить `thinkingLevelByModel`.
+4. [DONE] Git Commit: feat(extension): add thinkingLevelByModel to gemini settings
 
 ### Stream 2: UI State & Dialog
 1. [TODO] Обновить `settings-state-raw.ts` и `settings-state-model.ts`: добавить маппинг `thinkingLevelByModel`.
