@@ -152,11 +152,7 @@ export class GeminiSessionManager {
     }
 
     if (resolvedThinkingLevel) {
-      // biome-ignore lint/suspicious/noExplicitAny: thinkingLevel is not yet in official types
-      const configAny = config as any;
-      if (typeof configAny.setThinkingLevel === "function") {
-        configAny.setThinkingLevel(resolvedThinkingLevel);
-      }
+      this.applyThinkingConfig(config, resolvedModel ?? "", resolvedThinkingLevel);
     }
 
     await config.initialize();
@@ -653,25 +649,120 @@ export class GeminiSessionManager {
     }
   }
 
-  private resolveDefaultModelFromSnapshot(
-    snapshot: GeminiSettingsSnapshot | null
-  ): string | undefined {
-    const candidate = snapshot?.providers?.gemini?.defaultModel;
-    if (typeof candidate === "string" && candidate.trim().length > 0) {
-      return candidate.trim();
+    private resolveDefaultModelFromSnapshot(
+
+      snapshot: GeminiSettingsSnapshot | null
+
+    ): string | undefined {
+
+      const candidate = snapshot?.providers?.gemini?.defaultModel;
+
+      if (typeof candidate === "string" && candidate.trim().length > 0) {
+
+        return candidate.trim();
+
+      }
+
+      return;
+
     }
-    return;
+
+  
+
+    private resolveThinkingLevelFromSnapshot(
+
+      snapshot: GeminiSettingsSnapshot | null,
+
+      modelId: string
+
+    ): string | undefined {
+
+      const candidate = snapshot?.providers?.gemini?.thinkingLevelByModel?.[modelId];
+
+      if (typeof candidate === "string" && candidate.trim().length > 0) {
+
+        return candidate.trim();
+
+      }
+
+      return;
+
+    }
+
+  
+
+    private applyThinkingConfig(
+
+      config: any,
+
+      modelId: string,
+
+      level: string
+
+    ): void {
+
+      // Gemini 2.5 family uses thinkingBudget (integer tokens)
+
+      if (modelId.startsWith("gemini-2.5-")) {
+
+        let budget = 0;
+
+        switch (level) {
+
+          case "low":
+
+            budget = 4000;
+
+            break;
+
+          case "high":
+
+            budget = 16000;
+
+            break;
+
+          case "off":
+
+          default:
+
+            budget = 0;
+
+            break;
+
+        }
+
+        if (typeof config.setThinkingBudget === "function") {
+
+          config.setThinkingBudget(budget);
+
+        }
+
+        return;
+
+      }
+
+  
+
+      // Gemini 3 family uses thinkingLevel (string)
+
+      // Note: 'off' is not supported for G3, so we just don't set it or use 'minimal'
+
+      if (level === "off") {
+
+        return;
+
+      }
+
+  
+
+      if (typeof config.setThinkingLevel === "function") {
+
+        config.setThinkingLevel(level);
+
+      }
+
+    }
+
   }
 
-  private resolveThinkingLevelFromSnapshot(
-    snapshot: GeminiSettingsSnapshot | null,
-    modelId: string
-  ): string | undefined {
-    const candidate =
-      snapshot?.providers?.gemini?.thinkingLevelByModel?.[modelId];
-    if (typeof candidate === "string" && candidate.trim().length > 0) {
-      return candidate.trim();
-    }
-    return;
-  }
-}
+  
