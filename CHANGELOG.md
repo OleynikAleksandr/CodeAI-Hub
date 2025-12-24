@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.341] - 2025-12-24
+### Added
+- **Gemini Default Model UI**: Settings → Gemini now renders a model selector card identical to Claude/Codex, listing `gemini-3-pro-preview`, `gemini-3-flash-preview` and `gemini-2.5` families.
+- **Gemini Default Model state**: The selected model is persisted in `settings.json` → `providers.gemini.defaultModel` and synced to `GEMINI_DEFAULT_MODEL` environment variable for the core runtime.
+- **Settings Architecture**: Refactored `useSettingsState` into helper functions to comply with the 300-line limit while adding Gemini support.
+
+### Build
+- VSIX → `codeai-hub-1.1.341.vsix`
+- Launcher → `CodeAIHubLauncher-macos-arm64-1.1.341.tar.bz2`
+- Core → `codeai-hub-core-darwin-arm64-1.1.341.tar.bz2`
+- Providers → `claude-module-1.1.341.tar.bz2`, `codex-module-1.1.341.tar.bz2`, `gemini-module-1.1.341.tar.bz2`
+- UI → `vscode-webview-1.1.341.tar.bz2`, `web-client-1.1.341.tar.bz2`, `project-manager-1.1.341.tar.bz2`
+
 ## [1.1.340] - 2025-12-23
 ### Fixed
 - **Claude/Codex Default Model UI parity**: Both selectors now import `shared-model-card-styles.ts` so borders, hover/selected states, radio circles, and `tabIndex={-1}`/`role="radio"` semantics match exactly; the knowledge base and system architecture docs were refreshed to describe the shared alias metadata and styling pipeline.
@@ -595,10 +608,8 @@ All notable changes to this project will be documented in this file.
 
 ## [1.1.140] - 2025-11-04
 ### Added
-- Settings view now renders horizontal tabs for `Claude`, `Codex`, `Gemini`, and `General`, with the Claude tab hosting thinking controls.
-
-### Fixed
-- Changing the maximum thinking tokens flips `Save Changes` to active, guaranteeing that new limits persist into the next Claude session.
+- Settings view now exposes "Claude Thinking Settings" и сохраняет выбранный лимит thinking tokens в общий конфиг.
+- Claude модуль читает настройки перед запуском запроса и отключает частичное стриминг-поведение.
 
 ### Build
 - VSIX → `codeai-hub-1.1.140.vsix`
@@ -1144,7 +1155,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.1.9] - 2025-10-26
 ### Added
-- Automated release pipeline for Claude Module/Core VSIX: `build-claude-module.sh`, `build-core.sh`, and `build-release.sh` теперь сами повышают версии, вычищают старые артефакты и публикуют свежие архивы в `doc/tmp/releases/` (остаются только `CodeAIHubLauncher-macos-arm64`, `codeai-hub-core-darwin-arm64-<ver>` и `claude-module-<ver>`).
+- Automated release pipeline for Claude Module/Core VSIX: `build-claude-module.sh`, `build-core.sh`, and `build-release.sh` теперь сами повышают версии, вычищают старые артефакты и публикуют свежие архивы в `doc/tmp/releases/` (остаются только `CodeAIHubLauncher-macos-arm64`, `codeai-hub-core-darwin-arm64-<ver>` и `claude-module-<ver>`)
 - `assets/providers/claude/manifest.json` + новый установщик в VSIX гарантируют скачивание Claude Module при первом запуске и установку в `~/.codeai-hub/providers/claude/<version>/`.
 
 ### Changed
@@ -1456,10 +1467,10 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Updated all installer manifests (CEF, launcher, core) to follow redirects and use the Release mirrors so GitHub CDN hiccups no longer break activation.
-- Relaxed the webview CSP to allow `http://127.0.0.1` HTTP/WS connections; the UI can now reach the local core without hacks.
+- Relaxed the webview CSP to allow `http://127.0.0.1:8080` HTTP/WebSocket connections for core communication.
 
 ### Known Issues
-- Deleting a session inside the VS Code webview does **not** yet broadcast to the standalone client. Creation and messaging are synchronized, but deletion events will be addressed in Phase 11 follow-up.
+- Session deletion does not propagate between clients (fixed in v1.1.7).
 
 ### Build
 - Release packaged as `codeai-hub-1.1.6.vsix` via `./scripts/build-release.sh 1.1.6` (paired with `CodeAIHubLauncher-macos-arm64-1.0.43.tar.bz2` and `codeai-hub-core-darwin-arm64-0.1.0.tar.bz2`).
