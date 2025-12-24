@@ -26,6 +26,7 @@ export type CoreConfig = {
   readonly codexDefaultReasoningEffort?: CodexReasoningEffort;
   readonly geminiWorkspacePath: string;
   readonly geminiDefaultModel?: string;
+  readonly geminiThinkingLevelByModel: Record<string, string>;
   readonly geminiSettingsPath: string;
   readonly geminiCredentialsDirectory?: string;
   readonly claudeDefaultModel: string;
@@ -168,6 +169,50 @@ const resolveCodexReasoningFromSettings = (
   return normalized;
 };
 
+type GeminiSettingsSnapshot = {
+  readonly defaultModel?: unknown;
+  readonly thinkingLevelByModel?: unknown;
+};
+
+const loadGeminiSettingsSnapshot = (): GeminiSettingsSnapshot | null => {
+  try {
+    const raw = readFileSync(CLAUDE_SETTINGS_FILE, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    if (!isRecord(parsed)) {
+      return null;
+    }
+    const providers = isRecord(parsed.providers) ? parsed.providers : null;
+    const gemini =
+      providers && isRecord(providers.gemini) ? providers.gemini : null;
+    if (!gemini) {
+      return null;
+    }
+    return {
+      defaultModel: gemini.defaultModel,
+      thinkingLevelByModel: gemini.thinkingLevelByModel,
+    };
+  } catch {
+    return null;
+  }
+};
+
+const resolveGeminiThinkingFromSettings = (
+  value: unknown
+): Record<string, string> => {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  const normalized: Record<string, string> = {};
+  for (const [modelId, level] of Object.entries(value)) {
+    if (typeof level === "string") {
+      normalized[modelId] = level;
+    }
+  }
+
+  return normalized;
+};
+
 const toSandboxMode = (
   value: string | undefined
 ): CoreConfig["codexSandboxMode"] => {
@@ -259,6 +304,11 @@ export const loadConfig = (): CoreConfig => {
     process.env.GEMINI_CREDENTIALS_DIR ??
     undefined;
 
+  const geminiSettings = loadGeminiSettingsSnapshot();
+  const geminiThinkingLevelByModel = resolveGeminiThinkingFromSettings(
+    geminiSettings?.thinkingLevelByModel
+  );
+
   return {
     host,
     port,
@@ -277,6 +327,7 @@ export const loadConfig = (): CoreConfig => {
     codexDefaultReasoningEffort,
     geminiWorkspacePath,
     geminiDefaultModel,
+    geminiThinkingLevelByModel,
     geminiSettingsPath,
     geminiCredentialsDirectory,
   };
