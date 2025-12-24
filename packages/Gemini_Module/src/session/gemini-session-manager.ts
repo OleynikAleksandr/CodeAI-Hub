@@ -700,10 +700,6 @@ export class GeminiSessionManager {
         const thinkingConfig = this.resolveThinkingConfig(modelId, level);
         if (thinkingConfig) {
           chat.generationConfig.thinkingConfig = thinkingConfig;
-        } else if (level === "off") {
-          // Force removal if "off" is explicitly selected, to avoid defaults
-          // biome-ignore lint/performance/noDelete: necessary for API contract
-          delete chat.generationConfig.thinkingConfig;
         }
       }
       return chat;
@@ -731,7 +727,8 @@ export class GeminiSessionManager {
           budget = 16_000;
           break;
         default:
-          return; // "off" should result in no config being sent
+          budget = 4000; // Default to specific budget if unknown, to be safe
+          break;
       }
 
       return {
