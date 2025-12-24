@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
 import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
@@ -57,6 +58,14 @@ type ProcessTurnContext = {
   readonly depth: number;
 };
 
+type GeminiSettingsSnapshot = {
+  readonly providers?: {
+    readonly gemini?: {
+      readonly defaultModel?: unknown;
+    };
+  };
+};
+
 export class GeminiSessionManager {
   private readonly sessions = new Map<string, ActiveSession>();
 
@@ -99,7 +108,15 @@ export class GeminiSessionManager {
       });
     }
 
-    const argv = this.createArgv(options);
+    const settingsSnapshot = this.loadSettingsSnapshot(options.settingsPath);
+    const defaultModelOverride =
+      this.resolveDefaultModelFromSnapshot(settingsSnapshot);
+    const resolvedModel = defaultModelOverride ?? options.defaultModel;
+
+    const argv = this.createArgv({
+      ...options,
+      defaultModel: resolvedModel,
+    });
 
     const loadCliConfig = this.modules.config
       .loadCliConfig as typeof this.modules.config.loadCliConfig;
@@ -122,8 +139,8 @@ export class GeminiSessionManager {
       throw error;
     }
 
-    if (options.defaultModel) {
-      config.setModel(options.defaultModel);
+    if (resolvedModel) {
+      config.setModel(resolvedModel);
     }
 
     await config.initialize();
@@ -602,5 +619,29 @@ export class GeminiSessionManager {
       throw new Error(`Gemini session ${sessionId} not found`);
     }
     return session;
+  }
+
+  private loadSettingsSnapshot(
+    settingsPath?: string
+  ): GeminiSettingsSnapshot | null {
+    if (!settingsPath) {
+      return null;
+    }
+    try {
+      const raw = readFileSync(settingsPath, "utf8");
+      return JSON.parse(raw) as GeminiSettingsSnapshot;
+    } catch {
+      return null;
+    }
+  }
+
+  private resolveDefaultModelFromSnapshot(
+    snapshot: GeminiSettingsSnapshot | null
+  ): string | undefined {
+    const candidate = snapshot?.providers?.gemini?.defaultModel;
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
+    return;
   }
 }

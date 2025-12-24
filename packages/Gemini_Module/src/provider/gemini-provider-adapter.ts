@@ -39,6 +39,7 @@ export class GeminiProviderAdapter {
     const { sessionId, session } = await manager.createSession({
       workspacePath: this.options.workspace.workspacePath,
       defaultModel: this.options.workspace.defaultModel,
+      settingsPath: this.options.workspace.settingsPath,
       reporter: this.options.reporter,
       logger,
     });

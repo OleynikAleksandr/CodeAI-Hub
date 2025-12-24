@@ -20,6 +20,7 @@ export type ActiveSession = {
 export type SessionCreationOptions = {
   readonly workspacePath: string;
   readonly defaultModel?: string;
+  readonly settingsPath?: string;
   readonly reporter?: ModuleReporter;
   readonly logger?: GeminiSessionLogger | null;
 };
