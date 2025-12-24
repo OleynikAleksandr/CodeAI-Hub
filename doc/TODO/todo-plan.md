@@ -3,8 +3,8 @@
 ## Phase 7 — Fix Gemini Thinking Configuration Accuracy (owner: Gemini, updated: 2025-12-24)
 
 ### Stream 1: Registry Correction
-1. [TODO] Обновить `src/types/gemini-model-registry.ts`: убрать `off` из списков Gemini 3, так как эти модели не поддерживают полное отключение.
-2. [TODO] Git Commit: fix(types): remove unsupported 'off' thinking level for Gemini 3
+1. [DONE] Обновить `src/types/gemini-model-registry.ts`: убрать `off` из списков Gemini 3, так как эти модели не поддерживают полное отключение.
+2. [DONE] Git Commit: fix(types): remove unsupported 'off' thinking level for Gemini 3
 
 ### Stream 2: Logic Correction
 1. [TODO] Обновить `gemini-session-manager.ts`: исправить патч, чтобы для Gemini 3 никогда не передавался `thinkingBudget`, а предыдущая конфигурация очищалась корректно.
