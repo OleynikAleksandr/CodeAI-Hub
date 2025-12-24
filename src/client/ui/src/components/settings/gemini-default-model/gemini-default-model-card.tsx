@@ -7,7 +7,7 @@ import {
   DEFAULT_GEMINI_THINKING_LEVEL,
 } from "../../../../../../types/gemini-model-registry";
 import SettingsCard from "../settings-card";
-import type { GeminiThinkingByModel } from "../settings-state-model";
+import type { GeminiThinkingByModel } from "../gemini-mapping";
 import {
   descriptionStyles,
   listStyles,

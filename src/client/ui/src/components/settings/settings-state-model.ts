@@ -14,16 +14,6 @@ import {
   DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../../types/codex-model-registry";
 
-import {
-  DEFAULT_GEMINI_MODEL_ID,
-  DEFAULT_GEMINI_THINKING_LEVEL,
-  GEMINI_MODEL_ID_SET,
-  GEMINI_RECOMMENDED_MODELS,
-  GEMINI_THINKING_LEVELS,
-  type GeminiModelId,
-  type GeminiThinkingLevel,
-} from "../../../../../types/gemini-model-registry";
-
 import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
@@ -33,6 +23,12 @@ import type {
   RawSettingsSnapshot,
   RawThinkingSettings,
 } from "./settings-state-raw";
+
+import {
+  areGeminiThinkingLevelByModelEqual,
+  mapGeminiSettings,
+  type GeminiSettings,
+} from "./gemini-mapping";
 
 export type {
   CodexModelId,
@@ -69,14 +65,6 @@ type CodexSettings = {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: CodexModelId;
   readonly reasoningByModel: CodexReasoningByModel;
-};
-export type GeminiThinkingByModel = Readonly<
-  Record<string, GeminiThinkingLevel>
->;
-type GeminiSettings = {
-  readonly autoUpdate: AutoUpdateSettings;
-  readonly defaultModel: GeminiModelId;
-  readonly thinkingLevelByModel: GeminiThinkingByModel;
 };
 
 export type Settings = {
@@ -125,16 +113,6 @@ const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_ALL_MODELS.reduce<
   Record<string, CodexReasoningLevel>
 >((accumulator, model) => {
   accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
-  return accumulator;
-}, {});
-
-const GEMINI_THINKING_LEVEL_SET = new Set<string>(
-  GEMINI_THINKING_LEVELS.map((level) => level.name)
-);
-const DEFAULT_GEMINI_THINKING_BY_MODEL = GEMINI_RECOMMENDED_MODELS.reduce<
-  Record<string, GeminiThinkingLevel>
->((accumulator, model) => {
-  accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
   return accumulator;
 }, {});
 
@@ -224,47 +202,6 @@ const mapCodexSettings = (
   reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
 });
 
-const resolveGeminiModelId = (value: unknown): GeminiModelId => {
-  if (typeof value !== "string") {
-    return DEFAULT_GEMINI_MODEL_ID;
-  }
-  const alias = value as GeminiModelId;
-  return GEMINI_MODEL_ID_SET.has(alias) ? alias : DEFAULT_GEMINI_MODEL_ID;
-};
-
-const mapGeminiThinkingLevelByModel = (
-  value: unknown
-): GeminiThinkingByModel => {
-  const nextThinkingLevelByModel = {
-    ...DEFAULT_GEMINI_THINKING_BY_MODEL,
-  };
-
-  if (!isRecord(value)) {
-    return nextThinkingLevelByModel;
-  }
-
-  for (const [modelId, level] of Object.entries(value)) {
-    if (
-      typeof level === "string" &&
-      GEMINI_THINKING_LEVEL_SET.has(level)
-    ) {
-      nextThinkingLevelByModel[modelId] = level as GeminiThinkingLevel;
-    }
-  }
-
-  return nextThinkingLevelByModel;
-};
-
-const mapGeminiSettings = (
-  value: RawGeminiSettings | undefined
-): GeminiSettings => ({
-  autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
-  defaultModel: resolveGeminiModelId(value?.defaultModel),
-  thinkingLevelByModel: mapGeminiThinkingLevelByModel(
-    value?.thinkingLevelByModel
-  ),
-});
-
 export const mapSettingsSnapshot = (
   value: RawSettingsSnapshot | undefined
 ): Settings => ({
@@ -272,7 +209,7 @@ export const mapSettingsSnapshot = (
   providers: {
     claude: mapClaudeSettings(value?.providers?.claude),
     codex: mapCodexSettings(value?.providers?.codex),
-    gemini: mapGeminiSettings(value?.providers?.gemini),
+    gemini: mapGeminiSettings(value?.providers?.gemini, mapAutoUpdateSettings),
   },
 });
 
@@ -325,20 +262,6 @@ const areCodexSettingsEqual = (
   areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
   left.defaultModel === right.defaultModel &&
   areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel);
-
-const areGeminiThinkingLevelByModelEqual = (
-  left: GeminiThinkingByModel,
-  right: GeminiThinkingByModel
-): boolean => {
-  const leftEntries = Object.entries(left);
-  if (leftEntries.length !== Object.keys(right).length) {
-    return false;
-  }
-
-  return leftEntries.every(
-    ([modelId, level]) => right[modelId] === level
-  );
-};
 
 const areGeminiSettingsEqual = (
   left: GeminiSettings,
