@@ -12,6 +12,6 @@
 4. [DONE] Git Commit: feat(core): pass settings path to gemini provider for dynamic model loading
 
 ## Stream 3: Verification
-1. [TODO] Запустить сборку и гейты качества.
-2. [TODO] Собрать новый релиз 1.1.342.
-3. [TODO] Git Commit: chore: release v1.1.342 - fix gemini model selection
+1. [DONE] Запустить сборку и гейты качества.
+2. [DONE] Собрать новый релиз 1.1.342.
+3. [DONE] Git Commit: chore: release v1.1.342 - fix gemini model selection
