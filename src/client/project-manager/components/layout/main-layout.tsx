@@ -62,6 +62,7 @@ export const MainLayout: React.FC = () => {
         selectedProjectId={selectedId}
       />
       <MainArea
+        activeProject={activeProject}
         activeProjectName={activeProject?.name}
         onSizeChange={updateSize}
         sizes={sizes}
