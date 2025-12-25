@@ -8,10 +8,10 @@ export type CoreConfig = {
   readonly shutdownGracePeriodMs: number;
   readonly idleTtlMinutes: number | null;
   readonly managedMode: string | null;
-  readonly claudeWorkspacePath: string;
+  readonly claudeWorkspacePath?: string;
   readonly claudeProjectSlug: string;
   readonly claudeSettingsPath: string;
-  readonly codexWorkspacePath: string;
+  readonly codexWorkspacePath?: string;
   readonly codexSandboxMode?:
     | "read-only"
     | "workspace-write"
@@ -24,7 +24,7 @@ export type CoreConfig = {
   readonly codexSkipGitRepoCheck: boolean;
   readonly codexDefaultModel?: string;
   readonly codexDefaultReasoningEffort?: CodexReasoningEffort;
-  readonly geminiWorkspacePath: string;
+  readonly geminiWorkspacePath?: string;
   readonly geminiDefaultModel?: string;
   readonly geminiThinkingLevelByModel: Record<string, string>;
   readonly geminiSettingsPath: string;
@@ -260,11 +260,10 @@ export const loadConfig = (): CoreConfig => {
       ? null
       : Math.round(shutdownGracePeriodMs / MILLISECONDS_IN_MINUTE);
   const managedMode = process.env.CORE_MANAGED_MODE ?? null;
-  const workspacePath =
-    process.env.CLAUDE_WORKSPACE_PATH ?? path.resolve(process.cwd());
+  const workspacePath = process.env.CLAUDE_WORKSPACE_PATH;
   const slug =
     process.env.CLAUDE_PROJECT_SLUG ??
-    sanitizeSlug(workspacePath.replace(/[^a-zA-Z0-9]/g, "-"));
+    (workspacePath ? sanitizeSlug(workspacePath) : "default-workspace");
   const codexWorkspacePath = process.env.CODEX_WORKSPACE_PATH ?? workspacePath;
   const claudeSettingsPath =
     process.env.CLAUDE_SETTINGS_PATH ??

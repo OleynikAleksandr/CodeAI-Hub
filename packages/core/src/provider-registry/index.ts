@@ -479,7 +479,8 @@ export class ProviderRegistry {
       resolveGeminiModulePath(),
       this.options.logger
     );
-    this.geminiWorkspacePath = this.options.config.geminiWorkspacePath;
+    this.geminiWorkspacePath =
+      this.options.config.geminiWorkspacePath ?? process.cwd();
     this.geminiDefaultModel = this.options.config.geminiDefaultModel;
     this.geminiThinkingLevelByModel =
       this.options.config.geminiThinkingLevelByModel;
@@ -700,7 +701,7 @@ export class ProviderRegistry {
     return new this.claudeAdapterCtor({
       installerPaths: CLAUDE_INSTALLER_PATHS,
       workspace: {
-        workspacePath: this.options.config.claudeWorkspacePath,
+        workspacePath: this.options.config.claudeWorkspacePath ?? process.cwd(),
         claudeProjectSlug: this.options.config.claudeProjectSlug,
         settingsPath: this.options.config.claudeSettingsPath,
         defaultModel: this.options.config.claudeDefaultModel,
@@ -722,7 +723,7 @@ export class ProviderRegistry {
     return new this.codexAdapterCtor({
       installerPaths: CODEX_INSTALLER_PATHS,
       workspace: {
-        workspacePath: codexWorkspacePath,
+        workspacePath: codexWorkspacePath ?? process.cwd(),
         defaultSandboxMode: codexSandboxMode,
         defaultApprovalMode: codexApprovalMode,
         defaultModel: codexDefaultModel,
