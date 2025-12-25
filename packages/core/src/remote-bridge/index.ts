@@ -7,6 +7,10 @@ import { WebSocket, WebSocketServer } from "ws";
 import type { CoreConfig } from "../config";
 import type { FileDropService } from "../file-drop/file-drop-service";
 import type { ProviderRegistry } from "../provider-registry";
+import type {
+  ProjectRegistry,
+  WorkspaceProject,
+} from "../services/project-registry";
 import type { Session, SessionManager } from "../session-manager";
 import type {
   RuntimeStatusEvent,
@@ -45,6 +49,10 @@ type BridgeEvent =
   | {
       readonly type: "core:loading-status";
       readonly payload: RuntimeStatusEvent;
+    }
+  | {
+      readonly type: "projects:update";
+      readonly payload: { readonly projects: readonly WorkspaceProject[] };
     };
 
 type SerializedSession = {
@@ -96,6 +104,17 @@ type IncomingMessage =
       readonly payload: {
         readonly sessionId: string;
       };
+    }
+  | {
+      readonly type: "projects:list";
+    }
+  | {
+      readonly type: "projects:add";
+      readonly payload: { readonly path: string; readonly name?: string };
+    }
+  | {
+      readonly type: "projects:remove";
+      readonly payload: { readonly id: string };
     };
 
 type ProviderSessionBinding = {
@@ -139,6 +158,8 @@ export class RemoteBridge {
 
   private readonly providerRegistry: ProviderRegistry;
 
+  private readonly projectRegistry: ProjectRegistry;
+
   private readonly logger: Logger;
 
   private readonly version: string;
@@ -171,6 +192,7 @@ export class RemoteBridge {
     readonly config: CoreConfig;
     readonly sessionManager: SessionManager;
     readonly providerRegistry: ProviderRegistry;
+    readonly projectRegistry: ProjectRegistry;
     readonly logger: Logger;
     readonly version: string;
     readonly hooks?: RemoteBridgeHooks;
@@ -181,6 +203,7 @@ export class RemoteBridge {
     this.config = options.config;
     this.sessionManager = options.sessionManager;
     this.providerRegistry = options.providerRegistry;
+    this.projectRegistry = options.projectRegistry;
     this.logger = options.logger;
     this.version = options.version;
     this.hooks = options.hooks ?? {};
@@ -498,6 +521,15 @@ export class RemoteBridge {
         break;
       case "session:delete":
         await this.handleSessionDelete(incoming.payload.sessionId);
+        break;
+      case "projects:list":
+        this.handleProjectsList();
+        break;
+      case "projects:add":
+        this.handleProjectsAdd(incoming.payload.path, incoming.payload.name);
+        break;
+      case "projects:remove":
+        this.handleProjectsRemove(incoming.payload.id);
         break;
       default:
         this.logger.warn("Unsupported message", { clientId, incoming });
@@ -859,5 +891,23 @@ export class RemoteBridge {
     }
     const candidate = payload as { readonly sessionId?: unknown };
     return typeof candidate.sessionId === "string" ? candidate.sessionId : null;
+  }
+
+  private handleProjectsList(): void {
+    const projects = this.projectRegistry.listWorkspaces();
+    this.broadcast({
+      type: "projects:update",
+      payload: { projects },
+    });
+  }
+
+  private handleProjectsAdd(path: string, name?: string): void {
+    this.projectRegistry.addWorkspace(path, name);
+    this.handleProjectsList();
+  }
+
+  private handleProjectsRemove(id: string): void {
+    this.projectRegistry.removeWorkspace(id);
+    this.handleProjectsList();
   }
 }
