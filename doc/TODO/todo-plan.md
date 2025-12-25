@@ -19,8 +19,8 @@
 ### Stream 3: Workspace Actions & Details
 1. [DONE] Добавить кнопки "Session" и "Task" для каждого элемента в списке воркспейсов.
 2. [DONE] Git Commit: `feat(ui): add session and task buttons to workspace list`
-3. [TODO] Реализовать логику кнопки "Add Workspace" (вызов API добавления).
-4. [TODO] Git Commit: `feat(ui): implement add workspace functionality`
+3. [DONE] Реализовать логику кнопки "Add Workspace" (вызов API добавления).
+4. [DONE] Git Commit: `feat(ui): implement add workspace functionality`
 5. [TODO] Реализовать базовое отображение деталей выбранного проекта в Секциях 4-6.
 6. [TODO] Git Commit: `feat(ui): display workspace details in main panels`
 

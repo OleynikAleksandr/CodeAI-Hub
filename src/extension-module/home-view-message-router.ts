@@ -62,6 +62,19 @@ export class HomeViewMessageRouter {
       return;
     }
 
+    if (
+      typeof message === "object" &&
+      message !== null &&
+      "type" in message &&
+      message.type === "projects:pickFolder"
+    ) {
+      this.handlePickFolder(webview).catch((error) => {
+        const reason = error instanceof Error ? error.message : String(error);
+        window.showErrorMessage(`Failed to pick folder: ${reason}`);
+      });
+      return;
+    }
+
     if (isCommandMessage(message)) {
       const context: CommandContext = {
         providerRegistry: this.providerRegistry,
@@ -121,6 +134,23 @@ export class HomeViewMessageRouter {
     message: WebviewMessage
   ): message is SettingsMessage {
     return this.settingsHandler.canHandle(message);
+  }
+
+  private async handlePickFolder(webview: Webview): Promise<void> {
+    const folders = await window.showOpenDialog({
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false,
+      openLabel: "Select Workspace Folder",
+    });
+
+    if (folders && folders.length > 0) {
+      const path = folders[0].fsPath;
+      webview.postMessage({
+        type: "projects:folderPicked",
+        payload: { path },
+      });
+    }
   }
 }
 

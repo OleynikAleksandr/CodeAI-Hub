@@ -27,6 +27,9 @@ type ProjectUpdatePayload = {
 
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const vscode = typeof (window as any).acquireVsCodeApi === "function" ? (window as any).acquireVsCodeApi() : null;
+
 export class ProjectManagerApi {
   private socket: WebSocket | null = null;
   private readonly listeners = new Set<ProjectListener>();
@@ -40,6 +43,13 @@ export class ProjectManagerApi {
       wsUrl: "ws://127.0.0.1:8080",
       httpUrl: "http://127.0.0.1:8080",
     };
+
+    window.addEventListener("message", (event) => {
+      const message = event.data;
+      if (message.type === "projects:folderPicked" && message.payload?.path) {
+        this.addProject(message.payload.path);
+      }
+    });
   }
 
   connect(): void {
@@ -71,6 +81,17 @@ export class ProjectManagerApi {
     } catch (error) {
       console.error("[ProjectManagerApi] Connection failed", error);
       this.scheduleReconnect();
+    }
+  }
+
+  pickFolder(): void {
+    if (vscode) {
+      vscode.postMessage({ type: "projects:pickFolder" });
+    } else {
+      const path = window.prompt("Enter absolute path to workspace:");
+      if (path?.trim()) {
+        this.addProject(path.trim());
+      }
     }
   }
 
