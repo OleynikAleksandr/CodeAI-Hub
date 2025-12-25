@@ -52,7 +52,7 @@ export type Provider = {
 
 type ProviderAdapter = {
   initialize(): Promise<void>;
-  createSession(): Promise<string>;
+  createSession(workspacePath?: string): Promise<string>;
   closeSession(sessionId: string): Promise<void>;
   sendMessage(sessionId: string, content: string): Promise<void>;
   subscribe(

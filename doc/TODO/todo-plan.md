@@ -21,12 +21,12 @@
 
 ### Stream 2: Session Context Refactoring
 1. [DONE] Обновить интерфейс `Session` и класс `UnifiedSession`: добавить `workspacePath` в конструктор и свойства.
-2. [TODO] Git Commit: `refactor(session): add workspacePath to session context`
-3. [TODO] Обновить `CoreOrchestrator`: извлекать путь из запроса `createSession` или брать из Registry.
-4. [TODO] Git Commit: `feat(core): support dynamic workspace path in session creation`
+2. [DONE] Git Commit: `refactor(session): add workspacePath to session context`
+3. [DONE] Обновить `CoreOrchestrator`: извлекать путь из запроса `createSession` или брать из Registry.
+4. [DONE] Git Commit: `feat(core): support dynamic workspace path in session creation`
 
 ### Stream 3: Tool Context Refactoring
-1. [TODO] Рефакторинг `FileOperations`: использовать `session.workspacePath` вместо глобального конфига.
+1. [DONE] Рефакторинг `FileOperations`: использовать `session.workspacePath` вместо глобального конфига.
 2. [TODO] Git Commit: `refactor(tools): file operations use session workspace`
 3. [TODO] Рефакторинг `SearchOperations` (ripgrep/glob): использовать `session.workspacePath`.
 4. [TODO] Git Commit: `refactor(tools): search operations use session workspace`

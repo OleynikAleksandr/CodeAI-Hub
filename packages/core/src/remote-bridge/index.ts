@@ -522,7 +522,7 @@ export class RemoteBridge {
     }
     let providerSessionId: string | undefined;
     try {
-      providerSessionId = await adapter.createSession();
+      providerSessionId = await adapter.createSession(actualWorkspacePath);
     } catch (error) {
       this.handleProviderFailure(actualProviderId, error);
       return;

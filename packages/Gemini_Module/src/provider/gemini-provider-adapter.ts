@@ -33,7 +33,7 @@ export class GeminiProviderAdapter {
     });
   }
 
-  async createSession(): Promise<string> {
+  async createSession(workspacePath?: string): Promise<string> {
     const manager = this.requireSessionManager();
     const logger = new GeminiSessionLogger(this.options.reporter);
     const defaultModel = this.options.workspace.defaultModel;
@@ -42,7 +42,7 @@ export class GeminiProviderAdapter {
       : undefined;
 
     const { sessionId, session } = await manager.createSession({
-      workspacePath: this.options.workspace.workspacePath,
+      workspacePath: workspacePath ?? this.options.workspace.workspacePath,
       defaultModel,
       thinkingLevel,
       settingsPath: this.options.workspace.settingsPath,

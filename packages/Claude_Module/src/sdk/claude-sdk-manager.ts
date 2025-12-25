@@ -77,10 +77,13 @@ export class ClaudeSDKManager {
     this.initialized = true;
   }
 
-  async createSession(): Promise<string> {
+  async createSession(workspacePath?: string): Promise<string> {
     await this.initialize();
+    const actualWorkspacePath =
+      workspacePath ?? this.deps.workspace.workspacePath;
     const filesBefore = this.deps.processor.getSDKFilesBefore();
     const { tempId, session } = this.deps.sessions.createSession(
+      actualWorkspacePath,
       new SDKSessionLoggerFacade()
     );
     const queryInstance = this.invokeQuery(session);
@@ -158,9 +161,9 @@ export class ClaudeSDKManager {
     const resolvedModel =
       defaultModelOverride ?? this.deps.workspace.defaultModel;
     const options = {
-      cwd: this.deps.workspace.workspacePath,
+      cwd: session.workspacePath,
       permissionMode: "bypassPermissions",
-      additionalDirectories: [this.deps.workspace.workspacePath],
+      additionalDirectories: [session.workspacePath],
       includePartialMessages: false,
       projectPath,
       settingSources: ["user", "project", "local"],
