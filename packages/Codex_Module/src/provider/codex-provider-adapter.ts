@@ -37,8 +37,8 @@ export class CodexProviderAdapter {
     await this.sdkManager.initialize();
   }
 
-  async createSession(): Promise<string> {
-    const sessionId = await this.sdkManager.createSession();
+  async createSession(workspacePath?: string): Promise<string> {
+    const sessionId = await this.sdkManager.createSession(workspacePath);
     const session = this.sdkManager.getSession(sessionId);
     if (session) {
       this.bindSessionEvents(session);

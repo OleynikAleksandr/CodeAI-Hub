@@ -112,11 +112,16 @@ export class CodexSDKManager {
     this.initialized = true;
   }
 
-  async createSession(): Promise<string> {
+  async createSession(workspacePath?: string): Promise<string> {
     await this.initialize();
+    const actualWorkspacePath =
+      workspacePath ?? this.deps.workspace.workspacePath;
     const logger = new CodexSessionLogger();
-    const { tempId, session } = this.deps.sessions.createSession(logger);
-    const thread = this.createThread();
+    const { tempId, session } = this.deps.sessions.createSession(
+      actualWorkspacePath,
+      logger
+    );
+    const thread = this.createThread(session);
     session.thread = thread;
     this.deps.processor.initializeSession(session, thread);
     return tempId;
@@ -139,20 +144,20 @@ export class CodexSDKManager {
     this.deps.processor.enqueueMessage(sessionId, content, undefined, options);
   }
 
-  private createThread(): Thread {
+  private createThread(session: ActiveSession): Thread {
     if (!this.codexInstance) {
       throw new Error("Codex SDK not initialized");
     }
-    const options = this.resolveThreadOptions();
+    const options = this.resolveThreadOptions(session);
     return this.codexInstance.startThread(options);
   }
 
-  private resolveThreadOptions(): CodexThreadOptions {
+  private resolveThreadOptions(session: ActiveSession): CodexThreadOptions {
     return {
       model: this.workspaceDefaults.defaultModel,
       modelReasoningEffort: this.workspaceDefaults.defaultReasoningEffort,
       sandboxMode: this.workspaceDefaults.defaultSandboxMode,
-      workingDirectory: this.workspaceDefaults.workspacePath,
+      workingDirectory: session.workspacePath,
       skipGitRepoCheck: this.workspaceDefaults.skipGitRepoCheck,
     };
   }

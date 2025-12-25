@@ -18,12 +18,16 @@ export class CodexSessionManager {
     this.lifecycle = options?.lifecycle ?? new CodexSessionLifecycle();
   }
 
-  createSession(logger: SessionLogger | null = null): SessionCreationResult {
+  createSession(
+    workspacePath: string,
+    logger: SessionLogger | null = null
+  ): SessionCreationResult {
     const controller = this.lifecycle.createMessageController();
     const eventEmitter = this.lifecycle.createEventEmitter();
     const tempId = this.lifecycle.generateTemporaryId();
     const session: ActiveSession = {
       sessionId: tempId,
+      workspacePath,
       createdAt: Date.now(),
       eventEmitter,
       messageController: controller,

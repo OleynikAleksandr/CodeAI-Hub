@@ -15,6 +15,7 @@ export type SessionLogger = {
 
 export type ActiveSession = {
   sessionId: string;
+  readonly workspacePath: string;
   readonly createdAt: number;
   readonly eventEmitter: EventEmitter;
   readonly messageController: MessageController;
