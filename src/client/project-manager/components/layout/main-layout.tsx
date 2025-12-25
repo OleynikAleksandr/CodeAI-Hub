@@ -1,25 +1,11 @@
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "../../api";
 import { usePanelSizes } from "../../hooks/use-panel-sizes";
 import { useSidebarState } from "../../hooks/use-sidebar-state";
+import type { WorkspaceProject } from "../../types";
 import { MainArea } from "./main-area";
 import { Sidebar } from "./sidebar";
-import type { WorkspaceProject } from "../../types";
-
-const MOCK_PROJECTS: WorkspaceProject[] = [
-  {
-    id: "1",
-    name: "CodeAI-Hub",
-    path: "/Users/user/VSCODE/CodeAI-Hub",
-    lastUsed: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    name: "Project-with-very-long-name-to-expand-the-sidebar",
-    path: "/Users/user/VSCODE/Long-Project",
-    lastUsed: new Date().toISOString(),
-  },
-];
 
 /**
  * Main layout component (Grid container for Section 1 + Section 2)
@@ -27,17 +13,34 @@ const MOCK_PROJECTS: WorkspaceProject[] = [
 export const MainLayout: React.FC = () => {
   const { collapsed, toggle } = useSidebarState();
   const { sizes, updateSize } = usePanelSizes();
-  const [selectedId, setSelectedId] = useState<string>("1");
+  const [projects, setProjects] = useState<readonly WorkspaceProject[]>([]);
+  const [selectedId, setSelectedId] = useState<string | undefined>();
+
+  useEffect(() => {
+    const unsubscribe = api.onProjectsUpdate((updatedProjects) => {
+      setProjects(updatedProjects);
+      if (updatedProjects.length > 0 && !selectedId) {
+        setSelectedId(updatedProjects[0].id);
+      }
+    });
+
+    api.connect();
+
+    return () => {
+      unsubscribe();
+    };
+  }, [selectedId]);
 
   const layoutClass = collapsed
     ? "pm-layout pm-layout--collapsed"
     : "pm-layout pm-layout--expanded";
 
   const handleAddProject = () => {
+    // Future: Use VS Code API to pick a folder, then call api.addProject(path)
     console.log("Add Project clicked");
   };
 
-  const activeProject = MOCK_PROJECTS.find((p) => p.id === selectedId);
+  const activeProject = projects.find((p) => p.id === selectedId);
 
   return (
     <div className={layoutClass}>
@@ -46,7 +49,7 @@ export const MainLayout: React.FC = () => {
         onAddProject={handleAddProject}
         onSelectProject={setSelectedId}
         onToggle={toggle}
-        projects={MOCK_PROJECTS}
+        projects={[...projects]}
         selectedProjectId={selectedId}
       />
       <MainArea
