@@ -13,8 +13,8 @@
 
 ### Stream 1: Project Registry Service
 1. [DONE] Создать `ProjectRegistryService` в `packages/core/src/services/project-registry/` (DTO, Storage, Service).
-2. [TODO] Git Commit: `feat(core): implement ProjectRegistryService`
-3. [TODO] Обновить `CoreConfig` в `packages/core/src/config/index.ts`, сделав `*_WORKSPACE_PATH` опциональными.
+2. [DONE] Git Commit: `feat(core): implement ProjectRegistryService`
+3. [DONE] Обновить `CoreConfig` в `packages/core/src/config/index.ts`, сделав `*_WORKSPACE_PATH` опциональными.
 4. [TODO] Git Commit: `refactor(core): make workspace paths optional in config`
 5. [TODO] Интегрировать `ProjectRegistryService` в `CoreProcessManager` (регистрация дефолтного пути при старте).
 6. [TODO] Git Commit: `feat(core): register default workspace on startup`
