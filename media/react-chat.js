@@ -8096,6 +8096,7 @@
       id: sessionId,
       title: session.title,
       providerIds: [providerId],
+      workspacePath: session.workspacePath ?? "",
       createdAt: toNumberTimestamp(session.createdAt),
       binding: normalizeBinding(bindingCandidate)
     };

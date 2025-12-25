@@ -3,6 +3,7 @@ import { window } from "vscode";
 import { ProviderRegistry } from "../core/providers/provider-registry";
 import { SessionLauncher } from "../core/session/session-launcher";
 import type { CoreProcessManager } from "./core/core-process-manager";
+import { resolveWorkspacePath } from "./core/core-workspace";
 import { FileOperationsFacade } from "./file-operations/file-operations-facade";
 import { handleCommand } from "./home-view-message-router/command-handler";
 import { validateLayoutPayload } from "./home-view-message-router/layout-utils";
@@ -42,7 +43,9 @@ export class HomeViewMessageRouter {
 
   constructor(extensionPath: string, coreProcessManager?: CoreProcessManager) {
     this.providerRegistry = new ProviderRegistry();
-    this.sessionLauncher = new SessionLauncher();
+    this.sessionLauncher = new SessionLauncher({
+      workspacePathResolver: resolveWorkspacePath,
+    });
     this.settingsHandler = new SettingsMessageHandler(extensionPath);
     this.fileOperations = new FileOperationsFacade();
     this.coreProcessManager = coreProcessManager;
