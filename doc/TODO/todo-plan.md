@@ -1,58 +1,33 @@
 # План разработки (Development TODO Plan)
 
-## Правила выполнения (Execution Rules):
-- **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое колличество - Stream (стрим), в каждом Стриме - некоторое кол-во подзадач.
-- Каждая подзадача должна затрагивать не более 3 файлов.
-- **Gates**: после выполнения каждой подзадачи прогоняется Гейт Качества - `scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npm run check:links`, затем таргетная сборка.
-- **Commit**: После зеленых гейтов — Git Commit и апдейт `todo-plan.md`.
-- **Real-time Документация**: Обновляем `doc/Architecture/` и `doc/Project_Docs/` синхронно с кодом.
-
----
-
-## Phase 1 — Multi-Workspace Core Foundation (owner: Gemini, updated: 2025-12-25)
-
-### Stream 1: Project Registry Service
-1. [DONE] Создать `ProjectRegistryService` в `packages/core/src/services/project-registry/` (DTO, Storage, Service).
-2. [DONE] Git Commit: `feat(core): implement ProjectRegistryService`
-3. [DONE] Обновить `CoreConfig` в `packages/core/src/config/index.ts`, сделав `*_WORKSPACE_PATH` опциональными.
-4. [DONE] Git Commit: `refactor(core): make workspace paths optional in config`
-5. [DONE] Интегрировать `ProjectRegistryService` в `CoreProcessManager` (регистрация дефолтного пути при старте).
-6. [DONE] Git Commit: `feat(core): register default workspace on startup`
-
-### Stream 2: Session Context Refactoring
-1. [DONE] Обновить интерфейс `Session` и класс `UnifiedSession`: добавить `workspacePath` в конструктор и свойства.
-2. [DONE] Git Commit: `refactor(session): add workspacePath to session context`
-3. [DONE] Обновить `CoreOrchestrator`: извлекать путь из запроса `createSession` или брать из Registry.
-4. [DONE] Git Commit: `feat(core): support dynamic workspace path in session creation`
-
-### Stream 3: Tool Context Refactoring
-1. [DONE] Рефакторинг `FileOperations`: использовать `session.workspacePath` вместо глобального конфига.
-2. [DONE] Git Commit: `refactor(tools): file operations use session workspace`
-3. [DONE] Рефакторинг `SearchOperations` (ripgrep/glob): использовать `session.workspacePath`.
-4. [DONE] Git Commit: `refactor(tools): search operations use session workspace`
-5. [DONE] Исправить `Launcher` и `VSCode Extension`: передавать корректный путь при инициализации.
-6. [DONE] Git Commit: `fix(launcher): pass workspace path explicitly`
+## Phase 1 — Multi-Workspace Core Foundation (owner: Gemini, updated: 2025-12-25) [DONE]
 
 ---
 
 ## Phase 2 — Project Manager UI & API (owner: Gemini, updated: 2025-12-25)
 
-### Stream 1: Project Manager Layout & Sidebar
+### Stream 1: Project Manager Layout & Sidebar [DONE]
 1. [DONE] Реализовать 7-секционный Layout с поддержкой Section 7 (Status Bar).
-2. [DONE] Git Commit: `feat(ui): implement 7-section layout for project manager`
-3. [DONE] Реализовать динамический Sidebar (Section 1) с подстройкой ширины под имена воркспейсов.
-4. [DONE] Git Commit: `feat(ui): dynamic width sidebar based on content`
-5. [DONE] Реализовать Header (Section 3) с иконкой настроек в стиле VS Code (справа от названия).
-6. [DONE] Git Commit: `feat(ui): vs-code style header with gear icon`
+2. [DONE] Реализовать динамический Sidebar (Section 1).
+3. [DONE] Реализовать Header (Section 3) в стиле VS Code.
 
-### Stream 2: Project Manager API Integration
+### Stream 2: Project Manager API Integration [DONE]
 1. [DONE] Реализовать обработчики RPC `projects:list` и `projects:add` в `RemoteBridge` (Core).
-2. [DONE] Git Commit: `feat(core): implement projects RPC API`
-3. [DONE] Создать клиентский сервис API в UI Project Manager (`src/client/project-manager/api.ts`).
-4. [TODO] Git Commit: `feat(ui): add project manager api client`
-5. [TODO] Интегрировать API в `MainLayout` (заменить моки на реальные вызовы).
-6. [TODO] Git Commit: `feat(ui): integrate project list with core api`
+2. [DONE] Создать клиентский сервис API в UI Project Manager (`api.ts`).
+3. [DONE] Интегрировать API в `MainLayout`.
 
-### Stream 3: Tech Debt & Refactoring
+### Stream 3: Workspace Actions & Details
+1. [DONE] Добавить кнопки "Session" и "Task" для каждого элемента в списке воркспейсов.
+2. [DONE] Git Commit: `feat(ui): add session and task buttons to workspace list`
+3. [TODO] Реализовать логику кнопки "Add Workspace" (вызов API добавления).
+4. [TODO] Git Commit: `feat(ui): implement add workspace functionality`
+5. [TODO] Реализовать базовое отображение деталей выбранного проекта в Секциях 4-6.
+6. [TODO] Git Commit: `feat(ui): display workspace details in main panels`
+
+---
+
+## Phase 3 — Tech Debt & Refactoring (owner: Gemini, updated: 2025-12-25)
+
+### Stream 1: RemoteBridge Decomposition
 1. [TODO] Рефакторинг `RemoteBridge`: разбить монолитный класс на `Router` и `Handlers` (Session, Project, System).
 2. [TODO] Git Commit: `refactor(core): split RemoteBridge into handlers`
