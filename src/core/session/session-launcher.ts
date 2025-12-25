@@ -1,4 +1,3 @@
-import { resolveWorkspacePath } from "../../extension-module/core/core-workspace";
 import type { ProviderStackId } from "../../types/provider";
 import { getDefaultProviderTitle } from "../../types/provider";
 import type { SessionRecord } from "../../types/session";
@@ -23,6 +22,17 @@ export type SessionLaunchResult =
  * will allocate tabs, orchestrate provider combos, and persist selections.
  */
 export class SessionLauncher {
+  private readonly workspacePathResolver: () => string;
+
+  constructor(options?: { readonly workspacePathResolver?: () => string }) {
+<<<<<<< Updated upstream
+    this.workspacePathResolver = options?.workspacePathResolver ?? (() => "");
+=======
+    this.workspacePathResolver =
+      options?.workspacePathResolver ?? (() => "");
+>>>>>>> Stashed changes
+  }
+
   launch(request: SessionLaunchRequest): SessionLaunchResult {
     const uniqueProviders = [...new Set(request.providerIds)];
 
@@ -52,7 +62,7 @@ export class SessionLauncher {
     const now = Date.now();
     const id = `session-${now}-${this.sequence}`;
     const title = `Session ${this.sequence}`;
-    const workspacePath = resolveWorkspacePath();
+    const workspacePath = this.workspacePathResolver();
     this.sequence += 1;
 
     return {

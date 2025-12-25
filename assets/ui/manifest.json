@@ -3,10 +3,10 @@
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "bundles": {
     "vscode-webview": {
-      "version": "1.1.352",
-      "package": "vscode-webview-1.1.352.tar.bz2",
-      "size": 143571,
-      "sha1": "f2d24bca8c35d445adf1c9f147345937266402ce"
+      "version": "1.1.353",
+      "package": "vscode-webview-1.1.353.tar.bz2",
+      "size": 143472,
+      "sha1": "e1db2fc41cde59936a1498bddba8af80a7ec78ce"
     },
     "web-client": {
       "version": "1.1.352",
