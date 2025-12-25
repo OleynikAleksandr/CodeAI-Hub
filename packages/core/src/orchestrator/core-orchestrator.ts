@@ -5,6 +5,7 @@ import { type CoreConfig, loadConfig } from "../config";
 import { FileDropService } from "../file-drop/file-drop-service";
 import { ProviderRegistry } from "../provider-registry";
 import { type CoreTtlState, RemoteBridge } from "../remote-bridge";
+import { ProjectRegistry } from "../services/project-registry/project-registry";
 import { SessionManager } from "../session-manager";
 import { RuntimeStatusReporter } from "../status/runtime-status-reporter";
 import { Logger } from "../telemetry/logger";
@@ -22,6 +23,8 @@ export class CoreOrchestrator {
   private readonly sessionManager: SessionManager;
 
   private readonly providerRegistry: ProviderRegistry;
+
+  private readonly projectRegistry: ProjectRegistry;
 
   private readonly remoteBridge: RemoteBridge;
 
@@ -46,6 +49,7 @@ export class CoreOrchestrator {
     this.logger = new Logger();
     this.sessionManager = new SessionManager();
     this.statusReporter = new RuntimeStatusReporter();
+    this.projectRegistry = new ProjectRegistry();
     this.providerRegistry = new ProviderRegistry({
       config: this.config,
       logger: this.logger,
@@ -82,6 +86,18 @@ export class CoreOrchestrator {
       scope: "core",
       label: "Initializing the CodeAI Hub core...",
     });
+
+    if (this.config.claudeWorkspacePath) {
+      const project = this.projectRegistry.addWorkspace(
+        this.config.claudeWorkspacePath
+      );
+      this.projectRegistry.markLastUsed(project.id);
+      this.logger.info("Auto-registered workspace from environment", {
+        path: project.path,
+        id: project.id,
+      });
+    }
+
     await this.runStartupSelfTest();
     await this.remoteBridge.start();
     await this.providerRegistry.initialize();
