@@ -32,24 +32,34 @@
 }
 
 .pm-layout--expanded {
-  --pm-sidebar-width: var(--pm-sidebar-width-expanded);
+  --pm-sidebar-width: min-content;
 }
 
 /* ========== Sidebar (Section 1) ========== */
 .pm-sidebar {
   display: flex;
   flex-direction: column;
+  min-width: var(--pm-sidebar-width);
+  max-width: 300px;
   background-color: var(--pm-bg-secondary);
   border-right: 1px solid var(--pm-border-color);
-  transition: width var(--pm-transition-duration) ease;
+  transition: min-width var(--pm-transition-duration) ease;
   overflow: hidden;
+}
+
+.pm-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 8px;
+  border-bottom: 1px solid var(--pm-border-color);
 }
 
 .pm-sidebar__toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: 40px;
   height: 40px;
   padding: 8px;
   background: transparent;
@@ -63,10 +73,61 @@
   color: var(--pm-icon-hover);
 }
 
+.pm-sidebar__add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--pm-icon-color);
+  font-size: 18px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.pm-sidebar__add:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--pm-icon-hover);
+}
+
 .pm-sidebar__content {
   flex: 1;
-  padding: 8px;
   overflow-y: auto;
+}
+
+.pm-sidebar__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pm-sidebar__item {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.1s ease;
+  white-space: nowrap;
+}
+
+.pm-sidebar__item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.pm-sidebar__item--active {
+  background-color: rgba(0, 122, 204, 0.3);
+  border-left: 2px solid #007acc;
+  padding-left: 10px;
+}
+
+.pm-sidebar__item-name {
+  font-size: 13px;
+  color: var(--pm-text-primary);
 }
 
 /* ========== Main Area (Section 2) ========== */
@@ -142,6 +203,26 @@
   flex: 1;
   padding: 12px;
   overflow-y: auto;
+}
+
+/* ========== Status Bar (Section 7) ========== */
+.pm-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--pm-status-bar-height);
+  min-height: var(--pm-status-bar-height);
+  padding: 0 12px;
+  background-color: #007acc;
+  color: #ffffff;
+  font-size: 11px;
+}
+
+.pm-status-bar__left,
+.pm-status-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 /* ========== Vertical Resizer ========== */
