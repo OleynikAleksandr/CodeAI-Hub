@@ -31,4 +31,4 @@
 ### Stream 1: RemoteBridge Decomposition
 1. [DONE] Рефакторинг `RemoteBridge`: вынести логику проектов и системных роутов в отдельные хендлеры.
 2. [DONE] Git Commit: `refactor(core): extract ProjectRequestHandler and SystemRequestHandler from RemoteBridge`
-3. [TODO] Рефакторинг `RemoteBridge`: вынести логику сессий в `SessionRequestHandler`.
+3. [DONE] Рефакторинг `RemoteBridge`: вынести логику сессий в `SessionRequestHandler`.
