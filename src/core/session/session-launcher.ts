@@ -25,12 +25,8 @@ export class SessionLauncher {
   private readonly workspacePathResolver: () => string;
 
   constructor(options?: { readonly workspacePathResolver?: () => string }) {
-<<<<<<< Updated upstream
-    this.workspacePathResolver = options?.workspacePathResolver ?? (() => "");
-=======
     this.workspacePathResolver =
       options?.workspacePathResolver ?? (() => "");
->>>>>>> Stashed changes
   }
 
   launch(request: SessionLaunchRequest): SessionLaunchResult {
