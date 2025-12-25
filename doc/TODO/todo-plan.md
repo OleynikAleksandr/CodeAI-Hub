@@ -47,8 +47,8 @@
 
 ### Stream 2: Project Manager API Integration
 1. [DONE] Реализовать обработчики RPC `projects:list` и `projects:add` в `RemoteBridge` (Core).
-2. [TODO] Git Commit: `feat(core): implement projects RPC API`
-3. [TODO] Создать клиентский сервис API в UI Project Manager (`src/client/project-manager/api.ts`).
+2. [DONE] Git Commit: `feat(core): implement projects RPC API`
+3. [DONE] Создать клиентский сервис API в UI Project Manager (`src/client/project-manager/api.ts`).
 4. [TODO] Git Commit: `feat(ui): add project manager api client`
 5. [TODO] Интегрировать API в `MainLayout` (заменить моки на реальные вызовы).
 6. [TODO] Git Commit: `feat(ui): integrate project list with core api`
