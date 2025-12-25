@@ -27,18 +27,18 @@
 
 ### Stream 3: Tool Context Refactoring
 1. [DONE] Рефакторинг `FileOperations`: использовать `session.workspacePath` вместо глобального конфига.
-2. [TODO] Git Commit: `refactor(tools): file operations use session workspace`
-3. [TODO] Рефакторинг `SearchOperations` (ripgrep/glob): использовать `session.workspacePath`.
-4. [TODO] Git Commit: `refactor(tools): search operations use session workspace`
-5. [TODO] Исправить `Launcher` и `VSCode Extension`: передавать корректный путь при инициализации.
-6. [TODO] Git Commit: `fix(launcher): pass workspace path explicitly`
+2. [DONE] Git Commit: `refactor(tools): file operations use session workspace`
+3. [DONE] Рефакторинг `SearchOperations` (ripgrep/glob): использовать `session.workspacePath`.
+4. [DONE] Git Commit: `refactor(tools): search operations use session workspace`
+5. [DONE] Исправить `Launcher` и `VSCode Extension`: передавать корректный путь при инициализации.
+6. [DONE] Git Commit: `fix(launcher): pass workspace path explicitly`
 
 ---
 
 ## Phase 2 — Project Manager UI & API (owner: Gemini, updated: 2025-12-25)
 
 ### Stream 1: Project Manager Layout & Sidebar
-1. [TODO] Реализовать 7-секционный Layout с поддержкой Section 7 (Status Bar).
+1. [DONE] Реализовать 7-секционный Layout с поддержкой Section 7 (Status Bar).
 2. [TODO] Git Commit: `feat(ui): implement 7-section layout for project manager`
 3. [TODO] Реализовать динамический Sidebar (Section 1) с подстройкой ширины под имена воркспейсов.
 4. [TODO] Git Commit: `feat(ui): dynamic width sidebar based on content`
