@@ -1,4 +1,4 @@
-## [1.1.353] - 2025-12-25
+## [1.1.355] - 2025-12-25
 
 ### Added
 - **Multi-Workspace Architecture**: The Core now supports parallel sessions in different workspace folders.
