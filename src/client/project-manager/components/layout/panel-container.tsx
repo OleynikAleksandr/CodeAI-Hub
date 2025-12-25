@@ -1,10 +1,12 @@
 import type React from "react";
 import { useCallback, useRef } from "react";
+import type { WorkspaceProject } from "../../types";
 import { VerticalResizer } from "../resizer/vertical-resizer";
 
 interface PanelContainerProps {
   sizes: [number, number, number];
   onSizeChange: (index: 0 | 1, delta: number, containerWidth: number) => void;
+  activeProject?: WorkspaceProject;
 }
 
 /**
@@ -14,6 +16,7 @@ interface PanelContainerProps {
 export const PanelContainer: React.FC<PanelContainerProps> = ({
   sizes,
   onSizeChange,
+  activeProject,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -27,26 +30,52 @@ export const PanelContainer: React.FC<PanelContainerProps> = ({
 
   return (
     <div className="pm-panel-container" ref={containerRef}>
-      {/* Panel 4 (Section 4) */}
+      {/* Panel 4 (Overview) */}
       <div className="pm-panel" style={{ width: `${sizes[0]}%` }}>
-        <div className="pm-panel__header">Section 4</div>
-        <div className="pm-panel__content">{/* Future: Panel 4 content */}</div>
+        <div className="pm-panel__header">Overview</div>
+        <div className="pm-panel__content">
+          {activeProject ? (
+            <div className="pm-details">
+              <h2 className="pm-details__title">{activeProject.name}</h2>
+              <p className="pm-details__path">{activeProject.path}</p>
+            </div>
+          ) : (
+            <div className="pm-placeholder">Select a workspace to see details</div>
+          )}
+        </div>
       </div>
 
       <VerticalResizer index={0} onResize={handleResize} />
 
-      {/* Panel 5 (Section 5) */}
+      {/* Panel 5 (Details) */}
       <div className="pm-panel" style={{ width: `${sizes[1]}%` }}>
-        <div className="pm-panel__header">Section 5</div>
-        <div className="pm-panel__content">{/* Future: Panel 5 content */}</div>
+        <div className="pm-panel__header">Details</div>
+        <div className="pm-panel__content">
+          {activeProject && (
+            <div className="pm-details-list">
+              <div className="pm-details-item">
+                <span className="pm-details-item__label">Last Used:</span>
+                <span className="pm-details-item__value">
+                  {new Date(activeProject.lastUsed).toLocaleString()}
+                </span>
+              </div>
+              <div className="pm-details-item">
+                <span className="pm-details-item__label">Project ID:</span>
+                <span className="pm-details-item__value">{activeProject.id}</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <VerticalResizer index={1} onResize={handleResize} />
 
-      {/* Panel 6 (Section 6) */}
+      {/* Panel 6 (Stats) */}
       <div className="pm-panel" style={{ width: `${sizes[2]}%` }}>
-        <div className="pm-panel__header">Section 6</div>
-        <div className="pm-panel__content">{/* Future: Panel 6 content */}</div>
+        <div className="pm-panel__header">Sessions</div>
+        <div className="pm-panel__content">
+          <div className="pm-placeholder">No active sessions for this workspace</div>
+        </div>
       </div>
     </div>
   );
