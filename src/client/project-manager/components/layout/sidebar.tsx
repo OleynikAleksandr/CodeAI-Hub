@@ -9,6 +9,8 @@ interface SidebarProps {
   projects?: WorkspaceProject[];
   onAddProject?: () => void;
   onSelectProject?: (id: string) => void;
+  onOpenSession?: (id: string) => void;
+  onStartTask?: (id: string) => void;
   selectedProjectId?: string;
 }
 
@@ -22,6 +24,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   projects = [],
   onAddProject,
   onSelectProject,
+  onOpenSession,
+  onStartTask,
   selectedProjectId,
 }) => (
   <aside className="pm-sidebar">
@@ -60,6 +64,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
               title={project.path}
             >
               <span className="pm-sidebar__item-name">{project.name}</span>
+              <div className="pm-sidebar__item-actions">
+                <button
+                  className="pm-sidebar__action-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenSession?.(project.id);
+                  }}
+                  title="Open Session"
+                  type="button"
+                >
+                  S
+                </button>
+                <button
+                  className="pm-sidebar__action-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onStartTask?.(project.id);
+                  }}
+                  title="Start Task"
+                  type="button"
+                >
+                  T
+                </button>
+              </div>
             </li>
           ))}
         </ul>

@@ -108,15 +108,50 @@
 .pm-sidebar__item {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 6px 12px;
   cursor: pointer;
   user-select: none;
   transition: background-color 0.1s ease;
   white-space: nowrap;
+  gap: 12px;
 }
 
 .pm-sidebar__item:hover {
   background-color: rgba(255, 255, 255, 0.05);
+}
+
+.pm-sidebar__item-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.pm-sidebar__item:hover .pm-sidebar__item-actions {
+  opacity: 1;
+}
+
+.pm-sidebar__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 3px;
+  color: var(--pm-text-primary);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.pm-sidebar__action-btn:hover {
+  background-color: #007acc;
+  color: #ffffff;
 }
 
 .pm-sidebar__item--active {

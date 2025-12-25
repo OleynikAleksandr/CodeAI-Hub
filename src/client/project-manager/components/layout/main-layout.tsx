@@ -40,6 +40,14 @@ export const MainLayout: React.FC = () => {
     console.log("Add Project clicked");
   };
 
+  const handleOpenSession = (id: string) => {
+    console.log("Open Session for project:", id);
+  };
+
+  const handleStartTask = (id: string) => {
+    console.log("Start Task for project:", id);
+  };
+
   const activeProject = projects.find((p) => p.id === selectedId);
 
   return (
@@ -47,7 +55,9 @@ export const MainLayout: React.FC = () => {
       <Sidebar
         collapsed={collapsed}
         onAddProject={handleAddProject}
+        onOpenSession={handleOpenSession}
         onSelectProject={setSelectedId}
+        onStartTask={handleStartTask}
         onToggle={toggle}
         projects={[...projects]}
         selectedProjectId={selectedId}
