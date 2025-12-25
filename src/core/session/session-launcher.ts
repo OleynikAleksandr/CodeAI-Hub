@@ -1,3 +1,4 @@
+import { resolveWorkspacePath } from "../../extension-module/core/core-workspace";
 import type { ProviderStackId } from "../../types/provider";
 import { getDefaultProviderTitle } from "../../types/provider";
 import type { SessionRecord } from "../../types/session";
@@ -51,11 +52,13 @@ export class SessionLauncher {
     const now = Date.now();
     const id = `session-${now}-${this.sequence}`;
     const title = `Session ${this.sequence}`;
+    const workspacePath = resolveWorkspacePath();
     this.sequence += 1;
 
     return {
       id,
       providerIds,
+      workspacePath,
       createdAt: now,
       title,
       binding: {

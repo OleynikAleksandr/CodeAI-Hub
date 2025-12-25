@@ -32,6 +32,7 @@ export type ServerSessionMessage = {
 export type ServerSession = {
   readonly id?: string;
   readonly providerId?: ProviderStackId | string;
+  readonly workspacePath?: string;
   readonly title?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;

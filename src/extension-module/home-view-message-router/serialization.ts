@@ -15,6 +15,7 @@ export const serializeSession = (session: SessionRecord): SessionRecord => ({
   id: session.id,
   title: session.title,
   providerIds: [...session.providerIds],
+  workspacePath: session.workspacePath,
   createdAt: session.createdAt,
   binding: {
     providerSessionId: session.binding.providerSessionId,

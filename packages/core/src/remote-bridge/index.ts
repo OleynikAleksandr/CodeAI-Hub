@@ -50,6 +50,7 @@ type BridgeEvent =
 type SerializedSession = {
   readonly id: string;
   readonly providerId: string;
+  readonly workspacePath: string;
   readonly title: string;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -78,7 +79,10 @@ type RemoteBridgeHooks = {
 type IncomingMessage =
   | {
       readonly type: "session:create";
-      readonly payload: { readonly providerId?: string };
+      readonly payload: {
+        readonly providerId?: string;
+        readonly workspacePath?: string;
+      };
     }
   | {
       readonly type: "session:message";
@@ -448,6 +452,7 @@ export class RemoteBridge {
     return {
       id: session.id,
       providerId: session.providerId,
+      workspacePath: session.workspacePath,
       title: session.title,
       createdAt: session.createdAt,
       updatedAt: session.updatedAt,
@@ -480,7 +485,10 @@ export class RemoteBridge {
 
     switch (incoming.type) {
       case "session:create":
-        await this.handleSessionCreate(incoming.payload?.providerId);
+        await this.handleSessionCreate(
+          incoming.payload?.providerId,
+          incoming.payload?.workspacePath
+        );
         break;
       case "session:message":
         await this.handleSessionMessage(
@@ -497,8 +505,13 @@ export class RemoteBridge {
     }
   }
 
-  private async handleSessionCreate(providerId?: string): Promise<void> {
+  private async handleSessionCreate(
+    providerId?: string,
+    workspacePath?: string
+  ): Promise<void> {
     const actualProviderId = providerId ?? this.getDefaultProviderId();
+    const actualWorkspacePath =
+      workspacePath ?? this.config.claudeWorkspacePath ?? process.cwd();
     const adapter = this.providerRegistry.getAdapter(actualProviderId);
     if (!adapter) {
       this.broadcast({
@@ -520,6 +533,7 @@ export class RemoteBridge {
       actualProviderId === "geminiCli";
     const session = this.sessionManager.createSession(
       actualProviderId,
+      actualWorkspacePath,
       supportsImmediateBinding ? providerSessionId : undefined
     );
     this.sessionStorage.register(session);

@@ -13,6 +13,7 @@ export type SessionMessage = {
 export type Session = {
   readonly id: string;
   readonly providerId: string;
+  readonly workspacePath: string;
   readonly title: string;
   readonly createdAt: string;
   updatedAt: string;
@@ -34,12 +35,17 @@ export class SessionManager {
     return this.sessions.get(sessionId);
   }
 
-  createSession(providerId: string, providerSessionId?: string): Session {
+  createSession(
+    providerId: string,
+    workspacePath: string,
+    providerSessionId?: string
+  ): Session {
     const id = randomUUID();
     const now = new Date().toISOString();
     const session: Session = {
       id,
       providerId,
+      workspacePath,
       title: `Mock session ${id.slice(0, SESSION_TITLE_PREFIX_LENGTH)}`,
       createdAt: now,
       updatedAt: now,
