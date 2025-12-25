@@ -1,3 +1,16 @@
+## [1.1.353] - 2025-12-25
+
+### Added
+- **Multi-Workspace Architecture**: The Core now supports parallel sessions in different workspace folders.
+- **Project Manager UI**: A new 7-section layout for managing projects, sessions, and tasks.
+- **Project Registry**: Automatic persistence of known projects in `~/.codeai-hub/state/projects.json`.
+- **Dynamic Workspace Selection**: Added folder picker integration between Project Manager UI and VS Code host.
+
+### Changed
+- **Core Decoupling**: Workspace paths are no longer required at startup; they are now session-owned.
+- **RemoteBridge Refactoring**: Completely decomposed the monolithic bridge into specialized micro-handlers (all files < 300 lines).
+- **UI Enhancements**: Implemented dynamic sidebar width and VS Code-style header.
+
 ## [1.1.352] - 2025-12-24
 ### Changed
 - **Gemini 2.5 Flash Constraints**: Removed the "Thinking: Off" option from the UI for `gemini-2.5-flash` and `gemini-2.5-flash-lite`, as these are inherently thinking models and do not support disabling the thinking process via the API. Users must select at least "Low" thinking level.
