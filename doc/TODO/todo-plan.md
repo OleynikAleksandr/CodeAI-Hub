@@ -39,8 +39,20 @@
 
 ### Stream 1: Project Manager Layout & Sidebar
 1. [DONE] Реализовать 7-секционный Layout с поддержкой Section 7 (Status Bar).
-2. [TODO] Git Commit: `feat(ui): implement 7-section layout for project manager`
+2. [DONE] Git Commit: `feat(ui): implement 7-section layout for project manager`
 3. [DONE] Реализовать динамический Sidebar (Section 1) с подстройкой ширины под имена воркспейсов.
-4. [TODO] Git Commit: `feat(ui): dynamic width sidebar based on content`
+4. [DONE] Git Commit: `feat(ui): dynamic width sidebar based on content`
 5. [DONE] Реализовать Header (Section 3) с иконкой настроек в стиле VS Code (справа от названия).
-6. [TODO] Git Commit: `feat(ui): vs-code style header with gear icon`
+6. [DONE] Git Commit: `feat(ui): vs-code style header with gear icon`
+
+### Stream 2: Project Manager API Integration
+1. [DONE] Реализовать обработчики RPC `projects:list` и `projects:add` в `RemoteBridge` (Core).
+2. [TODO] Git Commit: `feat(core): implement projects RPC API`
+3. [TODO] Создать клиентский сервис API в UI Project Manager (`src/client/project-manager/api.ts`).
+4. [TODO] Git Commit: `feat(ui): add project manager api client`
+5. [TODO] Интегрировать API в `MainLayout` (заменить моки на реальные вызовы).
+6. [TODO] Git Commit: `feat(ui): integrate project list with core api`
+
+### Stream 3: Tech Debt & Refactoring
+1. [TODO] Рефакторинг `RemoteBridge`: разбить монолитный класс на `Router` и `Handlers` (Session, Project, System).
+2. [TODO] Git Commit: `refactor(core): split RemoteBridge into handlers`

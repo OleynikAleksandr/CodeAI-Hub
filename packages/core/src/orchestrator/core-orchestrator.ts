@@ -64,6 +64,7 @@ export class CoreOrchestrator {
     this.remoteBridge = new RemoteBridge({
       config: this.config,
       providerRegistry: this.providerRegistry,
+      projectRegistry: this.projectRegistry,
       sessionManager: this.sessionManager,
       logger: this.logger,
       version: pkg.version,
