@@ -37,6 +37,8 @@ export const MainLayout: React.FC = () => {
     console.log("Add Project clicked");
   };
 
+  const activeProject = MOCK_PROJECTS.find((p) => p.id === selectedId);
+
   return (
     <div className={layoutClass}>
       <Sidebar
@@ -47,7 +49,11 @@ export const MainLayout: React.FC = () => {
         projects={MOCK_PROJECTS}
         selectedProjectId={selectedId}
       />
-      <MainArea onSizeChange={updateSize} sizes={sizes} />
+      <MainArea
+        activeProjectName={activeProject?.name}
+        onSizeChange={updateSize}
+        sizes={sizes}
+      />
     </div>
   );
 };

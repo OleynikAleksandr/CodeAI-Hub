@@ -42,5 +42,5 @@
 2. [TODO] Git Commit: `feat(ui): implement 7-section layout for project manager`
 3. [DONE] Реализовать динамический Sidebar (Section 1) с подстройкой ширины под имена воркспейсов.
 4. [TODO] Git Commit: `feat(ui): dynamic width sidebar based on content`
-5. [TODO] Реализовать Header (Section 3) с иконкой настроек в стиле VS Code (справа от названия).
+5. [DONE] Реализовать Header (Section 3) с иконкой настроек в стиле VS Code (справа от названия).
 6. [TODO] Git Commit: `feat(ui): vs-code style header with gear icon`
