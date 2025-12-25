@@ -36,8 +36,7 @@ export const MainLayout: React.FC = () => {
     : "pm-layout pm-layout--expanded";
 
   const handleAddProject = () => {
-    // Future: Use VS Code API to pick a folder, then call api.addProject(path)
-    console.log("Add Project clicked");
+    api.pickFolder();
   };
 
   const handleOpenSession = (id: string) => {
