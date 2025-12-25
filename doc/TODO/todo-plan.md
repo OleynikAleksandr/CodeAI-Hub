@@ -29,5 +29,6 @@
 ## Phase 3 — Tech Debt & Refactoring (owner: Gemini, updated: 2025-12-25)
 
 ### Stream 1: RemoteBridge Decomposition
-1. [TODO] Рефакторинг `RemoteBridge`: разбить монолитный класс на `Router` и `Handlers` (Session, Project, System).
-2. [TODO] Git Commit: `refactor(core): split RemoteBridge into handlers`
+1. [DONE] Рефакторинг `RemoteBridge`: вынести логику проектов и системных роутов в отдельные хендлеры.
+2. [DONE] Git Commit: `refactor(core): extract ProjectRequestHandler and SystemRequestHandler from RemoteBridge`
+3. [TODO] Рефакторинг `RemoteBridge`: вынести логику сессий в `SessionRequestHandler`.

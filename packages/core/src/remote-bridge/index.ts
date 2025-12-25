@@ -7,10 +7,8 @@ import { WebSocket, WebSocketServer } from "ws";
 import type { CoreConfig } from "../config";
 import type { FileDropService } from "../file-drop/file-drop-service";
 import type { ProviderRegistry } from "../provider-registry";
-import type {
-  ProjectRegistry,
-  WorkspaceProject,
-} from "../services/project-registry";
+import type { ProjectRegistry } from "../services/project-registry/project-registry";
+import type { WorkspaceProject } from "../services/project-registry/types";
 import type { Session, SessionManager } from "../session-manager";
 import type {
   RuntimeStatusEvent,
@@ -18,6 +16,8 @@ import type {
 } from "../status/runtime-status-reporter";
 import type { Logger } from "../telemetry/logger";
 import { UnifiedSessionStorage } from "../unified-session/storage";
+import { ProjectRequestHandler } from "./handlers/project-request-handler";
+import { SystemRequestHandler } from "./handlers/system-request-handler";
 
 type ClientSocket = {
   readonly id: string;
@@ -148,8 +148,6 @@ const isSessionIdChangedPayload = (
 const HTTP_NO_CONTENT = 204;
 const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_FOUND = 404;
-const HTTP_ACCEPTED = 202;
-const MILLISECONDS_IN_SECOND = 1000;
 
 export class RemoteBridge {
   private readonly config: CoreConfig;
@@ -159,6 +157,10 @@ export class RemoteBridge {
   private readonly providerRegistry: ProviderRegistry;
 
   private readonly projectRegistry: ProjectRegistry;
+
+  private readonly projectHandler: ProjectRequestHandler;
+
+  private readonly systemHandler: SystemRequestHandler;
 
   private readonly logger: Logger;
 
@@ -210,6 +212,16 @@ export class RemoteBridge {
     this.statusReporter = options.statusReporter;
     this.getTtlState = options.getTtlState;
     this.fileDropService = options.fileDropService;
+    this.projectHandler = new ProjectRequestHandler(
+      this.projectRegistry,
+      (event) => this.broadcast(event)
+    );
+    this.systemHandler = new SystemRequestHandler(
+      this.config,
+      this.version,
+      this.logger,
+      () => this.hooks.onShutdownRequested?.()
+    );
     this.sessionStorage = new UnifiedSessionStorage({
       workspaceSlug: this.config.claudeProjectSlug,
       logger: this.logger,
@@ -308,56 +320,21 @@ export class RemoteBridge {
       return;
     }
 
-    this.app.get("/api/v1/health", (_req: Request, res: Response) => {
-      res.json({
-        status: "ok",
-        version: this.version,
-        uptime: process.uptime(),
-        clients: this.getActiveClientCount(),
-        managedMode: this.config.managedMode,
-        pid: process.pid,
+    this.app.get("/api/v1/health", (req: Request, res: Response) => {
+      this.systemHandler.handleHealth(req, res, this.getActiveClientCount());
+    });
+
+    this.app.get("/api/v1/status", (req: Request, res: Response) => {
+      this.systemHandler.handleStatus(req, res, {
+        clientCount: this.getActiveClientCount(),
+        ttlState: this.getTtlState?.(),
+        sessionData: this.serializeSessions(),
+        providerData: this.providerRegistry.listProviders(),
       });
     });
 
-    this.app.get("/api/v1/status", (_req: Request, res: Response) => {
-      const ttlState = this.getTtlState?.();
-
-      res.json({
-        core: {
-          version: this.version,
-          uptime: process.uptime(),
-          host: this.config.host,
-          port: this.config.port,
-          clients: this.getActiveClientCount(),
-          managedMode: this.config.managedMode,
-          pid: process.pid,
-          ttl:
-            ttlState == null
-              ? undefined
-              : {
-                  mode: ttlState.idleTtlMs === null ? "infinite" : "finite",
-                  idleTtlSeconds:
-                    ttlState.idleTtlMs === null
-                      ? null
-                      : Math.round(ttlState.idleTtlMs / MILLISECONDS_IN_SECOND),
-                  lastActivityAt: ttlState.lastActivityAt,
-                  idleSince: ttlState.idleSince,
-                  secondsUntilShutdown: ttlState.secondsUntilShutdown,
-                },
-        },
-        sessions: this.serializeSessions(),
-        providers: this.providerRegistry.listProviders(),
-      });
-    });
-
-    this.app.post("/api/v1/shutdown", (_req: Request, res: Response) => {
-      this.logger.info("Shutdown request received via API");
-      res
-        .status(HTTP_ACCEPTED)
-        .json({ status: "shutting-down", pid: process.pid });
-      setImmediate(() => {
-        this.hooks.onShutdownRequested?.();
-      });
+    this.app.post("/api/v1/shutdown", (req: Request, res: Response) => {
+      this.systemHandler.handleShutdown(req, res);
     });
 
     this.app.get(
@@ -894,20 +871,14 @@ export class RemoteBridge {
   }
 
   private handleProjectsList(): void {
-    const projects = this.projectRegistry.listWorkspaces();
-    this.broadcast({
-      type: "projects:update",
-      payload: { projects },
-    });
+    this.projectHandler.handleList();
   }
 
   private handleProjectsAdd(path: string, name?: string): void {
-    this.projectRegistry.addWorkspace(path, name);
-    this.handleProjectsList();
+    this.projectHandler.handleAdd(path, name);
   }
 
   private handleProjectsRemove(id: string): void {
-    this.projectRegistry.removeWorkspace(id);
-    this.handleProjectsList();
+    this.projectHandler.handleRemove(id);
   }
 }
