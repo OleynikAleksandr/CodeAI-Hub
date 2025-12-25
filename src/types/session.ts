@@ -34,6 +34,7 @@ export type SessionRecord = {
   readonly id: string;
   readonly title: string;
   readonly providerIds: readonly ProviderStackId[];
+  readonly workspacePath: string;
   readonly createdAt: number;
   readonly binding: SessionBindingInfo;
 };
