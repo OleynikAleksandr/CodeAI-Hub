@@ -1,222 +1,101 @@
-# Архитектура Layout для Project Manager
+# Project Manager & Multi-Workspace Architecture
 
-**Версия:** 1.0.0
-**Дата:** 2025-11-28
-**Статус:** Черновик (Ожидает одобрения)
-**Автор:** Claude
-
----
-
-## 1. Постановка задачи
-
-Приложение Project Manager сейчас отображает пустое тёмное окно. Необходим функциональный layout с:
-- Сворачиваемым сайдбаром для навигации
-- Тулбаром с доступом к настройкам
-- Тремя панелями контента с изменяемыми размерами
+**Version:** 2.2.0
+**Date:** 2025-12-25
+**Status:** Approved for Implementation
+**Scope:** Core, Project Manager UI, Launcher
 
 ---
 
-## 2. Обзор решения
+## 1. Problem Statement
 
-Реализовать **6-секционный адаптивный layout** с использованием React компонентов и CSS Grid/Flexbox:
+Currently, the CodeAI Hub Core is tightly coupled to a single workspace path defined at process startup via environment variables (`CLAUDE_WORKSPACE_PATH`, etc.). This creates a "Singleton Workspace" architecture:
+- To switch projects, the entire Core process must be restarted.
+- Only one project can be active at a time.
+- The "Project Manager" UI currently has no backend API to list or switch projects.
+- The Launcher defaults to a hardcoded path if VS Code is not involved.
+
+## 2. Solution Overview
+
+We will transition to a **Multi-Tenant Session Architecture**:
+1.  **Core as a Service**: The Core starts *without* a specific workspace context.
+2.  **Session-Owned Context**: The `workspacePath` becomes a property of a `Session`, not the process.
+3.  **Global Registry**: A persistent JSON file (`projects.json`) stores the list of known workspaces.
+4.  **Project Manager UI**: Acts as the control center to manage this registry and spawn sessions in specific contexts.
+
+---
+
+## 3. Core Architecture Changes
+
+### 3.1 Global Project Registry
+A new service in Core responsible for persisting the list of workspaces.
+
+- **Storage**: `~/.codeai-hub/state/projects.json`
+- **Schema**:
+```json
+{
+  "workspaces": [
+    {
+      "id": "uuid-v4",
+      "name": "CodeAI-Hub",
+      "path": "/Users/user/VSCODE/CodeAI-Hub",
+      "lastUsed": "2025-12-25T10:00:00Z",
+      "icon": "default"
+    }
+  ],
+  "lastActiveWorkspaceId": "uuid-v4"
+}
+```
+
+---
+
+## 4. UI Architecture (Project Manager)
+
+### 4.1 Layout Structure (7-Section Model)
 
 ```
 ┌─────────┬──────────────────────────────────────────────┐
-│ Секция  │                  Секция 2                     │
+│ Section │                  Section 2 (Main)             │
 │    1    │ ┌────────────────────────────────────────────┐│
-│         │ │       Секция 3 (Toolbar)              ⚙️   ││
-│  ├←     │ ├──────────────┬──────────────┬──────────────┤│
-│  ├→     │ │   Секция 4   │   Секция 5   │   Секция 6   ││
-│         │ │              │              │              ││
-│         │ │              │              │              ││
-│         │ │              │              │              ││
-│ (120px/ │ │              │              │              ││
-│  40px)  │ │              │              │              ││
-│         │ └──────────────┴──────────────┴──────────────┘│
+│ (Sidebar│ │       Section 3 (Toolbar / Header)     ⚙️  ││
+│ List)   │ ├──────────────┬──────────────┬──────────────┤│
+│         │ │   Section 4  │   Section 5  │   Section 6  ││
+│  [+]    │ │              │              │              ││
+│  Add    │ │   Project    │   Details    │   Stats      ││
+│         │ │   Overview   │   or Logs    │              ││
+│  Proj A │ │              │              │              ││
+│  Proj B │ │              │              │              ││
+│         │ ├──────────────┴──────────────┴──────────────┤│
+│         │ │       Section 7 (Status Bar / Footer)      ││
+│         │ └────────────────────────────────────────────┘│
 └─────────┴──────────────────────────────────────────────┘
 ```
 
-### 2.1 Спецификации секций
+### 4.2 Section 1: Dynamic Sidebar (Workspace List)
+- **Dynamic Width**: The sidebar width must automatically adjust to fit the length of workspace names (with sensible min/max constraints and ellipsis for extreme cases).
+- **Add Workspace Button**: Fixed at the top/bottom of the list.
+- **Workspace List**: Rendered as a vertical list of project names.
 
-| Секция | Роль | Размеры | Особенности |
-|--------|------|---------|-------------|
-| **1 (Сайдбар)** | Навигация | Ш: 120px (развёрнут) / 40px (свёрнут), В: 100% | Кнопка переключения (иконка свернуть/развернуть) |
-| **2 (Основная)** | Контейнер | Ш: остаток, В: 100% | Содержит секции 3-6 |
-| **3 (Тулбар)** | Заголовок | Ш: 100%, В: 40px | Иконка Settings справа |
-| **4 (Левая панель)** | Контент | Ш: flex (изменяемый), В: остаток | Перетаскиваемая правая граница |
-| **5 (Центральная панель)** | Контент | Ш: flex (изменяемый), В: остаток | Перетаскиваемые границы |
-| **6 (Правая панель)** | Контент | Ш: flex (изменяемый), В: остаток | Перетаскиваемая левая граница |
-
-### 2.2 Взаимодействия
-
-1. **Переключение сайдбара**:
-   - Клик на иконку `├←` → сворачивание до 40px, иконка меняется на `├→`
-   - Клик на иконку `├→` → разворачивание до 120px, иконка меняется на `├←`
-   - Состояние сохраняется в localStorage
-
-2. **Изменение размеров панелей**:
-   - Перетаскивание вертикальных разделителей между секциями 4/5 и 5/6
-   - Минимальная ширина панели: 100px
-   - Пропорции сохраняются в localStorage
+### 4.3 Section 3: Header (VS Code Style)
+- **Title**: Displays the current view name (e.g., "Project Manager") or the active project name.
+- **Settings Icon**: A gear icon placed **immediately to the right of the title**, matching the VS Code interface style. Clicking it opens the Settings overlay/window.
 
 ---
 
-## 3. Архитектура компонентов
+## 5. Implementation Plan
 
-### 3.1 Структура файлов (микро-классовый подход)
+### Phase 1: Core Refactoring (The Foundation)
+1.  **Refactor Config**: Make workspace paths optional in `CoreConfig`.
+2.  **Refactor Session**: Inject `workspacePath` into Session state.
+3.  **Refactor Tools**: Update `FileOperations` to use session context.
+4.  **Implement Registry**: Create `ProjectRegistryService` and `projects.json`.
 
-```
-src/client/project-manager/
-├── index.tsx                    # Точка входа (существует)
-├── app.tsx                      # Корневой компонент (рефакторинг)
-├── components/
-│   ├── layout/
-│   │   ├── main-layout.tsx      # Grid-контейнер (Секция 1 + 2)
-│   │   ├── sidebar.tsx          # Секция 1 с переключателем
-│   │   ├── main-area.tsx        # Контейнер секции 2
-│   │   ├── toolbar.tsx          # Секция 3
-│   │   └── panel-container.tsx  # Секции 4-6 с ресайзерами
-│   ├── icons/
-│   │   ├── collapse-icon.tsx    # Иконка ├←
-│   │   ├── expand-icon.tsx      # Иконка ├→
-│   │   └── settings-icon.tsx    # Иконка ⚙️
-│   └── resizer/
-│       └── vertical-resizer.tsx # Перетаскиваемый разделитель
-├── hooks/
-│   ├── use-sidebar-state.ts     # Состояние свёрнут/развёрнут
-│   └── use-panel-sizes.ts       # Пропорции ширин панелей
-└── styles/
-    └── layout.css               # Стили для layout
-```
+### Phase 2: Project Manager API
+1.  Expose `projects/*` endpoints over TRPC/WebSocket.
+2.  Update `session.create` to handle dynamic paths.
 
-### 3.2 Контракты компонентов
-
-#### MainLayout
-```tsx
-interface MainLayoutProps {
-  children?: React.ReactNode;
-}
-// Рендерит: <Sidebar /> + <MainArea />
-```
-
-#### Sidebar
-```tsx
-interface SidebarProps {
-  collapsed: boolean;
-  onToggle: () => void;
-}
-// Ширина: collapsed ? 40px : 120px
-// Рендерит: Иконку переключения вверху
-```
-
-#### Toolbar
-```tsx
-interface ToolbarProps {
-  onSettingsClick?: () => void;
-}
-// Высота: 40px
-// Рендерит: Иконку Settings справа
-```
-
-#### PanelContainer
-```tsx
-interface PanelContainerProps {
-  panels: [ReactNode, ReactNode, ReactNode];
-  sizes: [number, number, number]; // проценты
-  onSizeChange: (sizes: [number, number, number]) => void;
-}
-// Рендерит: 3 панели с 2 ресайзерами
-```
-
-#### VerticalResizer
-```tsx
-interface VerticalResizerProps {
-  onDrag: (deltaX: number) => void;
-}
-// Ширина: 4px, курсор: col-resize
-```
-
----
-
-## 4. Стратегия стилизации
-
-### 4.1 CSS переменные (токены темы)
-```css
-:root {
-  --pm-sidebar-width-expanded: 120px;
-  --pm-sidebar-width-collapsed: 40px;
-  --pm-toolbar-height: 40px;
-  --pm-resizer-width: 4px;
-  --pm-panel-min-width: 100px;
-  --pm-bg-primary: #1e1e1e;
-  --pm-bg-secondary: #252526;
-  --pm-border-color: #3c3c3c;
-  --pm-text-primary: #cccccc;
-  --pm-icon-color: #858585;
-  --pm-icon-hover: #ffffff;
-}
-```
-
-### 4.2 CSS Layout (Grid + Flexbox)
-```css
-.pm-layout {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
-  height: 100vh;
-}
-
-.pm-main-area {
-  display: flex;
-  flex-direction: column;
-}
-
-.pm-panel-container {
-  display: flex;
-  flex: 1;
-}
-```
-
----
-
-## 5. Управление состоянием
-
-### 5.1 Локальное состояние (useState)
-- Состояние свёрнутости сайдбара
-- Пропорции размеров панелей
-
-### 5.2 Персистентность (localStorage)
-```typescript
-const STORAGE_KEYS = {
-  SIDEBAR_COLLAPSED: 'pm-sidebar-collapsed',
-  PANEL_SIZES: 'pm-panel-sizes'
-};
-```
-
----
-
-## 6. Ограничения реализации
-
-1. **Лимит размера файла**: Каждый файл ≤ 300 строк
-2. **Без внешних зависимостей**: Использовать только нативные React hooks, без дополнительных npm пакетов
-3. **Доступность**: Поддержка клавиатуры для ресайзеров (стрелки)
-4. **Производительность**: CSS transforms для превью ресайза, обновление состояния по mouseup
-
----
-
-## 7. Чек-лист тестирования
-
-- [ ] Сайдбар переключается между 120px и 40px
-- [ ] Состояние сайдбара сохраняется после перезагрузки
-- [ ] Тулбар отображает иконку Settings
-- [ ] Ресайзеры панелей работают при перетаскивании мышью
-- [ ] Минимальная ширина панели соблюдается (100px)
-- [ ] Размеры панелей сохраняются после перезагрузки
-- [ ] Layout работает при разных размерах окна
-
----
-
-## 8. Связанные документы
-
-- `doc/Project_Docs/Stacks/UI_Modules.md`
-- `doc/Project_Docs/SystemArchitecture/UI_Modularization_Architecture.md`
-- `doc/Architecture/Architecture.md`
+### Phase 3: Project Manager UI
+1.  Implement **Sidebar** (Section 1) with dynamic width logic.
+2.  Implement **Layout** with Header (Section 3), Panels (4-6), and Status Bar (Section 7).
+3.  Implement **VS Code Style Settings icon** next to the title.
+4.  Wire up "Open Session" button to trigger the new session API.
