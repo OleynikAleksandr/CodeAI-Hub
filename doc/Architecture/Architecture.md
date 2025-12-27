@@ -3,7 +3,7 @@
 **Version:** 0.5.9
 **Last Updated:** 2025-12-27
 **Status:** Active reference
-**Release Focus:** v1.1.359 — `reasoning_summary_ru` должен быть максимально близок к native reasoning по содержанию/объёму (без chain-of-thought); детали в `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
+**Release Focus:** v1.1.359 — `reasoning_summary_ru` должен быть максимально близок к native reasoning по содержанию/объёму (без chain-of-thought); детали в `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
 
 ---
 
@@ -117,7 +117,7 @@ graph TD
 - **Release 1.1.357**: артефакты VSIX/launcher/core/providers/UI обновлены под hotfix схемы.
 
 ## Recent Changes (v1.1.356 - 2025-12-27)
-- **Codex structured outputs**: native reasoning скрывается; `answer` стримится из JSON, RU thinking summary попадает в thinking-панель. Подробности: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
+- **Codex structured outputs**: native reasoning скрывается; `answer` стримится из JSON, RU thinking summary попадает в thinking-панель. Подробности: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
 - **Release 1.1.356**: обновлены артефакты VSIX/launcher/core/providers/UI и зафиксированы новые правила отображения thinking.
 
 ## Recent Changes (v1.1.340 - 2025-12-23)
@@ -213,7 +213,7 @@ graph TD
 
 ## Related Documents
 - `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-- `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`
+- `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`
 - `doc/Project_Docs/Stacks/CoreOrchestrator.md`
 - `doc/tmp/RemoteCoreBridge.md`
 - `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
