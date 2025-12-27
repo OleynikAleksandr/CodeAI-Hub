@@ -17,8 +17,8 @@
 2. [DONE] Git Commit: `docs: approve codex RU thinking summary contract` (hash: 163775c).
 
 ### Stream 2: Codex Module — Structured Output + streaming extractor
-1. [TODO] Добавить тип `outputSchema` в `CodexTurnOptions` (scope: `packages/Codex_Module/src/types/index.ts`) — target commit: `feat(codex): support outputSchema in turn options`.
-2. [TODO] Git Commit: `feat(codex): support outputSchema in turn options` (hash: TBD).
+1. [DONE] Добавить тип `outputSchema` в `CodexTurnOptions` (scope: `packages/Codex_Module/src/types/index.ts`) — target commit: `feat(codex): support outputSchema in turn options`.
+2. [DONE] Git Commit: `feat(codex): support outputSchema in turn options` (hash: 853252d).
 3. [TODO] Добавить потоковый извлекатель `answer` из JSON (микро-класс) (scope: `packages/Codex_Module/src/messaging/answer-json-stream-extractor.ts`) — target commit: `feat(codex): add streamed answer extractor for structured output`.
 4. [TODO] Git Commit: `feat(codex): add streamed answer extractor for structured output` (hash: TBD).
 5. [TODO] Интегрировать Structured Outputs в `CodexMessageProcessor` (scope: `packages/Codex_Module/src/messaging/message-processor.ts`) — target commit: `feat(codex): replace native reasoning with RU thinking summary`.
