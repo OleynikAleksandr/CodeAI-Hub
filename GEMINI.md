@@ -81,6 +81,7 @@ doc/TODO/Archive/
   ## Правила выполнения (Execution Rules):
   - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое колличество - Stream (стрим), в каждом Стриме - некоторое кол-во подзадач.
   - Каждая подзадача должна затрагивать не более 3 файлов.
+  - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
   - Если по факту разработки оказывается, что конкретная подзазача Stream затрагивает больше 3 файлов - такая задача должна быть разбита на более мелкие и список задач в Стриме переписывается.
   - **Gates**: после выполнения каждой подзадачи прогоняется Гейт Качества -
 `scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем выполняем таргетную сборку (`npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`).
@@ -94,10 +95,12 @@ doc/TODO/Archive/
 
   ## Phase <N> — <описание> (owner: <имя>, updated: YYYY-MM-DD)
   ### Stream: <Короткое название>
-  1. [STATUS] <задача 1 — указать затрагиваемые файлы и ожидаемый commit id и описание>
-  2. [STATUS] <задача 2>
+  1. [STATUS] <задача 1 — scope: ≤3 файлов/пакетов; ожидаемый commit message>
+  2. [STATUS] Git Commit: `<commit_message>` (hash: TBD)
+  3. [STATUS] <задача 2 — scope: ≤3 файлов/пакетов; ожидаемый commit message>
+  4. [STATUS] Git Commit: `<commit_message>` (hash: TBD)
   ```
-  Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`. Каждый пункт обязан иметь «scope» (файлы или пакеты) и целевой commit message. Микрозадачи обновляются сразу после коммита.
+  Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`. Каждый пункт обязан иметь «scope» (файлы или пакеты) и целевой commit message; для пунктов `Git Commit` фиксируется хеш. Микрозадачи обновляются сразу после коммита.
 
 ## 5. Цикл выполнения (Гейт Качества)
 Для каждой подзадачи Stream из `todo-plan.md`:
