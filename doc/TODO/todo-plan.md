@@ -89,7 +89,7 @@
 ## Phase 10 — Release 1.1.358 (owner: Codex, updated: 2025-12-27)
 
 ### Stream 1: Release notes
-1. [TODO] Обновить README/CHANGELOG для 1.1.358 и описать hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update README and changelog for 1.1.358`.
+1. [IN_PROGRESS] Обновить README/CHANGELOG для 1.1.358 и описать hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update README and changelog for 1.1.358`.
 2. [TODO] Git Commit: `docs: update README and changelog for 1.1.358` (hash: TBD).
 
 ### Stream 2: Architecture docs
