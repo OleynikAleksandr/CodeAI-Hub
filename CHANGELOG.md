@@ -1,3 +1,12 @@
+## [1.1.356] - 2025-12-27
+
+### Added
+- **Codex structured outputs**: native reasoning hidden in UI; RU thinking summary emitted via structured output schema.
+- **Streaming extractor**: assistant `answer` is streamed from JSON while `reasoning_summary_ru` is rendered in the Thinking panel.
+
+### Documentation
+- Updated README and architecture docs to reference Codex structured outputs and the RU thinking summary contract.
+
 ## [1.1.355] - 2025-12-25
 
 ### Added
