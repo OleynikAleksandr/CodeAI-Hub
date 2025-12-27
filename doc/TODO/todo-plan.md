@@ -76,6 +76,32 @@
 
 ---
 
+## Phase 9 — Codex prompt enforcement (owner: Codex, updated: 2025-12-27)
+
+### Stream 1: Structured output prompt
+1. [IN_PROGRESS] Добавить префикс инструкций structured output в Codex prompt (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/TODO/todo-plan.md`) — target commit: `fix(codex): enforce RU summary prompt`.
+2. [TODO] Git Commit: `fix(codex): enforce RU summary prompt` (hash: TBD).
+3. [TODO] Обновить документацию structured outputs про новый префикс (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: document codex summary prompt enforcement`.
+4. [TODO] Git Commit: `docs: document codex summary prompt enforcement` (hash: TBD).
+
+---
+
+## Phase 10 — Release 1.1.358 (owner: Codex, updated: 2025-12-27)
+
+### Stream 1: Release notes
+1. [TODO] Обновить README/CHANGELOG для 1.1.358 и описать hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update README and changelog for 1.1.358`.
+2. [TODO] Git Commit: `docs: update README and changelog for 1.1.358` (hash: TBD).
+
+### Stream 2: Architecture docs
+1. [TODO] Обновить архитектурные документы под релиз 1.1.358 (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update architecture for 1.1.358`.
+2. [TODO] Git Commit: `docs: update architecture for 1.1.358` (hash: TBD).
+
+### Stream 3: Release build
+1. [TODO] Собрать релиз `build-all.sh` + `build-release.sh --use-current-version` и зафиксировать артефакты (scope: release artifacts/manifests) — target commit: `chore: bump versions to 1.1.358 and build release`.
+2. [TODO] Git Commit: `chore: bump versions to 1.1.358 and build release` (hash: TBD).
+
+---
+
 ## Legacy / Deferred
 
 ## Phase 4 — Final Polish & Release (owner: Gemini, updated: 2025-12-25)

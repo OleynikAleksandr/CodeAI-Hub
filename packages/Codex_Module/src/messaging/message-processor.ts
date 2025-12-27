@@ -122,7 +122,10 @@ export class CodexMessageProcessor {
       const runOptions = session.internalTurn
         ? turnOptions
         : this.structuredOutput.applyOutputSchema(turnOptions);
-      const { events } = await thread.runStreamed(message.content, runOptions);
+      const prompt = session.internalTurn
+        ? message.content
+        : this.structuredOutput.applyPrompt(message.content);
+      const { events } = await thread.runStreamed(prompt, runOptions);
       await this.consumeEvents(session, events);
     } catch (error) {
       this.options?.reporter?.error?.("Codex turn execution failed", error);
