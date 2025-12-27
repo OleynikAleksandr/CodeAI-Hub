@@ -43,7 +43,9 @@ export type CodexThreadItem = ThreadItem;
 export type CodexThreadOptions = ThreadOptions & {
   readonly modelReasoningEffort?: CodexReasoningEffort;
 };
-export type CodexTurnOptions = TurnOptions;
+export type CodexTurnOptions = TurnOptions & {
+  readonly outputSchema?: unknown;
+};
 export type CodexSandboxMode = SandboxMode;
 export type CodexApprovalMode = ApprovalMode;
 
