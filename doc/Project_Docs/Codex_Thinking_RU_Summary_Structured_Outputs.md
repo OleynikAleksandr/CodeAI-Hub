@@ -119,6 +119,7 @@
 - `packages/Codex_Module/src/messaging/message-processor.ts`
   - перестать эмитить native reasoning (`item.type="reasoning"`).
   - включать `outputSchema` для пользовательских turn'ов.
+  - префиксовать prompt блоком инструкций structured output, чтобы `reasoning_summary_ru` был непустым (если это возможно).
   - добавить потоковый извлекатель `answer` + финальный парсер JSON.
   - эмитить placeholder thinking на старте turn.
 

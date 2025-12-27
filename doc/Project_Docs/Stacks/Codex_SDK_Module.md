@@ -222,6 +222,7 @@ Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source 
 - Maintain per-session outbound queue feeding `thread.runStreamed`.
 - Support structured inputs: convert attachments (files/images) to `--image` flags, attach JSON schema when UI requests structured output.
 - When structured output is enabled, stream `answer` from JSON, emit the thinking placeholder on `turn.started`, publish `reasoning_summary_ru` as the only thinking payload, and ignore native `reasoning` items.
+- Префиксовать пользовательский prompt инструкциями structured output, чтобы модель заполняла `reasoning_summary_ru` (пустая строка допустима только при невозможности).
 - Fan-out streamed events to session logger and listener registry; preserve chronological ordering as they arrive from SDK.
 
 ---
