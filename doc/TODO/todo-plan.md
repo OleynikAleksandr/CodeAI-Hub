@@ -30,8 +30,8 @@
    - RU summary появляется в thinking позже (если удалось распарсить), иначе thinking остаётся пустым.
 
 ### Stream 3: Smoke/UX проверка
-1. [TODO] Зафиксировать результаты smoke/UX проверки (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`) — target commit: `docs: document codex RU thinking summary verification`.
-2. [TODO] Git Commit: `docs: document codex RU thinking summary verification` (hash: TBD).
+1. [DONE] Зафиксировать результаты smoke/UX проверки (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`) — target commit: `docs: document codex RU thinking summary verification`.
+2. [DONE] Git Commit: `docs: document codex RU thinking summary verification` (hash: cfc9bd3).
 
 ---
 
