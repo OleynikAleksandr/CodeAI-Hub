@@ -13,8 +13,8 @@
 ## Phase 5 — Codex: RU Thinking Summary (Structured Outputs) (owner: Codex, updated: 2025-12-27)
 
 ### Stream 1: Доки и контракт
-1. [IN_PROGRESS] Зафиксировать апрув и план (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: approve codex RU thinking summary contract`.
-2. [TODO] Git Commit: `docs: approve codex RU thinking summary contract` (hash: TBD).
+1. [DONE] Зафиксировать апрув и план (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: approve codex RU thinking summary contract`.
+2. [DONE] Git Commit: `docs: approve codex RU thinking summary contract` (hash: 163775c).
 
 ### Stream 2: Codex Module — Structured Output + streaming extractor
 1. [TODO] Добавить тип `outputSchema` в `CodexTurnOptions` (scope: `packages/Codex_Module/src/types/index.ts`) — target commit: `feat(codex): support outputSchema in turn options`.
