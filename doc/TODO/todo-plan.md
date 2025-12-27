@@ -21,8 +21,8 @@
 2. [DONE] Git Commit: `feat(codex): support outputSchema in turn options` (hash: 853252d).
 3. [DONE] Добавить потоковый извлекатель `answer` из JSON (микро-класс) (scope: `packages/Codex_Module/src/messaging/answer-json-stream-extractor.ts`) — target commit: `feat(codex): add streamed answer extractor for structured output`.
 4. [DONE] Git Commit: `feat(codex): add streamed answer extractor for structured output` (hash: efe3404).
-5. [TODO] Интегрировать Structured Outputs в `CodexMessageProcessor` (scope: `packages/Codex_Module/src/messaging/message-processor.ts`) — target commit: `feat(codex): replace native reasoning with RU thinking summary`.
-6. [TODO] Git Commit: `feat(codex): replace native reasoning with RU thinking summary` (hash: TBD).
+5. [DONE] Интегрировать Structured Outputs в `CodexMessageProcessor` (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`) — target commit: `feat(codex): replace native reasoning with RU thinking summary`.
+6. [DONE] Git Commit: `feat(codex): replace native reasoning with RU thinking summary` (hash: 195c7bf).
    Acceptance:
    - native `item.type="reasoning"` не попадает в UI.
    - на `turn.started` появляется первая thinking-плашка (placeholder `<!-- -->`).
