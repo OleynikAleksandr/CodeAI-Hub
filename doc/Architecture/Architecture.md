@@ -3,7 +3,7 @@
 **Version:** 0.5.9
 **Last Updated:** 2025-12-27
 **Status:** Active reference
-**Release Focus:** v1.1.357 — Codex structured output schema требует `reasoning_summary_ru` (пустая строка допускается), чтобы исключить no-response; детали в `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
+**Release Focus:** v1.1.358 — в Codex prompt добавлен префикс structured output, чтобы `reasoning_summary_ru` был заполнен на русском; детали в `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
 
 ---
 
@@ -103,6 +103,10 @@ graph TD
 - **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`, `project-manager.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
+
+## Recent Changes (v1.1.358 - 2025-12-27)
+- **Codex summary prompt**: structured output инструкции префиксуются, чтобы получать непустой RU summary (пустая строка только при невозможности).
+- **Release 1.1.358**: артефакты VSIX/launcher/core/providers/UI обновлены под hotfix prompt.
 
 ## Recent Changes (v1.1.357 - 2025-12-27)
 - **Codex structured output schema**: `reasoning_summary_ru` обязателен (пустая строка разрешена), иначе CLI отклоняет схему и turn не возвращает ответ.
