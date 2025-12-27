@@ -1,20 +1,20 @@
 # Codex SDK Module
 
-**Updated:** 2025-12-22  
+**Updated:** 2025-12-27  
 **Owner:** Codex  
 **Source Reference:** `https://github.com/openai/codex/tree/main/sdk/typescript`
 
 ---
 
 ## 1. Purpose & Scope
-- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.331` inside CodeAI-Hub Core.
+- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.355` inside CodeAI-Hub Core.
 - Capture the CLI/SDK contract (events, items, options) that we must adapt for RemoteBridge and UI streaming.
 - List integration prerequisites (authentication, binaries, storage layout) required to bootstrap Codex alongside the Claude module.
 
 Key capabilities we must preserve when porting:
 1. Streaming JSONL event bridge on top of `codex exec --experimental-json`.
 2. Support for threaded conversations with resume semantics via `~/.codex/sessions`.
-3. Mixed text/image inputs and structured JSON outputs per turn.
+3. Mixed text/image inputs and structured JSON outputs per turn (answer + RU thinking summary).
 4. Sandbox controls (`read-only`, `workspace-write`, `danger-full-access`) and optional Git repository enforcement.
 5. Authentication via ChatGPT login or API key override (`CODEX_API_KEY`), with persistence under `~/.codex`.
 6. Graceful error propagation when CLI exits non-zero (surface `turn.failed`, `error` events, or exit messages).
@@ -68,6 +68,7 @@ CodeAI-Hub Core  →  Codex Provider Adapter  →  @openai/codex-sdk  →  codex
    - When CodeAI Hub has a saved per-model reasoning level, it passes `--config model_reasoning_effort=<level>` per turn (runtime override, no edits to `~/.codex/config.toml`).
 6. Inputs may be a simple prompt (`string`) or an array of `{ type: "text" | "local_image" }`. Text entries are concatenated; image paths are converted to repeated `--image` flags.
 7. Structured outputs require passing a JSON schema per turn; the SDK writes it to a temp file and cleans up afterward.
+8. The RU thinking summary contract for CodeAI Hub lives in `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
 
 Error handling:
 - CLI non-zero exit → SDK rejects with aggregated stderr (`Codex Exec exited with code ...`).
@@ -87,7 +88,7 @@ Error handling:
 
 Thread items exposed via `event.item`:
 - `agent_message`: assistant response (natural language or JSON string when structured output).
-- `reasoning`: high-level plan/summary.
+- `reasoning`: internal reasoning summary (suppressed in UI when structured outputs are enabled).
 - `command_execution`: shell command Invocations, with stdout/stderr aggregation and exit codes.
 - `file_change`: patch outcome; includes per-file operations and final status.
 - `mcp_tool_call`: invocation lifecycle for Model Context Protocol tools (server, tool, status).
@@ -163,6 +164,7 @@ Implications for CodeAI-Hub:
 ---
 
 ## 12. Reference Links
+- CodeAI Hub structured outputs contract: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`
 - Codex SDK overview: https://developers.openai.com/codex/sdk
 - TypeScript SDK docs: https://developers.openai.com/codex/sdk#typescript-library
 - GitHub repository: https://github.com/openai/codex
@@ -182,7 +184,7 @@ Implications for CodeAI-Hub:
 | Installer | `packages/Codex_Module/src/installer/*` | `codex-installer.ts` (binary acquisition + integrity checks), `npm-runner.ts` (fallback to global npm), `codex-paths.ts` (manifest-driven paths). |
 | Auth | `packages/Codex_Module/src/auth/*` | `sdk-auth-manager.ts` detects `auth.json`, prompts RemoteBridge for login guidance, exposes environment variables. |
 | Session management | `packages/Codex_Module/src/session/*` | Registry, lifecycle, controller types; mirrors Claude structures with Codex-specific resume hooks. |
-| Messaging | `packages/Codex_Module/src/messaging/*` | `message-processor.ts` pumps user prompts into `runStreamed`, normalizes `ThreadEvent` payloads, handles resume + sandbox flags. |
+| Messaging | `packages/Codex_Module/src/messaging/*` | `message-processor.ts` плюс `structured-output-stream-controller.ts`/`answer-json-stream-extractor.ts` стримят `answer` и публикуют RU thinking summary; native reasoning не транслируется в UI. |
 | Logging | `packages/Codex_Module/src/logging/*` | Session logger writing Codex JSONL transcripts under `~/.codeai-hub/logs/codex/`. |
 | CLI bridge | `packages/Codex_Module/src/cli/*` | Thin wrapper around `@openai/codex-sdk` (thread factory, stream subscriptions, structured output helpers). |
 | Types | `packages/Codex_Module/src/types/*` | Shared types (`CodexModuleOptions`, `CodexInstallerPaths`, normalized event/item shapes, reporter interface). |
@@ -219,6 +221,7 @@ Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source 
 **Message processor (`message-processor.ts`):**
 - Maintain per-session outbound queue feeding `thread.runStreamed`.
 - Support structured inputs: convert attachments (files/images) to `--image` flags, attach JSON schema when UI requests structured output.
+- When structured output is enabled, stream `answer` from JSON, emit the thinking placeholder on `turn.started`, publish `reasoning_summary_ru` as the only thinking payload, and ignore native `reasoning` items.
 - Fan-out streamed events to session logger and listener registry; preserve chronological ordering as they arrive from SDK.
 
 ---
