@@ -12,7 +12,7 @@ const CODEX_OUTPUT_SCHEMA = {
     reasoning_summary_ru: {
       type: "string",
       description:
-        "Brief Russian reasoning summary for the user. No chain-of-thought, code, or formulas. Empty string allowed.",
+        "Russian reasoning summary for the user, as close in content and length to native reasoning as possible without revealing chain-of-thought. No code or formulas. Empty string allowed.",
     },
   },
   required: ["answer", "reasoning_summary_ru"],
@@ -22,7 +22,8 @@ const STRUCTURED_OUTPUT_PROMPT = [
   "You must respond with a JSON object that matches the provided schema.",
   "Populate both fields:",
   "- answer: the user-facing answer.",
-  "- reasoning_summary_ru: 2-4 short bullet points in Russian summarizing key considerations or risks. No chain-of-thought, code, or formulas.",
+  "- reasoning_summary_ru: a Russian summary that is as close in content and length to the native reasoning summary as possible, without revealing chain-of-thought, code, or formulas.",
+  "Do not omit key considerations, do not add new facts, and keep the original structure if possible.",
   "Use an empty string only if you truly cannot provide a summary.",
   "Return only JSON, no extra text.",
   "",
