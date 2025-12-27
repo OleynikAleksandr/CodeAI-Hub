@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.356
-- **Codex thinking summary (structured outputs)**: native reasoning is hidden in UI; a controlled RU summary is streamed from `answer`/`reasoning_summary_ru` per `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
-- **Release 1.1.356**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` after the Codex structured output pipeline was integrated and documented.
+## Current Release — v1.1.357
+- **Codex structured outputs hotfix**: schema now requires `reasoning_summary_ru` (empty string allowed), preventing no-response turns.
+- **Release 1.1.357**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` after the Codex schema contract was hardened.
 - **Previous release (1.1.355)**: Multi-workspace Core foundation, Project Manager UI, and project registry integration.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.356.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.356.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.356.tar.bz2`
-  - Providers: `claude-module-1.1.356.tar.bz2`, `codex-module-1.1.356.tar.bz2`, `gemini-module-1.1.356.tar.bz2`
-  - UI: `vscode-webview-1.1.356.tar.bz2`, `web-client-1.1.356.tar.bz2`, `project-manager-1.1.356.tar.bz2`
+  - VSIX: `codeai-hub-1.1.357.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.357.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.357.tar.bz2`
+  - Providers: `claude-module-1.1.357.tar.bz2`, `codex-module-1.1.357.tar.bz2`, `gemini-module-1.1.357.tar.bz2`
+  - UI: `vscode-webview-1.1.357.tar.bz2`, `web-client-1.1.357.tar.bz2`, `project-manager-1.1.357.tar.bz2`
 
 
 ## Features

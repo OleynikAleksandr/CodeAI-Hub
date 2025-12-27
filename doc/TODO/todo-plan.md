@@ -60,6 +60,22 @@
 
 ---
 
+## Phase 8 — Release 1.1.357 (owner: Codex, updated: 2025-12-27)
+
+### Stream 1: Release notes
+1. [IN_PROGRESS] Обновить README/CHANGELOG для 1.1.357 и описать hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update README and changelog for 1.1.357`.
+2. [TODO] Git Commit: `docs: update README and changelog for 1.1.357` (hash: TBD).
+
+### Stream 2: Architecture docs
+1. [TODO] Обновить архитектурные документы под релиз 1.1.357 (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update architecture for 1.1.357`.
+2. [TODO] Git Commit: `docs: update architecture for 1.1.357` (hash: TBD).
+
+### Stream 3: Release build
+1. [TODO] Собрать релиз `build-all.sh` + `build-release.sh --use-current-version` и зафиксировать артефакты (scope: release artifacts/manifests) — target commit: `chore: bump versions to 1.1.357 and build release`.
+2. [TODO] Git Commit: `chore: bump versions to 1.1.357 and build release` (hash: TBD).
+
+---
+
 ## Legacy / Deferred
 
 ## Phase 4 — Final Polish & Release (owner: Gemini, updated: 2025-12-25)
