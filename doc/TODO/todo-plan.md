@@ -81,8 +81,8 @@
 ### Stream 1: Structured output prompt
 1. [DONE] Добавить префикс инструкций structured output в Codex prompt (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/TODO/todo-plan.md`) — target commit: `fix(codex): enforce RU summary prompt`.
 2. [DONE] Git Commit: `fix(codex): enforce RU summary prompt` (hash: e42e741).
-3. [IN_PROGRESS] Обновить документацию structured outputs про новый префикс (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: document codex summary prompt enforcement`.
-4. [TODO] Git Commit: `docs: document codex summary prompt enforcement` (hash: TBD).
+3. [DONE] Обновить документацию structured outputs про новый префикс (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: document codex summary prompt enforcement`.
+4. [DONE] Git Commit: `docs: document codex summary prompt enforcement` (hash: 803d2b4).
 
 ---
 
