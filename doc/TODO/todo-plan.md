@@ -47,8 +47,8 @@
 2. [DONE] Git Commit: `docs: update architecture for codex structured outputs` (hash: 0c2a150).
 
 ### Stream 3: Codex module doc
-1. [TODO] Обновить `Codex_SDK_Module.md` под structured outputs (scope: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update codex module docs for structured outputs`.
-2. [TODO] Git Commit: `docs: update codex module docs for structured outputs` (hash: TBD).
+1. [DONE] Обновить `Codex_SDK_Module.md` под structured outputs (scope: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update codex module docs for structured outputs`.
+2. [DONE] Git Commit: `docs: update codex module docs for structured outputs` (hash: fa9d0b4).
 
 ---
 
