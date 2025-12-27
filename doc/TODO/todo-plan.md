@@ -141,8 +141,8 @@
 ### Stream 3: Remaining docs
 1. [DONE] Обновить Codex SDK doc ссылкой на новый контракт (scope: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update codex stack link to summary contract`.
 2. [DONE] Git Commit: `docs: update codex stack link to summary contract` (hash: c714f66).
-3. [TODO] Обновить ссылки в Session018/Session019 (scope: `doc/Sessions/Session018.md`, `doc/Sessions/Session019.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: refresh session links to codex summary contract (1/2)`.
-4. [TODO] Git Commit: `docs: refresh session links to codex summary contract (1/2)` (hash: TBD).
+3. [DONE] Обновить ссылки в Session018/Session019 (scope: `doc/Sessions/Session018.md`, `doc/Sessions/Session019.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: refresh session links to codex summary contract (1/2)`.
+4. [DONE] Git Commit: `docs: refresh session links to codex summary contract (1/2)` (hash: ee66d9c).
 5. [TODO] Обновить ссылки в Session020/Session021 (scope: `doc/Sessions/Session020.md`, `doc/Sessions/Session021.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: refresh session links to codex summary contract (2/2)`.
 6. [TODO] Git Commit: `docs: refresh session links to codex summary contract (2/2)` (hash: TBD).
 
