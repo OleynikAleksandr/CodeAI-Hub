@@ -13,9 +13,11 @@ import type {
 import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type { CodexTurnOptions, ModuleReporter } from "../types";
+import { StructuredOutputStreamController } from "./structured-output-stream-controller";
 
 const PROVIDER = "codex";
 const THREAD_ID_SHORT_LENGTH = 8;
+const THINKING_PLACEHOLDER = "<!-- -->";
 
 type EnqueuedMessage = {
   readonly type: "user_input";
@@ -37,6 +39,7 @@ type MessageProcessorOptions = {
 export class CodexMessageProcessor {
   private readonly sessionManager: CodexSessionManager;
   private readonly options?: MessageProcessorOptions;
+  private readonly structuredOutput = new StructuredOutputStreamController();
 
   constructor(
     sessionManager: CodexSessionManager,
@@ -115,10 +118,11 @@ export class CodexMessageProcessor {
     const { session, thread, message } = context;
     session.internalTurn = message.internal ?? false;
     try {
-      const { events } = await thread.runStreamed(
-        message.content,
-        message.turnOptions ?? {}
-      );
+      const turnOptions = message.turnOptions ?? {};
+      const runOptions = session.internalTurn
+        ? turnOptions
+        : this.structuredOutput.applyOutputSchema(turnOptions);
+      const { events } = await thread.runStreamed(message.content, runOptions);
       await this.consumeEvents(session, events);
     } catch (error) {
       this.options?.reporter?.error?.("Codex turn execution failed", error);
@@ -159,6 +163,10 @@ export class CodexMessageProcessor {
           threadId: session.codexThreadId,
           timestamp: new Date().toISOString(),
         });
+        if (!session.internalTurn) {
+          this.emitDialogMessage(session, "thinking", THINKING_PLACEHOLDER);
+          this.structuredOutput.startTurn(session.sessionId);
+        }
         break;
       case "turn.completed":
         this.handleTurnCompleted(session, event);
@@ -216,6 +224,7 @@ export class CodexMessageProcessor {
       usage: event.usage,
       timestamp: new Date().toISOString(),
     });
+    this.structuredOutput.clear(session.sessionId);
   }
 
   private handleTurnFailed(
@@ -230,6 +239,7 @@ export class CodexMessageProcessor {
       error: event.error,
       timestamp: new Date().toISOString(),
     });
+    this.structuredOutput.clear(session.sessionId);
   }
 
   private handleStreamError(
@@ -244,6 +254,7 @@ export class CodexMessageProcessor {
       message: event.message,
       timestamp: new Date().toISOString(),
     });
+    this.structuredOutput.clear(session.sessionId);
   }
 
   private handleThreadItem(
@@ -251,15 +262,22 @@ export class CodexMessageProcessor {
     event: ItemStartedEvent | ItemUpdatedEvent | ItemCompletedEvent
   ): void {
     const item = event.item as ThreadItem;
-    if (item.type === "reasoning" && typeof item.text === "string") {
-      this.emitDialogMessage(session, "thinking", item.text, item.id);
-      return;
-    }
     if (item.type !== "agent_message") {
       return;
     }
     if (event.type === "item.updated") {
       if (session.internalTurn) {
+        return;
+      }
+      if (typeof item.text !== "string") {
+        return;
+      }
+      const delta = this.structuredOutput.appendChunk(
+        session.sessionId,
+        item.id,
+        item.text
+      );
+      if (!delta) {
         return;
       }
       this.emitMessage(session, {
@@ -270,7 +288,7 @@ export class CodexMessageProcessor {
         data: {
           kind: "assistant_chunk",
           itemId: item.id,
-          text: item.text,
+          text: delta,
         },
         timestamp: new Date().toISOString(),
       });
@@ -282,12 +300,38 @@ export class CodexMessageProcessor {
     if (session.internalTurn) {
       return;
     }
+    const itemText = typeof item.text === "string" ? item.text : "";
+    const result = this.structuredOutput.complete(
+      session.sessionId,
+      item.id,
+      itemText
+    );
+    if (result.streamDelta) {
+      this.emitMessage(session, {
+        type: "stream_event",
+        provider: PROVIDER,
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        data: {
+          kind: "assistant_chunk",
+          itemId: item.id,
+          text: result.streamDelta,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    }
+    if (result.reasoningSummary) {
+      this.emitDialogMessage(session, "thinking", result.reasoningSummary);
+    }
+    if (!result.assistantText) {
+      return;
+    }
     this.emitMessage(session, {
       type: "assistant",
       provider: PROVIDER,
       sessionId: session.sessionId,
       threadId: session.codexThreadId,
-      content: item.text,
+      content: result.assistantText,
       uuid: item.id,
       timestamp: new Date().toISOString(),
     });
