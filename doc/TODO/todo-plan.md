@@ -56,6 +56,6 @@
 
 ## Phase 4 — Final Polish & Release (owner: Gemini, updated: 2025-12-25)
 1. [DONE] Актуализировать CHANGELOG.md и Architecture.md.
-2. [TODO] Собрать все компоненты через `./scripts/build-all.sh`.
-3. [TODO] Собрать VSIX через `./scripts/build-release.sh --use-current-version`.
+2. [DONE] Собрать все компоненты через `./scripts/build-all.sh` (v1.1.356, 2025-12-27).
+3. [DONE] Собрать VSIX через `./scripts/build-release.sh --use-current-version` (v1.1.356, 2025-12-27).
 4. [TODO] Проверить работоспособность релиза.
