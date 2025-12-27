@@ -25,8 +25,7 @@ export class SessionLauncher {
   private readonly workspacePathResolver: () => string;
 
   constructor(options?: { readonly workspacePathResolver?: () => string }) {
-    this.workspacePathResolver =
-      options?.workspacePathResolver ?? (() => "");
+    this.workspacePathResolver = options?.workspacePathResolver ?? (() => "");
   }
 
   launch(request: SessionLaunchRequest): SessionLaunchResult {
