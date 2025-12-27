@@ -107,8 +107,8 @@
 ### Stream 1: Prompt update
 1. [DONE] Обновить prompt structured output: убрать лимит и требовать максимальную близость к native reasoning (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/TODO/todo-plan.md`) — target commit: `fix(codex): align summary with native reasoning`.
 2. [DONE] Git Commit: `fix(codex): align summary with native reasoning` (hash: f468e42).
-3. [TODO] Обновить контракт structured outputs под новый формат summary (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update codex summary contract`.
-4. [TODO] Git Commit: `docs: update codex summary contract` (hash: TBD).
+3. [DONE] Обновить контракт structured outputs под новый формат summary (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update codex summary contract`.
+4. [DONE] Git Commit: `docs: update codex summary contract` (hash: 21fc646).
 
 ---
 
