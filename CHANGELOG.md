@@ -1,3 +1,11 @@
+## [1.1.358] - 2025-12-27
+
+### Fixed
+- **Codex summary prompt**: structured output instructions are prefixed to encourage non-empty Russian `reasoning_summary_ru` summaries.
+
+### Documentation
+- Updated Codex structured output docs to describe prompt enforcement.
+
 ## [1.1.357] - 2025-12-27
 
 ### Fixed
