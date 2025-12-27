@@ -115,8 +115,8 @@
 ## Phase 12 — Release 1.1.359 (owner: Codex, updated: 2025-12-27)
 
 ### Stream 1: Release notes
-1. [IN_PROGRESS] Обновить README/CHANGELOG для 1.1.359 и описать hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update README and changelog for 1.1.359`.
-2. [TODO] Git Commit: `docs: update README and changelog for 1.1.359` (hash: TBD).
+1. [DONE] Обновить README/CHANGELOG для 1.1.359 и описать hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update README and changelog for 1.1.359`.
+2. [DONE] Git Commit: `docs: update README and changelog for 1.1.359` (hash: ae6f153).
 
 ### Stream 2: Architecture docs
 1. [TODO] Обновить архитектурные документы под релиз 1.1.359 (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update architecture for 1.1.359`.
