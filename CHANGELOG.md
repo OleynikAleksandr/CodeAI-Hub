@@ -1,3 +1,11 @@
+## [1.1.357] - 2025-12-27
+
+### Fixed
+- **Codex structured output schema**: `reasoning_summary_ru` is required (empty string allowed), preventing schema validation failures that blocked responses.
+
+### Documentation
+- Updated the Codex structured outputs contract to reflect the required summary field.
+
 ## [1.1.356] - 2025-12-27
 
 ### Added
