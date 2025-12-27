@@ -135,8 +135,8 @@
 2. [DONE] Git Commit: `docs: move and update codex thinking summary contract` (hash: bf16bc0).
 
 ### Stream 2: Architecture references
-1. [TODO] Обновить архитектурные документы со ссылкой на новый путь (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: sync architecture references for codex summary doc`.
-2. [TODO] Git Commit: `docs: sync architecture references for codex summary doc` (hash: TBD).
+1. [DONE] Обновить архитектурные документы со ссылкой на новый путь (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: sync architecture references for codex summary doc`.
+2. [DONE] Git Commit: `docs: sync architecture references for codex summary doc` (hash: 6224c80).
 
 ### Stream 3: Remaining docs
 1. [TODO] Обновить Codex SDK doc ссылкой на новый контракт (scope: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update codex stack link to summary contract`.
