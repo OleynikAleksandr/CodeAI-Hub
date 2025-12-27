@@ -30,7 +30,7 @@
 
 ## Required documents to review before work
 1. `doc/TODO/todo-plan.md`
-2. `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`
+2. `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`
 3. `doc/Knowledge/Контролируемое отображение размышлений в Codex.md`
 4. `doc/Sessions/Session018.md` (THIS REPORT)
 
