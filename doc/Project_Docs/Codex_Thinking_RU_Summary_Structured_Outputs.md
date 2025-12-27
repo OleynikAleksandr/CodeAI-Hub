@@ -1,0 +1,134 @@
+# Codex: скрытие native reasoning и вывод RU summary через Structured Outputs
+
+**Date:** 2025-12-27
+**Status:** Approved
+**Scope:** Codex provider module, Core RemoteBridge, UI (без изменения UI-лейблов)
+
+---
+
+## 1) Problem Statement
+
+Сейчас для провайдера Codex мы транслируем `ThreadItem.type = "reasoning"` в UI как `dialog_message` с `role = "thinking"`.
+Это приводит к тому, что пользователь видит англоязычные/служебные размышления (native reasoning), которые:
+- не контролируются по форме и содержанию,
+- приходят фрагментами (мы их мерджим в один блок),
+- могут ухудшать UX (лишний шум, утечки лишних деталей).
+
+Требование:
+- **Internal reasoning Codex остаётся включённым** (качество ответа сохраняем).
+- **Native reasoning в UI не показываем вообще.**
+- Вместо него показываем **короткое русскоязычное Thinking-summary**, полностью контролируемое контрактом.
+- **Один turn** (никаких дополнительных запросов/turn'ов).
+- **Стриминг ответа ассистента должен сохраниться**.
+- Thinking-плашка в UI должна появляться первой и может быть визуально «пустой»; текст RU summary может прийти позже.
+- При сбое генерации/парсинга summary — **не показывать ничего** в thinking.
+- UI-лейбл остаётся **"Thinking"**.
+
+---
+
+## 2) Key Idea
+
+Используем **Structured Outputs** в Codex (CLI `--output-schema` через SDK) так, чтобы модель возвращала **структурированный JSON**, содержащий:
+- `answer` — основной ответ ассистента (Markdown-строка), который мы будем **стримить** в UI;
+- `reasoning_summary_ru` — короткое RU summary для thinking (не chain-of-thought).
+
+При этом:
+- native reasoning (`item.type="reasoning"`) игнорируем;
+- UI получает обычный поток `assistant_chunk` из **извлечённого** `answer` во время стриминга JSON;
+- `reasoning_summary_ru` показываем отдельным `dialog_message(role="thinking")` когда он станет доступен.
+
+---
+
+## 3) Output Contract (JSON Schema)
+
+### 3.1 Поля
+- `answer` (string, required)
+  - Основной ответ для пользователя.
+  - Допускается Markdown.
+  - Должен быть самодостаточным и не ссылаться на reasoning.
+
+- `reasoning_summary_ru` (string, optional)
+  - Только русский язык.
+  - Максимально кратко.
+  - Цель: помочь пользователю заметить возможные проблемы/риски в ответе.
+  - Запрещено:
+    - пошаговое внутреннее мышление,
+    - реконструкция chain-of-thought,
+    - отладочные рассуждения,
+    - код/псевдокод/формулы,
+    - повтор ответа.
+
+### 3.2 Формат summary (предлагаемый)
+Один `string` с 2–4 короткими пунктами (каждый пункт — одна строка), в стиле:
+- допущение/ограничение,
+- риск/неопределённость,
+- что стоит проверить.
+
+Пример (для ориентира, не копировать буквально):
+- Опираюсь на предположение X; если оно неверно — результат нужно скорректировать.
+- Есть риск Y (версия/окружение); проверь Z.
+
+---
+
+## 4) Streaming Strategy (как сохранить стриминг ответа)
+
+### 4.1 Проблема
+`--output-schema` заставляет модель выводить JSON. Если просто показывать его — UI увидит сырой JSON вместо нормального текста.
+
+### 4.2 Решение
+В Codex message-processor добавляется потоковый парсер, который:
+- на `item.updated` для `agent_message` принимает накапливающийся текст JSON,
+- инкрементально извлекает значение поля `answer` (как строку),
+- эмитит `stream_event { kind: "assistant_chunk" }` только из извлечённого `answer`.
+
+На `item.completed`:
+- парсим полный JSON,
+- если `reasoning_summary_ru` валиден и непустой — эмитим `dialog_message(role="thinking")`.
+- если парсинг summary не удался — ничего не эмитим в thinking.
+
+Важно:
+- сохраняем текущую модель мерджа thinking: любые куски `reasoning_summary_ru`, если будут приходить частями (редко, но возможно), объединяем в один thinking-блок так же, как сейчас UI объединяет consecutive thinking messages.
+
+---
+
+## 5) UX детали
+
+- В начале turn (на `turn.started`) эмитим «плейсхолдер» thinking-сообщение (минимальный невидимый контент, например zero-width), чтобы карточка Thinking появилась первой.
+- Дальше ассистент начинает стримиться сразу (из `answer`).
+- Когда станет доступен `reasoning_summary_ru` — отправляем его отдельным `dialog_message(role="thinking")`. UI уже умеет мержить consecutive thinking messages.
+
+---
+
+## 6) Failure Modes
+
+- Если structured JSON не распарсился полностью:
+  - ассистентский стриминг стараемся продолжать через best-effort extraction `answer`.
+  - thinking summary не показываем.
+
+- Если `reasoning_summary_ru` пустой/отсутствует:
+  - thinking summary не показываем (плейсхолдер остаётся визуально пустым).
+
+---
+
+## 7) Implementation Touchpoints
+
+- `packages/Codex_Module/src/types/index.ts`
+  - расширить `CodexTurnOptions`, чтобы поддерживать `outputSchema?: unknown` (используется патчем SDK).
+
+- `packages/Codex_Module/src/messaging/message-processor.ts`
+  - перестать эмитить native reasoning (`item.type="reasoning"`).
+  - включать `outputSchema` для пользовательских turn'ов.
+  - добавить потоковый извлекатель `answer` + финальный парсер JSON.
+  - эмитить placeholder thinking на старте turn.
+
+- `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`
+  - оставить текущую поддержку `outputSchema` (уже есть), при необходимости расширить совместимость типов.
+
+---
+
+## 8) Open Questions (для апрува)
+
+1) Ок ли, что `answer` — это Markdown-строка внутри JSON, и мы стримим её через best-effort extraction?
+2) Подтвердить формат summary: `string` с 2–4 пунктами (вместо массива строк).
+3) Placeholder thinking: можно ли использовать невидимый символ (ZWSP) как «пустой» контент?
+

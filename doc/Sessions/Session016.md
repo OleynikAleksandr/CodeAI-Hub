@@ -1,25 +1,38 @@
-# Session 016 — Multi-Workspace Foundation & Project Manager Architecture
+# Session 016 — Multi-Workspace Foundation & Project Manager UI Release
 
-**Date:** 2025-12-25 12:00 (CET)
+**Date:** 2025-12-25 21:30 (CET)
 **Branch:** main
-**Version:** 1.1.352 (Core updated to support dynamic workspaces)
+**Version:** 1.1.355 (Release Candidate)
 
 ---
 
 # 1. Work Done in This Session
 
 ## Work summary
-- **Multi-Workspace Foundation**: Refactored the Core Orchestrator to support multiple parallel sessions in different workspaces.
-- **Project Registry**: Implemented `ProjectRegistryService` to persist known projects in `~/.codeai-hub/state/projects.json`.
-- **Core Config Decoupling**: Updated `CoreConfig` to make workspace paths optional, allowing the Core to start as a generic service without environment-fixed paths.
-- **Session Context Propagation**:
-    - Updated `Session` model to include `workspacePath`.
-    - Refactored `RemoteBridge` to accept `workspacePath` in the `session:create` RPC call.
-    - Updated all provider adapters (Claude, Codex, Gemini) to propagate the session-owned `workspacePath` to their respective SDK tools.
-- **UI Architecture**: Defined the 7-section layout for the upcoming Project Manager UI, including a VS Code-style header and dynamic sidebar.
-- **Verification**: All packages (`core`, `claude-module`, `codex-module`, `gemini-module`) build successfully with consistent type definitions.
+- **Multi-Workspace Core**: Полностью пересмотрена архитектура Ядра. Путь к воркспейсу (`workspacePath`) перенесен из глобальных переменных окружения процесса в контекст конкретной Сессии. Это позволяет Ядру обслуживать несколько проектов параллельно.
+- **Project Registry Service**: Реализован сервис для хранения и управления списком известных воркспейсов в `~/.codeai-hub/state/projects.json`.
+- **RemoteBridge Refactoring**: Проведен глубокий рефакторинг монолитного `RemoteBridge`. Логика разбита на 5 специализированных микро-хендлеров. Основной файл сокращен с 885 до 227 строк, что теперь полностью соответствует архитектурным правилам (< 300 строк).
+- **Project Manager UI**: Реализована первая версия интерфейса управления проектами (7-секционный Layout, динамический сайдбар, интеграция с нативным диалогом выбора папок VS Code).
+- **Release 1.1.355**: Успешно выполнен полный цикл сборки (`build-all.sh`) и упаковки расширения (`build-release.sh`). Все гейты качества (архитектура, типы, линтинг) пройдены.
 
 ## Git commits
+- `d0f8ed6 chore: bump versions to 1.1.355 and finalize release docs`
+- `e64af41 chore: bump versions to 1.1.354`
+- `d6c563e fix: remove git conflict markers`
+- `3a575d9 fix: decouple SessionLauncher from VS Code API for web-client compatibility`
+- `a9c0239 docs: finalize documentation for v1.1.353 release`
+- `22c8cbb refactor(core): complete RemoteBridge decomposition into micro-handlers (<300 lines)`
+- `a8e5436 refactor(core): split RemoteBridge into Session, Project and System handlers`
+- `b7aea08 refactor(core): extract ProjectRequestHandler and SystemRequestHandler from RemoteBridge`
+- `a57e718 feat(core): implement projects RPC API`
+- `f126638 feat(ui): implement add workspace functionality`
+- `b9e576e feat(ui): add project manager api client`
+- `ca8e8d1 feat(ui): vs-code style header with gear icon`
+- `ed054df feat(ui): integrate project list with core api`
+- `5120b49 feat(ui): add session and task buttons to workspace list`
+- `aaa6241 feat(ui): dynamic width sidebar based on content`
+- `e0ff7fb feat(ui): implement 7-section layout for project manager`
+- `2114afd feat(ui): display workspace details in main panels`
 - `29cfeb2 refactor(tools): propagate workspacePath from session to all provider tools`
 - `d46f3fa feat(core): register default workspace on startup`
 - `92e175f refactor(core): make workspace paths optional in config`
@@ -30,13 +43,12 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/NewFeature_Architecture_Project Manager.md` (Updated v2.2.0)
-2. `doc/TODO/todo-plan.md` (Phase 2 is next)
-3. `packages/core/src/services/project-registry/project-registry.ts`
+1. `doc/Project_Docs/NewFeature_Architecture_Project Manager.md`
+2. `doc/TODO/todo-plan.md`
+3. `doc/Sessions/Session016.md` (THIS REPORT)
 
 ## Plans for next session
-- **Phase 2: Project Manager UI & API**:
-    - Implement the 7-section React layout in `src/client/project-manager/`.
-    - Add the "Add Workspace" functionality (New/Open).
-    - Implement the dynamic Sidebar with the workspace list.
-    - Integrate with the new `projects.*` Core API (to be implemented).
+- **КРИТИЧНО: Глубокая доработка интерфейса Project Manager**. Текущая реализация содержит много ошибок в логике отображения и взаимодействии.
+- Исправление багов в связке UI <-> Core API для проектов.
+- Доработка панелей деталей проекта (Секции 4-6).
+- Реализация полноценного запуска сессий и тасков из Project Manager.
