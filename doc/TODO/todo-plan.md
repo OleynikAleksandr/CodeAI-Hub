@@ -71,8 +71,8 @@
 2. [DONE] Git Commit: `docs: update architecture for 1.1.357` (hash: 1cbe146).
 
 ### Stream 3: Release build
-1. [IN_PROGRESS] Собрать релиз `build-all.sh` + `build-release.sh --use-current-version` и зафиксировать артефакты (scope: release artifacts/manifests) — target commit: `chore: bump versions to 1.1.357 and build release`.
-2. [TODO] Git Commit: `chore: bump versions to 1.1.357 and build release` (hash: TBD).
+1. [DONE] Собрать релиз `build-all.sh` + `build-release.sh --use-current-version` и зафиксировать артефакты (scope: release artifacts/manifests) — target commit: `chore: bump versions to 1.1.357 and build release`.
+2. [DONE] Git Commit: `chore: bump versions to 1.1.357 and build release` (hash: 6baffaf).
 
 ---
 
