@@ -1,3 +1,11 @@
+## [1.1.359] - 2025-12-27
+
+### Fixed
+- **Codex summary alignment**: `reasoning_summary_ru` is prompted to match native reasoning content/length without revealing chain-of-thought.
+
+### Documentation
+- Updated the Codex structured outputs contract for the new summary guidance.
+
 ## [1.1.358] - 2025-12-27
 
 ### Fixed
