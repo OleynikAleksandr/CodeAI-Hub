@@ -131,8 +131,8 @@
 ## Phase 13 — Codex summary docs consolidation (owner: Codex, updated: 2025-12-27)
 
 ### Stream 1: Contract relocation + success note
-1. [TODO] Перенести и актуализировать контракт thinking summary (scope: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: move and update codex thinking summary contract`.
-2. [TODO] Git Commit: `docs: move and update codex thinking summary contract` (hash: TBD).
+1. [DONE] Перенести и актуализировать контракт thinking summary (scope: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: move and update codex thinking summary contract`.
+2. [DONE] Git Commit: `docs: move and update codex thinking summary contract` (hash: bf16bc0).
 
 ### Stream 2: Architecture references
 1. [TODO] Обновить архитектурные документы со ссылкой на новый путь (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: sync architecture references for codex summary doc`.
