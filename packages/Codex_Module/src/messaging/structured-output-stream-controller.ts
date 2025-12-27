@@ -18,6 +18,17 @@ const CODEX_OUTPUT_SCHEMA = {
   required: ["answer", "reasoning_summary_ru"],
 } as const;
 
+const STRUCTURED_OUTPUT_PROMPT = [
+  "You must respond with a JSON object that matches the provided schema.",
+  "Populate both fields:",
+  "- answer: the user-facing answer.",
+  "- reasoning_summary_ru: 2-4 short bullet points in Russian summarizing key considerations or risks. No chain-of-thought, code, or formulas.",
+  "Use an empty string only if you truly cannot provide a summary.",
+  "Return only JSON, no extra text.",
+  "",
+  "User request:",
+].join("\n");
+
 type ParsedOutput = {
   readonly answer?: string;
   readonly reasoningSummary?: string;
@@ -37,6 +48,10 @@ export type StructuredOutputResult = {
 
 export class StructuredOutputStreamController {
   private readonly streams = new Map<string, AnswerStreamState>();
+
+  applyPrompt(prompt: string): string {
+    return `${STRUCTURED_OUTPUT_PROMPT}\n${prompt}`;
+  }
 
   applyOutputSchema(turnOptions: CodexTurnOptions): CodexTurnOptions {
     if (turnOptions.outputSchema) {
