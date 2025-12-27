@@ -123,7 +123,7 @@
 2. [DONE] Git Commit: `docs: update architecture for 1.1.359` (hash: ff32f0a).
 
 ### Stream 3: Release build
-1. [TODO] Собрать релиз `build-all.sh` + `build-release.sh --use-current-version` и зафиксировать артефакты (scope: release artifacts/manifests) — target commit: `chore: bump versions to 1.1.359 and build release`.
+1. [IN_PROGRESS] Собрать релиз `build-all.sh` + `build-release.sh --use-current-version` и зафиксировать артефакты (scope: release artifacts/manifests) — target commit: `chore: bump versions to 1.1.359 and build release`.
 2. [TODO] Git Commit: `chore: bump versions to 1.1.359 and build release` (hash: TBD).
 
 ---
