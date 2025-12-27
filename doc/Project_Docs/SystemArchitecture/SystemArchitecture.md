@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.339 (23.12.2025) — синхронизация `~/.codeai-hub/settings/settings.json` → `CLAUDE_DEFAULT_MODEL` → Core/Claude SDK; обновлённые версии manifest`ов и артефакты VSIX/launcher/core/UI. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
+**Состояние:** релиз 1.1.355 (27.12.2025) — Codex structured outputs скрывают native reasoning и выводят RU thinking summary; обновлены артефакты VSIX/launcher/core/UI. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
 
 ## Обзор
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
@@ -31,51 +31,51 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.339
-- Автономное ядро: `@codeai-hub/core` 1.1.339
-- UI Bundles: 1.1.339
-- Claude module: 1.1.339
-- Codex module: 1.1.339
-- Gemini module: 1.1.339
+- VSIX: `codeai-hub` 1.1.355
+- Автономное ядро: `@codeai-hub/core` 1.1.355
+- UI Bundles: 1.1.355
+- Claude module: 1.1.355
+- Codex module: 1.1.355
+- Gemini module: 1.1.355
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.334/
+│       └── 1.1.355/
 │           ├── node/
 │           ├── app/
 │           └── install.json
 ├── packages/
 │   ├── launcher/
-│   │   └── macos-arm64/1.1.334/
+│   │   └── macos-arm64/1.1.355/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.334/
-│       │   └── current -> 1.1.334
+│       │   ├── 1.1.355/
+│       │   └── current -> 1.1.355
 │       ├── web-client/
-│       │   ├── 1.1.334/
-│       │   └── current -> 1.1.334
+│       │   ├── 1.1.355/
+│       │   └── current -> 1.1.355
 │       └── project-manager/
-│           ├── 1.1.334/
-│           └── current -> 1.1.334
+│           ├── 1.1.355/
+│           └── current -> 1.1.355
 ├── providers/
-│   ├── claude/1.1.339/
-│   ├── codex/1.1.339/
-│   └── gemini/1.1.339/
+│   ├── claude/1.1.355/
+│   ├── codex/1.1.355/
+│   └── gemini/1.1.355/
 ├── settings/
 │   ├── claude.json          # legacy thinking settings migrated to settings.json
 │   └── settings.json        # current source of truth for providers.{claude,codex,gemini}
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.339.tar.bz2
-    ├── vscode-webview-1.1.339.tar.bz2
-    ├── web-client-1.1.339.tar.bz2
-    ├── project-manager-1.1.339.tar.bz2
-    ├── claude-module-1.1.339.tar.bz2
-    ├── codex-module-1.1.339.tar.bz2
-    ├── gemini-module-1.1.339.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.339.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.355.tar.bz2
+    ├── vscode-webview-1.1.355.tar.bz2
+    ├── web-client-1.1.355.tar.bz2
+    ├── project-manager-1.1.355.tar.bz2
+    ├── claude-module-1.1.355.tar.bz2
+    ├── codex-module-1.1.355.tar.bz2
+    ├── gemini-module-1.1.355.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.355.tar.bz2
 ```
 
 ## Провайдеры
@@ -89,6 +89,10 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
+
+## Recent Changes (v1.1.355 - 2025-12-27)
+- **Codex structured outputs**: native reasoning скрывается; `answer` стримится из JSON, RU thinking summary выводится отдельным thinking-блоком. См. `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
+- **Release 1.1.355**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.355.
 
 ## Recent Changes (v1.1.339 - 2025-12-23)
 - **Claude default model pipeline**: `settings.json` → `CLAUDE_SETTINGS_PATH`/`CLAUDE_DEFAULT_MODEL` → Core config → Claude SDK (re-read before each `query`) обеспечивает применение выбранного alias и thinking-настроек, а сборка 1.1.339 публикует свежие `codeai-hub-1.1.339.vsix`, `Core`, `Launcher` и provider tarball’ы.
@@ -108,4 +112,5 @@ CodeAI-Hub — автономная платформа управления AI-�
 - Core Orchestrator: `doc/Project_Docs/Stacks/CoreOrchestrator.md`
 - Claude Provider: `doc/Project_Docs/Stacks/Claude.md`
 - Codex Provider: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
+- Codex Thinking Summary: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`
 - Gemini Provider: `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
