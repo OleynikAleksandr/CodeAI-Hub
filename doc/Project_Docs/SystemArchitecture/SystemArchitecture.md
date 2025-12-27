@@ -103,7 +103,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Release 1.1.357**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.357.
 
 ## Recent Changes (v1.1.356 - 2025-12-27)
-- **Codex structured outputs**: native reasoning скрывается; `answer` стримится из JSON, RU thinking summary выводится отдельным thinking-блоком. См. `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
+- **Codex structured outputs**: native reasoning скрывается; `answer` стримится из JSON, RU thinking summary выводится отдельным thinking-блоком. См. `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
 - **Release 1.1.356**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.356.
 
 ## Recent Changes (v1.1.339 - 2025-12-23)
@@ -124,5 +124,5 @@ CodeAI-Hub — автономная платформа управления AI-�
 - Core Orchestrator: `doc/Project_Docs/Stacks/CoreOrchestrator.md`
 - Claude Provider: `doc/Project_Docs/Stacks/Claude.md`
 - Codex Provider: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
-- Codex Thinking Summary: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`
+- Codex Thinking Summary: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`
 - Gemini Provider: `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
