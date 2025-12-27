@@ -33,6 +33,23 @@
 1. [DONE] Зафиксировать результаты smoke/UX проверки (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`) — target commit: `docs: document codex RU thinking summary verification`.
 2. [DONE] Git Commit: `docs: document codex RU thinking summary verification` (hash: cfc9bd3).
 
+
+---
+
+## Phase 6 — Docs sync for Codex structured outputs (owner: Codex, updated: 2025-12-27)
+
+### Stream 1: README
+1. [DONE] Обновить README с релизом 1.1.355 и ссылкой на structured outputs (scope: `README.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update README for codex structured outputs`.
+2. [DONE] Git Commit: `docs: update README for codex structured outputs` (hash: 8e424ca).
+
+### Stream 2: Architecture docs
+1. [TODO] Обновить архитектурные документы под новый Codex вывод (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update architecture for codex structured outputs`.
+2. [TODO] Git Commit: `docs: update architecture for codex structured outputs` (hash: TBD).
+
+### Stream 3: Codex module doc
+1. [TODO] Обновить `Codex_SDK_Module.md` под structured outputs (scope: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update codex module docs for structured outputs`.
+2. [TODO] Git Commit: `docs: update codex module docs for structured outputs` (hash: TBD).
+
 ---
 
 ## Legacy / Deferred
