@@ -67,11 +67,11 @@
 2. [DONE] Git Commit: `docs: update README and changelog for 1.1.357` (hash: f003b10).
 
 ### Stream 2: Architecture docs
-1. [IN_PROGRESS] Обновить архитектурные документы под релиз 1.1.357 (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update architecture for 1.1.357`.
-2. [TODO] Git Commit: `docs: update architecture for 1.1.357` (hash: TBD).
+1. [DONE] Обновить архитектурные документы под релиз 1.1.357 (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update architecture for 1.1.357`.
+2. [DONE] Git Commit: `docs: update architecture for 1.1.357` (hash: 1cbe146).
 
 ### Stream 3: Release build
-1. [TODO] Собрать релиз `build-all.sh` + `build-release.sh --use-current-version` и зафиксировать артефакты (scope: release artifacts/manifests) — target commit: `chore: bump versions to 1.1.357 and build release`.
+1. [IN_PROGRESS] Собрать релиз `build-all.sh` + `build-release.sh --use-current-version` и зафиксировать артефакты (scope: release artifacts/manifests) — target commit: `chore: bump versions to 1.1.357 and build release`.
 2. [TODO] Git Commit: `chore: bump versions to 1.1.357 and build release` (hash: TBD).
 
 ---
