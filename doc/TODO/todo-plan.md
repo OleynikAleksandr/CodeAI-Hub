@@ -52,6 +52,14 @@
 
 ---
 
+## Phase 7 — Hotfix: Codex structured output schema (owner: Codex, updated: 2025-12-27)
+
+### Stream 1: Schema requirement
+1. [IN_PROGRESS] Зафиксировать требование `reasoning_summary_ru` в схеме и задокументировать пустой fallback (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `fix(codex): require reasoning_summary_ru in schema`.
+2. [TODO] Git Commit: `fix(codex): require reasoning_summary_ru in schema` (hash: TBD).
+
+---
+
 ## Legacy / Deferred
 
 ## Phase 4 — Final Polish & Release (owner: Gemini, updated: 2025-12-25)

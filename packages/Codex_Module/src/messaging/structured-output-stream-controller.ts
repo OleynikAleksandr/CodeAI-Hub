@@ -12,10 +12,10 @@ const CODEX_OUTPUT_SCHEMA = {
     reasoning_summary_ru: {
       type: "string",
       description:
-        "Brief Russian reasoning summary for the user. No chain-of-thought, code, or formulas.",
+        "Brief Russian reasoning summary for the user. No chain-of-thought, code, or formulas. Empty string allowed.",
     },
   },
-  required: ["answer"],
+  required: ["answer", "reasoning_summary_ru"],
 } as const;
 
 type ParsedOutput = {
