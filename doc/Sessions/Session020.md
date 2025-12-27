@@ -33,7 +33,7 @@
 ## Required documents to review before work
 1. `doc/Architecture/Architecture.md`
 2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-3. `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`
+3. `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session020.md` (THIS REPORT)
 
