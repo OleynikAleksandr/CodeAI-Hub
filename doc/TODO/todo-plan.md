@@ -13,7 +13,7 @@
 ## Phase 5 — Codex: RU Thinking Summary (Structured Outputs) (owner: Codex, updated: 2025-12-27)
 
 ### Stream 1: Доки и контракт
-1. [DONE] Зафиксировать апрув и план (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: approve codex RU thinking summary contract`.
+1. [DONE] Зафиксировать апрув и план (scope: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: approve codex RU thinking summary contract`.
 2. [DONE] Git Commit: `docs: approve codex RU thinking summary contract` (hash: 163775c).
 
 ### Stream 2: Codex Module — Structured Output + streaming extractor
@@ -30,7 +30,7 @@
    - RU summary появляется в thinking позже (если удалось распарсить), иначе thinking остаётся пустым.
 
 ### Stream 3: Smoke/UX проверка
-1. [DONE] Зафиксировать результаты smoke/UX проверки (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`) — target commit: `docs: document codex RU thinking summary verification`.
+1. [DONE] Зафиксировать результаты smoke/UX проверки (scope: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`) — target commit: `docs: document codex RU thinking summary verification`.
 2. [DONE] Git Commit: `docs: document codex RU thinking summary verification` (hash: cfc9bd3).
 
 
@@ -55,7 +55,7 @@
 ## Phase 7 — Hotfix: Codex structured output schema (owner: Codex, updated: 2025-12-27)
 
 ### Stream 1: Schema requirement
-1. [DONE] Зафиксировать требование `reasoning_summary_ru` в схеме и задокументировать пустой fallback (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `fix(codex): require reasoning_summary_ru in schema`.
+1. [DONE] Зафиксировать требование `reasoning_summary_ru` в схеме и задокументировать пустой fallback (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `fix(codex): require reasoning_summary_ru in schema`.
 2. [DONE] Git Commit: `fix(codex): require reasoning_summary_ru in schema` (hash: fd23e0f).
 
 ---
@@ -81,7 +81,7 @@
 ### Stream 1: Structured output prompt
 1. [DONE] Добавить префикс инструкций structured output в Codex prompt (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/TODO/todo-plan.md`) — target commit: `fix(codex): enforce RU summary prompt`.
 2. [DONE] Git Commit: `fix(codex): enforce RU summary prompt` (hash: e42e741).
-3. [DONE] Обновить документацию structured outputs про новый префикс (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: document codex summary prompt enforcement`.
+3. [DONE] Обновить документацию structured outputs про новый префикс (scope: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: document codex summary prompt enforcement`.
 4. [DONE] Git Commit: `docs: document codex summary prompt enforcement` (hash: 803d2b4).
 
 ---
@@ -107,7 +107,7 @@
 ### Stream 1: Prompt update
 1. [DONE] Обновить prompt structured output: убрать лимит и требовать максимальную близость к native reasoning (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/TODO/todo-plan.md`) — target commit: `fix(codex): align summary with native reasoning`.
 2. [DONE] Git Commit: `fix(codex): align summary with native reasoning` (hash: f468e42).
-3. [DONE] Обновить контракт structured outputs под новый формат summary (scope: `doc/Project_Docs/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update codex summary contract`.
+3. [DONE] Обновить контракт structured outputs под новый формат summary (scope: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update codex summary contract`.
 4. [DONE] Git Commit: `docs: update codex summary contract` (hash: 21fc646).
 
 ---
@@ -125,6 +125,26 @@
 ### Stream 3: Release build
 1. [DONE] Собрать релиз `build-all.sh` + `build-release.sh --use-current-version` и зафиксировать артефакты (scope: release artifacts/manifests) — target commit: `chore: bump versions to 1.1.359 and build release`.
 2. [DONE] Git Commit: `chore: bump versions to 1.1.359 and build release` (hash: 5d1cef6).
+
+---
+
+## Phase 13 — Codex summary docs consolidation (owner: Codex, updated: 2025-12-27)
+
+### Stream 1: Contract relocation + success note
+1. [TODO] Перенести и актуализировать контракт thinking summary (scope: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: move and update codex thinking summary contract`.
+2. [TODO] Git Commit: `docs: move and update codex thinking summary contract` (hash: TBD).
+
+### Stream 2: Architecture references
+1. [TODO] Обновить архитектурные документы со ссылкой на новый путь (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: sync architecture references for codex summary doc`.
+2. [TODO] Git Commit: `docs: sync architecture references for codex summary doc` (hash: TBD).
+
+### Stream 3: Remaining docs
+1. [TODO] Обновить Codex SDK doc ссылкой на новый контракт (scope: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: update codex stack link to summary contract`.
+2. [TODO] Git Commit: `docs: update codex stack link to summary contract` (hash: TBD).
+3. [TODO] Обновить ссылки в Session018/Session019 (scope: `doc/Sessions/Session018.md`, `doc/Sessions/Session019.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: refresh session links to codex summary contract (1/2)`.
+4. [TODO] Git Commit: `docs: refresh session links to codex summary contract (1/2)` (hash: TBD).
+5. [TODO] Обновить ссылки в Session020/Session021 (scope: `doc/Sessions/Session020.md`, `doc/Sessions/Session021.md`, `doc/TODO/todo-plan.md`) — target commit: `docs: refresh session links to codex summary contract (2/2)`.
+6. [TODO] Git Commit: `docs: refresh session links to codex summary contract (2/2)` (hash: TBD).
 
 ---
 
