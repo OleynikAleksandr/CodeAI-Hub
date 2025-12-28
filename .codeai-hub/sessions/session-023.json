@@ -1,0 +1,50 @@
+{
+  "session_id": "S023",
+  "timestamp": "2025-12-28T18:30:00+01:00",
+  "status": "completed",
+  "plan_progress": {
+    "current_wave": 0,
+    "completed_waves": [],
+    "completed_tasks": [],
+    "next_task": "W1.A.1"
+  },
+  "commits": [
+    {
+      "hash": "5653f67",
+      "message": "feat(orchestrator): add Project Orchestrator foundation and wave-based plan"
+    },
+    {
+      "hash": "2bf2a45",
+      "message": "docs: add Session023 report for Project Orchestrator"
+    }
+  ],
+  "files_changed": [
+    ".codeai-hub/orchestrator/idea.md",
+    "doc/Project_Docs/knowledge/Автоматизация Flow разработки на основе Plan.md.md",
+    "doc/Project_Docs/knowledge/Образец Plan.md.md",
+    "doc/TODO/todo-plan.md",
+    "doc/Sessions/Session023.md"
+  ],
+  "context_for_next_session": {
+    "must_read": [
+      "doc/TODO/todo-plan.md",
+      ".codeai-hub/orchestrator/idea.md",
+      "doc/Project_Docs/knowledge/Автоматизация Flow разработки на основе Plan.md.md",
+      "src/client/ui/src/provider-picker.tsx",
+      "src/client/ui/src/app-host.tsx"
+    ],
+    "resume_from": "W1.A.1",
+    "wave_to_start": 1,
+    "parallel_agents_possible": 3,
+    "open_questions": [
+      "Точный формат Structured Output для Idea Collector",
+      "Механизм отображения диалога с агентом в UI",
+      "Сохранение Idea.md — через агента или отдельный сервис?"
+    ],
+    "risks": [
+      "Интеграция с Codex exec может потребовать доработок",
+      "UI Flow Wizard должен корректно работать с provider-picker"
+    ]
+  },
+  "agent_notes": "Сессия посвящена проектированию и документированию концепции Project Orchestrator. Код не писался. Следующая сессия должна начать реализацию с Волны 1 — можно запустить до 3 агентов параллельно."
+}
