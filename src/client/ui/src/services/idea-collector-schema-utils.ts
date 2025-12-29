@@ -39,7 +39,36 @@ const strictifyItems = (schema: JsonRecord): void => {
   }
 };
 
-const strictifyCombinators = (schema: JsonRecord): void => {
+const removeCombinatorsFromProperties = (schema: JsonRecord): void => {
+  const properties = schema.properties;
+  if (!isRecord(properties)) {
+    return;
+  }
+  for (const value of Object.values(properties)) {
+    if (isRecord(value)) {
+      removeCombinators(value);
+    }
+  }
+};
+
+const removeCombinatorsFromItems = (schema: JsonRecord): void => {
+  const items = schema.items;
+  if (Array.isArray(items)) {
+    for (const item of items) {
+      if (isRecord(item)) {
+        removeCombinators(item);
+      }
+    }
+    return;
+  }
+  if (isRecord(items)) {
+    removeCombinators(items);
+  }
+};
+
+const removeCombinators = (schema: JsonRecord): void => {
+  removeCombinatorsFromProperties(schema);
+  removeCombinatorsFromItems(schema);
   for (const key of ["allOf", "anyOf", "oneOf"]) {
     const entries = schema[key];
     if (!Array.isArray(entries)) {
@@ -47,16 +76,17 @@ const strictifyCombinators = (schema: JsonRecord): void => {
     }
     for (const entry of entries) {
       if (isRecord(entry)) {
-        strictifySchema(entry);
+        removeCombinators(entry);
       }
     }
+    delete schema[key];
   }
 };
 
 const strictifySchema = (schema: JsonRecord): void => {
+  removeCombinators(schema);
   strictifyProperties(schema);
   strictifyItems(schema);
-  strictifyCombinators(schema);
 };
 
 const injectTemplateIntoSchema = (
@@ -90,11 +120,62 @@ const injectTemplateIntoSchema = (
   return schema;
 };
 
+const ALLOWED_SCHEMA_KEYS = new Set([
+  "type",
+  "properties",
+  "required",
+  "additionalProperties",
+  "items",
+  "description",
+]);
+
+const pruneSchemaKeys = (schema: JsonRecord): void => {
+  for (const key of Object.keys(schema)) {
+    if (!ALLOWED_SCHEMA_KEYS.has(key)) {
+      delete schema[key];
+    }
+  }
+};
+
+const sanitizeSchemaProperties = (schema: JsonRecord): void => {
+  const properties = schema.properties;
+  if (!isRecord(properties)) {
+    return;
+  }
+  for (const value of Object.values(properties)) {
+    if (isRecord(value)) {
+      sanitizeSchemaKeywords(value);
+    }
+  }
+};
+
+const sanitizeSchemaItems = (schema: JsonRecord): void => {
+  const items = schema.items;
+  if (Array.isArray(items)) {
+    for (const item of items) {
+      if (isRecord(item)) {
+        sanitizeSchemaKeywords(item);
+      }
+    }
+    return;
+  }
+  if (isRecord(items)) {
+    sanitizeSchemaKeywords(items);
+  }
+};
+
+const sanitizeSchemaKeywords = (schema: JsonRecord): void => {
+  pruneSchemaKeys(schema);
+  sanitizeSchemaProperties(schema);
+  sanitizeSchemaItems(schema);
+};
+
 export const normalizeIdeaCollectorSchema = (
   schema: JsonRecord,
   template: string | null
 ): JsonRecord => {
   const next = cloneSchema(schema);
   strictifySchema(next);
+  sanitizeSchemaKeywords(next);
   return injectTemplateIntoSchema(next, template);
 };
