@@ -47,17 +47,11 @@
 - Каждая задача затрагивает **≤ 3 файлов**
 - После каждой задачи — **обязательный Git Commit**
 
-### 1.3 Гейты качества (перед каждым коммитом)
+### 1.3 Гейты качества
 
-```bash
-./scripts/check-architecture.sh
-npx ultracite check
-npx ts-prune
-npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"
-npm run check:links
-npm run build:webview   # или таргетная сборка
-```
-
+- Гейты запускаются автоматически git-hook'ом при `git commit` (команды не дублируем в плане, чтобы не тратить контекст).
+- Если hook красный — задача не считается выполненной: исправить причину и повторить коммит.
+- При необходимости ручного прогона: `./scripts/check-architecture.sh`.
 ---
 
 ## 2. Волна 1 — Независимые задачи

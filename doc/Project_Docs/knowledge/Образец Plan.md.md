@@ -82,18 +82,12 @@ Plan
 - После каждой задачи — **обязательный Git Commit**
 - Коммит нельзя пропускать или объединять
 
-### 1.4 Гейты качества (перед каждым коммитом)
+### 1.4 Гейты качества
 
-```bash
-./scripts/check-architecture.sh
-npx ultracite check
-npx ts-prune
-npx jscpd --threshold 3 --silent --reporters console src
-npm run check:links
-npm run build --workspace <package>   # таргетная сборка
-```
+- В CodeAI Hub гейты обычно выполняются автоматически git-hook'ом при `git commit`.
+- Исполнитель не тратит контекст на список команд; достаточно помнить: **красный hook = задача не закрыта**.
+- Ручной прогон при диагностике: `./scripts/check-architecture.sh`.
 
-Если хотя бы один гейт красный — задача **не выполнена**.
 
 ---
 
