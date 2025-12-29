@@ -1,7 +1,8 @@
-import type { CSSProperties } from "react";
+import { type CSSProperties, useState } from "react";
 
 import type { FlowStageId } from "./index";
 import {
+  flowStageButtonActiveHoverStyles,
   flowStageButtonActiveStyles,
   flowStageButtonBaseStyles,
   flowStageButtonDisabledStyles,
@@ -26,9 +27,19 @@ export const FlowStage = ({
   disabled,
   onStageClick,
 }: FlowStageProps) => {
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+
+  const interactive = active && !disabled;
+  const showHoverStyles = interactive && (hovered || focused);
+  const hoverStyles: CSSProperties = showHoverStyles
+    ? flowStageButtonActiveHoverStyles
+    : {};
+
   const buttonStyles: CSSProperties = {
     ...flowStageButtonBaseStyles,
     ...(active ? flowStageButtonActiveStyles : {}),
+    ...hoverStyles,
     ...(disabled ? flowStageButtonDisabledStyles : {}),
   };
 
@@ -44,7 +55,19 @@ export const FlowStage = ({
       aria-current={active ? "step" : undefined}
       aria-disabled={disabled}
       disabled={disabled}
+      onBlur={() => {
+        setFocused(false);
+      }}
       onClick={handleClick}
+      onFocus={() => {
+        setFocused(true);
+      }}
+      onMouseEnter={() => {
+        setHovered(true);
+      }}
+      onMouseLeave={() => {
+        setHovered(false);
+      }}
       style={buttonStyles}
       type="button"
     >
