@@ -1,3 +1,8 @@
+## [1.1.363] - 2025-12-29
+
+### Fixed
+- **UI boot crash**: preserve escape sequences in the embedded Idea Collector fallback schema so the webview bundle loads correctly.
+
 ## [1.1.362] - 2025-12-29
 
 ### Fixed
