@@ -22933,43 +22933,102 @@ ${path2}` : path2;
   var import_react10 = __toESM(require_react());
 
   // src/client/ui/src/app-host/idea-kickoff-prompt.ts
-  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector \u0434\u043B\u044F Project Orchestrator.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441, \u0447\u0442\u043E\u0431\u044B \u0441\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0440\u0435\u0431\u043E\u0432\u0430\u043D\u0438\u044F \u0438 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442.\n\u0412 \u043A\u043E\u043D\u0446\u0435, \u043A\u043E\u0433\u0434\u0430 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E, \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u0447\u0435\u0440\u043D\u043E\u0432\u0438\u043A `Idea.md` (\u0432 Markdown) \u0434\u043B\u044F `.codeai-hub/orchestrator/idea.md`.";
+  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector \u0434\u043B\u044F Project Orchestrator.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441, \u0447\u0442\u043E\u0431\u044B \u0441\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0440\u0435\u0431\u043E\u0432\u0430\u043D\u0438\u044F \u0438 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438: \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u043F\u0443\u0441\u0442\u044B\u0435 \u0441\u0442\u0440\u043E\u043A\u0438/\u043C\u0430\u0441\u0441\u0438\u0432\u044B \u0438\u043B\u0438 \u043A\u0440\u0430\u0442\u043A\u0438\u0439 placeholder.\nartifact.idea_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438.\n\u0412 \u043A\u043E\u043D\u0446\u0435, \u043A\u043E\u0433\u0434\u0430 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E, \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u0447\u0435\u0440\u043D\u043E\u0432\u0438\u043A `Idea.md` (\u0432 Markdown) \u0434\u043B\u044F `.codeai-hub/orchestrator/idea.md`.";
+
+  // src/client/ui/src/services/idea-collector-fallback-schema.ts
+  var FALLBACK_SCHEMA_JSON = `{"$schema":"http://json-schema.org/draft-07/schema#","$id":"https://codeai-hub.local/schemas/idea-collector-schema.json","title":"Idea Collector \u2014 Structured Output Contract","description":"\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 Structured Output \u0434\u043B\u044F \u0430\u0433\u0435\u043D\u0442\u0430 Idea Collector. \u0410\u0433\u0435\u043D\u0442 \u0432\u0435\u0434\u0451\u0442 guided conversation, \u0437\u0430\u043F\u043E\u043B\u043D\u044F\u044F \u0441\u0435\u043A\u0446\u0438\u0438 \u0438\u0437 idea-template.md, \u0438 \u043D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 (next_action=finalize) \u043E\u0431\u044F\u0437\u0430\u043D \u0432\u0435\u0440\u043D\u0443\u0442\u044C \u0433\u043E\u0442\u043E\u0432\u044B\u0439 Idea.md \u043A\u0430\u043A markdown + \u0446\u0435\u043B\u0435\u0432\u043E\u0439 \u043F\u0443\u0442\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F.","type":"object","additionalProperties":false,"required":["conversation_state","next_action","suggested_response","artifact"],"properties":{"conversation_state":{"type":"object","additionalProperties":false,"required":["collected","coverage_percent","coverage"],"description":"\u041D\u0430\u043A\u043E\u043F\u043B\u0435\u043D\u043D\u043E\u0435 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0435 \u0434\u0438\u0430\u043B\u043E\u0433\u0430: \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u043E \u0438\u043B\u0438 \u043F\u043E\u043B\u043D\u043E\u0441\u0442\u044C\u044E \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u044B\u0435 \u0441\u0435\u043A\u0446\u0438\u0438 \u0438\u0437 \u0448\u0430\u0431\u043B\u043E\u043D\u0430 \u0438\u0434\u0435\u0438.","properties":{"collected":{"type":"object","additionalProperties":false,"description":"\u041D\u0430\u043A\u043E\u043F\u043B\u0435\u043D\u043D\u044B\u0435 \u043E\u0442\u0432\u0435\u0442\u044B \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F/\u0430\u0433\u0435\u043D\u0442\u0430 \u043F\u043E \u0441\u0435\u043A\u0446\u0438\u044F\u043C idea-template.md. \u0414\u043E\u043F\u0443\u0441\u043A\u0430\u0435\u0442\u0441\u044F \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u043E\u0435 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435 \u2014 \u0430\u0433\u0435\u043D\u0442 \u0434\u043E\u0437\u0430\u043F\u0440\u0430\u0448\u0438\u0432\u0430\u0435\u0442 \u043D\u0435\u0434\u043E\u0441\u0442\u0430\u044E\u0449\u0435\u0435.","properties":{"meta":{"type":"object","additionalProperties":false,"description":"\u041C\u0435\u0442\u0430\u0434\u0430\u043D\u043D\u044B\u0435 \u0448\u0430\u043F\u043A\u0438 Idea.md.","properties":{"title":{"type":"string","minLength":1,"description":"# Idea: <\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u043C\u043E\u0434\u0443\u043B\u044F/\u043F\u0440\u043E\u0435\u043A\u0442\u0430>"},"created_date":{"type":"string","description":"**\u0414\u0430\u0442\u0430 \u0441\u043E\u0437\u0434\u0430\u043D\u0438\u044F:** <YYYY-MM-DD>","pattern":"^\\d{4}-\\d{2}-\\d{2}$"},"status":{"type":"string","description":"**\u0421\u0442\u0430\u0442\u0443\u0441:** Draft | Approved | In Progress | Completed","enum":["Draft","Approved","In Progress","Completed"]},"flow":{"type":"string","description":"**Flow:** Full Development Flow","const":"Full Development Flow"},"author":{"type":"string","minLength":1,"description":"**\u0410\u0432\u0442\u043E\u0440 \u0438\u0434\u0435\u0438:** <\u0438\u043C\u044F>"}},"required":["title","created_date","status","flow","author"]},"short_description":{"type":"string","description":"## 1. \u041A\u0440\u0430\u0442\u043A\u043E\u0435 \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \u2014 \u043E\u0434\u043D\u043E-\u0434\u0432\u0430 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F, \u0447\u0442\u043E \u044D\u0442\u043E \u0438 \u0437\u0430\u0447\u0435\u043C."},"context_and_motivation":{"type":"string","description":"## 2. \u041A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438 \u043C\u043E\u0442\u0438\u0432\u0430\u0446\u0438\u044F \u2014 \u043F\u043E\u0447\u0435\u043C\u0443 \u044D\u0442\u043E \u0432\u0430\u0436\u043D\u043E \u0441\u0435\u0439\u0447\u0430\u0441, \u043A\u0430\u043A\u043E\u0439 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u043F\u0440\u0438\u0432\u0451\u043B \u043A \u0438\u0434\u0435\u0435."},"problem":{"type":"string","description":"## 3. \u041F\u0440\u043E\u0431\u043B\u0435\u043C\u0430 \u2014 \u043A\u0430\u043A\u0443\u044E \u043F\u0440\u043E\u0431\u043B\u0435\u043C\u0443 \u0440\u0435\u0448\u0430\u0435\u0442 \u043C\u043E\u0434\u0443\u043B\u044C/\u043F\u0440\u043E\u0435\u043A\u0442."},"goals_and_success_criteria":{"type":"object","additionalProperties":false,"description":"## 4. \u0426\u0435\u043B\u0438 \u0438 \u043A\u0440\u0438\u0442\u0435\u0440\u0438\u0438 \u0443\u0441\u043F\u0435\u0445\u0430.","properties":{"goals":{"type":"array","description":"**\u0426\u0435\u043B\u0438:**","items":{"type":"string","minLength":1}},"success_criteria":{"type":"array","description":"**\u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0438 \u0443\u0441\u043F\u0435\u0445\u0430 (\u0438\u0437\u043C\u0435\u0440\u0438\u043C\u044B\u0435/\u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u044B\u0435):**","items":{"type":"string","minLength":1}}},"required":["goals","success_criteria"]},"high_level_solution":{"type":"string","description":"## 5. \u0420\u0435\u0448\u0435\u043D\u0438\u0435 (\u0432\u044B\u0441\u043E\u043A\u043E\u0443\u0440\u043E\u0432\u043D\u0435\u0432\u043E\u0435) \u2014 \u043A\u0430\u043A \u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442\u0441\u044F \u0440\u0435\u0448\u0438\u0442\u044C \u043F\u0440\u043E\u0431\u043B\u0435\u043C\u0443."},"user_scenarios":{"type":"array","description":"## 6. \u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0435 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u0438 \u2014 3\u20137 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0445 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u0435\u0432 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F.","items":{"type":"string","minLength":1}},"key_functions":{"type":"array","description":"## 7. \u041A\u043B\u044E\u0447\u0435\u0432\u044B\u0435 \u0444\u0443\u043D\u043A\u0446\u0438\u0438 \u2014 \u0442\u0430\u0431\u043B\u0438\u0446\u0430 \u0444\u0443\u043D\u043A\u0446\u0438\u0439.","items":{"type":"object","additionalProperties":false,"required":["id","name","description"],"properties":{"id":{"type":"integer","minimum":1,"description":"\u041F\u043E\u0440\u044F\u0434\u043A\u043E\u0432\u044B\u0439 \u043D\u043E\u043C\u0435\u0440 \u0432 \u0442\u0430\u0431\u043B\u0438\u0446\u0435 (\u043E\u043F\u0446\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u043E)."},"name":{"type":"string","minLength":1,"description":"\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0444\u0443\u043D\u043A\u0446\u0438\u0438."},"description":{"type":"string","minLength":1,"description":"\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \u0444\u0443\u043D\u043A\u0446\u0438\u0438."}}}},"users_and_roles":{"type":"object","additionalProperties":false,"description":"## 8. \u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u0438 \u0438 \u0440\u043E\u043B\u0438.","properties":{"user":{"type":"string","description":"- **\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C**: ..."},"ai_agent":{"type":"string","description":"- **AI \u0410\u0433\u0435\u043D\u0442**: ..."},"system":{"type":"string","description":"- **\u0421\u0438\u0441\u0442\u0435\u043C\u0430**: ..."}},"required":["user","ai_agent","system"]},"out_of_scope":{"type":"array","description":"## 9. \u0413\u0440\u0430\u043D\u0438\u0446\u044B (\u0447\u0442\u043E \u041D\u0415 \u0432\u0445\u043E\u0434\u0438\u0442).","items":{"type":"string","minLength":1}},"constraints_and_assumptions":{"type":"object","additionalProperties":false,"description":"## 10. \u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u044F \u0438 \u0434\u043E\u043F\u0443\u0449\u0435\u043D\u0438\u044F.","properties":{"technical_constraints":{"type":"array","description":"- \u0422\u0435\u0445\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0435 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u044F: ...","items":{"type":"string","minLength":1}},"ux_time_team_constraints":{"type":"array","description":"- \u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u044F \u043F\u043E UX/\u0432\u0440\u0435\u043C\u0435\u043D\u0438/\u043A\u043E\u043C\u0430\u043D\u0434\u0435: ...","items":{"type":"string","minLength":1}},"assumptions":{"type":"array","description":"- \u0414\u043E\u043F\u0443\u0449\u0435\u043D\u0438\u044F: ...","items":{"type":"string","minLength":1}}},"required":["technical_constraints","ux_time_team_constraints","assumptions"]},"data_and_storage":{"type":"object","additionalProperties":false,"description":"## 11. \u0414\u0430\u043D\u043D\u044B\u0435 \u0438 \u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435.","properties":{"artifacts_files":{"type":"array","description":"- \u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B/\u0444\u0430\u0439\u043B\u044B: ...","items":{"type":"string","minLength":1}},"configs_settings":{"type":"array","description":"- \u041A\u043E\u043D\u0444\u0438\u0433\u0438/\u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438: ...","items":{"type":"string","minLength":1}},"logs_telemetry":{"type":"array","description":"- \u041B\u043E\u0433\u0438/\u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044F: ...","items":{"type":"string","minLength":1}}},"required":["artifacts_files","configs_settings","logs_telemetry"]},"dependencies_and_integrations":{"type":"object","additionalProperties":false,"description":"## 12. \u0417\u0430\u0432\u0438\u0441\u0438\u043C\u043E\u0441\u0442\u0438 \u0438 \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438.","properties":{"external_systems":{"type":"array","description":"- \u0412\u043D\u0435\u0448\u043D\u0438\u0435 \u0441\u0438\u0441\u0442\u0435\u043C\u044B: ...","items":{"type":"string","minLength":1}},"internal_modules":{"type":"array","description":"- \u0412\u043D\u0443\u0442\u0440\u0435\u043D\u043D\u0438\u0435 \u043C\u043E\u0434\u0443\u043B\u0438: ...","items":{"type":"string","minLength":1}},"ai_providers":{"type":"array","description":"- \u041F\u0440\u043E\u0432\u0430\u0439\u0434\u0435\u0440\u044B AI: ...","items":{"type":"string","minLength":1}}},"required":["external_systems","internal_modules","ai_providers"]},"risks_and_unknowns":{"type":"array","description":"## 13. \u0420\u0438\u0441\u043A\u0438 \u0438 \u043D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E\u0441\u0442\u0438.","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"## 14. \u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u044B \u2014 \u0441\u043F\u0438\u0441\u043E\u043A \u0442\u043E\u0433\u043E, \u0447\u0442\u043E \u043D\u0430\u0434\u043E \u0443\u0442\u043E\u0447\u043D\u0438\u0442\u044C \u043F\u0435\u0440\u0435\u0434 Spec.md.","items":{"type":"string","minLength":1}},"spec_entry_criteria":{"type":"array","description":"## 15. \u041A\u0440\u0438\u0442\u0435\u0440\u0438\u0438 \u043F\u0435\u0440\u0435\u0445\u043E\u0434\u0430 \u043A Spec.md \u2014 \u0447\u0435\u043A-\u043B\u0438\u0441\u0442. \u041C\u043E\u0436\u0435\u0442 \u0431\u044B\u0442\u044C \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u043E \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D/\u043F\u0435\u0440\u0435\u0444\u043E\u0440\u043C\u0443\u043B\u0438\u0440\u043E\u0432\u0430\u043D \u043F\u043E\u0434 \u043F\u0440\u043E\u0435\u043A\u0442.","items":{"type":"string","minLength":1}},"related_documents":{"type":"object","additionalProperties":false,"description":"## 16. \u0421\u0432\u044F\u0437\u0430\u043D\u043D\u044B\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B.","properties":{"spec_note":{"type":"string","description":"\u0421\u0442\u0440\u043E\u043A\u0430/\u043F\u043E\u044F\u0441\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u043E Spec.md (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440 '(\u0431\u0443\u0434\u0435\u0442 \u0441\u043E\u0437\u0434\u0430\u043D)')."},"plan_note":{"type":"string","description":"\u0421\u0442\u0440\u043E\u043A\u0430/\u043F\u043E\u044F\u0441\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u043E Plan.md (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440 '(\u0431\u0443\u0434\u0435\u0442 \u0441\u043E\u0437\u0434\u0430\u043D)')."},"discussion_links":{"type":"array","description":"\u0421\u0441\u044B\u043B\u043A\u0438 \u043D\u0430 \u043E\u0431\u0441\u0443\u0436\u0434\u0435\u043D\u0438\u044F/\u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B.","items":{"type":"string","minLength":1}}},"required":["spec_note","plan_note","discussion_links"]}},"required":["meta","short_description","context_and_motivation","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","users_and_roles","out_of_scope","constraints_and_assumptions","data_and_storage","dependencies_and_integrations","risks_and_unknowns","open_questions","spec_entry_criteria","related_documents"]},"coverage_percent":{"type":"integer","minimum":0,"maximum":100,"description":"\u041E\u0446\u0435\u043D\u043A\u0430 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u043E\u0441\u0442\u0438 \u0448\u0430\u0431\u043B\u043E\u043D\u0430 \u0438\u0434\u0435\u0438 (0..100). \u0420\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0443\u0435\u043C\u044B\u0439 \u043F\u043E\u0440\u043E\u0433 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u044F: >= 80."},"coverage":{"type":"object","additionalProperties":false,"description":"\u041E\u043F\u0446\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u0430\u044F \u0434\u0435\u0442\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u044F \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F \u043F\u043E \u0441\u0435\u043A\u0446\u0438\u044F\u043C \u0448\u0430\u0431\u043B\u043E\u043D\u0430.","properties":{"completed_sections":{"type":"array","items":{"type":"string","minLength":1}},"missing_sections":{"type":"array","items":{"type":"string","minLength":1}}},"required":["completed_sections","missing_sections"]}}},"next_action":{"type":"string","description":"\u0427\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435: \u0437\u0430\u0434\u0430\u0442\u044C \u0432\u043E\u043F\u0440\u043E\u0441, \u0443\u0442\u043E\u0447\u043D\u0438\u0442\u044C, \u0441\u0443\u043C\u043C\u0430\u0440\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0438\u043B\u0438 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u044C \u0438 \u0432\u0435\u0440\u043D\u0443\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442.","enum":["ask_question","clarify","summarize","finalize"]},"suggested_response":{"type":"string","minLength":1,"description":"\u0422\u0435\u043A\u0441\u0442 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F \u0430\u0433\u0435\u043D\u0442\u0430 (\u0432\u043E\u043F\u0440\u043E\u0441/\u0443\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u0435/\u0441\u0432\u043E\u0434\u043A\u0430/\u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u044F), \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u043C \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E."},"artifact":{"type":"object","additionalProperties":false,"description":"\u0424\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442. \u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u0435\u043D \u043F\u0440\u0438 next_action=finalize.","required":["idea_markdown","path"],"properties":{"idea_markdown":{"type":"string","description":"\u0413\u043E\u0442\u043E\u0432\u044B\u0439 Idea.md \u043A\u0430\u043A markdown (\u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u0438 \u0432\u0441\u0435 \u0441\u0435\u043A\u0446\u0438\u0438 \u043F\u043E \u0448\u0430\u0431\u043B\u043E\u043D\u0443)."},"path":{"type":"string","description":"\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442 \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435.","const":".codeai-hub/orchestrator/idea.md"}}}},"allOf":[{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"required":["artifact"]}},{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"properties":{"conversation_state":{"required":["collected","coverage_percent"],"properties":{"coverage_percent":{"minimum":80},"collected":{"required":["meta","short_description","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","users_and_roles","out_of_scope","dependencies_and_integrations","risks_and_unknowns","open_questions"],"properties":{"meta":{"required":["title","created_date","status","flow","author"]},"goals_and_success_criteria":{"required":["goals","success_criteria"]}}}}}}}}]}`;
+  var IDEA_COLLECTOR_FALLBACK_SCHEMA = JSON.parse(
+    FALLBACK_SCHEMA_JSON
+  );
+
+  // src/client/ui/src/services/idea-collector-schema-utils.ts
+  var isRecord2 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
+  var strictifyProperties = (schema) => {
+    const properties = schema.properties;
+    if (!isRecord2(properties)) {
+      return;
+    }
+    schema.required = Object.keys(properties);
+    if (schema.additionalProperties === void 0) {
+      schema.additionalProperties = false;
+    }
+    for (const value of Object.values(properties)) {
+      if (isRecord2(value)) {
+        strictifySchema(value);
+      }
+    }
+  };
+  var strictifyItems = (schema) => {
+    const items = schema.items;
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        if (isRecord2(item)) {
+          strictifySchema(item);
+        }
+      }
+      return;
+    }
+    if (isRecord2(items)) {
+      strictifySchema(items);
+    }
+  };
+  var strictifyCombinators = (schema) => {
+    for (const key of ["allOf", "anyOf", "oneOf"]) {
+      const entries = schema[key];
+      if (!Array.isArray(entries)) {
+        continue;
+      }
+      for (const entry of entries) {
+        if (isRecord2(entry)) {
+          strictifySchema(entry);
+        }
+      }
+    }
+  };
+  var strictifySchema = (schema) => {
+    strictifyProperties(schema);
+    strictifyItems(schema);
+    strictifyCombinators(schema);
+  };
+  var injectTemplateIntoSchema = (schema, template) => {
+    if (!template) {
+      return schema;
+    }
+    const properties = schema.properties;
+    if (!isRecord2(properties)) {
+      return schema;
+    }
+    const artifact = properties.artifact;
+    if (!isRecord2(artifact)) {
+      return schema;
+    }
+    const artifactProperties = artifact.properties;
+    if (!isRecord2(artifactProperties)) {
+      return schema;
+    }
+    const ideaMarkdown = artifactProperties.idea_markdown;
+    if (!isRecord2(ideaMarkdown)) {
+      return schema;
+    }
+    const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
+    ideaMarkdown.description = `${description}
+
+Idea.md template:
+${template}`;
+    return schema;
+  };
+  var normalizeIdeaCollectorSchema = (schema, template) => {
+    const next = cloneSchema(schema);
+    strictifySchema(next);
+    return injectTemplateIntoSchema(next, template);
+  };
 
   // src/client/ui/src/services/idea-collector-service.ts
   var IDEA_COLLECTOR_PROMPT_PATH = "~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md";
   var IDEA_COLLECTOR_TEMPLATE_PATH = "~/.codeai-hub/templates/flows/full-development-flow/idea-template.md";
   var IDEA_COLLECTOR_SCHEMA_PATH = "~/.codeai-hub/templates/schemas/idea-collector-schema.json";
   var HARDCODED_IDEA_PATH = "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/.codeai-hub/orchestrator/idea.md";
-  var FALLBACK_SCHEMA = {
-    type: "object",
-    additionalProperties: false,
-    required: ["conversation_state", "next_action", "suggested_response"],
-    properties: {
-      conversation_state: {
-        type: "object",
-        additionalProperties: false,
-        required: ["collected", "coverage_percent"],
-        properties: {
-          collected: { type: "object", additionalProperties: false },
-          coverage_percent: { type: "integer", minimum: 0, maximum: 100 }
-        }
-      },
-      next_action: {
-        type: "string",
-        enum: ["ask_question", "clarify", "summarize", "finalize"]
-      },
-      suggested_response: { type: "string", minLength: 1 },
-      artifact: {
-        type: "object",
-        additionalProperties: false,
-        required: ["idea_markdown", "path"],
-        properties: {
-          idea_markdown: { type: "string", minLength: 1 },
-          path: { type: "string" }
-        }
-      }
-    }
-  };
   var resolveHomeDirectory = () => {
     const globalScope2 = globalThis;
     const env2 = globalScope2.process?.env;
@@ -22990,7 +23049,7 @@ ${path2}` : path2;
     return `${home}${templatePath.slice(1)}`;
   };
   var toFileUrl = (filePath) => `file://${encodeURI(filePath)}`;
-  var isRecord2 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var readTextFromFile = async (templatePath) => {
     const resolvedPath = resolveTemplatePath(templatePath);
     if (!resolvedPath) {
@@ -23023,25 +23082,34 @@ ${path2}` : path2;
   var loadSchema = async () => {
     const raw = await readTextFromFile(IDEA_COLLECTOR_SCHEMA_PATH);
     if (!raw) {
-      return FALLBACK_SCHEMA;
+      return IDEA_COLLECTOR_FALLBACK_SCHEMA;
     }
     try {
       const parsed = JSON.parse(raw);
-      return isRecord2(parsed) ? parsed : FALLBACK_SCHEMA;
+      return isRecord3(parsed) ? parsed : IDEA_COLLECTOR_FALLBACK_SCHEMA;
     } catch {
-      return FALLBACK_SCHEMA;
+      return IDEA_COLLECTOR_FALLBACK_SCHEMA;
     }
   };
   var extractArtifact = (event) => {
-    if (!isRecord2(event)) {
+    if (!isRecord3(event)) {
       return null;
     }
     const data = event.data;
-    if (!isRecord2(data) || data.kind !== "structured_output") {
+    if (!isRecord3(data) || data.kind !== "structured_output") {
+      return null;
+    }
+    let nextAction = null;
+    if (typeof data.nextAction === "string") {
+      nextAction = data.nextAction;
+    } else if (typeof data.next_action === "string") {
+      nextAction = data.next_action;
+    }
+    if (nextAction !== "finalize") {
       return null;
     }
     const artifact = data.artifact;
-    if (!isRecord2(artifact)) {
+    if (!isRecord3(artifact)) {
       return null;
     }
     const path2 = HARDCODED_IDEA_PATH;
@@ -23055,35 +23123,6 @@ ${path2}` : path2;
       return null;
     }
     return { path: path2, ideaMarkdown };
-  };
-  var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
-  var injectTemplateIntoSchema = (schema, template) => {
-    if (!template) {
-      return schema;
-    }
-    const next = cloneSchema(schema);
-    const properties = next.properties;
-    if (!isRecord2(properties)) {
-      return schema;
-    }
-    const artifact = properties.artifact;
-    if (!isRecord2(artifact)) {
-      return schema;
-    }
-    const artifactProperties = artifact.properties;
-    if (!isRecord2(artifactProperties)) {
-      return schema;
-    }
-    const ideaMarkdown = artifactProperties.idea_markdown;
-    if (!isRecord2(ideaMarkdown)) {
-      return schema;
-    }
-    const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "\u0413\u043E\u0442\u043E\u0432\u044B\u0439 Idea.md \u0432 Markdown.";
-    ideaMarkdown.description = `${description}
-
-\u0428\u0430\u0431\u043B\u043E\u043D Idea.md:
-${template}`;
-    return next;
   };
   var generateLocalMessageId = () => {
     if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
@@ -23115,6 +23154,7 @@ ${template}`;
       this.promptPromise = null;
       this.templatePromise = null;
       this.schemaPromise = null;
+      this.normalizedSchemaPromise = null;
       this.noticesSent = /* @__PURE__ */ new Set();
     }
     isIdeaCollectorSession(sessionId) {
@@ -23132,19 +23172,17 @@ ${template}`;
           "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Idea Collector. \u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u0434\u043E\u0436\u0434\u0438\u0442\u0435\u0441\u044C \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u0432\u043E\u043F\u0440\u043E\u0441\u0430."
         );
       }
-      const [prompt, schema, template] = await Promise.all([
+      const [prompt, schema] = await Promise.all([
         this.getPrompt(),
-        this.getSchema(),
-        this.getTemplate()
+        this.getNormalizedSchema()
       ]);
-      const hydratedSchema = injectTemplateIntoSchema(schema, template);
-      sendChatMessage(sessionId, prompt, { outputSchema: hydratedSchema });
+      sendChatMessage(sessionId, prompt, { outputSchema: schema });
     }
     async continueConversation(sessionId, content3) {
       if (!this.activeSessions.has(sessionId)) {
         return;
       }
-      const schema = await this.getSchema();
+      const schema = await this.getNormalizedSchema();
       sendChatMessage(sessionId, content3, { outputSchema: schema });
     }
     handleStreamEvent(sessionId, event) {
@@ -23173,6 +23211,17 @@ ${template}`;
         this.schemaPromise = loadSchema();
       }
       return this.schemaPromise;
+    }
+    getNormalizedSchema() {
+      if (!this.normalizedSchemaPromise) {
+        this.normalizedSchemaPromise = Promise.all([
+          this.getSchema(),
+          this.getTemplate()
+        ]).then(
+          ([schema, template]) => normalizeIdeaCollectorSchema(schema, template)
+        );
+      }
+      return this.normalizedSchemaPromise;
     }
   };
 
@@ -25716,13 +25765,13 @@ ${template}`;
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord3 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord4 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord3(value)) {
+    if (!isRecord4(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -25761,7 +25810,7 @@ ${template}`;
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord4 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord5 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -25794,7 +25843,7 @@ ${template}`;
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord4(value)) {
+    if (!isRecord5(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
