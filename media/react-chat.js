@@ -22937,6 +22937,7 @@ ${path2}` : path2;
 
   // src/client/ui/src/services/idea-collector-service.ts
   var IDEA_COLLECTOR_PROMPT_PATH = "~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md";
+  var IDEA_COLLECTOR_TEMPLATE_PATH = "~/.codeai-hub/templates/flows/full-development-flow/idea-template.md";
   var IDEA_COLLECTOR_SCHEMA_PATH = "~/.codeai-hub/templates/schemas/idea-collector-schema.json";
   var HARDCODED_IDEA_PATH = "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/.codeai-hub/orchestrator/idea.md";
   var FALLBACK_SCHEMA = {
@@ -22944,10 +22945,29 @@ ${path2}` : path2;
     additionalProperties: false,
     required: ["conversation_state", "next_action", "suggested_response"],
     properties: {
-      conversation_state: { type: "object", additionalProperties: true },
-      next_action: { type: "string" },
-      suggested_response: { type: "string" },
-      artifact: { type: "object", additionalProperties: true }
+      conversation_state: {
+        type: "object",
+        additionalProperties: false,
+        required: ["collected", "coverage_percent"],
+        properties: {
+          collected: { type: "object", additionalProperties: false },
+          coverage_percent: { type: "integer", minimum: 0, maximum: 100 }
+        }
+      },
+      next_action: {
+        type: "string",
+        enum: ["ask_question", "clarify", "summarize", "finalize"]
+      },
+      suggested_response: { type: "string", minLength: 1 },
+      artifact: {
+        type: "object",
+        additionalProperties: false,
+        required: ["idea_markdown", "path"],
+        properties: {
+          idea_markdown: { type: "string", minLength: 1 },
+          path: { type: "string" }
+        }
+      }
     }
   };
   var resolveHomeDirectory = () => {
@@ -22993,6 +23013,13 @@ ${path2}` : path2;
     }
     return IDEA_KICKOFF_PROMPT;
   };
+  var loadTemplate = async () => {
+    const raw = await readTextFromFile(IDEA_COLLECTOR_TEMPLATE_PATH);
+    if (raw && raw.trim().length > 0) {
+      return raw;
+    }
+    return null;
+  };
   var loadSchema = async () => {
     const raw = await readTextFromFile(IDEA_COLLECTOR_SCHEMA_PATH);
     if (!raw) {
@@ -23029,12 +23056,66 @@ ${path2}` : path2;
     }
     return { path: path2, ideaMarkdown };
   };
+  var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
+  var injectTemplateIntoSchema = (schema, template) => {
+    if (!template) {
+      return schema;
+    }
+    const next = cloneSchema(schema);
+    const properties = next.properties;
+    if (!isRecord2(properties)) {
+      return schema;
+    }
+    const artifact = properties.artifact;
+    if (!isRecord2(artifact)) {
+      return schema;
+    }
+    const artifactProperties = artifact.properties;
+    if (!isRecord2(artifactProperties)) {
+      return schema;
+    }
+    const ideaMarkdown = artifactProperties.idea_markdown;
+    if (!isRecord2(ideaMarkdown)) {
+      return schema;
+    }
+    const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "\u0413\u043E\u0442\u043E\u0432\u044B\u0439 Idea.md \u0432 Markdown.";
+    ideaMarkdown.description = `${description}
+
+\u0428\u0430\u0431\u043B\u043E\u043D Idea.md:
+${template}`;
+    return next;
+  };
+  var generateLocalMessageId = () => {
+    if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
+      return globalThis.crypto.randomUUID();
+    }
+    return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  };
+  var postSystemNotice = (sessionId, content3) => {
+    window.postMessage(
+      {
+        type: "session:message",
+        payload: {
+          sessionId,
+          message: {
+            id: generateLocalMessageId(),
+            role: "system",
+            content: content3,
+            createdAt: Date.now()
+          }
+        }
+      },
+      "*"
+    );
+  };
   var IdeaCollectorService = class {
     constructor() {
       this.activeSessions = /* @__PURE__ */ new Set();
       this.artifacts = /* @__PURE__ */ new Map();
       this.promptPromise = null;
+      this.templatePromise = null;
       this.schemaPromise = null;
+      this.noticesSent = /* @__PURE__ */ new Set();
     }
     isIdeaCollectorSession(sessionId) {
       return this.activeSessions.has(sessionId);
@@ -23044,11 +23125,20 @@ ${path2}` : path2;
     }
     async startCollection(sessionId) {
       this.activeSessions.add(sessionId);
-      const [prompt, schema] = await Promise.all([
+      if (!this.noticesSent.has(sessionId)) {
+        this.noticesSent.add(sessionId);
+        postSystemNotice(
+          sessionId,
+          "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Idea Collector. \u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u0434\u043E\u0436\u0434\u0438\u0442\u0435\u0441\u044C \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u0432\u043E\u043F\u0440\u043E\u0441\u0430."
+        );
+      }
+      const [prompt, schema, template] = await Promise.all([
         this.getPrompt(),
-        this.getSchema()
+        this.getSchema(),
+        this.getTemplate()
       ]);
-      sendChatMessage(sessionId, prompt, { outputSchema: schema });
+      const hydratedSchema = injectTemplateIntoSchema(schema, template);
+      sendChatMessage(sessionId, prompt, { outputSchema: hydratedSchema });
     }
     async continueConversation(sessionId, content3) {
       if (!this.activeSessions.has(sessionId)) {
@@ -23071,6 +23161,12 @@ ${path2}` : path2;
         this.promptPromise = loadPrompt();
       }
       return this.promptPromise;
+    }
+    getTemplate() {
+      if (!this.templatePromise) {
+        this.templatePromise = loadTemplate();
+      }
+      return this.templatePromise;
     }
     getSchema() {
       if (!this.schemaPromise) {
