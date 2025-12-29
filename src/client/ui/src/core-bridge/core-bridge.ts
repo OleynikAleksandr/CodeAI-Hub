@@ -219,16 +219,20 @@ const createSession = (providerIds: readonly ProviderStackId[]): void => {
     payload: { providerId },
   });
 };
-export const sendChatMessage = (sessionId: string, content: string): void => {
+export const sendChatMessage = (
+  sessionId: string,
+  content: string,
+  turnOptions?: Record<string, unknown>
+): void => {
   if (!content.trim()) {
     return;
   }
-
+  const messageContent = turnOptions ? { text: content, turnOptions } : content;
   enqueueMessage({
     type: "session:message",
     payload: {
       sessionId,
-      content,
+      content: messageContent,
     },
   });
 };

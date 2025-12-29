@@ -54,7 +54,11 @@ type ProviderAdapter = {
   initialize(): Promise<void>;
   createSession(workspacePath?: string): Promise<string>;
   closeSession(sessionId: string): Promise<void>;
-  sendMessage(sessionId: string, content: string): Promise<void>;
+  sendMessage(
+    sessionId: string,
+    content: string,
+    turnOptions?: Record<string, unknown>
+  ): Promise<void>;
   subscribe(
     sessionId: string,
     listener: (payload: unknown) => void
