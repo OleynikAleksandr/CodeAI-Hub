@@ -11,6 +11,7 @@ import type { ActiveSession } from "../session/types";
 import type {
   CodexReasoningEffort,
   CodexThreadOptions,
+  CodexTurnOptions,
   CodexWorkspaceOptions,
   ModuleReporter,
 } from "../types";
@@ -138,10 +139,16 @@ export class CodexSDKManager {
   async sendMessage(
     sessionId: string,
     content: string,
+    turnOptions?: CodexTurnOptions,
     options?: { readonly internal?: boolean }
   ): Promise<void> {
     await this.initialize();
-    this.deps.processor.enqueueMessage(sessionId, content, undefined, options);
+    this.deps.processor.enqueueMessage(
+      sessionId,
+      content,
+      turnOptions,
+      options
+    );
   }
 
   private createThread(session: ActiveSession): Thread {

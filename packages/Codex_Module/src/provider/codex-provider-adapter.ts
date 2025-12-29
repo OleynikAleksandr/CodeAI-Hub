@@ -4,7 +4,7 @@ import { CodexMessageProcessor } from "../messaging/message-processor";
 import { CodexSDKManager } from "../sdk/codex-sdk-manager";
 import { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
-import type { CodexModuleOptions } from "../types";
+import type { CodexModuleOptions, CodexTurnOptions } from "../types";
 
 export type SessionListener = (payload: unknown) => void;
 
@@ -51,8 +51,12 @@ export class CodexProviderAdapter {
     this.listeners.delete(sessionId);
   }
 
-  async sendMessage(sessionId: string, content: string): Promise<void> {
-    await this.sdkManager.sendMessage(sessionId, content);
+  async sendMessage(
+    sessionId: string,
+    content: string,
+    turnOptions?: CodexTurnOptions
+  ): Promise<void> {
+    await this.sdkManager.sendMessage(sessionId, content, turnOptions);
   }
 
   subscribe(sessionId: string, listener: SessionListener): () => void {
