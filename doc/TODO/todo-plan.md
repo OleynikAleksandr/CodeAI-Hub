@@ -75,9 +75,9 @@ npm run build:webview   # или таргетная сборка
 - [ ] Принимает props: `onStageClick`, `activeStage`
 - [ ] Отображает 4 этапа: Idea → Spec → Plan → Execute
 
-**Статус:** `TODO`
-**Дата:**
-**Commit:**
+**Статус:** `DONE`
+**Дата:** 2025-12-29
+**Commit:** `b61de20`
 
 ##### Git Commit: `feat(ui): add flow wizard component structure`
 
@@ -96,8 +96,8 @@ npm run build:webview   # или таргетная сборка
 - [ ] Disabled кубики серые с opacity
 - [ ] Hover эффект на active кубиках
 
-**Статус:** `TODO`
-**Дата:**
+**Статус:** `IN_PROGRESS`
+**Дата:** 2025-12-29
 **Commit:**
 
 ##### Git Commit: `style(ui): add flow wizard stage styling`
@@ -346,4 +346,3 @@ npm run build:webview   # или таргетная сборка
 3. Найти первую незавершённую задачу в текущей волне
 4. Продолжить выполнение
 5. При неясностях — задать вопросы пользователю
-

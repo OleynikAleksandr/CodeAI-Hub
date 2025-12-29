@@ -50,9 +50,14 @@ export const flowStageButtonActiveStyles: CSSProperties = {
   background: "#1f2a33",
 };
 
+export const flowStageButtonActiveHoverStyles: CSSProperties = {
+  borderColor: "#2b88d8",
+};
+
 export const flowStageButtonDisabledStyles: CSSProperties = {
   opacity: 0.55,
   cursor: "not-allowed",
+  color: "#b0b0b0",
 };
 
 export const flowStageTitleStyles: CSSProperties = {
