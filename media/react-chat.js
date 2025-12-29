@@ -7609,14 +7609,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react24 = __toESM(require_react());
+  var import_react25 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host.tsx
-  var import_react23 = __toESM(require_react());
-
-  // src/client/ui/src/app-host/idea-kickoff-prompt.ts
-  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector \u0434\u043B\u044F Project Orchestrator.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441, \u0447\u0442\u043E\u0431\u044B \u0441\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0440\u0435\u0431\u043E\u0432\u0430\u043D\u0438\u044F \u0438 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442.\n\u0412 \u043A\u043E\u043D\u0446\u0435, \u043A\u043E\u0433\u0434\u0430 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E, \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u0447\u0435\u0440\u043D\u043E\u0432\u0438\u043A `Idea.md` (\u0432 Markdown) \u0434\u043B\u044F `.codeai-hub/orchestrator/idea.md`.";
+  var import_react24 = __toESM(require_react());
 
   // src/client/ui/src/app-host/loading-messages.ts
   var MESSAGE_ORDER = [
@@ -8432,15 +8429,16 @@
       payload: { providerId }
     });
   };
-  var sendChatMessage = (sessionId, content3) => {
+  var sendChatMessage = (sessionId, content3, turnOptions) => {
     if (!content3.trim()) {
       return;
     }
+    const messageContent = turnOptions ? { text: content3, turnOptions } : content3;
     enqueueMessage({
       type: "session:message",
       payload: {
         sessionId,
-        content: content3
+        content: messageContent
       }
     });
   };
@@ -22931,8 +22929,199 @@ ${path2}` : path2;
     };
   };
 
-  // src/client/ui/src/app-host/webview-message-handler.ts
+  // src/client/ui/src/app-host/use-idea-collector.ts
   var import_react10 = __toESM(require_react());
+
+  // src/client/ui/src/app-host/idea-kickoff-prompt.ts
+  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector \u0434\u043B\u044F Project Orchestrator.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441, \u0447\u0442\u043E\u0431\u044B \u0441\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0440\u0435\u0431\u043E\u0432\u0430\u043D\u0438\u044F \u0438 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442.\n\u0412 \u043A\u043E\u043D\u0446\u0435, \u043A\u043E\u0433\u0434\u0430 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E, \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u0447\u0435\u0440\u043D\u043E\u0432\u0438\u043A `Idea.md` (\u0432 Markdown) \u0434\u043B\u044F `.codeai-hub/orchestrator/idea.md`.";
+
+  // src/client/ui/src/services/idea-collector-service.ts
+  var IDEA_COLLECTOR_PROMPT_PATH = "~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md";
+  var IDEA_COLLECTOR_SCHEMA_PATH = "~/.codeai-hub/templates/schemas/idea-collector-schema.json";
+  var HARDCODED_IDEA_PATH = "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/.codeai-hub/orchestrator/idea.md";
+  var FALLBACK_SCHEMA = {
+    type: "object",
+    additionalProperties: false,
+    required: ["conversation_state", "next_action", "suggested_response"],
+    properties: {
+      conversation_state: { type: "object", additionalProperties: true },
+      next_action: { type: "string" },
+      suggested_response: { type: "string" },
+      artifact: { type: "object", additionalProperties: true }
+    }
+  };
+  var resolveHomeDirectory = () => {
+    const globalScope2 = globalThis;
+    const env2 = globalScope2.process?.env;
+    const home = env2?.HOME ?? env2?.USERPROFILE;
+    if (typeof home !== "string" || home.length === 0) {
+      return null;
+    }
+    return home;
+  };
+  var resolveTemplatePath = (templatePath) => {
+    if (!templatePath.startsWith("~")) {
+      return templatePath;
+    }
+    const home = resolveHomeDirectory();
+    if (!home) {
+      return null;
+    }
+    return `${home}${templatePath.slice(1)}`;
+  };
+  var toFileUrl = (filePath) => `file://${encodeURI(filePath)}`;
+  var isRecord2 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var readTextFromFile = async (templatePath) => {
+    const resolvedPath = resolveTemplatePath(templatePath);
+    if (!resolvedPath) {
+      return null;
+    }
+    try {
+      const response = await fetch(toFileUrl(resolvedPath));
+      if (!response.ok) {
+        return null;
+      }
+      return await response.text();
+    } catch {
+      return null;
+    }
+  };
+  var loadPrompt = async () => {
+    const raw = await readTextFromFile(IDEA_COLLECTOR_PROMPT_PATH);
+    if (raw && raw.trim().length > 0) {
+      return raw;
+    }
+    return IDEA_KICKOFF_PROMPT;
+  };
+  var loadSchema = async () => {
+    const raw = await readTextFromFile(IDEA_COLLECTOR_SCHEMA_PATH);
+    if (!raw) {
+      return FALLBACK_SCHEMA;
+    }
+    try {
+      const parsed = JSON.parse(raw);
+      return isRecord2(parsed) ? parsed : FALLBACK_SCHEMA;
+    } catch {
+      return FALLBACK_SCHEMA;
+    }
+  };
+  var extractArtifact = (event) => {
+    if (!isRecord2(event)) {
+      return null;
+    }
+    const data = event.data;
+    if (!isRecord2(data) || data.kind !== "structured_output") {
+      return null;
+    }
+    const artifact = data.artifact;
+    if (!isRecord2(artifact)) {
+      return null;
+    }
+    const path2 = HARDCODED_IDEA_PATH;
+    let ideaMarkdown = null;
+    if (typeof artifact.ideaMarkdown === "string") {
+      ideaMarkdown = artifact.ideaMarkdown;
+    } else if (typeof artifact.idea_markdown === "string") {
+      ideaMarkdown = artifact.idea_markdown;
+    }
+    if (!(path2 && ideaMarkdown)) {
+      return null;
+    }
+    return { path: path2, ideaMarkdown };
+  };
+  var IdeaCollectorService = class {
+    constructor() {
+      this.activeSessions = /* @__PURE__ */ new Set();
+      this.artifacts = /* @__PURE__ */ new Map();
+      this.promptPromise = null;
+      this.schemaPromise = null;
+    }
+    isIdeaCollectorSession(sessionId) {
+      return this.activeSessions.has(sessionId);
+    }
+    getLatestArtifact(sessionId) {
+      return this.artifacts.get(sessionId) ?? null;
+    }
+    async startCollection(sessionId) {
+      this.activeSessions.add(sessionId);
+      const [prompt, schema] = await Promise.all([
+        this.getPrompt(),
+        this.getSchema()
+      ]);
+      sendChatMessage(sessionId, prompt, { outputSchema: schema });
+    }
+    async continueConversation(sessionId, content3) {
+      if (!this.activeSessions.has(sessionId)) {
+        return;
+      }
+      const schema = await this.getSchema();
+      sendChatMessage(sessionId, content3, { outputSchema: schema });
+    }
+    handleStreamEvent(sessionId, event) {
+      if (!this.activeSessions.has(sessionId)) {
+        return;
+      }
+      const artifact = extractArtifact(event);
+      if (artifact) {
+        this.artifacts.set(sessionId, artifact);
+      }
+    }
+    getPrompt() {
+      if (!this.promptPromise) {
+        this.promptPromise = loadPrompt();
+      }
+      return this.promptPromise;
+    }
+    getSchema() {
+      if (!this.schemaPromise) {
+        this.schemaPromise = loadSchema();
+      }
+      return this.schemaPromise;
+    }
+  };
+
+  // src/client/ui/src/app-host/use-idea-collector.ts
+  var useIdeaCollector = (fallbackSendMessage) => {
+    const serviceRef = (0, import_react10.useRef)(new IdeaCollectorService());
+    const service = serviceRef.current;
+    (0, import_react10.useEffect)(() => {
+      const handleStreamMessage = (event) => {
+        const candidate = event.data;
+        if (candidate?.type !== "session:stream") {
+          return;
+        }
+        const sessionId = candidate.payload?.sessionId;
+        if (typeof sessionId !== "string") {
+          return;
+        }
+        service.handleStreamEvent(sessionId, candidate.payload?.event);
+      };
+      window.addEventListener("message", handleStreamMessage);
+      return () => {
+        window.removeEventListener("message", handleStreamMessage);
+      };
+    }, [service]);
+    const startCollection = (0, import_react10.useCallback)(
+      (sessionId) => {
+        service.startCollection(sessionId);
+      },
+      [service]
+    );
+    const sendMessage = (0, import_react10.useCallback)(
+      (sessionId, content3) => {
+        if (service.isIdeaCollectorSession(sessionId)) {
+          service.continueConversation(sessionId, content3);
+          return;
+        }
+        fallbackSendMessage(sessionId, content3);
+      },
+      [fallbackSendMessage, service]
+    );
+    return { startCollection, sendMessage };
+  };
+
+  // src/client/ui/src/app-host/webview-message-handler.ts
+  var import_react11 = __toESM(require_react());
 
   // src/client/ui/src/app-host/webview-message-types.ts
   var isIncomingMessage = (value) => Boolean(value && typeof value === "object" && "type" in value);
@@ -23141,7 +23330,7 @@ ${path2}` : path2;
     onSessionBinding,
     onSessionHistory
   }) => {
-    (0, import_react10.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       const handleIncomingMessage = (event) => {
         dispatchWebviewMessage(event.data, {
           onProviderPickerOpen,
@@ -23179,7 +23368,7 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/components/action-bar/index.tsx
-  var import_react11 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
 
   // src/client/ui/src/root-dom.ts
   var activateRoot = () => {
@@ -23198,7 +23387,7 @@ ${path2}` : path2;
     { id: "oldSessions", label: ["Old", "Sessions"] }
   ];
   var ActionBar = ({ disabled = false }) => {
-    const handleClick = (0, import_react11.useCallback)(
+    const handleClick = (0, import_react12.useCallback)(
       (command) => {
         if (disabled) {
           return;
@@ -23248,10 +23437,10 @@ ${path2}` : path2;
   var action_bar_default = ActionBar;
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_react22 = __toESM(require_react());
+  var import_react23 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_react12 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
 
   // src/types/claude-model-registry.ts
   var CLAUDE_MODEL_ALIASES = [
@@ -23412,7 +23601,7 @@ ${path2}` : path2;
     defaultModel,
     onDefaultModelChange
   }) => {
-    const [hoveredAlias, setHoveredAlias] = (0, import_react12.useState)(
+    const [hoveredAlias, setHoveredAlias] = (0, import_react13.useState)(
       null
     );
     const handleRowClick = (model) => {
@@ -23472,10 +23661,10 @@ ${path2}` : path2;
       /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
     ] });
   };
-  var claude_default_model_card_default = (0, import_react12.memo)(ClaudeDefaultModelCard);
+  var claude_default_model_card_default = (0, import_react13.memo)(ClaudeDefaultModelCard);
 
   // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_react14 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
 
   // src/types/codex-model-registry.ts
   var CODEX_RECOMMENDED_MODELS = [
@@ -23633,7 +23822,7 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
-  var import_react13 = __toESM(require_react());
+  var import_react14 = __toESM(require_react());
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var overlayStyles = {
     position: "fixed",
@@ -23763,7 +23952,7 @@ ${path2}` : path2;
     onSave,
     onCancel
   }) => {
-    const [selectedReasoning, setSelectedReasoning] = (0, import_react13.useState)(initialReasoning);
+    const [selectedReasoning, setSelectedReasoning] = (0, import_react14.useState)(initialReasoning);
     return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
       "div",
       {
@@ -23854,15 +24043,15 @@ ${path2}` : path2;
     onDefaultModelChange,
     onReasoningChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react14.useState)(null);
-    const [hoveredRowId, setHoveredRowId] = (0, import_react14.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react14.useState)(
+    const [activeModelId, setActiveModelId] = (0, import_react15.useState)(null);
+    const [hoveredRowId, setHoveredRowId] = (0, import_react15.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react15.useState)(
       null
     );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react14.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react15.useState)(
       null
     );
-    const recommendedModelIds = (0, import_react14.useMemo)(
+    const recommendedModelIds = (0, import_react15.useMemo)(
       () => new Set(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
       []
     );
@@ -23973,10 +24162,10 @@ ${path2}` : path2;
       ) : null
     ] });
   };
-  var codex_default_model_card_default = (0, import_react14.memo)(CodexDefaultModelCard);
+  var codex_default_model_card_default = (0, import_react15.memo)(CodexDefaultModelCard);
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_react16 = __toESM(require_react());
+  var import_react17 = __toESM(require_react());
 
   // src/types/gemini-model-registry.ts
   var GEMINI_RECOMMENDED_MODELS = [
@@ -24096,7 +24285,7 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
-  var import_react15 = __toESM(require_react());
+  var import_react16 = __toESM(require_react());
   var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   var overlayStyles2 = {
     position: "fixed",
@@ -24226,7 +24415,7 @@ ${path2}` : path2;
     onSave,
     onCancel
   }) => {
-    const [selectedLevel, setSelectedLevel] = (0, import_react15.useState)(initialLevel);
+    const [selectedLevel, setSelectedLevel] = (0, import_react16.useState)(initialLevel);
     return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: overlayStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
       "div",
       {
@@ -24319,14 +24508,14 @@ ${path2}` : path2;
     onDefaultModelChange,
     onThinkingChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react16.useState)(
+    const [activeModelId, setActiveModelId] = (0, import_react17.useState)(
       null
     );
-    const [hoveredRowId, setHoveredRowId] = (0, import_react16.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react16.useState)(
+    const [hoveredRowId, setHoveredRowId] = (0, import_react17.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react17.useState)(
       null
     );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react16.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react17.useState)(
       null
     );
     const activeModel = GEMINI_RECOMMENDED_MODELS.find(
@@ -24433,10 +24622,10 @@ ${path2}` : path2;
       ) : null
     ] });
   };
-  var gemini_default_model_card_default = (0, import_react16.memo)(GeminiDefaultModelCard);
+  var gemini_default_model_card_default = (0, import_react17.memo)(GeminiDefaultModelCard);
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_react17 = __toESM(require_react());
+  var import_react18 = __toESM(require_react());
   var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     marginBottom: "30px"
@@ -24466,13 +24655,13 @@ ${path2}` : path2;
       /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("button", { onClick: handleRestartCore, style: buttonStyles, type: "button", children: "Restart Core" })
     ] }) });
   };
-  var general_settings_default = (0, import_react17.memo)(GeneralSettings);
+  var general_settings_default = (0, import_react18.memo)(GeneralSettings);
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_react19 = __toESM(require_react());
+  var import_react20 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react18 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
   var import_jsx_runtime23 = __toESM(require_jsx_runtime());
   var rowStyles = {
     display: "flex",
@@ -24587,7 +24776,7 @@ ${path2}` : path2;
       ) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: chipStyles, children: latestLabel })
     ] });
   };
-  var VersionRowItem = (0, import_react18.memo)(VersionRowItemComponent);
+  var VersionRowItem = (0, import_react19.memo)(VersionRowItemComponent);
 
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
   var import_jsx_runtime24 = __toESM(require_jsx_runtime());
@@ -24754,9 +24943,9 @@ ${path2}` : path2;
     onAutoUpdateChange,
     onUpdate
   }) => {
-    const [pendingTarget, setPendingTarget] = (0, import_react19.useState)(null);
+    const [pendingTarget, setPendingTarget] = (0, import_react20.useState)(null);
     const snapshot = versions.data;
-    const rows = (0, import_react19.useMemo)(() => {
+    const rows = (0, import_react20.useMemo)(() => {
       if (!snapshot) {
         return [];
       }
@@ -24806,7 +24995,7 @@ ${path2}` : path2;
         }
       ];
     }, [provider, snapshot]);
-    const hasProviderVersions = (0, import_react19.useMemo)(() => {
+    const hasProviderVersions = (0, import_react20.useMemo)(() => {
       if (!snapshot) {
         return false;
       }
@@ -24818,11 +25007,11 @@ ${path2}` : path2;
     const isBusy = versions.loading || versions.updatingTargets.length > 0;
     const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
     const isPending = (target) => pendingTarget === `${provider}:${target}`;
-    const providerUpdateTargets = (0, import_react19.useMemo)(() => {
+    const providerUpdateTargets = (0, import_react20.useMemo)(() => {
       const prefix = `${provider}:`;
       return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
     }, [provider, versions.updatingTargets]);
-    const manualUpdateStatus = (0, import_react19.useMemo)(() => {
+    const manualUpdateStatus = (0, import_react20.useMemo)(() => {
       if (providerUpdateTargets.length === 0) {
         return null;
       }
@@ -24831,7 +25020,7 @@ ${path2}` : path2;
       );
       return `Manual update in progress: ${labels.join(", ")}`;
     }, [provider, providerUpdateTargets]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react20.useEffect)(() => {
       if (versions.updatingTargets.length === 0) {
         setPendingTarget(null);
       }
@@ -24889,7 +25078,7 @@ ${path2}` : path2;
       }
     );
   };
-  var provider_versions_default = (0, import_react19.memo)(ProviderVersions);
+  var provider_versions_default = (0, import_react20.memo)(ProviderVersions);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
   var import_jsx_runtime26 = __toESM(require_jsx_runtime());
@@ -25110,7 +25299,7 @@ ${path2}` : path2;
   var settings_header_default = SettingsHeader;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react20 = __toESM(require_react());
+  var import_react21 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
@@ -25335,10 +25524,10 @@ ${path2}` : path2;
       ] })
     ] });
   };
-  var thinking_settings_default = (0, import_react20.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react21.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var import_react21 = __toESM(require_react());
+  var import_react22 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/settings-state-helpers.ts
   var updateThinkingSettings = (settings, enabled, maxTokens) => ({
@@ -25431,13 +25620,13 @@ ${path2}` : path2;
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord2 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord3 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord2(value)) {
+    if (!isRecord3(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -25476,7 +25665,7 @@ ${path2}` : path2;
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord3 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord4 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -25509,7 +25698,7 @@ ${path2}` : path2;
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord3(value)) {
+    if (!isRecord4(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -25569,15 +25758,15 @@ ${path2}` : path2;
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions";
   };
   var useSettingsState = () => {
-    const initialSettingsRef = (0, import_react21.useRef)(createDefaultSettings());
-    const [settings, setSettings] = (0, import_react21.useState)(createDefaultSettings);
-    const [hasChanges, setHasChanges] = (0, import_react21.useState)(false);
-    const [saving, setSaving] = (0, import_react21.useState)(false);
-    const [resetting, setResetting] = (0, import_react21.useState)(false);
-    const [versions, setVersions] = (0, import_react21.useState)(
+    const initialSettingsRef = (0, import_react22.useRef)(createDefaultSettings());
+    const [settings, setSettings] = (0, import_react22.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react22.useState)(false);
+    const [saving, setSaving] = (0, import_react22.useState)(false);
+    const [resetting, setResetting] = (0, import_react22.useState)(false);
+    const [versions, setVersions] = (0, import_react22.useState)(
       createDefaultVersionsState
     );
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
       });
@@ -25614,60 +25803,60 @@ ${path2}` : path2;
         window.removeEventListener("message", handleMessage);
       };
     }, []);
-    const updateSettings = (0, import_react21.useCallback)((nextSettings) => {
+    const updateSettings = (0, import_react22.useCallback)((nextSettings) => {
       setSettings(nextSettings);
       setHasChanges(!areSettingsEqual(nextSettings, initialSettingsRef.current));
     }, []);
-    const handleThinkingSettingsChange = (0, import_react21.useCallback)(
+    const handleThinkingSettingsChange = (0, import_react22.useCallback)(
       (enabled, maxTokens) => {
         updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
       },
       [settings, updateSettings]
     );
-    const handleClaudeDefaultModelChange = (0, import_react21.useCallback)(
+    const handleClaudeDefaultModelChange = (0, import_react22.useCallback)(
       (modelId) => {
         updateSettings(updateClaudeDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexDefaultModelChange = (0, import_react21.useCallback)(
+    const handleCodexDefaultModelChange = (0, import_react22.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexReasoningChange = (0, import_react21.useCallback)(
+    const handleCodexReasoningChange = (0, import_react22.useCallback)(
       (modelId, reasoning) => {
         updateSettings(updateCodexReasoning(settings, modelId, reasoning));
       },
       [settings, updateSettings]
     );
-    const handleProviderAutoUpdateChange = (0, import_react21.useCallback)(
+    const handleProviderAutoUpdateChange = (0, import_react22.useCallback)(
       (provider, enabled) => {
         updateSettings(updateProviderAutoUpdate(settings, provider, enabled));
       },
       [settings, updateSettings]
     );
-    const handleGeminiDefaultModelChange = (0, import_react21.useCallback)(
+    const handleGeminiDefaultModelChange = (0, import_react22.useCallback)(
       (modelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleGeminiThinkingChange = (0, import_react21.useCallback)(
+    const handleGeminiThinkingChange = (0, import_react22.useCallback)(
       (modelId, level) => {
         updateSettings(updateGeminiThinking(settings, modelId, level));
       },
       [settings, updateSettings]
     );
-    const handleSave = (0, import_react21.useCallback)(() => {
+    const handleSave = (0, import_react22.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
         type: "settings:save",
         settings
       });
     }, [settings]);
-    const handleReset = (0, import_react21.useCallback)(() => {
+    const handleReset = (0, import_react22.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
         vscode_default.postMessage({
@@ -25675,7 +25864,7 @@ ${path2}` : path2;
         });
       }, RESET_DELAY_MS);
     }, []);
-    const handleUpdateProvider = (0, import_react21.useCallback)(
+    const handleUpdateProvider = (0, import_react22.useCallback)(
       (provider, target) => {
         const targetKey = `${provider}:${target}`;
         setVersions((prev) => ({
@@ -25754,7 +25943,7 @@ ${path2}` : path2;
     { id: "general", label: "General" }
   ];
   var SettingsView = ({ onClose }) => {
-    const [activeTab, setActiveTab] = (0, import_react22.useState)("claude");
+    const [activeTab, setActiveTab] = (0, import_react23.useState)("claude");
     const {
       settings,
       hasChanges,
@@ -25878,20 +26067,20 @@ ${path2}` : path2;
       )
     ] });
   };
-  var settings_view_default = import_react22.default.memo(SettingsView);
+  var settings_view_default = import_react23.default.memo(SettingsView);
 
   // src/client/ui/src/app-host.tsx
   var import_jsx_runtime33 = __toESM(require_jsx_runtime());
   var AppHost = () => {
-    const [coreStatus, setCoreStatus] = (0, import_react23.useState)("connecting");
-    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react23.useState)(
+    const [coreStatus, setCoreStatus] = (0, import_react24.useState)("connecting");
+    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react24.useState)(
       void 0
     );
-    const [coreFinalized, setCoreFinalized] = (0, import_react23.useState)(false);
-    const [messages, setMessages] = (0, import_react23.useState)(
+    const [coreFinalized, setCoreFinalized] = (0, import_react24.useState)(false);
+    const [messages, setMessages] = (0, import_react24.useState)(
       createDefaultMessages
     );
-    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react23.useState)(0);
+    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react24.useState)(0);
     const {
       pickerState,
       providerLabels,
@@ -25922,66 +26111,70 @@ ${path2}` : path2;
       sendMessage
     } = useSessionStore(providerLabels);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const shouldKickoffIdeaRef = (0, import_react23.useRef)(false);
-    const handleProviderPickerOpen = (0, import_react23.useCallback)(
+    const shouldKickoffIdeaRef = (0, import_react24.useRef)(false);
+    const {
+      startCollection: startIdeaCollection,
+      sendMessage: sendIdeaCollectorMessage
+    } = useIdeaCollector(sendMessage);
+    const handleProviderPickerOpen = (0, import_react24.useCallback)(
       (providers) => {
         activateRoot();
         openPicker(providers);
       },
       [openPicker]
     );
-    const confirmSelectionFromUi = (0, import_react23.useCallback)(
+    const confirmSelectionFromUi = (0, import_react24.useCallback)(
       (providerIds) => {
         shouldKickoffIdeaRef.current = flowWizardVisible && providerIds[0] === "codexCli";
         confirmSelection(providerIds);
       },
       [confirmSelection, flowWizardVisible]
     );
-    const handleSessionCreatedMessage2 = (0, import_react23.useCallback)(
+    const handleSessionCreatedMessage2 = (0, import_react24.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
         handleSessionCreated(session);
         if (shouldKickoffIdeaRef.current) {
           shouldKickoffIdeaRef.current = false;
-          sendMessage(session.id, IDEA_KICKOFF_PROMPT);
+          startIdeaCollection(session.id);
         }
       },
-      [handleSessionCreated, resetPicker, sendMessage]
+      [handleSessionCreated, resetPicker, startIdeaCollection]
     );
-    const handleShowSettings = (0, import_react23.useCallback)(() => {
+    const handleShowSettings = (0, import_react24.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    const handleCoreState = (0, import_react23.useCallback)(
+    const handleCoreState = (0, import_react24.useCallback)(
       (payload) => {
         activateRoot();
         hydrateFromCoreState(payload);
       },
       [hydrateFromCoreState]
     );
-    const handleSessionMessage = (0, import_react23.useCallback)(
+    const handleSessionMessage = (0, import_react24.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionMessageEvent2(payload);
       },
       [handleSessionMessageEvent2]
     );
-    const handleSessionHistory = (0, import_react23.useCallback)(
+    const handleSessionHistory = (0, import_react24.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionHistoryEvent(payload);
       },
       [handleSessionHistoryEvent]
     );
-    const handleSessionDeletedMessage2 = (0, import_react23.useCallback)(
+    const handleSessionDeletedMessage2 = (0, import_react24.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionDeleted(payload);
       },
       [handleSessionDeleted]
     );
-    const handleSessionBindingMessage2 = (0, import_react23.useCallback)(
+    const handleSessionBindingMessage2 = (0, import_react24.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionBindingUpdate(payload);
@@ -26034,7 +26227,7 @@ ${path2}` : path2;
       onSessionHistory: handleSessionHistory
     });
     const isCoreReady = coreStatus === "ready" && coreFinalized;
-    (0, import_react23.useEffect)(() => {
+    (0, import_react24.useEffect)(() => {
       if (isCoreReady) {
         return;
       }
@@ -26047,11 +26240,11 @@ ${path2}` : path2;
         window.clearInterval(timer);
       };
     }, [isCoreReady]);
-    const currentMessage = (0, import_react23.useMemo)(() => {
+    const currentMessage = (0, import_react24.useMemo)(() => {
       const messageId = MESSAGE_ORDER[activeMessageIndex];
       return messages[messageId] ?? DEFAULT_MESSAGES[messageId];
     }, [activeMessageIndex, messages]);
-    const { headlineText, statusLine, detailLine } = (0, import_react23.useMemo)(() => {
+    const { headlineText, statusLine, detailLine } = (0, import_react24.useMemo)(() => {
       if (coreStatus === "error") {
         return {
           headlineText: "Please hold on - we are getting CodeAI Hub ready.",
@@ -26083,7 +26276,7 @@ ${path2}` : path2;
             coreConnectionStatus: coreStatus,
             onCloseSession: closeSession,
             onSelectSession: selectSession,
-            onSendMessage: sendMessage,
+            onSendMessage: sendIdeaCollectorMessage,
             onToggleTodo: toggleTodo,
             providerLabels,
             sessions,
@@ -26115,7 +26308,7 @@ ${path2}` : path2;
     activateRoot();
     const root4 = (0, import_client.createRoot)(rootElement);
     root4.render(
-      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(import_react24.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(import_react25.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(app_host_default, {}) })
     );
   };
   mount();
