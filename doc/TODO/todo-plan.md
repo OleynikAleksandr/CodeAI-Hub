@@ -136,8 +136,8 @@
 **Ждёт:** FlowWizard интегрирован + IdeaCollectorService готов (Волна 2, Stream W2.A + Stream W2.B)
 **Назначение:** Связать клик на "Idea" с запуском агента.
 
-1. [BLOCKED] W3.A.1 Подключить FlowWizard к IdeaCollectorService (scope: `src/client/ui/src/components/flow-wizard/index.tsx`, `src/client/ui/src/app-host.tsx`; DoD: клик "Idea" вызывает `startCollection()`; диалог в UI; structured output парсится; финализация генерирует `Idea.md`) (blocked_by: W2.B.1)
-2. [DONE] Git Commit: `feat(ui): connect flow wizard to idea collector agent` (hash: bbf4af3) — MVP: клик "Idea" создаёт Codex-сессию и отправляет kickoff prompt.
+1. [DONE] W3.A.1 Подключить FlowWizard к IdeaCollectorService (scope: `src/client/ui/src/components/flow-wizard/index.tsx`, `src/client/ui/src/app-host.tsx`; DoD: клик "Idea" вызывает `startCollection()`; диалог в UI; structured output парсится; финализация генерирует `Idea.md`) (date: 2025-12-29)
+2. [DONE] Git Commit: `feat(orchestrator): add idea collector service` (hash: dfbae3c; shared with W2.B.1d)
 
 ---
 
@@ -175,8 +175,8 @@
 
 - [TODO] `.codeai-hub/orchestrator/idea.md`
 - [TODO] `doc/Project_Docs/knowledge/Автоматизация Flow разработки на основе Plan.md.md`
-- [TODO] `doc/Architecture/Architecture.md` (после завершения Волны 3)
-- [TODO] `README.md` (после успешного тестирования)
+- [DONE] `doc/Architecture/Architecture.md` (date: 2025-12-29)
+- [DONE] `README.md` (date: 2025-12-29)
 
 ---
 
@@ -194,7 +194,7 @@
 
 ### Следующая сессия
 
-**Продолжить с:** W2.B.1 (IdeaCollectorService)
+**Продолжить с:** Сценарии проверки (раздел 5)
 **Обязательно прочитать:**
 - `doc/TODO/todo-plan.md`
 - `.codeai-hub/orchestrator/idea.md`
