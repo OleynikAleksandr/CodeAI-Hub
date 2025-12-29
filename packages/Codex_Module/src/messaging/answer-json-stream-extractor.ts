@@ -3,21 +3,23 @@ type DecodedFragment = {
   readonly complete: boolean;
 };
 
-const ANSWER_KEY = '"answer"';
 const UNICODE_ESCAPE_REGEX = /^[0-9a-fA-F]{4}$/;
 
 const isWhitespace = (value: string): boolean =>
   value === " " || value === "\n" || value === "\t" || value === "\r";
 
-const findAnswerValueStart = (source: string): number | null => {
-  let index = source.indexOf(ANSWER_KEY);
+const findFieldValueStart = (
+  source: string,
+  fieldToken: string
+): number | null => {
+  let index = source.indexOf(fieldToken);
   while (index !== -1) {
-    let cursor = index + ANSWER_KEY.length;
+    let cursor = index + fieldToken.length;
     while (cursor < source.length && isWhitespace(source[cursor])) {
       cursor += 1;
     }
     if (source[cursor] !== ":") {
-      index = source.indexOf(ANSWER_KEY, cursor);
+      index = source.indexOf(fieldToken, cursor);
       continue;
     }
     cursor += 1;
@@ -25,7 +27,7 @@ const findAnswerValueStart = (source: string): number | null => {
       cursor += 1;
     }
     if (source[cursor] !== '"') {
-      index = source.indexOf(ANSWER_KEY, cursor);
+      index = source.indexOf(fieldToken, cursor);
       continue;
     }
     return cursor + 1;
@@ -107,6 +109,11 @@ export class AnswerJsonStreamExtractor {
   private answerValueStartIndex: number | null = null;
   private emittedLength = 0;
   private answerComplete = false;
+  private readonly fieldToken: string;
+
+  constructor(fieldName = "answer") {
+    this.fieldToken = `"${fieldName}"`;
+  }
 
   append(nextText: string): string | null {
     if (!nextText) {
@@ -130,7 +137,10 @@ export class AnswerJsonStreamExtractor {
       return null;
     }
     if (this.answerValueStartIndex === null) {
-      this.answerValueStartIndex = findAnswerValueStart(this.buffer);
+      this.answerValueStartIndex = findFieldValueStart(
+        this.buffer,
+        this.fieldToken
+      );
     }
     if (this.answerValueStartIndex === null) {
       return null;

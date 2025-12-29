@@ -122,9 +122,14 @@ export class CodexMessageProcessor {
       const runOptions = session.internalTurn
         ? turnOptions
         : this.structuredOutput.applyOutputSchema(turnOptions);
-      const prompt = session.internalTurn
-        ? message.content
-        : this.structuredOutput.applyPrompt(message.content);
+      let prompt = message.content;
+      if (!session.internalTurn) {
+        const config = this.structuredOutput.prepareTurn(
+          session.sessionId,
+          runOptions
+        );
+        prompt = this.structuredOutput.applyPrompt(message.content, config);
+      }
       const { events } = await thread.runStreamed(prompt, runOptions);
       await this.consumeEvents(session, events);
     } catch (error) {
@@ -325,6 +330,20 @@ export class CodexMessageProcessor {
     }
     if (result.reasoningSummary) {
       this.emitDialogMessage(session, "thinking", result.reasoningSummary);
+    }
+    if (result.artifact) {
+      this.emitMessage(session, {
+        type: "stream_event",
+        provider: PROVIDER,
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        data: {
+          kind: "structured_output",
+          artifact: result.artifact,
+          nextAction: result.nextAction,
+        },
+        timestamp: new Date().toISOString(),
+      });
     }
     if (!result.assistantText) {
       return;
