@@ -1,5 +1,7 @@
 import { IDEA_KICKOFF_PROMPT } from "../app-host/idea-kickoff-prompt";
 import { sendChatMessage } from "../core-bridge/core-bridge";
+import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "./idea-collector-fallback-schema";
+import { normalizeIdeaCollectorSchema } from "./idea-collector-schema-utils";
 
 type IdeaCollectorArtifact = {
   readonly path: string;
@@ -14,37 +16,6 @@ const IDEA_COLLECTOR_SCHEMA_PATH =
   "~/.codeai-hub/templates/schemas/idea-collector-schema.json";
 const HARDCODED_IDEA_PATH =
   "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/.codeai-hub/orchestrator/idea.md";
-
-const FALLBACK_SCHEMA: Record<string, unknown> = {
-  type: "object",
-  additionalProperties: false,
-  required: ["conversation_state", "next_action", "suggested_response"],
-  properties: {
-    conversation_state: {
-      type: "object",
-      additionalProperties: false,
-      required: ["collected", "coverage_percent"],
-      properties: {
-        collected: { type: "object", additionalProperties: false },
-        coverage_percent: { type: "integer", minimum: 0, maximum: 100 },
-      },
-    },
-    next_action: {
-      type: "string",
-      enum: ["ask_question", "clarify", "summarize", "finalize"],
-    },
-    suggested_response: { type: "string", minLength: 1 },
-    artifact: {
-      type: "object",
-      additionalProperties: false,
-      required: ["idea_markdown", "path"],
-      properties: {
-        idea_markdown: { type: "string", minLength: 1 },
-        path: { type: "string" },
-      },
-    },
-  },
-};
 
 const resolveHomeDirectory = (): string | null => {
   const globalScope = globalThis as {
@@ -111,13 +82,13 @@ const loadTemplate = async (): Promise<string | null> => {
 const loadSchema = async (): Promise<Record<string, unknown>> => {
   const raw = await readTextFromFile(IDEA_COLLECTOR_SCHEMA_PATH);
   if (!raw) {
-    return FALLBACK_SCHEMA;
+    return IDEA_COLLECTOR_FALLBACK_SCHEMA;
   }
   try {
     const parsed = JSON.parse(raw) as unknown;
-    return isRecord(parsed) ? parsed : FALLBACK_SCHEMA;
+    return isRecord(parsed) ? parsed : IDEA_COLLECTOR_FALLBACK_SCHEMA;
   } catch {
-    return FALLBACK_SCHEMA;
+    return IDEA_COLLECTOR_FALLBACK_SCHEMA;
   }
 };
 
@@ -127,6 +98,15 @@ const extractArtifact = (event: unknown): IdeaCollectorArtifact | null => {
   }
   const data = event.data;
   if (!isRecord(data) || data.kind !== "structured_output") {
+    return null;
+  }
+  let nextAction: string | null = null;
+  if (typeof data.nextAction === "string") {
+    nextAction = data.nextAction;
+  } else if (typeof data.next_action === "string") {
+    nextAction = data.next_action;
+  }
+  if (nextAction !== "finalize") {
     return null;
   }
   const artifact = data.artifact;
@@ -144,45 +124,6 @@ const extractArtifact = (event: unknown): IdeaCollectorArtifact | null => {
     return null;
   }
   return { path, ideaMarkdown };
-};
-
-const cloneSchema = (
-  schema: Record<string, unknown>
-): Record<string, unknown> =>
-  typeof globalThis.structuredClone === "function"
-    ? globalThis.structuredClone(schema)
-    : (JSON.parse(JSON.stringify(schema)) as Record<string, unknown>);
-
-const injectTemplateIntoSchema = (
-  schema: Record<string, unknown>,
-  template: string | null
-): Record<string, unknown> => {
-  if (!template) {
-    return schema;
-  }
-  const next = cloneSchema(schema);
-  const properties = next.properties;
-  if (!isRecord(properties)) {
-    return schema;
-  }
-  const artifact = properties.artifact;
-  if (!isRecord(artifact)) {
-    return schema;
-  }
-  const artifactProperties = artifact.properties;
-  if (!isRecord(artifactProperties)) {
-    return schema;
-  }
-  const ideaMarkdown = artifactProperties.idea_markdown;
-  if (!isRecord(ideaMarkdown)) {
-    return schema;
-  }
-  const description =
-    typeof ideaMarkdown.description === "string"
-      ? ideaMarkdown.description
-      : "Готовый Idea.md в Markdown.";
-  ideaMarkdown.description = `${description}\n\nШаблон Idea.md:\n${template}`;
-  return next;
 };
 
 const generateLocalMessageId = (): string => {
@@ -219,6 +160,8 @@ export class IdeaCollectorService {
   private promptPromise: Promise<string> | null = null;
   private templatePromise: Promise<string | null> | null = null;
   private schemaPromise: Promise<Record<string, unknown>> | null = null;
+  private normalizedSchemaPromise: Promise<Record<string, unknown>> | null =
+    null;
   private readonly noticesSent = new Set<string>();
 
   isIdeaCollectorSession(sessionId: string): boolean {
@@ -238,13 +181,11 @@ export class IdeaCollectorService {
         "Запускаю Idea Collector. Пожалуйста, дождитесь первого вопроса."
       );
     }
-    const [prompt, schema, template] = await Promise.all([
+    const [prompt, schema] = await Promise.all([
       this.getPrompt(),
-      this.getSchema(),
-      this.getTemplate(),
+      this.getNormalizedSchema(),
     ]);
-    const hydratedSchema = injectTemplateIntoSchema(schema, template);
-    sendChatMessage(sessionId, prompt, { outputSchema: hydratedSchema });
+    sendChatMessage(sessionId, prompt, { outputSchema: schema });
   }
 
   async continueConversation(
@@ -254,7 +195,7 @@ export class IdeaCollectorService {
     if (!this.activeSessions.has(sessionId)) {
       return;
     }
-    const schema = await this.getSchema();
+    const schema = await this.getNormalizedSchema();
     sendChatMessage(sessionId, content, { outputSchema: schema });
   }
 
@@ -287,5 +228,17 @@ export class IdeaCollectorService {
       this.schemaPromise = loadSchema();
     }
     return this.schemaPromise;
+  }
+
+  private getNormalizedSchema(): Promise<Record<string, unknown>> {
+    if (!this.normalizedSchemaPromise) {
+      this.normalizedSchemaPromise = Promise.all([
+        this.getSchema(),
+        this.getTemplate(),
+      ]).then(([schema, template]) =>
+        normalizeIdeaCollectorSchema(schema, template)
+      );
+    }
+    return this.normalizedSchemaPromise;
   }
 }
