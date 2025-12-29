@@ -1,3 +1,9 @@
+## [1.1.362] - 2025-12-29
+
+### Fixed
+- **Idea Collector schema validation**: normalize and strictify the structured output schema to satisfy Codex JSON schema requirements.
+- **Idea Collector fallback contract**: embed the strict schema and prompt guidance so sessions remain valid even if global templates are unavailable.
+
 ## [1.1.361] - 2025-12-29
 
 ### Added
