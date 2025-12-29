@@ -96,9 +96,9 @@ npm run build:webview   # или таргетная сборка
 - [ ] Disabled кубики серые с opacity
 - [ ] Hover эффект на active кубиках
 
-**Статус:** `IN_PROGRESS`
+**Статус:** `DONE`
 **Дата:** 2025-12-29
-**Commit:**
+**Commit:** `efd5dc6`
 
 ##### Git Commit: `style(ui): add flow wizard stage styling`
 
@@ -178,8 +178,8 @@ npm run build:webview   # или таргетная сборка
 - [ ] Функция `openFlowWizard(providerId)`
 - [ ] Функция `closeFlowWizard()`
 
-**Статус:** `TODO`
-**Дата:**
+**Статус:** `IN_PROGRESS`
+**Дата:** 2025-12-29
 **Commit:**
 
 ##### Git Commit: `feat(ui): add flow wizard state management`
