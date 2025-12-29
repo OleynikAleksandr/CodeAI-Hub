@@ -10,6 +10,8 @@ const IDEA_COLLECTOR_PROMPT_PATH =
   "~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md";
 const IDEA_COLLECTOR_SCHEMA_PATH =
   "~/.codeai-hub/templates/schemas/idea-collector-schema.json";
+const HARDCODED_IDEA_PATH =
+  "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/.codeai-hub/orchestrator/idea.md";
 
 const FALLBACK_SCHEMA: Record<string, unknown> = {
   type: "object",
@@ -102,7 +104,7 @@ const extractArtifact = (event: unknown): IdeaCollectorArtifact | null => {
   if (!isRecord(artifact)) {
     return null;
   }
-  const path = typeof artifact.path === "string" ? artifact.path : null;
+  const path = HARDCODED_IDEA_PATH;
   let ideaMarkdown: string | null = null;
   if (typeof artifact.ideaMarkdown === "string") {
     ideaMarkdown = artifact.ideaMarkdown;
