@@ -30,27 +30,85 @@ const STRUCTURED_OUTPUT_PROMPT = [
   "User request:",
 ].join("\n");
 
+type StructuredOutputMode = "default" | "idea_collector";
+
+type StructuredOutputTurnConfig = {
+  readonly mode: StructuredOutputMode;
+  readonly fieldKey: "answer" | "suggested_response";
+  readonly applyPrompt: boolean;
+};
+
+type StructuredOutputArtifact = {
+  readonly path: string;
+  readonly ideaMarkdown: string;
+};
+
 type ParsedOutput = {
-  readonly answer?: string;
+  readonly assistantText?: string;
   readonly reasoningSummary?: string;
+  readonly nextAction?: string;
+  readonly artifact?: StructuredOutputArtifact;
 };
 
 type AnswerStreamState = {
   extractor: AnswerJsonStreamExtractor;
   itemId: string | null;
-  answerText: string;
+  assistantText: string;
+  mode: StructuredOutputMode;
 };
 
 export type StructuredOutputResult = {
   readonly streamDelta?: string;
   readonly assistantText?: string;
   readonly reasoningSummary?: string;
+  readonly nextAction?: string;
+  readonly artifact?: StructuredOutputArtifact;
+};
+
+const DEFAULT_TURN_CONFIG: StructuredOutputTurnConfig = {
+  mode: "default",
+  fieldKey: "answer",
+  applyPrompt: true,
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const resolveTurnConfig = (
+  turnOptions: CodexTurnOptions
+): StructuredOutputTurnConfig => {
+  const schema = turnOptions.outputSchema;
+  if (
+    isRecord(schema) &&
+    isRecord(schema.properties) &&
+    Object.hasOwn(schema.properties, "suggested_response")
+  ) {
+    return {
+      mode: "idea_collector",
+      fieldKey: "suggested_response",
+      applyPrompt: false,
+    };
+  }
+  return DEFAULT_TURN_CONFIG;
 };
 
 export class StructuredOutputStreamController {
   private readonly streams = new Map<string, AnswerStreamState>();
+  private readonly turnConfigs = new Map<string, StructuredOutputTurnConfig>();
 
-  applyPrompt(prompt: string): string {
+  prepareTurn(
+    sessionId: string,
+    turnOptions: CodexTurnOptions
+  ): StructuredOutputTurnConfig {
+    const config = resolveTurnConfig(turnOptions);
+    this.turnConfigs.set(sessionId, config);
+    return config;
+  }
+
+  applyPrompt(prompt: string, config: StructuredOutputTurnConfig): string {
+    if (!config.applyPrompt) {
+      return prompt;
+    }
     return `${STRUCTURED_OUTPUT_PROMPT}\n${prompt}`;
   }
 
@@ -62,10 +120,12 @@ export class StructuredOutputStreamController {
   }
 
   startTurn(sessionId: string): void {
+    const config = this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG;
     this.streams.set(sessionId, {
-      extractor: new AnswerJsonStreamExtractor(),
+      extractor: new AnswerJsonStreamExtractor(config.fieldKey),
       itemId: null,
-      answerText: "",
+      assistantText: "",
+      mode: config.mode,
     });
   }
 
@@ -73,7 +133,7 @@ export class StructuredOutputStreamController {
     const state = this.ensureState(sessionId, itemId);
     const delta = state.extractor.append(text);
     if (delta) {
-      state.answerText += delta;
+      state.assistantText += delta;
     }
     return delta ?? null;
   }
@@ -86,30 +146,38 @@ export class StructuredOutputStreamController {
     const state = this.ensureState(sessionId, itemId);
     const streamDelta = state.extractor.append(text) ?? null;
     if (streamDelta) {
-      state.answerText += streamDelta;
+      state.assistantText += streamDelta;
     }
-    const parsed = parseStructuredOutput(text);
+    const parsed = parseStructuredOutput(text, state.mode);
     const assistantText =
-      state.answerText.trim().length > 0 ? state.answerText : parsed.answer;
+      state.assistantText.trim().length > 0
+        ? state.assistantText
+        : parsed.assistantText;
     this.streams.delete(sessionId);
+    this.turnConfigs.delete(sessionId);
     return {
       streamDelta: streamDelta ?? undefined,
       assistantText: assistantText ?? undefined,
       reasoningSummary: parsed.reasoningSummary ?? undefined,
+      nextAction: parsed.nextAction ?? undefined,
+      artifact: parsed.artifact ?? undefined,
     };
   }
 
   clear(sessionId: string): void {
     this.streams.delete(sessionId);
+    this.turnConfigs.delete(sessionId);
   }
 
   private ensureState(sessionId: string, itemId: string): AnswerStreamState {
     const existing = this.streams.get(sessionId);
+    const config = this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG;
     if (!existing || (existing.itemId && existing.itemId !== itemId)) {
       const fresh = {
-        extractor: new AnswerJsonStreamExtractor(),
+        extractor: new AnswerJsonStreamExtractor(config.fieldKey),
         itemId,
-        answerText: "",
+        assistantText: "",
+        mode: config.mode,
       };
       this.streams.set(sessionId, fresh);
       return fresh;
@@ -121,28 +189,69 @@ export class StructuredOutputStreamController {
   }
 }
 
-const parseStructuredOutput = (text: string): ParsedOutput => {
+const parseStructuredOutput = (
+  text: string,
+  mode: StructuredOutputMode
+): ParsedOutput => {
   if (!text) {
     return {};
   }
   try {
     const parsed = JSON.parse(text) as Record<string, unknown> | null;
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    if (!isRecord(parsed)) {
       return {};
     }
-    const answer =
-      typeof parsed.answer === "string" ? parsed.answer : undefined;
-    const reasoningSummary =
-      typeof parsed.reasoning_summary_ru === "string"
-        ? parsed.reasoning_summary_ru
-        : undefined;
-    return {
-      answer,
-      reasoningSummary: reasoningSummary?.trim().length
-        ? reasoningSummary
-        : undefined,
-    };
+    return mode === "idea_collector"
+      ? parseIdeaCollectorOutput(parsed)
+      : parseDefaultOutput(parsed);
   } catch {
     return {};
   }
+};
+
+const parseDefaultOutput = (parsed: Record<string, unknown>): ParsedOutput => {
+  const assistantText =
+    typeof parsed.answer === "string" ? parsed.answer : undefined;
+  const reasoningSummary =
+    typeof parsed.reasoning_summary_ru === "string"
+      ? parsed.reasoning_summary_ru
+      : undefined;
+  return {
+    assistantText: assistantText?.trim().length ? assistantText : undefined,
+    reasoningSummary: reasoningSummary?.trim().length
+      ? reasoningSummary
+      : undefined,
+  };
+};
+
+const parseIdeaCollectorOutput = (
+  parsed: Record<string, unknown>
+): ParsedOutput => {
+  const assistantText =
+    typeof parsed.suggested_response === "string"
+      ? parsed.suggested_response
+      : undefined;
+  const nextAction =
+    typeof parsed.next_action === "string" ? parsed.next_action : undefined;
+  const artifact = parseIdeaCollectorArtifact(parsed.artifact);
+  return {
+    assistantText: assistantText?.trim().length ? assistantText : undefined,
+    nextAction,
+    artifact,
+  };
+};
+
+const parseIdeaCollectorArtifact = (
+  value: unknown
+): StructuredOutputArtifact | undefined => {
+  if (!isRecord(value)) {
+    return;
+  }
+  const path = typeof value.path === "string" ? value.path : undefined;
+  const ideaMarkdown =
+    typeof value.idea_markdown === "string" ? value.idea_markdown : undefined;
+  if (!(path && ideaMarkdown)) {
+    return;
+  }
+  return { path, ideaMarkdown };
 };
