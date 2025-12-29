@@ -167,7 +167,7 @@
 
 | Task ID | Причина | Решение | Требует обновления Spec |
 |---------|---------|---------|------------------------|
-| - | - | - | - |
+| W2.B.1d | Core-путь записи Idea.md ещё не готов | Временно жёстко задан абсолютный путь `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/.codeai-hub/orchestrator/idea.md` в `IdeaCollectorService` | Да |
 
 ---
 
