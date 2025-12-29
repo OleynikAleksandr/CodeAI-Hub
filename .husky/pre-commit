@@ -25,15 +25,19 @@ PARTIALLY_STAGED=$(git diff --name-only)
 
 # Stash unstaged changes to preserve working directory
 # --keep-index keeps staged changes in working tree
-git stash push --quiet --keep-index --message "pre-commit-stash" || true
-STASHED=$?
+STASH_MESSAGE="pre-commit-stash-$$"
+git stash push --quiet --keep-index --message "$STASH_MESSAGE" || true
+STASHED=0
+if git stash list -n 1 | grep -F -q "$STASH_MESSAGE"; then
+  STASHED=1
+fi
 
 # Run formatter on the staged files (Ultracite)
 npx ultracite fix
 FORMAT_EXIT_CODE=$?
 
 # Restore working directory state
-if [ $STASHED -eq 0 ]; then
+if [ $STASHED -eq 1 ]; then
   # Re-stage the formatted files
   if [ -n "$STAGED_FILES" ]; then
     echo "$STAGED_FILES" | while IFS= read -r file; do
