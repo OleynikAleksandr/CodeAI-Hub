@@ -2,7 +2,7 @@
 
 **Версия:** 1.0
 **Дата создания:** 2025-12-28
-**Последнее обновление:** 2025-12-28
+**Последнее обновление:** 2025-12-29
 
 > Этот документ является **источником истины** для разработки Project Orchestrator.
 > Структура плана визуализирует параллелизм — что можно делать одновременно.
@@ -67,100 +67,32 @@ npm run build:webview   # или таргетная сборка
 
 ---
 
-### [Агент A] FlowWizard UI компонент
+### [Stream W1.A] FlowWizard UI компонент
 
 **Назначение:** Создать React-компонент визарда с кубиками этапов Flow.
 
-#### Task W1.A.1 — Создать базовую структуру FlowWizard
-
-**Цель:** Файловая структура и базовый компонент.
-
-**Файлы:**
-- `src/client/ui/src/components/flow-wizard/index.tsx` (новый)
-- `src/client/ui/src/components/flow-wizard/flow-stage.tsx` (новый)
-- `src/client/ui/src/components/flow-wizard/styles.ts` (новый)
-
-**Критерии готовности:**
-- [ ] Компонент рендерится без ошибок
-- [ ] Принимает props: `onStageClick`, `activeStage`
-- [ ] Отображает 4 этапа: Idea → Spec → Plan → Execute
-
-**Статус:** `DONE`
-**Дата:** 2025-12-29
-**Commit:** `b61de20`
-
-##### Git Commit: `feat(ui): add flow wizard component structure`
+1. [DONE] W1.A.1 Создать базовую структуру FlowWizard (scope: `src/client/ui/src/components/flow-wizard/index.tsx`, `src/client/ui/src/components/flow-wizard/flow-stage.tsx`, `src/client/ui/src/components/flow-wizard/styles.ts`; DoD: рендер без ошибок; props `onStageClick`/`activeStage`; 4 этапа) (date: 2025-12-29)
+2. [DONE] Git Commit: `feat(ui): add flow wizard component structure` (hash: b61de20)
+3. [DONE] W1.A.2 Стилизация FlowWizard (scope: `src/client/ui/src/components/flow-wizard/styles.ts`, `src/client/ui/src/components/flow-wizard/flow-stage.tsx`; DoD: active accent; disabled opacity; hover) (date: 2025-12-29)
+4. [DONE] Git Commit: `style(ui): add flow wizard stage styling` (hash: efd5dc6)
 
 ---
 
-#### Task W1.A.2 — Стилизация FlowWizard
-
-**Цель:** Стили для кубиков: active/disabled/hover состояния.
-
-**Файлы:**
-- `src/client/ui/src/components/flow-wizard/styles.ts`
-- `src/client/ui/src/components/flow-wizard/flow-stage.tsx`
-
-**Критерии готовности:**
-- [ ] Active кубик имеет accent цвет
-- [ ] Disabled кубики серые с opacity
-- [ ] Hover эффект на active кубиках
-
-**Статус:** `DONE`
-**Дата:** 2025-12-29
-**Commit:** `efd5dc6`
-
-##### Git Commit: `style(ui): add flow wizard stage styling`
-
----
-
-### [Агент B] JSON Schema для Idea Collector
+### [Stream W1.B] JSON Schema для Idea Collector
 
 **Назначение:** Создать Structured Output схему для агента сбора идей.
 
-#### Task W1.B.1 — Создать idea-collector-schema.json
-
-**Цель:** JSON Schema для направления диалога агента.
-
-**Файлы:**
-- `~/.codeai-hub/templates/schemas/idea-collector-schema.json` (новый)
-
-**Критерии готовности:**
-- [ ] Поле `conversation_state` с `collected`, `coverage_percent`
-- [ ] Поле `next_action` с enum: `ask_question`, `clarify`, `summarize`, `finalize`
-- [ ] Поле `suggested_response` для следующего вопроса
-- [ ] Schema валидна по JSON Schema Draft-07
-
-**Статус:** `DONE`
-**Дата:** 2025-12-29
-**Commit:** N/A (global)
-
-##### Git Commit: `feat(orchestrator): add idea collector json schema`
+1. [DONE] W1.B.1 Создать `idea-collector-schema.json` (scope: `~/.codeai-hub/templates/schemas/idea-collector-schema.json`; DoD: Draft-07; `next_action=finalize` требует `artifact`) (date: 2025-12-29)
+2. [DONE] Git Commit: `feat(orchestrator): add idea collector json schema` (hash: N/A (global))
 
 ---
 
-### [Агент C] Системный промпт Idea Collector
+### [Stream W1.C] Системный промпт Idea Collector
 
 **Назначение:** Инструкция для агента: цель, чек-лист, стиль диалога.
 
-#### Task W1.C.1 — Создать idea-collector-prompt.md
-
-**Цель:** Промпт для Guided Conversation (не анкета!).
-
-**Файлы:**
-- `~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md` (новый)
-
-**Критерии готовности:**
-- [ ] Цель: создать Idea.md
-- [ ] Чек-лист информации (не порядок вопросов!)
-- [ ] Стиль: живая беседа, уточняющие вопросы
-- [ ] Критерии завершения: coverage >= 80%
-
-**Статус:** `DONE`
-**Дата:** 2025-12-29
-**Commit:** N/A (global)
-
-##### Git Commit: `feat(orchestrator): add idea collector system prompt`
+1. [DONE] W1.C.1 Создать `idea-collector-prompt.md` (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md`; DoD: RU; агент начинает сам; ответы валидируются schema; `finalize` только после явного «ОК/утверждаю») (date: 2025-12-29)
+2. [DONE] Git Commit: `feat(orchestrator): add idea collector system prompt` (hash: N/A (global))
 
 ---
 
@@ -171,77 +103,25 @@ npm run build:webview   # или таргетная сборка
 
 ---
 
-### [Агент W2.A] Интеграция FlowWizard с ProviderPicker
+### [Stream W2.A] Интеграция FlowWizard с ProviderPicker
 
-**Ждёт:** FlowWizard UI компонент готов (Волна 1, Агент A)
+**Ждёт:** FlowWizard UI компонент готов (Волна 1, Stream W1.A)
 **Назначение:** Показывать FlowWizard после выбора Codex.
 
-#### Task W2.A.1 — Добавить состояние FlowWizard
-
-**Цель:** Расширить state management для показа визарда.
-
-**Файлы:**
-- `src/client/ui/src/app-host/provider-picker-state.ts`
-
-**Критерии готовности:**
-- [ ] Новое состояние `flowWizardVisible: boolean`
-- [ ] Функция `openFlowWizard(providerId)`
-- [ ] Функция `closeFlowWizard()`
-
-**Статус:** `DONE`
-**Дата:** 2025-12-29
-**Commit:** `c2f6c1c`
-
-##### Git Commit: `feat(ui): add flow wizard state management`
+1. [DONE] W2.A.1 Добавить состояние FlowWizard (scope: `src/client/ui/src/app-host/provider-picker-state.ts`; DoD: `flowWizardVisible`; `openFlowWizard()`; `closeFlowWizard()`) (date: 2025-12-29)
+2. [DONE] Git Commit: `feat(ui): add flow wizard state management` (hash: c2f6c1c)
+3. [DONE] W2.A.2 Интегрировать FlowWizard в AppHost (scope: `src/client/ui/src/app-host.tsx`, `src/client/ui/src/provider-picker.tsx`, `src/client/ui/src/app-host/session-region.tsx`; DoD: confirm Codex → FlowWizard; другие провайдеры без изменений; cancel → ProviderPicker; запуск сессии по клику "Idea") (date: 2025-12-29)
+4. [DONE] Git Commit: `feat(ui): integrate flow wizard with provider picker` (hash: 2db9709)
 
 ---
 
-#### Task W2.A.2 — Интегрировать FlowWizard в AppHost
+### [Stream W2.B] Интеграция Idea Collector с Codex SDK
 
-**Цель:** Условный показ визарда после выбора Codex.
-
-**Файлы:**
-- `src/client/ui/src/app-host.tsx`
-- `src/client/ui/src/provider-picker.tsx`
-- `src/client/ui/src/app-host/session-region.tsx`
-
-**Критерии готовности:**
-- [ ] При confirm Codex → показать FlowWizard
-- [ ] При confirm других провайдеров → стандартный flow
-- [ ] Cancel в визарде → возврат к ProviderPicker
-- [ ] Сессия запускается по клику на "Idea", а не в момент выбора Codex
-
-**Статус:** `DONE`
-**Дата:** 2025-12-29
-**Commit:** `2db9709`
-
-##### Git Commit: `feat(ui): integrate flow wizard with provider picker`
-
----
-
-### [Агент W2.B] Интеграция Idea Collector с Codex SDK
-
-**Ждёт:** Schema + Prompt готовы (Волна 1, Агенты B и C)
+**Ждёт:** Schema + Prompt готовы (Волна 1, Stream W1.B + Stream W1.C)
 **Назначение:** Подключить агента к UI через Codex exec.
 
-#### Task W2.B.1 — Создать IdeaCollectorService
-
-**Цель:** Сервис для запуска и управления агентом.
-
-**Файлы:**
-- `src/client/ui/src/services/idea-collector-service.ts` (новый)
-
-**Критерии готовности:**
-- [ ] Загружает schema и prompt
-- [ ] Метод `startCollection()` запускает Codex exec
-- [ ] Метод `continueConversation(userMessage)` для продолжения
-- [ ] Обрабатывает Structured Output ответы
-
-**Статус:** `TODO`
-**Дата:**
-**Commit:**
-
-##### Git Commit: `feat(orchestrator): add idea collector service`
+1. [TODO] W2.B.1 Создать `IdeaCollectorService` (scope: `src/client/ui/src/services/idea-collector-service.ts`; DoD: грузит schema+prompt; `startCollection()`; `continueConversation()`; парсит structured output; работает с текущим session pipeline для `SessionView`)
+2. [TODO] Git Commit: `feat(orchestrator): add idea collector service` (hash: TBD)
 
 ---
 
@@ -251,52 +131,33 @@ npm run build:webview   # или таргетная сборка
 
 ---
 
-### [Агент W3.A] Полная интеграция Flow
+### [Stream W3.A] Полная интеграция Flow
 
-**Ждёт:** FlowWizard интегрирован + IdeaCollectorService готов (Волна 2)
+**Ждёт:** FlowWizard интегрирован + IdeaCollectorService готов (Волна 2, Stream W2.A + Stream W2.B)
 **Назначение:** Связать клик на "Idea" с запуском агента.
 
-#### Task W3.A.1 — Подключить FlowWizard к IdeaCollectorService
-
-**Цель:** End-to-end flow: клик → диалог → Idea.md
-
-**Файлы:**
-- `src/client/ui/src/components/flow-wizard/index.tsx`
-- `src/client/ui/src/app-host.tsx`
-
-**Критерии готовности:**
-- [ ] Клик на "Idea" вызывает `startCollection()`
-- [ ] Диалог отображается в UI
-- [ ] Ответы агента через Structured Output
-- [ ] Финализация генерирует Idea.md
-
-**Статус:** `BLOCKED`
-**Дата:** 2025-12-29
-**Commit:** `bbf4af3`
-
-##### Git Commit: `feat(ui): connect flow wizard to idea collector agent`
-
-**Примечание:** MVP: клик на "Idea" создаёт Codex-сессию и отправляет kickoff prompt; Structured Output + генерация `Idea.md` ждут `Task W2.B.1`.
+1. [BLOCKED] W3.A.1 Подключить FlowWizard к IdeaCollectorService (scope: `src/client/ui/src/components/flow-wizard/index.tsx`, `src/client/ui/src/app-host.tsx`; DoD: клик "Idea" вызывает `startCollection()`; диалог в UI; structured output парсится; финализация генерирует `Idea.md`) (blocked_by: W2.B.1)
+2. [DONE] Git Commit: `feat(ui): connect flow wizard to idea collector agent` (hash: bbf4af3) — MVP: клик "Idea" создаёт Codex-сессию и отправляет kickoff prompt.
 
 ---
 
 ## 5. Сценарии проверки
 
 ### После Волны 1
-1. [ ] FlowWizard рендерится изолированно (storybook/dev)
-2. [ ] Schema проходит валидацию
-3. [ ] Prompt читается корректно
+- [TODO] FlowWizard рендерится изолированно (storybook/dev)
+- [TODO] Schema проходит валидацию
+- [TODO] Prompt читается корректно
 
 ### После Волны 2
-1. [ ] New Session → Codex → видим FlowWizard
-2. [ ] New Session → Claude → стандартная сессия
-3. [ ] IdeaCollectorService запускает Codex без ошибок
+- [TODO] New Session → Codex → видим FlowWizard
+- [TODO] New Session → Claude → стандартная сессия
+- [TODO] IdeaCollectorService запускает Codex без ошибок
 
 ### После Волны 3 (Финальная)
-1. [ ] Полный flow: New Session → Codex → Idea → диалог → Idea.md
-2. [ ] Idea.md создаётся в `.codeai-hub/orchestrator/`
-3. [ ] Structured Output ответы корректно парсятся
-4. [ ] UI показывает прогресс диалога
+- [TODO] Полный flow: New Session → Codex → Idea → диалог → Idea.md
+- [TODO] Idea.md создаётся в `.codeai-hub/orchestrator/`
+- [TODO] Structured Output ответы корректно парсятся
+- [TODO] UI показывает прогресс диалога
 
 ---
 
@@ -312,10 +173,10 @@ npm run build:webview   # или таргетная сборка
 
 ## 7. Обновляемые документы
 
-- [ ] `.codeai-hub/orchestrator/idea.md`
-- [ ] `doc/Project_Docs/knowledge/Автоматизация Flow разработки на основе Plan.md.md`
-- [ ] `doc/Architecture/Architecture.md` (после завершения Волны 3)
-- [ ] `README.md` (после успешного тестирования)
+- [TODO] `.codeai-hub/orchestrator/idea.md`
+- [TODO] `doc/Project_Docs/knowledge/Автоматизация Flow разработки на основе Plan.md.md`
+- [TODO] `doc/Architecture/Architecture.md` (после завершения Волны 3)
+- [TODO] `README.md` (после успешного тестирования)
 
 ---
 
@@ -327,21 +188,18 @@ npm run build:webview   # или таргетная сборка
 **Статус:** `in_progress`
 
 ### Выполнено
-- Волна: подготовительная (документация)
-- Tasks: 
-  - Создана структура `.codeai-hub/`
-  - Создан `idea-template.md`
-  - Создан `idea.md` для Project Orchestrator
-  - Обновлены документы Flow и Plan шаблон
-- Commits: (будут после завершения обсуждения)
+- Волна 1: UI+контракты (частично в global templates)
+- Commits (repo): `b61de20`, `efd5dc6`, `c2f6c1c`, `2db9709`, `bbf4af3`, `00fcd14`, `94727a2`, `ba4b8c0`, `3a50aa2`
+- Изменения вне git: `~/.codeai-hub/templates/schemas/idea-collector-schema.json`, `~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md`
 
 ### Следующая сессия
 
-**Продолжить с:** W1.A.1 (FlowWizard компонент)
+**Продолжить с:** W2.B.1 (IdeaCollectorService)
 **Обязательно прочитать:**
 - `doc/TODO/todo-plan.md`
 - `.codeai-hub/orchestrator/idea.md`
 - `src/client/ui/src/provider-picker.tsx`
+- `src/client/ui/src/app-host/session-region.tsx`
 
 **Открытые вопросы:**
 - Точный формат Session Report (уточняется при отладке)
