@@ -155,6 +155,14 @@ export const ProviderPicker = ({
   };
 
   const isSubmitDisabled = selectedIds.length === 0;
+  const isCodexSelected = selectedProvider?.id === "codexCli";
+  const primaryButtonLabel = isCodexSelected ? "Continue" : "Start session";
+  let selectionMessage = "Select a provider to continue.";
+  if (!isSubmitDisabled) {
+    selectionMessage = isCodexSelected
+      ? "Codex selected. Continue to flow."
+      : `${selectedProvider?.title ?? "Provider"} selected.`;
+  }
 
   return (
     <section
@@ -180,9 +188,7 @@ export const ProviderPicker = ({
         </fieldset>
         <div className="provider-picker__actions">
           <output aria-live="polite" className="provider-picker__status">
-            {isSubmitDisabled
-              ? "Select a provider to continue."
-              : `${selectedProvider?.title ?? "Provider"} selected.`}
+            {selectionMessage}
           </output>
           <div className="provider-picker__action-buttons">
             <button
@@ -197,7 +203,7 @@ export const ProviderPicker = ({
               disabled={isSubmitDisabled}
               type="submit"
             >
-              Start session
+              {primaryButtonLabel}
             </button>
           </div>
         </div>

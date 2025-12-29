@@ -11,6 +11,7 @@ import {
   resolveMessageId,
 } from "./app-host/loading-messages";
 import { useProviderPickerState } from "./app-host/provider-picker-state";
+import { SessionRegion } from "./app-host/session-region";
 import { useSessionStore } from "./app-host/session-store";
 import { useSettingsVisibility } from "./app-host/settings-visibility";
 import { useWebviewMessageHandler } from "./app-host/webview-message-handler";
@@ -21,9 +22,7 @@ import type {
   CoreBridgeSessionMessagePayload,
   CoreBridgeStatePayload,
 } from "./core-bridge/types";
-import { ProviderPicker } from "./provider-picker";
 import { activateRoot } from "./root-dom";
-import SessionView from "./session/session-view";
 
 const AppHost = () => {
   const [coreStatus, setCoreStatus] = useState<
@@ -41,10 +40,14 @@ const AppHost = () => {
   const {
     pickerState,
     providerLabels,
+    flowWizardVisible,
+    flowWizardProviderId,
     openPicker,
     confirmSelection,
     cancelSelection,
     resetPicker,
+    openFlowWizard,
+    closeFlowWizard,
   } = useProviderPickerState();
 
   const {
@@ -226,29 +229,27 @@ const AppHost = () => {
   return (
     <div className="app-shell">
       <ActionBar disabled={!isCoreReady} />
-      <div className="app-shell__session-region">
-        <ProviderPicker
-          onCancel={cancelSelection}
-          onConfirm={confirmSelection}
-          providers={pickerState.providers}
-          visible={pickerState.visible}
-        />
-        {pickerState.visible ? null : (
-          <SessionView
-            activeSessionId={activeSessionId}
-            coreConnectionDetail={coreStatusDetail}
-            coreConnectionStatus={coreStatus}
-            onCloseSession={closeSession}
-            onSelectSession={selectSession}
-            onSendMessage={sendMessage}
-            onToggleTodo={toggleTodo}
-            providerLabels={providerLabels}
-            sessions={sessions}
-            showEmptyState
-            snapshots={snapshots}
-          />
-        )}
-      </div>
+      <SessionRegion
+        cancelSelection={cancelSelection}
+        closeFlowWizard={closeFlowWizard}
+        confirmSelection={confirmSelection}
+        flowWizardProviderId={flowWizardProviderId}
+        flowWizardVisible={flowWizardVisible}
+        openFlowWizard={openFlowWizard}
+        pickerState={pickerState}
+        sessionViewProps={{
+          activeSessionId,
+          coreConnectionDetail: coreStatusDetail,
+          coreConnectionStatus: coreStatus,
+          onCloseSession: closeSession,
+          onSelectSession: selectSession,
+          onSendMessage: sendMessage,
+          onToggleTodo: toggleTodo,
+          providerLabels,
+          sessions,
+          snapshots,
+        }}
+      />
       {isCoreReady ? null : (
         <div className="app-shell__status-overlay">
           <output aria-live="polite" className="app-shell__status-card">
