@@ -1,6 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type { ProviderStackDescriptor } from "../../../types/provider";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type {
+  ProviderStackDescriptor,
+  ProviderStackId,
+} from "../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../types/session";
+import { IDEA_KICKOFF_PROMPT } from "./app-host/idea-kickoff-prompt";
 import {
   createDefaultMessages,
   DEFAULT_MESSAGES,
@@ -71,6 +75,8 @@ const AppHost = () => {
   const { settingsVisible, openSettings, closeSettings } =
     useSettingsVisibility();
 
+  const shouldKickoffIdeaRef = useRef(false);
+
   const handleProviderPickerOpen = useCallback(
     (providers: readonly ProviderStackDescriptor[]) => {
       activateRoot();
@@ -79,13 +85,26 @@ const AppHost = () => {
     [openPicker]
   );
 
+  const confirmSelectionFromUi = useCallback(
+    (providerIds: readonly ProviderStackId[]) => {
+      shouldKickoffIdeaRef.current =
+        flowWizardVisible && providerIds[0] === "codexCli";
+      confirmSelection(providerIds);
+    },
+    [confirmSelection, flowWizardVisible]
+  );
+
   const handleSessionCreatedMessage = useCallback(
     (session: SessionRecord) => {
       activateRoot();
       resetPicker();
       handleSessionCreated(session);
+      if (shouldKickoffIdeaRef.current) {
+        shouldKickoffIdeaRef.current = false;
+        sendMessage(session.id, IDEA_KICKOFF_PROMPT);
+      }
     },
-    [handleSessionCreated, resetPicker]
+    [handleSessionCreated, resetPicker, sendMessage]
   );
 
   const handleShowSettings = useCallback(() => {
@@ -232,7 +251,7 @@ const AppHost = () => {
       <SessionRegion
         cancelSelection={cancelSelection}
         closeFlowWizard={closeFlowWizard}
-        confirmSelection={confirmSelection}
+        confirmSelection={confirmSelectionFromUi}
         flowWizardProviderId={flowWizardProviderId}
         flowWizardVisible={flowWizardVisible}
         openFlowWizard={openFlowWizard}
