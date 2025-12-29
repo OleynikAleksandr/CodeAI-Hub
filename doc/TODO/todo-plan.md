@@ -178,9 +178,9 @@ npm run build:webview   # или таргетная сборка
 - [ ] Функция `openFlowWizard(providerId)`
 - [ ] Функция `closeFlowWizard()`
 
-**Статус:** `IN_PROGRESS`
+**Статус:** `DONE`
 **Дата:** 2025-12-29
-**Commit:**
+**Commit:** `c2f6c1c`
 
 ##### Git Commit: `feat(ui): add flow wizard state management`
 
@@ -193,15 +193,17 @@ npm run build:webview   # или таргетная сборка
 **Файлы:**
 - `src/client/ui/src/app-host.tsx`
 - `src/client/ui/src/provider-picker.tsx`
+- `src/client/ui/src/app-host/session-region.tsx`
 
 **Критерии готовности:**
 - [ ] При confirm Codex → показать FlowWizard
 - [ ] При confirm других провайдеров → стандартный flow
 - [ ] Cancel в визарде → возврат к ProviderPicker
+- [ ] Сессия запускается по клику на "Idea", а не в момент выбора Codex
 
-**Статус:** `TODO`
-**Дата:**
-**Commit:**
+**Статус:** `DONE`
+**Дата:** 2025-12-29
+**Commit:** `2db9709`
 
 ##### Git Commit: `feat(ui): integrate flow wizard with provider picker`
 
@@ -258,11 +260,13 @@ npm run build:webview   # или таргетная сборка
 - [ ] Ответы агента через Structured Output
 - [ ] Финализация генерирует Idea.md
 
-**Статус:** `TODO`
-**Дата:**
-**Commit:**
+**Статус:** `BLOCKED`
+**Дата:** 2025-12-29
+**Commit:** `bbf4af3`
 
 ##### Git Commit: `feat(ui): connect flow wizard to idea collector agent`
+
+**Примечание:** MVP: клик на "Idea" создаёт Codex-сессию и отправляет kickoff prompt; Structured Output + генерация `Idea.md` ждут `Task W2.B.1`.
 
 ---
 
