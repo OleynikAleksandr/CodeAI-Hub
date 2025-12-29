@@ -1,3 +1,8 @@
+## [1.1.364] - 2025-12-29
+
+### Fixed
+- **Idea Collector schema compatibility**: strip unsupported JSON schema keywords to match the Codex structured output validator.
+
 ## [1.1.363] - 2025-12-29
 
 ### Fixed
