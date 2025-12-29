@@ -1,3 +1,16 @@
+## [1.1.360] - 2025-12-29
+
+### Added
+- **Idea Collector flow (Codex)**: Flow Wizard launches a guided idea collection session using global templates and structured outputs.
+- **Idea Collector service**: UI service routes messages through the Idea Collector schema/prompt and captures final artifacts.
+
+### Changed
+- **Codex structured output**: now supports Idea Collector `suggested_response` streaming plus structured artifact payloads.
+- **Turn options pipeline**: UI → core → Codex SDK forwards `turnOptions` for structured output turns.
+
+### Notes
+- **Idea.md path (temporary)**: until core write-path is ready, the Idea Collector uses a fixed absolute path for tests.
+
 ## [1.1.359] - 2025-12-27
 
 ### Fixed
