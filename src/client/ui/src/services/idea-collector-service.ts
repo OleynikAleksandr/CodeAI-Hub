@@ -8,6 +8,8 @@ type IdeaCollectorArtifact = {
 
 const IDEA_COLLECTOR_PROMPT_PATH =
   "~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md";
+const IDEA_COLLECTOR_TEMPLATE_PATH =
+  "~/.codeai-hub/templates/flows/full-development-flow/idea-template.md";
 const IDEA_COLLECTOR_SCHEMA_PATH =
   "~/.codeai-hub/templates/schemas/idea-collector-schema.json";
 const HARDCODED_IDEA_PATH =
@@ -18,10 +20,29 @@ const FALLBACK_SCHEMA: Record<string, unknown> = {
   additionalProperties: false,
   required: ["conversation_state", "next_action", "suggested_response"],
   properties: {
-    conversation_state: { type: "object", additionalProperties: true },
-    next_action: { type: "string" },
-    suggested_response: { type: "string" },
-    artifact: { type: "object", additionalProperties: true },
+    conversation_state: {
+      type: "object",
+      additionalProperties: false,
+      required: ["collected", "coverage_percent"],
+      properties: {
+        collected: { type: "object", additionalProperties: false },
+        coverage_percent: { type: "integer", minimum: 0, maximum: 100 },
+      },
+    },
+    next_action: {
+      type: "string",
+      enum: ["ask_question", "clarify", "summarize", "finalize"],
+    },
+    suggested_response: { type: "string", minLength: 1 },
+    artifact: {
+      type: "object",
+      additionalProperties: false,
+      required: ["idea_markdown", "path"],
+      properties: {
+        idea_markdown: { type: "string", minLength: 1 },
+        path: { type: "string" },
+      },
+    },
   },
 };
 
@@ -79,6 +100,14 @@ const loadPrompt = async (): Promise<string> => {
   return IDEA_KICKOFF_PROMPT;
 };
 
+const loadTemplate = async (): Promise<string | null> => {
+  const raw = await readTextFromFile(IDEA_COLLECTOR_TEMPLATE_PATH);
+  if (raw && raw.trim().length > 0) {
+    return raw;
+  }
+  return null;
+};
+
 const loadSchema = async (): Promise<Record<string, unknown>> => {
   const raw = await readTextFromFile(IDEA_COLLECTOR_SCHEMA_PATH);
   if (!raw) {
@@ -117,11 +146,80 @@ const extractArtifact = (event: unknown): IdeaCollectorArtifact | null => {
   return { path, ideaMarkdown };
 };
 
+const cloneSchema = (
+  schema: Record<string, unknown>
+): Record<string, unknown> =>
+  typeof globalThis.structuredClone === "function"
+    ? globalThis.structuredClone(schema)
+    : (JSON.parse(JSON.stringify(schema)) as Record<string, unknown>);
+
+const injectTemplateIntoSchema = (
+  schema: Record<string, unknown>,
+  template: string | null
+): Record<string, unknown> => {
+  if (!template) {
+    return schema;
+  }
+  const next = cloneSchema(schema);
+  const properties = next.properties;
+  if (!isRecord(properties)) {
+    return schema;
+  }
+  const artifact = properties.artifact;
+  if (!isRecord(artifact)) {
+    return schema;
+  }
+  const artifactProperties = artifact.properties;
+  if (!isRecord(artifactProperties)) {
+    return schema;
+  }
+  const ideaMarkdown = artifactProperties.idea_markdown;
+  if (!isRecord(ideaMarkdown)) {
+    return schema;
+  }
+  const description =
+    typeof ideaMarkdown.description === "string"
+      ? ideaMarkdown.description
+      : "Готовый Idea.md в Markdown.";
+  ideaMarkdown.description = `${description}\n\nШаблон Idea.md:\n${template}`;
+  return next;
+};
+
+const generateLocalMessageId = (): string => {
+  if (
+    typeof globalThis.crypto !== "undefined" &&
+    "randomUUID" in globalThis.crypto
+  ) {
+    return globalThis.crypto.randomUUID();
+  }
+  return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const postSystemNotice = (sessionId: string, content: string): void => {
+  window.postMessage(
+    {
+      type: "session:message",
+      payload: {
+        sessionId,
+        message: {
+          id: generateLocalMessageId(),
+          role: "system",
+          content,
+          createdAt: Date.now(),
+        },
+      },
+    },
+    "*"
+  );
+};
+
 export class IdeaCollectorService {
   private readonly activeSessions = new Set<string>();
   private readonly artifacts = new Map<string, IdeaCollectorArtifact>();
   private promptPromise: Promise<string> | null = null;
+  private templatePromise: Promise<string | null> | null = null;
   private schemaPromise: Promise<Record<string, unknown>> | null = null;
+  private readonly noticesSent = new Set<string>();
 
   isIdeaCollectorSession(sessionId: string): boolean {
     return this.activeSessions.has(sessionId);
@@ -133,11 +231,20 @@ export class IdeaCollectorService {
 
   async startCollection(sessionId: string): Promise<void> {
     this.activeSessions.add(sessionId);
-    const [prompt, schema] = await Promise.all([
+    if (!this.noticesSent.has(sessionId)) {
+      this.noticesSent.add(sessionId);
+      postSystemNotice(
+        sessionId,
+        "Запускаю Idea Collector. Пожалуйста, дождитесь первого вопроса."
+      );
+    }
+    const [prompt, schema, template] = await Promise.all([
       this.getPrompt(),
       this.getSchema(),
+      this.getTemplate(),
     ]);
-    sendChatMessage(sessionId, prompt, { outputSchema: schema });
+    const hydratedSchema = injectTemplateIntoSchema(schema, template);
+    sendChatMessage(sessionId, prompt, { outputSchema: hydratedSchema });
   }
 
   async continueConversation(
@@ -166,6 +273,13 @@ export class IdeaCollectorService {
       this.promptPromise = loadPrompt();
     }
     return this.promptPromise;
+  }
+
+  private getTemplate(): Promise<string | null> {
+    if (!this.templatePromise) {
+      this.templatePromise = loadTemplate();
+    }
+    return this.templatePromise;
   }
 
   private getSchema(): Promise<Record<string, unknown>> {
