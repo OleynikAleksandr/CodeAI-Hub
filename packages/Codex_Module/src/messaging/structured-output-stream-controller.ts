@@ -81,7 +81,10 @@ const resolveTurnConfig = (
   if (
     isRecord(schema) &&
     isRecord(schema.properties) &&
-    Object.hasOwn(schema.properties, "suggested_response")
+    Object.prototype.hasOwnProperty.call(
+      schema.properties,
+      "suggested_response"
+    )
   ) {
     return {
       mode: "idea_collector",
