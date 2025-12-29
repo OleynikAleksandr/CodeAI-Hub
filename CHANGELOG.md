@@ -1,3 +1,16 @@
+## [1.1.361] - 2025-12-29
+
+### Added
+- **Idea Collector startup notice**: UI posts a system message prompting the user to wait for the first agent question.
+- **Idea Collector contract context**: Idea.md template is injected into the structured output schema for finalize guidance.
+
+### Changed
+- **Idea Collector fallback schema**: tightened required fields and `additionalProperties` to match Codex schema validation.
+- **Finalize gate**: contract requires core Idea sections and `coverage_percent >= 80` before finalize.
+
+### Fixed
+- **Husky pre-commit**: avoids popping stale stashes when none were created in the hook.
+
 ## [1.1.360] - 2025-12-29
 
 ### Added

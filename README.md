@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.360
-- **Idea Collector flow (Codex)**: Flow Wizard launches a guided idea collection session using global templates and structured outputs.
-- **Codex structured output updates**: structured responses now carry `suggested_response` + artifacts for Idea Collector flows.
-- **Release 1.1.360**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` for the Idea Collector pipeline.
+## Current Release — v1.1.361
+- **Idea Collector UX**: a system notice confirms the agent is starting so users wait for the first question.
+- **Idea Collector contract**: the Idea.md template is injected into the structured output schema and finalize demands core sections + `coverage_percent >= 80`.
+- **Release 1.1.361**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` for the Idea Collector pipeline.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.360.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.360.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.360.tar.bz2`
-  - Providers: `claude-module-1.1.360.tar.bz2`, `codex-module-1.1.360.tar.bz2`, `gemini-module-1.1.360.tar.bz2`
-  - UI: `vscode-webview-1.1.360.tar.bz2`, `web-client-1.1.360.tar.bz2`, `project-manager-1.1.360.tar.bz2`
+  - VSIX: `codeai-hub-1.1.361.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.361.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.361.tar.bz2`
+  - Providers: `claude-module-1.1.361.tar.bz2`, `codex-module-1.1.361.tar.bz2`, `gemini-module-1.1.361.tar.bz2`
+  - UI: `vscode-webview-1.1.361.tar.bz2`, `web-client-1.1.361.tar.bz2`, `project-manager-1.1.361.tar.bz2`
 
 
 ## Features
