@@ -22973,7 +22973,34 @@ ${path2}` : path2;
       strictifySchema(items);
     }
   };
-  var strictifyCombinators = (schema) => {
+  var removeCombinatorsFromProperties = (schema) => {
+    const properties = schema.properties;
+    if (!isRecord2(properties)) {
+      return;
+    }
+    for (const value of Object.values(properties)) {
+      if (isRecord2(value)) {
+        removeCombinators(value);
+      }
+    }
+  };
+  var removeCombinatorsFromItems = (schema) => {
+    const items = schema.items;
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        if (isRecord2(item)) {
+          removeCombinators(item);
+        }
+      }
+      return;
+    }
+    if (isRecord2(items)) {
+      removeCombinators(items);
+    }
+  };
+  var removeCombinators = (schema) => {
+    removeCombinatorsFromProperties(schema);
+    removeCombinatorsFromItems(schema);
     for (const key of ["allOf", "anyOf", "oneOf"]) {
       const entries = schema[key];
       if (!Array.isArray(entries)) {
@@ -22981,15 +23008,16 @@ ${path2}` : path2;
       }
       for (const entry of entries) {
         if (isRecord2(entry)) {
-          strictifySchema(entry);
+          removeCombinators(entry);
         }
       }
+      delete schema[key];
     }
   };
   var strictifySchema = (schema) => {
+    removeCombinators(schema);
     strictifyProperties(schema);
     strictifyItems(schema);
-    strictifyCombinators(schema);
   };
   var injectTemplateIntoSchema = (schema, template) => {
     if (!template) {
@@ -23018,9 +23046,55 @@ Idea.md template:
 ${template}`;
     return schema;
   };
+  var ALLOWED_SCHEMA_KEYS = /* @__PURE__ */ new Set([
+    "type",
+    "properties",
+    "required",
+    "additionalProperties",
+    "items",
+    "description"
+  ]);
+  var pruneSchemaKeys = (schema) => {
+    for (const key of Object.keys(schema)) {
+      if (!ALLOWED_SCHEMA_KEYS.has(key)) {
+        delete schema[key];
+      }
+    }
+  };
+  var sanitizeSchemaProperties = (schema) => {
+    const properties = schema.properties;
+    if (!isRecord2(properties)) {
+      return;
+    }
+    for (const value of Object.values(properties)) {
+      if (isRecord2(value)) {
+        sanitizeSchemaKeywords(value);
+      }
+    }
+  };
+  var sanitizeSchemaItems = (schema) => {
+    const items = schema.items;
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        if (isRecord2(item)) {
+          sanitizeSchemaKeywords(item);
+        }
+      }
+      return;
+    }
+    if (isRecord2(items)) {
+      sanitizeSchemaKeywords(items);
+    }
+  };
+  var sanitizeSchemaKeywords = (schema) => {
+    pruneSchemaKeys(schema);
+    sanitizeSchemaProperties(schema);
+    sanitizeSchemaItems(schema);
+  };
   var normalizeIdeaCollectorSchema = (schema, template) => {
     const next = cloneSchema(schema);
     strictifySchema(next);
+    sanitizeSchemaKeywords(next);
     return injectTemplateIntoSchema(next, template);
   };
 
