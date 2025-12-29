@@ -21,6 +21,19 @@ export type DialogMessagePayload = {
   readonly timestamp?: string;
 };
 
+type MessageContentPayload =
+  | string
+  | {
+      readonly text?: unknown;
+      readonly content?: unknown;
+      readonly turnOptions?: unknown;
+    };
+
+type MessageContentExtraction = {
+  readonly content: string;
+  readonly turnOptions?: Record<string, unknown>;
+};
+
 type SessionIdChangedPayload = {
   readonly newId?: string;
 };
@@ -115,7 +128,17 @@ export class SessionRequestHandler {
     }
   }
 
-  async handleMessage(sessionId: string, content: string): Promise<void> {
+  async handleMessage(
+    sessionId: string,
+    messagePayload: MessageContentPayload
+  ): Promise<void> {
+    const extracted = this.extractMessageContentAndTurnOptions(messagePayload);
+    if (!extracted) {
+      this.logger.warn("Received invalid message payload", { sessionId });
+      return;
+    }
+
+    const { content, turnOptions } = extracted;
     const userMessage = this.sessionManager.appendMessage(
       sessionId,
       "user",
@@ -145,7 +168,11 @@ export class SessionRequestHandler {
     }
 
     try {
-      await adapter.sendMessage(binding.providerSessionId, content);
+      await adapter.sendMessage(
+        binding.providerSessionId,
+        content,
+        turnOptions
+      );
     } catch (error) {
       this.handleProviderFailure(binding.providerId, error, sessionId);
     }
@@ -316,6 +343,42 @@ export class SessionRequestHandler {
       return JSON.stringify(typed.data);
     }
     return null;
+  }
+
+  private extractMessageContentAndTurnOptions(
+    payload: MessageContentPayload
+  ): MessageContentExtraction | null {
+    if (typeof payload === "string") {
+      return { content: payload };
+    }
+    if (!payload || typeof payload !== "object") {
+      return null;
+    }
+
+    const typed = payload as {
+      readonly text?: unknown;
+      readonly content?: unknown;
+      readonly turnOptions?: unknown;
+    };
+    let content: string | null = null;
+    if (typeof typed.text === "string") {
+      content = typed.text;
+    } else if (typeof typed.content === "string") {
+      content = typed.content;
+    }
+
+    if (!content) {
+      return null;
+    }
+
+    const turnOptions =
+      typed.turnOptions &&
+      typeof typed.turnOptions === "object" &&
+      !Array.isArray(typed.turnOptions)
+        ? (typed.turnOptions as Record<string, unknown>)
+        : undefined;
+
+    return { content, turnOptions };
   }
 
   private updateProviderBinding(
