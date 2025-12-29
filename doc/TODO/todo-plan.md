@@ -120,8 +120,8 @@
 4. [DONE] Git Commit: `feat(codex): forward turn options to sdk manager` (hash: 0154b62)
 5. [DONE] W2.B.1c Поддержать Idea Collector schema/prompt в Codex Structured Output (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `packages/Codex_Module/src/messaging/message-processor.ts` [+ возможно `packages/Codex_Module/src/messaging/answer-json-stream-extractor.ts`]; DoD: `suggested_response` выводится в SessionView, `artifact` доступен при finalize) (date: 2025-12-29)
 6. [DONE] Git Commit: `feat(codex): support idea collector structured output` (hash: 18b4405)
-7. [TODO] W2.B.1d Реализовать `IdeaCollectorService` (scope: `src/client/ui/src/services/idea-collector-service.ts` [+ до 2 файлов интеграции]; DoD: `startCollection()`/`continueConversation()`; подставляет schema+prompt; использует текущий SessionView)
-8. [TODO] Git Commit: `feat(orchestrator): add idea collector service` (hash: TBD)
+7. [DONE] W2.B.1d Реализовать `IdeaCollectorService` (scope: `src/client/ui/src/services/idea-collector-service.ts` [+ до 2 файлов интеграции]; DoD: `startCollection()`/`continueConversation()`; подставляет schema+prompt; использует текущий SessionView) (date: 2025-12-29)
+8. [DONE] Git Commit: `feat(orchestrator): add idea collector service` (hash: dfbae3c)
 
 ---
 
