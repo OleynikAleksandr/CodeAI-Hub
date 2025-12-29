@@ -4,7 +4,6 @@ import type {
   ProviderStackId,
 } from "../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../types/session";
-import { IDEA_KICKOFF_PROMPT } from "./app-host/idea-kickoff-prompt";
 import {
   createDefaultMessages,
   DEFAULT_MESSAGES,
@@ -18,6 +17,7 @@ import { useProviderPickerState } from "./app-host/provider-picker-state";
 import { SessionRegion } from "./app-host/session-region";
 import { useSessionStore } from "./app-host/session-store";
 import { useSettingsVisibility } from "./app-host/settings-visibility";
+import { useIdeaCollector } from "./app-host/use-idea-collector";
 import { useWebviewMessageHandler } from "./app-host/webview-message-handler";
 import ActionBar from "./components/action-bar";
 import SettingsView from "./components/settings-view";
@@ -40,7 +40,6 @@ const AppHost = () => {
     createDefaultMessages
   );
   const [activeMessageIndex, setActiveMessageIndex] = useState(0);
-
   const {
     pickerState,
     providerLabels,
@@ -53,7 +52,6 @@ const AppHost = () => {
     openFlowWizard,
     closeFlowWizard,
   } = useProviderPickerState();
-
   const {
     sessions,
     snapshots,
@@ -71,11 +69,13 @@ const AppHost = () => {
     toggleTodo,
     sendMessage,
   } = useSessionStore(providerLabels);
-
   const { settingsVisible, openSettings, closeSettings } =
     useSettingsVisibility();
-
   const shouldKickoffIdeaRef = useRef(false);
+  const {
+    startCollection: startIdeaCollection,
+    sendMessage: sendIdeaCollectorMessage,
+  } = useIdeaCollector(sendMessage);
 
   const handleProviderPickerOpen = useCallback(
     (providers: readonly ProviderStackDescriptor[]) => {
@@ -101,10 +101,10 @@ const AppHost = () => {
       handleSessionCreated(session);
       if (shouldKickoffIdeaRef.current) {
         shouldKickoffIdeaRef.current = false;
-        sendMessage(session.id, IDEA_KICKOFF_PROMPT);
+        startIdeaCollection(session.id);
       }
     },
-    [handleSessionCreated, resetPicker, sendMessage]
+    [handleSessionCreated, resetPicker, startIdeaCollection]
   );
 
   const handleShowSettings = useCallback(() => {
@@ -262,7 +262,7 @@ const AppHost = () => {
           coreConnectionStatus: coreStatus,
           onCloseSession: closeSession,
           onSelectSession: selectSession,
-          onSendMessage: sendMessage,
+          onSendMessage: sendIdeaCollectorMessage,
           onToggleTodo: toggleTodo,
           providerLabels,
           sessions,
