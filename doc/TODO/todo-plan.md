@@ -114,8 +114,14 @@
 **Ждёт:** Schema + Prompt готовы (Волна 1, Stream W1.B + Stream W1.C)
 **Назначение:** Подключить агента к UI через Codex exec.
 
-1. [TODO] W2.B.1 Создать `IdeaCollectorService` (scope: `src/client/ui/src/services/idea-collector-service.ts`; DoD: грузит schema+prompt; `startCollection()`; `continueConversation()`; парсит structured output; работает с текущим session pipeline для `SessionView`)
-2. [TODO] Git Commit: `feat(orchestrator): add idea collector service` (hash: TBD)
+1. [TODO] W2.B.1a Прокинуть `turnOptions` из UI в core (scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/provider-registry/index.ts`; DoD: `session:message` принимает `turnOptions`, core передаёт их в adapter)
+2. [TODO] Git Commit: `feat(orchestrator): pass turn options from ui to core` (hash: TBD)
+3. [TODO] W2.B.1b Прокинуть `turnOptions` до Codex SDK manager (scope: `packages/Codex_Module/src/provider/codex-provider-adapter.ts`, `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`; DoD: adapter принимает options, processor получает их)
+4. [TODO] Git Commit: `feat(codex): forward turn options to sdk manager` (hash: TBD)
+5. [TODO] W2.B.1c Поддержать Idea Collector schema/prompt в Codex Structured Output (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `packages/Codex_Module/src/messaging/message-processor.ts` [+ возможно `packages/Codex_Module/src/messaging/answer-json-stream-extractor.ts`]; DoD: `suggested_response` выводится в SessionView, `artifact` доступен при finalize)
+6. [TODO] Git Commit: `feat(codex): support idea collector structured output` (hash: TBD)
+7. [TODO] W2.B.1d Реализовать `IdeaCollectorService` (scope: `src/client/ui/src/services/idea-collector-service.ts` [+ до 2 файлов интеграции]; DoD: `startCollection()`/`continueConversation()`; подставляет schema+prompt; использует текущий SessionView)
+8. [TODO] Git Commit: `feat(orchestrator): add idea collector service` (hash: TBD)
 
 ---
 
