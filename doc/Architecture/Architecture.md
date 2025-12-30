@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.5.9
-**Last Updated:** 2025-12-29
+**Last Updated:** 2025-12-30
 **Status:** Active reference
-**Release Focus:** v1.1.361 — укрепление контракта Idea Collector (шаблон в schema, stricter finalize) и UX-уведомление старта.
+**Release Focus:** v1.1.366 — Idea Collector spec-ready шаблон/контракт и восстановление Codex thinking (native + RU summary).
 
 ---
 
@@ -104,6 +104,11 @@ graph TD
 - **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`, `project-manager.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
+
+## Recent Changes (v1.1.366 - 2025-12-30)
+- **Idea Collector spec readiness**: шаблон/контракт требуют UI/UX, триггеры, сущности и архитектурный контур для подготовки Spec.md.
+- **Codex thinking output**: native reasoning снова показывается вместе с `reasoning_summary_ru`, включая кастомные structured outputs.
+- **Release 1.1.366**: артефакты VSIX/launcher/core/providers/UI обновлены под новую модель thinking и Idea Collector контракт.
 
 ## Recent Changes (v1.1.361 - 2025-12-29)
 - **Idea Collector UX**: добавлено системное сообщение «ждите», чтобы пользователь видел старт агента.

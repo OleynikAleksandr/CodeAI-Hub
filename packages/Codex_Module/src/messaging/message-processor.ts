@@ -36,10 +36,16 @@ type MessageProcessorOptions = {
   readonly reporter?: ModuleReporter;
 };
 
+type ReasoningDelta = {
+  readonly delta: string;
+  readonly merged: string;
+};
+
 export class CodexMessageProcessor {
   private readonly sessionManager: CodexSessionManager;
   private readonly options?: MessageProcessorOptions;
   private readonly structuredOutput = new StructuredOutputStreamController();
+  private readonly reasoningStreams = new Map<string, Map<string, string>>();
 
   constructor(
     sessionManager: CodexSessionManager,
@@ -204,6 +210,7 @@ export class CodexMessageProcessor {
     if (previousId !== threadId) {
       this.sessionManager.updateSessionId(previousId, threadId);
       session.logger?.renameSession?.(previousId, threadId);
+      this.clearReasoningSession(previousId);
       session.eventEmitter.emit("sessionIdChanged", {
         oldId: previousId,
         newId: threadId,
@@ -233,6 +240,7 @@ export class CodexMessageProcessor {
       timestamp: new Date().toISOString(),
     });
     this.structuredOutput.clear(session.sessionId);
+    this.clearReasoningSession(session.sessionId);
   }
 
   private handleTurnFailed(
@@ -248,6 +256,7 @@ export class CodexMessageProcessor {
       timestamp: new Date().toISOString(),
     });
     this.structuredOutput.clear(session.sessionId);
+    this.clearReasoningSession(session.sessionId);
   }
 
   private handleStreamError(
@@ -263,6 +272,7 @@ export class CodexMessageProcessor {
       timestamp: new Date().toISOString(),
     });
     this.structuredOutput.clear(session.sessionId);
+    this.clearReasoningSession(session.sessionId);
   }
 
   private handleThreadItem(
@@ -270,6 +280,52 @@ export class CodexMessageProcessor {
     event: ItemStartedEvent | ItemUpdatedEvent | ItemCompletedEvent
   ): void {
     const item = event.item as ThreadItem;
+    if (this.handleReasoningItem(session, event, item)) {
+      return;
+    }
+    this.handleAgentMessageItem(session, event, item);
+  }
+
+  private handleReasoningItem(
+    session: ActiveSession,
+    event: ItemStartedEvent | ItemUpdatedEvent | ItemCompletedEvent,
+    item: ThreadItem
+  ): boolean {
+    if (item.type !== "reasoning") {
+      return false;
+    }
+    if (session.internalTurn || typeof item.text !== "string") {
+      return true;
+    }
+    if (event.type === "item.updated") {
+      const delta = this.appendReasoningDelta(
+        session.sessionId,
+        item.id,
+        item.text
+      );
+      if (delta) {
+        this.emitDialogMessage(session, "thinking", delta, item.id);
+      }
+      return true;
+    }
+    if (event.type === "item.completed") {
+      const delta = this.completeReasoningDelta(
+        session.sessionId,
+        item.id,
+        item.text
+      );
+      if (delta) {
+        this.emitDialogMessage(session, "thinking", delta, item.id);
+      }
+    }
+    return true;
+  }
+
+  private handleAgentMessageItem(
+    session: ActiveSession,
+    event: ItemStartedEvent | ItemUpdatedEvent | ItemCompletedEvent,
+    item: ThreadItem
+  ): void {
     if (item.type !== "agent_message") {
       return;
     }
@@ -390,6 +446,72 @@ export class CodexMessageProcessor {
       uuid: id ?? crypto.randomUUID(),
       timestamp: new Date().toISOString(),
     });
+  }
+
+  private appendReasoningDelta(
+    sessionId: string,
+    itemId: string,
+    nextText: string
+  ): string | null {
+    if (!nextText) {
+      return null;
+    }
+    const sessionMap = this.getReasoningSession(sessionId);
+    const previous = sessionMap.get(itemId) ?? "";
+    const { delta, merged } = this.resolveReasoningDelta(previous, nextText);
+    if (merged !== previous) {
+      sessionMap.set(itemId, merged);
+    }
+    return delta.length > 0 ? delta : null;
+  }
+
+  private completeReasoningDelta(
+    sessionId: string,
+    itemId: string,
+    nextText: string
+  ): string | null {
+    const delta = this.appendReasoningDelta(sessionId, itemId, nextText);
+    const sessionMap = this.reasoningStreams.get(sessionId);
+    if (sessionMap) {
+      sessionMap.delete(itemId);
+      if (sessionMap.size === 0) {
+        this.reasoningStreams.delete(sessionId);
+      }
+    }
+    return delta;
+  }
+
+  private getReasoningSession(sessionId: string): Map<string, string> {
+    const existing = this.reasoningStreams.get(sessionId);
+    if (existing) {
+      return existing;
+    }
+    const fresh = new Map<string, string>();
+    this.reasoningStreams.set(sessionId, fresh);
+    return fresh;
+  }
+
+  private resolveReasoningDelta(
+    previous: string,
+    nextText: string
+  ): ReasoningDelta {
+    if (!previous) {
+      return { delta: nextText, merged: nextText };
+    }
+    if (nextText.startsWith(previous)) {
+      return {
+        delta: nextText.slice(previous.length),
+        merged: nextText,
+      };
+    }
+    if (previous.startsWith(nextText)) {
+      return { delta: "", merged: previous };
+    }
+    return { delta: nextText, merged: `${previous}${nextText}` };
+  }
+
+  private clearReasoningSession(sessionId: string): void {
+    this.reasoningStreams.delete(sessionId);
   }
 
   private isEnqueuedMessage(value: unknown): value is EnqueuedMessage {

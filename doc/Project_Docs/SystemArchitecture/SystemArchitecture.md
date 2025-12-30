@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.361 (29.12.2025) — Idea Collector использует усиленный контракт (шаблон в schema, строгий finalize) и показывает системное сообщение старта. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
+**Состояние:** релиз 1.1.366 (30.12.2025) — Idea Collector использует spec-ready контракт (UI/триггеры/сущности/архконтур) и возвращает `reasoning_summary_ru`, Codex thinking показывает native + RU summary. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
 
 ## Обзор
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
@@ -31,51 +31,51 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.361
-- Автономное ядро: `@codeai-hub/core` 1.1.361
-- UI Bundles: 1.1.361
-- Claude module: 1.1.361
-- Codex module: 1.1.361
-- Gemini module: 1.1.361
+- VSIX: `codeai-hub` 1.1.366
+- Автономное ядро: `@codeai-hub/core` 1.1.366
+- UI Bundles: 1.1.366
+- Claude module: 1.1.366
+- Codex module: 1.1.366
+- Gemini module: 1.1.366
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.361/
+│       └── 1.1.366/
 │           ├── node/
 │           ├── app/
 │           └── install.json
 ├── packages/
 │   ├── launcher/
-│   │   └── macos-arm64/1.1.361/
+│   │   └── macos-arm64/1.1.366/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.361/
-│       │   └── current -> 1.1.361
+│       │   ├── 1.1.366/
+│       │   └── current -> 1.1.366
 │       ├── web-client/
-│       │   ├── 1.1.361/
-│       │   └── current -> 1.1.361
+│       │   ├── 1.1.366/
+│       │   └── current -> 1.1.366
 │       └── project-manager/
-│           ├── 1.1.361/
-│           └── current -> 1.1.361
+│           ├── 1.1.366/
+│           └── current -> 1.1.366
 ├── providers/
-│   ├── claude/1.1.361/
-│   ├── codex/1.1.361/
-│   └── gemini/1.1.361/
+│   ├── claude/1.1.366/
+│   ├── codex/1.1.366/
+│   └── gemini/1.1.366/
 ├── settings/
 │   ├── claude.json          # legacy thinking settings migrated to settings.json
 │   └── settings.json        # current source of truth for providers.{claude,codex,gemini}
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.361.tar.bz2
-    ├── vscode-webview-1.1.361.tar.bz2
-    ├── web-client-1.1.361.tar.bz2
-    ├── project-manager-1.1.361.tar.bz2
-    ├── claude-module-1.1.361.tar.bz2
-    ├── codex-module-1.1.361.tar.bz2
-    ├── gemini-module-1.1.361.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.361.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.366.tar.bz2
+    ├── vscode-webview-1.1.366.tar.bz2
+    ├── web-client-1.1.366.tar.bz2
+    ├── project-manager-1.1.366.tar.bz2
+    ├── claude-module-1.1.366.tar.bz2
+    ├── codex-module-1.1.366.tar.bz2
+    ├── gemini-module-1.1.366.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.366.tar.bz2
 ```
 
 ## Провайдеры
@@ -89,6 +89,11 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
+
+## Recent Changes (v1.1.366 - 2025-12-30)
+- **Idea Collector spec readiness**: шаблон/контракт теперь требуют UI/UX, триггеры, сущности и архитектурный контур для Spec.md.
+- **Codex thinking output**: native reasoning снова показывается, RU summary добавляется поверх для structured outputs.
+- **Release 1.1.366**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.366.
 
 ## Recent Changes (v1.1.361 - 2025-12-29)
 - **Idea Collector UX**: системное сообщение подтверждает старт агента и просит дождаться первого вопроса.
