@@ -8,88 +8,83 @@ type IdeaCollectorArtifact = {
   readonly ideaMarkdown: string;
 };
 
-const IDEA_COLLECTOR_PROMPT_PATH =
-  "~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md";
-const IDEA_COLLECTOR_TEMPLATE_PATH =
-  "~/.codeai-hub/templates/flows/full-development-flow/idea-template.md";
-const IDEA_COLLECTOR_SCHEMA_PATH =
-  "~/.codeai-hub/templates/schemas/idea-collector-schema.json";
+type IdeaContractPayload = {
+  readonly prompt: string;
+  readonly schema: Record<string, unknown>;
+};
+
+type IdeaContractSnapshot = {
+  readonly prompt: string;
+  readonly schema: Record<string, unknown>;
+};
+
+const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const HARDCODED_IDEA_PATH =
   "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/.codeai-hub/orchestrator/idea.md";
-
-const resolveHomeDirectory = (): string | null => {
-  const globalScope = globalThis as {
-    readonly process?: { readonly env?: Record<string, string | undefined> };
-  };
-  const env = globalScope.process?.env;
-  const home = env?.HOME ?? env?.USERPROFILE;
-  if (typeof home !== "string" || home.length === 0) {
-    return null;
-  }
-  return home;
-};
-
-const resolveTemplatePath = (templatePath: string): string | null => {
-  if (!templatePath.startsWith("~")) {
-    return templatePath;
-  }
-  const home = resolveHomeDirectory();
-  if (!home) {
-    return null;
-  }
-  return `${home}${templatePath.slice(1)}`;
-};
-
-const toFileUrl = (filePath: string): string => `file://${encodeURI(filePath)}`;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const readTextFromFile = async (
-  templatePath: string
-): Promise<string | null> => {
-  const resolvedPath = resolveTemplatePath(templatePath);
-  if (!resolvedPath) {
+const resolveCoreHttpUrl = (): string | null => {
+  const globalScope = window as typeof window & {
+    __CODEAI_CORE_CONFIG?: { readonly httpUrl?: string };
+  };
+  const httpUrl = globalScope.__CODEAI_CORE_CONFIG?.httpUrl;
+  if (typeof httpUrl !== "string" || httpUrl.length === 0) {
+    return null;
+  }
+  return httpUrl;
+};
+
+const joinUrl = (baseUrl: string, path: string): string =>
+  baseUrl.endsWith("/")
+    ? `${baseUrl.slice(0, -1)}${path}`
+    : `${baseUrl}${path}`;
+
+const isIdeaContractPayload = (
+  value: unknown
+): value is IdeaContractPayload => {
+  if (!isRecord(value)) {
+    return false;
+  }
+  return (
+    typeof value.prompt === "string" &&
+    value.prompt.length > 0 &&
+    isRecord(value.schema)
+  );
+};
+
+const fetchIdeaContract = async (): Promise<IdeaContractSnapshot | null> => {
+  const httpUrl = resolveCoreHttpUrl();
+  if (!httpUrl) {
     return null;
   }
   try {
-    const response = await fetch(toFileUrl(resolvedPath));
+    const response = await fetch(joinUrl(httpUrl, IDEA_CONTRACT_ENDPOINT));
     if (!response.ok) {
       return null;
     }
-    return await response.text();
+    const payload = (await response.json()) as unknown;
+    if (!isIdeaContractPayload(payload)) {
+      return null;
+    }
+    const schema = normalizeIdeaCollectorSchema(payload.schema, null);
+    return { prompt: payload.prompt, schema };
   } catch {
     return null;
   }
 };
 
-const loadPrompt = async (): Promise<string> => {
-  const raw = await readTextFromFile(IDEA_COLLECTOR_PROMPT_PATH);
-  if (raw && raw.trim().length > 0) {
-    return raw;
+const loadContract = async (): Promise<IdeaContractSnapshot> => {
+  const remote = await fetchIdeaContract();
+  if (remote) {
+    return remote;
   }
-  return IDEA_KICKOFF_PROMPT;
-};
-
-const loadTemplate = async (): Promise<string | null> => {
-  const raw = await readTextFromFile(IDEA_COLLECTOR_TEMPLATE_PATH);
-  if (raw && raw.trim().length > 0) {
-    return raw;
-  }
-  return null;
-};
-
-const loadSchema = async (): Promise<Record<string, unknown>> => {
-  const raw = await readTextFromFile(IDEA_COLLECTOR_SCHEMA_PATH);
-  if (!raw) {
-    return IDEA_COLLECTOR_FALLBACK_SCHEMA;
-  }
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    return isRecord(parsed) ? parsed : IDEA_COLLECTOR_FALLBACK_SCHEMA;
-  } catch {
-    return IDEA_COLLECTOR_FALLBACK_SCHEMA;
-  }
+  const fallbackSchema = normalizeIdeaCollectorSchema(
+    IDEA_COLLECTOR_FALLBACK_SCHEMA,
+    null
+  );
+  return { prompt: IDEA_KICKOFF_PROMPT, schema: fallbackSchema };
 };
 
 const extractArtifact = (event: unknown): IdeaCollectorArtifact | null => {
@@ -157,11 +152,7 @@ const postSystemNotice = (sessionId: string, content: string): void => {
 export class IdeaCollectorService {
   private readonly activeSessions = new Set<string>();
   private readonly artifacts = new Map<string, IdeaCollectorArtifact>();
-  private promptPromise: Promise<string> | null = null;
-  private templatePromise: Promise<string | null> | null = null;
-  private schemaPromise: Promise<Record<string, unknown>> | null = null;
-  private normalizedSchemaPromise: Promise<Record<string, unknown>> | null =
-    null;
+  private contractPromise: Promise<IdeaContractSnapshot> | null = null;
   private readonly noticesSent = new Set<string>();
 
   isIdeaCollectorSession(sessionId: string): boolean {
@@ -210,35 +201,17 @@ export class IdeaCollectorService {
   }
 
   private getPrompt(): Promise<string> {
-    if (!this.promptPromise) {
-      this.promptPromise = loadPrompt();
-    }
-    return this.promptPromise;
-  }
-
-  private getTemplate(): Promise<string | null> {
-    if (!this.templatePromise) {
-      this.templatePromise = loadTemplate();
-    }
-    return this.templatePromise;
-  }
-
-  private getSchema(): Promise<Record<string, unknown>> {
-    if (!this.schemaPromise) {
-      this.schemaPromise = loadSchema();
-    }
-    return this.schemaPromise;
+    return this.getContract().then((contract) => contract.prompt);
   }
 
   private getNormalizedSchema(): Promise<Record<string, unknown>> {
-    if (!this.normalizedSchemaPromise) {
-      this.normalizedSchemaPromise = Promise.all([
-        this.getSchema(),
-        this.getTemplate(),
-      ]).then(([schema, template]) =>
-        normalizeIdeaCollectorSchema(schema, template)
-      );
+    return this.getContract().then((contract) => contract.schema);
+  }
+
+  private getContract(): Promise<IdeaContractSnapshot> {
+    if (!this.contractPromise) {
+      this.contractPromise = loadContract();
     }
-    return this.normalizedSchemaPromise;
+    return this.contractPromise;
   }
 }
