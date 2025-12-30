@@ -1,4 +1,4 @@
-# Codex: скрытие native reasoning и вывод RU summary через Structured Outputs
+# Codex: native reasoning + RU summary через Structured Outputs
 
 **Date:** 2025-12-27
 **Status:** Verified
@@ -142,7 +142,7 @@
 ### Статус
 - Проверка выполнена, результат **PASS**.
 - `reasoning_summary_ru` приходит на русском и по смыслу/объёму близок к native reasoning (в безопасном виде).
-- `answer` стримится корректно; native reasoning в UI не отображается.
+- `answer` стримится корректно; native reasoning в UI отображается вместе с RU summary.
 
 ### Пример подтверждения
 - Лог: `~/.codex/sessions/2025/12/27/rollout-2025-12-27T19-32-15-019b6115-2830-7292-be87-4a077a2ec882.jsonl`.

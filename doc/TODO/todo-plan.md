@@ -156,6 +156,34 @@
 
 ---
 
+## 4.2 Волна 5 — Усиление Idea Collector + Thinking
+
+> Цель: подготовить Idea.md для Spec.md и вернуть thinking (native + summary) для Codex structured outputs.
+
+### [Stream W5.A] Spec-ready шаблон и контракт Idea Collector
+
+**Назначение:** Сделать Idea.md достаточно конкретным для Spec.md, зафиксировать новые секции и правила.
+
+1. [DONE] W5.A.1 Обновить idea-template.md под Spec.md (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-template.md`; DoD: секции UI/UX, триггеры, сущности, архитектурный контур + чек-лист Spec readiness) (commit: `feat(orchestrator): make idea template spec-ready`) (date: 2025-12-30)
+2. [DONE] Git Commit: `feat(orchestrator): make idea template spec-ready` (hash: N/A (global))
+3. [DONE] W5.A.2 Обновить prompt Idea Collector (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md`; DoD: явное требование Spec-ready, запрет заглушек, reasoning_summary_ru) (commit: `feat(orchestrator): tighten idea collector prompt`) (date: 2025-12-30)
+4. [DONE] Git Commit: `feat(orchestrator): tighten idea collector prompt` (hash: N/A (global))
+5. [DONE] W5.A.3 Обновить schema Idea Collector (scope: `~/.codeai-hub/templates/schemas/idea-collector-schema.json`; DoD: новые секции + reasoning_summary_ru + финальные ограничения) (commit: `feat(orchestrator): extend idea collector schema`) (date: 2025-12-30)
+6. [DONE] Git Commit: `feat(orchestrator): extend idea collector schema` (hash: N/A (global))
+
+---
+
+### [Stream W5.B] Thinking для Codex structured outputs
+
+**Назначение:** Вернуть thinking summary для кастомных схем и восстановить native thinking поток.
+
+1. [DONE] W5.B.1 Всегда извлекать `reasoning_summary_ru` из structured output (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`; DoD: summary эмитится как thinking даже для Idea Collector/кастомных схем) (commit: `fix(codex): parse reasoning summary in custom outputs`) (date: 2025-12-30)
+2. [DONE] Git Commit: `fix(codex): parse reasoning summary in custom outputs` (hash: c9cea9e)
+3. [DONE] W5.B.2 Восстановить native thinking из Codex SDK (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: SDK reasoning/events пробрасываются в UI как `thinking`) (commit: `fix(codex): surface native reasoning stream`) (date: 2025-12-30)
+4. [DONE] Git Commit: `fix(codex): surface native reasoning stream` (hash: be2ee83)
+
+---
+
 ## 5. Сценарии проверки
 
 ### После Волны 1
@@ -190,7 +218,9 @@
 
 - [TODO] `.codeai-hub/orchestrator/idea.md`
 - [TODO] `doc/Project_Docs/knowledge/Автоматизация Flow разработки на основе Plan.md.md`
-- [DONE] `doc/Architecture/Architecture.md` (date: 2025-12-29)
+- [DONE] `doc/Architecture/Architecture.md` (date: 2025-12-30)
+- [DONE] `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (date: 2025-12-30)
+- [DONE] `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md` (date: 2025-12-30)
 - [DONE] `README.md` (date: 2025-12-29)
 
 ---
@@ -204,7 +234,7 @@
 
 ### Выполнено
 - Волна 1: UI+контракты (частично в global templates)
-- Commits (repo): `b61de20`, `efd5dc6`, `c2f6c1c`, `2db9709`, `bbf4af3`, `00fcd14`, `94727a2`, `ba4b8c0`, `3a50aa2`
+- Commits (repo): `b61de20`, `efd5dc6`, `c2f6c1c`, `2db9709`, `bbf4af3`, `00fcd14`, `94727a2`, `ba4b8c0`, `3a50aa2`, `c9cea9e`, `be2ee83`
 - Изменения вне git: `~/.codeai-hub/templates/schemas/idea-collector-schema.json`, `~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md`
 
 ### Следующая сессия
