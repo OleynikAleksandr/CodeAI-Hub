@@ -80,12 +80,14 @@ const resolveTurnConfig = (
   const schema = turnOptions.outputSchema;
   if (
     isRecord(schema) &&
-    isRecord(schema.properties) &&
-    // biome-ignore lint/suspicious/noPrototypeBuiltins: TS lib lacks Object.hasOwn.
-    Object.prototype.hasOwnProperty.call(
-      schema.properties,
-      "suggested_response"
-    )
+    ((isRecord(schema.properties) &&
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: TS lib lacks Object.hasOwn.
+      Object.prototype.hasOwnProperty.call(
+        schema.properties,
+        "suggested_response"
+      )) ||
+      (Array.isArray(schema.required) &&
+        schema.required.includes("suggested_response")))
   ) {
     return {
       mode: "idea_collector",
@@ -205,6 +207,9 @@ const parseStructuredOutput = (
     if (!isRecord(parsed)) {
       return {};
     }
+    if (hasIdeaCollectorSignature(parsed)) {
+      return parseIdeaCollectorOutput(parsed);
+    }
     return mode === "idea_collector"
       ? parseIdeaCollectorOutput(parsed)
       : parseDefaultOutput(parsed);
@@ -231,12 +236,19 @@ const parseDefaultOutput = (parsed: Record<string, unknown>): ParsedOutput => {
 const parseIdeaCollectorOutput = (
   parsed: Record<string, unknown>
 ): ParsedOutput => {
-  const assistantText =
-    typeof parsed.suggested_response === "string"
-      ? parsed.suggested_response
-      : undefined;
-  const nextAction =
-    typeof parsed.next_action === "string" ? parsed.next_action : undefined;
+  let assistantText: string | undefined;
+  if (typeof parsed.suggested_response === "string") {
+    assistantText = parsed.suggested_response;
+  } else if (typeof parsed.suggestedResponse === "string") {
+    assistantText = parsed.suggestedResponse;
+  }
+
+  let nextAction: string | undefined;
+  if (typeof parsed.next_action === "string") {
+    nextAction = parsed.next_action;
+  } else if (typeof parsed.nextAction === "string") {
+    nextAction = parsed.nextAction;
+  }
   const artifact = parseIdeaCollectorArtifact(parsed.artifact);
   return {
     assistantText: assistantText?.trim().length ? assistantText : undefined,
@@ -252,10 +264,18 @@ const parseIdeaCollectorArtifact = (
     return;
   }
   const path = typeof value.path === "string" ? value.path : undefined;
-  const ideaMarkdown =
-    typeof value.idea_markdown === "string" ? value.idea_markdown : undefined;
+  let ideaMarkdown: string | undefined;
+  if (typeof value.idea_markdown === "string") {
+    ideaMarkdown = value.idea_markdown;
+  } else if (typeof value.ideaMarkdown === "string") {
+    ideaMarkdown = value.ideaMarkdown;
+  }
   if (!(path && ideaMarkdown)) {
     return;
   }
   return { path, ideaMarkdown };
 };
+
+const hasIdeaCollectorSignature = (parsed: Record<string, unknown>): boolean =>
+  typeof parsed.suggested_response === "string" ||
+  typeof parsed.suggestedResponse === "string";
