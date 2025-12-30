@@ -1,3 +1,9 @@
+## [1.1.365] - 2025-12-30
+
+### Fixed
+- **Idea Collector structured output rendering**: surface `suggested_response` from Codex structured output and fall back to JSON parsing in the UI.
+- **Idea Collector output detection**: treat schema `required` as a signal and accept camelCase keys (`suggestedResponse`, `nextAction`, `ideaMarkdown`).
+
 ## [1.1.364] - 2025-12-29
 
 ### Fixed
