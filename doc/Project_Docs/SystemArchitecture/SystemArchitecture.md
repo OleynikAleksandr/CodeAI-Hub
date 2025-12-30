@@ -92,6 +92,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Recent Changes (v1.1.366 - 2025-12-30)
 - **Idea Collector spec readiness**: шаблон/контракт теперь требуют UI/UX, триггеры, сущности и архитектурный контур для Spec.md.
+- **Idea Collector contract delivery**: Core отдаёт contract через `/api/v1/orchestrator/idea-contract`, UI больше не читает шаблоны напрямую.
 - **Codex thinking output**: native reasoning снова показывается, RU summary добавляется поверх для structured outputs.
 - **Release 1.1.366**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.366.
 
