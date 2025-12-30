@@ -8,21 +8,18 @@
 
 ## 1) Problem Statement
 
-Сейчас для провайдера Codex мы транслируем `ThreadItem.type = "reasoning"` в UI как `dialog_message` с `role = "thinking"`.
-Это приводит к тому, что пользователь видит англоязычные/служебные размышления (native reasoning), которые:
-- не контролируются по форме и содержанию,
-- приходят фрагментами (мы их мерджим в один блок),
-- могут ухудшать UX (лишний шум, утечки лишних деталей).
+Сейчас для провайдера Codex в UI приходит `ThreadItem.type = "reasoning"` как `dialog_message` с `role = "thinking"`.
+Мы также добавили RU summary через Structured Outputs, но в некоторых flow summary отсутствует (кастомные схемы), а native reasoning был скрыт.
 
 Требование:
 - **Internal reasoning Codex остаётся включённым** (качество ответа сохраняем).
-- **Native reasoning в UI не показываем вообще.**
-- Вместо него показываем **русскоязычный Thinking-summary**, полностью контролируемый контрактом.
+- **Native reasoning показываем в UI** как baseline thinking.
+- Дополнительно показываем **русскоязычный Thinking-summary**, полностью контролируемый контрактом.
 - Summary должен быть **максимально близок к native reasoning по содержанию и объёму** (без chain-of-thought).
 - **Один turn** (никаких дополнительных запросов/turn'ов).
 - **Стриминг ответа ассистента должен сохраниться**.
-- Thinking-плашка в UI должна появляться первой и может быть визуально «пустой»; текст RU summary может прийти позже.
-- При сбое генерации/парсинга summary — **не показывать ничего** в thinking.
+- Thinking-плашка в UI должна появляться первой и может быть визуально «пустой»; native reasoning и RU summary приходят позже.
+- При сбое генерации/парсинга summary — **оставляем только native thinking**.
 - UI-лейбл остаётся **"Thinking"**.
 
 ---
@@ -34,9 +31,10 @@
 - `reasoning_summary_ru` — RU summary для thinking (не chain-of-thought), максимально близкий к native reasoning по смыслу и объёму.
 
 При этом:
-- native reasoning (`item.type="reasoning"`) игнорируем;
+- native reasoning (`item.type="reasoning"`) эмитим как `thinking` (delta-стрим);
 - UI получает обычный поток `assistant_chunk` из **извлечённого** `answer` во время стриминга JSON;
 - `reasoning_summary_ru` показываем отдельным `dialog_message(role="thinking")` когда он станет доступен.
+- Для custom schema (например Idea Collector) также поддерживаем `reasoning_summary_ru`: summary извлекается даже при нестандартных полях основного ответа.
 
 ---
 
@@ -96,6 +94,7 @@
 
 - В начале turn (на `turn.started`) эмитим «плейсхолдер» thinking-сообщение (минимальный невидимый контент, например zero-width), чтобы карточка Thinking появилась первой.
 - Дальше ассистент начинает стримиться сразу (из `answer`).
+- Native reasoning приходит стримом и мержится в ту же thinking-карточку.
 - Когда станет доступен `reasoning_summary_ru` — отправляем его отдельным `dialog_message(role="thinking")`. UI уже умеет мержить consecutive thinking messages.
 
 ---
@@ -104,10 +103,10 @@
 
 - Если structured JSON не распарсился полностью:
   - ассистентский стриминг стараемся продолжать через best-effort extraction `answer`.
-  - thinking summary не показываем.
+  - thinking summary не показываем (native thinking остаётся).
 
 - Если `reasoning_summary_ru` пустой/отсутствует:
-  - thinking summary не показываем (плейсхолдер остаётся визуально пустым).
+  - thinking summary не показываем (native thinking остаётся).
 
 ---
 
@@ -117,11 +116,13 @@
   - расширить `CodexTurnOptions`, чтобы поддерживать `outputSchema?: unknown` (используется патчем SDK).
 
 - `packages/Codex_Module/src/messaging/message-processor.ts`
-  - перестать эмитить native reasoning (`item.type="reasoning"`).
+  - эмитить native reasoning (`item.type="reasoning"`) как `thinking` с delta-стримом.
   - включать `outputSchema` для пользовательских turn'ов.
   - префиксовать prompt блоком инструкций structured output, чтобы `reasoning_summary_ru` был непустым (если это возможно).
   - добавить потоковый извлекатель `answer` + финальный парсер JSON.
   - эмитить placeholder thinking на старте turn.
+- `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`
+  - извлекать `reasoning_summary_ru` и для custom structured outputs (Idea Collector, etc.).
 
 - `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`
   - оставить текущую поддержку `outputSchema` (уже есть), при необходимости расширить совместимость типов.
