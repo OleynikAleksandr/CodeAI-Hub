@@ -204,8 +204,8 @@
 10. [DONE] Git Commit: `feat(orchestrator): make idea collector interview adaptive` (hash: N/A (global))
 11. [DONE] W6.A.6 Запретить публикацию длинных документов в диалоге (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md`; DoD: агент пишет только краткую выжимку + путь к файлу, полный текст — только в workspace) (commit: `fix(orchestrator): forbid long docs in dialog`) (date: 2025-12-30)
 12. [DONE] Git Commit: `fix(orchestrator): forbid long docs in dialog` (hash: N/A (global))
-13. [TODO] W6.A.7 Синхронизировать UI fallback schema и fallback prompt с универсальным контрактом (scope: `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`; DoD: fallback schema + prompt соответствуют универсальному контракту) (commit: `fix(ui): sync idea collector fallbacks`)
-14. [TODO] Git Commit: `fix(ui): sync idea collector fallbacks` (hash: TBD)
+13. [DONE] W6.A.7 Синхронизировать UI fallback schema и fallback prompt с универсальным контрактом (scope: `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`; DoD: fallback schema + prompt соответствуют универсальному контракту) (commit: `fix(ui): sync idea collector fallbacks`) (date: 2025-12-30)
+14. [DONE] Git Commit: `fix(ui): sync idea collector fallbacks` (hash: a52c4e0)
 15. [TODO] W6.A.8 Переключить IdeaCollectorService на контракт из Core (scope: `src/client/ui/src/services/idea-collector-service.ts`; DoD: prompt/schema берутся из Core API, локальные file:// чтения удалены; fallback остаётся) (commit: `feat(ui): load idea collector contract from core`)
 16. [TODO] Git Commit: `feat(ui): load idea collector contract from core` (hash: TBD)
 
