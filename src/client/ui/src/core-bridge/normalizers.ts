@@ -73,12 +73,45 @@ export const sanitizeMessage = (
     return null;
   }
 
+  const normalizedContent =
+    role === "assistant"
+      ? (extractIdeaCollectorResponse(message.content) ?? message.content)
+      : message.content;
+
   return {
     id: message.id,
     role,
-    content: message.content,
+    content: normalizedContent,
     createdAt: toNumberTimestamp(message.timestamp),
   };
+};
+
+const extractIdeaCollectorResponse = (content: string): string | null => {
+  if (!content.trim().startsWith("{")) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(content) as Record<string, unknown> | null;
+    if (!parsed || typeof parsed !== "object") {
+      return null;
+    }
+    let suggestedResponse: string | null = null;
+    if (typeof parsed.suggested_response === "string") {
+      suggestedResponse = parsed.suggested_response;
+    } else if (typeof parsed.suggestedResponse === "string") {
+      suggestedResponse = parsed.suggestedResponse;
+    }
+    if (!suggestedResponse?.trim()) {
+      return null;
+    }
+    const hasSignature =
+      typeof parsed.conversation_state === "object" ||
+      typeof parsed.next_action === "string" ||
+      typeof parsed.nextAction === "string";
+    return hasSignature ? suggestedResponse : null;
+  } catch {
+    return null;
+  }
 };
 
 export const sanitizeSession = (
