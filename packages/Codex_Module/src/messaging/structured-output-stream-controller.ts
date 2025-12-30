@@ -249,9 +249,18 @@ const parseIdeaCollectorOutput = (
   } else if (typeof parsed.nextAction === "string") {
     nextAction = parsed.nextAction;
   }
+  let reasoningSummary: string | undefined;
+  if (typeof parsed.reasoning_summary_ru === "string") {
+    reasoningSummary = parsed.reasoning_summary_ru;
+  } else if (typeof parsed.reasoningSummaryRu === "string") {
+    reasoningSummary = parsed.reasoningSummaryRu;
+  }
   const artifact = parseIdeaCollectorArtifact(parsed.artifact);
   return {
     assistantText: assistantText?.trim().length ? assistantText : undefined,
+    reasoningSummary: reasoningSummary?.trim().length
+      ? reasoningSummary
+      : undefined,
     nextAction,
     artifact,
   };
