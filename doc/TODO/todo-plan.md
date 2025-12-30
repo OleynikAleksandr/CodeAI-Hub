@@ -194,8 +194,8 @@
 
 1. [DONE] W6.A.1 Синхронизировать контракт при старте ядра и отказаться от чтения документов агентом (scope: `packages/core/src/...`; DoD: ядро читает шаблоны, формирует контракт и гарантирует его передачу в Structured Output; агенту запрещено опираться на внешние документы) (commit: `feat(core): sync idea contract at startup`) (date: 2025-12-30)
 2. [DONE] Git Commit: `feat(core): sync idea contract at startup` (hash: af3c91c)
-3. [TODO] W6.A.2 Обновить документ универсального контракта интервью (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`; DoD: универсальные принципы, адаптивный сценарий, обязательные/опциональные секции, критерии Spec-ready) (commit: `docs(orchestrator): define universal idea interview contract`)
-4. [TODO] Git Commit: `docs(orchestrator): define universal idea interview contract` (hash: TBD)
+3. [DONE] W6.A.2 Обновить документ универсального контракта интервью (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`; DoD: универсальные принципы, адаптивный сценарий, обязательные/опциональные секции, критерии Spec-ready) (commit: `docs(orchestrator): define universal idea interview contract`) (date: 2025-12-30)
+4. [DONE] Git Commit: `docs(orchestrator): define universal idea interview contract` (hash: 9ae16b7)
 5. [TODO] W6.A.3 Универсализировать idea-template (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-template.md`; DoD: убрать привязку к Flow, добавить формулировки для микро‑модулей и фич) (commit: `feat(orchestrator): universalize idea template`)
 6. [TODO] Git Commit: `feat(orchestrator): universalize idea template` (hash: N/A (global))
 7. [TODO] W6.A.4 Универсализировать schema Idea Collector (scope: `~/.codeai-hub/templates/schemas/idea-collector-schema.json`; DoD: совместимость с универсальным шаблоном, поддержка разных типов идеи, поля для адаптации интервью) (commit: `feat(orchestrator): universalize idea collector schema`)
