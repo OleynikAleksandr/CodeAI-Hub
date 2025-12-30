@@ -2,7 +2,7 @@
 
 **Версия:** 1.0
 **Дата создания:** 2025-12-28
-**Последнее обновление:** 2025-12-29
+**Последнее обновление:** 2025-12-30
 
 > Этот документ является **источником истины** для разработки Project Orchestrator.
 > Структура плана визуализирует параллелизм — что можно делать одновременно.
@@ -141,23 +141,38 @@
 
 ---
 
+## 4.1 Волна 4 — Исправление фильтра Structured Output
+
+> Эти задачи блокируют финальную проверку Idea Collector: `suggested_response` не отображается в UI.
+
+### [Stream W4.A] Прокидка structured output в SessionView
+
+**Назначение:** Извлечь `suggested_response` из structured output и отобразить его как сообщение ассистента.
+
+1. [DONE] W4.A.1 Исправить обработку `suggested_response` в Codex structured output (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `packages/Codex_Module/src/messaging/answer-json-stream-extractor.ts`; DoD: `suggested_response` превращается в `assistant` message, UI получает `session:message`) (commit: `fix(codex): surface idea collector suggested_response`) (date: 2025-12-30)
+2. [DONE] Git Commit: `fix(codex): surface idea collector suggested_response` (hash: ef5e16e)
+3. [DONE] W4.A.2 Добавить UI‑fallback парсинга structured output при чтении сообщений (scope: `src/client/ui/src/core-bridge/normalizers.ts`, `src/client/ui/src/services/idea-collector-service.ts`; DoD: если `content` — JSON с `suggested_response`, в UI показывается текст вопроса) (commit: `fix(ui): render idea collector structured output`) (date: 2025-12-30)
+4. [DONE] Git Commit: `fix(ui): render idea collector structured output` (hash: bedfc82)
+
+---
+
 ## 5. Сценарии проверки
 
 ### После Волны 1
-- [TODO] FlowWizard рендерится изолированно (storybook/dev)
-- [TODO] Schema проходит валидацию
-- [TODO] Prompt читается корректно
+- [TODO] FlowWizard рендерится изолированно (storybook/dev) (не проверено вручную)
+- [TODO] Schema проходит валидацию (не прогоняли после последних правок schema)
+- [TODO] Prompt читается корректно (не проверено после замены fallback prompt)
 
 ### После Волны 2
-- [TODO] New Session → Codex → видим FlowWizard
-- [TODO] New Session → Claude → стандартная сессия
-- [TODO] IdeaCollectorService запускает Codex без ошибок
+- [TODO] New Session → Codex → видим FlowWizard (не проверено, фокус на баге structured output)
+- [TODO] New Session → Claude → стандартная сессия (не проверено вручную)
+- [TODO] IdeaCollectorService запускает Codex без ошибок (не проверено после W4.A)
 
 ### После Волны 3 (Финальная)
-- [TODO] Полный flow: New Session → Codex → Idea → диалог → Idea.md
-- [TODO] Idea.md создаётся в `.codeai-hub/orchestrator/`
-- [TODO] Structured Output ответы корректно парсятся
-- [TODO] UI показывает прогресс диалога
+- [TODO] Полный flow: New Session → Codex → Idea → диалог → Idea.md (не проверено после W4.A)
+- [TODO] Idea.md создаётся в `.codeai-hub/orchestrator/` (не проверено после W4.A)
+- [TODO] Structured Output ответы корректно парсятся (не проверено после W4.A)
+- [TODO] UI показывает прогресс диалога (не проверено после W4.A)
 
 ---
 
@@ -200,12 +215,16 @@
 - `.codeai-hub/orchestrator/idea.md`
 - `src/client/ui/src/provider-picker.tsx`
 - `src/client/ui/src/app-host/session-region.tsx`
+- `src/client/ui/src/core-bridge/normalizers.ts`
+- `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`
+- `packages/Codex_Module/src/messaging/answer-json-stream-extractor.ts`
 
 **Открытые вопросы:**
 - Точный формат Session Report (уточняется при отладке)
 
 **Риски:**
 - Интеграция с Codex exec может потребовать доработок
+- Structured Output всё ещё требует e2e проверки после фикса
 
 ---
 
