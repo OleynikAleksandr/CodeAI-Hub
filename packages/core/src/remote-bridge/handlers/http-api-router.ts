@@ -3,6 +3,7 @@ import type { FileDropService } from "../../file-drop/file-drop-service";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import { buildIdeaContract } from "./idea-contract-service";
 import type {
   StatusInfo,
   SystemRequestHandler,
@@ -11,6 +12,7 @@ import type {
 const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_FOUND = 404;
 const HTTP_NO_CONTENT = 204;
+const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 
 export type RouterDependencies = {
   readonly app: Express;
@@ -63,6 +65,10 @@ export class HttpApiRouter {
       fileDropService.clear();
       res.status(HTTP_NO_CONTENT).end();
     });
+
+    app.get(IDEA_CONTRACT_ENDPOINT, async (_req: Request, res: Response) => {
+      await this.handleIdeaContract(res);
+    });
   }
 
   private async handleSessionHistory(
@@ -114,6 +120,24 @@ export class HttpApiRouter {
       this.deps.logger.error("File drop capture failed", error as Error);
       res.status(HTTP_INTERNAL_ERROR).json({
         error: "Unable to capture file drop data",
+      });
+    }
+  }
+
+  private async handleIdeaContract(res: Response): Promise<void> {
+    try {
+      const contract = await buildIdeaContract();
+      if (!contract) {
+        res.status(HTTP_NOT_FOUND).json({
+          error: "Idea contract templates are unavailable",
+        });
+        return;
+      }
+      res.json(contract);
+    } catch (error) {
+      this.deps.logger.error("Idea contract build failed", error as Error);
+      res.status(HTTP_INTERNAL_ERROR).json({
+        error: "Unable to build idea contract",
       });
     }
   }

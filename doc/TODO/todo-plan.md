@@ -192,18 +192,22 @@
 
 **Назначение:** Универсальный контракт для Idea Collector (app/feature/module) + адаптивные вопросы.
 
-1. [TODO] W6.A.1 Обновить документ универсального контракта интервью (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`; DoD: универсальные принципы, адаптивный сценарий, обязательные/опциональные секции, критерии Spec-ready) (commit: `docs(orchestrator): define universal idea interview contract`)
-2. [TODO] Git Commit: `docs(orchestrator): define universal idea interview contract` (hash: TBD)
-3. [TODO] W6.A.2 Универсализировать idea-template (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-template.md`; DoD: убрать привязку к Flow, добавить формулировки для микро‑модулей и фич) (commit: `feat(orchestrator): universalize idea template`)
-4. [TODO] Git Commit: `feat(orchestrator): universalize idea template` (hash: N/A (global))
-5. [TODO] W6.A.3 Универсализировать schema Idea Collector (scope: `~/.codeai-hub/templates/schemas/idea-collector-schema.json`; DoD: совместимость с универсальным шаблоном, поддержка разных типов идеи, поля для адаптации интервью) (commit: `feat(orchestrator): universalize idea collector schema`)
-6. [TODO] Git Commit: `feat(orchestrator): universalize idea collector schema` (hash: N/A (global))
-7. [TODO] W6.A.4 Обновить prompt для адаптивного интервью (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md`; DoD: первые вопросы определяют тип идеи, далее перестройка блока вопросов под контекст) (commit: `feat(orchestrator): make idea collector interview adaptive`)
-8. [TODO] Git Commit: `feat(orchestrator): make idea collector interview adaptive` (hash: N/A (global))
-9. [TODO] W6.A.5 Запретить публикацию длинных документов в диалоге (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md`; DoD: агент пишет только краткую выжимку + путь к файлу, полный текст — только в workspace) (commit: `fix(orchestrator): forbid long docs in dialog`)
-10. [TODO] Git Commit: `fix(orchestrator): forbid long docs in dialog` (hash: N/A (global))
-11. [TODO] W6.A.6 Синхронизировать UI fallback schema с универсальным контрактом (scope: `src/client/ui/src/services/idea-collector-fallback-schema.ts`; DoD: fallback полностью соответствует универсальной схеме) (commit: `fix(ui): sync universal idea collector fallback schema`)
-12. [TODO] Git Commit: `fix(ui): sync universal idea collector fallback schema` (hash: TBD)
+1. [TODO] W6.A.1 Синхронизировать контракт при старте ядра и отказаться от чтения документов агентом (scope: `packages/core/src/...`; DoD: ядро читает шаблоны, формирует контракт и гарантирует его передачу в Structured Output; агенту запрещено опираться на внешние документы) (commit: `feat(core): sync idea contract at startup`)
+2. [TODO] Git Commit: `feat(core): sync idea contract at startup` (hash: TBD)
+3. [TODO] W6.A.2 Обновить документ универсального контракта интервью (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`; DoD: универсальные принципы, адаптивный сценарий, обязательные/опциональные секции, критерии Spec-ready) (commit: `docs(orchestrator): define universal idea interview contract`)
+4. [TODO] Git Commit: `docs(orchestrator): define universal idea interview contract` (hash: TBD)
+5. [TODO] W6.A.3 Универсализировать idea-template (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-template.md`; DoD: убрать привязку к Flow, добавить формулировки для микро‑модулей и фич) (commit: `feat(orchestrator): universalize idea template`)
+6. [TODO] Git Commit: `feat(orchestrator): universalize idea template` (hash: N/A (global))
+7. [TODO] W6.A.4 Универсализировать schema Idea Collector (scope: `~/.codeai-hub/templates/schemas/idea-collector-schema.json`; DoD: совместимость с универсальным шаблоном, поддержка разных типов идеи, поля для адаптации интервью) (commit: `feat(orchestrator): universalize idea collector schema`)
+8. [TODO] Git Commit: `feat(orchestrator): universalize idea collector schema` (hash: N/A (global))
+9. [TODO] W6.A.5 Обновить prompt для адаптивного интервью (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md`; DoD: первые вопросы определяют тип идеи, далее перестройка блока вопросов под контекст) (commit: `feat(orchestrator): make idea collector interview adaptive`)
+10. [TODO] Git Commit: `feat(orchestrator): make idea collector interview adaptive` (hash: N/A (global))
+11. [TODO] W6.A.6 Запретить публикацию длинных документов в диалоге (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md`; DoD: агент пишет только краткую выжимку + путь к файлу, полный текст — только в workspace) (commit: `fix(orchestrator): forbid long docs in dialog`)
+12. [TODO] Git Commit: `fix(orchestrator): forbid long docs in dialog` (hash: N/A (global))
+13. [TODO] W6.A.7 Синхронизировать UI fallback schema и fallback prompt с универсальным контрактом (scope: `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`; DoD: fallback schema + prompt соответствуют универсальному контракту) (commit: `fix(ui): sync idea collector fallbacks`)
+14. [TODO] Git Commit: `fix(ui): sync idea collector fallbacks` (hash: TBD)
+15. [TODO] W6.A.8 Переключить IdeaCollectorService на контракт из Core (scope: `src/client/ui/src/services/idea-collector-service.ts`; DoD: prompt/schema берутся из Core API, локальные file:// чтения удалены; fallback остаётся) (commit: `feat(ui): load idea collector contract from core`)
+16. [TODO] Git Commit: `feat(ui): load idea collector contract from core` (hash: TBD)
 
 ---
 
