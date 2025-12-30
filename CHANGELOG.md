@@ -1,3 +1,9 @@
+## [1.1.366] - 2025-12-30
+
+### Fixed
+- **Idea Collector spec readiness**: шаблон/промпт/схема требуют UI/триггеры/сущности/архконтур и `reasoning_summary_ru`.
+- **Codex thinking output**: восстановлен native reasoning; `reasoning_summary_ru` парсится даже для кастомных structured outputs.
+
 ## [1.1.365] - 2025-12-30
 
 ### Fixed
