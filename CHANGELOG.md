@@ -1,3 +1,13 @@
+## [1.1.367] - 2025-12-30
+
+### Added
+- **Idea Collector contract endpoint**: Core exposes `/api/v1/orchestrator/idea-contract` with prompt/schema/template payloads.
+
+### Changed
+- **Universal Idea contract**: template/schema/prompt now use `idea_type`, adaptive interview logic, and no external document reliance.
+- **Idea Collector delivery**: UI pulls contract from Core API instead of local `file://` template reads.
+- **Fallbacks**: updated fallback prompt/schema to match the universal contract and dialog token policy.
+
 ## [1.1.366] - 2025-12-30
 
 ### Fixed
