@@ -17,7 +17,10 @@ const HTTP_BAD_REQUEST = 400;
 const HTTP_NO_CONTENT = 204;
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-const IDEA_ARTIFACT_RELATIVE_PATH = ".codeai-hub/orchestrator/idea.md";
+const FLOW_NAME = "full-development-flow";
+const IDEA_STAGE = "idea";
+const IDEA_ARTIFACT_RELATIVE_PATH = `.codeai-hub/${FLOW_NAME}/${IDEA_STAGE}/idea.md`;
+const VIRTUAL_SIMULATION_RELATIVE_PATH = `.codeai-hub/${FLOW_NAME}/${IDEA_STAGE}/virtual-simulation.md`;
 
 export type RouterDependencies = {
   readonly app: Express;
@@ -155,23 +158,13 @@ export class HttpApiRouter {
     req: Request,
     res: Response
   ): Promise<void> {
-    const payload = req.body as unknown;
-    if (!payload || typeof payload !== "object") {
-      res.status(HTTP_BAD_REQUEST).json({ error: "Invalid payload" });
+    const parsedPayload = parseIdeaArtifactPayload(req.body as unknown);
+    if (!parsedPayload.ok) {
+      res.status(HTTP_BAD_REQUEST).json({ error: parsedPayload.error });
       return;
     }
-
-    const sessionId = (payload as { readonly sessionId?: unknown }).sessionId;
-    const ideaMarkdown = (payload as { readonly ideaMarkdown?: unknown })
-      .ideaMarkdown;
-    if (typeof sessionId !== "string" || sessionId.length === 0) {
-      res.status(HTTP_BAD_REQUEST).json({ error: "Missing sessionId" });
-      return;
-    }
-    if (typeof ideaMarkdown !== "string" || ideaMarkdown.trim().length === 0) {
-      res.status(HTTP_BAD_REQUEST).json({ error: "Missing ideaMarkdown" });
-      return;
-    }
+    const { sessionId, ideaMarkdown, virtualSimulationMarkdown } =
+      parsedPayload.value;
 
     const session = this.deps.sessionManager.getSession(sessionId);
     if (!session) {
@@ -182,34 +175,111 @@ export class HttpApiRouter {
     }
 
     const workspaceRoot = path.resolve(session.workspacePath);
-    const artifactFullPath = path.resolve(
+    const ideaPath = resolveArtifactPath(
       workspaceRoot,
       IDEA_ARTIFACT_RELATIVE_PATH
     );
-    if (!artifactFullPath.startsWith(`${workspaceRoot}${path.sep}`)) {
+    const virtualSimulationPath = resolveArtifactPath(
+      workspaceRoot,
+      VIRTUAL_SIMULATION_RELATIVE_PATH
+    );
+    if (!(ideaPath && virtualSimulationPath)) {
       res.status(HTTP_BAD_REQUEST).json({ error: "Unsafe artifact path" });
       return;
     }
 
     try {
-      await mkdir(path.dirname(artifactFullPath), { recursive: true });
       const content = ideaMarkdown.endsWith("\n")
         ? ideaMarkdown
         : `${ideaMarkdown}\n`;
-      await writeFile(artifactFullPath, content, { encoding: "utf8" });
-      res.json({ path: IDEA_ARTIFACT_RELATIVE_PATH });
+      const simulationContent = virtualSimulationMarkdown.endsWith("\n")
+        ? virtualSimulationMarkdown
+        : `${virtualSimulationMarkdown}\n`;
+      await writeArtifactFile(ideaPath, content);
+      await writeArtifactFile(virtualSimulationPath, simulationContent);
+      res.json({
+        paths: {
+          idea: IDEA_ARTIFACT_RELATIVE_PATH,
+          virtualSimulation: VIRTUAL_SIMULATION_RELATIVE_PATH,
+        },
+      });
     } catch (error) {
-      this.deps.logger.error(
-        "Failed to write Idea.md artifact",
-        error as Error,
-        {
-          sessionId,
-          artifactPath: IDEA_ARTIFACT_RELATIVE_PATH,
-        }
-      );
+      this.deps.logger.error("Failed to write Idea artifacts", error as Error, {
+        sessionId,
+        ideaPath: IDEA_ARTIFACT_RELATIVE_PATH,
+        virtualSimulationPath: VIRTUAL_SIMULATION_RELATIVE_PATH,
+      });
       res
         .status(HTTP_INTERNAL_ERROR)
         .json({ error: "Unable to write artifact" });
     }
   }
 }
+
+type IdeaArtifactPayload = {
+  readonly sessionId: string;
+  readonly ideaMarkdown: string;
+  readonly virtualSimulationMarkdown: string;
+};
+
+type IdeaArtifactPayloadResult =
+  | { readonly ok: true; readonly value: IdeaArtifactPayload }
+  | { readonly ok: false; readonly error: string };
+
+const parseIdeaArtifactPayload = (
+  payload: unknown
+): IdeaArtifactPayloadResult => {
+  if (!payload || typeof payload !== "object") {
+    return { ok: false, error: "Invalid payload" };
+  }
+  const candidate = payload as Record<string, unknown>;
+  const sessionId = readNonEmptyString(candidate.sessionId);
+  if (!sessionId) {
+    return { ok: false, error: "Missing sessionId" };
+  }
+  const ideaMarkdown = readNonEmptyString(candidate.ideaMarkdown);
+  if (!ideaMarkdown) {
+    return { ok: false, error: "Missing ideaMarkdown" };
+  }
+  const virtualSimulationMarkdown =
+    readNonEmptyString(candidate.virtualSimulationMarkdown) ??
+    readNonEmptyString(candidate.virtual_simulation_markdown);
+  if (!virtualSimulationMarkdown) {
+    return { ok: false, error: "Missing virtualSimulationMarkdown" };
+  }
+  return {
+    ok: true,
+    value: {
+      sessionId,
+      ideaMarkdown,
+      virtualSimulationMarkdown,
+    },
+  };
+};
+
+const readNonEmptyString = (value: unknown): string | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? value : null;
+};
+
+const resolveArtifactPath = (
+  workspaceRoot: string,
+  relativePath: string
+): string | null => {
+  const artifactPath = path.resolve(workspaceRoot, relativePath);
+  if (!artifactPath.startsWith(`${workspaceRoot}${path.sep}`)) {
+    return null;
+  }
+  return artifactPath;
+};
+
+const writeArtifactFile = async (
+  artifactPath: string,
+  content: string
+): Promise<void> => {
+  await mkdir(path.dirname(artifactPath), { recursive: true });
+  await writeFile(artifactPath, content, { encoding: "utf8" });
+};
