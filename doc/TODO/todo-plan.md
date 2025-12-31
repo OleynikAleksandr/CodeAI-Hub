@@ -264,8 +264,8 @@
 6. [DONE] Git Commit: `docs(ui): sync idea collector fallback for virtual simulation` (hash: dc81247)
 7. [DONE] W9.A.4 Обновить global templates под новую структуру и второй артефакт (scope: `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-prompt.md`, `~/.codeai-hub/templates/full-development-flow/idea/idea-template.md`, `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`; DoD: prompt/ schema учитывают virtual-simulation.md, файлы лежат в flow/stage папке) (commit: `feat(orchestrator): add virtual simulation artifact to idea contract`) (date: 2025-12-31)
 8. [DONE] Git Commit: `feat(orchestrator): add virtual simulation artifact to idea contract` (hash: N/A (global))
-9. [TODO] W9.A.5 Обновить документацию контракта и архитектуры (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: отражены два артефакта и flow/stage пути) (commit: `docs(orchestrator): document virtual simulation artifact`)
-10. [TODO] Git Commit: `docs(orchestrator): document virtual simulation artifact` (hash: TBD)
+9. [DONE] W9.A.5 Обновить документацию контракта и архитектуры (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: отражены два артефакта и flow/stage пути) (commit: `docs(orchestrator): document virtual simulation artifact`) (date: 2025-12-31)
+10. [DONE] Git Commit: `docs(orchestrator): document virtual simulation artifact` (hash: ef252aa)
 11. [TODO] W9.A.6 Обновить README/CHANGELOG и пример Plan.md (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/knowledge/Образец Plan.md.md`; DoD: новые пути артефактов и session reports) (commit: `docs: update flow artifact paths`)
 12. [TODO] Git Commit: `docs: update flow artifact paths` (hash: TBD)
 
