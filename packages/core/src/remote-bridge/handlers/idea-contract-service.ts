@@ -17,7 +17,7 @@ const IDEA_COLLECTOR_PROMPT_PATH =
 const IDEA_COLLECTOR_TEMPLATE_PATH =
   "~/.codeai-hub/templates/flows/full-development-flow/idea-template.md";
 const IDEA_COLLECTOR_SCHEMA_PATH =
-  "~/.codeai-hub/templates/schemas/idea-collector-schema.json";
+  "~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json";
 const IDEA_COLLECTOR_OUTPUT_PATH = ".codeai-hub/orchestrator/idea.md";
 
 export const buildIdeaContract =
