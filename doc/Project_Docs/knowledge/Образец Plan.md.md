@@ -17,9 +17,10 @@
 **Последнее обновление:** <дата>
 
 ### Связанные артефакты
-- Idea.md: `.codeai-hub/orchestrator/idea.md`
-- Spec.md: `.codeai-hub/orchestrator/spec.md`
-- Session Reports: `.codeai-hub/sessions/`
+- Idea.md: `.codeai-hub/full-development-flow/idea/idea.md`
+- Virtual Simulation: `.codeai-hub/full-development-flow/idea/virtual-simulation.md`
+- Spec.md: `.codeai-hub/full-development-flow/spec/spec.md`
+- Session Reports: `.codeai-hub/full-development-flow/implementation/sessions/`
 
 ---
 
@@ -237,4 +238,3 @@ Plan
 3. Найти первую незавершённую задачу
 4. Продолжить выполнение
 5. При неясностях — задать вопросы пользователю
-
