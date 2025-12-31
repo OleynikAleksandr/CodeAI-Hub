@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.367
-- **Idea Collector contract delivery**: Core serves `/api/v1/orchestrator/idea-contract`, UI pulls prompt/schema from core instead of local files.
-- **Universal Idea contract**: template/schema/prompt now use `idea_type`, adaptive interview, and forbid long documents in the dialog.
-- **Release 1.1.367**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` for the universal Idea Collector flow.
+## Current Release — v1.1.368
+- **Idea Collector contract v2 (Spec-first)**: adds explicit `readiness` + `handoff_for_spec` to keep the handoff to Spec.md honest.
+- **Idea.md persistence**: Core persists `.codeai-hub/orchestrator/idea.md` into the session workspace via `POST /api/v1/orchestrator/idea-artifact`.
+- **Release 1.1.368**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.367.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.367.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.367.tar.bz2`
-  - Providers: `claude-module-1.1.367.tar.bz2`, `codex-module-1.1.367.tar.bz2`, `gemini-module-1.1.367.tar.bz2`
-  - UI: `vscode-webview-1.1.367.tar.bz2`, `web-client-1.1.367.tar.bz2`, `project-manager-1.1.367.tar.bz2`
+  - VSIX: `codeai-hub-1.1.368.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.368.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.368.tar.bz2`
+  - Providers: `claude-module-1.1.368.tar.bz2`, `codex-module-1.1.368.tar.bz2`, `gemini-module-1.1.368.tar.bz2`
+  - UI: `vscode-webview-1.1.368.tar.bz2`, `web-client-1.1.368.tar.bz2`, `project-manager-1.1.368.tar.bz2`
 
 
 ## Features

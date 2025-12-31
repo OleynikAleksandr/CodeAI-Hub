@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.5.9
-**Last Updated:** 2025-12-30
+**Last Updated:** 2025-12-31
 **Status:** Active reference
-**Release Focus:** v1.1.367 — универсальный контракт Idea Collector (Core contract delivery, адаптивный prompt, запрет длинных документов).
+**Release Focus:** v1.1.368 — Idea Collector v2 (Spec-first readiness/handoff + сохранение Idea.md в workspace через Core API).
 
 ---
 
