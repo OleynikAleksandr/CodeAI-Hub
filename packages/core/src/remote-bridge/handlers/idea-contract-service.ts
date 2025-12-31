@@ -8,6 +8,7 @@ export type IdeaContractPayload = {
   readonly prompt: string;
   readonly schema: JsonRecord;
   readonly template: string;
+  readonly outputPath: string;
   readonly version: string;
 };
 
@@ -17,6 +18,7 @@ const IDEA_COLLECTOR_TEMPLATE_PATH =
   "~/.codeai-hub/templates/flows/full-development-flow/idea-template.md";
 const IDEA_COLLECTOR_SCHEMA_PATH =
   "~/.codeai-hub/templates/schemas/idea-collector-schema.json";
+const IDEA_COLLECTOR_OUTPUT_PATH = ".codeai-hub/orchestrator/idea.md";
 
 export const buildIdeaContract =
   async (): Promise<IdeaContractPayload | null> => {
@@ -46,6 +48,7 @@ export const buildIdeaContract =
       prompt,
       schema: normalizedSchema,
       template,
+      outputPath: IDEA_COLLECTOR_OUTPUT_PATH,
       version,
     };
   };

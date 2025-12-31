@@ -1,3 +1,5 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
 import type { Express, Request, Response } from "express";
 import type { FileDropService } from "../../file-drop/file-drop-service";
 import type { SessionManager } from "../../session-manager";
@@ -11,8 +13,11 @@ import type {
 
 const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_FOUND = 404;
+const HTTP_BAD_REQUEST = 400;
 const HTTP_NO_CONTENT = 204;
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
+const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
+const IDEA_ARTIFACT_RELATIVE_PATH = ".codeai-hub/orchestrator/idea.md";
 
 export type RouterDependencies = {
   readonly app: Express;
@@ -68,6 +73,10 @@ export class HttpApiRouter {
 
     app.get(IDEA_CONTRACT_ENDPOINT, async (_req: Request, res: Response) => {
       await this.handleIdeaContract(res);
+    });
+
+    app.post(IDEA_ARTIFACT_ENDPOINT, async (req: Request, res: Response) => {
+      await this.handleIdeaArtifactSave(req, res);
     });
   }
 
@@ -139,6 +148,68 @@ export class HttpApiRouter {
       res.status(HTTP_INTERNAL_ERROR).json({
         error: "Unable to build idea contract",
       });
+    }
+  }
+
+  private async handleIdeaArtifactSave(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const payload = req.body as unknown;
+    if (!payload || typeof payload !== "object") {
+      res.status(HTTP_BAD_REQUEST).json({ error: "Invalid payload" });
+      return;
+    }
+
+    const sessionId = (payload as { readonly sessionId?: unknown }).sessionId;
+    const ideaMarkdown = (payload as { readonly ideaMarkdown?: unknown })
+      .ideaMarkdown;
+    if (typeof sessionId !== "string" || sessionId.length === 0) {
+      res.status(HTTP_BAD_REQUEST).json({ error: "Missing sessionId" });
+      return;
+    }
+    if (typeof ideaMarkdown !== "string" || ideaMarkdown.trim().length === 0) {
+      res.status(HTTP_BAD_REQUEST).json({ error: "Missing ideaMarkdown" });
+      return;
+    }
+
+    const session = this.deps.sessionManager.getSession(sessionId);
+    if (!session) {
+      res
+        .status(HTTP_NOT_FOUND)
+        .json({ error: `Session ${sessionId} not found` });
+      return;
+    }
+
+    const workspaceRoot = path.resolve(session.workspacePath);
+    const artifactFullPath = path.resolve(
+      workspaceRoot,
+      IDEA_ARTIFACT_RELATIVE_PATH
+    );
+    if (!artifactFullPath.startsWith(`${workspaceRoot}${path.sep}`)) {
+      res.status(HTTP_BAD_REQUEST).json({ error: "Unsafe artifact path" });
+      return;
+    }
+
+    try {
+      await mkdir(path.dirname(artifactFullPath), { recursive: true });
+      const content = ideaMarkdown.endsWith("\n")
+        ? ideaMarkdown
+        : `${ideaMarkdown}\n`;
+      await writeFile(artifactFullPath, content, { encoding: "utf8" });
+      res.json({ path: IDEA_ARTIFACT_RELATIVE_PATH });
+    } catch (error) {
+      this.deps.logger.error(
+        "Failed to write Idea.md artifact",
+        error as Error,
+        {
+          sessionId,
+          artifactPath: IDEA_ARTIFACT_RELATIVE_PATH,
+        }
+      );
+      res
+        .status(HTTP_INTERNAL_ERROR)
+        .json({ error: "Unable to write artifact" });
     }
   }
 }
