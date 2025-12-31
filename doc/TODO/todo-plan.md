@@ -16,10 +16,11 @@
 **Провайдер для тестирования:** Codex (Structured Outputs)
 
 ### Связанные артефакты
-- Idea.md: `.codeai-hub/orchestrator/idea.md`
-- Spec.md: `.codeai-hub/orchestrator/spec.md` (будет создан)
-- Session Reports: `.codeai-hub/sessions/`
-- Шаблоны: `~/.codeai-hub/templates/`
+- Idea.md: `.codeai-hub/full-development-flow/idea/idea.md`
+- Virtual Simulation: `.codeai-hub/full-development-flow/idea/virtual-simulation.md`
+- Spec.md: `.codeai-hub/full-development-flow/spec/spec.md` (будет создан)
+- Session Reports: `.codeai-hub/full-development-flow/implementation/sessions/`
+- Шаблоны: `~/.codeai-hub/templates/full-development-flow/idea/`
 
 ---
 
@@ -244,6 +245,29 @@
 2. [DONE] Git Commit: `fix(core): read idea collector schema from flow folder` (hash: b2499e9)
 3. [DONE] W8.A.2 Обновить документацию по контракту и архитектуре (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: зафиксировано, что schema живёт в `flows/full-development-flow/schemas/`) (commit: `docs(orchestrator): align flow-local schema path`) (date: 2025-12-31)
 4. [DONE] Git Commit: `docs(orchestrator): align flow-local schema path` (hash: dde3848)
+
+---
+
+## 4.5 Волна 9 — Артефакты по структуре Flow/Stage + Virtual Simulation
+
+> Цель: артефакты Idea пишутся в `.codeai-hub/<flow>/<stage>/`, а Idea Collector создаёт второй документ `virtual-simulation.md`.
+
+### [Stream W9.A] Idea Collector: dual artifacts + flow/stage paths
+
+**Назначение:** добавить Virtual Simulation, перенести пути артефактов в flow/stage структуру и синхронизировать templates/docs.
+
+1. [TODO] W9.A.1 Обновить Core paths и сохранение артефактов (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; DoD: contract возвращает `outputPaths` для Idea + Virtual Simulation в `.codeai-hub/full-development-flow/idea/`, API сохраняет оба файла) (commit: `feat(core): add virtual simulation artifact paths`)
+2. [TODO] Git Commit: `feat(core): add virtual simulation artifact paths` (hash: TBD)
+3. [TODO] W9.A.2 Обновить UI IdeaCollectorService под два артефакта (scope: `src/client/ui/src/services/idea-collector-service.ts`; DoD: читаем `virtual_simulation_*`, отправляем в API оба markdown, сообщения показывают два пути) (commit: `feat(ui): persist idea virtual simulation artifact`)
+4. [TODO] Git Commit: `feat(ui): persist idea virtual simulation artifact` (hash: TBD)
+5. [TODO] W9.A.3 Синхронизировать UI fallback schema + prompt (scope: `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`; DoD: schema включает Virtual Simulation, prompt требует второй артефакт, пути обновлены на flow/stage) (commit: `docs(ui): sync idea collector fallback for virtual simulation`)
+6. [TODO] Git Commit: `docs(ui): sync idea collector fallback for virtual simulation` (hash: TBD)
+7. [TODO] W9.A.4 Обновить global templates под новую структуру и второй артефакт (scope: `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-prompt.md`, `~/.codeai-hub/templates/full-development-flow/idea/idea-template.md`, `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`; DoD: prompt/ schema учитывают virtual-simulation.md, файлы лежат в flow/stage папке) (commit: `feat(orchestrator): add virtual simulation artifact to idea contract`)
+8. [TODO] Git Commit: `feat(orchestrator): add virtual simulation artifact to idea contract` (hash: N/A (global))
+9. [TODO] W9.A.5 Обновить документацию контракта и архитектуры (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: отражены два артефакта и flow/stage пути) (commit: `docs(orchestrator): document virtual simulation artifact`)
+10. [TODO] Git Commit: `docs(orchestrator): document virtual simulation artifact` (hash: TBD)
+11. [TODO] W9.A.6 Обновить README/CHANGELOG и пример Plan.md (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/knowledge/Образец Plan.md.md`; DoD: новые пути артефактов и session reports) (commit: `docs: update flow artifact paths`)
+12. [TODO] Git Commit: `docs: update flow artifact paths` (hash: TBD)
 
 ---
 
