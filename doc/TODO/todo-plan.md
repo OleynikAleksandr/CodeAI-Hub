@@ -219,7 +219,7 @@
 
 **Назначение:** зафиксировать главную цель Idea.md (помочь Spec-агенту), добавить честную оценку готовности, и финализировать так, чтобы в UI/чате показывалась только краткая выжимка + путь, без полного текста Idea.md.
 
-1. [TODO] W7.A.1 Обновить документ контракта v2 (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`; DoD: описаны принципы «контракт результата, не сценарий», критерии Spec-ready/Blockers, правила финализации “файл создан” без публикации полного Idea.md) (commit: `docs(orchestrator): refine idea collector contract v2`)
+1. [IN_PROGRESS] W7.A.1 Обновить документ контракта v2 (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`; DoD: описаны принципы «контракт результата, не сценарий», критерии Spec-ready/Blockers, правила финализации “файл создан” без публикации полного Idea.md) (commit: `docs(orchestrator): refine idea collector contract v2`) (date: 2025-12-31)
 2. [TODO] Git Commit: `docs(orchestrator): refine idea collector contract v2` (hash: TBD)
 3. [TODO] W7.A.2 Добавить в контракт поля handoff/готовности (scope: `~/.codeai-hub/templates/schemas/idea-collector-schema.json`; DoD: `readiness.ready_for_spec` + `readiness.blockers[]`; `handoff_for_spec` (assumptions/decisions/open_questions/next_steps) и запрет авто‑“[x] готово”, если есть блокеры) (commit: `feat(orchestrator): add spec handoff fields to idea contract`)
 4. [TODO] Git Commit: `feat(orchestrator): add spec handoff fields to idea contract` (hash: N/A (global))
