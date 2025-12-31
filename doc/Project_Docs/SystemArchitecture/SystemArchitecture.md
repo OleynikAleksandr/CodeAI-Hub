@@ -91,7 +91,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
 
 ## Recent Changes (v1.1.367 - 2025-12-30)
-- **Idea Collector contract delivery**: Core отдаёт `/api/v1/orchestrator/idea-contract`, UI не читает локальные шаблоны напрямую.
+- **Idea Collector contract delivery**: Core отдаёт `/api/v1/orchestrator/idea-contract`, UI не читает локальные шаблоны напрямую; schema хранится в `~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json`.
 - **Universal Idea contract**: template/schema/prompt обновлены под `idea_type`, адаптивное интервью и запрет длинных документов в диалоге.
 - **Release 1.1.367**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.367.
 

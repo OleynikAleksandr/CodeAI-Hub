@@ -34,6 +34,7 @@
   - Загружает шаблоны и schema из `~/.codeai-hub/templates/**`.
   - Нормализует schema, инжектит template.
   - Возвращает `IdeaContractPayload` по HTTP.
+  - Источник schema для Full Development Flow: `~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json`.
 - **HTTP endpoint**
   - `GET /api/v1/orchestrator/idea-contract`
 - **IdeaCollectorService (UI)**
