@@ -3,7 +3,7 @@
 **Version:** 0.5.9
 **Last Updated:** 2025-12-31
 **Status:** Active reference
-**Release Focus:** v1.1.368 — Idea Collector v2 (Spec-first readiness/handoff + сохранение Idea.md в workspace через Core API).
+**Release Focus:** v1.1.369 — Idea Collector schema перенесена в flow‑папку и читается Core как единственный источник истины.
 
 ---
 

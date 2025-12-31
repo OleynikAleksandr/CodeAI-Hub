@@ -1,3 +1,8 @@
+## [1.1.369] - 2025-12-31
+
+### Changed
+- **Idea Collector schema path**: schema moved under `~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json` and Core reads from the flow-local location.
+
 ## [1.1.368] - 2025-12-31
 
 ### Added
