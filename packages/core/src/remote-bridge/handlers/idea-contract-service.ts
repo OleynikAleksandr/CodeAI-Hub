@@ -8,17 +8,21 @@ export type IdeaContractPayload = {
   readonly prompt: string;
   readonly schema: JsonRecord;
   readonly template: string;
-  readonly outputPath: string;
+  readonly outputPaths: {
+    readonly idea: string;
+    readonly virtualSimulation: string;
+  };
   readonly version: string;
 };
 
-const IDEA_COLLECTOR_PROMPT_PATH =
-  "~/.codeai-hub/templates/flows/full-development-flow/idea-collector-prompt.md";
-const IDEA_COLLECTOR_TEMPLATE_PATH =
-  "~/.codeai-hub/templates/flows/full-development-flow/idea-template.md";
-const IDEA_COLLECTOR_SCHEMA_PATH =
-  "~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json";
-const IDEA_COLLECTOR_OUTPUT_PATH = ".codeai-hub/orchestrator/idea.md";
+const FLOW_NAME = "full-development-flow";
+const IDEA_STAGE = "idea";
+const IDEA_TEMPLATE_ROOT = `~/.codeai-hub/templates/${FLOW_NAME}/${IDEA_STAGE}`;
+const IDEA_COLLECTOR_PROMPT_PATH = `${IDEA_TEMPLATE_ROOT}/idea-collector-prompt.md`;
+const IDEA_COLLECTOR_TEMPLATE_PATH = `${IDEA_TEMPLATE_ROOT}/idea-template.md`;
+const IDEA_COLLECTOR_SCHEMA_PATH = `${IDEA_TEMPLATE_ROOT}/idea-collector-schema.json`;
+const IDEA_COLLECTOR_OUTPUT_PATH = `.codeai-hub/${FLOW_NAME}/${IDEA_STAGE}/idea.md`;
+const IDEA_COLLECTOR_VIRTUAL_SIMULATION_PATH = `.codeai-hub/${FLOW_NAME}/${IDEA_STAGE}/virtual-simulation.md`;
 
 export const buildIdeaContract =
   async (): Promise<IdeaContractPayload | null> => {
@@ -39,6 +43,10 @@ export const buildIdeaContract =
       prompt,
       template,
       schema: normalizedSchema,
+      outputPaths: {
+        idea: IDEA_COLLECTOR_OUTPUT_PATH,
+        virtualSimulation: IDEA_COLLECTOR_VIRTUAL_SIMULATION_PATH,
+      },
       promptMtime,
       templateMtime,
       schemaMtime,
@@ -48,7 +56,10 @@ export const buildIdeaContract =
       prompt,
       schema: normalizedSchema,
       template,
-      outputPath: IDEA_COLLECTOR_OUTPUT_PATH,
+      outputPaths: {
+        idea: IDEA_COLLECTOR_OUTPUT_PATH,
+        virtualSimulation: IDEA_COLLECTOR_VIRTUAL_SIMULATION_PATH,
+      },
       version,
     };
   };
