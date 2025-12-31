@@ -242,8 +242,8 @@
 
 1. [DONE] W8.A.1 Перенести schema в Flow и обновить Core path (scope: `~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; DoD: Core читает schema из flow‑папки, старый путь не используется) (commit: `fix(core): read idea collector schema from flow folder`) (date: 2025-12-31)
 2. [DONE] Git Commit: `fix(core): read idea collector schema from flow folder` (hash: b2499e9)
-3. [TODO] W8.A.2 Обновить документацию по контракту и архитектуре (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: зафиксировано, что schema живёт в `flows/full-development-flow/schemas/`) (commit: `docs(orchestrator): align flow-local schema path`) (date: TBD)
-4. [TODO] Git Commit: `docs(orchestrator): align flow-local schema path` (hash: TBD)
+3. [DONE] W8.A.2 Обновить документацию по контракту и архитектуре (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: зафиксировано, что schema живёт в `flows/full-development-flow/schemas/`) (commit: `docs(orchestrator): align flow-local schema path`) (date: 2025-12-31)
+4. [DONE] Git Commit: `docs(orchestrator): align flow-local schema path` (hash: dde3848)
 
 ---
 
