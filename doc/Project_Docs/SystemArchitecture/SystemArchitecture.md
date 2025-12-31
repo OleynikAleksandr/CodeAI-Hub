@@ -31,51 +31,51 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.366
-- Автономное ядро: `@codeai-hub/core` 1.1.366
-- UI Bundles: 1.1.366
-- Claude module: 1.1.366
-- Codex module: 1.1.366
-- Gemini module: 1.1.366
+- VSIX: `codeai-hub` 1.1.370
+- Автономное ядро: `@codeai-hub/core` 1.1.370
+- UI Bundles: 1.1.370
+- Claude module: 1.1.370
+- Codex module: 1.1.370
+- Gemini module: 1.1.370
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.366/
+│       └── 1.1.370/
 │           ├── node/
 │           ├── app/
 │           └── install.json
 ├── packages/
 │   ├── launcher/
-│   │   └── macos-arm64/1.1.366/
+│   │   └── macos-arm64/1.1.370/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.366/
-│       │   └── current -> 1.1.366
+│       │   ├── 1.1.370/
+│       │   └── current -> 1.1.370
 │       ├── web-client/
-│       │   ├── 1.1.366/
-│       │   └── current -> 1.1.366
+│       │   ├── 1.1.370/
+│       │   └── current -> 1.1.370
 │       └── project-manager/
-│           ├── 1.1.366/
-│           └── current -> 1.1.366
+│           ├── 1.1.370/
+│           └── current -> 1.1.370
 ├── providers/
-│   ├── claude/1.1.366/
-│   ├── codex/1.1.366/
-│   └── gemini/1.1.366/
+│   ├── claude/1.1.370/
+│   ├── codex/1.1.370/
+│   └── gemini/1.1.370/
 ├── settings/
 │   ├── claude.json          # legacy thinking settings migrated to settings.json
 │   └── settings.json        # current source of truth for providers.{claude,codex,gemini}
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.366.tar.bz2
-    ├── vscode-webview-1.1.366.tar.bz2
-    ├── web-client-1.1.366.tar.bz2
-    ├── project-manager-1.1.366.tar.bz2
-    ├── claude-module-1.1.366.tar.bz2
-    ├── codex-module-1.1.366.tar.bz2
-    ├── gemini-module-1.1.366.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.366.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.370.tar.bz2
+    ├── vscode-webview-1.1.370.tar.bz2
+    ├── web-client-1.1.370.tar.bz2
+    ├── project-manager-1.1.370.tar.bz2
+    ├── claude-module-1.1.370.tar.bz2
+    ├── codex-module-1.1.370.tar.bz2
+    ├── gemini-module-1.1.370.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.370.tar.bz2
 ```
 
 ## Провайдеры
