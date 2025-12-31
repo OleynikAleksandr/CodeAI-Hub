@@ -232,6 +232,21 @@
 
 ---
 
+## 4.4 Волна 8 — Flow-local schema source of truth
+
+> Цель: схема Idea Collector должна лежать внутри конкретного Flow (а не в общем каталоге), и Core должен читать её оттуда.
+
+### [Stream W8.A] Перенос schema в flow-структуру
+
+**Назначение:** перенести schema в `flows/full-development-flow/` и обновить Core path + документацию.
+
+1. [TODO] W8.A.1 Перенести schema в Flow и обновить Core path (scope: `~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; DoD: Core читает schema из flow‑папки, старый путь не используется) (commit: `fix(core): read idea collector schema from flow folder`)
+2. [TODO] Git Commit: `fix(core): read idea collector schema from flow folder` (hash: TBD)
+3. [TODO] W8.A.2 Обновить документацию по контракту и архитектуре (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: зафиксировано, что schema живёт в `flows/full-development-flow/schemas/`) (commit: `docs(orchestrator): align flow-local schema path`) (date: TBD)
+4. [TODO] Git Commit: `docs(orchestrator): align flow-local schema path` (hash: TBD)
+
+---
+
 ## 5. Сценарии проверки
 
 ### После Волны 1
