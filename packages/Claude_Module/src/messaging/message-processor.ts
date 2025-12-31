@@ -21,6 +21,14 @@ const SESSION_DISCOVERY_TIMEOUT_MS = 1000;
 const SESSION_DISCOVERY_POLL_INTERVAL_MS = 50;
 const SESSION_FILE_EXTENSION = ".jsonl";
 
+/**
+ * UUID v4 pattern: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+ * Only files matching this pattern are considered valid session files.
+ * This excludes sub-agent files (agent-*.jsonl) and other non-session files.
+ */
+const UUID_SESSION_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export class SDKMessageProcessor {
   private readonly sessionManager: SDKSessionManager;
   private readonly options: MessageProcessorOptions;
@@ -201,8 +209,21 @@ export class SDKMessageProcessor {
     }
     return fs
       .readdirSync(this.options.projectPath)
-      .filter((fileName) => fileName.endsWith(SESSION_FILE_EXTENSION))
+      .filter(
+        (fileName) =>
+          fileName.endsWith(SESSION_FILE_EXTENSION) &&
+          this.isValidSessionFile(fileName)
+      )
       .map((fileName) => path.join(this.options.projectPath, fileName));
+  }
+
+  /**
+   * Checks if file name matches UUID session format.
+   * Excludes sub-agent files (agent-*.jsonl) and other non-session files.
+   */
+  private isValidSessionFile(fileName: string): boolean {
+    const baseName = path.basename(fileName, SESSION_FILE_EXTENSION);
+    return UUID_SESSION_PATTERN.test(baseName);
   }
 
   async getSessionIdFromSDKFiles(
@@ -215,7 +236,11 @@ export class SDKMessageProcessor {
     while (Date.now() < deadline) {
       const filesAfter = fs
         .readdirSync(this.options.projectPath)
-        .filter((fileName) => fileName.endsWith(SESSION_FILE_EXTENSION))
+        .filter(
+          (fileName) =>
+            fileName.endsWith(SESSION_FILE_EXTENSION) &&
+            this.isValidSessionFile(fileName)
+        )
         .map((fileName) => path.join(this.options.projectPath, fileName));
       const newFile = filesAfter.find(
         (filePath) => !previousFiles.includes(filePath)
