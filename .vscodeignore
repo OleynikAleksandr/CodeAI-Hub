@@ -24,6 +24,7 @@ dist/**
 .claude/**
 .vscode/**
 .gemini/**
+.codeai-hub/**
 doc/**
 AGENTS.md
 biome.jsonc
