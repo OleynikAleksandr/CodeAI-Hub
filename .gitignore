@@ -10,6 +10,7 @@ tmp/
 .claude/
 .vscode/
 .gemini/
+.codeai-hub/
 AGENTS.md
 
 lefthook.yml
