@@ -11,16 +11,18 @@ type IdeaCollectorArtifact = {
 type IdeaContractPayload = {
   readonly prompt: string;
   readonly schema: Record<string, unknown>;
+  readonly outputPath: string;
 };
 
 type IdeaContractSnapshot = {
   readonly prompt: string;
   readonly schema: Record<string, unknown>;
+  readonly outputPath: string;
 };
 
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
-const HARDCODED_IDEA_PATH =
-  "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/.codeai-hub/orchestrator/idea.md";
+const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
+const FALLBACK_OUTPUT_PATH = ".codeai-hub/orchestrator/idea.md";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -50,7 +52,9 @@ const isIdeaContractPayload = (
   return (
     typeof value.prompt === "string" &&
     value.prompt.length > 0 &&
-    isRecord(value.schema)
+    isRecord(value.schema) &&
+    typeof value.outputPath === "string" &&
+    value.outputPath.length > 0
   );
 };
 
@@ -69,7 +73,7 @@ const fetchIdeaContract = async (): Promise<IdeaContractSnapshot | null> => {
       return null;
     }
     const schema = normalizeIdeaCollectorSchema(payload.schema, null);
-    return { prompt: payload.prompt, schema };
+    return { prompt: payload.prompt, schema, outputPath: payload.outputPath };
   } catch {
     return null;
   }
@@ -84,7 +88,11 @@ const loadContract = async (): Promise<IdeaContractSnapshot> => {
     IDEA_COLLECTOR_FALLBACK_SCHEMA,
     null
   );
-  return { prompt: IDEA_KICKOFF_PROMPT, schema: fallbackSchema };
+  return {
+    prompt: IDEA_KICKOFF_PROMPT,
+    schema: fallbackSchema,
+    outputPath: FALLBACK_OUTPUT_PATH,
+  };
 };
 
 const extractArtifact = (event: unknown): IdeaCollectorArtifact | null => {
@@ -108,7 +116,7 @@ const extractArtifact = (event: unknown): IdeaCollectorArtifact | null => {
   if (!isRecord(artifact)) {
     return null;
   }
-  const path = HARDCODED_IDEA_PATH;
+  const path = typeof artifact.path === "string" ? artifact.path : null;
   let ideaMarkdown: string | null = null;
   if (typeof artifact.ideaMarkdown === "string") {
     ideaMarkdown = artifact.ideaMarkdown;
@@ -197,6 +205,16 @@ export class IdeaCollectorService {
     const artifact = extractArtifact(event);
     if (artifact) {
       this.artifacts.set(sessionId, artifact);
+      this.persistIdeaArtifact(sessionId, artifact.ideaMarkdown).catch(
+        (error: unknown) => {
+          const message =
+            error instanceof Error ? error.message : String(error);
+          postSystemNotice(
+            sessionId,
+            `Не удалось сохранить Idea.md: ${message}`
+          );
+        }
+      );
     }
   }
 
@@ -213,5 +231,46 @@ export class IdeaCollectorService {
       this.contractPromise = loadContract();
     }
     return this.contractPromise;
+  }
+
+  private async persistIdeaArtifact(
+    sessionId: string,
+    ideaMarkdown: string
+  ): Promise<void> {
+    const httpUrl = resolveCoreHttpUrl();
+    const contract = await this.getContract();
+    if (!httpUrl) {
+      postSystemNotice(
+        sessionId,
+        `Не могу сохранить Idea.md: Core HTTP URL не определён. Ожидаемый путь: ${contract.outputPath}`
+      );
+      return;
+    }
+
+    try {
+      const response = await fetch(joinUrl(httpUrl, IDEA_ARTIFACT_ENDPOINT), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId, ideaMarkdown }),
+      });
+
+      if (!response.ok) {
+        postSystemNotice(
+          sessionId,
+          `Не удалось сохранить Idea.md (HTTP ${response.status}). Ожидаемый путь: ${contract.outputPath}`
+        );
+        return;
+      }
+
+      postSystemNotice(
+        sessionId,
+        `Idea.md сохранён в workspace: ${contract.outputPath}`
+      );
+    } catch {
+      postSystemNotice(
+        sessionId,
+        `Не удалось сохранить Idea.md: ошибка сети. Ожидаемый путь: ${contract.outputPath}`
+      );
+    }
   }
 }
