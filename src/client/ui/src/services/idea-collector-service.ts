@@ -2,46 +2,52 @@ import { IDEA_KICKOFF_PROMPT } from "../app-host/idea-kickoff-prompt";
 import { sendChatMessage } from "../core-bridge/core-bridge";
 import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "./idea-collector-fallback-schema";
 import { normalizeIdeaCollectorSchema } from "./idea-collector-schema-utils";
+import {
+  joinUrl,
+  postSystemNotice,
+  resolveCoreHttpUrl,
+} from "./idea-collector-support";
 
 type IdeaCollectorArtifact = {
-  readonly path: string;
+  readonly ideaPath: string;
   readonly ideaMarkdown: string;
+  readonly virtualSimulationPath: string;
+  readonly virtualSimulationMarkdown: string;
 };
 
 type IdeaContractPayload = {
   readonly prompt: string;
   readonly schema: Record<string, unknown>;
-  readonly outputPath: string;
+  readonly outputPaths: {
+    readonly idea: string;
+    readonly virtualSimulation: string;
+  };
 };
 
 type IdeaContractSnapshot = {
   readonly prompt: string;
   readonly schema: Record<string, unknown>;
-  readonly outputPath: string;
+  readonly outputPaths: {
+    readonly idea: string;
+    readonly virtualSimulation: string;
+  };
 };
 
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-const FALLBACK_OUTPUT_PATH = ".codeai-hub/orchestrator/idea.md";
+const FALLBACK_OUTPUT_PATHS = {
+  idea: ".codeai-hub/full-development-flow/idea/idea.md",
+  virtualSimulation:
+    ".codeai-hub/full-development-flow/idea/virtual-simulation.md",
+} as const;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const resolveCoreHttpUrl = (): string | null => {
-  const globalScope = window as typeof window & {
-    __CODEAI_CORE_CONFIG?: { readonly httpUrl?: string };
-  };
-  const httpUrl = globalScope.__CODEAI_CORE_CONFIG?.httpUrl;
-  if (typeof httpUrl !== "string" || httpUrl.length === 0) {
-    return null;
-  }
-  return httpUrl;
-};
-
-const joinUrl = (baseUrl: string, path: string): string =>
-  baseUrl.endsWith("/")
-    ? `${baseUrl.slice(0, -1)}${path}`
-    : `${baseUrl}${path}`;
+const readStringField = (
+  record: Record<string, unknown>,
+  key: string
+): string | null => (typeof record[key] === "string" ? record[key] : null);
 
 const isIdeaContractPayload = (
   value: unknown
@@ -49,12 +55,16 @@ const isIdeaContractPayload = (
   if (!isRecord(value)) {
     return false;
   }
+  const outputPaths = value.outputPaths;
   return (
     typeof value.prompt === "string" &&
     value.prompt.length > 0 &&
     isRecord(value.schema) &&
-    typeof value.outputPath === "string" &&
-    value.outputPath.length > 0
+    isRecord(outputPaths) &&
+    typeof outputPaths.idea === "string" &&
+    outputPaths.idea.length > 0 &&
+    typeof outputPaths.virtualSimulation === "string" &&
+    outputPaths.virtualSimulation.length > 0
   );
 };
 
@@ -73,7 +83,7 @@ const fetchIdeaContract = async (): Promise<IdeaContractSnapshot | null> => {
       return null;
     }
     const schema = normalizeIdeaCollectorSchema(payload.schema, null);
-    return { prompt: payload.prompt, schema, outputPath: payload.outputPath };
+    return { prompt: payload.prompt, schema, outputPaths: payload.outputPaths };
   } catch {
     return null;
   }
@@ -91,7 +101,7 @@ const loadContract = async (): Promise<IdeaContractSnapshot> => {
   return {
     prompt: IDEA_KICKOFF_PROMPT,
     schema: fallbackSchema,
-    outputPath: FALLBACK_OUTPUT_PATH,
+    outputPaths: FALLBACK_OUTPUT_PATHS,
   };
 };
 
@@ -116,45 +126,35 @@ const extractArtifact = (event: unknown): IdeaCollectorArtifact | null => {
   if (!isRecord(artifact)) {
     return null;
   }
-  const path = typeof artifact.path === "string" ? artifact.path : null;
-  let ideaMarkdown: string | null = null;
-  if (typeof artifact.ideaMarkdown === "string") {
-    ideaMarkdown = artifact.ideaMarkdown;
-  } else if (typeof artifact.idea_markdown === "string") {
-    ideaMarkdown = artifact.idea_markdown;
-  }
-  if (!(path && ideaMarkdown)) {
+  const ideaPath =
+    readStringField(artifact, "ideaPath") ??
+    readStringField(artifact, "idea_path") ??
+    readStringField(artifact, "path");
+  const virtualSimulationPath =
+    readStringField(artifact, "virtualSimulationPath") ??
+    readStringField(artifact, "virtual_simulation_path");
+  const ideaMarkdown =
+    readStringField(artifact, "ideaMarkdown") ??
+    readStringField(artifact, "idea_markdown");
+  const virtualSimulationMarkdown =
+    readStringField(artifact, "virtualSimulationMarkdown") ??
+    readStringField(artifact, "virtual_simulation_markdown");
+  if (
+    !(
+      ideaPath &&
+      ideaMarkdown &&
+      virtualSimulationPath &&
+      virtualSimulationMarkdown
+    )
+  ) {
     return null;
   }
-  return { path, ideaMarkdown };
-};
-
-const generateLocalMessageId = (): string => {
-  if (
-    typeof globalThis.crypto !== "undefined" &&
-    "randomUUID" in globalThis.crypto
-  ) {
-    return globalThis.crypto.randomUUID();
-  }
-  return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-};
-
-const postSystemNotice = (sessionId: string, content: string): void => {
-  window.postMessage(
-    {
-      type: "session:message",
-      payload: {
-        sessionId,
-        message: {
-          id: generateLocalMessageId(),
-          role: "system",
-          content,
-          createdAt: Date.now(),
-        },
-      },
-    },
-    "*"
-  );
+  return {
+    ideaPath,
+    ideaMarkdown,
+    virtualSimulationPath,
+    virtualSimulationMarkdown,
+  };
 };
 
 export class IdeaCollectorService {
@@ -205,16 +205,17 @@ export class IdeaCollectorService {
     const artifact = extractArtifact(event);
     if (artifact) {
       this.artifacts.set(sessionId, artifact);
-      this.persistIdeaArtifact(sessionId, artifact.ideaMarkdown).catch(
-        (error: unknown) => {
-          const message =
-            error instanceof Error ? error.message : String(error);
-          postSystemNotice(
-            sessionId,
-            `Не удалось сохранить Idea.md: ${message}`
-          );
-        }
-      );
+      this.persistIdeaArtifacts(
+        sessionId,
+        artifact.ideaMarkdown,
+        artifact.virtualSimulationMarkdown
+      ).catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        postSystemNotice(
+          sessionId,
+          `Не удалось сохранить артефакты идеи: ${message}`
+        );
+      });
     }
   }
 
@@ -233,16 +234,17 @@ export class IdeaCollectorService {
     return this.contractPromise;
   }
 
-  private async persistIdeaArtifact(
+  private async persistIdeaArtifacts(
     sessionId: string,
-    ideaMarkdown: string
+    ideaMarkdown: string,
+    virtualSimulationMarkdown: string
   ): Promise<void> {
     const httpUrl = resolveCoreHttpUrl();
     const contract = await this.getContract();
     if (!httpUrl) {
       postSystemNotice(
         sessionId,
-        `Не могу сохранить Idea.md: Core HTTP URL не определён. Ожидаемый путь: ${contract.outputPath}`
+        `Не могу сохранить артефакты идеи: Core HTTP URL не определён. Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}`
       );
       return;
     }
@@ -251,25 +253,29 @@ export class IdeaCollectorService {
       const response = await fetch(joinUrl(httpUrl, IDEA_ARTIFACT_ENDPOINT), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, ideaMarkdown }),
+        body: JSON.stringify({
+          sessionId,
+          ideaMarkdown,
+          virtualSimulationMarkdown,
+        }),
       });
 
       if (!response.ok) {
         postSystemNotice(
           sessionId,
-          `Не удалось сохранить Idea.md (HTTP ${response.status}). Ожидаемый путь: ${contract.outputPath}`
+          `Не удалось сохранить артефакты идеи (HTTP ${response.status}). Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}`
         );
         return;
       }
 
       postSystemNotice(
         sessionId,
-        `Idea.md сохранён в workspace: ${contract.outputPath}`
+        `Артефакты идеи сохранены в workspace: ${contract.outputPaths.idea} и ${contract.outputPaths.virtualSimulation}`
       );
     } catch {
       postSystemNotice(
         sessionId,
-        `Не удалось сохранить Idea.md: ошибка сети. Ожидаемый путь: ${contract.outputPath}`
+        `Не удалось сохранить артефакты идеи: ошибка сети. Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}`
       );
     }
   }
