@@ -1,3 +1,12 @@
+## [1.1.370] - 2025-12-31
+
+### Added
+- **Idea Collector virtual simulation**: agent now returns `virtual-simulation.md` alongside `Idea.md` as a second artifact.
+
+### Changed
+- **Flow/Stage artifact paths**: Idea artifacts now live under `.codeai-hub/full-development-flow/idea/`.
+- **Template layout**: Idea Collector templates now live in `~/.codeai-hub/templates/full-development-flow/idea/`.
+
 ## [1.1.369] - 2025-12-31
 
 ### Changed
