@@ -22958,10 +22958,10 @@ ${path2}` : path2;
   var import_react10 = __toESM(require_react());
 
   // src/client/ui/src/app-host/idea-kickoff-prompt.ts
-  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438 \u0438 \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438.\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\nSpec-first: \u0432\u0435\u0434\u0438 readiness (ready_for_spec/blockers) \u0438 handoff_for_spec (assumptions/decisions_needed/open_questions/next_steps).\nartifact.idea_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0432 \u0447\u0430\u0442\u0435.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0432 artifact.idea_markdown \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B \u0441\u043E\u0437\u0434\u0430\u043D.\n\u041F\u0443\u0442\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/orchestrator/idea.md`.";
+  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438 \u0438 \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438.\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\nSpec-first: \u0432\u0435\u0434\u0438 readiness (ready_for_spec/blockers) \u0438 handoff_for_spec (assumptions/decisions_needed/open_questions/next_steps).\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0441\u043E\u0437\u0434\u0430\u043D\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/full-development-flow/idea/idea.md` \u0438 `.codeai-hub/full-development-flow/idea/virtual-simulation.md`.";
 
   // src/client/ui/src/services/idea-collector-fallback-schema.ts
-  var FALLBACK_SCHEMA_JSON = String.raw`{"$schema":"http://json-schema.org/draft-07/schema#","$id":"https://codeai-hub.local/schemas/idea-collector-schema.json","title":"Idea Collector — Structured Output Contract","description":"Контракт Structured Output для универсального агента Idea Collector. Агент ведёт guided conversation, заполняя секции идеи, опирается только на контракт (без внешних документов), и на финале (next_action=finalize) обязан вернуть готовый Idea.md как markdown + целевой путь сохранения.","type":"object","additionalProperties":false,"required":["conversation_state","next_action","suggested_response","reasoning_summary_ru","artifact"],"properties":{"conversation_state":{"type":"object","additionalProperties":false,"required":["collected","coverage_percent","coverage","readiness","handoff_for_spec"],"description":"Накопленное состояние диалога: частично или полностью заполненные секции из шаблона идеи.","properties":{"collected":{"type":"object","additionalProperties":false,"description":"Накопленные ответы пользователя/агента по секциям idea-template.md. Допускается частичное заполнение — агент дозапрашивает недостающее.","properties":{"meta":{"type":"object","additionalProperties":false,"description":"Метаданные шапки Idea.md.","properties":{"title":{"type":"string","minLength":1,"description":"# Idea: <Название инициативы/модуля/проекта>"},"created_date":{"type":"string","description":"**Дата создания:** <YYYY-MM-DD>","pattern":"^\\d{4}-\\d{2}-\\d{2}$"},"status":{"type":"string","description":"**Статус:** Draft | Approved | In Progress | Completed","enum":["Draft","Approved","In Progress","Completed"]},"author":{"type":"string","minLength":1,"description":"**Автор идеи:** <имя>"},"idea_type":{"type":"string","description":"**Тип идеи:** продукт | фича | модуль | улучшение | исследование","enum":["продукт","фича","модуль","улучшение","исследование"]}},"required":["title","created_date","status","idea_type","author"]},"short_description":{"type":"string","description":"## 1. Краткое описание — одно-два предложения, что это и зачем."},"context_and_motivation":{"type":"string","description":"## 2. Контекст и мотивация — почему это важно сейчас, какой контекст привёл к идее."},"problem":{"type":"string","description":"## 3. Проблема — какую проблему решает модуль/проект."},"goals_and_success_criteria":{"type":"object","additionalProperties":false,"description":"## 4. Цели и критерии успеха.","properties":{"goals":{"type":"array","description":"**Цели:**","items":{"type":"string","minLength":1}},"success_criteria":{"type":"array","description":"**Критерии успеха (измеримые/проверяемые):**","items":{"type":"string","minLength":1}}},"required":["goals","success_criteria"]},"high_level_solution":{"type":"string","description":"## 5. Решение (высокоуровневое) — как предлагается решить проблему."},"user_scenarios":{"type":"array","description":"## 6. Пользовательские сценарии — 3–7 ключевых сценариев использования.","items":{"type":"string","minLength":1}},"key_functions":{"type":"array","description":"## 7. Ключевые функции — таблица функций.","items":{"type":"object","additionalProperties":false,"required":["id","name","description"],"properties":{"id":{"type":"integer","minimum":1,"description":"Порядковый номер в таблице (опционально)."},"name":{"type":"string","minLength":1,"description":"Название функции."},"description":{"type":"string","minLength":1,"description":"Описание функции."}}}},"ui_ux":{"type":"array","description":"## 8. UI/UX и пользовательские потоки — экраны, ключевые действия, критичные состояния.","items":{"type":"string","minLength":1}},"triggers_and_events":{"type":"array","description":"## 9. Триггеры и события — что запускает процесс, какие сигналы обрабатываются.","items":{"type":"string","minLength":1}},"data_entities":{"type":"array","description":"## 10. Данные и ключевые сущности — основные модели, состояния, справочники.","items":{"type":"string","minLength":1}},"architecture_outline":{"type":"array","description":"## 11. Архитектурный контур — модули/сервисы/фасады и их взаимодействие.","items":{"type":"string","minLength":1}},"users_and_roles":{"type":"object","additionalProperties":false,"description":"## 12. Пользователи и роли.","properties":{"user":{"type":"string","description":"- **Пользователь**: ..."},"ai_agent":{"type":"string","description":"- **AI Агент**: ..."},"system":{"type":"string","description":"- **Система**: ..."}},"required":["user","ai_agent","system"]},"out_of_scope":{"type":"array","description":"## 13. Границы (что НЕ входит).","items":{"type":"string","minLength":1}},"constraints_and_assumptions":{"type":"object","additionalProperties":false,"description":"## 14. Ограничения и допущения.","properties":{"technical_constraints":{"type":"array","description":"- Технические ограничения: ...","items":{"type":"string","minLength":1}},"ux_time_team_constraints":{"type":"array","description":"- Ограничения по UX/времени/команде: ...","items":{"type":"string","minLength":1}},"assumptions":{"type":"array","description":"- Допущения: ...","items":{"type":"string","minLength":1}}},"required":["technical_constraints","ux_time_team_constraints","assumptions"]},"data_and_storage":{"type":"object","additionalProperties":false,"description":"## 15. Данные и хранение.","properties":{"artifacts_files":{"type":"array","description":"- Артефакты/файлы: ...","items":{"type":"string","minLength":1}},"configs_settings":{"type":"array","description":"- Конфиги/настройки: ...","items":{"type":"string","minLength":1}},"logs_telemetry":{"type":"array","description":"- Логи/телеметрия: ...","items":{"type":"string","minLength":1}}},"required":["artifacts_files","configs_settings","logs_telemetry"]},"dependencies_and_integrations":{"type":"object","additionalProperties":false,"description":"## 16. Зависимости и интеграции.","properties":{"external_systems":{"type":"array","description":"- Внешние системы: ...","items":{"type":"string","minLength":1}},"internal_modules":{"type":"array","description":"- Внутренние модули: ...","items":{"type":"string","minLength":1}},"ai_providers":{"type":"array","description":"- Провайдеры AI: ...","items":{"type":"string","minLength":1}}},"required":["external_systems","internal_modules","ai_providers"]},"risks_and_unknowns":{"type":"array","description":"## 17. Риски и неизвестности.","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"## 18. Открытые вопросы — список того, что надо уточнить перед Spec.md.","items":{"type":"string","minLength":1}},"spec_entry_criteria":{"type":"array","description":"## 19. Критерии перехода к Spec.md — чек-лист. Может быть частично заполнен/переформулирован под проект.","items":{"type":"string","minLength":1}},"related_documents":{"type":"object","additionalProperties":false,"description":"## 20. Связанные документы.","properties":{"spec_note":{"type":"string","description":"Строка/пояснение про Spec.md (например '(будет создан)')."},"plan_note":{"type":"string","description":"Строка/пояснение про Plan.md (например '(будет создан)')."},"discussion_links":{"type":"array","description":"Ссылки на обсуждения/документы.","items":{"type":"string","minLength":1}}},"required":["spec_note","plan_note","discussion_links"]}},"required":["meta","short_description","context_and_motivation","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","constraints_and_assumptions","data_and_storage","dependencies_and_integrations","risks_and_unknowns","open_questions","spec_entry_criteria","related_documents"]},"coverage_percent":{"type":"integer","minimum":0,"maximum":100,"description":"Оценка заполненности шаблона идеи (0..100). Рекомендуемый порог завершения: >= 80."},"coverage":{"type":"object","additionalProperties":false,"description":"Опциональная детализация покрытия по секциям шаблона.","properties":{"completed_sections":{"type":"array","items":{"type":"string","minLength":1}},"missing_sections":{"type":"array","items":{"type":"string","minLength":1}}},"required":["completed_sections","missing_sections"]},"readiness":{"type":"object","additionalProperties":false,"description":"Готовность к переходу в Spec.md: честная оценка и блокеры.","properties":{"ready_for_spec":{"type":"boolean","description":"true только если блокеров нет и пользователь подтвердил финализацию."},"blockers":{"type":"array","description":"Список причин, почему нельзя переходить к Spec.md прямо сейчас.","items":{"type":"string","minLength":1}}},"required":["ready_for_spec","blockers"]},"handoff_for_spec":{"type":"object","additionalProperties":false,"description":"Handoff для следующего агента Spec.md: что принять как данность и что уточнить.","properties":{"assumptions":{"type":"array","description":"Ключевые допущения, на которых строится идея.","items":{"type":"string","minLength":1}},"decisions_needed":{"type":"array","description":"Решения, которые нужно принять в Spec.md (варианты/компромиссы).","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"Открытые вопросы для Spec.md (что уточнить у пользователя/стейкхолдеров).","items":{"type":"string","minLength":1}},"next_steps":{"type":"array","description":"Следующие шаги для подготовки Spec.md.","items":{"type":"string","minLength":1}}},"required":["assumptions","decisions_needed","open_questions","next_steps"]}}},"next_action":{"type":"string","description":"Что делать дальше: задать вопрос, уточнить, суммаризировать или завершить и вернуть артефакт.","enum":["ask_question","clarify","summarize","finalize"]},"suggested_response":{"type":"string","minLength":1,"description":"Текст следующего сообщения агента (вопрос/уточнение/сводка/финализация), который показываем пользователю."},"reasoning_summary_ru":{"type":"string","description":"Краткое резюме прогресса/решений на русском без chain-of-thought."},"artifact":{"type":"object","additionalProperties":false,"description":"Финальный артефакт. Обязателен при next_action=finalize.","required":["idea_markdown","path"],"properties":{"idea_markdown":{"type":"string","description":"Готовый Idea.md как markdown (включая заголовок и все секции по шаблону)."},"path":{"type":"string","description":"Куда сохранить артефакт в проекте.","const":".codeai-hub/orchestrator/idea.md"}}}},"allOf":[{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"required":["artifact"]}},{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"properties":{"conversation_state":{"required":["collected","coverage_percent"],"properties":{"coverage_percent":{"minimum":80},"collected":{"required":["meta","short_description","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","dependencies_and_integrations","risks_and_unknowns","open_questions"],"properties":{"meta":{"required":["title","created_date","status","idea_type","author"]},"goals_and_success_criteria":{"required":["goals","success_criteria"]},"ui_ux":{"minItems":1},"triggers_and_events":{"minItems":1},"data_entities":{"minItems":1},"architecture_outline":{"minItems":1}}}}}}}}]}`;
+  var FALLBACK_SCHEMA_JSON = String.raw`{"$schema":"http://json-schema.org/draft-07/schema#","$id":"https://codeai-hub.local/schemas/idea-collector-schema.json","title":"Idea Collector — Structured Output Contract","description":"Контракт Structured Output для универсального агента Idea Collector. Агент ведёт guided conversation, заполняя секции идеи, опирается только на контракт (без внешних документов), и на финале (next_action=finalize) обязан вернуть готовые Idea.md и virtual-simulation.md как markdown + целевые пути сохранения.","type":"object","additionalProperties":false,"required":["conversation_state","next_action","suggested_response","reasoning_summary_ru","artifact"],"properties":{"conversation_state":{"type":"object","additionalProperties":false,"required":["collected","coverage_percent","coverage","readiness","handoff_for_spec"],"description":"Накопленное состояние диалога: частично или полностью заполненные секции из шаблона идеи.","properties":{"collected":{"type":"object","additionalProperties":false,"description":"Накопленные ответы пользователя/агента по секциям idea-template.md. Допускается частичное заполнение — агент дозапрашивает недостающее.","properties":{"meta":{"type":"object","additionalProperties":false,"description":"Метаданные шапки Idea.md.","properties":{"title":{"type":"string","minLength":1,"description":"# Idea: <Название инициативы/модуля/проекта>"},"created_date":{"type":"string","description":"**Дата создания:** <YYYY-MM-DD>","pattern":"^\\d{4}-\\d{2}-\\d{2}$"},"status":{"type":"string","description":"**Статус:** Draft | Approved | In Progress | Completed","enum":["Draft","Approved","In Progress","Completed"]},"author":{"type":"string","minLength":1,"description":"**Автор идеи:** <имя>"},"idea_type":{"type":"string","description":"**Тип идеи:** продукт | фича | модуль | улучшение | исследование","enum":["продукт","фича","модуль","улучшение","исследование"]}},"required":["title","created_date","status","idea_type","author"]},"short_description":{"type":"string","description":"## 1. Краткое описание — одно-два предложения, что это и зачем."},"context_and_motivation":{"type":"string","description":"## 2. Контекст и мотивация — почему это важно сейчас, какой контекст привёл к идее."},"problem":{"type":"string","description":"## 3. Проблема — какую проблему решает модуль/проект."},"goals_and_success_criteria":{"type":"object","additionalProperties":false,"description":"## 4. Цели и критерии успеха.","properties":{"goals":{"type":"array","description":"**Цели:**","items":{"type":"string","minLength":1}},"success_criteria":{"type":"array","description":"**Критерии успеха (измеримые/проверяемые):**","items":{"type":"string","minLength":1}}},"required":["goals","success_criteria"]},"high_level_solution":{"type":"string","description":"## 5. Решение (высокоуровневое) — как предлагается решить проблему."},"user_scenarios":{"type":"array","description":"## 6. Пользовательские сценарии — 3–7 ключевых сценариев использования.","items":{"type":"string","minLength":1}},"key_functions":{"type":"array","description":"## 7. Ключевые функции — таблица функций.","items":{"type":"object","additionalProperties":false,"required":["id","name","description"],"properties":{"id":{"type":"integer","minimum":1,"description":"Порядковый номер в таблице (опционально)."},"name":{"type":"string","minLength":1,"description":"Название функции."},"description":{"type":"string","minLength":1,"description":"Описание функции."}}}},"ui_ux":{"type":"array","description":"## 8. UI/UX и пользовательские потоки — экраны, ключевые действия, критичные состояния.","items":{"type":"string","minLength":1}},"triggers_and_events":{"type":"array","description":"## 9. Триггеры и события — что запускает процесс, какие сигналы обрабатываются.","items":{"type":"string","minLength":1}},"data_entities":{"type":"array","description":"## 10. Данные и ключевые сущности — основные модели, состояния, справочники.","items":{"type":"string","minLength":1}},"architecture_outline":{"type":"array","description":"## 11. Архитектурный контур — модули/сервисы/фасады и их взаимодействие.","items":{"type":"string","minLength":1}},"users_and_roles":{"type":"object","additionalProperties":false,"description":"## 12. Пользователи и роли.","properties":{"user":{"type":"string","description":"- **Пользователь**: ..."},"ai_agent":{"type":"string","description":"- **AI Агент**: ..."},"system":{"type":"string","description":"- **Система**: ..."}},"required":["user","ai_agent","system"]},"out_of_scope":{"type":"array","description":"## 13. Границы (что НЕ входит).","items":{"type":"string","minLength":1}},"constraints_and_assumptions":{"type":"object","additionalProperties":false,"description":"## 14. Ограничения и допущения.","properties":{"technical_constraints":{"type":"array","description":"- Технические ограничения: ...","items":{"type":"string","minLength":1}},"ux_time_team_constraints":{"type":"array","description":"- Ограничения по UX/времени/команде: ...","items":{"type":"string","minLength":1}},"assumptions":{"type":"array","description":"- Допущения: ...","items":{"type":"string","minLength":1}}},"required":["technical_constraints","ux_time_team_constraints","assumptions"]},"data_and_storage":{"type":"object","additionalProperties":false,"description":"## 15. Данные и хранение.","properties":{"artifacts_files":{"type":"array","description":"- Артефакты/файлы: ...","items":{"type":"string","minLength":1}},"configs_settings":{"type":"array","description":"- Конфиги/настройки: ...","items":{"type":"string","minLength":1}},"logs_telemetry":{"type":"array","description":"- Логи/телеметрия: ...","items":{"type":"string","minLength":1}}},"required":["artifacts_files","configs_settings","logs_telemetry"]},"dependencies_and_integrations":{"type":"object","additionalProperties":false,"description":"## 16. Зависимости и интеграции.","properties":{"external_systems":{"type":"array","description":"- Внешние системы: ...","items":{"type":"string","minLength":1}},"internal_modules":{"type":"array","description":"- Внутренние модули: ...","items":{"type":"string","minLength":1}},"ai_providers":{"type":"array","description":"- Провайдеры AI: ...","items":{"type":"string","minLength":1}}},"required":["external_systems","internal_modules","ai_providers"]},"risks_and_unknowns":{"type":"array","description":"## 17. Риски и неизвестности.","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"## 18. Открытые вопросы — список того, что надо уточнить перед Spec.md.","items":{"type":"string","minLength":1}},"spec_entry_criteria":{"type":"array","description":"## 19. Критерии перехода к Spec.md — чек-лист. Может быть частично заполнен/переформулирован под проект.","items":{"type":"string","minLength":1}},"related_documents":{"type":"object","additionalProperties":false,"description":"## 20. Связанные документы.","properties":{"spec_note":{"type":"string","description":"Строка/пояснение про Spec.md (например '(будет создан)')."},"plan_note":{"type":"string","description":"Строка/пояснение про Plan.md (например '(будет создан)')."},"discussion_links":{"type":"array","description":"Ссылки на обсуждения/документы.","items":{"type":"string","minLength":1}}},"required":["spec_note","plan_note","discussion_links"]}},"required":["meta","short_description","context_and_motivation","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","constraints_and_assumptions","data_and_storage","dependencies_and_integrations","risks_and_unknowns","open_questions","spec_entry_criteria","related_documents"]},"coverage_percent":{"type":"integer","minimum":0,"maximum":100,"description":"Оценка заполненности шаблона идеи (0..100). Рекомендуемый порог завершения: >= 80."},"coverage":{"type":"object","additionalProperties":false,"description":"Опциональная детализация покрытия по секциям шаблона.","properties":{"completed_sections":{"type":"array","items":{"type":"string","minLength":1}},"missing_sections":{"type":"array","items":{"type":"string","minLength":1}}},"required":["completed_sections","missing_sections"]},"readiness":{"type":"object","additionalProperties":false,"description":"Готовность к переходу в Spec.md: честная оценка и блокеры.","properties":{"ready_for_spec":{"type":"boolean","description":"true только если блокеров нет и пользователь подтвердил финализацию."},"blockers":{"type":"array","description":"Список причин, почему нельзя переходить к Spec.md прямо сейчас.","items":{"type":"string","minLength":1}}},"required":["ready_for_spec","blockers"]},"handoff_for_spec":{"type":"object","additionalProperties":false,"description":"Handoff для следующего агента Spec.md: что принять как данность и что уточнить.","properties":{"assumptions":{"type":"array","description":"Ключевые допущения, на которых строится идея.","items":{"type":"string","minLength":1}},"decisions_needed":{"type":"array","description":"Решения, которые нужно принять в Spec.md (варианты/компромиссы).","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"Открытые вопросы для Spec.md (что уточнить у пользователя/стейкхолдеров).","items":{"type":"string","minLength":1}},"next_steps":{"type":"array","description":"Следующие шаги для подготовки Spec.md.","items":{"type":"string","minLength":1}}},"required":["assumptions","decisions_needed","open_questions","next_steps"]}}},"next_action":{"type":"string","description":"Что делать дальше: задать вопрос, уточнить, суммаризировать или завершить и вернуть артефакт.","enum":["ask_question","clarify","summarize","finalize"]},"suggested_response":{"type":"string","minLength":1,"description":"Текст следующего сообщения агента (вопрос/уточнение/сводка/финализация), который показываем пользователю."},"reasoning_summary_ru":{"type":"string","description":"Краткое резюме прогресса/решений на русском без chain-of-thought."},"artifact":{"type":"object","additionalProperties":false,"description":"Финальные артефакты. Обязательны при next_action=finalize.","required":["idea_markdown","virtual_simulation_markdown","idea_path","virtual_simulation_path"],"properties":{"idea_markdown":{"type":"string","description":"Готовый Idea.md как markdown (включая заголовок и все секции по шаблону)."},"virtual_simulation_markdown":{"type":"string","description":"Виртуальный тест (virtual-simulation.md) как markdown."},"idea_path":{"type":"string","description":"Куда сохранить Idea.md в проекте.","const":".codeai-hub/full-development-flow/idea/idea.md"},"virtual_simulation_path":{"type":"string","description":"Куда сохранить virtual-simulation.md в проекте.","const":".codeai-hub/full-development-flow/idea/virtual-simulation.md"}}}},"allOf":[{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"required":["artifact"]}},{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"properties":{"conversation_state":{"required":["collected","coverage_percent"],"properties":{"coverage_percent":{"minimum":80},"collected":{"required":["meta","short_description","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","dependencies_and_integrations","risks_and_unknowns","open_questions"],"properties":{"meta":{"required":["title","created_date","status","idea_type","author"]},"goals_and_success_criteria":{"required":["goals","success_criteria"]},"ui_ux":{"minItems":1},"triggers_and_events":{"minItems":1},"data_entities":{"minItems":1},"architecture_outline":{"minItems":1}}}}}}}}]}`;
   var IDEA_COLLECTOR_FALLBACK_SCHEMA = JSON.parse(
     FALLBACK_SCHEMA_JSON
   );
@@ -23123,11 +23123,13 @@ ${template}`;
     return injectTemplateIntoSchema(next, template);
   };
 
-  // src/client/ui/src/services/idea-collector-service.ts
-  var IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
-  var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-  var FALLBACK_OUTPUT_PATH = ".codeai-hub/orchestrator/idea.md";
-  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  // src/client/ui/src/services/idea-collector-support.ts
+  var generateLocalMessageId = () => {
+    if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
+      return globalThis.crypto.randomUUID();
+    }
+    return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  };
   var resolveCoreHttpUrl = () => {
     const globalScope2 = window;
     const httpUrl = globalScope2.__CODEAI_CORE_CONFIG?.httpUrl;
@@ -23137,11 +23139,39 @@ ${template}`;
     return httpUrl;
   };
   var joinUrl = (baseUrl, path2) => baseUrl.endsWith("/") ? `${baseUrl.slice(0, -1)}${path2}` : `${baseUrl}${path2}`;
+  var postSystemNotice = (sessionId, content3) => {
+    window.postMessage(
+      {
+        type: "session:message",
+        payload: {
+          sessionId,
+          message: {
+            id: generateLocalMessageId(),
+            role: "system",
+            content: content3,
+            createdAt: Date.now()
+          }
+        }
+      },
+      "*"
+    );
+  };
+
+  // src/client/ui/src/services/idea-collector-service.ts
+  var IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
+  var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
+  var FALLBACK_OUTPUT_PATHS = {
+    idea: ".codeai-hub/full-development-flow/idea/idea.md",
+    virtualSimulation: ".codeai-hub/full-development-flow/idea/virtual-simulation.md"
+  };
+  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
   var isIdeaContractPayload = (value) => {
     if (!isRecord3(value)) {
       return false;
     }
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord3(value.schema) && typeof value.outputPath === "string" && value.outputPath.length > 0;
+    const outputPaths = value.outputPaths;
+    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord3(value.schema) && isRecord3(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
   };
   var fetchIdeaContract = async () => {
     const httpUrl = resolveCoreHttpUrl();
@@ -23158,7 +23188,7 @@ ${template}`;
         return null;
       }
       const schema = normalizeIdeaCollectorSchema(payload.schema, null);
-      return { prompt: payload.prompt, schema, outputPath: payload.outputPath };
+      return { prompt: payload.prompt, schema, outputPaths: payload.outputPaths };
     } catch {
       return null;
     }
@@ -23175,7 +23205,7 @@ ${template}`;
     return {
       prompt: IDEA_KICKOFF_PROMPT,
       schema: fallbackSchema,
-      outputPath: FALLBACK_OUTPUT_PATH
+      outputPaths: FALLBACK_OUTPUT_PATHS
     };
   };
   var extractArtifact = (event) => {
@@ -23199,40 +23229,19 @@ ${template}`;
     if (!isRecord3(artifact)) {
       return null;
     }
-    const path2 = typeof artifact.path === "string" ? artifact.path : null;
-    let ideaMarkdown = null;
-    if (typeof artifact.ideaMarkdown === "string") {
-      ideaMarkdown = artifact.ideaMarkdown;
-    } else if (typeof artifact.idea_markdown === "string") {
-      ideaMarkdown = artifact.idea_markdown;
-    }
-    if (!(path2 && ideaMarkdown)) {
+    const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
+    const virtualSimulationPath = readStringField(artifact, "virtualSimulationPath") ?? readStringField(artifact, "virtual_simulation_path");
+    const ideaMarkdown = readStringField(artifact, "ideaMarkdown") ?? readStringField(artifact, "idea_markdown");
+    const virtualSimulationMarkdown = readStringField(artifact, "virtualSimulationMarkdown") ?? readStringField(artifact, "virtual_simulation_markdown");
+    if (!(ideaPath && ideaMarkdown && virtualSimulationPath && virtualSimulationMarkdown)) {
       return null;
     }
-    return { path: path2, ideaMarkdown };
-  };
-  var generateLocalMessageId = () => {
-    if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
-      return globalThis.crypto.randomUUID();
-    }
-    return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  };
-  var postSystemNotice = (sessionId, content3) => {
-    window.postMessage(
-      {
-        type: "session:message",
-        payload: {
-          sessionId,
-          message: {
-            id: generateLocalMessageId(),
-            role: "system",
-            content: content3,
-            createdAt: Date.now()
-          }
-        }
-      },
-      "*"
-    );
+    return {
+      ideaPath,
+      ideaMarkdown,
+      virtualSimulationPath,
+      virtualSimulationMarkdown
+    };
   };
   var IdeaCollectorService = class {
     constructor() {
@@ -23276,15 +23285,17 @@ ${template}`;
       const artifact = extractArtifact(event);
       if (artifact) {
         this.artifacts.set(sessionId, artifact);
-        this.persistIdeaArtifact(sessionId, artifact.ideaMarkdown).catch(
-          (error) => {
-            const message = error instanceof Error ? error.message : String(error);
-            postSystemNotice(
-              sessionId,
-              `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C Idea.md: ${message}`
-            );
-          }
-        );
+        this.persistIdeaArtifacts(
+          sessionId,
+          artifact.ideaMarkdown,
+          artifact.virtualSimulationMarkdown
+        ).catch((error) => {
+          const message = error instanceof Error ? error.message : String(error);
+          postSystemNotice(
+            sessionId,
+            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: ${message}`
+          );
+        });
       }
     }
     getPrompt() {
@@ -23299,13 +23310,13 @@ ${template}`;
       }
       return this.contractPromise;
     }
-    async persistIdeaArtifact(sessionId, ideaMarkdown) {
+    async persistIdeaArtifacts(sessionId, ideaMarkdown, virtualSimulationMarkdown) {
       const httpUrl = resolveCoreHttpUrl();
       const contract = await this.getContract();
       if (!httpUrl) {
         postSystemNotice(
           sessionId,
-          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C Idea.md: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0439 \u043F\u0443\u0442\u044C: ${contract.outputPath}`
+          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}`
         );
         return;
       }
@@ -23313,23 +23324,27 @@ ${template}`;
         const response = await fetch(joinUrl(httpUrl, IDEA_ARTIFACT_ENDPOINT), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, ideaMarkdown })
+          body: JSON.stringify({
+            sessionId,
+            ideaMarkdown,
+            virtualSimulationMarkdown
+          })
         });
         if (!response.ok) {
           postSystemNotice(
             sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C Idea.md (HTTP ${response.status}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0439 \u043F\u0443\u0442\u044C: ${contract.outputPath}`
+            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (HTTP ${response.status}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}`
           );
           return;
         }
         postSystemNotice(
           sessionId,
-          `Idea.md \u0441\u043E\u0445\u0440\u0430\u043D\u0451\u043D \u0432 workspace: ${contract.outputPath}`
+          `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${contract.outputPaths.idea} \u0438 ${contract.outputPaths.virtualSimulation}`
         );
       } catch {
         postSystemNotice(
           sessionId,
-          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C Idea.md: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0439 \u043F\u0443\u0442\u044C: ${contract.outputPath}`
+          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}`
         );
       }
     }
