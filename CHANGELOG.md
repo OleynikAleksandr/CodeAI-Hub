@@ -1,3 +1,13 @@
+## [1.1.368] - 2025-12-31
+
+### Added
+- **Idea Collector artifact save API**: Core exposes `POST /api/v1/orchestrator/idea-artifact` to persist `.codeai-hub/orchestrator/idea.md` into the active session workspace.
+
+### Changed
+- **Idea Collector contract v2 (Spec-first)**: contract now supports explicit `readiness` and `handoff_for_spec` fields to prevent premature “Spec-ready” claims.
+- **Idea Collector output path**: Core includes `outputPath` in the contract payload so the UI no longer relies on hardcoded absolute paths.
+- **Fallbacks**: updated embedded schema/prompt to match the v2 contract fields and finalize behavior.
+
 ## [1.1.367] - 2025-12-30
 
 ### Added
