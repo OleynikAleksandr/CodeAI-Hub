@@ -1,3 +1,8 @@
+## [1.1.371] - 2025-12-31
+
+### Fixed
+- **Claude session ID detection**: filter out sub-agent files (`agent-*.jsonl`) when detecting session ID; only UUID-formatted session files are considered.
+
 ## [1.1.370] - 2025-12-31
 
 ### Added
