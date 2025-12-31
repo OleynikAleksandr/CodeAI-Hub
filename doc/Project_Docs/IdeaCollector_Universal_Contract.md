@@ -26,15 +26,16 @@
 3. **UI не читает файлы напрямую**: все данные приходят из контракта; локальный fallback допустим только при недоступности Core.
 4. **Универсальность**: контракт не привязан к Flow/проекту и покрывает идеи от микро‑модуля до полноценного продукта.
 5. **Адаптивное интервью**: первые ответы формируют контекст и масштаб, далее вопросы подстраиваются под глубину идеи.
-6. **Экономия токенов**: в диалоге только краткая выжимка и путь к файлу; полный Idea.md сохраняется в workspace.
+6. **Экономия токенов**: в диалоге только краткая выжимка и путь к файлам; полный `Idea.md` и `virtual-simulation.md` сохраняются в workspace.
 7. **Spec-first handoff**: контракт фиксирует (а) что уже решено, (б) что остаётся решить, (в) блокеры для Spec.
+8. **Virtual Simulation**: отдельный документ фиксирует сценарии, события, артефакты и критерии успеха как виртуальный тест перед Spec.md.
 
 ## 4. Архитектурные компоненты
 - **Idea Contract Service (core, Remote Bridge)**
   - Загружает шаблоны и schema из `~/.codeai-hub/templates/**`.
   - Нормализует schema, инжектит template.
   - Возвращает `IdeaContractPayload` по HTTP.
-  - Источник schema для Full Development Flow: `~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json`.
+  - Источник schema для Full Development Flow: `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`.
 - **HTTP endpoint**
   - `GET /api/v1/orchestrator/idea-contract`
 - **IdeaCollectorService (UI)**
@@ -46,6 +47,7 @@
 - `prompt`: string
 - `schema`: JSON object (structured output schema)
 - `template`: string (raw idea template)
+- `outputPaths`: `{ idea, virtualSimulation }` (пути сохранения в workspace)
 - `version`: string (hash/mtime)
 
 ## 6. Принципы универсального интервью (без «анкеты»)
@@ -68,10 +70,10 @@
 - `readiness.blockers[]`: конкретные причины, почему ещё нельзя переходить к Spec.md.
 - `handoff_for_spec`: список допущений, решений, открытых вопросов и следующих шагов для Spec‑агента.
 
-## 9. Финализация и UX (без публикации Idea.md в чате)
+## 9. Финализация и UX (без публикации документов в чате)
 На `finalize` агент:
-- возвращает полный `Idea.md` в `artifact.idea_markdown` (для сохранения системой);
-- в `suggested_response` пишет только: «файл создан» + краткая выжимка + путь сохранения;
+- возвращает полный `Idea.md` и `virtual-simulation.md` в `artifact.*` (для сохранения системой);
+- в `suggested_response` пишет только: «файлы созданы» + краткая выжимка + пути сохранения;
 - не публикует полный Markdown в stdout/чате.
 
 ## 10. Риски

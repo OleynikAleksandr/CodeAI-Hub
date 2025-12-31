@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.369 (31.12.2025) — Idea Collector получает универсальный контракт из Core API (`/api/v1/orchestrator/idea-contract`), контракт v2 добавляет `readiness`/`handoff_for_spec`, а schema теперь хранится в `~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json`. Core сохраняет `.codeai-hub/orchestrator/idea.md` в workspace через `POST /api/v1/orchestrator/idea-artifact`. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
+**Состояние:** релиз 1.1.370 (31.12.2025) — Idea Collector получает универсальный контракт из Core API (`/api/v1/orchestrator/idea-contract`), контракт v2 добавляет `readiness`/`handoff_for_spec`, а schema хранится в `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`. Core сохраняет `.codeai-hub/full-development-flow/idea/idea.md` и `.codeai-hub/full-development-flow/idea/virtual-simulation.md` в workspace через `POST /api/v1/orchestrator/idea-artifact`. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
 
 ## Обзор
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
@@ -91,7 +91,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
 
 ## Recent Changes (v1.1.367 - 2025-12-30)
-- **Idea Collector contract delivery**: Core отдаёт `/api/v1/orchestrator/idea-contract`, UI не читает локальные шаблоны напрямую; schema хранится в `~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json`.
+- **Idea Collector contract delivery**: Core отдаёт `/api/v1/orchestrator/idea-contract`, UI не читает локальные шаблоны напрямую; schema хранится в `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`.
 - **Universal Idea contract**: template/schema/prompt обновлены под `idea_type`, адаптивное интервью и запрет длинных документов в диалоге.
 - **Release 1.1.367**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.367.
 
