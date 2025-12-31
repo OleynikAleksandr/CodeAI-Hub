@@ -227,8 +227,8 @@
 6. [DONE] Git Commit: `feat(orchestrator): make idea collector interview spec-first` (hash: N/A (global))
 7. [DONE] W7.A.4 Убрать hardcoded путь и сохранять Idea.md в workspace (scope: `src/client/ui/src/services/idea-collector-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; DoD: путь берём из контракта (outputPath), Core пишет `.codeai-hub/orchestrator/idea.md` в workspace по `sessionId`, а в чате показывается только сообщение “создан файл” без markdown) (commit: `fix(orchestrator): write idea.md to workspace and hide markdown`) (date: 2025-12-31)
 8. [DONE] Git Commit: `fix(orchestrator): write idea.md to workspace and hide markdown` (hash: b586084)
-9. [TODO] W7.A.5 Синхронизировать UI fallback contract с v2 (scope: `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`; DoD: fallback schema/prompt отражают v2 поля и правила финализации) (commit: `fix(ui): sync idea collector v2 fallbacks`)
-10. [TODO] Git Commit: `fix(ui): sync idea collector v2 fallbacks` (hash: TBD)
+9. [DONE] W7.A.5 Синхронизировать UI fallback contract с v2 (scope: `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`; DoD: fallback schema/prompt отражают v2 поля и правила финализации) (commit: `fix(ui): sync idea collector v2 fallbacks`) (date: 2025-12-31)
+10. [DONE] Git Commit: `fix(ui): sync idea collector v2 fallbacks` (hash: 34946e5)
 
 ---
 
