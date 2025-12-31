@@ -256,8 +256,8 @@
 
 **Назначение:** добавить Virtual Simulation, перенести пути артефактов в flow/stage структуру и синхронизировать templates/docs.
 
-1. [TODO] W9.A.1 Обновить Core paths и сохранение артефактов (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; DoD: contract возвращает `outputPaths` для Idea + Virtual Simulation в `.codeai-hub/full-development-flow/idea/`, API сохраняет оба файла) (commit: `feat(core): add virtual simulation artifact paths`)
-2. [TODO] Git Commit: `feat(core): add virtual simulation artifact paths` (hash: TBD)
+1. [DONE] W9.A.1 Обновить Core paths и сохранение артефактов (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; DoD: contract возвращает `outputPaths` для Idea + Virtual Simulation в `.codeai-hub/full-development-flow/idea/`, API сохраняет оба файла) (commit: `feat(core): add virtual simulation artifact paths`) (date: 2025-12-31)
+2. [DONE] Git Commit: `feat(core): add virtual simulation artifact paths` (hash: c15db20)
 3. [TODO] W9.A.2 Обновить UI IdeaCollectorService под два артефакта (scope: `src/client/ui/src/services/idea-collector-service.ts`; DoD: читаем `virtual_simulation_*`, отправляем в API оба markdown, сообщения показывают два пути) (commit: `feat(ui): persist idea virtual simulation artifact`)
 4. [TODO] Git Commit: `feat(ui): persist idea virtual simulation artifact` (hash: TBD)
 5. [TODO] W9.A.3 Синхронизировать UI fallback schema + prompt (scope: `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`; DoD: schema включает Virtual Simulation, prompt требует второй артефакт, пути обновлены на flow/stage) (commit: `docs(ui): sync idea collector fallback for virtual simulation`)
