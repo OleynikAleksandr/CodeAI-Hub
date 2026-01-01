@@ -3,7 +3,7 @@
 **Version:** 0.5.9
 **Last Updated:** 2026-01-01
 **Status:** Active reference
-**Release Focus:** v1.1.372 — Idea Collector доступен для Codex и Claude через Structured Outputs; создаёт два артефакта (Idea + Virtual Simulation) и использует flow/stage структуру.
+**Release Focus:** v1.1.373 — Idea Collector: `приложение`/`кластер` как first-class типы идеи и правило Flow для multi-module (Spec/Plan по модулям); Virtual Simulation стандартизирует секции UI ↔ Core и логирование.
 
 ---
 
@@ -31,7 +31,7 @@ graph TD
 ## Extension Host Layer
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
 - **UI bundle bootstrap (v1.1.313)**: `ui-activation.ts` (вызывается из `activate`) читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current`. Поддерживаются `vscode-webview`, `web-client` и `project-manager`.
-- **Idea Collector artifacts (v1.1.372)**: schema читается из `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, а артефакты пишутся в `.codeai-hub/full-development-flow/idea/` (`idea.md`, `virtual-simulation.md`).
+- **Idea Collector artifacts (v1.1.373)**: schema читается из `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, а артефакты пишутся в `.codeai-hub/full-development-flow/idea/` (`idea.md`, `virtual-simulation.md`).
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
 - **Core Bootstrap (v1.1.353 improvements)**: Ядро переведено на мульти-тенантную архитектуру. Рабочий каталог (`workspacePath`) теперь является свойством конкретной Сессии, а не глобальным параметром процесса. Это позволяет одному экземпляру Ядра обслуживать несколько проектов одновременно.
