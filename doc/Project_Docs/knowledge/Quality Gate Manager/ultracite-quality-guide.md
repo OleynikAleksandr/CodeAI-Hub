@@ -127,5 +127,5 @@ Biome's linter will catch most issues automatically. Focus your attention on:
 Most formatting and common issues are automatically fixed by Biome. Run `npx ultracite fix` before committing to ensure compliance.
 
 ## Полезные ссылки
-- Ultracite Docs: https://www.ultracite.ai/introduction/
+- Ultracite Docs: https://www.ultracite.ai/
 - Ultracite GitHub: https://github.com/haydenbleasel/ultracite
