@@ -10,6 +10,7 @@ import type {
   StatusInfo,
   SystemRequestHandler,
 } from "./system-request-handler";
+import { handleWorkspaceFileRead } from "./workspace-file-service";
 
 const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_FOUND = 404;
@@ -17,6 +18,7 @@ const HTTP_BAD_REQUEST = 400;
 const HTTP_NO_CONTENT = 204;
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
+const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const FLOW_NAME = "full-development-flow";
 const IDEA_STAGE = "idea";
 const IDEA_ARTIFACT_RELATIVE_PATH = `.codeai-hub/${FLOW_NAME}/${IDEA_STAGE}/idea.md`;
@@ -80,6 +82,15 @@ export class HttpApiRouter {
 
     app.post(IDEA_ARTIFACT_ENDPOINT, async (req: Request, res: Response) => {
       await this.handleIdeaArtifactSave(req, res);
+    });
+
+    app.post(WORKSPACE_FILE_ENDPOINT, async (req: Request, res: Response) => {
+      await handleWorkspaceFileRead(
+        req,
+        res,
+        this.deps.sessionManager,
+        this.deps.logger
+      );
     });
   }
 
