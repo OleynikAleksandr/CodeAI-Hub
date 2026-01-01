@@ -1,3 +1,8 @@
+## [1.1.374] - 2026-01-01
+
+### Added
+- **Idea Collector workspace file context**: users can attach existing workspace documents to the Idea Collector interview (UI command `/read <path>`); Core exposes `POST /api/v1/orchestrator/workspace-file` to safely read session-scoped files.
+
 ## [1.1.373] - 2026-01-01
 
 ### Added

@@ -23157,6 +23157,130 @@ ${template}`;
     );
   };
 
+  // src/client/ui/src/services/idea-collector-workspace-context.ts
+  var WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
+  var DEFAULT_MAX_BYTES = 6e4;
+  var MAX_FILES = 3;
+  var normalizePathToken = (token) => {
+    const trimmed = token.trim();
+    if (trimmed.length === 0) {
+      return null;
+    }
+    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) {
+      return trimmed.slice(1, -1).trim() || null;
+    }
+    return trimmed;
+  };
+  var parseWorkspaceReadCommand = (content3) => {
+    const trimmed = content3.trimStart();
+    if (!(trimmed.startsWith("/read") || trimmed.startsWith("/attach"))) {
+      return null;
+    }
+    const lines = trimmed.split("\n");
+    const firstLine = lines[0]?.trim() ?? "";
+    const tokens = firstLine.split(/\s+/g);
+    const command = tokens[0];
+    if (!(command === "/read" || command === "/attach")) {
+      return null;
+    }
+    const paths = tokens.slice(1).map((token) => normalizePathToken(token)).filter(Boolean);
+    const remainingMessage = lines.slice(1).join("\n").trim();
+    return { paths, remainingMessage };
+  };
+  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isWorkspaceFileResponse = (value) => {
+    if (!isRecord3(value)) {
+      return false;
+    }
+    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
+  };
+  var fetchWorkspaceFile = async (sessionId, relativePath) => {
+    const httpUrl = resolveCoreHttpUrl();
+    if (!httpUrl) {
+      return null;
+    }
+    try {
+      const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          path: relativePath,
+          maxBytes: DEFAULT_MAX_BYTES
+        })
+      });
+      if (!response.ok) {
+        return null;
+      }
+      const payload = await response.json();
+      if (!isWorkspaceFileResponse(payload)) {
+        return null;
+      }
+      return payload;
+    } catch {
+      return null;
+    }
+  };
+  var buildMessageWithWorkspaceContext = async (sessionId, content3) => {
+    const command = parseWorkspaceReadCommand(content3);
+    if (!command) {
+      return null;
+    }
+    if (command.paths.length === 0) {
+      postSystemNotice(
+        sessionId,
+        "\u041A\u043E\u043C\u0430\u043D\u0434\u0430 /read \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043F\u0443\u0442\u044C(\u0438):\n/read doc/Architecture/Architecture.md\n(\u0434\u0430\u043B\u044C\u0448\u0435 \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445 \u043C\u043E\u0436\u043D\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432\u043E\u043F\u0440\u043E\u0441/\u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439)"
+      );
+      return "";
+    }
+    const files = await Promise.all(
+      command.paths.slice(0, MAX_FILES).map(async (relativePath) => ({
+        relativePath,
+        response: await fetchWorkspaceFile(sessionId, relativePath)
+      }))
+    );
+    const resolvedFiles = files.filter((entry) => entry.response);
+    if (resolvedFiles.length === 0) {
+      postSystemNotice(
+        sessionId,
+        "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C \u043D\u0438 \u043E\u0434\u0438\u043D \u0444\u0430\u0439\u043B \u0438\u0437 /read. \u041F\u0440\u043E\u0432\u0435\u0440\u044C \u043F\u0443\u0442\u0438 \u0438 \u0447\u0442\u043E Core \u0437\u0430\u043F\u0443\u0449\u0435\u043D."
+      );
+      return "";
+    }
+    const blocks = [];
+    blocks.push(
+      "\u041A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438\u0437 \u0444\u0430\u0439\u043B\u043E\u0432 (workspace). \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u044D\u0442\u043E \u043A\u0430\u043A \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0438\u0441\u0442\u0438\u043D\u044B \u0434\u043B\u044F \u0442\u0435\u043A\u0443\u0449\u0435\u0433\u043E \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E:"
+    );
+    for (const entry of resolvedFiles) {
+      const payload = entry.response;
+      const truncationNote = payload.truncated ? `
+(\u0444\u0430\u0439\u043B \u043E\u0431\u0440\u0435\u0437\u0430\u043D \u0434\u043E ${payload.maxBytes} \u0431\u0430\u0439\u0442)` : "";
+      blocks.push(
+        `
+[FILE: ${payload.path}]${truncationNote}
+\`\`\`
+${payload.content}
+\`\`\``
+      );
+    }
+    if (command.paths.length > MAX_FILES) {
+      postSystemNotice(
+        sessionId,
+        `\u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0435: \u043F\u0440\u0438\u043A\u0440\u0435\u043F\u043B\u044F\u044E \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C ${MAX_FILES} \u0444\u0430\u0439\u043B\u043E\u0432 \u0437\u0430 \u0440\u0430\u0437.`
+      );
+    }
+    if (command.remainingMessage.length > 0) {
+      blocks.push(`
+\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F:
+${command.remainingMessage}`);
+    } else {
+      blocks.push(
+        "\n\u0414\u0430\u043B\u0435\u0435: \u0443\u0447\u0442\u0438 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438 \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E (\u0437\u0430\u0434\u0430\u0439 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441)."
+      );
+    }
+    return blocks.join("\n");
+  };
+
   // src/client/ui/src/services/idea-collector-service.ts
   var IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
   var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
@@ -23164,14 +23288,14 @@ ${template}`;
     idea: ".codeai-hub/full-development-flow/idea/idea.md",
     virtualSimulation: ".codeai-hub/full-development-flow/idea/virtual-simulation.md"
   };
-  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
   var isIdeaContractPayload = (value) => {
-    if (!isRecord3(value)) {
+    if (!isRecord4(value)) {
       return false;
     }
     const outputPaths = value.outputPaths;
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord3(value.schema) && isRecord3(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
+    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord4(value.schema) && isRecord4(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
   };
   var fetchIdeaContract = async () => {
     const httpUrl = resolveCoreHttpUrl();
@@ -23209,11 +23333,11 @@ ${template}`;
     };
   };
   var extractArtifact = (event) => {
-    if (!isRecord3(event)) {
+    if (!isRecord4(event)) {
       return null;
     }
     const data = event.data;
-    if (!isRecord3(data) || data.kind !== "structured_output") {
+    if (!isRecord4(data) || data.kind !== "structured_output") {
       return null;
     }
     let nextAction = null;
@@ -23226,7 +23350,7 @@ ${template}`;
       return null;
     }
     const artifact = data.artifact;
-    if (!isRecord3(artifact)) {
+    if (!isRecord4(artifact)) {
       return null;
     }
     const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
@@ -23264,6 +23388,10 @@ ${template}`;
           sessionId,
           "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Idea Collector. \u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u0434\u043E\u0436\u0434\u0438\u0442\u0435\u0441\u044C \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u0432\u043E\u043F\u0440\u043E\u0441\u0430."
         );
+        postSystemNotice(
+          sessionId,
+          "\u0427\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u044C \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B/\u0444\u0430\u0439\u043B\u044B \u0438\u0437 workspace, \u043D\u0430\u043F\u0438\u0448\u0438\u0442\u0435:\n/read <relative-path>\n(\u043C\u043E\u0436\u043D\u043E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043F\u0443\u0442\u0435\u0439 \u0432 \u043E\u0434\u043D\u043E\u0439 \u0441\u0442\u0440\u043E\u043A\u0435, \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 3)."
+        );
       }
       const [prompt, schema] = await Promise.all([
         this.getPrompt(),
@@ -23276,7 +23404,16 @@ ${template}`;
         return;
       }
       const schema = await this.getNormalizedSchema();
-      sendChatMessage(sessionId, content3, { outputSchema: schema });
+      const augmentedContent = await buildMessageWithWorkspaceContext(
+        sessionId,
+        content3
+      );
+      if (augmentedContent === "") {
+        return;
+      }
+      sendChatMessage(sessionId, augmentedContent ?? content3, {
+        outputSchema: schema
+      });
     }
     handleStreamEvent(sessionId, event) {
       if (!this.activeSessions.has(sessionId)) {
@@ -25890,13 +26027,13 @@ ${template}`;
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord4 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord5 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord4(value)) {
+    if (!isRecord5(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -25935,7 +26072,7 @@ ${template}`;
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord5 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord6 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -25968,7 +26105,7 @@ ${template}`;
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord5(value)) {
+    if (!isRecord6(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
