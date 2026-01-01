@@ -13,6 +13,7 @@ type ServerEventType =
   | "session:created"
   | "session:deleted"
   | "session:stream"
+  | "session:error"
   | "core:loading-status"
   | "session:binding";
 
@@ -29,6 +30,22 @@ type BindingPayload = {
   readonly status?: string;
 };
 
+type SessionErrorPayload = {
+  readonly sessionId?: string | null;
+  readonly providerId?: string;
+  readonly message?: string;
+};
+
+const generateLocalMessageId = (): string => {
+  if (
+    typeof globalThis.crypto !== "undefined" &&
+    "randomUUID" in globalThis.crypto
+  ) {
+    return globalThis.crypto.randomUUID();
+  }
+  return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
 const parseEnvelope = (raw: string): ServerEnvelope | null => {
   try {
     const parsed = JSON.parse(raw) as {
@@ -43,6 +60,7 @@ const parseEnvelope = (raw: string): ServerEnvelope | null => {
       parsed.type === "session:created" ||
       parsed.type === "session:deleted" ||
       parsed.type === "session:stream" ||
+      parsed.type === "session:error" ||
       parsed.type === "core:loading-status" ||
       parsed.type === "session:binding"
     ) {
@@ -63,6 +81,11 @@ const isStreamPayload = (payload: unknown): payload is StreamPayload =>
   typeof payload === "object" &&
   payload !== null &&
   typeof (payload as { readonly sessionId?: unknown }).sessionId === "string";
+
+const isSessionErrorPayload = (
+  payload: unknown
+): payload is SessionErrorPayload =>
+  typeof payload === "object" && payload !== null;
 
 const isBindingPayload = (payload: unknown): payload is BindingPayload => {
   if (
@@ -146,11 +169,45 @@ export const createServerMessageHandler = (
     });
   };
 
+  const handleSessionError = (payload: unknown): void => {
+    if (!isSessionErrorPayload(payload)) {
+      return;
+    }
+    const candidate = payload as SessionErrorPayload;
+    const sessionId =
+      typeof candidate.sessionId === "string" ? candidate.sessionId : null;
+    if (!sessionId) {
+      return;
+    }
+    const providerLabel =
+      typeof candidate.providerId === "string" && candidate.providerId.trim()
+        ? `[${candidate.providerId.trim()}] `
+        : "";
+    const message =
+      typeof candidate.message === "string" && candidate.message.trim()
+        ? candidate.message.trim()
+        : "Unknown error.";
+
+    notify({
+      type: "session:message",
+      payload: {
+        sessionId,
+        message: {
+          id: generateLocalMessageId(),
+          role: "system",
+          content: `${providerLabel}${message}`,
+          createdAt: Date.now(),
+        },
+      } satisfies CoreBridgeSessionMessagePayload,
+    });
+  };
+
   const handlers: Record<ServerEventType, (payload: unknown) => void> = {
     "session:message": handleSessionMessage,
     "session:created": handleSessionCreated,
     "session:deleted": handleSessionDeleted,
     "session:stream": handleSessionStream,
+    "session:error": handleSessionError,
     "core:loading-status": (payload) => {
       notify({
         type: "core:loading-status",
