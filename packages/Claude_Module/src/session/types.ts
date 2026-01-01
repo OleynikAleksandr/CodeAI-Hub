@@ -20,6 +20,8 @@ export type ActiveSession = {
   readonly eventEmitter: EventEmitter;
   readonly messageController: MessageController;
   readonly logger: SessionLogger | null;
+  structuredOutputSchema?: Record<string, unknown> | null;
+  structuredOutputFinalized?: boolean;
   messageGenerator?: AsyncGenerator<unknown>;
   queryInstance?: AsyncIterableIterator<unknown> & {
     interrupt?: () => Promise<void>;

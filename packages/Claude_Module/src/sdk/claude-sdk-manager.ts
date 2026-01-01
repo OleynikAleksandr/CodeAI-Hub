@@ -81,13 +81,53 @@ export class ClaudeSDKManager {
     await this.initialize();
     const actualWorkspacePath =
       workspacePath ?? this.deps.workspace.workspacePath;
-    const filesBefore = this.deps.processor.getSDKFilesBefore();
-    const { tempId, session } = this.deps.sessions.createSession(
+    const { tempId } = this.deps.sessions.createSession(
       actualWorkspacePath,
       new SDKSessionLoggerFacade()
     );
+    return tempId;
+  }
+
+  async sendMessage(
+    sessionId: string,
+    content: string,
+    turnOptions?: Record<string, unknown>
+  ): Promise<void> {
+    await this.ensureSessionStarted(sessionId, turnOptions);
+    this.deps.processor.send(sessionId, content);
+  }
+
+  async closeSession(sessionId: string): Promise<void> {
+    await this.deps.sessions.closeSession(sessionId);
+  }
+
+  getSession(sessionId: string): ActiveSession | undefined {
+    return this.deps.sessions.getSession(sessionId);
+  }
+
+  private async ensureSessionStarted(
+    sessionId: string,
+    turnOptions?: Record<string, unknown>
+  ): Promise<void> {
+    const session = this.deps.sessions.getSession(sessionId);
+    if (!session) {
+      throw new Error(`Session ${sessionId} not found`);
+    }
+    if (session.queryInstance) {
+      return;
+    }
+    await this.initialize();
+
+    const outputSchema = readOutputSchema(turnOptions);
+    if (outputSchema) {
+      session.structuredOutputSchema = outputSchema;
+    }
+
+    const filesBefore = this.deps.processor.getSDKFilesBefore();
+    const tempId = session.sessionId;
     const queryInstance = this.invokeQuery(session);
     session.queryInstance = queryInstance;
+
     this.deps.processor
       .processResponses({
         sessionId: tempId,
@@ -99,6 +139,7 @@ export class ClaudeSDKManager {
       .catch((error) => {
         this.deps.reporter?.error?.("Claude response processing failed", error);
       });
+
     this.deps.processor
       .getSessionIdFromSDKFiles(filesBefore)
       .then((fileSessionId) => {
@@ -109,25 +150,13 @@ export class ClaudeSDKManager {
       .catch((error) => {
         this.deps.reporter?.error?.("Failed to read SDK session files", error);
       });
+
     session.eventEmitter.once("realSessionId", (realId: string) => {
       if (!realId || realId === tempId) {
         return;
       }
       this.promoteSessionId(tempId, realId, session);
     });
-    return tempId;
-  }
-
-  async sendMessage(sessionId: string, content: string): Promise<void> {
-    await this.deps.processor.send(sessionId, content);
-  }
-
-  async closeSession(sessionId: string): Promise<void> {
-    await this.deps.sessions.closeSession(sessionId);
-  }
-
-  getSession(sessionId: string): ActiveSession | undefined {
-    return this.deps.sessions.getSession(sessionId);
   }
 
   private promoteSessionId(
@@ -163,6 +192,7 @@ export class ClaudeSDKManager {
     const options = {
       cwd: session.workspacePath,
       permissionMode: "bypassPermissions",
+      allowDangerouslySkipPermissions: true,
       additionalDirectories: [session.workspacePath],
       includePartialMessages: false,
       projectPath,
@@ -171,6 +201,14 @@ export class ClaudeSDKManager {
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
       ...(resolvedModel ? { model: resolvedModel } : {}),
       ...thinkingOptions,
+      ...(session.structuredOutputSchema
+        ? {
+            outputFormat: {
+              type: "json_schema",
+              schema: session.structuredOutputSchema,
+            },
+          }
+        : {}),
     };
     const queryInstance = this.queryFunction({
       prompt: session.messageGenerator as AsyncGenerator<unknown>,
@@ -240,3 +278,16 @@ export class ClaudeSDKManager {
     }
   }
 }
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readOutputSchema = (
+  turnOptions?: Record<string, unknown>
+): Record<string, unknown> | null => {
+  if (!turnOptions) {
+    return null;
+  }
+  const schema = turnOptions.outputSchema;
+  return isRecord(schema) ? schema : null;
+};
