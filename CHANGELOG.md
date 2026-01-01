@@ -1,3 +1,11 @@
+## [1.1.373] - 2026-01-01
+
+### Added
+- **Idea Collector cluster/app rules**: the universal contract now explicitly supports `приложение`/`кластер` idea types and enforces the Flow rule that `Spec.md`/`Plan.md` are produced per-module for multi-module initiatives.
+
+### Changed
+- **Virtual Simulation structure**: the contract now nudges agents to include `UI ↔ Core события` and `Логи и телеметрия` sections for more implementation-ready simulations.
+
 ## [1.1.372] - 2026-01-01
 
 ### Added
