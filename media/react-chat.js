@@ -7788,11 +7788,11 @@
       );
     };
     const isSubmitDisabled = selectedIds.length === 0;
-    const isCodexSelected = selectedProvider?.id === "codexCli";
-    const primaryButtonLabel = isCodexSelected ? "Continue" : "Start session";
+    const isFlowProviderSelected = selectedProvider?.id === "codexCli" || selectedProvider?.id === "claudeCodeCli";
+    const primaryButtonLabel = isFlowProviderSelected ? "Continue" : "Start session";
     let selectionMessage = "Select a provider to continue.";
     if (!isSubmitDisabled) {
-      selectionMessage = isCodexSelected ? "Codex selected. Continue to flow." : `${selectedProvider?.title ?? "Provider"} selected.`;
+      selectionMessage = isFlowProviderSelected ? `${selectedProvider?.title ?? "Provider"} selected. Continue to flow.` : `${selectedProvider?.title ?? "Provider"} selected.`;
     }
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
       "section",
@@ -22681,7 +22681,7 @@ ${path2}` : path2;
   }) => {
     const handleProviderConfirm = (providerIds) => {
       const selectedProvider = providerIds[0];
-      if (selectedProvider === "codexCli") {
+      if (selectedProvider === "codexCli" || selectedProvider === "claudeCodeCli") {
         openFlowWizard(selectedProvider);
         return;
       }
@@ -22710,7 +22710,7 @@ ${path2}` : path2;
       flowWizardVisible ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "provider-picker", children: [
         /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(FlowWizard, { activeStage: "idea", onStageClick: handleFlowStageClick }),
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "provider-picker__actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: flowWizardProviderId === "codexCli" ? "Click Idea to start." : "Select a stage to continue." }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: flowWizardProviderId === "codexCli" || flowWizardProviderId === "claudeCodeCli" ? "Click Idea to start." : "Select a stage to continue." }),
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "provider-picker__action-buttons", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
             "button",
             {
@@ -26395,7 +26395,7 @@ ${template}`;
     );
     const confirmSelectionFromUi = (0, import_react24.useCallback)(
       (providerIds) => {
-        shouldKickoffIdeaRef.current = flowWizardVisible && providerIds[0] === "codexCli";
+        shouldKickoffIdeaRef.current = flowWizardVisible && (providerIds[0] === "codexCli" || providerIds[0] === "claudeCodeCli");
         confirmSelection(providerIds);
       },
       [confirmSelection, flowWizardVisible]

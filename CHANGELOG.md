@@ -1,3 +1,8 @@
+## [1.1.372] - 2026-01-01
+
+### Added
+- **Idea Collector on Claude (Structured Outputs)**: Flow Wizard can launch the Idea Collector flow when the Claude provider is selected; the Claude Agent SDK is invoked with JSON-schema structured outputs to produce the same artifacts as Codex.
+
 ## [1.1.371] - 2025-12-31
 
 ### Fixed

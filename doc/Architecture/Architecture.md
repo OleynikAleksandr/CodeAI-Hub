@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.5.9
-**Last Updated:** 2025-12-31
+**Last Updated:** 2026-01-01
 **Status:** Active reference
-**Release Focus:** v1.1.370 — Idea Collector создаёт два артефакта (Idea + Virtual Simulation) и использует flow/stage структуру.
+**Release Focus:** v1.1.372 — Idea Collector доступен для Codex и Claude через Structured Outputs; создаёт два артефакта (Idea + Virtual Simulation) и использует flow/stage структуру.
 
 ---
 
@@ -31,7 +31,7 @@ graph TD
 ## Extension Host Layer
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
 - **UI bundle bootstrap (v1.1.313)**: `ui-activation.ts` (вызывается из `activate`) читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current`. Поддерживаются `vscode-webview`, `web-client` и `project-manager`.
-- **Idea Collector artifacts (v1.1.370)**: schema читается из `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, а артефакты пишутся в `.codeai-hub/full-development-flow/idea/` (`idea.md`, `virtual-simulation.md`).
+- **Idea Collector artifacts (v1.1.372)**: schema читается из `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, а артефакты пишутся в `.codeai-hub/full-development-flow/idea/` (`idea.md`, `virtual-simulation.md`).
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
 - **Core Bootstrap (v1.1.353 improvements)**: Ядро переведено на мульти-тенантную архитектуру. Рабочий каталог (`workspacePath`) теперь является свойством конкретной Сессии, а не глобальным параметром процесса. Это позволяет одному экземпляру Ядра обслуживать несколько проектов одновременно.
@@ -55,7 +55,7 @@ graph TD
 - **Session Binding**: `InfoPanel` отображает состояние привязки к провайдеру — ожидается ли реальный `sessionId`, удалось ли его получить, либо инициализация провалилась. После подтверждения от SDK панель выводит полный идентификатор сессии (и подсказку в `title`), помогая отлаживать CLI-интеграции.
 - **Clipboard handling**: `input-panel-clipboard` централизует обработку copy/paste в webview и standalone — реагирует на `ClipboardEvent`, использует `navigator.clipboard` как fallback и сохраняет высоту textarea.
 - **Provider Picker & Settings**: отдельные модули `provider-picker`, `settings/view` позволяют выбирать провайдеров (Claude, Codex, Gemini) и менять конфигурацию визардов. UI отображает статус подключения каждого стека (connected / offline) и синхронизирует выбор с extension host через события ядра.
-- **Flow Wizard → Idea Collector**: для Codex включён Flow Wizard (Idea/Spec/Plan), который стартует Guided Conversation. `IdeaCollectorService` получает contract (prompt + schema + template) из Core API `/api/v1/orchestrator/idea-contract`, а Codex structured outputs возвращают `suggested_response` + артефакт.
+- **Flow Wizard → Idea Collector**: для Codex и Claude включён Flow Wizard (Idea/Spec/Plan), который стартует Guided Conversation. `IdeaCollectorService` получает contract (prompt + schema + template) из Core API `/api/v1/orchestrator/idea-contract`, а Codex structured outputs возвращают `suggested_response` + артефакт.
 - **Provider health isolation**: `ProviderRegistry` отслеживает runtime-ошибки Claude/Codex/Gemini CLI и по сигналу Remote Bridge помечает провайдера как `inactive`, очищает адаптер и планирует автоматический retry. Ошибки `createSession`/`sendMessage`/`closeSession` больше не валят orchestrator: сессия получает статус `failed`, UI выводит предупреждение, а остальные провайдеры продолжают работать.
 - **Claude Default model selector**: в разделе Settings → Claude появился новый блок `Claude Default model`, который хранит выбранный alias (`default/sonnet`, `opus`, `haiku`) в `~/.codeai-hub/settings/settings.json` и сразу обновляет переменную окружения `CLAUDE_DEFAULT_MODEL`, чтобы core передавал актуальный alias в Claude SDK при создании сессий.
 - **Streaming Rendering**: `StreamingWordEmitter` и `useDialogMessages` формируют потоковый вывод без разрывов Markdown. Логика идентична в webview и локальном веб-клиенте.

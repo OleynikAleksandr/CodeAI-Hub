@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.370 (31.12.2025) — Idea Collector получает универсальный контракт из Core API (`/api/v1/orchestrator/idea-contract`), контракт v2 добавляет `readiness`/`handoff_for_spec`, а schema хранится в `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`. Core сохраняет `.codeai-hub/full-development-flow/idea/idea.md` и `.codeai-hub/full-development-flow/idea/virtual-simulation.md` в workspace через `POST /api/v1/orchestrator/idea-artifact`. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
+**Состояние:** релиз 1.1.372 (01.01.2026) — Idea Collector получает универсальный контракт из Core API (`/api/v1/orchestrator/idea-contract`), контракт v2 добавляет `readiness`/`handoff_for_spec`, а schema хранится в `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`. Core сохраняет `.codeai-hub/full-development-flow/idea/idea.md` и `.codeai-hub/full-development-flow/idea/virtual-simulation.md` в workspace через `POST /api/v1/orchestrator/idea-artifact`. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`.
 
 ## Обзор
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
@@ -106,7 +106,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Release 1.1.361**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.361.
 
 ## Recent Changes (v1.1.360 - 2025-12-29)
-- **Idea Collector flow**: Flow Wizard запускает guided conversation для Codex, structured output возвращает `suggested_response` и артефакты.
+- **Idea Collector flow**: Flow Wizard запускает guided conversation для Codex и Claude (Claude Agent SDK Structured Outputs), structured output возвращает `suggested_response` и артефакты.
 - **Release 1.1.360**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.360.
 
 ## Recent Changes (v1.1.359 - 2025-12-27)
