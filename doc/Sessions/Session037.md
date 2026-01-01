@@ -13,6 +13,10 @@
   - добавлены типы идеи `приложение`/`кластер`;
   - вшито правило Flow: для `приложение`/`кластер` этап Spec считается завершённым только после `Spec.md` для каждого модуля; `Plan.md` составляется отдельно для каждого модуля;
   - virtual-simulation.md стандартизирован: секции `UI ↔ Core события` и `Логи и телеметрия` сделаны обязательными (когда релевантно).
+- Изменения вне git (global templates):
+  - `~/.codeai-hub/templates/full-development-flow/idea/idea-template.md`
+  - `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-prompt.md`
+  - `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`
 - Синхронизирован fallback (UI) для schema/стартового промпта, чтобы поведение было консистентным при недоступности Core контракта.
 - Обновлены документы релиза: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/IdeaCollector_Universal_Contract.md`.
 - Собран релиз 1.1.373: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`, VSIX создан.
@@ -22,6 +26,7 @@
 - `f4fcf8c feat(idea-collector): add cluster/app flow rules`
 - `e3a513c fix(idea-collector): sync kickoff prompt for clusters`
 - `a2c1e27 feat: v1.1.373 - Idea Collector cluster/app rules`
+- `8fd7963 docs(session): add Session037 report`
 
 ---
 
