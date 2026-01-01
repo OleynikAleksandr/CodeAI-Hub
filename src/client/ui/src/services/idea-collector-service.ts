@@ -7,6 +7,7 @@ import {
   postSystemNotice,
   resolveCoreHttpUrl,
 } from "./idea-collector-support";
+import { buildMessageWithWorkspaceContext } from "./idea-collector-workspace-context";
 
 type IdeaCollectorArtifact = {
   readonly ideaPath: string;
@@ -179,6 +180,10 @@ export class IdeaCollectorService {
         sessionId,
         "Запускаю Idea Collector. Пожалуйста, дождитесь первого вопроса."
       );
+      postSystemNotice(
+        sessionId,
+        "Чтобы приложить существующие документы/файлы из workspace, напишите:\n/read <relative-path>\n(можно несколько путей в одной строке, максимум 3)."
+      );
     }
     const [prompt, schema] = await Promise.all([
       this.getPrompt(),
@@ -195,7 +200,16 @@ export class IdeaCollectorService {
       return;
     }
     const schema = await this.getNormalizedSchema();
-    sendChatMessage(sessionId, content, { outputSchema: schema });
+    const augmentedContent = await buildMessageWithWorkspaceContext(
+      sessionId,
+      content
+    );
+    if (augmentedContent === "") {
+      return;
+    }
+    sendChatMessage(sessionId, augmentedContent ?? content, {
+      outputSchema: schema,
+    });
   }
 
   handleStreamEvent(sessionId: string, event: unknown): void {
