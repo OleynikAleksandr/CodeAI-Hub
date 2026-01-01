@@ -6,6 +6,7 @@ import { DEFAULT_CONFIG, FALLBACK_PROVIDERS } from "./constants";
 import { convertStatusResponse } from "./normalizers";
 import { createServerMessageHandler } from "./server-message-handler";
 import { loadSessionHistories } from "./session-history";
+import { requestCoreFromSupervisor } from "./supervisor-requests";
 import type { CoreBridgeConfig, ServerStatusResponse } from "./types";
 
 const RECONNECT_DELAY_MS = 2000;
@@ -76,6 +77,7 @@ const enqueueMessage = (payload: unknown): void => {
   pendingMessages.push(serialized);
   flushPendingMessages();
 };
+
 const scheduleReconnect = (config: CoreBridgeConfig): void => {
   if (reconnectTimer) {
     return;
@@ -86,18 +88,9 @@ const scheduleReconnect = (config: CoreBridgeConfig): void => {
       ? "Reconnecting to CodeAI Hub core…"
       : "Starting CodeAI Hub core via Supervisor…"
   );
-  if (!hasSuccessfulConnection) {
-    try {
-      type VsCodeWindow = typeof window & {
-        acquireVsCodeApi?: () => { postMessage: (m: unknown) => void };
-      };
-      (window as VsCodeWindow)
-        .acquireVsCodeApi?.()
-        .postMessage({ type: "core:restart-request" });
-    } catch {
-      /* noop */
-    }
-  }
+  requestCoreFromSupervisor(
+    hasSuccessfulConnection ? "ensure-started" : "restart"
+  );
   reconnectTimer = window.setTimeout(() => {
     reconnectTimer = undefined;
     connectWebSocket(config);

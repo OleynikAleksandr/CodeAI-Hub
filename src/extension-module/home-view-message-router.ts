@@ -65,6 +65,17 @@ export class HomeViewMessageRouter {
       return;
     }
 
+    // Ensure core is running (no forced restart)
+    if (
+      typeof message === "object" &&
+      message !== null &&
+      "type" in message &&
+      message.type === "core:ensure-started"
+    ) {
+      this.handleCoreEnsureStartedRequest();
+      return;
+    }
+
     if (
       typeof message === "object" &&
       message !== null &&
@@ -124,6 +135,17 @@ export class HomeViewMessageRouter {
         const reason = error instanceof Error ? error.message : String(error);
         window.showErrorMessage(`Failed to restart core: ${reason}`);
       });
+  }
+
+  private handleCoreEnsureStartedRequest(): void {
+    if (!this.coreProcessManager) {
+      return;
+    }
+
+    this.coreProcessManager.ensureStarted(undefined).catch((error) => {
+      const reason = error instanceof Error ? error.message : String(error);
+      window.showErrorMessage(`Failed to start core: ${reason}`);
+    });
   }
 
   private notifyWebview(

@@ -38,6 +38,14 @@ type SessionIdChangedPayload = {
   readonly newId?: string;
 };
 
+type ProviderErrorEnvelope = {
+  readonly provider?: unknown;
+  readonly message?: unknown;
+  readonly error?: unknown;
+  readonly payload?: unknown;
+  readonly type?: unknown;
+};
+
 export type SessionRequestHandlerOptions = {
   readonly config: CoreConfig;
   readonly sessionManager: SessionManager;
@@ -226,6 +234,11 @@ export class SessionRequestHandler {
       case "realSessionId":
         this.handleRealSessionIdEvent(sessionId, event.payload);
         break;
+      case "turn_failed":
+      case "stream_error":
+      case "error":
+        this.broadcastProviderError(sessionId, event);
+        break;
       case "stream_event":
         this.broadcaster({
           type: "session:stream",
@@ -244,6 +257,57 @@ export class SessionRequestHandler {
       default:
         break;
     }
+  }
+
+  private broadcastProviderError(
+    sessionId: string,
+    event: ProviderEventEnvelope
+  ): void {
+    const typed = event as ProviderErrorEnvelope;
+    const providerId =
+      typeof typed.provider === "string" && typed.provider.trim().length > 0
+        ? typed.provider.trim()
+        : null;
+
+    const message = this.extractProviderErrorMessage(typed);
+    this.broadcaster({
+      type: "session:error",
+      payload: {
+        sessionId,
+        providerId,
+        message,
+      },
+    });
+  }
+
+  private extractProviderErrorMessage(event: ProviderErrorEnvelope): string {
+    if (typeof event.message === "string" && event.message.trim().length > 0) {
+      return event.message.trim();
+    }
+    if (typeof event.error === "string" && event.error.trim().length > 0) {
+      return event.error.trim();
+    }
+    if (event.error && typeof event.error === "object") {
+      const candidate = event.error as { readonly message?: unknown };
+      if (
+        typeof candidate.message === "string" &&
+        candidate.message.trim().length > 0
+      ) {
+        return candidate.message.trim();
+      }
+      return JSON.stringify(event.error);
+    }
+    if (event.payload && typeof event.payload === "object") {
+      const candidate = event.payload as { readonly message?: unknown };
+      if (
+        typeof candidate.message === "string" &&
+        candidate.message.trim().length > 0
+      ) {
+        return candidate.message.trim();
+      }
+      return JSON.stringify(event.payload);
+    }
+    return "Provider error.";
   }
 
   private handleProviderFailure(
