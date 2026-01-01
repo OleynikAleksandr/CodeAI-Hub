@@ -40,7 +40,10 @@ export const SessionRegion = ({
 }: SessionRegionProps) => {
   const handleProviderConfirm = (providerIds: readonly ProviderStackId[]) => {
     const selectedProvider = providerIds[0];
-    if (selectedProvider === "codexCli") {
+    if (
+      selectedProvider === "codexCli" ||
+      selectedProvider === "claudeCodeCli"
+    ) {
       openFlowWizard(selectedProvider);
       return;
     }
@@ -72,7 +75,8 @@ export const SessionRegion = ({
           <FlowWizard activeStage="idea" onStageClick={handleFlowStageClick} />
           <div className="provider-picker__actions">
             <output aria-live="polite" className="provider-picker__status">
-              {flowWizardProviderId === "codexCli"
+              {flowWizardProviderId === "codexCli" ||
+              flowWizardProviderId === "claudeCodeCli"
                 ? "Click Idea to start."
                 : "Select a stage to continue."}
             </output>

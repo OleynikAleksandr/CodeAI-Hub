@@ -1,10 +1,16 @@
 import crypto from "node:crypto";
-import fs from "node:fs";
-import path from "node:path";
-import { setTimeout as delay } from "node:timers/promises";
 import type { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage, ModuleReporter } from "../types";
+import type { IdeaCollectorStructuredOutput } from "./idea-collector-structured-output";
+import {
+  parseIdeaCollectorOutputFromResultMessage,
+  parseIdeaCollectorOutputFromText,
+} from "./idea-collector-structured-output";
+import {
+  getSDKFilesBefore,
+  getSessionIdFromSDKFiles,
+} from "./session-file-discovery";
 
 type ProcessResponseOptions = {
   readonly sessionId: string;
@@ -16,18 +22,6 @@ type MessageProcessorOptions = {
   readonly projectPath: string;
   readonly reporter?: ModuleReporter;
 };
-
-const SESSION_DISCOVERY_TIMEOUT_MS = 1000;
-const SESSION_DISCOVERY_POLL_INTERVAL_MS = 50;
-const SESSION_FILE_EXTENSION = ".jsonl";
-
-/**
- * UUID v4 pattern: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
- * Only files matching this pattern are considered valid session files.
- * This excludes sub-agent files (agent-*.jsonl) and other non-session files.
- */
-const UUID_SESSION_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export class SDKMessageProcessor {
   private readonly sessionManager: SDKSessionManager;
@@ -122,6 +116,25 @@ export class SDKMessageProcessor {
         if (!assistantText) {
           return;
         }
+        const structured = parseIdeaCollectorOutputFromText(assistantText);
+        if (structured) {
+          this.emitStructuredOutput(session, message, structured);
+          if (structured.suggestedResponse) {
+            emitter.emit("message", {
+              type: "assistant",
+              content: structured.suggestedResponse,
+              uuid: message.uuid,
+              claudeSessionId: message.session_id,
+              data: message,
+              metadata: {
+                uuid: message.uuid,
+                session_id: message.session_id,
+                model: message.message?.model,
+              },
+            });
+          }
+          return;
+        }
         emitter.emit("message", {
           type: "assistant",
           content: assistantText,
@@ -136,9 +149,45 @@ export class SDKMessageProcessor {
         });
         break;
       }
+      case "result": {
+        const structured = parseIdeaCollectorOutputFromResultMessage(message);
+        if (structured) {
+          this.emitStructuredOutput(session, message, structured);
+        }
+        break;
+      }
       default:
         break;
     }
+  }
+
+  private emitStructuredOutput(
+    session: ActiveSession,
+    message: ClaudeStreamMessage,
+    output: IdeaCollectorStructuredOutput
+  ): void {
+    if (!(output.nextAction && output.artifact)) {
+      return;
+    }
+    if (output.nextAction === "finalize") {
+      if (session.structuredOutputFinalized) {
+        return;
+      }
+      session.structuredOutputFinalized = true;
+    }
+    session.eventEmitter.emit("message", {
+      type: "stream_event",
+      provider: "claude",
+      sessionId: session.sessionId,
+      claudeSessionId: message.session_id,
+      data: {
+        kind: "structured_output",
+        artifact: output.artifact,
+        nextAction: output.nextAction,
+      },
+      uuid: `${message.uuid ?? crypto.randomUUID()}::structured_output`,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   private emitThinkingChunks(
@@ -201,74 +250,14 @@ export class SDKMessageProcessor {
   }
 
   getSDKFilesBefore(): string[] {
-    if (!fs.existsSync(this.options.projectPath)) {
-      this.options.reporter?.warn?.(
-        `Claude project path missing: ${this.options.projectPath}`
-      );
-      return [];
-    }
-    return fs
-      .readdirSync(this.options.projectPath)
-      .filter(
-        (fileName) =>
-          fileName.endsWith(SESSION_FILE_EXTENSION) &&
-          this.isValidSessionFile(fileName)
-      )
-      .map((fileName) => path.join(this.options.projectPath, fileName));
+    return getSDKFilesBefore(this.options.projectPath, this.options.reporter);
   }
 
-  /**
-   * Checks if file name matches UUID session format.
-   * Excludes sub-agent files (agent-*.jsonl) and other non-session files.
-   */
-  private isValidSessionFile(fileName: string): boolean {
-    const baseName = path.basename(fileName, SESSION_FILE_EXTENSION);
-    return UUID_SESSION_PATTERN.test(baseName);
-  }
-
-  async getSessionIdFromSDKFiles(
-    previousFiles: string[]
-  ): Promise<string | null> {
-    if (!fs.existsSync(this.options.projectPath)) {
-      return null;
-    }
-    const deadline = Date.now() + SESSION_DISCOVERY_TIMEOUT_MS;
-    while (Date.now() < deadline) {
-      const filesAfter = fs
-        .readdirSync(this.options.projectPath)
-        .filter(
-          (fileName) =>
-            fileName.endsWith(SESSION_FILE_EXTENSION) &&
-            this.isValidSessionFile(fileName)
-        )
-        .map((fileName) => path.join(this.options.projectPath, fileName));
-      const newFile = filesAfter.find(
-        (filePath) => !previousFiles.includes(filePath)
-      );
-      if (newFile) {
-        const sessionId = path.basename(newFile, ".jsonl");
-        try {
-          const content = fs.readFileSync(newFile, "utf8");
-          const firstLine = content
-            .split("\n")
-            .find((line) => line.trim().length > 0);
-          if (!firstLine) {
-            return sessionId;
-          }
-          const parsed = JSON.parse(firstLine) as {
-            readonly sessionId?: string;
-          };
-          return parsed.sessionId ?? sessionId;
-        } catch (error) {
-          this.options.reporter?.error?.(
-            "Failed to inspect SDK session file",
-            error
-          );
-          return sessionId;
-        }
-      }
-      await delay(SESSION_DISCOVERY_POLL_INTERVAL_MS);
-    }
-    return null;
+  getSessionIdFromSDKFiles(previousFiles: string[]): Promise<string | null> {
+    return getSessionIdFromSDKFiles(
+      this.options.projectPath,
+      previousFiles,
+      this.options.reporter
+    );
   }
 }

@@ -59,8 +59,12 @@ export class ClaudeProviderAdapter {
     this.listeners.delete(sessionId);
   }
 
-  async sendMessage(sessionId: string, content: string): Promise<void> {
-    await this.sdkManager.sendMessage(sessionId, content);
+  async sendMessage(
+    sessionId: string,
+    content: string,
+    turnOptions?: Record<string, unknown>
+  ): Promise<void> {
+    await this.sdkManager.sendMessage(sessionId, content, turnOptions);
   }
 
   subscribe(sessionId: string, listener: SessionListener): () => void {

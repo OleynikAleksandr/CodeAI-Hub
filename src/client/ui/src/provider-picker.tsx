@@ -155,12 +155,16 @@ export const ProviderPicker = ({
   };
 
   const isSubmitDisabled = selectedIds.length === 0;
-  const isCodexSelected = selectedProvider?.id === "codexCli";
-  const primaryButtonLabel = isCodexSelected ? "Continue" : "Start session";
+  const isFlowProviderSelected =
+    selectedProvider?.id === "codexCli" ||
+    selectedProvider?.id === "claudeCodeCli";
+  const primaryButtonLabel = isFlowProviderSelected
+    ? "Continue"
+    : "Start session";
   let selectionMessage = "Select a provider to continue.";
   if (!isSubmitDisabled) {
-    selectionMessage = isCodexSelected
-      ? "Codex selected. Continue to flow."
+    selectionMessage = isFlowProviderSelected
+      ? `${selectedProvider?.title ?? "Provider"} selected. Continue to flow.`
       : `${selectedProvider?.title ?? "Provider"} selected.`;
   }
 

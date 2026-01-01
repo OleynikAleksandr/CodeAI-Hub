@@ -88,7 +88,8 @@ const AppHost = () => {
   const confirmSelectionFromUi = useCallback(
     (providerIds: readonly ProviderStackId[]) => {
       shouldKickoffIdeaRef.current =
-        flowWizardVisible && providerIds[0] === "codexCli";
+        flowWizardVisible &&
+        (providerIds[0] === "codexCli" || providerIds[0] === "claudeCodeCli");
       confirmSelection(providerIds);
     },
     [confirmSelection, flowWizardVisible]
