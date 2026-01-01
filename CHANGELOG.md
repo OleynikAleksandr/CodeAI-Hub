@@ -1,3 +1,9 @@
+## [1.1.375] - 2026-01-01
+
+### Fixed
+- **Core reconnect**: webview requests Supervisor to ensure Core is running on reconnect, reducing silent drops after idle shutdown.
+- **Provider errors in UI**: provider turn failures are propagated as session errors and rendered as system messages in the chat.
+
 ## [1.1.374] - 2026-01-01
 
 ### Added

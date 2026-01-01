@@ -8144,13 +8144,19 @@
   };
 
   // src/client/ui/src/core-bridge/server-message-handler.ts
+  var generateLocalMessageId = () => {
+    if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
+      return globalThis.crypto.randomUUID();
+    }
+    return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  };
   var parseEnvelope = (raw) => {
     try {
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed.type !== "string") {
         return null;
       }
-      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "core:loading-status" || parsed.type === "session:binding") {
+      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "session:error" || parsed.type === "core:loading-status" || parsed.type === "session:binding") {
         return { type: parsed.type, payload: parsed.payload };
       }
     } catch {
@@ -8160,6 +8166,7 @@
   };
   var isDeletedPayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string";
   var isStreamPayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string";
+  var isSessionErrorPayload = (payload) => typeof payload === "object" && payload !== null;
   var isBindingPayload = (payload) => {
     if (typeof payload !== "object" || payload === null || typeof payload.sessionId !== "string") {
       return false;
@@ -8222,11 +8229,36 @@
         }
       });
     };
+    const handleSessionError = (payload) => {
+      if (!isSessionErrorPayload(payload)) {
+        return;
+      }
+      const candidate = payload;
+      const sessionId = typeof candidate.sessionId === "string" ? candidate.sessionId : null;
+      if (!sessionId) {
+        return;
+      }
+      const providerLabel = typeof candidate.providerId === "string" && candidate.providerId.trim() ? `[${candidate.providerId.trim()}] ` : "";
+      const message = typeof candidate.message === "string" && candidate.message.trim() ? candidate.message.trim() : "Unknown error.";
+      notify({
+        type: "session:message",
+        payload: {
+          sessionId,
+          message: {
+            id: generateLocalMessageId(),
+            role: "system",
+            content: `${providerLabel}${message}`,
+            createdAt: Date.now()
+          }
+        }
+      });
+    };
     const handlers2 = {
       "session:message": handleSessionMessage,
       "session:created": handleSessionCreated,
       "session:deleted": handleSessionDeleted,
       "session:stream": handleSessionStream,
+      "session:error": handleSessionError,
       "core:loading-status": (payload) => {
         notify({
           type: "core:loading-status",
@@ -8281,6 +8313,16 @@
     await Promise.all(
       sessions.map((session) => fetchSessionHistory(config, session.id, notify))
     );
+  };
+
+  // src/client/ui/src/core-bridge/supervisor-requests.ts
+  var requestCoreFromSupervisor = (mode) => {
+    try {
+      window.acquireVsCodeApi?.().postMessage({
+        type: mode === "restart" ? "core:restart-request" : "core:ensure-started"
+      });
+    } catch {
+    }
   };
 
   // src/client/ui/src/core-bridge/core-bridge.ts
@@ -8338,12 +8380,9 @@
       "connecting",
       hasSuccessfulConnection ? "Reconnecting to CodeAI Hub core\u2026" : "Starting CodeAI Hub core via Supervisor\u2026"
     );
-    if (!hasSuccessfulConnection) {
-      try {
-        window.acquireVsCodeApi?.().postMessage({ type: "core:restart-request" });
-      } catch {
-      }
-    }
+    requestCoreFromSupervisor(
+      hasSuccessfulConnection ? "ensure-started" : "restart"
+    );
     reconnectTimer = window.setTimeout(() => {
       reconnectTimer = void 0;
       connectWebSocket(config);
@@ -23124,7 +23163,7 @@ ${template}`;
   };
 
   // src/client/ui/src/services/idea-collector-support.ts
-  var generateLocalMessageId = () => {
+  var generateLocalMessageId2 = () => {
     if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
       return globalThis.crypto.randomUUID();
     }
@@ -23146,7 +23185,7 @@ ${template}`;
         payload: {
           sessionId,
           message: {
-            id: generateLocalMessageId(),
+            id: generateLocalMessageId2(),
             role: "system",
             content: content3,
             createdAt: Date.now()
