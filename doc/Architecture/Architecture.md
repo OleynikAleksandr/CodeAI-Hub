@@ -3,7 +3,7 @@
 **Version:** 0.5.9
 **Last Updated:** 2026-01-02
 **Status:** Active reference
-**Release Focus:** v1.1.376 — Workspace auto-attach: Core автоматически прикрепляет содержимое файлов workspace по явным триггерам (без `/read`); Надёжность UI ↔ Core: auto-ensure-started на реконнекте + отображение ошибок провайдера в чате; Idea Collector: прикрепление документов воркспейса и чтение через Core endpoint.
+**Release Focus:** v1.1.377 — Workspace auto-attach: Core автоматически прикрепляет содержимое файлов workspace по явным триггерам (без `/read`), включая многострочные сообщения; Надёжность UI ↔ Core: auto-ensure-started на реконнекте + отображение ошибок провайдера в чате.
 
 ---
 
@@ -241,4 +241,5 @@ graph TD
 - `doc/TODO/todo-plan.md`
 - `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`
 - `doc/Project_Docs/Stacks/UI_Modules.md`
+
 
