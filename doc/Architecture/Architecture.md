@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.5.9
-**Last Updated:** 2026-01-01
+**Last Updated:** 2026-01-02
 **Status:** Active reference
-**Release Focus:** v1.1.375 — Надёжность UI ↔ Core: auto-ensure-started на реконнекте + отображение ошибок провайдера в чате; Idea Collector: поддержка прикрепления существующих документов воркспейса (UI `/read`) и чтение через Core endpoint; `приложение`/`кластер` как first-class типы идеи и правило Flow для multi-module (Spec/Plan по модулям).
+**Release Focus:** v1.1.376 — Workspace auto-attach: Core автоматически прикрепляет содержимое файлов workspace по явным триггерам (без `/read`); Надёжность UI ↔ Core: auto-ensure-started на реконнекте + отображение ошибок провайдера в чате; Idea Collector: прикрепление документов воркспейса и чтение через Core endpoint.
 
 ---
 
@@ -241,3 +241,4 @@ graph TD
 - `doc/TODO/todo-plan.md`
 - `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`
 - `doc/Project_Docs/Stacks/UI_Modules.md`
+
