@@ -9,7 +9,7 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Idea Collector cluster/app rules**: шаблоны теперь явно поддерживают `приложение`/`кластер` и фиксируют правило Flow: для multi-module инициатив `Spec.md`/`Plan.md` делаются отдельно для каждого модуля.
 - **Idea Collector workspace docs**: в интервью можно прикреплять существующие файлы воркспейса (команда `/read <path>`), чтобы агент мог ссылаться на реальные документы.
 - **Core reconnect reliability**: webview автоматически просит Supervisor запустить Core при реконнекте; ошибки провайдера показываются в чате как system message.
-- **Workspace auto-attach**: можно писать «прочитай: <path>…» — Core сам приложит текст файлов workspace (без `/read`).
+- **Workspace auto-attach**: напишите триггер (например, «прочитай/изучи/ознакомься») и укажите 1–3 относительных пути к файлам в workspace (можно на отдельных строках) — Core сам приложит содержимое (до 60KB/файл; только текстовые расширения), без `/read`.
 - **Release 1.1.377**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
@@ -97,4 +97,3 @@ doc/                         Architecture and knowledge base (ignored in VSIX).
 
 ## License
 License information will be added in a future update. Until then, treat the repository as proprietary and request permission before redistribution.
-
