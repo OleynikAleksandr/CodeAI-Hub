@@ -3,6 +3,7 @@ import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import { autoAttachWorkspaceFiles } from "./workspace-auto-attach";
 
 export type ProviderSessionBinding = {
   readonly providerId: string;
@@ -147,6 +148,25 @@ export class SessionRequestHandler {
     }
 
     const { content, turnOptions } = extracted;
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      this.broadcaster({
+        type: "session:error",
+        payload: { sessionId, message: "Session not found" },
+      });
+      return;
+    }
+
+    const providerContentResult = await autoAttachWorkspaceFiles(
+      session.workspacePath,
+      content
+    );
+    if (providerContentResult.didAttach) {
+      this.logger.info("Auto-attached workspace files to provider message", {
+        sessionId,
+        attachedPaths: providerContentResult.attachedPaths,
+      });
+    }
     const userMessage = this.sessionManager.appendMessage(
       sessionId,
       "user",
@@ -178,7 +198,7 @@ export class SessionRequestHandler {
     try {
       await adapter.sendMessage(
         binding.providerSessionId,
-        content,
+        providerContentResult.content,
         turnOptions
       );
     } catch (error) {

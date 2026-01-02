@@ -1,8 +1,8 @@
-import { open, stat } from "node:fs/promises";
 import path from "node:path";
 import type { Request, Response } from "express";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import { readFileHead, resolveWorkspaceFilePath } from "./workspace-file-utils";
 
 const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_FOUND = 404;
@@ -61,46 +61,6 @@ const parseWorkspaceFilePayload = (
   };
 };
 
-const resolveWorkspaceFilePath = (
-  workspaceRoot: string,
-  relativePath: string
-): string | null => {
-  if (path.isAbsolute(relativePath)) {
-    return null;
-  }
-  if (relativePath.includes("\0")) {
-    return null;
-  }
-  const resolvedRoot = path.resolve(workspaceRoot);
-  const resolvedFile = path.resolve(resolvedRoot, relativePath);
-  const rootPrefix = resolvedRoot.endsWith(path.sep)
-    ? resolvedRoot
-    : `${resolvedRoot}${path.sep}`;
-  if (!resolvedFile.startsWith(rootPrefix)) {
-    return null;
-  }
-  return resolvedFile;
-};
-
-const readFileHeadUtf8 = async (
-  absolutePath: string,
-  maxBytes: number
-): Promise<{ readonly content: string; readonly truncated: boolean }> => {
-  const fileStats = await stat(absolutePath);
-  const sizeBytes = fileStats.size;
-  const truncated = sizeBytes > maxBytes;
-  const bytesToRead = truncated ? maxBytes : sizeBytes;
-  const handle = await open(absolutePath, "r");
-  try {
-    const buffer = Buffer.alloc(bytesToRead);
-    const { bytesRead } = await handle.read(buffer, 0, bytesToRead, 0);
-    const content = buffer.subarray(0, bytesRead).toString("utf8");
-    return { content, truncated };
-  } finally {
-    await handle.close();
-  }
-};
-
 export const handleWorkspaceFileRead = async (
   req: Request,
   res: Response,
@@ -133,10 +93,8 @@ export const handleWorkspaceFileRead = async (
 
   try {
     const maxBytes = parsedPayload.value.maxBytes ?? DEFAULT_MAX_BYTES;
-    const { content, truncated } = await readFileHeadUtf8(
-      absolutePath,
-      maxBytes
-    );
+    const { buffer, truncated } = await readFileHead(absolutePath, maxBytes);
+    const content = buffer.toString("utf8");
     res.json({
       path: parsedPayload.value.path,
       truncated,
