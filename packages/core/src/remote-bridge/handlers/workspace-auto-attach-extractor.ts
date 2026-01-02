@@ -3,48 +3,44 @@ type CandidateMatch = {
   readonly index: number;
 };
 
-type SentenceSpan = {
-  readonly start: number;
-  readonly end: number;
-};
-
 type ExtractorOptions = {
   readonly maxFiles: number;
 };
 
-const MAX_TRIGGER_DISTANCE_CHARS = 200;
-const MAX_COLON_FOLLOWUP_LINES = 5;
-
-const SENTENCE_BREAK_PATTERN = /[?!;](?=\s|$)|\.(?=\s|$)/u;
 const NEWLINE_SPLIT_PATTERN = /\r?\n/u;
 const TRAILING_PUNCTUATION_PATTERN = /[),.;:!?]+$/u;
 const LOCATION_HASH_SUFFIX_PATTERN = /#L\d+(?:C\d+)?$/iu;
 const LOCATION_COLON_SUFFIX_PATTERN = /:(\d+)(?::\d+)?$/u;
-const WHITESPACE_CHAR_PATTERN = /\s/u;
-const WRAPPER_CHARS_PATTERN = /[`"'()[\]{}]/gu;
-const LIST_DELIMITERS_PATTERN = /[\s,;]+/gu;
 
-const TRIGGER_PATTERNS: readonly RegExp[] = [
-  /\b(прочти(те)?|прочитай(те)?|прочитать)\b/iu,
-  /\b(ознакомься|ознакомьтесь|познакомься|познакомьтесь)\b/iu,
-  /\b(изучи(те)?|посмотри(те)?|проверь(те)?|учти(те)?|используй(те)?)\b/iu,
-  /\b(read|review|check|inspect|use)\b/iu,
+const RU_TRIGGER_TOKENS: readonly string[] = [
+  "прочти",
+  "прочитай",
+  "прочитайте",
+  "прочитать",
+  "ознакомься",
+  "ознакомьтесь",
+  "познакомься",
+  "познакомьтесь",
+  "изучи",
+  "изучите",
+  "посмотри",
+  "посмотрите",
+  "проверь",
+  "проверьте",
+  "учти",
+  "учтите",
+  "используй",
+  "используйте",
 ];
 
-const looksLikeTrigger = (text: string): boolean =>
-  TRIGGER_PATTERNS.some((pattern) => pattern.test(text));
+const EN_TRIGGER_PATTERN = /\b(read|review|check|inspect|use)\b/iu;
 
-const getTriggerOffsets = (text: string): readonly number[] => {
-  const offsets: number[] = [];
-  for (const pattern of TRIGGER_PATTERNS) {
-    const global = new RegExp(pattern.source, `${pattern.flags}g`);
-    let match: RegExpExecArray | null;
-    // biome-ignore lint/suspicious/noAssignInExpressions: regex scanning
-    while ((match = global.exec(text))) {
-      offsets.push(match.index);
-    }
+const looksLikeTrigger = (text: string): boolean => {
+  const lower = text.toLowerCase();
+  if (RU_TRIGGER_TOKENS.some((token) => lower.includes(token))) {
+    return true;
   }
-  return offsets.sort((a, b) => a - b);
+  return EN_TRIGGER_PATTERN.test(text);
 };
 
 const stripTrailingPunctuation = (value: string): string =>
@@ -115,7 +111,7 @@ const extractCandidatePaths = (text: string): readonly CandidateMatch[] => {
   }
 
   const plain =
-    /(^|[\s(])([A-Za-z0-9][A-Za-z0-9._-]*(?:\/[A-Za-z0-9][A-Za-z0-9._-]*)+\.[A-Za-z0-9]{1,10}(?:#L\d+(?:C\d+)?)?(?::\d+(?::\d+)?)?)(?=[$\s),.;:!?])/gu;
+    /(^|[\s(])([A-Za-z0-9][A-Za-z0-9._-]*(?:\/[A-Za-z0-9][A-Za-z0-9._-]*)+\.[A-Za-z0-9]{1,10}(?:#L\d+(?:C\d+)?)?(?::\d+(?::\d+)?)?)(?=$|[\s),.;:!?])/gu;
   // biome-ignore lint/suspicious/noAssignInExpressions: regex scanning
   while ((match = plain.exec(text))) {
     const prefix = match[1] ?? "";
@@ -126,92 +122,7 @@ const extractCandidatePaths = (text: string): readonly CandidateMatch[] => {
     }
   }
 
-  return candidates;
-};
-
-const splitSentenceSpans = (line: string): readonly SentenceSpan[] => {
-  const spans: SentenceSpan[] = [];
-  let cursor = 0;
-  for (let index = 0; index < line.length; index += 1) {
-    const char = line[index];
-    if (char === "." || char === "?" || char === "!" || char === ";") {
-      const next = line[index + 1];
-      if (!next || WHITESPACE_CHAR_PATTERN.test(next)) {
-        spans.push({ start: cursor, end: index + 1 });
-        cursor = index + 1;
-      }
-    }
-  }
-  spans.push({ start: cursor, end: line.length });
-  return spans.filter((span) => span.end > span.start);
-};
-
-const isSameSentenceWindow = (
-  line: string,
-  triggerIndex: number,
-  candidateIndex: number
-): boolean => {
-  const start = Math.min(triggerIndex, candidateIndex);
-  const end = Math.max(triggerIndex, candidateIndex);
-  const between = line.slice(start, end);
-  return !SENTENCE_BREAK_PATTERN.test(between);
-};
-
-const pickNearbyPaths = (
-  line: string,
-  matches: readonly CandidateMatch[]
-): readonly string[] => {
-  const selected = new Set<string>();
-  const spans = splitSentenceSpans(line);
-
-  for (const span of spans) {
-    const segment = line.slice(span.start, span.end);
-    const triggers = getTriggerOffsets(segment);
-    if (triggers.length === 0) {
-      continue;
-    }
-    const segmentMatches = matches
-      .filter(
-        (candidate) =>
-          candidate.index >= span.start && candidate.index < span.end
-      )
-      .map((candidate) => ({
-        path: candidate.path,
-        index: candidate.index - span.start,
-      }));
-
-    for (const candidate of segmentMatches) {
-      for (const trigger of triggers) {
-        if (
-          Math.abs(candidate.index - trigger) <= MAX_TRIGGER_DISTANCE_CHARS &&
-          isSameSentenceWindow(segment, trigger, candidate.index)
-        ) {
-          selected.add(candidate.path);
-          break;
-        }
-      }
-    }
-  }
-
-  return Array.from(selected);
-};
-
-const isPathListLine = (
-  line: string,
-  matches: readonly CandidateMatch[]
-): boolean => {
-  if (matches.length === 0) {
-    return false;
-  }
-  let remaining = line;
-  for (const candidate of matches) {
-    remaining = remaining.replace(candidate.path, "");
-  }
-  const normalized = remaining
-    .replace(WRAPPER_CHARS_PATTERN, "")
-    .replace(LIST_DELIMITERS_PATTERN, "")
-    .trim();
-  return normalized.length === 0;
+  return candidates.sort((a, b) => a.index - b.index);
 };
 
 type LimitedCollector = {
@@ -254,29 +165,6 @@ const shouldScanForPaths = (message: string): boolean =>
   looksLikeTrigger(message) &&
   message.includes("/");
 
-const collectFollowUpPaths = (
-  lines: readonly string[],
-  startIndex: number
-): readonly string[] => {
-  const collected: string[] = [];
-
-  for (let offset = 1; offset <= MAX_COLON_FOLLOWUP_LINES; offset += 1) {
-    const followUp = lines[startIndex + offset] ?? "";
-    if (followUp.trim().length === 0) {
-      break;
-    }
-    const followMatches = extractCandidatePaths(followUp);
-    if (!isPathListLine(followUp, followMatches)) {
-      break;
-    }
-    for (const candidate of followMatches.map((entry) => entry.path)) {
-      collected.push(candidate);
-    }
-  }
-
-  return collected;
-};
-
 export const extractAutoAttachPaths = (
   message: string,
   options: ExtractorOptions
@@ -288,33 +176,13 @@ export const extractAutoAttachPaths = (
   const lines = message.split(NEWLINE_SPLIT_PATTERN);
   const collector = createLimitedCollector(options.maxFiles);
 
-  for (let index = 0; index < lines.length; index += 1) {
+  for (const line of lines) {
     if (collector.isFull()) {
       break;
     }
 
-    const line = lines[index] ?? "";
     const matches = extractCandidatePaths(line);
-    const nearby = pickNearbyPaths(line, matches);
-    collector.addMany(nearby);
-
-    if (collector.isFull()) {
-      break;
-    }
-
-    const trimmed = line.trim();
-    if (
-      !(
-        looksLikeTrigger(trimmed) &&
-        trimmed.endsWith(":") &&
-        nearby.length === 0
-      )
-    ) {
-      continue;
-    }
-
-    const followUps = collectFollowUpPaths(lines, index);
-    collector.addMany(followUps);
+    collector.addMany(matches.map((entry) => entry.path));
   }
 
   return collector.list();
