@@ -19,10 +19,10 @@ const HTTP_NO_CONTENT = 204;
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
 const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
-const FLOW_NAME = "full-development-flow";
-const IDEA_STAGE = "idea";
-const IDEA_ARTIFACT_RELATIVE_PATH = `.codeai-hub/${FLOW_NAME}/${IDEA_STAGE}/idea.md`;
-const VIRTUAL_SIMULATION_RELATIVE_PATH = `.codeai-hub/${FLOW_NAME}/${IDEA_STAGE}/virtual-simulation.md`;
+const IDEA_PATH_RE =
+  /^\.codeai-hub\/full-development-flow\/initiatives\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
+const VIRTUAL_SIMULATION_PATH_RE =
+  /^\.codeai-hub\/full-development-flow\/initiatives\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/virtual-simulation\.md$/;
 
 export type RouterDependencies = {
   readonly app: Express;
@@ -174,7 +174,7 @@ export class HttpApiRouter {
       res.status(HTTP_BAD_REQUEST).json({ error: parsedPayload.error });
       return;
     }
-    const { sessionId, ideaMarkdown, virtualSimulationMarkdown } =
+    const { sessionId, ideaMarkdown, virtualSimulationMarkdown, paths } =
       parsedPayload.value;
 
     const session = this.deps.sessionManager.getSession(sessionId);
@@ -186,13 +186,17 @@ export class HttpApiRouter {
     }
 
     const workspaceRoot = path.resolve(session.workspacePath);
-    const ideaPath = resolveArtifactPath(
-      workspaceRoot,
-      IDEA_ARTIFACT_RELATIVE_PATH
-    );
+    if (!isAllowedIdeaArtifactPaths(paths)) {
+      res.status(HTTP_BAD_REQUEST).json({
+        error:
+          "Invalid artifact paths (expected .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/...)",
+      });
+      return;
+    }
+    const ideaPath = resolveArtifactPath(workspaceRoot, paths.idea);
     const virtualSimulationPath = resolveArtifactPath(
       workspaceRoot,
-      VIRTUAL_SIMULATION_RELATIVE_PATH
+      paths.virtualSimulation
     );
     if (!(ideaPath && virtualSimulationPath)) {
       res.status(HTTP_BAD_REQUEST).json({ error: "Unsafe artifact path" });
@@ -210,15 +214,15 @@ export class HttpApiRouter {
       await writeArtifactFile(virtualSimulationPath, simulationContent);
       res.json({
         paths: {
-          idea: IDEA_ARTIFACT_RELATIVE_PATH,
-          virtualSimulation: VIRTUAL_SIMULATION_RELATIVE_PATH,
+          idea: paths.idea,
+          virtualSimulation: paths.virtualSimulation,
         },
       });
     } catch (error) {
       this.deps.logger.error("Failed to write Idea artifacts", error as Error, {
         sessionId,
-        ideaPath: IDEA_ARTIFACT_RELATIVE_PATH,
-        virtualSimulationPath: VIRTUAL_SIMULATION_RELATIVE_PATH,
+        ideaPath: paths.idea,
+        virtualSimulationPath: paths.virtualSimulation,
       });
       res
         .status(HTTP_INTERNAL_ERROR)
@@ -231,6 +235,10 @@ type IdeaArtifactPayload = {
   readonly sessionId: string;
   readonly ideaMarkdown: string;
   readonly virtualSimulationMarkdown: string;
+  readonly paths: {
+    readonly idea: string;
+    readonly virtualSimulation: string;
+  };
 };
 
 type IdeaArtifactPayloadResult =
@@ -258,15 +266,38 @@ const parseIdeaArtifactPayload = (
   if (!virtualSimulationMarkdown) {
     return { ok: false, error: "Missing virtualSimulationMarkdown" };
   }
+  const ideaPath =
+    readNonEmptyString(candidate.ideaPath) ??
+    readNonEmptyString(candidate.idea_path);
+  const virtualSimulationPath =
+    readNonEmptyString(candidate.virtualSimulationPath) ??
+    readNonEmptyString(candidate.virtual_simulation_path);
+  if (!ideaPath) {
+    return { ok: false, error: "Missing ideaPath" };
+  }
+  if (!virtualSimulationPath) {
+    return { ok: false, error: "Missing virtualSimulationPath" };
+  }
   return {
     ok: true,
     value: {
       sessionId,
       ideaMarkdown,
       virtualSimulationMarkdown,
+      paths: {
+        idea: ideaPath,
+        virtualSimulation: virtualSimulationPath,
+      },
     },
   };
 };
+
+const isAllowedIdeaArtifactPaths = (paths: {
+  readonly idea: string;
+  readonly virtualSimulation: string;
+}): boolean =>
+  IDEA_PATH_RE.test(paths.idea) &&
+  VIRTUAL_SIMULATION_PATH_RE.test(paths.virtualSimulation);
 
 const readNonEmptyString = (value: unknown): string | null => {
   if (typeof value !== "string") {

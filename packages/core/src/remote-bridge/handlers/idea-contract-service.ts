@@ -17,12 +17,13 @@ export type IdeaContractPayload = {
 
 const FLOW_NAME = "full-development-flow";
 const IDEA_STAGE = "idea";
+const DEFAULT_INITIATIVE_SLUG = "full-development-flow";
 const IDEA_TEMPLATE_ROOT = `~/.codeai-hub/templates/${FLOW_NAME}/${IDEA_STAGE}`;
 const IDEA_COLLECTOR_PROMPT_PATH = `${IDEA_TEMPLATE_ROOT}/idea-collector-prompt.md`;
 const IDEA_COLLECTOR_TEMPLATE_PATH = `${IDEA_TEMPLATE_ROOT}/idea-template.md`;
 const IDEA_COLLECTOR_SCHEMA_PATH = `${IDEA_TEMPLATE_ROOT}/idea-collector-schema.json`;
-const IDEA_COLLECTOR_OUTPUT_PATH = `.codeai-hub/${FLOW_NAME}/${IDEA_STAGE}/idea.md`;
-const IDEA_COLLECTOR_VIRTUAL_SIMULATION_PATH = `.codeai-hub/${FLOW_NAME}/${IDEA_STAGE}/virtual-simulation.md`;
+const IDEA_COLLECTOR_OUTPUT_PATH = `.codeai-hub/${FLOW_NAME}/initiatives/${DEFAULT_INITIATIVE_SLUG}/${IDEA_STAGE}/idea.md`;
+const IDEA_COLLECTOR_VIRTUAL_SIMULATION_PATH = `.codeai-hub/${FLOW_NAME}/initiatives/${DEFAULT_INITIATIVE_SLUG}/${IDEA_STAGE}/virtual-simulation.md`;
 
 export const buildIdeaContract =
   async (): Promise<IdeaContractPayload | null> => {

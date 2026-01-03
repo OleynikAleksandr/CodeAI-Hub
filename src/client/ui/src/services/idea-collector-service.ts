@@ -25,21 +25,14 @@ type IdeaContractPayload = {
   };
 };
 
-type IdeaContractSnapshot = {
-  readonly prompt: string;
-  readonly schema: Record<string, unknown>;
-  readonly outputPaths: {
-    readonly idea: string;
-    readonly virtualSimulation: string;
-  };
-};
+type IdeaContractSnapshot = IdeaContractPayload;
 
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
 const FALLBACK_OUTPUT_PATHS = {
-  idea: ".codeai-hub/full-development-flow/idea/idea.md",
+  idea: ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/idea.md",
   virtualSimulation:
-    ".codeai-hub/full-development-flow/idea/virtual-simulation.md",
+    ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/virtual-simulation.md",
 } as const;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -219,11 +212,7 @@ export class IdeaCollectorService {
     const artifact = extractArtifact(event);
     if (artifact) {
       this.artifacts.set(sessionId, artifact);
-      this.persistIdeaArtifacts(
-        sessionId,
-        artifact.ideaMarkdown,
-        artifact.virtualSimulationMarkdown
-      ).catch((error: unknown) => {
+      this.persistIdeaArtifacts(sessionId, artifact).catch((error: unknown) => {
         const message = error instanceof Error ? error.message : String(error);
         postSystemNotice(
           sessionId,
@@ -250,15 +239,14 @@ export class IdeaCollectorService {
 
   private async persistIdeaArtifacts(
     sessionId: string,
-    ideaMarkdown: string,
-    virtualSimulationMarkdown: string
+    artifact: IdeaCollectorArtifact
   ): Promise<void> {
     const httpUrl = resolveCoreHttpUrl();
     const contract = await this.getContract();
     if (!httpUrl) {
       postSystemNotice(
         sessionId,
-        `Не могу сохранить артефакты идеи: Core HTTP URL не определён. Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}`
+        `Не могу сохранить артефакты идеи: Core HTTP URL не определён. Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
       );
       return;
     }
@@ -269,27 +257,41 @@ export class IdeaCollectorService {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sessionId,
-          ideaMarkdown,
-          virtualSimulationMarkdown,
+          ideaMarkdown: artifact.ideaMarkdown,
+          virtualSimulationMarkdown: artifact.virtualSimulationMarkdown,
+          ideaPath: artifact.ideaPath,
+          virtualSimulationPath: artifact.virtualSimulationPath,
         }),
       });
 
       if (!response.ok) {
         postSystemNotice(
           sessionId,
-          `Не удалось сохранить артефакты идеи (HTTP ${response.status}). Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}`
+          `Не удалось сохранить артефакты идеи (HTTP ${response.status}). Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
         );
         return;
       }
-
+      const payload = (await response.json()) as unknown;
+      const savedIdeaPath =
+        isRecord(payload) &&
+        isRecord(payload.paths) &&
+        typeof payload.paths.idea === "string"
+          ? payload.paths.idea
+          : artifact.ideaPath;
+      const savedVirtualSimulationPath =
+        isRecord(payload) &&
+        isRecord(payload.paths) &&
+        typeof payload.paths.virtualSimulation === "string"
+          ? payload.paths.virtualSimulation
+          : artifact.virtualSimulationPath;
       postSystemNotice(
         sessionId,
-        `Артефакты идеи сохранены в workspace: ${contract.outputPaths.idea} и ${contract.outputPaths.virtualSimulation}`
+        `Артефакты идеи сохранены в workspace: ${savedIdeaPath} и ${savedVirtualSimulationPath}`
       );
     } catch {
       postSystemNotice(
         sessionId,
-        `Не удалось сохранить артефакты идеи: ошибка сети. Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}`
+        `Не удалось сохранить артефакты идеи: ошибка сети. Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
       );
     }
   }
