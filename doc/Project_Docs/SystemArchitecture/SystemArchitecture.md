@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.378 (03.01.2026) — Idea Collector получает универсальный контракт из Core API (`/api/v1/orchestrator/idea-contract`), контракт v2 добавляет `readiness`/`handoff_for_spec`, а schema хранится в `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`. Контракт/шаблон явно поддерживают `приложение`/`кластер` и фиксируют правило Flow: для multi-module инициатив `Spec.md`/`Plan.md` создаются **по модулю**. Для ссылок на существующие документы в интервью UI поддерживает прикрепление файлов из workspace (команда `/read ...`), а Core читает их через `POST /api/v1/orchestrator/workspace-file`. Также Core поддерживает auto-attach: при явных триггерах в сообщении (например, «прочитай/изучи/ознакомься») содержимое 1–3 текстовых файлов из workspace (до 60KB/файл; allowlist расширений) прикрепляется автоматически, пути можно указывать где угодно в сообщении/на отдельных строках (без `/read`). Core сохраняет артефакты Idea в `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/` (Idea.md + virtual-simulation.md) в workspace через `POST /api/v1/orchestrator/idea-artifact`. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`. Также UI при реконнекте просит Supervisor гарантировать, что Core запущен; ошибки провайдера отображаются как system сообщения.
+**Состояние:** релиз 1.1.379 (03.01.2026) — Idea Collector получает универсальный контракт из Core API (`/api/v1/orchestrator/idea-contract`), контракт v2 добавляет `readiness`/`handoff_for_spec`, а schema хранится в `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`. Контракт/шаблон явно поддерживают `приложение`/`кластер` и фиксируют правило Flow: для multi-module инициатив `Spec.md`/`Plan.md` создаются **по модулю**. Для ссылок на существующие документы в интервью UI поддерживает прикрепление файлов из workspace (команда `/read ...`), а Core читает их через `POST /api/v1/orchestrator/workspace-file`. Также Core поддерживает auto-attach: при явных триггерах в сообщении (например, «прочитай/изучи/ознакомься») содержимое 1–3 текстовых файлов из workspace (до 60KB/файл; allowlist расширений) прикрепляется автоматически, пути можно указывать где угодно в сообщении/на отдельных строках (без `/read`). Core сохраняет артефакты Idea в `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/` (Idea.md + virtual-simulation.md) в workspace через `POST /api/v1/orchestrator/idea-artifact`. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`. Также UI при реконнекте просит Supervisor гарантировать, что Core запущен; ошибки провайдера отображаются как system сообщения.
 
 ## Обзор
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
@@ -31,51 +31,51 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.377
-- Автономное ядро: `@codeai-hub/core` 1.1.377
-- UI Bundles: 1.1.377
-- Claude module: 1.1.377
-- Codex module: 1.1.377
-- Gemini module: 1.1.377
+- VSIX: `codeai-hub` 1.1.379
+- Автономное ядро: `@codeai-hub/core` 1.1.379
+- UI Bundles: 1.1.379
+- Claude module: 1.1.379
+- Codex module: 1.1.379
+- Gemini module: 1.1.379
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.377/
+│       └── 1.1.379/
 │           ├── node/
 │           ├── app/
 │           └── install.json
 ├── packages/
 │   ├── launcher/
-│   │   └── macos-arm64/1.1.377/
+│   │   └── macos-arm64/1.1.379/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.377/
-│       │   └── current -> 1.1.377
+│       │   ├── 1.1.379/
+│       │   └── current -> 1.1.379
 │       ├── web-client/
-│       │   ├── 1.1.377/
-│       │   └── current -> 1.1.377
+│       │   ├── 1.1.379/
+│       │   └── current -> 1.1.379
 │       └── project-manager/
-│           ├── 1.1.377/
-│           └── current -> 1.1.377
+│           ├── 1.1.379/
+│           └── current -> 1.1.379
 ├── providers/
-│   ├── claude/1.1.377/
-│   ├── codex/1.1.377/
-│   └── gemini/1.1.377/
+│   ├── claude/1.1.379/
+│   ├── codex/1.1.379/
+│   └── gemini/1.1.379/
 ├── settings/
 │   ├── claude.json          # legacy thinking settings migrated to settings.json
 │   └── settings.json        # current source of truth for providers.{claude,codex,gemini}
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.377.tar.bz2
-    ├── vscode-webview-1.1.377.tar.bz2
-    ├── web-client-1.1.377.tar.bz2
-    ├── project-manager-1.1.377.tar.bz2
-    ├── claude-module-1.1.377.tar.bz2
-    ├── codex-module-1.1.377.tar.bz2
-    ├── gemini-module-1.1.377.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.377.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.379.tar.bz2
+    ├── vscode-webview-1.1.379.tar.bz2
+    ├── web-client-1.1.379.tar.bz2
+    ├── project-manager-1.1.379.tar.bz2
+    ├── claude-module-1.1.379.tar.bz2
+    ├── codex-module-1.1.379.tar.bz2
+    ├── gemini-module-1.1.379.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.379.tar.bz2
 ```
 
 ## Провайдеры
