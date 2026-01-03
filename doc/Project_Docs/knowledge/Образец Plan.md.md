@@ -17,10 +17,10 @@
 **Последнее обновление:** <дата>
 
 ### Связанные артефакты
-- Idea.md: `.codeai-hub/full-development-flow/idea/idea.md`
-- Virtual Simulation: `.codeai-hub/full-development-flow/idea/virtual-simulation.md`
-- Spec.md: `.codeai-hub/full-development-flow/spec/spec.md`
-- Session Reports: `.codeai-hub/full-development-flow/implementation/sessions/`
+- Idea.md: `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md`
+- Virtual Simulation: `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md`
+- Spec.md: `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/spec/spec.md` (single-module) или `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/modules/<moduleSlug>/spec/spec.md` (multi-module)
+- Session Reports: `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/modules/<moduleSlug>/sessions/`
 
 ---
 
