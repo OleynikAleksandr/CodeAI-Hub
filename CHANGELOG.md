@@ -1,3 +1,8 @@
+## [1.1.379] - 2026-01-03
+
+### Fixed
+- **Codex Idea Collector artifact emission**: Codex now emits the full finalize artifact payload (including Idea.md + virtual-simulation.md) as a `structured_output` stream event, restoring automatic artifact persistence in the UI/Core pipeline.
+
 ## [1.1.378] - 2026-01-03
 
 ### Fixed
