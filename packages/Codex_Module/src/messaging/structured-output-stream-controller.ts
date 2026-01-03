@@ -38,10 +38,7 @@ type StructuredOutputTurnConfig = {
   readonly applyPrompt: boolean;
 };
 
-type StructuredOutputArtifact = {
-  readonly path: string;
-  readonly ideaMarkdown: string;
-};
+type StructuredOutputArtifact = Record<string, unknown>;
 
 type ParsedOutput = {
   readonly assistantText?: string;
@@ -255,7 +252,7 @@ const parseIdeaCollectorOutput = (
   } else if (typeof parsed.reasoningSummaryRu === "string") {
     reasoningSummary = parsed.reasoningSummaryRu;
   }
-  const artifact = parseIdeaCollectorArtifact(parsed.artifact);
+  const artifact = parseIdeaCollectorArtifact(parsed.artifact, nextAction);
   return {
     assistantText: assistantText?.trim().length ? assistantText : undefined,
     reasoningSummary: reasoningSummary?.trim().length
@@ -267,22 +264,33 @@ const parseIdeaCollectorOutput = (
 };
 
 const parseIdeaCollectorArtifact = (
-  value: unknown
+  value: unknown,
+  nextAction: string | undefined
 ): StructuredOutputArtifact | undefined => {
   if (!isRecord(value)) {
     return;
   }
-  const path = typeof value.path === "string" ? value.path : undefined;
+  if (nextAction !== "finalize") {
+    return;
+  }
   let ideaMarkdown: string | undefined;
   if (typeof value.idea_markdown === "string") {
     ideaMarkdown = value.idea_markdown;
   } else if (typeof value.ideaMarkdown === "string") {
     ideaMarkdown = value.ideaMarkdown;
   }
-  if (!(path && ideaMarkdown)) {
+
+  let virtualSimulationMarkdown: string | undefined;
+  if (typeof value.virtual_simulation_markdown === "string") {
+    virtualSimulationMarkdown = value.virtual_simulation_markdown;
+  } else if (typeof value.virtualSimulationMarkdown === "string") {
+    virtualSimulationMarkdown = value.virtualSimulationMarkdown;
+  }
+
+  if (!(ideaMarkdown?.trim() && virtualSimulationMarkdown?.trim())) {
     return;
   }
-  return { path, ideaMarkdown };
+  return value;
 };
 
 const hasIdeaCollectorSignature = (parsed: Record<string, unknown>): boolean =>
