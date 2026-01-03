@@ -1,3 +1,8 @@
+## [1.1.378] - 2026-01-03
+
+### Fixed
+- **Idea Collector artifact paths**: artifacts are saved under `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/` (lowercase kebab-case, multi-initiative-ready) and the UI passes the final artifact paths to Core for persistence.
+
 ## [1.1.377] - 2026-01-02
 
 ### Fixed
