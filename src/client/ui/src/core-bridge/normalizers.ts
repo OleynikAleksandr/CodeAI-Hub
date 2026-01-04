@@ -18,6 +18,9 @@ import type {
   ServerStatusResponse,
 } from "./types";
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
 const toNumberTimestamp = (value?: string): number => {
   if (!value) {
     return Date.now();
@@ -173,4 +176,21 @@ export const convertStatusResponse = (
     sessions,
     providers,
   };
+};
+
+export const extractIdeaContractQuestionnaireTemplate = (
+  contract: Record<string, unknown> | null
+): string | null => {
+  if (!contract) {
+    return null;
+  }
+  const questionnaire = contract.questionnaire;
+  if (!isRecord(questionnaire)) {
+    return null;
+  }
+  const templateMarkdown = questionnaire.templateMarkdown;
+  if (typeof templateMarkdown !== "string") {
+    return null;
+  }
+  return templateMarkdown.trim().length > 0 ? templateMarkdown : null;
 };
