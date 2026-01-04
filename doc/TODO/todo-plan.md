@@ -29,13 +29,13 @@
 2. [DONE] Git Commit: `docs(orchestrator): add questionnaire ui architecture` (hash: 19d326b) (date: 2026-01-04)
 
 3. [DONE] Заархивировать старый `doc/TODO/todo-plan.md` и завести новый план (scope: `doc/TODO/Archive/todo-plan-phase9-and-e2e-checklist.md`, `doc/TODO/todo-plan.md`; expected: старый план в архиве, новый план отражает Questionnaire MVP) (commit: `docs(todo): archive old plan and start questionnaire mvp plan`) (date: 2026-01-04)
-4. [TODO] Git Commit: `docs(todo): archive old plan and start questionnaire mvp plan` (hash: TBD)
+4. [DONE] Git Commit: `docs(todo): archive old plan and start questionnaire mvp plan` (hash: 94027b3) (date: 2026-01-04)
 
-5. [TODO] Добавить bundled шаблон анкеты, соответствующий полям `conversation_state.collected` из schema Idea Collector (scope: `assets/templates/full-development-flow/idea/questionnaire-template.md`; expected: вопросы/секции покрывают все поля schema; commit: `feat(templates): add idea questionnaire template`) (date: TBD)
-6. [TODO] Git Commit: `feat(templates): add idea questionnaire template` (hash: TBD)
+5. [DONE] Добавить bundled шаблон анкеты, соответствующий полям `conversation_state.collected` из schema Idea Collector (scope: `assets/templates/full-development-flow/idea/questionnaire-template.md`; expected: вопросы/секции покрывают все поля schema; commit: `feat(templates): add idea questionnaire template`) (date: 2026-01-04)
+6. [DONE] Git Commit: `feat(templates): add idea questionnaire template` (hash: 432d14f) (date: 2026-01-04)
 
-7. [TODO] Установка шаблона анкеты при первом старте расширения (scope: `src/extension-module/templates/idea-questionnaire-template-installer.ts`, `src/extension.ts`; expected: создаётся `~/.codeai-hub/templates/full-development-flow/idea/questionnaire-template.md`, если нет/пустой; пользовательские правки не перезаписываются) (commit: `feat(extension): install idea questionnaire template on startup`) (date: TBD)
-8. [TODO] Git Commit: `feat(extension): install idea questionnaire template on startup` (hash: TBD)
+7. [DONE] Установка шаблона анкеты при первом старте расширения (scope: `src/extension-module/templates/idea-questionnaire-template-installer.ts`, `src/extension.ts`; expected: создаётся `~/.codeai-hub/templates/full-development-flow/idea/questionnaire-template.md`, если нет/пустой; пользовательские правки не перезаписываются) (commit: `feat(extension): install idea questionnaire template on startup`) (date: 2026-01-04)
+8. [DONE] Git Commit: `feat(extension): install idea questionnaire template on startup` (hash: 1b5aabe) (date: 2026-01-04)
 
 ### Stream: Контракт и интеграция анкеты (UI ↔ Core)
 
