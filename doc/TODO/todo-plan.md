@@ -50,8 +50,8 @@
 
 ### Stream: UI анкеты (VS Code webview)
 
-15. [TODO] Вынести общий слой textarea+dnd из `InputPanel` для переиспользования (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-textarea.tsx`, `src/client/ui/src/session/input-dnd.ts`; expected: `InputPanel` продолжает работать, анкета использует те же dnd-возможности) (commit: `refactor(ui): extract input textarea + dnd logic`) (date: TBD)
-16. [TODO] Git Commit: `refactor(ui): extract input textarea + dnd logic` (hash: TBD)
+15. [DONE] Вынести общий слой textarea+dnd из `InputPanel` для переиспользования (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-textarea.tsx`, `src/client/ui/src/session/input-dnd.ts`; expected: `InputPanel` продолжает работать, анкета использует те же dnd-возможности) (commit: `refactor(ui): extract input textarea + dnd logic`) (date: 2026-01-04)
+16. [DONE] Git Commit: `refactor(ui): extract input textarea + dnd logic` (hash: 5ef1ed7) (date: 2026-01-04)
 
 17. [TODO] Экран анкеты: рендер вопросов + ответы без внутреннего скролла (scope: `src/client/ui/src/components/idea-questionnaire/idea-questionnaire-view.tsx`, `src/client/ui/src/components/idea-questionnaire/question-block.tsx`, `src/client/ui/src/components/idea-questionnaire/styles.ts`; expected: длинная страница, поля авто-grow + ручной min-height drag, одна кнопка отправки в конце) (commit: `feat(ui): add idea questionnaire view`) (date: TBD)
 18. [TODO] Git Commit: `feat(ui): add idea questionnaire view` (hash: TBD)
