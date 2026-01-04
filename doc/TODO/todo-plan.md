@@ -39,8 +39,8 @@
 
 ### Stream: Контракт и интеграция анкеты (UI ↔ Core)
 
-9. [TODO] Расширить `idea-contract`: добавить `questionnaire.templateMarkdown` (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected: contract возвращает templateMarkdown анкеты, версия контракта учитывает mtime/контент анкеты) (commit: `feat(core): include questionnaire template in idea contract`) (date: TBD)
-10. [TODO] Git Commit: `feat(core): include questionnaire template in idea contract` (hash: TBD)
+9. [DONE] Расширить `idea-contract`: добавить `questionnaire.templateMarkdown` (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected: contract возвращает templateMarkdown анкеты, версия контракта учитывает mtime/контент анкеты) (commit: `feat(core): include questionnaire template in idea contract`) (date: 2026-01-04)
+10. [DONE] Git Commit: `feat(core): include questionnaire template in idea contract` (hash: 68149fd) (date: 2026-01-04)
 
 11. [TODO] Обновить UI normalizers под новое поле контракта (scope: `src/client/ui/src/core-bridge/normalizers.ts`; expected: безопасная нормализация questionnaire.templateMarkdown + сохранение fallback поведения) (commit: `feat(ui): normalize questionnaire template from core contract`) (date: TBD)
 12. [TODO] Git Commit: `feat(ui): normalize questionnaire template from core contract` (hash: TBD)
