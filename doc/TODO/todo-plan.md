@@ -71,7 +71,26 @@
 26. [DONE] Git Commit: `chore(webview): update bundle` (hash: 2a1bf0c) (date: 2026-01-04)
 
 27. [DONE] E2E ручная проверка (scope: нет изменений кода; expected: создать анкету, заполнить, отправить, уточнения, “ОК/утверждаю”, артефакты сохраняются; обновить этот файл статусами и ссылками) (commit: `docs: verify questionnaire mvp flow`) (date: 2026-01-04)
-28. [DONE] Git Commit: `docs: verify questionnaire mvp flow` (hash: TBD) (date: 2026-01-04)
+28. [DONE] Git Commit: `docs: verify questionnaire mvp flow` (hash: e351555) (date: 2026-01-04)
+
+## Phase 2 — Idea Prompt Architecture Alignment (owner: Oleksandr, updated: 2026-01-04)
+
+### Stream: Prompt template bootstrap
+
+1. [DONE] Вынести общий installer для bundled templates (scope: `src/extension-module/templates/bundled-template-installer.ts`, `src/extension-module/templates/idea-collector-prompt-installer.ts`, `src/extension-module/templates/idea-questionnaire-template-installer.ts`; expected: общий helper снижает дублирование) (commit: `refactor(templates): share bundled installer`) (date: 2026-01-04)
+2. [DONE] Git Commit: `refactor(templates): share bundled installer` (hash: be14b7e) (date: 2026-01-04)
+
+3. [DONE] Добавить bundled prompt + установить при старте расширения (scope: `assets/templates/full-development-flow/idea/idea-collector-prompt.md`, `src/extension.ts`; expected: prompt включает архитектурные принципы на этапе идеи) (commit: `feat(extension): install idea collector prompt template`) (date: 2026-01-04)
+4. [DONE] Git Commit: `feat(extension): install idea collector prompt template` (hash: 351ca52) (date: 2026-01-04)
+
+5. [TODO] Обновить релизные документы под prompt-апдейт (scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`; expected: релиз 1.1.381 отражает архитектурные принципы в Idea prompt) (commit: `docs: update idea prompt release notes`) (date: TBD)
+6. [TODO] Git Commit: `docs: update idea prompt release notes` (hash: TBD)
+
+7. [TODO] Обновить системную архитектуру и версии (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: версии/Release 1.1.381) (commit: `docs(orchestrator): refresh system architecture 1.1.381`) (date: TBD)
+8. [TODO] Git Commit: `docs(orchestrator): refresh system architecture 1.1.381` (hash: TBD)
+
+9. [TODO] Подготовить релиз 1.1.381 (scope: версии/манифесты/locks; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`) (commit: `chore(release): prepare 1.1.381`) (date: TBD)
+10. [TODO] Git Commit: `chore(release): prepare 1.1.381` (hash: TBD)
 
 ---
 
