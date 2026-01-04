@@ -31,6 +31,7 @@ import {
   applyDefaultModelsEnv,
   loadSettingsSnapshot,
 } from "./extension-module/settings/settings-storage";
+import { ensureIdeaQuestionnaireTemplateInstalled } from "./extension-module/templates/idea-questionnaire-template-installer";
 import { prepareUIBundles } from "./extension-module/ui/ui-activation";
 
 let coreProcessManager: CoreProcessManager | null = null;
@@ -205,6 +206,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
     version: extensionVersion,
     extensionPath: context.extensionUri.fsPath,
   });
+
+  await ensureIdeaQuestionnaireTemplateInstalled(context, logger);
 
   await prepareLocalRuntime(
     context,
