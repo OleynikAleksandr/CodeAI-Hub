@@ -116,6 +116,7 @@ export class IdeaCollectorService {
   private readonly artifacts = new Map<string, IdeaCollectorArtifact>();
   private contractPromise: Promise<IdeaContractSnapshot> | null = null;
   private readonly noticesSent = new Set<string>();
+  private readonly pendingQuestionnaire = new Set<string>();
 
   isIdeaCollectorSession(sessionId: string): boolean {
     return this.activeSessions.has(sessionId);
@@ -125,24 +126,20 @@ export class IdeaCollectorService {
     return this.artifacts.get(sessionId) ?? null;
   }
 
-  async startCollection(sessionId: string): Promise<void> {
+  startCollection(sessionId: string): void {
     this.activeSessions.add(sessionId);
+    this.pendingQuestionnaire.add(sessionId);
     if (!this.noticesSent.has(sessionId)) {
       this.noticesSent.add(sessionId);
       postSystemNotice(
         sessionId,
-        "Запускаю Idea Collector. Пожалуйста, дождитесь первого вопроса."
+        "Запускаю Idea Collector. Заполните анкету и нажмите «Отправить анкету»."
       );
       postSystemNotice(
         sessionId,
         "Чтобы приложить существующие документы/файлы из workspace, можно:\n- написать в сообщении триггер (например, «прочитай/изучи/ознакомься») и указать пути к файлам (можно на отдельных строках);\n- или использовать команду:\n/read <relative-path>\n(можно несколько путей в одной строке, максимум 3)."
       );
     }
-    const [prompt, schema] = await Promise.all([
-      this.getPrompt(),
-      this.getNormalizedSchema(),
-    ]);
-    sendChatMessage(sessionId, prompt, { outputSchema: schema });
   }
 
   async continueConversation(
@@ -150,6 +147,13 @@ export class IdeaCollectorService {
     content: string
   ): Promise<void> {
     if (!this.activeSessions.has(sessionId)) {
+      return;
+    }
+    if (this.pendingQuestionnaire.has(sessionId)) {
+      postSystemNotice(
+        sessionId,
+        "Анкета ещё не отправлена. Заполните анкету и нажмите «Отправить анкету»."
+      );
       return;
     }
     const schema = await this.getNormalizedSchema();
@@ -163,6 +167,22 @@ export class IdeaCollectorService {
     sendChatMessage(sessionId, augmentedContent ?? content, {
       outputSchema: schema,
     });
+  }
+
+  async beginQuestionnaireReview(
+    sessionId: string,
+    content: string
+  ): Promise<void> {
+    if (!this.activeSessions.has(sessionId)) {
+      this.activeSessions.add(sessionId);
+    }
+    this.pendingQuestionnaire.delete(sessionId);
+    const [prompt, schema] = await Promise.all([
+      this.getPrompt(),
+      this.getNormalizedSchema(),
+    ]);
+    sendChatMessage(sessionId, prompt, { outputSchema: schema });
+    sendChatMessage(sessionId, content, { outputSchema: schema });
   }
 
   handleStreamEvent(sessionId: string, event: unknown): void {
@@ -194,6 +214,10 @@ export class IdeaCollectorService {
     return this.getContract().then(
       (contract) => contract.questionnaireTemplateMarkdown
     );
+  }
+
+  getOutputPaths(): Promise<IdeaContractSnapshot["outputPaths"]> {
+    return this.getContract().then((contract) => contract.outputPaths);
   }
 
   private getContract(): Promise<IdeaContractSnapshot> {

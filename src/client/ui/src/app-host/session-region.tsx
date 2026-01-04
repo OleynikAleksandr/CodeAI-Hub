@@ -1,7 +1,11 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord } from "../../../../types/session";
 import { type FlowStageId, FlowWizard } from "../components/flow-wizard";
+import { IdeaQuestionnaireView } from "../components/idea-questionnaire/idea-questionnaire-view";
 import { ProviderPicker, type ProviderPickerState } from "../provider-picker";
+import type { QuestionnaireSnapshot } from "../services/idea-questionnaire-service";
+import { IdeaQuestionnaireService } from "../services/idea-questionnaire-service";
 import type { SessionSnapshots } from "../session/helpers";
 import SessionView from "../session/session-view";
 import type { ProviderLabels } from "./provider-picker-state";
@@ -38,6 +42,40 @@ export const SessionRegion = ({
   cancelSelection,
   sessionViewProps,
 }: SessionRegionProps) => {
+  const questionnaireServiceRef = useRef(new IdeaQuestionnaireService());
+  const pendingQuestionnaireRef = useRef(false);
+  const [questionnaireSnapshot, setQuestionnaireSnapshot] =
+    useState<QuestionnaireSnapshot | null>(null);
+
+  const questionnaireService = questionnaireServiceRef.current;
+
+  const handleAnswerChange = useCallback(
+    (questionId: string, value: string) => {
+      setQuestionnaireSnapshot((current) => {
+        if (!current) {
+          return current;
+        }
+        const answers = { ...current.answers, [questionId]: value };
+        const content = questionnaireService.renderQuestionnaire(
+          current.template,
+          current.placeholders,
+          answers
+        );
+        questionnaireService.queueSave(
+          current.sessionId,
+          current.path,
+          content
+        );
+        return { ...current, answers };
+      });
+    },
+    [questionnaireService]
+  );
+
+  const handleQuestionnaireSubmit = useCallback(() => {
+    // TODO: implement questionnaire submission to Idea Collector.
+  }, []);
+
   const handleProviderConfirm = (providerIds: readonly ProviderStackId[]) => {
     const selectedProvider = providerIds[0];
     if (
@@ -57,10 +95,48 @@ export const SessionRegion = ({
     if (!flowWizardProviderId) {
       return;
     }
+    pendingQuestionnaireRef.current = true;
     confirmSelection([flowWizardProviderId]);
   };
 
-  const showSessionView = !(pickerState.visible || flowWizardVisible);
+  const activeSessionId = sessionViewProps.activeSessionId;
+  const showQuestionnaire =
+    questionnaireSnapshot &&
+    activeSessionId &&
+    questionnaireSnapshot.sessionId === activeSessionId;
+  const showSessionView = !(
+    pickerState.visible ||
+    flowWizardVisible ||
+    showQuestionnaire
+  );
+
+  useEffect(() => {
+    if (!activeSessionId) {
+      return;
+    }
+    if (!pendingQuestionnaireRef.current) {
+      return;
+    }
+    pendingQuestionnaireRef.current = false;
+    questionnaireService
+      .loadQuestionnaire(activeSessionId)
+      .then((snapshot) => {
+        if (snapshot) {
+          setQuestionnaireSnapshot(snapshot);
+        }
+      })
+      .catch(() => {
+        /* ignore questionnaire load errors */
+      });
+  }, [activeSessionId, questionnaireService]);
+
+  const questionnaireTitle = useMemo(() => "Idea Questionnaire", []);
+  const questionnaireDescription = useMemo(
+    () =>
+      "Fill out the questionnaire and attach any supporting files or references.",
+    []
+  );
+  const questionnaireSubmitLabel = useMemo(() => "Send questionnaire", []);
 
   return (
     <div className="app-shell__session-region">
@@ -91,6 +167,17 @@ export const SessionRegion = ({
             </div>
           </div>
         </div>
+      ) : null}
+      {showQuestionnaire && questionnaireSnapshot ? (
+        <IdeaQuestionnaireView
+          answers={questionnaireSnapshot.answers}
+          description={questionnaireDescription}
+          onAnswerChange={handleAnswerChange}
+          onSubmit={handleQuestionnaireSubmit}
+          questions={questionnaireSnapshot.questions}
+          submitLabel={questionnaireSubmitLabel}
+          title={questionnaireTitle}
+        />
       ) : null}
       {showSessionView ? (
         <SessionView
