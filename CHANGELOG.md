@@ -1,3 +1,12 @@
+## [1.1.381] - 2026-01-04
+
+### Added
+- **Idea Collector prompt template**: bundled + installed on startup so the questionnaire flow always loads the latest prompt.
+- **Architecture principles at Idea stage**: prompt now enforces cluster-modular constraints (facades, new modules over edits, micro-class decomposition) during questionnaire review.
+
+### Changed
+- **Idea Collector guidance**: shifted fully to questionnaire analysis with architecture-aware clarifications (no interview framing).
+
 ## [1.1.380] - 2026-01-04
 
 ### Added
