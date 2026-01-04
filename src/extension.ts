@@ -31,6 +31,7 @@ import {
   applyDefaultModelsEnv,
   loadSettingsSnapshot,
 } from "./extension-module/settings/settings-storage";
+import { ensureIdeaCollectorPromptInstalled } from "./extension-module/templates/idea-collector-prompt-installer";
 import { ensureIdeaQuestionnaireTemplateInstalled } from "./extension-module/templates/idea-questionnaire-template-installer";
 import { prepareUIBundles } from "./extension-module/ui/ui-activation";
 
@@ -207,6 +208,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     extensionPath: context.extensionUri.fsPath,
   });
 
+  await ensureIdeaCollectorPromptInstalled(context, logger);
   await ensureIdeaQuestionnaireTemplateInstalled(context, logger);
 
   await prepareLocalRuntime(
