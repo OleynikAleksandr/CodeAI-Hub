@@ -112,25 +112,25 @@ const loadContract = async (): Promise<IdeaContractSnapshot> => {
 };
 
 export class IdeaCollectorService {
-  private readonly activeSessions = new Set<string>();
-  private readonly artifacts = new Map<string, IdeaCollectorArtifact>();
+  private static readonly activeSessions = new Set<string>();
+  private static readonly artifacts = new Map<string, IdeaCollectorArtifact>();
+  private static readonly noticesSent = new Set<string>();
+  private static readonly pendingQuestionnaire = new Set<string>();
   private contractPromise: Promise<IdeaContractSnapshot> | null = null;
-  private readonly noticesSent = new Set<string>();
-  private readonly pendingQuestionnaire = new Set<string>();
 
   isIdeaCollectorSession(sessionId: string): boolean {
-    return this.activeSessions.has(sessionId);
+    return IdeaCollectorService.activeSessions.has(sessionId);
   }
 
   getLatestArtifact(sessionId: string): IdeaCollectorArtifact | null {
-    return this.artifacts.get(sessionId) ?? null;
+    return IdeaCollectorService.artifacts.get(sessionId) ?? null;
   }
 
   startCollection(sessionId: string): void {
-    this.activeSessions.add(sessionId);
-    this.pendingQuestionnaire.add(sessionId);
-    if (!this.noticesSent.has(sessionId)) {
-      this.noticesSent.add(sessionId);
+    IdeaCollectorService.activeSessions.add(sessionId);
+    IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+    if (!IdeaCollectorService.noticesSent.has(sessionId)) {
+      IdeaCollectorService.noticesSent.add(sessionId);
       postSystemNotice(
         sessionId,
         "Запускаю Idea Collector. Заполните анкету и нажмите «Отправить анкету»."
@@ -146,10 +146,10 @@ export class IdeaCollectorService {
     sessionId: string,
     content: string
   ): Promise<void> {
-    if (!this.activeSessions.has(sessionId)) {
+    if (!IdeaCollectorService.activeSessions.has(sessionId)) {
       return;
     }
-    if (this.pendingQuestionnaire.has(sessionId)) {
+    if (IdeaCollectorService.pendingQuestionnaire.has(sessionId)) {
       postSystemNotice(
         sessionId,
         "Анкета ещё не отправлена. Заполните анкету и нажмите «Отправить анкету»."
@@ -173,10 +173,10 @@ export class IdeaCollectorService {
     sessionId: string,
     content: string
   ): Promise<void> {
-    if (!this.activeSessions.has(sessionId)) {
-      this.activeSessions.add(sessionId);
+    if (!IdeaCollectorService.activeSessions.has(sessionId)) {
+      IdeaCollectorService.activeSessions.add(sessionId);
     }
-    this.pendingQuestionnaire.delete(sessionId);
+    IdeaCollectorService.pendingQuestionnaire.delete(sessionId);
     const [prompt, schema] = await Promise.all([
       this.getPrompt(),
       this.getNormalizedSchema(),
@@ -186,12 +186,12 @@ export class IdeaCollectorService {
   }
 
   handleStreamEvent(sessionId: string, event: unknown): void {
-    if (!this.activeSessions.has(sessionId)) {
+    if (!IdeaCollectorService.activeSessions.has(sessionId)) {
       return;
     }
     const artifact = extractIdeaCollectorArtifact(event);
     if (artifact) {
-      this.artifacts.set(sessionId, artifact);
+      IdeaCollectorService.artifacts.set(sessionId, artifact);
       this.persistIdeaArtifacts(sessionId, artifact).catch((error: unknown) => {
         const message = error instanceof Error ? error.message : String(error);
         postSystemNotice(
