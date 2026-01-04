@@ -1,5 +1,10 @@
 import { IDEA_KICKOFF_PROMPT } from "../app-host/idea-kickoff-prompt";
 import { sendChatMessage } from "../core-bridge/core-bridge";
+import { extractIdeaContractQuestionnaireTemplate } from "../core-bridge/normalizers";
+import {
+  extractIdeaCollectorArtifact,
+  type IdeaCollectorArtifact,
+} from "./idea-collector-artifact";
 import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "./idea-collector-fallback-schema";
 import { normalizeIdeaCollectorSchema } from "./idea-collector-schema-utils";
 import {
@@ -9,23 +14,27 @@ import {
 } from "./idea-collector-support";
 import { buildMessageWithWorkspaceContext } from "./idea-collector-workspace-context";
 
-type IdeaCollectorArtifact = {
-  readonly ideaPath: string;
-  readonly ideaMarkdown: string;
-  readonly virtualSimulationPath: string;
-  readonly virtualSimulationMarkdown: string;
-};
-
 type IdeaContractPayload = {
   readonly prompt: string;
   readonly schema: Record<string, unknown>;
+  readonly questionnaire?: {
+    readonly templateMarkdown?: string;
+  };
   readonly outputPaths: {
     readonly idea: string;
     readonly virtualSimulation: string;
   };
 };
 
-type IdeaContractSnapshot = IdeaContractPayload;
+type IdeaContractSnapshot = {
+  readonly prompt: string;
+  readonly schema: Record<string, unknown>;
+  readonly outputPaths: {
+    readonly idea: string;
+    readonly virtualSimulation: string;
+  };
+  readonly questionnaireTemplateMarkdown: string | null;
+};
 
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
@@ -37,11 +46,6 @@ const FALLBACK_OUTPUT_PATHS = {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
-const readStringField = (
-  record: Record<string, unknown>,
-  key: string
-): string | null => (typeof record[key] === "string" ? record[key] : null);
 
 const isIdeaContractPayload = (
   value: unknown
@@ -77,7 +81,14 @@ const fetchIdeaContract = async (): Promise<IdeaContractSnapshot | null> => {
       return null;
     }
     const schema = normalizeIdeaCollectorSchema(payload.schema, null);
-    return { prompt: payload.prompt, schema, outputPaths: payload.outputPaths };
+    const questionnaireTemplateMarkdown =
+      extractIdeaContractQuestionnaireTemplate(payload) ?? null;
+    return {
+      prompt: payload.prompt,
+      schema,
+      outputPaths: payload.outputPaths,
+      questionnaireTemplateMarkdown,
+    };
   } catch {
     return null;
   }
@@ -96,58 +107,7 @@ const loadContract = async (): Promise<IdeaContractSnapshot> => {
     prompt: IDEA_KICKOFF_PROMPT,
     schema: fallbackSchema,
     outputPaths: FALLBACK_OUTPUT_PATHS,
-  };
-};
-
-const extractArtifact = (event: unknown): IdeaCollectorArtifact | null => {
-  if (!isRecord(event)) {
-    return null;
-  }
-  const data = event.data;
-  if (!isRecord(data) || data.kind !== "structured_output") {
-    return null;
-  }
-  let nextAction: string | null = null;
-  if (typeof data.nextAction === "string") {
-    nextAction = data.nextAction;
-  } else if (typeof data.next_action === "string") {
-    nextAction = data.next_action;
-  }
-  if (nextAction !== "finalize") {
-    return null;
-  }
-  const artifact = data.artifact;
-  if (!isRecord(artifact)) {
-    return null;
-  }
-  const ideaPath =
-    readStringField(artifact, "ideaPath") ??
-    readStringField(artifact, "idea_path") ??
-    readStringField(artifact, "path");
-  const virtualSimulationPath =
-    readStringField(artifact, "virtualSimulationPath") ??
-    readStringField(artifact, "virtual_simulation_path");
-  const ideaMarkdown =
-    readStringField(artifact, "ideaMarkdown") ??
-    readStringField(artifact, "idea_markdown");
-  const virtualSimulationMarkdown =
-    readStringField(artifact, "virtualSimulationMarkdown") ??
-    readStringField(artifact, "virtual_simulation_markdown");
-  if (
-    !(
-      ideaPath &&
-      ideaMarkdown &&
-      virtualSimulationPath &&
-      virtualSimulationMarkdown
-    )
-  ) {
-    return null;
-  }
-  return {
-    ideaPath,
-    ideaMarkdown,
-    virtualSimulationPath,
-    virtualSimulationMarkdown,
+    questionnaireTemplateMarkdown: null,
   };
 };
 
@@ -209,7 +169,7 @@ export class IdeaCollectorService {
     if (!this.activeSessions.has(sessionId)) {
       return;
     }
-    const artifact = extractArtifact(event);
+    const artifact = extractIdeaCollectorArtifact(event);
     if (artifact) {
       this.artifacts.set(sessionId, artifact);
       this.persistIdeaArtifacts(sessionId, artifact).catch((error: unknown) => {
@@ -228,6 +188,12 @@ export class IdeaCollectorService {
 
   private getNormalizedSchema(): Promise<Record<string, unknown>> {
     return this.getContract().then((contract) => contract.schema);
+  }
+
+  getQuestionnaireTemplateMarkdown(): Promise<string | null> {
+    return this.getContract().then(
+      (contract) => contract.questionnaireTemplateMarkdown
+    );
   }
 
   private getContract(): Promise<IdeaContractSnapshot> {
