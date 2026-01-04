@@ -1,7 +1,7 @@
 # Архитектура: Idea Collector — Анкетирование (Questionnaire UI) вместо интервью
 
 **Date:** 2026-01-04
-**Status:** Draft (for approval)
+**Status:** Approved
 
 ---
 
