@@ -1,3 +1,14 @@
+## [1.1.380] - 2026-01-04
+
+### Added
+- **Idea Questionnaire UI**: Idea stage opens a questionnaire view based on the bundled template; answers are persisted to `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/questionnaire.md`.
+- **Questionnaire template contract**: Core idea contract now includes `questionnaire.templateMarkdown` so the UI stays aligned with the global template.
+- **Questionnaire template install**: extension installs `~/.codeai-hub/templates/full-development-flow/idea/questionnaire-template.md` on first start without overwriting edits.
+- **Workspace questionnaire write endpoint**: Core exposes `POST /api/v1/orchestrator/workspace-file-write` for persisting questionnaire updates from the UI.
+
+### Changed
+- **Idea Collector intake**: questionnaire responses are sent via workspace file attach instead of posting full text in chat.
+
 ## [1.1.379] - 2026-01-03
 
 ### Fixed
