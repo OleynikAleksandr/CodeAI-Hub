@@ -7609,11 +7609,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react25 = __toESM(require_react());
+  var import_react29 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host.tsx
-  var import_react24 = __toESM(require_react());
+  var import_react28 = __toESM(require_react());
 
   // src/client/ui/src/app-host/loading-messages.ts
   var MESSAGE_ORDER = [
@@ -8675,6 +8675,9 @@
     };
   };
 
+  // src/client/ui/src/app-host/session-region.tsx
+  var import_react11 = __toESM(require_react());
+
   // src/client/ui/src/components/flow-wizard/flow-stage.tsx
   var import_react3 = __toESM(require_react());
 
@@ -8837,8 +8840,1641 @@
     );
   };
 
-  // src/client/ui/src/session/dialog-panel.tsx
+  // src/client/ui/src/components/idea-questionnaire/question-block.tsx
   var import_react5 = __toESM(require_react());
+
+  // src/client/ui/src/session/input-dnd.ts
+  var import_react4 = __toESM(require_react());
+
+  // src/client/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
+  var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
+  var LINE_SPLIT_REGEX = /\r?\n/;
+  var normalizeCandidate = (rawValue) => {
+    const value = rawValue.trim();
+    if (!value) {
+      return null;
+    }
+    if (value.startsWith("file://")) {
+      const withoutScheme = value.replace("file://", "");
+      try {
+        return decodeURIComponent(withoutScheme);
+      } catch {
+        return withoutScheme;
+      }
+    }
+    if (value.startsWith("/") || WINDOWS_PATH_PATTERN.test(value)) {
+      return value;
+    }
+    return null;
+  };
+  var forEachEntry = (raw, handler) => {
+    if (!raw) {
+      return;
+    }
+    const lines = raw.split(LINE_SPLIT_REGEX);
+    for (const line of lines) {
+      if (line.trim()) {
+        handler(line);
+      }
+    }
+  };
+  var extractFilePathsFromDataTransfer = (dataTransfer, options = {}) => {
+    if (!dataTransfer) {
+      return [];
+    }
+    const { logger, debug = false, logPrefix = "[DropDataExtractor]" } = options;
+    const seen = /* @__PURE__ */ new Set();
+    const results = [];
+    const logDebug = (message, ...details) => {
+      if (debug && logger) {
+        logger(`${logPrefix} ${message}`, ...details);
+      }
+    };
+    const acceptCandidate = (candidate, source) => {
+      if (!seen.has(candidate)) {
+        seen.add(candidate);
+        results.push(candidate);
+        logDebug(`accepted ${candidate} from ${source}`);
+      }
+    };
+    const inspectType = (mime) => {
+      try {
+        const payload = dataTransfer.getData(mime);
+        logDebug(`DataTransfer[${mime}]`, payload);
+        return payload;
+      } catch (error) {
+        logDebug(`failed to read DataTransfer[${mime}]`, error);
+        return null;
+      }
+    };
+    const mimeTypes = [
+      "application/vnd.code.uri-list",
+      "text/plain",
+      "text/uri-list"
+    ];
+    for (const mime of mimeTypes) {
+      const payload = inspectType(mime);
+      forEachEntry(payload, (entry) => {
+        const candidate = normalizeCandidate(entry);
+        if (candidate) {
+          acceptCandidate(candidate, mime);
+        } else {
+          logDebug(`ignored entry from ${mime}`, entry);
+        }
+      });
+    }
+    if (dataTransfer.files && dataTransfer.files.length > 0) {
+      for (const file of Array.from(dataTransfer.files)) {
+        const candidate = file.path;
+        if (!candidate) {
+          continue;
+        }
+        const normalised = normalizeCandidate(candidate);
+        if (normalised) {
+          acceptCandidate(normalised, "FileList");
+        } else {
+          logDebug("ignored FileList entry", candidate);
+        }
+      }
+    }
+    logDebug("extraction result", results);
+    return results;
+  };
+
+  // src/client/ui/src/modules/drag-drop-module/drag-drop-handler.ts
+  var DragDropHandler = class {
+    constructor(options = {}) {
+      this.container = null;
+      this.callbacks = {};
+      this.logger = options.logger;
+      this.handleDragEnter = this.handleDragEnter.bind(this);
+      this.handleDragOver = this.handleDragOver.bind(this);
+      this.handleDragLeave = this.handleDragLeave.bind(this);
+      this.handleDrop = this.handleDrop.bind(this);
+    }
+    attach(container, callbacks) {
+      this.container = container;
+      this.callbacks = callbacks;
+      container.addEventListener("dragenter", this.handleDragEnter);
+      container.addEventListener("dragover", this.handleDragOver);
+      container.addEventListener("dragleave", this.handleDragLeave);
+      container.addEventListener("drop", this.handleDrop);
+    }
+    detach() {
+      if (!this.container) {
+        return;
+      }
+      this.container.removeEventListener("dragenter", this.handleDragEnter);
+      this.container.removeEventListener("dragover", this.handleDragOver);
+      this.container.removeEventListener("dragleave", this.handleDragLeave);
+      this.container.removeEventListener("drop", this.handleDrop);
+      this.container = null;
+      this.callbacks = {};
+    }
+    handleDragEnter(event) {
+      if (!event.shiftKey) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      this.callbacks.onDragEnter?.(true);
+      this.logger?.("dragenter", event.dataTransfer?.types ?? []);
+    }
+    handleDragOver(event) {
+      if (!event.shiftKey) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    handleDragLeave(event) {
+      const relatedTarget = event.relatedTarget;
+      if (this.container && relatedTarget && this.container.contains(relatedTarget)) {
+        return;
+      }
+      this.callbacks.onDragLeave?.();
+    }
+    handleDrop(event) {
+      if (!event.shiftKey) {
+        return;
+      }
+      event.preventDefault();
+      const filePaths = extractFilePathsFromDataTransfer(event.dataTransfer, {
+        debug: Boolean(this.logger),
+        logger: this.logger,
+        logPrefix: "[DragDropHandler]"
+      });
+      if (filePaths.length > 0) {
+        this.callbacks.onFileDrop?.(filePaths);
+      } else {
+        this.callbacks.onFallbackRequest?.();
+      }
+      this.callbacks.onDragLeave?.();
+    }
+  };
+
+  // src/client/ui/src/modules/drag-drop-module/file-path-processor.ts
+  var WINDOWS_PATH_PATTERN2 = /^[a-zA-Z]:\\/;
+  var WINDOWS_POSIX_PATTERN = /^[a-zA-Z]:\//;
+  var FilePathProcessor = class {
+    constructor() {
+      this.lastInsertedPath = "";
+      this.lastInsertTime = 0;
+      this.duplicateThresholdMs = 1e3;
+    }
+    formatPaths(paths) {
+      if (paths.length === 0) {
+        return "";
+      }
+      const formattedPaths = paths.map((path2) => `"${path2}"`).join("\n");
+      return `${formattedPaths}
+`;
+    }
+    mergePaths(currentValue, formattedPaths) {
+      if (!formattedPaths) {
+        return currentValue;
+      }
+      if (currentValue && !currentValue.endsWith("\n")) {
+        return `${currentValue}
+${formattedPaths}`;
+      }
+      return currentValue + formattedPaths;
+    }
+    isDuplicate(path2) {
+      const now = Date.now();
+      return path2 === this.lastInsertedPath && now - this.lastInsertTime < this.duplicateThresholdMs;
+    }
+    recordInsertion(path2) {
+      this.lastInsertedPath = path2;
+      this.lastInsertTime = Date.now();
+    }
+    processSinglePath(path2, currentValue) {
+      if (!this.isValidPath(path2) || this.isDuplicate(path2)) {
+        return null;
+      }
+      this.recordInsertion(path2);
+      const formatted = this.formatPaths([path2]);
+      return this.mergePaths(currentValue, formatted);
+    }
+    processMultiplePaths(paths, currentValue) {
+      if (paths.length === 0) {
+        return null;
+      }
+      const validPaths = paths.filter((path2) => this.isValidPath(path2));
+      if (validPaths.length === 0) {
+        return null;
+      }
+      this.recordInsertion(validPaths[0]);
+      const formatted = this.formatPaths(validPaths);
+      return this.mergePaths(currentValue, formatted);
+    }
+    clear() {
+      this.lastInsertedPath = "";
+      this.lastInsertTime = 0;
+    }
+    isValidPath(path2) {
+      if (!path2) {
+        return false;
+      }
+      return path2.startsWith("/") || WINDOWS_PATH_PATTERN2.test(path2) || WINDOWS_POSIX_PATTERN.test(path2);
+    }
+  };
+
+  // src/client/ui/src/modules/drag-drop-module/message-handler.ts
+  var isRecord2 = (value) => typeof value === "object" && value !== null;
+  var MessageHandler = class {
+    constructor(logger) {
+      this.callbacks = {};
+      this.messageListener = null;
+      this.logger = logger;
+    }
+    startListening(callbacks) {
+      this.callbacks = callbacks;
+      this.messageListener = (event) => {
+        this.handleMessage(event.data);
+      };
+      window.addEventListener("message", this.messageListener);
+      this.logger?.("message-handler:start");
+    }
+    stopListening() {
+      if (this.messageListener) {
+        window.removeEventListener("message", this.messageListener);
+        this.messageListener = null;
+      }
+      this.callbacks = {};
+      this.logger?.("message-handler:stop");
+    }
+    requestFilePathGrab() {
+      const timestamp = Date.now();
+      this.sendMessage("grabFilePathFromDrop", { timestamp });
+    }
+    clearClipboards() {
+      this.sendMessage("clearAllClipboards");
+    }
+    sendMessage(command, payload) {
+      const message = { command };
+      if (payload) {
+        Object.assign(message, payload);
+      }
+      this.logger?.("message-handler:send", command, payload ?? null);
+      vscode_default.postMessage(message);
+    }
+    handleMessage(message) {
+      if (!isRecord2(message) || typeof message.command !== "string") {
+        return;
+      }
+      if (message.command === "insertPath") {
+        this.handleInsertPath(
+          typeof message.path === "string" ? message.path : ""
+        );
+        return;
+      }
+      if (message.command === "clipboardContent") {
+        this.handleClipboardContent(
+          typeof message.content === "string" ? message.content : ""
+        );
+      }
+    }
+    handleInsertPath(path2) {
+      if (!path2) {
+        return;
+      }
+      this.logger?.("message-handler:insert-path", path2);
+      this.callbacks.onPathInsert?.(path2);
+      this.clearClipboards();
+    }
+    handleClipboardContent(content3) {
+      if (!content3) {
+        return;
+      }
+      this.logger?.("message-handler:clipboard", content3);
+      this.callbacks.onClipboardContent?.(content3);
+      this.clearClipboards();
+    }
+  };
+
+  // src/client/ui/src/modules/drag-drop-module/drag-drop-facade.ts
+  var DragDropFacade = class {
+    constructor(logger) {
+      this.config = null;
+      this.isDragging = false;
+      this.dragHandler = new DragDropHandler({ logger });
+      this.pathProcessor = new FilePathProcessor();
+      this.messageHandler = new MessageHandler(logger);
+    }
+    initialize(config) {
+      this.config = config;
+      const callbacks = {
+        onDragEnter: (isShiftPressed) => this.handleDragEnter(isShiftPressed),
+        onDragLeave: () => this.handleDragLeave(),
+        onFileDrop: (paths) => this.handleFileDrop(paths),
+        onFallbackRequest: () => this.handleFallbackRequest()
+      };
+      this.dragHandler.attach(config.container, callbacks);
+      this.messageHandler.startListening({
+        onPathInsert: (path2) => this.handlePathInsert(path2),
+        onClipboardContent: (content3) => this.handleClipboardContent(content3)
+      });
+    }
+    destroy() {
+      this.dragHandler.detach();
+      this.messageHandler.stopListening();
+      this.pathProcessor.clear();
+      this.config = null;
+      this.isDragging = false;
+    }
+    getIsDragging() {
+      return this.isDragging;
+    }
+    handleDragEnter(isShiftPressed) {
+      if (!isShiftPressed) {
+        return;
+      }
+      this.isDragging = true;
+      this.config?.onDragStateChange?.(true);
+    }
+    handleDragLeave() {
+      this.isDragging = false;
+      this.config?.onDragStateChange?.(false);
+    }
+    handleFileDrop(paths) {
+      if (!this.config) {
+        return;
+      }
+      const currentValue = this.config.getCurrentValue();
+      const newValue = this.pathProcessor.processMultiplePaths(
+        paths,
+        currentValue
+      );
+      if (newValue !== null) {
+        this.config.onValueChange(newValue);
+      }
+    }
+    handleFallbackRequest() {
+      this.messageHandler.requestFilePathGrab();
+    }
+    handlePathInsert(path2) {
+      if (!this.config) {
+        return;
+      }
+      const currentValue = this.config.getCurrentValue();
+      if (path2.includes('"') && path2.includes("\n")) {
+        const mergedValue = currentValue ? `${currentValue}
+${path2}` : path2;
+        this.config.onValueChange(mergedValue);
+        return;
+      }
+      const newValue = this.pathProcessor.processSinglePath(path2, currentValue);
+      if (newValue !== null) {
+        this.config.onValueChange(newValue);
+      }
+    }
+    handleClipboardContent(content3) {
+      if (!this.config) {
+        return;
+      }
+      const currentValue = this.config.getCurrentValue();
+      const newValue = this.pathProcessor.processSinglePath(
+        content3,
+        currentValue
+      );
+      if (newValue !== null) {
+        this.config.onValueChange(newValue);
+      }
+    }
+  };
+
+  // src/client/ui/src/session/input-dnd.ts
+  var DEFAULT_DRAG_OVERLAY_LABEL = "Drop files here while holding Shift";
+  var useInputDragDrop = ({
+    containerRef,
+    textareaRef,
+    onValueChange
+  }) => {
+    const [isDragging, setIsDragging] = (0, import_react4.useState)(false);
+    const dragDropFacadeRef = (0, import_react4.useRef)(null);
+    (0, import_react4.useEffect)(() => {
+      const container = containerRef.current;
+      const textarea = textareaRef.current;
+      if (!(container && textarea)) {
+        return;
+      }
+      const dragDropFacade = new DragDropFacade();
+      dragDropFacadeRef.current = dragDropFacade;
+      dragDropFacade.initialize({
+        container,
+        onValueChange,
+        getCurrentValue: () => textarea.value,
+        onDragStateChange: setIsDragging
+      });
+      return () => {
+        dragDropFacade.destroy();
+        dragDropFacadeRef.current = null;
+      };
+    }, [containerRef, onValueChange, textareaRef]);
+    return { isDragging };
+  };
+
+  // src/client/ui/src/session/input-panel-clipboard.ts
+  var handlePlainTextPaste = (event, insertText) => {
+    const dataTransfer = event.clipboardData;
+    if (!dataTransfer) {
+      return false;
+    }
+    const plainText = dataTransfer.getData("text/plain");
+    if (plainText) {
+      event.preventDefault();
+      insertText(plainText);
+      return true;
+    }
+    if (typeof dataTransfer.items !== "undefined") {
+      const stringItem = Array.from(dataTransfer.items).find(
+        (item) => item.kind === "string"
+      );
+      if (stringItem) {
+        event.preventDefault();
+        stringItem.getAsString((text7) => {
+          if (text7) {
+            insertText(text7);
+          }
+        });
+        return true;
+      }
+    }
+    return false;
+  };
+  var tryReadFromNavigator = async (insertText) => {
+    if (typeof navigator === "undefined" || !navigator.clipboard || typeof navigator.clipboard.readText !== "function") {
+      return false;
+    }
+    try {
+      const text7 = await navigator.clipboard.readText();
+      if (text7) {
+        insertText(text7);
+        return true;
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  };
+  var copySelectionToClipboard = (event, textarea, selection) => {
+    if (event.clipboardData) {
+      event.preventDefault();
+      event.clipboardData.setData("text/plain", selection);
+      return;
+    }
+    if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      event.preventDefault();
+      navigator.clipboard.writeText(selection).catch(() => {
+      });
+      return;
+    }
+    textarea.select();
+  };
+  var createClipboardHandlers = ({
+    textareaRef,
+    insertTextAtSelection,
+    syncTextareaValue
+  }) => {
+    const handlePaste = (event) => {
+      const handled = handlePlainTextPaste(event, insertTextAtSelection);
+      if (handled) {
+        return;
+      }
+      tryReadFromNavigator(insertTextAtSelection).then((success) => {
+        if (success) {
+          return;
+        }
+        requestAnimationFrame(syncTextareaValue);
+      }).catch(() => {
+        requestAnimationFrame(syncTextareaValue);
+      });
+    };
+    const handleCopy = (event) => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      const start2 = textarea.selectionStart ?? 0;
+      const end = textarea.selectionEnd ?? 0;
+      if (start2 === end) {
+        return;
+      }
+      const selection = textarea.value.slice(start2, end);
+      if (!selection) {
+        return;
+      }
+      copySelectionToClipboard(event, textarea, selection);
+    };
+    return {
+      handlePaste,
+      handleCopy
+    };
+  };
+
+  // src/client/ui/src/components/idea-questionnaire/styles.ts
+  var questionnairePageStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+    height: "100%",
+    overflowY: "auto",
+    padding: "20px",
+    boxSizing: "border-box",
+    background: "linear-gradient(180deg, #1b1d21 0%, #16181b 100%)",
+    color: "#e5e5e5"
+  };
+  var questionnaireHeaderStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px"
+  };
+  var questionnaireTitleStyles = {
+    margin: 0,
+    fontSize: "18px",
+    fontWeight: 600
+  };
+  var questionnaireDescriptionStyles = {
+    margin: 0,
+    fontSize: "12px",
+    color: "#a7a7a7",
+    lineHeight: 1.6
+  };
+  var questionnaireListStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px"
+  };
+  var questionnaireFooterStyles = {
+    display: "flex",
+    justifyContent: "flex-end",
+    paddingBottom: "16px"
+  };
+  var questionnaireSubmitButtonStyles = {
+    appearance: "none",
+    border: "1px solid #0e639c",
+    borderRadius: "8px",
+    background: "#0e639c",
+    color: "#ffffff",
+    fontSize: "13px",
+    fontWeight: 600,
+    padding: "10px 16px",
+    cursor: "pointer",
+    boxShadow: "0 6px 16px rgba(14, 99, 156, 0.35)"
+  };
+  var questionCardStyles = {
+    background: "#1f2125",
+    border: "1px solid #2a2d33",
+    borderRadius: "12px",
+    padding: "16px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    boxShadow: "0 8px 18px rgba(0, 0, 0, 0.25)"
+  };
+  var questionHeaderStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px"
+  };
+  var questionTitleStyles = {
+    fontSize: "14px",
+    fontWeight: 600,
+    color: "#f0f0f0"
+  };
+  var questionDescriptionStyles = {
+    margin: 0,
+    fontSize: "12px",
+    color: "#9aa0a6",
+    lineHeight: 1.5
+  };
+  var questionInputShellStyles = {
+    position: "relative",
+    border: "1px solid #2c2f36",
+    borderRadius: "8px",
+    padding: "10px",
+    background: "#16181b"
+  };
+  var questionInputShellDraggingStyles = {
+    borderColor: "#2b88d8",
+    background: "#1e2a35"
+  };
+  var questionInputShellFocusedStyles = {
+    borderColor: "#0e639c",
+    boxShadow: "0 0 0 2px rgba(14, 99, 156, 0.2)"
+  };
+  var questionTextareaStyles = {
+    width: "100%",
+    border: "none",
+    outline: "none",
+    background: "transparent",
+    color: "#e5e5e5",
+    fontSize: "13px",
+    lineHeight: 1.6,
+    resize: "vertical",
+    overflow: "hidden",
+    padding: 0,
+    margin: 0,
+    boxSizing: "border-box"
+  };
+  var questionOverlayStyles = {
+    position: "absolute",
+    inset: "0",
+    borderRadius: "8px",
+    background: "rgba(14, 99, 156, 0.2)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#e5f4ff",
+    fontSize: "12px",
+    letterSpacing: "0.2px",
+    pointerEvents: "none"
+  };
+
+  // src/client/ui/src/components/idea-questionnaire/question-block.tsx
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  var BASE_MIN_HEIGHT = 96;
+  var focusTextareaEnd = (textarea) => {
+    if (!textarea) {
+      return;
+    }
+    const element3 = textarea;
+    element3.focus();
+    const length = element3.value.length;
+    element3.setSelectionRange(length, length);
+  };
+  var QuestionBlock = ({
+    question,
+    value,
+    onChange
+  }) => {
+    const [isFocused, setIsFocused] = (0, import_react5.useState)(false);
+    const [userMinHeight, setUserMinHeight] = (0, import_react5.useState)(null);
+    const textareaRef = (0, import_react5.useRef)(null);
+    const containerRef = (0, import_react5.useRef)(null);
+    const lastWidthRef = (0, import_react5.useRef)(null);
+    const adjustTextareaHeight2 = (0, import_react5.useCallback)(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      const minHeight = userMinHeight ?? BASE_MIN_HEIGHT;
+      textarea.style.height = "auto";
+      textarea.style.minHeight = `${minHeight}px`;
+      const targetHeight = Math.max(textarea.scrollHeight, minHeight);
+      textarea.style.height = `${targetHeight}px`;
+    }, [userMinHeight]);
+    const applyExternalValue = (0, import_react5.useCallback)(
+      (nextValue) => {
+        onChange(question.id, nextValue);
+        requestAnimationFrame(() => {
+          focusTextareaEnd(textareaRef.current);
+          adjustTextareaHeight2();
+        });
+      },
+      [adjustTextareaHeight2, onChange, question.id]
+    );
+    const { isDragging } = useInputDragDrop({
+      containerRef,
+      textareaRef,
+      onValueChange: applyExternalValue
+    });
+    const handleChange = (0, import_react5.useCallback)(
+      (event) => {
+        onChange(question.id, event.target.value);
+      },
+      [onChange, question.id]
+    );
+    const handleResizeCommit = (0, import_react5.useCallback)(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      const nextMinHeight = Math.max(
+        userMinHeight ?? BASE_MIN_HEIGHT,
+        textarea.offsetHeight
+      );
+      if (nextMinHeight !== (userMinHeight ?? BASE_MIN_HEIGHT)) {
+        setUserMinHeight(nextMinHeight);
+      }
+    }, [userMinHeight]);
+    const insertTextAtSelection = (0, import_react5.useCallback)(
+      (text7) => {
+        const textarea = textareaRef.current;
+        if (!textarea) {
+          return;
+        }
+        const [selectionStart, selectionEnd] = [
+          textarea.selectionStart ?? textarea.value.length,
+          textarea.selectionEnd ?? textarea.value.length
+        ];
+        const currentValue = textarea.value;
+        const nextValue = currentValue.slice(0, selectionStart) + text7 + currentValue.slice(selectionEnd);
+        onChange(question.id, nextValue);
+        requestAnimationFrame(() => {
+          const position3 = selectionStart + text7.length;
+          textarea.selectionStart = position3;
+          textarea.selectionEnd = position3;
+          adjustTextareaHeight2();
+          textarea.focus();
+        });
+      },
+      [adjustTextareaHeight2, onChange, question.id]
+    );
+    const syncTextareaValue = (0, import_react5.useCallback)(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      onChange(question.id, textarea.value);
+    }, [onChange, question.id]);
+    const { handlePaste, handleCopy } = (0, import_react5.useMemo)(
+      () => createClipboardHandlers({
+        textareaRef,
+        insertTextAtSelection,
+        syncTextareaValue
+      }),
+      [insertTextAtSelection, syncTextareaValue]
+    );
+    (0, import_react5.useEffect)(() => {
+      const nextValue = value;
+      requestAnimationFrame(() => {
+        const textarea = textareaRef.current;
+        if (!textarea || textarea.value !== nextValue) {
+          return;
+        }
+        adjustTextareaHeight2();
+      });
+    }, [adjustTextareaHeight2, value]);
+    (0, import_react5.useEffect)(() => {
+      const textarea = textareaRef.current;
+      if (!textarea || typeof ResizeObserver === "undefined") {
+        return;
+      }
+      const observer = new ResizeObserver((entries) => {
+        const entry = entries[0];
+        if (!entry) {
+          return;
+        }
+        const nextWidth = entry.contentRect.width;
+        if (lastWidthRef.current !== nextWidth) {
+          lastWidthRef.current = nextWidth;
+          adjustTextareaHeight2();
+        }
+      });
+      observer.observe(textarea);
+      return () => observer.disconnect();
+    }, [adjustTextareaHeight2]);
+    const inputShellStyles = {
+      ...questionInputShellStyles,
+      ...isDragging ? questionInputShellDraggingStyles : {},
+      ...isFocused ? questionInputShellFocusedStyles : {}
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("section", { style: questionCardStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: questionHeaderStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: questionTitleStyles, children: question.title }),
+        question.description ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { style: questionDescriptionStyles, children: question.description }) : null
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { ref: containerRef, style: inputShellStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+          "textarea",
+          {
+            "aria-label": question.title,
+            onBlur: () => {
+              setIsFocused(false);
+              handleResizeCommit();
+            },
+            onChange: handleChange,
+            onCopy: handleCopy,
+            onFocus: () => setIsFocused(true),
+            onMouseUp: handleResizeCommit,
+            onPaste: handlePaste,
+            onTouchEnd: handleResizeCommit,
+            placeholder: question.placeholder,
+            ref: textareaRef,
+            rows: 1,
+            style: questionTextareaStyles,
+            value
+          }
+        ),
+        isDragging ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("output", { style: questionOverlayStyles, children: DEFAULT_DRAG_OVERLAY_LABEL }) : null
+      ] })
+    ] });
+  };
+
+  // src/client/ui/src/components/idea-questionnaire/idea-questionnaire-view.tsx
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var IdeaQuestionnaireView = ({
+    title,
+    description,
+    questions,
+    answers,
+    submitLabel,
+    onAnswerChange,
+    onSubmit
+  }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("section", { "aria-label": "Idea questionnaire", style: questionnairePageStyles, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("header", { style: questionnaireHeaderStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h1", { style: questionnaireTitleStyles, children: title }),
+      description ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: questionnaireDescriptionStyles, children: description }) : null
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: questionnaireListStyles, children: questions.map((question) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      QuestionBlock,
+      {
+        onChange: onAnswerChange,
+        question,
+        value: answers[question.id] ?? ""
+      },
+      question.id
+    )) }),
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: questionnaireFooterStyles, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      "button",
+      {
+        onClick: onSubmit,
+        style: questionnaireSubmitButtonStyles,
+        type: "button",
+        children: submitLabel
+      }
+    ) })
+  ] });
+
+  // src/client/ui/src/app-host/idea-kickoff-prompt.ts
+  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\nSpec-first: \u0432\u0435\u0434\u0438 readiness (ready_for_spec/blockers) \u0438 handoff_for_spec (assumptions/decisions_needed/open_questions/next_steps).\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md` \u0438 `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md`.";
+
+  // src/client/ui/src/services/idea-collector-artifact.ts
+  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
+  var extractIdeaCollectorArtifact = (event) => {
+    if (!isRecord3(event)) {
+      return null;
+    }
+    const data = event.data;
+    if (!isRecord3(data) || data.kind !== "structured_output") {
+      return null;
+    }
+    let nextAction = null;
+    if (typeof data.nextAction === "string") {
+      nextAction = data.nextAction;
+    } else if (typeof data.next_action === "string") {
+      nextAction = data.next_action;
+    }
+    if (nextAction !== "finalize") {
+      return null;
+    }
+    const artifact = data.artifact;
+    if (!isRecord3(artifact)) {
+      return null;
+    }
+    const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
+    const virtualSimulationPath = readStringField(artifact, "virtualSimulationPath") ?? readStringField(artifact, "virtual_simulation_path");
+    const ideaMarkdown = readStringField(artifact, "ideaMarkdown") ?? readStringField(artifact, "idea_markdown");
+    const virtualSimulationMarkdown = readStringField(artifact, "virtualSimulationMarkdown") ?? readStringField(artifact, "virtual_simulation_markdown");
+    if (!(ideaPath && ideaMarkdown && virtualSimulationPath && virtualSimulationMarkdown)) {
+      return null;
+    }
+    return {
+      ideaPath,
+      ideaMarkdown,
+      virtualSimulationPath,
+      virtualSimulationMarkdown
+    };
+  };
+
+  // src/client/ui/src/services/idea-collector-fallback-schema.ts
+  var FALLBACK_SCHEMA_JSON = String.raw`{"$schema":"http://json-schema.org/draft-07/schema#","$id":"https://codeai-hub.local/schemas/idea-collector-schema.json","title":"Idea Collector — Structured Output Contract","description":"Контракт Structured Output для универсального агента Idea Collector. Агент ведёт guided conversation, заполняя секции идеи, опирается только на контракт (без внешних документов), и на финале (next_action=finalize) обязан вернуть готовые Idea.md и virtual-simulation.md как markdown + целевые пути сохранения.","type":"object","additionalProperties":false,"required":["conversation_state","next_action","suggested_response","reasoning_summary_ru","artifact"],"properties":{"conversation_state":{"type":"object","additionalProperties":false,"required":["collected","coverage_percent","coverage","readiness","handoff_for_spec"],"description":"Накопленное состояние диалога: частично или полностью заполненные секции из шаблона идеи.","properties":{"collected":{"type":"object","additionalProperties":false,"description":"Накопленные ответы пользователя/агента по секциям idea-template.md. Допускается частичное заполнение — агент дозапрашивает недостающее.","properties":{"meta":{"type":"object","additionalProperties":false,"description":"Метаданные шапки Idea.md.","properties":{"title":{"type":"string","minLength":1,"description":"# Idea: <Название инициативы/модуля/проекта>"},"created_date":{"type":"string","description":"**Дата создания:** <YYYY-MM-DD>","pattern":"^\\d{4}-\\d{2}-\\d{2}$"},"status":{"type":"string","description":"**Статус:** Draft | Approved | In Progress | Completed","enum":["Draft","Approved","In Progress","Completed"]},"author":{"type":"string","minLength":1,"description":"**Автор идеи:** <имя>"},"idea_type":{"type":"string","description":"**Тип идеи:** продукт | приложение | кластер | фича | модуль | улучшение | исследование","enum":["продукт","приложение","кластер","фича","модуль","улучшение","исследование"]}},"required":["title","created_date","status","idea_type","author"]},"short_description":{"type":"string","description":"## 1. Краткое описание — одно-два предложения, что это и зачем."},"context_and_motivation":{"type":"string","description":"## 2. Контекст и мотивация — почему это важно сейчас, какой контекст привёл к идее."},"problem":{"type":"string","description":"## 3. Проблема — какую проблему решает модуль/проект."},"goals_and_success_criteria":{"type":"object","additionalProperties":false,"description":"## 4. Цели и критерии успеха.","properties":{"goals":{"type":"array","description":"**Цели:**","items":{"type":"string","minLength":1}},"success_criteria":{"type":"array","description":"**Критерии успеха (измеримые/проверяемые):**","items":{"type":"string","minLength":1}}},"required":["goals","success_criteria"]},"high_level_solution":{"type":"string","description":"## 5. Решение (высокоуровневое) — как предлагается решить проблему."},"user_scenarios":{"type":"array","description":"## 6. Пользовательские сценарии — 3–7 ключевых сценариев использования.","items":{"type":"string","minLength":1}},"key_functions":{"type":"array","description":"## 7. Ключевые функции — таблица функций.","items":{"type":"object","additionalProperties":false,"required":["id","name","description"],"properties":{"id":{"type":"integer","minimum":1,"description":"Порядковый номер в таблице (опционально)."},"name":{"type":"string","minLength":1,"description":"Название функции."},"description":{"type":"string","minLength":1,"description":"Описание функции."}}}},"ui_ux":{"type":"array","description":"## 8. UI/UX и пользовательские потоки — экраны, ключевые действия, критичные состояния.","items":{"type":"string","minLength":1}},"triggers_and_events":{"type":"array","description":"## 9. Триггеры и события — что запускает процесс, какие сигналы обрабатываются.","items":{"type":"string","minLength":1}},"data_entities":{"type":"array","description":"## 10. Данные и ключевые сущности — основные модели, состояния, справочники (в т.ч. Приложение/Кластер/Модуль, если релевантно).","items":{"type":"string","minLength":1}},"architecture_outline":{"type":"array","description":"## 11. Архитектурный контур — модули/сервисы/фасады и их взаимодействие.","items":{"type":"string","minLength":1}},"users_and_roles":{"type":"object","additionalProperties":false,"description":"## 12. Пользователи и роли.","properties":{"user":{"type":"string","description":"- **Пользователь**: ..."},"ai_agent":{"type":"string","description":"- **AI Агент**: ..."},"system":{"type":"string","description":"- **Система**: ..."}},"required":["user","ai_agent","system"]},"out_of_scope":{"type":"array","description":"## 13. Границы (что НЕ входит).","items":{"type":"string","minLength":1}},"constraints_and_assumptions":{"type":"object","additionalProperties":false,"description":"## 14. Ограничения и допущения.","properties":{"technical_constraints":{"type":"array","description":"- Технические ограничения: ...","items":{"type":"string","minLength":1}},"ux_time_team_constraints":{"type":"array","description":"- Ограничения по UX/времени/команде: ...","items":{"type":"string","minLength":1}},"assumptions":{"type":"array","description":"- Допущения: ...","items":{"type":"string","minLength":1}}},"required":["technical_constraints","ux_time_team_constraints","assumptions"]},"data_and_storage":{"type":"object","additionalProperties":false,"description":"## 15. Данные и хранение.","properties":{"artifacts_files":{"type":"array","description":"- Артефакты/файлы: ...","items":{"type":"string","minLength":1}},"configs_settings":{"type":"array","description":"- Конфиги/настройки: ...","items":{"type":"string","minLength":1}},"logs_telemetry":{"type":"array","description":"- Логи/телеметрия: ...","items":{"type":"string","minLength":1}}},"required":["artifacts_files","configs_settings","logs_telemetry"]},"dependencies_and_integrations":{"type":"object","additionalProperties":false,"description":"## 16. Зависимости и интеграции.","properties":{"external_systems":{"type":"array","description":"- Внешние системы: ...","items":{"type":"string","minLength":1}},"internal_modules":{"type":"array","description":"- Внутренние модули: ...","items":{"type":"string","minLength":1}},"ai_providers":{"type":"array","description":"- Провайдеры AI: ...","items":{"type":"string","minLength":1}}},"required":["external_systems","internal_modules","ai_providers"]},"risks_and_unknowns":{"type":"array","description":"## 17. Риски и неизвестности.","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"## 18. Открытые вопросы — список того, что надо уточнить перед Spec.md.","items":{"type":"string","minLength":1}},"spec_entry_criteria":{"type":"array","description":"## 19. Критерии перехода к Spec.md — чек-лист. Может быть частично заполнен/переформулирован под проект.","items":{"type":"string","minLength":1}},"related_documents":{"type":"object","additionalProperties":false,"description":"## 20. Связанные документы.","properties":{"spec_note":{"type":"string","description":"Строка/пояснение про Spec.md (например '(будет создан)')."},"plan_note":{"type":"string","description":"Строка/пояснение про Plan.md (например '(будет создан)')."},"discussion_links":{"type":"array","description":"Ссылки на обсуждения/документы.","items":{"type":"string","minLength":1}}},"required":["spec_note","plan_note","discussion_links"]}},"required":["meta","short_description","context_and_motivation","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","constraints_and_assumptions","data_and_storage","dependencies_and_integrations","risks_and_unknowns","open_questions","spec_entry_criteria","related_documents"]},"coverage_percent":{"type":"integer","minimum":0,"maximum":100,"description":"Оценка заполненности шаблона идеи (0..100). Рекомендуемый порог завершения: >= 80."},"coverage":{"type":"object","additionalProperties":false,"description":"Опциональная детализация покрытия по секциям шаблона.","properties":{"completed_sections":{"type":"array","items":{"type":"string","minLength":1}},"missing_sections":{"type":"array","items":{"type":"string","minLength":1}}},"required":["completed_sections","missing_sections"]},"readiness":{"type":"object","additionalProperties":false,"description":"Готовность к переходу в Spec.md: честная оценка и блокеры.","properties":{"ready_for_spec":{"type":"boolean","description":"true только если блокеров нет и пользователь подтвердил финализацию."},"blockers":{"type":"array","description":"Список причин, почему нельзя переходить к Spec.md прямо сейчас.","items":{"type":"string","minLength":1}}},"required":["ready_for_spec","blockers"]},"handoff_for_spec":{"type":"object","additionalProperties":false,"description":"Handoff для следующего агента Spec.md: что принять как данность и что уточнить.","properties":{"assumptions":{"type":"array","description":"Ключевые допущения, на которых строится идея.","items":{"type":"string","minLength":1}},"decisions_needed":{"type":"array","description":"Решения, которые нужно принять в Spec.md (варианты/компромиссы).","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"Открытые вопросы для Spec.md (что уточнить у пользователя/стейкхолдеров).","items":{"type":"string","minLength":1}},"next_steps":{"type":"array","description":"Следующие шаги для подготовки Spec.md.","items":{"type":"string","minLength":1}}},"required":["assumptions","decisions_needed","open_questions","next_steps"]}}},"next_action":{"type":"string","description":"Что делать дальше: задать вопрос, уточнить, суммаризировать или завершить и вернуть артефакт.","enum":["ask_question","clarify","summarize","finalize"]},"suggested_response":{"type":"string","minLength":1,"description":"Текст следующего сообщения агента (вопрос/уточнение/сводка/финализация), который показываем пользователю."},"reasoning_summary_ru":{"type":"string","description":"Краткое резюме прогресса/решений на русском без chain-of-thought."},"artifact":{"type":"object","additionalProperties":false,"description":"Финальные артефакты. Обязательны при next_action=finalize.","required":["idea_markdown","virtual_simulation_markdown","idea_path","virtual_simulation_path"],"properties":{"idea_markdown":{"type":"string","description":"Готовый Idea.md как markdown (включая заголовок и все секции по шаблону)."},"virtual_simulation_markdown":{"type":"string","description":"Виртуальный тест (virtual-simulation.md) как markdown.\n\nОбязательные секции/заголовки (используй эти названия):\n- # Virtual Simulation: <Название идеи>\n- ## Цель симуляции\n- ## Сценарий 1 — ... (2–4 сценария)\n- ## UI ↔ Core события\n- ## Логи и телеметрия\n- ## Мини-матрица рисков\n- ## Must-pass проверки (E2E)\n- ## Выводы\n"},"idea_path":{"type":"string","description":"Куда сохранить Idea.md в проекте.","const":".codeai-hub/full-development-flow/idea/idea.md"},"virtual_simulation_path":{"type":"string","description":"Куда сохранить virtual-simulation.md в проекте.","const":".codeai-hub/full-development-flow/idea/virtual-simulation.md"}}}},"allOf":[{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"required":["artifact"]}},{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"properties":{"conversation_state":{"required":["collected","coverage_percent"],"properties":{"coverage_percent":{"minimum":80},"collected":{"required":["meta","short_description","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","dependencies_and_integrations","risks_and_unknowns","open_questions"],"properties":{"meta":{"required":["title","created_date","status","idea_type","author"]},"goals_and_success_criteria":{"required":["goals","success_criteria"]},"ui_ux":{"minItems":1},"triggers_and_events":{"minItems":1},"data_entities":{"minItems":1},"architecture_outline":{"minItems":1}}}}}}}}]}`;
+  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var getNestedRecord = (root4, keys2) => {
+    let current = root4;
+    for (const key of keys2) {
+      const next = current[key];
+      if (!isRecord4(next)) {
+        return null;
+      }
+      current = next;
+    }
+    return current;
+  };
+  var patchFallbackIdeaCollectorSchema = (schema) => {
+    const meta = getNestedRecord(schema, [
+      "properties",
+      "conversation_state",
+      "properties",
+      "collected",
+      "properties",
+      "meta"
+    ]);
+    const metaProperties = meta ? getNestedRecord(meta, ["properties"]) : null;
+    const metaRequired = meta?.required;
+    if (metaProperties) {
+      metaProperties.initiative_slug = {
+        type: "string",
+        minLength: 1,
+        description: "initiativeSlug (lowercase kebab-case). \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442\u0441\u044F \u0432 \u043A\u0430\u043D\u043E\u043D\u0438\u0447\u043D\u044B\u0445 \u043F\u0443\u0442\u044F\u0445: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/..."
+      };
+    }
+    if (Array.isArray(metaRequired) && !metaRequired.includes("initiative_slug")) {
+      metaRequired.push("initiative_slug");
+    }
+    const artifact = getNestedRecord(schema, ["properties", "artifact"]);
+    const artifactProperties = artifact ? getNestedRecord(artifact, ["properties"]) : null;
+    if (artifactProperties && isRecord4(artifactProperties.idea_path)) {
+      artifactProperties.idea_path.const = ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/idea.md";
+    }
+    if (artifactProperties && isRecord4(artifactProperties.virtual_simulation_path)) {
+      artifactProperties.virtual_simulation_path.const = ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/virtual-simulation.md";
+    }
+  };
+  var parsed = JSON.parse(FALLBACK_SCHEMA_JSON);
+  patchFallbackIdeaCollectorSchema(parsed);
+  var IDEA_COLLECTOR_FALLBACK_SCHEMA = parsed;
+
+  // src/client/ui/src/services/idea-collector-schema-utils.ts
+  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
+  var strictifyProperties = (schema) => {
+    const properties = schema.properties;
+    if (!isRecord5(properties)) {
+      return;
+    }
+    schema.required = Object.keys(properties);
+    if (schema.additionalProperties === void 0) {
+      schema.additionalProperties = false;
+    }
+    for (const value of Object.values(properties)) {
+      if (isRecord5(value)) {
+        strictifySchema(value);
+      }
+    }
+  };
+  var strictifyItems = (schema) => {
+    const items = schema.items;
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        if (isRecord5(item)) {
+          strictifySchema(item);
+        }
+      }
+      return;
+    }
+    if (isRecord5(items)) {
+      strictifySchema(items);
+    }
+  };
+  var removeCombinatorsFromProperties = (schema) => {
+    const properties = schema.properties;
+    if (!isRecord5(properties)) {
+      return;
+    }
+    for (const value of Object.values(properties)) {
+      if (isRecord5(value)) {
+        removeCombinators(value);
+      }
+    }
+  };
+  var removeCombinatorsFromItems = (schema) => {
+    const items = schema.items;
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        if (isRecord5(item)) {
+          removeCombinators(item);
+        }
+      }
+      return;
+    }
+    if (isRecord5(items)) {
+      removeCombinators(items);
+    }
+  };
+  var removeCombinators = (schema) => {
+    removeCombinatorsFromProperties(schema);
+    removeCombinatorsFromItems(schema);
+    for (const key of ["allOf", "anyOf", "oneOf"]) {
+      const entries = schema[key];
+      if (!Array.isArray(entries)) {
+        continue;
+      }
+      for (const entry of entries) {
+        if (isRecord5(entry)) {
+          removeCombinators(entry);
+        }
+      }
+      delete schema[key];
+    }
+  };
+  var strictifySchema = (schema) => {
+    removeCombinators(schema);
+    strictifyProperties(schema);
+    strictifyItems(schema);
+  };
+  var injectTemplateIntoSchema = (schema, template) => {
+    if (!template) {
+      return schema;
+    }
+    const properties = schema.properties;
+    if (!isRecord5(properties)) {
+      return schema;
+    }
+    const artifact = properties.artifact;
+    if (!isRecord5(artifact)) {
+      return schema;
+    }
+    const artifactProperties = artifact.properties;
+    if (!isRecord5(artifactProperties)) {
+      return schema;
+    }
+    const ideaMarkdown = artifactProperties.idea_markdown;
+    if (!isRecord5(ideaMarkdown)) {
+      return schema;
+    }
+    const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
+    ideaMarkdown.description = `${description}
+
+Idea.md template:
+${template}`;
+    return schema;
+  };
+  var ALLOWED_SCHEMA_KEYS = /* @__PURE__ */ new Set([
+    "type",
+    "properties",
+    "required",
+    "additionalProperties",
+    "items",
+    "description"
+  ]);
+  var pruneSchemaKeys = (schema) => {
+    for (const key of Object.keys(schema)) {
+      if (!ALLOWED_SCHEMA_KEYS.has(key)) {
+        delete schema[key];
+      }
+    }
+  };
+  var sanitizeSchemaProperties = (schema) => {
+    const properties = schema.properties;
+    if (!isRecord5(properties)) {
+      return;
+    }
+    for (const value of Object.values(properties)) {
+      if (isRecord5(value)) {
+        sanitizeSchemaKeywords(value);
+      }
+    }
+  };
+  var sanitizeSchemaItems = (schema) => {
+    const items = schema.items;
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        if (isRecord5(item)) {
+          sanitizeSchemaKeywords(item);
+        }
+      }
+      return;
+    }
+    if (isRecord5(items)) {
+      sanitizeSchemaKeywords(items);
+    }
+  };
+  var sanitizeSchemaKeywords = (schema) => {
+    pruneSchemaKeys(schema);
+    sanitizeSchemaProperties(schema);
+    sanitizeSchemaItems(schema);
+  };
+  var normalizeIdeaCollectorSchema = (schema, template) => {
+    const next = cloneSchema(schema);
+    strictifySchema(next);
+    sanitizeSchemaKeywords(next);
+    return injectTemplateIntoSchema(next, template);
+  };
+
+  // src/client/ui/src/services/idea-collector-support.ts
+  var generateLocalMessageId2 = () => {
+    if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
+      return globalThis.crypto.randomUUID();
+    }
+    return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  };
+  var resolveCoreHttpUrl = () => {
+    const globalScope2 = window;
+    const httpUrl = globalScope2.__CODEAI_CORE_CONFIG?.httpUrl;
+    if (typeof httpUrl !== "string" || httpUrl.length === 0) {
+      return null;
+    }
+    return httpUrl;
+  };
+  var joinUrl = (baseUrl, path2) => baseUrl.endsWith("/") ? `${baseUrl.slice(0, -1)}${path2}` : `${baseUrl}${path2}`;
+  var postSystemNotice = (sessionId, content3) => {
+    window.postMessage(
+      {
+        type: "session:message",
+        payload: {
+          sessionId,
+          message: {
+            id: generateLocalMessageId2(),
+            role: "system",
+            content: content3,
+            createdAt: Date.now()
+          }
+        }
+      },
+      "*"
+    );
+  };
+
+  // src/client/ui/src/services/idea-collector-workspace-context.ts
+  var WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
+  var DEFAULT_MAX_BYTES = 6e4;
+  var MAX_FILES = 3;
+  var normalizePathToken = (token) => {
+    const trimmed = token.trim();
+    if (trimmed.length === 0) {
+      return null;
+    }
+    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) {
+      return trimmed.slice(1, -1).trim() || null;
+    }
+    return trimmed;
+  };
+  var parseWorkspaceReadCommand = (content3) => {
+    const trimmed = content3.trimStart();
+    if (!(trimmed.startsWith("/read") || trimmed.startsWith("/attach"))) {
+      return null;
+    }
+    const lines = trimmed.split("\n");
+    const firstLine = lines[0]?.trim() ?? "";
+    const tokens = firstLine.split(/\s+/g);
+    const command = tokens[0];
+    if (!(command === "/read" || command === "/attach")) {
+      return null;
+    }
+    const paths = tokens.slice(1).map((token) => normalizePathToken(token)).filter(Boolean);
+    const remainingMessage = lines.slice(1).join("\n").trim();
+    return { paths, remainingMessage };
+  };
+  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isWorkspaceFileResponse = (value) => {
+    if (!isRecord6(value)) {
+      return false;
+    }
+    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
+  };
+  var fetchWorkspaceFile = async (sessionId, relativePath) => {
+    const httpUrl = resolveCoreHttpUrl();
+    if (!httpUrl) {
+      return null;
+    }
+    try {
+      const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          path: relativePath,
+          maxBytes: DEFAULT_MAX_BYTES
+        })
+      });
+      if (!response.ok) {
+        return null;
+      }
+      const payload = await response.json();
+      if (!isWorkspaceFileResponse(payload)) {
+        return null;
+      }
+      return payload;
+    } catch {
+      return null;
+    }
+  };
+  var buildMessageWithWorkspaceContext = async (sessionId, content3) => {
+    const command = parseWorkspaceReadCommand(content3);
+    if (!command) {
+      return null;
+    }
+    if (command.paths.length === 0) {
+      postSystemNotice(
+        sessionId,
+        "\u041A\u043E\u043C\u0430\u043D\u0434\u0430 /read \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043F\u0443\u0442\u044C(\u0438):\n/read doc/Architecture/Architecture.md\n(\u0434\u0430\u043B\u044C\u0448\u0435 \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445 \u043C\u043E\u0436\u043D\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432\u043E\u043F\u0440\u043E\u0441/\u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439)"
+      );
+      return "";
+    }
+    const files = await Promise.all(
+      command.paths.slice(0, MAX_FILES).map(async (relativePath) => ({
+        relativePath,
+        response: await fetchWorkspaceFile(sessionId, relativePath)
+      }))
+    );
+    const resolvedFiles = files.filter((entry) => entry.response);
+    if (resolvedFiles.length === 0) {
+      postSystemNotice(
+        sessionId,
+        "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C \u043D\u0438 \u043E\u0434\u0438\u043D \u0444\u0430\u0439\u043B \u0438\u0437 /read. \u041F\u0440\u043E\u0432\u0435\u0440\u044C \u043F\u0443\u0442\u0438 \u0438 \u0447\u0442\u043E Core \u0437\u0430\u043F\u0443\u0449\u0435\u043D."
+      );
+      return "";
+    }
+    const blocks = [];
+    blocks.push(
+      "\u041A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438\u0437 \u0444\u0430\u0439\u043B\u043E\u0432 (workspace). \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u044D\u0442\u043E \u043A\u0430\u043A \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0438\u0441\u0442\u0438\u043D\u044B \u0434\u043B\u044F \u0442\u0435\u043A\u0443\u0449\u0435\u0433\u043E \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E:"
+    );
+    for (const entry of resolvedFiles) {
+      const payload = entry.response;
+      const truncationNote = payload.truncated ? `
+(\u0444\u0430\u0439\u043B \u043E\u0431\u0440\u0435\u0437\u0430\u043D \u0434\u043E ${payload.maxBytes} \u0431\u0430\u0439\u0442)` : "";
+      blocks.push(
+        `
+[FILE: ${payload.path}]${truncationNote}
+\`\`\`
+${payload.content}
+\`\`\``
+      );
+    }
+    if (command.paths.length > MAX_FILES) {
+      postSystemNotice(
+        sessionId,
+        `\u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0435: \u043F\u0440\u0438\u043A\u0440\u0435\u043F\u043B\u044F\u044E \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C ${MAX_FILES} \u0444\u0430\u0439\u043B\u043E\u0432 \u0437\u0430 \u0440\u0430\u0437.`
+      );
+    }
+    if (command.remainingMessage.length > 0) {
+      blocks.push(`
+\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F:
+${command.remainingMessage}`);
+    } else {
+      blocks.push(
+        "\n\u0414\u0430\u043B\u0435\u0435: \u0443\u0447\u0442\u0438 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438 \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E (\u0437\u0430\u0434\u0430\u0439 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441)."
+      );
+    }
+    return blocks.join("\n");
+  };
+
+  // src/client/ui/src/services/idea-collector-service.ts
+  var IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
+  var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
+  var FALLBACK_OUTPUT_PATHS = {
+    idea: ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/idea.md",
+    virtualSimulation: ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/virtual-simulation.md"
+  };
+  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isIdeaContractPayload = (value) => {
+    if (!isRecord7(value)) {
+      return false;
+    }
+    const outputPaths = value.outputPaths;
+    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord7(value.schema) && isRecord7(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
+  };
+  var fetchIdeaContract = async () => {
+    const httpUrl = resolveCoreHttpUrl();
+    if (!httpUrl) {
+      return null;
+    }
+    try {
+      const response = await fetch(joinUrl(httpUrl, IDEA_CONTRACT_ENDPOINT));
+      if (!response.ok) {
+        return null;
+      }
+      const payload = await response.json();
+      if (!isIdeaContractPayload(payload)) {
+        return null;
+      }
+      const schema = normalizeIdeaCollectorSchema(payload.schema, null);
+      const questionnaireTemplateMarkdown = extractIdeaContractQuestionnaireTemplate(payload) ?? null;
+      return {
+        prompt: payload.prompt,
+        schema,
+        outputPaths: payload.outputPaths,
+        questionnaireTemplateMarkdown
+      };
+    } catch {
+      return null;
+    }
+  };
+  var loadContract = async () => {
+    const remote = await fetchIdeaContract();
+    if (remote) {
+      return remote;
+    }
+    const fallbackSchema = normalizeIdeaCollectorSchema(
+      IDEA_COLLECTOR_FALLBACK_SCHEMA,
+      null
+    );
+    return {
+      prompt: IDEA_KICKOFF_PROMPT,
+      schema: fallbackSchema,
+      outputPaths: FALLBACK_OUTPUT_PATHS,
+      questionnaireTemplateMarkdown: null
+    };
+  };
+  var _IdeaCollectorService = class _IdeaCollectorService {
+    constructor() {
+      this.contractPromise = null;
+    }
+    isIdeaCollectorSession(sessionId) {
+      return _IdeaCollectorService.activeSessions.has(sessionId);
+    }
+    getLatestArtifact(sessionId) {
+      return _IdeaCollectorService.artifacts.get(sessionId) ?? null;
+    }
+    startCollection(sessionId) {
+      _IdeaCollectorService.activeSessions.add(sessionId);
+      _IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+      if (!_IdeaCollectorService.noticesSent.has(sessionId)) {
+        _IdeaCollectorService.noticesSent.add(sessionId);
+        postSystemNotice(
+          sessionId,
+          "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Idea Collector. \u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
+        );
+        postSystemNotice(
+          sessionId,
+          "\u0427\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u044C \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B/\u0444\u0430\u0439\u043B\u044B \u0438\u0437 workspace, \u043C\u043E\u0436\u043D\u043E:\n- \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0438 \u0442\u0440\u0438\u0433\u0433\u0435\u0440 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0439/\u0438\u0437\u0443\u0447\u0438/\u043E\u0437\u043D\u0430\u043A\u043E\u043C\u044C\u0441\u044F\xBB) \u0438 \u0443\u043A\u0430\u0437\u0430\u0442\u044C \u043F\u0443\u0442\u0438 \u043A \u0444\u0430\u0439\u043B\u0430\u043C (\u043C\u043E\u0436\u043D\u043E \u043D\u0430 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445);\n- \u0438\u043B\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u043A\u043E\u043C\u0430\u043D\u0434\u0443:\n/read <relative-path>\n(\u043C\u043E\u0436\u043D\u043E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043F\u0443\u0442\u0435\u0439 \u0432 \u043E\u0434\u043D\u043E\u0439 \u0441\u0442\u0440\u043E\u043A\u0435, \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 3)."
+        );
+      }
+    }
+    async continueConversation(sessionId, content3) {
+      if (!_IdeaCollectorService.activeSessions.has(sessionId)) {
+        return;
+      }
+      if (_IdeaCollectorService.pendingQuestionnaire.has(sessionId)) {
+        postSystemNotice(
+          sessionId,
+          "\u0410\u043D\u043A\u0435\u0442\u0430 \u0435\u0449\u0451 \u043D\u0435 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0430. \u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
+        );
+        return;
+      }
+      const schema = await this.getNormalizedSchema();
+      const augmentedContent = await buildMessageWithWorkspaceContext(
+        sessionId,
+        content3
+      );
+      if (augmentedContent === "") {
+        return;
+      }
+      sendChatMessage(sessionId, augmentedContent ?? content3, {
+        outputSchema: schema
+      });
+    }
+    async beginQuestionnaireReview(sessionId, content3) {
+      if (!_IdeaCollectorService.activeSessions.has(sessionId)) {
+        _IdeaCollectorService.activeSessions.add(sessionId);
+      }
+      _IdeaCollectorService.pendingQuestionnaire.delete(sessionId);
+      const [prompt, schema] = await Promise.all([
+        this.getPrompt(),
+        this.getNormalizedSchema()
+      ]);
+      sendChatMessage(sessionId, prompt, { outputSchema: schema });
+      sendChatMessage(sessionId, content3, { outputSchema: schema });
+    }
+    handleStreamEvent(sessionId, event) {
+      if (!_IdeaCollectorService.activeSessions.has(sessionId)) {
+        return;
+      }
+      const artifact = extractIdeaCollectorArtifact(event);
+      if (artifact) {
+        _IdeaCollectorService.artifacts.set(sessionId, artifact);
+        this.persistIdeaArtifacts(sessionId, artifact).catch((error) => {
+          const message = error instanceof Error ? error.message : String(error);
+          postSystemNotice(
+            sessionId,
+            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: ${message}`
+          );
+        });
+      }
+    }
+    getPrompt() {
+      return this.getContract().then((contract) => contract.prompt);
+    }
+    getNormalizedSchema() {
+      return this.getContract().then((contract) => contract.schema);
+    }
+    getQuestionnaireTemplateMarkdown() {
+      return this.getContract().then(
+        (contract) => contract.questionnaireTemplateMarkdown
+      );
+    }
+    getOutputPaths() {
+      return this.getContract().then((contract) => contract.outputPaths);
+    }
+    getContract() {
+      if (!this.contractPromise) {
+        this.contractPromise = loadContract();
+      }
+      return this.contractPromise;
+    }
+    async persistIdeaArtifacts(sessionId, artifact) {
+      const httpUrl = resolveCoreHttpUrl();
+      const contract = await this.getContract();
+      if (!httpUrl) {
+        postSystemNotice(
+          sessionId,
+          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
+        );
+        return;
+      }
+      try {
+        const response = await fetch(joinUrl(httpUrl, IDEA_ARTIFACT_ENDPOINT), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            ideaMarkdown: artifact.ideaMarkdown,
+            virtualSimulationMarkdown: artifact.virtualSimulationMarkdown,
+            ideaPath: artifact.ideaPath,
+            virtualSimulationPath: artifact.virtualSimulationPath
+          })
+        });
+        if (!response.ok) {
+          postSystemNotice(
+            sessionId,
+            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (HTTP ${response.status}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
+          );
+          return;
+        }
+        const payload = await response.json();
+        const savedIdeaPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : artifact.ideaPath;
+        const savedVirtualSimulationPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : artifact.virtualSimulationPath;
+        postSystemNotice(
+          sessionId,
+          `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedIdeaPath} \u0438 ${savedVirtualSimulationPath}`
+        );
+      } catch {
+        postSystemNotice(
+          sessionId,
+          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
+        );
+      }
+    }
+  };
+  _IdeaCollectorService.activeSessions = /* @__PURE__ */ new Set();
+  _IdeaCollectorService.artifacts = /* @__PURE__ */ new Map();
+  _IdeaCollectorService.noticesSent = /* @__PURE__ */ new Set();
+  _IdeaCollectorService.pendingQuestionnaire = /* @__PURE__ */ new Set();
+  var IdeaCollectorService = _IdeaCollectorService;
+
+  // src/client/ui/src/services/idea-questionnaire-service.ts
+  var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
+  var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
+  var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
+  var SAVE_DEBOUNCE_MS = 400;
+  var FIELD_REGEX = /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
+  var HEADING_PREFIX_RE = /^#+\s*/;
+  var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
+  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isWorkspaceFileResponse2 = (value) => {
+    if (!isRecord8(value)) {
+      return false;
+    }
+    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
+  };
+  var resolveFieldTitle = (template, startIndex, fallback) => {
+    const prefix = template.slice(0, startIndex);
+    const lines = prefix.split("\n").reverse();
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("<!--")) {
+        continue;
+      }
+      if (trimmed.startsWith("#")) {
+        return trimmed.replace(HEADING_PREFIX_RE, "");
+      }
+      return trimmed;
+    }
+    return fallback;
+  };
+  var parseTemplateFields = (template) => {
+    const questions = [];
+    const placeholders = {};
+    const matches = template.matchAll(FIELD_REGEX);
+    for (const match of matches) {
+      const fieldId = match[1];
+      if (!fieldId || placeholders[fieldId]) {
+        continue;
+      }
+      const placeholder = (match[2] ?? "").trim();
+      const title = resolveFieldTitle(template, match.index ?? 0, fieldId);
+      placeholders[fieldId] = placeholder;
+      questions.push({ id: fieldId, title, placeholder });
+    }
+    return { questions, placeholders };
+  };
+  var extractAnswers = (content3, placeholders) => {
+    const answers = {};
+    const matches = content3.matchAll(FIELD_REGEX);
+    for (const match of matches) {
+      const fieldId = match[1];
+      if (!fieldId) {
+        continue;
+      }
+      const candidate = (match[2] ?? "").trim();
+      const placeholder = (placeholders[fieldId] ?? "").trim();
+      answers[fieldId] = candidate === placeholder ? "" : candidate;
+    }
+    return answers;
+  };
+  var IdeaQuestionnaireService = class {
+    constructor() {
+      this.ideaCollector = new IdeaCollectorService();
+      this.saveTimers = /* @__PURE__ */ new Map();
+    }
+    async loadQuestionnaire(sessionId) {
+      const httpUrl = resolveCoreHttpUrl();
+      if (!httpUrl) {
+        return null;
+      }
+      const [templateMarkdown, outputPaths] = await Promise.all([
+        this.ideaCollector.getQuestionnaireTemplateMarkdown(),
+        this.ideaCollector.getOutputPaths()
+      ]);
+      if (!outputPaths) {
+        return null;
+      }
+      const template = templateMarkdown && templateMarkdown.trim().length > 0 ? templateMarkdown : DEFAULT_TEMPLATE;
+      const { questions, placeholders } = parseTemplateFields(template);
+      const questionnairePath = outputPaths.idea.replace(
+        IDEA_PATH_SUFFIX_RE,
+        "questionnaire.md"
+      );
+      const existing = await this.fetchWorkspaceFile(
+        sessionId,
+        questionnairePath
+      );
+      const content3 = existing && existing.content.trim().length > 0 ? existing.content : template;
+      if (!existing || existing.content.trim().length === 0) {
+        await this.writeWorkspaceFile(sessionId, questionnairePath, content3);
+      }
+      const answers = extractAnswers(content3, placeholders);
+      return {
+        sessionId,
+        path: questionnairePath,
+        template,
+        placeholders,
+        questions,
+        answers
+      };
+    }
+    renderQuestionnaire(template, placeholders, answers) {
+      return template.replace(FIELD_REGEX, (_match, fieldId, fallback) => {
+        const rawAnswer = answers[fieldId] ?? "";
+        const trimmedAnswer = rawAnswer.trim();
+        const placeholder = placeholders[fieldId] ?? String(fallback ?? "").trim();
+        const replacement = trimmedAnswer.length > 0 ? rawAnswer.trimEnd() : placeholder;
+        return `<!-- field:${fieldId} -->
+${replacement}
+<!-- /field -->`;
+      });
+    }
+    queueSave(sessionId, path2, content3) {
+      const existing = this.saveTimers.get(sessionId);
+      if (existing) {
+        window.clearTimeout(existing);
+      }
+      const timer = window.setTimeout(() => {
+        this.writeWorkspaceFile(sessionId, path2, content3).catch(() => {
+        });
+      }, SAVE_DEBOUNCE_MS);
+      this.saveTimers.set(sessionId, timer);
+    }
+    async flushSave(sessionId, path2, content3) {
+      const existing = this.saveTimers.get(sessionId);
+      if (existing) {
+        window.clearTimeout(existing);
+        this.saveTimers.delete(sessionId);
+      }
+      await this.writeWorkspaceFile(sessionId, path2, content3);
+    }
+    async fetchWorkspaceFile(sessionId, path2) {
+      const httpUrl = resolveCoreHttpUrl();
+      if (!httpUrl) {
+        return null;
+      }
+      try {
+        const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT2), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId, path: path2, maxBytes: 2e5 })
+        });
+        if (!response.ok) {
+          return null;
+        }
+        const payload = await response.json();
+        if (!isWorkspaceFileResponse2(payload)) {
+          return null;
+        }
+        return payload;
+      } catch {
+        return null;
+      }
+    }
+    async writeWorkspaceFile(sessionId, path2, content3) {
+      const httpUrl = resolveCoreHttpUrl();
+      if (!httpUrl) {
+        return;
+      }
+      await fetch(joinUrl(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId, path: path2, content: content3 })
+      });
+    }
+  };
+
+  // src/client/ui/src/session/dialog-panel.tsx
+  var import_react7 = __toESM(require_react());
 
   // node_modules/devlop/lib/default.js
   function ok() {
@@ -10463,11 +12099,11 @@
       }
     }
   }
-  function productionCreate(_, jsx35, jsxs33) {
+  function productionCreate(_, jsx38, jsxs36) {
     return create2;
     function create2(_2, type, props, key) {
       const isStaticChildren = Array.isArray(props.children);
-      const fn = isStaticChildren ? jsxs33 : jsx35;
+      const fn = isStaticChildren ? jsxs36 : jsx38;
       return key ? fn(type, props, key) : fn(type, props);
     }
   }
@@ -10712,8 +12348,8 @@
   };
 
   // node_modules/react-markdown/lib/index.js
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
-  var import_react4 = __toESM(require_react(), 1);
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
+  var import_react6 = __toESM(require_react(), 1);
 
   // node_modules/mdast-util-to-string/lib/index.js
   var emptyOptions2 = {};
@@ -18376,11 +20012,11 @@
     }
     visit(tree, transform);
     return toJsxRuntime(tree, {
-      Fragment: import_jsx_runtime4.Fragment,
+      Fragment: import_jsx_runtime6.Fragment,
       components,
       ignoreInvalidStyle: true,
-      jsx: import_jsx_runtime4.jsx,
-      jsxs: import_jsx_runtime4.jsxs,
+      jsx: import_jsx_runtime6.jsx,
+      jsxs: import_jsx_runtime6.jsxs,
       passKeys: true,
       passNode: true
     });
@@ -21488,7 +23124,7 @@
   }
 
   // src/client/ui/src/session/markdown-content.tsx
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   var MarkdownContent = ({
     className,
     content: content3,
@@ -21500,7 +23136,7 @@
       ...props
     }) => {
       const { style: _ignoredStyle, ...rest } = props;
-      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "span",
         {
           ...rest,
@@ -21511,14 +23147,14 @@
         }
       );
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className, id, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className, id, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
       Markdown,
       {
         components: {
-          a: ({ node: _node, href, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("a", { ...props, href: href ?? "#", rel: "noreferrer", target: "_blank" }),
-          p: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { ...props }),
-          strong: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { ...props }) : renderPlainText,
-          em: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("em", { ...props }) : renderPlainText
+          a: ({ node: _node, href, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("a", { ...props, href: href ?? "#", rel: "noreferrer", target: "_blank" }),
+          p: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { ...props }),
+          strong: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("strong", { ...props }) : renderPlainText,
+          em: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("em", { ...props }) : renderPlainText
         },
         remarkPlugins: [remarkGfm],
         skipHtml: true,
@@ -21529,21 +23165,21 @@
   var markdown_content_default = MarkdownContent;
 
   // src/client/ui/src/session/dialog-panel.tsx
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   var AUTO_SCROLL_EPSILON = 32;
   var DialogPanel = ({
     messages,
     providerTheme = null,
     providerLabel = null
   }) => {
-    const scrollContainerRef = (0, import_react5.useRef)(null);
-    const displayMessages = (0, import_react5.useMemo)(
+    const scrollContainerRef = (0, import_react7.useRef)(null);
+    const displayMessages = (0, import_react7.useMemo)(
       () => mergeThinkingMessages(messages),
       [messages]
     );
-    const [expandedThinking, setExpandedThinking] = (0, import_react5.useState)({});
-    const [pinnedToBottom, setPinnedToBottom] = (0, import_react5.useState)(true);
-    (0, import_react5.useEffect)(() => {
+    const [expandedThinking, setExpandedThinking] = (0, import_react7.useState)({});
+    const [pinnedToBottom, setPinnedToBottom] = (0, import_react7.useState)(true);
+    (0, import_react7.useEffect)(() => {
       setExpandedThinking((previous3) => {
         let hasChanges = false;
         const nextState = { ...previous3 };
@@ -21574,7 +23210,7 @@
       );
     };
     const messageCount = displayMessages.length;
-    (0, import_react5.useLayoutEffect)(() => {
+    (0, import_react7.useLayoutEffect)(() => {
       if (!pinnedToBottom) {
         return;
       }
@@ -21589,9 +23225,9 @@
       container.scrollTop = container.scrollHeight;
     }, [messageCount, pinnedToBottom]);
     if (displayMessages.length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
       "div",
       {
         className: "session-dialog__scroll",
@@ -21602,7 +23238,7 @@
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
-            return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+            return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
               ThinkingMessage,
               {
                 className,
@@ -21614,7 +23250,7 @@
               message.id
             );
           }
-          return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
             StandardMessage,
             {
               className,
@@ -21656,9 +23292,9 @@
     onToggle,
     label,
     className
-  }) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("article", { className, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("header", { className: "session-dialog__message-header session-dialog__message-header--thinking", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+  }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("article", { className, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("header", { className: "session-dialog__message-header session-dialog__message-header--thinking", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         "button",
         {
           "aria-controls": `thinking-${message.id}`,
@@ -21670,9 +23306,9 @@
           children: expanded ? "\u25BE" : "\u25B8"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-dialog__role", children: label })
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-dialog__role", children: label })
     ] }),
-    expanded ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    expanded ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
       markdown_content_default,
       {
         allowEmphasis: false,
@@ -21688,10 +23324,10 @@
     className
   }) => {
     const messageDate = new Date(message.createdAt);
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("article", { className, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("header", { className: "session-dialog__message-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-dialog__role", children: label }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("article", { className, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("header", { className: "session-dialog__message-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-dialog__role", children: label }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           "time",
           {
             className: "session-dialog__timestamp",
@@ -21700,7 +23336,7 @@
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         markdown_content_default,
         {
           className: "session-dialog__content",
@@ -21731,15 +23367,15 @@ ${message.content}`
   };
 
   // src/client/ui/src/session/empty-state.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
-  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "session-empty", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "session-empty", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
+    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
   ] });
   var empty_state_default = EmptyState;
 
   // src/client/ui/src/session/info-panel.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var InfoPanel = ({ binding }) => {
     let primaryText = "Session information unavailable";
     let secondaryText = "Provider session state is unknown.";
@@ -21755,526 +23391,37 @@ ${message.content}`
       primaryText = "Session failed to initialize";
       secondaryText = "Provider session ID unavailable. Check CLI logs.";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("section", { className: "session-panel session-info", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-info__text", children: primaryText }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-info__text", title: secondaryTitle, children: secondaryText }) })
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { className: "session-panel session-info", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-info__text", children: primaryText }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-info__text", title: secondaryTitle, children: secondaryText }) })
     ] });
   };
   var info_panel_default = InfoPanel;
 
   // src/client/ui/src/session/input-panel.tsx
-  var import_react6 = __toESM(require_react());
+  var import_react9 = __toESM(require_react());
 
-  // src/client/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
-  var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
-  var LINE_SPLIT_REGEX = /\r?\n/;
-  var normalizeCandidate = (rawValue) => {
-    const value = rawValue.trim();
-    if (!value) {
-      return null;
-    }
-    if (value.startsWith("file://")) {
-      const withoutScheme = value.replace("file://", "");
-      try {
-        return decodeURIComponent(withoutScheme);
-      } catch {
-        return withoutScheme;
-      }
-    }
-    if (value.startsWith("/") || WINDOWS_PATH_PATTERN.test(value)) {
-      return value;
-    }
-    return null;
+  // src/client/ui/src/session/input-textarea.tsx
+  var import_react8 = __toESM(require_react());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var DEFAULT_CLASSES = {
+    container: "",
+    containerDragging: "",
+    textarea: "",
+    textareaFocused: "",
+    overlay: ""
   };
-  var forEachEntry = (raw, handler) => {
-    if (!raw) {
-      return;
-    }
-    const lines = raw.split(LINE_SPLIT_REGEX);
-    for (const line of lines) {
-      if (line.trim()) {
-        handler(line);
-      }
-    }
-  };
-  var extractFilePathsFromDataTransfer = (dataTransfer, options = {}) => {
-    if (!dataTransfer) {
-      return [];
-    }
-    const { logger, debug = false, logPrefix = "[DropDataExtractor]" } = options;
-    const seen = /* @__PURE__ */ new Set();
-    const results = [];
-    const logDebug = (message, ...details) => {
-      if (debug && logger) {
-        logger(`${logPrefix} ${message}`, ...details);
-      }
-    };
-    const acceptCandidate = (candidate, source) => {
-      if (!seen.has(candidate)) {
-        seen.add(candidate);
-        results.push(candidate);
-        logDebug(`accepted ${candidate} from ${source}`);
-      }
-    };
-    const inspectType = (mime) => {
-      try {
-        const payload = dataTransfer.getData(mime);
-        logDebug(`DataTransfer[${mime}]`, payload);
-        return payload;
-      } catch (error) {
-        logDebug(`failed to read DataTransfer[${mime}]`, error);
-        return null;
-      }
-    };
-    const mimeTypes = [
-      "application/vnd.code.uri-list",
-      "text/plain",
-      "text/uri-list"
-    ];
-    for (const mime of mimeTypes) {
-      const payload = inspectType(mime);
-      forEachEntry(payload, (entry) => {
-        const candidate = normalizeCandidate(entry);
-        if (candidate) {
-          acceptCandidate(candidate, mime);
-        } else {
-          logDebug(`ignored entry from ${mime}`, entry);
-        }
-      });
-    }
-    if (dataTransfer.files && dataTransfer.files.length > 0) {
-      for (const file of Array.from(dataTransfer.files)) {
-        const candidate = file.path;
-        if (!candidate) {
-          continue;
-        }
-        const normalised = normalizeCandidate(candidate);
-        if (normalised) {
-          acceptCandidate(normalised, "FileList");
-        } else {
-          logDebug("ignored FileList entry", candidate);
-        }
-      }
-    }
-    logDebug("extraction result", results);
-    return results;
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/drag-drop-handler.ts
-  var DragDropHandler = class {
-    constructor(options = {}) {
-      this.container = null;
-      this.callbacks = {};
-      this.logger = options.logger;
-      this.handleDragEnter = this.handleDragEnter.bind(this);
-      this.handleDragOver = this.handleDragOver.bind(this);
-      this.handleDragLeave = this.handleDragLeave.bind(this);
-      this.handleDrop = this.handleDrop.bind(this);
-    }
-    attach(container, callbacks) {
-      this.container = container;
-      this.callbacks = callbacks;
-      container.addEventListener("dragenter", this.handleDragEnter);
-      container.addEventListener("dragover", this.handleDragOver);
-      container.addEventListener("dragleave", this.handleDragLeave);
-      container.addEventListener("drop", this.handleDrop);
-    }
-    detach() {
-      if (!this.container) {
-        return;
-      }
-      this.container.removeEventListener("dragenter", this.handleDragEnter);
-      this.container.removeEventListener("dragover", this.handleDragOver);
-      this.container.removeEventListener("dragleave", this.handleDragLeave);
-      this.container.removeEventListener("drop", this.handleDrop);
-      this.container = null;
-      this.callbacks = {};
-    }
-    handleDragEnter(event) {
-      if (!event.shiftKey) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-      this.callbacks.onDragEnter?.(true);
-      this.logger?.("dragenter", event.dataTransfer?.types ?? []);
-    }
-    handleDragOver(event) {
-      if (!event.shiftKey) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    handleDragLeave(event) {
-      const relatedTarget = event.relatedTarget;
-      if (this.container && relatedTarget && this.container.contains(relatedTarget)) {
-        return;
-      }
-      this.callbacks.onDragLeave?.();
-    }
-    handleDrop(event) {
-      if (!event.shiftKey) {
-        return;
-      }
-      event.preventDefault();
-      const filePaths = extractFilePathsFromDataTransfer(event.dataTransfer, {
-        debug: Boolean(this.logger),
-        logger: this.logger,
-        logPrefix: "[DragDropHandler]"
-      });
-      if (filePaths.length > 0) {
-        this.callbacks.onFileDrop?.(filePaths);
-      } else {
-        this.callbacks.onFallbackRequest?.();
-      }
-      this.callbacks.onDragLeave?.();
-    }
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/file-path-processor.ts
-  var WINDOWS_PATH_PATTERN2 = /^[a-zA-Z]:\\/;
-  var WINDOWS_POSIX_PATTERN = /^[a-zA-Z]:\//;
-  var FilePathProcessor = class {
-    constructor() {
-      this.lastInsertedPath = "";
-      this.lastInsertTime = 0;
-      this.duplicateThresholdMs = 1e3;
-    }
-    formatPaths(paths) {
-      if (paths.length === 0) {
-        return "";
-      }
-      const formattedPaths = paths.map((path2) => `"${path2}"`).join("\n");
-      return `${formattedPaths}
-`;
-    }
-    mergePaths(currentValue, formattedPaths) {
-      if (!formattedPaths) {
-        return currentValue;
-      }
-      if (currentValue && !currentValue.endsWith("\n")) {
-        return `${currentValue}
-${formattedPaths}`;
-      }
-      return currentValue + formattedPaths;
-    }
-    isDuplicate(path2) {
-      const now = Date.now();
-      return path2 === this.lastInsertedPath && now - this.lastInsertTime < this.duplicateThresholdMs;
-    }
-    recordInsertion(path2) {
-      this.lastInsertedPath = path2;
-      this.lastInsertTime = Date.now();
-    }
-    processSinglePath(path2, currentValue) {
-      if (!this.isValidPath(path2) || this.isDuplicate(path2)) {
-        return null;
-      }
-      this.recordInsertion(path2);
-      const formatted = this.formatPaths([path2]);
-      return this.mergePaths(currentValue, formatted);
-    }
-    processMultiplePaths(paths, currentValue) {
-      if (paths.length === 0) {
-        return null;
-      }
-      const validPaths = paths.filter((path2) => this.isValidPath(path2));
-      if (validPaths.length === 0) {
-        return null;
-      }
-      this.recordInsertion(validPaths[0]);
-      const formatted = this.formatPaths(validPaths);
-      return this.mergePaths(currentValue, formatted);
-    }
-    clear() {
-      this.lastInsertedPath = "";
-      this.lastInsertTime = 0;
-    }
-    isValidPath(path2) {
-      if (!path2) {
-        return false;
-      }
-      return path2.startsWith("/") || WINDOWS_PATH_PATTERN2.test(path2) || WINDOWS_POSIX_PATTERN.test(path2);
-    }
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/message-handler.ts
-  var isRecord2 = (value) => typeof value === "object" && value !== null;
-  var MessageHandler = class {
-    constructor(logger) {
-      this.callbacks = {};
-      this.messageListener = null;
-      this.logger = logger;
-    }
-    startListening(callbacks) {
-      this.callbacks = callbacks;
-      this.messageListener = (event) => {
-        this.handleMessage(event.data);
-      };
-      window.addEventListener("message", this.messageListener);
-      this.logger?.("message-handler:start");
-    }
-    stopListening() {
-      if (this.messageListener) {
-        window.removeEventListener("message", this.messageListener);
-        this.messageListener = null;
-      }
-      this.callbacks = {};
-      this.logger?.("message-handler:stop");
-    }
-    requestFilePathGrab() {
-      const timestamp = Date.now();
-      this.sendMessage("grabFilePathFromDrop", { timestamp });
-    }
-    clearClipboards() {
-      this.sendMessage("clearAllClipboards");
-    }
-    sendMessage(command, payload) {
-      const message = { command };
-      if (payload) {
-        Object.assign(message, payload);
-      }
-      this.logger?.("message-handler:send", command, payload ?? null);
-      vscode_default.postMessage(message);
-    }
-    handleMessage(message) {
-      if (!isRecord2(message) || typeof message.command !== "string") {
-        return;
-      }
-      if (message.command === "insertPath") {
-        this.handleInsertPath(
-          typeof message.path === "string" ? message.path : ""
-        );
-        return;
-      }
-      if (message.command === "clipboardContent") {
-        this.handleClipboardContent(
-          typeof message.content === "string" ? message.content : ""
-        );
-      }
-    }
-    handleInsertPath(path2) {
-      if (!path2) {
-        return;
-      }
-      this.logger?.("message-handler:insert-path", path2);
-      this.callbacks.onPathInsert?.(path2);
-      this.clearClipboards();
-    }
-    handleClipboardContent(content3) {
-      if (!content3) {
-        return;
-      }
-      this.logger?.("message-handler:clipboard", content3);
-      this.callbacks.onClipboardContent?.(content3);
-      this.clearClipboards();
-    }
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/drag-drop-facade.ts
-  var DragDropFacade = class {
-    constructor(logger) {
-      this.config = null;
-      this.isDragging = false;
-      this.dragHandler = new DragDropHandler({ logger });
-      this.pathProcessor = new FilePathProcessor();
-      this.messageHandler = new MessageHandler(logger);
-    }
-    initialize(config) {
-      this.config = config;
-      const callbacks = {
-        onDragEnter: (isShiftPressed) => this.handleDragEnter(isShiftPressed),
-        onDragLeave: () => this.handleDragLeave(),
-        onFileDrop: (paths) => this.handleFileDrop(paths),
-        onFallbackRequest: () => this.handleFallbackRequest()
-      };
-      this.dragHandler.attach(config.container, callbacks);
-      this.messageHandler.startListening({
-        onPathInsert: (path2) => this.handlePathInsert(path2),
-        onClipboardContent: (content3) => this.handleClipboardContent(content3)
-      });
-    }
-    destroy() {
-      this.dragHandler.detach();
-      this.messageHandler.stopListening();
-      this.pathProcessor.clear();
-      this.config = null;
-      this.isDragging = false;
-    }
-    getIsDragging() {
-      return this.isDragging;
-    }
-    handleDragEnter(isShiftPressed) {
-      if (!isShiftPressed) {
-        return;
-      }
-      this.isDragging = true;
-      this.config?.onDragStateChange?.(true);
-    }
-    handleDragLeave() {
-      this.isDragging = false;
-      this.config?.onDragStateChange?.(false);
-    }
-    handleFileDrop(paths) {
-      if (!this.config) {
-        return;
-      }
-      const currentValue = this.config.getCurrentValue();
-      const newValue = this.pathProcessor.processMultiplePaths(
-        paths,
-        currentValue
-      );
-      if (newValue !== null) {
-        this.config.onValueChange(newValue);
-      }
-    }
-    handleFallbackRequest() {
-      this.messageHandler.requestFilePathGrab();
-    }
-    handlePathInsert(path2) {
-      if (!this.config) {
-        return;
-      }
-      const currentValue = this.config.getCurrentValue();
-      if (path2.includes('"') && path2.includes("\n")) {
-        const mergedValue = currentValue ? `${currentValue}
-${path2}` : path2;
-        this.config.onValueChange(mergedValue);
-        return;
-      }
-      const newValue = this.pathProcessor.processSinglePath(path2, currentValue);
-      if (newValue !== null) {
-        this.config.onValueChange(newValue);
-      }
-    }
-    handleClipboardContent(content3) {
-      if (!this.config) {
-        return;
-      }
-      const currentValue = this.config.getCurrentValue();
-      const newValue = this.pathProcessor.processSinglePath(
-        content3,
-        currentValue
-      );
-      if (newValue !== null) {
-        this.config.onValueChange(newValue);
-      }
-    }
-  };
-
-  // src/client/ui/src/session/input-panel-clipboard.ts
-  var handlePlainTextPaste = (event, insertText) => {
-    const dataTransfer = event.clipboardData;
-    if (!dataTransfer) {
-      return false;
-    }
-    const plainText = dataTransfer.getData("text/plain");
-    if (plainText) {
-      event.preventDefault();
-      insertText(plainText);
-      return true;
-    }
-    if (typeof dataTransfer.items !== "undefined") {
-      const stringItem = Array.from(dataTransfer.items).find(
-        (item) => item.kind === "string"
-      );
-      if (stringItem) {
-        event.preventDefault();
-        stringItem.getAsString((text7) => {
-          if (text7) {
-            insertText(text7);
-          }
-        });
-        return true;
-      }
-    }
-    return false;
-  };
-  var tryReadFromNavigator = async (insertText) => {
-    if (typeof navigator === "undefined" || !navigator.clipboard || typeof navigator.clipboard.readText !== "function") {
-      return false;
-    }
-    try {
-      const text7 = await navigator.clipboard.readText();
-      if (text7) {
-        insertText(text7);
-        return true;
-      }
-    } catch {
-      return false;
-    }
-    return false;
-  };
-  var copySelectionToClipboard = (event, textarea, selection) => {
-    if (event.clipboardData) {
-      event.preventDefault();
-      event.clipboardData.setData("text/plain", selection);
-      return;
-    }
-    if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-      event.preventDefault();
-      navigator.clipboard.writeText(selection).catch(() => {
-      });
-      return;
-    }
-    textarea.select();
-  };
-  var createClipboardHandlers = ({
-    textareaRef,
-    insertTextAtSelection,
-    syncTextareaValue
-  }) => {
-    const handlePaste = (event) => {
-      const handled = handlePlainTextPaste(event, insertTextAtSelection);
-      if (handled) {
-        return;
-      }
-      tryReadFromNavigator(insertTextAtSelection).then((success) => {
-        if (success) {
-          return;
-        }
-        requestAnimationFrame(syncTextareaValue);
-      }).catch(() => {
-        requestAnimationFrame(syncTextareaValue);
-      });
-    };
-    const handleCopy = (event) => {
-      const textarea = textareaRef.current;
-      if (!textarea) {
-        return;
-      }
-      const start2 = textarea.selectionStart ?? 0;
-      const end = textarea.selectionEnd ?? 0;
-      if (start2 === end) {
-        return;
-      }
-      const selection = textarea.value.slice(start2, end);
-      if (!selection) {
-        return;
-      }
-      copySelectionToClipboard(event, textarea, selection);
-    };
-    return {
-      handlePaste,
-      handleCopy
-    };
-  };
-
-  // src/client/ui/src/session/input-panel.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-  var MAX_TEXTAREA_HEIGHT = 200;
-  var adjustTextareaHeight = (textarea) => {
+  var adjustTextareaHeight = (textarea, maxHeight) => {
     if (!textarea) {
       return;
     }
     const element3 = textarea;
     element3.style.height = "auto";
     const { scrollHeight } = element3;
-    const targetHeight = Math.min(scrollHeight, MAX_TEXTAREA_HEIGHT);
+    const targetHeight = typeof maxHeight === "number" ? Math.min(scrollHeight, maxHeight) : scrollHeight;
     element3.style.height = `${targetHeight}px`;
   };
-  var focusTextareaEnd = (textarea) => {
+  var focusTextareaEnd2 = (textarea) => {
     if (!textarea) {
       return;
     }
@@ -22283,40 +23430,44 @@ ${path2}` : path2;
     const length = element3.value.length;
     element3.setSelectionRange(length, length);
   };
-  var InputPanel = ({ draft, onSubmit }) => {
-    const [value, setValue] = (0, import_react6.useState)(draft);
-    const [isDragging, setIsDragging] = (0, import_react6.useState)(false);
-    const [isFocused, setIsFocused] = (0, import_react6.useState)(false);
-    const textareaRef = (0, import_react6.useRef)(null);
-    const dropContainerRef = (0, import_react6.useRef)(null);
-    const dragDropFacadeRef = (0, import_react6.useRef)(null);
-    const updateValue = (0, import_react6.useCallback)((nextValue) => {
-      setValue(nextValue);
-      requestAnimationFrame(() => {
-        adjustTextareaHeight(textareaRef.current);
-      });
-    }, []);
-    (0, import_react6.useEffect)(() => {
-      updateValue(draft);
-    }, [draft, updateValue]);
-    const sendMessage = (0, import_react6.useCallback)(() => {
-      const trimmed = value.trim();
-      if (!trimmed) {
-        return;
-      }
-      onSubmit(trimmed);
-      updateValue("");
-    }, [onSubmit, updateValue, value]);
-    const handleSubmit = (0, import_react6.useCallback)(
-      (event) => {
-        event.preventDefault();
-        sendMessage();
+  var InputTextarea = ({
+    value,
+    onValueChange,
+    onSubmit,
+    placeholder,
+    rows = 1,
+    maxHeight,
+    overlayLabel = DEFAULT_DRAG_OVERLAY_LABEL,
+    classes
+  }) => {
+    const [isFocused, setIsFocused] = (0, import_react8.useState)(false);
+    const textareaRef = (0, import_react8.useRef)(null);
+    const dropContainerRef = (0, import_react8.useRef)(null);
+    const resolvedClasses = { ...DEFAULT_CLASSES, ...classes };
+    const applyExternalValue = (0, import_react8.useCallback)(
+      (newValue) => {
+        onValueChange(newValue);
+        requestAnimationFrame(() => {
+          focusTextareaEnd2(textareaRef.current);
+          adjustTextareaHeight(textareaRef.current, maxHeight);
+        });
       },
-      [sendMessage]
+      [maxHeight, onValueChange]
     );
-    const handleKeyDown = (0, import_react6.useCallback)(
+    const { isDragging } = useInputDragDrop({
+      containerRef: dropContainerRef,
+      textareaRef,
+      onValueChange: applyExternalValue
+    });
+    const handleChange = (0, import_react8.useCallback)(
       (event) => {
-        if (event.key !== "Enter") {
+        onValueChange(event.target.value);
+      },
+      [onValueChange]
+    );
+    const handleKeyDown = (0, import_react8.useCallback)(
+      (event) => {
+        if (!onSubmit || event.key !== "Enter") {
           return;
         }
         if (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) {
@@ -22327,17 +23478,11 @@ ${path2}` : path2;
           return;
         }
         event.preventDefault();
-        sendMessage();
+        onSubmit();
       },
-      [sendMessage]
+      [onSubmit]
     );
-    const handleChange = (0, import_react6.useCallback)(
-      (event) => {
-        updateValue(event.target.value);
-      },
-      [updateValue]
-    );
-    const insertTextAtSelection = (0, import_react6.useCallback)(
+    const insertTextAtSelection = (0, import_react8.useCallback)(
       (text7) => {
         const textarea = textareaRef.current;
         if (!textarea) {
@@ -22349,25 +23494,25 @@ ${path2}` : path2;
         ];
         const currentValue = textarea.value;
         const nextValue = currentValue.slice(0, selectionStart) + text7 + currentValue.slice(selectionEnd);
-        updateValue(nextValue);
+        onValueChange(nextValue);
         requestAnimationFrame(() => {
           const position3 = selectionStart + text7.length;
           textarea.selectionStart = position3;
           textarea.selectionEnd = position3;
-          adjustTextareaHeight(textarea);
+          adjustTextareaHeight(textarea, maxHeight);
           textarea.focus();
         });
       },
-      [updateValue]
+      [maxHeight, onValueChange]
     );
-    const syncTextareaValue = (0, import_react6.useCallback)(() => {
+    const syncTextareaValue = (0, import_react8.useCallback)(() => {
       const textarea = textareaRef.current;
       if (!textarea) {
         return;
       }
-      updateValue(textarea.value);
-    }, [updateValue]);
-    const { handlePaste, handleCopy } = (0, import_react6.useMemo)(
+      onValueChange(textarea.value);
+    }, [onValueChange]);
+    const { handlePaste, handleCopy } = (0, import_react8.useMemo)(
       () => createClipboardHandlers({
         textareaRef,
         insertTextAtSelection,
@@ -22375,77 +23520,94 @@ ${path2}` : path2;
       }),
       [insertTextAtSelection, syncTextareaValue]
     );
-    const applyExternalValue = (0, import_react6.useCallback)(
-      (newValue) => {
-        updateValue(newValue);
-        requestAnimationFrame(() => {
-          const textarea = textareaRef.current;
-          focusTextareaEnd(textarea);
-        });
-      },
-      [updateValue]
-    );
-    (0, import_react6.useEffect)(() => {
-      const container = dropContainerRef.current;
-      const textarea = textareaRef.current;
-      if (!(container && textarea)) {
+    (0, import_react8.useEffect)(() => {
+      const nextValue = value;
+      requestAnimationFrame(() => {
+        const textarea = textareaRef.current;
+        if (!textarea || textarea.value !== nextValue) {
+          return;
+        }
+        adjustTextareaHeight(textarea, maxHeight);
+      });
+    }, [maxHeight, value]);
+    const containerClassName = [
+      resolvedClasses.container,
+      isDragging ? resolvedClasses.containerDragging : ""
+    ].filter(Boolean).join(" ");
+    const textareaClassName = [
+      resolvedClasses.textarea,
+      isFocused ? resolvedClasses.textareaFocused : ""
+    ].filter(Boolean).join(" ");
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: containerClassName, ref: dropContainerRef, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        "textarea",
+        {
+          "aria-multiline": "true",
+          className: textareaClassName,
+          onBlur: () => setIsFocused(false),
+          onChange: handleChange,
+          onCopy: handleCopy,
+          onFocus: () => setIsFocused(true),
+          onKeyDown: handleKeyDown,
+          onPaste: handlePaste,
+          placeholder,
+          ref: textareaRef,
+          rows,
+          value
+        }
+      ),
+      isDragging && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("output", { className: resolvedClasses.overlay, children: overlayLabel })
+    ] });
+  };
+
+  // src/client/ui/src/session/input-panel.tsx
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var MAX_TEXTAREA_HEIGHT = 200;
+  var InputPanel = ({ draft, onSubmit }) => {
+    const [value, setValue] = (0, import_react9.useState)(draft);
+    (0, import_react9.useEffect)(() => {
+      setValue(draft);
+    }, [draft]);
+    const sendMessage = (0, import_react9.useCallback)(() => {
+      const trimmed = value.trim();
+      if (!trimmed) {
         return;
       }
-      const dragDropFacade = new DragDropFacade();
-      dragDropFacadeRef.current = dragDropFacade;
-      dragDropFacade.initialize({
-        container,
-        onValueChange: applyExternalValue,
-        getCurrentValue: () => textarea.value,
-        onDragStateChange: setIsDragging
-      });
-      return () => {
-        dragDropFacade.destroy();
-        dragDropFacadeRef.current = null;
-      };
-    }, [applyExternalValue]);
-    const overlayLabel = "Drop files here while holding Shift";
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
+      onSubmit(trimmed);
+      setValue("");
+    }, [onSubmit, value]);
+    const handleSubmit = (0, import_react9.useCallback)(
+      (event) => {
+        event.preventDefault();
+        sendMessage();
+      },
+      [sendMessage]
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
       "form",
       {
         "aria-label": "Message input",
         className: "session-input session-panel",
         onSubmit: handleSubmit,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
-            "div",
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            InputTextarea,
             {
-              className: [
-                "session-input__container",
-                isDragging ? "session-input__container--dragging" : ""
-              ].filter(Boolean).join(" "),
-              ref: dropContainerRef,
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-                  "textarea",
-                  {
-                    "aria-multiline": "true",
-                    className: [
-                      "session-input__textarea",
-                      isFocused ? "session-input__textarea--focused" : ""
-                    ].filter(Boolean).join(" "),
-                    onBlur: () => setIsFocused(false),
-                    onChange: handleChange,
-                    onCopy: handleCopy,
-                    onFocus: () => setIsFocused(true),
-                    onKeyDown: handleKeyDown,
-                    onPaste: handlePaste,
-                    placeholder: "Type your request or drag files with Shift held...",
-                    ref: textareaRef,
-                    rows: 1,
-                    value
-                  }
-                ),
-                isDragging && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("output", { className: "session-input__overlay", children: overlayLabel })
-              ]
+              classes: {
+                container: "session-input__container",
+                containerDragging: "session-input__container--dragging",
+                textarea: "session-input__textarea",
+                textareaFocused: "session-input__textarea--focused",
+                overlay: "session-input__overlay"
+              },
+              maxHeight: MAX_TEXTAREA_HEIGHT,
+              onSubmit: sendMessage,
+              onValueChange: setValue,
+              placeholder: "Type your request or drag files with Shift held...",
+              value
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
         ]
       }
     );
@@ -22453,7 +23615,7 @@ ${path2}` : path2;
   var input_panel_default = InputPanel;
 
   // src/client/ui/src/session/session-tabs.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   var SessionTabs = ({
     sessions,
     providerLabels,
@@ -22464,7 +23626,7 @@ ${path2}` : path2;
     if (sessions.length === 0) {
       return null;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
       const isActive = session.id === activeSessionId;
       const providerNames = session.providerIds.map((providerId) => {
         const label = providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);
@@ -22495,8 +23657,8 @@ ${path2}` : path2;
         isActive ? "session-tab--active" : null,
         tabProviderTheme ? `session-tab--${tabProviderTheme}` : null
       ].filter(Boolean).join(" ");
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: tabClassName, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: tabClassName, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
           "button",
           {
             "aria-label": `Activate session for ${spokenSummary}`,
@@ -22504,13 +23666,13 @@ ${path2}` : path2;
             onClick: () => onSelect(session.id),
             title: fullSummary,
             type: "button",
-            children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "session-tab__providers", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
-              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
+            children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "session-tab__providers", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
+              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
             ] })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
           "button",
           {
             "aria-label": `Close session for ${spokenSummary}`,
@@ -22526,7 +23688,7 @@ ${path2}` : path2;
   var session_tabs_default = SessionTabs;
 
   // src/client/ui/src/session/status-panel.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   var MAX_PERCENTAGE = 100;
   var MIN_TOKEN_LIMIT = 1;
   var PERCENT_SCALE = 100;
@@ -22537,12 +23699,12 @@ ${path2}` : path2;
     connectionDetail
   }) => {
     if (!status || connectionStatus !== "ready") {
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("section", { className: "session-status session-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-status__row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__label", children: SUPERVISOR_LABEL }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__value", children: describeConnectionStatus(connectionStatus) })
+      return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("section", { className: "session-status session-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-status__row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__label", children: SUPERVISOR_LABEL }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__value", children: describeConnectionStatus(connectionStatus) })
         ] }),
-        connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-status__row session-status__row--muted", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__value", children: connectionDetail }) }) : null
+        connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-status__row session-status__row--muted", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__value", children: connectionDetail }) }) : null
       ] });
     }
     const { providerSummary, tokenUsage } = status;
@@ -22552,18 +23714,18 @@ ${path2}` : path2;
         tokenUsage.used / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT) * PERCENT_SCALE
       )
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("section", { className: "session-status session-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__label", children: "Providers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__value", children: providerSummary })
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("section", { className: "session-status session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__label", children: "Providers" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__value", children: providerSummary })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-status__row session-status__row--muted", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__label", children: "Status" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__value", children: "Inactive or degraded providers are disabled in the picker." })
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-status__row session-status__row--muted", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__label", children: "Status" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__value", children: "Inactive or degraded providers are disabled in the picker." })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__label", children: "Tokens" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "session-status__value", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-status__label", children: "Tokens" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { className: "session-status__value", children: [
           tokenUsage.used.toLocaleString(),
           " /",
           " ",
@@ -22588,26 +23750,26 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/session/todo-panel.tsx
-  var import_react7 = __toESM(require_react());
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_react10 = __toESM(require_react());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var TodoPanel = ({ items, onToggle }) => {
-    const [showActiveOnly, setShowActiveOnly] = (0, import_react7.useState)(false);
-    const completedCount = (0, import_react7.useMemo)(
+    const [showActiveOnly, setShowActiveOnly] = (0, import_react10.useState)(false);
+    const completedCount = (0, import_react10.useMemo)(
       () => items.filter((item) => item.completed).length,
       [items]
     );
-    const visibleItems = (0, import_react7.useMemo)(
+    const visibleItems = (0, import_react10.useMemo)(
       () => showActiveOnly ? items.filter((item) => !item.completed) : [...items],
       [items, showActiveOnly]
     );
     const handleToggleFilter = () => {
       setShowActiveOnly((previous3) => !previous3);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "session-todos session-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("header", { className: "session-todos__header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-todos__title-group", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("section", { className: "session-todos session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("header", { className: "session-todos__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "session-todos__title-group", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
             "button",
             {
               "aria-label": showActiveOnly ? "Show all tasks" : "Show only active tasks",
@@ -22615,21 +23777,21 @@ ${path2}` : path2;
               className: showActiveOnly ? "session-todos__toggle session-todos__toggle--active" : "session-todos__toggle",
               onClick: handleToggleFilter,
               type: "button",
-              children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { "aria-hidden": true, className: "session-todos__toggle-icon", children: "\u25BE" })
+              children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { "aria-hidden": true, className: "session-todos__toggle-icon", children: "\u25BE" })
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "session-todos__counter", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "session-todos__counter", children: [
           completedCount,
           "/",
           items.length,
           " done"
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("ul", { className: "session-todos__list", children: visibleItems.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("li", { className: "session-todos__empty", children: "All tasks complete" }) : visibleItems.map((item) => {
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("ul", { className: "session-todos__list", children: visibleItems.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("li", { className: "session-todos__empty", children: "All tasks complete" }) : visibleItems.map((item) => {
         const textClassName = item.completed ? "session-todos__text session-todos__text--completed" : "session-todos__text";
-        return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { className: "session-todos__label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "session-todos__label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
             "input",
             {
               checked: item.completed,
@@ -22637,7 +23799,7 @@ ${path2}` : path2;
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: textClassName, children: item.title })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: textClassName, children: item.title })
         ] }) }, item.id);
       }) })
     ] });
@@ -22645,7 +23807,7 @@ ${path2}` : path2;
   var todo_panel_default = TodoPanel;
 
   // src/client/ui/src/session/session-view.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var SessionView = ({
     sessions,
     providerLabels,
@@ -22667,11 +23829,11 @@ ${path2}` : path2;
     const providerTheme = mapProviderTheme(primaryProviderId);
     const providerDisplayLabel = primaryProviderId != null ? providerLabels.get(primaryProviderId) ?? getDefaultProviderTitle(primaryProviderId) : null;
     if (sessions.length === 0 && showEmptyState) {
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(empty_state_default, {}) });
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(empty_state_default, {}) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-app", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-app__header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-app", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-app__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           session_tabs_default,
           {
             activeSessionId,
@@ -22681,10 +23843,10 @@ ${path2}` : path2;
             sessions
           }
         ),
-        activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(info_panel_default, { binding: activeSession.binding }) : null
+        activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(info_panel_default, { binding: activeSession.binding }) : null
       ] }),
-      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-app__content", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-app__content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           dialog_panel_default,
           {
             messages: activeSession.messages,
@@ -22692,22 +23854,22 @@ ${path2}` : path2;
             providerTheme
           }
         ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-app__rails", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "session-app__rails", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             todo_panel_default,
             {
               items: activeSession.todos,
               onToggle: (todoId) => onToggleTodo(activeSessionId, todoId)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             input_panel_default,
             {
               draft: activeSession.draft,
               onSubmit: (text7) => onSendMessage(activeSessionId, text7)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             status_panel_default,
             {
               connectionDetail: coreConnectionDetail,
@@ -22722,7 +23884,7 @@ ${path2}` : path2;
   var session_view_default = SessionView;
 
   // src/client/ui/src/app-host/session-region.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var SessionRegion = ({
     pickerState,
     flowWizardVisible,
@@ -22733,6 +23895,58 @@ ${path2}` : path2;
     cancelSelection,
     sessionViewProps
   }) => {
+    const ideaCollectorRef = (0, import_react11.useRef)(new IdeaCollectorService());
+    const questionnaireServiceRef = (0, import_react11.useRef)(new IdeaQuestionnaireService());
+    const pendingQuestionnaireRef = (0, import_react11.useRef)(false);
+    const [questionnaireSnapshot, setQuestionnaireSnapshot] = (0, import_react11.useState)(null);
+    const ideaCollector = ideaCollectorRef.current;
+    const questionnaireService = questionnaireServiceRef.current;
+    const handleAnswerChange = (0, import_react11.useCallback)(
+      (questionId, value) => {
+        setQuestionnaireSnapshot((current) => {
+          if (!current) {
+            return current;
+          }
+          const answers = { ...current.answers, [questionId]: value };
+          const content3 = questionnaireService.renderQuestionnaire(
+            current.template,
+            current.placeholders,
+            answers
+          );
+          questionnaireService.queueSave(
+            current.sessionId,
+            current.path,
+            content3
+          );
+          return { ...current, answers };
+        });
+      },
+      [questionnaireService]
+    );
+    const handleQuestionnaireSubmit = (0, import_react11.useCallback)(() => {
+      if (!questionnaireSnapshot) {
+        return;
+      }
+      const content3 = questionnaireService.renderQuestionnaire(
+        questionnaireSnapshot.template,
+        questionnaireSnapshot.placeholders,
+        questionnaireSnapshot.answers
+      );
+      const submissionMessage = `Please review \`${questionnaireSnapshot.path}\` against the contract, ask any clarifying questions, then wait for OK/approve before finalize.`;
+      questionnaireService.flushSave(
+        questionnaireSnapshot.sessionId,
+        questionnaireSnapshot.path,
+        content3
+      ).then(
+        () => ideaCollector.beginQuestionnaireReview(
+          questionnaireSnapshot.sessionId,
+          submissionMessage
+        )
+      ).then(() => {
+        setQuestionnaireSnapshot(null);
+      }).catch(() => {
+      });
+    }, [ideaCollector, questionnaireService, questionnaireSnapshot]);
     const handleProviderConfirm = (providerIds) => {
       const selectedProvider = providerIds[0];
       if (selectedProvider === "codexCli" || selectedProvider === "claudeCodeCli") {
@@ -22748,11 +23962,35 @@ ${path2}` : path2;
       if (!flowWizardProviderId) {
         return;
       }
+      pendingQuestionnaireRef.current = true;
       confirmSelection([flowWizardProviderId]);
     };
-    const showSessionView = !(pickerState.visible || flowWizardVisible);
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "app-shell__session-region", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    const activeSessionId = sessionViewProps.activeSessionId;
+    const showQuestionnaire = questionnaireSnapshot && activeSessionId && questionnaireSnapshot.sessionId === activeSessionId;
+    const showSessionView = !(pickerState.visible || flowWizardVisible || showQuestionnaire);
+    (0, import_react11.useEffect)(() => {
+      if (!activeSessionId) {
+        return;
+      }
+      if (!pendingQuestionnaireRef.current) {
+        return;
+      }
+      pendingQuestionnaireRef.current = false;
+      questionnaireService.loadQuestionnaire(activeSessionId).then((snapshot) => {
+        if (snapshot) {
+          setQuestionnaireSnapshot(snapshot);
+        }
+      }).catch(() => {
+      });
+    }, [activeSessionId, questionnaireService]);
+    const questionnaireTitle = (0, import_react11.useMemo)(() => "Idea Questionnaire", []);
+    const questionnaireDescription = (0, import_react11.useMemo)(
+      () => "Fill out the questionnaire and attach any supporting files or references.",
+      []
+    );
+    const questionnaireSubmitLabel = (0, import_react11.useMemo)(() => "Send questionnaire", []);
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "app-shell__session-region", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
         ProviderPicker,
         {
           onCancel: cancelSelection,
@@ -22761,11 +23999,11 @@ ${path2}` : path2;
           visible: pickerState.visible
         }
       ),
-      flowWizardVisible ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "provider-picker", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(FlowWizard, { activeStage: "idea", onStageClick: handleFlowStageClick }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "provider-picker__actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: flowWizardProviderId === "codexCli" || flowWizardProviderId === "claudeCodeCli" ? "Click Idea to start." : "Select a stage to continue." }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "provider-picker__action-buttons", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      flowWizardVisible ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "provider-picker", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(FlowWizard, { activeStage: "idea", onStageClick: handleFlowStageClick }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "provider-picker__actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: flowWizardProviderId === "codexCli" || flowWizardProviderId === "claudeCodeCli" ? "Click Idea to start." : "Select a stage to continue." }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "provider-picker__action-buttons", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
             "button",
             {
               className: "provider-picker__secondary",
@@ -22776,7 +24014,19 @@ ${path2}` : path2;
           ) })
         ] })
       ] }) : null,
-      showSessionView ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      showQuestionnaire && questionnaireSnapshot ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+        IdeaQuestionnaireView,
+        {
+          answers: questionnaireSnapshot.answers,
+          description: questionnaireDescription,
+          onAnswerChange: handleAnswerChange,
+          onSubmit: handleQuestionnaireSubmit,
+          questions: questionnaireSnapshot.questions,
+          submitLabel: questionnaireSubmitLabel,
+          title: questionnaireTitle
+        }
+      ) : null,
+      showSessionView ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
         session_view_default,
         {
           activeSessionId: sessionViewProps.activeSessionId,
@@ -22796,17 +24046,17 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/app-host/session-store.ts
-  var import_react8 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
   var useSessionStore = (providerLabels) => {
-    const [sessions, setSessions] = (0, import_react8.useState)([]);
-    const [snapshots, setSnapshots] = (0, import_react8.useState)({});
-    const [activeSessionId, setActiveSessionId] = (0, import_react8.useState)(null);
-    const sessionsRef = (0, import_react8.useRef)([]);
-    const pendingBindingsRef = (0, import_react8.useRef)({});
-    const syncSessionsRef = (0, import_react8.useCallback)((current) => {
+    const [sessions, setSessions] = (0, import_react12.useState)([]);
+    const [snapshots, setSnapshots] = (0, import_react12.useState)({});
+    const [activeSessionId, setActiveSessionId] = (0, import_react12.useState)(null);
+    const sessionsRef = (0, import_react12.useRef)([]);
+    const pendingBindingsRef = (0, import_react12.useRef)({});
+    const syncSessionsRef = (0, import_react12.useCallback)((current) => {
       sessionsRef.current = current;
     }, []);
-    const applyPendingBinding = (0, import_react8.useCallback)(
+    const applyPendingBinding = (0, import_react12.useCallback)(
       (session) => {
         const pending = pendingBindingsRef.current[session.id];
         if (!pending) {
@@ -22817,7 +24067,7 @@ ${path2}` : path2;
       },
       []
     );
-    const handleSessionCreated = (0, import_react8.useCallback)(
+    const handleSessionCreated = (0, import_react12.useCallback)(
       (session) => {
         const sessionWithBinding = applyPendingBinding(session);
         setSessions((previous3) => {
@@ -22833,7 +24083,7 @@ ${path2}` : path2;
       },
       [applyPendingBinding, providerLabels, syncSessionsRef]
     );
-    const hydrateFromCoreState = (0, import_react8.useCallback)(
+    const hydrateFromCoreState = (0, import_react12.useCallback)(
       (payload) => {
         const nextSessions = payload.sessions.map(
           (record) => applyPendingBinding(record)
@@ -22857,19 +24107,19 @@ ${path2}` : path2;
       },
       [applyPendingBinding, providerLabels, syncSessionsRef]
     );
-    const handleSessionMessageEvent2 = (0, import_react8.useCallback)(
+    const handleSessionMessageEvent2 = (0, import_react12.useCallback)(
       (payload) => {
         setSnapshots((previous3) => appendMessageToSnapshots(previous3, payload));
       },
       []
     );
-    const handleSessionHistoryEvent = (0, import_react8.useCallback)(
+    const handleSessionHistoryEvent = (0, import_react12.useCallback)(
       (payload) => {
         setSnapshots((previous3) => mergeHistoryIntoSnapshots(previous3, payload));
       },
       []
     );
-    const handleSessionBindingUpdate = (0, import_react8.useCallback)(
+    const handleSessionBindingUpdate = (0, import_react12.useCallback)(
       (payload) => {
         const binding = normalizeBinding({
           providerSessionId: payload.providerSessionId,
@@ -22908,7 +24158,7 @@ ${path2}` : path2;
       },
       [syncSessionsRef]
     );
-    const clearSessions = (0, import_react8.useCallback)(() => {
+    const clearSessions = (0, import_react12.useCallback)(() => {
       setSessions(() => {
         syncSessionsRef([]);
         return [];
@@ -22916,16 +24166,16 @@ ${path2}` : path2;
       setSnapshots({});
       setActiveSessionId(null);
     }, [syncSessionsRef]);
-    const focusLastSession = (0, import_react8.useCallback)(() => {
+    const focusLastSession = (0, import_react12.useCallback)(() => {
       const last = sessionsRef.current.at(-1);
       if (last) {
         setActiveSessionId(last.id);
       }
     }, []);
-    const selectSession = (0, import_react8.useCallback)((sessionId) => {
+    const selectSession = (0, import_react12.useCallback)((sessionId) => {
       setActiveSessionId(sessionId);
     }, []);
-    const handleSessionDeleted = (0, import_react8.useCallback)(
+    const handleSessionDeleted = (0, import_react12.useCallback)(
       (payload) => {
         const { sessionId } = payload;
         setSessions((previous3) => {
@@ -22947,15 +24197,15 @@ ${path2}` : path2;
       },
       [syncSessionsRef]
     );
-    const closeSession = (0, import_react8.useCallback)((sessionId) => {
+    const closeSession = (0, import_react12.useCallback)((sessionId) => {
       deleteSession(sessionId);
     }, []);
-    const toggleTodo = (0, import_react8.useCallback)((sessionId, todoId) => {
+    const toggleTodo = (0, import_react12.useCallback)((sessionId, todoId) => {
       setSnapshots(
         (previous3) => toggleTodoInSnapshots(previous3, sessionId, todoId)
       );
     }, []);
-    const sendMessage = (0, import_react8.useCallback)((sessionId, content3) => {
+    const sendMessage = (0, import_react12.useCallback)((sessionId, content3) => {
       setSnapshots((previous3) => {
         const current = previous3[sessionId];
         if (!current) {
@@ -22991,13 +24241,13 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/app-host/settings-visibility.ts
-  var import_react9 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
   var useSettingsVisibility = () => {
-    const [settingsVisible, setSettingsVisible] = (0, import_react9.useState)(false);
-    const openSettings = (0, import_react9.useCallback)(() => {
+    const [settingsVisible, setSettingsVisible] = (0, import_react13.useState)(false);
+    const openSettings = (0, import_react13.useCallback)(() => {
       setSettingsVisible(true);
     }, []);
-    const closeSettings = (0, import_react9.useCallback)(() => {
+    const closeSettings = (0, import_react13.useCallback)(() => {
       setSettingsVisible(false);
       postVsCodeMessage({ type: "settings:closed" });
     }, []);
@@ -23009,601 +24259,11 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/app-host/use-idea-collector.ts
-  var import_react10 = __toESM(require_react());
-
-  // src/client/ui/src/app-host/idea-kickoff-prompt.ts
-  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\nSpec-first: \u0432\u0435\u0434\u0438 readiness (ready_for_spec/blockers) \u0438 handoff_for_spec (assumptions/decisions_needed/open_questions/next_steps).\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md` \u0438 `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md`.";
-
-  // src/client/ui/src/services/idea-collector-artifact.ts
-  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
-  var extractIdeaCollectorArtifact = (event) => {
-    if (!isRecord3(event)) {
-      return null;
-    }
-    const data = event.data;
-    if (!isRecord3(data) || data.kind !== "structured_output") {
-      return null;
-    }
-    let nextAction = null;
-    if (typeof data.nextAction === "string") {
-      nextAction = data.nextAction;
-    } else if (typeof data.next_action === "string") {
-      nextAction = data.next_action;
-    }
-    if (nextAction !== "finalize") {
-      return null;
-    }
-    const artifact = data.artifact;
-    if (!isRecord3(artifact)) {
-      return null;
-    }
-    const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
-    const virtualSimulationPath = readStringField(artifact, "virtualSimulationPath") ?? readStringField(artifact, "virtual_simulation_path");
-    const ideaMarkdown = readStringField(artifact, "ideaMarkdown") ?? readStringField(artifact, "idea_markdown");
-    const virtualSimulationMarkdown = readStringField(artifact, "virtualSimulationMarkdown") ?? readStringField(artifact, "virtual_simulation_markdown");
-    if (!(ideaPath && ideaMarkdown && virtualSimulationPath && virtualSimulationMarkdown)) {
-      return null;
-    }
-    return {
-      ideaPath,
-      ideaMarkdown,
-      virtualSimulationPath,
-      virtualSimulationMarkdown
-    };
-  };
-
-  // src/client/ui/src/services/idea-collector-fallback-schema.ts
-  var FALLBACK_SCHEMA_JSON = String.raw`{"$schema":"http://json-schema.org/draft-07/schema#","$id":"https://codeai-hub.local/schemas/idea-collector-schema.json","title":"Idea Collector — Structured Output Contract","description":"Контракт Structured Output для универсального агента Idea Collector. Агент ведёт guided conversation, заполняя секции идеи, опирается только на контракт (без внешних документов), и на финале (next_action=finalize) обязан вернуть готовые Idea.md и virtual-simulation.md как markdown + целевые пути сохранения.","type":"object","additionalProperties":false,"required":["conversation_state","next_action","suggested_response","reasoning_summary_ru","artifact"],"properties":{"conversation_state":{"type":"object","additionalProperties":false,"required":["collected","coverage_percent","coverage","readiness","handoff_for_spec"],"description":"Накопленное состояние диалога: частично или полностью заполненные секции из шаблона идеи.","properties":{"collected":{"type":"object","additionalProperties":false,"description":"Накопленные ответы пользователя/агента по секциям idea-template.md. Допускается частичное заполнение — агент дозапрашивает недостающее.","properties":{"meta":{"type":"object","additionalProperties":false,"description":"Метаданные шапки Idea.md.","properties":{"title":{"type":"string","minLength":1,"description":"# Idea: <Название инициативы/модуля/проекта>"},"created_date":{"type":"string","description":"**Дата создания:** <YYYY-MM-DD>","pattern":"^\\d{4}-\\d{2}-\\d{2}$"},"status":{"type":"string","description":"**Статус:** Draft | Approved | In Progress | Completed","enum":["Draft","Approved","In Progress","Completed"]},"author":{"type":"string","minLength":1,"description":"**Автор идеи:** <имя>"},"idea_type":{"type":"string","description":"**Тип идеи:** продукт | приложение | кластер | фича | модуль | улучшение | исследование","enum":["продукт","приложение","кластер","фича","модуль","улучшение","исследование"]}},"required":["title","created_date","status","idea_type","author"]},"short_description":{"type":"string","description":"## 1. Краткое описание — одно-два предложения, что это и зачем."},"context_and_motivation":{"type":"string","description":"## 2. Контекст и мотивация — почему это важно сейчас, какой контекст привёл к идее."},"problem":{"type":"string","description":"## 3. Проблема — какую проблему решает модуль/проект."},"goals_and_success_criteria":{"type":"object","additionalProperties":false,"description":"## 4. Цели и критерии успеха.","properties":{"goals":{"type":"array","description":"**Цели:**","items":{"type":"string","minLength":1}},"success_criteria":{"type":"array","description":"**Критерии успеха (измеримые/проверяемые):**","items":{"type":"string","minLength":1}}},"required":["goals","success_criteria"]},"high_level_solution":{"type":"string","description":"## 5. Решение (высокоуровневое) — как предлагается решить проблему."},"user_scenarios":{"type":"array","description":"## 6. Пользовательские сценарии — 3–7 ключевых сценариев использования.","items":{"type":"string","minLength":1}},"key_functions":{"type":"array","description":"## 7. Ключевые функции — таблица функций.","items":{"type":"object","additionalProperties":false,"required":["id","name","description"],"properties":{"id":{"type":"integer","minimum":1,"description":"Порядковый номер в таблице (опционально)."},"name":{"type":"string","minLength":1,"description":"Название функции."},"description":{"type":"string","minLength":1,"description":"Описание функции."}}}},"ui_ux":{"type":"array","description":"## 8. UI/UX и пользовательские потоки — экраны, ключевые действия, критичные состояния.","items":{"type":"string","minLength":1}},"triggers_and_events":{"type":"array","description":"## 9. Триггеры и события — что запускает процесс, какие сигналы обрабатываются.","items":{"type":"string","minLength":1}},"data_entities":{"type":"array","description":"## 10. Данные и ключевые сущности — основные модели, состояния, справочники (в т.ч. Приложение/Кластер/Модуль, если релевантно).","items":{"type":"string","minLength":1}},"architecture_outline":{"type":"array","description":"## 11. Архитектурный контур — модули/сервисы/фасады и их взаимодействие.","items":{"type":"string","minLength":1}},"users_and_roles":{"type":"object","additionalProperties":false,"description":"## 12. Пользователи и роли.","properties":{"user":{"type":"string","description":"- **Пользователь**: ..."},"ai_agent":{"type":"string","description":"- **AI Агент**: ..."},"system":{"type":"string","description":"- **Система**: ..."}},"required":["user","ai_agent","system"]},"out_of_scope":{"type":"array","description":"## 13. Границы (что НЕ входит).","items":{"type":"string","minLength":1}},"constraints_and_assumptions":{"type":"object","additionalProperties":false,"description":"## 14. Ограничения и допущения.","properties":{"technical_constraints":{"type":"array","description":"- Технические ограничения: ...","items":{"type":"string","minLength":1}},"ux_time_team_constraints":{"type":"array","description":"- Ограничения по UX/времени/команде: ...","items":{"type":"string","minLength":1}},"assumptions":{"type":"array","description":"- Допущения: ...","items":{"type":"string","minLength":1}}},"required":["technical_constraints","ux_time_team_constraints","assumptions"]},"data_and_storage":{"type":"object","additionalProperties":false,"description":"## 15. Данные и хранение.","properties":{"artifacts_files":{"type":"array","description":"- Артефакты/файлы: ...","items":{"type":"string","minLength":1}},"configs_settings":{"type":"array","description":"- Конфиги/настройки: ...","items":{"type":"string","minLength":1}},"logs_telemetry":{"type":"array","description":"- Логи/телеметрия: ...","items":{"type":"string","minLength":1}}},"required":["artifacts_files","configs_settings","logs_telemetry"]},"dependencies_and_integrations":{"type":"object","additionalProperties":false,"description":"## 16. Зависимости и интеграции.","properties":{"external_systems":{"type":"array","description":"- Внешние системы: ...","items":{"type":"string","minLength":1}},"internal_modules":{"type":"array","description":"- Внутренние модули: ...","items":{"type":"string","minLength":1}},"ai_providers":{"type":"array","description":"- Провайдеры AI: ...","items":{"type":"string","minLength":1}}},"required":["external_systems","internal_modules","ai_providers"]},"risks_and_unknowns":{"type":"array","description":"## 17. Риски и неизвестности.","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"## 18. Открытые вопросы — список того, что надо уточнить перед Spec.md.","items":{"type":"string","minLength":1}},"spec_entry_criteria":{"type":"array","description":"## 19. Критерии перехода к Spec.md — чек-лист. Может быть частично заполнен/переформулирован под проект.","items":{"type":"string","minLength":1}},"related_documents":{"type":"object","additionalProperties":false,"description":"## 20. Связанные документы.","properties":{"spec_note":{"type":"string","description":"Строка/пояснение про Spec.md (например '(будет создан)')."},"plan_note":{"type":"string","description":"Строка/пояснение про Plan.md (например '(будет создан)')."},"discussion_links":{"type":"array","description":"Ссылки на обсуждения/документы.","items":{"type":"string","minLength":1}}},"required":["spec_note","plan_note","discussion_links"]}},"required":["meta","short_description","context_and_motivation","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","constraints_and_assumptions","data_and_storage","dependencies_and_integrations","risks_and_unknowns","open_questions","spec_entry_criteria","related_documents"]},"coverage_percent":{"type":"integer","minimum":0,"maximum":100,"description":"Оценка заполненности шаблона идеи (0..100). Рекомендуемый порог завершения: >= 80."},"coverage":{"type":"object","additionalProperties":false,"description":"Опциональная детализация покрытия по секциям шаблона.","properties":{"completed_sections":{"type":"array","items":{"type":"string","minLength":1}},"missing_sections":{"type":"array","items":{"type":"string","minLength":1}}},"required":["completed_sections","missing_sections"]},"readiness":{"type":"object","additionalProperties":false,"description":"Готовность к переходу в Spec.md: честная оценка и блокеры.","properties":{"ready_for_spec":{"type":"boolean","description":"true только если блокеров нет и пользователь подтвердил финализацию."},"blockers":{"type":"array","description":"Список причин, почему нельзя переходить к Spec.md прямо сейчас.","items":{"type":"string","minLength":1}}},"required":["ready_for_spec","blockers"]},"handoff_for_spec":{"type":"object","additionalProperties":false,"description":"Handoff для следующего агента Spec.md: что принять как данность и что уточнить.","properties":{"assumptions":{"type":"array","description":"Ключевые допущения, на которых строится идея.","items":{"type":"string","minLength":1}},"decisions_needed":{"type":"array","description":"Решения, которые нужно принять в Spec.md (варианты/компромиссы).","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"Открытые вопросы для Spec.md (что уточнить у пользователя/стейкхолдеров).","items":{"type":"string","minLength":1}},"next_steps":{"type":"array","description":"Следующие шаги для подготовки Spec.md.","items":{"type":"string","minLength":1}}},"required":["assumptions","decisions_needed","open_questions","next_steps"]}}},"next_action":{"type":"string","description":"Что делать дальше: задать вопрос, уточнить, суммаризировать или завершить и вернуть артефакт.","enum":["ask_question","clarify","summarize","finalize"]},"suggested_response":{"type":"string","minLength":1,"description":"Текст следующего сообщения агента (вопрос/уточнение/сводка/финализация), который показываем пользователю."},"reasoning_summary_ru":{"type":"string","description":"Краткое резюме прогресса/решений на русском без chain-of-thought."},"artifact":{"type":"object","additionalProperties":false,"description":"Финальные артефакты. Обязательны при next_action=finalize.","required":["idea_markdown","virtual_simulation_markdown","idea_path","virtual_simulation_path"],"properties":{"idea_markdown":{"type":"string","description":"Готовый Idea.md как markdown (включая заголовок и все секции по шаблону)."},"virtual_simulation_markdown":{"type":"string","description":"Виртуальный тест (virtual-simulation.md) как markdown.\n\nОбязательные секции/заголовки (используй эти названия):\n- # Virtual Simulation: <Название идеи>\n- ## Цель симуляции\n- ## Сценарий 1 — ... (2–4 сценария)\n- ## UI ↔ Core события\n- ## Логи и телеметрия\n- ## Мини-матрица рисков\n- ## Must-pass проверки (E2E)\n- ## Выводы\n"},"idea_path":{"type":"string","description":"Куда сохранить Idea.md в проекте.","const":".codeai-hub/full-development-flow/idea/idea.md"},"virtual_simulation_path":{"type":"string","description":"Куда сохранить virtual-simulation.md в проекте.","const":".codeai-hub/full-development-flow/idea/virtual-simulation.md"}}}},"allOf":[{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"required":["artifact"]}},{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"properties":{"conversation_state":{"required":["collected","coverage_percent"],"properties":{"coverage_percent":{"minimum":80},"collected":{"required":["meta","short_description","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","dependencies_and_integrations","risks_and_unknowns","open_questions"],"properties":{"meta":{"required":["title","created_date","status","idea_type","author"]},"goals_and_success_criteria":{"required":["goals","success_criteria"]},"ui_ux":{"minItems":1},"triggers_and_events":{"minItems":1},"data_entities":{"minItems":1},"architecture_outline":{"minItems":1}}}}}}}}]}`;
-  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var getNestedRecord = (root4, keys2) => {
-    let current = root4;
-    for (const key of keys2) {
-      const next = current[key];
-      if (!isRecord4(next)) {
-        return null;
-      }
-      current = next;
-    }
-    return current;
-  };
-  var patchFallbackIdeaCollectorSchema = (schema) => {
-    const meta = getNestedRecord(schema, [
-      "properties",
-      "conversation_state",
-      "properties",
-      "collected",
-      "properties",
-      "meta"
-    ]);
-    const metaProperties = meta ? getNestedRecord(meta, ["properties"]) : null;
-    const metaRequired = meta?.required;
-    if (metaProperties) {
-      metaProperties.initiative_slug = {
-        type: "string",
-        minLength: 1,
-        description: "initiativeSlug (lowercase kebab-case). \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442\u0441\u044F \u0432 \u043A\u0430\u043D\u043E\u043D\u0438\u0447\u043D\u044B\u0445 \u043F\u0443\u0442\u044F\u0445: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/..."
-      };
-    }
-    if (Array.isArray(metaRequired) && !metaRequired.includes("initiative_slug")) {
-      metaRequired.push("initiative_slug");
-    }
-    const artifact = getNestedRecord(schema, ["properties", "artifact"]);
-    const artifactProperties = artifact ? getNestedRecord(artifact, ["properties"]) : null;
-    if (artifactProperties && isRecord4(artifactProperties.idea_path)) {
-      artifactProperties.idea_path.const = ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/idea.md";
-    }
-    if (artifactProperties && isRecord4(artifactProperties.virtual_simulation_path)) {
-      artifactProperties.virtual_simulation_path.const = ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/virtual-simulation.md";
-    }
-  };
-  var parsed = JSON.parse(FALLBACK_SCHEMA_JSON);
-  patchFallbackIdeaCollectorSchema(parsed);
-  var IDEA_COLLECTOR_FALLBACK_SCHEMA = parsed;
-
-  // src/client/ui/src/services/idea-collector-schema-utils.ts
-  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
-  var strictifyProperties = (schema) => {
-    const properties = schema.properties;
-    if (!isRecord5(properties)) {
-      return;
-    }
-    schema.required = Object.keys(properties);
-    if (schema.additionalProperties === void 0) {
-      schema.additionalProperties = false;
-    }
-    for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
-        strictifySchema(value);
-      }
-    }
-  };
-  var strictifyItems = (schema) => {
-    const items = schema.items;
-    if (Array.isArray(items)) {
-      for (const item of items) {
-        if (isRecord5(item)) {
-          strictifySchema(item);
-        }
-      }
-      return;
-    }
-    if (isRecord5(items)) {
-      strictifySchema(items);
-    }
-  };
-  var removeCombinatorsFromProperties = (schema) => {
-    const properties = schema.properties;
-    if (!isRecord5(properties)) {
-      return;
-    }
-    for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
-        removeCombinators(value);
-      }
-    }
-  };
-  var removeCombinatorsFromItems = (schema) => {
-    const items = schema.items;
-    if (Array.isArray(items)) {
-      for (const item of items) {
-        if (isRecord5(item)) {
-          removeCombinators(item);
-        }
-      }
-      return;
-    }
-    if (isRecord5(items)) {
-      removeCombinators(items);
-    }
-  };
-  var removeCombinators = (schema) => {
-    removeCombinatorsFromProperties(schema);
-    removeCombinatorsFromItems(schema);
-    for (const key of ["allOf", "anyOf", "oneOf"]) {
-      const entries = schema[key];
-      if (!Array.isArray(entries)) {
-        continue;
-      }
-      for (const entry of entries) {
-        if (isRecord5(entry)) {
-          removeCombinators(entry);
-        }
-      }
-      delete schema[key];
-    }
-  };
-  var strictifySchema = (schema) => {
-    removeCombinators(schema);
-    strictifyProperties(schema);
-    strictifyItems(schema);
-  };
-  var injectTemplateIntoSchema = (schema, template) => {
-    if (!template) {
-      return schema;
-    }
-    const properties = schema.properties;
-    if (!isRecord5(properties)) {
-      return schema;
-    }
-    const artifact = properties.artifact;
-    if (!isRecord5(artifact)) {
-      return schema;
-    }
-    const artifactProperties = artifact.properties;
-    if (!isRecord5(artifactProperties)) {
-      return schema;
-    }
-    const ideaMarkdown = artifactProperties.idea_markdown;
-    if (!isRecord5(ideaMarkdown)) {
-      return schema;
-    }
-    const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
-    ideaMarkdown.description = `${description}
-
-Idea.md template:
-${template}`;
-    return schema;
-  };
-  var ALLOWED_SCHEMA_KEYS = /* @__PURE__ */ new Set([
-    "type",
-    "properties",
-    "required",
-    "additionalProperties",
-    "items",
-    "description"
-  ]);
-  var pruneSchemaKeys = (schema) => {
-    for (const key of Object.keys(schema)) {
-      if (!ALLOWED_SCHEMA_KEYS.has(key)) {
-        delete schema[key];
-      }
-    }
-  };
-  var sanitizeSchemaProperties = (schema) => {
-    const properties = schema.properties;
-    if (!isRecord5(properties)) {
-      return;
-    }
-    for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
-        sanitizeSchemaKeywords(value);
-      }
-    }
-  };
-  var sanitizeSchemaItems = (schema) => {
-    const items = schema.items;
-    if (Array.isArray(items)) {
-      for (const item of items) {
-        if (isRecord5(item)) {
-          sanitizeSchemaKeywords(item);
-        }
-      }
-      return;
-    }
-    if (isRecord5(items)) {
-      sanitizeSchemaKeywords(items);
-    }
-  };
-  var sanitizeSchemaKeywords = (schema) => {
-    pruneSchemaKeys(schema);
-    sanitizeSchemaProperties(schema);
-    sanitizeSchemaItems(schema);
-  };
-  var normalizeIdeaCollectorSchema = (schema, template) => {
-    const next = cloneSchema(schema);
-    strictifySchema(next);
-    sanitizeSchemaKeywords(next);
-    return injectTemplateIntoSchema(next, template);
-  };
-
-  // src/client/ui/src/services/idea-collector-support.ts
-  var generateLocalMessageId2 = () => {
-    if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
-      return globalThis.crypto.randomUUID();
-    }
-    return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  };
-  var resolveCoreHttpUrl = () => {
-    const globalScope2 = window;
-    const httpUrl = globalScope2.__CODEAI_CORE_CONFIG?.httpUrl;
-    if (typeof httpUrl !== "string" || httpUrl.length === 0) {
-      return null;
-    }
-    return httpUrl;
-  };
-  var joinUrl = (baseUrl, path2) => baseUrl.endsWith("/") ? `${baseUrl.slice(0, -1)}${path2}` : `${baseUrl}${path2}`;
-  var postSystemNotice = (sessionId, content3) => {
-    window.postMessage(
-      {
-        type: "session:message",
-        payload: {
-          sessionId,
-          message: {
-            id: generateLocalMessageId2(),
-            role: "system",
-            content: content3,
-            createdAt: Date.now()
-          }
-        }
-      },
-      "*"
-    );
-  };
-
-  // src/client/ui/src/services/idea-collector-workspace-context.ts
-  var WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
-  var DEFAULT_MAX_BYTES = 6e4;
-  var MAX_FILES = 3;
-  var normalizePathToken = (token) => {
-    const trimmed = token.trim();
-    if (trimmed.length === 0) {
-      return null;
-    }
-    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) {
-      return trimmed.slice(1, -1).trim() || null;
-    }
-    return trimmed;
-  };
-  var parseWorkspaceReadCommand = (content3) => {
-    const trimmed = content3.trimStart();
-    if (!(trimmed.startsWith("/read") || trimmed.startsWith("/attach"))) {
-      return null;
-    }
-    const lines = trimmed.split("\n");
-    const firstLine = lines[0]?.trim() ?? "";
-    const tokens = firstLine.split(/\s+/g);
-    const command = tokens[0];
-    if (!(command === "/read" || command === "/attach")) {
-      return null;
-    }
-    const paths = tokens.slice(1).map((token) => normalizePathToken(token)).filter(Boolean);
-    const remainingMessage = lines.slice(1).join("\n").trim();
-    return { paths, remainingMessage };
-  };
-  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isWorkspaceFileResponse = (value) => {
-    if (!isRecord6(value)) {
-      return false;
-    }
-    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
-  };
-  var fetchWorkspaceFile = async (sessionId, relativePath) => {
-    const httpUrl = resolveCoreHttpUrl();
-    if (!httpUrl) {
-      return null;
-    }
-    try {
-      const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          path: relativePath,
-          maxBytes: DEFAULT_MAX_BYTES
-        })
-      });
-      if (!response.ok) {
-        return null;
-      }
-      const payload = await response.json();
-      if (!isWorkspaceFileResponse(payload)) {
-        return null;
-      }
-      return payload;
-    } catch {
-      return null;
-    }
-  };
-  var buildMessageWithWorkspaceContext = async (sessionId, content3) => {
-    const command = parseWorkspaceReadCommand(content3);
-    if (!command) {
-      return null;
-    }
-    if (command.paths.length === 0) {
-      postSystemNotice(
-        sessionId,
-        "\u041A\u043E\u043C\u0430\u043D\u0434\u0430 /read \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043F\u0443\u0442\u044C(\u0438):\n/read doc/Architecture/Architecture.md\n(\u0434\u0430\u043B\u044C\u0448\u0435 \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445 \u043C\u043E\u0436\u043D\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432\u043E\u043F\u0440\u043E\u0441/\u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439)"
-      );
-      return "";
-    }
-    const files = await Promise.all(
-      command.paths.slice(0, MAX_FILES).map(async (relativePath) => ({
-        relativePath,
-        response: await fetchWorkspaceFile(sessionId, relativePath)
-      }))
-    );
-    const resolvedFiles = files.filter((entry) => entry.response);
-    if (resolvedFiles.length === 0) {
-      postSystemNotice(
-        sessionId,
-        "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C \u043D\u0438 \u043E\u0434\u0438\u043D \u0444\u0430\u0439\u043B \u0438\u0437 /read. \u041F\u0440\u043E\u0432\u0435\u0440\u044C \u043F\u0443\u0442\u0438 \u0438 \u0447\u0442\u043E Core \u0437\u0430\u043F\u0443\u0449\u0435\u043D."
-      );
-      return "";
-    }
-    const blocks = [];
-    blocks.push(
-      "\u041A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438\u0437 \u0444\u0430\u0439\u043B\u043E\u0432 (workspace). \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u044D\u0442\u043E \u043A\u0430\u043A \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0438\u0441\u0442\u0438\u043D\u044B \u0434\u043B\u044F \u0442\u0435\u043A\u0443\u0449\u0435\u0433\u043E \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E:"
-    );
-    for (const entry of resolvedFiles) {
-      const payload = entry.response;
-      const truncationNote = payload.truncated ? `
-(\u0444\u0430\u0439\u043B \u043E\u0431\u0440\u0435\u0437\u0430\u043D \u0434\u043E ${payload.maxBytes} \u0431\u0430\u0439\u0442)` : "";
-      blocks.push(
-        `
-[FILE: ${payload.path}]${truncationNote}
-\`\`\`
-${payload.content}
-\`\`\``
-      );
-    }
-    if (command.paths.length > MAX_FILES) {
-      postSystemNotice(
-        sessionId,
-        `\u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0435: \u043F\u0440\u0438\u043A\u0440\u0435\u043F\u043B\u044F\u044E \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C ${MAX_FILES} \u0444\u0430\u0439\u043B\u043E\u0432 \u0437\u0430 \u0440\u0430\u0437.`
-      );
-    }
-    if (command.remainingMessage.length > 0) {
-      blocks.push(`
-\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F:
-${command.remainingMessage}`);
-    } else {
-      blocks.push(
-        "\n\u0414\u0430\u043B\u0435\u0435: \u0443\u0447\u0442\u0438 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438 \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E (\u0437\u0430\u0434\u0430\u0439 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441)."
-      );
-    }
-    return blocks.join("\n");
-  };
-
-  // src/client/ui/src/services/idea-collector-service.ts
-  var IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
-  var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-  var FALLBACK_OUTPUT_PATHS = {
-    idea: ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/idea.md",
-    virtualSimulation: ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/virtual-simulation.md"
-  };
-  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isIdeaContractPayload = (value) => {
-    if (!isRecord7(value)) {
-      return false;
-    }
-    const outputPaths = value.outputPaths;
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord7(value.schema) && isRecord7(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
-  };
-  var fetchIdeaContract = async () => {
-    const httpUrl = resolveCoreHttpUrl();
-    if (!httpUrl) {
-      return null;
-    }
-    try {
-      const response = await fetch(joinUrl(httpUrl, IDEA_CONTRACT_ENDPOINT));
-      if (!response.ok) {
-        return null;
-      }
-      const payload = await response.json();
-      if (!isIdeaContractPayload(payload)) {
-        return null;
-      }
-      const schema = normalizeIdeaCollectorSchema(payload.schema, null);
-      const questionnaireTemplateMarkdown = extractIdeaContractQuestionnaireTemplate(payload) ?? null;
-      return {
-        prompt: payload.prompt,
-        schema,
-        outputPaths: payload.outputPaths,
-        questionnaireTemplateMarkdown
-      };
-    } catch {
-      return null;
-    }
-  };
-  var loadContract = async () => {
-    const remote = await fetchIdeaContract();
-    if (remote) {
-      return remote;
-    }
-    const fallbackSchema = normalizeIdeaCollectorSchema(
-      IDEA_COLLECTOR_FALLBACK_SCHEMA,
-      null
-    );
-    return {
-      prompt: IDEA_KICKOFF_PROMPT,
-      schema: fallbackSchema,
-      outputPaths: FALLBACK_OUTPUT_PATHS,
-      questionnaireTemplateMarkdown: null
-    };
-  };
-  var IdeaCollectorService = class {
-    constructor() {
-      this.activeSessions = /* @__PURE__ */ new Set();
-      this.artifacts = /* @__PURE__ */ new Map();
-      this.contractPromise = null;
-      this.noticesSent = /* @__PURE__ */ new Set();
-    }
-    isIdeaCollectorSession(sessionId) {
-      return this.activeSessions.has(sessionId);
-    }
-    getLatestArtifact(sessionId) {
-      return this.artifacts.get(sessionId) ?? null;
-    }
-    async startCollection(sessionId) {
-      this.activeSessions.add(sessionId);
-      if (!this.noticesSent.has(sessionId)) {
-        this.noticesSent.add(sessionId);
-        postSystemNotice(
-          sessionId,
-          "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Idea Collector. \u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u0434\u043E\u0436\u0434\u0438\u0442\u0435\u0441\u044C \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u0432\u043E\u043F\u0440\u043E\u0441\u0430."
-        );
-        postSystemNotice(
-          sessionId,
-          "\u0427\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u044C \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B/\u0444\u0430\u0439\u043B\u044B \u0438\u0437 workspace, \u043C\u043E\u0436\u043D\u043E:\n- \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0438 \u0442\u0440\u0438\u0433\u0433\u0435\u0440 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0439/\u0438\u0437\u0443\u0447\u0438/\u043E\u0437\u043D\u0430\u043A\u043E\u043C\u044C\u0441\u044F\xBB) \u0438 \u0443\u043A\u0430\u0437\u0430\u0442\u044C \u043F\u0443\u0442\u0438 \u043A \u0444\u0430\u0439\u043B\u0430\u043C (\u043C\u043E\u0436\u043D\u043E \u043D\u0430 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445);\n- \u0438\u043B\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u043A\u043E\u043C\u0430\u043D\u0434\u0443:\n/read <relative-path>\n(\u043C\u043E\u0436\u043D\u043E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043F\u0443\u0442\u0435\u0439 \u0432 \u043E\u0434\u043D\u043E\u0439 \u0441\u0442\u0440\u043E\u043A\u0435, \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 3)."
-        );
-      }
-      const [prompt, schema] = await Promise.all([
-        this.getPrompt(),
-        this.getNormalizedSchema()
-      ]);
-      sendChatMessage(sessionId, prompt, { outputSchema: schema });
-    }
-    async continueConversation(sessionId, content3) {
-      if (!this.activeSessions.has(sessionId)) {
-        return;
-      }
-      const schema = await this.getNormalizedSchema();
-      const augmentedContent = await buildMessageWithWorkspaceContext(
-        sessionId,
-        content3
-      );
-      if (augmentedContent === "") {
-        return;
-      }
-      sendChatMessage(sessionId, augmentedContent ?? content3, {
-        outputSchema: schema
-      });
-    }
-    handleStreamEvent(sessionId, event) {
-      if (!this.activeSessions.has(sessionId)) {
-        return;
-      }
-      const artifact = extractIdeaCollectorArtifact(event);
-      if (artifact) {
-        this.artifacts.set(sessionId, artifact);
-        this.persistIdeaArtifacts(sessionId, artifact).catch((error) => {
-          const message = error instanceof Error ? error.message : String(error);
-          postSystemNotice(
-            sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: ${message}`
-          );
-        });
-      }
-    }
-    getPrompt() {
-      return this.getContract().then((contract) => contract.prompt);
-    }
-    getNormalizedSchema() {
-      return this.getContract().then((contract) => contract.schema);
-    }
-    getQuestionnaireTemplateMarkdown() {
-      return this.getContract().then(
-        (contract) => contract.questionnaireTemplateMarkdown
-      );
-    }
-    getContract() {
-      if (!this.contractPromise) {
-        this.contractPromise = loadContract();
-      }
-      return this.contractPromise;
-    }
-    async persistIdeaArtifacts(sessionId, artifact) {
-      const httpUrl = resolveCoreHttpUrl();
-      const contract = await this.getContract();
-      if (!httpUrl) {
-        postSystemNotice(
-          sessionId,
-          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
-        );
-        return;
-      }
-      try {
-        const response = await fetch(joinUrl(httpUrl, IDEA_ARTIFACT_ENDPOINT), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId,
-            ideaMarkdown: artifact.ideaMarkdown,
-            virtualSimulationMarkdown: artifact.virtualSimulationMarkdown,
-            ideaPath: artifact.ideaPath,
-            virtualSimulationPath: artifact.virtualSimulationPath
-          })
-        });
-        if (!response.ok) {
-          postSystemNotice(
-            sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (HTTP ${response.status}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
-          );
-          return;
-        }
-        const payload = await response.json();
-        const savedIdeaPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : artifact.ideaPath;
-        const savedVirtualSimulationPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : artifact.virtualSimulationPath;
-        postSystemNotice(
-          sessionId,
-          `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedIdeaPath} \u0438 ${savedVirtualSimulationPath}`
-        );
-      } catch {
-        postSystemNotice(
-          sessionId,
-          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
-        );
-      }
-    }
-  };
-
-  // src/client/ui/src/app-host/use-idea-collector.ts
+  var import_react14 = __toESM(require_react());
   var useIdeaCollector = (fallbackSendMessage) => {
-    const serviceRef = (0, import_react10.useRef)(new IdeaCollectorService());
+    const serviceRef = (0, import_react14.useRef)(new IdeaCollectorService());
     const service = serviceRef.current;
-    (0, import_react10.useEffect)(() => {
+    (0, import_react14.useEffect)(() => {
       const handleStreamMessage = (event) => {
         const candidate = event.data;
         if (candidate?.type !== "session:stream") {
@@ -23620,13 +24280,13 @@ ${command.remainingMessage}`);
         window.removeEventListener("message", handleStreamMessage);
       };
     }, [service]);
-    const startCollection = (0, import_react10.useCallback)(
+    const startCollection = (0, import_react14.useCallback)(
       (sessionId) => {
         service.startCollection(sessionId);
       },
       [service]
     );
-    const sendMessage = (0, import_react10.useCallback)(
+    const sendMessage = (0, import_react14.useCallback)(
       (sessionId, content3) => {
         if (service.isIdeaCollectorSession(sessionId)) {
           service.continueConversation(sessionId, content3);
@@ -23640,7 +24300,7 @@ ${command.remainingMessage}`);
   };
 
   // src/client/ui/src/app-host/webview-message-handler.ts
-  var import_react11 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
 
   // src/client/ui/src/app-host/webview-message-types.ts
   var isIncomingMessage = (value) => Boolean(value && typeof value === "object" && "type" in value);
@@ -23849,7 +24509,7 @@ ${command.remainingMessage}`);
     onSessionBinding,
     onSessionHistory
   }) => {
-    (0, import_react11.useEffect)(() => {
+    (0, import_react15.useEffect)(() => {
       const handleIncomingMessage = (event) => {
         dispatchWebviewMessage(event.data, {
           onProviderPickerOpen,
@@ -23887,7 +24547,7 @@ ${command.remainingMessage}`);
   };
 
   // src/client/ui/src/components/action-bar/index.tsx
-  var import_react12 = __toESM(require_react());
+  var import_react16 = __toESM(require_react());
 
   // src/client/ui/src/root-dom.ts
   var activateRoot = () => {
@@ -23898,7 +24558,7 @@ ${command.remainingMessage}`);
   };
 
   // src/client/ui/src/components/action-bar/index.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var BUTTONS = [
     { id: "newSession", label: ["New", "Session"] },
     { id: "lastSession", label: ["Last", "Session"], highlighted: true },
@@ -23906,7 +24566,7 @@ ${command.remainingMessage}`);
     { id: "oldSessions", label: ["Old", "Sessions"] }
   ];
   var ActionBar = ({ disabled = false }) => {
-    const handleClick = (0, import_react12.useCallback)(
+    const handleClick = (0, import_react16.useCallback)(
       (command) => {
         if (disabled) {
           return;
@@ -23921,22 +24581,22 @@ ${command.remainingMessage}`);
       },
       [disabled]
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "action-bar__surface", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "action-bar__surface", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         "div",
         {
           "aria-hidden": "true",
           className: "action-bar__rail action-bar__rail--top"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         "div",
         {
           "aria-hidden": "true",
           className: "action-bar__rail action-bar__rail--bottom"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "action-bar__buttons", children: BUTTONS.map(({ id, label, highlighted }) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "action-bar__buttons", children: BUTTONS.map(({ id, label, highlighted }) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
         "button",
         {
           "aria-label": `${label[0]} ${label[1]}`,
@@ -23945,8 +24605,8 @@ ${command.remainingMessage}`);
           onClick: () => handleClick(id),
           type: "button",
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "action-bar__line", children: label[0] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "action-bar__line", children: label[1] })
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "action-bar__line", children: label[0] }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "action-bar__line", children: label[1] })
           ]
         },
         id
@@ -23956,10 +24616,10 @@ ${command.remainingMessage}`);
   var action_bar_default = ActionBar;
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_react23 = __toESM(require_react());
+  var import_react27 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_react13 = __toESM(require_react());
+  var import_react17 = __toESM(require_react());
 
   // src/types/claude-model-registry.ts
   var CLAUDE_MODEL_ALIASES = [
@@ -23989,7 +24649,7 @@ ${command.remainingMessage}`);
   var DEFAULT_CLAUDE_MODEL_ALIAS = "default";
 
   // src/client/ui/src/components/settings/settings-card.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   var cardStyles = {
     background: "#252526",
     borderRadius: "6px",
@@ -24015,9 +24675,9 @@ ${command.remainingMessage}`);
     title,
     action,
     children
-  }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: cardStyles, children: [
-    title ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: headerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { style: titleStyles, children: title }),
+  }) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: cardStyles, children: [
+    title ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: headerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { style: titleStyles, children: title }),
       action
     ] }) : null,
     children
@@ -24115,12 +24775,12 @@ ${command.remainingMessage}`);
   };
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   var ClaudeDefaultModelCard = ({
     defaultModel,
     onDefaultModelChange
   }) => {
-    const [hoveredAlias, setHoveredAlias] = (0, import_react13.useState)(
+    const [hoveredAlias, setHoveredAlias] = (0, import_react17.useState)(
       null
     );
     const handleRowClick = (model) => {
@@ -24132,9 +24792,9 @@ ${command.remainingMessage}`);
         onDefaultModelChange(model);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(settings_card_default, { title: "Claude Default model", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/Knowledge/Claude_Model_Aliases.md" }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(settings_card_default, { title: "Claude Default model", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/Knowledge/Claude_Model_Aliases.md" }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
         const isSelected = defaultModel === model.alias;
         const rowStyle = {
           ...rowBaseStyles,
@@ -24144,7 +24804,7 @@ ${command.remainingMessage}`);
         };
         return (
           // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
             "div",
             {
               "aria-checked": isSelected,
@@ -24156,20 +24816,20 @@ ${command.remainingMessage}`);
               style: rowStyle,
               tabIndex: -1,
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
                   "div",
                   {
                     style: {
                       ...radioCircleStyles,
                       ...isSelected ? radioCircleSelectedStyles : {}
                     },
-                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: radioCircleInnerStyles }) : null
+                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: radioCircleInnerStyles }) : null
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: modelInfoStyles, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: aliasStyles, children: model.alias }),
-                  /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: modelInfoStyles, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: aliasStyles, children: model.alias }),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                 ] })
               ]
             },
@@ -24177,13 +24837,13 @@ ${command.remainingMessage}`);
           )
         );
       }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
     ] });
   };
-  var claude_default_model_card_default = (0, import_react13.memo)(ClaudeDefaultModelCard);
+  var claude_default_model_card_default = (0, import_react17.memo)(ClaudeDefaultModelCard);
 
   // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_react15 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
 
   // src/types/codex-model-registry.ts
   var CODEX_RECOMMENDED_MODELS = [
@@ -24341,8 +25001,8 @@ ${command.remainingMessage}`);
   };
 
   // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
-  var import_react14 = __toESM(require_react());
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var import_react18 = __toESM(require_react());
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
   var overlayStyles = {
     position: "fixed",
     inset: 0,
@@ -24471,8 +25131,8 @@ ${command.remainingMessage}`);
     onSave,
     onCancel
   }) => {
-    const [selectedReasoning, setSelectedReasoning] = (0, import_react14.useState)(initialReasoning);
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
+    const [selectedReasoning, setSelectedReasoning] = (0, import_react18.useState)(initialReasoning);
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
       "div",
       {
         "aria-label": `Reasoning effort for ${model.displayName}`,
@@ -24480,19 +25140,19 @@ ${command.remainingMessage}`);
         role: "dialog",
         style: dialogStyles,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: headerStyles2, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { style: titleStyles2, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: headerStyles2, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("h3", { style: titleStyles2, children: [
                 model.displayName,
                 " reasoning"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { style: subtitleStyles, children: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session." })
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { style: subtitleStyles, children: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session." })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: onCancel, style: closeButtonStyles, type: "button", children: "Close" })
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("button", { onClick: onCancel, style: closeButtonStyles, type: "button", children: "Close" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: optionListStyles, children: CODEX_REASONING_LEVELS.map((level) => {
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: optionListStyles, children: CODEX_REASONING_LEVELS.map((level) => {
             const isSelected = level.name === selectedReasoning;
-            return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
+            return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
               "label",
               {
                 style: {
@@ -24500,7 +25160,7 @@ ${command.remainingMessage}`);
                   ...isSelected ? optionSelectedStyles : null
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
                     "input",
                     {
                       checked: isSelected,
@@ -24510,13 +25170,13 @@ ${command.remainingMessage}`);
                       type: "radio"
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: optionTitleStyles, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: optionTitleStyles, children: [
                       level.name,
-                      level.default ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { style: defaultBadgeStyles, children: "Default" }) : null
+                      level.default ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { style: defaultBadgeStyles, children: "Default" }) : null
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { style: optionDescriptionStyles, children: level.description }),
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { style: optionUseCaseStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { style: optionDescriptionStyles, children: level.description }),
+                    /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("p", { style: optionUseCaseStyles, children: [
                       "Use case: ",
                       level.useCase
                     ] })
@@ -24526,9 +25186,9 @@ ${command.remainingMessage}`);
               level.name
             );
           }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: footerStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: onCancel, style: cancelButtonStyles, type: "button", children: "Cancel" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: footerStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("button", { onClick: onCancel, style: cancelButtonStyles, type: "button", children: "Cancel" }),
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
               "button",
               {
                 onClick: () => onSave(selectedReasoning),
@@ -24545,15 +25205,15 @@ ${command.remainingMessage}`);
   var codex_reasoning_dialog_default = CodexReasoningDialog;
 
   // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
-  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
     "div",
     {
       style: {
         ...radioCircleStyles,
         ...checked ? radioCircleSelectedStyles : {}
       },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: radioCircleInnerStyles }) : null
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: radioCircleInnerStyles }) : null
     }
   );
   var CodexDefaultModelCard = ({
@@ -24562,15 +25222,15 @@ ${command.remainingMessage}`);
     onDefaultModelChange,
     onReasoningChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react15.useState)(null);
-    const [hoveredRowId, setHoveredRowId] = (0, import_react15.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react15.useState)(
+    const [activeModelId, setActiveModelId] = (0, import_react19.useState)(null);
+    const [hoveredRowId, setHoveredRowId] = (0, import_react19.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react19.useState)(
       null
     );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react15.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react19.useState)(
       null
     );
-    const recommendedModelIds = (0, import_react15.useMemo)(
+    const recommendedModelIds = (0, import_react19.useMemo)(
       () => new Set(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
       []
     );
@@ -24593,11 +25253,11 @@ ${command.remainingMessage}`);
       event.stopPropagation();
       setActiveModelId(modelId);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(settings_card_default, { title: "Codex Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
-        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: warningStyles, children: "The saved default model is no longer available. Falling back to GPT-5.2-Codex." }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: listStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(settings_card_default, { title: "Codex Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
+        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: warningStyles, children: "The saved default model is no longer available. Falling back to GPT-5.2-Codex." }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: listStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
           const isSelected = selectedModelId === model.id;
           const isRowHovered = hoveredRowId === model.id;
           const reasoningLevel = resolveReasoning(model.id);
@@ -24617,7 +25277,7 @@ ${command.remainingMessage}`);
           };
           return (
             // biome-ignore lint/a11y/useSemanticElements: Custom radio to avoid browser focus styles on native input
-            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
               "div",
               {
                 "aria-checked": isSelected,
@@ -24629,16 +25289,16 @@ ${command.remainingMessage}`);
                 style: rowStyle,
                 tabIndex: -1,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RadioCircle, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: modelBodyStyles, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: modelIdStyles, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(RadioCircle, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: modelBodyStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: modelIdStyles, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: reasoningRowStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: reasoningRowStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
                         "button",
                         {
                           onClick: (e) => handleReasoningButtonClick(e, model.id),
@@ -24665,9 +25325,9 @@ ${command.remainingMessage}`);
             )
           );
         }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
       ] }),
-      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
         codex_reasoning_dialog_default,
         {
           initialReasoning: resolveReasoning(activeModel.id),
@@ -24681,10 +25341,10 @@ ${command.remainingMessage}`);
       ) : null
     ] });
   };
-  var codex_default_model_card_default = (0, import_react15.memo)(CodexDefaultModelCard);
+  var codex_default_model_card_default = (0, import_react19.memo)(CodexDefaultModelCard);
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_react17 = __toESM(require_react());
+  var import_react21 = __toESM(require_react());
 
   // src/types/gemini-model-registry.ts
   var GEMINI_RECOMMENDED_MODELS = [
@@ -24804,8 +25464,8 @@ ${command.remainingMessage}`);
   };
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
-  var import_react16 = __toESM(require_react());
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var import_react20 = __toESM(require_react());
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
   var overlayStyles2 = {
     position: "fixed",
     inset: 0,
@@ -24934,8 +25594,8 @@ ${command.remainingMessage}`);
     onSave,
     onCancel
   }) => {
-    const [selectedLevel, setSelectedLevel] = (0, import_react16.useState)(initialLevel);
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: overlayStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+    const [selectedLevel, setSelectedLevel] = (0, import_react20.useState)(initialLevel);
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: overlayStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
       "div",
       {
         "aria-label": `Thinking level for ${model.displayName}`,
@@ -24943,21 +25603,21 @@ ${command.remainingMessage}`);
         role: "dialog",
         style: dialogStyles2,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: headerStyles3, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("h3", { style: titleStyles3, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: headerStyles3, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("h3", { style: titleStyles3, children: [
                 model.displayName,
                 " thinking"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { style: subtitleStyles2, children: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session." })
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: subtitleStyles2, children: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session." })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("button", { onClick: onCancel, style: closeButtonStyles2, type: "button", children: "Close" })
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("button", { onClick: onCancel, style: closeButtonStyles2, type: "button", children: "Close" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: optionListStyles2, children: GEMINI_THINKING_LEVELS.filter(
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: optionListStyles2, children: GEMINI_THINKING_LEVELS.filter(
             (level) => model.supportedThinkingLevels.includes(level.name)
           ).map((level) => {
             const isSelected = level.name === selectedLevel;
-            return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+            return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
               "label",
               {
                 style: {
@@ -24965,7 +25625,7 @@ ${command.remainingMessage}`);
                   ...isSelected ? optionSelectedStyles2 : null
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                     "input",
                     {
                       checked: isSelected,
@@ -24975,13 +25635,13 @@ ${command.remainingMessage}`);
                       type: "radio"
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: optionTitleStyles2, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: optionTitleStyles2, children: [
                       level.name,
-                      level.name === DEFAULT_GEMINI_THINKING_LEVEL ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { style: defaultBadgeStyles2, children: "Default" }) : null
+                      level.name === DEFAULT_GEMINI_THINKING_LEVEL ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: defaultBadgeStyles2, children: "Default" }) : null
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { style: optionDescriptionStyles2, children: level.description }),
-                    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { style: optionUseCaseStyles2, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: optionDescriptionStyles2, children: level.description }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { style: optionUseCaseStyles2, children: [
                       "Use case: ",
                       level.useCase
                     ] })
@@ -24991,9 +25651,9 @@ ${command.remainingMessage}`);
               level.name
             );
           }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: footerStyles2, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: footerStyles2, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               "button",
               {
                 onClick: () => onSave(selectedLevel),
@@ -25010,15 +25670,15 @@ ${command.remainingMessage}`);
   var gemini_thinking_dialog_default = GeminiThinkingDialog;
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
-  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
     "div",
     {
       style: {
         ...radioCircleStyles,
         ...checked ? radioCircleSelectedStyles : {}
       },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: radioCircleInnerStyles }) : null
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: radioCircleInnerStyles }) : null
     }
   );
   var GeminiDefaultModelCard = ({
@@ -25027,14 +25687,14 @@ ${command.remainingMessage}`);
     onDefaultModelChange,
     onThinkingChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react17.useState)(
+    const [activeModelId, setActiveModelId] = (0, import_react21.useState)(
       null
     );
-    const [hoveredRowId, setHoveredRowId] = (0, import_react17.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react17.useState)(
+    const [hoveredRowId, setHoveredRowId] = (0, import_react21.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react21.useState)(
       null
     );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react17.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react21.useState)(
       null
     );
     const activeModel = GEMINI_RECOMMENDED_MODELS.find(
@@ -25054,10 +25714,10 @@ ${command.remainingMessage}`);
       event.stopPropagation();
       setActiveModelId(modelId);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/Knowledge/Gemini_Model_Selection.md" }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/Knowledge/Gemini_Model_Selection.md" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
           const isSelected = defaultModel === model.id;
           const isRowHovered = hoveredRowId === model.id;
           const thinkingLevel = resolveThinkingLevel(model.id);
@@ -25077,7 +25737,7 @@ ${command.remainingMessage}`);
           };
           return (
             // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
               "div",
               {
                 "aria-checked": isSelected,
@@ -25089,16 +25749,16 @@ ${command.remainingMessage}`);
                 style: rowStyle,
                 tabIndex: -1,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(RadioCircle2, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: modelBodyStyles2, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: modelIdStyles2, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(RadioCircle2, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: modelBodyStyles2, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: modelIdStyles2, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: reasoningRowStyles2, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { style: reasoningLabelStyles2, children: "Configure thinking:" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: reasoningRowStyles2, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { style: reasoningLabelStyles2, children: "Configure thinking:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
                         "button",
                         {
                           onClick: (e) => handleThinkingButtonClick(e, model.id),
@@ -25125,9 +25785,9 @@ ${command.remainingMessage}`);
             )
           );
         }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
       ] }),
-      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
         gemini_thinking_dialog_default,
         {
           initialLevel: resolveThinkingLevel(activeModel.id),
@@ -25141,11 +25801,11 @@ ${command.remainingMessage}`);
       ) : null
     ] });
   };
-  var gemini_default_model_card_default = (0, import_react17.memo)(GeminiDefaultModelCard);
+  var gemini_default_model_card_default = (0, import_react21.memo)(GeminiDefaultModelCard);
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_react18 = __toESM(require_react());
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var import_react22 = __toESM(require_react());
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     marginBottom: "30px"
   };
@@ -25169,19 +25829,19 @@ ${command.remainingMessage}`);
     const handleRestartCore = () => {
       postVsCodeMessage({ type: "core:restart-request" });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: wrapperStyles, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(settings_card_default, { title: "Core Controls", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("button", { onClick: handleRestartCore, style: buttonStyles, type: "button", children: "Restart Core" })
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: wrapperStyles, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(settings_card_default, { title: "Core Controls", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { onClick: handleRestartCore, style: buttonStyles, type: "button", children: "Restart Core" })
     ] }) });
   };
-  var general_settings_default = (0, import_react18.memo)(GeneralSettings);
+  var general_settings_default = (0, import_react22.memo)(GeneralSettings);
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_react20 = __toESM(require_react());
+  var import_react24 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react19 = __toESM(require_react());
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var import_react23 = __toESM(require_react());
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
   var rowStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -25273,17 +25933,17 @@ ${command.remainingMessage}`);
       resolvedButtonStyle = buttonStyles2;
     }
     const shouldShowButton = row.showUpdateButton ?? true;
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: rowStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: labelStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: nameStyles, children: row.label }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { style: versionTextStyles, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: rowStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: labelStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: nameStyles, children: row.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { style: versionTextStyles, children: [
           "Current: ",
           currentLabel,
           " ",
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: chipStyles, children: latestLabel })
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { style: chipStyles, children: latestLabel })
         ] })
       ] }),
-      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         "button",
         {
           disabled: disabled || !hasUpdate,
@@ -25292,13 +25952,13 @@ ${command.remainingMessage}`);
           type: "button",
           children: buttonLabel
         }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: chipStyles, children: latestLabel })
+      ) : /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { style: chipStyles, children: latestLabel })
     ] });
   };
-  var VersionRowItem = (0, import_react19.memo)(VersionRowItemComponent);
+  var VersionRowItem = (0, import_react23.memo)(VersionRowItemComponent);
 
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
   var warningStyles2 = {
     background: "#3a2a1f",
     border: "1px solid #9b6b3d",
@@ -25390,7 +26050,7 @@ ${command.remainingMessage}`);
   };
   var WarningBanner = ({
     provider
-  }) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
+  }) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
   var AutoUpdateToggle = ({
     provider,
     enabled,
@@ -25399,7 +26059,7 @@ ${command.remainingMessage}`);
   }) => {
     const providerLabel = resolveProviderLabel(provider);
     const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
       "label",
       {
         style: {
@@ -25408,7 +26068,7 @@ ${command.remainingMessage}`);
           cursor: disabled ? "not-allowed" : "pointer"
         },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
             "input",
             {
               checked: enabled,
@@ -25418,12 +26078,12 @@ ${command.remainingMessage}`);
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: toggleTitleStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: toggleTitleStyles, children: [
               "Auto-update ",
               providerLabel
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("p", { style: toggleDescriptionStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { style: toggleDescriptionStyles, children: [
               "Automatically check and update the ",
               packageLabel,
               " on core start. Manual updates remain available below."
@@ -25435,7 +26095,7 @@ ${command.remainingMessage}`);
   };
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
   var rowsContainerStyles = {
     display: "flex",
     flexDirection: "column",
@@ -25462,9 +26122,9 @@ ${command.remainingMessage}`);
     onAutoUpdateChange,
     onUpdate
   }) => {
-    const [pendingTarget, setPendingTarget] = (0, import_react20.useState)(null);
+    const [pendingTarget, setPendingTarget] = (0, import_react24.useState)(null);
     const snapshot = versions.data;
-    const rows = (0, import_react20.useMemo)(() => {
+    const rows = (0, import_react24.useMemo)(() => {
       if (!snapshot) {
         return [];
       }
@@ -25514,7 +26174,7 @@ ${command.remainingMessage}`);
         }
       ];
     }, [provider, snapshot]);
-    const hasProviderVersions = (0, import_react20.useMemo)(() => {
+    const hasProviderVersions = (0, import_react24.useMemo)(() => {
       if (!snapshot) {
         return false;
       }
@@ -25526,11 +26186,11 @@ ${command.remainingMessage}`);
     const isBusy = versions.loading || versions.updatingTargets.length > 0;
     const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
     const isPending = (target) => pendingTarget === `${provider}:${target}`;
-    const providerUpdateTargets = (0, import_react20.useMemo)(() => {
+    const providerUpdateTargets = (0, import_react24.useMemo)(() => {
       const prefix = `${provider}:`;
       return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
     }, [provider, versions.updatingTargets]);
-    const manualUpdateStatus = (0, import_react20.useMemo)(() => {
+    const manualUpdateStatus = (0, import_react24.useMemo)(() => {
       if (providerUpdateTargets.length === 0) {
         return null;
       }
@@ -25539,7 +26199,7 @@ ${command.remainingMessage}`);
       );
       return `Manual update in progress: ${labels.join(", ")}`;
     }, [provider, providerUpdateTargets]);
-    (0, import_react20.useEffect)(() => {
+    (0, import_react24.useEffect)(() => {
       if (versions.updatingTargets.length === 0) {
         setPendingTarget(null);
       }
@@ -25559,17 +26219,17 @@ ${command.remainingMessage}`);
     } else if (provider === "codex") {
       title = "Codex Versions";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
       settings_card_default,
       {
-        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("span", { style: metadataTextStyles, children: [
+        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { style: metadataTextStyles, children: [
           "Checked: ",
           formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
         ] }) : null,
         title,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(WarningBanner, { provider }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(WarningBanner, { provider }),
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
             AutoUpdateToggle,
             {
               disabled: versions.loading,
@@ -25578,11 +26238,11 @@ ${command.remainingMessage}`);
               provider
             }
           ),
-          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: errorStyles, children: versions.error }) : null,
-          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
-          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
-          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: errorStyles, children: versions.error }) : null,
+          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
+          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
+          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
             VersionRowItem,
             {
               disabled: isBusy,
@@ -25597,10 +26257,10 @@ ${command.remainingMessage}`);
       }
     );
   };
-  var provider_versions_default = (0, import_react20.memo)(ProviderVersions);
+  var provider_versions_default = (0, import_react24.memo)(ProviderVersions);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime());
   var containerStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -25712,8 +26372,8 @@ ${command.remainingMessage}`);
         event.currentTarget.style.background = "#0e639c";
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: containerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: containerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
         "button",
         {
           disabled: resetting,
@@ -25734,8 +26394,8 @@ ${command.remainingMessage}`);
           children: resetting ? "Resetting..." : "Reset to Defaults"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
           "button",
           {
             onBlur: handleCloseBlur,
@@ -25748,7 +26408,7 @@ ${command.remainingMessage}`);
             children: "Close"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
           "button",
           {
             disabled: !hasChanges || saving,
@@ -25774,7 +26434,7 @@ ${command.remainingMessage}`);
   var settings_footer_default = SettingsFooter;
 
   // src/client/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime());
   var headerStyles4 = {
     display: "flex",
     alignItems: "center",
@@ -25801,9 +26461,9 @@ ${command.remainingMessage}`);
     alignItems: "center",
     justifyContent: "center"
   };
-  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: headerStyles4, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: titleStyles4, children: "Settings" }),
-    /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { style: headerStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { style: titleStyles4, children: "Settings" }),
+    /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
       "button",
       {
         "aria-label": "Close settings",
@@ -25818,7 +26478,7 @@ ${command.remainingMessage}`);
   var settings_header_default = SettingsHeader;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react21 = __toESM(require_react());
+  var import_react25 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
@@ -25833,7 +26493,7 @@ ${command.remainingMessage}`);
 `;
 
   // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime31 = __toESM(require_jsx_runtime());
   var containerStyles2 = {
     marginTop: "20px",
     padding: "12px",
@@ -25852,14 +26512,14 @@ ${command.remainingMessage}`);
     color: "#999999",
     lineHeight: "1.4"
   };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: containerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { style: containerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
   ] });
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime32 = __toESM(require_jsx_runtime());
   var toggleContainerStyles2 = {
     display: "flex",
     alignItems: "flex-start",
@@ -25886,8 +26546,8 @@ ${command.remainingMessage}`);
   var noteStyles2 = {
     color: "#d4a36a"
   };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("label", { style: toggleContainerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("label", { style: toggleContainerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
       "input",
       {
         checked: enabled,
@@ -25896,12 +26556,12 @@ ${command.remainingMessage}`);
         type: "checkbox"
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: descriptionStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: descriptionStyles4, children: [
         "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("strong", { style: noteStyles2, children: "Note:" }),
         " Changes take effect when creating a new session."
       ] })
     ] })
@@ -25909,7 +26569,7 @@ ${command.remainingMessage}`);
   var thinking_toggle_default = ThinkingToggle;
 
   // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime30 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime33 = __toESM(require_jsx_runtime());
   var containerStyles3 = {
     paddingLeft: "28px",
     borderTop: "1px solid #3c3c3c",
@@ -25971,10 +26631,10 @@ ${command.remainingMessage}`);
       const parsed2 = Number.parseInt(event.target.value, 10);
       updateValue(Number.isNaN(parsed2) ? MIN_THINKING_TOKENS : parsed2);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
           "button",
           {
             onClick: () => updateValue(value - THINKING_TOKEN_STEP),
@@ -25984,7 +26644,7 @@ ${command.remainingMessage}`);
             children: "\u2212"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
           "input",
           {
             max: MAX_THINKING_TOKENS,
@@ -25996,7 +26656,7 @@ ${command.remainingMessage}`);
             value
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
           "button",
           {
             onClick: () => updateValue(value + THINKING_TOKEN_STEP),
@@ -26007,11 +26667,11 @@ ${command.remainingMessage}`);
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { style: helperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { style: helperStyles, children: [
         "\u2022 Normal (4000): Standard reasoning depth",
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("br", {}),
         "\u2022 Hard (10000): Extended analysis for complex tasks",
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("br", {}),
         "\u2022 Ultra (32000): Maximum reasoning capacity"
       ] })
     ] }) });
@@ -26019,7 +26679,7 @@ ${command.remainingMessage}`);
   var thinking_token_input_default = ThinkingTokenInput;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime31 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime34 = __toESM(require_jsx_runtime());
   var wrapperStyles2 = {
     marginBottom: "30px"
   };
@@ -26034,19 +26694,19 @@ ${command.remainingMessage}`);
     const handleTokenChange = (nextValue) => {
       onChange(enabled, nextValue);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { style: wrapperStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(thinking_pro_tip_default, {})
+    return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { style: wrapperStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(thinking_pro_tip_default, {})
       ] })
     ] });
   };
-  var thinking_settings_default = (0, import_react21.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react25.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var import_react22 = __toESM(require_react());
+  var import_react26 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/settings-state-helpers.ts
   var updateThinkingSettings = (settings, enabled, maxTokens) => ({
@@ -26139,13 +26799,13 @@ ${command.remainingMessage}`);
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord8 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord9 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord8(value)) {
+    if (!isRecord9(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -26184,7 +26844,7 @@ ${command.remainingMessage}`);
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord9 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord10 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -26217,7 +26877,7 @@ ${command.remainingMessage}`);
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord9(value)) {
+    if (!isRecord10(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -26277,15 +26937,15 @@ ${command.remainingMessage}`);
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions";
   };
   var useSettingsState = () => {
-    const initialSettingsRef = (0, import_react22.useRef)(createDefaultSettings());
-    const [settings, setSettings] = (0, import_react22.useState)(createDefaultSettings);
-    const [hasChanges, setHasChanges] = (0, import_react22.useState)(false);
-    const [saving, setSaving] = (0, import_react22.useState)(false);
-    const [resetting, setResetting] = (0, import_react22.useState)(false);
-    const [versions, setVersions] = (0, import_react22.useState)(
+    const initialSettingsRef = (0, import_react26.useRef)(createDefaultSettings());
+    const [settings, setSettings] = (0, import_react26.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react26.useState)(false);
+    const [saving, setSaving] = (0, import_react26.useState)(false);
+    const [resetting, setResetting] = (0, import_react26.useState)(false);
+    const [versions, setVersions] = (0, import_react26.useState)(
       createDefaultVersionsState
     );
-    (0, import_react22.useEffect)(() => {
+    (0, import_react26.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
       });
@@ -26322,60 +26982,60 @@ ${command.remainingMessage}`);
         window.removeEventListener("message", handleMessage);
       };
     }, []);
-    const updateSettings = (0, import_react22.useCallback)((nextSettings) => {
+    const updateSettings = (0, import_react26.useCallback)((nextSettings) => {
       setSettings(nextSettings);
       setHasChanges(!areSettingsEqual(nextSettings, initialSettingsRef.current));
     }, []);
-    const handleThinkingSettingsChange = (0, import_react22.useCallback)(
+    const handleThinkingSettingsChange = (0, import_react26.useCallback)(
       (enabled, maxTokens) => {
         updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
       },
       [settings, updateSettings]
     );
-    const handleClaudeDefaultModelChange = (0, import_react22.useCallback)(
+    const handleClaudeDefaultModelChange = (0, import_react26.useCallback)(
       (modelId) => {
         updateSettings(updateClaudeDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexDefaultModelChange = (0, import_react22.useCallback)(
+    const handleCodexDefaultModelChange = (0, import_react26.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexReasoningChange = (0, import_react22.useCallback)(
+    const handleCodexReasoningChange = (0, import_react26.useCallback)(
       (modelId, reasoning) => {
         updateSettings(updateCodexReasoning(settings, modelId, reasoning));
       },
       [settings, updateSettings]
     );
-    const handleProviderAutoUpdateChange = (0, import_react22.useCallback)(
+    const handleProviderAutoUpdateChange = (0, import_react26.useCallback)(
       (provider, enabled) => {
         updateSettings(updateProviderAutoUpdate(settings, provider, enabled));
       },
       [settings, updateSettings]
     );
-    const handleGeminiDefaultModelChange = (0, import_react22.useCallback)(
+    const handleGeminiDefaultModelChange = (0, import_react26.useCallback)(
       (modelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleGeminiThinkingChange = (0, import_react22.useCallback)(
+    const handleGeminiThinkingChange = (0, import_react26.useCallback)(
       (modelId, level) => {
         updateSettings(updateGeminiThinking(settings, modelId, level));
       },
       [settings, updateSettings]
     );
-    const handleSave = (0, import_react22.useCallback)(() => {
+    const handleSave = (0, import_react26.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
         type: "settings:save",
         settings
       });
     }, [settings]);
-    const handleReset = (0, import_react22.useCallback)(() => {
+    const handleReset = (0, import_react26.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
         vscode_default.postMessage({
@@ -26383,7 +27043,7 @@ ${command.remainingMessage}`);
         });
       }, RESET_DELAY_MS);
     }, []);
-    const handleUpdateProvider = (0, import_react22.useCallback)(
+    const handleUpdateProvider = (0, import_react26.useCallback)(
       (provider, target) => {
         const targetKey = `${provider}:${target}`;
         setVersions((prev) => ({
@@ -26418,7 +27078,7 @@ ${command.remainingMessage}`);
   };
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_jsx_runtime32 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime35 = __toESM(require_jsx_runtime());
   var containerStyles4 = {
     height: "100%",
     display: "flex",
@@ -26462,7 +27122,7 @@ ${command.remainingMessage}`);
     { id: "general", label: "General" }
   ];
   var SettingsView = ({ onClose }) => {
-    const [activeTab, setActiveTab] = (0, import_react23.useState)("claude");
+    const [activeTab, setActiveTab] = (0, import_react27.useState)("claude");
     const {
       settings,
       hasChanges,
@@ -26480,9 +27140,9 @@ ${command.remainingMessage}`);
       handleReset,
       handleUpdateProvider
     } = useSettingsState();
-    return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: containerStyles4, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(settings_header_default, { onClose }),
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab2) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { style: containerStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(settings_header_default, { onClose }),
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab2) => /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
         "button",
         {
           onClick: () => setActiveTab(tab2.id),
@@ -26495,17 +27155,17 @@ ${command.remainingMessage}`);
         },
         tab2.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { style: contentStyles, children: (() => {
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: contentStyles, children: (() => {
         if (activeTab === "claude") {
-          return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
               claude_default_model_card_default,
               {
                 defaultModel: settings.providers.claude.defaultModel,
                 onDefaultModelChange: handleClaudeDefaultModelChange
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.claude.autoUpdate.enabled,
@@ -26515,7 +27175,7 @@ ${command.remainingMessage}`);
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
               thinking_settings_default,
               {
                 enabled: settings.providers.claude.thinking.enabled,
@@ -26526,11 +27186,11 @@ ${command.remainingMessage}`);
           ] });
         }
         if (activeTab === "general") {
-          return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(general_settings_default, {}) });
+          return /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(general_settings_default, {}) });
         }
         if (activeTab === "codex") {
-          return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
               codex_default_model_card_default,
               {
                 defaultModel: settings.providers.codex.defaultModel,
@@ -26539,7 +27199,7 @@ ${command.remainingMessage}`);
                 reasoningByModel: settings.providers.codex.reasoningByModel
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.codex.autoUpdate.enabled,
@@ -26551,8 +27211,8 @@ ${command.remainingMessage}`);
             )
           ] });
         }
-        return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: stackStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { style: stackStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
             gemini_default_model_card_default,
             {
               defaultModel: settings.providers.gemini.defaultModel,
@@ -26561,7 +27221,7 @@ ${command.remainingMessage}`);
               thinkingLevelByModel: settings.providers.gemini.thinkingLevelByModel
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
             provider_versions_default,
             {
               autoUpdateEnabled: settings.providers.gemini.autoUpdate.enabled,
@@ -26573,7 +27233,7 @@ ${command.remainingMessage}`);
           )
         ] });
       })() }),
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
         settings_footer_default,
         {
           hasChanges,
@@ -26586,20 +27246,20 @@ ${command.remainingMessage}`);
       )
     ] });
   };
-  var settings_view_default = import_react23.default.memo(SettingsView);
+  var settings_view_default = import_react27.default.memo(SettingsView);
 
   // src/client/ui/src/app-host.tsx
-  var import_jsx_runtime33 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime36 = __toESM(require_jsx_runtime());
   var AppHost = () => {
-    const [coreStatus, setCoreStatus] = (0, import_react24.useState)("connecting");
-    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react24.useState)(
+    const [coreStatus, setCoreStatus] = (0, import_react28.useState)("connecting");
+    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react28.useState)(
       void 0
     );
-    const [coreFinalized, setCoreFinalized] = (0, import_react24.useState)(false);
-    const [messages, setMessages] = (0, import_react24.useState)(
+    const [coreFinalized, setCoreFinalized] = (0, import_react28.useState)(false);
+    const [messages, setMessages] = (0, import_react28.useState)(
       createDefaultMessages
     );
-    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react24.useState)(0);
+    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react28.useState)(0);
     const {
       pickerState,
       providerLabels,
@@ -26630,26 +27290,26 @@ ${command.remainingMessage}`);
       sendMessage
     } = useSessionStore(providerLabels);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const shouldKickoffIdeaRef = (0, import_react24.useRef)(false);
+    const shouldKickoffIdeaRef = (0, import_react28.useRef)(false);
     const {
       startCollection: startIdeaCollection,
       sendMessage: sendIdeaCollectorMessage
     } = useIdeaCollector(sendMessage);
-    const handleProviderPickerOpen = (0, import_react24.useCallback)(
+    const handleProviderPickerOpen = (0, import_react28.useCallback)(
       (providers) => {
         activateRoot();
         openPicker(providers);
       },
       [openPicker]
     );
-    const confirmSelectionFromUi = (0, import_react24.useCallback)(
+    const confirmSelectionFromUi = (0, import_react28.useCallback)(
       (providerIds) => {
         shouldKickoffIdeaRef.current = flowWizardVisible && (providerIds[0] === "codexCli" || providerIds[0] === "claudeCodeCli");
         confirmSelection(providerIds);
       },
       [confirmSelection, flowWizardVisible]
     );
-    const handleSessionCreatedMessage2 = (0, import_react24.useCallback)(
+    const handleSessionCreatedMessage2 = (0, import_react28.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
@@ -26661,39 +27321,39 @@ ${command.remainingMessage}`);
       },
       [handleSessionCreated, resetPicker, startIdeaCollection]
     );
-    const handleShowSettings = (0, import_react24.useCallback)(() => {
+    const handleShowSettings = (0, import_react28.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    const handleCoreState = (0, import_react24.useCallback)(
+    const handleCoreState = (0, import_react28.useCallback)(
       (payload) => {
         activateRoot();
         hydrateFromCoreState(payload);
       },
       [hydrateFromCoreState]
     );
-    const handleSessionMessage = (0, import_react24.useCallback)(
+    const handleSessionMessage = (0, import_react28.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionMessageEvent2(payload);
       },
       [handleSessionMessageEvent2]
     );
-    const handleSessionHistory = (0, import_react24.useCallback)(
+    const handleSessionHistory = (0, import_react28.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionHistoryEvent(payload);
       },
       [handleSessionHistoryEvent]
     );
-    const handleSessionDeletedMessage2 = (0, import_react24.useCallback)(
+    const handleSessionDeletedMessage2 = (0, import_react28.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionDeleted(payload);
       },
       [handleSessionDeleted]
     );
-    const handleSessionBindingMessage2 = (0, import_react24.useCallback)(
+    const handleSessionBindingMessage2 = (0, import_react28.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionBindingUpdate(payload);
@@ -26746,7 +27406,7 @@ ${command.remainingMessage}`);
       onSessionHistory: handleSessionHistory
     });
     const isCoreReady = coreStatus === "ready" && coreFinalized;
-    (0, import_react24.useEffect)(() => {
+    (0, import_react28.useEffect)(() => {
       if (isCoreReady) {
         return;
       }
@@ -26759,11 +27419,11 @@ ${command.remainingMessage}`);
         window.clearInterval(timer);
       };
     }, [isCoreReady]);
-    const currentMessage = (0, import_react24.useMemo)(() => {
+    const currentMessage = (0, import_react28.useMemo)(() => {
       const messageId = MESSAGE_ORDER[activeMessageIndex];
       return messages[messageId] ?? DEFAULT_MESSAGES[messageId];
     }, [activeMessageIndex, messages]);
-    const { headlineText, statusLine, detailLine } = (0, import_react24.useMemo)(() => {
+    const { headlineText, statusLine, detailLine } = (0, import_react28.useMemo)(() => {
       if (coreStatus === "error") {
         return {
           headlineText: "Please hold on - we are getting CodeAI Hub ready.",
@@ -26777,9 +27437,9 @@ ${command.remainingMessage}`);
         detailLine: coreStatusDetail ?? currentMessage.detail
       };
     }, [coreStatus, coreStatusDetail, currentMessage]);
-    return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(action_bar_default, { disabled: !isCoreReady }),
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(action_bar_default, { disabled: !isCoreReady }),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
         SessionRegion,
         {
           cancelSelection,
@@ -26803,21 +27463,21 @@ ${command.remainingMessage}`);
           }
         }
       ),
-      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("span", { className: "app-shell__status-text", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
-          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
-          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
+      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("span", { className: "app-shell__status-text", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
+          /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
+          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
         ] })
       ] }) }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
     ] });
   };
   var app_host_default = AppHost;
 
   // src/client/ui/src/index.tsx
-  var import_jsx_runtime34 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime37 = __toESM(require_jsx_runtime());
   initializeCoreBridge();
   var mount = () => {
     const rootElement = document.getElementById("root");
@@ -26827,7 +27487,7 @@ ${command.remainingMessage}`);
     activateRoot();
     const root4 = (0, import_client.createRoot)(rootElement);
     root4.render(
-      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(import_react25.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(import_react29.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(app_host_default, {}) })
     );
   };
   mount();
