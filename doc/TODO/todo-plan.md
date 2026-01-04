@@ -83,11 +83,11 @@
 3. [DONE] Добавить bundled prompt + установить при старте расширения (scope: `assets/templates/full-development-flow/idea/idea-collector-prompt.md`, `src/extension.ts`; expected: prompt включает архитектурные принципы на этапе идеи) (commit: `feat(extension): install idea collector prompt template`) (date: 2026-01-04)
 4. [DONE] Git Commit: `feat(extension): install idea collector prompt template` (hash: 351ca52) (date: 2026-01-04)
 
-5. [TODO] Обновить релизные документы под prompt-апдейт (scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`; expected: релиз 1.1.381 отражает архитектурные принципы в Idea prompt) (commit: `docs: update idea prompt release notes`) (date: TBD)
-6. [TODO] Git Commit: `docs: update idea prompt release notes` (hash: TBD)
+5. [DONE] Обновить релизные документы под prompt-апдейт (scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`; expected: релиз 1.1.381 отражает архитектурные принципы в Idea prompt) (commit: `docs: update idea prompt release notes`) (date: 2026-01-04)
+6. [DONE] Git Commit: `docs: update idea prompt release notes` (hash: f607f11) (date: 2026-01-04)
 
-7. [TODO] Обновить системную архитектуру и версии (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: версии/Release 1.1.381) (commit: `docs(orchestrator): refresh system architecture 1.1.381`) (date: TBD)
-8. [TODO] Git Commit: `docs(orchestrator): refresh system architecture 1.1.381` (hash: TBD)
+7. [DONE] Обновить системную архитектуру и версии (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: версии/Release 1.1.381) (commit: `docs(orchestrator): refresh system architecture 1.1.381`) (date: 2026-01-04)
+8. [DONE] Git Commit: `docs(orchestrator): refresh system architecture 1.1.381` (hash: 4b966be) (date: 2026-01-04)
 
 9. [TODO] Подготовить релиз 1.1.381 (scope: версии/манифесты/locks; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`) (commit: `chore(release): prepare 1.1.381`) (date: TBD)
 10. [TODO] Git Commit: `chore(release): prepare 1.1.381` (hash: TBD)
