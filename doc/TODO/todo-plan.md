@@ -56,16 +56,19 @@
 17. [DONE] Экран анкеты: рендер вопросов + ответы без внутреннего скролла (scope: `src/client/ui/src/components/idea-questionnaire/idea-questionnaire-view.tsx`, `src/client/ui/src/components/idea-questionnaire/question-block.tsx`, `src/client/ui/src/components/idea-questionnaire/styles.ts`; expected: длинная страница, поля авто-grow + ручной min-height drag, одна кнопка отправки в конце) (commit: `feat(ui): add idea questionnaire view`) (date: 2026-01-04)
 18. [DONE] Git Commit: `feat(ui): add idea questionnaire view` (hash: e0cfa88) (date: 2026-01-04)
 
-19. [TODO] Создание/восстановление `.codeai-hub/.../idea/questionnaire.md` при старте стадии (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/services/idea-collector-service.ts`; expected: файл создаётся из templateMarkdown, далее редактирование сохраняет в workspace; повторное открытие восстанавливает ответы) (commit: `feat(ui): persist idea questionnaire in workspace`) (date: TBD)
-20. [TODO] Git Commit: `feat(ui): persist idea questionnaire in workspace` (hash: TBD)
+19. [DONE] Добавить endpoint записи workspace файла для анкеты (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected: POST /workspace-file-write пишет контент анкеты в workspace) (commit: `feat(core): add workspace file write endpoint`) (date: 2026-01-04)
+20. [DONE] Git Commit: `feat(core): add workspace file write endpoint` (hash: 5428d91) (date: 2026-01-04)
 
-21. [TODO] Отправка анкеты в агент: короткое сообщение + путь (auto-attach), переход в окно сессии Idea Collector (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/app-host/session-region.tsx`; expected: анкета не публикуется целиком; agent получает attach; далее уточнения и finalize как сейчас) (commit: `feat(ui): send questionnaire to idea collector and focus session`) (date: TBD)
-22. [TODO] Git Commit: `feat(ui): send questionnaire to idea collector and focus session` (hash: TBD)
+21. [TODO] Создание/восстановление `.codeai-hub/.../idea/questionnaire.md` при старте стадии (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/services/idea-collector-service.ts`; expected: файл создаётся из templateMarkdown, далее редактирование сохраняет в workspace; повторное открытие восстанавливает ответы) (commit: `feat(ui): persist idea questionnaire in workspace`) (date: TBD)
+22. [TODO] Git Commit: `feat(ui): persist idea questionnaire in workspace` (hash: TBD)
+
+23. [TODO] Отправка анкеты в агент: короткое сообщение + путь (auto-attach), переход в окно сессии Idea Collector (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/app-host/session-region.tsx`; expected: анкета не публикуется целиком; agent получает attach; далее уточнения и finalize как сейчас) (commit: `feat(ui): send questionnaire to idea collector and focus session`) (date: TBD)
+24. [TODO] Git Commit: `feat(ui): send questionnaire to idea collector and focus session` (hash: TBD)
 
 ### Stream: Верификация MVP
 
-23. [TODO] E2E ручная проверка (scope: нет изменений кода; expected: создать анкету, заполнить, отправить, уточнения, “ОК/утверждаю”, артефакты сохраняются; обновить этот файл статусами и ссылками) (commit: `docs: verify questionnaire mvp flow`) (date: TBD)
-24. [TODO] Git Commit: `docs: verify questionnaire mvp flow` (hash: TBD)
+25. [TODO] E2E ручная проверка (scope: нет изменений кода; expected: создать анкету, заполнить, отправить, уточнения, “ОК/утверждаю”, артефакты сохраняются; обновить этот файл статусами и ссылками) (commit: `docs: verify questionnaire mvp flow`) (date: TBD)
+26. [TODO] Git Commit: `docs: verify questionnaire mvp flow` (hash: TBD)
 
 ---
 
