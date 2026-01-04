@@ -4,6 +4,7 @@ import type { SessionRecord } from "../../../../types/session";
 import { type FlowStageId, FlowWizard } from "../components/flow-wizard";
 import { IdeaQuestionnaireView } from "../components/idea-questionnaire/idea-questionnaire-view";
 import { ProviderPicker, type ProviderPickerState } from "../provider-picker";
+import { IdeaCollectorService } from "../services/idea-collector-service";
 import type { QuestionnaireSnapshot } from "../services/idea-questionnaire-service";
 import { IdeaQuestionnaireService } from "../services/idea-questionnaire-service";
 import type { SessionSnapshots } from "../session/helpers";
@@ -42,11 +43,13 @@ export const SessionRegion = ({
   cancelSelection,
   sessionViewProps,
 }: SessionRegionProps) => {
+  const ideaCollectorRef = useRef(new IdeaCollectorService());
   const questionnaireServiceRef = useRef(new IdeaQuestionnaireService());
   const pendingQuestionnaireRef = useRef(false);
   const [questionnaireSnapshot, setQuestionnaireSnapshot] =
     useState<QuestionnaireSnapshot | null>(null);
 
+  const ideaCollector = ideaCollectorRef.current;
   const questionnaireService = questionnaireServiceRef.current;
 
   const handleAnswerChange = useCallback(
@@ -73,8 +76,37 @@ export const SessionRegion = ({
   );
 
   const handleQuestionnaireSubmit = useCallback(() => {
-    // TODO: implement questionnaire submission to Idea Collector.
-  }, []);
+    if (!questionnaireSnapshot) {
+      return;
+    }
+    const content = questionnaireService.renderQuestionnaire(
+      questionnaireSnapshot.template,
+      questionnaireSnapshot.placeholders,
+      questionnaireSnapshot.answers
+    );
+    const submissionMessage =
+      `Please review \`${questionnaireSnapshot.path}\` against the contract, ` +
+      "ask any clarifying questions, then wait for OK/approve before finalize.";
+
+    questionnaireService
+      .flushSave(
+        questionnaireSnapshot.sessionId,
+        questionnaireSnapshot.path,
+        content
+      )
+      .then(() =>
+        ideaCollector.beginQuestionnaireReview(
+          questionnaireSnapshot.sessionId,
+          submissionMessage
+        )
+      )
+      .then(() => {
+        setQuestionnaireSnapshot(null);
+      })
+      .catch(() => {
+        /* ignore submission errors */
+      });
+  }, [ideaCollector, questionnaireService, questionnaireSnapshot]);
 
   const handleProviderConfirm = (providerIds: readonly ProviderStackId[]) => {
     const selectedProvider = providerIds[0];
