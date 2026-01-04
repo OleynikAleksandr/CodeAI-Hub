@@ -89,8 +89,8 @@
 7. [DONE] Обновить системную архитектуру и версии (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: версии/Release 1.1.381) (commit: `docs(orchestrator): refresh system architecture 1.1.381`) (date: 2026-01-04)
 8. [DONE] Git Commit: `docs(orchestrator): refresh system architecture 1.1.381` (hash: 4b966be) (date: 2026-01-04)
 
-9. [TODO] Подготовить релиз 1.1.381 (scope: версии/манифесты/locks; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`) (commit: `chore(release): prepare 1.1.381`) (date: TBD)
-10. [TODO] Git Commit: `chore(release): prepare 1.1.381` (hash: TBD)
+9. [DONE] Подготовить релиз 1.1.381 (scope: версии/манифесты/locks; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`) (commit: `chore(release): prepare 1.1.381`) (date: 2026-01-04)
+10. [DONE] Git Commit: `chore(release): prepare 1.1.381` (hash: c9ed8f1) (date: 2026-01-04)
 
 ---
 
