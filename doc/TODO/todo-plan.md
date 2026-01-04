@@ -45,8 +45,8 @@
 11. [DONE] Обновить UI normalizers под новое поле контракта (scope: `src/client/ui/src/core-bridge/normalizers.ts`; expected: безопасная нормализация questionnaire.templateMarkdown + сохранение fallback поведения) (commit: `feat(ui): normalize questionnaire template from core contract`) (date: 2026-01-04)
 12. [DONE] Git Commit: `feat(ui): normalize questionnaire template from core contract` (hash: 0ab76d0) (date: 2026-01-04)
 
-13. [TODO] Использовать templateMarkdown в UI-сервисе (scope: `src/client/ui/src/services/idea-collector-service.ts`; expected: сервис может получать шаблон анкеты из контракта, fallback остаётся) (commit: `feat(ui): use questionnaire template from idea contract`) (date: TBD)
-14. [TODO] Git Commit: `feat(ui): use questionnaire template from idea contract` (hash: TBD)
+13. [DONE] Использовать templateMarkdown в UI-сервисе (scope: `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-collector-artifact.ts`, `media/react-chat.js`; expected: сервис может получать шаблон анкеты из контракта, fallback остаётся) (commit: `feat(ui): use questionnaire template from idea contract`) (date: 2026-01-04)
+14. [DONE] Git Commit: `feat(ui): use questionnaire template from idea contract` (hash: f8ee410) (date: 2026-01-04)
 
 ### Stream: UI анкеты (VS Code webview)
 
