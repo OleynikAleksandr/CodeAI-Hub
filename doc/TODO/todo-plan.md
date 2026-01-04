@@ -70,8 +70,8 @@
 25. [DONE] Обновить webview bundle после изменений анкеты (scope: `media/react-chat.js`; expected: bundle отражает новые UI/сервисы анкеты) (commit: `chore(webview): update bundle`) (date: 2026-01-04)
 26. [DONE] Git Commit: `chore(webview): update bundle` (hash: 2a1bf0c) (date: 2026-01-04)
 
-27. [TODO] E2E ручная проверка (scope: нет изменений кода; expected: создать анкету, заполнить, отправить, уточнения, “ОК/утверждаю”, артефакты сохраняются; обновить этот файл статусами и ссылками) (commit: `docs: verify questionnaire mvp flow`) (date: TBD)
-28. [TODO] Git Commit: `docs: verify questionnaire mvp flow` (hash: TBD)
+27. [DONE] E2E ручная проверка (scope: нет изменений кода; expected: создать анкету, заполнить, отправить, уточнения, “ОК/утверждаю”, артефакты сохраняются; обновить этот файл статусами и ссылками) (commit: `docs: verify questionnaire mvp flow`) (date: 2026-01-04)
+28. [DONE] Git Commit: `docs: verify questionnaire mvp flow` (hash: TBD) (date: 2026-01-04)
 
 ---
 
