@@ -67,8 +67,11 @@
 
 ### Stream: Верификация MVP
 
-25. [TODO] E2E ручная проверка (scope: нет изменений кода; expected: создать анкету, заполнить, отправить, уточнения, “ОК/утверждаю”, артефакты сохраняются; обновить этот файл статусами и ссылками) (commit: `docs: verify questionnaire mvp flow`) (date: TBD)
-26. [TODO] Git Commit: `docs: verify questionnaire mvp flow` (hash: TBD)
+25. [TODO] Обновить webview bundle после изменений анкеты (scope: `media/react-chat.js`; expected: bundle отражает новые UI/сервисы анкеты) (commit: `chore(webview): update bundle`) (date: TBD)
+26. [TODO] Git Commit: `chore(webview): update bundle` (hash: TBD)
+
+27. [TODO] E2E ручная проверка (scope: нет изменений кода; expected: создать анкету, заполнить, отправить, уточнения, “ОК/утверждаю”, артефакты сохраняются; обновить этот файл статусами и ссылками) (commit: `docs: verify questionnaire mvp flow`) (date: TBD)
+28. [TODO] Git Commit: `docs: verify questionnaire mvp flow` (hash: TBD)
 
 ---
 
