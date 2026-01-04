@@ -9,7 +9,7 @@ const DESTINATION_RELATIVE_PATH = path.join(
   "templates",
   "full-development-flow",
   "idea",
-  "questionnaire-template.md"
+  "idea-collector-prompt.md"
 );
 
 const BUNDLED_RELATIVE_PATH = path.join(
@@ -17,10 +17,10 @@ const BUNDLED_RELATIVE_PATH = path.join(
   "templates",
   "full-development-flow",
   "idea",
-  "questionnaire-template.md"
+  "idea-collector-prompt.md"
 );
 
-export const ensureIdeaQuestionnaireTemplateInstalled = async (
+export const ensureIdeaCollectorPromptInstalled = async (
   context: ExtensionContext,
   logger: ExtensionLogger
 ): Promise<void> => {
@@ -34,6 +34,6 @@ export const ensureIdeaQuestionnaireTemplateInstalled = async (
     destinationPath,
     bundledPath,
     logger,
-    logPrefix: "templates:questionnaire",
+    logPrefix: "templates:idea-prompt",
   });
 };
