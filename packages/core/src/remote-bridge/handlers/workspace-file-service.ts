@@ -1,3 +1,4 @@
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { Request, Response } from "express";
 import type { SessionManager } from "../../session-manager";
@@ -16,6 +17,12 @@ type WorkspaceFilePayload = {
   readonly sessionId: string;
   readonly path: string;
   readonly maxBytes?: number;
+};
+
+type WorkspaceFileWritePayload = {
+  readonly sessionId: string;
+  readonly path: string;
+  readonly content: string;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -57,6 +64,35 @@ const parseWorkspaceFilePayload = (
       sessionId,
       path: filePath,
       maxBytes: readMaxBytes(payload.maxBytes),
+    },
+  };
+};
+
+const parseWorkspaceFileWritePayload = (
+  payload: unknown
+):
+  | { readonly ok: true; readonly value: WorkspaceFileWritePayload }
+  | { readonly ok: false; readonly error: string } => {
+  if (!isRecord(payload)) {
+    return { ok: false, error: "Invalid payload" };
+  }
+  const sessionId = readNonEmptyString(payload.sessionId);
+  if (!sessionId) {
+    return { ok: false, error: "Missing sessionId" };
+  }
+  const filePath = readNonEmptyString(payload.path);
+  if (!filePath) {
+    return { ok: false, error: "Missing path" };
+  }
+  if (typeof payload.content !== "string") {
+    return { ok: false, error: "Missing content" };
+  }
+  return {
+    ok: true,
+    value: {
+      sessionId,
+      path: filePath,
+      content: payload.content,
     },
   };
 };
@@ -107,5 +143,51 @@ export const handleWorkspaceFileRead = async (
       path: parsedPayload.value.path,
     });
     res.status(HTTP_INTERNAL_ERROR).json({ error: "Unable to read file" });
+  }
+};
+
+export const handleWorkspaceFileWrite = async (
+  req: Request,
+  res: Response,
+  sessionManager: SessionManager,
+  logger: Logger
+): Promise<void> => {
+  const parsedPayload = parseWorkspaceFileWritePayload(req.body as unknown);
+  if (!parsedPayload.ok) {
+    res.status(HTTP_BAD_REQUEST).json({ error: parsedPayload.error });
+    return;
+  }
+
+  const session = sessionManager.getSession(parsedPayload.value.sessionId);
+  if (!session) {
+    res.status(HTTP_NOT_FOUND).json({
+      error: `Session ${parsedPayload.value.sessionId} not found`,
+    });
+    return;
+  }
+
+  const workspaceRoot = path.resolve(session.workspacePath);
+  const absolutePath = resolveWorkspaceFilePath(
+    workspaceRoot,
+    parsedPayload.value.path
+  );
+  if (!absolutePath) {
+    res.status(HTTP_BAD_REQUEST).json({ error: "Unsafe path" });
+    return;
+  }
+
+  try {
+    const content = parsedPayload.value.content.endsWith("\n")
+      ? parsedPayload.value.content
+      : `${parsedPayload.value.content}\n`;
+    await mkdir(path.dirname(absolutePath), { recursive: true });
+    await writeFile(absolutePath, content, { encoding: "utf8" });
+    res.json({ path: parsedPayload.value.path });
+  } catch (error) {
+    logger.error("Failed to write workspace file", error as Error, {
+      sessionId: session.id,
+      path: parsedPayload.value.path,
+    });
+    res.status(HTTP_INTERNAL_ERROR).json({ error: "Unable to write file" });
   }
 };

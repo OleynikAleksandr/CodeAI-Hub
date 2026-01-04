@@ -10,7 +10,10 @@ import type {
   StatusInfo,
   SystemRequestHandler,
 } from "./system-request-handler";
-import { handleWorkspaceFileRead } from "./workspace-file-service";
+import {
+  handleWorkspaceFileRead,
+  handleWorkspaceFileWrite,
+} from "./workspace-file-service";
 
 const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_FOUND = 404;
@@ -19,6 +22,8 @@ const HTTP_NO_CONTENT = 204;
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
 const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
+const WORKSPACE_FILE_WRITE_ENDPOINT =
+  "/api/v1/orchestrator/workspace-file-write";
 const IDEA_PATH_RE =
   /^\.codeai-hub\/full-development-flow\/initiatives\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
 const VIRTUAL_SIMULATION_PATH_RE =
@@ -92,6 +97,18 @@ export class HttpApiRouter {
         this.deps.logger
       );
     });
+
+    app.post(
+      WORKSPACE_FILE_WRITE_ENDPOINT,
+      async (req: Request, res: Response) => {
+        await handleWorkspaceFileWrite(
+          req,
+          res,
+          this.deps.sessionManager,
+          this.deps.logger
+        );
+      }
+    );
   }
 
   private async handleSessionHistory(
