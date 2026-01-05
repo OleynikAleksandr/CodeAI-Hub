@@ -9,12 +9,11 @@ type BundledTemplateInstallOptions = {
   readonly logPrefix: string;
 };
 
-const isNonEmptyTextFile = async (filePath: string): Promise<boolean> => {
+const readTextFile = async (filePath: string): Promise<string | null> => {
   try {
-    const stats = await fs.stat(filePath);
-    return stats.isFile() && stats.size > 0;
+    return await fs.readFile(filePath, "utf8");
   } catch {
-    return false;
+    return null;
   }
 };
 
@@ -29,24 +28,29 @@ export const ensureBundledTemplateInstalled = async ({
     bundledPath,
   });
 
-  if (await isNonEmptyTextFile(destinationPath)) {
-    logger.log(`${logPrefix}:ensure:skip`, { destinationPath });
-    return;
-  }
-
   try {
-    const bundledContent = await fs.readFile(bundledPath, "utf8");
-    const trimmed = bundledContent.trim();
-    if (!trimmed) {
+    const bundledContent = await readTextFile(bundledPath);
+    const trimmedBundled = bundledContent?.trim() ?? "";
+    if (!trimmedBundled) {
       logger.warn(`${logPrefix}:ensure:bundled-empty`, {
         bundledPath,
       });
       return;
     }
 
+    const destinationContent = await readTextFile(destinationPath);
+    const normalizedDestination = destinationContent?.trimEnd() ?? null;
+    if (normalizedDestination === trimmedBundled) {
+      logger.log(`${logPrefix}:ensure:up-to-date`, { destinationPath });
+      return;
+    }
+
     await fs.mkdir(path.dirname(destinationPath), { recursive: true });
-    await fs.writeFile(destinationPath, `${trimmed}\n`, "utf8");
-    logger.log(`${logPrefix}:ensure:installed`, { destinationPath });
+    await fs.writeFile(destinationPath, `${trimmedBundled}\n`, "utf8");
+    logger.log(`${logPrefix}:ensure:installed`, {
+      destinationPath,
+      overwritten: destinationContent !== null,
+    });
   } catch (error) {
     logger.warn(`${logPrefix}:ensure:error`, {
       destinationPath,

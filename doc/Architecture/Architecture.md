@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.5.9
-**Last Updated:** 2026-01-04
+**Last Updated:** 2026-01-05
 **Status:** Active reference
-**Release Focus:** v1.1.381 — Idea Collector prompt bundle: анкетный prompt установлен из assets и содержит архитектурные принципы (кластерно‑модульный подход) для этапа идеи.
+**Release Focus:** v1.1.383 — анкета идеи получила расширенные пояснения/резюме, отмену/возобновление, а Core синхронизирует bundled‑шаблоны как источник правды.
 
 ---
 
@@ -32,8 +32,7 @@ graph TD
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
 - **UI bundle bootstrap (v1.1.313)**: `ui-activation.ts` (вызывается из `activate`) читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current`. Поддерживаются `vscode-webview`, `web-client` и `project-manager`.
 - **Idea Collector artifacts (v1.1.378)**: schema читается из `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, а артефакты пишутся в `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/` (`idea.md`, `virtual-simulation.md`).
-- **Questionnaire template bootstrap (v1.1.380)**: при активации расширения устанавливается `~/.codeai-hub/templates/full-development-flow/idea/questionnaire-template.md`, если файла нет или он пустой; пользовательские правки не перезаписываются.
-- **Idea Collector prompt bootstrap (v1.1.381)**: расширение устанавливает `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-prompt.md`, если файла нет или он пустой; prompt включает архитектурные принципы для этапа идеи.
+- **Template authority (v1.1.383)**: Core синхронизирует bundled‑шаблоны (prompt, schema, idea-template, questionnaire) в `~/.codeai-hub/templates/full-development-flow/idea/` и перезаписывает локальные правки при старте; installers расширения остаются fallback для VSIX-only сценариев.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
 - **Core Bootstrap (v1.1.353 improvements)**: Ядро переведено на мульти-тенантную архитектуру. Рабочий каталог (`workspacePath`) теперь является свойством конкретной Сессии, а не глобальным параметром процесса. Это позволяет одному экземпляру Ядра обслуживать несколько проектов одновременно.
@@ -58,7 +57,7 @@ graph TD
 - **Clipboard handling**: `input-panel-clipboard` централизует обработку copy/paste в webview и standalone — реагирует на `ClipboardEvent`, использует `navigator.clipboard` как fallback и сохраняет высоту textarea.
 - **Provider Picker & Settings**: отдельные модули `provider-picker`, `settings/view` позволяют выбирать провайдеров (Claude, Codex, Gemini) и менять конфигурацию визардов. UI отображает статус подключения каждого стека (connected / offline) и синхронизирует выбор с extension host через события ядра.
 - **Flow Wizard → Idea Collector**: для Codex и Claude включён Flow Wizard (Idea/Spec/Plan), который стартует Guided Conversation. `IdeaCollectorService` получает contract (prompt + schema + template) из Core API `/api/v1/orchestrator/idea-contract`, а Codex structured outputs возвращают `suggested_response` + артефакт.
-- **Idea Questionnaire UI (v1.1.380)**: экран анкеты открывается по клику `Idea`, использует templateMarkdown из контракта, сохраняет ответы в `.codeai-hub/.../idea/questionnaire.md` и отправляет путь через auto-attach вместо публикации полного текста.
+- **Idea Questionnaire UI (v1.1.383)**: экран анкеты открывается по клику `Idea`, использует templateMarkdown из контракта, сохраняет ответы в `.codeai-hub/.../idea/questionnaire.md`, поддерживает отмену/возобновление и отображает расширенные пояснения из шаблона.
 - **Provider health isolation**: `ProviderRegistry` отслеживает runtime-ошибки Claude/Codex/Gemini CLI и по сигналу Remote Bridge помечает провайдера как `inactive`, очищает адаптер и планирует автоматический retry. Ошибки `createSession`/`sendMessage`/`closeSession` больше не валят orchestrator: сессия получает статус `failed`, UI выводит предупреждение, а остальные провайдеры продолжают работать.
 - **Claude Default model selector**: в разделе Settings → Claude появился новый блок `Claude Default model`, который хранит выбранный alias (`default/sonnet`, `opus`, `haiku`) в `~/.codeai-hub/settings/settings.json` и сразу обновляет переменную окружения `CLAUDE_DEFAULT_MODEL`, чтобы core передавал актуальный alias в Claude SDK при создании сессий.
 - **Streaming Rendering**: `StreamingWordEmitter` и `useDialogMessages` формируют потоковый вывод без разрывов Markdown. Логика идентична в webview и локальном веб-клиенте.
@@ -108,6 +107,11 @@ graph TD
 - **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`, `project-manager.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
+
+## Recent Changes (v1.1.383 - 2026-01-05)
+- **Idea questionnaire UX**: добавлены секция документов для чтения, пояснения и примеры, отмена и возобновление заполнения.
+- **Template sync in Core**: ядро синхронизирует bundled‑шаблоны и перезаписывает локальные правки в `~/.codeai-hub/templates/full-development-flow/idea/`.
+- **Release 1.1.383**: артефакты VSIX/launcher/core/providers/UI обновлены под анкетные улучшения.
 
 ## Recent Changes (v1.1.381 - 2026-01-04)
 - **Idea Collector prompt template**: bundled prompt устанавливается при старте расширения, чтобы анкета использовала актуальные инструкции.

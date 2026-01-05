@@ -1,5 +1,6 @@
 import { QuestionBlock, type QuestionnaireQuestion } from "./question-block";
 import {
+  questionnaireCancelButtonStyles,
   questionnaireDescriptionStyles,
   questionnaireFooterStyles,
   questionnaireHeaderStyles,
@@ -15,8 +16,10 @@ type IdeaQuestionnaireViewProps = {
   readonly questions: readonly QuestionnaireQuestion[];
   readonly answers: Record<string, string>;
   readonly submitLabel: string;
+  readonly cancelLabel: string;
   readonly onAnswerChange: (questionId: string, value: string) => void;
   readonly onSubmit: () => void;
+  readonly onCancel: () => void;
 };
 
 export const IdeaQuestionnaireView = ({
@@ -25,8 +28,10 @@ export const IdeaQuestionnaireView = ({
   questions,
   answers,
   submitLabel,
+  cancelLabel,
   onAnswerChange,
   onSubmit,
+  onCancel,
 }: IdeaQuestionnaireViewProps) => (
   <section aria-label="Idea questionnaire" style={questionnairePageStyles}>
     <header style={questionnaireHeaderStyles}>
@@ -48,6 +53,13 @@ export const IdeaQuestionnaireView = ({
     </div>
 
     <div style={questionnaireFooterStyles}>
+      <button
+        onClick={onCancel}
+        style={questionnaireCancelButtonStyles}
+        type="button"
+      >
+        {cancelLabel}
+      </button>
       <button
         onClick={onSubmit}
         style={questionnaireSubmitButtonStyles}

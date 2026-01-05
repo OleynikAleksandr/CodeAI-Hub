@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord } from "../../../../types/session";
-import { type FlowStageId, FlowWizard } from "../components/flow-wizard";
+import type { FlowStageId } from "../components/flow-wizard";
 import { IdeaQuestionnaireView } from "../components/idea-questionnaire/idea-questionnaire-view";
 import { ProviderPicker, type ProviderPickerState } from "../provider-picker";
 import { IdeaCollectorService } from "../services/idea-collector-service";
@@ -9,7 +9,9 @@ import type { QuestionnaireSnapshot } from "../services/idea-questionnaire-servi
 import { IdeaQuestionnaireService } from "../services/idea-questionnaire-service";
 import type { SessionSnapshots } from "../session/helpers";
 import SessionView from "../session/session-view";
+import { FlowWizardPicker } from "./flow-wizard-picker";
 import type { ProviderLabels } from "./provider-picker-state";
+import { QuestionnaireResumeBanner } from "./questionnaire-resume-banner";
 
 type SessionRegionProps = {
   readonly pickerState: ProviderPickerState;
@@ -48,9 +50,11 @@ export const SessionRegion = ({
   const pendingQuestionnaireRef = useRef(false);
   const [questionnaireSnapshot, setQuestionnaireSnapshot] =
     useState<QuestionnaireSnapshot | null>(null);
+  const [questionnaireVisible, setQuestionnaireVisible] = useState(false);
 
   const ideaCollector = ideaCollectorRef.current;
   const questionnaireService = questionnaireServiceRef.current;
+  const activeSessionId = sessionViewProps.activeSessionId;
 
   const handleAnswerChange = useCallback(
     (questionId: string, value: string) => {
@@ -85,7 +89,9 @@ export const SessionRegion = ({
       questionnaireSnapshot.answers
     );
     const submissionMessage =
-      `Please review \`${questionnaireSnapshot.path}\` against the contract, ` +
+      "Before reading the questionnaire, review the documents listed in " +
+      'section "0. Документы для чтения перед анкетой" (if any). Then ' +
+      `review \`${questionnaireSnapshot.path}\` against the contract, ` +
       "ask any clarifying questions, then wait for OK/approve before finalize.";
 
     questionnaireService
@@ -102,11 +108,57 @@ export const SessionRegion = ({
       )
       .then(() => {
         setQuestionnaireSnapshot(null);
+        setQuestionnaireVisible(false);
       })
       .catch(() => {
         /* ignore submission errors */
       });
   }, [ideaCollector, questionnaireService, questionnaireSnapshot]);
+
+  const handleQuestionnaireCancel = useCallback(() => {
+    if (!questionnaireSnapshot) {
+      setQuestionnaireVisible(false);
+      return;
+    }
+    const content = questionnaireService.renderQuestionnaire(
+      questionnaireSnapshot.template,
+      questionnaireSnapshot.placeholders,
+      questionnaireSnapshot.answers
+    );
+    questionnaireService
+      .flushSave(
+        questionnaireSnapshot.sessionId,
+        questionnaireSnapshot.path,
+        content
+      )
+      .catch(() => {
+        /* ignore save errors */
+      })
+      .finally(() => {
+        setQuestionnaireVisible(false);
+      });
+  }, [questionnaireService, questionnaireSnapshot]);
+
+  const handleQuestionnaireResume = useCallback(() => {
+    if (!activeSessionId) {
+      return;
+    }
+    if (questionnaireSnapshot?.sessionId === activeSessionId) {
+      setQuestionnaireVisible(true);
+      return;
+    }
+    questionnaireService
+      .loadQuestionnaire(activeSessionId)
+      .then((snapshot) => {
+        if (snapshot) {
+          setQuestionnaireSnapshot(snapshot);
+          setQuestionnaireVisible(true);
+        }
+      })
+      .catch(() => {
+        /* ignore questionnaire load errors */
+      });
+  }, [activeSessionId, questionnaireService, questionnaireSnapshot]);
 
   const handleProviderConfirm = (providerIds: readonly ProviderStackId[]) => {
     const selectedProvider = providerIds[0];
@@ -131,11 +183,21 @@ export const SessionRegion = ({
     confirmSelection([flowWizardProviderId]);
   };
 
-  const activeSessionId = sessionViewProps.activeSessionId;
-  const showQuestionnaire =
-    questionnaireSnapshot &&
-    activeSessionId &&
-    questionnaireSnapshot.sessionId === activeSessionId;
+  const hasPendingQuestionnaire = activeSessionId
+    ? ideaCollector.isQuestionnairePending(activeSessionId)
+    : false;
+  const showQuestionnaire = Boolean(
+    questionnaireVisible &&
+      questionnaireSnapshot &&
+      activeSessionId &&
+      questionnaireSnapshot.sessionId === activeSessionId
+  );
+  const showQuestionnaireResume =
+    Boolean(activeSessionId) &&
+    hasPendingQuestionnaire &&
+    !showQuestionnaire &&
+    !pickerState.visible &&
+    !flowWizardVisible;
   const showSessionView = !(
     pickerState.visible ||
     flowWizardVisible ||
@@ -155,6 +217,7 @@ export const SessionRegion = ({
       .then((snapshot) => {
         if (snapshot) {
           setQuestionnaireSnapshot(snapshot);
+          setQuestionnaireVisible(true);
         }
       })
       .catch(() => {
@@ -162,13 +225,14 @@ export const SessionRegion = ({
       });
   }, [activeSessionId, questionnaireService]);
 
-  const questionnaireTitle = useMemo(() => "Idea Questionnaire", []);
-  const questionnaireDescription = useMemo(
-    () =>
-      "Fill out the questionnaire and attach any supporting files or references.",
-    []
-  );
-  const questionnaireSubmitLabel = useMemo(() => "Send questionnaire", []);
+  const questionnaireTitle = "Анкета идеи";
+  const questionnaireDescription =
+    "Заполните анкету, приложите ссылки на документы и отправьте на проверку.";
+  const questionnaireSubmitLabel = "Отправить анкету";
+  const questionnaireCancelLabel = "Отмена";
+  const questionnaireResumeLabel = "Продолжить анкету";
+  const questionnaireResumeNote =
+    "Есть незавершенная анкета для этой сессии. Можно продолжить заполнение.";
 
   return (
     <div className="app-shell__session-region">
@@ -178,33 +242,26 @@ export const SessionRegion = ({
         providers={pickerState.providers}
         visible={pickerState.visible}
       />
-      {flowWizardVisible ? (
-        <div className="provider-picker">
-          <FlowWizard activeStage="idea" onStageClick={handleFlowStageClick} />
-          <div className="provider-picker__actions">
-            <output aria-live="polite" className="provider-picker__status">
-              {flowWizardProviderId === "codexCli" ||
-              flowWizardProviderId === "claudeCodeCli"
-                ? "Click Idea to start."
-                : "Select a stage to continue."}
-            </output>
-            <div className="provider-picker__action-buttons">
-              <button
-                className="provider-picker__secondary"
-                onClick={closeFlowWizard}
-                type="button"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+      <FlowWizardPicker
+        onCancel={closeFlowWizard}
+        onStageClick={handleFlowStageClick}
+        providerId={flowWizardProviderId}
+        visible={flowWizardVisible}
+      />
+      {showQuestionnaireResume ? (
+        <QuestionnaireResumeBanner
+          note={questionnaireResumeNote}
+          onResume={handleQuestionnaireResume}
+          resumeLabel={questionnaireResumeLabel}
+        />
       ) : null}
       {showQuestionnaire && questionnaireSnapshot ? (
         <IdeaQuestionnaireView
           answers={questionnaireSnapshot.answers}
+          cancelLabel={questionnaireCancelLabel}
           description={questionnaireDescription}
           onAnswerChange={handleAnswerChange}
+          onCancel={handleQuestionnaireCancel}
           onSubmit={handleQuestionnaireSubmit}
           questions={questionnaireSnapshot.questions}
           submitLabel={questionnaireSubmitLabel}

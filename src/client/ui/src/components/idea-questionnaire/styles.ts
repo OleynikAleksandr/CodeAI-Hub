@@ -40,7 +40,20 @@ export const questionnaireListStyles: CSSProperties = {
 export const questionnaireFooterStyles: CSSProperties = {
   display: "flex",
   justifyContent: "flex-end",
+  gap: "12px",
   paddingBottom: "16px",
+};
+
+export const questionnaireCancelButtonStyles: CSSProperties = {
+  appearance: "none",
+  border: "1px solid #3a3f46",
+  borderRadius: "8px",
+  background: "transparent",
+  color: "#d5d7db",
+  fontSize: "13px",
+  fontWeight: 600,
+  padding: "10px 16px",
+  cursor: "pointer",
 };
 
 export const questionnaireSubmitButtonStyles: CSSProperties = {
@@ -84,6 +97,7 @@ export const questionDescriptionStyles: CSSProperties = {
   fontSize: "12px",
   color: "#9aa0a6",
   lineHeight: 1.5,
+  whiteSpace: "pre-wrap",
 };
 
 export const questionInputShellStyles: CSSProperties = {

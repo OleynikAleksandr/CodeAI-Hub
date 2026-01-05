@@ -4,6 +4,7 @@ import { joinUrl, resolveCoreHttpUrl } from "./idea-collector-support";
 type QuestionnaireField = {
   readonly id: string;
   readonly title: string;
+  readonly description?: string;
   readonly placeholder: string;
 };
 
@@ -31,6 +32,7 @@ const SAVE_DEBOUNCE_MS = 400;
 const FIELD_REGEX =
   /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
 const HEADING_PREFIX_RE = /^#+\s*/;
+const HEADING_LINE_RE = /^#+\s+.*$/gm;
 const IDEA_PATH_SUFFIX_RE = /idea\.md$/;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -50,24 +52,36 @@ const isWorkspaceFileResponse = (
   );
 };
 
-const resolveFieldTitle = (
+const normalizeDescription = (value: string): string | undefined => {
+  const lines = value
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith("<!--"));
+  if (lines.length === 0) {
+    return;
+  }
+  return lines.join("\n");
+};
+
+const resolveFieldMeta = (
   template: string,
   startIndex: number,
   fallback: string
-): string => {
+): { readonly title: string; readonly description?: string } => {
   const prefix = template.slice(0, startIndex);
-  const lines = prefix.split("\n").reverse();
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("<!--")) {
-      continue;
-    }
-    if (trimmed.startsWith("#")) {
-      return trimmed.replace(HEADING_PREFIX_RE, "");
-    }
-    return trimmed;
+  const headings = Array.from(prefix.matchAll(HEADING_LINE_RE));
+  const lastHeading = headings.at(-1);
+  if (!lastHeading) {
+    return { title: fallback };
   }
-  return fallback;
+  const headingIndex = lastHeading.index ?? 0;
+  const headingLine = lastHeading[0] ?? "";
+  const title = headingLine.replace(HEADING_PREFIX_RE, "").trim() || fallback;
+  const descriptionStart = headingIndex + headingLine.length;
+  const description = normalizeDescription(
+    template.slice(descriptionStart, startIndex)
+  );
+  return { title, description };
 };
 
 const parseTemplateFields = (
@@ -85,9 +99,13 @@ const parseTemplateFields = (
       continue;
     }
     const placeholder = (match[2] ?? "").trim();
-    const title = resolveFieldTitle(template, match.index ?? 0, fieldId);
+    const { title, description } = resolveFieldMeta(
+      template,
+      match.index ?? 0,
+      fieldId
+    );
     placeholders[fieldId] = placeholder;
-    questions.push({ id: fieldId, title, placeholder });
+    questions.push({ id: fieldId, title, description, placeholder });
   }
   return { questions, placeholders };
 };
