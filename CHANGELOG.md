@@ -1,3 +1,12 @@
+## [1.1.385] - 2026-01-05
+
+### Fixed
+- **Questionnaire submit**: prompt and submission are sent as a single turn to prevent early provider replies.
+
+### Added
+- **Pre-read auto-attach**: Core extracts `pre_read_documents` from the questionnaire and attaches them before the questionnaire content.
+- **Auto-attach limits**: per-file limit raised to 300 KB with a total attachment budget of 1.2 MB (also used by `/read`).
+
 ## [1.1.384] - 2026-01-05
 
 ### Fixed

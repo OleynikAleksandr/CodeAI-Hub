@@ -146,10 +146,10 @@
 
 ### Stream: Документация релиза
 
-19. [TODO] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: описаны single-turn submit, pre-read auto-attach, лимиты; commit: `docs(orchestrator): document questionnaire pre-read auto-attach`)
-20. [TODO] Git Commit: `docs(orchestrator): document questionnaire pre-read auto-attach` (hash: TBD)
+19. [DONE] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: описаны single-turn submit, pre-read auto-attach, лимиты; commit: `docs(orchestrator): document questionnaire pre-read auto-attach`) (date: 2026-01-05)
+20. [DONE] Git Commit: `docs(orchestrator): document questionnaire pre-read auto-attach` (hash: bd66733) (date: 2026-01-05)
 
-21. [TODO] Обновить README + CHANGELOG под релиз 1.1.385 (scope: `README.md`, `CHANGELOG.md`; expected: release notes; commit: `docs(release): update 1.1.385 notes`)
+21. [TODO] Обновить README + CHANGELOG под релиз 1.1.385 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.385 notes`)
 22. [TODO] Git Commit: `docs(release): update 1.1.385 notes` (hash: TBD)
 
 ## Notes
