@@ -1,115 +1,30 @@
-import { IDEA_KICKOFF_PROMPT } from "../app-host/idea-kickoff-prompt";
 import { sendChatMessage } from "../core-bridge/core-bridge";
-import { extractIdeaContractQuestionnaireTemplate } from "../core-bridge/normalizers";
 import {
   extractIdeaCollectorArtifact,
   type IdeaCollectorArtifact,
 } from "./idea-collector-artifact";
-import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "./idea-collector-fallback-schema";
-import { normalizeIdeaCollectorSchema } from "./idea-collector-schema-utils";
+import {
+  type IdeaContractSnapshot,
+  loadIdeaContract,
+} from "./idea-collector-contract";
 import {
   joinUrl,
   postSystemNotice,
   resolveCoreHttpUrl,
 } from "./idea-collector-support";
 import { buildMessageWithWorkspaceContext } from "./idea-collector-workspace-context";
+import {
+  clearQuestionnairePendingStored,
+  isQuestionnairePendingStored,
+  markQuestionnairePendingStored,
+} from "./idea-questionnaire-pending-store";
 
-type IdeaContractPayload = {
-  readonly prompt: string;
-  readonly schema: Record<string, unknown>;
-  readonly questionnaire?: {
-    readonly templateMarkdown?: string;
-  };
-  readonly outputPaths: {
-    readonly idea: string;
-    readonly virtualSimulation: string;
-  };
-};
-
-type IdeaContractSnapshot = {
-  readonly prompt: string;
-  readonly schema: Record<string, unknown>;
-  readonly outputPaths: {
-    readonly idea: string;
-    readonly virtualSimulation: string;
-  };
-  readonly questionnaireTemplateMarkdown: string | null;
-};
-
-const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-const FALLBACK_OUTPUT_PATHS = {
-  idea: ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/idea.md",
-  virtualSimulation:
-    ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/virtual-simulation.md",
-} as const;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const isIdeaContractPayload = (
-  value: unknown
-): value is IdeaContractPayload => {
-  if (!isRecord(value)) {
-    return false;
-  }
-  const outputPaths = value.outputPaths;
-  return (
-    typeof value.prompt === "string" &&
-    value.prompt.length > 0 &&
-    isRecord(value.schema) &&
-    isRecord(outputPaths) &&
-    typeof outputPaths.idea === "string" &&
-    outputPaths.idea.length > 0 &&
-    typeof outputPaths.virtualSimulation === "string" &&
-    outputPaths.virtualSimulation.length > 0
-  );
-};
-
-const fetchIdeaContract = async (): Promise<IdeaContractSnapshot | null> => {
-  const httpUrl = resolveCoreHttpUrl();
-  if (!httpUrl) {
-    return null;
-  }
-  try {
-    const response = await fetch(joinUrl(httpUrl, IDEA_CONTRACT_ENDPOINT));
-    if (!response.ok) {
-      return null;
-    }
-    const payload = (await response.json()) as unknown;
-    if (!isIdeaContractPayload(payload)) {
-      return null;
-    }
-    const schema = normalizeIdeaCollectorSchema(payload.schema, null);
-    const questionnaireTemplateMarkdown =
-      extractIdeaContractQuestionnaireTemplate(payload) ?? null;
-    return {
-      prompt: payload.prompt,
-      schema,
-      outputPaths: payload.outputPaths,
-      questionnaireTemplateMarkdown,
-    };
-  } catch {
-    return null;
-  }
-};
-
-const loadContract = async (): Promise<IdeaContractSnapshot> => {
-  const remote = await fetchIdeaContract();
-  if (remote) {
-    return remote;
-  }
-  const fallbackSchema = normalizeIdeaCollectorSchema(
-    IDEA_COLLECTOR_FALLBACK_SCHEMA,
-    null
-  );
-  return {
-    prompt: IDEA_KICKOFF_PROMPT,
-    schema: fallbackSchema,
-    outputPaths: FALLBACK_OUTPUT_PATHS,
-    questionnaireTemplateMarkdown: null,
-  };
-};
+const loadContract = (): Promise<IdeaContractSnapshot> => loadIdeaContract();
 
 export class IdeaCollectorService {
   private static readonly activeSessions = new Set<string>();
@@ -119,7 +34,14 @@ export class IdeaCollectorService {
   private contractPromise: Promise<IdeaContractSnapshot> | null = null;
 
   isIdeaCollectorSession(sessionId: string): boolean {
-    return IdeaCollectorService.activeSessions.has(sessionId);
+    if (IdeaCollectorService.activeSessions.has(sessionId)) {
+      return true;
+    }
+    if (this.isQuestionnairePending(sessionId)) {
+      IdeaCollectorService.activeSessions.add(sessionId);
+      return true;
+    }
+    return false;
   }
 
   getLatestArtifact(sessionId: string): IdeaCollectorArtifact | null {
@@ -128,7 +50,7 @@ export class IdeaCollectorService {
 
   startCollection(sessionId: string): void {
     IdeaCollectorService.activeSessions.add(sessionId);
-    IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+    this.markQuestionnairePending(sessionId);
     if (!IdeaCollectorService.noticesSent.has(sessionId)) {
       IdeaCollectorService.noticesSent.add(sessionId);
       postSystemNotice(
@@ -146,10 +68,10 @@ export class IdeaCollectorService {
     sessionId: string,
     content: string
   ): Promise<void> {
-    if (!IdeaCollectorService.activeSessions.has(sessionId)) {
+    if (!this.isIdeaCollectorSession(sessionId)) {
       return;
     }
-    if (IdeaCollectorService.pendingQuestionnaire.has(sessionId)) {
+    if (this.isQuestionnairePending(sessionId)) {
       postSystemNotice(
         sessionId,
         "Анкета ещё не отправлена. Заполните анкету и нажмите «Отправить анкету»."
@@ -176,7 +98,7 @@ export class IdeaCollectorService {
     if (!IdeaCollectorService.activeSessions.has(sessionId)) {
       IdeaCollectorService.activeSessions.add(sessionId);
     }
-    IdeaCollectorService.pendingQuestionnaire.delete(sessionId);
+    this.clearQuestionnairePending(sessionId);
     const [prompt, schema] = await Promise.all([
       this.getPrompt(),
       this.getNormalizedSchema(),
@@ -202,6 +124,17 @@ export class IdeaCollectorService {
     }
   }
 
+  isQuestionnairePending(sessionId: string): boolean {
+    if (IdeaCollectorService.pendingQuestionnaire.has(sessionId)) {
+      return true;
+    }
+    if (isQuestionnairePendingStored(sessionId)) {
+      IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+      return true;
+    }
+    return false;
+  }
+
   private getPrompt(): Promise<string> {
     return this.getContract().then((contract) => contract.prompt);
   }
@@ -225,6 +158,16 @@ export class IdeaCollectorService {
       this.contractPromise = loadContract();
     }
     return this.contractPromise;
+  }
+
+  private markQuestionnairePending(sessionId: string): void {
+    IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+    markQuestionnairePendingStored(sessionId);
+  }
+
+  private clearQuestionnairePending(sessionId: string): void {
+    IdeaCollectorService.pendingQuestionnaire.delete(sessionId);
+    clearQuestionnairePendingStored(sessionId);
   }
 
   private async persistIdeaArtifacts(

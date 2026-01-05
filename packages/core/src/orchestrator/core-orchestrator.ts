@@ -9,6 +9,7 @@ import { ProjectRegistry } from "../services/project-registry/project-registry";
 import { SessionManager } from "../session-manager";
 import { RuntimeStatusReporter } from "../status/runtime-status-reporter";
 import { Logger } from "../telemetry/logger";
+import { TemplateSyncFacade } from "../templates/template-sync-facade";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require("../../package.json") as { version: string };
@@ -32,6 +33,8 @@ export class CoreOrchestrator {
 
   private readonly fileDropService: FileDropService;
 
+  private readonly templateSync: TemplateSyncFacade;
+
   private activeClients = 0;
 
   private shuttingDown = false;
@@ -47,6 +50,7 @@ export class CoreOrchestrator {
   constructor() {
     this.config = loadConfig();
     this.logger = new Logger();
+    this.templateSync = new TemplateSyncFacade(this.logger);
     this.sessionManager = new SessionManager();
     this.statusReporter = new RuntimeStatusReporter();
     this.projectRegistry = new ProjectRegistry();
@@ -99,6 +103,7 @@ export class CoreOrchestrator {
       });
     }
 
+    await this.templateSync.sync();
     await this.runStartupSelfTest();
     await this.remoteBridge.start();
     await this.providerRegistry.initialize();

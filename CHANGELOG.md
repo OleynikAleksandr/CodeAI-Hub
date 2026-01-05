@@ -1,3 +1,12 @@
+## [1.1.383] - 2026-01-05
+
+### Added
+- **Questionnaire resume**: pending questionnaires persist across restarts and can be resumed from the session UI.
+- **Core template sync**: Core overwrites local template edits on startup using bundled prompt/template/schema/questionnaire sources.
+
+### Changed
+- **Idea questionnaire template**: added pre-read documents section, expanded explanations/examples, removed tables, merged data questions, and added free-form user notes.
+
 ## [1.1.382] - 2026-01-05
 
 ### Fixed
