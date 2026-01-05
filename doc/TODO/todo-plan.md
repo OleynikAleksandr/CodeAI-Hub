@@ -130,10 +130,10 @@
 9. [DONE] Бюджет размера вложений (scope: `packages/core/src/remote-bridge/handlers/workspace-auto-attach-reader.ts`, `doc/TODO/todo-plan.md`; expected: лимит общего размера вложений; commit: `feat(core): add total budget for workspace attachments`) (date: 2026-01-05)
 10. [DONE] Git Commit: `feat(core): add total budget for workspace attachments` (hash: bb1bbcb) (date: 2026-01-05)
 
-11. [TODO] Attacher для pre-read документов (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-attacher.ts`, `doc/TODO/todo-plan.md`; expected: чтение анкеты и attach файлов; commit: `feat(core): attach pre-read questionnaire documents`)
-12. [TODO] Git Commit: `feat(core): attach pre-read questionnaire documents` (hash: TBD)
+11. [DONE] Attacher для pre-read документов (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-attacher.ts`, `doc/TODO/todo-plan.md`; expected: чтение анкеты и attach файлов; commit: `feat(core): attach pre-read questionnaire documents`) (date: 2026-01-05)
+12. [DONE] Git Commit: `feat(core): attach pre-read questionnaire documents` (hash: 164178a) (date: 2026-01-05)
 
-13. [TODO] Встройка pre-read attach в pipeline сессии (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-auto-attach.ts`; expected: pre-read prefix + обновлённые лимиты auto-attach; commit: `feat(core): prepend pre-read attachments before auto-attach`)
+13. [TODO] Встройка pre-read attach в pipeline сессии (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-auto-attach.ts`, `doc/TODO/todo-plan.md`; expected: pre-read prefix + обновлённые лимиты auto-attach; commit: `feat(core): prepend pre-read attachments before auto-attach`)
 14. [TODO] Git Commit: `feat(core): prepend pre-read attachments before auto-attach` (hash: TBD)
 
 ### Stream: Лимиты /read и auto-attach
