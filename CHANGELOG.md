@@ -1,3 +1,9 @@
+## [1.1.384] - 2026-01-05
+
+### Fixed
+- **Questionnaire inputs**: template scaffolding is no longer prefilled in user inputs; hints are displayed under each question instead.
+- **Release artefacts**: UI tarballs are preserved in `doc/tmp/releases/` (no longer cleaned out).
+
 ## [1.1.383] - 2026-01-05
 
 ### Added
