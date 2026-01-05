@@ -1,11 +1,16 @@
 import { IdeaCollectorService } from "./idea-collector-service";
 import { joinUrl, resolveCoreHttpUrl } from "./idea-collector-support";
+import {
+  extractIdeaQuestionnaireAnswers,
+  parseIdeaQuestionnaireTemplateFields,
+  renderIdeaQuestionnaire,
+} from "./idea-questionnaire-template";
 
 type QuestionnaireField = {
   readonly id: string;
   readonly title: string;
   readonly description?: string;
-  readonly placeholder: string;
+  readonly hint?: string;
 };
 
 export type QuestionnaireSnapshot = {
@@ -29,10 +34,6 @@ const WORKSPACE_FILE_WRITE_ENDPOINT =
   "/api/v1/orchestrator/workspace-file-write";
 const DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
 const SAVE_DEBOUNCE_MS = 400;
-const FIELD_REGEX =
-  /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
-const HEADING_PREFIX_RE = /^#+\s*/;
-const HEADING_LINE_RE = /^#+\s+.*$/gm;
 const IDEA_PATH_SUFFIX_RE = /idea\.md$/;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -50,82 +51,6 @@ const isWorkspaceFileResponse = (
     typeof value.truncated === "boolean" &&
     typeof value.maxBytes === "number"
   );
-};
-
-const normalizeDescription = (value: string): string | undefined => {
-  const lines = value
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0 && !line.startsWith("<!--"));
-  if (lines.length === 0) {
-    return;
-  }
-  return lines.join("\n");
-};
-
-const resolveFieldMeta = (
-  template: string,
-  startIndex: number,
-  fallback: string
-): { readonly title: string; readonly description?: string } => {
-  const prefix = template.slice(0, startIndex);
-  const headings = Array.from(prefix.matchAll(HEADING_LINE_RE));
-  const lastHeading = headings.at(-1);
-  if (!lastHeading) {
-    return { title: fallback };
-  }
-  const headingIndex = lastHeading.index ?? 0;
-  const headingLine = lastHeading[0] ?? "";
-  const title = headingLine.replace(HEADING_PREFIX_RE, "").trim() || fallback;
-  const descriptionStart = headingIndex + headingLine.length;
-  const description = normalizeDescription(
-    template.slice(descriptionStart, startIndex)
-  );
-  return { title, description };
-};
-
-const parseTemplateFields = (
-  template: string
-): {
-  readonly questions: QuestionnaireField[];
-  readonly placeholders: Record<string, string>;
-} => {
-  const questions: QuestionnaireField[] = [];
-  const placeholders: Record<string, string> = {};
-  const matches = template.matchAll(FIELD_REGEX);
-  for (const match of matches) {
-    const fieldId = match[1];
-    if (!fieldId || placeholders[fieldId]) {
-      continue;
-    }
-    const placeholder = (match[2] ?? "").trim();
-    const { title, description } = resolveFieldMeta(
-      template,
-      match.index ?? 0,
-      fieldId
-    );
-    placeholders[fieldId] = placeholder;
-    questions.push({ id: fieldId, title, description, placeholder });
-  }
-  return { questions, placeholders };
-};
-
-const extractAnswers = (
-  content: string,
-  placeholders: Record<string, string>
-): Record<string, string> => {
-  const answers: Record<string, string> = {};
-  const matches = content.matchAll(FIELD_REGEX);
-  for (const match of matches) {
-    const fieldId = match[1];
-    if (!fieldId) {
-      continue;
-    }
-    const candidate = (match[2] ?? "").trim();
-    const placeholder = (placeholders[fieldId] ?? "").trim();
-    answers[fieldId] = candidate === placeholder ? "" : candidate;
-  }
-  return answers;
 };
 
 export class IdeaQuestionnaireService {
@@ -152,7 +77,8 @@ export class IdeaQuestionnaireService {
       templateMarkdown && templateMarkdown.trim().length > 0
         ? templateMarkdown
         : DEFAULT_TEMPLATE;
-    const { questions, placeholders } = parseTemplateFields(template);
+    const { questions, placeholders } =
+      parseIdeaQuestionnaireTemplateFields(template);
     const questionnairePath = outputPaths.idea.replace(
       IDEA_PATH_SUFFIX_RE,
       "questionnaire.md"
@@ -170,7 +96,7 @@ export class IdeaQuestionnaireService {
       await this.writeWorkspaceFile(sessionId, questionnairePath, content);
     }
 
-    const answers = extractAnswers(content, placeholders);
+    const answers = extractIdeaQuestionnaireAnswers(content, placeholders);
     return {
       sessionId,
       path: questionnairePath,
@@ -186,15 +112,7 @@ export class IdeaQuestionnaireService {
     placeholders: Record<string, string>,
     answers: Record<string, string>
   ): string {
-    return template.replace(FIELD_REGEX, (_match, fieldId, fallback) => {
-      const rawAnswer = answers[fieldId] ?? "";
-      const trimmedAnswer = rawAnswer.trim();
-      const placeholder =
-        placeholders[fieldId] ?? String(fallback ?? "").trim();
-      const replacement =
-        trimmedAnswer.length > 0 ? rawAnswer.trimEnd() : placeholder;
-      return `<!-- field:${fieldId} -->\n${replacement}\n<!-- /field -->`;
-    });
+    return renderIdeaQuestionnaire(template, placeholders, answers);
   }
 
   queueSave(sessionId: string, path: string, content: string): void {

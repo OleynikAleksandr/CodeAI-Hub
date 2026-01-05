@@ -11,6 +11,9 @@ clean_release_dir() {
     "claude-module-*.tar.bz2"
     "codex-module-*.tar.bz2"
     "gemini-module-*.tar.bz2"
+    "vscode-webview-*.tar.bz2"
+    "web-client-*.tar.bz2"
+    "project-manager-*.tar.bz2"
   )
 
   for pattern in "${keep_patterns[@]}"; do

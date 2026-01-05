@@ -2,18 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.383
+## Current Release — v1.1.384
 - **Idea questionnaire clarity**: added pre-read documents section, expanded explanations/examples, merged data questions, removed tables, and added free-form user notes.
+- **Questionnaire input polish**: hints are rendered under each question; input fields start empty (no prefilled scaffolding).
 - **Questionnaire UX**: cancel button + resume banner; pending questionnaires persist across restarts.
 - **Core template authority**: Core syncs bundled prompt/template/schema/questionnaire on startup and overwrites local edits.
-- **Release 1.1.383**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+- **Release 1.1.384**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.383.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.383.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.383.tar.bz2`
-  - Providers: `claude-module-1.1.383.tar.bz2`, `codex-module-1.1.383.tar.bz2`, `gemini-module-1.1.383.tar.bz2`
-  - UI: `vscode-webview-1.1.383.tar.bz2`, `web-client-1.1.383.tar.bz2`, `project-manager-1.1.383.tar.bz2`
+  - VSIX: `codeai-hub-1.1.384.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.384.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.384.tar.bz2`
+  - Providers: `claude-module-1.1.384.tar.bz2`, `codex-module-1.1.384.tar.bz2`, `gemini-module-1.1.384.tar.bz2`
+  - UI: `vscode-webview-1.1.384.tar.bz2`, `web-client-1.1.384.tar.bz2`, `project-manager-1.1.384.tar.bz2`
 
 
 ## Features

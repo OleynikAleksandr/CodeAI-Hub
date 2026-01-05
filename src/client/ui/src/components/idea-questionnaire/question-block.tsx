@@ -8,6 +8,7 @@ import {
   questionCardStyles,
   questionDescriptionStyles,
   questionHeaderStyles,
+  questionHintStyles,
   questionInputShellDraggingStyles,
   questionInputShellFocusedStyles,
   questionInputShellStyles,
@@ -20,7 +21,7 @@ export type QuestionnaireQuestion = {
   readonly id: string;
   readonly title: string;
   readonly description?: string;
-  readonly placeholder?: string;
+  readonly hint?: string;
 };
 
 type QuestionBlockProps = {
@@ -199,6 +200,9 @@ export const QuestionBlock = ({
         {question.description ? (
           <p style={questionDescriptionStyles}>{question.description}</p>
         ) : null}
+        {question.hint ? (
+          <p style={questionHintStyles}>{question.hint}</p>
+        ) : null}
       </div>
       <div ref={containerRef} style={inputShellStyles}>
         <textarea
@@ -213,7 +217,6 @@ export const QuestionBlock = ({
           onMouseUp={handleResizeCommit}
           onPaste={handlePaste}
           onTouchEnd={handleResizeCommit}
-          placeholder={question.placeholder}
           ref={textareaRef}
           rows={1}
           style={questionTextareaStyles}

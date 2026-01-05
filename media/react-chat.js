@@ -9300,6 +9300,13 @@ ${path2}` : path2;
     lineHeight: 1.5,
     whiteSpace: "pre-wrap"
   };
+  var questionHintStyles = {
+    margin: 0,
+    fontSize: "11px",
+    color: "#7f868e",
+    lineHeight: 1.5,
+    whiteSpace: "pre-wrap"
+  };
   var questionInputShellStyles = {
     position: "relative",
     border: "1px solid #2c2f36",
@@ -9485,7 +9492,8 @@ ${path2}` : path2;
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("section", { style: questionCardStyles, children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { style: questionHeaderStyles, children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: questionTitleStyles, children: question.title }),
-        question.description ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: questionDescriptionStyles, children: question.description }) : null
+        question.description ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: questionDescriptionStyles, children: question.description }) : null,
+        question.hint ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: questionHintStyles, children: question.hint }) : null
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { ref: containerRef, style: inputShellStyles, children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
@@ -9502,7 +9510,6 @@ ${path2}` : path2;
             onMouseUp: handleResizeCommit,
             onPaste: handlePaste,
             onTouchEnd: handleResizeCommit,
-            placeholder: question.placeholder,
             ref: textareaRef,
             rows: 1,
             style: questionTextareaStyles,
@@ -10233,22 +10240,11 @@ ${command.remainingMessage}`);
   _IdeaCollectorService.pendingQuestionnaire = /* @__PURE__ */ new Set();
   var IdeaCollectorService = _IdeaCollectorService;
 
-  // src/client/ui/src/services/idea-questionnaire-service.ts
-  var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
-  var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
-  var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
-  var SAVE_DEBOUNCE_MS = 400;
+  // src/client/ui/src/services/idea-questionnaire-template.ts
   var FIELD_REGEX = /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
   var HEADING_PREFIX_RE = /^#+\s*/;
   var HEADING_LINE_RE = /^#+\s+.*$/gm;
-  var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
-  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isWorkspaceFileResponse2 = (value) => {
-    if (!isRecord9(value)) {
-      return false;
-    }
-    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
-  };
+  var HINT_TOKEN_RE = /<[^>\n]{1,80}>/;
   var normalizeDescription = (value) => {
     const lines = value.split("\n").map((line) => line.trim()).filter((line) => line.length > 0 && !line.startsWith("<!--"));
     if (lines.length === 0) {
@@ -10272,7 +10268,26 @@ ${command.remainingMessage}`);
     );
     return { title, description };
   };
-  var parseTemplateFields = (template) => {
+  var isHintLikeAnswer = (value) => {
+    const trimmed = value.trim();
+    if (trimmed.length === 0) {
+      return true;
+    }
+    if (trimmed.startsWith("\u041F\u0440\u0438\u043C\u0435\u0440:") || trimmed.startsWith("Example:")) {
+      return true;
+    }
+    if (HINT_TOKEN_RE.test(trimmed)) {
+      return true;
+    }
+    if (trimmed.split("\n").some((line) => line.trim().startsWith("- <"))) {
+      return true;
+    }
+    if (trimmed.includes("...") && trimmed.includes(":")) {
+      return true;
+    }
+    return false;
+  };
+  var parseIdeaQuestionnaireTemplateFields = (template) => {
     const questions = [];
     const placeholders = {};
     const matches = template.matchAll(FIELD_REGEX);
@@ -10288,11 +10303,16 @@ ${command.remainingMessage}`);
         fieldId
       );
       placeholders[fieldId] = placeholder;
-      questions.push({ id: fieldId, title, description, placeholder });
+      questions.push({
+        id: fieldId,
+        title,
+        description,
+        hint: placeholder.length > 0 ? placeholder : void 0
+      });
     }
     return { questions, placeholders };
   };
-  var extractAnswers = (content3, placeholders) => {
+  var extractIdeaQuestionnaireAnswers = (content3, placeholders) => {
     const answers = {};
     const matches = content3.matchAll(FIELD_REGEX);
     for (const match of matches) {
@@ -10302,9 +10322,32 @@ ${command.remainingMessage}`);
       }
       const candidate = (match[2] ?? "").trim();
       const placeholder = (placeholders[fieldId] ?? "").trim();
-      answers[fieldId] = candidate === placeholder ? "" : candidate;
+      answers[fieldId] = candidate === placeholder || isHintLikeAnswer(candidate) ? "" : candidate;
     }
     return answers;
+  };
+  var renderIdeaQuestionnaire = (template, placeholders, answers) => template.replace(FIELD_REGEX, (_match, fieldId, fallback) => {
+    const rawAnswer = answers[fieldId] ?? "";
+    const trimmedAnswer = rawAnswer.trim();
+    const placeholder = placeholders[fieldId] ?? String(fallback ?? "").trim();
+    const replacement = trimmedAnswer.length > 0 ? rawAnswer.trimEnd() : placeholder;
+    return `<!-- field:${fieldId} -->
+${replacement}
+<!-- /field -->`;
+  });
+
+  // src/client/ui/src/services/idea-questionnaire-service.ts
+  var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
+  var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
+  var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
+  var SAVE_DEBOUNCE_MS = 400;
+  var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
+  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isWorkspaceFileResponse2 = (value) => {
+    if (!isRecord9(value)) {
+      return false;
+    }
+    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
   };
   var IdeaQuestionnaireService = class {
     constructor() {
@@ -10324,7 +10367,7 @@ ${command.remainingMessage}`);
         return null;
       }
       const template = templateMarkdown && templateMarkdown.trim().length > 0 ? templateMarkdown : DEFAULT_TEMPLATE;
-      const { questions, placeholders } = parseTemplateFields(template);
+      const { questions, placeholders } = parseIdeaQuestionnaireTemplateFields(template);
       const questionnairePath = outputPaths.idea.replace(
         IDEA_PATH_SUFFIX_RE,
         "questionnaire.md"
@@ -10337,7 +10380,7 @@ ${command.remainingMessage}`);
       if (!existing || existing.content.trim().length === 0) {
         await this.writeWorkspaceFile(sessionId, questionnairePath, content3);
       }
-      const answers = extractAnswers(content3, placeholders);
+      const answers = extractIdeaQuestionnaireAnswers(content3, placeholders);
       return {
         sessionId,
         path: questionnairePath,
@@ -10348,15 +10391,7 @@ ${command.remainingMessage}`);
       };
     }
     renderQuestionnaire(template, placeholders, answers) {
-      return template.replace(FIELD_REGEX, (_match, fieldId, fallback) => {
-        const rawAnswer = answers[fieldId] ?? "";
-        const trimmedAnswer = rawAnswer.trim();
-        const placeholder = placeholders[fieldId] ?? String(fallback ?? "").trim();
-        const replacement = trimmedAnswer.length > 0 ? rawAnswer.trimEnd() : placeholder;
-        return `<!-- field:${fieldId} -->
-${replacement}
-<!-- /field -->`;
-      });
+      return renderIdeaQuestionnaire(template, placeholders, answers);
     }
     queueSave(sessionId, path2, content3) {
       const existing = this.saveTimers.get(sessionId);

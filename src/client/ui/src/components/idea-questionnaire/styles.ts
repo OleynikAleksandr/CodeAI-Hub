@@ -100,6 +100,14 @@ export const questionDescriptionStyles: CSSProperties = {
   whiteSpace: "pre-wrap",
 };
 
+export const questionHintStyles: CSSProperties = {
+  margin: 0,
+  fontSize: "11px",
+  color: "#7f868e",
+  lineHeight: 1.5,
+  whiteSpace: "pre-wrap",
+};
+
 export const questionInputShellStyles: CSSProperties = {
   position: "relative",
   border: "1px solid #2c2f36",
