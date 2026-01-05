@@ -1,7 +1,7 @@
 import path from "node:path";
 import { readFileHead, resolveWorkspaceFilePath } from "./workspace-file-utils";
 
-type WorkspaceTextAttachment = {
+export type WorkspaceTextAttachment = {
   readonly path: string;
   readonly content: string;
   readonly truncated: boolean;
@@ -128,6 +128,57 @@ export const readWorkspaceTextFiles = async (
         truncated,
         maxBytes,
       });
+    } catch {
+      // ignore
+    }
+  }
+
+  return attachments;
+};
+
+export const readWorkspaceTextFilesWithBudget = async (
+  workspaceRoot: string,
+  relativePaths: readonly string[],
+  options: { readonly maxBytes: number; readonly totalBudgetBytes: number }
+): Promise<readonly WorkspaceTextAttachment[]> => {
+  const normalizedRoot = path.resolve(workspaceRoot);
+  const filteredPaths = relativePaths.filter((candidate) =>
+    isAllowedTextPath(candidate)
+  );
+  if (filteredPaths.length === 0) {
+    return [];
+  }
+
+  let remainingBudget = options.totalBudgetBytes;
+  if (!Number.isFinite(remainingBudget) || remainingBudget <= 0) {
+    return [];
+  }
+
+  const attachments: WorkspaceTextAttachment[] = [];
+  for (const relativePath of filteredPaths) {
+    if (remainingBudget <= 0) {
+      break;
+    }
+    const absolutePath = resolveWorkspaceFilePath(normalizedRoot, relativePath);
+    if (!absolutePath) {
+      continue;
+    }
+    const maxBytes = Math.min(options.maxBytes, remainingBudget);
+    if (maxBytes <= 0) {
+      break;
+    }
+    try {
+      const { buffer, truncated } = await readFileHead(absolutePath, maxBytes);
+      if (isBinaryLike(buffer)) {
+        continue;
+      }
+      attachments.push({
+        path: relativePath,
+        content: buffer.toString("utf8"),
+        truncated,
+        maxBytes,
+      });
+      remainingBudget -= buffer.length;
     } catch {
       // ignore
     }
