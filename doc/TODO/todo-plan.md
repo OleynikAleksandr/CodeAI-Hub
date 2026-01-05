@@ -107,6 +107,48 @@
 
 ---
 
+## Phase 4 — Questionnaire submit + pre-read auto-attach (owner: Oleksandr, updated: 2026-01-05)
+
+### Stream: Архитектура и план
+
+1. [IN_PROGRESS] Архитектурный документ pre-read auto-attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описаны pipeline, компоненты, лимиты; commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture`) (date: 2026-01-05)
+2. [TODO] Git Commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture` (hash: TBD)
+
+### Stream: UI single-turn submit
+
+3. [TODO] Объединить prompt + submit в один turn (scope: `src/client/ui/src/services/idea-collector-service.ts`; expected: один `sendChatMessage` для анкеты; commit: `fix(ui): send questionnaire submit as single turn`)
+4. [TODO] Git Commit: `fix(ui): send questionnaire submit as single turn` (hash: TBD)
+
+### Stream: Pre-read auto-attach (Core)
+
+5. [TODO] Детектор пути анкеты (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-path-detector.ts`; expected: извлечение `questionnaire.md` из сообщения; commit: `feat(core): detect questionnaire path for pre-read attach`)
+6. [TODO] Git Commit: `feat(core): detect questionnaire path for pre-read attach` (hash: TBD)
+
+7. [TODO] Экстрактор `pre_read_documents` (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-extractor.ts`; expected: парсер field-блока; commit: `feat(core): extract pre-read document paths from questionnaire`)
+8. [TODO] Git Commit: `feat(core): extract pre-read document paths from questionnaire` (hash: TBD)
+
+9. [TODO] Бюджет размера вложений (scope: `packages/core/src/remote-bridge/handlers/workspace-auto-attach-reader.ts`; expected: лимит общего размера вложений; commit: `feat(core): add total budget for workspace attachments`)
+10. [TODO] Git Commit: `feat(core): add total budget for workspace attachments` (hash: TBD)
+
+11. [TODO] Attacher для pre-read документов (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-attacher.ts`; expected: чтение анкеты и attach файлов; commit: `feat(core): attach pre-read questionnaire documents`)
+12. [TODO] Git Commit: `feat(core): attach pre-read questionnaire documents` (hash: TBD)
+
+13. [TODO] Встройка pre-read attach в pipeline сессии (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-auto-attach.ts`; expected: pre-read prefix + обновлённые лимиты auto-attach; commit: `feat(core): prepend pre-read attachments before auto-attach`)
+14. [TODO] Git Commit: `feat(core): prepend pre-read attachments before auto-attach` (hash: TBD)
+
+### Stream: Лимиты /read и auto-attach
+
+15. [TODO] Повысить лимиты чтения /read (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `src/client/ui/src/services/idea-collector-workspace-context.ts`; expected: новый DEFAULT_MAX_BYTES; commit: `feat(core): raise workspace read limits for idea collector`)
+16. [TODO] Git Commit: `feat(core): raise workspace read limits for idea collector` (hash: TBD)
+
+### Stream: Документация релиза
+
+17. [TODO] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: описаны single-turn submit, pre-read auto-attach, лимиты; commit: `docs(orchestrator): document questionnaire pre-read auto-attach`)
+18. [TODO] Git Commit: `docs(orchestrator): document questionnaire pre-read auto-attach` (hash: TBD)
+
+19. [TODO] Обновить README + CHANGELOG под релиз 1.1.385 (scope: `README.md`, `CHANGELOG.md`; expected: release notes; commit: `docs(release): update 1.1.385 notes`)
+20. [TODO] Git Commit: `docs(release): update 1.1.385 notes` (hash: TBD)
+
 ## Notes
 
 - Каноничные пути артефактов инициативы (как сейчас):
