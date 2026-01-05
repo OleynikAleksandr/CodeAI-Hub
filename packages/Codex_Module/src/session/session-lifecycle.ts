@@ -1,9 +1,10 @@
+import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
 import type { MessageController } from "./types";
 
 export class CodexSessionLifecycle {
   generateTemporaryId(): string {
-    return `codex_${Date.now()}`;
+    return `codex_${randomUUID()}`;
   }
 
   createEventEmitter(): EventEmitter {

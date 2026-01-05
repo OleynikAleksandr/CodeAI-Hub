@@ -293,7 +293,7 @@ const patchedThreadRunStreamedInternal: ThreadRunStreamedInternal =
           (parseError as Error & { cause?: unknown }).cause = error;
           throw parseError;
         }
-        if (isThreadStartedEvent(parsed)) {
+        if (isThreadStartedEvent(parsed) && this._id === null) {
           this._id = parsed.thread_id;
         }
         yield parsed;
