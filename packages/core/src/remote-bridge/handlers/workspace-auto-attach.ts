@@ -2,12 +2,13 @@ import path from "node:path";
 import { extractAutoAttachPaths } from "./workspace-auto-attach-extractor";
 import {
   buildWorkspaceContextPreamble,
-  readWorkspaceTextFiles,
+  readWorkspaceTextFilesWithBudget,
 } from "./workspace-auto-attach-reader";
 
 type AutoAttachOptions = {
   readonly maxFiles: number;
   readonly maxBytes: number;
+  readonly totalBudgetBytes: number;
 };
 
 export type AutoAttachResult = {
@@ -18,7 +19,8 @@ export type AutoAttachResult = {
 
 const DEFAULT_OPTIONS: AutoAttachOptions = {
   maxFiles: 3,
-  maxBytes: 60_000,
+  maxBytes: 300_000,
+  totalBudgetBytes: 1_200_000,
 };
 
 export const autoAttachWorkspaceFiles = async (
@@ -29,6 +31,8 @@ export const autoAttachWorkspaceFiles = async (
   const effectiveOptions: AutoAttachOptions = {
     maxFiles: options.maxFiles ?? DEFAULT_OPTIONS.maxFiles,
     maxBytes: options.maxBytes ?? DEFAULT_OPTIONS.maxBytes,
+    totalBudgetBytes:
+      options.totalBudgetBytes ?? DEFAULT_OPTIONS.totalBudgetBytes,
   };
 
   const extracted = extractAutoAttachPaths(message, {
@@ -38,10 +42,13 @@ export const autoAttachWorkspaceFiles = async (
     return { didAttach: false, content: message, attachedPaths: [] };
   }
 
-  const attachments = await readWorkspaceTextFiles(
+  const attachments = await readWorkspaceTextFilesWithBudget(
     path.resolve(workspaceRoot),
     extracted,
-    effectiveOptions.maxBytes
+    {
+      maxBytes: effectiveOptions.maxBytes,
+      totalBudgetBytes: effectiveOptions.totalBudgetBytes,
+    }
   );
   if (attachments.length === 0) {
     return { didAttach: false, content: message, attachedPaths: [] };

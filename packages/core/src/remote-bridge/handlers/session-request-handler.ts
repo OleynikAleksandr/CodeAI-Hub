@@ -3,6 +3,8 @@ import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import { detectQuestionnairePath } from "./idea-questionnaire-path-detector";
+import { attachPreReadDocuments } from "./idea-questionnaire-pre-read-attacher";
 import { autoAttachWorkspaceFiles } from "./workspace-auto-attach";
 
 export type ProviderSessionBinding = {
@@ -157,6 +159,18 @@ export class SessionRequestHandler {
       return;
     }
 
+    const questionnairePath = detectQuestionnairePath(content);
+    const preReadResult = questionnairePath
+      ? await attachPreReadDocuments(session.workspacePath, questionnairePath)
+      : { contentPrefix: "", attachedPaths: [] };
+
+    if (preReadResult.attachedPaths.length > 0) {
+      this.logger.info("Auto-attached questionnaire pre-read documents", {
+        sessionId,
+        attachedPaths: preReadResult.attachedPaths,
+      });
+    }
+
     const providerContentResult = await autoAttachWorkspaceFiles(
       session.workspacePath,
       content
@@ -196,9 +210,12 @@ export class SessionRequestHandler {
     }
 
     try {
+      const providerContent = preReadResult.contentPrefix
+        ? `${preReadResult.contentPrefix}\n${providerContentResult.content}`
+        : providerContentResult.content;
       await adapter.sendMessage(
         binding.providerSessionId,
-        providerContentResult.content,
+        providerContent,
         turnOptions
       );
     } catch (error) {
