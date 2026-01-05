@@ -13,11 +13,15 @@ import type {
 import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type { CodexTurnOptions, ModuleReporter } from "../types";
+import type { CodexStartupLockRelease } from "./codex-startup-lock";
+import { codexStartupLock } from "./codex-startup-lock";
 import { StructuredOutputStreamController } from "./structured-output-stream-controller";
 
 const PROVIDER = "codex";
 const THREAD_ID_SHORT_LENGTH = 8;
 const THINKING_PLACEHOLDER = "<!-- -->";
+const STARTUP_LOCK_ACQUIRE_TIMEOUT_MS = 30_000;
+const STARTUP_LOCK_THREAD_STARTED_TIMEOUT_MS = 30_000;
 
 type EnqueuedMessage = {
   readonly type: "user_input";
@@ -39,6 +43,12 @@ type MessageProcessorOptions = {
 type ReasoningDelta = {
   readonly delta: string;
   readonly merged: string;
+};
+
+type StartupLockContext = {
+  readonly release: CodexStartupLockRelease;
+  readonly threadStartedTimeoutMs: number;
+  readonly ownerSessionId: string;
 };
 
 export class CodexMessageProcessor {
@@ -123,6 +133,7 @@ export class CodexMessageProcessor {
   private async processTurn(context: ProcessTurnContext): Promise<void> {
     const { session, thread, message } = context;
     session.internalTurn = message.internal ?? false;
+    let startupLock: StartupLockContext | null = null;
     try {
       const turnOptions = message.turnOptions ?? {};
       const runOptions = session.internalTurn
@@ -136,8 +147,9 @@ export class CodexMessageProcessor {
         );
         prompt = this.structuredOutput.applyPrompt(message.content, config);
       }
+      startupLock = await this.acquireStartupLockIfNeeded(session);
       const { events } = await thread.runStreamed(prompt, runOptions);
-      await this.consumeEvents(session, events);
+      await this.consumeEvents(session, events, startupLock);
     } catch (error) {
       this.options?.reporter?.error?.("Codex turn execution failed", error);
       session.eventEmitter.emit("error", {
@@ -145,21 +157,129 @@ export class CodexMessageProcessor {
         error,
       });
     } finally {
+      startupLock?.release();
       session.internalTurn = false;
     }
   }
 
   private async consumeEvents(
     session: ActiveSession,
-    events: AsyncGenerator<ThreadEvent>
+    events: AsyncGenerator<ThreadEvent>,
+    startupLock?: StartupLockContext | null
   ): Promise<void> {
     try {
+      if (startupLock) {
+        await this.consumeEventsWithStartupLock(session, events, startupLock);
+        return;
+      }
+
       for await (const event of events) {
         this.dispatchEvent(session, event);
       }
     } catch (error) {
       this.options?.reporter?.error?.("Codex event stream failed", error);
       session.eventEmitter.emit("error", { type: "event_stream", error });
+    }
+  }
+
+  private async acquireStartupLockIfNeeded(
+    session: ActiveSession
+  ): Promise<StartupLockContext | null> {
+    if (session.codexThreadId) {
+      return null;
+    }
+
+    const ownerSessionId = session.sessionId;
+    const release = await codexStartupLock.acquire(
+      { sessionId: ownerSessionId },
+      { timeoutMs: STARTUP_LOCK_ACQUIRE_TIMEOUT_MS }
+    );
+    session.logger?.logSDKEvent("startup_lock_acquired", {
+      sessionId: ownerSessionId,
+      timeoutMs: STARTUP_LOCK_THREAD_STARTED_TIMEOUT_MS,
+    });
+
+    return {
+      release,
+      threadStartedTimeoutMs: STARTUP_LOCK_THREAD_STARTED_TIMEOUT_MS,
+      ownerSessionId,
+    };
+  }
+
+  private async consumeEventsWithStartupLock(
+    session: ActiveSession,
+    events: AsyncGenerator<ThreadEvent>,
+    startupLock: StartupLockContext
+  ): Promise<void> {
+    let released = false;
+    const safeRelease = (): void => {
+      if (released) {
+        return;
+      }
+      released = true;
+      startupLock.release();
+      session.logger?.logSDKEvent("startup_lock_released", {
+        sessionId: startupLock.ownerSessionId,
+      });
+    };
+
+    const timeoutMs = startupLock.threadStartedTimeoutMs;
+    let timer: NodeJS.Timeout | null = null;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => {
+        reject(
+          new Error(
+            `Codex startup lock timeout: thread.started not received within ${timeoutMs}ms (sessionId=${startupLock.ownerSessionId})`
+          )
+        );
+      }, timeoutMs);
+    });
+
+    try {
+      while (true) {
+        const nextPromise = events.next();
+        const result = await Promise.race([nextPromise, timeoutPromise]).catch(
+          async (error) => {
+            nextPromise.catch(() => {
+              // Ignore late generator failures after timeout.
+            });
+            safeRelease();
+            if (timer) {
+              clearTimeout(timer);
+            }
+            try {
+              await events.return(undefined);
+            } catch {
+              // ignore cancellation errors
+            }
+            throw error;
+          }
+        );
+
+        if (result.done) {
+          break;
+        }
+
+        const event = result.value;
+        this.dispatchEvent(session, event);
+
+        if (event.type === "thread.started") {
+          safeRelease();
+          if (timer) {
+            clearTimeout(timer);
+          }
+          break;
+        }
+      }
+
+      for await (const event of events) {
+        this.dispatchEvent(session, event);
+      }
+    } finally {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      safeRelease();
     }
   }
 
