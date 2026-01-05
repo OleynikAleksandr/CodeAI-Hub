@@ -1,3 +1,12 @@
+## [1.1.382] - 2026-01-05
+
+### Fixed
+- **Codex thread routing**: sessions can no longer be rebound to an unexpected `thread_id` (lock-on-first-turn + ignore rebinding events).
+- **Codex startup race**: first turn is serialized until the initial `thread.started` binds the session `thread_id`.
+
+### Changed
+- **Codex state isolation**: CodeAI Hub now defaults `CODEX_HOME` to `~/.codeai-hub/providers/codex/home` and migrates `auth.json` (+ `config.toml`) from `~/.codex` when missing.
+
 ## [1.1.381] - 2026-01-04
 
 ### Added
