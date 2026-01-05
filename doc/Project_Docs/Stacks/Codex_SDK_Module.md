@@ -52,7 +52,7 @@ CodeAI-Hub Core  →  Codex Provider Adapter  →  @openai/codex-sdk  →  codex
 - The `Codex` class encapsulates a `CodexExec` instance that spawns the CLI per turn.
 - `Thread` objects maintain conversation identity (`thread_id`), multiplexing consecutive turns over the same CLI command by passing `resume` arguments.
 - Event streaming is line-oriented: each stdout line is JSON encoded `ThreadEvent`. The SDK already parses lines and raises typed unions.
-- The CLI writes artifacts (sessions, config, auth) to `$CODEX_HOME` (defaults to `~/.codex`). Our provider must respect and, if needed, override this directory via environment variables.
+- The CLI writes artifacts (sessions, config, auth) to `$CODEX_HOME`. CodeAI Hub defaults this to `~/.codeai-hub/providers/codex/home` (importing `~/.codex/auth.json` on first run) to isolate state from interactive CLI sessions; it can still be overridden via `CODEX_HOME`.
 
 ---
 
@@ -203,7 +203,7 @@ Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source 
 - Expose `ensureInstalled()` to download on demand and `loadSDK()` to import `@openai/codex-sdk/dist/index.js` from the managed location with `createRequire`.
 
 **Auth manager (`sdk-auth-manager.ts`):**
-- Locate `$CODEX_HOME/auth.json` (default `~/.codex/auth.json`, allow override via env).
+- Locate `$CODEX_HOME/auth.json` (CodeAI Hub default: `~/.codeai-hub/providers/codex/home/auth.json`; migrates from `~/.codex/auth.json` if present; allow override via env).
 - Surface missing-auth diagnostics through `ModuleReporter.warn` and RemoteBridge notifications (`provider:codex:authRequired`).
 - Provide `ensureAuth()` returning env overrides (`CODEX_API_KEY`, `CODEX_HOME`, `CODEX_CONFIG_DIR`) for the provider.
 
