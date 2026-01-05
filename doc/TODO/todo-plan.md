@@ -127,10 +127,10 @@
 7. [DONE] Экстрактор `pre_read_documents` (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-extractor.ts`, `doc/TODO/todo-plan.md`; expected: парсер field-блока; commit: `feat(core): extract pre-read document paths from questionnaire`) (date: 2026-01-05)
 8. [DONE] Git Commit: `feat(core): extract pre-read document paths from questionnaire` (hash: 43ad1bf) (date: 2026-01-05)
 
-9. [TODO] Бюджет размера вложений (scope: `packages/core/src/remote-bridge/handlers/workspace-auto-attach-reader.ts`, `doc/TODO/todo-plan.md`; expected: лимит общего размера вложений; commit: `feat(core): add total budget for workspace attachments`)
-10. [TODO] Git Commit: `feat(core): add total budget for workspace attachments` (hash: TBD)
+9. [DONE] Бюджет размера вложений (scope: `packages/core/src/remote-bridge/handlers/workspace-auto-attach-reader.ts`, `doc/TODO/todo-plan.md`; expected: лимит общего размера вложений; commit: `feat(core): add total budget for workspace attachments`) (date: 2026-01-05)
+10. [DONE] Git Commit: `feat(core): add total budget for workspace attachments` (hash: bb1bbcb) (date: 2026-01-05)
 
-11. [TODO] Attacher для pre-read документов (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-attacher.ts`; expected: чтение анкеты и attach файлов; commit: `feat(core): attach pre-read questionnaire documents`)
+11. [TODO] Attacher для pre-read документов (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-attacher.ts`, `doc/TODO/todo-plan.md`; expected: чтение анкеты и attach файлов; commit: `feat(core): attach pre-read questionnaire documents`)
 12. [TODO] Git Commit: `feat(core): attach pre-read questionnaire documents` (hash: TBD)
 
 13. [TODO] Встройка pre-read attach в pipeline сессии (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-auto-attach.ts`; expected: pre-read prefix + обновлённые лимиты auto-attach; commit: `feat(core): prepend pre-read attachments before auto-attach`)
