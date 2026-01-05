@@ -159,10 +159,10 @@
 ### Stream: Auto-attach placeholder guard
 
 1. [DONE] Исправить auto-attach: игнорировать шаблонные пути с `<...>` (scope: `packages/core/src/remote-bridge/handlers/workspace-auto-attach-extractor.ts`, `doc/TODO/todo-plan.md`; expected: анкета прикрепляется при prompt+submit; commit: `fix(core): ignore placeholder paths in auto-attach`) (date: 2026-01-05)
-2. [DONE] Git Commit: `fix(core): ignore placeholder paths in auto-attach` (hash: TBD)
+2. [DONE] Git Commit: `fix(core): ignore placeholder paths in auto-attach` (hash: f7a1def)
 
-3. [IN_PROGRESS] Обновить архитектурный документ pre-read attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описан guard для шаблонных путей; commit: `docs(orchestrator): clarify auto-attach placeholder guard`) (date: 2026-01-05)
-4. [TODO] Git Commit: `docs(orchestrator): clarify auto-attach placeholder guard` (hash: TBD)
+3. [DONE] Обновить архитектурный документ pre-read attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описан guard для шаблонных путей; commit: `docs(orchestrator): clarify auto-attach placeholder guard`) (date: 2026-01-05)
+4. [DONE] Git Commit: `docs(orchestrator): clarify auto-attach placeholder guard` (hash: TBD)
 
 ### Stream: Release 1.1.386
 
