@@ -103,8 +103,8 @@ export class IdeaCollectorService {
       this.getPrompt(),
       this.getNormalizedSchema(),
     ]);
-    sendChatMessage(sessionId, prompt, { outputSchema: schema });
-    sendChatMessage(sessionId, content, { outputSchema: schema });
+    const combinedContent = `${prompt}\n\n${content}`;
+    sendChatMessage(sessionId, combinedContent, { outputSchema: schema });
   }
 
   handleStreamEvent(sessionId: string, event: unknown): void {

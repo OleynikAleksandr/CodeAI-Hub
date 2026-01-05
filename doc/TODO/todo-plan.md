@@ -111,12 +111,12 @@
 
 ### Stream: Архитектура и план
 
-1. [IN_PROGRESS] Архитектурный документ pre-read auto-attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описаны pipeline, компоненты, лимиты; commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture`) (date: 2026-01-05)
-2. [TODO] Git Commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture` (hash: TBD)
+1. [DONE] Архитектурный документ pre-read auto-attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описаны pipeline, компоненты, лимиты; commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture`) (date: 2026-01-05)
+2. [DONE] Git Commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture` (hash: 9c79206) (date: 2026-01-05)
 
 ### Stream: UI single-turn submit
 
-3. [TODO] Объединить prompt + submit в один turn (scope: `src/client/ui/src/services/idea-collector-service.ts`; expected: один `sendChatMessage` для анкеты; commit: `fix(ui): send questionnaire submit as single turn`)
+3. [TODO] Объединить prompt + submit в один turn (scope: `src/client/ui/src/services/idea-collector-service.ts`, `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: один `sendChatMessage` для анкеты; commit: `fix(ui): send questionnaire submit as single turn`)
 4. [TODO] Git Commit: `fix(ui): send questionnaire submit as single turn` (hash: TBD)
 
 ### Stream: Pre-read auto-attach (Core)

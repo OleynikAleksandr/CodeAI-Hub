@@ -10133,8 +10133,10 @@ ${command.remainingMessage}`);
         this.getPrompt(),
         this.getNormalizedSchema()
       ]);
-      sendChatMessage(sessionId, prompt, { outputSchema: schema });
-      sendChatMessage(sessionId, content3, { outputSchema: schema });
+      const combinedContent = `${prompt}
+
+${content3}`;
+      sendChatMessage(sessionId, combinedContent, { outputSchema: schema });
     }
     handleStreamEvent(sessionId, event) {
       if (!_IdeaCollectorService.activeSessions.has(sessionId)) {
