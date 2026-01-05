@@ -121,10 +121,10 @@
 
 ### Stream: Pre-read auto-attach (Core)
 
-5. [TODO] Детектор пути анкеты (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-path-detector.ts`, `doc/TODO/todo-plan.md`; expected: извлечение `questionnaire.md` из сообщения; commit: `feat(core): detect questionnaire path for pre-read attach`)
-6. [TODO] Git Commit: `feat(core): detect questionnaire path for pre-read attach` (hash: TBD)
+5. [DONE] Детектор пути анкеты (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-path-detector.ts`, `doc/TODO/todo-plan.md`; expected: извлечение `questionnaire.md` из сообщения; commit: `feat(core): detect questionnaire path for pre-read attach`) (date: 2026-01-05)
+6. [DONE] Git Commit: `feat(core): detect questionnaire path for pre-read attach` (hash: eb4ae40) (date: 2026-01-05)
 
-7. [TODO] Экстрактор `pre_read_documents` (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-extractor.ts`; expected: парсер field-блока; commit: `feat(core): extract pre-read document paths from questionnaire`)
+7. [TODO] Экстрактор `pre_read_documents` (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-extractor.ts`, `doc/TODO/todo-plan.md`; expected: парсер field-блока; commit: `feat(core): extract pre-read document paths from questionnaire`)
 8. [TODO] Git Commit: `feat(core): extract pre-read document paths from questionnaire` (hash: TBD)
 
 9. [TODO] Бюджет размера вложений (scope: `packages/core/src/remote-bridge/handlers/workspace-auto-attach-reader.ts`; expected: лимит общего размера вложений; commit: `feat(core): add total budget for workspace attachments`)
