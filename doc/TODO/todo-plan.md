@@ -162,12 +162,12 @@
 2. [DONE] Git Commit: `fix(core): ignore placeholder paths in auto-attach` (hash: f7a1def)
 
 3. [DONE] Обновить архитектурный документ pre-read attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описан guard для шаблонных путей; commit: `docs(orchestrator): clarify auto-attach placeholder guard`) (date: 2026-01-05)
-4. [DONE] Git Commit: `docs(orchestrator): clarify auto-attach placeholder guard` (hash: TBD)
+4. [DONE] Git Commit: `docs(orchestrator): clarify auto-attach placeholder guard` (hash: 36a9c89)
 
 ### Stream: Release 1.1.386
 
-5. [TODO] Обновить Architecture + SystemArchitecture под hotfix (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: версия 1.1.386 + запись изменений; commit: `docs(orchestrator): refresh system docs 1.1.386`) (date: 2026-01-05)
-6. [TODO] Git Commit: `docs(orchestrator): refresh system docs 1.1.386` (hash: TBD)
+5. [DONE] Обновить Architecture + SystemArchitecture под hotfix (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: версия 1.1.386 + запись изменений; commit: `docs(orchestrator): refresh system docs 1.1.386`) (date: 2026-01-05)
+6. [DONE] Git Commit: `docs(orchestrator): refresh system docs 1.1.386` (hash: TBD)
 
 7. [TODO] Обновить README + CHANGELOG под релиз 1.1.386 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.386 notes`) (date: 2026-01-05)
 8. [TODO] Git Commit: `docs(release): update 1.1.386 notes` (hash: TBD)
