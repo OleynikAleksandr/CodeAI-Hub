@@ -92,6 +92,19 @@
 9. [DONE] Подготовить релиз 1.1.381 (scope: версии/манифесты/locks; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`) (commit: `chore(release): prepare 1.1.381`) (date: 2026-01-04)
 10. [DONE] Git Commit: `chore(release): prepare 1.1.381` (hash: c9ed8f1) (date: 2026-01-04)
 
+## Phase 3 — Codex thread_id Startup Lock (owner: Oleksandr, updated: 2026-01-04)
+
+### Stream: Startup lock на первый turn (Codex)
+
+1. [TODO] Архитектурный документ: Startup lock для получения «своего» thread_id (scope: `doc/Project_Docs/Codex_ThreadId_StartupLock_Architecture.md`; expected: описана стратегия global mutex на первый `thread.runStreamed` до получения `thread_id`, инварианты и сценарии retry) (commit: `docs(codex): add startup lock thread binding architecture`) (date: TBD)
+2. [TODO] Git Commit: `docs(codex): add startup lock thread binding architecture` (hash: TBD) (date: TBD)
+
+3. [TODO] Реализовать global startup lock для Codex до первого `thread.started` (scope: `packages/Codex_Module/src/messaging/codex-startup-lock.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`; expected: первый turn сериализован между сессиями Codex, thread_id фиксируется при первом `thread.started`, далее без lock) (commit: `fix(codex): serialize first turn until thread id bound`) (date: TBD)
+4. [TODO] Git Commit: `fix(codex): serialize first turn until thread id bound` (hash: TBD) (date: TBD)
+
+5. [TODO] Верификация: гейты + таргетная сборка Codex module (scope: `doc/TODO/todo-plan.md`; expected: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/codex-module`) (commit: `docs: verify codex startup lock`) (date: TBD)
+6. [TODO] Git Commit: `docs: verify codex startup lock` (hash: TBD) (date: TBD)
+
 ---
 
 ## Notes
