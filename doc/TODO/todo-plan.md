@@ -133,21 +133,24 @@
 11. [DONE] Attacher для pre-read документов (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-attacher.ts`, `doc/TODO/todo-plan.md`; expected: чтение анкеты и attach файлов; commit: `feat(core): attach pre-read questionnaire documents`) (date: 2026-01-05)
 12. [DONE] Git Commit: `feat(core): attach pre-read questionnaire documents` (hash: 164178a) (date: 2026-01-05)
 
-13. [TODO] Встройка pre-read attach в pipeline сессии (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-auto-attach.ts`, `doc/TODO/todo-plan.md`; expected: pre-read prefix + обновлённые лимиты auto-attach; commit: `feat(core): prepend pre-read attachments before auto-attach`)
-14. [TODO] Git Commit: `feat(core): prepend pre-read attachments before auto-attach` (hash: TBD)
+13. [DONE] Встройка pre-read attach в pipeline сессии (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-auto-attach.ts`, `doc/TODO/todo-plan.md`; expected: pre-read prefix + обновлённые лимиты auto-attach; commit: `feat(core): prepend pre-read attachments before auto-attach`) (date: 2026-01-05)
+14. [DONE] Git Commit: `feat(core): prepend pre-read attachments before auto-attach` (hash: 6cf770b) (date: 2026-01-05)
 
 ### Stream: Лимиты /read и auto-attach
 
-15. [TODO] Повысить лимиты чтения /read (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `src/client/ui/src/services/idea-collector-workspace-context.ts`; expected: новый DEFAULT_MAX_BYTES; commit: `feat(core): raise workspace read limits for idea collector`)
+15. [TODO] Повысить лимиты чтения /read (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `src/client/ui/src/services/idea-collector-workspace-context.ts`, `doc/TODO/todo-plan.md`; expected: новый DEFAULT_MAX_BYTES; commit: `feat(core): raise workspace read limits for idea collector`)
 16. [TODO] Git Commit: `feat(core): raise workspace read limits for idea collector` (hash: TBD)
+
+17. [TODO] Обновить webview bundle для /read лимитов (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: bundle отражает новый лимит; commit: `chore(webview): refresh bundle for read limits`)
+18. [TODO] Git Commit: `chore(webview): refresh bundle for read limits` (hash: TBD)
 
 ### Stream: Документация релиза
 
-17. [TODO] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: описаны single-turn submit, pre-read auto-attach, лимиты; commit: `docs(orchestrator): document questionnaire pre-read auto-attach`)
-18. [TODO] Git Commit: `docs(orchestrator): document questionnaire pre-read auto-attach` (hash: TBD)
+19. [TODO] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: описаны single-turn submit, pre-read auto-attach, лимиты; commit: `docs(orchestrator): document questionnaire pre-read auto-attach`)
+20. [TODO] Git Commit: `docs(orchestrator): document questionnaire pre-read auto-attach` (hash: TBD)
 
-19. [TODO] Обновить README + CHANGELOG под релиз 1.1.385 (scope: `README.md`, `CHANGELOG.md`; expected: release notes; commit: `docs(release): update 1.1.385 notes`)
-20. [TODO] Git Commit: `docs(release): update 1.1.385 notes` (hash: TBD)
+21. [TODO] Обновить README + CHANGELOG под релиз 1.1.385 (scope: `README.md`, `CHANGELOG.md`; expected: release notes; commit: `docs(release): update 1.1.385 notes`)
+22. [TODO] Git Commit: `docs(release): update 1.1.385 notes` (hash: TBD)
 
 ## Notes
 

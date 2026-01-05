@@ -6,7 +6,7 @@ import {
 
 const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 
-const DEFAULT_MAX_BYTES = 60_000;
+const DEFAULT_MAX_BYTES = 300_000;
 const MAX_FILES = 3;
 
 type WorkspaceReadCommand = {
