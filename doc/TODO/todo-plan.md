@@ -116,12 +116,12 @@
 
 ### Stream: UI single-turn submit
 
-3. [TODO] Объединить prompt + submit в один turn (scope: `src/client/ui/src/services/idea-collector-service.ts`, `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: один `sendChatMessage` для анкеты; commit: `fix(ui): send questionnaire submit as single turn`)
-4. [TODO] Git Commit: `fix(ui): send questionnaire submit as single turn` (hash: TBD)
+3. [DONE] Объединить prompt + submit в один turn (scope: `src/client/ui/src/services/idea-collector-service.ts`, `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: один `sendChatMessage` для анкеты; commit: `fix(ui): send questionnaire submit as single turn`) (date: 2026-01-05)
+4. [DONE] Git Commit: `fix(ui): send questionnaire submit as single turn` (hash: 2926971) (date: 2026-01-05)
 
 ### Stream: Pre-read auto-attach (Core)
 
-5. [TODO] Детектор пути анкеты (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-path-detector.ts`; expected: извлечение `questionnaire.md` из сообщения; commit: `feat(core): detect questionnaire path for pre-read attach`)
+5. [TODO] Детектор пути анкеты (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-path-detector.ts`, `doc/TODO/todo-plan.md`; expected: извлечение `questionnaire.md` из сообщения; commit: `feat(core): detect questionnaire path for pre-read attach`)
 6. [TODO] Git Commit: `feat(core): detect questionnaire path for pre-read attach` (hash: TBD)
 
 7. [TODO] Экстрактор `pre_read_documents` (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-extractor.ts`; expected: парсер field-блока; commit: `feat(core): extract pre-read document paths from questionnaire`)
