@@ -167,10 +167,10 @@
 ### Stream: Release 1.1.386
 
 5. [DONE] Обновить Architecture + SystemArchitecture под hotfix (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: версия 1.1.386 + запись изменений; commit: `docs(orchestrator): refresh system docs 1.1.386`) (date: 2026-01-05)
-6. [DONE] Git Commit: `docs(orchestrator): refresh system docs 1.1.386` (hash: TBD)
+6. [DONE] Git Commit: `docs(orchestrator): refresh system docs 1.1.386` (hash: f647261)
 
-7. [TODO] Обновить README + CHANGELOG под релиз 1.1.386 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.386 notes`) (date: 2026-01-05)
-8. [TODO] Git Commit: `docs(release): update 1.1.386 notes` (hash: TBD)
+7. [DONE] Обновить README + CHANGELOG под релиз 1.1.386 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.386 notes`) (date: 2026-01-05)
+8. [DONE] Git Commit: `docs(release): update 1.1.386 notes` (hash: TBD)
 
 9. [TODO] Подготовить релиз 1.1.386 (scope: версии/манифесты/locks; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.386`) (date: 2026-01-05)
 10. [TODO] Git Commit: `chore(release): prepare 1.1.386` (hash: TBD)
