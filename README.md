@@ -2,19 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.381
+## Current Release — v1.1.382
 - **Idea Collector prompt template**: bundled + installed on startup for the questionnaire flow.
 - **Architecture-aware Idea stage**: prompt enforces cluster-modular constraints (facades, new modules over edits, micro-class decomposition) during questionnaire review.
 - **Questionnaire persistence + attach**: responses are saved to `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/questionnaire.md` and sent via workspace auto-attach instead of chat.
 - **Workspace file write API**: Core adds `POST /api/v1/orchestrator/workspace-file-write` for saving questionnaire updates.
-- **Release 1.1.381**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+- **Codex session safety**: startup lock serializes the first turn until `thread_id` is bound; further `thread_id` rebinding is ignored.
+- **Release 1.1.382**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.381.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.381.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.381.tar.bz2`
-  - Providers: `claude-module-1.1.381.tar.bz2`, `codex-module-1.1.381.tar.bz2`, `gemini-module-1.1.381.tar.bz2`
-  - UI: `vscode-webview-1.1.381.tar.bz2`, `web-client-1.1.381.tar.bz2`, `project-manager-1.1.381.tar.bz2`
+  - VSIX: `codeai-hub-1.1.382.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.382.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.382.tar.bz2`
+  - Providers: `claude-module-1.1.382.tar.bz2`, `codex-module-1.1.382.tar.bz2`, `gemini-module-1.1.382.tar.bz2`
+  - UI: `vscode-webview-1.1.382.tar.bz2`, `web-client-1.1.382.tar.bz2`, `project-manager-1.1.382.tar.bz2`
 
 
 ## Features

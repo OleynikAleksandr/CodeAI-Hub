@@ -103,7 +103,7 @@
 4. [DONE] Git Commit: `fix(codex): serialize first turn until thread id bound` (hash: f79feed) (date: 2026-01-05)
 
 5. [DONE] Верификация: гейты + таргетная сборка Codex module (scope: `doc/TODO/todo-plan.md`; expected: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/codex-module`) (commit: `docs: verify codex startup lock`) (date: 2026-01-05)
-6. [DONE] Git Commit: `docs: verify codex startup lock` (hash: TBD) (date: 2026-01-05)
+6. [DONE] Git Commit: `docs: verify codex startup lock` (hash: 2970faa) (date: 2026-01-05)
 
 ---
 
