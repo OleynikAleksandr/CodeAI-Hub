@@ -1,3 +1,8 @@
+## [1.1.386] - 2026-01-05
+
+### Fixed
+- **Questionnaire auto-attach**: ignore placeholder `<...>` paths in the prompt so `questionnaire.md` is attached during single-turn submit.
+
 ## [1.1.385] - 2026-01-05
 
 ### Fixed
