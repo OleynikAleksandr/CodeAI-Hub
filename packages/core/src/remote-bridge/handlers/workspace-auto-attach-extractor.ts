@@ -80,6 +80,9 @@ const normalizeCandidatePath = (raw: string): string | null => {
   if (trimmed.length === 0) {
     return null;
   }
+  if (trimmed.includes("<") || trimmed.includes(">")) {
+    return null;
+  }
   if (trimmed.includes("\0")) {
     return null;
   }

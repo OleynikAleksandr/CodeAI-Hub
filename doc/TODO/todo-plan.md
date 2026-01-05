@@ -152,6 +152,29 @@
 21. [DONE] Обновить README + CHANGELOG под релиз 1.1.385 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.385 notes`) (date: 2026-01-05)
 22. [DONE] Git Commit: `docs(release): update 1.1.385 notes` (hash: 9a09380) (date: 2026-01-05)
 
+---
+
+## Phase 5 — Fix questionnaire auto-attach path extraction (owner: Oleksandr, updated: 2026-01-05)
+
+### Stream: Auto-attach placeholder guard
+
+1. [DONE] Исправить auto-attach: игнорировать шаблонные пути с `<...>` (scope: `packages/core/src/remote-bridge/handlers/workspace-auto-attach-extractor.ts`, `doc/TODO/todo-plan.md`; expected: анкета прикрепляется при prompt+submit; commit: `fix(core): ignore placeholder paths in auto-attach`) (date: 2026-01-05)
+2. [DONE] Git Commit: `fix(core): ignore placeholder paths in auto-attach` (hash: TBD)
+
+3. [IN_PROGRESS] Обновить архитектурный документ pre-read attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описан guard для шаблонных путей; commit: `docs(orchestrator): clarify auto-attach placeholder guard`) (date: 2026-01-05)
+4. [TODO] Git Commit: `docs(orchestrator): clarify auto-attach placeholder guard` (hash: TBD)
+
+### Stream: Release 1.1.386
+
+5. [TODO] Обновить Architecture + SystemArchitecture под hotfix (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: версия 1.1.386 + запись изменений; commit: `docs(orchestrator): refresh system docs 1.1.386`) (date: 2026-01-05)
+6. [TODO] Git Commit: `docs(orchestrator): refresh system docs 1.1.386` (hash: TBD)
+
+7. [TODO] Обновить README + CHANGELOG под релиз 1.1.386 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.386 notes`) (date: 2026-01-05)
+8. [TODO] Git Commit: `docs(release): update 1.1.386 notes` (hash: TBD)
+
+9. [TODO] Подготовить релиз 1.1.386 (scope: версии/манифесты/locks; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.386`) (date: 2026-01-05)
+10. [TODO] Git Commit: `chore(release): prepare 1.1.386` (hash: TBD)
+
 ## Notes
 
 - Каноничные пути артефактов инициативы (как сейчас):
