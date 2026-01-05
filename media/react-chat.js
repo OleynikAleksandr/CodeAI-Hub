@@ -9909,7 +9909,7 @@ ${template}`;
 
   // src/client/ui/src/services/idea-collector-workspace-context.ts
   var WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
-  var DEFAULT_MAX_BYTES = 6e4;
+  var DEFAULT_MAX_BYTES = 3e5;
   var MAX_FILES = 3;
   var normalizePathToken = (token) => {
     const trimmed = token.trim();

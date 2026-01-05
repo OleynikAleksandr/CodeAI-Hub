@@ -138,8 +138,8 @@
 
 ### Stream: Лимиты /read и auto-attach
 
-15. [TODO] Повысить лимиты чтения /read (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `src/client/ui/src/services/idea-collector-workspace-context.ts`, `doc/TODO/todo-plan.md`; expected: новый DEFAULT_MAX_BYTES; commit: `feat(core): raise workspace read limits for idea collector`)
-16. [TODO] Git Commit: `feat(core): raise workspace read limits for idea collector` (hash: TBD)
+15. [DONE] Повысить лимиты чтения /read (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `src/client/ui/src/services/idea-collector-workspace-context.ts`, `doc/TODO/todo-plan.md`; expected: новый DEFAULT_MAX_BYTES; commit: `feat(core): raise workspace read limits for idea collector`) (date: 2026-01-05)
+16. [DONE] Git Commit: `feat(core): raise workspace read limits for idea collector` (hash: d185c66) (date: 2026-01-05)
 
 17. [TODO] Обновить webview bundle для /read лимитов (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: bundle отражает новый лимит; commit: `chore(webview): refresh bundle for read limits`)
 18. [TODO] Git Commit: `chore(webview): refresh bundle for read limits` (hash: TBD)
