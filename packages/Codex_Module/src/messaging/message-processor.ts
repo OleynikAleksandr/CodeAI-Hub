@@ -204,10 +204,23 @@ export class CodexMessageProcessor {
   }
 
   private handleThreadStarted(session: ActiveSession, threadId: string): void {
+    const existingThreadId = session.codexThreadId;
+    if (existingThreadId && existingThreadId !== threadId) {
+      this.options?.reporter?.warn?.(
+        `Ignoring unexpected Codex thread_id change (${existingThreadId} -> ${threadId})`
+      );
+      session.logger?.logSDKEvent("thread_id_ignored", {
+        expected: existingThreadId,
+        received: threadId,
+      });
+      return;
+    }
+
     const previousId = session.sessionId;
     session.codexThreadId = threadId;
     session.logger?.logSDKEvent("thread_id", threadId);
-    if (previousId !== threadId) {
+
+    if (!existingThreadId && previousId !== threadId) {
       this.sessionManager.updateSessionId(previousId, threadId);
       session.logger?.renameSession?.(previousId, threadId);
       this.clearReasoningSession(previousId);
