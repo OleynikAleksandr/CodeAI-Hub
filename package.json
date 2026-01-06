@@ -6,7 +6,8 @@
   "publisher": "CodeAIHub",
   "license": "ISC",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "packages/agents/*"
   ],
   "engines": {
     "vscode": "^1.85.0"
