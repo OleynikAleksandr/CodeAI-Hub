@@ -26,29 +26,29 @@
 ### Stream: Архитектурный документ и согласование
 
 1. [DONE] Создать архитектурный документ Agent Packages (scope: `doc/Project_Docs/AgentPackages_Architecture.md`; expected: описана проблема, целевая архитектура, миграционный план; commit: `docs(agents): add agent packages architecture`) (date: 2026-01-06)
-2. [TODO] Git Commit: `docs(agents): add agent packages architecture` (hash: TBD)
+2. [DONE] Git Commit: `docs(agents): add agent packages architecture` (hash: 045ab7c) (date: 2026-01-06)
 
 ### Stream: Shared Agent Package
 
-3. [TODO] Создать пакет `@codeai-hub/agent-shared` (scope: `packages/agents/shared/package.json`, `packages/agents/shared/tsconfig.json`, `packages/agents/shared/src/index.ts`; expected: базовая структура пакета; commit: `feat(agents): bootstrap agent-shared package`)
-4. [TODO] Git Commit: `feat(agents): bootstrap agent-shared package` (hash: TBD)
+3. [DONE] Создать пакет `@codeai-hub/agent-shared` (scope: `packages/agents/shared/package.json`, `packages/agents/shared/tsconfig.json`, `packages/agents/shared/src/index.ts`; expected: базовая структура пакета; commit: `feat(agents): bootstrap agent-shared package`) (date: 2026-01-06)
+4. [DONE] Git Commit: `feat(agents): bootstrap agent-shared package` (hash: 1e7dd36) (date: 2026-01-06)
 
-5. [TODO] Добавить общие типы контракта агента (scope: `packages/agents/shared/src/types/agent-contract.ts`, `packages/agents/shared/src/types/structured-output.ts`, `packages/agents/shared/src/types/index.ts`; expected: `AgentContractPayload`, `AgentStructuredOutput` типы; commit: `feat(agents): add shared agent types`)
-6. [TODO] Git Commit: `feat(agents): add shared agent types` (hash: TBD)
+5. [DONE] Добавить общие типы контракта агента (scope: `packages/agents/shared/src/types/agent-contract.ts`, `packages/agents/shared/src/types/structured-output.ts`, `packages/agents/shared/src/types/index.ts`; expected: `AgentContractPayload`, `AgentStructuredOutput` типы; commit: `feat(agents): add shared agent types`) (date: 2026-01-06)
+6. [DONE] Git Commit: `feat(agents): add shared agent types` (hash: 9a9fbb0) (date: 2026-01-06)
 
-7. [TODO] Добавить утилиты для схем (scope: `packages/agents/shared/src/schema-utils/schema-normalizer.ts`, `packages/agents/shared/src/schema-utils/schema-strictifier.ts`, `packages/agents/shared/src/schema-utils/index.ts`; expected: вынесена логика из `idea-contract-service.ts`; commit: `feat(agents): add shared schema utilities`)
-8. [TODO] Git Commit: `feat(agents): add shared schema utilities` (hash: TBD)
+7. [DONE] Добавить утилиты для схем (scope: `packages/agents/shared/src/schema-utils/schema-normalizer.ts`, `packages/agents/shared/src/schema-utils/schema-strictifier.ts`, `packages/agents/shared/src/schema-utils/index.ts`; expected: вынесена логика из `idea-contract-service.ts`; commit: `feat(agents): add shared schema utilities`) (date: 2026-01-06)
+8. [DONE] Git Commit: `feat(agents): add shared schema utilities` (hash: d56de9a) (date: 2026-01-06)
 
-9. [TODO] Добавить утилиты для контрактов (scope: `packages/agents/shared/src/contract-utils/file-reader.ts`, `packages/agents/shared/src/contract-utils/version-hasher.ts`, `packages/agents/shared/src/contract-utils/index.ts`; expected: чтение файлов, хеширование версии; commit: `feat(agents): add shared contract utilities`)
-10. [TODO] Git Commit: `feat(agents): add shared contract utilities` (hash: TBD)
+9. [DONE] Добавить утилиты для контрактов (scope: `packages/agents/shared/src/contract-utils/file-reader.ts`, `packages/agents/shared/src/contract-utils/version-hasher.ts`, `packages/agents/shared/src/contract-utils/index.ts`; expected: чтение файлов, хеширование версии; commit: `feat(agents): add shared contract utilities`) (date: 2026-01-06)
+10. [DONE] Git Commit: `feat(agents): add shared contract utilities` (hash: accd571) (date: 2026-01-06)
 
 ### Stream: Idea Collector Package — Bootstrap
 
-11. [TODO] Создать пакет `@codeai-hub/idea-collector` (scope: `packages/agents/idea-collector/package.json`, `packages/agents/idea-collector/tsconfig.json`, `packages/agents/idea-collector/src/index.ts`; expected: зависимость от `@codeai-hub/agent-shared`; commit: `feat(agents): bootstrap idea-collector package`)
-12. [TODO] Git Commit: `feat(agents): bootstrap idea-collector package` (hash: TBD)
+11. [DONE] Создать пакет `@codeai-hub/idea-collector` (scope: `packages/agents/idea-collector/package.json`, `packages/agents/idea-collector/tsconfig.json`, `packages/agents/idea-collector/src/index.ts`; expected: зависимость от `@codeai-hub/agent-shared`; commit: `feat(agents): bootstrap idea-collector package`) (date: 2026-01-06)
+12. [DONE] Git Commit: `feat(agents): bootstrap idea-collector package` (hash: 94edcfb) (date: 2026-01-06)
 
-13. [TODO] Перенести assets в пакет (scope: `packages/agents/idea-collector/assets/*`; expected: schema.json, prompt.md, template.md, questionnaire-template.md; commit: `feat(agents): move idea collector assets to package`)
-14. [TODO] Git Commit: `feat(agents): move idea collector assets to package` (hash: TBD)
+13. [DONE] Перенести assets в пакет (scope: `packages/agents/idea-collector/assets/*`; expected: schema.json, prompt.md, template.md, questionnaire-template.md; commit: `feat(agents): move idea collector assets to package`) (date: 2026-01-06)
+14. [DONE] Git Commit: `feat(agents): move idea collector assets to package` (hash: 2fbd2f0) (date: 2026-01-06)
 
 ---
 
@@ -56,30 +56,30 @@
 
 ### Stream: Contract Logic Migration
 
-1. [TODO] Перенести типы контракта (scope: `packages/agents/idea-collector/src/contract/contract-types.ts`, `packages/agents/idea-collector/src/contract/index.ts`; expected: `IdeaContractPayload` и связанные типы; commit: `feat(idea-collector): add contract types`)
-2. [TODO] Git Commit: `feat(idea-collector): add contract types` (hash: TBD)
+1. [DONE] Перенести типы контракта (scope: `packages/agents/idea-collector/src/contract/contract-types.ts`, `packages/agents/idea-collector/src/contract/index.ts`; expected: `IdeaContractPayload` и связанные типы; commit: `feat(idea-collector): add contract types`) (date: 2026-01-06)
+2. [DONE] Git Commit: `feat(idea-collector): add contract types` (hash: bdf5b26) (date: 2026-01-06)
 
-3. [TODO] Перенести логику построения контракта (scope: `packages/agents/idea-collector/src/contract/contract-builder.ts`; expected: `buildIdeaContract()` использует shared utilities; commit: `feat(idea-collector): add contract builder`)
-4. [TODO] Git Commit: `feat(idea-collector): add contract builder` (hash: TBD)
+3. [DONE] Перенести логику построения контракта (scope: `packages/agents/idea-collector/src/contract/contract-builder.ts`; expected: `buildIdeaContract()` использует shared utilities; commit: `feat(idea-collector): add contract builder`) (date: 2026-01-06)
+4. [DONE] Git Commit: `feat(idea-collector): add contract builder` (hash: f1ba68d) (date: 2026-01-06)
 
-5. [TODO] Перенести пути артефактов (scope: `packages/agents/idea-collector/src/paths/artifact-paths.ts`, `packages/agents/idea-collector/src/paths/index.ts`; expected: константы путей для idea артефактов; commit: `feat(idea-collector): add artifact paths`)
-6. [TODO] Git Commit: `feat(idea-collector): add artifact paths` (hash: TBD)
+5. [DONE] Перенести пути артефактов (scope: `packages/agents/idea-collector/src/paths/artifact-paths.ts`, `packages/agents/idea-collector/src/paths/index.ts`; expected: константы путей для idea артефактов; commit: `feat(idea-collector): add artifact paths`) (date: 2026-01-06)
+6. [DONE] Git Commit: `feat(idea-collector): add artifact paths` (hash: 80d6299) (date: 2026-01-06)
 
 ### Stream: Parser Logic Migration
 
-7. [TODO] Перенести типы structured output (scope: `packages/agents/idea-collector/src/parser/parser-types.ts`, `packages/agents/idea-collector/src/parser/index.ts`; expected: `IdeaStructuredOutput` и связанные типы; commit: `feat(idea-collector): add parser types`)
-8. [TODO] Git Commit: `feat(idea-collector): add parser types` (hash: TBD)
+7. [DONE] Перенести типы structured output (scope: `packages/agents/idea-collector/src/parser/parser-types.ts`, `packages/agents/idea-collector/src/parser/index.ts`; expected: `IdeaStructuredOutput` и связанные типы; commit: `feat(idea-collector): add parser types`) (date: 2026-01-06)
+8. [DONE] Git Commit: `feat(idea-collector): add parser types` (hash: d3b0d84) (date: 2026-01-06)
 
-9. [TODO] Перенести логику парсинга (scope: `packages/agents/idea-collector/src/parser/structured-output-parser.ts`; expected: логика из `idea-collector-structured-output.ts`; commit: `feat(idea-collector): add structured output parser`)
-10. [TODO] Git Commit: `feat(idea-collector): add structured output parser` (hash: TBD)
+9. [DONE] Перенести логику парсинга (scope: `packages/agents/idea-collector/src/parser/structured-output-parser.ts`; expected: логика из `idea-collector-structured-output.ts`; commit: `feat(idea-collector): add structured output parser`) (date: 2026-01-06)
+10. [DONE] Git Commit: `feat(idea-collector): add structured output parser` (hash: 8796335) (date: 2026-01-06)
 
 ### Stream: Facade Implementation
 
-11. [TODO] Создать фасад Idea Collector (scope: `packages/agents/idea-collector/src/facade.ts`; expected: `IdeaCollectorFacade` с `buildContract()`, `parseStructuredOutput()`, `getArtifactPaths()`; commit: `feat(idea-collector): implement facade`)
-12. [TODO] Git Commit: `feat(idea-collector): implement facade` (hash: TBD)
+11. [DONE] Создать фасад Idea Collector (scope: `packages/agents/idea-collector/src/facade.ts`; expected: `IdeaCollectorFacade` с `buildContract()`, `parseStructuredOutput()`, `getArtifactPaths()`; commit: `feat(idea-collector): implement facade`) (date: 2026-01-06)
+12. [DONE] Git Commit: `feat(idea-collector): implement facade` (hash: eca4b59) (date: 2026-01-06)
 
-13. [TODO] Обновить публичные экспорты (scope: `packages/agents/idea-collector/src/index.ts`; expected: экспорт фасада и типов; commit: `feat(idea-collector): finalize public exports`)
-14. [TODO] Git Commit: `feat(idea-collector): finalize public exports` (hash: TBD)
+13. [DONE] Обновить публичные экспорты (scope: `packages/agents/idea-collector/src/index.ts`; expected: экспорт фасада и типов; commit: `feat(idea-collector): finalize public exports`) (date: 2026-01-06)
+14. [DONE] Git Commit: `feat(idea-collector): finalize public exports` (hash: 8b4ffc9) (date: 2026-01-06)
 
 ---
 
