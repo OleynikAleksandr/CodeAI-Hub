@@ -129,8 +129,10 @@
 9. [DONE] Обновить README + CHANGELOG (scope: `README.md`, `CHANGELOG.md`; expected: release notes для рефакторинга) (date: 2026-01-06)
 10. [DONE] Git Commit: (included in 946501d)
 
-11. [IN_PROGRESS] Подготовить релиз (scope: версии/манифесты; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.388`)
-12. [TODO] Git Commit: `chore(release): prepare 1.1.388` (hash: TBD)
+11. [DONE] Подготовить релиз (scope: версии/манифесты; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`) (date: 2026-01-06)
+12. [DONE] Git Commit: `chore(release): bump versions to 1.1.388` (hash: 9a04d43) (date: 2026-01-06)
+
+✅ **Phase 4 COMPLETE** — Release 1.1.388 built successfully!
 
 ---
 
