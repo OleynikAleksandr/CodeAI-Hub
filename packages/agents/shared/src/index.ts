@@ -12,6 +12,15 @@
  */
 export const AGENT_SHARED_VERSION = "1.1.387";
 
+// Contract utilities
+export {
+  computeVersionHash,
+  readFileMtime,
+  readJsonFromFile,
+  readTextFromFile,
+  resolveHomeDirectory,
+  resolveTemplatePath,
+} from "./contract-utils";
 // Schema utilities
 export {
   cloneSchema,
@@ -20,6 +29,7 @@ export {
   normalizeSchema,
   strictifySchema,
 } from "./schema-utils";
+
 // Types
 export type {
   AgentOutputPaths,
