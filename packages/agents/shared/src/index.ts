@@ -11,3 +11,13 @@
  * Used for debugging and version tracking.
  */
 export const AGENT_SHARED_VERSION = "1.1.387";
+
+// Types
+export type {
+  AgentOutputPaths,
+  AgentTemplatePaths,
+  BaseAgentContract,
+  BaseStructuredOutput,
+  JsonRecord,
+  StructuredOutputParseResult,
+} from "./types";
