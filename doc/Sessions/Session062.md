@@ -13,12 +13,14 @@
 - Исправлен `scripts/build-core.sh`: при сборке core runtime теперь включаются `packages/agents/shared` и `packages/agents/idea-collector` в `$INSTALL_ROOT/agents/` + создаются валидные ссылки для резолва зависимостей.
 - Зафиксировано правило в системной архитектуре: любые новые модули обязаны быть подключены к pipeline сборки (`build-*.sh`/`build-all.sh`), особенно если используются workspace `file:` зависимости.
 - Собран релиз 1.1.389: `./scripts/build-all.sh` (providers/core/ui/launcher) + `./scripts/build-release.sh --use-current-version` (VSIX).
+- Верификация: после установки релиза ядро стартует корректно, `/api/v1/health` становится healthy (подтверждено пользователем).
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `8dc92fb fix(build): include agent packages in core runtime`
 - `58b7cec chore(release): bump versions to 1.1.389`
 - `3bf8747 docs(release): add 1.1.389 hotfix notes`
+- `2feceeb docs(sessions): add Session062 hotfix report`
 
 ---
 
@@ -32,7 +34,6 @@
 5. `doc/Sessions/Session062.md` (THIS REPORT)
 
 ## Plans for next session
-- Проверить установку/старт на “чистой” среде (fresh VSIX): Core должен стартовать и отвечать на `GET /api/v1/health`.
 - Рассмотреть упаковку остальных Agent Packages (например, `spec-creator`) в core runtime по мере включения их в Core dependencies.
 - При необходимости: завести Phase 5 (Spec Creator implementation / UI integration) через дизайн-док в `doc/Project_Docs/` → новый `doc/TODO/todo-plan.md`.
 
