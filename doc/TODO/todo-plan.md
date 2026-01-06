@@ -91,12 +91,12 @@
 2. [DONE] Git Commit: `refactor(core): use idea collector facade for contract` (hash: dc74592) (date: 2026-01-06)
 
 3. [DONE] Обновить questionnaire handlers в Core (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-*.ts`; expected: импорт путей из фасада; commit: `refactor(core): use idea collector facade for paths`) (date: 2026-01-06)
-4. [IN_PROGRESS] Git Commit: `refactor(core): use idea collector facade for paths` (hash: TBD)
+4. [DONE] Git Commit: `refactor(core): use idea collector facade for paths` (hash: ba245b5) (date: 2026-01-06)
 
 ### Stream: Claude Module Integration
 
-5. [TODO] Обновить Claude Module для использования парсера (scope: `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`; expected: re-export из `@codeai-hub/idea-collector` или удаление; commit: `refactor(claude): use idea collector facade for parser`)
-6. [TODO] Git Commit: `refactor(claude): use idea collector facade for parser` (hash: TBD)
+5. [DONE] Обновить Claude Module для использования парсера (scope: `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`; expected: re-export из `@codeai-hub/idea-collector` или удаление; commit: `refactor(claude): use idea collector facade for parser`) (date: 2026-01-06)
+6. [IN_PROGRESS] Git Commit: `refactor(claude): use idea collector facade for parser` (hash: TBD)
 
 ### Stream: Legacy Cleanup
 
