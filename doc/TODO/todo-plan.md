@@ -96,12 +96,12 @@
 ### Stream: Claude Module Integration
 
 5. [DONE] Обновить Claude Module для использования парсера (scope: `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`; expected: re-export из `@codeai-hub/idea-collector` или удаление; commit: `refactor(claude): use idea collector facade for parser`) (date: 2026-01-06)
-6. [IN_PROGRESS] Git Commit: `refactor(claude): use idea collector facade for parser` (hash: TBD)
+6. [DONE] Git Commit: `refactor(claude): use idea collector facade for parser` (hash: 2774132) (date: 2026-01-06)
 
 ### Stream: Legacy Cleanup
 
-7. [TODO] Удалить старые assets (scope: `assets/templates/full-development-flow/idea/*`; expected: файлы перенесены в пакет; commit: `refactor(assets): remove legacy idea collector templates`)
-8. [TODO] Git Commit: `refactor(assets): remove legacy idea collector templates` (hash: TBD)
+7. [DONE] Удалить старые assets (scope: `assets/templates/full-development-flow/idea/*`; expected: файлы перенесены в пакет; commit: `refactor(assets): remove legacy idea collector templates`) (date: 2026-01-06)
+8. [IN_PROGRESS] Git Commit: `refactor(assets): remove legacy idea collector templates` (hash: TBD)
 
 9. [TODO] Обновить Extension installers (scope: `src/extension-module/templates/idea-collector-prompt-installer.ts`, `src/extension-module/templates/idea-questionnaire-template-installer.ts`; expected: путь к bundled assets из пакета; commit: `refactor(extension): update idea collector installers`)
 10. [TODO] Git Commit: `refactor(extension): update idea collector installers` (hash: TBD)
