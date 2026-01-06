@@ -111,6 +111,8 @@ DOWNLOAD_STAGE="$STAGING_DIR/downloads"
 mkdir -p "$APP_STAGE" "$NODE_STAGE" "$TARBALL_STAGE" "$DOWNLOAD_STAGE"
 
 echo "🔧 Building workspace packages..."
+npm run build --workspace=@codeai-hub/agent-shared >/dev/null
+npm run build --workspace=@codeai-hub/idea-collector >/dev/null
 npm run build --workspace=@codeai-hub/claude-module >/dev/null
 npm run build --workspace=@codeai-hub/codex-module >/dev/null
 npm run build --workspace=@codeai-hub/gemini-module >/dev/null || true
@@ -129,6 +131,30 @@ if [[ -f "$CORE_PROJECT_DIR/package-lock.json" ]]; then
   cp "$CORE_PROJECT_DIR/package-lock.json" "$APP_STAGE/package-lock.json"
 fi
 rsync -a "$CORE_PROJECT_DIR/dist" "$APP_STAGE/"
+
+# NOTE: @codeai-hub/core depends on @codeai-hub/idea-collector via a local workspace
+# reference, which npm materializes as a symlink in node_modules. The extracted Core
+# runtime must therefore include the agent packages at a stable relative path so the
+# symlink is valid at runtime (otherwise Core fails to start with MODULE_NOT_FOUND).
+AGENTS_STAGE="$STAGING_DIR/agents"
+mkdir -p "$AGENTS_STAGE"
+rsync -a --delete \
+  --exclude "node_modules" \
+  --exclude "src" \
+  --exclude "*.tsbuildinfo" \
+  "$REPO_ROOT/packages/agents/shared/" \
+  "$AGENTS_STAGE/shared/"
+rsync -a --delete \
+  --exclude "node_modules" \
+  --exclude "src" \
+  --exclude "*.tsbuildinfo" \
+  "$REPO_ROOT/packages/agents/idea-collector/" \
+  "$AGENTS_STAGE/idea-collector/"
+
+# Allow agent packages to resolve shared deps when loaded directly from $INSTALL_ROOT/agents/**.
+mkdir -p "$AGENTS_STAGE/node_modules/@codeai-hub"
+ln -snf "../../shared" "$AGENTS_STAGE/node_modules/@codeai-hub/agent-shared"
+
 mkdir -p "$APP_STAGE/tarballs"
 cp "$TARBALL_STAGE/$CLAUDE_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$CODEX_TARBALL" "$APP_STAGE/tarballs/"
@@ -162,6 +188,12 @@ NODE
 (cd "$APP_STAGE" && npm install --omit=dev --ignore-scripts --no-audit --no-fund >/dev/null)
 rm -rf "$APP_STAGE/tarballs"
 
+# Ensure agent package symlinks are valid inside the extracted runtime.
+# (package-lock from the workspace may create links that otherwise point to nowhere)
+mkdir -p "$APP_STAGE/node_modules/@codeai-hub"
+ln -snf "../../../agents/idea-collector" "$APP_STAGE/node_modules/@codeai-hub/idea-collector"
+ln -snf "../../../agents/shared" "$APP_STAGE/node_modules/@codeai-hub/agent-shared"
+
 NODE_ARCHIVE_PATH="$DOWNLOAD_STAGE/$NODE_ARCHIVE"
 echo "⬇️  Fetching Node runtime $NODE_ARCHIVE"
 curl -fsSL "$NODE_DIST_BASE/$NODE_ARCHIVE" -o "$NODE_ARCHIVE_PATH"
@@ -191,6 +223,7 @@ rm -rf "$INSTALL_ROOT"
 mkdir -p "$INSTALL_ROOT"
 rsync -a "$NODE_STAGE/runtime/" "$INSTALL_ROOT/node/"
 rsync -a "$APP_STAGE/" "$INSTALL_ROOT/app/"
+rsync -a "$AGENTS_STAGE/" "$INSTALL_ROOT/agents/"
 
 touch "$INSTALL_ROOT/.complete"
 
