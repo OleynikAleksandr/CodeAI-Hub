@@ -21,201 +21,122 @@
 
 ---
 
-## Phase 1 — Questionnaire MVP для Idea Collector (owner: Oleksandr, updated: 2026-01-04)
+## Phase 1 — Agent Packages Infrastructure (owner: Oleksandr, updated: 2026-01-06)
 
-### Stream: Дизайн и bootstrap шаблона (Extension)
+### Stream: Архитектурный документ и согласование
 
-1. [DONE] Архитектурный документ под анкетирование (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_UI_Architecture.md`; expected: согласованный документ с путями/контрактами/UX; commit: `docs(orchestrator): add questionnaire ui architecture`) (date: 2026-01-04)
-2. [DONE] Git Commit: `docs(orchestrator): add questionnaire ui architecture` (hash: 19d326b) (date: 2026-01-04)
+1. [DONE] Создать архитектурный документ Agent Packages (scope: `doc/Project_Docs/AgentPackages_Architecture.md`; expected: описана проблема, целевая архитектура, миграционный план; commit: `docs(agents): add agent packages architecture`) (date: 2026-01-06)
+2. [TODO] Git Commit: `docs(agents): add agent packages architecture` (hash: TBD)
 
-3. [DONE] Заархивировать старый `doc/TODO/todo-plan.md` и завести новый план (scope: `doc/TODO/Archive/todo-plan-phase9-and-e2e-checklist.md`, `doc/TODO/todo-plan.md`; expected: старый план в архиве, новый план отражает Questionnaire MVP) (commit: `docs(todo): archive old plan and start questionnaire mvp plan`) (date: 2026-01-04)
-4. [DONE] Git Commit: `docs(todo): archive old plan and start questionnaire mvp plan` (hash: 94027b3) (date: 2026-01-04)
+### Stream: Shared Agent Package
 
-5. [DONE] Добавить bundled шаблон анкеты, соответствующий полям `conversation_state.collected` из schema Idea Collector (scope: `assets/templates/full-development-flow/idea/questionnaire-template.md`; expected: вопросы/секции покрывают все поля schema; commit: `feat(templates): add idea questionnaire template`) (date: 2026-01-04)
-6. [DONE] Git Commit: `feat(templates): add idea questionnaire template` (hash: 432d14f) (date: 2026-01-04)
+3. [TODO] Создать пакет `@codeai-hub/agent-shared` (scope: `packages/agents/shared/package.json`, `packages/agents/shared/tsconfig.json`, `packages/agents/shared/src/index.ts`; expected: базовая структура пакета; commit: `feat(agents): bootstrap agent-shared package`)
+4. [TODO] Git Commit: `feat(agents): bootstrap agent-shared package` (hash: TBD)
 
-7. [DONE] Установка шаблона анкеты при первом старте расширения (scope: `src/extension-module/templates/idea-questionnaire-template-installer.ts`, `src/extension.ts`; expected: создаётся `~/.codeai-hub/templates/full-development-flow/idea/questionnaire-template.md`, если нет/пустой; пользовательские правки не перезаписываются) (commit: `feat(extension): install idea questionnaire template on startup`) (date: 2026-01-04)
-8. [DONE] Git Commit: `feat(extension): install idea questionnaire template on startup` (hash: 1b5aabe) (date: 2026-01-04)
+5. [TODO] Добавить общие типы контракта агента (scope: `packages/agents/shared/src/types/agent-contract.ts`, `packages/agents/shared/src/types/structured-output.ts`, `packages/agents/shared/src/types/index.ts`; expected: `AgentContractPayload`, `AgentStructuredOutput` типы; commit: `feat(agents): add shared agent types`)
+6. [TODO] Git Commit: `feat(agents): add shared agent types` (hash: TBD)
 
-### Stream: Контракт и интеграция анкеты (UI ↔ Core)
+7. [TODO] Добавить утилиты для схем (scope: `packages/agents/shared/src/schema-utils/schema-normalizer.ts`, `packages/agents/shared/src/schema-utils/schema-strictifier.ts`, `packages/agents/shared/src/schema-utils/index.ts`; expected: вынесена логика из `idea-contract-service.ts`; commit: `feat(agents): add shared schema utilities`)
+8. [TODO] Git Commit: `feat(agents): add shared schema utilities` (hash: TBD)
 
-9. [DONE] Расширить `idea-contract`: добавить `questionnaire.templateMarkdown` (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected: contract возвращает templateMarkdown анкеты, версия контракта учитывает mtime/контент анкеты) (commit: `feat(core): include questionnaire template in idea contract`) (date: 2026-01-04)
-10. [DONE] Git Commit: `feat(core): include questionnaire template in idea contract` (hash: 68149fd) (date: 2026-01-04)
+9. [TODO] Добавить утилиты для контрактов (scope: `packages/agents/shared/src/contract-utils/file-reader.ts`, `packages/agents/shared/src/contract-utils/version-hasher.ts`, `packages/agents/shared/src/contract-utils/index.ts`; expected: чтение файлов, хеширование версии; commit: `feat(agents): add shared contract utilities`)
+10. [TODO] Git Commit: `feat(agents): add shared contract utilities` (hash: TBD)
 
-11. [DONE] Обновить UI normalizers под новое поле контракта (scope: `src/client/ui/src/core-bridge/normalizers.ts`; expected: безопасная нормализация questionnaire.templateMarkdown + сохранение fallback поведения) (commit: `feat(ui): normalize questionnaire template from core contract`) (date: 2026-01-04)
-12. [DONE] Git Commit: `feat(ui): normalize questionnaire template from core contract` (hash: 0ab76d0) (date: 2026-01-04)
+### Stream: Idea Collector Package — Bootstrap
 
-13. [DONE] Использовать templateMarkdown в UI-сервисе (scope: `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-collector-artifact.ts`, `media/react-chat.js`; expected: сервис может получать шаблон анкеты из контракта, fallback остаётся) (commit: `feat(ui): use questionnaire template from idea contract`) (date: 2026-01-04)
-14. [DONE] Git Commit: `feat(ui): use questionnaire template from idea contract` (hash: f8ee410) (date: 2026-01-04)
+11. [TODO] Создать пакет `@codeai-hub/idea-collector` (scope: `packages/agents/idea-collector/package.json`, `packages/agents/idea-collector/tsconfig.json`, `packages/agents/idea-collector/src/index.ts`; expected: зависимость от `@codeai-hub/agent-shared`; commit: `feat(agents): bootstrap idea-collector package`)
+12. [TODO] Git Commit: `feat(agents): bootstrap idea-collector package` (hash: TBD)
 
-### Stream: UI анкеты (VS Code webview)
-
-15. [DONE] Вынести общий слой textarea+dnd из `InputPanel` для переиспользования (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-textarea.tsx`, `src/client/ui/src/session/input-dnd.ts`; expected: `InputPanel` продолжает работать, анкета использует те же dnd-возможности) (commit: `refactor(ui): extract input textarea + dnd logic`) (date: 2026-01-04)
-16. [DONE] Git Commit: `refactor(ui): extract input textarea + dnd logic` (hash: 5ef1ed7) (date: 2026-01-04)
-
-17. [DONE] Экран анкеты: рендер вопросов + ответы без внутреннего скролла (scope: `src/client/ui/src/components/idea-questionnaire/idea-questionnaire-view.tsx`, `src/client/ui/src/components/idea-questionnaire/question-block.tsx`, `src/client/ui/src/components/idea-questionnaire/styles.ts`; expected: длинная страница, поля авто-grow + ручной min-height drag, одна кнопка отправки в конце) (commit: `feat(ui): add idea questionnaire view`) (date: 2026-01-04)
-18. [DONE] Git Commit: `feat(ui): add idea questionnaire view` (hash: e0cfa88) (date: 2026-01-04)
-
-19. [DONE] Добавить endpoint записи workspace файла для анкеты (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected: POST /workspace-file-write пишет контент анкеты в workspace) (commit: `feat(core): add workspace file write endpoint`) (date: 2026-01-04)
-20. [DONE] Git Commit: `feat(core): add workspace file write endpoint` (hash: 5428d91) (date: 2026-01-04)
-
-21. [DONE] Создание/восстановление `.codeai-hub/.../idea/questionnaire.md` при старте стадии (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/services/idea-collector-service.ts`; expected: файл создаётся из templateMarkdown, далее редактирование сохраняет в workspace; повторное открытие восстанавливает ответы) (commit: `feat(ui): persist idea questionnaire in workspace`) (date: 2026-01-04)
-22. [DONE] Git Commit: `feat(ui): persist idea questionnaire in workspace` (hash: 06aea3a) (date: 2026-01-04)
-
-23. [DONE] Отправка анкеты в агент: короткое сообщение + путь (auto-attach), переход в окно сессии Idea Collector (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/app-host/session-region.tsx`; expected: анкета не публикуется целиком; agent получает attach; далее уточнения и finalize как сейчас) (commit: `feat(ui): send questionnaire to idea collector and focus session`) (date: 2026-01-04)
-24. [DONE] Git Commit: `feat(ui): send questionnaire to idea collector and focus session` (hash: fd75412) (date: 2026-01-04)
-
-### Stream: Верификация MVP
-
-25. [DONE] Обновить webview bundle после изменений анкеты (scope: `media/react-chat.js`; expected: bundle отражает новые UI/сервисы анкеты) (commit: `chore(webview): update bundle`) (date: 2026-01-04)
-26. [DONE] Git Commit: `chore(webview): update bundle` (hash: 2a1bf0c) (date: 2026-01-04)
-
-27. [DONE] E2E ручная проверка (scope: нет изменений кода; expected: создать анкету, заполнить, отправить, уточнения, “ОК/утверждаю”, артефакты сохраняются; обновить этот файл статусами и ссылками) (commit: `docs: verify questionnaire mvp flow`) (date: 2026-01-04)
-28. [DONE] Git Commit: `docs: verify questionnaire mvp flow` (hash: e351555) (date: 2026-01-04)
-
-## Phase 2 — Idea Prompt Architecture Alignment (owner: Oleksandr, updated: 2026-01-04)
-
-### Stream: Prompt template bootstrap
-
-1. [DONE] Вынести общий installer для bundled templates (scope: `src/extension-module/templates/bundled-template-installer.ts`, `src/extension-module/templates/idea-collector-prompt-installer.ts`, `src/extension-module/templates/idea-questionnaire-template-installer.ts`; expected: общий helper снижает дублирование) (commit: `refactor(templates): share bundled installer`) (date: 2026-01-04)
-2. [DONE] Git Commit: `refactor(templates): share bundled installer` (hash: be14b7e) (date: 2026-01-04)
-
-3. [DONE] Добавить bundled prompt + установить при старте расширения (scope: `assets/templates/full-development-flow/idea/idea-collector-prompt.md`, `src/extension.ts`; expected: prompt включает архитектурные принципы на этапе идеи) (commit: `feat(extension): install idea collector prompt template`) (date: 2026-01-04)
-4. [DONE] Git Commit: `feat(extension): install idea collector prompt template` (hash: 351ca52) (date: 2026-01-04)
-
-5. [DONE] Обновить релизные документы под prompt-апдейт (scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`; expected: релиз 1.1.381 отражает архитектурные принципы в Idea prompt) (commit: `docs: update idea prompt release notes`) (date: 2026-01-04)
-6. [DONE] Git Commit: `docs: update idea prompt release notes` (hash: f607f11) (date: 2026-01-04)
-
-7. [DONE] Обновить системную архитектуру и версии (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: версии/Release 1.1.381) (commit: `docs(orchestrator): refresh system architecture 1.1.381`) (date: 2026-01-04)
-8. [DONE] Git Commit: `docs(orchestrator): refresh system architecture 1.1.381` (hash: 4b966be) (date: 2026-01-04)
-
-9. [DONE] Подготовить релиз 1.1.381 (scope: версии/манифесты/locks; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`) (commit: `chore(release): prepare 1.1.381`) (date: 2026-01-04)
-10. [DONE] Git Commit: `chore(release): prepare 1.1.381` (hash: c9ed8f1) (date: 2026-01-04)
-
-## Phase 3 — Codex thread_id Startup Lock (owner: Oleksandr, updated: 2026-01-05)
-
-### Stream: Startup lock на первый turn (Codex)
-
-1. [DONE] Архитектурный документ: Startup lock для получения «своего» thread_id (scope: `doc/Project_Docs/Codex_ThreadId_StartupLock_Architecture.md`; expected: описана стратегия global mutex на первый `thread.runStreamed` до получения `thread_id`, инварианты и сценарии retry) (commit: `docs(codex): add startup lock thread binding architecture`) (date: 2026-01-05)
-2. [DONE] Git Commit: `docs(codex): add startup lock thread binding architecture` (hash: b25e33c) (date: 2026-01-05)
-
-3. [DONE] Реализовать global startup lock для Codex до первого `thread.started` (scope: `packages/Codex_Module/src/messaging/codex-startup-lock.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`; expected: первый turn сериализован между сессиями Codex, thread_id фиксируется при первом `thread.started`, далее без lock) (commit: `fix(codex): serialize first turn until thread id bound`) (date: 2026-01-05)
-4. [DONE] Git Commit: `fix(codex): serialize first turn until thread id bound` (hash: f79feed) (date: 2026-01-05)
-
-5. [DONE] Верификация: гейты + таргетная сборка Codex module (scope: `doc/TODO/todo-plan.md`; expected: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/codex-module`) (commit: `docs: verify codex startup lock`) (date: 2026-01-05)
-6. [DONE] Git Commit: `docs: verify codex startup lock` (hash: 2970faa) (date: 2026-01-05)
+13. [TODO] Перенести assets в пакет (scope: `packages/agents/idea-collector/assets/*`; expected: schema.json, prompt.md, template.md, questionnaire-template.md; commit: `feat(agents): move idea collector assets to package`)
+14. [TODO] Git Commit: `feat(agents): move idea collector assets to package` (hash: TBD)
 
 ---
 
-## Phase 4 — Questionnaire submit + pre-read auto-attach (owner: Oleksandr, updated: 2026-01-05)
+## Phase 2 — Idea Collector Migration (owner: Oleksandr, updated: 2026-01-06)
 
-### Stream: Архитектура и план
+### Stream: Contract Logic Migration
 
-1. [DONE] Архитектурный документ pre-read auto-attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описаны pipeline, компоненты, лимиты; commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture`) (date: 2026-01-05)
-2. [DONE] Git Commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture` (hash: 9c79206) (date: 2026-01-05)
+1. [TODO] Перенести типы контракта (scope: `packages/agents/idea-collector/src/contract/contract-types.ts`, `packages/agents/idea-collector/src/contract/index.ts`; expected: `IdeaContractPayload` и связанные типы; commit: `feat(idea-collector): add contract types`)
+2. [TODO] Git Commit: `feat(idea-collector): add contract types` (hash: TBD)
 
-### Stream: UI single-turn submit
+3. [TODO] Перенести логику построения контракта (scope: `packages/agents/idea-collector/src/contract/contract-builder.ts`; expected: `buildIdeaContract()` использует shared utilities; commit: `feat(idea-collector): add contract builder`)
+4. [TODO] Git Commit: `feat(idea-collector): add contract builder` (hash: TBD)
 
-3. [DONE] Объединить prompt + submit в один turn (scope: `src/client/ui/src/services/idea-collector-service.ts`, `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: один `sendChatMessage` для анкеты; commit: `fix(ui): send questionnaire submit as single turn`) (date: 2026-01-05)
-4. [DONE] Git Commit: `fix(ui): send questionnaire submit as single turn` (hash: 2926971) (date: 2026-01-05)
+5. [TODO] Перенести пути артефактов (scope: `packages/agents/idea-collector/src/paths/artifact-paths.ts`, `packages/agents/idea-collector/src/paths/index.ts`; expected: константы путей для idea артефактов; commit: `feat(idea-collector): add artifact paths`)
+6. [TODO] Git Commit: `feat(idea-collector): add artifact paths` (hash: TBD)
 
-### Stream: Pre-read auto-attach (Core)
+### Stream: Parser Logic Migration
 
-5. [DONE] Детектор пути анкеты (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-path-detector.ts`, `doc/TODO/todo-plan.md`; expected: извлечение `questionnaire.md` из сообщения; commit: `feat(core): detect questionnaire path for pre-read attach`) (date: 2026-01-05)
-6. [DONE] Git Commit: `feat(core): detect questionnaire path for pre-read attach` (hash: eb4ae40) (date: 2026-01-05)
+7. [TODO] Перенести типы structured output (scope: `packages/agents/idea-collector/src/parser/parser-types.ts`, `packages/agents/idea-collector/src/parser/index.ts`; expected: `IdeaStructuredOutput` и связанные типы; commit: `feat(idea-collector): add parser types`)
+8. [TODO] Git Commit: `feat(idea-collector): add parser types` (hash: TBD)
 
-7. [DONE] Экстрактор `pre_read_documents` (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-extractor.ts`, `doc/TODO/todo-plan.md`; expected: парсер field-блока; commit: `feat(core): extract pre-read document paths from questionnaire`) (date: 2026-01-05)
-8. [DONE] Git Commit: `feat(core): extract pre-read document paths from questionnaire` (hash: 43ad1bf) (date: 2026-01-05)
+9. [TODO] Перенести логику парсинга (scope: `packages/agents/idea-collector/src/parser/structured-output-parser.ts`; expected: логика из `idea-collector-structured-output.ts`; commit: `feat(idea-collector): add structured output parser`)
+10. [TODO] Git Commit: `feat(idea-collector): add structured output parser` (hash: TBD)
 
-9. [DONE] Бюджет размера вложений (scope: `packages/core/src/remote-bridge/handlers/workspace-auto-attach-reader.ts`, `doc/TODO/todo-plan.md`; expected: лимит общего размера вложений; commit: `feat(core): add total budget for workspace attachments`) (date: 2026-01-05)
-10. [DONE] Git Commit: `feat(core): add total budget for workspace attachments` (hash: bb1bbcb) (date: 2026-01-05)
+### Stream: Facade Implementation
 
-11. [DONE] Attacher для pre-read документов (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-pre-read-attacher.ts`, `doc/TODO/todo-plan.md`; expected: чтение анкеты и attach файлов; commit: `feat(core): attach pre-read questionnaire documents`) (date: 2026-01-05)
-12. [DONE] Git Commit: `feat(core): attach pre-read questionnaire documents` (hash: 164178a) (date: 2026-01-05)
+11. [TODO] Создать фасад Idea Collector (scope: `packages/agents/idea-collector/src/facade.ts`; expected: `IdeaCollectorFacade` с `buildContract()`, `parseStructuredOutput()`, `getArtifactPaths()`; commit: `feat(idea-collector): implement facade`)
+12. [TODO] Git Commit: `feat(idea-collector): implement facade` (hash: TBD)
 
-13. [DONE] Встройка pre-read attach в pipeline сессии (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-auto-attach.ts`, `doc/TODO/todo-plan.md`; expected: pre-read prefix + обновлённые лимиты auto-attach; commit: `feat(core): prepend pre-read attachments before auto-attach`) (date: 2026-01-05)
-14. [DONE] Git Commit: `feat(core): prepend pre-read attachments before auto-attach` (hash: 6cf770b) (date: 2026-01-05)
-
-### Stream: Лимиты /read и auto-attach
-
-15. [DONE] Повысить лимиты чтения /read (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `src/client/ui/src/services/idea-collector-workspace-context.ts`, `doc/TODO/todo-plan.md`; expected: новый DEFAULT_MAX_BYTES; commit: `feat(core): raise workspace read limits for idea collector`) (date: 2026-01-05)
-16. [DONE] Git Commit: `feat(core): raise workspace read limits for idea collector` (hash: d185c66) (date: 2026-01-05)
-
-17. [DONE] Обновить webview bundle для /read лимитов (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: bundle отражает новый лимит; commit: `chore(webview): refresh bundle for read limits`) (date: 2026-01-05)
-18. [DONE] Git Commit: `chore(webview): refresh bundle for read limits` (hash: 3a8019e) (date: 2026-01-05)
-
-### Stream: Документация релиза
-
-19. [DONE] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: описаны single-turn submit, pre-read auto-attach, лимиты; commit: `docs(orchestrator): document questionnaire pre-read auto-attach`) (date: 2026-01-05)
-20. [DONE] Git Commit: `docs(orchestrator): document questionnaire pre-read auto-attach` (hash: bd66733) (date: 2026-01-05)
-
-21. [DONE] Обновить README + CHANGELOG под релиз 1.1.385 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.385 notes`) (date: 2026-01-05)
-22. [DONE] Git Commit: `docs(release): update 1.1.385 notes` (hash: 9a09380) (date: 2026-01-05)
+13. [TODO] Обновить публичные экспорты (scope: `packages/agents/idea-collector/src/index.ts`; expected: экспорт фасада и типов; commit: `feat(idea-collector): finalize public exports`)
+14. [TODO] Git Commit: `feat(idea-collector): finalize public exports` (hash: TBD)
 
 ---
 
-## Phase 5 — Fix questionnaire auto-attach path extraction (owner: Oleksandr, updated: 2026-01-05)
+## Phase 3 — Integration & Cleanup (owner: Oleksandr, updated: 2026-01-06)
 
-### Stream: Auto-attach placeholder guard
+### Stream: Core Integration
 
-1. [DONE] Исправить auto-attach: игнорировать шаблонные пути с `<...>` (scope: `packages/core/src/remote-bridge/handlers/workspace-auto-attach-extractor.ts`, `doc/TODO/todo-plan.md`; expected: анкета прикрепляется при prompt+submit; commit: `fix(core): ignore placeholder paths in auto-attach`) (date: 2026-01-05)
-2. [DONE] Git Commit: `fix(core): ignore placeholder paths in auto-attach` (hash: f7a1def)
+1. [TODO] Обновить Core для использования фасада (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected: вызов `IdeaCollectorFacade.buildContract()`; commit: `refactor(core): use idea collector facade for contract`)
+2. [TODO] Git Commit: `refactor(core): use idea collector facade for contract` (hash: TBD)
 
-3. [DONE] Обновить архитектурный документ pre-read attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описан guard для шаблонных путей; commit: `docs(orchestrator): clarify auto-attach placeholder guard`) (date: 2026-01-05)
-4. [DONE] Git Commit: `docs(orchestrator): clarify auto-attach placeholder guard` (hash: 36a9c89)
+3. [TODO] Обновить questionnaire handlers в Core (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-*.ts`; expected: импорт путей из фасада; commit: `refactor(core): use idea collector facade for paths`)
+4. [TODO] Git Commit: `refactor(core): use idea collector facade for paths` (hash: TBD)
 
-### Stream: Release 1.1.386
+### Stream: Claude Module Integration
 
-5. [DONE] Обновить Architecture + SystemArchitecture под hotfix (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: версия 1.1.386 + запись изменений; commit: `docs(orchestrator): refresh system docs 1.1.386`) (date: 2026-01-05)
-6. [DONE] Git Commit: `docs(orchestrator): refresh system docs 1.1.386` (hash: f647261)
+5. [TODO] Обновить Claude Module для использования парсера (scope: `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`; expected: re-export из `@codeai-hub/idea-collector` или удаление; commit: `refactor(claude): use idea collector facade for parser`)
+6. [TODO] Git Commit: `refactor(claude): use idea collector facade for parser` (hash: TBD)
 
-7. [DONE] Обновить README + CHANGELOG под релиз 1.1.386 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.386 notes`) (date: 2026-01-05)
-8. [DONE] Git Commit: `docs(release): update 1.1.386 notes` (hash: 949bd07)
+### Stream: Legacy Cleanup
 
-9. [DONE] Подготовить релиз 1.1.386 (scope: версии/манифесты/locks, `doc/TODO/todo-plan.md`; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.386`) (date: 2026-01-05)
-10. [DONE] Git Commit: `chore(release): prepare 1.1.386` (hash: 4e1a7a6)
+7. [TODO] Удалить старые assets (scope: `assets/templates/full-development-flow/idea/*`; expected: файлы перенесены в пакет; commit: `refactor(assets): remove legacy idea collector templates`)
+8. [TODO] Git Commit: `refactor(assets): remove legacy idea collector templates` (hash: TBD)
+
+9. [TODO] Обновить Extension installers (scope: `src/extension-module/templates/idea-collector-prompt-installer.ts`, `src/extension-module/templates/idea-questionnaire-template-installer.ts`; expected: путь к bundled assets из пакета; commit: `refactor(extension): update idea collector installers`)
+10. [TODO] Git Commit: `refactor(extension): update idea collector installers` (hash: TBD)
 
 ---
 
-## Phase 6 — Slim structured output for Idea Collector (owner: Oleksandr, updated: 2026-01-05)
+## Phase 4 — Spec Creator Skeleton (owner: Oleksandr, updated: 2026-01-06)
 
-### Stream: Архитектура и план
+### Stream: Spec Creator Package Bootstrap
 
-1. [DONE] Утвердить архитектуру slim-контракта (scope: `doc/Project_Docs/IdeaCollector_Slim_Structured_Output.md`, `doc/TODO/todo-plan.md`; expected: статус Approved + план работ; commit: `docs(orchestrator): approve slim structured output plan`) (date: 2026-01-05)
-2. [DONE] Git Commit: `docs(orchestrator): approve slim structured output plan` (hash: 97a425b)
+1. [TODO] Создать пакет `@codeai-hub/spec-creator` (scope: `packages/agents/spec-creator/package.json`, `packages/agents/spec-creator/tsconfig.json`, `packages/agents/spec-creator/src/index.ts`; expected: структура аналогична idea-collector; commit: `feat(agents): bootstrap spec-creator package`)
+2. [TODO] Git Commit: `feat(agents): bootstrap spec-creator package` (hash: TBD)
 
-### Stream: Slim schema
+3. [TODO] Добавить placeholder assets (scope: `packages/agents/spec-creator/assets/spec-creator-schema.json`, `packages/agents/spec-creator/assets/spec-creator-prompt.md`, `packages/agents/spec-creator/assets/spec-template.md`; expected: заглушки для будущей реализации; commit: `feat(spec-creator): add placeholder assets`)
+4. [TODO] Git Commit: `feat(spec-creator): add placeholder assets` (hash: TBD)
 
-3. [DONE] Обновить schema + fallback под slim-контракт (scope: `assets/templates/full-development-flow/idea/idea-collector-schema.json`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `doc/TODO/todo-plan.md`; expected: assessment + questions без дублирования анкеты; commit: `feat(orchestrator): slim idea collector schema`) (date: 2026-01-05)
-4. [DONE] Git Commit: `feat(orchestrator): slim idea collector schema` (hash: 7830421)
+5. [TODO] Создать скелет фасада (scope: `packages/agents/spec-creator/src/facade.ts`, `packages/agents/spec-creator/src/contract/`, `packages/agents/spec-creator/src/parser/`; expected: `SpecCreatorFacade` с TODO методами; commit: `feat(spec-creator): implement facade skeleton`)
+6. [TODO] Git Commit: `feat(spec-creator): implement facade skeleton` (hash: TBD)
 
-### Stream: Prompt alignment
+### Stream: Documentation & Release
 
-5. [DONE] Обновить prompt + kickoff prompt (scope: `assets/templates/full-development-flow/idea/idea-collector-prompt.md`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `doc/TODO/todo-plan.md`; expected: вопросы формируются по достаточности данных для Idea/virtual-simulation; commit: `feat(orchestrator): align idea collector prompt`) (date: 2026-01-05)
-6. [DONE] Git Commit: `feat(orchestrator): align idea collector prompt` (hash: f1f4fc4)
+7. [TODO] Обновить Architecture.md (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: описание Agent Packages архитектуры; commit: `docs(architecture): document agent packages structure`)
+8. [TODO] Git Commit: `docs(architecture): document agent packages structure` (hash: TBD)
 
-### Stream: Webview bundle
+9. [TODO] Обновить README + CHANGELOG (scope: `README.md`, `CHANGELOG.md`; expected: release notes для рефакторинга; commit: `docs(release): update agent packages refactoring notes`)
+10. [TODO] Git Commit: `docs(release): update agent packages refactoring notes` (hash: TBD)
 
-7. [DONE] Обновить webview bundle (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: bundle отражает новый prompt/contract; commit: `chore(webview): refresh bundle for slim contract`) (date: 2026-01-05)
-8. [DONE] Git Commit: `chore(webview): refresh bundle for slim contract` (hash: 7b8ab4c)
+11. [TODO] Подготовить релиз (scope: версии/манифесты; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare X.X.XXX`)
+12. [TODO] Git Commit: `chore(release): prepare X.X.XXX` (hash: TBD)
 
-### Stream: Документация и релиз
-
-9. [DONE] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: релиз 1.1.387 + описание slim-контракта; commit: `docs(orchestrator): document slim idea collector contract`) (date: 2026-01-05)
-10. [DONE] Git Commit: `docs(orchestrator): document slim idea collector contract` (hash: 5d854e7)
-
-11. [DONE] Обновить README + CHANGELOG под релиз 1.1.387 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.387 notes`) (date: 2026-01-05)
-12. [DONE] Git Commit: `docs(release): update 1.1.387 notes` (hash: 4389950)
-
-13. [DONE] Подготовить релиз 1.1.387 (scope: версии/манифесты/locks, `doc/TODO/todo-plan.md`; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.387`) (date: 2026-01-05)
-14. [DONE] Git Commit: `chore(release): prepare 1.1.387` (hash: 2c87928)
+---
 
 ## Notes
 
-- Каноничные пути артефактов инициативы (как сейчас):
-  - `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md`
-  - `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md`
-- Новый файл анкеты (MVP):
-  - `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/questionnaire.md`
-- Шаблон анкеты (global template):
-  - `~/.codeai-hub/templates/full-development-flow/idea/questionnaire-template.md`
+- Архитектурный документ: `doc/Project_Docs/AgentPackages_Architecture.md`
+- Каждый агент-пакет имеет ЕДИНУЮ точку входа — Facade
+- UI компоненты остаются в `src/client/ui/` (webview-specific)
+- Assets синхронизируются в `~/.codeai-hub/templates/` через Core
