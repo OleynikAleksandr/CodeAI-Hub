@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
-**Version:** 0.5.9
-**Last Updated:** 2026-01-05
+**Version:** 0.6.0
+**Last Updated:** 2026-01-06
 **Status:** Active reference
-**Release Focus:** v1.1.387 — slim Structured Output для Idea Collector: оценка готовности + умные вопросы без дублирования анкеты.
+**Release Focus:** v1.1.388 — Agent Packages architecture: `@codeai-hub/idea-collector` and `@codeai-hub/spec-creator` extracted into standalone npm packages with facade pattern.
 
 ---
 
@@ -109,6 +109,54 @@ graph TD
 - **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`, `project-manager.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
+
+## Agent Packages Architecture (v1.1.388)
+
+Starting with v1.1.388, agent-specific logic is extracted into standalone npm packages under `packages/agents/`:
+
+```
+packages/agents/
+├── shared/                     # @codeai-hub/agent-shared
+│   └── src/
+│       ├── schema-utils/       # Schema normalization, strictification
+│       ├── contract-utils/     # File reading, version hashing
+│       └── types/              # BaseAgentContract, BaseStructuredOutput
+├── idea-collector/             # @codeai-hub/idea-collector
+│   ├── src/
+│   │   ├── facade.ts           # IdeaCollectorFacade — single entry point
+│   │   ├── contract/           # Contract types and builder
+│   │   ├── parser/             # Structured output parser
+│   │   └── paths/              # Artifact path constants
+│   └── assets/                 # Bundled templates (prompt, schema, template)
+└── spec-creator/               # @codeai-hub/spec-creator (skeleton)
+    ├── src/
+    │   ├── facade.ts           # SpecCreatorFacade — single entry point
+    │   ├── contract/           # Contract types and builder
+    │   ├── parser/             # Structured output parser
+    │   └── paths/              # Artifact path constants
+    └── assets/                 # Placeholder templates
+```
+
+**Key principles:**
+- **Facade Pattern**: External systems interact ONLY through `*Facade` classes (`IdeaCollectorFacade.buildContract()`, `SpecCreatorFacade.parseStructuredOutput()`)
+- **Closed Modules**: Each agent package is self-contained; changes don't require touching Core, UI, or Extension
+- **Single Responsibility**: Clear boundaries between stages (Idea → Spec → Plan → Code)
+- **Shared Utilities**: Common logic (schema manipulation, file reading) lives in `@codeai-hub/agent-shared`
+
+**Integration points:**
+| Layer | Before | After |
+|-------|--------|-------|
+| Core | `idea-contract-service.ts` (329 lines) | `IdeaCollectorFacade.buildContract()` (18 lines) |
+| Claude Module | `idea-collector-structured-output.ts` (65 lines) | `IdeaCollectorFacade.parseStructuredOutput()` (25 lines) |
+| Extension | Local asset installers | Bundled assets from package |
+
+See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.388 - 2026-01-06)
+- **Agent Packages refactoring**: Extracted `@codeai-hub/idea-collector` and `@codeai-hub/spec-creator` into standalone packages.
+- **Idea Collector migration**: Contract building, parsing, and artifact paths moved to facade-based package.
+- **Spec Creator skeleton**: Package structure with placeholder assets ready for future implementation.
+- **Code reduction**: ~400 lines of duplicated code removed from Core and Claude Module.
 
 ## Recent Changes (v1.1.387 - 2026-01-05)
 - **Idea Collector slim output**: JSON с оценкой готовности и умными вопросами заменяет дублирование анкеты.
@@ -269,6 +317,7 @@ graph TD
 
 ## Related Documents
 - `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+- `doc/Project_Docs/AgentPackages_Architecture.md` — Agent Packages design and migration plan
 - `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`
 - `doc/Project_Docs/Stacks/CoreOrchestrator.md`
 - `doc/tmp/RemoteCoreBridge.md`

@@ -113,24 +113,24 @@
 ### Stream: Spec Creator Package Bootstrap
 
 1. [DONE] Создать пакет `@codeai-hub/spec-creator` (scope: `packages/agents/spec-creator/package.json`, `packages/agents/spec-creator/tsconfig.json`, `packages/agents/spec-creator/src/index.ts`; expected: структура аналогична idea-collector; commit: `feat(agents): bootstrap spec-creator package`) (date: 2026-01-06)
-2. [DONE] Git Commit: `feat(agents): bootstrap spec-creator package` (hash: TBD)
+2. [DONE] Git Commit: `feat(agents): bootstrap spec-creator package with facade skeleton` (hash: 801135f) (date: 2026-01-06)
 
-3. [DONE] Добавить placeholder assets (scope: `packages/agents/spec-creator/assets/spec-creator-schema.json`, `packages/agents/spec-creator/assets/spec-creator-prompt.md`, `packages/agents/spec-creator/assets/spec-template.md`; expected: заглушки для будущей реализации; commit: `feat(spec-creator): add placeholder assets`) (date: 2026-01-06)
-4. [DONE] Git Commit: `feat(spec-creator): add placeholder assets` (hash: TBD)
+3. [DONE] Добавить placeholder assets (scope: `packages/agents/spec-creator/assets/spec-creator-schema.json`, `packages/agents/spec-creator/assets/spec-creator-prompt.md`, `packages/agents/spec-creator/assets/spec-template.md`; expected: заглушки для будущей реализации) (date: 2026-01-06)
+4. [DONE] Git Commit: (included in 801135f)
 
-5. [DONE] Создать скелет фасада (scope: `packages/agents/spec-creator/src/facade.ts`, `packages/agents/spec-creator/src/contract/`, `packages/agents/spec-creator/src/parser/`; expected: `SpecCreatorFacade` с TODO методами; commit: `feat(spec-creator): implement facade skeleton`) (date: 2026-01-06)
-6. [DONE] Git Commit: `feat(spec-creator): implement facade skeleton` (hash: TBD)
+5. [DONE] Создать скелет фасада (scope: `packages/agents/spec-creator/src/facade.ts`, `packages/agents/spec-creator/src/contract/`, `packages/agents/spec-creator/src/parser/`; expected: `SpecCreatorFacade` с TODO методами) (date: 2026-01-06)
+6. [DONE] Git Commit: (included in 801135f)
 
 ### Stream: Documentation & Release
 
-7. [TODO] Обновить Architecture.md (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: описание Agent Packages архитектуры; commit: `docs(architecture): document agent packages structure`)
-8. [TODO] Git Commit: `docs(architecture): document agent packages structure` (hash: TBD)
+7. [DONE] Обновить Architecture.md (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/AgentPackages_Architecture.md`; expected: описание Agent Packages архитектуры) (date: 2026-01-06)
+8. [DONE] Git Commit: `docs(architecture): document agent packages structure` (hash: TBD)
 
-9. [TODO] Обновить README + CHANGELOG (scope: `README.md`, `CHANGELOG.md`; expected: release notes для рефакторинга; commit: `docs(release): update agent packages refactoring notes`)
-10. [TODO] Git Commit: `docs(release): update agent packages refactoring notes` (hash: TBD)
+9. [DONE] Обновить README + CHANGELOG (scope: `README.md`, `CHANGELOG.md`; expected: release notes для рефакторинга) (date: 2026-01-06)
+10. [DONE] Git Commit: (included in docs commit)
 
-11. [TODO] Подготовить релиз (scope: версии/манифесты; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare X.X.XXX`)
-12. [TODO] Git Commit: `chore(release): prepare X.X.XXX` (hash: TBD)
+11. [IN_PROGRESS] Подготовить релиз (scope: версии/манифесты; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.388`)
+12. [TODO] Git Commit: `chore(release): prepare 1.1.388` (hash: TBD)
 
 ---
 
