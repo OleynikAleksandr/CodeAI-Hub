@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.387 (05.01.2026) — усилена безопасность Codex-сессий: первый turn сериализован до bind `thread_id` (startup lock), после bind любые попытки перепривязки игнорируются (lock-on-first-turn). Анкета идеи расширена (секция документов для чтения, подробные пояснения, отмена/возобновление), а подсказки/примеры отображаются под вопросами (поля ввода остаются пустыми). Первый submit анкеты отправляется одним turn'ом, а документы из `pre_read_documents` auto-attach'ятся перед анкетой; auto-attach игнорирует шаблонные пути `<...>` из prompt, чтобы `questionnaire.md` прикреплялся детерминированно. Structured Output Idea Collector переведён на slim-контракт: в ответе есть оценка готовности (`assessment`) и 1–3 умных вопроса (`questions`) без дублирования анкеты, а финальные документы возвращаются только на `finalize`. Core синхронизирует bundled‑шаблоны и перезаписывает локальные правки в `~/.codeai-hub/templates/full-development-flow/idea/`. Idea Collector использует bundled prompt с архитектурными принципами (кластерно‑модульный подход) уже на этапе идеи. Анкетирование остаётся основой: UI получает templateMarkdown через `/api/v1/orchestrator/idea-contract`, создаёт `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/questionnaire.md`, сохраняет ответы через `POST /api/v1/orchestrator/workspace-file-write` и отправляет путь через auto-attach вместо публикации полного текста. Контракт v2 по‑прежнему хранит schema в `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, поддерживает `приложение`/`кластер` и фиксирует правило Flow: для multi-module инициатив `Spec.md`/`Plan.md` создаются **по модулю**. Для ссылок на существующие документы UI поддерживает `/read ...`, а Core читает их через `POST /api/v1/orchestrator/workspace-file`. Также Core поддерживает auto-attach: при явных триггерах в сообщении (например, «прочитай/изучи/ознакомься») содержимое 1–3 текстовых файлов из workspace (до 300KB/файл, общий бюджет 1.2 MB; allowlist расширений) прикрепляется автоматически, пути можно указывать где угодно в сообщении/на отдельных строках (без `/read`). Core сохраняет артефакты Idea в `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/` (Idea.md + virtual-simulation.md) через `POST /api/v1/orchestrator/idea-artifact`. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`. Также UI при реконнекте просит Supervisor гарантировать, что Core запущен; ошибки провайдера отображаются как system сообщения.
+**Состояние:** релиз 1.1.388 (06.01.2026) — усилена безопасность Codex-сессий: первый turn сериализован до bind `thread_id` (startup lock), после bind любые попытки перепривязки игнорируются (lock-on-first-turn). Анкета идеи расширена (секция документов для чтения, подробные пояснения, отмена/возобновление), а подсказки/примеры отображаются под вопросами (поля ввода остаются пустыми). Первый submit анкеты отправляется одним turn'ом, а документы из `pre_read_documents` auto-attach'ятся перед анкетой; auto-attach игнорирует шаблонные пути `<...>` из prompt, чтобы `questionnaire.md` прикреплялся детерминированно. Structured Output Idea Collector переведён на slim-контракт: в ответе есть оценка готовности (`assessment`) и 1–3 умных вопроса (`questions`) без дублирования анкеты, а финальные документы возвращаются только на `finalize`. Core синхронизирует bundled‑шаблоны и перезаписывает локальные правки в `~/.codeai-hub/templates/full-development-flow/idea/`. Idea Collector использует bundled prompt с архитектурными принципами (кластерно‑модульный подход) уже на этапе идеи. Анкетирование остаётся основой: UI получает templateMarkdown через `/api/v1/orchestrator/idea-contract`, создаёт `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/questionnaire.md`, сохраняет ответы через `POST /api/v1/orchestrator/workspace-file-write` и отправляет путь через auto-attach вместо публикации полного текста. Контракт v2 по‑прежнему хранит schema в `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, поддерживает `приложение`/`кластер` и фиксирует правило Flow: для multi-module инициатив `Spec.md`/`Plan.md` создаются **по модулю**. Для ссылок на существующие документы UI поддерживает `/read ...`, а Core читает их через `POST /api/v1/orchestrator/workspace-file`. Также Core поддерживает auto-attach: при явных триггерах в сообщении (например, «прочитай/изучи/ознакомься») содержимое 1–3 текстовых файлов из workspace (до 300KB/файл, общий бюджет 1.2 MB; allowlist расширений) прикрепляется автоматически, пути можно указывать где угодно в сообщении/на отдельных строках (без `/read`). Core сохраняет артефакты Idea в `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/` (Idea.md + virtual-simulation.md) через `POST /api/v1/orchestrator/idea-artifact`. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`. Также UI при реконнекте просит Supervisor гарантировать, что Core запущен; ошибки провайдера отображаются как system сообщения.
 
 ## Обзор
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
@@ -31,12 +31,15 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.387
-- Автономное ядро: `@codeai-hub/core` 1.1.387
-- UI Bundles: 1.1.387
-- Claude module: 1.1.387
-- Codex module: 1.1.387
-- Gemini module: 1.1.387
+- VSIX: `codeai-hub` 1.1.388
+- Автономное ядро: `@codeai-hub/core` 1.1.388
+- UI Bundles: 1.1.388
+- Claude module: 1.1.388
+- Codex module: 1.1.388
+- Gemini module: 1.1.388
+- Agent Shared: `@codeai-hub/agent-shared` 1.1.388
+- Idea Collector: `@codeai-hub/idea-collector` 1.1.388
+- Spec Creator: `@codeai-hub/spec-creator` 1.1.388 (skeleton)
 
 ## Структура артефактов
 ```
@@ -89,6 +92,12 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
+
+## Recent Changes (v1.1.388 - 2026-01-06)
+- **Agent Packages architecture**: Extracted `@codeai-hub/idea-collector` and `@codeai-hub/spec-creator` into standalone npm packages with facade pattern.
+- **Idea Collector migration**: Contract building (329→18 lines), parsing (65→25 lines), and artifact paths moved to `IdeaCollectorFacade`.
+- **Spec Creator skeleton**: Package structure with placeholder assets (schema, prompt, template) ready for future implementation.
+- **Agent Shared package**: Common utilities (`schema-utils`, `contract-utils`, `types`) extracted to `@codeai-hub/agent-shared`.
 
 ## Recent Changes (v1.1.387 - 2026-01-05)
 - **Idea Collector slim output**: Structured Output возвращает оценку готовности и умные вопросы, не дублируя анкету.
@@ -174,6 +183,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - Обновить telemetry checklist.
 
 ## Module Documentation
+- Agent Packages: `doc/Project_Docs/AgentPackages_Architecture.md`
 - UI Modules: `doc/Project_Docs/Stacks/UI_Modules.md`
 - Launcher CEF: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
 - Core Orchestrator: `doc/Project_Docs/Stacks/CoreOrchestrator.md`

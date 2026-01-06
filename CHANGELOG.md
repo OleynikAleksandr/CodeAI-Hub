@@ -1,3 +1,20 @@
+## [1.1.388] - 2026-01-06
+
+### Added
+- **Agent Packages architecture**: Extracted agent logic into standalone npm packages under `packages/agents/`.
+- **@codeai-hub/agent-shared**: Common utilities (schema-utils, contract-utils) and types (BaseAgentContract, BaseStructuredOutput).
+- **@codeai-hub/idea-collector**: Facade-based package with contract builder, structured output parser, and artifact paths.
+- **@codeai-hub/spec-creator**: Skeleton package with placeholder assets ready for future implementation.
+
+### Changed
+- **Core integration**: `idea-contract-service.ts` reduced from 329 to 18 lines by delegating to `IdeaCollectorFacade.buildContract()`.
+- **Claude Module integration**: `idea-collector-structured-output.ts` reduced from 65 to 25 lines by delegating to facade.
+- **Extension installers**: Updated to load templates from bundled package assets.
+
+### Removed
+- **Legacy assets**: Removed `assets/templates/full-development-flow/idea/` directory (migrated to package).
+- **Duplicated code**: ~400 lines of contract building and parsing logic removed from Core and Claude Module.
+
 ## [1.1.387] - 2026-01-05
 
 ### Changed
