@@ -205,10 +205,10 @@
 10. [DONE] Git Commit: `docs(orchestrator): document slim idea collector contract` (hash: 5d854e7)
 
 11. [DONE] Обновить README + CHANGELOG под релиз 1.1.387 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.387 notes`) (date: 2026-01-05)
-12. [DONE] Git Commit: `docs(release): update 1.1.387 notes` (hash: TBD)
+12. [DONE] Git Commit: `docs(release): update 1.1.387 notes` (hash: 4389950)
 
-13. [TODO] Подготовить релиз 1.1.387 (scope: версии/манифесты/locks, `doc/TODO/todo-plan.md`; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.387`) (date: 2026-01-05)
-14. [TODO] Git Commit: `chore(release): prepare 1.1.387` (hash: TBD)
+13. [DONE] Подготовить релиз 1.1.387 (scope: версии/манифесты/locks, `doc/TODO/todo-plan.md`; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.387`) (date: 2026-01-05)
+14. [DONE] Git Commit: `chore(release): prepare 1.1.387` (hash: TBD)
 
 ## Notes
 
