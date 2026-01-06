@@ -182,16 +182,16 @@
 ### Stream: Архитектура и план
 
 1. [DONE] Утвердить архитектуру slim-контракта (scope: `doc/Project_Docs/IdeaCollector_Slim_Structured_Output.md`, `doc/TODO/todo-plan.md`; expected: статус Approved + план работ; commit: `docs(orchestrator): approve slim structured output plan`) (date: 2026-01-05)
-2. [DONE] Git Commit: `docs(orchestrator): approve slim structured output plan` (hash: TBD)
+2. [DONE] Git Commit: `docs(orchestrator): approve slim structured output plan` (hash: 97a425b)
 
 ### Stream: Slim schema
 
-3. [TODO] Обновить schema + fallback под slim-контракт (scope: `assets/templates/full-development-flow/idea/idea-collector-schema.json`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `doc/TODO/todo-plan.md`; expected: assessment + questions без дублирования анкеты; commit: `feat(orchestrator): slim idea collector schema`) (date: 2026-01-05)
-4. [TODO] Git Commit: `feat(orchestrator): slim idea collector schema` (hash: TBD)
+3. [DONE] Обновить schema + fallback под slim-контракт (scope: `assets/templates/full-development-flow/idea/idea-collector-schema.json`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `doc/TODO/todo-plan.md`; expected: assessment + questions без дублирования анкеты; commit: `feat(orchestrator): slim idea collector schema`) (date: 2026-01-05)
+4. [DONE] Git Commit: `feat(orchestrator): slim idea collector schema` (hash: TBD)
 
 ### Stream: Prompt alignment
 
-5. [TODO] Обновить prompt + kickoff prompt (scope: `assets/templates/full-development-flow/idea/idea-collector-prompt.md`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `doc/TODO/todo-plan.md`; expected: вопросы формируются по достаточности данных для Idea/virtual-simulation; commit: `feat(orchestrator): align idea collector prompt`) (date: 2026-01-05)
+5. [IN_PROGRESS] Обновить prompt + kickoff prompt (scope: `assets/templates/full-development-flow/idea/idea-collector-prompt.md`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `doc/TODO/todo-plan.md`; expected: вопросы формируются по достаточности данных для Idea/virtual-simulation; commit: `feat(orchestrator): align idea collector prompt`) (date: 2026-01-05)
 6. [TODO] Git Commit: `feat(orchestrator): align idea collector prompt` (hash: TBD)
 
 ### Stream: Webview bundle

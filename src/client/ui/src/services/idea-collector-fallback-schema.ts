@@ -1,71 +1,113 @@
-const FALLBACK_SCHEMA_JSON = String.raw`{"$schema":"http://json-schema.org/draft-07/schema#","$id":"https://codeai-hub.local/schemas/idea-collector-schema.json","title":"Idea Collector — Structured Output Contract","description":"Контракт Structured Output для универсального агента Idea Collector. Агент ведёт guided conversation, заполняя секции идеи, опирается только на контракт (без внешних документов), и на финале (next_action=finalize) обязан вернуть готовые Idea.md и virtual-simulation.md как markdown + целевые пути сохранения.","type":"object","additionalProperties":false,"required":["conversation_state","next_action","suggested_response","reasoning_summary_ru","artifact"],"properties":{"conversation_state":{"type":"object","additionalProperties":false,"required":["collected","coverage_percent","coverage","readiness","handoff_for_spec"],"description":"Накопленное состояние диалога: частично или полностью заполненные секции из шаблона идеи.","properties":{"collected":{"type":"object","additionalProperties":false,"description":"Накопленные ответы пользователя/агента по секциям idea-template.md. Допускается частичное заполнение — агент дозапрашивает недостающее.","properties":{"meta":{"type":"object","additionalProperties":false,"description":"Метаданные шапки Idea.md.","properties":{"title":{"type":"string","minLength":1,"description":"# Idea: <Название инициативы/модуля/проекта>"},"created_date":{"type":"string","description":"**Дата создания:** <YYYY-MM-DD>","pattern":"^\\d{4}-\\d{2}-\\d{2}$"},"status":{"type":"string","description":"**Статус:** Draft | Approved | In Progress | Completed","enum":["Draft","Approved","In Progress","Completed"]},"author":{"type":"string","minLength":1,"description":"**Автор идеи:** <имя>"},"idea_type":{"type":"string","description":"**Тип идеи:** продукт | приложение | кластер | фича | модуль | улучшение | исследование","enum":["продукт","приложение","кластер","фича","модуль","улучшение","исследование"]}},"required":["title","created_date","status","idea_type","author"]},"short_description":{"type":"string","description":"## 1. Краткое описание — одно-два предложения, что это и зачем."},"context_and_motivation":{"type":"string","description":"## 2. Контекст и мотивация — почему это важно сейчас, какой контекст привёл к идее."},"problem":{"type":"string","description":"## 3. Проблема — какую проблему решает модуль/проект."},"goals_and_success_criteria":{"type":"object","additionalProperties":false,"description":"## 4. Цели и критерии успеха.","properties":{"goals":{"type":"array","description":"**Цели:**","items":{"type":"string","minLength":1}},"success_criteria":{"type":"array","description":"**Критерии успеха (измеримые/проверяемые):**","items":{"type":"string","minLength":1}}},"required":["goals","success_criteria"]},"high_level_solution":{"type":"string","description":"## 5. Решение (высокоуровневое) — как предлагается решить проблему."},"user_scenarios":{"type":"array","description":"## 6. Пользовательские сценарии — 3–7 ключевых сценариев использования.","items":{"type":"string","minLength":1}},"key_functions":{"type":"array","description":"## 7. Ключевые функции — таблица функций.","items":{"type":"object","additionalProperties":false,"required":["id","name","description"],"properties":{"id":{"type":"integer","minimum":1,"description":"Порядковый номер в таблице (опционально)."},"name":{"type":"string","minLength":1,"description":"Название функции."},"description":{"type":"string","minLength":1,"description":"Описание функции."}}}},"ui_ux":{"type":"array","description":"## 8. UI/UX и пользовательские потоки — экраны, ключевые действия, критичные состояния.","items":{"type":"string","minLength":1}},"triggers_and_events":{"type":"array","description":"## 9. Триггеры и события — что запускает процесс, какие сигналы обрабатываются.","items":{"type":"string","minLength":1}},"data_entities":{"type":"array","description":"## 10. Данные и ключевые сущности — основные модели, состояния, справочники (в т.ч. Приложение/Кластер/Модуль, если релевантно).","items":{"type":"string","minLength":1}},"architecture_outline":{"type":"array","description":"## 11. Архитектурный контур — модули/сервисы/фасады и их взаимодействие.","items":{"type":"string","minLength":1}},"users_and_roles":{"type":"object","additionalProperties":false,"description":"## 12. Пользователи и роли.","properties":{"user":{"type":"string","description":"- **Пользователь**: ..."},"ai_agent":{"type":"string","description":"- **AI Агент**: ..."},"system":{"type":"string","description":"- **Система**: ..."}},"required":["user","ai_agent","system"]},"out_of_scope":{"type":"array","description":"## 13. Границы (что НЕ входит).","items":{"type":"string","minLength":1}},"constraints_and_assumptions":{"type":"object","additionalProperties":false,"description":"## 14. Ограничения и допущения.","properties":{"technical_constraints":{"type":"array","description":"- Технические ограничения: ...","items":{"type":"string","minLength":1}},"ux_time_team_constraints":{"type":"array","description":"- Ограничения по UX/времени/команде: ...","items":{"type":"string","minLength":1}},"assumptions":{"type":"array","description":"- Допущения: ...","items":{"type":"string","minLength":1}}},"required":["technical_constraints","ux_time_team_constraints","assumptions"]},"data_and_storage":{"type":"object","additionalProperties":false,"description":"## 15. Данные и хранение.","properties":{"artifacts_files":{"type":"array","description":"- Артефакты/файлы: ...","items":{"type":"string","minLength":1}},"configs_settings":{"type":"array","description":"- Конфиги/настройки: ...","items":{"type":"string","minLength":1}},"logs_telemetry":{"type":"array","description":"- Логи/телеметрия: ...","items":{"type":"string","minLength":1}}},"required":["artifacts_files","configs_settings","logs_telemetry"]},"dependencies_and_integrations":{"type":"object","additionalProperties":false,"description":"## 16. Зависимости и интеграции.","properties":{"external_systems":{"type":"array","description":"- Внешние системы: ...","items":{"type":"string","minLength":1}},"internal_modules":{"type":"array","description":"- Внутренние модули: ...","items":{"type":"string","minLength":1}},"ai_providers":{"type":"array","description":"- Провайдеры AI: ...","items":{"type":"string","minLength":1}}},"required":["external_systems","internal_modules","ai_providers"]},"risks_and_unknowns":{"type":"array","description":"## 17. Риски и неизвестности.","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"## 18. Открытые вопросы — список того, что надо уточнить перед Spec.md.","items":{"type":"string","minLength":1}},"spec_entry_criteria":{"type":"array","description":"## 19. Критерии перехода к Spec.md — чек-лист. Может быть частично заполнен/переформулирован под проект.","items":{"type":"string","minLength":1}},"related_documents":{"type":"object","additionalProperties":false,"description":"## 20. Связанные документы.","properties":{"spec_note":{"type":"string","description":"Строка/пояснение про Spec.md (например '(будет создан)')."},"plan_note":{"type":"string","description":"Строка/пояснение про Plan.md (например '(будет создан)')."},"discussion_links":{"type":"array","description":"Ссылки на обсуждения/документы.","items":{"type":"string","minLength":1}}},"required":["spec_note","plan_note","discussion_links"]}},"required":["meta","short_description","context_and_motivation","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","constraints_and_assumptions","data_and_storage","dependencies_and_integrations","risks_and_unknowns","open_questions","spec_entry_criteria","related_documents"]},"coverage_percent":{"type":"integer","minimum":0,"maximum":100,"description":"Оценка заполненности шаблона идеи (0..100). Рекомендуемый порог завершения: >= 80."},"coverage":{"type":"object","additionalProperties":false,"description":"Опциональная детализация покрытия по секциям шаблона.","properties":{"completed_sections":{"type":"array","items":{"type":"string","minLength":1}},"missing_sections":{"type":"array","items":{"type":"string","minLength":1}}},"required":["completed_sections","missing_sections"]},"readiness":{"type":"object","additionalProperties":false,"description":"Готовность к переходу в Spec.md: честная оценка и блокеры.","properties":{"ready_for_spec":{"type":"boolean","description":"true только если блокеров нет и пользователь подтвердил финализацию."},"blockers":{"type":"array","description":"Список причин, почему нельзя переходить к Spec.md прямо сейчас.","items":{"type":"string","minLength":1}}},"required":["ready_for_spec","blockers"]},"handoff_for_spec":{"type":"object","additionalProperties":false,"description":"Handoff для следующего агента Spec.md: что принять как данность и что уточнить.","properties":{"assumptions":{"type":"array","description":"Ключевые допущения, на которых строится идея.","items":{"type":"string","minLength":1}},"decisions_needed":{"type":"array","description":"Решения, которые нужно принять в Spec.md (варианты/компромиссы).","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"Открытые вопросы для Spec.md (что уточнить у пользователя/стейкхолдеров).","items":{"type":"string","minLength":1}},"next_steps":{"type":"array","description":"Следующие шаги для подготовки Spec.md.","items":{"type":"string","minLength":1}}},"required":["assumptions","decisions_needed","open_questions","next_steps"]}}},"next_action":{"type":"string","description":"Что делать дальше: задать вопрос, уточнить, суммаризировать или завершить и вернуть артефакт.","enum":["ask_question","clarify","summarize","finalize"]},"suggested_response":{"type":"string","minLength":1,"description":"Текст следующего сообщения агента (вопрос/уточнение/сводка/финализация), который показываем пользователю."},"reasoning_summary_ru":{"type":"string","description":"Краткое резюме прогресса/решений на русском без chain-of-thought."},"artifact":{"type":"object","additionalProperties":false,"description":"Финальные артефакты. Обязательны при next_action=finalize.","required":["idea_markdown","virtual_simulation_markdown","idea_path","virtual_simulation_path"],"properties":{"idea_markdown":{"type":"string","description":"Готовый Idea.md как markdown (включая заголовок и все секции по шаблону)."},"virtual_simulation_markdown":{"type":"string","description":"Виртуальный тест (virtual-simulation.md) как markdown.\n\nОбязательные секции/заголовки (используй эти названия):\n- # Virtual Simulation: <Название идеи>\n- ## Цель симуляции\n- ## Сценарий 1 — ... (2–4 сценария)\n- ## UI ↔ Core события\n- ## Логи и телеметрия\n- ## Мини-матрица рисков\n- ## Must-pass проверки (E2E)\n- ## Выводы\n"},"idea_path":{"type":"string","description":"Куда сохранить Idea.md в проекте.","const":".codeai-hub/full-development-flow/idea/idea.md"},"virtual_simulation_path":{"type":"string","description":"Куда сохранить virtual-simulation.md в проекте.","const":".codeai-hub/full-development-flow/idea/virtual-simulation.md"}}}},"allOf":[{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"required":["artifact"]}},{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"properties":{"conversation_state":{"required":["collected","coverage_percent"],"properties":{"coverage_percent":{"minimum":80},"collected":{"required":["meta","short_description","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","dependencies_and_integrations","risks_and_unknowns","open_questions"],"properties":{"meta":{"required":["title","created_date","status","idea_type","author"]},"goals_and_success_criteria":{"required":["goals","success_criteria"]},"ui_ux":{"minItems":1},"triggers_and_events":{"minItems":1},"data_entities":{"minItems":1},"architecture_outline":{"minItems":1}}}}}}}}]}`;
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const getNestedRecord = (
-  root: Record<string, unknown>,
-  keys: readonly string[]
-): Record<string, unknown> | null => {
-  let current: Record<string, unknown> = root;
-  for (const key of keys) {
-    const next = current[key];
-    if (!isRecord(next)) {
-      return null;
+const FALLBACK_SCHEMA_JSON = `{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://codeai-hub.local/schemas/idea-collector-schema.json",
+  "title": "Idea Collector — Structured Output Contract (Slim)",
+  "description": "Контракт Structured Output для Idea Collector. Агент анализирует заполненную анкету, оценивает готовность к финализации и задаёт 1–3 умных уточняющих вопроса. На финале (next_action=finalize) обязан вернуть готовые Idea.md и virtual-simulation.md как markdown + целевые пути сохранения.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "next_action",
+    "suggested_response",
+    "reasoning_summary_ru",
+    "assessment",
+    "questions",
+    "artifact"
+  ],
+  "properties": {
+    "next_action": {
+      "type": "string",
+      "description": "Что делать дальше: ask_question | clarify | summarize | finalize."
+    },
+    "suggested_response": {
+      "type": "string",
+      "description": "Текст следующего сообщения агента (вопрос/уточнение/сводка/финализация), который показываем пользователю."
+    },
+    "reasoning_summary_ru": {
+      "type": "string",
+      "description": "Краткое резюме прогресса/решений на русском без chain-of-thought."
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ready_for_finalize",
+        "confidence_percent",
+        "missing_info",
+        "assumptions",
+        "risks"
+      ],
+      "description": "Оценка достаточности данных анкеты для подготовки Idea.md и virtual-simulation.md.",
+      "properties": {
+        "ready_for_finalize": {
+          "type": "boolean",
+          "description": "Готов ли агент финализировать документы прямо сейчас."
+        },
+        "confidence_percent": {
+          "type": "integer",
+          "description": "Уверенность в полноте данных (0–100). Ожидаемый порог для финализации: >= 80."
+        },
+        "missing_info": {
+          "type": "array",
+          "description": "Список пробелов/данных, которых не хватает для уверенной финализации.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "description": "Список допущений, на которых агент готов строить финальные документы.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "risks": {
+          "type": "array",
+          "description": "Список рисков/сомнений при финализации.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "description": "1–3 точечных вопроса, чтобы закрыть пробелы. До финализации вопросы обязательны; на finalize — пустой список.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Финальные артефакты. Обязательны при next_action=finalize.",
+      "required": [
+        "idea_markdown",
+        "virtual_simulation_markdown",
+        "idea_path",
+        "virtual_simulation_path"
+      ],
+      "properties": {
+        "idea_markdown": {
+          "type": "string",
+          "description": "Готовый Idea.md как markdown (включая заголовок и все секции по шаблону)."
+        },
+        "virtual_simulation_markdown": {
+          "type": "string",
+          "description": "Виртуальный тест (virtual-simulation.md) как markdown с обязательными секциями: # Virtual Simulation, Цель симуляции, Сценарии, UI ↔ Core события, Логи и телеметрия, Мини-матрица рисков, Must-pass проверки (E2E), Выводы."
+        },
+        "idea_path": {
+          "type": "string",
+          "description": "Куда сохранить Idea.md в проекте (канон: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md)."
+        },
+        "virtual_simulation_path": {
+          "type": "string",
+          "description": "Куда сохранить virtual-simulation.md в проекте (канон: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md)."
+        }
+      }
     }
-    current = next;
   }
-  return current;
-};
+}`;
 
-const patchFallbackIdeaCollectorSchema = (
-  schema: Record<string, unknown>
-): void => {
-  const meta = getNestedRecord(schema, [
-    "properties",
-    "conversation_state",
-    "properties",
-    "collected",
-    "properties",
-    "meta",
-  ]);
-  const metaProperties = meta ? getNestedRecord(meta, ["properties"]) : null;
-  const metaRequired = meta?.required;
-  if (metaProperties) {
-    metaProperties.initiative_slug = {
-      type: "string",
-      minLength: 1,
-      description:
-        "initiativeSlug (lowercase kebab-case). Используется в каноничных путях: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/...",
-    };
-  }
-  if (
-    Array.isArray(metaRequired) &&
-    !metaRequired.includes("initiative_slug")
-  ) {
-    metaRequired.push("initiative_slug");
-  }
-
-  const artifact = getNestedRecord(schema, ["properties", "artifact"]);
-  const artifactProperties = artifact
-    ? getNestedRecord(artifact, ["properties"])
-    : null;
-  if (artifactProperties && isRecord(artifactProperties.idea_path)) {
-    (artifactProperties.idea_path as Record<string, unknown>).const =
-      ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/idea.md";
-  }
-  if (
-    artifactProperties &&
-    isRecord(artifactProperties.virtual_simulation_path)
-  ) {
-    (
-      artifactProperties.virtual_simulation_path as Record<string, unknown>
-    ).const =
-      ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/virtual-simulation.md";
-  }
-};
-
-const parsed = JSON.parse(FALLBACK_SCHEMA_JSON) as Record<string, unknown>;
-patchFallbackIdeaCollectorSchema(parsed);
-
-export const IDEA_COLLECTOR_FALLBACK_SCHEMA = parsed;
+export const IDEA_COLLECTOR_FALLBACK_SCHEMA = JSON.parse(
+  FALLBACK_SCHEMA_JSON
+) as Record<string, unknown>;
