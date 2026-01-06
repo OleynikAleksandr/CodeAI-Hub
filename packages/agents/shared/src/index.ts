@@ -12,6 +12,14 @@
  */
 export const AGENT_SHARED_VERSION = "1.1.387";
 
+// Schema utilities
+export {
+  cloneSchema,
+  injectTemplateIntoSchema,
+  isRecord,
+  normalizeSchema,
+  strictifySchema,
+} from "./schema-utils";
 // Types
 export type {
   AgentOutputPaths,
