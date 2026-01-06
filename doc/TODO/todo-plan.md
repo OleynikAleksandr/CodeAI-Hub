@@ -175,6 +175,41 @@
 9. [DONE] Подготовить релиз 1.1.386 (scope: версии/манифесты/locks, `doc/TODO/todo-plan.md`; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.386`) (date: 2026-01-05)
 10. [DONE] Git Commit: `chore(release): prepare 1.1.386` (hash: 4e1a7a6)
 
+---
+
+## Phase 6 — Slim structured output for Idea Collector (owner: Oleksandr, updated: 2026-01-05)
+
+### Stream: Архитектура и план
+
+1. [DONE] Утвердить архитектуру slim-контракта (scope: `doc/Project_Docs/IdeaCollector_Slim_Structured_Output.md`, `doc/TODO/todo-plan.md`; expected: статус Approved + план работ; commit: `docs(orchestrator): approve slim structured output plan`) (date: 2026-01-05)
+2. [DONE] Git Commit: `docs(orchestrator): approve slim structured output plan` (hash: TBD)
+
+### Stream: Slim schema
+
+3. [TODO] Обновить schema + fallback под slim-контракт (scope: `assets/templates/full-development-flow/idea/idea-collector-schema.json`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `doc/TODO/todo-plan.md`; expected: assessment + questions без дублирования анкеты; commit: `feat(orchestrator): slim idea collector schema`) (date: 2026-01-05)
+4. [TODO] Git Commit: `feat(orchestrator): slim idea collector schema` (hash: TBD)
+
+### Stream: Prompt alignment
+
+5. [TODO] Обновить prompt + kickoff prompt (scope: `assets/templates/full-development-flow/idea/idea-collector-prompt.md`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `doc/TODO/todo-plan.md`; expected: вопросы формируются по достаточности данных для Idea/virtual-simulation; commit: `feat(orchestrator): align idea collector prompt`) (date: 2026-01-05)
+6. [TODO] Git Commit: `feat(orchestrator): align idea collector prompt` (hash: TBD)
+
+### Stream: Webview bundle
+
+7. [TODO] Обновить webview bundle (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: bundle отражает новый prompt/contract; commit: `chore(webview): refresh bundle for slim contract`) (date: 2026-01-05)
+8. [TODO] Git Commit: `chore(webview): refresh bundle for slim contract` (hash: TBD)
+
+### Stream: Документация и релиз
+
+9. [TODO] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: релиз 1.1.387 + описание slim-контракта; commit: `docs(orchestrator): document slim idea collector contract`) (date: 2026-01-05)
+10. [TODO] Git Commit: `docs(orchestrator): document slim idea collector contract` (hash: TBD)
+
+11. [TODO] Обновить README + CHANGELOG под релиз 1.1.387 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.387 notes`) (date: 2026-01-05)
+12. [TODO] Git Commit: `docs(release): update 1.1.387 notes` (hash: TBD)
+
+13. [TODO] Подготовить релиз 1.1.387 (scope: версии/манифесты/locks, `doc/TODO/todo-plan.md`; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.387`) (date: 2026-01-05)
+14. [TODO] Git Commit: `chore(release): prepare 1.1.387` (hash: TBD)
+
 ## Notes
 
 - Каноничные пути артефактов инициативы (как сейчас):
