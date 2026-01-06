@@ -112,14 +112,14 @@
 
 ### Stream: Spec Creator Package Bootstrap
 
-1. [TODO] Создать пакет `@codeai-hub/spec-creator` (scope: `packages/agents/spec-creator/package.json`, `packages/agents/spec-creator/tsconfig.json`, `packages/agents/spec-creator/src/index.ts`; expected: структура аналогична idea-collector; commit: `feat(agents): bootstrap spec-creator package`)
-2. [TODO] Git Commit: `feat(agents): bootstrap spec-creator package` (hash: TBD)
+1. [DONE] Создать пакет `@codeai-hub/spec-creator` (scope: `packages/agents/spec-creator/package.json`, `packages/agents/spec-creator/tsconfig.json`, `packages/agents/spec-creator/src/index.ts`; expected: структура аналогична idea-collector; commit: `feat(agents): bootstrap spec-creator package`) (date: 2026-01-06)
+2. [DONE] Git Commit: `feat(agents): bootstrap spec-creator package` (hash: TBD)
 
-3. [TODO] Добавить placeholder assets (scope: `packages/agents/spec-creator/assets/spec-creator-schema.json`, `packages/agents/spec-creator/assets/spec-creator-prompt.md`, `packages/agents/spec-creator/assets/spec-template.md`; expected: заглушки для будущей реализации; commit: `feat(spec-creator): add placeholder assets`)
-4. [TODO] Git Commit: `feat(spec-creator): add placeholder assets` (hash: TBD)
+3. [DONE] Добавить placeholder assets (scope: `packages/agents/spec-creator/assets/spec-creator-schema.json`, `packages/agents/spec-creator/assets/spec-creator-prompt.md`, `packages/agents/spec-creator/assets/spec-template.md`; expected: заглушки для будущей реализации; commit: `feat(spec-creator): add placeholder assets`) (date: 2026-01-06)
+4. [DONE] Git Commit: `feat(spec-creator): add placeholder assets` (hash: TBD)
 
-5. [TODO] Создать скелет фасада (scope: `packages/agents/spec-creator/src/facade.ts`, `packages/agents/spec-creator/src/contract/`, `packages/agents/spec-creator/src/parser/`; expected: `SpecCreatorFacade` с TODO методами; commit: `feat(spec-creator): implement facade skeleton`)
-6. [TODO] Git Commit: `feat(spec-creator): implement facade skeleton` (hash: TBD)
+5. [DONE] Создать скелет фасада (scope: `packages/agents/spec-creator/src/facade.ts`, `packages/agents/spec-creator/src/contract/`, `packages/agents/spec-creator/src/parser/`; expected: `SpecCreatorFacade` с TODO методами; commit: `feat(spec-creator): implement facade skeleton`) (date: 2026-01-06)
+6. [DONE] Git Commit: `feat(spec-creator): implement facade skeleton` (hash: TBD)
 
 ### Stream: Documentation & Release
 

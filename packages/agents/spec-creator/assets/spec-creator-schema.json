@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Spec Creator Output Schema",
+  "description": "JSON Schema for Spec Creator agent structured output. TODO: Define complete schema.",
+  "type": "object",
+  "properties": {
+    "artifact": {
+      "type": "object",
+      "description": "Generated specification artifacts",
+      "properties": {
+        "specification_markdown": {
+          "type": "string",
+          "description": "Full specification document in Markdown format"
+        },
+        "technical_design_markdown": {
+          "type": "string",
+          "description": "Technical design document in Markdown format"
+        }
+      },
+      "required": ["specification_markdown"]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadata about the generation process",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Schema version"
+        },
+        "stage": {
+          "type": "string",
+          "const": "spec"
+        }
+      }
+    }
+  },
+  "required": ["artifact"]
+}
