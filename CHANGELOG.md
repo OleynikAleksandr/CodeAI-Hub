@@ -1,3 +1,8 @@
+## [1.1.387] - 2026-01-05
+
+### Changed
+- **Idea Collector slim output**: return readiness assessment + 1–3 smart questions without duplicating the questionnaire.
+
 ## [1.1.386] - 2026-01-05
 
 ### Fixed

@@ -2,21 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.386
+## Current Release — v1.1.387
+- **Idea Collector slim output**: readiness assessment + 1–3 smart questions, without duplicating the questionnaire.
 - **Questionnaire auto-attach guard**: prompt placeholder paths are ignored so `questionnaire.md` is attached on single-turn submit.
 - **Questionnaire submit**: prompt + submission are sent as a single turn to avoid early provider replies.
 - **Pre-read auto-attach**: documents from section 0 are attached before the questionnaire content.
 - **Auto-attach limits**: per-file limit increased to 300 KB with a 1.2 MB total budget (also used by `/read`).
 - **Questionnaire UX**: cancel button + resume banner; pending questionnaires persist across restarts.
 - **Core template authority**: Core syncs bundled prompt/template/schema/questionnaire on startup and overwrites local edits.
-- **Release 1.1.386**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+- **Release 1.1.387**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.386.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.386.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.386.tar.bz2`
-  - Providers: `claude-module-1.1.386.tar.bz2`, `codex-module-1.1.386.tar.bz2`, `gemini-module-1.1.386.tar.bz2`
-  - UI: `vscode-webview-1.1.386.tar.bz2`, `web-client-1.1.386.tar.bz2`, `project-manager-1.1.386.tar.bz2`
+  - VSIX: `codeai-hub-1.1.387.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.387.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.387.tar.bz2`
+  - Providers: `claude-module-1.1.387.tar.bz2`, `codex-module-1.1.387.tar.bz2`, `gemini-module-1.1.387.tar.bz2`
+  - UI: `vscode-webview-1.1.387.tar.bz2`, `web-client-1.1.387.tar.bz2`, `project-manager-1.1.387.tar.bz2`
 
 
 ## Features
