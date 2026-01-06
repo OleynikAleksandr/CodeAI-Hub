@@ -8,5 +8,13 @@
       "!!media/web-client/dist",
       "!!src/client/project-manager"
     ]
+  },
+  "linter": {
+    "rules": {
+      "performance": {
+        // Allow barrel files in agent packages for convenient API
+        "noBarrelFile": "off"
+      }
+    }
   }
 }
