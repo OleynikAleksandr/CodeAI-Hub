@@ -124,10 +124,10 @@
 ### Stream: Documentation & Release
 
 7. [DONE] Обновить Architecture.md (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/AgentPackages_Architecture.md`; expected: описание Agent Packages архитектуры) (date: 2026-01-06)
-8. [DONE] Git Commit: `docs(architecture): document agent packages structure` (hash: TBD)
+8. [DONE] Git Commit: `docs(architecture): document agent packages structure` (hash: 946501d) (date: 2026-01-06)
 
 9. [DONE] Обновить README + CHANGELOG (scope: `README.md`, `CHANGELOG.md`; expected: release notes для рефакторинга) (date: 2026-01-06)
-10. [DONE] Git Commit: (included in docs commit)
+10. [DONE] Git Commit: (included in 946501d)
 
 11. [IN_PROGRESS] Подготовить релиз (scope: версии/манифесты; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.388`)
 12. [TODO] Git Commit: `chore(release): prepare 1.1.388` (hash: TBD)
