@@ -13,10 +13,10 @@ const DESTINATION_RELATIVE_PATH = path.join(
 );
 
 const BUNDLED_RELATIVE_PATH = path.join(
+  "node_modules",
+  "@codeai-hub",
+  "idea-collector",
   "assets",
-  "templates",
-  "full-development-flow",
-  "idea",
   "questionnaire-template.md"
 );
 
