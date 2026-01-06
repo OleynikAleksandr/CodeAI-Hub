@@ -208,7 +208,7 @@
 12. [DONE] Git Commit: `docs(release): update 1.1.387 notes` (hash: 4389950)
 
 13. [DONE] Подготовить релиз 1.1.387 (scope: версии/манифесты/locks, `doc/TODO/todo-plan.md`; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.387`) (date: 2026-01-05)
-14. [DONE] Git Commit: `chore(release): prepare 1.1.387` (hash: TBD)
+14. [DONE] Git Commit: `chore(release): prepare 1.1.387` (hash: 2c87928)
 
 ## Notes
 
