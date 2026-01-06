@@ -8049,8 +8049,8 @@
     if (!value) {
       return Date.now();
     }
-    const parsed2 = Date.parse(value);
-    return Number.isNaN(parsed2) ? Date.now() : parsed2;
+    const parsed = Date.parse(value);
+    return Number.isNaN(parsed) ? Date.now() : parsed;
   };
   var sanitizeProvider = (provider) => {
     if (!provider || typeof provider.id !== "string") {
@@ -8092,20 +8092,20 @@
       return null;
     }
     try {
-      const parsed2 = JSON.parse(content3);
-      if (!parsed2 || typeof parsed2 !== "object") {
+      const parsed = JSON.parse(content3);
+      if (!parsed || typeof parsed !== "object") {
         return null;
       }
       let suggestedResponse = null;
-      if (typeof parsed2.suggested_response === "string") {
-        suggestedResponse = parsed2.suggested_response;
-      } else if (typeof parsed2.suggestedResponse === "string") {
-        suggestedResponse = parsed2.suggestedResponse;
+      if (typeof parsed.suggested_response === "string") {
+        suggestedResponse = parsed.suggested_response;
+      } else if (typeof parsed.suggestedResponse === "string") {
+        suggestedResponse = parsed.suggestedResponse;
       }
       if (!suggestedResponse?.trim()) {
         return null;
       }
-      const hasSignature = typeof parsed2.conversation_state === "object" || typeof parsed2.next_action === "string" || typeof parsed2.nextAction === "string";
+      const hasSignature = typeof parsed.conversation_state === "object" || typeof parsed.next_action === "string" || typeof parsed.nextAction === "string";
       return hasSignature ? suggestedResponse : null;
     } catch {
       return null;
@@ -8167,12 +8167,12 @@
   };
   var parseEnvelope = (raw) => {
     try {
-      const parsed2 = JSON.parse(raw);
-      if (!parsed2 || typeof parsed2.type !== "string") {
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed.type !== "string") {
         return null;
       }
-      if (parsed2.type === "session:message" || parsed2.type === "session:created" || parsed2.type === "session:deleted" || parsed2.type === "session:stream" || parsed2.type === "session:error" || parsed2.type === "core:loading-status" || parsed2.type === "session:binding") {
-        return { type: parsed2.type, payload: parsed2.payload };
+      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "session:error" || parsed.type === "core:loading-status" || parsed.type === "session:binding") {
+        return { type: parsed.type, payload: parsed.payload };
       }
     } catch {
       return null;
@@ -9609,62 +9609,128 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/app-host/idea-kickoff-prompt.ts
-  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\nSpec-first: \u0432\u0435\u0434\u0438 readiness (ready_for_spec/blockers) \u0438 handoff_for_spec (assumptions/decisions_needed/open_questions/next_steps).\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md` \u0438 `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md`.";
+  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\n\u041E\u0446\u0435\u043D\u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0447\u0435\u0440\u0435\u0437 assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0434\u0430\u0439 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 (questions), \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E; \u043D\u0430 finalize questions = [].\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md` \u0438 `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md`.";
 
   // src/client/ui/src/services/idea-collector-fallback-schema.ts
-  var FALLBACK_SCHEMA_JSON = String.raw`{"$schema":"http://json-schema.org/draft-07/schema#","$id":"https://codeai-hub.local/schemas/idea-collector-schema.json","title":"Idea Collector — Structured Output Contract","description":"Контракт Structured Output для универсального агента Idea Collector. Агент ведёт guided conversation, заполняя секции идеи, опирается только на контракт (без внешних документов), и на финале (next_action=finalize) обязан вернуть готовые Idea.md и virtual-simulation.md как markdown + целевые пути сохранения.","type":"object","additionalProperties":false,"required":["conversation_state","next_action","suggested_response","reasoning_summary_ru","artifact"],"properties":{"conversation_state":{"type":"object","additionalProperties":false,"required":["collected","coverage_percent","coverage","readiness","handoff_for_spec"],"description":"Накопленное состояние диалога: частично или полностью заполненные секции из шаблона идеи.","properties":{"collected":{"type":"object","additionalProperties":false,"description":"Накопленные ответы пользователя/агента по секциям idea-template.md. Допускается частичное заполнение — агент дозапрашивает недостающее.","properties":{"meta":{"type":"object","additionalProperties":false,"description":"Метаданные шапки Idea.md.","properties":{"title":{"type":"string","minLength":1,"description":"# Idea: <Название инициативы/модуля/проекта>"},"created_date":{"type":"string","description":"**Дата создания:** <YYYY-MM-DD>","pattern":"^\\d{4}-\\d{2}-\\d{2}$"},"status":{"type":"string","description":"**Статус:** Draft | Approved | In Progress | Completed","enum":["Draft","Approved","In Progress","Completed"]},"author":{"type":"string","minLength":1,"description":"**Автор идеи:** <имя>"},"idea_type":{"type":"string","description":"**Тип идеи:** продукт | приложение | кластер | фича | модуль | улучшение | исследование","enum":["продукт","приложение","кластер","фича","модуль","улучшение","исследование"]}},"required":["title","created_date","status","idea_type","author"]},"short_description":{"type":"string","description":"## 1. Краткое описание — одно-два предложения, что это и зачем."},"context_and_motivation":{"type":"string","description":"## 2. Контекст и мотивация — почему это важно сейчас, какой контекст привёл к идее."},"problem":{"type":"string","description":"## 3. Проблема — какую проблему решает модуль/проект."},"goals_and_success_criteria":{"type":"object","additionalProperties":false,"description":"## 4. Цели и критерии успеха.","properties":{"goals":{"type":"array","description":"**Цели:**","items":{"type":"string","minLength":1}},"success_criteria":{"type":"array","description":"**Критерии успеха (измеримые/проверяемые):**","items":{"type":"string","minLength":1}}},"required":["goals","success_criteria"]},"high_level_solution":{"type":"string","description":"## 5. Решение (высокоуровневое) — как предлагается решить проблему."},"user_scenarios":{"type":"array","description":"## 6. Пользовательские сценарии — 3–7 ключевых сценариев использования.","items":{"type":"string","minLength":1}},"key_functions":{"type":"array","description":"## 7. Ключевые функции — таблица функций.","items":{"type":"object","additionalProperties":false,"required":["id","name","description"],"properties":{"id":{"type":"integer","minimum":1,"description":"Порядковый номер в таблице (опционально)."},"name":{"type":"string","minLength":1,"description":"Название функции."},"description":{"type":"string","minLength":1,"description":"Описание функции."}}}},"ui_ux":{"type":"array","description":"## 8. UI/UX и пользовательские потоки — экраны, ключевые действия, критичные состояния.","items":{"type":"string","minLength":1}},"triggers_and_events":{"type":"array","description":"## 9. Триггеры и события — что запускает процесс, какие сигналы обрабатываются.","items":{"type":"string","minLength":1}},"data_entities":{"type":"array","description":"## 10. Данные и ключевые сущности — основные модели, состояния, справочники (в т.ч. Приложение/Кластер/Модуль, если релевантно).","items":{"type":"string","minLength":1}},"architecture_outline":{"type":"array","description":"## 11. Архитектурный контур — модули/сервисы/фасады и их взаимодействие.","items":{"type":"string","minLength":1}},"users_and_roles":{"type":"object","additionalProperties":false,"description":"## 12. Пользователи и роли.","properties":{"user":{"type":"string","description":"- **Пользователь**: ..."},"ai_agent":{"type":"string","description":"- **AI Агент**: ..."},"system":{"type":"string","description":"- **Система**: ..."}},"required":["user","ai_agent","system"]},"out_of_scope":{"type":"array","description":"## 13. Границы (что НЕ входит).","items":{"type":"string","minLength":1}},"constraints_and_assumptions":{"type":"object","additionalProperties":false,"description":"## 14. Ограничения и допущения.","properties":{"technical_constraints":{"type":"array","description":"- Технические ограничения: ...","items":{"type":"string","minLength":1}},"ux_time_team_constraints":{"type":"array","description":"- Ограничения по UX/времени/команде: ...","items":{"type":"string","minLength":1}},"assumptions":{"type":"array","description":"- Допущения: ...","items":{"type":"string","minLength":1}}},"required":["technical_constraints","ux_time_team_constraints","assumptions"]},"data_and_storage":{"type":"object","additionalProperties":false,"description":"## 15. Данные и хранение.","properties":{"artifacts_files":{"type":"array","description":"- Артефакты/файлы: ...","items":{"type":"string","minLength":1}},"configs_settings":{"type":"array","description":"- Конфиги/настройки: ...","items":{"type":"string","minLength":1}},"logs_telemetry":{"type":"array","description":"- Логи/телеметрия: ...","items":{"type":"string","minLength":1}}},"required":["artifacts_files","configs_settings","logs_telemetry"]},"dependencies_and_integrations":{"type":"object","additionalProperties":false,"description":"## 16. Зависимости и интеграции.","properties":{"external_systems":{"type":"array","description":"- Внешние системы: ...","items":{"type":"string","minLength":1}},"internal_modules":{"type":"array","description":"- Внутренние модули: ...","items":{"type":"string","minLength":1}},"ai_providers":{"type":"array","description":"- Провайдеры AI: ...","items":{"type":"string","minLength":1}}},"required":["external_systems","internal_modules","ai_providers"]},"risks_and_unknowns":{"type":"array","description":"## 17. Риски и неизвестности.","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"## 18. Открытые вопросы — список того, что надо уточнить перед Spec.md.","items":{"type":"string","minLength":1}},"spec_entry_criteria":{"type":"array","description":"## 19. Критерии перехода к Spec.md — чек-лист. Может быть частично заполнен/переформулирован под проект.","items":{"type":"string","minLength":1}},"related_documents":{"type":"object","additionalProperties":false,"description":"## 20. Связанные документы.","properties":{"spec_note":{"type":"string","description":"Строка/пояснение про Spec.md (например '(будет создан)')."},"plan_note":{"type":"string","description":"Строка/пояснение про Plan.md (например '(будет создан)')."},"discussion_links":{"type":"array","description":"Ссылки на обсуждения/документы.","items":{"type":"string","minLength":1}}},"required":["spec_note","plan_note","discussion_links"]}},"required":["meta","short_description","context_and_motivation","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","constraints_and_assumptions","data_and_storage","dependencies_and_integrations","risks_and_unknowns","open_questions","spec_entry_criteria","related_documents"]},"coverage_percent":{"type":"integer","minimum":0,"maximum":100,"description":"Оценка заполненности шаблона идеи (0..100). Рекомендуемый порог завершения: >= 80."},"coverage":{"type":"object","additionalProperties":false,"description":"Опциональная детализация покрытия по секциям шаблона.","properties":{"completed_sections":{"type":"array","items":{"type":"string","minLength":1}},"missing_sections":{"type":"array","items":{"type":"string","minLength":1}}},"required":["completed_sections","missing_sections"]},"readiness":{"type":"object","additionalProperties":false,"description":"Готовность к переходу в Spec.md: честная оценка и блокеры.","properties":{"ready_for_spec":{"type":"boolean","description":"true только если блокеров нет и пользователь подтвердил финализацию."},"blockers":{"type":"array","description":"Список причин, почему нельзя переходить к Spec.md прямо сейчас.","items":{"type":"string","minLength":1}}},"required":["ready_for_spec","blockers"]},"handoff_for_spec":{"type":"object","additionalProperties":false,"description":"Handoff для следующего агента Spec.md: что принять как данность и что уточнить.","properties":{"assumptions":{"type":"array","description":"Ключевые допущения, на которых строится идея.","items":{"type":"string","minLength":1}},"decisions_needed":{"type":"array","description":"Решения, которые нужно принять в Spec.md (варианты/компромиссы).","items":{"type":"string","minLength":1}},"open_questions":{"type":"array","description":"Открытые вопросы для Spec.md (что уточнить у пользователя/стейкхолдеров).","items":{"type":"string","minLength":1}},"next_steps":{"type":"array","description":"Следующие шаги для подготовки Spec.md.","items":{"type":"string","minLength":1}}},"required":["assumptions","decisions_needed","open_questions","next_steps"]}}},"next_action":{"type":"string","description":"Что делать дальше: задать вопрос, уточнить, суммаризировать или завершить и вернуть артефакт.","enum":["ask_question","clarify","summarize","finalize"]},"suggested_response":{"type":"string","minLength":1,"description":"Текст следующего сообщения агента (вопрос/уточнение/сводка/финализация), который показываем пользователю."},"reasoning_summary_ru":{"type":"string","description":"Краткое резюме прогресса/решений на русском без chain-of-thought."},"artifact":{"type":"object","additionalProperties":false,"description":"Финальные артефакты. Обязательны при next_action=finalize.","required":["idea_markdown","virtual_simulation_markdown","idea_path","virtual_simulation_path"],"properties":{"idea_markdown":{"type":"string","description":"Готовый Idea.md как markdown (включая заголовок и все секции по шаблону)."},"virtual_simulation_markdown":{"type":"string","description":"Виртуальный тест (virtual-simulation.md) как markdown.\n\nОбязательные секции/заголовки (используй эти названия):\n- # Virtual Simulation: <Название идеи>\n- ## Цель симуляции\n- ## Сценарий 1 — ... (2–4 сценария)\n- ## UI ↔ Core события\n- ## Логи и телеметрия\n- ## Мини-матрица рисков\n- ## Must-pass проверки (E2E)\n- ## Выводы\n"},"idea_path":{"type":"string","description":"Куда сохранить Idea.md в проекте.","const":".codeai-hub/full-development-flow/idea/idea.md"},"virtual_simulation_path":{"type":"string","description":"Куда сохранить virtual-simulation.md в проекте.","const":".codeai-hub/full-development-flow/idea/virtual-simulation.md"}}}},"allOf":[{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"required":["artifact"]}},{"if":{"properties":{"next_action":{"const":"finalize"}},"required":["next_action"]},"then":{"properties":{"conversation_state":{"required":["collected","coverage_percent"],"properties":{"coverage_percent":{"minimum":80},"collected":{"required":["meta","short_description","problem","goals_and_success_criteria","high_level_solution","user_scenarios","key_functions","ui_ux","triggers_and_events","data_entities","architecture_outline","users_and_roles","out_of_scope","dependencies_and_integrations","risks_and_unknowns","open_questions"],"properties":{"meta":{"required":["title","created_date","status","idea_type","author"]},"goals_and_success_criteria":{"required":["goals","success_criteria"]},"ui_ux":{"minItems":1},"triggers_and_events":{"minItems":1},"data_entities":{"minItems":1},"architecture_outline":{"minItems":1}}}}}}}}]}`;
-  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var getNestedRecord = (root4, keys2) => {
-    let current = root4;
-    for (const key of keys2) {
-      const next = current[key];
-      if (!isRecord4(next)) {
-        return null;
+  var FALLBACK_SCHEMA_JSON = `{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://codeai-hub.local/schemas/idea-collector-schema.json",
+  "title": "Idea Collector \u2014 Structured Output Contract (Slim)",
+  "description": "\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 Structured Output \u0434\u043B\u044F Idea Collector. \u0410\u0433\u0435\u043D\u0442 \u0430\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u0443\u044E \u0430\u043D\u043A\u0435\u0442\u0443, \u043E\u0446\u0435\u043D\u0438\u0432\u0430\u0435\u0442 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0437\u0430\u0434\u0430\u0451\u0442 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430. \u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 (next_action=finalize) \u043E\u0431\u044F\u0437\u0430\u043D \u0432\u0435\u0440\u043D\u0443\u0442\u044C \u0433\u043E\u0442\u043E\u0432\u044B\u0435 Idea.md \u0438 virtual-simulation.md \u043A\u0430\u043A markdown + \u0446\u0435\u043B\u0435\u0432\u044B\u0435 \u043F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "next_action",
+    "suggested_response",
+    "reasoning_summary_ru",
+    "assessment",
+    "questions",
+    "artifact"
+  ],
+  "properties": {
+    "next_action": {
+      "type": "string",
+      "description": "\u0427\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435: ask_question | clarify | summarize | finalize."
+    },
+    "suggested_response": {
+      "type": "string",
+      "description": "\u0422\u0435\u043A\u0441\u0442 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F \u0430\u0433\u0435\u043D\u0442\u0430 (\u0432\u043E\u043F\u0440\u043E\u0441/\u0443\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u0435/\u0441\u0432\u043E\u0434\u043A\u0430/\u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u044F), \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u043C \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E."
+    },
+    "reasoning_summary_ru": {
+      "type": "string",
+      "description": "\u041A\u0440\u0430\u0442\u043A\u043E\u0435 \u0440\u0435\u0437\u044E\u043C\u0435 \u043F\u0440\u043E\u0433\u0440\u0435\u0441\u0441\u0430/\u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043D\u0430 \u0440\u0443\u0441\u0441\u043A\u043E\u043C \u0431\u0435\u0437 chain-of-thought."
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ready_for_finalize",
+        "confidence_percent",
+        "missing_info",
+        "assumptions",
+        "risks"
+      ],
+      "description": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E\u0441\u0442\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0430\u043D\u043A\u0435\u0442\u044B \u0434\u043B\u044F \u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0438 Idea.md \u0438 virtual-simulation.md.",
+      "properties": {
+        "ready_for_finalize": {
+          "type": "boolean",
+          "description": "\u0413\u043E\u0442\u043E\u0432 \u043B\u0438 \u0430\u0433\u0435\u043D\u0442 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u043F\u0440\u044F\u043C\u043E \u0441\u0435\u0439\u0447\u0430\u0441."
+        },
+        "confidence_percent": {
+          "type": "integer",
+          "description": "\u0423\u0432\u0435\u0440\u0435\u043D\u043D\u043E\u0441\u0442\u044C \u0432 \u043F\u043E\u043B\u043D\u043E\u0442\u0435 \u0434\u0430\u043D\u043D\u044B\u0445 (0\u2013100). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0439 \u043F\u043E\u0440\u043E\u0433 \u0434\u043B\u044F \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438: >= 80."
+        },
+        "missing_info": {
+          "type": "array",
+          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u043F\u0440\u043E\u0431\u0435\u043B\u043E\u0432/\u0434\u0430\u043D\u043D\u044B\u0445, \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442 \u0434\u043B\u044F \u0443\u0432\u0435\u0440\u0435\u043D\u043D\u043E\u0439 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u0434\u043E\u043F\u0443\u0449\u0435\u043D\u0438\u0439, \u043D\u0430 \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u0430\u0433\u0435\u043D\u0442 \u0433\u043E\u0442\u043E\u0432 \u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "risks": {
+          "type": "array",
+          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u0440\u0438\u0441\u043A\u043E\u0432/\u0441\u043E\u043C\u043D\u0435\u043D\u0438\u0439 \u043F\u0440\u0438 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438.",
+          "items": {
+            "type": "string"
+          }
+        }
       }
-      current = next;
+    },
+    "questions": {
+      "type": "array",
+      "description": "1\u20133 \u0442\u043E\u0447\u0435\u0447\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430, \u0447\u0442\u043E\u0431\u044B \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u043F\u0440\u043E\u0431\u0435\u043B\u044B. \u0414\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0432\u043E\u043F\u0440\u043E\u0441\u044B \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B; \u043D\u0430 finalize \u2014 \u043F\u0443\u0441\u0442\u043E\u0439 \u0441\u043F\u0438\u0441\u043E\u043A.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "\u0424\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B. \u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B \u043F\u0440\u0438 next_action=finalize.",
+      "required": [
+        "idea_markdown",
+        "virtual_simulation_markdown",
+        "idea_path",
+        "virtual_simulation_path"
+      ],
+      "properties": {
+        "idea_markdown": {
+          "type": "string",
+          "description": "\u0413\u043E\u0442\u043E\u0432\u044B\u0439 Idea.md \u043A\u0430\u043A markdown (\u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u0438 \u0432\u0441\u0435 \u0441\u0435\u043A\u0446\u0438\u0438 \u043F\u043E \u0448\u0430\u0431\u043B\u043E\u043D\u0443)."
+        },
+        "virtual_simulation_markdown": {
+          "type": "string",
+          "description": "\u0412\u0438\u0440\u0442\u0443\u0430\u043B\u044C\u043D\u044B\u0439 \u0442\u0435\u0441\u0442 (virtual-simulation.md) \u043A\u0430\u043A markdown \u0441 \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B\u043C\u0438 \u0441\u0435\u043A\u0446\u0438\u044F\u043C\u0438: # Virtual Simulation, \u0426\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, \u0421\u0446\u0435\u043D\u0430\u0440\u0438\u0438, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u041B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044F, \u041C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0430 \u0440\u0438\u0441\u043A\u043E\u0432, Must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0412\u044B\u0432\u043E\u0434\u044B."
+        },
+        "idea_path": {
+          "type": "string",
+          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C Idea.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md)."
+        },
+        "virtual_simulation_path": {
+          "type": "string",
+          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C virtual-simulation.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md)."
+        }
+      }
     }
-    return current;
-  };
-  var patchFallbackIdeaCollectorSchema = (schema) => {
-    const meta = getNestedRecord(schema, [
-      "properties",
-      "conversation_state",
-      "properties",
-      "collected",
-      "properties",
-      "meta"
-    ]);
-    const metaProperties = meta ? getNestedRecord(meta, ["properties"]) : null;
-    const metaRequired = meta?.required;
-    if (metaProperties) {
-      metaProperties.initiative_slug = {
-        type: "string",
-        minLength: 1,
-        description: "initiativeSlug (lowercase kebab-case). \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442\u0441\u044F \u0432 \u043A\u0430\u043D\u043E\u043D\u0438\u0447\u043D\u044B\u0445 \u043F\u0443\u0442\u044F\u0445: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/..."
-      };
-    }
-    if (Array.isArray(metaRequired) && !metaRequired.includes("initiative_slug")) {
-      metaRequired.push("initiative_slug");
-    }
-    const artifact = getNestedRecord(schema, ["properties", "artifact"]);
-    const artifactProperties = artifact ? getNestedRecord(artifact, ["properties"]) : null;
-    if (artifactProperties && isRecord4(artifactProperties.idea_path)) {
-      artifactProperties.idea_path.const = ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/idea.md";
-    }
-    if (artifactProperties && isRecord4(artifactProperties.virtual_simulation_path)) {
-      artifactProperties.virtual_simulation_path.const = ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/virtual-simulation.md";
-    }
-  };
-  var parsed = JSON.parse(FALLBACK_SCHEMA_JSON);
-  patchFallbackIdeaCollectorSchema(parsed);
-  var IDEA_COLLECTOR_FALLBACK_SCHEMA = parsed;
+  }
+}`;
+  var IDEA_COLLECTOR_FALLBACK_SCHEMA = JSON.parse(
+    FALLBACK_SCHEMA_JSON
+  );
 
   // src/client/ui/src/services/idea-collector-schema-utils.ts
-  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
   var strictifyProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord4(properties)) {
       return;
     }
     schema.required = Object.keys(properties);
@@ -9672,7 +9738,7 @@ ${path2}` : path2;
       schema.additionalProperties = false;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
+      if (isRecord4(value)) {
         strictifySchema(value);
       }
     }
@@ -9681,23 +9747,23 @@ ${path2}` : path2;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord5(item)) {
+        if (isRecord4(item)) {
           strictifySchema(item);
         }
       }
       return;
     }
-    if (isRecord5(items)) {
+    if (isRecord4(items)) {
       strictifySchema(items);
     }
   };
   var removeCombinatorsFromProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord4(properties)) {
       return;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
+      if (isRecord4(value)) {
         removeCombinators(value);
       }
     }
@@ -9706,13 +9772,13 @@ ${path2}` : path2;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord5(item)) {
+        if (isRecord4(item)) {
           removeCombinators(item);
         }
       }
       return;
     }
-    if (isRecord5(items)) {
+    if (isRecord4(items)) {
       removeCombinators(items);
     }
   };
@@ -9725,7 +9791,7 @@ ${path2}` : path2;
         continue;
       }
       for (const entry of entries) {
-        if (isRecord5(entry)) {
+        if (isRecord4(entry)) {
           removeCombinators(entry);
         }
       }
@@ -9742,19 +9808,19 @@ ${path2}` : path2;
       return schema;
     }
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord4(properties)) {
       return schema;
     }
     const artifact = properties.artifact;
-    if (!isRecord5(artifact)) {
+    if (!isRecord4(artifact)) {
       return schema;
     }
     const artifactProperties = artifact.properties;
-    if (!isRecord5(artifactProperties)) {
+    if (!isRecord4(artifactProperties)) {
       return schema;
     }
     const ideaMarkdown = artifactProperties.idea_markdown;
-    if (!isRecord5(ideaMarkdown)) {
+    if (!isRecord4(ideaMarkdown)) {
       return schema;
     }
     const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
@@ -9781,11 +9847,11 @@ ${template}`;
   };
   var sanitizeSchemaProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord4(properties)) {
       return;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
+      if (isRecord4(value)) {
         sanitizeSchemaKeywords(value);
       }
     }
@@ -9794,13 +9860,13 @@ ${template}`;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord5(item)) {
+        if (isRecord4(item)) {
           sanitizeSchemaKeywords(item);
         }
       }
       return;
     }
-    if (isRecord5(items)) {
+    if (isRecord4(items)) {
       sanitizeSchemaKeywords(items);
     }
   };
@@ -9856,13 +9922,13 @@ ${template}`;
     idea: ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/idea.md",
     virtualSimulation: ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/virtual-simulation.md"
   };
-  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isIdeaContractPayload = (value) => {
-    if (!isRecord6(value)) {
+    if (!isRecord5(value)) {
       return false;
     }
     const outputPaths = value.outputPaths;
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord6(value.schema) && isRecord6(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
+    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord5(value.schema) && isRecord5(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
   };
   var fetchIdeaContract = async () => {
     const httpUrl = resolveCoreHttpUrl();
@@ -9937,9 +10003,9 @@ ${template}`;
     const remainingMessage = lines.slice(1).join("\n").trim();
     return { paths, remainingMessage };
   };
-  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse = (value) => {
-    if (!isRecord7(value)) {
+    if (!isRecord6(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -10067,7 +10133,7 @@ ${command.remainingMessage}`);
 
   // src/client/ui/src/services/idea-collector-service.ts
   var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var loadContract = () => loadIdeaContract();
   var _IdeaCollectorService = class _IdeaCollectorService {
     constructor() {
@@ -10222,8 +10288,8 @@ ${content3}`;
           return;
         }
         const payload = await response.json();
-        const savedIdeaPath = isRecord8(payload) && isRecord8(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : artifact.ideaPath;
-        const savedVirtualSimulationPath = isRecord8(payload) && isRecord8(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : artifact.virtualSimulationPath;
+        const savedIdeaPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : artifact.ideaPath;
+        const savedVirtualSimulationPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : artifact.virtualSimulationPath;
         postSystemNotice(
           sessionId,
           `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedIdeaPath} \u0438 ${savedVirtualSimulationPath}`
@@ -10344,9 +10410,9 @@ ${replacement}
   var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
   var SAVE_DEBOUNCE_MS = 400;
   var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
-  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse2 = (value) => {
-    if (!isRecord9(value)) {
+    if (!isRecord8(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -26286,15 +26352,15 @@ ${message.content}`
     if (!value) {
       return null;
     }
-    const parsed2 = new Date(value);
-    if (Number.isNaN(parsed2.getTime())) {
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
       return null;
     }
-    const year = parsed2.getFullYear();
-    const month = String(parsed2.getMonth() + 1).padStart(2, "0");
-    const day = String(parsed2.getDate()).padStart(2, "0");
-    const hours = String(parsed2.getHours()).padStart(2, "0");
-    const minutes = String(parsed2.getMinutes()).padStart(2, "0");
+    const year = parsed.getFullYear();
+    const month = String(parsed.getMonth() + 1).padStart(2, "0");
+    const day = String(parsed.getDate()).padStart(2, "0");
+    const hours = String(parsed.getHours()).padStart(2, "0");
+    const minutes = String(parsed.getMinutes()).padStart(2, "0");
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
   var WarningBanner = ({
@@ -26877,8 +26943,8 @@ ${message.content}`
       onChange(constrained);
     };
     const handleInputChange = (event) => {
-      const parsed2 = Number.parseInt(event.target.value, 10);
-      updateValue(Number.isNaN(parsed2) ? MIN_THINKING_TOKENS : parsed2);
+      const parsed = Number.parseInt(event.target.value, 10);
+      updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: containerStyles4, children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("label", { style: { display: "block" }, children: [
       /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
@@ -27048,13 +27114,13 @@ ${message.content}`
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord10 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord9 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord10(value)) {
+    if (!isRecord9(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -27093,7 +27159,7 @@ ${message.content}`
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord10 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -27126,7 +27192,7 @@ ${message.content}`
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord11(value)) {
+    if (!isRecord10(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
