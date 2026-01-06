@@ -197,14 +197,14 @@
 ### Stream: Webview bundle
 
 7. [DONE] Обновить webview bundle (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: bundle отражает новый prompt/contract; commit: `chore(webview): refresh bundle for slim contract`) (date: 2026-01-05)
-8. [DONE] Git Commit: `chore(webview): refresh bundle for slim contract` (hash: TBD)
+8. [DONE] Git Commit: `chore(webview): refresh bundle for slim contract` (hash: 7b8ab4c)
 
 ### Stream: Документация и релиз
 
-9. [IN_PROGRESS] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: релиз 1.1.387 + описание slim-контракта; commit: `docs(orchestrator): document slim idea collector contract`) (date: 2026-01-05)
-10. [TODO] Git Commit: `docs(orchestrator): document slim idea collector contract` (hash: TBD)
+9. [DONE] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: релиз 1.1.387 + описание slim-контракта; commit: `docs(orchestrator): document slim idea collector contract`) (date: 2026-01-05)
+10. [DONE] Git Commit: `docs(orchestrator): document slim idea collector contract` (hash: TBD)
 
-11. [TODO] Обновить README + CHANGELOG под релиз 1.1.387 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.387 notes`) (date: 2026-01-05)
+11. [IN_PROGRESS] Обновить README + CHANGELOG под релиз 1.1.387 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.387 notes`) (date: 2026-01-05)
 12. [TODO] Git Commit: `docs(release): update 1.1.387 notes` (hash: TBD)
 
 13. [TODO] Подготовить релиз 1.1.387 (scope: версии/манифесты/locks, `doc/TODO/todo-plan.md`; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit: `chore(release): prepare 1.1.387`) (date: 2026-01-05)

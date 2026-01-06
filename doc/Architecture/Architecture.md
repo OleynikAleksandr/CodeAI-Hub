@@ -3,7 +3,7 @@
 **Version:** 0.5.9
 **Last Updated:** 2026-01-05
 **Status:** Active reference
-**Release Focus:** v1.1.386 — auto-attach игнорирует шаблонные пути из prompt, чтобы анкета прикреплялась при single-turn submit.
+**Release Focus:** v1.1.387 — slim Structured Output для Idea Collector: оценка готовности + умные вопросы без дублирования анкеты.
 
 ---
 
@@ -59,6 +59,7 @@ graph TD
 - **Flow Wizard → Idea Collector**: для Codex и Claude включён Flow Wizard (Idea/Spec/Plan), который стартует Guided Conversation. `IdeaCollectorService` получает contract (prompt + schema + template) из Core API `/api/v1/orchestrator/idea-contract`, а Codex structured outputs возвращают `suggested_response` + артефакт.
 - **Idea Questionnaire UI (v1.1.385)**: экран анкеты открывается по клику `Idea`, использует templateMarkdown из контракта, сохраняет ответы в `.codeai-hub/.../idea/questionnaire.md`, поддерживает отмену/возобновление, отображает подсказки под вопросом и отправляет submit в один provider turn.
 - **Questionnaire auto-attach guard (v1.1.386)**: auto-attach пропускает шаблонные пути `<...>` из prompt, чтобы корректно прикреплять `questionnaire.md` при single-turn submit.
+- **Idea Collector slim output (v1.1.387)**: Structured Output возвращает оценку готовности (`assessment`) и 1–3 умных вопроса (`questions`) без повторения анкеты; финализация — только через артефакты.
 - **Provider health isolation**: `ProviderRegistry` отслеживает runtime-ошибки Claude/Codex/Gemini CLI и по сигналу Remote Bridge помечает провайдера как `inactive`, очищает адаптер и планирует автоматический retry. Ошибки `createSession`/`sendMessage`/`closeSession` больше не валят orchestrator: сессия получает статус `failed`, UI выводит предупреждение, а остальные провайдеры продолжают работать.
 - **Claude Default model selector**: в разделе Settings → Claude появился новый блок `Claude Default model`, который хранит выбранный alias (`default/sonnet`, `opus`, `haiku`) в `~/.codeai-hub/settings/settings.json` и сразу обновляет переменную окружения `CLAUDE_DEFAULT_MODEL`, чтобы core передавал актуальный alias в Claude SDK при создании сессий.
 - **Streaming Rendering**: `StreamingWordEmitter` и `useDialogMessages` формируют потоковый вывод без разрывов Markdown. Логика идентична в webview и локальном веб-клиенте.
@@ -108,6 +109,9 @@ graph TD
 - **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`, `project-manager.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
 - **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
+
+## Recent Changes (v1.1.387 - 2026-01-05)
+- **Idea Collector slim output**: JSON с оценкой готовности и умными вопросами заменяет дублирование анкеты.
 
 ## Recent Changes (v1.1.386 - 2026-01-05)
 - **Questionnaire auto-attach**: шаблонные пути `<...>` в prompt игнорируются, чтобы анкета прикреплялась при single-turn submit.
