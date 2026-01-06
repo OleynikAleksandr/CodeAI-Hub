@@ -88,10 +88,10 @@
 ### Stream: Core Integration
 
 1. [DONE] Обновить Core для использования фасада (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected: вызов `IdeaCollectorFacade.buildContract()`; commit: `refactor(core): use idea collector facade for contract`) (date: 2026-01-06)
-2. [IN_PROGRESS] Git Commit: `refactor(core): use idea collector facade for contract` (hash: TBD)
+2. [DONE] Git Commit: `refactor(core): use idea collector facade for contract` (hash: dc74592) (date: 2026-01-06)
 
-3. [TODO] Обновить questionnaire handlers в Core (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-*.ts`; expected: импорт путей из фасада; commit: `refactor(core): use idea collector facade for paths`)
-4. [TODO] Git Commit: `refactor(core): use idea collector facade for paths` (hash: TBD)
+3. [DONE] Обновить questionnaire handlers в Core (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-*.ts`; expected: импорт путей из фасада; commit: `refactor(core): use idea collector facade for paths`) (date: 2026-01-06)
+4. [IN_PROGRESS] Git Commit: `refactor(core): use idea collector facade for paths` (hash: TBD)
 
 ### Stream: Claude Module Integration
 
