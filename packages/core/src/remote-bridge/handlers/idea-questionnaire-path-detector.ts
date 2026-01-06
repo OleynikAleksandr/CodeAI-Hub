@@ -1,5 +1,8 @@
+import { FLOW_NAME, IDEA_STAGE } from "@codeai-hub/idea-collector";
+
 const QUESTIONNAIRE_BASENAME = "questionnaire.md";
-const CANONICAL_PREFIX = ".codeai-hub/full-development-flow/initiatives/";
+const CANONICAL_PREFIX = `.codeai-hub/${FLOW_NAME}/initiatives/`;
+const IDEA_QUESTIONNAIRE_SUFFIX = `/${IDEA_STAGE}/${QUESTIONNAIRE_BASENAME}`;
 
 const WRAPPER_PAIRS: readonly [string, string][] = [
   ["`", "`"],
@@ -65,10 +68,10 @@ const extractCandidates = (message: string): readonly string[] => {
 
 const isCanonicalQuestionnairePath = (value: string): boolean =>
   value.includes(CANONICAL_PREFIX) &&
-  value.toLowerCase().endsWith(`/idea/${QUESTIONNAIRE_BASENAME}`);
+  value.toLowerCase().endsWith(IDEA_QUESTIONNAIRE_SUFFIX);
 
 const isIdeaQuestionnairePath = (value: string): boolean =>
-  value.toLowerCase().endsWith(`/idea/${QUESTIONNAIRE_BASENAME}`);
+  value.toLowerCase().endsWith(IDEA_QUESTIONNAIRE_SUFFIX);
 
 export const detectQuestionnairePath = (message: string): string | null => {
   const candidates = extractCandidates(message);
