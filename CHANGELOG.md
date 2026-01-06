@@ -1,3 +1,8 @@
+## [1.1.389] - 2026-01-06
+
+### Fixed
+- **Core runtime packaging**: Agent Packages are bundled into the built core runtime to avoid `MODULE_NOT_FOUND` and allow `/api/v1/health` to become healthy on fresh installs.
+
 ## [1.1.388] - 2026-01-06
 
 ### Added
