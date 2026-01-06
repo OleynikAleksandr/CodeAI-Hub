@@ -187,16 +187,16 @@
 ### Stream: Slim schema
 
 3. [DONE] Обновить schema + fallback под slim-контракт (scope: `assets/templates/full-development-flow/idea/idea-collector-schema.json`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `doc/TODO/todo-plan.md`; expected: assessment + questions без дублирования анкеты; commit: `feat(orchestrator): slim idea collector schema`) (date: 2026-01-05)
-4. [DONE] Git Commit: `feat(orchestrator): slim idea collector schema` (hash: TBD)
+4. [DONE] Git Commit: `feat(orchestrator): slim idea collector schema` (hash: 7830421)
 
 ### Stream: Prompt alignment
 
-5. [IN_PROGRESS] Обновить prompt + kickoff prompt (scope: `assets/templates/full-development-flow/idea/idea-collector-prompt.md`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `doc/TODO/todo-plan.md`; expected: вопросы формируются по достаточности данных для Idea/virtual-simulation; commit: `feat(orchestrator): align idea collector prompt`) (date: 2026-01-05)
-6. [TODO] Git Commit: `feat(orchestrator): align idea collector prompt` (hash: TBD)
+5. [DONE] Обновить prompt + kickoff prompt (scope: `assets/templates/full-development-flow/idea/idea-collector-prompt.md`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `doc/TODO/todo-plan.md`; expected: вопросы формируются по достаточности данных для Idea/virtual-simulation; commit: `feat(orchestrator): align idea collector prompt`) (date: 2026-01-05)
+6. [DONE] Git Commit: `feat(orchestrator): align idea collector prompt` (hash: TBD)
 
 ### Stream: Webview bundle
 
-7. [TODO] Обновить webview bundle (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: bundle отражает новый prompt/contract; commit: `chore(webview): refresh bundle for slim contract`) (date: 2026-01-05)
+7. [IN_PROGRESS] Обновить webview bundle (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: bundle отражает новый prompt/contract; commit: `chore(webview): refresh bundle for slim contract`) (date: 2026-01-05)
 8. [TODO] Git Commit: `chore(webview): refresh bundle for slim contract` (hash: TBD)
 
 ### Stream: Документация и релиз
