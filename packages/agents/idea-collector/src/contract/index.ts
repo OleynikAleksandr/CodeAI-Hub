@@ -1,3 +1,4 @@
+export { buildIdeaContract } from "./contract-builder";
 export type {
   IdeaContractPayload,
   IdeaOutputPaths,
