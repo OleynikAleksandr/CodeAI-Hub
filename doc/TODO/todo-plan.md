@@ -104,7 +104,7 @@
 8. [DONE] Git Commit: `refactor(assets): remove legacy idea collector templates` (hash: 8f0b5cf) (date: 2026-01-06)
 
 9. [DONE] Обновить Extension installers (scope: `src/extension-module/templates/idea-collector-prompt-installer.ts`, `src/extension-module/templates/idea-questionnaire-template-installer.ts`; expected: путь к bundled assets из пакета; commit: `refactor(extension): update idea collector installers`) (date: 2026-01-06)
-10. [IN_PROGRESS] Git Commit: `refactor(extension): update idea collector installers` (hash: TBD)
+10. [DONE] Git Commit: `refactor(extension): update idea collector installers` (hash: 69f962d) (date: 2026-01-06)
 
 ---
 
