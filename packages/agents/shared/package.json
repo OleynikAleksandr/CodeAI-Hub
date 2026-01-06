@@ -1,0 +1,26 @@
+{
+  "name": "@codeai-hub/agent-shared",
+  "version": "1.1.387",
+  "description": "Shared utilities and types for CodeAI Hub agent packages",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "codeai-hub",
+    "agents",
+    "shared"
+  ],
+  "author": "CodeAI Hub",
+  "license": "ISC"
+}
