@@ -1,6 +1,6 @@
 # Session 57 — Slim Idea Collector Output + Release 1.1.387
 
-**Date:** 2026-01-06 10:57 CET
+**Date:** 2026-01-06 13:52 CET
 **Branch:** main
 **Version:** 1.1.387
 
@@ -12,6 +12,7 @@
 - Обновлены архитектурные документы под slim Structured Output для Idea Collector.
 - Обновлены README + CHANGELOG под релиз 1.1.387.
 - Собран релиз 1.1.387: `build-all.sh` + `build-release.sh --use-current-version`, сформирован VSIX.
+- Релиз запушен в `origin/main`.
 
 ## Git commits
 - `5d854e7 docs(orchestrator): document slim idea collector contract`
