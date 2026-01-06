@@ -192,16 +192,16 @@
 ### Stream: Prompt alignment
 
 5. [DONE] Обновить prompt + kickoff prompt (scope: `assets/templates/full-development-flow/idea/idea-collector-prompt.md`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `doc/TODO/todo-plan.md`; expected: вопросы формируются по достаточности данных для Idea/virtual-simulation; commit: `feat(orchestrator): align idea collector prompt`) (date: 2026-01-05)
-6. [DONE] Git Commit: `feat(orchestrator): align idea collector prompt` (hash: TBD)
+6. [DONE] Git Commit: `feat(orchestrator): align idea collector prompt` (hash: f1f4fc4)
 
 ### Stream: Webview bundle
 
-7. [IN_PROGRESS] Обновить webview bundle (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: bundle отражает новый prompt/contract; commit: `chore(webview): refresh bundle for slim contract`) (date: 2026-01-05)
-8. [TODO] Git Commit: `chore(webview): refresh bundle for slim contract` (hash: TBD)
+7. [DONE] Обновить webview bundle (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected: bundle отражает новый prompt/contract; commit: `chore(webview): refresh bundle for slim contract`) (date: 2026-01-05)
+8. [DONE] Git Commit: `chore(webview): refresh bundle for slim contract` (hash: TBD)
 
 ### Stream: Документация и релиз
 
-9. [TODO] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: релиз 1.1.387 + описание slim-контракта; commit: `docs(orchestrator): document slim idea collector contract`) (date: 2026-01-05)
+9. [IN_PROGRESS] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: релиз 1.1.387 + описание slim-контракта; commit: `docs(orchestrator): document slim idea collector contract`) (date: 2026-01-05)
 10. [TODO] Git Commit: `docs(orchestrator): document slim idea collector contract` (hash: TBD)
 
 11. [TODO] Обновить README + CHANGELOG под релиз 1.1.387 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.387 notes`) (date: 2026-01-05)
