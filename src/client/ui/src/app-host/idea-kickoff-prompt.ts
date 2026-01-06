@@ -4,7 +4,8 @@ export const IDEA_KICKOFF_PROMPT =
   "Не читай внешние документы — работай только с контрактом и диалогом.\n" +
   "Как только появилось название, вычисли initiativeSlug (lowercase kebab-case) и предложи пользователю при желании отредактировать.\n" +
   "Всегда отвечай JSON, валидный по schema. Возвращай все ключи; если данных нет — задай уточняющий вопрос.\n" +
-  "Spec-first: веди readiness (ready_for_spec/blockers) и handoff_for_spec (assumptions/decisions_needed/open_questions/next_steps).\n" +
+  "Оцени готовность к финализации через assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n" +
+  "Всегда задай 1–3 умных вопроса (questions), даже если данных достаточно; на finalize questions = [].\n" +
   "Тип идеи: продукт | приложение | кластер | фича | модуль | улучшение | исследование.\n" +
   "Multi-module правило Flow: если идея — приложение или кластер (несколько модулей), Spec завершается только после Spec.md для каждого модуля; Plan составляется отдельно для каждого модуля.\n" +
   "artifact.idea_markdown и artifact.virtual_simulation_markdown держи пустыми до финализации; не публикуй полный Markdown в чате.\n" +
