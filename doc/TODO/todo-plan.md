@@ -52,5 +52,5 @@
 16. [DONE] Поднять версии и собрать tarball'ы через `./scripts/build-all.sh` (scope: build scripts + workspaces; commit: `chore(release): bump versions to 1.1.391`) (date: 2026-01-07)
 17. [DONE] Git Commit: `chore(release): bump versions to 1.1.391` (hash: 16832fd) (date: 2026-01-07)
 
-18. [TODO] Собрать VSIX: `./scripts/build-release.sh --use-current-version` (scope: release script; expected: `codeai-hub-1.1.391.vsix`) (date: 2026-01-07)
-19. [TODO] Git Commit: `docs(release): add Session064 report for 1.1.391` (hash: TBD)
+18. [DONE] Собрать VSIX: `./scripts/build-release.sh --use-current-version` (scope: release script; expected: `codeai-hub-1.1.391.vsix`) (date: 2026-01-07)
+19. [DONE] Git Commit: `docs(sessions): add Session064 release report` (hash: 806180c) (date: 2026-01-07)
