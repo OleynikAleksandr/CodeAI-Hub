@@ -1,6 +1,6 @@
 # UI Flow — Entry Selection (Simple Chat vs Flow Stages)
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Date:** 2026-01-07
 **Status:** Implemented (UI refactor)
 
@@ -8,7 +8,7 @@
 
 ## 1. Проблема
 
-Текущий UX запуска новой сессии начинается с выбора провайдера, после чего для Codex/Claude появляется отдельный шаг выбора Flow (и фактически работает только `Idea`).
+Текущий UX запуска новой сессии был построен вокруг «быстрых действий» в верхней панели (Action Bar) и/или выбора провайдера как первого шага.
 
 Это мешает «поставить Flow в центр» интерфейса:
 - Пользователь сначала думает о провайдере, а не о задаче/этапе.
@@ -18,11 +18,19 @@
 
 ## 2. Цель
 
-Сделать старт сессии **step-first**:
-1) Пользователь выбирает режим старта: **Simple Chat** или один из этапов Flow: **Idea / Spec / Plan / Execute**.
-2) Затем выбирает провайдера:
+Сделать старт сессии **step-first** и встроить его прямо в верхнюю панель:
+
+1) **Action Bar** заменяет прежние 4 кнопки (`New Session`, `Last Session`, `Clear Session`, `Old Sessions`) на 5 кнопок старта (EN):
+   - **Simple Chat**
+   - **Idea**
+   - **Spec**
+   - **Plan**
+   - **Execute**
+
+2) После выбора кнопки пользователь выбирает провайдера:
    - Для **Simple Chat** — любой из доступных (Codex / Claude / Gemini).
    - Для **Flow этапов** — только **Codex** и **Claude** (т.к. нужен Structured Output).
+
 3) Далее поведение остаётся прежним:
    - Для **Idea** после создания сессии запускается Idea Collector и показывается анкета.
    - Для **Spec/Plan/Execute** пока стартуется обычная сессия (без отдельного UI-пайплайна), как подготовка к будущей интеграции.
@@ -40,8 +48,8 @@
 ## 4. Затронутые UI пакеты
 
 Один кодовый слой UI используется и для:
-- **vscode-webview** (`src/client/ui`) — панель в VS Code
-- **web-client** (`src/client/web-client`) — PWA/CEF (подхватывает тот же UI через import)
+- **vscode-webview** (`src/client/ui`) — панель в VS Code.
+- **web-client** (`src/client/web-client`) — PWA/CEF (подхватывает тот же UI через import).
 
 ---
 
@@ -51,13 +59,12 @@
 - `selectedStage: 'chat' | 'idea' | 'spec' | 'plan' | 'execute' | null`
 
 ### Правила отображения
-- Если `providerPicker` открыт и `selectedStage === null` → показываем **выбор шага** (5 кнопок).
+- Если `providerPicker` открыт и `selectedStage === null` → показываем fallback **выбор шага** (Flow wizard).
 - Если `providerPicker` открыт и `selectedStage !== null` → показываем **выбор провайдера**.
 
 ### Ограничения провайдеров
 - `selectedStage === 'chat'` → показываем все доступные провайдеры.
 - `selectedStage !== 'chat'` → показываем только `codexCli` и `claudeCodeCli`.
-- Если Codex/Claude недоступны (не подключены), Flow-этапы в UI disabled.
 
 ---
 

@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-07
 **Status:** Active reference
-**Release Focus:** v1.1.390 — Flow-first UI session start: choose stage (Simple Chat/Idea/Spec/Plan/Execute) before provider selection.
+**Release Focus:** v1.1.391 — Flow-first UI session start: Action Bar provides 5 Flow buttons (Simple Chat/Idea/Spec/Plan/Execute) before provider selection.
 
 ---
 
@@ -151,6 +151,9 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.391 - 2026-01-07)
+- **Flow-first Action Bar**: replaced quick actions with 5 Flow start buttons (Simple Chat/Idea/Spec/Plan/Execute); provider selection follows, Flow steps restricted to Codex/Claude.
 
 ## Recent Changes (v1.1.390 - 2026-01-07)
 - **Flow-first session start**: UI теперь начинается с выбора этапа (Simple Chat/Idea/Spec/Plan/Execute), затем — выбора провайдера (Flow ограничен Codex/Claude).
