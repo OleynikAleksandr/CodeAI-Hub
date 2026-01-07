@@ -27806,7 +27806,6 @@ ${message.content}`
           pickerState,
           selectedStage,
           selectStage,
-          stageSelectionLocked,
           sessionViewProps: {
             activeSessionId,
             coreConnectionDetail: coreStatusDetail,
