@@ -33,7 +33,8 @@ import {
 } from "./webview-message-types";
 
 type ProviderPickerOpenHandler = (
-  providers: readonly ProviderStackDescriptor[]
+  providers: readonly ProviderStackDescriptor[],
+  stage: string | null
 ) => void;
 
 type SessionCreatedHandler = (session: SessionRecord) => void;
@@ -70,8 +71,14 @@ const handleProviderPickerOpenMessage = (
   onProviderPickerOpen: ProviderPickerOpenHandler
 ): void => {
   const providers = parseProviderList(message.payload?.providers);
+  const stage =
+    typeof message.payload?.stage === "string" ? message.payload.stage : null;
   if (providers.length > 0) {
-    onProviderPickerOpen(providers);
+    onProviderPickerOpen(providers, stage);
+    return;
+  }
+  if (stage) {
+    onProviderPickerOpen([], stage);
   }
 };
 

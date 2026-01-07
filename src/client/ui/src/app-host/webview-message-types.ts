@@ -9,6 +9,7 @@ export type ProviderPickerOpenMessage = {
   readonly type: "providerPicker:open";
   readonly payload?: {
     readonly providers?: unknown;
+    readonly stage?: unknown;
   };
 };
 
