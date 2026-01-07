@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type {
-  ProviderStackDescriptor,
-  ProviderStackId,
-} from "../../../types/provider";
+import type { ProviderStackId } from "../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../types/session";
 import {
   createDefaultMessages,
@@ -18,6 +15,7 @@ import { SessionRegion } from "./app-host/session-region";
 import { useSessionStore } from "./app-host/session-store";
 import { useSettingsVisibility } from "./app-host/settings-visibility";
 import { useIdeaCollector } from "./app-host/use-idea-collector";
+import { useProviderPickerOpenHandler } from "./app-host/use-provider-picker-open-handler";
 import { useWebviewMessageHandler } from "./app-host/webview-message-handler";
 import ActionBar from "./components/action-bar";
 import SettingsView from "./components/settings-view";
@@ -32,9 +30,9 @@ const AppHost = () => {
   const [coreStatus, setCoreStatus] = useState<
     "connecting" | "ready" | "error"
   >("connecting");
-  const [coreStatusDetail, setCoreStatusDetail] = useState<string | undefined>(
-    undefined
-  );
+  const [coreStatusDetail, setCoreStatusDetail] = useState<
+    string | undefined
+  >();
   const [coreFinalized, setCoreFinalized] = useState(false);
   const [messages, setMessages] = useState<Record<MessageId, LoadingMessage>>(
     createDefaultMessages
@@ -76,12 +74,9 @@ const AppHost = () => {
     sendMessage: sendIdeaCollectorMessage,
   } = useIdeaCollector(sendMessage);
 
-  const handleProviderPickerOpen = useCallback(
-    (providers: readonly ProviderStackDescriptor[]) => {
-      activateRoot();
-      openPicker(providers);
-    },
-    [openPicker]
+  const handleProviderPickerOpen = useProviderPickerOpenHandler(
+    openPicker,
+    selectStage
   );
 
   const confirmSelectionFromUi = useCallback(
