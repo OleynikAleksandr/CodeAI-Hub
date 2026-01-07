@@ -43,14 +43,13 @@ const AppHost = () => {
   const {
     pickerState,
     providerLabels,
-    flowWizardVisible,
-    flowWizardProviderId,
+    selectedStage,
     openPicker,
     confirmSelection,
     cancelSelection,
     resetPicker,
-    openFlowWizard,
-    closeFlowWizard,
+    selectStage,
+    clearStageSelection,
   } = useProviderPickerState();
   const {
     sessions,
@@ -88,11 +87,11 @@ const AppHost = () => {
   const confirmSelectionFromUi = useCallback(
     (providerIds: readonly ProviderStackId[]) => {
       shouldKickoffIdeaRef.current =
-        flowWizardVisible &&
+        selectedStage === "idea" &&
         (providerIds[0] === "codexCli" || providerIds[0] === "claudeCodeCli");
       confirmSelection(providerIds);
     },
-    [confirmSelection, flowWizardVisible]
+    [confirmSelection, selectedStage]
   );
 
   const handleSessionCreatedMessage = useCallback(
@@ -251,12 +250,11 @@ const AppHost = () => {
       <ActionBar disabled={!isCoreReady} />
       <SessionRegion
         cancelSelection={cancelSelection}
-        closeFlowWizard={closeFlowWizard}
+        clearStageSelection={clearStageSelection}
         confirmSelection={confirmSelectionFromUi}
-        flowWizardProviderId={flowWizardProviderId}
-        flowWizardVisible={flowWizardVisible}
-        openFlowWizard={openFlowWizard}
         pickerState={pickerState}
+        selectedStage={selectedStage}
+        selectStage={selectStage}
         sessionViewProps={{
           activeSessionId,
           coreConnectionDetail: coreStatusDetail,
