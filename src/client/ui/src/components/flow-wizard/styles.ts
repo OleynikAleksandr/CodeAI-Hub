@@ -21,7 +21,7 @@ export const flowWizardHeadingStyles: CSSProperties = {
 
 export const flowWizardStagesRowStyles: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+  gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
   gap: "10px",
 };
 
@@ -52,6 +52,11 @@ export const flowStageButtonActiveStyles: CSSProperties = {
 
 export const flowStageButtonActiveHoverStyles: CSSProperties = {
   borderColor: "#2b88d8",
+};
+
+export const flowStageButtonHoverStyles: CSSProperties = {
+  borderColor: "#4a4a4a",
+  background: "#242424",
 };
 
 export const flowStageButtonDisabledStyles: CSSProperties = {

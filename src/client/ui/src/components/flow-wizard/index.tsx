@@ -7,11 +7,12 @@ import {
   flowWizardStagesRowStyles,
 } from "./styles";
 
-export type FlowStageId = "idea" | "spec" | "plan" | "execute";
+export type FlowStageId = "chat" | "idea" | "spec" | "plan" | "execute";
 
 export type FlowWizardProps = {
-  readonly activeStage: FlowStageId;
+  readonly activeStage: FlowStageId | null;
   readonly onStageClick: (stage: FlowStageId) => void;
+  readonly disabledStages?: ReadonlySet<FlowStageId>;
 };
 
 const STAGES: ReadonlyArray<{
@@ -19,13 +20,18 @@ const STAGES: ReadonlyArray<{
   readonly title: string;
   readonly subtitle: string;
 }> = [
+  { id: "chat", title: "Simple Chat", subtitle: "Just talk to the assistant" },
   { id: "idea", title: "Idea", subtitle: "Collect requirements" },
   { id: "spec", title: "Spec", subtitle: "Define architecture" },
   { id: "plan", title: "Plan", subtitle: "Break work into tasks" },
   { id: "execute", title: "Execute", subtitle: "Run the plan" },
 ];
 
-export const FlowWizard = ({ activeStage, onStageClick }: FlowWizardProps) => {
+export const FlowWizard = ({
+  activeStage,
+  onStageClick,
+  disabledStages,
+}: FlowWizardProps) => {
   const headingStyles: CSSProperties = flowWizardHeadingStyles;
 
   return (
@@ -33,11 +39,11 @@ export const FlowWizard = ({ activeStage, onStageClick }: FlowWizardProps) => {
       aria-label="Development flow wizard"
       style={flowWizardContainerStyles}
     >
-      <h2 style={headingStyles}>Flow</h2>
+      <h2 style={headingStyles}>Start</h2>
       <div style={flowWizardStagesRowStyles}>
         {STAGES.map((stage) => {
           const active = stage.id === activeStage;
-          const disabled = !active;
+          const disabled = disabledStages?.has(stage.id) ?? false;
           return (
             <FlowStage
               active={active}

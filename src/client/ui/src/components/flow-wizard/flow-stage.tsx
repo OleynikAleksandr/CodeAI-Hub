@@ -6,6 +6,7 @@ import {
   flowStageButtonActiveStyles,
   flowStageButtonBaseStyles,
   flowStageButtonDisabledStyles,
+  flowStageButtonHoverStyles,
   flowStageSubtitleStyles,
   flowStageTitleStyles,
 } from "./styles";
@@ -30,11 +31,14 @@ export const FlowStage = ({
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
 
-  const interactive = active && !disabled;
+  const interactive = !disabled;
   const showHoverStyles = interactive && (hovered || focused);
-  const hoverStyles: CSSProperties = showHoverStyles
-    ? flowStageButtonActiveHoverStyles
-    : {};
+  let hoverStyles: CSSProperties = {};
+  if (showHoverStyles) {
+    hoverStyles = active
+      ? flowStageButtonActiveHoverStyles
+      : flowStageButtonHoverStyles;
+  }
 
   const buttonStyles: CSSProperties = {
     ...flowStageButtonBaseStyles,
