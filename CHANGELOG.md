@@ -1,3 +1,8 @@
+## [1.1.390] - 2026-01-07
+
+### Changed
+- **Flow-first UI start**: New sessions start by choosing a step (Simple Chat / Idea / Spec / Plan / Execute) before choosing a provider; Flow steps are restricted to Codex and Claude.
+
 ## [1.1.389] - 2026-01-06
 
 ### Fixed
