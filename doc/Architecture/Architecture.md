@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-07
 **Status:** Active reference
-**Release Focus:** v1.1.391 — Flow-first UI session start: Action Bar provides 5 Flow buttons (Simple Chat/Idea/Spec/Plan/Execute) before provider selection.
+**Release Focus:** v1.1.392 — Flow-first UI session start: Action Bar provides 5 Flow buttons (Simple Chat/Idea/Spec/Plan/Execute) before provider selection; Back closes the provider picker for Action Bar starts.
 
 ---
 
