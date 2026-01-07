@@ -12,8 +12,6 @@
   - `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`
   - `npm run check:links`
   - затем таргетная сборка (минимально необходимая для затронутого пакета/клиента), например:
-    - `npm run build --workspace @codeai-hub/core`
-    - `npm run build --workspace @codeai-hub/codex-module`
     - `npm run build:webview`
     - `npm run typecheck:webview`
 - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт этого файла (дата, статус, хеш).
@@ -21,124 +19,40 @@
 
 ---
 
-## Phase 1 — Agent Packages Infrastructure (owner: Oleksandr, updated: 2026-01-06)
+## Phase 1 — Flow-first UI session start (owner: Oleksandr, updated: 2026-01-07)
 
-### Stream: Архитектурный документ и согласование
+### Stream: Design Doc
 
-1. [DONE] Создать архитектурный документ Agent Packages (scope: `doc/Project_Docs/AgentPackages_Architecture.md`; expected: описана проблема, целевая архитектура, миграционный план; commit: `docs(agents): add agent packages architecture`) (date: 2026-01-06)
-2. [DONE] Git Commit: `docs(agents): add agent packages architecture` (hash: 045ab7c) (date: 2026-01-06)
+1. [DONE] Описать UX и модель состояния для step-first старта (scope: `doc/Project_Docs/UIFlow_EntrySelection_Architecture.md`; expected: цели/ограничения, state model, provider filtering; commit: `docs(ui): document flow-first start picker`) (date: 2026-01-07)
+2. [DONE] Git Commit: `docs(ui): document flow-first start picker` (hash: df8e3f8) (date: 2026-01-07)
 
-### Stream: Shared Agent Package
+### Stream: UI — Step selection (5 buttons)
 
-3. [DONE] Создать пакет `@codeai-hub/agent-shared` (scope: `packages/agents/shared/package.json`, `packages/agents/shared/tsconfig.json`, `packages/agents/shared/src/index.ts`; expected: базовая структура пакета; commit: `feat(agents): bootstrap agent-shared package`) (date: 2026-01-06)
-4. [DONE] Git Commit: `feat(agents): bootstrap agent-shared package` (hash: 1e7dd36) (date: 2026-01-06)
+3. [DONE] Расширить Flow wizard до 5 кнопок и включить hover/disabled поддержку (scope: `src/client/ui/src/components/flow-wizard/index.tsx`, `src/client/ui/src/components/flow-wizard/styles.ts`, `src/client/ui/src/components/flow-wizard/flow-stage.tsx`; expected: Simple Chat + Idea/Spec/Plan/Execute, адаптивная сетка; commit: `refactor(ui): extend flow wizard start steps`) (date: 2026-01-07)
+4. [DONE] Git Commit: `refactor(ui): extend flow wizard start steps` (hash: ed3fba1) (date: 2026-01-07)
 
-5. [DONE] Добавить общие типы контракта агента (scope: `packages/agents/shared/src/types/agent-contract.ts`, `packages/agents/shared/src/types/structured-output.ts`, `packages/agents/shared/src/types/index.ts`; expected: `AgentContractPayload`, `AgentStructuredOutput` типы; commit: `feat(agents): add shared agent types`) (date: 2026-01-06)
-6. [DONE] Git Commit: `feat(agents): add shared agent types` (hash: 9a9fbb0) (date: 2026-01-06)
+### Stream: UI — Stage-first provider selection
 
-7. [DONE] Добавить утилиты для схем (scope: `packages/agents/shared/src/schema-utils/schema-normalizer.ts`, `packages/agents/shared/src/schema-utils/schema-strictifier.ts`, `packages/agents/shared/src/schema-utils/index.ts`; expected: вынесена логика из `idea-contract-service.ts`; commit: `feat(agents): add shared schema utilities`) (date: 2026-01-06)
-8. [DONE] Git Commit: `feat(agents): add shared schema utilities` (hash: d56de9a) (date: 2026-01-06)
+5. [DONE] Переставить UX: сначала выбор шага, затем выбор провайдера; ограничить провайдеры для Flow (scope: `src/client/ui/src/app-host/provider-picker-state.ts`, `src/client/ui/src/app-host/flow-wizard-picker.tsx`, `src/client/ui/src/app-host/session-region.tsx`; expected: stage picker → provider picker, Flow = Codex/Claude only, disabled Flow при отсутствии Codex/Claude; commit: `refactor(ui): stage-first provider selection`) (date: 2026-01-07)
+6. [DONE] Git Commit: `refactor(ui): stage-first provider selection` (hash: a16225f) (date: 2026-01-07)
 
-9. [DONE] Добавить утилиты для контрактов (scope: `packages/agents/shared/src/contract-utils/file-reader.ts`, `packages/agents/shared/src/contract-utils/version-hasher.ts`, `packages/agents/shared/src/contract-utils/index.ts`; expected: чтение файлов, хеширование версии; commit: `feat(agents): add shared contract utilities`) (date: 2026-01-06)
-10. [DONE] Git Commit: `feat(agents): add shared contract utilities` (hash: accd571) (date: 2026-01-06)
+7. [DONE] Добавить “Back” в provider picker и убрать flow-specific текст (scope: `src/client/ui/src/provider-picker.tsx`; expected: Back возвращает к выбору шага; commit: `refactor(ui): add back navigation to provider picker`) (date: 2026-01-07)
+8. [DONE] Git Commit: `refactor(ui): add back navigation to provider picker` (hash: 0c567da) (date: 2026-01-07)
 
-### Stream: Idea Collector Package — Bootstrap
+9. [DONE] Ограничить kickoff Idea Collector только для Idea stage (scope: `src/client/ui/src/app-host.tsx`; expected: kickoff только когда выбран этап Idea; commit: `fix(ui): gate idea kickoff by stage`) (date: 2026-01-07)
+10. [DONE] Git Commit: `fix(ui): gate idea kickoff by stage` (hash: e62ac7a) (date: 2026-01-07)
 
-11. [DONE] Создать пакет `@codeai-hub/idea-collector` (scope: `packages/agents/idea-collector/package.json`, `packages/agents/idea-collector/tsconfig.json`, `packages/agents/idea-collector/src/index.ts`; expected: зависимость от `@codeai-hub/agent-shared`; commit: `feat(agents): bootstrap idea-collector package`) (date: 2026-01-06)
-12. [DONE] Git Commit: `feat(agents): bootstrap idea-collector package` (hash: 94edcfb) (date: 2026-01-06)
+### Stream: UI — Webview bundle
 
-13. [DONE] Перенести assets в пакет (scope: `packages/agents/idea-collector/assets/*`; expected: schema.json, prompt.md, template.md, questionnaire-template.md; commit: `feat(agents): move idea collector assets to package`) (date: 2026-01-06)
-14. [DONE] Git Commit: `feat(agents): move idea collector assets to package` (hash: 2fbd2f0) (date: 2026-01-06)
+11. [DONE] Обновить webview bundle под новый UX (scope: `media/react-chat.js`; expected: bundle соответствует UI изменениям; commit: `chore(webview): rebuild bundle`) (date: 2026-01-07)
+12. [DONE] Git Commit: `chore(webview): rebuild bundle` (hash: c7a6282) (date: 2026-01-07)
 
----
+### Stream: TODO hygiene
 
-## Phase 2 — Idea Collector Migration (owner: Oleksandr, updated: 2026-01-06)
+13. [DONE] Заархивировать предыдущий TODO план Agent Packages (scope: `doc/TODO/Archive/todo-plan-phase4-agent-packages-2026-01-06.md`; expected: перенос из `doc/TODO/todo-plan.md`; commit: `docs(todo): archive agent packages todo plan`) (date: 2026-01-07)
+14. [DONE] Git Commit: `docs(todo): archive agent packages todo plan` (hash: 2694230) (date: 2026-01-07)
 
-### Stream: Contract Logic Migration
+### Stream: Gates
 
-1. [DONE] Перенести типы контракта (scope: `packages/agents/idea-collector/src/contract/contract-types.ts`, `packages/agents/idea-collector/src/contract/index.ts`; expected: `IdeaContractPayload` и связанные типы; commit: `feat(idea-collector): add contract types`) (date: 2026-01-06)
-2. [DONE] Git Commit: `feat(idea-collector): add contract types` (hash: bdf5b26) (date: 2026-01-06)
-
-3. [DONE] Перенести логику построения контракта (scope: `packages/agents/idea-collector/src/contract/contract-builder.ts`; expected: `buildIdeaContract()` использует shared utilities; commit: `feat(idea-collector): add contract builder`) (date: 2026-01-06)
-4. [DONE] Git Commit: `feat(idea-collector): add contract builder` (hash: f1ba68d) (date: 2026-01-06)
-
-5. [DONE] Перенести пути артефактов (scope: `packages/agents/idea-collector/src/paths/artifact-paths.ts`, `packages/agents/idea-collector/src/paths/index.ts`; expected: константы путей для idea артефактов; commit: `feat(idea-collector): add artifact paths`) (date: 2026-01-06)
-6. [DONE] Git Commit: `feat(idea-collector): add artifact paths` (hash: 80d6299) (date: 2026-01-06)
-
-### Stream: Parser Logic Migration
-
-7. [DONE] Перенести типы structured output (scope: `packages/agents/idea-collector/src/parser/parser-types.ts`, `packages/agents/idea-collector/src/parser/index.ts`; expected: `IdeaStructuredOutput` и связанные типы; commit: `feat(idea-collector): add parser types`) (date: 2026-01-06)
-8. [DONE] Git Commit: `feat(idea-collector): add parser types` (hash: d3b0d84) (date: 2026-01-06)
-
-9. [DONE] Перенести логику парсинга (scope: `packages/agents/idea-collector/src/parser/structured-output-parser.ts`; expected: логика из `idea-collector-structured-output.ts`; commit: `feat(idea-collector): add structured output parser`) (date: 2026-01-06)
-10. [DONE] Git Commit: `feat(idea-collector): add structured output parser` (hash: 8796335) (date: 2026-01-06)
-
-### Stream: Facade Implementation
-
-11. [DONE] Создать фасад Idea Collector (scope: `packages/agents/idea-collector/src/facade.ts`; expected: `IdeaCollectorFacade` с `buildContract()`, `parseStructuredOutput()`, `getArtifactPaths()`; commit: `feat(idea-collector): implement facade`) (date: 2026-01-06)
-12. [DONE] Git Commit: `feat(idea-collector): implement facade` (hash: eca4b59) (date: 2026-01-06)
-
-13. [DONE] Обновить публичные экспорты (scope: `packages/agents/idea-collector/src/index.ts`; expected: экспорт фасада и типов; commit: `feat(idea-collector): finalize public exports`) (date: 2026-01-06)
-14. [DONE] Git Commit: `feat(idea-collector): finalize public exports` (hash: 8b4ffc9) (date: 2026-01-06)
-
----
-
-## Phase 3 — Integration & Cleanup (owner: Oleksandr, updated: 2026-01-06)
-
-### Stream: Core Integration
-
-1. [DONE] Обновить Core для использования фасада (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected: вызов `IdeaCollectorFacade.buildContract()`; commit: `refactor(core): use idea collector facade for contract`) (date: 2026-01-06)
-2. [DONE] Git Commit: `refactor(core): use idea collector facade for contract` (hash: dc74592) (date: 2026-01-06)
-
-3. [DONE] Обновить questionnaire handlers в Core (scope: `packages/core/src/remote-bridge/handlers/idea-questionnaire-*.ts`; expected: импорт путей из фасада; commit: `refactor(core): use idea collector facade for paths`) (date: 2026-01-06)
-4. [DONE] Git Commit: `refactor(core): use idea collector facade for paths` (hash: ba245b5) (date: 2026-01-06)
-
-### Stream: Claude Module Integration
-
-5. [DONE] Обновить Claude Module для использования парсера (scope: `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`; expected: re-export из `@codeai-hub/idea-collector` или удаление; commit: `refactor(claude): use idea collector facade for parser`) (date: 2026-01-06)
-6. [DONE] Git Commit: `refactor(claude): use idea collector facade for parser` (hash: 2774132) (date: 2026-01-06)
-
-### Stream: Legacy Cleanup
-
-7. [DONE] Удалить старые assets (scope: `assets/templates/full-development-flow/idea/*`; expected: файлы перенесены в пакет; commit: `refactor(assets): remove legacy idea collector templates`) (date: 2026-01-06)
-8. [DONE] Git Commit: `refactor(assets): remove legacy idea collector templates` (hash: 8f0b5cf) (date: 2026-01-06)
-
-9. [DONE] Обновить Extension installers (scope: `src/extension-module/templates/idea-collector-prompt-installer.ts`, `src/extension-module/templates/idea-questionnaire-template-installer.ts`; expected: путь к bundled assets из пакета; commit: `refactor(extension): update idea collector installers`) (date: 2026-01-06)
-10. [DONE] Git Commit: `refactor(extension): update idea collector installers` (hash: 69f962d) (date: 2026-01-06)
-
----
-
-## Phase 4 — Spec Creator Skeleton (owner: Oleksandr, updated: 2026-01-06)
-
-### Stream: Spec Creator Package Bootstrap
-
-1. [DONE] Создать пакет `@codeai-hub/spec-creator` (scope: `packages/agents/spec-creator/package.json`, `packages/agents/spec-creator/tsconfig.json`, `packages/agents/spec-creator/src/index.ts`; expected: структура аналогична idea-collector; commit: `feat(agents): bootstrap spec-creator package`) (date: 2026-01-06)
-2. [DONE] Git Commit: `feat(agents): bootstrap spec-creator package with facade skeleton` (hash: 801135f) (date: 2026-01-06)
-
-3. [DONE] Добавить placeholder assets (scope: `packages/agents/spec-creator/assets/spec-creator-schema.json`, `packages/agents/spec-creator/assets/spec-creator-prompt.md`, `packages/agents/spec-creator/assets/spec-template.md`; expected: заглушки для будущей реализации) (date: 2026-01-06)
-4. [DONE] Git Commit: (included in 801135f)
-
-5. [DONE] Создать скелет фасада (scope: `packages/agents/spec-creator/src/facade.ts`, `packages/agents/spec-creator/src/contract/`, `packages/agents/spec-creator/src/parser/`; expected: `SpecCreatorFacade` с TODO методами) (date: 2026-01-06)
-6. [DONE] Git Commit: (included in 801135f)
-
-### Stream: Documentation & Release
-
-7. [DONE] Обновить Architecture.md (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/AgentPackages_Architecture.md`; expected: описание Agent Packages архитектуры) (date: 2026-01-06)
-8. [DONE] Git Commit: `docs(architecture): document agent packages structure` (hash: 946501d) (date: 2026-01-06)
-
-9. [DONE] Обновить README + CHANGELOG (scope: `README.md`, `CHANGELOG.md`; expected: release notes для рефакторинга) (date: 2026-01-06)
-10. [DONE] Git Commit: (included in 946501d)
-
-11. [DONE] Подготовить релиз (scope: версии/манифесты; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`) (date: 2026-01-06)
-12. [DONE] Git Commit: `chore(release): bump versions to 1.1.388` (hash: 9a04d43) (date: 2026-01-06)
-
-✅ **Phase 4 COMPLETE** — Release 1.1.388 built successfully!
-
----
-
-## Notes
-
-- Архитектурный документ: `doc/Project_Docs/AgentPackages_Architecture.md`
-- Каждый агент-пакет имеет ЕДИНУЮ точку входа — Facade
-- UI компоненты остаются в `src/client/ui/` (webview-specific)
-- Assets синхронизируются в `~/.codeai-hub/templates/` через Core
+15. [DONE] Таргетный TypeScript typecheck для webview (scope: `tsconfig.webview.json`; expected: `npm run typecheck:webview` зелёный) (date: 2026-01-07)
+16. [DONE] Gate: `./scripts/check-architecture.sh` + `npx ultracite check` + `npx ts-prune` + `npx jscpd ...` + `npm run check:links` + `npm run build:webview` (scope: scripts + UI; expected: зелёный прогон) (date: 2026-01-07)
