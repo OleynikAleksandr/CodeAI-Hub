@@ -8618,10 +8618,12 @@
     const [pickerState, setPickerState] = (0, import_react2.useState)(defaultPickerState);
     const [catalog, setCatalog] = (0, import_react2.useState)({});
     const [selectedStage, setSelectedStage] = (0, import_react2.useState)(null);
+    const [stageSelectionLocked, setStageSelectionLocked] = (0, import_react2.useState)(false);
     const providerLabels = (0, import_react2.useMemo)(() => buildProviderLabels(catalog), [catalog]);
     const resetPicker = (0, import_react2.useCallback)(() => {
       setPickerState(defaultPickerState);
       setSelectedStage(null);
+      setStageSelectionLocked(false);
     }, []);
     const openPicker = (0, import_react2.useCallback)(
       (providers) => {
@@ -8631,6 +8633,7 @@
           providers
         });
         setSelectedStage(null);
+        setStageSelectionLocked(false);
       },
       []
     );
@@ -8639,6 +8642,9 @@
     }, []);
     const clearStageSelection = (0, import_react2.useCallback)(() => {
       setSelectedStage(null);
+    }, []);
+    const lockStageSelection = (0, import_react2.useCallback)(() => {
+      setStageSelectionLocked(true);
     }, []);
     const confirmSelection = (0, import_react2.useCallback)(
       (providerIds) => {
@@ -8658,12 +8664,14 @@
       pickerState,
       providerLabels,
       selectedStage,
+      stageSelectionLocked,
       openPicker,
       confirmSelection,
       cancelSelection,
       resetPicker,
       selectStage,
-      clearStageSelection
+      clearStageSelection,
+      lockStageSelection
     };
   };
 
@@ -24173,6 +24181,7 @@ ${message.content}`
   var SessionRegion = ({
     pickerState,
     selectedStage,
+    stageSelectionLocked,
     selectStage,
     clearStageSelection,
     confirmSelection,
@@ -24311,14 +24320,16 @@ ${message.content}`
     ) : pickerState.providers;
     const showStagePicker = pickerState.visible && selectedStage === null;
     const showProviderPicker = pickerState.visible && selectedStage !== null;
+    const providerPickerSecondaryLabel = stageSelectionLocked ? "Cancel" : "Back";
+    const handleProviderPickerSecondary = stageSelectionLocked ? cancelSelection : clearStageSelection;
     return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "app-shell__session-region", children: [
       /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         ProviderPicker,
         {
           onConfirm: handleProviderConfirm,
-          onSecondary: clearStageSelection,
+          onSecondary: handleProviderPickerSecondary,
           providers: filteredProviders,
-          secondaryLabel: "Back",
+          secondaryLabel: providerPickerSecondaryLabel,
           visible: showProviderPicker
         }
       ),
@@ -24640,7 +24651,7 @@ ${message.content}`
 
   // src/client/ui/src/app-host/use-provider-picker-open-handler.ts
   var isFlowStageId = (value) => value === "chat" || value === "idea" || value === "spec" || value === "plan" || value === "execute";
-  var useProviderPickerOpenHandler = (openPicker, selectStage) => (0, import_react15.useCallback)(
+  var useProviderPickerOpenHandler = (openPicker, selectStage, lockStageSelection) => (0, import_react15.useCallback)(
     (providers, stage) => {
       activateRoot();
       if (providers.length === 0) {
@@ -24648,10 +24659,11 @@ ${message.content}`
       }
       openPicker(providers);
       if (stage && isFlowStageId(stage)) {
+        lockStageSelection();
         selectStage(stage);
       }
     },
-    [openPicker, selectStage]
+    [lockStageSelection, openPicker, selectStage]
   );
 
   // src/client/ui/src/app-host/webview-message-handler.ts
@@ -27611,12 +27623,14 @@ ${message.content}`
       pickerState,
       providerLabels,
       selectedStage,
+      stageSelectionLocked,
       openPicker,
       confirmSelection,
       cancelSelection,
       resetPicker,
       selectStage,
-      clearStageSelection
+      clearStageSelection,
+      lockStageSelection
     } = useProviderPickerState();
     const {
       sessions,
@@ -27643,7 +27657,8 @@ ${message.content}`
     } = useIdeaCollector(sendMessage);
     const handleProviderPickerOpen = useProviderPickerOpenHandler(
       openPicker,
-      selectStage
+      selectStage,
+      lockStageSelection
     );
     const confirmSelectionFromUi = (0, import_react29.useCallback)(
       (providerIds) => {
@@ -27791,6 +27806,7 @@ ${message.content}`
           pickerState,
           selectedStage,
           selectStage,
+          stageSelectionLocked,
           sessionViewProps: {
             activeSessionId,
             coreConnectionDetail: coreStatusDetail,
@@ -27802,7 +27818,8 @@ ${message.content}`
             providerLabels,
             sessions,
             snapshots
-          }
+          },
+          stageSelectionLocked
         }
       ),
       isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
