@@ -21,7 +21,8 @@ const isFlowStageId = (value: string): value is FlowStageId =>
 
 export const useProviderPickerOpenHandler = (
   openPicker: OpenPickerHandler,
-  selectStage: (stage: FlowStageId) => void
+  selectStage: (stage: FlowStageId) => void,
+  lockStageSelection: () => void
 ): ProviderPickerOpenHandler =>
   useCallback(
     (providers, stage) => {
@@ -31,8 +32,9 @@ export const useProviderPickerOpenHandler = (
       }
       openPicker(providers);
       if (stage && isFlowStageId(stage)) {
+        lockStageSelection();
         selectStage(stage);
       }
     },
-    [openPicker, selectStage]
+    [lockStageSelection, openPicker, selectStage]
   );

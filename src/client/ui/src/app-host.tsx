@@ -48,6 +48,7 @@ const AppHost = () => {
     resetPicker,
     selectStage,
     clearStageSelection,
+    lockStageSelection,
   } = useProviderPickerState();
   const {
     sessions,
@@ -76,7 +77,8 @@ const AppHost = () => {
 
   const handleProviderPickerOpen = useProviderPickerOpenHandler(
     openPicker,
-    selectStage
+    selectStage,
+    lockStageSelection
   );
 
   const confirmSelectionFromUi = useCallback(

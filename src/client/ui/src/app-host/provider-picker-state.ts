@@ -21,12 +21,14 @@ export type UseProviderPickerStateResult = {
   readonly pickerState: ProviderPickerState;
   readonly providerLabels: ProviderLabels;
   readonly selectedStage: FlowStageId | null;
+  readonly stageSelectionLocked: boolean;
   readonly openPicker: (providers: readonly ProviderStackDescriptor[]) => void;
   readonly confirmSelection: (providerIds: readonly ProviderStackId[]) => void;
   readonly cancelSelection: () => void;
   readonly resetPicker: () => void;
   readonly selectStage: (stage: FlowStageId) => void;
   readonly clearStageSelection: () => void;
+  readonly lockStageSelection: () => void;
 };
 
 export const useProviderPickerState = (): UseProviderPickerStateResult => {
@@ -34,12 +36,14 @@ export const useProviderPickerState = (): UseProviderPickerStateResult => {
     useState<ProviderPickerState>(defaultPickerState);
   const [catalog, setCatalog] = useState<ProviderCatalog>({});
   const [selectedStage, setSelectedStage] = useState<FlowStageId | null>(null);
+  const [stageSelectionLocked, setStageSelectionLocked] = useState(false);
 
   const providerLabels = useMemo(() => buildProviderLabels(catalog), [catalog]);
 
   const resetPicker = useCallback(() => {
     setPickerState(defaultPickerState);
     setSelectedStage(null);
+    setStageSelectionLocked(false);
   }, []);
 
   const openPicker = useCallback(
@@ -50,6 +54,7 @@ export const useProviderPickerState = (): UseProviderPickerStateResult => {
         providers,
       });
       setSelectedStage(null);
+      setStageSelectionLocked(false);
     },
     []
   );
@@ -60,6 +65,10 @@ export const useProviderPickerState = (): UseProviderPickerStateResult => {
 
   const clearStageSelection = useCallback(() => {
     setSelectedStage(null);
+  }, []);
+
+  const lockStageSelection = useCallback(() => {
+    setStageSelectionLocked(true);
   }, []);
 
   const confirmSelection = useCallback(
@@ -82,11 +91,13 @@ export const useProviderPickerState = (): UseProviderPickerStateResult => {
     pickerState,
     providerLabels,
     selectedStage,
+    stageSelectionLocked,
     openPicker,
     confirmSelection,
     cancelSelection,
     resetPicker,
     selectStage,
     clearStageSelection,
+    lockStageSelection,
   };
 };
