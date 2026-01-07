@@ -4,23 +4,15 @@ import {
   type SessionLaunchRequest,
   type SessionLaunchResult,
 } from "../../core/session/session-launcher";
-import type {
-  ProviderStackDescriptor,
-  ProviderStackId,
-} from "../../types/provider";
+import type { ProviderStackId } from "../../types/provider";
 import type { CoreBridgeConfig } from "../ui/src/core-bridge/types";
+import {
+  cloneStack,
+  tryOpenProviderPickerForStartCommand,
+} from "./standalone-flow-start";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
-
-const cloneStack = (
-  descriptor: ProviderStackDescriptor
-): ProviderStackDescriptor => ({
-  id: descriptor.id,
-  title: descriptor.title,
-  description: descriptor.description,
-  connected: descriptor.connected,
-});
 
 const isSuccessfulLaunch = (
   result: SessionLaunchResult
@@ -126,6 +118,16 @@ const createStandaloneRouter = () => {
   };
 
   const handleCommand = async (command: string): Promise<void> => {
+    if (
+      tryOpenProviderPickerForStartCommand(
+        command,
+        providerRegistry,
+        notifyWebview
+      )
+    ) {
+      return;
+    }
+
     switch (command) {
       case "newSession": {
         const stacks = providerRegistry
