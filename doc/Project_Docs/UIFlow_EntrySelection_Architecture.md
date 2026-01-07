@@ -1,6 +1,6 @@
 # UI Flow — Entry Selection (Simple Chat vs Flow Stages)
 
-**Version:** 1.1.0
+**Version:** 1.1.1
 **Date:** 2026-01-07
 **Status:** Implemented (UI refactor)
 
@@ -30,6 +30,10 @@
 2) После выбора кнопки пользователь выбирает провайдера:
    - Для **Simple Chat** — любой из доступных (Codex / Claude / Gemini).
    - Для **Flow этапов** — только **Codex** и **Claude** (т.к. нужен Structured Output).
+
+2.1) Навигация в provider picker:
+   - Если picker открыт после клика по **Action Bar** (stage задан извне) — вторичная кнопка закрывает picker (не возвращает к Flow wizard).
+   - Если picker открыт в legacy-сценарии без заданного stage — доступен возврат к выбору stage (Flow wizard) через Back.
 
 3) Далее поведение остаётся прежним:
    - Для **Idea** после создания сессии запускается Idea Collector и показывается анкета.
