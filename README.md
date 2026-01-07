@@ -2,21 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.391
+## Current Release — v1.1.392
 - **Agent Packages architecture**: Extracted `@codeai-hub/idea-collector` and `@codeai-hub/spec-creator` into standalone npm packages with facade pattern.
 - **Idea Collector migration**: Contract building (329→18 lines), parsing (65→25 lines), and artifact paths moved to `IdeaCollectorFacade`.
 - **Spec Creator skeleton**: Package structure with placeholder assets ready for future implementation.
 - **Code reduction**: ~400 lines of duplicated code removed from Core and Claude Module.
 - **Core runtime packaging**: Agent Packages are included in the built core runtime to avoid `MODULE_NOT_FOUND` on fresh installs.
-- **Flow-first UI start**: Action bar now starts sessions via 5 Flow buttons (Simple Chat / Idea / Spec / Plan / Execute), then provider selection.
-- **Release 1.1.391**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+- **Flow-first UI start**: Action bar starts sessions via 5 Flow buttons (Simple Chat / Idea / Spec / Plan / Execute), then provider selection.
+- **Provider picker UX**: Back now closes the provider picker for Action Bar starts (no fallback stage wizard).
+- **Release 1.1.392**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.391.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.391.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.391.tar.bz2`
-  - Providers: `claude-module-1.1.391.tar.bz2`, `codex-module-1.1.391.tar.bz2`, `gemini-module-1.1.391.tar.bz2`
-  - UI: `vscode-webview-1.1.391.tar.bz2`, `web-client-1.1.391.tar.bz2`, `project-manager-1.1.391.tar.bz2`
+  - VSIX: `codeai-hub-1.1.392.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.392.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.392.tar.bz2`
+  - Providers: `claude-module-1.1.392.tar.bz2`, `codex-module-1.1.392.tar.bz2`, `gemini-module-1.1.392.tar.bz2`
+  - UI: `vscode-webview-1.1.392.tar.bz2`, `web-client-1.1.392.tar.bz2`, `project-manager-1.1.392.tar.bz2`
   - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/idea-collector`, `@codeai-hub/spec-creator`
 
 

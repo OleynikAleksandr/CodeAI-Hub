@@ -1,3 +1,8 @@
+## [1.1.392] - 2026-01-07
+
+### Fixed
+- **Provider picker navigation**: Back no longer returns to the deprecated stage wizard when the session was started from the Action Bar; it closes the picker instead.
+
 ## [1.1.391] - 2026-01-07
 
 ### Changed
