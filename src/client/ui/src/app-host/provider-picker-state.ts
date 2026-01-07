@@ -3,6 +3,7 @@ import type {
   ProviderStackDescriptor,
   ProviderStackId,
 } from "../../../../types/provider";
+import type { FlowStageId } from "../components/flow-wizard";
 import {
   defaultPickerState,
   type ProviderPickerState,
@@ -19,30 +20,26 @@ export type ProviderLabels = ReturnType<typeof buildProviderLabels>;
 export type UseProviderPickerStateResult = {
   readonly pickerState: ProviderPickerState;
   readonly providerLabels: ProviderLabels;
-  readonly flowWizardVisible: boolean;
-  readonly flowWizardProviderId: ProviderStackId | null;
+  readonly selectedStage: FlowStageId | null;
   readonly openPicker: (providers: readonly ProviderStackDescriptor[]) => void;
   readonly confirmSelection: (providerIds: readonly ProviderStackId[]) => void;
   readonly cancelSelection: () => void;
   readonly resetPicker: () => void;
-  readonly openFlowWizard: (providerId: ProviderStackId) => void;
-  readonly closeFlowWizard: () => void;
+  readonly selectStage: (stage: FlowStageId) => void;
+  readonly clearStageSelection: () => void;
 };
 
 export const useProviderPickerState = (): UseProviderPickerStateResult => {
   const [pickerState, setPickerState] =
     useState<ProviderPickerState>(defaultPickerState);
   const [catalog, setCatalog] = useState<ProviderCatalog>({});
-  const [flowWizardVisible, setFlowWizardVisible] = useState(false);
-  const [flowWizardProviderId, setFlowWizardProviderId] =
-    useState<ProviderStackId | null>(null);
+  const [selectedStage, setSelectedStage] = useState<FlowStageId | null>(null);
 
   const providerLabels = useMemo(() => buildProviderLabels(catalog), [catalog]);
 
   const resetPicker = useCallback(() => {
     setPickerState(defaultPickerState);
-    setFlowWizardVisible(false);
-    setFlowWizardProviderId(null);
+    setSelectedStage(null);
   }, []);
 
   const openPicker = useCallback(
@@ -52,22 +49,17 @@ export const useProviderPickerState = (): UseProviderPickerStateResult => {
         visible: true,
         providers,
       });
-      setFlowWizardVisible(false);
-      setFlowWizardProviderId(null);
+      setSelectedStage(null);
     },
     []
   );
 
-  const openFlowWizard = useCallback((providerId: ProviderStackId) => {
-    setFlowWizardVisible(true);
-    setFlowWizardProviderId(providerId);
-    setPickerState((previous) => ({ ...previous, visible: false }));
+  const selectStage = useCallback((stage: FlowStageId) => {
+    setSelectedStage(stage);
   }, []);
 
-  const closeFlowWizard = useCallback(() => {
-    setFlowWizardVisible(false);
-    setFlowWizardProviderId(null);
-    setPickerState((previous) => ({ ...previous, visible: true }));
+  const clearStageSelection = useCallback(() => {
+    setSelectedStage(null);
   }, []);
 
   const confirmSelection = useCallback(
@@ -89,13 +81,12 @@ export const useProviderPickerState = (): UseProviderPickerStateResult => {
   return {
     pickerState,
     providerLabels,
-    flowWizardVisible,
-    flowWizardProviderId,
+    selectedStage,
     openPicker,
     confirmSelection,
     cancelSelection,
     resetPicker,
-    openFlowWizard,
-    closeFlowWizard,
+    selectStage,
+    clearStageSelection,
   };
 };

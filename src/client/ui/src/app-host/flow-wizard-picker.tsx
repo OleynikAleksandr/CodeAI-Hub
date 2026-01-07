@@ -1,15 +1,17 @@
-import type { ProviderStackId } from "../../../../types/provider";
+import type { ProviderStackDescriptor } from "../../../../types/provider";
 import { type FlowStageId, FlowWizard } from "../components/flow-wizard";
 
 type FlowWizardPickerProps = {
-  readonly providerId: ProviderStackId | null;
+  readonly providers: readonly ProviderStackDescriptor[];
+  readonly selectedStage: FlowStageId | null;
   readonly onCancel: () => void;
   readonly onStageClick: (stage: FlowStageId) => void;
   readonly visible: boolean;
 };
 
 export const FlowWizardPicker = ({
-  providerId,
+  providers,
+  selectedStage,
   onCancel,
   onStageClick,
   visible,
@@ -18,14 +20,23 @@ export const FlowWizardPicker = ({
     return null;
   }
 
-  const statusMessage =
-    providerId === "codexCli" || providerId === "claudeCodeCli"
-      ? "Click Idea to start."
-      : "Select a stage to continue.";
+  const flowProviderAvailable = providers.some(
+    (provider) => provider.id === "codexCli" || provider.id === "claudeCodeCli"
+  );
+  const disabledStages = flowProviderAvailable
+    ? undefined
+    : new Set<FlowStageId>(["idea", "spec", "plan", "execute"]);
+  const statusMessage = flowProviderAvailable
+    ? "Select a start mode to continue."
+    : "Only Simple Chat is available (connect Codex or Claude for Flow steps).";
 
   return (
     <div className="provider-picker">
-      <FlowWizard activeStage="idea" onStageClick={onStageClick} />
+      <FlowWizard
+        activeStage={selectedStage}
+        disabledStages={disabledStages}
+        onStageClick={onStageClick}
+      />
       <div className="provider-picker__actions">
         <output aria-live="polite" className="provider-picker__status">
           {statusMessage}
