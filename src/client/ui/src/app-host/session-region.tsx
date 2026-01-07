@@ -16,6 +16,7 @@ import { QuestionnaireResumeBanner } from "./questionnaire-resume-banner";
 type SessionRegionProps = {
   readonly pickerState: ProviderPickerState;
   readonly selectedStage: FlowStageId | null;
+  readonly stageSelectionLocked: boolean;
   readonly selectStage: (stage: FlowStageId) => void;
   readonly clearStageSelection: () => void;
   readonly confirmSelection: (providerIds: readonly ProviderStackId[]) => void;
@@ -37,6 +38,7 @@ type SessionRegionProps = {
 export const SessionRegion = ({
   pickerState,
   selectedStage,
+  stageSelectionLocked,
   selectStage,
   clearStageSelection,
   confirmSelection,
@@ -225,13 +227,18 @@ export const SessionRegion = ({
   const showStagePicker = pickerState.visible && selectedStage === null;
   const showProviderPicker = pickerState.visible && selectedStage !== null;
 
+  const providerPickerSecondaryLabel = stageSelectionLocked ? "Cancel" : "Back";
+  const handleProviderPickerSecondary = stageSelectionLocked
+    ? cancelSelection
+    : clearStageSelection;
+
   return (
     <div className="app-shell__session-region">
       <ProviderPicker
         onConfirm={handleProviderConfirm}
-        onSecondary={clearStageSelection}
+        onSecondary={handleProviderPickerSecondary}
         providers={filteredProviders}
-        secondaryLabel="Back"
+        secondaryLabel={providerPickerSecondaryLabel}
         visible={showProviderPicker}
       />
       <FlowWizardPicker

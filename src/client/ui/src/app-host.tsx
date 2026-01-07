@@ -42,6 +42,7 @@ const AppHost = () => {
     pickerState,
     providerLabels,
     selectedStage,
+    stageSelectionLocked,
     openPicker,
     confirmSelection,
     cancelSelection,
@@ -264,6 +265,7 @@ const AppHost = () => {
           sessions,
           snapshots,
         }}
+        stageSelectionLocked={stageSelectionLocked}
       />
       {isCoreReady ? null : (
         <div className="app-shell__status-overlay">
