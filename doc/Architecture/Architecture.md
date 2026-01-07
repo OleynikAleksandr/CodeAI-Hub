@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.6.0
-**Last Updated:** 2026-01-06
+**Last Updated:** 2026-01-07
 **Status:** Active reference
-**Release Focus:** v1.1.388 — Agent Packages architecture: `@codeai-hub/idea-collector` and `@codeai-hub/spec-creator` extracted into standalone npm packages with facade pattern.
+**Release Focus:** v1.1.390 — Flow-first UI session start: choose stage (Simple Chat/Idea/Spec/Plan/Execute) before provider selection.
 
 ---
 
@@ -151,6 +151,9 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.390 - 2026-01-07)
+- **Flow-first session start**: UI теперь начинается с выбора этапа (Simple Chat/Idea/Spec/Plan/Execute), затем — выбора провайдера (Flow ограничен Codex/Claude).
 
 ## Recent Changes (v1.1.388 - 2026-01-06)
 - **Agent Packages refactoring**: Extracted `@codeai-hub/idea-collector` and `@codeai-hub/spec-creator` into standalone packages.
