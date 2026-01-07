@@ -19,7 +19,8 @@ type ProviderPickerProps = {
   readonly visible: boolean;
   readonly providers: readonly ProviderStackDescriptor[];
   readonly onConfirm: (providerIds: readonly ProviderStackId[]) => void;
-  readonly onCancel: () => void;
+  readonly onSecondary: () => void;
+  readonly secondaryLabel?: string;
 };
 
 type ProviderOptionProps = {
@@ -91,7 +92,8 @@ export const ProviderPicker = ({
   visible,
   providers,
   onConfirm,
-  onCancel,
+  onSecondary,
+  secondaryLabel = "Cancel",
 }: ProviderPickerProps) => {
   const [selected, setSelected] = useState<Set<ProviderStackId>>(
     () => new Set()
@@ -128,7 +130,7 @@ export const ProviderPicker = ({
   };
 
   const handleCancel = () => {
-    onCancel();
+    onSecondary();
   };
 
   if (!visible) {
@@ -155,17 +157,10 @@ export const ProviderPicker = ({
   };
 
   const isSubmitDisabled = selectedIds.length === 0;
-  const isFlowProviderSelected =
-    selectedProvider?.id === "codexCli" ||
-    selectedProvider?.id === "claudeCodeCli";
-  const primaryButtonLabel = isFlowProviderSelected
-    ? "Continue"
-    : "Start session";
+  const primaryButtonLabel = "Start session";
   let selectionMessage = "Select a provider to continue.";
   if (!isSubmitDisabled) {
-    selectionMessage = isFlowProviderSelected
-      ? `${selectedProvider?.title ?? "Provider"} selected. Continue to flow.`
-      : `${selectedProvider?.title ?? "Provider"} selected.`;
+    selectionMessage = `${selectedProvider?.title ?? "Provider"} selected.`;
   }
 
   return (
@@ -200,7 +195,7 @@ export const ProviderPicker = ({
               onClick={handleCancel}
               type="button"
             >
-              Cancel
+              {secondaryLabel}
             </button>
             <button
               className="provider-picker__primary"
