@@ -15,10 +15,9 @@ import { QuestionnaireResumeBanner } from "./questionnaire-resume-banner";
 
 type SessionRegionProps = {
   readonly pickerState: ProviderPickerState;
-  readonly flowWizardVisible: boolean;
-  readonly flowWizardProviderId: ProviderStackId | null;
-  readonly openFlowWizard: (providerId: ProviderStackId) => void;
-  readonly closeFlowWizard: () => void;
+  readonly selectedStage: FlowStageId | null;
+  readonly selectStage: (stage: FlowStageId) => void;
+  readonly clearStageSelection: () => void;
   readonly confirmSelection: (providerIds: readonly ProviderStackId[]) => void;
   readonly cancelSelection: () => void;
   readonly sessionViewProps: {
@@ -37,10 +36,9 @@ type SessionRegionProps = {
 
 export const SessionRegion = ({
   pickerState,
-  flowWizardVisible,
-  flowWizardProviderId,
-  openFlowWizard,
-  closeFlowWizard,
+  selectedStage,
+  selectStage,
+  clearStageSelection,
   confirmSelection,
   cancelSelection,
   sessionViewProps,
@@ -161,26 +159,14 @@ export const SessionRegion = ({
   }, [activeSessionId, questionnaireService, questionnaireSnapshot]);
 
   const handleProviderConfirm = (providerIds: readonly ProviderStackId[]) => {
-    const selectedProvider = providerIds[0];
-    if (
-      selectedProvider === "codexCli" ||
-      selectedProvider === "claudeCodeCli"
-    ) {
-      openFlowWizard(selectedProvider);
-      return;
+    if (selectedStage === "idea") {
+      pendingQuestionnaireRef.current = true;
     }
     confirmSelection(providerIds);
   };
 
-  const handleFlowStageClick = (stage: FlowStageId) => {
-    if (stage !== "idea") {
-      return;
-    }
-    if (!flowWizardProviderId) {
-      return;
-    }
-    pendingQuestionnaireRef.current = true;
-    confirmSelection([flowWizardProviderId]);
+  const handleStageClick = (stage: FlowStageId) => {
+    selectStage(stage);
   };
 
   const hasPendingQuestionnaire = activeSessionId
@@ -196,13 +182,8 @@ export const SessionRegion = ({
     Boolean(activeSessionId) &&
     hasPendingQuestionnaire &&
     !showQuestionnaire &&
-    !pickerState.visible &&
-    !flowWizardVisible;
-  const showSessionView = !(
-    pickerState.visible ||
-    flowWizardVisible ||
-    showQuestionnaire
-  );
+    !pickerState.visible;
+  const showSessionView = !(pickerState.visible || showQuestionnaire);
 
   useEffect(() => {
     if (!activeSessionId) {
@@ -234,19 +215,31 @@ export const SessionRegion = ({
   const questionnaireResumeNote =
     "Есть незавершенная анкета для этой сессии. Можно продолжить заполнение.";
 
+  const filteredProviders =
+    selectedStage && selectedStage !== "chat"
+      ? pickerState.providers.filter(
+          (provider) =>
+            provider.id === "codexCli" || provider.id === "claudeCodeCli"
+        )
+      : pickerState.providers;
+  const showStagePicker = pickerState.visible && selectedStage === null;
+  const showProviderPicker = pickerState.visible && selectedStage !== null;
+
   return (
     <div className="app-shell__session-region">
       <ProviderPicker
-        onCancel={cancelSelection}
         onConfirm={handleProviderConfirm}
-        providers={pickerState.providers}
-        visible={pickerState.visible}
+        onSecondary={clearStageSelection}
+        providers={filteredProviders}
+        secondaryLabel="Back"
+        visible={showProviderPicker}
       />
       <FlowWizardPicker
-        onCancel={closeFlowWizard}
-        onStageClick={handleFlowStageClick}
-        providerId={flowWizardProviderId}
-        visible={flowWizardVisible}
+        onCancel={cancelSelection}
+        onStageClick={handleStageClick}
+        providers={pickerState.providers}
+        selectedStage={selectedStage}
+        visible={showStagePicker}
       />
       {showQuestionnaireResume ? (
         <QuestionnaireResumeBanner
