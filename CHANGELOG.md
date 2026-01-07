@@ -1,3 +1,8 @@
+## [1.1.391] - 2026-01-07
+
+### Changed
+- **Flow-first UI start**: Action bar now starts sessions via 5 Flow buttons (Simple Chat / Idea / Spec / Plan / Execute), then provider selection; Flow steps remain restricted to Codex and Claude.
+
 ## [1.1.390] - 2026-01-07
 
 ### Changed
