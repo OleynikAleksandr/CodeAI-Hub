@@ -3,22 +3,23 @@ import { activateRoot } from "../../root-dom";
 import { postVsCodeMessage } from "../../vscode";
 
 type ActionBarCommand =
-  | "newSession"
-  | "lastSession"
-  | "launchWebClient"
-  | "oldSessions";
+  | "startChat"
+  | "startIdea"
+  | "startSpec"
+  | "startPlan"
+  | "startExecute";
 
 type ButtonDescriptor = {
   readonly id: ActionBarCommand;
   readonly label: readonly [string, string];
-  readonly highlighted?: boolean;
 };
 
 const BUTTONS: readonly ButtonDescriptor[] = [
-  { id: "newSession", label: ["New", "Session"] },
-  { id: "lastSession", label: ["Last", "Session"], highlighted: true },
-  { id: "launchWebClient", label: ["Clear", "Session"] },
-  { id: "oldSessions", label: ["Old", "Sessions"] },
+  { id: "startChat", label: ["Simple", "Chat"] },
+  { id: "startIdea", label: ["Idea", ""] },
+  { id: "startSpec", label: ["Spec", ""] },
+  { id: "startPlan", label: ["Plan", ""] },
+  { id: "startExecute", label: ["Execute", ""] },
 ];
 
 type ActionBarProps = {
@@ -32,13 +33,7 @@ const ActionBar = ({ disabled = false }: ActionBarProps) => {
         return;
       }
 
-      if (command === "newSession") {
-        activateRoot();
-      }
-
-      if (command === "launchWebClient") {
-        return;
-      }
+      activateRoot();
 
       postVsCodeMessage({ command });
     },
@@ -57,23 +52,22 @@ const ActionBar = ({ disabled = false }: ActionBarProps) => {
           className="action-bar__rail action-bar__rail--bottom"
         />
         <div className="action-bar__buttons">
-          {BUTTONS.map(({ id, label, highlighted }) => (
-            <button
-              aria-label={`${label[0]} ${label[1]}`}
-              className={
-                highlighted
-                  ? "action-bar__button action-bar__button--highlight"
-                  : "action-bar__button"
-              }
-              disabled={disabled}
-              key={id}
-              onClick={() => handleClick(id)}
-              type="button"
-            >
-              <span className="action-bar__line">{label[0]}</span>
-              <span className="action-bar__line">{label[1]}</span>
-            </button>
-          ))}
+          {BUTTONS.map(({ id, label }) => {
+            const ariaLabel = label.filter(Boolean).join(" ");
+            return (
+              <button
+                aria-label={ariaLabel}
+                className="action-bar__button"
+                disabled={disabled}
+                key={id}
+                onClick={() => handleClick(id)}
+                type="button"
+              >
+                <span className="action-bar__line">{label[0]}</span>
+                <span className="action-bar__line">{label[1]}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </header>
