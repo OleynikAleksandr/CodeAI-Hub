@@ -54,3 +54,33 @@
 
 18. [DONE] Собрать VSIX: `./scripts/build-release.sh --use-current-version` (scope: release script; expected: `codeai-hub-1.1.391.vsix`) (date: 2026-01-07)
 19. [DONE] Git Commit: `docs(sessions): add Session064 release report` (hash: 806180c) (date: 2026-01-07)
+
+
+---
+
+## Phase 3 — Provider picker Back fix (owner: Oleksandr, updated: 2026-01-07)
+
+### Stream: UI — Back behavior for Action Bar starts
+
+1. [DONE] Заблокировать возврат к stage picker при старте из Action Bar (scope: `src/client/ui/src/app-host/provider-picker-state.ts`, `src/client/ui/src/app-host/use-provider-picker-open-handler.ts`, `src/client/ui/src/app-host.tsx`; commit: `fix(ui): lock stage selection for action bar starts`) (date: 2026-01-07)
+2. [DONE] Git Commit: `fix(ui): lock stage selection for action bar starts` (hash: 0a39cc1) (date: 2026-01-07)
+
+3. [DONE] Сделать Back = Cancel для стартов из Action Bar (не показывать Flow wizard) (scope: `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/app-host.tsx`; commit: `fix(ui): back closes picker for action bar flow`) (date: 2026-01-07)
+4. [DONE] Git Commit: `fix(ui): back closes picker for action bar flow` (hash: b82571a) (date: 2026-01-07)
+
+5. [DONE] Прокинуть `stageSelectionLocked` в `SessionRegion` (scope: `src/client/ui/src/app-host.tsx`; commit: `fix(ui): wire stage selection lock to session region`) (date: 2026-01-07)
+6. [DONE] Git Commit: `fix(ui): wire stage selection lock to session region` (hash: 5e41be4) (date: 2026-01-07)
+
+7. [DONE] Пересобрать webview bundle после UX фикса (scope: `media/react-chat.js`; commit: `chore(webview): rebuild bundle`) (date: 2026-01-07)
+8. [DONE] Git Commit: `chore(webview): rebuild bundle` (hash: ba20446) (date: 2026-01-07)
+
+### Stream: Release 1.1.392
+
+9. [DONE] Поднять версии и собрать tarball'ы через `./scripts/build-all.sh` (scope: manifests + workspaces; commit: `chore(release): bump versions to 1.1.392`) (date: 2026-01-07)
+10. [DONE] Git Commit: `chore(release): bump versions to 1.1.392` (hash: 6b0cbbd) (date: 2026-01-07)
+
+11. [DONE] Обновить релизные и архитектурные документы под 1.1.392 (scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(release): add 1.1.392 back navigation fix`) (date: 2026-01-07)
+12. [DONE] Git Commit: `docs(release): add 1.1.392 back navigation fix` (hash: f2d7c3f) (date: 2026-01-07)
+
+13. [DONE] Собрать VSIX: `./scripts/build-release.sh --use-current-version` (scope: release script; expected: `codeai-hub-1.1.392.vsix`) (date: 2026-01-07)
+14. [DONE] Git Commit: `docs(sessions): add Session065 release report` (hash: 7eef43a) (date: 2026-01-07)
