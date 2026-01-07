@@ -12,6 +12,8 @@ type CommandContext = {
   readonly coreProcessManager?: CoreProcessManager;
 };
 
+type StartStage = "chat" | "idea" | "spec" | "plan" | "execute";
+
 const handleNewSession = (context: CommandContext): void => {
   const stacks = context.providerRegistry
     .listStacks()
@@ -28,6 +30,39 @@ const handleNewSession = (context: CommandContext): void => {
     type: "providerPicker:open",
     payload: {
       providers: stacks.map((stack) => serializeStack(stack)),
+    },
+  });
+};
+
+const handleStartWithStage = (
+  context: CommandContext,
+  stage: StartStage
+): void => {
+  const stacks = context.providerRegistry
+    .listStacks()
+    .filter((stack) => stack.connected);
+
+  const filtered =
+    stage === "chat"
+      ? stacks
+      : stacks.filter(
+          (stack) => stack.id === "codexCli" || stack.id === "claudeCodeCli"
+        );
+
+  if (filtered.length === 0) {
+    const reason =
+      stage === "chat"
+        ? "No connected provider stacks detected. Install a provider CLI to continue."
+        : "Flow steps require Codex or Claude (Structured Output). Connect Codex/Claude to continue.";
+    window.showWarningMessage(reason);
+    return;
+  }
+
+  context.notifyWebview({
+    type: "providerPicker:open",
+    payload: {
+      providers: filtered.map((stack) => serializeStack(stack)),
+      stage,
     },
   });
 };
@@ -55,6 +90,21 @@ export const handleCommand = async (
   switch (command) {
     case "newSession":
       handleNewSession(context);
+      return;
+    case "startChat":
+      handleStartWithStage(context, "chat");
+      return;
+    case "startIdea":
+      handleStartWithStage(context, "idea");
+      return;
+    case "startSpec":
+      handleStartWithStage(context, "spec");
+      return;
+    case "startPlan":
+      handleStartWithStage(context, "plan");
+      return;
+    case "startExecute":
+      handleStartWithStage(context, "execute");
       return;
     case "lastSession":
       context.notifyWebview({ type: "session:focusLast" });
