@@ -11,48 +11,46 @@
   - `npx ts-prune`
   - `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`
   - `npm run check:links`
-  - затем таргетная сборка (минимально необходимая для затронутого пакета/клиента), например:
-    - `npm run build:webview`
-    - `npm run typecheck:webview`
+  - затем таргетная сборка (минимально необходимая для затронутого пакета/клиента).
 - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт этого файла (дата, статус, хеш).
 - Phase завершается на чистом дереве.
 
 ---
 
-## Phase 1 — Flow-first UI session start (owner: Oleksandr, updated: 2026-01-07)
+## Phase 2 — Action Bar Flow entry (owner: Oleksandr, updated: 2026-01-07)
 
-### Stream: Design Doc
+### Stream: UI — Action Bar entry buttons
 
-1. [DONE] Описать UX и модель состояния для step-first старта (scope: `doc/Project_Docs/UIFlow_EntrySelection_Architecture.md`; expected: цели/ограничения, state model, provider filtering; commit: `docs(ui): document flow-first start picker`) (date: 2026-01-07)
-2. [DONE] Git Commit: `docs(ui): document flow-first start picker` (hash: df8e3f8) (date: 2026-01-07)
+1. [DONE] Заменить 4 кнопки Action Bar на 5 Flow кнопок: `Simple Chat`, `Idea`, `Spec`, `Plan`, `Execute` (scope: `src/client/ui/src/components/action-bar/index.tsx`, `media/main-view.css`; commit: `refactor(ui): replace action bar with flow entry buttons`) (date: 2026-01-07)
+2. [DONE] Git Commit: `refactor(ui): replace action bar with flow entry buttons` (hash: 74af863) (date: 2026-01-07)
 
-### Stream: UI — Step selection (5 buttons)
+3. [DONE] Пробросить stage в событие открытия выбора провайдера и обработчик в UI (scope: `src/client/ui/src/app-host/webview-message-types.ts`, `src/client/ui/src/app-host/webview-message-dispatcher.ts`, `src/client/ui/src/app-host/use-provider-picker-open-handler.ts`; commit: `feat(ui): include stage in provider picker open message` + `refactor(ui): extract provider picker open handler`) (date: 2026-01-07)
+4. [DONE] Git Commit: `feat(ui): include stage in provider picker open message` (hash: d08db9d) (date: 2026-01-07)
+5. [DONE] Git Commit: `refactor(ui): extract provider picker open handler` (hash: 16addd2) (date: 2026-01-07)
 
-3. [DONE] Расширить Flow wizard до 5 кнопок и включить hover/disabled поддержку (scope: `src/client/ui/src/components/flow-wizard/index.tsx`, `src/client/ui/src/components/flow-wizard/styles.ts`, `src/client/ui/src/components/flow-wizard/flow-stage.tsx`; expected: Simple Chat + Idea/Spec/Plan/Execute, адаптивная сетка; commit: `refactor(ui): extend flow wizard start steps`) (date: 2026-01-07)
-4. [DONE] Git Commit: `refactor(ui): extend flow wizard start steps` (hash: ed3fba1) (date: 2026-01-07)
+### Stream: Host routing — Extension + Standalone web-client
 
-### Stream: UI — Stage-first provider selection
+6. [DONE] Добавить команды старта по stage и открыть provider picker с фильтрацией провайдеров (scope: `src/extension-module/home-view-message-router/message-types.ts`, `src/extension-module/home-view-message-router/command-handler.ts`; commit: `feat(extension): start sessions from flow action bar`) (date: 2026-01-07)
+7. [DONE] Git Commit: `feat(extension): start sessions from flow action bar` (hash: e155a7a) (date: 2026-01-07)
 
-5. [DONE] Переставить UX: сначала выбор шага, затем выбор провайдера; ограничить провайдеры для Flow (scope: `src/client/ui/src/app-host/provider-picker-state.ts`, `src/client/ui/src/app-host/flow-wizard-picker.tsx`, `src/client/ui/src/app-host/session-region.tsx`; expected: stage picker → provider picker, Flow = Codex/Claude only, disabled Flow при отсутствии Codex/Claude; commit: `refactor(ui): stage-first provider selection`) (date: 2026-01-07)
-6. [DONE] Git Commit: `refactor(ui): stage-first provider selection` (hash: a16225f) (date: 2026-01-07)
+8. [DONE] Поддержать команды stage в Standalone `web-client` окружении (scope: `src/client/web-client/environment.ts`, `src/client/web-client/standalone-flow-start.ts`; commit: `feat(web-client): start sessions from flow action bar`) (date: 2026-01-07)
+9. [DONE] Git Commit: `feat(web-client): start sessions from flow action bar` (hash: 16c6838) (date: 2026-01-07)
 
-7. [DONE] Добавить “Back” в provider picker и убрать flow-specific текст (scope: `src/client/ui/src/provider-picker.tsx`; expected: Back возвращает к выбору шага; commit: `refactor(ui): add back navigation to provider picker`) (date: 2026-01-07)
-8. [DONE] Git Commit: `refactor(ui): add back navigation to provider picker` (hash: 0c567da) (date: 2026-01-07)
+### Stream: Bundles + Docs
 
-9. [DONE] Ограничить kickoff Idea Collector только для Idea stage (scope: `src/client/ui/src/app-host.tsx`; expected: kickoff только когда выбран этап Idea; commit: `fix(ui): gate idea kickoff by stage`) (date: 2026-01-07)
-10. [DONE] Git Commit: `fix(ui): gate idea kickoff by stage` (hash: e62ac7a) (date: 2026-01-07)
+10. [DONE] Пересобрать webview bundle под новый Action Bar (scope: `media/react-chat.js`; commit: `chore(webview): rebuild bundle for flow action bar`) (date: 2026-01-07)
+11. [DONE] Git Commit: `chore(webview): rebuild bundle for flow action bar` (hash: 38ede99) (date: 2026-01-07)
 
-### Stream: UI — Webview bundle
+12. [DONE] Обновить релизные документы (README/CHANGELOG) под 1.1.391 (scope: `README.md`, `CHANGELOG.md`; commit: `docs(release): add 1.1.391 notes`) (date: 2026-01-07)
+13. [DONE] Git Commit: `docs(release): add 1.1.391 notes` (hash: a218e83) (date: 2026-01-07)
 
-11. [DONE] Обновить webview bundle под новый UX (scope: `media/react-chat.js`; expected: bundle соответствует UI изменениям; commit: `chore(webview): rebuild bundle`) (date: 2026-01-07)
-12. [DONE] Git Commit: `chore(webview): rebuild bundle` (hash: c7a6282) (date: 2026-01-07)
+14. [DONE] Обновить архитектурные документы + дизайн-док под Action Bar (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/UIFlow_EntrySelection_Architecture.md`; commit: `docs(architecture): align docs with flow action bar`) (date: 2026-01-07)
+15. [DONE] Git Commit: `docs(architecture): align docs with flow action bar` (hash: 818ce65) (date: 2026-01-07)
 
-### Stream: TODO hygiene
+### Stream: Release 1.1.391
 
-13. [DONE] Заархивировать предыдущий TODO план Agent Packages (scope: `doc/TODO/Archive/todo-plan-phase4-agent-packages-2026-01-06.md`; expected: перенос из `doc/TODO/todo-plan.md`; commit: `docs(todo): archive agent packages todo plan`) (date: 2026-01-07)
-14. [DONE] Git Commit: `docs(todo): archive agent packages todo plan` (hash: 2694230) (date: 2026-01-07)
+16. [DONE] Поднять версии и собрать tarball'ы через `./scripts/build-all.sh` (scope: build scripts + workspaces; commit: `chore(release): bump versions to 1.1.391`) (date: 2026-01-07)
+17. [DONE] Git Commit: `chore(release): bump versions to 1.1.391` (hash: 16832fd) (date: 2026-01-07)
 
-### Stream: Gates
-
-15. [DONE] Таргетный TypeScript typecheck для webview (scope: `tsconfig.webview.json`; expected: `npm run typecheck:webview` зелёный) (date: 2026-01-07)
-16. [DONE] Gate: `./scripts/check-architecture.sh` + `npx ultracite check` + `npx ts-prune` + `npx jscpd ...` + `npm run check:links` + `npm run build:webview` (scope: scripts + UI; expected: зелёный прогон) (date: 2026-01-07)
+18. [TODO] Собрать VSIX: `./scripts/build-release.sh --use-current-version` (scope: release script; expected: `codeai-hub-1.1.391.vsix`) (date: 2026-01-07)
+19. [TODO] Git Commit: `docs(release): add Session064 report for 1.1.391` (hash: TBD)
