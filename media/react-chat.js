@@ -7735,7 +7735,8 @@
     visible,
     providers,
     onConfirm,
-    onCancel
+    onSecondary,
+    secondaryLabel = "Cancel"
   }) => {
     const [selected, setSelected] = (0, import_react.useState)(
       () => /* @__PURE__ */ new Set()
@@ -7767,7 +7768,7 @@
       onConfirm(selectedIds);
     };
     const handleCancel = () => {
-      onCancel();
+      onSecondary();
     };
     if (!visible) {
       return null;
@@ -7788,11 +7789,10 @@
       );
     };
     const isSubmitDisabled = selectedIds.length === 0;
-    const isFlowProviderSelected = selectedProvider?.id === "codexCli" || selectedProvider?.id === "claudeCodeCli";
-    const primaryButtonLabel = isFlowProviderSelected ? "Continue" : "Start session";
+    const primaryButtonLabel = "Start session";
     let selectionMessage = "Select a provider to continue.";
     if (!isSubmitDisabled) {
-      selectionMessage = isFlowProviderSelected ? `${selectedProvider?.title ?? "Provider"} selected. Continue to flow.` : `${selectedProvider?.title ?? "Provider"} selected.`;
+      selectionMessage = `${selectedProvider?.title ?? "Provider"} selected.`;
     }
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
       "section",
@@ -7817,7 +7817,7 @@
                     className: "provider-picker__secondary",
                     onClick: handleCancel,
                     type: "button",
-                    children: "Cancel"
+                    children: secondaryLabel
                   }
                 ),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
@@ -8617,13 +8617,11 @@
   var useProviderPickerState = () => {
     const [pickerState, setPickerState] = (0, import_react2.useState)(defaultPickerState);
     const [catalog, setCatalog] = (0, import_react2.useState)({});
-    const [flowWizardVisible, setFlowWizardVisible] = (0, import_react2.useState)(false);
-    const [flowWizardProviderId, setFlowWizardProviderId] = (0, import_react2.useState)(null);
+    const [selectedStage, setSelectedStage] = (0, import_react2.useState)(null);
     const providerLabels = (0, import_react2.useMemo)(() => buildProviderLabels(catalog), [catalog]);
     const resetPicker = (0, import_react2.useCallback)(() => {
       setPickerState(defaultPickerState);
-      setFlowWizardVisible(false);
-      setFlowWizardProviderId(null);
+      setSelectedStage(null);
     }, []);
     const openPicker = (0, import_react2.useCallback)(
       (providers) => {
@@ -8632,20 +8630,15 @@
           visible: true,
           providers
         });
-        setFlowWizardVisible(false);
-        setFlowWizardProviderId(null);
+        setSelectedStage(null);
       },
       []
     );
-    const openFlowWizard = (0, import_react2.useCallback)((providerId) => {
-      setFlowWizardVisible(true);
-      setFlowWizardProviderId(providerId);
-      setPickerState((previous3) => ({ ...previous3, visible: false }));
+    const selectStage = (0, import_react2.useCallback)((stage) => {
+      setSelectedStage(stage);
     }, []);
-    const closeFlowWizard = (0, import_react2.useCallback)(() => {
-      setFlowWizardVisible(false);
-      setFlowWizardProviderId(null);
-      setPickerState((previous3) => ({ ...previous3, visible: true }));
+    const clearStageSelection = (0, import_react2.useCallback)(() => {
+      setSelectedStage(null);
     }, []);
     const confirmSelection = (0, import_react2.useCallback)(
       (providerIds) => {
@@ -8664,14 +8657,13 @@
     return {
       pickerState,
       providerLabels,
-      flowWizardVisible,
-      flowWizardProviderId,
+      selectedStage,
       openPicker,
       confirmSelection,
       cancelSelection,
       resetPicker,
-      openFlowWizard,
-      closeFlowWizard
+      selectStage,
+      clearStageSelection
     };
   };
 
@@ -23949,7 +23941,7 @@ ${message.content}`
   };
   var flowWizardStagesRowStyles = {
     display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
     gap: "10px"
   };
   var flowStageButtonBaseStyles = {
@@ -23977,6 +23969,10 @@ ${message.content}`
   };
   var flowStageButtonActiveHoverStyles = {
     borderColor: "#2b88d8"
+  };
+  var flowStageButtonHoverStyles = {
+    borderColor: "#4a4a4a",
+    background: "#242424"
   };
   var flowStageButtonDisabledStyles = {
     opacity: 0.55,
@@ -24006,9 +24002,12 @@ ${message.content}`
   }) => {
     const [hovered, setHovered] = (0, import_react10.useState)(false);
     const [focused, setFocused] = (0, import_react10.useState)(false);
-    const interactive = active && !disabled;
+    const interactive = !disabled;
     const showHoverStyles = interactive && (hovered || focused);
-    const hoverStyles = showHoverStyles ? flowStageButtonActiveHoverStyles : {};
+    let hoverStyles = {};
+    if (showHoverStyles) {
+      hoverStyles = active ? flowStageButtonActiveHoverStyles : flowStageButtonHoverStyles;
+    }
     const buttonStyles5 = {
       ...flowStageButtonBaseStyles,
       ...active ? flowStageButtonActiveStyles : {},
@@ -24053,12 +24052,17 @@ ${message.content}`
   // src/client/ui/src/components/flow-wizard/index.tsx
   var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var STAGES = [
+    { id: "chat", title: "Simple Chat", subtitle: "Just talk to the assistant" },
     { id: "idea", title: "Idea", subtitle: "Collect requirements" },
     { id: "spec", title: "Spec", subtitle: "Define architecture" },
     { id: "plan", title: "Plan", subtitle: "Break work into tasks" },
     { id: "execute", title: "Execute", subtitle: "Run the plan" }
   ];
-  var FlowWizard = ({ activeStage, onStageClick }) => {
+  var FlowWizard = ({
+    activeStage,
+    onStageClick,
+    disabledStages
+  }) => {
     const headingStyles = flowWizardHeadingStyles;
     return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
       "section",
@@ -24066,10 +24070,10 @@ ${message.content}`
         "aria-label": "Development flow wizard",
         style: flowWizardContainerStyles,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { style: headingStyles, children: "Flow" }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { style: headingStyles, children: "Start" }),
           /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: flowWizardStagesRowStyles, children: STAGES.map((stage) => {
             const active = stage.id === activeStage;
-            const disabled = !active;
+            const disabled = disabledStages?.has(stage.id) ?? false;
             return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
               FlowStage,
               {
@@ -24091,7 +24095,8 @@ ${message.content}`
   // src/client/ui/src/app-host/flow-wizard-picker.tsx
   var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var FlowWizardPicker = ({
-    providerId,
+    providers,
+    selectedStage,
     onCancel,
     onStageClick,
     visible
@@ -24099,9 +24104,20 @@ ${message.content}`
     if (!visible) {
       return null;
     }
-    const statusMessage = providerId === "codexCli" || providerId === "claudeCodeCli" ? "Click Idea to start." : "Select a stage to continue.";
+    const flowProviderAvailable = providers.some(
+      (provider) => provider.id === "codexCli" || provider.id === "claudeCodeCli"
+    );
+    const disabledStages = flowProviderAvailable ? void 0 : /* @__PURE__ */ new Set(["idea", "spec", "plan", "execute"]);
+    const statusMessage = flowProviderAvailable ? "Select a start mode to continue." : "Only Simple Chat is available (connect Codex or Claude for Flow steps).";
     return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "provider-picker", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(FlowWizard, { activeStage: "idea", onStageClick }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+        FlowWizard,
+        {
+          activeStage: selectedStage,
+          disabledStages,
+          onStageClick
+        }
+      ),
       /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "provider-picker__actions", children: [
         /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: statusMessage }),
         /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "provider-picker__action-buttons", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
@@ -24156,10 +24172,9 @@ ${message.content}`
   var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   var SessionRegion = ({
     pickerState,
-    flowWizardVisible,
-    flowWizardProviderId,
-    openFlowWizard,
-    closeFlowWizard,
+    selectedStage,
+    selectStage,
+    clearStageSelection,
     confirmSelection,
     cancelSelection,
     sessionViewProps
@@ -24255,29 +24270,20 @@ ${message.content}`
       });
     }, [activeSessionId, questionnaireService, questionnaireSnapshot]);
     const handleProviderConfirm = (providerIds) => {
-      const selectedProvider = providerIds[0];
-      if (selectedProvider === "codexCli" || selectedProvider === "claudeCodeCli") {
-        openFlowWizard(selectedProvider);
-        return;
+      if (selectedStage === "idea") {
+        pendingQuestionnaireRef.current = true;
       }
       confirmSelection(providerIds);
     };
-    const handleFlowStageClick = (stage) => {
-      if (stage !== "idea") {
-        return;
-      }
-      if (!flowWizardProviderId) {
-        return;
-      }
-      pendingQuestionnaireRef.current = true;
-      confirmSelection([flowWizardProviderId]);
+    const handleStageClick = (stage) => {
+      selectStage(stage);
     };
     const hasPendingQuestionnaire = activeSessionId ? ideaCollector.isQuestionnairePending(activeSessionId) : false;
     const showQuestionnaire = Boolean(
       questionnaireVisible && questionnaireSnapshot && activeSessionId && questionnaireSnapshot.sessionId === activeSessionId
     );
-    const showQuestionnaireResume = Boolean(activeSessionId) && hasPendingQuestionnaire && !showQuestionnaire && !pickerState.visible && !flowWizardVisible;
-    const showSessionView = !(pickerState.visible || flowWizardVisible || showQuestionnaire);
+    const showQuestionnaireResume = Boolean(activeSessionId) && hasPendingQuestionnaire && !showQuestionnaire && !pickerState.visible;
+    const showSessionView = !(pickerState.visible || showQuestionnaire);
     (0, import_react11.useEffect)(() => {
       if (!activeSessionId) {
         return;
@@ -24300,23 +24306,30 @@ ${message.content}`
     const questionnaireCancelLabel = "\u041E\u0442\u043C\u0435\u043D\u0430";
     const questionnaireResumeLabel = "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443";
     const questionnaireResumeNote = "\u0415\u0441\u0442\u044C \u043D\u0435\u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u043D\u0430\u044F \u0430\u043D\u043A\u0435\u0442\u0430 \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438. \u041C\u043E\u0436\u043D\u043E \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435.";
+    const filteredProviders = selectedStage && selectedStage !== "chat" ? pickerState.providers.filter(
+      (provider) => provider.id === "codexCli" || provider.id === "claudeCodeCli"
+    ) : pickerState.providers;
+    const showStagePicker = pickerState.visible && selectedStage === null;
+    const showProviderPicker = pickerState.visible && selectedStage !== null;
     return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "app-shell__session-region", children: [
       /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         ProviderPicker,
         {
-          onCancel: cancelSelection,
           onConfirm: handleProviderConfirm,
-          providers: pickerState.providers,
-          visible: pickerState.visible
+          onSecondary: clearStageSelection,
+          providers: filteredProviders,
+          secondaryLabel: "Back",
+          visible: showProviderPicker
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         FlowWizardPicker,
         {
-          onCancel: closeFlowWizard,
-          onStageClick: handleFlowStageClick,
-          providerId: flowWizardProviderId,
-          visible: flowWizardVisible
+          onCancel: cancelSelection,
+          onStageClick: handleStageClick,
+          providers: pickerState.providers,
+          selectedStage,
+          visible: showStagePicker
         }
       ),
       showQuestionnaireResume ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
@@ -27578,14 +27591,13 @@ ${message.content}`
     const {
       pickerState,
       providerLabels,
-      flowWizardVisible,
-      flowWizardProviderId,
+      selectedStage,
       openPicker,
       confirmSelection,
       cancelSelection,
       resetPicker,
-      openFlowWizard,
-      closeFlowWizard
+      selectStage,
+      clearStageSelection
     } = useProviderPickerState();
     const {
       sessions,
@@ -27619,10 +27631,10 @@ ${message.content}`
     );
     const confirmSelectionFromUi = (0, import_react28.useCallback)(
       (providerIds) => {
-        shouldKickoffIdeaRef.current = flowWizardVisible && (providerIds[0] === "codexCli" || providerIds[0] === "claudeCodeCli");
+        shouldKickoffIdeaRef.current = selectedStage === "idea" && (providerIds[0] === "codexCli" || providerIds[0] === "claudeCodeCli");
         confirmSelection(providerIds);
       },
-      [confirmSelection, flowWizardVisible]
+      [confirmSelection, selectedStage]
     );
     const handleSessionCreatedMessage2 = (0, import_react28.useCallback)(
       (session) => {
@@ -27758,12 +27770,11 @@ ${message.content}`
         SessionRegion,
         {
           cancelSelection,
-          closeFlowWizard,
+          clearStageSelection,
           confirmSelection: confirmSelectionFromUi,
-          flowWizardProviderId,
-          flowWizardVisible,
-          openFlowWizard,
           pickerState,
+          selectedStage,
+          selectStage,
           sessionViewProps: {
             activeSessionId,
             coreConnectionDetail: coreStatusDetail,
