@@ -1,3 +1,9 @@
+## [1.1.393] - 2026-01-08
+
+### Changed
+- **Idea stage (Description)**: Idea Collector templates (prompt/template/questionnaire) now emphasize cluster-modular decomposition (micro-modules + facades) and capture dependency arrows as text.
+- **Diagram generation deferred**: Module Diagram and Interface Map are planned as separate steps/agents; Description no longer emits diagram blocks as artifacts.
+
 ## [1.1.392] - 2026-01-07
 
 ### Fixed
