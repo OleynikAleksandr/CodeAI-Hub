@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.6.0
-**Last Updated:** 2026-01-07
+**Last Updated:** 2026-01-08
 **Status:** Active reference
-**Release Focus:** v1.1.392 — Flow-first UI session start: Action Bar provides 5 Flow buttons (Simple Chat/Idea/Spec/Plan/Execute) before provider selection; Back closes the provider picker for Action Bar starts.
+**Release Focus:** v1.1.393 — Workflow-first (Description stage): Idea Collector contract refreshed for modular decomposition (micro-modules + facades), and diagram generation is deferred to upcoming Module Diagram / Interface Map steps.
 
 ---
 
@@ -151,6 +151,10 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.393 - 2026-01-08)
+- **Idea stage clarified as Description**: updated Idea Collector templates (prompt/template/questionnaire) to enforce cluster-modular decomposition (micro-modules + facade entrypoints) and capture dependency arrows.
+- **Diagrams deferred**: Module Diagram and Interface Map are treated as separate upcoming steps/agents; Description no longer emits diagram blocks as artifacts.
 
 ## Recent Changes (v1.1.391 - 2026-01-07)
 - **Flow-first Action Bar**: replaced quick actions with 5 Flow start buttons (Simple Chat/Idea/Spec/Plan/Execute); provider selection follows, Flow steps restricted to Codex/Claude.
