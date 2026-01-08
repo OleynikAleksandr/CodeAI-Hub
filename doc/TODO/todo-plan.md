@@ -84,3 +84,32 @@
 
 13. [DONE] Собрать VSIX: `./scripts/build-release.sh --use-current-version` (scope: release script; expected: `codeai-hub-1.1.392.vsix`) (date: 2026-01-07)
 14. [DONE] Git Commit: `docs(sessions): add Session065 release report` (hash: 7eef43a) (date: 2026-01-07)
+
+---
+
+## Phase 4 — Workflow Architecture (Description stage) alignment (owner: Oleksandr, updated: 2026-01-08)
+
+### Stream: Idea Collector — Description stage contract refresh
+
+1. [IN_PROGRESS] Обновить prompt/template для Idea Collector под новые правила Description (без диаграмм, модульность/фасады, стрелки текстом) (scope: `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `packages/agents/idea-collector/assets/idea-template.md`; commit: `docs(idea): align idea collector prompt and template with workflow architecture`) (date: 2026-01-08)
+2. [TODO] Git Commit: `docs(idea): align idea collector prompt and template with workflow architecture` (hash: TBD)
+
+3. [TODO] Обновить анкету Description с упором на модульную декомпозицию (scope: `packages/agents/idea-collector/assets/questionnaire-template.md`; commit: `docs(idea): refresh description questionnaire for modular decomposition`) (date: 2026-01-08)
+4. [TODO] Git Commit: `docs(idea): refresh description questionnaire for modular decomposition` (hash: TBD)
+
+5. [TODO] Обновить schema формулировки и пересобрать bundled templates для Core (scope: `packages/agents/idea-collector/assets/idea-collector-schema.json`, `packages/core/src/templates/bundled-templates.ts`; commit: `chore(core): sync bundled idea templates with updated assets`) (date: 2026-01-08)
+6. [TODO] Git Commit: `chore(core): sync bundled idea templates with updated assets` (hash: TBD)
+
+### Stream: Docs + Release
+
+7. [TODO] Обновить архитектурные документы под новый релиз (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): update workflow docs for next release`) (date: 2026-01-08)
+8. [TODO] Git Commit: `docs(architecture): update workflow docs for next release` (hash: TBD)
+
+9. [TODO] Обновить релизные документы (scope: `README.md`, `CHANGELOG.md`; commit: `docs(release): add 1.1.393 notes`) (date: 2026-01-08)
+10. [TODO] Git Commit: `docs(release): add 1.1.393 notes` (hash: TBD)
+
+11. [TODO] Поднять версии и собрать tarball'ы через `./scripts/build-all.sh` (scope: manifests + workspaces; commit: `chore(release): bump versions to 1.1.393`) (date: 2026-01-08)
+12. [TODO] Git Commit: `chore(release): bump versions to 1.1.393` (hash: TBD)
+
+13. [TODO] Собрать VSIX: `./scripts/build-release.sh --use-current-version` (scope: release script; expected: `codeai-hub-1.1.393.vsix`) (date: 2026-01-08)
+14. [TODO] Git Commit: `docs(sessions): add Session067 release report` (hash: TBD) (date: 2026-01-08)
