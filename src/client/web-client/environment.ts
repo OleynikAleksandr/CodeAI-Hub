@@ -7,6 +7,11 @@ import {
 import type { ProviderStackId } from "../../types/provider";
 import type { CoreBridgeConfig } from "../ui/src/core-bridge/types";
 import {
+  type CoreBridgeConfigWithWorkspace,
+  type LauncherConfig,
+  mergeLauncherConfig,
+} from "./launcher-config";
+import {
   cloneStack,
   tryOpenProviderPickerForStartCommand,
 } from "./standalone-flow-start";
@@ -248,11 +253,22 @@ export const initializeStandaloneEnvironment = (): void => {
       setState?: (state: unknown) => void;
       getState?: () => unknown;
     };
+    __CODEAI_CORE_CONFIG?: CoreBridgeConfigWithWorkspace;
+    __CODEAI_LAUNCHER_CONFIG?: LauncherConfig;
   };
 
   if (typeof globalScope.acquireVsCodeApi === "function") {
     // Already running inside VS Code webview – nothing to override.
     return;
+  }
+
+  const coreConfig = globalScope.__CODEAI_CORE_CONFIG;
+  const mergedConfig = mergeLauncherConfig(
+    coreConfig,
+    globalScope.__CODEAI_LAUNCHER_CONFIG
+  );
+  if (mergedConfig) {
+    globalScope.__CODEAI_CORE_CONFIG = mergedConfig;
   }
 
   const routeMessage = createStandaloneRouter();
