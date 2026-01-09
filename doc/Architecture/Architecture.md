@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-09
 **Status:** Active reference
-**Release Focus:** v1.1.394 — Initiative/Run entry in Action Bar with inline creation; Flow buttons gated by selected Initiative + Run context.
+**Release Focus:** v1.1.395 — Core runtime packaging includes initiatives module to keep `/api/v1/health` healthy after release installs.
 
 ---
 

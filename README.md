@@ -2,19 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.394
-- **Initiatives + Runs entry**: Action Bar now includes Initiative/Run selectors with inline creation (name + optional description).
-- **Flow gating**: Flow buttons are enabled only when an Initiative and Run are selected; Simple Chat remains always available.
-- **Standalone parity**: web-client supports the same Initiative/Run entry with workspacePath-aware config merging.
-- **Core API**: new HTTP endpoints for initiatives/runs (list/create/select current) backed by workspace-scoped storage.
-- **Release 1.1.394**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+## Current Release — v1.1.395
+- **Core runtime packaging**: `@codeai-hub/initiatives` is bundled into the core runtime to prevent `MODULE_NOT_FOUND` and `/api/v1/health` failures.
+- **Build pipeline**: `build-all.sh` now bumps/builds the initiatives workspace alongside core/providers.
+- **Release 1.1.395**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.394.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.394.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.394.tar.bz2`
-  - Providers: `claude-module-1.1.394.tar.bz2`, `codex-module-1.1.394.tar.bz2`, `gemini-module-1.1.394.tar.bz2`
-  - UI: `vscode-webview-1.1.394.tar.bz2`, `web-client-1.1.394.tar.bz2`, `project-manager-1.1.394.tar.bz2`
+  - VSIX: `codeai-hub-1.1.395.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.395.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.395.tar.bz2`
+  - Providers: `claude-module-1.1.395.tar.bz2`, `codex-module-1.1.395.tar.bz2`, `gemini-module-1.1.395.tar.bz2`
+  - UI: `vscode-webview-1.1.395.tar.bz2`, `web-client-1.1.395.tar.bz2`, `project-manager-1.1.395.tar.bz2`
   - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/idea-collector`, `@codeai-hub/spec-creator`
 
 
