@@ -61,10 +61,13 @@
 
 ### Stream: Web-client — parity
 
-23. [TODO] Поддержать initiative/run selector и тот же UI entry в standalone `web-client` окружении (scope: `src/client/web-client/environment.ts`, `src/client/ui/src/components/action-bar/index.tsx`; commit: `feat(web-client): add initiative entry parity`) (date: 2026-01-09)
-24. [TODO] Git Commit: `feat(web-client): add initiative entry parity` (hash: TBD)
+23. [DONE] Пробросить workspacePath в webview core config для Initiatives/Runs (scope: `src/extension.ts`, `src/extension-module/home-view-provider.ts`, `src/core/webview-module/webview-html-generator.ts`; commit: `feat(ui): inject workspace path into webview config`) (date: 2026-01-09)
+24. [DONE] Git Commit: `feat(ui): inject workspace path into webview config` (hash: e85801a) (date: 2026-01-09)
+
+25. [TODO] Поддержать initiative/run selector и тот же UI entry в standalone `web-client` окружении (scope: `src/client/web-client/environment.ts`, `src/client/ui/src/components/action-bar/index.tsx`; commit: `feat(web-client): add initiative entry parity`) (date: 2026-01-09)
+26. [TODO] Git Commit: `feat(web-client): add initiative entry parity` (hash: TBD)
 
 ### Stream: Docs
 
-25. [TODO] Обновить системную архитектуру под Initiatives/Runs (пути, API, UI entry) (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): document initiatives and runs model`) (date: 2026-01-09)
-26. [TODO] Git Commit: `docs(architecture): document initiatives and runs model` (hash: TBD)
+27. [TODO] Обновить системную архитектуру под Initiatives/Runs (пути, API, UI entry) (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): document initiatives and runs model`) (date: 2026-01-09)
+28. [TODO] Git Commit: `docs(architecture): document initiatives and runs model` (hash: TBD)
