@@ -16,58 +16,46 @@
 
 ---
 
-## Phase 5 — Initiatives + Runs: универсальный вход в Flow (owner: Oleksandr, updated: 2026-01-09)
+## Phase 6 — Initiatives: auto-runs + новые пути артефактов (owner: Oleksandr, updated: 2026-01-09)
 
-### Stream: Design baseline
+### Stream: Storage root + paths
 
-1. [DONE] Зафиксировать MVP архитектуру Initiatives/Runs (модель, пути, API, UI entry) (scope: `doc/Project_Docs/Initiatives_Runs_UI_Entry_Architecture.md`; commit: `docs(architecture): add initiatives and runs entry design`) (date: 2026-01-09)
-2. [DONE] Git Commit: `docs(architecture): add initiatives and runs entry design` (hash: e890e7f)
+1. [DONE] Обновить корневой путь инициатив на `.codeai-hub/initiatives` (scope: `packages/initiatives/src/index.ts`; commit: `refactor(initiatives): move initiatives root`) (date: 2026-01-09)
+2. [DONE] Git Commit: `refactor(initiatives): move initiatives root` (hash: 8a74e991) (date: 2026-01-09)
+3. [DONE] Добавить run-aware output paths для Idea Collector (initiativeSlug + runSlug) (scope: `packages/agents/idea-collector/src/paths/artifact-paths.ts`, `packages/agents/idea-collector/src/contract/contract-builder.ts`; commit: `feat(idea-collector): add run-aware output paths`) (date: 2026-01-09)
+4. [DONE] Git Commit: `feat(idea-collector): add run-aware output paths` (hash: c7253728) (date: 2026-01-09)
 
-### Stream: Core — Initiatives + Runs storage
+### Stream: Templates + UI fallback
 
-3. [DONE] Добавить каноничные пути/утилиты для инициатив и run’ов (slugified имена папок + уникализация `-2/-3/...`) (scope: `packages/initiatives/src/index.ts`; commit: `feat(initiatives): add slug and path utilities`) (date: 2026-01-09)
-4. [DONE] Git Commit: `feat(initiatives): add slug and path utilities` (hash: 87e7edf) (date: 2026-01-09)
+5. [DONE] Обновить ассеты Idea Collector под новый канон путей (scope: `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `packages/agents/idea-collector/assets/idea-collector-schema.json`, `packages/agents/idea-collector/assets/idea-template.md`; commit: `docs(idea-collector): update artifact paths`) (date: 2026-01-09)
+6. [DONE] Git Commit: `docs(idea-collector): update artifact paths` (hash: faf5d987) (date: 2026-01-09)
+7. [DONE] Обновить UI fallback prompt/schema/contract paths (scope: `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `src/client/ui/src/services/idea-collector-contract.ts`; commit: `docs(ui): align idea collector paths`) (date: 2026-01-09)
+8. [DONE] Git Commit: `docs(ui): align idea collector paths` (hash: 4125f96c) (date: 2026-01-09)
 
-5. [DONE] Добавить файловое хранилище инициатив (create/list/read/update, displayName/description, currentRunId) (scope: `packages/initiatives/src/initiative-store.ts`; commit: `feat(initiatives): add initiative store`) (date: 2026-01-09)
-6. [DONE] Git Commit: `feat(initiatives): add initiative store` (hash: 172febe) (date: 2026-01-09)
+### Stream: Core validators + questionnaire path
 
-7. [DONE] Добавить файловое хранилище run’ов (create/list/read, displayName/description, runSlug folder, select current) (scope: `packages/initiatives/src/run-store.ts`; commit: `feat(initiatives): add run store`) (date: 2026-01-09)
-8. [DONE] Git Commit: `feat(initiatives): add run store` (hash: 28caec0) (date: 2026-01-09)
+9. [DONE] Обновить валидацию путей артефактов и детектор questionnaire (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-questionnaire-path-detector.ts`; commit: `fix(core): validate run-aware idea paths`) (date: 2026-01-09)
+10. [DONE] Git Commit: `fix(core): validate run-aware idea paths` (hash: 53d87102) (date: 2026-01-09)
 
-### Stream: Core — HTTP API
+### Stream: UI — убрать run
 
-9. [DONE] Подключить `@codeai-hub/initiatives` в Core и обновить lockfile (scope: `packages/core/package.json`, `package-lock.json`; commit: `chore(core): add initiatives dependency`) (date: 2026-01-09)
-10. [DONE] Git Commit: `chore(core): add initiatives dependency` (hash: da8175f) (date: 2026-01-09)
+11. [DONE] Убрать run selector/форму из Action Bar (scope: `src/client/ui/src/components/action-bar/index.tsx`, `src/client/ui/src/components/action-bar/context-form.tsx`, `media/main-view.css`; commit: `refactor(ui): remove run selector`) (date: 2026-01-09)
+12. [DONE] Git Commit: `refactor(ui): remove run selector` (hash: 5f66f59a) (date: 2026-01-09)
+13. [DONE] Упростить инициативный контекст (без runs) (scope: `src/client/ui/src/components/action-bar/use-initiative-context.ts`; commit: `refactor(ui): simplify initiative context`) (date: 2026-01-09)
+14. [DONE] Git Commit: `refactor(ui): simplify initiative context` (hash: 708f83dc) (date: 2026-01-09)
 
-11. [DONE] Добавить endpoints инициатив: list + create (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/initiatives-http-handler.ts`; commit: `feat(core): expose initiatives API`) (date: 2026-01-09)
-12. [DONE] Git Commit: `feat(core): expose initiatives API` (hash: 080ca82) (date: 2026-01-09)
+### Stream: Auto‑runs on stage start
 
-13. [DONE] Добавить endpoints run’ов: list + create + select-current (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/runs-http-handler.ts`; commit: `feat(core): expose runs API`) (date: 2026-01-09)
-14. [DONE] Git Commit: `feat(core): expose runs API` (hash: 92f099a) (date: 2026-01-09)
+15. [DONE] Расширить модель сессии инициативой/стадией/runSlug (scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/types.ts`, `src/types/session.ts`; commit: `feat(core): add session initiative context`) (date: 2026-01-09)
+16. [DONE] Git Commit: `feat(core): add session initiative context` (hash: f931627c) (date: 2026-01-09)
+17. [DONE] Прокинуть initiativeSlug+stage при session:create (scope: `src/client/ui/src/core-bridge/core-bridge.ts`; commit: `feat(ui): send initiative context on session create`) (date: 2026-01-09)
+18. [DONE] Git Commit: `feat(ui): send initiative context on session create` (hash: 84ac00e7) (date: 2026-01-09)
+19. [DONE] Принять initiativeSlug+stage в core bridge (scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit: `feat(core): accept session create context`) (date: 2026-01-09)
+20. [DONE] Git Commit: `feat(core): accept session create context` (hash: 879a69a6) (date: 2026-01-09)
+21. [DONE] Автосоздание run с именем `NNN-<model>` при старте стадии (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/auto-run-service.ts`, `packages/initiatives/src/run-store.ts`; commit: `feat(core): auto-create runs on flow start`) (date: 2026-01-09)
+22. [DONE] Git Commit: `feat(core): auto-create runs on flow start` (hash: eda98ace) (date: 2026-01-09)
 
-### Stream: UI — Initiative bar + split zones (vscode-webview)
+### Stream: Docs sync
 
-15. [DONE] Добавить UI клиенты инициатив/ранов для Core API (scope: `src/client/ui/src/api/orchestrator/initiatives-client.ts`, `src/client/ui/src/api/orchestrator/runs-client.ts`; commit: `feat(ui): add initiatives and runs clients`) (date: 2026-01-09)
-16. [DONE] Git Commit: `feat(ui): add initiatives and runs clients` (hash: 5e81703) (date: 2026-01-09)
-
-17. [DONE] Добавить UI строку контекста над кнопками: dropdown инициативы + dropdown run + `+` (создание инициативы с именем/описанием) + `+ run` (создание run с именем/описанием), хранить выбранный контекст в UI state (scope: `src/client/ui/src/components/action-bar/index.tsx`, `src/client/ui/src/components/action-bar/use-initiative-context.ts`; commit: `feat(ui): add initiative and run selector`) (date: 2026-01-09)
-18. [DONE] Git Commit: `feat(ui): add initiative and run selector` (hash: caa7a13) (date: 2026-01-09)
-
-19. [DONE] Разделить Action Bar на две зоны: слева `Simple Chat`, справа — Flow buttons (пока: Idea/Spec/Plan/Execute); Flow disabled без `initiative+run` (scope: `src/client/ui/src/components/action-bar/index.tsx`, `media/main-view.css`, `src/client/ui/src/components/action-bar/context-form.tsx`; commit: `refactor(ui): split action bar into chat and flow zones`) (date: 2026-01-09)
-20. [DONE] Git Commit: `refactor(ui): split action bar into chat and flow zones` (hash: 298bdbe) (date: 2026-01-09)
-
-21. [DONE] Пересобрать webview bundle после изменения Action Bar (scope: `media/react-chat.js`; commit: `chore(webview): rebuild bundle for initiative entry`) (date: 2026-01-09)
-22. [DONE] Git Commit: `chore(webview): rebuild bundle for initiative entry` (hash: 6a2ae70) (date: 2026-01-09)
-
-### Stream: Web-client — parity
-
-23. [DONE] Пробросить workspacePath в webview core config для Initiatives/Runs (scope: `src/extension.ts`, `src/extension-module/home-view-provider.ts`, `src/core/webview-module/webview-html-generator.ts`; commit: `feat(ui): inject workspace path into webview config`) (date: 2026-01-09)
-24. [DONE] Git Commit: `feat(ui): inject workspace path into webview config` (hash: e85801a) (date: 2026-01-09)
-
-25. [DONE] Поддержать initiative/run selector и тот же UI entry в standalone `web-client` окружении (scope: `src/client/web-client/environment.ts`, `src/client/web-client/launcher-config.ts`; commit: `feat(web-client): add initiative entry parity`) (date: 2026-01-09)
-26. [DONE] Git Commit: `feat(web-client): add initiative entry parity` (hash: 6f29cc7) (date: 2026-01-09)
-
-### Stream: Docs
-
-27. [DONE] Обновить системную архитектуру под Initiatives/Runs (пути, API, UI entry) (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): document initiatives and runs model`) (date: 2026-01-09)
-28. [DONE] Git Commit: `docs(architecture): document initiatives and runs model` (hash: 2e91cfb) (date: 2026-01-09)
+23. [TODO] Обновить системную архитектуру под новые пути/авто‑runs (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): update auto-run paths`)
+24. [TODO] Git Commit: `docs(architecture): update auto-run paths` (hash: TBD)
