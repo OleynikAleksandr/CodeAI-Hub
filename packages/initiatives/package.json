@@ -1,0 +1,20 @@
+{
+  "name": "@codeai-hub/initiatives",
+  "version": "1.1.393",
+  "description": "Initiatives + runs storage primitives for CodeAI Hub",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.7",
+    "husky": "^9.1.7",
+    "lefthook": "^2.0.4",
+    "lint-staged": "^16.2.7",
+    "typescript": "^5.6.3",
+    "ultracite": "^6.3.7"
+  }
+}
