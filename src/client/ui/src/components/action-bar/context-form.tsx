@@ -1,10 +1,9 @@
 type ActionBarContextFormProps = {
-  readonly mode: "initiative" | "run" | null;
+  readonly mode: "initiative" | null;
   readonly title: string;
   readonly name: string;
   readonly description: string;
   readonly controlsDisabled: boolean;
-  readonly createRunDisabled: boolean;
   readonly statusMessage: string | null;
   readonly onNameChange: (value: string) => void;
   readonly onDescriptionChange: (value: string) => void;
@@ -18,7 +17,6 @@ export const ActionBarContextForm = ({
   name,
   description,
   controlsDisabled,
-  createRunDisabled,
   statusMessage,
   onNameChange,
   onDescriptionChange,
@@ -48,7 +46,7 @@ export const ActionBarContextForm = ({
         <div className="action-bar__context-form-actions">
           <button
             className="action-bar__context-button"
-            disabled={mode === "run" ? createRunDisabled : controlsDisabled}
+            disabled={controlsDisabled}
             type="submit"
           >
             Create
