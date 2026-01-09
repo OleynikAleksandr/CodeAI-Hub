@@ -31,9 +31,9 @@ const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const WORKSPACE_FILE_WRITE_ENDPOINT =
   "/api/v1/orchestrator/workspace-file-write";
 const IDEA_PATH_RE =
-  /^\.codeai-hub\/full-development-flow\/initiatives\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
+  /^\.codeai-hub\/initiatives\/[a-z0-9]+(?:-[a-z0-9]+)*\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
 const VIRTUAL_SIMULATION_PATH_RE =
-  /^\.codeai-hub\/full-development-flow\/initiatives\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/virtual-simulation\.md$/;
+  /^\.codeai-hub\/initiatives\/[a-z0-9]+(?:-[a-z0-9]+)*\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/virtual-simulation\.md$/;
 
 export type RouterDependencies = {
   readonly app: Express;
@@ -237,7 +237,7 @@ export class HttpApiRouter {
     if (!isAllowedIdeaArtifactPaths(paths)) {
       res.status(HTTP_BAD_REQUEST).json({
         error:
-          "Invalid artifact paths (expected .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/...)",
+          "Invalid artifact paths (expected .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/...)",
       });
       return;
     }
