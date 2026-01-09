@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.6.0
-**Last Updated:** 2026-01-08
+**Last Updated:** 2026-01-09
 **Status:** Active reference
-**Release Focus:** v1.1.393 — Workflow-first (Description stage): Idea Collector contract refreshed for modular decomposition (micro-modules + facades), and diagram generation is deferred to upcoming Module Diagram / Interface Map steps.
+**Release Focus:** v1.1.394 — Initiative/Run entry in Action Bar with inline creation; Flow buttons gated by selected Initiative + Run context.
 
 ---
 

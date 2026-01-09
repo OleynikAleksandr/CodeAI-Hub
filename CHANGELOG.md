@@ -1,3 +1,13 @@
+## [1.1.394] - 2026-01-09
+
+### Added
+- **Initiatives/Runs foundation**: workspace-scoped storage plus Core HTTP endpoints for list/create/select-current.
+- **Action Bar context**: Initiative + Run selectors with inline creation (name + optional description).
+- **Standalone parity**: web-client merges workspacePath-aware launch config for Initiative/Run UI entry.
+
+### Changed
+- **Action Bar layout**: Simple Chat split to the left, Flow buttons grouped to the right and gated by Initiative + Run selection.
+
 ## [1.1.393] - 2026-01-08
 
 ### Changed
