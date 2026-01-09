@@ -42,8 +42,8 @@
 11. [DONE] Добавить endpoints инициатив: list + create (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/initiatives-http-handler.ts`; commit: `feat(core): expose initiatives API`) (date: 2026-01-09)
 12. [DONE] Git Commit: `feat(core): expose initiatives API` (hash: 080ca82) (date: 2026-01-09)
 
-13. [TODO] Добавить endpoints run’ов: list + create + select-current (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/runs-http-handler.ts`; commit: `feat(core): expose runs API`) (date: 2026-01-09)
-14. [TODO] Git Commit: `feat(core): expose runs API` (hash: TBD)
+13. [DONE] Добавить endpoints run’ов: list + create + select-current (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/runs-http-handler.ts`; commit: `feat(core): expose runs API`) (date: 2026-01-09)
+14. [DONE] Git Commit: `feat(core): expose runs API` (hash: 92f099a) (date: 2026-01-09)
 
 ### Stream: UI — Initiative bar + split zones (vscode-webview)
 
