@@ -39,8 +39,8 @@
 9. [DONE] Подключить `@codeai-hub/initiatives` в Core и обновить lockfile (scope: `packages/core/package.json`, `package-lock.json`; commit: `chore(core): add initiatives dependency`) (date: 2026-01-09)
 10. [DONE] Git Commit: `chore(core): add initiatives dependency` (hash: da8175f) (date: 2026-01-09)
 
-11. [TODO] Добавить endpoints инициатив: list + create (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/initiatives-http-handler.ts`; commit: `feat(core): expose initiatives API`) (date: 2026-01-09)
-12. [TODO] Git Commit: `feat(core): expose initiatives API` (hash: TBD)
+11. [DONE] Добавить endpoints инициатив: list + create (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/initiatives-http-handler.ts`; commit: `feat(core): expose initiatives API`) (date: 2026-01-09)
+12. [DONE] Git Commit: `feat(core): expose initiatives API` (hash: 080ca82) (date: 2026-01-09)
 
 13. [TODO] Добавить endpoints run’ов: list + create + select-current (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/runs-http-handler.ts`; commit: `feat(core): expose runs API`) (date: 2026-01-09)
 14. [TODO] Git Commit: `feat(core): expose runs API` (hash: TBD)
