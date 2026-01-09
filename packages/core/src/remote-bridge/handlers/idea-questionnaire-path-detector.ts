@@ -1,7 +1,7 @@
-import { FLOW_NAME, IDEA_STAGE } from "@codeai-hub/idea-collector";
+import { IDEA_STAGE } from "@codeai-hub/idea-collector";
 
 const QUESTIONNAIRE_BASENAME = "questionnaire.md";
-const CANONICAL_PREFIX = `.codeai-hub/${FLOW_NAME}/initiatives/`;
+const CANONICAL_PREFIX = ".codeai-hub/initiatives/";
 const IDEA_QUESTIONNAIRE_SUFFIX = `/${IDEA_STAGE}/${QUESTIONNAIRE_BASENAME}`;
 
 const WRAPPER_PAIRS: readonly [string, string][] = [
