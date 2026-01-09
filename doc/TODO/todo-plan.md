@@ -21,7 +21,7 @@
 ### Stream: Design baseline
 
 1. [DONE] Зафиксировать MVP архитектуру Initiatives/Runs (модель, пути, API, UI entry) (scope: `doc/Project_Docs/Initiatives_Runs_UI_Entry_Architecture.md`; commit: `docs(architecture): add initiatives and runs entry design`) (date: 2026-01-09)
-2. [DONE] Git Commit: `docs(architecture): add initiatives and runs entry design` (hash: TBD)
+2. [DONE] Git Commit: `docs(architecture): add initiatives and runs entry design` (hash: e890e7f)
 
 ### Stream: Core — Initiatives + Runs storage
 
