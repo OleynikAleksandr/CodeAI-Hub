@@ -3,6 +3,7 @@ import { Uri, type Webview } from "vscode";
 type CoreBridgeConfig = {
   readonly httpUrl: string;
   readonly wsUrl: string;
+  readonly workspacePath?: string;
 };
 
 const NONCE_LENGTH = 32;
