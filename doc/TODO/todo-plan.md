@@ -69,5 +69,5 @@
 
 ### Stream: Docs
 
-27. [TODO] Обновить системную архитектуру под Initiatives/Runs (пути, API, UI entry) (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): document initiatives and runs model`) (date: 2026-01-09)
-28. [TODO] Git Commit: `docs(architecture): document initiatives and runs model` (hash: TBD)
+27. [DONE] Обновить системную архитектуру под Initiatives/Runs (пути, API, UI entry) (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): document initiatives and runs model`) (date: 2026-01-09)
+28. [DONE] Git Commit: `docs(architecture): document initiatives and runs model` (hash: 2e91cfb) (date: 2026-01-09)
