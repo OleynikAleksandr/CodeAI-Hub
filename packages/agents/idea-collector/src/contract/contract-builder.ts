@@ -7,8 +7,8 @@ import {
   readTextFromFile,
 } from "@codeai-hub/agent-shared";
 import {
+  getIdeaOutputPaths,
   IDEA_MARKDOWN_SCHEMA_PATH,
-  IDEA_OUTPUT_PATHS,
   IDEA_TEMPLATE_PATHS,
 } from "../paths";
 import type { IdeaContractPayload } from "./contract-types";
@@ -53,10 +53,7 @@ export const buildIdeaContract =
     );
 
     const questionnaireTemplateMarkdown = questionnaireTemplate ?? "";
-    const outputPaths = {
-      idea: IDEA_OUTPUT_PATHS.idea,
-      virtualSimulation: IDEA_OUTPUT_PATHS.virtualSimulation,
-    };
+    const outputPaths = getIdeaOutputPaths();
 
     const versionSeed = {
       prompt,

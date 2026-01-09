@@ -9,6 +9,7 @@
 export const FLOW_NAME = "full-development-flow";
 export const IDEA_STAGE = "idea";
 export const DEFAULT_INITIATIVE_SLUG = "full-development-flow";
+export const DEFAULT_RUN_SLUG = "001-default";
 
 /**
  * Template paths (where assets are installed).
@@ -27,7 +28,7 @@ export const IDEA_TEMPLATE_PATHS = {
  * Output paths (where artifacts are saved).
  * Paths are relative to workspace root.
  */
-export const IDEA_OUTPUT_ROOT = `.codeai-hub/${FLOW_NAME}/initiatives/${DEFAULT_INITIATIVE_SLUG}/${IDEA_STAGE}`;
+export const IDEA_OUTPUT_ROOT = `.codeai-hub/initiatives/${DEFAULT_INITIATIVE_SLUG}/runs/${DEFAULT_RUN_SLUG}/${IDEA_STAGE}`;
 
 export const IDEA_OUTPUT_PATHS = {
   idea: `${IDEA_OUTPUT_ROOT}/idea.md`,
@@ -43,13 +44,14 @@ export type IdeaArtifactPaths = {
 };
 
 /**
- * Get artifact output paths for a specific initiative.
- * Allows customization of the initiative slug.
+ * Get artifact output paths for a specific initiative/run.
+ * Allows customization of the initiative and run slugs.
  */
 export const getIdeaOutputPaths = (
-  initiativeSlug: string = DEFAULT_INITIATIVE_SLUG
+  initiativeSlug: string = DEFAULT_INITIATIVE_SLUG,
+  runSlug: string = DEFAULT_RUN_SLUG
 ): IdeaArtifactPaths => {
-  const root = `.codeai-hub/${FLOW_NAME}/initiatives/${initiativeSlug}/${IDEA_STAGE}`;
+  const root = `.codeai-hub/initiatives/${initiativeSlug}/runs/${runSlug}/${IDEA_STAGE}`;
   return {
     idea: `${root}/idea.md`,
     virtualSimulation: `${root}/virtual-simulation.md`,
