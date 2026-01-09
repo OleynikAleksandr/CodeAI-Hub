@@ -4,21 +4,12 @@ import {
   type InitiativeSummary,
   listInitiatives,
 } from "../../api/orchestrator/initiatives-client";
-import {
-  createRun as createRunRequest,
-  listRuns,
-  type RunSummary,
-  selectCurrentRun,
-} from "../../api/orchestrator/runs-client";
 import { resolveCoreHttpUrl } from "../../services/idea-collector-support";
 
 type InitiativeContextState = {
   readonly initiatives: readonly InitiativeSummary[];
-  readonly runs: readonly RunSummary[];
   readonly selectedInitiativeSlug: string | null;
-  readonly selectedRunId: string | null;
   readonly initiativeTitle: string;
-  readonly runTitle: string;
   readonly canStartFlow: boolean;
   readonly controlsDisabled: boolean;
   readonly statusMessage: string | null;
@@ -33,11 +24,7 @@ type InitiativeContextActions = {
   readonly handleInitiativeChange: (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => void;
-  readonly handleRunChange: (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => Promise<void>;
   readonly createInitiative: (input: CreateInput) => Promise<boolean>;
-  readonly createRun: (input: CreateInput) => Promise<boolean>;
   readonly clearStatus: () => void;
 };
 
@@ -57,11 +44,9 @@ const resolveWorkspacePath = (): string | null => {
 
 export const useInitiativeContext = (disabled: boolean): InitiativeContext => {
   const [initiatives, setInitiatives] = useState<InitiativeSummary[]>([]);
-  const [runs, setRuns] = useState<RunSummary[]>([]);
   const [selectedInitiativeSlug, setSelectedInitiativeSlug] = useState<
     string | null
   >(null);
-  const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const coreHttpUrl = useMemo(() => resolveCoreHttpUrl(), []);
@@ -98,31 +83,6 @@ export const useInitiativeContext = (disabled: boolean): InitiativeContext => {
     [coreHttpUrl, selectedInitiativeSlug, workspacePath]
   );
 
-  const refreshRuns = useCallback(
-    async (initiativeSlug: string, preferredRunId?: string | null) => {
-      if (!(coreHttpUrl && workspacePath)) {
-        return;
-      }
-
-      const result = await listRuns(coreHttpUrl, workspacePath, initiativeSlug);
-      if (!result.ok) {
-        setRuns([]);
-        setSelectedRunId(null);
-        return;
-      }
-
-      setRuns([...result.data.runs]);
-      const candidate =
-        result.data.currentRunId ?? preferredRunId ?? selectedRunId;
-      const nextRunId =
-        candidate && result.data.runs.some((run) => run.runId === candidate)
-          ? candidate
-          : (result.data.runs[0]?.runId ?? null);
-      setSelectedRunId(nextRunId);
-    },
-    [coreHttpUrl, selectedRunId, workspacePath]
-  );
-
   useEffect(() => {
     if (disabled || !hasWorkspace) {
       return;
@@ -132,20 +92,6 @@ export const useInitiativeContext = (disabled: boolean): InitiativeContext => {
     });
   }, [disabled, hasWorkspace, refreshInitiatives]);
 
-  useEffect(() => {
-    if (!selectedInitiativeSlug) {
-      setRuns([]);
-      setSelectedRunId(null);
-      return;
-    }
-    if (disabled || !hasWorkspace) {
-      return;
-    }
-    refreshRuns(selectedInitiativeSlug).catch(() => {
-      /* no-op */
-    });
-  }, [disabled, hasWorkspace, refreshRuns, selectedInitiativeSlug]);
-
   const selectedInitiative = useMemo(
     () =>
       initiatives.find(
@@ -154,22 +100,11 @@ export const useInitiativeContext = (disabled: boolean): InitiativeContext => {
     [initiatives, selectedInitiativeSlug]
   );
 
-  const selectedRun = useMemo(
-    () => runs.find((run) => run.runId === selectedRunId) ?? null,
-    [runs, selectedRunId]
-  );
-
   const initiativeTitle = selectedInitiative
     ? [selectedInitiative.displayName, selectedInitiative.description]
         .filter(Boolean)
         .join(" — ")
     : "Select initiative";
-
-  const runTitle = selectedRun
-    ? [selectedRun.displayName, selectedRun.description]
-        .filter(Boolean)
-        .join(" — ")
-    : "Select run";
 
   const handleInitiativeChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -177,31 +112,6 @@ export const useInitiativeContext = (disabled: boolean): InitiativeContext => {
       setSelectedInitiativeSlug(nextSlug.length > 0 ? nextSlug : null);
     },
     []
-  );
-
-  const handleRunChange = useCallback(
-    async (event: React.ChangeEvent<HTMLSelectElement>) => {
-      if (!(selectedInitiativeSlug && coreHttpUrl && workspacePath)) {
-        return;
-      }
-
-      const nextRunId = event.target.value;
-      const previousRunId = selectedRunId;
-      setSelectedRunId(nextRunId);
-
-      const result = await selectCurrentRun(
-        coreHttpUrl,
-        workspacePath,
-        selectedInitiativeSlug,
-        nextRunId
-      );
-
-      if (!result.ok) {
-        setSelectedRunId(previousRunId ?? null);
-        setStatusMessage(result.error);
-      }
-    },
-    [coreHttpUrl, selectedInitiativeSlug, selectedRunId, workspacePath]
   );
 
   const createInitiative = useCallback(
@@ -233,59 +143,15 @@ export const useInitiativeContext = (disabled: boolean): InitiativeContext => {
     [coreHttpUrl, refreshInitiatives, workspacePath]
   );
 
-  const createRun = useCallback(
-    async (input: CreateInput) => {
-      if (!selectedInitiativeSlug) {
-        setStatusMessage("Select an initiative before creating a run.");
-        return false;
-      }
-
-      if (!(coreHttpUrl && workspacePath)) {
-        setStatusMessage("Workspace path is unavailable.");
-        return false;
-      }
-
-      const displayName = input.displayName.trim();
-      if (!displayName) {
-        setStatusMessage("Provide a run name.");
-        return false;
-      }
-
-      const result = await createRunRequest(
-        coreHttpUrl,
-        workspacePath,
-        selectedInitiativeSlug,
-        {
-          displayName,
-          description: input.description?.trim() || undefined,
-        }
-      );
-      if (!result.ok) {
-        setStatusMessage(result.error);
-        return false;
-      }
-
-      await refreshRuns(selectedInitiativeSlug, result.data.run.runId);
-      setStatusMessage(null);
-      return true;
-    },
-    [coreHttpUrl, refreshRuns, selectedInitiativeSlug, workspacePath]
-  );
-
   return {
     initiatives,
-    runs,
     selectedInitiativeSlug,
-    selectedRunId,
     initiativeTitle,
-    runTitle,
-    canStartFlow: Boolean(selectedInitiativeSlug && selectedRunId),
+    canStartFlow: Boolean(selectedInitiativeSlug),
     controlsDisabled: disabled || !hasWorkspace,
     statusMessage,
     handleInitiativeChange,
-    handleRunChange,
     createInitiative,
-    createRun,
     clearStatus,
   };
 };
