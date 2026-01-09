@@ -6,6 +6,7 @@ import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { buildIdeaContract } from "./idea-contract-service";
+import { InitiativesHttpHandler } from "./initiatives-http-handler";
 import type {
   StatusInfo,
   SystemRequestHandler,
@@ -21,6 +22,7 @@ const HTTP_BAD_REQUEST = 400;
 const HTTP_NO_CONTENT = 204;
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
+const INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
 const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const WORKSPACE_FILE_WRITE_ENDPOINT =
   "/api/v1/orchestrator/workspace-file-write";
@@ -48,6 +50,7 @@ export class HttpApiRouter {
 
   registerRoutes(): void {
     const { app, systemHandler, fileDropService } = this.deps;
+    const initiativesHandler = new InitiativesHttpHandler(this.deps.logger);
 
     app.get("/api/v1/health", (req: Request, res: Response) => {
       systemHandler.handleHealth(
@@ -87,6 +90,14 @@ export class HttpApiRouter {
 
     app.post(IDEA_ARTIFACT_ENDPOINT, async (req: Request, res: Response) => {
       await this.handleIdeaArtifactSave(req, res);
+    });
+
+    app.get(INITIATIVES_ENDPOINT, async (req: Request, res: Response) => {
+      await initiativesHandler.handleList(req, res);
+    });
+
+    app.post(INITIATIVES_ENDPOINT, async (req: Request, res: Response) => {
+      await initiativesHandler.handleCreate(req, res);
     });
 
     app.post(WORKSPACE_FILE_ENDPOINT, async (req: Request, res: Response) => {
