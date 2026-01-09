@@ -8343,6 +8343,13 @@
   // src/client/ui/src/core-bridge/core-bridge.ts
   var RECONNECT_DELAY_MS = 2e3;
   var globalScope = window;
+  var COMMAND_STAGE_MAP = {
+    startChat: "chat",
+    startIdea: "idea",
+    startSpec: "spec",
+    startPlan: "plan",
+    startExecute: "execute"
+  };
   var resolveConfig = () => {
     const config = globalScope.__CODEAI_CORE_CONFIG;
     if (!config || typeof config.httpUrl !== "string" || typeof config.wsUrl !== "string") {
@@ -8359,6 +8366,7 @@
   var pendingMessages = [];
   var currentConnectionStatus = "idle";
   var currentConnectionDetail;
+  var pendingStage = null;
   var notifyConnectionStatus = (status, detail) => {
     if (currentConnectionStatus === status && currentConnectionDetail === detail) {
       return;
@@ -8386,6 +8394,17 @@
     const serialized = JSON.stringify(payload);
     pendingMessages.push(serialized);
     flushPendingMessages();
+  };
+  var resolveSelectedInitiativeSlug = () => {
+    if (typeof document === "undefined") {
+      return null;
+    }
+    const element3 = document.getElementById("initiative");
+    if (!(element3 instanceof HTMLSelectElement)) {
+      return null;
+    }
+    const value = element3.value.trim();
+    return value.length > 0 ? value : null;
   };
   var scheduleReconnect = (config) => {
     if (reconnectTimer) {
@@ -8503,9 +8522,12 @@
       });
       return;
     }
+    const initiativeSlug = resolveSelectedInitiativeSlug();
+    const stage = pendingStage;
+    pendingStage = null;
     enqueueMessage({
       type: "session:create",
-      payload: { providerId }
+      payload: { providerId, initiativeSlug, stage }
     });
   };
   var sendChatMessage = (sessionId, content3, turnOptions) => {
@@ -8544,6 +8566,7 @@
         });
         return true;
       }
+      pendingStage = COMMAND_STAGE_MAP[candidate.command] ?? pendingStage;
       return false;
     }
     if (candidate.type === "providerPicker:confirm") {
@@ -8551,6 +8574,10 @@
       const providerIds = payload?.providerIds ?? [];
       createSession(providerIds);
       return true;
+    }
+    if (candidate.type === "providerPicker:cancel") {
+      pendingStage = null;
+      return false;
     }
     return false;
   };
@@ -9609,7 +9636,7 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/app-host/idea-kickoff-prompt.ts
-  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\n\u041E\u0446\u0435\u043D\u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0447\u0435\u0440\u0435\u0437 assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0434\u0430\u0439 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 (questions), \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E; \u043D\u0430 finalize questions = [].\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md` \u0438 `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md`.";
+  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\n\u041E\u0446\u0435\u043D\u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0447\u0435\u0440\u0435\u0437 assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0434\u0430\u0439 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 (questions), \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E; \u043D\u0430 finalize questions = [].\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md` \u0438 `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md`.";
 
   // src/client/ui/src/services/idea-collector-fallback-schema.ts
   var FALLBACK_SCHEMA_JSON = `{
@@ -9711,11 +9738,11 @@ ${path2}` : path2;
         },
         "idea_path": {
           "type": "string",
-          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C Idea.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md)."
+          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C Idea.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md)."
         },
         "virtual_simulation_path": {
           "type": "string",
-          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C virtual-simulation.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md)."
+          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C virtual-simulation.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md)."
         }
       }
     }
@@ -9919,8 +9946,8 @@ ${template}`;
   // src/client/ui/src/services/idea-collector-contract.ts
   var IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
   var FALLBACK_OUTPUT_PATHS = {
-    idea: ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/idea.md",
-    virtualSimulation: ".codeai-hub/full-development-flow/initiatives/full-development-flow/idea/virtual-simulation.md"
+    idea: ".codeai-hub/initiatives/full-development-flow/runs/001-default/idea/idea.md",
+    virtualSimulation: ".codeai-hub/initiatives/full-development-flow/runs/001-default/idea/virtual-simulation.md"
   };
   var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isIdeaContractPayload = (value) => {
@@ -24929,7 +24956,6 @@ ${message.content}`
     name: name2,
     description,
     controlsDisabled,
-    createRunDisabled,
     statusMessage,
     onNameChange,
     onDescriptionChange,
@@ -24965,7 +24991,7 @@ ${message.content}`
           "button",
           {
             className: "action-bar__context-button",
-            disabled: mode === "run" ? createRunDisabled : controlsDisabled,
+            disabled: controlsDisabled,
             type: "submit",
             children: "Create"
           }
@@ -25084,155 +25110,6 @@ ${message.content}`
     }
   };
 
-  // src/client/ui/src/api/orchestrator/runs-client.ts
-  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isRunSummary = (value) => {
-    if (!isRecord10(value)) {
-      return false;
-    }
-    return typeof value.runId === "string" && typeof value.runSlug === "string" && typeof value.displayName === "string";
-  };
-  var parseRunSummary = (value) => {
-    if (!isRunSummary(value)) {
-      return null;
-    }
-    return {
-      runId: value.runId,
-      runSlug: value.runSlug,
-      displayName: value.displayName,
-      description: typeof value.description === "string" ? value.description : void 0,
-      createdAt: typeof value.createdAt === "string" ? value.createdAt : void 0
-    };
-  };
-  var buildRunsUrl = (httpUrl, workspacePath, initiativeSlug) => {
-    const encodedSlug = encodeURIComponent(initiativeSlug);
-    const url = new URL(
-      joinUrl(httpUrl, `/api/v1/orchestrator/initiatives/${encodedSlug}/runs`)
-    );
-    url.searchParams.set("workspacePath", workspacePath);
-    return url.toString();
-  };
-  var buildSelectCurrentUrl = (httpUrl, workspacePath, initiativeSlug, runId) => {
-    const encodedSlug = encodeURIComponent(initiativeSlug);
-    const encodedRunId = encodeURIComponent(runId);
-    const url = new URL(
-      joinUrl(
-        httpUrl,
-        `/api/v1/orchestrator/initiatives/${encodedSlug}/runs/${encodedRunId}/select-current`
-      )
-    );
-    url.searchParams.set("workspacePath", workspacePath);
-    return url.toString();
-  };
-  var parseRunList = (value) => {
-    if (!isRecord10(value)) {
-      return { runs: [], currentRunId: null };
-    }
-    const raw = value.runs;
-    const runs = [];
-    if (Array.isArray(raw)) {
-      for (const entry of raw) {
-        const parsed = parseRunSummary(entry);
-        if (parsed) {
-          runs.push(parsed);
-        }
-      }
-    }
-    const currentRunId = typeof value.currentRunId === "string" ? value.currentRunId : null;
-    return { runs, currentRunId };
-  };
-  var parseCreatedRun = (value) => {
-    if (!isRecord10(value)) {
-      return null;
-    }
-    const run = parseRunSummary(value.run);
-    const currentRunId = value.currentRunId;
-    if (!run || typeof currentRunId !== "string") {
-      return null;
-    }
-    return { run, currentRunId };
-  };
-  var parseCurrentRunId = (value) => {
-    if (!isRecord10(value)) {
-      return null;
-    }
-    return typeof value.currentRunId === "string" ? value.currentRunId : null;
-  };
-  var listRuns = async (httpUrl, workspacePath, initiativeSlug) => {
-    try {
-      const response = await fetch(
-        buildRunsUrl(httpUrl, workspacePath, initiativeSlug),
-        { method: "GET" }
-      );
-      if (!response.ok) {
-        return {
-          ok: false,
-          error: `Failed to load runs (HTTP ${response.status}).`
-        };
-      }
-      const payload = await response.json();
-      return { ok: true, data: parseRunList(payload) };
-    } catch {
-      return { ok: false, error: "Failed to reach CodeAI Hub core." };
-    }
-  };
-  var createRun = async (httpUrl, workspacePath, initiativeSlug, input) => {
-    try {
-      const response = await fetch(
-        buildRunsUrl(httpUrl, workspacePath, initiativeSlug),
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            workspacePath,
-            displayName: input.displayName,
-            description: input.description
-          })
-        }
-      );
-      if (!response.ok) {
-        return {
-          ok: false,
-          error: `Failed to create run (HTTP ${response.status}).`
-        };
-      }
-      const payload = await response.json();
-      const parsed = parseCreatedRun(payload);
-      if (!parsed) {
-        return { ok: false, error: "Invalid run response payload." };
-      }
-      return { ok: true, data: parsed };
-    } catch {
-      return { ok: false, error: "Failed to reach CodeAI Hub core." };
-    }
-  };
-  var selectCurrentRun = async (httpUrl, workspacePath, initiativeSlug, runId) => {
-    try {
-      const response = await fetch(
-        buildSelectCurrentUrl(httpUrl, workspacePath, initiativeSlug, runId),
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ workspacePath })
-        }
-      );
-      if (!response.ok) {
-        return {
-          ok: false,
-          error: `Failed to select run (HTTP ${response.status}).`
-        };
-      }
-      const payload = await response.json();
-      const currentRunId = parseCurrentRunId(payload);
-      if (!currentRunId) {
-        return { ok: false, error: "Invalid run selection response." };
-      }
-      return { ok: true, data: currentRunId };
-    } catch {
-      return { ok: false, error: "Failed to reach CodeAI Hub core." };
-    }
-  };
-
   // src/client/ui/src/components/action-bar/use-initiative-context.ts
   var resolveWorkspacePath = () => {
     const globalScope2 = window;
@@ -25244,9 +25121,7 @@ ${message.content}`
   };
   var useInitiativeContext = (disabled) => {
     const [initiatives, setInitiatives] = (0, import_react17.useState)([]);
-    const [runs, setRuns] = (0, import_react17.useState)([]);
     const [selectedInitiativeSlug, setSelectedInitiativeSlug] = (0, import_react17.useState)(null);
-    const [selectedRunId, setSelectedRunId] = (0, import_react17.useState)(null);
     const [statusMessage, setStatusMessage] = (0, import_react17.useState)(null);
     const coreHttpUrl = (0, import_react17.useMemo)(() => resolveCoreHttpUrl(), []);
     const workspacePath = (0, import_react17.useMemo)(() => resolveWorkspacePath(), []);
@@ -25273,24 +25148,6 @@ ${message.content}`
       },
       [coreHttpUrl, selectedInitiativeSlug, workspacePath]
     );
-    const refreshRuns = (0, import_react17.useCallback)(
-      async (initiativeSlug, preferredRunId) => {
-        if (!(coreHttpUrl && workspacePath)) {
-          return;
-        }
-        const result = await listRuns(coreHttpUrl, workspacePath, initiativeSlug);
-        if (!result.ok) {
-          setRuns([]);
-          setSelectedRunId(null);
-          return;
-        }
-        setRuns([...result.data.runs]);
-        const candidate = result.data.currentRunId ?? preferredRunId ?? selectedRunId;
-        const nextRunId = candidate && result.data.runs.some((run) => run.runId === candidate) ? candidate : result.data.runs[0]?.runId ?? null;
-        setSelectedRunId(nextRunId);
-      },
-      [coreHttpUrl, selectedRunId, workspacePath]
-    );
     (0, import_react17.useEffect)(() => {
       if (disabled || !hasWorkspace) {
         return;
@@ -25298,57 +25155,19 @@ ${message.content}`
       refreshInitiatives().catch(() => {
       });
     }, [disabled, hasWorkspace, refreshInitiatives]);
-    (0, import_react17.useEffect)(() => {
-      if (!selectedInitiativeSlug) {
-        setRuns([]);
-        setSelectedRunId(null);
-        return;
-      }
-      if (disabled || !hasWorkspace) {
-        return;
-      }
-      refreshRuns(selectedInitiativeSlug).catch(() => {
-      });
-    }, [disabled, hasWorkspace, refreshRuns, selectedInitiativeSlug]);
     const selectedInitiative = (0, import_react17.useMemo)(
       () => initiatives.find(
         (initiative) => initiative.initiativeSlug === selectedInitiativeSlug
       ) ?? null,
       [initiatives, selectedInitiativeSlug]
     );
-    const selectedRun = (0, import_react17.useMemo)(
-      () => runs.find((run) => run.runId === selectedRunId) ?? null,
-      [runs, selectedRunId]
-    );
     const initiativeTitle = selectedInitiative ? [selectedInitiative.displayName, selectedInitiative.description].filter(Boolean).join(" \u2014 ") : "Select initiative";
-    const runTitle = selectedRun ? [selectedRun.displayName, selectedRun.description].filter(Boolean).join(" \u2014 ") : "Select run";
     const handleInitiativeChange = (0, import_react17.useCallback)(
       (event) => {
         const nextSlug = event.target.value;
         setSelectedInitiativeSlug(nextSlug.length > 0 ? nextSlug : null);
       },
       []
-    );
-    const handleRunChange = (0, import_react17.useCallback)(
-      async (event) => {
-        if (!(selectedInitiativeSlug && coreHttpUrl && workspacePath)) {
-          return;
-        }
-        const nextRunId = event.target.value;
-        const previousRunId = selectedRunId;
-        setSelectedRunId(nextRunId);
-        const result = await selectCurrentRun(
-          coreHttpUrl,
-          workspacePath,
-          selectedInitiativeSlug,
-          nextRunId
-        );
-        if (!result.ok) {
-          setSelectedRunId(previousRunId ?? null);
-          setStatusMessage(result.error);
-        }
-      },
-      [coreHttpUrl, selectedInitiativeSlug, selectedRunId, workspacePath]
     );
     const createInitiative2 = (0, import_react17.useCallback)(
       async (input) => {
@@ -25375,54 +25194,15 @@ ${message.content}`
       },
       [coreHttpUrl, refreshInitiatives, workspacePath]
     );
-    const createRun2 = (0, import_react17.useCallback)(
-      async (input) => {
-        if (!selectedInitiativeSlug) {
-          setStatusMessage("Select an initiative before creating a run.");
-          return false;
-        }
-        if (!(coreHttpUrl && workspacePath)) {
-          setStatusMessage("Workspace path is unavailable.");
-          return false;
-        }
-        const displayName = input.displayName.trim();
-        if (!displayName) {
-          setStatusMessage("Provide a run name.");
-          return false;
-        }
-        const result = await createRun(
-          coreHttpUrl,
-          workspacePath,
-          selectedInitiativeSlug,
-          {
-            displayName,
-            description: input.description?.trim() || void 0
-          }
-        );
-        if (!result.ok) {
-          setStatusMessage(result.error);
-          return false;
-        }
-        await refreshRuns(selectedInitiativeSlug, result.data.run.runId);
-        setStatusMessage(null);
-        return true;
-      },
-      [coreHttpUrl, refreshRuns, selectedInitiativeSlug, workspacePath]
-    );
     return {
       initiatives,
-      runs,
       selectedInitiativeSlug,
-      selectedRunId,
       initiativeTitle,
-      runTitle,
-      canStartFlow: Boolean(selectedInitiativeSlug && selectedRunId),
+      canStartFlow: Boolean(selectedInitiativeSlug),
       controlsDisabled: disabled || !hasWorkspace,
       statusMessage,
       handleInitiativeChange,
-      handleRunChange,
       createInitiative: createInitiative2,
-      createRun: createRun2,
       clearStatus
     };
   };
@@ -25441,45 +25221,23 @@ ${message.content}`
   var ActionBar = ({ disabled = false }) => {
     const {
       initiatives,
-      runs,
       selectedInitiativeSlug,
-      selectedRunId,
       initiativeTitle,
-      runTitle,
       canStartFlow,
       controlsDisabled,
       statusMessage,
       handleInitiativeChange,
-      handleRunChange,
       createInitiative: createInitiative2,
-      createRun: createRun2,
       clearStatus
     } = useInitiativeContext(disabled);
-    const [createMode, setCreateMode] = (0, import_react18.useState)(
-      null
-    );
+    const [createMode, setCreateMode] = (0, import_react18.useState)(null);
     const [draftName, setDraftName] = (0, import_react18.useState)("");
     const [draftDescription, setDraftDescription] = (0, import_react18.useState)("");
     const initiativePlaceholder = initiatives.length === 0 ? "No initiatives yet" : "Select initiative";
-    const runPlaceholder = (0, import_react18.useMemo)(() => {
-      if (!selectedInitiativeSlug) {
-        return "Select initiative first";
-      }
-      if (runs.length === 0) {
-        return "No runs yet";
-      }
-      return "Select run";
-    }, [runs.length, selectedInitiativeSlug]);
-    const formTitle = createMode === "initiative" ? "New initiative" : "New run";
+    const formTitle = "New initiative";
     const handleStartCreateInitiative = (0, import_react18.useCallback)(() => {
       clearStatus();
       setCreateMode("initiative");
-      setDraftName("");
-      setDraftDescription("");
-    }, [clearStatus]);
-    const handleStartCreateRun = (0, import_react18.useCallback)(() => {
-      clearStatus();
-      setCreateMode("run");
       setDraftName("");
       setDraftDescription("");
     }, [clearStatus]);
@@ -25498,14 +25256,14 @@ ${message.content}`
           displayName: draftName,
           description: draftDescription
         };
-        const success = createMode === "initiative" ? await createInitiative2(input) : await createRun2(input);
+        const success = createMode === "initiative" ? await createInitiative2(input) : false;
         if (success) {
           setCreateMode(null);
           setDraftName("");
           setDraftDescription("");
         }
       },
-      [createInitiative2, createMode, createRun2, draftDescription, draftName]
+      [createInitiative2, createMode, draftDescription, draftName]
     );
     const handleClick = (0, import_react18.useCallback)(
       (command) => {
@@ -25521,7 +25279,6 @@ ${message.content}`
       [canStartFlow, disabled]
     );
     const flowDisabled = disabled || !canStartFlow;
-    const createRunDisabled = controlsDisabled || !selectedInitiativeSlug;
     return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__surface", children: [
       /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
         "div",
@@ -25564,53 +25321,21 @@ ${message.content}`
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__context-group", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("label", { className: "action-bar__context-label", htmlFor: "run", children: "Run" }),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
-            "select",
-            {
-              "aria-label": "Run",
-              className: "action-bar__context-select",
-              disabled: controlsDisabled || !selectedInitiativeSlug,
-              id: "run",
-              onChange: handleRunChange,
-              title: runTitle,
-              value: selectedRunId ?? "",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("option", { disabled: true, value: "", children: runPlaceholder }),
-                runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("option", { value: run.runId, children: run.displayName }, run.runId))
-              ]
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__context-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-            "button",
-            {
-              className: "action-bar__context-button",
-              disabled: controlsDisabled,
-              onClick: handleStartCreateInitiative,
-              type: "button",
-              children: "+"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-            "button",
-            {
-              className: "action-bar__context-button",
-              disabled: createRunDisabled,
-              onClick: handleStartCreateRun,
-              type: "button",
-              children: "+ run"
-            }
-          )
-        ] })
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "action-bar__context-actions", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          "button",
+          {
+            className: "action-bar__context-button",
+            disabled: controlsDisabled,
+            onClick: handleStartCreateInitiative,
+            type: "button",
+            children: "+"
+          }
+        ) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
         ActionBarContextForm,
         {
           controlsDisabled,
-          createRunDisabled,
           description: draftDescription,
           mode: createMode,
           name: draftName,
@@ -27848,13 +27573,13 @@ ${message.content}`
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord10 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord11(value)) {
+    if (!isRecord10(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -27893,7 +27618,7 @@ ${message.content}`
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -27926,7 +27651,7 @@ ${message.content}`
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord12(value)) {
+    if (!isRecord11(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
