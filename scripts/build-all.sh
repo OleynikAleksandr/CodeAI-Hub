@@ -81,6 +81,7 @@ VERSION_SOURCES=(
   "packages/Claude_Module/package.json::version"
   "packages/Codex_Module/package.json::version"
   "packages/Gemini_Module/package.json::version"
+  "packages/initiatives/package.json::version"
   "packages/unified-session/package.json::version"
   "assets/launcher/manifest.json::platforms.darwin-arm64.launcherVersion"
 )
@@ -210,6 +211,7 @@ update_workspace_version "@codeai-hub/core" "$new_version"
 update_workspace_version "@codeai-hub/claude-module" "$new_version"
 update_workspace_version "@codeai-hub/codex-module" "$new_version"
 update_workspace_version "@codeai-hub/gemini-module" "$new_version"
+update_workspace_version "@codeai-hub/initiatives" "$new_version"
 update_workspace_version "@codeai-hub/unified-session" "$new_version"
 update_root_version "$new_version"
 
