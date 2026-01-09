@@ -97,11 +97,11 @@
         },
         "idea_path": {
           "type": "string",
-          "description": "Куда сохранить idea.md в проекте (канон: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md)."
+          "description": "Куда сохранить idea.md в проекте (канон: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md)."
         },
         "virtual_simulation_path": {
           "type": "string",
-          "description": "Куда сохранить virtual-simulation.md в проекте (канон: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md)."
+          "description": "Куда сохранить virtual-simulation.md в проекте (канон: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md)."
         }
       }
     }

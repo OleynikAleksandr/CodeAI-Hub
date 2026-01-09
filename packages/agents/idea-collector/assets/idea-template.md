@@ -185,8 +185,8 @@
 
 ### Каноничные пути артефактов инициативы
 Артефакты сохраняются в структуру инициативы:
-- `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md`
-- `.codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md`
+- `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md`
+- `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md`
 
 ---
 
