@@ -97,11 +97,11 @@ const FALLBACK_SCHEMA_JSON = `{
         },
         "idea_path": {
           "type": "string",
-          "description": "Куда сохранить Idea.md в проекте (канон: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/idea.md)."
+          "description": "Куда сохранить Idea.md в проекте (канон: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md)."
         },
         "virtual_simulation_path": {
           "type": "string",
-          "description": "Куда сохранить virtual-simulation.md в проекте (канон: .codeai-hub/full-development-flow/initiatives/<initiativeSlug>/idea/virtual-simulation.md)."
+          "description": "Куда сохранить virtual-simulation.md в проекте (канон: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md)."
         }
       }
     }
