@@ -25,14 +25,14 @@
 
 ### Stream: Core — Initiatives + Runs storage
 
-3. [TODO] Добавить каноничные пути/утилиты для инициатив и run’ов (slugified имена папок + уникализация `-2/-3/...`) (scope: `packages/core/src/services/initiatives/initiative-paths.ts`; commit: `feat(core): add initiative paths`) (date: 2026-01-09)
-4. [TODO] Git Commit: `feat(core): add initiative paths` (hash: TBD)
+3. [DONE] Добавить каноничные пути/утилиты для инициатив и run’ов (slugified имена папок + уникализация `-2/-3/...`) (scope: `packages/initiatives/src/index.ts`; commit: `feat(initiatives): add slug and path utilities`) (date: 2026-01-09)
+4. [DONE] Git Commit: `feat(initiatives): add slug and path utilities` (hash: 87e7edf) (date: 2026-01-09)
 
-5. [TODO] Добавить файловое хранилище инициатив (create/list/read/update, displayName/description, currentRunId) (scope: `packages/core/src/services/initiatives/initiative-store.ts`; commit: `feat(core): add initiative store`) (date: 2026-01-09)
-6. [TODO] Git Commit: `feat(core): add initiative store` (hash: TBD)
+5. [TODO] Добавить файловое хранилище инициатив (create/list/read/update, displayName/description, currentRunId) (scope: `packages/initiatives/src/initiative-store.ts`; commit: `feat(initiatives): add initiative store`) (date: 2026-01-09)
+6. [TODO] Git Commit: `feat(initiatives): add initiative store` (hash: TBD)
 
-7. [TODO] Добавить файловое хранилище run’ов (create/list/read, displayName/description, runSlug folder, select current) (scope: `packages/core/src/services/initiatives/run-store.ts`; commit: `feat(core): add run store`) (date: 2026-01-09)
-8. [TODO] Git Commit: `feat(core): add run store` (hash: TBD)
+7. [TODO] Добавить файловое хранилище run’ов (create/list/read, displayName/description, runSlug folder, select current) (scope: `packages/initiatives/src/run-store.ts`; commit: `feat(initiatives): add run store`) (date: 2026-01-09)
+8. [TODO] Git Commit: `feat(initiatives): add run store` (hash: TBD)
 
 ### Stream: Core — HTTP API
 
