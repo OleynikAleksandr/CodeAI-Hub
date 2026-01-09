@@ -64,8 +64,8 @@
 23. [DONE] Пробросить workspacePath в webview core config для Initiatives/Runs (scope: `src/extension.ts`, `src/extension-module/home-view-provider.ts`, `src/core/webview-module/webview-html-generator.ts`; commit: `feat(ui): inject workspace path into webview config`) (date: 2026-01-09)
 24. [DONE] Git Commit: `feat(ui): inject workspace path into webview config` (hash: e85801a) (date: 2026-01-09)
 
-25. [TODO] Поддержать initiative/run selector и тот же UI entry в standalone `web-client` окружении (scope: `src/client/web-client/environment.ts`, `src/client/ui/src/components/action-bar/index.tsx`; commit: `feat(web-client): add initiative entry parity`) (date: 2026-01-09)
-26. [TODO] Git Commit: `feat(web-client): add initiative entry parity` (hash: TBD)
+25. [DONE] Поддержать initiative/run selector и тот же UI entry в standalone `web-client` окружении (scope: `src/client/web-client/environment.ts`, `src/client/web-client/launcher-config.ts`; commit: `feat(web-client): add initiative entry parity`) (date: 2026-01-09)
+26. [DONE] Git Commit: `feat(web-client): add initiative entry parity` (hash: 6f29cc7) (date: 2026-01-09)
 
 ### Stream: Docs
 
