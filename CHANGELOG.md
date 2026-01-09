@@ -1,3 +1,12 @@
+## [1.1.396] - 2026-01-09
+
+### Added
+- **Auto-runs on Flow start**: each stage start creates a new run (`NNN-<model>`) and marks it current.
+
+### Changed
+- **Run-aware artifact paths**: Flow artifacts now live under `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/<stage>/...`.
+- **Action Bar context**: run selector removed; Flow buttons require initiative selection only.
+
 ## [1.1.395] - 2026-01-09
 
 ### Fixed
