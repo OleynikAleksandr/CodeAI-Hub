@@ -138,3 +138,8 @@ export const resolveInitiativePaths = (
   stageDir: (stage: string) =>
     resolveStageDir(workspaceRoot, initiativeSlug, runSlug, stage),
 });
+
+export type { InitiativeManifest } from "./initiative-store";
+export { InitiativeStore } from "./initiative-store";
+export type { RunManifest } from "./run-store";
+export { RunStore } from "./run-store";
