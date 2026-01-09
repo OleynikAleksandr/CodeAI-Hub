@@ -13,9 +13,15 @@ const RECONNECT_DELAY_MS = 2000;
 const globalScope = window as typeof window & {
   __CODEAI_CORE_CONFIG?: CoreBridgeConfig;
 };
-
 type CoreConnectionStatus = "connecting" | "ready" | "error";
-
+type SessionStage = "chat" | "idea" | "spec" | "plan" | "execute";
+const COMMAND_STAGE_MAP: Record<string, SessionStage> = {
+  startChat: "chat",
+  startIdea: "idea",
+  startSpec: "spec",
+  startPlan: "plan",
+  startExecute: "execute",
+};
 const resolveConfig = (): CoreBridgeConfig => {
   const config = globalScope.__CODEAI_CORE_CONFIG;
   if (
@@ -27,10 +33,8 @@ const resolveConfig = (): CoreBridgeConfig => {
   }
   return config;
 };
-
 const notifyWindow = (message: Record<string, unknown>): void =>
   window.postMessage(message, "*");
-
 let initialized = false;
 let hasSuccessfulConnection = false;
 let websocket: WebSocket | null = null;
@@ -39,7 +43,7 @@ let cachedProviders: ProviderStackDescriptor[] = [...FALLBACK_PROVIDERS];
 const pendingMessages: string[] = [];
 let currentConnectionStatus: CoreConnectionStatus | "idle" = "idle";
 let currentConnectionDetail: string | undefined;
-
+let pendingStage: SessionStage | null = null;
 const notifyConnectionStatus = (
   status: CoreConnectionStatus,
   detail?: string
@@ -57,13 +61,11 @@ const notifyConnectionStatus = (
     payload: { status, detail },
   });
 };
-
 const handleServerMessage = createServerMessageHandler(notifyWindow);
 const flushPendingMessages = (): void => {
   if (!websocket || websocket.readyState !== WebSocket.OPEN) {
     return;
   }
-
   while (pendingMessages.length > 0) {
     const serialized = pendingMessages.shift();
     if (serialized) {
@@ -71,13 +73,22 @@ const flushPendingMessages = (): void => {
     }
   }
 };
-
 const enqueueMessage = (payload: unknown): void => {
   const serialized = JSON.stringify(payload);
   pendingMessages.push(serialized);
   flushPendingMessages();
 };
-
+const resolveSelectedInitiativeSlug = (): string | null => {
+  if (typeof document === "undefined") {
+    return null;
+  }
+  const element = document.getElementById("initiative");
+  if (!(element instanceof HTMLSelectElement)) {
+    return null;
+  }
+  const value = element.value.trim();
+  return value.length > 0 ? value : null;
+};
 const scheduleReconnect = (config: CoreBridgeConfig): void => {
   if (reconnectTimer) {
     return;
@@ -96,13 +107,11 @@ const scheduleReconnect = (config: CoreBridgeConfig): void => {
     connectWebSocket(config);
   }, RECONNECT_DELAY_MS);
 };
-
 const connectWebSocket = (config: CoreBridgeConfig): void => {
   if (websocket) {
     websocket.close();
     websocket = null;
   }
-
   websocket = new WebSocket(config.wsUrl);
   websocket.addEventListener("open", () => {
     hasSuccessfulConnection = true;
@@ -179,11 +188,9 @@ const ensureProvidersAvailable = async (
   }
   return cachedProviders;
 };
-
 const openProviderPicker = async (): Promise<void> => {
   const config = resolveConfig();
   const providers = await ensureProvidersAvailable(config);
-
   if (providers.length === 0) {
     notifyWindow({
       type: "ui:providerPickerError",
@@ -191,7 +198,6 @@ const openProviderPicker = async (): Promise<void> => {
     });
     return;
   }
-
   notifyWindow({
     type: "providerPicker:open",
     payload: { providers },
@@ -206,10 +212,12 @@ const createSession = (providerIds: readonly ProviderStackId[]): void => {
     });
     return;
   }
-
+  const initiativeSlug = resolveSelectedInitiativeSlug();
+  const stage = pendingStage;
+  pendingStage = null;
   enqueueMessage({
     type: "session:create",
-    payload: { providerId },
+    payload: { providerId, initiativeSlug, stage },
   });
 };
 export const sendChatMessage = (
@@ -237,14 +245,11 @@ export const deleteSession = (sessionId: string): void => {
     },
   });
 };
-
 export const handleOutgoingVsCodeMessage = (message: unknown): boolean => {
   if (!message || typeof message !== "object") {
     return false;
   }
-
   const candidate = message as Record<string, unknown>;
-
   if (typeof candidate.command === "string") {
     if (candidate.command === "newSession") {
       openProviderPicker().catch((error) => {
@@ -255,9 +260,9 @@ export const handleOutgoingVsCodeMessage = (message: unknown): boolean => {
       });
       return true;
     }
+    pendingStage = COMMAND_STAGE_MAP[candidate.command] ?? pendingStage;
     return false;
   }
-
   if (candidate.type === "providerPicker:confirm") {
     const payload = candidate.payload as
       | { readonly providerIds?: readonly ProviderStackId[] }
@@ -266,15 +271,16 @@ export const handleOutgoingVsCodeMessage = (message: unknown): boolean => {
     createSession(providerIds);
     return true;
   }
-
+  if (candidate.type === "providerPicker:cancel") {
+    pendingStage = null;
+    return false;
+  }
   return false;
 };
-
 export const initializeCoreBridge = (): void => {
   if (initialized || typeof window === "undefined") {
     return;
   }
-
   initialized = true;
   notifyConnectionStatus("connecting");
   const config = resolveConfig();
