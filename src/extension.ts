@@ -227,8 +227,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
     });
   }
 
-  const resolvedConnectionInfo =
-    coreProcessManager?.getConnectionInfo() ?? getDefaultCoreConnectionInfo();
+  const workspacePath = resolveWorkspacePath();
+  const resolvedConnectionInfo = {
+    ...(coreProcessManager?.getConnectionInfo() ??
+      getDefaultCoreConnectionInfo()),
+    workspacePath,
+  };
   logger.log("extension:activate:connectionInfo", {
     httpUrl: resolvedConnectionInfo.httpUrl,
     wsUrl: resolvedConnectionInfo.wsUrl,

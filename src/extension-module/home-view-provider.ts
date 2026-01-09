@@ -16,14 +16,22 @@ export class HomeViewProvider implements WebviewViewProvider {
   private readonly webviewUIRootPath: string;
   private readonly htmlGenerator: WebviewHtmlGenerator;
   private readonly messageRouter: HomeViewMessageRouter;
-  private readonly coreConfig?: { httpUrl: string; wsUrl: string };
+  private readonly coreConfig?: {
+    readonly httpUrl: string;
+    readonly wsUrl: string;
+    readonly workspacePath?: string;
+  };
   private currentView: WebviewView | null = null;
   private pendingShowSettings = false;
 
   constructor(
     extensionUri: Uri,
     webviewUIRootPath: string,
-    coreConfig?: { httpUrl: string; wsUrl: string },
+    coreConfig?: {
+      readonly httpUrl: string;
+      readonly wsUrl: string;
+      readonly workspacePath?: string;
+    },
     coreProcessManager?: CoreProcessManager
   ) {
     this.extensionUri = extensionUri;
