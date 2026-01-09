@@ -1,3 +1,11 @@
+## [1.1.395] - 2026-01-09
+
+### Fixed
+- **Core runtime packaging**: include `@codeai-hub/initiatives` in the packed runtime to avoid `MODULE_NOT_FOUND` and `/api/v1/health` failures.
+
+### Changed
+- **Build pipeline**: `build-all.sh` now bumps/builds the initiatives workspace alongside core/providers.
+
 ## [1.1.394] - 2026-01-09
 
 ### Added
