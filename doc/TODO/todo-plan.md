@@ -47,21 +47,24 @@
 
 ### Stream: UI — Initiative bar + split zones (vscode-webview)
 
-15. [TODO] Добавить UI строку контекста над кнопками: dropdown инициативы + dropdown run + `+` (создание инициативы с именем/описанием) + `+ run` (создание run с именем/описанием), хранить выбранный контекст в UI state (scope: `src/client/ui/src/components/action-bar/index.tsx`, `src/client/ui/src/api/orchestrator/initiatives-client.ts`, `src/client/ui/src/api/orchestrator/runs-client.ts`; commit: `feat(ui): add initiative and run selector`) (date: 2026-01-09)
-16. [TODO] Git Commit: `feat(ui): add initiative and run selector` (hash: TBD)
+15. [DONE] Добавить UI клиенты инициатив/ранов для Core API (scope: `src/client/ui/src/api/orchestrator/initiatives-client.ts`, `src/client/ui/src/api/orchestrator/runs-client.ts`; commit: `feat(ui): add initiatives and runs clients`) (date: 2026-01-09)
+16. [DONE] Git Commit: `feat(ui): add initiatives and runs clients` (hash: 5e81703) (date: 2026-01-09)
 
-17. [TODO] Разделить Action Bar на две зоны: слева `Simple Chat`, справа — Flow buttons (пока: Idea/Spec/Plan/Execute); Flow disabled без `initiative+run` (scope: `src/client/ui/src/components/action-bar/index.tsx`, `media/main-view.css`; commit: `refactor(ui): split action bar into chat and flow zones`) (date: 2026-01-09)
-18. [TODO] Git Commit: `refactor(ui): split action bar into chat and flow zones` (hash: TBD)
+17. [DONE] Добавить UI строку контекста над кнопками: dropdown инициативы + dropdown run + `+` (создание инициативы с именем/описанием) + `+ run` (создание run с именем/описанием), хранить выбранный контекст в UI state (scope: `src/client/ui/src/components/action-bar/index.tsx`, `src/client/ui/src/components/action-bar/use-initiative-context.ts`; commit: `feat(ui): add initiative and run selector`) (date: 2026-01-09)
+18. [DONE] Git Commit: `feat(ui): add initiative and run selector` (hash: caa7a13) (date: 2026-01-09)
 
-19. [TODO] Пересобрать webview bundle после изменения Action Bar (scope: `media/react-chat.js`; commit: `chore(webview): rebuild bundle for initiative entry`) (date: 2026-01-09)
-20. [TODO] Git Commit: `chore(webview): rebuild bundle for initiative entry` (hash: TBD)
+19. [TODO] Разделить Action Bar на две зоны: слева `Simple Chat`, справа — Flow buttons (пока: Idea/Spec/Plan/Execute); Flow disabled без `initiative+run` (scope: `src/client/ui/src/components/action-bar/index.tsx`, `media/main-view.css`; commit: `refactor(ui): split action bar into chat and flow zones`) (date: 2026-01-09)
+20. [TODO] Git Commit: `refactor(ui): split action bar into chat and flow zones` (hash: TBD)
+
+21. [TODO] Пересобрать webview bundle после изменения Action Bar (scope: `media/react-chat.js`; commit: `chore(webview): rebuild bundle for initiative entry`) (date: 2026-01-09)
+22. [TODO] Git Commit: `chore(webview): rebuild bundle for initiative entry` (hash: TBD)
 
 ### Stream: Web-client — parity
 
-21. [TODO] Поддержать initiative/run selector и тот же UI entry в standalone `web-client` окружении (scope: `src/client/web-client/environment.ts`, `src/client/ui/src/components/action-bar/index.tsx`; commit: `feat(web-client): add initiative entry parity`) (date: 2026-01-09)
-22. [TODO] Git Commit: `feat(web-client): add initiative entry parity` (hash: TBD)
+23. [TODO] Поддержать initiative/run selector и тот же UI entry в standalone `web-client` окружении (scope: `src/client/web-client/environment.ts`, `src/client/ui/src/components/action-bar/index.tsx`; commit: `feat(web-client): add initiative entry parity`) (date: 2026-01-09)
+24. [TODO] Git Commit: `feat(web-client): add initiative entry parity` (hash: TBD)
 
 ### Stream: Docs
 
-23. [TODO] Обновить системную архитектуру под Initiatives/Runs (пути, API, UI entry) (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): document initiatives and runs model`) (date: 2026-01-09)
-24. [TODO] Git Commit: `docs(architecture): document initiatives and runs model` (hash: TBD)
+25. [TODO] Обновить системную архитектуру под Initiatives/Runs (пути, API, UI entry) (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): document initiatives and runs model`) (date: 2026-01-09)
+26. [TODO] Git Commit: `docs(architecture): document initiatives and runs model` (hash: TBD)
