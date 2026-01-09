@@ -81,7 +81,12 @@ export class SessionRequestHandler {
 
   async handleCreate(
     providerId?: string,
-    workspacePath?: string
+    workspacePath?: string,
+    context?: {
+      readonly initiativeSlug?: string | null;
+      readonly stage?: string | null;
+      readonly runSlug?: string | null;
+    }
   ): Promise<void> {
     const actualProviderId = providerId ?? this.getDefaultProviderId();
     const actualWorkspacePath =
@@ -107,7 +112,8 @@ export class SessionRequestHandler {
       const session = this.sessionManager.createSession(
         actualProviderId,
         actualWorkspacePath,
-        supportsImmediateBinding ? providerSessionId : undefined
+        supportsImmediateBinding ? providerSessionId : undefined,
+        context
       );
 
       this.sessionStorage.register(session);

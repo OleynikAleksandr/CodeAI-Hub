@@ -218,7 +218,11 @@ export class RemoteBridge {
       case "session:create":
         await this.sessionHandler.handleCreate(
           incoming.payload?.providerId,
-          incoming.payload?.workspacePath
+          incoming.payload?.workspacePath,
+          {
+            initiativeSlug: incoming.payload?.initiativeSlug ?? null,
+            stage: incoming.payload?.stage ?? null,
+          }
         );
         break;
       case "session:message":

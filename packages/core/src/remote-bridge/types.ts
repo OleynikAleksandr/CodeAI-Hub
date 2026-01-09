@@ -59,6 +59,8 @@ export type IncomingMessage =
       readonly payload: {
         readonly providerId?: string;
         readonly workspacePath?: string;
+        readonly initiativeSlug?: string | null;
+        readonly stage?: string | null;
       };
     }
   | {
