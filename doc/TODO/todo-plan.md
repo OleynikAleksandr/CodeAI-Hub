@@ -56,8 +56,8 @@
 19. [DONE] Разделить Action Bar на две зоны: слева `Simple Chat`, справа — Flow buttons (пока: Idea/Spec/Plan/Execute); Flow disabled без `initiative+run` (scope: `src/client/ui/src/components/action-bar/index.tsx`, `media/main-view.css`, `src/client/ui/src/components/action-bar/context-form.tsx`; commit: `refactor(ui): split action bar into chat and flow zones`) (date: 2026-01-09)
 20. [DONE] Git Commit: `refactor(ui): split action bar into chat and flow zones` (hash: 298bdbe) (date: 2026-01-09)
 
-21. [TODO] Пересобрать webview bundle после изменения Action Bar (scope: `media/react-chat.js`; commit: `chore(webview): rebuild bundle for initiative entry`) (date: 2026-01-09)
-22. [TODO] Git Commit: `chore(webview): rebuild bundle for initiative entry` (hash: TBD)
+21. [DONE] Пересобрать webview bundle после изменения Action Bar (scope: `media/react-chat.js`; commit: `chore(webview): rebuild bundle for initiative entry`) (date: 2026-01-09)
+22. [DONE] Git Commit: `chore(webview): rebuild bundle for initiative entry` (hash: 6a2ae70) (date: 2026-01-09)
 
 ### Stream: Web-client — parity
 
