@@ -116,6 +116,7 @@ npm run build --workspace=@codeai-hub/idea-collector >/dev/null
 npm run build --workspace=@codeai-hub/claude-module >/dev/null
 npm run build --workspace=@codeai-hub/codex-module >/dev/null
 npm run build --workspace=@codeai-hub/gemini-module >/dev/null || true
+npm run build --workspace=@codeai-hub/initiatives >/dev/null
 npm run build --workspace=@codeai-hub/unified-session >/dev/null
 npm run build --workspace=@codeai-hub/core-supervisor >/dev/null
 npm run build --workspace=@codeai-hub/core >/dev/null
@@ -124,6 +125,7 @@ echo "📦 Packing provider tarballs..."
 CLAUDE_TARBALL=$(npm pack --workspace=@codeai-hub/claude-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 CODEX_TARBALL=$(npm pack --workspace=@codeai-hub/codex-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 GEMINI_TARBALL=$(npm pack --workspace=@codeai-hub/gemini-module --pack-destination "$TARBALL_STAGE" | tail -n1)
+INITIATIVES_TARBALL=$(npm pack --workspace=@codeai-hub/initiatives --pack-destination "$TARBALL_STAGE" | tail -n1)
 UNIFIED_SESSION_TARBALL=$(npm pack --workspace=@codeai-hub/unified-session --pack-destination "$TARBALL_STAGE" | tail -n1)
 
 cp "$CORE_PROJECT_DIR/package.json" "$APP_STAGE/package.json"
@@ -159,6 +161,7 @@ mkdir -p "$APP_STAGE/tarballs"
 cp "$TARBALL_STAGE/$CLAUDE_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$CODEX_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$GEMINI_TARBALL" "$APP_STAGE/tarballs/"
+cp "$TARBALL_STAGE/$INITIATIVES_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$UNIFIED_SESSION_TARBALL" "$APP_STAGE/tarballs/"
 
 APP_STAGE_DIR="$APP_STAGE" node <<'NODE'
@@ -172,6 +175,7 @@ const rewrite = new Map([
   ["@codeai-hub/claude-module", "codeai-hub-claude-module"],
   ["@codeai-hub/codex-module", "codeai-hub-codex-module"],
   ["@codeai-hub/gemini-module", "codeai-hub-gemini-module"],
+  ["@codeai-hub/initiatives", "codeai-hub-initiatives"],
   ["@codeai-hub/unified-session", "codeai-hub-unified-session"],
 ]);
 for (const [dep, base] of rewrite) {
