@@ -57,12 +57,7 @@ export type InitiativePaths = {
 };
 
 export const resolveInitiativesRoot = (workspaceRoot: string): string =>
-  path.join(
-    workspaceRoot,
-    ".codeai-hub",
-    "full-development-flow",
-    "initiatives"
-  );
+  path.join(workspaceRoot, ".codeai-hub", "initiatives");
 
 export const resolveInitiativeDir = (
   workspaceRoot: string,
