@@ -31,6 +31,10 @@ export class IdeaCollectorService {
   private static readonly artifacts = new Map<string, IdeaCollectorArtifact>();
   private static readonly noticesSent = new Set<string>();
   private static readonly pendingQuestionnaire = new Set<string>();
+  private readonly outputPathsBySession = new Map<
+    string,
+    IdeaContractSnapshot["outputPaths"]
+  >();
   private contractPromise: Promise<IdeaContractSnapshot> | null = null;
 
   isIdeaCollectorSession(sessionId: string): boolean {
@@ -93,7 +97,8 @@ export class IdeaCollectorService {
 
   async beginQuestionnaireReview(
     sessionId: string,
-    content: string
+    content: string,
+    outputPathsOverride?: IdeaContractSnapshot["outputPaths"]
   ): Promise<void> {
     if (!IdeaCollectorService.activeSessions.has(sessionId)) {
       IdeaCollectorService.activeSessions.add(sessionId);
@@ -103,7 +108,13 @@ export class IdeaCollectorService {
       this.getPrompt(),
       this.getNormalizedSchema(),
     ]);
-    const combinedContent = `${prompt}\n\n${content}`;
+    const outputPaths = outputPathsOverride ?? (await this.getOutputPaths());
+    this.outputPathsBySession.set(sessionId, outputPaths);
+    const promptWithPaths = this.buildPromptWithOutputPaths(
+      prompt,
+      outputPaths
+    );
+    const combinedContent = `${promptWithPaths}\n\n${content}`;
     sendChatMessage(sessionId, combinedContent, { outputSchema: schema });
   }
 
@@ -153,6 +164,15 @@ export class IdeaCollectorService {
     return this.getContract().then((contract) => contract.outputPaths);
   }
 
+  getOutputPathsForSession(
+    outputPathsOverride?: IdeaContractSnapshot["outputPaths"]
+  ): Promise<IdeaContractSnapshot["outputPaths"]> {
+    if (outputPathsOverride) {
+      return Promise.resolve(outputPathsOverride);
+    }
+    return this.getOutputPaths();
+  }
+
   private getContract(): Promise<IdeaContractSnapshot> {
     if (!this.contractPromise) {
       this.contractPromise = loadContract();
@@ -176,10 +196,12 @@ export class IdeaCollectorService {
   ): Promise<void> {
     const httpUrl = resolveCoreHttpUrl();
     const contract = await this.getContract();
+    const outputPaths =
+      this.outputPathsBySession.get(sessionId) ?? contract.outputPaths;
     if (!httpUrl) {
       postSystemNotice(
         sessionId,
-        `Не могу сохранить артефакты идеи: Core HTTP URL не определён. Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
+        `Не могу сохранить артефакты идеи: Core HTTP URL не определён. Ожидаемые пути: ${outputPaths.idea}, ${outputPaths.virtualSimulation}.`
       );
       return;
     }
@@ -200,7 +222,7 @@ export class IdeaCollectorService {
       if (!response.ok) {
         postSystemNotice(
           sessionId,
-          `Не удалось сохранить артефакты идеи (HTTP ${response.status}). Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
+          `Не удалось сохранить артефакты идеи (HTTP ${response.status}). Ожидаемые пути: ${outputPaths.idea}, ${outputPaths.virtualSimulation}.`
         );
         return;
       }
@@ -224,8 +246,20 @@ export class IdeaCollectorService {
     } catch {
       postSystemNotice(
         sessionId,
-        `Не удалось сохранить артефакты идеи: ошибка сети. Ожидаемые пути: ${contract.outputPaths.idea}, ${contract.outputPaths.virtualSimulation}.`
+        `Не удалось сохранить артефакты идеи: ошибка сети. Ожидаемые пути: ${outputPaths.idea}, ${outputPaths.virtualSimulation}.`
       );
     }
+  }
+
+  private buildPromptWithOutputPaths(
+    prompt: string,
+    outputPaths: IdeaContractSnapshot["outputPaths"]
+  ): string {
+    return (
+      `${prompt}\n\n` +
+      "Пути сохранения для этой сессии (используй в Structured Output):\n" +
+      `- idea.md: ${outputPaths.idea}\n` +
+      `- virtual-simulation.md: ${outputPaths.virtualSimulation}`
+    );
   }
 }

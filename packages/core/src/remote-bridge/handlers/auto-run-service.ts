@@ -26,6 +26,21 @@ const resolveModelLabel = (
   return null;
 };
 
+const normalizeModelLabelForRun = (
+  providerId: string,
+  modelLabel: string
+): string => {
+  if (modelLabel === "default") {
+    if (providerId === "codexCli") {
+      return "gpt-5.2-codex";
+    }
+    if (providerId === "claudeCodeCli") {
+      return "sonnet";
+    }
+  }
+  return modelLabel;
+};
+
 export const maybeCreateAutoRun = async (
   input: AutoRunInput
 ): Promise<RunManifest | null> => {
@@ -44,12 +59,16 @@ export const maybeCreateAutoRun = async (
     });
     return null;
   }
+  const normalizedLabel = normalizeModelLabelForRun(
+    input.providerId,
+    modelLabel
+  );
 
   const store = new RunStore();
   const run = await store.createAutoRun(
     input.workspacePath,
     input.initiativeSlug,
-    modelLabel
+    normalizedLabel
   );
   await store.selectCurrent(
     input.workspacePath,

@@ -12,6 +12,11 @@ import SessionView from "../session/session-view";
 import { FlowWizardPicker } from "./flow-wizard-picker";
 import type { ProviderLabels } from "./provider-picker-state";
 import { QuestionnaireResumeBanner } from "./questionnaire-resume-banner";
+import {
+  loadQuestionnaireForSession,
+  resolveIdeaOutputPaths,
+} from "./session-region-idea-paths";
+import { IDEA_QUESTIONNAIRE_COPY } from "./session-region-questionnaire-copy";
 
 type SessionRegionProps = {
   readonly pickerState: ProviderPickerState;
@@ -34,7 +39,6 @@ type SessionRegionProps = {
     readonly snapshots: SessionSnapshots;
   };
 };
-
 export const SessionRegion = ({
   pickerState,
   selectedStage,
@@ -51,11 +55,9 @@ export const SessionRegion = ({
   const [questionnaireSnapshot, setQuestionnaireSnapshot] =
     useState<QuestionnaireSnapshot | null>(null);
   const [questionnaireVisible, setQuestionnaireVisible] = useState(false);
-
   const ideaCollector = ideaCollectorRef.current;
   const questionnaireService = questionnaireServiceRef.current;
   const activeSessionId = sessionViewProps.activeSessionId;
-
   const handleAnswerChange = useCallback(
     (questionId: string, value: string) => {
       setQuestionnaireSnapshot((current) => {
@@ -78,8 +80,7 @@ export const SessionRegion = ({
     },
     [questionnaireService]
   );
-
-  const handleQuestionnaireSubmit = useCallback(() => {
+  const handleQuestionnaireSubmit = useCallback(async () => {
     if (!questionnaireSnapshot) {
       return;
     }
@@ -94,27 +95,33 @@ export const SessionRegion = ({
       `review \`${questionnaireSnapshot.path}\` against the contract, ` +
       "ask any clarifying questions, then wait for OK/approve before finalize.";
 
-    questionnaireService
-      .flushSave(
+    try {
+      await questionnaireService.flushSave(
         questionnaireSnapshot.sessionId,
         questionnaireSnapshot.path,
         content
-      )
-      .then(() =>
-        ideaCollector.beginQuestionnaireReview(
-          questionnaireSnapshot.sessionId,
-          submissionMessage
-        )
-      )
-      .then(() => {
-        setQuestionnaireSnapshot(null);
-        setQuestionnaireVisible(false);
-      })
-      .catch(() => {
-        /* ignore submission errors */
-      });
-  }, [ideaCollector, questionnaireService, questionnaireSnapshot]);
-
+      );
+      const outputPaths =
+        resolveIdeaOutputPaths(
+          sessionViewProps.sessions,
+          questionnaireSnapshot.sessionId
+        ) ?? (await ideaCollector.getOutputPaths());
+      await ideaCollector.beginQuestionnaireReview(
+        questionnaireSnapshot.sessionId,
+        submissionMessage,
+        outputPaths
+      );
+      setQuestionnaireSnapshot(null);
+      setQuestionnaireVisible(false);
+    } catch {
+      /* ignore submission errors */
+    }
+  }, [
+    ideaCollector,
+    questionnaireService,
+    questionnaireSnapshot,
+    sessionViewProps.sessions,
+  ]);
   const handleQuestionnaireCancel = useCallback(() => {
     if (!questionnaireSnapshot) {
       setQuestionnaireVisible(false);
@@ -138,7 +145,6 @@ export const SessionRegion = ({
         setQuestionnaireVisible(false);
       });
   }, [questionnaireService, questionnaireSnapshot]);
-
   const handleQuestionnaireResume = useCallback(() => {
     if (!activeSessionId) {
       return;
@@ -147,8 +153,11 @@ export const SessionRegion = ({
       setQuestionnaireVisible(true);
       return;
     }
-    questionnaireService
-      .loadQuestionnaire(activeSessionId)
+    loadQuestionnaireForSession(
+      questionnaireService,
+      sessionViewProps.sessions,
+      activeSessionId
+    )
       .then((snapshot) => {
         if (snapshot) {
           setQuestionnaireSnapshot(snapshot);
@@ -158,19 +167,21 @@ export const SessionRegion = ({
       .catch(() => {
         /* ignore questionnaire load errors */
       });
-  }, [activeSessionId, questionnaireService, questionnaireSnapshot]);
-
+  }, [
+    activeSessionId,
+    questionnaireService,
+    questionnaireSnapshot,
+    sessionViewProps.sessions,
+  ]);
   const handleProviderConfirm = (providerIds: readonly ProviderStackId[]) => {
     if (selectedStage === "idea") {
       pendingQuestionnaireRef.current = true;
     }
     confirmSelection(providerIds);
   };
-
   const handleStageClick = (stage: FlowStageId) => {
     selectStage(stage);
   };
-
   const hasPendingQuestionnaire = activeSessionId
     ? ideaCollector.isQuestionnairePending(activeSessionId)
     : false;
@@ -195,8 +206,11 @@ export const SessionRegion = ({
       return;
     }
     pendingQuestionnaireRef.current = false;
-    questionnaireService
-      .loadQuestionnaire(activeSessionId)
+    loadQuestionnaireForSession(
+      questionnaireService,
+      sessionViewProps.sessions,
+      activeSessionId
+    )
       .then((snapshot) => {
         if (snapshot) {
           setQuestionnaireSnapshot(snapshot);
@@ -206,16 +220,14 @@ export const SessionRegion = ({
       .catch(() => {
         /* ignore questionnaire load errors */
       });
-  }, [activeSessionId, questionnaireService]);
+  }, [activeSessionId, questionnaireService, sessionViewProps.sessions]);
 
-  const questionnaireTitle = "Анкета идеи";
-  const questionnaireDescription =
-    "Заполните анкету, приложите ссылки на документы и отправьте на проверку.";
-  const questionnaireSubmitLabel = "Отправить анкету";
-  const questionnaireCancelLabel = "Отмена";
-  const questionnaireResumeLabel = "Продолжить анкету";
-  const questionnaireResumeNote =
-    "Есть незавершенная анкета для этой сессии. Можно продолжить заполнение.";
+  const questionnaireTitle = IDEA_QUESTIONNAIRE_COPY.title;
+  const questionnaireDescription = IDEA_QUESTIONNAIRE_COPY.description;
+  const questionnaireSubmitLabel = IDEA_QUESTIONNAIRE_COPY.submitLabel;
+  const questionnaireCancelLabel = IDEA_QUESTIONNAIRE_COPY.cancelLabel;
+  const questionnaireResumeLabel = IDEA_QUESTIONNAIRE_COPY.resumeLabel;
+  const questionnaireResumeNote = IDEA_QUESTIONNAIRE_COPY.resumeNote;
 
   const filteredProviders =
     selectedStage && selectedStage !== "chat"
