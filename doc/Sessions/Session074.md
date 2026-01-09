@@ -12,6 +12,7 @@
 - Закрыты хвосты Phase 6: синхронизированы doc/TODO, архив и документ auto‑run entry.
 - Пересобран webview fallback bundle (`media/react-chat.js`).
 - Обновлены README/CHANGELOG под релиз 1.1.396.
+- Обновлены архитектурные документы под решения релиза 1.1.396.
 - Выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; собран `codeai-hub-1.1.396.vsix`.
 
 ## Git commits
@@ -20,6 +21,7 @@
 - `f7ad600a chore(webview): rebuild bundle for auto-runs`
 - `baaf78a3 docs(release): prep 1.1.396 notes`
 - `5c8e8aa0 feat: v1.1.396 - auto-runs and run-aware artifacts`
+- `8ef92669 docs(architecture): update for v1.1.396`
 
 ---
 
