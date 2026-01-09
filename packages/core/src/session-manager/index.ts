@@ -14,12 +14,21 @@ export type Session = {
   readonly id: string;
   readonly providerId: string;
   readonly workspacePath: string;
+  readonly initiativeSlug: string | null;
+  readonly stage: string | null;
+  readonly runSlug: string | null;
   readonly title: string;
   readonly createdAt: string;
   updatedAt: string;
   messages: SessionMessage[];
   providerSessionId?: string;
   providerSessionStatus: "pending" | "ready" | "failed";
+};
+
+export type SessionInitiativeContext = {
+  readonly initiativeSlug?: string | null;
+  readonly stage?: string | null;
+  readonly runSlug?: string | null;
 };
 
 const SESSION_TITLE_PREFIX_LENGTH = 4;
@@ -38,7 +47,8 @@ export class SessionManager {
   createSession(
     providerId: string,
     workspacePath: string,
-    providerSessionId?: string
+    providerSessionId?: string,
+    context?: SessionInitiativeContext
   ): Session {
     const id = randomUUID();
     const now = new Date().toISOString();
@@ -46,6 +56,9 @@ export class SessionManager {
       id,
       providerId,
       workspacePath,
+      initiativeSlug: context?.initiativeSlug ?? null,
+      stage: context?.stage ?? null,
+      runSlug: context?.runSlug ?? null,
       title: `Mock session ${id.slice(0, SESSION_TITLE_PREFIX_LENGTH)}`,
       createdAt: now,
       updatedAt: now,
