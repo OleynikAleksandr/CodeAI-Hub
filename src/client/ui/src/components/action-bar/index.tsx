@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { activateRoot } from "../../root-dom";
 import { postVsCodeMessage } from "../../vscode";
+import { ActionBarContextForm } from "./context-form";
 import { useInitiativeContext } from "./use-initiative-context";
 
 type ActionBarCommand =
@@ -22,6 +23,9 @@ const BUTTONS: readonly ButtonDescriptor[] = [
   { id: "startPlan", label: ["Plan", ""] },
   { id: "startExecute", label: ["Execute", ""] },
 ];
+
+const CHAT_BUTTONS = BUTTONS.filter((button) => button.id === "startChat");
+const FLOW_BUTTONS = BUTTONS.filter((button) => button.id !== "startChat");
 
 type ActionBarProps = {
   readonly disabled?: boolean;
@@ -211,71 +215,56 @@ const ActionBar = ({ disabled = false }: ActionBarProps) => {
             </button>
           </div>
         </div>
-        {createMode ? (
-          <form
-            className="action-bar__context-form"
-            onSubmit={handleSubmitCreate}
-          >
-            <span className="action-bar__context-form-title">{formTitle}</span>
-            <input
-              aria-label="Name"
-              className="action-bar__context-input"
-              onChange={(event) => setDraftName(event.target.value)}
-              placeholder="Name"
-              type="text"
-              value={draftName}
-            />
-            <input
-              aria-label="Description"
-              className="action-bar__context-input"
-              onChange={(event) => setDraftDescription(event.target.value)}
-              placeholder="Description (optional)"
-              type="text"
-              value={draftDescription}
-            />
-            <div className="action-bar__context-form-actions">
-              <button
-                className="action-bar__context-button"
-                disabled={
-                  createMode === "run" ? createRunDisabled : controlsDisabled
-                }
-                type="submit"
-              >
-                Create
-              </button>
-              <button
-                className="action-bar__context-button"
-                onClick={handleCancelCreate}
-                type="button"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : null}
-        {statusMessage ? (
-          <output aria-live="polite" className="action-bar__context-status">
-            {statusMessage}
-          </output>
-        ) : null}
+        <ActionBarContextForm
+          controlsDisabled={controlsDisabled}
+          createRunDisabled={createRunDisabled}
+          description={draftDescription}
+          mode={createMode}
+          name={draftName}
+          onCancel={handleCancelCreate}
+          onDescriptionChange={setDraftDescription}
+          onNameChange={setDraftName}
+          onSubmit={handleSubmitCreate}
+          statusMessage={statusMessage}
+          title={formTitle}
+        />
         <div className="action-bar__buttons">
-          {BUTTONS.map(({ id, label }) => {
-            const ariaLabel = label.filter(Boolean).join(" ");
-            const isFlow = id !== "startChat";
-            return (
-              <button
-                aria-label={ariaLabel}
-                className="action-bar__button"
-                disabled={isFlow ? flowDisabled : disabled}
-                key={id}
-                onClick={() => handleClick(id)}
-                type="button"
-              >
-                <span className="action-bar__line">{label[0]}</span>
-                <span className="action-bar__line">{label[1]}</span>
-              </button>
-            );
-          })}
+          <div className="action-bar__button-zone action-bar__button-zone--chat">
+            {CHAT_BUTTONS.map(({ id, label }) => {
+              const ariaLabel = label.filter(Boolean).join(" ");
+              return (
+                <button
+                  aria-label={ariaLabel}
+                  className="action-bar__button"
+                  disabled={disabled}
+                  key={id}
+                  onClick={() => handleClick(id)}
+                  type="button"
+                >
+                  <span className="action-bar__line">{label[0]}</span>
+                  <span className="action-bar__line">{label[1]}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="action-bar__button-zone action-bar__button-zone--flow">
+            {FLOW_BUTTONS.map(({ id, label }) => {
+              const ariaLabel = label.filter(Boolean).join(" ");
+              return (
+                <button
+                  aria-label={ariaLabel}
+                  className="action-bar__button"
+                  disabled={flowDisabled}
+                  key={id}
+                  onClick={() => handleClick(id)}
+                  type="button"
+                >
+                  <span className="action-bar__line">{label[0]}</span>
+                  <span className="action-bar__line">{label[1]}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </header>
