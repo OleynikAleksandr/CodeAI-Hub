@@ -56,38 +56,85 @@ export type InitiativePaths = {
   readonly stageDir: (stage: string) => string;
 };
 
-export const resolveInitiativePaths = (
-  workspaceRoot: string,
-  initiativeSlug: string,
-  runSlug: string
-): InitiativePaths => {
-  if (!SLUG_RE.test(initiativeSlug)) {
-    throw new Error(`Invalid initiativeSlug: ${initiativeSlug}`);
-  }
-  if (!SLUG_RE.test(runSlug)) {
-    throw new Error(`Invalid runSlug: ${runSlug}`);
-  }
-
-  const initiativesRoot = path.join(
+export const resolveInitiativesRoot = (workspaceRoot: string): string =>
+  path.join(
     workspaceRoot,
     ".codeai-hub",
     "full-development-flow",
     "initiatives"
   );
 
-  const initiativeDir = path.join(initiativesRoot, initiativeSlug);
-  const initiativeManifestPath = path.join(initiativeDir, "initiative.json");
-  const runsRoot = path.join(initiativeDir, "runs");
-  const runDir = path.join(runsRoot, runSlug);
-  const runManifestPath = path.join(runDir, "run.json");
+export const resolveInitiativeDir = (
+  workspaceRoot: string,
+  initiativeSlug: string
+): string => {
+  if (!SLUG_RE.test(initiativeSlug)) {
+    throw new Error(`Invalid initiativeSlug: ${initiativeSlug}`);
+  }
 
-  return {
-    initiativesRoot,
-    initiativeDir,
-    initiativeManifestPath,
-    runsRoot,
-    runDir,
-    runManifestPath,
-    stageDir: (stage: string) => path.join(runDir, stage),
-  };
+  return path.join(resolveInitiativesRoot(workspaceRoot), initiativeSlug);
 };
+
+export const resolveInitiativeManifestPath = (
+  workspaceRoot: string,
+  initiativeSlug: string
+): string =>
+  path.join(
+    resolveInitiativeDir(workspaceRoot, initiativeSlug),
+    "initiative.json"
+  );
+
+export const resolveRunsRoot = (
+  workspaceRoot: string,
+  initiativeSlug: string
+): string =>
+  path.join(resolveInitiativeDir(workspaceRoot, initiativeSlug), "runs");
+
+export const resolveRunDir = (
+  workspaceRoot: string,
+  initiativeSlug: string,
+  runSlug: string
+): string => {
+  if (!SLUG_RE.test(runSlug)) {
+    throw new Error(`Invalid runSlug: ${runSlug}`);
+  }
+
+  return path.join(resolveRunsRoot(workspaceRoot, initiativeSlug), runSlug);
+};
+
+export const resolveRunManifestPath = (
+  workspaceRoot: string,
+  initiativeSlug: string,
+  runSlug: string
+): string =>
+  path.join(resolveRunDir(workspaceRoot, initiativeSlug, runSlug), "run.json");
+
+export const resolveStageDir = (
+  workspaceRoot: string,
+  initiativeSlug: string,
+  runSlug: string,
+  stage: string
+): string =>
+  path.join(resolveRunDir(workspaceRoot, initiativeSlug, runSlug), stage);
+
+export const resolveInitiativePaths = (
+  workspaceRoot: string,
+  initiativeSlug: string,
+  runSlug: string
+): InitiativePaths => ({
+  initiativesRoot: resolveInitiativesRoot(workspaceRoot),
+  initiativeDir: resolveInitiativeDir(workspaceRoot, initiativeSlug),
+  initiativeManifestPath: resolveInitiativeManifestPath(
+    workspaceRoot,
+    initiativeSlug
+  ),
+  runsRoot: resolveRunsRoot(workspaceRoot, initiativeSlug),
+  runDir: resolveRunDir(workspaceRoot, initiativeSlug, runSlug),
+  runManifestPath: resolveRunManifestPath(
+    workspaceRoot,
+    initiativeSlug,
+    runSlug
+  ),
+  stageDir: (stage: string) =>
+    resolveStageDir(workspaceRoot, initiativeSlug, runSlug, stage),
+});
