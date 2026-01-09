@@ -1,3 +1,4 @@
+import type { IdeaContractSnapshot } from "./idea-collector-contract";
 import { IdeaCollectorService } from "./idea-collector-service";
 import { joinUrl, resolveCoreHttpUrl } from "./idea-collector-support";
 import {
@@ -58,7 +59,8 @@ export class IdeaQuestionnaireService {
   private readonly saveTimers = new Map<string, number>();
 
   async loadQuestionnaire(
-    sessionId: string
+    sessionId: string,
+    outputPathsOverride?: IdeaContractSnapshot["outputPaths"]
   ): Promise<QuestionnaireSnapshot | null> {
     const httpUrl = resolveCoreHttpUrl();
     if (!httpUrl) {
@@ -67,7 +69,9 @@ export class IdeaQuestionnaireService {
 
     const [templateMarkdown, outputPaths] = await Promise.all([
       this.ideaCollector.getQuestionnaireTemplateMarkdown(),
-      this.ideaCollector.getOutputPaths(),
+      outputPathsOverride
+        ? Promise.resolve(outputPathsOverride)
+        : this.ideaCollector.getOutputPaths(),
     ]);
     if (!outputPaths) {
       return null;
