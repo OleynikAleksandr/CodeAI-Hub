@@ -71,6 +71,20 @@ const listExistingSlugs = async (rootDir: string): Promise<string[]> => {
   }
 };
 
+const RUN_COUNTER_PATTERN = /^(\d{3})-/;
+
+const parseRunCounter = (runSlug: string): number | null => {
+  const match = RUN_COUNTER_PATTERN.exec(runSlug);
+  if (!match) {
+    return null;
+  }
+  const value = Number.parseInt(match[1], 10);
+  return Number.isNaN(value) ? null : value;
+};
+
+const formatRunCounter = (value: number): string =>
+  String(value).padStart(3, "0");
+
 export class RunStore {
   private readonly initiativeStore: InitiativeStore;
 
@@ -135,6 +149,47 @@ export class RunStore {
       runSlug,
       displayName: input.displayName.trim(),
       description: input.description?.trim() || undefined,
+      createdAt: now,
+    };
+
+    await writeFile(
+      resolveRunManifestPath(workspaceRoot, initiativeSlug, runSlug),
+      `${JSON.stringify(manifest, null, 2)}\n`,
+      "utf-8"
+    );
+
+    return manifest;
+  }
+
+  async createAutoRun(
+    workspaceRoot: string,
+    initiativeSlug: string,
+    modelLabel: string
+  ): Promise<RunManifest> {
+    const runsRoot = resolveRunsRoot(workspaceRoot, initiativeSlug);
+    await mkdir(runsRoot, { recursive: true });
+
+    const modelSlug = toSlug(modelLabel);
+    const existing = await listExistingSlugs(runsRoot);
+    const existingCounters = existing
+      .map((slug) => parseRunCounter(slug))
+      .filter((value): value is number => value !== null);
+    let counter =
+      existingCounters.length > 0 ? Math.max(...existingCounters) + 1 : 1;
+    let runSlug = `${formatRunCounter(counter)}-${modelSlug}`;
+    while (existing.includes(runSlug)) {
+      counter += 1;
+      runSlug = `${formatRunCounter(counter)}-${modelSlug}`;
+    }
+
+    const runDir = resolveRunDir(workspaceRoot, initiativeSlug, runSlug);
+    await mkdir(runDir, { recursive: true });
+
+    const now = new Date().toISOString();
+    const manifest: RunManifest = {
+      runId: randomUUID(),
+      runSlug,
+      displayName: runSlug,
       createdAt: now,
     };
 

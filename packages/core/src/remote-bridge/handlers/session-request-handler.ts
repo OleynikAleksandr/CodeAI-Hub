@@ -3,6 +3,7 @@ import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import { maybeCreateAutoRun } from "./auto-run-service";
 import { detectQuestionnairePath } from "./idea-questionnaire-path-detector";
 import { attachPreReadDocuments } from "./idea-questionnaire-pre-read-attacher";
 import { autoAttachWorkspaceFiles } from "./workspace-auto-attach";
@@ -109,11 +110,33 @@ export class SessionRequestHandler {
         providerSessionId.length > 0 &&
         actualProviderId === "geminiCli";
 
+      const autoRun = await maybeCreateAutoRun({
+        workspacePath: actualWorkspacePath,
+        initiativeSlug: context?.initiativeSlug ?? null,
+        stage: context?.stage ?? null,
+        providerId: actualProviderId,
+        config: this.config,
+        logger: this.logger,
+      }).catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.logger.warn("Auto-run creation failed", {
+          providerId: actualProviderId,
+          initiativeSlug: context?.initiativeSlug ?? null,
+          stage: context?.stage ?? null,
+          error: message,
+        });
+        return null;
+      });
+
       const session = this.sessionManager.createSession(
         actualProviderId,
         actualWorkspacePath,
         supportsImmediateBinding ? providerSessionId : undefined,
-        context
+        {
+          initiativeSlug: context?.initiativeSlug ?? null,
+          stage: context?.stage ?? null,
+          runSlug: autoRun?.runSlug ?? context?.runSlug ?? null,
+        }
       );
 
       this.sessionStorage.register(session);
