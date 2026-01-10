@@ -22,5 +22,5 @@
 
 1. [DONE] Починить сохранение артефактов Idea при рассинхроне контекста (scope: `src/client/ui/src/services/idea-collector-service.ts`, `doc/TODO/todo-plan.md`; commit: `fix(ui): stabilize idea artifact save context`) (date: 2026-01-10)
 2. [DONE] Git Commit: `fix(ui): stabilize idea artifact save context` (hash: 4f7a6e00) (date: 2026-01-10)
-3. [TODO] Добавить reuse анкеты между run-ами через initiative-level кеш (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `feat(ui): reuse idea questionnaire across runs`)
-4. [TODO] Git Commit: `feat(ui): reuse idea questionnaire across runs` (hash: TBD)
+3. [DONE] Добавить reuse анкеты между run-ами через initiative-level кеш (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `feat(ui): reuse idea questionnaire across runs`) (date: 2026-01-10)
+4. [DONE] Git Commit: `feat(ui): reuse idea questionnaire across runs` (hash: 1930b199) (date: 2026-01-10)
