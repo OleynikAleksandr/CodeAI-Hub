@@ -25,7 +25,7 @@
 3. [DONE] Добавить reuse анкеты между run-ами через initiative-level кеш (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `feat(ui): reuse idea questionnaire across runs`) (date: 2026-01-10)
 4. [DONE] Git Commit: `feat(ui): reuse idea questionnaire across runs` (hash: 1930b199) (date: 2026-01-10)
 5. [DONE] Трекинг последнего вопроса агента для анкеты (scope: `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/app-host/use-idea-collector.ts`, `doc/TODO/todo-plan.md`; commit: `feat(ui): track idea collector questions`) (date: 2026-01-10)
-6. [DONE] Git Commit: `feat(ui): track idea collector questions` (hash: TBD) (date: 2026-01-10)
+6. [DONE] Git Commit: `feat(ui): track idea collector questions` (hash: bb6ef934) (date: 2026-01-10)
 7. [TODO] Авто-добавление ответов на уточнения в анкету (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/app-host/use-idea-collector.ts`, `doc/TODO/todo-plan.md`; commit: `feat(ui): append idea clarifications to questionnaire`)
 8. [TODO] Git Commit: `feat(ui): append idea clarifications to questionnaire` (hash: TBD)
 9. [TODO] Документировать авто-дополнение анкеты уточнениями (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: document idea questionnaire sync`)
