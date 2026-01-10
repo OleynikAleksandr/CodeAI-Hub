@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { IdeaCollectorService } from "../services/idea-collector-service";
+import { IdeaQuestionnaireService } from "../services/idea-questionnaire-service";
 
 type SendMessageHandler = (sessionId: string, content: string) => void;
 
@@ -12,7 +13,9 @@ export const useIdeaCollector = (
   fallbackSendMessage: SendMessageHandler
 ): UseIdeaCollectorResult => {
   const serviceRef = useRef(new IdeaCollectorService());
+  const questionnaireServiceRef = useRef(new IdeaQuestionnaireService());
   const service = serviceRef.current;
+  const questionnaireService = questionnaireServiceRef.current;
 
   useEffect(() => {
     type SessionEventCandidate = {
@@ -81,12 +84,28 @@ export const useIdeaCollector = (
   const sendMessage = useCallback(
     (sessionId: string, content: string) => {
       if (service.isIdeaCollectorSession(sessionId)) {
+        if (!service.isQuestionnairePending(sessionId)) {
+          const outputPaths = service.getOutputPathsForSessionId(sessionId);
+          const question = service.getLastAssistantMessage(sessionId);
+          if (outputPaths && question) {
+            questionnaireService
+              .appendClarificationAnswer(
+                sessionId,
+                outputPaths,
+                question,
+                content
+              )
+              .catch(() => {
+                /* ignore save errors */
+              });
+          }
+        }
         service.continueConversation(sessionId, content);
         return;
       }
       fallbackSendMessage(sessionId, content);
     },
-    [fallbackSendMessage, service]
+    [fallbackSendMessage, questionnaireService, service]
   );
 
   return { startCollection, sendMessage };

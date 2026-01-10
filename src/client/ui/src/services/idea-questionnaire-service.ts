@@ -36,6 +36,7 @@ const WORKSPACE_FILE_WRITE_ENDPOINT =
 const DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
 const SAVE_DEBOUNCE_MS = 400;
 const IDEA_PATH_SUFFIX_RE = /idea\.md$/;
+const QUESTIONNAIRE_CLARIFICATIONS_HEADER = "## Уточнения анкеты";
 const RUN_QUESTIONNAIRE_PATH_RE =
   /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
 
@@ -74,6 +75,26 @@ const resolveInitiativeQuestionnairePath = (
     return null;
   }
   return `.codeai-hub/initiatives/${match[1]}/idea/questionnaire.md`;
+};
+
+const appendClarificationToMarkdown = (
+  content: string,
+  question: string | null,
+  answer: string
+): string => {
+  const normalizedAnswer = answer.trim();
+  if (normalizedAnswer.length === 0) {
+    return content;
+  }
+  const normalizedQuestion = question?.trim();
+  const questionLine = normalizedQuestion
+    ? `- Вопрос: ${normalizedQuestion}`
+    : "- Вопрос: (не удалось определить)";
+  const base = content.trimEnd();
+  const withHeader = base.includes(QUESTIONNAIRE_CLARIFICATIONS_HEADER)
+    ? base
+    : `${base}\n\n${QUESTIONNAIRE_CLARIFICATIONS_HEADER}`;
+  return `${withHeader}\n${questionLine}\n  Ответ: ${normalizedAnswer}\n`;
 };
 
 export class IdeaQuestionnaireService {
@@ -177,6 +198,35 @@ export class IdeaQuestionnaireService {
       this.saveTimers.delete(sessionId);
     }
     await this.writeQuestionnaireCopies(sessionId, path, content);
+  }
+
+  async appendClarificationAnswer(
+    sessionId: string,
+    outputPaths: IdeaContractSnapshot["outputPaths"],
+    question: string | null,
+    answer: string
+  ): Promise<void> {
+    const questionnairePath = outputPaths.idea.replace(
+      IDEA_PATH_SUFFIX_RE,
+      "questionnaire.md"
+    );
+    const existing = await this.fetchWorkspaceFile(
+      sessionId,
+      questionnairePath
+    );
+    const existingContent = normalizeQuestionnaireContent(existing?.content);
+    if (!existingContent) {
+      return;
+    }
+    const updated = appendClarificationToMarkdown(
+      existingContent,
+      question,
+      answer
+    );
+    if (updated === existingContent) {
+      return;
+    }
+    await this.writeQuestionnaireCopies(sessionId, questionnairePath, updated);
   }
 
   private async fetchWorkspaceFile(
