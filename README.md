@@ -4,6 +4,8 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 
 ## Current Release — v1.1.400
 - **Session created context**: Core includes initiative/run/stage so the questionnaire opens in the correct run folder.
+- **Idea artifacts persistence**: output paths are shared across Idea Collector sessions and writes are blocked without run context.
+- **Questionnaire reuse**: initiative-level cache seeds new runs and clarification answers are appended automatically.
 - **Release 1.1.400**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
