@@ -16,9 +16,9 @@
 
 ---
 
-## Phase 11 — TBD (owner: Oleksandr, updated: 2026-01-10)
+## Phase 10 — Fix session:created context payload (owner: Oleksandr, updated: 2026-01-10)
 
-### Stream: TBD
+### Stream: Idea questionnaire context
 
-1. [TODO] TBD (scope: TBD; commit: `TBD`)
-2. [TODO] Git Commit: `TBD` (hash: TBD)
+1. [DONE] Добавить initiativeSlug/runSlug/stage в payload `session:created` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit: `fix(core): include initiative context in session created`) (date: 2026-01-10)
+2. [DONE] Git Commit: `fix(core): include initiative context in session created` (hash: 6b5f48b1) (date: 2026-01-10)
