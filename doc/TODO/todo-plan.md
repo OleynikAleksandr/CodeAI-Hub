@@ -21,7 +21,9 @@
 2. [DONE] Git Commit: `docs: add idea artifacts knowledge` (hash: 176dd2f6) (date: 2026-01-10)
 3. [DONE] Актуализировать release-документы (README/CHANGELOG/архитектура при необходимости) — scope: README.md, CHANGELOG.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: update release notes` (date: 2026-01-10)
 4. [DONE] Git Commit: `docs: update release notes` (hash: 63004467) (date: 2026-01-10)
-5. [TODO] Прогнать гейты и выполнить релизные сборки (build-all, build-release) + переложить tarball'ы — scope: scripts/build-all.sh, scripts/build-release.sh, doc/tmp/releases/, doc/TODO/todo-plan.md; ожидаемый commit message: `chore: build release artifacts`
-6. [TODO] Git Commit: `chore: build release artifacts` (hash: TBD)
-7. [TODO] Подготовить отчет сессии и обновить todo-plan по релизу — scope: doc/Sessions/Session084.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: record release session`
-8. [TODO] Git Commit: `docs: record release session` (hash: TBD)
+5. [TODO] Синхронизировать release-документы под версию 1.1.401 после build-all — scope: README.md, CHANGELOG.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: sync release version 1.1.401`
+6. [TODO] Git Commit: `docs: sync release version 1.1.401` (hash: TBD)
+7. [TODO] Прогнать гейты и выполнить релизные сборки (build-all, build-release) + переложить tarball'ы — scope: scripts/build-all.sh, scripts/build-release.sh, doc/tmp/releases/, doc/TODO/todo-plan.md; ожидаемый commit message: `chore: build release artifacts`
+8. [TODO] Git Commit: `chore: build release artifacts` (hash: TBD)
+9. [TODO] Подготовить отчет сессии и обновить todo-plan по релизу — scope: doc/Sessions/Session084.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: record release session`
+10. [TODO] Git Commit: `docs: record release session` (hash: TBD)

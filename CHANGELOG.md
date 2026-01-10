@@ -1,9 +1,13 @@
+## [1.1.401] - 2026-01-10
+
+### Fixed
+- **Idea artifacts persistence**: output paths are reused across Idea Collector sessions and writes are blocked without run context.
+- **Questionnaire reuse**: initiative-level cache seeds new runs and clarification answers are appended automatically.
+
 ## [1.1.400] - 2026-01-10
 
 ### Fixed
 - **Session created context**: Core includes initiative/run/stage in `session:created` so the questionnaire opens in the correct run folder.
-- **Idea artifacts persistence**: output paths are reused across Idea Collector sessions and writes are blocked without run context.
-- **Questionnaire reuse**: initiative-level cache seeds new runs and clarification answers are appended automatically.
 
 ## [1.1.399] - 2026-01-10
 
