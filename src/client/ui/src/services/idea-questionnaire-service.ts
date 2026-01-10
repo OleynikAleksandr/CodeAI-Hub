@@ -36,6 +36,8 @@ const WORKSPACE_FILE_WRITE_ENDPOINT =
 const DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
 const SAVE_DEBOUNCE_MS = 400;
 const IDEA_PATH_SUFFIX_RE = /idea\.md$/;
+const RUN_QUESTIONNAIRE_PATH_RE =
+  /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -52,6 +54,26 @@ const isWorkspaceFileResponse = (
     typeof value.truncated === "boolean" &&
     typeof value.maxBytes === "number"
   );
+};
+
+const normalizeQuestionnaireContent = (
+  content: string | null | undefined
+): string | null => {
+  if (!content) {
+    return null;
+  }
+  const trimmed = content.trim();
+  return trimmed.length > 0 ? content : null;
+};
+
+const resolveInitiativeQuestionnairePath = (
+  questionnairePath: string
+): string | null => {
+  const match = RUN_QUESTIONNAIRE_PATH_RE.exec(questionnairePath);
+  if (!match) {
+    return null;
+  }
+  return `.codeai-hub/initiatives/${match[1]}/idea/questionnaire.md`;
 };
 
 export class IdeaQuestionnaireService {
@@ -85,19 +107,34 @@ export class IdeaQuestionnaireService {
       "questionnaire.md"
     );
 
+    const initiativeQuestionnairePath =
+      resolveInitiativeQuestionnairePath(questionnairePath);
     const existing = await this.fetchWorkspaceFile(
       sessionId,
       questionnairePath
     );
-    const content =
-      existing && existing.content.trim().length > 0
-        ? existing.content
-        : template;
-    if (!existing || existing.content.trim().length === 0) {
-      await this.writeWorkspaceFile(sessionId, questionnairePath, content);
+    const existingContent = normalizeQuestionnaireContent(existing?.content);
+    let content = existingContent;
+    if (!content && initiativeQuestionnairePath) {
+      const initiativeCopy = await this.fetchWorkspaceFile(
+        sessionId,
+        initiativeQuestionnairePath
+      );
+      content = normalizeQuestionnaireContent(initiativeCopy?.content);
+    }
+    const resolvedContent = content ?? template;
+    if (!existingContent) {
+      await this.writeWorkspaceFile(
+        sessionId,
+        questionnairePath,
+        resolvedContent
+      );
     }
 
-    const answers = extractIdeaQuestionnaireAnswers(content, placeholders);
+    const answers = extractIdeaQuestionnaireAnswers(
+      resolvedContent,
+      placeholders
+    );
     return {
       sessionId,
       path: questionnairePath,
@@ -122,7 +159,7 @@ export class IdeaQuestionnaireService {
       window.clearTimeout(existing);
     }
     const timer = window.setTimeout(() => {
-      this.writeWorkspaceFile(sessionId, path, content).catch(() => {
+      this.writeQuestionnaireCopies(sessionId, path, content).catch(() => {
         /* ignore save errors */
       });
     }, SAVE_DEBOUNCE_MS);
@@ -139,7 +176,7 @@ export class IdeaQuestionnaireService {
       window.clearTimeout(existing);
       this.saveTimers.delete(sessionId);
     }
-    await this.writeWorkspaceFile(sessionId, path, content);
+    await this.writeQuestionnaireCopies(sessionId, path, content);
   }
 
   private async fetchWorkspaceFile(
@@ -166,6 +203,23 @@ export class IdeaQuestionnaireService {
       return payload;
     } catch {
       return null;
+    }
+  }
+
+  private async writeQuestionnaireCopies(
+    sessionId: string,
+    path: string,
+    content: string
+  ): Promise<void> {
+    await this.writeWorkspaceFile(sessionId, path, content);
+    const initiativeQuestionnairePath =
+      resolveInitiativeQuestionnairePath(path);
+    if (initiativeQuestionnairePath && initiativeQuestionnairePath !== path) {
+      await this.writeWorkspaceFile(
+        sessionId,
+        initiativeQuestionnairePath,
+        content
+      );
     }
   }
 
