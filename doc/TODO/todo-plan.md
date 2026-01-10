@@ -19,8 +19,8 @@
 ### Stream: Release build
 1. [DONE] Добавить knowledge-артефакт по стабилизации idea-артефактов и анкеты — scope: doc/Knowledge/idea-artifacts-run-context-2026-01-10.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: add idea artifacts knowledge` (date: 2026-01-10)
 2. [DONE] Git Commit: `docs: add idea artifacts knowledge` (hash: 176dd2f6) (date: 2026-01-10)
-3. [TODO] Актуализировать release-документы (README/CHANGELOG/архитектура при необходимости) — scope: README.md, CHANGELOG.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: update release notes`
-4. [TODO] Git Commit: `docs: update release notes` (hash: TBD)
+3. [DONE] Актуализировать release-документы (README/CHANGELOG/архитектура при необходимости) — scope: README.md, CHANGELOG.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: update release notes` (date: 2026-01-10)
+4. [DONE] Git Commit: `docs: update release notes` (hash: 63004467) (date: 2026-01-10)
 5. [TODO] Прогнать гейты и выполнить релизные сборки (build-all, build-release) + переложить tarball'ы — scope: scripts/build-all.sh, scripts/build-release.sh, doc/tmp/releases/, doc/TODO/todo-plan.md; ожидаемый commit message: `chore: build release artifacts`
 6. [TODO] Git Commit: `chore: build release artifacts` (hash: TBD)
 7. [TODO] Подготовить отчет сессии и обновить todo-plan по релизу — scope: doc/Sessions/Session084.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: record release session`
