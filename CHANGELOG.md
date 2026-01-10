@@ -1,3 +1,12 @@
+## [1.1.398] - 2026-01-10
+
+### Fixed
+- **Session context slugs**: UI now preserves initiative/run/stage in session records to resolve run-aware paths.
+- **Idea contract fallbacks**: legacy `full-development-flow/001-default` output paths removed.
+
+### Changed
+- **Idea Collector defaults**: placeholder slugs replace legacy defaults for artifact output paths.
+
 ## [1.1.397] - 2026-01-10
 
 ### Changed

@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-10
 **Status:** Active reference
-**Release Focus:** v1.1.397 — Auto-runs create `NNN-<model>` runs on Flow start; artifacts live under `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/<stage>/...`; Action Bar uses initiative-only context (run selector removed).
+**Release Focus:** v1.1.398 — UI session records preserve initiative/run/stage so questionnaire paths resolve per run; Idea contract and Idea Collector defaults drop legacy slugs.
 
 ---
 
