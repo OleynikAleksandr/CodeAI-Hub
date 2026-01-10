@@ -16,9 +16,11 @@
 
 ---
 
-## Phase 13 — TBD (owner: Oleksandr, updated: 2026-01-10)
+## Phase 13 — Idea artifacts + questionnaire reuse (owner: Oleksandr, updated: 2026-01-10)
 
-### Stream: TBD
+### Stream: Idea Collector stability
 
-1. [TODO] <описание задачи> (scope: <до 3 файлов/пакетов>; commit: `docs: TBD`)
-2. [TODO] Git Commit: `docs: TBD` (hash: TBD)
+1. [DONE] Починить сохранение артефактов Idea при рассинхроне контекста (scope: `src/client/ui/src/services/idea-collector-service.ts`, `doc/TODO/todo-plan.md`; commit: `fix(ui): stabilize idea artifact save context`) (date: 2026-01-10)
+2. [DONE] Git Commit: `fix(ui): stabilize idea artifact save context` (hash: 4f7a6e00) (date: 2026-01-10)
+3. [TODO] Добавить reuse анкеты между run-ами через initiative-level кеш (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `feat(ui): reuse idea questionnaire across runs`)
+4. [TODO] Git Commit: `feat(ui): reuse idea questionnaire across runs` (hash: TBD)
