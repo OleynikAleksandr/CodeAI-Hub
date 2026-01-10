@@ -37,54 +37,54 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.397
-- Автономное ядро: `@codeai-hub/core` 1.1.397
-- UI Bundles: 1.1.397
-- Claude module: 1.1.397
-- Codex module: 1.1.397
-- Gemini module: 1.1.397
-- Agent Shared: `@codeai-hub/agent-shared` 1.1.397
-- Idea Collector: `@codeai-hub/idea-collector` 1.1.397
-- Spec Creator: `@codeai-hub/spec-creator` 1.1.397 (skeleton)
+- VSIX: `codeai-hub` 1.1.400
+- Автономное ядро: `@codeai-hub/core` 1.1.400
+- UI Bundles: 1.1.400
+- Claude module: 1.1.400
+- Codex module: 1.1.400
+- Gemini module: 1.1.400
+- Agent Shared: `@codeai-hub/agent-shared` 1.1.400
+- Idea Collector: `@codeai-hub/idea-collector` 1.1.400
+- Spec Creator: `@codeai-hub/spec-creator` 1.1.400 (skeleton)
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.397/
+│       └── 1.1.400/
 │           ├── node/
 │           ├── app/
 │           └── install.json
 ├── packages/
 │   ├── launcher/
-│   │   └── macos-arm64/1.1.397/
+│   │   └── macos-arm64/1.1.400/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.397/
-│       │   └── current -> 1.1.397
+│       │   ├── 1.1.400/
+│       │   └── current -> 1.1.400
 │       ├── web-client/
-│       │   ├── 1.1.397/
-│       │   └── current -> 1.1.397
+│       │   ├── 1.1.400/
+│       │   └── current -> 1.1.400
 │       └── project-manager/
-│           ├── 1.1.397/
-│           └── current -> 1.1.397
+│           ├── 1.1.400/
+│           └── current -> 1.1.400
 ├── providers/
-│   ├── claude/1.1.397/
-│   ├── codex/1.1.397/
-│   └── gemini/1.1.397/
+│   ├── claude/1.1.400/
+│   ├── codex/1.1.400/
+│   └── gemini/1.1.400/
 ├── settings/
 │   ├── claude.json          # legacy thinking settings migrated to settings.json
 │   └── settings.json        # current source of truth for providers.{claude,codex,gemini}
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.397.tar.bz2
-    ├── vscode-webview-1.1.397.tar.bz2
-    ├── web-client-1.1.397.tar.bz2
-    ├── project-manager-1.1.397.tar.bz2
-    ├── claude-module-1.1.397.tar.bz2
-    ├── codex-module-1.1.397.tar.bz2
-    ├── gemini-module-1.1.397.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.397.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.400.tar.bz2
+    ├── vscode-webview-1.1.400.tar.bz2
+    ├── web-client-1.1.400.tar.bz2
+    ├── project-manager-1.1.400.tar.bz2
+    ├── claude-module-1.1.400.tar.bz2
+    ├── codex-module-1.1.400.tar.bz2
+    ├── gemini-module-1.1.400.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.400.tar.bz2
 ```
 
 ## Провайдеры
