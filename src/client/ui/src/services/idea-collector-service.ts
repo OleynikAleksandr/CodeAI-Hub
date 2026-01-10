@@ -13,6 +13,7 @@ import {
   resolveCoreHttpUrl,
 } from "./idea-collector-support";
 import { buildMessageWithWorkspaceContext } from "./idea-collector-workspace-context";
+import { notifyMissingIdeaContext } from "./idea-questionnaire-messages";
 import {
   clearQuestionnairePendingStored,
   isQuestionnairePendingStored,
@@ -108,7 +109,11 @@ export class IdeaCollectorService {
       this.getPrompt(),
       this.getNormalizedSchema(),
     ]);
-    const outputPaths = outputPathsOverride ?? (await this.getOutputPaths());
+    const outputPaths = outputPathsOverride;
+    if (!outputPaths) {
+      notifyMissingIdeaContext(sessionId);
+      return;
+    }
     this.outputPathsBySession.set(sessionId, outputPaths);
     const promptWithPaths = this.buildPromptWithOutputPaths(
       prompt,
@@ -195,9 +200,14 @@ export class IdeaCollectorService {
     artifact: IdeaCollectorArtifact
   ): Promise<void> {
     const httpUrl = resolveCoreHttpUrl();
-    const contract = await this.getContract();
-    const outputPaths =
-      this.outputPathsBySession.get(sessionId) ?? contract.outputPaths;
+    const outputPaths = this.outputPathsBySession.get(sessionId);
+    if (!outputPaths) {
+      postSystemNotice(
+        sessionId,
+        "Не могу сохранить артефакты идеи: Core еще не вернул initiative/run контекст. Перезапустите этап и попробуйте снова."
+      );
+      return;
+    }
     if (!httpUrl) {
       postSystemNotice(
         sessionId,

@@ -5,8 +5,14 @@ import type { FlowStageId } from "../components/flow-wizard";
 import { IdeaQuestionnaireView } from "../components/idea-questionnaire/idea-questionnaire-view";
 import { ProviderPicker, type ProviderPickerState } from "../provider-picker";
 import { IdeaCollectorService } from "../services/idea-collector-service";
-import type { QuestionnaireSnapshot } from "../services/idea-questionnaire-service";
-import { IdeaQuestionnaireService } from "../services/idea-questionnaire-service";
+import {
+  buildQuestionnaireSubmissionMessage,
+  notifyMissingIdeaContext,
+} from "../services/idea-questionnaire-messages";
+import {
+  IdeaQuestionnaireService,
+  type QuestionnaireSnapshot,
+} from "../services/idea-questionnaire-service";
 import type { SessionSnapshots } from "../session/helpers";
 import SessionView from "../session/session-view";
 import { FlowWizardPicker } from "./flow-wizard-picker";
@@ -89,23 +95,23 @@ export const SessionRegion = ({
       questionnaireSnapshot.placeholders,
       questionnaireSnapshot.answers
     );
-    const submissionMessage =
-      "Before reading the questionnaire, review the documents listed in " +
-      'section "0. Документы для чтения перед анкетой" (if any). Then ' +
-      `review \`${questionnaireSnapshot.path}\` against the contract, ` +
-      "ask any clarifying questions, then wait for OK/approve before finalize.";
-
+    const submissionMessage = buildQuestionnaireSubmissionMessage(
+      questionnaireSnapshot.path
+    );
     try {
       await questionnaireService.flushSave(
         questionnaireSnapshot.sessionId,
         questionnaireSnapshot.path,
         content
       );
-      const outputPaths =
-        resolveIdeaOutputPaths(
-          sessionViewProps.sessions,
-          questionnaireSnapshot.sessionId
-        ) ?? (await ideaCollector.getOutputPaths());
+      const outputPaths = resolveIdeaOutputPaths(
+        sessionViewProps.sessions,
+        questionnaireSnapshot.sessionId
+      );
+      if (!outputPaths) {
+        notifyMissingIdeaContext(questionnaireSnapshot.sessionId);
+        return;
+      }
       await ideaCollector.beginQuestionnaireReview(
         questionnaireSnapshot.sessionId,
         submissionMessage,
@@ -179,9 +185,7 @@ export const SessionRegion = ({
     }
     confirmSelection(providerIds);
   };
-  const handleStageClick = (stage: FlowStageId) => {
-    selectStage(stage);
-  };
+  const handleStageClick = (stage: FlowStageId) => selectStage(stage);
   const hasPendingQuestionnaire = activeSessionId
     ? ideaCollector.isQuestionnairePending(activeSessionId)
     : false;
@@ -197,7 +201,6 @@ export const SessionRegion = ({
     !showQuestionnaire &&
     !pickerState.visible;
   const showSessionView = !(pickerState.visible || showQuestionnaire);
-
   useEffect(() => {
     if (!activeSessionId) {
       return;
@@ -221,14 +224,12 @@ export const SessionRegion = ({
         /* ignore questionnaire load errors */
       });
   }, [activeSessionId, questionnaireService, sessionViewProps.sessions]);
-
   const questionnaireTitle = IDEA_QUESTIONNAIRE_COPY.title;
   const questionnaireDescription = IDEA_QUESTIONNAIRE_COPY.description;
   const questionnaireSubmitLabel = IDEA_QUESTIONNAIRE_COPY.submitLabel;
   const questionnaireCancelLabel = IDEA_QUESTIONNAIRE_COPY.cancelLabel;
   const questionnaireResumeLabel = IDEA_QUESTIONNAIRE_COPY.resumeLabel;
   const questionnaireResumeNote = IDEA_QUESTIONNAIRE_COPY.resumeNote;
-
   const filteredProviders =
     selectedStage && selectedStage !== "chat"
       ? pickerState.providers.filter(
@@ -238,12 +239,10 @@ export const SessionRegion = ({
       : pickerState.providers;
   const showStagePicker = pickerState.visible && selectedStage === null;
   const showProviderPicker = pickerState.visible && selectedStage !== null;
-
   const providerPickerSecondaryLabel = stageSelectionLocked ? "Cancel" : "Back";
   const handleProviderPickerSecondary = stageSelectionLocked
     ? cancelSelection
     : clearStageSelection;
-
   return (
     <div className="app-shell__session-region">
       <ProviderPicker
