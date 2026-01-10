@@ -29,5 +29,5 @@
 
 ### Stream: Action Bar UI tweaks
 
-7. [TODO] Переместить кнопку создания Initiative в одну строку с селектором и переименовать в `New` (scope: `src/client/ui/src/components/action-bar/index.tsx`, `media/main-view.css`; commit: `refactor(ui): align initiative action button`)
-8. [TODO] Git Commit: `refactor(ui): align initiative action button` (hash: TBD)
+7. [DONE] Переместить кнопку создания Initiative в одну строку с селектором и переименовать в `New` (scope: `src/client/ui/src/components/action-bar/index.tsx`, `media/main-view.css`; commit: `refactor(ui): align initiative action button`)
+8. [DONE] Git Commit: `refactor(ui): align initiative action button` (hash: 18a4c718)
