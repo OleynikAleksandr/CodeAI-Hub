@@ -1,3 +1,9 @@
+## [1.1.399] - 2026-01-10
+
+### Fixed
+- **Questionnaire path guards**: UI blocks questionnaire load/submit when initiative/run context is missing.
+- **Idea artifacts**: persistence is halted without initiative/run context to avoid fallback paths.
+
 ## [1.1.398] - 2026-01-10
 
 ### Fixed
