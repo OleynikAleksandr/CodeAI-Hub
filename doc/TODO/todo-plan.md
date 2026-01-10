@@ -28,5 +28,5 @@
 6. [DONE] Git Commit: `feat(ui): track idea collector questions` (hash: bb6ef934) (date: 2026-01-10)
 7. [DONE] Авто-добавление ответов на уточнения в анкету (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/app-host/use-idea-collector.ts`, `doc/TODO/todo-plan.md`; commit: `feat(ui): append idea clarifications to questionnaire`) (date: 2026-01-10)
 8. [DONE] Git Commit: `feat(ui): append idea clarifications to questionnaire` (hash: d89d4869) (date: 2026-01-10)
-9. [TODO] Документировать авто-дополнение анкеты уточнениями (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: document idea questionnaire sync`)
-10. [TODO] Git Commit: `docs: document idea questionnaire sync` (hash: TBD)
+9. [DONE] Документировать авто-дополнение анкеты уточнениями (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: document idea questionnaire sync`) (date: 2026-01-10)
+10. [DONE] Git Commit: `docs: document idea questionnaire sync` (hash: TBD) (date: 2026-01-10)
