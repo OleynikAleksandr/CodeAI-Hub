@@ -15,27 +15,59 @@ export const useIdeaCollector = (
   const service = serviceRef.current;
 
   useEffect(() => {
-    const handleStreamMessage = (event: MessageEvent<unknown>) => {
-      const candidate = event.data as {
-        readonly type?: string;
-        readonly payload?: {
-          readonly sessionId?: string;
-          readonly event?: unknown;
+    type SessionEventCandidate = {
+      readonly type?: string;
+      readonly payload?: {
+        readonly sessionId?: string;
+        readonly event?: unknown;
+        readonly message?: {
+          readonly role?: string;
+          readonly content?: unknown;
         };
       };
-      if (candidate?.type !== "session:stream") {
+    };
+
+    const handleStreamEvent = (candidate: SessionEventCandidate): boolean => {
+      if (candidate.type !== "session:stream") {
+        return false;
+      }
+      const sessionId = candidate.payload?.sessionId;
+      if (typeof sessionId !== "string") {
+        return true;
+      }
+      service.handleStreamEvent(sessionId, candidate.payload?.event);
+      return true;
+    };
+
+    const handleAssistantMessage = (candidate: SessionEventCandidate): void => {
+      if (candidate.type !== "session:message") {
         return;
       }
       const sessionId = candidate.payload?.sessionId;
       if (typeof sessionId !== "string") {
         return;
       }
-      service.handleStreamEvent(sessionId, candidate.payload?.event);
+      const message = candidate.payload?.message;
+      if (message?.role !== "assistant") {
+        return;
+      }
+      if (typeof message.content !== "string") {
+        return;
+      }
+      service.recordAssistantMessage(sessionId, message.content);
     };
 
-    window.addEventListener("message", handleStreamMessage);
+    const handleSessionEvent = (event: MessageEvent<unknown>) => {
+      const candidate = event.data as SessionEventCandidate;
+      if (handleStreamEvent(candidate)) {
+        return;
+      }
+      handleAssistantMessage(candidate);
+    };
+
+    window.addEventListener("message", handleSessionEvent);
     return () => {
-      window.removeEventListener("message", handleStreamMessage);
+      window.removeEventListener("message", handleSessionEvent);
     };
   }, [service]);
 
