@@ -1,8 +1,9 @@
 import type { CoreConfig } from "../../config";
 import type { ProviderRegistry } from "../../provider-registry";
-import type { Session, SessionManager } from "../../session-manager";
+import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import { serializeSession } from "../types";
 import { maybeCreateAutoRun } from "./auto-run-service";
 import { detectQuestionnairePath } from "./idea-questionnaire-path-detector";
 import { attachPreReadDocuments } from "./idea-questionnaire-pre-read-attacher";
@@ -160,7 +161,7 @@ export class SessionRequestHandler {
 
       this.broadcaster({
         type: "session:created",
-        payload: this.serializeSession(session),
+        payload: serializeSession(session),
       });
       this.broadcastSessionBinding(session.id);
     } catch (error) {
@@ -577,18 +578,5 @@ export class SessionRequestHandler {
 
   private getDefaultProviderId(): string {
     return this.providerRegistry.listProviders()[0]?.id ?? "claudeCodeCli";
-  }
-
-  private serializeSession(session: Session) {
-    return {
-      id: session.id,
-      providerId: session.providerId,
-      workspacePath: session.workspacePath,
-      title: session.title,
-      createdAt: session.createdAt,
-      updatedAt: session.updatedAt,
-      providerSessionId: session.providerSessionId ?? null,
-      providerSessionStatus: session.providerSessionStatus,
-    };
   }
 }
