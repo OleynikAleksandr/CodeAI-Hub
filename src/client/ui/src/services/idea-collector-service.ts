@@ -32,7 +32,7 @@ export class IdeaCollectorService {
   private static readonly artifacts = new Map<string, IdeaCollectorArtifact>();
   private static readonly noticesSent = new Set<string>();
   private static readonly pendingQuestionnaire = new Set<string>();
-  private readonly outputPathsBySession = new Map<
+  private static readonly outputPathsBySession = new Map<
     string,
     IdeaContractSnapshot["outputPaths"]
   >();
@@ -114,7 +114,7 @@ export class IdeaCollectorService {
       notifyMissingIdeaContext(sessionId);
       return;
     }
-    this.outputPathsBySession.set(sessionId, outputPaths);
+    IdeaCollectorService.outputPathsBySession.set(sessionId, outputPaths);
     const promptWithPaths = this.buildPromptWithOutputPaths(
       prompt,
       outputPaths
@@ -200,18 +200,28 @@ export class IdeaCollectorService {
     artifact: IdeaCollectorArtifact
   ): Promise<void> {
     const httpUrl = resolveCoreHttpUrl();
-    const outputPaths = this.outputPathsBySession.get(sessionId);
-    if (!outputPaths) {
+    const outputPaths =
+      IdeaCollectorService.outputPathsBySession.get(sessionId);
+    const ideaPath = outputPaths?.idea ?? artifact.ideaPath;
+    const virtualSimulationPath =
+      outputPaths?.virtualSimulation ?? artifact.virtualSimulationPath;
+    if (!(ideaPath && virtualSimulationPath)) {
       postSystemNotice(
         sessionId,
-        "Не могу сохранить артефакты идеи: Core еще не вернул initiative/run контекст. Перезапустите этап и попробуйте снова."
+        "Не могу сохранить артефакты идеи: не удалось определить пути для сохранения. Перезапустите этап и попробуйте снова."
       );
       return;
+    }
+    if (!outputPaths) {
+      IdeaCollectorService.outputPathsBySession.set(sessionId, {
+        idea: ideaPath,
+        virtualSimulation: virtualSimulationPath,
+      });
     }
     if (!httpUrl) {
       postSystemNotice(
         sessionId,
-        `Не могу сохранить артефакты идеи: Core HTTP URL не определён. Ожидаемые пути: ${outputPaths.idea}, ${outputPaths.virtualSimulation}.`
+        `Не могу сохранить артефакты идеи: Core HTTP URL не определён. Ожидаемые пути: ${ideaPath}, ${virtualSimulationPath}.`
       );
       return;
     }
@@ -232,7 +242,7 @@ export class IdeaCollectorService {
       if (!response.ok) {
         postSystemNotice(
           sessionId,
-          `Не удалось сохранить артефакты идеи (HTTP ${response.status}). Ожидаемые пути: ${outputPaths.idea}, ${outputPaths.virtualSimulation}.`
+          `Не удалось сохранить артефакты идеи (HTTP ${response.status}). Ожидаемые пути: ${ideaPath}, ${virtualSimulationPath}.`
         );
         return;
       }
@@ -242,13 +252,13 @@ export class IdeaCollectorService {
         isRecord(payload.paths) &&
         typeof payload.paths.idea === "string"
           ? payload.paths.idea
-          : artifact.ideaPath;
+          : ideaPath;
       const savedVirtualSimulationPath =
         isRecord(payload) &&
         isRecord(payload.paths) &&
         typeof payload.paths.virtualSimulation === "string"
           ? payload.paths.virtualSimulation
-          : artifact.virtualSimulationPath;
+          : virtualSimulationPath;
       postSystemNotice(
         sessionId,
         `Артефакты идеи сохранены в workspace: ${savedIdeaPath} и ${savedVirtualSimulationPath}`
@@ -256,7 +266,7 @@ export class IdeaCollectorService {
     } catch {
       postSystemNotice(
         sessionId,
-        `Не удалось сохранить артефакты идеи: ошибка сети. Ожидаемые пути: ${outputPaths.idea}, ${outputPaths.virtualSimulation}.`
+        `Не удалось сохранить артефакты идеи: ошибка сети. Ожидаемые пути: ${ideaPath}, ${virtualSimulationPath}.`
       );
     }
   }
