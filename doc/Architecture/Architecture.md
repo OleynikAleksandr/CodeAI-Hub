@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-10
 **Status:** Active reference
-**Release Focus:** v1.1.399 — UI blocks questionnaire load/submit without initiative/run context; Idea artifacts are not persisted without run context.
+**Release Focus:** v1.1.400 — Core sends initiative/run/stage in session:created so questionnaire opens in the correct initiative/run folder.
 
 ---
 
