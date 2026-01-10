@@ -32,6 +32,7 @@ export class IdeaCollectorService {
   private static readonly artifacts = new Map<string, IdeaCollectorArtifact>();
   private static readonly noticesSent = new Set<string>();
   private static readonly pendingQuestionnaire = new Set<string>();
+  private static readonly lastAssistantMessages = new Map<string, string>();
   private static readonly outputPathsBySession = new Map<
     string,
     IdeaContractSnapshot["outputPaths"]
@@ -52,7 +53,21 @@ export class IdeaCollectorService {
   getLatestArtifact(sessionId: string): IdeaCollectorArtifact | null {
     return IdeaCollectorService.artifacts.get(sessionId) ?? null;
   }
-
+  recordAssistantMessage(sessionId: string, content: string): void {
+    const trimmed = content.trim();
+    if (trimmed.length === 0) {
+      return;
+    }
+    IdeaCollectorService.lastAssistantMessages.set(sessionId, trimmed);
+  }
+  getLastAssistantMessage(sessionId: string): string | null {
+    return IdeaCollectorService.lastAssistantMessages.get(sessionId) ?? null;
+  }
+  getOutputPathsForSessionId(
+    sessionId: string
+  ): IdeaContractSnapshot["outputPaths"] | null {
+    return IdeaCollectorService.outputPathsBySession.get(sessionId) ?? null;
+  }
   startCollection(sessionId: string): void {
     IdeaCollectorService.activeSessions.add(sessionId);
     this.markQuestionnairePending(sessionId);
