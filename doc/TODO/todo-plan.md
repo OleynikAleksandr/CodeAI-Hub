@@ -22,8 +22,8 @@
 
 1. [DONE] Подготовить postmortem по багу анкеты и путей инициатив (scope: `doc/Knowledge/postmortem-questionnaire-paths-2026-01-10.md`, `doc/TODO/todo-plan.md`; commit: `docs: add questionnaire path postmortem`) (date: 2026-01-10)
 2. [DONE] Git Commit: `docs: add questionnaire path postmortem` (hash: 8475ba5f) (date: 2026-01-10)
-3. [TODO] Актуализировать release-версии в системной архитектуре (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: sync system architecture versions`)
-4. [TODO] Git Commit: `docs: sync system architecture versions` (hash: TBD)
+3. [DONE] Актуализировать release-версии в системной архитектуре (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: sync system architecture versions`) (date: 2026-01-10)
+4. [DONE] Git Commit: `docs: sync system architecture versions` (hash: e5e85aae) (date: 2026-01-10)
 5. [TODO] Обновить отчет сессии (scope: `doc/Sessions/Session082.md`; commit: `docs: add Session082 report`)
 6. [TODO] Git Commit: `docs: add Session082 report` (hash: TBD)
 7. [TODO] Заархивировать план Phase 12 и создать новый placeholder (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; commit: `docs: archive phase 12 todo plan`)
