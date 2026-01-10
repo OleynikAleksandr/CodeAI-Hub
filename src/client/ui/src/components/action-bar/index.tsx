@@ -124,37 +124,37 @@ const ActionBar = ({ disabled = false }: ActionBarProps) => {
             <label className="action-bar__context-label" htmlFor="initiative">
               Initiative
             </label>
-            <select
-              aria-label="Initiative"
-              className="action-bar__context-select"
-              disabled={controlsDisabled}
-              id="initiative"
-              onChange={handleInitiativeChange}
-              title={initiativeTitle}
-              value={selectedInitiativeSlug ?? ""}
-            >
-              <option disabled value="">
-                {initiativePlaceholder}
-              </option>
-              {initiatives.map((initiative) => (
-                <option
-                  key={initiative.initiativeSlug}
-                  value={initiative.initiativeSlug}
-                >
-                  {initiative.displayName}
+            <div className="action-bar__context-row">
+              <select
+                aria-label="Initiative"
+                className="action-bar__context-select"
+                disabled={controlsDisabled}
+                id="initiative"
+                onChange={handleInitiativeChange}
+                title={initiativeTitle}
+                value={selectedInitiativeSlug ?? ""}
+              >
+                <option disabled value="">
+                  {initiativePlaceholder}
                 </option>
-              ))}
-            </select>
-          </div>
-          <div className="action-bar__context-actions">
-            <button
-              className="action-bar__context-button"
-              disabled={controlsDisabled}
-              onClick={handleStartCreateInitiative}
-              type="button"
-            >
-              +
-            </button>
+                {initiatives.map((initiative) => (
+                  <option
+                    key={initiative.initiativeSlug}
+                    value={initiative.initiativeSlug}
+                  >
+                    {initiative.displayName}
+                  </option>
+                ))}
+              </select>
+              <button
+                className="action-bar__context-button"
+                disabled={controlsDisabled}
+                onClick={handleStartCreateInitiative}
+                type="button"
+              >
+                New
+              </button>
+            </div>
           </div>
         </div>
         <ActionBarContextForm
