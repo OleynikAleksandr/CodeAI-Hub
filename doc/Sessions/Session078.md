@@ -11,10 +11,13 @@
 ## Work summary
 - Заархивирован предыдущий `doc/TODO/todo-plan.md` и создан новый точечный план (Phase 7).
 - Кнопка создания инициативы перенесена в одну строку с селектором и переименована в `New`.
+- Обновлён `todo-plan.md` с отметкой выполненного UI‑пункта.
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
-- Нет
+- `f4088a3f docs: archive todo plan and add session 078`
+- `18a4c718 refactor(ui): align initiative action button`
+- `ae299ce2 docs: update todo plan status`
 
 ---
 
