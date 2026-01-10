@@ -23,7 +23,9 @@
 4. [DONE] Git Commit: `docs: update release notes` (hash: 63004467) (date: 2026-01-10)
 5. [DONE] Синхронизировать release-документы под версию 1.1.401 после build-all — scope: README.md, CHANGELOG.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: sync release version 1.1.401` (date: 2026-01-10)
 6. [DONE] Git Commit: `docs: sync release version 1.1.401` (hash: baa4007a) (date: 2026-01-10)
-7. [TODO] Прогнать гейты и выполнить релизные сборки (build-all, build-release) + переложить tarball'ы — scope: scripts/build-all.sh, scripts/build-release.sh, doc/tmp/releases/, doc/TODO/todo-plan.md; ожидаемый commit message: `chore: build release artifacts`
+7. [TODO] Зафиксировать результат build-all (версии/манифесты/бандлы) — scope: package.json, package-lock.json, assets/**, media/react-chat.js, packages/*/package.json, doc/TODO/todo-plan.md; ожидаемый commit message: `chore: build release artifacts`
 8. [TODO] Git Commit: `chore: build release artifacts` (hash: TBD)
-9. [TODO] Подготовить отчет сессии и обновить todo-plan по релизу — scope: doc/Sessions/Session084.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: record release session`
-10. [TODO] Git Commit: `docs: record release session` (hash: TBD)
+9. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и добавить VSIX — scope: codeai-hub-1.1.401.vsix, doc/TODO/todo-plan.md; ожидаемый commit message: `chore: build release vsix`
+10. [TODO] Git Commit: `chore: build release vsix` (hash: TBD)
+11. [TODO] Подготовить отчет сессии и обновить todo-plan по релизу — scope: doc/Sessions/Session084.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: record release session`
+12. [TODO] Git Commit: `docs: record release session` (hash: TBD)

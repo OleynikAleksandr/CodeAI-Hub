@@ -10174,7 +10174,6 @@ ${command.remainingMessage}`);
   var loadContract = () => loadIdeaContract();
   var _IdeaCollectorService = class _IdeaCollectorService {
     constructor() {
-      this.outputPathsBySession = /* @__PURE__ */ new Map();
       this.contractPromise = null;
     }
     isIdeaCollectorSession(sessionId) {
@@ -10189,6 +10188,19 @@ ${command.remainingMessage}`);
     }
     getLatestArtifact(sessionId) {
       return _IdeaCollectorService.artifacts.get(sessionId) ?? null;
+    }
+    recordAssistantMessage(sessionId, content3) {
+      const trimmed = content3.trim();
+      if (trimmed.length === 0) {
+        return;
+      }
+      _IdeaCollectorService.lastAssistantMessages.set(sessionId, trimmed);
+    }
+    getLastAssistantMessage(sessionId) {
+      return _IdeaCollectorService.lastAssistantMessages.get(sessionId) ?? null;
+    }
+    getOutputPathsForSessionId(sessionId) {
+      return _IdeaCollectorService.outputPathsBySession.get(sessionId) ?? null;
     }
     startCollection(sessionId) {
       _IdeaCollectorService.activeSessions.add(sessionId);
@@ -10242,7 +10254,7 @@ ${command.remainingMessage}`);
         notifyMissingIdeaContext(sessionId);
         return;
       }
-      this.outputPathsBySession.set(sessionId, outputPaths);
+      _IdeaCollectorService.outputPathsBySession.set(sessionId, outputPaths);
       const promptWithPaths = this.buildPromptWithOutputPaths(
         prompt,
         outputPaths
@@ -10314,18 +10326,26 @@ ${content3}`;
     }
     async persistIdeaArtifacts(sessionId, artifact) {
       const httpUrl = resolveCoreHttpUrl();
-      const outputPaths = this.outputPathsBySession.get(sessionId);
-      if (!outputPaths) {
+      const outputPaths = _IdeaCollectorService.outputPathsBySession.get(sessionId);
+      const ideaPath = outputPaths?.idea ?? artifact.ideaPath;
+      const virtualSimulationPath = outputPaths?.virtualSimulation ?? artifact.virtualSimulationPath;
+      if (!(ideaPath && virtualSimulationPath)) {
         postSystemNotice(
           sessionId,
-          "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core \u0435\u0449\u0435 \u043D\u0435 \u0432\u0435\u0440\u043D\u0443\u043B initiative/run \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442. \u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u044D\u0442\u0430\u043F \u0438 \u043F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0441\u043D\u043E\u0432\u0430."
+          "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C \u043F\u0443\u0442\u0438 \u0434\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F. \u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u044D\u0442\u0430\u043F \u0438 \u043F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0441\u043D\u043E\u0432\u0430."
         );
         return;
+      }
+      if (!outputPaths) {
+        _IdeaCollectorService.outputPathsBySession.set(sessionId, {
+          idea: ideaPath,
+          virtualSimulation: virtualSimulationPath
+        });
       }
       if (!httpUrl) {
         postSystemNotice(
           sessionId,
-          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${outputPaths.idea}, ${outputPaths.virtualSimulation}.`
+          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
         );
         return;
       }
@@ -10344,13 +10364,13 @@ ${content3}`;
         if (!response.ok) {
           postSystemNotice(
             sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (HTTP ${response.status}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${outputPaths.idea}, ${outputPaths.virtualSimulation}.`
+            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (HTTP ${response.status}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
           );
           return;
         }
         const payload = await response.json();
-        const savedIdeaPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : artifact.ideaPath;
-        const savedVirtualSimulationPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : artifact.virtualSimulationPath;
+        const savedIdeaPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : ideaPath;
+        const savedVirtualSimulationPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : virtualSimulationPath;
         postSystemNotice(
           sessionId,
           `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedIdeaPath} \u0438 ${savedVirtualSimulationPath}`
@@ -10358,7 +10378,7 @@ ${content3}`;
       } catch {
         postSystemNotice(
           sessionId,
-          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${outputPaths.idea}, ${outputPaths.virtualSimulation}.`
+          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
         );
       }
     }
@@ -10374,6 +10394,8 @@ ${content3}`;
   _IdeaCollectorService.artifacts = /* @__PURE__ */ new Map();
   _IdeaCollectorService.noticesSent = /* @__PURE__ */ new Set();
   _IdeaCollectorService.pendingQuestionnaire = /* @__PURE__ */ new Set();
+  _IdeaCollectorService.lastAssistantMessages = /* @__PURE__ */ new Map();
+  _IdeaCollectorService.outputPathsBySession = /* @__PURE__ */ new Map();
   var IdeaCollectorService = _IdeaCollectorService;
 
   // src/client/ui/src/services/idea-questionnaire-template.ts
@@ -10478,12 +10500,44 @@ ${replacement}
   var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
   var SAVE_DEBOUNCE_MS = 400;
   var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
+  var QUESTIONNAIRE_CLARIFICATIONS_HEADER = "## \u0423\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u044F \u0430\u043D\u043A\u0435\u0442\u044B";
+  var RUN_QUESTIONNAIRE_PATH_RE = /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
   var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse2 = (value) => {
     if (!isRecord8(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
+  };
+  var normalizeQuestionnaireContent = (content3) => {
+    if (!content3) {
+      return null;
+    }
+    const trimmed = content3.trim();
+    return trimmed.length > 0 ? content3 : null;
+  };
+  var resolveInitiativeQuestionnairePath = (questionnairePath) => {
+    const match = RUN_QUESTIONNAIRE_PATH_RE.exec(questionnairePath);
+    if (!match) {
+      return null;
+    }
+    return `.codeai-hub/initiatives/${match[1]}/idea/questionnaire.md`;
+  };
+  var appendClarificationToMarkdown = (content3, question, answer) => {
+    const normalizedAnswer = answer.trim();
+    if (normalizedAnswer.length === 0) {
+      return content3;
+    }
+    const normalizedQuestion = question?.trim();
+    const questionLine = normalizedQuestion ? `- \u0412\u043E\u043F\u0440\u043E\u0441: ${normalizedQuestion}` : "- \u0412\u043E\u043F\u0440\u043E\u0441: (\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C)";
+    const base = content3.trimEnd();
+    const withHeader = base.includes(QUESTIONNAIRE_CLARIFICATIONS_HEADER) ? base : `${base}
+
+${QUESTIONNAIRE_CLARIFICATIONS_HEADER}`;
+    return `${withHeader}
+${questionLine}
+  \u041E\u0442\u0432\u0435\u0442: ${normalizedAnswer}
+`;
   };
   var IdeaQuestionnaireService = class {
     constructor() {
@@ -10506,15 +10560,32 @@ ${replacement}
         IDEA_PATH_SUFFIX_RE,
         "questionnaire.md"
       );
+      const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(questionnairePath);
       const existing = await this.fetchWorkspaceFile(
         sessionId,
         questionnairePath
       );
-      const content3 = existing && existing.content.trim().length > 0 ? existing.content : template;
-      if (!existing || existing.content.trim().length === 0) {
-        await this.writeWorkspaceFile(sessionId, questionnairePath, content3);
+      const existingContent = normalizeQuestionnaireContent(existing?.content);
+      let content3 = existingContent;
+      if (!content3 && initiativeQuestionnairePath) {
+        const initiativeCopy = await this.fetchWorkspaceFile(
+          sessionId,
+          initiativeQuestionnairePath
+        );
+        content3 = normalizeQuestionnaireContent(initiativeCopy?.content);
       }
-      const answers = extractIdeaQuestionnaireAnswers(content3, placeholders);
+      const resolvedContent = content3 ?? template;
+      if (!existingContent) {
+        await this.writeWorkspaceFile(
+          sessionId,
+          questionnairePath,
+          resolvedContent
+        );
+      }
+      const answers = extractIdeaQuestionnaireAnswers(
+        resolvedContent,
+        placeholders
+      );
       return {
         sessionId,
         path: questionnairePath,
@@ -10533,7 +10604,7 @@ ${replacement}
         window.clearTimeout(existing);
       }
       const timer = window.setTimeout(() => {
-        this.writeWorkspaceFile(sessionId, path2, content3).catch(() => {
+        this.writeQuestionnaireCopies(sessionId, path2, content3).catch(() => {
         });
       }, SAVE_DEBOUNCE_MS);
       this.saveTimers.set(sessionId, timer);
@@ -10544,7 +10615,30 @@ ${replacement}
         window.clearTimeout(existing);
         this.saveTimers.delete(sessionId);
       }
-      await this.writeWorkspaceFile(sessionId, path2, content3);
+      await this.writeQuestionnaireCopies(sessionId, path2, content3);
+    }
+    async appendClarificationAnswer(sessionId, outputPaths, question, answer) {
+      const questionnairePath = outputPaths.idea.replace(
+        IDEA_PATH_SUFFIX_RE,
+        "questionnaire.md"
+      );
+      const existing = await this.fetchWorkspaceFile(
+        sessionId,
+        questionnairePath
+      );
+      const existingContent = normalizeQuestionnaireContent(existing?.content);
+      if (!existingContent) {
+        return;
+      }
+      const updated = appendClarificationToMarkdown(
+        existingContent,
+        question,
+        answer
+      );
+      if (updated === existingContent) {
+        return;
+      }
+      await this.writeQuestionnaireCopies(sessionId, questionnairePath, updated);
     }
     async fetchWorkspaceFile(sessionId, path2) {
       const httpUrl = resolveCoreHttpUrl();
@@ -10567,6 +10661,17 @@ ${replacement}
         return payload;
       } catch {
         return null;
+      }
+    }
+    async writeQuestionnaireCopies(sessionId, path2, content3) {
+      await this.writeWorkspaceFile(sessionId, path2, content3);
+      const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(path2);
+      if (initiativeQuestionnairePath && initiativeQuestionnairePath !== path2) {
+        await this.writeWorkspaceFile(
+          sessionId,
+          initiativeQuestionnairePath,
+          content3
+        );
       }
     }
     async writeWorkspaceFile(sessionId, path2, content3) {
@@ -24727,22 +24832,48 @@ ${message.content}`
   var import_react14 = __toESM(require_react());
   var useIdeaCollector = (fallbackSendMessage) => {
     const serviceRef = (0, import_react14.useRef)(new IdeaCollectorService());
+    const questionnaireServiceRef = (0, import_react14.useRef)(new IdeaQuestionnaireService());
     const service = serviceRef.current;
+    const questionnaireService = questionnaireServiceRef.current;
     (0, import_react14.useEffect)(() => {
-      const handleStreamMessage = (event) => {
-        const candidate = event.data;
-        if (candidate?.type !== "session:stream") {
+      const handleStreamEvent = (candidate) => {
+        if (candidate.type !== "session:stream") {
+          return false;
+        }
+        const sessionId = candidate.payload?.sessionId;
+        if (typeof sessionId !== "string") {
+          return true;
+        }
+        service.handleStreamEvent(sessionId, candidate.payload?.event);
+        return true;
+      };
+      const handleAssistantMessage = (candidate) => {
+        if (candidate.type !== "session:message") {
           return;
         }
         const sessionId = candidate.payload?.sessionId;
         if (typeof sessionId !== "string") {
           return;
         }
-        service.handleStreamEvent(sessionId, candidate.payload?.event);
+        const message = candidate.payload?.message;
+        if (message?.role !== "assistant") {
+          return;
+        }
+        if (typeof message.content !== "string") {
+          return;
+        }
+        service.recordAssistantMessage(sessionId, message.content);
       };
-      window.addEventListener("message", handleStreamMessage);
+      const handleSessionEvent = (event) => {
+        const candidate = event.data;
+        if (handleStreamEvent(candidate)) {
+          return;
+        }
+        handleAssistantMessage(candidate);
+      };
+      window.addEventListener("message", handleSessionEvent);
       return () => {
-        window.removeEventListener("message", handleStreamMessage);
+        window.removeEventListener("message", handleSessionEvent);
       };
     }, [service]);
     const startCollection = (0, import_react14.useCallback)(
@@ -24754,12 +24885,25 @@ ${message.content}`
     const sendMessage = (0, import_react14.useCallback)(
       (sessionId, content3) => {
         if (service.isIdeaCollectorSession(sessionId)) {
+          if (!service.isQuestionnairePending(sessionId)) {
+            const outputPaths = service.getOutputPathsForSessionId(sessionId);
+            const question = service.getLastAssistantMessage(sessionId);
+            if (outputPaths && question) {
+              questionnaireService.appendClarificationAnswer(
+                sessionId,
+                outputPaths,
+                question,
+                content3
+              ).catch(() => {
+              });
+            }
+          }
           service.continueConversation(sessionId, content3);
           return;
         }
         fallbackSendMessage(sessionId, content3);
       },
-      [fallbackSendMessage, service]
+      [fallbackSendMessage, questionnaireService, service]
     );
     return { startCollection, sendMessage };
   };
