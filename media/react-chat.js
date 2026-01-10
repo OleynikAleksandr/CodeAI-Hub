@@ -8129,6 +8129,9 @@
       title: session.title,
       providerIds: [providerId],
       workspacePath: session.workspacePath ?? "",
+      initiativeSlug: typeof session.initiativeSlug === "string" ? session.initiativeSlug : null,
+      stage: typeof session.stage === "string" ? session.stage : null,
+      runSlug: typeof session.runSlug === "string" ? session.runSlug : null,
       createdAt: toNumberTimestamp(session.createdAt),
       binding: normalizeBinding(bindingCandidate)
     };
@@ -25367,9 +25370,9 @@ ${message.content}`
           className: "action-bar__rail action-bar__rail--bottom"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__context", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__context-group", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("label", { className: "action-bar__context-label", htmlFor: "initiative", children: "Initiative" }),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "action-bar__context", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__context-group", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("label", { className: "action-bar__context-label", htmlFor: "initiative", children: "Initiative" }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__context-row", children: [
           /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
             "select",
             {
@@ -25392,19 +25395,19 @@ ${message.content}`
                 ))
               ]
             }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+            "button",
+            {
+              className: "action-bar__context-button",
+              disabled: controlsDisabled,
+              onClick: handleStartCreateInitiative,
+              type: "button",
+              children: "New"
+            }
           )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "action-bar__context-actions", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-          "button",
-          {
-            className: "action-bar__context-button",
-            disabled: controlsDisabled,
-            onClick: handleStartCreateInitiative,
-            type: "button",
-            children: "+"
-          }
-        ) })
-      ] }),
+        ] })
+      ] }) }),
       /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
         ActionBarContextForm,
         {
