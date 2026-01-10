@@ -20,8 +20,8 @@
 
 ### Stream: Release build
 
-1. [IN_PROGRESS] Обновить README/CHANGELOG под v1.1.400 (scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare v1.1.400 release notes`)
-2. [TODO] Git Commit: `docs: prepare v1.1.400 release notes` (hash: TBD)
+1. [DONE] Обновить README/CHANGELOG под v1.1.400 (scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare v1.1.400 release notes`) (date: 2026-01-10)
+2. [DONE] Git Commit: `docs: prepare v1.1.400 release notes` (hash: 5dd793b1) (date: 2026-01-10)
 3. [TODO] Обновить архитектурные документы под v1.1.400 (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs: update architecture for v1.1.400`)
 4. [TODO] Git Commit: `docs: update architecture for v1.1.400` (hash: TBD)
 5. [TODO] Выполнить release build v1.1.400 (build-all; scope: auto-generated release manifests + `package.json`/`package-lock.json`; commit: `feat: v1.1.400 - release build`)
