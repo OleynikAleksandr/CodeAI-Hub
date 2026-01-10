@@ -9949,8 +9949,8 @@ ${template}`;
   // src/client/ui/src/services/idea-collector-contract.ts
   var IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
   var FALLBACK_OUTPUT_PATHS = {
-    idea: ".codeai-hub/initiatives/full-development-flow/runs/001-default/idea/idea.md",
-    virtualSimulation: ".codeai-hub/initiatives/full-development-flow/runs/001-default/idea/virtual-simulation.md"
+    idea: ".codeai-hub/initiatives/unknown-initiative/runs/000-unknown/idea/idea.md",
+    virtualSimulation: ".codeai-hub/initiatives/unknown-initiative/runs/000-unknown/idea/virtual-simulation.md"
   };
   var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isIdeaContractPayload = (value) => {
