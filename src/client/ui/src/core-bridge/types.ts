@@ -33,6 +33,9 @@ export type ServerSession = {
   readonly id?: string;
   readonly providerId?: ProviderStackId | string;
   readonly workspacePath?: string;
+  readonly initiativeSlug?: string | null;
+  readonly stage?: string | null;
+  readonly runSlug?: string | null;
   readonly title?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
