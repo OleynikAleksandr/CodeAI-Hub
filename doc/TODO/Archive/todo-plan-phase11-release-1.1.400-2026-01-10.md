@@ -26,5 +26,5 @@
 4. [DONE] Git Commit: `docs: update architecture for v1.1.400` (hash: 78a499a6) (date: 2026-01-10)
 5. [DONE] Выполнить release build v1.1.400 (build-all; scope: auto-generated release manifests + `package.json`/`package-lock.json`; commit: `feat: v1.1.400 - release build`) (date: 2026-01-10)
 6. [DONE] Git Commit: `feat: v1.1.400 - release build` (hash: f372508f) (date: 2026-01-10)
-7. [TODO] Заархивировать план Phase 11 и создать новый placeholder (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; commit: `docs: archive phase 11 todo plan`)
-8. [TODO] Git Commit: `docs: archive phase 11 todo plan` (hash: TBD)
+7. [DONE] Заархивировать план Phase 11 и создать новый placeholder (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; commit: `docs: archive phase 11 todo plan`) (date: 2026-01-10)
+8. [DONE] Git Commit: `docs: archive phase 11 todo plan` (hash: 07bbec6f) (date: 2026-01-10)
