@@ -1,3 +1,8 @@
+## [1.1.400] - 2026-01-10
+
+### Fixed
+- **Session created context**: Core includes initiative/run/stage in `session:created` so the questionnaire opens in the correct run folder.
+
 ## [1.1.399] - 2026-01-10
 
 ### Fixed

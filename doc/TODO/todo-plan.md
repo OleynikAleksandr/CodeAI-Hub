@@ -16,9 +16,15 @@
 
 ---
 
-## Phase 11 — TBD (owner: Oleksandr, updated: 2026-01-10)
+## Phase 11 — Release v1.1.400 (owner: Oleksandr, updated: 2026-01-10)
 
-### Stream: TBD
+### Stream: Release build
 
-1. [TODO] TBD (scope: TBD; commit: `TBD`)
-2. [TODO] Git Commit: `TBD` (hash: TBD)
+1. [IN_PROGRESS] Обновить README/CHANGELOG под v1.1.400 (scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare v1.1.400 release notes`)
+2. [TODO] Git Commit: `docs: prepare v1.1.400 release notes` (hash: TBD)
+3. [TODO] Обновить архитектурные документы под v1.1.400 (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs: update architecture for v1.1.400`)
+4. [TODO] Git Commit: `docs: update architecture for v1.1.400` (hash: TBD)
+5. [TODO] Выполнить release build v1.1.400 (build-all; scope: auto-generated release manifests + `package.json`/`package-lock.json`; commit: `feat: v1.1.400 - release build`)
+6. [TODO] Git Commit: `feat: v1.1.400 - release build` (hash: TBD)
+7. [TODO] Заархивировать план Phase 11 и создать новый placeholder (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; commit: `docs: archive phase 11 todo plan`)
+8. [TODO] Git Commit: `docs: archive phase 11 todo plan` (hash: TBD)
