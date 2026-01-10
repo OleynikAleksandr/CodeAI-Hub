@@ -1,32 +1,25 @@
 # План разработки (Development TODO Plan)
 
 ## Правила выполнения (Execution Rules):
-- **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream — набор микро‑задач.
-- Каждая микро‑задача должна затрагивать не более 3 файлов.
-- Каждая микро‑задача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
-- После выполнения каждой микро‑задачи прогоняется Гейт Качества:
-  - `./scripts/check-architecture.sh`
-  - `npx ultracite check`
-  - `npx ts-prune`
-  - `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`
-  - `npm run check:links`
-  - затем таргетная сборка (минимально необходимая для затронутого пакета/клиента)
-- Коммит делаем только после зелёных гейтов. После коммита сразу обновляем этот файл (статус/дата/хеш).
-- Phase завершается на чистом дереве.
+- **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое колличество - Stream (стрим), в каждом Стриме - некоторое кол-во подзадач.
+- Каждая подзадача должна затрагивать не более 3 файлов.
+- Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
+- Если по факту разработки оказывается, что конкретная подзазача Stream затрагивает больше 3 файлов - такая задача должна быть разбита на более мелкие и список задач в Стриме переписывается.
+- **Gates**: после выполнения каждой подзадачи прогоняется Гейт Качества -
+`scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем выполняем таргетную сборку (`npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`).
+- **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
+- Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке (например, Claude → Codex → core), чтобы локализовать ошибки без запуска `build-all`.
+- **Real-time Документация**: 
+Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/Architecture/Architecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
+- Phase завершается на чистом дереве: 
+запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
+- **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
 
----
-
-## Phase 13 — Idea artifacts + questionnaire reuse (owner: Oleksandr, updated: 2026-01-10)
-
-### Stream: Idea Collector stability
-
-1. [DONE] Починить сохранение артефактов Idea при рассинхроне контекста (scope: `src/client/ui/src/services/idea-collector-service.ts`, `doc/TODO/todo-plan.md`; commit: `fix(ui): stabilize idea artifact save context`) (date: 2026-01-10)
-2. [DONE] Git Commit: `fix(ui): stabilize idea artifact save context` (hash: 4f7a6e00) (date: 2026-01-10)
-3. [DONE] Добавить reuse анкеты между run-ами через initiative-level кеш (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `feat(ui): reuse idea questionnaire across runs`) (date: 2026-01-10)
-4. [DONE] Git Commit: `feat(ui): reuse idea questionnaire across runs` (hash: 1930b199) (date: 2026-01-10)
-5. [DONE] Трекинг последнего вопроса агента для анкеты (scope: `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/app-host/use-idea-collector.ts`, `doc/TODO/todo-plan.md`; commit: `feat(ui): track idea collector questions`) (date: 2026-01-10)
-6. [DONE] Git Commit: `feat(ui): track idea collector questions` (hash: bb6ef934) (date: 2026-01-10)
-7. [DONE] Авто-добавление ответов на уточнения в анкету (scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/app-host/use-idea-collector.ts`, `doc/TODO/todo-plan.md`; commit: `feat(ui): append idea clarifications to questionnaire`) (date: 2026-01-10)
-8. [DONE] Git Commit: `feat(ui): append idea clarifications to questionnaire` (hash: d89d4869) (date: 2026-01-10)
-9. [DONE] Документировать авто-дополнение анкеты уточнениями (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: document idea questionnaire sync`) (date: 2026-01-10)
-10. [DONE] Git Commit: `docs: document idea questionnaire sync` (hash: 91a4e558) (date: 2026-01-10)
+## Phase 14 — Release build preparation (owner: Oleksandr, updated: 2026-01-10)
+### Stream: Release build
+1. [TODO] Актуализировать release-документы (README/CHANGELOG/архитектура при необходимости) — scope: README.md, CHANGELOG.md, doc/Architecture/Architecture.md; ожидаемый commit message: `docs: update release notes`
+2. [TODO] Git Commit: `docs: update release notes` (hash: TBD)
+3. [TODO] Прогнать гейты и выполнить релизные сборки (build-all, build-release) + переложить tarball'ы — scope: scripts/build-all.sh, scripts/build-release.sh, doc/tmp/releases/; ожидаемый commit message: `chore: build release artifacts`
+4. [TODO] Git Commit: `chore: build release artifacts` (hash: TBD)
+5. [TODO] Подготовить отчет сессии и обновить todo-plan по релизу — scope: doc/Sessions/Session084.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: record release session`
+6. [TODO] Git Commit: `docs: record release session` (hash: TBD)
