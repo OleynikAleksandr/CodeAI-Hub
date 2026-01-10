@@ -7,10 +7,12 @@ import {
   readTextFromFile,
 } from "@codeai-hub/agent-shared";
 import {
+  DEFAULT_INITIATIVE_SLUG,
+  DEFAULT_RUN_SLUG,
   getIdeaOutputPaths,
   IDEA_MARKDOWN_SCHEMA_PATH,
   IDEA_TEMPLATE_PATHS,
-} from "../paths";
+} from "../paths/artifact-paths";
 import type { IdeaContractPayload } from "./contract-types";
 
 /**
@@ -53,7 +55,10 @@ export const buildIdeaContract =
     );
 
     const questionnaireTemplateMarkdown = questionnaireTemplate ?? "";
-    const outputPaths = getIdeaOutputPaths();
+    const outputPaths = getIdeaOutputPaths(
+      DEFAULT_INITIATIVE_SLUG,
+      DEFAULT_RUN_SLUG
+    );
 
     const versionSeed = {
       prompt,

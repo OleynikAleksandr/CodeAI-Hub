@@ -8,8 +8,8 @@
  */
 export const FLOW_NAME = "full-development-flow";
 export const IDEA_STAGE = "idea";
-export const DEFAULT_INITIATIVE_SLUG = "full-development-flow";
-export const DEFAULT_RUN_SLUG = "001-default";
+export const DEFAULT_INITIATIVE_SLUG = "unknown-initiative";
+export const DEFAULT_RUN_SLUG = "000-unknown";
 
 /**
  * Template paths (where assets are installed).
