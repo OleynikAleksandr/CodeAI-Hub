@@ -1,5 +1,6 @@
 import type { SessionRecord } from "../../../../types/session";
 import type { IdeaContractSnapshot } from "../services/idea-collector-contract";
+import { postSystemNotice } from "../services/idea-collector-support";
 import type {
   IdeaQuestionnaireService,
   QuestionnaireSnapshot,
@@ -27,8 +28,12 @@ export const loadQuestionnaireForSession = (
   sessionId: string
 ): Promise<QuestionnaireSnapshot | null> => {
   const outputPaths = resolveIdeaOutputPaths(sessions, sessionId);
-  return questionnaireService.loadQuestionnaire(
-    sessionId,
-    outputPaths ?? undefined
-  );
+  if (!outputPaths) {
+    postSystemNotice(
+      sessionId,
+      "Не могу открыть анкету: Core еще не вернул initiative/run контекст. Подождите и нажмите «Возобновить анкету»."
+    );
+    return Promise.resolve(null);
+  }
+  return questionnaireService.loadQuestionnaire(sessionId, outputPaths);
 };

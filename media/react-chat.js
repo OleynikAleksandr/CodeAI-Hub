@@ -10478,10 +10478,8 @@ ${replacement}
       if (!httpUrl) {
         return null;
       }
-      const [templateMarkdown, outputPaths] = await Promise.all([
-        this.ideaCollector.getQuestionnaireTemplateMarkdown(),
-        outputPathsOverride ? Promise.resolve(outputPathsOverride) : this.ideaCollector.getOutputPaths()
-      ]);
+      const templateMarkdown = await this.ideaCollector.getQuestionnaireTemplateMarkdown();
+      const outputPaths = outputPathsOverride;
       if (!outputPaths) {
         return null;
       }
@@ -24240,10 +24238,14 @@ ${message.content}`
   };
   var loadQuestionnaireForSession = (questionnaireService, sessions, sessionId) => {
     const outputPaths = resolveIdeaOutputPaths(sessions, sessionId);
-    return questionnaireService.loadQuestionnaire(
-      sessionId,
-      outputPaths ?? void 0
-    );
+    if (!outputPaths) {
+      postSystemNotice(
+        sessionId,
+        "\u041D\u0435 \u043C\u043E\u0433\u0443 \u043E\u0442\u043A\u0440\u044B\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443: Core \u0435\u0449\u0435 \u043D\u0435 \u0432\u0435\u0440\u043D\u0443\u043B initiative/run \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442. \u041F\u043E\u0434\u043E\u0436\u0434\u0438\u0442\u0435 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u0412\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
+      );
+      return Promise.resolve(null);
+    }
+    return questionnaireService.loadQuestionnaire(sessionId, outputPaths);
   };
 
   // src/client/ui/src/app-host/session-region-questionnaire-copy.ts

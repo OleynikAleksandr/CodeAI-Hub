@@ -67,12 +67,9 @@ export class IdeaQuestionnaireService {
       return null;
     }
 
-    const [templateMarkdown, outputPaths] = await Promise.all([
-      this.ideaCollector.getQuestionnaireTemplateMarkdown(),
-      outputPathsOverride
-        ? Promise.resolve(outputPathsOverride)
-        : this.ideaCollector.getOutputPaths(),
-    ]);
+    const templateMarkdown =
+      await this.ideaCollector.getQuestionnaireTemplateMarkdown();
+    const outputPaths = outputPathsOverride;
     if (!outputPaths) {
       return null;
     }
