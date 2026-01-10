@@ -22,5 +22,5 @@
 
 1. [DONE] Останавливать загрузку анкеты без initiative/run контекста и показывать system notice (scope: `src/client/ui/src/app-host/session-region-idea-paths.ts`, `src/client/ui/src/services/idea-questionnaire-service.ts`; commit: `fix(ui): guard questionnaire paths by session context`) (date: 2026-01-10)
 2. [DONE] Git Commit: `fix(ui): guard questionnaire paths by session context` (hash: a8144f48) (date: 2026-01-10)
-3. [TODO] Останавливать submit анкеты и сохранение артефактов при отсутствии initiative/run контекста (scope: `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/services/idea-collector-service.ts`; commit: `fix(ui): block idea artifacts without run context`)
-4. [TODO] Git Commit: `fix(ui): block idea artifacts without run context` (hash: TBD)
+3. [DONE] Останавливать submit анкеты и сохранение артефактов при отсутствии initiative/run контекста (scope: `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/services/idea-collector-service.ts`; commit: `fix(ui): block idea artifacts without run context`) (date: 2026-01-10)
+4. [DONE] Git Commit: `fix(ui): block idea artifacts without run context` (hash: 562e650c) (date: 2026-01-10)
