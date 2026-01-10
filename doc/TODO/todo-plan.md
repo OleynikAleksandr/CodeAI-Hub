@@ -16,9 +16,15 @@
 
 ---
 
-## Phase 12 — TBD (owner: Oleksandr, updated: 2026-01-10)
+## Phase 12 — Postmortem + release docs + session report (owner: Oleksandr, updated: 2026-01-10)
 
-### Stream: TBD
+### Stream: Postmortem
 
-1. [TODO] TBD (scope: TBD; commit: `TBD`)
-2. [TODO] Git Commit: `TBD` (hash: TBD)
+1. [IN_PROGRESS] Подготовить postmortem по багу анкеты и путей инициатив (scope: `doc/Knowledge/postmortem-questionnaire-paths-2026-01-10.md`, `doc/TODO/todo-plan.md`; commit: `docs: add questionnaire path postmortem`)
+2. [TODO] Git Commit: `docs: add questionnaire path postmortem` (hash: TBD)
+3. [TODO] Актуализировать release-версии в системной архитектуре (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: sync system architecture versions`)
+4. [TODO] Git Commit: `docs: sync system architecture versions` (hash: TBD)
+5. [TODO] Обновить отчет сессии (scope: `doc/Sessions/Session082.md`; commit: `docs: add Session082 report`)
+6. [TODO] Git Commit: `docs: add Session082 report` (hash: TBD)
+7. [TODO] Заархивировать план Phase 12 и создать новый placeholder (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; commit: `docs: archive phase 12 todo plan`)
+8. [TODO] Git Commit: `docs: archive phase 12 todo plan` (hash: TBD)
