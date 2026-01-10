@@ -2,18 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.396
+## Current Release — v1.1.397
 - **Auto-runs on Flow start**: new run created automatically per stage (`NNN-<model>`) and set as current.
 - **Run-aware artifact paths**: Flow artifacts now live under `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/<stage>/...`.
 - **Action Bar context**: run selector removed; Flow buttons require initiative selection only.
-- **Release 1.1.396**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+- **Release 1.1.397**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.396.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.396.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.396.tar.bz2`
-  - Providers: `claude-module-1.1.396.tar.bz2`, `codex-module-1.1.396.tar.bz2`, `gemini-module-1.1.396.tar.bz2`
-  - UI: `vscode-webview-1.1.396.tar.bz2`, `web-client-1.1.396.tar.bz2`, `project-manager-1.1.396.tar.bz2`
+  - VSIX: `codeai-hub-1.1.397.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.397.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.397.tar.bz2`
+  - Providers: `claude-module-1.1.397.tar.bz2`, `codex-module-1.1.397.tar.bz2`, `gemini-module-1.1.397.tar.bz2`
+  - UI: `vscode-webview-1.1.397.tar.bz2`, `web-client-1.1.397.tar.bz2`, `project-manager-1.1.397.tar.bz2`
   - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/idea-collector`, `@codeai-hub/spec-creator`
 
 

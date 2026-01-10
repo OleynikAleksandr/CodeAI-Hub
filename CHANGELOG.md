@@ -1,3 +1,8 @@
+## [1.1.397] - 2026-01-10
+
+### Changed
+- **Release rebuild**: refreshed artifacts after the auto-run + run-aware path updates (no code changes).
+
 ## [1.1.396] - 2026-01-09
 
 ### Added

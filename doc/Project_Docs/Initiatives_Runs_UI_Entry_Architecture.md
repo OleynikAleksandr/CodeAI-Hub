@@ -1,7 +1,7 @@
 # Initiatives + Auto Runs — Универсальный вход в Flow (MVP)
 
-**Date:** 2026-01-09
-**Status:** Implemented (v1.1.396)
+**Date:** 2026-01-10
+**Status:** Implemented (v1.1.397)
 
 ---
 
