@@ -10127,6 +10127,13 @@ ${command.remainingMessage}`);
     return blocks.join("\n");
   };
 
+  // src/client/ui/src/services/idea-questionnaire-messages.ts
+  var MISSING_IDEA_CONTEXT_MESSAGE = "\u041D\u0435 \u043C\u043E\u0433\u0443 \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443: Core \u0435\u0449\u0435 \u043D\u0435 \u0432\u0435\u0440\u043D\u0443\u043B initiative/run \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442. \u041F\u043E\u0434\u043E\u0436\u0434\u0438\u0442\u0435 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u0412\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB.";
+  var buildQuestionnaireSubmissionMessage = (questionnairePath) => `Before reading the questionnaire, review the documents listed in section "0. \u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u0434\u043B\u044F \u0447\u0442\u0435\u043D\u0438\u044F \u043F\u0435\u0440\u0435\u0434 \u0430\u043D\u043A\u0435\u0442\u043E\u0439" (if any). Then review \`${questionnairePath}\` against the contract, ask any clarifying questions, then wait for OK/approve before finalize.`;
+  var notifyMissingIdeaContext = (sessionId) => {
+    postSystemNotice(sessionId, MISSING_IDEA_CONTEXT_MESSAGE);
+  };
+
   // src/client/ui/src/services/idea-questionnaire-pending-store.ts
   var QUESTIONNAIRE_PENDING_STORAGE_PREFIX = "codeai-hub:idea-questionnaire:pending:";
   var QUESTIONNAIRE_PENDING_STORAGE_VALUE = "1";
@@ -10230,7 +10237,11 @@ ${command.remainingMessage}`);
         this.getPrompt(),
         this.getNormalizedSchema()
       ]);
-      const outputPaths = outputPathsOverride ?? await this.getOutputPaths();
+      const outputPaths = outputPathsOverride;
+      if (!outputPaths) {
+        notifyMissingIdeaContext(sessionId);
+        return;
+      }
       this.outputPathsBySession.set(sessionId, outputPaths);
       const promptWithPaths = this.buildPromptWithOutputPaths(
         prompt,
@@ -10303,8 +10314,14 @@ ${content3}`;
     }
     async persistIdeaArtifacts(sessionId, artifact) {
       const httpUrl = resolveCoreHttpUrl();
-      const contract = await this.getContract();
-      const outputPaths = this.outputPathsBySession.get(sessionId) ?? contract.outputPaths;
+      const outputPaths = this.outputPathsBySession.get(sessionId);
+      if (!outputPaths) {
+        postSystemNotice(
+          sessionId,
+          "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core \u0435\u0449\u0435 \u043D\u0435 \u0432\u0435\u0440\u043D\u0443\u043B initiative/run \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442. \u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u044D\u0442\u0430\u043F \u0438 \u043F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0441\u043D\u043E\u0432\u0430."
+        );
+        return;
+      }
       if (!httpUrl) {
         postSystemNotice(
           sessionId,
@@ -24309,7 +24326,9 @@ ${message.content}`
         questionnaireSnapshot.placeholders,
         questionnaireSnapshot.answers
       );
-      const submissionMessage = `Before reading the questionnaire, review the documents listed in section "0. \u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u0434\u043B\u044F \u0447\u0442\u0435\u043D\u0438\u044F \u043F\u0435\u0440\u0435\u0434 \u0430\u043D\u043A\u0435\u0442\u043E\u0439" (if any). Then review \`${questionnaireSnapshot.path}\` against the contract, ask any clarifying questions, then wait for OK/approve before finalize.`;
+      const submissionMessage = buildQuestionnaireSubmissionMessage(
+        questionnaireSnapshot.path
+      );
       try {
         await questionnaireService.flushSave(
           questionnaireSnapshot.sessionId,
@@ -24319,7 +24338,11 @@ ${message.content}`
         const outputPaths = resolveIdeaOutputPaths(
           sessionViewProps.sessions,
           questionnaireSnapshot.sessionId
-        ) ?? await ideaCollector.getOutputPaths();
+        );
+        if (!outputPaths) {
+          notifyMissingIdeaContext(questionnaireSnapshot.sessionId);
+          return;
+        }
         await ideaCollector.beginQuestionnaireReview(
           questionnaireSnapshot.sessionId,
           submissionMessage,
@@ -24385,9 +24408,7 @@ ${message.content}`
       }
       confirmSelection(providerIds);
     };
-    const handleStageClick = (stage) => {
-      selectStage(stage);
-    };
+    const handleStageClick = (stage) => selectStage(stage);
     const hasPendingQuestionnaire = activeSessionId ? ideaCollector.isQuestionnairePending(activeSessionId) : false;
     const showQuestionnaire = Boolean(
       questionnaireVisible && questionnaireSnapshot && activeSessionId && questionnaireSnapshot.sessionId === activeSessionId
