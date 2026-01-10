@@ -17,9 +17,11 @@
 
 ## Phase 14 — Release build preparation (owner: Oleksandr, updated: 2026-01-10)
 ### Stream: Release build
-1. [TODO] Актуализировать release-документы (README/CHANGELOG/архитектура при необходимости) — scope: README.md, CHANGELOG.md, doc/Architecture/Architecture.md; ожидаемый commit message: `docs: update release notes`
-2. [TODO] Git Commit: `docs: update release notes` (hash: TBD)
-3. [TODO] Прогнать гейты и выполнить релизные сборки (build-all, build-release) + переложить tarball'ы — scope: scripts/build-all.sh, scripts/build-release.sh, doc/tmp/releases/; ожидаемый commit message: `chore: build release artifacts`
-4. [TODO] Git Commit: `chore: build release artifacts` (hash: TBD)
-5. [TODO] Подготовить отчет сессии и обновить todo-plan по релизу — scope: doc/Sessions/Session084.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: record release session`
-6. [TODO] Git Commit: `docs: record release session` (hash: TBD)
+1. [TODO] Добавить knowledge-артефакт по стабилизации idea-артефактов и анкеты — scope: doc/Knowledge/idea-artifacts-run-context-2026-01-10.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: add idea artifacts knowledge`
+2. [TODO] Git Commit: `docs: add idea artifacts knowledge` (hash: TBD)
+3. [TODO] Актуализировать release-документы (README/CHANGELOG/архитектура при необходимости) — scope: README.md, CHANGELOG.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: update release notes`
+4. [TODO] Git Commit: `docs: update release notes` (hash: TBD)
+5. [TODO] Прогнать гейты и выполнить релизные сборки (build-all, build-release) + переложить tarball'ы — scope: scripts/build-all.sh, scripts/build-release.sh, doc/tmp/releases/, doc/TODO/todo-plan.md; ожидаемый commit message: `chore: build release artifacts`
+6. [TODO] Git Commit: `chore: build release artifacts` (hash: TBD)
+7. [TODO] Подготовить отчет сессии и обновить todo-plan по релизу — scope: doc/Sessions/Session084.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: record release session`
+8. [TODO] Git Commit: `docs: record release session` (hash: TBD)
