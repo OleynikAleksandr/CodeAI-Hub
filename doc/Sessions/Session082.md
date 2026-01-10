@@ -16,6 +16,8 @@
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
+- `d8d1ec8b docs: update phase 12 archive status`
+- `ef37d66c docs: add Session082 report`
 - `e2fbe172 docs: archive phase 12 todo plan`
 - `06054f0b docs: update todo plan status`
 - `e5e85aae docs: sync system architecture versions`
