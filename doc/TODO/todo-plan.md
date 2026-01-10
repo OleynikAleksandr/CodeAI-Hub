@@ -26,6 +26,6 @@
 7. [DONE] Зафиксировать результат build-all (версии/манифесты/бандлы) — scope: package.json, package-lock.json, assets/**, media/react-chat.js, packages/*/package.json, doc/TODO/todo-plan.md; ожидаемый commit message: `chore: build release artifacts` (date: 2026-01-10)
 8. [DONE] Git Commit: `chore: build release artifacts` (hash: 6e04f14b) (date: 2026-01-10)
 9. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и добавить VSIX — scope: codeai-hub-1.1.401.vsix, doc/TODO/todo-plan.md; ожидаемый commit message: `chore: build release vsix` (date: 2026-01-10)
-10. [TODO] Git Commit: `chore: build release vsix` (hash: TBD)
+10. [DONE] Git Commit: `chore: build release vsix` (hash: 4d9b7a5d) (date: 2026-01-10)
 11. [TODO] Подготовить отчет сессии и обновить todo-plan по релизу — scope: doc/Sessions/Session084.md, doc/TODO/todo-plan.md; ожидаемый commit message: `docs: record release session`
 12. [TODO] Git Commit: `docs: record release session` (hash: TBD)
