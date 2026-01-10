@@ -16,9 +16,11 @@
 
 ---
 
-## Phase 10 — TBD (owner: Oleksandr, updated: 2026-01-10)
+## Phase 9 — Release v1.1.399 (owner: Oleksandr, updated: 2026-01-10)
 
-### Stream: TBD
+### Stream: Release build
 
-1. [TODO] TBD (scope: TBD; commit: `TBD`)
-2. [TODO] Git Commit: `TBD` (hash: TBD)
+1. [DONE] Выполнить release build v1.1.399 (build-all, обновлённые манифесты/версии; scope: auto-generated release manifests + `package.json`/`package-lock.json`; commit: `feat: v1.1.399 - release build`) (date: 2026-01-10)
+2. [DONE] Git Commit: `feat: v1.1.399 - release build` (hash: a99d3af6) (date: 2026-01-10)
+3. [DONE] Обновить launcher manifest под v1.1.399 (scope: `assets/launcher/manifest.json`; commit: `fix: update launcher manifest for v1.1.399`) (date: 2026-01-10)
+4. [DONE] Git Commit: `fix: update launcher manifest for v1.1.399` (hash: cd94ab7e) (date: 2026-01-10)
