@@ -48,3 +48,16 @@
 6. [DONE] Git Commit: `docs: update architecture for 1.1.404` (hash: 060a28f9)
 7. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 89 report`
 8. [DONE] Git Commit: `docs: add session 89 report` (hash: 76eecd0a)
+
+## Phase 18 — Preserve Codex home + release 1.1.405 (owner: Oleksandr, updated: 2026-01-11)
+### Stream: Preserve Codex home on release build
+1. [DONE] Preserve Codex CLI home during build cleanup + document rule — scope: `scripts/build-all.sh`, `scripts/build-codex-module.sh`, `.codeai-hub/WORKFLOW_ARCHITECTURE.md`; expected commit message: `fix(build): preserve codex home`
+2. [DONE] Git Commit: `fix(build): preserve codex home` (hash: 85f6addd)
+3. [TODO] Build artifacts and bump version to 1.1.405 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.405`
+4. [TODO] Git Commit: `chore(release): bump 1.1.405` (hash: TBD)
+5. [TODO] Update release notes (README + CHANGELOG + todo-plan) — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: update 1.1.405 release notes`
+6. [TODO] Git Commit: `docs: update 1.1.405 release notes` (hash: TBD)
+7. [TODO] Update architecture docs for 1.1.405 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.405`
+8. [TODO] Git Commit: `docs: update architecture for 1.1.405` (hash: TBD)
+9. [TODO] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 90 report`
+10. [TODO] Git Commit: `docs: add session 90 report` (hash: TBD)
