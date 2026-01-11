@@ -42,9 +42,9 @@
 ### Stream: 1.1.404 release
 1. [DONE] Build artifacts and bump version to 1.1.404 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.404`
 2. [DONE] Git Commit: `chore(release): bump 1.1.404` (hash: 6f0634fc)
-3. [IN_PROGRESS] Update release notes (README + CHANGELOG + todo-plan) — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: update 1.1.404 release notes`
-4. [TODO] Git Commit: `docs: update 1.1.404 release notes` (hash: TBD)
-5. [IN_PROGRESS] Update architecture docs for 1.1.404 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.404`
-6. [TODO] Git Commit: `docs: update architecture for 1.1.404` (hash: TBD)
+3. [DONE] Update release notes (README + CHANGELOG + todo-plan) — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: update 1.1.404 release notes`
+4. [DONE] Git Commit: `docs: update 1.1.404 release notes` (hash: f05db65a)
+5. [DONE] Update architecture docs for 1.1.404 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.404`
+6. [DONE] Git Commit: `docs: update architecture for 1.1.404` (hash: 060a28f9)
 7. [TODO] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 89 report`
 8. [TODO] Git Commit: `docs: add session 89 report` (hash: TBD)
