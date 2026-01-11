@@ -8330,6 +8330,17 @@
     const value = element3.value.trim();
     return value.length > 0 ? value : null;
   };
+  var resolveSelectedProviderSessionId = () => {
+    if (typeof document === "undefined") {
+      return null;
+    }
+    const element3 = document.getElementById("providerSessionId");
+    if (!(element3 instanceof HTMLInputElement)) {
+      return null;
+    }
+    const value = element3.value.trim();
+    return value.length > 0 ? value : null;
+  };
 
   // src/client/ui/src/core-bridge/session-history.ts
   var fetchSessionHistory = async (config, sessionId, notify) => {
@@ -8540,6 +8551,7 @@
     }
     const initiativeSlug = resolveSelectedInitiativeSlug();
     const runSlug = resolveSelectedRunSlug();
+    const providerSessionId = resolveSelectedProviderSessionId();
     const stage = pendingStage;
     pendingStage = null;
     enqueueMessage({
@@ -8548,6 +8560,7 @@
         providerId,
         initiativeSlug,
         runSlug: runSlug ?? void 0,
+        providerSessionId: providerSessionId ?? void 0,
         stage
       }
     });
@@ -8778,7 +8791,9 @@
       runSlug: value.runSlug,
       displayName: value.displayName,
       description: typeof value.description === "string" ? value.description : void 0,
-      createdAt: typeof value.createdAt === "string" ? value.createdAt : void 0
+      createdAt: typeof value.createdAt === "string" ? value.createdAt : void 0,
+      providerId: typeof value.providerId === "string" ? value.providerId : void 0,
+      providerSessionId: typeof value.providerSessionId === "string" ? value.providerSessionId : void 0
     };
   };
   var buildRunsUrl = (httpUrl, workspacePath, initiativeSlug) => {
@@ -24765,8 +24780,28 @@ ${questionLine}
     ] });
   };
 
-  // src/client/ui/src/app-host/session-region.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  // src/client/ui/src/app-host/run-provider.ts
+  var inferProviderIdFromRunSlug = (runSlug) => {
+    const normalized = runSlug.trim().toLowerCase();
+    if (normalized.length === 0) {
+      return null;
+    }
+    if (normalized.includes("gpt") || normalized.includes("o1")) {
+      return "codexCli";
+    }
+    if (normalized.includes("claude") || normalized.includes("sonnet") || normalized.includes("opus") || normalized.includes("haiku")) {
+      return "claudeCodeCli";
+    }
+    return null;
+  };
+  var normalizeProviderId = (value) => {
+    if (value === "codexCli" || value === "claudeCodeCli") {
+      return value;
+    }
+    return null;
+  };
+
+  // src/client/ui/src/app-host/session-region-dom.ts
   var resolveSelectedInitiativeSlug2 = () => {
     const element3 = document.getElementById("initiative");
     if (!(element3 instanceof HTMLSelectElement)) {
@@ -24783,6 +24818,9 @@ ${questionLine}
     }
     return workspacePath;
   };
+
+  // src/client/ui/src/app-host/session-region.tsx
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
   var SessionRegion = ({
     pickerState,
     selectedStage,
@@ -24794,6 +24832,8 @@ ${questionLine}
     sessionViewProps
   }) => {
     const pendingQuestionnaireRef = (0, import_react12.useRef)(false);
+    const [pendingRunStart, setPendingRunStart] = (0, import_react12.useState)(null);
+    const [selectedProviderSessionId, setSelectedProviderSessionId] = (0, import_react12.useState)(null);
     const [runSelection, setRunSelection] = (0, import_react12.useState)({
       status: "pending"
     });
@@ -24814,6 +24854,8 @@ ${questionLine}
     (0, import_react12.useEffect)(() => {
       if (!pickerState.visible || selectedStage !== "idea") {
         setRunSelection({ status: "pending" });
+        setPendingRunStart(null);
+        setSelectedProviderSessionId(null);
         setRunPickerMode("choice");
         setRunPickerRuns([]);
         setRunPickerStatus(null);
@@ -24822,6 +24864,7 @@ ${questionLine}
     }, [pickerState.visible, selectedStage]);
     const handleCreateNewDescription = (0, import_react12.useCallback)(() => {
       setRunSelection({ status: "new" });
+      setSelectedProviderSessionId(null);
     }, []);
     const handleSelectExistingRun = (0, import_react12.useCallback)(
       (runSlug) => {
@@ -24834,14 +24877,36 @@ ${questionLine}
           cancelSelection();
           return;
         }
+        const run = runPickerRuns.find((entry) => entry.runSlug === runSlug);
+        const providerId = normalizeProviderId(run?.providerId) ?? inferProviderIdFromRunSlug(runSlug) ?? "codexCli";
+        pendingQuestionnaireRef.current = true;
         setRunSelection({ status: "existing", runSlug });
+        setSelectedProviderSessionId(run?.providerSessionId ?? null);
+        setPendingRunStart({ runSlug, providerId });
       },
       [
         cancelSelection,
+        runPickerRuns,
         sessionViewProps.onSelectSession,
         sessionViewProps.sessions
       ]
     );
+    (0, import_react12.useEffect)(() => {
+      if (!pendingRunStart) {
+        return;
+      }
+      if (!pickerState.visible || selectedStage !== "idea" || runSelection.status !== "existing" || runSelection.runSlug !== pendingRunStart.runSlug) {
+        return;
+      }
+      confirmSelection([pendingRunStart.providerId]);
+      setPendingRunStart(null);
+    }, [
+      confirmSelection,
+      pendingRunStart,
+      pickerState.visible,
+      runSelection,
+      selectedStage
+    ]);
     (0, import_react12.useEffect)(() => {
       if (!pickerState.visible || selectedStage !== "idea" || runSelection.status !== "pending" || runPickerMode !== "list") {
         return;
@@ -24883,7 +24948,7 @@ ${questionLine}
     ) : pickerState.providers;
     const showRunPicker = pickerState.visible && selectedStage === "idea" && runSelection.status === "pending";
     const showStagePicker = pickerState.visible && selectedStage === null;
-    const showProviderPicker = pickerState.visible && selectedStage !== null && !showRunPicker;
+    const showProviderPicker = pickerState.visible && selectedStage !== null && !showRunPicker && runSelection.status !== "existing";
     const isRunPickerEmpty = !runPickerLoading && runPickerRuns.length === 0;
     const providerPickerSecondaryLabel = stageSelectionLocked ? "Cancel" : "Back";
     const handleProviderPickerSecondary = stageSelectionLocked ? cancelSelection : clearStageSelection;
@@ -24895,6 +24960,15 @@ ${questionLine}
           readOnly: true,
           type: "hidden",
           value: selectedRunSlug ?? ""
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        "input",
+        {
+          id: "providerSessionId",
+          readOnly: true,
+          type: "hidden",
+          value: selectedProviderSessionId ?? ""
         }
       ),
       /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
