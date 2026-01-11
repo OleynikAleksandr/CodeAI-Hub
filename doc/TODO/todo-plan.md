@@ -33,9 +33,9 @@
 6. [DONE] Git Commit: `feat(runs): seed questionnaire from latest` (hash: 19355e6b) (date: 2026-01-11)
 
 ### Stream: UI run selection + session binding
-7. [TODO] Добавить UX «Описать инициативу» с выбором нового/существующего описания и списком runSlug — scope: src/client/ui/src/app-host/session-region.tsx, src/client/ui/src/app-host/flow-wizard-picker.tsx, src/client/ui/src/api/orchestrator/runs-client.ts; ожидаемый commit message: `feat(ui): add description run selection`
-8. [TODO] Git Commit: `feat(ui): add description run selection` (hash: TBD)
-9. [TODO] Передавать `runSlug` при `session:create` и отключать auto-run при переданном `runSlug` — scope: src/client/ui/src/core-bridge/core-bridge.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts; ожидаемый commit message: `feat(core): support runSlug session create`
-10. [TODO] Git Commit: `feat(core): support runSlug session create` (hash: TBD)
-11. [TODO] Открывать диалог или анкету в зависимости от наличия сессии run — scope: src/client/ui/src/app-host/session-region.tsx, src/client/ui/src/services/idea-collector-service.ts, src/client/ui/src/services/idea-questionnaire-service.ts; ожидаемый commit message: `feat(ui): resume description runs`
-12. [TODO] Git Commit: `feat(ui): resume description runs` (hash: TBD)
+7. [DONE] Добавить UX «Описать инициативу» с выбором нового/существующего описания и списком runSlug — scope: src/client/ui/src/app-host/session-region.tsx, src/client/ui/src/app-host/description-run-picker.tsx, src/client/ui/src/app-host/idea-questionnaire-panel.tsx; commit: `feat(ui): add description run selection` (date: 2026-01-11)
+8. [DONE] Git Commit: `feat(ui): add description run selection` (hash: e31912df) (date: 2026-01-11)
+9. [DONE] Обновить Architecture.md под выбор run на Description — scope: doc/Architecture/Architecture.md; commit: `docs: update architecture for description runs` (date: 2026-01-11)
+10. [DONE] Git Commit: `docs: update architecture for description runs` (hash: e29a6afa) (date: 2026-01-11)
+11. [DONE] Передавать `runSlug` при `session:create` и отключать auto-run при переданном `runSlug` — scope: src/client/ui/src/core-bridge/core-bridge.ts, src/client/ui/src/core-bridge/session-context-resolver.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts; commit: `feat(core): support runSlug session create` (date: 2026-01-11)
+12. [DONE] Git Commit: `feat(core): support runSlug session create` (hash: dd9891be) (date: 2026-01-11)
