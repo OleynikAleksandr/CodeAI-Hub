@@ -5,6 +5,10 @@ import type {
 import { DEFAULT_CONFIG, FALLBACK_PROVIDERS } from "./constants";
 import { convertStatusResponse } from "./normalizers";
 import { createServerMessageHandler } from "./server-message-handler";
+import {
+  resolveSelectedInitiativeSlug,
+  resolveSelectedRunSlug,
+} from "./session-context-resolver";
 import { loadSessionHistories } from "./session-history";
 import { requestCoreFromSupervisor } from "./supervisor-requests";
 import type { CoreBridgeConfig, ServerStatusResponse } from "./types";
@@ -77,17 +81,6 @@ const enqueueMessage = (payload: unknown): void => {
   const serialized = JSON.stringify(payload);
   pendingMessages.push(serialized);
   flushPendingMessages();
-};
-const resolveSelectedInitiativeSlug = (): string | null => {
-  if (typeof document === "undefined") {
-    return null;
-  }
-  const element = document.getElementById("initiative");
-  if (!(element instanceof HTMLSelectElement)) {
-    return null;
-  }
-  const value = element.value.trim();
-  return value.length > 0 ? value : null;
 };
 const scheduleReconnect = (config: CoreBridgeConfig): void => {
   if (reconnectTimer) {
@@ -213,11 +206,17 @@ const createSession = (providerIds: readonly ProviderStackId[]): void => {
     return;
   }
   const initiativeSlug = resolveSelectedInitiativeSlug();
+  const runSlug = resolveSelectedRunSlug();
   const stage = pendingStage;
   pendingStage = null;
   enqueueMessage({
     type: "session:create",
-    payload: { providerId, initiativeSlug, stage },
+    payload: {
+      providerId,
+      initiativeSlug,
+      runSlug: runSlug ?? undefined,
+      stage,
+    },
   });
 };
 export const sendChatMessage = (
