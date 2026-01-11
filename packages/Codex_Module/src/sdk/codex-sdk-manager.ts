@@ -128,6 +128,26 @@ export class CodexSDKManager {
     return tempId;
   }
 
+  async resumeSession(
+    threadId: string,
+    workspacePath?: string
+  ): Promise<string> {
+    await this.initialize();
+    const actualWorkspacePath =
+      workspacePath ?? this.deps.workspace.workspacePath;
+    const logger = new CodexSessionLogger();
+    const session = this.deps.sessions.createResumedSession(
+      actualWorkspacePath,
+      threadId,
+      logger
+    );
+    const thread = this.createThread(session);
+    (thread as unknown as { _id?: string | null })._id = threadId;
+    session.thread = thread;
+    this.deps.processor.initializeSession(session, thread);
+    return threadId;
+  }
+
   async closeSession(sessionId: string): Promise<void> {
     await this.deps.sessions.closeSession(sessionId);
   }

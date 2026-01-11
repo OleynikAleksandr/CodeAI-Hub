@@ -10,6 +10,8 @@ export type RunSummary = {
   readonly displayName: string;
   readonly description?: string;
   readonly createdAt?: string;
+  readonly providerId?: string;
+  readonly providerSessionId?: string;
 };
 
 type CreateRunInput = {
@@ -50,6 +52,12 @@ const parseRunSummary = (value: unknown): RunSummary | null => {
       typeof value.description === "string" ? value.description : undefined,
     createdAt:
       typeof value.createdAt === "string" ? value.createdAt : undefined,
+    providerId:
+      typeof value.providerId === "string" ? value.providerId : undefined,
+    providerSessionId:
+      typeof value.providerSessionId === "string"
+        ? value.providerSessionId
+        : undefined,
   };
 };
 

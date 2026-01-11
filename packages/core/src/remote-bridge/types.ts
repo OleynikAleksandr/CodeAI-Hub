@@ -60,6 +60,8 @@ export type IncomingMessage =
         readonly providerId?: string;
         readonly workspacePath?: string;
         readonly initiativeSlug?: string | null;
+        readonly runSlug?: string | null;
+        readonly providerSessionId?: string | null;
         readonly stage?: string | null;
       };
     }

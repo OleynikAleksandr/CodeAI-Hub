@@ -7,6 +7,7 @@ import { convertStatusResponse } from "./normalizers";
 import { createServerMessageHandler } from "./server-message-handler";
 import {
   resolveSelectedInitiativeSlug,
+  resolveSelectedProviderSessionId,
   resolveSelectedRunSlug,
 } from "./session-context-resolver";
 import { loadSessionHistories } from "./session-history";
@@ -207,6 +208,7 @@ const createSession = (providerIds: readonly ProviderStackId[]): void => {
   }
   const initiativeSlug = resolveSelectedInitiativeSlug();
   const runSlug = resolveSelectedRunSlug();
+  const providerSessionId = resolveSelectedProviderSessionId();
   const stage = pendingStage;
   pendingStage = null;
   enqueueMessage({
@@ -215,6 +217,7 @@ const createSession = (providerIds: readonly ProviderStackId[]): void => {
       providerId,
       initiativeSlug,
       runSlug: runSlug ?? undefined,
+      providerSessionId: providerSessionId ?? undefined,
       stage,
     },
   });

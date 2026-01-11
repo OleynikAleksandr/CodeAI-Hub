@@ -11,6 +11,14 @@ import { RunPickerView } from "./description-run-picker";
 import { FlowWizardPicker } from "./flow-wizard-picker";
 import { IdeaQuestionnairePanel } from "./idea-questionnaire-panel";
 import type { ProviderLabels } from "./provider-picker-state";
+import {
+  inferProviderIdFromRunSlug,
+  normalizeProviderId,
+} from "./run-provider";
+import {
+  resolveSelectedInitiativeSlug,
+  resolveWorkspacePath,
+} from "./session-region-dom";
 
 type SessionRegionProps = {
   readonly pickerState: ProviderPickerState;
@@ -39,24 +47,9 @@ type RunSelectionState =
   | { readonly status: "new" }
   | { readonly status: "existing"; readonly runSlug: string };
 
-const resolveSelectedInitiativeSlug = (): string | null => {
-  const element = document.getElementById("initiative");
-  if (!(element instanceof HTMLSelectElement)) {
-    return null;
-  }
-  const value = element.value.trim();
-  return value.length > 0 ? value : null;
-};
-
-const resolveWorkspacePath = (): string | null => {
-  const globalScope = window as typeof window & {
-    __CODEAI_CORE_CONFIG?: { readonly workspacePath?: string };
-  };
-  const workspacePath = globalScope.__CODEAI_CORE_CONFIG?.workspacePath;
-  if (typeof workspacePath !== "string" || workspacePath.length === 0) {
-    return null;
-  }
-  return workspacePath;
+type PendingRunStart = {
+  readonly runSlug: string;
+  readonly providerId: ProviderStackId;
 };
 
 export const SessionRegion = ({
@@ -70,6 +63,11 @@ export const SessionRegion = ({
   sessionViewProps,
 }: SessionRegionProps) => {
   const pendingQuestionnaireRef = useRef(false);
+  const [pendingRunStart, setPendingRunStart] =
+    useState<PendingRunStart | null>(null);
+  const [selectedProviderSessionId, setSelectedProviderSessionId] = useState<
+    string | null
+  >(null);
   const [runSelection, setRunSelection] = useState<RunSelectionState>({
     status: "pending",
   });
@@ -90,6 +88,8 @@ export const SessionRegion = ({
   useEffect(() => {
     if (!pickerState.visible || selectedStage !== "idea") {
       setRunSelection({ status: "pending" });
+      setPendingRunStart(null);
+      setSelectedProviderSessionId(null);
       setRunPickerMode("choice");
       setRunPickerRuns([]);
       setRunPickerStatus(null);
@@ -98,6 +98,7 @@ export const SessionRegion = ({
   }, [pickerState.visible, selectedStage]);
   const handleCreateNewDescription = useCallback(() => {
     setRunSelection({ status: "new" });
+    setSelectedProviderSessionId(null);
   }, []);
   const handleSelectExistingRun = useCallback(
     (runSlug: string) => {
@@ -113,14 +114,48 @@ export const SessionRegion = ({
         cancelSelection();
         return;
       }
+
+      const run = runPickerRuns.find((entry) => entry.runSlug === runSlug);
+      const providerId =
+        normalizeProviderId(run?.providerId) ??
+        inferProviderIdFromRunSlug(runSlug) ??
+        "codexCli";
+
+      pendingQuestionnaireRef.current = true;
       setRunSelection({ status: "existing", runSlug });
+      setSelectedProviderSessionId(run?.providerSessionId ?? null);
+      setPendingRunStart({ runSlug, providerId });
     },
     [
       cancelSelection,
+      runPickerRuns,
       sessionViewProps.onSelectSession,
       sessionViewProps.sessions,
     ]
   );
+
+  useEffect(() => {
+    if (!pendingRunStart) {
+      return;
+    }
+    if (
+      !pickerState.visible ||
+      selectedStage !== "idea" ||
+      runSelection.status !== "existing" ||
+      runSelection.runSlug !== pendingRunStart.runSlug
+    ) {
+      return;
+    }
+
+    confirmSelection([pendingRunStart.providerId]);
+    setPendingRunStart(null);
+  }, [
+    confirmSelection,
+    pendingRunStart,
+    pickerState.visible,
+    runSelection,
+    selectedStage,
+  ]);
   useEffect(() => {
     if (
       !pickerState.visible ||
@@ -178,7 +213,10 @@ export const SessionRegion = ({
     runSelection.status === "pending";
   const showStagePicker = pickerState.visible && selectedStage === null;
   const showProviderPicker =
-    pickerState.visible && selectedStage !== null && !showRunPicker;
+    pickerState.visible &&
+    selectedStage !== null &&
+    !showRunPicker &&
+    runSelection.status !== "existing";
   const isRunPickerEmpty = !runPickerLoading && runPickerRuns.length === 0;
   const providerPickerSecondaryLabel = stageSelectionLocked ? "Cancel" : "Back";
   const handleProviderPickerSecondary = stageSelectionLocked
@@ -191,6 +229,12 @@ export const SessionRegion = ({
         readOnly
         type="hidden"
         value={selectedRunSlug ?? ""}
+      />
+      <input
+        id="providerSessionId"
+        readOnly
+        type="hidden"
+        value={selectedProviderSessionId ?? ""}
       />
       <ProviderPicker
         onConfirm={handleProviderConfirm}
