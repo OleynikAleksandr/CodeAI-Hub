@@ -1,3 +1,8 @@
+## [1.1.405] - 2026-01-11
+
+### Fixed
+- **Codex home retention**: release build cleanup no longer wipes `~/.codeai-hub/providers/codex/home`, preserving Codex CLI sessions across releases.
+
 ## [1.1.404] - 2026-01-11
 
 ### Fixed
