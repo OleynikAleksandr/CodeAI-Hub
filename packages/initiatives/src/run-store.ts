@@ -18,6 +18,7 @@ export type RunManifest = {
   readonly displayName: string;
   readonly description?: string;
   readonly createdAt: string;
+  readonly lastQuestionnaireAt?: string;
 };
 
 const parseRunManifest = (value: unknown): RunManifest | null => {
@@ -39,6 +40,11 @@ const parseRunManifest = (value: unknown): RunManifest | null => {
     return null;
   }
 
+  const lastQuestionnaireAt =
+    typeof value.lastQuestionnaireAt === "string"
+      ? value.lastQuestionnaireAt
+      : undefined;
+
   const description =
     typeof value.description === "string" ? value.description : undefined;
 
@@ -48,6 +54,7 @@ const parseRunManifest = (value: unknown): RunManifest | null => {
     displayName,
     description,
     createdAt,
+    lastQuestionnaireAt,
   };
 };
 
