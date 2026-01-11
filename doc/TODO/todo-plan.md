@@ -21,7 +21,19 @@
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session086.md`
 
-## Phase 16 — TBD (owner: Oleksandr, updated: 2026-01-11)
-### Stream: TBD
-1. [TODO] Определить задачи следующей фазы — scope: TBD; ожидаемый commit message: `docs: plan next phase`
-2. [TODO] Git Commit: `docs: plan next phase` (hash: TBD)
+## Phase 16 — Run-bound resume + release 1.1.403 (owner: Oleksandr, updated: 2026-01-11)
+### Stream: Provider session binding for existing runs
+1. [DONE] Привязать RUNS к provider sessions (providerId/providerSessionId + resume) — scope: `packages/core`, `packages/initiatives`, `packages/*_Module`, `src/client/ui`; ожидаемый commit message: `feat(resume): bind runs to provider sessions`
+2. [DONE] Git Commit: `feat(resume): bind runs to provider sessions` (hash: 5ecc02ae)
+3. [DONE] Обновить fallback webview bundle под изменения UI — scope: `media/react-chat.js`; ожидаемый commit message: `chore(ui): refresh webview fallback bundle`
+4. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: 8693f508)
+5. [DONE] Собрать артефакты и поднять версию до 1.1.403 (build-all) — scope: manifests + package.json; ожидаемый commit message: `chore(release): bump 1.1.403`
+6. [DONE] Git Commit: `chore(release): bump 1.1.403` (hash: a6f43bf3)
+7. [DONE] Обновить релизные документы (README/CHANGELOG/Architecture/SystemArchitecture/Project docs) — scope: `README.md`, `CHANGELOG.md`, `doc/**`; ожидаемый commit message: `docs: update 1.1.403 release notes`
+8. [DONE] Git Commit: `docs: update 1.1.403 release notes` (hash: 955af64d)
+9. [DONE] Синхронизировать архитектурные документы под 1.1.403 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; ожидаемый commit message: `docs: update architecture for 1.1.403`
+10. [DONE] Git Commit: `docs: update architecture for 1.1.403` (hash: d8c657b4)
+11. [DONE] Уточнить описание Runs-архитектуры (provider binding) — scope: `doc/Project_Docs/Initiative_Description_Runs_Architecture.md`; ожидаемый commit message: `docs: record run provider session binding`
+12. [DONE] Git Commit: `docs: record run provider session binding` (hash: 9c92e00f)
+13. [TODO] Собрать VSIX (build-release) — scope: `scripts/build-release.sh`; ожидаемый commit message: `docs: add session 87 report`
+14. [TODO] Git Commit: `docs: add session 87 report` (hash: TBD)
