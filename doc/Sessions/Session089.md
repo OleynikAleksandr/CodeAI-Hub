@@ -23,6 +23,8 @@
 - `f05db65a docs: update 1.1.404 release notes`
 - `060a28f9 docs: update architecture for 1.1.404`
 - `4b26b1ad docs: update todo plan status`
+- `76eecd0a docs: add session 89 report`
+- `c34d66f9 docs: update todo plan status`
 
 ---
 
