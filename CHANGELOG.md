@@ -1,3 +1,12 @@
+## [1.1.403] - 2026-01-11
+
+### Added
+- **Run/session binding**: `run.json` now stores `providerId` + `providerSessionId` (when available) so existing runs can be resumed deterministically.
+- **Provider resume**: when `providerSessionId` is present, CodeAI Hub resumes the original provider session (Codex thread id / Claude session id).
+
+### Fixed
+- **Refine existing run**: selecting an existing run no longer creates a new run; it opens that run’s questionnaire/session context.
+
 ## [1.1.402] - 2026-01-11
 
 ### Added
