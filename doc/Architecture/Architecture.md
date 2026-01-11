@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-11
 **Status:** Active reference
-**Release Focus:** v1.1.404 — Idea Collector questions appear in assistant text, resume prefers run.json provider binding, and UI skips auto-questionnaire for resumed sessions.
+**Release Focus:** v1.1.405 — Release build cleanup preserves Codex CLI home (`~/.codeai-hub/providers/codex/home`) so previous sessions survive upgrades.
 
 ---
 
