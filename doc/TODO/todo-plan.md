@@ -35,5 +35,5 @@
 10. [DONE] Git Commit: `docs: update architecture for 1.1.403` (hash: d8c657b4)
 11. [DONE] Уточнить описание Runs-архитектуры (provider binding) — scope: `doc/Project_Docs/Initiative_Description_Runs_Architecture.md`; ожидаемый commit message: `docs: record run provider session binding`
 12. [DONE] Git Commit: `docs: record run provider session binding` (hash: 9c92e00f)
-13. [TODO] Собрать VSIX (build-release) — scope: `scripts/build-release.sh`; ожидаемый commit message: `docs: add session 87 report`
-14. [TODO] Git Commit: `docs: add session 87 report` (hash: TBD)
+13. [DONE] Собрать VSIX (build-release) — scope: `scripts/build-release.sh`; ожидаемый commit message: `docs: add session 87 report`
+14. [DONE] Git Commit: `docs: add session 87 report` (hash: f1c9b7db)
