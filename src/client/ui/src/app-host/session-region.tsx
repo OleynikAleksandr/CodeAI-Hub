@@ -1,28 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord } from "../../../../types/session";
+import { listRuns, type RunSummary } from "../api/orchestrator/runs-client";
 import type { FlowStageId } from "../components/flow-wizard";
-import { IdeaQuestionnaireView } from "../components/idea-questionnaire/idea-questionnaire-view";
 import { ProviderPicker, type ProviderPickerState } from "../provider-picker";
-import { IdeaCollectorService } from "../services/idea-collector-service";
-import {
-  buildQuestionnaireSubmissionMessage,
-  notifyMissingIdeaContext,
-} from "../services/idea-questionnaire-messages";
-import {
-  IdeaQuestionnaireService,
-  type QuestionnaireSnapshot,
-} from "../services/idea-questionnaire-service";
+import { resolveCoreHttpUrl } from "../services/idea-collector-support";
 import type { SessionSnapshots } from "../session/helpers";
 import SessionView from "../session/session-view";
+import { RunPickerView } from "./description-run-picker";
 import { FlowWizardPicker } from "./flow-wizard-picker";
+import { IdeaQuestionnairePanel } from "./idea-questionnaire-panel";
 import type { ProviderLabels } from "./provider-picker-state";
-import { QuestionnaireResumeBanner } from "./questionnaire-resume-banner";
-import {
-  loadQuestionnaireForSession,
-  resolveIdeaOutputPaths,
-} from "./session-region-idea-paths";
-import { IDEA_QUESTIONNAIRE_COPY } from "./session-region-questionnaire-copy";
 
 type SessionRegionProps = {
   readonly pickerState: ProviderPickerState;
@@ -45,6 +33,32 @@ type SessionRegionProps = {
     readonly snapshots: SessionSnapshots;
   };
 };
+
+type RunSelectionState =
+  | { readonly status: "pending" }
+  | { readonly status: "new" }
+  | { readonly status: "existing"; readonly runSlug: string };
+
+const resolveSelectedInitiativeSlug = (): string | null => {
+  const element = document.getElementById("initiative");
+  if (!(element instanceof HTMLSelectElement)) {
+    return null;
+  }
+  const value = element.value.trim();
+  return value.length > 0 ? value : null;
+};
+
+const resolveWorkspacePath = (): string | null => {
+  const globalScope = window as typeof window & {
+    __CODEAI_CORE_CONFIG?: { readonly workspacePath?: string };
+  };
+  const workspacePath = globalScope.__CODEAI_CORE_CONFIG?.workspacePath;
+  if (typeof workspacePath !== "string" || workspacePath.length === 0) {
+    return null;
+  }
+  return workspacePath;
+};
+
 export const SessionRegion = ({
   pickerState,
   selectedStage,
@@ -55,181 +69,102 @@ export const SessionRegion = ({
   cancelSelection,
   sessionViewProps,
 }: SessionRegionProps) => {
-  const ideaCollectorRef = useRef(new IdeaCollectorService());
-  const questionnaireServiceRef = useRef(new IdeaQuestionnaireService());
   const pendingQuestionnaireRef = useRef(false);
-  const [questionnaireSnapshot, setQuestionnaireSnapshot] =
-    useState<QuestionnaireSnapshot | null>(null);
-  const [questionnaireVisible, setQuestionnaireVisible] = useState(false);
-  const ideaCollector = ideaCollectorRef.current;
-  const questionnaireService = questionnaireServiceRef.current;
-  const activeSessionId = sessionViewProps.activeSessionId;
-  const handleAnswerChange = useCallback(
-    (questionId: string, value: string) => {
-      setQuestionnaireSnapshot((current) => {
-        if (!current) {
-          return current;
-        }
-        const answers = { ...current.answers, [questionId]: value };
-        const content = questionnaireService.renderQuestionnaire(
-          current.template,
-          current.placeholders,
-          answers
-        );
-        questionnaireService.queueSave(
-          current.sessionId,
-          current.path,
-          content
-        );
-        return { ...current, answers };
-      });
-    },
-    [questionnaireService]
+  const [runSelection, setRunSelection] = useState<RunSelectionState>({
+    status: "pending",
+  });
+  const [runPickerMode, setRunPickerMode] = useState<"choice" | "list">(
+    "choice"
   );
-  const handleQuestionnaireSubmit = useCallback(async () => {
-    if (!questionnaireSnapshot) {
-      return;
-    }
-    const content = questionnaireService.renderQuestionnaire(
-      questionnaireSnapshot.template,
-      questionnaireSnapshot.placeholders,
-      questionnaireSnapshot.answers
-    );
-    const submissionMessage = buildQuestionnaireSubmissionMessage(
-      questionnaireSnapshot.path
-    );
-    try {
-      await questionnaireService.flushSave(
-        questionnaireSnapshot.sessionId,
-        questionnaireSnapshot.path,
-        content
-      );
-      const outputPaths = resolveIdeaOutputPaths(
-        sessionViewProps.sessions,
-        questionnaireSnapshot.sessionId
-      );
-      if (!outputPaths) {
-        notifyMissingIdeaContext(questionnaireSnapshot.sessionId);
-        return;
-      }
-      await ideaCollector.beginQuestionnaireReview(
-        questionnaireSnapshot.sessionId,
-        submissionMessage,
-        outputPaths
-      );
-      setQuestionnaireSnapshot(null);
-      setQuestionnaireVisible(false);
-    } catch {
-      /* ignore submission errors */
-    }
-  }, [
-    ideaCollector,
-    questionnaireService,
-    questionnaireSnapshot,
-    sessionViewProps.sessions,
-  ]);
-  const handleQuestionnaireCancel = useCallback(() => {
-    if (!questionnaireSnapshot) {
-      setQuestionnaireVisible(false);
-      return;
-    }
-    const content = questionnaireService.renderQuestionnaire(
-      questionnaireSnapshot.template,
-      questionnaireSnapshot.placeholders,
-      questionnaireSnapshot.answers
-    );
-    questionnaireService
-      .flushSave(
-        questionnaireSnapshot.sessionId,
-        questionnaireSnapshot.path,
-        content
-      )
-      .catch(() => {
-        /* ignore save errors */
-      })
-      .finally(() => {
-        setQuestionnaireVisible(false);
-      });
-  }, [questionnaireService, questionnaireSnapshot]);
-  const handleQuestionnaireResume = useCallback(() => {
-    if (!activeSessionId) {
-      return;
-    }
-    if (questionnaireSnapshot?.sessionId === activeSessionId) {
-      setQuestionnaireVisible(true);
-      return;
-    }
-    loadQuestionnaireForSession(
-      questionnaireService,
-      sessionViewProps.sessions,
-      activeSessionId
-    )
-      .then((snapshot) => {
-        if (snapshot) {
-          setQuestionnaireSnapshot(snapshot);
-          setQuestionnaireVisible(true);
-        }
-      })
-      .catch(() => {
-        /* ignore questionnaire load errors */
-      });
-  }, [
-    activeSessionId,
-    questionnaireService,
-    questionnaireSnapshot,
-    sessionViewProps.sessions,
-  ]);
+  const [runPickerRuns, setRunPickerRuns] = useState<RunSummary[]>([]);
+  const [runPickerStatus, setRunPickerStatus] = useState<string | null>(null);
+  const [runPickerLoading, setRunPickerLoading] = useState(false);
+  const [questionnaireActive, setQuestionnaireActive] = useState(false);
+  const activeSessionId = sessionViewProps.activeSessionId;
   const handleProviderConfirm = (providerIds: readonly ProviderStackId[]) => {
     if (selectedStage === "idea") {
       pendingQuestionnaireRef.current = true;
     }
     confirmSelection(providerIds);
   };
-  const handleStageClick = (stage: FlowStageId) => selectStage(stage);
-  const hasPendingQuestionnaire = activeSessionId
-    ? ideaCollector.isQuestionnairePending(activeSessionId)
-    : false;
-  const showQuestionnaire = Boolean(
-    questionnaireVisible &&
-      questionnaireSnapshot &&
-      activeSessionId &&
-      questionnaireSnapshot.sessionId === activeSessionId
-  );
-  const showQuestionnaireResume =
-    Boolean(activeSessionId) &&
-    hasPendingQuestionnaire &&
-    !showQuestionnaire &&
-    !pickerState.visible;
-  const showSessionView = !(pickerState.visible || showQuestionnaire);
   useEffect(() => {
-    if (!activeSessionId) {
-      return;
+    if (!pickerState.visible || selectedStage !== "idea") {
+      setRunSelection({ status: "pending" });
+      setRunPickerMode("choice");
+      setRunPickerRuns([]);
+      setRunPickerStatus(null);
+      setRunPickerLoading(false);
     }
-    if (!pendingQuestionnaireRef.current) {
-      return;
-    }
-    pendingQuestionnaireRef.current = false;
-    loadQuestionnaireForSession(
-      questionnaireService,
+  }, [pickerState.visible, selectedStage]);
+  const handleCreateNewDescription = useCallback(() => {
+    setRunSelection({ status: "new" });
+  }, []);
+  const handleSelectExistingRun = useCallback(
+    (runSlug: string) => {
+      const initiativeSlug = resolveSelectedInitiativeSlug();
+      const existingSession = sessionViewProps.sessions.find(
+        (session) =>
+          session.runSlug === runSlug &&
+          session.stage === "idea" &&
+          session.initiativeSlug === initiativeSlug
+      );
+      if (existingSession) {
+        sessionViewProps.onSelectSession(existingSession.id);
+        cancelSelection();
+        return;
+      }
+      setRunSelection({ status: "existing", runSlug });
+    },
+    [
+      cancelSelection,
+      sessionViewProps.onSelectSession,
       sessionViewProps.sessions,
-      activeSessionId
-    )
-      .then((snapshot) => {
-        if (snapshot) {
-          setQuestionnaireSnapshot(snapshot);
-          setQuestionnaireVisible(true);
+    ]
+  );
+  useEffect(() => {
+    if (
+      !pickerState.visible ||
+      selectedStage !== "idea" ||
+      runSelection.status !== "pending" ||
+      runPickerMode !== "list"
+    ) {
+      return;
+    }
+    const httpUrl = resolveCoreHttpUrl();
+    const workspacePath = resolveWorkspacePath();
+    const initiativeSlug = resolveSelectedInitiativeSlug();
+    if (!(httpUrl && workspacePath && initiativeSlug)) {
+      setRunPickerRuns([]);
+      setRunPickerStatus("Select an initiative to continue.");
+      setRunPickerLoading(false);
+      return;
+    }
+    setRunPickerLoading(true);
+    setRunPickerStatus("Loading description runs...");
+    listRuns(httpUrl, workspacePath, initiativeSlug)
+      .then((result) => {
+        if (!result.ok) {
+          setRunPickerRuns([]);
+          setRunPickerStatus(result.error);
+          setRunPickerLoading(false);
+          return;
         }
+        setRunPickerRuns([...result.data.runs]);
+        setRunPickerStatus(
+          result.data.runs.length === 0 ? "No description runs yet." : null
+        );
+        setRunPickerLoading(false);
       })
       .catch(() => {
-        /* ignore questionnaire load errors */
+        setRunPickerRuns([]);
+        setRunPickerStatus("Failed to load description runs.");
+        setRunPickerLoading(false);
       });
-  }, [activeSessionId, questionnaireService, sessionViewProps.sessions]);
-  const questionnaireTitle = IDEA_QUESTIONNAIRE_COPY.title;
-  const questionnaireDescription = IDEA_QUESTIONNAIRE_COPY.description;
-  const questionnaireSubmitLabel = IDEA_QUESTIONNAIRE_COPY.submitLabel;
-  const questionnaireCancelLabel = IDEA_QUESTIONNAIRE_COPY.cancelLabel;
-  const questionnaireResumeLabel = IDEA_QUESTIONNAIRE_COPY.resumeLabel;
-  const questionnaireResumeNote = IDEA_QUESTIONNAIRE_COPY.resumeNote;
+  }, [pickerState.visible, runPickerMode, runSelection.status, selectedStage]);
+  const handleStageClick = (stage: FlowStageId) => selectStage(stage);
+  const selectedRunSlug =
+    runSelection.status === "existing" ? runSelection.runSlug : null;
+  const showSessionView = !(pickerState.visible || questionnaireActive);
   const filteredProviders =
     selectedStage && selectedStage !== "chat"
       ? pickerState.providers.filter(
@@ -237,14 +172,26 @@ export const SessionRegion = ({
             provider.id === "codexCli" || provider.id === "claudeCodeCli"
         )
       : pickerState.providers;
+  const showRunPicker =
+    pickerState.visible &&
+    selectedStage === "idea" &&
+    runSelection.status === "pending";
   const showStagePicker = pickerState.visible && selectedStage === null;
-  const showProviderPicker = pickerState.visible && selectedStage !== null;
+  const showProviderPicker =
+    pickerState.visible && selectedStage !== null && !showRunPicker;
+  const isRunPickerEmpty = !runPickerLoading && runPickerRuns.length === 0;
   const providerPickerSecondaryLabel = stageSelectionLocked ? "Cancel" : "Back";
   const handleProviderPickerSecondary = stageSelectionLocked
     ? cancelSelection
     : clearStageSelection;
   return (
     <div className="app-shell__session-region">
+      <input
+        id="runSlug"
+        readOnly
+        type="hidden"
+        value={selectedRunSlug ?? ""}
+      />
       <ProviderPicker
         onConfirm={handleProviderConfirm}
         onSecondary={handleProviderPickerSecondary}
@@ -259,26 +206,25 @@ export const SessionRegion = ({
         selectedStage={selectedStage}
         visible={showStagePicker}
       />
-      {showQuestionnaireResume ? (
-        <QuestionnaireResumeBanner
-          note={questionnaireResumeNote}
-          onResume={handleQuestionnaireResume}
-          resumeLabel={questionnaireResumeLabel}
-        />
-      ) : null}
-      {showQuestionnaire && questionnaireSnapshot ? (
-        <IdeaQuestionnaireView
-          answers={questionnaireSnapshot.answers}
-          cancelLabel={questionnaireCancelLabel}
-          description={questionnaireDescription}
-          onAnswerChange={handleAnswerChange}
-          onCancel={handleQuestionnaireCancel}
-          onSubmit={handleQuestionnaireSubmit}
-          questions={questionnaireSnapshot.questions}
-          submitLabel={questionnaireSubmitLabel}
-          title={questionnaireTitle}
-        />
-      ) : null}
+      <RunPickerView
+        isEmpty={isRunPickerEmpty}
+        mode={runPickerMode}
+        onBack={() => setRunPickerMode("choice")}
+        onCancel={cancelSelection}
+        onCreateNew={handleCreateNewDescription}
+        onSelectRun={handleSelectExistingRun}
+        onShowList={() => setRunPickerMode("list")}
+        runs={runPickerRuns}
+        status={runPickerStatus}
+        visible={showRunPicker}
+      />
+      <IdeaQuestionnairePanel
+        activeSessionId={activeSessionId}
+        onQuestionnaireVisibleChange={setQuestionnaireActive}
+        pendingQuestionnaireRef={pendingQuestionnaireRef}
+        pickerVisible={pickerState.visible}
+        sessions={sessionViewProps.sessions}
+      />
       {showSessionView ? (
         <SessionView
           activeSessionId={sessionViewProps.activeSessionId}
