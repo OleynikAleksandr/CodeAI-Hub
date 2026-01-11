@@ -22,18 +22,21 @@
 - `d0536fdd chore(ui): refresh webview fallback bundle`
 - `02752ce4 chore(release): bump 1.1.402`
 - `d135ddb5 docs: archive phase 15 plan`
+- `f6c69984 docs: add session 86 report`
 
 ---
 
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Architecture/Architecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-3. `doc/Project_Docs/Initiative_Description_Runs_Architecture.md`
-4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session086.md`
+1. `README.md`
+2. `CHANGELOG.md`
+3. `doc/Architecture/Architecture.md`
+4. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+5. `doc/Project_Docs/Initiative_Description_Runs_Architecture.md`
+6. `doc/TODO/todo-plan.md`
+7. `doc/Sessions/Session086.md`
 
 ## Plans for next session
-- Определить задачи следующей фазы и обновить `doc/TODO/todo-plan.md`.
-- При необходимости — e2e проверка релиза 1.1.402 (VSIX install + запуск web-client).
+- Протестировать релиз 1.1.402 (VSIX install + запуск web-client).
+- Зафиксировать результаты теста и обновить `doc/Sessions/Session086.md` при необходимости.
