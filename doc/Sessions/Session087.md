@@ -27,6 +27,8 @@
 - `d8c657b4 docs: update architecture for 1.1.403`
 - `9c92e00f docs: record run provider session binding`
 - `0699c034 docs: update todo plan status`
+- `f1c9b7db docs: add session 87 report`
+- `020a7680 docs: close phase 16`
 
 ---
 
