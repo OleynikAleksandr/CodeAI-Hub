@@ -7609,11 +7609,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react31 = __toESM(require_react());
+  var import_react32 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host.tsx
-  var import_react30 = __toESM(require_react());
+  var import_react31 = __toESM(require_react());
 
   // src/client/ui/src/app-host/loading-messages.ts
   var MESSAGE_ORDER = [
@@ -8307,6 +8307,30 @@
     };
   };
 
+  // src/client/ui/src/core-bridge/session-context-resolver.ts
+  var resolveSelectedInitiativeSlug = () => {
+    if (typeof document === "undefined") {
+      return null;
+    }
+    const element3 = document.getElementById("initiative");
+    if (!(element3 instanceof HTMLSelectElement)) {
+      return null;
+    }
+    const value = element3.value.trim();
+    return value.length > 0 ? value : null;
+  };
+  var resolveSelectedRunSlug = () => {
+    if (typeof document === "undefined") {
+      return null;
+    }
+    const element3 = document.getElementById("runSlug");
+    if (!(element3 instanceof HTMLInputElement)) {
+      return null;
+    }
+    const value = element3.value.trim();
+    return value.length > 0 ? value : null;
+  };
+
   // src/client/ui/src/core-bridge/session-history.ts
   var fetchSessionHistory = async (config, sessionId, notify) => {
     try {
@@ -8397,17 +8421,6 @@
     const serialized = JSON.stringify(payload);
     pendingMessages.push(serialized);
     flushPendingMessages();
-  };
-  var resolveSelectedInitiativeSlug = () => {
-    if (typeof document === "undefined") {
-      return null;
-    }
-    const element3 = document.getElementById("initiative");
-    if (!(element3 instanceof HTMLSelectElement)) {
-      return null;
-    }
-    const value = element3.value.trim();
-    return value.length > 0 ? value : null;
   };
   var scheduleReconnect = (config) => {
     if (reconnectTimer) {
@@ -8526,11 +8539,17 @@
       return;
     }
     const initiativeSlug = resolveSelectedInitiativeSlug();
+    const runSlug = resolveSelectedRunSlug();
     const stage = pendingStage;
     pendingStage = null;
     enqueueMessage({
       type: "session:create",
-      payload: { providerId, initiativeSlug, stage }
+      payload: {
+        providerId,
+        initiativeSlug,
+        runSlug: runSlug ?? void 0,
+        stage
+      }
     });
   };
   var sendChatMessage = (sessionId, content3, turnOptions) => {
@@ -8706,1211 +8725,7 @@
   };
 
   // src/client/ui/src/app-host/session-region.tsx
-  var import_react11 = __toESM(require_react());
-
-  // src/client/ui/src/components/idea-questionnaire/question-block.tsx
-  var import_react4 = __toESM(require_react());
-
-  // src/client/ui/src/session/input-dnd.ts
-  var import_react3 = __toESM(require_react());
-
-  // src/client/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
-  var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
-  var LINE_SPLIT_REGEX = /\r?\n/;
-  var normalizeCandidate = (rawValue) => {
-    const value = rawValue.trim();
-    if (!value) {
-      return null;
-    }
-    if (value.startsWith("file://")) {
-      const withoutScheme = value.replace("file://", "");
-      try {
-        return decodeURIComponent(withoutScheme);
-      } catch {
-        return withoutScheme;
-      }
-    }
-    if (value.startsWith("/") || WINDOWS_PATH_PATTERN.test(value)) {
-      return value;
-    }
-    return null;
-  };
-  var forEachEntry = (raw, handler) => {
-    if (!raw) {
-      return;
-    }
-    const lines = raw.split(LINE_SPLIT_REGEX);
-    for (const line of lines) {
-      if (line.trim()) {
-        handler(line);
-      }
-    }
-  };
-  var extractFilePathsFromDataTransfer = (dataTransfer, options = {}) => {
-    if (!dataTransfer) {
-      return [];
-    }
-    const { logger, debug = false, logPrefix = "[DropDataExtractor]" } = options;
-    const seen = /* @__PURE__ */ new Set();
-    const results = [];
-    const logDebug = (message, ...details) => {
-      if (debug && logger) {
-        logger(`${logPrefix} ${message}`, ...details);
-      }
-    };
-    const acceptCandidate = (candidate, source) => {
-      if (!seen.has(candidate)) {
-        seen.add(candidate);
-        results.push(candidate);
-        logDebug(`accepted ${candidate} from ${source}`);
-      }
-    };
-    const inspectType = (mime) => {
-      try {
-        const payload = dataTransfer.getData(mime);
-        logDebug(`DataTransfer[${mime}]`, payload);
-        return payload;
-      } catch (error) {
-        logDebug(`failed to read DataTransfer[${mime}]`, error);
-        return null;
-      }
-    };
-    const mimeTypes = [
-      "application/vnd.code.uri-list",
-      "text/plain",
-      "text/uri-list"
-    ];
-    for (const mime of mimeTypes) {
-      const payload = inspectType(mime);
-      forEachEntry(payload, (entry) => {
-        const candidate = normalizeCandidate(entry);
-        if (candidate) {
-          acceptCandidate(candidate, mime);
-        } else {
-          logDebug(`ignored entry from ${mime}`, entry);
-        }
-      });
-    }
-    if (dataTransfer.files && dataTransfer.files.length > 0) {
-      for (const file of Array.from(dataTransfer.files)) {
-        const candidate = file.path;
-        if (!candidate) {
-          continue;
-        }
-        const normalised = normalizeCandidate(candidate);
-        if (normalised) {
-          acceptCandidate(normalised, "FileList");
-        } else {
-          logDebug("ignored FileList entry", candidate);
-        }
-      }
-    }
-    logDebug("extraction result", results);
-    return results;
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/drag-drop-handler.ts
-  var DragDropHandler = class {
-    constructor(options = {}) {
-      this.container = null;
-      this.callbacks = {};
-      this.logger = options.logger;
-      this.handleDragEnter = this.handleDragEnter.bind(this);
-      this.handleDragOver = this.handleDragOver.bind(this);
-      this.handleDragLeave = this.handleDragLeave.bind(this);
-      this.handleDrop = this.handleDrop.bind(this);
-    }
-    attach(container, callbacks) {
-      this.container = container;
-      this.callbacks = callbacks;
-      container.addEventListener("dragenter", this.handleDragEnter);
-      container.addEventListener("dragover", this.handleDragOver);
-      container.addEventListener("dragleave", this.handleDragLeave);
-      container.addEventListener("drop", this.handleDrop);
-    }
-    detach() {
-      if (!this.container) {
-        return;
-      }
-      this.container.removeEventListener("dragenter", this.handleDragEnter);
-      this.container.removeEventListener("dragover", this.handleDragOver);
-      this.container.removeEventListener("dragleave", this.handleDragLeave);
-      this.container.removeEventListener("drop", this.handleDrop);
-      this.container = null;
-      this.callbacks = {};
-    }
-    handleDragEnter(event) {
-      if (!event.shiftKey) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-      this.callbacks.onDragEnter?.(true);
-      this.logger?.("dragenter", event.dataTransfer?.types ?? []);
-    }
-    handleDragOver(event) {
-      if (!event.shiftKey) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    handleDragLeave(event) {
-      const relatedTarget = event.relatedTarget;
-      if (this.container && relatedTarget && this.container.contains(relatedTarget)) {
-        return;
-      }
-      this.callbacks.onDragLeave?.();
-    }
-    handleDrop(event) {
-      if (!event.shiftKey) {
-        return;
-      }
-      event.preventDefault();
-      const filePaths = extractFilePathsFromDataTransfer(event.dataTransfer, {
-        debug: Boolean(this.logger),
-        logger: this.logger,
-        logPrefix: "[DragDropHandler]"
-      });
-      if (filePaths.length > 0) {
-        this.callbacks.onFileDrop?.(filePaths);
-      } else {
-        this.callbacks.onFallbackRequest?.();
-      }
-      this.callbacks.onDragLeave?.();
-    }
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/file-path-processor.ts
-  var WINDOWS_PATH_PATTERN2 = /^[a-zA-Z]:\\/;
-  var WINDOWS_POSIX_PATTERN = /^[a-zA-Z]:\//;
-  var FilePathProcessor = class {
-    constructor() {
-      this.lastInsertedPath = "";
-      this.lastInsertTime = 0;
-      this.duplicateThresholdMs = 1e3;
-    }
-    formatPaths(paths) {
-      if (paths.length === 0) {
-        return "";
-      }
-      const formattedPaths = paths.map((path2) => `"${path2}"`).join("\n");
-      return `${formattedPaths}
-`;
-    }
-    mergePaths(currentValue, formattedPaths) {
-      if (!formattedPaths) {
-        return currentValue;
-      }
-      if (currentValue && !currentValue.endsWith("\n")) {
-        return `${currentValue}
-${formattedPaths}`;
-      }
-      return currentValue + formattedPaths;
-    }
-    isDuplicate(path2) {
-      const now = Date.now();
-      return path2 === this.lastInsertedPath && now - this.lastInsertTime < this.duplicateThresholdMs;
-    }
-    recordInsertion(path2) {
-      this.lastInsertedPath = path2;
-      this.lastInsertTime = Date.now();
-    }
-    processSinglePath(path2, currentValue) {
-      if (!this.isValidPath(path2) || this.isDuplicate(path2)) {
-        return null;
-      }
-      this.recordInsertion(path2);
-      const formatted = this.formatPaths([path2]);
-      return this.mergePaths(currentValue, formatted);
-    }
-    processMultiplePaths(paths, currentValue) {
-      if (paths.length === 0) {
-        return null;
-      }
-      const validPaths = paths.filter((path2) => this.isValidPath(path2));
-      if (validPaths.length === 0) {
-        return null;
-      }
-      this.recordInsertion(validPaths[0]);
-      const formatted = this.formatPaths(validPaths);
-      return this.mergePaths(currentValue, formatted);
-    }
-    clear() {
-      this.lastInsertedPath = "";
-      this.lastInsertTime = 0;
-    }
-    isValidPath(path2) {
-      if (!path2) {
-        return false;
-      }
-      return path2.startsWith("/") || WINDOWS_PATH_PATTERN2.test(path2) || WINDOWS_POSIX_PATTERN.test(path2);
-    }
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/message-handler.ts
-  var isRecord2 = (value) => typeof value === "object" && value !== null;
-  var MessageHandler = class {
-    constructor(logger) {
-      this.callbacks = {};
-      this.messageListener = null;
-      this.logger = logger;
-    }
-    startListening(callbacks) {
-      this.callbacks = callbacks;
-      this.messageListener = (event) => {
-        this.handleMessage(event.data);
-      };
-      window.addEventListener("message", this.messageListener);
-      this.logger?.("message-handler:start");
-    }
-    stopListening() {
-      if (this.messageListener) {
-        window.removeEventListener("message", this.messageListener);
-        this.messageListener = null;
-      }
-      this.callbacks = {};
-      this.logger?.("message-handler:stop");
-    }
-    requestFilePathGrab() {
-      const timestamp = Date.now();
-      this.sendMessage("grabFilePathFromDrop", { timestamp });
-    }
-    clearClipboards() {
-      this.sendMessage("clearAllClipboards");
-    }
-    sendMessage(command, payload) {
-      const message = { command };
-      if (payload) {
-        Object.assign(message, payload);
-      }
-      this.logger?.("message-handler:send", command, payload ?? null);
-      vscode_default.postMessage(message);
-    }
-    handleMessage(message) {
-      if (!isRecord2(message) || typeof message.command !== "string") {
-        return;
-      }
-      if (message.command === "insertPath") {
-        this.handleInsertPath(
-          typeof message.path === "string" ? message.path : ""
-        );
-        return;
-      }
-      if (message.command === "clipboardContent") {
-        this.handleClipboardContent(
-          typeof message.content === "string" ? message.content : ""
-        );
-      }
-    }
-    handleInsertPath(path2) {
-      if (!path2) {
-        return;
-      }
-      this.logger?.("message-handler:insert-path", path2);
-      this.callbacks.onPathInsert?.(path2);
-      this.clearClipboards();
-    }
-    handleClipboardContent(content3) {
-      if (!content3) {
-        return;
-      }
-      this.logger?.("message-handler:clipboard", content3);
-      this.callbacks.onClipboardContent?.(content3);
-      this.clearClipboards();
-    }
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/drag-drop-facade.ts
-  var DragDropFacade = class {
-    constructor(logger) {
-      this.config = null;
-      this.isDragging = false;
-      this.dragHandler = new DragDropHandler({ logger });
-      this.pathProcessor = new FilePathProcessor();
-      this.messageHandler = new MessageHandler(logger);
-    }
-    initialize(config) {
-      this.config = config;
-      const callbacks = {
-        onDragEnter: (isShiftPressed) => this.handleDragEnter(isShiftPressed),
-        onDragLeave: () => this.handleDragLeave(),
-        onFileDrop: (paths) => this.handleFileDrop(paths),
-        onFallbackRequest: () => this.handleFallbackRequest()
-      };
-      this.dragHandler.attach(config.container, callbacks);
-      this.messageHandler.startListening({
-        onPathInsert: (path2) => this.handlePathInsert(path2),
-        onClipboardContent: (content3) => this.handleClipboardContent(content3)
-      });
-    }
-    destroy() {
-      this.dragHandler.detach();
-      this.messageHandler.stopListening();
-      this.pathProcessor.clear();
-      this.config = null;
-      this.isDragging = false;
-    }
-    getIsDragging() {
-      return this.isDragging;
-    }
-    handleDragEnter(isShiftPressed) {
-      if (!isShiftPressed) {
-        return;
-      }
-      this.isDragging = true;
-      this.config?.onDragStateChange?.(true);
-    }
-    handleDragLeave() {
-      this.isDragging = false;
-      this.config?.onDragStateChange?.(false);
-    }
-    handleFileDrop(paths) {
-      if (!this.config) {
-        return;
-      }
-      const currentValue = this.config.getCurrentValue();
-      const newValue = this.pathProcessor.processMultiplePaths(
-        paths,
-        currentValue
-      );
-      if (newValue !== null) {
-        this.config.onValueChange(newValue);
-      }
-    }
-    handleFallbackRequest() {
-      this.messageHandler.requestFilePathGrab();
-    }
-    handlePathInsert(path2) {
-      if (!this.config) {
-        return;
-      }
-      const currentValue = this.config.getCurrentValue();
-      if (path2.includes('"') && path2.includes("\n")) {
-        const mergedValue = currentValue ? `${currentValue}
-${path2}` : path2;
-        this.config.onValueChange(mergedValue);
-        return;
-      }
-      const newValue = this.pathProcessor.processSinglePath(path2, currentValue);
-      if (newValue !== null) {
-        this.config.onValueChange(newValue);
-      }
-    }
-    handleClipboardContent(content3) {
-      if (!this.config) {
-        return;
-      }
-      const currentValue = this.config.getCurrentValue();
-      const newValue = this.pathProcessor.processSinglePath(
-        content3,
-        currentValue
-      );
-      if (newValue !== null) {
-        this.config.onValueChange(newValue);
-      }
-    }
-  };
-
-  // src/client/ui/src/session/input-dnd.ts
-  var DEFAULT_DRAG_OVERLAY_LABEL = "Drop files here while holding Shift";
-  var useInputDragDrop = ({
-    containerRef,
-    textareaRef,
-    onValueChange
-  }) => {
-    const [isDragging, setIsDragging] = (0, import_react3.useState)(false);
-    const dragDropFacadeRef = (0, import_react3.useRef)(null);
-    (0, import_react3.useEffect)(() => {
-      const container = containerRef.current;
-      const textarea = textareaRef.current;
-      if (!(container && textarea)) {
-        return;
-      }
-      const dragDropFacade = new DragDropFacade();
-      dragDropFacadeRef.current = dragDropFacade;
-      dragDropFacade.initialize({
-        container,
-        onValueChange,
-        getCurrentValue: () => textarea.value,
-        onDragStateChange: setIsDragging
-      });
-      return () => {
-        dragDropFacade.destroy();
-        dragDropFacadeRef.current = null;
-      };
-    }, [containerRef, onValueChange, textareaRef]);
-    return { isDragging };
-  };
-
-  // src/client/ui/src/session/input-panel-clipboard.ts
-  var handlePlainTextPaste = (event, insertText) => {
-    const dataTransfer = event.clipboardData;
-    if (!dataTransfer) {
-      return false;
-    }
-    const plainText = dataTransfer.getData("text/plain");
-    if (plainText) {
-      event.preventDefault();
-      insertText(plainText);
-      return true;
-    }
-    if (typeof dataTransfer.items !== "undefined") {
-      const stringItem = Array.from(dataTransfer.items).find(
-        (item) => item.kind === "string"
-      );
-      if (stringItem) {
-        event.preventDefault();
-        stringItem.getAsString((text7) => {
-          if (text7) {
-            insertText(text7);
-          }
-        });
-        return true;
-      }
-    }
-    return false;
-  };
-  var tryReadFromNavigator = async (insertText) => {
-    if (typeof navigator === "undefined" || !navigator.clipboard || typeof navigator.clipboard.readText !== "function") {
-      return false;
-    }
-    try {
-      const text7 = await navigator.clipboard.readText();
-      if (text7) {
-        insertText(text7);
-        return true;
-      }
-    } catch {
-      return false;
-    }
-    return false;
-  };
-  var copySelectionToClipboard = (event, textarea, selection) => {
-    if (event.clipboardData) {
-      event.preventDefault();
-      event.clipboardData.setData("text/plain", selection);
-      return;
-    }
-    if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-      event.preventDefault();
-      navigator.clipboard.writeText(selection).catch(() => {
-      });
-      return;
-    }
-    textarea.select();
-  };
-  var createClipboardHandlers = ({
-    textareaRef,
-    insertTextAtSelection,
-    syncTextareaValue
-  }) => {
-    const handlePaste = (event) => {
-      const handled = handlePlainTextPaste(event, insertTextAtSelection);
-      if (handled) {
-        return;
-      }
-      tryReadFromNavigator(insertTextAtSelection).then((success) => {
-        if (success) {
-          return;
-        }
-        requestAnimationFrame(syncTextareaValue);
-      }).catch(() => {
-        requestAnimationFrame(syncTextareaValue);
-      });
-    };
-    const handleCopy = (event) => {
-      const textarea = textareaRef.current;
-      if (!textarea) {
-        return;
-      }
-      const start2 = textarea.selectionStart ?? 0;
-      const end = textarea.selectionEnd ?? 0;
-      if (start2 === end) {
-        return;
-      }
-      const selection = textarea.value.slice(start2, end);
-      if (!selection) {
-        return;
-      }
-      copySelectionToClipboard(event, textarea, selection);
-    };
-    return {
-      handlePaste,
-      handleCopy
-    };
-  };
-
-  // src/client/ui/src/components/idea-questionnaire/styles.ts
-  var questionnairePageStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-    height: "100%",
-    overflowY: "auto",
-    padding: "20px",
-    boxSizing: "border-box",
-    background: "linear-gradient(180deg, #1b1d21 0%, #16181b 100%)",
-    color: "#e5e5e5"
-  };
-  var questionnaireHeaderStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px"
-  };
-  var questionnaireTitleStyles = {
-    margin: 0,
-    fontSize: "18px",
-    fontWeight: 600
-  };
-  var questionnaireDescriptionStyles = {
-    margin: 0,
-    fontSize: "12px",
-    color: "#a7a7a7",
-    lineHeight: 1.6
-  };
-  var questionnaireListStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px"
-  };
-  var questionnaireFooterStyles = {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "12px",
-    paddingBottom: "16px"
-  };
-  var questionnaireCancelButtonStyles = {
-    appearance: "none",
-    border: "1px solid #3a3f46",
-    borderRadius: "8px",
-    background: "transparent",
-    color: "#d5d7db",
-    fontSize: "13px",
-    fontWeight: 600,
-    padding: "10px 16px",
-    cursor: "pointer"
-  };
-  var questionnaireSubmitButtonStyles = {
-    appearance: "none",
-    border: "1px solid #0e639c",
-    borderRadius: "8px",
-    background: "#0e639c",
-    color: "#ffffff",
-    fontSize: "13px",
-    fontWeight: 600,
-    padding: "10px 16px",
-    cursor: "pointer",
-    boxShadow: "0 6px 16px rgba(14, 99, 156, 0.35)"
-  };
-  var questionCardStyles = {
-    background: "#1f2125",
-    border: "1px solid #2a2d33",
-    borderRadius: "12px",
-    padding: "16px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    boxShadow: "0 8px 18px rgba(0, 0, 0, 0.25)"
-  };
-  var questionHeaderStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px"
-  };
-  var questionTitleStyles = {
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#f0f0f0"
-  };
-  var questionDescriptionStyles = {
-    margin: 0,
-    fontSize: "12px",
-    color: "#9aa0a6",
-    lineHeight: 1.5,
-    whiteSpace: "pre-wrap"
-  };
-  var questionHintStyles = {
-    margin: 0,
-    fontSize: "11px",
-    color: "#7f868e",
-    lineHeight: 1.5,
-    whiteSpace: "pre-wrap"
-  };
-  var questionInputShellStyles = {
-    position: "relative",
-    border: "1px solid #2c2f36",
-    borderRadius: "8px",
-    padding: "10px",
-    background: "#16181b"
-  };
-  var questionInputShellDraggingStyles = {
-    borderColor: "#2b88d8",
-    background: "#1e2a35"
-  };
-  var questionInputShellFocusedStyles = {
-    borderColor: "#0e639c",
-    boxShadow: "0 0 0 2px rgba(14, 99, 156, 0.2)"
-  };
-  var questionTextareaStyles = {
-    width: "100%",
-    border: "none",
-    outline: "none",
-    background: "transparent",
-    color: "#e5e5e5",
-    fontSize: "13px",
-    lineHeight: 1.6,
-    resize: "vertical",
-    overflow: "hidden",
-    padding: 0,
-    margin: 0,
-    boxSizing: "border-box"
-  };
-  var questionOverlayStyles = {
-    position: "absolute",
-    inset: "0",
-    borderRadius: "8px",
-    background: "rgba(14, 99, 156, 0.2)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#e5f4ff",
-    fontSize: "12px",
-    letterSpacing: "0.2px",
-    pointerEvents: "none"
-  };
-
-  // src/client/ui/src/components/idea-questionnaire/question-block.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-  var BASE_MIN_HEIGHT = 96;
-  var focusTextareaEnd = (textarea) => {
-    if (!textarea) {
-      return;
-    }
-    const element3 = textarea;
-    element3.focus();
-    const length = element3.value.length;
-    element3.setSelectionRange(length, length);
-  };
-  var QuestionBlock = ({
-    question,
-    value,
-    onChange
-  }) => {
-    const [isFocused, setIsFocused] = (0, import_react4.useState)(false);
-    const [userMinHeight, setUserMinHeight] = (0, import_react4.useState)(null);
-    const textareaRef = (0, import_react4.useRef)(null);
-    const containerRef = (0, import_react4.useRef)(null);
-    const lastWidthRef = (0, import_react4.useRef)(null);
-    const adjustTextareaHeight2 = (0, import_react4.useCallback)(() => {
-      const textarea = textareaRef.current;
-      if (!textarea) {
-        return;
-      }
-      const minHeight = userMinHeight ?? BASE_MIN_HEIGHT;
-      textarea.style.height = "auto";
-      textarea.style.minHeight = `${minHeight}px`;
-      const targetHeight = Math.max(textarea.scrollHeight, minHeight);
-      textarea.style.height = `${targetHeight}px`;
-    }, [userMinHeight]);
-    const applyExternalValue = (0, import_react4.useCallback)(
-      (nextValue) => {
-        onChange(question.id, nextValue);
-        requestAnimationFrame(() => {
-          focusTextareaEnd(textareaRef.current);
-          adjustTextareaHeight2();
-        });
-      },
-      [adjustTextareaHeight2, onChange, question.id]
-    );
-    const { isDragging } = useInputDragDrop({
-      containerRef,
-      textareaRef,
-      onValueChange: applyExternalValue
-    });
-    const handleChange = (0, import_react4.useCallback)(
-      (event) => {
-        onChange(question.id, event.target.value);
-      },
-      [onChange, question.id]
-    );
-    const handleResizeCommit = (0, import_react4.useCallback)(() => {
-      const textarea = textareaRef.current;
-      if (!textarea) {
-        return;
-      }
-      const nextMinHeight = Math.max(
-        userMinHeight ?? BASE_MIN_HEIGHT,
-        textarea.offsetHeight
-      );
-      if (nextMinHeight !== (userMinHeight ?? BASE_MIN_HEIGHT)) {
-        setUserMinHeight(nextMinHeight);
-      }
-    }, [userMinHeight]);
-    const insertTextAtSelection = (0, import_react4.useCallback)(
-      (text7) => {
-        const textarea = textareaRef.current;
-        if (!textarea) {
-          return;
-        }
-        const [selectionStart, selectionEnd] = [
-          textarea.selectionStart ?? textarea.value.length,
-          textarea.selectionEnd ?? textarea.value.length
-        ];
-        const currentValue = textarea.value;
-        const nextValue = currentValue.slice(0, selectionStart) + text7 + currentValue.slice(selectionEnd);
-        onChange(question.id, nextValue);
-        requestAnimationFrame(() => {
-          const position3 = selectionStart + text7.length;
-          textarea.selectionStart = position3;
-          textarea.selectionEnd = position3;
-          adjustTextareaHeight2();
-          textarea.focus();
-        });
-      },
-      [adjustTextareaHeight2, onChange, question.id]
-    );
-    const syncTextareaValue = (0, import_react4.useCallback)(() => {
-      const textarea = textareaRef.current;
-      if (!textarea) {
-        return;
-      }
-      onChange(question.id, textarea.value);
-    }, [onChange, question.id]);
-    const { handlePaste, handleCopy } = (0, import_react4.useMemo)(
-      () => createClipboardHandlers({
-        textareaRef,
-        insertTextAtSelection,
-        syncTextareaValue
-      }),
-      [insertTextAtSelection, syncTextareaValue]
-    );
-    (0, import_react4.useEffect)(() => {
-      const nextValue = value;
-      requestAnimationFrame(() => {
-        const textarea = textareaRef.current;
-        if (!textarea || textarea.value !== nextValue) {
-          return;
-        }
-        adjustTextareaHeight2();
-      });
-    }, [adjustTextareaHeight2, value]);
-    (0, import_react4.useEffect)(() => {
-      const textarea = textareaRef.current;
-      if (!textarea || typeof ResizeObserver === "undefined") {
-        return;
-      }
-      const observer = new ResizeObserver((entries) => {
-        const entry = entries[0];
-        if (!entry) {
-          return;
-        }
-        const nextWidth = entry.contentRect.width;
-        if (lastWidthRef.current !== nextWidth) {
-          lastWidthRef.current = nextWidth;
-          adjustTextareaHeight2();
-        }
-      });
-      observer.observe(textarea);
-      return () => observer.disconnect();
-    }, [adjustTextareaHeight2]);
-    const inputShellStyles = {
-      ...questionInputShellStyles,
-      ...isDragging ? questionInputShellDraggingStyles : {},
-      ...isFocused ? questionInputShellFocusedStyles : {}
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("section", { style: questionCardStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { style: questionHeaderStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: questionTitleStyles, children: question.title }),
-        question.description ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: questionDescriptionStyles, children: question.description }) : null,
-        question.hint ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: questionHintStyles, children: question.hint }) : null
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { ref: containerRef, style: inputShellStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-          "textarea",
-          {
-            "aria-label": question.title,
-            onBlur: () => {
-              setIsFocused(false);
-              handleResizeCommit();
-            },
-            onChange: handleChange,
-            onCopy: handleCopy,
-            onFocus: () => setIsFocused(true),
-            onMouseUp: handleResizeCommit,
-            onPaste: handlePaste,
-            onTouchEnd: handleResizeCommit,
-            ref: textareaRef,
-            rows: 1,
-            style: questionTextareaStyles,
-            value
-          }
-        ),
-        isDragging ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("output", { style: questionOverlayStyles, children: DEFAULT_DRAG_OVERLAY_LABEL }) : null
-      ] })
-    ] });
-  };
-
-  // src/client/ui/src/components/idea-questionnaire/idea-questionnaire-view.tsx
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-  var IdeaQuestionnaireView = ({
-    title,
-    description,
-    questions,
-    answers,
-    submitLabel,
-    cancelLabel,
-    onAnswerChange,
-    onSubmit,
-    onCancel
-  }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { "aria-label": "Idea questionnaire", style: questionnairePageStyles, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("header", { style: questionnaireHeaderStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h1", { style: questionnaireTitleStyles, children: title }),
-      description ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { style: questionnaireDescriptionStyles, children: description }) : null
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: questionnaireListStyles, children: questions.map((question) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-      QuestionBlock,
-      {
-        onChange: onAnswerChange,
-        question,
-        value: answers[question.id] ?? ""
-      },
-      question.id
-    )) }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: questionnaireFooterStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        "button",
-        {
-          onClick: onCancel,
-          style: questionnaireCancelButtonStyles,
-          type: "button",
-          children: cancelLabel
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        "button",
-        {
-          onClick: onSubmit,
-          style: questionnaireSubmitButtonStyles,
-          type: "button",
-          children: submitLabel
-        }
-      )
-    ] })
-  ] });
-
-  // src/client/ui/src/services/idea-collector-artifact.ts
-  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
-  var extractIdeaCollectorArtifact = (event) => {
-    if (!isRecord3(event)) {
-      return null;
-    }
-    const data = event.data;
-    if (!isRecord3(data) || data.kind !== "structured_output") {
-      return null;
-    }
-    let nextAction = null;
-    if (typeof data.nextAction === "string") {
-      nextAction = data.nextAction;
-    } else if (typeof data.next_action === "string") {
-      nextAction = data.next_action;
-    }
-    if (nextAction !== "finalize") {
-      return null;
-    }
-    const artifact = data.artifact;
-    if (!isRecord3(artifact)) {
-      return null;
-    }
-    const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
-    const virtualSimulationPath = readStringField(artifact, "virtualSimulationPath") ?? readStringField(artifact, "virtual_simulation_path");
-    const ideaMarkdown = readStringField(artifact, "ideaMarkdown") ?? readStringField(artifact, "idea_markdown");
-    const virtualSimulationMarkdown = readStringField(artifact, "virtualSimulationMarkdown") ?? readStringField(artifact, "virtual_simulation_markdown");
-    if (!(ideaPath && ideaMarkdown && virtualSimulationPath && virtualSimulationMarkdown)) {
-      return null;
-    }
-    return {
-      ideaPath,
-      ideaMarkdown,
-      virtualSimulationPath,
-      virtualSimulationMarkdown
-    };
-  };
-
-  // src/client/ui/src/app-host/idea-kickoff-prompt.ts
-  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\n\u041E\u0446\u0435\u043D\u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0447\u0435\u0440\u0435\u0437 assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0434\u0430\u0439 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 (questions), \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E; \u043D\u0430 finalize questions = [].\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md` \u0438 `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md`.";
-
-  // src/client/ui/src/services/idea-collector-fallback-schema.ts
-  var FALLBACK_SCHEMA_JSON = `{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://codeai-hub.local/schemas/idea-collector-schema.json",
-  "title": "Idea Collector \u2014 Structured Output Contract (Slim)",
-  "description": "\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 Structured Output \u0434\u043B\u044F Idea Collector. \u0410\u0433\u0435\u043D\u0442 \u0430\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u0443\u044E \u0430\u043D\u043A\u0435\u0442\u0443, \u043E\u0446\u0435\u043D\u0438\u0432\u0430\u0435\u0442 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0437\u0430\u0434\u0430\u0451\u0442 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430. \u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 (next_action=finalize) \u043E\u0431\u044F\u0437\u0430\u043D \u0432\u0435\u0440\u043D\u0443\u0442\u044C \u0433\u043E\u0442\u043E\u0432\u044B\u0435 Idea.md \u0438 virtual-simulation.md \u043A\u0430\u043A markdown + \u0446\u0435\u043B\u0435\u0432\u044B\u0435 \u043F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F.",
-  "type": "object",
-  "additionalProperties": false,
-  "required": [
-    "next_action",
-    "suggested_response",
-    "reasoning_summary_ru",
-    "assessment",
-    "questions",
-    "artifact"
-  ],
-  "properties": {
-    "next_action": {
-      "type": "string",
-      "description": "\u0427\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435: ask_question | clarify | summarize | finalize."
-    },
-    "suggested_response": {
-      "type": "string",
-      "description": "\u0422\u0435\u043A\u0441\u0442 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F \u0430\u0433\u0435\u043D\u0442\u0430 (\u0432\u043E\u043F\u0440\u043E\u0441/\u0443\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u0435/\u0441\u0432\u043E\u0434\u043A\u0430/\u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u044F), \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u043C \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E."
-    },
-    "reasoning_summary_ru": {
-      "type": "string",
-      "description": "\u041A\u0440\u0430\u0442\u043A\u043E\u0435 \u0440\u0435\u0437\u044E\u043C\u0435 \u043F\u0440\u043E\u0433\u0440\u0435\u0441\u0441\u0430/\u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043D\u0430 \u0440\u0443\u0441\u0441\u043A\u043E\u043C \u0431\u0435\u0437 chain-of-thought."
-    },
-    "assessment": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ready_for_finalize",
-        "confidence_percent",
-        "missing_info",
-        "assumptions",
-        "risks"
-      ],
-      "description": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E\u0441\u0442\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0430\u043D\u043A\u0435\u0442\u044B \u0434\u043B\u044F \u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0438 Idea.md \u0438 virtual-simulation.md.",
-      "properties": {
-        "ready_for_finalize": {
-          "type": "boolean",
-          "description": "\u0413\u043E\u0442\u043E\u0432 \u043B\u0438 \u0430\u0433\u0435\u043D\u0442 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u043F\u0440\u044F\u043C\u043E \u0441\u0435\u0439\u0447\u0430\u0441."
-        },
-        "confidence_percent": {
-          "type": "integer",
-          "description": "\u0423\u0432\u0435\u0440\u0435\u043D\u043D\u043E\u0441\u0442\u044C \u0432 \u043F\u043E\u043B\u043D\u043E\u0442\u0435 \u0434\u0430\u043D\u043D\u044B\u0445 (0\u2013100). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0439 \u043F\u043E\u0440\u043E\u0433 \u0434\u043B\u044F \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438: >= 80."
-        },
-        "missing_info": {
-          "type": "array",
-          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u043F\u0440\u043E\u0431\u0435\u043B\u043E\u0432/\u0434\u0430\u043D\u043D\u044B\u0445, \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442 \u0434\u043B\u044F \u0443\u0432\u0435\u0440\u0435\u043D\u043D\u043E\u0439 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "assumptions": {
-          "type": "array",
-          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u0434\u043E\u043F\u0443\u0449\u0435\u043D\u0438\u0439, \u043D\u0430 \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u0430\u0433\u0435\u043D\u0442 \u0433\u043E\u0442\u043E\u0432 \u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "risks": {
-          "type": "array",
-          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u0440\u0438\u0441\u043A\u043E\u0432/\u0441\u043E\u043C\u043D\u0435\u043D\u0438\u0439 \u043F\u0440\u0438 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438.",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "questions": {
-      "type": "array",
-      "description": "1\u20133 \u0442\u043E\u0447\u0435\u0447\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430, \u0447\u0442\u043E\u0431\u044B \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u043F\u0440\u043E\u0431\u0435\u043B\u044B. \u0414\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0432\u043E\u043F\u0440\u043E\u0441\u044B \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B; \u043D\u0430 finalize \u2014 \u043F\u0443\u0441\u0442\u043E\u0439 \u0441\u043F\u0438\u0441\u043E\u043A.",
-      "items": {
-        "type": "string"
-      }
-    },
-    "artifact": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "\u0424\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B. \u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B \u043F\u0440\u0438 next_action=finalize.",
-      "required": [
-        "idea_markdown",
-        "virtual_simulation_markdown",
-        "idea_path",
-        "virtual_simulation_path"
-      ],
-      "properties": {
-        "idea_markdown": {
-          "type": "string",
-          "description": "\u0413\u043E\u0442\u043E\u0432\u044B\u0439 Idea.md \u043A\u0430\u043A markdown (\u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u0438 \u0432\u0441\u0435 \u0441\u0435\u043A\u0446\u0438\u0438 \u043F\u043E \u0448\u0430\u0431\u043B\u043E\u043D\u0443)."
-        },
-        "virtual_simulation_markdown": {
-          "type": "string",
-          "description": "\u0412\u0438\u0440\u0442\u0443\u0430\u043B\u044C\u043D\u044B\u0439 \u0442\u0435\u0441\u0442 (virtual-simulation.md) \u043A\u0430\u043A markdown \u0441 \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B\u043C\u0438 \u0441\u0435\u043A\u0446\u0438\u044F\u043C\u0438: # Virtual Simulation, \u0426\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, \u0421\u0446\u0435\u043D\u0430\u0440\u0438\u0438, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u041B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044F, \u041C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0430 \u0440\u0438\u0441\u043A\u043E\u0432, Must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0412\u044B\u0432\u043E\u0434\u044B."
-        },
-        "idea_path": {
-          "type": "string",
-          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C Idea.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md)."
-        },
-        "virtual_simulation_path": {
-          "type": "string",
-          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C virtual-simulation.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md)."
-        }
-      }
-    }
-  }
-}`;
-  var IDEA_COLLECTOR_FALLBACK_SCHEMA = JSON.parse(
-    FALLBACK_SCHEMA_JSON
-  );
-
-  // src/client/ui/src/services/idea-collector-schema-utils.ts
-  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
-  var strictifyProperties = (schema) => {
-    const properties = schema.properties;
-    if (!isRecord4(properties)) {
-      return;
-    }
-    schema.required = Object.keys(properties);
-    if (schema.additionalProperties === void 0) {
-      schema.additionalProperties = false;
-    }
-    for (const value of Object.values(properties)) {
-      if (isRecord4(value)) {
-        strictifySchema(value);
-      }
-    }
-  };
-  var strictifyItems = (schema) => {
-    const items = schema.items;
-    if (Array.isArray(items)) {
-      for (const item of items) {
-        if (isRecord4(item)) {
-          strictifySchema(item);
-        }
-      }
-      return;
-    }
-    if (isRecord4(items)) {
-      strictifySchema(items);
-    }
-  };
-  var removeCombinatorsFromProperties = (schema) => {
-    const properties = schema.properties;
-    if (!isRecord4(properties)) {
-      return;
-    }
-    for (const value of Object.values(properties)) {
-      if (isRecord4(value)) {
-        removeCombinators(value);
-      }
-    }
-  };
-  var removeCombinatorsFromItems = (schema) => {
-    const items = schema.items;
-    if (Array.isArray(items)) {
-      for (const item of items) {
-        if (isRecord4(item)) {
-          removeCombinators(item);
-        }
-      }
-      return;
-    }
-    if (isRecord4(items)) {
-      removeCombinators(items);
-    }
-  };
-  var removeCombinators = (schema) => {
-    removeCombinatorsFromProperties(schema);
-    removeCombinatorsFromItems(schema);
-    for (const key of ["allOf", "anyOf", "oneOf"]) {
-      const entries = schema[key];
-      if (!Array.isArray(entries)) {
-        continue;
-      }
-      for (const entry of entries) {
-        if (isRecord4(entry)) {
-          removeCombinators(entry);
-        }
-      }
-      delete schema[key];
-    }
-  };
-  var strictifySchema = (schema) => {
-    removeCombinators(schema);
-    strictifyProperties(schema);
-    strictifyItems(schema);
-  };
-  var injectTemplateIntoSchema = (schema, template) => {
-    if (!template) {
-      return schema;
-    }
-    const properties = schema.properties;
-    if (!isRecord4(properties)) {
-      return schema;
-    }
-    const artifact = properties.artifact;
-    if (!isRecord4(artifact)) {
-      return schema;
-    }
-    const artifactProperties = artifact.properties;
-    if (!isRecord4(artifactProperties)) {
-      return schema;
-    }
-    const ideaMarkdown = artifactProperties.idea_markdown;
-    if (!isRecord4(ideaMarkdown)) {
-      return schema;
-    }
-    const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
-    ideaMarkdown.description = `${description}
-
-Idea.md template:
-${template}`;
-    return schema;
-  };
-  var ALLOWED_SCHEMA_KEYS = /* @__PURE__ */ new Set([
-    "type",
-    "properties",
-    "required",
-    "additionalProperties",
-    "items",
-    "description"
-  ]);
-  var pruneSchemaKeys = (schema) => {
-    for (const key of Object.keys(schema)) {
-      if (!ALLOWED_SCHEMA_KEYS.has(key)) {
-        delete schema[key];
-      }
-    }
-  };
-  var sanitizeSchemaProperties = (schema) => {
-    const properties = schema.properties;
-    if (!isRecord4(properties)) {
-      return;
-    }
-    for (const value of Object.values(properties)) {
-      if (isRecord4(value)) {
-        sanitizeSchemaKeywords(value);
-      }
-    }
-  };
-  var sanitizeSchemaItems = (schema) => {
-    const items = schema.items;
-    if (Array.isArray(items)) {
-      for (const item of items) {
-        if (isRecord4(item)) {
-          sanitizeSchemaKeywords(item);
-        }
-      }
-      return;
-    }
-    if (isRecord4(items)) {
-      sanitizeSchemaKeywords(items);
-    }
-  };
-  var sanitizeSchemaKeywords = (schema) => {
-    pruneSchemaKeys(schema);
-    sanitizeSchemaProperties(schema);
-    sanitizeSchemaItems(schema);
-  };
-  var normalizeIdeaCollectorSchema = (schema, template) => {
-    const next = cloneSchema(schema);
-    strictifySchema(next);
-    sanitizeSchemaKeywords(next);
-    return injectTemplateIntoSchema(next, template);
-  };
+  var import_react12 = __toESM(require_react());
 
   // src/client/ui/src/services/idea-collector-support.ts
   var generateLocalMessageId2 = () => {
@@ -9946,749 +8761,72 @@ ${template}`;
     );
   };
 
-  // src/client/ui/src/services/idea-collector-contract.ts
-  var IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
-  var FALLBACK_OUTPUT_PATHS = {
-    idea: ".codeai-hub/initiatives/unknown-initiative/runs/000-unknown/idea/idea.md",
-    virtualSimulation: ".codeai-hub/initiatives/unknown-initiative/runs/000-unknown/idea/virtual-simulation.md"
-  };
-  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isIdeaContractPayload = (value) => {
-    if (!isRecord5(value)) {
+  // src/client/ui/src/api/orchestrator/runs-client.ts
+  var isRecord2 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRunSummary = (value) => {
+    if (!isRecord2(value)) {
       return false;
     }
-    const outputPaths = value.outputPaths;
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord5(value.schema) && isRecord5(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
+    return typeof value.runId === "string" && typeof value.runSlug === "string" && typeof value.displayName === "string";
   };
-  var fetchIdeaContract = async () => {
-    const httpUrl = resolveCoreHttpUrl();
-    if (!httpUrl) {
+  var parseRunSummary = (value) => {
+    if (!isRunSummary(value)) {
       return null;
     }
-    try {
-      const response = await fetch(joinUrl(httpUrl, IDEA_CONTRACT_ENDPOINT));
-      if (!response.ok) {
-        return null;
-      }
-      const payload = await response.json();
-      if (!isIdeaContractPayload(payload)) {
-        return null;
-      }
-      const schema = normalizeIdeaCollectorSchema(payload.schema, null);
-      const questionnaireTemplateMarkdown = extractIdeaContractQuestionnaireTemplate(payload) ?? null;
-      return {
-        prompt: payload.prompt,
-        schema,
-        outputPaths: payload.outputPaths,
-        questionnaireTemplateMarkdown
-      };
-    } catch {
-      return null;
-    }
-  };
-  var loadIdeaContract = async () => {
-    const remote = await fetchIdeaContract();
-    if (remote) {
-      return remote;
-    }
-    const fallbackSchema = normalizeIdeaCollectorSchema(
-      IDEA_COLLECTOR_FALLBACK_SCHEMA,
-      null
-    );
     return {
-      prompt: IDEA_KICKOFF_PROMPT,
-      schema: fallbackSchema,
-      outputPaths: FALLBACK_OUTPUT_PATHS,
-      questionnaireTemplateMarkdown: null
+      runId: value.runId,
+      runSlug: value.runSlug,
+      displayName: value.displayName,
+      description: typeof value.description === "string" ? value.description : void 0,
+      createdAt: typeof value.createdAt === "string" ? value.createdAt : void 0
     };
   };
-
-  // src/client/ui/src/services/idea-collector-workspace-context.ts
-  var WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
-  var DEFAULT_MAX_BYTES = 3e5;
-  var MAX_FILES = 3;
-  var normalizePathToken = (token) => {
-    const trimmed = token.trim();
-    if (trimmed.length === 0) {
-      return null;
-    }
-    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) {
-      return trimmed.slice(1, -1).trim() || null;
-    }
-    return trimmed;
+  var buildRunsUrl = (httpUrl, workspacePath, initiativeSlug) => {
+    const encodedSlug = encodeURIComponent(initiativeSlug);
+    const url = new URL(
+      joinUrl(httpUrl, `/api/v1/orchestrator/initiatives/${encodedSlug}/runs`)
+    );
+    url.searchParams.set("workspacePath", workspacePath);
+    return url.toString();
   };
-  var parseWorkspaceReadCommand = (content3) => {
-    const trimmed = content3.trimStart();
-    if (!(trimmed.startsWith("/read") || trimmed.startsWith("/attach"))) {
-      return null;
+  var parseRunList = (value) => {
+    if (!isRecord2(value)) {
+      return { runs: [], currentRunId: null };
     }
-    const lines = trimmed.split("\n");
-    const firstLine = lines[0]?.trim() ?? "";
-    const tokens = firstLine.split(/\s+/g);
-    const command = tokens[0];
-    if (!(command === "/read" || command === "/attach")) {
-      return null;
+    const raw = value.runs;
+    const runs = [];
+    if (Array.isArray(raw)) {
+      for (const entry of raw) {
+        const parsed = parseRunSummary(entry);
+        if (parsed) {
+          runs.push(parsed);
+        }
+      }
     }
-    const paths = tokens.slice(1).map((token) => normalizePathToken(token)).filter(Boolean);
-    const remainingMessage = lines.slice(1).join("\n").trim();
-    return { paths, remainingMessage };
+    const currentRunId = typeof value.currentRunId === "string" ? value.currentRunId : null;
+    return { runs, currentRunId };
   };
-  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isWorkspaceFileResponse = (value) => {
-    if (!isRecord6(value)) {
-      return false;
-    }
-    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
-  };
-  var fetchWorkspaceFile = async (sessionId, relativePath) => {
-    const httpUrl = resolveCoreHttpUrl();
-    if (!httpUrl) {
-      return null;
-    }
+  var listRuns = async (httpUrl, workspacePath, initiativeSlug) => {
     try {
-      const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          path: relativePath,
-          maxBytes: DEFAULT_MAX_BYTES
-        })
-      });
+      const response = await fetch(
+        buildRunsUrl(httpUrl, workspacePath, initiativeSlug),
+        { method: "GET" }
+      );
       if (!response.ok) {
-        return null;
+        return {
+          ok: false,
+          error: `Failed to load runs (HTTP ${response.status}).`
+        };
       }
       const payload = await response.json();
-      if (!isWorkspaceFileResponse(payload)) {
-        return null;
-      }
-      return payload;
+      return { ok: true, data: parseRunList(payload) };
     } catch {
-      return null;
-    }
-  };
-  var buildMessageWithWorkspaceContext = async (sessionId, content3) => {
-    const command = parseWorkspaceReadCommand(content3);
-    if (!command) {
-      return null;
-    }
-    if (command.paths.length === 0) {
-      postSystemNotice(
-        sessionId,
-        "\u041A\u043E\u043C\u0430\u043D\u0434\u0430 /read \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043F\u0443\u0442\u044C(\u0438):\n/read doc/Architecture/Architecture.md\n(\u0434\u0430\u043B\u044C\u0448\u0435 \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445 \u043C\u043E\u0436\u043D\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432\u043E\u043F\u0440\u043E\u0441/\u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439)"
-      );
-      return "";
-    }
-    const files = await Promise.all(
-      command.paths.slice(0, MAX_FILES).map(async (relativePath) => ({
-        relativePath,
-        response: await fetchWorkspaceFile(sessionId, relativePath)
-      }))
-    );
-    const resolvedFiles = files.filter((entry) => entry.response);
-    if (resolvedFiles.length === 0) {
-      postSystemNotice(
-        sessionId,
-        "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C \u043D\u0438 \u043E\u0434\u0438\u043D \u0444\u0430\u0439\u043B \u0438\u0437 /read. \u041F\u0440\u043E\u0432\u0435\u0440\u044C \u043F\u0443\u0442\u0438 \u0438 \u0447\u0442\u043E Core \u0437\u0430\u043F\u0443\u0449\u0435\u043D."
-      );
-      return "";
-    }
-    const blocks = [];
-    blocks.push(
-      "\u041A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438\u0437 \u0444\u0430\u0439\u043B\u043E\u0432 (workspace). \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u044D\u0442\u043E \u043A\u0430\u043A \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0438\u0441\u0442\u0438\u043D\u044B \u0434\u043B\u044F \u0442\u0435\u043A\u0443\u0449\u0435\u0433\u043E \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E:"
-    );
-    for (const entry of resolvedFiles) {
-      const payload = entry.response;
-      const truncationNote = payload.truncated ? `
-(\u0444\u0430\u0439\u043B \u043E\u0431\u0440\u0435\u0437\u0430\u043D \u0434\u043E ${payload.maxBytes} \u0431\u0430\u0439\u0442)` : "";
-      blocks.push(
-        `
-[FILE: ${payload.path}]${truncationNote}
-\`\`\`
-${payload.content}
-\`\`\``
-      );
-    }
-    if (command.paths.length > MAX_FILES) {
-      postSystemNotice(
-        sessionId,
-        `\u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0435: \u043F\u0440\u0438\u043A\u0440\u0435\u043F\u043B\u044F\u044E \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C ${MAX_FILES} \u0444\u0430\u0439\u043B\u043E\u0432 \u0437\u0430 \u0440\u0430\u0437.`
-      );
-    }
-    if (command.remainingMessage.length > 0) {
-      blocks.push(`
-\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F:
-${command.remainingMessage}`);
-    } else {
-      blocks.push(
-        "\n\u0414\u0430\u043B\u0435\u0435: \u0443\u0447\u0442\u0438 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438 \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E (\u0437\u0430\u0434\u0430\u0439 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441)."
-      );
-    }
-    return blocks.join("\n");
-  };
-
-  // src/client/ui/src/services/idea-questionnaire-messages.ts
-  var MISSING_IDEA_CONTEXT_MESSAGE = "\u041D\u0435 \u043C\u043E\u0433\u0443 \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443: Core \u0435\u0449\u0435 \u043D\u0435 \u0432\u0435\u0440\u043D\u0443\u043B initiative/run \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442. \u041F\u043E\u0434\u043E\u0436\u0434\u0438\u0442\u0435 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u0412\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB.";
-  var buildQuestionnaireSubmissionMessage = (questionnairePath) => `Before reading the questionnaire, review the documents listed in section "0. \u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u0434\u043B\u044F \u0447\u0442\u0435\u043D\u0438\u044F \u043F\u0435\u0440\u0435\u0434 \u0430\u043D\u043A\u0435\u0442\u043E\u0439" (if any). Then review \`${questionnairePath}\` against the contract, ask any clarifying questions, then wait for OK/approve before finalize.`;
-  var notifyMissingIdeaContext = (sessionId) => {
-    postSystemNotice(sessionId, MISSING_IDEA_CONTEXT_MESSAGE);
-  };
-
-  // src/client/ui/src/services/idea-questionnaire-pending-store.ts
-  var QUESTIONNAIRE_PENDING_STORAGE_PREFIX = "codeai-hub:idea-questionnaire:pending:";
-  var QUESTIONNAIRE_PENDING_STORAGE_VALUE = "1";
-  var buildQuestionnairePendingKey = (sessionId) => `${QUESTIONNAIRE_PENDING_STORAGE_PREFIX}${sessionId}`;
-  var readStorageValue = (key) => {
-    try {
-      return window.localStorage.getItem(key);
-    } catch {
-      return null;
-    }
-  };
-  var writeStorageValue = (key, value) => {
-    try {
-      window.localStorage.setItem(key, value);
-    } catch {
-    }
-  };
-  var removeStorageValue = (key) => {
-    try {
-      window.localStorage.removeItem(key);
-    } catch {
-    }
-  };
-  var isQuestionnairePendingStored = (sessionId) => readStorageValue(buildQuestionnairePendingKey(sessionId)) === QUESTIONNAIRE_PENDING_STORAGE_VALUE;
-  var markQuestionnairePendingStored = (sessionId) => {
-    writeStorageValue(
-      buildQuestionnairePendingKey(sessionId),
-      QUESTIONNAIRE_PENDING_STORAGE_VALUE
-    );
-  };
-  var clearQuestionnairePendingStored = (sessionId) => {
-    removeStorageValue(buildQuestionnairePendingKey(sessionId));
-  };
-
-  // src/client/ui/src/services/idea-collector-service.ts
-  var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var loadContract = () => loadIdeaContract();
-  var _IdeaCollectorService = class _IdeaCollectorService {
-    constructor() {
-      this.contractPromise = null;
-    }
-    isIdeaCollectorSession(sessionId) {
-      if (_IdeaCollectorService.activeSessions.has(sessionId)) {
-        return true;
-      }
-      if (this.isQuestionnairePending(sessionId)) {
-        _IdeaCollectorService.activeSessions.add(sessionId);
-        return true;
-      }
-      return false;
-    }
-    getLatestArtifact(sessionId) {
-      return _IdeaCollectorService.artifacts.get(sessionId) ?? null;
-    }
-    recordAssistantMessage(sessionId, content3) {
-      const trimmed = content3.trim();
-      if (trimmed.length === 0) {
-        return;
-      }
-      _IdeaCollectorService.lastAssistantMessages.set(sessionId, trimmed);
-    }
-    getLastAssistantMessage(sessionId) {
-      return _IdeaCollectorService.lastAssistantMessages.get(sessionId) ?? null;
-    }
-    getOutputPathsForSessionId(sessionId) {
-      return _IdeaCollectorService.outputPathsBySession.get(sessionId) ?? null;
-    }
-    startCollection(sessionId) {
-      _IdeaCollectorService.activeSessions.add(sessionId);
-      this.markQuestionnairePending(sessionId);
-      if (!_IdeaCollectorService.noticesSent.has(sessionId)) {
-        _IdeaCollectorService.noticesSent.add(sessionId);
-        postSystemNotice(
-          sessionId,
-          "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Idea Collector. \u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
-        );
-        postSystemNotice(
-          sessionId,
-          "\u0427\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u044C \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B/\u0444\u0430\u0439\u043B\u044B \u0438\u0437 workspace, \u043C\u043E\u0436\u043D\u043E:\n- \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0438 \u0442\u0440\u0438\u0433\u0433\u0435\u0440 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0439/\u0438\u0437\u0443\u0447\u0438/\u043E\u0437\u043D\u0430\u043A\u043E\u043C\u044C\u0441\u044F\xBB) \u0438 \u0443\u043A\u0430\u0437\u0430\u0442\u044C \u043F\u0443\u0442\u0438 \u043A \u0444\u0430\u0439\u043B\u0430\u043C (\u043C\u043E\u0436\u043D\u043E \u043D\u0430 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445);\n- \u0438\u043B\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u043A\u043E\u043C\u0430\u043D\u0434\u0443:\n/read <relative-path>\n(\u043C\u043E\u0436\u043D\u043E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043F\u0443\u0442\u0435\u0439 \u0432 \u043E\u0434\u043D\u043E\u0439 \u0441\u0442\u0440\u043E\u043A\u0435, \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 3)."
-        );
-      }
-    }
-    async continueConversation(sessionId, content3) {
-      if (!this.isIdeaCollectorSession(sessionId)) {
-        return;
-      }
-      if (this.isQuestionnairePending(sessionId)) {
-        postSystemNotice(
-          sessionId,
-          "\u0410\u043D\u043A\u0435\u0442\u0430 \u0435\u0449\u0451 \u043D\u0435 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0430. \u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
-        );
-        return;
-      }
-      const schema = await this.getNormalizedSchema();
-      const augmentedContent = await buildMessageWithWorkspaceContext(
-        sessionId,
-        content3
-      );
-      if (augmentedContent === "") {
-        return;
-      }
-      sendChatMessage(sessionId, augmentedContent ?? content3, {
-        outputSchema: schema
-      });
-    }
-    async beginQuestionnaireReview(sessionId, content3, outputPathsOverride) {
-      if (!_IdeaCollectorService.activeSessions.has(sessionId)) {
-        _IdeaCollectorService.activeSessions.add(sessionId);
-      }
-      this.clearQuestionnairePending(sessionId);
-      const [prompt, schema] = await Promise.all([
-        this.getPrompt(),
-        this.getNormalizedSchema()
-      ]);
-      const outputPaths = outputPathsOverride;
-      if (!outputPaths) {
-        notifyMissingIdeaContext(sessionId);
-        return;
-      }
-      _IdeaCollectorService.outputPathsBySession.set(sessionId, outputPaths);
-      const promptWithPaths = this.buildPromptWithOutputPaths(
-        prompt,
-        outputPaths
-      );
-      const combinedContent = `${promptWithPaths}
-
-${content3}`;
-      sendChatMessage(sessionId, combinedContent, { outputSchema: schema });
-    }
-    handleStreamEvent(sessionId, event) {
-      if (!_IdeaCollectorService.activeSessions.has(sessionId)) {
-        return;
-      }
-      const artifact = extractIdeaCollectorArtifact(event);
-      if (artifact) {
-        _IdeaCollectorService.artifacts.set(sessionId, artifact);
-        this.persistIdeaArtifacts(sessionId, artifact).catch((error) => {
-          const message = error instanceof Error ? error.message : String(error);
-          postSystemNotice(
-            sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: ${message}`
-          );
-        });
-      }
-    }
-    isQuestionnairePending(sessionId) {
-      if (_IdeaCollectorService.pendingQuestionnaire.has(sessionId)) {
-        return true;
-      }
-      if (isQuestionnairePendingStored(sessionId)) {
-        _IdeaCollectorService.pendingQuestionnaire.add(sessionId);
-        return true;
-      }
-      return false;
-    }
-    getPrompt() {
-      return this.getContract().then((contract) => contract.prompt);
-    }
-    getNormalizedSchema() {
-      return this.getContract().then((contract) => contract.schema);
-    }
-    getQuestionnaireTemplateMarkdown() {
-      return this.getContract().then(
-        (contract) => contract.questionnaireTemplateMarkdown
-      );
-    }
-    getOutputPaths() {
-      return this.getContract().then((contract) => contract.outputPaths);
-    }
-    getOutputPathsForSession(outputPathsOverride) {
-      if (outputPathsOverride) {
-        return Promise.resolve(outputPathsOverride);
-      }
-      return this.getOutputPaths();
-    }
-    getContract() {
-      if (!this.contractPromise) {
-        this.contractPromise = loadContract();
-      }
-      return this.contractPromise;
-    }
-    markQuestionnairePending(sessionId) {
-      _IdeaCollectorService.pendingQuestionnaire.add(sessionId);
-      markQuestionnairePendingStored(sessionId);
-    }
-    clearQuestionnairePending(sessionId) {
-      _IdeaCollectorService.pendingQuestionnaire.delete(sessionId);
-      clearQuestionnairePendingStored(sessionId);
-    }
-    async persistIdeaArtifacts(sessionId, artifact) {
-      const httpUrl = resolveCoreHttpUrl();
-      const outputPaths = _IdeaCollectorService.outputPathsBySession.get(sessionId);
-      const ideaPath = outputPaths?.idea ?? artifact.ideaPath;
-      const virtualSimulationPath = outputPaths?.virtualSimulation ?? artifact.virtualSimulationPath;
-      if (!(ideaPath && virtualSimulationPath)) {
-        postSystemNotice(
-          sessionId,
-          "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C \u043F\u0443\u0442\u0438 \u0434\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F. \u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u044D\u0442\u0430\u043F \u0438 \u043F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0441\u043D\u043E\u0432\u0430."
-        );
-        return;
-      }
-      if (!outputPaths) {
-        _IdeaCollectorService.outputPathsBySession.set(sessionId, {
-          idea: ideaPath,
-          virtualSimulation: virtualSimulationPath
-        });
-      }
-      if (!httpUrl) {
-        postSystemNotice(
-          sessionId,
-          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
-        );
-        return;
-      }
-      try {
-        const response = await fetch(joinUrl(httpUrl, IDEA_ARTIFACT_ENDPOINT), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId,
-            ideaMarkdown: artifact.ideaMarkdown,
-            virtualSimulationMarkdown: artifact.virtualSimulationMarkdown,
-            ideaPath: artifact.ideaPath,
-            virtualSimulationPath: artifact.virtualSimulationPath
-          })
-        });
-        if (!response.ok) {
-          postSystemNotice(
-            sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (HTTP ${response.status}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
-          );
-          return;
-        }
-        const payload = await response.json();
-        const savedIdeaPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : ideaPath;
-        const savedVirtualSimulationPath = isRecord7(payload) && isRecord7(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : virtualSimulationPath;
-        postSystemNotice(
-          sessionId,
-          `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedIdeaPath} \u0438 ${savedVirtualSimulationPath}`
-        );
-      } catch {
-        postSystemNotice(
-          sessionId,
-          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
-        );
-      }
-    }
-    buildPromptWithOutputPaths(prompt, outputPaths) {
-      return `${prompt}
-
-\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 (\u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u0432 Structured Output):
-- idea.md: ${outputPaths.idea}
-- virtual-simulation.md: ${outputPaths.virtualSimulation}`;
-    }
-  };
-  _IdeaCollectorService.activeSessions = /* @__PURE__ */ new Set();
-  _IdeaCollectorService.artifacts = /* @__PURE__ */ new Map();
-  _IdeaCollectorService.noticesSent = /* @__PURE__ */ new Set();
-  _IdeaCollectorService.pendingQuestionnaire = /* @__PURE__ */ new Set();
-  _IdeaCollectorService.lastAssistantMessages = /* @__PURE__ */ new Map();
-  _IdeaCollectorService.outputPathsBySession = /* @__PURE__ */ new Map();
-  var IdeaCollectorService = _IdeaCollectorService;
-
-  // src/client/ui/src/services/idea-questionnaire-template.ts
-  var FIELD_REGEX = /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
-  var HEADING_PREFIX_RE = /^#+\s*/;
-  var HEADING_LINE_RE = /^#+\s+.*$/gm;
-  var HINT_TOKEN_RE = /<[^>\n]{1,80}>/;
-  var normalizeDescription = (value) => {
-    const lines = value.split("\n").map((line) => line.trim()).filter((line) => line.length > 0 && !line.startsWith("<!--"));
-    if (lines.length === 0) {
-      return;
-    }
-    return lines.join("\n");
-  };
-  var resolveFieldMeta = (template, startIndex, fallback) => {
-    const prefix = template.slice(0, startIndex);
-    const headings = Array.from(prefix.matchAll(HEADING_LINE_RE));
-    const lastHeading = headings.at(-1);
-    if (!lastHeading) {
-      return { title: fallback };
-    }
-    const headingIndex = lastHeading.index ?? 0;
-    const headingLine = lastHeading[0] ?? "";
-    const title = headingLine.replace(HEADING_PREFIX_RE, "").trim() || fallback;
-    const descriptionStart = headingIndex + headingLine.length;
-    const description = normalizeDescription(
-      template.slice(descriptionStart, startIndex)
-    );
-    return { title, description };
-  };
-  var isHintLikeAnswer = (value) => {
-    const trimmed = value.trim();
-    if (trimmed.length === 0) {
-      return true;
-    }
-    if (trimmed.startsWith("\u041F\u0440\u0438\u043C\u0435\u0440:") || trimmed.startsWith("Example:")) {
-      return true;
-    }
-    if (HINT_TOKEN_RE.test(trimmed)) {
-      return true;
-    }
-    if (trimmed.split("\n").some((line) => line.trim().startsWith("- <"))) {
-      return true;
-    }
-    if (trimmed.includes("...") && trimmed.includes(":")) {
-      return true;
-    }
-    return false;
-  };
-  var parseIdeaQuestionnaireTemplateFields = (template) => {
-    const questions = [];
-    const placeholders = {};
-    const matches = template.matchAll(FIELD_REGEX);
-    for (const match of matches) {
-      const fieldId = match[1];
-      if (!fieldId || placeholders[fieldId]) {
-        continue;
-      }
-      const placeholder = (match[2] ?? "").trim();
-      const { title, description } = resolveFieldMeta(
-        template,
-        match.index ?? 0,
-        fieldId
-      );
-      placeholders[fieldId] = placeholder;
-      questions.push({
-        id: fieldId,
-        title,
-        description,
-        hint: placeholder.length > 0 ? placeholder : void 0
-      });
-    }
-    return { questions, placeholders };
-  };
-  var extractIdeaQuestionnaireAnswers = (content3, placeholders) => {
-    const answers = {};
-    const matches = content3.matchAll(FIELD_REGEX);
-    for (const match of matches) {
-      const fieldId = match[1];
-      if (!fieldId) {
-        continue;
-      }
-      const candidate = (match[2] ?? "").trim();
-      const placeholder = (placeholders[fieldId] ?? "").trim();
-      answers[fieldId] = candidate === placeholder || isHintLikeAnswer(candidate) ? "" : candidate;
-    }
-    return answers;
-  };
-  var renderIdeaQuestionnaire = (template, placeholders, answers) => template.replace(FIELD_REGEX, (_match, fieldId, fallback) => {
-    const rawAnswer = answers[fieldId] ?? "";
-    const trimmedAnswer = rawAnswer.trim();
-    const placeholder = placeholders[fieldId] ?? String(fallback ?? "").trim();
-    const replacement = trimmedAnswer.length > 0 ? rawAnswer.trimEnd() : placeholder;
-    return `<!-- field:${fieldId} -->
-${replacement}
-<!-- /field -->`;
-  });
-
-  // src/client/ui/src/services/idea-questionnaire-service.ts
-  var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
-  var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
-  var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
-  var SAVE_DEBOUNCE_MS = 400;
-  var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
-  var QUESTIONNAIRE_CLARIFICATIONS_HEADER = "## \u0423\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u044F \u0430\u043D\u043A\u0435\u0442\u044B";
-  var RUN_QUESTIONNAIRE_PATH_RE = /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
-  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isWorkspaceFileResponse2 = (value) => {
-    if (!isRecord8(value)) {
-      return false;
-    }
-    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
-  };
-  var normalizeQuestionnaireContent = (content3) => {
-    if (!content3) {
-      return null;
-    }
-    const trimmed = content3.trim();
-    return trimmed.length > 0 ? content3 : null;
-  };
-  var resolveInitiativeQuestionnairePath = (questionnairePath) => {
-    const match = RUN_QUESTIONNAIRE_PATH_RE.exec(questionnairePath);
-    if (!match) {
-      return null;
-    }
-    return `.codeai-hub/initiatives/${match[1]}/idea/questionnaire.md`;
-  };
-  var appendClarificationToMarkdown = (content3, question, answer) => {
-    const normalizedAnswer = answer.trim();
-    if (normalizedAnswer.length === 0) {
-      return content3;
-    }
-    const normalizedQuestion = question?.trim();
-    const questionLine = normalizedQuestion ? `- \u0412\u043E\u043F\u0440\u043E\u0441: ${normalizedQuestion}` : "- \u0412\u043E\u043F\u0440\u043E\u0441: (\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C)";
-    const base = content3.trimEnd();
-    const withHeader = base.includes(QUESTIONNAIRE_CLARIFICATIONS_HEADER) ? base : `${base}
-
-${QUESTIONNAIRE_CLARIFICATIONS_HEADER}`;
-    return `${withHeader}
-${questionLine}
-  \u041E\u0442\u0432\u0435\u0442: ${normalizedAnswer}
-`;
-  };
-  var IdeaQuestionnaireService = class {
-    constructor() {
-      this.ideaCollector = new IdeaCollectorService();
-      this.saveTimers = /* @__PURE__ */ new Map();
-    }
-    async loadQuestionnaire(sessionId, outputPathsOverride) {
-      const httpUrl = resolveCoreHttpUrl();
-      if (!httpUrl) {
-        return null;
-      }
-      const templateMarkdown = await this.ideaCollector.getQuestionnaireTemplateMarkdown();
-      const outputPaths = outputPathsOverride;
-      if (!outputPaths) {
-        return null;
-      }
-      const template = templateMarkdown && templateMarkdown.trim().length > 0 ? templateMarkdown : DEFAULT_TEMPLATE;
-      const { questions, placeholders } = parseIdeaQuestionnaireTemplateFields(template);
-      const questionnairePath = outputPaths.idea.replace(
-        IDEA_PATH_SUFFIX_RE,
-        "questionnaire.md"
-      );
-      const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(questionnairePath);
-      const existing = await this.fetchWorkspaceFile(
-        sessionId,
-        questionnairePath
-      );
-      const existingContent = normalizeQuestionnaireContent(existing?.content);
-      let content3 = existingContent;
-      if (!content3 && initiativeQuestionnairePath) {
-        const initiativeCopy = await this.fetchWorkspaceFile(
-          sessionId,
-          initiativeQuestionnairePath
-        );
-        content3 = normalizeQuestionnaireContent(initiativeCopy?.content);
-      }
-      const resolvedContent = content3 ?? template;
-      if (!existingContent) {
-        await this.writeWorkspaceFile(
-          sessionId,
-          questionnairePath,
-          resolvedContent
-        );
-      }
-      const answers = extractIdeaQuestionnaireAnswers(
-        resolvedContent,
-        placeholders
-      );
-      return {
-        sessionId,
-        path: questionnairePath,
-        template,
-        placeholders,
-        questions,
-        answers
-      };
-    }
-    renderQuestionnaire(template, placeholders, answers) {
-      return renderIdeaQuestionnaire(template, placeholders, answers);
-    }
-    queueSave(sessionId, path2, content3) {
-      const existing = this.saveTimers.get(sessionId);
-      if (existing) {
-        window.clearTimeout(existing);
-      }
-      const timer = window.setTimeout(() => {
-        this.writeQuestionnaireCopies(sessionId, path2, content3).catch(() => {
-        });
-      }, SAVE_DEBOUNCE_MS);
-      this.saveTimers.set(sessionId, timer);
-    }
-    async flushSave(sessionId, path2, content3) {
-      const existing = this.saveTimers.get(sessionId);
-      if (existing) {
-        window.clearTimeout(existing);
-        this.saveTimers.delete(sessionId);
-      }
-      await this.writeQuestionnaireCopies(sessionId, path2, content3);
-    }
-    async appendClarificationAnswer(sessionId, outputPaths, question, answer) {
-      const questionnairePath = outputPaths.idea.replace(
-        IDEA_PATH_SUFFIX_RE,
-        "questionnaire.md"
-      );
-      const existing = await this.fetchWorkspaceFile(
-        sessionId,
-        questionnairePath
-      );
-      const existingContent = normalizeQuestionnaireContent(existing?.content);
-      if (!existingContent) {
-        return;
-      }
-      const updated = appendClarificationToMarkdown(
-        existingContent,
-        question,
-        answer
-      );
-      if (updated === existingContent) {
-        return;
-      }
-      await this.writeQuestionnaireCopies(sessionId, questionnairePath, updated);
-    }
-    async fetchWorkspaceFile(sessionId, path2) {
-      const httpUrl = resolveCoreHttpUrl();
-      if (!httpUrl) {
-        return null;
-      }
-      try {
-        const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT2), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, path: path2, maxBytes: 2e5 })
-        });
-        if (!response.ok) {
-          return null;
-        }
-        const payload = await response.json();
-        if (!isWorkspaceFileResponse2(payload)) {
-          return null;
-        }
-        return payload;
-      } catch {
-        return null;
-      }
-    }
-    async writeQuestionnaireCopies(sessionId, path2, content3) {
-      await this.writeWorkspaceFile(sessionId, path2, content3);
-      const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(path2);
-      if (initiativeQuestionnairePath && initiativeQuestionnairePath !== path2) {
-        await this.writeWorkspaceFile(
-          sessionId,
-          initiativeQuestionnairePath,
-          content3
-        );
-      }
-    }
-    async writeWorkspaceFile(sessionId, path2, content3) {
-      const httpUrl = resolveCoreHttpUrl();
-      if (!httpUrl) {
-        return;
-      }
-      await fetch(joinUrl(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, path: path2, content: content3 })
-      });
+      return { ok: false, error: "Failed to reach CodeAI Hub core." };
     }
   };
 
   // src/client/ui/src/session/dialog-panel.tsx
-  var import_react6 = __toESM(require_react());
+  var import_react4 = __toESM(require_react());
 
   // node_modules/devlop/lib/default.js
   function ok() {
@@ -12313,11 +10451,11 @@ ${questionLine}
       }
     }
   }
-  function productionCreate(_, jsx41, jsxs39) {
+  function productionCreate(_, jsx43, jsxs41) {
     return create2;
     function create2(_2, type, props, key) {
       const isStaticChildren = Array.isArray(props.children);
-      const fn = isStaticChildren ? jsxs39 : jsx41;
+      const fn = isStaticChildren ? jsxs41 : jsx43;
       return key ? fn(type, props, key) : fn(type, props);
     }
   }
@@ -12562,8 +10700,8 @@ ${questionLine}
   };
 
   // node_modules/react-markdown/lib/index.js
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
-  var import_react5 = __toESM(require_react(), 1);
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
+  var import_react3 = __toESM(require_react(), 1);
 
   // node_modules/mdast-util-to-string/lib/index.js
   var emptyOptions2 = {};
@@ -20226,11 +18364,11 @@ ${questionLine}
     }
     visit(tree, transform);
     return toJsxRuntime(tree, {
-      Fragment: import_jsx_runtime4.Fragment,
+      Fragment: import_jsx_runtime2.Fragment,
       components,
       ignoreInvalidStyle: true,
-      jsx: import_jsx_runtime4.jsx,
-      jsxs: import_jsx_runtime4.jsxs,
+      jsx: import_jsx_runtime2.jsx,
+      jsxs: import_jsx_runtime2.jsxs,
       passKeys: true,
       passNode: true
     });
@@ -23338,7 +21476,7 @@ ${questionLine}
   }
 
   // src/client/ui/src/session/markdown-content.tsx
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   var MarkdownContent = ({
     className,
     content: content3,
@@ -23350,7 +21488,7 @@ ${questionLine}
       ...props
     }) => {
       const { style: _ignoredStyle, ...rest } = props;
-      return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
         "span",
         {
           ...rest,
@@ -23361,14 +21499,14 @@ ${questionLine}
         }
       );
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className, id, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className, id, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
       Markdown,
       {
         components: {
-          a: ({ node: _node, href, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("a", { ...props, href: href ?? "#", rel: "noreferrer", target: "_blank" }),
-          p: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { ...props }),
-          strong: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("strong", { ...props }) : renderPlainText,
-          em: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("em", { ...props }) : renderPlainText
+          a: ({ node: _node, href, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("a", { ...props, href: href ?? "#", rel: "noreferrer", target: "_blank" }),
+          p: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { ...props }),
+          strong: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { ...props }) : renderPlainText,
+          em: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("em", { ...props }) : renderPlainText
         },
         remarkPlugins: [remarkGfm],
         skipHtml: true,
@@ -23379,21 +21517,21 @@ ${questionLine}
   var markdown_content_default = MarkdownContent;
 
   // src/client/ui/src/session/dialog-panel.tsx
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   var AUTO_SCROLL_EPSILON = 32;
   var DialogPanel = ({
     messages,
     providerTheme = null,
     providerLabel = null
   }) => {
-    const scrollContainerRef = (0, import_react6.useRef)(null);
-    const displayMessages = (0, import_react6.useMemo)(
+    const scrollContainerRef = (0, import_react4.useRef)(null);
+    const displayMessages = (0, import_react4.useMemo)(
       () => mergeThinkingMessages(messages),
       [messages]
     );
-    const [expandedThinking, setExpandedThinking] = (0, import_react6.useState)({});
-    const [pinnedToBottom, setPinnedToBottom] = (0, import_react6.useState)(true);
-    (0, import_react6.useEffect)(() => {
+    const [expandedThinking, setExpandedThinking] = (0, import_react4.useState)({});
+    const [pinnedToBottom, setPinnedToBottom] = (0, import_react4.useState)(true);
+    (0, import_react4.useEffect)(() => {
       setExpandedThinking((previous3) => {
         let hasChanges = false;
         const nextState = { ...previous3 };
@@ -23424,7 +21562,7 @@ ${questionLine}
       );
     };
     const messageCount = displayMessages.length;
-    (0, import_react6.useLayoutEffect)(() => {
+    (0, import_react4.useLayoutEffect)(() => {
       if (!pinnedToBottom) {
         return;
       }
@@ -23439,9 +21577,9 @@ ${questionLine}
       container.scrollTop = container.scrollHeight;
     }, [messageCount, pinnedToBottom]);
     if (displayMessages.length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
       "div",
       {
         className: "session-dialog__scroll",
@@ -23452,7 +21590,7 @@ ${questionLine}
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
-            return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+            return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
               ThinkingMessage,
               {
                 className,
@@ -23464,7 +21602,7 @@ ${questionLine}
               message.id
             );
           }
-          return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             StandardMessage,
             {
               className,
@@ -23506,9 +21644,9 @@ ${questionLine}
     onToggle,
     label,
     className
-  }) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("article", { className, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("header", { className: "session-dialog__message-header session-dialog__message-header--thinking", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+  }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("article", { className, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("header", { className: "session-dialog__message-header session-dialog__message-header--thinking", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         "button",
         {
           "aria-controls": `thinking-${message.id}`,
@@ -23520,9 +21658,9 @@ ${questionLine}
           children: expanded ? "\u25BE" : "\u25B8"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-dialog__role", children: label })
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__role", children: label })
     ] }),
-    expanded ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    expanded ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
       markdown_content_default,
       {
         allowEmphasis: false,
@@ -23538,10 +21676,10 @@ ${questionLine}
     className
   }) => {
     const messageDate = new Date(message.createdAt);
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("article", { className, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("header", { className: "session-dialog__message-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-dialog__role", children: label }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("article", { className, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("header", { className: "session-dialog__message-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__role", children: label }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
           "time",
           {
             className: "session-dialog__timestamp",
@@ -23550,7 +21688,7 @@ ${questionLine}
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         markdown_content_default,
         {
           className: "session-dialog__content",
@@ -23581,15 +21719,15 @@ ${message.content}`
   };
 
   // src/client/ui/src/session/empty-state.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
-  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "session-empty", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "session-empty", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
   ] });
   var empty_state_default = EmptyState;
 
   // src/client/ui/src/session/info-panel.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
   var InfoPanel = ({ binding }) => {
     let primaryText = "Session information unavailable";
     let secondaryText = "Provider session state is unknown.";
@@ -23605,19 +21743,551 @@ ${message.content}`
       primaryText = "Session failed to initialize";
       secondaryText = "Provider session ID unavailable. Check CLI logs.";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("section", { className: "session-panel session-info", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-info__text", children: primaryText }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-info__text", title: secondaryTitle, children: secondaryText }) })
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("section", { className: "session-panel session-info", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-info__text", children: primaryText }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-info__text", title: secondaryTitle, children: secondaryText }) })
     ] });
   };
   var info_panel_default = InfoPanel;
 
   // src/client/ui/src/session/input-panel.tsx
-  var import_react8 = __toESM(require_react());
+  var import_react7 = __toESM(require_react());
 
   // src/client/ui/src/session/input-textarea.tsx
-  var import_react7 = __toESM(require_react());
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var import_react6 = __toESM(require_react());
+
+  // src/client/ui/src/session/input-dnd.ts
+  var import_react5 = __toESM(require_react());
+
+  // src/client/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
+  var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
+  var LINE_SPLIT_REGEX = /\r?\n/;
+  var normalizeCandidate = (rawValue) => {
+    const value = rawValue.trim();
+    if (!value) {
+      return null;
+    }
+    if (value.startsWith("file://")) {
+      const withoutScheme = value.replace("file://", "");
+      try {
+        return decodeURIComponent(withoutScheme);
+      } catch {
+        return withoutScheme;
+      }
+    }
+    if (value.startsWith("/") || WINDOWS_PATH_PATTERN.test(value)) {
+      return value;
+    }
+    return null;
+  };
+  var forEachEntry = (raw, handler) => {
+    if (!raw) {
+      return;
+    }
+    const lines = raw.split(LINE_SPLIT_REGEX);
+    for (const line of lines) {
+      if (line.trim()) {
+        handler(line);
+      }
+    }
+  };
+  var extractFilePathsFromDataTransfer = (dataTransfer, options = {}) => {
+    if (!dataTransfer) {
+      return [];
+    }
+    const { logger, debug = false, logPrefix = "[DropDataExtractor]" } = options;
+    const seen = /* @__PURE__ */ new Set();
+    const results = [];
+    const logDebug = (message, ...details) => {
+      if (debug && logger) {
+        logger(`${logPrefix} ${message}`, ...details);
+      }
+    };
+    const acceptCandidate = (candidate, source) => {
+      if (!seen.has(candidate)) {
+        seen.add(candidate);
+        results.push(candidate);
+        logDebug(`accepted ${candidate} from ${source}`);
+      }
+    };
+    const inspectType = (mime) => {
+      try {
+        const payload = dataTransfer.getData(mime);
+        logDebug(`DataTransfer[${mime}]`, payload);
+        return payload;
+      } catch (error) {
+        logDebug(`failed to read DataTransfer[${mime}]`, error);
+        return null;
+      }
+    };
+    const mimeTypes = [
+      "application/vnd.code.uri-list",
+      "text/plain",
+      "text/uri-list"
+    ];
+    for (const mime of mimeTypes) {
+      const payload = inspectType(mime);
+      forEachEntry(payload, (entry) => {
+        const candidate = normalizeCandidate(entry);
+        if (candidate) {
+          acceptCandidate(candidate, mime);
+        } else {
+          logDebug(`ignored entry from ${mime}`, entry);
+        }
+      });
+    }
+    if (dataTransfer.files && dataTransfer.files.length > 0) {
+      for (const file of Array.from(dataTransfer.files)) {
+        const candidate = file.path;
+        if (!candidate) {
+          continue;
+        }
+        const normalised = normalizeCandidate(candidate);
+        if (normalised) {
+          acceptCandidate(normalised, "FileList");
+        } else {
+          logDebug("ignored FileList entry", candidate);
+        }
+      }
+    }
+    logDebug("extraction result", results);
+    return results;
+  };
+
+  // src/client/ui/src/modules/drag-drop-module/drag-drop-handler.ts
+  var DragDropHandler = class {
+    constructor(options = {}) {
+      this.container = null;
+      this.callbacks = {};
+      this.logger = options.logger;
+      this.handleDragEnter = this.handleDragEnter.bind(this);
+      this.handleDragOver = this.handleDragOver.bind(this);
+      this.handleDragLeave = this.handleDragLeave.bind(this);
+      this.handleDrop = this.handleDrop.bind(this);
+    }
+    attach(container, callbacks) {
+      this.container = container;
+      this.callbacks = callbacks;
+      container.addEventListener("dragenter", this.handleDragEnter);
+      container.addEventListener("dragover", this.handleDragOver);
+      container.addEventListener("dragleave", this.handleDragLeave);
+      container.addEventListener("drop", this.handleDrop);
+    }
+    detach() {
+      if (!this.container) {
+        return;
+      }
+      this.container.removeEventListener("dragenter", this.handleDragEnter);
+      this.container.removeEventListener("dragover", this.handleDragOver);
+      this.container.removeEventListener("dragleave", this.handleDragLeave);
+      this.container.removeEventListener("drop", this.handleDrop);
+      this.container = null;
+      this.callbacks = {};
+    }
+    handleDragEnter(event) {
+      if (!event.shiftKey) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      this.callbacks.onDragEnter?.(true);
+      this.logger?.("dragenter", event.dataTransfer?.types ?? []);
+    }
+    handleDragOver(event) {
+      if (!event.shiftKey) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    handleDragLeave(event) {
+      const relatedTarget = event.relatedTarget;
+      if (this.container && relatedTarget && this.container.contains(relatedTarget)) {
+        return;
+      }
+      this.callbacks.onDragLeave?.();
+    }
+    handleDrop(event) {
+      if (!event.shiftKey) {
+        return;
+      }
+      event.preventDefault();
+      const filePaths = extractFilePathsFromDataTransfer(event.dataTransfer, {
+        debug: Boolean(this.logger),
+        logger: this.logger,
+        logPrefix: "[DragDropHandler]"
+      });
+      if (filePaths.length > 0) {
+        this.callbacks.onFileDrop?.(filePaths);
+      } else {
+        this.callbacks.onFallbackRequest?.();
+      }
+      this.callbacks.onDragLeave?.();
+    }
+  };
+
+  // src/client/ui/src/modules/drag-drop-module/file-path-processor.ts
+  var WINDOWS_PATH_PATTERN2 = /^[a-zA-Z]:\\/;
+  var WINDOWS_POSIX_PATTERN = /^[a-zA-Z]:\//;
+  var FilePathProcessor = class {
+    constructor() {
+      this.lastInsertedPath = "";
+      this.lastInsertTime = 0;
+      this.duplicateThresholdMs = 1e3;
+    }
+    formatPaths(paths) {
+      if (paths.length === 0) {
+        return "";
+      }
+      const formattedPaths = paths.map((path2) => `"${path2}"`).join("\n");
+      return `${formattedPaths}
+`;
+    }
+    mergePaths(currentValue, formattedPaths) {
+      if (!formattedPaths) {
+        return currentValue;
+      }
+      if (currentValue && !currentValue.endsWith("\n")) {
+        return `${currentValue}
+${formattedPaths}`;
+      }
+      return currentValue + formattedPaths;
+    }
+    isDuplicate(path2) {
+      const now = Date.now();
+      return path2 === this.lastInsertedPath && now - this.lastInsertTime < this.duplicateThresholdMs;
+    }
+    recordInsertion(path2) {
+      this.lastInsertedPath = path2;
+      this.lastInsertTime = Date.now();
+    }
+    processSinglePath(path2, currentValue) {
+      if (!this.isValidPath(path2) || this.isDuplicate(path2)) {
+        return null;
+      }
+      this.recordInsertion(path2);
+      const formatted = this.formatPaths([path2]);
+      return this.mergePaths(currentValue, formatted);
+    }
+    processMultiplePaths(paths, currentValue) {
+      if (paths.length === 0) {
+        return null;
+      }
+      const validPaths = paths.filter((path2) => this.isValidPath(path2));
+      if (validPaths.length === 0) {
+        return null;
+      }
+      this.recordInsertion(validPaths[0]);
+      const formatted = this.formatPaths(validPaths);
+      return this.mergePaths(currentValue, formatted);
+    }
+    clear() {
+      this.lastInsertedPath = "";
+      this.lastInsertTime = 0;
+    }
+    isValidPath(path2) {
+      if (!path2) {
+        return false;
+      }
+      return path2.startsWith("/") || WINDOWS_PATH_PATTERN2.test(path2) || WINDOWS_POSIX_PATTERN.test(path2);
+    }
+  };
+
+  // src/client/ui/src/modules/drag-drop-module/message-handler.ts
+  var isRecord3 = (value) => typeof value === "object" && value !== null;
+  var MessageHandler = class {
+    constructor(logger) {
+      this.callbacks = {};
+      this.messageListener = null;
+      this.logger = logger;
+    }
+    startListening(callbacks) {
+      this.callbacks = callbacks;
+      this.messageListener = (event) => {
+        this.handleMessage(event.data);
+      };
+      window.addEventListener("message", this.messageListener);
+      this.logger?.("message-handler:start");
+    }
+    stopListening() {
+      if (this.messageListener) {
+        window.removeEventListener("message", this.messageListener);
+        this.messageListener = null;
+      }
+      this.callbacks = {};
+      this.logger?.("message-handler:stop");
+    }
+    requestFilePathGrab() {
+      const timestamp = Date.now();
+      this.sendMessage("grabFilePathFromDrop", { timestamp });
+    }
+    clearClipboards() {
+      this.sendMessage("clearAllClipboards");
+    }
+    sendMessage(command, payload) {
+      const message = { command };
+      if (payload) {
+        Object.assign(message, payload);
+      }
+      this.logger?.("message-handler:send", command, payload ?? null);
+      vscode_default.postMessage(message);
+    }
+    handleMessage(message) {
+      if (!isRecord3(message) || typeof message.command !== "string") {
+        return;
+      }
+      if (message.command === "insertPath") {
+        this.handleInsertPath(
+          typeof message.path === "string" ? message.path : ""
+        );
+        return;
+      }
+      if (message.command === "clipboardContent") {
+        this.handleClipboardContent(
+          typeof message.content === "string" ? message.content : ""
+        );
+      }
+    }
+    handleInsertPath(path2) {
+      if (!path2) {
+        return;
+      }
+      this.logger?.("message-handler:insert-path", path2);
+      this.callbacks.onPathInsert?.(path2);
+      this.clearClipboards();
+    }
+    handleClipboardContent(content3) {
+      if (!content3) {
+        return;
+      }
+      this.logger?.("message-handler:clipboard", content3);
+      this.callbacks.onClipboardContent?.(content3);
+      this.clearClipboards();
+    }
+  };
+
+  // src/client/ui/src/modules/drag-drop-module/drag-drop-facade.ts
+  var DragDropFacade = class {
+    constructor(logger) {
+      this.config = null;
+      this.isDragging = false;
+      this.dragHandler = new DragDropHandler({ logger });
+      this.pathProcessor = new FilePathProcessor();
+      this.messageHandler = new MessageHandler(logger);
+    }
+    initialize(config) {
+      this.config = config;
+      const callbacks = {
+        onDragEnter: (isShiftPressed) => this.handleDragEnter(isShiftPressed),
+        onDragLeave: () => this.handleDragLeave(),
+        onFileDrop: (paths) => this.handleFileDrop(paths),
+        onFallbackRequest: () => this.handleFallbackRequest()
+      };
+      this.dragHandler.attach(config.container, callbacks);
+      this.messageHandler.startListening({
+        onPathInsert: (path2) => this.handlePathInsert(path2),
+        onClipboardContent: (content3) => this.handleClipboardContent(content3)
+      });
+    }
+    destroy() {
+      this.dragHandler.detach();
+      this.messageHandler.stopListening();
+      this.pathProcessor.clear();
+      this.config = null;
+      this.isDragging = false;
+    }
+    getIsDragging() {
+      return this.isDragging;
+    }
+    handleDragEnter(isShiftPressed) {
+      if (!isShiftPressed) {
+        return;
+      }
+      this.isDragging = true;
+      this.config?.onDragStateChange?.(true);
+    }
+    handleDragLeave() {
+      this.isDragging = false;
+      this.config?.onDragStateChange?.(false);
+    }
+    handleFileDrop(paths) {
+      if (!this.config) {
+        return;
+      }
+      const currentValue = this.config.getCurrentValue();
+      const newValue = this.pathProcessor.processMultiplePaths(
+        paths,
+        currentValue
+      );
+      if (newValue !== null) {
+        this.config.onValueChange(newValue);
+      }
+    }
+    handleFallbackRequest() {
+      this.messageHandler.requestFilePathGrab();
+    }
+    handlePathInsert(path2) {
+      if (!this.config) {
+        return;
+      }
+      const currentValue = this.config.getCurrentValue();
+      if (path2.includes('"') && path2.includes("\n")) {
+        const mergedValue = currentValue ? `${currentValue}
+${path2}` : path2;
+        this.config.onValueChange(mergedValue);
+        return;
+      }
+      const newValue = this.pathProcessor.processSinglePath(path2, currentValue);
+      if (newValue !== null) {
+        this.config.onValueChange(newValue);
+      }
+    }
+    handleClipboardContent(content3) {
+      if (!this.config) {
+        return;
+      }
+      const currentValue = this.config.getCurrentValue();
+      const newValue = this.pathProcessor.processSinglePath(
+        content3,
+        currentValue
+      );
+      if (newValue !== null) {
+        this.config.onValueChange(newValue);
+      }
+    }
+  };
+
+  // src/client/ui/src/session/input-dnd.ts
+  var DEFAULT_DRAG_OVERLAY_LABEL = "Drop files here while holding Shift";
+  var useInputDragDrop = ({
+    containerRef,
+    textareaRef,
+    onValueChange
+  }) => {
+    const [isDragging, setIsDragging] = (0, import_react5.useState)(false);
+    const dragDropFacadeRef = (0, import_react5.useRef)(null);
+    (0, import_react5.useEffect)(() => {
+      const container = containerRef.current;
+      const textarea = textareaRef.current;
+      if (!(container && textarea)) {
+        return;
+      }
+      const dragDropFacade = new DragDropFacade();
+      dragDropFacadeRef.current = dragDropFacade;
+      dragDropFacade.initialize({
+        container,
+        onValueChange,
+        getCurrentValue: () => textarea.value,
+        onDragStateChange: setIsDragging
+      });
+      return () => {
+        dragDropFacade.destroy();
+        dragDropFacadeRef.current = null;
+      };
+    }, [containerRef, onValueChange, textareaRef]);
+    return { isDragging };
+  };
+
+  // src/client/ui/src/session/input-panel-clipboard.ts
+  var handlePlainTextPaste = (event, insertText) => {
+    const dataTransfer = event.clipboardData;
+    if (!dataTransfer) {
+      return false;
+    }
+    const plainText = dataTransfer.getData("text/plain");
+    if (plainText) {
+      event.preventDefault();
+      insertText(plainText);
+      return true;
+    }
+    if (typeof dataTransfer.items !== "undefined") {
+      const stringItem = Array.from(dataTransfer.items).find(
+        (item) => item.kind === "string"
+      );
+      if (stringItem) {
+        event.preventDefault();
+        stringItem.getAsString((text7) => {
+          if (text7) {
+            insertText(text7);
+          }
+        });
+        return true;
+      }
+    }
+    return false;
+  };
+  var tryReadFromNavigator = async (insertText) => {
+    if (typeof navigator === "undefined" || !navigator.clipboard || typeof navigator.clipboard.readText !== "function") {
+      return false;
+    }
+    try {
+      const text7 = await navigator.clipboard.readText();
+      if (text7) {
+        insertText(text7);
+        return true;
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  };
+  var copySelectionToClipboard = (event, textarea, selection) => {
+    if (event.clipboardData) {
+      event.preventDefault();
+      event.clipboardData.setData("text/plain", selection);
+      return;
+    }
+    if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      event.preventDefault();
+      navigator.clipboard.writeText(selection).catch(() => {
+      });
+      return;
+    }
+    textarea.select();
+  };
+  var createClipboardHandlers = ({
+    textareaRef,
+    insertTextAtSelection,
+    syncTextareaValue
+  }) => {
+    const handlePaste = (event) => {
+      const handled = handlePlainTextPaste(event, insertTextAtSelection);
+      if (handled) {
+        return;
+      }
+      tryReadFromNavigator(insertTextAtSelection).then((success) => {
+        if (success) {
+          return;
+        }
+        requestAnimationFrame(syncTextareaValue);
+      }).catch(() => {
+        requestAnimationFrame(syncTextareaValue);
+      });
+    };
+    const handleCopy = (event) => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      const start2 = textarea.selectionStart ?? 0;
+      const end = textarea.selectionEnd ?? 0;
+      if (start2 === end) {
+        return;
+      }
+      const selection = textarea.value.slice(start2, end);
+      if (!selection) {
+        return;
+      }
+      copySelectionToClipboard(event, textarea, selection);
+    };
+    return {
+      handlePaste,
+      handleCopy
+    };
+  };
+
+  // src/client/ui/src/session/input-textarea.tsx
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   var DEFAULT_CLASSES = {
     container: "",
     containerDragging: "",
@@ -23635,7 +22305,7 @@ ${message.content}`
     const targetHeight = typeof maxHeight === "number" ? Math.min(scrollHeight, maxHeight) : scrollHeight;
     element3.style.height = `${targetHeight}px`;
   };
-  var focusTextareaEnd2 = (textarea) => {
+  var focusTextareaEnd = (textarea) => {
     if (!textarea) {
       return;
     }
@@ -23654,15 +22324,15 @@ ${message.content}`
     overlayLabel = DEFAULT_DRAG_OVERLAY_LABEL,
     classes
   }) => {
-    const [isFocused, setIsFocused] = (0, import_react7.useState)(false);
-    const textareaRef = (0, import_react7.useRef)(null);
-    const dropContainerRef = (0, import_react7.useRef)(null);
+    const [isFocused, setIsFocused] = (0, import_react6.useState)(false);
+    const textareaRef = (0, import_react6.useRef)(null);
+    const dropContainerRef = (0, import_react6.useRef)(null);
     const resolvedClasses = { ...DEFAULT_CLASSES, ...classes };
-    const applyExternalValue = (0, import_react7.useCallback)(
+    const applyExternalValue = (0, import_react6.useCallback)(
       (newValue) => {
         onValueChange(newValue);
         requestAnimationFrame(() => {
-          focusTextareaEnd2(textareaRef.current);
+          focusTextareaEnd(textareaRef.current);
           adjustTextareaHeight(textareaRef.current, maxHeight);
         });
       },
@@ -23673,13 +22343,13 @@ ${message.content}`
       textareaRef,
       onValueChange: applyExternalValue
     });
-    const handleChange = (0, import_react7.useCallback)(
+    const handleChange = (0, import_react6.useCallback)(
       (event) => {
         onValueChange(event.target.value);
       },
       [onValueChange]
     );
-    const handleKeyDown = (0, import_react7.useCallback)(
+    const handleKeyDown = (0, import_react6.useCallback)(
       (event) => {
         if (!onSubmit || event.key !== "Enter") {
           return;
@@ -23696,7 +22366,7 @@ ${message.content}`
       },
       [onSubmit]
     );
-    const insertTextAtSelection = (0, import_react7.useCallback)(
+    const insertTextAtSelection = (0, import_react6.useCallback)(
       (text7) => {
         const textarea = textareaRef.current;
         if (!textarea) {
@@ -23719,14 +22389,14 @@ ${message.content}`
       },
       [maxHeight, onValueChange]
     );
-    const syncTextareaValue = (0, import_react7.useCallback)(() => {
+    const syncTextareaValue = (0, import_react6.useCallback)(() => {
       const textarea = textareaRef.current;
       if (!textarea) {
         return;
       }
       onValueChange(textarea.value);
     }, [onValueChange]);
-    const { handlePaste, handleCopy } = (0, import_react7.useMemo)(
+    const { handlePaste, handleCopy } = (0, import_react6.useMemo)(
       () => createClipboardHandlers({
         textareaRef,
         insertTextAtSelection,
@@ -23734,7 +22404,7 @@ ${message.content}`
       }),
       [insertTextAtSelection, syncTextareaValue]
     );
-    (0, import_react7.useEffect)(() => {
+    (0, import_react6.useEffect)(() => {
       const nextValue = value;
       requestAnimationFrame(() => {
         const textarea = textareaRef.current;
@@ -23752,8 +22422,8 @@ ${message.content}`
       resolvedClasses.textarea,
       isFocused ? resolvedClasses.textareaFocused : ""
     ].filter(Boolean).join(" ");
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: containerClassName, ref: dropContainerRef, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: containerClassName, ref: dropContainerRef, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         "textarea",
         {
           "aria-multiline": "true",
@@ -23770,19 +22440,19 @@ ${message.content}`
           value
         }
       ),
-      isDragging && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("output", { className: resolvedClasses.overlay, children: overlayLabel })
+      isDragging && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("output", { className: resolvedClasses.overlay, children: overlayLabel })
     ] });
   };
 
   // src/client/ui/src/session/input-panel.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   var MAX_TEXTAREA_HEIGHT = 200;
   var InputPanel = ({ draft, onSubmit }) => {
-    const [value, setValue] = (0, import_react8.useState)(draft);
-    (0, import_react8.useEffect)(() => {
+    const [value, setValue] = (0, import_react7.useState)(draft);
+    (0, import_react7.useEffect)(() => {
       setValue(draft);
     }, [draft]);
-    const sendMessage = (0, import_react8.useCallback)(() => {
+    const sendMessage = (0, import_react7.useCallback)(() => {
       const trimmed = value.trim();
       if (!trimmed) {
         return;
@@ -23790,21 +22460,21 @@ ${message.content}`
       onSubmit(trimmed);
       setValue("");
     }, [onSubmit, value]);
-    const handleSubmit = (0, import_react8.useCallback)(
+    const handleSubmit = (0, import_react7.useCallback)(
       (event) => {
         event.preventDefault();
         sendMessage();
       },
       [sendMessage]
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
       "form",
       {
         "aria-label": "Message input",
         className: "session-input session-panel",
         onSubmit: handleSubmit,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
             InputTextarea,
             {
               classes: {
@@ -23821,7 +22491,7 @@ ${message.content}`
               value
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
         ]
       }
     );
@@ -23829,7 +22499,7 @@ ${message.content}`
   var input_panel_default = InputPanel;
 
   // src/client/ui/src/session/session-tabs.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   var SessionTabs = ({
     sessions,
     providerLabels,
@@ -23840,7 +22510,7 @@ ${message.content}`
     if (sessions.length === 0) {
       return null;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
       const isActive = session.id === activeSessionId;
       const providerNames = session.providerIds.map((providerId) => {
         const label = providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);
@@ -23871,8 +22541,8 @@ ${message.content}`
         isActive ? "session-tab--active" : null,
         tabProviderTheme ? `session-tab--${tabProviderTheme}` : null
       ].filter(Boolean).join(" ");
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: tabClassName, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: tabClassName, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
           "button",
           {
             "aria-label": `Activate session for ${spokenSummary}`,
@@ -23880,13 +22550,13 @@ ${message.content}`
             onClick: () => onSelect(session.id),
             title: fullSummary,
             type: "button",
-            children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "session-tab__providers", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
-              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
+            children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { className: "session-tab__providers", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
+              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
             ] })
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
           "button",
           {
             "aria-label": `Close session for ${spokenSummary}`,
@@ -23902,7 +22572,7 @@ ${message.content}`
   var session_tabs_default = SessionTabs;
 
   // src/client/ui/src/session/status-panel.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var MAX_PERCENTAGE = 100;
   var MIN_TOKEN_LIMIT = 1;
   var PERCENT_SCALE = 100;
@@ -23913,12 +22583,12 @@ ${message.content}`
     connectionDetail
   }) => {
     if (!status || connectionStatus !== "ready") {
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "session-status session-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-status__row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-status__label", children: SUPERVISOR_LABEL }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-status__value", children: describeConnectionStatus(connectionStatus) })
+      return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { className: "session-status session-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "session-status__row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-status__label", children: SUPERVISOR_LABEL }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-status__value", children: describeConnectionStatus(connectionStatus) })
         ] }),
-        connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-status__row session-status__row--muted", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-status__value", children: connectionDetail }) }) : null
+        connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "session-status__row session-status__row--muted", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-status__value", children: connectionDetail }) }) : null
       ] });
     }
     const { providerSummary, tokenUsage } = status;
@@ -23928,18 +22598,18 @@ ${message.content}`
         tokenUsage.used / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT) * PERCENT_SCALE
       )
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "session-status session-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-status__label", children: "Providers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-status__value", children: providerSummary })
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { className: "session-status session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-status__label", children: "Providers" }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-status__value", children: providerSummary })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-status__row session-status__row--muted", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-status__label", children: "Status" }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-status__value", children: "Inactive or degraded providers are disabled in the picker." })
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "session-status__row session-status__row--muted", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-status__label", children: "Status" }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-status__value", children: "Inactive or degraded providers are disabled in the picker." })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-status__row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "session-status__label", children: "Tokens" }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "session-status__value", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "session-status__row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-status__label", children: "Tokens" }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "session-status__value", children: [
           tokenUsage.used.toLocaleString(),
           " /",
           " ",
@@ -23964,26 +22634,26 @@ ${message.content}`
   };
 
   // src/client/ui/src/session/todo-panel.tsx
-  var import_react9 = __toESM(require_react());
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var import_react8 = __toESM(require_react());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   var TodoPanel = ({ items, onToggle }) => {
-    const [showActiveOnly, setShowActiveOnly] = (0, import_react9.useState)(false);
-    const completedCount = (0, import_react9.useMemo)(
+    const [showActiveOnly, setShowActiveOnly] = (0, import_react8.useState)(false);
+    const completedCount = (0, import_react8.useMemo)(
       () => items.filter((item) => item.completed).length,
       [items]
     );
-    const visibleItems = (0, import_react9.useMemo)(
+    const visibleItems = (0, import_react8.useMemo)(
       () => showActiveOnly ? items.filter((item) => !item.completed) : [...items],
       [items, showActiveOnly]
     );
     const handleToggleFilter = () => {
       setShowActiveOnly((previous3) => !previous3);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("section", { className: "session-todos session-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("header", { className: "session-todos__header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-todos__title-group", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("section", { className: "session-todos session-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("header", { className: "session-todos__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-todos__title-group", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h2", { className: "session-todos__title", children: "Session TODO" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             "button",
             {
               "aria-label": showActiveOnly ? "Show all tasks" : "Show only active tasks",
@@ -23991,21 +22661,21 @@ ${message.content}`
               className: showActiveOnly ? "session-todos__toggle session-todos__toggle--active" : "session-todos__toggle",
               onClick: handleToggleFilter,
               type: "button",
-              children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { "aria-hidden": true, className: "session-todos__toggle-icon", children: "\u25BE" })
+              children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { "aria-hidden": true, className: "session-todos__toggle-icon", children: "\u25BE" })
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "session-todos__counter", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "session-todos__counter", children: [
           completedCount,
           "/",
           items.length,
           " done"
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("ul", { className: "session-todos__list", children: visibleItems.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("li", { className: "session-todos__empty", children: "All tasks complete" }) : visibleItems.map((item) => {
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("ul", { className: "session-todos__list", children: visibleItems.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("li", { className: "session-todos__empty", children: "All tasks complete" }) : visibleItems.map((item) => {
         const textClassName = item.completed ? "session-todos__text session-todos__text--completed" : "session-todos__text";
-        return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { className: "session-todos__label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("li", { className: "session-todos__item", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "session-todos__label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             "input",
             {
               checked: item.completed,
@@ -24013,7 +22683,7 @@ ${message.content}`
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: textClassName, children: item.title })
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: textClassName, children: item.title })
         ] }) }, item.id);
       }) })
     ] });
@@ -24021,7 +22691,7 @@ ${message.content}`
   var todo_panel_default = TodoPanel;
 
   // src/client/ui/src/session/session-view.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   var SessionView = ({
     sessions,
     providerLabels,
@@ -24043,11 +22713,11 @@ ${message.content}`
     const providerTheme = mapProviderTheme(primaryProviderId);
     const providerDisplayLabel = primaryProviderId != null ? providerLabels.get(primaryProviderId) ?? getDefaultProviderTitle(primaryProviderId) : null;
     if (sessions.length === 0 && showEmptyState) {
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(empty_state_default, {}) });
+      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(empty_state_default, {}) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-app", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-app__header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app__header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           session_tabs_default,
           {
             activeSessionId,
@@ -24057,10 +22727,10 @@ ${message.content}`
             sessions
           }
         ),
-        activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(info_panel_default, { binding: activeSession.binding }) : null
+        activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(info_panel_default, { binding: activeSession.binding }) : null
       ] }),
-      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-app__content", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app__content", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           dialog_panel_default,
           {
             messages: activeSession.messages,
@@ -24068,22 +22738,22 @@ ${message.content}`
             providerTheme
           }
         ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-app__rails", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app__rails", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             todo_panel_default,
             {
               items: activeSession.todos,
               onToggle: (todoId) => onToggleTodo(activeSessionId, todoId)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             input_panel_default,
             {
               draft: activeSession.draft,
               onSubmit: (text7) => onSendMessage(activeSessionId, text7)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             status_panel_default,
             {
               connectionDetail: coreConnectionDetail,
@@ -24097,8 +22767,133 @@ ${message.content}`
   };
   var session_view_default = SessionView;
 
+  // src/client/ui/src/app-host/description-run-picker.tsx
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var RunPickerView = ({
+    visible,
+    mode,
+    runs,
+    isEmpty,
+    status,
+    onCancel,
+    onCreateNew,
+    onShowList,
+    onBack,
+    onSelectRun
+  }) => {
+    if (!visible) {
+      return null;
+    }
+    if (mode === "choice") {
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+        "section",
+        {
+          "aria-labelledby": "description-run-picker-heading",
+          className: "provider-picker",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              "h2",
+              {
+                className: "provider-picker__title",
+                id: "description-run-picker-heading",
+                children: "Describe initiative"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "provider-picker__description", children: "Choose how you want to proceed." }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "provider-picker__actions", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: "Start a new variant or refine an existing description." }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "provider-picker__action-buttons", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+                  "button",
+                  {
+                    className: "provider-picker__secondary",
+                    onClick: onCancel,
+                    type: "button",
+                    children: "Cancel"
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+                  "button",
+                  {
+                    className: "provider-picker__secondary",
+                    onClick: onShowList,
+                    type: "button",
+                    children: "Refine existing"
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+                  "button",
+                  {
+                    className: "provider-picker__primary",
+                    onClick: onCreateNew,
+                    type: "button",
+                    children: "Create new description"
+                  }
+                )
+              ] })
+            ] })
+          ]
+        }
+      );
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+      "section",
+      {
+        "aria-labelledby": "description-run-picker-list-heading",
+        className: "provider-picker",
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            "h2",
+            {
+              className: "provider-picker__title",
+              id: "description-run-picker-list-heading",
+              children: "Refine existing descriptions"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "provider-picker__description", children: "Pick a run to continue." }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "provider-picker__options", children: [
+            runs.map((run) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              "button",
+              {
+                className: "provider-picker__option",
+                onClick: () => onSelectRun(run.runSlug),
+                type: "button",
+                children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "provider-picker__label", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "provider-picker__label-title", children: run.runSlug }) })
+              },
+              run.runSlug
+            )),
+            isEmpty ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "provider-picker__status", children: "No description runs yet." }) : null
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "provider-picker__actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: status ?? "Select a run to continue." }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "provider-picker__action-buttons", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+                "button",
+                {
+                  className: "provider-picker__secondary",
+                  onClick: onBack,
+                  type: "button",
+                  children: "Back"
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+                "button",
+                {
+                  className: "provider-picker__secondary",
+                  onClick: onCancel,
+                  type: "button",
+                  children: "Cancel"
+                }
+              )
+            ] })
+          ] })
+        ]
+      }
+    );
+  };
+
   // src/client/ui/src/components/flow-wizard/flow-stage.tsx
-  var import_react10 = __toESM(require_react());
+  var import_react9 = __toESM(require_react());
 
   // src/client/ui/src/components/flow-wizard/styles.ts
   var flowWizardContainerStyles = {
@@ -24170,7 +22965,7 @@ ${message.content}`
   };
 
   // src/client/ui/src/components/flow-wizard/flow-stage.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   var FlowStage = ({
     id,
     title,
@@ -24179,8 +22974,8 @@ ${message.content}`
     disabled,
     onStageClick
   }) => {
-    const [hovered, setHovered] = (0, import_react10.useState)(false);
-    const [focused, setFocused] = (0, import_react10.useState)(false);
+    const [hovered, setHovered] = (0, import_react9.useState)(false);
+    const [focused, setFocused] = (0, import_react9.useState)(false);
     const interactive = !disabled;
     const showHoverStyles = interactive && (hovered || focused);
     let hoverStyles = {};
@@ -24199,7 +22994,7 @@ ${message.content}`
       }
       onStageClick(id);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
       "button",
       {
         "aria-current": active ? "step" : void 0,
@@ -24221,15 +23016,15 @@ ${message.content}`
         style: buttonStyles5,
         type: "button",
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { style: flowStageTitleStyles, children: title }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: flowStageSubtitleStyles, children: subtitle })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { style: flowStageTitleStyles, children: title }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { style: flowStageSubtitleStyles, children: subtitle })
         ]
       }
     );
   };
 
   // src/client/ui/src/components/flow-wizard/index.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var STAGES = [
     { id: "chat", title: "Simple Chat", subtitle: "Just talk to the assistant" },
     { id: "idea", title: "Idea", subtitle: "Collect requirements" },
@@ -24243,17 +23038,17 @@ ${message.content}`
     disabledStages
   }) => {
     const headingStyles = flowWizardHeadingStyles;
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
       "section",
       {
         "aria-label": "Development flow wizard",
         style: flowWizardContainerStyles,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { style: headingStyles, children: "Start" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: flowWizardStagesRowStyles, children: STAGES.map((stage) => {
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { style: headingStyles, children: "Start" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: flowWizardStagesRowStyles, children: STAGES.map((stage) => {
             const active = stage.id === activeStage;
             const disabled = disabledStages?.has(stage.id) ?? false;
-            return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
               FlowStage,
               {
                 active,
@@ -24272,7 +23067,7 @@ ${message.content}`
   };
 
   // src/client/ui/src/app-host/flow-wizard-picker.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var FlowWizardPicker = ({
     providers,
     selectedStage,
@@ -24288,8 +23083,8 @@ ${message.content}`
     );
     const disabledStages = flowProviderAvailable ? void 0 : /* @__PURE__ */ new Set(["idea", "spec", "plan", "execute"]);
     const statusMessage = flowProviderAvailable ? "Select a start mode to continue." : "Only Simple Chat is available (connect Codex or Claude for Flow steps).";
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "provider-picker", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "provider-picker", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
         FlowWizard,
         {
           activeStage: selectedStage,
@@ -24297,9 +23092,9 @@ ${message.content}`
           onStageClick
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "provider-picker__actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: statusMessage }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "provider-picker__action-buttons", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "provider-picker__actions", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: statusMessage }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "provider-picker__action-buttons", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
           "button",
           {
             className: "provider-picker__secondary",
@@ -24312,8 +23107,1426 @@ ${message.content}`
     ] });
   };
 
-  // src/client/ui/src/app-host/questionnaire-resume-banner.tsx
+  // src/client/ui/src/app-host/idea-questionnaire-panel.tsx
+  var import_react11 = __toESM(require_react());
+
+  // src/client/ui/src/components/idea-questionnaire/question-block.tsx
+  var import_react10 = __toESM(require_react());
+
+  // src/client/ui/src/components/idea-questionnaire/styles.ts
+  var questionnairePageStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+    height: "100%",
+    overflowY: "auto",
+    padding: "20px",
+    boxSizing: "border-box",
+    background: "linear-gradient(180deg, #1b1d21 0%, #16181b 100%)",
+    color: "#e5e5e5"
+  };
+  var questionnaireHeaderStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px"
+  };
+  var questionnaireTitleStyles = {
+    margin: 0,
+    fontSize: "18px",
+    fontWeight: 600
+  };
+  var questionnaireDescriptionStyles = {
+    margin: 0,
+    fontSize: "12px",
+    color: "#a7a7a7",
+    lineHeight: 1.6
+  };
+  var questionnaireListStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px"
+  };
+  var questionnaireFooterStyles = {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "12px",
+    paddingBottom: "16px"
+  };
+  var questionnaireCancelButtonStyles = {
+    appearance: "none",
+    border: "1px solid #3a3f46",
+    borderRadius: "8px",
+    background: "transparent",
+    color: "#d5d7db",
+    fontSize: "13px",
+    fontWeight: 600,
+    padding: "10px 16px",
+    cursor: "pointer"
+  };
+  var questionnaireSubmitButtonStyles = {
+    appearance: "none",
+    border: "1px solid #0e639c",
+    borderRadius: "8px",
+    background: "#0e639c",
+    color: "#ffffff",
+    fontSize: "13px",
+    fontWeight: 600,
+    padding: "10px 16px",
+    cursor: "pointer",
+    boxShadow: "0 6px 16px rgba(14, 99, 156, 0.35)"
+  };
+  var questionCardStyles = {
+    background: "#1f2125",
+    border: "1px solid #2a2d33",
+    borderRadius: "12px",
+    padding: "16px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    boxShadow: "0 8px 18px rgba(0, 0, 0, 0.25)"
+  };
+  var questionHeaderStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px"
+  };
+  var questionTitleStyles = {
+    fontSize: "14px",
+    fontWeight: 600,
+    color: "#f0f0f0"
+  };
+  var questionDescriptionStyles = {
+    margin: 0,
+    fontSize: "12px",
+    color: "#9aa0a6",
+    lineHeight: 1.5,
+    whiteSpace: "pre-wrap"
+  };
+  var questionHintStyles = {
+    margin: 0,
+    fontSize: "11px",
+    color: "#7f868e",
+    lineHeight: 1.5,
+    whiteSpace: "pre-wrap"
+  };
+  var questionInputShellStyles = {
+    position: "relative",
+    border: "1px solid #2c2f36",
+    borderRadius: "8px",
+    padding: "10px",
+    background: "#16181b"
+  };
+  var questionInputShellDraggingStyles = {
+    borderColor: "#2b88d8",
+    background: "#1e2a35"
+  };
+  var questionInputShellFocusedStyles = {
+    borderColor: "#0e639c",
+    boxShadow: "0 0 0 2px rgba(14, 99, 156, 0.2)"
+  };
+  var questionTextareaStyles = {
+    width: "100%",
+    border: "none",
+    outline: "none",
+    background: "transparent",
+    color: "#e5e5e5",
+    fontSize: "13px",
+    lineHeight: 1.6,
+    resize: "vertical",
+    overflow: "hidden",
+    padding: 0,
+    margin: 0,
+    boxSizing: "border-box"
+  };
+  var questionOverlayStyles = {
+    position: "absolute",
+    inset: "0",
+    borderRadius: "8px",
+    background: "rgba(14, 99, 156, 0.2)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#e5f4ff",
+    fontSize: "12px",
+    letterSpacing: "0.2px",
+    pointerEvents: "none"
+  };
+
+  // src/client/ui/src/components/idea-questionnaire/question-block.tsx
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var BASE_MIN_HEIGHT = 96;
+  var focusTextareaEnd2 = (textarea) => {
+    if (!textarea) {
+      return;
+    }
+    const element3 = textarea;
+    element3.focus();
+    const length = element3.value.length;
+    element3.setSelectionRange(length, length);
+  };
+  var QuestionBlock = ({
+    question,
+    value,
+    onChange
+  }) => {
+    const [isFocused, setIsFocused] = (0, import_react10.useState)(false);
+    const [userMinHeight, setUserMinHeight] = (0, import_react10.useState)(null);
+    const textareaRef = (0, import_react10.useRef)(null);
+    const containerRef = (0, import_react10.useRef)(null);
+    const lastWidthRef = (0, import_react10.useRef)(null);
+    const adjustTextareaHeight2 = (0, import_react10.useCallback)(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      const minHeight = userMinHeight ?? BASE_MIN_HEIGHT;
+      textarea.style.height = "auto";
+      textarea.style.minHeight = `${minHeight}px`;
+      const targetHeight = Math.max(textarea.scrollHeight, minHeight);
+      textarea.style.height = `${targetHeight}px`;
+    }, [userMinHeight]);
+    const applyExternalValue = (0, import_react10.useCallback)(
+      (nextValue) => {
+        onChange(question.id, nextValue);
+        requestAnimationFrame(() => {
+          focusTextareaEnd2(textareaRef.current);
+          adjustTextareaHeight2();
+        });
+      },
+      [adjustTextareaHeight2, onChange, question.id]
+    );
+    const { isDragging } = useInputDragDrop({
+      containerRef,
+      textareaRef,
+      onValueChange: applyExternalValue
+    });
+    const handleChange = (0, import_react10.useCallback)(
+      (event) => {
+        onChange(question.id, event.target.value);
+      },
+      [onChange, question.id]
+    );
+    const handleResizeCommit = (0, import_react10.useCallback)(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      const nextMinHeight = Math.max(
+        userMinHeight ?? BASE_MIN_HEIGHT,
+        textarea.offsetHeight
+      );
+      if (nextMinHeight !== (userMinHeight ?? BASE_MIN_HEIGHT)) {
+        setUserMinHeight(nextMinHeight);
+      }
+    }, [userMinHeight]);
+    const insertTextAtSelection = (0, import_react10.useCallback)(
+      (text7) => {
+        const textarea = textareaRef.current;
+        if (!textarea) {
+          return;
+        }
+        const [selectionStart, selectionEnd] = [
+          textarea.selectionStart ?? textarea.value.length,
+          textarea.selectionEnd ?? textarea.value.length
+        ];
+        const currentValue = textarea.value;
+        const nextValue = currentValue.slice(0, selectionStart) + text7 + currentValue.slice(selectionEnd);
+        onChange(question.id, nextValue);
+        requestAnimationFrame(() => {
+          const position3 = selectionStart + text7.length;
+          textarea.selectionStart = position3;
+          textarea.selectionEnd = position3;
+          adjustTextareaHeight2();
+          textarea.focus();
+        });
+      },
+      [adjustTextareaHeight2, onChange, question.id]
+    );
+    const syncTextareaValue = (0, import_react10.useCallback)(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      onChange(question.id, textarea.value);
+    }, [onChange, question.id]);
+    const { handlePaste, handleCopy } = (0, import_react10.useMemo)(
+      () => createClipboardHandlers({
+        textareaRef,
+        insertTextAtSelection,
+        syncTextareaValue
+      }),
+      [insertTextAtSelection, syncTextareaValue]
+    );
+    (0, import_react10.useEffect)(() => {
+      const nextValue = value;
+      requestAnimationFrame(() => {
+        const textarea = textareaRef.current;
+        if (!textarea || textarea.value !== nextValue) {
+          return;
+        }
+        adjustTextareaHeight2();
+      });
+    }, [adjustTextareaHeight2, value]);
+    (0, import_react10.useEffect)(() => {
+      const textarea = textareaRef.current;
+      if (!textarea || typeof ResizeObserver === "undefined") {
+        return;
+      }
+      const observer = new ResizeObserver((entries) => {
+        const entry = entries[0];
+        if (!entry) {
+          return;
+        }
+        const nextWidth = entry.contentRect.width;
+        if (lastWidthRef.current !== nextWidth) {
+          lastWidthRef.current = nextWidth;
+          adjustTextareaHeight2();
+        }
+      });
+      observer.observe(textarea);
+      return () => observer.disconnect();
+    }, [adjustTextareaHeight2]);
+    const inputShellStyles = {
+      ...questionInputShellStyles,
+      ...isDragging ? questionInputShellDraggingStyles : {},
+      ...isFocused ? questionInputShellFocusedStyles : {}
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { style: questionCardStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: questionHeaderStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: questionTitleStyles, children: question.title }),
+        question.description ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: questionDescriptionStyles, children: question.description }) : null,
+        question.hint ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: questionHintStyles, children: question.hint }) : null
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { ref: containerRef, style: inputShellStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          "textarea",
+          {
+            "aria-label": question.title,
+            onBlur: () => {
+              setIsFocused(false);
+              handleResizeCommit();
+            },
+            onChange: handleChange,
+            onCopy: handleCopy,
+            onFocus: () => setIsFocused(true),
+            onMouseUp: handleResizeCommit,
+            onPaste: handlePaste,
+            onTouchEnd: handleResizeCommit,
+            ref: textareaRef,
+            rows: 1,
+            style: questionTextareaStyles,
+            value
+          }
+        ),
+        isDragging ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("output", { style: questionOverlayStyles, children: DEFAULT_DRAG_OVERLAY_LABEL }) : null
+      ] })
+    ] });
+  };
+
+  // src/client/ui/src/components/idea-questionnaire/idea-questionnaire-view.tsx
   var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var IdeaQuestionnaireView = ({
+    title,
+    description,
+    questions,
+    answers,
+    submitLabel,
+    cancelLabel,
+    onAnswerChange,
+    onSubmit,
+    onCancel
+  }) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { "aria-label": "Idea questionnaire", style: questionnairePageStyles, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("header", { style: questionnaireHeaderStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h1", { style: questionnaireTitleStyles, children: title }),
+      description ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { style: questionnaireDescriptionStyles, children: description }) : null
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: questionnaireListStyles, children: questions.map((question) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      QuestionBlock,
+      {
+        onChange: onAnswerChange,
+        question,
+        value: answers[question.id] ?? ""
+      },
+      question.id
+    )) }),
+    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: questionnaireFooterStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+        "button",
+        {
+          onClick: onCancel,
+          style: questionnaireCancelButtonStyles,
+          type: "button",
+          children: cancelLabel
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+        "button",
+        {
+          onClick: onSubmit,
+          style: questionnaireSubmitButtonStyles,
+          type: "button",
+          children: submitLabel
+        }
+      )
+    ] })
+  ] });
+
+  // src/client/ui/src/services/idea-collector-artifact.ts
+  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
+  var extractIdeaCollectorArtifact = (event) => {
+    if (!isRecord4(event)) {
+      return null;
+    }
+    const data = event.data;
+    if (!isRecord4(data) || data.kind !== "structured_output") {
+      return null;
+    }
+    let nextAction = null;
+    if (typeof data.nextAction === "string") {
+      nextAction = data.nextAction;
+    } else if (typeof data.next_action === "string") {
+      nextAction = data.next_action;
+    }
+    if (nextAction !== "finalize") {
+      return null;
+    }
+    const artifact = data.artifact;
+    if (!isRecord4(artifact)) {
+      return null;
+    }
+    const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
+    const virtualSimulationPath = readStringField(artifact, "virtualSimulationPath") ?? readStringField(artifact, "virtual_simulation_path");
+    const ideaMarkdown = readStringField(artifact, "ideaMarkdown") ?? readStringField(artifact, "idea_markdown");
+    const virtualSimulationMarkdown = readStringField(artifact, "virtualSimulationMarkdown") ?? readStringField(artifact, "virtual_simulation_markdown");
+    if (!(ideaPath && ideaMarkdown && virtualSimulationPath && virtualSimulationMarkdown)) {
+      return null;
+    }
+    return {
+      ideaPath,
+      ideaMarkdown,
+      virtualSimulationPath,
+      virtualSimulationMarkdown
+    };
+  };
+
+  // src/client/ui/src/app-host/idea-kickoff-prompt.ts
+  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\n\u041E\u0446\u0435\u043D\u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0447\u0435\u0440\u0435\u0437 assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0434\u0430\u0439 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 (questions), \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E; \u043D\u0430 finalize questions = [].\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md` \u0438 `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md`.";
+
+  // src/client/ui/src/services/idea-collector-fallback-schema.ts
+  var FALLBACK_SCHEMA_JSON = `{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://codeai-hub.local/schemas/idea-collector-schema.json",
+  "title": "Idea Collector \u2014 Structured Output Contract (Slim)",
+  "description": "\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 Structured Output \u0434\u043B\u044F Idea Collector. \u0410\u0433\u0435\u043D\u0442 \u0430\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u0443\u044E \u0430\u043D\u043A\u0435\u0442\u0443, \u043E\u0446\u0435\u043D\u0438\u0432\u0430\u0435\u0442 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0437\u0430\u0434\u0430\u0451\u0442 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430. \u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 (next_action=finalize) \u043E\u0431\u044F\u0437\u0430\u043D \u0432\u0435\u0440\u043D\u0443\u0442\u044C \u0433\u043E\u0442\u043E\u0432\u044B\u0435 Idea.md \u0438 virtual-simulation.md \u043A\u0430\u043A markdown + \u0446\u0435\u043B\u0435\u0432\u044B\u0435 \u043F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "next_action",
+    "suggested_response",
+    "reasoning_summary_ru",
+    "assessment",
+    "questions",
+    "artifact"
+  ],
+  "properties": {
+    "next_action": {
+      "type": "string",
+      "description": "\u0427\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435: ask_question | clarify | summarize | finalize."
+    },
+    "suggested_response": {
+      "type": "string",
+      "description": "\u0422\u0435\u043A\u0441\u0442 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F \u0430\u0433\u0435\u043D\u0442\u0430 (\u0432\u043E\u043F\u0440\u043E\u0441/\u0443\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u0435/\u0441\u0432\u043E\u0434\u043A\u0430/\u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u044F), \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u043C \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E."
+    },
+    "reasoning_summary_ru": {
+      "type": "string",
+      "description": "\u041A\u0440\u0430\u0442\u043A\u043E\u0435 \u0440\u0435\u0437\u044E\u043C\u0435 \u043F\u0440\u043E\u0433\u0440\u0435\u0441\u0441\u0430/\u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043D\u0430 \u0440\u0443\u0441\u0441\u043A\u043E\u043C \u0431\u0435\u0437 chain-of-thought."
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ready_for_finalize",
+        "confidence_percent",
+        "missing_info",
+        "assumptions",
+        "risks"
+      ],
+      "description": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E\u0441\u0442\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0430\u043D\u043A\u0435\u0442\u044B \u0434\u043B\u044F \u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0438 Idea.md \u0438 virtual-simulation.md.",
+      "properties": {
+        "ready_for_finalize": {
+          "type": "boolean",
+          "description": "\u0413\u043E\u0442\u043E\u0432 \u043B\u0438 \u0430\u0433\u0435\u043D\u0442 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u043F\u0440\u044F\u043C\u043E \u0441\u0435\u0439\u0447\u0430\u0441."
+        },
+        "confidence_percent": {
+          "type": "integer",
+          "description": "\u0423\u0432\u0435\u0440\u0435\u043D\u043D\u043E\u0441\u0442\u044C \u0432 \u043F\u043E\u043B\u043D\u043E\u0442\u0435 \u0434\u0430\u043D\u043D\u044B\u0445 (0\u2013100). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0439 \u043F\u043E\u0440\u043E\u0433 \u0434\u043B\u044F \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438: >= 80."
+        },
+        "missing_info": {
+          "type": "array",
+          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u043F\u0440\u043E\u0431\u0435\u043B\u043E\u0432/\u0434\u0430\u043D\u043D\u044B\u0445, \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442 \u0434\u043B\u044F \u0443\u0432\u0435\u0440\u0435\u043D\u043D\u043E\u0439 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u0434\u043E\u043F\u0443\u0449\u0435\u043D\u0438\u0439, \u043D\u0430 \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u0430\u0433\u0435\u043D\u0442 \u0433\u043E\u0442\u043E\u0432 \u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "risks": {
+          "type": "array",
+          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u0440\u0438\u0441\u043A\u043E\u0432/\u0441\u043E\u043C\u043D\u0435\u043D\u0438\u0439 \u043F\u0440\u0438 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "description": "1\u20133 \u0442\u043E\u0447\u0435\u0447\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430, \u0447\u0442\u043E\u0431\u044B \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u043F\u0440\u043E\u0431\u0435\u043B\u044B. \u0414\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0432\u043E\u043F\u0440\u043E\u0441\u044B \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B; \u043D\u0430 finalize \u2014 \u043F\u0443\u0441\u0442\u043E\u0439 \u0441\u043F\u0438\u0441\u043E\u043A.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "\u0424\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B. \u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B \u043F\u0440\u0438 next_action=finalize.",
+      "required": [
+        "idea_markdown",
+        "virtual_simulation_markdown",
+        "idea_path",
+        "virtual_simulation_path"
+      ],
+      "properties": {
+        "idea_markdown": {
+          "type": "string",
+          "description": "\u0413\u043E\u0442\u043E\u0432\u044B\u0439 Idea.md \u043A\u0430\u043A markdown (\u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u0438 \u0432\u0441\u0435 \u0441\u0435\u043A\u0446\u0438\u0438 \u043F\u043E \u0448\u0430\u0431\u043B\u043E\u043D\u0443)."
+        },
+        "virtual_simulation_markdown": {
+          "type": "string",
+          "description": "\u0412\u0438\u0440\u0442\u0443\u0430\u043B\u044C\u043D\u044B\u0439 \u0442\u0435\u0441\u0442 (virtual-simulation.md) \u043A\u0430\u043A markdown \u0441 \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B\u043C\u0438 \u0441\u0435\u043A\u0446\u0438\u044F\u043C\u0438: # Virtual Simulation, \u0426\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, \u0421\u0446\u0435\u043D\u0430\u0440\u0438\u0438, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u041B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044F, \u041C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0430 \u0440\u0438\u0441\u043A\u043E\u0432, Must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0412\u044B\u0432\u043E\u0434\u044B."
+        },
+        "idea_path": {
+          "type": "string",
+          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C Idea.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md)."
+        },
+        "virtual_simulation_path": {
+          "type": "string",
+          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C virtual-simulation.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md)."
+        }
+      }
+    }
+  }
+}`;
+  var IDEA_COLLECTOR_FALLBACK_SCHEMA = JSON.parse(
+    FALLBACK_SCHEMA_JSON
+  );
+
+  // src/client/ui/src/services/idea-collector-schema-utils.ts
+  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
+  var strictifyProperties = (schema) => {
+    const properties = schema.properties;
+    if (!isRecord5(properties)) {
+      return;
+    }
+    schema.required = Object.keys(properties);
+    if (schema.additionalProperties === void 0) {
+      schema.additionalProperties = false;
+    }
+    for (const value of Object.values(properties)) {
+      if (isRecord5(value)) {
+        strictifySchema(value);
+      }
+    }
+  };
+  var strictifyItems = (schema) => {
+    const items = schema.items;
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        if (isRecord5(item)) {
+          strictifySchema(item);
+        }
+      }
+      return;
+    }
+    if (isRecord5(items)) {
+      strictifySchema(items);
+    }
+  };
+  var removeCombinatorsFromProperties = (schema) => {
+    const properties = schema.properties;
+    if (!isRecord5(properties)) {
+      return;
+    }
+    for (const value of Object.values(properties)) {
+      if (isRecord5(value)) {
+        removeCombinators(value);
+      }
+    }
+  };
+  var removeCombinatorsFromItems = (schema) => {
+    const items = schema.items;
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        if (isRecord5(item)) {
+          removeCombinators(item);
+        }
+      }
+      return;
+    }
+    if (isRecord5(items)) {
+      removeCombinators(items);
+    }
+  };
+  var removeCombinators = (schema) => {
+    removeCombinatorsFromProperties(schema);
+    removeCombinatorsFromItems(schema);
+    for (const key of ["allOf", "anyOf", "oneOf"]) {
+      const entries = schema[key];
+      if (!Array.isArray(entries)) {
+        continue;
+      }
+      for (const entry of entries) {
+        if (isRecord5(entry)) {
+          removeCombinators(entry);
+        }
+      }
+      delete schema[key];
+    }
+  };
+  var strictifySchema = (schema) => {
+    removeCombinators(schema);
+    strictifyProperties(schema);
+    strictifyItems(schema);
+  };
+  var injectTemplateIntoSchema = (schema, template) => {
+    if (!template) {
+      return schema;
+    }
+    const properties = schema.properties;
+    if (!isRecord5(properties)) {
+      return schema;
+    }
+    const artifact = properties.artifact;
+    if (!isRecord5(artifact)) {
+      return schema;
+    }
+    const artifactProperties = artifact.properties;
+    if (!isRecord5(artifactProperties)) {
+      return schema;
+    }
+    const ideaMarkdown = artifactProperties.idea_markdown;
+    if (!isRecord5(ideaMarkdown)) {
+      return schema;
+    }
+    const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
+    ideaMarkdown.description = `${description}
+
+Idea.md template:
+${template}`;
+    return schema;
+  };
+  var ALLOWED_SCHEMA_KEYS = /* @__PURE__ */ new Set([
+    "type",
+    "properties",
+    "required",
+    "additionalProperties",
+    "items",
+    "description"
+  ]);
+  var pruneSchemaKeys = (schema) => {
+    for (const key of Object.keys(schema)) {
+      if (!ALLOWED_SCHEMA_KEYS.has(key)) {
+        delete schema[key];
+      }
+    }
+  };
+  var sanitizeSchemaProperties = (schema) => {
+    const properties = schema.properties;
+    if (!isRecord5(properties)) {
+      return;
+    }
+    for (const value of Object.values(properties)) {
+      if (isRecord5(value)) {
+        sanitizeSchemaKeywords(value);
+      }
+    }
+  };
+  var sanitizeSchemaItems = (schema) => {
+    const items = schema.items;
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        if (isRecord5(item)) {
+          sanitizeSchemaKeywords(item);
+        }
+      }
+      return;
+    }
+    if (isRecord5(items)) {
+      sanitizeSchemaKeywords(items);
+    }
+  };
+  var sanitizeSchemaKeywords = (schema) => {
+    pruneSchemaKeys(schema);
+    sanitizeSchemaProperties(schema);
+    sanitizeSchemaItems(schema);
+  };
+  var normalizeIdeaCollectorSchema = (schema, template) => {
+    const next = cloneSchema(schema);
+    strictifySchema(next);
+    sanitizeSchemaKeywords(next);
+    return injectTemplateIntoSchema(next, template);
+  };
+
+  // src/client/ui/src/services/idea-collector-contract.ts
+  var IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
+  var FALLBACK_OUTPUT_PATHS = {
+    idea: ".codeai-hub/initiatives/unknown-initiative/runs/000-unknown/idea/idea.md",
+    virtualSimulation: ".codeai-hub/initiatives/unknown-initiative/runs/000-unknown/idea/virtual-simulation.md"
+  };
+  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isIdeaContractPayload = (value) => {
+    if (!isRecord6(value)) {
+      return false;
+    }
+    const outputPaths = value.outputPaths;
+    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord6(value.schema) && isRecord6(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
+  };
+  var fetchIdeaContract = async () => {
+    const httpUrl = resolveCoreHttpUrl();
+    if (!httpUrl) {
+      return null;
+    }
+    try {
+      const response = await fetch(joinUrl(httpUrl, IDEA_CONTRACT_ENDPOINT));
+      if (!response.ok) {
+        return null;
+      }
+      const payload = await response.json();
+      if (!isIdeaContractPayload(payload)) {
+        return null;
+      }
+      const schema = normalizeIdeaCollectorSchema(payload.schema, null);
+      const questionnaireTemplateMarkdown = extractIdeaContractQuestionnaireTemplate(payload) ?? null;
+      return {
+        prompt: payload.prompt,
+        schema,
+        outputPaths: payload.outputPaths,
+        questionnaireTemplateMarkdown
+      };
+    } catch {
+      return null;
+    }
+  };
+  var loadIdeaContract = async () => {
+    const remote = await fetchIdeaContract();
+    if (remote) {
+      return remote;
+    }
+    const fallbackSchema = normalizeIdeaCollectorSchema(
+      IDEA_COLLECTOR_FALLBACK_SCHEMA,
+      null
+    );
+    return {
+      prompt: IDEA_KICKOFF_PROMPT,
+      schema: fallbackSchema,
+      outputPaths: FALLBACK_OUTPUT_PATHS,
+      questionnaireTemplateMarkdown: null
+    };
+  };
+
+  // src/client/ui/src/services/idea-collector-workspace-context.ts
+  var WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
+  var DEFAULT_MAX_BYTES = 3e5;
+  var MAX_FILES = 3;
+  var normalizePathToken = (token) => {
+    const trimmed = token.trim();
+    if (trimmed.length === 0) {
+      return null;
+    }
+    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) {
+      return trimmed.slice(1, -1).trim() || null;
+    }
+    return trimmed;
+  };
+  var parseWorkspaceReadCommand = (content3) => {
+    const trimmed = content3.trimStart();
+    if (!(trimmed.startsWith("/read") || trimmed.startsWith("/attach"))) {
+      return null;
+    }
+    const lines = trimmed.split("\n");
+    const firstLine = lines[0]?.trim() ?? "";
+    const tokens = firstLine.split(/\s+/g);
+    const command = tokens[0];
+    if (!(command === "/read" || command === "/attach")) {
+      return null;
+    }
+    const paths = tokens.slice(1).map((token) => normalizePathToken(token)).filter(Boolean);
+    const remainingMessage = lines.slice(1).join("\n").trim();
+    return { paths, remainingMessage };
+  };
+  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isWorkspaceFileResponse = (value) => {
+    if (!isRecord7(value)) {
+      return false;
+    }
+    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
+  };
+  var fetchWorkspaceFile = async (sessionId, relativePath) => {
+    const httpUrl = resolveCoreHttpUrl();
+    if (!httpUrl) {
+      return null;
+    }
+    try {
+      const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          path: relativePath,
+          maxBytes: DEFAULT_MAX_BYTES
+        })
+      });
+      if (!response.ok) {
+        return null;
+      }
+      const payload = await response.json();
+      if (!isWorkspaceFileResponse(payload)) {
+        return null;
+      }
+      return payload;
+    } catch {
+      return null;
+    }
+  };
+  var buildMessageWithWorkspaceContext = async (sessionId, content3) => {
+    const command = parseWorkspaceReadCommand(content3);
+    if (!command) {
+      return null;
+    }
+    if (command.paths.length === 0) {
+      postSystemNotice(
+        sessionId,
+        "\u041A\u043E\u043C\u0430\u043D\u0434\u0430 /read \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043F\u0443\u0442\u044C(\u0438):\n/read doc/Architecture/Architecture.md\n(\u0434\u0430\u043B\u044C\u0448\u0435 \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445 \u043C\u043E\u0436\u043D\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432\u043E\u043F\u0440\u043E\u0441/\u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439)"
+      );
+      return "";
+    }
+    const files = await Promise.all(
+      command.paths.slice(0, MAX_FILES).map(async (relativePath) => ({
+        relativePath,
+        response: await fetchWorkspaceFile(sessionId, relativePath)
+      }))
+    );
+    const resolvedFiles = files.filter((entry) => entry.response);
+    if (resolvedFiles.length === 0) {
+      postSystemNotice(
+        sessionId,
+        "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C \u043D\u0438 \u043E\u0434\u0438\u043D \u0444\u0430\u0439\u043B \u0438\u0437 /read. \u041F\u0440\u043E\u0432\u0435\u0440\u044C \u043F\u0443\u0442\u0438 \u0438 \u0447\u0442\u043E Core \u0437\u0430\u043F\u0443\u0449\u0435\u043D."
+      );
+      return "";
+    }
+    const blocks = [];
+    blocks.push(
+      "\u041A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438\u0437 \u0444\u0430\u0439\u043B\u043E\u0432 (workspace). \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u044D\u0442\u043E \u043A\u0430\u043A \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0438\u0441\u0442\u0438\u043D\u044B \u0434\u043B\u044F \u0442\u0435\u043A\u0443\u0449\u0435\u0433\u043E \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E:"
+    );
+    for (const entry of resolvedFiles) {
+      const payload = entry.response;
+      const truncationNote = payload.truncated ? `
+(\u0444\u0430\u0439\u043B \u043E\u0431\u0440\u0435\u0437\u0430\u043D \u0434\u043E ${payload.maxBytes} \u0431\u0430\u0439\u0442)` : "";
+      blocks.push(
+        `
+[FILE: ${payload.path}]${truncationNote}
+\`\`\`
+${payload.content}
+\`\`\``
+      );
+    }
+    if (command.paths.length > MAX_FILES) {
+      postSystemNotice(
+        sessionId,
+        `\u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0435: \u043F\u0440\u0438\u043A\u0440\u0435\u043F\u043B\u044F\u044E \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C ${MAX_FILES} \u0444\u0430\u0439\u043B\u043E\u0432 \u0437\u0430 \u0440\u0430\u0437.`
+      );
+    }
+    if (command.remainingMessage.length > 0) {
+      blocks.push(`
+\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F:
+${command.remainingMessage}`);
+    } else {
+      blocks.push(
+        "\n\u0414\u0430\u043B\u0435\u0435: \u0443\u0447\u0442\u0438 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438 \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E (\u0437\u0430\u0434\u0430\u0439 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441)."
+      );
+    }
+    return blocks.join("\n");
+  };
+
+  // src/client/ui/src/services/idea-questionnaire-messages.ts
+  var MISSING_IDEA_CONTEXT_MESSAGE = "\u041D\u0435 \u043C\u043E\u0433\u0443 \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443: Core \u0435\u0449\u0435 \u043D\u0435 \u0432\u0435\u0440\u043D\u0443\u043B initiative/run \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442. \u041F\u043E\u0434\u043E\u0436\u0434\u0438\u0442\u0435 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u0412\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB.";
+  var buildQuestionnaireSubmissionMessage = (questionnairePath) => `Before reading the questionnaire, review the documents listed in section "0. \u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u0434\u043B\u044F \u0447\u0442\u0435\u043D\u0438\u044F \u043F\u0435\u0440\u0435\u0434 \u0430\u043D\u043A\u0435\u0442\u043E\u0439" (if any). Then review \`${questionnairePath}\` against the contract, ask any clarifying questions, then wait for OK/approve before finalize.`;
+  var notifyMissingIdeaContext = (sessionId) => {
+    postSystemNotice(sessionId, MISSING_IDEA_CONTEXT_MESSAGE);
+  };
+
+  // src/client/ui/src/services/idea-questionnaire-pending-store.ts
+  var QUESTIONNAIRE_PENDING_STORAGE_PREFIX = "codeai-hub:idea-questionnaire:pending:";
+  var QUESTIONNAIRE_PENDING_STORAGE_VALUE = "1";
+  var buildQuestionnairePendingKey = (sessionId) => `${QUESTIONNAIRE_PENDING_STORAGE_PREFIX}${sessionId}`;
+  var readStorageValue = (key) => {
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  };
+  var writeStorageValue = (key, value) => {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch {
+    }
+  };
+  var removeStorageValue = (key) => {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+    }
+  };
+  var isQuestionnairePendingStored = (sessionId) => readStorageValue(buildQuestionnairePendingKey(sessionId)) === QUESTIONNAIRE_PENDING_STORAGE_VALUE;
+  var markQuestionnairePendingStored = (sessionId) => {
+    writeStorageValue(
+      buildQuestionnairePendingKey(sessionId),
+      QUESTIONNAIRE_PENDING_STORAGE_VALUE
+    );
+  };
+  var clearQuestionnairePendingStored = (sessionId) => {
+    removeStorageValue(buildQuestionnairePendingKey(sessionId));
+  };
+
+  // src/client/ui/src/services/idea-collector-service.ts
+  var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
+  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var loadContract = () => loadIdeaContract();
+  var _IdeaCollectorService = class _IdeaCollectorService {
+    constructor() {
+      this.contractPromise = null;
+    }
+    isIdeaCollectorSession(sessionId) {
+      if (_IdeaCollectorService.activeSessions.has(sessionId)) {
+        return true;
+      }
+      if (this.isQuestionnairePending(sessionId)) {
+        _IdeaCollectorService.activeSessions.add(sessionId);
+        return true;
+      }
+      return false;
+    }
+    getLatestArtifact(sessionId) {
+      return _IdeaCollectorService.artifacts.get(sessionId) ?? null;
+    }
+    recordAssistantMessage(sessionId, content3) {
+      const trimmed = content3.trim();
+      if (trimmed.length === 0) {
+        return;
+      }
+      _IdeaCollectorService.lastAssistantMessages.set(sessionId, trimmed);
+    }
+    getLastAssistantMessage(sessionId) {
+      return _IdeaCollectorService.lastAssistantMessages.get(sessionId) ?? null;
+    }
+    getOutputPathsForSessionId(sessionId) {
+      return _IdeaCollectorService.outputPathsBySession.get(sessionId) ?? null;
+    }
+    startCollection(sessionId) {
+      _IdeaCollectorService.activeSessions.add(sessionId);
+      this.markQuestionnairePending(sessionId);
+      if (!_IdeaCollectorService.noticesSent.has(sessionId)) {
+        _IdeaCollectorService.noticesSent.add(sessionId);
+        postSystemNotice(
+          sessionId,
+          "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Idea Collector. \u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
+        );
+        postSystemNotice(
+          sessionId,
+          "\u0427\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u044C \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B/\u0444\u0430\u0439\u043B\u044B \u0438\u0437 workspace, \u043C\u043E\u0436\u043D\u043E:\n- \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0438 \u0442\u0440\u0438\u0433\u0433\u0435\u0440 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0439/\u0438\u0437\u0443\u0447\u0438/\u043E\u0437\u043D\u0430\u043A\u043E\u043C\u044C\u0441\u044F\xBB) \u0438 \u0443\u043A\u0430\u0437\u0430\u0442\u044C \u043F\u0443\u0442\u0438 \u043A \u0444\u0430\u0439\u043B\u0430\u043C (\u043C\u043E\u0436\u043D\u043E \u043D\u0430 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445);\n- \u0438\u043B\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u043A\u043E\u043C\u0430\u043D\u0434\u0443:\n/read <relative-path>\n(\u043C\u043E\u0436\u043D\u043E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043F\u0443\u0442\u0435\u0439 \u0432 \u043E\u0434\u043D\u043E\u0439 \u0441\u0442\u0440\u043E\u043A\u0435, \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 3)."
+        );
+      }
+    }
+    async continueConversation(sessionId, content3) {
+      if (!this.isIdeaCollectorSession(sessionId)) {
+        return;
+      }
+      if (this.isQuestionnairePending(sessionId)) {
+        postSystemNotice(
+          sessionId,
+          "\u0410\u043D\u043A\u0435\u0442\u0430 \u0435\u0449\u0451 \u043D\u0435 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0430. \u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
+        );
+        return;
+      }
+      const schema = await this.getNormalizedSchema();
+      const augmentedContent = await buildMessageWithWorkspaceContext(
+        sessionId,
+        content3
+      );
+      if (augmentedContent === "") {
+        return;
+      }
+      sendChatMessage(sessionId, augmentedContent ?? content3, {
+        outputSchema: schema
+      });
+    }
+    async beginQuestionnaireReview(sessionId, content3, outputPathsOverride) {
+      if (!_IdeaCollectorService.activeSessions.has(sessionId)) {
+        _IdeaCollectorService.activeSessions.add(sessionId);
+      }
+      this.clearQuestionnairePending(sessionId);
+      const [prompt, schema] = await Promise.all([
+        this.getPrompt(),
+        this.getNormalizedSchema()
+      ]);
+      const outputPaths = outputPathsOverride;
+      if (!outputPaths) {
+        notifyMissingIdeaContext(sessionId);
+        return;
+      }
+      _IdeaCollectorService.outputPathsBySession.set(sessionId, outputPaths);
+      const promptWithPaths = this.buildPromptWithOutputPaths(
+        prompt,
+        outputPaths
+      );
+      const combinedContent = `${promptWithPaths}
+
+${content3}`;
+      sendChatMessage(sessionId, combinedContent, { outputSchema: schema });
+    }
+    handleStreamEvent(sessionId, event) {
+      if (!_IdeaCollectorService.activeSessions.has(sessionId)) {
+        return;
+      }
+      const artifact = extractIdeaCollectorArtifact(event);
+      if (artifact) {
+        _IdeaCollectorService.artifacts.set(sessionId, artifact);
+        this.persistIdeaArtifacts(sessionId, artifact).catch((error) => {
+          const message = error instanceof Error ? error.message : String(error);
+          postSystemNotice(
+            sessionId,
+            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: ${message}`
+          );
+        });
+      }
+    }
+    isQuestionnairePending(sessionId) {
+      if (_IdeaCollectorService.pendingQuestionnaire.has(sessionId)) {
+        return true;
+      }
+      if (isQuestionnairePendingStored(sessionId)) {
+        _IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+        return true;
+      }
+      return false;
+    }
+    getPrompt() {
+      return this.getContract().then((contract) => contract.prompt);
+    }
+    getNormalizedSchema() {
+      return this.getContract().then((contract) => contract.schema);
+    }
+    getQuestionnaireTemplateMarkdown() {
+      return this.getContract().then(
+        (contract) => contract.questionnaireTemplateMarkdown
+      );
+    }
+    getOutputPaths() {
+      return this.getContract().then((contract) => contract.outputPaths);
+    }
+    getOutputPathsForSession(outputPathsOverride) {
+      if (outputPathsOverride) {
+        return Promise.resolve(outputPathsOverride);
+      }
+      return this.getOutputPaths();
+    }
+    getContract() {
+      if (!this.contractPromise) {
+        this.contractPromise = loadContract();
+      }
+      return this.contractPromise;
+    }
+    markQuestionnairePending(sessionId) {
+      _IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+      markQuestionnairePendingStored(sessionId);
+    }
+    clearQuestionnairePending(sessionId) {
+      _IdeaCollectorService.pendingQuestionnaire.delete(sessionId);
+      clearQuestionnairePendingStored(sessionId);
+    }
+    async persistIdeaArtifacts(sessionId, artifact) {
+      const httpUrl = resolveCoreHttpUrl();
+      const outputPaths = _IdeaCollectorService.outputPathsBySession.get(sessionId);
+      const ideaPath = outputPaths?.idea ?? artifact.ideaPath;
+      const virtualSimulationPath = outputPaths?.virtualSimulation ?? artifact.virtualSimulationPath;
+      if (!(ideaPath && virtualSimulationPath)) {
+        postSystemNotice(
+          sessionId,
+          "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C \u043F\u0443\u0442\u0438 \u0434\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F. \u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u044D\u0442\u0430\u043F \u0438 \u043F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0441\u043D\u043E\u0432\u0430."
+        );
+        return;
+      }
+      if (!outputPaths) {
+        _IdeaCollectorService.outputPathsBySession.set(sessionId, {
+          idea: ideaPath,
+          virtualSimulation: virtualSimulationPath
+        });
+      }
+      if (!httpUrl) {
+        postSystemNotice(
+          sessionId,
+          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
+        );
+        return;
+      }
+      try {
+        const response = await fetch(joinUrl(httpUrl, IDEA_ARTIFACT_ENDPOINT), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            ideaMarkdown: artifact.ideaMarkdown,
+            virtualSimulationMarkdown: artifact.virtualSimulationMarkdown,
+            ideaPath: artifact.ideaPath,
+            virtualSimulationPath: artifact.virtualSimulationPath
+          })
+        });
+        if (!response.ok) {
+          postSystemNotice(
+            sessionId,
+            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (HTTP ${response.status}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
+          );
+          return;
+        }
+        const payload = await response.json();
+        const savedIdeaPath = isRecord8(payload) && isRecord8(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : ideaPath;
+        const savedVirtualSimulationPath = isRecord8(payload) && isRecord8(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : virtualSimulationPath;
+        postSystemNotice(
+          sessionId,
+          `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedIdeaPath} \u0438 ${savedVirtualSimulationPath}`
+        );
+      } catch {
+        postSystemNotice(
+          sessionId,
+          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
+        );
+      }
+    }
+    buildPromptWithOutputPaths(prompt, outputPaths) {
+      return `${prompt}
+
+\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 (\u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u0432 Structured Output):
+- idea.md: ${outputPaths.idea}
+- virtual-simulation.md: ${outputPaths.virtualSimulation}`;
+    }
+  };
+  _IdeaCollectorService.activeSessions = /* @__PURE__ */ new Set();
+  _IdeaCollectorService.artifacts = /* @__PURE__ */ new Map();
+  _IdeaCollectorService.noticesSent = /* @__PURE__ */ new Set();
+  _IdeaCollectorService.pendingQuestionnaire = /* @__PURE__ */ new Set();
+  _IdeaCollectorService.lastAssistantMessages = /* @__PURE__ */ new Map();
+  _IdeaCollectorService.outputPathsBySession = /* @__PURE__ */ new Map();
+  var IdeaCollectorService = _IdeaCollectorService;
+
+  // src/client/ui/src/services/idea-questionnaire-template.ts
+  var FIELD_REGEX = /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
+  var HEADING_PREFIX_RE = /^#+\s*/;
+  var HEADING_LINE_RE = /^#+\s+.*$/gm;
+  var HINT_TOKEN_RE = /<[^>\n]{1,80}>/;
+  var normalizeDescription = (value) => {
+    const lines = value.split("\n").map((line) => line.trim()).filter((line) => line.length > 0 && !line.startsWith("<!--"));
+    if (lines.length === 0) {
+      return;
+    }
+    return lines.join("\n");
+  };
+  var resolveFieldMeta = (template, startIndex, fallback) => {
+    const prefix = template.slice(0, startIndex);
+    const headings = Array.from(prefix.matchAll(HEADING_LINE_RE));
+    const lastHeading = headings.at(-1);
+    if (!lastHeading) {
+      return { title: fallback };
+    }
+    const headingIndex = lastHeading.index ?? 0;
+    const headingLine = lastHeading[0] ?? "";
+    const title = headingLine.replace(HEADING_PREFIX_RE, "").trim() || fallback;
+    const descriptionStart = headingIndex + headingLine.length;
+    const description = normalizeDescription(
+      template.slice(descriptionStart, startIndex)
+    );
+    return { title, description };
+  };
+  var isHintLikeAnswer = (value) => {
+    const trimmed = value.trim();
+    if (trimmed.length === 0) {
+      return true;
+    }
+    if (trimmed.startsWith("\u041F\u0440\u0438\u043C\u0435\u0440:") || trimmed.startsWith("Example:")) {
+      return true;
+    }
+    if (HINT_TOKEN_RE.test(trimmed)) {
+      return true;
+    }
+    if (trimmed.split("\n").some((line) => line.trim().startsWith("- <"))) {
+      return true;
+    }
+    if (trimmed.includes("...") && trimmed.includes(":")) {
+      return true;
+    }
+    return false;
+  };
+  var parseIdeaQuestionnaireTemplateFields = (template) => {
+    const questions = [];
+    const placeholders = {};
+    const matches = template.matchAll(FIELD_REGEX);
+    for (const match of matches) {
+      const fieldId = match[1];
+      if (!fieldId || placeholders[fieldId]) {
+        continue;
+      }
+      const placeholder = (match[2] ?? "").trim();
+      const { title, description } = resolveFieldMeta(
+        template,
+        match.index ?? 0,
+        fieldId
+      );
+      placeholders[fieldId] = placeholder;
+      questions.push({
+        id: fieldId,
+        title,
+        description,
+        hint: placeholder.length > 0 ? placeholder : void 0
+      });
+    }
+    return { questions, placeholders };
+  };
+  var extractIdeaQuestionnaireAnswers = (content3, placeholders) => {
+    const answers = {};
+    const matches = content3.matchAll(FIELD_REGEX);
+    for (const match of matches) {
+      const fieldId = match[1];
+      if (!fieldId) {
+        continue;
+      }
+      const candidate = (match[2] ?? "").trim();
+      const placeholder = (placeholders[fieldId] ?? "").trim();
+      answers[fieldId] = candidate === placeholder || isHintLikeAnswer(candidate) ? "" : candidate;
+    }
+    return answers;
+  };
+  var renderIdeaQuestionnaire = (template, placeholders, answers) => template.replace(FIELD_REGEX, (_match, fieldId, fallback) => {
+    const rawAnswer = answers[fieldId] ?? "";
+    const trimmedAnswer = rawAnswer.trim();
+    const placeholder = placeholders[fieldId] ?? String(fallback ?? "").trim();
+    const replacement = trimmedAnswer.length > 0 ? rawAnswer.trimEnd() : placeholder;
+    return `<!-- field:${fieldId} -->
+${replacement}
+<!-- /field -->`;
+  });
+
+  // src/client/ui/src/services/idea-questionnaire-service.ts
+  var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
+  var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
+  var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
+  var SAVE_DEBOUNCE_MS = 400;
+  var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
+  var QUESTIONNAIRE_CLARIFICATIONS_HEADER = "## \u0423\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u044F \u0430\u043D\u043A\u0435\u0442\u044B";
+  var RUN_QUESTIONNAIRE_PATH_RE = /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
+  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isWorkspaceFileResponse2 = (value) => {
+    if (!isRecord9(value)) {
+      return false;
+    }
+    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
+  };
+  var normalizeQuestionnaireContent = (content3) => {
+    if (!content3) {
+      return null;
+    }
+    const trimmed = content3.trim();
+    return trimmed.length > 0 ? content3 : null;
+  };
+  var resolveInitiativeQuestionnairePath = (questionnairePath) => {
+    const match = RUN_QUESTIONNAIRE_PATH_RE.exec(questionnairePath);
+    if (!match) {
+      return null;
+    }
+    return `.codeai-hub/initiatives/${match[1]}/idea/questionnaire.md`;
+  };
+  var appendClarificationToMarkdown = (content3, question, answer) => {
+    const normalizedAnswer = answer.trim();
+    if (normalizedAnswer.length === 0) {
+      return content3;
+    }
+    const normalizedQuestion = question?.trim();
+    const questionLine = normalizedQuestion ? `- \u0412\u043E\u043F\u0440\u043E\u0441: ${normalizedQuestion}` : "- \u0412\u043E\u043F\u0440\u043E\u0441: (\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C)";
+    const base = content3.trimEnd();
+    const withHeader = base.includes(QUESTIONNAIRE_CLARIFICATIONS_HEADER) ? base : `${base}
+
+${QUESTIONNAIRE_CLARIFICATIONS_HEADER}`;
+    return `${withHeader}
+${questionLine}
+  \u041E\u0442\u0432\u0435\u0442: ${normalizedAnswer}
+`;
+  };
+  var IdeaQuestionnaireService = class {
+    constructor() {
+      this.ideaCollector = new IdeaCollectorService();
+      this.saveTimers = /* @__PURE__ */ new Map();
+    }
+    async loadQuestionnaire(sessionId, outputPathsOverride) {
+      const httpUrl = resolveCoreHttpUrl();
+      if (!httpUrl) {
+        return null;
+      }
+      const templateMarkdown = await this.ideaCollector.getQuestionnaireTemplateMarkdown();
+      const outputPaths = outputPathsOverride;
+      if (!outputPaths) {
+        return null;
+      }
+      const template = templateMarkdown && templateMarkdown.trim().length > 0 ? templateMarkdown : DEFAULT_TEMPLATE;
+      const { questions, placeholders } = parseIdeaQuestionnaireTemplateFields(template);
+      const questionnairePath = outputPaths.idea.replace(
+        IDEA_PATH_SUFFIX_RE,
+        "questionnaire.md"
+      );
+      const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(questionnairePath);
+      const existing = await this.fetchWorkspaceFile(
+        sessionId,
+        questionnairePath
+      );
+      const existingContent = normalizeQuestionnaireContent(existing?.content);
+      let content3 = existingContent;
+      if (!content3 && initiativeQuestionnairePath) {
+        const initiativeCopy = await this.fetchWorkspaceFile(
+          sessionId,
+          initiativeQuestionnairePath
+        );
+        content3 = normalizeQuestionnaireContent(initiativeCopy?.content);
+      }
+      const resolvedContent = content3 ?? template;
+      if (!existingContent) {
+        await this.writeWorkspaceFile(
+          sessionId,
+          questionnairePath,
+          resolvedContent
+        );
+      }
+      const answers = extractIdeaQuestionnaireAnswers(
+        resolvedContent,
+        placeholders
+      );
+      return {
+        sessionId,
+        path: questionnairePath,
+        template,
+        placeholders,
+        questions,
+        answers
+      };
+    }
+    renderQuestionnaire(template, placeholders, answers) {
+      return renderIdeaQuestionnaire(template, placeholders, answers);
+    }
+    queueSave(sessionId, path2, content3) {
+      const existing = this.saveTimers.get(sessionId);
+      if (existing) {
+        window.clearTimeout(existing);
+      }
+      const timer = window.setTimeout(() => {
+        this.writeQuestionnaireCopies(sessionId, path2, content3).catch(() => {
+        });
+      }, SAVE_DEBOUNCE_MS);
+      this.saveTimers.set(sessionId, timer);
+    }
+    async flushSave(sessionId, path2, content3) {
+      const existing = this.saveTimers.get(sessionId);
+      if (existing) {
+        window.clearTimeout(existing);
+        this.saveTimers.delete(sessionId);
+      }
+      await this.writeQuestionnaireCopies(sessionId, path2, content3);
+    }
+    async appendClarificationAnswer(sessionId, outputPaths, question, answer) {
+      const questionnairePath = outputPaths.idea.replace(
+        IDEA_PATH_SUFFIX_RE,
+        "questionnaire.md"
+      );
+      const existing = await this.fetchWorkspaceFile(
+        sessionId,
+        questionnairePath
+      );
+      const existingContent = normalizeQuestionnaireContent(existing?.content);
+      if (!existingContent) {
+        return;
+      }
+      const updated = appendClarificationToMarkdown(
+        existingContent,
+        question,
+        answer
+      );
+      if (updated === existingContent) {
+        return;
+      }
+      await this.writeQuestionnaireCopies(sessionId, questionnairePath, updated);
+    }
+    async fetchWorkspaceFile(sessionId, path2) {
+      const httpUrl = resolveCoreHttpUrl();
+      if (!httpUrl) {
+        return null;
+      }
+      try {
+        const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT2), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId, path: path2, maxBytes: 2e5 })
+        });
+        if (!response.ok) {
+          return null;
+        }
+        const payload = await response.json();
+        if (!isWorkspaceFileResponse2(payload)) {
+          return null;
+        }
+        return payload;
+      } catch {
+        return null;
+      }
+    }
+    async writeQuestionnaireCopies(sessionId, path2, content3) {
+      await this.writeWorkspaceFile(sessionId, path2, content3);
+      const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(path2);
+      if (initiativeQuestionnairePath && initiativeQuestionnairePath !== path2) {
+        await this.writeWorkspaceFile(
+          sessionId,
+          initiativeQuestionnairePath,
+          content3
+        );
+      }
+    }
+    async writeWorkspaceFile(sessionId, path2, content3) {
+      const httpUrl = resolveCoreHttpUrl();
+      if (!httpUrl) {
+        return;
+      }
+      await fetch(joinUrl(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId, path: path2, content: content3 })
+      });
+    }
+  };
+
+  // src/client/ui/src/app-host/questionnaire-resume-banner.tsx
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   var containerStyles = {
     display: "flex",
     alignItems: "center",
@@ -24342,9 +24555,9 @@ ${message.content}`
     note,
     resumeLabel,
     onResume
-  }) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: containerStyles, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: note }),
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: onResume, style: buttonStyles, type: "button", children: resumeLabel })
+  }) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: containerStyles, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: note }),
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: onResume, style: buttonStyles, type: "button", children: resumeLabel })
   ] });
 
   // src/client/ui/src/app-host/session-region-idea-paths.ts
@@ -24380,26 +24593,21 @@ ${message.content}`
     resumeNote: "\u0415\u0441\u0442\u044C \u043D\u0435\u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u043D\u0430\u044F \u0430\u043D\u043A\u0435\u0442\u0430 \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438. \u041C\u043E\u0436\u043D\u043E \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435."
   };
 
-  // src/client/ui/src/app-host/session-region.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
-  var SessionRegion = ({
-    pickerState,
-    selectedStage,
-    stageSelectionLocked,
-    selectStage,
-    clearStageSelection,
-    confirmSelection,
-    cancelSelection,
-    sessionViewProps
+  // src/client/ui/src/app-host/idea-questionnaire-panel.tsx
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var IdeaQuestionnairePanel = ({
+    activeSessionId,
+    sessions,
+    pendingQuestionnaireRef,
+    pickerVisible,
+    onQuestionnaireVisibleChange
   }) => {
     const ideaCollectorRef = (0, import_react11.useRef)(new IdeaCollectorService());
     const questionnaireServiceRef = (0, import_react11.useRef)(new IdeaQuestionnaireService());
-    const pendingQuestionnaireRef = (0, import_react11.useRef)(false);
     const [questionnaireSnapshot, setQuestionnaireSnapshot] = (0, import_react11.useState)(null);
     const [questionnaireVisible, setQuestionnaireVisible] = (0, import_react11.useState)(false);
     const ideaCollector = ideaCollectorRef.current;
     const questionnaireService = questionnaireServiceRef.current;
-    const activeSessionId = sessionViewProps.activeSessionId;
     const handleAnswerChange = (0, import_react11.useCallback)(
       (questionId, value) => {
         setQuestionnaireSnapshot((current) => {
@@ -24441,7 +24649,7 @@ ${message.content}`
           content3
         );
         const outputPaths = resolveIdeaOutputPaths(
-          sessionViewProps.sessions,
+          sessions,
           questionnaireSnapshot.sessionId
         );
         if (!outputPaths) {
@@ -24457,12 +24665,7 @@ ${message.content}`
         setQuestionnaireVisible(false);
       } catch {
       }
-    }, [
-      ideaCollector,
-      questionnaireService,
-      questionnaireSnapshot,
-      sessionViewProps.sessions
-    ]);
+    }, [ideaCollector, questionnaireService, questionnaireSnapshot, sessions]);
     const handleQuestionnaireCancel = (0, import_react11.useCallback)(() => {
       if (!questionnaireSnapshot) {
         setQuestionnaireVisible(false);
@@ -24490,36 +24693,14 @@ ${message.content}`
         setQuestionnaireVisible(true);
         return;
       }
-      loadQuestionnaireForSession(
-        questionnaireService,
-        sessionViewProps.sessions,
-        activeSessionId
-      ).then((snapshot) => {
+      loadQuestionnaireForSession(questionnaireService, sessions, activeSessionId).then((snapshot) => {
         if (snapshot) {
           setQuestionnaireSnapshot(snapshot);
           setQuestionnaireVisible(true);
         }
       }).catch(() => {
       });
-    }, [
-      activeSessionId,
-      questionnaireService,
-      questionnaireSnapshot,
-      sessionViewProps.sessions
-    ]);
-    const handleProviderConfirm = (providerIds) => {
-      if (selectedStage === "idea") {
-        pendingQuestionnaireRef.current = true;
-      }
-      confirmSelection(providerIds);
-    };
-    const handleStageClick = (stage) => selectStage(stage);
-    const hasPendingQuestionnaire = activeSessionId ? ideaCollector.isQuestionnairePending(activeSessionId) : false;
-    const showQuestionnaire = Boolean(
-      questionnaireVisible && questionnaireSnapshot && activeSessionId && questionnaireSnapshot.sessionId === activeSessionId
-    );
-    const showQuestionnaireResume = Boolean(activeSessionId) && hasPendingQuestionnaire && !showQuestionnaire && !pickerState.visible;
-    const showSessionView = !(pickerState.visible || showQuestionnaire);
+    }, [activeSessionId, questionnaireService, questionnaireSnapshot, sessions]);
     (0, import_react11.useEffect)(() => {
       if (!activeSessionId) {
         return;
@@ -24528,53 +24709,38 @@ ${message.content}`
         return;
       }
       pendingQuestionnaireRef.current = false;
-      loadQuestionnaireForSession(
-        questionnaireService,
-        sessionViewProps.sessions,
-        activeSessionId
-      ).then((snapshot) => {
+      loadQuestionnaireForSession(questionnaireService, sessions, activeSessionId).then((snapshot) => {
         if (snapshot) {
           setQuestionnaireSnapshot(snapshot);
           setQuestionnaireVisible(true);
         }
       }).catch(() => {
       });
-    }, [activeSessionId, questionnaireService, sessionViewProps.sessions]);
+    }, [
+      activeSessionId,
+      pendingQuestionnaireRef,
+      questionnaireService,
+      sessions
+    ]);
+    const hasPendingQuestionnaire = activeSessionId ? ideaCollector.isQuestionnairePending(activeSessionId) : false;
+    const showQuestionnaire = Boolean(
+      questionnaireVisible && questionnaireSnapshot && activeSessionId && questionnaireSnapshot.sessionId === activeSessionId
+    );
+    const showQuestionnaireResume = Boolean(activeSessionId) && hasPendingQuestionnaire && !showQuestionnaire && !pickerVisible;
+    (0, import_react11.useEffect)(() => {
+      onQuestionnaireVisibleChange(showQuestionnaire);
+    }, [onQuestionnaireVisibleChange, showQuestionnaire]);
+    if (!(showQuestionnaire || showQuestionnaireResume)) {
+      return null;
+    }
     const questionnaireTitle = IDEA_QUESTIONNAIRE_COPY.title;
     const questionnaireDescription = IDEA_QUESTIONNAIRE_COPY.description;
     const questionnaireSubmitLabel = IDEA_QUESTIONNAIRE_COPY.submitLabel;
     const questionnaireCancelLabel = IDEA_QUESTIONNAIRE_COPY.cancelLabel;
     const questionnaireResumeLabel = IDEA_QUESTIONNAIRE_COPY.resumeLabel;
     const questionnaireResumeNote = IDEA_QUESTIONNAIRE_COPY.resumeNote;
-    const filteredProviders = selectedStage && selectedStage !== "chat" ? pickerState.providers.filter(
-      (provider) => provider.id === "codexCli" || provider.id === "claudeCodeCli"
-    ) : pickerState.providers;
-    const showStagePicker = pickerState.visible && selectedStage === null;
-    const showProviderPicker = pickerState.visible && selectedStage !== null;
-    const providerPickerSecondaryLabel = stageSelectionLocked ? "Cancel" : "Back";
-    const handleProviderPickerSecondary = stageSelectionLocked ? cancelSelection : clearStageSelection;
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "app-shell__session-region", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-        ProviderPicker,
-        {
-          onConfirm: handleProviderConfirm,
-          onSecondary: handleProviderPickerSecondary,
-          providers: filteredProviders,
-          secondaryLabel: providerPickerSecondaryLabel,
-          visible: showProviderPicker
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-        FlowWizardPicker,
-        {
-          onCancel: cancelSelection,
-          onStageClick: handleStageClick,
-          providers: pickerState.providers,
-          selectedStage,
-          visible: showStagePicker
-        }
-      ),
-      showQuestionnaireResume ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
+      showQuestionnaireResume ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         QuestionnaireResumeBanner,
         {
           note: questionnaireResumeNote,
@@ -24582,7 +24748,7 @@ ${message.content}`
           resumeLabel: questionnaireResumeLabel
         }
       ) : null,
-      showQuestionnaire && questionnaireSnapshot ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      showQuestionnaire && questionnaireSnapshot ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         IdeaQuestionnaireView,
         {
           answers: questionnaireSnapshot.answers,
@@ -24595,8 +24761,188 @@ ${message.content}`
           submitLabel: questionnaireSubmitLabel,
           title: questionnaireTitle
         }
-      ) : null,
-      showSessionView ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+      ) : null
+    ] });
+  };
+
+  // src/client/ui/src/app-host/session-region.tsx
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var resolveSelectedInitiativeSlug2 = () => {
+    const element3 = document.getElementById("initiative");
+    if (!(element3 instanceof HTMLSelectElement)) {
+      return null;
+    }
+    const value = element3.value.trim();
+    return value.length > 0 ? value : null;
+  };
+  var resolveWorkspacePath = () => {
+    const globalScope2 = window;
+    const workspacePath = globalScope2.__CODEAI_CORE_CONFIG?.workspacePath;
+    if (typeof workspacePath !== "string" || workspacePath.length === 0) {
+      return null;
+    }
+    return workspacePath;
+  };
+  var SessionRegion = ({
+    pickerState,
+    selectedStage,
+    stageSelectionLocked,
+    selectStage,
+    clearStageSelection,
+    confirmSelection,
+    cancelSelection,
+    sessionViewProps
+  }) => {
+    const pendingQuestionnaireRef = (0, import_react12.useRef)(false);
+    const [runSelection, setRunSelection] = (0, import_react12.useState)({
+      status: "pending"
+    });
+    const [runPickerMode, setRunPickerMode] = (0, import_react12.useState)(
+      "choice"
+    );
+    const [runPickerRuns, setRunPickerRuns] = (0, import_react12.useState)([]);
+    const [runPickerStatus, setRunPickerStatus] = (0, import_react12.useState)(null);
+    const [runPickerLoading, setRunPickerLoading] = (0, import_react12.useState)(false);
+    const [questionnaireActive, setQuestionnaireActive] = (0, import_react12.useState)(false);
+    const activeSessionId = sessionViewProps.activeSessionId;
+    const handleProviderConfirm = (providerIds) => {
+      if (selectedStage === "idea") {
+        pendingQuestionnaireRef.current = true;
+      }
+      confirmSelection(providerIds);
+    };
+    (0, import_react12.useEffect)(() => {
+      if (!pickerState.visible || selectedStage !== "idea") {
+        setRunSelection({ status: "pending" });
+        setRunPickerMode("choice");
+        setRunPickerRuns([]);
+        setRunPickerStatus(null);
+        setRunPickerLoading(false);
+      }
+    }, [pickerState.visible, selectedStage]);
+    const handleCreateNewDescription = (0, import_react12.useCallback)(() => {
+      setRunSelection({ status: "new" });
+    }, []);
+    const handleSelectExistingRun = (0, import_react12.useCallback)(
+      (runSlug) => {
+        const initiativeSlug = resolveSelectedInitiativeSlug2();
+        const existingSession = sessionViewProps.sessions.find(
+          (session) => session.runSlug === runSlug && session.stage === "idea" && session.initiativeSlug === initiativeSlug
+        );
+        if (existingSession) {
+          sessionViewProps.onSelectSession(existingSession.id);
+          cancelSelection();
+          return;
+        }
+        setRunSelection({ status: "existing", runSlug });
+      },
+      [
+        cancelSelection,
+        sessionViewProps.onSelectSession,
+        sessionViewProps.sessions
+      ]
+    );
+    (0, import_react12.useEffect)(() => {
+      if (!pickerState.visible || selectedStage !== "idea" || runSelection.status !== "pending" || runPickerMode !== "list") {
+        return;
+      }
+      const httpUrl = resolveCoreHttpUrl();
+      const workspacePath = resolveWorkspacePath();
+      const initiativeSlug = resolveSelectedInitiativeSlug2();
+      if (!(httpUrl && workspacePath && initiativeSlug)) {
+        setRunPickerRuns([]);
+        setRunPickerStatus("Select an initiative to continue.");
+        setRunPickerLoading(false);
+        return;
+      }
+      setRunPickerLoading(true);
+      setRunPickerStatus("Loading description runs...");
+      listRuns(httpUrl, workspacePath, initiativeSlug).then((result) => {
+        if (!result.ok) {
+          setRunPickerRuns([]);
+          setRunPickerStatus(result.error);
+          setRunPickerLoading(false);
+          return;
+        }
+        setRunPickerRuns([...result.data.runs]);
+        setRunPickerStatus(
+          result.data.runs.length === 0 ? "No description runs yet." : null
+        );
+        setRunPickerLoading(false);
+      }).catch(() => {
+        setRunPickerRuns([]);
+        setRunPickerStatus("Failed to load description runs.");
+        setRunPickerLoading(false);
+      });
+    }, [pickerState.visible, runPickerMode, runSelection.status, selectedStage]);
+    const handleStageClick = (stage) => selectStage(stage);
+    const selectedRunSlug = runSelection.status === "existing" ? runSelection.runSlug : null;
+    const showSessionView = !(pickerState.visible || questionnaireActive);
+    const filteredProviders = selectedStage && selectedStage !== "chat" ? pickerState.providers.filter(
+      (provider) => provider.id === "codexCli" || provider.id === "claudeCodeCli"
+    ) : pickerState.providers;
+    const showRunPicker = pickerState.visible && selectedStage === "idea" && runSelection.status === "pending";
+    const showStagePicker = pickerState.visible && selectedStage === null;
+    const showProviderPicker = pickerState.visible && selectedStage !== null && !showRunPicker;
+    const isRunPickerEmpty = !runPickerLoading && runPickerRuns.length === 0;
+    const providerPickerSecondaryLabel = stageSelectionLocked ? "Cancel" : "Back";
+    const handleProviderPickerSecondary = stageSelectionLocked ? cancelSelection : clearStageSelection;
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "app-shell__session-region", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        "input",
+        {
+          id: "runSlug",
+          readOnly: true,
+          type: "hidden",
+          value: selectedRunSlug ?? ""
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        ProviderPicker,
+        {
+          onConfirm: handleProviderConfirm,
+          onSecondary: handleProviderPickerSecondary,
+          providers: filteredProviders,
+          secondaryLabel: providerPickerSecondaryLabel,
+          visible: showProviderPicker
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        FlowWizardPicker,
+        {
+          onCancel: cancelSelection,
+          onStageClick: handleStageClick,
+          providers: pickerState.providers,
+          selectedStage,
+          visible: showStagePicker
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        RunPickerView,
+        {
+          isEmpty: isRunPickerEmpty,
+          mode: runPickerMode,
+          onBack: () => setRunPickerMode("choice"),
+          onCancel: cancelSelection,
+          onCreateNew: handleCreateNewDescription,
+          onSelectRun: handleSelectExistingRun,
+          onShowList: () => setRunPickerMode("list"),
+          runs: runPickerRuns,
+          status: runPickerStatus,
+          visible: showRunPicker
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        IdeaQuestionnairePanel,
+        {
+          activeSessionId,
+          onQuestionnaireVisibleChange: setQuestionnaireActive,
+          pendingQuestionnaireRef,
+          pickerVisible: pickerState.visible,
+          sessions: sessionViewProps.sessions
+        }
+      ),
+      showSessionView ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
         session_view_default,
         {
           activeSessionId: sessionViewProps.activeSessionId,
@@ -24616,17 +24962,17 @@ ${message.content}`
   };
 
   // src/client/ui/src/app-host/session-store.ts
-  var import_react12 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
   var useSessionStore = (providerLabels) => {
-    const [sessions, setSessions] = (0, import_react12.useState)([]);
-    const [snapshots, setSnapshots] = (0, import_react12.useState)({});
-    const [activeSessionId, setActiveSessionId] = (0, import_react12.useState)(null);
-    const sessionsRef = (0, import_react12.useRef)([]);
-    const pendingBindingsRef = (0, import_react12.useRef)({});
-    const syncSessionsRef = (0, import_react12.useCallback)((current) => {
+    const [sessions, setSessions] = (0, import_react13.useState)([]);
+    const [snapshots, setSnapshots] = (0, import_react13.useState)({});
+    const [activeSessionId, setActiveSessionId] = (0, import_react13.useState)(null);
+    const sessionsRef = (0, import_react13.useRef)([]);
+    const pendingBindingsRef = (0, import_react13.useRef)({});
+    const syncSessionsRef = (0, import_react13.useCallback)((current) => {
       sessionsRef.current = current;
     }, []);
-    const applyPendingBinding = (0, import_react12.useCallback)(
+    const applyPendingBinding = (0, import_react13.useCallback)(
       (session) => {
         const pending = pendingBindingsRef.current[session.id];
         if (!pending) {
@@ -24637,7 +24983,7 @@ ${message.content}`
       },
       []
     );
-    const handleSessionCreated = (0, import_react12.useCallback)(
+    const handleSessionCreated = (0, import_react13.useCallback)(
       (session) => {
         const sessionWithBinding = applyPendingBinding(session);
         setSessions((previous3) => {
@@ -24653,7 +24999,7 @@ ${message.content}`
       },
       [applyPendingBinding, providerLabels, syncSessionsRef]
     );
-    const hydrateFromCoreState = (0, import_react12.useCallback)(
+    const hydrateFromCoreState = (0, import_react13.useCallback)(
       (payload) => {
         const nextSessions = payload.sessions.map(
           (record) => applyPendingBinding(record)
@@ -24677,19 +25023,19 @@ ${message.content}`
       },
       [applyPendingBinding, providerLabels, syncSessionsRef]
     );
-    const handleSessionMessageEvent2 = (0, import_react12.useCallback)(
+    const handleSessionMessageEvent2 = (0, import_react13.useCallback)(
       (payload) => {
         setSnapshots((previous3) => appendMessageToSnapshots(previous3, payload));
       },
       []
     );
-    const handleSessionHistoryEvent = (0, import_react12.useCallback)(
+    const handleSessionHistoryEvent = (0, import_react13.useCallback)(
       (payload) => {
         setSnapshots((previous3) => mergeHistoryIntoSnapshots(previous3, payload));
       },
       []
     );
-    const handleSessionBindingUpdate = (0, import_react12.useCallback)(
+    const handleSessionBindingUpdate = (0, import_react13.useCallback)(
       (payload) => {
         const binding = normalizeBinding({
           providerSessionId: payload.providerSessionId,
@@ -24728,7 +25074,7 @@ ${message.content}`
       },
       [syncSessionsRef]
     );
-    const clearSessions = (0, import_react12.useCallback)(() => {
+    const clearSessions = (0, import_react13.useCallback)(() => {
       setSessions(() => {
         syncSessionsRef([]);
         return [];
@@ -24736,16 +25082,16 @@ ${message.content}`
       setSnapshots({});
       setActiveSessionId(null);
     }, [syncSessionsRef]);
-    const focusLastSession = (0, import_react12.useCallback)(() => {
+    const focusLastSession = (0, import_react13.useCallback)(() => {
       const last = sessionsRef.current.at(-1);
       if (last) {
         setActiveSessionId(last.id);
       }
     }, []);
-    const selectSession = (0, import_react12.useCallback)((sessionId) => {
+    const selectSession = (0, import_react13.useCallback)((sessionId) => {
       setActiveSessionId(sessionId);
     }, []);
-    const handleSessionDeleted = (0, import_react12.useCallback)(
+    const handleSessionDeleted = (0, import_react13.useCallback)(
       (payload) => {
         const { sessionId } = payload;
         setSessions((previous3) => {
@@ -24767,15 +25113,15 @@ ${message.content}`
       },
       [syncSessionsRef]
     );
-    const closeSession = (0, import_react12.useCallback)((sessionId) => {
+    const closeSession = (0, import_react13.useCallback)((sessionId) => {
       deleteSession(sessionId);
     }, []);
-    const toggleTodo = (0, import_react12.useCallback)((sessionId, todoId) => {
+    const toggleTodo = (0, import_react13.useCallback)((sessionId, todoId) => {
       setSnapshots(
         (previous3) => toggleTodoInSnapshots(previous3, sessionId, todoId)
       );
     }, []);
-    const sendMessage = (0, import_react12.useCallback)((sessionId, content3) => {
+    const sendMessage = (0, import_react13.useCallback)((sessionId, content3) => {
       setSnapshots((previous3) => {
         const current = previous3[sessionId];
         if (!current) {
@@ -24811,13 +25157,13 @@ ${message.content}`
   };
 
   // src/client/ui/src/app-host/settings-visibility.ts
-  var import_react13 = __toESM(require_react());
+  var import_react14 = __toESM(require_react());
   var useSettingsVisibility = () => {
-    const [settingsVisible, setSettingsVisible] = (0, import_react13.useState)(false);
-    const openSettings = (0, import_react13.useCallback)(() => {
+    const [settingsVisible, setSettingsVisible] = (0, import_react14.useState)(false);
+    const openSettings = (0, import_react14.useCallback)(() => {
       setSettingsVisible(true);
     }, []);
-    const closeSettings = (0, import_react13.useCallback)(() => {
+    const closeSettings = (0, import_react14.useCallback)(() => {
       setSettingsVisible(false);
       postVsCodeMessage({ type: "settings:closed" });
     }, []);
@@ -24829,13 +25175,13 @@ ${message.content}`
   };
 
   // src/client/ui/src/app-host/use-idea-collector.ts
-  var import_react14 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
   var useIdeaCollector = (fallbackSendMessage) => {
-    const serviceRef = (0, import_react14.useRef)(new IdeaCollectorService());
-    const questionnaireServiceRef = (0, import_react14.useRef)(new IdeaQuestionnaireService());
+    const serviceRef = (0, import_react15.useRef)(new IdeaCollectorService());
+    const questionnaireServiceRef = (0, import_react15.useRef)(new IdeaQuestionnaireService());
     const service = serviceRef.current;
     const questionnaireService = questionnaireServiceRef.current;
-    (0, import_react14.useEffect)(() => {
+    (0, import_react15.useEffect)(() => {
       const handleStreamEvent = (candidate) => {
         if (candidate.type !== "session:stream") {
           return false;
@@ -24876,13 +25222,13 @@ ${message.content}`
         window.removeEventListener("message", handleSessionEvent);
       };
     }, [service]);
-    const startCollection = (0, import_react14.useCallback)(
+    const startCollection = (0, import_react15.useCallback)(
       (sessionId) => {
         service.startCollection(sessionId);
       },
       [service]
     );
-    const sendMessage = (0, import_react14.useCallback)(
+    const sendMessage = (0, import_react15.useCallback)(
       (sessionId, content3) => {
         if (service.isIdeaCollectorSession(sessionId)) {
           if (!service.isQuestionnairePending(sessionId)) {
@@ -24909,7 +25255,7 @@ ${message.content}`
   };
 
   // src/client/ui/src/app-host/use-provider-picker-open-handler.ts
-  var import_react15 = __toESM(require_react());
+  var import_react16 = __toESM(require_react());
 
   // src/client/ui/src/root-dom.ts
   var activateRoot = () => {
@@ -24921,7 +25267,7 @@ ${message.content}`
 
   // src/client/ui/src/app-host/use-provider-picker-open-handler.ts
   var isFlowStageId = (value) => value === "chat" || value === "idea" || value === "spec" || value === "plan" || value === "execute";
-  var useProviderPickerOpenHandler = (openPicker, selectStage, lockStageSelection) => (0, import_react15.useCallback)(
+  var useProviderPickerOpenHandler = (openPicker, selectStage, lockStageSelection) => (0, import_react16.useCallback)(
     (providers, stage) => {
       activateRoot();
       if (providers.length === 0) {
@@ -24937,7 +25283,7 @@ ${message.content}`
   );
 
   // src/client/ui/src/app-host/webview-message-handler.ts
-  var import_react16 = __toESM(require_react());
+  var import_react17 = __toESM(require_react());
 
   // src/client/ui/src/app-host/webview-message-types.ts
   var isIncomingMessage = (value) => Boolean(value && typeof value === "object" && "type" in value);
@@ -25151,7 +25497,7 @@ ${message.content}`
     onSessionBinding,
     onSessionHistory
   }) => {
-    (0, import_react16.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       const handleIncomingMessage = (event) => {
         dispatchWebviewMessage(event.data, {
           onProviderPickerOpen,
@@ -25189,10 +25535,10 @@ ${message.content}`
   };
 
   // src/client/ui/src/components/action-bar/index.tsx
-  var import_react18 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
 
   // src/client/ui/src/components/action-bar/context-form.tsx
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   var ActionBarContextForm = ({
     mode,
     title,
@@ -25204,10 +25550,10 @@ ${message.content}`
     onDescriptionChange,
     onSubmit,
     onCancel
-  }) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_jsx_runtime20.Fragment, { children: [
-    mode ? /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("form", { className: "action-bar__context-form", onSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "action-bar__context-form-title", children: title }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+  }) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
+    mode ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("form", { className: "action-bar__context-form", onSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "action-bar__context-form-title", children: title }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
         "input",
         {
           "aria-label": "Name",
@@ -25218,7 +25564,7 @@ ${message.content}`
           value: name2
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
         "input",
         {
           "aria-label": "Description",
@@ -25229,8 +25575,8 @@ ${message.content}`
           value: description
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "action-bar__context-form-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "action-bar__context-form-actions", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           "button",
           {
             className: "action-bar__context-button",
@@ -25239,7 +25585,7 @@ ${message.content}`
             children: "Create"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           "button",
           {
             className: "action-bar__context-button",
@@ -25250,23 +25596,23 @@ ${message.content}`
         )
       ] })
     ] }) : null,
-    statusMessage ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("output", { "aria-live": "polite", className: "action-bar__context-status", children: statusMessage }) : null
+    statusMessage ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("output", { "aria-live": "polite", className: "action-bar__context-status", children: statusMessage }) : null
   ] });
 
   // src/client/ui/src/components/action-bar/use-initiative-context.ts
-  var import_react17 = __toESM(require_react());
+  var import_react18 = __toESM(require_react());
 
   // src/client/ui/src/api/orchestrator/initiatives-client.ts
   var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
-  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isInitiativeSummary = (value) => {
-    if (!isRecord9(value)) {
+    if (!isRecord10(value)) {
       return false;
     }
     return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
   };
   var parseInitiatives = (value) => {
-    if (!isRecord9(value)) {
+    if (!isRecord10(value)) {
       return [];
     }
     const raw = value.initiatives;
@@ -25288,7 +25634,7 @@ ${message.content}`
     return initiatives;
   };
   var parseCreatedInitiative = (value) => {
-    if (!isRecord9(value)) {
+    if (!isRecord10(value)) {
       return null;
     }
     const initiative = value.initiative;
@@ -25354,7 +25700,7 @@ ${message.content}`
   };
 
   // src/client/ui/src/components/action-bar/use-initiative-context.ts
-  var resolveWorkspacePath = () => {
+  var resolveWorkspacePath2 = () => {
     const globalScope2 = window;
     const workspacePath = globalScope2.__CODEAI_CORE_CONFIG?.workspacePath;
     if (typeof workspacePath !== "string" || workspacePath.length === 0) {
@@ -25363,16 +25709,16 @@ ${message.content}`
     return workspacePath;
   };
   var useInitiativeContext = (disabled) => {
-    const [initiatives, setInitiatives] = (0, import_react17.useState)([]);
-    const [selectedInitiativeSlug, setSelectedInitiativeSlug] = (0, import_react17.useState)(null);
-    const [statusMessage, setStatusMessage] = (0, import_react17.useState)(null);
-    const coreHttpUrl = (0, import_react17.useMemo)(() => resolveCoreHttpUrl(), []);
-    const workspacePath = (0, import_react17.useMemo)(() => resolveWorkspacePath(), []);
+    const [initiatives, setInitiatives] = (0, import_react18.useState)([]);
+    const [selectedInitiativeSlug, setSelectedInitiativeSlug] = (0, import_react18.useState)(null);
+    const [statusMessage, setStatusMessage] = (0, import_react18.useState)(null);
+    const coreHttpUrl = (0, import_react18.useMemo)(() => resolveCoreHttpUrl(), []);
+    const workspacePath = (0, import_react18.useMemo)(() => resolveWorkspacePath2(), []);
     const hasWorkspace = Boolean(coreHttpUrl && workspacePath);
-    const clearStatus = (0, import_react17.useCallback)(() => {
+    const clearStatus = (0, import_react18.useCallback)(() => {
       setStatusMessage(null);
     }, []);
-    const refreshInitiatives = (0, import_react17.useCallback)(
+    const refreshInitiatives = (0, import_react18.useCallback)(
       async (preferredSlug) => {
         if (!(coreHttpUrl && workspacePath)) {
           return;
@@ -25391,28 +25737,28 @@ ${message.content}`
       },
       [coreHttpUrl, selectedInitiativeSlug, workspacePath]
     );
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (disabled || !hasWorkspace) {
         return;
       }
       refreshInitiatives().catch(() => {
       });
     }, [disabled, hasWorkspace, refreshInitiatives]);
-    const selectedInitiative = (0, import_react17.useMemo)(
+    const selectedInitiative = (0, import_react18.useMemo)(
       () => initiatives.find(
         (initiative) => initiative.initiativeSlug === selectedInitiativeSlug
       ) ?? null,
       [initiatives, selectedInitiativeSlug]
     );
     const initiativeTitle = selectedInitiative ? [selectedInitiative.displayName, selectedInitiative.description].filter(Boolean).join(" \u2014 ") : "Select initiative";
-    const handleInitiativeChange = (0, import_react17.useCallback)(
+    const handleInitiativeChange = (0, import_react18.useCallback)(
       (event) => {
         const nextSlug = event.target.value;
         setSelectedInitiativeSlug(nextSlug.length > 0 ? nextSlug : null);
       },
       []
     );
-    const createInitiative2 = (0, import_react17.useCallback)(
+    const createInitiative2 = (0, import_react18.useCallback)(
       async (input) => {
         if (!(coreHttpUrl && workspacePath)) {
           setStatusMessage("Workspace path is unavailable.");
@@ -25451,7 +25797,7 @@ ${message.content}`
   };
 
   // src/client/ui/src/components/action-bar/index.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
   var BUTTONS = [
     { id: "startChat", label: ["Simple", "Chat"] },
     { id: "startIdea", label: ["Idea", ""] },
@@ -25473,23 +25819,23 @@ ${message.content}`
       createInitiative: createInitiative2,
       clearStatus
     } = useInitiativeContext(disabled);
-    const [createMode, setCreateMode] = (0, import_react18.useState)(null);
-    const [draftName, setDraftName] = (0, import_react18.useState)("");
-    const [draftDescription, setDraftDescription] = (0, import_react18.useState)("");
+    const [createMode, setCreateMode] = (0, import_react19.useState)(null);
+    const [draftName, setDraftName] = (0, import_react19.useState)("");
+    const [draftDescription, setDraftDescription] = (0, import_react19.useState)("");
     const initiativePlaceholder = initiatives.length === 0 ? "No initiatives yet" : "Select initiative";
     const formTitle = "New initiative";
-    const handleStartCreateInitiative = (0, import_react18.useCallback)(() => {
+    const handleStartCreateInitiative = (0, import_react19.useCallback)(() => {
       clearStatus();
       setCreateMode("initiative");
       setDraftName("");
       setDraftDescription("");
     }, [clearStatus]);
-    const handleCancelCreate = (0, import_react18.useCallback)(() => {
+    const handleCancelCreate = (0, import_react19.useCallback)(() => {
       setCreateMode(null);
       setDraftName("");
       setDraftDescription("");
     }, []);
-    const handleSubmitCreate = (0, import_react18.useCallback)(
+    const handleSubmitCreate = (0, import_react19.useCallback)(
       async (event) => {
         event.preventDefault();
         if (!createMode) {
@@ -25508,7 +25854,7 @@ ${message.content}`
       },
       [createInitiative2, createMode, draftDescription, draftName]
     );
-    const handleClick = (0, import_react18.useCallback)(
+    const handleClick = (0, import_react19.useCallback)(
       (command) => {
         if (command !== "startChat" && !canStartFlow) {
           return;
@@ -25522,25 +25868,25 @@ ${message.content}`
       [canStartFlow, disabled]
     );
     const flowDisabled = disabled || !canStartFlow;
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__surface", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "action-bar__surface", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         "div",
         {
           "aria-hidden": "true",
           className: "action-bar__rail action-bar__rail--top"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         "div",
         {
           "aria-hidden": "true",
           className: "action-bar__rail action-bar__rail--bottom"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "action-bar__context", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__context-group", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("label", { className: "action-bar__context-label", htmlFor: "initiative", children: "Initiative" }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__context-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "action-bar__context", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "action-bar__context-group", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("label", { className: "action-bar__context-label", htmlFor: "initiative", children: "Initiative" }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "action-bar__context-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
             "select",
             {
               "aria-label": "Initiative",
@@ -25551,8 +25897,8 @@ ${message.content}`
               title: initiativeTitle,
               value: selectedInitiativeSlug ?? "",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("option", { disabled: true, value: "", children: initiativePlaceholder }),
-                initiatives.map((initiative) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("option", { disabled: true, value: "", children: initiativePlaceholder }),
+                initiatives.map((initiative) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                   "option",
                   {
                     value: initiative.initiativeSlug,
@@ -25563,7 +25909,7 @@ ${message.content}`
               ]
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
             "button",
             {
               className: "action-bar__context-button",
@@ -25575,7 +25921,7 @@ ${message.content}`
           )
         ] })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         ActionBarContextForm,
         {
           controlsDisabled,
@@ -25590,10 +25936,10 @@ ${message.content}`
           title: formTitle
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__buttons", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "action-bar__button-zone action-bar__button-zone--chat", children: CHAT_BUTTONS.map(({ id, label }) => {
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "action-bar__buttons", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "action-bar__button-zone action-bar__button-zone--chat", children: CHAT_BUTTONS.map(({ id, label }) => {
           const ariaLabel = label.filter(Boolean).join(" ");
-          return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
             "button",
             {
               "aria-label": ariaLabel,
@@ -25602,16 +25948,16 @@ ${message.content}`
               onClick: () => handleClick(id),
               type: "button",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "action-bar__line", children: label[0] }),
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "action-bar__line", children: label[1] })
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "action-bar__line", children: label[0] }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "action-bar__line", children: label[1] })
               ]
             },
             id
           );
         }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "action-bar__button-zone action-bar__button-zone--flow", children: FLOW_BUTTONS.map(({ id, label }) => {
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "action-bar__button-zone action-bar__button-zone--flow", children: FLOW_BUTTONS.map(({ id, label }) => {
           const ariaLabel = label.filter(Boolean).join(" ");
-          return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
             "button",
             {
               "aria-label": ariaLabel,
@@ -25620,8 +25966,8 @@ ${message.content}`
               onClick: () => handleClick(id),
               type: "button",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "action-bar__line", children: label[0] }),
-                /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "action-bar__line", children: label[1] })
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "action-bar__line", children: label[0] }),
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "action-bar__line", children: label[1] })
               ]
             },
             id
@@ -25633,10 +25979,10 @@ ${message.content}`
   var action_bar_default = ActionBar;
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_react29 = __toESM(require_react());
+  var import_react30 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_react19 = __toESM(require_react());
+  var import_react20 = __toESM(require_react());
 
   // src/types/claude-model-registry.ts
   var CLAUDE_MODEL_ALIASES = [
@@ -25666,7 +26012,7 @@ ${message.content}`
   var DEFAULT_CLAUDE_MODEL_ALIAS = "default";
 
   // src/client/ui/src/components/settings/settings-card.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
   var cardStyles = {
     background: "#252526",
     borderRadius: "6px",
@@ -25692,9 +26038,9 @@ ${message.content}`
     title,
     action,
     children
-  }) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: cardStyles, children: [
-    title ? /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: headerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h3", { style: titleStyles, children: title }),
+  }) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: cardStyles, children: [
+    title ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: headerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h3", { style: titleStyles, children: title }),
       action
     ] }) : null,
     children
@@ -25792,12 +26138,12 @@ ${message.content}`
   };
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
   var ClaudeDefaultModelCard = ({
     defaultModel,
     onDefaultModelChange
   }) => {
-    const [hoveredAlias, setHoveredAlias] = (0, import_react19.useState)(
+    const [hoveredAlias, setHoveredAlias] = (0, import_react20.useState)(
       null
     );
     const handleRowClick = (model) => {
@@ -25809,9 +26155,9 @@ ${message.content}`
         onDefaultModelChange(model);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(settings_card_default, { title: "Claude Default model", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/Knowledge/Claude_Model_Aliases.md" }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(settings_card_default, { title: "Claude Default model", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/Knowledge/Claude_Model_Aliases.md" }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
         const isSelected = defaultModel === model.alias;
         const rowStyle = {
           ...rowBaseStyles,
@@ -25821,7 +26167,7 @@ ${message.content}`
         };
         return (
           // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
             "div",
             {
               "aria-checked": isSelected,
@@ -25833,20 +26179,20 @@ ${message.content}`
               style: rowStyle,
               tabIndex: -1,
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
                   "div",
                   {
                     style: {
                       ...radioCircleStyles,
                       ...isSelected ? radioCircleSelectedStyles : {}
                     },
-                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: radioCircleInnerStyles }) : null
+                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: radioCircleInnerStyles }) : null
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: modelInfoStyles, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: aliasStyles, children: model.alias }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: modelInfoStyles, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: aliasStyles, children: model.alias }),
+                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                 ] })
               ]
             },
@@ -25854,13 +26200,13 @@ ${message.content}`
           )
         );
       }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
     ] });
   };
-  var claude_default_model_card_default = (0, import_react19.memo)(ClaudeDefaultModelCard);
+  var claude_default_model_card_default = (0, import_react20.memo)(ClaudeDefaultModelCard);
 
   // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_react21 = __toESM(require_react());
+  var import_react22 = __toESM(require_react());
 
   // src/types/codex-model-registry.ts
   var CODEX_RECOMMENDED_MODELS = [
@@ -26018,8 +26364,8 @@ ${message.content}`
   };
 
   // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
-  var import_react20 = __toESM(require_react());
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+  var import_react21 = __toESM(require_react());
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
   var overlayStyles = {
     position: "fixed",
     inset: 0,
@@ -26148,8 +26494,8 @@ ${message.content}`
     onSave,
     onCancel
   }) => {
-    const [selectedReasoning, setSelectedReasoning] = (0, import_react20.useState)(initialReasoning);
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+    const [selectedReasoning, setSelectedReasoning] = (0, import_react21.useState)(initialReasoning);
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
       "div",
       {
         "aria-label": `Reasoning effort for ${model.displayName}`,
@@ -26157,19 +26503,19 @@ ${message.content}`
         role: "dialog",
         style: dialogStyles,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: headerStyles2, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("h3", { style: titleStyles2, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: headerStyles2, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("h3", { style: titleStyles2, children: [
                 model.displayName,
                 " reasoning"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: subtitleStyles, children: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session." })
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: subtitleStyles, children: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session." })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { onClick: onCancel, style: closeButtonStyles, type: "button", children: "Close" })
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { onClick: onCancel, style: closeButtonStyles, type: "button", children: "Close" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: optionListStyles, children: CODEX_REASONING_LEVELS.map((level) => {
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: optionListStyles, children: CODEX_REASONING_LEVELS.map((level) => {
             const isSelected = level.name === selectedReasoning;
-            return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+            return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
               "label",
               {
                 style: {
@@ -26177,7 +26523,7 @@ ${message.content}`
                   ...isSelected ? optionSelectedStyles : null
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                     "input",
                     {
                       checked: isSelected,
@@ -26187,13 +26533,13 @@ ${message.content}`
                       type: "radio"
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: optionTitleStyles, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: optionTitleStyles, children: [
                       level.name,
-                      level.default ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { style: defaultBadgeStyles, children: "Default" }) : null
+                      level.default ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { style: defaultBadgeStyles, children: "Default" }) : null
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: optionDescriptionStyles, children: level.description }),
-                    /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("p", { style: optionUseCaseStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: optionDescriptionStyles, children: level.description }),
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { style: optionUseCaseStyles, children: [
                       "Use case: ",
                       level.useCase
                     ] })
@@ -26203,9 +26549,9 @@ ${message.content}`
               level.name
             );
           }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: footerStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("button", { onClick: onCancel, style: cancelButtonStyles, type: "button", children: "Cancel" }),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: footerStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { onClick: onCancel, style: cancelButtonStyles, type: "button", children: "Cancel" }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
               "button",
               {
                 onClick: () => onSave(selectedReasoning),
@@ -26222,15 +26568,15 @@ ${message.content}`
   var codex_reasoning_dialog_default = CodexReasoningDialog;
 
   // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
-  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
+  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
     "div",
     {
       style: {
         ...radioCircleStyles,
         ...checked ? radioCircleSelectedStyles : {}
       },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: radioCircleInnerStyles }) : null
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: radioCircleInnerStyles }) : null
     }
   );
   var CodexDefaultModelCard = ({
@@ -26239,15 +26585,15 @@ ${message.content}`
     onDefaultModelChange,
     onReasoningChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react21.useState)(null);
-    const [hoveredRowId, setHoveredRowId] = (0, import_react21.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react21.useState)(
+    const [activeModelId, setActiveModelId] = (0, import_react22.useState)(null);
+    const [hoveredRowId, setHoveredRowId] = (0, import_react22.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react22.useState)(
       null
     );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react21.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react22.useState)(
       null
     );
-    const recommendedModelIds = (0, import_react21.useMemo)(
+    const recommendedModelIds = (0, import_react22.useMemo)(
       () => new Set(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
       []
     );
@@ -26270,11 +26616,11 @@ ${message.content}`
       event.stopPropagation();
       setActiveModelId(modelId);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(settings_card_default, { title: "Codex Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
-        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: warningStyles, children: "The saved default model is no longer available. Falling back to GPT-5.2-Codex." }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: listStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(settings_card_default, { title: "Codex Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
+        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: warningStyles, children: "The saved default model is no longer available. Falling back to GPT-5.2-Codex." }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: listStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
           const isSelected = selectedModelId === model.id;
           const isRowHovered = hoveredRowId === model.id;
           const reasoningLevel = resolveReasoning(model.id);
@@ -26294,7 +26640,7 @@ ${message.content}`
           };
           return (
             // biome-ignore lint/a11y/useSemanticElements: Custom radio to avoid browser focus styles on native input
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
               "div",
               {
                 "aria-checked": isSelected,
@@ -26306,16 +26652,16 @@ ${message.content}`
                 style: rowStyle,
                 tabIndex: -1,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(RadioCircle, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: modelBodyStyles, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: modelIdStyles, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(RadioCircle, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: modelBodyStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: modelIdStyles, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: reasoningRowStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: reasoningRowStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
                         "button",
                         {
                           onClick: (e) => handleReasoningButtonClick(e, model.id),
@@ -26342,9 +26688,9 @@ ${message.content}`
             )
           );
         }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
       ] }),
-      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
         codex_reasoning_dialog_default,
         {
           initialReasoning: resolveReasoning(activeModel.id),
@@ -26358,10 +26704,10 @@ ${message.content}`
       ) : null
     ] });
   };
-  var codex_default_model_card_default = (0, import_react21.memo)(CodexDefaultModelCard);
+  var codex_default_model_card_default = (0, import_react22.memo)(CodexDefaultModelCard);
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_react23 = __toESM(require_react());
+  var import_react24 = __toESM(require_react());
 
   // src/types/gemini-model-registry.ts
   var GEMINI_RECOMMENDED_MODELS = [
@@ -26481,8 +26827,8 @@ ${message.content}`
   };
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
-  var import_react22 = __toESM(require_react());
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
+  var import_react23 = __toESM(require_react());
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
   var overlayStyles2 = {
     position: "fixed",
     inset: 0,
@@ -26611,8 +26957,8 @@ ${message.content}`
     onSave,
     onCancel
   }) => {
-    const [selectedLevel, setSelectedLevel] = (0, import_react22.useState)(initialLevel);
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: overlayStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
+    const [selectedLevel, setSelectedLevel] = (0, import_react23.useState)(initialLevel);
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: overlayStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
       "div",
       {
         "aria-label": `Thinking level for ${model.displayName}`,
@@ -26620,21 +26966,21 @@ ${message.content}`
         role: "dialog",
         style: dialogStyles2,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: headerStyles3, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("h3", { style: titleStyles3, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: headerStyles3, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("h3", { style: titleStyles3, children: [
                 model.displayName,
                 " thinking"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: subtitleStyles2, children: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session." })
+              /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: subtitleStyles2, children: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session." })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { onClick: onCancel, style: closeButtonStyles2, type: "button", children: "Close" })
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { onClick: onCancel, style: closeButtonStyles2, type: "button", children: "Close" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: optionListStyles2, children: GEMINI_THINKING_LEVELS.filter(
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: optionListStyles2, children: GEMINI_THINKING_LEVELS.filter(
             (level) => model.supportedThinkingLevels.includes(level.name)
           ).map((level) => {
             const isSelected = level.name === selectedLevel;
-            return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
+            return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
               "label",
               {
                 style: {
@@ -26642,7 +26988,7 @@ ${message.content}`
                   ...isSelected ? optionSelectedStyles2 : null
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
                     "input",
                     {
                       checked: isSelected,
@@ -26652,13 +26998,13 @@ ${message.content}`
                       type: "radio"
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: optionTitleStyles2, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: optionTitleStyles2, children: [
                       level.name,
-                      level.name === DEFAULT_GEMINI_THINKING_LEVEL ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { style: defaultBadgeStyles2, children: "Default" }) : null
+                      level.name === DEFAULT_GEMINI_THINKING_LEVEL ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: defaultBadgeStyles2, children: "Default" }) : null
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: optionDescriptionStyles2, children: level.description }),
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { style: optionUseCaseStyles2, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: optionDescriptionStyles2, children: level.description }),
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { style: optionUseCaseStyles2, children: [
                       "Use case: ",
                       level.useCase
                     ] })
@@ -26668,9 +27014,9 @@ ${message.content}`
               level.name
             );
           }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: footerStyles2, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: footerStyles2, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
               "button",
               {
                 onClick: () => onSave(selectedLevel),
@@ -26687,15 +27033,15 @@ ${message.content}`
   var gemini_thinking_dialog_default = GeminiThinkingDialog;
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
-  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime());
+  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
     "div",
     {
       style: {
         ...radioCircleStyles,
         ...checked ? radioCircleSelectedStyles : {}
       },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: radioCircleInnerStyles }) : null
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: radioCircleInnerStyles }) : null
     }
   );
   var GeminiDefaultModelCard = ({
@@ -26704,14 +27050,14 @@ ${message.content}`
     onDefaultModelChange,
     onThinkingChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react23.useState)(
+    const [activeModelId, setActiveModelId] = (0, import_react24.useState)(
       null
     );
-    const [hoveredRowId, setHoveredRowId] = (0, import_react23.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react23.useState)(
+    const [hoveredRowId, setHoveredRowId] = (0, import_react24.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react24.useState)(
       null
     );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react23.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react24.useState)(
       null
     );
     const activeModel = GEMINI_RECOMMENDED_MODELS.find(
@@ -26731,10 +27077,10 @@ ${message.content}`
       event.stopPropagation();
       setActiveModelId(modelId);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/Knowledge/Gemini_Model_Selection.md" }),
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(import_jsx_runtime29.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/Knowledge/Gemini_Model_Selection.md" }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
           const isSelected = defaultModel === model.id;
           const isRowHovered = hoveredRowId === model.id;
           const thinkingLevel = resolveThinkingLevel(model.id);
@@ -26754,7 +27100,7 @@ ${message.content}`
           };
           return (
             // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
               "div",
               {
                 "aria-checked": isSelected,
@@ -26766,16 +27112,16 @@ ${message.content}`
                 style: rowStyle,
                 tabIndex: -1,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(RadioCircle2, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: modelBodyStyles2, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: modelIdStyles2, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                  /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(RadioCircle2, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: modelBodyStyles2, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: modelIdStyles2, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: reasoningRowStyles2, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { style: reasoningLabelStyles2, children: "Configure thinking:" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: reasoningRowStyles2, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { style: reasoningLabelStyles2, children: "Configure thinking:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
                         "button",
                         {
                           onClick: (e) => handleThinkingButtonClick(e, model.id),
@@ -26802,9 +27148,9 @@ ${message.content}`
             )
           );
         }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
       ] }),
-      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
         gemini_thinking_dialog_default,
         {
           initialLevel: resolveThinkingLevel(activeModel.id),
@@ -26818,11 +27164,11 @@ ${message.content}`
       ) : null
     ] });
   };
-  var gemini_default_model_card_default = (0, import_react23.memo)(GeminiDefaultModelCard);
+  var gemini_default_model_card_default = (0, import_react24.memo)(GeminiDefaultModelCard);
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_react24 = __toESM(require_react());
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
+  var import_react25 = __toESM(require_react());
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     marginBottom: "30px"
   };
@@ -26846,19 +27192,19 @@ ${message.content}`
     const handleRestartCore = () => {
       postVsCodeMessage({ type: "core:restart-request" });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: wrapperStyles, children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(settings_card_default, { title: "Core Controls", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { onClick: handleRestartCore, style: buttonStyles2, type: "button", children: "Restart Core" })
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { style: wrapperStyles, children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(settings_card_default, { title: "Core Controls", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("button", { onClick: handleRestartCore, style: buttonStyles2, type: "button", children: "Restart Core" })
     ] }) });
   };
-  var general_settings_default = (0, import_react24.memo)(GeneralSettings);
+  var general_settings_default = (0, import_react25.memo)(GeneralSettings);
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_react26 = __toESM(require_react());
+  var import_react27 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react25 = __toESM(require_react());
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime());
+  var import_react26 = __toESM(require_react());
+  var import_jsx_runtime31 = __toESM(require_jsx_runtime());
   var rowStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -26950,17 +27296,17 @@ ${message.content}`
       resolvedButtonStyle = buttonStyles3;
     }
     const shouldShowButton = row.showUpdateButton ?? true;
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: rowStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: labelStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { style: nameStyles, children: row.label }),
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { style: versionTextStyles, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { style: rowStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { style: labelStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { style: nameStyles, children: row.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { style: versionTextStyles, children: [
           "Current: ",
           currentLabel,
           " ",
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { style: chipStyles, children: latestLabel })
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { style: chipStyles, children: latestLabel })
         ] })
       ] }),
-      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
+      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
         "button",
         {
           disabled: disabled || !hasUpdate,
@@ -26969,13 +27315,13 @@ ${message.content}`
           type: "button",
           children: buttonLabel
         }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { style: chipStyles, children: latestLabel })
+      ) : /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("span", { style: chipStyles, children: latestLabel })
     ] });
   };
-  var VersionRowItem = (0, import_react25.memo)(VersionRowItemComponent);
+  var VersionRowItem = (0, import_react26.memo)(VersionRowItemComponent);
 
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
-  var import_jsx_runtime30 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime32 = __toESM(require_jsx_runtime());
   var warningStyles2 = {
     background: "#3a2a1f",
     border: "1px solid #9b6b3d",
@@ -27067,7 +27413,7 @@ ${message.content}`
   };
   var WarningBanner = ({
     provider
-  }) => /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
+  }) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
   var AutoUpdateToggle = ({
     provider,
     enabled,
@@ -27076,7 +27422,7 @@ ${message.content}`
   }) => {
     const providerLabel = resolveProviderLabel(provider);
     const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
-    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
       "label",
       {
         style: {
@@ -27085,7 +27431,7 @@ ${message.content}`
           cursor: disabled ? "not-allowed" : "pointer"
         },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
             "input",
             {
               checked: enabled,
@@ -27095,12 +27441,12 @@ ${message.content}`
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { style: toggleTitleStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: toggleTitleStyles, children: [
               "Auto-update ",
               providerLabel
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("p", { style: toggleDescriptionStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { style: toggleDescriptionStyles, children: [
               "Automatically check and update the ",
               packageLabel,
               " on core start. Manual updates remain available below."
@@ -27112,7 +27458,7 @@ ${message.content}`
   };
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_jsx_runtime31 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime33 = __toESM(require_jsx_runtime());
   var rowsContainerStyles = {
     display: "flex",
     flexDirection: "column",
@@ -27139,9 +27485,9 @@ ${message.content}`
     onAutoUpdateChange,
     onUpdate
   }) => {
-    const [pendingTarget, setPendingTarget] = (0, import_react26.useState)(null);
+    const [pendingTarget, setPendingTarget] = (0, import_react27.useState)(null);
     const snapshot = versions.data;
-    const rows = (0, import_react26.useMemo)(() => {
+    const rows = (0, import_react27.useMemo)(() => {
       if (!snapshot) {
         return [];
       }
@@ -27191,7 +27537,7 @@ ${message.content}`
         }
       ];
     }, [provider, snapshot]);
-    const hasProviderVersions = (0, import_react26.useMemo)(() => {
+    const hasProviderVersions = (0, import_react27.useMemo)(() => {
       if (!snapshot) {
         return false;
       }
@@ -27203,11 +27549,11 @@ ${message.content}`
     const isBusy = versions.loading || versions.updatingTargets.length > 0;
     const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
     const isPending = (target) => pendingTarget === `${provider}:${target}`;
-    const providerUpdateTargets = (0, import_react26.useMemo)(() => {
+    const providerUpdateTargets = (0, import_react27.useMemo)(() => {
       const prefix = `${provider}:`;
       return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
     }, [provider, versions.updatingTargets]);
-    const manualUpdateStatus = (0, import_react26.useMemo)(() => {
+    const manualUpdateStatus = (0, import_react27.useMemo)(() => {
       if (providerUpdateTargets.length === 0) {
         return null;
       }
@@ -27216,7 +27562,7 @@ ${message.content}`
       );
       return `Manual update in progress: ${labels.join(", ")}`;
     }, [provider, providerUpdateTargets]);
-    (0, import_react26.useEffect)(() => {
+    (0, import_react27.useEffect)(() => {
       if (versions.updatingTargets.length === 0) {
         setPendingTarget(null);
       }
@@ -27236,17 +27582,17 @@ ${message.content}`
     } else if (provider === "codex") {
       title = "Codex Versions";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(
       settings_card_default,
       {
-        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { style: metadataTextStyles, children: [
+        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("span", { style: metadataTextStyles, children: [
           "Checked: ",
           formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
         ] }) : null,
         title,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(WarningBanner, { provider }),
-          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(WarningBanner, { provider }),
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
             AutoUpdateToggle,
             {
               disabled: versions.loading,
@@ -27255,11 +27601,11 @@ ${message.content}`
               provider
             }
           ),
-          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { style: errorStyles, children: versions.error }) : null,
-          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
-          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
-          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { style: errorStyles, children: versions.error }) : null,
+          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
+          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
+          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
             VersionRowItem,
             {
               disabled: isBusy,
@@ -27274,10 +27620,10 @@ ${message.content}`
       }
     );
   };
-  var provider_versions_default = (0, import_react26.memo)(ProviderVersions);
+  var provider_versions_default = (0, import_react27.memo)(ProviderVersions);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime32 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime34 = __toESM(require_jsx_runtime());
   var containerStyles2 = {
     display: "flex",
     justifyContent: "space-between",
@@ -27389,8 +27735,8 @@ ${message.content}`
         event.currentTarget.style.background = "#0e639c";
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: containerStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { style: containerStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
         "button",
         {
           disabled: resetting,
@@ -27411,8 +27757,8 @@ ${message.content}`
           children: resetting ? "Resetting..." : "Reset to Defaults"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
           "button",
           {
             onBlur: handleCloseBlur,
@@ -27425,7 +27771,7 @@ ${message.content}`
             children: "Close"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
           "button",
           {
             disabled: !hasChanges || saving,
@@ -27451,7 +27797,7 @@ ${message.content}`
   var settings_footer_default = SettingsFooter;
 
   // src/client/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime33 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime35 = __toESM(require_jsx_runtime());
   var headerStyles4 = {
     display: "flex",
     alignItems: "center",
@@ -27478,9 +27824,9 @@ ${message.content}`
     alignItems: "center",
     justifyContent: "center"
   };
-  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { style: headerStyles4, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { style: titleStyles4, children: "Settings" }),
-    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { style: headerStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: titleStyles4, children: "Settings" }),
+    /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
       "button",
       {
         "aria-label": "Close settings",
@@ -27495,7 +27841,7 @@ ${message.content}`
   var settings_header_default = SettingsHeader;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react27 = __toESM(require_react());
+  var import_react28 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
@@ -27510,7 +27856,7 @@ ${message.content}`
 `;
 
   // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime34 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime36 = __toESM(require_jsx_runtime());
   var containerStyles3 = {
     marginTop: "20px",
     padding: "12px",
@@ -27529,14 +27875,14 @@ ${message.content}`
     color: "#999999",
     lineHeight: "1.4"
   };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { style: containerStyles3, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { style: containerStyles3, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
   ] });
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime35 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime37 = __toESM(require_jsx_runtime());
   var toggleContainerStyles2 = {
     display: "flex",
     alignItems: "flex-start",
@@ -27563,8 +27909,8 @@ ${message.content}`
   var noteStyles2 = {
     color: "#d4a36a"
   };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("label", { style: toggleContainerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("label", { style: toggleContainerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
       "input",
       {
         checked: enabled,
@@ -27573,12 +27919,12 @@ ${message.content}`
         type: "checkbox"
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { style: descriptionStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: descriptionStyles4, children: [
         "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("strong", { style: noteStyles2, children: "Note:" }),
         " Changes take effect when creating a new session."
       ] })
     ] })
@@ -27586,7 +27932,7 @@ ${message.content}`
   var thinking_toggle_default = ThinkingToggle;
 
   // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime36 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime38 = __toESM(require_jsx_runtime());
   var containerStyles4 = {
     paddingLeft: "28px",
     borderTop: "1px solid #3c3c3c",
@@ -27648,10 +27994,10 @@ ${message.content}`
       const parsed = Number.parseInt(event.target.value, 10);
       updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { style: containerStyles4, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { style: containerStyles4, children: /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
           "button",
           {
             onClick: () => updateValue(value - THINKING_TOKEN_STEP),
@@ -27661,7 +28007,7 @@ ${message.content}`
             children: "\u2212"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
           "input",
           {
             max: MAX_THINKING_TOKENS,
@@ -27673,7 +28019,7 @@ ${message.content}`
             value
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
           "button",
           {
             onClick: () => updateValue(value + THINKING_TOKEN_STEP),
@@ -27684,11 +28030,11 @@ ${message.content}`
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { style: helperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { style: helperStyles, children: [
         "\u2022 Normal (4000): Standard reasoning depth",
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("br", {}),
         "\u2022 Hard (10000): Extended analysis for complex tasks",
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("br", {}),
         "\u2022 Ultra (32000): Maximum reasoning capacity"
       ] })
     ] }) });
@@ -27696,7 +28042,7 @@ ${message.content}`
   var thinking_token_input_default = ThinkingTokenInput;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime37 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime39 = __toESM(require_jsx_runtime());
   var wrapperStyles2 = {
     marginBottom: "30px"
   };
@@ -27711,19 +28057,19 @@ ${message.content}`
     const handleTokenChange = (nextValue) => {
       onChange(enabled, nextValue);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: wrapperStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(thinking_pro_tip_default, {})
+    return /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { style: wrapperStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(thinking_pro_tip_default, {})
       ] })
     ] });
   };
-  var thinking_settings_default = (0, import_react27.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react28.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var import_react28 = __toESM(require_react());
+  var import_react29 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/settings-state-helpers.ts
   var updateThinkingSettings = (settings, enabled, maxTokens) => ({
@@ -27816,13 +28162,13 @@ ${message.content}`
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord10 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord10(value)) {
+    if (!isRecord11(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -27861,7 +28207,7 @@ ${message.content}`
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -27894,7 +28240,7 @@ ${message.content}`
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord11(value)) {
+    if (!isRecord12(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -27954,15 +28300,15 @@ ${message.content}`
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions";
   };
   var useSettingsState = () => {
-    const initialSettingsRef = (0, import_react28.useRef)(createDefaultSettings());
-    const [settings, setSettings] = (0, import_react28.useState)(createDefaultSettings);
-    const [hasChanges, setHasChanges] = (0, import_react28.useState)(false);
-    const [saving, setSaving] = (0, import_react28.useState)(false);
-    const [resetting, setResetting] = (0, import_react28.useState)(false);
-    const [versions, setVersions] = (0, import_react28.useState)(
+    const initialSettingsRef = (0, import_react29.useRef)(createDefaultSettings());
+    const [settings, setSettings] = (0, import_react29.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react29.useState)(false);
+    const [saving, setSaving] = (0, import_react29.useState)(false);
+    const [resetting, setResetting] = (0, import_react29.useState)(false);
+    const [versions, setVersions] = (0, import_react29.useState)(
       createDefaultVersionsState
     );
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
       });
@@ -27999,60 +28345,60 @@ ${message.content}`
         window.removeEventListener("message", handleMessage);
       };
     }, []);
-    const updateSettings = (0, import_react28.useCallback)((nextSettings) => {
+    const updateSettings = (0, import_react29.useCallback)((nextSettings) => {
       setSettings(nextSettings);
       setHasChanges(!areSettingsEqual(nextSettings, initialSettingsRef.current));
     }, []);
-    const handleThinkingSettingsChange = (0, import_react28.useCallback)(
+    const handleThinkingSettingsChange = (0, import_react29.useCallback)(
       (enabled, maxTokens) => {
         updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
       },
       [settings, updateSettings]
     );
-    const handleClaudeDefaultModelChange = (0, import_react28.useCallback)(
+    const handleClaudeDefaultModelChange = (0, import_react29.useCallback)(
       (modelId) => {
         updateSettings(updateClaudeDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexDefaultModelChange = (0, import_react28.useCallback)(
+    const handleCodexDefaultModelChange = (0, import_react29.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexReasoningChange = (0, import_react28.useCallback)(
+    const handleCodexReasoningChange = (0, import_react29.useCallback)(
       (modelId, reasoning) => {
         updateSettings(updateCodexReasoning(settings, modelId, reasoning));
       },
       [settings, updateSettings]
     );
-    const handleProviderAutoUpdateChange = (0, import_react28.useCallback)(
+    const handleProviderAutoUpdateChange = (0, import_react29.useCallback)(
       (provider, enabled) => {
         updateSettings(updateProviderAutoUpdate(settings, provider, enabled));
       },
       [settings, updateSettings]
     );
-    const handleGeminiDefaultModelChange = (0, import_react28.useCallback)(
+    const handleGeminiDefaultModelChange = (0, import_react29.useCallback)(
       (modelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleGeminiThinkingChange = (0, import_react28.useCallback)(
+    const handleGeminiThinkingChange = (0, import_react29.useCallback)(
       (modelId, level) => {
         updateSettings(updateGeminiThinking(settings, modelId, level));
       },
       [settings, updateSettings]
     );
-    const handleSave = (0, import_react28.useCallback)(() => {
+    const handleSave = (0, import_react29.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
         type: "settings:save",
         settings
       });
     }, [settings]);
-    const handleReset = (0, import_react28.useCallback)(() => {
+    const handleReset = (0, import_react29.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
         vscode_default.postMessage({
@@ -28060,7 +28406,7 @@ ${message.content}`
         });
       }, RESET_DELAY_MS);
     }, []);
-    const handleUpdateProvider = (0, import_react28.useCallback)(
+    const handleUpdateProvider = (0, import_react29.useCallback)(
       (provider, target) => {
         const targetKey = `${provider}:${target}`;
         setVersions((prev) => ({
@@ -28095,7 +28441,7 @@ ${message.content}`
   };
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_jsx_runtime38 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime40 = __toESM(require_jsx_runtime());
   var containerStyles5 = {
     height: "100%",
     display: "flex",
@@ -28139,7 +28485,7 @@ ${message.content}`
     { id: "general", label: "General" }
   ];
   var SettingsView = ({ onClose }) => {
-    const [activeTab, setActiveTab] = (0, import_react29.useState)("claude");
+    const [activeTab, setActiveTab] = (0, import_react30.useState)("claude");
     const {
       settings,
       hasChanges,
@@ -28157,9 +28503,9 @@ ${message.content}`
       handleReset,
       handleUpdateProvider
     } = useSettingsState();
-    return /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { style: containerStyles5, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(settings_header_default, { onClose }),
-      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab2) => /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { style: containerStyles5, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(settings_header_default, { onClose }),
+      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab2) => /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
         "button",
         {
           onClick: () => setActiveTab(tab2.id),
@@ -28172,17 +28518,17 @@ ${message.content}`
         },
         tab2.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { style: contentStyles, children: (() => {
+      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { style: contentStyles, children: (() => {
         if (activeTab === "claude") {
-          return /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
               claude_default_model_card_default,
               {
                 defaultModel: settings.providers.claude.defaultModel,
                 onDefaultModelChange: handleClaudeDefaultModelChange
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.claude.autoUpdate.enabled,
@@ -28192,7 +28538,7 @@ ${message.content}`
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
               thinking_settings_default,
               {
                 enabled: settings.providers.claude.thinking.enabled,
@@ -28203,11 +28549,11 @@ ${message.content}`
           ] });
         }
         if (activeTab === "general") {
-          return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(general_settings_default, {}) });
+          return /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(general_settings_default, {}) });
         }
         if (activeTab === "codex") {
-          return /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
               codex_default_model_card_default,
               {
                 defaultModel: settings.providers.codex.defaultModel,
@@ -28216,7 +28562,7 @@ ${message.content}`
                 reasoningByModel: settings.providers.codex.reasoningByModel
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.codex.autoUpdate.enabled,
@@ -28228,8 +28574,8 @@ ${message.content}`
             )
           ] });
         }
-        return /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { style: stackStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { style: stackStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
             gemini_default_model_card_default,
             {
               defaultModel: settings.providers.gemini.defaultModel,
@@ -28238,7 +28584,7 @@ ${message.content}`
               thinkingLevelByModel: settings.providers.gemini.thinkingLevelByModel
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
             provider_versions_default,
             {
               autoUpdateEnabled: settings.providers.gemini.autoUpdate.enabled,
@@ -28250,7 +28596,7 @@ ${message.content}`
           )
         ] });
       })() }),
-      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
         settings_footer_default,
         {
           hasChanges,
@@ -28263,18 +28609,18 @@ ${message.content}`
       )
     ] });
   };
-  var settings_view_default = import_react29.default.memo(SettingsView);
+  var settings_view_default = import_react30.default.memo(SettingsView);
 
   // src/client/ui/src/app-host.tsx
-  var import_jsx_runtime39 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime41 = __toESM(require_jsx_runtime());
   var AppHost = () => {
-    const [coreStatus, setCoreStatus] = (0, import_react30.useState)("connecting");
-    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react30.useState)();
-    const [coreFinalized, setCoreFinalized] = (0, import_react30.useState)(false);
-    const [messages, setMessages] = (0, import_react30.useState)(
+    const [coreStatus, setCoreStatus] = (0, import_react31.useState)("connecting");
+    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react31.useState)();
+    const [coreFinalized, setCoreFinalized] = (0, import_react31.useState)(false);
+    const [messages, setMessages] = (0, import_react31.useState)(
       createDefaultMessages
     );
-    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react30.useState)(0);
+    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react31.useState)(0);
     const {
       pickerState,
       providerLabels,
@@ -28306,7 +28652,7 @@ ${message.content}`
       sendMessage
     } = useSessionStore(providerLabels);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const shouldKickoffIdeaRef = (0, import_react30.useRef)(false);
+    const shouldKickoffIdeaRef = (0, import_react31.useRef)(false);
     const {
       startCollection: startIdeaCollection,
       sendMessage: sendIdeaCollectorMessage
@@ -28316,14 +28662,14 @@ ${message.content}`
       selectStage,
       lockStageSelection
     );
-    const confirmSelectionFromUi = (0, import_react30.useCallback)(
+    const confirmSelectionFromUi = (0, import_react31.useCallback)(
       (providerIds) => {
         shouldKickoffIdeaRef.current = selectedStage === "idea" && (providerIds[0] === "codexCli" || providerIds[0] === "claudeCodeCli");
         confirmSelection(providerIds);
       },
       [confirmSelection, selectedStage]
     );
-    const handleSessionCreatedMessage2 = (0, import_react30.useCallback)(
+    const handleSessionCreatedMessage2 = (0, import_react31.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
@@ -28335,39 +28681,39 @@ ${message.content}`
       },
       [handleSessionCreated, resetPicker, startIdeaCollection]
     );
-    const handleShowSettings = (0, import_react30.useCallback)(() => {
+    const handleShowSettings = (0, import_react31.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    const handleCoreState = (0, import_react30.useCallback)(
+    const handleCoreState = (0, import_react31.useCallback)(
       (payload) => {
         activateRoot();
         hydrateFromCoreState(payload);
       },
       [hydrateFromCoreState]
     );
-    const handleSessionMessage = (0, import_react30.useCallback)(
+    const handleSessionMessage = (0, import_react31.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionMessageEvent2(payload);
       },
       [handleSessionMessageEvent2]
     );
-    const handleSessionHistory = (0, import_react30.useCallback)(
+    const handleSessionHistory = (0, import_react31.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionHistoryEvent(payload);
       },
       [handleSessionHistoryEvent]
     );
-    const handleSessionDeletedMessage2 = (0, import_react30.useCallback)(
+    const handleSessionDeletedMessage2 = (0, import_react31.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionDeleted(payload);
       },
       [handleSessionDeleted]
     );
-    const handleSessionBindingMessage2 = (0, import_react30.useCallback)(
+    const handleSessionBindingMessage2 = (0, import_react31.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionBindingUpdate(payload);
@@ -28420,7 +28766,7 @@ ${message.content}`
       onSessionHistory: handleSessionHistory
     });
     const isCoreReady = coreStatus === "ready" && coreFinalized;
-    (0, import_react30.useEffect)(() => {
+    (0, import_react31.useEffect)(() => {
       if (isCoreReady) {
         return;
       }
@@ -28433,11 +28779,11 @@ ${message.content}`
         window.clearInterval(timer);
       };
     }, [isCoreReady]);
-    const currentMessage = (0, import_react30.useMemo)(() => {
+    const currentMessage = (0, import_react31.useMemo)(() => {
       const messageId = MESSAGE_ORDER[activeMessageIndex];
       return messages[messageId] ?? DEFAULT_MESSAGES[messageId];
     }, [activeMessageIndex, messages]);
-    const { headlineText, statusLine, detailLine } = (0, import_react30.useMemo)(() => {
+    const { headlineText, statusLine, detailLine } = (0, import_react31.useMemo)(() => {
       if (coreStatus === "error") {
         return {
           headlineText: "Please hold on - we are getting CodeAI Hub ready.",
@@ -28451,9 +28797,9 @@ ${message.content}`
         detailLine: coreStatusDetail ?? currentMessage.detail
       };
     }, [coreStatus, coreStatusDetail, currentMessage]);
-    return /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(action_bar_default, { disabled: !isCoreReady }),
-      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(action_bar_default, { disabled: !isCoreReady }),
+      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
         SessionRegion,
         {
           cancelSelection,
@@ -28477,21 +28823,21 @@ ${message.content}`
           stageSelectionLocked
         }
       ),
-      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
-        /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("span", { className: "app-shell__status-text", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
-          /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
-          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
+      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
+        /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("span", { className: "app-shell__status-text", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
+          /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
+          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
         ] })
       ] }) }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
     ] });
   };
   var app_host_default = AppHost;
 
   // src/client/ui/src/index.tsx
-  var import_jsx_runtime40 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime42 = __toESM(require_jsx_runtime());
   initializeCoreBridge();
   var mount = () => {
     const rootElement = document.getElementById("root");
@@ -28501,7 +28847,7 @@ ${message.content}`
     activateRoot();
     const root4 = (0, import_client.createRoot)(rootElement);
     root4.render(
-      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(import_react31.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(import_react32.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(app_host_default, {}) })
     );
   };
   mount();
