@@ -54,6 +54,21 @@ export class ClaudeProviderAdapter {
     return sessionId;
   }
 
+  async resumeSession(
+    sessionId: string,
+    workspacePath?: string
+  ): Promise<string> {
+    const resumedId = await this.sdkManager.resumeSession(
+      sessionId,
+      workspacePath
+    );
+    const session = this.sdkManager.getSession(resumedId);
+    if (session) {
+      this.bindSessionEvents(session);
+    }
+    return resumedId;
+  }
+
   async closeSession(sessionId: string): Promise<void> {
     await this.sdkManager.closeSession(sessionId);
     this.listeners.delete(sessionId);

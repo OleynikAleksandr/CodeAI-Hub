@@ -19,6 +19,8 @@ export type RunManifest = {
   readonly description?: string;
   readonly createdAt: string;
   readonly lastQuestionnaireAt?: string;
+  readonly providerId?: string;
+  readonly providerSessionId?: string;
 };
 
 const parseRunManifest = (value: unknown): RunManifest | null => {
@@ -45,6 +47,18 @@ const parseRunManifest = (value: unknown): RunManifest | null => {
       ? value.lastQuestionnaireAt
       : undefined;
 
+  const providerId =
+    typeof value.providerId === "string" ? value.providerId : undefined;
+
+  let providerSessionIdCandidate: string | undefined;
+  if (typeof value.providerSessionId === "string") {
+    providerSessionIdCandidate = value.providerSessionId;
+  } else if (typeof value.lastProviderSessionId === "string") {
+    providerSessionIdCandidate = value.lastProviderSessionId;
+  } else {
+    providerSessionIdCandidate = undefined;
+  }
+
   const description =
     typeof value.description === "string" ? value.description : undefined;
 
@@ -55,6 +69,8 @@ const parseRunManifest = (value: unknown): RunManifest | null => {
     description,
     createdAt,
     lastQuestionnaireAt,
+    providerId,
+    providerSessionId: providerSessionIdCandidate,
   };
 };
 
@@ -231,7 +247,8 @@ export class RunStore {
   async createAutoRun(
     workspaceRoot: string,
     initiativeSlug: string,
-    modelLabel: string
+    modelLabel: string,
+    providerId: string
   ): Promise<RunManifest> {
     const runsRoot = resolveRunsRoot(workspaceRoot, initiativeSlug);
     await mkdir(runsRoot, { recursive: true });
@@ -258,6 +275,7 @@ export class RunStore {
       runSlug,
       displayName: runSlug,
       createdAt: now,
+      providerId,
     };
 
     await writeFile(

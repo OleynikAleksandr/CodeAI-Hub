@@ -123,7 +123,8 @@ export const maybeCreateAutoRun = async (
   const run = await store.createAutoRun(
     input.workspacePath,
     input.initiativeSlug,
-    normalizedLabel
+    normalizedLabel,
+    input.providerId
   );
   await store.selectCurrent(
     input.workspacePath,

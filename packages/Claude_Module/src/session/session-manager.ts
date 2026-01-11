@@ -41,6 +41,29 @@ export class SDKSessionManager {
     return { tempId, session };
   }
 
+  createResumedSession(
+    workspacePath: string,
+    sessionId: string,
+    logger: SessionLogger | null = null
+  ): ActiveSession {
+    const controller = this.lifecycle.createMessageController();
+    const eventEmitter = this.lifecycle.createEventEmitter();
+    const session: ActiveSession = {
+      sessionId,
+      workspacePath,
+      createdAt: Date.now(),
+      eventEmitter,
+      messageController: controller,
+      logger: logger ?? new SDKSessionLoggerFacade(),
+      resumeSessionId: sessionId,
+    };
+    session.messageGenerator =
+      this.lifecycle.createMessageGenerator(controller);
+    this.registry.add(session);
+    session.logger?.start(sessionId);
+    return session;
+  }
+
   updateSessionId(tempId: string, realId: string): void {
     this.registry.updateSessionId(tempId, realId);
   }

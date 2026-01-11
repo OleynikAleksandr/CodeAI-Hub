@@ -42,6 +42,30 @@ export class CodexSessionManager {
     return { tempId, session };
   }
 
+  createResumedSession(
+    workspacePath: string,
+    threadId: string,
+    logger: SessionLogger | null = null
+  ): ActiveSession {
+    const controller = this.lifecycle.createMessageController();
+    const eventEmitter = this.lifecycle.createEventEmitter();
+    const session: ActiveSession = {
+      sessionId: threadId,
+      workspacePath,
+      createdAt: Date.now(),
+      eventEmitter,
+      messageController: controller,
+      logger,
+      codexThreadId: threadId,
+      internalTurn: false,
+    };
+    session.messageGenerator =
+      this.lifecycle.createMessageGenerator(controller);
+    this.registry.add(session);
+    session.logger?.start(threadId);
+    return session;
+  }
+
   getSession(sessionId: string): ActiveSession | undefined {
     return this.registry.get(sessionId);
   }

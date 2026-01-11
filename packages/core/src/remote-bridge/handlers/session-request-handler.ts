@@ -1,3 +1,6 @@
+import { writeFile } from "node:fs/promises";
+import path from "node:path";
+import { RunStore, resolveRunManifestPath } from "@codeai-hub/initiatives";
 import type { CoreConfig } from "../../config";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { SessionManager } from "../../session-manager";
@@ -8,6 +11,16 @@ import { maybeCreateAutoRun } from "./auto-run-service";
 import { detectQuestionnairePath } from "./idea-questionnaire-path-detector";
 import { attachPreReadDocuments } from "./idea-questionnaire-pre-read-attacher";
 import { autoAttachWorkspaceFiles } from "./workspace-auto-attach";
+
+type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
+
+type ProviderSessionResolution =
+  | {
+      readonly providerSessionId: string;
+      readonly didResume: boolean;
+      readonly supportsImmediateBinding: boolean;
+    }
+  | { readonly error: string };
 
 export type ProviderSessionBinding = {
   readonly providerId: string;
@@ -81,6 +94,180 @@ export class SessionRequestHandler {
     this.stateBroadcaster = options.stateBroadcaster;
   }
 
+  private async resolveProviderSessionId(
+    adapter: ProviderAdapter,
+    providerId: string,
+    workspacePath: string,
+    requestedProviderSessionId: string | null
+  ): Promise<ProviderSessionResolution> {
+    const shouldResume =
+      typeof requestedProviderSessionId === "string" &&
+      requestedProviderSessionId.trim().length > 0;
+
+    if (shouldResume) {
+      if (!adapter.resumeSession) {
+        return {
+          error: `Provider ${providerId} does not support resume`,
+        };
+      }
+
+      const providerSessionId = await adapter.resumeSession(
+        requestedProviderSessionId.trim(),
+        workspacePath
+      );
+
+      return {
+        providerSessionId,
+        didResume: true,
+        supportsImmediateBinding: true,
+      };
+    }
+
+    const providerSessionId = await adapter.createSession(workspacePath);
+    return {
+      providerSessionId,
+      didResume: false,
+      supportsImmediateBinding:
+        providerId === "geminiCli" && providerSessionId.length > 0,
+    };
+  }
+
+  private persistRunProviderBinding(options: {
+    readonly providerId: string;
+    readonly workspaceRoot: string;
+    readonly initiativeSlug: string;
+    readonly runSlug: string;
+    readonly providerSessionId: string;
+    readonly supportsImmediateBinding: boolean;
+  }): void {
+    const runs = new RunStore();
+    runs
+      .read(options.workspaceRoot, options.initiativeSlug, options.runSlug)
+      .then(async (manifest) => {
+        if (!manifest) {
+          return;
+        }
+        const manifestPath = resolveRunManifestPath(
+          options.workspaceRoot,
+          options.initiativeSlug,
+          options.runSlug
+        );
+        const updated = {
+          ...manifest,
+          providerId: options.providerId,
+          ...(options.supportsImmediateBinding
+            ? { providerSessionId: options.providerSessionId }
+            : {}),
+        };
+        await writeFile(
+          manifestPath,
+          `${JSON.stringify(updated, null, 2)}\n`,
+          "utf8"
+        );
+      })
+      .catch(() => {
+        /* ignore run binding update errors */
+      });
+  }
+
+  private async createAndRegisterSession(options: {
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly adapter: ProviderAdapter;
+    readonly context: {
+      readonly initiativeSlug: string | null;
+      readonly stage: string | null;
+      readonly runSlug: string | null;
+      readonly providerSessionId: string | null;
+    };
+  }): Promise<void> {
+    const providerSessionResolution = await this.resolveProviderSessionId(
+      options.adapter,
+      options.providerId,
+      options.workspacePath,
+      options.context.providerSessionId
+    );
+    if ("error" in providerSessionResolution) {
+      this.broadcaster({
+        type: "session:error",
+        payload: { message: providerSessionResolution.error },
+      });
+      return;
+    }
+
+    const { providerSessionId, didResume, supportsImmediateBinding } =
+      providerSessionResolution;
+
+    const autoRun =
+      options.context.runSlug || didResume
+        ? null
+        : await maybeCreateAutoRun({
+            workspacePath: options.workspacePath,
+            initiativeSlug: options.context.initiativeSlug,
+            stage: options.context.stage,
+            providerId: options.providerId,
+            config: this.config,
+            logger: this.logger,
+          }).catch((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : String(error);
+            this.logger.warn("Auto-run creation failed", {
+              providerId: options.providerId,
+              initiativeSlug: options.context.initiativeSlug,
+              stage: options.context.stage,
+              error: message,
+            });
+            return null;
+          });
+
+    const session = this.sessionManager.createSession(
+      options.providerId,
+      options.workspacePath,
+      supportsImmediateBinding ? providerSessionId : undefined,
+      {
+        initiativeSlug: options.context.initiativeSlug,
+        stage: options.context.stage,
+        runSlug: options.context.runSlug ?? autoRun?.runSlug ?? null,
+      }
+    );
+
+    if (session.initiativeSlug && session.runSlug) {
+      this.persistRunProviderBinding({
+        providerId: options.providerId,
+        workspaceRoot: path.resolve(options.workspacePath),
+        initiativeSlug: session.initiativeSlug,
+        runSlug: session.runSlug,
+        providerSessionId,
+        supportsImmediateBinding,
+      });
+    }
+
+    this.sessionStorage.register(session);
+
+    const unsubscribe = options.adapter.subscribe(
+      providerSessionId,
+      (event: unknown) => {
+        this.handleProviderEvent(session.id, event);
+      }
+    );
+
+    this.providerSessions.set(session.id, {
+      providerId: options.providerId,
+      providerSessionId,
+      unsubscribe,
+    });
+
+    if (supportsImmediateBinding) {
+      this.updateProviderBinding(session.id, providerSessionId);
+    }
+
+    this.broadcaster({
+      type: "session:created",
+      payload: serializeSession(session),
+    });
+    this.broadcastSessionBinding(session.id);
+  }
+
   async handleCreate(
     providerId?: string,
     workspacePath?: string,
@@ -88,6 +275,7 @@ export class SessionRequestHandler {
       readonly initiativeSlug?: string | null;
       readonly stage?: string | null;
       readonly runSlug?: string | null;
+      readonly providerSessionId?: string | null;
     }
   ): Promise<void> {
     const actualProviderId = providerId ?? this.getDefaultProviderId();
@@ -104,70 +292,17 @@ export class SessionRequestHandler {
     }
 
     try {
-      const providerSessionId =
-        await adapter.createSession(actualWorkspacePath);
-      const supportsImmediateBinding =
-        typeof providerSessionId === "string" &&
-        providerSessionId.length > 0 &&
-        actualProviderId === "geminiCli";
-
-      const requestedRunSlug = context?.runSlug ?? null;
-      const autoRun = requestedRunSlug
-        ? null
-        : await maybeCreateAutoRun({
-            workspacePath: actualWorkspacePath,
-            initiativeSlug: context?.initiativeSlug ?? null,
-            stage: context?.stage ?? null,
-            providerId: actualProviderId,
-            config: this.config,
-            logger: this.logger,
-          }).catch((error: unknown) => {
-            const message =
-              error instanceof Error ? error.message : String(error);
-            this.logger.warn("Auto-run creation failed", {
-              providerId: actualProviderId,
-              initiativeSlug: context?.initiativeSlug ?? null,
-              stage: context?.stage ?? null,
-              error: message,
-            });
-            return null;
-          });
-
-      const session = this.sessionManager.createSession(
-        actualProviderId,
-        actualWorkspacePath,
-        supportsImmediateBinding ? providerSessionId : undefined,
-        {
+      await this.createAndRegisterSession({
+        providerId: actualProviderId,
+        workspacePath: actualWorkspacePath,
+        adapter,
+        context: {
           initiativeSlug: context?.initiativeSlug ?? null,
           stage: context?.stage ?? null,
-          runSlug: requestedRunSlug ?? autoRun?.runSlug ?? null,
-        }
-      );
-
-      this.sessionStorage.register(session);
-
-      const unsubscribe = adapter.subscribe(
-        providerSessionId,
-        (event: unknown) => {
-          this.handleProviderEvent(session.id, event);
-        }
-      );
-
-      this.providerSessions.set(session.id, {
-        providerId: actualProviderId,
-        providerSessionId,
-        unsubscribe,
+          runSlug: context?.runSlug ?? null,
+          providerSessionId: context?.providerSessionId ?? null,
+        },
       });
-
-      if (supportsImmediateBinding) {
-        this.updateProviderBinding(session.id, providerSessionId);
-      }
-
-      this.broadcaster({
-        type: "session:created",
-        payload: serializeSession(session),
-      });
-      this.broadcastSessionBinding(session.id);
     } catch (error) {
       this.handleProviderFailure(actualProviderId, error);
     }
@@ -544,6 +679,38 @@ export class SessionRequestHandler {
     this.sessionManager.updateProviderSessionId(sessionId, providerSessionId);
     this.sessionStorage.promote(sessionId, providerSessionId);
     this.updateProviderBinding(sessionId, providerSessionId);
+
+    if (session.initiativeSlug && session.runSlug) {
+      const workspaceRoot = path.resolve(session.workspacePath);
+      const initiativeSlug = session.initiativeSlug;
+      const runSlug = session.runSlug;
+      const runs = new RunStore();
+      runs
+        .read(workspaceRoot, initiativeSlug, runSlug)
+        .then(async (manifest) => {
+          if (!manifest) {
+            return;
+          }
+          const manifestPath = resolveRunManifestPath(
+            workspaceRoot,
+            initiativeSlug,
+            runSlug
+          );
+          const updated = {
+            ...manifest,
+            providerId: session.providerId,
+            providerSessionId,
+          };
+          await writeFile(
+            manifestPath,
+            `${JSON.stringify(updated, null, 2)}\n`,
+            "utf8"
+          );
+        })
+        .catch(() => {
+          /* ignore run providerSessionId persistence errors */
+        });
+    }
     this.broadcastSessionBinding(sessionId);
   }
 

@@ -88,6 +88,21 @@ export class ClaudeSDKManager {
     return tempId;
   }
 
+  async resumeSession(
+    sessionId: string,
+    workspacePath?: string
+  ): Promise<string> {
+    await this.initialize();
+    const actualWorkspacePath =
+      workspacePath ?? this.deps.workspace.workspacePath;
+    this.deps.sessions.createResumedSession(
+      actualWorkspacePath,
+      sessionId,
+      new SDKSessionLoggerFacade()
+    );
+    return sessionId;
+  }
+
   async sendMessage(
     sessionId: string,
     content: string,
@@ -201,6 +216,7 @@ export class ClaudeSDKManager {
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
       ...(resolvedModel ? { model: resolvedModel } : {}),
       ...thinkingOptions,
+      ...(session.resumeSessionId ? { resume: session.resumeSessionId } : {}),
       ...(session.structuredOutputSchema
         ? {
             outputFormat: {
