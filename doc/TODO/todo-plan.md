@@ -27,8 +27,8 @@
 ### Stream: Run metadata + questionnaire seeding
 1. [DONE] Добавить `lastQuestionnaireAt` в run.json и поддержку чтения/записи — scope: packages/initiatives/src/run-store.ts, packages/initiatives/src/index.ts; commit: `feat(runs): add lastQuestionnaireAt metadata` (date: 2026-01-11)
 2. [DONE] Git Commit: `feat(runs): add lastQuestionnaireAt metadata` (hash: ace7ee38) (date: 2026-01-11)
-3. [TODO] Обновлять `lastQuestionnaireAt` при записи анкеты через Core — scope: packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/initiatives/src/run-store.ts, packages/initiatives/src/index.ts; ожидаемый commit message: `feat(core): track questionnaire updates`
-4. [TODO] Git Commit: `feat(core): track questionnaire updates` (hash: TBD)
+3. [DONE] Обновлять `lastQuestionnaireAt` при записи анкеты через Core — scope: packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/initiatives/src/run-store.ts, packages/initiatives/src/index.ts; commit: `feat(core): track questionnaire updates` (date: 2026-01-11)
+4. [DONE] Git Commit: `feat(core): track questionnaire updates` (hash: c60c4c97) (date: 2026-01-11)
 5. [TODO] Сидировать новую анкету из последнего run по `lastQuestionnaireAt` — scope: packages/core/src/remote-bridge/handlers/auto-run-service.ts, packages/initiatives/src/run-store.ts, packages/initiatives/src/index.ts; ожидаемый commit message: `feat(runs): seed questionnaire from latest`
 6. [TODO] Git Commit: `feat(runs): seed questionnaire from latest` (hash: TBD)
 
