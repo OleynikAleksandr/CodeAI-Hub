@@ -26,6 +26,8 @@
 - `f5f2142e docs: update 1.1.405 release notes`
 - `db28f6c5 docs: update architecture for 1.1.405`
 - `f310c1b4 docs: update todo plan status`
+- `1dd1bc52 docs: add session 90 report`
+- `b42263e5 docs: update todo plan status`
 
 ---
 
