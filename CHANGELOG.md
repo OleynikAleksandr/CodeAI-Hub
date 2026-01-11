@@ -1,3 +1,10 @@
+## [1.1.404] - 2026-01-11
+
+### Fixed
+- **Idea Collector questions**: structured output `questions[]` now appear in the assistant message text.
+- **Resume provider binding**: Core prefers `providerId` + `providerSessionId` from `run.json` even when UI does not pass `providerSessionId`.
+- **Resume-safe UI**: resumed Idea sessions skip auto questionnaire open and auto-start to avoid overwriting flow.
+
 ## [1.1.403] - 2026-01-11
 
 ### Added
