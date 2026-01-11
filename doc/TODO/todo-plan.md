@@ -29,8 +29,8 @@
 2. [DONE] Git Commit: `feat(runs): add lastQuestionnaireAt metadata` (hash: ace7ee38) (date: 2026-01-11)
 3. [DONE] Обновлять `lastQuestionnaireAt` при записи анкеты через Core — scope: packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/initiatives/src/run-store.ts, packages/initiatives/src/index.ts; commit: `feat(core): track questionnaire updates` (date: 2026-01-11)
 4. [DONE] Git Commit: `feat(core): track questionnaire updates` (hash: c60c4c97) (date: 2026-01-11)
-5. [TODO] Сидировать новую анкету из последнего run по `lastQuestionnaireAt` — scope: packages/core/src/remote-bridge/handlers/auto-run-service.ts, packages/initiatives/src/run-store.ts, packages/initiatives/src/index.ts; ожидаемый commit message: `feat(runs): seed questionnaire from latest`
-6. [TODO] Git Commit: `feat(runs): seed questionnaire from latest` (hash: TBD)
+5. [DONE] Сидировать новую анкету из последнего run по `lastQuestionnaireAt` — scope: packages/core/src/remote-bridge/handlers/auto-run-service.ts, packages/initiatives/src/run-store.ts, packages/initiatives/src/index.ts; commit: `feat(runs): seed questionnaire from latest` (date: 2026-01-11)
+6. [DONE] Git Commit: `feat(runs): seed questionnaire from latest` (hash: 19355e6b) (date: 2026-01-11)
 
 ### Stream: UI run selection + session binding
 7. [TODO] Добавить UX «Описать инициативу» с выбором нового/существующего описания и списком runSlug — scope: src/client/ui/src/app-host/session-region.tsx, src/client/ui/src/app-host/flow-wizard-picker.tsx, src/client/ui/src/api/orchestrator/runs-client.ts; ожидаемый commit message: `feat(ui): add description run selection`
