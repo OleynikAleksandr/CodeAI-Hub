@@ -94,6 +94,61 @@ export class SessionRequestHandler {
     this.stateBroadcaster = options.stateBroadcaster;
   }
 
+  private async resolveRunBoundProviderContext(options: {
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly initiativeSlug: string | null;
+    readonly runSlug: string | null;
+    readonly requestedProviderSessionId: string | null;
+  }): Promise<{
+    readonly providerId: string;
+    readonly providerSessionId: string | null;
+  }> {
+    if (!(options.initiativeSlug && options.runSlug)) {
+      return {
+        providerId: options.providerId,
+        providerSessionId: options.requestedProviderSessionId,
+      };
+    }
+
+    const workspaceRoot = path.resolve(options.workspacePath);
+    const runs = new RunStore();
+    const manifest = await runs.read(
+      workspaceRoot,
+      options.initiativeSlug,
+      options.runSlug
+    );
+    if (!manifest) {
+      return {
+        providerId: options.providerId,
+        providerSessionId: options.requestedProviderSessionId,
+      };
+    }
+
+    const manifestProviderId =
+      typeof manifest.providerId === "string" && manifest.providerId.trim()
+        ? manifest.providerId.trim()
+        : null;
+    const manifestProviderSessionId =
+      typeof manifest.providerSessionId === "string" &&
+      manifest.providerSessionId.trim()
+        ? manifest.providerSessionId.trim()
+        : null;
+
+    const selectedProviderId =
+      manifestProviderId && this.providerRegistry.getAdapter(manifestProviderId)
+        ? manifestProviderId
+        : options.providerId;
+
+    const providerSessionId =
+      options.requestedProviderSessionId ??
+      (selectedProviderId === manifestProviderId
+        ? manifestProviderSessionId
+        : null);
+
+    return { providerId: selectedProviderId, providerSessionId };
+  }
+
   private async resolveProviderSessionId(
     adapter: ProviderAdapter,
     providerId: string,
@@ -278,9 +333,20 @@ export class SessionRequestHandler {
       readonly providerSessionId?: string | null;
     }
   ): Promise<void> {
-    const actualProviderId = providerId ?? this.getDefaultProviderId();
+    const requestedProviderId = providerId ?? this.getDefaultProviderId();
     const actualWorkspacePath =
       workspacePath ?? this.config.claudeWorkspacePath ?? process.cwd();
+    const runBound = await this.resolveRunBoundProviderContext({
+      providerId: requestedProviderId,
+      workspacePath: actualWorkspacePath,
+      initiativeSlug: context?.initiativeSlug ?? null,
+      runSlug: context?.runSlug ?? null,
+      requestedProviderSessionId: context?.providerSessionId ?? null,
+    }).catch(() => ({
+      providerId: requestedProviderId,
+      providerSessionId: context?.providerSessionId ?? null,
+    }));
+    const actualProviderId = runBound.providerId;
     const adapter = this.providerRegistry.getAdapter(actualProviderId);
 
     if (!adapter) {
@@ -300,7 +366,7 @@ export class SessionRequestHandler {
           initiativeSlug: context?.initiativeSlug ?? null,
           stage: context?.stage ?? null,
           runSlug: context?.runSlug ?? null,
-          providerSessionId: context?.providerSessionId ?? null,
+          providerSessionId: runBound.providerSessionId,
         },
       });
     } catch (error) {
