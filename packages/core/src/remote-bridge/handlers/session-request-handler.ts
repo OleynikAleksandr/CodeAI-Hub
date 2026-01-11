@@ -111,23 +111,27 @@ export class SessionRequestHandler {
         providerSessionId.length > 0 &&
         actualProviderId === "geminiCli";
 
-      const autoRun = await maybeCreateAutoRun({
-        workspacePath: actualWorkspacePath,
-        initiativeSlug: context?.initiativeSlug ?? null,
-        stage: context?.stage ?? null,
-        providerId: actualProviderId,
-        config: this.config,
-        logger: this.logger,
-      }).catch((error: unknown) => {
-        const message = error instanceof Error ? error.message : String(error);
-        this.logger.warn("Auto-run creation failed", {
-          providerId: actualProviderId,
-          initiativeSlug: context?.initiativeSlug ?? null,
-          stage: context?.stage ?? null,
-          error: message,
-        });
-        return null;
-      });
+      const requestedRunSlug = context?.runSlug ?? null;
+      const autoRun = requestedRunSlug
+        ? null
+        : await maybeCreateAutoRun({
+            workspacePath: actualWorkspacePath,
+            initiativeSlug: context?.initiativeSlug ?? null,
+            stage: context?.stage ?? null,
+            providerId: actualProviderId,
+            config: this.config,
+            logger: this.logger,
+          }).catch((error: unknown) => {
+            const message =
+              error instanceof Error ? error.message : String(error);
+            this.logger.warn("Auto-run creation failed", {
+              providerId: actualProviderId,
+              initiativeSlug: context?.initiativeSlug ?? null,
+              stage: context?.stage ?? null,
+              error: message,
+            });
+            return null;
+          });
 
       const session = this.sessionManager.createSession(
         actualProviderId,
@@ -136,7 +140,7 @@ export class SessionRequestHandler {
         {
           initiativeSlug: context?.initiativeSlug ?? null,
           stage: context?.stage ?? null,
-          runSlug: autoRun?.runSlug ?? context?.runSlug ?? null,
+          runSlug: requestedRunSlug ?? autoRun?.runSlug ?? null,
         }
       );
 
