@@ -31,29 +31,24 @@ const STRUCTURED_OUTPUT_PROMPT = [
 ].join("\n");
 
 type StructuredOutputMode = "default" | "idea_collector";
-
 type StructuredOutputTurnConfig = {
   readonly mode: StructuredOutputMode;
   readonly fieldKey: "answer" | "suggested_response";
   readonly applyPrompt: boolean;
 };
-
 type StructuredOutputArtifact = Record<string, unknown>;
-
 type ParsedOutput = {
   readonly assistantText?: string;
   readonly reasoningSummary?: string;
   readonly nextAction?: string;
   readonly artifact?: StructuredOutputArtifact;
 };
-
 type AnswerStreamState = {
   extractor: AnswerJsonStreamExtractor;
   itemId: string | null;
   assistantText: string;
   mode: StructuredOutputMode;
 };
-
 export type StructuredOutputResult = {
   readonly streamDelta?: string;
   readonly assistantText?: string;
@@ -61,7 +56,6 @@ export type StructuredOutputResult = {
   readonly nextAction?: string;
   readonly artifact?: StructuredOutputArtifact;
 };
-
 const DEFAULT_TURN_CONFIG: StructuredOutputTurnConfig = {
   mode: "default",
   fieldKey: "answer",
@@ -152,10 +146,13 @@ export class StructuredOutputStreamController {
       state.assistantText += streamDelta;
     }
     const parsed = parseStructuredOutput(text, state.mode);
-    const assistantText =
+    let assistantText =
       state.assistantText.trim().length > 0
         ? state.assistantText
         : parsed.assistantText;
+    if (state.mode === "idea_collector" && parsed.assistantText?.trim()) {
+      assistantText = parsed.assistantText;
+    }
     this.streams.delete(sessionId);
     this.turnConfigs.delete(sessionId);
     return {
@@ -191,7 +188,6 @@ export class StructuredOutputStreamController {
     return existing;
   }
 }
-
 const parseStructuredOutput = (
   text: string,
   mode: StructuredOutputMode
@@ -214,7 +210,6 @@ const parseStructuredOutput = (
     return {};
   }
 };
-
 const parseDefaultOutput = (parsed: Record<string, unknown>): ParsedOutput => {
   const assistantText =
     typeof parsed.answer === "string" ? parsed.answer : undefined;
@@ -229,7 +224,6 @@ const parseDefaultOutput = (parsed: Record<string, unknown>): ParsedOutput => {
       : undefined,
   };
 };
-
 const parseIdeaCollectorOutput = (
   parsed: Record<string, unknown>
 ): ParsedOutput => {
@@ -239,7 +233,15 @@ const parseIdeaCollectorOutput = (
   } else if (typeof parsed.suggestedResponse === "string") {
     assistantText = parsed.suggestedResponse;
   }
-
+  const questions = Array.isArray(parsed.questions)
+    ? parsed.questions.filter(
+        (question): question is string =>
+          typeof question === "string" && question.trim().length > 0
+      )
+    : [];
+  if (assistantText?.trim().length && questions.length > 0) {
+    assistantText = `${assistantText}\n\nВопросы:\n${questions.map((question, index) => `${index + 1}. ${question}`).join("\n")}`;
+  }
   let nextAction: string | undefined;
   if (typeof parsed.next_action === "string") {
     nextAction = parsed.next_action;
@@ -262,7 +264,6 @@ const parseIdeaCollectorOutput = (
     artifact,
   };
 };
-
 const parseIdeaCollectorArtifact = (
   value: unknown,
   nextAction: string | undefined
@@ -292,7 +293,6 @@ const parseIdeaCollectorArtifact = (
   }
   return value;
 };
-
 const hasIdeaCollectorSignature = (parsed: Record<string, unknown>): boolean =>
   typeof parsed.suggested_response === "string" ||
   typeof parsed.suggestedResponse === "string";
