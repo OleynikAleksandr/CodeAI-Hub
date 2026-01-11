@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-11
 **Status:** Active reference
-**Release Focus:** v1.1.403 — Run/session binding via providerSessionId + provider resume, plus refine-existing opening the existing run context (no new run).
+**Release Focus:** v1.1.404 — Idea Collector questions appear in assistant text, resume prefers run.json provider binding, and UI skips auto-questionnaire for resumed sessions.
 
 ---
 
