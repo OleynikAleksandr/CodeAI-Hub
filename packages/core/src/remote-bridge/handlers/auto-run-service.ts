@@ -1,3 +1,5 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { type RunManifest, RunStore } from "@codeai-hub/initiatives";
 import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
@@ -12,6 +14,8 @@ type AutoRunInput = {
 };
 
 const FLOW_STAGES = new Set(["idea", "spec", "plan", "execute"]);
+const IDEA_STAGE = "idea";
+const QUESTIONNAIRE_FILE = "questionnaire.md";
 
 const resolveModelLabel = (
   providerId: string,
@@ -41,6 +45,53 @@ const normalizeModelLabelForRun = (
   return modelLabel;
 };
 
+const resolveQuestionnairePath = (
+  workspacePath: string,
+  initiativeSlug: string,
+  runSlug: string
+): string =>
+  path.join(
+    workspacePath,
+    ".codeai-hub",
+    "initiatives",
+    initiativeSlug,
+    "runs",
+    runSlug,
+    IDEA_STAGE,
+    QUESTIONNAIRE_FILE
+  );
+
+const loadQuestionnaire = async (
+  workspacePath: string,
+  initiativeSlug: string,
+  runSlug: string
+): Promise<string | null> => {
+  try {
+    return await readFile(
+      resolveQuestionnairePath(workspacePath, initiativeSlug, runSlug),
+      "utf8"
+    );
+  } catch {
+    return null;
+  }
+};
+
+const saveQuestionnaire = async (
+  workspacePath: string,
+  initiativeSlug: string,
+  runSlug: string,
+  content: string
+): Promise<void> => {
+  const targetPath = resolveQuestionnairePath(
+    workspacePath,
+    initiativeSlug,
+    runSlug
+  );
+  await mkdir(path.dirname(targetPath), { recursive: true });
+  const normalized = content.endsWith("\n") ? content : `${content}\n`;
+  await writeFile(targetPath, normalized, "utf8");
+};
+
 export const maybeCreateAutoRun = async (
   input: AutoRunInput
 ): Promise<RunManifest | null> => {
@@ -65,6 +116,10 @@ export const maybeCreateAutoRun = async (
   );
 
   const store = new RunStore();
+  const latestQuestionnaireRun = await store.findLatestQuestionnaireRun(
+    input.workspacePath,
+    input.initiativeSlug
+  );
   const run = await store.createAutoRun(
     input.workspacePath,
     input.initiativeSlug,
@@ -75,5 +130,22 @@ export const maybeCreateAutoRun = async (
     input.initiativeSlug,
     run.runId
   );
+
+  if (latestQuestionnaireRun) {
+    const questionnaire = await loadQuestionnaire(
+      input.workspacePath,
+      input.initiativeSlug,
+      latestQuestionnaireRun.runSlug
+    );
+    if (questionnaire) {
+      await saveQuestionnaire(
+        input.workspacePath,
+        input.initiativeSlug,
+        run.runSlug,
+        questionnaire
+      );
+    }
+  }
+
   return run;
 };

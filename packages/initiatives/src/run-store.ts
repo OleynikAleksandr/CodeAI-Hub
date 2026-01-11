@@ -92,6 +92,14 @@ const parseRunCounter = (runSlug: string): number | null => {
 const formatRunCounter = (value: number): string =>
   String(value).padStart(3, "0");
 
+const parseTimestamp = (value: string | undefined): number | null => {
+  if (!value) {
+    return null;
+  }
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? null : parsed;
+};
+
 export class RunStore {
   private readonly initiativeStore: InitiativeStore;
 
@@ -196,6 +204,28 @@ export class RunStore {
     );
 
     return updated;
+  }
+
+  async findLatestQuestionnaireRun(
+    workspaceRoot: string,
+    initiativeSlug: string
+  ): Promise<RunManifest | null> {
+    const runs = await this.list(workspaceRoot, initiativeSlug);
+    let latest: RunManifest | null = null;
+    let latestTimestamp = -1;
+
+    for (const run of runs) {
+      const timestamp = parseTimestamp(run.lastQuestionnaireAt);
+      if (timestamp === null) {
+        continue;
+      }
+      if (timestamp > latestTimestamp) {
+        latest = run;
+        latestTimestamp = timestamp;
+      }
+    }
+
+    return latest;
   }
 
   async createAutoRun(
