@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.400 (10.01.2026) — session:created содержит initiativeSlug/runSlug/stage, поэтому анкета открывается и создаётся в корректной папке; auto-runs создают новый run `NNN-<model>` на старте стадии, а артефакты Flow живут в `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/<stage>/...`; Action Bar использует только Initiative (run selector удалён). Пути анкеты и артефактов в UI вычисляются по контексту сессии (`initiativeSlug`/`runSlug`), без статических default-путей. UI session records сохраняют initiativeSlug/runSlug/stage, а анкета и артефакты не записываются без этого контекста. Усилена безопасность Codex-сессий: первый turn сериализован до bind `thread_id` (startup lock), после bind любые попытки перепривязки игнорируются (lock-on-first-turn). Анкета идеи расширена (секция документов для чтения, подробные пояснения, отмена/возобновление), а подсказки/примеры отображаются под вопросами (поля ввода остаются пустыми). Первый submit анкеты отправляется одним turn'ом, а документы из `pre_read_documents` auto-attach'ятся перед анкетой; auto-attach игнорирует шаблонные пути `<...>` из prompt, чтобы `questionnaire.md` прикреплялся детерминированно. Structured Output Idea Collector переведён на slim-контракт: в ответе есть оценка готовности (`assessment`) и 1–3 умных вопроса (`questions`) без дублирования анкеты, а финальные документы возвращаются только на `finalize`. Core синхронизирует bundled‑шаблоны и перезаписывает локальные правки в `~/.codeai-hub/templates/full-development-flow/idea/`. Idea Collector использует bundled prompt с архитектурными принципами (кластерно‑модульный подход) уже на этапе идеи. Анкетирование остаётся основой: UI получает templateMarkdown через `/api/v1/orchestrator/idea-contract`, создаёт `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/questionnaire.md`, сохраняет ответы через `POST /api/v1/orchestrator/workspace-file-write` и отправляет путь через auto-attach вместо публикации полного текста. При каждом сохранении анкеты Core обновляет `lastQuestionnaireAt` в `run.json`, чтобы отслеживать последнюю заполненную версию. При создании нового run Core копирует `questionnaire.md` из run с максимальным `lastQuestionnaireAt`, чтобы новые варианты стартовали с актуальной анкеты. Ответы на уточнения агента автоматически дописываются в `questionnaire.md` и синхронизируются в `.codeai-hub/initiatives/<initiativeSlug>/idea/questionnaire.md`. Для повторных запусков UI сохраняет копию анкеты в `.codeai-hub/initiatives/<initiativeSlug>/idea/questionnaire.md` и подставляет её в новый run, если анкета там отсутствует. Контракт v2 по‑прежнему хранит schema в `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, поддерживает `приложение`/`кластер` и фиксирует правило Flow: для multi-module инициатив `Spec.md`/`Plan.md` создаются **по модулю**. Для ссылок на существующие документы UI поддерживает `/read ...`, а Core читает их через `POST /api/v1/orchestrator/workspace-file`. Также Core поддерживает auto-attach: при явных триггерах в сообщении (например, «прочитай/изучи/ознакомься») содержимое 1–3 текстовых файлов из workspace (до 300KB/файл, общий бюджет 1.2 MB; allowlist расширений) прикрепляется автоматически, пути можно указывать где угодно в сообщении/на отдельных строках (без `/read`). Core сохраняет артефакты Idea в `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/` (Idea.md + virtual-simulation.md) через `POST /api/v1/orchestrator/idea-artifact`. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`. Также UI при реконнекте просит Supervisor гарантировать, что Core запущен; ошибки провайдера отображаются как system сообщения. Также UI переведён в плоскость Flow: Action Bar содержит 5 кнопок старта (Simple Chat/Idea/Spec/Plan/Execute) и открывает выбор провайдера; Flow шаги доступны только для Codex/Claude. Над Action Bar добавлена строка выбора Initiative (без run selector); Flow-кнопки доступны при выбранной инициативе, а run создаётся автоматически при старте стадии (формат `NNN-<model>`). Core получил HTTP endpoints `/api/v1/orchestrator/initiatives` и `/api/v1/orchestrator/initiatives/:initiativeSlug/runs` (workspacePath обязателен и прокидывается через `__CODEAI_CORE_CONFIG`). Back в provider picker для стартов из Action Bar закрывает выбор провайдера и не возвращает к Flow wizard. Стадия Idea (UI: Description) теперь фиксирует модульную декомпозицию (микро‑модули + фасады) и черновые стрелки зависимостей, а построение диаграмм вынесено в будущие шаги Module Diagram / Interface Map. Core runtime now bundles `@codeai-hub/initiatives` to prevent release-time `MODULE_NOT_FOUND`.
+**Состояние:** релиз 1.1.402 (11.01.2026) — session:created содержит initiativeSlug/runSlug/stage, поэтому анкета открывается и создаётся в корректной папке; auto-runs создают новый run `NNN-<model>` на старте стадии, а артефакты Flow живут в `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/<stage>/...`; Action Bar использует только Initiative (run selector удалён). Для Description UI предлагает выбрать новый вариант или существующий run по `runSlug`. Пути анкеты и артефактов в UI вычисляются по контексту сессии (`initiativeSlug`/`runSlug`), без статических default-путей. UI session records сохраняют initiativeSlug/runSlug/stage, а анкета и артефакты не записываются без этого контекста. Усилена безопасность Codex-сессий: первый turn сериализован до bind `thread_id` (startup lock), после bind любые попытки перепривязки игнорируются (lock-on-first-turn). Анкета идеи расширена (секция документов для чтения, подробные пояснения, отмена/возобновление), а подсказки/примеры отображаются под вопросами (поля ввода остаются пустыми). Первый submit анкеты отправляется одним turn'ом, а документы из `pre_read_documents` auto-attach'ятся перед анкетой; auto-attach игнорирует шаблонные пути `<...>` из prompt, чтобы `questionnaire.md` прикреплялся детерминированно. Structured Output Idea Collector переведён на slim-контракт: в ответе есть оценка готовности (`assessment`) и 1–3 умных вопроса (`questions`) без дублирования анкеты, а финальные документы возвращаются только на `finalize`. Core синхронизирует bundled‑шаблоны и перезаписывает локальные правки в `~/.codeai-hub/templates/full-development-flow/idea/`. Idea Collector использует bundled prompt с архитектурными принципами (кластерно‑модульный подход) уже на этапе идеи. Анкетирование остаётся основой: UI получает templateMarkdown через `/api/v1/orchestrator/idea-contract`, создаёт `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/questionnaire.md`, сохраняет ответы через `POST /api/v1/orchestrator/workspace-file-write` и отправляет путь через auto-attach вместо публикации полного текста. При каждом сохранении анкеты Core обновляет `lastQuestionnaireAt` в `run.json`, чтобы отслеживать последнюю заполненную версию. При создании нового run Core копирует `questionnaire.md` из run с максимальным `lastQuestionnaireAt`, чтобы новые варианты стартовали с актуальной анкеты. UI при выборе существующего run передаёт `runSlug` в `session:create`; если `runSlug` передан, auto-run не создаётся, а сессия привязывается к указанному run. Ответы на уточнения агента автоматически дописываются в `questionnaire.md` и синхронизируются в `.codeai-hub/initiatives/<initiativeSlug>/idea/questionnaire.md`. Для повторных запусков UI сохраняет копию анкеты в `.codeai-hub/initiatives/<initiativeSlug>/idea/questionnaire.md` и подставляет её в новый run, если анкета там отсутствует. Контракт v2 по‑прежнему хранит schema в `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, поддерживает `приложение`/`кластер` и фиксирует правило Flow: для multi-module инициатив `Spec.md`/`Plan.md` создаются **по модулю**. Для ссылок на существующие документы UI поддерживает `/read ...`, а Core читает их через `POST /api/v1/orchestrator/workspace-file`. Также Core поддерживает auto-attach: при явных триггерах в сообщении (например, «прочитай/изучи/ознакомься») содержимое 1–3 текстовых файлов из workspace (до 300KB/файл, общий бюджет 1.2 MB; allowlist расширений) прикрепляется автоматически, пути можно указывать где угодно в сообщении/на отдельных строках (без `/read`). Core сохраняет артефакты Idea в `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/` (Idea.md + virtual-simulation.md) через `POST /api/v1/orchestrator/idea-artifact`. VS Code Webview и CEF Launcher загружают интерфейс из независимых пакетов (`~/.codeai-hub/packages/ui/**`). Launcher поддерживает независимые окна для Web Client и Project Manager. Гейты качества унифицированы через Husky и скрипты `build-all.sh` / `build-release.sh`. Также UI при реконнекте просит Supervisor гарантировать, что Core запущен; ошибки провайдера отображаются как system сообщения. Также UI переведён в плоскость Flow: Action Bar содержит 5 кнопок старта (Simple Chat/Idea/Spec/Plan/Execute) и открывает выбор провайдера; Flow шаги доступны только для Codex/Claude. Над Action Bar добавлена строка выбора Initiative (без run selector); Flow-кнопки доступны при выбранной инициативе, а run создаётся автоматически при старте стадии (формат `NNN-<model>`). Core получил HTTP endpoints `/api/v1/orchestrator/initiatives` и `/api/v1/orchestrator/initiatives/:initiativeSlug/runs` (workspacePath обязателен и прокидывается через `__CODEAI_CORE_CONFIG`). Back в provider picker для стартов из Action Bar закрывает выбор провайдера и не возвращает к Flow wizard. Стадия Idea (UI: Description) теперь фиксирует модульную декомпозицию (микро‑модули + фасады) и черновые стрелки зависимостей, а построение диаграмм вынесено в будущие шаги Module Diagram / Interface Map. Core runtime now bundles `@codeai-hub/initiatives` to prevent release-time `MODULE_NOT_FOUND`.
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
@@ -37,54 +37,54 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.400
-- Автономное ядро: `@codeai-hub/core` 1.1.400
-- UI Bundles: 1.1.400
-- Claude module: 1.1.400
-- Codex module: 1.1.400
-- Gemini module: 1.1.400
-- Agent Shared: `@codeai-hub/agent-shared` 1.1.400
-- Idea Collector: `@codeai-hub/idea-collector` 1.1.400
-- Spec Creator: `@codeai-hub/spec-creator` 1.1.400 (skeleton)
+- VSIX: `codeai-hub` 1.1.402
+- Автономное ядро: `@codeai-hub/core` 1.1.402
+- UI Bundles: 1.1.402
+- Claude module: 1.1.402
+- Codex module: 1.1.402
+- Gemini module: 1.1.402
+- Agent Shared: `@codeai-hub/agent-shared` 1.1.402
+- Idea Collector: `@codeai-hub/idea-collector` 1.1.402
+- Spec Creator: `@codeai-hub/spec-creator` 1.1.402 (skeleton)
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.400/
+│       └── 1.1.402/
 │           ├── node/
 │           ├── app/
 │           └── install.json
 ├── packages/
 │   ├── launcher/
-│   │   └── macos-arm64/1.1.400/
+│   │   └── macos-arm64/1.1.402/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.400/
-│       │   └── current -> 1.1.400
+│       │   ├── 1.1.402/
+│       │   └── current -> 1.1.402
 │       ├── web-client/
-│       │   ├── 1.1.400/
-│       │   └── current -> 1.1.400
+│       │   ├── 1.1.402/
+│       │   └── current -> 1.1.402
 │       └── project-manager/
-│           ├── 1.1.400/
-│           └── current -> 1.1.400
+│           ├── 1.1.402/
+│           └── current -> 1.1.402
 ├── providers/
-│   ├── claude/1.1.400/
-│   ├── codex/1.1.400/
-│   └── gemini/1.1.400/
+│   ├── claude/1.1.402/
+│   ├── codex/1.1.402/
+│   └── gemini/1.1.402/
 ├── settings/
 │   ├── claude.json          # legacy thinking settings migrated to settings.json
 │   └── settings.json        # current source of truth for providers.{claude,codex,gemini}
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.400.tar.bz2
-    ├── vscode-webview-1.1.400.tar.bz2
-    ├── web-client-1.1.400.tar.bz2
-    ├── project-manager-1.1.400.tar.bz2
-    ├── claude-module-1.1.400.tar.bz2
-    ├── codex-module-1.1.400.tar.bz2
-    ├── gemini-module-1.1.400.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.400.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.402.tar.bz2
+    ├── vscode-webview-1.1.402.tar.bz2
+    ├── web-client-1.1.402.tar.bz2
+    ├── project-manager-1.1.402.tar.bz2
+    ├── claude-module-1.1.402.tar.bz2
+    ├── codex-module-1.1.402.tar.bz2
+    ├── gemini-module-1.1.402.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.402.tar.bz2
 ```
 
 ## Провайдеры

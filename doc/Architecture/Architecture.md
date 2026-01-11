@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.6.0
-**Last Updated:** 2026-01-10
+**Last Updated:** 2026-01-11
 **Status:** Active reference
-**Release Focus:** v1.1.400 — Core sends initiative/run/stage in session:created so questionnaire opens in the correct initiative/run folder.
+**Release Focus:** v1.1.402 — Description run selection (new/refine), runSlug session binding, and questionnaire seeding from the latest run.
 
 ---
 
@@ -153,6 +153,11 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.402 - 2026-01-11)
+- **Description run selection**: UI prompts for a new variant or existing run and reuses run slugs for the Description stage.
+- **Run metadata + seeding**: `lastQuestionnaireAt` tracks questionnaire updates and new runs seed from the latest questionnaire.
+- **Run-aware session create**: `session:create` accepts `runSlug` and skips auto-run when provided.
 
 ## Recent Changes (v1.1.397 - 2026-01-10)
 - **Auto-runs on Flow start**: each stage start creates a new run (`NNN-<model>`) and marks it current.
