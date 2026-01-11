@@ -174,17 +174,23 @@ update_root_version() {
 }
 
 clean_local_artifacts() {
-  local paths=(
-    "$HOME/.codeai-hub/core"
-    "$HOME/.codeai-hub/providers"
-    "$HOME/.codeai-hub/cef-launcher"
-    "$HOME/.codeai-hub/releases"
-  )
-  for path in "${paths[@]}"; do
+  local core_path="$HOME/.codeai-hub/core"
+  local providers_root="$HOME/.codeai-hub/providers"
+  local cef_path="$HOME/.codeai-hub/cef-launcher"
+  local releases_path="$HOME/.codeai-hub/releases"
+
+  for path in "$core_path" "$cef_path" "$releases_path"; do
     if [[ -d "$path" ]]; then
       rm -rf "$path"
     fi
   done
+
+  if [[ -d "$providers_root" ]]; then
+    find "$providers_root" -mindepth 1 -maxdepth 1 ! -name "codex" -exec rm -rf {} +
+    if [[ -d "$providers_root/codex" ]]; then
+      find "$providers_root/codex" -mindepth 1 -maxdepth 1 ! -name "home" -exec rm -rf {} +
+    fi
+  fi
 }
 
 ensure_clean_worktree
