@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { RunStore } from "@codeai-hub/initiatives";
 import type { Request, Response } from "express";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -12,6 +13,7 @@ const HTTP_BAD_REQUEST = 400;
 const DEFAULT_MAX_BYTES = 300_000;
 const MIN_MAX_BYTES = 1000;
 const MAX_MAX_BYTES = 500_000;
+const RUN_QUESTIONNAIRE_SUFFIX = "/idea/questionnaire.md";
 
 type WorkspaceFilePayload = {
   readonly sessionId: string;
@@ -37,6 +39,23 @@ const readMaxBytes = (value: unknown): number => {
   }
   const rounded = Math.floor(value);
   return Math.max(MIN_MAX_BYTES, Math.min(MAX_MAX_BYTES, rounded));
+};
+
+const normalizeWorkspacePath = (value: string): string => {
+  const normalized = value.replace(/\\/g, "/");
+  return normalized.startsWith("./") ? normalized.slice(2) : normalized;
+};
+
+const isRunQuestionnairePath = (
+  pathValue: string,
+  initiativeSlug: string,
+  runSlug: string
+): boolean => {
+  const normalized = normalizeWorkspacePath(pathValue);
+  return (
+    normalized ===
+    `.codeai-hub/initiatives/${initiativeSlug}/runs/${runSlug}${RUN_QUESTIONNAIRE_SUFFIX}`
+  );
 };
 
 const parseWorkspaceFilePayload = (
@@ -182,6 +201,24 @@ export const handleWorkspaceFileWrite = async (
       : `${parsedPayload.value.content}\n`;
     await mkdir(path.dirname(absolutePath), { recursive: true });
     await writeFile(absolutePath, content, { encoding: "utf8" });
+
+    if (
+      session.initiativeSlug &&
+      session.runSlug &&
+      isRunQuestionnairePath(
+        parsedPayload.value.path,
+        session.initiativeSlug,
+        session.runSlug
+      )
+    ) {
+      const runs = new RunStore();
+      await runs.updateLastQuestionnaireAt(
+        workspaceRoot,
+        session.initiativeSlug,
+        session.runSlug
+      );
+    }
+
     res.json({ path: parsedPayload.value.path });
   } catch (error) {
     logger.error("Failed to write workspace file", error as Error, {

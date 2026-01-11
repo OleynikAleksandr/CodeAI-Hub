@@ -168,6 +168,36 @@ export class RunStore {
     return manifest;
   }
 
+  async updateLastQuestionnaireAt(
+    workspaceRoot: string,
+    initiativeSlug: string,
+    runSlug: string,
+    timestamp = new Date().toISOString()
+  ): Promise<RunManifest | null> {
+    const manifestPath = resolveRunManifestPath(
+      workspaceRoot,
+      initiativeSlug,
+      runSlug
+    );
+    const parsed = parseRunManifest(await readJsonFile(manifestPath));
+    if (!parsed) {
+      return null;
+    }
+
+    const updated: RunManifest = {
+      ...parsed,
+      lastQuestionnaireAt: timestamp,
+    };
+
+    await writeFile(
+      manifestPath,
+      `${JSON.stringify(updated, null, 2)}\n`,
+      "utf-8"
+    );
+
+    return updated;
+  }
+
   async createAutoRun(
     workspaceRoot: string,
     initiativeSlug: string,
