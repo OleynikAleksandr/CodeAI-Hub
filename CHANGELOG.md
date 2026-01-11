@@ -1,3 +1,13 @@
+## [1.1.402] - 2026-01-11
+
+### Added
+- **Description run selection**: choose new or existing runs (`runSlug`) before starting the Description stage.
+- **Run metadata tracking**: `lastQuestionnaireAt` stored in run.json and updated on questionnaire writes.
+
+### Changed
+- **Questionnaire seeding**: new runs copy the most recently updated questionnaire.
+- **Session binding**: `session:create` accepts `runSlug` and skips auto-run when provided.
+
 ## [1.1.401] - 2026-01-10
 
 ### Fixed
