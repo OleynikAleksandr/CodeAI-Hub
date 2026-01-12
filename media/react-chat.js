@@ -23501,6 +23501,7 @@ ${path2}` : path2;
   ] });
 
   // src/client/ui/src/services/idea-artifact-persistence.ts
+  var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
   var resolveIdeaArtifactPaths = (outputPathsBySession, sessionId, artifact) => {
     const outputPaths = outputPathsBySession.get(sessionId);
     const ideaPath = outputPaths?.idea ?? artifact.ideaPath;
@@ -23517,6 +23518,48 @@ ${path2}` : path2;
     return { ideaPath, virtualSimulationPath };
   };
   var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var persistIdeaArtifacts = async (params) => {
+    const payload = {
+      sessionId: params.sessionId,
+      nextAction: params.artifact.nextAction,
+      ideaPath: params.paths.ideaPath,
+      virtualSimulationPath: params.paths.virtualSimulationPath
+    };
+    if (params.artifact.ideaMarkdown) {
+      payload.ideaMarkdown = params.artifact.ideaMarkdown;
+    }
+    if (params.artifact.virtualSimulationMarkdown) {
+      payload.virtualSimulationMarkdown = params.artifact.virtualSimulationMarkdown;
+    }
+    if (params.artifact.patch) {
+      payload.patch = params.artifact.patch;
+    }
+    const response = await fetch(
+      joinUrl(params.httpUrl, IDEA_ARTIFACT_ENDPOINT),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }
+    );
+    if (!response.ok) {
+      const errorDetails = await tryReadCoreErrorDetails(response);
+      return {
+        ok: false,
+        error: `HTTP ${response.status}${errorDetails ? `: ${errorDetails}` : ""}`
+      };
+    }
+    const responsePayload = await response.json();
+    const savedIdeaPath = isRecord4(responsePayload) && isRecord4(responsePayload.paths) && typeof responsePayload.paths.idea === "string" ? responsePayload.paths.idea : params.paths.ideaPath;
+    const savedVirtualSimulationPath = isRecord4(responsePayload) && isRecord4(responsePayload.paths) && typeof responsePayload.paths.virtualSimulation === "string" ? responsePayload.paths.virtualSimulation : params.paths.virtualSimulationPath;
+    return {
+      ok: true,
+      paths: {
+        idea: savedIdeaPath,
+        virtualSimulation: savedVirtualSimulationPath
+      }
+    };
+  };
   var tryReadCoreErrorDetails = async (response) => {
     try {
       const payload = await response.json();
@@ -23532,6 +23575,84 @@ ${path2}` : path2;
   // src/client/ui/src/services/idea-collector-artifact.ts
   var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
+  var PATCH_TARGETS = /* @__PURE__ */ new Set([
+    "idea",
+    "virtual_simulation"
+  ]);
+  var PATCH_OPERATIONS = /* @__PURE__ */ new Set([
+    "replace",
+    "append",
+    "prepend",
+    "remove"
+  ]);
+  var parsePatchEntry = (entry) => {
+    if (!isRecord5(entry)) {
+      return null;
+    }
+    const targetRaw = readStringField(entry, "target");
+    if (!(targetRaw && PATCH_TARGETS.has(targetRaw))) {
+      return null;
+    }
+    const section = readStringField(entry, "section");
+    if (!section) {
+      return null;
+    }
+    const operationRaw = readStringField(entry, "operation");
+    if (!(operationRaw && PATCH_OPERATIONS.has(operationRaw))) {
+      return null;
+    }
+    const content3 = readStringField(entry, "content");
+    if (content3 === null) {
+      return null;
+    }
+    return {
+      target: targetRaw,
+      section,
+      operation: operationRaw,
+      content: content3
+    };
+  };
+  var parsePatchList = (patchValue) => {
+    if (!Array.isArray(patchValue)) {
+      return null;
+    }
+    const entries = patchValue.map((entry) => parsePatchEntry(entry)).filter((entry) => entry !== null);
+    return entries.length > 0 ? entries : null;
+  };
+  var readNextAction = (data) => {
+    let nextAction = null;
+    if (typeof data.nextAction === "string") {
+      nextAction = data.nextAction;
+    } else if (typeof data.next_action === "string") {
+      nextAction = data.next_action;
+    }
+    if (nextAction === "finalize" || nextAction === "revise_artifacts") {
+      return nextAction;
+    }
+    return null;
+  };
+  var readArtifactPayload = (artifact) => {
+    const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
+    const virtualSimulationPath = readStringField(artifact, "virtualSimulationPath") ?? readStringField(artifact, "virtual_simulation_path");
+    const ideaMarkdown = readStringField(artifact, "ideaMarkdown") ?? readStringField(artifact, "idea_markdown");
+    const virtualSimulationMarkdown = readStringField(artifact, "virtualSimulationMarkdown") ?? readStringField(artifact, "virtual_simulation_markdown");
+    const patch2 = parsePatchList(artifact.patch);
+    return {
+      ideaPath,
+      virtualSimulationPath,
+      ideaMarkdown,
+      virtualSimulationMarkdown,
+      patch: patch2
+    };
+  };
+  var isArtifactReady = (nextAction, ideaMarkdown, virtualSimulationMarkdown, patch2) => {
+    const hasFull = Boolean(ideaMarkdown) && Boolean(virtualSimulationMarkdown);
+    const hasPatch = Boolean(patch2);
+    if (nextAction === "finalize") {
+      return hasFull;
+    }
+    return hasFull || hasPatch;
+  };
   var extractIdeaCollectorArtifact = (event) => {
     if (!isRecord5(event)) {
       return null;
@@ -23540,43 +23661,43 @@ ${path2}` : path2;
     if (!isRecord5(data) || data.kind !== "structured_output") {
       return null;
     }
-    let nextAction = null;
-    if (typeof data.nextAction === "string") {
-      nextAction = data.nextAction;
-    } else if (typeof data.next_action === "string") {
-      nextAction = data.next_action;
-    }
-    if (nextAction !== "finalize") {
+    const nextAction = readNextAction(data);
+    if (!nextAction) {
       return null;
     }
     const artifact = data.artifact;
     if (!isRecord5(artifact)) {
       return null;
     }
-    const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
-    const virtualSimulationPath = readStringField(artifact, "virtualSimulationPath") ?? readStringField(artifact, "virtual_simulation_path");
-    const ideaMarkdown = readStringField(artifact, "ideaMarkdown") ?? readStringField(artifact, "idea_markdown");
-    const virtualSimulationMarkdown = readStringField(artifact, "virtualSimulationMarkdown") ?? readStringField(artifact, "virtual_simulation_markdown");
-    if (!(ideaPath && ideaMarkdown && virtualSimulationPath && virtualSimulationMarkdown)) {
+    const {
+      ideaPath,
+      virtualSimulationPath,
+      ideaMarkdown,
+      virtualSimulationMarkdown,
+      patch: patch2
+    } = readArtifactPayload(artifact);
+    if (!isArtifactReady(nextAction, ideaMarkdown, virtualSimulationMarkdown, patch2)) {
       return null;
     }
     return {
+      nextAction,
       ideaPath,
       ideaMarkdown,
       virtualSimulationPath,
-      virtualSimulationMarkdown
+      virtualSimulationMarkdown,
+      patch: patch2
     };
   };
 
   // src/client/ui/src/app-host/idea-kickoff-prompt.ts
-  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\n\u041E\u0446\u0435\u043D\u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0447\u0435\u0440\u0435\u0437 assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0434\u0430\u0439 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 (questions), \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E; \u043D\u0430 finalize questions = [].\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md` \u0438 `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md`.";
+  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\n\u041E\u0446\u0435\u043D\u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0447\u0435\u0440\u0435\u0437 assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0434\u0430\u0439 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 (questions), \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E; \u043D\u0430 finalize questions = [].\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u0415\u0441\u043B\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u043F\u0440\u043E\u0441\u0438\u0442 \u043F\u0440\u0430\u0432\u043A\u0438 \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u043E\u0432, \u0432\u0435\u0440\u043D\u0438 next_action=revise_artifacts \u0438 artifact.patch (\u043F\u0440\u0435\u0434\u043F\u043E\u0447\u0442\u0438\u0442\u0435\u043B\u044C\u043D\u043E) \u0438\u043B\u0438 \u043F\u043E\u043B\u043D\u044B\u0435 markdown; \u043D\u0435 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 heredoc/\u043A\u043E\u043C\u0430\u043D\u0434\u044B \u0438 \u043D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0442\u0440\u0430\u043D\u0441\u043A\u0440\u0438\u043F\u0442\u044B.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md` \u0438 `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md`.";
 
   // src/client/ui/src/services/idea-collector-fallback-schema.ts
   var FALLBACK_SCHEMA_JSON = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://codeai-hub.local/schemas/idea-collector-schema.json",
   "title": "Idea Collector \u2014 Structured Output Contract (Slim)",
-  "description": "\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 Structured Output \u0434\u043B\u044F Idea Collector. \u0410\u0433\u0435\u043D\u0442 \u0430\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u0443\u044E \u0430\u043D\u043A\u0435\u0442\u0443, \u043E\u0446\u0435\u043D\u0438\u0432\u0430\u0435\u0442 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0437\u0430\u0434\u0430\u0451\u0442 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430. \u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 (next_action=finalize) \u043E\u0431\u044F\u0437\u0430\u043D \u0432\u0435\u0440\u043D\u0443\u0442\u044C \u0433\u043E\u0442\u043E\u0432\u044B\u0435 Idea.md \u0438 virtual-simulation.md \u043A\u0430\u043A markdown + \u0446\u0435\u043B\u0435\u0432\u044B\u0435 \u043F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F.",
+  "description": "\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 Structured Output \u0434\u043B\u044F Idea Collector. \u0410\u0433\u0435\u043D\u0442 \u0430\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u0443\u044E \u0430\u043D\u043A\u0435\u0442\u0443, \u043E\u0446\u0435\u043D\u0438\u0432\u0430\u0435\u0442 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0437\u0430\u0434\u0430\u0451\u0442 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430. \u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 (next_action=finalize) \u043E\u0431\u044F\u0437\u0430\u043D \u0432\u0435\u0440\u043D\u0443\u0442\u044C \u0433\u043E\u0442\u043E\u0432\u044B\u0435 Idea.md \u0438 virtual-simulation.md \u043A\u0430\u043A markdown + \u0446\u0435\u043B\u0435\u0432\u044B\u0435 \u043F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F. \u041D\u0430 revise_artifacts \u0430\u0433\u0435\u043D\u0442 \u0432\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442 \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0439 patch \u043F\u043E \u0441\u0435\u043A\u0446\u0438\u044F\u043C \u0438\u043B\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 markdown \u0431\u0435\u0437 \u0437\u0430\u043F\u0438\u0441\u0438 \u0444\u0430\u0439\u043B\u043E\u0432.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -23590,7 +23711,7 @@ ${path2}` : path2;
   "properties": {
     "next_action": {
       "type": "string",
-      "description": "\u0427\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435: ask_question | clarify | summarize | finalize."
+      "description": "\u0427\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435: ask_question | clarify | summarize | finalize | revise_artifacts."
     },
     "suggested_response": {
       "type": "string",
@@ -23653,14 +23774,40 @@ ${path2}` : path2;
     "artifact": {
       "type": "object",
       "additionalProperties": false,
-      "description": "\u0424\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B. \u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B \u043F\u0440\u0438 next_action=finalize.",
-      "required": [
-        "idea_markdown",
-        "virtual_simulation_markdown",
-        "idea_path",
-        "virtual_simulation_path"
-      ],
+      "description": "\u0424\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u043B\u0438 \u043F\u0440\u0430\u0432\u043A\u0438. \u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B \u043F\u0440\u0438 next_action=finalize \u0438\u043B\u0438 next_action=revise_artifacts.",
       "properties": {
+        "patch": {
+          "type": "array",
+          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u043F\u0440\u0430\u0432\u043E\u043A \u043F\u043E \u0441\u0435\u043A\u0446\u0438\u044F\u043C/\u044F\u043A\u043E\u0440\u044F\u043C. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442\u0441\u044F \u043F\u0440\u0438 next_action=revise_artifacts (\u043F\u0440\u0435\u0434\u043F\u043E\u0447\u0442\u0438\u0442\u0435\u043B\u044C\u043D\u043E).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "target",
+              "section",
+              "operation",
+              "content"
+            ],
+            "properties": {
+              "target": {
+                "type": "string",
+                "description": "\u0426\u0435\u043B\u0435\u0432\u043E\u0439 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442: idea | virtual_simulation."
+              },
+              "section": {
+                "type": "string",
+                "description": "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u0441\u0435\u043A\u0446\u0438\u0438 \u0438\u043B\u0438 \u044F\u043A\u043E\u0440\u044C, \u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F \u043F\u0440\u0430\u0432\u043A\u0430."
+              },
+              "operation": {
+                "type": "string",
+                "description": "\u0422\u0438\u043F \u043E\u043F\u0435\u0440\u0430\u0446\u0438\u0438: replace | append | prepend | remove."
+              },
+              "content": {
+                "type": "string",
+                "description": "Markdown-\u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442 \u0434\u043B\u044F \u043E\u043F\u0435\u0440\u0430\u0446\u0438\u0438 (\u043F\u0443\u0441\u0442\u0430\u044F \u0441\u0442\u0440\u043E\u043A\u0430 \u0434\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u0430 \u0434\u043B\u044F remove)."
+              }
+            }
+          }
+        },
         "idea_markdown": {
           "type": "string",
           "description": "\u0413\u043E\u0442\u043E\u0432\u044B\u0439 Idea.md \u043A\u0430\u043A markdown (\u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u0438 \u0432\u0441\u0435 \u0441\u0435\u043A\u0446\u0438\u0438 \u043F\u043E \u0448\u0430\u0431\u043B\u043E\u043D\u0443)."
@@ -24065,8 +24212,6 @@ ${command.remainingMessage}`);
   };
 
   // src/client/ui/src/services/idea-collector-service.ts
-  var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var loadContract = () => loadIdeaContract();
   var _IdeaCollectorService = class _IdeaCollectorService {
     isIdeaCollectorSession(sessionId) {
@@ -24236,31 +24381,23 @@ ${content3}`;
         return;
       }
       try {
-        const response = await fetch(joinUrl(httpUrl, IDEA_ARTIFACT_ENDPOINT), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId,
-            ideaMarkdown: artifact.ideaMarkdown,
-            virtualSimulationMarkdown: artifact.virtualSimulationMarkdown,
-            ideaPath: paths.ideaPath,
-            virtualSimulationPath: paths.virtualSimulationPath
-          })
+        const result = await persistIdeaArtifacts({
+          httpUrl,
+          sessionId,
+          artifact,
+          paths
         });
-        if (!response.ok) {
-          const errorDetails = await tryReadCoreErrorDetails(response);
+        if (!result.ok) {
           postSystemNotice(
             sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (HTTP ${response.status}${errorDetails ? `: ${errorDetails}` : ""}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
+            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (${result.error}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
           );
           return;
         }
-        const payload = await response.json();
-        const savedIdeaPath = isRecord9(payload) && isRecord9(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : paths.ideaPath;
-        const savedVirtualSimulationPath = isRecord9(payload) && isRecord9(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : paths.virtualSimulationPath;
+        const verb = artifact.nextAction === "revise_artifacts" ? "\u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u044B" : "\u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B";
         postSystemNotice(
           sessionId,
-          `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedIdeaPath} \u0438 ${savedVirtualSimulationPath}`
+          `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 ${verb} \u0432 workspace: ${result.paths.idea} \u0438 ${result.paths.virtualSimulation}`
         );
       } catch {
         postSystemNotice(
@@ -24486,9 +24623,9 @@ ${replacement}
   // src/client/ui/src/services/workspace-file-service.ts
   var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
   var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
-  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse2 = (value) => {
-    if (!isRecord10(value)) {
+    if (!isRecord9(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -25808,15 +25945,15 @@ ${replacement}
 
   // src/client/ui/src/api/orchestrator/initiatives-client.ts
   var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
-  var isRecord11 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isInitiativeSummary = (value) => {
-    if (!isRecord11(value)) {
+    if (!isRecord10(value)) {
       return false;
     }
     return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
   };
   var parseInitiatives = (value) => {
-    if (!isRecord11(value)) {
+    if (!isRecord10(value)) {
       return [];
     }
     const raw = value.initiatives;
@@ -25838,7 +25975,7 @@ ${replacement}
     return initiatives;
   };
   var parseCreatedInitiative = (value) => {
-    if (!isRecord11(value)) {
+    if (!isRecord10(value)) {
       return null;
     }
     const initiative = value.initiative;
@@ -28366,13 +28503,13 @@ ${replacement}
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord12(value)) {
+    if (!isRecord11(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -28411,7 +28548,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord13 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -28444,7 +28581,7 @@ ${replacement}
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord13(value)) {
+    if (!isRecord12(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
