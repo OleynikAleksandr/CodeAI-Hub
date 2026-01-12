@@ -36,5 +36,4 @@
 4. `doc/Sessions/Session099.md` (THIS REPORT)
 
 ## Plans for next session
-- Решить, нужно ли обновить hash TBD в Phase 26 (todo-plan) отдельным commit.
-- Проверить ручной сценарий `revise_artifacts` (patch vs full markdown) на реальном run.
+- Собрать новый релиз (build-all.sh + build-release.sh --use-current-version) и зафиксировать артефакты.
