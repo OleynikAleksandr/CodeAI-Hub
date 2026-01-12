@@ -142,3 +142,12 @@
 8. [DONE] Git Commit: `docs: update 1.1.410 release notes` (hash: c0d3d68f)
 9. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 95 report`
 10. [DONE] Git Commit: `docs: add session 95 report` (hash: 1a477e9a)
+
+## Phase 24 — Refine existing provider guard + questionnaire mirror (owner: Oleksandr, updated: 2026-01-12)
+### Stream: Idea refine existing hardening
+1. [DONE] Fail-fast on provider mismatch for refine existing run — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): fail-fast on refine provider mismatch`
+2. [DONE] Git Commit: `fix(core): fail-fast on refine provider mismatch` (hash: 31ae4865)
+3. [DONE] Mirror run questionnaire to initiative copy on each save/append — scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): mirror run questionnaire to initiative copy`
+4. [DONE] Git Commit: `fix(core): mirror run questionnaire to initiative copy` (hash: b41126ea)
+5. [TODO] Add session 96 report — scope: `doc/Sessions/Session096.md`; expected commit message: `docs: add session 96 report`
+6. [TODO] Git Commit: `docs: add session 96 report` (hash: TBD)
