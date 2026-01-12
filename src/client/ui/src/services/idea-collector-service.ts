@@ -1,5 +1,9 @@
 import { sendChatMessage } from "../core-bridge/core-bridge";
 import {
+  resolveIdeaArtifactPaths,
+  tryReadCoreErrorDetails,
+} from "./idea-artifact-persistence";
+import {
   extractIdeaCollectorArtifact,
   type IdeaCollectorArtifact,
 } from "./idea-collector-artifact";
@@ -211,28 +215,22 @@ export class IdeaCollectorService {
     artifact: IdeaCollectorArtifact
   ): Promise<void> {
     const httpUrl = resolveCoreHttpUrl();
-    const outputPaths =
-      IdeaCollectorService.outputPathsBySession.get(sessionId);
-    const ideaPath = outputPaths?.idea ?? artifact.ideaPath;
-    const virtualSimulationPath =
-      outputPaths?.virtualSimulation ?? artifact.virtualSimulationPath;
-    if (!(ideaPath && virtualSimulationPath)) {
+    const paths = resolveIdeaArtifactPaths(
+      IdeaCollectorService.outputPathsBySession,
+      sessionId,
+      artifact
+    );
+    if (!paths) {
       postSystemNotice(
         sessionId,
         "Не могу сохранить артефакты идеи: не удалось определить пути для сохранения. Перезапустите этап и попробуйте снова."
       );
       return;
     }
-    if (!outputPaths) {
-      IdeaCollectorService.outputPathsBySession.set(sessionId, {
-        idea: ideaPath,
-        virtualSimulation: virtualSimulationPath,
-      });
-    }
     if (!httpUrl) {
       postSystemNotice(
         sessionId,
-        `Не могу сохранить артефакты идеи: Core HTTP URL не определён. Ожидаемые пути: ${ideaPath}, ${virtualSimulationPath}.`
+        `Не могу сохранить артефакты идеи: Core HTTP URL не определён. Ожидаемые пути: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
       );
       return;
     }
@@ -245,15 +243,16 @@ export class IdeaCollectorService {
           sessionId,
           ideaMarkdown: artifact.ideaMarkdown,
           virtualSimulationMarkdown: artifact.virtualSimulationMarkdown,
-          ideaPath: artifact.ideaPath,
-          virtualSimulationPath: artifact.virtualSimulationPath,
+          ideaPath: paths.ideaPath,
+          virtualSimulationPath: paths.virtualSimulationPath,
         }),
       });
 
       if (!response.ok) {
+        const errorDetails = await tryReadCoreErrorDetails(response);
         postSystemNotice(
           sessionId,
-          `Не удалось сохранить артефакты идеи (HTTP ${response.status}). Ожидаемые пути: ${ideaPath}, ${virtualSimulationPath}.`
+          `Не удалось сохранить артефакты идеи (HTTP ${response.status}${errorDetails ? `: ${errorDetails}` : ""}). Ожидаемые пути: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
         );
         return;
       }
@@ -263,13 +262,13 @@ export class IdeaCollectorService {
         isRecord(payload.paths) &&
         typeof payload.paths.idea === "string"
           ? payload.paths.idea
-          : ideaPath;
+          : paths.ideaPath;
       const savedVirtualSimulationPath =
         isRecord(payload) &&
         isRecord(payload.paths) &&
         typeof payload.paths.virtualSimulation === "string"
           ? payload.paths.virtualSimulation
-          : virtualSimulationPath;
+          : paths.virtualSimulationPath;
       postSystemNotice(
         sessionId,
         `Артефакты идеи сохранены в workspace: ${savedIdeaPath} и ${savedVirtualSimulationPath}`
@@ -277,7 +276,7 @@ export class IdeaCollectorService {
     } catch {
       postSystemNotice(
         sessionId,
-        `Не удалось сохранить артефакты идеи: ошибка сети. Ожидаемые пути: ${ideaPath}, ${virtualSimulationPath}.`
+        `Не удалось сохранить артефакты идеи: ошибка сети. Ожидаемые пути: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
       );
     }
   }
