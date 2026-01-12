@@ -95,3 +95,20 @@
 14. [DONE] Git Commit: `docs: update architecture for 1.1.407` (hash: 8cf7a60d)
 15. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 92 report`
 16. [DONE] Git Commit: `docs: add session 92 report` (hash: da21792f)
+
+## Phase 21 — Questionnaire placeholder hotfix + release 1.1.408 (owner: Oleksandr, updated: 2026-01-12)
+### Stream: 1.1.408 hotfix release
+1. [DONE] Keep non-hint placeholder answers in UI — scope: `src/client/ui/src/services/idea-questionnaire-template.ts`; expected commit message: `fix(ui): keep non-hint placeholder answers`
+2. [DONE] Git Commit: `fix(ui): keep non-hint placeholder answers` (hash: d6eb09b4)
+3. [DONE] Bundle updated questionnaire template in Core — scope: `packages/core/src/templates/bundled-templates.ts`; expected commit message: `fix(core): bundle updated questionnaire template`
+4. [DONE] Git Commit: `fix(core): bundle updated questionnaire template` (hash: b419aee5)
+5. [DONE] Refresh fallback webview bundle — scope: `media/react-chat.js`; expected commit message: `chore(ui): refresh webview fallback bundle`
+6. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: a38fc65d)
+7. [DONE] Build artifacts and bump version to 1.1.408 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.408`
+8. [DONE] Git Commit: `chore(release): bump 1.1.408` (hash: 3753e4ab)
+9. [DONE] Update release notes (README/CHANGELOG) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.408 release notes`
+10. [DONE] Git Commit: `docs: update 1.1.408 release notes` (hash: a6034f0b)
+11. [DONE] Update architecture docs for 1.1.408 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.408`
+12. [DONE] Git Commit: `docs: update architecture for 1.1.408` (hash: 47823009)
+13. [TODO] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 93 report`
+14. [TODO] Git Commit: `docs: add session 93 report` (hash: TBD)
