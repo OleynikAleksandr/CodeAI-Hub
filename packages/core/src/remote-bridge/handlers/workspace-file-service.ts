@@ -14,6 +14,7 @@ const DEFAULT_MAX_BYTES = 300_000;
 const MIN_MAX_BYTES = 1000;
 const MAX_MAX_BYTES = 500_000;
 const RUN_QUESTIONNAIRE_SUFFIX = "/idea/questionnaire.md";
+const INITIATIVE_QUESTIONNAIRE_PATH_SUFFIX = "/idea/questionnaire.md";
 
 type WorkspaceFilePayload = {
   readonly sessionId: string;
@@ -57,6 +58,9 @@ const isRunQuestionnairePath = (
     `.codeai-hub/initiatives/${initiativeSlug}/runs/${runSlug}${RUN_QUESTIONNAIRE_SUFFIX}`
   );
 };
+
+const resolveInitiativeQuestionnairePath = (initiativeSlug: string): string =>
+  `.codeai-hub/initiatives/${initiativeSlug}${INITIATIVE_QUESTIONNAIRE_PATH_SUFFIX}`;
 
 const parseWorkspaceFilePayload = (
   payload: unknown
@@ -217,6 +221,18 @@ export const handleWorkspaceFileWrite = async (
         session.initiativeSlug,
         session.runSlug
       );
+
+      const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(
+        session.initiativeSlug
+      );
+      const initiativeAbsolutePath = resolveWorkspaceFilePath(
+        workspaceRoot,
+        initiativeQuestionnairePath
+      );
+      if (initiativeAbsolutePath && initiativeAbsolutePath !== absolutePath) {
+        await mkdir(path.dirname(initiativeAbsolutePath), { recursive: true });
+        await writeFile(initiativeAbsolutePath, content, { encoding: "utf8" });
+      }
     }
 
     res.json({ path: parsedPayload.value.path });
