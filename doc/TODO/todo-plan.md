@@ -174,4 +174,4 @@
 9. [DONE] Обновить fallback webview bundle — scope: `media/react-chat.js`; ожидаемый commit message: `chore(ui): refresh webview fallback bundle`
 10. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: b139b060)
 11. [DONE] Gates + targeted builds для затронутых пакетов — scope: scripts/commands; ожидаемый commit message: `docs: update todo plan status`
-12. [DONE] Git Commit: `docs: update todo plan status` (hash: TBD)
+12. [DONE] Git Commit: `docs: update todo plan status` (hash: 69fa2185)
