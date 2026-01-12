@@ -129,3 +129,16 @@
 10. [DONE] Git Commit: `docs: update architecture for 1.1.409` (hash: f7756b6b)
 11. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 94 report`
 12. [DONE] Git Commit: `docs: add session 94 report` (hash: 323b40ea)
+
+## Phase 23 — Idea refine existing run questionnaire fix + release 1.1.410 (owner: Oleksandr, updated: 2026-01-12)
+### Stream: 1.1.410 hotfix release
+1. [DONE] Open questionnaire for Idea refine existing runs — scope: `src/client/ui/src/app-host.tsx`, `src/client/ui/src/app-host/idea-questionnaire-panel.tsx`; expected commit message: `fix(ui): open questionnaire for refine runs`
+2. [DONE] Git Commit: `fix(ui): open questionnaire for refine runs` (hash: e5b687fa)
+3. [DONE] Refresh fallback webview bundle — scope: `media/react-chat.js`; expected commit message: `chore(ui): refresh webview fallback bundle`
+4. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: c098d57e)
+5. [DONE] Build artifacts and bump version to 1.1.410 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.410`
+6. [DONE] Git Commit: `chore(release): bump 1.1.410` (hash: 6dad1c38)
+7. [DONE] Update release notes (README/CHANGELOG/Architecture/SystemArchitecture) — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.410 release notes`
+8. [DONE] Git Commit: `docs: update 1.1.410 release notes` (hash: c0d3d68f)
+9. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 95 report`
+10. [TODO] Git Commit: `docs: add session 95 report` (hash: TBD)
