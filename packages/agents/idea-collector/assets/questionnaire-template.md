@@ -90,10 +90,12 @@ Draft
 
 ### 3.2 Где будет лежать код модулей
 
-Правило Workflow: после Scaffold каждый модуль появляется в `packages/<moduleSlug>/...`.
+> _Правило Workflow: после Scaffold каждый модуль появляется в `packages/<moduleSlug>/...`._
+> _moduleSlug — lowercase-kebab-case (пример: `workflow-module-diagram`); публичный вход модуля — фасад `*facade.ts`._
+> _В поле ниже укажите только корневую папку (например: `packages`)._
 
 <!-- field:project.module_root -->
-packages
+
 <!-- /field -->
 
 ---
