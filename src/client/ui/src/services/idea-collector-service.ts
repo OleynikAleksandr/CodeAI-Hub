@@ -37,7 +37,6 @@ export class IdeaCollectorService {
     string,
     IdeaContractSnapshot["outputPaths"]
   >();
-  private contractPromise: Promise<IdeaContractSnapshot> | null = null;
 
   isIdeaCollectorSession(sessionId: string): boolean {
     if (IdeaCollectorService.activeSessions.has(sessionId)) {
@@ -194,10 +193,7 @@ export class IdeaCollectorService {
   }
 
   private getContract(): Promise<IdeaContractSnapshot> {
-    if (!this.contractPromise) {
-      this.contractPromise = loadContract();
-    }
-    return this.contractPromise;
+    return loadContract();
   }
 
   private markQuestionnairePending(sessionId: string): void {
