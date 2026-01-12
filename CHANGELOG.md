@@ -1,3 +1,8 @@
+## [1.1.409] - 2026-01-12
+
+### Fixed
+- **Idea artifacts persistence**: Idea Collector now persists `idea.md` + `virtual-simulation.md` using run-aware paths (next to the run’s questionnaire), rather than trusting agent-provided paths.
+
 ## [1.1.408] - 2026-01-12
 
 ### Fixed
