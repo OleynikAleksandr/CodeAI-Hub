@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.6.0
-**Last Updated:** 2026-01-11
+**Last Updated:** 2026-01-12
 **Status:** Active reference
-**Release Focus:** v1.1.406 — Idea questionnaire resume preserves answers (no stale template caching; `<...>` placeholder detection no longer wipes real content).
+**Release Focus:** v1.1.407 — Idea questionnaire reads answers from disk reliably; hints render in headings (no placeholder content inside input fields).
 
 ---
 
