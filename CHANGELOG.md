@@ -1,3 +1,8 @@
+## [1.1.407] - 2026-01-12
+
+### Fixed
+- **Idea questionnaire UX**: hints no longer appear inside answer fields; questionnaire answers are loaded from disk reliably to avoid losing content on resume.
+
 ## [1.1.406] - 2026-01-12
 
 ### Fixed
