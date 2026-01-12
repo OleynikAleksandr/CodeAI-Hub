@@ -1,3 +1,8 @@
+## [1.1.408] - 2026-01-12
+
+### Fixed
+- **Idea questionnaire resume**: answers are no longer cleared when they match non-hint template placeholders (e.g. `Draft`, `packages`); Core now syncs the updated questionnaire template without placeholder content inside answer fields.
+
 ## [1.1.407] - 2026-01-12
 
 ### Fixed
