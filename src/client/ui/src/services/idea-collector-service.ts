@@ -175,7 +175,7 @@ export class IdeaCollectorService {
   }
 
   getQuestionnaireTemplateMarkdown(): Promise<string | null> {
-    return this.getContract().then(
+    return loadContract().then(
       (contract) => contract.questionnaireTemplateMarkdown
     );
   }
