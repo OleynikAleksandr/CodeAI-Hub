@@ -1,7 +1,7 @@
 import { sendChatMessage } from "../core-bridge/core-bridge";
 import {
+  persistIdeaArtifacts,
   resolveIdeaArtifactPaths,
-  tryReadCoreErrorDetails,
 } from "./idea-artifact-persistence";
 import {
   extractIdeaCollectorArtifact,
@@ -11,11 +11,7 @@ import {
   type IdeaContractSnapshot,
   loadIdeaContract,
 } from "./idea-collector-contract";
-import {
-  joinUrl,
-  postSystemNotice,
-  resolveCoreHttpUrl,
-} from "./idea-collector-support";
+import { postSystemNotice, resolveCoreHttpUrl } from "./idea-collector-support";
 import { buildMessageWithWorkspaceContext } from "./idea-collector-workspace-context";
 import { notifyMissingIdeaContext } from "./idea-questionnaire-messages";
 import {
@@ -23,11 +19,6 @@ import {
   isQuestionnairePendingStored,
   markQuestionnairePendingStored,
 } from "./idea-questionnaire-pending-store";
-
-const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
 
 const loadContract = (): Promise<IdeaContractSnapshot> => loadIdeaContract();
 
@@ -236,42 +227,24 @@ export class IdeaCollectorService {
     }
 
     try {
-      const response = await fetch(joinUrl(httpUrl, IDEA_ARTIFACT_ENDPOINT), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          ideaMarkdown: artifact.ideaMarkdown,
-          virtualSimulationMarkdown: artifact.virtualSimulationMarkdown,
-          ideaPath: paths.ideaPath,
-          virtualSimulationPath: paths.virtualSimulationPath,
-        }),
+      const result = await persistIdeaArtifacts({
+        httpUrl,
+        sessionId,
+        artifact,
+        paths,
       });
-
-      if (!response.ok) {
-        const errorDetails = await tryReadCoreErrorDetails(response);
+      if (!result.ok) {
         postSystemNotice(
           sessionId,
-          `Не удалось сохранить артефакты идеи (HTTP ${response.status}${errorDetails ? `: ${errorDetails}` : ""}). Ожидаемые пути: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
+          `Не удалось сохранить артефакты идеи (${result.error}). Ожидаемые пути: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
         );
         return;
       }
-      const payload = (await response.json()) as unknown;
-      const savedIdeaPath =
-        isRecord(payload) &&
-        isRecord(payload.paths) &&
-        typeof payload.paths.idea === "string"
-          ? payload.paths.idea
-          : paths.ideaPath;
-      const savedVirtualSimulationPath =
-        isRecord(payload) &&
-        isRecord(payload.paths) &&
-        typeof payload.paths.virtualSimulation === "string"
-          ? payload.paths.virtualSimulation
-          : paths.virtualSimulationPath;
+      const verb =
+        artifact.nextAction === "revise_artifacts" ? "обновлены" : "сохранены";
       postSystemNotice(
         sessionId,
-        `Артефакты идеи сохранены в workspace: ${savedIdeaPath} и ${savedVirtualSimulationPath}`
+        `Артефакты идеи ${verb} в workspace: ${result.paths.idea} и ${result.paths.virtualSimulation}`
       );
     } catch {
       postSystemNotice(
