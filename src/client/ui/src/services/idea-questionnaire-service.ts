@@ -2,6 +2,10 @@ import type { IdeaContractSnapshot } from "./idea-collector-contract";
 import { IdeaCollectorService } from "./idea-collector-service";
 import { resolveCoreHttpUrl } from "./idea-collector-support";
 import {
+  appendClarificationToAgentQnaField,
+  migrateLegacyClarifications,
+} from "./idea-questionnaire-agent-qna";
+import {
   extractIdeaQuestionnaireAnswers,
   parseIdeaQuestionnaireTemplateFields,
   renderIdeaQuestionnaire,
@@ -29,7 +33,6 @@ const DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
 const SAVE_DEBOUNCE_MS = 400;
 const QUESTIONNAIRE_READ_MAX_BYTES = 1_000_000;
 const IDEA_PATH_SUFFIX_RE = /idea\.md$/;
-const QUESTIONNAIRE_CLARIFICATIONS_HEADER = "## Уточнения анкеты";
 const RUN_QUESTIONNAIRE_PATH_RE =
   /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
 
@@ -51,26 +54,6 @@ const resolveInitiativeQuestionnairePath = (
     return null;
   }
   return `.codeai-hub/initiatives/${match[1]}/idea/questionnaire.md`;
-};
-
-const appendClarificationToMarkdown = (
-  content: string,
-  question: string | null,
-  answer: string
-): string => {
-  const normalizedAnswer = answer.trim();
-  if (normalizedAnswer.length === 0) {
-    return content;
-  }
-  const normalizedQuestion = question?.trim();
-  const questionLine = normalizedQuestion
-    ? `- Вопрос: ${normalizedQuestion}`
-    : "- Вопрос: (не удалось определить)";
-  const base = content.trimEnd();
-  const withHeader = base.includes(QUESTIONNAIRE_CLARIFICATIONS_HEADER)
-    ? base
-    : `${base}\n\n${QUESTIONNAIRE_CLARIFICATIONS_HEADER}`;
-  return `${withHeader}\n${questionLine}\n  Ответ: ${normalizedAnswer}\n`;
 };
 
 export class IdeaQuestionnaireService {
@@ -129,21 +112,25 @@ export class IdeaQuestionnaireService {
           : null;
     }
     const resolvedContent = content ?? template;
+    const migratedContent = migrateLegacyClarifications(resolvedContent);
 
     const shouldWriteTemplate =
       existing.status === "missing" ||
       (existing.status === "ok" && existingContent === null);
 
-    if (shouldWriteTemplate) {
+    const shouldWriteMigrated =
+      shouldWriteTemplate || migratedContent !== resolvedContent;
+
+    if (shouldWriteMigrated) {
       await this.workspaceFiles.write(
         sessionId,
         questionnairePath,
-        resolvedContent
+        migratedContent
       );
     }
 
     const answers = extractIdeaQuestionnaireAnswers(
-      resolvedContent,
+      migratedContent,
       placeholders
     );
     return {
@@ -212,7 +199,7 @@ export class IdeaQuestionnaireService {
     if (!existingContent) {
       return;
     }
-    const updated = appendClarificationToMarkdown(
+    const updated = appendClarificationToAgentQnaField(
       existingContent,
       question,
       answer
