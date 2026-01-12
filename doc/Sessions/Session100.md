@@ -18,6 +18,8 @@
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `c15b035c chore(release): bump 1.1.412`
 - `e0ee7c86 docs: update 1.1.412 release notes`
+- `aa4571db docs: add session 100 report`
+- `e52f37f9 docs: update todo plan status`
 
 ---
 
