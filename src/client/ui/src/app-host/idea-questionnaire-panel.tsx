@@ -153,15 +153,6 @@ export const IdeaQuestionnairePanel = ({
       return;
     }
     pendingQuestionnaireRef.current = false;
-    const activeSession = sessions.find(
-      (session) => session.id === activeSessionId
-    );
-    if (
-      activeSession?.stage === "idea" &&
-      activeSession.binding.status === "ready"
-    ) {
-      return;
-    }
     loadQuestionnaireForSession(questionnaireService, sessions, activeSessionId)
       .then((snapshot) => {
         if (snapshot) {

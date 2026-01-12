@@ -99,7 +99,7 @@ const AppHost = () => {
       handleSessionCreated(session);
       if (shouldKickoffIdeaRef.current) {
         shouldKickoffIdeaRef.current = false;
-        if (session.stage === "idea" && session.binding.status === "pending") {
+        if (session.stage === "idea") {
           startIdeaCollection(session.id);
         }
       }
