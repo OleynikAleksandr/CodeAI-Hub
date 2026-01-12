@@ -114,3 +114,18 @@
 14. [DONE] Git Commit: `docs: add session 93 report` (hash: d1ecbbc7)
 15. [DONE] Update Session093 report (final commit list + next session focus) — scope: `doc/Sessions/Session093.md`; expected commit message: `docs: update session 93 report`
 16. [DONE] Git Commit: `docs: update session 93 report` (hash: d01e2ff8)
+
+## Phase 22 — Idea artifacts persistence fix + release 1.1.409 (owner: Oleksandr, updated: 2026-01-12)
+### Stream: 1.1.409 hotfix release
+1. [DONE] Persist Idea artifacts using run-aware paths (ignore agent paths) — scope: `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-artifact-persistence.ts`; expected commit message: `fix(ui): persist idea artifacts to run paths`
+2. [DONE] Git Commit: `fix(ui): persist idea artifacts to run paths` (hash: 00d9c3ca)
+3. [DONE] Refresh fallback webview bundle — scope: `media/react-chat.js`; expected commit message: `chore(ui): refresh webview fallback bundle`
+4. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: aab6fd9a)
+5. [DONE] Build artifacts and bump version to 1.1.409 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.409`
+6. [DONE] Git Commit: `chore(release): bump 1.1.409` (hash: 0c50386f)
+7. [DONE] Update release notes (README/CHANGELOG) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.409 release notes`
+8. [DONE] Git Commit: `docs: update 1.1.409 release notes` (hash: 3e095e19)
+9. [DONE] Update architecture docs for 1.1.409 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.409`
+10. [DONE] Git Commit: `docs: update architecture for 1.1.409` (hash: f7756b6b)
+11. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 94 report`
+12. [TODO] Git Commit: `docs: add session 94 report` (hash: TBD)
