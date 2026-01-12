@@ -1,11 +1,16 @@
 type QuestionnaireField = {
   readonly id: string;
   readonly title: string;
+  readonly titleHint?: string;
   readonly description?: string;
   readonly hint?: string;
 };
 
-type FieldMeta = { readonly title: string; readonly description?: string };
+type FieldMeta = {
+  readonly title: string;
+  readonly titleHint?: string;
+  readonly description?: string;
+};
 
 export const FIELD_REGEX =
   /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
@@ -13,6 +18,8 @@ export const FIELD_REGEX =
 const HEADING_PREFIX_RE = /^#+\s*/;
 const HEADING_LINE_RE = /^#+\s+.*$/gm;
 const SINGLE_HINT_TOKEN_RE = /^<[^>\n]{1,80}>$/;
+const TITLE_HINT_HTML_LINE_RE =
+  /^<small>\s*<i>(?<hint>[\s\S]+?)<\/i>\s*<\/small>$/i;
 
 const normalizeDescription = (value: string): string | undefined => {
   const lines = value
@@ -23,6 +30,31 @@ const normalizeDescription = (value: string): string | undefined => {
     return;
   }
   return lines.join("\n");
+};
+
+const extractTitleHintFromDescription = (
+  descriptionRaw: string
+): { readonly titleHint?: string; readonly description?: string } => {
+  const lines = descriptionRaw
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith("<!--"));
+
+  if (lines.length === 0) {
+    return {};
+  }
+
+  const firstLine = lines[0] ?? "";
+  const hintMatch = TITLE_HINT_HTML_LINE_RE.exec(firstLine);
+  if (!hintMatch?.groups?.hint) {
+    return { description: lines.join("\n") };
+  }
+
+  const titleHint = hintMatch.groups.hint.trim();
+  const remainder = lines.slice(1).join("\n");
+  const description = remainder.length > 0 ? remainder : undefined;
+
+  return { titleHint, description };
 };
 
 const resolveFieldMeta = (
@@ -40,10 +72,12 @@ const resolveFieldMeta = (
   const headingLine = lastHeading[0] ?? "";
   const title = headingLine.replace(HEADING_PREFIX_RE, "").trim() || fallback;
   const descriptionStart = headingIndex + headingLine.length;
-  const description = normalizeDescription(
-    template.slice(descriptionStart, startIndex)
-  );
-  return { title, description };
+  const rawDescription = template.slice(descriptionStart, startIndex);
+  const extracted = extractTitleHintFromDescription(rawDescription);
+  const description = extracted.description
+    ? normalizeDescription(extracted.description)
+    : undefined;
+  return { title, titleHint: extracted.titleHint, description };
 };
 
 const isHintLikeAnswer = (value: string): boolean => {
@@ -60,11 +94,15 @@ const isHintLikeAnswer = (value: string): boolean => {
     return true;
   }
 
-  if (trimmed.split("\n").some((line) => line.trim().startsWith("- <"))) {
-    return true;
-  }
+  const nonEmptyLines = trimmed
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
 
-  if (trimmed.includes("...") && trimmed.includes(":")) {
+  if (
+    nonEmptyLines.length > 0 &&
+    nonEmptyLines.every((line) => line.startsWith("- <"))
+  ) {
     return true;
   }
 
@@ -86,7 +124,7 @@ export const parseIdeaQuestionnaireTemplateFields = (
       continue;
     }
     const placeholder = (match[2] ?? "").trim();
-    const { title, description } = resolveFieldMeta(
+    const { title, titleHint, description } = resolveFieldMeta(
       template,
       match.index ?? 0,
       fieldId
@@ -95,8 +133,8 @@ export const parseIdeaQuestionnaireTemplateFields = (
     questions.push({
       id: fieldId,
       title,
+      titleHint,
       description,
-      hint: placeholder.length > 0 ? placeholder : undefined,
     });
   }
   return { questions, placeholders };
