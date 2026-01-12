@@ -14,12 +14,15 @@ import {
   questionInputShellStyles,
   questionOverlayStyles,
   questionTextareaStyles,
+  questionTitleHintStyles,
+  questionTitleRowStyles,
   questionTitleStyles,
 } from "./styles";
 
 export type QuestionnaireQuestion = {
   readonly id: string;
   readonly title: string;
+  readonly titleHint?: string;
   readonly description?: string;
   readonly hint?: string;
 };
@@ -196,7 +199,12 @@ export const QuestionBlock = ({
   return (
     <section style={questionCardStyles}>
       <div style={questionHeaderStyles}>
-        <div style={questionTitleStyles}>{question.title}</div>
+        <div style={questionTitleRowStyles}>
+          <span style={questionTitleStyles}>{question.title}</span>
+          {question.titleHint ? (
+            <span style={questionTitleHintStyles}>{question.titleHint}</span>
+          ) : null}
+        </div>
         {question.description ? (
           <p style={questionDescriptionStyles}>{question.description}</p>
         ) : null}

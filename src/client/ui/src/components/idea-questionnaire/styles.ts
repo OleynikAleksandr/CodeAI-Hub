@@ -86,10 +86,23 @@ export const questionHeaderStyles: CSSProperties = {
   gap: "6px",
 };
 
+export const questionTitleRowStyles: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  alignItems: "baseline",
+  gap: "8px",
+};
+
 export const questionTitleStyles: CSSProperties = {
   fontSize: "14px",
   fontWeight: 600,
   color: "#f0f0f0",
+};
+
+export const questionTitleHintStyles: CSSProperties = {
+  fontSize: "12px",
+  fontStyle: "italic",
+  color: "#9aa0a6",
 };
 
 export const questionDescriptionStyles: CSSProperties = {
