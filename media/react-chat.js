@@ -24285,6 +24285,90 @@ ${content3}`;
   _IdeaCollectorService.outputPathsBySession = /* @__PURE__ */ new Map();
   var IdeaCollectorService = _IdeaCollectorService;
 
+  // src/client/ui/src/services/idea-questionnaire-agent-qna.ts
+  var AGENT_QNA_FIELD_ID = "system.agent_qna";
+  var AGENT_QNA_SECTION_TITLE = "## 20. \u0412\u043E\u043F\u0440\u043E\u0441\u044B AI \u0410\u0433\u0435\u043D\u0442\u0430 (\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u0435\u043C \u041D\u0415 \u0437\u0430\u043F\u043E\u043B\u043D\u044F\u044E\u0442\u0441\u044F!!!)";
+  var LEGACY_CLARIFICATIONS_HEADER = "## \u0423\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u044F \u0430\u043D\u043A\u0435\u0442\u044B";
+  var formatClarificationEntry = (question, answer) => {
+    const normalizedAnswer = answer.trim();
+    if (normalizedAnswer.length === 0) {
+      return null;
+    }
+    const normalizedQuestion = question?.trim();
+    const questionLine = normalizedQuestion ? `- \u0412\u043E\u043F\u0440\u043E\u0441: ${normalizedQuestion}` : "- \u0412\u043E\u043F\u0440\u043E\u0441: (\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C)";
+    return `${questionLine}
+  \u041E\u0442\u0432\u0435\u0442: ${normalizedAnswer}`.trimEnd();
+  };
+  var ensureAgentQnaSection = (content3) => {
+    if (content3.includes(`<!-- field:${AGENT_QNA_FIELD_ID} -->`)) {
+      return content3;
+    }
+    return `${content3.trimEnd()}
+
+---
+
+${AGENT_QNA_SECTION_TITLE}
+
+<!-- field:${AGENT_QNA_FIELD_ID} -->
+
+<!-- /field -->
+`;
+  };
+  var migrateLegacyClarifications = (content3) => {
+    if (content3.includes(`<!-- field:${AGENT_QNA_FIELD_ID} -->`)) {
+      return content3;
+    }
+    const legacyIndex = content3.indexOf(LEGACY_CLARIFICATIONS_HEADER);
+    if (legacyIndex < 0) {
+      return content3;
+    }
+    const before = content3.slice(0, legacyIndex).trimEnd();
+    const afterHeader = content3.slice(legacyIndex);
+    const headerLineEnd = afterHeader.indexOf("\n");
+    const body = headerLineEnd >= 0 ? afterHeader.slice(headerLineEnd + 1).trim() : "";
+    const migrated = ensureAgentQnaSection(before);
+    const escapedFieldId = AGENT_QNA_FIELD_ID.replace(".", "\\.");
+    const fieldRe = new RegExp(
+      `<!--\\s*field:${escapedFieldId}\\s*-->\\n([\\s\\S]*?)\\n<!--\\s*\\/field\\s*-->`,
+      "u"
+    );
+    return migrated.replace(fieldRe, (_match, existingRaw) => {
+      const existing = String(existingRaw ?? "").trim();
+      const next = body.length > 0 ? body : existing;
+      return `<!-- field:${AGENT_QNA_FIELD_ID} -->
+${next}
+<!-- /field -->`;
+    });
+  };
+  var appendClarificationToAgentQnaField = (content3, question, answer) => {
+    const entry = formatClarificationEntry(question, answer);
+    if (!entry) {
+      return content3;
+    }
+    const migrated = migrateLegacyClarifications(content3);
+    const ensured = ensureAgentQnaSection(migrated);
+    const escapedFieldId = AGENT_QNA_FIELD_ID.replace(".", "\\.");
+    const fieldRe = new RegExp(
+      `<!--\\s*field:${escapedFieldId}\\s*-->\\n([\\s\\S]*?)\\n<!--\\s*\\/field\\s*-->`,
+      "u"
+    );
+    const match = fieldRe.exec(ensured);
+    if (!match) {
+      return content3;
+    }
+    const existingRaw = match[1] ?? "";
+    const existing = String(existingRaw).trim();
+    const updatedBody = existing.length > 0 ? `${existing}
+
+${entry}` : entry;
+    return ensured.replace(
+      fieldRe,
+      `<!-- field:${AGENT_QNA_FIELD_ID} -->
+${updatedBody}
+<!-- /field -->`
+    );
+  };
+
   // src/client/ui/src/services/idea-questionnaire-template.ts
   var FIELD_REGEX = /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
   var HEADING_PREFIX_RE = /^#+\s*/;
@@ -24347,6 +24431,7 @@ ${content3}`;
     return false;
   };
   var parseIdeaQuestionnaireTemplateFields = (template) => {
+    const isUserEditableFieldId = (fieldId) => !fieldId.startsWith("system.");
     const questions = [];
     const placeholders = {};
     const matches = template.matchAll(FIELD_REGEX);
@@ -24362,12 +24447,14 @@ ${content3}`;
         fieldId
       );
       placeholders[fieldId] = placeholder;
-      questions.push({
-        id: fieldId,
-        title,
-        titleHint,
-        description
-      });
+      if (isUserEditableFieldId(fieldId)) {
+        questions.push({
+          id: fieldId,
+          title,
+          titleHint,
+          description
+        });
+      }
     }
     return { questions, placeholders };
   };
@@ -24448,7 +24535,6 @@ ${replacement}
   var SAVE_DEBOUNCE_MS = 400;
   var QUESTIONNAIRE_READ_MAX_BYTES = 1e6;
   var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
-  var QUESTIONNAIRE_CLARIFICATIONS_HEADER = "## \u0423\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u044F \u0430\u043D\u043A\u0435\u0442\u044B";
   var RUN_QUESTIONNAIRE_PATH_RE = /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
   var normalizeQuestionnaireContent = (content3) => {
     if (!content3) {
@@ -24463,22 +24549,6 @@ ${replacement}
       return null;
     }
     return `.codeai-hub/initiatives/${match[1]}/idea/questionnaire.md`;
-  };
-  var appendClarificationToMarkdown = (content3, question, answer) => {
-    const normalizedAnswer = answer.trim();
-    if (normalizedAnswer.length === 0) {
-      return content3;
-    }
-    const normalizedQuestion = question?.trim();
-    const questionLine = normalizedQuestion ? `- \u0412\u043E\u043F\u0440\u043E\u0441: ${normalizedQuestion}` : "- \u0412\u043E\u043F\u0440\u043E\u0441: (\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C)";
-    const base = content3.trimEnd();
-    const withHeader = base.includes(QUESTIONNAIRE_CLARIFICATIONS_HEADER) ? base : `${base}
-
-${QUESTIONNAIRE_CLARIFICATIONS_HEADER}`;
-    return `${withHeader}
-${questionLine}
-  \u041E\u0442\u0432\u0435\u0442: ${normalizedAnswer}
-`;
   };
   var IdeaQuestionnaireService = class {
     constructor() {
@@ -24519,16 +24589,18 @@ ${questionLine}
         content3 = initiativeCopy.status === "ok" ? normalizeQuestionnaireContent(initiativeCopy.file.content) : null;
       }
       const resolvedContent = content3 ?? template;
+      const migratedContent = migrateLegacyClarifications(resolvedContent);
       const shouldWriteTemplate = existing.status === "missing" || existing.status === "ok" && existingContent === null;
-      if (shouldWriteTemplate) {
+      const shouldWriteMigrated = shouldWriteTemplate || migratedContent !== resolvedContent;
+      if (shouldWriteMigrated) {
         await this.workspaceFiles.write(
           sessionId,
           questionnairePath,
-          resolvedContent
+          migratedContent
         );
       }
       const answers = extractIdeaQuestionnaireAnswers(
-        resolvedContent,
+        migratedContent,
         placeholders
       );
       return {
@@ -24576,7 +24648,7 @@ ${questionLine}
       if (!existingContent) {
         return;
       }
-      const updated = appendClarificationToMarkdown(
+      const updated = appendClarificationToAgentQnaField(
         existingContent,
         question,
         answer
