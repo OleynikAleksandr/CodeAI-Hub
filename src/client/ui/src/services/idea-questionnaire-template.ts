@@ -12,7 +12,7 @@ export const FIELD_REGEX =
 
 const HEADING_PREFIX_RE = /^#+\s*/;
 const HEADING_LINE_RE = /^#+\s+.*$/gm;
-const HINT_TOKEN_RE = /<[^>\n]{1,80}>/;
+const SINGLE_HINT_TOKEN_RE = /^<[^>\n]{1,80}>$/;
 
 const normalizeDescription = (value: string): string | undefined => {
   const lines = value
@@ -56,7 +56,7 @@ const isHintLikeAnswer = (value: string): boolean => {
     return true;
   }
 
-  if (HINT_TOKEN_RE.test(trimmed)) {
+  if (SINGLE_HINT_TOKEN_RE.test(trimmed)) {
     return true;
   }
 

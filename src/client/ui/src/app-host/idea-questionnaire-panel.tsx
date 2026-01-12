@@ -132,7 +132,6 @@ export const IdeaQuestionnairePanel = ({
     }
     if (questionnaireSnapshot?.sessionId === activeSessionId) {
       setQuestionnaireVisible(true);
-      return;
     }
     loadQuestionnaireForSession(questionnaireService, sessions, activeSessionId)
       .then((snapshot) => {
