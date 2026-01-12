@@ -83,6 +83,8 @@ export class SessionRequestHandler {
   private readonly logger: Logger;
   private readonly broadcaster: (event: unknown) => void;
   private readonly stateBroadcaster: () => void;
+  private static readonly REFINE_PROVIDER_MISMATCH_ERROR =
+    "Refine existing run cannot change provider; start a new run to switch provider.";
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -323,6 +325,54 @@ export class SessionRequestHandler {
     this.broadcastSessionBinding(session.id);
   }
 
+  private normalizeProviderId(value?: string): string | null {
+    if (typeof value !== "string") {
+      return null;
+    }
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+
+  private async canStartRefineExistingRun(options: {
+    readonly workspacePath: string;
+    readonly initiativeSlug: string | null;
+    readonly runSlug: string | null;
+    readonly explicitProviderId: string | null;
+  }): Promise<boolean> {
+    if (
+      !(options.explicitProviderId && options.initiativeSlug && options.runSlug)
+    ) {
+      return true;
+    }
+
+    const runs = new RunStore();
+    const workspaceRoot = path.resolve(options.workspacePath);
+    const manifest = await runs.read(
+      workspaceRoot,
+      options.initiativeSlug,
+      options.runSlug
+    );
+    const manifestProviderId =
+      typeof manifest?.providerId === "string" && manifest.providerId.trim()
+        ? manifest.providerId.trim()
+        : null;
+
+    if (
+      manifestProviderId &&
+      manifestProviderId !== options.explicitProviderId
+    ) {
+      this.broadcaster({
+        type: "session:error",
+        payload: {
+          message: SessionRequestHandler.REFINE_PROVIDER_MISMATCH_ERROR,
+        },
+      });
+      return false;
+    }
+
+    return true;
+  }
+
   async handleCreate(
     providerId?: string,
     workspacePath?: string,
@@ -333,9 +383,22 @@ export class SessionRequestHandler {
       readonly providerSessionId?: string | null;
     }
   ): Promise<void> {
-    const requestedProviderId = providerId ?? this.getDefaultProviderId();
+    const normalizedRequestedProviderId = this.normalizeProviderId(providerId);
+    const requestedProviderId =
+      normalizedRequestedProviderId ?? this.getDefaultProviderId();
     const actualWorkspacePath =
       workspacePath ?? this.config.claudeWorkspacePath ?? process.cwd();
+
+    const canStartRefineExisting = await this.canStartRefineExistingRun({
+      workspacePath: actualWorkspacePath,
+      initiativeSlug: context?.initiativeSlug ?? null,
+      runSlug: context?.runSlug ?? null,
+      explicitProviderId: normalizedRequestedProviderId,
+    });
+    if (!canStartRefineExisting) {
+      return;
+    }
+
     const runBound = await this.resolveRunBoundProviderContext({
       providerId: requestedProviderId,
       workspacePath: actualWorkspacePath,
