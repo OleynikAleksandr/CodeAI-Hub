@@ -61,3 +61,18 @@
 8. [DONE] Git Commit: `docs: update architecture for 1.1.405` (hash: db28f6c5)
 9. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 90 report`
 10. [DONE] Git Commit: `docs: add session 90 report` (hash: 1dd1bc52)
+
+## Phase 19 — Questionnaire resume fix + release 1.1.406 (owner: Oleksandr, updated: 2026-01-12)
+### Stream: Questionnaire resume fix + 1.1.406 release
+1. [DONE] Fix Idea questionnaire resume (reload from disk; avoid stale template cache; soften `<...>` placeholder heuristic) — scope: `src/client/ui/src/app-host/idea-questionnaire-panel.tsx`, `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-questionnaire-template.ts`; expected commit message: `fix(ui): preserve questionnaire answers on resume`
+2. [DONE] Git Commit: `fix(ui): preserve questionnaire answers on resume` (hash: 641b5263)
+3. [DONE] Adjust bundled questionnaire template hints (move guidance out of answer fields) — scope: `packages/agents/idea-collector/assets/questionnaire-template.md`; expected commit message: `fix(idea): adjust questionnaire template hints`
+4. [DONE] Git Commit: `fix(idea): adjust questionnaire template hints` (hash: 6c290850)
+5. [DONE] Refresh fallback webview bundle — scope: `media/react-chat.js`; expected commit message: `chore(ui): refresh webview fallback bundle`
+6. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: bd8fcca6)
+7. [DONE] Build artifacts and bump version to 1.1.406 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.406`
+8. [DONE] Git Commit: `chore(release): bump 1.1.406` (hash: 3d714331)
+9. [DONE] Update release notes (README/CHANGELOG/Architecture/SystemArchitecture) — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.406 release notes`
+10. [DONE] Git Commit: `docs: update 1.1.406 release notes` (hash: f3a9ae0b)
+11. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 91 report`
+12. [TODO] Git Commit: `docs: add session 91 report` (hash: TBD)
