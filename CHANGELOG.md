@@ -1,3 +1,8 @@
+## [1.1.412] - 2026-01-12
+
+### Added
+- **Idea artifact revisions**: `revise_artifacts` supports patch/full markdown updates; UI persists patches and Core applies them with backup + header validation.
+
 ## [1.1.410] - 2026-01-12
 
 ### Fixed
