@@ -112,3 +112,5 @@
 12. [DONE] Git Commit: `docs: update architecture for 1.1.408` (hash: 47823009)
 13. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 93 report`
 14. [DONE] Git Commit: `docs: add session 93 report` (hash: d1ecbbc7)
+15. [DONE] Update Session093 report (final commit list + next session focus) — scope: `doc/Sessions/Session093.md`; expected commit message: `docs: update session 93 report`
+16. [DONE] Git Commit: `docs: update session 93 report` (hash: d01e2ff8)
