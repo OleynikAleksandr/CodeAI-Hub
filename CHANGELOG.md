@@ -1,3 +1,8 @@
+## [1.1.406] - 2026-01-12
+
+### Fixed
+- **Idea questionnaire resume**: resuming a partially filled questionnaire no longer drops answers due to stale template caching or overly broad `<...>` placeholder detection.
+
 ## [1.1.405] - 2026-01-11
 
 ### Fixed
