@@ -24782,12 +24782,6 @@ ${questionLine}
         return;
       }
       pendingQuestionnaireRef.current = false;
-      const activeSession = sessions.find(
-        (session) => session.id === activeSessionId
-      );
-      if (activeSession?.stage === "idea" && activeSession.binding.status === "ready") {
-        return;
-      }
       loadQuestionnaireForSession(questionnaireService, sessions, activeSessionId).then((snapshot) => {
         if (snapshot) {
           setQuestionnaireSnapshot(snapshot);
@@ -28814,7 +28808,7 @@ ${questionLine}
         handleSessionCreated(session);
         if (shouldKickoffIdeaRef.current) {
           shouldKickoffIdeaRef.current = false;
-          if (session.stage === "idea" && session.binding.status === "pending") {
+          if (session.stage === "idea") {
             startIdeaCollection(session.id);
           }
         }
