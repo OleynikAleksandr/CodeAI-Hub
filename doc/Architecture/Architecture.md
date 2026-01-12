@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-12
 **Status:** Active reference
-**Release Focus:** v1.1.407 — Idea questionnaire reads answers from disk reliably; hints render in headings (no placeholder content inside input fields).
+**Release Focus:** v1.1.408 — Idea questionnaire resume shows answers reliably even when they match non-hint placeholders; Core bundles the updated questionnaire template (no placeholder content inside answer fields).
 
 ---
 
