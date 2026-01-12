@@ -2,16 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.405
-- **Codex home preserved**: build/installer cleanup keeps `~/.codeai-hub/providers/codex/home` intact, so prior Codex CLI sessions remain available.
-- **Release 1.1.405**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+## Current Release — v1.1.406
+- **Questionnaire resume fix**: resuming an Idea questionnaire no longer drops answers due to template caching or `<...>` placeholder heuristics.
+- **Release 1.1.406**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.405.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.405.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.405.tar.bz2`
-  - Providers: `claude-module-1.1.405.tar.bz2`, `codex-module-1.1.405.tar.bz2`, `gemini-module-1.1.405.tar.bz2`
-  - UI: `vscode-webview-1.1.405.tar.bz2`, `web-client-1.1.405.tar.bz2`, `project-manager-1.1.405.tar.bz2`
+  - VSIX: `codeai-hub-1.1.406.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.406.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.406.tar.bz2`
+  - Providers: `claude-module-1.1.406.tar.bz2`, `codex-module-1.1.406.tar.bz2`, `gemini-module-1.1.406.tar.bz2`
+  - UI: `vscode-webview-1.1.406.tar.bz2`, `web-client-1.1.406.tar.bz2`, `project-manager-1.1.406.tar.bz2`
   - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/idea-collector`, `@codeai-hub/spec-creator`
 
 
