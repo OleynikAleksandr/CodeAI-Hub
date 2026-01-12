@@ -1,15 +1,17 @@
 import type { IdeaContractSnapshot } from "./idea-collector-contract";
 import { IdeaCollectorService } from "./idea-collector-service";
-import { joinUrl, resolveCoreHttpUrl } from "./idea-collector-support";
+import { resolveCoreHttpUrl } from "./idea-collector-support";
 import {
   extractIdeaQuestionnaireAnswers,
   parseIdeaQuestionnaireTemplateFields,
   renderIdeaQuestionnaire,
 } from "./idea-questionnaire-template";
+import { WorkspaceFileService } from "./workspace-file-service";
 
 type QuestionnaireField = {
   readonly id: string;
   readonly title: string;
+  readonly titleHint?: string;
   readonly description?: string;
   readonly hint?: string;
 };
@@ -23,39 +25,13 @@ export type QuestionnaireSnapshot = {
   readonly answers: Record<string, string>;
 };
 
-type WorkspaceFileResponse = {
-  readonly path: string;
-  readonly truncated: boolean;
-  readonly maxBytes: number;
-  readonly content: string;
-};
-
-const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
-const WORKSPACE_FILE_WRITE_ENDPOINT =
-  "/api/v1/orchestrator/workspace-file-write";
 const DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
 const SAVE_DEBOUNCE_MS = 400;
+const QUESTIONNAIRE_READ_MAX_BYTES = 1_000_000;
 const IDEA_PATH_SUFFIX_RE = /idea\.md$/;
 const QUESTIONNAIRE_CLARIFICATIONS_HEADER = "## Уточнения анкеты";
 const RUN_QUESTIONNAIRE_PATH_RE =
   /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const isWorkspaceFileResponse = (
-  value: unknown
-): value is WorkspaceFileResponse => {
-  if (!isRecord(value)) {
-    return false;
-  }
-  return (
-    typeof value.path === "string" &&
-    typeof value.content === "string" &&
-    typeof value.truncated === "boolean" &&
-    typeof value.maxBytes === "number"
-  );
-};
 
 const normalizeQuestionnaireContent = (
   content: string | null | undefined
@@ -99,6 +75,7 @@ const appendClarificationToMarkdown = (
 
 export class IdeaQuestionnaireService {
   private readonly ideaCollector = new IdeaCollectorService();
+  private readonly workspaceFiles = new WorkspaceFileService();
   private readonly saveTimers = new Map<string, number>();
 
   async loadQuestionnaire(
@@ -130,22 +107,35 @@ export class IdeaQuestionnaireService {
 
     const initiativeQuestionnairePath =
       resolveInitiativeQuestionnairePath(questionnairePath);
-    const existing = await this.fetchWorkspaceFile(
+    const existing = await this.workspaceFiles.read(
       sessionId,
-      questionnairePath
+      questionnairePath,
+      QUESTIONNAIRE_READ_MAX_BYTES
     );
-    const existingContent = normalizeQuestionnaireContent(existing?.content);
+    const existingContent =
+      existing.status === "ok"
+        ? normalizeQuestionnaireContent(existing.file.content)
+        : null;
     let content = existingContent;
     if (!content && initiativeQuestionnairePath) {
-      const initiativeCopy = await this.fetchWorkspaceFile(
+      const initiativeCopy = await this.workspaceFiles.read(
         sessionId,
-        initiativeQuestionnairePath
+        initiativeQuestionnairePath,
+        QUESTIONNAIRE_READ_MAX_BYTES
       );
-      content = normalizeQuestionnaireContent(initiativeCopy?.content);
+      content =
+        initiativeCopy.status === "ok"
+          ? normalizeQuestionnaireContent(initiativeCopy.file.content)
+          : null;
     }
     const resolvedContent = content ?? template;
-    if (!existingContent) {
-      await this.writeWorkspaceFile(
+
+    const shouldWriteTemplate =
+      existing.status === "missing" ||
+      (existing.status === "ok" && existingContent === null);
+
+    if (shouldWriteTemplate) {
+      await this.workspaceFiles.write(
         sessionId,
         questionnairePath,
         resolvedContent
@@ -210,11 +200,15 @@ export class IdeaQuestionnaireService {
       IDEA_PATH_SUFFIX_RE,
       "questionnaire.md"
     );
-    const existing = await this.fetchWorkspaceFile(
+    const existing = await this.workspaceFiles.read(
       sessionId,
-      questionnairePath
+      questionnairePath,
+      QUESTIONNAIRE_READ_MAX_BYTES
     );
-    const existingContent = normalizeQuestionnaireContent(existing?.content);
+    const existingContent =
+      existing.status === "ok"
+        ? normalizeQuestionnaireContent(existing.file.content)
+        : null;
     if (!existingContent) {
       return;
     }
@@ -229,63 +223,20 @@ export class IdeaQuestionnaireService {
     await this.writeQuestionnaireCopies(sessionId, questionnairePath, updated);
   }
 
-  private async fetchWorkspaceFile(
-    sessionId: string,
-    path: string
-  ): Promise<WorkspaceFileResponse | null> {
-    const httpUrl = resolveCoreHttpUrl();
-    if (!httpUrl) {
-      return null;
-    }
-    try {
-      const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, path, maxBytes: 200_000 }),
-      });
-      if (!response.ok) {
-        return null;
-      }
-      const payload = (await response.json()) as unknown;
-      if (!isWorkspaceFileResponse(payload)) {
-        return null;
-      }
-      return payload;
-    } catch {
-      return null;
-    }
-  }
-
   private async writeQuestionnaireCopies(
     sessionId: string,
     path: string,
     content: string
   ): Promise<void> {
-    await this.writeWorkspaceFile(sessionId, path, content);
+    await this.workspaceFiles.write(sessionId, path, content);
     const initiativeQuestionnairePath =
       resolveInitiativeQuestionnairePath(path);
     if (initiativeQuestionnairePath && initiativeQuestionnairePath !== path) {
-      await this.writeWorkspaceFile(
+      await this.workspaceFiles.write(
         sessionId,
         initiativeQuestionnairePath,
         content
       );
     }
-  }
-
-  private async writeWorkspaceFile(
-    sessionId: string,
-    path: string,
-    content: string
-  ): Promise<void> {
-    const httpUrl = resolveCoreHttpUrl();
-    if (!httpUrl) {
-      return;
-    }
-    await fetch(joinUrl(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, path, content }),
-    });
   }
 }
