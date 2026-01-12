@@ -153,8 +153,10 @@ export const extractIdeaQuestionnaireAnswers = (
     }
     const candidate = (match[2] ?? "").trim();
     const placeholder = (placeholders[fieldId] ?? "").trim();
-    answers[fieldId] =
-      candidate === placeholder || isHintLikeAnswer(candidate) ? "" : candidate;
+    const shouldClear =
+      isHintLikeAnswer(candidate) ||
+      (candidate === placeholder && isHintLikeAnswer(placeholder));
+    answers[fieldId] = shouldClear ? "" : candidate;
   }
   return answers;
 };
