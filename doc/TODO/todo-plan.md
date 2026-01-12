@@ -151,3 +151,12 @@
 4. [DONE] Git Commit: `fix(core): mirror run questionnaire to initiative copy` (hash: b41126ea)
 5. [DONE] Add session 96 report — scope: `doc/Sessions/Session096.md`; expected commit message: `docs: add session 96 report`
 6. [DONE] Git Commit: `docs: add session 96 report` (hash: 8db7a1e3)
+
+## Phase 25 — Idea questionnaire: Agent Q/A persistence (owner: Oleksandr, updated: 2026-01-12)
+### Stream: Agent clarifications persistence
+1. [DONE] Add template section for agent Q/A (`system.agent_qna`) — scope: `packages/agents/idea-collector/assets/questionnaire-template.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit message: `fix(templates): add agent Q/A section to questionnaire`
+2. [DONE] Git Commit: `fix(templates): add agent Q/A section to questionnaire` (hash: 41c36077)
+3. [DONE] Persist agent Q/A in questionnaire field + migrate legacy clarifications — scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/services/idea-questionnaire-template.ts`, `src/client/ui/src/services/idea-questionnaire-agent-qna.ts`; expected commit message: `fix(ui): persist agent Q/A in questionnaire`
+4. [DONE] Git Commit: `fix(ui): persist agent Q/A in questionnaire` (hash: df1690de)
+5. [DONE] Add session 97 report — scope: `doc/Sessions/Session097.md`; expected commit message: `docs: add session 97 report`
+6. [DONE] Git Commit: `docs: add session 97 report` (hash: 2665917d)
