@@ -27,6 +27,8 @@
 - `a6034f0b docs: update 1.1.408 release notes`
 - `47823009 docs: update architecture for 1.1.408`
 - `7ce91822 docs: update todo plan status`
+- `d1ecbbc7 docs: add session 93 report`
+- `76a566c6 docs: update todo plan status`
 
 ---
 
@@ -41,5 +43,5 @@
 6. `doc/Sessions/Session093.md` (THIS REPORT)
 
 ## Plans for next session
-- Ручной e2e тест: открыть реальный `.codeai-hub/initiatives/.../idea/questionnaire.md` с заполненными `meta.status=Draft` и `project.module_root=packages` и убедиться, что UI показывает значения.
-- Проверить, что Core действительно отдаёт обновлённый templateMarkdown через `/api/v1/orchestrator/idea-contract` (в плейсхолдерах нет `Draft`/`packages`).
+- Установить/перезагрузить расширение версии 1.1.408 (VSIX) и проверить в UI, что анкета подтягивает значения из `.codeai-hub/initiatives/.../runs/.../idea/questionnaire.md` (включая `meta.status=Draft` и `project.module_root=packages`).
+- Проверить, что Core отдаёт обновлённый templateMarkdown через `/api/v1/orchestrator/idea-contract` (плейсхолдеры пустые; нет дефолтных `Draft`/`packages` внутри `<!-- field:... -->`).
