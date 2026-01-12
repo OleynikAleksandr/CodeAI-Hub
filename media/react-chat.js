@@ -24150,7 +24150,7 @@ ${content3}`;
       return this.getContract().then((contract) => contract.schema);
     }
     getQuestionnaireTemplateMarkdown() {
-      return this.getContract().then(
+      return loadContract().then(
         (contract) => contract.questionnaireTemplateMarkdown
       );
     }
@@ -24255,7 +24255,7 @@ ${content3}`;
   var FIELD_REGEX = /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
   var HEADING_PREFIX_RE = /^#+\s*/;
   var HEADING_LINE_RE = /^#+\s+.*$/gm;
-  var HINT_TOKEN_RE = /<[^>\n]{1,80}>/;
+  var SINGLE_HINT_TOKEN_RE = /^<[^>\n]{1,80}>$/;
   var normalizeDescription = (value) => {
     const lines = value.split("\n").map((line) => line.trim()).filter((line) => line.length > 0 && !line.startsWith("<!--"));
     if (lines.length === 0) {
@@ -24287,7 +24287,7 @@ ${content3}`;
     if (trimmed.startsWith("\u041F\u0440\u0438\u043C\u0435\u0440:") || trimmed.startsWith("Example:")) {
       return true;
     }
-    if (HINT_TOKEN_RE.test(trimmed)) {
+    if (SINGLE_HINT_TOKEN_RE.test(trimmed)) {
       return true;
     }
     if (trimmed.split("\n").some((line) => line.trim().startsWith("- <"))) {
@@ -24706,7 +24706,6 @@ ${questionLine}
       }
       if (questionnaireSnapshot?.sessionId === activeSessionId) {
         setQuestionnaireVisible(true);
-        return;
       }
       loadQuestionnaireForSession(questionnaireService, sessions, activeSessionId).then((snapshot) => {
         if (snapshot) {
