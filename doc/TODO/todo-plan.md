@@ -160,3 +160,18 @@
 4. [DONE] Git Commit: `fix(ui): persist agent Q/A in questionnaire` (hash: df1690de)
 5. [DONE] Add session 97 report — scope: `doc/Sessions/Session097.md`; expected commit message: `docs: add session 97 report`
 6. [DONE] Git Commit: `docs: add session 97 report` (hash: 2665917d)
+
+## Phase 26 — Safe idea artifact revisions (owner: Oleksandr, updated: 2026-01-12)
+### Stream: Revise artifacts flow
+1. [DONE] Contract: добавить `revise_artifacts` и `artifact.patch` — scope: `packages/agents/idea-collector/assets/idea-collector-schema.json`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `doc/Project_Docs/IdeaCollector_Slim_Structured_Output.md`; ожидаемый commit message: `feat(idea): add revise_artifacts to structured output contract`
+2. [DONE] Git Commit: `feat(idea): add revise_artifacts to structured output contract` (hash: 1cd18df8)
+3. [DONE] Prompt: добавить строгие правила ревизии — scope: `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`; ожидаемый commit message: `docs(idea): clarify artifact revision rules`
+4. [DONE] Git Commit: `docs(idea): clarify artifact revision rules` (hash: a1532f64)
+5. [DONE] UI: сохранять артефакты на `revise_artifacts` + поддержка patch/full markdown — scope: `src/client/ui/src/services/idea-collector-artifact.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-artifact-persistence.ts`; ожидаемый commit message: `feat(ui): persist idea artifacts on revise_artifacts`
+6. [DONE] Git Commit: `feat(ui): persist idea artifacts on revise_artifacts` (hash: 7733d850)
+7. [DONE] Core: backup + валидация + patch apply — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; ожидаемый commit message: `feat(core): safe idea artifact overwrite (backup+validation)`
+8. [DONE] Git Commit: `feat(core): safe idea artifact overwrite (backup+validation)` (hash: 587fb6d9)
+9. [DONE] Обновить fallback webview bundle — scope: `media/react-chat.js`; ожидаемый commit message: `chore(ui): refresh webview fallback bundle`
+10. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: b139b060)
+11. [DONE] Gates + targeted builds для затронутых пакетов — scope: scripts/commands; ожидаемый commit message: `docs: update todo plan status`
+12. [DONE] Git Commit: `docs: update todo plan status` (hash: TBD)
