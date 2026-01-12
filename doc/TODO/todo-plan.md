@@ -149,5 +149,5 @@
 2. [DONE] Git Commit: `fix(core): fail-fast on refine provider mismatch` (hash: 31ae4865)
 3. [DONE] Mirror run questionnaire to initiative copy on each save/append — scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): mirror run questionnaire to initiative copy`
 4. [DONE] Git Commit: `fix(core): mirror run questionnaire to initiative copy` (hash: b41126ea)
-5. [TODO] Add session 96 report — scope: `doc/Sessions/Session096.md`; expected commit message: `docs: add session 96 report`
-6. [TODO] Git Commit: `docs: add session 96 report` (hash: TBD)
+5. [DONE] Add session 96 report — scope: `doc/Sessions/Session096.md`; expected commit message: `docs: add session 96 report`
+6. [DONE] Git Commit: `docs: add session 96 report` (hash: 8db7a1e3)
