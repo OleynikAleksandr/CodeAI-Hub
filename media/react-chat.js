@@ -23205,10 +23205,21 @@ ${path2}` : path2;
     flexDirection: "column",
     gap: "6px"
   };
+  var questionTitleRowStyles = {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "baseline",
+    gap: "8px"
+  };
   var questionTitleStyles = {
     fontSize: "14px",
     fontWeight: 600,
     color: "#f0f0f0"
+  };
+  var questionTitleHintStyles = {
+    fontSize: "12px",
+    fontStyle: "italic",
+    color: "#9aa0a6"
   };
   var questionDescriptionStyles = {
     margin: 0,
@@ -23408,7 +23419,10 @@ ${path2}` : path2;
     };
     return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { style: questionCardStyles, children: [
       /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: questionHeaderStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: questionTitleStyles, children: question.title }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: questionTitleRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { style: questionTitleStyles, children: question.title }),
+          question.titleHint ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { style: questionTitleHintStyles, children: question.titleHint }) : null
+        ] }),
         question.description ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: questionDescriptionStyles, children: question.description }) : null,
         question.hint ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: questionHintStyles, children: question.hint }) : null
       ] }),
@@ -24026,9 +24040,6 @@ ${command.remainingMessage}`);
   var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var loadContract = () => loadIdeaContract();
   var _IdeaCollectorService = class _IdeaCollectorService {
-    constructor() {
-      this.contractPromise = null;
-    }
     isIdeaCollectorSession(sessionId) {
       if (_IdeaCollectorService.activeSessions.has(sessionId)) {
         return true;
@@ -24164,10 +24175,7 @@ ${content3}`;
       return this.getOutputPaths();
     }
     getContract() {
-      if (!this.contractPromise) {
-        this.contractPromise = loadContract();
-      }
-      return this.contractPromise;
+      return loadContract();
     }
     markQuestionnairePending(sessionId) {
       _IdeaCollectorService.pendingQuestionnaire.add(sessionId);
@@ -24256,12 +24264,28 @@ ${content3}`;
   var HEADING_PREFIX_RE = /^#+\s*/;
   var HEADING_LINE_RE = /^#+\s+.*$/gm;
   var SINGLE_HINT_TOKEN_RE = /^<[^>\n]{1,80}>$/;
+  var TITLE_HINT_HTML_LINE_RE = /^<small>\s*<i>(?<hint>[\s\S]+?)<\/i>\s*<\/small>$/i;
   var normalizeDescription = (value) => {
     const lines = value.split("\n").map((line) => line.trim()).filter((line) => line.length > 0 && !line.startsWith("<!--"));
     if (lines.length === 0) {
       return;
     }
     return lines.join("\n");
+  };
+  var extractTitleHintFromDescription = (descriptionRaw) => {
+    const lines = descriptionRaw.split("\n").map((line) => line.trim()).filter((line) => line.length > 0 && !line.startsWith("<!--"));
+    if (lines.length === 0) {
+      return {};
+    }
+    const firstLine = lines[0] ?? "";
+    const hintMatch = TITLE_HINT_HTML_LINE_RE.exec(firstLine);
+    if (!hintMatch?.groups?.hint) {
+      return { description: lines.join("\n") };
+    }
+    const titleHint = hintMatch.groups.hint.trim();
+    const remainder = lines.slice(1).join("\n");
+    const description = remainder.length > 0 ? remainder : void 0;
+    return { titleHint, description };
   };
   var resolveFieldMeta = (template, startIndex, fallback) => {
     const prefix = template.slice(0, startIndex);
@@ -24274,10 +24298,10 @@ ${content3}`;
     const headingLine = lastHeading[0] ?? "";
     const title = headingLine.replace(HEADING_PREFIX_RE, "").trim() || fallback;
     const descriptionStart = headingIndex + headingLine.length;
-    const description = normalizeDescription(
-      template.slice(descriptionStart, startIndex)
-    );
-    return { title, description };
+    const rawDescription = template.slice(descriptionStart, startIndex);
+    const extracted = extractTitleHintFromDescription(rawDescription);
+    const description = extracted.description ? normalizeDescription(extracted.description) : void 0;
+    return { title, titleHint: extracted.titleHint, description };
   };
   var isHintLikeAnswer = (value) => {
     const trimmed = value.trim();
@@ -24290,10 +24314,8 @@ ${content3}`;
     if (SINGLE_HINT_TOKEN_RE.test(trimmed)) {
       return true;
     }
-    if (trimmed.split("\n").some((line) => line.trim().startsWith("- <"))) {
-      return true;
-    }
-    if (trimmed.includes("...") && trimmed.includes(":")) {
+    const nonEmptyLines = trimmed.split("\n").map((line) => line.trim()).filter((line) => line.length > 0);
+    if (nonEmptyLines.length > 0 && nonEmptyLines.every((line) => line.startsWith("- <"))) {
       return true;
     }
     return false;
@@ -24308,7 +24330,7 @@ ${content3}`;
         continue;
       }
       const placeholder = (match[2] ?? "").trim();
-      const { title, description } = resolveFieldMeta(
+      const { title, titleHint, description } = resolveFieldMeta(
         template,
         match.index ?? 0,
         fieldId
@@ -24317,8 +24339,8 @@ ${content3}`;
       questions.push({
         id: fieldId,
         title,
-        description,
-        hint: placeholder.length > 0 ? placeholder : void 0
+        titleHint,
+        description
       });
     }
     return { questions, placeholders };
@@ -24347,14 +24369,9 @@ ${replacement}
 <!-- /field -->`;
   });
 
-  // src/client/ui/src/services/idea-questionnaire-service.ts
+  // src/client/ui/src/services/workspace-file-service.ts
   var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
   var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
-  var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
-  var SAVE_DEBOUNCE_MS = 400;
-  var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
-  var QUESTIONNAIRE_CLARIFICATIONS_HEADER = "## \u0423\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u044F \u0430\u043D\u043A\u0435\u0442\u044B";
-  var RUN_QUESTIONNAIRE_PATH_RE = /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
   var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse2 = (value) => {
     if (!isRecord9(value)) {
@@ -24362,6 +24379,50 @@ ${replacement}
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
   };
+  var WorkspaceFileService = class {
+    async read(sessionId, path2, maxBytes) {
+      const httpUrl = resolveCoreHttpUrl();
+      if (!httpUrl) {
+        return { status: "error" };
+      }
+      try {
+        const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT2), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId, path: path2, maxBytes })
+        });
+        if (!response.ok) {
+          return response.status === 404 ? { status: "missing" } : { status: "error" };
+        }
+        const payload = await response.json();
+        if (!isWorkspaceFileResponse2(payload)) {
+          return { status: "error" };
+        }
+        return { status: "ok", file: payload };
+      } catch {
+        return { status: "error" };
+      }
+    }
+    async write(sessionId, path2, content3) {
+      const httpUrl = resolveCoreHttpUrl();
+      if (!httpUrl) {
+        return;
+      }
+      await fetch(joinUrl(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId, path: path2, content: content3 })
+      });
+    }
+  };
+
+  // src/client/ui/src/services/idea-questionnaire-service.ts
+  var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
+  var SAVE_DEBOUNCE_MS = 400;
+  var QUESTIONNAIRE_READ_MAX_BYTES = 1e6;
+  var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
+  var QUESTIONNAIRE_CLARIFICATIONS_HEADER = "## \u0423\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u044F \u0430\u043D\u043A\u0435\u0442\u044B";
+  var RUN_QUESTIONNAIRE_PATH_RE = /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
   var normalizeQuestionnaireContent = (content3) => {
     if (!content3) {
       return null;
@@ -24395,6 +24456,7 @@ ${questionLine}
   var IdeaQuestionnaireService = class {
     constructor() {
       this.ideaCollector = new IdeaCollectorService();
+      this.workspaceFiles = new WorkspaceFileService();
       this.saveTimers = /* @__PURE__ */ new Map();
     }
     async loadQuestionnaire(sessionId, outputPathsOverride) {
@@ -24414,22 +24476,25 @@ ${questionLine}
         "questionnaire.md"
       );
       const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(questionnairePath);
-      const existing = await this.fetchWorkspaceFile(
+      const existing = await this.workspaceFiles.read(
         sessionId,
-        questionnairePath
+        questionnairePath,
+        QUESTIONNAIRE_READ_MAX_BYTES
       );
-      const existingContent = normalizeQuestionnaireContent(existing?.content);
+      const existingContent = existing.status === "ok" ? normalizeQuestionnaireContent(existing.file.content) : null;
       let content3 = existingContent;
       if (!content3 && initiativeQuestionnairePath) {
-        const initiativeCopy = await this.fetchWorkspaceFile(
+        const initiativeCopy = await this.workspaceFiles.read(
           sessionId,
-          initiativeQuestionnairePath
+          initiativeQuestionnairePath,
+          QUESTIONNAIRE_READ_MAX_BYTES
         );
-        content3 = normalizeQuestionnaireContent(initiativeCopy?.content);
+        content3 = initiativeCopy.status === "ok" ? normalizeQuestionnaireContent(initiativeCopy.file.content) : null;
       }
       const resolvedContent = content3 ?? template;
-      if (!existingContent) {
-        await this.writeWorkspaceFile(
+      const shouldWriteTemplate = existing.status === "missing" || existing.status === "ok" && existingContent === null;
+      if (shouldWriteTemplate) {
+        await this.workspaceFiles.write(
           sessionId,
           questionnairePath,
           resolvedContent
@@ -24475,11 +24540,12 @@ ${questionLine}
         IDEA_PATH_SUFFIX_RE,
         "questionnaire.md"
       );
-      const existing = await this.fetchWorkspaceFile(
+      const existing = await this.workspaceFiles.read(
         sessionId,
-        questionnairePath
+        questionnairePath,
+        QUESTIONNAIRE_READ_MAX_BYTES
       );
-      const existingContent = normalizeQuestionnaireContent(existing?.content);
+      const existingContent = existing.status === "ok" ? normalizeQuestionnaireContent(existing.file.content) : null;
       if (!existingContent) {
         return;
       }
@@ -24493,50 +24559,16 @@ ${questionLine}
       }
       await this.writeQuestionnaireCopies(sessionId, questionnairePath, updated);
     }
-    async fetchWorkspaceFile(sessionId, path2) {
-      const httpUrl = resolveCoreHttpUrl();
-      if (!httpUrl) {
-        return null;
-      }
-      try {
-        const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT2), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, path: path2, maxBytes: 2e5 })
-        });
-        if (!response.ok) {
-          return null;
-        }
-        const payload = await response.json();
-        if (!isWorkspaceFileResponse2(payload)) {
-          return null;
-        }
-        return payload;
-      } catch {
-        return null;
-      }
-    }
     async writeQuestionnaireCopies(sessionId, path2, content3) {
-      await this.writeWorkspaceFile(sessionId, path2, content3);
+      await this.workspaceFiles.write(sessionId, path2, content3);
       const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(path2);
       if (initiativeQuestionnairePath && initiativeQuestionnairePath !== path2) {
-        await this.writeWorkspaceFile(
+        await this.workspaceFiles.write(
           sessionId,
           initiativeQuestionnairePath,
           content3
         );
       }
-    }
-    async writeWorkspaceFile(sessionId, path2, content3) {
-      const httpUrl = resolveCoreHttpUrl();
-      if (!httpUrl) {
-        return;
-      }
-      await fetch(joinUrl(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, path: path2, content: content3 })
-      });
     }
   };
 
