@@ -76,3 +76,22 @@
 10. [DONE] Git Commit: `docs: update 1.1.406 release notes` (hash: f3a9ae0b)
 11. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 91 report`
 12. [DONE] Git Commit: `docs: add session 91 report` (hash: dee13aeb)
+
+## Phase 20 — Questionnaire hints UX + disk load reliability + release 1.1.407 (owner: Oleksandr, updated: 2026-01-12)
+### Stream: Questionnaire reliability + 1.1.407 release
+1. [DONE] Move questionnaire hints into headings (no placeholders inside answer fields) — scope: `packages/agents/idea-collector/assets/questionnaire-template.md`; expected commit message: `fix(idea): move questionnaire hints into headings`
+2. [DONE] Git Commit: `fix(idea): move questionnaire hints into headings` (hash: 5ef5ce8e)
+3. [DONE] Render heading hints in UI + relax answer heuristics — scope: `src/client/ui/src/services/idea-questionnaire-template.ts`, `src/client/ui/src/components/idea-questionnaire/question-block.tsx`, `src/client/ui/src/components/idea-questionnaire/styles.ts`; expected commit message: `fix(ui): render questionnaire hints in headings`
+4. [DONE] Git Commit: `fix(ui): render questionnaire hints in headings` (hash: 75272194)
+5. [DONE] Reload questionnaire answers from disk (remove contract cache; avoid overwriting existing file; increase read limit) — scope: `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/services/workspace-file-service.ts`; expected commit message: `fix(ui): reload questionnaire content from disk`
+6. [DONE] Git Commit: `fix(ui): reload questionnaire content from disk` (hash: daf2f155)
+7. [DONE] Refresh fallback webview bundle — scope: `media/react-chat.js`; expected commit message: `chore(ui): refresh webview fallback bundle`
+8. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: f7a0fed7)
+9. [DONE] Build artifacts and bump version to 1.1.407 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.407`
+10. [DONE] Git Commit: `chore(release): bump 1.1.407` (hash: 705c1452)
+11. [DONE] Update release notes (README/CHANGELOG) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.407 release notes`
+12. [DONE] Git Commit: `docs: update 1.1.407 release notes` (hash: d4842eee)
+13. [DONE] Update architecture docs for 1.1.407 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.407`
+14. [DONE] Git Commit: `docs: update architecture for 1.1.407` (hash: 8cf7a60d)
+15. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 92 report`
+16. [TODO] Git Commit: `docs: add session 92 report` (hash: TBD)
