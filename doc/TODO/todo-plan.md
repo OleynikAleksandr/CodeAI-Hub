@@ -175,3 +175,12 @@
 10. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: b139b060)
 11. [DONE] Gates + targeted builds для затронутых пакетов — scope: scripts/commands; ожидаемый commit message: `docs: update todo plan status`
 12. [DONE] Git Commit: `docs: update todo plan status` (hash: 69fa2185)
+
+## Phase 27 — Release 1.1.412 (owner: Oleksandr, updated: 2026-01-12)
+### Stream: 1.1.412 release
+1. [DONE] Build artifacts and bump version to 1.1.412 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.412`
+2. [DONE] Git Commit: `chore(release): bump 1.1.412` (hash: c15b035c)
+3. [DONE] Update release notes (README/CHANGELOG/Architecture/SystemArchitecture) — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.412 release notes`
+4. [DONE] Git Commit: `docs: update 1.1.412 release notes` (hash: e0ee7c86)
+5. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 100 report`
+6. [TODO] Git Commit: `docs: add session 100 report` (hash: TBD)
