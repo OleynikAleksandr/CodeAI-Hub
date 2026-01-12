@@ -115,6 +115,9 @@ export const parseIdeaQuestionnaireTemplateFields = (
   readonly questions: QuestionnaireField[];
   readonly placeholders: Record<string, string>;
 } => {
+  const isUserEditableFieldId = (fieldId: string): boolean =>
+    !fieldId.startsWith("system.");
+
   const questions: QuestionnaireField[] = [];
   const placeholders: Record<string, string> = {};
   const matches = template.matchAll(FIELD_REGEX);
@@ -130,12 +133,14 @@ export const parseIdeaQuestionnaireTemplateFields = (
       fieldId
     );
     placeholders[fieldId] = placeholder;
-    questions.push({
-      id: fieldId,
-      title,
-      titleHint,
-      description,
-    });
+    if (isUserEditableFieldId(fieldId)) {
+      questions.push({
+        id: fieldId,
+        title,
+        titleHint,
+        description,
+      });
+    }
   }
   return { questions, placeholders };
 };
