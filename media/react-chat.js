@@ -23500,15 +23500,44 @@ ${path2}` : path2;
     ] })
   ] });
 
-  // src/client/ui/src/services/idea-collector-artifact.ts
+  // src/client/ui/src/services/idea-artifact-persistence.ts
+  var resolveIdeaArtifactPaths = (outputPathsBySession, sessionId, artifact) => {
+    const outputPaths = outputPathsBySession.get(sessionId);
+    const ideaPath = outputPaths?.idea ?? artifact.ideaPath;
+    const virtualSimulationPath = outputPaths?.virtualSimulation ?? artifact.virtualSimulationPath;
+    if (!(ideaPath && virtualSimulationPath)) {
+      return null;
+    }
+    if (!outputPaths) {
+      outputPathsBySession.set(sessionId, {
+        idea: ideaPath,
+        virtualSimulation: virtualSimulationPath
+      });
+    }
+    return { ideaPath, virtualSimulationPath };
+  };
   var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var tryReadCoreErrorDetails = async (response) => {
+    try {
+      const payload = await response.json();
+      if (isRecord4(payload) && typeof payload.error === "string") {
+        return payload.error;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
+  // src/client/ui/src/services/idea-collector-artifact.ts
+  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
   var extractIdeaCollectorArtifact = (event) => {
-    if (!isRecord4(event)) {
+    if (!isRecord5(event)) {
       return null;
     }
     const data = event.data;
-    if (!isRecord4(data) || data.kind !== "structured_output") {
+    if (!isRecord5(data) || data.kind !== "structured_output") {
       return null;
     }
     let nextAction = null;
@@ -23521,7 +23550,7 @@ ${path2}` : path2;
       return null;
     }
     const artifact = data.artifact;
-    if (!isRecord4(artifact)) {
+    if (!isRecord5(artifact)) {
       return null;
     }
     const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
@@ -23657,11 +23686,11 @@ ${path2}` : path2;
   );
 
   // src/client/ui/src/services/idea-collector-schema-utils.ts
-  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
   var strictifyProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord6(properties)) {
       return;
     }
     schema.required = Object.keys(properties);
@@ -23669,7 +23698,7 @@ ${path2}` : path2;
       schema.additionalProperties = false;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
+      if (isRecord6(value)) {
         strictifySchema(value);
       }
     }
@@ -23678,23 +23707,23 @@ ${path2}` : path2;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord5(item)) {
+        if (isRecord6(item)) {
           strictifySchema(item);
         }
       }
       return;
     }
-    if (isRecord5(items)) {
+    if (isRecord6(items)) {
       strictifySchema(items);
     }
   };
   var removeCombinatorsFromProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord6(properties)) {
       return;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
+      if (isRecord6(value)) {
         removeCombinators(value);
       }
     }
@@ -23703,13 +23732,13 @@ ${path2}` : path2;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord5(item)) {
+        if (isRecord6(item)) {
           removeCombinators(item);
         }
       }
       return;
     }
-    if (isRecord5(items)) {
+    if (isRecord6(items)) {
       removeCombinators(items);
     }
   };
@@ -23722,7 +23751,7 @@ ${path2}` : path2;
         continue;
       }
       for (const entry of entries) {
-        if (isRecord5(entry)) {
+        if (isRecord6(entry)) {
           removeCombinators(entry);
         }
       }
@@ -23739,19 +23768,19 @@ ${path2}` : path2;
       return schema;
     }
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord6(properties)) {
       return schema;
     }
     const artifact = properties.artifact;
-    if (!isRecord5(artifact)) {
+    if (!isRecord6(artifact)) {
       return schema;
     }
     const artifactProperties = artifact.properties;
-    if (!isRecord5(artifactProperties)) {
+    if (!isRecord6(artifactProperties)) {
       return schema;
     }
     const ideaMarkdown = artifactProperties.idea_markdown;
-    if (!isRecord5(ideaMarkdown)) {
+    if (!isRecord6(ideaMarkdown)) {
       return schema;
     }
     const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
@@ -23778,11 +23807,11 @@ ${template}`;
   };
   var sanitizeSchemaProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord6(properties)) {
       return;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
+      if (isRecord6(value)) {
         sanitizeSchemaKeywords(value);
       }
     }
@@ -23791,13 +23820,13 @@ ${template}`;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord5(item)) {
+        if (isRecord6(item)) {
           sanitizeSchemaKeywords(item);
         }
       }
       return;
     }
-    if (isRecord5(items)) {
+    if (isRecord6(items)) {
       sanitizeSchemaKeywords(items);
     }
   };
@@ -23819,13 +23848,13 @@ ${template}`;
     idea: ".codeai-hub/initiatives/unknown-initiative/runs/000-unknown/idea/idea.md",
     virtualSimulation: ".codeai-hub/initiatives/unknown-initiative/runs/000-unknown/idea/virtual-simulation.md"
   };
-  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isIdeaContractPayload = (value) => {
-    if (!isRecord6(value)) {
+    if (!isRecord7(value)) {
       return false;
     }
     const outputPaths = value.outputPaths;
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord6(value.schema) && isRecord6(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
+    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord7(value.schema) && isRecord7(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
   };
   var fetchIdeaContract = async () => {
     const httpUrl = resolveCoreHttpUrl();
@@ -23900,9 +23929,9 @@ ${template}`;
     const remainingMessage = lines.slice(1).join("\n").trim();
     return { paths, remainingMessage };
   };
-  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse = (value) => {
-    if (!isRecord7(value)) {
+    if (!isRecord8(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -24037,7 +24066,7 @@ ${command.remainingMessage}`);
 
   // src/client/ui/src/services/idea-collector-service.ts
   var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var loadContract = () => loadIdeaContract();
   var _IdeaCollectorService = class _IdeaCollectorService {
     isIdeaCollectorSession(sessionId) {
@@ -24187,26 +24216,22 @@ ${content3}`;
     }
     async persistIdeaArtifacts(sessionId, artifact) {
       const httpUrl = resolveCoreHttpUrl();
-      const outputPaths = _IdeaCollectorService.outputPathsBySession.get(sessionId);
-      const ideaPath = outputPaths?.idea ?? artifact.ideaPath;
-      const virtualSimulationPath = outputPaths?.virtualSimulation ?? artifact.virtualSimulationPath;
-      if (!(ideaPath && virtualSimulationPath)) {
+      const paths = resolveIdeaArtifactPaths(
+        _IdeaCollectorService.outputPathsBySession,
+        sessionId,
+        artifact
+      );
+      if (!paths) {
         postSystemNotice(
           sessionId,
           "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C \u043F\u0443\u0442\u0438 \u0434\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F. \u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u044D\u0442\u0430\u043F \u0438 \u043F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0441\u043D\u043E\u0432\u0430."
         );
         return;
       }
-      if (!outputPaths) {
-        _IdeaCollectorService.outputPathsBySession.set(sessionId, {
-          idea: ideaPath,
-          virtualSimulation: virtualSimulationPath
-        });
-      }
       if (!httpUrl) {
         postSystemNotice(
           sessionId,
-          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
+          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
         );
         return;
       }
@@ -24218,20 +24243,21 @@ ${content3}`;
             sessionId,
             ideaMarkdown: artifact.ideaMarkdown,
             virtualSimulationMarkdown: artifact.virtualSimulationMarkdown,
-            ideaPath: artifact.ideaPath,
-            virtualSimulationPath: artifact.virtualSimulationPath
+            ideaPath: paths.ideaPath,
+            virtualSimulationPath: paths.virtualSimulationPath
           })
         });
         if (!response.ok) {
+          const errorDetails = await tryReadCoreErrorDetails(response);
           postSystemNotice(
             sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (HTTP ${response.status}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
+            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (HTTP ${response.status}${errorDetails ? `: ${errorDetails}` : ""}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
           );
           return;
         }
         const payload = await response.json();
-        const savedIdeaPath = isRecord8(payload) && isRecord8(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : ideaPath;
-        const savedVirtualSimulationPath = isRecord8(payload) && isRecord8(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : virtualSimulationPath;
+        const savedIdeaPath = isRecord9(payload) && isRecord9(payload.paths) && typeof payload.paths.idea === "string" ? payload.paths.idea : paths.ideaPath;
+        const savedVirtualSimulationPath = isRecord9(payload) && isRecord9(payload.paths) && typeof payload.paths.virtualSimulation === "string" ? payload.paths.virtualSimulation : paths.virtualSimulationPath;
         postSystemNotice(
           sessionId,
           `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedIdeaPath} \u0438 ${savedVirtualSimulationPath}`
@@ -24239,7 +24265,7 @@ ${content3}`;
       } catch {
         postSystemNotice(
           sessionId,
-          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${ideaPath}, ${virtualSimulationPath}.`
+          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
         );
       }
     }
@@ -24373,9 +24399,9 @@ ${replacement}
   // src/client/ui/src/services/workspace-file-service.ts
   var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
   var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
-  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse2 = (value) => {
-    if (!isRecord9(value)) {
+    if (!isRecord10(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -25716,15 +25742,15 @@ ${questionLine}
 
   // src/client/ui/src/api/orchestrator/initiatives-client.ts
   var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
-  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord11 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isInitiativeSummary = (value) => {
-    if (!isRecord10(value)) {
+    if (!isRecord11(value)) {
       return false;
     }
     return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
   };
   var parseInitiatives = (value) => {
-    if (!isRecord10(value)) {
+    if (!isRecord11(value)) {
       return [];
     }
     const raw = value.initiatives;
@@ -25746,7 +25772,7 @@ ${questionLine}
     return initiatives;
   };
   var parseCreatedInitiative = (value) => {
-    if (!isRecord10(value)) {
+    if (!isRecord11(value)) {
       return null;
     }
     const initiative = value.initiative;
@@ -28274,13 +28300,13 @@ ${questionLine}
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord11(value)) {
+    if (!isRecord12(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -28319,7 +28345,7 @@ ${questionLine}
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord13 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -28352,7 +28378,7 @@ ${questionLine}
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord12(value)) {
+    if (!isRecord13(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
