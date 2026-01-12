@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-12
 **Status:** Active reference
-**Release Focus:** v1.1.409 — Idea artifacts are persisted using run-aware paths (next to the run’s questionnaire), rather than trusting agent-provided paths.
+**Release Focus:** v1.1.410 — Idea flow: selecting “Refine existing” for a run opens the run’s questionnaire reliably (even when the provider binding is already ready).
 
 ---
 

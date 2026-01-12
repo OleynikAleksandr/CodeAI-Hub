@@ -1,3 +1,8 @@
+## [1.1.410] - 2026-01-12
+
+### Fixed
+- **Idea refine existing run**: selecting an existing run in Idea flow reliably opens the run’s questionnaire (even when the provider binding is already `ready`), so the questionnaire can be reviewed and submitted before continuing.
+
 ## [1.1.409] - 2026-01-12
 
 ### Fixed
