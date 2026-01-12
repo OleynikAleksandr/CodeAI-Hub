@@ -25,6 +25,8 @@
 - `6dad1c38 chore(release): bump 1.1.410`
 - `c0d3d68f docs: update 1.1.410 release notes`
 - `6e4105b4 docs: update todo plan status`
+- `1a477e9a docs: add session 95 report`
+- `d191e5c9 docs: update todo plan status`
 
 ---
 
