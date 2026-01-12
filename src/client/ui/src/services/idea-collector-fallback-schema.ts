@@ -2,7 +2,7 @@ const FALLBACK_SCHEMA_JSON = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://codeai-hub.local/schemas/idea-collector-schema.json",
   "title": "Idea Collector — Structured Output Contract (Slim)",
-  "description": "Контракт Structured Output для Idea Collector. Агент анализирует заполненную анкету, оценивает готовность к финализации и задаёт 1–3 умных уточняющих вопроса. На финале (next_action=finalize) обязан вернуть готовые Idea.md и virtual-simulation.md как markdown + целевые пути сохранения.",
+  "description": "Контракт Structured Output для Idea Collector. Агент анализирует заполненную анкету, оценивает готовность к финализации и задаёт 1–3 умных уточняющих вопроса. На финале (next_action=finalize) обязан вернуть готовые Idea.md и virtual-simulation.md как markdown + целевые пути сохранения. На revise_artifacts агент возвращает структурированный patch по секциям или полный markdown без записи файлов.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -16,7 +16,7 @@ const FALLBACK_SCHEMA_JSON = `{
   "properties": {
     "next_action": {
       "type": "string",
-      "description": "Что делать дальше: ask_question | clarify | summarize | finalize."
+      "description": "Что делать дальше: ask_question | clarify | summarize | finalize | revise_artifacts."
     },
     "suggested_response": {
       "type": "string",
@@ -79,14 +79,40 @@ const FALLBACK_SCHEMA_JSON = `{
     "artifact": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Финальные артефакты. Обязательны при next_action=finalize.",
-      "required": [
-        "idea_markdown",
-        "virtual_simulation_markdown",
-        "idea_path",
-        "virtual_simulation_path"
-      ],
+      "description": "Финальные артефакты или правки. Обязательны при next_action=finalize или next_action=revise_artifacts.",
       "properties": {
+        "patch": {
+          "type": "array",
+          "description": "Список правок по секциям/якорям. Используется при next_action=revise_artifacts (предпочтительно).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "target",
+              "section",
+              "operation",
+              "content"
+            ],
+            "properties": {
+              "target": {
+                "type": "string",
+                "description": "Целевой документ: idea | virtual_simulation."
+              },
+              "section": {
+                "type": "string",
+                "description": "Заголовок секции или якорь, куда применяется правка."
+              },
+              "operation": {
+                "type": "string",
+                "description": "Тип операции: replace | append | prepend | remove."
+              },
+              "content": {
+                "type": "string",
+                "description": "Markdown-фрагмент для операции (пустая строка допустима для remove)."
+              }
+            }
+          }
+        },
         "idea_markdown": {
           "type": "string",
           "description": "Готовый Idea.md как markdown (включая заголовок и все секции по шаблону)."
