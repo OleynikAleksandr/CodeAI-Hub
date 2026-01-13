@@ -195,5 +195,5 @@ CodeAI-Hub — автономная платформа управления AI-�
 - Core Orchestrator: `doc/Project_Docs/Stacks/CoreOrchestrator.md`
 - Claude Provider: `doc/Project_Docs/Stacks/Claude.md`
 - Codex Provider: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
-- Codex Thinking (native reasoning): `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md` (документ помечен как deprecated, см. внутри)
+- Codex Thinking: `doc/Knowledge/Контролируемое отображение размышлений в Codex.md`
 - Gemini Provider: `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`

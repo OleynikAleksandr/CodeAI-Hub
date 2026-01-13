@@ -13,12 +13,11 @@
 ## Required documents to review before work
 1. `doc/Architecture/Architecture.md`
 2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-3. `doc/Project_Docs/ArtifactUpsertProtocol_VariantB_Architecture.md`
-4. `doc/TODO/todo-plan.md`
+3. `doc/TODO/todo-plan.md`
 
 ## Phase 29 — Artifact Upsert Protocol (Variant B) (owner: Oleksandr, updated: 2026-01-13)
 ### Stream: Design approval
-1. [DONE] Утвердить архитектуру Variant B — scope: `doc/Project_Docs/ArtifactUpsertProtocol_VariantB_Architecture.md`; expected commit message: `docs: approve artifact upsert protocol vB`
+1. [DONE] Утвердить архитектуру Variant B — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: approve artifact upsert protocol vB`
 2. [DONE] Git Commit: `docs: approve artifact upsert protocol vB` (hash: b24f798b)
 
 ### Stream: Core slot→path + upsert endpoint (MVP)

@@ -355,10 +355,10 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 ## Related Documents
 - `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 - `doc/Project_Docs/AgentPackages_Architecture.md` — Agent Packages design and migration plan
-- `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`
 - `doc/Project_Docs/Stacks/CoreOrchestrator.md`
 - `doc/tmp/RemoteCoreBridge.md`
 - `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
 - `doc/TODO/todo-plan.md`
 - `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`
 - `doc/Project_Docs/Stacks/UI_Modules.md`
+- `doc/Knowledge/Контролируемое отображение размышлений в Codex.md`
