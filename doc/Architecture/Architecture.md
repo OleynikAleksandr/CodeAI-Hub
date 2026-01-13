@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-13
 **Status:** Active reference
-**Release Focus:** v1.1.413 — Idea Collector finalize-only flow: повторяемые finalize с явным подтверждением, сохранение полных markdown на каждый finalize, дедуп structured output по uuid.
+**Release Focus:** v1.1.413 — Artifact Upsert Protocol (Variant B): `artifacts[]` (slot+markdown), частичные upsert без silent-drop, без путей от агента.
 
 ---
 
@@ -31,7 +31,7 @@ graph TD
 ## Extension Host Layer
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
 - **UI bundle bootstrap (v1.1.313)**: `ui-activation.ts` (вызывается из `activate`) читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current`. Поддерживаются `vscode-webview`, `web-client` и `project-manager`.
-- **Idea Collector artifacts (v1.1.378)**: schema читается из `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, артефакты пишутся в `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/` (`idea.md`, `virtual-simulation.md`); финализация повторяемая — UI сохраняет полные markdown на каждый `finalize`, Core делает backup и минимальную валидацию заголовков.
+- **Idea Collector artifacts (v1.1.413)**: schema читается из `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, structured output возвращает `suggested_response` + `artifacts[]: {slot, markdown}` (без путей и без `next_action`); UI сохраняет любое подмножество слотов, Core вычисляет slot→path и делает atomic write с backup.
 - **Template authority (v1.1.383)**: Core синхронизирует bundled‑шаблоны (prompt, schema, idea-template, questionnaire) в `~/.codeai-hub/templates/full-development-flow/idea/` и перезаписывает локальные правки при старте; installers расширения остаются fallback для VSIX-only сценариев.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
@@ -58,7 +58,7 @@ graph TD
 - **Session Binding**: `InfoPanel` отображает состояние привязки к провайдеру — ожидается ли реальный `sessionId`, удалось ли его получить, либо инициализация провалилась. После подтверждения от SDK панель выводит полный идентификатор сессии (и подсказку в `title`), помогая отлаживать CLI-интеграции.
 - **Clipboard handling**: `input-panel-clipboard` централизует обработку copy/paste в webview и standalone — реагирует на `ClipboardEvent`, использует `navigator.clipboard` как fallback и сохраняет высоту textarea.
 - **Provider Picker & Settings**: отдельные модули `provider-picker`, `settings/view` позволяют выбирать провайдеров (Claude, Codex, Gemini) и менять конфигурацию визардов. UI отображает статус подключения каждого стека (connected / offline) и синхронизирует выбор с extension host через события ядра.
-- **Flow Wizard → Idea Collector**: для Codex и Claude включён Flow Wizard (Idea/Spec/Plan), который стартует Guided Conversation. `IdeaCollectorService` получает contract (prompt + schema + template) из Core API `/api/v1/orchestrator/idea-contract`, а Codex structured outputs возвращают `suggested_response` + артефакт.
+- **Flow Wizard → Idea Collector**: для Codex и Claude включён Flow Wizard (Idea/Spec/Plan), который стартует Guided Conversation. `IdeaCollectorService` получает contract (prompt + schema + template) из Core API `/api/v1/orchestrator/idea-contract`, а structured outputs возвращают `suggested_response` + `artifacts[]` (slot+markdown).
 - **Idea Questionnaire UI (v1.1.385)**: экран анкеты открывается по клику `Idea`, использует templateMarkdown из контракта, сохраняет ответы в `.codeai-hub/.../idea/questionnaire.md`, поддерживает отмену/возобновление, отображает подсказки под вопросом и отправляет submit в один provider turn.
 - **Questionnaire auto-attach guard (v1.1.386)**: auto-attach пропускает шаблонные пути `<...>` из prompt, чтобы корректно прикреплять `questionnaire.md` при single-turn submit.
 - **Idea Collector slim output (v1.1.387)**: Structured Output возвращает оценку готовности (`assessment`) и 1–3 умных вопроса (`questions`) без повторения анкеты; финализация — только через артефакты.
