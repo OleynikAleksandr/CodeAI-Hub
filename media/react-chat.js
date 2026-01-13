@@ -23501,44 +23501,24 @@ ${path2}` : path2;
   ] });
 
   // src/client/ui/src/services/idea-artifact-persistence.ts
-  var IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-  var resolveIdeaArtifactPaths = (outputPathsBySession, sessionId, artifact) => {
-    const outputPaths = outputPathsBySession.get(sessionId);
-    const ideaPath = outputPaths?.idea ?? artifact.ideaPath;
-    const virtualSimulationPath = outputPaths?.virtualSimulation ?? artifact.virtualSimulationPath;
-    if (!(ideaPath && virtualSimulationPath)) {
-      return null;
-    }
-    if (!outputPaths) {
-      outputPathsBySession.set(sessionId, {
-        idea: ideaPath,
-        virtualSimulation: virtualSimulationPath
-      });
-    }
-    return { ideaPath, virtualSimulationPath };
-  };
+  var ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
   var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var persistIdeaArtifacts = async (params) => {
     const payload = {
       sessionId: params.sessionId,
-      nextAction: params.artifact.nextAction,
-      ideaPath: params.paths.ideaPath,
-      virtualSimulationPath: params.paths.virtualSimulationPath
+      artifacts: params.artifact.artifacts
     };
-    if (params.artifact.ideaMarkdown) {
-      payload.ideaMarkdown = params.artifact.ideaMarkdown;
-    }
-    if (params.artifact.virtualSimulationMarkdown) {
-      payload.virtualSimulationMarkdown = params.artifact.virtualSimulationMarkdown;
-    }
     const response = await fetch(
-      joinUrl(params.httpUrl, IDEA_ARTIFACT_ENDPOINT),
+      joinUrl(params.httpUrl, ARTIFACT_UPSERT_ENDPOINT),
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       }
     );
+    if (response.status === 204) {
+      return { ok: true, saved: [] };
+    }
     if (!response.ok) {
       const errorDetails = await tryReadCoreErrorDetails(response);
       return {
@@ -23547,15 +23527,8 @@ ${path2}` : path2;
       };
     }
     const responsePayload = await response.json();
-    const savedIdeaPath = isRecord4(responsePayload) && isRecord4(responsePayload.paths) && typeof responsePayload.paths.idea === "string" ? responsePayload.paths.idea : params.paths.ideaPath;
-    const savedVirtualSimulationPath = isRecord4(responsePayload) && isRecord4(responsePayload.paths) && typeof responsePayload.paths.virtualSimulation === "string" ? responsePayload.paths.virtualSimulation : params.paths.virtualSimulationPath;
-    return {
-      ok: true,
-      paths: {
-        idea: savedIdeaPath,
-        virtualSimulation: savedVirtualSimulationPath
-      }
-    };
+    const savedEntries = parseSavedArtifactUpserts(responsePayload);
+    return { ok: true, saved: savedEntries ?? [] };
   };
   var tryReadCoreErrorDetails = async (response) => {
     try {
@@ -23568,6 +23541,23 @@ ${path2}` : path2;
       return null;
     }
   };
+  var parseSavedArtifactUpserts = (payload) => {
+    if (!(isRecord4(payload) && Array.isArray(payload.saved))) {
+      return null;
+    }
+    const saved = [];
+    for (const entry of payload.saved) {
+      if (!isRecord4(entry)) {
+        return null;
+      }
+      if (typeof entry.slot !== "string" || typeof entry.path !== "string") {
+        return null;
+      }
+      const changed = typeof entry.changed === "boolean" ? entry.changed : true;
+      saved.push({ slot: entry.slot, path: entry.path, changed });
+    }
+    return saved;
+  };
 
   // src/client/ui/src/services/idea-collector-artifact.ts
   var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
@@ -23579,11 +23569,12 @@ ${path2}` : path2;
     } else if (typeof data.next_action === "string") {
       nextAction = data.next_action;
     }
-    if (nextAction === "finalize") {
+    if (nextAction === "finalize" || nextAction === "revise_artifacts") {
       return nextAction;
     }
     return null;
   };
+  var readSuggestedResponse = (data) => readStringField(data, "suggested_response") ?? readStringField(data, "suggestedResponse");
   var readArtifactPayload = (artifact) => {
     const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
     const virtualSimulationPath = readStringField(artifact, "virtualSimulationPath") ?? readStringField(artifact, "virtual_simulation_path");
@@ -23596,7 +23587,24 @@ ${path2}` : path2;
       virtualSimulationMarkdown
     };
   };
-  var isArtifactReady = (ideaMarkdown, virtualSimulationMarkdown) => Boolean(ideaMarkdown) && Boolean(virtualSimulationMarkdown);
+  var readArtifactsList = (data) => {
+    if (!Array.isArray(data.artifacts)) {
+      return null;
+    }
+    const artifacts = [];
+    for (const entry of data.artifacts) {
+      if (!isRecord5(entry)) {
+        return null;
+      }
+      const slot = readStringField(entry, "slot");
+      const markdown = readStringField(entry, "markdown");
+      if (!(slot && markdown)) {
+        return null;
+      }
+      artifacts.push({ slot, markdown });
+    }
+    return artifacts;
+  };
   var extractIdeaCollectorArtifact = (event) => {
     if (!isRecord5(event)) {
       return null;
@@ -23604,6 +23612,11 @@ ${path2}` : path2;
     const data = event.data;
     if (!isRecord5(data) || data.kind !== "structured_output") {
       return null;
+    }
+    const suggestedResponse = readSuggestedResponse(data);
+    const variantBArtifacts = readArtifactsList(data);
+    if (variantBArtifacts && variantBArtifacts.length > 0) {
+      return { suggestedResponse, artifacts: variantBArtifacts };
     }
     const nextAction = readNextAction(data);
     if (!nextAction) {
@@ -23613,22 +23626,21 @@ ${path2}` : path2;
     if (!isRecord5(artifact)) {
       return null;
     }
-    const {
-      ideaPath,
-      virtualSimulationPath,
-      ideaMarkdown,
-      virtualSimulationMarkdown
-    } = readArtifactPayload(artifact);
-    if (!isArtifactReady(ideaMarkdown, virtualSimulationMarkdown)) {
+    const { ideaMarkdown, virtualSimulationMarkdown } = readArtifactPayload(artifact);
+    const legacyArtifacts = [];
+    if (ideaMarkdown) {
+      legacyArtifacts.push({ slot: "cluster.idea.idea", markdown: ideaMarkdown });
+    }
+    if (virtualSimulationMarkdown) {
+      legacyArtifacts.push({
+        slot: "cluster.idea.virtual-simulation",
+        markdown: virtualSimulationMarkdown
+      });
+    }
+    if (legacyArtifacts.length === 0) {
       return null;
     }
-    return {
-      nextAction,
-      ideaPath,
-      ideaMarkdown,
-      virtualSimulationPath,
-      virtualSimulationMarkdown
-    };
+    return { suggestedResponse, artifacts: legacyArtifacts };
   };
 
   // src/client/ui/src/app-host/idea-kickoff-prompt.ts
@@ -23638,23 +23650,18 @@ ${path2}` : path2;
   var FALLBACK_SCHEMA_JSON = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://codeai-hub.local/schemas/idea-collector-schema.json",
-  "title": "Idea Collector \u2014 Structured Output Contract (Slim)",
-  "description": "\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 Structured Output \u0434\u043B\u044F Idea Collector. \u0410\u0433\u0435\u043D\u0442 \u0430\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u0443\u044E \u0430\u043D\u043A\u0435\u0442\u0443, \u043E\u0446\u0435\u043D\u0438\u0432\u0430\u0435\u0442 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0437\u0430\u0434\u0430\u0451\u0442 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430. \u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 (next_action=finalize) \u043E\u0431\u044F\u0437\u0430\u043D \u0432\u0435\u0440\u043D\u0443\u0442\u044C \u0433\u043E\u0442\u043E\u0432\u044B\u0435 Idea.md \u0438 virtual-simulation.md \u043A\u0430\u043A markdown + \u0446\u0435\u043B\u0435\u0432\u044B\u0435 \u043F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F.",
+  "title": "Idea Collector \u2014 Structured Output Contract (Variant B)",
+  "description": "\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 Structured Output \u0434\u043B\u044F Idea Collector (Variant B). \u0410\u0433\u0435\u043D\u0442 \u0430\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u0443\u044E \u0430\u043D\u043A\u0435\u0442\u0443, \u043E\u0446\u0435\u043D\u0438\u0432\u0430\u0435\u0442 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0437\u0430\u0434\u0430\u0451\u0442 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430. \u041F\u0440\u0438 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 (\u043F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F) \u0430\u0433\u0435\u043D\u0442 \u043E\u0442\u0434\u0430\u0451\u0442 artifacts[] \u043A\u0430\u043A upsert: \u0441\u043F\u0438\u0441\u043E\u043A \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u043E\u0432 {slot, markdown} \u0431\u0435\u0437 \u043F\u0443\u0442\u0435\u0439 \u0438 \u0431\u0435\u0437 next_action. \u041A\u0430\u0436\u0434\u044B\u0439 markdown \u2014 \u043F\u043E\u043B\u043D\u044B\u0439 \u0442\u0435\u043A\u0443\u0449\u0438\u0439 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442 (\u043D\u0435 patch).",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "next_action",
     "suggested_response",
     "reasoning_summary_ru",
     "assessment",
     "questions",
-    "artifact"
+    "artifacts"
   ],
   "properties": {
-    "next_action": {
-      "type": "string",
-      "description": "\u0427\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435: ask_question | clarify | summarize | finalize."
-    },
     "suggested_response": {
       "type": "string",
       "description": "\u0422\u0435\u043A\u0441\u0442 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F \u0430\u0433\u0435\u043D\u0442\u0430 (\u0432\u043E\u043F\u0440\u043E\u0441/\u0443\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u0435/\u0441\u0432\u043E\u0434\u043A\u0430/\u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u044F), \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u043C \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E."
@@ -23673,11 +23680,11 @@ ${path2}` : path2;
         "assumptions",
         "risks"
       ],
-      "description": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E\u0441\u0442\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0430\u043D\u043A\u0435\u0442\u044B \u0434\u043B\u044F \u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0438 Idea.md \u0438 virtual-simulation.md.",
+      "description": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E\u0441\u0442\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0430\u043D\u043A\u0435\u0442\u044B \u0434\u043B\u044F \u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0438 idea.md \u0438 virtual-simulation.md.",
       "properties": {
         "ready_for_finalize": {
           "type": "boolean",
-          "description": "\u0413\u043E\u0442\u043E\u0432 \u043B\u0438 \u0430\u0433\u0435\u043D\u0442 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u043F\u0440\u044F\u043C\u043E \u0441\u0435\u0439\u0447\u0430\u0441."
+          "description": "\u0413\u043E\u0442\u043E\u0432 \u043B\u0438 \u0430\u0433\u0435\u043D\u0442 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u043F\u0440\u044F\u043C\u043E \u0441\u0435\u0439\u0447\u0430\u0441 (\u043F\u0440\u0438 \u0443\u0441\u043B\u043E\u0432\u0438\u0438 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F)."
         },
         "confidence_percent": {
           "type": "integer",
@@ -23708,31 +23715,34 @@ ${path2}` : path2;
     },
     "questions": {
       "type": "array",
-      "description": "1\u20133 \u0442\u043E\u0447\u0435\u0447\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430, \u0447\u0442\u043E\u0431\u044B \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u043F\u0440\u043E\u0431\u0435\u043B\u044B. \u0414\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0432\u043E\u043F\u0440\u043E\u0441\u044B \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B; \u043D\u0430 finalize \u2014 \u043F\u0443\u0441\u0442\u043E\u0439 \u0441\u043F\u0438\u0441\u043E\u043A.",
+      "description": "1\u20133 \u0442\u043E\u0447\u0435\u0447\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430, \u0447\u0442\u043E\u0431\u044B \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u043F\u0440\u043E\u0431\u0435\u043B\u044B. \u0414\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0432\u043E\u043F\u0440\u043E\u0441\u044B \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B; \u043F\u0440\u0438 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u2014 \u043F\u0443\u0441\u0442\u043E\u0439 \u0441\u043F\u0438\u0441\u043E\u043A.",
       "items": {
         "type": "string"
       }
     },
-    "artifact": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "\u0424\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B. \u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B \u043F\u0440\u0438 next_action=finalize.",
-      "properties": {
-        "idea_markdown": {
-          "type": "string",
-          "description": "\u0413\u043E\u0442\u043E\u0432\u044B\u0439 Idea.md \u043A\u0430\u043A markdown (\u0432\u043A\u043B\u044E\u0447\u0430\u044F \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u0438 \u0432\u0441\u0435 \u0441\u0435\u043A\u0446\u0438\u0438 \u043F\u043E \u0448\u0430\u0431\u043B\u043E\u043D\u0443)."
-        },
-        "virtual_simulation_markdown": {
-          "type": "string",
-          "description": "\u0412\u0438\u0440\u0442\u0443\u0430\u043B\u044C\u043D\u044B\u0439 \u0442\u0435\u0441\u0442 (virtual-simulation.md) \u043A\u0430\u043A markdown \u0441 \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B\u043C\u0438 \u0441\u0435\u043A\u0446\u0438\u044F\u043C\u0438: # Virtual Simulation, \u0426\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, \u0421\u0446\u0435\u043D\u0430\u0440\u0438\u0438, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u041B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044F, \u041C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0430 \u0440\u0438\u0441\u043A\u043E\u0432, Must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0412\u044B\u0432\u043E\u0434\u044B."
-        },
-        "idea_path": {
-          "type": "string",
-          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C Idea.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md)."
-        },
-        "virtual_simulation_path": {
-          "type": "string",
-          "description": "\u041A\u0443\u0434\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C virtual-simulation.md \u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0435 (\u043A\u0430\u043D\u043E\u043D: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md)."
+    "artifacts": {
+      "type": "array",
+      "description": "\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0434\u043B\u044F upsert. \u0414\u043E \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E \u043F\u0443\u0441\u0442\u043E\u0439 \u043C\u0430\u0441\u0441\u0438\u0432. \u041F\u0440\u0438 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u043E\u0431\u044B\u0447\u043D\u043E \u0432\u043A\u043B\u044E\u0447\u0430\u0439 \u043E\u0431\u0430 \u0441\u043B\u043E\u0442\u0430; \u043F\u0440\u0438 \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u044B\u0445 \u043F\u0440\u0430\u0432\u043A\u0430\u0445 \u0434\u043E\u043F\u0443\u0441\u043A\u0430\u0435\u0442\u0441\u044F \u043F\u043E\u0434\u043C\u043D\u043E\u0436\u0435\u0441\u0442\u0432\u043E.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "slot",
+          "markdown"
+        ],
+        "properties": {
+          "slot": {
+            "type": "string",
+            "description": "\u0421\u043B\u043E\u0442 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u0430.",
+            "enum": [
+              "cluster.idea.idea",
+              "cluster.idea.virtual-simulation"
+            ]
+          },
+          "markdown": {
+            "type": "string",
+            "description": "\u041F\u043E\u043B\u043D\u044B\u0439 markdown \u0434\u043B\u044F \u0443\u043A\u0430\u0437\u0430\u043D\u043D\u043E\u0433\u043E \u0441\u043B\u043E\u0442\u0430 (\u043D\u0435 patch)."
+          }
         }
       }
     }
@@ -24203,10 +24213,7 @@ ${command.remainingMessage}`);
         return;
       }
       _IdeaCollectorService.outputPathsBySession.set(sessionId, outputPaths);
-      const promptWithPaths = this.buildPromptWithOutputPaths(
-        prompt,
-        outputPaths
-      );
+      const promptWithPaths = this.buildPromptWithOutputPaths(prompt);
       const combinedContent = `${promptWithPaths}
 
 ${content3}`;
@@ -24271,56 +24278,47 @@ ${content3}`;
     }
     async persistIdeaArtifacts(sessionId, artifact) {
       const httpUrl = resolveCoreHttpUrl();
-      const paths = resolveIdeaArtifactPaths(
-        _IdeaCollectorService.outputPathsBySession,
-        sessionId,
-        artifact
-      );
-      if (!paths) {
-        postSystemNotice(
-          sessionId,
-          "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C \u043F\u0443\u0442\u0438 \u0434\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F. \u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 \u044D\u0442\u0430\u043F \u0438 \u043F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0441\u043D\u043E\u0432\u0430."
-        );
-        return;
-      }
       if (!httpUrl) {
         postSystemNotice(
           sessionId,
-          `\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
+          "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D."
         );
         return;
       }
       try {
+        if (artifact.artifacts.length === 0) {
+          return;
+        }
         const result = await persistIdeaArtifacts({
           httpUrl,
           sessionId,
-          artifact,
-          paths
+          artifact
         });
         if (!result.ok) {
           postSystemNotice(
             sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (${result.error}). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
+            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (${result.error}).`
           );
           return;
         }
+        const savedSummary = result.saved.length > 0 ? result.saved.map((entry) => entry.path).join(", ") : artifact.artifacts.map((entry) => entry.slot).join(", ");
         postSystemNotice(
           sessionId,
-          `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${result.paths.idea} \u0438 ${result.paths.virtualSimulation}`
+          `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedSummary}`
         );
       } catch {
         postSystemNotice(
           sessionId,
-          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438. \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0435 \u043F\u0443\u0442\u0438: ${paths.ideaPath}, ${paths.virtualSimulationPath}.`
+          "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438."
         );
       }
     }
-    buildPromptWithOutputPaths(prompt, outputPaths) {
+    buildPromptWithOutputPaths(prompt) {
       return `${prompt}
 
-\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 (\u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u0432 Structured Output):
-- idea.md: ${outputPaths.idea}
-- virtual-simulation.md: ${outputPaths.virtualSimulation}`;
+\u0421\u043B\u043E\u0442\u044B \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 (\u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u0432 Structured Output):
+- idea.md: cluster.idea.idea
+- virtual-simulation.md: cluster.idea.virtual-simulation`;
     }
   };
   _IdeaCollectorService.activeSessions = /* @__PURE__ */ new Set();
