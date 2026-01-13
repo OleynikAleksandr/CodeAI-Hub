@@ -1,3 +1,11 @@
+## [1.1.413] - 2026-01-13
+
+### Changed
+- **Idea Collector finalize-only**: remove `revise_artifacts`, require explicit confirmation before each finalize, and persist full markdown on every finalize.
+
+### Fixed
+- **Provider dedup**: Claude/Codex now ignore duplicate structured output events by `uuid`, preventing repeated artifact writes.
+
 ## [1.1.412] - 2026-01-12
 
 ### Added
