@@ -18,9 +18,24 @@
 ## Required documents to review before work
 1. `doc/Architecture/Architecture.md`
 2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-3. `doc/TODO/todo-plan.md`
+3. `doc/Project_Docs/IdeaCollector_Artifact_Revisions_Architecture.md`
+4. `doc/TODO/todo-plan.md`
 
-## Phase 29 — TBD (owner: Oleksandr, updated: 2026-01-13)
-### Stream: TODO
-1. [TODO] Определить задачи следующей фазы — scope: TBD; expected commit message: `docs: define phase 29 plan`
-2. [TODO] Git Commit: `docs: define phase 29 plan` (hash: TBD)
+## Phase 28 — Unified Idea Collector finalize flow (owner: Oleksandr, updated: 2026-01-12)
+### Stream: Contract simplification + repeatable finalize
+1. [DONE] Contract: убрать `revise_artifacts`/`artifact.patch`, зафиксировать finalize как повторяемый — scope: `packages/agents/idea-collector/assets/idea-collector-schema.json`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `doc/Project_Docs/IdeaCollector_Slim_Structured_Output.md`; expected commit message: `feat(idea): simplify contract finalize-only`
+2. [DONE] Git Commit: `feat(idea): simplify contract finalize-only` (hash: bf296fc0)
+3. [DONE] Prompt: требовать «ОК/Утверждаю» перед каждым finalize, убрать правила revise_artifacts — scope: `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`; expected commit message: `docs(idea): require explicit confirm per finalize`
+4. [DONE] Git Commit: `docs(idea): require explicit confirm per finalize` (hash: 46c7142e)
+5. [DONE] UI: finalize-only, повторные сохранения артефактов, убрать patch — scope: `src/client/ui/src/services/idea-collector-artifact.ts`, `src/client/ui/src/services/idea-artifact-persistence.ts`, `src/client/ui/src/services/idea-collector-service.ts`; expected commit message: `feat(ui): allow repeated finalize artifact saves`
+6. [DONE] Git Commit: `feat(ui): allow repeated finalize artifact saves` (hash: b8586443)
+7. [DONE] Claude provider: убрать single-finalize lock, добавить дедуп по uuid — scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `fix(claude): allow repeated finalize events`
+8. [DONE] Git Commit: `fix(claude): allow repeated finalize events` (hash: 5f1ce031)
+9. [DONE] Codex provider: убрать single-finalize lock, добавить дедуп по uuid — scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `fix(codex): allow repeated finalize events`
+10. [DONE] Git Commit: `fix(codex): allow repeated finalize events` (hash: 6e3c1d49)
+11. [DONE] Docs: обновить архитектуру под повторяемый finalize — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for repeatable finalize`
+12. [DONE] Git Commit: `docs: update architecture for repeatable finalize` (hash: 9fc806f5)
+13. [DONE] Обновить fallback webview bundle — scope: `media/react-chat.js`; expected commit message: `chore(ui): refresh webview fallback bundle`
+14. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: a630fa81)
+15. [DONE] Gates + targeted builds для затронутых пакетов — scope: scripts/commands; expected commit message: `docs: update todo plan status`
+16. [DONE] Git Commit: `docs: update todo plan status` (hash: 62b17b24)
