@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.414 (13.01.2026) — Artifact Upsert Protocol (Variant B): Idea Collector сохраняет артефакты через `artifacts[]` (slot+markdown) без путей от агента; Core выполняет slot→path и принимает частичные upsert (без silent-drop).
+**Состояние:** релиз 1.1.415 (13.01.2026) — Codex structured outputs cleanup + Artifact Upsert Protocol (Variant B): Idea Collector сохраняет артефакты через `artifacts[]` (slot+markdown) без путей от агента; Core выполняет slot→path и принимает частичные upsert (без silent-drop).
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).

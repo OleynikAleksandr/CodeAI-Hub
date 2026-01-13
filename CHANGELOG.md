@@ -1,3 +1,9 @@
+## [1.1.415] - 2026-01-13
+
+### Fixed
+- **Codex structured outputs (MVP)**: removed `reasoning_summary_ru`; thinking UI relies on native reasoning events.
+- **Artifact upserts (Variant B)**: Codex flow payload now emits `artifacts[]` reliably, including partial updates (no silent drops).
+
 ## [1.1.414] - 2026-01-13
 
 ### Added
