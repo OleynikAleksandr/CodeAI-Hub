@@ -59,9 +59,6 @@ export const persistIdeaArtifacts = async (params: {
     payload.virtualSimulationMarkdown =
       params.artifact.virtualSimulationMarkdown;
   }
-  if (params.artifact.patch) {
-    payload.patch = params.artifact.patch;
-  }
 
   const response = await fetch(
     joinUrl(params.httpUrl, IDEA_ARTIFACT_ENDPOINT),

@@ -240,11 +240,9 @@ export class IdeaCollectorService {
         );
         return;
       }
-      const verb =
-        artifact.nextAction === "revise_artifacts" ? "обновлены" : "сохранены";
       postSystemNotice(
         sessionId,
-        `Артефакты идеи ${verb} в workspace: ${result.paths.idea} и ${result.paths.virtualSimulation}`
+        `Артефакты идеи сохранены в workspace: ${result.paths.idea} и ${result.paths.virtualSimulation}`
       );
     } catch {
       postSystemNotice(
