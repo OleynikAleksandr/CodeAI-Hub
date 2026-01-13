@@ -71,11 +71,6 @@ const normalizeSpecOutput = (
       "suggestedResponse",
       "suggested_response"
     ),
-    reasoningSummaryRu: extractString(
-      data,
-      "reasoningSummaryRu",
-      "reasoning_summary_ru"
-    ),
     nextAction: extractString(data, "nextAction", "next_action"),
     artifact,
   };

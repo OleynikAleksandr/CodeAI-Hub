@@ -7,7 +7,6 @@ const FALLBACK_SCHEMA_JSON = `{
   "additionalProperties": false,
   "required": [
     "suggested_response",
-    "reasoning_summary_ru",
     "assessment",
     "questions",
     "artifacts"
@@ -16,10 +15,6 @@ const FALLBACK_SCHEMA_JSON = `{
     "suggested_response": {
       "type": "string",
       "description": "Текст следующего сообщения агента (вопрос/уточнение/сводка/финализация), который показываем пользователю."
-    },
-    "reasoning_summary_ru": {
-      "type": "string",
-      "description": "Краткое резюме прогресса/решений на русском без chain-of-thought."
     },
     "assessment": {
       "type": "object",

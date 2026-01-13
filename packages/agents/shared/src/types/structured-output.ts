@@ -7,8 +7,6 @@ import type { JsonRecord } from "./agent-contract";
 export type BaseStructuredOutput = {
   /** Suggested response text to show the user */
   readonly suggestedResponse: string | null;
-  /** Russian-language reasoning summary for thinking panel */
-  readonly reasoningSummaryRu: string | null;
   /** Next action indicator (e.g., 'continue', 'finalize', 'clarify') */
   readonly nextAction: string | null;
   /** Generated artifact data (agent-specific structure) */
