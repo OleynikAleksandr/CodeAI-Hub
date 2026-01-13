@@ -18,21 +18,21 @@
 
 ## Phase 29 — Artifact Upsert Protocol (Variant B) (owner: Oleksandr, updated: 2026-01-13)
 ### Stream: Design approval
-1. [TODO] Утвердить архитектуру Variant B — scope: `doc/Project_Docs/ArtifactUpsertProtocol_VariantB_Architecture.md`; expected commit message: `docs: approve artifact upsert protocol vB`
-2. [TODO] Git Commit: `docs: approve artifact upsert protocol vB` (hash: TBD)
+1. [DONE] Утвердить архитектуру Variant B — scope: `doc/Project_Docs/ArtifactUpsertProtocol_VariantB_Architecture.md`; expected commit message: `docs: approve artifact upsert protocol vB`
+2. [DONE] Git Commit: `docs: approve artifact upsert protocol vB` (hash: b24f798b)
 
 ### Stream: Core slot→path + upsert endpoint (MVP)
-1. [TODO] Core: добавить slot→path mapping для Idea stage и новый upsert контракт (artifacts[]: slot+markdown) — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): add artifact upsert protocol vB`
-2. [TODO] Git Commit: `feat(core): add artifact upsert protocol vB` (hash: TBD)
+1. [DONE] Core: добавить slot→path mapping для Idea stage и новый upsert контракт (artifacts[]: slot+markdown) — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): add artifact upsert protocol vB`
+2. [DONE] Git Commit: `feat(core): add artifact upsert protocol vB` (hash: 03397944)
 
 ### Stream: UI accept partial artifacts + no agent paths
-1. [TODO] UI: принимать partial artifacts и писать только то, что пришло (без требований "оба файла"), убрать зависимость от agent paths — scope: `src/client/ui/src/services/idea-collector-artifact.ts`, `src/client/ui/src/services/idea-artifact-persistence.ts`, `src/client/ui/src/services/idea-collector-service.ts`; expected commit message: `feat(ui): persist artifact upserts by slot`
-2. [TODO] Git Commit: `feat(ui): persist artifact upserts by slot` (hash: TBD)
+1. [DONE] UI: принимать partial artifacts и писать только то, что пришло (без требований "оба файла"), убрать зависимость от agent paths — scope: `src/client/ui/src/services/idea-collector-artifact.ts`, `src/client/ui/src/services/idea-artifact-persistence.ts`, `src/client/ui/src/services/idea-collector-service.ts`; expected commit message: `feat(ui): persist artifact upserts by slot`
+2. [DONE] Git Commit: `feat(ui): persist artifact upserts by slot` (hash: 1b5ac333)
 
 ### Stream: Agent contract simplification (Idea Collector)
-1. [TODO] Contract: заменить artifact.*_path и next_action на artifacts[] (slot+markdown), обновить prompt — scope: `packages/agents/idea-collector/assets/idea-collector-schema.json`, `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`; expected commit message: `feat(idea): switch to artifact upsert protocol vB`
-2. [TODO] Git Commit: `feat(idea): switch to artifact upsert protocol vB` (hash: TBD)
+1. [DONE] Contract: заменить artifact.*_path и next_action на artifacts[] (slot+markdown), обновить prompt — scope: `packages/agents/idea-collector/assets/idea-collector-schema.json`, `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`; expected commit message: `feat(idea): switch to artifact upsert protocol vB`
+2. [DONE] Git Commit: `feat(idea): switch to artifact upsert protocol vB` (hash: fef0d66e)
 
 ### Stream: Compatibility + cleanup
-1. [TODO] Compatibility: поддержать new→legacy fallback на переходный период, добавить защиту от silent-drop — scope: `src/client/ui/src/services/idea-collector-artifact.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `doc/Architecture/Architecture.md`; expected commit message: `fix: prevent silent artifact drops (vB)`
-2. [TODO] Git Commit: `fix: prevent silent artifact drops (vB)` (hash: TBD)
+1. [DONE] Compatibility: поддержать new→legacy fallback на переходный период, добавить защиту от silent-drop — scope: `src/client/ui/src/services/idea-collector-artifact.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `doc/Architecture/Architecture.md`; expected commit message: `fix: prevent silent artifact drops (vB)`
+2. [DONE] Git Commit: `fix: prevent silent artifact drops (vB)` (hash: d9ddc01d)
