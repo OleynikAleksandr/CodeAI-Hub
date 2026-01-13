@@ -15,7 +15,10 @@ import type { ActiveSession } from "../session/types";
 import type { CodexTurnOptions, ModuleReporter } from "../types";
 import type { CodexStartupLockRelease } from "./codex-startup-lock";
 import { codexStartupLock } from "./codex-startup-lock";
-import { StructuredOutputStreamController } from "./structured-output-stream-controller";
+import {
+  type StructuredOutputResult,
+  StructuredOutputStreamController,
+} from "./structured-output-stream-controller";
 
 const PROVIDER = "codex";
 const THREAD_ID_SHORT_LENGTH = 8;
@@ -50,6 +53,10 @@ type StartupLockContext = {
   readonly threadStartedTimeoutMs: number;
   readonly ownerSessionId: string;
 };
+type AgentMessageItem = ThreadItem & { readonly type: "agent_message" };
+
+const isAgentMessageItem = (item: ThreadItem): item is AgentMessageItem =>
+  item.type === "agent_message";
 
 export class CodexMessageProcessor {
   private readonly sessionManager: CodexSessionManager;
@@ -459,41 +466,43 @@ export class CodexMessageProcessor {
     event: ItemStartedEvent | ItemUpdatedEvent | ItemCompletedEvent,
     item: ThreadItem
   ): void {
-    if (item.type !== "agent_message") {
+    if (!isAgentMessageItem(item)) {
       return;
     }
     if (event.type === "item.updated") {
-      if (session.internalTurn) {
-        return;
-      }
-      if (typeof item.text !== "string") {
-        return;
-      }
-      const delta = this.structuredOutput.appendChunk(
-        session.sessionId,
-        item.id,
-        item.text
-      );
-      if (!delta) {
-        return;
-      }
-      this.emitMessage(session, {
-        type: "stream_event",
-        provider: PROVIDER,
-        sessionId: session.sessionId,
-        threadId: session.codexThreadId,
-        data: {
-          kind: "assistant_chunk",
-          itemId: item.id,
-          text: delta,
-        },
-        timestamp: new Date().toISOString(),
-      });
+      this.handleAgentMessageUpdate(session, item);
       return;
     }
-    if (event.type !== "item.completed") {
+    if (event.type === "item.completed") {
+      this.handleAgentMessageComplete(session, item);
+    }
+  }
+
+  private handleAgentMessageUpdate(
+    session: ActiveSession,
+    item: AgentMessageItem
+  ): void {
+    if (session.internalTurn) {
       return;
     }
+    if (typeof item.text !== "string") {
+      return;
+    }
+    const delta = this.structuredOutput.appendChunk(
+      session.sessionId,
+      item.id,
+      item.text
+    );
+    if (!delta) {
+      return;
+    }
+    this.emitAssistantChunk(session, item.id, delta);
+  }
+
+  private handleAgentMessageComplete(
+    session: ActiveSession,
+    item: AgentMessageItem
+  ): void {
     if (session.internalTurn) {
       return;
     }
@@ -504,36 +513,12 @@ export class CodexMessageProcessor {
       itemText
     );
     if (result.streamDelta) {
-      this.emitMessage(session, {
-        type: "stream_event",
-        provider: PROVIDER,
-        sessionId: session.sessionId,
-        threadId: session.codexThreadId,
-        data: {
-          kind: "assistant_chunk",
-          itemId: item.id,
-          text: result.streamDelta,
-        },
-        timestamp: new Date().toISOString(),
-      });
+      this.emitAssistantChunk(session, item.id, result.streamDelta);
     }
     if (result.reasoningSummary) {
       this.emitDialogMessage(session, "thinking", result.reasoningSummary);
     }
-    if (result.artifact) {
-      this.emitMessage(session, {
-        type: "stream_event",
-        provider: PROVIDER,
-        sessionId: session.sessionId,
-        threadId: session.codexThreadId,
-        data: {
-          kind: "structured_output",
-          artifact: result.artifact,
-          nextAction: result.nextAction,
-        },
-        timestamp: new Date().toISOString(),
-      });
-    }
+    this.emitStructuredOutput(session, item.id, result);
     if (!result.assistantText) {
       return;
     }
@@ -544,6 +529,63 @@ export class CodexMessageProcessor {
       threadId: session.codexThreadId,
       content: result.assistantText,
       uuid: item.id,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  private emitAssistantChunk(
+    session: ActiveSession,
+    itemId: string,
+    text: string
+  ): void {
+    this.emitMessage(session, {
+      type: "stream_event",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      data: {
+        kind: "assistant_chunk",
+        itemId,
+        text,
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  private emitStructuredOutput(
+    session: ActiveSession,
+    itemId: string,
+    result: StructuredOutputResult
+  ): void {
+    if (!result.artifact) {
+      return;
+    }
+    const dedupeId = itemId;
+    let shouldEmit = true;
+    if (dedupeId) {
+      if (!session.structuredOutputUuids) {
+        session.structuredOutputUuids = new Set();
+      }
+      if (session.structuredOutputUuids.has(dedupeId)) {
+        shouldEmit = false;
+      } else {
+        session.structuredOutputUuids.add(dedupeId);
+      }
+    }
+    if (!shouldEmit) {
+      return;
+    }
+    this.emitMessage(session, {
+      type: "stream_event",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      data: {
+        kind: "structured_output",
+        artifact: result.artifact,
+        nextAction: result.nextAction,
+      },
+      uuid: dedupeId ?? crypto.randomUUID(),
       timestamp: new Date().toISOString(),
     });
   }

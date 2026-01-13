@@ -26,6 +26,7 @@ export type ActiveSession = {
   codexThreadId: string | null;
   processingLoop?: Promise<void>;
   internalTurn?: boolean;
+  structuredOutputUuids?: Set<string>;
 };
 
 export type SessionCreationResult = {
