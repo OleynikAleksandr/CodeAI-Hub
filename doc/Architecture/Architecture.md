@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-13
 **Status:** Active reference
-**Release Focus:** v1.1.415 — Codex structured outputs cleanup + Artifact Upsert Protocol (Variant B): `artifacts[]` (slot+markdown), частичные upsert без silent-drop, без путей от агента.
+**Release Focus:** v1.1.416 — Codex structured outputs: structured output больше не теряется между turn’ами (fix dedupe для повторяющихся `itemId`), чтобы partial upsert применялся детерминированно.
 
 ---
 
@@ -153,6 +153,9 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.416 - 2026-01-13)
+- **Codex structured output dedupe**: structured output события больше не подавляются между turn’ами при повторном `itemId`, чтобы `artifact-upsert` запускался при каждой явной правке/финализации.
 
 ## Recent Changes (v1.1.415 - 2026-01-13)
 - **Codex structured outputs**: убрано `reasoning_summary_ru`; thinking в UI опирается на native reasoning, а flow‑payload корректно эмитит `artifacts[]` (включая partial upsert).

@@ -1,3 +1,8 @@
+## [1.1.416] - 2026-01-13
+
+### Fixed
+- **Codex structured outputs**: prevent structured output events from being dropped across turns when Codex reuses `itemId`, so artifact upserts trigger reliably.
+
 ## [1.1.415] - 2026-01-13
 
 ### Fixed
