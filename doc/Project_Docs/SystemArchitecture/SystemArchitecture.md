@@ -37,7 +37,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.403
+- VSIX: `codeai-hub` 1.1.416
 - Автономное ядро: `@codeai-hub/core` 1.1.403
 - UI Bundles: 1.1.403
 - Claude module: 1.1.403
@@ -184,7 +184,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Claude Default model selector**: новый блок в Settings → Claude рендерит карточки из `CLAUDE_MODEL_ALIASES` (`src/types/claude-model-registry.ts`) и переиспользует `shared-model-card-styles.ts` (`src/client/ui/src/components/settings/shared-model-card-styles.ts`) для border/hover/selected цветов, `tabIndex={-1}` rows, `role="radio"` и `outline: none`/`boxShadow: none`, что делает оформление идентичным карточкам Codex и соответствует рекомендациям из `doc/Knowledge/css-border-shorthand-react-inline-styles.md`. Выбранный alias (`default/sonnet`, `opus`, `haiku`) сохраняется в `providers.claude.defaultModel`, копируется в `CLAUDE_SETTINGS_PATH`/`CLAUDE_DEFAULT_MODEL`, и Core/Claude module используют alias при старте сессий.
 
 ## TODO / Next Steps
-- Пройти e2e (fresh VSIX → ручная установка CLI пользователем → запуск сессии Gemini) и задокументировать результат.
+- Пройти e2e (fresh VSIX → ручная установка CLI пользователем → запуск сессии Gemini) и задокументировать результат (если ещё не зафиксировано).
 - Добавить health-check провайдера в ядре.
 - Обновить telemetry checklist.
 

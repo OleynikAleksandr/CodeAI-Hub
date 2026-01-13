@@ -1,6 +1,6 @@
 # UI Modules Stack
 
-**Status:** Active (v1.1.326)
+**Status:** Active (v1.1.416)
 **Owner:** Codex
 **Context:** Модульная система UI, позволяющая обновлять интерфейс независимо от VSIX и обеспечивающая единую кодовую базу для VS Code Webview и локального CEF клиента.
 
@@ -22,7 +22,7 @@ UI Modules — это набор пакетов, отвечающих за ви�
 
 ### 2.1. Distribution Model
 Вместо упаковки JS/CSS файлов внутрь VSIX, они распространяются как отдельные модули:
-1. **Build**: `scripts/build-ui-bundle.sh` собирает `vscode-webview`, `web-client` и `project-manager` в архивы.
+1. **Build**: `./scripts/build-all.sh` (release) или `npm run build:webview` / `npm run build:web-client` / `npm run build:project-manager` (dev) собирают UI артефакты.
 2. **Manifest**: `assets/ui/manifest.json` описывает доступные версии и хеши.
 3. **Installation**: При старте расширения `UIBundleInstaller` проверяет наличие бандлов и распаковывает их в `~/.codeai-hub/packages/ui/<bundleId>/<version>/`.
 4. **Symlinking**: Создается симлинк `current` -> `<version>`, который используется хост-приложениями.
@@ -71,11 +71,6 @@ project-manager-<version>/
 
 ### 4.1. Building
 ```bash
-# Сборка всех UI бандлов
-./scripts/build-ui-bundle.sh vscode-webview <version>
-./scripts/build-ui-bundle.sh web-client <version>
-./scripts/build-ui-bundle.sh project-manager <version>
-
 # Сборка конкретного таргета (dev)
 npm run build:webview
 npm run build:web-client
