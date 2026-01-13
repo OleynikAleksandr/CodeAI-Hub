@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.6.0
-**Last Updated:** 2026-01-12
+**Last Updated:** 2026-01-13
 **Status:** Active reference
-**Release Focus:** v1.1.412 — Idea artifact revisions: safe patch/full markdown updates via `revise_artifacts` with Core backup + header validation.
+**Release Focus:** v1.1.413 — Idea Collector finalize-only flow: повторяемые finalize с явным подтверждением, сохранение полных markdown на каждый finalize, дедуп structured output по uuid.
 
 ---
 
@@ -31,7 +31,7 @@ graph TD
 ## Extension Host Layer
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
 - **UI bundle bootstrap (v1.1.313)**: `ui-activation.ts` (вызывается из `activate`) читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current`. Поддерживаются `vscode-webview`, `web-client` и `project-manager`.
-- **Idea Collector artifacts (v1.1.378)**: schema читается из `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, артефакты пишутся в `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/` (`idea.md`, `virtual-simulation.md`); режим `revise_artifacts` позволяет безопасно обновлять артефакты через patch/полные markdown (UI сохраняет, Core делает backup и минимальную валидацию).
+- **Idea Collector artifacts (v1.1.378)**: schema читается из `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, артефакты пишутся в `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/` (`idea.md`, `virtual-simulation.md`); финализация повторяемая — UI сохраняет полные markdown на каждый `finalize`, Core делает backup и минимальную валидацию заголовков.
 - **Template authority (v1.1.383)**: Core синхронизирует bundled‑шаблоны (prompt, schema, idea-template, questionnaire) в `~/.codeai-hub/templates/full-development-flow/idea/` и перезаписывает локальные правки при старте; installers расширения остаются fallback для VSIX-only сценариев.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
@@ -153,6 +153,11 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.413 - 2026-01-13)
+- **Idea Collector finalize-only**: контракт без `revise_artifacts`, повторяемые `finalize` только после явного подтверждения.
+- **UI artifact saves**: при каждом `finalize` сохраняются полные markdown артефактов, без patch-пайплайна.
+- **Provider dedup**: Claude/Codex дедуплируют structured output по `uuid`, single-finalize lock удалён.
 
 ## Recent Changes (v1.1.402 - 2026-01-11)
 - **Description run selection**: UI prompts for a new variant or existing run and reuses run slugs for the Description stage.
