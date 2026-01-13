@@ -1,41 +1,18 @@
 import type { IdeaCollectorArtifact } from "./idea-collector-artifact";
-import type { IdeaContractSnapshot } from "./idea-collector-contract";
 import { joinUrl } from "./idea-collector-support";
 
-const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
-
-type IdeaArtifactPaths = {
-  readonly ideaPath: string;
-  readonly virtualSimulationPath: string;
-};
+const ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
 
 type PersistIdeaArtifactsResult =
   | {
       readonly ok: true;
-      readonly paths: { idea: string; virtualSimulation: string };
+      readonly saved: readonly {
+        slot: string;
+        path: string;
+        changed: boolean;
+      }[];
     }
   | { readonly ok: false; readonly error: string };
-
-export const resolveIdeaArtifactPaths = (
-  outputPathsBySession: Map<string, IdeaContractSnapshot["outputPaths"]>,
-  sessionId: string,
-  artifact: IdeaCollectorArtifact
-): IdeaArtifactPaths | null => {
-  const outputPaths = outputPathsBySession.get(sessionId);
-  const ideaPath = outputPaths?.idea ?? artifact.ideaPath;
-  const virtualSimulationPath =
-    outputPaths?.virtualSimulation ?? artifact.virtualSimulationPath;
-  if (!(ideaPath && virtualSimulationPath)) {
-    return null;
-  }
-  if (!outputPaths) {
-    outputPathsBySession.set(sessionId, {
-      idea: ideaPath,
-      virtualSimulation: virtualSimulationPath,
-    });
-  }
-  return { ideaPath, virtualSimulationPath };
-};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -44,30 +21,24 @@ export const persistIdeaArtifacts = async (params: {
   readonly httpUrl: string;
   readonly sessionId: string;
   readonly artifact: IdeaCollectorArtifact;
-  readonly paths: IdeaArtifactPaths;
 }): Promise<PersistIdeaArtifactsResult> => {
   const payload: Record<string, unknown> = {
     sessionId: params.sessionId,
-    nextAction: params.artifact.nextAction,
-    ideaPath: params.paths.ideaPath,
-    virtualSimulationPath: params.paths.virtualSimulationPath,
+    artifacts: params.artifact.artifacts,
   };
-  if (params.artifact.ideaMarkdown) {
-    payload.ideaMarkdown = params.artifact.ideaMarkdown;
-  }
-  if (params.artifact.virtualSimulationMarkdown) {
-    payload.virtualSimulationMarkdown =
-      params.artifact.virtualSimulationMarkdown;
-  }
 
   const response = await fetch(
-    joinUrl(params.httpUrl, IDEA_ARTIFACT_ENDPOINT),
+    joinUrl(params.httpUrl, ARTIFACT_UPSERT_ENDPOINT),
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }
   );
+
+  if (response.status === 204) {
+    return { ok: true, saved: [] };
+  }
   if (!response.ok) {
     const errorDetails = await tryReadCoreErrorDetails(response);
     return {
@@ -75,26 +46,10 @@ export const persistIdeaArtifacts = async (params: {
       error: `HTTP ${response.status}${errorDetails ? `: ${errorDetails}` : ""}`,
     };
   }
+
   const responsePayload = (await response.json()) as unknown;
-  const savedIdeaPath =
-    isRecord(responsePayload) &&
-    isRecord(responsePayload.paths) &&
-    typeof responsePayload.paths.idea === "string"
-      ? responsePayload.paths.idea
-      : params.paths.ideaPath;
-  const savedVirtualSimulationPath =
-    isRecord(responsePayload) &&
-    isRecord(responsePayload.paths) &&
-    typeof responsePayload.paths.virtualSimulation === "string"
-      ? responsePayload.paths.virtualSimulation
-      : params.paths.virtualSimulationPath;
-  return {
-    ok: true,
-    paths: {
-      idea: savedIdeaPath,
-      virtualSimulation: savedVirtualSimulationPath,
-    },
-  };
+  const savedEntries = parseSavedArtifactUpserts(responsePayload);
+  return { ok: true, saved: savedEntries ?? [] };
 };
 
 export const tryReadCoreErrorDetails = async (
@@ -111,4 +66,26 @@ export const tryReadCoreErrorDetails = async (
   }
 };
 
-export type { IdeaArtifactPaths, PersistIdeaArtifactsResult };
+const parseSavedArtifactUpserts = (
+  payload: unknown
+): { slot: string; path: string; changed: boolean }[] | null => {
+  if (!(isRecord(payload) && Array.isArray(payload.saved))) {
+    return null;
+  }
+
+  const saved: { slot: string; path: string; changed: boolean }[] = [];
+  for (const entry of payload.saved) {
+    if (!isRecord(entry)) {
+      return null;
+    }
+    if (typeof entry.slot !== "string" || typeof entry.path !== "string") {
+      return null;
+    }
+    const changed = typeof entry.changed === "boolean" ? entry.changed : true;
+    saved.push({ slot: entry.slot, path: entry.path, changed });
+  }
+
+  return saved;
+};
+
+export type { PersistIdeaArtifactsResult };
