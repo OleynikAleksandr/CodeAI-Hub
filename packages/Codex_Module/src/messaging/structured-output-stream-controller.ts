@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { CodexTurnOptions } from "../types";
 import { AnswerJsonStreamExtractor } from "./answer-json-stream-extractor";
 
@@ -51,6 +52,7 @@ export type StructuredOutputResult = {
   readonly nextAction?: string;
   readonly artifact?: StructuredOutputArtifact;
   readonly artifacts?: readonly StructuredOutputArtifactUpsert[];
+  readonly outputHash?: string;
 };
 const DEFAULT_TURN_CONFIG: StructuredOutputTurnConfig = {
   mode: "default",
@@ -151,12 +153,16 @@ export class StructuredOutputStreamController {
     }
     this.streams.delete(sessionId);
     this.turnConfigs.delete(sessionId);
+    const trimmedText = text.trim();
     return {
       streamDelta: streamDelta ?? undefined,
       assistantText: assistantText ?? undefined,
       nextAction: parsed.nextAction ?? undefined,
       artifact: parsed.artifact ?? undefined,
       artifacts: parsed.artifacts ?? undefined,
+      outputHash: trimmedText.length
+        ? createHash("sha256").update(trimmedText).digest("hex")
+        : undefined,
     };
   }
 
