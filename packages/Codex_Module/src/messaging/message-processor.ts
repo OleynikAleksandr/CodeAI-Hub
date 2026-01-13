@@ -305,6 +305,7 @@ export class CodexMessageProcessor {
           timestamp: new Date().toISOString(),
         });
         if (!session.internalTurn) {
+          session.structuredOutputUuids = new Set();
           this.emitDialogMessage(session, "thinking", THINKING_PLACEHOLDER);
           this.structuredOutput.startTurn(session.sessionId);
         }
@@ -559,7 +560,7 @@ export class CodexMessageProcessor {
     if (!(result.artifact || shouldEmitArtifacts)) {
       return;
     }
-    const dedupeId = itemId;
+    const dedupeId = result.outputHash ?? itemId;
     let shouldEmit = true;
     if (dedupeId) {
       if (!session.structuredOutputUuids) {
@@ -586,7 +587,7 @@ export class CodexMessageProcessor {
         nextAction: result.nextAction,
         suggested_response: result.assistantText,
       },
-      uuid: dedupeId ?? crypto.randomUUID(),
+      uuid: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
     });
   }
