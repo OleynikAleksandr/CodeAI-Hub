@@ -25,11 +25,6 @@ const parseIdeaOutput = (
     "suggestedResponse"
   );
   const nextAction = readStringField(parsed, "next_action", "nextAction");
-  const reasoningSummaryRu = readStringField(
-    parsed,
-    "reasoning_summary_ru",
-    "reasoningSummaryRu"
-  );
   const artifact = isRecord(parsed.artifact)
     ? (parsed.artifact as IdeaArtifact)
     : null;
@@ -40,7 +35,6 @@ const parseIdeaOutput = (
 
   return {
     suggestedResponse: suggestedResponse ?? null,
-    reasoningSummaryRu: reasoningSummaryRu ?? null,
     nextAction: nextAction ?? null,
     artifact,
   };

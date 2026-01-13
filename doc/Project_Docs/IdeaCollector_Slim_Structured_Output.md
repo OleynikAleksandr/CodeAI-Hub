@@ -33,12 +33,10 @@ Core/UI нормализуют схему (strictify + prune), поэтому в
 
 ## Новый контракт (структура)
 ### Top-level поля
-- `next_action`: ask_question | clarify | summarize | finalize
 - `suggested_response`: человекочитаемый ответ для UI
-- `reasoning_summary_ru`: краткое русское резюме
 - `assessment`: оценка готовности
 - `questions`: 1–3 вопроса (на finalize — пустой список)
-- `artifact`: финальные артефакты
+- `artifacts[]`: финальные артефакты (Variant B upsert)
 
 ### assessment (оценка)
 - `ready_for_finalize` (bool)
@@ -52,11 +50,10 @@ Core/UI нормализуют схему (strictify + prune), поэтому в
 - Всегда задаются до финализации
 - Формируются по принципу «хватит ли этого для качественных Idea.md и virtual-simulation.md?»
 
-### artifact (артефакты)
-- `idea_markdown`
-- `virtual_simulation_markdown`
-- `idea_path`
-- `virtual_simulation_path`
+### artifacts[] (артефакты, Variant B)
+Массив элементов `{ slot, markdown }`:
+- `slot`: `cluster.idea.idea` | `cluster.idea.virtual-simulation`
+- `markdown`: полный markdown документа (не patch)
 
 ## Изменения в prompt
 - Запрет на пересказ анкеты в Structured Output.
@@ -66,8 +63,8 @@ Core/UI нормализуют схему (strictify + prune), поэтому в
 - На finalize не задавать вопросов, `questions` = [].
 
 ## Затрагиваемые компоненты
-- `assets/templates/full-development-flow/idea/idea-collector-schema.json`
-- `assets/templates/full-development-flow/idea/idea-collector-prompt.md`
+- `packages/agents/idea-collector/assets/idea-collector-schema.json`
+- `packages/agents/idea-collector/assets/idea-collector-prompt.md`
 - `src/client/ui/src/services/idea-collector-fallback-schema.ts`
 - `src/client/ui/src/services/idea-collector-schema-utils.ts` (без изменений логики)
 - `packages/core/src/remote-bridge/handlers/idea-contract-service.ts` (без изменений логики)

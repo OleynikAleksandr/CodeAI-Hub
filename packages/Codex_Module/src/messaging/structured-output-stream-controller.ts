@@ -9,22 +9,14 @@ const CODEX_OUTPUT_SCHEMA = {
       type: "string",
       description: "Final answer for the user. Markdown allowed.",
     },
-    reasoning_summary_ru: {
-      type: "string",
-      description:
-        "Russian reasoning summary for the user, as close in content and length to native reasoning as possible without revealing chain-of-thought. No code or formulas. Empty string allowed.",
-    },
   },
-  required: ["answer", "reasoning_summary_ru"],
+  required: ["answer"],
 } as const;
 
 const STRUCTURED_OUTPUT_PROMPT = [
   "You must respond with a JSON object that matches the provided schema.",
-  "Populate both fields:",
+  "Populate the field:",
   "- answer: the user-facing answer.",
-  "- reasoning_summary_ru: a Russian summary that is as close in content and length to the native reasoning summary as possible, without revealing chain-of-thought, code, or formulas.",
-  "Do not omit key considerations, do not add new facts, and keep the original structure if possible.",
-  "Use an empty string only if you truly cannot provide a summary.",
   "Return only JSON, no extra text.",
   "",
   "User request:",
@@ -37,11 +29,15 @@ type StructuredOutputTurnConfig = {
   readonly applyPrompt: boolean;
 };
 type StructuredOutputArtifact = Record<string, unknown>;
+type StructuredOutputArtifactUpsert = {
+  readonly slot: string;
+  readonly markdown: string;
+};
 type ParsedOutput = {
   readonly assistantText?: string;
-  readonly reasoningSummary?: string;
   readonly nextAction?: string;
   readonly artifact?: StructuredOutputArtifact;
+  readonly artifacts?: readonly StructuredOutputArtifactUpsert[];
 };
 type AnswerStreamState = {
   extractor: AnswerJsonStreamExtractor;
@@ -52,9 +48,9 @@ type AnswerStreamState = {
 export type StructuredOutputResult = {
   readonly streamDelta?: string;
   readonly assistantText?: string;
-  readonly reasoningSummary?: string;
   readonly nextAction?: string;
   readonly artifact?: StructuredOutputArtifact;
+  readonly artifacts?: readonly StructuredOutputArtifactUpsert[];
 };
 const DEFAULT_TURN_CONFIG: StructuredOutputTurnConfig = {
   mode: "default",
@@ -158,9 +154,9 @@ export class StructuredOutputStreamController {
     return {
       streamDelta: streamDelta ?? undefined,
       assistantText: assistantText ?? undefined,
-      reasoningSummary: parsed.reasoningSummary ?? undefined,
       nextAction: parsed.nextAction ?? undefined,
       artifact: parsed.artifact ?? undefined,
+      artifacts: parsed.artifacts ?? undefined,
     };
   }
 
@@ -213,15 +209,8 @@ const parseStructuredOutput = (
 const parseDefaultOutput = (parsed: Record<string, unknown>): ParsedOutput => {
   const assistantText =
     typeof parsed.answer === "string" ? parsed.answer : undefined;
-  const reasoningSummary =
-    typeof parsed.reasoning_summary_ru === "string"
-      ? parsed.reasoning_summary_ru
-      : undefined;
   return {
     assistantText: assistantText?.trim().length ? assistantText : undefined,
-    reasoningSummary: reasoningSummary?.trim().length
-      ? reasoningSummary
-      : undefined,
   };
 };
 const parseIdeaCollectorOutput = (
@@ -248,22 +237,45 @@ const parseIdeaCollectorOutput = (
   } else if (typeof parsed.nextAction === "string") {
     nextAction = parsed.nextAction;
   }
-  let reasoningSummary: string | undefined;
-  if (typeof parsed.reasoning_summary_ru === "string") {
-    reasoningSummary = parsed.reasoning_summary_ru;
-  } else if (typeof parsed.reasoningSummaryRu === "string") {
-    reasoningSummary = parsed.reasoningSummaryRu;
-  }
+  const artifacts = parseIdeaCollectorArtifacts(parsed);
   const artifact = parseIdeaCollectorArtifact(parsed.artifact, nextAction);
   return {
     assistantText: assistantText?.trim().length ? assistantText : undefined,
-    reasoningSummary: reasoningSummary?.trim().length
-      ? reasoningSummary
-      : undefined,
     nextAction,
     artifact,
+    artifacts,
   };
 };
+
+const parseIdeaCollectorArtifacts = (
+  parsed: Record<string, unknown>
+): readonly StructuredOutputArtifactUpsert[] | undefined => {
+  if (!Array.isArray(parsed.artifacts)) {
+    return;
+  }
+
+  const artifacts: StructuredOutputArtifactUpsert[] = [];
+  for (const entry of parsed.artifacts) {
+    if (!isRecord(entry)) {
+      return;
+    }
+
+    const slot = entry.slot;
+    const markdown = entry.markdown;
+    if (typeof slot !== "string" || typeof markdown !== "string") {
+      return;
+    }
+
+    if (!(slot.trim() && markdown.trim())) {
+      continue;
+    }
+
+    artifacts.push({ slot, markdown });
+  }
+
+  return artifacts;
+};
+
 const parseIdeaCollectorArtifact = (
   value: unknown,
   nextAction: string | undefined
@@ -271,7 +283,7 @@ const parseIdeaCollectorArtifact = (
   if (!isRecord(value)) {
     return;
   }
-  if (nextAction !== "finalize") {
+  if (!(nextAction === "finalize" || nextAction === "revise_artifacts")) {
     return;
   }
   let ideaMarkdown: string | undefined;
@@ -288,7 +300,7 @@ const parseIdeaCollectorArtifact = (
     virtualSimulationMarkdown = value.virtualSimulationMarkdown;
   }
 
-  if (!(ideaMarkdown?.trim() && virtualSimulationMarkdown?.trim())) {
+  if (!(ideaMarkdown?.trim() || virtualSimulationMarkdown?.trim())) {
     return;
   }
   return value;

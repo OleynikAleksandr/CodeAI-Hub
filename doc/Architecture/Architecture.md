@@ -54,7 +54,7 @@ graph TD
 - **Empty timeline mode**: до внедрения нормализующего врапера `useSessionStore` игнорирует входящие события `session:message`, поэтому `DialogPanel` остаётся пустым и не показывает суррогатные system-events/placeholder-текст.
 - **Layout**: сетка `session-grid` объединяет панели `ActionBar`, `DialogPanel`, `TodoPanel`, `StatusPanel`, `InputPanel`. Все панели используют общие дизайн-токены и CSS переменные (`media/main-view.css`).
 - **Initiative context + auto-runs (v1.1.397)**: над Action Bar добавлена строка выбора Initiative (без run selector); Flow-кнопки доступны при выбранной инициативе, а run создаётся автоматически при старте стадии (формат `NNN-<model>`). Артефакты пишутся в `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/<stage>/...`, UI обращается к Core API `/api/v1/orchestrator/initiatives` и `/api/v1/orchestrator/initiatives/:initiativeSlug/runs` с обязательным `workspacePath`, который передаётся в `__CODEAI_CORE_CONFIG`. UI использует контекст сессии (`initiativeSlug`/`runSlug`) для путей анкеты/артефактов, без статических default-путей.
-- **Description run selection (v1.1.402)**: при старте Idea/Description пользователь выбирает новый вариант или существующий run (список `runSlug`); при наличии активной сессии run UI открывает диалог, иначе запускает анкету в выбранном run и передаёт `runSlug` в `session:create`.
+- **Idea run selection (v1.1.402)**: при старте Idea пользователь выбирает новый вариант или существующий run (список `runSlug`); при наличии активной сессии run UI открывает диалог, иначе запускает анкету в выбранном run и передаёт `runSlug` в `session:create`.
 - **Session Binding**: `InfoPanel` отображает состояние привязки к провайдеру — ожидается ли реальный `sessionId`, удалось ли его получить, либо инициализация провалилась. После подтверждения от SDK панель выводит полный идентификатор сессии (и подсказку в `title`), помогая отлаживать CLI-интеграции.
 - **Clipboard handling**: `input-panel-clipboard` централизует обработку copy/paste в webview и standalone — реагирует на `ClipboardEvent`, использует `navigator.clipboard` как fallback и сохраняет высоту textarea.
 - **Provider Picker & Settings**: отдельные модули `provider-picker`, `settings/view` позволяют выбирать провайдеров (Claude, Codex, Gemini) и менять конфигурацию визардов. UI отображает статус подключения каждого стека (connected / offline) и синхронизирует выбор с extension host через события ядра.
@@ -62,7 +62,7 @@ graph TD
 - **Idea Questionnaire UI (v1.1.385)**: экран анкеты открывается по клику `Idea`, использует templateMarkdown из контракта, сохраняет ответы в `.codeai-hub/.../idea/questionnaire.md`, поддерживает отмену/возобновление, отображает подсказки под вопросом и отправляет submit в один provider turn.
 - **Questionnaire auto-attach guard (v1.1.386)**: auto-attach пропускает шаблонные пути `<...>` из prompt, чтобы корректно прикреплять `questionnaire.md` при single-turn submit.
 - **Idea Collector slim output (v1.1.387)**: Structured Output возвращает оценку готовности (`assessment`) и 1–3 умных вопроса (`questions`) без повторения анкеты; финализация — только через артефакты.
-- **Provider health isolation**: `ProviderRegistry` отслеживает runtime-ошибки Claude/Codex/Gemini CLI и по сигналу Remote Bridge помечает провайдера как `inactive`, очищает адаптер и планирует автоматический retry. Ошибки `createSession`/`sendMessage`/`closeSession` больше не валят orchestrator: сессия получает статус `failed`, UI выводит предупреждение, а остальные провайдеры продолжают работать.
+- **Provider health isolation**: `ProviderRegistry` отслеживает runtime-ошибки Claude/Codex/Gemini CLI и по сигналу Remote Bridge помечает провайдера как `inactive` и очищает адаптер. Ошибки `createSession`/`sendMessage`/`closeSession` больше не валят orchestrator: сессия получает статус `failed`, UI выводит предупреждение, а остальные провайдеры продолжают работать (в MVP нет автоматического retry/rollback — повтор запускается вручную).
 - **Claude Default model selector**: в разделе Settings → Claude появился новый блок `Claude Default model`, который хранит выбранный alias (`default/sonnet`, `opus`, `haiku`) в `~/.codeai-hub/settings/settings.json` и сразу обновляет переменную окружения `CLAUDE_DEFAULT_MODEL`, чтобы core передавал актуальный alias в Claude SDK при создании сессий.
 - **Streaming Rendering**: `StreamingWordEmitter` и `useDialogMessages` формируют потоковый вывод без разрывов Markdown. Логика идентична в webview и локальном веб-клиенте.
 - **Accessibility**: все компоненты соответствуют правилам Ultracite (role, aria, tabindex), что позволяет без изменений переносить UI в браузерный клиент.
@@ -109,7 +109,7 @@ graph TD
 
 ## Dependencies & Tooling
 - **Build**: VSIX больше не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2 пакеты (`vscode-webview.tar.bz2`, `web-client.tar.bz2`, `project-manager.tar.bz2`) и публикуется в `~/.codeai-hub/releases/`.
-- **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок.
+- **Quality Gates**: Ultracite (Biome) обеспечивает форматирование и линтинг TS/JS‑кода; архитектурный скрипт контролирует структуру `src/` (лимит 300 строк, фасады, пустые директории). Husky‑хуки (`.husky/pre-commit`, `.husky/pre-push`) оркестрируют запуск архитектурного чека, Ultracite, ts-prune, jscpd и проверок ссылок. В Execute (MVP) Core запускает тот же минимальный набор как subprocess из корня workspace: `./scripts/check-architecture.sh` → `npx ultracite check` → `npx ts-prune` → `npx jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"` → `npm run check:links`.
 - **Runtime**: Extension host требует VS Code ≥ 1.90 и Node.js (в составе VS Code). Локальный клиент использует скачанный `CodeAIHubLauncher` (Chromium Embedded Framework) и не зависит от системного браузера.
 
 ## Agent Packages Architecture (v1.1.388)
@@ -164,7 +164,7 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Provider dedup**: Claude/Codex дедуплируют structured output по `uuid`, single-finalize lock удалён.
 
 ## Recent Changes (v1.1.402 - 2026-01-11)
-- **Description run selection**: UI prompts for a new variant or existing run and reuses run slugs for the Description stage.
+- **Idea run selection**: UI prompts for a new variant or existing run and reuses run slugs for the Idea stage.
 - **Run metadata + seeding**: `lastQuestionnaireAt` tracks questionnaire updates and new runs seed from the latest questionnaire.
 - **Run-aware session create**: `session:create` accepts `runSlug` and skips auto-run when provided.
 
@@ -174,8 +174,8 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Action Bar context**: run selector removed; Flow buttons require initiative selection.
 
 ## Recent Changes (v1.1.393 - 2026-01-08)
-- **Idea stage clarified as Description**: updated Idea Collector templates (prompt/template/questionnaire) to enforce cluster-modular decomposition (micro-modules + facade entrypoints) and capture dependency arrows.
-- **Diagrams deferred**: Module Diagram and Interface Map are treated as separate upcoming steps/agents; Description no longer emits diagram blocks as artifacts.
+- **Idea stage clarified**: updated Idea Collector templates (prompt/template/questionnaire) to enforce cluster-modular decomposition (micro-modules + facade entrypoints) and capture dependency arrows.
+- **Diagrams deferred**: Module Diagram and Interface Map are treated as separate upcoming steps/agents; Idea no longer emits diagram blocks as artifacts.
 
 ## Recent Changes (v1.1.391 - 2026-01-07)
 - **Flow-first Action Bar**: replaced quick actions with 5 Flow start buttons (Simple Chat/Idea/Spec/Plan/Execute); provider selection follows, Flow steps restricted to Codex/Claude.
@@ -227,7 +227,7 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 
 ## Recent Changes (v1.1.366 - 2025-12-30)
 - **Idea Collector spec readiness**: шаблон/контракт требуют UI/UX, триггеры, сущности и архитектурный контур для подготовки Spec.md.
-- **Codex thinking output**: native reasoning снова показывается вместе с `reasoning_summary_ru`, включая кастомные structured outputs.
+- **Codex thinking output**: native reasoning снова показывается; structured outputs не требуют отдельного RU summary поля.
 - **Release 1.1.366**: артефакты VSIX/launcher/core/providers/UI обновлены под новую модель thinking и Idea Collector контракт.
 
 ## Recent Changes (v1.1.361 - 2025-12-29)
@@ -240,19 +240,19 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Release 1.1.360**: артефакты VSIX/launcher/core/providers/UI обновлены под новый flow.
 
 ## Recent Changes (v1.1.359 - 2025-12-27)
-- **Codex summary alignment**: `reasoning_summary_ru` максимально приближается к native reasoning по содержанию и объёму (без chain-of-thought).
+- **Codex thinking alignment**: structured outputs больше не завязаны на отдельное RU summary поле; thinking опирается на native reasoning (если доступен).
 - **Release 1.1.359**: артефакты VSIX/launcher/core/providers/UI обновлены под hotfix prompt.
 
 ## Recent Changes (v1.1.358 - 2025-12-27)
-- **Codex summary prompt**: structured output инструкции префиксуются, чтобы получать непустой RU summary (пустая строка только при невозможности).
+- **Codex structured output prompt**: упрощённый префикс для JSON-ответа (без требования RU summary).
 - **Release 1.1.358**: артефакты VSIX/launcher/core/providers/UI обновлены под hotfix prompt.
 
 ## Recent Changes (v1.1.357 - 2025-12-27)
-- **Codex structured output schema**: `reasoning_summary_ru` обязателен (пустая строка разрешена), иначе CLI отклоняет схему и turn не возвращает ответ.
+- **Codex structured output schema**: дефолтный schema больше не требует RU summary (минимум `{ answer }`), кастомные схемы задаются UI/Flow контрактом.
 - **Release 1.1.357**: артефакты VSIX/launcher/core/providers/UI обновлены под hotfix схемы.
 
 ## Recent Changes (v1.1.356 - 2025-12-27)
-- **Codex structured outputs**: native reasoning скрывается; `answer` стримится из JSON, RU thinking summary попадает в thinking-панель. Подробности: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
+- **Codex structured outputs**: `answer` стримится из JSON; thinking отображается из native reasoning (если доступен), без RU summary через отдельное поле.
 - **Release 1.1.356**: обновлены артефакты VSIX/launcher/core/providers/UI и зафиксированы новые правила отображения thinking.
 
 ## Recent Changes (v1.1.340 - 2025-12-23)

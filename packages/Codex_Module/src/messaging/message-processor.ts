@@ -515,9 +515,6 @@ export class CodexMessageProcessor {
     if (result.streamDelta) {
       this.emitAssistantChunk(session, item.id, result.streamDelta);
     }
-    if (result.reasoningSummary) {
-      this.emitDialogMessage(session, "thinking", result.reasoningSummary);
-    }
     this.emitStructuredOutput(session, item.id, result);
     if (!result.assistantText) {
       return;
@@ -557,7 +554,9 @@ export class CodexMessageProcessor {
     itemId: string,
     result: StructuredOutputResult
   ): void {
-    if (!result.artifact) {
+    const shouldEmitArtifacts =
+      Array.isArray(result.artifacts) && result.artifacts.length > 0;
+    if (!(result.artifact || shouldEmitArtifacts)) {
       return;
     }
     const dedupeId = itemId;
@@ -583,7 +582,9 @@ export class CodexMessageProcessor {
       data: {
         kind: "structured_output",
         artifact: result.artifact,
+        artifacts: shouldEmitArtifacts ? result.artifacts : undefined,
         nextAction: result.nextAction,
+        suggested_response: result.assistantText,
       },
       uuid: dedupeId ?? crypto.randomUUID(),
       timestamp: new Date().toISOString(),

@@ -2,24 +2,14 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://codeai-hub.local/schemas/idea-collector-schema.json",
   "title": "Idea Collector — Structured Output Contract (Variant B)",
-  "description": "Контракт Structured Output для Idea Collector (стадия idea, UI label: Description). Агент анализирует заполненную анкету, оценивает готовность к финализации и задаёт 1–3 умных уточняющих вопроса. При финализации (после явного подтверждения пользователя) агент отдаёт artifacts[] как upsert: список элементов {slot, markdown} без путей и без next_action. Каждый markdown — полный текущий документ (не patch).",
+  "description": "Контракт Structured Output для Idea Collector (стадия idea, UI label: Idea). Агент анализирует заполненную анкету, оценивает готовность к финализации и задаёт 1–3 умных уточняющих вопроса. При финализации (после явного подтверждения пользователя) агент отдаёт artifacts[] как upsert: список элементов {slot, markdown} без путей и без next_action. Каждый markdown — полный текущий документ (не patch).",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "suggested_response",
-    "reasoning_summary_ru",
-    "assessment",
-    "questions",
-    "artifacts"
-  ],
+  "required": ["suggested_response", "assessment", "questions", "artifacts"],
   "properties": {
     "suggested_response": {
       "type": "string",
       "description": "Текст следующего сообщения агента (вопрос/уточнение/сводка/финализация), который показываем пользователю."
-    },
-    "reasoning_summary_ru": {
-      "type": "string",
-      "description": "Краткое резюме прогресса/решений на русском без chain-of-thought."
     },
     "assessment": {
       "type": "object",

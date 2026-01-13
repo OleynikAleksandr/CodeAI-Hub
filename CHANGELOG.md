@@ -71,7 +71,7 @@
 ## [1.1.402] - 2026-01-11
 
 ### Added
-- **Description run selection**: choose new or existing runs (`runSlug`) before starting the Description stage.
+- **Idea run selection**: choose new or existing runs (`runSlug`) before starting the Idea stage.
 - **Run metadata tracking**: `lastQuestionnaireAt` stored in run.json and updated on questionnaire writes.
 
 ### Changed
@@ -328,8 +328,8 @@
 ## [1.1.366] - 2025-12-30
 
 ### Fixed
-- **Idea Collector spec readiness**: шаблон/промпт/схема требуют UI/триггеры/сущности/архконтур и `reasoning_summary_ru`.
-- **Codex thinking output**: восстановлен native reasoning; `reasoning_summary_ru` парсится даже для кастомных structured outputs.
+- **Idea Collector spec readiness**: шаблон/промпт/схема требуют UI/триггеры/сущности/архконтур и контролируемый RU summary для thinking.
+- **Codex thinking output**: восстановлен native reasoning; RU summary для thinking поддерживается и для кастомных structured outputs.
 
 ## [1.1.365] - 2025-12-30
 
@@ -382,7 +382,7 @@
 ## [1.1.359] - 2025-12-27
 
 ### Fixed
-- **Codex summary alignment**: `reasoning_summary_ru` is prompted to match native reasoning content/length without revealing chain-of-thought.
+- **Codex summary alignment**: RU thinking summary is prompted to match native reasoning content/length without revealing chain-of-thought.
 
 ### Documentation
 - Updated the Codex structured outputs contract for the new summary guidance.
@@ -390,7 +390,7 @@
 ## [1.1.358] - 2025-12-27
 
 ### Fixed
-- **Codex summary prompt**: structured output instructions are prefixed to encourage non-empty Russian `reasoning_summary_ru` summaries.
+- **Codex summary prompt**: structured output instructions are prefixed to encourage non-empty Russian thinking summaries.
 
 ### Documentation
 - Updated Codex structured output docs to describe prompt enforcement.
@@ -398,7 +398,7 @@
 ## [1.1.357] - 2025-12-27
 
 ### Fixed
-- **Codex structured output schema**: `reasoning_summary_ru` is required (empty string allowed), preventing schema validation failures that blocked responses.
+- **Codex structured output schema**: RU thinking summary field is required (empty string allowed), preventing schema validation failures that blocked responses.
 
 ### Documentation
 - Updated the Codex structured outputs contract to reflect the required summary field.
@@ -407,7 +407,7 @@
 
 ### Added
 - **Codex structured outputs**: native reasoning hidden in UI; RU thinking summary emitted via structured output schema.
-- **Streaming extractor**: assistant `answer` is streamed from JSON while `reasoning_summary_ru` is rendered in the Thinking panel.
+- **Streaming extractor**: assistant `answer` is streamed from JSON while the RU thinking summary is rendered in the Thinking panel.
 
 ### Documentation
 - Updated README and architecture docs to reference Codex structured outputs and the RU thinking summary contract.

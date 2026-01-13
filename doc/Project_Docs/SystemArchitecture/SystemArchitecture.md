@@ -148,7 +148,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Recent Changes (v1.1.366 - 2025-12-30)
 - **Idea Collector spec readiness**: шаблон/контракт теперь требуют UI/UX, триггеры, сущности и архитектурный контур для Spec.md.
-- **Codex thinking output**: native reasoning снова показывается, RU summary добавляется поверх для structured outputs.
+- **Codex thinking output**: native reasoning снова показывается; structured outputs не требуют отдельного RU summary поля.
 - **Release 1.1.366**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.366.
 
 ## Recent Changes (v1.1.361 - 2025-12-29)
@@ -161,19 +161,19 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Release 1.1.360**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.360.
 
 ## Recent Changes (v1.1.359 - 2025-12-27)
-- **Codex summary alignment**: `reasoning_summary_ru` максимально приближается к native reasoning по содержанию и объёму (без chain-of-thought).
+- **Codex thinking alignment**: structured outputs больше не завязаны на отдельное RU summary поле; thinking опирается на native reasoning (если доступен).
 - **Release 1.1.359**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.359.
 
 ## Recent Changes (v1.1.358 - 2025-12-27)
-- **Codex summary prompt**: structured output инструкции префиксуются, чтобы получать непустой RU summary (пустая строка только при невозможности).
+- **Codex structured output prompt**: упрощённый префикс для JSON-ответа (без требования RU summary).
 - **Release 1.1.358**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.358.
 
 ## Recent Changes (v1.1.357 - 2025-12-27)
-- **Codex schema requirement**: `reasoning_summary_ru` обязателен (может быть пустой строкой), иначе structured output schema отклоняется и ответы не приходят.
+- **Codex structured output schema**: дефолтный schema больше не требует RU summary (минимум `{ answer }`), кастомные схемы задаются UI/Flow контрактом.
 - **Release 1.1.357**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.357.
 
 ## Recent Changes (v1.1.356 - 2025-12-27)
-- **Codex structured outputs**: native reasoning скрывается; `answer` стримится из JSON, RU thinking summary выводится отдельным thinking-блоком. См. `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`.
+- **Codex structured outputs**: `answer` стримится из JSON; thinking отображается из native reasoning (если доступен), без RU summary через отдельное поле.
 - **Release 1.1.356**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.356.
 
 ## Recent Changes (v1.1.339 - 2025-12-23)
@@ -195,5 +195,5 @@ CodeAI-Hub — автономная платформа управления AI-�
 - Core Orchestrator: `doc/Project_Docs/Stacks/CoreOrchestrator.md`
 - Claude Provider: `doc/Project_Docs/Stacks/Claude.md`
 - Codex Provider: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
-- Codex Thinking Summary: `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`
+- Codex Thinking (native reasoning): `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md` (документ помечен как deprecated, см. внутри)
 - Gemini Provider: `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
