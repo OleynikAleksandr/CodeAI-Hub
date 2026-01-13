@@ -2,7 +2,7 @@
 
 **Status:** Active (CommonJS bridge)
 
-**Last Updated:** 2025-12-21
+**Last Updated:** 2026-01-13
 
 **Maintainer:** Codex / CodeAI Hub Core Team
 
@@ -10,6 +10,8 @@
 
 ## 1. Purpose
 This document captures the requirements and integration notes for adding Google Gemini CLI support to CodeAI Hub. It complements the Claude and Codex module guides and serves as the architectural reference for the upcoming `Gemini_Module` package.
+
+Validated in release `1.1.416` (runtime installs + provider registry wiring are stable; exact CLI versions remain user-managed via global npm + optional auto-update).
 
 ---
 
