@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-13
 **Status:** Active reference
-**Release Focus:** v1.1.413 — Artifact Upsert Protocol (Variant B): `artifacts[]` (slot+markdown), частичные upsert без silent-drop, без путей от агента.
+**Release Focus:** v1.1.414 — Artifact Upsert Protocol (Variant B): `artifacts[]` (slot+markdown), частичные upsert без silent-drop, без путей от агента.
 
 ---
 
@@ -153,6 +153,10 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.414 - 2026-01-13)
+- **Artifact Upsert Protocol (Variant B)**: `artifacts[]` (slot+markdown) вместо путей/`next_action`, сохраняются частичные upsert без silent-drop.
+- **Core endpoint**: `POST /api/v1/orchestrator/artifact-upsert` сохраняет слоты Idea stage через slot→path allowlist + atomic write/backup.
 
 ## Recent Changes (v1.1.413 - 2026-01-13)
 - **Idea Collector finalize-only**: контракт без `revise_artifacts`, повторяемые `finalize` только после явного подтверждения.
