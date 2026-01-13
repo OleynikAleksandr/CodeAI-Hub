@@ -22,7 +22,7 @@ export type ActiveSession = {
   readonly logger: SessionLogger | null;
   readonly resumeSessionId?: string;
   structuredOutputSchema?: Record<string, unknown> | null;
-  structuredOutputFinalized?: boolean;
+  structuredOutputUuids?: Set<string>;
   messageGenerator?: AsyncGenerator<unknown>;
   queryInstance?: AsyncIterableIterator<unknown> & {
     interrupt?: () => Promise<void>;

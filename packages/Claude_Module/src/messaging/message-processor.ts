@@ -169,11 +169,15 @@ export class SDKMessageProcessor {
     if (!(output.nextAction && output.artifact)) {
       return;
     }
-    if (output.nextAction === "finalize") {
-      if (session.structuredOutputFinalized) {
+    const dedupeId = message.uuid;
+    if (dedupeId) {
+      if (!session.structuredOutputUuids) {
+        session.structuredOutputUuids = new Set();
+      }
+      if (session.structuredOutputUuids.has(dedupeId)) {
         return;
       }
-      session.structuredOutputFinalized = true;
+      session.structuredOutputUuids.add(dedupeId);
     }
     session.eventEmitter.emit("message", {
       type: "stream_event",
@@ -185,7 +189,7 @@ export class SDKMessageProcessor {
         artifact: output.artifact,
         nextAction: output.nextAction,
       },
-      uuid: `${message.uuid ?? crypto.randomUUID()}::structured_output`,
+      uuid: `${dedupeId ?? crypto.randomUUID()}::structured_output`,
       timestamp: new Date().toISOString(),
     });
   }
