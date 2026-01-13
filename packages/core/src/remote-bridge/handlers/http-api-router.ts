@@ -23,6 +23,7 @@ const HTTP_BAD_REQUEST = 400;
 const HTTP_NO_CONTENT = 204;
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
+const ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
 const INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
 const RUNS_ENDPOINT = "/api/v1/orchestrator/initiatives/:initiativeSlug/runs";
 const RUN_SELECT_CURRENT_ENDPOINT =
@@ -95,6 +96,10 @@ export class HttpApiRouter {
 
     app.post(IDEA_ARTIFACT_ENDPOINT, async (req: Request, res: Response) => {
       await this.handleIdeaArtifactSave(req, res);
+    });
+
+    app.post(ARTIFACT_UPSERT_ENDPOINT, async (req: Request, res: Response) => {
+      await this.handleArtifactUpsertSave(req, res);
     });
 
     app.get(INITIATIVES_ENDPOINT, async (req: Request, res: Response) => {
@@ -213,6 +218,69 @@ export class HttpApiRouter {
     }
   }
 
+  private async handleArtifactUpsertSave(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const parsedPayload = parseArtifactUpsertPayload(req.body as unknown);
+    if (!parsedPayload.ok) {
+      res.status(HTTP_BAD_REQUEST).json({ error: parsedPayload.error });
+      return;
+    }
+
+    const { sessionId, artifacts } = parsedPayload.value;
+    if (artifacts.length === 0) {
+      res.status(HTTP_NO_CONTENT).end();
+      return;
+    }
+
+    const session = this.deps.sessionManager.getSession(sessionId);
+    if (!session) {
+      res.status(HTTP_NOT_FOUND).json({
+        error: `Session ${sessionId} not found`,
+      });
+      return;
+    }
+
+    const planResult = await buildIdeaStageArtifactUpsertPlan({
+      workspacePath: session.workspacePath,
+      sessionContext: {
+        initiativeSlug: session.initiativeSlug,
+        runSlug: session.runSlug,
+        stage: session.stage,
+      },
+      artifacts,
+    });
+
+    if (!planResult.ok) {
+      res.status(HTTP_BAD_REQUEST).json({ error: planResult.error });
+      return;
+    }
+
+    const writeResult = await writeArtifactUpsertPlan(planResult.value);
+    if (!writeResult.ok) {
+      this.deps.logger.error(
+        "Failed to write artifact upserts",
+        writeResult.error,
+        {
+          sessionId,
+        }
+      );
+      res
+        .status(HTTP_INTERNAL_ERROR)
+        .json({ error: "Unable to write artifact upsert" });
+      return;
+    }
+
+    res.json({
+      saved: planResult.value.upserts.map((upsert) => ({
+        slot: upsert.slot,
+        path: upsert.relativePath,
+        changed: upsert.changed,
+      })),
+    });
+  }
+
   private async handleIdeaArtifactSave(
     req: Request,
     res: Response
@@ -278,6 +346,20 @@ type IdeaArtifactPayload = {
     readonly virtualSimulation: string;
   };
 };
+
+type ArtifactUpsertItem = {
+  readonly slot: string;
+  readonly markdown: string;
+};
+
+type ArtifactUpsertPayload = {
+  readonly sessionId: string;
+  readonly artifacts: ArtifactUpsertItem[];
+};
+
+type ArtifactUpsertPayloadResult =
+  | { readonly ok: true; readonly value: ArtifactUpsertPayload }
+  | { readonly ok: false; readonly error: string };
 
 type IdeaArtifactPayloadResult =
   | { readonly ok: true; readonly value: IdeaArtifactPayload }
@@ -345,6 +427,41 @@ const parseIdeaArtifactPayload = (
   };
 };
 
+const parseArtifactUpsertPayload = (
+  payload: unknown
+): ArtifactUpsertPayloadResult => {
+  if (!payload || typeof payload !== "object") {
+    return { ok: false, error: "Invalid payload" };
+  }
+
+  const candidate = payload as Record<string, unknown>;
+  const sessionId = readNonEmptyString(candidate.sessionId);
+  if (!sessionId) {
+    return { ok: false, error: "Missing sessionId" };
+  }
+
+  const artifactsRaw = candidate.artifacts;
+  if (!Array.isArray(artifactsRaw)) {
+    return { ok: false, error: "Missing artifacts" };
+  }
+
+  const artifacts: ArtifactUpsertItem[] = [];
+  for (const entry of artifactsRaw) {
+    if (!entry || typeof entry !== "object") {
+      return { ok: false, error: "Invalid artifact entry" };
+    }
+    const record = entry as Record<string, unknown>;
+    const slot = readNonEmptyString(record.slot);
+    const markdown = readNonEmptyString(record.markdown);
+    if (!(slot && markdown)) {
+      return { ok: false, error: "Invalid artifact entry" };
+    }
+    artifacts.push({ slot, markdown });
+  }
+
+  return { ok: true, value: { sessionId, artifacts } };
+};
+
 type IdeaArtifactUpdatePlan = {
   readonly ideaPath: string;
   readonly virtualSimulationPath: string;
@@ -364,6 +481,208 @@ type IdeaArtifactUpdatePlanResult =
 type IdeaArtifactWriteResult =
   | { readonly ok: true }
   | { readonly ok: false; readonly error: Error };
+
+type IdeaStageArtifactUpsertPlan = {
+  readonly upserts: readonly {
+    readonly slot: string;
+    readonly relativePath: string;
+    readonly artifactPath: string;
+    readonly content: string;
+    readonly existingContent: string | null;
+    readonly changed: boolean;
+  }[];
+};
+
+type IdeaStageArtifactUpsertPlanResult =
+  | { readonly ok: true; readonly value: IdeaStageArtifactUpsertPlan }
+  | { readonly ok: false; readonly error: string };
+
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+const IDEA_STAGE_SLOTS = new Map<string, "idea.md" | "virtual-simulation.md">([
+  ["cluster.idea.idea", "idea.md"],
+  ["cluster.idea.virtual-simulation", "virtual-simulation.md"],
+]);
+
+type IdeaStageUpsertContext = {
+  readonly initiativeSlug: string;
+  readonly runSlug: string;
+  readonly workspaceRoot: string;
+};
+
+type IdeaStageUpsertTarget = {
+  readonly fileName: "idea.md" | "virtual-simulation.md";
+  readonly relativePath: string;
+  readonly artifactPath: string;
+};
+
+const resolveIdeaStageUpsertContext = (params: {
+  readonly workspacePath: string;
+  readonly sessionContext: {
+    readonly initiativeSlug: string | null;
+    readonly runSlug: string | null;
+    readonly stage: string | null;
+  };
+}): PayloadParseResult<IdeaStageUpsertContext> => {
+  const { initiativeSlug, runSlug, stage } = params.sessionContext;
+  if (!(initiativeSlug && runSlug && stage)) {
+    return {
+      ok: false,
+      error: "Session context is missing initiativeSlug/runSlug/stage",
+    };
+  }
+  if (stage !== "idea") {
+    return { ok: false, error: `Unsupported stage: ${stage}` };
+  }
+  if (!(SLUG_RE.test(initiativeSlug) && SLUG_RE.test(runSlug))) {
+    return { ok: false, error: "Invalid initiativeSlug/runSlug" };
+  }
+  return {
+    ok: true,
+    value: {
+      initiativeSlug,
+      runSlug,
+      workspaceRoot: path.resolve(params.workspacePath),
+    },
+  };
+};
+
+const resolveIdeaStageUpsertTarget = (params: {
+  readonly context: IdeaStageUpsertContext;
+  readonly slot: string;
+}): PayloadParseResult<IdeaStageUpsertTarget> => {
+  const fileName = IDEA_STAGE_SLOTS.get(params.slot);
+  if (!fileName) {
+    return {
+      ok: false,
+      error: `Unsupported artifact slot: ${params.slot}`,
+    };
+  }
+
+  const relativePath = `.codeai-hub/initiatives/${params.context.initiativeSlug}/runs/${params.context.runSlug}/idea/${fileName}`;
+  const isAllowed =
+    fileName === "idea.md"
+      ? IDEA_PATH_RE.test(relativePath)
+      : VIRTUAL_SIMULATION_PATH_RE.test(relativePath);
+  if (!isAllowed) {
+    return { ok: false, error: "Invalid artifact path" };
+  }
+
+  const artifactPath = resolveArtifactPath(
+    params.context.workspaceRoot,
+    relativePath
+  );
+  if (!artifactPath) {
+    return { ok: false, error: "Unsafe artifact path" };
+  }
+
+  return { ok: true, value: { fileName, relativePath, artifactPath } };
+};
+
+const normalizeAndValidateIdeaStageUpsertMarkdown = (params: {
+  readonly fileName: "idea.md" | "virtual-simulation.md";
+  readonly markdown: string;
+}): PayloadParseResult<string> => {
+  const normalizedContent = normalizeArtifactContent(params.markdown);
+  const validationError =
+    params.fileName === "idea.md"
+      ? validateIdeaMarkdown(normalizedContent, true)
+      : validateVirtualSimulationMarkdown(normalizedContent, true);
+  if (validationError) {
+    return { ok: false, error: validationError };
+  }
+  return { ok: true, value: normalizedContent };
+};
+
+const buildIdeaStageArtifactUpsertPlan = async (params: {
+  readonly workspacePath: string;
+  readonly sessionContext: {
+    readonly initiativeSlug: string | null;
+    readonly runSlug: string | null;
+    readonly stage: string | null;
+  };
+  readonly artifacts: readonly ArtifactUpsertItem[];
+}): Promise<IdeaStageArtifactUpsertPlanResult> => {
+  const contextResult = resolveIdeaStageUpsertContext({
+    workspacePath: params.workspacePath,
+    sessionContext: params.sessionContext,
+  });
+  if (!contextResult.ok) {
+    return { ok: false, error: contextResult.error };
+  }
+  const context = contextResult.value;
+
+  const seenSlots = new Set<string>();
+  const upserts: IdeaStageArtifactUpsertPlan["upserts"][number][] = [];
+
+  for (const artifact of params.artifacts) {
+    if (seenSlots.has(artifact.slot)) {
+      return { ok: false, error: `Duplicate artifact slot: ${artifact.slot}` };
+    }
+    seenSlots.add(artifact.slot);
+
+    const targetResult = resolveIdeaStageUpsertTarget({
+      context,
+      slot: artifact.slot,
+    });
+    if (!targetResult.ok) {
+      return { ok: false, error: targetResult.error };
+    }
+
+    const contentResult = normalizeAndValidateIdeaStageUpsertMarkdown({
+      fileName: targetResult.value.fileName,
+      markdown: artifact.markdown,
+    });
+    if (!contentResult.ok) {
+      return { ok: false, error: contentResult.error };
+    }
+
+    const existingContent = await readArtifactFile(
+      targetResult.value.artifactPath
+    );
+    const normalizedExisting =
+      existingContent === null
+        ? null
+        : normalizeArtifactContent(existingContent);
+    const changed = normalizedExisting !== contentResult.value;
+
+    upserts.push({
+      slot: artifact.slot,
+      relativePath: targetResult.value.relativePath,
+      artifactPath: targetResult.value.artifactPath,
+      content: contentResult.value,
+      existingContent,
+      changed,
+    });
+  }
+
+  return { ok: true, value: { upserts } };
+};
+
+const writeArtifactUpsertPlan = async (
+  plan: IdeaStageArtifactUpsertPlan
+): Promise<IdeaArtifactWriteResult> => {
+  const backups: ArtifactBackup[] = [];
+  try {
+    for (const upsert of plan.upserts) {
+      if (!upsert.changed) {
+        continue;
+      }
+      backups.push(
+        await backupAndWriteArtifact(
+          upsert.artifactPath,
+          upsert.content,
+          upsert.existingContent
+        )
+      );
+    }
+    return { ok: true };
+  } catch (error) {
+    await restoreBackups(backups);
+    const failure = error instanceof Error ? error : new Error(String(error));
+    return { ok: false, error: failure };
+  }
+};
 
 const buildIdeaArtifactUpdatePlan = async (
   deps: RouterDependencies,

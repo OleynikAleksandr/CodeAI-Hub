@@ -6,7 +6,7 @@ import type { ProviderRegistry } from "../../provider-registry";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
-import { serializeSession } from "../types";
+import { type BridgeEvent, serializeSession } from "../types";
 import { maybeCreateAutoRun } from "./auto-run-service";
 import { detectQuestionnairePath } from "./idea-questionnaire-path-detector";
 import { attachPreReadDocuments } from "./idea-questionnaire-pre-read-attacher";
@@ -70,7 +70,7 @@ export type SessionRequestHandlerOptions = {
   readonly providerRegistry: ProviderRegistry;
   readonly sessionStorage: UnifiedSessionStorage;
   readonly logger: Logger;
-  readonly broadcaster: (event: unknown) => void;
+  readonly broadcaster: (event: BridgeEvent) => void;
   readonly stateBroadcaster: () => void;
 };
 
@@ -81,7 +81,7 @@ export class SessionRequestHandler {
   private readonly providerRegistry: ProviderRegistry;
   private readonly sessionStorage: UnifiedSessionStorage;
   private readonly logger: Logger;
-  private readonly broadcaster: (event: unknown) => void;
+  private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
   private static readonly REFINE_PROVIDER_MISMATCH_ERROR =
     "Refine existing run cannot change provider; start a new run to switch provider.";

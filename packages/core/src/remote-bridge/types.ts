@@ -24,7 +24,7 @@ export type CoreStatePayload = {
 
 export type BridgeEvent =
   | { readonly type: "core:state"; readonly payload: CoreStatePayload }
-  | { readonly type: "session:created"; readonly payload: unknown }
+  | { readonly type: "session:created"; readonly payload: SerializedSession }
   | { readonly type: "session:message"; readonly payload: unknown }
   | {
       readonly type: "session:binding";
