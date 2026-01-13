@@ -1,3 +1,14 @@
+## [1.1.414] - 2026-01-13
+
+### Added
+- **Artifact upsert endpoint (Variant B)**: Core now accepts `POST /api/v1/orchestrator/artifact-upsert` with `artifacts[]` as `{slot, markdown}`.
+
+### Changed
+- **Idea Collector artifacts protocol**: switched from `next_action` + `*_path` to slot-based `artifacts[]` (full markdown, no patches).
+
+### Fixed
+- **Silent artifact drops**: partial updates (e.g. only `virtual-simulation.md`) are persisted immediately instead of being discarded.
+
 ## [1.1.413] - 2026-01-13
 
 ### Changed
