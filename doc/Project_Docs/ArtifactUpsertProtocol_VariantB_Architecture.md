@@ -1,6 +1,6 @@
 # Artifact Upsert Protocol (Variant B) — Architecture
 
-**Status:** Draft (needs approval)
+**Status:** Approved
 **Last updated:** 2026-01-13
 **Scope:** Workflow-first artifacts in `.codeai-hub/` (workspace layer)
 
