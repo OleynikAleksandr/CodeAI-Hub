@@ -1,23 +1,18 @@
 const FALLBACK_SCHEMA_JSON = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://codeai-hub.local/schemas/idea-collector-schema.json",
-  "title": "Idea Collector — Structured Output Contract (Slim)",
-  "description": "Контракт Structured Output для Idea Collector. Агент анализирует заполненную анкету, оценивает готовность к финализации и задаёт 1–3 умных уточняющих вопроса. На финале (next_action=finalize) обязан вернуть готовые Idea.md и virtual-simulation.md как markdown + целевые пути сохранения.",
+  "title": "Idea Collector — Structured Output Contract (Variant B)",
+  "description": "Контракт Structured Output для Idea Collector (Variant B). Агент анализирует заполненную анкету, оценивает готовность к финализации и задаёт 1–3 умных уточняющих вопроса. При финализации (после явного подтверждения пользователя) агент отдаёт artifacts[] как upsert: список элементов {slot, markdown} без путей и без next_action. Каждый markdown — полный текущий документ (не patch).",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "next_action",
     "suggested_response",
     "reasoning_summary_ru",
     "assessment",
     "questions",
-    "artifact"
+    "artifacts"
   ],
   "properties": {
-    "next_action": {
-      "type": "string",
-      "description": "Что делать дальше: ask_question | clarify | summarize | finalize."
-    },
     "suggested_response": {
       "type": "string",
       "description": "Текст следующего сообщения агента (вопрос/уточнение/сводка/финализация), который показываем пользователю."
@@ -36,11 +31,11 @@ const FALLBACK_SCHEMA_JSON = `{
         "assumptions",
         "risks"
       ],
-      "description": "Оценка достаточности данных анкеты для подготовки Idea.md и virtual-simulation.md.",
+      "description": "Оценка достаточности данных анкеты для подготовки idea.md и virtual-simulation.md.",
       "properties": {
         "ready_for_finalize": {
           "type": "boolean",
-          "description": "Готов ли агент финализировать документы прямо сейчас."
+          "description": "Готов ли агент финализировать документы прямо сейчас (при условии явного подтверждения пользователя)."
         },
         "confidence_percent": {
           "type": "integer",
@@ -71,31 +66,34 @@ const FALLBACK_SCHEMA_JSON = `{
     },
     "questions": {
       "type": "array",
-      "description": "1–3 точечных вопроса, чтобы закрыть пробелы. До финализации вопросы обязательны; на finalize — пустой список.",
+      "description": "1–3 точечных вопроса, чтобы закрыть пробелы. До финализации вопросы обязательны; при финализации — пустой список.",
       "items": {
         "type": "string"
       }
     },
-    "artifact": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Финальные артефакты. Обязательны при next_action=finalize.",
-      "properties": {
-        "idea_markdown": {
-          "type": "string",
-          "description": "Готовый Idea.md как markdown (включая заголовок и все секции по шаблону)."
-        },
-        "virtual_simulation_markdown": {
-          "type": "string",
-          "description": "Виртуальный тест (virtual-simulation.md) как markdown с обязательными секциями: # Virtual Simulation, Цель симуляции, Сценарии, UI ↔ Core события, Логи и телеметрия, Мини-матрица рисков, Must-pass проверки (E2E), Выводы."
-        },
-        "idea_path": {
-          "type": "string",
-          "description": "Куда сохранить Idea.md в проекте (канон: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/idea.md)."
-        },
-        "virtual_simulation_path": {
-          "type": "string",
-          "description": "Куда сохранить virtual-simulation.md в проекте (канон: .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/virtual-simulation.md)."
+    "artifacts": {
+      "type": "array",
+      "description": "Артефакты для upsert. До явного подтверждения пользователя обязательно пустой массив. При финализации обычно включай оба слота; при частичных правках допускается подмножество.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "slot",
+          "markdown"
+        ],
+        "properties": {
+          "slot": {
+            "type": "string",
+            "description": "Слот артефакта.",
+            "enum": [
+              "cluster.idea.idea",
+              "cluster.idea.virtual-simulation"
+            ]
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Полный markdown для указанного слота (не patch)."
+          }
         }
       }
     }
