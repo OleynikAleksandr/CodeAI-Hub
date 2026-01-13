@@ -22,8 +22,8 @@
 Structured Output становится «оценочным»:
 - Агент возвращает краткую оценку готовности, рисков, допущений и пробелов.
 - Агент всегда задаёт 1–3 уточняющих вопроса (кроме финализации).
-- На `next_action=finalize` возвращаются полные документы Idea.md и virtual-simulation.md.
-- На `next_action=revise_artifacts` агент возвращает структурированный patch по секциям (предпочтительно) или полный markdown без записи файлов.
+- `finalize` возвращает полные документы Idea.md и virtual-simulation.md как markdown.
+- `finalize` не одноразовый: при новых правках агент снова запрашивает подтверждение и возвращает полный finalize.
 
 ## Ограничения фильтра схемы (критично)
 Core/UI нормализуют схему (strictify + prune), поэтому в контракте можно использовать только ключевые поля:
@@ -33,12 +33,12 @@ Core/UI нормализуют схему (strictify + prune), поэтому в
 
 ## Новый контракт (структура)
 ### Top-level поля
-- `next_action`: ask_question | clarify | summarize | finalize | revise_artifacts
+- `next_action`: ask_question | clarify | summarize | finalize
 - `suggested_response`: человекочитаемый ответ для UI
 - `reasoning_summary_ru`: краткое русское резюме
 - `assessment`: оценка готовности
 - `questions`: 1–3 вопроса (на finalize — пустой список)
-- `artifact`: финальные артефакты или patch-правки
+- `artifact`: финальные артефакты
 
 ### assessment (оценка)
 - `ready_for_finalize` (bool)
@@ -53,22 +53,16 @@ Core/UI нормализуют схему (strictify + prune), поэтому в
 - Формируются по принципу «хватит ли этого для качественных Idea.md и virtual-simulation.md?»
 
 ### artifact (артефакты)
-- `patch` (предпочтительно для `revise_artifacts`)
 - `idea_markdown`
 - `virtual_simulation_markdown`
 - `idea_path`
 - `virtual_simulation_path`
 
-### artifact.patch (структурированные правки)
-- `target`: idea | virtual_simulation
-- `section`: заголовок секции или якорь
-- `operation`: replace | append | prepend | remove
-- `content`: markdown-фрагмент (может быть пустым для remove)
-
 ## Изменения в prompt
 - Запрет на пересказ анкеты в Structured Output.
 - Вопросы формулируются не по списку анкеты, а по качеству будущих документов.
 - Если `confidence_percent >= 80` — просить подтверждение, а после «ОК» финализировать.
+- Повторный `finalize` допускается при новых правках (с повторным подтверждением).
 - На finalize не задавать вопросов, `questions` = [].
 
 ## Затрагиваемые компоненты
