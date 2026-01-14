@@ -8,6 +8,7 @@
 - `Architecture/` — архитектура и правила Workflow Tree (узлы, статусы, зависимости, “rebuild/simulation”).
 
 ## Принципы
+- MVP: “полный SolidWorks” (Workflow Tree Workbench) реализуется в `project-manager` (CEF); `vscode-webview`/`web-client` на этом этапе не дублируют дерево.
 - Верхний уровень всегда `Repo (Assembly)`.
 - Рабочий контекст задачи — `Initiative (Configuration)`.
 - Реализация ведётся в кластерно‑модульной архитектуре:
