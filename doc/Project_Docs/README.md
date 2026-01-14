@@ -8,6 +8,9 @@
 - `AgentPackages_Architecture.md` — архитектура agent packages и точки интеграции.
 - `knowledge/` — минимальная база знаний для запуска/эксплуатации.
 
+## Вне папки (дизайн‑доки)
+- `doc/SolidWorks-Flow/` — SolidWorks‑подобная визуализация workflow (дерево разработки, статусы, “жёсткие” гейты).
+
 ## Что оставлено намеренно
 - `knowledge/ProviderSetupGuide.md` — как установить и аутентифицировать CLI провайдеров.
 - `knowledge/Local_Artifacts_Workflow.md` — офлайн‑цикл сборки, локальные артефакты, дисциплина релизов.
