@@ -2,8 +2,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
 import { usePanelSizes } from "../../hooks/use-panel-sizes";
-import { useSidebarState } from "../../hooks/use-sidebar-state";
-import type { WorkspaceProject } from "../../types";
+import type { Initiative, WorkspaceProject } from "../../types";
 import { MainArea } from "./main-area";
 import { Sidebar } from "./sidebar";
 
@@ -11,17 +10,21 @@ import { Sidebar } from "./sidebar";
  * Main layout component (Grid container for Section 1 + Section 2)
  */
 export const MainLayout: React.FC = () => {
-  const { collapsed, toggle } = useSidebarState();
   const { sizes, updateSize } = usePanelSizes();
   const [projects, setProjects] = useState<readonly WorkspaceProject[]>([]);
-  const [selectedId, setSelectedId] = useState<string | undefined>();
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | undefined>();
+  const [initiatives, setInitiatives] = useState<readonly Initiative[]>([]);
+  const [selectedInitiativeId, setSelectedInitiativeId] = useState<string | undefined>();
 
   useEffect(() => {
     const unsubscribe = api.onProjectsUpdate((updatedProjects) => {
       setProjects(updatedProjects);
-      if (updatedProjects.length > 0 && !selectedId) {
-        setSelectedId(updatedProjects[0].id);
-      }
+      setSelectedWorkspaceId((current) => {
+        if (current && updatedProjects.some((project) => project.id === current)) {
+          return current;
+        }
+        return updatedProjects[0]?.id;
+      });
     });
 
     api.connect();
@@ -29,41 +32,57 @@ export const MainLayout: React.FC = () => {
     return () => {
       unsubscribe();
     };
-  }, [selectedId]);
+  }, []);
 
-  const layoutClass = collapsed
-    ? "pm-layout pm-layout--collapsed"
-    : "pm-layout pm-layout--expanded";
+  useEffect(() => {
+    if (!selectedWorkspaceId) {
+      setInitiatives([]);
+      setSelectedInitiativeId(undefined);
+      return;
+    }
 
-  const handleAddProject = () => {
+    const seededInitiatives: Initiative[] = [
+      {
+        id: `${selectedWorkspaceId}:workflow-tree-mvp`,
+        name: "Workflow Tree MVP",
+      },
+    ];
+
+    setInitiatives(seededInitiatives);
+    setSelectedInitiativeId((current) => {
+      if (current && seededInitiatives.some((item) => item.id === current)) {
+        return current;
+      }
+      return seededInitiatives[0]?.id;
+    });
+  }, [selectedWorkspaceId]);
+
+  const handleAddWorkspace = () => {
     api.pickFolder();
   };
 
-  const handleOpenSession = (id: string) => {
-    console.log("Open Session for project:", id);
+  const handleCreateInitiative = () => {
+    // Placeholder for Initiative creation dialog
   };
 
-  const handleStartTask = (id: string) => {
-    console.log("Start Task for project:", id);
-  };
-
-  const activeProject = projects.find((p) => p.id === selectedId);
+  const activeWorkspace = projects.find((p) => p.id === selectedWorkspaceId);
+  const activeInitiative = initiatives.find((item) => item.id === selectedInitiativeId);
 
   return (
-    <div className={layoutClass}>
+    <div className="pm-layout">
       <Sidebar
-        collapsed={collapsed}
-        onAddProject={handleAddProject}
-        onOpenSession={handleOpenSession}
-        onSelectProject={setSelectedId}
-        onStartTask={handleStartTask}
-        onToggle={toggle}
-        projects={[...projects]}
-        selectedProjectId={selectedId}
+        initiatives={[...initiatives]}
+        onAddWorkspace={handleAddWorkspace}
+        onCreateInitiative={handleCreateInitiative}
+        onSelectInitiative={setSelectedInitiativeId}
+        onSelectWorkspace={setSelectedWorkspaceId}
+        selectedInitiativeId={selectedInitiativeId}
+        selectedWorkspaceId={selectedWorkspaceId}
+        workspaces={[...projects]}
       />
       <MainArea
-        activeProject={activeProject}
-        activeProjectName={activeProject?.name}
+        activeInitiativeName={activeInitiative?.name}
+        activeWorkspaceName={activeWorkspace?.name}
         onSizeChange={updateSize}
         sizes={sizes}
       />

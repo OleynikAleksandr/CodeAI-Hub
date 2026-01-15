@@ -2,8 +2,8 @@ import type React from "react";
 import { useCallback, useRef, useState } from "react";
 
 interface VerticalResizerProps {
-  index: 0 | 1;
-  onResize: (index: 0 | 1, deltaX: number) => void;
+  index: number;
+  onResize: (index: number, deltaX: number) => void;
 }
 
 /**

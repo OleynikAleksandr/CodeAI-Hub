@@ -5,3 +5,8 @@ export type WorkspaceProject = {
   readonly lastUsed: string;
   readonly icon?: string;
 };
+
+export type Initiative = {
+  readonly id: string;
+  readonly name: string;
+};

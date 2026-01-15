@@ -1,17 +1,15 @@
 import type React from "react";
-import { CollapseIcon } from "../icons/collapse-icon";
-import { ExpandIcon } from "../icons/expand-icon";
-import type { WorkspaceProject } from "../../types";
+import type { Initiative, WorkspaceProject } from "../../types";
 
 interface SidebarProps {
-  collapsed: boolean;
-  onToggle: () => void;
-  projects?: WorkspaceProject[];
-  onAddProject?: () => void;
-  onSelectProject?: (id: string) => void;
-  onOpenSession?: (id: string) => void;
-  onStartTask?: (id: string) => void;
-  selectedProjectId?: string;
+  workspaces?: WorkspaceProject[];
+  initiatives?: Initiative[];
+  selectedWorkspaceId?: string;
+  selectedInitiativeId?: string;
+  onSelectWorkspace?: (id: string) => void;
+  onSelectInitiative?: (id: string) => void;
+  onAddWorkspace?: () => void;
+  onCreateInitiative?: () => void;
 }
 
 /**
@@ -19,79 +17,131 @@ interface SidebarProps {
  * Width adjusts to content when expanded
  */
 export const Sidebar: React.FC<SidebarProps> = ({
-  collapsed,
-  onToggle,
-  projects = [],
-  onAddProject,
-  onSelectProject,
-  onOpenSession,
-  onStartTask,
-  selectedProjectId,
-}) => (
-  <aside className="pm-sidebar">
-    <div className="pm-sidebar__header">
-      <button
-        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        className="pm-sidebar__toggle"
-        onClick={onToggle}
-        title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        type="button"
-      >
-        {collapsed ? <ExpandIcon size={20} /> : <CollapseIcon size={20} />}
-      </button>
-      {!collapsed && (
-        <button
-          aria-label="Add Workspace"
-          className="pm-sidebar__add"
-          onClick={onAddProject}
-          title="Add Workspace"
-          type="button"
-        >
-          <span className="pm-icon--add">+</span>
-        </button>
-      )}
-    </div>
-    <div className="pm-sidebar__content">
-      {!collapsed && (
-        <ul className="pm-sidebar__list">
-          {projects.map((project) => (
-            <li
-              className={`pm-sidebar__item ${
-                selectedProjectId === project.id ? "pm-sidebar__item--active" : ""
-              }`}
-              key={project.id}
-              onClick={() => onSelectProject?.(project.id)}
-              title={project.path}
+  workspaces = [],
+  initiatives = [],
+  selectedWorkspaceId,
+  selectedInitiativeId,
+  onSelectWorkspace,
+  onSelectInitiative,
+  onAddWorkspace,
+  onCreateInitiative,
+}) => {
+  const activeWorkspace = workspaces.find((workspace) => workspace.id === selectedWorkspaceId);
+  const activeInitiative = initiatives.find((item) => item.id === selectedInitiativeId);
+
+  const treeNodes = selectedInitiativeId
+    ? [
+        {
+          id: "initiative",
+          label: activeInitiative?.name ?? "Initiative",
+          depth: 0,
+          status: "active",
+        },
+        { id: "description", label: "Description", depth: 1, status: "todo" },
+        { id: "diagrams", label: "Diagrams", depth: 1, status: "blocked" },
+        { id: "modules", label: "Modules", depth: 1, status: "draft" },
+        { id: "module-a", label: "Module: Core", depth: 2, status: "todo" },
+        { id: "spec", label: "Spec", depth: 3, status: "todo" },
+        { id: "plan", label: "Plan", depth: 3, status: "todo" },
+        { id: "execute", label: "Execute", depth: 3, status: "todo" },
+      ]
+    : [];
+
+  return (
+    <aside className="pm-sidebar">
+      <div className="pm-sidebar__context">
+        <div className="pm-context-block">
+          <div className="pm-context-row">
+            <span className="pm-context-label">Workspace</span>
+            <button
+              className="pm-context-action"
+              onClick={onAddWorkspace}
+              type="button"
             >
-              <span className="pm-sidebar__item-name">{project.name}</span>
-              <div className="pm-sidebar__item-actions">
-                <button
-                  className="pm-sidebar__action-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenSession?.(project.id);
-                  }}
-                  title="Open Session"
-                  type="button"
-                >
-                  S
-                </button>
-                <button
-                  className="pm-sidebar__action-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onStartTask?.(project.id);
-                  }}
-                  title="Start Task"
-                  type="button"
-                >
-                  T
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  </aside>
-);
+              Add
+            </button>
+          </div>
+          <select
+            aria-label="Workspace"
+            className="pm-context-select"
+            onChange={(event) => {
+              const nextId = event.target.value;
+              if (nextId) {
+                onSelectWorkspace?.(nextId);
+              }
+            }}
+            value={selectedWorkspaceId ?? ""}
+          >
+            {workspaces.length === 0 ? (
+              <option value="" disabled>
+                No workspaces yet
+              </option>
+            ) : null}
+            {workspaces.map((workspace) => (
+              <option key={workspace.id} value={workspace.id}>
+                {workspace.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="pm-context-block">
+          <div className="pm-context-row">
+            <span className="pm-context-label">Initiative</span>
+            <button
+              className="pm-context-action"
+              onClick={onCreateInitiative}
+              type="button"
+            >
+              New
+            </button>
+          </div>
+          <select
+            aria-label="Initiative"
+            className="pm-context-select"
+            disabled={initiatives.length === 0}
+            onChange={(event) => {
+              const nextId = event.target.value;
+              if (nextId) {
+                onSelectInitiative?.(nextId);
+              }
+            }}
+            value={selectedInitiativeId ?? ""}
+          >
+            {initiatives.length === 0 ? (
+              <option value="">No initiatives yet</option>
+            ) : null}
+            {initiatives.map((initiative) => (
+              <option key={initiative.id} value={initiative.id}>
+                {initiative.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="pm-sidebar__tree">
+        <div className="pm-tree__header">
+          <span className="pm-tree__title">Workflow Tree</span>
+          <span className="pm-tree__subtitle">
+            {activeWorkspace?.name ?? "No workspace"}
+          </span>
+        </div>
+        {treeNodes.length === 0 ? (
+          <div className="pm-tree__empty">Select a workspace and initiative.</div>
+        ) : (
+          <ul className="pm-tree__list">
+            {treeNodes.map((node) => (
+              <li
+                className={`pm-tree__item pm-tree__item--${node.status}`}
+                key={node.id}
+                style={{ paddingLeft: `${12 + node.depth * 16}px` }}
+              >
+                <span className="pm-tree__status" />
+                <span className="pm-tree__label">{node.label}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </aside>
+  );
+};
