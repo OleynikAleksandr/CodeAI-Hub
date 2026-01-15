@@ -46,3 +46,11 @@
 2. [DONE] Git Commit: `fix(project-manager): guard workspace controls` (hash: caf137f9)
 3. [DONE] Docs: обновить релизные заметки и систему под 1.1.419 — scope: `README.md`, `CHANGELOG.md`, `doc/`; expected commit message: `docs: update 1.1.419 release notes`
 4. [DONE] Git Commit: `docs: update 1.1.419 release notes` (hash: d500a791)
+
+### Stream: Workbench interaction stability (CEF crash)
+1. [DONE] UI: заменить нативные select на кастомные меню, чтобы убрать краши CEF — scope: `src/client/project-manager/components/layout/sidebar.tsx`, `packages/ui/project-manager/styles.css`, `src/client/project-manager/api.ts`; expected commit message: `fix(project-manager): replace native selects`
+2. [DONE] Git Commit: `fix(project-manager): replace native selects` (hash: 4647482e)
+
+### Stream: Release 1.1.420 docs
+1. [TODO] Docs: обновить релизные заметки и систему под 1.1.420 — scope: `README.md`, `CHANGELOG.md`, `doc/`; expected commit message: `docs: update 1.1.420 release notes`
+2. [TODO] Git Commit: `docs: update 1.1.420 release notes` (hash: TBD)

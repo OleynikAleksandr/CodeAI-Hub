@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.419 (15.01.2026) — Project Manager: устойчивые workspace/initiative controls + безопасный folder picker fallback.
+**Состояние:** релиз 1.1.420 (15.01.2026) — Project Manager: кастомные меню вместо нативных select (устранение крашей CEF).
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
@@ -37,7 +37,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.419
+- VSIX: `codeai-hub` 1.1.420
 - Автономное ядро: `@codeai-hub/core` 1.1.403
 - UI Bundles: 1.1.403
 - Claude module: 1.1.403

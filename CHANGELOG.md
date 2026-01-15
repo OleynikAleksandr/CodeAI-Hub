@@ -1,3 +1,8 @@
+## [1.1.420] - 2026-01-15
+
+### Fixed
+- **Project Manager**: replaced native selects with custom menus to prevent CEF crashes on workspace/initiative selection.
+
 ## [1.1.419] - 2026-01-15
 
 ### Fixed
