@@ -52,5 +52,5 @@
 2. [DONE] Git Commit: `fix(project-manager): replace native selects` (hash: 4647482e)
 
 ### Stream: Release 1.1.420 docs
-1. [TODO] Docs: обновить релизные заметки и систему под 1.1.420 — scope: `README.md`, `CHANGELOG.md`, `doc/`; expected commit message: `docs: update 1.1.420 release notes`
-2. [TODO] Git Commit: `docs: update 1.1.420 release notes` (hash: TBD)
+1. [DONE] Docs: обновить релизные заметки и систему под 1.1.420 — scope: `README.md`, `CHANGELOG.md`, `doc/`; expected commit message: `docs: update 1.1.420 release notes`
+2. [DONE] Git Commit: `docs: update 1.1.420 release notes` (hash: 9e9bd282)
