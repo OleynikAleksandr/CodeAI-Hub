@@ -120,15 +120,6 @@ export class ProjectManagerApi {
       vscode.postMessage({ type: "projects:pickFolder" });
       return;
     }
-
-    if (typeof window.prompt === "function") {
-      const path = window.prompt("Enter absolute path to workspace:");
-      if (path?.trim()) {
-        this.addProject(path.trim());
-      }
-      return;
-    }
-
     console.warn("[ProjectManagerApi] No folder picker available.");
   }
 

@@ -132,6 +132,10 @@ body {
 }
 
 .pm-context-select {
+  position: relative;
+}
+
+.pm-context-select__button {
   width: 100%;
   height: 36px;
   border-radius: 8px;
@@ -140,12 +144,66 @@ body {
   color: var(--pm-text-primary);
   font-size: 13px;
   padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+  cursor: pointer;
   outline: none;
 }
 
-.pm-context-select:disabled {
+.pm-context-select__button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.pm-context-select__label {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pm-context-select__chevron {
+  color: var(--pm-text-muted);
+  font-size: 12px;
+}
+
+.pm-context-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #0f151d;
+  border: 1px solid var(--pm-border-color);
+  border-radius: 10px;
+  box-shadow: var(--pm-shadow-soft);
+  padding: 6px 0;
+  z-index: 10;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.pm-context-option {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--pm-text-primary);
+  font-size: 13px;
+  padding: 8px 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pm-context-option:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.pm-context-option--active {
+  background: rgba(66, 201, 162, 0.16);
+  color: var(--pm-accent-strong);
 }
 
 .pm-sidebar__tree {

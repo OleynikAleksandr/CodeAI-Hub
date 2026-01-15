@@ -1,4 +1,5 @@
 import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Initiative, WorkspaceProject } from "../../types";
 
 interface SidebarProps {
@@ -28,6 +29,61 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const activeWorkspace = workspaces.find((workspace) => workspace.id === selectedWorkspaceId);
   const activeInitiative = initiatives.find((item) => item.id === selectedInitiativeId);
+  const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
+  const [isInitiativeMenuOpen, setIsInitiativeMenuOpen] = useState(false);
+  const workspaceMenuRef = useRef<HTMLDivElement>(null);
+  const initiativeMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      const targetNode = event.target as Node | null;
+      if (
+        isWorkspaceMenuOpen &&
+        workspaceMenuRef.current &&
+        targetNode &&
+        !workspaceMenuRef.current.contains(targetNode)
+      ) {
+        setIsWorkspaceMenuOpen(false);
+      }
+      if (
+        isInitiativeMenuOpen &&
+        initiativeMenuRef.current &&
+        targetNode &&
+        !initiativeMenuRef.current.contains(targetNode)
+      ) {
+        setIsInitiativeMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleDocumentClick);
+    return () => {
+      document.removeEventListener("click", handleDocumentClick);
+    };
+  }, [isWorkspaceMenuOpen, isInitiativeMenuOpen]);
+
+  const handleWorkspaceToggle = () => {
+    if (workspaces.length === 0) {
+      return;
+    }
+    setIsWorkspaceMenuOpen((prev) => !prev);
+  };
+
+  const handleInitiativeToggle = () => {
+    if (initiatives.length === 0) {
+      return;
+    }
+    setIsInitiativeMenuOpen((prev) => !prev);
+  };
+
+  const handleWorkspaceSelect = (id: string) => {
+    onSelectWorkspace?.(id);
+    setIsWorkspaceMenuOpen(false);
+  };
+
+  const handleInitiativeSelect = (id: string) => {
+    onSelectInitiative?.(id);
+    setIsInitiativeMenuOpen(false);
+  };
 
   const treeNodes = selectedInitiativeId
     ? [
@@ -61,26 +117,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
               Add
             </button>
           </div>
-          <select
-            aria-label="Workspace"
-            className="pm-context-select"
-            onChange={(event) => {
-              const nextId = event.target.value;
-              if (nextId) {
-                onSelectWorkspace?.(nextId);
-              }
-            }}
-            value={selectedWorkspaceId ?? ""}
-          >
-            <option disabled value="">
-              {workspaces.length === 0 ? "No workspaces yet" : "Select workspace"}
-            </option>
-            {workspaces.map((workspace) => (
-              <option key={workspace.id} value={workspace.id}>
-                {workspace.name}
-              </option>
-            ))}
-          </select>
+          <div className="pm-context-select" ref={workspaceMenuRef}>
+            <button
+              aria-expanded={isWorkspaceMenuOpen}
+              aria-haspopup="listbox"
+              className="pm-context-select__button"
+              disabled={workspaces.length === 0}
+              onClick={handleWorkspaceToggle}
+              type="button"
+            >
+              <span className="pm-context-select__label">
+                {activeWorkspace?.name ??
+                  (workspaces.length === 0 ? "No workspaces yet" : "Select workspace")}
+              </span>
+              <span className="pm-context-select__chevron" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+            {isWorkspaceMenuOpen ? (
+              <div className="pm-context-menu" role="listbox">
+                {workspaces.map((workspace) => (
+                  <button
+                    className={
+                      workspace.id === selectedWorkspaceId
+                        ? "pm-context-option pm-context-option--active"
+                        : "pm-context-option"
+                    }
+                    key={workspace.id}
+                    onClick={() => handleWorkspaceSelect(workspace.id)}
+                    type="button"
+                  >
+                    {workspace.name}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
         </div>
         <div className="pm-context-block">
           <div className="pm-context-row">
@@ -93,27 +165,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
               New
             </button>
           </div>
-          <select
-            aria-label="Initiative"
-            className="pm-context-select"
-            disabled={initiatives.length === 0}
-            onChange={(event) => {
-              const nextId = event.target.value;
-              if (nextId) {
-                onSelectInitiative?.(nextId);
-              }
-            }}
-            value={selectedInitiativeId ?? ""}
-          >
-            <option disabled value="">
-              {initiatives.length === 0 ? "No initiatives yet" : "Select initiative"}
-            </option>
-            {initiatives.map((initiative) => (
-              <option key={initiative.id} value={initiative.id}>
-                {initiative.name}
-              </option>
-            ))}
-          </select>
+          <div className="pm-context-select" ref={initiativeMenuRef}>
+            <button
+              aria-expanded={isInitiativeMenuOpen}
+              aria-haspopup="listbox"
+              className="pm-context-select__button"
+              disabled={initiatives.length === 0}
+              onClick={handleInitiativeToggle}
+              type="button"
+            >
+              <span className="pm-context-select__label">
+                {activeInitiative?.name ??
+                  (initiatives.length === 0 ? "No initiatives yet" : "Select initiative")}
+              </span>
+              <span className="pm-context-select__chevron" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+            {isInitiativeMenuOpen ? (
+              <div className="pm-context-menu" role="listbox">
+                {initiatives.map((initiative) => (
+                  <button
+                    className={
+                      initiative.id === selectedInitiativeId
+                        ? "pm-context-option pm-context-option--active"
+                        : "pm-context-option"
+                    }
+                    key={initiative.id}
+                    onClick={() => handleInitiativeSelect(initiative.id)}
+                    type="button"
+                  >
+                    {initiative.name}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
       <div className="pm-sidebar__tree">
