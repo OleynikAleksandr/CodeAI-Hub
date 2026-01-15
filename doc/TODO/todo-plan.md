@@ -45,4 +45,4 @@
 1. [DONE] UI: защитить workspace/initiative controls и fallback выбора папки — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/layout/sidebar.tsx`; expected commit message: `fix(project-manager): guard workspace controls`
 2. [DONE] Git Commit: `fix(project-manager): guard workspace controls` (hash: caf137f9)
 3. [DONE] Docs: обновить релизные заметки и систему под 1.1.419 — scope: `README.md`, `CHANGELOG.md`, `doc/`; expected commit message: `docs: update 1.1.419 release notes`
-4. [DONE] Git Commit: `docs: update 1.1.419 release notes` (hash: TBD)
+4. [DONE] Git Commit: `docs: update 1.1.419 release notes` (hash: d500a791)
