@@ -1,3 +1,8 @@
+## [1.1.417] - 2026-01-15
+
+### Changed
+- **Project Manager**: reset UI to a blank workbench canvas to start the SolidWorks-like Workflow Tree refactor.
+
 ## [1.1.416] - 2026-01-13
 
 ### Fixed

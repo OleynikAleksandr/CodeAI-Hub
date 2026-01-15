@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.6.0
-**Last Updated:** 2026-01-13
+**Last Updated:** 2026-01-15
 **Status:** Active reference
-**Release Focus:** v1.1.416 — Codex structured outputs: structured output больше не теряется между turn’ами (fix dedupe для повторяющихся `itemId`), чтобы partial upsert применялся детерминированно.
+**Release Focus:** v1.1.417 — Project Manager: UI reset to a blank workbench canvas (prep for SolidWorks-like Workflow Tree).
 
 ---
 
@@ -38,7 +38,7 @@ graph TD
 - **Core Bootstrap (v1.1.353 improvements)**: Ядро переведено на мульти-тенантную архитектуру. Рабочий каталог (`workspacePath`) теперь является свойством конкретной Сессии, а не глобальным параметром процесса. Это позволяет одному экземпляру Ядра обслуживать несколько проектов одновременно.
 - **Project Registry**: Внедрен сервис реестра проектов, сохраняющий историю воркспейсов в `~/.codeai-hub/state/projects.json`.
 - **RemoteBridge Decomposition**: Монолитный `RemoteBridge` разделен на специализированные хендлеры (`SessionRequestHandler`, `ProjectRequestHandler`, `SystemRequestHandler`, `HttpApiRouter`, `WebSocketManager`), что позволило обеспечить высокую поддерживаемость и соблюдение лимитов размера файлов (< 300 строк).
-- **UI Modularization**: Project Manager реализован как отдельный бандл с 7-секционной архитектурой Layout, обеспечивающей динамическую подстройку под контент и интеграцию с нативными диалогами выбора папок VS Code.
+- **UI Modularization**: Project Manager остаётся отдельным UI-бандлом; UI сброшен до чистого Workbench-холста для реализации SolidWorks-like Workflow Tree.
 - **Runtime installation flow**: скрипт `build-all.sh` теперь устанавливает Core в финальное место (`~/.codeai-hub/core/<platform>/<version>/`) сразу после сборки.
 - **Supervisor logging hygiene**: `CoreProcessManager` теперь инициализирует `supervisorLogger` с явными `string` типами (`info`/`error`). Это исключает случайные `[object Object]` вставки в Output Channel, когда Supervisor прокидывает структурированные объекты, и гарантирует одинаковый формат логов в VS Code и launcher.
 - **Port negotiation & shutdown**: перед запуском новой версии и расширение, и лаунчер отправляют `POST /api/v1/shutdown` действующему ядру, ждут graceful-stop и при необходимости добивают процесс по PID из `/api/v1/health`. Если порт занят посторонним приложением, менеджеры перебирают пул `8080 → 8081 → 8082 → … → 8092`, выбирают первый свободный вариант и фиксируют его в `~/.codeai-hub/state/runtime-registry.json (network.corePort)` и `CORE_PORT`, поэтому последующие клиенты мгновенно подключаются к актуальному сокету. Это же значение используется в health-мониторинге launcher’а и в UI, поэтому одновременный запуск Standalone + VSIX больше не блокирует обновления.
@@ -153,6 +153,9 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.417 - 2026-01-15)
+- **Project Manager workbench reset**: UI сброшен до чистого холста, чтобы начать реализацию SolidWorks-like Workflow Tree.
 
 ## Recent Changes (v1.1.416 - 2026-01-13)
 - **Codex structured output dedupe**: structured output события больше не подавляются между turn’ами при повторном `itemId`, чтобы `artifact-upsert` запускался при каждой явной правке/финализации.
