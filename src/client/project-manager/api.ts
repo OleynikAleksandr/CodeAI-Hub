@@ -27,8 +27,28 @@ type ProjectUpdatePayload = {
 
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const vscode = typeof (window as any).acquireVsCodeApi === "function" ? (window as any).acquireVsCodeApi() : null;
+type VscodeBridge = {
+  postMessage: (message: unknown) => void;
+};
+
+const resolveVscodeBridge = (): VscodeBridge | null => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const acquire = (window as any).acquireVsCodeApi;
+  if (typeof acquire !== "function") {
+    return null;
+  }
+  try {
+    const api = acquire();
+    if (api && typeof api.postMessage === "function") {
+      return api as VscodeBridge;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+};
+
+const vscode = resolveVscodeBridge();
 
 export class ProjectManagerApi {
   private socket: WebSocket | null = null;
@@ -46,8 +66,19 @@ export class ProjectManagerApi {
 
     window.addEventListener("message", (event) => {
       const message = event.data;
-      if (message.type === "projects:folderPicked" && message.payload?.path) {
-        this.addProject(message.payload.path);
+      if (
+        message &&
+        typeof message === "object" &&
+        "type" in message &&
+        message.type === "projects:folderPicked"
+      ) {
+        const payload = "payload" in message ? message.payload : null;
+        if (payload && typeof payload === "object" && "path" in payload) {
+          const path = payload.path;
+          if (typeof path === "string") {
+            this.addProject(path);
+          }
+        }
       }
     });
   }
@@ -85,14 +116,20 @@ export class ProjectManagerApi {
   }
 
   pickFolder(): void {
-    if (vscode) {
+    if (vscode?.postMessage) {
       vscode.postMessage({ type: "projects:pickFolder" });
-    } else {
+      return;
+    }
+
+    if (typeof window.prompt === "function") {
       const path = window.prompt("Enter absolute path to workspace:");
       if (path?.trim()) {
         this.addProject(path.trim());
       }
+      return;
     }
+
+    console.warn("[ProjectManagerApi] No folder picker available.");
   }
 
   listProjects(): void {

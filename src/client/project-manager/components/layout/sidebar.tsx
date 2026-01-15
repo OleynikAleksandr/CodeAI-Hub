@@ -72,11 +72,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }}
             value={selectedWorkspaceId ?? ""}
           >
-            {workspaces.length === 0 ? (
-              <option value="" disabled>
-                No workspaces yet
-              </option>
-            ) : null}
+            <option disabled value="">
+              {workspaces.length === 0 ? "No workspaces yet" : "Select workspace"}
+            </option>
             {workspaces.map((workspace) => (
               <option key={workspace.id} value={workspace.id}>
                 {workspace.name}
@@ -107,9 +105,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }}
             value={selectedInitiativeId ?? ""}
           >
-            {initiatives.length === 0 ? (
-              <option value="">No initiatives yet</option>
-            ) : null}
+            <option disabled value="">
+              {initiatives.length === 0 ? "No initiatives yet" : "Select initiative"}
+            </option>
             {initiatives.map((initiative) => (
               <option key={initiative.id} value={initiative.id}>
                 {initiative.name}
