@@ -1,3 +1,8 @@
+## [1.1.419] - 2026-01-15
+
+### Fixed
+- **Project Manager**: harden workspace/initiative selection and folder picker fallback to prevent UI crash on interactions.
+
 ## [1.1.418] - 2026-01-15
 
 ### Changed
