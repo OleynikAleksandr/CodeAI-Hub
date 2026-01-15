@@ -12,10 +12,12 @@
 - Зафиксирована модель “этапы = инструменты палитры” (как в SolidWorks): инструмент контекстный, создаёт/открывает узел шага, активируется по зависимостям.
 - Переименован первый шаг `Idea` → `Описание`.
 - Зафиксированы правила: “источник правды — шаг, который сформировал сущность”, автогенерация `Clusters/Modules` из артефактов диаграмм, `OUTDATED` как “needs rebuild”.
+- Уточнены UX-решения: `Cluster/Module` материализуются сразу после `Диаграммы` в Draft (`TODO`), удаление из диаграммы = физическое удаление + пересчёт зависимостей + подсветка проблем.
 - Гейты: `./scripts/check-architecture.sh` (pass with warnings), `npx ultracite check` (pass), `npx ts-prune` (отчёт), `npx jscpd` (pass), `npm run check:links` (pass).
 
 ## Git commits
 - `a80bf475 docs: model workflow as tool palette`
+- `e01194ba docs: define diagram-driven draft nodes`
 
 ---
 
