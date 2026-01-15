@@ -1,3 +1,8 @@
+## [1.1.418] - 2026-01-15
+
+### Changed
+- **Project Manager**: Workflow Tree workbench layout with context sidebar, tool palette, status bar, and sessions/artifacts split.
+
 ## [1.1.417] - 2026-01-15
 
 ### Changed

@@ -2,18 +2,27 @@
 
 /* ========== CSS Variables (Theme Tokens) ========== */
 :root {
-  --pm-sidebar-width-expanded: 120px;
-  --pm-sidebar-width-collapsed: 40px;
-  --pm-toolbar-height: 40px;
-  --pm-resizer-width: 4px;
-  --pm-panel-min-width: 100px;
-  --pm-bg-primary: #1e1e1e;
-  --pm-bg-secondary: #252526;
-  --pm-border-color: #3c3c3c;
-  --pm-text-primary: #cccccc;
-  --pm-icon-color: #858585;
-  --pm-icon-hover: #ffffff;
-  --pm-transition-duration: 0.2s;
+  --pm-font-family:
+    "Space Grotesk", "Sora", "IBM Plex Sans", "Segoe UI", sans-serif;
+  --pm-sidebar-min-width: 220px;
+  --pm-sidebar-max-width: 420px;
+  --pm-toolbar-height: 44px;
+  --pm-status-bar-height: 44px;
+  --pm-tool-height: 32px;
+  --pm-resizer-width: 6px;
+  --pm-panel-min-width: 240px;
+  --pm-bg-primary: #0f1216;
+  --pm-bg-secondary: #151a20;
+  --pm-bg-surface: #0f141b;
+  --pm-bg-panel: #101823;
+  --pm-border-color: #26303b;
+  --pm-border-strong: #354152;
+  --pm-text-primary: #e7eaee;
+  --pm-text-muted: #a8b0ba;
+  --pm-accent: #42c9a2;
+  --pm-accent-strong: #5fe3ba;
+  --pm-shadow-soft: 0 18px 40px rgba(7, 10, 15, 0.45);
+  --pm-shadow-inset: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 /* ========== Reset & Base ========== */
@@ -23,12 +32,26 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--pm-bg-primary);
+  background:
+    radial-gradient(
+      1200px at 12% -10%,
+      rgba(66, 201, 162, 0.16),
+      transparent 55%
+    ),
+    radial-gradient(
+      900px at 110% 10%,
+      rgba(64, 120, 210, 0.12),
+      transparent 55%
+    ), #0b0d12;
   color: var(--pm-text-primary);
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-    Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family: var(--pm-font-family);
   overflow: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 #root {
@@ -36,118 +59,260 @@ body {
   height: 100%;
 }
 
-/* ========== Empty Workbench (MVP reset) ========== */
+/* ========== Workbench Layout ========== */
 .pm-workbench {
   width: 100%;
   height: 100%;
 }
 
-/* ========== Main Layout (Grid) ========== */
 .pm-layout {
-  display: grid;
-  grid-template-columns: var(--pm-sidebar-width) 1fr;
+  display: flex;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-color: var(--pm-bg-primary);
 }
 
-.pm-layout--collapsed {
-  --pm-sidebar-width: var(--pm-sidebar-width-collapsed);
-}
-
-.pm-layout--expanded {
-  --pm-sidebar-width: var(--pm-sidebar-width-expanded);
-}
-
-/* ========== Sidebar (Section 1) ========== */
+/* ========== Sidebar (Tree + Context) ========== */
 .pm-sidebar {
   display: flex;
   flex-direction: column;
-  background-color: var(--pm-bg-secondary);
+  width: max-content;
+  min-width: var(--pm-sidebar-min-width);
+  max-width: var(--pm-sidebar-max-width);
+  background: var(--pm-bg-secondary);
   border-right: 1px solid var(--pm-border-color);
-  transition: width var(--pm-transition-duration) ease;
-  overflow: hidden;
+  box-shadow: var(--pm-shadow-inset);
 }
 
-.pm-sidebar__toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 40px;
-  padding: 8px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--pm-icon-color);
-  transition: color 0.15s ease;
-}
-
-.pm-sidebar__toggle:hover {
-  color: var(--pm-icon-hover);
-}
-
-.pm-sidebar__content {
-  flex: 1;
-  padding: 8px;
-  overflow-y: auto;
-}
-
-/* ========== Main Area (Section 2) ========== */
-.pm-main-area {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* ========== Toolbar (Section 3) ========== */
-.pm-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  height: var(--pm-toolbar-height);
-  min-height: var(--pm-toolbar-height);
-  padding: 0 12px;
-  background-color: var(--pm-bg-secondary);
+.pm-sidebar__context {
+  padding: 12px 12px 8px;
   border-bottom: 1px solid var(--pm-border-color);
 }
 
-.pm-toolbar__settings {
+.pm-context-block + .pm-context-block {
+  margin-top: 12px;
+}
+
+.pm-context-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 28px;
+  justify-content: space-between;
   height: 28px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.pm-context-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pm-text-muted);
+}
+
+.pm-context-action {
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--pm-border-color);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--pm-text-primary);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   cursor: pointer;
-  color: var(--pm-icon-color);
   transition:
+    border-color 0.15s ease,
     color 0.15s ease,
-    background-color 0.15s ease;
+    background 0.15s ease;
 }
 
-.pm-toolbar__settings:hover {
-  color: var(--pm-icon-hover);
-  background-color: rgba(255, 255, 255, 0.1);
+.pm-context-action:hover {
+  border-color: var(--pm-accent);
+  color: var(--pm-accent-strong);
+  background: rgba(66, 201, 162, 0.12);
 }
 
-/* ========== Panel Container (Sections 4, 5, 6) ========== */
+.pm-context-select {
+  width: 100%;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--pm-border-color);
+  background: var(--pm-bg-surface);
+  color: var(--pm-text-primary);
+  font-size: 13px;
+  padding: 0 10px;
+  outline: none;
+}
+
+.pm-context-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pm-sidebar__tree {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.pm-tree__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-bottom: 1px solid var(--pm-border-color);
+}
+
+.pm-tree__title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--pm-text-muted);
+}
+
+.pm-tree__subtitle {
+  font-size: 13px;
+  color: var(--pm-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pm-tree__empty {
+  padding: 16px 12px;
+  font-size: 13px;
+  color: var(--pm-text-muted);
+}
+
+.pm-tree__list {
+  list-style: none;
+  padding: 10px 0 16px;
+  margin: 0;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.pm-tree__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--pm-text-primary);
+  cursor: default;
+  min-width: 0;
+}
+
+.pm-tree__item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.pm-tree__status {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #6b7483;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.pm-tree__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pm-tree__item--active .pm-tree__status {
+  background: var(--pm-accent-strong);
+  box-shadow: 0 0 0 4px rgba(95, 227, 186, 0.18);
+}
+
+.pm-tree__item--todo .pm-tree__status {
+  background: #d9a441;
+}
+
+.pm-tree__item--blocked .pm-tree__status {
+  background: #e06363;
+}
+
+.pm-tree__item--draft .pm-tree__status {
+  background: #7b8aa1;
+}
+
+/* ========== Main Area ========== */
+.pm-main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--pm-bg-primary);
+}
+
+/* ========== Tool Palette ========== */
+.pm-tool-palette {
+  display: flex;
+  align-items: center;
+  height: var(--pm-toolbar-height);
+  min-height: var(--pm-toolbar-height);
+  padding: 0 12px;
+  background: var(--pm-bg-secondary);
+  border-bottom: 1px solid var(--pm-border-color);
+}
+
+.pm-tool-palette__track {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.pm-tool {
+  height: var(--pm-tool-height);
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--pm-text-muted);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.pm-tool:hover {
+  color: var(--pm-text-primary);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.pm-tool--active {
+  border-color: rgba(66, 201, 162, 0.6);
+  background: rgba(66, 201, 162, 0.16);
+  color: var(--pm-accent-strong);
+}
+
+/* ========== Split Panels ========== */
 .pm-panel-container {
   display: flex;
   flex: 1;
   overflow: hidden;
+  background: var(--pm-bg-primary);
+  min-width: 0;
 }
 
 .pm-panel {
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   min-width: var(--pm-panel-min-width);
-  overflow: hidden;
+  background: var(--pm-bg-panel);
   border-right: 1px solid var(--pm-border-color);
+  box-shadow: var(--pm-shadow-inset);
 }
 
 .pm-panel:last-child {
@@ -155,25 +320,35 @@ body {
 }
 
 .pm-panel__header {
-  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 14px;
   font-size: 12px;
-  font-weight: 500;
-  color: var(--pm-text-primary);
-  background-color: var(--pm-bg-secondary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pm-text-muted);
   border-bottom: 1px solid var(--pm-border-color);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .pm-panel__content {
   flex: 1;
-  padding: 12px;
+  padding: 16px;
   overflow-y: auto;
+}
+
+.pm-placeholder {
+  color: var(--pm-text-muted);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 /* ========== Vertical Resizer ========== */
 .pm-resizer {
   width: var(--pm-resizer-width);
   min-width: var(--pm-resizer-width);
-  background-color: var(--pm-border-color);
+  background: var(--pm-border-color);
   cursor: col-resize;
   transition: background-color 0.15s ease;
   user-select: none;
@@ -181,17 +356,50 @@ body {
 
 .pm-resizer:hover,
 .pm-resizer--active {
-  background-color: #007acc;
+  background: var(--pm-accent);
 }
 
-/* ========== Utility Classes ========== */
-.pm-icon {
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
+/* ========== Status Bar ========== */
+.pm-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--pm-status-bar-height);
+  min-height: var(--pm-status-bar-height);
+  padding: 0 16px;
+  background: var(--pm-bg-secondary);
+  border-top: 1px solid var(--pm-border-color);
+  color: var(--pm-text-primary);
+  font-size: 12px;
 }
 
-.pm-icon--lg {
-  width: 20px;
-  height: 20px;
+.pm-status-bar__left,
+.pm-status-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pm-status-pill {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(66, 201, 162, 0.14);
+  color: var(--pm-accent-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+}
+
+.pm-status-divider {
+  color: var(--pm-text-muted);
+}
+
+.pm-status-text {
+  color: var(--pm-text-primary);
+}
+
+.pm-status-hint {
+  color: var(--pm-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }

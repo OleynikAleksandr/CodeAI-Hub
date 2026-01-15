@@ -1,42 +1,35 @@
 import type React from "react";
-import { SettingsIcon } from "../icons/settings-icon";
 
 interface ToolbarProps {
-  onSettingsClick?: () => void;
-  title?: string;
+  tools: readonly string[];
+  activeTool?: string;
+  onToolSelect?: (tool: string) => void;
 }
 
 /**
- * Toolbar component (Section 3)
- * Displays title and settings icon in VS Code style
+ * Tool palette (Section 3)
+ * Displays contextual workflow tools.
  */
 export const Toolbar: React.FC<ToolbarProps> = ({
-  onSettingsClick,
-  title = "Project Manager",
-}) => {
-  const handleSettingsClick = () => {
-    if (onSettingsClick) {
-      onSettingsClick();
-    }
-  };
-
-  return (
-    <header className="pm-toolbar">
-      <div className="pm-toolbar__title-group">
-        <h1 className="pm-toolbar__title">{title}</h1>
-        <button
-          aria-label="Open settings"
-          className="pm-toolbar__settings"
-          onClick={handleSettingsClick}
-          title="Settings"
-          type="button"
-        >
-          <SettingsIcon size={16} />
-        </button>
-      </div>
-      <div className="pm-toolbar__actions">
-        {/* Future: Other header actions */}
-      </div>
-    </header>
-  );
-};
+  tools,
+  activeTool,
+  onToolSelect,
+}) => (
+  <header className="pm-tool-palette">
+    <div className="pm-tool-palette__track">
+      {tools.map((tool) => {
+        const isActive = tool === activeTool;
+        return (
+          <button
+            className={isActive ? "pm-tool pm-tool--active" : "pm-tool"}
+            key={tool}
+            onClick={() => onToolSelect?.(tool)}
+            type="button"
+          >
+            <span className="pm-tool__label">{tool}</span>
+          </button>
+        );
+      })}
+    </div>
+  </header>
+);

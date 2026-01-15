@@ -35,3 +35,8 @@
 ### Stream: Compatibility + cleanup
 1. [DONE] Compatibility: поддержать new→legacy fallback на переходный период, добавить защиту от silent-drop — scope: `src/client/ui/src/services/idea-collector-artifact.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `doc/Architecture/Architecture.md`; expected commit message: `fix: prevent silent artifact drops (vB)`
 2. [DONE] Git Commit: `fix: prevent silent artifact drops (vB)` (hash: d9ddc01d)
+
+## Phase 30 — Workflow Tree Workbench Shell (owner: Oleksandr, updated: 2026-01-15)
+### Stream: Workbench shell
+1. [DONE] UI: собрать Workbench-раскладку (контекстный сайдбар, tool palette, status bar, сплит сессии/артефактов + ресайз) с синхронизацией доков — scope: `src/client/project-manager/`, `packages/ui/project-manager/`, `docs (README.md, CHANGELOG.md, doc/)`; expected commit message: `feat(project-manager): workflow tree workbench shell`
+2. [DONE] Git Commit: `feat(project-manager): workflow tree workbench shell` (hash: TBD)

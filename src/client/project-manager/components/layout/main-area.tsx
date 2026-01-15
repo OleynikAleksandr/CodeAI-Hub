@@ -1,14 +1,14 @@
 import type React from "react";
+import { useState } from "react";
 import { PanelContainer } from "./panel-container";
 import { StatusBar } from "./status-bar";
 import { Toolbar } from "./toolbar";
-import type { WorkspaceProject } from "../../types";
 
 interface MainAreaProps {
-  sizes: [number, number, number];
-  onSizeChange: (index: 0 | 1, delta: number, containerWidth: number) => void;
-  activeProjectName?: string;
-  activeProject?: WorkspaceProject;
+  sizes: [number, number];
+  onSizeChange: (index: 0, delta: number, containerWidth: number) => void;
+  activeWorkspaceName?: string;
+  activeInitiativeName?: string;
 }
 
 /**
@@ -18,25 +18,23 @@ interface MainAreaProps {
 export const MainArea: React.FC<MainAreaProps> = ({
   sizes,
   onSizeChange,
-  activeProjectName,
-  activeProject,
+  activeWorkspaceName,
+  activeInitiativeName,
 }) => {
-  const handleSettingsClick = () => {
-    // Future: Open settings modal/panel
-  };
+  const tools = ["Description", "Diagrams", "Spec", "Plan", "Execute"];
+  const [activeTool, setActiveTool] = useState<string>(tools[0] ?? "Description");
 
   return (
     <main className="pm-main-area">
-      <Toolbar
-        onSettingsClick={handleSettingsClick}
-        title={activeProjectName}
-      />
+      <Toolbar activeTool={activeTool} onToolSelect={setActiveTool} tools={tools} />
       <PanelContainer
-        activeProject={activeProject}
         onSizeChange={onSizeChange}
         sizes={sizes}
       />
-      <StatusBar />
+      <StatusBar
+        initiativeName={activeInitiativeName}
+        workspaceName={activeWorkspaceName}
+      />
     </main>
   );
 };
