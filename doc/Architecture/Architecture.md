@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-15
 **Status:** Active reference
-**Release Focus:** v1.1.419 — Project Manager: hardened workspace/initiative controls and folder picker fallback (no UI crash).
+**Release Focus:** v1.1.420 — Project Manager: кастомные меню вместо нативных select (устранение крашей CEF).
 
 ---
 
@@ -153,6 +153,9 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.420 - 2026-01-15)
+- **Project Manager UI stability**: нативные select заменены на кастомные меню, чтобы выбор workspace/initiative не крашил CEF.
 
 ## Recent Changes (v1.1.419 - 2026-01-15)
 - **Project Manager UI stability**: усилены проверки workspace/initiative controls и fallback выбора папки, чтобы клики не приводили к крашу.
