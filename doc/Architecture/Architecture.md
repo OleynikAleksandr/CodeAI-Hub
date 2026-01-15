@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-15
 **Status:** Active reference
-**Release Focus:** v1.1.418 — Project Manager: Workflow Tree workbench layout (context sidebar, tool palette, status bar, sessions/artifacts split).
+**Release Focus:** v1.1.419 — Project Manager: hardened workspace/initiative controls and folder picker fallback (no UI crash).
 
 ---
 
@@ -153,6 +153,9 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.419 - 2026-01-15)
+- **Project Manager UI stability**: усилены проверки workspace/initiative controls и fallback выбора папки, чтобы клики не приводили к крашу.
 
 ## Recent Changes (v1.1.418 - 2026-01-15)
 - **Project Manager workbench layout**: добавлены контекстный сайдбар, tool palette, status bar и центральный сплит сессии/артефактов для Workflow Tree.
