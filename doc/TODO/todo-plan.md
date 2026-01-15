@@ -39,4 +39,4 @@
 ## Phase 30 — Workflow Tree Workbench Shell (owner: Oleksandr, updated: 2026-01-15)
 ### Stream: Workbench shell
 1. [DONE] UI: собрать Workbench-раскладку (контекстный сайдбар, tool palette, status bar, сплит сессии/артефактов + ресайз) с синхронизацией доков — scope: `src/client/project-manager/`, `packages/ui/project-manager/`, `docs (README.md, CHANGELOG.md, doc/)`; expected commit message: `feat(project-manager): workflow tree workbench shell`
-2. [DONE] Git Commit: `feat(project-manager): workflow tree workbench shell` (hash: TBD)
+2. [DONE] Git Commit: `feat(project-manager): workflow tree workbench shell` (hash: 0b690e83)
