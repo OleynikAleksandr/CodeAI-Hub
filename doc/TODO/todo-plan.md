@@ -96,3 +96,12 @@
 ### Stream: Release 1.1.424 build
 1. [DONE] Release: bump + build-all артефакты под 1.1.424 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.424`
 2. [DONE] Git Commit: `chore(release): bump 1.1.424` (hash: d7d69ccf)
+
+## Phase 33 — SolidWorks-Flow Release Docs + GitHub Push (owner: Oleksandr, updated: 2026-01-16)
+### Stream: SolidWorks-Flow release docs
+1. [TODO] Docs: актуализировать SolidWorks-Flow под релиз 1.1.424 — scope: `doc/SolidWorks-Flow/README.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: update solidworks-flow 1.1.424 notes`
+2. [TODO] Git Commit: `docs: update solidworks-flow 1.1.424 notes` (hash: TBD)
+
+### Stream: Release notes refresh
+1. [TODO] Docs: уточнить релизные заметки под 1.1.424 — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: refine 1.1.424 release notes`
+2. [TODO] Git Commit: `docs: refine 1.1.424 release notes` (hash: TBD)
