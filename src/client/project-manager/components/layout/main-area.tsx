@@ -19,8 +19,13 @@ export const MainArea: React.FC<MainAreaProps> = ({
   onSizeChange,
   activeWorkspaceName,
 }) => {
-  const tools = ["Description", "Diagrams", "Spec", "Plan", "Execute"];
-  const [activeTool, setActiveTool] = useState<string>(tools[0] ?? "Description");
+  // NOTE (MVP): Tool palette will be driven by the selected node in the real Workflow Tree
+  // (gated by artifacts/status). The static tool list was only used during early layout work
+  // and is intentionally disabled to avoid implying functionality that isn't wired yet.
+  //
+  // const tools = ["Description", "Diagrams", "Spec", "Plan", "Execute"] as const;
+  const tools: readonly string[] = [];
+  const [activeTool, setActiveTool] = useState<string | undefined>(undefined);
 
   return (
     <main className="pm-main-area">

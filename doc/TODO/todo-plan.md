@@ -109,8 +109,8 @@
 
 ## Phase 34 — Project Manager Workflow Bootstrap + Release 1.1.425 (owner: Oleksandr, updated: 2026-01-16)
 ### Stream: Workflow Tree canon
-1. [IN_PROGRESS] Docs: унифицировать Workflow Tree документ под MVP Project Manager + привязка к runtime артефактам — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: consolidate workflow tree mvp`
-2. [TODO] Git Commit: `docs: consolidate workflow tree mvp` (hash: TBD)
+1. [DONE] Docs: унифицировать Workflow Tree документ под MVP Project Manager + привязка к runtime артефактам — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: consolidate workflow tree mvp`
+2. [DONE] Git Commit: `docs: consolidate workflow tree mvp` (hash: 2bf21d2e)
 
 ### Stream: Disable mock workflow tree
 1. [IN_PROGRESS] UI: показывать только корень workspace (без моковых шагов/модулей/tools) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): hide mock workflow tree`
