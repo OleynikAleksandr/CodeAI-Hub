@@ -24,8 +24,8 @@
 
 ## Phase 39 — Release 1.1.427 (owner: Oleksandr, updated: 2026-01-16)
 ### Stream: Release notes
-1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.427 release notes`
-2. [TODO] Git Commit: `docs: update 1.1.427 release notes` (hash: TBD)
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.427 release notes`
+2. [DONE] Git Commit: `docs: update 1.1.427 release notes` (hash: 8c8675ae)
 
 ### Stream: Release architecture docs
 1. [TODO] Docs: обновить системную архитектуру под 1.1.427 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.427 architecture notes`
