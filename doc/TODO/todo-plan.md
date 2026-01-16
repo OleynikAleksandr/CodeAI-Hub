@@ -21,3 +21,16 @@
 2. [DONE] Git Commit: `fix(project-manager): restore split panels` (hash: d1676f3c)
 3. [DONE] UI: использовать fallback httpUrl для загрузки анкеты Description без bridge config — scope: `src/client/project-manager/services/description-questionnaire-utils.ts`; expected commit message: `fix(project-manager): fallback core http url`
 4. [DONE] Git Commit: `fix(project-manager): fallback core http url` (hash: bf920a92)
+
+## Phase 39 — Release 1.1.427 (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Release notes
+1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.427 release notes`
+2. [TODO] Git Commit: `docs: update 1.1.427 release notes` (hash: TBD)
+
+### Stream: Release architecture docs
+1. [TODO] Docs: обновить системную архитектуру под 1.1.427 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.427 architecture notes`
+2. [TODO] Git Commit: `docs: update 1.1.427 architecture notes` (hash: TBD)
+
+### Stream: Release 1.1.427 build
+1. [TODO] Release: bump + build-all артефакты под 1.1.427 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.427`
+2. [TODO] Git Commit: `chore(release): bump 1.1.427` (hash: TBD)
