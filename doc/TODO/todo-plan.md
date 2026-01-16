@@ -90,9 +90,9 @@
 ### Stream: Release 1.1.424 docs
 1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.424 release notes`
 2. [DONE] Git Commit: `docs: update 1.1.424 release notes` (hash: 4e556a10)
-3. [IN_PROGRESS] Docs: обновить системную архитектуру под 1.1.424 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.424 architecture notes`
-4. [TODO] Git Commit: `docs: update 1.1.424 architecture notes` (hash: TBD)
+3. [DONE] Docs: обновить системную архитектуру под 1.1.424 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.424 architecture notes`
+4. [DONE] Git Commit: `docs: update 1.1.424 architecture notes` (hash: 4b6381bf)
 
 ### Stream: Release 1.1.424 build
-1. [TODO] Release: bump + build-all артефакты под 1.1.424 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.424`
+1. [IN_PROGRESS] Release: bump + build-all артефакты под 1.1.424 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.424`
 2. [TODO] Git Commit: `chore(release): bump 1.1.424` (hash: TBD)
