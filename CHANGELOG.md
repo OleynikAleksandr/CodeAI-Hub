@@ -2,6 +2,7 @@
 
 ### Changed
 - **Project Manager**: Spec/Plan/Execute выровнены по оси маркера модуля; Orchestration остаётся со смещением.
+- **SolidWorks-Flow docs**: обновлены правила визуального выравнивания модульных шагов в Workflow Tree.
 
 ## [1.1.423] - 2026-01-16
 

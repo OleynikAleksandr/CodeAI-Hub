@@ -99,9 +99,9 @@
 
 ## Phase 33 — SolidWorks-Flow Release Docs + GitHub Push (owner: Oleksandr, updated: 2026-01-16)
 ### Stream: SolidWorks-Flow release docs
-1. [TODO] Docs: актуализировать SolidWorks-Flow под релиз 1.1.424 — scope: `doc/SolidWorks-Flow/README.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: update solidworks-flow 1.1.424 notes`
-2. [TODO] Git Commit: `docs: update solidworks-flow 1.1.424 notes` (hash: TBD)
+1. [DONE] Docs: актуализировать SolidWorks-Flow под релиз 1.1.424 — scope: `doc/SolidWorks-Flow/README.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: update solidworks-flow 1.1.424 notes`
+2. [DONE] Git Commit: `docs: update solidworks-flow 1.1.424 notes` (hash: d1f09bcb)
 
 ### Stream: Release notes refresh
-1. [TODO] Docs: уточнить релизные заметки под 1.1.424 — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: refine 1.1.424 release notes`
+1. [IN_PROGRESS] Docs: уточнить релизные заметки под 1.1.424 — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: refine 1.1.424 release notes`
 2. [TODO] Git Commit: `docs: refine 1.1.424 release notes` (hash: TBD)
