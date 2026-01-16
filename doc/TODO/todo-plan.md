@@ -51,3 +51,8 @@
 ### Stream: Release 1.1.428 build
 1. [DONE] Release: bump + build-all артефакты под 1.1.428 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.428`
 2. [DONE] Git Commit: `chore(release): bump 1.1.428` (hash: de24e0c6)
+
+## Phase 41 — Fix Description questionnaire submission (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Idea Collector session creation
+1. [TODO] Fix: надёжное создание idea-сессии и выбор доступного провайдера при отправке анкеты — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/api.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(project-manager): make idea collector session start`
+2. [TODO] Git Commit: `fix(project-manager): make idea collector session start` (hash: TBD)
