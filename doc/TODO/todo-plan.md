@@ -73,9 +73,9 @@
 2. [DONE] Git Commit: `feat(project-manager): align tree markers` (hash: 2e50cf96)
 
 ### Stream: Release 1.1.423 docs
-1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.423 release notes`
-2. [TODO] Git Commit: `docs: update 1.1.423 release notes` (hash: TBD)
-3. [TODO] Docs: обновить системную архитектуру под 1.1.423 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.423 architecture notes`
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.423 release notes`
+2. [DONE] Git Commit: `docs: update 1.1.423 release notes` (hash: 310da73d)
+3. [IN_PROGRESS] Docs: обновить системную архитектуру под 1.1.423 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.423 architecture notes`
 4. [TODO] Git Commit: `docs: update 1.1.423 architecture notes` (hash: TBD)
 
 ### Stream: Release 1.1.423 build
