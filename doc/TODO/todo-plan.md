@@ -105,3 +105,17 @@
 ### Stream: Release notes refresh
 1. [DONE] Docs: уточнить релизные заметки под 1.1.424 — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: refine 1.1.424 release notes`
 2. [DONE] Git Commit: `docs: refine 1.1.424 release notes` (hash: 4b22a490)
+
+
+## Phase 34 — Project Manager Workflow Bootstrap + Release 1.1.425 (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Workflow Tree canon
+1. [IN_PROGRESS] Docs: унифицировать Workflow Tree документ под MVP Project Manager + привязка к runtime артефактам — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: consolidate workflow tree mvp`
+2. [TODO] Git Commit: `docs: consolidate workflow tree mvp` (hash: TBD)
+
+### Stream: Disable mock workflow tree
+1. [IN_PROGRESS] UI: показывать только корень workspace (без моковых шагов/модулей/tools) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): hide mock workflow tree`
+2. [TODO] Git Commit: `fix(project-manager): hide mock workflow tree` (hash: TBD)
+
+### Stream: Release 1.1.425 build
+1. [TODO] Release: bump + build-all артефакты под 1.1.425 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.425`
+2. [TODO] Git Commit: `chore(release): bump 1.1.425` (hash: TBD)
