@@ -37,8 +37,8 @@
 
 ## Phase 40 — Project Manager Idea Collector submission + Release 1.1.428 (owner: Oleksandr, updated: 2026-01-16)
 ### Stream: Description questionnaire submit
-1. [IN_PROGRESS] UI: автосохранение + отправка анкеты Description в Idea Collector — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/api.ts`; expected commit message: `fix(project-manager): submit description questionnaire`
-2. [TODO] Git Commit: `fix(project-manager): submit description questionnaire` (hash: TBD)
+1. [DONE] UI: автосохранение + отправка анкеты Description в Idea Collector — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/api.ts`; expected commit message: `fix(project-manager): submit description questionnaire`
+2. [DONE] Git Commit: `fix(project-manager): submit description questionnaire` (hash: 39fa2cc4)
 
 ### Stream: Release 1.1.428 notes
 1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.428 release notes`
