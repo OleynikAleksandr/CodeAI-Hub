@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.6.0
-**Last Updated:** 2026-01-15
+**Last Updated:** 2026-01-16
 **Status:** Active reference
-**Release Focus:** v1.1.420 — Project Manager: кастомные меню вместо нативных select (устранение крашей CEF).
+**Release Focus:** v1.1.421 — Project Manager: упрощение контекста (Workspace-only) и полноэкранное меню выбора.
 
 ---
 
@@ -153,6 +153,9 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.421 - 2026-01-16)
+- **Project Manager Workbench**: убран контекст `Initiative` (Workspace-only); селектор workspace открывает полноэкранное меню со списком и действиями (Add/Fork/New).
 
 ## Recent Changes (v1.1.420 - 2026-01-15)
 - **Project Manager UI stability**: нативные select заменены на кастомные меню, чтобы выбор workspace/initiative не крашил CEF.
