@@ -22,6 +22,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   workspaceName,
 }) => {
   const [expandedNodes, setExpandedNodes] = useState<Readonly<Record<string, boolean>>>({});
+  const baseIndent = 12;
+  const depthIndent = 16 / 1.5;
 
   useEffect(() => {
     if (!selectedWorkspaceId) {
@@ -121,7 +123,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
             <li
               className={`pm-tree__item pm-tree__item--${node.status}`}
               key={node.id}
-              style={{ paddingLeft: `${12 + node.visualDepth * 16}px` }}
+              style={{ paddingLeft: `${baseIndent + node.visualDepth * depthIndent}px` }}
             >
               {node.isCollapsible ? (
                 <button
@@ -152,4 +154,3 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     </div>
   );
 };
-

@@ -66,3 +66,18 @@
 2. [DONE] Git Commit: `feat(project-manager): collapsible workflow tree layout` (hash: 72e1ac93)
 3. [DONE] Release: bump + build-all артефакты под 1.1.422 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.422`
 4. [DONE] Git Commit: `chore(release): bump 1.1.422` (hash: 0344af1e)
+
+## Phase 31 — Workflow Tree Marker Alignment + Release 1.1.423 (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Tree marker alignment
+1. [TODO] UI: увеличить треугольники, выровнять оси маркеров (triangle/dot) и уменьшить шаг смещения в дереве — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `feat(project-manager): align tree markers`
+2. [TODO] Git Commit: `feat(project-manager): align tree markers` (hash: TBD)
+
+### Stream: Release 1.1.423 docs
+1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.423 release notes`
+2. [TODO] Git Commit: `docs: update 1.1.423 release notes` (hash: TBD)
+3. [TODO] Docs: обновить системную архитектуру под 1.1.423 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.423 architecture notes`
+4. [TODO] Git Commit: `docs: update 1.1.423 architecture notes` (hash: TBD)
+
+### Stream: Release 1.1.423 build
+1. [TODO] Release: bump + build-all артефакты под 1.1.423 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.423`
+2. [TODO] Git Commit: `chore(release): bump 1.1.423` (hash: TBD)
