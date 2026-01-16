@@ -32,7 +32,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setActiveTool((current) => current ?? "Description");
   }, [activeWorkspace?.id]);
 
-  const showQuestionnaire = activeTool === "Description";
+  const showDescriptionQuestionnaire = activeTool === "Description";
 
   return (
     <main className="pm-main-area">
@@ -41,7 +41,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
         onToolSelect={setActiveTool}
         tools={tools}
       />
-      {showQuestionnaire ? (
+      {showDescriptionQuestionnaire ? (
         <div className="pm-panel-container">
           <div className="pm-panel__content">
             <DescriptionQuestionnairePanel
