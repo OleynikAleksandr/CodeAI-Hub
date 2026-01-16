@@ -54,3 +54,9 @@
 ### Stream: Release 1.1.420 docs
 1. [DONE] Docs: обновить релизные заметки и систему под 1.1.420 — scope: `README.md`, `CHANGELOG.md`, `doc/`; expected commit message: `docs: update 1.1.420 release notes`
 2. [DONE] Git Commit: `docs: update 1.1.420 release notes` (hash: 9e9bd282)
+
+### Stream: Workspace-only Workbench + Release 1.1.421
+1. [DONE] UI: убрать сущность Initiative и сделать полноэкранный workspace menu (Add/Fork/New) — scope: `src/client/project-manager/components/layout/{main-layout,sidebar,status-bar}.tsx`, `src/client/project-manager/types.ts`, `packages/ui/project-manager/styles.css`, `doc/SolidWorks-Flow/`, `README.md`, `CHANGELOG.md`, `doc/`; expected commit message: `feat(project-manager): workspace-only workbench menu`
+2. [DONE] Git Commit: `feat(project-manager): workspace-only workbench menu` (hash: 361aeca6)
+3. [DONE] Release: bump + build-all артефакты под 1.1.421 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.421`
+4. [DONE] Git Commit: `chore(release): bump 1.1.421` (hash: 318bab89)
