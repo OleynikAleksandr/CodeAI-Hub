@@ -103,5 +103,5 @@
 2. [DONE] Git Commit: `docs: update solidworks-flow 1.1.424 notes` (hash: d1f09bcb)
 
 ### Stream: Release notes refresh
-1. [IN_PROGRESS] Docs: уточнить релизные заметки под 1.1.424 — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: refine 1.1.424 release notes`
-2. [TODO] Git Commit: `docs: refine 1.1.424 release notes` (hash: TBD)
+1. [DONE] Docs: уточнить релизные заметки под 1.1.424 — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: refine 1.1.424 release notes`
+2. [DONE] Git Commit: `docs: refine 1.1.424 release notes` (hash: 4b22a490)
