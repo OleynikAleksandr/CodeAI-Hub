@@ -87,7 +87,7 @@ export const DescriptionQuestionnairePanel: React.FC<
   }, [canLoad, resolvedWorkspaceName, workspacePath]);
 
   const title = useMemo(
-    () => `Description — ${resolvedWorkspaceName}`,
+    () => `Description questionnaire — ${resolvedWorkspaceName}`,
     [resolvedWorkspaceName]
   );
 
@@ -120,7 +120,7 @@ export const DescriptionQuestionnairePanel: React.FC<
   }
 
   if (panelState.status === "loading") {
-    return <div className="pm-placeholder">Loading questionnaire...</div>;
+    return <div className="pm-placeholder">Loading description questionnaire...</div>;
   }
 
   if (panelState.status === "error") {
@@ -139,12 +139,12 @@ export const DescriptionQuestionnairePanel: React.FC<
     <IdeaQuestionnaireView
       answers={answers}
       cancelLabel="Close"
-      description="Fill the description questionnaire to seed the workflow tree."
+      description="Complete the description questionnaire to seed the workflow tree."
       onAnswerChange={handleAnswerChange}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
       questions={panelState.questions}
-      submitLabel="Save questionnaire"
+      submitLabel="Save description questionnaire"
       title={title}
     />
   );
