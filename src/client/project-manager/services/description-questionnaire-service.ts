@@ -171,7 +171,7 @@ export class DescriptionQuestionnaireService {
     const existingContent =
       existing.status === "ok" ? existing.file.content : null;
 
-    const defaults = buildDefaults(workspaceName);
+    const defaults = buildDefaults(workspaceName, workspace.path);
     const baseContent = existingContent ?? template;
     const answers = extractIdeaQuestionnaireAnswers(baseContent, placeholders);
 
