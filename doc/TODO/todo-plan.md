@@ -41,8 +41,8 @@
 2. [DONE] Git Commit: `fix(project-manager): submit description questionnaire` (hash: 39fa2cc4)
 
 ### Stream: Release 1.1.428 notes
-1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.428 release notes`
-2. [TODO] Git Commit: `docs: update 1.1.428 release notes` (hash: TBD)
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.428 release notes`
+2. [DONE] Git Commit: `docs: update 1.1.428 release notes` (hash: cc3f4c00)
 
 ### Stream: Release 1.1.428 architecture docs
 1. [TODO] Docs: обновить системную архитектуру под 1.1.428 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.428 architecture notes`
