@@ -92,15 +92,35 @@ const toWorkspaceSlug = (value: string): string => {
 
 const formatDate = (value: Date): string => value.toISOString().slice(0, 10);
 
-const buildDefaults = (workspaceName: string): Record<string, string> => ({
+const resolveAuthorName = (workspacePath: string): string => {
+  const normalized = workspacePath.replace(/\\/g, "/");
+  const segments = normalized.split("/").filter((part) => part.length > 0);
+  const markers = new Set(["Users", "home"]);
+  for (const [index, segment] of segments.entries()) {
+    if (!markers.has(segment)) {
+      continue;
+    }
+    const candidate = segments[index + 1];
+    if (candidate) {
+      return candidate;
+    }
+  }
+  return "User";
+};
+
+const buildDefaults = (
+  workspaceName: string,
+  workspacePath: string
+): Record<string, string> => ({
   "meta.title": workspaceName,
   "meta.created_date": formatDate(new Date()),
   "meta.idea_type": "Draft",
+  "meta.author": resolveAuthorName(workspacePath),
 });
 
 const resolveQuestionnairePath = (workspaceName: string): string => {
   const slug = toWorkspaceSlug(workspaceName);
-  return `.codeai-hub/initiatives/${slug}/idea/questionnaire.md`;
+  return `.codeai-hub/${slug}/description/questionnaire.md`;
 };
 
 export type {
