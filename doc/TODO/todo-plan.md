@@ -119,3 +119,20 @@
 ### Stream: Release 1.1.425 build
 1. [DONE] Release: bump + build-all артефакты под 1.1.425 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.425`
 2. [DONE] Git Commit: `chore(release): bump 1.1.425` (hash: e51848b8)
+
+## Phase 35 — Project Manager Description Questionnaire (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Core workspace session endpoint
+1. [DONE] Core: добавить HTTP endpoint для создания workspace-сессии под Project Manager (без провайдера, для чтения/записи файлов) — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/workspace-session-service.ts`; expected commit message: `feat(core): add workspace session endpoint`
+2. [DONE] Git Commit: `feat(core): add workspace session endpoint` (hash: 119e9625)
+
+### Stream: Description questionnaire service
+1. [DONE] UI: сервис загрузки/сохранения анкеты Description (auto-fill name/date/type) и workspace slug — scope: `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `feat(project-manager): add description questionnaire service`
+2. [DONE] Git Commit: `feat(project-manager): add description questionnaire service` (hash: afe30dad)
+
+### Stream: Description questionnaire panel
+1. [DONE] UI: панель анкеты Description (рендер полей + сохранение) — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit message: `feat(project-manager): add description questionnaire panel`
+2. [DONE] Git Commit: `feat(project-manager): add description questionnaire panel` (hash: 9cd33e17)
+
+### Stream: Hook Description tool
+1. [DONE] UI: вернуть кнопку Description и подключить панель анкеты в main area — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `feat(project-manager): wire description tool to questionnaire`
+2. [DONE] Git Commit: `feat(project-manager): wire description tool to questionnaire` (hash: a805311f)
