@@ -63,20 +63,20 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
                 visualDepth: 2,
                 isCollapsible: true,
                 children: [
-                  { id: "module-core:spec", label: "Spec", status: "todo", visualDepth: 3 },
-                  { id: "module-core:plan", label: "Plan", status: "todo", visualDepth: 3 },
+                  { id: "module-core:spec", label: "Spec", status: "todo", visualDepth: 2 },
+                  { id: "module-core:plan", label: "Plan", status: "todo", visualDepth: 2 },
                   {
                     id: "module-core:execute",
                     label: "Execute",
                     status: "todo",
-                    visualDepth: 3,
+                    visualDepth: 2,
                     isCollapsible: true,
                     children: [
                       {
                         id: "module-core:execute:orchestration",
                         label: "Orchestration",
                         status: "draft",
-                        visualDepth: 4,
+                        visualDepth: 3,
                       },
                     ],
                   },
