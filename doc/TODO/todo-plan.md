@@ -59,10 +59,10 @@
 
 ## Phase 42 — Release 1.1.429 (owner: Oleksandr, updated: 2026-01-16)
 ### Stream: Release notes
-1. [IN_PROGRESS] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.429 release notes`
-2. [TODO] Git Commit: `docs: update 1.1.429 release notes` (hash: TBD)
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.429 release notes`
+2. [DONE] Git Commit: `docs: update 1.1.429 release notes` (hash: d17e4793)
 
 ### Stream: Release 1.1.429 build
-1. [TODO] Release: bump + build-all артефакты под 1.1.429 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.429`
+1. [IN_PROGRESS] Release: bump + build-all артефакты под 1.1.429 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.429`
 2. [TODO] Git Commit: `chore(release): bump 1.1.429` (hash: TBD)
 
