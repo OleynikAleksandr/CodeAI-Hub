@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import type { WorkspaceProject } from "../../types";
+import { WorkspaceTree } from "./workspace-tree";
 
 interface SidebarProps {
   workspaces?: WorkspaceProject[];
@@ -77,24 +78,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     onForkWorkspace?.(selectedWorkspaceId);
     setIsWorkspaceMenuOpen(false);
   };
-
-  const treeNodes = selectedWorkspaceId
-    ? [
-        {
-          id: "workspace",
-          label: activeWorkspace?.name ?? "Workspace",
-          depth: 0,
-          status: "active",
-        },
-        { id: "description", label: "Description", depth: 1, status: "todo" },
-        { id: "diagrams", label: "Diagrams", depth: 1, status: "blocked" },
-        { id: "modules", label: "Modules", depth: 1, status: "draft" },
-        { id: "module-a", label: "Module: Core", depth: 2, status: "todo" },
-        { id: "spec", label: "Spec", depth: 3, status: "todo" },
-        { id: "plan", label: "Plan", depth: 3, status: "todo" },
-        { id: "execute", label: "Execute", depth: 3, status: "todo" },
-      ]
-    : [];
 
   return (
     <aside className="pm-sidebar">
@@ -182,30 +165,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
       ) : null}
-      <div className="pm-sidebar__tree">
-        <div className="pm-tree__header">
-          <span className="pm-tree__title">Workflow Tree</span>
-          <span className="pm-tree__subtitle">
-            {activeWorkspace?.name ?? "No workspace"}
-          </span>
-        </div>
-        {treeNodes.length === 0 ? (
-          <div className="pm-tree__empty">Select a workspace to start.</div>
-        ) : (
-          <ul className="pm-tree__list">
-            {treeNodes.map((node) => (
-              <li
-                className={`pm-tree__item pm-tree__item--${node.status}`}
-                key={node.id}
-                style={{ paddingLeft: `${12 + node.depth * 16}px` }}
-              >
-                <span className="pm-tree__status" />
-                <span className="pm-tree__label">{node.label}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <WorkspaceTree
+        selectedWorkspaceId={selectedWorkspaceId}
+        workspaceName={activeWorkspace?.name}
+      />
     </aside>
   );
 };

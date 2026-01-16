@@ -347,6 +347,36 @@ body {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.pm-tree__toggle {
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pm-text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.pm-tree__toggle:hover {
+  color: var(--pm-text-primary);
+}
+
+.pm-tree__toggle-icon {
+  display: inline-block;
+  transform: rotate(0deg);
+  transition: transform 0.12s ease;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.pm-tree__toggle-icon--expanded {
+  transform: rotate(90deg);
+}
+
 .pm-tree__status {
   width: 8px;
   height: 8px;
