@@ -4,6 +4,7 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 
 ## Current Release — v1.1.424
 - **Project Manager (CEF)**: Spec/Plan/Execute выровнены по оси маркера модуля; Orchestration остаётся со смещением как вложенный шаг.
+- **SolidWorks-Flow docs**: обновлены правила визуального выравнивания модульных шагов в Workflow Tree.
 - **Codex structured outputs**: фикс дедупликации (повторяющийся `itemId`) — structured output больше не теряется между turn’ами, поэтому partial upsert артефактов срабатывает детерминированно.
 - **Artifact Upsert Protocol (Variant B)**: `artifacts[]` (slot+markdown), partial upserts, без путей от агента (no silent-drop).
 - **Release 1.1.424**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
