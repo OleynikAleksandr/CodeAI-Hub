@@ -1,3 +1,9 @@
+import type { ProviderStackDescriptor } from "../../types/provider";
+import {
+  extractProviders,
+  resolveIdeaCollectorProviders,
+  type ProviderSnapshot,
+} from "./services/provider-snapshot";
 import type { WorkspaceProject } from "./types";
 
 type ApiConfig = {
@@ -45,6 +51,10 @@ type IncomingMessage = {
   readonly payload?: unknown;
 };
 
+type CoreStatePayload = {
+  readonly providers?: unknown;
+};
+
 type ProjectUpdatePayload = {
   readonly projects: readonly WorkspaceProject[];
 };
@@ -79,6 +89,7 @@ export class ProjectManagerApi {
   private socket: WebSocket | null = null;
   private readonly listeners = new Set<ProjectListener>();
   private readonly coreListeners = new Set<CoreEventListener>();
+  private providerSnapshot: ProviderSnapshot[] = [];
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly config: ApiConfig;
 
@@ -203,6 +214,10 @@ export class ProjectManagerApi {
     };
   }
 
+  getIdeaCollectorProviders(): readonly ProviderStackDescriptor[] {
+    return resolveIdeaCollectorProviders(this.providerSnapshot);
+  }
+
   private send(message: OutgoingMessage): void {
     if (this.socket?.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));
@@ -216,6 +231,13 @@ export class ProjectManagerApi {
       const payload = message.payload as ProjectUpdatePayload;
       if (payload?.projects) {
         this.notifyListeners(payload.projects);
+      }
+    }
+    if (message.type === "core:state") {
+      const payload = message.payload as CoreStatePayload;
+      const providers = extractProviders(payload);
+      if (providers.length > 0) {
+        this.providerSnapshot = providers;
       }
     }
     this.notifyCoreListeners(message);
