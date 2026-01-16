@@ -15,7 +15,9 @@
 2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md`
 
-## Phase 38 — TBD (owner: Oleksandr, updated: 2026-01-16)
-### Stream: TBD
-1. [TODO] TBD — scope: TBD; expected commit message: `chore: placeholder`
-2. [TODO] Git Commit: `chore: placeholder` (hash: TBD)
+## Phase 38 — Project Manager Description UI fixes (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Description questionnaire stability
+1. [DONE] UI: восстановить split‑layout (Sessions/Artifacts) при открытой анкете Description — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/panel-container.tsx`; expected commit message: `fix(project-manager): restore split panels`
+2. [DONE] Git Commit: `fix(project-manager): restore split panels` (hash: d1676f3c)
+3. [TODO] UI: использовать fallback httpUrl для загрузки анкеты Description без bridge config — scope: `src/client/project-manager/services/description-questionnaire-utils.ts`; expected commit message: `fix(project-manager): fallback core http url`
+4. [TODO] Git Commit: `fix(project-manager): fallback core http url` (hash: TBD)
