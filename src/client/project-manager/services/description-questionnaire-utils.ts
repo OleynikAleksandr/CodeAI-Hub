@@ -34,13 +34,15 @@ type WorkspaceSessionResponse = {
   readonly sessionId: string;
 };
 
-const resolveCoreHttpUrl = (): string | null => {
+const DEFAULT_CORE_HTTP_URL = "http://127.0.0.1:8080";
+
+const resolveCoreHttpUrl = (): string => {
   const globalScope = window as typeof window & {
     codeaiBridgeConfig?: { readonly httpUrl?: string };
   };
   const httpUrl = globalScope.codeaiBridgeConfig?.httpUrl;
   if (typeof httpUrl !== "string" || httpUrl.length === 0) {
-    return null;
+    return DEFAULT_CORE_HTTP_URL;
   }
   return httpUrl;
 };
