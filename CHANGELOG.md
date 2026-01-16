@@ -1,3 +1,8 @@
+## [1.1.428] - 2026-01-16
+
+### Fixed
+- **Project Manager**: анкета Description автосохраняется и отправляется в Idea Collector, который сохраняет `idea.md` и `virtual-simulation.md`.
+
 ## [1.1.427] - 2026-01-16
 
 ### Fixed
