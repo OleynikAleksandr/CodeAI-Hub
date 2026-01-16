@@ -19,5 +19,5 @@
 ### Stream: Description questionnaire stability
 1. [DONE] UI: восстановить split‑layout (Sessions/Artifacts) при открытой анкете Description — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/panel-container.tsx`; expected commit message: `fix(project-manager): restore split panels`
 2. [DONE] Git Commit: `fix(project-manager): restore split panels` (hash: d1676f3c)
-3. [TODO] UI: использовать fallback httpUrl для загрузки анкеты Description без bridge config — scope: `src/client/project-manager/services/description-questionnaire-utils.ts`; expected commit message: `fix(project-manager): fallback core http url`
-4. [TODO] Git Commit: `fix(project-manager): fallback core http url` (hash: TBD)
+3. [DONE] UI: использовать fallback httpUrl для загрузки анкеты Description без bridge config — scope: `src/client/project-manager/services/description-questionnaire-utils.ts`; expected commit message: `fix(project-manager): fallback core http url`
+4. [DONE] Git Commit: `fix(project-manager): fallback core http url` (hash: bf920a92)
