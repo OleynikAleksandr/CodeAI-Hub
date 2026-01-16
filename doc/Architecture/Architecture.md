@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-16
 **Status:** Active reference
-**Release Focus:** v1.1.424 — Project Manager: выравнивание Spec/Plan/Execute по оси модуля, Orchestration остаётся со смещением.
+**Release Focus:** v1.1.426 — Project Manager: анкета Description сохраняется в `.codeai-hub/<workspaceSlug>/description/questionnaire.md`, терминология Description и автозаполнение `meta.author`.
 
 ---
 
@@ -153,6 +153,10 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.426 - 2026-01-16)
+- **Project Manager Description**: анкета сохраняется в `.codeai-hub/<workspaceSlug>/description/questionnaire.md`, `meta.author` автозаполняется из пути воркспейса.
+- **Description questionnaire wording**: панель и шаблон приведены к терминологии Description (без Idea/Initiative), артефакты описания обозначены как `description.md` и `virtual-simulation.md`.
 
 ## Recent Changes (v1.1.424 - 2026-01-16)
 - **Project Manager Workbench**: Spec/Plan/Execute выровнены по оси маркера модуля; Orchestration остаётся со смещением как вложенный шаг.
