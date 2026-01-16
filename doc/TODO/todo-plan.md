@@ -54,5 +54,15 @@
 
 ## Phase 41 — Fix Description questionnaire submission (owner: Oleksandr, updated: 2026-01-16)
 ### Stream: Idea Collector session creation
-1. [IN_PROGRESS] Fix: session:create выбирает активный провайдер по умолчанию, чтобы анкета Description запускала Idea Collector — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): prefer active provider for session create`
-2. [TODO] Git Commit: `fix(core): prefer active provider for session create` (hash: TBD)
+1. [DONE] Fix: session:create выбирает активный провайдер по умолчанию, чтобы анкета Description запускала Idea Collector — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): prefer active provider for session create`
+2. [DONE] Git Commit: `fix(core): prefer active provider for session create` (hash: c1deb2c4)
+
+## Phase 42 — Release 1.1.429 (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Release notes
+1. [IN_PROGRESS] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.429 release notes`
+2. [TODO] Git Commit: `docs: update 1.1.429 release notes` (hash: TBD)
+
+### Stream: Release 1.1.429 build
+1. [TODO] Release: bump + build-all артефакты под 1.1.429 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.429`
+2. [TODO] Git Commit: `chore(release): bump 1.1.429` (hash: TBD)
+
