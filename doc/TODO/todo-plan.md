@@ -70,6 +70,6 @@
 ### Stream: Idea Collector provider selection
 1. [DONE] Core state snapshot + submit поддерживает providerId — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/provider-snapshot.ts`; expected commit message: `fix(project-manager): allow provider choice on submit`
 2. [DONE] Git Commit: `fix(project-manager): allow provider choice on submit` (hash: 6d4a10ff)
-3. [TODO] UI: добавить picker провайдера при отправке анкеты Description — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `fix(project-manager): add provider picker for description submit`
-4. [TODO] Git Commit: `fix(project-manager): add provider picker for description submit` (hash: TBD)
+3. [DONE] UI: добавить picker провайдера при отправке анкеты Description — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `fix(project-manager): add provider picker for description submit`
+4. [DONE] Git Commit: `fix(project-manager): add provider picker for description submit` (hash: f5d707da)
 
