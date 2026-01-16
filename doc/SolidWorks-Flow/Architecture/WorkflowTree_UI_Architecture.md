@@ -1,7 +1,7 @@
 # Workflow Tree UI (SolidWorks-подобная визуализация разработки)
 
-**Status:** Draft (v0.4)
-**Updated:** 2026-01-15
+**Status:** Draft (v0.5)
+**Updated:** 2026-01-16
 **Owner:** Oleksandr + Codex
 
 ---
@@ -100,6 +100,8 @@ Workflow Tree становится **единой точкой правды** д
 - `Step` (шаг: `Описание` | `Диаграммы` | `Spec` | `Plan` | `Execute`)
 - `Artifact` (файл/результат шага)
 - `Session` (диалог с агентом)
+
+Визуальная ось модульных шагов: `Spec`/`Plan`/`Execute` выравниваются по оси маркера `Module`, а вложенные подшаги (например `Orchestration`) смещаются глубже.
 
 ### 4.2. Пример дерева (workspace‑проект с кластерами)
 ```

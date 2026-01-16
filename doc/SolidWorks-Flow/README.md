@@ -7,6 +7,9 @@
 ## Структура
 - `Architecture/` — архитектура и правила Workflow Tree (узлы, статусы, зависимости, “rebuild/simulation”).
 
+## Обновления
+- 2026-01-16 (release 1.1.424): Spec/Plan/Execute выровнены по оси модуля, Orchestration остаётся вложенным шагом.
+
 ## Принципы
 - MVP: “полный SolidWorks” (Workflow Tree Workbench) реализуется в `project-manager` (CEF); `vscode-webview`/`web-client` на этом этапе не дублируют дерево.
 - Верхний уровень всегда `Repo (Assembly)`.
