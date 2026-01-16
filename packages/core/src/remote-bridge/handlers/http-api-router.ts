@@ -16,6 +16,7 @@ import {
   handleWorkspaceFileRead,
   handleWorkspaceFileWrite,
 } from "./workspace-file-service";
+import { handleWorkspaceSessionCreate } from "./workspace-session-service";
 
 const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_FOUND = 404;
@@ -31,6 +32,7 @@ const RUN_SELECT_CURRENT_ENDPOINT =
 const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const WORKSPACE_FILE_WRITE_ENDPOINT =
   "/api/v1/orchestrator/workspace-file-write";
+const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
 const IDEA_PATH_RE =
   /^\.codeai-hub\/initiatives\/[a-z0-9]+(?:-[a-z0-9]+)*\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
 const VIRTUAL_SIMULATION_PATH_RE =
@@ -101,6 +103,18 @@ export class HttpApiRouter {
     app.post(ARTIFACT_UPSERT_ENDPOINT, async (req: Request, res: Response) => {
       await this.handleArtifactUpsertSave(req, res);
     });
+
+    app.post(
+      WORKSPACE_SESSION_ENDPOINT,
+      async (req: Request, res: Response) => {
+        await handleWorkspaceSessionCreate(
+          req,
+          res,
+          this.deps.sessionManager,
+          this.deps.logger
+        );
+      }
+    );
 
     app.get(INITIATIVES_ENDPOINT, async (req: Request, res: Response) => {
       await initiativesHandler.handleList(req, res);
