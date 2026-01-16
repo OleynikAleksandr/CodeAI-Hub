@@ -1,3 +1,9 @@
+## [1.1.425] - 2026-01-16
+
+### Changed
+- **Project Manager**: отключены моковые узлы Workflow Tree и статическая палитра инструментов; при выборе workspace пока отображается только корень.
+- **SolidWorks-Flow docs**: унифицирован канонический Workflow Tree документ под MVP Project Manager (UX + runtime binding).
+
 ## [1.1.424] - 2026-01-16
 
 ### Changed

@@ -113,9 +113,9 @@
 2. [DONE] Git Commit: `docs: consolidate workflow tree mvp` (hash: 2bf21d2e)
 
 ### Stream: Disable mock workflow tree
-1. [IN_PROGRESS] UI: показывать только корень workspace (без моковых шагов/модулей/tools) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): hide mock workflow tree`
-2. [TODO] Git Commit: `fix(project-manager): hide mock workflow tree` (hash: TBD)
+1. [DONE] UI: показывать только корень workspace (без моковых шагов/модулей/tools) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): hide mock workflow tree`
+2. [DONE] Git Commit: `fix(project-manager): hide mock workflow tree` (hash: 3149b16d)
 
 ### Stream: Release 1.1.425 build
-1. [TODO] Release: bump + build-all артефакты под 1.1.425 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.425`
-2. [TODO] Git Commit: `chore(release): bump 1.1.425` (hash: TBD)
+1. [DONE] Release: bump + build-all артефакты под 1.1.425 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.425`
+2. [DONE] Git Commit: `chore(release): bump 1.1.425` (hash: e51848b8)
