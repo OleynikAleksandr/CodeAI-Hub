@@ -66,3 +66,10 @@
 1. [DONE] Release: bump + build-all артефакты под 1.1.429 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.429`
 2. [DONE] Git Commit: `chore(release): bump 1.1.429` (hash: 17d31f07)
 
+## Phase 43 — Project Manager provider picker (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Idea Collector provider selection
+1. [DONE] Core state snapshot + submit поддерживает providerId — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/provider-snapshot.ts`; expected commit message: `fix(project-manager): allow provider choice on submit`
+2. [DONE] Git Commit: `fix(project-manager): allow provider choice on submit` (hash: 6d4a10ff)
+3. [TODO] UI: добавить picker провайдера при отправке анкеты Description — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `fix(project-manager): add provider picker for description submit`
+4. [TODO] Git Commit: `fix(project-manager): add provider picker for description submit` (hash: TBD)
+
