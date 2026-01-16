@@ -47,7 +47,7 @@ export const MainLayout: React.FC = () => {
         workspaces={[...projects]}
       />
       <MainArea
-        activeWorkspaceName={activeWorkspace?.name}
+        activeWorkspace={activeWorkspace}
         onSizeChange={updateSize}
         sizes={sizes}
       />
