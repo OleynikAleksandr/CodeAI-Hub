@@ -28,8 +28,8 @@
 2. [DONE] Git Commit: `docs: update 1.1.427 release notes` (hash: 8c8675ae)
 
 ### Stream: Release architecture docs
-1. [TODO] Docs: обновить системную архитектуру под 1.1.427 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.427 architecture notes`
-2. [TODO] Git Commit: `docs: update 1.1.427 architecture notes` (hash: TBD)
+1. [DONE] Docs: обновить системную архитектуру под 1.1.427 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.427 architecture notes`
+2. [DONE] Git Commit: `docs: update 1.1.427 architecture notes` (hash: 0cf7088e)
 
 ### Stream: Release 1.1.427 build
 1. [TODO] Release: bump + build-all артефакты под 1.1.427 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.427`
