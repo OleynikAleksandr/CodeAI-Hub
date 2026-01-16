@@ -49,5 +49,5 @@
 2. [DONE] Git Commit: `docs: update 1.1.428 architecture notes` (hash: e35d0ff6)
 
 ### Stream: Release 1.1.428 build
-1. [TODO] Release: bump + build-all артефакты под 1.1.428 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.428`
-2. [TODO] Git Commit: `chore(release): bump 1.1.428` (hash: TBD)
+1. [DONE] Release: bump + build-all артефакты под 1.1.428 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.428`
+2. [DONE] Git Commit: `chore(release): bump 1.1.428` (hash: de24e0c6)
