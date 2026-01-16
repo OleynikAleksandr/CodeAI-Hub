@@ -63,6 +63,6 @@
 2. [DONE] Git Commit: `docs: update 1.1.429 release notes` (hash: d17e4793)
 
 ### Stream: Release 1.1.429 build
-1. [IN_PROGRESS] Release: bump + build-all артефакты под 1.1.429 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.429`
-2. [TODO] Git Commit: `chore(release): bump 1.1.429` (hash: TBD)
+1. [DONE] Release: bump + build-all артефакты под 1.1.429 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.429`
+2. [DONE] Git Commit: `chore(release): bump 1.1.429` (hash: 17d31f07)
 
