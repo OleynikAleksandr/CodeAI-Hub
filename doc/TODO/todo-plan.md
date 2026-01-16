@@ -60,3 +60,9 @@
 2. [DONE] Git Commit: `feat(project-manager): workspace-only workbench menu` (hash: 361aeca6)
 3. [DONE] Release: bump + build-all артефакты под 1.1.421 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.421`
 4. [DONE] Git Commit: `chore(release): bump 1.1.421` (hash: 318bab89)
+
+### Stream: Tree cleanup + Release 1.1.422
+1. [DONE] UI: убрать заголовок дерева, выровнять уровни (Description/Diagrams на уровне workspace) и добавить сворачивание треугольниками — scope: `src/client/project-manager/components/layout/{sidebar,workspace-tree}.tsx`, `packages/ui/project-manager/styles.css`, `README.md`, `CHANGELOG.md`, `doc/`; expected commit message: `feat(project-manager): collapsible workflow tree layout`
+2. [DONE] Git Commit: `feat(project-manager): collapsible workflow tree layout` (hash: 72e1ac93)
+3. [DONE] Release: bump + build-all артефакты под 1.1.422 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.422`
+4. [DONE] Git Commit: `chore(release): bump 1.1.422` (hash: 0344af1e)
