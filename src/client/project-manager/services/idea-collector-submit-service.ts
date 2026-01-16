@@ -1,3 +1,4 @@
+import type { ProviderStackId } from "../../types/provider";
 import { api } from "../api";
 import { IDEA_KICKOFF_PROMPT } from "../../ui/src/app-host/idea-kickoff-prompt";
 import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "../../ui/src/services/idea-collector-fallback-schema";
@@ -31,6 +32,11 @@ type SessionCreatedPayload = {
 type SessionStreamPayload = {
   readonly sessionId?: string;
   readonly event?: unknown;
+};
+
+type SessionErrorPayload = {
+  readonly sessionId?: string;
+  readonly message: string;
 };
 
 const activeIdeaSessions = new Set<string>();
@@ -116,6 +122,21 @@ const extractSessionStreamPayload = (
   };
 };
 
+const extractSessionErrorPayload = (
+  payload: unknown
+): SessionErrorPayload | null => {
+  if (!isRecord(payload)) {
+    return null;
+  }
+  const message = typeof payload.message === "string" ? payload.message : null;
+  if (!message) {
+    return null;
+  }
+  const sessionId =
+    typeof payload.sessionId === "string" ? payload.sessionId : undefined;
+  return { sessionId, message };
+};
+
 const ensureStreamListener = (): void => {
   if (streamListenerReady) {
     return;
@@ -151,6 +172,7 @@ const createIdeaCollectorSession = async (params: {
   readonly workspacePath: string;
   readonly initiativeSlug: string;
   readonly stage: string;
+  readonly providerId?: ProviderStackId;
 }): Promise<string> =>
   new Promise((resolve, reject) => {
     let resolved = false;
@@ -164,6 +186,20 @@ const createIdeaCollectorSession = async (params: {
     }, SESSION_CREATE_TIMEOUT_MS);
 
     const unsubscribe = api.onCoreEvent((message) => {
+      if (message.type === "session:error") {
+        const errorPayload = extractSessionErrorPayload(message.payload);
+        if (!errorPayload || errorPayload.sessionId) {
+          return;
+        }
+        if (resolved) {
+          return;
+        }
+        resolved = true;
+        window.clearTimeout(timeout);
+        unsubscribe();
+        reject(new Error(errorPayload.message));
+        return;
+      }
       if (message.type !== "session:created") {
         return;
       }
@@ -188,6 +224,7 @@ const createIdeaCollectorSession = async (params: {
     });
 
     api.createSession({
+      providerId: params.providerId,
       workspacePath: params.workspacePath,
       initiativeSlug: params.initiativeSlug,
       stage: params.stage,
@@ -199,6 +236,7 @@ export class IdeaCollectorSubmitService {
     readonly workspaceName?: string;
     readonly workspacePath: string;
     readonly questionnairePath: string;
+    readonly providerId?: ProviderStackId;
   }): Promise<void> {
     const workspaceName = resolveWorkspaceName({
       name: params.workspaceName,
@@ -209,6 +247,7 @@ export class IdeaCollectorSubmitService {
       workspacePath: params.workspacePath,
       initiativeSlug,
       stage: "idea",
+      providerId: params.providerId,
     });
 
     activeIdeaSessions.add(sessionId);
