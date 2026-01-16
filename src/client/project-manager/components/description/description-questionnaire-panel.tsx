@@ -4,6 +4,9 @@ import { IdeaQuestionnaireView } from "../../../ui/src/components/idea-questionn
 import {
   DescriptionQuestionnaireService,
 } from "../../services/description-questionnaire-service";
+import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
+
+const SAVE_DEBOUNCE_MS = 400;
 
 interface DescriptionQuestionnairePanelProps {
   readonly workspaceName?: string;
@@ -34,8 +37,11 @@ export const DescriptionQuestionnairePanel: React.FC<
   DescriptionQuestionnairePanelProps
 > = ({ workspaceName, workspacePath, onClose }) => {
   const serviceRef = useRef(new DescriptionQuestionnaireService());
+  const ideaCollectorRef = useRef(new IdeaCollectorSubmitService());
   const [panelState, setPanelState] = useState<PanelState>({ status: "idle" });
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const saveTimerRef = useRef<number | null>(null);
+  const submitInFlightRef = useRef(false);
 
   const resolvedWorkspaceName =
     workspaceName && workspaceName.trim().length > 0
@@ -87,7 +93,7 @@ export const DescriptionQuestionnairePanel: React.FC<
   }, [canLoad, resolvedWorkspaceName, workspacePath]);
 
   const title = useMemo(
-    () => `Description questionnaire — ${resolvedWorkspaceName}`,
+    () => `Анкета описания — ${resolvedWorkspaceName}`,
     [resolvedWorkspaceName]
   );
 
@@ -95,18 +101,57 @@ export const DescriptionQuestionnairePanel: React.FC<
     setAnswers((current) => ({ ...current, [questionId]: value }));
   };
 
-  const handleSubmit = async () => {
+  useEffect(() => {
     if (panelState.status !== "ready") {
       return;
     }
-    const service = serviceRef.current;
-    await service.save(
-      panelState.sessionId,
-      panelState.questionnairePath,
-      panelState.template,
-      panelState.placeholders,
-      answers
-    );
+    if (saveTimerRef.current) {
+      window.clearTimeout(saveTimerRef.current);
+    }
+    const timer = window.setTimeout(() => {
+      serviceRef.current
+        .save(
+          panelState.sessionId,
+          panelState.questionnairePath,
+          panelState.template,
+          panelState.placeholders,
+          answers
+        )
+        .catch(() => {
+          /* ignore save errors */
+        });
+    }, SAVE_DEBOUNCE_MS);
+    saveTimerRef.current = timer;
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [answers, panelState]);
+
+  const handleSubmit = async () => {
+    if (panelState.status !== "ready" || submitInFlightRef.current) {
+      return;
+    }
+    submitInFlightRef.current = true;
+    if (saveTimerRef.current) {
+      window.clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+    try {
+      await serviceRef.current.save(
+        panelState.sessionId,
+        panelState.questionnairePath,
+        panelState.template,
+        panelState.placeholders,
+        answers
+      );
+      await ideaCollectorRef.current.submitQuestionnaire({
+        workspaceName: resolvedWorkspaceName,
+        workspacePath: workspacePath ?? "",
+        questionnairePath: panelState.questionnairePath,
+      });
+    } finally {
+      submitInFlightRef.current = false;
+    }
   };
 
   const handleCancel = () => {
@@ -115,18 +160,20 @@ export const DescriptionQuestionnairePanel: React.FC<
 
   if (!canLoad) {
     return (
-      <div className="pm-placeholder">Select a workspace to start.</div>
+      <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>
     );
   }
 
   if (panelState.status === "loading") {
-    return <div className="pm-placeholder">Loading description questionnaire...</div>;
+    return (
+      <div className="pm-placeholder">Загружаем анкету описания...</div>
+    );
   }
 
   if (panelState.status === "error") {
     return (
       <div className="pm-placeholder">
-        Unable to load the description questionnaire.
+        Не удалось загрузить анкету описания.
       </div>
     );
   }
@@ -138,13 +185,13 @@ export const DescriptionQuestionnairePanel: React.FC<
   return (
     <IdeaQuestionnaireView
       answers={answers}
-      cancelLabel="Close"
-      description="Complete the description questionnaire to seed the workflow tree."
+      cancelLabel="Закрыть"
+      description="Анкета сохраняется автоматически. Нажмите «Отправить анкету», чтобы запустить Idea Collector."
       onAnswerChange={handleAnswerChange}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
       questions={panelState.questions}
-      submitLabel="Save description questionnaire"
+      submitLabel="Отправить анкету"
       title={title}
     />
   );

@@ -14,6 +14,30 @@ type OutgoingMessage =
   | {
       readonly type: "projects:remove";
       readonly payload: { readonly id: string };
+    }
+  | {
+      readonly type: "session:create";
+      readonly payload: {
+        readonly providerId?: string;
+        readonly workspacePath?: string;
+        readonly initiativeSlug?: string | null;
+        readonly runSlug?: string | null;
+        readonly providerSessionId?: string | null;
+        readonly stage?: string | null;
+      };
+    }
+  | {
+      readonly type: "session:message";
+      readonly payload: {
+        readonly sessionId: string;
+        readonly content:
+          | string
+          | { readonly text: string; readonly turnOptions?: Record<string, unknown> };
+      };
+    }
+  | {
+      readonly type: "session:delete";
+      readonly payload: { readonly sessionId: string };
     };
 
 type IncomingMessage = {
@@ -26,6 +50,7 @@ type ProjectUpdatePayload = {
 };
 
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
+type CoreEventListener = (message: IncomingMessage) => void;
 
 type VscodeBridge = {
   postMessage: (message: unknown) => void;
@@ -53,6 +78,7 @@ const vscode = resolveVscodeBridge();
 export class ProjectManagerApi {
   private socket: WebSocket | null = null;
   private readonly listeners = new Set<ProjectListener>();
+  private readonly coreListeners = new Set<CoreEventListener>();
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly config: ApiConfig;
 
@@ -135,10 +161,45 @@ export class ProjectManagerApi {
     this.send({ type: "projects:remove", payload: { id } });
   }
 
+  createSession(params: {
+    readonly providerId?: string;
+    readonly workspacePath?: string;
+    readonly initiativeSlug?: string | null;
+    readonly runSlug?: string | null;
+    readonly providerSessionId?: string | null;
+    readonly stage?: string | null;
+  }): void {
+    this.send({ type: "session:create", payload: params });
+  }
+
+  sendSessionMessage(
+    sessionId: string,
+    content: string,
+    turnOptions?: Record<string, unknown>
+  ): void {
+    if (!content.trim()) {
+      return;
+    }
+    const payloadContent = turnOptions
+      ? { text: content, turnOptions }
+      : content;
+    this.send({
+      type: "session:message",
+      payload: { sessionId, content: payloadContent },
+    });
+  }
+
   onProjectsUpdate(listener: ProjectListener): () => void {
     this.listeners.add(listener);
     return () => {
       this.listeners.delete(listener);
+    };
+  }
+
+  onCoreEvent(listener: CoreEventListener): () => void {
+    this.coreListeners.add(listener);
+    return () => {
+      this.coreListeners.delete(listener);
     };
   }
 
@@ -157,11 +218,18 @@ export class ProjectManagerApi {
         this.notifyListeners(payload.projects);
       }
     }
+    this.notifyCoreListeners(message);
   }
 
   private notifyListeners(projects: readonly WorkspaceProject[]): void {
     for (const listener of this.listeners) {
       listener(projects);
+    }
+  }
+
+  private notifyCoreListeners(message: IncomingMessage): void {
+    for (const listener of this.coreListeners) {
+      listener(message);
     }
   }
 
