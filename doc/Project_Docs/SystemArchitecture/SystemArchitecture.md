@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.426 (16.01.2026) — Project Manager: анкета Description сохраняется в `.codeai-hub/<workspaceSlug>/description/questionnaire.md`, `meta.author` автозаполняется из пути воркспейса.
+**Состояние:** релиз 1.1.427 (16.01.2026) — Project Manager: восстановлен split‑layout и fallback httpUrl для загрузки анкеты Description.
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
