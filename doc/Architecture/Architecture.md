@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-16
 **Status:** Active reference
-**Release Focus:** v1.1.426 — Project Manager: анкета Description сохраняется в `.codeai-hub/<workspaceSlug>/description/questionnaire.md`, терминология Description и автозаполнение `meta.author`.
+**Release Focus:** v1.1.427 — Project Manager: восстановлен split‑layout в центральной зоне и добавлен fallback httpUrl для загрузки анкеты Description.
 
 ---
 
@@ -153,6 +153,10 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.427 - 2026-01-16)
+- **Project Manager Description**: восстановлен split‑layout (Sessions/Artifacts) при открытой анкете.
+- **Description questionnaire**: fallback `http://127.0.0.1:8080`, если bridge config отсутствует.
 
 ## Recent Changes (v1.1.426 - 2026-01-16)
 - **Project Manager Description**: анкета сохраняется в `.codeai-hub/<workspaceSlug>/description/questionnaire.md`, `meta.author` автозаполняется из пути воркспейса.
