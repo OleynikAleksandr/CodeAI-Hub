@@ -136,3 +136,16 @@
 ### Stream: Hook Description tool
 1. [DONE] UI: вернуть кнопку Description и подключить панель анкеты в main area — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `feat(project-manager): wire description tool to questionnaire`
 2. [DONE] Git Commit: `feat(project-manager): wire description tool to questionnaire` (hash: a805311f)
+
+## Phase 36 — Description Questionnaire Terminology + Path (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Description questionnaire path + meta defaults
+1. [TODO] UI: изменить путь анкеты на `.codeai-hub/<workspaceSlug>/description/questionnaire.md`, добавить авто‑заполнение `meta.author` — scope: `src/client/project-manager/services/description-questionnaire-service.ts`, `src/client/project-manager/services/description-questionnaire-utils.ts`; expected commit message: `fix(project-manager): align description questionnaire path`
+2. [TODO] Git Commit: `fix(project-manager): align description questionnaire path` (hash: TBD)
+
+### Stream: Terminology cleanup (Description)
+1. [TODO] UI: заменить остаточные упоминания Idea → Description в Project Manager (заголовки/описания панели) — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `docs(ui): align description terminology`
+2. [TODO] Git Commit: `docs(ui): align description terminology` (hash: TBD)
+
+### Stream: Questionnaire template wording
+1. [TODO] Docs: переименовать формулировки анкеты под Description (без «Idea»/«Initiative») — scope: `packages/agents/idea-collector/assets/questionnaire-template.md`; expected commit message: `docs(idea): align questionnaire wording to description`
+2. [TODO] Git Commit: `docs(idea): align questionnaire wording to description` (hash: TBD)
