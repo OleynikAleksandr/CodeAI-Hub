@@ -149,3 +149,16 @@
 ### Stream: Questionnaire template wording
 1. [DONE] Docs: переименовать формулировки анкеты под Description (без «Idea»/«Initiative») — scope: `packages/agents/idea-collector/assets/questionnaire-template.md`; expected commit message: `docs(idea): align questionnaire wording to description`
 2. [DONE] Git Commit: `docs(idea): align questionnaire wording to description` (hash: cf306f58)
+
+## Phase 37 — Release 1.1.426 (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Release notes
+1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.426 release notes`
+2. [TODO] Git Commit: `docs: update 1.1.426 release notes` (hash: TBD)
+
+### Stream: Release architecture docs
+1. [TODO] Docs: обновить системную архитектуру под 1.1.426 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.426 architecture notes`
+2. [TODO] Git Commit: `docs: update 1.1.426 architecture notes` (hash: TBD)
+
+### Stream: Release 1.1.426 build
+1. [TODO] Release: bump + build-all артефакты под 1.1.426 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.426`
+2. [TODO] Git Commit: `chore(release): bump 1.1.426` (hash: TBD)

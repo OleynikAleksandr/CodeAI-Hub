@@ -1,3 +1,9 @@
+## [1.1.426] - 2026-01-16
+
+### Changed
+- **Project Manager**: анкета Description сохраняется в `.codeai-hub/<workspaceSlug>/description/questionnaire.md`, `meta.author` автозаполняется из пути воркспейса.
+- **Description questionnaire**: панель и шаблон анкеты приведены к терминологии Description (без Idea/Initiative), артефакты описания обозначены как `description.md` и `virtual-simulation.md`.
+
 ## [1.1.425] - 2026-01-16
 
 ### Changed
