@@ -33,10 +33,16 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
 
     setExpandedNodes({
       workspace: true,
-      modules: true,
-      "module-core": true,
-      "module-core:execute": false,
     });
+
+    // NOTE (MVP): The mock workflow subtree (Description/Diagrams/Modules/...) is intentionally
+    // disabled while we wire the Project Manager tree to real workflow artifacts/runs stored
+    // under `.codeai-hub/` and produced by Core. We keep the old expansion defaults commented
+    // out to preserve the previous UX iteration context.
+    //
+    // modules: true,
+    // "module-core": true,
+    // "module-core:execute": false,
   }, [selectedWorkspaceId]);
 
   const rootNode: TreeNode | null = selectedWorkspaceId
@@ -46,45 +52,52 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         status: "active",
         visualDepth: 0,
         isCollapsible: true,
-        children: [
-          { id: "description", label: "Description", status: "todo", visualDepth: 0 },
-          { id: "diagrams", label: "Diagrams", status: "blocked", visualDepth: 0 },
-          {
-            id: "modules",
-            label: "Modules",
-            status: "draft",
-            visualDepth: 1,
-            isCollapsible: true,
-            children: [
-              {
-                id: "module-core",
-                label: "Module: Core",
-                status: "todo",
-                visualDepth: 2,
-                isCollapsible: true,
-                children: [
-                  { id: "module-core:spec", label: "Spec", status: "todo", visualDepth: 2 },
-                  { id: "module-core:plan", label: "Plan", status: "todo", visualDepth: 2 },
-                  {
-                    id: "module-core:execute",
-                    label: "Execute",
-                    status: "todo",
-                    visualDepth: 2,
-                    isCollapsible: true,
-                    children: [
-                      {
-                        id: "module-core:execute:orchestration",
-                        label: "Orchestration",
-                        status: "draft",
-                        visualDepth: 3,
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
+        // NOTE (MVP): When a workspace is selected, we currently render only the workspace root
+        // node (e.g. "CodeAI-Hub") and no children. The next step is to generate the full tree
+        // from real state (workflow artifacts, diagrams, gates) rather than hardcoded sample data.
+        //
+        // The previous mock tree is kept here, commented out, to preserve the node model and
+        // visual depth conventions we iterated on.
+        //
+        // children: [
+        //   { id: "description", label: "Description", status: "todo", visualDepth: 0 },
+        //   { id: "diagrams", label: "Diagrams", status: "blocked", visualDepth: 0 },
+        //   {
+        //     id: "modules",
+        //     label: "Modules",
+        //     status: "draft",
+        //     visualDepth: 1,
+        //     isCollapsible: true,
+        //     children: [
+        //       {
+        //         id: "module-core",
+        //         label: "Module: Core",
+        //         status: "todo",
+        //         visualDepth: 2,
+        //         isCollapsible: true,
+        //         children: [
+        //           { id: "module-core:spec", label: "Spec", status: "todo", visualDepth: 2 },
+        //           { id: "module-core:plan", label: "Plan", status: "todo", visualDepth: 2 },
+        //           {
+        //             id: "module-core:execute",
+        //             label: "Execute",
+        //             status: "todo",
+        //             visualDepth: 2,
+        //             isCollapsible: true,
+        //             children: [
+        //               {
+        //                 id: "module-core:execute:orchestration",
+        //                 label: "Orchestration",
+        //                 status: "draft",
+        //                 visualDepth: 3,
+        //               },
+        //             ],
+        //           },
+        //         ],
+        //       },
+        //     ],
+        //   },
+        // ],
       }
     : null;
 
@@ -125,7 +138,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
               key={node.id}
               style={{ paddingLeft: `${baseIndent + node.visualDepth * depthIndent}px` }}
             >
-              {node.isCollapsible ? (
+              {node.isCollapsible && (node.children?.length ?? 0) > 0 ? (
                 <button
                   aria-expanded={expandedNodes[node.id] ?? true}
                   className="pm-tree__toggle"
