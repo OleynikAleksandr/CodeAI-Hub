@@ -139,13 +139,13 @@
 
 ## Phase 36 — Description Questionnaire Terminology + Path (owner: Oleksandr, updated: 2026-01-16)
 ### Stream: Description questionnaire path + meta defaults
-1. [TODO] UI: изменить путь анкеты на `.codeai-hub/<workspaceSlug>/description/questionnaire.md`, добавить авто‑заполнение `meta.author` — scope: `src/client/project-manager/services/description-questionnaire-service.ts`, `src/client/project-manager/services/description-questionnaire-utils.ts`; expected commit message: `fix(project-manager): align description questionnaire path`
-2. [TODO] Git Commit: `fix(project-manager): align description questionnaire path` (hash: TBD)
+1. [DONE] UI: изменить путь анкеты на `.codeai-hub/<workspaceSlug>/description/questionnaire.md`, добавить авто‑заполнение `meta.author` — scope: `src/client/project-manager/services/description-questionnaire-service.ts`, `src/client/project-manager/services/description-questionnaire-utils.ts`; expected commit message: `fix(project-manager): align description questionnaire path`
+2. [DONE] Git Commit: `fix(project-manager): align description questionnaire path` (hash: e584fe38)
 
 ### Stream: Terminology cleanup (Description)
-1. [TODO] UI: заменить остаточные упоминания Idea → Description в Project Manager (заголовки/описания панели) — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `docs(ui): align description terminology`
-2. [TODO] Git Commit: `docs(ui): align description terminology` (hash: TBD)
+1. [DONE] UI: заменить остаточные упоминания Idea → Description в Project Manager (заголовки/описания панели) — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `docs(ui): align description terminology`
+2. [DONE] Git Commit: `docs(ui): align description terminology` (hash: 01462236)
 
 ### Stream: Questionnaire template wording
-1. [TODO] Docs: переименовать формулировки анкеты под Description (без «Idea»/«Initiative») — scope: `packages/agents/idea-collector/assets/questionnaire-template.md`; expected commit message: `docs(idea): align questionnaire wording to description`
-2. [TODO] Git Commit: `docs(idea): align questionnaire wording to description` (hash: TBD)
+1. [DONE] Docs: переименовать формулировки анкеты под Description (без «Idea»/«Initiative») — scope: `packages/agents/idea-collector/assets/questionnaire-template.md`; expected commit message: `docs(idea): align questionnaire wording to description`
+2. [DONE] Git Commit: `docs(idea): align questionnaire wording to description` (hash: cf306f58)
