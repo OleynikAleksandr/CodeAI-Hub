@@ -5,6 +5,12 @@ import {
   DescriptionQuestionnaireService,
 } from "../../services/description-questionnaire-service";
 import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
+import type {
+  ProviderStackDescriptor,
+  ProviderStackId,
+} from "../../../types/provider";
+import { api } from "../../api";
+import { IdeaCollectorProviderPicker } from "./idea-collector-provider-picker";
 
 const SAVE_DEBOUNCE_MS = 400;
 
@@ -40,6 +46,11 @@ export const DescriptionQuestionnairePanel: React.FC<
   const ideaCollectorRef = useRef(new IdeaCollectorSubmitService());
   const [panelState, setPanelState] = useState<PanelState>({ status: "idle" });
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [providerPickerOpen, setProviderPickerOpen] = useState(false);
+  const [providerOptions, setProviderOptions] = useState<
+    readonly ProviderStackDescriptor[]
+  >([]);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const saveTimerRef = useRef<number | null>(null);
   const submitInFlightRef = useRef(false);
 
@@ -127,11 +138,12 @@ export const DescriptionQuestionnairePanel: React.FC<
     };
   }, [answers, panelState]);
 
-  const handleSubmit = async () => {
+  const submitQuestionnaire = async (providerId: ProviderStackId) => {
     if (panelState.status !== "ready" || submitInFlightRef.current) {
       return;
     }
     submitInFlightRef.current = true;
+    setSubmitError(null);
     if (saveTimerRef.current) {
       window.clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
@@ -148,10 +160,35 @@ export const DescriptionQuestionnairePanel: React.FC<
         workspaceName: resolvedWorkspaceName,
         workspacePath: workspacePath ?? "",
         questionnairePath: panelState.questionnairePath,
+        providerId,
       });
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Не удалось отправить анкету."
+      );
     } finally {
       submitInFlightRef.current = false;
     }
+  };
+
+  const handleSubmit = () => {
+    if (panelState.status !== "ready" || submitInFlightRef.current) {
+      return;
+    }
+    setSubmitError(null);
+    setProviderOptions(api.getIdeaCollectorProviders());
+    setProviderPickerOpen(true);
+  };
+
+  const handleProviderConfirm = (providerId: ProviderStackId) => {
+    setProviderPickerOpen(false);
+    void submitQuestionnaire(providerId);
+  };
+
+  const handleProviderCancel = () => {
+    setProviderPickerOpen(false);
   };
 
   const handleCancel = () => {
@@ -183,16 +220,27 @@ export const DescriptionQuestionnairePanel: React.FC<
   }
 
   return (
-    <IdeaQuestionnaireView
-      answers={answers}
-      cancelLabel="Закрыть"
-      description="Анкета сохраняется автоматически. Нажмите «Отправить анкету», чтобы запустить Idea Collector."
-      onAnswerChange={handleAnswerChange}
-      onCancel={handleCancel}
-      onSubmit={handleSubmit}
-      questions={panelState.questions}
-      submitLabel="Отправить анкету"
-      title={title}
-    />
+    <div className="pm-questionnaire-wrapper">
+      {submitError ? (
+        <div className="pm-questionnaire-alert">{submitError}</div>
+      ) : null}
+      <IdeaQuestionnaireView
+        answers={answers}
+        cancelLabel="Закрыть"
+        description="Анкета сохраняется автоматически. Нажмите «Отправить анкету», выберите провайдера и дождитесь запуска Idea Collector."
+        onAnswerChange={handleAnswerChange}
+        onCancel={handleCancel}
+        onSubmit={handleSubmit}
+        questions={panelState.questions}
+        submitLabel="Отправить анкету"
+        title={title}
+      />
+      <IdeaCollectorProviderPicker
+        onCancel={handleProviderCancel}
+        onConfirm={handleProviderConfirm}
+        providers={providerOptions}
+        visible={providerPickerOpen}
+      />
+    </div>
   );
 };
