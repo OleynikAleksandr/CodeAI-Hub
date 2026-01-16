@@ -8,7 +8,6 @@ interface MainAreaProps {
   sizes: [number, number];
   onSizeChange: (index: 0, delta: number, containerWidth: number) => void;
   activeWorkspaceName?: string;
-  activeInitiativeName?: string;
 }
 
 /**
@@ -19,7 +18,6 @@ export const MainArea: React.FC<MainAreaProps> = ({
   sizes,
   onSizeChange,
   activeWorkspaceName,
-  activeInitiativeName,
 }) => {
   const tools = ["Description", "Diagrams", "Spec", "Plan", "Execute"];
   const [activeTool, setActiveTool] = useState<string>(tools[0] ?? "Description");
@@ -32,7 +30,6 @@ export const MainArea: React.FC<MainAreaProps> = ({
         sizes={sizes}
       />
       <StatusBar
-        initiativeName={activeInitiativeName}
         workspaceName={activeWorkspaceName}
       />
     </main>

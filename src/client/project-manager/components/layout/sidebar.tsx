@@ -1,16 +1,14 @@
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
-import type { Initiative, WorkspaceProject } from "../../types";
+import { useEffect, useState } from "react";
+import type { WorkspaceProject } from "../../types";
 
 interface SidebarProps {
   workspaces?: WorkspaceProject[];
-  initiatives?: Initiative[];
   selectedWorkspaceId?: string;
-  selectedInitiativeId?: string;
   onSelectWorkspace?: (id: string) => void;
-  onSelectInitiative?: (id: string) => void;
   onAddWorkspace?: () => void;
-  onCreateInitiative?: () => void;
+  onForkWorkspace?: (id: string) => void;
+  onNewWorkspace?: () => void;
 }
 
 /**
@@ -19,60 +17,38 @@ interface SidebarProps {
  */
 export const Sidebar: React.FC<SidebarProps> = ({
   workspaces = [],
-  initiatives = [],
   selectedWorkspaceId,
-  selectedInitiativeId,
   onSelectWorkspace,
-  onSelectInitiative,
   onAddWorkspace,
-  onCreateInitiative,
+  onForkWorkspace,
+  onNewWorkspace,
 }) => {
   const activeWorkspace = workspaces.find((workspace) => workspace.id === selectedWorkspaceId);
-  const activeInitiative = initiatives.find((item) => item.id === selectedInitiativeId);
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
-  const [isInitiativeMenuOpen, setIsInitiativeMenuOpen] = useState(false);
-  const workspaceMenuRef = useRef<HTMLDivElement>(null);
-  const initiativeMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleDocumentClick = (event: MouseEvent) => {
-      const targetNode = event.target as Node | null;
-      if (
-        isWorkspaceMenuOpen &&
-        workspaceMenuRef.current &&
-        targetNode &&
-        !workspaceMenuRef.current.contains(targetNode)
-      ) {
+    if (!isWorkspaceMenuOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
         setIsWorkspaceMenuOpen(false);
       }
-      if (
-        isInitiativeMenuOpen &&
-        initiativeMenuRef.current &&
-        targetNode &&
-        !initiativeMenuRef.current.contains(targetNode)
-      ) {
-        setIsInitiativeMenuOpen(false);
-      }
     };
 
-    document.addEventListener("click", handleDocumentClick);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", handleKeyDown);
+
     return () => {
-      document.removeEventListener("click", handleDocumentClick);
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isWorkspaceMenuOpen, isInitiativeMenuOpen]);
+  }, [isWorkspaceMenuOpen]);
 
   const handleWorkspaceToggle = () => {
-    if (workspaces.length === 0) {
-      return;
-    }
     setIsWorkspaceMenuOpen((prev) => !prev);
-  };
-
-  const handleInitiativeToggle = () => {
-    if (initiatives.length === 0) {
-      return;
-    }
-    setIsInitiativeMenuOpen((prev) => !prev);
   };
 
   const handleWorkspaceSelect = (id: string) => {
@@ -80,16 +56,33 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setIsWorkspaceMenuOpen(false);
   };
 
-  const handleInitiativeSelect = (id: string) => {
-    onSelectInitiative?.(id);
-    setIsInitiativeMenuOpen(false);
+  const handleWorkspaceMenuClose = () => {
+    setIsWorkspaceMenuOpen(false);
   };
 
-  const treeNodes = selectedInitiativeId
+  const handleAddWorkspaceClick = () => {
+    onAddWorkspace?.();
+    setIsWorkspaceMenuOpen(false);
+  };
+
+  const handleNewWorkspaceClick = () => {
+    onNewWorkspace?.();
+    setIsWorkspaceMenuOpen(false);
+  };
+
+  const handleForkWorkspaceClick = () => {
+    if (!selectedWorkspaceId) {
+      return;
+    }
+    onForkWorkspace?.(selectedWorkspaceId);
+    setIsWorkspaceMenuOpen(false);
+  };
+
+  const treeNodes = selectedWorkspaceId
     ? [
         {
-          id: "initiative",
-          label: activeInitiative?.name ?? "Initiative",
+          id: "workspace",
+          label: activeWorkspace?.name ?? "Workspace",
           depth: 0,
           status: "active",
         },
@@ -109,20 +102,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="pm-context-block">
           <div className="pm-context-row">
             <span className="pm-context-label">Workspace</span>
-            <button
-              className="pm-context-action"
-              onClick={onAddWorkspace}
-              type="button"
-            >
-              Add
-            </button>
           </div>
-          <div className="pm-context-select" ref={workspaceMenuRef}>
+          <div className="pm-context-select">
             <button
               aria-expanded={isWorkspaceMenuOpen}
-              aria-haspopup="listbox"
+              aria-haspopup="dialog"
               className="pm-context-select__button"
-              disabled={workspaces.length === 0}
               onClick={handleWorkspaceToggle}
               type="button"
             >
@@ -134,9 +119,51 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 ▾
               </span>
             </button>
-            {isWorkspaceMenuOpen ? (
-              <div className="pm-context-menu" role="listbox">
-                {workspaces.map((workspace) => (
+          </div>
+        </div>
+      </div>
+      {isWorkspaceMenuOpen ? (
+        <div
+          aria-label="Workspace menu"
+          className="pm-workspace-overlay"
+          onClick={handleWorkspaceMenuClose}
+          role="dialog"
+        >
+          <div
+            className="pm-workspace-menu"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="pm-workspace-menu__actions">
+              <button
+                className="pm-workspace-menu__action"
+                onClick={handleAddWorkspaceClick}
+                type="button"
+              >
+                Add workspace
+              </button>
+              <button
+                className="pm-workspace-menu__action"
+                disabled={!selectedWorkspaceId || !onForkWorkspace}
+                onClick={handleForkWorkspaceClick}
+                type="button"
+              >
+                Fork workspace
+              </button>
+              <button
+                className="pm-workspace-menu__action"
+                disabled={!onNewWorkspace}
+                onClick={handleNewWorkspaceClick}
+                type="button"
+              >
+                New workspace
+              </button>
+            </div>
+            <div className="pm-workspace-menu__spacer" />
+            <div className="pm-workspace-menu__list" role="listbox">
+              {workspaces.length === 0 ? (
+                <div className="pm-workspace-menu__empty">No workspaces yet.</div>
+              ) : (
+                workspaces.map((workspace) => (
                   <button
                     className={
                       workspace.id === selectedWorkspaceId
@@ -149,60 +176,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   >
                     {workspace.name}
                   </button>
-                ))}
-              </div>
-            ) : null}
+                ))
+              )}
+            </div>
           </div>
         </div>
-        <div className="pm-context-block">
-          <div className="pm-context-row">
-            <span className="pm-context-label">Initiative</span>
-            <button
-              className="pm-context-action"
-              onClick={onCreateInitiative}
-              type="button"
-            >
-              New
-            </button>
-          </div>
-          <div className="pm-context-select" ref={initiativeMenuRef}>
-            <button
-              aria-expanded={isInitiativeMenuOpen}
-              aria-haspopup="listbox"
-              className="pm-context-select__button"
-              disabled={initiatives.length === 0}
-              onClick={handleInitiativeToggle}
-              type="button"
-            >
-              <span className="pm-context-select__label">
-                {activeInitiative?.name ??
-                  (initiatives.length === 0 ? "No initiatives yet" : "Select initiative")}
-              </span>
-              <span className="pm-context-select__chevron" aria-hidden="true">
-                ▾
-              </span>
-            </button>
-            {isInitiativeMenuOpen ? (
-              <div className="pm-context-menu" role="listbox">
-                {initiatives.map((initiative) => (
-                  <button
-                    className={
-                      initiative.id === selectedInitiativeId
-                        ? "pm-context-option pm-context-option--active"
-                        : "pm-context-option"
-                    }
-                    key={initiative.id}
-                    onClick={() => handleInitiativeSelect(initiative.id)}
-                    type="button"
-                  >
-                    {initiative.name}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </div>
+      ) : null}
       <div className="pm-sidebar__tree">
         <div className="pm-tree__header">
           <span className="pm-tree__title">Workflow Tree</span>
@@ -211,7 +190,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </span>
         </div>
         {treeNodes.length === 0 ? (
-          <div className="pm-tree__empty">Select a workspace and initiative.</div>
+          <div className="pm-tree__empty">Select a workspace to start.</div>
         ) : (
           <ul className="pm-tree__list">
             {treeNodes.map((node) => (

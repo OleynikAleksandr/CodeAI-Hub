@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.420 (15.01.2026) — Project Manager: кастомные меню вместо нативных select (устранение крашей CEF).
+**Состояние:** релиз 1.1.421 (16.01.2026) — Project Manager: Workspace-only контекст и полноэкранное меню выбора workspace (Add/Fork/New).
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).

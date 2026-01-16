@@ -1,3 +1,8 @@
+## [1.1.421] - 2026-01-16
+
+### Changed
+- **Project Manager**: removed Initiative selector; workspace picker is now a full-screen menu with actions (Add/Fork/New) and workspace list.
+
 ## [1.1.420] - 2026-01-15
 
 ### Fixed
