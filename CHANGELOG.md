@@ -1,3 +1,9 @@
+## [1.1.427] - 2026-01-16
+
+### Fixed
+- **Project Manager**: restored split layout (Sessions/Artifacts) while the Description questionnaire is open.
+- **Description questionnaire**: fallback to `http://127.0.0.1:8080` when bridge config is missing.
+
 ## [1.1.426] - 2026-01-16
 
 ### Changed
