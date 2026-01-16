@@ -292,6 +292,9 @@ body {
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
+  --pm-tree-marker-size: 24px;
+  --pm-tree-dot-size: 8px;
+  --pm-tree-triangle-size: 18px;
 }
 
 .pm-tree__header {
@@ -348,8 +351,8 @@ body {
 }
 
 .pm-tree__toggle {
-  width: 18px;
-  height: 18px;
+  width: var(--pm-tree-marker-size);
+  height: var(--pm-tree-marker-size);
   border: none;
   background: transparent;
   padding: 0;
@@ -369,7 +372,7 @@ body {
   display: inline-block;
   transform: rotate(0deg);
   transition: transform 0.12s ease;
-  font-size: 12px;
+  font-size: var(--pm-tree-triangle-size);
   line-height: 1;
 }
 
@@ -378,12 +381,21 @@ body {
 }
 
 .pm-tree__status {
-  width: 8px;
-  height: 8px;
+  width: var(--pm-tree-marker-size);
+  height: var(--pm-tree-marker-size);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pm-tree__status::before {
+  content: "";
+  width: var(--pm-tree-dot-size);
+  height: var(--pm-tree-dot-size);
   border-radius: 999px;
   background: #6b7483;
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
-  flex-shrink: 0;
 }
 
 .pm-tree__label {
@@ -392,20 +404,20 @@ body {
   text-overflow: ellipsis;
 }
 
-.pm-tree__item--active .pm-tree__status {
+.pm-tree__item--active .pm-tree__status::before {
   background: var(--pm-accent-strong);
   box-shadow: 0 0 0 4px rgba(95, 227, 186, 0.18);
 }
 
-.pm-tree__item--todo .pm-tree__status {
+.pm-tree__item--todo .pm-tree__status::before {
   background: #d9a441;
 }
 
-.pm-tree__item--blocked .pm-tree__status {
+.pm-tree__item--blocked .pm-tree__status::before {
   background: #e06363;
 }
 
-.pm-tree__item--draft .pm-tree__status {
+.pm-tree__item--draft .pm-tree__status::before {
   background: #7b8aa1;
 }
 
