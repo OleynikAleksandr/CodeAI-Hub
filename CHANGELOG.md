@@ -1,3 +1,8 @@
+## [1.1.422] - 2026-01-16
+
+### Changed
+- **Project Manager**: removed tree header, adjusted workflow levels (Description/Diagrams at workspace level), and added collapsible triangles for primary nodes.
+
 ## [1.1.421] - 2026-01-16
 
 ### Changed
