@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-16
 **Status:** Active reference
-**Release Focus:** v1.1.427 — Project Manager: восстановлен split‑layout в центральной зоне и добавлен fallback httpUrl для загрузки анкеты Description.
+**Release Focus:** v1.1.428 — Project Manager: анкета Description отправляется в Idea Collector (автосохранение и сохранение артефактов).
 
 ---
 
@@ -153,6 +153,9 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.428 - 2026-01-16)
+- **Project Manager Description**: анкета автосохраняется и отправляется в Idea Collector, артефакты пишутся через artifact‑upsert.
 
 ## Recent Changes (v1.1.427 - 2026-01-16)
 - **Project Manager Description**: восстановлен split‑layout (Sessions/Artifacts) при открытой анкете.
