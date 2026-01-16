@@ -877,6 +877,21 @@ export class SessionRequestHandler {
   }
 
   private getDefaultProviderId(): string {
-    return this.providerRegistry.listProviders()[0]?.id ?? "claudeCodeCli";
+    const providers = this.providerRegistry.listProviders();
+    const activeProvider = providers.find(
+      (provider) =>
+        provider.status === "active" &&
+        Boolean(this.providerRegistry.getAdapter(provider.id))
+    );
+    if (activeProvider) {
+      return activeProvider.id;
+    }
+    const fallbackProvider = providers.find((provider) =>
+      Boolean(this.providerRegistry.getAdapter(provider.id))
+    );
+    if (fallbackProvider) {
+      return fallbackProvider.id;
+    }
+    return "claudeCodeCli";
   }
 }

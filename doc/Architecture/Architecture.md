@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-16
 **Status:** Active reference
-**Release Focus:** v1.1.428 — Project Manager: анкета Description отправляется в Idea Collector (автосохранение и сохранение артефактов).
+**Release Focus:** v1.1.429 — Project Manager: session:create выбирает активный провайдер, чтобы анкета Description запускала Idea Collector.
 
 ---
 
@@ -38,6 +38,7 @@ graph TD
 - **Core Bootstrap (v1.1.353 improvements)**: Ядро переведено на мульти-тенантную архитектуру. Рабочий каталог (`workspacePath`) теперь является свойством конкретной Сессии, а не глобальным параметром процесса. Это позволяет одному экземпляру Ядра обслуживать несколько проектов одновременно.
 - **Project Registry**: Внедрен сервис реестра проектов, сохраняющий историю воркспейсов в `~/.codeai-hub/state/projects.json`.
 - **RemoteBridge Decomposition**: Монолитный `RemoteBridge` разделен на специализированные хендлеры (`SessionRequestHandler`, `ProjectRequestHandler`, `SystemRequestHandler`, `HttpApiRouter`, `WebSocketManager`), что позволило обеспечить высокую поддерживаемость и соблюдение лимитов размера файлов (< 300 строк).
+- **Default provider selection (v1.1.429)**: `session:create` выбирает первый активный провайдер с доступным адаптером, чтобы запуск Idea Collector не зависел от порядка списка провайдеров.
 - **UI Modularization**: Project Manager остаётся отдельным UI-бандлом; Workbench собирается из контекстного сайдбара, tool palette, status bar и центрального сплита сессии/артефактов.
 - **Runtime installation flow**: скрипт `build-all.sh` теперь устанавливает Core в финальное место (`~/.codeai-hub/core/<platform>/<version>/`) сразу после сборки.
 - **Supervisor logging hygiene**: `CoreProcessManager` теперь инициализирует `supervisorLogger` с явными `string` типами (`info`/`error`). Это исключает случайные `[object Object]` вставки в Output Channel, когда Supervisor прокидывает структурированные объекты, и гарантирует одинаковый формат логов в VS Code и launcher.
