@@ -45,8 +45,8 @@
 2. [DONE] Git Commit: `docs: update 1.1.428 release notes` (hash: cc3f4c00)
 
 ### Stream: Release 1.1.428 architecture docs
-1. [TODO] Docs: обновить системную архитектуру под 1.1.428 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.428 architecture notes`
-2. [TODO] Git Commit: `docs: update 1.1.428 architecture notes` (hash: TBD)
+1. [DONE] Docs: обновить системную архитектуру под 1.1.428 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.428 architecture notes`
+2. [DONE] Git Commit: `docs: update 1.1.428 architecture notes` (hash: e35d0ff6)
 
 ### Stream: Release 1.1.428 build
 1. [TODO] Release: bump + build-all артефакты под 1.1.428 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.428`
