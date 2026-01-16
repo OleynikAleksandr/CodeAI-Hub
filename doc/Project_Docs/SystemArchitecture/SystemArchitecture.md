@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.428 (16.01.2026) — Project Manager: анкета Description автосохраняется и отправляется в Idea Collector.
+**Состояние:** релиз 1.1.429 (16.01.2026) — Project Manager: session:create выбирает активный провайдер при отправке анкеты Description.
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
@@ -98,6 +98,9 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
+
+## Recent Changes (v1.1.429 - 2026-01-16)
+- **Default provider selection**: Core выбирает первый активный провайдер с доступным адаптером при `session:create`, чтобы запуск Idea Collector не зависел от порядка списка провайдеров.
 
 ## Recent Changes (v1.1.388 - 2026-01-06)
 - **Agent Packages architecture**: Extracted `@codeai-hub/idea-collector` and `@codeai-hub/spec-creator` into standalone npm packages with facade pattern.

@@ -54,5 +54,5 @@
 
 ## Phase 41 — Fix Description questionnaire submission (owner: Oleksandr, updated: 2026-01-16)
 ### Stream: Idea Collector session creation
-1. [TODO] Fix: надёжное создание idea-сессии и выбор доступного провайдера при отправке анкеты — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/api.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(project-manager): make idea collector session start`
-2. [TODO] Git Commit: `fix(project-manager): make idea collector session start` (hash: TBD)
+1. [IN_PROGRESS] Fix: session:create выбирает активный провайдер по умолчанию, чтобы анкета Description запускала Idea Collector — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): prefer active provider for session create`
+2. [TODO] Git Commit: `fix(core): prefer active provider for session create` (hash: TBD)
