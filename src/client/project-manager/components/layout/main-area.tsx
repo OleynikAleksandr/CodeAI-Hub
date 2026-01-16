@@ -1,5 +1,7 @@
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { WorkspaceProject } from "../../types";
+import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { PanelContainer } from "./panel-container";
 import { StatusBar } from "./status-bar";
 import { Toolbar } from "./toolbar";
@@ -7,7 +9,7 @@ import { Toolbar } from "./toolbar";
 interface MainAreaProps {
   sizes: [number, number];
   onSizeChange: (index: 0, delta: number, containerWidth: number) => void;
-  activeWorkspaceName?: string;
+  activeWorkspace?: WorkspaceProject;
 }
 
 /**
@@ -17,25 +19,43 @@ interface MainAreaProps {
 export const MainArea: React.FC<MainAreaProps> = ({
   sizes,
   onSizeChange,
-  activeWorkspaceName,
+  activeWorkspace,
 }) => {
-  // NOTE (MVP): Tool palette will be driven by the selected node in the real Workflow Tree
-  // (gated by artifacts/status). The static tool list was only used during early layout work
-  // and is intentionally disabled to avoid implying functionality that isn't wired yet.
-  //
-  // const tools = ["Description", "Diagrams", "Spec", "Plan", "Execute"] as const;
-  const tools: readonly string[] = [];
-  const [activeTool, setActiveTool] = useState<string | undefined>(undefined);
+  const tools: readonly string[] = activeWorkspace ? ["Description"] : [];
+  const [activeTool, setActiveTool] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!activeWorkspace) {
+      setActiveTool(null);
+      return;
+    }
+    setActiveTool((current) => current ?? "Description");
+  }, [activeWorkspace?.id]);
+
+  const showQuestionnaire = activeTool === "Description";
 
   return (
     <main className="pm-main-area">
-      <Toolbar activeTool={activeTool} onToolSelect={setActiveTool} tools={tools} />
-      <PanelContainer
-        onSizeChange={onSizeChange}
-        sizes={sizes}
+      <Toolbar
+        activeTool={activeTool ?? undefined}
+        onToolSelect={setActiveTool}
+        tools={tools}
       />
+      {showQuestionnaire ? (
+        <div className="pm-panel-container">
+          <div className="pm-panel__content">
+            <DescriptionQuestionnairePanel
+              onClose={() => setActiveTool(null)}
+              workspaceName={activeWorkspace?.name}
+              workspacePath={activeWorkspace?.path}
+            />
+          </div>
+        </div>
+      ) : (
+        <PanelContainer onSizeChange={onSizeChange} sizes={sizes} />
+      )}
       <StatusBar
-        workspaceName={activeWorkspaceName}
+        workspaceName={activeWorkspace?.name}
       />
     </main>
   );
