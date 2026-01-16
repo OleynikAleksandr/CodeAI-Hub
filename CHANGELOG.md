@@ -1,3 +1,8 @@
+## [1.1.424] - 2026-01-16
+
+### Changed
+- **Project Manager**: Spec/Plan/Execute выровнены по оси маркера модуля; Orchestration остаётся со смещением.
+
 ## [1.1.423] - 2026-01-16
 
 ### Changed

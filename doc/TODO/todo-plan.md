@@ -81,3 +81,18 @@
 ### Stream: Release 1.1.423 build
 1. [DONE] Release: bump + build-all артефакты под 1.1.423 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.423`
 2. [DONE] Git Commit: `chore(release): bump 1.1.423` (hash: 8c12f3e1)
+
+## Phase 32 — Module Step Alignment + Release 1.1.424 (owner: Oleksandr, updated: 2026-01-16)
+### Stream: Module step alignment
+1. [DONE] UI: выровнять Spec/Plan/Execute по оси маркера модуля и сохранить отступ Orchestration — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): align module step markers`
+2. [DONE] Git Commit: `fix(project-manager): align module step markers` (hash: 07f8de23)
+
+### Stream: Release 1.1.424 docs
+1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.424 release notes`
+2. [TODO] Git Commit: `docs: update 1.1.424 release notes` (hash: TBD)
+3. [TODO] Docs: обновить системную архитектуру под 1.1.424 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.424 architecture notes`
+4. [TODO] Git Commit: `docs: update 1.1.424 architecture notes` (hash: TBD)
+
+### Stream: Release 1.1.424 build
+1. [TODO] Release: bump + build-all артефакты под 1.1.424 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.424`
+2. [TODO] Git Commit: `chore(release): bump 1.1.424` (hash: TBD)
