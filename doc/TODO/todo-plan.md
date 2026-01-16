@@ -79,5 +79,5 @@
 4. [DONE] Git Commit: `docs: update 1.1.423 architecture notes` (hash: 92a84498)
 
 ### Stream: Release 1.1.423 build
-1. [IN_PROGRESS] Release: bump + build-all артефакты под 1.1.423 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.423`
-2. [TODO] Git Commit: `chore(release): bump 1.1.423` (hash: TBD)
+1. [DONE] Release: bump + build-all артефакты под 1.1.423 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.423`
+2. [DONE] Git Commit: `chore(release): bump 1.1.423` (hash: 8c12f3e1)
