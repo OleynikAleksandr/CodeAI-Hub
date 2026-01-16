@@ -41,19 +41,22 @@ export const MainArea: React.FC<MainAreaProps> = ({
         onToolSelect={setActiveTool}
         tools={tools}
       />
-      {showDescriptionQuestionnaire ? (
-        <div className="pm-panel-container">
-          <div className="pm-panel__content">
+      <PanelContainer
+        artifactContent={
+          <div className="pm-placeholder">Artifacts will appear here.</div>
+        }
+        onSizeChange={onSizeChange}
+        sessionContent={
+          showDescriptionQuestionnaire ? (
             <DescriptionQuestionnairePanel
               onClose={() => setActiveTool(null)}
               workspaceName={activeWorkspace?.name}
               workspacePath={activeWorkspace?.path}
             />
-          </div>
-        </div>
-      ) : (
-        <PanelContainer onSizeChange={onSizeChange} sizes={sizes} />
-      )}
+          ) : undefined
+        }
+        sizes={sizes}
+      />
       <StatusBar
         workspaceName={activeWorkspace?.name}
       />
