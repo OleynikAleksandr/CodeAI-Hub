@@ -23500,67 +23500,8 @@ ${path2}` : path2;
     ] })
   ] });
 
-  // src/client/ui/src/services/idea-artifact-persistence.ts
-  var ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
-  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var persistIdeaArtifacts = async (params) => {
-    const payload = {
-      sessionId: params.sessionId,
-      artifacts: params.artifact.artifacts
-    };
-    const response = await fetch(
-      joinUrl(params.httpUrl, ARTIFACT_UPSERT_ENDPOINT),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }
-    );
-    if (response.status === 204) {
-      return { ok: true, saved: [] };
-    }
-    if (!response.ok) {
-      const errorDetails = await tryReadCoreErrorDetails(response);
-      return {
-        ok: false,
-        error: `HTTP ${response.status}${errorDetails ? `: ${errorDetails}` : ""}`
-      };
-    }
-    const responsePayload = await response.json();
-    const savedEntries = parseSavedArtifactUpserts(responsePayload);
-    return { ok: true, saved: savedEntries ?? [] };
-  };
-  var tryReadCoreErrorDetails = async (response) => {
-    try {
-      const payload = await response.json();
-      if (isRecord4(payload) && typeof payload.error === "string") {
-        return payload.error;
-      }
-      return null;
-    } catch {
-      return null;
-    }
-  };
-  var parseSavedArtifactUpserts = (payload) => {
-    if (!(isRecord4(payload) && Array.isArray(payload.saved))) {
-      return null;
-    }
-    const saved = [];
-    for (const entry of payload.saved) {
-      if (!isRecord4(entry)) {
-        return null;
-      }
-      if (typeof entry.slot !== "string" || typeof entry.path !== "string") {
-        return null;
-      }
-      const changed = typeof entry.changed === "boolean" ? entry.changed : true;
-      saved.push({ slot: entry.slot, path: entry.path, changed });
-    }
-    return saved;
-  };
-
   // src/client/ui/src/services/idea-collector-artifact.ts
-  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
   var readNextAction = (data) => {
     let nextAction = null;
@@ -23593,7 +23534,7 @@ ${path2}` : path2;
     }
     const artifacts = [];
     for (const entry of data.artifacts) {
-      if (!isRecord5(entry)) {
+      if (!isRecord4(entry)) {
         return null;
       }
       const slot = readStringField(entry, "slot");
@@ -23606,11 +23547,11 @@ ${path2}` : path2;
     return artifacts;
   };
   var extractIdeaCollectorArtifact = (event) => {
-    if (!isRecord5(event)) {
+    if (!isRecord4(event)) {
       return null;
     }
     const data = event.data;
-    if (!isRecord5(data) || data.kind !== "structured_output") {
+    if (!isRecord4(data) || data.kind !== "structured_output") {
       return null;
     }
     const suggestedResponse = readSuggestedResponse(data);
@@ -23623,7 +23564,7 @@ ${path2}` : path2;
       return null;
     }
     const artifact = data.artifact;
-    if (!isRecord5(artifact)) {
+    if (!isRecord4(artifact)) {
       return null;
     }
     const { ideaMarkdown, virtualSimulationMarkdown } = readArtifactPayload(artifact);
@@ -23641,6 +23582,101 @@ ${path2}` : path2;
       return null;
     }
     return { suggestedResponse, artifacts: legacyArtifacts };
+  };
+
+  // src/client/ui/src/services/idea-artifact-persistence.ts
+  var ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
+  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var persistIdeaArtifacts = async (params) => {
+    const payload = {
+      sessionId: params.sessionId,
+      artifacts: params.artifact.artifacts
+    };
+    const response = await fetch(
+      joinUrl(params.httpUrl, ARTIFACT_UPSERT_ENDPOINT),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }
+    );
+    if (response.status === 204) {
+      return { ok: true, saved: [] };
+    }
+    if (!response.ok) {
+      const errorDetails = await tryReadCoreErrorDetails(response);
+      return {
+        ok: false,
+        error: `HTTP ${response.status}${errorDetails ? `: ${errorDetails}` : ""}`
+      };
+    }
+    const responsePayload = await response.json();
+    const savedEntries = parseSavedArtifactUpserts(responsePayload);
+    return { ok: true, saved: savedEntries ?? [] };
+  };
+  var tryReadCoreErrorDetails = async (response) => {
+    try {
+      const payload = await response.json();
+      if (isRecord5(payload) && typeof payload.error === "string") {
+        return payload.error;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  };
+  var parseSavedArtifactUpserts = (payload) => {
+    if (!(isRecord5(payload) && Array.isArray(payload.saved))) {
+      return null;
+    }
+    const saved = [];
+    for (const entry of payload.saved) {
+      if (!isRecord5(entry)) {
+        return null;
+      }
+      if (typeof entry.slot !== "string" || typeof entry.path !== "string") {
+        return null;
+      }
+      const changed = typeof entry.changed === "boolean" ? entry.changed : true;
+      saved.push({ slot: entry.slot, path: entry.path, changed });
+    }
+    return saved;
+  };
+
+  // src/client/ui/src/services/idea-collector-artifact-saver.ts
+  var saveIdeaCollectorArtifacts = async (sessionId, artifact) => {
+    const httpUrl = resolveCoreHttpUrl();
+    if (!httpUrl) {
+      postSystemNotice(
+        sessionId,
+        "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D."
+      );
+      return;
+    }
+    try {
+      if (artifact.artifacts.length === 0) {
+        return;
+      }
+      const result = await persistIdeaArtifacts({
+        httpUrl,
+        sessionId,
+        artifact
+      });
+      if (!result.ok) {
+        postSystemNotice(
+          sessionId,
+          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B (${result.error}).`
+        );
+        return;
+      }
+      const savedSummary = result.saved.length > 0 ? result.saved.map((entry) => entry.path).join(", ") : artifact.artifacts.map((entry) => entry.slot).join(", ");
+      postSystemNotice(
+        sessionId,
+        `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedSummary}`
+      );
+    } catch {
+      postSystemNotice(sessionId, "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438.");
+    }
   };
 
   // src/client/ui/src/app-host/idea-kickoff-prompt.ts
@@ -23905,60 +23941,123 @@ ${template}`;
   };
 
   // src/client/ui/src/services/idea-collector-contract.ts
-  var IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
+  var DESCRIPTION_CONTRACT_ENDPOINT = "/api/v1/orchestrator/description-contract";
+  var VIRTUAL_SIMULATION_CONTRACT_ENDPOINT = "/api/v1/orchestrator/virtual-simulation-contract";
   var FALLBACK_OUTPUT_PATHS = {
-    idea: ".codeai-hub/unknown-workspace/description/runs/000-unknown/idea/idea.md",
-    virtualSimulation: ".codeai-hub/unknown-workspace/description/runs/000-unknown/idea/virtual-simulation.md"
+    idea: ".codeai-hub/unknown-workspace/description/runs/000-unknown/description.md",
+    virtualSimulation: ".codeai-hub/unknown-workspace/virtual_simulation/runs/000-unknown/virtual-simulation.md"
   };
   var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isIdeaContractPayload = (value) => {
+  var isWorkflowContractPayload = (value) => {
     if (!isRecord7(value)) {
       return false;
     }
-    const outputPaths = value.outputPaths;
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord7(value.schema) && isRecord7(outputPaths) && typeof outputPaths.idea === "string" && outputPaths.idea.length > 0 && typeof outputPaths.virtualSimulation === "string" && outputPaths.virtualSimulation.length > 0;
+    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord7(value.schema);
   };
-  var fetchIdeaContract = async () => {
+  var parseVersion = (payload) => typeof payload.version === "string" && payload.version.trim().length > 0 ? payload.version : null;
+  var fetchWorkflowContract = async (endpoint) => {
     const httpUrl = resolveCoreHttpUrl();
     if (!httpUrl) {
       return null;
     }
     try {
-      const response = await fetch(joinUrl(httpUrl, IDEA_CONTRACT_ENDPOINT));
+      const response = await fetch(joinUrl(httpUrl, endpoint));
       if (!response.ok) {
         return null;
       }
       const payload = await response.json();
-      if (!isIdeaContractPayload(payload)) {
+      if (!isWorkflowContractPayload(payload)) {
         return null;
       }
-      const schema = normalizeIdeaCollectorSchema(payload.schema, null);
+      const template = typeof payload.template === "string" && payload.template.length > 0 ? payload.template : null;
+      const schema = normalizeIdeaCollectorSchema(payload.schema, template);
       const questionnaireTemplateMarkdown = extractIdeaContractQuestionnaireTemplate(payload) ?? null;
       return {
         prompt: payload.prompt,
         schema,
-        outputPaths: payload.outputPaths,
-        questionnaireTemplateMarkdown
+        template,
+        questionnaireTemplateMarkdown,
+        version: parseVersion(payload)
       };
     } catch {
       return null;
     }
   };
+  var fallbackContract = () => ({
+    prompt: IDEA_KICKOFF_PROMPT,
+    schema: normalizeIdeaCollectorSchema(IDEA_COLLECTOR_FALLBACK_SCHEMA, null),
+    template: null,
+    questionnaireTemplateMarkdown: null,
+    version: null
+  });
+  var loadDescriptionContract = async () => await fetchWorkflowContract(DESCRIPTION_CONTRACT_ENDPOINT) ?? fallbackContract();
+  var loadVirtualSimulationContract = async () => await fetchWorkflowContract(VIRTUAL_SIMULATION_CONTRACT_ENDPOINT) ?? fallbackContract();
   var loadIdeaContract = async () => {
-    const remote = await fetchIdeaContract();
-    if (remote) {
-      return remote;
-    }
-    const fallbackSchema = normalizeIdeaCollectorSchema(
-      IDEA_COLLECTOR_FALLBACK_SCHEMA,
-      null
-    );
+    const descriptionContract = await loadDescriptionContract();
     return {
-      prompt: IDEA_KICKOFF_PROMPT,
-      schema: fallbackSchema,
+      prompt: descriptionContract.prompt,
+      schema: descriptionContract.schema,
       outputPaths: FALLBACK_OUTPUT_PATHS,
-      questionnaireTemplateMarkdown: null
+      questionnaireTemplateMarkdown: descriptionContract.questionnaireTemplateMarkdown
     };
+  };
+
+  // src/client/ui/src/services/idea-collector-session-state.ts
+  var IdeaCollectorSessionState = class {
+    constructor() {
+      this.activeSessions = /* @__PURE__ */ new Set();
+      this.artifacts = /* @__PURE__ */ new Map();
+      this.noticesSent = /* @__PURE__ */ new Set();
+      this.pendingQuestionnaire = /* @__PURE__ */ new Set();
+      this.lastAssistantMessages = /* @__PURE__ */ new Map();
+      this.outputPathsBySession = /* @__PURE__ */ new Map();
+      this.sessionStages = /* @__PURE__ */ new Map();
+    }
+    isActive(sessionId) {
+      return this.activeSessions.has(sessionId);
+    }
+    markActive(sessionId) {
+      this.activeSessions.add(sessionId);
+    }
+    isQuestionnairePending(sessionId) {
+      return this.pendingQuestionnaire.has(sessionId);
+    }
+    markQuestionnairePending(sessionId) {
+      this.pendingQuestionnaire.add(sessionId);
+    }
+    clearQuestionnairePending(sessionId) {
+      this.pendingQuestionnaire.delete(sessionId);
+    }
+    hasNoticeSent(sessionId) {
+      return this.noticesSent.has(sessionId);
+    }
+    markNoticeSent(sessionId) {
+      this.noticesSent.add(sessionId);
+    }
+    recordArtifact(sessionId, artifact) {
+      this.artifacts.set(sessionId, artifact);
+    }
+    getArtifact(sessionId) {
+      return this.artifacts.get(sessionId) ?? null;
+    }
+    recordAssistantMessage(sessionId, content3) {
+      this.lastAssistantMessages.set(sessionId, content3);
+    }
+    getLastAssistantMessage(sessionId) {
+      return this.lastAssistantMessages.get(sessionId) ?? null;
+    }
+    setOutputPaths(sessionId, outputPaths) {
+      this.outputPathsBySession.set(sessionId, outputPaths);
+    }
+    getOutputPaths(sessionId) {
+      return this.outputPathsBySession.get(sessionId) ?? null;
+    }
+    setStage(sessionId, stage) {
+      this.sessionStages.set(sessionId, stage);
+    }
+    getStage(sessionId) {
+      return this.sessionStages.get(sessionId) ?? "description";
+    }
   };
 
   // src/client/ui/src/services/idea-collector-workspace-context.ts
@@ -24127,48 +24226,69 @@ ${command.remainingMessage}`);
   };
 
   // src/client/ui/src/services/idea-collector-service.ts
-  var loadContract = () => loadIdeaContract();
-  var _IdeaCollectorService = class _IdeaCollectorService {
+  var loadContractForStage = (stage) => stage === "virtual_simulation" ? loadVirtualSimulationContract() : loadDescriptionContract();
+  var loadLegacyContract = () => loadIdeaContract();
+  var IdeaCollectorService = class {
+    constructor() {
+      this.state = new IdeaCollectorSessionState();
+    }
     isIdeaCollectorSession(sessionId) {
-      if (_IdeaCollectorService.activeSessions.has(sessionId)) {
+      if (this.state.isActive(sessionId)) {
         return true;
       }
       if (this.isQuestionnairePending(sessionId)) {
-        _IdeaCollectorService.activeSessions.add(sessionId);
+        this.state.markActive(sessionId);
         return true;
       }
       return false;
     }
     getLatestArtifact(sessionId) {
-      return _IdeaCollectorService.artifacts.get(sessionId) ?? null;
+      return this.state.getArtifact(sessionId);
     }
     recordAssistantMessage(sessionId, content3) {
       const trimmed = content3.trim();
       if (trimmed.length === 0) {
         return;
       }
-      _IdeaCollectorService.lastAssistantMessages.set(sessionId, trimmed);
+      this.state.recordAssistantMessage(sessionId, trimmed);
     }
     getLastAssistantMessage(sessionId) {
-      return _IdeaCollectorService.lastAssistantMessages.get(sessionId) ?? null;
+      return this.state.getLastAssistantMessage(sessionId);
     }
     getOutputPathsForSessionId(sessionId) {
-      return _IdeaCollectorService.outputPathsBySession.get(sessionId) ?? null;
+      return this.state.getOutputPaths(sessionId);
     }
-    startCollection(sessionId) {
-      _IdeaCollectorService.activeSessions.add(sessionId);
-      this.markQuestionnairePending(sessionId);
-      if (!_IdeaCollectorService.noticesSent.has(sessionId)) {
-        _IdeaCollectorService.noticesSent.add(sessionId);
+    setSessionStage(sessionId, stage) {
+      this.state.setStage(sessionId, stage);
+    }
+    startCollection(sessionId, stage = "description") {
+      this.state.markActive(sessionId);
+      this.setSessionStage(sessionId, stage);
+      if (stage === "description") {
+        this.markQuestionnairePending(sessionId);
+        if (!this.state.hasNoticeSent(sessionId)) {
+          this.state.markNoticeSent(sessionId);
+          postSystemNotice(
+            sessionId,
+            "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Description. \u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
+          );
+          postSystemNotice(
+            sessionId,
+            "\u0427\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u044C \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B/\u0444\u0430\u0439\u043B\u044B \u0438\u0437 workspace, \u043C\u043E\u0436\u043D\u043E:\n- \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0438 \u0442\u0440\u0438\u0433\u0433\u0435\u0440 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0439/\u0438\u0437\u0443\u0447\u0438/\u043E\u0437\u043D\u0430\u043A\u043E\u043C\u044C\u0441\u044F\xBB) \u0438 \u0443\u043A\u0430\u0437\u0430\u0442\u044C \u043F\u0443\u0442\u0438 \u043A \u0444\u0430\u0439\u043B\u0430\u043C (\u043C\u043E\u0436\u043D\u043E \u043D\u0430 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445);\n- \u0438\u043B\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u043A\u043E\u043C\u0430\u043D\u0434\u0443:\n/read <relative-path>\n(\u043C\u043E\u0436\u043D\u043E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043F\u0443\u0442\u0435\u0439 \u0432 \u043E\u0434\u043D\u043E\u0439 \u0441\u0442\u0440\u043E\u043A\u0435, \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 3)."
+          );
+        }
+        return;
+      }
+      if (!this.state.hasNoticeSent(sessionId)) {
+        this.state.markNoticeSent(sessionId);
         postSystemNotice(
           sessionId,
-          "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Idea Collector. \u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
-        );
-        postSystemNotice(
-          sessionId,
-          "\u0427\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u044C \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B/\u0444\u0430\u0439\u043B\u044B \u0438\u0437 workspace, \u043C\u043E\u0436\u043D\u043E:\n- \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0438 \u0442\u0440\u0438\u0433\u0433\u0435\u0440 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0439/\u0438\u0437\u0443\u0447\u0438/\u043E\u0437\u043D\u0430\u043A\u043E\u043C\u044C\u0441\u044F\xBB) \u0438 \u0443\u043A\u0430\u0437\u0430\u0442\u044C \u043F\u0443\u0442\u0438 \u043A \u0444\u0430\u0439\u043B\u0430\u043C (\u043C\u043E\u0436\u043D\u043E \u043D\u0430 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445);\n- \u0438\u043B\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u043A\u043E\u043C\u0430\u043D\u0434\u0443:\n/read <relative-path>\n(\u043C\u043E\u0436\u043D\u043E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043F\u0443\u0442\u0435\u0439 \u0432 \u043E\u0434\u043D\u043E\u0439 \u0441\u0442\u0440\u043E\u043A\u0435, \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 3)."
+          "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Virtual Simulation. \u041F\u0440\u0438 \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u043E\u0441\u0442\u0438 \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u0435 description.md \u0438\u043B\u0438 \u0434\u0440\u0443\u0433\u0438\u0435 \u0444\u0430\u0439\u043B\u044B \u043F\u0440\u043E\u0435\u043A\u0442\u0430."
         );
       }
+    }
+    startVirtualSimulation(sessionId) {
+      this.startCollection(sessionId, "virtual_simulation");
     }
     async continueConversation(sessionId, content3) {
       if (!this.isIdeaCollectorSession(sessionId)) {
@@ -24181,7 +24301,7 @@ ${command.remainingMessage}`);
         );
         return;
       }
-      const schema = await this.getNormalizedSchema();
+      const schema = await this.getNormalizedSchemaForSession(sessionId);
       const augmentedContent = await buildMessageWithWorkspaceContext(
         sessionId,
         content3
@@ -24194,22 +24314,26 @@ ${command.remainingMessage}`);
       });
     }
     async beginQuestionnaireReview(sessionId, content3, outputPathsOverride) {
-      if (!_IdeaCollectorService.activeSessions.has(sessionId)) {
-        _IdeaCollectorService.activeSessions.add(sessionId);
+      if (!this.state.isActive(sessionId)) {
+        this.state.markActive(sessionId);
       }
+      this.setSessionStage(sessionId, "description");
       this.clearQuestionnairePending(sessionId);
       const [prompt, schema] = await Promise.all([
-        this.getPrompt(),
-        this.getNormalizedSchema()
+        this.getPrompt("description"),
+        this.getNormalizedSchema("description")
       ]);
       const outputPaths = outputPathsOverride;
       if (!outputPaths) {
         notifyMissingIdeaContext(sessionId);
         return;
       }
-      _IdeaCollectorService.outputPathsBySession.set(sessionId, outputPaths);
-      const promptWithPaths = this.buildPromptWithOutputPaths(prompt);
-      const combinedContent = `${promptWithPaths}
+      this.state.setOutputPaths(sessionId, outputPaths);
+      const promptWithSlots = this.buildPromptWithOutputSlots(
+        prompt,
+        "description"
+      );
+      const combinedContent = `${promptWithSlots}
 
 ${content3}`;
       sendChatMessage(sessionId, combinedContent, { outputSchema: schema });
@@ -24217,40 +24341,46 @@ ${content3}`;
     handleStreamEvent(sessionId, event) {
       const artifact = extractIdeaCollectorArtifact(event);
       if (artifact) {
-        _IdeaCollectorService.activeSessions.add(sessionId);
-        _IdeaCollectorService.artifacts.set(sessionId, artifact);
-        this.persistIdeaArtifacts(sessionId, artifact).catch((error) => {
-          const message = error instanceof Error ? error.message : String(error);
-          postSystemNotice(
-            sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: ${message}`
-          );
-        });
+        this.state.markActive(sessionId);
+        this.state.recordArtifact(sessionId, artifact);
+        saveIdeaCollectorArtifacts(sessionId, artifact).catch(
+          (error) => {
+            const message = error instanceof Error ? error.message : String(error);
+            postSystemNotice(
+              sessionId,
+              `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B: ${message}`
+            );
+          }
+        );
       }
     }
     isQuestionnairePending(sessionId) {
-      if (_IdeaCollectorService.pendingQuestionnaire.has(sessionId)) {
+      if (this.state.isQuestionnairePending(sessionId)) {
         return true;
       }
       if (isQuestionnairePendingStored(sessionId)) {
-        _IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+        this.state.markQuestionnairePending(sessionId);
         return true;
       }
       return false;
     }
-    getPrompt() {
-      return this.getContract().then((contract) => contract.prompt);
+    getPrompt(stage) {
+      return this.getContract(stage).then((contract) => contract.prompt);
     }
-    getNormalizedSchema() {
-      return this.getContract().then((contract) => contract.schema);
+    getNormalizedSchema(stage) {
+      return this.getContract(stage).then((contract) => contract.schema);
+    }
+    getNormalizedSchemaForSession(sessionId) {
+      const stage = this.getSessionStage(sessionId);
+      return this.getNormalizedSchema(stage);
     }
     getQuestionnaireTemplateMarkdown() {
-      return loadContract().then(
+      return loadDescriptionContract().then(
         (contract) => contract.questionnaireTemplateMarkdown
       );
     }
     getOutputPaths() {
-      return this.getContract().then((contract) => contract.outputPaths);
+      return this.getLegacyContract().then((contract) => contract.outputPaths);
     }
     getOutputPathsForSession(outputPathsOverride) {
       if (outputPathsOverride) {
@@ -24258,69 +24388,31 @@ ${content3}`;
       }
       return this.getOutputPaths();
     }
-    getContract() {
-      return loadContract();
+    getContract(stage) {
+      return loadContractForStage(stage);
+    }
+    getLegacyContract() {
+      return loadLegacyContract();
+    }
+    getSessionStage(sessionId) {
+      return this.state.getStage(sessionId);
     }
     markQuestionnairePending(sessionId) {
-      _IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+      this.state.markQuestionnairePending(sessionId);
       markQuestionnairePendingStored(sessionId);
     }
     clearQuestionnairePending(sessionId) {
-      _IdeaCollectorService.pendingQuestionnaire.delete(sessionId);
+      this.state.clearQuestionnairePending(sessionId);
       clearQuestionnairePendingStored(sessionId);
     }
-    async persistIdeaArtifacts(sessionId, artifact) {
-      const httpUrl = resolveCoreHttpUrl();
-      if (!httpUrl) {
-        postSystemNotice(
-          sessionId,
-          "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D."
-        );
-        return;
-      }
-      try {
-        if (artifact.artifacts.length === 0) {
-          return;
-        }
-        const result = await persistIdeaArtifacts({
-          httpUrl,
-          sessionId,
-          artifact
-        });
-        if (!result.ok) {
-          postSystemNotice(
-            sessionId,
-            `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 (${result.error}).`
-          );
-          return;
-        }
-        const savedSummary = result.saved.length > 0 ? result.saved.map((entry) => entry.path).join(", ") : artifact.artifacts.map((entry) => entry.slot).join(", ");
-        postSystemNotice(
-          sessionId,
-          `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedSummary}`
-        );
-      } catch {
-        postSystemNotice(
-          sessionId,
-          "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0438\u0434\u0435\u0438: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438."
-        );
-      }
-    }
-    buildPromptWithOutputPaths(prompt) {
+    buildPromptWithOutputSlots(prompt, stage) {
+      const slotLines = stage === "virtual_simulation" ? ["- virtual-simulation.md: workspace.virtual_simulation"] : ["- description.md: workspace.description"];
       return `${prompt}
 
 \u0421\u043B\u043E\u0442\u044B \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 (\u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u0432 Structured Output):
-- idea.md: cluster.idea.idea
-- virtual-simulation.md: cluster.idea.virtual-simulation`;
+${slotLines.join("\n")}`;
     }
   };
-  _IdeaCollectorService.activeSessions = /* @__PURE__ */ new Set();
-  _IdeaCollectorService.artifacts = /* @__PURE__ */ new Map();
-  _IdeaCollectorService.noticesSent = /* @__PURE__ */ new Set();
-  _IdeaCollectorService.pendingQuestionnaire = /* @__PURE__ */ new Set();
-  _IdeaCollectorService.lastAssistantMessages = /* @__PURE__ */ new Map();
-  _IdeaCollectorService.outputPathsBySession = /* @__PURE__ */ new Map();
-  var IdeaCollectorService = _IdeaCollectorService;
 
   // src/client/ui/src/services/idea-questionnaire-agent-qna.ts
   var AGENT_QNA_FIELD_ID = "system.agent_qna";
@@ -25206,23 +25298,31 @@ ${replacement}
   var import_react13 = __toESM(require_react());
 
   // src/client/ui/src/services/idea-collector-schema-cache.ts
-  var cachedSchema = null;
-  var pendingSchema = null;
-  var loadIdeaCollectorSchemaCached = () => {
-    if (cachedSchema) {
-      return Promise.resolve(cachedSchema);
+  var cachedSchemas = /* @__PURE__ */ new Map();
+  var pendingSchemas = /* @__PURE__ */ new Map();
+  var loadSchemaCached = (key, loader) => {
+    const cached = cachedSchemas.get(key);
+    if (cached) {
+      return Promise.resolve(cached);
     }
-    if (pendingSchema) {
-      return pendingSchema;
+    const pending = pendingSchemas.get(key);
+    if (pending) {
+      return pending;
     }
-    pendingSchema = loadIdeaContract().then((contract) => {
-      cachedSchema = contract.schema;
-      return contract.schema;
+    const next = loader().then((schema) => {
+      cachedSchemas.set(key, schema);
+      return schema;
     }).finally(() => {
-      pendingSchema = null;
+      pendingSchemas.delete(key);
     });
-    return pendingSchema;
+    pendingSchemas.set(key, next);
+    return next;
   };
+  var loadDescriptionSchemaCached = () => loadSchemaCached(
+    "description",
+    () => loadDescriptionContract().then((contract) => contract.schema)
+  );
+  var loadIdeaCollectorSchemaCached = () => loadDescriptionSchemaCached();
 
   // src/client/ui/src/app-host/session-store.ts
   var useSessionStore = (providerLabels) => {
