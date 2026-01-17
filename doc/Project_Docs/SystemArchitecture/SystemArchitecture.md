@@ -110,6 +110,9 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Project Manager**: stage `idea` follow-up сообщения отправляются с Idea Collector schema, финализация сохраняет `artifacts[]` вместо вывода markdown в чат.
 - **Claude module**: structured output корректно эмитит `suggested_response` и `artifacts[]` из `result` payload.
 
+## Recent Changes (v1.1.435 - 2026-01-17)
+- **Claude module**: structured output из `result` нормализуется в `stream_event`, чтобы артефакты сохранялись через `artifact-upsert` и UI показывал краткий ответ.
+
 ## Recent Changes (v1.1.434 - 2026-01-17)
 - **vscode-webview**: stage `idea` сообщения отправляются с Idea Collector schema, а `artifacts[]` сохраняются даже после перезапуска UI.
 
