@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.6.0
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-01-17
 **Status:** Active reference
-**Release Focus:** v1.1.429 — Project Manager: session:create выбирает активный провайдер, чтобы анкета Description запускала Idea Collector.
+**Release Focus:** v1.1.430 — Project Manager: выбор провайдера при отправке анкеты Description в Idea Collector.
 
 ---
 
@@ -59,6 +59,7 @@ graph TD
 - **Session Binding**: `InfoPanel` отображает состояние привязки к провайдеру — ожидается ли реальный `sessionId`, удалось ли его получить, либо инициализация провалилась. После подтверждения от SDK панель выводит полный идентификатор сессии (и подсказку в `title`), помогая отлаживать CLI-интеграции.
 - **Clipboard handling**: `input-panel-clipboard` централизует обработку copy/paste в webview и standalone — реагирует на `ClipboardEvent`, использует `navigator.clipboard` как fallback и сохраняет высоту textarea.
 - **Provider Picker & Settings**: отдельные модули `provider-picker`, `settings/view` позволяют выбирать провайдеров (Claude, Codex, Gemini) и менять конфигурацию визардов. UI отображает статус подключения каждого стека (connected / offline) и синхронизирует выбор с extension host через события ядра.
+- **Project Manager provider picker (v1.1.430)**: анкета Description теперь поддерживает явный выбор провайдера; submit передает `providerId`, полученный из snapshot’а ядра.
 - **Flow Wizard → Idea Collector**: для Codex и Claude включён Flow Wizard (Idea/Spec/Plan), который стартует Guided Conversation. `IdeaCollectorService` получает contract (prompt + schema + template) из Core API `/api/v1/orchestrator/idea-contract`, а structured outputs возвращают `suggested_response` + `artifacts[]` (slot+markdown).
 - **Idea Questionnaire UI (v1.1.385)**: экран анкеты открывается по клику `Idea`, использует templateMarkdown из контракта, сохраняет ответы в `.codeai-hub/.../idea/questionnaire.md`, поддерживает отмену/возобновление, отображает подсказки под вопросом и отправляет submit в один provider turn.
 - **Questionnaire auto-attach guard (v1.1.386)**: auto-attach пропускает шаблонные пути `<...>` из prompt, чтобы корректно прикреплять `questionnaire.md` при single-turn submit.
@@ -261,6 +262,9 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Questionnaire contract**: Core добавляет `questionnaire.templateMarkdown` в `idea-contract` и версионирует контракт с учётом шаблона.
 - **Workspace questionnaire persistence**: UI сохраняет анкету через `POST /api/v1/orchestrator/workspace-file-write` и отправляет путь через auto-attach.
 - **Release 1.1.380**: артефакты VSIX/launcher/core/providers/UI обновлены под анкетный flow.
+
+## Recent Changes (v1.1.430 - 2026-01-17)
+- **Project Manager provider picker**: анкета Description позволяет выбрать провайдера перед отправкой в Idea Collector, `providerId` передается вместе с submit.
 
 ## Recent Changes (v1.1.367 - 2025-12-30)
 - **Idea Collector contract delivery**: Core отдаёт `/api/v1/orchestrator/idea-contract`, UI забирает prompt/schema из ядра.
