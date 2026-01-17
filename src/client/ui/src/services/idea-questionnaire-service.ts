@@ -5,12 +5,16 @@ import {
   appendClarificationToAgentQnaField,
   migrateLegacyClarifications,
 } from "./idea-questionnaire-agent-qna";
+import { resolveQuestionnaireTargets } from "./idea-questionnaire-paths";
 import {
   extractIdeaQuestionnaireAnswers,
   parseIdeaQuestionnaireTemplateFields,
   renderIdeaQuestionnaire,
 } from "./idea-questionnaire-template";
-import { WorkspaceFileService } from "./workspace-file-service";
+import {
+  type WorkspaceFileFetchResult,
+  WorkspaceFileService,
+} from "./workspace-file-service";
 
 type QuestionnaireField = {
   readonly id: string;
@@ -29,12 +33,15 @@ export type QuestionnaireSnapshot = {
   readonly answers: Record<string, string>;
 };
 
+type QuestionnaireReadResult = {
+  readonly existingStatus: WorkspaceFileFetchResult["status"];
+  readonly existingContent: string | null;
+  readonly resolvedContent: string | null;
+};
+
 const DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
 const SAVE_DEBOUNCE_MS = 400;
 const QUESTIONNAIRE_READ_MAX_BYTES = 1_000_000;
-const IDEA_PATH_SUFFIX_RE = /idea\.md$/;
-const RUN_QUESTIONNAIRE_PATH_RE =
-  /^\.codeai-hub\/([^/]+)\/description\/runs\/[^/]+\/idea\/questionnaire\.md$/;
 
 const normalizeQuestionnaireContent = (
   content: string | null | undefined
@@ -46,20 +53,63 @@ const normalizeQuestionnaireContent = (
   return trimmed.length > 0 ? content : null;
 };
 
-const resolveInitiativeQuestionnairePath = (
-  questionnairePath: string
-): string | null => {
-  const match = RUN_QUESTIONNAIRE_PATH_RE.exec(questionnairePath);
-  if (!match) {
-    return null;
-  }
-  return `.codeai-hub/${match[1]}/description/idea/questionnaire.md`;
-};
+const shouldWriteTemplate = (
+  existingStatus: WorkspaceFileFetchResult["status"],
+  existingContent: string | null
+): boolean =>
+  existingStatus === "missing" ||
+  (existingStatus === "ok" && existingContent === null);
 
 export class IdeaQuestionnaireService {
   private readonly ideaCollector = new IdeaCollectorService();
   private readonly workspaceFiles = new WorkspaceFileService();
   private readonly saveTimers = new Map<string, number>();
+
+  private async readQuestionnaireContent(
+    sessionId: string,
+    primaryPath: string,
+    legacyPaths: readonly string[]
+  ): Promise<QuestionnaireReadResult> {
+    const existing = await this.workspaceFiles.read(
+      sessionId,
+      primaryPath,
+      QUESTIONNAIRE_READ_MAX_BYTES
+    );
+    const existingContent =
+      existing.status === "ok"
+        ? normalizeQuestionnaireContent(existing.file.content)
+        : null;
+    if (existingContent) {
+      return {
+        existingStatus: existing.status,
+        existingContent,
+        resolvedContent: existingContent,
+      };
+    }
+    for (const legacyPath of legacyPaths) {
+      const legacyCopy = await this.workspaceFiles.read(
+        sessionId,
+        legacyPath,
+        QUESTIONNAIRE_READ_MAX_BYTES
+      );
+      const legacyContent =
+        legacyCopy.status === "ok"
+          ? normalizeQuestionnaireContent(legacyCopy.file.content)
+          : null;
+      if (legacyContent) {
+        return {
+          existingStatus: existing.status,
+          existingContent,
+          resolvedContent: legacyContent,
+        };
+      }
+    }
+    return {
+      existingStatus: existing.status,
+      existingContent,
+      resolvedContent: null,
+    };
+  }
 
   async loadQuestionnaire(
     sessionId: string,
@@ -77,55 +127,33 @@ export class IdeaQuestionnaireService {
       return null;
     }
 
+    const { primaryPath: questionnairePath, legacyPaths } =
+      resolveQuestionnaireTargets(outputPaths.idea);
     const template =
       templateMarkdown && templateMarkdown.trim().length > 0
         ? templateMarkdown
         : DEFAULT_TEMPLATE;
     const { questions, placeholders } =
       parseIdeaQuestionnaireTemplateFields(template);
-    const questionnairePath = outputPaths.idea.replace(
-      IDEA_PATH_SUFFIX_RE,
-      "questionnaire.md"
-    );
-
-    const initiativeQuestionnairePath =
-      resolveInitiativeQuestionnairePath(questionnairePath);
-    const existing = await this.workspaceFiles.read(
-      sessionId,
-      questionnairePath,
-      QUESTIONNAIRE_READ_MAX_BYTES
-    );
-    const existingContent =
-      existing.status === "ok"
-        ? normalizeQuestionnaireContent(existing.file.content)
-        : null;
-    let content = existingContent;
-    if (!content && initiativeQuestionnairePath) {
-      const initiativeCopy = await this.workspaceFiles.read(
-        sessionId,
-        initiativeQuestionnairePath,
-        QUESTIONNAIRE_READ_MAX_BYTES
-      );
-      content =
-        initiativeCopy.status === "ok"
-          ? normalizeQuestionnaireContent(initiativeCopy.file.content)
-          : null;
-    }
-    const resolvedContent = content ?? template;
-    const migratedContent = migrateLegacyClarifications(resolvedContent);
-
-    const shouldWriteTemplate =
-      existing.status === "missing" ||
-      (existing.status === "ok" && existingContent === null);
-
-    const shouldWriteMigrated =
-      shouldWriteTemplate || migratedContent !== resolvedContent;
-
-    if (shouldWriteMigrated) {
-      await this.workspaceFiles.write(
+    const { existingStatus, existingContent, resolvedContent } =
+      await this.readQuestionnaireContent(
         sessionId,
         questionnairePath,
-        migratedContent
+        legacyPaths
+      );
+    const content = resolvedContent ?? template;
+    const migratedContent = migrateLegacyClarifications(content);
+
+    const shouldWriteMigrated =
+      shouldWriteTemplate(existingStatus, existingContent) ||
+      migratedContent !== content;
+
+    if (shouldWriteMigrated) {
+      await this.writeQuestionnaireCopies(
+        sessionId,
+        questionnairePath,
+        migratedContent,
+        legacyPaths
       );
     }
 
@@ -183,47 +211,44 @@ export class IdeaQuestionnaireService {
     question: string | null,
     answer: string
   ): Promise<void> {
-    const questionnairePath = outputPaths.idea.replace(
-      IDEA_PATH_SUFFIX_RE,
-      "questionnaire.md"
-    );
-    const existing = await this.workspaceFiles.read(
+    const { primaryPath: questionnairePath, legacyPaths } =
+      resolveQuestionnaireTargets(outputPaths.idea);
+    const { resolvedContent } = await this.readQuestionnaireContent(
       sessionId,
       questionnairePath,
-      QUESTIONNAIRE_READ_MAX_BYTES
+      legacyPaths
     );
-    const existingContent =
-      existing.status === "ok"
-        ? normalizeQuestionnaireContent(existing.file.content)
-        : null;
-    if (!existingContent) {
+    if (!resolvedContent) {
       return;
     }
     const updated = appendClarificationToAgentQnaField(
-      existingContent,
+      resolvedContent,
       question,
       answer
     );
-    if (updated === existingContent) {
+    if (updated === resolvedContent) {
       return;
     }
-    await this.writeQuestionnaireCopies(sessionId, questionnairePath, updated);
+    await this.writeQuestionnaireCopies(
+      sessionId,
+      questionnairePath,
+      updated,
+      legacyPaths
+    );
   }
 
   private async writeQuestionnaireCopies(
     sessionId: string,
     path: string,
-    content: string
+    content: string,
+    extraPaths: readonly string[] = []
   ): Promise<void> {
     await this.workspaceFiles.write(sessionId, path, content);
-    const initiativeQuestionnairePath =
-      resolveInitiativeQuestionnairePath(path);
-    if (initiativeQuestionnairePath && initiativeQuestionnairePath !== path) {
-      await this.workspaceFiles.write(
-        sessionId,
-        initiativeQuestionnairePath,
-        content
-      );
+    for (const extraPath of extraPaths) {
+      if (extraPath === path) {
+        continue;
+      }
+      await this.workspaceFiles.write(sessionId, extraPath, content);
     }
   }
 }
