@@ -4,6 +4,11 @@
 - **Project Manager**: Idea Collector (stage `idea`) теперь сохраняет structured output schema на последующих сообщениях, поэтому финализация создаёт артефакты, а не выводит их в чат.
 - **Claude provider**: structured output корректно отображает `suggested_response` и `artifacts[]` даже когда они приходят в `result` payload.
 
+## [1.1.434] - 2026-01-17
+
+### Fixed
+- **vscode-webview**: для сессий `stage=idea` follow-up сообщения отправляются с Idea Collector schema, а `artifacts[]` сохраняются даже после перезапуска UI (без “markdown в чат”).
+
 ## [1.1.432] - 2026-01-17
 
 ### Changed

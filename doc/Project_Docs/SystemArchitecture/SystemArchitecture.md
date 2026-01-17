@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.433 (17.01.2026) — Idea Collector finalize (PM + Claude structured output).
+**Состояние:** релиз 1.1.434 (17.01.2026) — Idea Collector follow-up (vscode-webview).
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
@@ -109,6 +109,9 @@ CodeAI-Hub — автономная платформа управления AI-�
 ## Recent Changes (v1.1.433 - 2026-01-17)
 - **Project Manager**: stage `idea` follow-up сообщения отправляются с Idea Collector schema, финализация сохраняет `artifacts[]` вместо вывода markdown в чат.
 - **Claude module**: structured output корректно эмитит `suggested_response` и `artifacts[]` из `result` payload.
+
+## Recent Changes (v1.1.434 - 2026-01-17)
+- **vscode-webview**: stage `idea` сообщения отправляются с Idea Collector schema, а `artifacts[]` сохраняются даже после перезапуска UI.
 
 ## Recent Changes (v1.1.430 - 2026-01-17)
 - **Project Manager provider picker**: анкета Description отправляется в Idea Collector с явным `providerId`, выбранным пользователем.
