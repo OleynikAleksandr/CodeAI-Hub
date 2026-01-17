@@ -153,4 +153,4 @@
 
 ### Stream: VSIX build
 1. [DONE] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.435`
-2. [TODO] Git Commit: `chore(release): package vsix 1.1.435` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): package vsix 1.1.435` (hash: 9662c80e)
