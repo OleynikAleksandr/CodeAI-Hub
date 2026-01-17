@@ -14,7 +14,10 @@ import {
   toggleTodoInSnapshots,
 } from "../../../ui/src/session/helpers";
 import SessionView from "../../../ui/src/session/session-view";
-import { loadIdeaCollectorSchemaForProjectManager } from "../../services/idea-collector-submit-service";
+import {
+  loadWorkflowSchemaForProjectManager,
+  type WorkflowStageId,
+} from "../../services/idea-collector-submit-service";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import { useProjectManagerSessionStream } from "./session-stream";
 
@@ -24,6 +27,26 @@ type ProjectManagerSessionViewProps = {
 };
 
 const DEFAULT_PROVIDER_CATALOG: ProviderCatalog = {};
+
+const resolveSchemaStage = (
+  stage: string | null | undefined
+): WorkflowStageId | null => {
+  if (!stage) {
+    return null;
+  }
+  if (stage === "idea") {
+    return "description";
+  }
+  if (
+    stage === "description" ||
+    stage === "virtual_simulation" ||
+    stage === "diagram_modules" ||
+    stage === "diagram_facades"
+  ) {
+    return stage;
+  }
+  return null;
+};
 
 export const ProjectManagerSessionView = ({
   workspacePath,
@@ -227,12 +250,13 @@ export const ProjectManagerSessionView = ({
       const record = sessionsRef.current.find(
         (session) => session.id === sessionId
       );
-      if (record?.stage !== "idea") {
+      const schemaStage = resolveSchemaStage(record?.stage);
+      if (!schemaStage) {
         api.sendSessionMessage(sessionId, content);
         return;
       }
 
-      void loadIdeaCollectorSchemaForProjectManager()
+      void loadWorkflowSchemaForProjectManager(schemaStage)
         .then((schema) => {
           api.sendSessionMessage(sessionId, content, { outputSchema: schema });
         })

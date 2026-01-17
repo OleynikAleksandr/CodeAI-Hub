@@ -161,6 +161,7 @@ export const DescriptionQuestionnairePanel: React.FC<
         workspaceName: resolvedWorkspaceName,
         workspacePath: workspacePath ?? "",
         questionnairePath: panelState.questionnairePath,
+        stage: "description",
         providerId,
       });
       onIdeaSessionCreated?.(sessionId);
@@ -229,7 +230,7 @@ export const DescriptionQuestionnairePanel: React.FC<
       <IdeaQuestionnaireView
         answers={answers}
         cancelLabel="Закрыть"
-        description="Анкета сохраняется автоматически. Нажмите «Отправить анкету», выберите провайдера и дождитесь запуска Idea Collector."
+        description="Анкета сохраняется автоматически. Нажмите «Отправить анкету», выберите провайдера и дождитесь запуска Description."
         onAnswerChange={handleAnswerChange}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
