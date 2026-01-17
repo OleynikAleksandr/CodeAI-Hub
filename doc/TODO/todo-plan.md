@@ -57,8 +57,8 @@
 ### Stream: Diagram Facades agent
 1. [DONE] Feat(agents): каркас diagram-facades-agent — scope: `packages/agents/diagram-facades-agent/package.json`, `packages/agents/diagram-facades-agent/src/index.ts`, `packages/agents/diagram-facades-agent/src/facade.ts`; expected commit message: `feat(agents): add diagram facades agent skeleton`
 2. [DONE] Git Commit: `feat(agents): add diagram facades agent skeleton` (hash: 3839cef3)
-3. [TODO] Feat(agents): шаблоны facades graph — scope: `packages/agents/diagram-facades-agent/assets/facades-graph-prompt.md`, `packages/agents/diagram-facades-agent/assets/facades-graph-schema.json`, `packages/agents/diagram-facades-agent/assets/facades-graph-template.mmd`; expected commit message: `feat(agents): add facades graph templates`
-4. [TODO] Git Commit: `feat(agents): add facades graph templates` (hash: TBD)
+3. [DONE] Feat(agents): шаблоны facades graph — scope: `packages/agents/diagram-facades-agent/assets/facades-graph-prompt.md`, `packages/agents/diagram-facades-agent/assets/facades-graph-schema.json`, `packages/agents/diagram-facades-agent/assets/facades-graph-template.mmd`; expected commit message: `feat(agents): add facades graph templates`
+4. [DONE] Git Commit: `feat(agents): add facades graph templates` (hash: 74caf112)
 
 ### Stream: Core contracts + paths
 1. [TODO] Refactor(core): разнести contract endpoints по шагам — scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-questionnaire-path-detector.ts`; expected commit message: `refactor(core): split workflow contracts`
