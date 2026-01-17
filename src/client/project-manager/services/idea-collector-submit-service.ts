@@ -237,7 +237,7 @@ export class IdeaCollectorSubmitService {
     readonly workspacePath: string;
     readonly questionnairePath: string;
     readonly providerId?: ProviderStackId;
-  }): Promise<void> {
+  }): Promise<string> {
     const workspaceName = resolveWorkspaceName({
       name: params.workspaceName,
       path: params.workspacePath,
@@ -262,5 +262,7 @@ export class IdeaCollectorSubmitService {
     api.sendSessionMessage(sessionId, content, {
       outputSchema: contract.schema,
     });
+
+    return sessionId;
   }
 }

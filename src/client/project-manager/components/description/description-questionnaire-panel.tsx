@@ -18,6 +18,7 @@ interface DescriptionQuestionnairePanelProps {
   readonly workspaceName?: string;
   readonly workspacePath?: string;
   readonly onClose?: () => void;
+  readonly onIdeaSessionCreated?: (sessionId: string) => void;
 }
 
 type PanelState =
@@ -41,7 +42,7 @@ type PanelState =
 
 export const DescriptionQuestionnairePanel: React.FC<
   DescriptionQuestionnairePanelProps
-> = ({ workspaceName, workspacePath, onClose }) => {
+> = ({ workspaceName, workspacePath, onClose, onIdeaSessionCreated }) => {
   const serviceRef = useRef(new DescriptionQuestionnaireService());
   const ideaCollectorRef = useRef(new IdeaCollectorSubmitService());
   const [panelState, setPanelState] = useState<PanelState>({ status: "idle" });
@@ -156,12 +157,13 @@ export const DescriptionQuestionnairePanel: React.FC<
         panelState.placeholders,
         answers
       );
-      await ideaCollectorRef.current.submitQuestionnaire({
+      const sessionId = await ideaCollectorRef.current.submitQuestionnaire({
         workspaceName: resolvedWorkspaceName,
         workspacePath: workspacePath ?? "",
         questionnairePath: panelState.questionnairePath,
         providerId,
       });
+      onIdeaSessionCreated?.(sessionId);
     } catch (error) {
       setSubmitError(
         error instanceof Error
