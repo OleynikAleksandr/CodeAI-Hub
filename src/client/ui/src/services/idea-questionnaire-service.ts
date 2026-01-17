@@ -34,7 +34,7 @@ const SAVE_DEBOUNCE_MS = 400;
 const QUESTIONNAIRE_READ_MAX_BYTES = 1_000_000;
 const IDEA_PATH_SUFFIX_RE = /idea\.md$/;
 const RUN_QUESTIONNAIRE_PATH_RE =
-  /^\.codeai-hub\/initiatives\/([^/]+)\/runs\/[^/]+\/idea\/questionnaire\.md$/;
+  /^\.codeai-hub\/([^/]+)\/description\/runs\/[^/]+\/idea\/questionnaire\.md$/;
 
 const normalizeQuestionnaireContent = (
   content: string | null | undefined
@@ -53,7 +53,7 @@ const resolveInitiativeQuestionnairePath = (
   if (!match) {
     return null;
   }
-  return `.codeai-hub/initiatives/${match[1]}/idea/questionnaire.md`;
+  return `.codeai-hub/${match[1]}/description/idea/questionnaire.md`;
 };
 
 export class IdeaQuestionnaireService {
