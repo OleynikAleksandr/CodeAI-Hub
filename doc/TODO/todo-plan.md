@@ -137,14 +137,14 @@
 
 ### Stream: Design approval
 1. [DONE] Docs: зафиксировать архитектуру для Claude result structured_output — scope: `doc/Project_Docs/Claude_Result_StructuredOutput_Pipeline_Architecture.md`; expected commit message: `docs: add claude structured output pipeline design`
-2. [TODO] Git Commit: `docs: add claude structured output pipeline design` (hash: TBD)
+2. [DONE] Git Commit: `docs: add claude structured output pipeline design` (hash: d8cd4544)
 
 ### Stream: Claude result normalization
-1. [TODO] Fix: нормализовать structured_output из result → stream_event + summary — scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(claude-module): normalize result structured output pipeline`
-2. [TODO] Git Commit: `fix(claude-module): normalize result structured output pipeline` (hash: TBD)
+1. [DONE] Fix: нормализовать structured_output из result → stream_event + summary — scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(claude-module): normalize result structured output pipeline`
+2. [DONE] Git Commit: `fix(claude-module): normalize result structured output pipeline` (hash: d05ba8df)
 
 ### Stream: Release notes
-1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.435 release notes`
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.435 release notes`
 2. [TODO] Git Commit: `docs: update 1.1.435 release notes` (hash: TBD)
 
 ### Stream: Release build
