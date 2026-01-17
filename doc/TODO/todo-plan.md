@@ -149,8 +149,8 @@
 
 ### Stream: Release build
 1. [DONE] Release: bump + build-all артефакты под 1.1.435 — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.435`
-2. [TODO] Git Commit: `chore(release): bump 1.1.435` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): bump 1.1.435` (hash: 6434dfd5)
 
 ### Stream: VSIX build
-1. [TODO] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.435`
+1. [DONE] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.435`
 2. [TODO] Git Commit: `chore(release): package vsix 1.1.435` (hash: TBD)
