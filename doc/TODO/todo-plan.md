@@ -51,8 +51,8 @@
 ### Stream: Diagram Modules agent
 1. [DONE] Feat(agents): каркас diagram-modules-agent — scope: `packages/agents/diagram-modules-agent/package.json`, `packages/agents/diagram-modules-agent/src/index.ts`, `packages/agents/diagram-modules-agent/src/facade.ts`; expected commit message: `feat(agents): add diagram modules agent skeleton`
 2. [DONE] Git Commit: `feat(agents): add diagram modules agent skeleton` (hash: 98fd9960)
-3. [TODO] Feat(agents): шаблоны modules diagram — scope: `packages/agents/diagram-modules-agent/assets/modules-diagram-prompt.md`, `packages/agents/diagram-modules-agent/assets/modules-diagram-schema.json`, `packages/agents/diagram-modules-agent/assets/modules-diagram-template.mmd`; expected commit message: `feat(agents): add modules diagram templates`
-4. [TODO] Git Commit: `feat(agents): add modules diagram templates` (hash: TBD)
+3. [DONE] Feat(agents): шаблоны modules diagram — scope: `packages/agents/diagram-modules-agent/assets/modules-diagram-prompt.md`, `packages/agents/diagram-modules-agent/assets/modules-diagram-schema.json`, `packages/agents/diagram-modules-agent/assets/modules-diagram-template.mmd`; expected commit message: `feat(agents): add modules diagram templates`
+4. [DONE] Git Commit: `feat(agents): add modules diagram templates` (hash: 39536b9a)
 
 ### Stream: Diagram Facades agent
 1. [DONE] Feat(agents): каркас diagram-facades-agent — scope: `packages/agents/diagram-facades-agent/package.json`, `packages/agents/diagram-facades-agent/src/index.ts`, `packages/agents/diagram-facades-agent/src/facade.ts`; expected commit message: `feat(agents): add diagram facades agent skeleton`
