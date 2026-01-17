@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-17
 **Status:** Active reference
-**Release Focus:** v1.1.435 — Workflow step split (Description, Virtual Simulation, Diagrams).
+**Release Focus:** v1.1.436 — Workflow step split (Description, Virtual Simulation, Diagrams).
 
 ---
 
