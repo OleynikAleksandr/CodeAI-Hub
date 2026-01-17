@@ -145,10 +145,10 @@
 
 ### Stream: Release notes
 1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.435 release notes`
-2. [TODO] Git Commit: `docs: update 1.1.435 release notes` (hash: TBD)
+2. [DONE] Git Commit: `docs: update 1.1.435 release notes` (hash: ea392cf3)
 
 ### Stream: Release build
-1. [TODO] Release: bump + build-all артефакты под 1.1.435 — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.435`
+1. [DONE] Release: bump + build-all артефакты под 1.1.435 — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.435`
 2. [TODO] Git Commit: `chore(release): bump 1.1.435` (hash: TBD)
 
 ### Stream: VSIX build
