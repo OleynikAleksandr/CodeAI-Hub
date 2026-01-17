@@ -24498,6 +24498,47 @@ ${updatedBody}
     );
   };
 
+  // src/client/ui/src/services/idea-questionnaire-paths.ts
+  var DESCRIPTION_RUN_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/runs\/([^/]+)\/description\.md$/;
+  var LEGACY_IDEA_RUN_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/runs\/([^/]+)\/idea\/idea\.md$/;
+  var FALLBACK_PATH_SEGMENT_RE = /[^/]+$/;
+  var buildCanonicalQuestionnairePath = (workspaceSlug) => `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
+  var buildLegacyInitiativeQuestionnairePath = (workspaceSlug) => `.codeai-hub/${workspaceSlug}/description/idea/questionnaire.md`;
+  var buildLegacyRunQuestionnairePath = (workspaceSlug, runSlug) => `.codeai-hub/${workspaceSlug}/description/runs/${runSlug}/idea/questionnaire.md`;
+  var resolveQuestionnairePaths = (descriptionPath) => {
+    const match = DESCRIPTION_RUN_PATH_RE.exec(descriptionPath) ?? LEGACY_IDEA_RUN_PATH_RE.exec(descriptionPath);
+    if (!match) {
+      return null;
+    }
+    const workspaceSlug = match[1];
+    const runSlug = match[2];
+    return {
+      canonical: buildCanonicalQuestionnairePath(workspaceSlug),
+      legacyRun: buildLegacyRunQuestionnairePath(workspaceSlug, runSlug),
+      legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug)
+    };
+  };
+  var resolveFallbackQuestionnairePath = (descriptionPath) => descriptionPath.replace(FALLBACK_PATH_SEGMENT_RE, "questionnaire.md");
+  var collectLegacyPaths = (paths, primaryPath) => {
+    const unique = /* @__PURE__ */ new Set();
+    for (const path2 of paths) {
+      if (!path2 || path2 === primaryPath) {
+        continue;
+      }
+      unique.add(path2);
+    }
+    return Array.from(unique);
+  };
+  var resolveQuestionnaireTargets = (descriptionPath) => {
+    const pathSet = resolveQuestionnairePaths(descriptionPath);
+    const primaryPath = pathSet?.canonical ?? resolveFallbackQuestionnairePath(descriptionPath);
+    const legacyPaths = collectLegacyPaths(
+      [pathSet?.legacyRun, pathSet?.legacyInitiative],
+      primaryPath
+    );
+    return { primaryPath, legacyPaths };
+  };
+
   // src/client/ui/src/services/idea-questionnaire-template.ts
   var FIELD_REGEX = /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
   var HEADING_PREFIX_RE = /^#+\s*/;
@@ -24663,8 +24704,6 @@ ${replacement}
   var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
   var SAVE_DEBOUNCE_MS = 400;
   var QUESTIONNAIRE_READ_MAX_BYTES = 1e6;
-  var IDEA_PATH_SUFFIX_RE = /idea\.md$/;
-  var RUN_QUESTIONNAIRE_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/runs\/[^/]+\/idea\/questionnaire\.md$/;
   var normalizeQuestionnaireContent = (content3) => {
     if (!content3) {
       return null;
@@ -24672,18 +24711,47 @@ ${replacement}
     const trimmed = content3.trim();
     return trimmed.length > 0 ? content3 : null;
   };
-  var resolveInitiativeQuestionnairePath = (questionnairePath) => {
-    const match = RUN_QUESTIONNAIRE_PATH_RE.exec(questionnairePath);
-    if (!match) {
-      return null;
-    }
-    return `.codeai-hub/${match[1]}/description/idea/questionnaire.md`;
-  };
+  var shouldWriteTemplate = (existingStatus, existingContent) => existingStatus === "missing" || existingStatus === "ok" && existingContent === null;
   var IdeaQuestionnaireService = class {
     constructor() {
       this.ideaCollector = new IdeaCollectorService();
       this.workspaceFiles = new WorkspaceFileService();
       this.saveTimers = /* @__PURE__ */ new Map();
+    }
+    async readQuestionnaireContent(sessionId, primaryPath, legacyPaths) {
+      const existing = await this.workspaceFiles.read(
+        sessionId,
+        primaryPath,
+        QUESTIONNAIRE_READ_MAX_BYTES
+      );
+      const existingContent = existing.status === "ok" ? normalizeQuestionnaireContent(existing.file.content) : null;
+      if (existingContent) {
+        return {
+          existingStatus: existing.status,
+          existingContent,
+          resolvedContent: existingContent
+        };
+      }
+      for (const legacyPath of legacyPaths) {
+        const legacyCopy = await this.workspaceFiles.read(
+          sessionId,
+          legacyPath,
+          QUESTIONNAIRE_READ_MAX_BYTES
+        );
+        const legacyContent = legacyCopy.status === "ok" ? normalizeQuestionnaireContent(legacyCopy.file.content) : null;
+        if (legacyContent) {
+          return {
+            existingStatus: existing.status,
+            existingContent,
+            resolvedContent: legacyContent
+          };
+        }
+      }
+      return {
+        existingStatus: existing.status,
+        existingContent,
+        resolvedContent: null
+      };
     }
     async loadQuestionnaire(sessionId, outputPathsOverride) {
       const httpUrl = resolveCoreHttpUrl();
@@ -24695,37 +24763,23 @@ ${replacement}
       if (!outputPaths) {
         return null;
       }
+      const { primaryPath: questionnairePath, legacyPaths } = resolveQuestionnaireTargets(outputPaths.idea);
       const template = templateMarkdown && templateMarkdown.trim().length > 0 ? templateMarkdown : DEFAULT_TEMPLATE;
       const { questions, placeholders } = parseIdeaQuestionnaireTemplateFields(template);
-      const questionnairePath = outputPaths.idea.replace(
-        IDEA_PATH_SUFFIX_RE,
-        "questionnaire.md"
-      );
-      const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(questionnairePath);
-      const existing = await this.workspaceFiles.read(
+      const { existingStatus, existingContent, resolvedContent } = await this.readQuestionnaireContent(
         sessionId,
         questionnairePath,
-        QUESTIONNAIRE_READ_MAX_BYTES
+        legacyPaths
       );
-      const existingContent = existing.status === "ok" ? normalizeQuestionnaireContent(existing.file.content) : null;
-      let content3 = existingContent;
-      if (!content3 && initiativeQuestionnairePath) {
-        const initiativeCopy = await this.workspaceFiles.read(
-          sessionId,
-          initiativeQuestionnairePath,
-          QUESTIONNAIRE_READ_MAX_BYTES
-        );
-        content3 = initiativeCopy.status === "ok" ? normalizeQuestionnaireContent(initiativeCopy.file.content) : null;
-      }
-      const resolvedContent = content3 ?? template;
-      const migratedContent = migrateLegacyClarifications(resolvedContent);
-      const shouldWriteTemplate = existing.status === "missing" || existing.status === "ok" && existingContent === null;
-      const shouldWriteMigrated = shouldWriteTemplate || migratedContent !== resolvedContent;
+      const content3 = resolvedContent ?? template;
+      const migratedContent = migrateLegacyClarifications(content3);
+      const shouldWriteMigrated = shouldWriteTemplate(existingStatus, existingContent) || migratedContent !== content3;
       if (shouldWriteMigrated) {
-        await this.workspaceFiles.write(
+        await this.writeQuestionnaireCopies(
           sessionId,
           questionnairePath,
-          migratedContent
+          migratedContent,
+          legacyPaths
         );
       }
       const answers = extractIdeaQuestionnaireAnswers(
@@ -24764,38 +24818,37 @@ ${replacement}
       await this.writeQuestionnaireCopies(sessionId, path2, content3);
     }
     async appendClarificationAnswer(sessionId, outputPaths, question, answer) {
-      const questionnairePath = outputPaths.idea.replace(
-        IDEA_PATH_SUFFIX_RE,
-        "questionnaire.md"
-      );
-      const existing = await this.workspaceFiles.read(
+      const { primaryPath: questionnairePath, legacyPaths } = resolveQuestionnaireTargets(outputPaths.idea);
+      const { resolvedContent } = await this.readQuestionnaireContent(
         sessionId,
         questionnairePath,
-        QUESTIONNAIRE_READ_MAX_BYTES
+        legacyPaths
       );
-      const existingContent = existing.status === "ok" ? normalizeQuestionnaireContent(existing.file.content) : null;
-      if (!existingContent) {
+      if (!resolvedContent) {
         return;
       }
       const updated = appendClarificationToAgentQnaField(
-        existingContent,
+        resolvedContent,
         question,
         answer
       );
-      if (updated === existingContent) {
+      if (updated === resolvedContent) {
         return;
       }
-      await this.writeQuestionnaireCopies(sessionId, questionnairePath, updated);
+      await this.writeQuestionnaireCopies(
+        sessionId,
+        questionnairePath,
+        updated,
+        legacyPaths
+      );
     }
-    async writeQuestionnaireCopies(sessionId, path2, content3) {
+    async writeQuestionnaireCopies(sessionId, path2, content3, extraPaths = []) {
       await this.workspaceFiles.write(sessionId, path2, content3);
-      const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(path2);
-      if (initiativeQuestionnairePath && initiativeQuestionnairePath !== path2) {
-        await this.workspaceFiles.write(
-          sessionId,
-          initiativeQuestionnairePath,
-          content3
-        );
+      for (const extraPath of extraPaths) {
+        if (extraPath === path2) {
+          continue;
+        }
+        await this.workspaceFiles.write(sessionId, extraPath, content3);
       }
     }
   };
@@ -24842,8 +24895,8 @@ ${replacement}
       return null;
     }
     return {
-      idea: `.codeai-hub/${session.initiativeSlug}/description/runs/${session.runSlug}/idea/idea.md`,
-      virtualSimulation: `.codeai-hub/${session.initiativeSlug}/description/runs/${session.runSlug}/idea/virtual-simulation.md`
+      idea: `.codeai-hub/${session.initiativeSlug}/description/runs/${session.runSlug}/description.md`,
+      virtualSimulation: `.codeai-hub/${session.initiativeSlug}/virtual_simulation/runs/${session.runSlug}/virtual-simulation.md`
     };
   };
   var loadQuestionnaireForSession = (questionnaireService, sessions, sessionId) => {
