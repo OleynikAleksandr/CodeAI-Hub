@@ -75,8 +75,10 @@
 6. [DONE] Git Commit: `refactor(ui): split diagram steps paths` (hash: a22d6bce)
 
 ### Stream: Project Manager wiring
-1. [TODO] Refactor(project-manager): split description submit + new steps — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `refactor(project-manager): split description workflow steps`
-2. [TODO] Git Commit: `refactor(project-manager): split description workflow steps` (hash: TBD)
+1. [DONE] Refactor(project-manager): split description submit + schema handling — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `refactor(project-manager): split description workflow steps`
+2. [DONE] Git Commit: `refactor(project-manager): split description workflow steps` (hash: 039c54a6)
+3. [TODO] Refactor(project-manager): добавить шаги workflow в тулбар — scope: `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `refactor(project-manager): add workflow step tools`
+4. [TODO] Git Commit: `refactor(project-manager): add workflow step tools` (hash: TBD)
 
 ### Stream: Cleanup idea naming
 1. [TODO] Refactor: удалить упоминания idea/full-development-flow из docs и типов — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/AgentPackages_Architecture.md`; expected commit message: `docs: remove idea naming from architecture`
