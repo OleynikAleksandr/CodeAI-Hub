@@ -31,8 +31,8 @@
 ### Stream: Core template namespace
 1. [DONE] Refactor(core): обновить реестр шаблонов и sync под новые namespaces — scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.ts`; expected commit message: `refactor(core): split template namespaces`
 2. [DONE] Git Commit: `refactor(core): split template namespaces` (hash: b2c6597b)
-3. [TODO] Refactor(core): добавить legacy-move для старых шаблонов idea — scope: `packages/core/src/templates/template-sync-service.ts`; expected commit message: `refactor(core): archive legacy idea templates`
-4. [TODO] Git Commit: `refactor(core): archive legacy idea templates` (hash: TBD)
+3. [DONE] Refactor(core): добавить legacy-move для старых шаблонов idea — scope: `packages/core/src/templates/template-sync-service.ts`; expected commit message: `refactor(core): archive legacy idea templates`
+4. [DONE] Git Commit: `refactor(core): archive legacy idea templates` (hash: e5f3f46b)
 
 ### Stream: Description agent
 1. [DONE] Feat(agents): каркас description-agent — scope: `packages/agents/description-agent/package.json`, `packages/agents/description-agent/src/index.ts`, `packages/agents/description-agent/src/facade.ts`; expected commit message: `feat(agents): add description agent skeleton`
