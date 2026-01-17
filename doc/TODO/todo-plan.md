@@ -81,5 +81,5 @@
 4. [DONE] Git Commit: `refactor(project-manager): add workflow step tools` (hash: 0b592e91)
 
 ### Stream: Cleanup idea naming
-1. [TODO] Refactor: удалить упоминания idea/full-development-flow из docs и типов — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/AgentPackages_Architecture.md`; expected commit message: `docs: remove idea naming from architecture`
-2. [TODO] Git Commit: `docs: remove idea naming from architecture` (hash: TBD)
+1. [DONE] Refactor: удалить упоминания idea/full-development-flow из docs и типов — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/AgentPackages_Architecture.md`; expected commit message: `docs: remove idea naming from architecture`
+2. [DONE] Git Commit: `docs: remove idea naming from architecture` (hash: 343f4ac4)
