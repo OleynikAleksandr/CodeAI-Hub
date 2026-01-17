@@ -43,8 +43,8 @@
 6. [TODO] Git Commit: `feat(agents): add description questionnaire template` (hash: TBD)
 
 ### Stream: Virtual Simulation agent
-1. [TODO] Feat(agents): каркас virtual-simulation-agent — scope: `packages/agents/virtual-simulation-agent/package.json`, `packages/agents/virtual-simulation-agent/src/index.ts`, `packages/agents/virtual-simulation-agent/src/facade.ts`; expected commit message: `feat(agents): add virtual simulation agent skeleton`
-2. [TODO] Git Commit: `feat(agents): add virtual simulation agent skeleton` (hash: TBD)
+1. [DONE] Feat(agents): каркас virtual-simulation-agent — scope: `packages/agents/virtual-simulation-agent/package.json`, `packages/agents/virtual-simulation-agent/src/index.ts`, `packages/agents/virtual-simulation-agent/src/facade.ts`; expected commit message: `feat(agents): add virtual simulation agent skeleton`
+2. [DONE] Git Commit: `feat(agents): add virtual simulation agent skeleton` (hash: 61b59722)
 3. [TODO] Feat(agents): шаблоны virtual simulation — scope: `packages/agents/virtual-simulation-agent/assets/virtual-simulation-prompt.md`, `packages/agents/virtual-simulation-agent/assets/virtual-simulation-schema.json`, `packages/agents/virtual-simulation-agent/assets/virtual-simulation-template.md`; expected commit message: `feat(agents): add virtual simulation templates`
 4. [TODO] Git Commit: `feat(agents): add virtual simulation templates` (hash: TBD)
 
