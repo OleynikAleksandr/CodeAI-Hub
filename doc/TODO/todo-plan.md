@@ -111,3 +111,22 @@
 ### Stream: VSIX build
 1. [DONE] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.433`
 2. [DONE] Git Commit: `chore(release): package vsix 1.1.433` (hash: 209e6e23)
+
+---
+
+## Phase 51 — Release 1.1.434 (owner: Oleksandr, updated: 2026-01-17)
+### Stream: vscode-webview Idea Collector follow-up
+1. [DONE] Fix: vscode-webview — stage `idea` сообщения всегда отправлять с Idea Collector schema; structured output сохранять даже после перезапуска UI — scope: `src/client/ui/src/app-host/session-store.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-collector-schema-cache.ts`, `media/react-chat.js`; expected commit message: `fix(webview): keep idea collector schema on idea sessions`
+2. [DONE] Git Commit: `fix(webview): keep idea collector schema on idea sessions` (hash: 6f1264b3)
+
+### Stream: Release notes
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.434 release notes`
+2. [DONE] Git Commit: `docs: update 1.1.434 release notes` (hash: 190f85b5)
+
+### Stream: Release build
+1. [DONE] Release: bump + build-all артефакты под 1.1.434 — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.434`
+2. [DONE] Git Commit: `chore(release): bump 1.1.434` (hash: 41f4e852)
+
+### Stream: VSIX build
+1. [DONE] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.434`
+2. [DONE] Git Commit: `chore(release): package vsix 1.1.434` (hash: 3cceaa48)
