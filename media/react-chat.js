@@ -24215,11 +24215,9 @@ ${content3}`;
       sendChatMessage(sessionId, combinedContent, { outputSchema: schema });
     }
     handleStreamEvent(sessionId, event) {
-      if (!_IdeaCollectorService.activeSessions.has(sessionId)) {
-        return;
-      }
       const artifact = extractIdeaCollectorArtifact(event);
       if (artifact) {
+        _IdeaCollectorService.activeSessions.add(sessionId);
         _IdeaCollectorService.artifacts.set(sessionId, artifact);
         this.persistIdeaArtifacts(sessionId, artifact).catch((error) => {
           const message = error instanceof Error ? error.message : String(error);
@@ -25206,6 +25204,27 @@ ${replacement}
 
   // src/client/ui/src/app-host/session-store.ts
   var import_react13 = __toESM(require_react());
+
+  // src/client/ui/src/services/idea-collector-schema-cache.ts
+  var cachedSchema = null;
+  var pendingSchema = null;
+  var loadIdeaCollectorSchemaCached = () => {
+    if (cachedSchema) {
+      return Promise.resolve(cachedSchema);
+    }
+    if (pendingSchema) {
+      return pendingSchema;
+    }
+    pendingSchema = loadIdeaContract().then((contract) => {
+      cachedSchema = contract.schema;
+      return contract.schema;
+    }).finally(() => {
+      pendingSchema = null;
+    });
+    return pendingSchema;
+  };
+
+  // src/client/ui/src/app-host/session-store.ts
   var useSessionStore = (providerLabels) => {
     const [sessions, setSessions] = (0, import_react13.useState)([]);
     const [snapshots, setSnapshots] = (0, import_react13.useState)({});
@@ -25378,7 +25397,16 @@ ${replacement}
           }
         };
       });
-      sendChatMessage(sessionId, content3);
+      const record = sessionsRef.current.find(
+        (session) => session.id === sessionId
+      );
+      if (record?.stage !== "idea") {
+        sendChatMessage(sessionId, content3);
+        return;
+      }
+      loadIdeaCollectorSchemaCached().then(
+        (schema) => sendChatMessage(sessionId, content3, { outputSchema: schema })
+      ).catch(() => sendChatMessage(sessionId, content3));
     }, []);
     return {
       sessions,

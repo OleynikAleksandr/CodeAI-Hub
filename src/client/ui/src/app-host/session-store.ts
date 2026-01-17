@@ -13,6 +13,7 @@ import type {
   CoreBridgeSessionMessagePayload,
   CoreBridgeStatePayload,
 } from "../core-bridge/types";
+import { loadIdeaCollectorSchemaCached } from "../services/idea-collector-schema-cache";
 import {
   appendMessageToSnapshots,
   createInitialSnapshot,
@@ -257,7 +258,18 @@ export const useSessionStore = (
       };
     });
 
-    sendChatMessage(sessionId, content);
+    const record = sessionsRef.current.find(
+      (session) => session.id === sessionId
+    );
+    if (record?.stage !== "idea") {
+      sendChatMessage(sessionId, content);
+      return;
+    }
+    loadIdeaCollectorSchemaCached()
+      .then((schema) =>
+        sendChatMessage(sessionId, content, { outputSchema: schema })
+      )
+      .catch(() => sendChatMessage(sessionId, content));
   }, []);
 
   return {
