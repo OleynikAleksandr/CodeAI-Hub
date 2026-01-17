@@ -101,13 +101,13 @@
 4. [DONE] Git Commit: `fix(project-manager): keep idea collector schema on chat` (hash: a91b2f6a)
 
 ### Stream: Release notes
-1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.433 release notes`
-2. [TODO] Git Commit: `docs: update 1.1.433 release notes` (hash: TBD)
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.433 release notes`
+2. [DONE] Git Commit: `docs: update 1.1.433 release notes` (hash: 1980a2cc)
 
 ### Stream: Release build
-1. [TODO] Release: bump + build-all артефакты под 1.1.433 — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.433`
-2. [TODO] Git Commit: `chore(release): bump 1.1.433` (hash: TBD)
+1. [DONE] Release: bump + build-all артефакты под 1.1.433 — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.433`
+2. [DONE] Git Commit: `chore(release): bump 1.1.433` (hash: f0c240c8)
 
 ### Stream: VSIX build
-1. [TODO] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.433`
-2. [TODO] Git Commit: `chore(release): package vsix 1.1.433` (hash: TBD)
+1. [DONE] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.433`
+2. [DONE] Git Commit: `chore(release): package vsix 1.1.433` (hash: 209e6e23)
