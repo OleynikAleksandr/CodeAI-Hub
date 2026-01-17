@@ -1,0 +1,29 @@
+{
+  "name": "@codeai-hub/diagram-facades-agent",
+  "version": "1.1.387",
+  "description": "Diagram Facades Agent package for CodeAI Hub",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@codeai-hub/agent-shared": "file:../shared"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "codeai-hub",
+    "agents",
+    "diagram-facades-agent"
+  ],
+  "author": "CodeAI Hub",
+  "license": "ISC"
+}
