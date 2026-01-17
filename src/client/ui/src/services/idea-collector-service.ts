@@ -1,14 +1,22 @@
 import { sendChatMessage } from "../core-bridge/core-bridge";
-import { persistIdeaArtifacts } from "./idea-artifact-persistence";
 import {
   extractIdeaCollectorArtifact,
   type IdeaCollectorArtifact,
 } from "./idea-collector-artifact";
+import { saveIdeaCollectorArtifacts } from "./idea-collector-artifact-saver";
 import {
+  type DescriptionContractSnapshot,
   type IdeaContractSnapshot,
+  loadDescriptionContract,
   loadIdeaContract,
+  loadVirtualSimulationContract,
+  type VirtualSimulationContractSnapshot,
 } from "./idea-collector-contract";
-import { postSystemNotice, resolveCoreHttpUrl } from "./idea-collector-support";
+import {
+  IdeaCollectorSessionState,
+  type WorkflowStageId,
+} from "./idea-collector-session-state";
+import { postSystemNotice } from "./idea-collector-support";
 import { buildMessageWithWorkspaceContext } from "./idea-collector-workspace-context";
 import { notifyMissingIdeaContext } from "./idea-questionnaire-messages";
 import {
@@ -17,62 +25,91 @@ import {
   markQuestionnairePendingStored,
 } from "./idea-questionnaire-pending-store";
 
-const loadContract = (): Promise<IdeaContractSnapshot> => loadIdeaContract();
+type WorkflowContractSnapshot =
+  | DescriptionContractSnapshot
+  | VirtualSimulationContractSnapshot;
+
+const loadContractForStage = (
+  stage: WorkflowStageId
+): Promise<WorkflowContractSnapshot> =>
+  stage === "virtual_simulation"
+    ? loadVirtualSimulationContract()
+    : loadDescriptionContract();
+
+const loadLegacyContract = (): Promise<IdeaContractSnapshot> =>
+  loadIdeaContract();
 
 export class IdeaCollectorService {
-  private static readonly activeSessions = new Set<string>();
-  private static readonly artifacts = new Map<string, IdeaCollectorArtifact>();
-  private static readonly noticesSent = new Set<string>();
-  private static readonly pendingQuestionnaire = new Set<string>();
-  private static readonly lastAssistantMessages = new Map<string, string>();
-  private static readonly outputPathsBySession = new Map<
-    string,
-    IdeaContractSnapshot["outputPaths"]
-  >();
+  private readonly state = new IdeaCollectorSessionState();
 
   isIdeaCollectorSession(sessionId: string): boolean {
-    if (IdeaCollectorService.activeSessions.has(sessionId)) {
+    if (this.state.isActive(sessionId)) {
       return true;
     }
     if (this.isQuestionnairePending(sessionId)) {
-      IdeaCollectorService.activeSessions.add(sessionId);
+      this.state.markActive(sessionId);
       return true;
     }
     return false;
   }
 
   getLatestArtifact(sessionId: string): IdeaCollectorArtifact | null {
-    return IdeaCollectorService.artifacts.get(sessionId) ?? null;
+    return this.state.getArtifact(sessionId);
   }
   recordAssistantMessage(sessionId: string, content: string): void {
     const trimmed = content.trim();
     if (trimmed.length === 0) {
       return;
     }
-    IdeaCollectorService.lastAssistantMessages.set(sessionId, trimmed);
+    this.state.recordAssistantMessage(sessionId, trimmed);
   }
   getLastAssistantMessage(sessionId: string): string | null {
-    return IdeaCollectorService.lastAssistantMessages.get(sessionId) ?? null;
+    return this.state.getLastAssistantMessage(sessionId);
   }
   getOutputPathsForSessionId(
     sessionId: string
   ): IdeaContractSnapshot["outputPaths"] | null {
-    return IdeaCollectorService.outputPathsBySession.get(sessionId) ?? null;
+    return this.state.getOutputPaths(sessionId);
   }
-  startCollection(sessionId: string): void {
-    IdeaCollectorService.activeSessions.add(sessionId);
-    this.markQuestionnairePending(sessionId);
-    if (!IdeaCollectorService.noticesSent.has(sessionId)) {
-      IdeaCollectorService.noticesSent.add(sessionId);
+
+  setSessionStage(sessionId: string, stage: WorkflowStageId): void {
+    this.state.setStage(sessionId, stage);
+  }
+
+  startCollection(
+    sessionId: string,
+    stage: WorkflowStageId = "description"
+  ): void {
+    this.state.markActive(sessionId);
+    this.setSessionStage(sessionId, stage);
+
+    if (stage === "description") {
+      this.markQuestionnairePending(sessionId);
+      if (!this.state.hasNoticeSent(sessionId)) {
+        this.state.markNoticeSent(sessionId);
+        postSystemNotice(
+          sessionId,
+          "Запускаю Description. Заполните анкету и нажмите «Отправить анкету»."
+        );
+        postSystemNotice(
+          sessionId,
+          "Чтобы приложить существующие документы/файлы из workspace, можно:\n- написать в сообщении триггер (например, «прочитай/изучи/ознакомься») и указать пути к файлам (можно на отдельных строках);\n- или использовать команду:\n/read <relative-path>\n(можно несколько путей в одной строке, максимум 3)."
+        );
+      }
+      return;
+    }
+
+    if (!this.state.hasNoticeSent(sessionId)) {
+      this.state.markNoticeSent(sessionId);
       postSystemNotice(
         sessionId,
-        "Запускаю Idea Collector. Заполните анкету и нажмите «Отправить анкету»."
-      );
-      postSystemNotice(
-        sessionId,
-        "Чтобы приложить существующие документы/файлы из workspace, можно:\n- написать в сообщении триггер (например, «прочитай/изучи/ознакомься») и указать пути к файлам (можно на отдельных строках);\n- или использовать команду:\n/read <relative-path>\n(можно несколько путей в одной строке, максимум 3)."
+        "Запускаю Virtual Simulation. При необходимости приложите description.md или другие файлы проекта."
       );
     }
+  }
+
+  startVirtualSimulation(sessionId: string): void {
+    this.startCollection(sessionId, "virtual_simulation");
   }
 
   async continueConversation(
@@ -89,7 +126,7 @@ export class IdeaCollectorService {
       );
       return;
     }
-    const schema = await this.getNormalizedSchema();
+    const schema = await this.getNormalizedSchemaForSession(sessionId);
     const augmentedContent = await buildMessageWithWorkspaceContext(
       sessionId,
       content
@@ -107,67 +144,83 @@ export class IdeaCollectorService {
     content: string,
     outputPathsOverride?: IdeaContractSnapshot["outputPaths"]
   ): Promise<void> {
-    if (!IdeaCollectorService.activeSessions.has(sessionId)) {
-      IdeaCollectorService.activeSessions.add(sessionId);
+    if (!this.state.isActive(sessionId)) {
+      this.state.markActive(sessionId);
     }
+    this.setSessionStage(sessionId, "description");
     this.clearQuestionnairePending(sessionId);
     const [prompt, schema] = await Promise.all([
-      this.getPrompt(),
-      this.getNormalizedSchema(),
+      this.getPrompt("description"),
+      this.getNormalizedSchema("description"),
     ]);
     const outputPaths = outputPathsOverride;
     if (!outputPaths) {
       notifyMissingIdeaContext(sessionId);
       return;
     }
-    IdeaCollectorService.outputPathsBySession.set(sessionId, outputPaths);
-    const promptWithPaths = this.buildPromptWithOutputPaths(prompt);
-    const combinedContent = `${promptWithPaths}\n\n${content}`;
+    this.state.setOutputPaths(sessionId, outputPaths);
+    const promptWithSlots = this.buildPromptWithOutputSlots(
+      prompt,
+      "description"
+    );
+    const combinedContent = `${promptWithSlots}\n\n${content}`;
     sendChatMessage(sessionId, combinedContent, { outputSchema: schema });
   }
 
   handleStreamEvent(sessionId: string, event: unknown): void {
     const artifact = extractIdeaCollectorArtifact(event);
     if (artifact) {
-      IdeaCollectorService.activeSessions.add(sessionId);
-      IdeaCollectorService.artifacts.set(sessionId, artifact);
-      this.persistIdeaArtifacts(sessionId, artifact).catch((error: unknown) => {
-        const message = error instanceof Error ? error.message : String(error);
-        postSystemNotice(
-          sessionId,
-          `Не удалось сохранить артефакты идеи: ${message}`
-        );
-      });
+      this.state.markActive(sessionId);
+      this.state.recordArtifact(sessionId, artifact);
+      saveIdeaCollectorArtifacts(sessionId, artifact).catch(
+        (error: unknown) => {
+          const message =
+            error instanceof Error ? error.message : String(error);
+          postSystemNotice(
+            sessionId,
+            `Не удалось сохранить артефакты: ${message}`
+          );
+        }
+      );
     }
   }
 
   isQuestionnairePending(sessionId: string): boolean {
-    if (IdeaCollectorService.pendingQuestionnaire.has(sessionId)) {
+    if (this.state.isQuestionnairePending(sessionId)) {
       return true;
     }
     if (isQuestionnairePendingStored(sessionId)) {
-      IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+      this.state.markQuestionnairePending(sessionId);
       return true;
     }
     return false;
   }
 
-  private getPrompt(): Promise<string> {
-    return this.getContract().then((contract) => contract.prompt);
+  private getPrompt(stage: WorkflowStageId): Promise<string> {
+    return this.getContract(stage).then((contract) => contract.prompt);
   }
 
-  private getNormalizedSchema(): Promise<Record<string, unknown>> {
-    return this.getContract().then((contract) => contract.schema);
+  private getNormalizedSchema(
+    stage: WorkflowStageId
+  ): Promise<Record<string, unknown>> {
+    return this.getContract(stage).then((contract) => contract.schema);
+  }
+
+  private getNormalizedSchemaForSession(
+    sessionId: string
+  ): Promise<Record<string, unknown>> {
+    const stage = this.getSessionStage(sessionId);
+    return this.getNormalizedSchema(stage);
   }
 
   getQuestionnaireTemplateMarkdown(): Promise<string | null> {
-    return loadContract().then(
+    return loadDescriptionContract().then(
       (contract) => contract.questionnaireTemplateMarkdown
     );
   }
 
   getOutputPaths(): Promise<IdeaContractSnapshot["outputPaths"]> {
-    return this.getContract().then((contract) => contract.outputPaths);
+    return this.getLegacyContract().then((contract) => contract.outputPaths);
   }
 
   getOutputPathsForSession(
@@ -179,72 +232,42 @@ export class IdeaCollectorService {
     return this.getOutputPaths();
   }
 
-  private getContract(): Promise<IdeaContractSnapshot> {
-    return loadContract();
+  private getContract(
+    stage: WorkflowStageId
+  ): Promise<WorkflowContractSnapshot> {
+    return loadContractForStage(stage);
+  }
+
+  private getLegacyContract(): Promise<IdeaContractSnapshot> {
+    return loadLegacyContract();
+  }
+
+  private getSessionStage(sessionId: string): WorkflowStageId {
+    return this.state.getStage(sessionId);
   }
 
   private markQuestionnairePending(sessionId: string): void {
-    IdeaCollectorService.pendingQuestionnaire.add(sessionId);
+    this.state.markQuestionnairePending(sessionId);
     markQuestionnairePendingStored(sessionId);
   }
 
   private clearQuestionnairePending(sessionId: string): void {
-    IdeaCollectorService.pendingQuestionnaire.delete(sessionId);
+    this.state.clearQuestionnairePending(sessionId);
     clearQuestionnairePendingStored(sessionId);
   }
 
-  private async persistIdeaArtifacts(
-    sessionId: string,
-    artifact: IdeaCollectorArtifact
-  ): Promise<void> {
-    const httpUrl = resolveCoreHttpUrl();
-    if (!httpUrl) {
-      postSystemNotice(
-        sessionId,
-        "Не могу сохранить артефакты идеи: Core HTTP URL не определён."
-      );
-      return;
-    }
-
-    try {
-      if (artifact.artifacts.length === 0) {
-        return;
-      }
-      const result = await persistIdeaArtifacts({
-        httpUrl,
-        sessionId,
-        artifact,
-      });
-      if (!result.ok) {
-        postSystemNotice(
-          sessionId,
-          `Не удалось сохранить артефакты идеи (${result.error}).`
-        );
-        return;
-      }
-
-      const savedSummary =
-        result.saved.length > 0
-          ? result.saved.map((entry) => entry.path).join(", ")
-          : artifact.artifacts.map((entry) => entry.slot).join(", ");
-      postSystemNotice(
-        sessionId,
-        `Артефакты идеи сохранены в workspace: ${savedSummary}`
-      );
-    } catch {
-      postSystemNotice(
-        sessionId,
-        "Не удалось сохранить артефакты идеи: ошибка сети."
-      );
-    }
-  }
-
-  private buildPromptWithOutputPaths(prompt: string): string {
+  private buildPromptWithOutputSlots(
+    prompt: string,
+    stage: WorkflowStageId
+  ): string {
+    const slotLines =
+      stage === "virtual_simulation"
+        ? ["- virtual-simulation.md: workspace.virtual_simulation"]
+        : ["- description.md: workspace.description"];
     return (
       `${prompt}\n\n` +
       "Слоты сохранения для этой сессии (используй в Structured Output):\n" +
-      "- idea.md: cluster.idea.idea\n" +
-      "- virtual-simulation.md: cluster.idea.virtual-simulation"
+      `${slotLines.join("\n")}`
     );
   }
 }
