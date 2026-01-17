@@ -69,3 +69,24 @@
 ### Stream: VSIX build
 1. [DONE] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.431`
 2. [DONE] Git Commit: `chore(release): package vsix 1.1.431` (hash: 17749ea9)
+
+---
+
+## Phase 49 — Release 1.1.432 (owner: Oleksandr, updated: 2026-01-17)
+### Stream: Project Manager sessions UI parity
+1. [DONE] Fix/Refactor: окно Sessions 1:1 как vscode-webview (tabs + dialog + TODO + input + status) — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/status-hydrator.ts`; expected commit message: `fix(project-manager): mirror webview session view`
+2. [DONE] Git Commit: `fix(project-manager): mirror webview session view` (hash: 28cba8fd)
+3. [DONE] Style: перенести webview session css в project-manager — scope: `packages/ui/project-manager/styles.css`; expected commit message: `style(project-manager): mirror webview session css`
+4. [DONE] Git Commit: `style(project-manager): mirror webview session css` (hash: 5f5be757)
+
+### Stream: Release notes
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.432 release notes`
+2. [DONE] Git Commit: `docs: update 1.1.432 release notes` (hash: f17dcec1)
+
+### Stream: Release build
+1. [DONE] Release: bump + build-all артефакты под 1.1.432 — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.432`
+2. [DONE] Git Commit: `chore(release): bump 1.1.432` (hash: cb8b997f)
+
+### Stream: VSIX build
+1. [DONE] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.432`
+2. [DONE] Git Commit: `chore(release): package vsix 1.1.432` (hash: 0cddf972)
