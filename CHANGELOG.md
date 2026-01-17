@@ -1,3 +1,8 @@
+## [1.1.430] - 2026-01-17
+
+### Fixed
+- **Project Manager**: анкета Description отправляется в Idea Collector с выбранным провайдером (UI picker + `providerId` в submit).
+
 ## [1.1.429] - 2026-01-16
 
 ### Fixed
