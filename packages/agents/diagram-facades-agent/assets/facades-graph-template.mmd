@@ -1,0 +1,10 @@
+%% Facades Graph Template
+flowchart TD
+  %% Facades
+  module-a["module-a facade"]
+  module-b["module-b facade"]
+  module-c["module-c facade"]
+
+  %% Contract Links
+  module-a -->|http /api/v1/example| module-b
+  module-b -->|event ModuleUpdated| module-c
