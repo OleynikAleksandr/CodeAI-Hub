@@ -127,11 +127,9 @@ export class IdeaCollectorService {
   }
 
   handleStreamEvent(sessionId: string, event: unknown): void {
-    if (!IdeaCollectorService.activeSessions.has(sessionId)) {
-      return;
-    }
     const artifact = extractIdeaCollectorArtifact(event);
     if (artifact) {
+      IdeaCollectorService.activeSessions.add(sessionId);
       IdeaCollectorService.artifacts.set(sessionId, artifact);
       this.persistIdeaArtifacts(sessionId, artifact).catch((error: unknown) => {
         const message = error instanceof Error ? error.message : String(error);
