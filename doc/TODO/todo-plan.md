@@ -130,3 +130,27 @@
 ### Stream: VSIX build
 1. [DONE] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.434`
 2. [DONE] Git Commit: `chore(release): package vsix 1.1.434` (hash: 3cceaa48)
+
+---
+
+## Phase 52 — Claude: structured_output из result → stream_event + Release 1.1.435 (owner: Oleksandr, updated: 2026-01-17)
+
+### Stream: Design approval
+1. [DONE] Docs: зафиксировать архитектуру для Claude result structured_output — scope: `doc/Project_Docs/Claude_Result_StructuredOutput_Pipeline_Architecture.md`; expected commit message: `docs: add claude structured output pipeline design`
+2. [TODO] Git Commit: `docs: add claude structured output pipeline design` (hash: TBD)
+
+### Stream: Claude result normalization
+1. [TODO] Fix: нормализовать structured_output из result → stream_event + summary — scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(claude-module): normalize result structured output pipeline`
+2. [TODO] Git Commit: `fix(claude-module): normalize result structured output pipeline` (hash: TBD)
+
+### Stream: Release notes
+1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.435 release notes`
+2. [TODO] Git Commit: `docs: update 1.1.435 release notes` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] Release: bump + build-all артефакты под 1.1.435 — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.435`
+2. [TODO] Git Commit: `chore(release): bump 1.1.435` (hash: TBD)
+
+### Stream: VSIX build
+1. [TODO] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.435`
+2. [TODO] Git Commit: `chore(release): package vsix 1.1.435` (hash: TBD)
