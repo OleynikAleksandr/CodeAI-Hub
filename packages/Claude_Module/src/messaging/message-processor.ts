@@ -13,6 +13,16 @@ import {
 } from "./session-file-discovery";
 import { extractVariantBArtifacts } from "./structured-output-utils";
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readStructuredOutput = (
+  source: Record<string, unknown>
+): Record<string, unknown> | null => {
+  const candidate = source.structured_output ?? source.structuredOutput;
+  return isRecord(candidate) ? candidate : null;
+};
+
 type ProcessResponseOptions = {
   readonly sessionId: string;
   readonly iterator: AsyncIterable<ClaudeStreamMessage>;
@@ -148,18 +158,53 @@ export class SDKMessageProcessor {
     session: ActiveSession,
     message: ClaudeStreamMessage
   ): void {
-    const structured = parseIdeaCollectorOutputFromResultMessage(message);
+    const normalizedMessage = this.normalizeStructuredOutputMessage(message);
+    const structured =
+      parseIdeaCollectorOutputFromResultMessage(normalizedMessage);
     if (!structured) {
       return;
     }
 
-    this.emitStructuredOutput(session, message, structured);
+    this.emitStructuredOutput(session, normalizedMessage, structured);
 
     if (!structured.suggestedResponse) {
       return;
     }
 
     this.emitAssistantText(session, message, structured.suggestedResponse);
+  }
+
+  private normalizeStructuredOutputMessage(
+    message: ClaudeStreamMessage
+  ): ClaudeStreamMessage {
+    const raw = message as Record<string, unknown>;
+    const direct = readStructuredOutput(raw);
+    if (direct) {
+      return message;
+    }
+
+    const payload = isRecord(raw.payload) ? raw.payload : null;
+    const payloadStructured = payload ? readStructuredOutput(payload) : null;
+    if (payloadStructured) {
+      return { ...message, structured_output: payloadStructured };
+    }
+
+    const result = isRecord(raw.result) ? raw.result : null;
+    if (result) {
+      const resultStructured = readStructuredOutput(result);
+      if (resultStructured) {
+        return { ...message, structured_output: resultStructured };
+      }
+      const resultPayload = isRecord(result.payload) ? result.payload : null;
+      const resultPayloadStructured = resultPayload
+        ? readStructuredOutput(resultPayload)
+        : null;
+      if (resultPayloadStructured) {
+        return { ...message, structured_output: resultPayloadStructured };
+      }
+    }
+
+    return message;
   }
 
   private emitAssistantText(

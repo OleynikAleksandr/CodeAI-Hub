@@ -270,6 +270,9 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Project Manager Idea Collector finalize**: для stage `idea` follow-up сообщения отправляются с Idea Collector schema, поэтому финализация пишет артефакты через `artifacts[]`, а не текстом в чат.
 - **Claude structured output**: `suggested_response` и `artifacts[]` эмитятся даже если structured output пришёл в `result` payload.
 
+## Recent Changes (v1.1.435 - 2026-01-17)
+- **Claude structured output normalization**: structured output из `result` нормализуется в `stream_event`, чтобы `artifacts[]` сохранялись через `artifact-upsert`, а UI получал краткий `suggested_response`.
+
 ## Recent Changes (v1.1.434 - 2026-01-17)
 - **vscode-webview Idea Collector follow-up**: для stage `idea` сообщения всегда отправляются с Idea Collector schema, а `artifacts[]` сохраняются даже после перезапуска UI.
 
