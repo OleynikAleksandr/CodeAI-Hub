@@ -71,8 +71,8 @@
 2. [DONE] Git Commit: `refactor(ui): add workflow contract loaders` (hash: c8d94af5)
 3. [DONE] Refactor(ui): split description/virtual simulation в IdeaCollectorService и вынести state/saver — scope: `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-collector-session-state.ts`, `src/client/ui/src/services/idea-collector-artifact-saver.ts`; expected commit message: `refactor(ui): split description and virtual simulation`
 4. [DONE] Git Commit: `refactor(ui): split description and virtual simulation` (hash: 905b4286)
-5. [TODO] Refactor(ui): обновить пути и логику runs для diagram steps — scope: `src/client/ui/src/app-host/session-region-idea-paths.ts`, `src/client/ui/src/services/idea-questionnaire-service.ts`; expected commit message: `refactor(ui): split diagram steps paths`
-6. [TODO] Git Commit: `refactor(ui): split diagram steps paths` (hash: TBD)
+5. [DONE] Refactor(ui): обновить пути и логику runs для diagram steps — scope: `src/client/ui/src/app-host/session-region-idea-paths.ts`, `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/services/idea-questionnaire-paths.ts`; expected commit message: `refactor(ui): split diagram steps paths`
+6. [DONE] Git Commit: `refactor(ui): split diagram steps paths` (hash: a22d6bce)
 
 ### Stream: Project Manager wiring
 1. [TODO] Refactor(project-manager): split description submit + new steps — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `refactor(project-manager): split description workflow steps`
