@@ -28,9 +28,9 @@ export type IdeaContractSnapshot = {
 
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const FALLBACK_OUTPUT_PATHS = {
-  idea: ".codeai-hub/initiatives/unknown-initiative/runs/000-unknown/idea/idea.md",
+  idea: ".codeai-hub/unknown-workspace/description/runs/000-unknown/idea/idea.md",
   virtualSimulation:
-    ".codeai-hub/initiatives/unknown-initiative/runs/000-unknown/idea/virtual-simulation.md",
+    ".codeai-hub/unknown-workspace/description/runs/000-unknown/idea/virtual-simulation.md",
 } as const;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
