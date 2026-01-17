@@ -1,3 +1,9 @@
+## [1.1.433] - 2026-01-17
+
+### Fixed
+- **Project Manager**: Idea Collector (stage `idea`) теперь сохраняет structured output schema на последующих сообщениях, поэтому финализация создаёт артефакты, а не выводит их в чат.
+- **Claude provider**: structured output корректно отображает `suggested_response` и `artifacts[]` даже когда они приходят в `result` payload.
+
 ## [1.1.432] - 2026-01-17
 
 ### Changed
