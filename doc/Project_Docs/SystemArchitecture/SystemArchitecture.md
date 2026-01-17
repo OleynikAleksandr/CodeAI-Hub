@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.430 (17.01.2026) — Project Manager: выбор провайдера при отправке анкеты Description.
+**Состояние:** релиз 1.1.431 (17.01.2026) — Project Manager: UI-сессия Idea Collector в окне Project Manager + runs path без initiatives.
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
@@ -98,6 +98,10 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
+
+## Recent Changes (v1.1.431 - 2026-01-17)
+- **Project Manager**: Idea Collector-сессия работает в Project Manager (Sessions слева), анкета Description — в Artifacts справа.
+- **Storage**: runs path обновлён на `.codeai-hub/003cworkspaceSlug003e/description/runs/003crunSlug003e/...` (без `initiatives/`).
 
 ## Recent Changes (v1.1.430 - 2026-01-17)
 - **Project Manager provider picker**: анкета Description отправляется в Idea Collector с явным `providerId`, выбранным пользователем.

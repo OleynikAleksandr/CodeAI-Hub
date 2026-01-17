@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-17
 **Status:** Active reference
-**Release Focus:** v1.1.430 — Project Manager: выбор провайдера при отправке анкеты Description в Idea Collector.
+**Release Focus:** v1.1.431 — Project Manager: UI-сессия Idea Collector в окне Project Manager + runs path без initiatives.
 
 ---
 
@@ -262,6 +262,10 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Questionnaire contract**: Core добавляет `questionnaire.templateMarkdown` в `idea-contract` и версионирует контракт с учётом шаблона.
 - **Workspace questionnaire persistence**: UI сохраняет анкету через `POST /api/v1/orchestrator/workspace-file-write` и отправляет путь через auto-attach.
 - **Release 1.1.380**: артефакты VSIX/launcher/core/providers/UI обновлены под анкетный flow.
+
+## Recent Changes (v1.1.431 - 2026-01-17)
+- **Project Manager session placement**: после отправки анкеты Description сессия Idea Collector отображается в Project Manager (Sessions слева), анкета — в Artifacts справа.
+- **Runs path (no initiatives)**: артефакты и анкеты используют `.codeai-hub/003cworkspaceSlug003e/description/runs/003crunSlug003e/...` вместо `.codeai-hub/initiatives/...`.
 
 ## Recent Changes (v1.1.430 - 2026-01-17)
 - **Project Manager provider picker**: анкета Description позволяет выбрать провайдера перед отправкой в Idea Collector, `providerId` передается вместе с submit.

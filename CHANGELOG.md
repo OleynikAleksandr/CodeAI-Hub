@@ -1,3 +1,9 @@
+## [1.1.431] - 2026-01-17
+
+### Changed
+- **Project Manager**: Idea Collector-сессия отображается в окне Project Manager (Sessions слева), анкета Description — в Artifacts справа.
+- **Storage**: runs теперь пишутся в `.codeai-hub/003cworkspaceSlug003e/description/runs/003crunSlug003e/...` (без `initiatives/`).
+
 ## [1.1.430] - 2026-01-17
 
 ### Fixed
