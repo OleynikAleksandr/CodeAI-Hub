@@ -22,7 +22,9 @@ export const MainArea: React.FC<MainAreaProps> = ({
   onSizeChange,
   activeWorkspace,
 }) => {
-  const tools: readonly string[] = activeWorkspace ? ["Description"] : [];
+  const tools: readonly string[] = activeWorkspace
+    ? ["Description", "Virtual Simulation", "Diagram Modules", "Diagram Facades"]
+    : [];
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [preferredSessionId, setPreferredSessionId] = useState<string | null>(
     null
@@ -38,6 +40,9 @@ export const MainArea: React.FC<MainAreaProps> = ({
   }, [activeWorkspace?.id]);
 
   const showDescriptionQuestionnaire = activeTool === "Description";
+  const showVirtualSimulation = activeTool === "Virtual Simulation";
+  const showDiagramModules = activeTool === "Diagram Modules";
+  const showDiagramFacades = activeTool === "Diagram Facades";
 
   return (
     <main className="pm-main-area">
@@ -55,6 +60,18 @@ export const MainArea: React.FC<MainAreaProps> = ({
               workspaceName={activeWorkspace?.name}
               workspacePath={activeWorkspace?.path}
             />
+          ) : showVirtualSimulation ? (
+            <div className="pm-placeholder">
+              Шаг Virtual Simulation пока не подключен.
+            </div>
+          ) : showDiagramModules ? (
+            <div className="pm-placeholder">
+              Шаг Diagram Modules пока не подключен.
+            </div>
+          ) : showDiagramFacades ? (
+            <div className="pm-placeholder">
+              Шаг Diagram Facades пока не подключен.
+            </div>
           ) : (
             <div className="pm-placeholder">Artifacts will appear here.</div>
           )
