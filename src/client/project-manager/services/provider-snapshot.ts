@@ -26,6 +26,28 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isProviderStatus = (value: unknown): value is ProviderStatus =>
   value === "active" || value === "inactive" || value === "degraded";
 
+const buildProviderSnapshot = (
+  provider: Record<string, unknown>
+): ProviderSnapshot | null => {
+  const id = provider.id;
+  const status = provider.status;
+  if (typeof id !== "string" || !isProviderStatus(status)) {
+    return null;
+  }
+  const statusMessage =
+    typeof provider.statusMessage === "string" ? provider.statusMessage : null;
+  const snapshot: ProviderSnapshot = {
+    id,
+    status,
+    statusMessage,
+    ...(typeof provider.name === "string" ? { name: provider.name } : {}),
+    ...(typeof provider.description === "string"
+      ? { description: provider.description }
+      : {}),
+  };
+  return snapshot;
+};
+
 export const extractProviders = (payload: unknown): ProviderSnapshot[] => {
   if (!isRecord(payload)) {
     return [];
@@ -39,23 +61,9 @@ export const extractProviders = (payload: unknown): ProviderSnapshot[] => {
       if (!isRecord(provider)) {
         return null;
       }
-      const id = provider.id;
-      const status = provider.status;
-      if (typeof id !== "string" || !isProviderStatus(status)) {
-        return null;
-      }
-      const statusMessage =
-        typeof provider.statusMessage === "string" ? provider.statusMessage : null;
-      return {
-        id,
-        status,
-        name: typeof provider.name === "string" ? provider.name : undefined,
-        description:
-          typeof provider.description === "string" ? provider.description : undefined,
-        statusMessage,
-      };
+      return buildProviderSnapshot(provider);
     })
-    .filter((provider): provider is ProviderSnapshot => Boolean(provider));
+    .filter((provider): provider is ProviderSnapshot => provider !== null);
 };
 
 const toProviderDescriptor = (
