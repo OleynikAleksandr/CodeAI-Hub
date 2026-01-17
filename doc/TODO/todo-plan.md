@@ -93,4 +93,4 @@
 
 ### Stream: Provider snapshot typing
 1. [DONE] Fix: выровнять типы провайдера в submit/snapshot сервисах — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/provider-snapshot.ts`; expected commit message: `fix(project-manager): align provider snapshot types`
-2. [DONE] Git Commit: `fix(project-manager): align provider snapshot types` (hash: TBD)
+2. [DONE] Git Commit: `fix(project-manager): align provider snapshot types` (hash: 1f36a960)
