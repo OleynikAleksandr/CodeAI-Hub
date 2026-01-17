@@ -49,8 +49,8 @@
 4. [TODO] Git Commit: `feat(agents): add virtual simulation templates` (hash: TBD)
 
 ### Stream: Diagram Modules agent
-1. [TODO] Feat(agents): каркас diagram-modules-agent — scope: `packages/agents/diagram-modules-agent/package.json`, `packages/agents/diagram-modules-agent/src/index.ts`, `packages/agents/diagram-modules-agent/src/facade.ts`; expected commit message: `feat(agents): add diagram modules agent skeleton`
-2. [TODO] Git Commit: `feat(agents): add diagram modules agent skeleton` (hash: TBD)
+1. [DONE] Feat(agents): каркас diagram-modules-agent — scope: `packages/agents/diagram-modules-agent/package.json`, `packages/agents/diagram-modules-agent/src/index.ts`, `packages/agents/diagram-modules-agent/src/facade.ts`; expected commit message: `feat(agents): add diagram modules agent skeleton`
+2. [DONE] Git Commit: `feat(agents): add diagram modules agent skeleton` (hash: 98fd9960)
 3. [TODO] Feat(agents): шаблоны modules diagram — scope: `packages/agents/diagram-modules-agent/assets/modules-diagram-prompt.md`, `packages/agents/diagram-modules-agent/assets/modules-diagram-schema.json`, `packages/agents/diagram-modules-agent/assets/modules-diagram-template.mmd`; expected commit message: `feat(agents): add modules diagram templates`
 4. [TODO] Git Commit: `feat(agents): add modules diagram templates` (hash: TBD)
 
