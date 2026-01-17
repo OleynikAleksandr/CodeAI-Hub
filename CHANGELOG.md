@@ -1,3 +1,8 @@
+## [1.1.435] - 2026-01-17
+
+### Fixed
+- **Claude module**: structured output из `result` нормализуется в `stream_event`, поэтому `artifacts[]` сохраняются через `artifact-upsert`, а UI показывает краткий `suggested_response`.
+
 ## [1.1.433] - 2026-01-17
 
 ### Fixed
