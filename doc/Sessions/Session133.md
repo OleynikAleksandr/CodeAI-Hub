@@ -65,6 +65,13 @@
 ## Plans for next session (Claude: артефакты не переписываются)
 **Цель:** добиться того же поведения, что и для Codex: исправления должны приводить к `artifacts[]` → atomic write (с backup) → обновление файлов на диске, без вывода полного markdown в диалог.
 
+### Claude — наблюдение по факту (важно)
+- Лог: `/Users/oleksandroliinyk/.codeai-hub/logs/claude/sdk-claude-b4394839-f0a1-4586-99ec-64a3d4dea7c1.jsonl` (ответ начиная с 37-й строки).
+- В этом логе **нет** structured output: отсутствуют поля вида `structured_output`/`structuredOutput` и отсутствует эмиссия `stream_event` с `data.kind="structured_output"`/`artifacts[]`.
+- Есть только `sdk:message` с `type="assistant"` и большим markdown (по сути — переписанный `idea.md` как текст).
+- Следствие: система **не могла** сделать upsert артефактов и backup, потому что пайплайн сохранения запускается только от `artifacts[]` (Idea Collector Variant B), а не от обычного assistant текста.
+- Также отдельно проверить: почему этот assistant текст не появился в UI (нужно сопоставить этот SDK-лог с событиями Core `session:message`/`session:stream` для того же `sessionId`).
+
 1) Диагностика по Claude JSONL
 - Открыть соответствующий лог `~/.codeai-hub/logs/claude/sdk-claude-*.jsonl` и найти:
   - есть ли structured output в `result.payload.structured_output` и есть ли `artifacts[]`;
