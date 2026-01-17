@@ -55,8 +55,8 @@
 4. [TODO] Git Commit: `feat(agents): add modules diagram templates` (hash: TBD)
 
 ### Stream: Diagram Facades agent
-1. [TODO] Feat(agents): каркас diagram-facades-agent — scope: `packages/agents/diagram-facades-agent/package.json`, `packages/agents/diagram-facades-agent/src/index.ts`, `packages/agents/diagram-facades-agent/src/facade.ts`; expected commit message: `feat(agents): add diagram facades agent skeleton`
-2. [TODO] Git Commit: `feat(agents): add diagram facades agent skeleton` (hash: TBD)
+1. [DONE] Feat(agents): каркас diagram-facades-agent — scope: `packages/agents/diagram-facades-agent/package.json`, `packages/agents/diagram-facades-agent/src/index.ts`, `packages/agents/diagram-facades-agent/src/facade.ts`; expected commit message: `feat(agents): add diagram facades agent skeleton`
+2. [DONE] Git Commit: `feat(agents): add diagram facades agent skeleton` (hash: 3839cef3)
 3. [TODO] Feat(agents): шаблоны facades graph — scope: `packages/agents/diagram-facades-agent/assets/facades-graph-prompt.md`, `packages/agents/diagram-facades-agent/assets/facades-graph-schema.json`, `packages/agents/diagram-facades-agent/assets/facades-graph-template.mmd`; expected commit message: `feat(agents): add facades graph templates`
 4. [TODO] Git Commit: `feat(agents): add facades graph templates` (hash: TBD)
 
