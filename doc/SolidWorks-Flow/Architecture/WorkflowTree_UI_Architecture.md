@@ -1,15 +1,16 @@
 # Workflow Tree UI (SolidWorks-подобная визуализация разработки)
 
-**Status:** Draft (v0.6)
-**Updated:** 2026-01-16
+**Status:** Draft (v0.7)
+**Updated:** 2026-01-17
 **Owner:** Oleksandr + Codex
 
 ---
 
 ## 1. Зачем нужен Workflow Tree
 Цель — дать пользователю UI, который **не позволяет хаотично “скакать” по задачам**, как это делает голый Git, а ведёт разработку как SolidWorks:
-- сначала фиксируется описание и ограничения,
-- затем формируется структура (кластеры/модули) и связи,
+- сначала фиксируется описание,
+- затем формируется виртуальная симуляция,
+- затем строятся диаграммы модулей и фасадов,
 - затем для каждого модуля делаются спецификация/план/исполнение,
 - затем выполняется “Rebuild” (гейты/сборка),
 - затем “Simulation” (тесты/сценарии).
@@ -36,7 +37,7 @@ Workflow Tree становится **единой точкой правды** д
 
 Примечание (vNext): после `Scaffold Modules` код каждого модуля материализуется в `packages/<moduleSlug>/...` (kebab-case).
 
-- **Step** — шаг workflow (например: `Описание`, `Диаграммы`, `Spec`, `Plan`, `Execute`).
+- **Step** — шаг workflow (например: `Описание`, `Virtual Simulation`, `Диаграмма модулей`, `Диаграмма фасадов`, `Spec`, `Plan`, `Execute`).
 - **Artifact** — файл/результат шага.
 - **Session** — диалог с агентом.
 
@@ -47,7 +48,12 @@ Workflow Tree становится **единой точкой правды** д
 ### 3.2. Артефакты как слоты и runs (для персистентности)
 Эта часть нужна, чтобы дерево было связано с текущим рантаймом артефактов.
 
-- **Artifact Slot** — “что” мы храним (семантический ключ результата). Пример: `workspace.description`, `workspace.virtualSimulation`, `diagram.modules`, `diagram.facades`, `module.<slug>.spec`.
+- **Artifact Slot** — “что” мы храним (семантический ключ результата).
+  - `workspace.description`
+  - `workspace.virtual_simulation`
+  - `diagram.modules`
+  - `diagram.facades`
+  - `module.<slug>.spec`
 - **Run** — одна попытка выполнения шага (провайдер/модель/итерация).
 - **Current** — выбранный пользователем актуальный результат слота.
 
@@ -75,7 +81,7 @@ Workflow Tree становится **единой точкой правды** д
 - при повторном запуске открывает тот же шаг для продолжения/редактирования.
 
 Базовые инструменты (MVP):
-- Для `Workspace`/`Cluster`: `Описание` → `Диаграммы`
+- Для `Workspace`: `Описание` → `Virtual Simulation` → `Диаграмма модулей` → `Диаграмма фасадов`
 - Для `Module`: `Spec` → `Plan` → `Execute`
 
 ### 4.3. Центральная панель: содержимое выбранного узла
@@ -105,16 +111,17 @@ Workspace: App
 ├─ Описание (Step)
 │  ├─ Artifact: questionnaire.md
 │  │  └─ Session: 001 (create)
-│  ├─ Artifact: description.md
-│  │  ├─ Session: 001 (create)
-│  │  └─ Session: 004 (edit)
-│  └─ Artifact: virtual-simulation.md
+│  └─ Artifact: description.md
 │     └─ Session: 001 (create)
-├─ Диаграммы (Step)
-│  ├─ Artifact: modules-diagram.mmd
-│  │  └─ Session: 002 (create)
-│  └─ Artifact: facades-graph.mmd
+├─ Virtual Simulation (Step)
+│  └─ Artifact: virtual-simulation.md
 │     └─ Session: 002 (create)
+├─ Диаграмма модулей (Step)
+│  └─ Artifact: modules-diagram.mmd
+│     └─ Session: 003 (create)
+├─ Диаграмма фасадов (Step)
+│  └─ Artifact: facades-graph.mmd
+│     └─ Session: 004 (create)
 ├─ Cluster: Auth
 │  └─ Module: auth-token
 │     ├─ Spec (Step)
@@ -135,43 +142,28 @@ Workspace: App
 
 ## 6. Шаги Flow и их артефакты (MVP)
 ### 6.1. UI label vs внутренний `stageId`
-Чтобы не ломать текущие рантайм-идентификаторы, допускаем:
-- UI label: `Описание`
-- внутренний `stageId`: `idea`
-
-Аналогично:
-- `Диаграммы` → `diagrams`
+Чтобы внутренние этапы были однозначными, используем snake_case:
+- `Описание` → `description`
+- `Virtual Simulation` → `virtual_simulation`
+- `Диаграмма модулей` → `diagram_modules`
+- `Диаграмма фасадов` → `diagram_facades`
 - `Spec` → `spec`
 - `Plan` → `plan`
 - `Execute` → `execute`
 
-### 6.2. Шаги верхнего уровня (`Workspace`/`Cluster`)
-- `Описание` (`stageId=idea`)
-  - результат: текстовое описание + виртуальная симуляция;
-  - правило: **не генерировать диаграммы** на этом шаге.
-
-- `Диаграммы` (`stageId=diagrams`)
-  - результат: диаграммы модулей и связей.
-
-### 6.3. Шаги модуля (`Module`)
-- `Spec` → `Plan` → `Execute`.
-
-`Execute` в MVP рассматриваем как “оркестрация выполнения” с входом `plan.md`; детализацию шагов/подшагов для `Execute` фиксируем отдельным документом по мере реализации.
-
-
-### 6.4. Условия разблокировки (обязательные артефакты)
-Для MVP считаем, что “готовность шага” = наличие **обязательных артефактов** и отсутствие `ERROR` у шага.
-
-`Workspace/Cluster`:
-- `Описание` → `DONE`, когда созданы:
-  1) `description.md` (цель, scope/out-of-scope, DoD/критерии успеха)
-  2) `virtual-simulation.md` (виртуальная симуляция/прогон сценариев)
-  Опционально: `questionnaire.md`.
-  Разблокирует `Диаграммы`.
-- `Диаграммы` → `DONE`, когда созданы:
-  1) `modules-diagram.mmd` (кластеры/модули + связи)
-  2) `facades-graph.mmd` (контракты связей/фасады)
-  Разблокирует материализацию `Cluster/Module` узлов.
+### 6.2. Шаги верхнего уровня (`Workspace`)
+- `Описание` (`stageId=description`)
+  - результаты:
+    1) `description.md`
+    2) `questionnaire.md` (опционально)
+- `Virtual Simulation` (`stageId=virtual_simulation`)
+  - результат: `virtual-simulation.md`
+- `Диаграмма модулей` (`stageId=diagram_modules`)
+  - результат: `modules-diagram.mmd`
+  - после завершения материализуются `Cluster/Module` узлы
+- `Диаграмма фасадов` (`stageId=diagram_facades`)
+  - результат: `facades-graph.mmd`
+  - фиксирует контрактные связи между фасадами
 
 `Module`:
 - `Spec` → `DONE`, когда созданы:
@@ -198,23 +190,26 @@ Workspace: App
 Инструмент активен только если выполнены предусловия.
 
 Примеры (MVP):
-- `Workspace/Cluster`: `Диаграммы` активен только если у `Описание` есть обязательные артефакты.
+- `Workspace`: `Virtual Simulation` активен только после `Описание`.
+- `Workspace`: `Диаграмма модулей` активна только после `Virtual Simulation`.
+- `Workspace`: `Диаграмма фасадов` активна только после `Диаграмма модулей`.
+- `Module`: `Spec` активен только после `Workspace: Диаграмма фасадов`.
 - `Module`: `Plan` активен только если есть артефакты `Spec`; `Execute` — только после `Plan`.
 
 ### 7.3. Anti-chaos rule (источник правды)
-Если сущность “появилась” из шага (например, список модулей из `Диаграммы`), то добавлять/удалять/переименовывать её можно **только через этот шаг**.
+Если сущность “появилась” из шага (например, список модулей из `Диаграмма модулей`), то добавлять/удалять/переименовывать её можно **только через этот шаг**.
 
 ### 7.4. Автоматическая материализация из диаграмм
-После выполнения `Диаграммы` система:
+После выполнения `Диаграмма модулей` система:
 - материализует `Cluster/Module` узлы,
-- поддерживает добавление/удаление/переименование только через `Диаграммы`,
+- поддерживает добавление/удаление/переименование только через `Диаграмма модулей`,
 - при конфликтах создаёт отчёт‑артефакт (например `dependency-problems.md`).
 
 ### 7.5. OUTDATED как “needs rebuild”
 Любой `Edit` запускает impact analysis по **графу зависимостей**, а не по глубине дерева.
 
 MVP-минимум:
-- структурные зависимости (что пришло из `Диаграммы`),
+- структурные зависимости (что пришло из `Диаграмма модулей`),
 - контрактные зависимости (фасады),
 - результаты гейтов/сборок.
 
@@ -239,17 +234,38 @@ MVP-минимум:
 
 ---
 
-## 9. Привязка к текущему рантайму артефактов `.codeai-hub/` (MVP)
+## 9. Привязка к рантайму артефактов `.codeai-hub/` (MVP)
 `.codeai-hub/` находится в `.gitignore`, но это **каноничное хранилище workflow-артефактов** на уровне workspace.
 
-### 9.1. Канон путей артефактов (текущий)
-В MVP артефакты сохраняются в:
-- `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/<stage>/...`
+### 9.1. Канон путей артефактов (новый)
+Каждый шаг имеет собственный корень и runs:
+- `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/description.md`
+- `.codeai-hub/<workspaceSlug>/virtual_simulation/runs/<runSlug>/virtual-simulation.md`
+- `.codeai-hub/<workspaceSlug>/diagram_modules/runs/<runSlug>/modules-diagram.mmd`
+- `.codeai-hub/<workspaceSlug>/diagram_facades/runs/<runSlug>/facades-graph.mmd`
 
-Примечание для Project Manager:
-- UI может скрывать понятие “initiative”; в текущем рантайме `initiativeSlug` является идентификатором workflow‑контекста и может быть привязан к workspace (конвенция уточняется).
+Вопросники/анкеты:
+- `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
 
-### 9.2. Upsert протокол (Artifact Upsert Protocol, Variant B)
+### 9.2. Template namespace (новый)
+Bundled‑шаблоны синхронизируются в `~/.codeai-hub/templates/` по шагам:
+- `description/description-collector-prompt.md`
+- `description/description-collector-schema.json`
+- `description/description-template.md`
+- `description/questionnaire-template.md`
+- `virtual_simulation/virtual-simulation-prompt.md`
+- `virtual_simulation/virtual-simulation-schema.json`
+- `virtual_simulation/virtual-simulation-template.md`
+- `diagram_modules/modules-diagram-prompt.md`
+- `diagram_modules/modules-diagram-schema.json`
+- `diagram_modules/modules-diagram-template.mmd`
+- `diagram_facades/facades-graph-prompt.md`
+- `diagram_facades/facades-graph-schema.json`
+- `diagram_facades/facades-graph-template.mmd`
+
+Старые шаблоны (`full-development-flow/idea/...`) помечаются как legacy и не используются.
+
+### 9.3. Upsert протокол (Artifact Upsert Protocol, Variant B)
 Сохранение артефактов выполняется через Core endpoint:
 - `POST /api/v1/orchestrator/artifact-upsert`
 
@@ -258,7 +274,7 @@ Payload (MVP):
 - Разрешены **частичные upsert**: можно прислать подмножество слотов.
 - При перезаписи файла Core делает backup: `*.bak-<timestamp>`.
 
-### 9.3. Привязка SessionID к шагу
+### 9.4. Привязка SessionID к шагу
 Для шага хранится история `runs[]` и указатель `currentRunId`.
 Привязка `providerSessionId/threadId` хранится в метаданных run.
 
@@ -271,20 +287,20 @@ Payload (MVP):
 - связи между модулями,
 - планы/порядок выполнения,
 
-обязана включать шаг обновления соответствующих артефактов (`Описание`/`Диаграммы`/`Spec`/`Plan`).
+обязана включать шаг обновления соответствующих артефактов (`Описание`/`Virtual Simulation`/`Диаграмма модулей`/`Диаграмма фасадов`/`Spec`/`Plan`).
 
 ---
 
 ## 11. Вне MVP (зафиксировано, но не реализуем сейчас)
-- Разделение `Диаграммы` на отдельные шаги `Module Diagram` и `Interface Map`.
-- `Scaffold Modules` как отдельное действие материализации кода в `packages/<moduleSlug>/...`.
-- Перенос хранилища на целевую структуру `.codeai-hub/flows/...` (с миграцией).
-- Полноценный resume после рестарта Core (сейчас часть сессионной привязки может быть in-memory и требует отдельного слоя персистентности).
+- Полный `Scaffold Modules` (генерация кода в `packages/<moduleSlug>/...`).
+- Полный execute‑пайплайн с автогейтами и автокоммитами.
+- Миграция старых артефактов `.codeai-hub/**` в новую структуру (делается вручную/скриптом при необходимости).
+- Полноценный resume после рестарта Core (часть сессионной привязки может быть in-memory и требует отдельного слоя персистентности).
 
 ---
 
 ## 12. Открытые вопросы (для решения до/в MVP)
 1) **Fork Workspace ↔ Git:** делаем fork как `git clone`/новая папка, или как `git worktree`/ветка в текущем checkout?
 2) **Формат диаграмм:** Mermaid достаточно для MVP, или сразу вводим data‑формат для layout (JSON) + экспорт в Mermaid?
-3) **Конвенция `initiativeSlug`:** равен `workspaceSlug` (скрытый уровень), или возвращаем явные инициативы на UI?
-4) **Валидация артефактов:** “файл существует и не пустой” vs минимальная схема (frontmatter/JSON) уже в MVP?
+3) **Валидация артефактов:** “файл существует и не пустой” vs минимальная схема (frontmatter/JSON) уже в MVP?
+4) **Конвенция `workspaceSlug`:** равен slug workspace (скрытый уровень), или возвращаем явные инициативы на UI?
