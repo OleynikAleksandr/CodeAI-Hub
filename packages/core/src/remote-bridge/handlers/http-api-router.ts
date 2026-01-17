@@ -34,9 +34,9 @@ const WORKSPACE_FILE_WRITE_ENDPOINT =
   "/api/v1/orchestrator/workspace-file-write";
 const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
 const IDEA_PATH_RE =
-  /^\.codeai-hub\/initiatives\/[a-z0-9]+(?:-[a-z0-9]+)*\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
 const VIRTUAL_SIMULATION_PATH_RE =
-  /^\.codeai-hub\/initiatives\/[a-z0-9]+(?:-[a-z0-9]+)*\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/virtual-simulation\.md$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/virtual-simulation\.md$/;
 
 export type RouterDependencies = {
   readonly app: Express;
@@ -573,7 +573,7 @@ const resolveIdeaStageUpsertTarget = (params: {
     };
   }
 
-  const relativePath = `.codeai-hub/initiatives/${params.context.initiativeSlug}/runs/${params.context.runSlug}/idea/${fileName}`;
+  const relativePath = `.codeai-hub/${params.context.initiativeSlug}/description/runs/${params.context.runSlug}/idea/${fileName}`;
   const isAllowed =
     fileName === "idea.md"
       ? IDEA_PATH_RE.test(relativePath)
@@ -715,7 +715,7 @@ const buildIdeaArtifactUpdatePlan = async (
       ok: false,
       status: HTTP_BAD_REQUEST,
       error:
-        "Invalid artifact paths (expected .codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/idea/...)",
+        "Invalid artifact paths (expected .codeai-hub/<workspaceSlug>/description/runs/<runSlug>/idea/...)",
     };
   }
   const workspaceRoot = path.resolve(session.workspacePath);

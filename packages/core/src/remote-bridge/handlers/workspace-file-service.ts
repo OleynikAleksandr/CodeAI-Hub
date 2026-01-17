@@ -55,12 +55,12 @@ const isRunQuestionnairePath = (
   const normalized = normalizeWorkspacePath(pathValue);
   return (
     normalized ===
-    `.codeai-hub/initiatives/${initiativeSlug}/runs/${runSlug}${RUN_QUESTIONNAIRE_SUFFIX}`
+    `.codeai-hub/${initiativeSlug}/description/runs/${runSlug}${RUN_QUESTIONNAIRE_SUFFIX}`
   );
 };
 
 const resolveInitiativeQuestionnairePath = (initiativeSlug: string): string =>
-  `.codeai-hub/initiatives/${initiativeSlug}${INITIATIVE_QUESTIONNAIRE_PATH_SUFFIX}`;
+  `.codeai-hub/${initiativeSlug}/description${INITIATIVE_QUESTIONNAIRE_PATH_SUFFIX}`;
 
 const parseWorkspaceFilePayload = (
   payload: unknown
