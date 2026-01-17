@@ -5,7 +5,13 @@ import type { FileDropService } from "../../file-drop/file-drop-service";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
-import { buildIdeaContract } from "./idea-contract-service";
+import {
+  buildDescriptionContract,
+  buildDiagramFacadesContract,
+  buildDiagramModulesContract,
+  buildIdeaContract,
+  buildVirtualSimulationContract,
+} from "./idea-contract-service";
 import { InitiativesHttpHandler } from "./initiatives-http-handler";
 import { RunsHttpHandler } from "./runs-http-handler";
 import type {
@@ -23,6 +29,14 @@ const HTTP_NOT_FOUND = 404;
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NO_CONTENT = 204;
 const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
+const DESCRIPTION_CONTRACT_ENDPOINT =
+  "/api/v1/orchestrator/description-contract";
+const VIRTUAL_SIMULATION_CONTRACT_ENDPOINT =
+  "/api/v1/orchestrator/virtual-simulation-contract";
+const DIAGRAM_MODULES_CONTRACT_ENDPOINT =
+  "/api/v1/orchestrator/diagram-modules-contract";
+const DIAGRAM_FACADES_CONTRACT_ENDPOINT =
+  "/api/v1/orchestrator/diagram-facades-contract";
 const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
 const ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
 const INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
@@ -95,6 +109,50 @@ export class HttpApiRouter {
     app.get(IDEA_CONTRACT_ENDPOINT, async (_req: Request, res: Response) => {
       await this.handleIdeaContract(res);
     });
+
+    app.get(
+      DESCRIPTION_CONTRACT_ENDPOINT,
+      async (_req: Request, res: Response) => {
+        await this.handleWorkflowContract(
+          res,
+          buildDescriptionContract,
+          "Description"
+        );
+      }
+    );
+
+    app.get(
+      VIRTUAL_SIMULATION_CONTRACT_ENDPOINT,
+      async (_req: Request, res: Response) => {
+        await this.handleWorkflowContract(
+          res,
+          buildVirtualSimulationContract,
+          "Virtual simulation"
+        );
+      }
+    );
+
+    app.get(
+      DIAGRAM_MODULES_CONTRACT_ENDPOINT,
+      async (_req: Request, res: Response) => {
+        await this.handleWorkflowContract(
+          res,
+          buildDiagramModulesContract,
+          "Diagram modules"
+        );
+      }
+    );
+
+    app.get(
+      DIAGRAM_FACADES_CONTRACT_ENDPOINT,
+      async (_req: Request, res: Response) => {
+        await this.handleWorkflowContract(
+          res,
+          buildDiagramFacadesContract,
+          "Diagram facades"
+        );
+      }
+    );
 
     app.post(IDEA_ARTIFACT_ENDPOINT, async (req: Request, res: Response) => {
       await this.handleIdeaArtifactSave(req, res);
@@ -215,19 +273,27 @@ export class HttpApiRouter {
   }
 
   private async handleIdeaContract(res: Response): Promise<void> {
+    await this.handleWorkflowContract(res, buildIdeaContract, "Idea");
+  }
+
+  private async handleWorkflowContract(
+    res: Response,
+    builder: () => Promise<unknown>,
+    label: string
+  ): Promise<void> {
     try {
-      const contract = await buildIdeaContract();
+      const contract = await builder();
       if (!contract) {
         res.status(HTTP_NOT_FOUND).json({
-          error: "Idea contract templates are unavailable",
+          error: `${label} contract templates are unavailable`,
         });
         return;
       }
       res.json(contract);
     } catch (error) {
-      this.deps.logger.error("Idea contract build failed", error as Error);
+      this.deps.logger.error(`${label} contract build failed`, error as Error);
       res.status(HTTP_INTERNAL_ERROR).json({
-        error: "Unable to build idea contract",
+        error: `Unable to build ${label.toLowerCase()} contract`,
       });
     }
   }

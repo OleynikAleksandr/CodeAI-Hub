@@ -1,9 +1,9 @@
-import { IDEA_STAGE } from "@codeai-hub/idea-collector";
-
 const QUESTIONNAIRE_BASENAME = "questionnaire.md";
 const CANONICAL_PREFIX = ".codeai-hub/";
-const DESCRIPTION_RUNS_SEGMENT = "/description/runs/";
-const IDEA_QUESTIONNAIRE_SUFFIX = `/${IDEA_STAGE}/${QUESTIONNAIRE_BASENAME}`;
+const DESCRIPTION_SEGMENT = "/description/";
+const DESCRIPTION_QUESTIONNAIRE_SUFFIX = `${DESCRIPTION_SEGMENT}${QUESTIONNAIRE_BASENAME}`;
+const LEGACY_RUNS_SEGMENT = "/description/runs/";
+const LEGACY_QUESTIONNAIRE_SUFFIX = `/idea/${QUESTIONNAIRE_BASENAME}`;
 
 const WRAPPER_PAIRS: readonly [string, string][] = [
   ["`", "`"],
@@ -67,13 +67,28 @@ const extractCandidates = (message: string): readonly string[] => {
   return candidates;
 };
 
-const isCanonicalQuestionnairePath = (value: string): boolean =>
-  value.includes(CANONICAL_PREFIX) &&
-  value.includes(DESCRIPTION_RUNS_SEGMENT) &&
-  value.toLowerCase().endsWith(IDEA_QUESTIONNAIRE_SUFFIX);
+const isCanonicalDescriptionPath = (value: string): boolean => {
+  const lower = value.toLowerCase();
+  return (
+    value.includes(CANONICAL_PREFIX) &&
+    lower.endsWith(DESCRIPTION_QUESTIONNAIRE_SUFFIX)
+  );
+};
 
-const isIdeaQuestionnairePath = (value: string): boolean =>
-  value.toLowerCase().endsWith(IDEA_QUESTIONNAIRE_SUFFIX);
+const isCanonicalLegacyPath = (value: string): boolean => {
+  const lower = value.toLowerCase();
+  return (
+    value.includes(CANONICAL_PREFIX) &&
+    value.includes(LEGACY_RUNS_SEGMENT) &&
+    lower.endsWith(LEGACY_QUESTIONNAIRE_SUFFIX)
+  );
+};
+
+const isDescriptionQuestionnairePath = (value: string): boolean =>
+  value.toLowerCase().endsWith(DESCRIPTION_QUESTIONNAIRE_SUFFIX);
+
+const isLegacyQuestionnairePath = (value: string): boolean =>
+  value.toLowerCase().endsWith(LEGACY_QUESTIONNAIRE_SUFFIX);
 
 export const detectQuestionnairePath = (message: string): string | null => {
   const candidates = extractCandidates(message);
@@ -81,13 +96,15 @@ export const detectQuestionnairePath = (message: string): string | null => {
     return null;
   }
 
-  const canonical = candidates.find((value) =>
-    isCanonicalQuestionnairePath(value)
-  );
+  const canonical =
+    candidates.find((value) => isCanonicalDescriptionPath(value)) ??
+    candidates.find((value) => isCanonicalLegacyPath(value));
   if (canonical) {
     return canonical;
   }
 
-  const ideaPath = candidates.find((value) => isIdeaQuestionnairePath(value));
-  return ideaPath ?? null;
+  const questionnairePath =
+    candidates.find((value) => isDescriptionQuestionnairePath(value)) ??
+    candidates.find((value) => isLegacyQuestionnairePath(value));
+  return questionnairePath ?? null;
 };
