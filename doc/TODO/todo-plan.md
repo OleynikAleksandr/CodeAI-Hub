@@ -54,3 +54,18 @@
 9. [DONE] Fix(idea-collector): обновить output paths под новый runs root — scope: `packages/agents/idea-collector/src/paths/artifact-paths.ts`, `packages/agents/idea-collector/assets/idea-template.md`; expected commit message: `fix(idea-collector): update runs paths without initiatives`
 10. [DONE] Git Commit: `fix(idea-collector): update runs paths without initiatives` (hash: 8f3c167f)
 
+
+---
+
+## Phase 48 — Release 1.1.431 (owner: Oleksandr, updated: 2026-01-17)
+### Stream: Release notes
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.431 release notes`
+2. [DONE] Git Commit: `docs: update 1.1.431 release notes` (hash: d64ddb88)
+
+### Stream: Release build
+1. [DONE] Release: bump + build-all артефакты под 1.1.431 — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.431`
+2. [DONE] Git Commit: `chore(release): bump 1.1.431` (hash: 26e3571f)
+
+### Stream: VSIX build
+1. [TODO] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.431`
+2. [TODO] Git Commit: `chore(release): package vsix 1.1.431` (hash: TBD)
