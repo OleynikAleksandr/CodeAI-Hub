@@ -28,7 +28,7 @@ export const IDEA_TEMPLATE_PATHS = {
  * Output paths (where artifacts are saved).
  * Paths are relative to workspace root.
  */
-export const IDEA_OUTPUT_ROOT = `.codeai-hub/initiatives/${DEFAULT_INITIATIVE_SLUG}/runs/${DEFAULT_RUN_SLUG}/${IDEA_STAGE}`;
+export const IDEA_OUTPUT_ROOT = `.codeai-hub/${DEFAULT_INITIATIVE_SLUG}/description/runs/${DEFAULT_RUN_SLUG}/${IDEA_STAGE}`;
 
 export const IDEA_OUTPUT_PATHS = {
   idea: `${IDEA_OUTPUT_ROOT}/idea.md`,
@@ -51,7 +51,7 @@ export const getIdeaOutputPaths = (
   initiativeSlug: string = DEFAULT_INITIATIVE_SLUG,
   runSlug: string = DEFAULT_RUN_SLUG
 ): IdeaArtifactPaths => {
-  const root = `.codeai-hub/initiatives/${initiativeSlug}/runs/${runSlug}/${IDEA_STAGE}`;
+  const root = `.codeai-hub/${initiativeSlug}/description/runs/${runSlug}/${IDEA_STAGE}`;
   return {
     idea: `${root}/idea.md`,
     virtualSimulation: `${root}/virtual-simulation.md`,
