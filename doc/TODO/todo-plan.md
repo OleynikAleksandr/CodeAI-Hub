@@ -29,8 +29,8 @@
 4. [TODO] Git Commit: `docs: link step split architecture` (hash: TBD)
 
 ### Stream: Core template namespace
-1. [TODO] Refactor(core): обновить реестр шаблонов и sync под новые namespaces — scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.ts`; expected commit message: `refactor(core): split template namespaces`
-2. [TODO] Git Commit: `refactor(core): split template namespaces` (hash: TBD)
+1. [DONE] Refactor(core): обновить реестр шаблонов и sync под новые namespaces — scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.ts`; expected commit message: `refactor(core): split template namespaces`
+2. [DONE] Git Commit: `refactor(core): split template namespaces` (hash: b2c6597b)
 3. [TODO] Refactor(core): добавить legacy-move для старых шаблонов idea — scope: `packages/core/src/templates/template-sync-service.ts`; expected commit message: `refactor(core): archive legacy idea templates`
 4. [TODO] Git Commit: `refactor(core): archive legacy idea templates` (hash: TBD)
 
