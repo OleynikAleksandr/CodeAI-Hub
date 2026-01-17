@@ -11,86 +11,46 @@
 - **Real-time Документация**: любое изменение протоколов/архитектуры требует синхронного обновления документов из `doc/` **до** коммита.
 
 ## Required documents to review before work
-1. `doc/Architecture/Architecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-3. `doc/TODO/todo-plan.md`
+1. `doc/Project_Docs/ProjectManager_SessionPlacement_And_RunsPath_Architecture.md`
+2. `doc/Architecture/Architecture.md`
+3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+4. `doc/TODO/todo-plan.md`
 
-## Phase 38 — Project Manager Description UI fixes (owner: Oleksandr, updated: 2026-01-16)
-### Stream: Description questionnaire stability
-1. [DONE] UI: восстановить split‑layout (Sessions/Artifacts) при открытой анкете Description — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/panel-container.tsx`; expected commit message: `fix(project-manager): restore split panels`
-2. [DONE] Git Commit: `fix(project-manager): restore split panels` (hash: d1676f3c)
-3. [DONE] UI: использовать fallback httpUrl для загрузки анкеты Description без bridge config — scope: `src/client/project-manager/services/description-questionnaire-utils.ts`; expected commit message: `fix(project-manager): fallback core http url`
-4. [DONE] Git Commit: `fix(project-manager): fallback core http url` (hash: bf920a92)
+---
 
-## Phase 39 — Release 1.1.427 (owner: Oleksandr, updated: 2026-01-16)
-### Stream: Release notes
-1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.427 release notes`
-2. [DONE] Git Commit: `docs: update 1.1.427 release notes` (hash: 8c8675ae)
+## Phase 46 — Project Manager: UI-сессия слева + анкета как артефакт справа (owner: Oleksandr, updated: 2026-01-17)
 
-### Stream: Release architecture docs
-1. [DONE] Docs: обновить системную архитектуру под 1.1.427 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.427 architecture notes`
-2. [DONE] Git Commit: `docs: update 1.1.427 architecture notes` (hash: 0cf7088e)
+### Stream: Design approval
+1. [DONE] Docs: утвердить решения (двойное открытие OK, миграции runs нет) — scope: `doc/Project_Docs/ProjectManager_SessionPlacement_And_RunsPath_Architecture.md`; expected commit message: `docs: approve pm session placement + runs path design`
+2. [TODO] Git Commit: `docs: approve pm session placement + runs path design` (hash: TBD)
 
-### Stream: Release 1.1.427 build
-1. [DONE] Release: bump + build-all артефакты под 1.1.427 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.427`
-2. [DONE] Git Commit: `chore(release): bump 1.1.427` (hash: 53e05453)
+### Stream: Questionnaire placement
+1. [DONE] Refactor: показывать анкету Description в правой панели (Artifacts) — scope: `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `refactor(project-manager): move description questionnaire to artifacts panel`
+2. [TODO] Git Commit: `refactor(project-manager): move description questionnaire to artifacts panel` (hash: TBD)
 
-## Phase 40 — Project Manager Idea Collector submission + Release 1.1.428 (owner: Oleksandr, updated: 2026-01-16)
-### Stream: Description questionnaire submit
-1. [DONE] UI: автосохранение + отправка анкеты Description в Idea Collector — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/api.ts`; expected commit message: `fix(project-manager): submit description questionnaire`
-2. [DONE] Git Commit: `fix(project-manager): submit description questionnaire` (hash: 39fa2cc4)
+### Stream: Session panel (Project Manager)
+1. [DONE] Fix: возвращать `sessionId` после submit и открывать/держать сессию в левой панели Sessions — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): show idea session in sessions panel`
+2. [TODO] Git Commit: `fix(project-manager): show idea session in sessions panel` (hash: TBD)
+3. [DONE] UI: добавить базовые стили session panel — scope: `packages/ui/project-manager/styles.css`; expected commit message: `style(project-manager): session panel styles`
+4. [TODO] Git Commit: `style(project-manager): session panel styles` (hash: TBD)
 
-### Stream: Release 1.1.428 notes
-1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.428 release notes`
-2. [DONE] Git Commit: `docs: update 1.1.428 release notes` (hash: cc3f4c00)
+---
 
-### Stream: Release 1.1.428 architecture docs
-1. [DONE] Docs: обновить системную архитектуру под 1.1.428 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.428 architecture notes`
-2. [DONE] Git Commit: `docs: update 1.1.428 architecture notes` (hash: e35d0ff6)
+## Phase 47 — Storage: новый путь runs без `initiatives/` (owner: Oleksandr, updated: 2026-01-17)
 
-### Stream: Release 1.1.428 build
-1. [DONE] Release: bump + build-all артефакты под 1.1.428 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.428`
-2. [DONE] Git Commit: `chore(release): bump 1.1.428` (hash: de24e0c6)
+### Stream: Runs base path
+1. [DONE] Fix(initiatives): заменить root на `.codeai-hub/<workspaceSlug>/description/**` — scope: `packages/initiatives/src/index.ts`; expected commit message: `fix(initiatives): update base directories without initiatives`
+2. [TODO] Git Commit: `fix(initiatives): update base directories without initiatives` (hash: TBD)
 
-## Phase 41 — Fix Description questionnaire submission (owner: Oleksandr, updated: 2026-01-16)
-### Stream: Idea Collector session creation
-1. [DONE] Fix: session:create выбирает активный провайдер по умолчанию, чтобы анкета Description запускала Idea Collector — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): prefer active provider for session create`
-2. [DONE] Git Commit: `fix(core): prefer active provider for session create` (hash: c1deb2c4)
+3. [DONE] Fix(core): обновить валидацию/канонические пути для анкеты и артефактов — scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `packages/core/src/remote-bridge/handlers/idea-questionnaire-path-detector.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit message: `fix(core): update runs paths without initiatives`
+4. [TODO] Git Commit: `fix(core): update runs paths without initiatives` (hash: TBD)
 
-## Phase 42 — Release 1.1.429 (owner: Oleksandr, updated: 2026-01-16)
-### Stream: Release notes
-1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.429 release notes`
-2. [DONE] Git Commit: `docs: update 1.1.429 release notes` (hash: d17e4793)
+5. [DONE] Fix(ui): обновить пути артефактов/подсказок — scope: `src/client/ui/src/services/idea-collector-contract.ts`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `src/client/ui/src/app-host/session-region-idea-paths.ts`; expected commit message: `fix(ui): update runs paths without initiatives`
+6. [TODO] Git Commit: `fix(ui): update runs paths without initiatives` (hash: TBD)
 
-### Stream: Release 1.1.429 build
-1. [DONE] Release: bump + build-all артефакты под 1.1.429 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.429`
-2. [DONE] Git Commit: `chore(release): bump 1.1.429` (hash: 17d31f07)
+7. [DONE] Fix(ui): обновить regex/резолвер пути анкеты — scope: `src/client/ui/src/services/idea-questionnaire-service.ts`; expected commit message: `fix(ui): update questionnaire paths without initiatives`
+8. [TODO] Git Commit: `fix(ui): update questionnaire paths without initiatives` (hash: TBD)
 
-## Phase 43 — Project Manager provider picker (owner: Oleksandr, updated: 2026-01-16)
-### Stream: Idea Collector provider selection
-1. [DONE] Core state snapshot + submit поддерживает providerId — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/provider-snapshot.ts`; expected commit message: `fix(project-manager): allow provider choice on submit`
-2. [DONE] Git Commit: `fix(project-manager): allow provider choice on submit` (hash: 6d4a10ff)
-3. [DONE] UI: добавить picker провайдера при отправке анкеты Description — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `fix(project-manager): add provider picker for description submit`
-4. [DONE] Git Commit: `fix(project-manager): add provider picker for description submit` (hash: f5d707da)
+9. [DONE] Fix(idea-collector): обновить output paths под новый runs root — scope: `packages/agents/idea-collector/src/paths/artifact-paths.ts`, `packages/agents/idea-collector/assets/idea-template.md`; expected commit message: `fix(idea-collector): update runs paths without initiatives`
+10. [TODO] Git Commit: `fix(idea-collector): update runs paths without initiatives` (hash: TBD)
 
-## Phase 44 — Release 1.1.430 (owner: Oleksandr, updated: 2026-01-17)
-### Stream: Release architecture docs
-1. [DONE] Docs: обновить системную архитектуру под 1.1.430 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.430 architecture notes`
-2. [DONE] Git Commit: `docs: update 1.1.430 architecture notes` (hash: d26faa8f)
-
-### Stream: Release notes
-1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.430 release notes`
-2. [DONE] Git Commit: `docs: update 1.1.430 release notes` (hash: 7953bc93)
-
-### Stream: Release 1.1.430 build
-1. [DONE] Release: bump + build-all артефакты под 1.1.430 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.430`
-2. [DONE] Git Commit: `chore(release): bump 1.1.430` (hash: 1951db47)
-
-## Phase 45 — Fix Project Manager provider typing (owner: Oleksandr, updated: 2026-01-17)
-### Stream: Provider picker imports
-1. [DONE] Fix: корректные импорты provider типов в Description UI — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`; expected commit message: `fix(project-manager): correct provider picker imports`
-2. [DONE] Git Commit: `fix(project-manager): correct provider picker imports` (hash: e3d0046b)
-
-### Stream: Provider snapshot typing
-1. [DONE] Fix: выровнять типы провайдера в submit/snapshot сервисах — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/provider-snapshot.ts`; expected commit message: `fix(project-manager): align provider snapshot types`
-2. [DONE] Git Commit: `fix(project-manager): align provider snapshot types` (hash: 1f36a960)
