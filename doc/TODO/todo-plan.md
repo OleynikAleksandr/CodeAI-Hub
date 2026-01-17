@@ -73,3 +73,15 @@
 3. [DONE] UI: добавить picker провайдера при отправке анкеты Description — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `fix(project-manager): add provider picker for description submit`
 4. [DONE] Git Commit: `fix(project-manager): add provider picker for description submit` (hash: f5d707da)
 
+## Phase 44 — Release 1.1.430 (owner: Oleksandr, updated: 2026-01-17)
+### Stream: Release architecture docs
+1. [DONE] Docs: обновить системную архитектуру под 1.1.430 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.430 architecture notes`
+2. [DONE] Git Commit: `docs: update 1.1.430 architecture notes` (hash: TBD)
+
+### Stream: Release notes
+1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.430 release notes`
+2. [TODO] Git Commit: `docs: update 1.1.430 release notes` (hash: TBD)
+
+### Stream: Release 1.1.430 build
+1. [TODO] Release: bump + build-all артефакты под 1.1.430 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.430`
+2. [TODO] Git Commit: `chore(release): bump 1.1.430` (hash: TBD)
