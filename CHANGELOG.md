@@ -1,3 +1,9 @@
+## [1.1.436] - 2026-01-17
+
+### Changed
+- **Workflow steps**: Description, Virtual Simulation, Diagram Modules и Diagram Facades выделены в отдельные этапы с stage-aware контрактами и слотами артефактов.
+- **Project Manager**: тулбар и запуск workflow приводят шаги к новым stage-идентификаторам.
+
 ## [1.1.435] - 2026-01-17
 
 ### Fixed
