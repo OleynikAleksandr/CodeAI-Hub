@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-17
 **Status:** Active reference
-**Release Focus:** v1.1.434 — Idea Collector follow-up (vscode-webview).
+**Release Focus:** v1.1.435 — Workflow step split (Description, Virtual Simulation, Diagrams).
 
 ---
 
@@ -31,14 +31,14 @@ graph TD
 ## Extension Host Layer
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
 - **UI bundle bootstrap (v1.1.313)**: `ui-activation.ts` (вызывается из `activate`) читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current`. Поддерживаются `vscode-webview`, `web-client` и `project-manager`.
-- **Idea Collector artifacts (v1.1.413)**: schema читается из `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`, structured output возвращает `suggested_response` + `artifacts[]: {slot, markdown}` (без путей и без `next_action`); UI сохраняет любое подмножество слотов, Core вычисляет slot→path и делает atomic write с backup.
-- **Template authority (v1.1.383)**: Core синхронизирует bundled‑шаблоны (prompt, schema, idea-template, questionnaire) в `~/.codeai-hub/templates/full-development-flow/idea/` и перезаписывает локальные правки при старте; installers расширения остаются fallback для VSIX-only сценариев.
+- **Workflow artifacts (v1.1.435)**: schema читается из `~/.codeai-hub/templates/<stage>/` (description/virtual_simulation/diagram_modules/diagram_facades), structured output возвращает `artifacts[]: {slot, markdown}` со слотами `workspace.description`, `workspace.virtual_simulation`, `diagram.modules`, `diagram.facades`; UI сохраняет любое подмножество слотов, Core вычисляет slot→path и делает atomic write с backup.
+- **Template authority (v1.1.435)**: Core синхронизирует bundled‑шаблоны (prompt, schema, template, questionnaire) в `~/.codeai-hub/templates/{description,virtual_simulation,diagram_modules,diagram_facades}/` и перезаписывает локальные правки при старте; installers расширения остаются fallback для VSIX-only сценариев.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
 - **Core Bootstrap (v1.1.353 improvements)**: Ядро переведено на мульти-тенантную архитектуру. Рабочий каталог (`workspacePath`) теперь является свойством конкретной Сессии, а не глобальным параметром процесса. Это позволяет одному экземпляру Ядра обслуживать несколько проектов одновременно.
 - **Project Registry**: Внедрен сервис реестра проектов, сохраняющий историю воркспейсов в `~/.codeai-hub/state/projects.json`.
 - **RemoteBridge Decomposition**: Монолитный `RemoteBridge` разделен на специализированные хендлеры (`SessionRequestHandler`, `ProjectRequestHandler`, `SystemRequestHandler`, `HttpApiRouter`, `WebSocketManager`), что позволило обеспечить высокую поддерживаемость и соблюдение лимитов размера файлов (< 300 строк).
-- **Default provider selection (v1.1.429)**: `session:create` выбирает первый активный провайдер с доступным адаптером, чтобы запуск Idea Collector не зависел от порядка списка провайдеров.
+- **Default provider selection (v1.1.429)**: `session:create` выбирает первый активный провайдер с доступным адаптером, чтобы запуск workflow шагов не зависел от порядка списка провайдеров.
 - **UI Modularization**: Project Manager остаётся отдельным UI-бандлом; Workbench собирается из контекстного сайдбара, tool palette, status bar и центрального сплита сессии/артефактов.
 - **Runtime installation flow**: скрипт `build-all.sh` теперь устанавливает Core в финальное место (`~/.codeai-hub/core/<platform>/<version>/`) сразу после сборки.
 - **Supervisor logging hygiene**: `CoreProcessManager` теперь инициализирует `supervisorLogger` с явными `string` типами (`info`/`error`). Это исключает случайные `[object Object]` вставки в Output Channel, когда Supervisor прокидывает структурированные объекты, и гарантирует одинаковый формат логов в VS Code и launcher.
@@ -55,15 +55,15 @@ graph TD
 - **Empty timeline mode**: до внедрения нормализующего врапера `useSessionStore` игнорирует входящие события `session:message`, поэтому `DialogPanel` остаётся пустым и не показывает суррогатные system-events/placeholder-текст.
 - **Layout**: сетка `session-grid` объединяет панели `ActionBar`, `DialogPanel`, `TodoPanel`, `StatusPanel`, `InputPanel`. Все панели используют общие дизайн-токены и CSS переменные (`media/main-view.css`).
 - **Initiative context + auto-runs (v1.1.397)**: над Action Bar добавлена строка выбора Initiative (без run selector); Flow-кнопки доступны при выбранной инициативе, а run создаётся автоматически при старте стадии (формат `NNN-<model>`). Артефакты пишутся в `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/<stage>/...`, UI обращается к Core API `/api/v1/orchestrator/initiatives` и `/api/v1/orchestrator/initiatives/:initiativeSlug/runs` с обязательным `workspacePath`, который передаётся в `__CODEAI_CORE_CONFIG`. UI использует контекст сессии (`initiativeSlug`/`runSlug`) для путей анкеты/артефактов, без статических default-путей.
-- **Idea run selection (v1.1.402)**: при старте Idea пользователь выбирает новый вариант или существующий run (список `runSlug`); при наличии активной сессии run UI открывает диалог, иначе запускает анкету в выбранном run и передаёт `runSlug` в `session:create`.
+- **Workflow run selection (v1.1.402)**: при старте Description пользователь выбирает новый вариант или существующий run (список `runSlug`); при наличии активной сессии run UI открывает диалог, иначе запускает анкету в выбранном run и передаёт `runSlug` в `session:create`.
 - **Session Binding**: `InfoPanel` отображает состояние привязки к провайдеру — ожидается ли реальный `sessionId`, удалось ли его получить, либо инициализация провалилась. После подтверждения от SDK панель выводит полный идентификатор сессии (и подсказку в `title`), помогая отлаживать CLI-интеграции.
 - **Clipboard handling**: `input-panel-clipboard` централизует обработку copy/paste в webview и standalone — реагирует на `ClipboardEvent`, использует `navigator.clipboard` как fallback и сохраняет высоту textarea.
 - **Provider Picker & Settings**: отдельные модули `provider-picker`, `settings/view` позволяют выбирать провайдеров (Claude, Codex, Gemini) и менять конфигурацию визардов. UI отображает статус подключения каждого стека (connected / offline) и синхронизирует выбор с extension host через события ядра.
 - **Project Manager provider picker (v1.1.430)**: анкета Description теперь поддерживает явный выбор провайдера; submit передает `providerId`, полученный из snapshot’а ядра.
-- **Flow Wizard → Idea Collector**: для Codex и Claude включён Flow Wizard (Idea/Spec/Plan), который стартует Guided Conversation. `IdeaCollectorService` получает contract (prompt + schema + template) из Core API `/api/v1/orchestrator/idea-contract`, а structured outputs возвращают `suggested_response` + `artifacts[]` (slot+markdown).
-- **Idea Questionnaire UI (v1.1.385)**: экран анкеты открывается по клику `Idea`, использует templateMarkdown из контракта, сохраняет ответы в `.codeai-hub/.../idea/questionnaire.md`, поддерживает отмену/возобновление, отображает подсказки под вопросом и отправляет submit в один provider turn.
+- **Flow Wizard → Description workflow**: для Codex и Claude включён Flow Wizard (Description/Spec/Plan), который стартует Guided Conversation. UI получает contract (prompt + schema + template) из Core API `/api/v1/orchestrator/description-contract`, а structured outputs возвращают `suggested_response` + `artifacts[]` (slot+markdown).
+- **Description Questionnaire UI (v1.1.385)**: экран анкеты открывается по клику `Description`, использует templateMarkdown из контракта, сохраняет ответы в `.codeai-hub/.../description/questionnaire.md`, поддерживает отмену/возобновление, отображает подсказки под вопросом и отправляет submit в один provider turn.
 - **Questionnaire auto-attach guard (v1.1.386)**: auto-attach пропускает шаблонные пути `<...>` из prompt, чтобы корректно прикреплять `questionnaire.md` при single-turn submit.
-- **Idea Collector slim output (v1.1.387)**: Structured Output возвращает оценку готовности (`assessment`) и 1–3 умных вопроса (`questions`) без повторения анкеты; финализация — только через артефакты.
+- **Workflow slim output (v1.1.387)**: Structured Output возвращает оценку готовности (`assessment`) и 1–3 умных вопроса (`questions`) без повторения анкеты; финализация — только через артефакты.
 - **Provider health isolation**: `ProviderRegistry` отслеживает runtime-ошибки Claude/Codex/Gemini CLI и по сигналу Remote Bridge помечает провайдера как `inactive` и очищает адаптер. Ошибки `createSession`/`sendMessage`/`closeSession` больше не валят orchestrator: сессия получает статус `failed`, UI выводит предупреждение, а остальные провайдеры продолжают работать (в MVP нет автоматического retry/rollback — повтор запускается вручную).
 - **Claude Default model selector**: в разделе Settings → Claude появился новый блок `Claude Default model`, который хранит выбранный alias (`default/sonnet`, `opus`, `haiku`) в `~/.codeai-hub/settings/settings.json` и сразу обновляет переменную окружения `CLAUDE_DEFAULT_MODEL`, чтобы core передавал актуальный alias в Claude SDK при создании сессий.
 - **Streaming Rendering**: `StreamingWordEmitter` и `useDialogMessages` формируют потоковый вывод без разрывов Markdown. Логика идентична в webview и локальном веб-клиенте.
@@ -125,9 +125,30 @@ packages/agents/
 │       ├── schema-utils/       # Schema normalization, strictification
 │       ├── contract-utils/     # File reading, version hashing
 │       └── types/              # BaseAgentContract, BaseStructuredOutput
-├── idea-collector/             # @codeai-hub/idea-collector
+├── description-agent/          # @codeai-hub/description-agent
 │   ├── src/
-│   │   ├── facade.ts           # IdeaCollectorFacade — single entry point
+│   │   ├── facade.ts           # DescriptionAgentFacade — single entry point
+│   │   ├── contract/           # Contract types and builder
+│   │   ├── parser/             # Structured output parser
+│   │   └── paths/              # Artifact path constants
+│   └── assets/                 # Bundled templates (prompt, schema, template, questionnaire)
+├── virtual-simulation-agent/   # @codeai-hub/virtual-simulation-agent
+│   ├── src/
+│   │   ├── facade.ts           # VirtualSimulationFacade — single entry point
+│   │   ├── contract/           # Contract types and builder
+│   │   ├── parser/             # Structured output parser
+│   │   └── paths/              # Artifact path constants
+│   └── assets/                 # Bundled templates (prompt, schema, template)
+├── diagram-modules-agent/      # @codeai-hub/diagram-modules-agent
+│   ├── src/
+│   │   ├── facade.ts           # DiagramModulesFacade — single entry point
+│   │   ├── contract/           # Contract types and builder
+│   │   ├── parser/             # Structured output parser
+│   │   └── paths/              # Artifact path constants
+│   └── assets/                 # Bundled templates (prompt, schema, template)
+├── diagram-facades-agent/      # @codeai-hub/diagram-facades-agent
+│   ├── src/
+│   │   ├── facade.ts           # DiagramFacadesFacade — single entry point
 │   │   ├── contract/           # Contract types and builder
 │   │   ├── parser/             # Structured output parser
 │   │   └── paths/              # Artifact path constants
@@ -142,22 +163,22 @@ packages/agents/
 ```
 
 **Key principles:**
-- **Facade Pattern**: External systems interact ONLY through `*Facade` classes (`IdeaCollectorFacade.buildContract()`, `SpecCreatorFacade.parseStructuredOutput()`)
+- **Facade Pattern**: External systems interact ONLY through `*Facade` classes (`DescriptionAgentFacade.buildContract()`, `SpecCreatorFacade.parseStructuredOutput()`)
 - **Closed Modules**: Each agent package is self-contained; changes don't require touching Core, UI, or Extension
-- **Single Responsibility**: Clear boundaries between stages (Idea → Spec → Plan → Code)
+- **Single Responsibility**: Clear boundaries between stages (Description → Spec → Plan → Code)
 - **Shared Utilities**: Common logic (schema manipulation, file reading) lives in `@codeai-hub/agent-shared`
 
 **Integration points:**
 | Layer | Before | After |
 |-------|--------|-------|
-| Core | `idea-contract-service.ts` (329 lines) | `IdeaCollectorFacade.buildContract()` (18 lines) |
-| Claude Module | `idea-collector-structured-output.ts` (65 lines) | `IdeaCollectorFacade.parseStructuredOutput()` (25 lines) |
+| Core | Workflow contract handlers | `DescriptionAgentFacade.buildContract()` |
+| Claude Module | Workflow structured output adapters | `DescriptionAgentFacade.parseStructuredOutput()` |
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 
 ## Recent Changes (v1.1.428 - 2026-01-16)
-- **Project Manager Description**: анкета автосохраняется и отправляется в Idea Collector, артефакты пишутся через artifact‑upsert.
+- **Project Manager Description**: анкета автосохраняется и отправляется в Description workflow, артефакты пишутся через artifact‑upsert.
 
 ## Recent Changes (v1.1.427 - 2026-01-16)
 - **Project Manager Description**: восстановлен split‑layout (Sessions/Artifacts) при открытой анкете.
@@ -165,7 +186,7 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 
 ## Recent Changes (v1.1.426 - 2026-01-16)
 - **Project Manager Description**: анкета сохраняется в `.codeai-hub/<workspaceSlug>/description/questionnaire.md`, `meta.author` автозаполняется из пути воркспейса.
-- **Description questionnaire wording**: панель и шаблон приведены к терминологии Description (без Idea/Initiative), артефакты описания обозначены как `description.md` и `virtual-simulation.md`.
+- **Description questionnaire wording**: панель и шаблон приведены к терминологии Description (без legacy-терминов), артефакты описания обозначены как `description.md` и `virtual-simulation.md`.
 
 ## Recent Changes (v1.1.424 - 2026-01-16)
 - **Project Manager Workbench**: Spec/Plan/Execute выровнены по оси маркера модуля; Orchestration остаётся со смещением как вложенный шаг.
@@ -199,15 +220,15 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 
 ## Recent Changes (v1.1.414 - 2026-01-13)
 - **Artifact Upsert Protocol (Variant B)**: `artifacts[]` (slot+markdown) вместо путей/`next_action`, сохраняются частичные upsert без silent-drop.
-- **Core endpoint**: `POST /api/v1/orchestrator/artifact-upsert` сохраняет слоты Idea stage через slot→path allowlist + atomic write/backup.
+- **Core endpoint**: `POST /api/v1/orchestrator/artifact-upsert` сохраняет слоты workflow stages через slot→path allowlist + atomic write/backup.
 
 ## Recent Changes (v1.1.413 - 2026-01-13)
-- **Idea Collector finalize-only**: контракт без `revise_artifacts`, повторяемые `finalize` только после явного подтверждения.
+- **Workflow finalize-only**: контракт без `revise_artifacts`, повторяемые `finalize` только после явного подтверждения.
 - **UI artifact saves**: при каждом `finalize` сохраняются полные markdown артефактов, без patch-пайплайна.
 - **Provider dedup**: Claude/Codex дедуплируют structured output по `uuid`, single-finalize lock удалён.
 
 ## Recent Changes (v1.1.402 - 2026-01-11)
-- **Idea run selection**: UI prompts for a new variant or existing run and reuses run slugs for the Idea stage.
+- **Workflow run selection**: UI prompts for a new variant or existing run and reuses run slugs for the Description stage.
 - **Run metadata + seeding**: `lastQuestionnaireAt` tracks questionnaire updates and new runs seed from the latest questionnaire.
 - **Run-aware session create**: `session:create` accepts `runSlug` and skips auto-run when provided.
 
@@ -217,23 +238,23 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Action Bar context**: run selector removed; Flow buttons require initiative selection.
 
 ## Recent Changes (v1.1.393 - 2026-01-08)
-- **Idea stage clarified**: updated Idea Collector templates (prompt/template/questionnaire) to enforce cluster-modular decomposition (micro-modules + facade entrypoints) and capture dependency arrows.
-- **Diagrams deferred**: Module Diagram and Interface Map are treated as separate upcoming steps/agents; Idea no longer emits diagram blocks as artifacts.
+- **Description stage clarified**: updated templates (prompt/template/questionnaire) to enforce cluster-modular decomposition (micro-modules + facade entrypoints) and capture dependency arrows.
+- **Diagrams deferred**: Module Diagram and Interface Map are treated as separate upcoming steps/agents; Description no longer emits diagram blocks as artifacts.
 
 ## Recent Changes (v1.1.391 - 2026-01-07)
-- **Flow-first Action Bar**: replaced quick actions with 5 Flow start buttons (Simple Chat/Idea/Spec/Plan/Execute); provider selection follows, Flow steps restricted to Codex/Claude.
+- **Flow-first Action Bar**: replaced quick actions with 5 Flow start buttons (Simple Chat/Description/Spec/Plan/Execute); provider selection follows, Flow steps restricted to Codex/Claude.
 
 ## Recent Changes (v1.1.390 - 2026-01-07)
-- **Flow-first session start**: UI теперь начинается с выбора этапа (Simple Chat/Idea/Spec/Plan/Execute), затем — выбора провайдера (Flow ограничен Codex/Claude).
+- **Flow-first session start**: UI теперь начинается с выбора этапа (Simple Chat/Description/Spec/Plan/Execute), затем — выбора провайдера (Flow ограничен Codex/Claude).
 
 ## Recent Changes (v1.1.388 - 2026-01-06)
-- **Agent Packages refactoring**: Extracted `@codeai-hub/idea-collector` and `@codeai-hub/spec-creator` into standalone packages.
-- **Idea Collector migration**: Contract building, parsing, and artifact paths moved to facade-based package.
+- **Agent Packages refactoring**: Extracted `@codeai-hub/description-agent`, `@codeai-hub/virtual-simulation-agent`, `@codeai-hub/diagram-modules-agent`, `@codeai-hub/diagram-facades-agent` into standalone packages.
+- **Description agent migration**: Contract building, parsing, and artifact paths moved to facade-based package.
 - **Spec Creator skeleton**: Package structure with placeholder assets ready for future implementation.
 - **Code reduction**: ~400 lines of duplicated code removed from Core and Claude Module.
 
 ## Recent Changes (v1.1.387 - 2026-01-05)
-- **Idea Collector slim output**: JSON с оценкой готовности и умными вопросами заменяет дублирование анкеты.
+- **Workflow slim output**: JSON с оценкой готовности и умными вопросами заменяет дублирование анкеты.
 
 ## Recent Changes (v1.1.386 - 2026-01-05)
 - **Questionnaire auto-attach**: шаблонные пути `<...>` в prompt игнорируются, чтобы анкета прикреплялась при single-turn submit.
@@ -248,18 +269,18 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Release artifacts**: UI tarballs сохраняются в `doc/tmp/releases/` как часть релизного набора.
 
 ## Recent Changes (v1.1.383 - 2026-01-05)
-- **Idea questionnaire UX**: добавлены секция документов для чтения, пояснения и примеры, отмена и возобновление заполнения.
-- **Template sync in Core**: ядро синхронизирует bundled‑шаблоны и перезаписывает локальные правки в `~/.codeai-hub/templates/full-development-flow/idea/`.
+- **Description questionnaire UX**: добавлены секция документов для чтения, пояснения и примеры, отмена и возобновление заполнения.
+- **Template sync in Core**: ядро синхронизирует bundled‑шаблоны и перезаписывает локальные правки в `~/.codeai-hub/templates/{description,virtual_simulation,diagram_modules,diagram_facades}/`.
 - **Release 1.1.383**: артефакты VSIX/launcher/core/providers/UI обновлены под анкетные улучшения.
 
 ## Recent Changes (v1.1.381 - 2026-01-04)
-- **Idea Collector prompt template**: bundled prompt устанавливается при старте расширения, чтобы анкета использовала актуальные инструкции.
-- **Architecture-aware Idea stage**: prompt фиксирует кластерно‑модульный подход (фасады, новые модули вместо правок, микро‑классы).
+- **Description prompt template**: bundled prompt устанавливается при старте расширения, чтобы анкета использовала актуальные инструкции.
+- **Architecture-aware Description stage**: prompt фиксирует кластерно‑модульный подход (фасады, новые модули вместо правок, микро‑классы).
 - **Release 1.1.381**: артефакты VSIX/launcher/core/providers/UI обновлены под обновлённый prompt.
 
 ## Recent Changes (v1.1.380 - 2026-01-04)
-- **Idea Questionnaire UI**: анкета открывается отдельным экраном, использует templateMarkdown из Core и сохраняет ответы в `.codeai-hub/.../idea/questionnaire.md`.
-- **Questionnaire contract**: Core добавляет `questionnaire.templateMarkdown` в `idea-contract` и версионирует контракт с учётом шаблона.
+- **Description Questionnaire UI**: анкета открывается отдельным экраном, использует templateMarkdown из Core и сохраняет ответы в `.codeai-hub/.../description/questionnaire.md`.
+- **Questionnaire contract**: Core добавляет `questionnaire.templateMarkdown` в `description-contract` и версионирует контракт с учётом шаблона.
 - **Workspace questionnaire persistence**: UI сохраняет анкету через `POST /api/v1/orchestrator/workspace-file-write` и отправляет путь через auto-attach.
 - **Release 1.1.380**: артефакты VSIX/launcher/core/providers/UI обновлены под анкетный flow.
 
@@ -267,39 +288,39 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Project Manager Sessions UI parity**: окно Sessions в Project Manager использует тот же `SessionView`/CSS, что и `vscode-webview` (tabs + dialog + TODO + input + status).
 
 ## Recent Changes (v1.1.433 - 2026-01-17)
-- **Project Manager Idea Collector finalize**: для stage `idea` follow-up сообщения отправляются с Idea Collector schema, поэтому финализация пишет артефакты через `artifacts[]`, а не текстом в чат.
+- **Project Manager Description finalize**: для stage `description` follow-up сообщения отправляются с Description schema, поэтому финализация пишет артефакты через `artifacts[]`, а не текстом в чат.
 - **Claude structured output**: `suggested_response` и `artifacts[]` эмитятся даже если structured output пришёл в `result` payload.
 
 ## Recent Changes (v1.1.435 - 2026-01-17)
 - **Claude structured output normalization**: structured output из `result` нормализуется в `stream_event`, чтобы `artifacts[]` сохранялись через `artifact-upsert`, а UI получал краткий `suggested_response`.
 
 ## Recent Changes (v1.1.434 - 2026-01-17)
-- **vscode-webview Idea Collector follow-up**: для stage `idea` сообщения всегда отправляются с Idea Collector schema, а `artifacts[]` сохраняются даже после перезапуска UI.
+- **vscode-webview Description follow-up**: для stage `description` сообщения всегда отправляются с Description schema, а `artifacts[]` сохраняются даже после перезапуска UI.
 
 ## Recent Changes (v1.1.431 - 2026-01-17)
-- **Project Manager session placement**: после отправки анкеты Description сессия Idea Collector отображается в Project Manager (Sessions слева), анкета — в Artifacts справа.
+- **Project Manager session placement**: после отправки анкеты Description сессия Description workflow отображается в Project Manager (Sessions слева), анкета — в Artifacts справа.
 - **Runs path (no initiatives)**: артефакты и анкеты используют `.codeai-hub/003cworkspaceSlug003e/description/runs/003crunSlug003e/...` вместо `.codeai-hub/initiatives/...`.
 
 ## Recent Changes (v1.1.430 - 2026-01-17)
-- **Project Manager provider picker**: анкета Description позволяет выбрать провайдера перед отправкой в Idea Collector, `providerId` передается вместе с submit.
+- **Project Manager provider picker**: анкета Description позволяет выбрать провайдера перед отправкой в Description workflow, `providerId` передается вместе с submit.
 
 ## Recent Changes (v1.1.367 - 2025-12-30)
-- **Idea Collector contract delivery**: Core отдаёт `/api/v1/orchestrator/idea-contract`, UI забирает prompt/schema из ядра.
-- **Universal Idea contract**: обновлены template/schema/prompt, добавлен `idea_type`, адаптивные вопросы и запрет длинных документов в диалоге.
-- **Release 1.1.367**: артефакты VSIX/launcher/core/providers/UI обновлены под универсальный Idea Collector контракт.
+- **Workflow contract delivery**: Core отдаёт `/api/v1/orchestrator/description-contract` и `/api/v1/orchestrator/virtual-simulation-contract`, UI забирает prompt/schema из ядра.
+- **Workflow contract set**: обновлены template/schema/prompt, добавлены stage-specific инструкции и запрет длинных документов в диалоге.
+- **Release 1.1.367**: артефакты VSIX/launcher/core/providers/UI обновлены под универсальные workflow контракты.
 
 ## Recent Changes (v1.1.366 - 2025-12-30)
-- **Idea Collector spec readiness**: шаблон/контракт требуют UI/UX, триггеры, сущности и архитектурный контур для подготовки Spec.md.
+- **Description spec readiness**: шаблон/контракт требуют UI/UX, триггеры, сущности и архитектурный контур для подготовки Spec.md.
 - **Codex thinking output**: native reasoning снова показывается; structured outputs не требуют отдельного RU summary поля.
-- **Release 1.1.366**: артефакты VSIX/launcher/core/providers/UI обновлены под новую модель thinking и Idea Collector контракт.
+- **Release 1.1.366**: артефакты VSIX/launcher/core/providers/UI обновлены под новую модель thinking и workflow контракт.
 
 ## Recent Changes (v1.1.361 - 2025-12-29)
-- **Idea Collector UX**: добавлено системное сообщение «ждите», чтобы пользователь видел старт агента.
-- **Idea Collector contract**: шаблон Idea.md инжектится в schema, finalize требует ключевые секции и `coverage_percent >= 80`.
+- **Description UX**: добавлено системное сообщение «ждите», чтобы пользователь видел старт агента.
+- **Description contract**: шаблон description.md инжектится в schema, finalize требует ключевые секции и `coverage_percent >= 80`.
 - **Release 1.1.361**: обновлены артефакты VSIX/launcher/core/providers/UI.
 
 ## Recent Changes (v1.1.360 - 2025-12-29)
-- **Idea Collector flow**: Flow Wizard запускает guided conversation, structured outputs возвращают `suggested_response` и артефакты.
+- **Description workflow flow**: Flow Wizard запускает guided conversation, structured outputs возвращают `suggested_response` и артефакты.
 - **Release 1.1.360**: артефакты VSIX/launcher/core/providers/UI обновлены под новый flow.
 
 ## Recent Changes (v1.1.359 - 2025-12-27)
