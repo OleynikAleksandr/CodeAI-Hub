@@ -183,6 +183,10 @@ export class ProjectManagerApi {
     this.send({ type: "session:create", payload: params });
   }
 
+  deleteSession(sessionId: string): void {
+    this.send({ type: "session:delete", payload: { sessionId } });
+  }
+
   sendSessionMessage(
     sessionId: string,
     content: string,
@@ -216,6 +220,19 @@ export class ProjectManagerApi {
 
   getIdeaCollectorProviders(): readonly ProviderStackDescriptor[] {
     return resolveIdeaCollectorProviders(this.providerSnapshot);
+  }
+
+  getHttpUrl(): string | null {
+    return typeof this.config.httpUrl === "string" ? this.config.httpUrl : null;
+  }
+
+  getWsUrl(): string | null {
+    return typeof this.config.wsUrl === "string" ? this.config.wsUrl : null;
+  }
+
+  getWsStreamUrl(): string {
+    const wsUrl = this.getWsUrl() ?? "ws://127.0.0.1:8080";
+    return `${wsUrl}/api/v1/stream`;
   }
 
   private send(message: OutgoingMessage): void {
