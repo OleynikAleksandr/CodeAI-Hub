@@ -17,8 +17,8 @@ export const resolveIdeaOutputPaths = (
     return null;
   }
   return {
-    idea: `.codeai-hub/initiatives/${session.initiativeSlug}/runs/${session.runSlug}/idea/idea.md`,
-    virtualSimulation: `.codeai-hub/initiatives/${session.initiativeSlug}/runs/${session.runSlug}/idea/virtual-simulation.md`,
+    idea: `.codeai-hub/${session.initiativeSlug}/description/runs/${session.runSlug}/idea/idea.md`,
+    virtualSimulation: `.codeai-hub/${session.initiativeSlug}/description/runs/${session.runSlug}/idea/virtual-simulation.md`,
   };
 };
 
