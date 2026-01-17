@@ -769,3 +769,113 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ========== Session Panel (Idea Collector) ========== */
+.pm-session-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 16px 18px;
+}
+
+.pm-session-panel__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pm-session-panel__title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pm-text-muted);
+}
+
+.pm-session-panel__subtitle {
+  font-size: 12px;
+  color: var(--pm-text-muted);
+}
+
+.pm-session-panel__messages {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pm-session-panel__message {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pm-session-panel__message + .pm-session-panel__message {
+  margin-top: 10px;
+}
+
+.pm-session-panel__message-role {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pm-text-muted);
+  margin-bottom: 6px;
+}
+
+.pm-session-panel__message-content {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--pm-text-primary);
+  white-space: pre-wrap;
+}
+
+.pm-session-panel__composer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pm-session-panel__input {
+  width: 100%;
+  resize: vertical;
+  min-height: 64px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--pm-text-primary);
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.pm-session-panel__input:focus {
+  outline: none;
+  border-color: rgba(66, 201, 162, 0.6);
+}
+
+.pm-session-panel__send {
+  height: 36px;
+  align-self: flex-end;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid var(--pm-border-strong);
+  background: var(--pm-accent);
+  color: #0b0d12;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.pm-session-panel__send:hover {
+  background: var(--pm-accent-strong);
+  border-color: var(--pm-accent-strong);
+}
