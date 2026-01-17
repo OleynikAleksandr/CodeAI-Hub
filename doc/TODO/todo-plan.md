@@ -67,5 +67,5 @@
 2. [DONE] Git Commit: `chore(release): bump 1.1.431` (hash: 26e3571f)
 
 ### Stream: VSIX build
-1. [TODO] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.431`
-2. [TODO] Git Commit: `chore(release): package vsix 1.1.431` (hash: TBD)
+1. [DONE] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.431`
+2. [DONE] Git Commit: `chore(release): package vsix 1.1.431` (hash: 17749ea9)
