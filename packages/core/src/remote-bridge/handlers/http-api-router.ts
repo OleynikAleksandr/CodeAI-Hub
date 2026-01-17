@@ -47,9 +47,17 @@ const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const WORKSPACE_FILE_WRITE_ENDPOINT =
   "/api/v1/orchestrator/workspace-file-write";
 const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
-const IDEA_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
+const DESCRIPTION_PATH_RE =
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\.md$/;
 const VIRTUAL_SIMULATION_PATH_RE =
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual-simulation\.md$/;
+const DIAGRAM_MODULES_PATH_RE =
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/modules-diagram\.mmd$/;
+const DIAGRAM_FACADES_PATH_RE =
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_facades\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/facades-graph\.mmd$/;
+const LEGACY_IDEA_PATH_RE =
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
+const LEGACY_VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/virtual-simulation\.md$/;
 
 export type RouterDependencies = {
@@ -322,7 +330,7 @@ export class HttpApiRouter {
       return;
     }
 
-    const planResult = await buildIdeaStageArtifactUpsertPlan({
+    const planResult = await buildWorkflowStageArtifactUpsertPlan({
       workspacePath: session.workspacePath,
       sessionContext: {
         initiativeSlug: session.initiativeSlug,
@@ -562,7 +570,7 @@ type IdeaArtifactWriteResult =
   | { readonly ok: true }
   | { readonly ok: false; readonly error: Error };
 
-type IdeaStageArtifactUpsertPlan = {
+type WorkflowStageArtifactUpsertPlan = {
   readonly upserts: readonly {
     readonly slot: string;
     readonly relativePath: string;
@@ -573,37 +581,81 @@ type IdeaStageArtifactUpsertPlan = {
   }[];
 };
 
-type IdeaStageArtifactUpsertPlanResult =
-  | { readonly ok: true; readonly value: IdeaStageArtifactUpsertPlan }
+type WorkflowStageArtifactUpsertPlanResult =
+  | { readonly ok: true; readonly value: WorkflowStageArtifactUpsertPlan }
   | { readonly ok: false; readonly error: string };
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-const IDEA_STAGE_SLOTS = new Map<string, "idea.md" | "virtual-simulation.md">([
-  ["cluster.idea.idea", "idea.md"],
-  ["cluster.idea.virtual-simulation", "virtual-simulation.md"],
+type WorkflowStageId =
+  | "description"
+  | "virtual_simulation"
+  | "diagram_modules"
+  | "diagram_facades";
+
+type WorkflowArtifactFileName =
+  | "description.md"
+  | "virtual-simulation.md"
+  | "modules-diagram.mmd"
+  | "facades-graph.mmd";
+
+const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
+  "description",
+  "virtual_simulation",
+  "diagram_modules",
+  "diagram_facades",
 ]);
 
-type IdeaStageUpsertContext = {
+const WORKFLOW_STAGE_SLOTS = new Map<
+  string,
+  { stage: WorkflowStageId; fileName: WorkflowArtifactFileName }
+>([
+  [
+    "workspace.description",
+    { stage: "description", fileName: "description.md" },
+  ],
+  [
+    "workspace.virtual_simulation",
+    { stage: "virtual_simulation", fileName: "virtual-simulation.md" },
+  ],
+  [
+    "diagram.modules",
+    { stage: "diagram_modules", fileName: "modules-diagram.mmd" },
+  ],
+  [
+    "diagram.facades",
+    { stage: "diagram_facades", fileName: "facades-graph.mmd" },
+  ],
+]);
+
+const WORKFLOW_STAGE_PATHS = new Map<WorkflowStageId, RegExp>([
+  ["description", DESCRIPTION_PATH_RE],
+  ["virtual_simulation", VIRTUAL_SIMULATION_PATH_RE],
+  ["diagram_modules", DIAGRAM_MODULES_PATH_RE],
+  ["diagram_facades", DIAGRAM_FACADES_PATH_RE],
+]);
+
+type WorkflowStageUpsertContext = {
   readonly initiativeSlug: string;
   readonly runSlug: string;
   readonly workspaceRoot: string;
+  readonly stage: WorkflowStageId;
 };
 
-type IdeaStageUpsertTarget = {
-  readonly fileName: "idea.md" | "virtual-simulation.md";
+type WorkflowStageUpsertTarget = {
+  readonly fileName: WorkflowArtifactFileName;
   readonly relativePath: string;
   readonly artifactPath: string;
 };
 
-const resolveIdeaStageUpsertContext = (params: {
+const resolveWorkflowStageUpsertContext = (params: {
   readonly workspacePath: string;
   readonly sessionContext: {
     readonly initiativeSlug: string | null;
     readonly runSlug: string | null;
     readonly stage: string | null;
   };
-}): PayloadParseResult<IdeaStageUpsertContext> => {
+}): PayloadParseResult<WorkflowStageUpsertContext> => {
   const { initiativeSlug, runSlug, stage } = params.sessionContext;
   if (!(initiativeSlug && runSlug && stage)) {
     return {
@@ -611,7 +663,7 @@ const resolveIdeaStageUpsertContext = (params: {
       error: "Session context is missing initiativeSlug/runSlug/stage",
     };
   }
-  if (stage !== "idea") {
+  if (!WORKFLOW_STAGE_SET.has(stage as WorkflowStageId)) {
     return { ok: false, error: `Unsupported stage: ${stage}` };
   }
   if (!(SLUG_RE.test(initiativeSlug) && SLUG_RE.test(runSlug))) {
@@ -623,27 +675,32 @@ const resolveIdeaStageUpsertContext = (params: {
       initiativeSlug,
       runSlug,
       workspaceRoot: path.resolve(params.workspacePath),
+      stage: stage as WorkflowStageId,
     },
   };
 };
 
-const resolveIdeaStageUpsertTarget = (params: {
-  readonly context: IdeaStageUpsertContext;
+const resolveWorkflowStageUpsertTarget = (params: {
+  readonly context: WorkflowStageUpsertContext;
   readonly slot: string;
-}): PayloadParseResult<IdeaStageUpsertTarget> => {
-  const fileName = IDEA_STAGE_SLOTS.get(params.slot);
-  if (!fileName) {
+}): PayloadParseResult<WorkflowStageUpsertTarget> => {
+  const slotInfo = WORKFLOW_STAGE_SLOTS.get(params.slot);
+  if (!slotInfo) {
     return {
       ok: false,
       error: `Unsupported artifact slot: ${params.slot}`,
     };
   }
+  if (slotInfo.stage !== params.context.stage) {
+    return {
+      ok: false,
+      error: `Artifact slot ${params.slot} is not allowed for ${params.context.stage}`,
+    };
+  }
 
-  const relativePath = `.codeai-hub/${params.context.initiativeSlug}/description/runs/${params.context.runSlug}/idea/${fileName}`;
+  const relativePath = `.codeai-hub/${params.context.initiativeSlug}/${slotInfo.stage}/runs/${params.context.runSlug}/${slotInfo.fileName}`;
   const isAllowed =
-    fileName === "idea.md"
-      ? IDEA_PATH_RE.test(relativePath)
-      : VIRTUAL_SIMULATION_PATH_RE.test(relativePath);
+    WORKFLOW_STAGE_PATHS.get(slotInfo.stage)?.test(relativePath) ?? false;
   if (!isAllowed) {
     return { ok: false, error: "Invalid artifact path" };
   }
@@ -656,25 +713,29 @@ const resolveIdeaStageUpsertTarget = (params: {
     return { ok: false, error: "Unsafe artifact path" };
   }
 
-  return { ok: true, value: { fileName, relativePath, artifactPath } };
+  return {
+    ok: true,
+    value: { fileName: slotInfo.fileName, relativePath, artifactPath },
+  };
 };
 
-const normalizeAndValidateIdeaStageUpsertMarkdown = (params: {
-  readonly fileName: "idea.md" | "virtual-simulation.md";
+const normalizeAndValidateWorkflowStageUpsertMarkdown = (params: {
+  readonly fileName: WorkflowArtifactFileName;
   readonly markdown: string;
 }): PayloadParseResult<string> => {
   const normalizedContent = normalizeArtifactContent(params.markdown);
-  const validationError =
-    params.fileName === "idea.md"
-      ? validateIdeaMarkdown(normalizedContent, true)
-      : validateVirtualSimulationMarkdown(normalizedContent, true);
+  const validationError = resolveWorkflowStageValidationError({
+    fileName: params.fileName,
+    content: normalizedContent,
+    shouldValidate: true,
+  });
   if (validationError) {
     return { ok: false, error: validationError };
   }
   return { ok: true, value: normalizedContent };
 };
 
-const buildIdeaStageArtifactUpsertPlan = async (params: {
+const buildWorkflowStageArtifactUpsertPlan = async (params: {
   readonly workspacePath: string;
   readonly sessionContext: {
     readonly initiativeSlug: string | null;
@@ -682,8 +743,8 @@ const buildIdeaStageArtifactUpsertPlan = async (params: {
     readonly stage: string | null;
   };
   readonly artifacts: readonly ArtifactUpsertItem[];
-}): Promise<IdeaStageArtifactUpsertPlanResult> => {
-  const contextResult = resolveIdeaStageUpsertContext({
+}): Promise<WorkflowStageArtifactUpsertPlanResult> => {
+  const contextResult = resolveWorkflowStageUpsertContext({
     workspacePath: params.workspacePath,
     sessionContext: params.sessionContext,
   });
@@ -693,7 +754,7 @@ const buildIdeaStageArtifactUpsertPlan = async (params: {
   const context = contextResult.value;
 
   const seenSlots = new Set<string>();
-  const upserts: IdeaStageArtifactUpsertPlan["upserts"][number][] = [];
+  const upserts: WorkflowStageArtifactUpsertPlan["upserts"][number][] = [];
 
   for (const artifact of params.artifacts) {
     if (seenSlots.has(artifact.slot)) {
@@ -701,7 +762,7 @@ const buildIdeaStageArtifactUpsertPlan = async (params: {
     }
     seenSlots.add(artifact.slot);
 
-    const targetResult = resolveIdeaStageUpsertTarget({
+    const targetResult = resolveWorkflowStageUpsertTarget({
       context,
       slot: artifact.slot,
     });
@@ -709,7 +770,7 @@ const buildIdeaStageArtifactUpsertPlan = async (params: {
       return { ok: false, error: targetResult.error };
     }
 
-    const contentResult = normalizeAndValidateIdeaStageUpsertMarkdown({
+    const contentResult = normalizeAndValidateWorkflowStageUpsertMarkdown({
       fileName: targetResult.value.fileName,
       markdown: artifact.markdown,
     });
@@ -740,7 +801,7 @@ const buildIdeaStageArtifactUpsertPlan = async (params: {
 };
 
 const writeArtifactUpsertPlan = async (
-  plan: IdeaStageArtifactUpsertPlan
+  plan: WorkflowStageArtifactUpsertPlan
 ): Promise<IdeaArtifactWriteResult> => {
   const backups: ArtifactBackup[] = [];
   try {
@@ -906,8 +967,8 @@ const isAllowedIdeaArtifactPaths = (paths: {
   readonly idea: string;
   readonly virtualSimulation: string;
 }): boolean =>
-  IDEA_PATH_RE.test(paths.idea) &&
-  VIRTUAL_SIMULATION_PATH_RE.test(paths.virtualSimulation);
+  LEGACY_IDEA_PATH_RE.test(paths.idea) &&
+  LEGACY_VIRTUAL_SIMULATION_PATH_RE.test(paths.virtualSimulation);
 
 const readNonEmptyString = (value: unknown): string | null => {
   if (typeof value !== "string") {
@@ -940,8 +1001,10 @@ const PATCH_OPERATIONS = new Set<IdeaArtifactPatchOperation>([
 ]);
 const LINE_SPLIT_RE = /\r?\n/;
 const HEADING_RE = /^(#{1,6})\s+(.*)$/;
+const DESCRIPTION_TITLE_RE = /^#\s+Description:/m;
 const IDEA_TITLE_RE = /^#\s+Idea:/m;
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
+const MERMAID_FLOWCHART_RE = /^\s*flowchart\s+/m;
 
 const parsePatchList = (patchValue: unknown): PatchParseResult => {
   if (patchValue === undefined) {
@@ -1238,6 +1301,46 @@ const normalizeHeading = (value: string): string =>
 const normalizeArtifactContent = (content: string): string =>
   content.endsWith("\n") ? content : `${content}\n`;
 
+const resolveWorkflowStageValidationError = (params: {
+  readonly fileName: WorkflowArtifactFileName;
+  readonly content: string;
+  readonly shouldValidate: boolean;
+}): string | null => {
+  switch (params.fileName) {
+    case "description.md":
+      return validateDescriptionMarkdown(params.content, params.shouldValidate);
+    case "virtual-simulation.md":
+      return validateVirtualSimulationMarkdown(
+        params.content,
+        params.shouldValidate
+      );
+    case "modules-diagram.mmd":
+    case "facades-graph.mmd":
+      return validateMermaidDiagramMarkdown(
+        params.content,
+        params.shouldValidate
+      );
+    default:
+      return "Unsupported artifact file";
+  }
+};
+
+const validateDescriptionMarkdown = (
+  content: string,
+  shouldValidate: boolean
+): string | null => {
+  if (!shouldValidate) {
+    return null;
+  }
+  if (content.trim().length === 0) {
+    return "Description markdown is empty";
+  }
+  if (!DESCRIPTION_TITLE_RE.test(content)) {
+    return "Description markdown is missing '# Description:' header";
+  }
+  return null;
+};
+
 const validateIdeaMarkdown = (
   content: string,
   shouldValidate: boolean
@@ -1266,6 +1369,22 @@ const validateVirtualSimulationMarkdown = (
   }
   if (!VIRTUAL_SIMULATION_TITLE_RE.test(content)) {
     return "virtual-simulation markdown is missing '# Virtual Simulation' header";
+  }
+  return null;
+};
+
+const validateMermaidDiagramMarkdown = (
+  content: string,
+  shouldValidate: boolean
+): string | null => {
+  if (!shouldValidate) {
+    return null;
+  }
+  if (content.trim().length === 0) {
+    return "Diagram markdown is empty";
+  }
+  if (!MERMAID_FLOWCHART_RE.test(content)) {
+    return "Diagram markdown is missing 'flowchart' declaration";
   }
   return null;
 };
