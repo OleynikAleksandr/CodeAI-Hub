@@ -80,8 +80,8 @@
 
 ### Stream: Release notes
 1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.430 release notes`
-2. [DONE] Git Commit: `docs: update 1.1.430 release notes` (hash: TBD)
+2. [DONE] Git Commit: `docs: update 1.1.430 release notes` (hash: 7953bc93)
 
 ### Stream: Release 1.1.430 build
-1. [TODO] Release: bump + build-all артефакты под 1.1.430 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.430`
-2. [TODO] Git Commit: `chore(release): bump 1.1.430` (hash: TBD)
+1. [DONE] Release: bump + build-all артефакты под 1.1.430 — scope: `package.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.430`
+2. [DONE] Git Commit: `chore(release): bump 1.1.430` (hash: TBD)
