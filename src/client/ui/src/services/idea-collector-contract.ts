@@ -4,17 +4,26 @@ import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "./idea-collector-fallback-schema
 import { normalizeIdeaCollectorSchema } from "./idea-collector-schema-utils";
 import { joinUrl, resolveCoreHttpUrl } from "./idea-collector-support";
 
-type IdeaContractPayload = {
+type WorkflowContractPayload = {
   readonly prompt: string;
   readonly schema: Record<string, unknown>;
+  readonly template?: string;
   readonly questionnaire?: {
     readonly templateMarkdown?: string;
   };
-  readonly outputPaths: {
-    readonly idea: string;
-    readonly virtualSimulation: string;
-  };
+  readonly version?: string;
 };
+
+type WorkflowContractSnapshot = {
+  readonly prompt: string;
+  readonly schema: Record<string, unknown>;
+  readonly template: string | null;
+  readonly questionnaireTemplateMarkdown: string | null;
+  readonly version: string | null;
+};
+
+export type DescriptionContractSnapshot = WorkflowContractSnapshot;
+export type VirtualSimulationContractSnapshot = WorkflowContractSnapshot;
 
 export type IdeaContractSnapshot = {
   readonly prompt: string;
@@ -26,76 +35,97 @@ export type IdeaContractSnapshot = {
   readonly questionnaireTemplateMarkdown: string | null;
 };
 
-const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
+const DESCRIPTION_CONTRACT_ENDPOINT =
+  "/api/v1/orchestrator/description-contract";
+const VIRTUAL_SIMULATION_CONTRACT_ENDPOINT =
+  "/api/v1/orchestrator/virtual-simulation-contract";
 const FALLBACK_OUTPUT_PATHS = {
-  idea: ".codeai-hub/unknown-workspace/description/runs/000-unknown/idea/idea.md",
+  idea: ".codeai-hub/unknown-workspace/description/runs/000-unknown/description.md",
   virtualSimulation:
-    ".codeai-hub/unknown-workspace/description/runs/000-unknown/idea/virtual-simulation.md",
+    ".codeai-hub/unknown-workspace/virtual_simulation/runs/000-unknown/virtual-simulation.md",
 } as const;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const isIdeaContractPayload = (
+const isWorkflowContractPayload = (
   value: unknown
-): value is IdeaContractPayload => {
+): value is WorkflowContractPayload => {
   if (!isRecord(value)) {
     return false;
   }
-  const outputPaths = value.outputPaths;
   return (
     typeof value.prompt === "string" &&
     value.prompt.length > 0 &&
-    isRecord(value.schema) &&
-    isRecord(outputPaths) &&
-    typeof outputPaths.idea === "string" &&
-    outputPaths.idea.length > 0 &&
-    typeof outputPaths.virtualSimulation === "string" &&
-    outputPaths.virtualSimulation.length > 0
+    isRecord(value.schema)
   );
 };
 
-const fetchIdeaContract = async (): Promise<IdeaContractSnapshot | null> => {
+const parseVersion = (payload: WorkflowContractPayload): string | null =>
+  typeof payload.version === "string" && payload.version.trim().length > 0
+    ? payload.version
+    : null;
+
+const fetchWorkflowContract = async (
+  endpoint: string
+): Promise<WorkflowContractSnapshot | null> => {
   const httpUrl = resolveCoreHttpUrl();
   if (!httpUrl) {
     return null;
   }
   try {
-    const response = await fetch(joinUrl(httpUrl, IDEA_CONTRACT_ENDPOINT));
+    const response = await fetch(joinUrl(httpUrl, endpoint));
     if (!response.ok) {
       return null;
     }
     const payload = (await response.json()) as unknown;
-    if (!isIdeaContractPayload(payload)) {
+    if (!isWorkflowContractPayload(payload)) {
       return null;
     }
-    const schema = normalizeIdeaCollectorSchema(payload.schema, null);
+    const template =
+      typeof payload.template === "string" && payload.template.length > 0
+        ? payload.template
+        : null;
+    const schema = normalizeIdeaCollectorSchema(payload.schema, template);
     const questionnaireTemplateMarkdown =
       extractIdeaContractQuestionnaireTemplate(payload) ?? null;
     return {
       prompt: payload.prompt,
       schema,
-      outputPaths: payload.outputPaths,
+      template,
       questionnaireTemplateMarkdown,
+      version: parseVersion(payload),
     };
   } catch {
     return null;
   }
 };
 
+const fallbackContract = (): WorkflowContractSnapshot => ({
+  prompt: IDEA_KICKOFF_PROMPT,
+  schema: normalizeIdeaCollectorSchema(IDEA_COLLECTOR_FALLBACK_SCHEMA, null),
+  template: null,
+  questionnaireTemplateMarkdown: null,
+  version: null,
+});
+
+export const loadDescriptionContract =
+  async (): Promise<DescriptionContractSnapshot> =>
+    (await fetchWorkflowContract(DESCRIPTION_CONTRACT_ENDPOINT)) ??
+    fallbackContract();
+
+export const loadVirtualSimulationContract =
+  async (): Promise<VirtualSimulationContractSnapshot> =>
+    (await fetchWorkflowContract(VIRTUAL_SIMULATION_CONTRACT_ENDPOINT)) ??
+    fallbackContract();
+
 export const loadIdeaContract = async (): Promise<IdeaContractSnapshot> => {
-  const remote = await fetchIdeaContract();
-  if (remote) {
-    return remote;
-  }
-  const fallbackSchema = normalizeIdeaCollectorSchema(
-    IDEA_COLLECTOR_FALLBACK_SCHEMA,
-    null
-  );
+  const descriptionContract = await loadDescriptionContract();
   return {
-    prompt: IDEA_KICKOFF_PROMPT,
-    schema: fallbackSchema,
+    prompt: descriptionContract.prompt,
+    schema: descriptionContract.schema,
     outputPaths: FALLBACK_OUTPUT_PATHS,
-    questionnaireTemplateMarkdown: null,
+    questionnaireTemplateMarkdown:
+      descriptionContract.questionnaireTemplateMarkdown,
   };
 };
