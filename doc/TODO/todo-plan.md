@@ -90,3 +90,24 @@
 ### Stream: VSIX build
 1. [DONE] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.432`
 2. [DONE] Git Commit: `chore(release): package vsix 1.1.432` (hash: 0cddf972)
+
+---
+
+## Phase 50 — Release 1.1.433 (owner: Oleksandr, updated: 2026-01-17)
+### Stream: Provider + PM fixes (Idea Collector finalize)
+1. [DONE] Fix: Claude structured output — эмитить `suggested_response`/`artifacts[]` из `result` payload — scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/structured-output-utils.ts`; expected commit message: `fix(claude-module): emit suggested response from result structured output`
+2. [DONE] Git Commit: `fix(claude-module): emit suggested response from result structured output` (hash: b83b1863)
+3. [DONE] Fix: Project Manager — для stage `idea` сохранять Idea Collector schema на последующих сообщениях (чтобы финализация возвращала `artifacts[]`) — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/services/idea-collector-submit-service.ts`; expected commit message: `fix(project-manager): keep idea collector schema on chat`
+4. [DONE] Git Commit: `fix(project-manager): keep idea collector schema on chat` (hash: a91b2f6a)
+
+### Stream: Release notes
+1. [TODO] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.433 release notes`
+2. [TODO] Git Commit: `docs: update 1.1.433 release notes` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] Release: bump + build-all артефакты под 1.1.433 — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, workspace `package.json`; expected commit message: `chore(release): bump 1.1.433`
+2. [TODO] Git Commit: `chore(release): bump 1.1.433` (hash: TBD)
+
+### Stream: VSIX build
+1. [TODO] Release: собрать VSIX `build-release.sh --use-current-version` — scope: `scripts/build-release.sh`; expected commit message: `chore(release): package vsix 1.1.433`
+2. [TODO] Git Commit: `chore(release): package vsix 1.1.433` (hash: TBD)

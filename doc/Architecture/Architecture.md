@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-17
 **Status:** Active reference
-**Release Focus:** v1.1.432 — Project Manager: Sessions UI 1:1 как vscode-webview.
+**Release Focus:** v1.1.433 — Idea Collector finalize (PM + Claude structured output).
 
 ---
 
@@ -265,6 +265,10 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 
 ## Recent Changes (v1.1.432 - 2026-01-17)
 - **Project Manager Sessions UI parity**: окно Sessions в Project Manager использует тот же `SessionView`/CSS, что и `vscode-webview` (tabs + dialog + TODO + input + status).
+
+## Recent Changes (v1.1.433 - 2026-01-17)
+- **Project Manager Idea Collector finalize**: для stage `idea` follow-up сообщения отправляются с Idea Collector schema, поэтому финализация пишет артефакты через `artifacts[]`, а не текстом в чат.
+- **Claude structured output**: `suggested_response` и `artifacts[]` эмитятся даже если structured output пришёл в `result` payload.
 
 ## Recent Changes (v1.1.431 - 2026-01-17)
 - **Project Manager session placement**: после отправки анкеты Description сессия Idea Collector отображается в Project Manager (Sessions слева), анкета — в Artifacts справа.
