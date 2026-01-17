@@ -11,6 +11,7 @@ import {
   getSDKFilesBefore,
   getSessionIdFromSDKFiles,
 } from "./session-file-discovery";
+import { extractVariantBArtifacts } from "./structured-output-utils";
 
 type ProcessResponseOptions = {
   readonly sessionId: string;
@@ -111,49 +112,11 @@ export class SDKMessageProcessor {
 
     switch (message.type) {
       case "assistant": {
-        this.emitThinkingChunks(session, message);
-        const assistantText = this.extractAssistantText(message);
-        if (!assistantText) {
-          return;
-        }
-        const structured = parseIdeaCollectorOutputFromText(assistantText);
-        if (structured) {
-          this.emitStructuredOutput(session, message, structured);
-          if (structured.suggestedResponse) {
-            emitter.emit("message", {
-              type: "assistant",
-              content: structured.suggestedResponse,
-              uuid: message.uuid,
-              claudeSessionId: message.session_id,
-              data: message,
-              metadata: {
-                uuid: message.uuid,
-                session_id: message.session_id,
-                model: message.message?.model,
-              },
-            });
-          }
-          return;
-        }
-        emitter.emit("message", {
-          type: "assistant",
-          content: assistantText,
-          uuid: message.uuid,
-          claudeSessionId: message.session_id,
-          data: message,
-          metadata: {
-            uuid: message.uuid,
-            session_id: message.session_id,
-            model: message.message?.model,
-          },
-        });
+        this.handleAssistantMessage(session, message);
         break;
       }
       case "result": {
-        const structured = parseIdeaCollectorOutputFromResultMessage(message);
-        if (structured) {
-          this.emitStructuredOutput(session, message, structured);
-        }
+        this.handleResultMessage(session, message);
         break;
       }
       default:
@@ -161,12 +124,72 @@ export class SDKMessageProcessor {
     }
   }
 
+  private handleAssistantMessage(
+    session: ActiveSession,
+    message: ClaudeStreamMessage
+  ): void {
+    this.emitThinkingChunks(session, message);
+    const assistantText = this.extractAssistantText(message);
+    if (!assistantText) {
+      return;
+    }
+    const structured = parseIdeaCollectorOutputFromText(assistantText);
+    if (structured) {
+      this.emitStructuredOutput(session, message, structured);
+      if (structured.suggestedResponse) {
+        this.emitAssistantText(session, message, structured.suggestedResponse);
+      }
+      return;
+    }
+    this.emitAssistantText(session, message, assistantText);
+  }
+
+  private handleResultMessage(
+    session: ActiveSession,
+    message: ClaudeStreamMessage
+  ): void {
+    const structured = parseIdeaCollectorOutputFromResultMessage(message);
+    if (!structured) {
+      return;
+    }
+
+    this.emitStructuredOutput(session, message, structured);
+
+    if (!structured.suggestedResponse) {
+      return;
+    }
+
+    this.emitAssistantText(session, message, structured.suggestedResponse);
+  }
+
+  private emitAssistantText(
+    session: ActiveSession,
+    message: ClaudeStreamMessage,
+    content: string
+  ): void {
+    session.eventEmitter.emit("message", {
+      type: "assistant",
+      content,
+      uuid: message.uuid ?? crypto.randomUUID(),
+      claudeSessionId: message.session_id,
+      data: message,
+      metadata: {
+        uuid: message.uuid,
+        session_id: message.session_id,
+        model: message.message?.model,
+      },
+    });
+  }
+
   private emitStructuredOutput(
     session: ActiveSession,
     message: ClaudeStreamMessage,
     output: IdeaCollectorStructuredOutput
   ): void {
-    if (!(output.nextAction && output.artifact)) {
+    const variantBArtifacts = extractVariantBArtifacts(message);
+    const shouldEmitVariantB =
+      Array.isArray(variantBArtifacts) && variantBArtifacts.length > 0;
+    if (!(shouldEmitVariantB || (output.nextAction && output.artifact))) {
       return;
     }
     const dedupeId = message.uuid;
@@ -187,7 +210,9 @@ export class SDKMessageProcessor {
       data: {
         kind: "structured_output",
         artifact: output.artifact,
+        artifacts: shouldEmitVariantB ? variantBArtifacts : undefined,
         nextAction: output.nextAction,
+        suggested_response: output.suggestedResponse,
       },
       uuid: `${dedupeId ?? crypto.randomUUID()}::structured_output`,
       timestamp: new Date().toISOString(),
