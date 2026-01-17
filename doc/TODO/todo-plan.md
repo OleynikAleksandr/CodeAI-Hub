@@ -37,8 +37,8 @@
 ### Stream: Description agent
 1. [DONE] Feat(agents): каркас description-agent — scope: `packages/agents/description-agent/package.json`, `packages/agents/description-agent/src/index.ts`, `packages/agents/description-agent/src/facade.ts`; expected commit message: `feat(agents): add description agent skeleton`
 2. [DONE] Git Commit: `feat(agents): add description agent skeleton` (hash: 82a5198f)
-3. [TODO] Feat(agents): шаблоны описания — scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/description-agent/assets/description-collector-schema.json`, `packages/agents/description-agent/assets/description-template.md`; expected commit message: `feat(agents): add description templates`
-4. [TODO] Git Commit: `feat(agents): add description templates` (hash: TBD)
+3. [DONE] Feat(agents): шаблоны описания — scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/description-agent/assets/description-collector-schema.json`, `packages/agents/description-agent/assets/description-template.md`; expected commit message: `feat(agents): add description templates`
+4. [DONE] Git Commit: `feat(agents): add description templates` (hash: eb75d920)
 5. [TODO] Feat(agents): анкета описания — scope: `packages/agents/description-agent/assets/questionnaire-template.md`; expected commit message: `feat(agents): add description questionnaire template`
 6. [TODO] Git Commit: `feat(agents): add description questionnaire template` (hash: TBD)
 
