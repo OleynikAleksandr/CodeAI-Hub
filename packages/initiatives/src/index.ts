@@ -57,7 +57,7 @@ export type InitiativePaths = {
 };
 
 export const resolveInitiativesRoot = (workspaceRoot: string): string =>
-  path.join(workspaceRoot, ".codeai-hub", "initiatives");
+  path.join(workspaceRoot, ".codeai-hub");
 
 export const resolveInitiativeDir = (
   workspaceRoot: string,
@@ -67,7 +67,11 @@ export const resolveInitiativeDir = (
     throw new Error(`Invalid initiativeSlug: ${initiativeSlug}`);
   }
 
-  return path.join(resolveInitiativesRoot(workspaceRoot), initiativeSlug);
+  return path.join(
+    resolveInitiativesRoot(workspaceRoot),
+    initiativeSlug,
+    "description"
+  );
 };
 
 export const resolveInitiativeManifestPath = (
