@@ -8,7 +8,7 @@ import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit
 import type {
   ProviderStackDescriptor,
   ProviderStackId,
-} from "../../../types/provider";
+} from "../../../../types/provider";
 import { api } from "../../api";
 import { IdeaCollectorProviderPicker } from "./idea-collector-provider-picker";
 

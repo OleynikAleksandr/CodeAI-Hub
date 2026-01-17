@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type {
   ProviderStackDescriptor,
   ProviderStackId,
-} from "../../../types/provider";
+} from "../../../../types/provider";
 
 type IdeaCollectorProviderPickerProps = {
   readonly visible: boolean;
