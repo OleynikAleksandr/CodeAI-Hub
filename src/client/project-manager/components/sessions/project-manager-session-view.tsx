@@ -14,6 +14,7 @@ import {
   toggleTodoInSnapshots,
 } from "../../../ui/src/session/helpers";
 import SessionView from "../../../ui/src/session/session-view";
+import { loadIdeaCollectorSchemaForProjectManager } from "../../services/idea-collector-submit-service";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import { useProjectManagerSessionStream } from "./session-stream";
 
@@ -221,9 +222,26 @@ export const ProjectManagerSessionView = ({
     api.deleteSession(sessionId);
   }, []);
 
-  const handleSendMessage = useCallback((sessionId: string, content: string) => {
-    api.sendSessionMessage(sessionId, content);
-  }, []);
+  const handleSendMessage = useCallback(
+    (sessionId: string, content: string) => {
+      const record = sessionsRef.current.find(
+        (session) => session.id === sessionId
+      );
+      if (record?.stage !== "idea") {
+        api.sendSessionMessage(sessionId, content);
+        return;
+      }
+
+      void loadIdeaCollectorSchemaForProjectManager()
+        .then((schema) => {
+          api.sendSessionMessage(sessionId, content, { outputSchema: schema });
+        })
+        .catch(() => {
+          api.sendSessionMessage(sessionId, content);
+        });
+    },
+    []
+  );
 
   const handleToggleTodo = useCallback((sessionId: string, todoId: string) => {
     setSnapshots((previous) =>

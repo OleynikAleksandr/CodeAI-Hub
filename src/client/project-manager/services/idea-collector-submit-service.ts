@@ -39,8 +39,9 @@ type SessionErrorPayload = {
   readonly message: string;
 };
 
-const activeIdeaSessions = new Set<string>();
 let streamListenerReady = false;
+let cachedIdeaSchema: Record<string, unknown> | null = null;
+let pendingIdeaSchema: Promise<Record<string, unknown>> | null = null;
 
 const buildPromptWithSlots = (prompt: string): string =>
   `${prompt}\n\n` +
@@ -147,7 +148,7 @@ const ensureStreamListener = (): void => {
       return;
     }
     const payload = extractSessionStreamPayload(message.payload);
-    if (!payload?.sessionId || !activeIdeaSessions.has(payload.sessionId)) {
+    if (!payload?.sessionId) {
       return;
     }
     const artifact = extractIdeaCollectorArtifact(payload.event);
@@ -167,6 +168,25 @@ const ensureStreamListener = (): void => {
     });
   });
 };
+
+export const loadIdeaCollectorSchemaForProjectManager =
+  async (): Promise<Record<string, unknown>> => {
+    if (cachedIdeaSchema) {
+      return cachedIdeaSchema;
+    }
+    if (pendingIdeaSchema) {
+      return pendingIdeaSchema;
+    }
+    pendingIdeaSchema = loadIdeaContract()
+      .then((contract) => {
+        cachedIdeaSchema = contract.schema;
+        return contract.schema;
+      })
+      .finally(() => {
+        pendingIdeaSchema = null;
+      });
+    return pendingIdeaSchema;
+  };
 
 const createIdeaCollectorSession = async (params: {
   readonly workspacePath: string;
@@ -250,7 +270,6 @@ export class IdeaCollectorSubmitService {
       providerId: params.providerId,
     });
 
-    activeIdeaSessions.add(sessionId);
     ensureStreamListener();
 
     const contract = await loadIdeaContract();
