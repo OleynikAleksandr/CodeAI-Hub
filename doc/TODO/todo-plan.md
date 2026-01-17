@@ -89,8 +89,8 @@
 ## Phase 45 — Fix Project Manager provider typing (owner: Oleksandr, updated: 2026-01-17)
 ### Stream: Provider picker imports
 1. [DONE] Fix: корректные импорты provider типов в Description UI — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`; expected commit message: `fix(project-manager): correct provider picker imports`
-2. [DONE] Git Commit: `fix(project-manager): correct provider picker imports` (hash: TBD)
+2. [DONE] Git Commit: `fix(project-manager): correct provider picker imports` (hash: e3d0046b)
 
 ### Stream: Provider snapshot typing
-1. [TODO] Fix: выровнять типы провайдера в submit/snapshot сервисах — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/provider-snapshot.ts`; expected commit message: `fix(project-manager): align provider snapshot types`
-2. [TODO] Git Commit: `fix(project-manager): align provider snapshot types` (hash: TBD)
+1. [DONE] Fix: выровнять типы провайдера в submit/snapshot сервисах — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/provider-snapshot.ts`; expected commit message: `fix(project-manager): align provider snapshot types`
+2. [DONE] Git Commit: `fix(project-manager): align provider snapshot types` (hash: TBD)

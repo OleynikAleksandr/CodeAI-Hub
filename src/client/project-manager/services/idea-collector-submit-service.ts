@@ -1,4 +1,4 @@
-import type { ProviderStackId } from "../../types/provider";
+import type { ProviderStackId } from "../../../types/provider";
 import { api } from "../api";
 import { IDEA_KICKOFF_PROMPT } from "../../ui/src/app-host/idea-kickoff-prompt";
 import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "../../ui/src/services/idea-collector-fallback-schema";
