@@ -54,7 +54,7 @@ graph TD
 - **Delivery**: webview грузит JS/CSS из установленного бандла `~/.codeai-hub/packages/ui/vscode-webview/current` (symlink → актуальная версия); VSIX не содержит `react-chat.js`/CSS, embedded медиа используются только в dev-сборках.
 - **Empty timeline mode**: до внедрения нормализующего врапера `useSessionStore` игнорирует входящие события `session:message`, поэтому `DialogPanel` остаётся пустым и не показывает суррогатные system-events/placeholder-текст.
 - **Layout**: сетка `session-grid` объединяет панели `ActionBar`, `DialogPanel`, `TodoPanel`, `StatusPanel`, `InputPanel`. Все панели используют общие дизайн-токены и CSS переменные (`media/main-view.css`).
-- **Initiative context + auto-runs (v1.1.397)**: над Action Bar добавлена строка выбора Initiative (без run selector); Flow-кнопки доступны при выбранной инициативе, а run создаётся автоматически при старте стадии (формат `NNN-<model>`). Артефакты пишутся в `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/<stage>/...`, UI обращается к Core API `/api/v1/orchestrator/initiatives` и `/api/v1/orchestrator/initiatives/:initiativeSlug/runs` с обязательным `workspacePath`, который передаётся в `__CODEAI_CORE_CONFIG`. UI использует контекст сессии (`initiativeSlug`/`runSlug`) для путей анкеты/артефактов, без статических default-путей.
+- **Initiative context + auto-runs (v1.1.397)**: над Action Bar добавлена строка выбора Initiative (без run selector); Flow-кнопки доступны при выбранной инициативе, а run создаётся автоматически при старте стадии (формат `NNN-<model>`). Артефакты пишутся в `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/<stage>/...`, UI обращается к Core API `/api/v1/orchestrator/initiatives` и `/api/v1/orchestrator/initiatives/:initiativeSlug/runs` с обязательным `workspacePath`, который передаётся в `__CODEAI_CORE_CONFIG`. UI использует контекст сессии (`initiativeSlug`/`runSlug`) для путей анкеты/артефактов, без статических default-путей.
 - **Idea run selection (v1.1.402)**: при старте Idea пользователь выбирает новый вариант или существующий run (список `runSlug`); при наличии активной сессии run UI открывает диалог, иначе запускает анкету в выбранном run и передаёт `runSlug` в `session:create`.
 - **Session Binding**: `InfoPanel` отображает состояние привязки к провайдеру — ожидается ли реальный `sessionId`, удалось ли его получить, либо инициализация провалилась. После подтверждения от SDK панель выводит полный идентификатор сессии (и подсказку в `title`), помогая отлаживать CLI-интеграции.
 - **Clipboard handling**: `input-panel-clipboard` централизует обработку copy/paste в webview и standalone — реагирует на `ClipboardEvent`, использует `navigator.clipboard` как fallback и сохраняет высоту textarea.
@@ -213,7 +213,7 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 
 ## Recent Changes (v1.1.397 - 2026-01-10)
 - **Auto-runs on Flow start**: each stage start creates a new run (`NNN-<model>`) and marks it current.
-- **Run-aware artifact paths**: Flow artifacts now live under `.codeai-hub/initiatives/<initiativeSlug>/runs/<runSlug>/<stage>/...`.
+- **Run-aware artifact paths**: Flow artifacts now live under `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/<stage>/...`.
 - **Action Bar context**: run selector removed; Flow buttons require initiative selection.
 
 ## Recent Changes (v1.1.393 - 2026-01-08)
