@@ -45,8 +45,8 @@
 ### Stream: Virtual Simulation agent
 1. [DONE] Feat(agents): каркас virtual-simulation-agent — scope: `packages/agents/virtual-simulation-agent/package.json`, `packages/agents/virtual-simulation-agent/src/index.ts`, `packages/agents/virtual-simulation-agent/src/facade.ts`; expected commit message: `feat(agents): add virtual simulation agent skeleton`
 2. [DONE] Git Commit: `feat(agents): add virtual simulation agent skeleton` (hash: 61b59722)
-3. [TODO] Feat(agents): шаблоны virtual simulation — scope: `packages/agents/virtual-simulation-agent/assets/virtual-simulation-prompt.md`, `packages/agents/virtual-simulation-agent/assets/virtual-simulation-schema.json`, `packages/agents/virtual-simulation-agent/assets/virtual-simulation-template.md`; expected commit message: `feat(agents): add virtual simulation templates`
-4. [TODO] Git Commit: `feat(agents): add virtual simulation templates` (hash: TBD)
+3. [DONE] Feat(agents): шаблоны virtual simulation — scope: `packages/agents/virtual-simulation-agent/assets/virtual-simulation-prompt.md`, `packages/agents/virtual-simulation-agent/assets/virtual-simulation-schema.json`, `packages/agents/virtual-simulation-agent/assets/virtual-simulation-template.md`; expected commit message: `feat(agents): add virtual simulation templates`
+4. [DONE] Git Commit: `feat(agents): add virtual simulation templates` (hash: 5b982032)
 
 ### Stream: Diagram Modules agent
 1. [DONE] Feat(agents): каркас diagram-modules-agent — scope: `packages/agents/diagram-modules-agent/package.json`, `packages/agents/diagram-modules-agent/src/index.ts`, `packages/agents/diagram-modules-agent/src/facade.ts`; expected commit message: `feat(agents): add diagram modules agent skeleton`
