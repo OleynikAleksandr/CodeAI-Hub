@@ -1,3 +1,8 @@
+## [1.1.432] - 2026-01-17
+
+### Changed
+- **Project Manager**: окно Sessions теперь отображает UI 1:1 как `vscode-webview` (tabs + dialog + TODO + input + status).
+
 ## [1.1.431] - 2026-01-17
 
 ### Changed
