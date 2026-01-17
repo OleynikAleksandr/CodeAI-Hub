@@ -23,10 +23,10 @@
 Цель UX: в дереве Project Manager и верхнем сайдбаре вместо двух шагов (Описание/Диаграмма) должны быть четыре — Описание, Virtual Simulation, Диаграмма модулей, Диаграмма фасадов.
 
 ### Stream: Architecture docs
-1. [IN_PROGRESS] Docs: обновить SolidWorks-Flow архитектуру (4 шага, новые пути/шаблоны) — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/README.md`; expected commit message: `docs: solidworks workflow step split`
-2. [TODO] Git Commit: `docs: solidworks workflow step split` (hash: TBD)
-3. [TODO] Docs: добавить указатель в Project_Docs — scope: `doc/Project_Docs/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs: link step split architecture`
-4. [TODO] Git Commit: `docs: link step split architecture` (hash: TBD)
+1. [DONE] Docs: обновить SolidWorks-Flow архитектуру (4 шага, новые пути/шаблоны) — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/README.md`; expected commit message: `docs: add workflow step split architecture`
+2. [DONE] Git Commit: `docs: add workflow step split architecture` (hash: 47de620c)
+3. [DONE] Docs: добавить указатель в Project_Docs — scope: `doc/Project_Docs/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs: add workflow step split architecture`
+4. [DONE] Git Commit: `docs: add workflow step split architecture` (hash: 47de620c)
 
 ### Stream: Core template namespace
 1. [DONE] Refactor(core): обновить реестр шаблонов и sync под новые namespaces — scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.ts`; expected commit message: `refactor(core): split template namespaces`
