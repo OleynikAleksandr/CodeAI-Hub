@@ -14,14 +14,25 @@ import {
   toWorkspaceSlug,
 } from "./description-questionnaire-utils";
 
-const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
 const SESSION_CREATE_TIMEOUT_MS = 15000;
+const WORKFLOW_CONTRACT_ENDPOINTS = {
+  description: "/api/v1/orchestrator/description-contract",
+  virtual_simulation: "/api/v1/orchestrator/virtual-simulation-contract",
+  diagram_modules: "/api/v1/orchestrator/diagram-modules-contract",
+  diagram_facades: "/api/v1/orchestrator/diagram-facades-contract",
+} as const;
+const WORKFLOW_STAGE_SLOT_LINES = {
+  description: ["- description.md: workspace.description"],
+  virtual_simulation: ["- virtual-simulation.md: workspace.virtual_simulation"],
+  diagram_modules: ["- modules-diagram.mmd: diagram.modules"],
+  diagram_facades: ["- facades-graph.mmd: diagram.facades"],
+} as const;
+export type WorkflowStageId = keyof typeof WORKFLOW_CONTRACT_ENDPOINTS;
 
-type IdeaContractSnapshot = {
+type WorkflowContractSnapshot = {
   readonly prompt: string;
   readonly schema: Record<string, unknown>;
 };
-
 type SessionCreatedPayload = {
   readonly id: string;
   readonly workspacePath?: string;
@@ -33,25 +44,21 @@ type SessionStreamPayload = {
   readonly sessionId?: string;
   readonly event?: unknown;
 };
-
 type SessionErrorPayload = {
   readonly sessionId?: string;
   readonly message: string;
 };
 
 let streamListenerReady = false;
-let cachedIdeaSchema: Record<string, unknown> | null = null;
-let pendingIdeaSchema: Promise<Record<string, unknown>> | null = null;
+const cachedWorkflowSchemas = new Map<WorkflowStageId, Record<string, unknown>>();
+const pendingWorkflowSchemas = new Map<WorkflowStageId, Promise<Record<string, unknown>>>();
 
-const buildPromptWithSlots = (prompt: string): string =>
-  `${prompt}\n\n` +
-  "Слоты сохранения для этой сессии (используй в Structured Output):\n" +
-  "- idea.md: cluster.idea.idea\n" +
-  "- virtual-simulation.md: cluster.idea.virtual-simulation";
+const buildPromptWithSlots = (prompt: string, stage: WorkflowStageId): string =>
+  `${prompt}\n\nСлоты сохранения для этой сессии (используй в Structured Output):\n${WORKFLOW_STAGE_SLOT_LINES[stage].join("\n")}`;
 
-const normalizeIdeaContract = (
+const normalizeWorkflowContract = (
   payload: unknown
-): IdeaContractSnapshot | null => {
+): WorkflowContractSnapshot | null => {
   if (!isRecord(payload)) {
     return null;
   }
@@ -65,8 +72,9 @@ const normalizeIdeaContract = (
   }
   return { prompt, schema: normalizeIdeaCollectorSchema(schema, null) };
 };
-
-const loadIdeaContract = async (): Promise<IdeaContractSnapshot> => {
+const loadWorkflowContract = async (
+  stage: WorkflowStageId
+): Promise<WorkflowContractSnapshot> => {
   const httpUrl = resolveCoreHttpUrl();
   const fallback = {
     prompt: IDEA_KICKOFF_PROMPT,
@@ -77,17 +85,18 @@ const loadIdeaContract = async (): Promise<IdeaContractSnapshot> => {
   }
 
   try {
-    const response = await fetch(joinUrl(httpUrl, IDEA_CONTRACT_ENDPOINT));
+    const response = await fetch(
+      joinUrl(httpUrl, WORKFLOW_CONTRACT_ENDPOINTS[stage])
+    );
     if (!response.ok) {
       return fallback;
     }
     const payload = (await response.json()) as unknown;
-    return normalizeIdeaContract(payload) ?? fallback;
+    return normalizeWorkflowContract(payload) ?? fallback;
   } catch {
     return fallback;
   }
 };
-
 const extractSessionCreatedPayload = (
   payload: unknown
 ): SessionCreatedPayload | null => {
@@ -109,7 +118,6 @@ const extractSessionCreatedPayload = (
   const stage = typeof payload.stage === "string" ? payload.stage : null;
   return { id, workspacePath, initiativeSlug, stage };
 };
-
 const extractSessionStreamPayload = (
   payload: unknown
 ): SessionStreamPayload | null => {
@@ -122,7 +130,6 @@ const extractSessionStreamPayload = (
     event: "event" in payload ? payload.event : undefined,
   };
 };
-
 const extractSessionErrorPayload = (
   payload: unknown
 ): SessionErrorPayload | null => {
@@ -137,7 +144,6 @@ const extractSessionErrorPayload = (
     typeof payload.sessionId === "string" ? payload.sessionId : undefined;
   return { sessionId, message };
 };
-
 const ensureStreamListener = (): void => {
   if (streamListenerReady) {
     return;
@@ -168,30 +174,32 @@ const ensureStreamListener = (): void => {
     });
   });
 };
-
-export const loadIdeaCollectorSchemaForProjectManager =
-  async (): Promise<Record<string, unknown>> => {
-    if (cachedIdeaSchema) {
-      return cachedIdeaSchema;
-    }
-    if (pendingIdeaSchema) {
-      return pendingIdeaSchema;
-    }
-    pendingIdeaSchema = loadIdeaContract()
-      .then((contract) => {
-        cachedIdeaSchema = contract.schema;
-        return contract.schema;
-      })
-      .finally(() => {
-        pendingIdeaSchema = null;
-      });
-    return pendingIdeaSchema;
-  };
-
+export const loadWorkflowSchemaForProjectManager = async (
+  stage: WorkflowStageId
+): Promise<Record<string, unknown>> => {
+  const cachedSchema = cachedWorkflowSchemas.get(stage);
+  if (cachedSchema) {
+    return cachedSchema;
+  }
+  const pendingSchema = pendingWorkflowSchemas.get(stage);
+  if (pendingSchema) {
+    return pendingSchema;
+  }
+  const pending = loadWorkflowContract(stage)
+    .then((contract) => {
+      cachedWorkflowSchemas.set(stage, contract.schema);
+      return contract.schema;
+    })
+    .finally(() => {
+      pendingWorkflowSchemas.delete(stage);
+    });
+  pendingWorkflowSchemas.set(stage, pending);
+  return pending;
+};
 const createIdeaCollectorSession = async (params: {
   readonly workspacePath: string;
   readonly initiativeSlug: string;
-  readonly stage: string;
+  readonly stage: WorkflowStageId;
   readonly providerId?: ProviderStackId;
 }): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -250,12 +258,12 @@ const createIdeaCollectorSession = async (params: {
       stage: params.stage,
     });
   });
-
 export class IdeaCollectorSubmitService {
   async submitQuestionnaire(params: {
     readonly workspaceName?: string;
     readonly workspacePath: string;
     readonly questionnairePath: string;
+    readonly stage?: WorkflowStageId;
     readonly providerId?: ProviderStackId;
   }): Promise<string> {
     const workspaceName = resolveWorkspaceName({
@@ -263,20 +271,24 @@ export class IdeaCollectorSubmitService {
       path: params.workspacePath,
     });
     const initiativeSlug = toWorkspaceSlug(workspaceName);
+    const stage = params.stage ?? "description";
     const sessionId = await createIdeaCollectorSession({
       workspacePath: params.workspacePath,
       initiativeSlug,
-      stage: "idea",
+      stage,
       providerId: params.providerId,
     });
 
     ensureStreamListener();
 
-    const contract = await loadIdeaContract();
+    const contract = await loadWorkflowContract(stage);
     const submissionMessage = buildQuestionnaireSubmissionMessage(
       params.questionnairePath
     );
-    const content = `${buildPromptWithSlots(contract.prompt)}\n\n${submissionMessage}`;
+    const content = `${buildPromptWithSlots(
+      contract.prompt,
+      stage
+    )}\n\n${submissionMessage}`;
 
     api.sendSessionMessage(sessionId, content, {
       outputSchema: contract.schema,
