@@ -63,8 +63,8 @@
 ### Stream: Core contracts + paths
 1. [DONE] Refactor(core): разнести contract endpoints по шагам — scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-questionnaire-path-detector.ts`; expected commit message: `refactor(core): split workflow contracts`
 2. [DONE] Git Commit: `refactor(core): split workflow contracts` (hash: 681d6ae2)
-3. [TODO] Refactor(core): обновить allowlist slots → paths для 4 шагов — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit message: `refactor(core): update artifact slots allowlist`
-4. [TODO] Git Commit: `refactor(core): update artifact slots allowlist` (hash: TBD)
+3. [DONE] Refactor(core): обновить allowlist slots → paths для 4 шагов — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit message: `refactor(core): update artifact slots allowlist`
+4. [DONE] Git Commit: `refactor(core): update artifact slots allowlist` (hash: d35fdb0c)
 
 ### Stream: UI wiring (vscode-webview)
 1. [TODO] Refactor(ui): заменить Idea Collector сервисы на Description + Virtual Simulation — scope: `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-collector-contract.ts`, `src/client/ui/src/services/idea-collector-schema-cache.ts`; expected commit message: `refactor(ui): split description and virtual simulation`
