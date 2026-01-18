@@ -40,14 +40,6 @@ const resolveSchemaStage = (
   if (stage === "idea") {
     return "description";
   }
-  if (
-    stage === "description" ||
-    stage === "virtual_simulation" ||
-    stage === "diagram_modules" ||
-    stage === "diagram_facades"
-  ) {
-    return stage;
-  }
   return null;
 };
 
