@@ -83,3 +83,11 @@
 ### Stream: Cleanup idea naming
 1. [DONE] Refactor: удалить упоминания idea/full-development-flow из docs и типов — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/AgentPackages_Architecture.md`; expected commit message: `docs: remove idea naming from architecture`
 2. [DONE] Git Commit: `docs: remove idea naming from architecture` (hash: 343f4ac4)
+
+---
+
+## Phase 54 — Workflow output schema enforcement (owner: Oleksandr, updated: 2026-01-18)
+
+### Stream: Core enforcement
+1. [DONE] Fix(core): гарантировать outputSchema + finalize artifacts на стороне Core — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): enforce workflow output schema`
+2. [DONE] Git Commit: `fix(core): enforce workflow output schema` (hash: aa1452d7)
