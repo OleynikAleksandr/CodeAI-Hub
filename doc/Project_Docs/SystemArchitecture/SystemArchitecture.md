@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.440 (18.01.2026) — Workflow question artifact guard.
+**Состояние:** релиз 1.1.440 (18.01.2026) — Workflow question artifact guard. В работе: v1.1.441 — workflow file-first + watcher.
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
@@ -101,6 +101,9 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
+
+## Planned Changes (v1.1.441 - 2026-01-18)
+- **Workflow file-first + watcher**: для стадий Description/Virtual Simulation/Diagrams structured output отключается; артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/...`, состояние и гейтинг строятся на watcher-событиях.
 
 ## Recent Changes (v1.1.440 - 2026-01-18)
 - **Codex/Claude structured output**: `question*` слоты в `artifacts[]` трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по schema allowlist.
