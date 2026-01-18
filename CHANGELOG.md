@@ -1,3 +1,9 @@
+## [1.1.444] - 2026-01-18
+
+### Fixed
+- **Workflow templates**: формулировки “следующий шаг” выровнены под последовательность `Description → Virtual Simulation → Module Diagram → Interface Map`.
+- **Sessions UI**: длинные строки/URL и code blocks больше не вылезают за границы сообщений (перенос/скролл).
+
 ## [1.1.443] - 2026-01-18
 
 ### Changed
