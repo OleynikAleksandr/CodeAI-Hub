@@ -55,8 +55,8 @@
 4. [DONE] Git Commit: `refactor(project-manager): add single-turn prompt pack` (hash: 92e2151b)
 
 ### Stream: Automation — watcher-driven gates
-1. [TODO] Feat(core): запуск гейтов по событию `workflow.stage.completed` (конфигурируемо) — scope: `packages/core/src/workflow/gates/workflow-gates-runner.ts`, `packages/core/src/workflow/gates/workflow-gates-facade.ts`, `packages/core/src/workflow/gates/workflow-gates-types.ts`; expected commit message: `feat(core): add watcher-driven workflow gates`
-2. [TODO] Git Commit: `feat(core): add watcher-driven workflow gates` (hash: TBD)
+1. [DONE] Feat(core): запуск гейтов по событию `workflow.stage.completed` (конфигурируемо) — scope: `packages/core/src/workflow/gates/workflow-gates-facade.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `feat(core): add watcher-driven workflow gates`
+2. [DONE] Git Commit: `feat(core): add watcher-driven workflow gates` (hash: 3695d33b)
 
 ### Stream: Verification (Codex + Claude)
 1. [TODO] Test(manual): прогнать стадии description → virtual_simulation → diagram_modules → diagram_facades на Codex и Claude (file-first запись) — scope: `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: document workflow file-first verification`
