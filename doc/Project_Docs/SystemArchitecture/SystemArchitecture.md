@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.440 (18.01.2026) — Workflow question artifact guard. В работе: v1.1.441 — workflow file-first + watcher.
+**Состояние:** релиз 1.1.440 (18.01.2026) — Workflow file-first + watcher. В работе: v1.1.441 — workflow verification + release follow-ups.
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
@@ -102,21 +102,19 @@ CodeAI-Hub — автономная платформа управления AI-�
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
 
-## Recent Changes (v1.1.441 - 2026-01-18)
+## Recent Changes (v1.1.440 - 2026-01-18)
 - **Workflow file-first**: Core больше не применяет `outputSchema` для workflow стадий; Project Manager отправляет single-turn prompt pack (инструкция + анкета + шаблон + target path).
 - **Workflow gates runner**: добавлен модуль запуска гейтов по событию `workflow.stage.completed` с эмиссией `workflow.gate.*` событий.
+- **Codex/Claude structured output**: `question*` слоты в `artifacts[]` трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по schema allowlist.
 
 ## Planned Changes (v1.1.441 - 2026-01-18)
-- **Workflow file-first + watcher**: для стадий Description/Virtual Simulation/Diagrams structured output отключается; артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/...`, состояние и гейтинг строятся на watcher-событиях.
-
-## Recent Changes (v1.1.440 - 2026-01-18)
-- **Codex/Claude structured output**: `question*` слоты в `artifacts[]` трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по schema allowlist.
+- **Workflow verification**: ручная проверка file-first стадий на Codex/Claude и фиксация результатов.
 
 ## Recent Changes (v1.1.439 - 2026-01-18)
 - **Codex turn timeout**: Codex-модуль прерывает зависшие ответы при отсутствии событий > 180s, чтобы UI не зависал без ответа.
 
 ## Recent Changes (v1.1.438 - 2026-01-18)
-- **Workflow schema enforcement**: Core подмешивает stage `outputSchema` для workflow-сессий и на finalize требует `artifacts[]` (minItems=1), чтобы `artifact-upsert` срабатывал даже при отсутствии schema со стороны UI. Для file-first стадий v1.1.441 `outputSchema` больше не применяется — Core удаляет её из `turnOptions`.
+- **Workflow schema enforcement**: Core подмешивает stage `outputSchema` для workflow-сессий и на finalize требует `artifacts[]` (minItems=1), чтобы `artifact-upsert` срабатывал даже при отсутствии schema со стороны UI. Для file-first стадий v1.1.440 `outputSchema` больше не применяется — Core удаляет её из `turnOptions`.
 
 ## Recent Changes (v1.1.431 - 2026-01-17)
 - **Project Manager**: Description workflow-сессия работает в Project Manager (Sessions слева), анкета Description — в Artifacts справа.

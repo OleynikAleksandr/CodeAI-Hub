@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-18
 **Status:** Active reference
-**Release Focus:** v1.1.441 — Workflow file-first + watcher (in progress).
+**Release Focus:** v1.1.440 — Workflow file-first + watcher + gates.
 
 ---
 
@@ -32,10 +32,10 @@ graph TD
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
 - **UI bundle bootstrap (v1.1.313)**: `ui-activation.ts` (вызывается из `activate`) читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current`. Поддерживаются `vscode-webview`, `web-client` и `project-manager`.
 - **Workflow artifacts (v1.1.435)**: schema читается из `~/.codeai-hub/templates/<stage>/` (description/virtual_simulation/diagram_modules/diagram_facades), structured output возвращает `artifacts[]: {slot, markdown}` со слотами `workspace.description`, `workspace.virtual_simulation`, `diagram.modules`, `diagram.facades`; UI сохраняет любое подмножество слотов, Core вычисляет slot→path и делает atomic write с backup. План: заменяется file-first артефактами для workflow стадий.
-- **Workflow schema enforcement (v1.1.438)**: Core гарантирует `outputSchema` для workflow-сессий и на finalize требует `artifacts[]` (minItems=1), даже если UI не прислал turnOptions. Для file-first стадий (v1.1.441) `outputSchema` больше не применяется — Core удаляет её из `turnOptions`.
+- **Workflow schema enforcement (v1.1.438)**: Core гарантирует `outputSchema` для workflow-сессий и на finalize требует `artifacts[]` (minItems=1), даже если UI не прислал turnOptions. Для file-first стадий (v1.1.440) `outputSchema` больше не применяется — Core удаляет её из `turnOptions`.
 - **Codex turn timeout (v1.1.439)**: Codex-модуль прерывает зависшие ответы, если поток событий молчит > 180s, и эмитит ошибку в UI.
 - **Workflow question artifact guard (v1.1.440)**: Codex/Claude модули трактуют `question*` слоты в `artifacts[]` как вопросы и фильтруют их из апсерта; допускаются только слоты из schema allowlist.
-- **Workflow file-first + watcher (v1.1.441 in progress)**: для стадий Description/Virtual Simulation/Diagrams structured output отключается, артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/...`, Watcher отслеживает файлы/события и обновляет workflow state для UI gating.
+- **Workflow file-first + watcher (v1.1.440)**: для стадий Description/Virtual Simulation/Diagrams structured output отключается, артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/...`, Watcher отслеживает файлы/события и обновляет workflow state для UI gating.
 - **Template authority (v1.1.435)**: Core синхронизирует bundled‑шаблоны (prompt, schema, template, questionnaire) в `~/.codeai-hub/templates/{description,virtual_simulation,diagram_modules,diagram_facades}/` и перезаписывает локальные правки при старте; installers расширения остаются fallback для VSIX-only сценариев.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
@@ -182,13 +182,11 @@ packages/agents/
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 
 ## Planned Changes (v1.1.441 - 2026-01-18)
-- **Workflow file-first + watcher**: переход на прямую запись артефактов через CLI tools и watcher-driven состояние/gating.
-
-## Recent Changes (v1.1.441 - 2026-01-18)
-- **Workflow file-first**: Core больше не применяет `outputSchema` для workflow стадий; Project Manager отправляет single-turn prompt pack (инструкция + анкета + шаблон + target path).
-- **Workflow gates runner**: добавлен модуль запуска гейтов по событию `workflow.stage.completed` с эмиссией `workflow.gate.*` событий.
+- **Workflow verification**: ручная проверка file-first стадий на Codex/Claude и фиксация результатов.
 
 ## Recent Changes (v1.1.440 - 2026-01-18)
+- **Workflow file-first**: Core больше не применяет `outputSchema` для workflow стадий; Project Manager отправляет single-turn prompt pack (инструкция + анкета + шаблон + target path).
+- **Workflow gates runner**: добавлен модуль запуска гейтов по событию `workflow.stage.completed` с эмиссией `workflow.gate.*` событий.
 - **Codex/Claude structured output**: `question*` артефакты трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по allowlist из schema.
 
 ## Recent Changes (v1.1.428 - 2026-01-16)
