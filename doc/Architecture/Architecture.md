@@ -1,9 +1,9 @@
 # CodeAI-Hub Extension Architecture
 
 **Version:** 0.6.0
-**Last Updated:** 2026-01-17
+**Last Updated:** 2026-01-18
 **Status:** Active reference
-**Release Focus:** v1.1.437 — Workflow finalize artifacts for Description/Virtual Simulation/Diagrams.
+**Release Focus:** v1.1.438 — Core-enforced workflow output schema for Description/Virtual Simulation/Diagrams.
 
 ---
 
@@ -32,6 +32,7 @@ graph TD
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
 - **UI bundle bootstrap (v1.1.313)**: `ui-activation.ts` (вызывается из `activate`) читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current`. Поддерживаются `vscode-webview`, `web-client` и `project-manager`.
 - **Workflow artifacts (v1.1.435)**: schema читается из `~/.codeai-hub/templates/<stage>/` (description/virtual_simulation/diagram_modules/diagram_facades), structured output возвращает `artifacts[]: {slot, markdown}` со слотами `workspace.description`, `workspace.virtual_simulation`, `diagram.modules`, `diagram.facades`; UI сохраняет любое подмножество слотов, Core вычисляет slot→path и делает atomic write с backup.
+- **Workflow schema enforcement (v1.1.438)**: Core гарантирует `outputSchema` для workflow-сессий и на finalize требует `artifacts[]` (minItems=1), даже если UI не прислал turnOptions.
 - **Template authority (v1.1.435)**: Core синхронизирует bundled‑шаблоны (prompt, schema, template, questionnaire) в `~/.codeai-hub/templates/{description,virtual_simulation,diagram_modules,diagram_facades}/` и перезаписывает локальные правки при старте; installers расширения остаются fallback для VSIX-only сценариев.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.

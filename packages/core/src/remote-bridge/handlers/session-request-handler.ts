@@ -8,6 +8,12 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { type BridgeEvent, serializeSession } from "../types";
 import { maybeCreateAutoRun } from "./auto-run-service";
+import {
+  buildDescriptionContract,
+  buildDiagramFacadesContract,
+  buildDiagramModulesContract,
+  buildVirtualSimulationContract,
+} from "./idea-contract-service";
 import { detectQuestionnairePath } from "./idea-questionnaire-path-detector";
 import { attachPreReadDocuments } from "./idea-questionnaire-pre-read-attacher";
 import { autoAttachWorkspaceFiles } from "./workspace-auto-attach";
@@ -62,6 +68,161 @@ type ProviderErrorEnvelope = {
   readonly error?: unknown;
   readonly payload?: unknown;
   readonly type?: unknown;
+};
+
+type WorkflowStageId =
+  | "description"
+  | "virtual_simulation"
+  | "diagram_modules"
+  | "diagram_facades";
+
+type WorkflowTurnOptionsResolution = {
+  readonly turnOptions?: Record<string, unknown>;
+  readonly appliedSchema: boolean;
+  readonly source: "turnOptions" | "template" | "none";
+  readonly finalize: boolean;
+};
+
+const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
+  "description",
+  "virtual_simulation",
+  "diagram_modules",
+  "diagram_facades",
+]);
+
+const FINALIZE_TRIGGER_PATTERN =
+  /(^|[\s,.;:!?])(?:ок|ok|утверждаю|approve|approved)(?=$|[\s,.;:!?])/i;
+
+const workflowSchemaCache = new Map<WorkflowStageId, Record<string, unknown>>();
+const workflowSchemaPending = new Map<
+  WorkflowStageId,
+  Promise<Record<string, unknown> | null>
+>();
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const cloneSchema = (
+  schema: Record<string, unknown>
+): Record<string, unknown> =>
+  typeof globalThis.structuredClone === "function"
+    ? (globalThis.structuredClone(schema) as Record<string, unknown>)
+    : (JSON.parse(JSON.stringify(schema)) as Record<string, unknown>);
+
+const enforceArtifactsRequired = (
+  schema: Record<string, unknown>
+): Record<string, unknown> => {
+  const next = cloneSchema(schema);
+  const properties = next.properties;
+  if (isRecord(properties)) {
+    const artifacts = properties.artifacts;
+    if (isRecord(artifacts)) {
+      artifacts.minItems = 1;
+    }
+    const questions = properties.questions;
+    if (isRecord(questions)) {
+      questions.maxItems = 0;
+    }
+  }
+  return next;
+};
+
+const resolveWorkflowStage = (
+  stage: string | null | undefined
+): WorkflowStageId | null =>
+  stage && WORKFLOW_STAGE_SET.has(stage as WorkflowStageId)
+    ? (stage as WorkflowStageId)
+    : null;
+
+const isFinalizeTrigger = (content: string): boolean => {
+  const normalized = content.trim().replace(/[\\/]/g, " ");
+  if (!normalized) {
+    return false;
+  }
+  return FINALIZE_TRIGGER_PATTERN.test(normalized);
+};
+
+const loadWorkflowSchema = async (
+  stage: WorkflowStageId
+): Promise<Record<string, unknown> | null> => {
+  const cached = workflowSchemaCache.get(stage);
+  if (cached) {
+    return cached;
+  }
+  const pending = workflowSchemaPending.get(stage);
+  if (pending) {
+    return pending;
+  }
+
+  const pendingSchema = (async () => {
+    let builder = buildDiagramFacadesContract;
+    if (stage === "description") {
+      builder = buildDescriptionContract;
+    } else if (stage === "virtual_simulation") {
+      builder = buildVirtualSimulationContract;
+    } else if (stage === "diagram_modules") {
+      builder = buildDiagramModulesContract;
+    }
+    const contract = await builder();
+    return contract?.schema ?? null;
+  })();
+
+  workflowSchemaPending.set(stage, pendingSchema);
+  const schema = await pendingSchema;
+  workflowSchemaPending.delete(stage);
+  if (schema) {
+    workflowSchemaCache.set(stage, schema);
+  }
+  return schema;
+};
+
+const resolveWorkflowTurnOptions = async (params: {
+  readonly stage: string | null | undefined;
+  readonly content: string;
+  readonly turnOptions?: Record<string, unknown>;
+}): Promise<WorkflowTurnOptionsResolution> => {
+  const stage = resolveWorkflowStage(params.stage);
+  const shouldFinalize = isFinalizeTrigger(params.content);
+  if (!stage) {
+    return {
+      turnOptions: params.turnOptions,
+      appliedSchema: false,
+      source: "none",
+      finalize: shouldFinalize,
+    };
+  }
+
+  const existingSchema = isRecord(params.turnOptions?.outputSchema)
+    ? (params.turnOptions?.outputSchema as Record<string, unknown>)
+    : null;
+  const baseSchema = existingSchema ?? (await loadWorkflowSchema(stage));
+  if (!baseSchema) {
+    return {
+      turnOptions: params.turnOptions,
+      appliedSchema: false,
+      source: "none",
+      finalize: shouldFinalize,
+    };
+  }
+
+  if (!shouldFinalize && existingSchema) {
+    return {
+      turnOptions: params.turnOptions,
+      appliedSchema: false,
+      source: "turnOptions",
+      finalize: false,
+    };
+  }
+
+  const outputSchema = shouldFinalize
+    ? enforceArtifactsRequired(baseSchema)
+    : baseSchema;
+  return {
+    turnOptions: { ...(params.turnOptions ?? {}), outputSchema },
+    appliedSchema: true,
+    source: existingSchema ? "turnOptions" : "template",
+    finalize: shouldFinalize,
+  };
 };
 
 export type SessionRequestHandlerOptions = {
@@ -511,10 +672,25 @@ export class SessionRequestHandler {
       const providerContent = preReadResult.contentPrefix
         ? `${preReadResult.contentPrefix}\n${providerContentResult.content}`
         : providerContentResult.content;
+      const workflowTurnOptions = await resolveWorkflowTurnOptions({
+        stage: session.stage,
+        content,
+        turnOptions,
+      });
+      const providerTurnOptions =
+        workflowTurnOptions.turnOptions ?? turnOptions;
+      if (workflowTurnOptions.appliedSchema) {
+        this.logger.info("Applied workflow output schema", {
+          sessionId,
+          stage: session.stage,
+          finalize: workflowTurnOptions.finalize,
+          source: workflowTurnOptions.source,
+        });
+      }
       await adapter.sendMessage(
         binding.providerSessionId,
         providerContent,
-        turnOptions
+        providerTurnOptions
       );
     } catch (error) {
       this.handleProviderFailure(binding.providerId, error, sessionId);
