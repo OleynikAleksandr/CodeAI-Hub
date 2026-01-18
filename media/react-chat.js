@@ -24002,6 +24002,33 @@ ${template}`;
     };
   };
 
+  // src/client/ui/src/services/idea-collector-finalize-utils.ts
+  var FINALIZE_TRIGGER_PATTERN = /(^|[\s,.;:!?])(?:ок|ok|утверждаю|approve|approved)(?=$|[\s,.;:!?])/i;
+  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var cloneSchema2 = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
+  var enforceArtifactsRequired = (schema) => {
+    const next = cloneSchema2(schema);
+    const properties = next.properties;
+    if (isRecord8(properties)) {
+      const artifacts = properties.artifacts;
+      if (isRecord8(artifacts)) {
+        artifacts.minItems = 1;
+      }
+      const questions = properties.questions;
+      if (isRecord8(questions)) {
+        questions.maxItems = 0;
+      }
+    }
+    return next;
+  };
+  var isFinalizeTrigger = (content3) => {
+    const normalized = content3.trim().replace(/[\\/]/g, " ");
+    if (!normalized) {
+      return false;
+    }
+    return FINALIZE_TRIGGER_PATTERN.test(normalized);
+  };
+
   // src/client/ui/src/services/idea-collector-session-state.ts
   var IdeaCollectorSessionState = class {
     constructor() {
@@ -24090,9 +24117,9 @@ ${template}`;
     const remainingMessage = lines.slice(1).join("\n").trim();
     return { paths, remainingMessage };
   };
-  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse = (value) => {
-    if (!isRecord8(value)) {
+    if (!isRecord9(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -24309,8 +24336,9 @@ ${command.remainingMessage}`);
       if (augmentedContent === "") {
         return;
       }
+      const outputSchema = isFinalizeTrigger(content3) ? enforceArtifactsRequired(schema) : schema;
       sendChatMessage(sessionId, augmentedContent ?? content3, {
-        outputSchema: schema
+        outputSchema
       });
     }
     async beginQuestionnaireReview(sessionId, content3, outputPathsOverride) {
@@ -24656,9 +24684,9 @@ ${replacement}
   // src/client/ui/src/services/workspace-file-service.ts
   var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
   var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
-  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse2 = (value) => {
-    if (!isRecord9(value)) {
+    if (!isRecord10(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -26028,15 +26056,15 @@ ${replacement}
 
   // src/client/ui/src/api/orchestrator/initiatives-client.ts
   var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
-  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord11 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isInitiativeSummary = (value) => {
-    if (!isRecord10(value)) {
+    if (!isRecord11(value)) {
       return false;
     }
     return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
   };
   var parseInitiatives = (value) => {
-    if (!isRecord10(value)) {
+    if (!isRecord11(value)) {
       return [];
     }
     const raw = value.initiatives;
@@ -26058,7 +26086,7 @@ ${replacement}
     return initiatives;
   };
   var parseCreatedInitiative = (value) => {
-    if (!isRecord10(value)) {
+    if (!isRecord11(value)) {
       return null;
     }
     const initiative = value.initiative;
@@ -28586,13 +28614,13 @@ ${replacement}
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord11(value)) {
+    if (!isRecord12(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -28631,7 +28659,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord13 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -28664,7 +28692,7 @@ ${replacement}
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord12(value)) {
+    if (!isRecord13(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {

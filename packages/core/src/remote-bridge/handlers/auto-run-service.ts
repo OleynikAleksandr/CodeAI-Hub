@@ -13,7 +13,16 @@ type AutoRunInput = {
   readonly logger: Logger;
 };
 
-const FLOW_STAGES = new Set(["idea", "spec", "plan", "execute"]);
+const FLOW_STAGES = new Set([
+  "idea",
+  "description",
+  "virtual_simulation",
+  "diagram_modules",
+  "diagram_facades",
+  "spec",
+  "plan",
+  "execute",
+]);
 const IDEA_STAGE = "idea";
 const QUESTIONNAIRE_FILE = "questionnaire.md";
 
