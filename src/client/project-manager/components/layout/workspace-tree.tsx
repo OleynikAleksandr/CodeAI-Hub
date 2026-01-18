@@ -1,5 +1,13 @@
 import type React from "react";
 import { useEffect, useState } from "react";
+import { api } from "../../api";
+import {
+  WORKFLOW_STAGE_ORDER,
+  toWorkflowWorkspaceSlug,
+  type WorkflowStageId,
+  type WorkflowStageStatus,
+  type WorkflowStateSnapshot,
+} from "../../services/workflow-state-client";
 
 type TreeStatus = "active" | "todo" | "blocked" | "draft";
 
@@ -12,6 +20,13 @@ type TreeNode = {
   readonly children?: readonly TreeNode[];
 };
 
+const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {
+  description: "Description",
+  virtual_simulation: "Virtual Simulation",
+  diagram_modules: "Diagram Modules",
+  diagram_facades: "Diagram Facades",
+};
+
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
@@ -21,13 +36,19 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   selectedWorkspaceId,
   workspaceName,
 }) => {
-  const [expandedNodes, setExpandedNodes] = useState<Readonly<Record<string, boolean>>>({});
+  const [expandedNodes, setExpandedNodes] = useState<
+    Readonly<Record<string, boolean>>
+  >({});
+  const [workflowState, setWorkflowState] = useState<WorkflowStateSnapshot | null>(
+    null
+  );
   const baseIndent = 12;
   const depthIndent = 16 / 1.5;
 
   useEffect(() => {
     if (!selectedWorkspaceId) {
       setExpandedNodes({});
+      setWorkflowState(null);
       return;
     }
 
@@ -45,6 +66,71 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     // "module-core:execute": false,
   }, [selectedWorkspaceId]);
 
+  useEffect(() => {
+    if (!selectedWorkspaceId || !workspaceName) {
+      setWorkflowState(null);
+      return;
+    }
+
+    const workspaceSlug = toWorkflowWorkspaceSlug(workspaceName);
+    let cancelled = false;
+
+    const loadState = async () => {
+      const state = await api.getWorkflowState(workspaceSlug);
+      if (!cancelled) {
+        setWorkflowState(state);
+      }
+    };
+
+    loadState();
+    const timer = window.setInterval(loadState, 15_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [selectedWorkspaceId, workspaceName]);
+
+  const resolveTreeStatus = (
+    status: WorkflowStageStatus,
+    blocked: boolean
+  ): TreeStatus => {
+    if (blocked) {
+      return "blocked";
+    }
+    if (status === "invalid") {
+      return "blocked";
+    }
+    if (status === "completed" || status === "in_progress") {
+      return "active";
+    }
+    return "todo";
+  };
+
+  const resolveStageNodes = (): readonly TreeNode[] => {
+    if (!workflowState) {
+      return WORKFLOW_STAGE_ORDER.map((stage) => ({
+        id: `workflow:${stage}`,
+        label: WORKFLOW_LABELS[stage],
+        status: "todo",
+        visualDepth: 1,
+      }));
+    }
+
+    return WORKFLOW_STAGE_ORDER.map((stage, index) => {
+      const status = workflowState.stages[stage] ?? "idle";
+      const previousStage = index > 0 ? WORKFLOW_STAGE_ORDER[index - 1] : null;
+      const blocked =
+        previousStage !== null &&
+        workflowState.stages[previousStage] !== "completed";
+      return {
+        id: `workflow:${stage}`,
+        label: WORKFLOW_LABELS[stage],
+        status: resolveTreeStatus(status, blocked),
+        visualDepth: 1,
+      };
+    });
+  };
+
   const rootNode: TreeNode | null = selectedWorkspaceId
     ? {
         id: "workspace",
@@ -52,52 +138,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         status: "active",
         visualDepth: 0,
         isCollapsible: true,
-        // NOTE (MVP): When a workspace is selected, we currently render only the workspace root
-        // node (e.g. "CodeAI-Hub") and no children. The next step is to generate the full tree
-        // from real state (workflow artifacts, diagrams, gates) rather than hardcoded sample data.
-        //
-        // The previous mock tree is kept here, commented out, to preserve the node model and
-        // visual depth conventions we iterated on.
-        //
-        // children: [
-        //   { id: "description", label: "Description", status: "todo", visualDepth: 0 },
-        //   { id: "diagrams", label: "Diagrams", status: "blocked", visualDepth: 0 },
-        //   {
-        //     id: "modules",
-        //     label: "Modules",
-        //     status: "draft",
-        //     visualDepth: 1,
-        //     isCollapsible: true,
-        //     children: [
-        //       {
-        //         id: "module-core",
-        //         label: "Module: Core",
-        //         status: "todo",
-        //         visualDepth: 2,
-        //         isCollapsible: true,
-        //         children: [
-        //           { id: "module-core:spec", label: "Spec", status: "todo", visualDepth: 2 },
-        //           { id: "module-core:plan", label: "Plan", status: "todo", visualDepth: 2 },
-        //           {
-        //             id: "module-core:execute",
-        //             label: "Execute",
-        //             status: "todo",
-        //             visualDepth: 2,
-        //             isCollapsible: true,
-        //             children: [
-        //               {
-        //                 id: "module-core:execute:orchestration",
-        //                 label: "Orchestration",
-        //                 status: "draft",
-        //                 visualDepth: 3,
-        //               },
-        //             ],
-        //           },
-        //         ],
-        //       },
-        //     ],
-        //   },
-        // ],
+        children: resolveStageNodes(),
       }
     : null;
 

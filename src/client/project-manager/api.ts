@@ -4,6 +4,10 @@ import {
   resolveIdeaCollectorProviders,
   type ProviderSnapshot,
 } from "./services/provider-snapshot";
+import {
+  fetchWorkflowState,
+  type WorkflowStateSnapshot,
+} from "./services/workflow-state-client";
 import type { WorkspaceProject } from "./types";
 
 type ApiConfig = {
@@ -233,6 +237,16 @@ export class ProjectManagerApi {
   getWsStreamUrl(): string {
     const wsUrl = this.getWsUrl() ?? "ws://127.0.0.1:8080";
     return `${wsUrl}/api/v1/stream`;
+  }
+
+  async getWorkflowState(
+    workspaceSlug: string
+  ): Promise<WorkflowStateSnapshot | null> {
+    const httpUrl = this.getHttpUrl();
+    if (!httpUrl) {
+      return null;
+    }
+    return fetchWorkflowState({ httpUrl, workspaceSlug });
   }
 
   private send(message: OutgoingMessage): void {
