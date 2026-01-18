@@ -68,7 +68,6 @@ packages/
 │   │   │       ├── artifact-paths.ts
 │   │   │       └── index.ts
 │   │   ├── assets/
-│   │   │   ├── description-collector-schema.json
 │   │   │   ├── description-collector-prompt.md
 │   │   │   ├── description-template.md
 │   │   │   └── questionnaire-template.md
