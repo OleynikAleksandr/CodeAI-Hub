@@ -8,6 +8,21 @@ cd "$REPO_ROOT"
 
 source "$SCRIPT_DIR/release-utils.sh"
 
+ALLOW_DIRTY=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --allow-dirty)
+      ALLOW_DIRTY=true
+      shift
+      ;;
+    *)
+      echo "❌ Unknown option: $1" >&2
+      exit 1
+      ;;
+  esac
+done
+
 detect_platform_keys() {
   local uname_s
   local uname_m
@@ -156,6 +171,10 @@ increment_patch() {
 }
 
 ensure_clean_worktree() {
+  if $ALLOW_DIRTY; then
+    echo "⚠️  Warning: --allow-dirty enabled. Building from a dirty working tree." >&2
+    return
+  fi
   if [[ -n "$(git status --porcelain)" ]]; then
     echo "❌ Working tree has uncommitted changes. Commit or stash before running build-all." >&2
     exit 1

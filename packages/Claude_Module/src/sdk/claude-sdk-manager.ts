@@ -208,7 +208,7 @@ export class ClaudeSDKManager {
       cwd: session.workspacePath,
       permissionMode: "bypassPermissions",
       allowDangerouslySkipPermissions: true,
-      additionalDirectories: [session.workspacePath],
+      additionalDirectories: [session.workspacePath, homedir()],
       includePartialMessages: false,
       projectPath,
       settingSources: ["user", "project", "local"],

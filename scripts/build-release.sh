@@ -12,18 +12,17 @@ REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo 
 source "$SCRIPT_DIR/release-utils.sh"
 cd "$REPO_ROOT"
 
-# Ensure clean working tree before release build
-if [[ -n "$(git status --porcelain)" ]]; then
-  echo "❌ Working tree has uncommitted changes. Commit or stash before running build-release.sh." >&2
-  exit 1
-fi
-
 USE_CURRENT_VERSION=false
+ALLOW_DIRTY=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --use-current-version)
       USE_CURRENT_VERSION=true
+      shift
+      ;;
+    --allow-dirty)
+      ALLOW_DIRTY=true
       shift
       ;;
     *)
@@ -32,6 +31,16 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+# Ensure clean working tree before release build (unless explicitly overridden).
+if ! $ALLOW_DIRTY && [[ -n "$(git status --porcelain)" ]]; then
+  echo "❌ Working tree has uncommitted changes. Commit or stash before running build-release.sh." >&2
+  exit 1
+fi
+
+if $ALLOW_DIRTY; then
+  echo "⚠️  Warning: --allow-dirty enabled. Building from a dirty working tree." >&2
+fi
 
 PACKAGE_NAME=$(node -p "require('./package.json').name")
 DIST_ROOT="$REPO_ROOT/doc/tmp/releases"
