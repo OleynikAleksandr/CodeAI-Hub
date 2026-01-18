@@ -39,8 +39,8 @@
 4. [DONE] Git Commit: `feat(core): allow file-first workflow artifact writes` (hash: 593cc1a3)
 
 ### Stream: Core — API hooks (UI + automation)
-1. [TODO] Feat(core): API для UI: получить state + подписка на workflow события (poll или WS) — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-events-service.ts`; expected commit message: `feat(core): expose workflow state and events`
-2. [TODO] Git Commit: `feat(core): expose workflow state and events` (hash: TBD)
+1. [DONE] Feat(core): API для UI: получить state + подписка на workflow события (poll или WS) — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-events-service.ts`; expected commit message: `feat(core): expose workflow state and events`
+2. [DONE] Git Commit: `feat(core): expose workflow state and events` (hash: e472248d)
 
 ### Stream: UI (Project Manager) — state-driven gating
 1. [TODO] Feat(project-manager): читать workflow state из Core и визуализировать гейтинг в дереве/панелях — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `feat(project-manager): gate workflow from core state`
