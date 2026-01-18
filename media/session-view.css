@@ -267,6 +267,8 @@
   font-size: 13px;
   line-height: 1.25;
   white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   color: #adb2ba;
   font-weight: 200;
 }
@@ -296,6 +298,15 @@
 }
 .session-dialog__content strong {
   font-weight: 600;
+}
+
+.session-dialog__content pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.session-dialog__content code {
+  max-width: 100%;
 }
 
 .session-dialog__content--thinking {
