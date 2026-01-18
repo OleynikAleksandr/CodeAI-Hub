@@ -22,7 +22,7 @@ type WorkflowContractPayload = {
 
 type WorkflowContractPaths = {
   readonly prompt: string;
-  readonly schema: string;
+  readonly schema?: string;
   readonly template: string;
   readonly questionnaire?: string;
 };
@@ -31,26 +31,22 @@ const TEMPLATE_ROOT_SEGMENTS = [".codeai-hub", "templates"];
 
 const DESCRIPTION_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "description/description-collector-prompt.md",
-  schema: "description/description-collector-schema.json",
   template: "description/description-template.md",
   questionnaire: "description/questionnaire-template.md",
 };
 
 const VIRTUAL_SIMULATION_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "virtual_simulation/virtual-simulation-prompt.md",
-  schema: "virtual_simulation/virtual-simulation-schema.json",
   template: "virtual_simulation/virtual-simulation-template.md",
 };
 
 const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "diagram_modules/modules-diagram-prompt.md",
-  schema: "diagram_modules/modules-diagram-schema.json",
   template: "diagram_modules/modules-diagram-template.mmd",
 };
 
 const DIAGRAM_FACADES_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "diagram_facades/facades-graph-prompt.md",
-  schema: "diagram_facades/facades-graph-schema.json",
   template: "diagram_facades/facades-graph-template.mmd",
 };
 
@@ -97,32 +93,33 @@ const buildWorkflowContract = async (
 ): Promise<WorkflowContractPayload | null> => {
   const resolved = {
     prompt: resolveTemplatePath(paths.prompt),
-    schema: resolveTemplatePath(paths.schema),
+    schema: paths.schema ? resolveTemplatePath(paths.schema) : null,
     template: resolveTemplatePath(paths.template),
     questionnaire: paths.questionnaire
       ? resolveTemplatePath(paths.questionnaire)
       : null,
   };
 
-  if (!(resolved.prompt && resolved.schema && resolved.template)) {
+  if (!(resolved.prompt && resolved.template)) {
     return null;
   }
 
   const [prompt, schema, template, questionnaireTemplate] = await Promise.all([
     readTextFile(resolved.prompt),
-    readJsonFile(resolved.schema),
+    resolved.schema ? readJsonFile(resolved.schema) : Promise.resolve({}),
     readTextFile(resolved.template),
     resolved.questionnaire ? readTextFile(resolved.questionnaire) : null,
   ]);
 
-  if (!(prompt && schema && template)) {
+  if (!(prompt && template)) {
     return null;
   }
+  const resolvedSchema = schema ?? {};
 
   const questionnaireMarkdown = questionnaireTemplate ?? "";
   const versionSeed = JSON.stringify({
     prompt,
-    schema,
+    schema: resolvedSchema,
     template,
     questionnaire: questionnaireMarkdown,
   });
@@ -130,7 +127,7 @@ const buildWorkflowContract = async (
 
   return {
     prompt,
-    schema,
+    schema: resolvedSchema,
     template,
     questionnaire: paths.questionnaire
       ? { templateMarkdown: questionnaireMarkdown }

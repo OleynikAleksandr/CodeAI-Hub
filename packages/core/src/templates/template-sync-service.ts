@@ -27,14 +27,6 @@ export class TemplateSyncService {
   }
 
   async sync(): Promise<void> {
-    const home = homedir();
-    if (home) {
-      await this.archiveLegacyIdeaTemplates(home);
-    } else {
-      this.logger.warn("Legacy template archive skipped", {
-        reason: "Home directory is unavailable",
-      });
-    }
     const results: TemplateSyncResult[] = [];
     for (const source of BUNDLED_TEMPLATE_SOURCES) {
       results.push(await this.syncTemplate(source));
@@ -138,63 +130,6 @@ export class TemplateSyncService {
       return Buffer.from(raw, "base64").toString("utf8");
     } catch {
       return null;
-    }
-  }
-
-  private async archiveLegacyIdeaTemplates(home: string): Promise<void> {
-    const legacySource = path.join(
-      home,
-      ".codeai-hub/templates/full-development-flow/idea"
-    );
-    let stat: Awaited<ReturnType<typeof fs.stat>> | null = null;
-    try {
-      stat = await fs.stat(legacySource);
-    } catch {
-      stat = null;
-    }
-    if (!stat?.isDirectory()) {
-      return;
-    }
-
-    const entries = await fs.readdir(legacySource);
-    if (entries.length === 0) {
-      return;
-    }
-
-    const legacyRoot = path.join(home, ".codeai-hub/templates/_legacy");
-    const destination = await this.resolveLegacyDestination(legacyRoot);
-
-    try {
-      await fs.mkdir(legacyRoot, { recursive: true });
-      await fs.rename(legacySource, destination);
-      this.logger.info("Legacy templates archived", {
-        source: legacySource,
-        destination,
-      });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      this.logger.warn("Legacy template archive failed", {
-        source: legacySource,
-        destination,
-        error: message,
-      });
-    }
-  }
-
-  private async resolveLegacyDestination(legacyRoot: string): Promise<string> {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const basePath = path.join(legacyRoot, `idea-${timestamp}`);
-    let candidate = basePath;
-    let counter = 1;
-
-    while (true) {
-      try {
-        await fs.stat(candidate);
-        candidate = `${basePath}-${counter}`;
-        counter += 1;
-      } catch {
-        return candidate;
-      }
     }
   }
 }
