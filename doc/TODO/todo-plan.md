@@ -91,3 +91,11 @@
 ### Stream: Core enforcement
 1. [DONE] Fix(core): гарантировать outputSchema + finalize artifacts на стороне Core — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): enforce workflow output schema`
 2. [DONE] Git Commit: `fix(core): enforce workflow output schema` (hash: aa1452d7)
+
+---
+
+## Phase 55 — Codex turn timeout guard (owner: Oleksandr, updated: 2026-01-18)
+
+### Stream: Codex watchdog
+1. [DONE] Fix(codex): прерывать зависший поток событий при отсутствии активности > 180s — scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(codex): add turn timeout guard`
+2. [DONE] Git Commit: `fix(codex): add turn timeout guard` (hash: TBD)
