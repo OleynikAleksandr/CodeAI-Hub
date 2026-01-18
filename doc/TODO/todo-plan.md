@@ -99,3 +99,15 @@
 ### Stream: Codex watchdog
 1. [DONE] Fix(codex): прерывать зависший поток событий при отсутствии активности > 180s — scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(codex): add turn timeout guard`
 2. [DONE] Git Commit: `fix(codex): add turn timeout guard` (hash: 07b2ce53)
+
+---
+
+## Phase 56 — Workflow question artifact guard (owner: Oleksandr, updated: 2026-01-18)
+
+### Stream: Codex question artifacts
+1. [DONE] Fix(codex): трактовать `question*` артефакты как вопросы + фильтр allowlist — scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(codex): treat question artifacts as questions`
+2. [DONE] Git Commit: `fix(codex): treat question artifacts as questions` (hash: 9d45c712)
+
+### Stream: Claude question artifacts
+1. [DONE] Fix(claude): трактовать `question*` артефакты как вопросы + доп. вопросы в suggested response — scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(claude): treat question artifacts as questions`
+2. [DONE] Git Commit: `fix(claude): treat question artifacts as questions` (hash: 79ad788c)
