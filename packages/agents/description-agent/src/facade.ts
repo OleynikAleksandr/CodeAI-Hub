@@ -7,7 +7,7 @@
 export const DescriptionAgentFacade = {
   /**
    * Build the complete contract for the Description agent.
-   * Returns prompt, schema, template, questionnaire, output paths, and version.
+   * Returns prompt, template, questionnaire, output paths, and version.
    *
    * @returns Contract payload or null if required files are missing
    */
