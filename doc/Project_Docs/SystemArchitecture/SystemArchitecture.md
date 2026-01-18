@@ -114,7 +114,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Codex turn timeout**: Codex-модуль прерывает зависшие ответы при отсутствии событий > 180s, чтобы UI не зависал без ответа.
 
 ## Recent Changes (v1.1.438 - 2026-01-18)
-- **Workflow schema enforcement**: Core подмешивает stage `outputSchema` для workflow-сессий и на finalize требует `artifacts[]` (minItems=1), чтобы `artifact-upsert` срабатывал даже при отсутствии schema со стороны UI. Для file-first стадий v1.1.440 `outputSchema` больше не применяется — Core удаляет её из `turnOptions`.
+- **Workflow schema enforcement (legacy)**: Core подмешивает stage `outputSchema` для structured-output workflow-сессий и на finalize требует `artifacts[]` (minItems=1), чтобы `artifact-upsert` срабатывал даже при отсутствии schema со стороны UI. Для file-first стадий v1.1.440 `outputSchema` больше не применяется — Core удаляет её из `turnOptions`.
 
 ## Recent Changes (v1.1.431 - 2026-01-17)
 - **Project Manager**: Description workflow-сессия работает в Project Manager (Sessions слева), анкета Description — в Artifacts справа.
@@ -124,14 +124,14 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Project Manager**: окно Sessions отображает UI 1:1 как `vscode-webview` (tabs + dialog + TODO + input + status).
 
 ## Recent Changes (v1.1.433 - 2026-01-17)
-- **Project Manager**: stage `description` follow-up сообщения отправляются с Description schema, финализация сохраняет `artifacts[]` вместо вывода markdown в чат.
+- **Project Manager (legacy)**: stage `description` follow-up сообщения отправлялись с Description schema, финализация сохраняла `artifacts[]` вместо вывода markdown в чат.
 - **Claude module**: structured output корректно эмитит `suggested_response` и `artifacts[]` из `result` payload.
 
 ## Recent Changes (v1.1.435 - 2026-01-17)
 - **Claude module**: structured output из `result` нормализуется в `stream_event`, чтобы артефакты сохранялись через `artifact-upsert` и UI показывал краткий ответ.
 
 ## Recent Changes (v1.1.434 - 2026-01-17)
-- **vscode-webview**: stage `description` сообщения отправляются с Description schema, а `artifacts[]` сохраняются даже после перезапуска UI.
+- **vscode-webview (legacy)**: stage `description` сообщения отправлялись с Description schema, а `artifacts[]` сохранялись даже после перезапуска UI.
 
 ## Recent Changes (v1.1.430 - 2026-01-17)
 - **Project Manager provider picker**: анкета Description отправляется в Description workflow с явным `providerId`, выбранным пользователем.
@@ -182,8 +182,8 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Release 1.1.380**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.380.
 
 ## Recent Changes (v1.1.367 - 2025-12-30)
-- **Workflow contract delivery**: Core отдаёт `/api/v1/orchestrator/description-contract` и `/api/v1/orchestrator/virtual-simulation-contract`, UI не читает локальные шаблоны напрямую; schema хранится в `~/.codeai-hub/templates/<stage>/`.
-- **Workflow contract set**: template/schema/prompt обновлены под stage-specific требования, адаптивное интервью и запрет длинных документов в диалоге.
+- **Workflow contract delivery**: Core отдаёт `/api/v1/orchestrator/description-contract` и `/api/v1/orchestrator/virtual-simulation-contract`, UI не читает локальные шаблоны напрямую; prompt/template хранятся в `~/.codeai-hub/templates/<stage>/`.
+- **Workflow contract set**: template/prompt обновлены под stage-specific требования, адаптивное интервью и запрет длинных документов в диалоге.
 - **Release 1.1.367**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.367.
 
 ## Recent Changes (v1.1.366 - 2025-12-30)
@@ -193,7 +193,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Recent Changes (v1.1.361 - 2025-12-29)
 - **Description UX**: системное сообщение подтверждает старт агента и просит дождаться первого вопроса.
-- **Description contract**: шаблон description.md включён в schema; finalize требует ключевые секции и `coverage_percent >= 80`.
+- **Description contract (legacy)**: шаблон description.md включался в schema; finalize требовал ключевые секции и `coverage_percent >= 80`.
 - **Release 1.1.361**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.361.
 
 ## Recent Changes (v1.1.360 - 2025-12-29)

@@ -31,12 +31,12 @@ graph TD
 ## Extension Host Layer
 - **Activation & Lifecycle**: `src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
 - **UI bundle bootstrap (v1.1.313)**: `ui-activation.ts` (вызывается из `activate`) читает `assets/ui/manifest.json`, ставит отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current`. Поддерживаются `vscode-webview`, `web-client` и `project-manager`.
-- **Workflow artifacts (v1.1.435)**: schema читается из `~/.codeai-hub/templates/<stage>/` (description/virtual_simulation/diagram_modules/diagram_facades), structured output возвращает `artifacts[]: {slot, markdown}` со слотами `workspace.description`, `workspace.virtual_simulation`, `diagram.modules`, `diagram.facades`; UI сохраняет любое подмножество слотов, Core вычисляет slot→path и делает atomic write с backup. План: заменяется file-first артефактами для workflow стадий.
-- **Workflow schema enforcement (v1.1.438)**: Core гарантирует `outputSchema` для workflow-сессий и на finalize требует `artifacts[]` (minItems=1), даже если UI не прислал turnOptions. Для file-first стадий (v1.1.440) `outputSchema` больше не применяется — Core удаляет её из `turnOptions`.
+- **Workflow artifacts (v1.1.440)**: для стадий Description/Virtual Simulation/Diagrams structured output выключен — артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/...` и отслеживаются Watcher'ом.
+- **Workflow schema enforcement (v1.1.438)**: `outputSchema` для workflow-сессий применяется только в legacy structured-output потоках; для file-first стадий Core удаляет `outputSchema` из `turnOptions`.
 - **Codex turn timeout (v1.1.439)**: Codex-модуль прерывает зависшие ответы, если поток событий молчит > 180s, и эмитит ошибку в UI.
 - **Workflow question artifact guard (v1.1.440)**: Codex/Claude модули трактуют `question*` слоты в `artifacts[]` как вопросы и фильтруют их из апсерта; допускаются только слоты из schema allowlist.
 - **Workflow file-first + watcher (v1.1.440)**: для стадий Description/Virtual Simulation/Diagrams structured output отключается, артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/...`, Watcher отслеживает файлы/события и обновляет workflow state для UI gating.
-- **Template authority (v1.1.435)**: Core синхронизирует bundled‑шаблоны (prompt, schema, template, questionnaire) в `~/.codeai-hub/templates/{description,virtual_simulation,diagram_modules,diagram_facades}/` и перезаписывает локальные правки при старте; installers расширения остаются fallback для VSIX-only сценариев.
+- **Template authority (v1.1.435)**: Core синхронизирует bundled‑шаблоны (prompt, template, questionnaire) в `~/.codeai-hub/templates/{description,virtual_simulation,diagram_modules,diagram_facades}/` и перезаписывает локальные правки при старте; installers расширения остаются fallback для VSIX-only сценариев.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
 - **Core Bootstrap (v1.1.353 improvements)**: Ядро переведено на мульти-тенантную архитектуру. Рабочий каталог (`workspacePath`) теперь является свойством конкретной Сессии, а не глобальным параметром процесса. Это позволяет одному экземпляру Ядра обслуживать несколько проектов одновременно.
@@ -64,7 +64,7 @@ graph TD
 - **Clipboard handling**: `input-panel-clipboard` централизует обработку copy/paste в webview и standalone — реагирует на `ClipboardEvent`, использует `navigator.clipboard` как fallback и сохраняет высоту textarea.
 - **Provider Picker & Settings**: отдельные модули `provider-picker`, `settings/view` позволяют выбирать провайдеров (Claude, Codex, Gemini) и менять конфигурацию визардов. UI отображает статус подключения каждого стека (connected / offline) и синхронизирует выбор с extension host через события ядра.
 - **Project Manager provider picker (v1.1.430)**: анкета Description теперь поддерживает явный выбор провайдера; submit передает `providerId`, полученный из snapshot’а ядра.
-- **Flow Wizard → Description workflow**: для Codex и Claude включён Flow Wizard (Description/Spec/Plan), который стартует Guided Conversation. UI получает contract (prompt + schema + template) из Core API `/api/v1/orchestrator/description-contract`, а structured outputs возвращают `suggested_response` + `artifacts[]` (slot+markdown).
+- **Flow Wizard → Description workflow**: UI получает contract (prompt + template + questionnaire) из Core API `/api/v1/orchestrator/description-contract`, формирует single-turn prompt pack с целевым путём; structured output не используется для file-first стадий.
 - **Description Questionnaire UI (v1.1.385)**: экран анкеты открывается по клику `Description`, использует templateMarkdown из контракта, сохраняет ответы в `.codeai-hub/.../description/questionnaire.md`, поддерживает отмену/возобновление, отображает подсказки под вопросом и отправляет submit в один provider turn.
 - **Questionnaire auto-attach guard (v1.1.386)**: auto-attach пропускает шаблонные пути `<...>` из prompt, чтобы корректно прикреплять `questionnaire.md` при single-turn submit.
 - **Workflow slim output (v1.1.387)**: Structured Output возвращает оценку готовности (`assessment`) и 1–3 умных вопроса (`questions`) без повторения анкеты; финализация — только через артефакты.
@@ -135,28 +135,28 @@ packages/agents/
 │   │   ├── contract/           # Contract types and builder
 │   │   ├── parser/             # Structured output parser
 │   │   └── paths/              # Artifact path constants
-│   └── assets/                 # Bundled templates (prompt, schema, template, questionnaire)
+│   └── assets/                 # Bundled templates (prompt, template, questionnaire)
 ├── virtual-simulation-agent/   # @codeai-hub/virtual-simulation-agent
 │   ├── src/
 │   │   ├── facade.ts           # VirtualSimulationFacade — single entry point
 │   │   ├── contract/           # Contract types and builder
 │   │   ├── parser/             # Structured output parser
 │   │   └── paths/              # Artifact path constants
-│   └── assets/                 # Bundled templates (prompt, schema, template)
+│   └── assets/                 # Bundled templates (prompt, template)
 ├── diagram-modules-agent/      # @codeai-hub/diagram-modules-agent
 │   ├── src/
 │   │   ├── facade.ts           # DiagramModulesFacade — single entry point
 │   │   ├── contract/           # Contract types and builder
 │   │   ├── parser/             # Structured output parser
 │   │   └── paths/              # Artifact path constants
-│   └── assets/                 # Bundled templates (prompt, schema, template)
+│   └── assets/                 # Bundled templates (prompt, template)
 ├── diagram-facades-agent/      # @codeai-hub/diagram-facades-agent
 │   ├── src/
 │   │   ├── facade.ts           # DiagramFacadesFacade — single entry point
 │   │   ├── contract/           # Contract types and builder
 │   │   ├── parser/             # Structured output parser
 │   │   └── paths/              # Artifact path constants
-│   └── assets/                 # Bundled templates (prompt, schema, template)
+│   └── assets/                 # Bundled templates (prompt, template)
 └── spec-creator/               # @codeai-hub/spec-creator (skeleton)
     ├── src/
     │   ├── facade.ts           # SpecCreatorFacade — single entry point
@@ -300,14 +300,14 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Project Manager Sessions UI parity**: окно Sessions в Project Manager использует тот же `SessionView`/CSS, что и `vscode-webview` (tabs + dialog + TODO + input + status).
 
 ## Recent Changes (v1.1.433 - 2026-01-17)
-- **Project Manager Description finalize**: для stage `description` follow-up сообщения отправляются с Description schema, поэтому финализация пишет артефакты через `artifacts[]`, а не текстом в чат.
+- **Project Manager Description finalize (legacy)**: для stage `description` follow-up сообщения отправлялись с Description schema, поэтому финализация писала артефакты через `artifacts[]`, а не текстом в чат.
 - **Claude structured output**: `suggested_response` и `artifacts[]` эмитятся даже если structured output пришёл в `result` payload.
 
 ## Recent Changes (v1.1.435 - 2026-01-17)
 - **Claude structured output normalization**: structured output из `result` нормализуется в `stream_event`, чтобы `artifacts[]` сохранялись через `artifact-upsert`, а UI получал краткий `suggested_response`.
 
 ## Recent Changes (v1.1.434 - 2026-01-17)
-- **vscode-webview Description follow-up**: для stage `description` сообщения всегда отправляются с Description schema, а `artifacts[]` сохраняются даже после перезапуска UI.
+- **vscode-webview Description follow-up (legacy)**: для stage `description` сообщения отправлялись с Description schema, а `artifacts[]` сохранялись даже после перезапуска UI.
 
 ## Recent Changes (v1.1.431 - 2026-01-17)
 - **Project Manager session placement**: после отправки анкеты Description сессия Description workflow отображается в Project Manager (Sessions слева), анкета — в Artifacts справа.
@@ -317,8 +317,8 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 - **Project Manager provider picker**: анкета Description позволяет выбрать провайдера перед отправкой в Description workflow, `providerId` передается вместе с submit.
 
 ## Recent Changes (v1.1.367 - 2025-12-30)
-- **Workflow contract delivery**: Core отдаёт `/api/v1/orchestrator/description-contract` и `/api/v1/orchestrator/virtual-simulation-contract`, UI забирает prompt/schema из ядра.
-- **Workflow contract set**: обновлены template/schema/prompt, добавлены stage-specific инструкции и запрет длинных документов в диалоге.
+- **Workflow contract delivery**: Core отдаёт `/api/v1/orchestrator/description-contract` и `/api/v1/orchestrator/virtual-simulation-contract`, UI забирает prompt/template из ядра.
+- **Workflow contract set**: обновлены template/prompt, добавлены stage-specific инструкции и запрет длинных документов в диалоге.
 - **Release 1.1.367**: артефакты VSIX/launcher/core/providers/UI обновлены под универсальные workflow контракты.
 
 ## Recent Changes (v1.1.366 - 2025-12-30)
@@ -328,7 +328,7 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 
 ## Recent Changes (v1.1.361 - 2025-12-29)
 - **Description UX**: добавлено системное сообщение «ждите», чтобы пользователь видел старт агента.
-- **Description contract**: шаблон description.md инжектится в schema, finalize требует ключевые секции и `coverage_percent >= 80`.
+- **Description contract (legacy)**: шаблон description.md инжектился в schema, finalize требовал ключевые секции и `coverage_percent >= 80`.
 - **Release 1.1.361**: обновлены артефакты VSIX/launcher/core/providers/UI.
 
 ## Recent Changes (v1.1.360 - 2025-12-29)
