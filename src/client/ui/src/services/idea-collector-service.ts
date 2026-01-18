@@ -13,6 +13,10 @@ import {
   type VirtualSimulationContractSnapshot,
 } from "./idea-collector-contract";
 import {
+  enforceArtifactsRequired,
+  isFinalizeTrigger,
+} from "./idea-collector-finalize-utils";
+import {
   IdeaCollectorSessionState,
   type WorkflowStageId,
 } from "./idea-collector-session-state";
@@ -134,8 +138,11 @@ export class IdeaCollectorService {
     if (augmentedContent === "") {
       return;
     }
+    const outputSchema = isFinalizeTrigger(content)
+      ? enforceArtifactsRequired(schema)
+      : schema;
     sendChatMessage(sessionId, augmentedContent ?? content, {
-      outputSchema: schema,
+      outputSchema,
     });
   }
 

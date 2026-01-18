@@ -1,3 +1,9 @@
+## [1.1.437] - 2026-01-17
+
+### Fixed
+- **Workflow finalize**: при «ОК/утверждаю» schema требует `artifacts[]`, чтобы артефакты сохранялись через Core (Codex/Claude).
+- **Workflow runs**: auto-run создаётся для новых стадий (description/virtual simulation/diagrams), чтобы artifact-upsert получил runSlug.
+
 ## [1.1.436] - 2026-01-17
 
 ### Changed

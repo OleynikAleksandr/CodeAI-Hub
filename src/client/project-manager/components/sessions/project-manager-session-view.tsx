@@ -18,6 +18,10 @@ import {
   loadWorkflowSchemaForProjectManager,
   type WorkflowStageId,
 } from "../../services/idea-collector-submit-service";
+import {
+  enforceArtifactsRequired,
+  isFinalizeTrigger,
+} from "../../../ui/src/services/idea-collector-finalize-utils";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import { useProjectManagerSessionStream } from "./session-stream";
 
@@ -27,7 +31,6 @@ type ProjectManagerSessionViewProps = {
 };
 
 const DEFAULT_PROVIDER_CATALOG: ProviderCatalog = {};
-
 const resolveSchemaStage = (
   stage: string | null | undefined
 ): WorkflowStageId | null => {
@@ -256,9 +259,13 @@ export const ProjectManagerSessionView = ({
         return;
       }
 
+      const shouldFinalize = isFinalizeTrigger(content);
       void loadWorkflowSchemaForProjectManager(schemaStage)
         .then((schema) => {
-          api.sendSessionMessage(sessionId, content, { outputSchema: schema });
+          const outputSchema = shouldFinalize
+            ? enforceArtifactsRequired(schema)
+            : schema;
+          api.sendSessionMessage(sessionId, content, { outputSchema });
         })
         .catch(() => {
           api.sendSessionMessage(sessionId, content);
