@@ -184,6 +184,10 @@ See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 ## Planned Changes (v1.1.441 - 2026-01-18)
 - **Workflow file-first + watcher**: переход на прямую запись артефактов через CLI tools и watcher-driven состояние/gating.
 
+## Recent Changes (v1.1.441 - 2026-01-18)
+- **Workflow file-first**: Core больше не применяет `outputSchema` для workflow стадий; Project Manager отправляет single-turn prompt pack (инструкция + анкета + шаблон + target path).
+- **Workflow gates runner**: добавлен модуль запуска гейтов по событию `workflow.stage.completed` с эмиссией `workflow.gate.*` событий.
+
 ## Recent Changes (v1.1.440 - 2026-01-18)
 - **Codex/Claude structured output**: `question*` артефакты трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по allowlist из schema.
 

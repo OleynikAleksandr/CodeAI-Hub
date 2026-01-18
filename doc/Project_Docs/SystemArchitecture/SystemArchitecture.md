@@ -102,6 +102,10 @@ CodeAI-Hub — автономная платформа управления AI-�
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
 
+## Recent Changes (v1.1.441 - 2026-01-18)
+- **Workflow file-first**: Core больше не применяет `outputSchema` для workflow стадий; Project Manager отправляет single-turn prompt pack (инструкция + анкета + шаблон + target path).
+- **Workflow gates runner**: добавлен модуль запуска гейтов по событию `workflow.stage.completed` с эмиссией `workflow.gate.*` событий.
+
 ## Planned Changes (v1.1.441 - 2026-01-18)
 - **Workflow file-first + watcher**: для стадий Description/Virtual Simulation/Diagrams structured output отключается; артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/...`, состояние и гейтинг строятся на watcher-событиях.
 
