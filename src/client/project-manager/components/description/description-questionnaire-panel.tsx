@@ -230,7 +230,7 @@ export const DescriptionQuestionnairePanel: React.FC<
       <IdeaQuestionnaireView
         answers={answers}
         cancelLabel="Закрыть"
-        description="Анкета сохраняется автоматически. Нажмите «Отправить анкету», выберите провайдера и дождитесь запуска Description."
+        description="Анкета сохраняется автоматически. Нажмите «Отправить анкету», выберите провайдера и дождитесь запуска Description. Агент сформирует артефакт и запишет его в .codeai-hub/<workspace>/description/runs/<runSlug>/description.md."
         onAnswerChange={handleAnswerChange}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
