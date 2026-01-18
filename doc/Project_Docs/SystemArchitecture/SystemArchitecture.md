@@ -103,7 +103,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
 
 ## Recent Changes (v1.1.440 - 2026-01-18)
-- **Codex structured output**: `question*` слоты в `artifacts[]` трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по schema allowlist.
+- **Codex/Claude structured output**: `question*` слоты в `artifacts[]` трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по schema allowlist.
 
 ## Recent Changes (v1.1.439 - 2026-01-18)
 - **Codex turn timeout**: Codex-модуль прерывает зависшие ответы при отсутствии событий > 180s, чтобы UI не зависал без ответа.

@@ -13,6 +13,63 @@ import {
 } from "./session-file-discovery";
 import { extractVariantBArtifacts } from "./structured-output-utils";
 
+const QUESTION_SLOT_PATTERN = /^question\d*$/i;
+
+type VariantBArtifact = ReturnType<typeof extractVariantBArtifacts> extends
+  | (infer Item)[]
+  | null
+  ? Item
+  : never;
+
+type VariantBPartition = {
+  readonly artifacts?: VariantBArtifact[];
+  readonly questions: string[];
+};
+
+const partitionVariantBArtifacts = (
+  artifacts: VariantBArtifact[] | null
+): VariantBPartition => {
+  if (!Array.isArray(artifacts)) {
+    return { questions: [] };
+  }
+
+  const keep: VariantBArtifact[] = [];
+  const questions: string[] = [];
+  for (const artifact of artifacts) {
+    const slot = artifact.slot.trim();
+    const markdown = artifact.markdown.trim();
+    if (!(slot && markdown)) {
+      continue;
+    }
+    if (QUESTION_SLOT_PATTERN.test(slot)) {
+      questions.push(markdown);
+      continue;
+    }
+    keep.push({ slot, markdown });
+  }
+
+  return {
+    artifacts: keep.length > 0 ? keep : undefined,
+    questions,
+  };
+};
+
+const appendQuestionsToSuggestedResponse = (
+  suggestedResponse: string | null | undefined,
+  questions: string[]
+): string | null => {
+  if (questions.length === 0) {
+    return suggestedResponse ?? null;
+  }
+  const questionsBlock = `Вопросы:\n${questions
+    .map((question, index) => `${index + 1}. ${question}`)
+    .join("\n")}`;
+  if (suggestedResponse && suggestedResponse.trim().length > 0) {
+    return `${suggestedResponse}\n\n${questionsBlock}`;
+  }
+  return questionsBlock;
+};
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -145,9 +202,14 @@ export class SDKMessageProcessor {
     }
     const structured = parseIdeaCollectorOutputFromText(assistantText);
     if (structured) {
-      this.emitStructuredOutput(session, message, structured);
-      if (structured.suggestedResponse) {
-        this.emitAssistantText(session, message, structured.suggestedResponse);
+      const suggestedResponse = this.emitStructuredOutput(
+        session,
+        message,
+        structured
+      );
+      const responseText = suggestedResponse ?? structured.suggestedResponse;
+      if (responseText) {
+        this.emitAssistantText(session, message, responseText);
       }
       return;
     }
@@ -165,13 +227,18 @@ export class SDKMessageProcessor {
       return;
     }
 
-    this.emitStructuredOutput(session, normalizedMessage, structured);
+    const suggestedResponse = this.emitStructuredOutput(
+      session,
+      normalizedMessage,
+      structured
+    );
 
-    if (!structured.suggestedResponse) {
+    const responseText = suggestedResponse ?? structured.suggestedResponse;
+    if (!responseText) {
       return;
     }
 
-    this.emitAssistantText(session, message, structured.suggestedResponse);
+    this.emitAssistantText(session, message, responseText);
   }
 
   private normalizeStructuredOutputMessage(
@@ -230,12 +297,23 @@ export class SDKMessageProcessor {
     session: ActiveSession,
     message: ClaudeStreamMessage,
     output: IdeaCollectorStructuredOutput
-  ): void {
+  ): string | null {
     const variantBArtifacts = extractVariantBArtifacts(message);
-    const shouldEmitVariantB =
-      Array.isArray(variantBArtifacts) && variantBArtifacts.length > 0;
-    if (!(shouldEmitVariantB || (output.nextAction && output.artifact))) {
-      return;
+    const { artifacts, questions } =
+      partitionVariantBArtifacts(variantBArtifacts);
+    const shouldEmitVariantB = Array.isArray(artifacts) && artifacts.length > 0;
+    const suggestedResponse = appendQuestionsToSuggestedResponse(
+      output.suggestedResponse,
+      questions
+    );
+    if (
+      !(
+        shouldEmitVariantB ||
+        questions.length > 0 ||
+        (output.nextAction && output.artifact)
+      )
+    ) {
+      return suggestedResponse;
     }
     const dedupeId = message.uuid;
     if (dedupeId) {
@@ -243,7 +321,7 @@ export class SDKMessageProcessor {
         session.structuredOutputUuids = new Set();
       }
       if (session.structuredOutputUuids.has(dedupeId)) {
-        return;
+        return suggestedResponse;
       }
       session.structuredOutputUuids.add(dedupeId);
     }
@@ -255,13 +333,14 @@ export class SDKMessageProcessor {
       data: {
         kind: "structured_output",
         artifact: output.artifact,
-        artifacts: shouldEmitVariantB ? variantBArtifacts : undefined,
+        artifacts: shouldEmitVariantB ? artifacts : undefined,
         nextAction: output.nextAction,
-        suggested_response: output.suggestedResponse,
+        suggested_response: suggestedResponse ?? undefined,
       },
       uuid: `${dedupeId ?? crypto.randomUUID()}::structured_output`,
       timestamp: new Date().toISOString(),
     });
+    return suggestedResponse;
   }
 
   private emitThinkingChunks(
