@@ -1,3 +1,10 @@
+## [1.1.442] - 2026-01-18
+
+### Changed
+- **Workflow prompt pack (path-first)**: Project Manager больше не инлайнит анкету/шаблон в стартовый промпт; в prompt pack передаются пути, агент читает файлы сам.
+- **Core**: полностью удалён auto-attach (workspace files + pre_read_documents), Core отправляет провайдеру ровно пользовательский текст.
+- **Workflow prompts**: file-first промпты упрощены (без JSON-инструкций, фокус на чтение файлов и запись артефакта).
+
 ## [1.1.441] - 2026-01-18
 
 ### Changed
