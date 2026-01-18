@@ -1,6 +1,12 @@
 import type React from "react";
 import { useEffect, useState } from "react";
+import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
+import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
+import {
+  startWorkflowEventPolling,
+  type WorkflowEvent,
+} from "../../services/workflow-events-client";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import { PanelContainer } from "./panel-container";
@@ -38,6 +44,31 @@ export const MainArea: React.FC<MainAreaProps> = ({
     }
     setActiveTool((current) => current ?? "Description");
   }, [activeWorkspace?.id]);
+
+  const handleWorkflowEvents = (events: readonly WorkflowEvent[]) => {
+    if (events.length > 0) {
+      setPreferredSessionId((current) => current ?? null);
+    }
+  };
+
+  useEffect(() => {
+    if (!activeWorkspace?.name) {
+      return;
+    }
+    const workspaceSlug = toWorkflowWorkspaceSlug(activeWorkspace.name);
+    const httpUrl = api.getHttpUrl();
+    if (!httpUrl) {
+      return;
+    }
+    const unsubscribe = startWorkflowEventPolling({
+      httpUrl,
+      workspaceSlug,
+      onEvents: handleWorkflowEvents,
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [activeWorkspace?.name]);
 
   const showDescriptionQuestionnaire = activeTool === "Description";
   const showVirtualSimulation = activeTool === "Virtual Simulation";
