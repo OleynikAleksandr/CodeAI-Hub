@@ -18,6 +18,8 @@ import type {
   StatusInfo,
   SystemRequestHandler,
 } from "./system-request-handler";
+import { WorkflowEventsService } from "./workflow-events-service";
+import { WorkflowStateService } from "./workflow-state-service";
 import {
   handleWorkspaceFileRead,
   handleWorkspaceFileWrite,
@@ -47,6 +49,8 @@ const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const WORKSPACE_FILE_WRITE_ENDPOINT =
   "/api/v1/orchestrator/workspace-file-write";
 const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
+const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
+const WORKFLOW_EVENTS_ENDPOINT = "/api/v1/orchestrator/workflow-events";
 const DESCRIPTION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\.md$/;
 const VIRTUAL_SIMULATION_PATH_RE =
@@ -81,6 +85,13 @@ export class HttpApiRouter {
     const { app, systemHandler, fileDropService } = this.deps;
     const initiativesHandler = new InitiativesHttpHandler(this.deps.logger);
     const runsHandler = new RunsHttpHandler(this.deps.logger);
+    const workflowStateService = new WorkflowStateService({
+      logger: this.deps.logger,
+      sessionManager: this.deps.sessionManager,
+    });
+    const workflowEventsService = new WorkflowEventsService({
+      logger: this.deps.logger,
+    });
 
     app.get("/api/v1/health", (req: Request, res: Response) => {
       systemHandler.handleHealth(
@@ -225,6 +236,14 @@ export class HttpApiRouter {
         );
       }
     );
+
+    app.get(WORKFLOW_STATE_ENDPOINT, (req: Request, res: Response) => {
+      workflowStateService.handleWorkflowStateRead(req, res);
+    });
+
+    app.get(WORKFLOW_EVENTS_ENDPOINT, (req: Request, res: Response) => {
+      workflowEventsService.handleWorkflowEventsRead(req, res);
+    });
   }
 
   private async handleSessionHistory(
