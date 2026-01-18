@@ -31,7 +31,7 @@
 | Описание | `description` | Description Agent | `description.md` | `workspace.description` |
 | Virtual Simulation | `virtual_simulation` | Virtual Simulation Agent | `virtual-simulation.md` | `workspace.virtual_simulation` |
 | Диаграмма модулей | `diagram_modules` | Module Diagram Agent | `modules-diagram.mmd` | `diagram.modules` |
-| Диаграмма фасадов | `diagram_facades` | Facades Diagram Agent | `facades-graph.mmd` | `diagram.facades` |
+| Interface Map (Диаграмма фасадов) | `diagram_facades` | Facades Diagram Agent | `facades-graph.mmd` | `diagram.facades` |
 
 Ключевой инвариант: **агент не пытается писать два артефакта в одном ответе**.
 
@@ -54,7 +54,7 @@ UI последствия:
 
 ## 5. Гейты и порядок шагов
 Последовательность фиксируется на уровне workflow‑gates:
-`Описание → Virtual Simulation → Диаграмма модулей → Диаграмма фасадов → Spec → Plan → Execute`.
+`Описание → Virtual Simulation → Диаграмма модулей → Interface Map (Диаграмма фасадов) → Spec → Plan → Execute`.
 
 `Module: Spec` активен **только** после `Workspace: Диаграмма фасадов`.
 

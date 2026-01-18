@@ -6,6 +6,7 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Workflow prompt pack (path-first)**: Project Manager отправляет короткий стартовый промпт с путями; агент читает анкету/шаблон и пишет артефакт.
 - **Workflow file-first**: артефакты пишутся через file-first поток (по целевым путям внутри `.codeai-hub/.../runs/...`).
 - **Workflow prompts**: агенты читают файлы напрямую средствами провайдера (без просьб `/read`).
+- **Workflow verification**: подтверждено на Codex + Claude (path-first чтение файлов по путям, запись `description.md` в runs).
 - **Workflow templates**: формулировки “следующий шаг” выровнены под последовательность `Description → Virtual Simulation → Module Diagram → Interface Map`.
 - **Sessions UI**: длинные строки/URL и code blocks не вылезают за границы сообщений.
 - **Release 1.1.444**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.

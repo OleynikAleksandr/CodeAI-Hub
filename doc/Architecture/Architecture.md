@@ -181,8 +181,10 @@ packages/agents/
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
 
-## Planned Changes (v1.1.441 - 2026-01-18)
-- **Workflow verification**: ручная проверка file-first стадий на Codex/Claude и фиксация результатов.
+## Recent Changes (v1.1.444 - 2026-01-18)
+- **Workflow templates**: формулировки “следующий шаг” выровнены под последовательность `Description → Virtual Simulation → Module Diagram → Interface Map`.
+- **Workflow verification**: Codex + Claude читают входные файлы по путям (path-first, без `/read`) и пишут `description.md` в file-first runs.
+- **Sessions UI**: длинные строки/URL и code blocks не вылезают за границы сообщений (перенос/скролл).
 
 ## Recent Changes (v1.1.440 - 2026-01-18)
 - **Workflow file-first**: Core больше не применяет `outputSchema` для workflow стадий; Project Manager отправляет single-turn prompt pack (инструкция + анкета + шаблон + target path).

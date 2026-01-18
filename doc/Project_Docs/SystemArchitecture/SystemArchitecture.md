@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.443 (18.01.2026) — Workflow prompts: provider-native file access (no `/read`). В работе: v1.1.444 — workflow verification + follow-ups.
+**Состояние:** релиз 1.1.444 (18.01.2026) — path-first + file-first workflow prompts (без `/read`), выровненный порядок шагов и исправления Sessions UI (перенос текста). Верификация: Codex + Claude корректно читают входные файлы по путям и пишут `description.md` в runs.
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
@@ -12,8 +12,8 @@
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
 
 ## Компоненты системы
-- **Автономное ядро** — Node.js сервис (`@codeai-hub/core@1.1.334`), упакованный как JS‑бандл + официальный Node 20 runtime. В dev/локальных сборках скрипт `scripts/build-core.sh` кладёт ядро в `~/.codeai-hub/core/<platform>/<version>/`, а манифест (`assets/core/manifest.json`) указывает на локальный cache `file://$HOME/.codeai-hub/releases/`. Core Supervisor (`@codeai-hub/core-supervisor`, CLI `codeai-core`) выбирает установленный runtime, запускает его через `<runtime>/node/bin/node <app>/dist/index.js`, пробрасывая `CORE_HOST/CORE_PORT/CORE_MANAGED_MODE`, рабочий каталог (`CLAUDE_WORKSPACE_PATH`, `CODEX_WORKSPACE_PATH`, `GEMINI_WORKSPACE_PATH`) и пути к провайдерам (`*_MODULE_PATH` под `~/.codeai-hub/providers/**`). Результаты установки и выбранный порт фиксируются в `~/.codeai-hub/state/runtime-registry.json`.
-- **UI Bundles (v1.1.334)** — интерфейсы вынесены из VSIX в отдельные пакеты:
+- **Автономное ядро** — Node.js сервис (`@codeai-hub/core@1.1.444`), упакованный как JS‑бандл + официальный Node 20 runtime. В dev/локальных сборках скрипт `scripts/build-core.sh` кладёт ядро в `~/.codeai-hub/core/<platform>/<version>/`, а манифест (`assets/core/manifest.json`) указывает на локальный cache `file://$HOME/.codeai-hub/releases/`. Core Supervisor (`@codeai-hub/core-supervisor`, CLI `codeai-core`) выбирает установленный runtime, запускает его через `<runtime>/node/bin/node <app>/dist/index.js`, пробрасывая `CORE_HOST/CORE_PORT/CORE_MANAGED_MODE`, рабочий каталог (`CLAUDE_WORKSPACE_PATH`, `CODEX_WORKSPACE_PATH`, `GEMINI_WORKSPACE_PATH`) и пути к провайдерам (`*_MODULE_PATH` под `~/.codeai-hub/providers/**`). Результаты установки и выбранный порт фиксируются в `~/.codeai-hub/state/runtime-registry.json`.
+- **UI Bundles (v1.1.444)** — интерфейсы вынесены из VSIX в отдельные пакеты:
     - `vscode-webview`: React-приложение для панели VS Code.
     - `web-client`: Статическая сборка для CEF Launcher (Web Client).
     - `project-manager`: Статическая сборка для CEF Launcher (Project Manager).
@@ -37,57 +37,57 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
 
 ## Текущие версии
-- VSIX: `codeai-hub` 1.1.420
-- Автономное ядро: `@codeai-hub/core` 1.1.403
-- UI Bundles: 1.1.403
-- Claude module: 1.1.403
-- Codex module: 1.1.403
-- Gemini module: 1.1.403
-- Agent Shared: `@codeai-hub/agent-shared` 1.1.403
-- Description Agent: `@codeai-hub/description-agent` 1.1.403
-- Virtual Simulation Agent: `@codeai-hub/virtual-simulation-agent` 1.1.403
-- Diagram Modules Agent: `@codeai-hub/diagram-modules-agent` 1.1.403
-- Diagram Facades Agent: `@codeai-hub/diagram-facades-agent` 1.1.403
-- Spec Creator: `@codeai-hub/spec-creator` 1.1.403 (skeleton)
+- VSIX: `codeai-hub` 1.1.444
+- Автономное ядро: `@codeai-hub/core` 1.1.444
+- UI Bundles: 1.1.444
+- Claude module: 1.1.444
+- Codex module: 1.1.444
+- Gemini module: 1.1.444
+- Agent Shared: `@codeai-hub/agent-shared` 1.1.387
+- Description Agent: `@codeai-hub/description-agent` 1.1.387
+- Virtual Simulation Agent: `@codeai-hub/virtual-simulation-agent` 1.1.387
+- Diagram Modules Agent: `@codeai-hub/diagram-modules-agent` 1.1.387
+- Diagram Facades Agent: `@codeai-hub/diagram-facades-agent` 1.1.387
+- Spec Creator: `@codeai-hub/spec-creator` 1.1.387 (skeleton)
 
 ## Структура артефактов
 ```
 ~/.codeai-hub/
 ├── core/
 │   └── darwin-arm64/
-│       └── 1.1.403/
+│       └── 1.1.444/
 │           ├── node/
 │           ├── app/
 │           └── install.json
 ├── packages/
 │   ├── launcher/
-│   │   └── macos-arm64/1.1.403/
+│   │   └── macos-arm64/1.1.444/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.403/
-│       │   └── current -> 1.1.403
+│       │   ├── 1.1.444/
+│       │   └── current -> 1.1.444
 │       ├── web-client/
-│       │   ├── 1.1.403/
-│       │   └── current -> 1.1.403
+│       │   ├── 1.1.444/
+│       │   └── current -> 1.1.444
 │       └── project-manager/
-│           ├── 1.1.403/
-│           └── current -> 1.1.403
+│           ├── 1.1.444/
+│           └── current -> 1.1.444
 ├── providers/
-│   ├── claude/1.1.403/
-│   ├── codex/1.1.403/
-│   └── gemini/1.1.403/
+│   ├── claude/1.1.444/
+│   ├── codex/1.1.444/
+│   └── gemini/1.1.444/
 ├── settings/
 │   ├── claude.json          # legacy thinking settings migrated to settings.json
 │   └── settings.json        # current source of truth for providers.{claude,codex,gemini}
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.403.tar.bz2
-    ├── vscode-webview-1.1.403.tar.bz2
-    ├── web-client-1.1.403.tar.bz2
-    ├── project-manager-1.1.403.tar.bz2
-    ├── claude-module-1.1.403.tar.bz2
-    ├── codex-module-1.1.403.tar.bz2
-    ├── gemini-module-1.1.403.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.403.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.444.tar.bz2
+    ├── vscode-webview-1.1.444.tar.bz2
+    ├── web-client-1.1.444.tar.bz2
+    ├── project-manager-1.1.444.tar.bz2
+    ├── claude-module-1.1.444.tar.bz2
+    ├── codex-module-1.1.444.tar.bz2
+    ├── gemini-module-1.1.444.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.444.tar.bz2
 ```
 
 ## Провайдеры
