@@ -21,8 +21,8 @@
 Цель: отказаться от structured-output для стадий Description/Virtual Simulation/Diagrams и перейти на **file-first** артефакты (агент пишет файл через CLI tools), а состояние/гейтинг строится через Watcher.
 
 ### Stream: Design approval + docs alignment
-1. [TODO] Docs: согласовать архитектуру перехода (decision: no structured-output для стадий + Watcher) — scope: `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`; expected commit message: `docs: approve workflow cli+watcher architecture`
-2. [TODO] Git Commit: `docs: approve workflow cli+watcher architecture` (hash: TBD)
+1. [DONE] Docs: согласовать архитектуру перехода (decision: no structured-output для стадий + Watcher) — scope: `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`; expected commit message: `docs: approve workflow cli+watcher architecture`
+2. [DONE] Git Commit: `docs: approve workflow cli+watcher architecture` (hash: b1bcd53d)
 3. [TODO] Docs: синхронизировать общие архитектурные документы под новый подход — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: document workflow file-first artifacts`
 4. [TODO] Git Commit: `docs: document workflow file-first artifacts` (hash: TBD)
 
