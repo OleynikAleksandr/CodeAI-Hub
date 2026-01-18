@@ -2,6 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { RunStore } from "@codeai-hub/initiatives";
 import type { Request, Response } from "express";
+import { isWorkspacePathAllowlisted } from "../../security/workspace-path-allowlist";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import { readFileHead, resolveWorkspaceFilePath } from "./workspace-file-utils";
@@ -140,6 +141,16 @@ export const handleWorkspaceFileRead = async (
     return;
   }
 
+  if (
+    !isWorkspacePathAllowlisted({
+      relativePath: parsedPayload.value.path,
+      workspaceSlug: session.initiativeSlug,
+    })
+  ) {
+    res.status(HTTP_BAD_REQUEST).json({ error: "Path is not allowlisted" });
+    return;
+  }
+
   const workspaceRoot = path.resolve(session.workspacePath);
   const absolutePath = resolveWorkspaceFilePath(
     workspaceRoot,
@@ -186,6 +197,16 @@ export const handleWorkspaceFileWrite = async (
     res.status(HTTP_NOT_FOUND).json({
       error: `Session ${parsedPayload.value.sessionId} not found`,
     });
+    return;
+  }
+
+  if (
+    !isWorkspacePathAllowlisted({
+      relativePath: parsedPayload.value.path,
+      workspaceSlug: session.initiativeSlug,
+    })
+  ) {
+    res.status(HTTP_BAD_REQUEST).json({ error: "Path is not allowlisted" });
     return;
   }
 
