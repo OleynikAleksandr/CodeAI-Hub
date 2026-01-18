@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-18
 **Status:** Active reference
-**Release Focus:** v1.1.439 — Codex turn timeout guard + workflow schema enforcement.
+**Release Focus:** v1.1.440 — Workflow question artifact guard.
 
 ---
 
@@ -34,6 +34,7 @@ graph TD
 - **Workflow artifacts (v1.1.435)**: schema читается из `~/.codeai-hub/templates/<stage>/` (description/virtual_simulation/diagram_modules/diagram_facades), structured output возвращает `artifacts[]: {slot, markdown}` со слотами `workspace.description`, `workspace.virtual_simulation`, `diagram.modules`, `diagram.facades`; UI сохраняет любое подмножество слотов, Core вычисляет slot→path и делает atomic write с backup.
 - **Workflow schema enforcement (v1.1.438)**: Core гарантирует `outputSchema` для workflow-сессий и на finalize требует `artifacts[]` (minItems=1), даже если UI не прислал turnOptions.
 - **Codex turn timeout (v1.1.439)**: Codex-модуль прерывает зависшие ответы, если поток событий молчит > 180s, и эмитит ошибку в UI.
+- **Workflow question artifact guard (v1.1.440)**: Codex-модуль трактует `question*` слоты в `artifacts[]` как вопросы и фильтрует их из апсерта; допускает только слоты из schema allowlist.
 - **Template authority (v1.1.435)**: Core синхронизирует bundled‑шаблоны (prompt, schema, template, questionnaire) в `~/.codeai-hub/templates/{description,virtual_simulation,diagram_modules,diagram_facades}/` и перезаписывает локальные правки при старте; installers расширения остаются fallback для VSIX-only сценариев.
 - **Webview Provider**: `HomeViewProvider` создаёт webview, подготавливает HTML (подключает React bundle, CSS, дизайн-токены) и настраивает CSP, беря статику из резолвленого UI-бандла (`~/.codeai-hub/packages/ui/vscode-webview/current`, fallback — `media/`).
 - **Message Routing**: модуль `home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует их в автономное ядро через Remote UI Bridge.
@@ -178,6 +179,9 @@ packages/agents/
 | Extension | Local asset installers | Bundled assets from package |
 
 See `doc/Project_Docs/AgentPackages_Architecture.md` for full migration details.
+
+## Recent Changes (v1.1.440 - 2026-01-18)
+- **Codex structured output**: `question*` артефакты трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по allowlist из schema.
 
 ## Recent Changes (v1.1.428 - 2026-01-16)
 - **Project Manager Description**: анкета автосохраняется и отправляется в Description workflow, артефакты пишутся через artifact‑upsert.

@@ -28,6 +28,7 @@ type StructuredOutputTurnConfig = {
   readonly mode: StructuredOutputMode;
   readonly fieldKey: "answer" | "suggested_response";
   readonly applyPrompt: boolean;
+  readonly allowedArtifactSlots?: ReadonlySet<string>;
 };
 type StructuredOutputArtifact = Record<string, unknown>;
 type StructuredOutputArtifactUpsert = {
@@ -40,6 +41,11 @@ type ParsedOutput = {
   readonly artifact?: StructuredOutputArtifact;
   readonly artifacts?: readonly StructuredOutputArtifactUpsert[];
 };
+type StructuredOutputParseOptions = {
+  readonly allowedArtifactSlots?: ReadonlySet<string>;
+};
+
+const QUESTION_SLOT_PATTERN = /^question\d*$/i;
 type AnswerStreamState = {
   extractor: AnswerJsonStreamExtractor;
   itemId: string | null;
@@ -67,6 +73,7 @@ const resolveTurnConfig = (
   turnOptions: CodexTurnOptions
 ): StructuredOutputTurnConfig => {
   const schema = turnOptions.outputSchema;
+  const allowedArtifactSlots = resolveAllowedArtifactSlots(schema);
   if (
     isRecord(schema) &&
     ((isRecord(schema.properties) &&
@@ -82,9 +89,47 @@ const resolveTurnConfig = (
       mode: "idea_collector",
       fieldKey: "suggested_response",
       applyPrompt: false,
+      allowedArtifactSlots,
     };
   }
   return DEFAULT_TURN_CONFIG;
+};
+
+const resolveAllowedArtifactSlots = (
+  schema: unknown
+): ReadonlySet<string> | undefined => {
+  if (!isRecord(schema)) {
+    return;
+  }
+  const properties = isRecord(schema.properties) ? schema.properties : null;
+  if (!properties) {
+    return;
+  }
+  const artifacts = isRecord(properties.artifacts)
+    ? properties.artifacts
+    : null;
+  if (!artifacts) {
+    return;
+  }
+  const items = isRecord(artifacts.items) ? artifacts.items : null;
+  if (!items) {
+    return;
+  }
+  const itemProperties = isRecord(items.properties) ? items.properties : null;
+  if (!itemProperties) {
+    return;
+  }
+  const slot = isRecord(itemProperties.slot) ? itemProperties.slot : null;
+  if (!slot) {
+    return;
+  }
+  const enumValues = Array.isArray(slot.enum)
+    ? slot.enum.filter((value): value is string => typeof value === "string")
+    : [];
+  if (enumValues.length === 0) {
+    return;
+  }
+  return new Set(enumValues);
 };
 
 export class StructuredOutputStreamController {
@@ -143,7 +188,10 @@ export class StructuredOutputStreamController {
     if (streamDelta) {
       state.assistantText += streamDelta;
     }
-    const parsed = parseStructuredOutput(text, state.mode);
+    const config = this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG;
+    const parsed = parseStructuredOutput(text, state.mode, {
+      allowedArtifactSlots: config.allowedArtifactSlots,
+    });
     let assistantText =
       state.assistantText.trim().length > 0
         ? state.assistantText
@@ -192,7 +240,8 @@ export class StructuredOutputStreamController {
 }
 const parseStructuredOutput = (
   text: string,
-  mode: StructuredOutputMode
+  mode: StructuredOutputMode,
+  options: StructuredOutputParseOptions
 ): ParsedOutput => {
   if (!text) {
     return {};
@@ -203,10 +252,10 @@ const parseStructuredOutput = (
       return {};
     }
     if (hasIdeaCollectorSignature(parsed)) {
-      return parseIdeaCollectorOutput(parsed);
+      return parseIdeaCollectorOutput(parsed, options);
     }
     return mode === "idea_collector"
-      ? parseIdeaCollectorOutput(parsed)
+      ? parseIdeaCollectorOutput(parsed, options)
       : parseDefaultOutput(parsed);
   } catch {
     return {};
@@ -220,7 +269,8 @@ const parseDefaultOutput = (parsed: Record<string, unknown>): ParsedOutput => {
   };
 };
 const parseIdeaCollectorOutput = (
-  parsed: Record<string, unknown>
+  parsed: Record<string, unknown>,
+  options: StructuredOutputParseOptions
 ): ParsedOutput => {
   let assistantText: string | undefined;
   if (typeof parsed.suggested_response === "string") {
@@ -234,16 +284,20 @@ const parseIdeaCollectorOutput = (
           typeof question === "string" && question.trim().length > 0
       )
     : [];
-  if (assistantText?.trim().length && questions.length > 0) {
-    assistantText = `${assistantText}\n\nВопросы:\n${questions.map((question, index) => `${index + 1}. ${question}`).join("\n")}`;
-  }
   let nextAction: string | undefined;
   if (typeof parsed.next_action === "string") {
     nextAction = parsed.next_action;
   } else if (typeof parsed.nextAction === "string") {
     nextAction = parsed.nextAction;
   }
-  const artifacts = parseIdeaCollectorArtifacts(parsed);
+  const { artifacts, questionArtifacts } = parseIdeaCollectorArtifacts(
+    parsed,
+    options.allowedArtifactSlots
+  );
+  const allQuestions = [...questions, ...questionArtifacts];
+  if (assistantText?.trim().length && allQuestions.length > 0) {
+    assistantText = `${assistantText}\n\nВопросы:\n${allQuestions.map((question, index) => `${index + 1}. ${question}`).join("\n")}`;
+  }
   const artifact = parseIdeaCollectorArtifact(parsed.artifact, nextAction);
   return {
     assistantText: assistantText?.trim().length ? assistantText : undefined,
@@ -254,32 +308,59 @@ const parseIdeaCollectorOutput = (
 };
 
 const parseIdeaCollectorArtifacts = (
-  parsed: Record<string, unknown>
-): readonly StructuredOutputArtifactUpsert[] | undefined => {
+  parsed: Record<string, unknown>,
+  allowedArtifactSlots: ReadonlySet<string> | undefined
+): {
+  readonly artifacts?: StructuredOutputArtifactUpsert[];
+  readonly questionArtifacts: string[];
+} => {
   if (!Array.isArray(parsed.artifacts)) {
-    return;
+    return { questionArtifacts: [] };
   }
 
   const artifacts: StructuredOutputArtifactUpsert[] = [];
+  const questionArtifacts: string[] = [];
   for (const entry of parsed.artifacts) {
-    if (!isRecord(entry)) {
-      return;
-    }
-
-    const slot = entry.slot;
-    const markdown = entry.markdown;
-    if (typeof slot !== "string" || typeof markdown !== "string") {
-      return;
-    }
-
-    if (!(slot.trim() && markdown.trim())) {
+    const normalized = normalizeArtifactEntry(entry);
+    if (!normalized) {
       continue;
     }
 
-    artifacts.push({ slot, markdown });
+    if (QUESTION_SLOT_PATTERN.test(normalized.slot)) {
+      questionArtifacts.push(normalized.markdown);
+      continue;
+    }
+
+    if (allowedArtifactSlots && !allowedArtifactSlots.has(normalized.slot)) {
+      continue;
+    }
+
+    artifacts.push(normalized);
   }
 
-  return artifacts;
+  return {
+    artifacts: artifacts.length > 0 ? artifacts : undefined,
+    questionArtifacts,
+  };
+};
+
+const normalizeArtifactEntry = (
+  entry: unknown
+): StructuredOutputArtifactUpsert | null => {
+  if (!isRecord(entry)) {
+    return null;
+  }
+  const slot = entry.slot;
+  const markdown = entry.markdown;
+  if (typeof slot !== "string" || typeof markdown !== "string") {
+    return null;
+  }
+  const trimmedSlot = slot.trim();
+  const trimmedMarkdown = markdown.trim();
+  if (!(trimmedSlot && trimmedMarkdown)) {
+    return null;
+  }
+  return { slot: trimmedSlot, markdown: trimmedMarkdown };
 };
 
 const parseIdeaCollectorArtifact = (
