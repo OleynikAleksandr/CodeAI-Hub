@@ -1,3 +1,17 @@
+## [1.1.440] - 2026-01-18
+
+### Added
+- **Workflow watcher + state/events**: Core watcher, workflow state store, `/workflow-state` + `/workflow-events` API.
+- **File-first allowlist + paths**: разрешена запись workflow артефактов в `.codeai-hub/<workspaceSlug>/...` и добавлен резолвер целевых путей.
+- **Project Manager workflow gating**: state-driven gating и live updates.
+- **Workflow gates runner**: запуск гейтов по событию `workflow.stage.completed`.
+
+### Changed
+- **Workflow file-first**: Core больше не применяет `outputSchema` для workflow стадий; Project Manager отправляет single-turn prompt pack (инструкция + анкета + шаблон + target path).
+
+### Fixed
+- **Workflow question artifacts**: Codex/Claude трактуют `question*` как вопросы и не апсерят в артефакты.
+
 ## [1.1.439] - 2026-01-18
 
 ### Fixed
