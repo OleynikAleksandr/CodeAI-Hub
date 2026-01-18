@@ -7,14 +7,14 @@
 ---
 
 ## 1. Purpose & Scope
-- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.420` inside CodeAI-Hub Core.
+- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.444` inside CodeAI-Hub Core.
 - Capture the CLI/SDK contract (events, items, options) that we must adapt for RemoteBridge and UI streaming.
 - List integration prerequisites (authentication, binaries, storage layout) required to bootstrap Codex alongside the Claude module.
 
 Key capabilities we must preserve when porting:
 1. Streaming JSONL event bridge on top of `codex exec --experimental-json`.
 2. Support for threaded conversations with resume semantics via `~/.codex/sessions`.
-3. Mixed text/image inputs and structured JSON outputs per turn (answer; in flow turns also `artifacts[]` for artifact upserts).
+3. Mixed text/image inputs and structured JSON outputs per turn (answer; structured output используется в legacy/Idea Collector потоках, а workflow стадии Description/Virtual Simulation/Diagrams работают в file-first режиме и пишут артефакты в runs).
 4. Sandbox controls (`read-only`, `workspace-write`, `danger-full-access`) and optional Git repository enforcement.
 5. Authentication via ChatGPT login or API key override (`CODEX_API_KEY`), with persistence under `~/.codex`.
 6. Graceful error propagation when CLI exits non-zero (surface `turn.failed`, `error` events, or exit messages).

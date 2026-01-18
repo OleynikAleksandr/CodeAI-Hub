@@ -3,7 +3,7 @@
 ## Overview
 CodeAI Hub uses a dedicated Chromium Embedded Framework (CEF) launcher to run the standalone web client outside VS Code. The launcher ships as a platform-specific binary (`CodeAIHubLauncher`) and is coupled with the official CEF minimal runtime published by Spotify CDN. The extension downloads, installs, and upgrades the launcher automatically based on `assets/launcher/manifest.json`.
 
-- **Current launcher version:** `CodeAIHubLauncher` 1.1.420 (macOS arm64)
+- **Current launcher version:** `CodeAIHubLauncher` 1.1.444 (macOS arm64)
 - **CEF distribution:** minimal build `141.0.10+g1d65b0d+chromium-141.0.7390.123`
 - **Primary install path:** `~/.codeai-hub/packages/launcher/<platform>/<version>/`
 - **Legacy fallback:** `~/.codeai-hub/cef-launcher/<platform>/<version>/` (mirrored for backward compatibility)
@@ -11,8 +11,8 @@ CodeAI Hub uses a dedicated Chromium Embedded Framework (CEF) launcher to run th
 
 ## Runtime Delivery
 1. On activation the extension calls `ensureCefRuntime` and `ensureLauncherInstalled`.
-2. The manifest entry (`baseUrl` → `file:///Users/oleksandroliinyk/.codeai-hub/releases/`) resolves to a tarball (`CodeAIHubLauncher-macos-arm64-1.1.420.tar.bz2`).
-3. The archive is downloaded or reused from the local cache, verified via SHA-1 and unpacked into `~/.codeai-hub/packages/launcher/darwin-arm64/1.1.420/`.
+2. The manifest entry (`baseUrl` → `file:///Users/oleksandroliinyk/.codeai-hub/releases/`) resolves to a tarball (`CodeAIHubLauncher-macos-arm64-1.1.444.tar.bz2`).
+3. The archive is downloaded or reused from the local cache, verified via SHA-1 and unpacked into `~/.codeai-hub/packages/launcher/darwin-arm64/1.1.444/`.
 4. Installation metadata is written to `install.json`, and downloads are mirrored under `downloads/` for reuse.
 5. The extension generates `config/config.json` (Web Client) and `config/project-manager.json` (Project Manager) next to the binary, preserving any existing keys and updating `uiRoot`, `entry`, `url`, `generatedAt`, `workspacePath`.
 6. The legacy path (`~/.codeai-hub/cef-launcher/...`) is symlinked or copied to keep older tooling working.
@@ -45,25 +45,25 @@ On macOS we use a Thin Bundle + Binary Copy strategy:
   packages/
     launcher/
       darwin-arm64/
-        1.1.420/
+        1.1.444/
           CodeAIHubLauncher.app
           config/
             config.json
             project-manager.json
           install.json
-        current -> 1.1.420
+        current -> 1.1.444
     ui/
       web-client/
-        1.1.420/
-        current -> 1.1.420
+        1.1.444/
+        current -> 1.1.444
       project-manager/
-        1.1.420/
-        current -> 1.1.420
+        1.1.444/
+        current -> 1.1.444
   cef-launcher/
     darwin-arm64/
-      1.1.420/  (legacy mirror)
+      1.1.444/  (legacy mirror)
   releases/
-    CodeAIHubLauncher-macos-arm64-1.1.420.tar.bz2
+    CodeAIHubLauncher-macos-arm64-1.1.444.tar.bz2
 ```
 
 ## Build & Release Pipeline

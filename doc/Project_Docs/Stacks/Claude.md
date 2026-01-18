@@ -1,7 +1,7 @@
 # Стек Claude для CodeAI-Hub
 
 ## Обзор
-Приватный модуль стека Claude (`@codeai-hub/claude-module@1.1.420`) предоставляет серверную интеграцию для CodeAI-Hub: управляет установкой CLI/SDK Anthropic, авторизацией пользователя и адаптацией потоковых событий Claude к унифицированному контракту расширения. Фронтенд вебвью наследуется из open source проекта `claude-code-fusion`, а стек Claude фокусируется на бэкенде и совместимости с мультистековой архитектурой. Начиная с релиза 1.1.326 ProviderVersionService читает версии CLI/SDK из глобального npm; манифест `assets/providers/claude/manifest.json` используется только для установки провайдера.
+Приватный модуль стека Claude (`@codeai-hub/claude-module@1.1.444`) предоставляет серверную интеграцию для CodeAI-Hub: управляет установкой CLI/SDK Anthropic, авторизацией пользователя и адаптацией потоковых событий Claude к унифицированному контракту расширения. Фронтенд вебвью наследуется из open source проекта `claude-code-fusion`, а стек Claude фокусируется на бэкенде и совместимости с мультистековой архитектурой. Начиная с релиза 1.1.326 ProviderVersionService читает версии CLI/SDK из глобального npm; манифест `assets/providers/claude/manifest.json` используется только для установки провайдера. Начиная с 1.1.443 при `bypassPermissions` расширен доступ к директориям (включая домашнюю) для чтения шаблонов из `~/.codeai-hub/templates/**`, а workflow prompts перешли на provider-native file access (без `/read`).
 
 ## Взаимодействие с CodeAI-Hub
 - **Open source расширение** переиспользует React-вебвью и фасады состояния из `claude-code-fusion`, модифицируя их под общий UI.

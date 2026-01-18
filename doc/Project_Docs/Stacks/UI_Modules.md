@@ -1,6 +1,6 @@
 # UI Modules Stack
 
-**Status:** Active (v1.1.420)
+**Status:** Active (v1.1.444)
 **Owner:** Codex
 **Context:** Модульная система UI, позволяющая обновлять интерфейс независимо от VSIX и обеспечивающая единую кодовую базу для VS Code Webview и локального CEF клиента.
 
