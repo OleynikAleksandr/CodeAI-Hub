@@ -51,8 +51,8 @@
 ### Stream: Workflow Steps — CLI tools вместо structured-output (Description/Virtual Simulation/Diagrams)
 1. [DONE] Refactor(core): отключить structured-output контракт для стадий description/virtual_simulation/diagram_* и перейти на file-first — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `refactor(core): switch workflow steps to file-first`
 2. [DONE] Git Commit: `refactor(core): switch workflow steps to file-first` (hash: a80ae3dc)
-3. [TODO] Refactor(project-manager): стартовый «Prompt Pack» за один turn (инструкция + анкета + шаблон + target path) — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit message: `refactor(project-manager): add single-turn prompt pack`
-4. [TODO] Git Commit: `refactor(project-manager): add single-turn prompt pack` (hash: TBD)
+3. [DONE] Refactor(project-manager): стартовый «Prompt Pack» за один turn (инструкция + анкета + шаблон + target path) — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit message: `refactor(project-manager): add single-turn prompt pack`
+4. [DONE] Git Commit: `refactor(project-manager): add single-turn prompt pack` (hash: 92e2151b)
 
 ### Stream: Automation — watcher-driven gates
 1. [TODO] Feat(core): запуск гейтов по событию `workflow.stage.completed` (конфигурируемо) — scope: `packages/core/src/workflow/gates/workflow-gates-runner.ts`, `packages/core/src/workflow/gates/workflow-gates-facade.ts`, `packages/core/src/workflow/gates/workflow-gates-types.ts`; expected commit message: `feat(core): add watcher-driven workflow gates`
