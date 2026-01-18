@@ -25,6 +25,7 @@ const THREAD_ID_SHORT_LENGTH = 8;
 const THINKING_PLACEHOLDER = "<!-- -->";
 const STARTUP_LOCK_ACQUIRE_TIMEOUT_MS = 30_000;
 const STARTUP_LOCK_THREAD_STARTED_TIMEOUT_MS = 30_000;
+const TURN_IDLE_TIMEOUT_MS = 180_000;
 
 type EnqueuedMessage = {
   readonly type: "user_input";
@@ -179,10 +180,7 @@ export class CodexMessageProcessor {
         await this.consumeEventsWithStartupLock(session, events, startupLock);
         return;
       }
-
-      for await (const event of events) {
-        this.dispatchEvent(session, event);
-      }
+      await this.consumeEventsWithIdleTimeout(session, events);
     } catch (error) {
       this.options?.reporter?.error?.("Codex event stream failed", error);
       session.eventEmitter.emit("error", { type: "event_stream", error });
@@ -279,14 +277,60 @@ export class CodexMessageProcessor {
         }
       }
 
-      for await (const event of events) {
-        this.dispatchEvent(session, event);
-      }
+      await this.consumeEventsWithIdleTimeout(session, events);
     } finally {
       if (timer) {
         clearTimeout(timer);
       }
       safeRelease();
+    }
+  }
+
+  private async consumeEventsWithIdleTimeout(
+    session: ActiveSession,
+    events: AsyncGenerator<ThreadEvent>
+  ): Promise<void> {
+    while (true) {
+      const nextPromise = events.next();
+      let timer: NodeJS.Timeout | null = null;
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(
+            new Error(
+              `Codex turn timeout: no events received within ${TURN_IDLE_TIMEOUT_MS}ms (sessionId=${session.sessionId})`
+            )
+          );
+        }, TURN_IDLE_TIMEOUT_MS);
+      });
+      let result: IteratorResult<ThreadEvent>;
+      try {
+        result = (await Promise.race([
+          nextPromise,
+          timeoutPromise,
+        ])) as IteratorResult<ThreadEvent>;
+      } catch (error) {
+        nextPromise.catch(() => {
+          // Ignore late generator failures after timeout.
+        });
+        if (timer) {
+          clearTimeout(timer);
+        }
+        try {
+          await events.return(undefined);
+        } catch {
+          // ignore cancellation errors
+        }
+        throw error;
+      } finally {
+        if (timer) {
+          clearTimeout(timer);
+        }
+      }
+
+      if (result.done) {
+        break;
+      }
+      this.dispatchEvent(session, result.value);
     }
   }
 
