@@ -4,6 +4,9 @@
 - **Workflow templates**: формулировки “следующий шаг” выровнены под последовательность `Description → Virtual Simulation → Module Diagram → Interface Map`.
 - **Sessions UI**: длинные строки/URL и code blocks больше не вылезают за границы сообщений (перенос/скролл).
 
+### Verified
+- **Workflow prompts**: Codex + Claude корректно читают входные файлы по путям (path-first, без `/read`) и пишут `description.md` в file-first runs.
+
 ## [1.1.443] - 2026-01-18
 
 ### Changed
