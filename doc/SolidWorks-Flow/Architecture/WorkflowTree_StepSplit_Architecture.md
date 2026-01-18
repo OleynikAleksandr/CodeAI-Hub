@@ -67,29 +67,25 @@ UI последствия:
 ~/.codeai-hub/templates/
 ├── description/
 │   ├── description-collector-prompt.md
-│   ├── description-collector-schema.json
 │   ├── description-template.md
 │   └── questionnaire-template.md
 ├── virtual_simulation/
 │   ├── virtual-simulation-prompt.md
-│   ├── virtual-simulation-schema.json
 │   └── virtual-simulation-template.md
 ├── diagram_modules/
 │   ├── modules-diagram-prompt.md
-│   ├── modules-diagram-schema.json
 │   └── modules-diagram-template.mmd
 └── diagram_facades/
     ├── facades-graph-prompt.md
-    ├── facades-graph-schema.json
     └── facades-graph-template.mmd
 ```
 
-Старые шаблоны сохраняются как legacy (например `~/.codeai-hub/templates/_legacy/idea-<timestamp>/`) и не используются в новых сессиях.
+Старые шаблоны удалены и не используются в новых сессиях.
 
 ---
 
 ## 7. Миграция и совместимость
-- Старые `idea`‑шаблоны не переиспользуются, но сохраняются как legacy.
+- Старые `idea`‑шаблоны не переиспользуются.
 - Старые runs остаются на диске, но новые сессии используют новые директории.
 - UI и Core обновляются одновременно (gates, контракты, template sync).
 
