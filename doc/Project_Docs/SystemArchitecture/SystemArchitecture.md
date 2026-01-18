@@ -112,7 +112,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Codex turn timeout**: Codex-модуль прерывает зависшие ответы при отсутствии событий > 180s, чтобы UI не зависал без ответа.
 
 ## Recent Changes (v1.1.438 - 2026-01-18)
-- **Workflow schema enforcement**: Core подмешивает stage `outputSchema` для workflow-сессий и на finalize требует `artifacts[]` (minItems=1), чтобы `artifact-upsert` срабатывал даже при отсутствии schema со стороны UI.
+- **Workflow schema enforcement**: Core подмешивает stage `outputSchema` для workflow-сессий и на finalize требует `artifacts[]` (minItems=1), чтобы `artifact-upsert` срабатывал даже при отсутствии schema со стороны UI. Для file-first стадий v1.1.441 `outputSchema` больше не применяется — Core удаляет её из `turnOptions`.
 
 ## Recent Changes (v1.1.431 - 2026-01-17)
 - **Project Manager**: Description workflow-сессия работает в Project Manager (Sessions слева), анкета Description — в Artifacts справа.
