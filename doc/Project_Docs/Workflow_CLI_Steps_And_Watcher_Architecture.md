@@ -1,8 +1,9 @@
 # Workflow: CLI Steps + Watcher (Architecture)
 
-**Status:** Draft
+**Status:** Approved
 **Updated:** 2026-01-18
 **Owner:** Oleksandr + Codex
+**Approval:** 2026-01-18 (user)
 
 ---
 
