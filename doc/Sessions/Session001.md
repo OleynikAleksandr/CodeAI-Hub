@@ -1,20 +1,19 @@
-# Session 001 — Workflow Watcher + UI Live Updates
+# Session 001 — Workflow File-First + Release 1.1.440
 
-**Date:** 2026-01-18 11:58 CET
+**Date:** 2026-01-18 12:38 CET
 **Branch:** main
-**Version:** 1.1.439
+**Version:** 1.1.440
 
 ---
 
 # 1. Work Done in This Session
 
 ## Work summary
-- Архивированы старые отчёты сессий, добавлен отчёт Session144 и приведён в порядок новый `doc/Sessions/Session001.md`.
-- Утверждена архитектура перехода на file-first workflow (CLI + Watcher) и синхронизированы базовые архитектурные документы.
-- Реализован каркас Workflow Watcher, хранение состояния, резолвер путей артефактов и allowlist для file-first записи.
-- Добавлены Core API для workflow state/events и UI-гейтинг в Project Manager.
-- Реализованы live-обновления UI через polling workflow events + обновления todo-plan после каждой микрозадачи.
-- Гейты/сборки: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:project-manager`.
+- Перевели workflow стадии на file-first в Core (outputSchema не применяется), обновили Architecture/SystemArchitecture.
+- В Project Manager внедрён single-turn prompt pack (инструкция + анкета + шаблон + target path) и обновлён текст анкеты.
+- Добавлен модуль workflow gates runner (emits `workflow.gate.*` на `workflow.stage.completed`).
+- Обновлены README/CHANGELOG под релиз 1.1.440 и выполнен полный цикл релиза.
+- Гейты/сборки: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:project-manager`, `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`.
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
@@ -38,6 +37,16 @@
 - `659cbff1 docs: update todo plan for workflow gating`
 - `a30d1450 feat(project-manager): live workflow updates`
 - `08f34132 docs: update todo plan for workflow live updates`
+- `67d9d004 docs: update session 001 report`
+- `a80ae3dc refactor(core): switch workflow steps to file-first`
+- `e006d427 docs: update todo plan for file-first core`
+- `92e2151b refactor(project-manager): add single-turn prompt pack`
+- `83e6e408 docs: update todo plan for prompt pack`
+- `3695d33b feat(core): add watcher-driven workflow gates`
+- `13d8d92d docs: update todo plan for workflow gates`
+- `aa48fe35 docs: prepare release 1.1.440`
+- `73c8552a feat: v1.1.440 - workflow file-first + watcher`
+- `8ce52750 docs: update todo plan for release 1.1.440`
 
 ---
 
@@ -51,6 +60,5 @@
 5. `doc/Sessions/Session001.md` (THIS REPORT)
 
 ## Plans for next session
-- Stream: Workflow Steps — переключить Description/Virtual Simulation/Diagrams на file-first (Core refactor).
-- Stream: Project Manager — собрать single-turn Prompt Pack (инструкция + анкета + шаблон + target path).
-- Подготовить основу для watcher-driven gates (после стабилизации file-first шагов).
+- Выполнить manual verification: description → virtual_simulation → diagram_modules → diagram_facades (Codex + Claude, file-first).
+- Зафиксировать результаты в документации и закрыть remaining TODO/commit из Stream: Verification.
