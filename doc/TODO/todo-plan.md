@@ -43,8 +43,8 @@
 2. [DONE] Git Commit: `feat(core): expose workflow state and events` (hash: e472248d)
 
 ### Stream: UI (Project Manager) — state-driven gating
-1. [TODO] Feat(project-manager): читать workflow state из Core и визуализировать гейтинг в дереве/панелях — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `feat(project-manager): gate workflow from core state`
-2. [TODO] Git Commit: `feat(project-manager): gate workflow from core state` (hash: TBD)
+1. [DONE] Feat(project-manager): читать workflow state из Core и визуализировать гейтинг в дереве/панелях — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `feat(project-manager): gate workflow from core state`
+2. [DONE] Git Commit: `feat(project-manager): gate workflow from core state` (hash: a281b353)
 3. [TODO] Feat(project-manager): подписка на workflow события (обновление UI без перезапуска) — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/workflow-events-client.ts`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `feat(project-manager): live workflow updates`
 4. [TODO] Git Commit: `feat(project-manager): live workflow updates` (hash: TBD)
 
