@@ -23,8 +23,8 @@
 ### Stream: Design approval + docs alignment
 1. [DONE] Docs: согласовать архитектуру перехода (decision: no structured-output для стадий + Watcher) — scope: `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`; expected commit message: `docs: approve workflow cli+watcher architecture`
 2. [DONE] Git Commit: `docs: approve workflow cli+watcher architecture` (hash: b1bcd53d)
-3. [TODO] Docs: синхронизировать общие архитектурные документы под новый подход — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: document workflow file-first artifacts`
-4. [TODO] Git Commit: `docs: document workflow file-first artifacts` (hash: TBD)
+3. [DONE] Docs: синхронизировать общие архитектурные документы под новый подход — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: document workflow file-first artifacts`
+4. [DONE] Git Commit: `docs: document workflow file-first artifacts` (hash: fdf9eec1)
 
 ### Stream: Core — Watcher foundation (events + state)
 1. [TODO] Feat(core): добавить каркас Workflow Watcher (FS watch + event bus) — scope: `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/workflow/watcher/workflow-watcher-facade.ts`, `packages/core/src/workflow/watcher/watcher-types.ts`; expected commit message: `feat(core): add workflow watcher foundation`
