@@ -97,3 +97,19 @@
 ### Stream: Release build
 1. [DONE] Release: полный цикл релиза после закрытия всех стримов (clean tree → build-all → build-release) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/SessionXXX.md`; expected commit message: `feat: v1.1.441 - workflow templates cleanup`
 2. [DONE] Git Commit: `feat: v1.1.441 - workflow templates cleanup` (hash: 514b6e49)
+
+---
+
+## Phase 60 — Workflow prompt pack path-first + remove Core auto-attach (owner: Oleksandr, updated: 2026-01-18)
+
+### Stream: Core — remove auto-attach
+1. [DONE] Удалить auto-attach (workspace files + pre_read_documents), отправлять в провайдер ровно user content — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-auto-attach*.ts`, `packages/core/src/remote-bridge/handlers/idea-questionnaire-*.ts`; expected commit message: `refactor(workflow): remove core auto-attach + path-first prompt pack`
+2. [DONE] Git Commit: `refactor(workflow): remove core auto-attach + path-first prompt pack` (hash: d9c47519)
+
+### Stream: Project Manager — prompt pack path-first
+1. [DONE] Сократить prompt pack до путей (анкета/шаблон/target path), без инлайна файлов — scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`; expected commit message: `refactor(workflow): remove core auto-attach + path-first prompt pack`
+2. [DONE] Git Commit: `refactor(workflow): remove core auto-attach + path-first prompt pack` (hash: d9c47519)
+
+### Stream: Release build
+1. [DONE] Release: полный цикл релиза (clean tree → build-all → build-release) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/SessionXXX.md`; expected commit message: `feat: v1.1.442 - workflow path-first + remove core auto-attach`
+2. [DONE] Git Commit: `feat: v1.1.442 - workflow path-first + remove core auto-attach` (hash: 012286d5)
