@@ -27,6 +27,21 @@ const WORKFLOW_STAGE_FILES = new Map<WorkflowStageId, WorkflowArtifactFileName>(
 const isWorkflowStage = (value: string): value is WorkflowStageId =>
   WORKFLOW_STAGE_SET.has(value as WorkflowStageId);
 
+const normalizeRelativePath = (value: string): string => {
+  const normalized = value.replace(/\\/g, "/").trim();
+  const trimmed = normalized.startsWith("./")
+    ? normalized.slice(2)
+    : normalized;
+  return path.posix.normalize(trimmed);
+};
+
+const resolveWorkflowRootPrefix = (workspaceSlug: string): string | null => {
+  if (!SLUG_RE.test(workspaceSlug)) {
+    return null;
+  }
+  return `.codeai-hub/${workspaceSlug}/`;
+};
+
 const resolveSafeArtifactPath = (
   workspaceRoot: string,
   relativePath: string
@@ -37,6 +52,18 @@ const resolveSafeArtifactPath = (
     return null;
   }
   return resolvedPath;
+};
+
+export const isWorkflowWorkspacePathAllowed = (params: {
+  readonly relativePath: string;
+  readonly workspaceSlug: string;
+}): boolean => {
+  const prefix = resolveWorkflowRootPrefix(params.workspaceSlug);
+  if (!prefix) {
+    return false;
+  }
+  const normalizedPath = normalizeRelativePath(params.relativePath);
+  return normalizedPath.startsWith(prefix);
 };
 
 export const resolveWorkflowArtifactPaths = (
