@@ -14,6 +14,11 @@ type WorkflowContractPayload = {
   readonly prompt: string;
   readonly schema: Record<string, unknown>;
   readonly template: string;
+  readonly paths: {
+    readonly prompt: string;
+    readonly template: string;
+    readonly questionnaire?: string;
+  };
   readonly questionnaire?: {
     readonly templateMarkdown: string;
   };
@@ -129,6 +134,11 @@ const buildWorkflowContract = async (
     prompt,
     schema: resolvedSchema,
     template,
+    paths: {
+      prompt: resolved.prompt,
+      template: resolved.template,
+      questionnaire: resolved.questionnaire ?? undefined,
+    },
     questionnaire: paths.questionnaire
       ? { templateMarkdown: questionnaireMarkdown }
       : undefined,

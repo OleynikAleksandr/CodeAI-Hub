@@ -3,7 +3,7 @@
 **Version:** 0.6.0
 **Last Updated:** 2026-01-18
 **Status:** Active reference
-**Release Focus:** v1.1.441 — Workflow templates cleanup (file-first prompts).
+**Release Focus:** v1.1.442 — Workflow prompt pack path-first + remove Core auto-attach.
 
 ---
 

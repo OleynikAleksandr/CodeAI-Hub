@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.441 (18.01.2026) — Workflow templates cleanup (file-first prompts). В работе: v1.1.442 — workflow verification + release follow-ups.
+**Состояние:** релиз 1.1.442 (18.01.2026) — Workflow prompt pack path-first + remove Core auto-attach. В работе: v1.1.443 — workflow verification + follow-ups.
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
@@ -102,6 +102,11 @@ CodeAI-Hub — автономная платформа управления AI-�
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
 
+## Recent Changes (v1.1.442 - 2026-01-18)
+- **Workflow prompt pack (path-first)**: Project Manager отправляет короткий стартовый промпт с путями к анкете/шаблону/целевому файлу; агент читает файлы сам.
+- **Core**: полностью удалён auto-attach (workspace files + pre_read_documents), в провайдер уходит ровно пользовательский текст.
+- **Workflow prompts**: file-first промпты стадий упрощены (без JSON-инструкций, фокус на чтение файлов и запись артефакта).
+
 ## Recent Changes (v1.1.441 - 2026-01-18)
 - **Workflow prompts (file-first)**: обновлены промпты стадий Description/Virtual Simulation/Diagrams — без structured output, запись в файл по целевому пути.
 - **Workflow templates cleanup**: удалены schema-шаблоны для workflow стадий, template sync больше не архивирует legacy-папки.
@@ -112,7 +117,7 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Workflow gates runner**: добавлен модуль запуска гейтов по событию `workflow.stage.completed` с эмиссией `workflow.gate.*` событий.
 - **Codex/Claude structured output**: `question*` слоты в `artifacts[]` трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по schema allowlist.
 
-## Planned Changes (v1.1.441 - 2026-01-18)
+## Planned Changes (v1.1.443 - 2026-01-18)
 - **Workflow verification**: ручная проверка file-first стадий на Codex/Claude и фиксация результатов.
 
 ## Recent Changes (v1.1.439 - 2026-01-18)

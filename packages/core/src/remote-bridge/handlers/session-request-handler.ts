@@ -8,9 +8,6 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { type BridgeEvent, serializeSession } from "../types";
 import { maybeCreateAutoRun } from "./auto-run-service";
-import { detectQuestionnairePath } from "./idea-questionnaire-path-detector";
-import { attachPreReadDocuments } from "./idea-questionnaire-pre-read-attacher";
-import { autoAttachWorkspaceFiles } from "./workspace-auto-attach";
 
 type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
@@ -535,28 +532,6 @@ export class SessionRequestHandler {
       return;
     }
 
-    const questionnairePath = detectQuestionnairePath(content);
-    const preReadResult = questionnairePath
-      ? await attachPreReadDocuments(session.workspacePath, questionnairePath)
-      : { contentPrefix: "", attachedPaths: [] };
-
-    if (preReadResult.attachedPaths.length > 0) {
-      this.logger.info("Auto-attached questionnaire pre-read documents", {
-        sessionId,
-        attachedPaths: preReadResult.attachedPaths,
-      });
-    }
-
-    const providerContentResult = await autoAttachWorkspaceFiles(
-      session.workspacePath,
-      content
-    );
-    if (providerContentResult.didAttach) {
-      this.logger.info("Auto-attached workspace files to provider message", {
-        sessionId,
-        attachedPaths: providerContentResult.attachedPaths,
-      });
-    }
     const userMessage = this.sessionManager.appendMessage(
       sessionId,
       "user",
@@ -586,9 +561,6 @@ export class SessionRequestHandler {
     }
 
     try {
-      const providerContent = preReadResult.contentPrefix
-        ? `${preReadResult.contentPrefix}\n${providerContentResult.content}`
-        : providerContentResult.content;
       const workflowTurnOptions = await resolveWorkflowTurnOptions({
         stage: session.stage,
         content,
@@ -607,7 +579,7 @@ export class SessionRequestHandler {
       }
       await adapter.sendMessage(
         binding.providerSessionId,
-        providerContent,
+        content,
         providerTurnOptions
       );
     } catch (error) {

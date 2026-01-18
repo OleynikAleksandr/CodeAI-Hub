@@ -5,12 +5,10 @@ import { normalizeIdeaCollectorSchema } from "../../ui/src/services/idea-collect
 import { notifyMissingIdeaContext } from "../../ui/src/services/idea-questionnaire-messages";
 import {
   isRecord,
-  isWorkspaceFileResponse,
   joinUrl,
   resolveCoreHttpUrl,
   resolveWorkspaceName,
   toWorkspaceSlug,
-  type WorkspaceFileResponse,
 } from "./description-questionnaire-utils";
 import { buildWorkflowPromptPack } from "./prompt-pack-builder";
 
@@ -21,16 +19,20 @@ const WORKFLOW_CONTRACT_ENDPOINTS = {
   diagram_modules: "/api/v1/orchestrator/diagram-modules-contract",
   diagram_facades: "/api/v1/orchestrator/diagram-facades-contract",
 } as const;
-const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const WORKFLOW_FILE_FIRST_FALLBACK_PROMPT =
   "Собери артефакт на основе анкеты и шаблона. " +
-  "Не используй structured output. Запиши результат файлом по целевому пути.";
+  "Запиши результат файлом по целевому пути.";
 export type WorkflowStageId = keyof typeof WORKFLOW_CONTRACT_ENDPOINTS;
 
 type WorkflowContractSnapshot = {
   readonly prompt: string;
   readonly schema: Record<string, unknown>;
   readonly template: string;
+  readonly paths: {
+    readonly prompt: string;
+    readonly template: string;
+    readonly questionnaire?: string;
+  };
 };
 type SessionCreatedPayload = {
   readonly id: string;
@@ -60,7 +62,19 @@ const normalizeWorkflowContract = (
       : null;
   const template =
     typeof payload.template === "string" ? payload.template : "";
+  const pathsRaw = isRecord(payload.paths) ? payload.paths : null;
+  const promptPath =
+    pathsRaw && typeof pathsRaw.prompt === "string" ? pathsRaw.prompt : null;
+  const templatePath =
+    pathsRaw && typeof pathsRaw.template === "string" ? pathsRaw.template : null;
+  const questionnairePath =
+    pathsRaw && typeof pathsRaw.questionnaire === "string"
+      ? pathsRaw.questionnaire
+      : undefined;
   if (!(prompt && schema)) {
+    return null;
+  }
+  if (!(promptPath && templatePath)) {
     return null;
   }
   return {
@@ -70,6 +84,11 @@ const normalizeWorkflowContract = (
       template.trim().length > 0 ? template : null
     ),
     template,
+    paths: {
+      prompt: promptPath,
+      template: templatePath,
+      questionnaire: questionnairePath,
+    },
   };
 };
 const loadWorkflowContract = async (
@@ -80,6 +99,7 @@ const loadWorkflowContract = async (
     prompt: WORKFLOW_FILE_FIRST_FALLBACK_PROMPT,
     schema: normalizeIdeaCollectorSchema(IDEA_COLLECTOR_FALLBACK_SCHEMA, null),
     template: "",
+    paths: { prompt: "", template: "" },
   };
   if (!httpUrl) {
     return fallback;
@@ -96,30 +116,6 @@ const loadWorkflowContract = async (
     return normalizeWorkflowContract(payload) ?? fallback;
   } catch {
     return fallback;
-  }
-};
-const loadWorkspaceFile = async (params: {
-  readonly sessionId: string;
-  readonly path: string;
-}): Promise<WorkspaceFileResponse | null> => {
-  const httpUrl = resolveCoreHttpUrl();
-  try {
-    const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: params.sessionId,
-        path: params.path,
-        maxBytes: 300_000,
-      }),
-    });
-    if (!response.ok) {
-      return null;
-    }
-    const payload = (await response.json()) as unknown;
-    return isWorkspaceFileResponse(payload) ? payload : null;
-  } catch {
-    return null;
   }
 };
 const extractSessionCreatedPayload = (
@@ -269,21 +265,14 @@ export class IdeaCollectorSubmitService {
     }
 
     const contract = await loadWorkflowContract(stage);
-    const questionnaire = await loadWorkspaceFile({
-      sessionId: session.id,
-      path: params.questionnairePath,
-    });
     const promptPack = buildWorkflowPromptPack({
       stage,
       workspacePath: params.workspacePath,
       workspaceSlug: resolvedInitiativeSlug,
       runSlug: session.runSlug,
       prompt: contract.prompt,
-      template: contract.template,
+      templatePath: contract.paths.template,
       questionnairePath: params.questionnairePath,
-      questionnaireContent: questionnaire?.content ?? "",
-      questionnaireTruncated: questionnaire?.truncated ?? false,
-      questionnaireMaxBytes: questionnaire?.maxBytes ?? 0,
     });
 
     api.sendSessionMessage(session.id, promptPack.content);
