@@ -29,8 +29,8 @@
 ### Stream: Core — Watcher foundation (events + state)
 1. [DONE] Feat(core): добавить каркас Workflow Watcher (FS watch + event bus) — scope: `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/workflow/watcher/workflow-watcher-facade.ts`, `packages/core/src/workflow/watcher/watcher-types.ts`; expected commit message: `feat(core): add workflow watcher foundation`
 2. [DONE] Git Commit: `feat(core): add workflow watcher foundation` (hash: 19f50249)
-3. [TODO] Feat(core): хранение/обновление workflow state на основании событий watcher (атомарно) — scope: `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/workflow/state/workflow-state-facade.ts`, `packages/core/src/workflow/state/workflow-state-types.ts`; expected commit message: `feat(core): persist workflow state from watcher`
-4. [TODO] Git Commit: `feat(core): persist workflow state from watcher` (hash: TBD)
+3. [DONE] Feat(core): хранение/обновление workflow state на основании событий watcher (атомарно) — scope: `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/workflow/state/workflow-state-facade.ts`, `packages/core/src/workflow/state/workflow-state-types.ts`; expected commit message: `feat(core): persist workflow state from watcher`
+4. [DONE] Git Commit: `feat(core): persist workflow state from watcher` (hash: f15135f7)
 
 ### Stream: Core — Paths + allowlist для file-first артефактов
 1. [TODO] Feat(core): единый резолвер путей артефактов (stage+runSlug → абсолютный путь) — scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/paths/workflow-paths-facade.ts`, `packages/core/src/workflow/paths/workflow-paths-types.ts`; expected commit message: `feat(core): add workflow artifact path resolver`
