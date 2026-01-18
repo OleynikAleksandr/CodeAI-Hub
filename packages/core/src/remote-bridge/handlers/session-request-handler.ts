@@ -8,12 +8,6 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { type BridgeEvent, serializeSession } from "../types";
 import { maybeCreateAutoRun } from "./auto-run-service";
-import {
-  buildDescriptionContract,
-  buildDiagramFacadesContract,
-  buildDiagramModulesContract,
-  buildVirtualSimulationContract,
-} from "./idea-contract-service";
 import { detectQuestionnairePath } from "./idea-questionnaire-path-detector";
 import { attachPreReadDocuments } from "./idea-questionnaire-pre-read-attacher";
 import { autoAttachWorkspaceFiles } from "./workspace-auto-attach";
@@ -81,6 +75,7 @@ type WorkflowTurnOptionsResolution = {
   readonly appliedSchema: boolean;
   readonly source: "turnOptions" | "template" | "none";
   readonly finalize: boolean;
+  readonly stageMatched: boolean;
 };
 
 const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
@@ -93,38 +88,17 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
 const FINALIZE_TRIGGER_PATTERN =
   /(^|[\s,.;:!?])(?:ок|ok|утверждаю|approve|approved)(?=$|[\s,.;:!?])/i;
 
-const workflowSchemaCache = new Map<WorkflowStageId, Record<string, unknown>>();
-const workflowSchemaPending = new Map<
-  WorkflowStageId,
-  Promise<Record<string, unknown> | null>
->();
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const cloneSchema = (
-  schema: Record<string, unknown>
-): Record<string, unknown> =>
-  typeof globalThis.structuredClone === "function"
-    ? (globalThis.structuredClone(schema) as Record<string, unknown>)
-    : (JSON.parse(JSON.stringify(schema)) as Record<string, unknown>);
-
-const enforceArtifactsRequired = (
-  schema: Record<string, unknown>
-): Record<string, unknown> => {
-  const next = cloneSchema(schema);
-  const properties = next.properties;
-  if (isRecord(properties)) {
-    const artifacts = properties.artifacts;
-    if (isRecord(artifacts)) {
-      artifacts.minItems = 1;
-    }
-    const questions = properties.questions;
-    if (isRecord(questions)) {
-      questions.maxItems = 0;
-    }
+const stripOutputSchema = (
+  turnOptions?: Record<string, unknown>
+): Record<string, unknown> | undefined => {
+  if (!turnOptions) {
+    return;
   }
-  return next;
+  if (!("outputSchema" in turnOptions)) {
+    return turnOptions;
+  }
+  const { outputSchema: _ignored, ...rest } = turnOptions;
+  return Object.keys(rest).length > 0 ? rest : undefined;
 };
 
 const resolveWorkflowStage = (
@@ -142,45 +116,11 @@ const isFinalizeTrigger = (content: string): boolean => {
   return FINALIZE_TRIGGER_PATTERN.test(normalized);
 };
 
-const loadWorkflowSchema = async (
-  stage: WorkflowStageId
-): Promise<Record<string, unknown> | null> => {
-  const cached = workflowSchemaCache.get(stage);
-  if (cached) {
-    return cached;
-  }
-  const pending = workflowSchemaPending.get(stage);
-  if (pending) {
-    return pending;
-  }
-
-  const pendingSchema = (async () => {
-    let builder = buildDiagramFacadesContract;
-    if (stage === "description") {
-      builder = buildDescriptionContract;
-    } else if (stage === "virtual_simulation") {
-      builder = buildVirtualSimulationContract;
-    } else if (stage === "diagram_modules") {
-      builder = buildDiagramModulesContract;
-    }
-    const contract = await builder();
-    return contract?.schema ?? null;
-  })();
-
-  workflowSchemaPending.set(stage, pendingSchema);
-  const schema = await pendingSchema;
-  workflowSchemaPending.delete(stage);
-  if (schema) {
-    workflowSchemaCache.set(stage, schema);
-  }
-  return schema;
-};
-
-const resolveWorkflowTurnOptions = async (params: {
+const resolveWorkflowTurnOptions = (params: {
   readonly stage: string | null | undefined;
   readonly content: string;
   readonly turnOptions?: Record<string, unknown>;
-}): Promise<WorkflowTurnOptionsResolution> => {
+}): WorkflowTurnOptionsResolution => {
   const stage = resolveWorkflowStage(params.stage);
   const shouldFinalize = isFinalizeTrigger(params.content);
   if (!stage) {
@@ -189,39 +129,16 @@ const resolveWorkflowTurnOptions = async (params: {
       appliedSchema: false,
       source: "none",
       finalize: shouldFinalize,
+      stageMatched: false,
     };
   }
 
-  const existingSchema = isRecord(params.turnOptions?.outputSchema)
-    ? (params.turnOptions?.outputSchema as Record<string, unknown>)
-    : null;
-  const baseSchema = existingSchema ?? (await loadWorkflowSchema(stage));
-  if (!baseSchema) {
-    return {
-      turnOptions: params.turnOptions,
-      appliedSchema: false,
-      source: "none",
-      finalize: shouldFinalize,
-    };
-  }
-
-  if (!shouldFinalize && existingSchema) {
-    return {
-      turnOptions: params.turnOptions,
-      appliedSchema: false,
-      source: "turnOptions",
-      finalize: false,
-    };
-  }
-
-  const outputSchema = shouldFinalize
-    ? enforceArtifactsRequired(baseSchema)
-    : baseSchema;
   return {
-    turnOptions: { ...(params.turnOptions ?? {}), outputSchema },
-    appliedSchema: true,
-    source: existingSchema ? "turnOptions" : "template",
+    turnOptions: stripOutputSchema(params.turnOptions),
+    appliedSchema: false,
+    source: "none",
     finalize: shouldFinalize,
+    stageMatched: true,
   };
 };
 
@@ -677,8 +594,9 @@ export class SessionRequestHandler {
         content,
         turnOptions,
       });
-      const providerTurnOptions =
-        workflowTurnOptions.turnOptions ?? turnOptions;
+      const providerTurnOptions = workflowTurnOptions.stageMatched
+        ? workflowTurnOptions.turnOptions
+        : turnOptions;
       if (workflowTurnOptions.appliedSchema) {
         this.logger.info("Applied workflow output schema", {
           sessionId,
