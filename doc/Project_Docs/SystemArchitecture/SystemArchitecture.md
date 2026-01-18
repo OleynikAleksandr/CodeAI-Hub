@@ -117,8 +117,14 @@ CodeAI-Hub — автономная платформа управления AI-�
 - **Workflow gates runner**: добавлен модуль запуска гейтов по событию `workflow.stage.completed` с эмиссией `workflow.gate.*` событий.
 - **Codex/Claude structured output**: `question*` слоты в `artifacts[]` трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по schema allowlist.
 
-## Planned Changes (v1.1.443 - 2026-01-18)
-- **Workflow verification**: ручная проверка file-first стадий на Codex/Claude и фиксация результатов.
+## Recent Changes (v1.1.444 - 2026-01-18)
+- **Workflow templates**: формулировки “следующий шаг” выровнены под последовательность `Description → Virtual Simulation → Module Diagram → Interface Map`.
+- **Sessions UI**: длинные строки/URL и code blocks больше не вылезают за границы сообщений (перенос/скролл).
+
+## Recent Changes (v1.1.443 - 2026-01-18)
+- **Workflow prompts**: file-first промпты больше не просят `/read`, а читают файлы напрямую средствами провайдера.
+- **Claude**: при `bypassPermissions` добавлена домашняя директория пользователя в `additionalDirectories` (для чтения шаблонов из `~/.codeai-hub/templates/**`).
+- **Build scripts**: добавлен флаг `--allow-dirty` для `build-all.sh`/`build-release.sh` (опционально; по умолчанию требования “clean tree” сохранены).
 
 ## Recent Changes (v1.1.439 - 2026-01-18)
 - **Codex turn timeout**: Codex-модуль прерывает зависшие ответы при отсутствии событий > 180s, чтобы UI не зависал без ответа.
