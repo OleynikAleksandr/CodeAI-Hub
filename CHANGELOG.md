@@ -1,3 +1,10 @@
+## [1.1.441] - 2026-01-18
+
+### Changed
+- **Workflow prompts (file-first)**: обновлены промпты для Description/Virtual Simulation/Diagrams — без structured output, с явной записью файла по целевому пути.
+- **Workflow templates**: schema-шаблоны для workflow стадий удалены из bundled templates; template sync больше не архивирует legacy-папки.
+- **Project Manager messaging**: fallback prompt выровнен под file-first, outputSchema не отправляется для workflow стадий.
+
 ## [1.1.440] - 2026-01-18
 
 ### Added
