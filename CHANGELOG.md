@@ -1,3 +1,8 @@
+## [1.1.438] - 2026-01-18
+
+### Fixed
+- **Workflow schema enforcement**: Core подставляет stage `outputSchema` и требует `artifacts[]` на finalize, чтобы `artifact-upsert` срабатывал даже при отсутствии schema со стороны UI.
+
 ## [1.1.437] - 2026-01-17
 
 ### Fixed
