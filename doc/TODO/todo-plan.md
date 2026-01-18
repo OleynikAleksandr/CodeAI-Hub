@@ -95,5 +95,5 @@
 6. [DONE] Git Commit: `docs: update agent package templates` (hash: c95867b9)
 
 ### Stream: Release build
-1. [TODO] Release: полный цикл релиза после закрытия всех стримов (clean tree → build-all → build-release) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/SessionXXX.md`; expected commit message: `feat: v1.1.441 - workflow templates cleanup`
-2. [TODO] Git Commit: `feat: v1.1.441 - workflow templates cleanup` (hash: TBD)
+1. [DONE] Release: полный цикл релиза после закрытия всех стримов (clean tree → build-all → build-release) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/SessionXXX.md`; expected commit message: `feat: v1.1.441 - workflow templates cleanup`
+2. [DONE] Git Commit: `feat: v1.1.441 - workflow templates cleanup` (hash: 514b6e49)
