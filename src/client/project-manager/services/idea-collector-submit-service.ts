@@ -1,6 +1,5 @@
 import type { ProviderStackId } from "../../../types/provider";
 import { api } from "../api";
-import { IDEA_KICKOFF_PROMPT } from "../../ui/src/app-host/idea-kickoff-prompt";
 import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "../../ui/src/services/idea-collector-fallback-schema";
 import { normalizeIdeaCollectorSchema } from "../../ui/src/services/idea-collector-schema-utils";
 import { notifyMissingIdeaContext } from "../../ui/src/services/idea-questionnaire-messages";
@@ -23,6 +22,9 @@ const WORKFLOW_CONTRACT_ENDPOINTS = {
   diagram_facades: "/api/v1/orchestrator/diagram-facades-contract",
 } as const;
 const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
+const WORKFLOW_FILE_FIRST_FALLBACK_PROMPT =
+  "Собери артефакт на основе анкеты и шаблона. " +
+  "Не используй structured output. Запиши результат файлом по целевому пути.";
 export type WorkflowStageId = keyof typeof WORKFLOW_CONTRACT_ENDPOINTS;
 
 type WorkflowContractSnapshot = {
@@ -75,7 +77,7 @@ const loadWorkflowContract = async (
 ): Promise<WorkflowContractSnapshot> => {
   const httpUrl = resolveCoreHttpUrl();
   const fallback = {
-    prompt: IDEA_KICKOFF_PROMPT,
+    prompt: WORKFLOW_FILE_FIRST_FALLBACK_PROMPT,
     schema: normalizeIdeaCollectorSchema(IDEA_COLLECTOR_FALLBACK_SCHEMA, null),
     template: "",
   };
