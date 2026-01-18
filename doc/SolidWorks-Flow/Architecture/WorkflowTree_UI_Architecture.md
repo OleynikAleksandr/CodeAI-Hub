@@ -250,20 +250,16 @@ MVP-минимум:
 ### 9.2. Template namespace (новый)
 Bundled‑шаблоны синхронизируются в `~/.codeai-hub/templates/` по шагам:
 - `description/description-collector-prompt.md`
-- `description/description-collector-schema.json`
 - `description/description-template.md`
 - `description/questionnaire-template.md`
 - `virtual_simulation/virtual-simulation-prompt.md`
-- `virtual_simulation/virtual-simulation-schema.json`
 - `virtual_simulation/virtual-simulation-template.md`
 - `diagram_modules/modules-diagram-prompt.md`
-- `diagram_modules/modules-diagram-schema.json`
 - `diagram_modules/modules-diagram-template.mmd`
 - `diagram_facades/facades-graph-prompt.md`
-- `diagram_facades/facades-graph-schema.json`
 - `diagram_facades/facades-graph-template.mmd`
 
-Старые шаблоны (`full-development-flow/idea/...`) помечаются как legacy и не используются.
+Старые шаблоны (`full-development-flow/idea/...`) удалены и не используются.
 
 ### 9.3. Upsert протокол (Artifact Upsert Protocol, Variant B)
 Сохранение артефактов выполняется через Core endpoint:
