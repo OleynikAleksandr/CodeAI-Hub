@@ -1,6 +1,6 @@
-# Session 001 — Pivot: File-first workflow + Watcher
+# Session 001 — Workflow Watcher + UI Live Updates
 
-**Date:** 2026-01-18 10:57 CET
+**Date:** 2026-01-18 11:58 CET
 **Branch:** main
 **Version:** 1.1.439
 
@@ -9,17 +9,35 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Diagnosed recurring structured-output failure mode: агенты возвращали вопросы как `artifacts[]` со слотами `question*`, что ломало Core allowlist (`Unsupported artifact slot: question1`).
-- Added guards in provider modules to treat `question*` artifacts as questions (not upserts) for both Codex and Claude.
-- Decision: отказаться от structured-output для стадий Description/Virtual Simulation/Diagrams и перейти на file-first (агент пишет артефакт файлом через CLI tools); управление состоянием и гейтинг — через Workflow Watcher.
-- Archived старый `doc/TODO/todo-plan.md` и создал новый план + архитектурный документ под CLI+Watcher подход.
+- Архивированы старые отчёты сессий, добавлен отчёт Session144 и приведён в порядок новый `doc/Sessions/Session001.md`.
+- Утверждена архитектура перехода на file-first workflow (CLI + Watcher) и синхронизированы базовые архитектурные документы.
+- Реализован каркас Workflow Watcher, хранение состояния, резолвер путей артефактов и allowlist для file-first записи.
+- Добавлены Core API для workflow state/events и UI-гейтинг в Project Manager.
+- Реализованы live-обновления UI через polling workflow events + обновления todo-plan после каждой микрозадачи.
+- Гейты/сборки: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:project-manager`.
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
-- `9d45c712 fix(codex): treat question artifacts as questions`
-- `79ad788c fix(claude): treat question artifacts as questions`
-- `b51e145c docs: update todo plan for question artifact guard`
-- `31a27c38 docs: plan switch workflow to file-first + watcher`
+- `e070e9df docs: add session 144 report`
+- `fbb9b3eb Перенес в архив отчеты`
+- `b1bcd53d docs: approve workflow cli+watcher architecture`
+- `bd45f57e docs: update todo plan for workflow approval`
+- `fdf9eec1 docs: document workflow file-first artifacts`
+- `c9c418e1 docs: update todo plan for workflow docs`
+- `19f50249 feat(core): add workflow watcher foundation`
+- `7f000832 docs: update todo plan for workflow watcher`
+- `f15135f7 feat(core): persist workflow state from watcher`
+- `0061de2d docs: update todo plan for workflow state`
+- `644c0492 feat(core): add workflow artifact path resolver`
+- `687c64f1 docs: update todo plan for workflow paths`
+- `593cc1a3 feat(core): allow file-first workflow artifact writes`
+- `0463228c docs: update todo plan for workflow allowlist`
+- `e472248d feat(core): expose workflow state and events`
+- `6f1e2163 docs: update todo plan for workflow api`
+- `a281b353 feat(project-manager): gate workflow from core state`
+- `659cbff1 docs: update todo plan for workflow gating`
+- `a30d1450 feat(project-manager): live workflow updates`
+- `08f34132 docs: update todo plan for workflow live updates`
 
 ---
 
@@ -30,9 +48,9 @@
 2. `doc/Architecture/Architecture.md`
 3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session144.md` (THIS REPORT)
+5. `doc/Sessions/Session001.md` (THIS REPORT)
 
 ## Plans for next session
-- Утвердить архитектурный документ CLI+Watcher (зафиксировать decision и границы ответственности Core/UI).
-- Начать Phase 57: каркас Workflow Watcher (events + state) в Core и API для UI.
-- Перевести Description/Virtual Simulation/Diagrams на file-first (Prompt Pack в 1 turn + запись артефакта в runs).
+- Stream: Workflow Steps — переключить Description/Virtual Simulation/Diagrams на file-first (Core refactor).
+- Stream: Project Manager — собрать single-turn Prompt Pack (инструкция + анкета + шаблон + target path).
+- Подготовить основу для watcher-driven gates (после стабилизации file-first шагов).
