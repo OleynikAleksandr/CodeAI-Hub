@@ -7,7 +7,7 @@
 export const DiagramFacadesAgentFacade = {
   /**
    * Build the complete contract for the Facades Diagram agent.
-   * Returns prompt, schema, template, output paths, and version.
+   * Returns prompt, template, output paths, and version.
    *
    * @returns Contract payload or null if required files are missing
    */
