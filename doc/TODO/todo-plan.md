@@ -98,4 +98,4 @@
 
 ### Stream: Codex watchdog
 1. [DONE] Fix(codex): прерывать зависший поток событий при отсутствии активности > 180s — scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(codex): add turn timeout guard`
-2. [DONE] Git Commit: `fix(codex): add turn timeout guard` (hash: TBD)
+2. [DONE] Git Commit: `fix(codex): add turn timeout guard` (hash: 07b2ce53)
