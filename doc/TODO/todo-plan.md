@@ -69,3 +69,31 @@
 ### Stream: Release build
 1. [DONE] Release: полный цикл релиза после закрытия всех стримов (clean tree → build-all → build-release) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/SessionXXX.md`; expected commit message: `feat: v1.1.440 - workflow file-first + watcher`
 2. [DONE] Git Commit: `feat: v1.1.440 - workflow file-first + watcher` (hash: 73c8552a)
+
+---
+
+## Phase 59 — Workflow templates cleanup + release prep (owner: Oleksandr, updated: 2026-01-18)
+
+### Stream: Agents — file-first prompts + remove schema assets
+1. [DONE] Обновить prompts под file-first и убрать schema assets для workflow стадий — scope: `packages/agents/description-agent`, `packages/agents/virtual-simulation-agent`, `packages/agents/diagram-modules-agent`, `packages/agents/diagram-facades-agent`; expected commit message: `feat(agents): refresh file-first workflow prompts`
+2. [DONE] Git Commit: `feat(agents): refresh file-first workflow prompts` (hash: 2818c626)
+
+### Stream: Core — templates + contract
+1. [DONE] Удалить workflow schema templates, обновить bundled templates и contract builder — scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit message: `refactor(core): drop workflow schema templates`
+2. [DONE] Git Commit: `refactor(core): drop workflow schema templates` (hash: f32369b3)
+
+### Stream: Project Manager — file-first messaging
+1. [DONE] Обновить fallback prompt и убрать outputSchema для file-first стадий — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `refactor(project-manager): align file-first workflow messaging`
+2. [DONE] Git Commit: `refactor(project-manager): align file-first workflow messaging` (hash: 697cda52)
+
+### Stream: Docs — workflow templates cleanup
+1. [DONE] Обновить Architecture/SystemArchitecture под file-first шаблоны — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: align workflow templates in architecture`
+2. [DONE] Git Commit: `docs: align workflow templates in architecture` (hash: d0601bb1)
+3. [DONE] Обновить SolidWorks docs по списку шаблонов — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs: update solidworks workflow templates`
+4. [DONE] Git Commit: `docs: update solidworks workflow templates` (hash: 7287a401)
+5. [DONE] Обновить AgentPackages по списку шаблонов — scope: `doc/Project_Docs/AgentPackages_Architecture.md`; expected commit message: `docs: update agent package templates`
+6. [DONE] Git Commit: `docs: update agent package templates` (hash: c95867b9)
+
+### Stream: Release build
+1. [TODO] Release: полный цикл релиза после закрытия всех стримов (clean tree → build-all → build-release) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/SessionXXX.md`; expected commit message: `feat: v1.1.441 - workflow templates cleanup`
+2. [TODO] Git Commit: `feat: v1.1.441 - workflow templates cleanup` (hash: TBD)
