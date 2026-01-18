@@ -33,8 +33,8 @@
 4. [DONE] Git Commit: `feat(core): persist workflow state from watcher` (hash: f15135f7)
 
 ### Stream: Core — Paths + allowlist для file-first артефактов
-1. [TODO] Feat(core): единый резолвер путей артефактов (stage+runSlug → абсолютный путь) — scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/paths/workflow-paths-facade.ts`, `packages/core/src/workflow/paths/workflow-paths-types.ts`; expected commit message: `feat(core): add workflow artifact path resolver`
-2. [TODO] Git Commit: `feat(core): add workflow artifact path resolver` (hash: TBD)
+1. [DONE] Feat(core): единый резолвер путей артефактов (stage+runSlug → абсолютный путь) — scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/paths/workflow-paths-facade.ts`, `packages/core/src/workflow/paths/workflow-paths-types.ts`; expected commit message: `feat(core): add workflow artifact path resolver`
+2. [DONE] Git Commit: `feat(core): add workflow artifact path resolver` (hash: 644c0492)
 3. [TODO] Feat(core): allowlist путей для инструментов записи (write/read) только внутри `.codeai-hub/<workspaceSlug>/...` — scope: `packages/core/src/security/workspace-path-allowlist.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/remote-bridge/handlers/file-ops-handler.ts`; expected commit message: `feat(core): allow file-first workflow artifact writes`
 4. [TODO] Git Commit: `feat(core): allow file-first workflow artifact writes` (hash: TBD)
 
