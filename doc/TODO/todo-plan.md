@@ -45,8 +45,8 @@
 ### Stream: UI (Project Manager) — state-driven gating
 1. [DONE] Feat(project-manager): читать workflow state из Core и визуализировать гейтинг в дереве/панелях — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `feat(project-manager): gate workflow from core state`
 2. [DONE] Git Commit: `feat(project-manager): gate workflow from core state` (hash: a281b353)
-3. [TODO] Feat(project-manager): подписка на workflow события (обновление UI без перезапуска) — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/workflow-events-client.ts`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `feat(project-manager): live workflow updates`
-4. [TODO] Git Commit: `feat(project-manager): live workflow updates` (hash: TBD)
+3. [DONE] Feat(project-manager): подписка на workflow события (обновление UI без перезапуска) — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/workflow-events-client.ts`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `feat(project-manager): live workflow updates`
+4. [DONE] Git Commit: `feat(project-manager): live workflow updates` (hash: a30d1450)
 
 ### Stream: Workflow Steps — CLI tools вместо structured-output (Description/Virtual Simulation/Diagrams)
 1. [TODO] Refactor(core): отключить structured-output контракт для стадий description/virtual_simulation/diagram_* и перейти на file-first — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-run-service.ts`; expected commit message: `refactor(core): switch workflow steps to file-first`
