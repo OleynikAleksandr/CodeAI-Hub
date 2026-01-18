@@ -1,6 +1,6 @@
 # Архитектура системы CodeAI-Hub
 
-**Состояние:** релиз 1.1.440 (18.01.2026) — Workflow file-first + watcher. В работе: v1.1.441 — workflow verification + release follow-ups.
+**Состояние:** релиз 1.1.441 (18.01.2026) — Workflow templates cleanup (file-first prompts). В работе: v1.1.442 — workflow verification + release follow-ups.
 
 ## Важно: добавление новых модулей (Build/Release)
 - Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
@@ -101,6 +101,11 @@ CodeAI-Hub — автономная платформа управления AI-�
 
 ## Манифесты
 Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
+
+## Recent Changes (v1.1.441 - 2026-01-18)
+- **Workflow prompts (file-first)**: обновлены промпты стадий Description/Virtual Simulation/Diagrams — без structured output, запись в файл по целевому пути.
+- **Workflow templates cleanup**: удалены schema-шаблоны для workflow стадий, template sync больше не архивирует legacy-папки.
+- **Project Manager**: fallback prompt выровнен под file-first, outputSchema не отправляется для workflow стадий.
 
 ## Recent Changes (v1.1.440 - 2026-01-18)
 - **Workflow file-first**: Core больше не применяет `outputSchema` для workflow стадий; Project Manager отправляет single-turn prompt pack (инструкция + анкета + шаблон + target path).
