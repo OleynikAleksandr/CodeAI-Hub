@@ -67,5 +67,5 @@
 ## Phase 58 — Release (owner: Oleksandr, updated: 2026-01-18)
 
 ### Stream: Release build
-1. [TODO] Release: полный цикл релиза после закрытия всех стримов (clean tree → build-all → build-release) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/SessionXXX.md`; expected commit message: `feat: vX.Y.Z - workflow file-first + watcher`
-2. [TODO] Git Commit: `feat: vX.Y.Z - workflow file-first + watcher` (hash: TBD)
+1. [DONE] Release: полный цикл релиза после закрытия всех стримов (clean tree → build-all → build-release) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/SessionXXX.md`; expected commit message: `feat: v1.1.440 - workflow file-first + watcher`
+2. [DONE] Git Commit: `feat: v1.1.440 - workflow file-first + watcher` (hash: 73c8552a)
