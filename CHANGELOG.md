@@ -1,3 +1,11 @@
+## [1.1.453] - 2026-01-19
+
+### Fixed
+- **Questionnaire Curator**: запись в анкету по `initiativeSlug` (ожидаемый `.codeai-hub/<workspaceSlug>/...`) и очистка вывода от эха промпта/JSON.
+
+### Changed
+- **Curator prompt**: запрет эха входных секций (metadata/questionnaire/transcript).
+
 ## [1.1.452] - 2026-01-19
 
 ### Changed
