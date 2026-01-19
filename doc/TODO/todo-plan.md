@@ -89,6 +89,14 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 1. [TODO] Test(manual): 2 последовательных run для `description` → убедиться что второй run видит дополненную анкету (Q/A + notes) и задаёт меньше повторных вопросов; scope: n/a; commit message: `docs: verify questionnaire curator`
 2. [TODO] Git Commit: `docs: verify questionnaire curator` (hash: TBD)
 
+### Stream: Curator path + output cleanup
+1. [TODO] Fix(core): писать в анкету по `initiativeSlug` и чистить вывод куратора от эха промпта/JSON; scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`; commit message: `fix(curator): target initiative questionnaire + sanitize output`
+2. [TODO] Git Commit: `fix(curator): target initiative questionnaire + sanitize output` (hash: TBD)
+3. [TODO] Docs(templates): запретить эхо входных секций в prompt куратора + обновить bundled template; scope: `packages/agents/description-agent/assets/questionnaire-curator.md`, `packages/core/src/templates/bundled-templates.ts`; commit message: `docs(curator): prevent prompt echo`
+4. [TODO] Git Commit: `docs(curator): prevent prompt echo` (hash: TBD)
+5. [TODO] Docs: синхронизировать архитектуру (session vs artifact workspace slug, очистка вывода); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: clarify curator workspace slugs`
+6. [TODO] Git Commit: `docs: clarify curator workspace slugs` (hash: TBD)
+
 ### Stream: Curator simplification (session JSONL, no run transcript, no markers)
 1. [DONE] Refactor(core): убрать запись `transcript.jsonl` в run-папке и зависимость от него; использовать только unified sessions JSONL; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit message: `refactor(curator): remove run transcript capture`
 2. [DONE] Git Commit: `refactor(curator): remove run transcript capture` (hash: 49a5e325)

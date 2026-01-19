@@ -21,7 +21,8 @@ type CuratorContext = {
   readonly providerSessionId: string;
   readonly sessionId: string;
   readonly createdAt: string;
-  readonly workspaceSlug: string;
+  readonly sessionWorkspaceSlug: string;
+  readonly artifactWorkspaceSlug: string;
   readonly questionnairePath: string;
 };
 
@@ -71,6 +72,38 @@ const resolveCuratorTemplatePath = (stage: string): string | null => {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const normalizeAppendBlock = (raw: string): string => {
+  const logIndex = raw.indexOf("## Clarifications log");
+  const start = logIndex >= 0 ? raw.slice(logIndex) : raw;
+  const stopMarkers = [
+    "Run metadata:",
+    "Current questionnaire.md:",
+    "Transcript (JSONL):",
+    "Transcript:",
+  ];
+  const lines = start.split("\n");
+  const cleaned: string[] = [];
+  let inFence = false;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith("```")) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) {
+      continue;
+    }
+    if (stopMarkers.some((marker) => trimmed.startsWith(marker))) {
+      break;
+    }
+    if (trimmed === "---") {
+      continue;
+    }
+    cleaned.push(line);
+  }
+  return cleaned.join("\n").trim();
+};
+
 const extractSessionMessage = (
   event: unknown
 ): {
@@ -97,7 +130,7 @@ const buildSessionTranscript = async (
 ): Promise<string | null> => {
   const filePath = buildSessionFilePath({
     rootDirectory: SESSION_ROOT,
-    workspaceSlug: sanitizeWorkspaceSlug(context.workspaceSlug),
+    workspaceSlug: sanitizeWorkspaceSlug(context.sessionWorkspaceSlug),
     provider: context.providerId,
     sessionId: sanitizeWorkspaceSlug(context.providerSessionId),
   });
@@ -200,7 +233,9 @@ export class QuestionnaireCuratorService {
     }
 
     const workspaceRoot = path.resolve(session.workspacePath);
-    const workspaceSlug = this.config.claudeProjectSlug;
+    const sessionWorkspaceSlug = this.config.claudeProjectSlug;
+    const artifactWorkspaceSlug =
+      session.initiativeSlug?.trim() || this.config.claudeProjectSlug;
     const runSlug = session.runSlug?.trim() ?? "";
     const runSlugLabel = runSlug || providerSessionId || session.id;
 
@@ -211,11 +246,12 @@ export class QuestionnaireCuratorService {
       providerSessionId,
       sessionId: session.id,
       createdAt: session.createdAt,
-      workspaceSlug,
+      sessionWorkspaceSlug,
+      artifactWorkspaceSlug,
       questionnairePath: path.join(
         workspaceRoot,
         WORKSPACE_ARTIFACTS_ROOT,
-        workspaceSlug,
+        artifactWorkspaceSlug,
         stage,
         QUESTIONNAIRE_FILENAME
       ),
@@ -284,7 +320,7 @@ export class QuestionnaireCuratorService {
     }
 
     const normalizedAppend = normalizeWithTrailingNewline(
-      input.appendBlock.trim()
+      normalizeAppendBlock(input.appendBlock)
     );
     const ensuredMarker = normalizedAppend.includes(input.marker)
       ? normalizedAppend
