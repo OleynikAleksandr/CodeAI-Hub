@@ -831,11 +831,7 @@ export class SessionRequestHandler {
       payload.timestamp
     );
     if (message) {
-      const session = this.sessionManager.getSession(sessionId);
       this.sessionStorage.appendMessage(sessionId, message);
-      if (session) {
-        this.sessionStorage.appendRunTranscript(session, message);
-      }
       this.broadcaster({ type: "session:message", payload: message });
     }
   }
