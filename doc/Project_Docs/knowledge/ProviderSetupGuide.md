@@ -1,76 +1,114 @@
 # Provider Setup Guide
 
-CodeAI Hub assumes that you already have valid subscriptions and official tooling for each AI provider you plan to use. The extension **does not install CLI tools on your behalf**. Follow the checklists below before launching the extension.
+**Last Updated:** 2026-01-19
 
-> **Important:** keep credentials private. The commands below run under your user account and store tokens on your machine only.
+CodeAI Hub использует официальные CLI/SDK для каждого AI-провайдера. Расширение **автоматически устанавливает** эти инструменты глобально при первом запуске, но вы можете установить их вручную.
+
+> **Important:** Учётные данные хранятся локально на вашем компьютере.
+
+---
 
 ## Anthropic Claude
 
-1. **Install the CLI / SDK**
-   ```bash
-   npm install -g @anthropic-ai/claude-agent-sdk
-   ```
-   This adds the `claude` binary to your global npm prefix (for example `~/.npm-global/bin`).
+### Автоматическая установка
+CodeAI Hub устанавливает `@anthropic-ai/claude-code` глобально при активации.
 
-2. **Authenticate**
-   ```bash
-   claude login
-   ```
-   Complete the browser flow. Credentials are stored under `~/.claude/`.
+### Ручная установка
+```bash
+npm install -g @anthropic-ai/claude-code
+```
 
-3. **Verify installation**
-   ```bash
-   claude --version
-   claude whoami
-   ```
-   Both commands must succeed without prompting.
+### Аутентификация
+```bash
+claude login
+```
+Завершите OAuth flow в браузере. Credentials: `~/.claude/`.
+
+### Проверка
+```bash
+claude --version
+claude whoami
+```
+
+---
 
 ## OpenAI Codex
 
-1. **Install the SDK**
-   ```bash
-   npm install -g @openai/codex-sdk
-   ```
-   The global binary resides in `~/.npm-global/bin/codex` (macOS/Linux) or `%APPDATA%\npm\codex` (Windows).
+### Автоматическая установка
+CodeAI Hub устанавливает `@openai/codex` глобально.
 
-2. **Authenticate**
-   - ChatGPT login (default):
-     ```bash
-     codex login
-     ```
-   - API key (optional): set `CODEX_API_KEY=<your-key>` and rerun the command.
-   Tokens are stored in `~/.codex/auth.json`.
+### Ручная установка
+```bash
+npm install -g @openai/codex
+```
 
-3. **Verify installation**
-   ```bash
-   codex --version
-   codex exec --experimental-json -p "ping" | head -n 1
-   ```
-   The second command should emit a JSONL response without errors.
+### Аутентификация
+- **ChatGPT login (default):**
+  ```bash
+  codex login
+  ```
+- **API key (optional):** `CODEX_API_KEY=<your-key>`
+
+Credentials: `~/.codex/auth.json` (или `~/.codeai-hub/providers/codex/home/auth.json` для изолированного режима).
+
+### Проверка
+```bash
+codex --version
+```
+
+---
 
 ## Google Gemini CLI
 
-1. **Install the CLI**
-   ```bash
-   npm install -g @google/gemini-cli
-   ```
+### Автоматическая установка
+CodeAI Hub устанавливает `@google/gemini-cli` и `@google/gemini-cli-core` глобально.
 
-2. **Authenticate**
-   ```bash
-   gemini login
-   ```
-   Follow the browser prompt. Credentials live in `~/.gemini/credentials.json`.
+### Ручная установка
+```bash
+npm install -g @google/gemini-cli @google/gemini-cli-core
+```
 
-3. **Verify installation**
-   ```bash
-   gemini --version
-   printf 'ping\n/exit\n' | gemini -o json
-   ```
-   The prompt should return a JSON object and exit code 0.
+### Аутентификация
+```bash
+gemini login
+```
+Завершите OAuth flow. Credentials: `~/.gemini/credentials.json`.
 
-## If you skip a provider
+### Проверка
+```bash
+gemini --version
+```
 
-- Keep the CLI uninstalled, or run its `logout` command to invalidate tokens.
-- Inside CodeAI Hub you can disable the provider in Settings (upcoming UI). Until then, the provider will show as `inactive` when the CLI is missing.
+---
 
-Prepare these tools before installing or updating the extension to ensure a smooth start.
+## Auto Update
+
+При старте ядра `ProviderAutoUpdateService` проверяет свежие версии CLI/SDK и обновляет их автоматически (если включено в Settings).
+
+---
+
+## Отключение провайдера
+
+Если не планируете использовать провайдер:
+- Не устанавливайте CLI
+- Или выполните `<cli> logout` для инвалидации токенов
+- Провайдер отобразится как `inactive` в UI
+
+---
+
+## Troubleshooting
+
+### `MODULE_NOT_FOUND` при запуске
+Проверьте глобальный npm prefix:
+```bash
+npm config get prefix
+```
+Должен быть в `PATH` (обычно `~/.npm-global/bin`).
+
+### Провайдер показывает `Not connected`
+1. Проверьте установку: `<cli> --version`
+2. Проверьте авторизацию: `<cli> whoami` или `<cli> login`
+3. Перезапустите VS Code
+
+### Gemini: `ERR_REQUIRE_ESM`
+Убедитесь, что используете Node.js 20+ (ядро включает bundled runtime).
