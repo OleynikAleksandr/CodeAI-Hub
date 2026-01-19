@@ -31,8 +31,12 @@
 6. [DONE] Git Commit: `fix(core): enable gemini auto-run model label` (hash: 656324eb)
 7. [DONE] Fix(core+gemini): нормализовать `workspacePath` при `session:create` (не принимать `process.cwd()` core app как workspace) + расширить allowlist Gemini CLI для чтения `~/.codeai-hub/templates` и `~/.codeai-hub/codeai-hub`; scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`
 8. [DONE] Git Commit: `fix(gemini): allow reading hub templates and questionnaire` (hash: 8143072e)
-9. [TODO] Test(manual): отправка анкеты через Gemini — убедиться что `read_file` по questionnaire/template проходит без ошибки workspace allowlist
-10. [TODO] Git Commit: `docs: verify gemini idea collector integration` (hash: TBD)
+9. [IN_PROGRESS] Fix(gemini): запускать Gemini CLI в YOLO режиме (shell/write/edit tools) + нормализовать `workspacePath` (не принимать core runtime dir); scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`
+10. [TODO] Git Commit: `fix(gemini): enable yolo tools and correct workspace` (hash: TBD)
+11. [TODO] Fix(core): для auto-run `geminiCli` брать default model из `~/.codeai-hub/settings/settings.json`, чтобы runSlug соответствовал актуальному Gemini Default model; scope: `packages/core/src/remote-bridge/handlers/auto-run-service.ts`
+12. [TODO] Git Commit: `fix(core): resolve gemini model label from settings` (hash: TBD)
+13. [TODO] Test(manual): отправка анкеты через Gemini — убедиться что `read_file` по questionnaire/template проходит без ошибки workspace allowlist и доступен `write_file`
+14. [TODO] Git Commit: `docs: verify gemini idea collector integration` (hash: TBD)
 
 ---
 

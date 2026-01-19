@@ -1,3 +1,4 @@
+import path from "node:path";
 import { GeminiInstaller } from "../installer/gemini-installer";
 import { GeminiSessionLogger } from "../logging/session-logger";
 import type { GeminiCliBridge } from "../runtime/cli-types";
@@ -41,8 +42,9 @@ export class GeminiProviderAdapter {
       ? this.options.workspace.thinkingLevelByModel?.[defaultModel]
       : undefined;
 
+    const resolvedWorkspacePath = this.resolveWorkspacePath(workspacePath);
     const { sessionId, session } = await manager.createSession({
-      workspacePath: workspacePath ?? this.options.workspace.workspacePath,
+      workspacePath: resolvedWorkspacePath,
       defaultModel,
       thinkingLevel,
       settingsPath: this.options.workspace.settingsPath,
@@ -145,5 +147,29 @@ export class GeminiProviderAdapter {
       throw new Error("Gemini provider not initialized");
     }
     return this.sessionManager;
+  }
+
+  private resolveWorkspacePath(workspacePath?: string): string {
+    const fallback = this.options.workspace.workspacePath;
+    if (
+      typeof workspacePath !== "string" ||
+      workspacePath.trim().length === 0
+    ) {
+      return fallback;
+    }
+
+    const normalized = path.resolve(workspacePath.trim()).replace(/\\/g, "/");
+    const looksLikeCoreInstall =
+      normalized.includes("/.codeai-hub/core/") && normalized.includes("/app");
+
+    if (looksLikeCoreInstall) {
+      this.options.reporter?.warn?.(
+        "Gemini workspacePath points to core runtime; falling back to configured workspace path",
+        { workspacePath: normalized, fallback }
+      );
+      return fallback;
+    }
+
+    return normalized;
   }
 }

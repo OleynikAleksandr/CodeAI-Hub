@@ -616,11 +616,9 @@ export class GeminiSessionManager {
   private createArgv(options: SessionCreationOptions): CliArgs {
     const includeDirectories = Array.from(
       new Set(
-        [
-          options.workspacePath,
-          path.join(homedir(), ".codeai-hub", "templates"),
-          path.join(homedir(), ".codeai-hub", "codeai-hub"),
-        ].map((directory) => path.resolve(directory))
+        [path.join(homedir(), ".codeai-hub", "templates")].map((directory) =>
+          path.resolve(directory)
+        )
       )
     );
     return {
@@ -630,8 +628,8 @@ export class GeminiSessionManager {
       debug: options.logger !== undefined,
       prompt: undefined,
       promptInteractive: undefined,
-      yolo: false,
-      approvalMode: undefined,
+      yolo: true,
+      approvalMode: "yolo",
       allowedMcpServerNames: undefined,
       allowedTools: undefined,
       experimentalAcp: false,
