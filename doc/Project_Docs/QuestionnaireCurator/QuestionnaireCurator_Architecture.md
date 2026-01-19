@@ -39,8 +39,8 @@
 
 ### Inputs
 - Session metadata: Core `Session` (providerId, providerSessionId, stage, runSlug, createdAt)
-- Transcript: `.codeai-hub/sessions/<workspaceSlug>/<providerId>/<providerSessionId>.jsonl`
-- Questionnaire: `.codeai-hub/<workspaceSlug>/<stage>/questionnaire.md`
+- Transcript: `.codeai-hub/sessions/<sessionWorkspaceSlug>/<providerId>/<providerSessionId>.jsonl`
+- Questionnaire: `.codeai-hub/<artifactWorkspaceSlug>/<stage>/questionnaire.md` (по `initiativeSlug`, если есть)
 
 ### Output
 - Append-only update анкеты:
@@ -116,7 +116,7 @@ Curator использует отдельный prompt-template (наприме�
 - `run.json` (как источник `runId`, `runSlug`, `providerId`)
 
 Выход LLM должен быть ограничен **только** контентом для append (без маркеров и обёрток).
-Core принимает ответ как готовый Markdown‑блок и дописывает его в конец анкеты.
+Core принимает ответ как готовый Markdown‑блок и дописывает его в конец анкеты, удаляя эхо входных секций.
 
 ---
 
