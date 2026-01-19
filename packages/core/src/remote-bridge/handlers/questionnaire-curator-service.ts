@@ -1,6 +1,11 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
+import {
+  buildSessionFilePath,
+  readSessionEvents,
+  sanitizeWorkspaceSlug,
+} from "@codeai-hub/unified-session";
 import type { CoreConfig } from "../../config";
 import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -12,8 +17,11 @@ import {
 type CuratorContext = {
   readonly stage: string;
   readonly runSlug: string;
-  readonly transcriptPath: string;
-  readonly manifestPath: string;
+  readonly providerId: string;
+  readonly providerSessionId: string;
+  readonly sessionId: string;
+  readonly createdAt: string;
+  readonly workspaceSlug: string;
   readonly questionnairePath: string;
 };
 
@@ -26,10 +34,8 @@ type CuratorInputs = {
 };
 
 const WORKSPACE_ARTIFACTS_ROOT = ".codeai-hub";
+const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 const TEMPLATE_ROOT = "templates";
-const RUNS_DIRECTORY_NAME = "runs";
-const TRANSCRIPT_FILENAME = "transcript.jsonl";
-const RUN_MANIFEST_FILENAME = "run.json";
 const QUESTIONNAIRE_FILENAME = "questionnaire.md";
 
 const readTextFile = async (filePath: string): Promise<string | null> => {
@@ -65,24 +71,56 @@ const resolveCuratorTemplatePath = (stage: string): string | null => {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const parseRunManifest = (
-  raw: string
-): { readonly runId: string | null; readonly createdAt: string | null } => {
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (!isRecord(parsed)) {
-      return { runId: null, createdAt: null };
-    }
-    const runId = typeof parsed.runId === "string" ? parsed.runId.trim() : "";
-    const createdAt =
-      typeof parsed.createdAt === "string" ? parsed.createdAt.trim() : "";
-    return {
-      runId: runId.length > 0 ? runId : null,
-      createdAt: createdAt.length > 0 ? createdAt : null,
-    };
-  } catch {
-    return { runId: null, createdAt: null };
+const extractSessionMessage = (
+  event: unknown
+): {
+  readonly id: string;
+  readonly role: string;
+  readonly content: string;
+  readonly timestamp: string;
+} | null => {
+  if (!isRecord(event) || event.type !== "message") {
+    return null;
   }
+  const id = typeof event.messageId === "string" ? event.messageId : "";
+  const role = typeof event.role === "string" ? event.role : "";
+  const content = typeof event.content === "string" ? event.content : "";
+  const timestamp = typeof event.timestamp === "string" ? event.timestamp : "";
+  if (!(id && role && content && timestamp)) {
+    return null;
+  }
+  return { id, role, content, timestamp };
+};
+
+const buildSessionTranscript = async (
+  context: CuratorContext
+): Promise<string | null> => {
+  const filePath = buildSessionFilePath({
+    rootDirectory: SESSION_ROOT,
+    workspaceSlug: sanitizeWorkspaceSlug(context.workspaceSlug),
+    provider: context.providerId,
+    sessionId: sanitizeWorkspaceSlug(context.providerSessionId),
+  });
+  const events = await readSessionEvents(filePath);
+  const lines: string[] = [];
+  for (const event of events) {
+    const message = extractSessionMessage(event);
+    if (!message) {
+      continue;
+    }
+    lines.push(
+      JSON.stringify({
+        id: message.id,
+        role: message.role,
+        content: message.content,
+        timestamp: message.timestamp,
+      })
+    );
+  }
+  if (lines.length === 0) {
+    return null;
+  }
+  return `${lines.join("\n")}\n`;
 };
 
 export class QuestionnaireCuratorService {
@@ -150,31 +188,30 @@ export class QuestionnaireCuratorService {
 
   private resolveCuratorContext(session: Session): CuratorContext | null {
     const stage = session.stage?.trim() ?? "";
-    const runSlug = session.runSlug?.trim() ?? "";
-    if (!(stage && runSlug)) {
+    if (!stage) {
       return null;
     }
     if (stage !== "description") {
       return null;
     }
+    const providerSessionId = session.providerSessionId?.trim() ?? "";
+    if (!providerSessionId) {
+      return null;
+    }
 
     const workspaceRoot = path.resolve(session.workspacePath);
     const workspaceSlug = this.config.claudeProjectSlug;
-
-    const runDirectory = path.join(
-      workspaceRoot,
-      WORKSPACE_ARTIFACTS_ROOT,
-      workspaceSlug,
-      stage,
-      RUNS_DIRECTORY_NAME,
-      runSlug
-    );
+    const runSlug = session.runSlug?.trim() ?? "";
+    const runSlugLabel = runSlug || providerSessionId || session.id;
 
     return {
       stage,
-      runSlug,
-      transcriptPath: path.join(runDirectory, TRANSCRIPT_FILENAME),
-      manifestPath: path.join(runDirectory, RUN_MANIFEST_FILENAME),
+      runSlug: runSlugLabel,
+      providerId: session.providerId,
+      providerSessionId,
+      sessionId: session.id,
+      createdAt: session.createdAt,
+      workspaceSlug,
       questionnairePath: path.join(
         workspaceRoot,
         WORKSPACE_ARTIFACTS_ROOT,
@@ -188,9 +225,8 @@ export class QuestionnaireCuratorService {
   private async loadCuratorInputs(
     context: CuratorContext
   ): Promise<CuratorInputs | null> {
-    const [transcriptRaw, manifestRaw, questionnaireRaw] = await Promise.all([
-      readTextFile(context.transcriptPath),
-      readTextFile(context.manifestPath),
+    const [transcriptRaw, questionnaireRaw] = await Promise.all([
+      buildSessionTranscript(context),
       readTextFile(context.questionnairePath),
     ]);
 
@@ -199,9 +235,9 @@ export class QuestionnaireCuratorService {
       return null;
     }
 
-    const manifest = manifestRaw ? parseRunManifest(manifestRaw) : null;
-    const runId = manifest?.runId ?? context.runSlug;
-    const createdAt = manifest?.createdAt ?? "";
+    const runId =
+      context.runSlug || context.providerSessionId || context.sessionId;
+    const createdAt = context.createdAt ?? "";
     const marker = `<!-- curator:runId=${runId} -->`;
 
     if (questionnaireRaw?.includes(marker)) {
