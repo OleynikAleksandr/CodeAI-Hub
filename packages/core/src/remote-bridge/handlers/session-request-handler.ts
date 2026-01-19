@@ -8,7 +8,7 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { type BridgeEvent, serializeSession } from "../types";
 import { maybeCreateAutoRun } from "./auto-run-service";
-import { QuestionnaireCuratorService } from "./questionnaire-curator-service";
+import { QuestionnaireCuratorFacade } from "./questionnaire-curator-facade";
 
 type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
@@ -157,7 +157,7 @@ export class SessionRequestHandler {
   private readonly providerRegistry: ProviderRegistry;
   private readonly sessionStorage: UnifiedSessionStorage;
   private readonly logger: Logger;
-  private readonly questionnaireCurator: QuestionnaireCuratorService;
+  private readonly questionnaireCurator: QuestionnaireCuratorFacade;
   private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
   private static readonly REFINE_PROVIDER_MISMATCH_ERROR =
@@ -169,7 +169,7 @@ export class SessionRequestHandler {
     this.providerRegistry = options.providerRegistry;
     this.sessionStorage = options.sessionStorage;
     this.logger = options.logger;
-    this.questionnaireCurator = new QuestionnaireCuratorService({
+    this.questionnaireCurator = new QuestionnaireCuratorFacade({
       config: options.config,
       logger: options.logger,
     });
