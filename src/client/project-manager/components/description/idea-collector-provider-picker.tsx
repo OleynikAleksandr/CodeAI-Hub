@@ -70,8 +70,8 @@ export const IdeaCollectorProviderPicker = ({
             Выберите провайдера
           </h2>
           <p className="pm-provider-picker__description">
-            Idea Collector поддерживает Claude и Codex. Провайдер должен быть
-            установлен и авторизован.
+            Idea Collector поддерживает Claude, Codex и Gemini. Провайдер должен
+            быть установлен и авторизован.
           </p>
         </header>
         <form className="pm-provider-picker__form" onSubmit={handleSubmit}>
