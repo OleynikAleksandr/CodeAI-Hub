@@ -3,7 +3,7 @@ import path from "node:path";
 import { RunStore, resolveRunManifestPath } from "@codeai-hub/initiatives";
 import type { CoreConfig } from "../../config";
 import type { ProviderRegistry } from "../../provider-registry";
-import type { SessionManager } from "../../session-manager";
+import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { type BridgeEvent, serializeSession } from "../types";
@@ -516,6 +516,7 @@ export class SessionRequestHandler {
     sessionId: string,
     messagePayload: MessageContentPayload
   ): Promise<void> {
+    this.logSessionMessageReceived(sessionId, messagePayload);
     const extracted = this.extractMessageContentAndTurnOptions(messagePayload);
     if (!extracted) {
       this.logger.warn("Received invalid message payload", { sessionId });
@@ -523,14 +524,18 @@ export class SessionRequestHandler {
     }
 
     const { content, turnOptions } = extracted;
+    this.logSessionMessageExtracted(sessionId, content, turnOptions);
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
       this.broadcaster({
         type: "session:error",
         payload: { sessionId, message: "Session not found" },
       });
+      this.logSessionNotFoundForIncomingMessage(sessionId);
       return;
     }
+
+    this.logResolvedSessionForIncomingMessage(sessionId, session);
 
     const userMessage = this.sessionManager.appendMessage(
       sessionId,
@@ -554,11 +559,16 @@ export class SessionRequestHandler {
       : null;
 
     if (!(binding && adapter)) {
-      this.logger.warn("Provider binding or adapter missing for session", {
+      this.logMissingProviderBindingForIncomingMessage(
         sessionId,
-      });
+        binding?.providerId,
+        Boolean(binding),
+        Boolean(adapter)
+      );
       return;
     }
+
+    this.logDispatchingMessageToProvider(sessionId, binding, content.length);
 
     try {
       const workflowTurnOptions = await resolveWorkflowTurnOptions({
@@ -583,6 +593,7 @@ export class SessionRequestHandler {
         providerTurnOptions
       );
     } catch (error) {
+      this.logProviderSendMessageFailed(sessionId, binding, error);
       this.handleProviderFailure(binding.providerId, error, sessionId);
     }
   }
@@ -940,6 +951,92 @@ export class SessionRequestHandler {
     if (typeof typed?.sessionId === "string") {
       this.updateBindingWithResolvedId(sessionId, typed.sessionId);
     }
+  }
+
+  private logSessionMessageReceived(
+    sessionId: string,
+    messagePayload: MessageContentPayload
+  ): void {
+    this.logger.info("Session message received", {
+      sessionId,
+      payloadType: typeof messagePayload,
+    });
+  }
+
+  private logSessionMessageExtracted(
+    sessionId: string,
+    content: string,
+    turnOptions?: Record<string, unknown>
+  ): void {
+    this.logger.info("Session message extracted", {
+      sessionId,
+      contentLength: content.length,
+      hasTurnOptions: turnOptions !== undefined,
+    });
+  }
+
+  private logSessionNotFoundForIncomingMessage(sessionId: string): void {
+    this.logger.warn("Session not found for incoming message", { sessionId });
+  }
+
+  private logResolvedSessionForIncomingMessage(
+    sessionId: string,
+    session: Session
+  ): void {
+    this.logger.info("Resolved session for incoming message", {
+      sessionId,
+      providerId: session.providerId,
+      providerSessionId: session.providerSessionId ?? null,
+      providerSessionStatus: session.providerSessionStatus,
+      stage: session.stage ?? null,
+      initiativeSlug: session.initiativeSlug ?? null,
+      runSlug: session.runSlug ?? null,
+    });
+  }
+
+  private logMissingProviderBindingForIncomingMessage(
+    sessionId: string,
+    providerId: string | undefined,
+    hasBinding: boolean,
+    hasAdapter: boolean
+  ): void {
+    this.logger.warn("Provider binding or adapter missing for session", {
+      sessionId,
+      providerId: providerId ?? null,
+      hasBinding,
+      hasAdapter,
+    });
+    this.logger.warn("Known provider session bindings", {
+      sessionId,
+      knownSessionIds: Array.from(this.providerSessions.keys()),
+    });
+  }
+
+  private logDispatchingMessageToProvider(
+    sessionId: string,
+    binding: ProviderSessionBinding,
+    contentLength: number
+  ): void {
+    this.logger.info("Dispatching message to provider adapter", {
+      sessionId,
+      providerId: binding.providerId,
+      providerSessionId: binding.providerSessionId,
+      contentLength,
+    });
+  }
+
+  private logProviderSendMessageFailed(
+    sessionId: string,
+    binding: ProviderSessionBinding,
+    error: unknown
+  ): void {
+    const message = error instanceof Error ? error.message : String(error);
+    this.logger.warn("Provider sendMessage failed", {
+      sessionId,
+      providerId: binding.providerId,
+      providerSessionId: binding.providerSessionId,
+      error: message,
+    });
   }
 
   private getDefaultProviderId(): string {
