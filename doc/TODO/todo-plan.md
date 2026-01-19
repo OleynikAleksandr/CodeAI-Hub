@@ -70,8 +70,8 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 2. [DONE] Git Commit: `docs: add questionnaire curator architecture` (hash: cc44daae)
 
 ### Stream: Core — capture per-run transcript
-1. [TODO] Feat(core): сохранять transcript текущего run (role+content+timestamp) в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/transcript.jsonl` (или `.md`) при завершении run; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit message: `feat(core): persist run transcript for curator`
-2. [TODO] Git Commit: `feat(core): persist run transcript for curator` (hash: TBD)
+1. [DONE] Feat(core): сохранять transcript текущего run (role+content+timestamp) в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/transcript.jsonl` (или `.md`) при завершении run; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit message: `feat(core): persist run transcript for curator`
+2. [DONE] Git Commit: `feat(core): persist run transcript for curator` (hash: 216c7e4d)
 
 ### Stream: Curator — apply transcript to questionnaire
 1. [TODO] Feat(core+agents): добавить “curator” прогон после `approve/OK` (читает transcript + текущую анкету и дописывает в конец `questionnaire.md` секцию `Clarifications log`); scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`, `packages/agents/description-agent/assets/questionnaire-curator.md`; commit message: `feat(curator): append clarifications to questionnaire`
