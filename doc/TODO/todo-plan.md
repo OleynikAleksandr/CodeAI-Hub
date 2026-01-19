@@ -76,8 +76,8 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 ### Stream: Curator — apply transcript to questionnaire
 1. [DONE] Feat(templates): добавить шаблон `questionnaire-curator.md` для TemplateSync (`~/.codeai-hub/templates/description/questionnaire-curator.md`); scope: `packages/core/src/templates/bundled-templates.ts`, `packages/agents/description-agent/assets/questionnaire-curator.md`; commit message: `feat(templates): add questionnaire curator prompt`
 2. [DONE] Git Commit: `feat(templates): add questionnaire curator prompt` (hash: dfe99904)
-3. [TODO] Feat(curator): добавить “curator” прогон после `approve/OK` (читает transcript + текущую анкету и дописывает в конец `questionnaire.md` секцию `Clarifications log`); scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`; commit message: `feat(curator): append clarifications to questionnaire`
-4. [TODO] Git Commit: `feat(curator): append clarifications to questionnaire` (hash: TBD)
+3. [DONE] Feat(curator): добавить “curator” прогон после `approve/OK` (читает transcript + текущую анкету и дописывает в конец `questionnaire.md` секцию `Clarifications log`); scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`; commit message: `feat(curator): append clarifications to questionnaire`
+4. [DONE] Git Commit: `feat(curator): append clarifications to questionnaire` (hash: e7eeafba)
 
 ### Stream: Manual verification
 1. [TODO] Test(manual): 2 последовательных run для `description` → убедиться что второй run видит дополненную анкету (Q/A + notes) и задаёт меньше повторных вопросов; scope: n/a; commit message: `docs: verify questionnaire curator`
