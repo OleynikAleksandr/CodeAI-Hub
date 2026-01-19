@@ -18,6 +18,7 @@ export type ProviderSnapshot = {
 const IDEA_PROVIDER_IDS = new Set<ProviderStackId>([
   "claudeCodeCli",
   "codexCli",
+  "geminiCli",
 ]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
