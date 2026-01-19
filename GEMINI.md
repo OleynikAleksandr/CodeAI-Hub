@@ -44,10 +44,9 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Architecture/Architecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-3. `doc/TODO/todo-plan.md`
-4. `doc/Sessions/Session<N>.md` (THIS REPORT)
+1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+2. `doc/TODO/todo-plan.md`
+3. `doc/Sessions/Session<N>.md` (THIS REPORT)
 
 ## Plans for next session
 - <Что осталось сделать>
@@ -88,7 +87,7 @@ doc/TODO/Archive/
   - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
   - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке (например, Claude → Codex → core), чтобы локализовать ошибки без запуска `build-all`.
   - **Real-time Документация**: 
-Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/Architecture/Architecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
+Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
   - Phase завершается на чистом дереве: 
 запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
   - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
@@ -105,7 +104,7 @@ doc/TODO/Archive/
 ## 5. Цикл выполнения (Гейт Качества)
 Для каждой подзадачи Stream из `todo-plan.md`:
 1.  **Реализация**: Пиши код (помни: Микро-классы, Фасады, классы не более 300 строк).
-2.  **Документация (Real-time)**: Если меняется логика или архитектура — **ОБНОВИ** `doc/Architecture/Architecture.md` (или другие доки) **ПРЯМО СЕЙЧАС**. Коммит должен содержать и код, и обновленную документацию.
+2.  **Документация (Real-time)**: Если меняется логика или архитектура — **ОБНОВИ** `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (или другие доки) **ПРЯМО СЕЙЧАС**. Коммит должен содержать и код, и обновленную документацию.
 3.  **Верификация**: Запусти **Обязательные Гейты**:
     ```bash
     ./scripts/check-architecture.sh  # ДОЛЖЕН ПРОЙТИ
@@ -122,7 +121,7 @@ doc/TODO/Archive/
 ## 6. Критические правила
 - **НИКОГДА** не обходи `check-architecture.sh`.
 - **НИКОГДА** не редактируй версии в `package.json` вручную (используй `build-all.sh`).
-- **ВСЕГДА** держи doc/Architecture/Architecture.md и doc/Project_Docs/SystemArchitecture/SystemArchitecture.md и другие связанные с подзадачей документы из папки - doc/ в синхронизации с изменениями кода (в том же коммите).
+- **ВСЕГДА** держи doc/Project_Docs/SystemArchitecture/SystemArchitecture.md и другие связанные с подзадачей документы из папки - doc/ в синхронизации с изменениями кода (в том же коммите).
 
 ## 7. Release Build Checklist
 0. Перед сборкой релиза актуализируй документы: в первую очередь `README.md` и `CHANGELOG.md`, а также связанные архитектурные материалы из `doc/`. Релиз собирается только для версии, указанной в этих документах.
