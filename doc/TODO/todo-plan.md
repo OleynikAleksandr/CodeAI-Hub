@@ -60,3 +60,23 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 # 2. В binding: какой providerSessionId хранится?
 # 3. В Gemini sessions map: под каким ключом сессия?
 ```
+
+---
+
+## Phase 62 — Questionnaire Curator (auto-merge Q/A into questionnaire) (owner: Oleksandr, updated: 2026-01-19)
+
+### Stream: Design — Curator architecture
+1. [TODO] Doc: описать архитектуру “Questionnaire Curator” (источник данных: transcript; цель: append-only updates в `questionnaire.md`; идемпотентность; триггеры `approve/OK`); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: add questionnaire curator architecture`
+2. [TODO] Git Commit: `docs: add questionnaire curator architecture` (hash: TBD)
+
+### Stream: Core — capture per-run transcript
+1. [TODO] Feat(core): сохранять transcript текущего run (role+content+timestamp) в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/transcript.jsonl` (или `.md`) при завершении run; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit message: `feat(core): persist run transcript for curator`
+2. [TODO] Git Commit: `feat(core): persist run transcript for curator` (hash: TBD)
+
+### Stream: Curator — apply transcript to questionnaire
+1. [TODO] Feat(core+agents): добавить “curator” прогон после `approve/OK` (читает transcript + текущую анкету и дописывает в конец `questionnaire.md` секцию `Clarifications log`); scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`, `packages/agents/description-agent/assets/questionnaire-curator.md`; commit message: `feat(curator): append clarifications to questionnaire`
+2. [TODO] Git Commit: `feat(curator): append clarifications to questionnaire` (hash: TBD)
+
+### Stream: Manual verification
+1. [TODO] Test(manual): 2 последовательных run для `description` → убедиться что второй run видит дополненную анкету (Q/A + notes) и задаёт меньше повторных вопросов; scope: n/a; commit message: `docs: verify questionnaire curator`
+2. [TODO] Git Commit: `docs: verify questionnaire curator` (hash: TBD)
