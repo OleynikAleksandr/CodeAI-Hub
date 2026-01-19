@@ -20,13 +20,13 @@
 1. [DONE] Feat(project-manager): добавить `geminiCli` в `IDEA_PROVIDER_IDS` и обновить текст диалога
 2. [DONE] Git Commit: `feat(project-manager): add gemini to idea collector providers` (hash: e90243bb)
 
-### Stream: Fix Gemini message delivery — **IN PROGRESS**
+### Stream: Fix Gemini message delivery — **IN PROGRESS** (updated: 2026-01-19)
 **ПРОБЛЕМА**: При отправке анкеты через Gemini, первое сообщение (промпт) не попадает в сессию. Сессия открывается пустой.
 
-1. [TODO] Debug: добавить логирование в `session-request-handler.ts:handleMessage()` — проверить что sessionId, binding, adapter присутствуют; scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
-2. [TODO] Git Commit: `debug(core): add message handling diagnostics` (hash: TBD)
-3. [TODO] Debug: сравнить sessionId между Core и Gemini — возможно promoteSessionId меняет ID, а Core использует старый; scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`
-4. [TODO] Git Commit: `debug(gemini): trace session id changes` (hash: TBD)
+1. [DONE] Debug: добавить логирование в `session-request-handler.ts:handleMessage()` — проверить что sessionId, binding, adapter присутствуют; scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
+2. [DONE] Git Commit: `debug(core): add message handling diagnostics` (hash: 1c8a5137)
+3. [DONE] Debug: сравнить sessionId между Core и Gemini — возможно promoteSessionId меняет ID, а Core использует старый; scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`
+4. [DONE] Git Commit: `fix(gemini): resolve session id alias mismatches` (hash: 4ac8464d)
 5. [TODO] Fix: исправить root cause после диагностики; scope: TBD
 6. [TODO] Git Commit: `fix(gemini): resolve message delivery to session` (hash: TBD)
 7. [TODO] Test(manual): проверить что промпт появляется в сессии Gemini
