@@ -1,18 +1,19 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
-import {
-  buildSessionFilePath,
-  readSessionEvents,
-  sanitizeWorkspaceSlug,
-} from "@codeai-hub/unified-session";
 import type { CoreConfig } from "../../config";
 import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import {
+  hasValidCuratorMarker,
+  normalizeWithTrailingNewline,
+  sanitizeCuratorAppendBlock,
+} from "./questionnaire-curator-append-sanitizer";
+import {
   type CuratorProviderAdapter,
   QuestionnaireCuratorProviderRunner,
 } from "./questionnaire-curator-provider-runner";
+import { buildCuratorTranscript } from "./questionnaire-curator-transcript";
 
 type CuratorContext = {
   readonly stage: string;
@@ -25,7 +26,6 @@ type CuratorContext = {
   readonly artifactWorkspaceSlug: string;
   readonly questionnairePath: string;
 };
-
 type CuratorInputs = {
   readonly transcript: string;
   readonly questionnaireRaw: string | null;
@@ -33,12 +33,9 @@ type CuratorInputs = {
   readonly runId: string;
   readonly createdAt: string;
 };
-
 const WORKSPACE_ARTIFACTS_ROOT = ".codeai-hub";
-const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 const TEMPLATE_ROOT = "templates";
 const QUESTIONNAIRE_FILENAME = "questionnaire.md";
-
 const readTextFile = async (filePath: string): Promise<string | null> => {
   try {
     return await readFile(filePath, "utf8");
@@ -46,15 +43,6 @@ const readTextFile = async (filePath: string): Promise<string | null> => {
     return null;
   }
 };
-
-const buildBackupPath = (artifactPath: string): string => {
-  const timestamp = new Date().toISOString().replace(/[^\d]/g, "");
-  return `${artifactPath}.bak-${timestamp}`;
-};
-
-const normalizeWithTrailingNewline = (value: string): string =>
-  value.endsWith("\n") ? value : `${value}\n`;
-
 const resolveCuratorTemplatePath = (stage: string): string | null => {
   const home = homedir();
   if (!home) {
@@ -68,94 +56,6 @@ const resolveCuratorTemplatePath = (stage: string): string | null => {
     "questionnaire-curator.md"
   );
 };
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const normalizeAppendBlock = (raw: string): string => {
-  const logIndex = raw.indexOf("## Clarifications log");
-  const start = logIndex >= 0 ? raw.slice(logIndex) : raw;
-  const stopMarkers = [
-    "Run metadata:",
-    "Current questionnaire.md:",
-    "Transcript (JSONL):",
-    "Transcript:",
-  ];
-  const lines = start.split("\n");
-  const cleaned: string[] = [];
-  let inFence = false;
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("```")) {
-      inFence = !inFence;
-      continue;
-    }
-    if (inFence) {
-      continue;
-    }
-    if (stopMarkers.some((marker) => trimmed.startsWith(marker))) {
-      break;
-    }
-    if (trimmed === "---") {
-      continue;
-    }
-    cleaned.push(line);
-  }
-  return cleaned.join("\n").trim();
-};
-
-const extractSessionMessage = (
-  event: unknown
-): {
-  readonly id: string;
-  readonly role: string;
-  readonly content: string;
-  readonly timestamp: string;
-} | null => {
-  if (!isRecord(event) || event.type !== "message") {
-    return null;
-  }
-  const id = typeof event.messageId === "string" ? event.messageId : "";
-  const role = typeof event.role === "string" ? event.role : "";
-  const content = typeof event.content === "string" ? event.content : "";
-  const timestamp = typeof event.timestamp === "string" ? event.timestamp : "";
-  if (!(id && role && content && timestamp)) {
-    return null;
-  }
-  return { id, role, content, timestamp };
-};
-
-const buildSessionTranscript = async (
-  context: CuratorContext
-): Promise<string | null> => {
-  const filePath = buildSessionFilePath({
-    rootDirectory: SESSION_ROOT,
-    workspaceSlug: sanitizeWorkspaceSlug(context.sessionWorkspaceSlug),
-    provider: context.providerId,
-    sessionId: sanitizeWorkspaceSlug(context.providerSessionId),
-  });
-  const events = await readSessionEvents(filePath);
-  const lines: string[] = [];
-  for (const event of events) {
-    const message = extractSessionMessage(event);
-    if (!message) {
-      continue;
-    }
-    lines.push(
-      JSON.stringify({
-        id: message.id,
-        role: message.role,
-        content: message.content,
-        timestamp: message.timestamp,
-      })
-    );
-  }
-  if (lines.length === 0) {
-    return null;
-  }
-  return `${lines.join("\n")}\n`;
-};
-
 export class QuestionnaireCuratorService {
   private readonly config: CoreConfig;
   private readonly logger: Logger;
@@ -262,7 +162,11 @@ export class QuestionnaireCuratorService {
     context: CuratorContext
   ): Promise<CuratorInputs | null> {
     const [transcriptRaw, questionnaireRaw] = await Promise.all([
-      buildSessionTranscript(context),
+      buildCuratorTranscript({
+        providerId: context.providerId,
+        providerSessionId: context.providerSessionId,
+        sessionWorkspaceSlug: context.sessionWorkspaceSlug,
+      }),
       readTextFile(context.questionnairePath),
     ]);
 
@@ -276,7 +180,7 @@ export class QuestionnaireCuratorService {
     const createdAt = context.createdAt ?? "";
     const marker = `<!-- curator:runId=${runId} -->`;
 
-    if (questionnaireRaw?.includes(marker)) {
+    if (questionnaireRaw && hasValidCuratorMarker(questionnaireRaw, marker)) {
       return null;
     }
 
@@ -315,13 +219,19 @@ export class QuestionnaireCuratorService {
     readonly marker: string;
     readonly appendBlock: string;
   }): Promise<void> {
-    if (input.existingContent.includes(input.marker)) {
+    if (hasValidCuratorMarker(input.existingContent, input.marker)) {
       return;
     }
 
-    const normalizedAppend = normalizeWithTrailingNewline(
-      normalizeAppendBlock(input.appendBlock)
-    );
+    const sanitized = sanitizeCuratorAppendBlock(input.appendBlock);
+    if (!sanitized) {
+      this.logger.warn("Questionnaire curator skipped: invalid append block", {
+        questionnairePath: input.questionnairePath,
+      });
+      return;
+    }
+
+    const normalizedAppend = normalizeWithTrailingNewline(sanitized);
     const ensuredMarker = normalizedAppend.includes(input.marker)
       ? normalizedAppend
       : `${input.marker}\n\n${normalizedAppend}`;
@@ -332,12 +242,6 @@ export class QuestionnaireCuratorService {
     const updated = `${input.existingContent.trimEnd()}\n\n${ensuredLogHeader.trimEnd()}\n`;
 
     await mkdir(path.dirname(input.questionnairePath), { recursive: true });
-    if (input.existingContent.length > 0) {
-      const backupPath = buildBackupPath(input.questionnairePath);
-      await writeFile(backupPath, input.existingContent, "utf8").catch(
-        () => null
-      );
-    }
     await writeFile(input.questionnairePath, updated, "utf8");
   }
 }
