@@ -88,3 +88,13 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 ### Stream: Manual verification
 1. [TODO] Test(manual): 2 последовательных run для `description` → убедиться что второй run видит дополненную анкету (Q/A + notes) и задаёт меньше повторных вопросов; scope: n/a; commit message: `docs: verify questionnaire curator`
 2. [TODO] Git Commit: `docs: verify questionnaire curator` (hash: TBD)
+
+### Stream: Curator simplification (session JSONL, no run transcript, no markers)
+1. [TODO] Refactor(core): убрать запись `transcript.jsonl` в run-папке и зависимость от него; использовать только unified sessions JSONL; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit message: `refactor(curator): remove run transcript capture`
+2. [TODO] Git Commit: `refactor(curator): remove run transcript capture` (hash: TBD)
+3. [TODO] Refactor(core): curator читает JSONL из `.codeai-hub/sessions` и принимает ответ без `BEGIN_APPEND/END_APPEND`; scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-provider-runner.ts`; commit message: `refactor(curator): use session jsonl and raw response`
+4. [TODO] Git Commit: `refactor(curator): use session jsonl and raw response` (hash: TBD)
+5. [TODO] Docs(templates): обновить prompt куратора (без маркеров) + обновить bundled template; scope: `packages/agents/description-agent/assets/questionnaire-curator.md`, `packages/core/src/templates/bundled-templates.ts`; commit message: `docs(curator): simplify prompt output rules`
+6. [TODO] Git Commit: `docs(curator): simplify prompt output rules` (hash: TBD)
+7. [TODO] Docs: обновить архитектуру Questionnaire Curator (источник JSONL, отсутствие run transcript/markers); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: refresh curator architecture`
+8. [TODO] Git Commit: `docs: refresh curator architecture` (hash: TBD)
