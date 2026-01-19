@@ -408,6 +408,24 @@ export class SessionRequestHandler {
     return trimmed.length > 0 ? trimmed : null;
   }
 
+  private resolveWorkspacePath(workspacePath?: string): string {
+    const trimmed =
+      typeof workspacePath === "string" && workspacePath.trim().length > 0
+        ? workspacePath.trim()
+        : undefined;
+    const cwdPath = process.cwd();
+    const environmentWorkspacePath = this.config.claudeWorkspacePath;
+
+    if (
+      environmentWorkspacePath &&
+      (!trimmed || path.resolve(trimmed) === path.resolve(cwdPath))
+    ) {
+      return environmentWorkspacePath;
+    }
+
+    return trimmed ?? environmentWorkspacePath ?? cwdPath;
+  }
+
   private async canStartRefineExistingRun(options: {
     readonly workspacePath: string;
     readonly initiativeSlug: string | null;
@@ -461,8 +479,7 @@ export class SessionRequestHandler {
     const normalizedRequestedProviderId = this.normalizeProviderId(providerId);
     const requestedProviderId =
       normalizedRequestedProviderId ?? this.getDefaultProviderId();
-    const actualWorkspacePath =
-      workspacePath ?? this.config.claudeWorkspacePath ?? process.cwd();
+    const actualWorkspacePath = this.resolveWorkspacePath(workspacePath);
 
     const canStartRefineExisting = await this.canStartRefineExistingRun({
       workspacePath: actualWorkspacePath,

@@ -29,8 +29,10 @@
 4. [DONE] Git Commit: `fix(gemini): resolve session id alias mismatches` (hash: 4ac8464d)
 5. [DONE] Fix(core): включить auto-run для `geminiCli` (modelLabel), чтобы `runSlug` не был пустой и клиент отправлял первый промпт; scope: `packages/core/src/remote-bridge/handlers/auto-run-service.ts`
 6. [DONE] Git Commit: `fix(core): enable gemini auto-run model label` (hash: 656324eb)
-7. [TODO] Test(manual): проверить что промпт появляется в сессии Gemini
-8. [TODO] Git Commit: `docs: verify gemini idea collector integration` (hash: TBD)
+7. [IN_PROGRESS] Fix(core+gemini): нормализовать `workspacePath` при `session:create` (не принимать `process.cwd()` core app как workspace) + расширить allowlist Gemini CLI для чтения `~/.codeai-hub/templates` и `~/.codeai-hub/codeai-hub`; scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`
+8. [TODO] Git Commit: `fix(gemini): allow reading hub templates and questionnaire` (hash: TBD)
+9. [TODO] Test(manual): отправка анкеты через Gemini — убедиться что `read_file` по questionnaire/template проходит без ошибки workspace allowlist
+10. [TODO] Git Commit: `docs: verify gemini idea collector integration` (hash: TBD)
 
 ---
 

@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
 import { readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import path from "node:path";
 import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
 import type { AuthType as AuthTypeEnum } from "@google/gemini-cli-core/dist/src/core/contentGenerator";
 import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
@@ -612,6 +614,15 @@ export class GeminiSessionManager {
   }
 
   private createArgv(options: SessionCreationOptions): CliArgs {
+    const includeDirectories = Array.from(
+      new Set(
+        [
+          options.workspacePath,
+          path.join(homedir(), ".codeai-hub", "templates"),
+          path.join(homedir(), ".codeai-hub", "codeai-hub"),
+        ].map((directory) => path.resolve(directory))
+      )
+    );
     return {
       query: undefined,
       model: options.defaultModel,
@@ -629,7 +640,7 @@ export class GeminiSessionManager {
       resume: undefined,
       listSessions: false,
       deleteSession: undefined,
-      includeDirectories: [],
+      includeDirectories,
       screenReader: undefined,
       useSmartEdit: undefined,
       useWriteTodos: undefined,
