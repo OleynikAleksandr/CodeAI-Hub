@@ -1,3 +1,12 @@
+## [1.1.452] - 2026-01-19
+
+### Changed
+- **Questionnaire Curator**: использует session JSONL из `.codeai-hub/sessions` вместо run transcript; ответ куратора читается как сырой Markdown без маркеров.
+- **Prompt**: упрощены правила вывода для куратора (без `BEGIN_APPEND/END_APPEND`).
+
+### Fixed
+- **Core**: удалены остаточные вызовы записи run transcript.
+
 ## [1.1.451] - 2026-01-19
 
 ### Added
