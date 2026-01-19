@@ -96,5 +96,5 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 4. [DONE] Git Commit: `refactor(curator): use session jsonl and raw response` (hash: 9004ade3)
 5. [DONE] Docs(templates): обновить prompt куратора (без маркеров) + обновить bundled template; scope: `packages/agents/description-agent/assets/questionnaire-curator.md`, `packages/core/src/templates/bundled-templates.ts`; commit message: `docs(curator): simplify prompt output rules`
 6. [DONE] Git Commit: `docs(curator): simplify prompt output rules` (hash: 45cc8b95)
-7. [TODO] Docs: обновить архитектуру Questionnaire Curator (источник JSONL, отсутствие run transcript/markers); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: refresh curator architecture`
-8. [TODO] Git Commit: `docs: refresh curator architecture` (hash: TBD)
+7. [DONE] Docs: обновить архитектуру Questionnaire Curator (источник JSONL, отсутствие run transcript/markers); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: refresh curator architecture`
+8. [DONE] Git Commit: `docs: refresh curator architecture` (hash: a2ad9f15)
