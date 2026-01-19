@@ -4,20 +4,10 @@ import path from "node:path";
 import type { CoreConfig } from "../../config";
 import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
-
-type ProviderAdapter = {
-  createSession(workspacePath?: string): Promise<string>;
-  closeSession(sessionId: string): Promise<void>;
-  sendMessage(
-    sessionId: string,
-    content: string,
-    turnOptions?: Record<string, unknown>
-  ): Promise<void>;
-  subscribe(
-    sessionId: string,
-    listener: (payload: unknown) => void
-  ): () => void;
-};
+import {
+  type CuratorProviderAdapter,
+  QuestionnaireCuratorProviderRunner,
+} from "./questionnaire-curator-provider-runner";
 
 type CuratorContext = {
   readonly stage: string;
@@ -42,61 +32,12 @@ const TRANSCRIPT_FILENAME = "transcript.jsonl";
 const RUN_MANIFEST_FILENAME = "run.json";
 const QUESTIONNAIRE_FILENAME = "questionnaire.md";
 
-const BEGIN_APPEND_MARKER = "BEGIN_APPEND";
-const END_APPEND_MARKER = "END_APPEND";
-const APPEND_BLOCK_RE = /BEGIN_APPEND\s*([\s\S]*?)\s*END_APPEND/m;
-
 const readTextFile = async (filePath: string): Promise<string | null> => {
   try {
     return await readFile(filePath, "utf8");
   } catch {
     return null;
   }
-};
-
-const extractAppendBlock = (text: string): string | null => {
-  const match = text.match(APPEND_BLOCK_RE);
-  if (!match) {
-    return null;
-  }
-  const content = match[1]?.trim();
-  return content && content.length > 0 ? content : null;
-};
-
-const extractMessageContent = (event: unknown): string | null => {
-  if (typeof event === "string") {
-    return event;
-  }
-  if (!event || typeof event !== "object") {
-    return null;
-  }
-  const typed = event as {
-    readonly content?: unknown;
-    readonly data?: unknown;
-    readonly payload?: unknown;
-  };
-
-  if (typeof typed.content === "string") {
-    return typed.content;
-  }
-  if (typed.content && typeof typed.content === "object") {
-    return JSON.stringify(typed.content);
-  }
-
-  if (typeof typed.data === "string") {
-    return typed.data;
-  }
-  if (typed.data && typeof typed.data === "object") {
-    return JSON.stringify(typed.data);
-  }
-
-  if (typeof typed.payload === "string") {
-    return typed.payload;
-  }
-  if (typed.payload && typeof typed.payload === "object") {
-    return JSON.stringify(typed.payload);
-  }
-  return null;
 };
 
 const buildBackupPath = (artifactPath: string): string => {
@@ -147,6 +88,7 @@ const parseRunManifest = (
 export class QuestionnaireCuratorService {
   private readonly config: CoreConfig;
   private readonly logger: Logger;
+  private readonly providerRunner = new QuestionnaireCuratorProviderRunner();
 
   constructor(options: {
     readonly config: CoreConfig;
@@ -156,7 +98,10 @@ export class QuestionnaireCuratorService {
     this.logger = options.logger;
   }
 
-  async maybeCurate(session: Session, adapter: ProviderAdapter): Promise<void> {
+  async maybeCurate(
+    session: Session,
+    adapter: CuratorProviderAdapter
+  ): Promise<void> {
     const context = this.resolveCuratorContext(session);
     if (!context) {
       return;
@@ -182,7 +127,7 @@ export class QuestionnaireCuratorService {
       transcript: inputs.transcript,
     });
 
-    const appendBlock = await this.requestAppendBlock(
+    const appendBlock = await this.providerRunner.requestAppendBlock(
       adapter,
       session.workspacePath,
       prompt
@@ -292,19 +237,6 @@ export class QuestionnaireCuratorService {
     return `${input.template.trim()}\n\n---\n\nRun metadata:\n- runId: ${input.runId}\n- runSlug: ${input.runSlug}\n- stage: ${input.stage}\n- createdAt: ${input.createdAt}\n- curatorAt: ${now}\n\nCurrent questionnaire.md:\n\n\`\`\`md\n${input.questionnaire.trimEnd()}\n\`\`\`\n\nTranscript (JSONL):\n\n\`\`\`jsonl\n${input.transcript}\n\`\`\`\n`;
   }
 
-  private async requestAppendBlock(
-    adapter: ProviderAdapter,
-    workspacePath: string,
-    prompt: string
-  ): Promise<string | null> {
-    const curatorSessionId = await adapter.createSession(workspacePath);
-    try {
-      return await this.runCuratorPrompt(adapter, curatorSessionId, prompt);
-    } finally {
-      await adapter.closeSession(curatorSessionId).catch(() => null);
-    }
-  }
-
   private async appendToQuestionnaire(input: {
     readonly questionnairePath: string;
     readonly existingContent: string;
@@ -335,56 +267,5 @@ export class QuestionnaireCuratorService {
       );
     }
     await writeFile(input.questionnairePath, updated, "utf8");
-  }
-
-  private async runCuratorPrompt(
-    adapter: ProviderAdapter,
-    sessionId: string,
-    prompt: string
-  ): Promise<string | null> {
-    let resolved = false;
-    let appendBlock: string | null = null;
-
-    const done = (value: string | null): void => {
-      if (resolved) {
-        return;
-      }
-      resolved = true;
-      appendBlock = value;
-    };
-
-    const unsubscribe = adapter.subscribe(sessionId, (event) => {
-      if (resolved) {
-        return;
-      }
-      const text = extractMessageContent(event);
-      if (!text) {
-        return;
-      }
-      if (
-        !(
-          text.includes(BEGIN_APPEND_MARKER) && text.includes(END_APPEND_MARKER)
-        )
-      ) {
-        return;
-      }
-      done(extractAppendBlock(text));
-    });
-
-    try {
-      await adapter.sendMessage(sessionId, prompt);
-      const timeoutMs = 90_000;
-      const startedAt = Date.now();
-      while (!resolved && Date.now() - startedAt < timeoutMs) {
-        await new Promise((resolver) => setTimeout(resolver, 250));
-      }
-      if (!resolved) {
-        done(null);
-      }
-    } finally {
-      unsubscribe();
-    }
-
-    return appendBlock;
   }
 }
