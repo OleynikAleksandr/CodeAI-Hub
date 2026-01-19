@@ -14,38 +14,36 @@ type ProviderAdapter = {
 
 export type CuratorProviderAdapter = ProviderAdapter;
 
-const extractMessageContent = (event: unknown): string | null => {
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const extractAssistantContent = (event: unknown): string | null => {
   if (typeof event === "string") {
     return event;
   }
-  if (!event || typeof event !== "object") {
+  if (!isRecord(event)) {
     return null;
   }
-  const typed = event as {
-    readonly content?: unknown;
-    readonly data?: unknown;
-    readonly payload?: unknown;
-  };
 
-  if (typeof typed.content === "string") {
-    return typed.content;
+  const type = typeof event.type === "string" ? event.type : "";
+  if (type === "assistant" && typeof event.content === "string") {
+    return event.content;
   }
-  if (typed.content && typeof typed.content === "object") {
-    return JSON.stringify(typed.content);
-  }
-
-  if (typeof typed.data === "string") {
-    return typed.data;
-  }
-  if (typed.data && typeof typed.data === "object") {
-    return JSON.stringify(typed.data);
+  if (
+    type === "dialog_message" &&
+    event.role === "assistant" &&
+    typeof event.content === "string"
+  ) {
+    return event.content;
   }
 
-  if (typeof typed.payload === "string") {
-    return typed.payload;
-  }
-  if (typed.payload && typeof typed.payload === "object") {
-    return JSON.stringify(typed.payload);
+  if (
+    type === "stream_event" &&
+    isRecord(event.data) &&
+    event.data.kind === "structured_output" &&
+    typeof event.data.suggested_response === "string"
+  ) {
+    return event.data.suggested_response;
   }
   return null;
 };
@@ -72,6 +70,7 @@ export class QuestionnaireCuratorProviderRunner {
     let resolved = false;
     let latestText: string | null = null;
     let lastUpdate = Date.now();
+    const promptTrimmed = prompt.trim();
 
     const done = (value: string | null): void => {
       if (resolved) {
@@ -85,12 +84,15 @@ export class QuestionnaireCuratorProviderRunner {
       if (resolved) {
         return;
       }
-      const text = extractMessageContent(event);
+      const text = extractAssistantContent(event);
       if (!text) {
         return;
       }
       const trimmed = text.trim();
       if (trimmed.length === 0) {
+        return;
+      }
+      if (trimmed === promptTrimmed) {
         return;
       }
       if (!latestText || trimmed.length >= latestText.length) {
