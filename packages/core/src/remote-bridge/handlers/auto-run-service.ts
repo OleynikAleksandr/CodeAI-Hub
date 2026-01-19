@@ -36,6 +36,9 @@ const resolveModelLabel = (
   if (providerId === "claudeCodeCli") {
     return config.claudeDefaultModel;
   }
+  if (providerId === "geminiCli") {
+    return config.geminiDefaultModel ?? "default";
+  }
   return null;
 };
 
