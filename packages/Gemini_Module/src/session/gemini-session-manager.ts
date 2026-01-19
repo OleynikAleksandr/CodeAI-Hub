@@ -215,6 +215,12 @@ export class GeminiSessionManager {
 
   async sendMessage(sessionId: string, content: string): Promise<void> {
     const session = this.requireSession(sessionId);
+    session.reporter?.info?.("Gemini sendMessage called", {
+      sessionId,
+      actualSessionId: session.sessionId,
+      contentLength: content.length,
+      status: session.status,
+    });
     if (session.status === "streaming") {
       throw new Error("Gemini session already has an in-flight request.");
     }
@@ -633,10 +639,21 @@ export class GeminiSessionManager {
 
   private requireSession(sessionId: string): ActiveSession {
     const session = this.sessions.get(sessionId);
-    if (!session) {
-      throw new Error(`Gemini session ${sessionId} not found`);
+    if (session) {
+      return session;
     }
-    return session;
+
+    // Fallback: search by internal sessionId property
+    for (const candidate of this.sessions.values()) {
+      if (candidate.sessionId === sessionId) {
+        return candidate;
+      }
+    }
+
+    const availableIds = Array.from(this.sessions.keys()).join(", ");
+    throw new Error(
+      `Gemini session ${sessionId} not found. Available: [${availableIds}]`
+    );
   }
 
   private loadSettingsSnapshot(
