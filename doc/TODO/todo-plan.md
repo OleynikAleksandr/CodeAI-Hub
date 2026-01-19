@@ -67,7 +67,7 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 
 ### Stream: Design — Curator architecture
 1. [DONE] Doc: описать архитектуру “Questionnaire Curator” (источник данных: transcript; цель: append-only updates в `questionnaire.md`; идемпотентность; триггеры `approve/OK`); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: add questionnaire curator architecture`
-2. [TODO] Git Commit: `docs: add questionnaire curator architecture` (hash: TBD)
+2. [DONE] Git Commit: `docs: add questionnaire curator architecture` (hash: cc44daae)
 
 ### Stream: Core — capture per-run transcript
 1. [TODO] Feat(core): сохранять transcript текущего run (role+content+timestamp) в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/transcript.jsonl` (или `.md`) при завершении run; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit message: `feat(core): persist run transcript for curator`
