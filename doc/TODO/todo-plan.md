@@ -28,7 +28,7 @@
 3. [DONE] Debug: сравнить sessionId между Core и Gemini — возможно promoteSessionId меняет ID, а Core использует старый; scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`
 4. [DONE] Git Commit: `fix(gemini): resolve session id alias mismatches` (hash: 4ac8464d)
 5. [DONE] Fix(core): включить auto-run для `geminiCli` (modelLabel), чтобы `runSlug` не был пустой и клиент отправлял первый промпт; scope: `packages/core/src/remote-bridge/handlers/auto-run-service.ts`
-6. [DONE] Git Commit: `fix(core): enable gemini auto-run model label` (hash: TBD)
+6. [DONE] Git Commit: `fix(core): enable gemini auto-run model label` (hash: 656324eb)
 7. [TODO] Test(manual): проверить что промпт появляется в сессии Gemini
 8. [TODO] Git Commit: `docs: verify gemini idea collector integration` (hash: TBD)
 
