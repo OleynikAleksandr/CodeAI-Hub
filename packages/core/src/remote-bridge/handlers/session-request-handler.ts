@@ -8,6 +8,7 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { type BridgeEvent, serializeSession } from "../types";
 import { maybeCreateAutoRun } from "./auto-run-service";
+import { QuestionnaireCuratorService } from "./questionnaire-curator-service";
 
 type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
@@ -156,6 +157,7 @@ export class SessionRequestHandler {
   private readonly providerRegistry: ProviderRegistry;
   private readonly sessionStorage: UnifiedSessionStorage;
   private readonly logger: Logger;
+  private readonly questionnaireCurator: QuestionnaireCuratorService;
   private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
   private static readonly REFINE_PROVIDER_MISMATCH_ERROR =
@@ -167,6 +169,10 @@ export class SessionRequestHandler {
     this.providerRegistry = options.providerRegistry;
     this.sessionStorage = options.sessionStorage;
     this.logger = options.logger;
+    this.questionnaireCurator = new QuestionnaireCuratorService({
+      config: options.config,
+      logger: options.logger,
+    });
     this.broadcaster = options.broadcaster;
     this.stateBroadcaster = options.stateBroadcaster;
   }
@@ -610,6 +616,18 @@ export class SessionRequestHandler {
         content,
         providerTurnOptions
       );
+
+      if (workflowTurnOptions.finalize) {
+        this.questionnaireCurator
+          .maybeCurate(session, adapter)
+          .catch((error: unknown) => {
+            this.logger.warn("Questionnaire curator failed", {
+              sessionId,
+              providerId: binding.providerId,
+              error: error instanceof Error ? error.message : String(error),
+            });
+          });
+      }
     } catch (error) {
       this.logProviderSendMessageFailed(sessionId, binding, error);
       this.handleProviderFailure(binding.providerId, error, sessionId);
