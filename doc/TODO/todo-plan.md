@@ -90,8 +90,8 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 2. [TODO] Git Commit: `docs: verify questionnaire curator` (hash: TBD)
 
 ### Stream: Curator simplification (session JSONL, no run transcript, no markers)
-1. [TODO] Refactor(core): убрать запись `transcript.jsonl` в run-папке и зависимость от него; использовать только unified sessions JSONL; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit message: `refactor(curator): remove run transcript capture`
-2. [TODO] Git Commit: `refactor(curator): remove run transcript capture` (hash: TBD)
+1. [DONE] Refactor(core): убрать запись `transcript.jsonl` в run-папке и зависимость от него; использовать только unified sessions JSONL; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit message: `refactor(curator): remove run transcript capture`
+2. [DONE] Git Commit: `refactor(curator): remove run transcript capture` (hash: 49a5e325)
 3. [TODO] Refactor(core): curator читает JSONL из `.codeai-hub/sessions` и принимает ответ без `BEGIN_APPEND/END_APPEND`; scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-provider-runner.ts`; commit message: `refactor(curator): use session jsonl and raw response`
 4. [TODO] Git Commit: `refactor(curator): use session jsonl and raw response` (hash: TBD)
 5. [TODO] Docs(templates): обновить prompt куратора (без маркеров) + обновить bundled template; scope: `packages/agents/description-agent/assets/questionnaire-curator.md`, `packages/core/src/templates/bundled-templates.ts`; commit message: `docs(curator): simplify prompt output rules`
