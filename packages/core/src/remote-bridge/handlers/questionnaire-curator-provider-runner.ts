@@ -14,19 +14,6 @@ type ProviderAdapter = {
 
 export type CuratorProviderAdapter = ProviderAdapter;
 
-const BEGIN_APPEND_MARKER = "BEGIN_APPEND";
-const END_APPEND_MARKER = "END_APPEND";
-const APPEND_BLOCK_RE = /BEGIN_APPEND\s*([\s\S]*?)\s*END_APPEND/m;
-
-const extractAppendBlock = (text: string): string | null => {
-  const match = text.match(APPEND_BLOCK_RE);
-  if (!match) {
-    return null;
-  }
-  const content = match[1]?.trim();
-  return content && content.length > 0 ? content : null;
-};
-
 const extractMessageContent = (event: unknown): string | null => {
   if (typeof event === "string") {
     return event;
@@ -83,14 +70,15 @@ export class QuestionnaireCuratorProviderRunner {
     prompt: string
   ): Promise<string | null> {
     let resolved = false;
-    let appendBlock: string | null = null;
+    let latestText: string | null = null;
+    let lastUpdate = Date.now();
 
     const done = (value: string | null): void => {
       if (resolved) {
         return;
       }
       resolved = true;
-      appendBlock = value;
+      latestText = value;
     };
 
     const unsubscribe = adapter.subscribe(sessionId, (event) => {
@@ -101,14 +89,14 @@ export class QuestionnaireCuratorProviderRunner {
       if (!text) {
         return;
       }
-      if (
-        !(
-          text.includes(BEGIN_APPEND_MARKER) && text.includes(END_APPEND_MARKER)
-        )
-      ) {
+      const trimmed = text.trim();
+      if (trimmed.length === 0) {
         return;
       }
-      done(extractAppendBlock(text));
+      if (!latestText || trimmed.length >= latestText.length) {
+        latestText = trimmed;
+        lastUpdate = Date.now();
+      }
     });
 
     try {
@@ -116,15 +104,19 @@ export class QuestionnaireCuratorProviderRunner {
       const timeoutMs = 90_000;
       const startedAt = Date.now();
       while (!resolved && Date.now() - startedAt < timeoutMs) {
+        if (latestText && Date.now() - lastUpdate > 1500) {
+          done(latestText);
+          break;
+        }
         await new Promise((resolver) => setTimeout(resolver, 250));
       }
       if (!resolved) {
-        done(null);
+        done(latestText);
       }
     } finally {
       unsubscribe();
     }
 
-    return appendBlock;
+    return latestText;
   }
 }
