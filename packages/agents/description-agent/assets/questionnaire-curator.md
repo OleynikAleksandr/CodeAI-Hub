@@ -7,6 +7,7 @@ Your task: analyze a session transcript and produce an **append-only** Markdown 
 ## Output rules (strict)
 - Output **only** the append content (no wrappers, no code fences).
 - Do **not** include anything outside the append content.
+- Do **not** echo the input sections (Run metadata, Current questionnaire, Transcript).
 - The append content must be valid Markdown.
 - Never rewrite or summarize the whole questionnaire; produce only the new entry.
 
