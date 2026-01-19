@@ -1,3 +1,4 @@
+import { appendFile, mkdir } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import {
@@ -10,6 +11,9 @@ import type { Session, SessionMessage } from "../session-manager";
 import type { Logger } from "../telemetry/logger";
 
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
+const WORKSPACE_ARTIFACTS_ROOT = ".codeai-hub";
+const RUNS_DIRECTORY_NAME = "runs";
+const TRANSCRIPT_FILENAME = "transcript.jsonl";
 const sanitizeSessionId = (value: string): string =>
   sanitizeWorkspaceSlug(value);
 
@@ -18,6 +22,9 @@ type PendingSession = {
   providerSessionId?: string;
   writer?: UnifiedSessionWriter;
   writerSessionId?: string;
+  runTranscriptPath?: string;
+  transcriptQueue: string[];
+  transcriptWriting?: Promise<void>;
   readonly queue: SessionMessage[];
 };
 
@@ -46,6 +53,8 @@ export class UnifiedSessionStorage {
     const entry: PendingSession = {
       providerId: session.providerId,
       providerSessionId: session.providerSessionId,
+      runTranscriptPath: this.resolveRunTranscriptPath(session) ?? undefined,
+      transcriptQueue: [],
       queue: [],
     };
     this.sessions.set(session.id, entry);
@@ -106,6 +115,13 @@ export class UnifiedSessionStorage {
         );
       });
     }
+
+    this.flushTranscriptQueue(entry).catch((error: unknown) => {
+      this.logger.error("Failed to flush run transcript", error as Error, {
+        sessionId,
+        providerId: entry.providerId,
+      });
+    });
   }
 
   async readMessages(session: Session): Promise<SessionMessage[]> {
@@ -249,5 +265,77 @@ export class UnifiedSessionStorage {
       content: message.content,
       timestamp: message.timestamp,
     });
+  }
+
+  appendRunTranscript(session: Session, message: SessionMessage): void {
+    const entry = this.sessions.get(session.id);
+    if (!entry) {
+      return;
+    }
+
+    const resolvedPath = this.resolveRunTranscriptPath(session);
+    if (!resolvedPath) {
+      return;
+    }
+
+    if (entry.runTranscriptPath !== resolvedPath) {
+      entry.runTranscriptPath = resolvedPath;
+    }
+
+    const line = `${JSON.stringify({
+      id: message.id,
+      role: message.role,
+      content: message.content,
+      timestamp: message.timestamp,
+    })}\n`;
+
+    entry.transcriptQueue.push(line);
+    if (!entry.transcriptWriting) {
+      entry.transcriptWriting = this.flushTranscriptQueue(entry).finally(() => {
+        entry.transcriptWriting = undefined;
+      });
+    }
+  }
+
+  private resolveRunTranscriptPath(session: Session): string | null {
+    if (!(session.stage && session.runSlug)) {
+      return null;
+    }
+
+    const stage = session.stage.trim();
+    const runSlug = session.runSlug.trim();
+    if (!(stage && runSlug)) {
+      return null;
+    }
+
+    const workspaceRoot = path.resolve(session.workspacePath);
+    return path.join(
+      workspaceRoot,
+      WORKSPACE_ARTIFACTS_ROOT,
+      this.workspaceSlug,
+      stage,
+      RUNS_DIRECTORY_NAME,
+      runSlug,
+      TRANSCRIPT_FILENAME
+    );
+  }
+
+  private async flushTranscriptQueue(entry: PendingSession): Promise<void> {
+    const transcriptPath = entry.runTranscriptPath;
+    if (!transcriptPath || entry.transcriptQueue.length === 0) {
+      return;
+    }
+
+    const payload = entry.transcriptQueue.splice(0).join("");
+    if (!payload) {
+      return;
+    }
+
+    await mkdir(path.dirname(transcriptPath), { recursive: true });
+    await appendFile(transcriptPath, payload, "utf8");
+
+    if (entry.transcriptQueue.length > 0) {
+      await this.flushTranscriptQueue(entry);
+    }
   }
 }

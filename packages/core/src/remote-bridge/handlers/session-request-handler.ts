@@ -568,6 +568,7 @@ export class SessionRequestHandler {
     }
 
     this.sessionStorage.appendMessage(sessionId, userMessage);
+    this.sessionStorage.appendRunTranscript(session, userMessage);
     this.broadcaster({ type: "session:message", payload: userMessage });
 
     const binding = this.providerSessions.get(sessionId);
@@ -788,7 +789,11 @@ export class SessionRequestHandler {
     }
     const message = this.sessionManager.appendMessage(sessionId, role, content);
     if (message) {
+      const session = this.sessionManager.getSession(sessionId);
       this.sessionStorage.appendMessage(sessionId, message);
+      if (session) {
+        this.sessionStorage.appendRunTranscript(session, message);
+      }
       this.broadcaster({ type: "session:message", payload: message });
     }
   }
@@ -813,7 +818,11 @@ export class SessionRequestHandler {
       payload.timestamp
     );
     if (message) {
+      const session = this.sessionManager.getSession(sessionId);
       this.sessionStorage.appendMessage(sessionId, message);
+      if (session) {
+        this.sessionStorage.appendRunTranscript(session, message);
+      }
       this.broadcaster({ type: "session:message", payload: message });
     }
   }
