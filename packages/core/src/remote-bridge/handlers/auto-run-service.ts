@@ -26,10 +26,35 @@ const FLOW_STAGES = new Set([
 const IDEA_STAGE = "idea";
 const QUESTIONNAIRE_FILE = "questionnaire.md";
 
-const resolveModelLabel = (
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const resolveGeminiDefaultModelFromSettings = async (
+  config: CoreConfig
+): Promise<string | null> => {
+  try {
+    const raw = await readFile(config.geminiSettingsPath, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    if (!isRecord(parsed)) {
+      return null;
+    }
+    const providers = isRecord(parsed.providers) ? parsed.providers : null;
+    const gemini =
+      providers && isRecord(providers.gemini) ? providers.gemini : null;
+    const model = gemini?.defaultModel;
+    if (typeof model !== "string" || model.trim().length === 0) {
+      return null;
+    }
+    return model.trim();
+  } catch {
+    return null;
+  }
+};
+
+const resolveModelLabel = async (
   providerId: string,
   config: CoreConfig
-): string | null => {
+): Promise<string | null> => {
   if (providerId === "codexCli") {
     return config.codexDefaultModel ?? null;
   }
@@ -37,7 +62,11 @@ const resolveModelLabel = (
     return config.claudeDefaultModel;
   }
   if (providerId === "geminiCli") {
-    return config.geminiDefaultModel ?? "default";
+    return (
+      (await resolveGeminiDefaultModelFromSettings(config)) ??
+      config.geminiDefaultModel ??
+      "default"
+    );
   }
   return null;
 };
@@ -114,7 +143,7 @@ export const maybeCreateAutoRun = async (
     return null;
   }
 
-  const modelLabel = resolveModelLabel(input.providerId, input.config);
+  const modelLabel = await resolveModelLabel(input.providerId, input.config);
   if (!modelLabel) {
     input.logger.warn("Auto-run skipped: model label unavailable", {
       providerId: input.providerId,
