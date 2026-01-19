@@ -1,3 +1,15 @@
+## [1.1.451] - 2026-01-19
+
+### Added
+- **Questionnaire Curator (description)**: авто-дописание `## Clarifications log` в `questionnaire.md` после финализации (`ok/approve/утверждаю`) на основе `transcript.jsonl`.
+- **Run transcript**: сохранение диалога в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/transcript.jsonl` для последующей обработки.
+- **Curator template**: новый template `questionnaire-curator.md` для генерации append-блока.
+
+### Fixed
+- **Gemini session routing**: устранены расхождения sessionId (alias promotion), из-за которых первое сообщение не попадало в сессию.
+- **Gemini idea workflow**: корректный auto-run model label (включая чтение default model из настроек), чтобы runSlug создавался и промпт уходил в провайдера.
+- **Gemini permissions**: разрешено чтение `~/.codeai-hub/templates` и `~/.codeai-hub/codeai-hub`, нормализован workspacePath; включены YOLO tools для write/edit.
+
 ## [1.1.444] - 2026-01-18
 
 ### Fixed
