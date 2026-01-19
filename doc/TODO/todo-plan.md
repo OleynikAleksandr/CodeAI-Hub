@@ -79,6 +79,12 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 3. [DONE] Feat(curator): добавить “curator” прогон после `approve/OK` (читает transcript + текущую анкету и дописывает в конец `questionnaire.md` секцию `Clarifications log`); scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`; commit message: `feat(curator): append clarifications to questionnaire`
 4. [DONE] Git Commit: `feat(curator): append clarifications to questionnaire` (hash: e7eeafba)
 
+### Stream: Refactor — curator module hygiene
+1. [DONE] Refactor(core): вынести provider-runner для curator, чтобы файлы были ≤300 строк; scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-provider-runner.ts`; commit message: `refactor(curator): split provider runner`
+2. [DONE] Git Commit: `refactor(curator): split provider runner` (hash: 8b296b96)
+3. [DONE] Refactor(core): добавить фасад для curator и использовать его в SessionRequestHandler; scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit message: `refactor(curator): add curator facade`
+4. [DONE] Git Commit: `refactor(curator): add curator facade` (hash: 13d68d3a)
+
 ### Stream: Manual verification
 1. [TODO] Test(manual): 2 последовательных run для `description` → убедиться что второй run видит дополненную анкету (Q/A + notes) и задаёт меньше повторных вопросов; scope: n/a; commit message: `docs: verify questionnaire curator`
 2. [TODO] Git Commit: `docs: verify questionnaire curator` (hash: TBD)
