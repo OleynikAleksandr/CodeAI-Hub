@@ -1,67 +1,219 @@
-# Архитектура системы CodeAI-Hub
+# CodeAI-Hub System Architecture
 
-**Состояние:** релиз 1.1.444 (18.01.2026) — path-first + file-first workflow prompts (без `/read`), выровненный порядок шагов и исправления Sessions UI (перенос текста). Верификация: Codex + Claude корректно читают входные файлы по путям и пишут `description.md` в runs.
+**Version:** 1.1.444
+**Last Updated:** 2026-01-19
+**Status:** Active reference (source of truth)
 
-## Важно: добавление новых модулей (Build/Release)
-- Любой новый пакет/модуль, который должен попадать в релизные артефакты (Core runtime, провайдерные tarball’ы, UI bundles, launcher), обязан быть подключён к pipeline сборки: либо через отдельный `scripts/build-<module>.sh`, который вызывается из `scripts/build-all.sh`, либо через прямое добавление в существующие скрипты (`scripts/build-all.sh`/`scripts/build-*.sh`).
-- Если модуль подключается как workspace `file:` dependency и не пакуется через `npm pack`, его нужно **явно включить внутрь runtime** (копирование в артефакт + валидные пути/ссылки), иначе на чистой машине будет `MODULE_NOT_FOUND` и `GET /api/v1/health` не поднимется.
-- Gate перед релизом для новых модулей: сборка артефакта + ручная проверка старта (минимум `curl http://127.0.0.1:<port>/api/v1/health`).
+---
 
+## Document Scope
 
-## Обзор
-CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение рассматривается как один из клиентов, подключающийся к общему ядру. Основная логика, оркестрация, хранение конфигурации и мульти-модульность вынесены в отдельный сервис, который можно запускать и обновлять независимо от оболочки редактора. Все дополнительные модули, SDK и теперь UI-компоненты подгружаются из публичных источников (или локального кеша) во время установки или при старте.
+Этот документ — **единственный источник правды** по архитектуре CodeAI-Hub. Он охватывает:
+- Автономное ядро (Core Orchestrator)
+- Extension Host Layer (VS Code)
+- UI Bundles (Webview, Web Client, Project Manager)
+- CEF Launcher
+- Провайдерные модули (Claude, Codex, Gemini)
 
-## Компоненты системы
-- **Автономное ядро** — Node.js сервис (`@codeai-hub/core@1.1.444`), упакованный как JS‑бандл + официальный Node 20 runtime. В dev/локальных сборках скрипт `scripts/build-core.sh` кладёт ядро в `~/.codeai-hub/core/<platform>/<version>/`, а манифест (`assets/core/manifest.json`) указывает на локальный cache `file://$HOME/.codeai-hub/releases/`. Core Supervisor (`@codeai-hub/core-supervisor`, CLI `codeai-core`) выбирает установленный runtime, запускает его через `<runtime>/node/bin/node <app>/dist/index.js`, пробрасывая `CORE_HOST/CORE_PORT/CORE_MANAGED_MODE`, рабочий каталог (`CLAUDE_WORKSPACE_PATH`, `CODEX_WORKSPACE_PATH`, `GEMINI_WORKSPACE_PATH`) и пути к провайдерам (`*_MODULE_PATH` под `~/.codeai-hub/providers/**`). Результаты установки и выбранный порт фиксируются в `~/.codeai-hub/state/runtime-registry.json`.
-- **UI Bundles (v1.1.444)** — интерфейсы вынесены из VSIX в отдельные пакеты:
-    - `vscode-webview`: React-приложение для панели VS Code.
-    - `web-client`: Статическая сборка для CEF Launcher (Web Client).
-    - `project-manager`: Статическая сборка для CEF Launcher (Project Manager).
-    Устанавливаются в `~/.codeai-hub/packages/ui/<bundleId>/<version>/` с созданием symlink `current`. Extension host при старте проверяет манифест `assets/ui/manifest.json` и распаковывает недостающие версии.
-- **TTL и graceful shutdown** — ядро имеет явную TTL/idle‑модель: параметр `CORE_SHUTDOWN_GRACE_MS` задаёт интервал ожидания после ухода последнего клиента. Пока есть WebSocket‑клиенты, ядро работает бесконечно; после ухода последнего клиента отсчитывается TTL, по истечении которого инициируется `POST /api/v1/shutdown`.
-- **Порты и владение ядром** — `CorePortManager` и Supervisor используют `runtime-registry.json` (`network.corePort`) как единый источник порта. Перед стартом клиенты вызывают `detectRunning()`: если версия ядра совпадает с ожидаемой, VS Code и лаунчер просто attach‑ятся к живому orchestrator’у.
-- **Sticky клиенты и автопереподключение** — VS Code расширение держит невидимое WebSocket‑подключение (`CoreKeepAlive`) к `RemoteBridge`, поэтому ядро остаётся активным, даже если webview свернуто.
-- **Provider version telemetry** — `ProviderVersionService` читает версии CLI/SDK через глобальный npm (`npm list -g`/`npm view`) и отдаёт их в Settings UI вместе с latest.
-- **Claude defaults** — `~/.codeai-hub/settings/settings.json` теперь хранит `providers.claude.defaultModel`; extension synchronizes this file with `CLAUDE_SETTINGS_PATH`/`CLAUDE_DEFAULT_MODEL`, core passes the alias into `ClaudeWorkspaceOptions`, and the Claire SDK re-reads the JSON before each `query` so new Claude sessions honor the selected alias and thinking tokens without hardcoding a full model ID.
-- **Логирование и окружение**: `CodeAIHubLauncher` пишет события в `~/.codeai-hub/logs/launcher/launcher.log`. Orchestrator выводит JSON‑записи в `~/.codeai-hub/logs/core/core.log`. VS Code extension ведёт `~/.codeai-hub/logs/extension/extension.log`.
-- **Клиентские интерфейсы**: webview VS Code, локальный CEF клиент. Все они подключаются к ядру через HTTP/WebSocket API (Remote Bridge).
-- **Session snapshot API**: `/api/v1/status` и стартовый `core:state` содержат только метаданные сессий. История сообщений читается из JSONL логов.
-- **Изоляция провайдеров**: Remote Bridge оборачивает операции в try/catch. Ошибка CLI переводит провайдер в `inactive`, не роняя ядро.
-- **Unified session storage**: `@codeai-hub/unified-session` пишет по одному файлу на `providerSessionId` в структуре `~/.codeai-hub/sessions/{workspaceSlug}/{providerId}/{sessionId}.jsonl`.
-- **Провайдерные модули**: устанавливаются в `~/.codeai-hub/providers/<stack>/<version>/`.
-- **Пайплайн статусов загрузки**: `RuntimeStatusReporter` в ядре собирает прогресс, RemoteBridge ретранслирует `core:loading-status`.
-- **FileDropService**: сервис ядра отдаёт пути через REST-эндпоинт `/api/v1/file-drop`, обеспечивая работу Drag & Drop в standalone-клиенте.
-- **Привязка сессий**: RemoteBridge транслирует событие `session:binding` при создании и смене идентификатора провайдера.
-- **Внешние пользовательские инструменты**: `@google/gemini-cli`, `@google/gemini-cli-core`, `@anthropic-ai/claude-agent-sdk`, `@openai/codex`, `@openai/codex-sdk` устанавливаются глобально в npm prefix и могут автообновляться при старте ядра (если включено в настройках).
-- **macOS меню**: лаунчер CEF создаёт системное меню `Edit` с командами Copy/Paste/Select All.
-- **Thinking settings**: UI сохраняет параметры Claude thinking tokens в `~/.codeai-hub/settings/settings.json` (legacy `claude.json` мигрируется).
+Детальная документация по отдельным стекам вынесена в `doc/Project_Docs/Stacks/`.
 
-## Текущие версии
-- VSIX: `codeai-hub` 1.1.444
-- Автономное ядро: `@codeai-hub/core` 1.1.444
-- UI Bundles: 1.1.444
-- Claude module: 1.1.444
-- Codex module: 1.1.444
-- Gemini module: 1.1.444
-- Agent Shared: `@codeai-hub/agent-shared` 1.1.387
-- Description Agent: `@codeai-hub/description-agent` 1.1.387
-- Virtual Simulation Agent: `@codeai-hub/virtual-simulation-agent` 1.1.387
-- Diagram Modules Agent: `@codeai-hub/diagram-modules-agent` 1.1.387
-- Diagram Facades Agent: `@codeai-hub/diagram-facades-agent` 1.1.387
-- Spec Creator: `@codeai-hub/spec-creator` 1.1.387 (skeleton)
+---
 
-## Структура артефактов
+## 1. Architectural Overview
+
+CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение — один из клиентов, подключающийся к общему ядру.
+
+```mermaid
+graph TD
+    subgraph "Clients (UI Layer)"
+        VSCode["VS Code Extension"]
+        Launcher["CEF Launcher"]
+        Webview["VS Code Webview"]
+        WebClient["Standalone Web Client"]
+        ProjectManager["Project Manager"]
+    end
+
+    subgraph "Core Service (Business Logic)"
+        Orchestrator["Core Orchestrator"]
+        Supervisor["Core Supervisor"]
+        Bridge["Remote Bridge"]
+        SessionMgr["Session Manager"]
+        Registry["Provider Registry"]
+    end
+
+    subgraph "Providers (AI Capabilities)"
+        Claude["Claude Module"]
+        Codex["Codex Module"]
+        Gemini["Gemini Module"]
+    end
+
+    %% Client Connections
+    VSCode -->|Spawns/Connects| Supervisor
+    Launcher -->|Spawns/Connects| Supervisor
+    Webview -->|WebSocket| Bridge
+    WebClient -->|WebSocket| Bridge
+    ProjectManager -->|WebSocket| Bridge
+
+    %% Core Internal Flow
+    Supervisor -->|Manages| Orchestrator
+    Orchestrator -->|Uses| SessionMgr
+    Orchestrator -->|Uses| Registry
+    Bridge -->|Exposes API| Orchestrator
+
+    %% Provider Connections
+    Registry -->|Loads| Claude
+    Registry -->|Loads| Codex
+    Registry -->|Loads| Gemini
+```
+
+### Три слоя компонентов
+
+1. **Extension Host Layer** — точка входа `src/extension.ts`, регистрация команд, webview и Core Supervisor.
+2. **VS Code Webview UI** — React-приложение внутри редактора.
+3. **Local CEF Client** — статический UI-бандл через Chromium Embedded Framework.
+
+---
+
+## 2. Core Components
+
+### 2.1 Автономное ядро
+
+Node.js сервис (`@codeai-hub/core@1.1.444`), упакованный как JS-бандл + официальный Node 20 runtime.
+
+**Установка:** `~/.codeai-hub/core/<platform>/<version>/`
+
+**Core Supervisor** (`@codeai-hub/core-supervisor`) выбирает runtime, запускает через:
+```
+<runtime>/node/bin/node <app>/dist/index.js
+```
+
+Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
+
+### 2.2 UI Bundles (v1.1.444)
+
+Интерфейсы вынесены из VSIX в отдельные пакеты:
+- `vscode-webview`: React-приложение для панели VS Code
+- `web-client`: Статическая сборка для CEF Launcher
+- `project-manager`: Статическая сборка Project Manager
+
+**Установка:** `~/.codeai-hub/packages/ui/<bundleId>/<version>/` с symlink `current`.
+
+### 2.3 TTL и Graceful Shutdown
+
+Параметр `CORE_SHUTDOWN_GRACE_MS` задаёт интервал ожидания после ухода последнего клиента. Пока есть WebSocket-клиенты — ядро работает бесконечно.
+
+### 2.4 Порты и владение ядром
+
+`CorePortManager` и Supervisor используют `runtime-registry.json` (`network.corePort`). Перед стартом клиенты вызывают `detectRunning()` — если версия совпадает, просто attach к живому orchestrator.
+
+### 2.5 Provider Version Telemetry
+
+`ProviderVersionService` читает версии CLI/SDK через глобальный npm (`npm list -g`/`npm view`).
+
+---
+
+## 3. Extension Host Layer
+
+### 3.1 Activation & Lifecycle
+
+`src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
+
+### 3.2 UI Bundle Bootstrap
+
+`ui-activation.ts` читает `assets/ui/manifest.json`, устанавливает отсутствующие tar.bz2 из `~/.codeai-hub/releases/` в `~/.codeai-hub/packages/ui/<bundle>/<version>`, создает symlink `current`.
+
+### 3.3 Webview Provider
+
+`HomeViewProvider` создаёт webview, подготавливает HTML и CSP, беря статику из `~/.codeai-hub/packages/ui/vscode-webview/current` (fallback — `media/`).
+
+### 3.4 Message Routing
+
+`home-view-message-router` обрабатывает события от webview (`session:create`, `provider:select`, `settings:update`) и проксирует в ядро через Remote UI Bridge.
+
+### 3.5 Core Bootstrap
+
+Ядро на мульти-тенантной архитектуре. `workspacePath` — свойство конкретной Сессии, не глобальный параметр. Один экземпляр ядра обслуживает несколько проектов.
+
+### 3.6 Port Negotiation & Shutdown
+
+Перед запуском новой версии расширение и лаунчер отправляют `POST /api/v1/shutdown`, ждут graceful-stop. При занятом порте перебирают пул `8080 → 8081 → … → 8092`.
+
+### 3.7 Sticky Keepalive
+
+`CoreKeepAlive` держит скрытое WebSocket-подключение к `ws://<host>:<port>/api/v1/stream`, поэтому ядро не зависит от состояния webview.
+
+---
+
+## 4. VS Code Webview UI
+
+### 4.1 AppHost
+
+Корневой React-компонент управляет состоянием сессий через hooks (`useSessionStore`, `useProviderPickerState`, `useSettingsState`). Модуль `core-bridge` подключается к ядру напрямую (HTTP `/api/v1/status`, WebSocket `/api/v1/stream`).
+
+### 4.2 Delivery
+
+Webview грузит JS/CSS из `~/.codeai-hub/packages/ui/vscode-webview/current`. VSIX не содержит `react-chat.js`/CSS.
+
+### 4.3 Layout
+
+Сетка `session-grid`: `ActionBar`, `DialogPanel`, `TodoPanel`, `StatusPanel`, `InputPanel`. Общие дизайн-токены в `media/main-view.css`.
+
+### 4.4 Provider Picker & Settings
+
+Модули `provider-picker`, `settings/view` позволяют выбирать провайдеров и менять конфигурацию. UI отображает статус подключения (connected / offline).
+
+---
+
+## 5. Local CEF Client
+
+### 5.1 Bundle
+
+UI устанавливается в `~/.codeai-hub/packages/ui/web-client/current` (или `project-manager/current`).
+
+### 5.2 Runtime & Launcher Delivery
+
+- `assets/cef/manifest.json` — CEF minimal-пакеты для Windows, macOS, Linux
+- `assets/launcher/manifest.json` — версии `CodeAIHubLauncher`
+
+Модули `runtime-installer.ts` и `launcher-installer.ts` скачивают архивы в `~/.codeai-hub/cef/` и `~/.codeai-hub/packages/launcher/`.
+
+### 5.3 Standalone Bootstrap
+
+При запуске `CodeAIHubLauncher` проверяет core. Если не запущен — поднимает bundled Node runtime и стартует `app/dist/index.js`.
+
+### 5.4 Logging
+
+- Launcher: `~/.codeai-hub/logs/launcher/launcher.log`
+- Core: `~/.codeai-hub/logs/core/core.log`
+- Providers: `~/.codeai-hub/logs/<provider>/sdk-<provider>-<sessionId>.jsonl`
+
+---
+
+## 6. Providers
+
+### 6.1 Claude & Codex
+
+CommonJS модули, tarballs через `npm pack`. Инсталляторы диагностируют наличие пользовательских CLI.
+
+**Claude defaults:** `~/.codeai-hub/settings/settings.json` хранит `providers.claude.defaultModel`.
+
+### 6.2 Gemini
+
+CommonJS модуль с динамическим `import()` для ESM-пакетов. Глобальная установка `@google/gemini-cli` и `@google/gemini-cli-core`.
+
+---
+
+## 7. Artifact Layout
+
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/
-│       └── 1.1.444/
-│           ├── node/
-│           ├── app/
-│           └── install.json
+│   └── darwin-arm64/1.1.444/
+│       ├── node/
+│       ├── app/
+│       └── install.json
 ├── packages/
-│   ├── launcher/
-│   │   └── macos-arm64/1.1.444/
+│   ├── launcher/macos-arm64/1.1.444/
 │   └── ui/
 │       ├── vscode-webview/
 │       │   ├── 1.1.444/
@@ -77,8 +229,8 @@ CodeAI-Hub — автономная платформа управления AI-�
 │   ├── codex/1.1.444/
 │   └── gemini/1.1.444/
 ├── settings/
-│   ├── claude.json          # legacy thinking settings migrated to settings.json
-│   └── settings.json        # current source of truth for providers.{claude,codex,gemini}
+│   └── settings.json
+├── sessions/<workspaceSlug>/<providerId>/<sessionId>.jsonl
 └── releases/
     ├── CodeAIHubLauncher-macos-arm64-1.1.444.tar.bz2
     ├── vscode-webview-1.1.444.tar.bz2
@@ -90,166 +242,80 @@ CodeAI-Hub — автономная платформа управления AI-�
     └── codeai-hub-core-darwin-arm64-1.1.444.tar.bz2
 ```
 
-## Провайдеры
-### Claude и Codex
-- Сборка остаётся CommonJS; тарболы публикуются через `npm pack` и укладываются в ядро.
-- Инсталляторы диагностируют наличие пользовательских инструментов.
+---
 
-### Gemini (актуальный статус)
-- Модуль остаётся CommonJS, но `cli-bridge` использует динамический `import()` для ESM-пакетов.
-- Инсталлятор обеспечивает глобальную установку `@google/gemini-cli` и `@google/gemini-cli-core` и может обновлять их до latest через Auto Update Service.
+## 8. Current Versions
 
-## Манифесты
-Во всех текущих dev-сборках и внутренних релизах manifests (`assets/core/manifest.json`, `assets/ui/manifest.json` и др.) указывают на локальный cache `file://$HOME/.codeai-hub/releases/…`.
+| Component | Version |
+|-----------|---------|
+| VSIX | 1.1.444 |
+| Core | 1.1.444 |
+| UI Bundles | 1.1.444 |
+| Claude Module | 1.1.444 |
+| Codex Module | 1.1.444 |
+| Gemini Module | 1.1.444 |
+| Agent Shared | 1.1.387 |
+| Description Agent | 1.1.387 |
+| Virtual Simulation Agent | 1.1.387 |
+| Diagram Modules Agent | 1.1.387 |
+| Diagram Facades Agent | 1.1.387 |
 
-## Recent Changes (v1.1.442 - 2026-01-18)
-- **Workflow prompt pack (path-first)**: Project Manager отправляет короткий стартовый промпт с путями к анкете/шаблону/целевому файлу; агент читает файлы сам.
-- **Core**: полностью удалён auto-attach (workspace files + pre_read_documents), в провайдер уходит ровно пользовательский текст.
-- **Workflow prompts**: file-first промпты стадий упрощены (без JSON-инструкций, фокус на чтение файлов и запись артефакта).
+---
 
-## Recent Changes (v1.1.441 - 2026-01-18)
-- **Workflow prompts (file-first)**: обновлены промпты стадий Description/Virtual Simulation/Diagrams — без structured output, запись в файл по целевому пути.
-- **Workflow templates cleanup**: удалены schema-шаблоны для workflow стадий, template sync больше не архивирует legacy-папки.
-- **Project Manager**: fallback prompt выровнен под file-first, outputSchema не отправляется для workflow стадий.
+## 9. Workflow (File-First Architecture)
 
-## Recent Changes (v1.1.440 - 2026-01-18)
-- **Workflow file-first**: Core больше не применяет `outputSchema` для workflow стадий; Project Manager отправляет single-turn prompt pack (инструкция + анкета + шаблон + target path).
-- **Workflow gates runner**: добавлен модуль запуска гейтов по событию `workflow.stage.completed` с эмиссией `workflow.gate.*` событий.
-- **Codex/Claude structured output**: `question*` слоты в `artifacts[]` трактуются как вопросы и не отправляются в artifact-upsert; слоты фильтруются по schema allowlist.
+С версии 1.1.440 workflow стадии (Description, Virtual Simulation, Diagrams) используют **file-first** подход:
+- Structured output отключён
+- Артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/...`
+- Watcher отслеживает файлы и обновляет workflow state для UI gating
 
-## Recent Changes (v1.1.444 - 2026-01-18)
-- **Workflow templates**: формулировки “следующий шаг” выровнены под последовательность `Description → Virtual Simulation → Module Diagram → Interface Map`.
-- **Sessions UI**: длинные строки/URL и code blocks больше не вылезают за границы сообщений (перенос/скролл).
+**Подробнее:** `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
 
-## Recent Changes (v1.1.443 - 2026-01-18)
-- **Workflow prompts**: file-first промпты больше не просят `/read`, а читают файлы напрямую средствами провайдера.
-- **Claude**: при `bypassPermissions` добавлена домашняя директория пользователя в `additionalDirectories` (для чтения шаблонов из `~/.codeai-hub/templates/**`).
-- **Build scripts**: добавлен флаг `--allow-dirty` для `build-all.sh`/`build-release.sh` (опционально; по умолчанию требования “clean tree” сохранены).
+---
 
-## Recent Changes (v1.1.439 - 2026-01-18)
-- **Codex turn timeout**: Codex-модуль прерывает зависшие ответы при отсутствии событий > 180s, чтобы UI не зависал без ответа.
+## 10. Security & Configuration
 
-## Recent Changes (v1.1.438 - 2026-01-18)
-- **Workflow schema enforcement (legacy)**: Core подмешивает stage `outputSchema` для structured-output workflow-сессий и на finalize требует `artifacts[]` (minItems=1), чтобы `artifact-upsert` срабатывал даже при отсутствии schema со стороны UI. Для file-first стадий v1.1.440 `outputSchema` больше не применяется — Core удаляет её из `turnOptions`.
+### 10.1 Secrets
 
-## Recent Changes (v1.1.431 - 2026-01-17)
-- **Project Manager**: Description workflow-сессия работает в Project Manager (Sessions слева), анкета Description — в Artifacts справа.
-- **Storage**: runs path обновлён на `.codeai-hub/003cworkspaceSlug003e/description/runs/003crunSlug003e/...` (без `initiatives/`).
+Токены и ключи сохраняются в `SecretStorage` VS Code; при недоступности — зашифрованы на стороне ядра.
 
-## Recent Changes (v1.1.432 - 2026-01-17)
-- **Project Manager**: окно Sessions отображает UI 1:1 как `vscode-webview` (tabs + dialog + TODO + input + status).
+### 10.2 CSP
 
-## Recent Changes (v1.1.433 - 2026-01-17)
-- **Project Manager (legacy)**: stage `description` follow-up сообщения отправлялись с Description schema, финализация сохраняла `artifacts[]` вместо вывода markdown в чат.
-- **Claude module**: structured output корректно эмитит `suggested_response` и `artifacts[]` из `result` payload.
+Webview запрещает inline-скрипты, ресурсы грузятся из `vscode-resource:`.
 
-## Recent Changes (v1.1.435 - 2026-01-17)
-- **Claude module**: structured output из `result` нормализуется в `stream_event`, чтобы артефакты сохранялись через `artifact-upsert` и UI показывал краткий ответ.
+### 10.3 Remote UI Bridge
 
-## Recent Changes (v1.1.434 - 2026-01-17)
-- **vscode-webview (legacy)**: stage `description` сообщения отправлялись с Description schema, а `artifacts[]` сохранялись даже после перезапуска UI.
+Ограничивает число одновременных подключений и сбрасывает сессии после таймаута простоя.
 
-## Recent Changes (v1.1.430 - 2026-01-17)
-- **Project Manager provider picker**: анкета Description отправляется в Description workflow с явным `providerId`, выбранным пользователем.
+---
 
-## Recent Changes (v1.1.429 - 2026-01-16)
-- **Default provider selection**: Core выбирает первый активный провайдер с доступным адаптером при `session:create`, чтобы запуск workflow шагов не зависел от порядка списка провайдеров.
+## 11. Build & Tooling
 
-## Recent Changes (v1.1.388 - 2026-01-06)
-- **Agent Packages architecture**: Extracted `@codeai-hub/description-agent`, `@codeai-hub/virtual-simulation-agent`, `@codeai-hub/diagram-modules-agent`, `@codeai-hub/diagram-facades-agent` into standalone npm packages with facade pattern.
-- **Description agent migration**: Contract building, parsing, and artifact paths moved to `DescriptionAgentFacade`.
-- **Spec Creator skeleton**: Package structure with placeholder assets (schema, prompt, template) ready for future implementation.
-- **Agent Shared package**: Common utilities (`schema-utils`, `contract-utils`, `types`) extracted to `@codeai-hub/agent-shared`.
+### 11.1 Build Pipeline
 
-## Recent Changes (v1.1.387 - 2026-01-05)
-- **Workflow slim output**: Structured Output возвращает оценку готовности и умные вопросы, не дублируя анкету.
+VSIX не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2:
+- `vscode-webview.tar.bz2`
+- `web-client.tar.bz2`
+- `project-manager.tar.bz2`
 
-## Recent Changes (v1.1.386 - 2026-01-05)
-- **Questionnaire auto-attach**: шаблонные пути `<...>` в prompt игнорируются, чтобы анкета прикреплялась при single-turn submit.
+### 11.2 Quality Gates
 
-## Recent Changes (v1.1.385 - 2026-01-05)
-- **Questionnaire submit**: первый submit отправляется одним turn'ом, без раннего ответа провайдера.
-- **Pre-read auto-attach**: Core извлекает `pre_read_documents` из анкеты и прикрепляет перед анкетой.
-- **Auto-attach limits**: лимит на файл поднят до 300 KB, добавлен общий бюджет вложений.
+- `./scripts/check-architecture.sh`
+- `npx ultracite check`
+- `npx ts-prune`
+- `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`
+- `npm run check:links`
 
-## Recent Changes (v1.1.384 - 2026-01-05)
-- **Questionnaire inputs**: подсказки/примеры отображаются под вопросами, поля ввода не содержат шаблонный текст.
-- **Release artefacts**: `doc/tmp/releases/` сохраняет UI tarballs (`vscode-webview`, `web-client`, `project-manager`) вместе с core/providers/launcher.
+### 11.3 Adding New Modules
 
-## Recent Changes (v1.1.383 - 2026-01-05)
-- **Description questionnaire UX**: добавлены секция документов для чтения, подробные пояснения, отмена и возобновление заполнения.
-- **Template authority**: Core на старте синхронизирует bundled-шаблоны и перезаписывает локальные правки в папках `~/.codeai-hub/templates/{description,virtual_simulation,diagram_modules,diagram_facades}/`.
-- **Release 1.1.383**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.383.
+Любой новый пакет должен быть подключён к pipeline сборки через `scripts/build-<module>.sh` или добавлен в `scripts/build-all.sh`. Gate перед релизом: `curl http://127.0.0.1:<port>/api/v1/health`.
 
-## Recent Changes (v1.1.382 - 2026-01-05)
-- **Codex thread binding safety**: global startup lock сериализует первый turn до получения `thread.started` и bind `thread_id`; после bind перепривязки игнорируются.
-- **Codex state isolation**: дефолтный `CODEX_HOME` для CodeAI Hub = `~/.codeai-hub/providers/codex/home` (с миграцией `auth.json`/`config.toml` из `~/.codex` при отсутствии).
-- **Release 1.1.382**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.382.
+---
 
-## Recent Changes (v1.1.381 - 2026-01-04)
-- **Description prompt template**: bundled prompt устанавливается при старте расширения и применяется для анкетного этапа.
-- **Architecture-aware Description stage**: prompt включает кластерно‑модульный подход (фасады, новые модули вместо правок, микро‑классы).
-- **Release 1.1.381**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.381.
+## 12. Related Documents
 
-## Recent Changes (v1.1.380 - 2026-01-04)
-- **Description Questionnaire UI**: анкета открывается отдельным экраном и использует templateMarkdown из Core.
-- **Questionnaire persistence**: ответы сохраняются в `.codeai-hub/.../description/questionnaire.md` через `POST /api/v1/orchestrator/workspace-file-write`.
-- **Description intake**: анкета отправляется как путь к файлу (auto-attach), без публикации полного текста в диалоге.
-- **Release 1.1.380**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.380.
-
-## Recent Changes (v1.1.367 - 2025-12-30)
-- **Workflow contract delivery**: Core отдаёт `/api/v1/orchestrator/description-contract` и `/api/v1/orchestrator/virtual-simulation-contract`, UI не читает локальные шаблоны напрямую; prompt/template хранятся в `~/.codeai-hub/templates/<stage>/`.
-- **Workflow contract set**: template/prompt обновлены под stage-specific требования, адаптивное интервью и запрет длинных документов в диалоге.
-- **Release 1.1.367**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.367.
-
-## Recent Changes (v1.1.366 - 2025-12-30)
-- **Description spec readiness**: шаблон/контракт теперь требуют UI/UX, триггеры, сущности и архитектурный контур для Spec.md.
-- **Codex thinking output**: native reasoning снова показывается; structured outputs не требуют отдельного RU summary поля.
-- **Release 1.1.366**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.366.
-
-## Recent Changes (v1.1.361 - 2025-12-29)
-- **Description UX**: системное сообщение подтверждает старт агента и просит дождаться первого вопроса.
-- **Description contract (legacy)**: шаблон description.md включался в schema; finalize требовал ключевые секции и `coverage_percent >= 80`.
-- **Release 1.1.361**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.361.
-
-## Recent Changes (v1.1.360 - 2025-12-29)
-- **Description workflow flow**: Flow Wizard запускает guided conversation для Codex и Claude (Claude Agent SDK Structured Outputs), structured output возвращает `suggested_response` и артефакты.
-- **Release 1.1.360**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.360.
-
-## Recent Changes (v1.1.359 - 2025-12-27)
-- **Codex thinking alignment**: structured outputs больше не завязаны на отдельное RU summary поле; thinking опирается на native reasoning (если доступен).
-- **Release 1.1.359**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.359.
-
-## Recent Changes (v1.1.358 - 2025-12-27)
-- **Codex structured output prompt**: упрощённый префикс для JSON-ответа (без требования RU summary).
-- **Release 1.1.358**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.358.
-
-## Recent Changes (v1.1.357 - 2025-12-27)
-- **Codex structured output schema**: дефолтный schema больше не требует RU summary (минимум `{ answer }`), кастомные схемы задаются UI/Flow контрактом.
-- **Release 1.1.357**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.357.
-
-## Recent Changes (v1.1.356 - 2025-12-27)
-- **Codex structured outputs**: `answer` стримится из JSON; thinking отображается из native reasoning (если доступен), без RU summary через отдельное поле.
-- **Release 1.1.356**: артефакты VSIX/launcher/core/UI и provider tarballs обновлены до 1.1.356.
-
-## Recent Changes (v1.1.339 - 2025-12-23)
-- **Claude default model pipeline**: `settings.json` → `CLAUDE_SETTINGS_PATH`/`CLAUDE_DEFAULT_MODEL` → Core config → Claude SDK (re-read before each `query`) обеспечивает применение выбранного alias и thinking-настроек, а сборка 1.1.339 публикует свежие `codeai-hub-1.1.339.vsix`, `Core`, `Launcher` и provider tarball’ы.
-- **Release 1.1.339**: packaging done via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`, lots recorded in `doc/tmp/releases/` and release doc.
-
-## Recent Changes (v1.1.338 - 2025-12-23)
-- **Claude Default model selector**: новый блок в Settings → Claude рендерит карточки из `CLAUDE_MODEL_ALIASES` (`src/types/claude-model-registry.ts`) и переиспользует `shared-model-card-styles.ts` (`src/client/ui/src/components/settings/shared-model-card-styles.ts`) для border/hover/selected цветов, `tabIndex={-1}` rows, `role="radio"` и `outline: none`/`boxShadow: none`, что делает оформление идентичным карточкам Codex и соответствует рекомендациям из `doc/Knowledge/css-border-shorthand-react-inline-styles.md`. Выбранный alias (`default/sonnet`, `opus`, `haiku`) сохраняется в `providers.claude.defaultModel`, копируется в `CLAUDE_SETTINGS_PATH`/`CLAUDE_DEFAULT_MODEL`, и Core/Claude module используют alias при старте сессий.
-
-## TODO / Next Steps
-- Пройти e2e (fresh VSIX → ручная установка CLI пользователем → запуск сессии Gemini) и задокументировать результат (если ещё не зафиксировано).
-- Добавить health-check провайдера в ядре.
-- Обновить telemetry checklist.
-
-## Module Documentation
-- Agent Packages: `doc/Project_Docs/AgentPackages_Architecture.md`
-- UI Modules: `doc/Project_Docs/Stacks/UI_Modules.md`
-- Launcher CEF: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
-- Core Orchestrator: `doc/Project_Docs/Stacks/CoreOrchestrator.md`
-- Claude Provider: `doc/Project_Docs/Stacks/Claude.md`
-- Codex Provider: `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
-- Codex Thinking: `doc/Knowledge/Контролируемое отображение размышлений в Codex.md`
-- Gemini Provider: `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
+- **Stacks:** `doc/Project_Docs/Stacks/` (CoreOrchestrator, Claude, Codex, Gemini, UI_Modules, Launcher_CEF)
+- **Workflow:** `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+- **Agent Packages:** `doc/Project_Docs/AgentPackages_Architecture.md`
+- **SolidWorks Flow:** `doc/SolidWorks-Flow/`
+- **Knowledge:** `doc/Project_Docs/knowledge/`

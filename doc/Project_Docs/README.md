@@ -1,23 +1,72 @@
-# Project Docs (актуальные документы)
+# Project Docs — Единый источник правды
 
-Эта папка содержит **актуальные** проектные документы, которые описывают текущую архитектуру и операционные договорённости CodeAI Hub.
+**Last Updated:** 2026-01-19
+
+Эта папка содержит **актуальные** проектные документы CodeAI Hub.
+
+---
 
 ## Структура
-- `SystemArchitecture/` — системная архитектура и карты компонентов.
-- `Stacks/` — стек‑документация по Core/UI/Launcher/провайдерам.
-- `knowledge/` — минимальная база знаний для запуска/эксплуатации.
+
+```
+doc/Project_Docs/
+├── README.md                    # Этот навигатор
+├── SystemArchitecture/          # Системная архитектура
+│   ├── SystemArchitecture.md    # ⭐ ГЛАВНЫЙ ДОКУМЕНТ (source of truth)
+│   ├── ProjectStructureMap.md   # Визуальная карта компонентов
+│   └── UnifiedSessionArchitecture.md
+├── Stacks/                      # Документация по модулям
+│   ├── CoreOrchestrator.md
+│   ├── Claude.md
+│   ├── Codex_SDK_Module.md
+│   ├── Gemini_CLI_Module.md
+│   ├── Launcher_CEF_Module.md
+│   └── UI_Modules.md
+├── Workflow_CLI_Steps_And_Watcher_Architecture.md  # Workflow file-first
+├── AgentPackages_Architecture.md                   # Agent packages
+└── knowledge/                   # Практические руководства
+    ├── ProviderSetupGuide.md
+    └── Local_Artifacts_Workflow.md
+```
+
+---
 
 ## Ключевые документы
-- `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — системная архитектура (source of truth).
-- `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md` — workflow file-first (no structured output) + watcher.
-- `doc/Project_Docs/AgentPackages_Architecture.md` — архитектура agent packages и точки интеграции.
 
-## Вне папки (дизайн‑доки)
-- `doc/SolidWorks-Flow/` — SolidWorks‑подобная визуализация workflow (дерево разработки, статусы, “жёсткие” гейты).
+| Документ | Описание |
+|----------|----------|
+| `SystemArchitecture/SystemArchitecture.md` | **Источник правды** — вся архитектура в одном месте |
+| `Workflow_CLI_Steps_And_Watcher_Architecture.md` | File-first workflow + watcher |
+| `AgentPackages_Architecture.md` | Agent packages и точки интеграции |
 
-## Архив
-- `doc/Project_Docs/Archive/` — одноразовые дизайн‑доки завершённых рефакторингов (оставлены для истории). Если документ из `Archive/` начинает снова влиять на решения — его нужно либо актуализировать, либо перенести обратно в основной список.
+---
 
-## Что оставлено намеренно
-- `doc/Project_Docs/knowledge/ProviderSetupGuide.md` — как установить и аутентифицировать CLI провайдеров.
-- `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md` — офлайн‑цикл сборки, локальные артефакты, дисциплина релизов.
+## Stacks (модульная документация)
+
+| Стек | Документ |
+|------|----------|
+| Core Orchestrator | `Stacks/CoreOrchestrator.md` |
+| Claude Provider | `Stacks/Claude.md` |
+| Codex Provider | `Stacks/Codex_SDK_Module.md` |
+| Gemini Provider | `Stacks/Gemini_CLI_Module.md` |
+| CEF Launcher | `Stacks/Launcher_CEF_Module.md` |
+| UI Modules | `Stacks/UI_Modules.md` |
+
+---
+
+## Вне этой папки
+
+| Папка | Описание |
+|-------|----------|
+| `doc/SolidWorks-Flow/` | UI/UX Workflow Tree (SolidWorks-подобная визуализация) |
+| `doc/TODO/` | Планы разработки |
+| `doc/Sessions/` | Отчёты сессий |
+| `doc/Knowledge/` | База знаний (tips, troubleshooting) |
+
+---
+
+## Правила
+
+1. **Один источник правды** — `SystemArchitecture.md` содержит всю архитектуру
+2. **Нет дублирования** — детали модулей только в `Stacks/`
+3. **Актуальность** — документы обновляются в том же коммите, что и код

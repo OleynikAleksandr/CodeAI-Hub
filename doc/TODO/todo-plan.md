@@ -9,10 +9,9 @@
 - **Real-time Docs**: любые изменения протоколов/архитектуры требуют синхронного обновления документов из `doc/` **до** коммита.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
-2. `doc/Architecture/Architecture.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-4. `doc/TODO/todo-plan.md`
+1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+2. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+3. `doc/TODO/todo-plan.md`
 
 ---
 
