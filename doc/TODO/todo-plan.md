@@ -66,7 +66,7 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 ## Phase 62 — Questionnaire Curator (auto-merge Q/A into questionnaire) (owner: Oleksandr, updated: 2026-01-19)
 
 ### Stream: Design — Curator architecture
-1. [TODO] Doc: описать архитектуру “Questionnaire Curator” (источник данных: transcript; цель: append-only updates в `questionnaire.md`; идемпотентность; триггеры `approve/OK`); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: add questionnaire curator architecture`
+1. [DONE] Doc: описать архитектуру “Questionnaire Curator” (источник данных: transcript; цель: append-only updates в `questionnaire.md`; идемпотентность; триггеры `approve/OK`); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: add questionnaire curator architecture`
 2. [TODO] Git Commit: `docs: add questionnaire curator architecture` (hash: TBD)
 
 ### Stream: Core — capture per-run transcript
