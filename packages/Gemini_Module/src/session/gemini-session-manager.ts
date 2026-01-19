@@ -69,6 +69,7 @@ type GeminiSettingsSnapshot = {
 
 export class GeminiSessionManager {
   private readonly sessions = new Map<string, ActiveSession>();
+  private readonly sessionAliases = new Map<string, string>();
 
   private readonly modules: GeminiCliModules;
 
@@ -323,7 +324,8 @@ export class GeminiSessionManager {
   }
 
   async closeSession(sessionId: string): Promise<void> {
-    const session = this.sessions.get(sessionId);
+    const resolvedSessionId = this.sessionAliases.get(sessionId) ?? sessionId;
+    const session = this.sessions.get(resolvedSessionId);
     if (!session) {
       return;
     }
@@ -341,7 +343,8 @@ export class GeminiSessionManager {
 
     session.logger?.end();
     session.status = "closed";
-    this.sessions.delete(sessionId);
+    this.sessions.delete(resolvedSessionId);
+    this.pruneAliasesForSession(resolvedSessionId);
     this.emitEvents(session, [
       {
         type: "system",
@@ -361,6 +364,7 @@ export class GeminiSessionManager {
       session.logger?.renameSession?.(previousId, nextId);
       return nextId;
     }
+    this.sessionAliases.set(previousId, nextId);
     this.sessions.delete(previousId);
     session.sessionId = nextId;
     this.sessions.set(nextId, session);
@@ -643,6 +647,15 @@ export class GeminiSessionManager {
       return session;
     }
 
+    const canonicalId = this.sessionAliases.get(sessionId);
+    if (canonicalId) {
+      const resolved = this.sessions.get(canonicalId);
+      if (resolved) {
+        return resolved;
+      }
+      this.sessionAliases.delete(sessionId);
+    }
+
     // Fallback: search by internal sessionId property
     for (const candidate of this.sessions.values()) {
       if (candidate.sessionId === sessionId) {
@@ -651,9 +664,18 @@ export class GeminiSessionManager {
     }
 
     const availableIds = Array.from(this.sessions.keys()).join(", ");
+    const aliasIds = Array.from(this.sessionAliases.keys()).join(", ");
     throw new Error(
-      `Gemini session ${sessionId} not found. Available: [${availableIds}]`
+      `Gemini session ${sessionId} not found. Available: [${availableIds}] Aliases: [${aliasIds}]`
     );
+  }
+
+  private pruneAliasesForSession(sessionId: string): void {
+    for (const [alias, canonical] of this.sessionAliases.entries()) {
+      if (alias === sessionId || canonical === sessionId) {
+        this.sessionAliases.delete(alias);
+      }
+    }
   }
 
   private loadSettingsSnapshot(
