@@ -112,8 +112,8 @@ Curator всегда добавляет запись в анкету в форм
 
 Curator использует отдельный prompt-template (например, `questionnaire-curator.md`) и получает на вход:
 - текущий `questionnaire.md`
-- `transcript.jsonl`
-- `run.json` (как источник `runId`, `runSlug`, `providerId`)
+- session transcript JSONL из `.codeai-hub/sessions/...` (Core предварительно удаляет самый первый user-пакет промпта Description Agent)
+- run metadata (Core `Session` + блок `Run metadata` в промпте)
 
 Выход LLM должен быть ограничен **только** контентом для append (без маркеров и обёрток).
 Core принимает ответ как готовый Markdown‑блок и дописывает его в конец анкеты, удаляя эхо входных секций.
@@ -124,6 +124,7 @@ Core принимает ответ как готовый Markdown‑блок и 
 
 - Нет session JSONL или он пустой → curator пропускается (лог + без ошибок в UI).
 - LLM вернул пустой ответ → curator пропускается (лог).
+- LLM вернул невалидный append block (эхо промпта/плейсхолдеры) → curator пропускается (лог).
 - Ошибка чтения/записи `questionnaire.md` → curator пропускается (лог), run остаётся валидным.
 
 ---

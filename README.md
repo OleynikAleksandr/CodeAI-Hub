@@ -2,21 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.453
+## Current Release — v1.1.454
 - **Workflow prompt pack (path-first)**: Project Manager отправляет короткий стартовый промпт с путями; агент читает анкету/шаблон и пишет артефакт.
 - **Workflow file-first**: артефакты пишутся через file-first поток (по целевым путям внутри `.codeai-hub/.../runs/...`).
 - **Workflow prompts**: агенты читают файлы напрямую средствами провайдера (без просьб `/read`).
 - **Workflow verification**: подтверждено на Codex + Claude (path-first чтение файлов по путям, запись `description.md` в runs).
 - **Workflow templates**: формулировки “следующий шаг” выровнены под последовательность `Description → Virtual Simulation → Module Diagram → Interface Map`.
 - **Sessions UI**: длинные строки/URL и code blocks не вылезают за границы сообщений.
-- **Release 1.1.453**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+- **Release 1.1.454**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.453.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.453.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.453.tar.bz2`
-  - Providers: `claude-module-1.1.453.tar.bz2`, `codex-module-1.1.453.tar.bz2`, `gemini-module-1.1.453.tar.bz2`
-  - UI: `vscode-webview-1.1.453.tar.bz2`, `web-client-1.1.453.tar.bz2`, `project-manager-1.1.453.tar.bz2`
+  - VSIX: `codeai-hub-1.1.454.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.454.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.454.tar.bz2`
+  - Providers: `claude-module-1.1.454.tar.bz2`, `codex-module-1.1.454.tar.bz2`, `gemini-module-1.1.454.tar.bz2`
+  - UI: `vscode-webview-1.1.454.tar.bz2`, `web-client-1.1.454.tar.bz2`, `project-manager-1.1.454.tar.bz2`
   - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/description-agent`, `@codeai-hub/virtual-simulation-agent`, `@codeai-hub/diagram-modules-agent`, `@codeai-hub/diagram-facades-agent`, `@codeai-hub/spec-creator`
 
 ## Features

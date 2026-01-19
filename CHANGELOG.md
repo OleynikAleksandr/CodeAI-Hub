@@ -1,3 +1,8 @@
+## [1.1.454] - 2026-01-19
+
+### Fixed
+- **Questionnaire Curator**: ignores provider `user_input` events (prevents writing the curator prompt into `questionnaire.md`), trims the initial Description Agent prompt from the session transcript, and skips invalid append blocks.
+
 ## [1.1.453] - 2026-01-19
 
 ### Fixed
