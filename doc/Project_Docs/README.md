@@ -24,9 +24,19 @@ doc/Project_Docs/
 │   └── UI_Modules.md
 ├── Workflow_CLI_Steps_And_Watcher_Architecture.md  # Workflow file-first
 ├── AgentPackages_Architecture.md                   # Agent packages
-└── knowledge/                   # Практические руководства
-    ├── ProviderSetupGuide.md
-    └── Local_Artifacts_Workflow.md
+└── knowledge/                   # Практические руководства и KB
+    ├── README.md                # Навигатор
+    ├── guides/                  # Руководства
+    │   ├── ProviderSetupGuide.md
+    │   └── Local_Artifacts_Workflow.md
+    ├── model-reference/         # Справочники моделей
+    │   ├── Claude_Model_Aliases.md
+    │   ├── Codex_Model_Selection.md
+    │   └── Gemini_Model_Selection.md
+    └── kb/                      # KB-статьи
+        ├── codex-thinking-display.md
+        ├── css-border-shorthand-react-inline-styles.md
+        └── idea-artifacts-run-context.md
 ```
 
 ---
@@ -61,7 +71,6 @@ doc/Project_Docs/
 | `doc/SolidWorks-Flow/` | UI/UX Workflow Tree (SolidWorks-подобная визуализация) |
 | `doc/TODO/` | Планы разработки |
 | `doc/Sessions/` | Отчёты сессий |
-| `doc/Knowledge/` | База знаний (tips, troubleshooting) |
 
 ---
 
