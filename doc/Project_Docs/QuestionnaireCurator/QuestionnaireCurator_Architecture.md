@@ -38,8 +38,8 @@
 ## 4. Inputs / Outputs
 
 ### Inputs
-- Run metadata: `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/run.json`
-- Transcript: `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/transcript.jsonl`
+- Session metadata: Core `Session` (providerId, providerSessionId, stage, runSlug, createdAt)
+- Transcript: `.codeai-hub/sessions/<workspaceSlug>/<providerId>/<providerSessionId>.jsonl`
 - Questionnaire: `.codeai-hub/<workspaceSlug>/<stage>/questionnaire.md`
 
 ### Output
@@ -68,7 +68,7 @@ Curator запускается после “финализации” run по�
 
 ## 6. Transcript format (contract)
 
-`transcript.jsonl` — JSON Lines, одна запись на сообщение.
+Session JSONL — JSON Lines, одна запись на сообщение (type=message).
 Минимальный контракт записи:
 
 ```json
@@ -115,23 +115,15 @@ Curator использует отдельный prompt-template (наприме�
 - `transcript.jsonl`
 - `run.json` (как источник `runId`, `runSlug`, `providerId`)
 
-Выход LLM должен быть ограничен **только** контентом для append.
-Чтобы парсинг был стабильным, LLM возвращает блок между маркерами:
-
-```text
-BEGIN_APPEND
-...markdown...
-END_APPEND
-```
-
-Core игнорирует всё вне маркеров и дописывает только содержимое между ними.
+Выход LLM должен быть ограничен **только** контентом для append (без маркеров и обёрток).
+Core принимает ответ как готовый Markdown‑блок и дописывает его в конец анкеты.
 
 ---
 
 ## 9. Failure modes
 
-- Нет `transcript.jsonl` или он пустой → curator пропускается (лог + без ошибок в UI).
-- LLM вернул ответ без `BEGIN_APPEND/END_APPEND` → curator пропускается (лог).
+- Нет session JSONL или он пустой → curator пропускается (лог + без ошибок в UI).
+- LLM вернул пустой ответ → curator пропускается (лог).
 - Ошибка чтения/записи `questionnaire.md` → curator пропускается (лог), run остаётся валидным.
 
 ---
@@ -142,4 +134,3 @@ Core игнорирует всё вне маркеров и дописывает
 2. Пользователь отправляет `OK/ок/approve`.
 3. Curator дописывает новую запись в `questionnaire.md`.
 4. Run #2 (`description`): агент читает обновлённую анкету и не повторяет уже отвеченные вопросы.
-
