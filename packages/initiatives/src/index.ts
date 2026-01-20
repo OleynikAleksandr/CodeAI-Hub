@@ -50,10 +50,6 @@ export type InitiativePaths = {
   readonly initiativesRoot: string;
   readonly initiativeDir: string;
   readonly initiativeManifestPath: string;
-  readonly runsRoot: string;
-  readonly runDir: string;
-  readonly runManifestPath: string;
-  readonly stageDir: (stage: string) => string;
 };
 
 export const resolveInitiativesRoot = (workspaceRoot: string): string =>
@@ -83,43 +79,9 @@ export const resolveInitiativeManifestPath = (
     "initiative.json"
   );
 
-export const resolveRunsRoot = (
-  workspaceRoot: string,
-  initiativeSlug: string
-): string =>
-  path.join(resolveInitiativeDir(workspaceRoot, initiativeSlug), "runs");
-
-export const resolveRunDir = (
-  workspaceRoot: string,
-  initiativeSlug: string,
-  runSlug: string
-): string => {
-  if (!SLUG_RE.test(runSlug)) {
-    throw new Error(`Invalid runSlug: ${runSlug}`);
-  }
-
-  return path.join(resolveRunsRoot(workspaceRoot, initiativeSlug), runSlug);
-};
-
-export const resolveRunManifestPath = (
-  workspaceRoot: string,
-  initiativeSlug: string,
-  runSlug: string
-): string =>
-  path.join(resolveRunDir(workspaceRoot, initiativeSlug, runSlug), "run.json");
-
-export const resolveStageDir = (
-  workspaceRoot: string,
-  initiativeSlug: string,
-  runSlug: string,
-  stage: string
-): string =>
-  path.join(resolveRunDir(workspaceRoot, initiativeSlug, runSlug), stage);
-
 export const resolveInitiativePaths = (
   workspaceRoot: string,
-  initiativeSlug: string,
-  runSlug: string
+  initiativeSlug: string
 ): InitiativePaths => ({
   initiativesRoot: resolveInitiativesRoot(workspaceRoot),
   initiativeDir: resolveInitiativeDir(workspaceRoot, initiativeSlug),
@@ -127,18 +89,7 @@ export const resolveInitiativePaths = (
     workspaceRoot,
     initiativeSlug
   ),
-  runsRoot: resolveRunsRoot(workspaceRoot, initiativeSlug),
-  runDir: resolveRunDir(workspaceRoot, initiativeSlug, runSlug),
-  runManifestPath: resolveRunManifestPath(
-    workspaceRoot,
-    initiativeSlug,
-    runSlug
-  ),
-  stageDir: (stage: string) =>
-    resolveStageDir(workspaceRoot, initiativeSlug, runSlug, stage),
 });
 
 export type { InitiativeManifest } from "./initiative-store";
 export { InitiativeStore } from "./initiative-store";
-export type { RunManifest } from "./run-store";
-export { RunStore } from "./run-store";
