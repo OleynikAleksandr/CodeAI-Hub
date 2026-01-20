@@ -55,8 +55,8 @@
 12. [DONE] Git Commit: `feat(core): add session continuity handoff` (hash: 10e25830)
 13. [DONE] Feat(core): отдать continuity chain в workflow-state API — scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/session-continuity/continuity-store.ts`; expected commit message: `feat(core): expose continuity chain`
 14. [DONE] Git Commit: `feat(core): expose continuity chain` (hash: f0b42087)
-15. [TODO] Feat(project-manager): отобразить цепочку сессий (handoff history) под Step + доступ к `handoff-report.md`; scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): show session continuity chain`
-16. [TODO] Git Commit: `feat(project-manager): show session continuity chain` (hash: TBD)
+15. [DONE] Feat(project-manager): отобразить цепочку сессий (handoff history) под Step + доступ к `handoff-report.md`; scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): show session continuity chain`
+16. [DONE] Git Commit: `feat(project-manager): show session continuity chain` (hash: 8b6c73f1)
 
 ### Stream: Prompting — Description Agent без уточняющих вопросов
 1. [DONE] Change: обновить промпт Description Agent так, чтобы он создавал `description.md` без вопросов (one-shot), вопросы переносим в Reviewer — scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; expected commit message: `docs(description): one-shot description prompt (no questions)`
