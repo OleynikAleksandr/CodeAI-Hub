@@ -34,7 +34,7 @@ src/extension-module/templates/                  # 1 file
 
 ### Scaling Problem
 
-For each new agent (Spec Creator, Plan Builder, Code Generator, Reviewer):
+For each new agent (Reviewer, Plan Builder, Code Generator, etc.):
 - **+15-20 files** in 7 different locations
 - No clear boundary "where Description ends and Spec begins"
 - Hard to understand dependencies
@@ -71,21 +71,6 @@ packages/
 │   │   │   ├── description-collector-prompt.md
 │   │   │   ├── description-template.md
 │   │   │   └── questionnaire-template.md
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   │
-│   ├── spec-creator/
-│   │   ├── src/
-│   │   │   ├── index.ts
-│   │   │   ├── facade.ts
-│   │   │   ├── contract/
-│   │   │   ├── parser/
-│   │   │   ├── schema/
-│   │   │   └── paths/
-│   │   ├── assets/
-│   │   │   ├── spec-creator-schema.json
-│   │   │   ├── spec-creator-prompt.md
-│   │   │   └── spec-template.md
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   │
@@ -139,11 +124,8 @@ export class DescriptionAgentFacade {
 ```
 @codeai-hub/agent-shared
     ↑
+    ├── @codeai-hub/idea-collector
     ├── @codeai-hub/description-agent
-    ├── @codeai-hub/virtual-simulation-agent
-    ├── @codeai-hub/diagram-modules-agent
-    ├── @codeai-hub/diagram-facades-agent
-    ├── @codeai-hub/spec-creator
     ├── @codeai-hub/plan-builder (future)
     └── @codeai-hub/code-generator (future)
 ```
@@ -181,9 +163,9 @@ After refactoring, external systems interact ONLY through facades:
 2. Update imports across codebase
 3. Verify all tests pass
 
-### Phase 4: Create Spec Creator Skeleton
-1. Create `packages/agents/spec-creator/` with same structure
-2. Add placeholder assets
+### Phase 4: Next Agent Package (future)
+1. Create new `packages/agents/<agent>/` with same structure
+2. Add assets (prompt/template/schema) as needed
 3. Implement facade skeleton
 
 ---
@@ -244,7 +226,7 @@ After refactoring, external systems interact ONLY through facades:
 - [x] Phase 1: Agent Packages Infrastructure — **DONE**
 - [x] Phase 2: Description Agent Migration — **DONE**
 - [x] Phase 3: Integration & Cleanup — **DONE**
-- [x] Phase 4: Spec Creator Skeleton — **DONE**
+- [ ] Phase 4: Next Agent Package — **TODO**
 
 **Approved by:** Oleksandr
 **Implementation completed:** 2026-01-06
@@ -252,6 +234,6 @@ After refactoring, external systems interact ONLY through facades:
 ### Implementation Summary
 - `@codeai-hub/agent-shared` — Common utilities and types
 - `@codeai-hub/description-agent` — Fully migrated with facade pattern
-- `@codeai-hub/spec-creator` — Skeleton ready for future implementation
+- `@codeai-hub/idea-collector` — Facade-based contract builder + artifact paths
 - ~400 lines of duplicated code removed from Core and Claude Module
 - All quality gates passed (architecture, ultracite, ts-prune, jscpd < 3%)

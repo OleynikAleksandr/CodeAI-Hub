@@ -380,7 +380,6 @@
 - **Agent Packages architecture**: Extracted agent logic into standalone npm packages under `packages/agents/`.
 - **@codeai-hub/agent-shared**: Common utilities (schema-utils, contract-utils) and types (BaseAgentContract, BaseStructuredOutput).
 - **@codeai-hub/idea-collector**: Facade-based package with contract builder, structured output parser, and artifact paths.
-- **@codeai-hub/spec-creator**: Skeleton package with placeholder assets ready for future implementation.
 
 ### Changed
 - **Core integration**: `idea-contract-service.ts` reduced from 329 to 18 lines by delegating to `IdeaCollectorFacade.buildContract()`.
