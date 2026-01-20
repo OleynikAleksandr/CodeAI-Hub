@@ -259,7 +259,7 @@ export class IdeaCollectorSubmitService {
       providerId: params.providerId,
     });
     const resolvedInitiativeSlug = session.initiativeSlug ?? initiativeSlug;
-    if (!session.runSlug || !resolvedInitiativeSlug) {
+    if (!resolvedInitiativeSlug) {
       notifyMissingIdeaContext(session.id);
       throw new Error("Workflow run context unavailable.");
     }
@@ -269,7 +269,6 @@ export class IdeaCollectorSubmitService {
       stage,
       workspacePath: params.workspacePath,
       workspaceSlug: resolvedInitiativeSlug,
-      runSlug: session.runSlug,
       prompt: contract.prompt,
       templatePath: contract.paths.template,
       questionnairePath: params.questionnairePath,

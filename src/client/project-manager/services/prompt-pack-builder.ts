@@ -8,7 +8,6 @@ type WorkflowPromptPackInput = {
   readonly stage: WorkflowStageId;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
-  readonly runSlug: string;
   readonly prompt: string;
   readonly questionnairePath: string;
   readonly templatePath?: string;
@@ -63,11 +62,10 @@ const resolveWorkflowArtifactPaths = (params: {
   readonly stage: WorkflowStageId;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
-  readonly runSlug: string;
 }): WorkflowArtifactPaths => {
   const fileName = WORKFLOW_STAGE_FILES[params.stage];
   const relativePath = normalizeRelativePath(
-    `.codeai-hub/${params.workspaceSlug}/${params.stage}/runs/${params.runSlug}/${fileName}`
+    `.codeai-hub/${params.workspaceSlug}/${params.stage}/${fileName}`
   );
   return {
     relativePath,
@@ -83,7 +81,6 @@ export const buildWorkflowPromptPack = (
     stage: params.stage,
     workspacePath: params.workspacePath,
     workspaceSlug: params.workspaceSlug,
-    runSlug: params.runSlug,
   });
   const prompt = params.prompt.trim().length
     ? params.prompt.trim()
