@@ -125,52 +125,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     if (branch.finalPath) nodes.push({ id: "workflow:description:final", label: "Final_Description.md", title: branch.finalPath, status: "active", visualDepth: 2 });
     return nodes;
   };
-  const resolveContinuityNodes = (stage: WorkflowStageId): readonly TreeNode[] => {
-    if (!workflowState) {
-      return [];
-    }
-    const chains = workflowState.continuity.chains.filter(
-      (chain) => chain.stage === stage
-    );
-    if (chains.length === 0) {
-      return [];
-    }
-    return chains.map((chain) => {
-      const chainLabel = `Handoff chain ${chain.rootSessionId.slice(0, 6)}`;
-      const segments = chain.segments.map((segment, segmentIndex) => {
-        const reportNodes = segment.handoffReportPath
-          ? [
-              {
-                id: `workflow:${stage}:segment:${segment.sessionId}:report`,
-                label: "handoff-report.md",
-                title: segment.handoffReportPath,
-                status: "draft" as const,
-                visualDepth: 4,
-              },
-            ]
-          : undefined;
-        return {
-          id: `workflow:${stage}:segment:${segment.sessionId}`,
-          label: `Session ${segmentIndex + 1} · ${segment.providerId}`,
-          title: segment.providerSessionId,
-          status: "draft" as const,
-          visualDepth: 3,
-          isCollapsible: Boolean(reportNodes),
-          children: reportNodes,
-        };
-      });
-
-      return {
-        id: `workflow:${stage}:chain:${chain.rootSessionId}`,
-        label: chainLabel,
-        title: chain.rootSessionId,
-        status: "draft" as const,
-        visualDepth: 2,
-        isCollapsible: segments.length > 0,
-        children: segments.length > 0 ? segments : undefined,
-      };
-    });
-  };
 
   const resolveStageNodes = (): readonly TreeNode[] => {
     if (!workflowState) {
@@ -190,18 +144,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         workflowState.stages[previousStage] !== "completed";
       const descriptionNodes =
         stage === "description" ? resolveDescriptionBranchNodes() : [];
-      const continuityNodes = resolveContinuityNodes(stage);
-      const childNodes =
-        descriptionNodes.length > 0
-          ? [...descriptionNodes, ...continuityNodes]
-          : continuityNodes;
       return {
         id: `workflow:${stage}`,
         label: WORKFLOW_LABELS[stage],
         status: resolveTreeStatus(status, blocked),
         visualDepth: 1,
-        isCollapsible: childNodes.length > 0,
-        children: childNodes.length > 0 ? childNodes : undefined,
+        isCollapsible: descriptionNodes.length > 0,
+        children: descriptionNodes.length > 0 ? descriptionNodes : undefined,
       };
     });
   };
