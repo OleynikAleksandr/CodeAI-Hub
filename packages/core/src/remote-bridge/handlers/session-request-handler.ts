@@ -1,6 +1,7 @@
 import path from "node:path";
 import type { CoreConfig } from "../../config";
 import type { ProviderRegistry } from "../../provider-registry";
+import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
@@ -145,6 +146,7 @@ export type SessionRequestHandlerOptions = {
   readonly logger: Logger;
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly stateBroadcaster: () => void;
+  readonly continuityClock?: () => string;
 };
 
 export class SessionRequestHandler {
@@ -157,6 +159,7 @@ export class SessionRequestHandler {
   private readonly questionnaireCurator: QuestionnaireCuratorFacade;
   private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
+  private readonly continuity: SessionContinuityFacade;
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -170,6 +173,16 @@ export class SessionRequestHandler {
     });
     this.broadcaster = options.broadcaster;
     this.stateBroadcaster = options.stateBroadcaster;
+    this.continuity = new SessionContinuityFacade({
+      logger: this.logger,
+      clock: options.continuityClock,
+      callbacks: {
+        sendMessage: async (sessionId, content) =>
+          this.sendInternalMessage(sessionId, content),
+        createSession: async (request) => this.createContinuitySession(request),
+      },
+      sessionLookup: (sessionId) => this.sessionManager.getSession(sessionId),
+    });
   }
 
   private resolveRunBoundProviderContext(options: {
@@ -236,7 +249,8 @@ export class SessionRequestHandler {
       readonly runSlug: string | null;
       readonly providerSessionId: string | null;
     };
-  }): Promise<void> {
+    readonly rootSessionId?: string | null;
+  }): Promise<Session | null> {
     const providerSessionResolution = await this.resolveProviderSessionId(
       options.adapter,
       options.providerId,
@@ -248,7 +262,7 @@ export class SessionRequestHandler {
         type: "session:error",
         payload: { message: providerSessionResolution.error },
       });
-      return;
+      return null;
     }
 
     const { providerSessionId, supportsImmediateBinding } =
@@ -284,11 +298,84 @@ export class SessionRequestHandler {
       this.updateProviderBinding(session.id, providerSessionId);
     }
 
+    this.continuity.registerSession({
+      session,
+      providerSessionId,
+      rootSessionId: options.rootSessionId ?? null,
+    });
+
     this.broadcaster({
       type: "session:created",
       payload: serializeSession(session),
     });
     this.broadcastSessionBinding(session.id);
+
+    return session;
+  }
+
+  private async createContinuitySession(options: {
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly context: {
+      readonly initiativeSlug: string | null;
+      readonly stage: string | null;
+    };
+    readonly rootSessionId: string;
+  }): Promise<Session | null> {
+    const adapter = this.providerRegistry.getAdapter(options.providerId);
+    if (!adapter) {
+      this.logger.warn("Continuity session creation failed: provider missing", {
+        providerId: options.providerId,
+      });
+      return null;
+    }
+
+    try {
+      return await this.createAndRegisterSession({
+        providerId: options.providerId,
+        workspacePath: options.workspacePath,
+        adapter,
+        context: {
+          initiativeSlug: options.context.initiativeSlug,
+          stage: options.context.stage,
+          runSlug: null,
+          providerSessionId: null,
+        },
+        rootSessionId: options.rootSessionId,
+      });
+    } catch (error) {
+      this.handleProviderFailure(options.providerId, error);
+      return null;
+    }
+  }
+
+  private async sendInternalMessage(
+    sessionId: string,
+    content: string
+  ): Promise<void> {
+    const binding = this.providerSessions.get(sessionId);
+    const adapter = binding
+      ? this.providerRegistry.getAdapter(binding.providerId)
+      : null;
+
+    if (!(binding && adapter)) {
+      this.logMissingProviderBindingForIncomingMessage(
+        sessionId,
+        binding?.providerId,
+        Boolean(binding),
+        Boolean(adapter)
+      );
+      return;
+    }
+
+    this.logDispatchingMessageToProvider(sessionId, binding, content.length);
+
+    try {
+      await adapter.sendMessage(binding.providerSessionId, content);
+    } catch (error) {
+      this.logProviderSendMessageFailed(sessionId, binding, error);
+      this.handleProviderFailure(binding.providerId, error, sessionId);
+    }
   }
 
   private normalizeProviderId(value?: string): string | null {
@@ -492,6 +579,13 @@ export class SessionRequestHandler {
   }
 
   private handleProviderEvent(sessionId: string, event: unknown): void {
+    this.continuity.handleProviderEvent(sessionId, event).catch((error) => {
+      this.logger.warn("Session continuity handler failed", {
+        sessionId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    });
+
     if (typeof event === "string") {
       this.updateBindingWithResolvedId(sessionId, event);
       return;
@@ -752,6 +846,7 @@ export class SessionRequestHandler {
     this.sessionManager.updateProviderSessionId(sessionId, providerSessionId);
     this.sessionStorage.promote(sessionId, providerSessionId);
     this.updateProviderBinding(sessionId, providerSessionId);
+    this.continuity.updateProviderSessionId(sessionId, providerSessionId);
 
     this.broadcastSessionBinding(sessionId);
   }
