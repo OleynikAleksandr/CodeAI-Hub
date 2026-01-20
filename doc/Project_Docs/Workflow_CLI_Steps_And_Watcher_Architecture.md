@@ -17,10 +17,9 @@
 
 ## 2) Цель
 Перейти на надёжный и простой подход:
-- **Агенты создают артефакты напрямую** (через CLI tools / file write) по заранее определённым путям внутри `.codeai-hub/.../runs/...`.
+- **Агенты создают артефакты напрямую** (через CLI tools / file write) по заранее определённым путям внутри `.codeai-hub/...` (без `runs`).
 - **Watcher** наблюдает прогресс (файлы/события/гейты) и обновляет:
   - состояние workflow (для UI gating);
-  - историю runs;
   - автоматизацию (например, авто‑валидаторы, авто‑подсказки).
 
 ## 3) Не‑цели
@@ -36,9 +35,14 @@
   - записи итогового файла артефакта.
 
 ### 4.2. Paths остаются каноничными (runs)
-Артефакты пишутся по канону runs:
+### 4.2. Paths остаются каноничными (без runs)
+Артефакты пишутся по канону (один “current” файл на шаг):
 - `.codeai-hub/<workspaceSlug>/<stage>/questionnaire.md` (если применимо)
-- `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/<fileName>`
+- `.codeai-hub/<workspaceSlug>/<stage>/<fileName>`
+
+Примечание для шага `description`:
+- `.codeai-hub/<workspaceSlug>/description/description.md` может существовать как временный draft;
+- downstream шаги читают только `.codeai-hub/<workspaceSlug>/description/Final_Description.md`.
 
 Слоты (`workspace.description`, `workspace.virtual_simulation`, `diagram.modules`, `diagram.facades`) остаются на уровне UI/логики, но запись осуществляется **файлом**, а не `artifact-upsert`.
 
@@ -59,13 +63,13 @@
 
 ## 6) Watcher: ответственность и события
 ### 6.1. Что должен уметь Watcher
-- Отслеживать появление/изменение файлов артефактов в `.codeai-hub/<workspaceSlug>/**/runs/**`.
+- Отслеживать появление/изменение файлов артефактов в `.codeai-hub/<workspaceSlug>/**`.
 - Определять «готовность» стадии по факту наличия файлов.
-- Обновлять workflow state (для UI) и метаданные runs.
+- Обновлять workflow state (для UI).
 
 ### 6.2. Источники событий
 - FS events (watch) по папке `.codeai-hub/<workspaceSlug>/`.
-- События сессий (start/stop, provider, модель, runSlug).
+- События сессий (start/stop, provider, модель).
 - События гейтов (architecture check / ultracite / ts-prune / jscpd / check:links / builds).
 
 ### 6.3. API хуки (внутренний контракт)
@@ -74,7 +78,8 @@ Watcher предоставляет «шину событий» (in-process API) 
 - Automation (Core) — для автозапуска проверок/подсказок.
 
 Минимальный набор событий:
-- `workflow.run.created`
+- `workflow.step.started`
+- `workflow.step.edited`
 - `workflow.artifact.written`
 - `workflow.stage.completed`
 - `workflow.stage.invalidated`
