@@ -93,6 +93,8 @@
 4. [DONE] Git Commit: `refactor(core): drop run questionnaire sync` (hash: 90238eea)
 5. [DONE] Refactor(core): убрать `RunStore` из создания инициатив (без initial run) — scope: `packages/core/src/remote-bridge/handlers/initiatives-http-handler.ts`; expected commit message: `refactor(core): remove initial run creation`
 6. [DONE] Git Commit: `refactor(core): remove initial run creation` (hash: 8fa643ec)
+7. [DONE] Refactor(core): убрать `RunStore` из session-request-handler (provider bindings / refine guard) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `refactor(core): drop run store from session handler`
+8. [DONE] Git Commit: `refactor(core): drop run store from session handler` (hash: e75e4f8e)
 
 ### Stream: Implementation — Workflow artifact paths (no `runs/`)
 1. [DONE] Refactor(core): убрать `runs/` из путей workflow-артефактов (watcher + allowlist + artifact-upsert) — scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit message: `refactor(core): remove runs from workflow paths`
