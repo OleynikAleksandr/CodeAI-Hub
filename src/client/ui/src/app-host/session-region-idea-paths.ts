@@ -13,12 +13,12 @@ export const resolveIdeaOutputPaths = (
   sessionId: string
 ): IdeaOutputPaths | null => {
   const session = sessions.find((record) => record.id === sessionId);
-  if (!(session?.initiativeSlug && session.runSlug)) {
+  if (!session?.initiativeSlug) {
     return null;
   }
   return {
-    idea: `.codeai-hub/${session.initiativeSlug}/description/runs/${session.runSlug}/description.md`,
-    virtualSimulation: `.codeai-hub/${session.initiativeSlug}/virtual_simulation/runs/${session.runSlug}/virtual-simulation.md`,
+    idea: `.codeai-hub/${session.initiativeSlug}/description/description.md`,
+    virtualSimulation: `.codeai-hub/${session.initiativeSlug}/virtual_simulation/virtual-simulation.md`,
   };
 };
 
@@ -31,7 +31,7 @@ export const loadQuestionnaireForSession = (
   if (!outputPaths) {
     postSystemNotice(
       sessionId,
-      "Не могу открыть анкету: Core еще не вернул initiative/run контекст. Подождите и нажмите «Возобновить анкету»."
+      "Не могу открыть анкету: Core еще не вернул initiative контекст. Подождите и нажмите «Возобновить анкету»."
     );
     return Promise.resolve(null);
   }
