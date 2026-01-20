@@ -1,6 +1,4 @@
-import { writeFile } from "node:fs/promises";
 import path from "node:path";
-import { RunStore, resolveRunManifestPath } from "@codeai-hub/initiatives";
 import type { CoreConfig } from "../../config";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
@@ -159,8 +157,6 @@ export class SessionRequestHandler {
   private readonly questionnaireCurator: QuestionnaireCuratorFacade;
   private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
-  private static readonly REFINE_PROVIDER_MISMATCH_ERROR =
-    "Refine existing run cannot change provider; start a new run to switch provider.";
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -176,59 +172,20 @@ export class SessionRequestHandler {
     this.stateBroadcaster = options.stateBroadcaster;
   }
 
-  private async resolveRunBoundProviderContext(options: {
+  private resolveRunBoundProviderContext(options: {
     readonly providerId: string;
     readonly workspacePath: string;
     readonly initiativeSlug: string | null;
     readonly runSlug: string | null;
     readonly requestedProviderSessionId: string | null;
-  }): Promise<{
+  }): {
     readonly providerId: string;
     readonly providerSessionId: string | null;
-  }> {
-    if (!(options.initiativeSlug && options.runSlug)) {
-      return {
-        providerId: options.providerId,
-        providerSessionId: options.requestedProviderSessionId,
-      };
-    }
-
-    const workspaceRoot = path.resolve(options.workspacePath);
-    const runs = new RunStore();
-    const manifest = await runs.read(
-      workspaceRoot,
-      options.initiativeSlug,
-      options.runSlug
-    );
-    if (!manifest) {
-      return {
-        providerId: options.providerId,
-        providerSessionId: options.requestedProviderSessionId,
-      };
-    }
-
-    const manifestProviderId =
-      typeof manifest.providerId === "string" && manifest.providerId.trim()
-        ? manifest.providerId.trim()
-        : null;
-    const manifestProviderSessionId =
-      typeof manifest.providerSessionId === "string" &&
-      manifest.providerSessionId.trim()
-        ? manifest.providerSessionId.trim()
-        : null;
-
-    const selectedProviderId =
-      manifestProviderId && this.providerRegistry.getAdapter(manifestProviderId)
-        ? manifestProviderId
-        : options.providerId;
-
-    const providerSessionId =
-      options.requestedProviderSessionId ??
-      (selectedProviderId === manifestProviderId
-        ? manifestProviderSessionId
-        : null);
-
-    return { providerId: selectedProviderId, providerSessionId };
+  } {
+    return {
+      providerId: options.providerId,
+      providerSessionId: options.requestedProviderSessionId,
+    };
   }
 
   private async resolveProviderSessionId(
@@ -269,44 +226,6 @@ export class SessionRequestHandler {
     };
   }
 
-  private persistRunProviderBinding(options: {
-    readonly providerId: string;
-    readonly workspaceRoot: string;
-    readonly initiativeSlug: string;
-    readonly runSlug: string;
-    readonly providerSessionId: string;
-    readonly supportsImmediateBinding: boolean;
-  }): void {
-    const runs = new RunStore();
-    runs
-      .read(options.workspaceRoot, options.initiativeSlug, options.runSlug)
-      .then(async (manifest) => {
-        if (!manifest) {
-          return;
-        }
-        const manifestPath = resolveRunManifestPath(
-          options.workspaceRoot,
-          options.initiativeSlug,
-          options.runSlug
-        );
-        const updated = {
-          ...manifest,
-          providerId: options.providerId,
-          ...(options.supportsImmediateBinding
-            ? { providerSessionId: options.providerSessionId }
-            : {}),
-        };
-        await writeFile(
-          manifestPath,
-          `${JSON.stringify(updated, null, 2)}\n`,
-          "utf8"
-        );
-      })
-      .catch(() => {
-        /* ignore run binding update errors */
-      });
-  }
-
   private async createAndRegisterSession(options: {
     readonly providerId: string;
     readonly workspacePath: string;
@@ -345,17 +264,6 @@ export class SessionRequestHandler {
         runSlug: options.context.runSlug ?? null,
       }
     );
-
-    if (session.initiativeSlug && session.runSlug) {
-      this.persistRunProviderBinding({
-        providerId: options.providerId,
-        workspaceRoot: path.resolve(options.workspacePath),
-        initiativeSlug: session.initiativeSlug,
-        runSlug: session.runSlug,
-        providerSessionId,
-        supportsImmediateBinding,
-      });
-    }
 
     this.sessionStorage.register(session);
 
@@ -409,46 +317,6 @@ export class SessionRequestHandler {
     return trimmed ?? environmentWorkspacePath ?? cwdPath;
   }
 
-  private async canStartRefineExistingRun(options: {
-    readonly workspacePath: string;
-    readonly initiativeSlug: string | null;
-    readonly runSlug: string | null;
-    readonly explicitProviderId: string | null;
-  }): Promise<boolean> {
-    if (
-      !(options.explicitProviderId && options.initiativeSlug && options.runSlug)
-    ) {
-      return true;
-    }
-
-    const runs = new RunStore();
-    const workspaceRoot = path.resolve(options.workspacePath);
-    const manifest = await runs.read(
-      workspaceRoot,
-      options.initiativeSlug,
-      options.runSlug
-    );
-    const manifestProviderId =
-      typeof manifest?.providerId === "string" && manifest.providerId.trim()
-        ? manifest.providerId.trim()
-        : null;
-
-    if (
-      manifestProviderId &&
-      manifestProviderId !== options.explicitProviderId
-    ) {
-      this.broadcaster({
-        type: "session:error",
-        payload: {
-          message: SessionRequestHandler.REFINE_PROVIDER_MISMATCH_ERROR,
-        },
-      });
-      return false;
-    }
-
-    return true;
-  }
-
   async handleCreate(
     providerId?: string,
     workspacePath?: string,
@@ -464,26 +332,13 @@ export class SessionRequestHandler {
       normalizedRequestedProviderId ?? this.getDefaultProviderId();
     const actualWorkspacePath = this.resolveWorkspacePath(workspacePath);
 
-    const canStartRefineExisting = await this.canStartRefineExistingRun({
-      workspacePath: actualWorkspacePath,
-      initiativeSlug: context?.initiativeSlug ?? null,
-      runSlug: context?.runSlug ?? null,
-      explicitProviderId: normalizedRequestedProviderId,
-    });
-    if (!canStartRefineExisting) {
-      return;
-    }
-
-    const runBound = await this.resolveRunBoundProviderContext({
+    const runBound = this.resolveRunBoundProviderContext({
       providerId: requestedProviderId,
       workspacePath: actualWorkspacePath,
       initiativeSlug: context?.initiativeSlug ?? null,
       runSlug: context?.runSlug ?? null,
       requestedProviderSessionId: context?.providerSessionId ?? null,
-    }).catch(() => ({
-      providerId: requestedProviderId,
-      providerSessionId: context?.providerSessionId ?? null,
-    }));
+    });
     const actualProviderId = runBound.providerId;
     const adapter = this.providerRegistry.getAdapter(actualProviderId);
 
@@ -898,37 +753,6 @@ export class SessionRequestHandler {
     this.sessionStorage.promote(sessionId, providerSessionId);
     this.updateProviderBinding(sessionId, providerSessionId);
 
-    if (session.initiativeSlug && session.runSlug) {
-      const workspaceRoot = path.resolve(session.workspacePath);
-      const initiativeSlug = session.initiativeSlug;
-      const runSlug = session.runSlug;
-      const runs = new RunStore();
-      runs
-        .read(workspaceRoot, initiativeSlug, runSlug)
-        .then(async (manifest) => {
-          if (!manifest) {
-            return;
-          }
-          const manifestPath = resolveRunManifestPath(
-            workspaceRoot,
-            initiativeSlug,
-            runSlug
-          );
-          const updated = {
-            ...manifest,
-            providerId: session.providerId,
-            providerSessionId,
-          };
-          await writeFile(
-            manifestPath,
-            `${JSON.stringify(updated, null, 2)}\n`,
-            "utf8"
-          );
-        })
-        .catch(() => {
-          /* ignore run providerSessionId persistence errors */
-        });
-    }
     this.broadcastSessionBinding(sessionId);
   }
 
