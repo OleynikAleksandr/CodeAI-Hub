@@ -28,13 +28,12 @@ type OutgoingMessage =
   | {
       readonly type: "session:create";
       readonly payload: {
-        readonly providerId?: string;
-        readonly workspacePath?: string;
-        readonly initiativeSlug?: string | null;
-        readonly runSlug?: string | null;
-        readonly providerSessionId?: string | null;
-        readonly stage?: string | null;
-      };
+      readonly providerId?: string;
+      readonly workspacePath?: string;
+      readonly initiativeSlug?: string | null;
+      readonly providerSessionId?: string | null;
+      readonly stage?: string | null;
+    };
     }
   | {
       readonly type: "session:message";
@@ -180,7 +179,6 @@ export class ProjectManagerApi {
     readonly providerId?: string;
     readonly workspacePath?: string;
     readonly initiativeSlug?: string | null;
-    readonly runSlug?: string | null;
     readonly providerSessionId?: string | null;
     readonly stage?: string | null;
   }): void {
