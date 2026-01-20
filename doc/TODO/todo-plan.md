@@ -10,7 +10,9 @@
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 2. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 3. `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`
-4. `doc/TODO/todo-plan.md`
+4. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
+5. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
+6. `doc/TODO/todo-plan.md`
 
 ---
 
@@ -27,6 +29,20 @@
 ### Stream: Design — Description lifecycle (tree UI + persisted progress)
 1. [DONE] Doc: уточнить алгоритм шага `Description` (треугольник + цвета TODO/IN_PROGRESS/DONE, persisted `questionnaire.md`, resume sessions, авто-старт reviewer, `Final_Description.md` как единственный source-of-truth; статусы BLOCKED/ERROR/OUTDATED — отложить) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs(workflow-tree): refine description step lifecycle`
 2. [DONE] Git Commit: `docs(workflow-tree): refine description step lifecycle` (hash: b8ccbbe2)
+
+### Stream: Docs — Step branches for all steps
+1. [DONE] Doc: зафиксировать правило “каждый Step — треугольник + ветка актуальных артефактов/сессий (persisted), ветка обновляется по мере прохождения” — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(workflow-tree): apply step branch pattern`
+2. [DONE] Git Commit: `docs(workflow-tree): apply step branch pattern` (hash: 4c6eeaed)
+
+### Stream: Design — Session Continuity (CRITICAL)
+1. [DONE] Doc: описать модуль `Session Continuity` (handoff-отчёт при <=25% контекста, rollover в новую сессию, agent-specific instructions) — scope: `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(session-continuity): add architecture`
+2. [DONE] Git Commit: `docs(session-continuity): add architecture` (hash: 40285931)
+3. [DONE] Doc: отметить `Session Continuity` как критичную инфраструктуру Core — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(system): mark session continuity as critical`
+4. [DONE] Git Commit: `docs(system): mark session continuity as critical` (hash: b3461817)
+5. [TODO] Feat(core): реализовать `Session Continuity` (monitor tokenUsage, генерация `handoff-report.md`, rollover в новую сессию, persistence цепочки); scope: `packages/core/src/...`; expected commit message: `feat(core): add session continuity handoff`
+6. [TODO] Git Commit: `feat(core): add session continuity handoff` (hash: TBD)
+7. [TODO] Feat(project-manager): отобразить цепочку сессий (handoff history) под Step + доступ к `handoff-report.md`; scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): show session continuity chain`
+8. [TODO] Git Commit: `feat(project-manager): show session continuity chain` (hash: TBD)
 
 ### Stream: Prompting — Description Agent без уточняющих вопросов
 1. [TODO] Change: обновить промпт Description Agent так, чтобы он создавал `description.md` без вопросов (one-shot), вопросы переносим в Reviewer — scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; expected commit message: `docs(description): one-shot description prompt (no questions)`
