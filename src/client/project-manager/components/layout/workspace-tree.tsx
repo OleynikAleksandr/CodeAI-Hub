@@ -54,7 +54,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       setWorkflowState(null);
       return;
     }
-
     setExpandedNodes({
       workspace: true,
     });
@@ -116,6 +115,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
               workspacePath,
               initiativeSlug: workspaceSlug,
               stage: "description",
+              runSlug: "reviewer",
             });
           },
         },
@@ -125,7 +125,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     if (branch.finalPath) nodes.push({ id: "workflow:description:final", label: "Final_Description.md", title: branch.finalPath, status: "active", visualDepth: 2 });
     return nodes;
   };
-
   const resolveContinuityNodes = (stage: WorkflowStageId): readonly TreeNode[] => {
     if (!workflowState) {
       return [];
@@ -136,7 +135,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     if (chains.length === 0) {
       return [];
     }
-
     return chains.map((chain) => {
       const chainLabel = `Handoff chain ${chain.rootSessionId.slice(0, 6)}`;
       const segments = chain.segments.map((segment, segmentIndex) => {
