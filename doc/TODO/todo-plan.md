@@ -14,11 +14,15 @@
 
 ---
 
-## Phase 62 — Workflow Tree: Description Node = Final Artifact + Reviewer Session (owner: Oleksandr, updated: 2026-01-19)
+## Phase 62 — Workflow Tree: Description Node = Final Artifact + Reviewer Session (owner: Oleksandr, updated: 2026-01-20)
+
+### Stream: Repo cleanup — remove unused agent packages
+1. [DONE] Chore(repo): удалить неиспользуемые agent-packages и зафиксировать `npm workspaces`; scope: `packages/agents/diagram-facades-agent/*`, `packages/agents/diagram-modules-agent/*`, `packages/agents/spec-creator/*`, `packages/agents/virtual-simulation-agent/*`, `packages/agents/shared/src/index.ts`, `package.json`, `package-lock.json`; expected commit message: `chore(repo): remove unused agent packages`
+2. [DONE] Git Commit: `chore(repo): remove unused agent packages` (hash: fae6a291)
 
 ### Stream: Design — Artifact-first + Resume Sessions
-1. [TODO] Doc: зафиксировать решение “узел хранит только final артефакт + sessionRef на reviewer-сессию (возобновляемая)”; провайдеры resume: Claude/Codex, Gemini исключить — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(workflow-tree): define description node artifact+review session`
-2. [TODO] Git Commit: `docs(workflow-tree): define description node artifact+review session` (hash: TBD)
+1. [DONE] Doc: зафиксировать решение “узел хранит только final артефакт + sessionRef на reviewer-сессию (возобновляемая)”; провайдеры resume: Claude/Codex, Gemini исключить — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs: add session 019 and phase 62 plan`
+2. [DONE] Git Commit: `docs: add session 019 and phase 62 plan` (hash: 4840a5e8)
 
 ### Stream: Prompting — Description Agent без уточняющих вопросов
 1. [TODO] Change: обновить промпт Description Agent так, чтобы он создавал `description.md` без вопросов (one-shot), вопросы переносим в Reviewer — scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; expected commit message: `docs(description): one-shot description prompt (no questions)`
