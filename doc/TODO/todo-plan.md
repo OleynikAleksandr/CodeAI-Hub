@@ -45,8 +45,8 @@
 2. [DONE] Git Commit: `docs(session-continuity): add architecture` (hash: 40285931)
 3. [DONE] Doc: отметить `Session Continuity` как критичную инфраструктуру Core — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(system): mark session continuity as critical`
 4. [DONE] Git Commit: `docs(system): mark session continuity as critical` (hash: b3461817)
-5. [TODO] Feat(core): добавить модели continuity chain + file-store — scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/index.ts`; expected commit message: `feat(core): add session continuity store`
-6. [TODO] Git Commit: `feat(core): add session continuity store` (hash: TBD)
+5. [DONE] Feat(core): добавить модели continuity chain + file-store — scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/index.ts`; expected commit message: `feat(core): add session continuity store`
+6. [DONE] Git Commit: `feat(core): add session continuity store` (hash: c7dd5e7a)
 7. [TODO] Feat(core): добавить token usage extractor + монитор — scope: `packages/core/src/session-continuity/token-usage.ts`, `packages/core/src/session-continuity/continuity-monitor.ts`, `packages/core/src/session-continuity/continuity-types.ts`; expected commit message: `feat(core): add continuity token monitor`
 8. [TODO] Git Commit: `feat(core): add continuity token monitor` (hash: TBD)
 9. [TODO] Feat(core): добавить handoff prompt/report writer — scope: `packages/core/src/session-continuity/handoff-prompt-builder.ts`, `packages/core/src/session-continuity/handoff-report-writer.ts`, `packages/core/src/session-continuity/continuity-types.ts`; expected commit message: `feat(core): add handoff report writer`
