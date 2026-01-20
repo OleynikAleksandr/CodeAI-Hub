@@ -48,6 +48,12 @@
 3. [DONE] Fix(project-manager): использовать `sessionKind` для label + `runSlug` при resume (клик по сессии до `Final_Description.md` должен открывать именно Reviewer) — scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): label reviewer session correctly`
 4. [DONE] Git Commit: `fix(project-manager): label reviewer session correctly` (hash: ed235fdb)
 
+### Stream: Release build — 1.1.458 (verification)
+1. [DONE] Release(build): собрать релиз 1.1.458 (build-all → tarballs; build-release → VSIX) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/tmp/releases/*-1.1.458.tar.bz2`, `codeai-hub-1.1.458.vsix`; expected commit message: `chore(release): bump versions to 1.1.458`
+2. [DONE] Git Commit: `chore(release): bump versions to 1.1.458` (hash: 52cf166e)
+3. [DONE] Docs(session): зафиксировать результаты проверки релиза 1.1.458 и список коммитов — scope: `doc/Sessions/Session027.md`; expected commit message: `docs(session): add Session027 report`
+4. [DONE] Git Commit: `docs(session): add Session027 report` (hash: d930ad66)
+
 ### Stream: Verification
 1. [TODO] Verify(manual): сценарий Description завершён → под узлом только 2 строки (`Final_Description.md` + `Reviewer session`); клик по файлу открывает viewer справа; клик по сессии открывает полную сессию слева даже после перезагрузки — scope: no files; expected commit message: `docs: record project-manager description UX verification`
 2. [TODO] Git Commit: `docs: record project-manager description UX verification` (hash: TBD)
