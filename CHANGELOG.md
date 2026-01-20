@@ -1,3 +1,13 @@
+## [1.1.455] - 2026-01-20
+
+### Added
+- **Session Continuity**: handoff chains with persisted reports and workflow-state API exposure.
+- **Workflow Tree**: persisted Description branch (questionnaire/draft/final + session ref) and downstream OUTDATED on edits.
+- **Project Manager**: continuity chain nodes, Description branch + Continue, and OUTDATED status in tree.
+
+### Changed
+- **Runs removal**: workflow artifacts now file-first without `runs/`, initiatives storage drops runs/currentRunId.
+
 ## [1.1.454] - 2026-01-19
 
 ### Fixed
