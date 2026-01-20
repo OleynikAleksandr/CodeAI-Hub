@@ -52,13 +52,13 @@ const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
 const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
 const WORKFLOW_EVENTS_ENDPOINT = "/api/v1/orchestrator/workflow-events";
 const DESCRIPTION_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\.md$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?description\.md$/;
 const VIRTUAL_SIMULATION_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual-simulation\.md$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/modules-diagram\.mmd$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?modules-diagram\.mmd$/;
 const DIAGRAM_FACADES_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_facades\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/facades-graph\.mmd$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_facades\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?facades-graph\.mmd$/;
 const LEGACY_IDEA_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
 const LEGACY_VIRTUAL_SIMULATION_PATH_RE =
@@ -656,7 +656,6 @@ const WORKFLOW_STAGE_PATHS = new Map<WorkflowStageId, RegExp>([
 
 type WorkflowStageUpsertContext = {
   readonly initiativeSlug: string;
-  readonly runSlug: string;
   readonly workspaceRoot: string;
   readonly stage: WorkflowStageId;
 };
@@ -675,24 +674,23 @@ const resolveWorkflowStageUpsertContext = (params: {
     readonly stage: string | null;
   };
 }): PayloadParseResult<WorkflowStageUpsertContext> => {
-  const { initiativeSlug, runSlug, stage } = params.sessionContext;
-  if (!(initiativeSlug && runSlug && stage)) {
+  const { initiativeSlug, stage } = params.sessionContext;
+  if (!(initiativeSlug && stage)) {
     return {
       ok: false,
-      error: "Session context is missing initiativeSlug/runSlug/stage",
+      error: "Session context is missing initiativeSlug/stage",
     };
   }
   if (!WORKFLOW_STAGE_SET.has(stage as WorkflowStageId)) {
     return { ok: false, error: `Unsupported stage: ${stage}` };
   }
-  if (!(SLUG_RE.test(initiativeSlug) && SLUG_RE.test(runSlug))) {
-    return { ok: false, error: "Invalid initiativeSlug/runSlug" };
+  if (!SLUG_RE.test(initiativeSlug)) {
+    return { ok: false, error: "Invalid initiativeSlug" };
   }
   return {
     ok: true,
     value: {
       initiativeSlug,
-      runSlug,
       workspaceRoot: path.resolve(params.workspacePath),
       stage: stage as WorkflowStageId,
     },
@@ -717,7 +715,7 @@ const resolveWorkflowStageUpsertTarget = (params: {
     };
   }
 
-  const relativePath = `.codeai-hub/${params.context.initiativeSlug}/${slotInfo.stage}/runs/${params.context.runSlug}/${slotInfo.fileName}`;
+  const relativePath = `.codeai-hub/${params.context.initiativeSlug}/${slotInfo.stage}/${slotInfo.fileName}`;
   const isAllowed =
     WORKFLOW_STAGE_PATHS.get(slotInfo.stage)?.test(relativePath) ?? false;
   if (!isAllowed) {

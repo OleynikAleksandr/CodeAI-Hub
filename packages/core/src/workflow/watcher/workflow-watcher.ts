@@ -49,20 +49,32 @@ const shouldIgnorePath = (relativePath: string): boolean => {
   return baseName.startsWith(".") || baseName.endsWith("~");
 };
 
+const CURRENT_RUN_SLUG = "current";
+
 const parseWorkflowPath = (relativePath: string): WorkflowPathMatch | null => {
   const segments = path
     .normalize(relativePath)
     .split(path.sep)
     .filter((segment) => segment.length > 0);
-  if (segments.length < 3) {
+  if (segments.length < 1) {
     return null;
   }
-  const [stage, runsMarker, runSlug, ...rest] = segments;
-  if (!isWorkflowStage(stage) || runsMarker !== "runs" || !runSlug) {
+  const [stage, maybeRunsMarker, maybeRunSlug, ...rest] = segments;
+  if (!isWorkflowStage(stage)) {
     return null;
   }
-  const filePath = rest.length > 0 ? rest.join(path.sep) : undefined;
-  return { stage, runSlug, filePath };
+
+  if (maybeRunsMarker === "runs") {
+    if (!maybeRunSlug) {
+      return null;
+    }
+    const filePath = rest.length > 0 ? rest.join(path.sep) : undefined;
+    return { stage, runSlug: maybeRunSlug, filePath };
+  }
+
+  const filePath =
+    segments.length > 1 ? segments.slice(1).join(path.sep) : undefined;
+  return { stage, runSlug: CURRENT_RUN_SLUG, filePath };
 };
 
 export class WorkflowWatcher {
