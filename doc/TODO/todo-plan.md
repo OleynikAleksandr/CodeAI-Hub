@@ -87,8 +87,12 @@
 ### Stream: Implementation — Workflow artifact paths (no `runs/`)
 1. [DONE] Refactor(core): убрать `runs/` из путей workflow-артефактов (watcher + allowlist + artifact-upsert) — scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit message: `refactor(core): remove runs from workflow paths`
 2. [DONE] Git Commit: `refactor(core): remove runs from workflow paths` (hash: 2221ac6a)
-3. [TODO] Refactor(core): убрать `runSlug` из типов workflow paths/events (workflows state + watcher event model) — scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/watcher/watcher-types.ts`, `packages/core/src/workflow/state/workflow-state-types.ts`; expected commit message: `refactor(core): drop runSlug from workflow watcher types`
-4. [TODO] Git Commit: `refactor(core): drop runSlug from workflow watcher types` (hash: TBD)
+3. [TODO] Refactor(core): убрать `runSlug` из workflow state/gates — scope: `packages/core/src/workflow/state/workflow-state-types.ts`, `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/workflow/gates/workflow-gates-facade.ts`; expected commit message: `refactor(core): drop runSlug from workflow state`
+4. [TODO] Git Commit: `refactor(core): drop runSlug from workflow state` (hash: TBD)
+5. [TODO] Refactor(core): убрать `runSlug` из watcher events — scope: `packages/core/src/workflow/watcher/watcher-types.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`; expected commit message: `refactor(core): drop runSlug from workflow watcher events`
+6. [TODO] Git Commit: `refactor(core): drop runSlug from workflow watcher events` (hash: TBD)
+7. [TODO] Refactor(core): убрать `runSlug` из workflow artifact path типов — scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`; expected commit message: `refactor(core): drop runSlug from artifact path types`
+8. [TODO] Git Commit: `refactor(core): drop runSlug from artifact path types` (hash: TBD)
 
 ### Stream: Implementation — Remote bridge / session context (remove runSlug)
 1. [DONE] Refactor(ui): обновить пути idea-артефактов без `runs/` (output paths + UI copy) — scope: `src/client/ui/src/app-host/session-region-idea-paths.ts`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `media/react-chat.js`; expected commit message: `refactor(ui): remove runs from idea output paths`
