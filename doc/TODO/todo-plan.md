@@ -84,18 +84,30 @@
 1. [TODO] Refactor(initiatives): убрать `runs`/`RunStore`/`runSlug` из пакета `@codeai-hub/initiatives` (заменить на single-current step storage) — scope: `packages/initiatives/src/index.ts`, `packages/initiatives/src/run-store.ts`, `packages/initiatives/package.json`; expected commit message: `refactor(initiatives): remove runs model`
 2. [TODO] Git Commit: `refactor(initiatives): remove runs model` (hash: TBD)
 
-### Stream: Implementation — Workflow artifact paths without runSlug
-1. [TODO] Refactor(core): убрать `runSlug` из `resolveWorkflowArtifactPaths` и allowlist, обновить watcher-конвенции путей — scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/watcher/watcher-types.ts`; expected commit message: `refactor(core): remove runSlug from workflow paths`
-2. [TODO] Git Commit: `refactor(core): remove runSlug from workflow paths` (hash: TBD)
+### Stream: Implementation — Workflow artifact paths (no `runs/`)
+1. [DONE] Refactor(core): убрать `runs/` из путей workflow-артефактов (watcher + allowlist + artifact-upsert) — scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit message: `refactor(core): remove runs from workflow paths`
+2. [DONE] Git Commit: `refactor(core): remove runs from workflow paths` (hash: 2221ac6a)
+3. [TODO] Refactor(core): убрать `runSlug` из типов workflow paths/events (workflows state + watcher event model) — scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/watcher/watcher-types.ts`, `packages/core/src/workflow/state/workflow-state-types.ts`; expected commit message: `refactor(core): drop runSlug from workflow watcher types`
+4. [TODO] Git Commit: `refactor(core): drop runSlug from workflow watcher types` (hash: TBD)
 
 ### Stream: Implementation — Remote bridge / session context (remove runSlug)
 1. [TODO] Refactor(core+types): убрать `runSlug` из remote-bridge session context payloads и shared session types — scope: `packages/core/src/remote-bridge/types.ts`, `src/types/session.ts`, `src/client/ui/src/core-bridge/types.ts`; expected commit message: `refactor(core): drop runSlug from session context`
 2. [TODO] Git Commit: `refactor(core): drop runSlug from session context` (hash: TBD)
 
+### Stream: Implementation — Core: remove runs endpoints
+1. [DONE] Refactor(core): удалить `/initiatives/:initiativeSlug/runs` API endpoints (runs list/create/select-current) — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/runs-http-handler.ts`; expected commit message: `refactor(core): remove runs endpoints`
+2. [DONE] Git Commit: `refactor(core): remove runs endpoints` (hash: aeaa16f5)
+
 ### Stream: Implementation — UI: remove run picker, switch to Edit Step
-1. [TODO] Refactor(ui): удалить run picker для `description` и привязать UI к “single current artifact” + `Edit Step` — scope: `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/core-bridge/session-context-resolver.ts`; expected commit message: `refactor(ui): remove run picker (use edit step)`
-2. [TODO] Git Commit: `refactor(ui): remove run picker (use edit step)` (hash: TBD)
+1. [DONE] Refactor(ui): удалить run picker (list/create/select) и runs-client в webview UI — scope: `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/api/orchestrator/runs-client.ts`, `src/client/ui/src/app-host/description-run-picker.tsx`; expected commit message: `refactor(ui): remove run picker (use edit step)`
+2. [DONE] Git Commit: `refactor(ui): remove run picker (use edit step)` (hash: ab574fd7)
+3. [DONE] Build(webview): пересобрать webview bundle после удаления run picker — scope: `media/react-chat.js`; expected commit message: `chore(webview): rebuild bundle`
+4. [DONE] Git Commit: `chore(webview): rebuild bundle` (hash: 2ecbf54c)
 
 ### Stream: Implementation — Project Manager prompt pack paths
-1. [TODO] Refactor(project-manager): убрать `runSlug` из prompt-pack builder, использовать новые каноничные пути без runs — scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/workflow-events-client.ts`, `src/client/project-manager/api.ts`; expected commit message: `refactor(project-manager): drop runSlug from prompt pack`
-2. [TODO] Git Commit: `refactor(project-manager): drop runSlug from prompt pack` (hash: TBD)
+1. [DONE] Refactor(project-manager): убрать `runs/` из prompt-pack builder, использовать новые каноничные пути без runs — scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`; expected commit message: `refactor(project-manager): drop runs from prompt pack`
+2. [DONE] Git Commit: `refactor(project-manager): drop runs from prompt pack` (hash: bdad937e)
+3. [DONE] Docs(project-manager): актуализировать UI copy про путь артефакта `Description` (без `runs/`) — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit message: `docs(project-manager): update description artifact path`
+4. [DONE] Git Commit: `docs(project-manager): update description artifact path` (hash: 2a9b7235)
+5. [TODO] Refactor(project-manager): убрать `runSlug` из workflow events client + API types — scope: `src/client/project-manager/services/workflow-events-client.ts`, `src/client/project-manager/api.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`; expected commit message: `refactor(project-manager): drop runSlug from workflow events`
+6. [TODO] Git Commit: `refactor(project-manager): drop runSlug from workflow events` (hash: TBD)
