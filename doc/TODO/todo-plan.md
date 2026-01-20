@@ -8,11 +8,13 @@
 
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
-3. `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`
-4. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
-5. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-6. `doc/TODO/todo-plan.md`
+2. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+3. `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
+4. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
+5. `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`
+6. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
+7. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
+8. `doc/TODO/todo-plan.md`
 
 ---
 
@@ -31,8 +33,8 @@
 2. [DONE] Git Commit: `docs(workflow-tree): refine description step lifecycle` (hash: b8ccbbe2)
 
 ### Stream: Design — Runs policy (history vs current)
-1. [TODO] Doc: уточнить политику `runs` (0..N как история; в UI показывать только текущий артефакт; vNext: pruning до последнего run) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs(workflow-tree): clarify runs policy`
-2. [TODO] Git Commit: `docs(workflow-tree): clarify runs policy` (hash: TBD)
+1. [DONE] Doc: уточнить политику `runs` (0..N как история; в UI показывать только текущий артефакт; vNext: pruning до последнего run) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs(workflow-tree): clarify runs policy` (obsolete: superseded by Phase 63)
+2. [DONE] Git Commit: `docs(workflow-tree): clarify runs policy` (hash: f14a1ccf)
 
 ### Stream: Docs — Step branches for all steps
 1. [DONE] Doc: зафиксировать правило “каждый Step — треугольник + ветка актуальных артефактов/сессий (persisted), ветка обновляется по мере прохождения” — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(workflow-tree): apply step branch pattern`
@@ -65,3 +67,35 @@
 ### Stream: Rebuild downstream
 1. [TODO] Feat(core): при “Edit” раннего узла помечать downstream узлы как OUTDATED и предлагать Rebuild — scope: `packages/core/src/...`; expected commit message: `feat(workflow-tree): mark downstream nodes outdated on edit`
 2. [TODO] Git Commit: `feat(workflow-tree): mark downstream nodes outdated on edit` (hash: TBD)
+
+---
+
+## Phase 63 — Remove RUNS entity (use Edit Step + single current artifacts) (owner: Oleksandr, updated: 2026-01-20)
+
+### Stream: Design — Remove runs (docs sync)
+1. [DONE] Doc: зафиксировать “без runs” для Workflow Tree (Edit Step, канон путей без `runs/`, без `currentRunId`) — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(workflow-tree): remove runs (use edit)`
+2. [DONE] Git Commit: `docs(workflow-tree): remove runs (use edit)` (hash: fe2f5218)
+3. [DONE] Doc: убрать `runs` из file-first workflow (SystemArchitecture + Watcher Architecture) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`; expected commit message: `docs(core): remove runs from file-first workflow`
+4. [DONE] Git Commit: `docs(core): remove runs from file-first workflow` (hash: 98c2caf0)
+5. [DONE] Doc: убрать `runSlug` из Questionnaire Curator (использовать session checkpoints) — scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; expected commit message: `docs(curator): remove runSlug (use session checkpoints)`
+6. [DONE] Git Commit: `docs(curator): remove runSlug (use session checkpoints)` (hash: 50844126)
+
+### Stream: Implementation — Initiatives storage without runs
+1. [TODO] Refactor(initiatives): убрать `runs`/`RunStore`/`runSlug` из пакета `@codeai-hub/initiatives` (заменить на single-current step storage) — scope: `packages/initiatives/src/index.ts`, `packages/initiatives/src/run-store.ts`, `packages/initiatives/package.json`; expected commit message: `refactor(initiatives): remove runs model`
+2. [TODO] Git Commit: `refactor(initiatives): remove runs model` (hash: TBD)
+
+### Stream: Implementation — Workflow artifact paths without runSlug
+1. [TODO] Refactor(core): убрать `runSlug` из `resolveWorkflowArtifactPaths` и allowlist, обновить watcher-конвенции путей — scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/watcher/watcher-types.ts`; expected commit message: `refactor(core): remove runSlug from workflow paths`
+2. [TODO] Git Commit: `refactor(core): remove runSlug from workflow paths` (hash: TBD)
+
+### Stream: Implementation — Remote bridge / session context (remove runSlug)
+1. [TODO] Refactor(core+types): убрать `runSlug` из remote-bridge session context payloads и shared session types — scope: `packages/core/src/remote-bridge/types.ts`, `src/types/session.ts`, `src/client/ui/src/core-bridge/types.ts`; expected commit message: `refactor(core): drop runSlug from session context`
+2. [TODO] Git Commit: `refactor(core): drop runSlug from session context` (hash: TBD)
+
+### Stream: Implementation — UI: remove run picker, switch to Edit Step
+1. [TODO] Refactor(ui): удалить run picker для `description` и привязать UI к “single current artifact” + `Edit Step` — scope: `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/core-bridge/session-context-resolver.ts`; expected commit message: `refactor(ui): remove run picker (use edit step)`
+2. [TODO] Git Commit: `refactor(ui): remove run picker (use edit step)` (hash: TBD)
+
+### Stream: Implementation — Project Manager prompt pack paths
+1. [TODO] Refactor(project-manager): убрать `runSlug` из prompt-pack builder, использовать новые каноничные пути без runs — scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/workflow-events-client.ts`, `src/client/project-manager/api.ts`; expected commit message: `refactor(project-manager): drop runSlug from prompt pack`
+2. [TODO] Git Commit: `refactor(project-manager): drop runSlug from prompt pack` (hash: TBD)
