@@ -95,8 +95,8 @@
 2. [DONE] Git Commit: `refactor(ui): remove runs from idea output paths` (hash: a01abb29)
 3. [DONE] Refactor(ui): обновить резолвер анкеты idea без `runSlug` (legacy runs остаются) — scope: `src/client/ui/src/services/idea-questionnaire-paths.ts`, `media/react-chat.js`; expected commit message: `refactor(ui): update idea questionnaire paths`
 4. [DONE] Git Commit: `refactor(ui): update idea questionnaire paths` (hash: baabcfa1)
-5. [TODO] Refactor(ui): убрать `runSlug` из session:create в core-bridge (DOM resolver + payload) — scope: `src/client/ui/src/core-bridge/session-context-resolver.ts`, `src/client/ui/src/core-bridge/core-bridge.ts`, `media/react-chat.js`; expected commit message: `refactor(ui): drop runSlug from session create`
-6. [TODO] Git Commit: `refactor(ui): drop runSlug from session create` (hash: TBD)
+5. [DONE] Refactor(ui): убрать `runSlug` из session:create в core-bridge (DOM resolver + payload) — scope: `src/client/ui/src/core-bridge/session-context-resolver.ts`, `src/client/ui/src/core-bridge/core-bridge.ts`, `media/react-chat.js`; expected commit message: `refactor(ui): drop runSlug from session create`
+6. [DONE] Git Commit: `refactor(ui): drop runSlug from session create` (hash: 18acd26a)
 7. [TODO] Refactor(ui): убрать `runSlug` из нормализации сессий — scope: `src/client/ui/src/core-bridge/normalizers.ts`, `media/react-chat.js`; expected commit message: `refactor(ui): drop runSlug normalization`
 8. [TODO] Git Commit: `refactor(ui): drop runSlug normalization` (hash: TBD)
 9. [TODO] Refactor(ui+types): удалить `runSlug` из session record типов — scope: `src/types/session.ts`, `src/client/ui/src/core-bridge/types.ts`, `media/react-chat.js`; expected commit message: `refactor(ui): remove runSlug from session types`
