@@ -1,5 +1,5 @@
 import path from "node:path";
-import { InitiativeStore, RunStore } from "@codeai-hub/initiatives";
+import { InitiativeStore } from "@codeai-hub/initiatives";
 import type { Request, Response } from "express";
 import type { Logger } from "../../telemetry/logger";
 
@@ -37,10 +37,6 @@ type CreateInitiativeRequest = {
   readonly workspacePath: string;
   readonly displayName: string;
   readonly description?: string;
-  readonly createInitialRun?: {
-    readonly displayName: string;
-    readonly description?: string;
-  };
 };
 
 const parseCreateInitiativeRequest = (
@@ -59,36 +55,20 @@ const parseCreateInitiativeRequest = (
   const description =
     typeof value.description === "string" ? value.description : undefined;
 
-  const createInitialRunRaw = value.createInitialRun;
-  const createInitialRun =
-    isRecord(createInitialRunRaw) &&
-    typeof createInitialRunRaw.displayName === "string"
-      ? {
-          displayName: createInitialRunRaw.displayName,
-          description:
-            typeof createInitialRunRaw.description === "string"
-              ? createInitialRunRaw.description
-              : undefined,
-        }
-      : undefined;
-
   return {
     workspacePath,
     displayName,
     description,
-    createInitialRun,
   };
 };
 
 export class InitiativesHttpHandler {
   private readonly logger: Logger;
   private readonly initiatives: InitiativeStore;
-  private readonly runs: RunStore;
 
   constructor(logger: Logger) {
     this.logger = logger;
     this.initiatives = new InitiativeStore();
-    this.runs = new RunStore(this.initiatives);
   }
 
   async handleList(req: Request, res: Response): Promise<void> {
@@ -132,22 +112,7 @@ export class InitiativesHttpHandler {
         description: payload.description,
       });
 
-      let initialRun = null as null | unknown;
-      if (payload.createInitialRun) {
-        const run = await this.runs.create(
-          workspaceRoot,
-          initiative.initiativeSlug,
-          payload.createInitialRun
-        );
-        await this.runs.selectCurrent(
-          workspaceRoot,
-          initiative.initiativeSlug,
-          run.runId
-        );
-        initialRun = run;
-      }
-
-      res.json({ initiative, initialRun });
+      res.json({ initiative });
     } catch (error) {
       this.logger.error("Failed to create initiative", error as Error, {
         workspaceRoot,
