@@ -123,5 +123,5 @@
 2. [DONE] Git Commit: `refactor(project-manager): drop runs from prompt pack` (hash: bdad937e)
 3. [DONE] Docs(project-manager): актуализировать UI copy про путь артефакта `Description` (без `runs/`) — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit message: `docs(project-manager): update description artifact path`
 4. [DONE] Git Commit: `docs(project-manager): update description artifact path` (hash: 2a9b7235)
-5. [TODO] Refactor(project-manager): убрать `runSlug` из workflow events client + API types — scope: `src/client/project-manager/services/workflow-events-client.ts`, `src/client/project-manager/api.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`; expected commit message: `refactor(project-manager): drop runSlug from workflow events`
-6. [TODO] Git Commit: `refactor(project-manager): drop runSlug from workflow events` (hash: TBD)
+5. [DONE] Refactor(project-manager): убрать `runSlug` из workflow events client + API types — scope: `src/client/project-manager/services/workflow-events-client.ts`, `src/client/project-manager/api.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`; expected commit message: `refactor(project-manager): drop runSlug from workflow events`
+6. [DONE] Git Commit: `refactor(project-manager): drop runSlug from workflow events` (hash: a4189fc6)
