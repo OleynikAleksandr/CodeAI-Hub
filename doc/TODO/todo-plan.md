@@ -14,7 +14,7 @@
 
 ---
 
-## Phase 62 — Workflow Tree: Description Node = Final Artifact + Reviewer Session (owner: Oleksandr, updated: 2026-01-20)
+## Phase 62 — Workflow Tree: Description Step = Questionnaire → Draft → Auto-Review → Final (owner: Oleksandr, updated: 2026-01-20)
 
 ### Stream: Repo cleanup — remove unused agent packages
 1. [DONE] Chore(repo): удалить неиспользуемые agent-packages и зафиксировать `npm workspaces`; scope: `packages/agents/diagram-facades-agent/*`, `packages/agents/diagram-modules-agent/*`, `packages/agents/spec-creator/*`, `packages/agents/virtual-simulation-agent/*`, `packages/agents/shared/src/index.ts`, `package.json`, `package-lock.json`; expected commit message: `chore(repo): remove unused agent packages`
@@ -24,13 +24,23 @@
 1. [DONE] Doc: зафиксировать решение “узел хранит только final артефакт + sessionRef на reviewer-сессию (возобновляемая)”; провайдеры resume: Claude/Codex, Gemini исключить — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs: add session 019 and phase 62 plan`
 2. [DONE] Git Commit: `docs: add session 019 and phase 62 plan` (hash: 4840a5e8)
 
+### Stream: Design — Description lifecycle (tree UI + persisted progress)
+1. [TODO] Doc: уточнить алгоритм шага `Description` (треугольник + цвета TODO/IN_PROGRESS/DONE, persisted `questionnaire.md`, resume sessions, авто-старт reviewer, `Final_Description.md` как единственный source-of-truth; статусы BLOCKED/ERROR/OUTDATED — отложить) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs(workflow-tree): refine description step lifecycle`
+2. [TODO] Git Commit: `docs(workflow-tree): refine description step lifecycle` (hash: TBD)
+
 ### Stream: Prompting — Description Agent без уточняющих вопросов
 1. [TODO] Change: обновить промпт Description Agent так, чтобы он создавал `description.md` без вопросов (one-shot), вопросы переносим в Reviewer — scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; expected commit message: `docs(description): one-shot description prompt (no questions)`
 2. [TODO] Git Commit: `docs(description): one-shot description prompt (no questions)` (hash: TBD)
 
+### Stream: Agent Packages — Reviewer Agent (new)
+1. [TODO] Feat(agents): создать `packages/agents/reviewer-agent` (facade + assets) для критичного review `description.md` и генерации `Final_Description.md`; scope: `packages/agents/reviewer-agent/*`, `package.json`, `package-lock.json`; expected commit message: `feat(reviewer-agent): scaffold reviewer agent package`
+2. [TODO] Git Commit: `feat(reviewer-agent): scaffold reviewer agent package` (hash: TBD)
+
 ### Stream: Reviewer Sessions — хранение и resume
-1. [TODO] Feat(core+ui): добавить сущность `sessionRef` в артефакт узла (provider + sessionId + jsonlPath) и кнопку Continue для reviewer-сессии — scope: `packages/core/src/...`, `src/client/project-manager/...`, `src/client/ui/...`; expected commit message: `feat(workflow-tree): persist reviewer sessionRef and allow resume`
-2. [TODO] Git Commit: `feat(workflow-tree): persist reviewer sessionRef and allow resume` (hash: TBD)
+1. [TODO] Feat(core): персистить состояние шага `Description` (пути/refs на `questionnaire.md`, текущий draft/final артефакт, `SessionRef` активной сессии) — scope: `packages/core/src/...`; expected commit message: `feat(workflow-tree): persist description step state`
+2. [TODO] Git Commit: `feat(workflow-tree): persist description step state` (hash: TBD)
+3. [TODO] Feat(project-manager): отображать шаги как треугольники и показывать/обновлять ветку `Description` (questionnaire/session/draft/final) + кнопка Continue для reviewer-сессии — scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): description step branch + continue reviewer session`
+4. [TODO] Git Commit: `feat(project-manager): description step branch + continue reviewer session` (hash: TBD)
 
 ### Stream: Rebuild downstream
 1. [TODO] Feat(core): при “Edit” раннего узла помечать downstream узлы как OUTDATED и предлагать Rebuild — scope: `packages/core/src/...`; expected commit message: `feat(workflow-tree): mark downstream nodes outdated on edit`
