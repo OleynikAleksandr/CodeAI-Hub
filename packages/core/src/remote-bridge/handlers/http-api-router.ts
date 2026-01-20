@@ -17,6 +17,7 @@ import type {
   StatusInfo,
   SystemRequestHandler,
 } from "./system-request-handler";
+import { handleWorkflowArtifactRead } from "./workflow-artifact-http-handler";
 import { WorkflowEventsService } from "./workflow-events-service";
 import { WorkflowStateService } from "./workflow-state-service";
 import {
@@ -47,6 +48,7 @@ const WORKSPACE_FILE_WRITE_ENDPOINT =
 const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
 const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
 const WORKFLOW_EVENTS_ENDPOINT = "/api/v1/orchestrator/workflow-events";
+const WORKFLOW_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/workflow-artifact";
 const DESCRIPTION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?description\.md$/;
 const VIRTUAL_SIMULATION_PATH_RE =
@@ -228,6 +230,10 @@ export class HttpApiRouter {
 
     app.get(WORKFLOW_EVENTS_ENDPOINT, (req: Request, res: Response) => {
       workflowEventsService.handleWorkflowEventsRead(req, res);
+    });
+
+    app.get(WORKFLOW_ARTIFACT_ENDPOINT, async (req: Request, res: Response) => {
+      await handleWorkflowArtifactRead(req, res);
     });
   }
 
