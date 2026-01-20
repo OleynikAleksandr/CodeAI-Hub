@@ -59,8 +59,8 @@
 16. [TODO] Git Commit: `feat(project-manager): show session continuity chain` (hash: TBD)
 
 ### Stream: Prompting — Description Agent без уточняющих вопросов
-1. [TODO] Change: обновить промпт Description Agent так, чтобы он создавал `description.md` без вопросов (one-shot), вопросы переносим в Reviewer — scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; expected commit message: `docs(description): one-shot description prompt (no questions)`
-2. [TODO] Git Commit: `docs(description): one-shot description prompt (no questions)` (hash: TBD)
+1. [DONE] Change: обновить промпт Description Agent так, чтобы он создавал `description.md` без вопросов (one-shot), вопросы переносим в Reviewer — scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; expected commit message: `docs(description): one-shot description prompt (no questions)`
+2. [DONE] Git Commit: `docs(description): one-shot description prompt (no questions)` (hash: 5c4732d7)
 
 ### Stream: Agent Packages — Reviewer Agent (new)
 1. [TODO] Feat(reviewer-agent): scaffold package (facade + index + package.json) — scope: `packages/agents/reviewer-agent/package.json`, `packages/agents/reviewer-agent/src/facade.ts`, `packages/agents/reviewer-agent/src/index.ts`; expected commit message: `feat(reviewer-agent): scaffold package`
