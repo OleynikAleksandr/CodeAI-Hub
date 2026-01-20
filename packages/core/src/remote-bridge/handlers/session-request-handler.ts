@@ -464,6 +464,41 @@ export class SessionRequestHandler {
     }
   }
 
+  async createSessionForWorkflow(options: {
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly context: {
+      readonly initiativeSlug: string;
+      readonly stage: string;
+      readonly runSlug?: string | null;
+    };
+  }): Promise<Session | null> {
+    const adapter = this.providerRegistry.getAdapter(options.providerId);
+    if (!adapter) {
+      this.logger.warn("Workflow session creation failed: provider missing", {
+        providerId: options.providerId,
+      });
+      return null;
+    }
+
+    try {
+      return await this.createAndRegisterSession({
+        providerId: options.providerId,
+        workspacePath: options.workspacePath,
+        adapter,
+        context: {
+          initiativeSlug: options.context.initiativeSlug,
+          stage: options.context.stage,
+          runSlug: options.context.runSlug ?? null,
+          providerSessionId: null,
+        },
+      });
+    } catch (error) {
+      this.handleProviderFailure(options.providerId, error);
+      return null;
+    }
+  }
+
   async handleMessage(
     sessionId: string,
     messagePayload: MessageContentPayload
@@ -996,6 +1031,8 @@ export class SessionRequestHandler {
     if (!resolvedProviderSessionId) {
       return;
     }
+    const sessionKind =
+      session.runSlug === "reviewer" ? "reviewer" : "collector";
 
     const jsonlPath = buildSessionFilePath({
       rootDirectory: SESSION_ROOT,
@@ -1011,6 +1048,7 @@ export class SessionRequestHandler {
           providerSessionId: resolvedProviderSessionId,
           jsonlPath,
         },
+        sessionKind,
       })
       .catch((error: unknown) => {
         this.logger.warn("Failed to persist description session ref", {

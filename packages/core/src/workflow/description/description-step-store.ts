@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type {
   DescriptionBranchSnapshot,
+  DescriptionSessionKind,
   DescriptionSessionRef,
   DescriptionStepSnapshot,
   DescriptionStepUpdate,
@@ -17,6 +18,9 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const readNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
+const parseSessionKind = (value: unknown): DescriptionSessionKind | null =>
+  value === "collector" || value === "reviewer" ? value : null;
+
 const resolveField = (
   current: string | undefined,
   update: string | null | undefined
@@ -27,10 +31,27 @@ const resolveField = (
   return update ?? current;
 };
 
+const resolveSessionKind = (
+  current: DescriptionSessionKind | undefined,
+  update: DescriptionSessionKind | null | undefined
+): DescriptionSessionKind | undefined => {
+  if (update === null) {
+    return;
+  }
+  return update ?? current;
+};
+
 const resolveSession = (
   current: DescriptionSessionRef | undefined,
-  update: DescriptionSessionRef | null | undefined
+  update: DescriptionSessionRef | null | undefined,
+  kinds?: {
+    readonly currentKind?: DescriptionSessionKind;
+    readonly updateKind?: DescriptionSessionKind | null | undefined;
+  }
 ): DescriptionSessionRef | undefined => {
+  if (kinds?.currentKind === "reviewer" && kinds.updateKind === "collector") {
+    return current;
+  }
   if (update === null) {
     return;
   }
@@ -65,6 +86,10 @@ const parseSnapshot = (value: unknown): DescriptionStepSnapshot | null => {
   const draftPath = readNonEmptyString(value.draftPath) ?? undefined;
   const finalPath = readNonEmptyString(value.finalPath) ?? undefined;
   const session = parseSessionRef(value.session);
+  const sessionKind =
+    parseSessionKind(
+      (value as { readonly sessionKind?: unknown }).sessionKind
+    ) ?? undefined;
 
   return {
     workspaceSlug,
@@ -74,6 +99,7 @@ const parseSnapshot = (value: unknown): DescriptionStepSnapshot | null => {
     draftPath,
     finalPath,
     session: session ?? undefined,
+    sessionKind,
   };
 };
 
@@ -146,6 +172,10 @@ export class DescriptionStepStore {
   ): Promise<DescriptionStepSnapshot> {
     const existing = await this.read(workspaceRoot, workspaceSlug);
     const now = this.clock();
+    const nextSessionKind = resolveSessionKind(
+      existing?.sessionKind,
+      update.sessionKind
+    );
     const next: DescriptionStepSnapshot = {
       workspaceSlug,
       createdAt: existing?.createdAt ?? now,
@@ -156,7 +186,11 @@ export class DescriptionStepStore {
       ),
       draftPath: resolveField(existing?.draftPath, update.draftPath),
       finalPath: resolveField(existing?.finalPath, update.finalPath),
-      session: resolveSession(existing?.session, update.session),
+      session: resolveSession(existing?.session, update.session, {
+        currentKind: existing?.sessionKind,
+        updateKind: update.sessionKind,
+      }),
+      sessionKind: nextSessionKind,
     };
 
     await writeJson(buildStatePath(workspaceRoot, workspaceSlug), next);
