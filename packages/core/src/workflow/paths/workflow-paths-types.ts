@@ -8,7 +8,6 @@ export type WorkflowArtifactFileName =
 
 export type WorkflowArtifactPath = {
   readonly stage: WorkflowStageId;
-  readonly runSlug: string;
   readonly fileName: WorkflowArtifactFileName;
   readonly relativePath: string;
   readonly absolutePath: string;
@@ -18,7 +17,6 @@ export type WorkflowArtifactPathParams = {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
   readonly stage: WorkflowStageId;
-  readonly runSlug: string;
   readonly fileName: WorkflowArtifactFileName;
 };
 

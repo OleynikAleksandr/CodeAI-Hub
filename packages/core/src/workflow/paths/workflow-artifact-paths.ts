@@ -72,8 +72,8 @@ export const resolveWorkflowArtifactPaths = (
   if (!isWorkflowStage(params.stage)) {
     return { ok: false, error: `Unsupported workflow stage: ${params.stage}` };
   }
-  if (!(SLUG_RE.test(params.workspaceSlug) && SLUG_RE.test(params.runSlug))) {
-    return { ok: false, error: "Invalid workspaceSlug/runSlug" };
+  if (!SLUG_RE.test(params.workspaceSlug)) {
+    return { ok: false, error: "Invalid workspaceSlug" };
   }
 
   const expectedFileName = WORKFLOW_STAGE_FILES.get(params.stage);
@@ -100,7 +100,6 @@ export const resolveWorkflowArtifactPaths = (
     ok: true,
     value: {
       stage: params.stage,
-      runSlug: params.runSlug,
       fileName: params.fileName,
       relativePath,
       absolutePath,
