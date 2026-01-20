@@ -65,8 +65,8 @@
 ### Stream: Agent Packages — Reviewer Agent (new)
 1. [DONE] Feat(reviewer-agent): scaffold package (facade + index + package.json) — scope: `packages/agents/reviewer-agent/package.json`, `packages/agents/reviewer-agent/src/facade.ts`, `packages/agents/reviewer-agent/src/index.ts`; expected commit message: `feat(reviewer-agent): scaffold package`
 2. [DONE] Git Commit: `feat(reviewer-agent): scaffold package` (hash: 4e1efb91)
-3. [TODO] Feat(reviewer-agent): добавить ассеты reviewer prompt/template — scope: `packages/agents/reviewer-agent/assets/reviewer-prompt.md`, `packages/agents/reviewer-agent/assets/reviewer-template.md`; expected commit message: `feat(reviewer-agent): add prompt assets`
-4. [TODO] Git Commit: `feat(reviewer-agent): add prompt assets` (hash: TBD)
+3. [DONE] Feat(reviewer-agent): добавить ассеты reviewer prompt/template — scope: `packages/agents/reviewer-agent/assets/reviewer-prompt.md`, `packages/agents/reviewer-agent/assets/reviewer-template.md`; expected commit message: `feat(reviewer-agent): add prompt assets`
+4. [DONE] Git Commit: `feat(reviewer-agent): add prompt assets` (hash: 5194981c)
 5. [TODO] Chore(repo): зарегистрировать reviewer-agent в workspace — scope: `package.json`, `package-lock.json`; expected commit message: `chore(repo): add reviewer-agent workspace`
 6. [TODO] Git Commit: `chore(repo): add reviewer-agent workspace` (hash: TBD)
 
