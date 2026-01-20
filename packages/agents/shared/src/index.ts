@@ -3,7 +3,7 @@
  *
  * Shared utilities and types for CodeAI Hub agent packages.
  * This package provides common functionality used by all agent packages
- * (idea-collector, spec-creator, plan-builder, etc.).
+ * (idea-collector, description-agent, plan-builder, etc.).
  */
 
 /**

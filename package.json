@@ -7,7 +7,9 @@
   "license": "ISC",
   "workspaces": [
     "packages/*",
-    "packages/agents/*"
+    "packages/agents/shared",
+    "packages/agents/description-agent",
+    "packages/agents/idea-collector"
   ],
   "engines": {
     "vscode": "^1.85.0"
