@@ -110,6 +110,12 @@ Node.js сервис (`@codeai-hub/core@1.1.454`), упакованный как
 
 `ProviderVersionService` читает версии CLI/SDK через глобальный npm (`npm list -g`/`npm view`).
 
+### 2.6 Session Continuity (CRITICAL)
+
+Для долгоживущих workflow-сессий в системе нужен механизм непрерывности: при исчерпании контекстного бюджета модель должна автоматически сформировать handoff-отчёт, после чего Core создаёт новую сессию и продолжает работу, подавая отчёт как входной контекст.
+
+Архитектура: `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`.
+
 ---
 
 ## 3. Extension Host Layer
