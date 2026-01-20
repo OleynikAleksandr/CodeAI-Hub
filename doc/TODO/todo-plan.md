@@ -81,8 +81,8 @@
 8. [DONE] Git Commit: `feat(project-manager): description step branch + continue reviewer session` (hash: 787ddb70)
 
 ### Stream: Rebuild downstream
-1. [TODO] Feat(core): помечать downstream как OUTDATED при новом артефакте раннего шага — scope: `packages/core/src/workflow/state/workflow-state-types.ts`, `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `feat(workflow-tree): mark downstream nodes outdated on edit`
-2. [TODO] Git Commit: `feat(workflow-tree): mark downstream nodes outdated on edit` (hash: TBD)
+1. [DONE] Feat(core): помечать downstream как OUTDATED при новом артефакте раннего шага — scope: `packages/core/src/workflow/state/workflow-state-types.ts`, `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `feat(workflow-tree): mark downstream nodes outdated on edit`
+2. [DONE] Git Commit: `feat(workflow-tree): mark downstream nodes outdated on edit` (hash: b6a71d4d)
 
 ---
 
