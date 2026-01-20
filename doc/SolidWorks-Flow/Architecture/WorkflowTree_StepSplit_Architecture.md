@@ -35,6 +35,9 @@
 
 Ключевой инвариант: **агент не пытается писать два артефакта в одном ответе**.
 
+UI правило (для всех шагов):
+- каждый `Step` в Workflow Tree — раскрываемый узел с веткой “артефакты + сессии”, чтобы прогресс переживал перезапуск (см. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`).
+
 Примечание для `description`:
 - `description.md` существует как **черновик** (run output) между Description Agent и Reviewer.
 - `Final_Description.md` — **единственный** финальный артефакт, который читают downstream шаги.

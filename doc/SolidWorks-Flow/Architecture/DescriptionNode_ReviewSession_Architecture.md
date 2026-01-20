@@ -33,6 +33,8 @@
 - Следующие этапы (virtual simulation / diagrams / etc.) получают на вход **финальный артефакт** (`Final_Description.md`), а не анкету/черновик.
 - При `Edit` раннего узла downstream-узлы помечаются как `OUTDATED` и подлежат пересборке.
 
+Примечание: подход “`Step` как раскрываемый узел → ветка актуальных артефактов/сессий” применяется **ко всем шагам Workflow Tree**. `Description` — просто самый сложный и показательный пример (анкета → draft → reviewer → final).
+
 ---
 
 ## 3. Non-Goals
@@ -169,6 +171,7 @@ UI следствие: сразу после старта сессии появ�
   - резюмировать сессию по `providerId + providerSessionId` (уже есть `resumeSession` для поддерживаемых провайдеров);
   - помечать downstream узлы как `OUTDATED` при изменении артефакта раннего узла.
   - автоматически запускать Reviewer-сессию после появления `description.md` и переключать “active session” в состоянии шага.
+  - поддерживать “handoff” для долгих reviewer-сессий (авто-отчёт при 25% контекста и продолжение в новой сессии): `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`.
 
 ---
 
