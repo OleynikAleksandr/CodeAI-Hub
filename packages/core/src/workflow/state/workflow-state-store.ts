@@ -101,10 +101,7 @@ const upsertGate = (
   nextGate: WorkflowGateState
 ): WorkflowGateState[] => {
   const index = gates.findIndex(
-    (gate) =>
-      gate.gateId === nextGate.gateId &&
-      gate.stage === nextGate.stage &&
-      gate.runSlug === nextGate.runSlug
+    (gate) => gate.gateId === nextGate.gateId && gate.stage === nextGate.stage
   );
   if (index < 0) {
     return [...gates, nextGate];
@@ -136,13 +133,11 @@ const updateStageState = (
   event: WorkflowWatcherEvent
 ): WorkflowStageState => {
   if (event.type === "workflow.run.created") {
-    const isNewRun = stageState.runSlug !== event.runSlug;
     return {
       ...stageState,
-      runSlug: event.runSlug,
       status: resolveStageStatus(stageState.status, event.type),
-      artifacts: isNewRun ? [] : stageState.artifacts,
-      gates: isNewRun ? [] : stageState.gates,
+      artifacts: [],
+      gates: [],
       updatedAt: event.timestamp,
     };
   }
@@ -150,7 +145,6 @@ const updateStageState = (
   if (event.type === "workflow.artifact.written") {
     return {
       ...stageState,
-      runSlug: event.runSlug,
       status: resolveStageStatus(stageState.status, event.type),
       artifacts: upsertArtifact(
         stageState.artifacts,
@@ -164,7 +158,6 @@ const updateStageState = (
   if (event.type === "workflow.stage.completed") {
     return {
       ...stageState,
-      runSlug: event.runSlug,
       status: resolveStageStatus(stageState.status, event.type),
       updatedAt: event.timestamp,
     };
@@ -190,7 +183,6 @@ const updateStageState = (
         status,
         updatedAt: event.timestamp,
         stage: event.stage,
-        runSlug: event.runSlug,
         detail: event.detail,
       }),
       updatedAt: event.timestamp,
