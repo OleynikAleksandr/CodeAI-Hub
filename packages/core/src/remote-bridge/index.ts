@@ -97,6 +97,7 @@ export class RemoteBridge {
       providerRegistry: this.providerRegistry,
       sessionStorage: this.sessionStorage,
       logger: this.logger,
+      continuityClock: () => new Date().toISOString(),
       broadcaster: (event) => {
         this.broadcast(event as BridgeEvent);
       },
