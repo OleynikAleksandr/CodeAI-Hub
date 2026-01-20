@@ -90,6 +90,8 @@
 2. [DONE] Git Commit: `feat(project-manager): parse outdated workflow status` (hash: 52b48ee4)
 3. [DONE] Feat(project-manager): отобразить `outdated` в дереве + стиль — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `feat(project-manager): display outdated workflow status`
 4. [DONE] Git Commit: `feat(project-manager): display outdated workflow status` (hash: 43c99ed3)
+5. [DONE] Fix(project-manager): стабилизировать типизацию description-ветки (без ложных элементов) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): tighten description branch nodes`
+6. [DONE] Git Commit: `fix(project-manager): tighten description branch nodes` (hash: d9eef652)
 
 ---
 
