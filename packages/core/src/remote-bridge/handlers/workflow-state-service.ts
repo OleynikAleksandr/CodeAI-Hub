@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
@@ -43,7 +44,30 @@ export class WorkflowStateService {
     }
 
     const state = this.getStore(workspaceSlugResult.value).snapshot();
-    res.json({ state });
+    const workspaceRoot = this.resolveWorkspaceRoot(
+      req,
+      workspaceSlugResult.value
+    );
+
+    if (!workspaceRoot) {
+      res.json({ state, continuity: { chains: [] } });
+      return;
+    }
+
+    SessionContinuityFacade.readWorkspaceChains({
+      workspaceRoot,
+      workspaceSlug: workspaceSlugResult.value,
+    })
+      .then((chains) => {
+        res.json({ state, continuity: { chains } });
+      })
+      .catch((error) => {
+        this.logger.warn("Failed to read continuity chains", {
+          workspaceSlug: workspaceSlugResult.value,
+          error: error instanceof Error ? error.message : String(error),
+        });
+        res.json({ state, continuity: { chains: [] } });
+      });
   }
 
   private resolveWorkspaceSlug(req: Request): WorkspaceSlugResult {
@@ -95,5 +119,27 @@ export class WorkflowStateService {
     const store = new WorkflowStateFacade({ workspaceSlug });
     this.stores.set(workspaceSlug, store);
     return store;
+  }
+
+  private resolveWorkspaceRoot(
+    req: Request,
+    workspaceSlug: string
+  ): string | null {
+    if (!this.sessionManager) {
+      return null;
+    }
+    const query = req.query as Record<string, unknown>;
+    const sessionId = readNonEmptyString(query.sessionId);
+    if (sessionId) {
+      const session = this.sessionManager.getSession(sessionId);
+      if (session?.workspacePath) {
+        return session.workspacePath;
+      }
+    }
+
+    const session = this.sessionManager
+      .listSessions()
+      .find((candidate) => candidate.initiativeSlug === workspaceSlug);
+    return session?.workspacePath ?? null;
   }
 }

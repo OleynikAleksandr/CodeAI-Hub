@@ -1,8 +1,12 @@
 import type { Session } from "../session-manager";
 import type { Logger } from "../telemetry/logger";
 import { ContinuityMonitor } from "./continuity-monitor";
-import { ContinuityChainStore } from "./continuity-store";
-import type { ContinuityChain, ContinuitySegment } from "./continuity-types";
+import { ContinuityChainStore, readContinuityChains } from "./continuity-store";
+import type {
+  ContinuityChain,
+  ContinuityChainSummary,
+  ContinuitySegment,
+} from "./continuity-types";
 import { buildHandoffPrompt } from "./handoff-prompt-builder";
 import {
   buildHandoffReportPath,
@@ -48,6 +52,13 @@ type ContinuityCallbacks = {
 };
 
 export class SessionContinuityFacade {
+  static readWorkspaceChains(options: {
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<ContinuityChainSummary[]> {
+    return readContinuityChains(options);
+  }
+
   private readonly logger: Logger;
   private readonly monitor = new ContinuityMonitor();
   private readonly clock: () => string;

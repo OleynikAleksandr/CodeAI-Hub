@@ -1,7 +1,8 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type {
   ContinuityChain,
+  ContinuityChainSummary,
   ContinuitySegment,
   ContinuityStageId,
 } from "./continuity-types";
@@ -131,3 +132,48 @@ export class ContinuityChainStore {
     });
   }
 }
+
+const readDirectories = async (root: string) => {
+  try {
+    return await readdir(root, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+};
+
+export const readContinuityChains = async (options: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<ContinuityChainSummary[]> => {
+  const baseDir = path.join(
+    options.workspaceRoot,
+    CONTINUITY_ROOT,
+    options.workspaceSlug,
+    CONTINUITY_DIR
+  );
+  const stageEntries = await readDirectories(baseDir);
+  const chains: ContinuityChainSummary[] = [];
+
+  for (const stageEntry of stageEntries) {
+    if (!stageEntry.isDirectory()) {
+      continue;
+    }
+    const stageDir = path.join(baseDir, stageEntry.name);
+    const rootEntries = await readDirectories(stageDir);
+    for (const rootEntry of rootEntries) {
+      if (!rootEntry.isDirectory()) {
+        continue;
+      }
+      const chainPath = path.join(stageDir, rootEntry.name, CHAIN_FILE_NAME);
+      const chain = await readJson<ContinuityChainSummary>(chainPath);
+      if (!chain || chain.workspaceSlug !== options.workspaceSlug) {
+        continue;
+      }
+      chains.push(chain);
+    }
+  }
+
+  return chains.sort((left, right) =>
+    right.updatedAt.localeCompare(left.updatedAt)
+  );
+};
