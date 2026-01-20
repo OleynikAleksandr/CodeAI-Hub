@@ -8131,7 +8131,6 @@
       workspacePath: session.workspacePath ?? "",
       initiativeSlug: typeof session.initiativeSlug === "string" ? session.initiativeSlug : null,
       stage: typeof session.stage === "string" ? session.stage : null,
-      runSlug: typeof session.runSlug === "string" ? session.runSlug : null,
       createdAt: toNumberTimestamp(session.createdAt),
       binding: normalizeBinding(bindingCandidate)
     };
