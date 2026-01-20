@@ -45,7 +45,7 @@ Workflow Tree становится **единой точкой правды** д
 - **Module имеет единственный публичный вход**: `*facade`.
 - Внутри Module — **микро‑классы** (≤300 строк) и строгая декомпозиция.
 
-### 3.2. Артефакты как слоты и runs (для персистентности)
+### 3.2. Артефакты как слоты (без runs)
 Эта часть нужна, чтобы дерево было связано с текущим рантаймом артефактов.
 
 - **Artifact Slot** — “что” мы храним (семантический ключ результата).
@@ -54,16 +54,8 @@ Workflow Tree становится **единой точкой правды** д
   - `diagram.modules`
   - `diagram.facades`
   - `module.<slug>.spec`
-- **Run** — одна попытка выполнения шага (провайдер/модель/итерация).
-- **Current** — выбранный пользователем актуальный результат слота.
-
-Зачем нужны runs:
-- шаг может выполняться разными провайдерами или повторно;
-- UI должен хранить историю и позволять выбрать “current”.
-
-UI правило (MVP): дерево не обязано показывать все `runs/*`.
-- Ветка `Step` показывает **только актуальные** артефакты/сессии для продолжения работы.
-- История `runs/*` остаётся на диске как диагностика/аудит и может быть скрыта в UI.
+- **Artifact (current)** — каноничный “текущий” файл результата слота (единственный source-of-truth для downstream).
+- **Edit Step** — повторное выполнение шага без “нового run”: пользователь продолжает/создаёт сессию, а система **перезаписывает текущий артефакт** шага (и помечает downstream как `OUTDATED`).
 
 ---
 
@@ -262,13 +254,13 @@ MVP-минимум:
 ## 9. Привязка к рантайму артефактов `.codeai-hub/` (MVP)
 `.codeai-hub/` находится в `.gitignore`, но это **каноничное хранилище workflow-артефактов** на уровне workspace.
 
-### 9.1. Канон путей артефактов (новый)
-Каждый шаг имеет собственный корень и runs:
-- `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/description.md`
+### 9.1. Канон путей артефактов (без runs)
+Каждый шаг имеет собственный корень и **единый** текущий артефакт:
+- `.codeai-hub/<workspaceSlug>/description/description.md` (draft; временный файл между Description Agent и Reviewer)
 - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
-- `.codeai-hub/<workspaceSlug>/virtual_simulation/runs/<runSlug>/virtual-simulation.md`
-- `.codeai-hub/<workspaceSlug>/diagram_modules/runs/<runSlug>/modules-diagram.mmd`
-- `.codeai-hub/<workspaceSlug>/diagram_facades/runs/<runSlug>/facades-graph.mmd`
+- `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`
+- `.codeai-hub/<workspaceSlug>/diagram_modules/modules-diagram.mmd`
+- `.codeai-hub/<workspaceSlug>/diagram_facades/facades-graph.mmd`
 
 Вопросники/анкеты:
 - `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
@@ -297,8 +289,8 @@ Payload (MVP):
 - При перезаписи файла Core делает backup: `*.bak-<timestamp>`.
 
 ### 9.4. Привязка SessionID к шагу
-Для шага хранится история `runs[]` и указатель `currentRunId`.
-Привязка `providerSessionId/threadId` хранится в метаданных run.
+Для шага хранится “resume-точка” (SessionRef) на активную сессию агента (например Reviewer).
+История диалогов/перезапусков обеспечивается `Session Continuity` (handoff цепочки), а не `runs`.
 
 ---
 

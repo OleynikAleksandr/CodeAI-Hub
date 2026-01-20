@@ -20,7 +20,7 @@
 1. **Один шаг = один финальный артефакт (source of truth).**
 2. Убрать сущность `Idea` из терминологии, шаблонов и путей.
 3. Развести `Диаграммы` на два независимых шага.
-4. Развести runs по шагам и привести структуру `.codeai-hub/` к строгой и прозрачной.
+4. Полностью убрать сущность `runs` и заменить повторные попытки на `Edit Step` (перезапись текущего артефакта).
 
 ---
 
@@ -48,19 +48,15 @@ UI последствия:
 
 ---
 
-## 4. Runs и пути артефактов
-Каждый шаг имеет собственный корень и историю runs:
-- `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/description.md`
+## 4. Пути артефактов (без runs)
+Каждый шаг имеет собственный корень и **единый** текущий артефакт:
+- `.codeai-hub/<workspaceSlug>/description/description.md` (draft; временный файл между Description Agent и Reviewer)
 - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
-- `.codeai-hub/<workspaceSlug>/virtual_simulation/runs/<runSlug>/virtual-simulation.md`
-- `.codeai-hub/<workspaceSlug>/diagram_modules/runs/<runSlug>/modules-diagram.mmd`
-- `.codeai-hub/<workspaceSlug>/diagram_facades/runs/<runSlug>/facades-graph.mmd`
+- `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`
+- `.codeai-hub/<workspaceSlug>/diagram_modules/modules-diagram.mmd`
+- `.codeai-hub/<workspaceSlug>/diagram_facades/facades-graph.mmd`
 
 Это убирает смешивание артефактов и упрощает диагностику.
-
-Политика runs (MVP):
-- `runs/` — история попыток (0..N).
-- Ветка шага в UI показывает только “current” результат шага; историю `runs/*` можно скрывать.
 
 ---
 
@@ -98,7 +94,7 @@ UI последствия:
 
 ## 7. Миграция и совместимость
 - Старые `idea`‑шаблоны не переиспользуются.
-- Старые runs остаются на диске, но новые сессии используют новые директории.
+- Старые `runs/*` считаются legacy и подлежат миграции/удалению по мере вычистки кода.
 - UI и Core обновляются одновременно (gates, контракты, template sync).
 
 ---
