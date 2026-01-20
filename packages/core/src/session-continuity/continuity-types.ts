@@ -40,3 +40,8 @@ export type ContinuityChainSummary = {
   readonly segments: readonly ContinuitySegment[];
   readonly updatedAt: string;
 };
+
+export type HandoffReportSnapshot = {
+  readonly path: string;
+  readonly createdAt: string;
+};
