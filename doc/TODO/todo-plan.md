@@ -87,8 +87,8 @@
 ### Stream: Implementation — Workflow artifact paths (no `runs/`)
 1. [DONE] Refactor(core): убрать `runs/` из путей workflow-артефактов (watcher + allowlist + artifact-upsert) — scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit message: `refactor(core): remove runs from workflow paths`
 2. [DONE] Git Commit: `refactor(core): remove runs from workflow paths` (hash: 2221ac6a)
-3. [TODO] Refactor(core): убрать `runSlug` из workflow state/gates — scope: `packages/core/src/workflow/state/workflow-state-types.ts`, `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/workflow/gates/workflow-gates-facade.ts`; expected commit message: `refactor(core): drop runSlug from workflow state`
-4. [TODO] Git Commit: `refactor(core): drop runSlug from workflow state` (hash: TBD)
+3. [DONE] Refactor(core): убрать `runSlug` из workflow state/gates — scope: `packages/core/src/workflow/state/workflow-state-types.ts`, `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/workflow/gates/workflow-gates-facade.ts`; expected commit message: `refactor(core): drop runSlug from workflow state`
+4. [DONE] Git Commit: `refactor(core): drop runSlug from workflow state` (hash: cd7f1d39)
 5. [TODO] Refactor(core): убрать `runSlug` из watcher events — scope: `packages/core/src/workflow/watcher/watcher-types.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`; expected commit message: `refactor(core): drop runSlug from workflow watcher events`
 6. [TODO] Git Commit: `refactor(core): drop runSlug from workflow watcher events` (hash: TBD)
 7. [TODO] Refactor(core): убрать `runSlug` из workflow artifact path типов — scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`; expected commit message: `refactor(core): drop runSlug from artifact path types`
