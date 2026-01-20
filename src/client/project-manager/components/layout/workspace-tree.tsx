@@ -112,10 +112,11 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         onSelect: () => selectArtifact(questionnairePath, "questionnaire.md"),
       });
     if (session) {
-      const label = branch.finalPath
+      const isReviewerSession = branch.sessionKind === "reviewer";
+      const label = isReviewerSession
         ? `Reviewer session · ${session.providerId}`
         : `Session · ${session.providerId}`;
-      const runSlug = branch.finalPath ? "reviewer" : null;
+      const runSlug = isReviewerSession ? "reviewer" : null;
       nodes.push({
         id: "workflow:description:session",
         label,
