@@ -8319,17 +8319,6 @@
     const value = element3.value.trim();
     return value.length > 0 ? value : null;
   };
-  var resolveSelectedRunSlug = () => {
-    if (typeof document === "undefined") {
-      return null;
-    }
-    const element3 = document.getElementById("runSlug");
-    if (!(element3 instanceof HTMLInputElement)) {
-      return null;
-    }
-    const value = element3.value.trim();
-    return value.length > 0 ? value : null;
-  };
   var resolveSelectedProviderSessionId = () => {
     if (typeof document === "undefined") {
       return null;
@@ -8550,7 +8539,6 @@
       return;
     }
     const initiativeSlug = resolveSelectedInitiativeSlug();
-    const runSlug = resolveSelectedRunSlug();
     const providerSessionId = resolveSelectedProviderSessionId();
     const stage = pendingStage;
     pendingStage = null;
@@ -8559,7 +8547,6 @@
       payload: {
         providerId,
         initiativeSlug,
-        runSlug: runSlug ?? void 0,
         providerSessionId: providerSessionId ?? void 0,
         stage
       }

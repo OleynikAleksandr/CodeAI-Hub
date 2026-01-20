@@ -8,7 +8,6 @@ import { createServerMessageHandler } from "./server-message-handler";
 import {
   resolveSelectedInitiativeSlug,
   resolveSelectedProviderSessionId,
-  resolveSelectedRunSlug,
 } from "./session-context-resolver";
 import { loadSessionHistories } from "./session-history";
 import { requestCoreFromSupervisor } from "./supervisor-requests";
@@ -207,7 +206,6 @@ const createSession = (providerIds: readonly ProviderStackId[]): void => {
     return;
   }
   const initiativeSlug = resolveSelectedInitiativeSlug();
-  const runSlug = resolveSelectedRunSlug();
   const providerSessionId = resolveSelectedProviderSessionId();
   const stage = pendingStage;
   pendingStage = null;
@@ -216,7 +214,6 @@ const createSession = (providerIds: readonly ProviderStackId[]): void => {
     payload: {
       providerId,
       initiativeSlug,
-      runSlug: runSlug ?? undefined,
       providerSessionId: providerSessionId ?? undefined,
       stage,
     },
