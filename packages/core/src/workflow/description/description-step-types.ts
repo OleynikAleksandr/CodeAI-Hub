@@ -23,6 +23,7 @@ export type DescriptionBranchSnapshot = {
   readonly draftPath?: string;
   readonly finalPath?: string;
   readonly session?: DescriptionSessionRef;
+  readonly sessionKind?: DescriptionSessionKind;
 };
 
 export type DescriptionStepUpdate = {

@@ -134,6 +134,7 @@ export const buildDescriptionBranchSnapshot = (
       updatedAt: snapshot.updatedAt,
       finalPath: snapshot.finalPath,
       session: snapshot.session,
+      sessionKind: snapshot.sessionKind,
     };
   }
 
@@ -142,6 +143,7 @@ export const buildDescriptionBranchSnapshot = (
     questionnairePath: snapshot.questionnairePath,
     draftPath: snapshot.draftPath,
     session: snapshot.session,
+    sessionKind: snapshot.sessionKind,
   };
 };
 
