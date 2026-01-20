@@ -84,6 +84,13 @@
 1. [DONE] Feat(core): помечать downstream как OUTDATED при новом артефакте раннего шага — scope: `packages/core/src/workflow/state/workflow-state-types.ts`, `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `feat(workflow-tree): mark downstream nodes outdated on edit`
 2. [DONE] Git Commit: `feat(workflow-tree): mark downstream nodes outdated on edit` (hash: b6a71d4d)
 
+
+### Stream: Project Manager — workflow outdated status
+1. [DONE] Feat(project-manager): поддержать `outdated` в парсере workflow state — scope: `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `feat(project-manager): parse outdated workflow status`
+2. [DONE] Git Commit: `feat(project-manager): parse outdated workflow status` (hash: 52b48ee4)
+3. [TODO] Feat(project-manager): отобразить `outdated` в дереве + стиль — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `feat(project-manager): display outdated workflow status`
+4. [TODO] Git Commit: `feat(project-manager): display outdated workflow status` (hash: TBD)
+
 ---
 
 ## Phase 63 — Remove RUNS entity (use Edit Step + single current artifacts) (owner: Oleksandr, updated: 2026-01-20)
