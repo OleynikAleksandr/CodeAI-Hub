@@ -81,8 +81,18 @@
 6. [DONE] Git Commit: `docs(curator): remove runSlug (use session checkpoints)` (hash: 50844126)
 
 ### Stream: Implementation — Initiatives storage without runs
-1. [TODO] Refactor(initiatives): убрать `runs`/`RunStore`/`runSlug` из пакета `@codeai-hub/initiatives` (заменить на single-current step storage) — scope: `packages/initiatives/src/index.ts`, `packages/initiatives/src/run-store.ts`, `packages/initiatives/package.json`; expected commit message: `refactor(initiatives): remove runs model`
-2. [TODO] Git Commit: `refactor(initiatives): remove runs model` (hash: TBD)
+1. [TODO] Refactor(initiatives): удалить `RunStore` и run-path helpers из exports — scope: `packages/initiatives/src/index.ts`, `packages/initiatives/src/run-store.ts`, `packages/initiatives/package.json`; expected commit message: `refactor(initiatives): remove run store`
+2. [TODO] Git Commit: `refactor(initiatives): remove run store` (hash: TBD)
+3. [TODO] Refactor(initiatives): убрать `currentRunId` из `initiative.json` — scope: `packages/initiatives/src/initiative-store.ts`; expected commit message: `refactor(initiatives): drop currentRunId`
+4. [TODO] Git Commit: `refactor(initiatives): drop currentRunId` (hash: TBD)
+
+### Stream: Implementation — Core: remove RunStore usage
+1. [DONE] Refactor(core): убрать auto-run создание (без `RunStore`) — scope: `packages/core/src/remote-bridge/handlers/auto-run-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `refactor(core): remove auto-run service`
+2. [DONE] Git Commit: `refactor(core): remove auto-run service` (hash: 31cbdd86)
+3. [TODO] Refactor(core): убрать `RunStore`-синхронизацию анкеты при записи — scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`; expected commit message: `refactor(core): drop run questionnaire sync`
+4. [TODO] Git Commit: `refactor(core): drop run questionnaire sync` (hash: TBD)
+5. [TODO] Refactor(core): убрать `RunStore` из создания инициатив (без initial run) — scope: `packages/core/src/remote-bridge/handlers/initiatives-http-handler.ts`; expected commit message: `refactor(core): remove initial run creation`
+6. [TODO] Git Commit: `refactor(core): remove initial run creation` (hash: TBD)
 
 ### Stream: Implementation — Workflow artifact paths (no `runs/`)
 1. [DONE] Refactor(core): убрать `runs/` из путей workflow-артефактов (watcher + allowlist + artifact-upsert) — scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit message: `refactor(core): remove runs from workflow paths`
