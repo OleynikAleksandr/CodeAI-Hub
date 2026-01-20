@@ -45,27 +45,43 @@
 2. [DONE] Git Commit: `docs(session-continuity): add architecture` (hash: 40285931)
 3. [DONE] Doc: отметить `Session Continuity` как критичную инфраструктуру Core — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(system): mark session continuity as critical`
 4. [DONE] Git Commit: `docs(system): mark session continuity as critical` (hash: b3461817)
-5. [TODO] Feat(core): реализовать `Session Continuity` (monitor tokenUsage, генерация `handoff-report.md`, rollover в новую сессию, persistence цепочки); scope: `packages/core/src/...`; expected commit message: `feat(core): add session continuity handoff`
-6. [TODO] Git Commit: `feat(core): add session continuity handoff` (hash: TBD)
-7. [TODO] Feat(project-manager): отобразить цепочку сессий (handoff history) под Step + доступ к `handoff-report.md`; scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): show session continuity chain`
-8. [TODO] Git Commit: `feat(project-manager): show session continuity chain` (hash: TBD)
+5. [TODO] Feat(core): добавить модели continuity chain + file-store — scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/index.ts`; expected commit message: `feat(core): add session continuity store`
+6. [TODO] Git Commit: `feat(core): add session continuity store` (hash: TBD)
+7. [TODO] Feat(core): добавить token usage extractor + монитор — scope: `packages/core/src/session-continuity/token-usage.ts`, `packages/core/src/session-continuity/continuity-monitor.ts`, `packages/core/src/session-continuity/continuity-types.ts`; expected commit message: `feat(core): add continuity token monitor`
+8. [TODO] Git Commit: `feat(core): add continuity token monitor` (hash: TBD)
+9. [TODO] Feat(core): добавить handoff prompt/report writer — scope: `packages/core/src/session-continuity/handoff-prompt-builder.ts`, `packages/core/src/session-continuity/handoff-report-writer.ts`, `packages/core/src/session-continuity/continuity-types.ts`; expected commit message: `feat(core): add handoff report writer`
+10. [TODO] Git Commit: `feat(core): add handoff report writer` (hash: TBD)
+11. [TODO] Feat(core): интегрировать continuity в session handler + rollover — scope: `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/index.ts`; expected commit message: `feat(core): add session continuity handoff`
+12. [TODO] Git Commit: `feat(core): add session continuity handoff` (hash: TBD)
+13. [TODO] Feat(core): отдать continuity chain в workflow-state API — scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/session-continuity/continuity-store.ts`; expected commit message: `feat(core): expose continuity chain`
+14. [TODO] Git Commit: `feat(core): expose continuity chain` (hash: TBD)
+15. [TODO] Feat(project-manager): отобразить цепочку сессий (handoff history) под Step + доступ к `handoff-report.md`; scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): show session continuity chain`
+16. [TODO] Git Commit: `feat(project-manager): show session continuity chain` (hash: TBD)
 
 ### Stream: Prompting — Description Agent без уточняющих вопросов
 1. [TODO] Change: обновить промпт Description Agent так, чтобы он создавал `description.md` без вопросов (one-shot), вопросы переносим в Reviewer — scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; expected commit message: `docs(description): one-shot description prompt (no questions)`
 2. [TODO] Git Commit: `docs(description): one-shot description prompt (no questions)` (hash: TBD)
 
 ### Stream: Agent Packages — Reviewer Agent (new)
-1. [TODO] Feat(agents): создать `packages/agents/reviewer-agent` (facade + assets) для критичного review `description.md` и генерации `Final_Description.md`; scope: `packages/agents/reviewer-agent/*`, `package.json`, `package-lock.json`; expected commit message: `feat(reviewer-agent): scaffold reviewer agent package`
-2. [TODO] Git Commit: `feat(reviewer-agent): scaffold reviewer agent package` (hash: TBD)
+1. [TODO] Feat(reviewer-agent): scaffold package (facade + index + package.json) — scope: `packages/agents/reviewer-agent/package.json`, `packages/agents/reviewer-agent/src/facade.ts`, `packages/agents/reviewer-agent/src/index.ts`; expected commit message: `feat(reviewer-agent): scaffold package`
+2. [TODO] Git Commit: `feat(reviewer-agent): scaffold package` (hash: TBD)
+3. [TODO] Feat(reviewer-agent): добавить ассеты reviewer prompt/template — scope: `packages/agents/reviewer-agent/assets/reviewer-prompt.md`, `packages/agents/reviewer-agent/assets/reviewer-template.md`; expected commit message: `feat(reviewer-agent): add prompt assets`
+4. [TODO] Git Commit: `feat(reviewer-agent): add prompt assets` (hash: TBD)
+5. [TODO] Chore(repo): зарегистрировать reviewer-agent в workspace — scope: `package.json`, `package-lock.json`; expected commit message: `chore(repo): add reviewer-agent workspace`
+6. [TODO] Git Commit: `chore(repo): add reviewer-agent workspace` (hash: TBD)
 
 ### Stream: Reviewer Sessions — хранение и resume
-1. [TODO] Feat(core): персистить состояние шага `Description` (пути/refs на `questionnaire.md`, текущий draft/final артефакт, `SessionRef` активной сессии) — scope: `packages/core/src/...`; expected commit message: `feat(workflow-tree): persist description step state`
-2. [TODO] Git Commit: `feat(workflow-tree): persist description step state` (hash: TBD)
-3. [TODO] Feat(project-manager): отображать шаги как треугольники и показывать/обновлять ветку `Description` (questionnaire/session/draft/final) + кнопка Continue для reviewer-сессии — scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): description step branch + continue reviewer session`
-4. [TODO] Git Commit: `feat(project-manager): description step branch + continue reviewer session` (hash: TBD)
+1. [TODO] Feat(core): добавить модели/хранилище состояния `Description` — scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/index.ts`; expected commit message: `feat(workflow-tree): add description step store`
+2. [TODO] Git Commit: `feat(workflow-tree): add description step store` (hash: TBD)
+3. [TODO] Feat(core): сохранять `SessionRef` description-сессии — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workflow/description/description-step-store.ts`; expected commit message: `feat(workflow-tree): persist description session ref`
+4. [TODO] Git Commit: `feat(workflow-tree): persist description session ref` (hash: TBD)
+5. [TODO] Feat(core): отдать ветку `Description` в workflow-state API — scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-types.ts`; expected commit message: `feat(workflow-tree): expose description branch`
+6. [TODO] Git Commit: `feat(workflow-tree): expose description branch` (hash: TBD)
+7. [TODO] Feat(project-manager): отображать шаги как треугольники и показывать/обновлять ветку `Description` (questionnaire/session/draft/final) + кнопка Continue для reviewer-сессии — scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): description step branch + continue reviewer session`
+8. [TODO] Git Commit: `feat(project-manager): description step branch + continue reviewer session` (hash: TBD)
 
 ### Stream: Rebuild downstream
-1. [TODO] Feat(core): при “Edit” раннего узла помечать downstream узлы как OUTDATED и предлагать Rebuild — scope: `packages/core/src/...`; expected commit message: `feat(workflow-tree): mark downstream nodes outdated on edit`
+1. [TODO] Feat(core): помечать downstream как OUTDATED при новом артефакте раннего шага — scope: `packages/core/src/workflow/state/workflow-state-types.ts`, `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `feat(workflow-tree): mark downstream nodes outdated on edit`
 2. [TODO] Git Commit: `feat(workflow-tree): mark downstream nodes outdated on edit` (hash: TBD)
 
 ---
