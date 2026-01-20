@@ -30,6 +30,10 @@
 1. [DONE] Doc: уточнить алгоритм шага `Description` (треугольник + цвета TODO/IN_PROGRESS/DONE, persisted `questionnaire.md`, resume sessions, авто-старт reviewer, `Final_Description.md` как единственный source-of-truth; статусы BLOCKED/ERROR/OUTDATED — отложить) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs(workflow-tree): refine description step lifecycle`
 2. [DONE] Git Commit: `docs(workflow-tree): refine description step lifecycle` (hash: b8ccbbe2)
 
+### Stream: Design — Runs policy (history vs current)
+1. [TODO] Doc: уточнить политику `runs` (0..N как история; в UI показывать только текущий артефакт; vNext: pruning до последнего run) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs(workflow-tree): clarify runs policy`
+2. [TODO] Git Commit: `docs(workflow-tree): clarify runs policy` (hash: TBD)
+
 ### Stream: Docs — Step branches for all steps
 1. [DONE] Doc: зафиксировать правило “каждый Step — треугольник + ветка актуальных артефактов/сессий (persisted), ветка обновляется по мере прохождения” — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(workflow-tree): apply step branch pattern`
 2. [DONE] Git Commit: `docs(workflow-tree): apply step branch pattern` (hash: 4c6eeaed)
