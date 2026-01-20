@@ -168,6 +168,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <WorkspaceTree
         selectedWorkspaceId={selectedWorkspaceId}
         workspaceName={activeWorkspace?.name}
+        workspacePath={activeWorkspace?.path}
       />
     </aside>
   );

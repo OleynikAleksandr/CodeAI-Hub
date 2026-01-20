@@ -2,69 +2,52 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
 import {
-  type ContinuityChainSnapshot,
-  type ContinuitySegmentSnapshot,
   WORKFLOW_STAGE_ORDER,
   toWorkflowWorkspaceSlug,
   type WorkflowStageId,
   type WorkflowStageStatus,
   type WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
-
 type TreeStatus = "active" | "todo" | "blocked" | "draft";
-
 type TreeNode = {
   readonly id: string;
   readonly label: string;
   readonly status: TreeStatus;
   readonly visualDepth: number;
   readonly title?: string;
+  readonly action?: {
+    readonly label: string;
+    readonly onClick: () => void;
+    readonly disabled?: boolean;
+  };
   readonly isCollapsible?: boolean;
   readonly children?: readonly TreeNode[];
 };
-
 const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {
   description: "Description",
   virtual_simulation: "Virtual Simulation",
   diagram_modules: "Diagram Modules",
   diagram_facades: "Diagram Facades",
 };
-
-const shortenId = (value: string, length = 6): string =>
-  value.length > length ? value.slice(0, length) : value;
-
-const buildChainLabel = (
-  chain: ContinuityChainSnapshot,
-  index: number
-): string => {
-  const shortId = shortenId(chain.rootSessionId);
-  return shortId ? `Handoff chain ${shortId}` : `Handoff chain ${index + 1}`;
-};
-
-const buildSegmentLabel = (
-  segment: ContinuitySegmentSnapshot,
-  index: number
-): string =>
-  `Session ${index + 1} · ${segment.providerId}`;
-
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
+  readonly workspacePath?: string;
 }
-
 export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   selectedWorkspaceId,
   workspaceName,
+  workspacePath,
 }) => {
-  const [expandedNodes, setExpandedNodes] = useState<
-    Readonly<Record<string, boolean>>
-  >({});
-  const [workflowState, setWorkflowState] = useState<WorkflowStateSnapshot | null>(
-    null
-  );
+  const [expandedNodes, setExpandedNodes] = useState<Readonly<Record<string, boolean>>>({});
+  const [workflowState, setWorkflowState] =
+    useState<WorkflowStateSnapshot | null>(null);
   const baseIndent = 12;
   const depthIndent = 16 / 1.5;
-
+  const workspaceSlug = workspaceName && workspaceName.trim().length > 0
+    ? toWorkflowWorkspaceSlug(workspaceName)
+    : null;
+  const canContinue = Boolean(workspaceSlug && workspacePath);
   useEffect(() => {
     if (!selectedWorkspaceId) {
       setExpandedNodes({});
@@ -75,24 +58,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     setExpandedNodes({
       workspace: true,
     });
-
-    // NOTE (MVP): The mock workflow subtree (Description/Diagrams/Modules/...) is intentionally
-    // disabled while we wire the Project Manager tree to real workflow artifacts/runs stored
-    // under `.codeai-hub/` and produced by Core. We keep the old expansion defaults commented
-    // out to preserve the previous UX iteration context.
-    //
-    // modules: true,
-    // "module-core": true,
-    // "module-core:execute": false,
   }, [selectedWorkspaceId]);
-
   useEffect(() => {
-    if (!selectedWorkspaceId || !workspaceName) {
+    if (!selectedWorkspaceId || !workspaceSlug) {
       setWorkflowState(null);
       return;
     }
 
-    const workspaceSlug = toWorkflowWorkspaceSlug(workspaceName);
     let cancelled = false;
 
     const loadState = async () => {
@@ -108,22 +80,50 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [selectedWorkspaceId, workspaceName]);
+  }, [selectedWorkspaceId, workspaceSlug]);
 
   const resolveTreeStatus = (
     status: WorkflowStageStatus,
     blocked: boolean
-  ): TreeStatus => {
-    if (blocked) {
-      return "blocked";
+  ): TreeStatus =>
+    blocked || status === "invalid"
+      ? "blocked"
+      : status === "completed" || status === "in_progress"
+        ? "active"
+        : "todo";
+
+  const resolveDescriptionBranchNodes = (): readonly TreeNode[] => {
+    const branch = workflowState?.description;
+    if (!branch) {
+      return [];
     }
-    if (status === "invalid") {
-      return "blocked";
-    }
-    if (status === "completed" || status === "in_progress") {
-      return "active";
-    }
-    return "todo";
+    return [
+      branch.questionnairePath && { id: "workflow:description:questionnaire", label: "questionnaire.md", title: branch.questionnairePath, status: "draft", visualDepth: 2 },
+      branch.session && {
+        id: "workflow:description:session",
+        label: `Session · ${branch.session.providerId}`,
+        status: "active",
+        visualDepth: 2,
+        action: {
+          label: "Continue",
+          disabled: !canContinue,
+          onClick: () => {
+            if (!(workspaceSlug && workspacePath)) {
+              return;
+            }
+            api.createSession({
+              providerId: branch.session.providerId,
+              providerSessionId: branch.session.providerSessionId,
+              workspacePath,
+              initiativeSlug: workspaceSlug,
+              stage: "description",
+            });
+          },
+        },
+      },
+      branch.draftPath && { id: "workflow:description:draft", label: "description.md", title: branch.draftPath, status: "draft", visualDepth: 2 },
+      branch.finalPath && { id: "workflow:description:final", label: "Final_Description.md", title: branch.finalPath, status: "active", visualDepth: 2 },
+    ].filter((node): node is TreeNode => Boolean(node));
   };
 
   const resolveContinuityNodes = (stage: WorkflowStageId): readonly TreeNode[] => {
@@ -137,7 +137,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       return [];
     }
 
-    return chains.map((chain, chainIndex) => {
+    return chains.map((chain) => {
+      const chainLabel = `Handoff chain ${chain.rootSessionId.slice(0, 6)}`;
       const segments = chain.segments.map((segment, segmentIndex) => {
         const reportNodes = segment.handoffReportPath
           ? [
@@ -149,21 +150,21 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
                 visualDepth: 4,
               },
             ]
-          : [];
+          : undefined;
         return {
           id: `workflow:${stage}:segment:${segment.sessionId}`,
-          label: buildSegmentLabel(segment, segmentIndex),
+          label: `Session ${segmentIndex + 1} · ${segment.providerId}`,
           title: segment.providerSessionId,
           status: "draft" as const,
           visualDepth: 3,
-          isCollapsible: reportNodes.length > 0,
-          children: reportNodes.length > 0 ? reportNodes : undefined,
+          isCollapsible: Boolean(reportNodes),
+          children: reportNodes,
         };
       });
 
       return {
         id: `workflow:${stage}:chain:${chain.rootSessionId}`,
-        label: buildChainLabel(chain, chainIndex),
+        label: chainLabel,
         title: chain.rootSessionId,
         status: "draft" as const,
         visualDepth: 2,
@@ -189,14 +190,20 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       const blocked =
         previousStage !== null &&
         workflowState.stages[previousStage] !== "completed";
+      const descriptionNodes =
+        stage === "description" ? resolveDescriptionBranchNodes() : [];
       const continuityNodes = resolveContinuityNodes(stage);
+      const childNodes =
+        descriptionNodes.length > 0
+          ? [...descriptionNodes, ...continuityNodes]
+          : continuityNodes;
       return {
         id: `workflow:${stage}`,
         label: WORKFLOW_LABELS[stage],
         status: resolveTreeStatus(status, blocked),
         visualDepth: 1,
-        isCollapsible: continuityNodes.length > 0,
-        children: continuityNodes.length > 0 ? continuityNodes : undefined,
+        isCollapsible: childNodes.length > 0,
+        children: childNodes.length > 0 ? childNodes : undefined,
       };
     });
   };
@@ -215,10 +222,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const flattenTree = (node: TreeNode): TreeNode[] => {
     const result: TreeNode[] = [node];
     const isExpanded = expandedNodes[node.id] ?? true;
-    if (!node.children || node.children.length === 0) {
-      return result;
-    }
-    if (!isExpanded) {
+    if (!node.children || node.children.length === 0 || !isExpanded) {
       return result;
     }
     for (const child of node.children) {
@@ -273,6 +277,20 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
               <span className="pm-tree__label" title={node.title ?? node.label}>
                 {node.label}
               </span>
+              {node.action ? (
+                <button
+                  className="pm-tree__action"
+                  disabled={node.action.disabled}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    node.action?.onClick();
+                  }}
+                  style={{ marginLeft: "auto" }}
+                  type="button"
+                >
+                  {node.action.label}
+                </button>
+              ) : null}
             </li>
           ))}
         </ul>
