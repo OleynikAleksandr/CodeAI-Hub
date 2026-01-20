@@ -1,3 +1,8 @@
+## [1.1.457] - 2026-01-20
+
+### Fixed
+- Description workflow: auto-start Reviewer after `description.md` is written; bundled `reviewer-prompt.md` template.
+
 ## [1.1.456] - 2026-01-20
 
 ### Fixed
