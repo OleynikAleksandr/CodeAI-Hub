@@ -87,7 +87,7 @@ export const resolveWorkflowArtifactPaths = (
     };
   }
 
-  const relativePath = `.codeai-hub/${params.workspaceSlug}/${params.stage}/runs/${params.runSlug}/${params.fileName}`;
+  const relativePath = `.codeai-hub/${params.workspaceSlug}/${params.stage}/${params.fileName}`;
   const absolutePath = resolveSafeArtifactPath(
     params.workspaceRoot,
     relativePath
