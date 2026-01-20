@@ -417,6 +417,11 @@ body {
   background: #e06363;
 }
 
+.pm-tree__item--outdated .pm-tree__status::before {
+  background: #e59a4a;
+  box-shadow: 0 0 0 3px rgba(229, 154, 74, 0.22);
+}
+
 .pm-tree__item--draft .pm-tree__status::before {
   background: #7b8aa1;
 }
