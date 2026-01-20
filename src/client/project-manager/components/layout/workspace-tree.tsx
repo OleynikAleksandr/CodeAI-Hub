@@ -2,6 +2,8 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
 import {
+  type ContinuityChainSnapshot,
+  type ContinuitySegmentSnapshot,
   WORKFLOW_STAGE_ORDER,
   toWorkflowWorkspaceSlug,
   type WorkflowStageId,
@@ -16,6 +18,7 @@ type TreeNode = {
   readonly label: string;
   readonly status: TreeStatus;
   readonly visualDepth: number;
+  readonly title?: string;
   readonly isCollapsible?: boolean;
   readonly children?: readonly TreeNode[];
 };
@@ -26,6 +29,23 @@ const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {
   diagram_modules: "Diagram Modules",
   diagram_facades: "Diagram Facades",
 };
+
+const shortenId = (value: string, length = 6): string =>
+  value.length > length ? value.slice(0, length) : value;
+
+const buildChainLabel = (
+  chain: ContinuityChainSnapshot,
+  index: number
+): string => {
+  const shortId = shortenId(chain.rootSessionId);
+  return shortId ? `Handoff chain ${shortId}` : `Handoff chain ${index + 1}`;
+};
+
+const buildSegmentLabel = (
+  segment: ContinuitySegmentSnapshot,
+  index: number
+): string =>
+  `Session ${index + 1} · ${segment.providerId}`;
 
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
@@ -106,6 +126,53 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     return "todo";
   };
 
+  const resolveContinuityNodes = (stage: WorkflowStageId): readonly TreeNode[] => {
+    if (!workflowState) {
+      return [];
+    }
+    const chains = workflowState.continuity.chains.filter(
+      (chain) => chain.stage === stage
+    );
+    if (chains.length === 0) {
+      return [];
+    }
+
+    return chains.map((chain, chainIndex) => {
+      const segments = chain.segments.map((segment, segmentIndex) => {
+        const reportNodes = segment.handoffReportPath
+          ? [
+              {
+                id: `workflow:${stage}:segment:${segment.sessionId}:report`,
+                label: "handoff-report.md",
+                title: segment.handoffReportPath,
+                status: "draft" as const,
+                visualDepth: 4,
+              },
+            ]
+          : [];
+        return {
+          id: `workflow:${stage}:segment:${segment.sessionId}`,
+          label: buildSegmentLabel(segment, segmentIndex),
+          title: segment.providerSessionId,
+          status: "draft" as const,
+          visualDepth: 3,
+          isCollapsible: reportNodes.length > 0,
+          children: reportNodes.length > 0 ? reportNodes : undefined,
+        };
+      });
+
+      return {
+        id: `workflow:${stage}:chain:${chain.rootSessionId}`,
+        label: buildChainLabel(chain, chainIndex),
+        title: chain.rootSessionId,
+        status: "draft" as const,
+        visualDepth: 2,
+        isCollapsible: segments.length > 0,
+        children: segments.length > 0 ? segments : undefined,
+      };
+    });
+  };
+
   const resolveStageNodes = (): readonly TreeNode[] => {
     if (!workflowState) {
       return WORKFLOW_STAGE_ORDER.map((stage) => ({
@@ -122,11 +189,14 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       const blocked =
         previousStage !== null &&
         workflowState.stages[previousStage] !== "completed";
+      const continuityNodes = resolveContinuityNodes(stage);
       return {
         id: `workflow:${stage}`,
         label: WORKFLOW_LABELS[stage],
         status: resolveTreeStatus(status, blocked),
         visualDepth: 1,
+        isCollapsible: continuityNodes.length > 0,
+        children: continuityNodes.length > 0 ? continuityNodes : undefined,
       };
     });
   };
@@ -200,7 +270,9 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
               ) : (
                 <span className="pm-tree__status" />
               )}
-              <span className="pm-tree__label">{node.label}</span>
+              <span className="pm-tree__label" title={node.title ?? node.label}>
+                {node.label}
+              </span>
             </li>
           ))}
         </ul>

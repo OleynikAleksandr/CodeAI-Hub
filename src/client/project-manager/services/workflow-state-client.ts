@@ -6,20 +6,44 @@ export type WorkflowStageId =
   | "diagram_modules"
   | "diagram_facades";
 
+export type ContinuityStageId = WorkflowStageId | "unknown";
+
 export type WorkflowStageStatus =
   | "idle"
   | "in_progress"
   | "completed"
   | "invalid";
 
+export type ContinuitySegmentSnapshot = {
+  readonly sessionId: string;
+  readonly providerId: string;
+  readonly providerSessionId: string;
+  readonly createdAt: string;
+  readonly handoffReportPath?: string;
+};
+
+export type ContinuityChainSnapshot = {
+  readonly rootSessionId: string;
+  readonly workspaceSlug: string;
+  readonly stage: ContinuityStageId;
+  readonly segments: readonly ContinuitySegmentSnapshot[];
+  readonly updatedAt: string;
+};
+
+export type WorkflowContinuitySnapshot = {
+  readonly chains: readonly ContinuityChainSnapshot[];
+};
+
 export type WorkflowStateSnapshot = {
   readonly workspaceSlug: string;
   readonly updatedAt: string;
   readonly stages: Record<WorkflowStageId, WorkflowStageStatus>;
+  readonly continuity: WorkflowContinuitySnapshot;
 };
 
 type WorkflowStateResponse = {
   readonly state: unknown;
+  readonly continuity?: unknown;
 };
 
 const STAGE_ORDER: readonly WorkflowStageId[] = [
@@ -43,6 +67,11 @@ const isWorkflowStageStatus = (value: unknown): value is WorkflowStageStatus =>
   value === "completed" ||
   value === "invalid";
 
+const isContinuityStageId = (value: unknown): value is ContinuityStageId =>
+  value === "unknown" ||
+  (typeof value === "string" &&
+    STAGE_ORDER.includes(value as WorkflowStageId));
+
 const buildDefaultStages = (): Record<WorkflowStageId, WorkflowStageStatus> =>
   STAGE_ORDER.reduce<Record<WorkflowStageId, WorkflowStageStatus>>(
     (accumulator, stage) => {
@@ -51,6 +80,71 @@ const buildDefaultStages = (): Record<WorkflowStageId, WorkflowStageStatus> =>
     },
     {} as Record<WorkflowStageId, WorkflowStageStatus>
   );
+
+const parseContinuitySegment = (
+  payload: unknown
+): ContinuitySegmentSnapshot | null => {
+  if (!isRecord(payload)) {
+    return null;
+  }
+  const sessionId = readNonEmptyString(payload.sessionId);
+  const providerId = readNonEmptyString(payload.providerId);
+  const providerSessionId = readNonEmptyString(payload.providerSessionId);
+  const createdAt = readNonEmptyString(payload.createdAt);
+  if (!(sessionId && providerId && providerSessionId && createdAt)) {
+    return null;
+  }
+  const handoffReportPath = readNonEmptyString(payload.handoffReportPath);
+  return {
+    sessionId,
+    providerId,
+    providerSessionId,
+    createdAt,
+    handoffReportPath: handoffReportPath ?? undefined,
+  };
+};
+
+const parseContinuityChain = (
+  payload: unknown
+): ContinuityChainSnapshot | null => {
+  if (!isRecord(payload)) {
+    return null;
+  }
+  const rootSessionId = readNonEmptyString(payload.rootSessionId);
+  const workspaceSlug = readNonEmptyString(payload.workspaceSlug);
+  const stageValue = readNonEmptyString(payload.stage);
+  const stage = isContinuityStageId(stageValue) ? stageValue : "unknown";
+  const updatedAt = readNonEmptyString(payload.updatedAt);
+  if (!(rootSessionId && workspaceSlug && updatedAt)) {
+    return null;
+  }
+  const segmentsPayload = Array.isArray(payload.segments)
+    ? payload.segments
+    : [];
+  const segments = segmentsPayload
+    .map(parseContinuitySegment)
+    .filter((segment): segment is ContinuitySegmentSnapshot => Boolean(segment));
+  return {
+    rootSessionId,
+    workspaceSlug,
+    stage,
+    segments,
+    updatedAt,
+  };
+};
+
+const parseContinuitySnapshot = (
+  payload: unknown
+): WorkflowContinuitySnapshot => {
+  if (!isRecord(payload)) {
+    return { chains: [] };
+  }
+  const chainsPayload = Array.isArray(payload.chains) ? payload.chains : [];
+  const chains = chainsPayload
+    .map(parseContinuityChain)
+    .filter((chain): chain is ContinuityChainSnapshot => Boolean(chain));
+  return { chains };
+};
 
 const parseWorkflowState = (
   payload: unknown
@@ -67,6 +161,7 @@ const parseWorkflowState = (
   const updatedAt = readNonEmptyString(state.updatedAt) ?? new Date().toISOString();
   const stagesPayload = state.stages;
   const stages = buildDefaultStages();
+  const continuity = parseContinuitySnapshot(response?.continuity);
 
   if (isRecord(stagesPayload)) {
     for (const stage of STAGE_ORDER) {
@@ -81,7 +176,7 @@ const parseWorkflowState = (
     }
   }
 
-  return { workspaceSlug, updatedAt, stages };
+  return { workspaceSlug, updatedAt, stages, continuity };
 };
 
 const joinUrl = (baseUrl: string, path: string): string =>
