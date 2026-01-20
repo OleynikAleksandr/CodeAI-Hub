@@ -49,8 +49,8 @@
 6. [DONE] Git Commit: `feat(core): add session continuity store` (hash: c7dd5e7a)
 7. [DONE] Feat(core): добавить token usage extractor + монитор — scope: `packages/core/src/session-continuity/token-usage.ts`, `packages/core/src/session-continuity/continuity-monitor.ts`, `packages/core/src/session-continuity/continuity-types.ts`; expected commit message: `feat(core): add continuity token monitor`
 8. [DONE] Git Commit: `feat(core): add continuity token monitor` (hash: 960bcde4)
-9. [TODO] Feat(core): добавить handoff prompt/report writer — scope: `packages/core/src/session-continuity/handoff-prompt-builder.ts`, `packages/core/src/session-continuity/handoff-report-writer.ts`, `packages/core/src/session-continuity/continuity-types.ts`; expected commit message: `feat(core): add handoff report writer`
-10. [TODO] Git Commit: `feat(core): add handoff report writer` (hash: TBD)
+9. [DONE] Feat(core): добавить handoff prompt/report writer — scope: `packages/core/src/session-continuity/handoff-prompt-builder.ts`, `packages/core/src/session-continuity/handoff-report-writer.ts`, `packages/core/src/session-continuity/continuity-types.ts`; expected commit message: `feat(core): add handoff report writer`
+10. [DONE] Git Commit: `feat(core): add handoff report writer` (hash: 3804cb17)
 11. [TODO] Feat(core): интегрировать continuity в session handler + rollover — scope: `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/index.ts`; expected commit message: `feat(core): add session continuity handoff`
 12. [TODO] Git Commit: `feat(core): add session continuity handoff` (hash: TBD)
 13. [TODO] Feat(core): отдать continuity chain в workflow-state API — scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/session-continuity/continuity-store.ts`; expected commit message: `feat(core): expose continuity chain`
