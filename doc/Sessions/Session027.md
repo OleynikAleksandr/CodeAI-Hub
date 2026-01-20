@@ -16,6 +16,9 @@
 - Исправлено отображение и resume Reviewer-сессии через `sessionKind` (корректно до появления `Final_Description.md`).
 - Собран verification релиз 1.1.458: `./scripts/build-all.sh` (tarballs) + `./scripts/build-release.sh --use-current-version` (VSIX).
 
+## Runtime verification (manual)
+- **Отложено**: ручная проверка UX (ветка Description = ровно 2 строки после финала, обе кликабельны) будет выполнена в следующей сессии.
+
 ## Release artifacts
 - VSIX: `codeai-hub-1.1.458.vsix`
 - Tarballs: `doc/tmp/releases/*-1.1.458.tar.bz2`
@@ -32,19 +35,19 @@
 - `./scripts/build-release.sh --use-current-version` (OK → VSIX)
 
 ## Git commits
+(ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `a888a02a docs(todo): start phase 63 plan`
 - `f7411af7 docs(project-manager): simplify description branch UX`
 - `14f99be7 fix(project-manager): hide continuity nodes in tree`
 - `f3d2d543 fix(project-manager): open session on tree click`
 - `1211894b feat(project-manager): open artifacts in built-in viewer`
 - `dff95c0c feat(core): expose artifact read endpoint for project-manager`
-- `f194463f docs(todo): record phase 63 progress`
 - `798cc233 docs(todo): extend phase 63 with sessionKind tasks`
 - `de36ecc0 fix(core): expose description sessionKind in workflow snapshot`
-- `0acd862f docs(todo): record sessionKind snapshot progress`
 - `ed235fdb fix(project-manager): label reviewer session correctly`
-- `930a1051 docs(todo): record reviewer sessionKind progress`
 - `52cf166e chore(release): bump versions to 1.1.458`
+- `d930ad66 docs(session): add Session027 report`
+- `2bae49fd docs(todo): record 1.1.458 verification release`
 
 ---
 
@@ -57,5 +60,5 @@
 4. `doc/Sessions/Session027.md` (THIS REPORT)
 
 ## Plans for next session
-- Manual verification UX: после завершения Description под узлом ровно две строки (`Final_Description.md` + `Reviewer session`), обе кликабельны.
-- Решить судьбу `questionnaire.md` и `description.md` в ветке (скрывать/удалять после появления `Final_Description.md` vs показывать только во время работы).
+- Ручная проверка UX: после завершения Description под узлом ровно две строки (`Final_Description.md` + `Reviewer session`), обе кликабельны.
+- При успехе: выполнить пункт `docs: record project-manager description UX verification` в `doc/TODO/todo-plan.md` и закоммитить.
