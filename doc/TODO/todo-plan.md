@@ -45,8 +45,8 @@
 ### Stream: Bugfix — reviewer sessionKind (resume до финала)
 1. [DONE] Fix(core): включить `sessionKind` в description snapshot для Project Manager (чтобы корректно отличать Reviewer/Collector до появления `Final_Description.md`) — scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`; expected commit message: `fix(core): expose description sessionKind in workflow snapshot`
 2. [DONE] Git Commit: `fix(core): expose description sessionKind in workflow snapshot` (hash: de36ecc0)
-3. [TODO] Fix(project-manager): использовать `sessionKind` для label + `runSlug` при resume (клик по сессии до `Final_Description.md` должен открывать именно Reviewer) — scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): label reviewer session correctly`
-4. [TODO] Git Commit: `fix(project-manager): label reviewer session correctly` (hash: TBD)
+3. [DONE] Fix(project-manager): использовать `sessionKind` для label + `runSlug` при resume (клик по сессии до `Final_Description.md` должен открывать именно Reviewer) — scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): label reviewer session correctly`
+4. [DONE] Git Commit: `fix(project-manager): label reviewer session correctly` (hash: ed235fdb)
 
 ### Stream: Verification
 1. [TODO] Verify(manual): сценарий Description завершён → под узлом только 2 строки (`Final_Description.md` + `Reviewer session`); клик по файлу открывает viewer справа; клик по сессии открывает полную сессию слева даже после перезагрузки — scope: no files; expected commit message: `docs: record project-manager description UX verification`
