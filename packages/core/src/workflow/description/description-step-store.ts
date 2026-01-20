@@ -1,0 +1,145 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+import type {
+  DescriptionSessionRef,
+  DescriptionStepSnapshot,
+  DescriptionStepUpdate,
+} from "./description-step-types";
+
+const ROOT_DIR = ".codeai-hub";
+const DESCRIPTION_DIR = "description";
+const STATE_FILE_NAME = "description-step.json";
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readNonEmptyString = (value: unknown): string | null =>
+  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const resolveField = (
+  current: string | undefined,
+  update: string | null | undefined
+): string | undefined => {
+  if (update === null) {
+    return;
+  }
+  return update ?? current;
+};
+
+const resolveSession = (
+  current: DescriptionSessionRef | undefined,
+  update: DescriptionSessionRef | null | undefined
+): DescriptionSessionRef | undefined => {
+  if (update === null) {
+    return;
+  }
+  return update ?? current;
+};
+
+const parseSessionRef = (value: unknown): DescriptionSessionRef | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+  const providerId = readNonEmptyString(value.providerId);
+  const providerSessionId = readNonEmptyString(value.providerSessionId);
+  const jsonlPath = readNonEmptyString(value.jsonlPath);
+  if (!(providerId && providerSessionId && jsonlPath)) {
+    return null;
+  }
+  return { providerId, providerSessionId, jsonlPath };
+};
+
+const parseSnapshot = (value: unknown): DescriptionStepSnapshot | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+  const workspaceSlug = readNonEmptyString(value.workspaceSlug);
+  const createdAt = readNonEmptyString(value.createdAt);
+  const updatedAt = readNonEmptyString(value.updatedAt);
+  if (!(workspaceSlug && createdAt && updatedAt)) {
+    return null;
+  }
+  const questionnairePath =
+    readNonEmptyString(value.questionnairePath) ?? undefined;
+  const draftPath = readNonEmptyString(value.draftPath) ?? undefined;
+  const finalPath = readNonEmptyString(value.finalPath) ?? undefined;
+  const session = parseSessionRef(value.session);
+
+  return {
+    workspaceSlug,
+    createdAt,
+    updatedAt,
+    questionnairePath,
+    draftPath,
+    finalPath,
+    session: session ?? undefined,
+  };
+};
+
+const buildStatePath = (workspaceRoot: string, workspaceSlug: string): string =>
+  path.join(
+    workspaceRoot,
+    ROOT_DIR,
+    workspaceSlug,
+    DESCRIPTION_DIR,
+    STATE_FILE_NAME
+  );
+
+const readJson = async <T>(filePath: string): Promise<T | null> => {
+  try {
+    const content = await readFile(filePath, "utf8");
+    return JSON.parse(content) as T;
+  } catch {
+    return null;
+  }
+};
+
+const writeJson = async (filePath: string, value: unknown): Promise<void> => {
+  await mkdir(path.dirname(filePath), { recursive: true });
+  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+};
+
+export class DescriptionStepStore {
+  private readonly clock: () => string;
+
+  constructor(options?: { readonly clock?: () => string }) {
+    this.clock = options?.clock ?? (() => new Date().toISOString());
+  }
+
+  async read(
+    workspaceRoot: string,
+    workspaceSlug: string
+  ): Promise<DescriptionStepSnapshot | null> {
+    const snapshot = await readJson<DescriptionStepSnapshot>(
+      buildStatePath(workspaceRoot, workspaceSlug)
+    );
+    if (!snapshot) {
+      return null;
+    }
+    return parseSnapshot(snapshot);
+  }
+
+  async upsert(
+    workspaceRoot: string,
+    workspaceSlug: string,
+    update: DescriptionStepUpdate
+  ): Promise<DescriptionStepSnapshot> {
+    const existing = await this.read(workspaceRoot, workspaceSlug);
+    const now = this.clock();
+    const next: DescriptionStepSnapshot = {
+      workspaceSlug,
+      createdAt: existing?.createdAt ?? now,
+      updatedAt: now,
+      questionnairePath: resolveField(
+        existing?.questionnairePath,
+        update.questionnairePath
+      ),
+      draftPath: resolveField(existing?.draftPath, update.draftPath),
+      finalPath: resolveField(existing?.finalPath, update.finalPath),
+      session: resolveSession(existing?.session, update.session),
+    };
+
+    await writeJson(buildStatePath(workspaceRoot, workspaceSlug), next);
+    return next;
+  }
+}
