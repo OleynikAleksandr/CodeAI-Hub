@@ -13,6 +13,7 @@ import type {
 } from "../status/runtime-status-reporter";
 import type { Logger } from "../telemetry/logger";
 import { UnifiedSessionStorage } from "../unified-session/storage";
+import { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import { HttpApiRouter } from "./handlers/http-api-router";
 import { ProjectRequestHandler } from "./handlers/project-request-handler";
 import { SessionRequestHandler } from "./handlers/session-request-handler";
@@ -53,6 +54,7 @@ export class RemoteBridge {
   private readonly projectHandler: ProjectRequestHandler;
   private readonly sessionHandler: SessionRequestHandler;
   private readonly systemHandler: SystemRequestHandler;
+  private readonly workflowRuntime: WorkflowRuntime;
   private wsManager?: WebSocketManager;
   private httpServer?: http.Server;
   private latestStatus: RuntimeStatusEvent | null = null;
@@ -115,6 +117,12 @@ export class RemoteBridge {
       }
     );
 
+    this.workflowRuntime = new WorkflowRuntime({
+      logger: this.logger,
+      providerRegistry: this.providerRegistry,
+      sessionHandler: this.sessionHandler,
+    });
+
     this.latestStatus = this.statusReporter.snapshot();
     this.unsubscribeStatus = this.statusReporter.subscribe((event) => {
       this.latestStatus = event;
@@ -138,6 +146,12 @@ export class RemoteBridge {
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
       logger: this.logger,
+      onWorkspaceSessionCreated: async (workspacePath, workspaceSlug) => {
+        await this.workflowRuntime.connectWorkspace({
+          workspaceRoot: workspacePath,
+          workspaceSlug,
+        });
+      },
       getStatusInfo: () => ({
         clientCount: this.wsManager?.getClientCount() ?? 0,
         ttlState: this.getTtlState?.(),

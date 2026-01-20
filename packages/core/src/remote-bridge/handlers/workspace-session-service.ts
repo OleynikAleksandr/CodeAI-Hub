@@ -1,3 +1,4 @@
+import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Request, Response } from "express";
 import type { SessionManager } from "../../session-manager";
@@ -5,6 +6,7 @@ import type { Logger } from "../../telemetry/logger";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_INTERNAL_ERROR = 500;
+const WORKSPACE_ROOT_DIR = ".codeai-hub";
 
 type WorkspaceSessionPayload = {
   readonly workspacePath: string;
@@ -51,20 +53,24 @@ const parseWorkspaceSessionPayload = (
   };
 };
 
-export const handleWorkspaceSessionCreate = (
-  req: Request,
-  res: Response,
-  sessionManager: SessionManager,
-  logger: Logger
-): void => {
-  const parsed = parseWorkspaceSessionPayload(req.body as unknown);
+export const handleWorkspaceSessionCreate = (params: {
+  readonly req: Request;
+  readonly res: Response;
+  readonly sessionManager: SessionManager;
+  readonly logger: Logger;
+  readonly onWorkspaceSessionCreated?: (
+    workspacePath: string,
+    workspaceSlug: string
+  ) => Promise<void> | void;
+}): void => {
+  const parsed = parseWorkspaceSessionPayload(params.req.body as unknown);
   if (!parsed.ok) {
-    res.status(HTTP_BAD_REQUEST).json({ error: parsed.error });
+    params.res.status(HTTP_BAD_REQUEST).json({ error: parsed.error });
     return;
   }
 
   try {
-    const session = sessionManager.createSession(
+    const session = params.sessionManager.createSession(
       "projectManager",
       parsed.value.workspacePath,
       undefined,
@@ -73,11 +79,35 @@ export const handleWorkspaceSessionCreate = (
         stage: parsed.value.stage,
       }
     );
-    res.json({ sessionId: session.id });
+
+    if (parsed.value.initiativeSlug) {
+      fs.mkdir(
+        path.join(
+          parsed.value.workspacePath,
+          WORKSPACE_ROOT_DIR,
+          parsed.value.initiativeSlug
+        ),
+        { recursive: true }
+      ).catch(() => {
+        /* best effort */
+      });
+      Promise.resolve(
+        params.onWorkspaceSessionCreated?.(
+          parsed.value.workspacePath,
+          parsed.value.initiativeSlug
+        )
+      ).catch(() => {
+        /* best effort */
+      });
+    }
+
+    params.res.json({ sessionId: session.id });
   } catch (error) {
-    logger.error("Failed to create workspace session", error as Error, {
+    params.logger.error("Failed to create workspace session", error as Error, {
       workspacePath: parsed.value.workspacePath,
     });
-    res.status(HTTP_INTERNAL_ERROR).json({ error: "Unable to create session" });
+    params.res
+      .status(HTTP_INTERNAL_ERROR)
+      .json({ error: "Unable to create session" });
   }
 };

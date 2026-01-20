@@ -4,6 +4,8 @@ export type DescriptionSessionRef = {
   readonly jsonlPath: string;
 };
 
+export type DescriptionSessionKind = "collector" | "reviewer";
+
 export type DescriptionStepSnapshot = {
   readonly workspaceSlug: string;
   readonly createdAt: string;
@@ -12,6 +14,7 @@ export type DescriptionStepSnapshot = {
   readonly draftPath?: string;
   readonly finalPath?: string;
   readonly session?: DescriptionSessionRef;
+  readonly sessionKind?: DescriptionSessionKind;
 };
 
 export type DescriptionBranchSnapshot = {
@@ -27,4 +30,5 @@ export type DescriptionStepUpdate = {
   readonly draftPath?: string | null;
   readonly finalPath?: string | null;
   readonly session?: DescriptionSessionRef | null;
+  readonly sessionKind?: DescriptionSessionKind | null;
 };

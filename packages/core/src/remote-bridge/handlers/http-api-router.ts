@@ -67,6 +67,10 @@ export type RouterDependencies = {
   readonly sessionManager: SessionManager;
   readonly sessionStorage: UnifiedSessionStorage;
   readonly logger: Logger;
+  readonly onWorkspaceSessionCreated?: (
+    workspacePath: string,
+    workspaceSlug: string
+  ) => Promise<void> | void;
   readonly getStatusInfo: () => StatusInfo;
 };
 
@@ -179,12 +183,13 @@ export class HttpApiRouter {
     app.post(
       WORKSPACE_SESSION_ENDPOINT,
       async (req: Request, res: Response) => {
-        await handleWorkspaceSessionCreate(
+        await handleWorkspaceSessionCreate({
           req,
           res,
-          this.deps.sessionManager,
-          this.deps.logger
-        );
+          sessionManager: this.deps.sessionManager,
+          logger: this.deps.logger,
+          onWorkspaceSessionCreated: this.deps.onWorkspaceSessionCreated,
+        });
       }
     );
 
