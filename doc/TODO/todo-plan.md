@@ -92,6 +92,8 @@
 4. [DONE] Git Commit: `feat(project-manager): display outdated workflow status` (hash: 43c99ed3)
 5. [DONE] Fix(project-manager): стабилизировать типизацию description-ветки (без ложных элементов) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): tighten description branch nodes`
 6. [DONE] Git Commit: `fix(project-manager): tighten description branch nodes` (hash: d9eef652)
+7. [DONE] Fix(project-manager): убрать nullable элементы в description-ветке (typecheck) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): avoid nullable description nodes`
+8. [DONE] Git Commit: `fix(project-manager): avoid nullable description nodes` (hash: 62cc9bca)
 
 ---
 
