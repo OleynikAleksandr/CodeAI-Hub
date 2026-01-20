@@ -34,16 +34,32 @@ export type WorkflowContinuitySnapshot = {
   readonly chains: readonly ContinuityChainSnapshot[];
 };
 
+export type DescriptionSessionRef = {
+  readonly providerId: string;
+  readonly providerSessionId: string;
+  readonly jsonlPath: string;
+};
+
+export type DescriptionBranchSnapshot = {
+  readonly updatedAt: string;
+  readonly questionnairePath?: string;
+  readonly draftPath?: string;
+  readonly finalPath?: string;
+  readonly session?: DescriptionSessionRef;
+};
+
 export type WorkflowStateSnapshot = {
   readonly workspaceSlug: string;
   readonly updatedAt: string;
   readonly stages: Record<WorkflowStageId, WorkflowStageStatus>;
   readonly continuity: WorkflowContinuitySnapshot;
+  readonly description: DescriptionBranchSnapshot | null;
 };
 
 type WorkflowStateResponse = {
   readonly state: unknown;
   readonly continuity?: unknown;
+  readonly description?: unknown;
 };
 
 const STAGE_ORDER: readonly WorkflowStageId[] = [
@@ -146,6 +162,45 @@ const parseContinuitySnapshot = (
   return { chains };
 };
 
+const parseDescriptionSessionRef = (
+  payload: unknown
+): DescriptionSessionRef | null => {
+  if (!isRecord(payload)) {
+    return null;
+  }
+  const providerId = readNonEmptyString(payload.providerId);
+  const providerSessionId = readNonEmptyString(payload.providerSessionId);
+  const jsonlPath = readNonEmptyString(payload.jsonlPath);
+  if (!(providerId && providerSessionId && jsonlPath)) {
+    return null;
+  }
+  return { providerId, providerSessionId, jsonlPath };
+};
+
+const parseDescriptionBranch = (
+  payload: unknown
+): DescriptionBranchSnapshot | null => {
+  if (!isRecord(payload)) {
+    return null;
+  }
+  const updatedAt = readNonEmptyString(payload.updatedAt);
+  if (!updatedAt) {
+    return null;
+  }
+  const questionnairePath =
+    readNonEmptyString(payload.questionnairePath) ?? undefined;
+  const draftPath = readNonEmptyString(payload.draftPath) ?? undefined;
+  const finalPath = readNonEmptyString(payload.finalPath) ?? undefined;
+  const session = parseDescriptionSessionRef(payload.session);
+  return {
+    updatedAt,
+    questionnairePath,
+    draftPath,
+    finalPath,
+    session: session ?? undefined,
+  };
+};
+
 const parseWorkflowState = (
   payload: unknown
 ): WorkflowStateSnapshot | null => {
@@ -162,6 +217,7 @@ const parseWorkflowState = (
   const stagesPayload = state.stages;
   const stages = buildDefaultStages();
   const continuity = parseContinuitySnapshot(response?.continuity);
+  const description = parseDescriptionBranch(response?.description);
 
   if (isRecord(stagesPayload)) {
     for (const stage of STAGE_ORDER) {
@@ -176,7 +232,7 @@ const parseWorkflowState = (
     }
   }
 
-  return { workspaceSlug, updatedAt, stages, continuity };
+  return { workspaceSlug, updatedAt, stages, continuity, description };
 };
 
 const joinUrl = (baseUrl: string, path: string): string =>
