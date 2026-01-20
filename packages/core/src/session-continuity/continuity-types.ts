@@ -11,6 +11,12 @@ export type TokenUsageSnapshot = {
   readonly updatedAt: string;
 };
 
+export type TokenUsageDecision = {
+  readonly usedRatio: number;
+  readonly remainingRatio: number;
+  readonly shouldHandoff: boolean;
+};
+
 export type ContinuitySegment = {
   readonly sessionId: string;
   readonly providerId: string;
