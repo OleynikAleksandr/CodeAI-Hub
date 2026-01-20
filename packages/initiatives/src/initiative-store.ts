@@ -17,7 +17,6 @@ export type InitiativeManifest = {
   readonly description?: string;
   readonly createdAt: string;
   readonly updatedAt: string;
-  readonly currentRunId?: string;
 };
 
 const parseInitiativeManifest = (value: unknown): InitiativeManifest | null => {
@@ -41,16 +40,12 @@ const parseInitiativeManifest = (value: unknown): InitiativeManifest | null => {
 
   const description =
     typeof value.description === "string" ? value.description : undefined;
-  const currentRunId =
-    typeof value.currentRunId === "string" ? value.currentRunId : undefined;
-
   return {
     initiativeSlug,
     displayName,
     description,
     createdAt,
     updatedAt,
-    currentRunId,
   };
 };
 
@@ -140,7 +135,6 @@ export class InitiativeStore {
     patch: {
       readonly displayName?: string;
       readonly description?: string | null;
-      readonly currentRunId?: string | null;
     }
   ): Promise<InitiativeManifest | null> {
     const current = await this.read(workspaceRoot, initiativeSlug);
@@ -156,10 +150,6 @@ export class InitiativeStore {
         patch.description === null
           ? undefined
           : (patch.description?.trim() ?? current.description),
-      currentRunId:
-        patch.currentRunId === null
-          ? undefined
-          : (patch.currentRunId ?? current.currentRunId),
       updatedAt,
     };
 
