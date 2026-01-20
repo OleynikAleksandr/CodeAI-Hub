@@ -17,7 +17,7 @@
 ---
 
 ## 2. Цели
-1. **Один шаг = один артефакт = один агент.**
+1. **Один шаг = один финальный артефакт (source of truth).**
 2. Убрать сущность `Idea` из терминологии, шаблонов и путей.
 3. Развести `Диаграммы` на два независимых шага.
 4. Развести runs по шагам и привести структуру `.codeai-hub/` к строгой и прозрачной.
@@ -28,12 +28,16 @@
 
 | Step (UI) | stageId | Агент | Артефакт | Slot |
 |---|---|---|---|---|
-| Описание | `description` | Description Agent | `description.md` | `workspace.description` |
+| Описание | `description` | Description Agent → Reviewer Agent (auto) | `Final_Description.md` | `workspace.description` |
 | Virtual Simulation | `virtual_simulation` | Virtual Simulation Agent | `virtual-simulation.md` | `workspace.virtual_simulation` |
 | Диаграмма модулей | `diagram_modules` | Module Diagram Agent | `modules-diagram.mmd` | `diagram.modules` |
 | Interface Map (Диаграмма фасадов) | `diagram_facades` | Facades Diagram Agent | `facades-graph.mmd` | `diagram.facades` |
 
 Ключевой инвариант: **агент не пытается писать два артефакта в одном ответе**.
+
+Примечание для `description`:
+- `description.md` существует как **черновик** (run output) между Description Agent и Reviewer.
+- `Final_Description.md` — **единственный** финальный артефакт, который читают downstream шаги.
 
 UI последствия:
 - В дереве разработки Project Manager вместо двух узлов (Описание/Диаграмма) отображаются четыре: Описание, Virtual Simulation, Диаграмма модулей, Диаграмма фасадов.
@@ -44,6 +48,7 @@ UI последствия:
 ## 4. Runs и пути артефактов
 Каждый шаг имеет собственный корень и историю runs:
 - `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/description.md`
+- `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
 - `.codeai-hub/<workspaceSlug>/virtual_simulation/runs/<runSlug>/virtual-simulation.md`
 - `.codeai-hub/<workspaceSlug>/diagram_modules/runs/<runSlug>/modules-diagram.mmd`
 - `.codeai-hub/<workspaceSlug>/diagram_facades/runs/<runSlug>/facades-graph.mmd`

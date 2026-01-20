@@ -1,8 +1,8 @@
-# Workflow Tree — Description Node: Final Artifact + Reviewer Session
+# Workflow Tree — Description Step/Node: Questionnaire → Draft → Auto-Review → Final
 
-**Version:** 1.0
-**Date:** 2026-01-19
-**Status:** Draft (approved decisions captured)
+**Version:** 1.1
+**Date:** 2026-01-20
+**Status:** Draft (refined lifecycle + UI semantics)
 
 ---
 
@@ -16,13 +16,21 @@
 
 Мы переходим на **artifact-first** подход: источник истины для следующих шагов — финальный артефакт узла, а вся история уточнений — в возобновляемой reviewer-сессии.
 
+Дополнительно, Workflow Tree (Project Manager) должен быть устойчив к “пауze/выключение компьютера” на любом под-этапе шага:
+- незаполненная анкета должна быть доступна после перезапуска;
+- начатая сессия агента должна быть доступна для resume;
+- текущий артефакт шага должен быть доступен для просмотра и как источник входа для следующих шагов.
+
 ---
 
 ## 2. Goals
 
-- Узел `description` хранит **только финальный артефакт** (без “сырого” черновика).
-- Узел `description` хранит **ссылку на возобновляемую reviewer-сессию**, чтобы пользователь мог продолжить диалог позже (через дни/недели).
-- Следующие этапы (virtual simulation / diagrams / etc.) получают на вход **финальный артефакт**, а не анкету.
+- Узел/шаг `Description` в дереве — **раскрываемый шаг** (треугольник), который содержит ветку документов/сессий.
+- Пока шаг `Description` **в работе**, в ветке доступны актуальные промежуточные сущности (анкета, сессии).
+- После завершения шага в ветке остаются **только**:
+  - финальный артефакт `Final_Description.md`;
+  - resume-сессия Reviewer.
+- Следующие этапы (virtual simulation / diagrams / etc.) получают на вход **финальный артефакт** (`Final_Description.md`), а не анкету/черновик.
 - При `Edit` раннего узла downstream-узлы помечаются как `OUTDATED` и подлежат пересборке.
 
 ---
@@ -32,6 +40,7 @@
 - Не делаем “триггеры” по ключевым словам (approve/ok/утверждаю) для кураторов/сборщиков.
 - Не дублируем Q/A в `questionnaire.md` как обязательный слой данных.
 - Не поддерживаем resume для Gemini на этом этапе (исключаем из “длинных” reviewer-сессий).
+- Не пытаемся “сохранить все исторические артефакты в ветке узла”: промежуточные документы могут существовать на диске, но в дереве остаются только актуальные для текущего состояния шага.
 
 ---
 
@@ -40,20 +49,27 @@
 1) **Храним только финальный артефакт** в узле `description`.
 2) Reviewer-сессии с resume: **только Claude/Codex**. Gemini — только разовые короткие сессии без гарантии resume.
 3) Источник истины истории — **unified session JSONL** (в `.codeai-hub/sessions/...`).
+4) Финальный артефакт шага `Description` — файл `Final_Description.md`:
+   - создаётся/перезаписывается Reviewer-агентом;
+   - после появления `Final_Description.md` промежуточный `description.md` больше не нужен для Flow (допускается удаление).
+5) Reviewer-сессия стартует **автоматически** после того, как появился первый `description.md` (draft) от Description Agent.
 
 ---
 
 ## 5. Data Model
 
-### 5.1 Node composition (conceptual)
+### 5.1 Node composition (conceptual UI)
 
-`Description Node` состоит из двух “саб-узлов”:
-- `Artifact`: финальный `description.md`
-- `Session`: ссылка на reviewer-сессию (resume)
+`Description Step/Node` — раскрываемый шаг, который отображает под-ветку “актуальных сущностей”:
+- `questionnaire.md` (пока draft не создан)
+- `Session: Description Agent` (пока draft не создан и/или пока не стартовал reviewer)
+- `description.md` (draft; существует между Description Agent и Reviewer)
+- `Session: Reviewer` (resume; основная долговременная сессия шага)
+- `Final_Description.md` (финальный артефакт; источник истины для downstream шагов)
 
-### 5.2 `ReviewerSessionRef`
+### 5.2 `SessionRef` (для resume)
 
-Минимальная структура ссылки на reviewer-сессию:
+Минимальная структура ссылки на возобновляемую сессию:
 
 - `providerId`: `claudeCli` | `codexCli`
 - `providerSessionId`: строка (provider-native id; используется для resume)
@@ -68,11 +84,28 @@ Unified session storage хранит события в:
 
 Где `sanitizedProviderSessionId` нормализован под безопасный slug (см. `@codeai-hub/unified-session/sanitizeWorkspaceSlug`).
 
+### 5.4 Artifacts (paths)
+
+Рекомендуемая (целевaя) структура для шага `description` в workspace артефактах:
+- Анкета (всегда доступна во время работы шага): `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
+- Runs (черновики, диагностика): `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/description.md`
+- Финальный артефакт (источник истины): `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
+
+Правило: как только появился `Final_Description.md`, downstream шаги должны читать **только его**.
+
 ---
 
 ## 6. Flows
 
-### 6.1 Build Description (one-shot)
+### 6.1 Start Description (persisted questionnaire)
+
+1) Пользователь открывает узел `Description` в Workflow Tree.
+2) Core/Project Manager обеспечивает наличие `.codeai-hub/<workspaceSlug>/description/questionnaire.md`.
+3) В дереве `Description` появляется дочерний узел `questionnaire.md`, который можно открыть/редактировать.
+
+Цель: даже если пользователь закрыл компьютер, при следующем запуске Project Manager анкета открывается и продолжается с места остановки.
+
+### 6.2 Build Draft Description (one-shot, no questions)
 
 1) Пользователь заполняет `questionnaire.md`.
 2) `Description Agent` получает только пути (path-first):
@@ -83,30 +116,45 @@ Unified session storage хранит события в:
 
 Результат: `description.md` (черновой, но структурированный).
 
-### 6.2 Review & Finalize Description
+UI следствие: сразу после старта сессии появляется дочерний узел `Session: Description Agent` (resume).
 
-1) `Reviewer Agent` получает на вход `description.md` (и, при необходимости, template/контекст).
-2) В ходе диалога может задавать вопросы и уточнять.
-3) По `Finalize` пишет **финальную версию** `description.md` (перезапись/новая ревизия в рамках узла).
-4) Узел фиксирует `ReviewerSessionRef`.
+### 6.3 Auto-start Reviewer + produce Final_Description.md
 
-Результат узла: финальный `description.md` + resume-сессия.
+1) Как только `description.md` (draft) появился, система автоматически создаёт сессию Reviewer (Claude/Codex) и фиксирует `SessionRef`.
+2) В ветке `Description` сессия Description Agent заменяется на `Session: Reviewer` (описательный/черновой агент больше не является “активной” сессией шага).
+3) Reviewer читает `description.md`, задаёт вопросы пользователю и пишет первую версию `Final_Description.md`.
+4) Как только появился `Final_Description.md`:
+   - в ветке `Description` точка `description.md` заменяется на `Final_Description.md`;
+   - `questionnaire.md` перестаёт быть необходимой частью Flow (может быть скрыт/удалён из ветки);
+   - шаг `Description` может быть переведён в `DONE` (при условии, что финал принят пользователем).
 
-### 6.3 Edit Description Node
+Результат шага: `Final_Description.md` + `Session: Reviewer`.
+
+### 6.4 Edit Description Step (resume Reviewer)
 
 1) Пользователь кликает `Session` → `Continue` (resume).
 2) Обсуждает правки.
-3) Reviewer пишет новую ревизию `description.md`.
+3) Reviewer пишет новую ревизию `Final_Description.md`.
 4) Все downstream-узлы помечаются `OUTDATED`.
 
 ---
 
 ## 7. Implications for UI
 
-- В Workflow Tree узел `description` показывает:
-  - `Open artifact` (просмотр markdown)
-  - `Continue review session` (resume)
-  - `Edit` (синоним продолжения reviewer-сессии + выпуск новой ревизии)
+### 7.1 Step UI rendering
+
+- Шаг `Description` отображается как **треугольник** (узел с веткой).
+- Цвет треугольника:
+  - `TODO` → серый
+  - `IN_PROGRESS` → оранжевый
+  - `DONE` → зелёный
+
+### 7.2 Branch content rules
+
+- Пока `Description` в работе, ветка содержит “актуальные на сейчас” документы/сессии (см. 6.1–6.3).
+- После появления `Final_Description.md` в ветке остаются:
+  - `Final_Description.md`
+  - `Session: Reviewer`
 
 - UI должен явно предупреждать:
   - “Изменения в этом узле могут сделать последующие узлы устаревшими (OUTDATED).”
@@ -116,15 +164,22 @@ Unified session storage хранит события в:
 ## 8. Implications for Core
 
 - Core должен уметь:
-  - сохранять/читать артефакты узлов (уже есть file-first запись артефактов);
-  - хранить `ReviewerSessionRef` рядом с артефактом узла (в манифесте узла или state store);
+  - гарантировать наличие `questionnaire.md` для шага `Description` при старте/открытии шага;
+  - хранить `SessionRef` активной сессии (Description Agent или Reviewer) рядом с состоянием шага, чтобы Project Manager мог возобновлять сессию после перезапуска;
   - резюмировать сессию по `providerId + providerSessionId` (уже есть `resumeSession` для поддерживаемых провайдеров);
   - помечать downstream узлы как `OUTDATED` при изменении артефакта раннего узла.
+  - автоматически запускать Reviewer-сессию после появления `description.md` и переключать “active session” в состоянии шага.
 
 ---
 
-## 9. Migration Notes
+## 9. Deferred / Open Questions
+
+- Цвета/отображение статусов `BLOCKED`, `ERROR`, `OUTDATED` в дереве (кроме TODO/IN_PROGRESS/DONE) — отложено.
+
+---
+
+## 10. Migration Notes
 
 - “Questionnaire Curator” становится опциональным и не является механизмом повышения качества артефакта.
 - Повышение качества делается через последовательность:
-  - `questionnaire.md` → one-shot `description.md` → reviewer → финальный `description.md`.
+  - `questionnaire.md` → one-shot `description.md` → auto reviewer → `Final_Description.md`.

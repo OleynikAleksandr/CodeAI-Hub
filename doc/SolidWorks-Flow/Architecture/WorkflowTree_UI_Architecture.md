@@ -103,6 +103,13 @@ Workflow Tree становится **единой точкой правды** д
 - `Artifact`
 - `Session`
 
+Визуальные правила MVP:
+- `Step` отображается как **треугольник** (раскрываемый узел), потому что шаг может содержать ветку документов/сессий.
+- Цвет треугольника шага:
+  - `TODO` → серый
+  - `IN_PROGRESS` → оранжевый
+  - `DONE` → зелёный
+
 Визуальная ось модульных шагов: `Spec`/`Plan`/`Execute` выравниваются по оси маркера `Module`, а вложенные подшаги (например `Orchestration`) смещаются глубже.
 
 ### 5.2. Пример дерева (workspace‑проект с кластерами)
@@ -110,9 +117,10 @@ Workflow Tree становится **единой точкой правды** д
 Workspace: App
 ├─ Описание (Step)
 │  ├─ Artifact: questionnaire.md
-│  │  └─ Session: 001 (create)
-│  └─ Artifact: description.md
-│     └─ Session: 001 (create)
+│  ├─ Session: Description Agent (resume)
+│  ├─ Artifact: description.md (draft, run output)
+│  ├─ Session: Reviewer (resume)
+│  └─ Artifact: Final_Description.md
 ├─ Virtual Simulation (Step)
 │  └─ Artifact: virtual-simulation.md
 │     └─ Session: 002 (create)
@@ -135,7 +143,7 @@ Workspace: App
 Сессии — **видимые узлы дерева**.
 
 Рекомендация MVP:
-- `Session` отображается как дочерний узел под `Artifact`.
+- `Session` отображается как дочерний узел под `Step` (для resume/продолжения работы).
 - Один `Session` может быть показан под несколькими `Artifact` как “ссылка” (один и тот же ID), если сессия породила/изменила несколько артефактов.
 
 ---
@@ -153,9 +161,12 @@ Workspace: App
 
 ### 6.2. Шаги верхнего уровня (`Workspace`)
 - `Описание` (`stageId=description`)
-  - результаты:
-    1) `description.md`
-    2) `questionnaire.md` (опционально)
+  - в процессе шага (пока `IN_PROGRESS`) должны быть доступны:
+    1) `questionnaire.md` (persisted, чтобы пережить перезапуск)
+    2) `Session: Description Agent` (resume)
+    3) `description.md` (draft, результат run)
+    4) `Session: Reviewer` (resume; авто-старт после появления draft)
+  - результат шага (источник истины для downstream): `Final_Description.md`
 - `Virtual Simulation` (`stageId=virtual_simulation`)
   - результат: `virtual-simulation.md`
 - `Диаграмма модулей` (`stageId=diagram_modules`)
@@ -185,6 +196,8 @@ Workspace: App
 - `OUTDATED` — было `DONE`, но стало невалидным после изменений (needs rebuild)
 - `ERROR` — последняя проверка/сборка/тест упали
 - `SUPPRESSED` — вне текущего скоупа (аналог suppression)
+
+Примечание: цветовая схема для `BLOCKED`, `OUTDATED`, `ERROR` — **отложенное решение** (см. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`).
 
 ### 7.2. Strict CAD Flow (без перескоков)
 Инструмент активен только если выполнены предусловия.
@@ -240,6 +253,7 @@ MVP-минимум:
 ### 9.1. Канон путей артефактов (новый)
 Каждый шаг имеет собственный корень и runs:
 - `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/description.md`
+- `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
 - `.codeai-hub/<workspaceSlug>/virtual_simulation/runs/<runSlug>/virtual-simulation.md`
 - `.codeai-hub/<workspaceSlug>/diagram_modules/runs/<runSlug>/modules-diagram.mmd`
 - `.codeai-hub/<workspaceSlug>/diagram_facades/runs/<runSlug>/facades-graph.mmd`
