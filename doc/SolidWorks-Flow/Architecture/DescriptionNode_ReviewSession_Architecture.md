@@ -137,7 +137,7 @@ UI следствие: сразу после старта сессии появ�
 
 ### 6.4 Edit Description Step (resume Reviewer)
 
-1) Пользователь кликает `Session` → `Continue` (resume).
+1) Пользователь кликает `Session: Reviewer` (resume).
 2) Обсуждает правки.
 3) Reviewer пишет новую ревизию `Final_Description.md`.
 4) Все downstream-узлы помечаются `OUTDATED`.
@@ -156,10 +156,20 @@ UI следствие: сразу после старта сессии появ�
 
 ### 7.2 Branch content rules
 
+- Ветка `Description` показывает **только актуальные** сущности шага (без вложенных подпапок/цепочек).
+- Клик по артефакту открывает **встроенный viewer** Project Manager (панель Artifacts).
+- Клик по строке `Session` создаёт/возобновляет сессию по persisted координатам (providerId + providerSessionId) и открывает полный диалог в панели Sessions.
+- UI не показывает `Session Continuity` / `handoff chains` в дереве: это инфраструктура ядра и не является частью UX ветки шага.
+
+Правила состава ветки:
 - Пока `Description` в работе, ветка содержит “актуальные на сейчас” документы/сессии (см. 6.1–6.3).
-- После появления `Final_Description.md` в ветке остаются:
+- После появления `Final_Description.md` в ветке остаются **ровно две строки**:
   - `Final_Description.md`
   - `Session: Reviewer`
+
+- Промежуточные сущности отображаются только до появления `Final_Description.md`:
+  - `description.md` показываем только пока финал не создан
+  - `Session: Description Agent` показываем только пока не создана `Session: Reviewer`
 
 - UI должен явно предупреждать:
   - “Изменения в этом узле могут сделать последующие узлы устаревшими (OUTDATED).”
