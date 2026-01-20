@@ -7,7 +7,6 @@ import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { type BridgeEvent, serializeSession } from "../types";
-import { maybeCreateAutoRun } from "./auto-run-service";
 import { QuestionnaireCuratorFacade } from "./questionnaire-curator-facade";
 
 type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
@@ -333,30 +332,8 @@ export class SessionRequestHandler {
       return;
     }
 
-    const { providerSessionId, didResume, supportsImmediateBinding } =
+    const { providerSessionId, supportsImmediateBinding } =
       providerSessionResolution;
-
-    const autoRun =
-      options.context.runSlug || didResume
-        ? null
-        : await maybeCreateAutoRun({
-            workspacePath: options.workspacePath,
-            initiativeSlug: options.context.initiativeSlug,
-            stage: options.context.stage,
-            providerId: options.providerId,
-            config: this.config,
-            logger: this.logger,
-          }).catch((error: unknown) => {
-            const message =
-              error instanceof Error ? error.message : String(error);
-            this.logger.warn("Auto-run creation failed", {
-              providerId: options.providerId,
-              initiativeSlug: options.context.initiativeSlug,
-              stage: options.context.stage,
-              error: message,
-            });
-            return null;
-          });
 
     const session = this.sessionManager.createSession(
       options.providerId,
@@ -365,7 +342,7 @@ export class SessionRequestHandler {
       {
         initiativeSlug: options.context.initiativeSlug,
         stage: options.context.stage,
-        runSlug: options.context.runSlug ?? autoRun?.runSlug ?? null,
+        runSlug: options.context.runSlug ?? null,
       }
     );
 
