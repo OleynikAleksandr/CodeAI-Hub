@@ -83,8 +83,8 @@
 ### Stream: Implementation — Initiatives storage without runs
 1. [DONE] Refactor(initiatives): удалить `RunStore` и run-path helpers из exports — scope: `packages/initiatives/src/index.ts`, `packages/initiatives/src/run-store.ts`, `packages/initiatives/package.json`; expected commit message: `refactor(initiatives): remove run store`
 2. [DONE] Git Commit: `refactor(initiatives): remove run store` (hash: 275b08d1)
-3. [IN_PROGRESS] Refactor(initiatives): убрать `currentRunId` из `initiative.json` — scope: `packages/initiatives/src/initiative-store.ts`; expected commit message: `refactor(initiatives): drop currentRunId`
-4. [TODO] Git Commit: `refactor(initiatives): drop currentRunId` (hash: TBD)
+3. [DONE] Refactor(initiatives): убрать `currentRunId` из `initiative.json` — scope: `packages/initiatives/src/initiative-store.ts`; expected commit message: `refactor(initiatives): drop currentRunId`
+4. [DONE] Git Commit: `refactor(initiatives): drop currentRunId` (hash: bca3c716)
 
 ### Stream: Implementation — Core: remove RunStore usage
 1. [DONE] Refactor(core): убрать auto-run создание (без `RunStore`) — scope: `packages/core/src/remote-bridge/handlers/auto-run-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `refactor(core): remove auto-run service`
