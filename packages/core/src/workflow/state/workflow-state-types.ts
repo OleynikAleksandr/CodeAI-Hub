@@ -4,7 +4,8 @@ export type WorkflowStageStatus =
   | "idle"
   | "in_progress"
   | "completed"
-  | "invalid";
+  | "invalid"
+  | "outdated";
 
 export type WorkflowArtifactState = {
   readonly path: string;
