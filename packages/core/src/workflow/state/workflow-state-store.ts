@@ -122,10 +122,50 @@ const resolveStageStatus = (
   if (eventType === "workflow.run.created") {
     return "in_progress";
   }
-  if (eventType === "workflow.artifact.written" && current === "idle") {
+  if (eventType === "workflow.artifact.written" && current !== "in_progress") {
     return "in_progress";
   }
   return current;
+};
+
+const shouldMarkOutdated = (stage: WorkflowStageState): boolean =>
+  stage.status === "completed" ||
+  stage.status === "in_progress" ||
+  stage.status === "outdated";
+
+const markDownstreamOutdated = (
+  stages: Record<WorkflowStageId, WorkflowStageState>,
+  stage: WorkflowStageId,
+  timestamp: string
+): Record<WorkflowStageId, WorkflowStageState> => {
+  const stageIndex = WORKFLOW_STAGES.indexOf(stage);
+  if (stageIndex < 0 || stageIndex === WORKFLOW_STAGES.length - 1) {
+    return stages;
+  }
+
+  let didUpdate = false;
+  const nextStages: Record<WorkflowStageId, WorkflowStageState> = {
+    ...stages,
+  };
+
+  for (let index = stageIndex + 1; index < WORKFLOW_STAGES.length; index += 1) {
+    const downstreamStage = WORKFLOW_STAGES[index];
+    const downstreamState = stages[downstreamStage];
+    const isOutdatedCandidate =
+      downstreamState && shouldMarkOutdated(downstreamState);
+    if (!isOutdatedCandidate) {
+      continue;
+    }
+
+    nextStages[downstreamStage] = {
+      ...downstreamState,
+      status: "outdated",
+      updatedAt: timestamp,
+    };
+    didUpdate = true;
+  }
+
+  return didUpdate ? nextStages : stages;
 };
 
 const updateStageState = (
@@ -227,9 +267,14 @@ export class WorkflowStateStore {
           })
         : this.state.gates;
 
+    const nextStagesWithOutdated =
+      event.type === "workflow.artifact.written"
+        ? markDownstreamOutdated(nextStages, event.stage, event.timestamp)
+        : nextStages;
+
     const nextState: WorkflowState = {
       ...this.state,
-      stages: nextStages,
+      stages: nextStagesWithOutdated,
       gates: nextGates,
       updatedAt: event.timestamp,
     };
