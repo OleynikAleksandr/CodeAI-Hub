@@ -88,8 +88,8 @@
 ### Stream: Project Manager — workflow outdated status
 1. [DONE] Feat(project-manager): поддержать `outdated` в парсере workflow state — scope: `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `feat(project-manager): parse outdated workflow status`
 2. [DONE] Git Commit: `feat(project-manager): parse outdated workflow status` (hash: 52b48ee4)
-3. [TODO] Feat(project-manager): отобразить `outdated` в дереве + стиль — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `feat(project-manager): display outdated workflow status`
-4. [TODO] Git Commit: `feat(project-manager): display outdated workflow status` (hash: TBD)
+3. [DONE] Feat(project-manager): отобразить `outdated` в дереве + стиль — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `feat(project-manager): display outdated workflow status`
+4. [DONE] Git Commit: `feat(project-manager): display outdated workflow status` (hash: 43c99ed3)
 
 ---
 
