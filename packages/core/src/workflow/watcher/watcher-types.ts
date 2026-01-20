@@ -14,26 +14,22 @@ export type WorkflowWatcherEventBase = {
 export type WorkflowRunCreatedEvent = WorkflowWatcherEventBase & {
   readonly type: "workflow.run.created";
   readonly stage: WorkflowStageId;
-  readonly runSlug: string;
 };
 
 export type WorkflowArtifactWrittenEvent = WorkflowWatcherEventBase & {
   readonly type: "workflow.artifact.written";
   readonly stage: WorkflowStageId;
-  readonly runSlug: string;
   readonly filePath: string;
 };
 
 export type WorkflowStageCompletedEvent = WorkflowWatcherEventBase & {
   readonly type: "workflow.stage.completed";
   readonly stage: WorkflowStageId;
-  readonly runSlug: string;
 };
 
 export type WorkflowStageInvalidatedEvent = WorkflowWatcherEventBase & {
   readonly type: "workflow.stage.invalidated";
   readonly stage: WorkflowStageId;
-  readonly runSlug: string;
   readonly reason?: string;
 };
 
@@ -44,7 +40,6 @@ export type WorkflowGateEvent = WorkflowWatcherEventBase & {
     | "workflow.gate.failed";
   readonly gateId: string;
   readonly stage?: WorkflowStageId;
-  readonly runSlug?: string;
   readonly detail?: string;
 };
 
