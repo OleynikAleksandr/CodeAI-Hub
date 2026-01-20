@@ -22,7 +22,6 @@ const supportsRecursiveWatch = (): boolean =>
 
 type WorkflowPathMatch = {
   readonly stage: WorkflowStageId;
-  readonly runSlug: string;
   readonly filePath?: string;
 };
 
@@ -49,8 +48,6 @@ const shouldIgnorePath = (relativePath: string): boolean => {
   return baseName.startsWith(".") || baseName.endsWith("~");
 };
 
-const CURRENT_RUN_SLUG = "current";
-
 const parseWorkflowPath = (relativePath: string): WorkflowPathMatch | null => {
   const segments = path
     .normalize(relativePath)
@@ -69,12 +66,12 @@ const parseWorkflowPath = (relativePath: string): WorkflowPathMatch | null => {
       return null;
     }
     const filePath = rest.length > 0 ? rest.join(path.sep) : undefined;
-    return { stage, runSlug: maybeRunSlug, filePath };
+    return { stage, filePath };
   }
 
   const filePath =
     segments.length > 1 ? segments.slice(1).join(path.sep) : undefined;
-  return { stage, runSlug: CURRENT_RUN_SLUG, filePath };
+  return { stage, filePath };
 };
 
 export class WorkflowWatcher {
@@ -197,7 +194,6 @@ export class WorkflowWatcher {
       timestamp: this.clock(),
       workspaceSlug: this.workspaceSlug,
       stage: match.stage,
-      runSlug: match.runSlug,
     };
   }
 
@@ -210,7 +206,6 @@ export class WorkflowWatcher {
       timestamp: this.clock(),
       workspaceSlug: this.workspaceSlug,
       stage: match.stage,
-      runSlug: match.runSlug,
       filePath: relativePath,
     };
   }
