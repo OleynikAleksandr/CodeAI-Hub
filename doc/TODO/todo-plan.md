@@ -81,9 +81,9 @@
 6. [DONE] Git Commit: `docs(curator): remove runSlug (use session checkpoints)` (hash: 50844126)
 
 ### Stream: Implementation — Initiatives storage without runs
-1. [IN_PROGRESS] Refactor(initiatives): удалить `RunStore` и run-path helpers из exports — scope: `packages/initiatives/src/index.ts`, `packages/initiatives/src/run-store.ts`, `packages/initiatives/package.json`; expected commit message: `refactor(initiatives): remove run store`
-2. [TODO] Git Commit: `refactor(initiatives): remove run store` (hash: TBD)
-3. [TODO] Refactor(initiatives): убрать `currentRunId` из `initiative.json` — scope: `packages/initiatives/src/initiative-store.ts`; expected commit message: `refactor(initiatives): drop currentRunId`
+1. [DONE] Refactor(initiatives): удалить `RunStore` и run-path helpers из exports — scope: `packages/initiatives/src/index.ts`, `packages/initiatives/src/run-store.ts`, `packages/initiatives/package.json`; expected commit message: `refactor(initiatives): remove run store`
+2. [DONE] Git Commit: `refactor(initiatives): remove run store` (hash: 275b08d1)
+3. [IN_PROGRESS] Refactor(initiatives): убрать `currentRunId` из `initiative.json` — scope: `packages/initiatives/src/initiative-store.ts`; expected commit message: `refactor(initiatives): drop currentRunId`
 4. [TODO] Git Commit: `refactor(initiatives): drop currentRunId` (hash: TBD)
 
 ### Stream: Implementation — Core: remove RunStore usage
