@@ -5,7 +5,6 @@ export type WorkflowEvent = {
   readonly timestamp: string;
   readonly workspaceSlug: string;
   readonly stage?: string;
-  readonly runSlug?: string;
   readonly gateId?: string;
   readonly detail?: string;
 };
@@ -39,7 +38,6 @@ const normalizeEvent = (event: unknown): WorkflowEvent | null => {
     timestamp,
     workspaceSlug,
     stage: readNonEmptyString(event.stage ?? undefined) ?? undefined,
-    runSlug: readNonEmptyString(event.runSlug ?? undefined) ?? undefined,
     gateId: readNonEmptyString(event.gateId ?? undefined) ?? undefined,
     detail: readNonEmptyString(event.detail ?? undefined) ?? undefined,
   };

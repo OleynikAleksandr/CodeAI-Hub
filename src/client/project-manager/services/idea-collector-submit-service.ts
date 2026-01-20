@@ -39,7 +39,6 @@ type SessionCreatedPayload = {
   readonly workspacePath?: string;
   readonly initiativeSlug?: string | null;
   readonly stage?: string | null;
-  readonly runSlug?: string | null;
 };
 type SessionErrorPayload = {
   readonly sessionId?: string;
@@ -137,8 +136,7 @@ const extractSessionCreatedPayload = (
       ? payload.initiativeSlug
       : null;
   const stage = typeof payload.stage === "string" ? payload.stage : null;
-  const runSlug = typeof payload.runSlug === "string" ? payload.runSlug : null;
-  return { id, workspacePath, initiativeSlug, stage, runSlug };
+  return { id, workspacePath, initiativeSlug, stage };
 };
 const extractSessionErrorPayload = (
   payload: unknown
