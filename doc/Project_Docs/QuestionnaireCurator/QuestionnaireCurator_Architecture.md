@@ -2,28 +2,28 @@
 
 **Status:** Draft (needs approval)
 **Owner:** Oleksandr
-**Updated:** 2026-01-19
+**Updated:** 2026-01-20
 
 ---
 
 ## 1. Problem
 
-В workflow (в первую очередь `description`) агент часто задаёт повторяющиеся уточняющие вопросы между run’ами.
-Цель — автоматически фиксировать (append-only) ответы пользователя, дополнительные уточнения и замечания в `questionnaire.md`, чтобы следующий run стартовал с более полного контекста.
+В workflow (в первую очередь `description`) агент часто задаёт повторяющиеся уточняющие вопросы между “итерациями” работы над шагом (например, после `Edit Step`).
+Цель — автоматически фиксировать (append-only) ответы пользователя, дополнительные уточнения и замечания в `questionnaire.md`, чтобы следующий старт/продолжение сессии имели более полный контекст.
 
 ---
 
 ## 2. Goals / Non-goals
 
 ### Goals
-- Автоматически добавлять в конец `questionnaire.md` секцию **Clarifications log** на основании диалога текущего run.
+- Автоматически добавлять в конец `questionnaire.md` секцию **Clarifications log** на основании диалога текущей сессии/чекпоинта шага.
 - Поддерживать **append-only** стратегию (без редактирования существующих секций анкеты).
-- Гарантировать **идемпотентность**: один и тот же run не должен дописываться в анкету повторно.
+- Гарантировать **идемпотентность**: один и тот же чекпоинт не должен дописываться в анкету повторно.
 - Работать локально в пределах workspace и `.codeai-hub/**`.
 
 ### Non-goals
 - Не пытаемся «рефакторить» или переформатировать уже заполненные поля анкеты.
-- Не внедряем сложный knowledge base или дедупликацию по смыслу (только защита от повторной обработки одного run).
+- Не внедряем сложный knowledge base или дедупликацию по смыслу (только защита от повторной обработки одного и того же чекпоинта).
 - Не меняем общий file-first workflow и текущие contracts `artifact-upsert`.
 
 ---
@@ -38,20 +38,20 @@
 ## 4. Inputs / Outputs
 
 ### Inputs
-- Session metadata: Core `Session` (providerId, providerSessionId, stage, runSlug, createdAt)
+- Session metadata: Core `Session` (providerId, providerSessionId, stage, createdAt)
 - Transcript: `.codeai-hub/sessions/<sessionWorkspaceSlug>/<providerId>/<providerSessionId>.jsonl`
 - Questionnaire: `.codeai-hub/<artifactWorkspaceSlug>/<stage>/questionnaire.md` (по `initiativeSlug`, если есть)
 
 ### Output
 - Append-only update анкеты:
   - дописать секцию `## Clarifications log` (или расширить существующую секцию) в конце файла
-  - добавить новую запись для конкретного run
+  - добавить новую запись для конкретного чекпоинта (session finalize)
 
 ---
 
 ## 5. Trigger (when curator runs)
 
-Curator запускается после “финализации” run пользователем.
+Curator запускается после “финализации” чекпоинта пользователем (обычно это завершение текущего под-этапа шага).
 Триггер — пользовательское сообщение, совпадающее с паттерном финализации (пример):
 - `ок`, `ok`
 - `утверждаю`
@@ -60,7 +60,7 @@ Curator запускается после “финализации” run по�
 Технически в Core это уже определяется через `FINALIZE_TRIGGER_PATTERN`.
 
 **Условие запуска:**
-- есть `workspaceSlug`, `stage` и `runSlug`
+- есть `workspaceSlug` и `stage`
 - `stage` входит в allowlist (в первой версии — `description`)
 - пользовательский ввод удовлетворяет finalize trigger
 
@@ -92,8 +92,8 @@ Curator всегда добавляет запись в анкету в форм
 ```md
 ## Clarifications log
 
-### 2026-01-19T12:15:00Z — description / 003-gemini-3-flash-preview
-<!-- curator:runId=6ce53ea3-be1b-433f-a57a-273dab17d30f -->
+### 2026-01-19T12:15:00Z — description / claudeCli / <providerSessionId>
+<!-- curator:checkpointId=<checkpointId> -->
 
 - Q: ...
   - A: ...
@@ -102,7 +102,7 @@ Curator всегда добавляет запись в анкету в форм
 
 ### Идемпотентность
 Перед записью Core ищет в `questionnaire.md` маркер:
-- `<!-- curator:runId=<runId> -->`
+- `<!-- curator:checkpointId=<checkpointId> -->`
 
 Если маркер уже существует — curator ничего не дописывает.
 
