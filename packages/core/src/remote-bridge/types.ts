@@ -9,7 +9,6 @@ export type SerializedSession = {
   readonly workspacePath: string;
   readonly initiativeSlug: string | null;
   readonly stage: string | null;
-  readonly runSlug: string | null;
   readonly title: string;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -60,7 +59,6 @@ export type IncomingMessage =
         readonly providerId?: string;
         readonly workspacePath?: string;
         readonly initiativeSlug?: string | null;
-        readonly runSlug?: string | null;
         readonly providerSessionId?: string | null;
         readonly stage?: string | null;
       };
@@ -96,7 +94,6 @@ export const serializeSession = (session: Session): SerializedSession => ({
   workspacePath: session.workspacePath,
   initiativeSlug: session.initiativeSlug,
   stage: session.stage,
-  runSlug: session.runSlug,
   title: session.title,
   createdAt: session.createdAt,
   updatedAt: session.updatedAt,

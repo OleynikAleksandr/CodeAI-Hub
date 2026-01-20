@@ -221,7 +221,6 @@ export class RemoteBridge {
           incoming.payload?.workspacePath,
           {
             initiativeSlug: incoming.payload?.initiativeSlug ?? null,
-            runSlug: incoming.payload?.runSlug ?? null,
             providerSessionId: incoming.payload?.providerSessionId ?? null,
             stage: incoming.payload?.stage ?? null,
           }
