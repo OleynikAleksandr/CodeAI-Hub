@@ -9,6 +9,7 @@
     "packages/*",
     "packages/agents/shared",
     "packages/agents/description-agent",
+    "packages/agents/reviewer-agent",
     "packages/agents/idea-collector"
   ],
   "engines": {
