@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type {
+  DescriptionBranchSnapshot,
   DescriptionSessionRef,
   DescriptionStepSnapshot,
   DescriptionStepUpdate,
@@ -97,6 +98,25 @@ const readJson = async <T>(filePath: string): Promise<T | null> => {
 const writeJson = async (filePath: string, value: unknown): Promise<void> => {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+};
+
+export const buildDescriptionBranchSnapshot = (
+  snapshot: DescriptionStepSnapshot
+): DescriptionBranchSnapshot => {
+  if (snapshot.finalPath) {
+    return {
+      updatedAt: snapshot.updatedAt,
+      finalPath: snapshot.finalPath,
+      session: snapshot.session,
+    };
+  }
+
+  return {
+    updatedAt: snapshot.updatedAt,
+    questionnairePath: snapshot.questionnairePath,
+    draftPath: snapshot.draftPath,
+    session: snapshot.session,
+  };
 };
 
 export class DescriptionStepStore {

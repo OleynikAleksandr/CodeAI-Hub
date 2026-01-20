@@ -2,6 +2,10 @@ import type { Request, Response } from "express";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import {
+  buildDescriptionBranchSnapshot,
+  DescriptionStepStore,
+} from "../../workflow/description/description-step-store";
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
 import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types";
@@ -20,6 +24,7 @@ export class WorkflowStateService {
   private readonly logger: Logger;
   private readonly sessionManager?: SessionManager;
   private readonly stores = new Map<string, WorkflowStateFacade>();
+  private readonly descriptionStepStore = new DescriptionStepStore();
 
   constructor(options: {
     readonly logger: Logger;
@@ -50,23 +55,32 @@ export class WorkflowStateService {
     );
 
     if (!workspaceRoot) {
-      res.json({ state, continuity: { chains: [] } });
+      res.json({ state, continuity: { chains: [] }, description: null });
       return;
     }
 
-    SessionContinuityFacade.readWorkspaceChains({
+    const continuityPromise = SessionContinuityFacade.readWorkspaceChains({
       workspaceRoot,
       workspaceSlug: workspaceSlugResult.value,
-    })
-      .then((chains) => {
-        res.json({ state, continuity: { chains } });
+    });
+    const descriptionPromise = this.descriptionStepStore.read(
+      workspaceRoot,
+      workspaceSlugResult.value
+    );
+
+    Promise.all([continuityPromise, descriptionPromise])
+      .then(([chains, descriptionSnapshot]) => {
+        const description = descriptionSnapshot
+          ? buildDescriptionBranchSnapshot(descriptionSnapshot)
+          : null;
+        res.json({ state, continuity: { chains }, description });
       })
       .catch((error) => {
-        this.logger.warn("Failed to read continuity chains", {
+        this.logger.warn("Failed to read workflow metadata", {
           workspaceSlug: workspaceSlugResult.value,
           error: error instanceof Error ? error.message : String(error),
         });
-        res.json({ state, continuity: { chains: [] } });
+        res.json({ state, continuity: { chains: [] }, description: null });
       });
   }
 

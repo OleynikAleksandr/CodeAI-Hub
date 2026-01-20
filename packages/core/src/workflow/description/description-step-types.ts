@@ -14,6 +14,14 @@ export type DescriptionStepSnapshot = {
   readonly session?: DescriptionSessionRef;
 };
 
+export type DescriptionBranchSnapshot = {
+  readonly updatedAt: string;
+  readonly questionnairePath?: string;
+  readonly draftPath?: string;
+  readonly finalPath?: string;
+  readonly session?: DescriptionSessionRef;
+};
+
 export type DescriptionStepUpdate = {
   readonly questionnairePath?: string | null;
   readonly draftPath?: string | null;
