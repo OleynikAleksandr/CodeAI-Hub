@@ -24336,19 +24336,49 @@ ${updatedBody}
   };
 
   // src/client/ui/src/services/idea-questionnaire-paths.ts
+  var DESCRIPTION_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/description\.md$/;
   var DESCRIPTION_RUN_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/runs\/([^/]+)\/description\.md$/;
+  var LEGACY_IDEA_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/idea\/idea\.md$/;
   var LEGACY_IDEA_RUN_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/runs\/([^/]+)\/idea\/idea\.md$/;
   var FALLBACK_PATH_SEGMENT_RE = /[^/]+$/;
   var buildCanonicalQuestionnairePath = (workspaceSlug) => `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
   var buildLegacyInitiativeQuestionnairePath = (workspaceSlug) => `.codeai-hub/${workspaceSlug}/description/idea/questionnaire.md`;
   var buildLegacyRunQuestionnairePath = (workspaceSlug, runSlug) => `.codeai-hub/${workspaceSlug}/description/runs/${runSlug}/idea/questionnaire.md`;
   var resolveQuestionnairePaths = (descriptionPath) => {
-    const match = DESCRIPTION_RUN_PATH_RE.exec(descriptionPath) ?? LEGACY_IDEA_RUN_PATH_RE.exec(descriptionPath);
-    if (!match) {
+    const descriptionMatch = DESCRIPTION_PATH_RE.exec(descriptionPath);
+    if (descriptionMatch) {
+      const workspaceSlug2 = descriptionMatch[1];
+      return {
+        canonical: buildCanonicalQuestionnairePath(workspaceSlug2),
+        legacyRun: null,
+        legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug2)
+      };
+    }
+    const runMatch = DESCRIPTION_RUN_PATH_RE.exec(descriptionPath);
+    if (runMatch) {
+      const workspaceSlug2 = runMatch[1];
+      const runSlug2 = runMatch[2];
+      return {
+        canonical: buildCanonicalQuestionnairePath(workspaceSlug2),
+        legacyRun: buildLegacyRunQuestionnairePath(workspaceSlug2, runSlug2),
+        legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug2)
+      };
+    }
+    const legacyIdeaMatch = LEGACY_IDEA_PATH_RE.exec(descriptionPath);
+    if (legacyIdeaMatch) {
+      const workspaceSlug2 = legacyIdeaMatch[1];
+      return {
+        canonical: buildCanonicalQuestionnairePath(workspaceSlug2),
+        legacyRun: null,
+        legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug2)
+      };
+    }
+    const legacyRunMatch = LEGACY_IDEA_RUN_PATH_RE.exec(descriptionPath);
+    if (!legacyRunMatch) {
       return null;
     }
-    const workspaceSlug = match[1];
-    const runSlug = match[2];
+    const workspaceSlug = legacyRunMatch[1];
+    const runSlug = legacyRunMatch[2];
     return {
       canonical: buildCanonicalQuestionnairePath(workspaceSlug),
       legacyRun: buildLegacyRunQuestionnairePath(workspaceSlug, runSlug),
