@@ -75,8 +75,8 @@
 2. [DONE] Git Commit: `feat(workflow-tree): add description step store` (hash: c1e2a368)
 3. [DONE] Feat(core): сохранять `SessionRef` description-сессии — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workflow/description/description-step-store.ts`; expected commit message: `feat(workflow-tree): persist description session ref`
 4. [DONE] Git Commit: `feat(workflow-tree): persist description session ref` (hash: c28b0db7)
-5. [TODO] Feat(core): отдать ветку `Description` в workflow-state API — scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-types.ts`; expected commit message: `feat(workflow-tree): expose description branch`
-6. [TODO] Git Commit: `feat(workflow-tree): expose description branch` (hash: TBD)
+5. [DONE] Feat(core): отдать ветку `Description` в workflow-state API — scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-types.ts`; expected commit message: `feat(workflow-tree): expose description branch`
+6. [DONE] Git Commit: `feat(workflow-tree): expose description branch` (hash: 0fe3c780)
 7. [TODO] Feat(project-manager): отображать шаги как треугольники и показывать/обновлять ветку `Description` (questionnaire/session/draft/final) + кнопка Continue для reviewer-сессии — scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): description step branch + continue reviewer session`
 8. [TODO] Git Commit: `feat(project-manager): description step branch + continue reviewer session` (hash: TBD)
 
