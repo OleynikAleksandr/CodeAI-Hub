@@ -90,8 +90,27 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       return [];
     }
     const session = branch.session;
+    const selectArtifact = (artifactPath: string, label: string) => {
+      if (!(workspaceSlug && workspacePath)) {
+        return;
+      }
+      window.dispatchEvent(
+        new CustomEvent("pm:artifact:selected", {
+          detail: { label, path: artifactPath, workspacePath, workspaceSlug },
+        })
+      );
+    };
     const nodes: TreeNode[] = [];
-    if (branch.questionnairePath) nodes.push({ id: "workflow:description:questionnaire", label: "questionnaire.md", title: branch.questionnairePath, status: "draft", visualDepth: 2 });
+    const questionnairePath = branch.questionnairePath;
+    if (questionnairePath)
+      nodes.push({
+        id: "workflow:description:questionnaire",
+        label: "questionnaire.md",
+        title: questionnairePath,
+        status: "draft",
+        visualDepth: 2,
+        onSelect: () => selectArtifact(questionnairePath, "questionnaire.md"),
+      });
     if (session) {
       const label = branch.finalPath
         ? `Reviewer session · ${session.providerId}`
@@ -117,8 +136,26 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         },
       });
     }
-    if (branch.draftPath) nodes.push({ id: "workflow:description:draft", label: "description.md", title: branch.draftPath, status: "draft", visualDepth: 2 });
-    if (branch.finalPath) nodes.push({ id: "workflow:description:final", label: "Final_Description.md", title: branch.finalPath, status: "active", visualDepth: 2 });
+    const draftPath = branch.draftPath;
+    if (draftPath)
+      nodes.push({
+        id: "workflow:description:draft",
+        label: "description.md",
+        title: draftPath,
+        status: "draft",
+        visualDepth: 2,
+        onSelect: () => selectArtifact(draftPath, "description.md"),
+      });
+    const finalPath = branch.finalPath;
+    if (finalPath)
+      nodes.push({
+        id: "workflow:description:final",
+        label: "Final_Description.md",
+        title: finalPath,
+        status: "active",
+        visualDepth: 2,
+        onSelect: () => selectArtifact(finalPath, "Final_Description.md"),
+      });
     return nodes;
   };
 
