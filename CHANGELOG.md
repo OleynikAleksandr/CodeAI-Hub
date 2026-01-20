@@ -1,3 +1,8 @@
+## [1.1.456] - 2026-01-20
+
+### Fixed
+- **Description Agent prompt**: bundled template now enforces one-shot generation (no chat questions); questions belong to Reviewer stage.
+
 ## [1.1.455] - 2026-01-20
 
 ### Added
