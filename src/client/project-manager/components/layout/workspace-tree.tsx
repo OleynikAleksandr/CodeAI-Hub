@@ -15,11 +15,7 @@ type TreeNode = {
   readonly status: TreeStatus;
   readonly visualDepth: number;
   readonly title?: string;
-  readonly action?: {
-    readonly label: string;
-    readonly onClick: () => void;
-    readonly disabled?: boolean;
-  };
+  readonly onSelect?: () => void;
   readonly isCollapsible?: boolean;
   readonly children?: readonly TreeNode[];
 };
@@ -97,27 +93,27 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     const nodes: TreeNode[] = [];
     if (branch.questionnairePath) nodes.push({ id: "workflow:description:questionnaire", label: "questionnaire.md", title: branch.questionnairePath, status: "draft", visualDepth: 2 });
     if (session) {
+      const label = branch.finalPath
+        ? `Reviewer session · ${session.providerId}`
+        : `Session · ${session.providerId}`;
+      const runSlug = branch.finalPath ? "reviewer" : null;
       nodes.push({
         id: "workflow:description:session",
-        label: `Session · ${session.providerId}`,
+        label,
         status: "active",
         visualDepth: 2,
-        action: {
-          label: "Continue",
-          disabled: !canContinue,
-          onClick: () => {
-            if (!(workspaceSlug && workspacePath)) {
-              return;
-            }
-            api.createSession({
-              providerId: session.providerId,
-              providerSessionId: session.providerSessionId,
-              workspacePath,
-              initiativeSlug: workspaceSlug,
-              stage: "description",
-              runSlug: "reviewer",
-            });
-          },
+        onSelect: () => {
+          if (!(workspaceSlug && workspacePath)) {
+            return;
+          }
+          api.createSession({
+            providerId: session.providerId,
+            providerSessionId: session.providerSessionId,
+            workspacePath,
+            initiativeSlug: workspaceSlug,
+            stage: "description",
+            runSlug,
+          });
         },
       });
     }
@@ -197,14 +193,19 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           {treeNodes.map((node) => (
             <li
               className={`pm-tree__item pm-tree__item--${node.status}`}
+              onClick={node.onSelect}
               key={node.id}
+              role={node.onSelect ? "button" : undefined}
               style={{ paddingLeft: `${baseIndent + node.visualDepth * depthIndent}px` }}
             >
               {node.isCollapsible && (node.children?.length ?? 0) > 0 ? (
                 <button
                   aria-expanded={expandedNodes[node.id] ?? true}
                   className="pm-tree__toggle"
-                  onClick={() => handleTreeToggle(node.id)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleTreeToggle(node.id);
+                  }}
                   type="button"
                 >
                   <span
@@ -224,20 +225,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
               <span className="pm-tree__label" title={node.title ?? node.label}>
                 {node.label}
               </span>
-              {node.action ? (
-                <button
-                  className="pm-tree__action"
-                  disabled={node.action.disabled}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    node.action?.onClick();
-                  }}
-                  style={{ marginLeft: "auto" }}
-                  type="button"
-                >
-                  {node.action.label}
-                </button>
-              ) : null}
             </li>
           ))}
         </ul>
