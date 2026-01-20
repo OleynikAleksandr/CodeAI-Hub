@@ -1,10 +1,16 @@
+import { homedir } from "node:os";
 import path from "node:path";
+import {
+  buildSessionFilePath,
+  sanitizeWorkspaceSlug,
+} from "@codeai-hub/unified-session";
 import type { CoreConfig } from "../../config";
 import type { ProviderRegistry } from "../../provider-registry";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import { DescriptionStepStore } from "../../workflow/description";
 import { type BridgeEvent, serializeSession } from "../types";
 import { QuestionnaireCuratorFacade } from "./questionnaire-curator-facade";
 
@@ -80,6 +86,8 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "diagram_modules",
   "diagram_facades",
 ]);
+
+const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 
 const FINALIZE_TRIGGER_PATTERN =
   /(^|[\s,.;:!?])(?:ок|ok|утверждаю|approve|approved)(?=$|[\s,.;:!?])/i;
@@ -160,6 +168,7 @@ export class SessionRequestHandler {
   private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
   private readonly continuity: SessionContinuityFacade;
+  private readonly descriptionStepStore = new DescriptionStepStore();
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -280,6 +289,7 @@ export class SessionRequestHandler {
     );
 
     this.sessionStorage.register(session);
+    this.updateDescriptionSessionRef(session, providerSessionId);
 
     const unsubscribe = options.adapter.subscribe(
       providerSessionId,
@@ -847,6 +857,7 @@ export class SessionRequestHandler {
     this.sessionStorage.promote(sessionId, providerSessionId);
     this.updateProviderBinding(sessionId, providerSessionId);
     this.continuity.updateProviderSessionId(sessionId, providerSessionId);
+    this.updateDescriptionSessionRef(session, providerSessionId);
 
     this.broadcastSessionBinding(sessionId);
   }
@@ -968,6 +979,45 @@ export class SessionRequestHandler {
       providerSessionId: binding.providerSessionId,
       error: message,
     });
+  }
+
+  private updateDescriptionSessionRef(
+    session: Session,
+    providerSessionId?: string
+  ): void {
+    if (session.stage !== "description") {
+      return;
+    }
+    if (!session.initiativeSlug) {
+      return;
+    }
+    const resolvedProviderSessionId =
+      providerSessionId ?? session.providerSessionId;
+    if (!resolvedProviderSessionId) {
+      return;
+    }
+
+    const jsonlPath = buildSessionFilePath({
+      rootDirectory: SESSION_ROOT,
+      workspaceSlug: sanitizeWorkspaceSlug(session.initiativeSlug),
+      provider: session.providerId,
+      sessionId: sanitizeWorkspaceSlug(resolvedProviderSessionId),
+    });
+
+    this.descriptionStepStore
+      .upsert(session.workspacePath, session.initiativeSlug, {
+        session: {
+          providerId: session.providerId,
+          providerSessionId: resolvedProviderSessionId,
+          jsonlPath,
+        },
+      })
+      .catch((error: unknown) => {
+        this.logger.warn("Failed to persist description session ref", {
+          sessionId: session.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      });
   }
 
   private getDefaultProviderId(): string {
