@@ -77,8 +77,8 @@
 4. [DONE] Git Commit: `feat(workflow-tree): persist description session ref` (hash: c28b0db7)
 5. [DONE] Feat(core): отдать ветку `Description` в workflow-state API — scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-types.ts`; expected commit message: `feat(workflow-tree): expose description branch`
 6. [DONE] Git Commit: `feat(workflow-tree): expose description branch` (hash: 0fe3c780)
-7. [TODO] Feat(project-manager): отображать шаги как треугольники и показывать/обновлять ветку `Description` (questionnaire/session/draft/final) + кнопка Continue для reviewer-сессии — scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): description step branch + continue reviewer session`
-8. [TODO] Git Commit: `feat(project-manager): description step branch + continue reviewer session` (hash: TBD)
+7. [DONE] Feat(project-manager): отображать шаги как треугольники и показывать/обновлять ветку `Description` (questionnaire/session/draft/final) + кнопка Continue для reviewer-сессии — scope: `src/client/project-manager/...`; expected commit message: `feat(project-manager): description step branch + continue reviewer session`
+8. [DONE] Git Commit: `feat(project-manager): description step branch + continue reviewer session` (hash: 787ddb70)
 
 ### Stream: Rebuild downstream
 1. [TODO] Feat(core): помечать downstream как OUTDATED при новом артефакте раннего шага — scope: `packages/core/src/workflow/state/workflow-state-types.ts`, `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `feat(workflow-tree): mark downstream nodes outdated on edit`
