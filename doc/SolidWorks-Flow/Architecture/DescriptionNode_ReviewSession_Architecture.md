@@ -90,15 +90,13 @@ Unified session storage хранит события в:
 
 Рекомендуемая (целевaя) структура для шага `description` в workspace артефактах:
 - Анкета (всегда доступна во время работы шага): `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
-- Runs (черновики, диагностика): `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/description.md`
+- Draft (временный файл между Description Agent и Reviewer): `.codeai-hub/<workspaceSlug>/description/description.md`
 - Финальный артефакт (источник истины): `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
 
 Правило: как только появился `Final_Description.md`, downstream шаги должны читать **только его**.
-
-Политика runs (важно):
-- `runs/` — это **история попыток** выполнения шага (могут быть 0..N runSlug со временем).
-- В UI ветке шага показывается **только один “текущий”** draft-артефакт (последний/активный), а не все run-папки.
-- Можно (vNext) добавить политику pruning: хранить только последний run для `description`, если история не нужна.
+Дополнение (важно): сущность `runs` удаляется из проекта.
+- Повторные попытки выполняются через `Edit Step` (обсуждение правок в сессии + перезапись текущего артефакта).
+- После появления `Final_Description.md` система может удалить `description.md`, чтобы не оставлять “ложный” source-of-truth на диске.
 
 ---
 
