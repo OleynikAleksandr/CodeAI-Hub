@@ -17,7 +17,7 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
   - Core: `codeai-hub-core-darwin-arm64-1.1.454.tar.bz2`
   - Providers: `claude-module-1.1.454.tar.bz2`, `codex-module-1.1.454.tar.bz2`, `gemini-module-1.1.454.tar.bz2`
   - UI: `vscode-webview-1.1.454.tar.bz2`, `web-client-1.1.454.tar.bz2`, `project-manager-1.1.454.tar.bz2`
-  - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/description-agent`, `@codeai-hub/virtual-simulation-agent`, `@codeai-hub/diagram-modules-agent`, `@codeai-hub/diagram-facades-agent`, `@codeai-hub/spec-creator`
+  - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/description-agent`, `@codeai-hub/idea-collector`
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
