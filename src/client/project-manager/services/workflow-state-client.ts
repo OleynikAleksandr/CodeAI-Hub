@@ -12,7 +12,8 @@ export type WorkflowStageStatus =
   | "idle"
   | "in_progress"
   | "completed"
-  | "invalid";
+  | "invalid"
+  | "outdated";
 
 export type ContinuitySegmentSnapshot = {
   readonly sessionId: string;
@@ -81,7 +82,8 @@ const isWorkflowStageStatus = (value: unknown): value is WorkflowStageStatus =>
   value === "idle" ||
   value === "in_progress" ||
   value === "completed" ||
-  value === "invalid";
+  value === "invalid" ||
+  value === "outdated";
 
 const isContinuityStageId = (value: unknown): value is ContinuityStageId =>
   value === "unknown" ||
