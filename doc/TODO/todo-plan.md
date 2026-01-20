@@ -101,8 +101,8 @@
 8. [DONE] Git Commit: `refactor(ui): drop runSlug normalization` (hash: e2ce98a1)
 9. [DONE] Refactor(ui+types): удалить `runSlug` из session record типов — scope: `src/types/session.ts`, `src/client/ui/src/core-bridge/types.ts`, `media/react-chat.js`; expected commit message: `refactor(ui): remove runSlug from session types`
 10. [DONE] Git Commit: `refactor(ui): remove runSlug from session types` (hash: 4f757a7d)
-11. [TODO] Refactor(core): убрать `runSlug` из session:create payloads — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/workspace-session-service.ts`; expected commit message: `refactor(core): drop runSlug from session create payload`
-12. [TODO] Git Commit: `refactor(core): drop runSlug from session create payload` (hash: TBD)
+11. [DONE] Refactor(core): убрать `runSlug` из session:create payloads — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/workspace-session-service.ts`; expected commit message: `refactor(core): drop runSlug from session create payload`
+12. [DONE] Git Commit: `refactor(core): drop runSlug from session create payload` (hash: 91d06fcb)
 
 ### Stream: Implementation — Core: remove runs endpoints
 1. [DONE] Refactor(core): удалить `/initiatives/:initiativeSlug/runs` API endpoints (runs list/create/select-current) — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/runs-http-handler.ts`; expected commit message: `refactor(core): remove runs endpoints`
