@@ -1,6 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { RunStore } from "@codeai-hub/initiatives";
 import type { Request, Response } from "express";
 import { isWorkspacePathAllowlisted } from "../../security/workspace-path-allowlist";
 import type { SessionManager } from "../../session-manager";
@@ -14,8 +13,7 @@ const HTTP_BAD_REQUEST = 400;
 const DEFAULT_MAX_BYTES = 300_000;
 const MIN_MAX_BYTES = 1000;
 const MAX_MAX_BYTES = 500_000;
-const RUN_QUESTIONNAIRE_SUFFIX = "/idea/questionnaire.md";
-const INITIATIVE_QUESTIONNAIRE_PATH_SUFFIX = "/idea/questionnaire.md";
+const LEGACY_RUN_QUESTIONNAIRE_SUFFIX = "/idea/questionnaire.md";
 
 type WorkspaceFilePayload = {
   readonly sessionId: string;
@@ -48,7 +46,7 @@ const normalizeWorkspacePath = (value: string): string => {
   return normalized.startsWith("./") ? normalized.slice(2) : normalized;
 };
 
-const isRunQuestionnairePath = (
+const isLegacyRunQuestionnairePath = (
   pathValue: string,
   initiativeSlug: string,
   runSlug: string
@@ -56,12 +54,12 @@ const isRunQuestionnairePath = (
   const normalized = normalizeWorkspacePath(pathValue);
   return (
     normalized ===
-    `.codeai-hub/${initiativeSlug}/description/runs/${runSlug}${RUN_QUESTIONNAIRE_SUFFIX}`
+    `.codeai-hub/${initiativeSlug}/description/runs/${runSlug}${LEGACY_RUN_QUESTIONNAIRE_SUFFIX}`
   );
 };
 
-const resolveInitiativeQuestionnairePath = (initiativeSlug: string): string =>
-  `.codeai-hub/${initiativeSlug}/description${INITIATIVE_QUESTIONNAIRE_PATH_SUFFIX}`;
+const resolveCanonicalQuestionnairePath = (initiativeSlug: string): string =>
+  `.codeai-hub/${initiativeSlug}/description/questionnaire.md`;
 
 const parseWorkspaceFilePayload = (
   payload: unknown
@@ -230,29 +228,22 @@ export const handleWorkspaceFileWrite = async (
     if (
       session.initiativeSlug &&
       session.runSlug &&
-      isRunQuestionnairePath(
+      isLegacyRunQuestionnairePath(
         parsedPayload.value.path,
         session.initiativeSlug,
         session.runSlug
       )
     ) {
-      const runs = new RunStore();
-      await runs.updateLastQuestionnaireAt(
-        workspaceRoot,
-        session.initiativeSlug,
-        session.runSlug
-      );
-
-      const initiativeQuestionnairePath = resolveInitiativeQuestionnairePath(
+      const canonicalQuestionnairePath = resolveCanonicalQuestionnairePath(
         session.initiativeSlug
       );
-      const initiativeAbsolutePath = resolveWorkspaceFilePath(
+      const canonicalAbsolutePath = resolveWorkspaceFilePath(
         workspaceRoot,
-        initiativeQuestionnairePath
+        canonicalQuestionnairePath
       );
-      if (initiativeAbsolutePath && initiativeAbsolutePath !== absolutePath) {
-        await mkdir(path.dirname(initiativeAbsolutePath), { recursive: true });
-        await writeFile(initiativeAbsolutePath, content, { encoding: "utf8" });
+      if (canonicalAbsolutePath && canonicalAbsolutePath !== absolutePath) {
+        await mkdir(path.dirname(canonicalAbsolutePath), { recursive: true });
+        await writeFile(canonicalAbsolutePath, content, { encoding: "utf8" });
       }
     }
 
