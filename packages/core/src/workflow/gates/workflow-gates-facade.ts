@@ -135,7 +135,7 @@ export class WorkflowGatesRunner {
 }
 
 const buildRunKey = (event: WorkflowStageCompletedEvent): string =>
-  `${event.workspaceSlug}:${event.stage}:${event.runSlug}`;
+  `${event.workspaceSlug}:${event.stage}`;
 
 const resolveStageGates = (
   config: WorkflowGatesConfig,
@@ -203,7 +203,6 @@ export class WorkflowGatesFacade {
         workspaceSlug: event.workspaceSlug,
         gateId: gate.gateId,
         stage: event.stage,
-        runSlug: event.runSlug,
       });
 
       const result = await this.runner.runGate({
@@ -215,7 +214,6 @@ export class WorkflowGatesFacade {
         this.logger.warn("Workflow gate failed", {
           gateId: gate.gateId,
           stage: event.stage,
-          runSlug: event.runSlug,
           detail: result.detail,
         });
         this.emitGateEvent({
@@ -224,7 +222,6 @@ export class WorkflowGatesFacade {
           workspaceSlug: event.workspaceSlug,
           gateId: gate.gateId,
           stage: event.stage,
-          runSlug: event.runSlug,
           detail: result.detail,
         });
         return;
@@ -236,7 +233,6 @@ export class WorkflowGatesFacade {
         workspaceSlug: event.workspaceSlug,
         gateId: gate.gateId,
         stage: event.stage,
-        runSlug: event.runSlug,
       });
     }
   }

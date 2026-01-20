@@ -18,14 +18,12 @@ export type WorkflowGateState = {
   readonly status: WorkflowGateStatus;
   readonly updatedAt: string;
   readonly stage?: WorkflowStageId;
-  readonly runSlug?: string;
   readonly detail?: string;
 };
 
 export type WorkflowStageState = {
   readonly stage: WorkflowStageId;
   readonly status: WorkflowStageStatus;
-  readonly runSlug?: string;
   readonly artifacts: readonly WorkflowArtifactState[];
   readonly gates: readonly WorkflowGateState[];
   readonly updatedAt: string;
