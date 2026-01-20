@@ -272,7 +272,7 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 С версии 1.1.440 workflow стадии (Description, Virtual Simulation, Diagrams) используют **file-first** подход:
 - Structured output отключён
-- Артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/...`
+- Артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/...` (сущность `runs` удаляется)
 - Watcher отслеживает файлы и обновляет workflow state для UI gating
 
 **Подробнее:** `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
