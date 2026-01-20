@@ -10,7 +10,6 @@ type WorkspaceSessionPayload = {
   readonly workspacePath: string;
   readonly initiativeSlug?: string | null;
   readonly stage?: string | null;
-  readonly runSlug?: string | null;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -48,7 +47,6 @@ const parseWorkspaceSessionPayload = (
       workspacePath,
       initiativeSlug: readOptionalString(payload.initiativeSlug),
       stage: readOptionalString(payload.stage),
-      runSlug: readOptionalString(payload.runSlug),
     },
   };
 };
@@ -73,7 +71,6 @@ export const handleWorkspaceSessionCreate = (
       {
         initiativeSlug: parsed.value.initiativeSlug,
         stage: parsed.value.stage,
-        runSlug: parsed.value.runSlug,
       }
     );
     res.json({ sessionId: session.id });
