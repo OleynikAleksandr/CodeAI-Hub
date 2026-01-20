@@ -8,7 +8,7 @@ import {
   type WorkflowStageStatus,
   type WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
-type TreeStatus = "active" | "todo" | "blocked" | "draft";
+type TreeStatus = "active" | "todo" | "blocked" | "draft" | "outdated";
 type TreeNode = {
   readonly id: string;
   readonly label: string;
@@ -64,9 +64,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       setWorkflowState(null);
       return;
     }
-
     let cancelled = false;
-
     const loadState = async () => {
       const state = await api.getWorkflowState(workspaceSlug);
       if (!cancelled) {
@@ -86,11 +84,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     status: WorkflowStageStatus,
     blocked: boolean
   ): TreeStatus =>
-    blocked || status === "invalid"
-      ? "blocked"
-      : status === "completed" || status === "in_progress"
-        ? "active"
-        : "todo";
+    status === "outdated"
+      ? "outdated"
+      : blocked || status === "invalid"
+        ? "blocked"
+        : status === "completed" || status === "in_progress"
+          ? "active"
+          : "todo";
 
   const resolveDescriptionBranchNodes = (): readonly TreeNode[] => {
     const branch = workflowState?.description;
