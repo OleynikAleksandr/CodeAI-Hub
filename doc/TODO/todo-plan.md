@@ -71,8 +71,8 @@
 6. [DONE] Git Commit: `chore(repo): add reviewer-agent workspace` (hash: d2b879af)
 
 ### Stream: Reviewer Sessions — хранение и resume
-1. [TODO] Feat(core): добавить модели/хранилище состояния `Description` — scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/index.ts`; expected commit message: `feat(workflow-tree): add description step store`
-2. [TODO] Git Commit: `feat(workflow-tree): add description step store` (hash: TBD)
+1. [DONE] Feat(core): добавить модели/хранилище состояния `Description` — scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/index.ts`; expected commit message: `feat(workflow-tree): add description step store`
+2. [DONE] Git Commit: `feat(workflow-tree): add description step store` (hash: c1e2a368)
 3. [TODO] Feat(core): сохранять `SessionRef` description-сессии — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workflow/description/description-step-store.ts`; expected commit message: `feat(workflow-tree): persist description session ref`
 4. [TODO] Git Commit: `feat(workflow-tree): persist description session ref` (hash: TBD)
 5. [TODO] Feat(core): отдать ветку `Description` в workflow-state API — scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-types.ts`; expected commit message: `feat(workflow-tree): expose description branch`
