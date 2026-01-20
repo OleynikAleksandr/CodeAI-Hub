@@ -71,7 +71,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         setWorkflowState(state);
       }
     };
-
     loadState();
     const timer = window.setInterval(loadState, 15_000);
     return () => {
@@ -79,7 +78,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       window.clearInterval(timer);
     };
   }, [selectedWorkspaceId, workspaceSlug]);
-
   const resolveTreeStatus = (
     status: WorkflowStageStatus,
     blocked: boolean
@@ -91,38 +89,40 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         : status === "completed" || status === "in_progress"
           ? "active"
           : "todo";
-
   const resolveDescriptionBranchNodes = (): readonly TreeNode[] => {
     const branch = workflowState?.description;
     if (!branch) {
       return [];
     }
+    const session = branch.session;
     return [
-      branch.questionnairePath && { id: "workflow:description:questionnaire", label: "questionnaire.md", title: branch.questionnairePath, status: "draft", visualDepth: 2 },
-      branch.session && {
-        id: "workflow:description:session",
-        label: `Session · ${branch.session.providerId}`,
-        status: "active",
-        visualDepth: 2,
-        action: {
-          label: "Continue",
-          disabled: !canContinue,
-          onClick: () => {
-            if (!(workspaceSlug && workspacePath)) {
-              return;
-            }
-            api.createSession({
-              providerId: branch.session.providerId,
-              providerSessionId: branch.session.providerSessionId,
-              workspacePath,
-              initiativeSlug: workspaceSlug,
-              stage: "description",
-            });
-          },
-        },
-      },
-      branch.draftPath && { id: "workflow:description:draft", label: "description.md", title: branch.draftPath, status: "draft", visualDepth: 2 },
-      branch.finalPath && { id: "workflow:description:final", label: "Final_Description.md", title: branch.finalPath, status: "active", visualDepth: 2 },
+      branch.questionnairePath ? { id: "workflow:description:questionnaire", label: "questionnaire.md", title: branch.questionnairePath, status: "draft", visualDepth: 2 } : null,
+      session
+        ? {
+            id: "workflow:description:session",
+            label: `Session · ${session.providerId}`,
+            status: "active",
+            visualDepth: 2,
+            action: {
+              label: "Continue",
+              disabled: !canContinue,
+              onClick: () => {
+                if (!(workspaceSlug && workspacePath)) {
+                  return;
+                }
+                api.createSession({
+                  providerId: session.providerId,
+                  providerSessionId: session.providerSessionId,
+                  workspacePath,
+                  initiativeSlug: workspaceSlug,
+                  stage: "description",
+                });
+              },
+            },
+        }
+        : null,
+      branch.draftPath ? { id: "workflow:description:draft", label: "description.md", title: branch.draftPath, status: "draft", visualDepth: 2 } : null,
+      branch.finalPath ? { id: "workflow:description:final", label: "Final_Description.md", title: branch.finalPath, status: "active", visualDepth: 2 } : null,
     ].filter((node): node is TreeNode => Boolean(node));
   };
 
