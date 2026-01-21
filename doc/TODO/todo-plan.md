@@ -79,6 +79,14 @@
 3. [DONE] Fix(project-manager): label для collector-сессии в ветке Description сделать человекочитаемым (`Description agent session · <provider>`) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): label description agent session in tree`
 4. [DONE] Git Commit: `fix(project-manager): label description agent session in tree` (hash: 9cde5d7e)
 
+
+### Stream: Fix — Pre-binding resume click (no duplicate sessions)
+1. [TODO] Fix(project-manager): при повторном `session:created` (rebroadcast existing) не создавать дубликат в списке сессий и не сбрасывать snapshot; вместо этого обновлять существующую запись по `session.id` и фокусить её — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(project-manager): dedupe rebroadcasted session created`
+2. [TODO] Git Commit: `fix(project-manager): dedupe rebroadcasted session created` (hash: TBD)
+
+3. [TODO] Verify(manual): клик по `Description agent session` в дереве ДО первого ответа агента не создаёт дубль окна/строки сессии — scope: no files; expected commit message: `docs: record description pre-binding click verification`
+4. [TODO] Git Commit: `docs: record description pre-binding click verification` (hash: TBD)
+
 ### Stream: Verification
 1. [TODO] Verify(manual): клик по строке `Session · <provider>` (Reviewer) не создаёт дубль; если сессия уже есть — только фокус; если скрыта — показывается снова; если это первый resume после перезапуска — открывается с полной историей (из JSONL), не пустая — scope: no files; expected commit message: `docs: record resume focus + history verification`
 2. [TODO] Git Commit: `docs: record resume focus + history verification` (hash: TBD)
