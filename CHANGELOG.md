@@ -1,3 +1,9 @@
+## [1.1.466] - 2026-01-21
+### Fixed
+- Project Manager: lock description questionnaire after submission (read-only markdown).
+- Project Manager: hide Description Agent session once Reviewer session is created.
+- Project Manager: reduce artifact viewer font size.
+
 ## [1.1.464] - 2026-01-21
 ### Fixed
 - VS Code Webview: prevent empty duplicate session when core rebroadcasts `session:created` (e.g. resume click while binding is pending).
