@@ -25080,14 +25080,28 @@ ${replacement}
       (session) => {
         const sessionWithBinding = applyPendingBinding(session);
         setSessions((previous3) => {
-          const next = [...previous3, sessionWithBinding];
+          const next = previous3.some((candidate) => candidate.id === session.id) ? previous3.map(
+            (candidate) => candidate.id === session.id ? sessionWithBinding : candidate
+          ) : [...previous3, sessionWithBinding];
           syncSessionsRef(next);
           return next;
         });
-        setSnapshots((previous3) => ({
-          ...previous3,
-          [session.id]: createInitialSnapshot(sessionWithBinding, providerLabels)
-        }));
+        setSnapshots((previous3) => {
+          const existing = previous3[session.id];
+          return existing ? {
+            ...previous3,
+            [session.id]: {
+              ...existing,
+              binding: sessionWithBinding.binding
+            }
+          } : {
+            ...previous3,
+            [session.id]: createInitialSnapshot(
+              sessionWithBinding,
+              providerLabels
+            )
+          };
+        });
         setActiveSessionId(session.id);
       },
       [applyPendingBinding, providerLabels, syncSessionsRef]
