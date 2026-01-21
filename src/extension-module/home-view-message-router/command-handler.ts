@@ -14,7 +14,20 @@ type CommandContext = {
 
 type StartStage = "chat" | "idea" | "spec" | "plan" | "execute";
 
+const PROJECT_MANAGER_HINT =
+  "Use Project Manager for sessions and chats during FLOW development.";
+const SESSIONS_DISABLED = true;
+
+const notifyProjectManagerHint = (context: CommandContext): void => {
+  window.showInformationMessage(PROJECT_MANAGER_HINT);
+  context.notifyWebview({ type: "ui:useProjectManager" });
+};
+
 const handleNewSession = (context: CommandContext): void => {
+  if (SESSIONS_DISABLED) {
+    notifyProjectManagerHint(context);
+    return;
+  }
   const stacks = context.providerRegistry
     .listStacks()
     .filter((stack) => stack.connected);
@@ -38,6 +51,10 @@ const handleStartWithStage = (
   context: CommandContext,
   stage: StartStage
 ): void => {
+  if (SESSIONS_DISABLED) {
+    notifyProjectManagerHint(context);
+    return;
+  }
   const stacks = context.providerRegistry
     .listStacks()
     .filter((stack) => stack.connected);
@@ -107,15 +124,10 @@ export const handleCommand = async (
       handleStartWithStage(context, "execute");
       return;
     case "lastSession":
-      context.notifyWebview({ type: "session:focusLast" });
-      window.showInformationMessage(
-        "Selecting the most recent session (placeholder)."
-      );
+      notifyProjectManagerHint(context);
       return;
     case "oldSessions":
-      window.showInformationMessage(
-        "Session history view is under construction."
-      );
+      notifyProjectManagerHint(context);
       return;
     case "grabFilePathFromDrop":
       await handleFileDropCommand(context);

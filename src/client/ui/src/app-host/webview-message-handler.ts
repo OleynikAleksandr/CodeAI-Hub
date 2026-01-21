@@ -1,6 +1,10 @@
 import { useEffect } from "react";
-import type { WebviewDispatchHandlers } from "./webview-message-dispatcher";
+import type {
+  VoidHandler,
+  WebviewDispatchHandlers,
+} from "./webview-message-dispatcher";
 import { dispatchWebviewMessage } from "./webview-message-dispatcher";
+import { isUseProjectManagerMessage } from "./webview-message-types";
 
 export type {
   ProviderPickerOpenHandler,
@@ -8,7 +12,9 @@ export type {
   VoidHandler,
 } from "./webview-message-dispatcher";
 
-export type WebviewMessageHandlers = WebviewDispatchHandlers;
+export type WebviewMessageHandlers = WebviewDispatchHandlers & {
+  readonly onUseProjectManager?: VoidHandler;
+};
 
 export const useWebviewMessageHandler = ({
   onProviderPickerOpen,
@@ -23,9 +29,14 @@ export const useWebviewMessageHandler = ({
   onSessionDeleted,
   onSessionBinding,
   onSessionHistory,
+  onUseProjectManager,
 }: WebviewMessageHandlers) => {
   useEffect(() => {
     const handleIncomingMessage = (event: MessageEvent<unknown>) => {
+      if (isUseProjectManagerMessage(event.data)) {
+        onUseProjectManager?.();
+        return;
+      }
       dispatchWebviewMessage(event.data, {
         onProviderPickerOpen,
         onSessionCreated,
@@ -59,5 +70,6 @@ export const useWebviewMessageHandler = ({
     onSessionDeleted,
     onSessionBinding,
     onSessionHistory,
+    onUseProjectManager,
   ]);
 };
