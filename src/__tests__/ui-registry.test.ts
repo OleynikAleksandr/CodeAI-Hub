@@ -76,22 +76,22 @@ describe("UIRegistry", () => {
     await registry.load();
 
     const entry: UIRegistryEntry = {
-      bundleId: "web-client",
+      bundleId: "project-manager",
       version: "2.0.0",
       installedAt: Date.now(),
-      path: "/tmp/web-client",
+      path: "/tmp/project-manager",
     };
 
     await registry.registerBundle(entry);
 
     // Verify in memory
-    const inMemory = registry.getBundle("web-client");
+    const inMemory = registry.getBundle("project-manager");
     deepStrictEqual(inMemory, entry);
 
     // Verify on disk
     const content = await readFile(registryPath, "utf-8");
     const diskState = JSON.parse(content);
-    deepStrictEqual(diskState.installed["web-client"], entry);
+    deepStrictEqual(diskState.installed["project-manager"], entry);
   });
 
   it("should unregister a bundle and persist to disk", async () => {
@@ -99,17 +99,17 @@ describe("UIRegistry", () => {
     await registry.load();
 
     // Ensure it exists first (from previous test)
-    strictEqual(registry.getBundle("web-client") !== undefined, true);
+    strictEqual(registry.getBundle("project-manager") !== undefined, true);
 
-    await registry.unregisterBundle("web-client");
+    await registry.unregisterBundle("project-manager");
 
     // Verify in memory
-    strictEqual(registry.getBundle("web-client"), undefined);
+    strictEqual(registry.getBundle("project-manager"), undefined);
 
     // Verify on disk
     const content = await readFile(registryPath, "utf-8");
     const diskState = JSON.parse(content);
-    strictEqual(diskState.installed["web-client"], undefined);
+    strictEqual(diskState.installed["project-manager"], undefined);
   });
 
   it("should list all installed bundles", async () => {
@@ -125,7 +125,7 @@ describe("UIRegistry", () => {
       path: "/p1",
     };
     const entry2: UIRegistryEntry = {
-      bundleId: "web-client",
+      bundleId: "project-manager",
       version: "2.0.0",
       installedAt: 2,
       path: "/p2",
@@ -139,7 +139,7 @@ describe("UIRegistry", () => {
     // Order is not guaranteed by Object.values, but usually insertion order for string keys in recent JS engines
     // Let's just check existence
     const hasEntry1 = list.some((e) => e.bundleId === "vscode-webview");
-    const hasEntry2 = list.some((e) => e.bundleId === "web-client");
+    const hasEntry2 = list.some((e) => e.bundleId === "project-manager");
     strictEqual(hasEntry1, true);
     strictEqual(hasEntry2, true);
   });

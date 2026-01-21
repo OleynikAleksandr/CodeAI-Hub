@@ -11,10 +11,6 @@ export type UIActivationResult = {
     path: string;
     source: "installed" | "embedded";
   };
-  webClient: {
-    path: string;
-    source: "installed" | "embedded";
-  };
   projectManager: {
     path: string;
     source: "installed" | "embedded";
@@ -23,13 +19,12 @@ export type UIActivationResult = {
 
 // Actually, the logic differs slightly per bundle.
 // webview: installed -> path, embedded -> dirname(path)
-// web-client: installed -> path/index.html, embedded -> path
 // project-manager: installed -> path/index.html, embedded -> path
 
 // Let's just extract the try-catch block and resolution.
 
 async function tryResolveBundle(
-  bundleId: "vscode-webview" | "web-client" | "project-manager",
+  bundleId: "vscode-webview" | "project-manager",
   embeddedPath: string,
   logger: ExtensionLogger
 ): Promise<{ path: string; source: "installed" | "embedded" }> {
@@ -97,35 +92,7 @@ export async function prepareUIBundles(
     });
   }
 
-  // 3. Resolve web-client bundle
-  const embeddedWebClientPath = path.join(
-    context.extensionUri.fsPath,
-    "media",
-    "web-client",
-    "dist",
-    "index.html"
-  );
-
-  const webClientResolved = await tryResolveBundle(
-    "web-client",
-    embeddedWebClientPath,
-    logger
-  );
-  let webClientIndexPath: string;
-  if (webClientResolved.source === "installed") {
-    webClientIndexPath = path.join(webClientResolved.path, "index.html");
-  } else {
-    webClientIndexPath = webClientResolved.path;
-  }
-
-  if (webClientResolved.source !== "embedded") {
-    logger.log("extension:activate:ui-resolved:web-client", {
-      source: webClientResolved.source,
-      path: webClientIndexPath,
-    });
-  }
-
-  // 4. Resolve project-manager bundle
+  // 3. Resolve project-manager bundle
   const embeddedProjectManagerPath = path.join(
     context.extensionUri.fsPath,
     "packages",
@@ -155,7 +122,6 @@ export async function prepareUIBundles(
 
   return {
     webview: { path: webviewUIRoot, source: webviewResolved.source },
-    webClient: { path: webClientIndexPath, source: webClientResolved.source },
     projectManager: {
       path: projectManagerIndexPath,
       source: pmResolved.source,
