@@ -23,6 +23,7 @@ import {
   isFinalizeTrigger,
 } from "../../../ui/src/services/idea-collector-finalize-utils";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
+import { useSessionResumeIntent } from "./session-resume-intent";
 import { useProjectManagerSessionStream } from "./session-stream";
 
 type ProjectManagerSessionViewProps = {
@@ -226,6 +227,11 @@ export const ProjectManagerSessionView = ({
     }
     setActiveSessionId(preferredSessionId);
   }, [preferredSessionId]);
+  useSessionResumeIntent({
+    sessionsRef,
+    focusSession: setActiveSessionId,
+    createSession: (payload) => api.createSession(payload),
+  });
 
   const visibleSessions = useMemo(() => {
     if (!workspacePath) {
