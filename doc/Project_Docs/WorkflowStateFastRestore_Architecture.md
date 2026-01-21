@@ -1,6 +1,6 @@
 # Workflow State Fast Restore (Project Manager) — MVP Architecture
 
-**Status:** Draft (needs approval)
+**Status:** Approved (MVP)
 **Updated:** 2026-01-21
 **Owner:** Oleksandr + Codex
 
@@ -55,3 +55,4 @@ Project Manager уже знает `workspacePath` выбранного workspace
 Критерии решения:
 - если MVP решает проблему и не ломает безопасность/инварианты — сложный вариант откладываем.
 - если нужна мгновенная реконструкция статусов/gates без событий watcher — рассматриваем persist/replay.
+- решение принимается после верификации MVP; целевая задержка появления ветки `Description` < 5s.
