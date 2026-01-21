@@ -73,7 +73,6 @@ echo ""
 echo "🧹 Step 1: Cleaning build cache..."
 rm -rf out/*
 rm -f *.vsix
-rm -rf media/web-client/dist
 rm -rf node_modules/@anthropic-ai 2>/dev/null || true
 rm -rf node_modules/@openai 2>/dev/null || true
 rm -rf node_modules/@google 2>/dev/null || true
@@ -94,7 +93,6 @@ fi
 echo ""
 echo "⚛️ Step 3: Building UI bundles..."
 npm run build:webview
-npm run build:web-client
 echo "✅ UI bundles ready"
 
 # Step 4: Architecture check
