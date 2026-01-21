@@ -84,10 +84,14 @@
 ## Phase 66 — Project Manager Description UX hardening (owner: Oleksandr, updated: 2026-01-21)
 
 ### Stream: Description workflow UX
-1. [TODO] Change: после отправки анкеты отображать `questionnaire.md` как read-only Markdown (без кнопок Back/Edit) и блокировать редактирование — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `fix(project-manager): lock description questionnaire`
-2. [TODO] Git Commit: `fix(project-manager): lock description questionnaire` (hash: TBD)
+1. [DONE] Change: после отправки анкеты отображать `questionnaire.md` как read-only Markdown (без кнопок Back/Edit) и блокировать редактирование — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`; expected commit message: `fix(project-manager): lock description questionnaire`
+2. [DONE] Git Commit: `fix(project-manager): lock description questionnaire` (hash: a38be3ed)
 3. [TODO] Change: при создании reviewer session скрывать сессию Description Agent в левой панели (оставлять только Reviewer) — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-visibility.ts`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `fix(project-manager): hide description agent session`
 4. [TODO] Git Commit: `fix(project-manager): hide description agent session` (hash: TBD)
+
+### Stream: Artifacts panel typography
+1. [TODO] Change: уменьшить вдвое размер шрифта артефактов в правой панели Project Manager — scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/styles/layout.css`; expected commit message: `fix(project-manager): reduce artifact font size`
+2. [TODO] Git Commit: `fix(project-manager): reduce artifact font size` (hash: TBD)
 
 ### Stream: Docs — SystemArchitecture alignment
 1. [DONE] Docs: убрать legacy `web-client`, обновить версии и роли UI (Settings-only webview, Project Manager основной) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): align SystemArchitecture with Phase65`
