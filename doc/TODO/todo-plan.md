@@ -72,8 +72,8 @@
 1. [DONE] Docs(release): обновить `README.md` + `CHANGELOG.md` (описать removal web-client и Settings-only webview) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): note web-client removal`
 2. [DONE] Git Commit: `docs(release): note web-client removal` (hash: f801d175)
 
-3. [TODO] Release(build): собрать verification build после удаления web-client и Settings-only webview — scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; expected commit message: `chore(release): build verification (no web-client)`
-4. [TODO] Git Commit: `chore(release): build verification (no web-client)` (hash: TBD)
+3. [DONE] Release(build): собрать verification build после удаления web-client и Settings-only webview — scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; expected commit message: `chore(release): build verification (no web-client)`
+4. [DONE] Git Commit: `chore(release): build verification (no web-client)` (hash: 29d75372)
 
-5. [TODO] Docs(todo): зафиксировать выполнение Phase 65 задач и хеши коммитов — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record phase65 web-client removal`
-6. [TODO] Git Commit: `docs(todo): record phase65 web-client removal` (hash: TBD)
+5. [DONE] Docs(todo): зафиксировать выполнение Phase 65 задач и хеши коммитов — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record phase65 web-client removal`
+6. [DONE] Git Commit: `docs(todo): record phase65 web-client removal` (hash: TBD)
