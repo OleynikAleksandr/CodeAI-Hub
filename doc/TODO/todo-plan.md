@@ -76,4 +76,4 @@
 4. [DONE] Git Commit: `chore(release): build verification (no web-client)` (hash: 29d75372)
 
 5. [DONE] Docs(todo): зафиксировать выполнение Phase 65 задач и хеши коммитов — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record phase65 web-client removal`
-6. [DONE] Git Commit: `docs(todo): record phase65 web-client removal` (hash: TBD)
+6. [DONE] Git Commit: `docs(todo): record phase65 web-client removal` (hash: bef7edd3)
