@@ -1,0 +1,89 @@
+import {
+  useCallback,
+  useMemo,
+  useState,
+  type MutableRefObject,
+} from "react";
+import type { SessionRecord } from "../../../../types/session";
+
+export const useSessionVisibility = (params: {
+  readonly sessions: readonly SessionRecord[];
+  readonly sessionsRef: MutableRefObject<readonly SessionRecord[]>;
+  readonly workspacePath?: string;
+  readonly setActiveSessionId: (
+    next:
+      | string
+      | null
+      | ((current: string | null) => string | null)
+  ) => void;
+}) => {
+  const [hiddenSessionIds, setHiddenSessionIds] = useState<Set<string>>(
+    () => new Set()
+  );
+
+  const showSession = useCallback((sessionId: string) => {
+    setHiddenSessionIds((current) => {
+      if (!current.has(sessionId)) {
+        return current;
+      }
+      const next = new Set(current);
+      next.delete(sessionId);
+      return next;
+    });
+  }, []);
+
+  const hideSession = useCallback(
+    (sessionId: string) => {
+      setHiddenSessionIds((current) => {
+        if (current.has(sessionId)) {
+          return current;
+        }
+        const next = new Set(current);
+        next.add(sessionId);
+        params.setActiveSessionId((currentActive) => {
+          if (currentActive !== sessionId) {
+            return currentActive;
+          }
+          const remaining = params.sessionsRef.current.filter(
+            (session) =>
+              session.workspacePath === params.workspacePath &&
+              session.id !== sessionId &&
+              !next.has(session.id)
+          );
+          return remaining.at(-1)?.id ?? null;
+        });
+        return next;
+      });
+    },
+    [params.sessionsRef, params.setActiveSessionId, params.workspacePath]
+  );
+
+  const removeHiddenSession = useCallback((sessionId: string) => {
+    setHiddenSessionIds((current) => {
+      if (!current.has(sessionId)) {
+        return current;
+      }
+      const next = new Set(current);
+      next.delete(sessionId);
+      return next;
+    });
+  }, []);
+
+  const visibleSessions = useMemo(() => {
+    if (!params.workspacePath) {
+      return [];
+    }
+    return params.sessions.filter(
+      (session) =>
+        session.workspacePath === params.workspacePath &&
+        !hiddenSessionIds.has(session.id)
+    );
+  }, [params.sessions, params.workspacePath, hiddenSessionIds]);
+
+  return {
+    hideSession,
+    removeHiddenSession,
+    showSession,
+    visibleSessions,
+  };
+};
