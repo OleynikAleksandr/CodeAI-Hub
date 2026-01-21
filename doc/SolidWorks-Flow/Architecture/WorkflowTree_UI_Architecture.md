@@ -88,6 +88,13 @@ Workflow Tree становится **единой точкой правды** д
 - клик по `Artifact` открывает содержимое артефакта во **встроенном viewer** Project Manager (не VS Code editor tab),
 - клик по `Session` открывает полный диалог; после перезапуска Project Manager сессия должна восстанавливаться по persisted координатам (providerId + providerSessionId).
 
+Контракт `Resume` (без дублей):
+- клик по `Session` диспатчит intent **focus/resume** по `providerId + providerSessionId` (а не прямой `session:create`).
+- если сессия с тем же `providerId + providerSessionId` **уже есть** в списке — **фокус** на неё (не создаём новую).
+- если такая сессия была “закрыта” в UI — она **показывается снова** (local hide → show).
+- если сессии нет — создаём/resume новую и **после `session:created` подгружаем историю** из unified-session JSONL.
+- `Close` в UI = **скрыть локально**, не удалять session record в Core.
+
 Примечание по `Session Continuity`:
 - continuity/handoff — инфраструктура ядра и **не отображается** в Workflow Tree (пользователь видит только актуальную сессию шага).
 
