@@ -22,6 +22,7 @@ import {
 import { useSessionResumeIntent } from "./session-resume-intent";
 import { useSessionVisibility } from "./session-visibility";
 import { useProjectManagerSessionStream } from "./session-stream";
+import { useReviewerSessionVisibility } from "./reviewer-session-visibility";
 import { useSessionMessageSender } from "./session-message-sender";
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
@@ -43,11 +44,17 @@ export const ProjectManagerSessionView = ({
   const syncSessionsRef = useCallback((current: readonly SessionRecord[]) => {
     sessionsRef.current = current;
   }, []);
+  const { forcedHiddenSessionIds, reviewerSessionId } =
+    useReviewerSessionVisibility({
+      sessions,
+      workspacePath,
+    });
   const { hideSession, removeHiddenSession, showSession, visibleSessions } =
     useSessionVisibility({
       sessions,
       sessionsRef,
       workspacePath,
+      forcedHiddenSessionIds,
       setActiveSessionId,
     });
   const hydrateFromState = useCallback(
@@ -228,6 +235,18 @@ export const ProjectManagerSessionView = ({
     }
     setActiveSessionId(preferredSessionId);
   }, [preferredSessionId]);
+  useEffect(() => {
+    if (!reviewerSessionId) {
+      return;
+    }
+    showSession(reviewerSessionId);
+  }, [reviewerSessionId, showSession]);
+  useEffect(() => {
+    if (!activeSessionId || !forcedHiddenSessionIds.has(activeSessionId)) {
+      return;
+    }
+    setActiveSessionId(visibleSessions.at(-1)?.id ?? null);
+  }, [activeSessionId, forcedHiddenSessionIds, visibleSessions]);
   const focusSession = useCallback((sessionId: string) => {
     showSession(sessionId);
     setActiveSessionId(sessionId);
