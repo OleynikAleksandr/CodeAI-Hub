@@ -31,8 +31,8 @@
 3. [DONE] Remove: вычистить `build-all`/`build-release` от сборки/установки web-client (и артефактов/manifest записей) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `assets/ui/manifest.json`; expected commit message: `chore(release): remove web-client from build pipelines`
 4. [DONE] Git Commit: `chore(release): remove web-client from build pipelines` (hash: 2449f6c1)
 
-5. [TODO] Remove: убрать web-client bundle id из UI registry/activation и тестов — scope: `src/extension-module/ui/ui-types.ts`, `src/extension-module/ui/ui-activation.ts`, `src/__tests__/ui-registry.test.ts`; expected commit message: `chore(web-client): remove bundle id from ui registry`
-6. [TODO] Git Commit: `chore(web-client): remove bundle id from ui registry` (hash: TBD)
+5. [DONE] Remove: убрать web-client bundle id из UI registry/activation и тестов — scope: `src/extension-module/ui/ui-types.ts`, `src/extension-module/ui/ui-activation.ts`, `src/__tests__/ui-registry.test.ts`; expected commit message: `chore(web-client): remove bundle id from ui registry`
+6. [DONE] Git Commit: `chore(web-client): remove bundle id from ui registry` (hash: 98d8c3ac)
 
 7. [TODO] Remove: убрать `launchWebClient` команду и роутинг в extension/handler — scope: `src/extension.ts`, `src/extension-module/home-view-message-router/command-handler.ts`, `src/extension-module/home-view-message-router/message-types.ts`; expected commit message: `chore(web-client): drop launch command wiring`
 8. [TODO] Git Commit: `chore(web-client): drop launch command wiring` (hash: TBD)
