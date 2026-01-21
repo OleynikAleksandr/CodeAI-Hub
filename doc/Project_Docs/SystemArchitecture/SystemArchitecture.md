@@ -1,6 +1,6 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.464
+**Version:** 1.1.465
 **Last Updated:** 2026-01-21
 **Status:** Active reference (source of truth)
 
@@ -11,7 +11,7 @@
 Этот документ — **единственный источник правды** по архитектуре CodeAI-Hub. Он охватывает:
 - Автономное ядро (Core Orchestrator)
 - Extension Host Layer (VS Code)
-- UI Bundles (VS Code Webview, Project Manager; `web-client` legacy → remove)
+- UI Bundles (VS Code Webview, Project Manager)
 - CEF Launcher
 - Провайдерные модули (Claude, Codex, Gemini)
 
@@ -76,7 +76,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.464`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.465`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -87,11 +87,10 @@ Node.js сервис (`@codeai-hub/core@1.1.464`), упакованный как
 
 Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
 
-### 2.2 UI Bundles (v1.1.457)
+### 2.2 UI Bundles (v1.1.465)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
 - `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
-- `web-client`: legacy (PWA/CEF) — принято решение о полном удалении вместе со сборкой/инсталляторами/ссылками (Phase 65)
 - `project-manager`: Статическая сборка Project Manager (единственный активный UI-клиент Core на период разработки FLOW)
 
 **Установка:** `~/.codeai-hub/packages/ui/<bundleId>/<version>/` с symlink `current`.
@@ -120,7 +119,7 @@ Node.js сервис (`@codeai-hub/core@1.1.464`), упакованный как
 
 ### 3.1 Activation & Lifecycle
 
-`src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchWebClient`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
+`src/extension.ts` активирует расширение, регистрирует команды (`codeaiHub.openSettings`, `codeaiHub.launchProjectManager`) и инициализирует `HomeViewProvider`.
 
 ### 3.2 UI Bundle Bootstrap
 
@@ -152,19 +151,15 @@ Node.js сервис (`@codeai-hub/core@1.1.464`), упакованный как
 
 ### 4.1 AppHost
 
-Корневой React-компонент управляет состоянием сессий через hooks (`useSessionStore`, `useProviderPickerState`, `useSettingsState`). Модуль `core-bridge` подключается к ядру напрямую (HTTP `/api/v1/status`, WebSocket `/api/v1/stream`).
+Корневой React-компонент в режиме FLOW показывает Settings-only UI и не подключается к Core (сессии/чаты выполняются только в Project Manager).
 
 ### 4.2 Delivery
 
 Webview грузит JS/CSS из `~/.codeai-hub/packages/ui/vscode-webview/current`. VSIX не содержит `react-chat.js`/CSS.
 
-### 4.3 Layout
+### 4.3 Settings UI
 
-Сетка `session-grid`: `ActionBar`, `DialogPanel`, `TodoPanel`, `StatusPanel`, `InputPanel`. Общие дизайн-токены в `media/main-view.css`.
-
-### 4.4 Provider Picker & Settings
-
-Модули `provider-picker`, `settings/view` позволяют выбирать провайдеров и менять конфигурацию. UI отображает статус подключения (connected / offline).
+Панель настроек доступна из webview, без сессионного UI.
 
 ---
 
@@ -173,8 +168,6 @@ Webview грузит JS/CSS из `~/.codeai-hub/packages/ui/vscode-webview/curre
 ### 5.1 Bundle
 
 UI устанавливается в `~/.codeai-hub/packages/ui/project-manager/current`.
-
-Legacy: `~/.codeai-hub/packages/ui/web-client/current` (PWA/CEF) — будет удалён (Phase 65).
 
 ### 5.2 Runtime & Launcher Delivery
 
@@ -214,38 +207,34 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/1.1.464/
+│   └── darwin-arm64/1.1.465/
 │       ├── node/
 │       ├── app/
 │       └── install.json
 ├── packages/
-│   ├── launcher/macos-arm64/1.1.464/
+│   ├── launcher/macos-arm64/1.1.465/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.464/
-│       │   └── current -> 1.1.464
-│       ├── web-client/
-│       │   ├── 1.1.464/
-│       │   └── current -> 1.1.464
+│       │   ├── 1.1.465/
+│       │   └── current -> 1.1.465
 │       └── project-manager/
-│           ├── 1.1.464/
-│           └── current -> 1.1.464
+│           ├── 1.1.465/
+│           └── current -> 1.1.465
 ├── providers/
-│   ├── claude/1.1.464/
-│   ├── codex/1.1.464/
-│   └── gemini/1.1.464/
+│   ├── claude/1.1.465/
+│   ├── codex/1.1.465/
+│   └── gemini/1.1.465/
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceSlug>/<providerId>/<sessionId>.jsonl
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.464.tar.bz2
-    ├── vscode-webview-1.1.464.tar.bz2
-    ├── web-client-1.1.464.tar.bz2
-    ├── project-manager-1.1.464.tar.bz2
-    ├── claude-module-1.1.464.tar.bz2
-    ├── codex-module-1.1.464.tar.bz2
-    ├── gemini-module-1.1.464.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.464.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.465.tar.bz2
+    ├── vscode-webview-1.1.465.tar.bz2
+    ├── project-manager-1.1.465.tar.bz2
+    ├── claude-module-1.1.465.tar.bz2
+    ├── codex-module-1.1.465.tar.bz2
+    ├── gemini-module-1.1.465.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.465.tar.bz2
 ```
 
 ---
@@ -254,12 +243,12 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.464 |
-| Core | 1.1.464 |
-| UI Bundles | 1.1.464 |
-| Claude Module | 1.1.464 |
-| Codex Module | 1.1.464 |
-| Gemini Module | 1.1.464 |
+| VSIX | 1.1.465 |
+| Core | 1.1.465 |
+| UI Bundles | 1.1.465 |
+| Claude Module | 1.1.465 |
+| Codex Module | 1.1.465 |
+| Gemini Module | 1.1.465 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |
@@ -302,7 +291,6 @@ Webview запрещает inline-скрипты, ресурсы грузятс�
 VSIX не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2:
 - `vscode-webview.tar.bz2`
 - `project-manager.tar.bz2`
-- legacy: `web-client.tar.bz2` (Phase 65 removal)
 
 ### 11.2 Quality Gates
 
