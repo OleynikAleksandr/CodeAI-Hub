@@ -56,8 +56,8 @@
 3. [DONE] Fix(project-manager): дедупликация повторных resume-кликов пока биндинг `providerSessionId` не подтверждён (in-flight map по ключу `workspacePath+providerId+providerSessionId+stage+runSlug`) — scope: `src/client/project-manager/components/sessions/session-resume-intent.ts`; expected commit message: `fix(project-manager): dedupe resume while binding pending`
 4. [DONE] Git Commit: `fix(project-manager): dedupe resume while binding pending` (hash: b7b9510a)
 
-5. [TODO] Fix(core): не допускать регресса `description.sessionKind` из `reviewer` в `collector` при апдейтах snapshot (сохранять reviewer-метку, если она уже была установлена) — scope: `packages/core/src/workflow/description/description-step-store.ts`; expected commit message: `fix(core): prevent description sessionKind regression`
-6. [TODO] Git Commit: `fix(core): prevent description sessionKind regression` (hash: TBD)
+5. [DONE] Fix(core): не допускать регресса `description.sessionKind` из `reviewer` в `collector` при апдейтах snapshot (сохранять reviewer-метку, если она уже была установлена) — scope: `packages/core/src/workflow/description/description-step-store.ts`; expected commit message: `fix(core): prevent description sessionKind regression`
+6. [DONE] Git Commit: `fix(core): prevent description sessionKind regression` (hash: 399e9943)
 
 7. [TODO] Fix(project-manager): сделать label сессии в ветке Description человекочитаемым (`Reviewer session · <provider>`), с fallback (если `finalPath` есть — считать сессию reviewer) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): label reviewer session in tree`
 8. [TODO] Git Commit: `fix(project-manager): label reviewer session in tree` (hash: TBD)
