@@ -259,6 +259,11 @@
   padding: 16px;
 }
 
+.pm-artifact-markdown {
+  font-size: 0.5em;
+  line-height: 1.6;
+}
+
 .pm-details__title {
   margin: 0 0 8px 0;
   font-size: 20px;

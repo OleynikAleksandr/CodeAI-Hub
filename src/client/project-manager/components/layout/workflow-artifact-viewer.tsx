@@ -85,7 +85,7 @@ export const WorkflowArtifactViewer: React.FC<{
         <div className="pm-placeholder">Загружаем артефакт...</div>
       ) : null}
       {!error && content !== null ? (
-        <MarkdownContent content={content} />
+        <MarkdownContent className="pm-artifact-markdown" content={content} />
       ) : null}
     </div>
   );
