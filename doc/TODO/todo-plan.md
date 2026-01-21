@@ -37,8 +37,8 @@
 7. [DONE] Remove: убрать `launchWebClient` команду и роутинг в extension/handler — scope: `src/extension.ts`, `src/extension-module/home-view-message-router/command-handler.ts`, `src/extension-module/home-view-message-router/message-types.ts`; expected commit message: `chore(web-client): drop launch command wiring`
 8. [DONE] Git Commit: `chore(web-client): drop launch command wiring` (hash: 91615862)
 
-9. [TODO] Remove: убрать `launchWebClient` contribution из `package.json` — scope: `package.json`; expected commit message: `chore(web-client): remove command contribution`
-10. [TODO] Git Commit: `chore(web-client): remove command contribution` (hash: TBD)
+9. [DONE] Remove: убрать `launchWebClient` contribution из `package.json` — scope: `package.json`; expected commit message: `chore(web-client): remove command contribution`
+10. [DONE] Git Commit: `chore(web-client): remove command contribution` (hash: 2d8c9e32)
 
 11. [TODO] Remove: удалить extension-module web-client shortcut manager и его использование — scope: `src/extension-module/web-client/`, `src/extension-module/cef/launcher-setup.ts`; expected commit message: `chore(web-client): remove launcher shortcut integration`
 12. [TODO] Git Commit: `chore(web-client): remove launcher shortcut integration` (hash: TBD)
