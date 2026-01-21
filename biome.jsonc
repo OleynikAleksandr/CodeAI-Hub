@@ -5,7 +5,6 @@
     "includes": [
       "**/*",
       "!!media/react-chat.js",
-      "!!media/web-client/dist",
       "!!src/client/project-manager"
     ]
   },
