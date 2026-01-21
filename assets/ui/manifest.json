@@ -5,8 +5,8 @@
     "vscode-webview": {
       "version": "1.1.464",
       "package": "vscode-webview-1.1.464.tar.bz2",
-      "size": 164557,
-      "sha1": "2a63c2ff9c2d12649c7134cbc12987f00b50dcd9"
+      "size": 165519,
+      "sha1": "900eb4d6a3e7c0934c08c5975c10181fabd7e1c8"
     },
     "project-manager": {
       "version": "1.1.464",

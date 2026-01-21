@@ -7609,11 +7609,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react32 = __toESM(require_react());
+  var import_react33 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host.tsx
-  var import_react31 = __toESM(require_react());
+  var import_react32 = __toESM(require_react());
 
   // src/client/ui/src/app-host/loading-messages.ts
   var MESSAGE_ORDER = [
@@ -10352,11 +10352,11 @@
       }
     }
   }
-  function productionCreate(_, jsx42, jsxs40) {
+  function productionCreate(_, jsx43, jsxs41) {
     return create2;
     function create2(_2, type, props, key) {
       const isStaticChildren = Array.isArray(props.children);
-      const fn = isStaticChildren ? jsxs40 : jsx42;
+      const fn = isStaticChildren ? jsxs41 : jsx43;
       return key ? fn(type, props, key) : fn(type, props);
     }
   }
@@ -25272,833 +25272,14 @@ ${replacement}
     };
   };
 
-  // src/client/ui/src/app-host/settings-visibility.ts
-  var import_react14 = __toESM(require_react());
-  var useSettingsVisibility = () => {
-    const [settingsVisible, setSettingsVisible] = (0, import_react14.useState)(false);
-    const openSettings = (0, import_react14.useCallback)(() => {
-      setSettingsVisible(true);
-    }, []);
-    const closeSettings = (0, import_react14.useCallback)(() => {
-      setSettingsVisible(false);
-      postVsCodeMessage({ type: "settings:closed" });
-    }, []);
-    return {
-      settingsVisible,
-      openSettings,
-      closeSettings
-    };
-  };
-
-  // src/client/ui/src/app-host/use-idea-collector.ts
-  var import_react15 = __toESM(require_react());
-  var useIdeaCollector = (fallbackSendMessage) => {
-    const serviceRef = (0, import_react15.useRef)(new IdeaCollectorService());
-    const questionnaireServiceRef = (0, import_react15.useRef)(new IdeaQuestionnaireService());
-    const service = serviceRef.current;
-    const questionnaireService = questionnaireServiceRef.current;
-    (0, import_react15.useEffect)(() => {
-      const handleStreamEvent = (candidate) => {
-        if (candidate.type !== "session:stream") {
-          return false;
-        }
-        const sessionId = candidate.payload?.sessionId;
-        if (typeof sessionId !== "string") {
-          return true;
-        }
-        service.handleStreamEvent(sessionId, candidate.payload?.event);
-        return true;
-      };
-      const handleAssistantMessage = (candidate) => {
-        if (candidate.type !== "session:message") {
-          return;
-        }
-        const sessionId = candidate.payload?.sessionId;
-        if (typeof sessionId !== "string") {
-          return;
-        }
-        const message = candidate.payload?.message;
-        if (message?.role !== "assistant") {
-          return;
-        }
-        if (typeof message.content !== "string") {
-          return;
-        }
-        service.recordAssistantMessage(sessionId, message.content);
-      };
-      const handleSessionEvent = (event) => {
-        const candidate = event.data;
-        if (handleStreamEvent(candidate)) {
-          return;
-        }
-        handleAssistantMessage(candidate);
-      };
-      window.addEventListener("message", handleSessionEvent);
-      return () => {
-        window.removeEventListener("message", handleSessionEvent);
-      };
-    }, [service]);
-    const startCollection = (0, import_react15.useCallback)(
-      (sessionId) => {
-        service.startCollection(sessionId);
-      },
-      [service]
-    );
-    const sendMessage = (0, import_react15.useCallback)(
-      (sessionId, content3) => {
-        if (service.isIdeaCollectorSession(sessionId)) {
-          if (!service.isQuestionnairePending(sessionId)) {
-            const outputPaths = service.getOutputPathsForSessionId(sessionId);
-            const question = service.getLastAssistantMessage(sessionId);
-            if (outputPaths && question) {
-              questionnaireService.appendClarificationAnswer(
-                sessionId,
-                outputPaths,
-                question,
-                content3
-              ).catch(() => {
-              });
-            }
-          }
-          service.continueConversation(sessionId, content3);
-          return;
-        }
-        fallbackSendMessage(sessionId, content3);
-      },
-      [fallbackSendMessage, questionnaireService, service]
-    );
-    return { startCollection, sendMessage };
-  };
-
-  // src/client/ui/src/app-host/use-provider-picker-open-handler.ts
-  var import_react16 = __toESM(require_react());
-
-  // src/client/ui/src/root-dom.ts
-  var activateRoot = () => {
-    const rootElement = document.getElementById("root");
-    if (rootElement) {
-      rootElement.classList.add("active");
-    }
-  };
-
-  // src/client/ui/src/app-host/use-provider-picker-open-handler.ts
-  var isFlowStageId = (value) => value === "chat" || value === "idea" || value === "spec" || value === "plan" || value === "execute";
-  var useProviderPickerOpenHandler = (openPicker, selectStage, lockStageSelection) => (0, import_react16.useCallback)(
-    (providers, stage) => {
-      activateRoot();
-      if (providers.length === 0) {
-        return;
-      }
-      openPicker(providers);
-      if (stage && isFlowStageId(stage)) {
-        lockStageSelection();
-        selectStage(stage);
-      }
-    },
-    [lockStageSelection, openPicker, selectStage]
-  );
-
-  // src/client/ui/src/app-host/webview-message-handler.ts
-  var import_react17 = __toESM(require_react());
-
-  // src/client/ui/src/app-host/webview-message-types.ts
-  var isIncomingMessage = (value) => Boolean(value && typeof value === "object" && "type" in value);
-  var isCoreBridgeStatePayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    return Array.isArray(candidate.sessions) && Array.isArray(candidate.providers);
-  };
-  var isSessionMessagePayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    if (typeof candidate.sessionId !== "string") {
-      return false;
-    }
-    const message = candidate.message;
-    if (!message || typeof message !== "object") {
-      return false;
-    }
-    const messageCandidate = message;
-    return typeof messageCandidate.id === "string" && typeof messageCandidate.content === "string" && typeof messageCandidate.createdAt === "number";
-  };
-  var isSessionDeletedPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    return typeof candidate.sessionId === "string";
-  };
-  var isCoreRuntimeStatusPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    return typeof candidate.label === "string";
-  };
-  var isSessionHistoryPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    return typeof candidate.sessionId === "string" && Array.isArray(candidate.messages);
-  };
-  var isSessionBindingPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    if (typeof candidate.sessionId !== "string") {
-      return false;
-    }
-    const status = candidate.status;
-    if (status !== "pending" && status !== "ready" && status !== "failed") {
-      return false;
-    }
-    const providerSessionId = candidate.providerSessionId;
-    if (providerSessionId !== null && typeof providerSessionId !== "string") {
-      return false;
-    }
-    return true;
-  };
-
-  // src/client/ui/src/app-host/webview-message-dispatcher.ts
-  var handleProviderPickerOpenMessage = (message, onProviderPickerOpen) => {
-    const providers = parseProviderList(message.payload?.providers);
-    const stage = typeof message.payload?.stage === "string" ? message.payload.stage : null;
-    if (providers.length > 0) {
-      onProviderPickerOpen(providers, stage);
-      return;
-    }
-    if (stage) {
-      onProviderPickerOpen([], stage);
-    }
-  };
-  var handleSessionCreatedMessage = (message, onSessionCreated) => {
-    if (isSessionRecordCandidate(message.payload)) {
-      onSessionCreated(message.payload);
-    }
-  };
-  var handleCoreStateMessage = (message, onCoreState) => {
-    if (!(onCoreState && isCoreBridgeStatePayload(message.payload))) {
-      return;
-    }
-    onCoreState(message.payload);
-  };
-  var handleSessionMessageEvent = (message, onSessionMessage) => {
-    if (!(onSessionMessage && isSessionMessagePayload(message.payload))) {
-      return;
-    }
-    onSessionMessage(message.payload);
-  };
-  var handleSessionHistoryMessage = (message, onSessionHistory) => {
-    if (!(onSessionHistory && message.type === "session:history")) {
-      return;
-    }
-    const payload = message.payload;
-    if (!isSessionHistoryPayload(payload)) {
-      return;
-    }
-    const normalized = payload.messages.map((candidate) => sanitizeMessage(candidate)).filter((entry) => Boolean(entry));
-    onSessionHistory({
-      sessionId: payload.sessionId,
-      messages: normalized
-    });
-  };
-  var handleSessionDeletedMessage = (message, onSessionDeleted) => {
-    if (!(onSessionDeleted && isSessionDeletedPayload(message.payload))) {
-      return;
-    }
-    onSessionDeleted(message.payload);
-  };
-  var handleSessionBindingMessage = (message, onSessionBinding) => {
-    if (!(onSessionBinding && isSessionBindingPayload(message.payload))) {
-      return;
-    }
-    onSessionBinding(message.payload);
-  };
-  var handleCoreLoadingStatusMessage = (message, onCoreLoadingStatus) => {
-    if (!(onCoreLoadingStatus && isCoreRuntimeStatusPayload(message.payload))) {
-      return;
-    }
-    onCoreLoadingStatus(message.payload);
-  };
-  var dispatchSessionMessage = (message, handlers2) => {
-    switch (message.type) {
-      case "session:created":
-        handleSessionCreatedMessage(message, handlers2.onSessionCreated);
-        return true;
-      case "session:clearAll":
-        handlers2.onSessionClearAll();
-        return true;
-      case "session:focusLast":
-        handlers2.onSessionFocusLast();
-        return true;
-      case "session:message":
-        handleSessionMessageEvent(message, handlers2.onSessionMessage);
-        return true;
-      case "session:deleted":
-        handleSessionDeletedMessage(message, handlers2.onSessionDeleted);
-        return true;
-      case "session:binding":
-        handleSessionBindingMessage(message, handlers2.onSessionBinding);
-        return true;
-      case "session:history":
-        handleSessionHistoryMessage(message, handlers2.onSessionHistory);
-        return true;
-      default:
-        return false;
-    }
-  };
-  var dispatchWebviewMessage = (rawMessage, handlers2) => {
-    if (!isIncomingMessage(rawMessage)) {
-      return;
-    }
-    const message = rawMessage;
-    if (dispatchSessionMessage(message, {
-      onSessionCreated: handlers2.onSessionCreated,
-      onSessionClearAll: handlers2.onSessionClearAll,
-      onSessionFocusLast: handlers2.onSessionFocusLast,
-      onSessionMessage: handlers2.onSessionMessage,
-      onSessionDeleted: handlers2.onSessionDeleted,
-      onSessionBinding: handlers2.onSessionBinding,
-      onSessionHistory: handlers2.onSessionHistory
-    })) {
-      return;
-    }
-    switch (message.type) {
-      case "core:connection": {
-        if (handlers2.onCoreConnectionStatus && message.payload) {
-          const candidate = message.payload;
-          const status = candidate.status;
-          if (typeof status === "string") {
-            const detail = typeof candidate.detail === "string" ? candidate.detail : void 0;
-            handlers2.onCoreConnectionStatus(status, detail);
-          }
-        }
-        return;
-      }
-      case "providerPicker:open":
-        handleProviderPickerOpenMessage(message, handlers2.onProviderPickerOpen);
-        return;
-      case "ui:showSettings":
-        handlers2.onShowSettings();
-        return;
-      case "core:state":
-        handleCoreStateMessage(message, handlers2.onCoreState);
-        return;
-      case "core:loading-status":
-        handleCoreLoadingStatusMessage(message, handlers2.onCoreLoadingStatus);
-        return;
-      default:
-        return;
-    }
-  };
-
-  // src/client/ui/src/app-host/webview-message-handler.ts
-  var useWebviewMessageHandler = ({
-    onProviderPickerOpen,
-    onSessionCreated,
-    onSessionClearAll,
-    onSessionFocusLast,
-    onShowSettings,
-    onCoreState,
-    onCoreConnectionStatus,
-    onCoreLoadingStatus,
-    onSessionMessage,
-    onSessionDeleted,
-    onSessionBinding,
-    onSessionHistory
-  }) => {
-    (0, import_react17.useEffect)(() => {
-      const handleIncomingMessage = (event) => {
-        dispatchWebviewMessage(event.data, {
-          onProviderPickerOpen,
-          onSessionCreated,
-          onSessionClearAll,
-          onSessionFocusLast,
-          onShowSettings,
-          onCoreState,
-          onCoreConnectionStatus,
-          onCoreLoadingStatus,
-          onSessionMessage,
-          onSessionDeleted,
-          onSessionBinding,
-          onSessionHistory
-        });
-      };
-      window.addEventListener("message", handleIncomingMessage);
-      return () => {
-        window.removeEventListener("message", handleIncomingMessage);
-      };
-    }, [
-      onProviderPickerOpen,
-      onSessionCreated,
-      onSessionClearAll,
-      onSessionFocusLast,
-      onShowSettings,
-      onCoreState,
-      onCoreConnectionStatus,
-      onCoreLoadingStatus,
-      onSessionMessage,
-      onSessionDeleted,
-      onSessionBinding,
-      onSessionHistory
-    ]);
-  };
-
-  // src/client/ui/src/components/action-bar/index.tsx
-  var import_react19 = __toESM(require_react());
-
-  // src/client/ui/src/components/action-bar/context-form.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
-  var ActionBarContextForm = ({
-    mode,
-    title,
-    name: name2,
-    description,
-    controlsDisabled,
-    statusMessage,
-    onNameChange,
-    onDescriptionChange,
-    onSubmit,
-    onCancel
-  }) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
-    mode ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("form", { className: "action-bar__context-form", onSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("span", { className: "action-bar__context-form-title", children: title }),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-        "input",
-        {
-          "aria-label": "Name",
-          className: "action-bar__context-input",
-          onChange: (event) => onNameChange(event.target.value),
-          placeholder: "Name",
-          type: "text",
-          value: name2
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-        "input",
-        {
-          "aria-label": "Description",
-          className: "action-bar__context-input",
-          onChange: (event) => onDescriptionChange(event.target.value),
-          placeholder: "Description (optional)",
-          type: "text",
-          value: description
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "action-bar__context-form-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-          "button",
-          {
-            className: "action-bar__context-button",
-            disabled: controlsDisabled,
-            type: "submit",
-            children: "Create"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-          "button",
-          {
-            className: "action-bar__context-button",
-            onClick: onCancel,
-            type: "button",
-            children: "Cancel"
-          }
-        )
-      ] })
-    ] }) : null,
-    statusMessage ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("output", { "aria-live": "polite", className: "action-bar__context-status", children: statusMessage }) : null
-  ] });
-
-  // src/client/ui/src/components/action-bar/use-initiative-context.ts
-  var import_react18 = __toESM(require_react());
-
-  // src/client/ui/src/api/orchestrator/initiatives-client.ts
-  var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
-  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isInitiativeSummary = (value) => {
-    if (!isRecord10(value)) {
-      return false;
-    }
-    return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
-  };
-  var parseInitiatives = (value) => {
-    if (!isRecord10(value)) {
-      return [];
-    }
-    const raw = value.initiatives;
-    if (!Array.isArray(raw)) {
-      return [];
-    }
-    const initiatives = [];
-    for (const entry of raw) {
-      if (!isInitiativeSummary(entry)) {
-        continue;
-      }
-      initiatives.push({
-        initiativeSlug: entry.initiativeSlug,
-        displayName: entry.displayName,
-        description: typeof entry.description === "string" ? entry.description : void 0,
-        currentRunId: typeof entry.currentRunId === "string" ? entry.currentRunId : void 0
-      });
-    }
-    return initiatives;
-  };
-  var parseCreatedInitiative = (value) => {
-    if (!isRecord10(value)) {
-      return null;
-    }
-    const initiative = value.initiative;
-    if (!isInitiativeSummary(initiative)) {
-      return null;
-    }
-    return {
-      initiativeSlug: initiative.initiativeSlug,
-      displayName: initiative.displayName,
-      description: typeof initiative.description === "string" ? initiative.description : void 0,
-      currentRunId: typeof initiative.currentRunId === "string" ? initiative.currentRunId : void 0
-    };
-  };
-  var buildInitiativesUrl = (httpUrl, workspacePath) => {
-    const url = new URL(joinUrl(httpUrl, INITIATIVES_ENDPOINT));
-    url.searchParams.set("workspacePath", workspacePath);
-    return url.toString();
-  };
-  var listInitiatives = async (httpUrl, workspacePath) => {
-    try {
-      const response = await fetch(buildInitiativesUrl(httpUrl, workspacePath), {
-        method: "GET"
-      });
-      if (!response.ok) {
-        return {
-          ok: false,
-          error: `Failed to load initiatives (HTTP ${response.status}).`
-        };
-      }
-      const payload = await response.json();
-      return { ok: true, data: parseInitiatives(payload) };
-    } catch {
-      return { ok: false, error: "Failed to reach CodeAI Hub core." };
-    }
-  };
-  var createInitiative = async (httpUrl, workspacePath, input) => {
-    try {
-      const response = await fetch(buildInitiativesUrl(httpUrl, workspacePath), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          workspacePath,
-          displayName: input.displayName,
-          description: input.description,
-          createInitialRun: input.createInitialRun
-        })
-      });
-      if (!response.ok) {
-        return {
-          ok: false,
-          error: `Failed to create initiative (HTTP ${response.status}).`
-        };
-      }
-      const payload = await response.json();
-      const initiative = parseCreatedInitiative(payload);
-      if (!initiative) {
-        return { ok: false, error: "Invalid initiative response payload." };
-      }
-      return { ok: true, data: initiative };
-    } catch {
-      return { ok: false, error: "Failed to reach CodeAI Hub core." };
-    }
-  };
-
-  // src/client/ui/src/components/action-bar/use-initiative-context.ts
-  var resolveWorkspacePath = () => {
-    const globalScope2 = window;
-    const workspacePath = globalScope2.__CODEAI_CORE_CONFIG?.workspacePath;
-    if (typeof workspacePath !== "string" || workspacePath.length === 0) {
-      return null;
-    }
-    return workspacePath;
-  };
-  var useInitiativeContext = (disabled) => {
-    const [initiatives, setInitiatives] = (0, import_react18.useState)([]);
-    const [selectedInitiativeSlug, setSelectedInitiativeSlug] = (0, import_react18.useState)(null);
-    const [statusMessage, setStatusMessage] = (0, import_react18.useState)(null);
-    const coreHttpUrl = (0, import_react18.useMemo)(() => resolveCoreHttpUrl(), []);
-    const workspacePath = (0, import_react18.useMemo)(() => resolveWorkspacePath(), []);
-    const hasWorkspace = Boolean(coreHttpUrl && workspacePath);
-    const clearStatus = (0, import_react18.useCallback)(() => {
-      setStatusMessage(null);
-    }, []);
-    const refreshInitiatives = (0, import_react18.useCallback)(
-      async (preferredSlug) => {
-        if (!(coreHttpUrl && workspacePath)) {
-          return;
-        }
-        const result = await listInitiatives(coreHttpUrl, workspacePath);
-        if (!result.ok) {
-          setInitiatives([]);
-          return;
-        }
-        setInitiatives([...result.data]);
-        const candidate = preferredSlug ?? selectedInitiativeSlug;
-        const fallback = candidate && result.data.some(
-          (initiative) => initiative.initiativeSlug === candidate
-        ) ? candidate : result.data[0]?.initiativeSlug ?? null;
-        setSelectedInitiativeSlug(fallback);
-      },
-      [coreHttpUrl, selectedInitiativeSlug, workspacePath]
-    );
-    (0, import_react18.useEffect)(() => {
-      if (disabled || !hasWorkspace) {
-        return;
-      }
-      refreshInitiatives().catch(() => {
-      });
-    }, [disabled, hasWorkspace, refreshInitiatives]);
-    const selectedInitiative = (0, import_react18.useMemo)(
-      () => initiatives.find(
-        (initiative) => initiative.initiativeSlug === selectedInitiativeSlug
-      ) ?? null,
-      [initiatives, selectedInitiativeSlug]
-    );
-    const initiativeTitle = selectedInitiative ? [selectedInitiative.displayName, selectedInitiative.description].filter(Boolean).join(" \u2014 ") : "Select initiative";
-    const handleInitiativeChange = (0, import_react18.useCallback)(
-      (event) => {
-        const nextSlug = event.target.value;
-        setSelectedInitiativeSlug(nextSlug.length > 0 ? nextSlug : null);
-      },
-      []
-    );
-    const createInitiative2 = (0, import_react18.useCallback)(
-      async (input) => {
-        if (!(coreHttpUrl && workspacePath)) {
-          setStatusMessage("Workspace path is unavailable.");
-          return false;
-        }
-        const displayName = input.displayName.trim();
-        if (!displayName) {
-          setStatusMessage("Provide an initiative name.");
-          return false;
-        }
-        const result = await createInitiative(coreHttpUrl, workspacePath, {
-          displayName,
-          description: input.description?.trim() || void 0
-        });
-        if (!result.ok) {
-          setStatusMessage(result.error);
-          return false;
-        }
-        await refreshInitiatives(result.data.initiativeSlug);
-        setStatusMessage(null);
-        return true;
-      },
-      [coreHttpUrl, refreshInitiatives, workspacePath]
-    );
-    return {
-      initiatives,
-      selectedInitiativeSlug,
-      initiativeTitle,
-      canStartFlow: Boolean(selectedInitiativeSlug),
-      controlsDisabled: disabled || !hasWorkspace,
-      statusMessage,
-      handleInitiativeChange,
-      createInitiative: createInitiative2,
-      clearStatus
-    };
-  };
-
-  // src/client/ui/src/components/action-bar/index.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
-  var BUTTONS = [
-    { id: "startChat", label: ["Simple", "Chat"] },
-    { id: "startIdea", label: ["Idea", ""] },
-    { id: "startSpec", label: ["Spec", ""] },
-    { id: "startPlan", label: ["Plan", ""] },
-    { id: "startExecute", label: ["Execute", ""] }
-  ];
-  var CHAT_BUTTONS = BUTTONS.filter((button) => button.id === "startChat");
-  var FLOW_BUTTONS = BUTTONS.filter((button) => button.id !== "startChat");
-  var ActionBar = ({ disabled = false }) => {
-    const {
-      initiatives,
-      selectedInitiativeSlug,
-      initiativeTitle,
-      canStartFlow,
-      controlsDisabled,
-      statusMessage,
-      handleInitiativeChange,
-      createInitiative: createInitiative2,
-      clearStatus
-    } = useInitiativeContext(disabled);
-    const [createMode, setCreateMode] = (0, import_react19.useState)(null);
-    const [draftName, setDraftName] = (0, import_react19.useState)("");
-    const [draftDescription, setDraftDescription] = (0, import_react19.useState)("");
-    const initiativePlaceholder = initiatives.length === 0 ? "No initiatives yet" : "Select initiative";
-    const formTitle = "New initiative";
-    const handleStartCreateInitiative = (0, import_react19.useCallback)(() => {
-      clearStatus();
-      setCreateMode("initiative");
-      setDraftName("");
-      setDraftDescription("");
-    }, [clearStatus]);
-    const handleCancelCreate = (0, import_react19.useCallback)(() => {
-      setCreateMode(null);
-      setDraftName("");
-      setDraftDescription("");
-    }, []);
-    const handleSubmitCreate = (0, import_react19.useCallback)(
-      async (event) => {
-        event.preventDefault();
-        if (!createMode) {
-          return;
-        }
-        const input = {
-          displayName: draftName,
-          description: draftDescription
-        };
-        const success = createMode === "initiative" ? await createInitiative2(input) : false;
-        if (success) {
-          setCreateMode(null);
-          setDraftName("");
-          setDraftDescription("");
-        }
-      },
-      [createInitiative2, createMode, draftDescription, draftName]
-    );
-    const handleClick = (0, import_react19.useCallback)(
-      (command) => {
-        if (command !== "startChat" && !canStartFlow) {
-          return;
-        }
-        if (disabled) {
-          return;
-        }
-        activateRoot();
-        postVsCodeMessage({ command });
-      },
-      [canStartFlow, disabled]
-    );
-    const flowDisabled = disabled || !canStartFlow;
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "action-bar__surface", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-        "div",
-        {
-          "aria-hidden": "true",
-          className: "action-bar__rail action-bar__rail--top"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-        "div",
-        {
-          "aria-hidden": "true",
-          className: "action-bar__rail action-bar__rail--bottom"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "action-bar__context", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "action-bar__context-group", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("label", { className: "action-bar__context-label", htmlFor: "initiative", children: "Initiative" }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "action-bar__context-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
-            "select",
-            {
-              "aria-label": "Initiative",
-              className: "action-bar__context-select",
-              disabled: controlsDisabled,
-              id: "initiative",
-              onChange: handleInitiativeChange,
-              title: initiativeTitle,
-              value: selectedInitiativeSlug ?? "",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("option", { disabled: true, value: "", children: initiativePlaceholder }),
-                initiatives.map((initiative) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-                  "option",
-                  {
-                    value: initiative.initiativeSlug,
-                    children: initiative.displayName
-                  },
-                  initiative.initiativeSlug
-                ))
-              ]
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-            "button",
-            {
-              className: "action-bar__context-button",
-              disabled: controlsDisabled,
-              onClick: handleStartCreateInitiative,
-              type: "button",
-              children: "New"
-            }
-          )
-        ] })
-      ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-        ActionBarContextForm,
-        {
-          controlsDisabled,
-          description: draftDescription,
-          mode: createMode,
-          name: draftName,
-          onCancel: handleCancelCreate,
-          onDescriptionChange: setDraftDescription,
-          onNameChange: setDraftName,
-          onSubmit: handleSubmitCreate,
-          statusMessage,
-          title: formTitle
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "action-bar__buttons", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "action-bar__button-zone action-bar__button-zone--chat", children: CHAT_BUTTONS.map(({ id, label }) => {
-          const ariaLabel = label.filter(Boolean).join(" ");
-          return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
-            "button",
-            {
-              "aria-label": ariaLabel,
-              className: "action-bar__button",
-              disabled,
-              onClick: () => handleClick(id),
-              type: "button",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "action-bar__line", children: label[0] }),
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "action-bar__line", children: label[1] })
-              ]
-            },
-            id
-          );
-        }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "action-bar__button-zone action-bar__button-zone--flow", children: FLOW_BUTTONS.map(({ id, label }) => {
-          const ariaLabel = label.filter(Boolean).join(" ");
-          return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
-            "button",
-            {
-              "aria-label": ariaLabel,
-              className: "action-bar__button",
-              disabled: flowDisabled,
-              onClick: () => handleClick(id),
-              type: "button",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "action-bar__line", children: label[0] }),
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "action-bar__line", children: label[1] })
-              ]
-            },
-            id
-          );
-        }) })
-      ] })
-    ] }) });
-  };
-  var action_bar_default = ActionBar;
+  // src/client/ui/src/app-host/settings-only-host.tsx
+  var import_react27 = __toESM(require_react());
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_react30 = __toESM(require_react());
+  var import_react24 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_react20 = __toESM(require_react());
+  var import_react14 = __toESM(require_react());
 
   // src/types/claude-model-registry.ts
   var CLAUDE_MODEL_ALIASES = [
@@ -26128,7 +25309,7 @@ ${replacement}
   var DEFAULT_CLAUDE_MODEL_ALIAS = "default";
 
   // src/client/ui/src/components/settings/settings-card.tsx
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
   var cardStyles = {
     background: "#252526",
     borderRadius: "6px",
@@ -26154,9 +25335,9 @@ ${replacement}
     title,
     action,
     children
-  }) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: cardStyles, children: [
-    title ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: headerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { style: titleStyles, children: title }),
+  }) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: cardStyles, children: [
+    title ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: headerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h3", { style: titleStyles, children: title }),
       action
     ] }) : null,
     children
@@ -26254,12 +25435,12 @@ ${replacement}
   };
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   var ClaudeDefaultModelCard = ({
     defaultModel,
     onDefaultModelChange
   }) => {
-    const [hoveredAlias, setHoveredAlias] = (0, import_react20.useState)(
+    const [hoveredAlias, setHoveredAlias] = (0, import_react14.useState)(
       null
     );
     const handleRowClick = (model) => {
@@ -26271,9 +25452,9 @@ ${replacement}
         onDefaultModelChange(model);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(settings_card_default, { title: "Claude Default model", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/Knowledge/Claude_Model_Aliases.md" }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(settings_card_default, { title: "Claude Default model", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/Knowledge/Claude_Model_Aliases.md" }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
         const isSelected = defaultModel === model.alias;
         const rowStyle = {
           ...rowBaseStyles,
@@ -26283,7 +25464,7 @@ ${replacement}
         };
         return (
           // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
             "div",
             {
               "aria-checked": isSelected,
@@ -26295,20 +25476,20 @@ ${replacement}
               style: rowStyle,
               tabIndex: -1,
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
                   "div",
                   {
                     style: {
                       ...radioCircleStyles,
                       ...isSelected ? radioCircleSelectedStyles : {}
                     },
-                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: radioCircleInnerStyles }) : null
+                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: radioCircleInnerStyles }) : null
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: modelInfoStyles, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: aliasStyles, children: model.alias }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: modelInfoStyles, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: aliasStyles, children: model.alias }),
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                 ] })
               ]
             },
@@ -26316,13 +25497,13 @@ ${replacement}
           )
         );
       }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
     ] });
   };
-  var claude_default_model_card_default = (0, import_react20.memo)(ClaudeDefaultModelCard);
+  var claude_default_model_card_default = (0, import_react14.memo)(ClaudeDefaultModelCard);
 
   // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_react22 = __toESM(require_react());
+  var import_react16 = __toESM(require_react());
 
   // src/types/codex-model-registry.ts
   var CODEX_RECOMMENDED_MODELS = [
@@ -26480,8 +25661,8 @@ ${replacement}
   };
 
   // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
-  var import_react21 = __toESM(require_react());
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
+  var import_react15 = __toESM(require_react());
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
   var overlayStyles = {
     position: "fixed",
     inset: 0,
@@ -26610,8 +25791,8 @@ ${replacement}
     onSave,
     onCancel
   }) => {
-    const [selectedReasoning, setSelectedReasoning] = (0, import_react21.useState)(initialReasoning);
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+    const [selectedReasoning, setSelectedReasoning] = (0, import_react15.useState)(initialReasoning);
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
       "div",
       {
         "aria-label": `Reasoning effort for ${model.displayName}`,
@@ -26619,19 +25800,19 @@ ${replacement}
         role: "dialog",
         style: dialogStyles,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: headerStyles2, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("h3", { style: titleStyles2, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: headerStyles2, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("h3", { style: titleStyles2, children: [
                 model.displayName,
                 " reasoning"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: subtitleStyles, children: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session." })
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: subtitleStyles, children: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session." })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { onClick: onCancel, style: closeButtonStyles, type: "button", children: "Close" })
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("button", { onClick: onCancel, style: closeButtonStyles, type: "button", children: "Close" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: optionListStyles, children: CODEX_REASONING_LEVELS.map((level) => {
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: optionListStyles, children: CODEX_REASONING_LEVELS.map((level) => {
             const isSelected = level.name === selectedReasoning;
-            return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
+            return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
               "label",
               {
                 style: {
@@ -26639,7 +25820,7 @@ ${replacement}
                   ...isSelected ? optionSelectedStyles : null
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
                     "input",
                     {
                       checked: isSelected,
@@ -26649,13 +25830,13 @@ ${replacement}
                       type: "radio"
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: optionTitleStyles, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: optionTitleStyles, children: [
                       level.name,
-                      level.default ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: defaultBadgeStyles, children: "Default" }) : null
+                      level.default ? /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: defaultBadgeStyles, children: "Default" }) : null
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: optionDescriptionStyles, children: level.description }),
-                    /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("p", { style: optionUseCaseStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { style: optionDescriptionStyles, children: level.description }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { style: optionUseCaseStyles, children: [
                       "Use case: ",
                       level.useCase
                     ] })
@@ -26665,9 +25846,9 @@ ${replacement}
               level.name
             );
           }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: footerStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { onClick: onCancel, style: cancelButtonStyles, type: "button", children: "Cancel" }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: footerStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("button", { onClick: onCancel, style: cancelButtonStyles, type: "button", children: "Cancel" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               "button",
               {
                 onClick: () => onSave(selectedReasoning),
@@ -26684,15 +25865,15 @@ ${replacement}
   var codex_reasoning_dialog_default = CodexReasoningDialog;
 
   // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
-  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
     "div",
     {
       style: {
         ...radioCircleStyles,
         ...checked ? radioCircleSelectedStyles : {}
       },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: radioCircleInnerStyles }) : null
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: radioCircleInnerStyles }) : null
     }
   );
   var CodexDefaultModelCard = ({
@@ -26701,15 +25882,15 @@ ${replacement}
     onDefaultModelChange,
     onReasoningChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react22.useState)(null);
-    const [hoveredRowId, setHoveredRowId] = (0, import_react22.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react22.useState)(
+    const [activeModelId, setActiveModelId] = (0, import_react16.useState)(null);
+    const [hoveredRowId, setHoveredRowId] = (0, import_react16.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react16.useState)(
       null
     );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react22.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react16.useState)(
       null
     );
-    const recommendedModelIds = (0, import_react22.useMemo)(
+    const recommendedModelIds = (0, import_react16.useMemo)(
       () => new Set(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
       []
     );
@@ -26732,11 +25913,11 @@ ${replacement}
       event.stopPropagation();
       setActiveModelId(modelId);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(settings_card_default, { title: "Codex Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
-        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: warningStyles, children: "The saved default model is no longer available. Falling back to GPT-5.2-Codex." }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: listStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(settings_card_default, { title: "Codex Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
+        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: warningStyles, children: "The saved default model is no longer available. Falling back to GPT-5.2-Codex." }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: listStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
           const isSelected = selectedModelId === model.id;
           const isRowHovered = hoveredRowId === model.id;
           const reasoningLevel = resolveReasoning(model.id);
@@ -26756,7 +25937,7 @@ ${replacement}
           };
           return (
             // biome-ignore lint/a11y/useSemanticElements: Custom radio to avoid browser focus styles on native input
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
               "div",
               {
                 "aria-checked": isSelected,
@@ -26768,16 +25949,16 @@ ${replacement}
                 style: rowStyle,
                 tabIndex: -1,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(RadioCircle, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: modelBodyStyles, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: modelIdStyles, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(RadioCircle, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: modelBodyStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: modelIdStyles, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: reasoningRowStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: reasoningRowStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
                         "button",
                         {
                           onClick: (e) => handleReasoningButtonClick(e, model.id),
@@ -26804,9 +25985,9 @@ ${replacement}
             )
           );
         }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
       ] }),
-      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
         codex_reasoning_dialog_default,
         {
           initialReasoning: resolveReasoning(activeModel.id),
@@ -26820,10 +26001,10 @@ ${replacement}
       ) : null
     ] });
   };
-  var codex_default_model_card_default = (0, import_react22.memo)(CodexDefaultModelCard);
+  var codex_default_model_card_default = (0, import_react16.memo)(CodexDefaultModelCard);
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_react24 = __toESM(require_react());
+  var import_react18 = __toESM(require_react());
 
   // src/types/gemini-model-registry.ts
   var GEMINI_RECOMMENDED_MODELS = [
@@ -26943,8 +26124,8 @@ ${replacement}
   };
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
-  var import_react23 = __toESM(require_react());
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
+  var import_react17 = __toESM(require_react());
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
   var overlayStyles2 = {
     position: "fixed",
     inset: 0,
@@ -27073,8 +26254,8 @@ ${replacement}
     onSave,
     onCancel
   }) => {
-    const [selectedLevel, setSelectedLevel] = (0, import_react23.useState)(initialLevel);
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: overlayStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+    const [selectedLevel, setSelectedLevel] = (0, import_react17.useState)(initialLevel);
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: overlayStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
       "div",
       {
         "aria-label": `Thinking level for ${model.displayName}`,
@@ -27082,21 +26263,21 @@ ${replacement}
         role: "dialog",
         style: dialogStyles2,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: headerStyles3, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("h3", { style: titleStyles3, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: headerStyles3, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("h3", { style: titleStyles3, children: [
                 model.displayName,
                 " thinking"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: subtitleStyles2, children: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session." })
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: subtitleStyles2, children: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session." })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { onClick: onCancel, style: closeButtonStyles2, type: "button", children: "Close" })
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { onClick: onCancel, style: closeButtonStyles2, type: "button", children: "Close" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: optionListStyles2, children: GEMINI_THINKING_LEVELS.filter(
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: optionListStyles2, children: GEMINI_THINKING_LEVELS.filter(
             (level) => model.supportedThinkingLevels.includes(level.name)
           ).map((level) => {
             const isSelected = level.name === selectedLevel;
-            return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+            return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
               "label",
               {
                 style: {
@@ -27104,7 +26285,7 @@ ${replacement}
                   ...isSelected ? optionSelectedStyles2 : null
                 },
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
                     "input",
                     {
                       checked: isSelected,
@@ -27114,13 +26295,13 @@ ${replacement}
                       type: "radio"
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: optionTitleStyles2, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: optionTitleStyles2, children: [
                       level.name,
-                      level.name === DEFAULT_GEMINI_THINKING_LEVEL ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { style: defaultBadgeStyles2, children: "Default" }) : null
+                      level.name === DEFAULT_GEMINI_THINKING_LEVEL ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: defaultBadgeStyles2, children: "Default" }) : null
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: optionDescriptionStyles2, children: level.description }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { style: optionUseCaseStyles2, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: optionDescriptionStyles2, children: level.description }),
+                    /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("p", { style: optionUseCaseStyles2, children: [
                       "Use case: ",
                       level.useCase
                     ] })
@@ -27130,9 +26311,9 @@ ${replacement}
               level.name
             );
           }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: footerStyles2, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: footerStyles2, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               "button",
               {
                 onClick: () => onSave(selectedLevel),
@@ -27149,15 +26330,15 @@ ${replacement}
   var gemini_thinking_dialog_default = GeminiThinkingDialog;
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
-  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
+  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
     "div",
     {
       style: {
         ...radioCircleStyles,
         ...checked ? radioCircleSelectedStyles : {}
       },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: radioCircleInnerStyles }) : null
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: radioCircleInnerStyles }) : null
     }
   );
   var GeminiDefaultModelCard = ({
@@ -27166,14 +26347,14 @@ ${replacement}
     onDefaultModelChange,
     onThinkingChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react24.useState)(
+    const [activeModelId, setActiveModelId] = (0, import_react18.useState)(
       null
     );
-    const [hoveredRowId, setHoveredRowId] = (0, import_react24.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react24.useState)(
+    const [hoveredRowId, setHoveredRowId] = (0, import_react18.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react18.useState)(
       null
     );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react24.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react18.useState)(
       null
     );
     const activeModel = GEMINI_RECOMMENDED_MODELS.find(
@@ -27193,10 +26374,10 @@ ${replacement}
       event.stopPropagation();
       setActiveModelId(modelId);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/Knowledge/Gemini_Model_Selection.md" }),
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/Knowledge/Gemini_Model_Selection.md" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
           const isSelected = defaultModel === model.id;
           const isRowHovered = hoveredRowId === model.id;
           const thinkingLevel = resolveThinkingLevel(model.id);
@@ -27216,7 +26397,7 @@ ${replacement}
           };
           return (
             // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
               "div",
               {
                 "aria-checked": isSelected,
@@ -27228,16 +26409,16 @@ ${replacement}
                 style: rowStyle,
                 tabIndex: -1,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(RadioCircle2, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: modelBodyStyles2, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: modelIdStyles2, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                  /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(RadioCircle2, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: modelBodyStyles2, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: modelIdStyles2, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: reasoningRowStyles2, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: reasoningLabelStyles2, children: "Configure thinking:" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: reasoningRowStyles2, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { style: reasoningLabelStyles2, children: "Configure thinking:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                         "button",
                         {
                           onClick: (e) => handleThinkingButtonClick(e, model.id),
@@ -27264,9 +26445,9 @@ ${replacement}
             )
           );
         }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
       ] }),
-      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         gemini_thinking_dialog_default,
         {
           initialLevel: resolveThinkingLevel(activeModel.id),
@@ -27280,11 +26461,11 @@ ${replacement}
       ) : null
     ] });
   };
-  var gemini_default_model_card_default = (0, import_react24.memo)(GeminiDefaultModelCard);
+  var gemini_default_model_card_default = (0, import_react18.memo)(GeminiDefaultModelCard);
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_react25 = __toESM(require_react());
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime());
+  var import_react19 = __toESM(require_react());
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     marginBottom: "30px"
   };
@@ -27308,19 +26489,19 @@ ${replacement}
     const handleRestartCore = () => {
       postVsCodeMessage({ type: "core:restart-request" });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: wrapperStyles, children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(settings_card_default, { title: "Core Controls", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("button", { onClick: handleRestartCore, style: buttonStyles2, type: "button", children: "Restart Core" })
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: wrapperStyles, children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(settings_card_default, { title: "Core Controls", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("button", { onClick: handleRestartCore, style: buttonStyles2, type: "button", children: "Restart Core" })
     ] }) });
   };
-  var general_settings_default = (0, import_react25.memo)(GeneralSettings);
+  var general_settings_default = (0, import_react19.memo)(GeneralSettings);
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_react27 = __toESM(require_react());
+  var import_react21 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react26 = __toESM(require_react());
-  var import_jsx_runtime30 = __toESM(require_jsx_runtime());
+  var import_react20 = __toESM(require_react());
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
   var rowStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -27412,17 +26593,17 @@ ${replacement}
       resolvedButtonStyle = buttonStyles3;
     }
     const shouldShowButton = row.showUpdateButton ?? true;
-    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { style: rowStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { style: labelStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { style: nameStyles, children: row.label }),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("p", { style: versionTextStyles, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: rowStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: labelStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: nameStyles, children: row.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { style: versionTextStyles, children: [
           "Current: ",
           currentLabel,
           " ",
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { style: chipStyles, children: latestLabel })
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: chipStyles, children: latestLabel })
         ] })
       ] }),
-      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
         "button",
         {
           disabled: disabled || !hasUpdate,
@@ -27431,13 +26612,13 @@ ${replacement}
           type: "button",
           children: buttonLabel
         }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { style: chipStyles, children: latestLabel })
+      ) : /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: chipStyles, children: latestLabel })
     ] });
   };
-  var VersionRowItem = (0, import_react26.memo)(VersionRowItemComponent);
+  var VersionRowItem = (0, import_react20.memo)(VersionRowItemComponent);
 
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
-  var import_jsx_runtime31 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime());
   var warningStyles2 = {
     background: "#3a2a1f",
     border: "1px solid #9b6b3d",
@@ -27529,7 +26710,7 @@ ${replacement}
   };
   var WarningBanner = ({
     provider
-  }) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
+  }) => /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
   var AutoUpdateToggle = ({
     provider,
     enabled,
@@ -27538,7 +26719,7 @@ ${replacement}
   }) => {
     const providerLabel = resolveProviderLabel(provider);
     const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
-    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
       "label",
       {
         style: {
@@ -27547,7 +26728,7 @@ ${replacement}
           cursor: disabled ? "not-allowed" : "pointer"
         },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
             "input",
             {
               checked: enabled,
@@ -27557,12 +26738,12 @@ ${replacement}
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { style: toggleTitleStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: toggleTitleStyles, children: [
               "Auto-update ",
               providerLabel
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { style: toggleDescriptionStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { style: toggleDescriptionStyles, children: [
               "Automatically check and update the ",
               packageLabel,
               " on core start. Manual updates remain available below."
@@ -27574,7 +26755,7 @@ ${replacement}
   };
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_jsx_runtime32 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime());
   var rowsContainerStyles = {
     display: "flex",
     flexDirection: "column",
@@ -27601,9 +26782,9 @@ ${replacement}
     onAutoUpdateChange,
     onUpdate
   }) => {
-    const [pendingTarget, setPendingTarget] = (0, import_react27.useState)(null);
+    const [pendingTarget, setPendingTarget] = (0, import_react21.useState)(null);
     const snapshot = versions.data;
-    const rows = (0, import_react27.useMemo)(() => {
+    const rows = (0, import_react21.useMemo)(() => {
       if (!snapshot) {
         return [];
       }
@@ -27653,7 +26834,7 @@ ${replacement}
         }
       ];
     }, [provider, snapshot]);
-    const hasProviderVersions = (0, import_react27.useMemo)(() => {
+    const hasProviderVersions = (0, import_react21.useMemo)(() => {
       if (!snapshot) {
         return false;
       }
@@ -27665,11 +26846,11 @@ ${replacement}
     const isBusy = versions.loading || versions.updatingTargets.length > 0;
     const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
     const isPending = (target) => pendingTarget === `${provider}:${target}`;
-    const providerUpdateTargets = (0, import_react27.useMemo)(() => {
+    const providerUpdateTargets = (0, import_react21.useMemo)(() => {
       const prefix = `${provider}:`;
       return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
     }, [provider, versions.updatingTargets]);
-    const manualUpdateStatus = (0, import_react27.useMemo)(() => {
+    const manualUpdateStatus = (0, import_react21.useMemo)(() => {
       if (providerUpdateTargets.length === 0) {
         return null;
       }
@@ -27678,7 +26859,7 @@ ${replacement}
       );
       return `Manual update in progress: ${labels.join(", ")}`;
     }, [provider, providerUpdateTargets]);
-    (0, import_react27.useEffect)(() => {
+    (0, import_react21.useEffect)(() => {
       if (versions.updatingTargets.length === 0) {
         setPendingTarget(null);
       }
@@ -27698,17 +26879,17 @@ ${replacement}
     } else if (provider === "codex") {
       title = "Codex Versions";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
       settings_card_default,
       {
-        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("span", { style: metadataTextStyles, children: [
+        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { style: metadataTextStyles, children: [
           "Checked: ",
           formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
         ] }) : null,
         title,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(WarningBanner, { provider }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(WarningBanner, { provider }),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
             AutoUpdateToggle,
             {
               disabled: versions.loading,
@@ -27717,11 +26898,11 @@ ${replacement}
               provider
             }
           ),
-          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { style: errorStyles, children: versions.error }) : null,
-          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
-          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
-          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { style: errorStyles, children: versions.error }) : null,
+          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
+          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
+          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
             VersionRowItem,
             {
               disabled: isBusy,
@@ -27736,10 +26917,10 @@ ${replacement}
       }
     );
   };
-  var provider_versions_default = (0, import_react27.memo)(ProviderVersions);
+  var provider_versions_default = (0, import_react21.memo)(ProviderVersions);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime33 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime31 = __toESM(require_jsx_runtime());
   var containerStyles2 = {
     display: "flex",
     justifyContent: "space-between",
@@ -27851,8 +27032,8 @@ ${replacement}
         event.currentTarget.style.background = "#0e639c";
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { style: containerStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { style: containerStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
         "button",
         {
           disabled: resetting,
@@ -27873,8 +27054,8 @@ ${replacement}
           children: resetting ? "Resetting..." : "Reset to Defaults"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
           "button",
           {
             onBlur: handleCloseBlur,
@@ -27887,7 +27068,7 @@ ${replacement}
             children: "Close"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
           "button",
           {
             disabled: !hasChanges || saving,
@@ -27913,7 +27094,7 @@ ${replacement}
   var settings_footer_default = SettingsFooter;
 
   // src/client/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime34 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime32 = __toESM(require_jsx_runtime());
   var headerStyles4 = {
     display: "flex",
     alignItems: "center",
@@ -27940,9 +27121,9 @@ ${replacement}
     alignItems: "center",
     justifyContent: "center"
   };
-  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { style: headerStyles4, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { style: titleStyles4, children: "Settings" }),
-    /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
+  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: headerStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { style: titleStyles4, children: "Settings" }),
+    /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
       "button",
       {
         "aria-label": "Close settings",
@@ -27957,7 +27138,7 @@ ${replacement}
   var settings_header_default = SettingsHeader;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react28 = __toESM(require_react());
+  var import_react22 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
@@ -27972,7 +27153,7 @@ ${replacement}
 `;
 
   // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime35 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime33 = __toESM(require_jsx_runtime());
   var containerStyles3 = {
     marginTop: "20px",
     padding: "12px",
@@ -27991,14 +27172,14 @@ ${replacement}
     color: "#999999",
     lineHeight: "1.4"
   };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { style: containerStyles3, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { style: containerStyles3, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
   ] });
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime36 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime34 = __toESM(require_jsx_runtime());
   var toggleContainerStyles2 = {
     display: "flex",
     alignItems: "flex-start",
@@ -28025,8 +27206,8 @@ ${replacement}
   var noteStyles2 = {
     color: "#d4a36a"
   };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("label", { style: toggleContainerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("label", { style: toggleContainerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
       "input",
       {
         checked: enabled,
@@ -28035,12 +27216,12 @@ ${replacement}
         type: "checkbox"
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { style: descriptionStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { style: descriptionStyles4, children: [
         "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("strong", { style: noteStyles2, children: "Note:" }),
         " Changes take effect when creating a new session."
       ] })
     ] })
@@ -28048,7 +27229,7 @@ ${replacement}
   var thinking_toggle_default = ThinkingToggle;
 
   // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime37 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime35 = __toESM(require_jsx_runtime());
   var containerStyles4 = {
     paddingLeft: "28px",
     borderTop: "1px solid #3c3c3c",
@@ -28110,10 +27291,10 @@ ${replacement}
       const parsed = Number.parseInt(event.target.value, 10);
       updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { style: containerStyles4, children: /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: containerStyles4, children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
           "button",
           {
             onClick: () => updateValue(value - THINKING_TOKEN_STEP),
@@ -28123,7 +27304,7 @@ ${replacement}
             children: "\u2212"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
           "input",
           {
             max: MAX_THINKING_TOKENS,
@@ -28135,7 +27316,7 @@ ${replacement}
             value
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
           "button",
           {
             onClick: () => updateValue(value + THINKING_TOKEN_STEP),
@@ -28146,11 +27327,11 @@ ${replacement}
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: helperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { style: helperStyles, children: [
         "\u2022 Normal (4000): Standard reasoning depth",
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("br", {}),
         "\u2022 Hard (10000): Extended analysis for complex tasks",
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("br", {}),
         "\u2022 Ultra (32000): Maximum reasoning capacity"
       ] })
     ] }) });
@@ -28158,7 +27339,7 @@ ${replacement}
   var thinking_token_input_default = ThinkingTokenInput;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime38 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime36 = __toESM(require_jsx_runtime());
   var wrapperStyles2 = {
     marginBottom: "30px"
   };
@@ -28173,19 +27354,19 @@ ${replacement}
     const handleTokenChange = (nextValue) => {
       onChange(enabled, nextValue);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { style: wrapperStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(thinking_pro_tip_default, {})
+    return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { style: wrapperStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(thinking_pro_tip_default, {})
       ] })
     ] });
   };
-  var thinking_settings_default = (0, import_react28.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react22.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var import_react29 = __toESM(require_react());
+  var import_react23 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/settings-state-helpers.ts
   var updateThinkingSettings = (settings, enabled, maxTokens) => ({
@@ -28278,13 +27459,13 @@ ${replacement}
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord10 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord11(value)) {
+    if (!isRecord10(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -28323,7 +27504,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -28356,7 +27537,7 @@ ${replacement}
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord12(value)) {
+    if (!isRecord11(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -28408,7 +27589,7 @@ ${replacement}
     error: null,
     updatingTargets: []
   });
-  var isIncomingMessage2 = (message) => {
+  var isIncomingMessage = (message) => {
     if (!message || typeof message !== "object") {
       return false;
     }
@@ -28416,20 +27597,20 @@ ${replacement}
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions";
   };
   var useSettingsState = () => {
-    const initialSettingsRef = (0, import_react29.useRef)(createDefaultSettings());
-    const [settings, setSettings] = (0, import_react29.useState)(createDefaultSettings);
-    const [hasChanges, setHasChanges] = (0, import_react29.useState)(false);
-    const [saving, setSaving] = (0, import_react29.useState)(false);
-    const [resetting, setResetting] = (0, import_react29.useState)(false);
-    const [versions, setVersions] = (0, import_react29.useState)(
+    const initialSettingsRef = (0, import_react23.useRef)(createDefaultSettings());
+    const [settings, setSettings] = (0, import_react23.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react23.useState)(false);
+    const [saving, setSaving] = (0, import_react23.useState)(false);
+    const [resetting, setResetting] = (0, import_react23.useState)(false);
+    const [versions, setVersions] = (0, import_react23.useState)(
       createDefaultVersionsState
     );
-    (0, import_react29.useEffect)(() => {
+    (0, import_react23.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
       });
       const handleMessage = (event) => {
-        if (!isIncomingMessage2(event.data)) {
+        if (!isIncomingMessage(event.data)) {
           return;
         }
         if (event.data.type === "settings:loaded") {
@@ -28461,60 +27642,60 @@ ${replacement}
         window.removeEventListener("message", handleMessage);
       };
     }, []);
-    const updateSettings = (0, import_react29.useCallback)((nextSettings) => {
+    const updateSettings = (0, import_react23.useCallback)((nextSettings) => {
       setSettings(nextSettings);
       setHasChanges(!areSettingsEqual(nextSettings, initialSettingsRef.current));
     }, []);
-    const handleThinkingSettingsChange = (0, import_react29.useCallback)(
+    const handleThinkingSettingsChange = (0, import_react23.useCallback)(
       (enabled, maxTokens) => {
         updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
       },
       [settings, updateSettings]
     );
-    const handleClaudeDefaultModelChange = (0, import_react29.useCallback)(
+    const handleClaudeDefaultModelChange = (0, import_react23.useCallback)(
       (modelId) => {
         updateSettings(updateClaudeDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexDefaultModelChange = (0, import_react29.useCallback)(
+    const handleCodexDefaultModelChange = (0, import_react23.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexReasoningChange = (0, import_react29.useCallback)(
+    const handleCodexReasoningChange = (0, import_react23.useCallback)(
       (modelId, reasoning) => {
         updateSettings(updateCodexReasoning(settings, modelId, reasoning));
       },
       [settings, updateSettings]
     );
-    const handleProviderAutoUpdateChange = (0, import_react29.useCallback)(
+    const handleProviderAutoUpdateChange = (0, import_react23.useCallback)(
       (provider, enabled) => {
         updateSettings(updateProviderAutoUpdate(settings, provider, enabled));
       },
       [settings, updateSettings]
     );
-    const handleGeminiDefaultModelChange = (0, import_react29.useCallback)(
+    const handleGeminiDefaultModelChange = (0, import_react23.useCallback)(
       (modelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleGeminiThinkingChange = (0, import_react29.useCallback)(
+    const handleGeminiThinkingChange = (0, import_react23.useCallback)(
       (modelId, level) => {
         updateSettings(updateGeminiThinking(settings, modelId, level));
       },
       [settings, updateSettings]
     );
-    const handleSave = (0, import_react29.useCallback)(() => {
+    const handleSave = (0, import_react23.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
         type: "settings:save",
         settings
       });
     }, [settings]);
-    const handleReset = (0, import_react29.useCallback)(() => {
+    const handleReset = (0, import_react23.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
         vscode_default.postMessage({
@@ -28522,7 +27703,7 @@ ${replacement}
         });
       }, RESET_DELAY_MS);
     }, []);
-    const handleUpdateProvider = (0, import_react29.useCallback)(
+    const handleUpdateProvider = (0, import_react23.useCallback)(
       (provider, target) => {
         const targetKey = `${provider}:${target}`;
         setVersions((prev) => ({
@@ -28557,7 +27738,7 @@ ${replacement}
   };
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_jsx_runtime39 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime37 = __toESM(require_jsx_runtime());
   var containerStyles5 = {
     height: "100%",
     display: "flex",
@@ -28594,14 +27775,33 @@ ${replacement}
     flexDirection: "column",
     gap: "16px"
   };
+  var modeNoticeStyles = {
+    margin: "16px 20px 0",
+    padding: "12px 14px",
+    borderRadius: "10px",
+    background: "#252526",
+    border: "1px solid #2d2d30",
+    color: "#cccccc",
+    fontSize: "12px",
+    lineHeight: 1.5
+  };
+  var modeNoticeTitleStyles = {
+    color: "#ffffff",
+    fontSize: "13px",
+    fontWeight: 600,
+    marginBottom: "4px"
+  };
   var settingsTabs = [
     { id: "claude", label: "Claude" },
     { id: "codex", label: "Codex" },
     { id: "gemini", label: "Gemini" },
     { id: "general", label: "General" }
   ];
-  var SettingsView = ({ onClose }) => {
-    const [activeTab, setActiveTab] = (0, import_react30.useState)("claude");
+  var SettingsView = ({
+    onClose,
+    mode = "full"
+  }) => {
+    const [activeTab, setActiveTab] = (0, import_react24.useState)("claude");
     const {
       settings,
       hasChanges,
@@ -28619,9 +27819,13 @@ ${replacement}
       handleReset,
       handleUpdateProvider
     } = useSettingsState();
-    return /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { style: containerStyles5, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(settings_header_default, { onClose }),
-      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab2) => /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: containerStyles5, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(settings_header_default, { onClose }),
+      mode === "settings-only" ? /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: modeNoticeStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { style: modeNoticeTitleStyles, children: "Settings only mode" }),
+        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { children: "Sessions and chats are available in Project Manager." })
+      ] }) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab2) => /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
         "button",
         {
           onClick: () => setActiveTab(tab2.id),
@@ -28634,17 +27838,17 @@ ${replacement}
         },
         tab2.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { style: contentStyles, children: (() => {
+      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { style: contentStyles, children: (() => {
         if (activeTab === "claude") {
-          return /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
               claude_default_model_card_default,
               {
                 defaultModel: settings.providers.claude.defaultModel,
                 onDefaultModelChange: handleClaudeDefaultModelChange
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.claude.autoUpdate.enabled,
@@ -28654,7 +27858,7 @@ ${replacement}
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
               thinking_settings_default,
               {
                 enabled: settings.providers.claude.thinking.enabled,
@@ -28665,11 +27869,11 @@ ${replacement}
           ] });
         }
         if (activeTab === "general") {
-          return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(general_settings_default, {}) });
+          return /* @__PURE__ */ (0, import_jsx_runtime37.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(general_settings_default, {}) });
         }
         if (activeTab === "codex") {
-          return /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
               codex_default_model_card_default,
               {
                 defaultModel: settings.providers.codex.defaultModel,
@@ -28678,7 +27882,7 @@ ${replacement}
                 reasoningByModel: settings.providers.codex.reasoningByModel
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.codex.autoUpdate.enabled,
@@ -28690,8 +27894,8 @@ ${replacement}
             )
           ] });
         }
-        return /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { style: stackStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: stackStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
             gemini_default_model_card_default,
             {
               defaultModel: settings.providers.gemini.defaultModel,
@@ -28700,7 +27904,7 @@ ${replacement}
               thinkingLevelByModel: settings.providers.gemini.thinkingLevelByModel
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
             provider_versions_default,
             {
               autoUpdateEnabled: settings.providers.gemini.autoUpdate.enabled,
@@ -28712,7 +27916,7 @@ ${replacement}
           )
         ] });
       })() }),
-      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
         settings_footer_default,
         {
           hasChanges,
@@ -28725,18 +27929,939 @@ ${replacement}
       )
     ] });
   };
-  var settings_view_default = import_react30.default.memo(SettingsView);
+  var settings_view_default = import_react24.default.memo(SettingsView);
+
+  // src/client/ui/src/root-dom.ts
+  var activateRoot = () => {
+    const rootElement = document.getElementById("root");
+    if (rootElement) {
+      rootElement.classList.add("active");
+    }
+  };
+
+  // src/client/ui/src/app-host/settings-visibility.ts
+  var import_react25 = __toESM(require_react());
+  var useSettingsVisibility = () => {
+    const [settingsVisible, setSettingsVisible] = (0, import_react25.useState)(false);
+    const openSettings = (0, import_react25.useCallback)(() => {
+      setSettingsVisible(true);
+    }, []);
+    const closeSettings = (0, import_react25.useCallback)(() => {
+      setSettingsVisible(false);
+      postVsCodeMessage({ type: "settings:closed" });
+    }, []);
+    return {
+      settingsVisible,
+      openSettings,
+      closeSettings
+    };
+  };
+
+  // src/client/ui/src/app-host/webview-message-handler.ts
+  var import_react26 = __toESM(require_react());
+
+  // src/client/ui/src/app-host/webview-message-types.ts
+  var isIncomingMessage2 = (value) => Boolean(value && typeof value === "object" && "type" in value);
+  var isCoreBridgeStatePayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return Array.isArray(candidate.sessions) && Array.isArray(candidate.providers);
+  };
+  var isSessionMessagePayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    if (typeof candidate.sessionId !== "string") {
+      return false;
+    }
+    const message = candidate.message;
+    if (!message || typeof message !== "object") {
+      return false;
+    }
+    const messageCandidate = message;
+    return typeof messageCandidate.id === "string" && typeof messageCandidate.content === "string" && typeof messageCandidate.createdAt === "number";
+  };
+  var isSessionDeletedPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.sessionId === "string";
+  };
+  var isCoreRuntimeStatusPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.label === "string";
+  };
+  var isSessionHistoryPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.sessionId === "string" && Array.isArray(candidate.messages);
+  };
+  var isUseProjectManagerMessage = (value) => Boolean(
+    value && typeof value === "object" && value.type === "ui:useProjectManager"
+  );
+  var isSessionBindingPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    if (typeof candidate.sessionId !== "string") {
+      return false;
+    }
+    const status = candidate.status;
+    if (status !== "pending" && status !== "ready" && status !== "failed") {
+      return false;
+    }
+    const providerSessionId = candidate.providerSessionId;
+    if (providerSessionId !== null && typeof providerSessionId !== "string") {
+      return false;
+    }
+    return true;
+  };
+
+  // src/client/ui/src/app-host/webview-message-dispatcher.ts
+  var handleProviderPickerOpenMessage = (message, onProviderPickerOpen) => {
+    const providers = parseProviderList(message.payload?.providers);
+    const stage = typeof message.payload?.stage === "string" ? message.payload.stage : null;
+    if (providers.length > 0) {
+      onProviderPickerOpen(providers, stage);
+      return;
+    }
+    if (stage) {
+      onProviderPickerOpen([], stage);
+    }
+  };
+  var handleSessionCreatedMessage = (message, onSessionCreated) => {
+    if (isSessionRecordCandidate(message.payload)) {
+      onSessionCreated(message.payload);
+    }
+  };
+  var handleCoreStateMessage = (message, onCoreState) => {
+    if (!(onCoreState && isCoreBridgeStatePayload(message.payload))) {
+      return;
+    }
+    onCoreState(message.payload);
+  };
+  var handleSessionMessageEvent = (message, onSessionMessage) => {
+    if (!(onSessionMessage && isSessionMessagePayload(message.payload))) {
+      return;
+    }
+    onSessionMessage(message.payload);
+  };
+  var handleSessionHistoryMessage = (message, onSessionHistory) => {
+    if (!(onSessionHistory && message.type === "session:history")) {
+      return;
+    }
+    const payload = message.payload;
+    if (!isSessionHistoryPayload(payload)) {
+      return;
+    }
+    const normalized = payload.messages.map((candidate) => sanitizeMessage(candidate)).filter((entry) => Boolean(entry));
+    onSessionHistory({
+      sessionId: payload.sessionId,
+      messages: normalized
+    });
+  };
+  var handleSessionDeletedMessage = (message, onSessionDeleted) => {
+    if (!(onSessionDeleted && isSessionDeletedPayload(message.payload))) {
+      return;
+    }
+    onSessionDeleted(message.payload);
+  };
+  var handleSessionBindingMessage = (message, onSessionBinding) => {
+    if (!(onSessionBinding && isSessionBindingPayload(message.payload))) {
+      return;
+    }
+    onSessionBinding(message.payload);
+  };
+  var handleCoreLoadingStatusMessage = (message, onCoreLoadingStatus) => {
+    if (!(onCoreLoadingStatus && isCoreRuntimeStatusPayload(message.payload))) {
+      return;
+    }
+    onCoreLoadingStatus(message.payload);
+  };
+  var dispatchSessionMessage = (message, handlers2) => {
+    switch (message.type) {
+      case "session:created":
+        handleSessionCreatedMessage(message, handlers2.onSessionCreated);
+        return true;
+      case "session:clearAll":
+        handlers2.onSessionClearAll();
+        return true;
+      case "session:focusLast":
+        handlers2.onSessionFocusLast();
+        return true;
+      case "session:message":
+        handleSessionMessageEvent(message, handlers2.onSessionMessage);
+        return true;
+      case "session:deleted":
+        handleSessionDeletedMessage(message, handlers2.onSessionDeleted);
+        return true;
+      case "session:binding":
+        handleSessionBindingMessage(message, handlers2.onSessionBinding);
+        return true;
+      case "session:history":
+        handleSessionHistoryMessage(message, handlers2.onSessionHistory);
+        return true;
+      default:
+        return false;
+    }
+  };
+  var dispatchWebviewMessage = (rawMessage, handlers2) => {
+    if (!isIncomingMessage2(rawMessage)) {
+      return;
+    }
+    const message = rawMessage;
+    if (dispatchSessionMessage(message, {
+      onSessionCreated: handlers2.onSessionCreated,
+      onSessionClearAll: handlers2.onSessionClearAll,
+      onSessionFocusLast: handlers2.onSessionFocusLast,
+      onSessionMessage: handlers2.onSessionMessage,
+      onSessionDeleted: handlers2.onSessionDeleted,
+      onSessionBinding: handlers2.onSessionBinding,
+      onSessionHistory: handlers2.onSessionHistory
+    })) {
+      return;
+    }
+    switch (message.type) {
+      case "core:connection": {
+        if (handlers2.onCoreConnectionStatus && message.payload) {
+          const candidate = message.payload;
+          const status = candidate.status;
+          if (typeof status === "string") {
+            const detail = typeof candidate.detail === "string" ? candidate.detail : void 0;
+            handlers2.onCoreConnectionStatus(status, detail);
+          }
+        }
+        return;
+      }
+      case "providerPicker:open":
+        handleProviderPickerOpenMessage(message, handlers2.onProviderPickerOpen);
+        return;
+      case "ui:showSettings":
+        handlers2.onShowSettings();
+        return;
+      case "core:state":
+        handleCoreStateMessage(message, handlers2.onCoreState);
+        return;
+      case "core:loading-status":
+        handleCoreLoadingStatusMessage(message, handlers2.onCoreLoadingStatus);
+        return;
+      default:
+        return;
+    }
+  };
+
+  // src/client/ui/src/app-host/webview-message-handler.ts
+  var useWebviewMessageHandler = ({
+    onProviderPickerOpen,
+    onSessionCreated,
+    onSessionClearAll,
+    onSessionFocusLast,
+    onShowSettings,
+    onCoreState,
+    onCoreConnectionStatus,
+    onCoreLoadingStatus,
+    onSessionMessage,
+    onSessionDeleted,
+    onSessionBinding,
+    onSessionHistory,
+    onUseProjectManager
+  }) => {
+    (0, import_react26.useEffect)(() => {
+      const handleIncomingMessage = (event) => {
+        if (isUseProjectManagerMessage(event.data)) {
+          onUseProjectManager?.();
+          return;
+        }
+        dispatchWebviewMessage(event.data, {
+          onProviderPickerOpen,
+          onSessionCreated,
+          onSessionClearAll,
+          onSessionFocusLast,
+          onShowSettings,
+          onCoreState,
+          onCoreConnectionStatus,
+          onCoreLoadingStatus,
+          onSessionMessage,
+          onSessionDeleted,
+          onSessionBinding,
+          onSessionHistory
+        });
+      };
+      window.addEventListener("message", handleIncomingMessage);
+      return () => {
+        window.removeEventListener("message", handleIncomingMessage);
+      };
+    }, [
+      onProviderPickerOpen,
+      onSessionCreated,
+      onSessionClearAll,
+      onSessionFocusLast,
+      onShowSettings,
+      onCoreState,
+      onCoreConnectionStatus,
+      onCoreLoadingStatus,
+      onSessionMessage,
+      onSessionDeleted,
+      onSessionBinding,
+      onSessionHistory,
+      onUseProjectManager
+    ]);
+  };
+
+  // src/client/ui/src/app-host/settings-only-host.tsx
+  var import_jsx_runtime38 = __toESM(require_jsx_runtime());
+  var settingsOnlyLayoutStyles = {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "32px 24px",
+    background: "#0f0f10",
+    color: "#cccccc"
+  };
+  var settingsOnlyCardStyles = {
+    width: "100%",
+    maxWidth: "520px",
+    borderRadius: "16px",
+    padding: "24px",
+    background: "#1b1b1c",
+    border: "1px solid #2a2a2a",
+    boxShadow: "0 12px 32px rgba(0, 0, 0, 0.35)",
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px"
+  };
+  var settingsOnlyTitleStyles = {
+    margin: 0,
+    fontSize: "20px",
+    fontWeight: 600,
+    color: "#ffffff"
+  };
+  var settingsOnlyBodyStyles = {
+    margin: 0,
+    fontSize: "14px",
+    lineHeight: 1.5
+  };
+  var settingsOnlyHintStyles = {
+    margin: 0,
+    fontSize: "12px",
+    color: "#9aa0a6"
+  };
+  var settingsOnlyButtonStyles = {
+    alignSelf: "flex-start",
+    marginTop: "4px",
+    padding: "8px 14px",
+    borderRadius: "6px",
+    border: "1px solid #3a3a3a",
+    background: "#0e639c",
+    color: "#ffffff",
+    fontSize: "13px",
+    cursor: "pointer"
+  };
+  var noopProviderPickerOpen = () => {
+  };
+  var noopSessionCreated = () => {
+  };
+  var noopVoidHandler = () => {
+  };
+  var SettingsOnlyHost = () => {
+    const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
+    const handleShowSettings = (0, import_react27.useCallback)(() => {
+      activateRoot();
+      openSettings();
+    }, [openSettings]);
+    (0, import_react27.useEffect)(() => {
+      activateRoot();
+    }, []);
+    useWebviewMessageHandler({
+      onProviderPickerOpen: noopProviderPickerOpen,
+      onSessionCreated: noopSessionCreated,
+      onSessionClearAll: noopVoidHandler,
+      onSessionFocusLast: noopVoidHandler,
+      onShowSettings: handleShowSettings
+    });
+    return /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("main", { "aria-label": "Settings only mode", style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("section", { style: settingsOnlyCardStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings only" }),
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("p", { style: settingsOnlyBodyStyles, children: "Sessions and chats are available in Project Manager." }),
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("p", { style: settingsOnlyHintStyles, children: "Use this panel to configure providers and defaults." }),
+        /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+          "button",
+          {
+            onClick: handleShowSettings,
+            style: settingsOnlyButtonStyles,
+            type: "button",
+            children: "Open settings"
+          }
+        )
+      ] }) }),
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(settings_view_default, { mode: "settings-only", onClose: closeSettings }) }) }) : null
+    ] });
+  };
+
+  // src/client/ui/src/app-host/use-idea-collector.ts
+  var import_react28 = __toESM(require_react());
+  var useIdeaCollector = (fallbackSendMessage) => {
+    const serviceRef = (0, import_react28.useRef)(new IdeaCollectorService());
+    const questionnaireServiceRef = (0, import_react28.useRef)(new IdeaQuestionnaireService());
+    const service = serviceRef.current;
+    const questionnaireService = questionnaireServiceRef.current;
+    (0, import_react28.useEffect)(() => {
+      const handleStreamEvent = (candidate) => {
+        if (candidate.type !== "session:stream") {
+          return false;
+        }
+        const sessionId = candidate.payload?.sessionId;
+        if (typeof sessionId !== "string") {
+          return true;
+        }
+        service.handleStreamEvent(sessionId, candidate.payload?.event);
+        return true;
+      };
+      const handleAssistantMessage = (candidate) => {
+        if (candidate.type !== "session:message") {
+          return;
+        }
+        const sessionId = candidate.payload?.sessionId;
+        if (typeof sessionId !== "string") {
+          return;
+        }
+        const message = candidate.payload?.message;
+        if (message?.role !== "assistant") {
+          return;
+        }
+        if (typeof message.content !== "string") {
+          return;
+        }
+        service.recordAssistantMessage(sessionId, message.content);
+      };
+      const handleSessionEvent = (event) => {
+        const candidate = event.data;
+        if (handleStreamEvent(candidate)) {
+          return;
+        }
+        handleAssistantMessage(candidate);
+      };
+      window.addEventListener("message", handleSessionEvent);
+      return () => {
+        window.removeEventListener("message", handleSessionEvent);
+      };
+    }, [service]);
+    const startCollection = (0, import_react28.useCallback)(
+      (sessionId) => {
+        service.startCollection(sessionId);
+      },
+      [service]
+    );
+    const sendMessage = (0, import_react28.useCallback)(
+      (sessionId, content3) => {
+        if (service.isIdeaCollectorSession(sessionId)) {
+          if (!service.isQuestionnairePending(sessionId)) {
+            const outputPaths = service.getOutputPathsForSessionId(sessionId);
+            const question = service.getLastAssistantMessage(sessionId);
+            if (outputPaths && question) {
+              questionnaireService.appendClarificationAnswer(
+                sessionId,
+                outputPaths,
+                question,
+                content3
+              ).catch(() => {
+              });
+            }
+          }
+          service.continueConversation(sessionId, content3);
+          return;
+        }
+        fallbackSendMessage(sessionId, content3);
+      },
+      [fallbackSendMessage, questionnaireService, service]
+    );
+    return { startCollection, sendMessage };
+  };
+
+  // src/client/ui/src/app-host/use-provider-picker-open-handler.ts
+  var import_react29 = __toESM(require_react());
+  var isFlowStageId = (value) => value === "chat" || value === "idea" || value === "spec" || value === "plan" || value === "execute";
+  var useProviderPickerOpenHandler = (openPicker, selectStage, lockStageSelection) => (0, import_react29.useCallback)(
+    (providers, stage) => {
+      activateRoot();
+      if (providers.length === 0) {
+        return;
+      }
+      openPicker(providers);
+      if (stage && isFlowStageId(stage)) {
+        lockStageSelection();
+        selectStage(stage);
+      }
+    },
+    [lockStageSelection, openPicker, selectStage]
+  );
+
+  // src/client/ui/src/components/action-bar/index.tsx
+  var import_react31 = __toESM(require_react());
+
+  // src/client/ui/src/components/action-bar/context-form.tsx
+  var import_jsx_runtime39 = __toESM(require_jsx_runtime());
+  var ActionBarContextForm = ({
+    mode,
+    title,
+    name: name2,
+    description,
+    controlsDisabled,
+    statusMessage,
+    onNameChange,
+    onDescriptionChange,
+    onSubmit,
+    onCancel
+  }) => /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)(import_jsx_runtime39.Fragment, { children: [
+    mode ? /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("form", { className: "action-bar__context-form", onSubmit, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("span", { className: "action-bar__context-form-title", children: title }),
+      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+        "input",
+        {
+          "aria-label": "Name",
+          className: "action-bar__context-input",
+          onChange: (event) => onNameChange(event.target.value),
+          placeholder: "Name",
+          type: "text",
+          value: name2
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+        "input",
+        {
+          "aria-label": "Description",
+          className: "action-bar__context-input",
+          onChange: (event) => onDescriptionChange(event.target.value),
+          placeholder: "Description (optional)",
+          type: "text",
+          value: description
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { className: "action-bar__context-form-actions", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+          "button",
+          {
+            className: "action-bar__context-button",
+            disabled: controlsDisabled,
+            type: "submit",
+            children: "Create"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+          "button",
+          {
+            className: "action-bar__context-button",
+            onClick: onCancel,
+            type: "button",
+            children: "Cancel"
+          }
+        )
+      ] })
+    ] }) : null,
+    statusMessage ? /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("output", { "aria-live": "polite", className: "action-bar__context-status", children: statusMessage }) : null
+  ] });
+
+  // src/client/ui/src/components/action-bar/use-initiative-context.ts
+  var import_react30 = __toESM(require_react());
+
+  // src/client/ui/src/api/orchestrator/initiatives-client.ts
+  var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
+  var isRecord12 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isInitiativeSummary = (value) => {
+    if (!isRecord12(value)) {
+      return false;
+    }
+    return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
+  };
+  var parseInitiatives = (value) => {
+    if (!isRecord12(value)) {
+      return [];
+    }
+    const raw = value.initiatives;
+    if (!Array.isArray(raw)) {
+      return [];
+    }
+    const initiatives = [];
+    for (const entry of raw) {
+      if (!isInitiativeSummary(entry)) {
+        continue;
+      }
+      initiatives.push({
+        initiativeSlug: entry.initiativeSlug,
+        displayName: entry.displayName,
+        description: typeof entry.description === "string" ? entry.description : void 0,
+        currentRunId: typeof entry.currentRunId === "string" ? entry.currentRunId : void 0
+      });
+    }
+    return initiatives;
+  };
+  var parseCreatedInitiative = (value) => {
+    if (!isRecord12(value)) {
+      return null;
+    }
+    const initiative = value.initiative;
+    if (!isInitiativeSummary(initiative)) {
+      return null;
+    }
+    return {
+      initiativeSlug: initiative.initiativeSlug,
+      displayName: initiative.displayName,
+      description: typeof initiative.description === "string" ? initiative.description : void 0,
+      currentRunId: typeof initiative.currentRunId === "string" ? initiative.currentRunId : void 0
+    };
+  };
+  var buildInitiativesUrl = (httpUrl, workspacePath) => {
+    const url = new URL(joinUrl(httpUrl, INITIATIVES_ENDPOINT));
+    url.searchParams.set("workspacePath", workspacePath);
+    return url.toString();
+  };
+  var listInitiatives = async (httpUrl, workspacePath) => {
+    try {
+      const response = await fetch(buildInitiativesUrl(httpUrl, workspacePath), {
+        method: "GET"
+      });
+      if (!response.ok) {
+        return {
+          ok: false,
+          error: `Failed to load initiatives (HTTP ${response.status}).`
+        };
+      }
+      const payload = await response.json();
+      return { ok: true, data: parseInitiatives(payload) };
+    } catch {
+      return { ok: false, error: "Failed to reach CodeAI Hub core." };
+    }
+  };
+  var createInitiative = async (httpUrl, workspacePath, input) => {
+    try {
+      const response = await fetch(buildInitiativesUrl(httpUrl, workspacePath), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workspacePath,
+          displayName: input.displayName,
+          description: input.description,
+          createInitialRun: input.createInitialRun
+        })
+      });
+      if (!response.ok) {
+        return {
+          ok: false,
+          error: `Failed to create initiative (HTTP ${response.status}).`
+        };
+      }
+      const payload = await response.json();
+      const initiative = parseCreatedInitiative(payload);
+      if (!initiative) {
+        return { ok: false, error: "Invalid initiative response payload." };
+      }
+      return { ok: true, data: initiative };
+    } catch {
+      return { ok: false, error: "Failed to reach CodeAI Hub core." };
+    }
+  };
+
+  // src/client/ui/src/components/action-bar/use-initiative-context.ts
+  var resolveWorkspacePath = () => {
+    const globalScope2 = window;
+    const workspacePath = globalScope2.__CODEAI_CORE_CONFIG?.workspacePath;
+    if (typeof workspacePath !== "string" || workspacePath.length === 0) {
+      return null;
+    }
+    return workspacePath;
+  };
+  var useInitiativeContext = (disabled) => {
+    const [initiatives, setInitiatives] = (0, import_react30.useState)([]);
+    const [selectedInitiativeSlug, setSelectedInitiativeSlug] = (0, import_react30.useState)(null);
+    const [statusMessage, setStatusMessage] = (0, import_react30.useState)(null);
+    const coreHttpUrl = (0, import_react30.useMemo)(() => resolveCoreHttpUrl(), []);
+    const workspacePath = (0, import_react30.useMemo)(() => resolveWorkspacePath(), []);
+    const hasWorkspace = Boolean(coreHttpUrl && workspacePath);
+    const clearStatus = (0, import_react30.useCallback)(() => {
+      setStatusMessage(null);
+    }, []);
+    const refreshInitiatives = (0, import_react30.useCallback)(
+      async (preferredSlug) => {
+        if (!(coreHttpUrl && workspacePath)) {
+          return;
+        }
+        const result = await listInitiatives(coreHttpUrl, workspacePath);
+        if (!result.ok) {
+          setInitiatives([]);
+          return;
+        }
+        setInitiatives([...result.data]);
+        const candidate = preferredSlug ?? selectedInitiativeSlug;
+        const fallback = candidate && result.data.some(
+          (initiative) => initiative.initiativeSlug === candidate
+        ) ? candidate : result.data[0]?.initiativeSlug ?? null;
+        setSelectedInitiativeSlug(fallback);
+      },
+      [coreHttpUrl, selectedInitiativeSlug, workspacePath]
+    );
+    (0, import_react30.useEffect)(() => {
+      if (disabled || !hasWorkspace) {
+        return;
+      }
+      refreshInitiatives().catch(() => {
+      });
+    }, [disabled, hasWorkspace, refreshInitiatives]);
+    const selectedInitiative = (0, import_react30.useMemo)(
+      () => initiatives.find(
+        (initiative) => initiative.initiativeSlug === selectedInitiativeSlug
+      ) ?? null,
+      [initiatives, selectedInitiativeSlug]
+    );
+    const initiativeTitle = selectedInitiative ? [selectedInitiative.displayName, selectedInitiative.description].filter(Boolean).join(" \u2014 ") : "Select initiative";
+    const handleInitiativeChange = (0, import_react30.useCallback)(
+      (event) => {
+        const nextSlug = event.target.value;
+        setSelectedInitiativeSlug(nextSlug.length > 0 ? nextSlug : null);
+      },
+      []
+    );
+    const createInitiative2 = (0, import_react30.useCallback)(
+      async (input) => {
+        if (!(coreHttpUrl && workspacePath)) {
+          setStatusMessage("Workspace path is unavailable.");
+          return false;
+        }
+        const displayName = input.displayName.trim();
+        if (!displayName) {
+          setStatusMessage("Provide an initiative name.");
+          return false;
+        }
+        const result = await createInitiative(coreHttpUrl, workspacePath, {
+          displayName,
+          description: input.description?.trim() || void 0
+        });
+        if (!result.ok) {
+          setStatusMessage(result.error);
+          return false;
+        }
+        await refreshInitiatives(result.data.initiativeSlug);
+        setStatusMessage(null);
+        return true;
+      },
+      [coreHttpUrl, refreshInitiatives, workspacePath]
+    );
+    return {
+      initiatives,
+      selectedInitiativeSlug,
+      initiativeTitle,
+      canStartFlow: Boolean(selectedInitiativeSlug),
+      controlsDisabled: disabled || !hasWorkspace,
+      statusMessage,
+      handleInitiativeChange,
+      createInitiative: createInitiative2,
+      clearStatus
+    };
+  };
+
+  // src/client/ui/src/components/action-bar/index.tsx
+  var import_jsx_runtime40 = __toESM(require_jsx_runtime());
+  var BUTTONS = [
+    { id: "startChat", label: ["Simple", "Chat"] },
+    { id: "startIdea", label: ["Idea", ""] },
+    { id: "startSpec", label: ["Spec", ""] },
+    { id: "startPlan", label: ["Plan", ""] },
+    { id: "startExecute", label: ["Execute", ""] }
+  ];
+  var CHAT_BUTTONS = BUTTONS.filter((button) => button.id === "startChat");
+  var FLOW_BUTTONS = BUTTONS.filter((button) => button.id !== "startChat");
+  var ActionBar = ({ disabled = false }) => {
+    const {
+      initiatives,
+      selectedInitiativeSlug,
+      initiativeTitle,
+      canStartFlow,
+      controlsDisabled,
+      statusMessage,
+      handleInitiativeChange,
+      createInitiative: createInitiative2,
+      clearStatus
+    } = useInitiativeContext(disabled);
+    const [createMode, setCreateMode] = (0, import_react31.useState)(null);
+    const [draftName, setDraftName] = (0, import_react31.useState)("");
+    const [draftDescription, setDraftDescription] = (0, import_react31.useState)("");
+    const initiativePlaceholder = initiatives.length === 0 ? "No initiatives yet" : "Select initiative";
+    const formTitle = "New initiative";
+    const handleStartCreateInitiative = (0, import_react31.useCallback)(() => {
+      clearStatus();
+      setCreateMode("initiative");
+      setDraftName("");
+      setDraftDescription("");
+    }, [clearStatus]);
+    const handleCancelCreate = (0, import_react31.useCallback)(() => {
+      setCreateMode(null);
+      setDraftName("");
+      setDraftDescription("");
+    }, []);
+    const handleSubmitCreate = (0, import_react31.useCallback)(
+      async (event) => {
+        event.preventDefault();
+        if (!createMode) {
+          return;
+        }
+        const input = {
+          displayName: draftName,
+          description: draftDescription
+        };
+        const success = createMode === "initiative" ? await createInitiative2(input) : false;
+        if (success) {
+          setCreateMode(null);
+          setDraftName("");
+          setDraftDescription("");
+        }
+      },
+      [createInitiative2, createMode, draftDescription, draftName]
+    );
+    const handleClick = (0, import_react31.useCallback)(
+      (command) => {
+        if (command !== "startChat" && !canStartFlow) {
+          return;
+        }
+        if (disabled) {
+          return;
+        }
+        activateRoot();
+        postVsCodeMessage({ command });
+      },
+      [canStartFlow, disabled]
+    );
+    const flowDisabled = disabled || !canStartFlow;
+    return /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { className: "action-bar__surface", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
+        "div",
+        {
+          "aria-hidden": "true",
+          className: "action-bar__rail action-bar__rail--top"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
+        "div",
+        {
+          "aria-hidden": "true",
+          className: "action-bar__rail action-bar__rail--bottom"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { className: "action-bar__context", children: /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { className: "action-bar__context-group", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("label", { className: "action-bar__context-label", htmlFor: "initiative", children: "Initiative" }),
+        /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { className: "action-bar__context-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)(
+            "select",
+            {
+              "aria-label": "Initiative",
+              className: "action-bar__context-select",
+              disabled: controlsDisabled,
+              id: "initiative",
+              onChange: handleInitiativeChange,
+              title: initiativeTitle,
+              value: selectedInitiativeSlug ?? "",
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("option", { disabled: true, value: "", children: initiativePlaceholder }),
+                initiatives.map((initiative) => /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
+                  "option",
+                  {
+                    value: initiative.initiativeSlug,
+                    children: initiative.displayName
+                  },
+                  initiative.initiativeSlug
+                ))
+              ]
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
+            "button",
+            {
+              className: "action-bar__context-button",
+              disabled: controlsDisabled,
+              onClick: handleStartCreateInitiative,
+              type: "button",
+              children: "New"
+            }
+          )
+        ] })
+      ] }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
+        ActionBarContextForm,
+        {
+          controlsDisabled,
+          description: draftDescription,
+          mode: createMode,
+          name: draftName,
+          onCancel: handleCancelCreate,
+          onDescriptionChange: setDraftDescription,
+          onNameChange: setDraftName,
+          onSubmit: handleSubmitCreate,
+          statusMessage,
+          title: formTitle
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { className: "action-bar__buttons", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { className: "action-bar__button-zone action-bar__button-zone--chat", children: CHAT_BUTTONS.map(({ id, label }) => {
+          const ariaLabel = label.filter(Boolean).join(" ");
+          return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)(
+            "button",
+            {
+              "aria-label": ariaLabel,
+              className: "action-bar__button",
+              disabled,
+              onClick: () => handleClick(id),
+              type: "button",
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("span", { className: "action-bar__line", children: label[0] }),
+                /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("span", { className: "action-bar__line", children: label[1] })
+              ]
+            },
+            id
+          );
+        }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { className: "action-bar__button-zone action-bar__button-zone--flow", children: FLOW_BUTTONS.map(({ id, label }) => {
+          const ariaLabel = label.filter(Boolean).join(" ");
+          return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)(
+            "button",
+            {
+              "aria-label": ariaLabel,
+              className: "action-bar__button",
+              disabled: flowDisabled,
+              onClick: () => handleClick(id),
+              type: "button",
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("span", { className: "action-bar__line", children: label[0] }),
+                /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("span", { className: "action-bar__line", children: label[1] })
+              ]
+            },
+            id
+          );
+        }) })
+      ] })
+    ] }) });
+  };
+  var action_bar_default = ActionBar;
 
   // src/client/ui/src/app-host.tsx
-  var import_jsx_runtime40 = __toESM(require_jsx_runtime());
-  var AppHost = () => {
-    const [coreStatus, setCoreStatus] = (0, import_react31.useState)("connecting");
-    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react31.useState)();
-    const [coreFinalized, setCoreFinalized] = (0, import_react31.useState)(false);
-    const [messages, setMessages] = (0, import_react31.useState)(
+  var import_jsx_runtime41 = __toESM(require_jsx_runtime());
+  var SETTINGS_ONLY_MODE = true;
+  var FullAppHost = () => {
+    const [coreStatus, setCoreStatus] = (0, import_react32.useState)("connecting");
+    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react32.useState)();
+    const [coreFinalized, setCoreFinalized] = (0, import_react32.useState)(false);
+    const [messages, setMessages] = (0, import_react32.useState)(
       createDefaultMessages
     );
-    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react31.useState)(0);
+    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react32.useState)(0);
     const {
       pickerState,
       providerLabels,
@@ -28768,7 +28893,7 @@ ${replacement}
       sendMessage
     } = useSessionStore(providerLabels);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const shouldKickoffIdeaRef = (0, import_react31.useRef)(false);
+    const shouldKickoffIdeaRef = (0, import_react32.useRef)(false);
     const {
       startCollection: startIdeaCollection,
       sendMessage: sendIdeaCollectorMessage
@@ -28778,14 +28903,14 @@ ${replacement}
       selectStage,
       lockStageSelection
     );
-    const confirmSelectionFromUi = (0, import_react31.useCallback)(
+    const confirmSelectionFromUi = (0, import_react32.useCallback)(
       (providerIds) => {
         shouldKickoffIdeaRef.current = selectedStage === "idea" && (providerIds[0] === "codexCli" || providerIds[0] === "claudeCodeCli");
         confirmSelection(providerIds);
       },
       [confirmSelection, selectedStage]
     );
-    const handleSessionCreatedMessage2 = (0, import_react31.useCallback)(
+    const handleSessionCreatedMessage2 = (0, import_react32.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
@@ -28799,39 +28924,39 @@ ${replacement}
       },
       [handleSessionCreated, resetPicker, startIdeaCollection]
     );
-    const handleShowSettings = (0, import_react31.useCallback)(() => {
+    const handleShowSettings = (0, import_react32.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    const handleCoreState = (0, import_react31.useCallback)(
+    const handleCoreState = (0, import_react32.useCallback)(
       (payload) => {
         activateRoot();
         hydrateFromCoreState(payload);
       },
       [hydrateFromCoreState]
     );
-    const handleSessionMessage = (0, import_react31.useCallback)(
+    const handleSessionMessage = (0, import_react32.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionMessageEvent2(payload);
       },
       [handleSessionMessageEvent2]
     );
-    const handleSessionHistory = (0, import_react31.useCallback)(
+    const handleSessionHistory = (0, import_react32.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionHistoryEvent(payload);
       },
       [handleSessionHistoryEvent]
     );
-    const handleSessionDeletedMessage2 = (0, import_react31.useCallback)(
+    const handleSessionDeletedMessage2 = (0, import_react32.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionDeleted(payload);
       },
       [handleSessionDeleted]
     );
-    const handleSessionBindingMessage2 = (0, import_react31.useCallback)(
+    const handleSessionBindingMessage2 = (0, import_react32.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionBindingUpdate(payload);
@@ -28884,7 +29009,7 @@ ${replacement}
       onSessionHistory: handleSessionHistory
     });
     const isCoreReady = coreStatus === "ready" && coreFinalized;
-    (0, import_react31.useEffect)(() => {
+    (0, import_react32.useEffect)(() => {
       if (isCoreReady) {
         return;
       }
@@ -28897,11 +29022,11 @@ ${replacement}
         window.clearInterval(timer);
       };
     }, [isCoreReady]);
-    const currentMessage = (0, import_react31.useMemo)(() => {
+    const currentMessage = (0, import_react32.useMemo)(() => {
       const messageId = MESSAGE_ORDER[activeMessageIndex];
       return messages[messageId] ?? DEFAULT_MESSAGES[messageId];
     }, [activeMessageIndex, messages]);
-    const { headlineText, statusLine, detailLine } = (0, import_react31.useMemo)(() => {
+    const { headlineText, statusLine, detailLine } = (0, import_react32.useMemo)(() => {
       if (coreStatus === "error") {
         return {
           headlineText: "Please hold on - we are getting CodeAI Hub ready.",
@@ -28915,9 +29040,9 @@ ${replacement}
         detailLine: coreStatusDetail ?? currentMessage.detail
       };
     }, [coreStatus, coreStatusDetail, currentMessage]);
-    return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(action_bar_default, { disabled: !isCoreReady }),
-      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(action_bar_default, { disabled: !isCoreReady }),
+      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
         SessionRegion,
         {
           cancelSelection,
@@ -28941,21 +29066,22 @@ ${replacement}
           stageSelectionLocked
         }
       ),
-      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
-        /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("span", { className: "app-shell__status-text", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
-          /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
-          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
+      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
+        /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("span", { className: "app-shell__status-text", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
+          /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
+          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
         ] })
       ] }) }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
     ] });
   };
+  var AppHost = () => SETTINGS_ONLY_MODE ? /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(SettingsOnlyHost, {}) : /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(FullAppHost, {});
   var app_host_default = AppHost;
 
   // src/client/ui/src/index.tsx
-  var import_jsx_runtime41 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime42 = __toESM(require_jsx_runtime());
   initializeCoreBridge();
   var mount = () => {
     const rootElement = document.getElementById("root");
@@ -28965,7 +29091,7 @@ ${replacement}
     activateRoot();
     const root4 = (0, import_client.createRoot)(rootElement);
     root4.render(
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(import_react32.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(import_react33.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(app_host_default, {}) })
     );
   };
   mount();
