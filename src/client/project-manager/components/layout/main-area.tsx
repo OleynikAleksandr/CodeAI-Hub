@@ -2,6 +2,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
+import { resolveQuestionnairePath } from "../../services/description-questionnaire-utils";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
 import {
   startWorkflowEventPolling,
@@ -48,6 +49,12 @@ export const MainArea: React.FC<MainAreaProps> = ({
     readonly path: string;
     readonly label: "description.md" | "Final_Description.md";
   } | null>(null);
+  const [questionnaireDocument, setQuestionnaireDocument] = useState<{
+    readonly workspacePath: string;
+    readonly workspaceSlug: string;
+    readonly path: string;
+    readonly label: "questionnaire.md";
+  } | null>(null);
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -70,6 +77,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
       setActiveTool(null);
       setPreferredSessionId(null);
       setSelectedArtifact(null);
+      setQuestionnaireDocument(null);
       return;
     }
     setActiveTool((current) => current ?? "Description");
@@ -103,6 +111,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
   useEffect(() => {
     if (!activeWorkspace?.name || !activeWorkspace.path) {
       setDescriptionDocument(null);
+      setQuestionnaireDocument(null);
       return;
     }
 
@@ -117,7 +126,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
       }
 
       const branch = state?.description;
-      const next =
+      const nextDescription =
         branch?.finalPath && branch.finalPath.trim().length > 0
           ? { path: branch.finalPath, label: "Final_Description.md" as const }
           : branch?.draftPath && branch.draftPath.trim().length > 0
@@ -125,8 +134,29 @@ export const MainArea: React.FC<MainAreaProps> = ({
             : null;
 
       setDescriptionDocument(
-        next
-          ? { ...next, workspacePath, workspaceSlug }
+        nextDescription
+          ? { ...nextDescription, workspacePath, workspaceSlug }
+          : null
+      );
+
+      const hasDescriptionSession = Boolean(
+        branch?.session || branch?.sessionKind
+      );
+      const questionnairePath =
+        branch?.questionnairePath && branch.questionnairePath.trim().length > 0
+          ? branch.questionnairePath
+          : resolveQuestionnairePath(activeWorkspace.name);
+      const nextQuestionnaire =
+        hasDescriptionSession && !nextDescription
+          ? {
+              path: questionnairePath,
+              label: "questionnaire.md" as const,
+            }
+          : null;
+
+      setQuestionnaireDocument(
+        nextQuestionnaire
+          ? { ...nextQuestionnaire, workspacePath, workspaceSlug }
           : null
       );
     };
@@ -140,7 +170,8 @@ export const MainArea: React.FC<MainAreaProps> = ({
   }, [activeWorkspace?.name, activeWorkspace?.path]);
 
   useEffect(() => {
-    if (!descriptionDocument) {
+    const autoDocument = descriptionDocument ?? questionnaireDocument;
+    if (!autoDocument) {
       return;
     }
     if (activeTool !== "Description") {
@@ -149,7 +180,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
 
     const shouldAutoReplace =
       selectedArtifact === null ||
-      (selectedArtifact.workspaceSlug === descriptionDocument.workspaceSlug &&
+      (selectedArtifact.workspaceSlug === autoDocument.workspaceSlug &&
         (selectedArtifact.label === "description.md" ||
           selectedArtifact.label === "Final_Description.md" ||
           selectedArtifact.label === "questionnaire.md"));
@@ -158,14 +189,15 @@ export const MainArea: React.FC<MainAreaProps> = ({
       return;
     }
 
-    if (selectedArtifact?.path === descriptionDocument.path) {
+    if (selectedArtifact?.path === autoDocument.path) {
       return;
     }
 
-    setSelectedArtifact(descriptionDocument);
+    setSelectedArtifact(autoDocument);
   }, [
     activeTool,
     descriptionDocument,
+    questionnaireDocument,
     selectedArtifact?.label,
     selectedArtifact?.path,
     selectedArtifact?.workspaceSlug,
@@ -175,7 +207,8 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const showDescriptionQuestionnaire =
     !showArtifactViewer &&
     activeTool === "Description" &&
-    descriptionDocument === null;
+    descriptionDocument === null &&
+    questionnaireDocument === null;
   const showVirtualSimulation = activeTool === "Virtual Simulation";
   const showDiagramModules = activeTool === "Diagram Modules";
   const showDiagramFacades = activeTool === "Diagram Facades";

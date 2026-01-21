@@ -66,7 +66,9 @@ export const WorkflowArtifactViewer: React.FC<{
   }, [props.path, props.workspacePath, props.workspaceSlug]);
 
   const showBackButton =
-    props.label !== "description.md" && props.label !== "Final_Description.md";
+    props.label !== "description.md" &&
+    props.label !== "Final_Description.md" &&
+    props.label !== "questionnaire.md";
 
   return (
     <div className="pm-details">
@@ -88,4 +90,3 @@ export const WorkflowArtifactViewer: React.FC<{
     </div>
   );
 };
-
