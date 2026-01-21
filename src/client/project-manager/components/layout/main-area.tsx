@@ -9,10 +9,10 @@ import {
 } from "../../services/workflow-events-client";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
-import MarkdownContent from "../../../ui/src/session/markdown-content";
 import { PanelContainer } from "./panel-container";
 import { StatusBar } from "./status-bar";
 import { Toolbar } from "./toolbar";
+import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
 
 interface MainAreaProps {
   sizes: [number, number];
@@ -41,6 +41,12 @@ export const MainArea: React.FC<MainAreaProps> = ({
     readonly workspaceSlug: string;
     readonly path: string;
     readonly label: string;
+  } | null>(null);
+  const [descriptionDocument, setDescriptionDocument] = useState<{
+    readonly workspacePath: string;
+    readonly workspaceSlug: string;
+    readonly path: string;
+    readonly label: "description.md" | "Final_Description.md";
   } | null>(null);
 
   useEffect(() => {
@@ -94,8 +100,82 @@ export const MainArea: React.FC<MainAreaProps> = ({
     };
   }, [activeWorkspace?.name]);
 
+  useEffect(() => {
+    if (!activeWorkspace?.name || !activeWorkspace.path) {
+      setDescriptionDocument(null);
+      return;
+    }
+
+    const workspaceSlug = toWorkflowWorkspaceSlug(activeWorkspace.name);
+    const workspacePath = activeWorkspace.path;
+    let cancelled = false;
+
+    const loadState = async () => {
+      const state = await api.getWorkflowState(workspaceSlug);
+      if (cancelled) {
+        return;
+      }
+
+      const branch = state?.description;
+      const next =
+        branch?.finalPath && branch.finalPath.trim().length > 0
+          ? { path: branch.finalPath, label: "Final_Description.md" as const }
+          : branch?.draftPath && branch.draftPath.trim().length > 0
+            ? { path: branch.draftPath, label: "description.md" as const }
+            : null;
+
+      setDescriptionDocument(
+        next
+          ? { ...next, workspacePath, workspaceSlug }
+          : null
+      );
+    };
+
+    loadState();
+    const timer = window.setInterval(loadState, 10_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [activeWorkspace?.name, activeWorkspace?.path]);
+
+  useEffect(() => {
+    if (!descriptionDocument) {
+      return;
+    }
+    if (activeTool !== "Description") {
+      return;
+    }
+
+    const shouldAutoReplace =
+      selectedArtifact === null ||
+      (selectedArtifact.workspaceSlug === descriptionDocument.workspaceSlug &&
+        (selectedArtifact.label === "description.md" ||
+          selectedArtifact.label === "Final_Description.md" ||
+          selectedArtifact.label === "questionnaire.md"));
+
+    if (!shouldAutoReplace) {
+      return;
+    }
+
+    if (selectedArtifact?.path === descriptionDocument.path) {
+      return;
+    }
+
+    setSelectedArtifact(descriptionDocument);
+  }, [
+    activeTool,
+    descriptionDocument,
+    selectedArtifact?.label,
+    selectedArtifact?.path,
+    selectedArtifact?.workspaceSlug,
+  ]);
+
   const showArtifactViewer = Boolean(selectedArtifact);
-  const showDescriptionQuestionnaire = !showArtifactViewer && activeTool === "Description";
+  const showDescriptionQuestionnaire =
+    !showArtifactViewer &&
+    activeTool === "Description" &&
+    descriptionDocument === null;
   const showVirtualSimulation = activeTool === "Virtual Simulation";
   const showDiagramModules = activeTool === "Diagram Modules";
   const showDiagramFacades = activeTool === "Diagram Facades";
@@ -153,86 +233,5 @@ export const MainArea: React.FC<MainAreaProps> = ({
         workspaceName={activeWorkspace?.name}
       />
     </main>
-  );
-};
-
-const WorkflowArtifactViewer = (props: {
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-  readonly path: string;
-  readonly label: string;
-  readonly onClose: () => void;
-}) => {
-  const [content, setContent] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    setContent(null);
-    setError(null);
-    const httpUrl = api.getHttpUrl();
-    if (!httpUrl) {
-      setError("Не удалось загрузить артефакт: Core HTTP недоступен.");
-      return () => {
-        cancelled = true;
-      };
-    }
-    const query = new URLSearchParams({
-      workspacePath: props.workspacePath,
-      workspaceSlug: props.workspaceSlug,
-      path: props.path,
-      maxBytes: "300000",
-    });
-    fetch(`${httpUrl}/api/v1/orchestrator/workflow-artifact?${query.toString()}`, {
-      method: "GET",
-    })
-      .then(async (response) => {
-        if (cancelled) {
-          return;
-        }
-        if (!response.ok) {
-          setError("Не удалось загрузить артефакт (endpoint недоступен или файл не найден).");
-          return;
-        }
-        const payload = (await response.json()) as unknown;
-        if (!payload || typeof payload !== "object") {
-          setError("Не удалось загрузить артефакт: неверный ответ сервера.");
-          return;
-        }
-        const record = payload as Record<string, unknown>;
-        const nextContent = typeof record.content === "string" ? record.content : null;
-        if (nextContent === null) {
-          setError("Не удалось загрузить артефакт: контент отсутствует.");
-          return;
-        }
-        setContent(nextContent);
-      })
-      .catch((readError: unknown) => {
-        if (cancelled) {
-          return;
-        }
-        setError(readError instanceof Error ? readError.message : String(readError));
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [props.path, props.workspacePath, props.workspaceSlug]);
-
-  return (
-    <div className="pm-details">
-      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
-        <button onClick={props.onClose} type="button">
-          Back
-        </button>
-        <strong title={props.path}>{props.label}</strong>
-      </div>
-      {error ? <div className="pm-placeholder">{error}</div> : null}
-      {!error && content === null ? (
-        <div className="pm-placeholder">Загружаем артефакт...</div>
-      ) : null}
-      {!error && content !== null ? (
-        <MarkdownContent content={content} />
-      ) : null}
-    </div>
   );
 };
