@@ -1,3 +1,7 @@
+## [1.1.467] - 2026-01-21
+### Fixed
+- Project Manager: align artifact viewer typography with session dialogs.
+
 ## [1.1.466] - 2026-01-21
 ### Fixed
 - Project Manager: lock description questionnaire after submission (read-only markdown).
