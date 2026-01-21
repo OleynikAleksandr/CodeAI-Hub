@@ -39,6 +39,46 @@
 1. [DONE] Fix(project-manager): при `session:created` обязательно подгружать историю из unified-session (JSONL), чтобы resume открывал полный диалог, а не пустое окно — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/status-hydrator.ts`; expected commit message: `fix(project-manager): load history for newly created sessions`
 2. [DONE] Git Commit: `fix(project-manager): load history for newly created sessions` (hash: 130ff166)
 
+### Stream: Hotfix — Project Manager UI bootstrap (verification 1.1.460)
+1. [DONE] Fix(project-manager): устранить проблему старта Project Manager (ошибка `handleSessionHistory`/TDZ при загрузке bundle) + убрать внешний `<link href="styles.css">` (стили инлайнятся) — scope: `packages/ui/project-manager/index.html`; expected commit message: `fix(project-manager): prevent bootstrap crash in release bundle`
+2. [DONE] Git Commit: `fix(project-manager): prevent bootstrap crash in release bundle` (hash: faf002a1)
+
+3. [DONE] Fix(claude-module): убрать runtime-зависимость от `@codeai-hub/idea-collector`, чтобы override-пакет в `~/.codeai-hub/providers/**` не падал без `node_modules` — scope: `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`, `packages/Claude_Module/package.json`; expected commit message: `fix(claude-module): remove runtime dependency on idea-collector`
+4. [TODO] Git Commit: `fix(claude-module): remove runtime dependency on idea-collector` (hash: TBD)
+
+5. [DONE] Release(build): собрать verification build 1.1.460 (tarballs + VSIX) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/tmp/releases/*-1.1.460.tar.bz2`, `codeai-hub-1.1.460.vsix`; expected commit message: `chore(release): build 1.1.460 verification`
+6. [TODO] Git Commit: `chore(release): build 1.1.460 verification` (hash: TBD)
+
+### Stream: Fix — Reviewer resume без дублей + понятный label
+1. [TODO] Fix(core): при `session:create` с `providerSessionId` (resume) сразу заполнять `binding.providerSessionId` (status может оставаться `pending`), чтобы UI мог матчить сессию до первого ответа провайдера и не создавать дубль (и лишние папки continuity) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-manager/index.ts`; expected commit message: `fix(core): seed providerSessionId on resume create`
+2. [TODO] Git Commit: `fix(core): seed providerSessionId on resume create` (hash: TBD)
+
+3. [TODO] Fix(project-manager): дедупликация повторных resume-кликов пока биндинг `providerSessionId` не подтверждён (in-flight map по ключу `workspacePath+providerId+providerSessionId+stage+runSlug`) — scope: `src/client/project-manager/components/sessions/session-resume-intent.ts`; expected commit message: `fix(project-manager): dedupe resume while binding pending`
+4. [TODO] Git Commit: `fix(project-manager): dedupe resume while binding pending` (hash: TBD)
+
+5. [TODO] Fix(core): не допускать регресса `description.sessionKind` из `reviewer` в `collector` при апдейтах snapshot (сохранять reviewer-метку, если она уже была установлена) — scope: `packages/core/src/workflow/description/description-step-store.ts`; expected commit message: `fix(core): prevent description sessionKind regression`
+6. [TODO] Git Commit: `fix(core): prevent description sessionKind regression` (hash: TBD)
+
+7. [TODO] Fix(project-manager): сделать label сессии в ветке Description человекочитаемым (`Reviewer session · <provider>`), с fallback (если `finalPath` есть — считать сессию reviewer) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): label reviewer session in tree`
+8. [TODO] Git Commit: `fix(project-manager): label reviewer session in tree` (hash: TBD)
+
+### Stream: Refactor — авто-переключение Questionnaire → Draft → Final (Description)
+1. [TODO] Fix(project-manager): в ветке Description показывать только один актуальный документ: `finalPath` (если есть) иначе `draftPath`, иначе `questionnairePath` — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): collapse description artifacts to latest`
+2. [TODO] Git Commit: `fix(project-manager): collapse description artifacts to latest` (hash: TBD)
+
+3. [TODO] Fix(project-manager): при появлении `draftPath` автоматически переключать центральную зону с анкеты на `description.md` (draft) и скрывать анкету; при появлении `finalPath` — автоматически переключать на финальный документ (без кнопок Back) — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `fix(project-manager): auto-open description draft/final artifacts`
+4. [TODO] Git Commit: `fix(project-manager): auto-open description draft/final artifacts` (hash: TBD)
+
+5. [TODO] Verify(manual): когда появляется draft (`description.md`) — анкета исчезает (в ветке и в центральной зоне) и автоматически открывается draft; когда появляется финал — draft исчезает и автоматически открывается финал — scope: no files; expected commit message: `docs: record description artifact auto-switch verification`
+6. [TODO] Git Commit: `docs: record description artifact auto-switch verification` (hash: TBD)
+
+### Stream: Fix — Description Agent resume без дублей + понятный label
+1. [TODO] Fix(core): при `session:create` с `providerSessionId` (resume) и уже существующей сессии (same `workspacePath + initiativeSlug + stage + providerId + providerSessionId`) не создавать новую, а переиспользовать существующую (rebroadcast `session:created` + `session:binding`) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): dedupe session:create resume for description agent`
+2. [TODO] Git Commit: `fix(core): dedupe session:create resume for description agent` (hash: TBD)
+
+3. [TODO] Fix(project-manager): label для collector-сессии в ветке Description сделать человекочитаемым (`Description agent session · <provider>`) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): label description agent session in tree`
+4. [TODO] Git Commit: `fix(project-manager): label description agent session in tree` (hash: TBD)
+
 ### Stream: Verification
 1. [TODO] Verify(manual): клик по строке `Session · <provider>` (Reviewer) не создаёт дубль; если сессия уже есть — только фокус; если скрыта — показывается снова; если это первый resume после перезапуска — открывается с полной историей (из JSONL), не пустая — scope: no files; expected commit message: `docs: record resume focus + history verification`
 2. [TODO] Git Commit: `docs: record resume focus + history verification` (hash: TBD)
