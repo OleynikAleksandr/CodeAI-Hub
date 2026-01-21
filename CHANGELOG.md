@@ -2,6 +2,12 @@
 ### Fixed
 - VS Code Webview: prevent empty duplicate session when core rebroadcasts `session:created` (e.g. resume click while binding is pending).
 
+### Changed
+- VS Code Webview: Settings-only mode (sessions/chats handled in Project Manager).
+
+### Removed
+- Legacy web-client UI bundle and build pipeline.
+
 ## [1.1.463] - 2026-01-21
 ### Fixed
 - Project Manager: prevent duplicate session windows when clicking Description Agent session before first provider response (dedupe rebroadcasted `session:created`).
