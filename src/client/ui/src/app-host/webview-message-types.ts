@@ -24,6 +24,10 @@ export type SessionFocusLastMessage = { readonly type: "session:focusLast" };
 
 export type ShowSettingsMessage = { readonly type: "ui:showSettings" };
 
+export type UseProjectManagerMessage = {
+  readonly type: "ui:useProjectManager";
+};
+
 export type CoreStateMessage = {
   readonly type: "core:state";
   readonly payload?: unknown;
@@ -71,6 +75,7 @@ export type IncomingMessage =
   | SessionFocusLastMessage
   | SessionBindingMessage
   | ShowSettingsMessage
+  | UseProjectManagerMessage
   | CoreStateMessage
   | CoreConnectionMessage
   | CoreLoadingStatusMessage
@@ -149,6 +154,15 @@ export const isSessionHistoryPayload = (
     typeof candidate.sessionId === "string" && Array.isArray(candidate.messages)
   );
 };
+
+export const isUseProjectManagerMessage = (
+  value: unknown
+): value is UseProjectManagerMessage =>
+  Boolean(
+    value &&
+      typeof value === "object" &&
+      (value as { type?: unknown }).type === "ui:useProjectManager"
+  );
 export const isSessionBindingPayload = (
   value: unknown
 ): value is CoreBridgeSessionBindingPayload => {
