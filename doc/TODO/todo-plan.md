@@ -89,6 +89,10 @@
 3. [TODO] Change: при создании reviewer session скрывать сессию Description Agent в левой панели (оставлять только Reviewer) — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-visibility.ts`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `fix(project-manager): hide description agent session`
 4. [TODO] Git Commit: `fix(project-manager): hide description agent session` (hash: TBD)
 
+### Stream: Refactor — session message sender
+1. [DONE] Refactor: вынести отправку сообщений в отдельный хук, чтобы держать `project-manager-session-view.tsx` < 300 строк — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-message-sender.ts`; expected commit message: `fix(project-manager): extract session message sender`
+2. [DONE] Git Commit: `fix(project-manager): extract session message sender` (hash: 117206dc)
+
 ### Stream: Artifacts panel typography
 1. [TODO] Change: уменьшить вдвое размер шрифта артефактов в правой панели Project Manager — scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/styles/layout.css`; expected commit message: `fix(project-manager): reduce artifact font size`
 2. [TODO] Git Commit: `fix(project-manager): reduce artifact font size` (hash: TBD)
