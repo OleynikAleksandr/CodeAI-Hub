@@ -12,7 +12,9 @@
 - 2026-01-16 (release 1.1.424): Spec/Plan/Execute выровнены по оси модуля, Orchestration остаётся вложенным шагом.
 
 ## Принципы
-- MVP: “полный SolidWorks” (Workflow Tree Workbench) реализуется в `project-manager` (CEF); `vscode-webview`/`web-client` на этом этапе не дублируют дерево.
+- MVP: “полный SolidWorks” (Workflow Tree Workbench) реализуется в `project-manager` (CEF) и является единственным активным UI‑клиентом Core на период разработки FLOW.
+- `vscode-webview` используется только для Settings (Settings‑only, без сессий/чатов/подключения к Core).
+- `web-client` — legacy UI (PWA/CEF), принят план полного удаления вместе со сборкой/инсталляторами/ссылками (Phase 65).
 - Верхний уровень всегда `Repo (Assembly)`.
 - Рабочий контекст задачи — `Workspace (Project)`.
 - Реализация ведётся в кластерно‑модульной архитектуре:
