@@ -3,6 +3,7 @@ import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import { sanitizeMessage } from "../../../ui/src/core-bridge/normalizers";
+import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
 import {
   buildProviderLabels,
   createInitialSnapshot,
@@ -22,7 +23,10 @@ import {
   enforceArtifactsRequired,
   isFinalizeTrigger,
 } from "../../../ui/src/services/idea-collector-finalize-utils";
-import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
+import {
+  resolveProjectManagerCoreConfig,
+  useProjectManagerCoreStatusHydrator,
+} from "./status-hydrator";
 import { useSessionResumeIntent } from "./session-resume-intent";
 import { useSessionVisibility } from "./session-visibility";
 import { useProjectManagerSessionStream } from "./session-stream";
@@ -96,8 +100,17 @@ export const ProjectManagerSessionView = ({
         [session.id]: createInitialSnapshot(session, providerLabels),
       }));
       setActiveSessionId(session.id);
+      const config = resolveProjectManagerCoreConfig();
+      if (!config) {
+        return;
+      }
+      loadSessionHistories(config, [session], (payload) => {
+        handleSessionHistory(payload);
+      }).catch(() => {
+        // ignore
+      });
     },
-    [providerLabels, syncSessionsRef]
+    [handleSessionHistory, providerLabels, syncSessionsRef]
   );
   const handleSessionMessage = useCallback(
     (payload: { readonly sessionId: string; readonly message: SessionMessage }) => {
