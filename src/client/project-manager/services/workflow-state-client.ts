@@ -1,3 +1,5 @@
+import { buildWorkflowStateQuery } from "./workflow-state-query";
+
 const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
 
 export type WorkflowStageId =
@@ -250,14 +252,16 @@ const joinUrl = (baseUrl: string, path: string): string =>
 export const fetchWorkflowState = async (params: {
   readonly httpUrl: string;
   readonly workspaceSlug: string;
+  readonly workspacePath?: string;
 }): Promise<WorkflowStateSnapshot | null> => {
   try {
     const response = await fetch(
       joinUrl(
         params.httpUrl,
-        `${WORKFLOW_STATE_ENDPOINT}?workspaceSlug=${encodeURIComponent(
-          params.workspaceSlug
-        )}`
+        `${WORKFLOW_STATE_ENDPOINT}?${buildWorkflowStateQuery({
+          workspaceSlug: params.workspaceSlug,
+          workspacePath: params.workspacePath,
+        })}`
       ),
       { method: "GET" }
     );

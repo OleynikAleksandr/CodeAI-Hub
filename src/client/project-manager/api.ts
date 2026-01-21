@@ -239,13 +239,14 @@ export class ProjectManagerApi {
   }
 
   async getWorkflowState(
-    workspaceSlug: string
+    workspaceSlug: string,
+    workspacePath?: string
   ): Promise<WorkflowStateSnapshot | null> {
     const httpUrl = this.getHttpUrl();
     if (!httpUrl) {
       return null;
     }
-    return fetchWorkflowState({ httpUrl, workspaceSlug });
+    return fetchWorkflowState({ httpUrl, workspaceSlug, workspacePath });
   }
 
   private send(message: OutgoingMessage): void {
