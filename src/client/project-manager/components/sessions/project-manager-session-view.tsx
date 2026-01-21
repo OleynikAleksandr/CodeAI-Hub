@@ -64,6 +64,13 @@ export const ProjectManagerSessionView = ({
   const syncSessionsRef = useCallback((current: readonly SessionRecord[]) => {
     sessionsRef.current = current;
   }, []);
+  const { hideSession, removeHiddenSession, showSession, visibleSessions } =
+    useSessionVisibility({
+      sessions,
+      sessionsRef,
+      workspacePath,
+      setActiveSessionId,
+    });
   const hydrateFromState = useCallback(
     (payload: {
       readonly providers: readonly ProviderStackDescriptor[];
@@ -87,6 +94,24 @@ export const ProjectManagerSessionView = ({
       });
     },
     [syncSessionsRef]
+  );
+  const handleSessionHistory = useCallback(
+    (payload: { readonly sessionId: string; readonly messages: readonly unknown[] }) => {
+      const normalized: SessionMessage[] = [];
+      for (const message of payload.messages) {
+        const converted = sanitizeMessage(message as never);
+        if (converted) {
+          normalized.push(converted);
+        }
+      }
+      setSnapshots((previous) =>
+        mergeHistoryIntoSnapshots(previous, {
+          sessionId: payload.sessionId,
+          messages: normalized,
+        })
+      );
+    },
+    []
   );
   const handleSessionCreated = useCallback(
     (session: SessionRecord) => {
@@ -127,24 +152,6 @@ export const ProjectManagerSessionView = ({
           },
         };
       });
-    },
-    []
-  );
-  const handleSessionHistory = useCallback(
-    (payload: { readonly sessionId: string; readonly messages: readonly unknown[] }) => {
-      const normalized: SessionMessage[] = [];
-      for (const message of payload.messages) {
-        const converted = sanitizeMessage(message as never);
-        if (converted) {
-          normalized.push(converted);
-        }
-      }
-      setSnapshots((previous) =>
-        mergeHistoryIntoSnapshots(previous, {
-          sessionId: payload.sessionId,
-          messages: normalized,
-        })
-      );
     },
     []
   );
@@ -218,13 +225,6 @@ export const ProjectManagerSessionView = ({
     onHydrate: hydrateFromState,
     onSessionHistory: handleSessionHistory,
   });
-  const { hideSession, removeHiddenSession, showSession, visibleSessions } =
-    useSessionVisibility({
-      sessions,
-      sessionsRef,
-      workspacePath,
-      setActiveSessionId,
-    });
   useEffect(() => {
     if (!preferredSessionId) {
       return;
