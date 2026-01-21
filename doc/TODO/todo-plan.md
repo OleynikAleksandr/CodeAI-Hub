@@ -87,16 +87,24 @@
 3. [TODO] Verify(manual): клик по `Description agent session` в дереве ДО первого ответа агента не создаёт дубль окна/строки сессии — scope: no files; expected commit message: `docs: record description pre-binding click verification`
 4. [TODO] Git Commit: `docs: record description pre-binding click verification` (hash: TBD)
 
+### Stream: Fix — vscode-webview: no duplicate sessions on rebroadcast
+1. [TODO] Fix(vscode-webview): при повторном `session:created` для уже существующей сессии (тот же `session.id`) не добавлять дубликат и не сбрасывать snapshot; обновлять существующий record и сохранять историю — scope: `src/client/ui/src/app-host/session-store.ts`; expected commit message: `fix(vscode-webview): dedupe rebroadcasted session created`
+2. [TODO] Git Commit: `fix(vscode-webview): dedupe rebroadcasted session created` (hash: TBD)
+
+3. [TODO] Verify(manual): клик по `Description agent session` в дереве Project Manager не открывает пустой дубль сессии в `vscode-webview` (React-панель VS Code) — scope: no files; expected commit message: `docs: record vscode-webview session dedupe verification`
+4. [TODO] Git Commit: `docs: record vscode-webview session dedupe verification` (hash: TBD)
+
+
 
 ### Stream: Release build — 1.1.463 (verification)
-1. [TODO] Release(build): собрать verification build 1.1.463 (tarballs + VSIX) из clean tree — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/tmp/releases/*-1.1.463.tar.bz2`, `codeai-hub-1.1.463.vsix`; expected commit message: `chore(release): build 1.1.463 verification`
-2. [TODO] Git Commit: `chore(release): build 1.1.463 verification` (hash: TBD)
+1. [DONE] Release(build): собрать verification build 1.1.463 (tarballs + VSIX) из clean tree — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/tmp/releases/*-1.1.463.tar.bz2`, `codeai-hub-1.1.463.vsix`; expected commit message: `chore(release): build 1.1.463 verification`
+2. [DONE] Git Commit: `chore(release): build 1.1.463 verification` (hash: 57fe9581)
 
-3. [TODO] Docs(release): обновить `README.md` + `CHANGELOG.md` под 1.1.463 (описать фикс дублей pre-binding click) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update 1.1.463 notes`
-4. [TODO] Git Commit: `docs(release): update 1.1.463 notes` (hash: TBD)
+3. [DONE] Docs(release): обновить `README.md` + `CHANGELOG.md` под 1.1.463 (описать фикс дублей pre-binding click) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update 1.1.463 notes`
+4. [DONE] Git Commit: `docs(release): update 1.1.463 notes` (hash: af7dde74)
 
-5. [TODO] Docs(arch): обновить `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (versions table) под 1.1.463 — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): bump SystemArchitecture to 1.1.463`
-6. [TODO] Git Commit: `docs(arch): bump SystemArchitecture to 1.1.463` (hash: TBD)
+5. [DONE] Docs(arch): обновить `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (versions table) под 1.1.463 — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): bump SystemArchitecture to 1.1.463`
+6. [DONE] Git Commit: `docs(arch): bump SystemArchitecture to 1.1.463` (hash: 45d8fbab)
 
 7. [TODO] Docs(todo): зафиксировать релиз 1.1.463 в плане (DONE+hash) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 1.1.463 verification release`
 8. [TODO] Git Commit: `docs(todo): record 1.1.463 verification release` (hash: TBD)
