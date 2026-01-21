@@ -19,6 +19,17 @@ type HydratedState = {
   readonly sessions: readonly SessionRecord[];
 };
 
+export const resolveProjectManagerCoreConfig = (): CoreBridgeConfig | null => {
+  const httpUrl = api.getHttpUrl();
+  if (!httpUrl) {
+    return null;
+  }
+  return {
+    httpUrl,
+    wsUrl: api.getWsStreamUrl(),
+  };
+};
+
 export const useProjectManagerCoreStatusHydrator = (params: {
   readonly onHydrate: (payload: HydratedState) => void;
   readonly onSessionHistory: (payload: {
@@ -31,16 +42,11 @@ export const useProjectManagerCoreStatusHydrator = (params: {
   });
 
   useEffect(() => {
-    const httpUrl = api.getHttpUrl();
-    if (!httpUrl) {
+    const config = resolveProjectManagerCoreConfig();
+    if (!config) {
       setConnection({ status: "error", detail: "Core config is missing." });
       return;
     }
-
-    const config: CoreBridgeConfig = {
-      httpUrl,
-      wsUrl: api.getWsStreamUrl(),
-    };
 
     setConnection({ status: "connecting" });
 
