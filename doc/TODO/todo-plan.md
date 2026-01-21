@@ -59,8 +59,8 @@
 22. [DONE] Git Commit: `docs: record web-client removal gates` (hash: 082ef1b2)
 
 ### Stream: Change — vscode-webview Settings-only
-1. [TODO] Change: отключить подключение к Core и сессионный UI в `vscode-webview`; оставить только Settings (и безопасный экран-заглушку) — scope: `src/client/ui/src/app-host.tsx`, `src/client/ui/src/app-host/session-store.ts`, `src/client/ui/src/components/settings/settings-view.tsx`; expected commit message: `fix(vscode-webview): run settings-only mode`
-2. [TODO] Git Commit: `fix(vscode-webview): run settings-only mode` (hash: TBD)
+1. [DONE] Change: отключить подключение к Core и сессионный UI в `vscode-webview`; оставить только Settings (и безопасный экран-заглушку) — scope: `src/client/ui/src/app-host.tsx`, `src/client/ui/src/app-host/settings-only-host.tsx`, `src/client/ui/src/components/settings-view.tsx`; expected commit message: `fix(vscode-webview): run settings-only mode`
+2. [DONE] Git Commit: `fix(vscode-webview): run settings-only mode` (hash: b552910b)
 
 3. [TODO] Change: обновить роутинг/extension-message router так, чтобы команды/сообщения, связанные с чатами/сессиями, не активировали UI, а возвращали подсказку “Use Project Manager” — scope: `src/extension-module/home-view-message-router/`, `src/client/ui/src/app-host/webview-message-handler.ts`, `src/client/ui/src/app-host/webview-message-types.ts`; expected commit message: `fix(vscode-webview): route sessions to project-manager`
 4. [TODO] Git Commit: `fix(vscode-webview): route sessions to project-manager` (hash: TBD)
