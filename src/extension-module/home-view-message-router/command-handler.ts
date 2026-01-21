@@ -1,4 +1,4 @@
-import { commands, window } from "vscode";
+import { window } from "vscode";
 import type { ProviderRegistry } from "../../core/providers/provider-registry";
 import type { CoreProcessManager } from "../core/core-process-manager";
 import type { FileOperationsFacade } from "../file-operations/file-operations-facade";
@@ -111,21 +111,6 @@ export const handleCommand = async (
       window.showInformationMessage(
         "Selecting the most recent session (placeholder)."
       );
-      return;
-    case "launchWebClient":
-      if (context.coreProcessManager) {
-        try {
-          await context.coreProcessManager.ensureStarted();
-        } catch (error) {
-          const reason =
-            error instanceof Error ? error.message : "Unknown error.";
-          window.showErrorMessage(
-            `Core Supervisor failed to start the core: ${reason}`
-          );
-          return;
-        }
-      }
-      await commands.executeCommand("codeaiHub.launchWebClient");
       return;
     case "oldSessions":
       window.showInformationMessage(
