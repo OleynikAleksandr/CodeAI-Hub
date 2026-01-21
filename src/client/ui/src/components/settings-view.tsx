@@ -9,8 +9,10 @@ import SettingsHeader from "./settings/settings-header";
 import ThinkingSettings from "./settings/thinking-settings";
 import { useSettingsState } from "./settings/use-settings-state";
 
+type SettingsMode = "settings-only" | "full";
 type SettingsViewProps = {
   readonly onClose: () => void;
+  readonly mode?: SettingsMode;
 };
 
 type SettingsTab = "claude" | "codex" | "gemini" | "general";
@@ -57,6 +59,24 @@ const stackStyles: React.CSSProperties = {
   gap: "16px",
 };
 
+const modeNoticeStyles: React.CSSProperties = {
+  margin: "16px 20px 0",
+  padding: "12px 14px",
+  borderRadius: "10px",
+  background: "#252526",
+  border: "1px solid #2d2d30",
+  color: "#cccccc",
+  fontSize: "12px",
+  lineHeight: 1.5,
+};
+
+const modeNoticeTitleStyles: React.CSSProperties = {
+  color: "#ffffff",
+  fontSize: "13px",
+  fontWeight: 600,
+  marginBottom: "4px",
+};
+
 const settingsTabs: ReadonlyArray<{
   readonly id: SettingsTab;
   readonly label: string;
@@ -67,7 +87,10 @@ const settingsTabs: ReadonlyArray<{
   { id: "general", label: "General" },
 ];
 
-const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
+const SettingsView: React.FC<SettingsViewProps> = ({
+  onClose,
+  mode = "full",
+}) => {
   const [activeTab, setActiveTab] = useState<SettingsTab>("claude");
   const {
     settings,
@@ -90,6 +113,12 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
   return (
     <div style={containerStyles}>
       <SettingsHeader onClose={onClose} />
+      {mode === "settings-only" ? (
+        <div style={modeNoticeStyles}>
+          <div style={modeNoticeTitleStyles}>Settings only mode</div>
+          <div>Sessions and chats are available in Project Manager.</div>
+        </div>
+      ) : null}
       <div style={tabBarStyles}>
         {settingsTabs.map((tab) => (
           <button
