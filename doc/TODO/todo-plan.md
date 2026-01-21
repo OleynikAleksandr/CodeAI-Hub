@@ -31,11 +31,29 @@
 3. [DONE] Remove: вычистить `build-all`/`build-release` от сборки/установки web-client (и артефактов/manifest записей) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `assets/ui/manifest.json`; expected commit message: `chore(release): remove web-client from build pipelines`
 4. [DONE] Git Commit: `chore(release): remove web-client from build pipelines` (hash: 2449f6c1)
 
-5. [TODO] Remove: удалить исходники `web-client` и все импорты/типы/реестры, которые на него ссылаются (UI bundle id, activation, registry tests и т.п.) — scope: `src/client/web-client/`, `src/extension-module/ui/ui-types.ts`, `src/extension-module/ui/ui-activation.ts`; expected commit message: `chore(web-client): delete web-client client and references`
-6. [TODO] Git Commit: `chore(web-client): delete web-client client and references` (hash: TBD)
+5. [TODO] Remove: убрать web-client bundle id из UI registry/activation и тестов — scope: `src/extension-module/ui/ui-types.ts`, `src/extension-module/ui/ui-activation.ts`, `src/__tests__/ui-registry.test.ts`; expected commit message: `chore(web-client): remove bundle id from ui registry`
+6. [TODO] Git Commit: `chore(web-client): remove bundle id from ui registry` (hash: TBD)
 
-7. [TODO] Gates: убедиться, что `ts-prune`/typecheck не находят мёртвых ссылок на web-client; сборки `build:webview` и `build:project-manager` зелёные — scope: no files; expected commit message: `docs: record web-client removal gates`
-8. [TODO] Git Commit: `docs: record web-client removal gates` (hash: TBD)
+7. [TODO] Remove: убрать `launchWebClient` команду и роутинг в extension/handler — scope: `src/extension.ts`, `src/extension-module/home-view-message-router/command-handler.ts`, `src/extension-module/home-view-message-router/message-types.ts`; expected commit message: `chore(web-client): drop launch command wiring`
+8. [TODO] Git Commit: `chore(web-client): drop launch command wiring` (hash: TBD)
+
+9. [TODO] Remove: убрать `launchWebClient` contribution из `package.json` — scope: `package.json`; expected commit message: `chore(web-client): remove command contribution`
+10. [TODO] Git Commit: `chore(web-client): remove command contribution` (hash: TBD)
+
+11. [TODO] Remove: удалить extension-module web-client shortcut manager и его использование — scope: `src/extension-module/web-client/`, `src/extension-module/cef/launcher-setup.ts`; expected commit message: `chore(web-client): remove launcher shortcut integration`
+12. [TODO] Git Commit: `chore(web-client): remove launcher shortcut integration` (hash: TBD)
+
+13. [TODO] Remove: удалить web-client UI исходники и tsconfig ссылки — scope: `src/client/web-client/`, `tsconfig.json`, `tsconfig.webview.json`; expected commit message: `chore(web-client): delete ui sources and tsconfig refs`
+14. [TODO] Git Commit: `chore(web-client): delete ui sources and tsconfig refs` (hash: TBD)
+
+15. [TODO] Remove: вычистить build-ui-bundle/release-utils от web-client — scope: `scripts/build-ui-bundle.sh`, `scripts/release-utils.sh`; expected commit message: `chore(web-client): remove build bundle wiring`
+16. [TODO] Git Commit: `chore(web-client): remove build bundle wiring` (hash: TBD)
+
+17. [TODO] Remove: удалить web-client media assets и biome ignore — scope: `media/web-client/`, `biome.jsonc`; expected commit message: `chore(web-client): remove media assets`
+18. [TODO] Git Commit: `chore(web-client): remove media assets` (hash: TBD)
+
+19. [TODO] Gates: убедиться, что `ts-prune`/typecheck не находят мёртвых ссылок на web-client; сборки `build:webview` и `build:project-manager` зелёные — scope: no files; expected commit message: `docs: record web-client removal gates`
+20. [TODO] Git Commit: `docs: record web-client removal gates` (hash: TBD)
 
 ### Stream: Change — vscode-webview Settings-only
 1. [TODO] Change: отключить подключение к Core и сессионный UI в `vscode-webview`; оставить только Settings (и безопасный экран-заглушку) — scope: `src/client/ui/src/app-host.tsx`, `src/client/ui/src/app-host/session-store.ts`, `src/client/ui/src/components/settings/settings-view.tsx`; expected commit message: `fix(vscode-webview): run settings-only mode`
