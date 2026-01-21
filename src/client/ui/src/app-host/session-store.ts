@@ -26,17 +26,11 @@ import {
 import type { ProviderLabels } from "./provider-picker-state";
 
 type ToggleTodoHandler = (sessionId: string, todoId: string) => void;
-
 type SendMessageHandler = (sessionId: string, content: string) => void;
-
 type CloseSessionHandler = (sessionId: string) => void;
-
 type SelectSessionHandler = (sessionId: string) => void;
-
 type FocusLastSessionHandler = () => void;
-
 type ClearSessionsHandler = () => void;
-
 type SessionCreatedHandler = (session: SessionRecord) => void;
 type CoreStateHandler = (payload: CoreBridgeStatePayload) => void;
 type SessionMessageHandler = (payload: CoreBridgeSessionMessagePayload) => void;
@@ -64,7 +58,6 @@ export type UseSessionStoreResult = {
   readonly toggleTodo: ToggleTodoHandler;
   readonly sendMessage: SendMessageHandler;
 };
-
 export const useSessionStore = (
   providerLabels: ProviderLabels
 ): UseSessionStoreResult => {
@@ -73,11 +66,9 @@ export const useSessionStore = (
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const sessionsRef = useRef<SessionRecord[]>([]);
   const pendingBindingsRef = useRef<Record<string, SessionBindingInfo>>({});
-
   const syncSessionsRef = useCallback((current: SessionRecord[]) => {
     sessionsRef.current = current;
   }, []);
-
   const applyPendingBinding = useCallback(
     (session: SessionRecord): SessionRecord => {
       const pending = pendingBindingsRef.current[session.id];
@@ -89,24 +80,40 @@ export const useSessionStore = (
     },
     []
   );
-
   const handleSessionCreated = useCallback<SessionCreatedHandler>(
     (session) => {
       const sessionWithBinding = applyPendingBinding(session);
       setSessions((previous) => {
-        const next = [...previous, sessionWithBinding];
+        const next = previous.some((candidate) => candidate.id === session.id)
+          ? previous.map((candidate) =>
+              candidate.id === session.id ? sessionWithBinding : candidate
+            )
+          : [...previous, sessionWithBinding];
         syncSessionsRef(next);
         return next;
       });
-      setSnapshots((previous) => ({
-        ...previous,
-        [session.id]: createInitialSnapshot(sessionWithBinding, providerLabels),
-      }));
+      setSnapshots((previous) => {
+        const existing = previous[session.id];
+        return existing
+          ? {
+              ...previous,
+              [session.id]: {
+                ...existing,
+                binding: sessionWithBinding.binding,
+              },
+            }
+          : {
+              ...previous,
+              [session.id]: createInitialSnapshot(
+                sessionWithBinding,
+                providerLabels
+              ),
+            };
+      });
       setActiveSessionId(session.id);
     },
     [applyPendingBinding, providerLabels, syncSessionsRef]
   );
-
   const hydrateFromCoreState = useCallback<CoreStateHandler>(
     (payload) => {
       const nextSessions = payload.sessions.map((record) =>
@@ -114,7 +121,6 @@ export const useSessionStore = (
       );
       syncSessionsRef(nextSessions);
       setSessions(nextSessions);
-
       const nextSnapshots: SessionSnapshots = {};
       for (const session of nextSessions) {
         nextSnapshots[session.id] = createInitialSnapshot(
@@ -123,7 +129,6 @@ export const useSessionStore = (
         );
       }
       setSnapshots(nextSnapshots);
-
       setActiveSessionId((current) => {
         if (current) {
           return current;
@@ -133,14 +138,12 @@ export const useSessionStore = (
     },
     [applyPendingBinding, providerLabels, syncSessionsRef]
   );
-
   const handleSessionMessageEvent = useCallback<SessionMessageHandler>(
     (payload) => {
       setSnapshots((previous) => appendMessageToSnapshots(previous, payload));
     },
     []
   );
-
   const handleSessionHistoryEvent = useCallback<SessionHistoryHandler>(
     (payload) => {
       setSnapshots((previous) => mergeHistoryIntoSnapshots(previous, payload));
