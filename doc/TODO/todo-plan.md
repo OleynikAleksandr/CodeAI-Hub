@@ -76,8 +76,8 @@
 1. [TODO] Fix(core): при `session:create` с `providerSessionId` (resume) и уже существующей сессии (same `workspacePath + initiativeSlug + stage + providerId + providerSessionId`) не создавать новую, а переиспользовать существующую (rebroadcast `session:created` + `session:binding`) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): dedupe session:create resume for description agent`
 2. [TODO] Git Commit: `fix(core): dedupe session:create resume for description agent` (hash: TBD)
 
-3. [TODO] Fix(project-manager): label для collector-сессии в ветке Description сделать человекочитаемым (`Description agent session · <provider>`) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): label description agent session in tree`
-4. [TODO] Git Commit: `fix(project-manager): label description agent session in tree` (hash: TBD)
+3. [DONE] Fix(project-manager): label для collector-сессии в ветке Description сделать человекочитаемым (`Description agent session · <provider>`) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): label description agent session in tree`
+4. [DONE] Git Commit: `fix(project-manager): label description agent session in tree` (hash: 9cde5d7e)
 
 ### Stream: Verification
 1. [TODO] Verify(manual): клик по строке `Session · <provider>` (Reviewer) не создаёт дубль; если сессия уже есть — только фокус; если скрыта — показывается снова; если это первый resume после перезапуска — открывается с полной историей (из JSONL), не пустая — scope: no files; expected commit message: `docs: record resume focus + history verification`
