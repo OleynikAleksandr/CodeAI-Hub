@@ -117,16 +117,24 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       );
     };
     const nodes: TreeNode[] = [];
-    const questionnairePath = branch.questionnairePath;
-    if (questionnairePath)
+    const artifactPath =
+      branch.finalPath ?? branch.draftPath ?? branch.questionnairePath;
+    const artifactLabel = branch.finalPath
+      ? "Final_Description.md"
+      : branch.draftPath
+        ? "description.md"
+        : "questionnaire.md";
+    const artifactStatus = branch.finalPath ? "active" : "draft";
+    if (artifactPath) {
       nodes.push({
-        id: "workflow:description:questionnaire",
-        label: "questionnaire.md",
-        title: questionnairePath,
-        status: "draft",
+        id: "workflow:description:artifact",
+        label: artifactLabel,
+        title: artifactPath,
+        status: artifactStatus,
         visualDepth: 2,
-        onSelect: () => selectArtifact(questionnairePath, "questionnaire.md"),
+        onSelect: () => selectArtifact(artifactPath, artifactLabel),
       });
+    }
     if (session) {
       const isReviewerSession =
         branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
@@ -155,26 +163,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         },
       });
     }
-    const draftPath = branch.draftPath;
-    if (draftPath)
-      nodes.push({
-        id: "workflow:description:draft",
-        label: "description.md",
-        title: draftPath,
-        status: "draft",
-        visualDepth: 2,
-        onSelect: () => selectArtifact(draftPath, "description.md"),
-      });
-    const finalPath = branch.finalPath;
-    if (finalPath)
-      nodes.push({
-        id: "workflow:description:final",
-        label: "Final_Description.md",
-        title: finalPath,
-        status: "active",
-        visualDepth: 2,
-        onSelect: () => selectArtifact(finalPath, "Final_Description.md"),
-      });
     return nodes;
   };
 
