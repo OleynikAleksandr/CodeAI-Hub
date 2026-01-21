@@ -88,8 +88,8 @@
 4. [TODO] Git Commit: `docs: record description pre-binding click verification` (hash: TBD)
 
 ### Stream: Fix — vscode-webview: no duplicate sessions on rebroadcast
-1. [TODO] Fix(vscode-webview): при повторном `session:created` для уже существующей сессии (тот же `session.id`) не добавлять дубликат и не сбрасывать snapshot; обновлять существующий record и сохранять историю — scope: `src/client/ui/src/app-host/session-store.ts`; expected commit message: `fix(vscode-webview): dedupe rebroadcasted session created`
-2. [TODO] Git Commit: `fix(vscode-webview): dedupe rebroadcasted session created` (hash: TBD)
+1. [DONE] Fix(vscode-webview): при повторном `session:created` для уже существующей сессии (тот же `session.id`) не добавлять дубликат и не сбрасывать snapshot; обновлять существующий record и сохранять историю — scope: `src/client/ui/src/app-host/session-store.ts`; expected commit message: `fix(vscode-webview): dedupe rebroadcasted session created`
+2. [DONE] Git Commit: `fix(vscode-webview): dedupe rebroadcasted session created` (hash: 18f69a47)
 
 3. [TODO] Verify(manual): клик по `Description agent session` в дереве Project Manager не открывает пустой дубль сессии в `vscode-webview` (React-панель VS Code) — scope: no files; expected commit message: `docs: record vscode-webview session dedupe verification`
 4. [TODO] Git Commit: `docs: record vscode-webview session dedupe verification` (hash: TBD)
@@ -106,10 +106,24 @@
 5. [DONE] Docs(arch): обновить `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (versions table) под 1.1.463 — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): bump SystemArchitecture to 1.1.463`
 6. [DONE] Git Commit: `docs(arch): bump SystemArchitecture to 1.1.463` (hash: 45d8fbab)
 
-7. [TODO] Docs(todo): зафиксировать релиз 1.1.463 в плане (DONE+hash) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 1.1.463 verification release`
-8. [TODO] Git Commit: `docs(todo): record 1.1.463 verification release` (hash: TBD)
+7. [DONE] Docs(todo): зафиксировать релиз 1.1.463 в плане (DONE+hash) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 1.1.463 verification release`
+8. [DONE] Git Commit: `docs(todo): record 1.1.463 verification release` (hash: f763cbc9)
 
 
+
+
+### Stream: Release build — 1.1.464 (verification)
+1. [DONE] Release(build): собрать verification build 1.1.464 (tarballs + VSIX) из clean tree — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/tmp/releases/*-1.1.464.tar.bz2`, `codeai-hub-1.1.464.vsix`; expected commit message: `chore(release): build 1.1.464 verification`
+2. [DONE] Git Commit: `chore(release): build 1.1.464 verification` (hash: 2fadabfd)
+
+3. [DONE] Docs(release): обновить `README.md` + `CHANGELOG.md` под 1.1.464 (описать фикс дублей в vscode-webview) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update 1.1.464 notes`
+4. [DONE] Git Commit: `docs(release): update 1.1.464 notes` (hash: cf894518)
+
+5. [DONE] Docs(arch): обновить `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (versions table) под 1.1.464 — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): bump SystemArchitecture to 1.1.464`
+6. [DONE] Git Commit: `docs(arch): bump SystemArchitecture to 1.1.464` (hash: 066d11aa)
+
+7. [TODO] Docs(todo): зафиксировать релиз 1.1.464 в плане (DONE+hash) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 1.1.464 verification release`
+8. [TODO] Git Commit: `docs(todo): record 1.1.464 verification release` (hash: TBD)
 ### Stream: Verification
 1. [TODO] Verify(manual): клик по строке `Session · <provider>` (Reviewer) не создаёт дубль; если сессия уже есть — только фокус; если скрыта — показывается снова; если это первый resume после перезапуска — открывается с полной историей (из JSONL), не пустая — scope: no files; expected commit message: `docs: record resume focus + history verification`
 2. [TODO] Git Commit: `docs: record resume focus + history verification` (hash: TBD)
