@@ -38,7 +38,9 @@ export const useSessionResumeIntent = (params: {
       const existing = params.sessionsRef.current.find(
         (session) =>
           session.workspacePath === detail.workspacePath &&
-          session.providerIds.includes(detail.providerId) &&
+          session.providerIds.some(
+            (providerId) => providerId === detail.providerId
+          ) &&
           session.binding.providerSessionId === detail.providerSessionId
       );
       if (existing) {
