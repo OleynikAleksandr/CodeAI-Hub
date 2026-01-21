@@ -63,8 +63,8 @@
 8. [DONE] Git Commit: `fix(project-manager): label reviewer session in tree` (hash: 373b8af7)
 
 ### Stream: Refactor — авто-переключение Questionnaire → Draft → Final (Description)
-1. [TODO] Fix(project-manager): в ветке Description показывать только один актуальный документ: `finalPath` (если есть) иначе `draftPath`, иначе `questionnairePath` — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): collapse description artifacts to latest`
-2. [TODO] Git Commit: `fix(project-manager): collapse description artifacts to latest` (hash: TBD)
+1. [DONE] Fix(project-manager): в ветке Description показывать только один актуальный документ: `finalPath` (если есть) иначе `draftPath`, иначе `questionnairePath` — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): collapse description artifacts to latest`
+2. [DONE] Git Commit: `fix(project-manager): collapse description artifacts to latest` (hash: 98f2d7f0)
 
 3. [TODO] Fix(project-manager): при появлении `draftPath` автоматически переключать центральную зону с анкеты на `description.md` (draft) и скрывать анкету; при появлении `finalPath` — автоматически переключать на финальный документ (без кнопок Back) — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `fix(project-manager): auto-open description draft/final artifacts`
 4. [TODO] Git Commit: `fix(project-manager): auto-open description draft/final artifacts` (hash: TBD)
