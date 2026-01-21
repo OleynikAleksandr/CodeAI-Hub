@@ -100,8 +100,8 @@
 ### Stream: Release build — test verification
 1. [DONE] Docs(release): обновить `README.md` и `CHANGELOG.md` под релиз 1.1.466 — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update 1.1.466 notes`
 2. [DONE] Git Commit: `docs(release): update 1.1.466 notes` (hash: 635b53e4)
-3. [TODO] Release(build): собрать `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: `./scripts/build-all.sh`, `./scripts/build-release.sh`; expected commit message: `chore(release): build 1.1.466`
-4. [TODO] Git Commit: `chore(release): build 1.1.466` (hash: TBD)
+3. [DONE] Release(build): собрать `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: `./scripts/build-all.sh`, `./scripts/build-release.sh`; expected commit message: `chore(release): build 1.1.466`
+4. [DONE] Git Commit: `chore(release): build 1.1.466` (hash: ea73836b)
 
 ### Stream: Docs — SystemArchitecture alignment
 1. [DONE] Docs: убрать legacy `web-client`, обновить версии и роли UI (Settings-only webview, Project Manager основной) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): align SystemArchitecture with Phase65`
