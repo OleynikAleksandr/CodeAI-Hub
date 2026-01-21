@@ -50,11 +50,6 @@
         "title": "Settings",
         "category": "CodeAI Hub",
         "icon": "$(settings-gear)"
-      },
-      {
-        "command": "codeaiHub.launchWebClient",
-        "title": "Launch Web Client",
-        "category": "CodeAI Hub"
       }
     ],
     "menus": {
