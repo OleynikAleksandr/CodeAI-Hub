@@ -94,8 +94,8 @@
 2. [DONE] Git Commit: `fix(project-manager): extract session message sender` (hash: 117206dc)
 
 ### Stream: Artifacts panel typography
-1. [TODO] Change: уменьшить вдвое размер шрифта артефактов в правой панели Project Manager — scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/styles/layout.css`; expected commit message: `fix(project-manager): reduce artifact font size`
-2. [TODO] Git Commit: `fix(project-manager): reduce artifact font size` (hash: TBD)
+1. [DONE] Change: уменьшить вдвое размер шрифта артефактов в правой панели Project Manager — scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/styles/layout.css`; expected commit message: `fix(project-manager): reduce artifact font size`
+2. [DONE] Git Commit: `fix(project-manager): reduce artifact font size` (hash: fb247cbe)
 
 ### Stream: Docs — SystemArchitecture alignment
 1. [DONE] Docs: убрать legacy `web-client`, обновить версии и роли UI (Settings-only webview, Project Manager основной) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): align SystemArchitecture with Phase65`
