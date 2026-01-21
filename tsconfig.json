@@ -14,9 +14,5 @@
     "strictNullChecks": true
   },
   "include": ["src"],
-  "exclude": [
-    "src/client/ui/src/**/*",
-    "src/client/web-client/**/*",
-    "src/client/project-manager/**/*"
-  ]
+  "exclude": ["src/client/ui/src/**/*", "src/client/project-manager/**/*"]
 }
