@@ -105,6 +105,18 @@ export class SessionManager {
     session.updatedAt = new Date().toISOString();
   }
 
+  seedProviderSessionId(sessionId: string, providerSessionId: string): void {
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      return;
+    }
+    if (session.providerSessionId === providerSessionId) {
+      return;
+    }
+    session.providerSessionId = providerSessionId;
+    session.updatedAt = new Date().toISOString();
+  }
+
   markProviderSessionFailed(sessionId: string): void {
     const session = this.sessions.get(sessionId);
     if (!session) {

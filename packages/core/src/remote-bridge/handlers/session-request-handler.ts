@@ -287,6 +287,9 @@ export class SessionRequestHandler {
         runSlug: options.context.runSlug ?? null,
       }
     );
+    if (!supportsImmediateBinding) {
+      this.sessionManager.seedProviderSessionId(session.id, providerSessionId);
+    }
 
     this.sessionStorage.register(session);
     this.updateDescriptionSessionRef(session, providerSessionId);
@@ -414,6 +417,108 @@ export class SessionRequestHandler {
     return trimmed ?? environmentWorkspacePath ?? cwdPath;
   }
 
+  private normalizeNullableToken(
+    value: string | null | undefined
+  ): string | null {
+    if (typeof value !== "string") {
+      return null;
+    }
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+
+  private sessionMatchesResume(options: {
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly initiativeSlug: string | null;
+    readonly stage: string | null;
+    readonly providerSessionId: string;
+    readonly session: Session;
+  }): boolean {
+    const session = options.session;
+    if (session.providerId !== options.providerId) {
+      return false;
+    }
+    if (session.workspacePath !== options.workspacePath) {
+      return false;
+    }
+    if (options.stage !== null && session.stage !== options.stage) {
+      return false;
+    }
+    if (
+      options.initiativeSlug !== null &&
+      session.initiativeSlug !== options.initiativeSlug
+    ) {
+      return false;
+    }
+    return session.providerSessionId === options.providerSessionId;
+  }
+
+  private resolveExistingResumeSession(options: {
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly initiativeSlug: string | null;
+    readonly stage: string | null;
+    readonly providerSessionId: string;
+  }): Session | null {
+    const stage = this.normalizeNullableToken(options.stage);
+    const initiativeSlug = this.normalizeNullableToken(options.initiativeSlug);
+    const providerSessionId = options.providerSessionId.trim();
+
+    for (const session of this.sessionManager.listSessions()) {
+      if (
+        this.sessionMatchesResume({
+          session,
+          providerId: options.providerId,
+          workspacePath: options.workspacePath,
+          stage,
+          initiativeSlug,
+          providerSessionId,
+        })
+      ) {
+        return session;
+      }
+    }
+    return null;
+  }
+
+  private broadcastExistingSession(session: Session): void {
+    this.broadcaster({
+      type: "session:created",
+      payload: serializeSession(session),
+    });
+    this.broadcastSessionBinding(session.id);
+  }
+
+  private tryReuseExistingResumeSession(options: {
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly providerSessionId: string | null;
+    readonly context?: {
+      readonly initiativeSlug?: string | null;
+      readonly stage?: string | null;
+    };
+  }): boolean {
+    const providerSessionId = this.normalizeNullableToken(
+      options.providerSessionId
+    );
+    if (!providerSessionId) {
+      return false;
+    }
+    const existing = this.resolveExistingResumeSession({
+      providerId: options.providerId,
+      workspacePath: options.workspacePath,
+      initiativeSlug: options.context?.initiativeSlug ?? null,
+      stage: options.context?.stage ?? null,
+      providerSessionId,
+    });
+    if (!existing) {
+      return false;
+    }
+    this.broadcastExistingSession(existing);
+    return true;
+  }
+
   async handleCreate(
     providerId?: string,
     workspacePath?: string,
@@ -437,6 +542,16 @@ export class SessionRequestHandler {
       requestedProviderSessionId: context?.providerSessionId ?? null,
     });
     const actualProviderId = runBound.providerId;
+    if (
+      this.tryReuseExistingResumeSession({
+        providerId: actualProviderId,
+        workspacePath: actualWorkspacePath,
+        providerSessionId: runBound.providerSessionId,
+        context,
+      })
+    ) {
+      return;
+    }
     const adapter = this.providerRegistry.getAdapter(actualProviderId);
 
     if (!adapter) {
