@@ -121,7 +121,10 @@ export const useReviewerSessionVisibility = (params: {
     }
     let cancelled = false;
     const loadState = async () => {
-      const state = await api.getWorkflowState(workspaceSlug);
+      const state = await api.getWorkflowState(
+        workspaceSlug,
+        params.workspacePath
+      );
       if (cancelled) {
         return;
       }
@@ -133,7 +136,7 @@ export const useReviewerSessionVisibility = (params: {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [workspaceSlug]);
+  }, [params.workspacePath, workspaceSlug]);
 
   const reviewerSessionId = useMemo(
     () =>
