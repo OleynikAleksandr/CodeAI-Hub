@@ -77,3 +77,18 @@
 
 5. [DONE] Docs(todo): зафиксировать выполнение Phase 65 задач и хеши коммитов — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record phase65 web-client removal`
 6. [DONE] Git Commit: `docs(todo): record phase65 web-client removal` (hash: bef7edd3)
+
+
+---
+
+## Phase 66 — Project Manager Description UX hardening (owner: Oleksandr, updated: 2026-01-21)
+
+### Stream: Description workflow UX
+1. [TODO] Change: после отправки анкеты отображать `questionnaire.md` как read-only Markdown (без кнопок Back/Edit) и блокировать редактирование — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `fix(project-manager): lock description questionnaire`
+2. [TODO] Git Commit: `fix(project-manager): lock description questionnaire` (hash: TBD)
+3. [TODO] Change: при создании reviewer session скрывать сессию Description Agent в левой панели (оставлять только Reviewer) — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-visibility.ts`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `fix(project-manager): hide description agent session`
+4. [TODO] Git Commit: `fix(project-manager): hide description agent session` (hash: TBD)
+
+### Stream: Docs — SystemArchitecture alignment
+1. [DONE] Docs: убрать legacy `web-client`, обновить версии и роли UI (Settings-only webview, Project Manager основной) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): align SystemArchitecture with Phase65`
+2. [DONE] Git Commit: `docs(arch): align SystemArchitecture with Phase65` (hash: 332345c9)
