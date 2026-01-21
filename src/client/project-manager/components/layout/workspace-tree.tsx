@@ -70,7 +70,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     }
     let cancelled = false;
     const loadState = async () => {
-      const state = await api.getWorkflowState(workspaceSlug);
+      const state = await api.getWorkflowState(workspaceSlug, workspacePath);
       if (!cancelled) {
         setWorkflowState(state);
       }
@@ -81,7 +81,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [selectedWorkspaceId, workspaceSlug]);
+  }, [selectedWorkspaceId, workspacePath, workspaceSlug]);
   const resolveTreeStatus = (
     status: WorkflowStageStatus,
     blocked: boolean
