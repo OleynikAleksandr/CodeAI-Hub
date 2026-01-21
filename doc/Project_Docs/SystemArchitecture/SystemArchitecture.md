@@ -11,7 +11,7 @@
 Этот документ — **единственный источник правды** по архитектуре CodeAI-Hub. Он охватывает:
 - Автономное ядро (Core Orchestrator)
 - Extension Host Layer (VS Code)
-- UI Bundles (Webview, Web Client, Project Manager)
+- UI Bundles (VS Code Webview, Project Manager; `web-client` legacy → remove)
 - CEF Launcher
 - Провайдерные модули (Claude, Codex, Gemini)
 
@@ -28,8 +28,7 @@ graph TD
     subgraph "Clients (UI Layer)"
         VSCode["VS Code Extension"]
         Launcher["CEF Launcher"]
-        Webview["VS Code Webview"]
-        WebClient["Standalone Web Client"]
+        Webview["VS Code Webview (Settings-only in FLOW dev)"]
         ProjectManager["Project Manager"]
     end
 
@@ -51,7 +50,6 @@ graph TD
     VSCode -->|Spawns/Connects| Supervisor
     Launcher -->|Spawns/Connects| Supervisor
     Webview -->|WebSocket| Bridge
-    WebClient -->|WebSocket| Bridge
     ProjectManager -->|WebSocket| Bridge
 
     %% Core Internal Flow
@@ -92,9 +90,9 @@ Node.js сервис (`@codeai-hub/core@1.1.464`), упакованный как
 ### 2.2 UI Bundles (v1.1.457)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
-- `vscode-webview`: React-приложение для панели VS Code
-- `web-client`: Статическая сборка для CEF Launcher
-- `project-manager`: Статическая сборка Project Manager
+- `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
+- `web-client`: legacy (PWA/CEF) — принято решение о полном удалении вместе со сборкой/инсталляторами/ссылками (Phase 65)
+- `project-manager`: Статическая сборка Project Manager (единственный активный UI-клиент Core на период разработки FLOW)
 
 **Установка:** `~/.codeai-hub/packages/ui/<bundleId>/<version>/` с symlink `current`.
 
@@ -170,11 +168,13 @@ Webview грузит JS/CSS из `~/.codeai-hub/packages/ui/vscode-webview/curre
 
 ---
 
-## 5. Local CEF Client
+## 5. Local CEF Client (Project Manager)
 
 ### 5.1 Bundle
 
-UI устанавливается в `~/.codeai-hub/packages/ui/web-client/current` (или `project-manager/current`).
+UI устанавливается в `~/.codeai-hub/packages/ui/project-manager/current`.
+
+Legacy: `~/.codeai-hub/packages/ui/web-client/current` (PWA/CEF) — будет удалён (Phase 65).
 
 ### 5.2 Runtime & Launcher Delivery
 
@@ -301,8 +301,8 @@ Webview запрещает inline-скрипты, ресурсы грузятс�
 
 VSIX не содержит JS/CSS бандлов. UI собирается в независимые tar.bz2:
 - `vscode-webview.tar.bz2`
-- `web-client.tar.bz2`
 - `project-manager.tar.bz2`
+- legacy: `web-client.tar.bz2` (Phase 65 removal)
 
 ### 11.2 Quality Gates
 

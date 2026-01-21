@@ -10,7 +10,6 @@ graph TD
         VSCode["VS Code Extension"]
         Launcher["CEF Launcher"]
         Webview["VS Code Webview"]
-        WebClient["Standalone Web Client"]
         ProjectManager["Project Manager"]
     end
 
@@ -38,7 +37,6 @@ graph TD
     VSCode -->|Spawns/Connects| Supervisor
     Launcher -->|Spawns/Connects| Supervisor
     Webview -->|WebSocket| Bridge
-    WebClient -->|WebSocket| Bridge
     ProjectManager -->|WebSocket| Bridge
 
     %% Core Internal Flow
@@ -63,7 +61,7 @@ graph TD
     classDef provider fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000;
     classDef storage fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000;
 
-    class VSCode,Launcher,Webview,WebClient client;
+    class VSCode,Launcher,Webview,ProjectManager client;
     class Orchestrator,Supervisor,Bridge,SessionMgr,Registry core;
     class Claude,Codex,Gemini provider;
     class Settings,Sessions,Packages storage;
@@ -89,7 +87,7 @@ graph TD
 **UI Modules**
 Набор пакетов пользовательского интерфейса, отделенных от основной логики расширения. Включает React-приложение для Webview и статический клиент для Launcher.
 - **Документация**: [UI_Modules.md](../Stacks/UI_Modules.md)
-- **Компоненты**: `vscode-webview`, `web-client`, `project-manager`.
+- **Компоненты**: `vscode-webview`, `project-manager` (а `web-client` — legacy и будет удалён в Phase 65).
 
 **Launcher CEF**
 Автономный запускатор на базе Chromium Embedded Framework (CEF) для macOS. Позволяет использовать CodeAI Hub без запущенного VS Code.
@@ -119,7 +117,7 @@ graph TD
 - **`core/`**: Установленные версии ядра.
 - **`packages/`**:
     - `launcher/`: Версии CEF лаунчера.
-    - `ui/`: Версии UI бандлов (`vscode-webview`, `web-client`).
+    - `ui/`: Версии UI бандлов (`vscode-webview`, `project-manager`; `web-client` — legacy до удаления).
 - **`providers/`**: Установленные модули провайдеров (Claude, Codex, Gemini).
 - **`sessions/`**: Логи сессий в формате JSONL.
 - **`settings/`**: Пользовательские настройки.
