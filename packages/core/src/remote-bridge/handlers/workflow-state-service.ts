@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { Request, Response } from "express";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
@@ -15,6 +16,14 @@ const HTTP_NOT_FOUND = 404;
 
 const readNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const readAbsolutePath = (value: unknown): string | null => {
+  const trimmed = readNonEmptyString(value);
+  if (!trimmed) {
+    return null;
+  }
+  return path.isAbsolute(trimmed) ? trimmed : null;
+};
 
 type WorkspaceSlugResult =
   | { readonly ok: true; readonly value: string }
@@ -139,10 +148,15 @@ export class WorkflowStateService {
     req: Request,
     workspaceSlug: string
   ): string | null {
+    const query = req.query as Record<string, unknown>;
+    const workspacePath = readAbsolutePath(query.workspacePath);
+    if (workspacePath) {
+      return workspacePath;
+    }
+
     if (!this.sessionManager) {
       return null;
     }
-    const query = req.query as Record<string, unknown>;
     const sessionId = readNonEmptyString(query.sessionId);
     if (sessionId) {
       const session = this.sessionManager.getSession(sessionId);
