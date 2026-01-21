@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/claude-module",
-  "version": "1.1.459",
+  "version": "1.1.461",
   "description": "Claude provider integration for CodeAI Hub core",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,9 +18,7 @@
   ],
   "author": "CodeAI Hub",
   "license": "ISC",
-  "dependencies": {
-    "@codeai-hub/idea-collector": "file:../agents/idea-collector"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@biomejs/biome": "^2.3.7",
     "@types/node": "^20.11.0",
