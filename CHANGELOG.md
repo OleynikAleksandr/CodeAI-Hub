@@ -1,3 +1,11 @@
+## [1.1.462] - 2026-01-21
+### Fixed
+- Project Manager: dedupe repeated resume clicks while binding is pending.
+- Project Manager: Description branch shows a single latest artifact (questionnaire → draft → final).
+- Project Manager: auto-open `description.md`/`Final_Description.md` when they appear (hides questionnaire when draft/final exists).
+- Project Manager: tree labels for Reviewer and Description Agent sessions.
+- Core: prevent `description.sessionKind` regression from reviewer → collector.
+
 ## [1.1.459] - 2026-01-21
 ### Fixed
 - Project Manager: resume/focus by `providerId + providerSessionId` without duplicates.

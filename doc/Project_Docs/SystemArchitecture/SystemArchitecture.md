@@ -1,7 +1,7 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.457
-**Last Updated:** 2026-01-20
+**Version:** 1.1.462
+**Last Updated:** 2026-01-21
 **Status:** Active reference (source of truth)
 
 ---
@@ -78,7 +78,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.457`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.462`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -254,10 +254,10 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.457 |
-| Core | 1.1.457 |
-| UI Bundles | 1.1.457 |
-| Claude Module | 1.1.457 |
+| VSIX | 1.1.462 |
+| Core | 1.1.462 |
+| UI Bundles | 1.1.462 |
+| Claude Module | 1.1.462 |
 | Codex Module | 1.1.457 |
 | Gemini Module | 1.1.457 |
 | Agent Shared | 1.1.387 |
