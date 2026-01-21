@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/core",
-  "version": "1.1.459",
+  "version": "1.1.462",
   "description": "CodeAI Hub autonomous core orchestrator service",
   "main": "dist/index.js",
   "type": "commonjs",
