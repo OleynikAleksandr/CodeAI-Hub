@@ -81,8 +81,8 @@
 
 
 ### Stream: Fix — Pre-binding resume click (no duplicate sessions)
-1. [TODO] Fix(project-manager): при повторном `session:created` (rebroadcast existing) не создавать дубликат в списке сессий и не сбрасывать snapshot; вместо этого обновлять существующую запись по `session.id` и фокусить её — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(project-manager): dedupe rebroadcasted session created`
-2. [TODO] Git Commit: `fix(project-manager): dedupe rebroadcasted session created` (hash: TBD)
+1. [DONE] Fix(project-manager): при повторном `session:created` (rebroadcast existing) не создавать дубликат в списке сессий и не сбрасывать snapshot; вместо этого обновлять существующую запись по `session.id` и фокусить её — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(project-manager): dedupe rebroadcasted session created`
+2. [DONE] Git Commit: `fix(project-manager): dedupe rebroadcasted session created` (hash: 3d323a83)
 
 3. [TODO] Verify(manual): клик по `Description agent session` в дереве ДО первого ответа агента не создаёт дубль окна/строки сессии — scope: no files; expected commit message: `docs: record description pre-binding click verification`
 4. [TODO] Git Commit: `docs: record description pre-binding click verification` (hash: TBD)
