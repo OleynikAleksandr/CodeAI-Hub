@@ -13,6 +13,7 @@ import {
 import { useProviderPickerState } from "./app-host/provider-picker-state";
 import { SessionRegion } from "./app-host/session-region";
 import { useSessionStore } from "./app-host/session-store";
+import { SettingsOnlyHost } from "./app-host/settings-only-host";
 import { useSettingsVisibility } from "./app-host/settings-visibility";
 import { useIdeaCollector } from "./app-host/use-idea-collector";
 import { useProviderPickerOpenHandler } from "./app-host/use-provider-picker-open-handler";
@@ -26,7 +27,8 @@ import type {
 } from "./core-bridge/types";
 import { activateRoot } from "./root-dom";
 
-const AppHost = () => {
+const SETTINGS_ONLY_MODE = true;
+const FullAppHost = () => {
   const [coreStatus, setCoreStatus] = useState<
     "connecting" | "ready" | "error"
   >("connecting");
@@ -75,13 +77,11 @@ const AppHost = () => {
     startCollection: startIdeaCollection,
     sendMessage: sendIdeaCollectorMessage,
   } = useIdeaCollector(sendMessage);
-
   const handleProviderPickerOpen = useProviderPickerOpenHandler(
     openPicker,
     selectStage,
     lockStageSelection
   );
-
   const confirmSelectionFromUi = useCallback(
     (providerIds: readonly ProviderStackId[]) => {
       shouldKickoffIdeaRef.current =
@@ -91,7 +91,6 @@ const AppHost = () => {
     },
     [confirmSelection, selectedStage]
   );
-
   const handleSessionCreatedMessage = useCallback(
     (session: SessionRecord) => {
       activateRoot();
@@ -106,7 +105,6 @@ const AppHost = () => {
     },
     [handleSessionCreated, resetPicker, startIdeaCollection]
   );
-
   const handleShowSettings = useCallback(() => {
     activateRoot();
     openSettings();
@@ -295,5 +293,8 @@ const AppHost = () => {
     </div>
   );
 };
+
+const AppHost = () =>
+  SETTINGS_ONLY_MODE ? <SettingsOnlyHost /> : <FullAppHost />;
 
 export default AppHost;
