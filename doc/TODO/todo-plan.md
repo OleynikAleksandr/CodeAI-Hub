@@ -8,52 +8,37 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
-2. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
-3. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
-4. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-5. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-6. `doc/Sessions/Session026.md`
+1. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
+2. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
+3. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
+4. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+5. `doc/Sessions/Session027.md`
+6. `doc/TODO/Archive/todo-plan-phase63-2026-01-21.md` (архив предыдущего плана)
 7. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
 
-## Phase 63 — Project Manager: Description node UX simplification (owner: Oleksandr, updated: 2026-01-20)
+## Phase 64 — Project Manager: Resume Session = Focus + History (owner: Oleksandr, updated: 2026-01-21)
 
-### Stream: Planning — archive Phase 62
-1. [DONE] Docs(todo): заархивировать старый `doc/TODO/todo-plan.md` и создать новый план Phase 63 — scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase62-2026-01-20.md`; expected commit message: `docs(todo): start phase 63 plan`
-2. [DONE] Git Commit: `docs(todo): start phase 63 plan` (hash: a888a02a)
+### Stream: Design — UX контракт “Resume без дублей”
+1. [DONE] Docs: зафиксировать контракт клика по `Session` в дереве: (а) если сессия с тем же `providerId + providerSessionId` уже существует в списке — НЕ создавать новую, а фокус/активация; (б) если не существует — создать/resume и сразу подгрузить историю из JSONL (unified-session). Дополнительно: “закрыть сессию” в UI = скрыть локально (не удалять session record в Core) — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(project-manager): define resume focus + history rules`
+2. [DONE] Git Commit: `docs(project-manager): define resume focus + history rules` (hash: 1afae7f5)
 
-### Stream: Design — утвердить UX контракт для Description
-1. [DONE] Docs: зафиксировать UX правила (после `Final_Description.md` в ветке остаются только `Final_Description.md` + `Reviewer session`; промежуточные артефакты/сессии показываем только до появления финала; continuity/handoff не отображаем в дереве) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(project-manager): simplify description branch UX`
-2. [DONE] Git Commit: `docs(project-manager): simplify description branch UX` (hash: f7411af7)
+### Stream: Fix — фокус на существующую сессию (не создавать новую)
+1. [DONE] Fix(project-manager): клик по `Session` в дереве должен диспатчить intent “focus/resume by providerId+providerSessionId”, а не напрямую вызывать `session:create` — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): request focus/resume from tree click`
+2. [DONE] Git Commit: `fix(project-manager): request focus/resume from tree click` (hash: da6a9f14)
 
-### Stream: Implementation — убрать “зверинец” из дерева Description
-1. [DONE] Fix(project-manager): полностью скрыть continuity/handoff chains из Workspace Tree (они нужны ядру, но не UI дерева) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): hide continuity nodes in tree`
-2. [DONE] Git Commit: `fix(project-manager): hide continuity nodes in tree` (hash: 14f99be7)
+3. [DONE] Fix(project-manager): обработать intent “focus/resume”: если сессия с тем же `providerId+providerSessionId` уже есть в списке — активировать её (фокус) и показать; иначе — вызвать `session:create` и после создания активировать новую (resume) — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(project-manager): focus existing session by providerSessionId`
+4. [DONE] Git Commit: `fix(project-manager): focus existing session by providerSessionId` (hash: 5feb9a82)
 
-3. [DONE] Fix(project-manager): убрать кнопку `Continue`; строка сессии кликабельна и по клику создаёт/возобновляет сессию (чтобы после перезагрузки пользователь мог восстановить reviewer-сессию из persisted координат) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): open session on tree click`
-4. [DONE] Git Commit: `fix(project-manager): open session on tree click` (hash: f3d2d543)
+### Stream: Fix — “закрыть” = скрыть (не удалять session record в Core)
+1. [DONE] Fix(project-manager): кнопка close у сессии должна скрывать её локально (и не вызывать `session:delete`), чтобы повторный клик по дереву мог вернуть ТУ ЖЕ сессию с тем же `session.id` — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(project-manager): close hides session (no delete)`
+2. [DONE] Git Commit: `fix(project-manager): close hides session (no delete)` (hash: 84b94441)
 
-5. [DONE] Feat(project-manager): клик по `Final_Description.md` открывает встроенный viewer в правой панели Artifacts (не VS Code editor tab) — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/api.ts`; expected commit message: `feat(project-manager): open artifacts in built-in viewer`
-6. [DONE] Git Commit: `feat(project-manager): open artifacts in built-in viewer` (hash: 1211894b)
-
-### Stream: Integration — минимальный API для чтения артефактов (безопасно)
-1. [DONE] Feat(core): добавить allowlisted API для чтения workflow-артефактов (Project Manager viewer) — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/workflow-artifact-http-handler.ts`; expected commit message: `feat(core): expose artifact read endpoint for project-manager`
-2. [DONE] Git Commit: `feat(core): expose artifact read endpoint for project-manager` (hash: dff95c0c)
-
-### Stream: Bugfix — reviewer sessionKind (resume до финала)
-1. [DONE] Fix(core): включить `sessionKind` в description snapshot для Project Manager (чтобы корректно отличать Reviewer/Collector до появления `Final_Description.md`) — scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`; expected commit message: `fix(core): expose description sessionKind in workflow snapshot`
-2. [DONE] Git Commit: `fix(core): expose description sessionKind in workflow snapshot` (hash: de36ecc0)
-3. [DONE] Fix(project-manager): использовать `sessionKind` для label + `runSlug` при resume (клик по сессии до `Final_Description.md` должен открывать именно Reviewer) — scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): label reviewer session correctly`
-4. [DONE] Git Commit: `fix(project-manager): label reviewer session correctly` (hash: ed235fdb)
-
-### Stream: Release build — 1.1.458 (verification)
-1. [DONE] Release(build): собрать релиз 1.1.458 (build-all → tarballs; build-release → VSIX) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/tmp/releases/*-1.1.458.tar.bz2`, `codeai-hub-1.1.458.vsix`; expected commit message: `chore(release): bump versions to 1.1.458`
-2. [DONE] Git Commit: `chore(release): bump versions to 1.1.458` (hash: 52cf166e)
-3. [DONE] Docs(session): зафиксировать результаты проверки релиза 1.1.458 и список коммитов — scope: `doc/Sessions/Session027.md`; expected commit message: `docs(session): add Session027 report`
-4. [DONE] Git Commit: `docs(session): add Session027 report` (hash: d930ad66)
+### Stream: Fix — подгрузка истории для вновь созданной/resume сессии
+1. [DONE] Fix(project-manager): при `session:created` обязательно подгружать историю из unified-session (JSONL), чтобы resume открывал полный диалог, а не пустое окно — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/status-hydrator.ts`; expected commit message: `fix(project-manager): load history for newly created sessions`
+2. [DONE] Git Commit: `fix(project-manager): load history for newly created sessions` (hash: 130ff166)
 
 ### Stream: Verification
-1. [TODO] Verify(manual): сценарий Description завершён → под узлом только 2 строки (`Final_Description.md` + `Reviewer session`); клик по файлу открывает viewer справа; клик по сессии открывает полную сессию слева даже после перезагрузки — scope: no files; expected commit message: `docs: record project-manager description UX verification`
-2. [TODO] Git Commit: `docs: record project-manager description UX verification` (hash: TBD)
+1. [TODO] Verify(manual): клик по строке `Session · <provider>` (Reviewer) не создаёт дубль; если сессия уже есть — только фокус; если скрыта — показывается снова; если это первый resume после перезапуска — открывается с полной историей (из JSONL), не пустая — scope: no files; expected commit message: `docs: record resume focus + history verification`
+2. [TODO] Git Commit: `docs: record resume focus + history verification` (hash: TBD)
