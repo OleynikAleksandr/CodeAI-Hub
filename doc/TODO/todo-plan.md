@@ -28,8 +28,8 @@
 1. [DONE] Remove: убрать `scripts/build-web-client.js` и npm script `build:web-client`/упоминания — scope: `scripts/build-web-client.js`, `package.json`; expected commit message: `chore(build): remove web-client build script`
 2. [DONE] Git Commit: `chore(build): remove web-client build script` (hash: be9f0df1)
 
-3. [TODO] Remove: вычистить `build-all`/`build-release` от сборки/установки web-client (и артефактов/manifest записей) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `assets/ui/manifest.json`; expected commit message: `chore(release): remove web-client from build pipelines`
-4. [TODO] Git Commit: `chore(release): remove web-client from build pipelines` (hash: TBD)
+3. [DONE] Remove: вычистить `build-all`/`build-release` от сборки/установки web-client (и артефактов/manifest записей) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `assets/ui/manifest.json`; expected commit message: `chore(release): remove web-client from build pipelines`
+4. [DONE] Git Commit: `chore(release): remove web-client from build pipelines` (hash: 2449f6c1)
 
 5. [TODO] Remove: удалить исходники `web-client` и все импорты/типы/реестры, которые на него ссылаются (UI bundle id, activation, registry tests и т.п.) — scope: `src/client/web-client/`, `src/extension-module/ui/ui-types.ts`, `src/extension-module/ui/ui-activation.ts`; expected commit message: `chore(web-client): delete web-client client and references`
 6. [TODO] Git Commit: `chore(web-client): delete web-client client and references` (hash: TBD)
