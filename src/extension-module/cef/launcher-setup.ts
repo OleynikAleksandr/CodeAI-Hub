@@ -1,12 +1,12 @@
 import path from "node:path";
 import { type ExtensionContext, Uri } from "vscode";
-import { ensureProjectManagerShortcuts } from "../web-client/shortcut-manager";
 import { ensureProjectManagerConfig } from "./launcher";
 import {
   ensureLauncherInstalled,
   type LauncherInstallInfo,
 } from "./launcher-installer";
 import { ensureCefRuntime } from "./runtime-installer";
+import { ensureProjectManagerShortcuts } from "./shortcut-manager";
 
 export async function ensureLauncherDependencies(
   context: ExtensionContext,
