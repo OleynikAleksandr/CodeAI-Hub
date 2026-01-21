@@ -120,6 +120,8 @@ export const useReviewerSessionVisibility = (params: {
       return;
     }
     let cancelled = false;
+    let timer = 0;
+    let fastPolling = true;
     const loadState = async () => {
       const state = await api.getWorkflowState(
         workspaceSlug,
@@ -128,10 +130,15 @@ export const useReviewerSessionVisibility = (params: {
       if (cancelled) {
         return;
       }
+      if (state && fastPolling) {
+        fastPolling = false;
+        window.clearInterval(timer);
+        timer = window.setInterval(loadState, 10_000);
+      }
       setDescriptionSessionSnapshot(resolveDescriptionSessionSnapshot(state));
     };
     loadState();
-    const timer = window.setInterval(loadState, 10_000);
+    timer = window.setInterval(loadState, 3_000);
     return () => {
       cancelled = true;
       window.clearInterval(timer);
