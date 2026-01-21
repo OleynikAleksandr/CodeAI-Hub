@@ -86,8 +86,8 @@
 ### Stream: Description workflow UX
 1. [DONE] Change: после отправки анкеты отображать `questionnaire.md` как read-only Markdown (без кнопок Back/Edit) и блокировать редактирование — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`; expected commit message: `fix(project-manager): lock description questionnaire`
 2. [DONE] Git Commit: `fix(project-manager): lock description questionnaire` (hash: a38be3ed)
-3. [TODO] Change: при создании reviewer session скрывать сессию Description Agent в левой панели (оставлять только Reviewer) — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-visibility.ts`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `fix(project-manager): hide description agent session`
-4. [TODO] Git Commit: `fix(project-manager): hide description agent session` (hash: TBD)
+3. [DONE] Change: при создании reviewer session скрывать сессию Description Agent в левой панели (оставлять только Reviewer) — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-visibility.ts`, `src/client/project-manager/components/sessions/reviewer-session-visibility.ts`; expected commit message: `fix(project-manager): hide description agent session`
+4. [DONE] Git Commit: `fix(project-manager): hide description agent session` (hash: b4b91ca1)
 
 ### Stream: Refactor — session message sender
 1. [DONE] Refactor: вынести отправку сообщений в отдельный хук, чтобы держать `project-manager-session-view.tsx` < 300 строк — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-message-sender.ts`; expected commit message: `fix(project-manager): extract session message sender`
