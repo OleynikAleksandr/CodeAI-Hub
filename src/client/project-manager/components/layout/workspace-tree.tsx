@@ -140,7 +140,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
       const label = isReviewerSession
         ? `Reviewer session · ${session.providerId}`
-        : `Session · ${session.providerId}`;
+        : `Description agent session · ${session.providerId}`;
       const runSlug = isReviewerSession ? "reviewer" : null;
       nodes.push({
         id: "workflow:description:session",
