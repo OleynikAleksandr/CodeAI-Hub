@@ -49,8 +49,8 @@
 15. [DONE] Remove: вычистить build-ui-bundle/release-utils от web-client — scope: `scripts/build-ui-bundle.sh`, `scripts/release-utils.sh`; expected commit message: `chore(web-client): remove build bundle wiring`
 16. [DONE] Git Commit: `chore(web-client): remove build bundle wiring` (hash: 71af889a)
 
-17. [TODO] Remove: удалить web-client media assets и biome ignore — scope: `media/web-client/`, `biome.jsonc`; expected commit message: `chore(web-client): remove media assets`
-18. [TODO] Git Commit: `chore(web-client): remove media assets` (hash: TBD)
+17. [DONE] Remove: удалить web-client media assets и biome ignore — scope: `media/web-client/`, `biome.jsonc`; expected commit message: `chore(web-client): remove media assets`
+18. [DONE] Git Commit: `chore(web-client): remove media assets` (hash: 3911f50f)
 
 19. [TODO] Gates: убедиться, что `ts-prune`/typecheck не находят мёртвых ссылок на web-client; сборки `build:webview` и `build:project-manager` зелёные — scope: no files; expected commit message: `docs: record web-client removal gates`
 20. [TODO] Git Commit: `docs: record web-client removal gates` (hash: TBD)
