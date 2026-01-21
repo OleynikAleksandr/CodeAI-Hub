@@ -118,11 +118,18 @@ export const MainArea: React.FC<MainAreaProps> = ({
     const workspaceSlug = toWorkflowWorkspaceSlug(activeWorkspace.name);
     const workspacePath = activeWorkspace.path;
     let cancelled = false;
+    let timer = 0;
+    let fastPolling = true;
 
     const loadState = async () => {
       const state = await api.getWorkflowState(workspaceSlug, workspacePath);
       if (cancelled) {
         return;
+      }
+      if (state && fastPolling) {
+        fastPolling = false;
+        window.clearInterval(timer);
+        timer = window.setInterval(loadState, 10_000);
       }
 
       const branch = state?.description;
@@ -162,7 +169,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     };
 
     loadState();
-    const timer = window.setInterval(loadState, 10_000);
+    timer = window.setInterval(loadState, 3_000);
     return () => {
       cancelled = true;
       window.clearInterval(timer);

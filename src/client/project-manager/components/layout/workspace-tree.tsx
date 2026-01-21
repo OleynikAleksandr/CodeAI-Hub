@@ -69,14 +69,22 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       return;
     }
     let cancelled = false;
+    let timer = 0;
+    let fastPolling = true;
     const loadState = async () => {
       const state = await api.getWorkflowState(workspaceSlug, workspacePath);
-      if (!cancelled) {
-        setWorkflowState(state);
+      if (cancelled) {
+        return;
       }
+      if (state && fastPolling) {
+        fastPolling = false;
+        window.clearInterval(timer);
+        timer = window.setInterval(loadState, 15_000);
+      }
+      setWorkflowState(state);
     };
     loadState();
-    const timer = window.setInterval(loadState, 15_000);
+    timer = window.setInterval(loadState, 3_000);
     return () => {
       cancelled = true;
       window.clearInterval(timer);
