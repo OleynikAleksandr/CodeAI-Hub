@@ -19,6 +19,15 @@ type TreeNode = {
   readonly isCollapsible?: boolean;
   readonly children?: readonly TreeNode[];
 };
+type SessionResumeIntent = {
+  readonly providerId: string;
+  readonly providerSessionId: string | null;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+  readonly initiativeSlug: string | null;
+  readonly stage: string | null;
+  readonly runSlug: string | null;
+};
 const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {
   description: "Description",
   virtual_simulation: "Virtual Simulation",
@@ -100,6 +109,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         })
       );
     };
+    const dispatchSessionResumeIntent = (payload: SessionResumeIntent) => {
+      window.dispatchEvent(
+        new CustomEvent("pm:session:resume", {
+          detail: payload,
+        })
+      );
+    };
     const nodes: TreeNode[] = [];
     const questionnairePath = branch.questionnairePath;
     if (questionnairePath)
@@ -126,10 +142,11 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           if (!(workspaceSlug && workspacePath)) {
             return;
           }
-          api.createSession({
+          dispatchSessionResumeIntent({
             providerId: session.providerId,
             providerSessionId: session.providerSessionId,
             workspacePath,
+            workspaceSlug,
             initiativeSlug: workspaceSlug,
             stage: "description",
             runSlug,
