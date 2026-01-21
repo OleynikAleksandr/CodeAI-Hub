@@ -1,4 +1,4 @@
-import { useEffect, type MutableRefObject } from "react";
+import { useEffect, useRef, type MutableRefObject } from "react";
 import type { SessionRecord } from "../../../../types/session";
 
 type SessionResumeIntent = {
@@ -9,6 +9,18 @@ type SessionResumeIntent = {
   readonly stage: string | null;
   readonly runSlug: string | null;
 };
+
+const IN_FLIGHT_TTL_MS = 30_000;
+
+const buildInFlightKey = (detail: SessionResumeIntent): string =>
+  [
+    detail.workspacePath,
+    detail.providerId,
+    detail.providerSessionId ?? "null",
+    detail.initiativeSlug ?? "null",
+    detail.stage ?? "null",
+    detail.runSlug ?? "null",
+  ].join("|");
 
 type SessionResumeCreatePayload = {
   readonly providerId: string;
@@ -24,6 +36,8 @@ export const useSessionResumeIntent = (params: {
   readonly focusSession: (sessionId: string) => void;
   readonly createSession: (payload: SessionResumeCreatePayload) => void;
 }) => {
+  const inFlight = useRef<Map<string, number>>(new Map());
+
   useEffect(() => {
     const handler = (event: Event) => {
       const custom = event as CustomEvent<SessionResumeIntent>;
@@ -31,10 +45,19 @@ export const useSessionResumeIntent = (params: {
       if (
         !detail ||
         typeof detail.providerId !== "string" ||
-        typeof detail.workspacePath !== "string"
+        typeof detail.workspacePath !== "string" ||
+        detail.providerSessionId === null
       ) {
         return;
       }
+
+      const now = Date.now();
+      for (const [key, startedAt] of inFlight.current) {
+        if (now - startedAt > IN_FLIGHT_TTL_MS) {
+          inFlight.current.delete(key);
+        }
+      }
+
       const existing = params.sessionsRef.current.find(
         (session) =>
           session.workspacePath === detail.workspacePath &&
@@ -44,9 +67,17 @@ export const useSessionResumeIntent = (params: {
           session.binding.providerSessionId === detail.providerSessionId
       );
       if (existing) {
+        inFlight.current.delete(buildInFlightKey(detail));
         params.focusSession(existing.id);
         return;
       }
+
+      const inFlightKey = buildInFlightKey(detail);
+      if (inFlight.current.has(inFlightKey)) {
+        return;
+      }
+      inFlight.current.set(inFlightKey, now);
+
       params.createSession({
         providerId: detail.providerId,
         providerSessionId: detail.providerSessionId,
