@@ -69,8 +69,8 @@
 6. [DONE] Git Commit: `chore(webview): rebuild settings-only bundle` (hash: 7ec0e407)
 
 ### Stream: Release build — next verification
-1. [TODO] Docs(release): обновить `README.md` + `CHANGELOG.md` (описать removal web-client и Settings-only webview) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): note web-client removal`
-2. [TODO] Git Commit: `docs(release): note web-client removal` (hash: TBD)
+1. [DONE] Docs(release): обновить `README.md` + `CHANGELOG.md` (описать removal web-client и Settings-only webview) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): note web-client removal`
+2. [DONE] Git Commit: `docs(release): note web-client removal` (hash: f801d175)
 
 3. [TODO] Release(build): собрать verification build после удаления web-client и Settings-only webview — scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; expected commit message: `chore(release): build verification (no web-client)`
 4. [TODO] Git Commit: `chore(release): build verification (no web-client)` (hash: TBD)
