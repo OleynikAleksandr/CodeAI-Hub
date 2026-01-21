@@ -43,8 +43,8 @@
 11. [DONE] Remove: удалить extension-module web-client shortcut manager и его использование — scope: `src/extension-module/web-client/`, `src/extension-module/cef/launcher-setup.ts`; expected commit message: `chore(web-client): remove launcher shortcut integration`
 12. [DONE] Git Commit: `chore(web-client): remove launcher shortcut integration` (hash: 00c2f9f3)
 
-13. [TODO] Remove: удалить web-client UI исходники и tsconfig ссылки — scope: `src/client/web-client/`, `tsconfig.json`, `tsconfig.webview.json`; expected commit message: `chore(web-client): delete ui sources and tsconfig refs`
-14. [TODO] Git Commit: `chore(web-client): delete ui sources and tsconfig refs` (hash: TBD)
+13. [DONE] Remove: удалить web-client UI исходники и tsconfig ссылки — scope: `src/client/web-client/`, `tsconfig.json`, `tsconfig.webview.json`; expected commit message: `chore(web-client): delete ui sources and tsconfig refs`
+14. [DONE] Git Commit: `chore(web-client): delete ui sources and tsconfig refs` (hash: 8b87b426)
 
 15. [TODO] Remove: вычистить build-ui-bundle/release-utils от web-client — scope: `scripts/build-ui-bundle.sh`, `scripts/release-utils.sh`; expected commit message: `chore(web-client): remove build bundle wiring`
 16. [TODO] Git Commit: `chore(web-client): remove build bundle wiring` (hash: TBD)
