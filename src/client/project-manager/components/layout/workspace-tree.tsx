@@ -128,7 +128,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         onSelect: () => selectArtifact(questionnairePath, "questionnaire.md"),
       });
     if (session) {
-      const isReviewerSession = branch.sessionKind === "reviewer";
+      const isReviewerSession =
+        branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
       const label = isReviewerSession
         ? `Reviewer session · ${session.providerId}`
         : `Session · ${session.providerId}`;
