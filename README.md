@@ -2,7 +2,9 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.467
+## Current Release — v1.1.468
+- **Workflow Tree Restore**: `workflow-state` принимает `workspacePath` и быстро восстанавливает ветку Description после рестарта Core.
+- **Project Manager Refresh**: ускорен initial polling workflow-state (3s до первого ответа, затем 10/15s).
 - **Project Manager Questionnaire**: после отправки — read-only Markdown без редактирования.
 - **Project Manager Sessions**: Description Agent скрывается после появления Reviewer.
 - **Project Manager Artifacts**: типографика артефактов выровнена под диалоги сессий.
@@ -17,14 +19,14 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Legacy web-client**: removed from build pipeline and artifacts.
 - **Workflow Tree**: ветка Description (questionnaire/draft/final + reviewer session) и downstream `OUTDATED` при правках.
 - **File-first artifacts**: шаги пишут в `.codeai-hub/<workspaceSlug>/<stage>/...` без `runs/`.
-- **Release 1.1.467**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+- **Release 1.1.468**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.467.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.467.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.467.tar.bz2`
-  - Providers: `claude-module-1.1.467.tar.bz2`, `codex-module-1.1.467.tar.bz2`, `gemini-module-1.1.467.tar.bz2`
-  - UI: `vscode-webview-1.1.467.tar.bz2`, `project-manager-1.1.467.tar.bz2`
+  - VSIX: `codeai-hub-1.1.468.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.468.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.468.tar.bz2`
+  - Providers: `claude-module-1.1.468.tar.bz2`, `codex-module-1.1.468.tar.bz2`, `gemini-module-1.1.468.tar.bz2`
+  - UI: `vscode-webview-1.1.468.tar.bz2`, `project-manager-1.1.468.tar.bz2`
   - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/description-agent`, `@codeai-hub/idea-collector`
 
 ## Features
