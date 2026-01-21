@@ -1,3 +1,9 @@
+## [1.1.459] - 2026-01-21
+### Fixed
+- Project Manager: resume/focus by `providerId + providerSessionId` without duplicates.
+- Project Manager: close hides session locally (no Core delete).
+- Project Manager: load JSONL history immediately after `session:created`.
+
 ## [1.1.457] - 2026-01-20
 
 ### Fixed
