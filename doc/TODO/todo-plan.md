@@ -50,8 +50,8 @@
 6. [TODO] Git Commit: `chore(release): build 1.1.460 verification` (hash: TBD)
 
 ### Stream: Fix — Reviewer resume без дублей + понятный label
-1. [TODO] Fix(core): при `session:create` с `providerSessionId` (resume) сразу заполнять `binding.providerSessionId` (status может оставаться `pending`), чтобы UI мог матчить сессию до первого ответа провайдера и не создавать дубль (и лишние папки continuity) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-manager/index.ts`; expected commit message: `fix(core): seed providerSessionId on resume create`
-2. [TODO] Git Commit: `fix(core): seed providerSessionId on resume create` (hash: TBD)
+1. [DONE] Fix(core): при `session:create` с `providerSessionId` (resume) сразу заполнять `binding.providerSessionId` (status может оставаться `pending`), чтобы UI мог матчить сессию до первого ответа провайдера и не создавать дубль (и лишние папки continuity) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-manager/index.ts`; expected commit message: `fix(core): seed providerSessionId on resume create`
+2. [DONE] Git Commit: `fix(core): seed providerSessionId on resume create` (hash: 5cef0854)
 
 3. [TODO] Fix(project-manager): дедупликация повторных resume-кликов пока биндинг `providerSessionId` не подтверждён (in-flight map по ключу `workspacePath+providerId+providerSessionId+stage+runSlug`) — scope: `src/client/project-manager/components/sessions/session-resume-intent.ts`; expected commit message: `fix(project-manager): dedupe resume while binding pending`
 4. [TODO] Git Commit: `fix(project-manager): dedupe resume while binding pending` (hash: TBD)
