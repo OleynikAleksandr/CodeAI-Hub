@@ -1,3 +1,7 @@
+## [1.1.463] - 2026-01-21
+### Fixed
+- Project Manager: prevent duplicate session windows when clicking Description Agent session before first provider response (dedupe rebroadcasted `session:created`).
+
 ## [1.1.462] - 2026-01-21
 ### Fixed
 - Project Manager: dedupe repeated resume clicks while binding is pending.
