@@ -15,19 +15,14 @@ import {
   toggleTodoInSnapshots,
 } from "../../../ui/src/session/helpers";
 import SessionView from "../../../ui/src/session/session-view";
-import { loadWorkflowSchemaForProjectManager } from "../../services/idea-collector-submit-service";
-import {
-  enforceArtifactsRequired,
-  isFinalizeTrigger,
-} from "../../../ui/src/services/idea-collector-finalize-utils";
 import {
   resolveProjectManagerCoreConfig,
   useProjectManagerCoreStatusHydrator,
 } from "./status-hydrator";
 import { useSessionResumeIntent } from "./session-resume-intent";
-import { resolveSchemaStage } from "./session-schema-stage";
 import { useSessionVisibility } from "./session-visibility";
 import { useProjectManagerSessionStream } from "./session-stream";
+import { useSessionMessageSender } from "./session-message-sender";
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
@@ -249,30 +244,7 @@ export const ProjectManagerSessionView = ({
     },
     [hideSession]
   );
-  const handleSendMessage = useCallback(
-    (sessionId: string, content: string) => {
-      const record = sessionsRef.current.find(
-        (session) => session.id === sessionId
-      );
-      const schemaStage = resolveSchemaStage(record?.stage);
-      if (!schemaStage) {
-        api.sendSessionMessage(sessionId, content);
-        return;
-      }
-      const shouldFinalize = isFinalizeTrigger(content);
-      void loadWorkflowSchemaForProjectManager(schemaStage)
-        .then((schema) => {
-          const outputSchema = shouldFinalize
-            ? enforceArtifactsRequired(schema)
-            : schema;
-          api.sendSessionMessage(sessionId, content, { outputSchema });
-        })
-        .catch(() => {
-          api.sendSessionMessage(sessionId, content);
-        });
-    },
-    []
-  );
+  const handleSendMessage = useSessionMessageSender(sessionsRef);
   const handleToggleTodo = useCallback((sessionId: string, todoId: string) => {
     setSnapshots((previous) =>
       toggleTodoInSnapshots(previous, sessionId, todoId)
