@@ -2,7 +2,7 @@
 
 **Status:** Active (v1.1.444)
 **Owner:** Codex
-**Context:** Модульная система UI, позволяющая обновлять интерфейс независимо от VSIX и обеспечивающая единую кодовую базу для VS Code Webview и локального CEF клиента.
+**Context:** Модульная система UI, позволяющая обновлять интерфейс независимо от VSIX и обеспечивающая единый источник правды для FLOW через Project Manager (CEF). На период активной разработки FLOW `vscode-webview` используется только для Settings (Settings-only), а legacy `web-client` запланирован к полному удалению (Phase 65).
 
 ---
 
@@ -11,9 +11,9 @@
 UI Modules — это набор пакетов, отвечающих за визуальную часть CodeAI Hub. Они собираются в независимые артефакты (`.tar.bz2`) и устанавливаются в `~/.codeai-hub/packages/ui/`, откуда загружаются хост-приложениями (VS Code Extension и CEF Launcher).
 
 ### Key Components
-- **vscode-webview**: React-приложение для панели в VS Code.
-- **web-client**: PWA-версия для запуска в автономном окне (CEF/Browser).
-- **project-manager**: Standalone UI для управления проектами (CEF).
+- **vscode-webview**: React-приложение для панели в VS Code (Settings-only на период разработки FLOW).
+- **project-manager**: Standalone UI для управления проектами (CEF) — основной UI-клиент Core для FLOW.
+- **web-client**: legacy PWA/CEF UI (будет удалён полностью в Phase 65).
 - **Shared UI Library**: общие компоненты, хуки и стили (`src/client/ui/src`), обеспечивающие идентичный UX.
 
 ---
@@ -22,7 +22,7 @@ UI Modules — это набор пакетов, отвечающих за ви�
 
 ### 2.1. Distribution Model
 Вместо упаковки JS/CSS файлов внутрь VSIX, они распространяются как отдельные модули:
-1. **Build**: `./scripts/build-all.sh` (release) или `npm run build:webview` / `npm run build:web-client` / `npm run build:project-manager` (dev) собирают UI артефакты.
+1. **Build**: `./scripts/build-all.sh` (release) или `npm run build:webview` / `npm run build:project-manager` (dev) собирают UI артефакты. Legacy: `npm run build:web-client` (будет удалён в Phase 65).
 2. **Manifest**: `assets/ui/manifest.json` описывает доступные версии и хеши.
 3. **Installation**: При старте расширения `UIBundleInstaller` проверяет наличие бандлов и распаковывает их в `~/.codeai-hub/packages/ui/<bundleId>/<version>/`.
 4. **Symlinking**: Создается симлинк `current` -> `<version>`, который используется хост-приложениями.
@@ -35,7 +35,7 @@ UI Modules — это набор пакетов, отвечающих за ви�
 
 ### 2.3. Host Integration
 - **VS Code**: `HomeViewProvider` настраивает `localResourceRoots` на `packages/ui/vscode-webview/current` и загружает HTML, ссылающийся на `react-chat.js` и CSS из этого пути.
-- **CEF Launcher**: Получает путь к `packages/ui/web-client/current/index.html` через аргументы запуска или конфиг.
+- **CEF Launcher**: Получает путь к `packages/ui/project-manager/current/index.html` через аргументы запуска или конфиг. Legacy: `web-client/current` (Phase 65 removal).
 
 ---
 
@@ -50,7 +50,7 @@ vscode-webview-<version>/
 └── react-chat.css      # Специфичные стили чата
 ```
 
-### web-client
+### web-client (legacy)
 ```
 web-client-<version>/
 ├── index.html          # Точка входа (PWA shell)
@@ -73,7 +73,6 @@ project-manager-<version>/
 ```bash
 # Сборка конкретного таргета (dev)
 npm run build:webview
-npm run build:web-client
 npm run build:project-manager
 ```
 
@@ -89,11 +88,11 @@ npm run build:project-manager
 - **State Management**: Zustand (SessionStore, SettingsStore)
 - **Communication**:
   - **VS Code**: `postMessage` API (через `vscode-api` адаптер).
-  - **Web Client**: WebSocket (прямое подключение к Core) или HTTP (REST API).
+  - **Project Manager (CEF)**: WebSocket (прямое подключение к Core) или HTTP (REST API).
 - **Design System**: Собственная система токенов, совместимая с VS Code Webview UI Toolkit.
 
 ---
 
 ## 6. Future Plans
 - **Remote Updates**: Поддержка обновления UI бандлов с удаленного сервера (CDN/GitHub Releases).
-- **Theming**: Расширенная поддержка тем (синхронизация с VS Code theme colors в web-client).
+- **Theming**: Расширенная поддержка тем для Project Manager (синхронизация с VS Code theme colors и/или системной темой).
