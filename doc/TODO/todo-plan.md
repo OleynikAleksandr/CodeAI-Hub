@@ -17,8 +17,12 @@
 ## Phase 65 — Decommission web-client + vscode-webview Settings-only (owner: Oleksandr, updated: 2026-01-21)
 
 ### Stream: Design — контракт отключения UI клиентов
-1. [TODO] Docs: зафиксировать контракт: единственный активный UI-клиент Core во время разработки FLOW = Project Manager; `vscode-webview` работает только как Settings UI (без сессий/чатов/подключения к Core); `web-client` удаляем полностью — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): define project-manager-only development mode`
-2. [TODO] Git Commit: `docs(arch): define project-manager-only development mode` (hash: TBD)
+1. [DONE] Docs: зафиксировать контракт: единственный активный UI-клиент Core во время разработки FLOW = Project Manager; `vscode-webview` работает только как Settings UI (без сессий/чатов/подключения к Core); `web-client` удаляем полностью — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SystemArchitecture/ProjectStructureMap.md`; expected commit message: `docs(arch): align docs with web-client deprecation`
+2. [DONE] Git Commit: `docs(arch): align docs with web-client deprecation` (hash: 834f865d)
+3. [DONE] Docs: выровнять SolidWorks-Flow docs под Project Manager-only режим — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/README.md`; expected commit message: `docs(solidworks-flow): reflect project-manager-only mode`
+4. [DONE] Git Commit: `docs(solidworks-flow): reflect project-manager-only mode` (hash: 02a3e466)
+5. [DONE] Docs: зафиксировать deprecate `web-client` в UI/CEF документации — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`, `doc/Project_Docs/Stacks/UI_Modules.md`, `doc/Project_Docs/knowledge/guides/Local_Artifacts_Workflow.md`; expected commit message: `docs(ui): deprecate web-client in docs`
+6. [DONE] Git Commit: `docs(ui): deprecate web-client in docs` (hash: f5dd78c1)
 
 ### Stream: Remove — web-client (полная зачистка)
 1. [TODO] Remove: убрать `scripts/build-web-client.js` и npm script `build:web-client`/упоминания — scope: `scripts/build-web-client.js`, `package.json`; expected commit message: `chore(build): remove web-client build script`
