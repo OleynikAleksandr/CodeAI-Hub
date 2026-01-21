@@ -72,7 +72,6 @@ copy_release_artifacts() {
     "codeai-hub-core-${CORE_PLATFORM_KEY}-${version}.tar.bz2"
     "CodeAIHubLauncher-${LAUNCHER_FILE_PLATFORM}-${version}.tar.bz2"
     "vscode-webview-${version}.tar.bz2"
-    "web-client-${version}.tar.bz2"
     "project-manager-${version}.tar.bz2"
   )
 
@@ -252,7 +251,6 @@ echo "🏗️  Building core..."
 
 echo "🏗️  Building UI bundles..."
 "$SCRIPT_DIR/build-ui-bundle.sh" vscode-webview "$new_version"
-"$SCRIPT_DIR/build-ui-bundle.sh" web-client "$new_version"
 "$SCRIPT_DIR/build-ui-bundle.sh" project-manager "$new_version"
 
 echo "🏗️  Building CEF launcher..."
@@ -265,7 +263,7 @@ echo "✅ Unified provider/core/UI build complete."
 echo "📦 Providers: claude/codex/gemini-module-${new_version}.tar.bz2"
 echo "📦 Core: codeai-hub-core-<platform>-${new_version}.tar.bz2"
 echo "📦 Launcher: CodeAIHubLauncher-<platform>-${new_version}.tar.bz2"
-echo "📦 UI: vscode-webview-${new_version}.tar.bz2, web-client-${new_version}.tar.bz2, project-manager-${new_version}.tar.bz2"
+echo "📦 UI: vscode-webview-${new_version}.tar.bz2, project-manager-${new_version}.tar.bz2"
 echo ""
 echo "Next:"
 echo "  1) Ensure git status is clean."

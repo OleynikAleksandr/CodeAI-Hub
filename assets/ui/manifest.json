@@ -8,12 +8,6 @@
       "size": 164557,
       "sha1": "2a63c2ff9c2d12649c7134cbc12987f00b50dcd9"
     },
-    "web-client": {
-      "version": "1.1.464",
-      "package": "web-client-1.1.464.tar.bz2",
-      "size": 174308,
-      "sha1": "ddda5e2b6c8ddd5d2eafab61bc09d1b88831ef0d"
-    },
     "project-manager": {
       "version": "1.1.464",
       "package": "project-manager-1.1.464.tar.bz2",
