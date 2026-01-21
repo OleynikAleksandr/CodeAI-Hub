@@ -52,8 +52,11 @@
 17. [DONE] Remove: удалить web-client media assets и biome ignore — scope: `media/web-client/`, `biome.jsonc`; expected commit message: `chore(web-client): remove media assets`
 18. [DONE] Git Commit: `chore(web-client): remove media assets` (hash: 3911f50f)
 
-19. [DONE] Gates: убедиться, что `ts-prune`/typecheck не находят мёртвых ссылок на web-client; сборки `build:webview` и `build:project-manager` зелёные — scope: no files; expected commit message: `docs: record web-client removal gates`
-20. [DONE] Git Commit: `docs: record web-client removal gates` (hash: a34f3bb2)
+19. [TODO] Remove: перенести shortcut helpers из web-client в CEF модуль — scope: `src/extension-module/cef/shortcut-manager.ts`, `src/extension-module/cef/mac-shortcut-service.ts`, `src/extension-module/cef/launcher-setup.ts`; expected commit message: `chore(web-client): move launcher shortcuts`
+20. [TODO] Git Commit: `chore(web-client): move launcher shortcuts` (hash: TBD)
+
+21. [TODO] Gates: убедиться, что `ts-prune`/typecheck не находят мёртвых ссылок на web-client; сборки `build:webview` и `build:project-manager` зелёные — scope: no files; expected commit message: `docs: record web-client removal gates`
+22. [TODO] Git Commit: `docs: record web-client removal gates` (hash: TBD)
 
 ### Stream: Change — vscode-webview Settings-only
 1. [TODO] Change: отключить подключение к Core и сессионный UI в `vscode-webview`; оставить только Settings (и безопасный экран-заглушку) — scope: `src/client/ui/src/app-host.tsx`, `src/client/ui/src/app-host/session-store.ts`, `src/client/ui/src/components/settings/settings-view.tsx`; expected commit message: `fix(vscode-webview): run settings-only mode`
