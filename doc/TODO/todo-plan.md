@@ -44,7 +44,7 @@
 2. [DONE] Git Commit: `fix(project-manager): prevent bootstrap crash in release bundle` (hash: faf002a1)
 
 3. [DONE] Fix(claude-module): убрать runtime-зависимость от `@codeai-hub/idea-collector`, чтобы override-пакет в `~/.codeai-hub/providers/**` не падал без `node_modules` — scope: `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`, `packages/Claude_Module/package.json`; expected commit message: `fix(claude-module): remove runtime dependency on idea-collector`
-4. [TODO] Git Commit: `fix(claude-module): remove runtime dependency on idea-collector` (hash: TBD)
+4. [DONE] Git Commit: `fix(claude-module): remove runtime dependency on idea-collector` (hash: 1431b22f)
 
 5. [DONE] Release(build): собрать verification build 1.1.460 (tarballs + VSIX) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/tmp/releases/*-1.1.460.tar.bz2`, `codeai-hub-1.1.460.vsix`; expected commit message: `chore(release): build 1.1.460 verification`
 6. [TODO] Git Commit: `chore(release): build 1.1.460 verification` (hash: TBD)
