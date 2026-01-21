@@ -53,44 +53,6 @@ case "$BUNDLE_NAME" in
     rm -rf "vscode-webview-$VERSION"
     ;;
     
-  web-client)
-    echo "🏗️  Building web-client UI bundle..."
-    npm run build:web-client
-    
-    BUNDLE_DIR="$REPO_ROOT/dist/ui/web-client-$VERSION"
-    mkdir -p "$BUNDLE_DIR"
-    
-    # Copy built web-client assets
-    cp -r "$REPO_ROOT/media/web-client/dist/"* "$BUNDLE_DIR/" 2>/dev/null || {
-      echo "⚠️  web-client build output not found, creating placeholder"
-      echo "placeholder" > "$BUNDLE_DIR/index.html"
-    }
-    
-    # Create archive
-    cd "$REPO_ROOT/dist/ui"
-    ARCHIVE_NAME="web-client-$VERSION.tar.bz2"
-    tar -cjf "$ARCHIVE_NAME" "web-client-$VERSION"
-    
-    # Move to releases
-    mv "$ARCHIVE_NAME" "$RELEASES_DIR/"
-    ARCHIVE_PATH="$RELEASES_DIR/$ARCHIVE_NAME"
-    
-    echo "✅ web-client bundle created: $ARCHIVE_PATH"
-    
-    # Install to packages layout
-    TARGET_DIR="$INSTALL_ROOT/$VERSION"
-    echo "📥 Installing to $TARGET_DIR..."
-    rm -rf "$TARGET_DIR"
-    mkdir -p "$TARGET_DIR"
-    cp -r "$BUNDLE_DIR/"* "$TARGET_DIR/"
-    
-    # Update current symlink
-    ln -sfn "$VERSION" "$INSTALL_ROOT/current"
-    
-    # Clean up build dir
-    rm -rf "web-client-$VERSION"
-    ;;
-
   project-manager)
     echo "📦 Building project-manager..."
     npm run build:project-manager
@@ -128,7 +90,7 @@ case "$BUNDLE_NAME" in
     
   *)
     echo "❌ Unknown bundle name: $BUNDLE_NAME" >&2
-    echo "Usage: $0 {vscode-webview|web-client|project-manager} [version]" >&2
+    echo "Usage: $0 {vscode-webview|project-manager} [version]" >&2
     exit 1
     ;;
 esac
