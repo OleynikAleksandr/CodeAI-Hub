@@ -35,6 +35,9 @@ const resolveSessionKind = (
   current: DescriptionSessionKind | undefined,
   update: DescriptionSessionKind | null | undefined
 ): DescriptionSessionKind | undefined => {
+  if (current === "reviewer" && update === "collector") {
+    return current;
+  }
   if (update === null) {
     return;
   }
