@@ -7,7 +7,6 @@ type ProviderPickerConfirmPayload = {
 export type WebviewCommand =
   | "newSession"
   | "lastSession"
-  | "launchWebClient"
   | "oldSessions"
   | "startChat"
   | "startIdea"

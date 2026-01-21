@@ -5,8 +5,6 @@ import {
   window,
   workspace,
 } from "vscode";
-import { launchCefClient } from "./extension-module/cef/launcher";
-import type { LauncherInstallInfo } from "./extension-module/cef/launcher-installer";
 import { ensureLauncherDependencies } from "./extension-module/cef/launcher-setup";
 import { resolvePlatformKey } from "./extension-module/cef/platform";
 import { getDefaultCoreConnectionInfo } from "./extension-module/core/core-connection-info";
@@ -37,7 +35,6 @@ import { prepareUIBundles } from "./extension-module/ui/ui-activation";
 
 let coreProcessManager: CoreProcessManager | null = null;
 let coreKeepAlive: CoreKeepAlive | null = null;
-let cachedLauncherInstallInfo: LauncherInstallInfo | null = null;
 const resolveWorkspacePath = (): string =>
   workspace.workspaceFolders?.[0]?.uri.fsPath ?? process.cwd();
 
@@ -54,30 +51,6 @@ async function resolveDeclaredCoreVersion(
   const platform = resolvePlatformKey();
   const manifestEntry = getManifestEntryOrThrow(manifest, platform);
   return manifestEntry.coreVersion;
-}
-
-async function handleLaunchWebClientCommand(
-  _context: ExtensionContext,
-  indexPath: string
-): Promise<void> {
-  const workspacePath = resolveWorkspacePath();
-  if (!cachedLauncherInstallInfo) {
-    window.showWarningMessage(
-      "CodeAI Hub launcher is not configured. Reload the extension to install required components."
-    );
-    return;
-  }
-  if (coreProcessManager) {
-    try {
-      await coreProcessManager.ensureStarted();
-    } catch (error) {
-      const reason = error instanceof Error ? error.message : String(error);
-      window.showWarningMessage(
-        `CodeAI Hub core restart failed before launching web client: ${reason}`
-      );
-    }
-  }
-  await launchCefClient(cachedLauncherInstallInfo, indexPath, workspacePath);
 }
 
 async function initializeCoreManager(context: ExtensionContext): Promise<void> {
@@ -128,7 +101,7 @@ async function prepareLocalRuntime(
 
   try {
     const workspacePath = resolveWorkspacePath();
-    cachedLauncherInstallInfo = await ensureLauncherDependencies(
+    await ensureLauncherDependencies(
       context,
       indexPath,
       projectManagerIndexPath,
@@ -154,30 +127,12 @@ async function prepareLocalRuntime(
 
 function registerCommands(
   context: ExtensionContext,
-  provider: HomeViewProvider,
-  indexPath: string
+  provider: HomeViewProvider
 ): void {
   context.subscriptions.push(
     window.registerWebviewViewProvider(HomeViewProvider.viewType, provider),
     commands.registerCommand("codeaiHub.openSettings", () => {
       provider.showSettingsPlaceholder();
-    }),
-    commands.registerCommand("codeaiHub.launchWebClient", async () => {
-      if (env.remoteName) {
-        window.showWarningMessage(
-          "Launching the local CodeAI Hub client is not supported in remote workspaces."
-        );
-        return;
-      }
-
-      try {
-        await handleLaunchWebClientCommand(context, indexPath);
-      } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
-        window.showErrorMessage(
-          `Failed to launch CodeAI Hub client: ${reason}`
-        );
-      }
     })
   );
 }
@@ -186,12 +141,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const logger = getExtensionLogger();
 
   // Prepare UI bundles
-  const { webview, webClient, projectManager } = await prepareUIBundles(
-    context,
-    logger
-  );
+  const { webview, projectManager } = await prepareUIBundles(context, logger);
   const webviewUIRoot = webview.path;
-  const webClientIndexPath = webClient.path;
   const projectManagerIndexPath = projectManager.path;
 
   const extensionVersion =
@@ -213,7 +164,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   await prepareLocalRuntime(
     context,
-    webClientIndexPath,
+    projectManagerIndexPath,
     projectManagerIndexPath
   );
   if (!coreKeepAlive && coreProcessManager) {
@@ -245,7 +196,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     coreProcessManager ?? undefined
   );
 
-  registerCommands(context, provider, webClientIndexPath);
+  registerCommands(context, provider);
 }
 
 export function deactivate(): void {
