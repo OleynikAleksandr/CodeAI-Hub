@@ -122,8 +122,8 @@
 5. [DONE] Docs(arch): обновить `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (versions table) под 1.1.464 — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): bump SystemArchitecture to 1.1.464`
 6. [DONE] Git Commit: `docs(arch): bump SystemArchitecture to 1.1.464` (hash: 066d11aa)
 
-7. [TODO] Docs(todo): зафиксировать релиз 1.1.464 в плане (DONE+hash) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 1.1.464 verification release`
-8. [TODO] Git Commit: `docs(todo): record 1.1.464 verification release` (hash: TBD)
+7. [DONE] Docs(todo): зафиксировать релиз 1.1.464 в плане (DONE+hash) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 1.1.464 verification release`
+8. [DONE] Git Commit: `docs(todo): record 1.1.464 verification release` (hash: 4827093a)
 ### Stream: Verification
 1. [TODO] Verify(manual): клик по строке `Session · <provider>` (Reviewer) не создаёт дубль; если сессия уже есть — только фокус; если скрыта — показывается снова; если это первый resume после перезапуска — открывается с полной историей (из JSONL), не пустая — scope: no files; expected commit message: `docs: record resume focus + history verification`
 2. [TODO] Git Commit: `docs: record resume focus + history verification` (hash: TBD)
