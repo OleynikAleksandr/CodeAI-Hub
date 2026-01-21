@@ -120,7 +120,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     let cancelled = false;
 
     const loadState = async () => {
-      const state = await api.getWorkflowState(workspaceSlug);
+      const state = await api.getWorkflowState(workspaceSlug, workspacePath);
       if (cancelled) {
         return;
       }
