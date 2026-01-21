@@ -15,10 +15,7 @@ import {
   toggleTodoInSnapshots,
 } from "../../../ui/src/session/helpers";
 import SessionView from "../../../ui/src/session/session-view";
-import {
-  loadWorkflowSchemaForProjectManager,
-  type WorkflowStageId,
-} from "../../services/idea-collector-submit-service";
+import { loadWorkflowSchemaForProjectManager } from "../../services/idea-collector-submit-service";
 import {
   enforceArtifactsRequired,
   isFinalizeTrigger,
@@ -28,31 +25,18 @@ import {
   useProjectManagerCoreStatusHydrator,
 } from "./status-hydrator";
 import { useSessionResumeIntent } from "./session-resume-intent";
+import { resolveSchemaStage } from "./session-schema-stage";
 import { useSessionVisibility } from "./session-visibility";
 import { useProjectManagerSessionStream } from "./session-stream";
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
 };
-const DEFAULT_PROVIDER_CATALOG: ProviderCatalog = {};
-const resolveSchemaStage = (
-  stage: string | null | undefined
-): WorkflowStageId | null => {
-  if (!stage) {
-    return null;
-  }
-  if (stage === "idea") {
-    return "description";
-  }
-  return null;
-};
 export const ProjectManagerSessionView = ({
   workspacePath,
   preferredSessionId,
 }: ProjectManagerSessionViewProps) => {
-  const [providerCatalog, setProviderCatalog] = useState<ProviderCatalog>(
-    DEFAULT_PROVIDER_CATALOG
-  );
+  const [providerCatalog, setProviderCatalog] = useState<ProviderCatalog>({});
   const providerLabels = useMemo(
     () => buildProviderLabels(providerCatalog),
     [providerCatalog]
@@ -115,15 +99,33 @@ export const ProjectManagerSessionView = ({
   );
   const handleSessionCreated = useCallback(
     (session: SessionRecord) => {
+      showSession(session.id);
       setSessions((previous) => {
-        const next = [...previous, session];
+        const next =
+          previous.some((candidate) => candidate.id === session.id)
+            ? previous.map((candidate) =>
+                candidate.id === session.id ? session : candidate
+              )
+            : [...previous, session];
         syncSessionsRef(next);
         return next;
       });
-      setSnapshots((previous) => ({
-        ...previous,
-        [session.id]: createInitialSnapshot(session, providerLabels),
-      }));
+      setSnapshots((previous) => {
+        const existing = previous[session.id];
+        if (existing) {
+          return {
+            ...previous,
+            [session.id]: {
+              ...existing,
+              binding: session.binding,
+            },
+          };
+        }
+        return {
+          ...previous,
+          [session.id]: createInitialSnapshot(session, providerLabels),
+        };
+      });
       setActiveSessionId(session.id);
       const config = resolveProjectManagerCoreConfig();
       if (!config) {
@@ -135,7 +137,7 @@ export const ProjectManagerSessionView = ({
         // ignore
       });
     },
-    [handleSessionHistory, providerLabels, syncSessionsRef]
+    [handleSessionHistory, providerLabels, showSession, syncSessionsRef]
   );
   const handleSessionMessage = useCallback(
     (payload: { readonly sessionId: string; readonly message: SessionMessage }) => {
