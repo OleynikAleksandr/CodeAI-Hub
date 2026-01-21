@@ -65,8 +65,8 @@
 3. [DONE] Change: обновить роутинг/extension-message router так, чтобы команды/сообщения, связанные с чатами/сессиями, не активировали UI, а возвращали подсказку “Use Project Manager” — scope: `src/extension-module/home-view-message-router/`, `src/client/ui/src/app-host/webview-message-handler.ts`, `src/client/ui/src/app-host/webview-message-types.ts`; expected commit message: `fix(vscode-webview): route sessions to project-manager`
 4. [DONE] Git Commit: `fix(vscode-webview): route sessions to project-manager` (hash: 3e528d83)
 
-5. [TODO] Rebuild: пересобрать webview bundle и обновить артефакты/manifest — scope: `media/react-chat.js`, `assets/ui/manifest.json`; expected commit message: `chore(webview): rebuild settings-only bundle`
-6. [TODO] Git Commit: `chore(webview): rebuild settings-only bundle` (hash: TBD)
+5. [DONE] Rebuild: пересобрать webview bundle и обновить артефакты/manifest — scope: `media/react-chat.js`, `assets/ui/manifest.json`; expected commit message: `chore(webview): rebuild settings-only bundle`
+6. [DONE] Git Commit: `chore(webview): rebuild settings-only bundle` (hash: 7ec0e407)
 
 ### Stream: Release build — next verification
 1. [TODO] Release(build): собрать verification build после удаления web-client и Settings-only webview — scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; expected commit message: `chore(release): build verification (no web-client)`
