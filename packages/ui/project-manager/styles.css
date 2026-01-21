@@ -529,6 +529,99 @@ body {
   line-height: 1.6;
 }
 
+/* ========== Artifact Viewer (Markdown) ========== */
+.pm-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.pm-details strong {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: var(--pm-text-primary);
+}
+
+.pm-details button {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--pm-text-primary);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pm-details button:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pm-details button:focus-visible {
+  outline: 2px solid rgba(66, 201, 162, 0.6);
+  outline-offset: 2px;
+}
+
+.pm-artifact-markdown {
+  font-size: 13px;
+  line-height: 1.25;
+  color: #adb2ba;
+  font-weight: 200;
+}
+
+.pm-artifact-markdown p,
+.pm-artifact-markdown ul,
+.pm-artifact-markdown ol {
+  margin: 0;
+  padding: 0;
+  line-height: inherit;
+}
+
+.pm-artifact-markdown p + *,
+.pm-artifact-markdown ul + *,
+.pm-artifact-markdown ol + * {
+  margin-top: 10px;
+}
+
+.pm-artifact-markdown li {
+  white-space: pre-wrap;
+}
+
+.pm-artifact-markdown ul,
+.pm-artifact-markdown ol {
+  padding-left: 18px;
+  list-style-position: inside;
+}
+
+.pm-artifact-markdown h1,
+.pm-artifact-markdown h2,
+.pm-artifact-markdown h3,
+.pm-artifact-markdown h4 {
+  margin: 14px 0 8px;
+  line-height: 1.15;
+  color: var(--pm-text-primary);
+}
+
+.pm-artifact-markdown h1 {
+  font-size: 18px;
+}
+
+.pm-artifact-markdown h2 {
+  font-size: 16px;
+}
+
+.pm-artifact-markdown h3,
+.pm-artifact-markdown h4 {
+  font-size: 14px;
+}
+
+.pm-artifact-markdown strong {
+  font-weight: 600;
+}
+
 /* ========== Vertical Resizer ========== */
 .pm-resizer {
   width: var(--pm-resizer-width);
