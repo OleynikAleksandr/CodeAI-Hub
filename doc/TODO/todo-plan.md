@@ -44,8 +44,8 @@
 ### Stream 2: Project Manager: load Settings via Core Remote Bridge
 **Goal:** PM получает реальные settings и StatusPanel показывает корректные model/reasoning.
 
-1. [TODO] Feat(core): добавить типы сообщений `settings:load`/`settings:loaded` — scope: `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): add settings bridge message types`
-2. [TODO] Git Commit: `feat(core): add settings bridge message types` (hash: TBD)
+1. [DONE] Feat(core): добавить типы сообщений `settings:load`/`settings:loaded` — scope: `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): add settings bridge message types`
+2. [DONE] Git Commit: `feat(core): add settings bridge message types` (hash: 35816fa2)
 
 3. [TODO] Feat(core): реализовать handler `SettingsRequestHandler` (читает `config.claudeSettingsPath`) — scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`; expected commit message: `feat(core): add settings request handler`
 4. [TODO] Git Commit: `feat(core): add settings request handler` (hash: TBD)
