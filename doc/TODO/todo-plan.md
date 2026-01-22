@@ -61,6 +61,6 @@
 
 ### Stream: Session report + push
 1. [DONE] Docs(session): создать отчет `Session047` и обновить `todo-plan.md` с hash/verify — scope: `doc/Sessions/Session047.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session047 release docs sync`
-2. [TODO] Git Commit: `docs(session): Session047 release docs sync` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): Session047 release docs sync` (hash: f25dff28)
 
-3. [TODO] Push: `git push origin main` — scope: git; expected commit message: `chore: push release 1.1.474`
+3. [DONE] Push: `git push origin main` — scope: git; expected commit message: `chore: push release 1.1.474`
