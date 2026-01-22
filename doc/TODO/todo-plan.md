@@ -32,8 +32,8 @@
 ### Stream 3: SessionTabs — add stage name
 **Goal:** Добавить к имени провайдера короткое имя агента (Description Codex, Reviewer Claude).
 
-1. [TODO] Fix(ui): добавить stage prefix в SessionTabs (использовать session.stage) — scope: `src/client/ui/src/session/session-tabs.tsx`; expected commit message: `fix(ui): add stage name to session tabs`
-2. [TODO] Git Commit: `fix(ui): add stage name to session tabs` (hash: TBD)
+1. [DONE] Fix(ui): добавить stage prefix в SessionTabs (использовать session.stage) — scope: `src/client/ui/src/session/session-tabs.tsx`; expected commit message: `fix(ui): add stage name to session tabs`
+2. [IN_PROGRESS] Git Commit: `fix(ui): add stage name to session tabs` (hash: TBD)
 
 ### Stream 4: StatusPanel — Models instead of Providers (Вариант B — расширение SessionStatusInfo)
 **Goal:** Расширить архитектуру для передачи информации о моделях и показывать реальную модель с reasoning level.
@@ -68,7 +68,7 @@ type ModelInfo = {
 **Goal:** Убрать статичную строку "Status" и сократить высоту панели.
 
 1. [DONE] Fix(ui): удалить строку "Status" из StatusPanel — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): remove static Status row from StatusPanel`
-2. [IN_PROGRESS] Git Commit: `fix(ui): remove static Status row from StatusPanel` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): remove static Status row from StatusPanel` (hash: 0998dd61)
 
 ---
 
