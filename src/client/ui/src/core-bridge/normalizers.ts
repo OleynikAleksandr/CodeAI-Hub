@@ -152,6 +152,11 @@ export const sanitizeSession = (
       ? session.sessionKind
       : null;
 
+  const runSlug =
+    typeof session.runSlug === "string" && session.runSlug.trim().length > 0
+      ? session.runSlug.trim()
+      : null;
+
   return {
     id: sessionId,
     title: session.title,
@@ -162,6 +167,7 @@ export const sanitizeSession = (
         ? session.initiativeSlug
         : null,
     stage: typeof session.stage === "string" ? session.stage : null,
+    runSlug,
     sessionKind,
     createdAt: toNumberTimestamp(session.createdAt),
     binding: normalizeBinding(bindingCandidate),

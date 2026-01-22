@@ -35,6 +35,7 @@ export type ServerSession = {
   readonly workspacePath?: string;
   readonly initiativeSlug?: string | null;
   readonly stage?: string | null;
+  readonly runSlug?: string | null;
   readonly sessionKind?: "collector" | "reviewer" | null;
   readonly title?: string;
   readonly createdAt?: string;
