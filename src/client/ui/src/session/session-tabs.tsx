@@ -3,6 +3,13 @@ import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionRecord } from "../../../../types/session";
 import { mapProviderTheme } from "./helpers";
 
+const formatStageName = (stage: string | null | undefined): string | null => {
+  if (!stage) {
+    return null;
+  }
+  return stage.charAt(0).toUpperCase() + stage.slice(1);
+};
+
 type SessionTabsProps = {
   readonly sessions: readonly SessionRecord[];
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
@@ -26,6 +33,7 @@ const SessionTabs = ({
     <div className="session-tabs">
       {sessions.map((session) => {
         const isActive = session.id === activeSessionId;
+        const stageName = formatStageName(session.stage);
         const providerNames = session.providerIds.map((providerId) => {
           const label =
             providerLabels.get(providerId) ??
@@ -42,21 +50,32 @@ const SessionTabs = ({
         } else {
           primaryLineLength = Math.ceil(providerNames.length / 2);
         }
-        const primaryLine = providerNames.slice(0, primaryLineLength).join("+");
+        const providerLine = providerNames
+          .slice(0, primaryLineLength)
+          .join("+");
+        // Prepend stage name if available: "Description Claude" or "Reviewer Codex"
+        const primaryLine = stageName
+          ? `${stageName} ${providerLine}`
+          : providerLine;
         const secondaryTokens = providerNames.slice(primaryLineLength);
         const secondaryLine =
           secondaryTokens.length > 0 ? `+${secondaryTokens.join("+")}` : "";
         const displaySummary = secondaryLine
           ? [primaryLine, secondaryLine]
           : [primaryLine];
-        const spokenSummary = providerNames.join(", ");
-        const fullSummary = session.providerIds
+        const spokenSummary = stageName
+          ? `${stageName} ${providerNames.join(", ")}`
+          : providerNames.join(", ");
+        const providerFullNames = session.providerIds
           .map(
             (providerId) =>
               providerLabels.get(providerId) ??
               getDefaultProviderTitle(providerId)
           )
           .join(" + ");
+        const fullSummary = stageName
+          ? `${stageName}: ${providerFullNames}`
+          : providerFullNames;
 
         const primaryProviderId = session.providerIds[0] ?? null;
         const tabProviderTheme = mapProviderTheme(primaryProviderId);
