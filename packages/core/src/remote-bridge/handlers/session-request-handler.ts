@@ -381,6 +381,11 @@ export class SessionRequestHandler {
       return;
     }
 
+    await this.continuity.ensureTrackedOnOutboundMessage({
+      sessionId,
+      providerSessionId: binding.providerSessionId,
+    });
+
     this.logDispatchingMessageToProvider(sessionId, binding, content.length);
 
     try {
@@ -669,6 +674,11 @@ export class SessionRequestHandler {
       );
       return;
     }
+
+    await this.continuity.ensureTrackedOnOutboundMessage({
+      sessionId,
+      providerSessionId: binding.providerSessionId,
+    });
 
     this.logDispatchingMessageToProvider(sessionId, binding, content.length);
 
