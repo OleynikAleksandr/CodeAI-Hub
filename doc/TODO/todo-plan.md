@@ -62,7 +62,7 @@ type ModelInfo = {
 5. [DEFERRED] Fix(ui): обновить вызовы createInitialSnapshot с передачей settings — требует прокидывания settings через многие компоненты, отложено до отдельной Phase
 6. [SKIPPED] Git Commit: skipped — settings prокидывание отложено
 7. [DONE] Fix(ui): обновить StatusPanel для отображения models — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `feat(ui): display model names with reasoning in StatusPanel`
-8. [IN_PROGRESS] Git Commit: `feat(ui): display model names with reasoning in StatusPanel` (hash: TBD)
+8. [DONE] Git Commit: `feat(ui): display model names with reasoning in StatusPanel` (hash: 7e07f682)
 
 ### Stream 5: StatusPanel — remove Status row
 **Goal:** Убрать статичную строку "Status" и сократить высоту панели.
