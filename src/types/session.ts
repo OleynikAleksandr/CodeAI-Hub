@@ -43,6 +43,13 @@ export type SessionStatusInfo = {
   readonly updatedAt: number;
 };
 
+/**
+ * Kind of session agent within a workflow stage.
+ * - "collector": Initial agent that gathers information (e.g., Description agent)
+ * - "reviewer": Agent that reviews and refines output (e.g., Reviewer)
+ */
+export type SessionKind = "collector" | "reviewer";
+
 export type SessionRecord = {
   readonly id: string;
   readonly title: string;
@@ -50,6 +57,7 @@ export type SessionRecord = {
   readonly workspacePath: string;
   readonly initiativeSlug?: string | null;
   readonly stage?: string | null;
+  readonly sessionKind?: SessionKind | null;
   readonly createdAt: number;
   readonly binding: SessionBindingInfo;
 };

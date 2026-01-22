@@ -22449,11 +22449,17 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/session-tabs.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-  var formatStageName = (stage) => {
-    if (!stage) {
-      return null;
+  var getAgentLabel = (sessionKind, stage) => {
+    if (sessionKind === "reviewer") {
+      return "Reviewer";
     }
-    return stage.charAt(0).toUpperCase() + stage.slice(1);
+    if (sessionKind === "collector") {
+      return "Agent";
+    }
+    if (stage) {
+      return stage.charAt(0).toUpperCase() + stage.slice(1);
+    }
+    return null;
   };
   var SessionTabs = ({
     sessions,
@@ -22467,7 +22473,7 @@ ${path2}` : path2;
     }
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
       const isActive = session.id === activeSessionId;
-      const stageName = formatStageName(session.stage);
+      const agentLabel = getAgentLabel(session.sessionKind, session.stage);
       const providerNames = session.providerIds.map((providerId) => {
         const label = providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);
         const [primaryToken] = label.split(" ");
@@ -22483,15 +22489,15 @@ ${path2}` : path2;
         primaryLineLength = Math.ceil(providerNames.length / 2);
       }
       const providerLine = providerNames.slice(0, primaryLineLength).join("+");
-      const primaryLine = stageName ? `${stageName} ${providerLine}` : providerLine;
+      const primaryLine = agentLabel ? `${agentLabel} ${providerLine}` : providerLine;
       const secondaryTokens = providerNames.slice(primaryLineLength);
       const secondaryLine = secondaryTokens.length > 0 ? `+${secondaryTokens.join("+")}` : "";
       const displaySummary = secondaryLine ? [primaryLine, secondaryLine] : [primaryLine];
-      const spokenSummary = stageName ? `${stageName} ${providerNames.join(", ")}` : providerNames.join(", ");
+      const spokenSummary = agentLabel ? `${agentLabel} ${providerNames.join(", ")}` : providerNames.join(", ");
       const providerFullNames = session.providerIds.map(
         (providerId) => providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId)
       ).join(" + ");
-      const fullSummary = stageName ? `${stageName}: ${providerFullNames}` : providerFullNames;
+      const fullSummary = agentLabel ? `${agentLabel}: ${providerFullNames}` : providerFullNames;
       const primaryProviderId = session.providerIds[0] ?? null;
       const tabProviderTheme = mapProviderTheme(primaryProviderId);
       const tabClassName = [
@@ -25050,7 +25056,7 @@ ${replacement}
   var loadIdeaCollectorSchemaCached = () => loadDescriptionSchemaCached();
 
   // src/client/ui/src/app-host/session-store.ts
-  var useSessionStore = (providerLabels) => {
+  var useSessionStore = (providerLabels, settings) => {
     const [sessions, setSessions] = (0, import_react12.useState)([]);
     const [snapshots, setSnapshots] = (0, import_react12.useState)({});
     const [activeSessionId, setActiveSessionId] = (0, import_react12.useState)(null);
@@ -25092,13 +25098,14 @@ ${replacement}
             ...previous3,
             [session.id]: createInitialSnapshot(
               sessionWithBinding,
-              providerLabels
+              providerLabels,
+              settings
             )
           };
         });
         setActiveSessionId(session.id);
       },
-      [applyPendingBinding, providerLabels, syncSessionsRef]
+      [applyPendingBinding, providerLabels, settings, syncSessionsRef]
     );
     const hydrateFromCoreState = (0, import_react12.useCallback)(
       (payload) => {
@@ -25111,7 +25118,8 @@ ${replacement}
         for (const session of nextSessions) {
           nextSnapshots[session.id] = createInitialSnapshot(
             session,
-            providerLabels
+            providerLabels,
+            settings
           );
         }
         setSnapshots(nextSnapshots);
@@ -25122,7 +25130,7 @@ ${replacement}
           return nextSessions.at(-1)?.id ?? null;
         });
       },
-      [applyPendingBinding, providerLabels, syncSessionsRef]
+      [applyPendingBinding, providerLabels, settings, syncSessionsRef]
     );
     const handleSessionMessageEvent2 = (0, import_react12.useCallback)(
       (payload) => {
@@ -28869,6 +28877,7 @@ ${replacement}
       clearStageSelection,
       lockStageSelection
     } = useProviderPickerState();
+    const { settings } = useSettingsState();
     const {
       sessions,
       snapshots,
@@ -28885,7 +28894,7 @@ ${replacement}
       closeSession,
       toggleTodo,
       sendMessage
-    } = useSessionStore(providerLabels);
+    } = useSessionStore(providerLabels, settings);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
     const shouldKickoffIdeaRef = (0, import_react31.useRef)(false);
     const {

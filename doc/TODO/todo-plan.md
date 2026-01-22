@@ -25,17 +25,32 @@
 
 ## Backlog
 
-### Settings Propagation for Models Display (из Phase 69)
-**Goal:** Прокинуть settings через компоненты для отображения реальных моделей в StatusPanel.
-**Status:** Отложено — требует детального исследования и многофайловых изменений.
-**Reference:** `doc/TODO/Archive/todo-plan-phase70.md` — Phase 69
-
 ### TodoPanel Removal (опционально)
 **Goal:** Полностью удалить TodoPanel вместо текущего комментирования.
 **Status:** Низкий приоритет.
 
 ---
 
-## Phase 71 — TBD (owner: TBD, updated: YYYY-MM-DD)
+## Phase 71 — Session UI Bugfixes (owner: Oleksandr, updated: 2026-01-22)
 
-_Задачи будут добавлены после определения приоритетов._
+### Stream 1: Fix SessionTabs agent name (sessionKind)
+**Goal:** Показывать правильное имя агента ("Reviewer" вместо "Description") в SessionTabs.
+**Problem:** `session.stage` = "description" (имя этапа Flow), а нужно `sessionKind` = "reviewer"/"collector" (тип агента).
+**Solution:** Добавить поле `sessionKind` в `SessionRecord` и использовать его в SessionTabs.
+
+1. [DONE] Fix(types): добавить поле `sessionKind?: "collector" | "reviewer"` в SessionRecord — scope: `src/types/session.ts`
+2. [DONE] Fix(ui): использовать sessionKind в SessionTabs для отображения имени агента — scope: `src/client/ui/src/session/session-tabs.tsx`
+
+### Stream 2: Fix StatusPanel models display (settings propagation)
+**Goal:** Показывать реальные модели с reasoning level вместо просто имени провайдера.
+**Problem:** `settings` не передаётся в `createInitialSnapshot`, fallback возвращает только имя провайдера.
+**Solution:** Прокинуть settings во все вызовы createInitialSnapshot.
+
+1. [DONE] Fix(ui): прокинуть settings в session-store.ts — scope: `src/client/ui/src/app-host/session-store.ts`, `src/client/ui/src/app-host.tsx`
+2. [DONE] Fix(ui): прокинуть settings в project-manager-session-view.tsx — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`
+
+### Stream 3: Build and verify
+**Goal:** Собрать webview и проверить исправления.
+
+1. [DONE] Build: npm run build:webview && npm run typecheck:webview — все гейты прошли
+2. [DONE] Git Commit: `fix(ui): session tabs agent name and models display` (hash: ca10f379)

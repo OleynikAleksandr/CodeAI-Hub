@@ -19,6 +19,7 @@ import { useIdeaCollector } from "./app-host/use-idea-collector";
 import { useProviderPickerOpenHandler } from "./app-host/use-provider-picker-open-handler";
 import { useWebviewMessageHandler } from "./app-host/webview-message-handler";
 import ActionBar from "./components/action-bar";
+import { useSettingsState } from "./components/settings/use-settings-state";
 import SettingsView from "./components/settings-view";
 import type {
   CoreBridgeSessionBindingPayload,
@@ -53,6 +54,7 @@ const FullAppHost = () => {
     clearStageSelection,
     lockStageSelection,
   } = useProviderPickerState();
+  const { settings } = useSettingsState();
   const {
     sessions,
     snapshots,
@@ -69,7 +71,7 @@ const FullAppHost = () => {
     closeSession,
     toggleTodo,
     sendMessage,
-  } = useSessionStore(providerLabels);
+  } = useSessionStore(providerLabels, settings);
   const { settingsVisible, openSettings, closeSettings } =
     useSettingsVisibility();
   const shouldKickoffIdeaRef = useRef(false);
@@ -205,9 +207,7 @@ const FullAppHost = () => {
     onSessionBinding: handleSessionBindingMessage,
     onSessionHistory: handleSessionHistory,
   });
-
   const isCoreReady = coreStatus === "ready" && coreFinalized;
-
   useEffect(() => {
     if (isCoreReady) {
       return;
