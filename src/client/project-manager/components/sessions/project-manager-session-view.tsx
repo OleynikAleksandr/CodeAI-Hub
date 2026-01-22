@@ -4,7 +4,6 @@ import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import { sanitizeMessage } from "../../../ui/src/core-bridge/normalizers";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
-import { useSettingsState } from "../../../ui/src/components/settings/use-settings-state";
 import {
   buildProviderLabels,
   createInitialSnapshot,
@@ -17,6 +16,7 @@ import {
 } from "../../../ui/src/session/helpers";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
+import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import {
   resolveProjectManagerCoreConfig,
   useProjectManagerCoreStatusHydrator,
@@ -39,7 +39,7 @@ export const ProjectManagerSessionView = ({
     () => buildProviderLabels(providerCatalog),
     [providerCatalog]
   );
-  const { settings } = useSettingsState();
+  const { settings } = useProjectManagerSettings();
   const [sessions, setSessions] = useState<readonly SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
