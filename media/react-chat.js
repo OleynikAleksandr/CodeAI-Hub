@@ -8180,6 +8180,7 @@
       status: session.providerSessionStatus === "ready" || session.providerSessionStatus === "failed" ? session.providerSessionStatus : "pending"
     };
     const sessionKind = session.sessionKind === "collector" || session.sessionKind === "reviewer" ? session.sessionKind : null;
+    const runSlug = typeof session.runSlug === "string" && session.runSlug.trim().length > 0 ? session.runSlug.trim() : null;
     return {
       id: sessionId,
       title: session.title,
@@ -8187,6 +8188,7 @@
       workspacePath: session.workspacePath ?? "",
       initiativeSlug: typeof session.initiativeSlug === "string" ? session.initiativeSlug : null,
       stage: typeof session.stage === "string" ? session.stage : null,
+      runSlug,
       sessionKind,
       createdAt: toNumberTimestamp(session.createdAt),
       binding: normalizeBinding(bindingCandidate)
@@ -22451,12 +22453,15 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/session-tabs.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-  var getAgentLabel = (sessionKind, stage) => {
+  var getAgentLabel = (sessionKind, stage, runSlug) => {
     if (sessionKind === "reviewer") {
       return "Reviewer";
     }
     if (sessionKind === "collector") {
       return "Agent";
+    }
+    if (stage === "description") {
+      return runSlug === "reviewer" ? "Reviewer" : "Agent";
     }
     if (stage) {
       return stage.charAt(0).toUpperCase() + stage.slice(1);
@@ -22475,7 +22480,11 @@ ${path2}` : path2;
     }
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
       const isActive = session.id === activeSessionId;
-      const agentLabel = getAgentLabel(session.sessionKind, session.stage);
+      const agentLabel = getAgentLabel(
+        session.sessionKind,
+        session.stage,
+        session.runSlug
+      );
       const providerNames = session.providerIds.map((providerId) => {
         const label = providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);
         const [primaryToken] = label.split(" ");
