@@ -46,3 +46,21 @@
 
 5. [DONE] Docs(session): Session046 report + update todo-plan — scope: `doc/Sessions/Session046.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session046 session labels release`
 6. [DONE] Git Commit: `docs(session): Session046 session labels release` (hash: 0d31db99)
+
+---
+
+## Phase 75 — Release 1.1.474 docs sync + push (owner: Oleksandr, updated: 2026-01-22)
+
+### Stream: Docs alignment (release notes)
+1. [TODO] Docs: обновить `README.md` и `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под релиз `1.1.474` (версии/артефакты/краткие изменения) — scope: `README.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update release docs for 1.1.474`
+2. [TODO] Git Commit: `docs: update release docs for 1.1.474` (hash: TBD)
+
+### Stream: SolidWorks-Flow sync
+1. [TODO] Docs(flow): синхронизировать примеры/термины с текущими UI-лейблами (`Description Codex`, `Reviewer Codex`) — scope: `doc/SolidWorks-Flow/README.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(flow): align session labels with UI`
+2. [TODO] Git Commit: `docs(flow): align session labels with UI` (hash: TBD)
+
+### Stream: Session report + push
+1. [TODO] Docs(session): создать отчет `Session047` и обновить `todo-plan.md` с hash/verify — scope: `doc/Sessions/Session047.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session047 release docs sync`
+2. [TODO] Git Commit: `docs(session): Session047 release docs sync` (hash: TBD)
+
+3. [TODO] Push: `git push origin main` — scope: git; expected commit message: `chore: push release 1.1.474`
