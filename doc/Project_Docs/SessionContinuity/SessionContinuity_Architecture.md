@@ -75,6 +75,10 @@
   - `handoffReportPath` (для сегмента, который был создан handoff’ом)
   - `createdAt`
 
+**Важно (Lazy activation):** `chain.json` создаётся/обновляется **только при первом outbound сообщении в провайдера** (user/system). Простое открытие/attach/resume без сообщений не должно создавать новые root-папки.
+
+Также: если это повторное открытие той же provider-сессии (тот же `providerSessionId`), новый `segments[]` не добавляется (обновляется только `updatedAt`). Новый сегмент появляется только при реальной смене provider session id (handoff).
+
 ### 6.2 Handoff report path
 
 MVP-целевой путь хранения отчёта (workspace артефакты):
