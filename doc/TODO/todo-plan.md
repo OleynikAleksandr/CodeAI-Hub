@@ -23,4 +23,8 @@
 4. [DONE] Git Commit: `docs(continuity): document lazy chain activation` (hash: cedab00a)
 
 5. [DONE] Docs(session): зафиксировать результаты и гейты — scope: `doc/Sessions/Session045.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session045 continuity activation`
-6. [TODO] Git Commit: `docs(session): Session045 continuity activation` (hash: TBD)
+6. [DONE] Git Commit: `docs(session): Session045 continuity activation` (hash: 8e5c809f)
+
+### Stream: Release build (1.1.473)
+1. [DONE] Release: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests; expected commit message: `chore(release): build next version`
+2. [DONE] Git Commit: `chore(release): build next version` (hash: cc3e13e0)
