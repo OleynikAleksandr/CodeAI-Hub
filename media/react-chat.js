@@ -22457,11 +22457,11 @@ ${path2}` : path2;
     if (sessionKind === "reviewer") {
       return "Reviewer";
     }
+    if (stage === "description") {
+      return runSlug === "reviewer" ? "Reviewer" : "Description";
+    }
     if (sessionKind === "collector") {
       return "Agent";
-    }
-    if (stage === "description") {
-      return runSlug === "reviewer" ? "Reviewer" : "Agent";
     }
     if (stage) {
       return stage.charAt(0).toUpperCase() + stage.slice(1);
