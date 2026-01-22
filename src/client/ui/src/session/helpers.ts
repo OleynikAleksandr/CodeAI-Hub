@@ -10,7 +10,9 @@ import type {
   SessionSnapshot,
   SessionStatusInfo,
 } from "../../../../types/session";
+import type { Settings } from "../components/settings/settings-state-model";
 import type { CoreBridgeSessionMessagePayload } from "../core-bridge/types";
+import { buildModelInfoList } from "./model-info-builder";
 
 export type ProviderCatalog = Partial<
   Record<ProviderStackId, ProviderStackDescriptor>
@@ -167,7 +169,8 @@ export const buildProviderLabels = (
 
 export const createInitialSnapshot = (
   session: SessionRecord,
-  providerLabels: ReadonlyMap<ProviderStackId, string>
+  providerLabels: ReadonlyMap<ProviderStackId, string>,
+  settings?: Settings | null
 ): SessionSnapshot => {
   const providersSummary = session.providerIds
     .map(
@@ -177,9 +180,11 @@ export const createInitialSnapshot = (
     .join(" + ");
 
   const now = Date.now();
+  const models = buildModelInfoList(session.providerIds, settings ?? null);
 
   const status: SessionStatusInfo = {
     providerSummary: providersSummary,
+    models,
     tokenUsage: {
       used: 0,
       limit: 200_000,
