@@ -4,6 +4,7 @@ import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import { sanitizeMessage } from "../../../ui/src/core-bridge/normalizers";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
+import { useSettingsState } from "../../../ui/src/components/settings/use-settings-state";
 import {
   buildProviderLabels,
   createInitialSnapshot,
@@ -37,6 +38,7 @@ export const ProjectManagerSessionView = ({
     () => buildProviderLabels(providerCatalog),
     [providerCatalog]
   );
+  const { settings } = useSettingsState();
   const [sessions, setSessions] = useState<readonly SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -70,7 +72,11 @@ export const ProjectManagerSessionView = ({
         setSessions(nextSessions);
         const nextSnapshots: SessionSnapshots = {};
         for (const session of nextSessions) {
-          nextSnapshots[session.id] = createInitialSnapshot(session, labels);
+          nextSnapshots[session.id] = createInitialSnapshot(
+            session,
+            labels,
+            settings
+          );
         }
         setSnapshots(nextSnapshots);
         setActiveSessionId(
@@ -79,7 +85,7 @@ export const ProjectManagerSessionView = ({
         return merged;
       });
     },
-    [syncSessionsRef]
+    [settings, syncSessionsRef]
   );
   const handleSessionHistory = useCallback(
     (payload: { readonly sessionId: string; readonly messages: readonly unknown[] }) => {
@@ -125,7 +131,7 @@ export const ProjectManagerSessionView = ({
         }
         return {
           ...previous,
-          [session.id]: createInitialSnapshot(session, providerLabels),
+          [session.id]: createInitialSnapshot(session, providerLabels, settings),
         };
       });
       setActiveSessionId(session.id);
@@ -139,7 +145,7 @@ export const ProjectManagerSessionView = ({
         // ignore
       });
     },
-    [handleSessionHistory, providerLabels, showSession, syncSessionsRef]
+    [handleSessionHistory, providerLabels, settings, showSession, syncSessionsRef]
   );
   const handleSessionMessage = useCallback(
     (payload: { readonly sessionId: string; readonly message: SessionMessage }) => {

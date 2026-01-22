@@ -4,6 +4,7 @@ import type {
   SessionMessage,
   SessionRecord,
 } from "../../../../types/session";
+import type { Settings } from "../components/settings/settings-state-model";
 import {
   deleteSession as deleteSessionOnServer,
   sendChatMessage,
@@ -59,7 +60,8 @@ export type UseSessionStoreResult = {
   readonly sendMessage: SendMessageHandler;
 };
 export const useSessionStore = (
-  providerLabels: ProviderLabels
+  providerLabels: ProviderLabels,
+  settings: Settings | null
 ): UseSessionStoreResult => {
   const [sessions, setSessions] = useState<SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
@@ -106,13 +108,14 @@ export const useSessionStore = (
               ...previous,
               [session.id]: createInitialSnapshot(
                 sessionWithBinding,
-                providerLabels
+                providerLabels,
+                settings
               ),
             };
       });
       setActiveSessionId(session.id);
     },
-    [applyPendingBinding, providerLabels, syncSessionsRef]
+    [applyPendingBinding, providerLabels, settings, syncSessionsRef]
   );
   const hydrateFromCoreState = useCallback<CoreStateHandler>(
     (payload) => {
@@ -125,7 +128,8 @@ export const useSessionStore = (
       for (const session of nextSessions) {
         nextSnapshots[session.id] = createInitialSnapshot(
           session,
-          providerLabels
+          providerLabels,
+          settings
         );
       }
       setSnapshots(nextSnapshots);
@@ -136,7 +140,7 @@ export const useSessionStore = (
         return nextSessions.at(-1)?.id ?? null;
       });
     },
-    [applyPendingBinding, providerLabels, syncSessionsRef]
+    [applyPendingBinding, providerLabels, settings, syncSessionsRef]
   );
   const handleSessionMessageEvent = useCallback<SessionMessageHandler>(
     (payload) => {

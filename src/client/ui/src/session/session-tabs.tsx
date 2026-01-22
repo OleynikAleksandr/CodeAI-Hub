@@ -1,13 +1,27 @@
 import type { ProviderStackId } from "../../../../types/provider";
 import { getDefaultProviderTitle } from "../../../../types/provider";
-import type { SessionRecord } from "../../../../types/session";
+import type { SessionKind, SessionRecord } from "../../../../types/session";
 import { mapProviderTheme } from "./helpers";
 
-const formatStageName = (stage: string | null | undefined): string | null => {
-  if (!stage) {
-    return null;
+/**
+ * Get display label for session agent based on sessionKind.
+ * Falls back to capitalized stage name if sessionKind is not set.
+ */
+const getAgentLabel = (
+  sessionKind: SessionKind | null | undefined,
+  stage: string | null | undefined
+): string | null => {
+  if (sessionKind === "reviewer") {
+    return "Reviewer";
   }
-  return stage.charAt(0).toUpperCase() + stage.slice(1);
+  if (sessionKind === "collector") {
+    return "Agent";
+  }
+  // Fallback to stage name for backward compatibility
+  if (stage) {
+    return stage.charAt(0).toUpperCase() + stage.slice(1);
+  }
+  return null;
 };
 
 type SessionTabsProps = {
@@ -33,7 +47,7 @@ const SessionTabs = ({
     <div className="session-tabs">
       {sessions.map((session) => {
         const isActive = session.id === activeSessionId;
-        const stageName = formatStageName(session.stage);
+        const agentLabel = getAgentLabel(session.sessionKind, session.stage);
         const providerNames = session.providerIds.map((providerId) => {
           const label =
             providerLabels.get(providerId) ??
@@ -53,9 +67,9 @@ const SessionTabs = ({
         const providerLine = providerNames
           .slice(0, primaryLineLength)
           .join("+");
-        // Prepend stage name if available: "Description Claude" or "Reviewer Codex"
-        const primaryLine = stageName
-          ? `${stageName} ${providerLine}`
+        // Prepend agent label if available: "Reviewer Codex" or "Agent Claude"
+        const primaryLine = agentLabel
+          ? `${agentLabel} ${providerLine}`
           : providerLine;
         const secondaryTokens = providerNames.slice(primaryLineLength);
         const secondaryLine =
@@ -63,8 +77,8 @@ const SessionTabs = ({
         const displaySummary = secondaryLine
           ? [primaryLine, secondaryLine]
           : [primaryLine];
-        const spokenSummary = stageName
-          ? `${stageName} ${providerNames.join(", ")}`
+        const spokenSummary = agentLabel
+          ? `${agentLabel} ${providerNames.join(", ")}`
           : providerNames.join(", ");
         const providerFullNames = session.providerIds
           .map(
@@ -73,8 +87,8 @@ const SessionTabs = ({
               getDefaultProviderTitle(providerId)
           )
           .join(" + ");
-        const fullSummary = stageName
-          ? `${stageName}: ${providerFullNames}`
+        const fullSummary = agentLabel
+          ? `${agentLabel}: ${providerFullNames}`
           : providerFullNames;
 
         const primaryProviderId = session.providerIds[0] ?? null;
