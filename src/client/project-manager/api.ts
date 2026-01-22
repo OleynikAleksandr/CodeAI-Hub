@@ -8,58 +8,17 @@ import {
   fetchWorkflowState,
   type WorkflowStateSnapshot,
 } from "./services/workflow-state-client";
+import type {
+  CoreStatePayload,
+  IncomingMessage,
+  OutgoingMessage,
+  ProjectUpdatePayload,
+} from "./core-stream-message-types";
 import type { WorkspaceProject } from "./types";
 
 type ApiConfig = {
   readonly wsUrl: string;
   readonly httpUrl: string;
-};
-
-type OutgoingMessage =
-  | { readonly type: "projects:list" }
-  | {
-      readonly type: "projects:add";
-      readonly payload: { readonly path: string; readonly name?: string };
-    }
-  | {
-      readonly type: "projects:remove";
-      readonly payload: { readonly id: string };
-    }
-  | {
-      readonly type: "session:create";
-      readonly payload: {
-      readonly providerId?: string;
-      readonly workspacePath?: string;
-      readonly initiativeSlug?: string | null;
-      readonly providerSessionId?: string | null;
-      readonly stage?: string | null;
-    };
-    }
-  | {
-      readonly type: "session:message";
-      readonly payload: {
-        readonly sessionId: string;
-        readonly content:
-          | string
-          | { readonly text: string; readonly turnOptions?: Record<string, unknown> };
-      };
-    }
-  | {
-      readonly type: "session:delete";
-      readonly payload: { readonly sessionId: string };
-    };
-
-type IncomingMessage = {
-  readonly type: string;
-  readonly payload?: unknown;
-};
-
-type CoreStatePayload = {
-  readonly providers?: unknown;
-};
-
-type ProjectUpdatePayload = {
-  readonly projects: readonly WorkspaceProject[];
 };
 
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
@@ -133,6 +92,7 @@ export class ProjectManagerApi {
       this.socket.onopen = () => {
         console.log("[ProjectManagerApi] Connected to Core");
         this.listProjects(); // Initial fetch
+        this.loadSettings();
       };
       this.socket.onmessage = (event) => {
         try {
@@ -165,6 +125,10 @@ export class ProjectManagerApi {
 
   listProjects(): void {
     this.send({ type: "projects:list" });
+  }
+
+  loadSettings(): void {
+    this.send({ type: "settings:load" });
   }
 
   addProject(path: string, name?: string): void {
