@@ -1,7 +1,7 @@
 # Workflow Tree — Description Step/Node: Questionnaire → Draft → Auto-Review → Final
 
 **Version:** 1.1
-**Date:** 2026-01-20
+**Date:** 2026-01-22
 **Status:** Draft (refined lifecycle + UI semantics)
 
 ---
@@ -64,9 +64,9 @@
 
 `Description Step/Node` — раскрываемый шаг, который отображает под-ветку “актуальных сущностей”:
 - `questionnaire.md` (пока draft не создан)
-- `Session: Description Agent` (пока draft не создан и/или пока не стартовал reviewer)
+- `Description <Provider>` (пока draft не создан и/или пока не стартовал reviewer)
 - `description.md` (draft; существует между Description Agent и Reviewer)
-- `Session: Reviewer` (resume; основная долговременная сессия шага)
+- `Reviewer <Provider>` (resume; основная долговременная сессия шага)
 - `Final_Description.md` (финальный артефакт; источник истины для downstream шагов)
 
 ### 5.2 `SessionRef` (для resume)
@@ -78,6 +78,7 @@
 - `jsonlPath`: абсолютный путь к unified session JSONL
 
 Примечание: `jsonlPath` не должен быть “вводимой пользователем” строкой — он вычисляется детерминированно из `providerId + providerSessionId + workspaceSlug`.
+Дополнение: `SessionRef` — техническая мета‑информация, которая хранится в метаданных шага/состоянии (например, `description-step.json`) и не должна попадать в `Final_Description.md`.
 
 ### 5.3 Session JSONL location
 
@@ -121,23 +122,23 @@ Unified session storage хранит события в:
 
 Результат: `description.md` (черновой, но структурированный).
 
-UI следствие: сразу после старта сессии появляется дочерний узел `Session: Description Agent` (resume).
+UI следствие: сразу после старта сессии появляется дочерний узел `Description <Provider>` (resume).
 
 ### 6.3 Auto-start Reviewer + produce Final_Description.md
 
 1) Как только `description.md` (draft) появился, система автоматически создаёт сессию Reviewer (Claude/Codex) и фиксирует `SessionRef`.
-2) В ветке `Description` сессия Description Agent заменяется на `Session: Reviewer` (описательный/черновой агент больше не является “активной” сессией шага).
+2) В ветке `Description` сессия Description Agent заменяется на `Reviewer <Provider>` (описательный/черновой агент больше не является “активной” сессией шага).
 3) Reviewer читает `description.md`, задаёт вопросы пользователю и пишет первую версию `Final_Description.md`.
 4) Как только появился `Final_Description.md`:
    - в ветке `Description` точка `description.md` заменяется на `Final_Description.md`;
    - `questionnaire.md` перестаёт быть необходимой частью Flow (может быть скрыт/удалён из ветки);
    - шаг `Description` может быть переведён в `DONE` (при условии, что финал принят пользователем).
 
-Результат шага: `Final_Description.md` + `Session: Reviewer`.
+Результат шага: `Final_Description.md` + `Reviewer <Provider>`.
 
 ### 6.4 Edit Description Step (resume Reviewer)
 
-1) Пользователь кликает `Session: Reviewer` (resume).
+1) Пользователь кликает `Reviewer <Provider>` (resume).
 2) Обсуждает правки.
 3) Reviewer пишет новую ревизию `Final_Description.md`.
 4) Все downstream-узлы помечаются `OUTDATED`.
@@ -165,11 +166,11 @@ UI следствие: сразу после старта сессии появ�
 - Пока `Description` в работе, ветка содержит “актуальные на сейчас” документы/сессии (см. 6.1–6.3).
 - После появления `Final_Description.md` в ветке остаются **ровно две строки**:
   - `Final_Description.md`
-  - `Session: Reviewer`
+  - `Reviewer <Provider>`
 
 - Промежуточные сущности отображаются только до появления `Final_Description.md`:
   - `description.md` показываем только пока финал не создан
-  - `Session: Description Agent` показываем только пока не создана `Session: Reviewer`
+  - `Description <Provider>` показываем только пока не создана `Reviewer <Provider>`
 
 - UI должен явно предупреждать:
   - “Изменения в этом узле могут сделать последующие узлы устаревшими (OUTDATED).”

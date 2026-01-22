@@ -1,7 +1,7 @@
 # Workflow Tree UI (SolidWorks-подобная визуализация разработки)
 
 **Status:** Draft (v0.7)
-**Updated:** 2026-01-17
+**Updated:** 2026-01-22
 **Owner:** Oleksandr + Codex
 
 ---
@@ -39,6 +39,7 @@ Workflow Tree становится **единой точкой правды** д
 - **Module** — единица ответственности.
 
 Примечание (vNext): после `Scaffold Modules` код каждого модуля материализуется в `packages/<moduleSlug>/...` (kebab-case).
+MVP-реальность: текущая реализация Workflow Tree живёт в `src/client/project-manager/`, без генерации модулей в `packages/*`.
 
 - **Step** — шаг workflow (например: `Описание`, `Virtual Simulation`, `Диаграмма модулей`, `Диаграмма фасадов`, `Spec`, `Plan`, `Execute`).
 - **Artifact** — файл/результат шага.
@@ -132,9 +133,9 @@ Workflow Tree становится **единой точкой правды** д
 Workspace: App
 ├─ Описание (Step)
 │  ├─ Artifact: questionnaire.md
-│  ├─ Session: Description Agent (resume)
+│  ├─ Description <Provider> (resume session)
 │  ├─ Artifact: description.md (draft, run output)
-│  ├─ Session: Reviewer (resume)
+│  ├─ Reviewer <Provider> (resume session)
 │  └─ Artifact: Final_Description.md
 ├─ Virtual Simulation (Step)
 │  └─ Artifact: virtual-simulation.md
@@ -180,9 +181,9 @@ Workspace: App
 - `Описание` (`stageId=description`)
   - в процессе шага (пока `IN_PROGRESS`) должны быть доступны:
     1) `questionnaire.md` (persisted, чтобы пережить перезапуск)
-    2) `Session: Description Agent` (resume)
+    2) `Description <Provider>` (resume)
     3) `description.md` (draft, результат run)
-    4) `Session: Reviewer` (resume; авто-старт после появления draft)
+    4) `Reviewer <Provider>` (resume; авто-старт после появления draft)
   - результат шага (источник истины для downstream): `Final_Description.md`
 - `Virtual Simulation` (`stageId=virtual_simulation`)
   - результат: `virtual-simulation.md`

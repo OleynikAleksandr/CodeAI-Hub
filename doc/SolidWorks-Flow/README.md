@@ -8,6 +8,7 @@
 - `Architecture/` — архитектура и правила Workflow Tree (узлы, статусы, зависимости, “rebuild/simulation”).
 
 ## Обновления
+- 2026-01-22 (release 1.1.474): подписи session-узлов в Workflow Tree и табах унифицированы и укорочены: `Description <Provider>` / `Reviewer <Provider>`.
 - 2026-01-17: шаги Описание/Virtual Simulation/Диаграмма модулей/Диаграмма фасадов разделены, сущность Idea выведена из терминологии.
 - 2026-01-16 (release 1.1.424): Spec/Plan/Execute выровнены по оси модуля, Orchestration остаётся вложенным шагом.
 
