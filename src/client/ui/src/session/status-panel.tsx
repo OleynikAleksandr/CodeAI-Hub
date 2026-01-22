@@ -1,9 +1,17 @@
-import type { SessionStatusInfo } from "../../../../types/session";
+import type { ModelInfo, SessionStatusInfo } from "../../../../types/session";
 
 const MAX_PERCENTAGE = 100;
 const MIN_TOKEN_LIMIT = 1;
 const PERCENT_SCALE = 100;
 const SUPERVISOR_LABEL = "Core Supervisor";
+
+const formatModelSummary = (models: readonly ModelInfo[]): string =>
+  models
+    .map((model) => {
+      const base = model.modelDisplayName;
+      return model.reasoning ? `${base} (${model.reasoning})` : base;
+    })
+    .join(", ");
 
 type CoreConnectionStatus = "connecting" | "ready" | "error";
 
@@ -36,7 +44,7 @@ const StatusPanel = ({
     );
   }
 
-  const { providerSummary, tokenUsage } = status;
+  const { providerSummary, models, tokenUsage } = status;
 
   const percentage = Math.min(
     MAX_PERCENTAGE,
@@ -46,11 +54,15 @@ const StatusPanel = ({
     )
   );
 
+  // Show model details if available, otherwise fall back to provider summary
+  const modelsSummary =
+    models && models.length > 0 ? formatModelSummary(models) : providerSummary;
+
   return (
     <section className="session-status session-panel">
       <div className="session-status__row">
-        <span className="session-status__label">Providers</span>
-        <span className="session-status__value">{providerSummary}</span>
+        <span className="session-status__label">Models</span>
+        <span className="session-status__value">{modelsSummary}</span>
       </div>
       <div className="session-status__row">
         <span className="session-status__label">Tokens</span>
