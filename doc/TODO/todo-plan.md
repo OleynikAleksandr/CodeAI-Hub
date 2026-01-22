@@ -9,60 +9,69 @@
 
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/TODO/todo-plan.md` (THIS FILE)
-3. `doc/Sessions/Session042.md`
+2. `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`
+3. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
 
-## Notes
+## Phase 72 — Fix SessionTabs label + Project Manager settings source (owner: Oleksandr, updated: 2026-01-22)
 
-- **Release 1.1.469** собран и протестирован (Session042)
-- Phase 68 (Session UI Panels) — завершена и заархивирована
-- Phase 69 (Settings propagation) — отложена, требует много файловых изменений
-- Phase 70 (Release build) — завершена и заархивирована
+### Stream 0: Design approval
+**Goal:** Утвердить контракт: runSlug в session:create + settings:load через Core Remote Bridge.
 
----
-
-## Backlog
-
-### TodoPanel Removal (опционально)
-**Goal:** Полностью удалить TodoPanel вместо текущего комментирования.
-**Status:** Низкий приоритет.
+1. [DONE] Docs(arch): review/approve `SessionUI_SessionKind_And_Settings_Architecture.md` — scope: `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`; expected commit message: `docs(arch): approve session metadata + PM settings contract`
+2. [DONE] Git Commit: `docs(arch): approve session metadata + PM settings contract` (hash: TBD)
 
 ---
 
-## Phase 71 — Session UI Bugfixes (owner: Oleksandr, updated: 2026-01-22)
+### Stream 1: Fix SessionTabs label via runSlug end-to-end
+**Goal:** При resume reviewer session вкладка показывает `Reviewer ...` (не `Description ...`).
 
-### Stream 1: Fix SessionTabs agent name (sessionKind)
-**Goal:** Показывать правильное имя агента ("Reviewer" вместо "Description") в SessionTabs.
-**Problem:** `session.stage` = "description" (имя этапа Flow), а нужно `sessionKind` = "reviewer"/"collector" (тип агента).
-**Solution:** Добавить поле `sessionKind` в `SessionRecord` и использовать его в SessionTabs.
+1. [TODO] Fix(core): принять `runSlug` в `IncomingMessage.session:create` и пробросить в `RemoteBridge.handleIncomingMessage` → `SessionRequestHandler.handleCreate` — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/index.ts`; expected commit message: `fix(core): accept runSlug in session:create`
+2. [TODO] Git Commit: `fix(core): accept runSlug in session:create` (hash: TBD)
 
-1. [DONE] Fix(types): добавить поле `sessionKind?: "collector" | "reviewer"` в SessionRecord — scope: `src/types/session.ts`
-2. [DONE] Fix(ui): использовать sessionKind в SessionTabs для отображения имени агента — scope: `src/client/ui/src/session/session-tabs.tsx`
+3. [TODO] Fix(core): сериализовать `runSlug` в `serializeSession()` — scope: `packages/core/src/remote-bridge/types.ts`; expected commit message: `fix(core): expose runSlug in serialized sessions`
+4. [TODO] Git Commit: `fix(core): expose runSlug in serialized sessions` (hash: TBD)
 
-### Stream 2: Fix StatusPanel models display (settings propagation)
-**Goal:** Показывать реальные модели с reasoning level вместо просто имени провайдера.
-**Problem:** `settings` не передаётся в `createInitialSnapshot`, fallback возвращает только имя провайдера.
-**Solution:** Прокинуть settings во все вызовы createInitialSnapshot.
+5. [TODO] Fix(ui): принять `runSlug` в `ServerSession` и `sanitizeSession` — scope: `src/client/ui/src/core-bridge/types.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `fix(ui): accept runSlug in session payload`
+6. [TODO] Git Commit: `fix(ui): accept runSlug in session payload` (hash: TBD)
 
-1. [DONE] Fix(ui): прокинуть settings в session-store.ts — scope: `src/client/ui/src/app-host/session-store.ts`, `src/client/ui/src/app-host.tsx`
-2. [DONE] Fix(ui): прокинуть settings в project-manager-session-view.tsx — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`
+7. [TODO] Fix(ui): в `SessionTabs` вычислять agent label из `sessionKind ?? (stage+runSlug fallback)` — scope: `src/client/ui/src/session/session-tabs.tsx`; expected commit message: `fix(ui): derive agent label from runSlug`
+8. [TODO] Git Commit: `fix(ui): derive agent label from runSlug` (hash: TBD)
 
-### Stream 3: Build and verify
-**Goal:** Собрать webview и проверить исправления.
+---
 
-1. [DONE] Build: npm run build:webview && npm run typecheck:webview — все гейты прошли
-2. [DONE] Git Commit: `fix(ui): session tabs agent name and models display` (hash: dda770b6)
+### Stream 2: Project Manager: load Settings via Core Remote Bridge
+**Goal:** PM получает реальные settings и StatusPanel показывает корректные model/reasoning.
 
-### Stream 4: Deep fix for sessionKind and models sync (added 2026-01-22)
-**Problem:** sessionKind wasn't being propagated; models not updating when settings changed.
-**Solution:** Full propagation of sessionKind from workflow to UI; reactive models sync via useSettingsModelsSync hook.
+1. [TODO] Feat(core): добавить типы сообщений `settings:load`/`settings:loaded` — scope: `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): add settings bridge message types`
+2. [TODO] Git Commit: `feat(core): add settings bridge message types` (hash: TBD)
 
-1. [DONE] Add sessionKind to ServerSession type and sanitizeSession — scope: `types.ts`, `normalizers.ts`
-2. [DONE] Add sessionKind to SessionResumeIntent and workspace-tree.tsx dispatch — scope: `session-resume-intent.ts`, `workspace-tree.tsx`
-3. [DONE] Add sessionKind to api.createSession — scope: `api.ts`
-4. [DONE] Create useSettingsModelsSync hook for reactive model updates — scope: `use-settings-models-sync.ts`
-5. [DONE] Apply hook in session-store.ts and project-manager-session-view.tsx
-6. [DONE] Git Commit: `fix(ui): propagate sessionKind and sync models with settings` (hash: 825ab222)
-7. [DONE] Release 1.1.471 built
+3. [TODO] Feat(core): реализовать handler `SettingsRequestHandler` (читает `config.claudeSettingsPath`) — scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`; expected commit message: `feat(core): add settings request handler`
+4. [TODO] Git Commit: `feat(core): add settings request handler` (hash: TBD)
+
+5. [TODO] Feat(core): подключить handler в `RemoteBridge` и обработать `IncomingMessage.settings:load` — scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`; expected commit message: `feat(core): wire settings:load into remote bridge`
+6. [TODO] Git Commit: `feat(core): wire settings:load into remote bridge` (hash: TBD)
+
+7. [TODO] Feat(project-manager): добавить `api.loadSettings()` + отправку `settings:load` — scope: `src/client/project-manager/api.ts`; expected commit message: `feat(project-manager): request settings from core`
+8. [TODO] Git Commit: `feat(project-manager): request settings from core` (hash: TBD)
+
+9. [TODO] Feat(project-manager): добавить hook/state для settings (слушает `settings:loaded`) — scope: `src/client/project-manager/components/settings/use-project-manager-settings.ts`; expected commit message: `feat(project-manager): store settings from core`
+10. [TODO] Git Commit: `feat(project-manager): store settings from core` (hash: TBD)
+
+11. [TODO] Fix(project-manager): использовать PM settings state при `createInitialSnapshot` и `useSettingsModelsSync` — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/settings/use-project-manager-settings.ts`; expected commit message: `fix(project-manager): use core settings for model info`
+12. [TODO] Git Commit: `fix(project-manager): use core settings for model info` (hash: TBD)
+
+---
+
+### Stream 3: Verification + release build
+**Goal:** Подтвердить, что обе проблемы решены, и собрать релиз.
+
+1. [TODO] Verify(manual): клик по узлу reviewer session → вкладка `Reviewer Codex`; StatusPanel показывает `gpt-5.2 (high)` — scope: manual; expected commit message: `docs: record session tabs + models verification`
+2. [TODO] Git Commit: `docs: record session tabs + models verification` (hash: TBD)
+
+3. [TODO] Build: прогнать гейты + таргетные сборки (`npm run build --workspace @codeai-hub/core`, `npm run build:web-client`, `npm run build:webview`) — scope: scripts; expected commit message: `chore: verify builds for session UI fixes`
+4. [TODO] Git Commit: `chore: verify builds for session UI fixes` (hash: TBD)
+
+5. [TODO] Release: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` — scope: scripts; expected commit message: `chore(release): build next version`
+6. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
