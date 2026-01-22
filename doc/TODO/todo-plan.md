@@ -53,4 +53,4 @@
 **Goal:** Собрать webview и проверить исправления.
 
 1. [DONE] Build: npm run build:webview && npm run typecheck:webview — все гейты прошли
-2. [DONE] Git Commit: `fix(ui): session tabs agent name and models display` (hash: ca10f379)
+2. [DONE] Git Commit: `fix(ui): session tabs agent name and models display` (hash: dda770b6)
