@@ -27,8 +27,8 @@
 ### Stream 1: Fix SessionTabs label via runSlug end-to-end
 **Goal:** При resume reviewer session вкладка показывает `Reviewer ...` (не `Description ...`).
 
-1. [TODO] Fix(core): принять `runSlug` в `IncomingMessage.session:create` и пробросить в `RemoteBridge.handleIncomingMessage` → `SessionRequestHandler.handleCreate` — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/index.ts`; expected commit message: `fix(core): accept runSlug in session:create`
-2. [TODO] Git Commit: `fix(core): accept runSlug in session:create` (hash: TBD)
+1. [DONE] Fix(core): принять `runSlug` в `IncomingMessage.session:create` и пробросить в `RemoteBridge.handleIncomingMessage` → `SessionRequestHandler.handleCreate` — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/index.ts`; expected commit message: `fix(core): accept runSlug in session:create`
+2. [DONE] Git Commit: `fix(core): accept runSlug in session:create` (hash: 4e4470bf)
 
 3. [TODO] Fix(core): сериализовать `runSlug` в `serializeSession()` — scope: `packages/core/src/remote-bridge/types.ts`; expected commit message: `fix(core): expose runSlug in serialized sessions`
 4. [TODO] Git Commit: `fix(core): expose runSlug in serialized sessions` (hash: TBD)
