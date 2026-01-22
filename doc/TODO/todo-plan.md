@@ -36,8 +36,8 @@
 5. [DONE] Fix(ui): принять `runSlug` в `ServerSession` и `sanitizeSession` — scope: `src/client/ui/src/core-bridge/types.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `fix(ui): accept runSlug in session payload`
 6. [DONE] Git Commit: `fix(ui): accept runSlug in session payload` (hash: c3f268cf)
 
-7. [TODO] Fix(ui): в `SessionTabs` вычислять agent label из `sessionKind ?? (stage+runSlug fallback)` — scope: `src/client/ui/src/session/session-tabs.tsx`; expected commit message: `fix(ui): derive agent label from runSlug`
-8. [TODO] Git Commit: `fix(ui): derive agent label from runSlug` (hash: TBD)
+7. [DONE] Fix(ui): в `SessionTabs` вычислять agent label из `sessionKind ?? (stage+runSlug fallback)` — scope: `src/client/ui/src/session/session-tabs.tsx`; expected commit message: `fix(ui): derive agent label from runSlug`
+8. [DONE] Git Commit: `fix(ui): derive agent label from runSlug` (hash: 73a78468)
 
 ---
 
