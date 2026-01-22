@@ -36,3 +36,13 @@
 ### Stream: Short labels (tabs + tree)
 1. [DONE] Fix(ui): показывать `Description <Provider>` для description agent (не `Agent <Provider>`) и синхронизировать подписи в дереве Project Manager с табами — scope: `src/client/ui/src/session/session-tabs.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `media/react-chat.js`; expected commit message: `fix(ui): align session labels`
 2. [DONE] Git Commit: `fix(ui): align session labels` (hash: 441c0779)
+
+### Stream: Release build (1.1.474)
+1. [DONE] Docs(changelog): добавить entries для `1.1.473`/`1.1.474` — scope: `CHANGELOG.md`; expected commit message: `docs(changelog): v1.1.474`
+2. [DONE] Git Commit: `docs(changelog): v1.1.474` (hash: 6dad7f6a)
+
+3. [DONE] Release: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests; expected commit message: `chore(release): build next version`
+4. [DONE] Git Commit: `chore(release): build next version` (hash: fa35c159)
+
+5. [DONE] Docs(session): Session046 report + update todo-plan — scope: `doc/Sessions/Session046.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session046 session labels release`
+6. [TODO] Git Commit: `docs(session): Session046 session labels release` (hash: TBD)
