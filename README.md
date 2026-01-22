@@ -2,31 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.468
-- **Workflow Tree Restore**: `workflow-state` принимает `workspacePath` и быстро восстанавливает ветку Description после рестарта Core.
-- **Project Manager Refresh**: ускорен initial polling workflow-state (3s до первого ответа, затем 10/15s).
-- **Project Manager Questionnaire**: после отправки — read-only Markdown без редактирования.
-- **Project Manager Sessions**: Description Agent скрывается после появления Reviewer.
-- **Project Manager Artifacts**: типографика артефактов выровнена под диалоги сессий.
-- **Project Manager Resume**: клик по Session фокусит существующую сессию по `providerId + providerSessionId` (без дублей).
-- **Project Manager Close**: close скрывает сессию локально (session record в Core сохраняется).
-- **Project Manager History**: после `session:created` сразу подтягивается JSONL‑история.
-- Description branch: single latest artifact + auto-open.
-- Description sessions: human-readable labels for Reviewer and Description Agent.
-- **Project Manager**: no duplicate session window on pre-binding Description Agent click.
-- **VS Code Webview**: no empty duplicate session on rebroadcast `session:created`.
-- **VS Code Webview**: Settings-only mode (sessions/chats handled in Project Manager).
-- **Legacy web-client**: removed from build pipeline and artifacts.
-- **Workflow Tree**: ветка Description (questionnaire/draft/final + reviewer session) и downstream `OUTDATED` при правках.
-- **File-first artifacts**: шаги пишут в `.codeai-hub/<workspaceSlug>/<stage>/...` без `runs/`.
-- **Release 1.1.468**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+## Current Release — v1.1.474
+- **Continuity chains (lazy)**: `chain.json` создаётся только при первом outbound сообщении в провайдера (пассивное открытие сессии не плодит новые roots).
+- **Session labels**: для `description` сессий таб/дерево показывают `Description <Provider>` и `Reviewer <Provider>` (например `Description Codex`), без `Agent Codex` и без `session · codexCli`.
+- **Release 1.1.474**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.468.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.468.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.468.tar.bz2`
-  - Providers: `claude-module-1.1.468.tar.bz2`, `codex-module-1.1.468.tar.bz2`, `gemini-module-1.1.468.tar.bz2`
-  - UI: `vscode-webview-1.1.468.tar.bz2`, `project-manager-1.1.468.tar.bz2`
+  - VSIX: `codeai-hub-1.1.474.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.474.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.474.tar.bz2`
+  - Providers: `claude-module-1.1.474.tar.bz2`, `codex-module-1.1.474.tar.bz2`, `gemini-module-1.1.474.tar.bz2`
+  - UI: `vscode-webview-1.1.474.tar.bz2`, `project-manager-1.1.474.tar.bz2`
   - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/description-agent`, `@codeai-hub/idea-collector`
 
 ## Features
@@ -34,7 +20,7 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Idea Collector flow**: Codex and Claude sessions can launch a guided idea collection flow that produces structured Idea.md drafts.
 - **Persistent standalone UI**: the macOS launcher (CEF) stores window position and size in real time, so Project Manager reopens exactly where you left it—even across monitor changes.
 - **Offline-first packaging**: manifests point to the local `~/.codeai-hub/releases/` cache, and build scripts publish fresh tarballs for core, launcher, and provider modules without relying on GitHub downloads.
-- **Provider readiness**: users install and configure CLI tools themselves (see the guide below); upcoming diagnostics and status toggles are outlined in `doc/TODO/todo-plan_.md`.
+- **Provider readiness**: users install and configure CLI tools themselves (see the guide below); upcoming diagnostics and status toggles are outlined in `doc/TODO/todo-plan.md`.
 - **Quality guardrails**: Ultracite architecture rules, jscpd duplication scans, ts-prune export checks, and Biome formatting are orchestrated through Husky pre-commit/pre-push hooks to keep the codebase healthy.
 
 ## Getting Started
