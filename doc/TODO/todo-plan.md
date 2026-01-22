@@ -54,3 +54,15 @@
 
 1. [DONE] Build: npm run build:webview && npm run typecheck:webview — все гейты прошли
 2. [DONE] Git Commit: `fix(ui): session tabs agent name and models display` (hash: dda770b6)
+
+### Stream 4: Deep fix for sessionKind and models sync (added 2026-01-22)
+**Problem:** sessionKind wasn't being propagated; models not updating when settings changed.
+**Solution:** Full propagation of sessionKind from workflow to UI; reactive models sync via useSettingsModelsSync hook.
+
+1. [DONE] Add sessionKind to ServerSession type and sanitizeSession — scope: `types.ts`, `normalizers.ts`
+2. [DONE] Add sessionKind to SessionResumeIntent and workspace-tree.tsx dispatch — scope: `session-resume-intent.ts`, `workspace-tree.tsx`
+3. [DONE] Add sessionKind to api.createSession — scope: `api.ts`
+4. [DONE] Create useSettingsModelsSync hook for reactive model updates — scope: `use-settings-models-sync.ts`
+5. [DONE] Apply hook in session-store.ts and project-manager-session-view.tsx
+6. [DONE] Git Commit: `fix(ui): propagate sessionKind and sync models with settings` (hash: 825ab222)
+7. [DONE] Release 1.1.471 built
