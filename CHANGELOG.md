@@ -1,3 +1,11 @@
+## [1.1.474] - 2026-01-22
+### Fixed
+- Session UI: show `Description <Provider>` for Description agent sessions; align Project Manager tree labels with tabs.
+
+## [1.1.473] - 2026-01-22
+### Fixed
+- Core: defer continuity chain creation until the first outbound message (avoid extra continuity roots on passive open).
+
 ## [1.1.468] - 2026-01-21
 ### Fixed
 - Core: workflow-state принимает `workspacePath` для чтения description/continuity после рестарта Core.
