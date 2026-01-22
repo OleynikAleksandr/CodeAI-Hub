@@ -21,13 +21,13 @@
 **Goal:** Закомментировать отображение TodoPanel (возможно уберём позже совсем).
 
 1. [DONE] Fix(ui): закомментировать рендеринг TodoPanel в session-view.tsx — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): hide TodoPanel from session view`
-2. [IN_PROGRESS] Git Commit: `fix(ui): hide TodoPanel from session view` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): hide TodoPanel from session view` (hash: 62117cc0)
 
 ### Stream 2: InfoPanel — single line
 **Goal:** Сделать InfoPanel в одну строку: "Session ID: <uuid>"
 
-1. [TODO] Fix(ui): переделать InfoPanel на single-line layout — scope: `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): make InfoPanel single-line`
-2. [TODO] Git Commit: `fix(ui): make InfoPanel single-line` (hash: TBD)
+1. [DONE] Fix(ui): переделать InfoPanel на single-line layout — scope: `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): make InfoPanel single-line`
+2. [IN_PROGRESS] Git Commit: `fix(ui): make InfoPanel single-line` (hash: TBD)
 
 ### Stream 3: SessionTabs — add stage name
 **Goal:** Добавить к имени провайдера короткое имя агента (Description Codex, Reviewer Claude).
