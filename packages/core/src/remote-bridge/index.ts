@@ -238,6 +238,7 @@ export class RemoteBridge {
             initiativeSlug: incoming.payload?.initiativeSlug ?? null,
             providerSessionId: incoming.payload?.providerSessionId ?? null,
             stage: incoming.payload?.stage ?? null,
+            runSlug: incoming.payload?.runSlug ?? null,
           }
         );
         break;

@@ -61,6 +61,7 @@ export type IncomingMessage =
         readonly initiativeSlug?: string | null;
         readonly providerSessionId?: string | null;
         readonly stage?: string | null;
+        readonly runSlug?: string | null;
       };
     }
   | {
