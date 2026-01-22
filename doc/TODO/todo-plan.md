@@ -56,8 +56,8 @@
 7. [DONE] Feat(project-manager): добавить `api.loadSettings()` + отправку `settings:load` — scope: `src/client/project-manager/api.ts`; expected commit message: `feat(project-manager): request settings from core`
 8. [DONE] Git Commit: `feat(project-manager): request settings from core` (hash: ccb3b09e)
 
-9. [TODO] Feat(project-manager): добавить hook/state для settings (слушает `settings:loaded`) — scope: `src/client/project-manager/components/settings/use-project-manager-settings.ts`; expected commit message: `feat(project-manager): store settings from core`
-10. [TODO] Git Commit: `feat(project-manager): store settings from core` (hash: TBD)
+9. [DONE] Feat(project-manager): добавить hook/state для settings (слушает `settings:loaded`) — scope: `src/client/project-manager/components/settings/use-project-manager-settings.ts`; expected commit message: `feat(project-manager): store settings from core`
+10. [DONE] Git Commit: `feat(project-manager): store settings from core` (hash: 7a03433b)
 
 11. [TODO] Fix(project-manager): использовать PM settings state при `createInitialSnapshot` и `useSettingsModelsSync` — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/settings/use-project-manager-settings.ts`; expected commit message: `fix(project-manager): use core settings for model info`
 12. [TODO] Git Commit: `fix(project-manager): use core settings for model info` (hash: TBD)
