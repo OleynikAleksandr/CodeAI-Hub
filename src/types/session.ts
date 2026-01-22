@@ -20,8 +20,21 @@ export type SessionTodoItem = {
   readonly completed: boolean;
 };
 
+/**
+ * Information about a model used in a session.
+ * Includes provider context, model identifier, and reasoning level if applicable.
+ */
+export type ModelInfo = {
+  readonly providerId: ProviderStackId;
+  readonly providerName: string;
+  readonly modelId: string;
+  readonly modelDisplayName: string;
+  readonly reasoning?: string;
+};
+
 export type SessionStatusInfo = {
   readonly providerSummary: string;
+  readonly models?: readonly ModelInfo[];
   readonly tokenUsage: {
     readonly used: number;
     readonly limit: number;

@@ -33,7 +33,7 @@
 **Goal:** Добавить к имени провайдера короткое имя агента (Description Codex, Reviewer Claude).
 
 1. [DONE] Fix(ui): добавить stage prefix в SessionTabs (использовать session.stage) — scope: `src/client/ui/src/session/session-tabs.tsx`; expected commit message: `fix(ui): add stage name to session tabs`
-2. [IN_PROGRESS] Git Commit: `fix(ui): add stage name to session tabs` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): add stage name to session tabs` (hash: 20672f82)
 
 ### Stream 4: StatusPanel — Models instead of Providers (Вариант B — расширение SessionStatusInfo)
 **Goal:** Расширить архитектуру для передачи информации о моделях и показывать реальную модель с reasoning level.
@@ -55,8 +55,8 @@ type ModelInfo = {
 };
 ```
 
-1. [TODO] Fix(types): добавить тип ModelInfo и расширить SessionStatusInfo — scope: `src/types/session.ts`; expected commit message: `feat(types): add ModelInfo type to SessionStatusInfo`
-2. [TODO] Git Commit: `feat(types): add ModelInfo type to SessionStatusInfo` (hash: TBD)
+1. [DONE] Fix(types): добавить тип ModelInfo и расширить SessionStatusInfo — scope: `src/types/session.ts`; expected commit message: `feat(types): add ModelInfo type to SessionStatusInfo`
+2. [IN_PROGRESS] Git Commit: `feat(types): add ModelInfo type to SessionStatusInfo` (hash: TBD)
 3. [TODO] Fix(ui/helpers): изменить createInitialSnapshot для приёма settings и формирования models — scope: `src/client/ui/src/session/helpers.ts`; expected commit message: `feat(ui): populate models in createInitialSnapshot`
 4. [TODO] Git Commit: `feat(ui): populate models in createInitialSnapshot` (hash: TBD)
 5. [TODO] Fix(ui): обновить вызовы createInitialSnapshot с передачей settings — scope: `src/client/ui/src/app-host.tsx`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(ui): pass settings to createInitialSnapshot`
