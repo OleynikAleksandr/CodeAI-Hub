@@ -57,6 +57,7 @@ export type SessionRecord = {
   readonly workspacePath: string;
   readonly initiativeSlug?: string | null;
   readonly stage?: string | null;
+  readonly runSlug?: string | null;
   readonly sessionKind?: SessionKind | null;
   readonly createdAt: number;
   readonly binding: SessionBindingInfo;
