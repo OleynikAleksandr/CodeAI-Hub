@@ -47,8 +47,8 @@
 1. [DONE] Feat(core): добавить типы сообщений `settings:load`/`settings:loaded` — scope: `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): add settings bridge message types`
 2. [DONE] Git Commit: `feat(core): add settings bridge message types` (hash: 35816fa2)
 
-3. [TODO] Feat(core): реализовать handler `SettingsRequestHandler` (читает `config.claudeSettingsPath`) — scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`; expected commit message: `feat(core): add settings request handler`
-4. [TODO] Git Commit: `feat(core): add settings request handler` (hash: TBD)
+3. [DONE] Feat(core): реализовать handler `SettingsRequestHandler` (читает `config.claudeSettingsPath`) — scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`; expected commit message: `feat(core): add settings request handler`
+4. [DONE] Git Commit: `feat(core): add settings request handler` (hash: e43cf127)
 
 5. [TODO] Feat(core): подключить handler в `RemoteBridge` и обработать `IncomingMessage.settings:load` — scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`; expected commit message: `feat(core): wire settings:load into remote bridge`
 6. [TODO] Git Commit: `feat(core): wire settings:load into remote bridge` (hash: TBD)
