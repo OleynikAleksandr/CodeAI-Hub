@@ -9,6 +9,7 @@ export type SerializedSession = {
   readonly workspacePath: string;
   readonly initiativeSlug: string | null;
   readonly stage: string | null;
+  readonly runSlug: string | null;
   readonly title: string;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -95,6 +96,7 @@ export const serializeSession = (session: Session): SerializedSession => ({
   workspacePath: session.workspacePath,
   initiativeSlug: session.initiativeSlug,
   stage: session.stage,
+  runSlug: session.runSlug ?? null,
   title: session.title,
   createdAt: session.createdAt,
   updatedAt: session.updatedAt,
