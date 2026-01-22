@@ -27,7 +27,7 @@
 **Goal:** Сделать InfoPanel в одну строку: "Session ID: <uuid>"
 
 1. [DONE] Fix(ui): переделать InfoPanel на single-line layout — scope: `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): make InfoPanel single-line`
-2. [IN_PROGRESS] Git Commit: `fix(ui): make InfoPanel single-line` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): make InfoPanel single-line` (hash: 2793f04c)
 
 ### Stream 3: SessionTabs — add stage name
 **Goal:** Добавить к имени провайдера короткое имя агента (Description Codex, Reviewer Claude).
@@ -67,8 +67,8 @@ type ModelInfo = {
 ### Stream 5: StatusPanel — remove Status row
 **Goal:** Убрать статичную строку "Status" и сократить высоту панели.
 
-1. [TODO] Fix(ui): удалить строку "Status" из StatusPanel — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): remove static Status row from StatusPanel`
-2. [TODO] Git Commit: `fix(ui): remove static Status row from StatusPanel` (hash: TBD)
+1. [DONE] Fix(ui): удалить строку "Status" из StatusPanel — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): remove static Status row from StatusPanel`
+2. [IN_PROGRESS] Git Commit: `fix(ui): remove static Status row from StatusPanel` (hash: TBD)
 
 ---
 
