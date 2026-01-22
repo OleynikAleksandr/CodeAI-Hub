@@ -5,11 +5,12 @@ import { mapProviderTheme } from "./helpers";
 
 /**
  * Get display label for session agent based on sessionKind.
- * Falls back to capitalized stage name if sessionKind is not set.
+ * Falls back to stage/runSlug heuristics for backward compatibility.
  */
 const getAgentLabel = (
   sessionKind: SessionKind | null | undefined,
-  stage: string | null | undefined
+  stage: string | null | undefined,
+  runSlug: string | null | undefined
 ): string | null => {
   if (sessionKind === "reviewer") {
     return "Reviewer";
@@ -17,7 +18,11 @@ const getAgentLabel = (
   if (sessionKind === "collector") {
     return "Agent";
   }
-  // Fallback to stage name for backward compatibility
+  // Backward compatibility for old sessions that only provide stage/runSlug.
+  if (stage === "description") {
+    return runSlug === "reviewer" ? "Reviewer" : "Agent";
+  }
+  // Fallback to stage name for other workflow stages.
   if (stage) {
     return stage.charAt(0).toUpperCase() + stage.slice(1);
   }
@@ -47,7 +52,11 @@ const SessionTabs = ({
     <div className="session-tabs">
       {sessions.map((session) => {
         const isActive = session.id === activeSessionId;
-        const agentLabel = getAgentLabel(session.sessionKind, session.stage);
+        const agentLabel = getAgentLabel(
+          session.sessionKind,
+          session.stage,
+          session.runSlug
+        );
         const providerNames = session.providerIds.map((providerId) => {
           const label =
             providerLabels.get(providerId) ??
