@@ -15,6 +15,7 @@ import {
   type SessionSnapshots,
   toggleTodoInSnapshots,
 } from "../../../ui/src/session/helpers";
+import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
 import {
   resolveProjectManagerCoreConfig,
@@ -253,6 +254,7 @@ export const ProjectManagerSessionView = ({
     }
     setActiveSessionId(visibleSessions.at(-1)?.id ?? null);
   }, [activeSessionId, forcedHiddenSessionIds, visibleSessions]);
+  useSettingsModelsSync(sessions, settings, setSnapshots);
   const focusSession = useCallback((sessionId: string) => {
     showSession(sessionId);
     setActiveSessionId(sessionId);
