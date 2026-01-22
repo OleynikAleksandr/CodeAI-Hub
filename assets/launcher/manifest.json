@@ -3,10 +3,10 @@
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "platforms": {
     "darwin-arm64": {
-      "launcherVersion": "1.1.471",
-      "package": "CodeAIHubLauncher-macos-arm64-1.1.471.tar.bz2",
-      "size": 241077066,
-      "sha1": "e3a209a7db3068c46a87e2149adfa9783fc45e6e"
+      "launcherVersion": "1.1.472",
+      "package": "CodeAIHubLauncher-macos-arm64-1.1.472.tar.bz2",
+      "size": 241083714,
+      "sha1": "c7dd4dc920f376de9f2828820e015f16ce778c84"
     }
   }
 }
