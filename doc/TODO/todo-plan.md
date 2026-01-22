@@ -33,8 +33,8 @@
 3. [DONE] Fix(core): сериализовать `runSlug` в `serializeSession()` — scope: `packages/core/src/remote-bridge/types.ts`; expected commit message: `fix(core): expose runSlug in serialized sessions`
 4. [DONE] Git Commit: `fix(core): expose runSlug in serialized sessions` (hash: 975e9dcf)
 
-5. [TODO] Fix(ui): принять `runSlug` в `ServerSession` и `sanitizeSession` — scope: `src/client/ui/src/core-bridge/types.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `fix(ui): accept runSlug in session payload`
-6. [TODO] Git Commit: `fix(ui): accept runSlug in session payload` (hash: TBD)
+5. [DONE] Fix(ui): принять `runSlug` в `ServerSession` и `sanitizeSession` — scope: `src/client/ui/src/core-bridge/types.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `fix(ui): accept runSlug in session payload`
+6. [DONE] Git Commit: `fix(ui): accept runSlug in session payload` (hash: c3f268cf)
 
 7. [TODO] Fix(ui): в `SessionTabs` вычислять agent label из `sessionKind ?? (stage+runSlug fallback)` — scope: `src/client/ui/src/session/session-tabs.tsx`; expected commit message: `fix(ui): derive agent label from runSlug`
 8. [TODO] Git Commit: `fix(ui): derive agent label from runSlug` (hash: TBD)
