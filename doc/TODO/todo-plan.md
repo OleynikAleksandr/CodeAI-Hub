@@ -28,3 +28,11 @@
 ### Stream: Release build (1.1.473)
 1. [DONE] Release: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests; expected commit message: `chore(release): build next version`
 2. [DONE] Git Commit: `chore(release): build next version` (hash: cc3e13e0)
+
+---
+
+## Phase 74 — Session labels consistency (owner: Oleksandr, updated: 2026-01-22)
+
+### Stream: Short labels (tabs + tree)
+1. [DONE] Fix(ui): показывать `Description <Provider>` для description agent (не `Agent <Provider>`) и синхронизировать подписи в дереве Project Manager с табами — scope: `src/client/ui/src/session/session-tabs.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `media/react-chat.js`; expected commit message: `fix(ui): align session labels`
+2. [DONE] Git Commit: `fix(ui): align session labels` (hash: 441c0779)
