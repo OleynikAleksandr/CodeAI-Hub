@@ -20,7 +20,7 @@
 **Goal:** Утвердить контракт: runSlug в session:create + settings:load через Core Remote Bridge.
 
 1. [DONE] Docs(arch): review/approve `SessionUI_SessionKind_And_Settings_Architecture.md` — scope: `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`; expected commit message: `docs(arch): approve session metadata + PM settings contract`
-2. [DONE] Git Commit: `docs(arch): approve session metadata + PM settings contract` (hash: TBD)
+2. [DONE] Git Commit: `docs(arch): approve session metadata + PM settings contract` (hash: 73c638c2)
 
 ---
 
@@ -68,7 +68,7 @@
 **Goal:** Подтвердить, что обе проблемы решены, и собрать релиз.
 
 1. [DONE] Verify(manual): клик по узлу reviewer session → вкладка `Reviewer Codex`; StatusPanel показывает `gpt-5.2 (high)` — scope: manual; expected commit message: `docs: record session tabs + models verification`
-2. [DONE] Git Commit: `docs: record session tabs + models verification` (hash: TBD)
+2. [DONE] Git Commit: `docs: record session tabs + models verification` (hash: 73c638c2)
 
 3. [DONE] Build: прогнать гейты + таргетные сборки (`npm run build --workspace @codeai-hub/core`, `npm run build:project-manager`, `npm run build:webview`) — scope: scripts; expected commit message: `chore: verify builds for session UI fixes`
 4. [DONE] Git Commit: `chore: verify builds for session UI fixes` (hash: 4cca91d9)
