@@ -8,7 +8,9 @@ import InfoPanel from "./info-panel";
 import InputPanel from "./input-panel";
 import SessionTabs from "./session-tabs";
 import StatusPanel from "./status-panel";
-import TodoPanel from "./todo-panel";
+
+// TODO: TodoPanel temporarily hidden, may be removed later
+// import TodoPanel from "./todo-panel";
 
 type SessionViewProps = {
   readonly sessions: readonly SessionRecord[];
@@ -21,7 +23,8 @@ type SessionViewProps = {
   readonly onSelectSession: (sessionId: string) => void;
   readonly onCloseSession: (sessionId: string) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
-  readonly onToggleTodo: (sessionId: string, todoId: string) => void;
+  // TODO: TodoPanel temporarily hidden — prop kept optional for future use
+  readonly onToggleTodo?: (sessionId: string, todoId: string) => void;
 };
 
 const SessionView = ({
@@ -35,7 +38,7 @@ const SessionView = ({
   onSelectSession,
   onCloseSession,
   onSendMessage,
-  onToggleTodo,
+  onToggleTodo: _onToggleTodo,
 }: SessionViewProps) => {
   const activeSession =
     activeSessionId && snapshots[activeSessionId]
@@ -85,10 +88,13 @@ const SessionView = ({
             />
           </div>
           <div className="session-app__rails">
-            <TodoPanel
-              items={activeSession.todos}
-              onToggle={(todoId) => onToggleTodo(activeSessionId, todoId)}
-            />
+            {/* TODO: TodoPanel temporarily hidden — uncomment when needed
+            {_onToggleTodo ? (
+              <TodoPanel
+                items={activeSession.todos}
+                onToggle={(todoId) => _onToggleTodo(activeSessionId, todoId)}
+              />
+            ) : null} */}
             <InputPanel
               draft={activeSession.draft}
               onSubmit={(text) => onSendMessage(activeSessionId, text)}
