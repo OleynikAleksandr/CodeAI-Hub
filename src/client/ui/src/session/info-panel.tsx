@@ -5,30 +5,23 @@ type InfoPanelProps = {
 };
 
 const InfoPanel = ({ binding }: InfoPanelProps) => {
-  let primaryText = "Session information unavailable";
-  let secondaryText = "Provider session state is unknown.";
-  let secondaryTitle: string | undefined;
+  let displayText = "Session information unavailable";
+  let titleText: string | undefined;
 
   if (binding.status === "ready" && binding.providerSessionId) {
-    primaryText = "Session ID";
-    secondaryText = binding.providerSessionId;
-    secondaryTitle = binding.providerSessionId;
+    displayText = `Session ID: ${binding.providerSessionId}`;
+    titleText = binding.providerSessionId;
   } else if (binding.status === "pending") {
-    primaryText = "Waiting for provider session ID…";
-    secondaryText = "The provider has not confirmed the session yet.";
+    displayText = "Waiting for provider session ID…";
   } else if (binding.status === "failed") {
-    primaryText = "Session failed to initialize";
-    secondaryText = "Provider session ID unavailable. Check CLI logs.";
+    displayText = "Session failed to initialize";
   }
 
   return (
-    <section className="session-panel session-info">
+    <section className="session-panel session-info session-info--single-line">
       <div className="session-status__row">
-        <span className="session-info__text">{primaryText}</span>
-      </div>
-      <div className="session-status__row">
-        <span className="session-info__text" title={secondaryTitle}>
-          {secondaryText}
+        <span className="session-info__text" title={titleText}>
+          {displayText}
         </span>
       </div>
     </section>
