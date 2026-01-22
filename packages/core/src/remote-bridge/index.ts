@@ -17,6 +17,7 @@ import { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import { HttpApiRouter } from "./handlers/http-api-router";
 import { ProjectRequestHandler } from "./handlers/project-request-handler";
 import { SessionRequestHandler } from "./handlers/session-request-handler";
+import { SettingsRequestHandler } from "./handlers/settings-request-handler";
 import { SystemRequestHandler } from "./handlers/system-request-handler";
 import { WebSocketManager } from "./handlers/websocket-manager";
 import {
@@ -54,6 +55,7 @@ export class RemoteBridge {
   private readonly projectHandler: ProjectRequestHandler;
   private readonly sessionHandler: SessionRequestHandler;
   private readonly systemHandler: SystemRequestHandler;
+  private readonly settingsHandler: SettingsRequestHandler;
   private readonly workflowRuntime: WorkflowRuntime;
   private wsManager?: WebSocketManager;
   private httpServer?: http.Server;
@@ -116,6 +118,14 @@ export class RemoteBridge {
         this.hooks.onShutdownRequested?.();
       }
     );
+
+    this.settingsHandler = new SettingsRequestHandler({
+      config: this.config,
+      logger: this.logger,
+      broadcaster: (event) => {
+        this.broadcast(event as BridgeEvent);
+      },
+    });
 
     this.workflowRuntime = new WorkflowRuntime({
       logger: this.logger,
@@ -241,6 +251,9 @@ export class RemoteBridge {
             runSlug: incoming.payload?.runSlug ?? null,
           }
         );
+        break;
+      case "settings:load":
+        await this.settingsHandler.handleLoad();
         break;
       case "session:message":
         await this.sessionHandler.handleMessage(
