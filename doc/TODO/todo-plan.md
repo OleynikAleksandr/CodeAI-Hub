@@ -73,5 +73,5 @@
 3. [DONE] Build: прогнать гейты + таргетные сборки (`npm run build --workspace @codeai-hub/core`, `npm run build:project-manager`, `npm run build:webview`) — scope: scripts; expected commit message: `chore: verify builds for session UI fixes`
 4. [DONE] Git Commit: `chore: verify builds for session UI fixes` (hash: 4cca91d9)
 
-5. [TODO] Release: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` — scope: scripts; expected commit message: `chore(release): build next version`
-6. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+5. [DONE] Release: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` — scope: scripts; expected commit message: `chore(release): build next version`
+6. [DONE] Git Commit: `chore(release): build next version` (hash: 5323523b)
