@@ -15,12 +15,11 @@ const getAgentLabel = (
   if (sessionKind === "reviewer") {
     return "Reviewer";
   }
+  if (stage === "description") {
+    return runSlug === "reviewer" ? "Reviewer" : "Description";
+  }
   if (sessionKind === "collector") {
     return "Agent";
-  }
-  // Backward compatibility for old sessions that only provide stage/runSlug.
-  if (stage === "description") {
-    return runSlug === "reviewer" ? "Reviewer" : "Agent";
   }
   // Fallback to stage name for other workflow stages.
   if (stage) {

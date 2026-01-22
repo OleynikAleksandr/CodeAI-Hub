@@ -1,5 +1,6 @@
 import type React from "react";
 import { useEffect, useState } from "react";
+import { getDefaultProviderTitle } from "../../../../types/provider";
 import { api } from "../../api";
 import {
   WORKFLOW_STAGE_ORDER,
@@ -147,9 +148,15 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     if (session) {
       const isReviewerSession =
         branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
+      const providerTitle =
+        session.providerId === "claudeCodeCli" ||
+        session.providerId === "codexCli" ||
+        session.providerId === "geminiCli"
+          ? getDefaultProviderTitle(session.providerId)
+          : session.providerId;
       const label = isReviewerSession
-        ? `Reviewer session · ${session.providerId}`
-        : `Description agent session · ${session.providerId}`;
+        ? `Reviewer ${providerTitle}`
+        : `Description ${providerTitle}`;
       const runSlug = isReviewerSession ? "reviewer" : null;
       nodes.push({
         id: "workflow:description:session",
