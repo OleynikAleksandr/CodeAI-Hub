@@ -67,8 +67,8 @@
 ### Stream 3: Verification + release build
 **Goal:** Подтвердить, что обе проблемы решены, и собрать релиз.
 
-1. [TODO] Verify(manual): клик по узлу reviewer session → вкладка `Reviewer Codex`; StatusPanel показывает `gpt-5.2 (high)` — scope: manual; expected commit message: `docs: record session tabs + models verification`
-2. [TODO] Git Commit: `docs: record session tabs + models verification` (hash: TBD)
+1. [DONE] Verify(manual): клик по узлу reviewer session → вкладка `Reviewer Codex`; StatusPanel показывает `gpt-5.2 (high)` — scope: manual; expected commit message: `docs: record session tabs + models verification`
+2. [DONE] Git Commit: `docs: record session tabs + models verification` (hash: TBD)
 
 3. [DONE] Build: прогнать гейты + таргетные сборки (`npm run build --workspace @codeai-hub/core`, `npm run build:project-manager`, `npm run build:webview`) — scope: scripts; expected commit message: `chore: verify builds for session UI fixes`
 4. [DONE] Git Commit: `chore: verify builds for session UI fixes` (hash: 4cca91d9)
