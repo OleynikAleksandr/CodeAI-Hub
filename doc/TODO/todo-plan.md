@@ -8,33 +8,71 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`
+1. `doc/SolidWorks-Flow/Architecture/SessionUI_Panels_Architecture.md`
 2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md` (THIS FILE)
-4. `doc/Sessions/Session039.md`
+4. `doc/Sessions/Session040.md`
 
 ---
 
-## Phase 67 — Workflow Tree fast restore after Core restart (owner: Oleksandr, updated: 2026-01-21)
+## Phase 68 — Session UI Panels Cleanup & Enhancement (owner: Oleksandr, updated: 2026-01-22)
 
-### Stream: Design — MVP contract approval
-1. [DONE] Docs: утвердить MVP-контракт восстановления workflow дерева через `workspacePath` в `workflow-state` API; зафиксировать критерии решения по “сложному варианту” (persist workflow state) — scope: `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`; expected commit message: `docs(arch): approve workflow-state fast restore MVP`
-2. [DONE] Git Commit: `docs(arch): approve workflow-state fast restore MVP` (hash: ea850b5e)
+### Stream 1: Hide TodoPanel
+**Goal:** Закомментировать отображение TodoPanel (возможно уберём позже совсем).
 
-### Stream: MVP Fix — pass workspacePath to workflow-state
-1. [DONE] Fix(core): принять `workspacePath` (query) в `workflow-state` и использовать как `workspaceRoot` для чтения `description-step.json` + continuity (fallback: текущая логика) — scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `fix(core): use workspacePath for workflow-state restore`
-2. [DONE] Git Commit: `fix(core): use workspacePath for workflow-state restore` (hash: d0d198fb)
-3. [DONE] Fix(project-manager): расширить workflow-state fetch для опционального `workspacePath` (client + api) — scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-state-query.ts`, `src/client/project-manager/api.ts`; expected commit message: `fix(project-manager): accept workspacePath in workflow-state fetch`
-4. [DONE] Git Commit: `fix(project-manager): accept workspacePath in workflow-state fetch` (hash: 863cc9fb)
-5. [DONE] Fix(project-manager): прокинуть `workspacePath` в polling workflow-state (tree + main-area) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): pass workspacePath in workflow polls`
-6. [DONE] Git Commit: `fix(project-manager): pass workspacePath in workflow polls` (hash: 89b1be0f)
-7. [DONE] Fix(project-manager): прокинуть `workspacePath` в reviewer visibility polling — scope: `src/client/project-manager/components/sessions/reviewer-session-visibility.ts`; expected commit message: `fix(project-manager): include workspacePath in reviewer visibility`
-8. [DONE] Git Commit: `fix(project-manager): include workspacePath in reviewer visibility` (hash: be455227)
+1. [DONE] Fix(ui): закомментировать рендеринг TodoPanel в session-view.tsx — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): hide TodoPanel from session view`
+2. [IN_PROGRESS] Git Commit: `fix(ui): hide TodoPanel from session view` (hash: TBD)
 
-### Stream: UX Hardening — faster initial refresh
-1. [DONE] Change(project-manager): ускорить initial refresh после reconnection (например, кратковременный polling 2–5s до первого успешного ответа, затем 15s) — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/sessions/reviewer-session-visibility.ts`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): speed up initial workflow-state refresh`
-2. [DONE] Git Commit: `fix(project-manager): speed up initial workflow-state refresh` (hash: 4800b40c)
+### Stream 2: InfoPanel — single line
+**Goal:** Сделать InfoPanel в одну строку: "Session ID: <uuid>"
 
-### Stream: Verify — manual
-1. [DONE] Verify(manual): рестарт Core → дерево `Description` восстанавливается быстро (без ожидания ~60s), ветка содержит 2 строки (`Final_Description.md` + Reviewer session) — scope: no files; expected commit message: `docs: record workflow restore verification`
-2. [DONE] Git Commit: `docs: record workflow restore verification` (hash: 0509038c)
+1. [TODO] Fix(ui): переделать InfoPanel на single-line layout — scope: `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): make InfoPanel single-line`
+2. [TODO] Git Commit: `fix(ui): make InfoPanel single-line` (hash: TBD)
+
+### Stream 3: SessionTabs — add stage name
+**Goal:** Добавить к имени провайдера короткое имя агента (Description Codex, Reviewer Claude).
+
+1. [TODO] Fix(ui): добавить stage prefix в SessionTabs (использовать session.stage) — scope: `src/client/ui/src/session/session-tabs.tsx`; expected commit message: `fix(ui): add stage name to session tabs`
+2. [TODO] Git Commit: `fix(ui): add stage name to session tabs` (hash: TBD)
+
+### Stream 4: StatusPanel — Models instead of Providers (Вариант B — расширение SessionStatusInfo)
+**Goal:** Расширить архитектуру для передачи информации о моделях и показывать реальную модель с reasoning level.
+
+**Архитектурное решение:**
+- Добавить тип `ModelInfo` в `session.ts`
+- Расширить `SessionStatusInfo` полем `models?: readonly ModelInfo[]`
+- Изменить `createInitialSnapshot` в `helpers.ts` для приёма settings и формирования models
+- Обновить StatusPanel для отображения models вместо providerSummary
+
+**Структура ModelInfo:**
+```typescript
+type ModelInfo = {
+  readonly providerId: ProviderStackId;
+  readonly providerName: string;    // "Claude", "Codex", "Gemini"
+  readonly modelId: string;         // "claude-opus-4-5", "gpt-5.2-codex"
+  readonly modelDisplayName: string; // "Claude Opus 4.5", "GPT-5.2 Codex"
+  readonly reasoning?: string;       // "high", "medium" (для Codex/Gemini)
+};
+```
+
+1. [TODO] Fix(types): добавить тип ModelInfo и расширить SessionStatusInfo — scope: `src/types/session.ts`; expected commit message: `feat(types): add ModelInfo type to SessionStatusInfo`
+2. [TODO] Git Commit: `feat(types): add ModelInfo type to SessionStatusInfo` (hash: TBD)
+3. [TODO] Fix(ui/helpers): изменить createInitialSnapshot для приёма settings и формирования models — scope: `src/client/ui/src/session/helpers.ts`; expected commit message: `feat(ui): populate models in createInitialSnapshot`
+4. [TODO] Git Commit: `feat(ui): populate models in createInitialSnapshot` (hash: TBD)
+5. [TODO] Fix(ui): обновить вызовы createInitialSnapshot с передачей settings — scope: `src/client/ui/src/app-host.tsx`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(ui): pass settings to createInitialSnapshot`
+6. [TODO] Git Commit: `fix(ui): pass settings to createInitialSnapshot` (hash: TBD)
+7. [TODO] Fix(ui): обновить StatusPanel для отображения models — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `feat(ui): display model names with reasoning in StatusPanel`
+8. [TODO] Git Commit: `feat(ui): display model names with reasoning in StatusPanel` (hash: TBD)
+
+### Stream 5: StatusPanel — remove Status row
+**Goal:** Убрать статичную строку "Status" и сократить высоту панели.
+
+1. [TODO] Fix(ui): удалить строку "Status" из StatusPanel — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): remove static Status row from StatusPanel`
+2. [TODO] Git Commit: `fix(ui): remove static Status row from StatusPanel` (hash: TBD)
+
+---
+
+## Notes
+
+- Stream 4 требует исследования — нужно понять, откуда брать информацию о реальной модели.
+- После Phase 68 можно рассмотреть полное удаление TodoPanel (сейчас только комментируем).
