@@ -181,11 +181,11 @@ export class ProjectManagerApi {
     readonly initiativeSlug?: string | null;
     readonly providerSessionId?: string | null;
     readonly stage?: string | null;
+    readonly sessionKind?: "collector" | "reviewer" | null;
     readonly runSlug?: string | null;
   }): void {
     this.send({ type: "session:create", payload: params });
   }
-
   deleteSession(sessionId: string): void {
     this.send({ type: "session:delete", payload: { sessionId } });
   }

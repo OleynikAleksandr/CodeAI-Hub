@@ -26,6 +26,7 @@ type SessionResumeIntent = {
   readonly workspaceSlug: string;
   readonly initiativeSlug: string | null;
   readonly stage: string | null;
+  readonly sessionKind: "collector" | "reviewer" | null;
   readonly runSlug: string | null;
 };
 const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {
@@ -166,6 +167,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
             workspaceSlug,
             initiativeSlug: workspaceSlug,
             stage: "description",
+            sessionKind: isReviewerSession ? "reviewer" : "collector",
             runSlug,
           });
         },

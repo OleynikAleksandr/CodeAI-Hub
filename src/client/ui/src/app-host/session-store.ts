@@ -25,6 +25,7 @@ import {
   toggleTodoInSnapshots,
 } from "../session/helpers";
 import type { ProviderLabels } from "./provider-picker-state";
+import { useSettingsModelsSync } from "./use-settings-models-sync";
 
 type ToggleTodoHandler = (sessionId: string, todoId: string) => void;
 type SendMessageHandler = (sessionId: string, content: string) => void;
@@ -278,7 +279,7 @@ export const useSessionStore = (
       )
       .catch(() => sendChatMessage(sessionId, content));
   }, []);
-
+  useSettingsModelsSync(sessions, settings, setSnapshots);
   return {
     sessions,
     snapshots,

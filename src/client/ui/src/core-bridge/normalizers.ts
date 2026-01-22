@@ -147,6 +147,11 @@ export const sanitizeSession = (
         : "pending",
   };
 
+  const sessionKind =
+    session.sessionKind === "collector" || session.sessionKind === "reviewer"
+      ? session.sessionKind
+      : null;
+
   return {
     id: sessionId,
     title: session.title,
@@ -157,6 +162,7 @@ export const sanitizeSession = (
         ? session.initiativeSlug
         : null,
     stage: typeof session.stage === "string" ? session.stage : null,
+    sessionKind,
     createdAt: toNumberTimestamp(session.createdAt),
     binding: normalizeBinding(bindingCandidate),
   };

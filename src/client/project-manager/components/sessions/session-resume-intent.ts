@@ -7,6 +7,7 @@ type SessionResumeIntent = {
   readonly workspacePath: string;
   readonly initiativeSlug: string | null;
   readonly stage: string | null;
+  readonly sessionKind: "collector" | "reviewer" | null;
   readonly runSlug: string | null;
 };
 
@@ -28,6 +29,7 @@ type SessionResumeCreatePayload = {
   readonly workspacePath: string;
   readonly initiativeSlug: string | null;
   readonly stage: string | null;
+  readonly sessionKind: "collector" | "reviewer" | null;
   readonly runSlug: string | null;
 };
 
@@ -84,6 +86,7 @@ export const useSessionResumeIntent = (params: {
         workspacePath: detail.workspacePath,
         initiativeSlug: detail.initiativeSlug,
         stage: detail.stage,
+        sessionKind: detail.sessionKind,
         runSlug: detail.runSlug,
       });
     };
