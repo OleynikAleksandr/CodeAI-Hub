@@ -1,12 +1,9 @@
 import type { Session } from "../session-manager";
 import type { Logger } from "../telemetry/logger";
 import { ContinuityMonitor } from "./continuity-monitor";
-import { ContinuityChainStore, readContinuityChains } from "./continuity-store";
-import type {
-  ContinuityChain,
-  ContinuityChainSummary,
-  ContinuitySegment,
-} from "./continuity-types";
+import { readContinuityChains } from "./continuity-store";
+import { ContinuityTracker } from "./continuity-tracker";
+import type { ContinuityChainSummary } from "./continuity-types";
 import { buildHandoffPrompt } from "./handoff-prompt-builder";
 import {
   buildHandoffReportPath,
@@ -63,7 +60,7 @@ export class SessionContinuityFacade {
   private readonly monitor = new ContinuityMonitor();
   private readonly clock: () => string;
   private readonly callbacks: ContinuityCallbacks;
-  private readonly rootBySessionId = new Map<string, string>();
+  private readonly tracker: ContinuityTracker;
   private readonly pending = new Map<string, PendingHandoff>();
   private readonly sessionLookup: (sessionId: string) => Session | undefined;
 
@@ -77,6 +74,11 @@ export class SessionContinuityFacade {
     this.clock = options.clock ?? (() => new Date().toISOString());
     this.callbacks = options.callbacks;
     this.sessionLookup = options.sessionLookup;
+    this.tracker = new ContinuityTracker({
+      logger: options.logger,
+      clock: this.clock,
+      sessionLookup: options.sessionLookup,
+    });
   }
 
   registerSession(options: {
@@ -84,59 +86,21 @@ export class SessionContinuityFacade {
     readonly providerSessionId?: string | null;
     readonly rootSessionId?: string | null;
   }): void {
-    const session = options.session;
-    const rootSessionId =
-      options.rootSessionId ??
-      this.rootBySessionId.get(session.id) ??
-      session.id;
-    this.rootBySessionId.set(session.id, rootSessionId);
-
-    const workspaceSlug = session.initiativeSlug;
-    if (!workspaceSlug) {
-      return;
-    }
-    const providerSessionId =
-      options.providerSessionId ?? session.providerSessionId ?? "unknown";
-
-    const store = this.createStore(session, rootSessionId);
-    const segment: ContinuitySegment = {
-      sessionId: session.id,
-      providerId: session.providerId,
-      providerSessionId,
-      createdAt: session.createdAt,
-    };
-
-    store.appendSegment(segment).catch((error: unknown) => {
-      this.logger.warn("Failed to append continuity segment", {
-        sessionId: session.id,
-        error: error instanceof Error ? error.message : String(error),
-      });
+    this.tracker.registerSession({
+      session: options.session,
+      rootSessionId: options.rootSessionId ?? null,
     });
   }
 
   updateProviderSessionId(sessionId: string, providerSessionId: string): void {
-    const session = this.sessionLookup(sessionId);
-    if (!session) {
-      return;
-    }
-    const rootSessionId = this.rootBySessionId.get(sessionId);
-    if (!(rootSessionId && session.initiativeSlug)) {
-      return;
-    }
+    this.tracker.updateProviderSessionId(sessionId, providerSessionId);
+  }
 
-    this.updateChain(session, rootSessionId, (chain) => {
-      const updated = chain.segments.map((segment) =>
-        segment.sessionId === sessionId
-          ? { ...segment, providerSessionId }
-          : segment
-      );
-      return { ...chain, segments: updated, updatedAt: this.clock() };
-    }).catch((error: unknown) => {
-      this.logger.warn("Failed to update continuity provider session id", {
-        sessionId,
-        error: error instanceof Error ? error.message : String(error),
-      });
-    });
+  ensureTrackedOnOutboundMessage(options: {
+    readonly sessionId: string;
+    readonly providerSessionId?: string | null;
+  }): Promise<void> {
+    return this.tracker.ensureTrackedOnOutboundMessage(options);
   }
 
   async handleProviderEvent(sessionId: string, event: unknown): Promise<void> {
@@ -170,7 +134,7 @@ export class SessionContinuityFacade {
       return;
     }
 
-    const rootSessionId = this.rootBySessionId.get(session.id) ?? session.id;
+    const rootSessionId = this.tracker.getRootSessionId(session.id);
     const timestamp = this.clock();
     this.pending.set(session.id, {
       rootSessionId,
@@ -233,14 +197,18 @@ export class SessionContinuityFacade {
     }
 
     try {
-      await this.updateChain(session, pending.rootSessionId, (chain) => {
-        const updated = chain.segments.map((segment) =>
-          segment.sessionId === session.id
-            ? { ...segment, handoffReportPath: reportPath }
-            : segment
-        );
-        return { ...chain, segments: updated, updatedAt: this.clock() };
-      });
+      await this.tracker.updateChain(
+        session,
+        pending.rootSessionId,
+        (chain) => {
+          const updated = chain.segments.map((segment) =>
+            segment.sessionId === session.id
+              ? { ...segment, handoffReportPath: reportPath }
+              : segment
+          );
+          return { ...chain, segments: updated, updatedAt: this.clock() };
+        }
+      );
     } catch (error) {
       this.logger.warn("Failed to update continuity chain", {
         sessionId: session.id,
@@ -276,34 +244,5 @@ export class SessionContinuityFacade {
         error: error instanceof Error ? error.message : String(error),
       });
     }
-  }
-
-  private createStore(
-    session: Session,
-    rootSessionId: string
-  ): ContinuityChainStore {
-    return new ContinuityChainStore({
-      workspaceRoot: session.workspacePath,
-      workspaceSlug: session.initiativeSlug ?? "unknown",
-      stage: session.stage,
-      rootSessionId,
-    });
-  }
-
-  private async updateChain(
-    session: Session,
-    rootSessionId: string,
-    update: (chain: ContinuityChain) => ContinuityChain
-  ): Promise<void> {
-    if (!session.initiativeSlug) {
-      return;
-    }
-    const store = this.createStore(session, rootSessionId);
-    const existing = await store.read();
-    if (!existing) {
-      return;
-    }
-    const next = update(existing);
-    await store.save(next);
   }
 }
