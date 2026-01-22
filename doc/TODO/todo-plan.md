@@ -53,8 +53,8 @@
 5. [DONE] Feat(core): подключить handler в `RemoteBridge` и обработать `IncomingMessage.settings:load` — scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`; expected commit message: `feat(core): wire settings:load into remote bridge`
 6. [DONE] Git Commit: `feat(core): wire settings:load into remote bridge` (hash: d6b2e853)
 
-7. [TODO] Feat(project-manager): добавить `api.loadSettings()` + отправку `settings:load` — scope: `src/client/project-manager/api.ts`; expected commit message: `feat(project-manager): request settings from core`
-8. [TODO] Git Commit: `feat(project-manager): request settings from core` (hash: TBD)
+7. [DONE] Feat(project-manager): добавить `api.loadSettings()` + отправку `settings:load` — scope: `src/client/project-manager/api.ts`; expected commit message: `feat(project-manager): request settings from core`
+8. [DONE] Git Commit: `feat(project-manager): request settings from core` (hash: ccb3b09e)
 
 9. [TODO] Feat(project-manager): добавить hook/state для settings (слушает `settings:loaded`) — scope: `src/client/project-manager/components/settings/use-project-manager-settings.ts`; expected commit message: `feat(project-manager): store settings from core`
 10. [TODO] Git Commit: `feat(project-manager): store settings from core` (hash: TBD)
