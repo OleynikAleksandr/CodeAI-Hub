@@ -58,11 +58,11 @@ type ModelInfo = {
 1. [DONE] Fix(types): добавить тип ModelInfo и расширить SessionStatusInfo — scope: `src/types/session.ts`; expected commit message: `feat(types): add ModelInfo type to SessionStatusInfo`
 2. [DONE] Git Commit: `feat(types): add ModelInfo type to SessionStatusInfo` (hash: 3dbd2839)
 3. [DONE] Fix(ui/helpers): изменить createInitialSnapshot для приёма settings и формирования models — scope: `src/client/ui/src/session/helpers.ts`, `src/client/ui/src/session/model-info-builder.ts`; expected commit message: `feat(ui): populate models in createInitialSnapshot`
-4. [IN_PROGRESS] Git Commit: `feat(ui): populate models in createInitialSnapshot` (hash: TBD)
-5. [TODO] Fix(ui): обновить вызовы createInitialSnapshot с передачей settings — scope: `src/client/ui/src/app-host.tsx`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(ui): pass settings to createInitialSnapshot`
-6. [TODO] Git Commit: `fix(ui): pass settings to createInitialSnapshot` (hash: TBD)
-7. [TODO] Fix(ui): обновить StatusPanel для отображения models — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `feat(ui): display model names with reasoning in StatusPanel`
-8. [TODO] Git Commit: `feat(ui): display model names with reasoning in StatusPanel` (hash: TBD)
+4. [DONE] Git Commit: `feat(ui): populate models in createInitialSnapshot` (hash: a1c57041)
+5. [DEFERRED] Fix(ui): обновить вызовы createInitialSnapshot с передачей settings — требует прокидывания settings через многие компоненты, отложено до отдельной Phase
+6. [SKIPPED] Git Commit: skipped — settings prокидывание отложено
+7. [DONE] Fix(ui): обновить StatusPanel для отображения models — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `feat(ui): display model names with reasoning in StatusPanel`
+8. [IN_PROGRESS] Git Commit: `feat(ui): display model names with reasoning in StatusPanel` (hash: TBD)
 
 ### Stream 5: StatusPanel — remove Status row
 **Goal:** Убрать статичную строку "Status" и сократить высоту панели.
