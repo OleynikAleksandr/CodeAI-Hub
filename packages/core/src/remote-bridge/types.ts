@@ -27,6 +27,13 @@ export type BridgeEvent =
   | { readonly type: "session:created"; readonly payload: SerializedSession }
   | { readonly type: "session:message"; readonly payload: unknown }
   | {
+      readonly type: "settings:loaded";
+      readonly payload: {
+        readonly settings: Record<string, unknown> | null;
+        readonly error: string | null;
+      };
+    }
+  | {
       readonly type: "session:binding";
       readonly payload: {
         readonly sessionId: string;
@@ -64,6 +71,9 @@ export type IncomingMessage =
         readonly stage?: string | null;
         readonly runSlug?: string | null;
       };
+    }
+  | {
+      readonly type: "settings:load";
     }
   | {
       readonly type: "session:message";
