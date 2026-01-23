@@ -197,6 +197,7 @@ UI устанавливается в `~/.codeai-hub/packages/ui/project-manager/
   - CEF macOS: нативный Finder folder picker (возвращает абсолютный путь через `projects:folderPicked`);
   - CEF fallback (Windows/Linux): модалка ввода абсолютного пути;
   - после add/activate UI делает `POST /api/v1/orchestrator/workspace-session` (best effort), чтобы создать `.codeai-hub/<workspaceSlug>/` и включить watcher.
+- После добавления workspace UI автоматически выбирает новый workspace в Project Manager.
 - При смене workspace UI сбрасывает выбранный артефакт/просмотрщик.
 - Для пустого workspace (нет артефактов/continuity, все стадии `idle`) UI авто-открывает анкету описания и начинает процесс с нуля.
 
