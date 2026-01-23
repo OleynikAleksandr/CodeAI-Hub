@@ -19,6 +19,7 @@ type QuestionnaireSnapshot = {
 type WorkspaceInfo = {
   readonly name?: string;
   readonly path: string;
+  readonly slug?: string;
 };
 
 type WorkspaceFileFetchResult =
@@ -120,10 +121,8 @@ const buildDefaults = (
   "meta.author": resolveAuthorName(workspacePath),
 });
 
-const resolveQuestionnairePath = (workspaceName: string): string => {
-  const slug = toWorkspaceSlug(workspaceName);
-  return `.codeai-hub/${slug}/description/questionnaire.md`;
-};
+const resolveQuestionnairePath = (workspaceSlug: string): string =>
+  `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
 
 export type {
   QuestionnaireLoadResult,
