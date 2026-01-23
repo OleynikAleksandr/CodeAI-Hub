@@ -63,24 +63,29 @@ export class ProjectManagerApi {
       httpUrl: "http://127.0.0.1:8080",
     };
 
-    window.addEventListener("message", (event) => {
-      const message = event.data;
-      if (
-        message &&
+	    window.addEventListener("message", (event) => {
+	      const message = event.data;
+	      if (
+	        message &&
         typeof message === "object" &&
         "type" in message &&
         message.type === "projects:folderPicked"
       ) {
-        const payload = "payload" in message ? message.payload : null;
-        if (payload && typeof payload === "object" && "path" in payload) {
-          const path = payload.path;
-          if (typeof path === "string") {
-            this.addProject(path);
-          }
-        }
-      }
-    });
-  }
+	        const payload = "payload" in message ? message.payload : null;
+	        if (payload && typeof payload === "object" && "path" in payload) {
+	          const path = payload.path;
+	          if (typeof path === "string") {
+	            window.dispatchEvent(
+	              new CustomEvent("pm:workspace:add-requested", {
+	                detail: { path },
+	              })
+	            );
+	            this.addProject(path);
+	          }
+	        }
+	      }
+	    });
+	  }
 
   connect(): void {
     if (this.socket?.readyState === WebSocket.OPEN) {
@@ -115,12 +120,13 @@ export class ProjectManagerApi {
     }
   }
 
-  pickFolder(): void {
+  pickFolder(): boolean {
     if (vscode?.postMessage) {
       vscode.postMessage({ type: "projects:pickFolder" });
-      return;
+      return true;
     }
     console.warn("[ProjectManagerApi] No folder picker available.");
+    return false;
   }
 
   listProjects(): void {

@@ -36,8 +36,8 @@
 3. [DONE] Fix(project-manager): расширить `WorkspaceProject` тип полем `slug` (UI) — scope: `src/client/project-manager/types.ts`; expected commit message: `fix(project-manager): include workspace slug in ui types`
 4. [DONE] Git Commit: `fix(project-manager): include workspace slug in ui types` (hash: 19b84dcd)
 
-5. [TODO] Fix(project-manager): перевести `MainArea` polling (workflow-state + workflow-events) на `workspace.slug` — scope: `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): use workspace slug in main area`
-6. [TODO] Git Commit: `fix(project-manager): use workspace slug in main area` (hash: TBD)
+5. [DONE] Fix(project-manager): перевести `MainArea` polling (workflow-state + workflow-events) на `workspace.slug` — scope: `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): use workspace slug in main area`
+6. [DONE] Git Commit: `fix(project-manager): use workspace slug in main area` (hash: 27180e19)
 
 ### Stream: Add workspace UI (CEF-safe)
 1. [TODO] Feat(project-manager): `api.pickFolder()` возвращает `boolean` и диспатчит `pm:workspace:add-requested` (для детерминированного init) — scope: `src/client/project-manager/api.ts`; expected commit message: `feat(project-manager): add workspace picker fallback hooks`
