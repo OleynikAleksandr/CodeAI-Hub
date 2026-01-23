@@ -18,6 +18,7 @@ const SAVE_DEBOUNCE_MS = 400;
 interface DescriptionQuestionnairePanelProps {
   readonly workspaceName?: string;
   readonly workspacePath?: string;
+  readonly workspaceSlug?: string;
   readonly onClose?: () => void;
   readonly onIdeaSessionCreated?: (sessionId: string) => void;
 }
@@ -43,7 +44,7 @@ type PanelState =
 
 export const DescriptionQuestionnairePanel: React.FC<
   DescriptionQuestionnairePanelProps
-> = ({ workspaceName, workspacePath, onClose, onIdeaSessionCreated }) => {
+> = ({ workspaceName, workspacePath, workspaceSlug, onClose, onIdeaSessionCreated }) => {
   const serviceRef = useRef(new DescriptionQuestionnaireService());
   const ideaCollectorRef = useRef(new IdeaCollectorSubmitService());
   const [panelState, setPanelState] = useState<PanelState>({ status: "idle" });
@@ -167,14 +168,14 @@ export const DescriptionQuestionnairePanel: React.FC<
       });
       onIdeaSessionCreated?.(sessionId);
       if (workspacePath) {
-        const workspaceSlug = toWorkflowWorkspaceSlug(resolvedWorkspaceName);
+        const resolvedSlug = workspaceSlug ?? toWorkflowWorkspaceSlug(resolvedWorkspaceName);
         window.dispatchEvent(
           new CustomEvent("pm:artifact:selected", {
             detail: {
               label: "questionnaire.md",
               path: panelState.questionnairePath,
               workspacePath,
-              workspaceSlug,
+              workspaceSlug: resolvedSlug,
             },
           })
         );

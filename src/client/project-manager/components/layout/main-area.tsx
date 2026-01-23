@@ -2,7 +2,6 @@ import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
-import { resolveQuestionnairePath } from "../../services/description-questionnaire-utils";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
 import {
   startWorkflowEventPolling,
@@ -21,6 +20,19 @@ interface MainAreaProps {
   activeWorkspace?: WorkspaceProject;
 }
 
+const resolveWorkspaceSlug = (workspace?: WorkspaceProject): string | null => {
+  if (!workspace) {
+    return null;
+  }
+  if (workspace.slug && workspace.slug.trim().length > 0) {
+    return workspace.slug.trim();
+  }
+  if (workspace.name && workspace.name.trim().length > 0) {
+    return toWorkflowWorkspaceSlug(workspace.name);
+  }
+  return null;
+};
+
 /**
  * Main area component (Section 2)
  * Contains Toolbar (Section 3), PanelContainer (Sections 4, 5, 6), and StatusBar (Section 7)
@@ -30,32 +42,13 @@ export const MainArea: React.FC<MainAreaProps> = ({
   onSizeChange,
   activeWorkspace,
 }) => {
-  const tools: readonly string[] = activeWorkspace
-    ? ["Description", "Virtual Simulation", "Diagram Modules", "Diagram Facades"]
-    : [];
+  const tools: readonly string[] = activeWorkspace ? ["Description", "Virtual Simulation", "Diagram Modules", "Diagram Facades"] : [];
   const [activeTool, setActiveTool] = useState<string | null>(null);
-  const [preferredSessionId, setPreferredSessionId] = useState<string | null>(
-    null
-  );
-  const [selectedArtifact, setSelectedArtifact] = useState<{
-    readonly workspacePath: string;
-    readonly workspaceSlug: string;
-    readonly path: string;
-    readonly label: string;
-  } | null>(null);
-  const [artifactRefreshKey, setArtifactRefreshKey] = useState<number>(0);
-  const [descriptionDocument, setDescriptionDocument] = useState<{
-    readonly workspacePath: string;
-    readonly workspaceSlug: string;
-    readonly path: string;
-    readonly label: "description.md" | "Final_Description.md";
-  } | null>(null);
-  const [questionnaireDocument, setQuestionnaireDocument] = useState<{
-    readonly workspacePath: string;
-    readonly workspaceSlug: string;
-    readonly path: string;
-    readonly label: "questionnaire.md";
-  } | null>(null);
+  const [preferredSessionId, setPreferredSessionId] = useState<string | null>(null);
+  const [selectedArtifact, setSelectedArtifact] = useState<{ readonly workspacePath: string; readonly workspaceSlug: string; readonly path: string; readonly label: string } | null>(null);
+  const [artifactRefreshKey, setArtifactRefreshKey] = useState(0);
+  const [descriptionDocument, setDescriptionDocument] = useState<{ readonly workspacePath: string; readonly workspaceSlug: string; readonly path: string; readonly label: "description.md" | "Final_Description.md" } | null>(null);
+  const [questionnaireDocument, setQuestionnaireDocument] = useState<{ readonly workspacePath: string; readonly workspaceSlug: string; readonly path: string; readonly label: "questionnaire.md" } | null>(null);
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -116,38 +109,46 @@ export const MainArea: React.FC<MainAreaProps> = ({
     [selectedArtifact]
   );
 
-  useEffect(() => {
-    if (!activeWorkspace?.name) {
-      return;
-    }
-    const workspaceSlug = toWorkflowWorkspaceSlug(activeWorkspace.name);
-    const httpUrl = api.getHttpUrl();
-    if (!httpUrl) {
-      return;
-    }
-    const unsubscribe = startWorkflowEventPolling({
+	  useEffect(() => {
+	    if (!activeWorkspace?.path) {
+	      return;
+	    }
+	    const workspaceSlug = resolveWorkspaceSlug(activeWorkspace);
+	    if (!workspaceSlug) {
+	      return;
+	    }
+	    const httpUrl = api.getHttpUrl();
+	    if (!httpUrl) {
+	      return;
+	    }
+	    const unsubscribe = startWorkflowEventPolling({
       httpUrl,
       workspaceSlug,
       onEvents: handleWorkflowEvents,
-      intervalMs: selectedArtifact ? 2_000 : 10_000,
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [activeWorkspace?.name, handleWorkflowEvents, selectedArtifact]);
+	      intervalMs: selectedArtifact ? 2_000 : 10_000,
+	    });
+	    return () => {
+	      unsubscribe();
+	    };
+	  }, [activeWorkspace?.id, activeWorkspace?.path, activeWorkspace?.slug, activeWorkspace?.name, handleWorkflowEvents, selectedArtifact]);
 
-  useEffect(() => {
-    if (!activeWorkspace?.name || !activeWorkspace.path) {
-      setDescriptionDocument(null);
-      setQuestionnaireDocument(null);
-      return;
-    }
+	  useEffect(() => {
+	    if (!activeWorkspace?.path) {
+	      setDescriptionDocument(null);
+	      setQuestionnaireDocument(null);
+	      return;
+	    }
 
-    const workspaceSlug = toWorkflowWorkspaceSlug(activeWorkspace.name);
-    const workspacePath = activeWorkspace.path;
-    let cancelled = false;
-    let timer = 0;
-    let fastPolling = true;
+	    const workspaceSlug = resolveWorkspaceSlug(activeWorkspace);
+	    if (!workspaceSlug) {
+	      setDescriptionDocument(null);
+	      setQuestionnaireDocument(null);
+	      return;
+	    }
+	    const workspacePath = activeWorkspace.path;
+	    let cancelled = false;
+	    let timer = 0;
+	    let fastPolling = true;
 
     const loadState = async () => {
       const state = await api.getWorkflowState(workspaceSlug, workspacePath);
@@ -177,14 +178,14 @@ export const MainArea: React.FC<MainAreaProps> = ({
       const hasDescriptionSession = Boolean(
         branch?.session || branch?.sessionKind
       );
-      const questionnairePath =
-        branch?.questionnairePath && branch.questionnairePath.trim().length > 0
-          ? branch.questionnairePath
-          : resolveQuestionnairePath(activeWorkspace.name);
-      const nextQuestionnaire =
-        hasDescriptionSession && !nextDescription
-          ? {
-              path: questionnairePath,
+	      const questionnairePath =
+	        branch?.questionnairePath && branch.questionnairePath.trim().length > 0
+	          ? branch.questionnairePath
+	          : `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
+	      const nextQuestionnaire =
+	        hasDescriptionSession && !nextDescription
+	          ? {
+	              path: questionnairePath,
               label: "questionnaire.md" as const,
             }
           : null;
@@ -198,11 +199,11 @@ export const MainArea: React.FC<MainAreaProps> = ({
 
     loadState();
     timer = window.setInterval(loadState, 3_000);
-    return () => {
-      cancelled = true;
-      window.clearInterval(timer);
-    };
-  }, [activeWorkspace?.name, activeWorkspace?.path]);
+	    return () => {
+	      cancelled = true;
+	      window.clearInterval(timer);
+	    };
+	  }, [activeWorkspace?.id, activeWorkspace?.path, activeWorkspace?.slug, activeWorkspace?.name]);
 
   useEffect(() => {
     const autoDocument = descriptionDocument ?? questionnaireDocument;
@@ -268,6 +269,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
               onIdeaSessionCreated={setPreferredSessionId}
               workspaceName={activeWorkspace?.name}
               workspacePath={activeWorkspace?.path}
+              workspaceSlug={activeWorkspace?.slug}
             />
           ) : showVirtualSimulation ? (
             <div className="pm-placeholder">Шаг Virtual Simulation пока не подключен.</div>

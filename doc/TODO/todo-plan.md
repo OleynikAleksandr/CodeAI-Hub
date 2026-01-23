@@ -33,8 +33,8 @@
 1. [DONE] Fix(project-manager): `Sidebar` прокидывает `workspaceSlug` в `WorkspaceTree` (и дерево использует slug, если он есть) — scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): use workspace slugs in tree`
 2. [DONE] Git Commit: `fix(project-manager): use workspace slugs in tree` (hash: e5a46680)
 
-3. [TODO] Fix(project-manager): расширить `WorkspaceProject` тип полем `slug` (UI) — scope: `src/client/project-manager/types.ts`; expected commit message: `fix(project-manager): include workspace slug in ui types`
-4. [TODO] Git Commit: `fix(project-manager): include workspace slug in ui types` (hash: TBD)
+3. [DONE] Fix(project-manager): расширить `WorkspaceProject` тип полем `slug` (UI) — scope: `src/client/project-manager/types.ts`; expected commit message: `fix(project-manager): include workspace slug in ui types`
+4. [DONE] Git Commit: `fix(project-manager): include workspace slug in ui types` (hash: 19b84dcd)
 
 5. [TODO] Fix(project-manager): перевести `MainArea` polling (workflow-state + workflow-events) на `workspace.slug` — scope: `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): use workspace slug in main area`
 6. [TODO] Git Commit: `fix(project-manager): use workspace slug in main area` (hash: TBD)
