@@ -79,6 +79,10 @@ export const DescriptionQuestionnairePanel: React.FC<
     const service = serviceRef.current;
     let cancelled = false;
 
+    setAnswers({});
+    setSubmitError(null);
+    setProviderPickerOpen(false);
+    submitInFlightRef.current = false;
     setPanelState({ status: "loading" });
     service
       .load({
