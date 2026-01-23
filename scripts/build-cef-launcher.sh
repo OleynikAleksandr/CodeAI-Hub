@@ -207,8 +207,8 @@ compute_sha1() {
 resolve_manifest_version() {
   node - "$1" "$2" <<'EOF'
 const { readFileSync } = require("node:fs");
-const path = process.argv[1];
-const platformKey = process.argv[2];
+const path = process.argv[2];
+const platformKey = process.argv[3];
 try {
   const manifest = JSON.parse(readFileSync(path, "utf8"));
   const entry = manifest.platforms?.[platformKey];
