@@ -56,7 +56,7 @@ Project Manager должен уметь работать с нескольким
 
 После выбора:
 1) отправить `projects:add` (path + optional name) → получить обновлённый список.
-2) определить добавленный workspace (по `path`).
+2) определить добавленный workspace (по `path`) и сделать его активным в UI.
 3) выполнить **worktree init**: `POST /api/v1/orchestrator/workspace-session` с:
    - `workspacePath`
    - `initiativeSlug = workspace.slug`
@@ -93,7 +93,7 @@ Project Manager должен уметь работать с нескольким
 1) Запустить Project Manager.
 2) Add workspace → выбрать/ввести путь к папке.
 3) Ожидаемое:
-   - workspace появляется в списке;
+   - workspace появляется в списке и автоматически становится активным;
    - внутри папки появляется `.codeai-hub/<workspaceSlug>/`;
    - переключение между 2 workspace меняет дерево и артефакты без смешения.
 4) Добавить 2 workspace с одинаковыми именами папок → убедиться, что `slug` различается и дерево не смешивается.
