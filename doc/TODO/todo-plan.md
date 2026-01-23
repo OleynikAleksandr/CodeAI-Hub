@@ -55,3 +55,17 @@
 
 5. [DONE] Verification: прогнать гейты + таргетную сборку `npm run build:project-manager` — scope: scripts; expected commit message: `chore: verify auto-select add workspace`
 6. [DONE] Git Commit: `chore: verify auto-select add workspace` (hash: d804b32e)
+
+---
+
+## Phase 81 — Project Manager: sync tree selection on workspace switch (owner: Oleksandr, updated: 2026-01-23)
+
+### Stream: auto-select session + artifact on workspace change
+1. [DONE] Fix(project-manager): при смене workspace автоматически выбирать последнюю сессию и артефакт из дерева — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`; expected commit message: `fix(project-manager): sync tree selection on workspace switch`
+2. [DONE] Git Commit: `fix(project-manager): sync tree selection on workspace switch` (hash: 08ef9b4c)
+
+3. [DONE] Docs: описать auto-select сессии/артефакта при смене workspace — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document workspace switch auto-select`
+4. [DONE] Git Commit: `docs: document workspace switch auto-select` (hash: 2a85c2f9)
+
+5. [DONE] Verification: прогнать гейты + таргетную сборку `npm run build:project-manager` — scope: scripts; expected commit message: `chore: verify workspace switch auto-select`
+6. [DONE] Git Commit: `chore: verify workspace switch auto-select` (hash: f2d3634a)
