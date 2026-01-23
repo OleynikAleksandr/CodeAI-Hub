@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import { api } from "../../api";
 import {
@@ -9,33 +9,11 @@ import {
   type WorkflowStageStatus,
   type WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
-type TreeStatus = "active" | "todo" | "blocked" | "draft" | "outdated";
-type TreeNode = {
-  readonly id: string;
-  readonly label: string;
-  readonly status: TreeStatus;
-  readonly visualDepth: number;
-  readonly title?: string;
-  readonly onSelect?: () => void;
-  readonly isCollapsible?: boolean;
-  readonly children?: readonly TreeNode[];
-};
-type SessionResumeIntent = {
-  readonly providerId: string;
-  readonly providerSessionId: string | null;
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-  readonly initiativeSlug: string | null;
-  readonly stage: string | null;
-  readonly sessionKind: "collector" | "reviewer" | null;
-  readonly runSlug: string | null;
-};
-const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {
-  description: "Description",
-  virtual_simulation: "Virtual Simulation",
-  diagram_modules: "Diagram Modules",
-  diagram_facades: "Diagram Facades",
-};
+import {
+  useWorkspaceTreeAutoSelect,
+  type SessionResumeIntent,
+} from "./workspace-tree-auto-select";
+import { WORKFLOW_LABELS, type TreeNode, type TreeStatus } from "./workspace-tree-model";
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
@@ -59,16 +37,50 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       ? toWorkflowWorkspaceSlug(workspaceName)
       : null);
   const canContinue = Boolean(workspaceSlug && workspacePath);
+
+  const selectArtifact = useCallback(
+    (artifactPath: string, label: string) => {
+      if (!(workspaceSlug && workspacePath)) {
+        return;
+      }
+      window.dispatchEvent(
+        new CustomEvent("pm:artifact:selected", {
+          detail: { label, path: artifactPath, workspacePath, workspaceSlug },
+        })
+      );
+    },
+    [workspacePath, workspaceSlug]
+  );
+
+  const dispatchSessionResumeIntent = useCallback((payload: SessionResumeIntent) => {
+    window.dispatchEvent(
+      new CustomEvent("pm:session:resume", {
+        detail: payload,
+      })
+    );
+  }, []);
+
+  const { handleStateUpdate, markWorkspaceChanged, resetPendingSelection } =
+    useWorkspaceTreeAutoSelect({
+      selectedWorkspaceId,
+      workspacePath,
+      workspaceSlug,
+      onSelectArtifact: selectArtifact,
+      onResumeSession: dispatchSessionResumeIntent,
+    });
+
   useEffect(() => {
     if (!selectedWorkspaceId) {
       setExpandedNodes({});
       setWorkflowState(null);
+      resetPendingSelection();
       return;
     }
+    markWorkspaceChanged();
     setExpandedNodes({
       workspace: true,
     });
-  }, [selectedWorkspaceId]);
+  }, [markWorkspaceChanged, resetPendingSelection, selectedWorkspaceId]);
   useEffect(() => {
     if (!selectedWorkspaceId || !workspaceSlug) {
       setWorkflowState(null);
@@ -88,6 +100,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         timer = window.setInterval(loadState, 15_000);
       }
       setWorkflowState(state);
+      handleStateUpdate(state);
     };
     loadState();
     timer = window.setInterval(loadState, 3_000);
@@ -95,7 +108,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [selectedWorkspaceId, workspacePath, workspaceSlug]);
+  }, [handleStateUpdate, selectedWorkspaceId, workspacePath, workspaceSlug]);
   const resolveTreeStatus = (
     status: WorkflowStageStatus,
     blocked: boolean
@@ -113,23 +126,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       return [];
     }
     const session = branch.session;
-    const selectArtifact = (artifactPath: string, label: string) => {
-      if (!(workspaceSlug && workspacePath)) {
-        return;
-      }
-      window.dispatchEvent(
-        new CustomEvent("pm:artifact:selected", {
-          detail: { label, path: artifactPath, workspacePath, workspaceSlug },
-        })
-      );
-    };
-    const dispatchSessionResumeIntent = (payload: SessionResumeIntent) => {
-      window.dispatchEvent(
-        new CustomEvent("pm:session:resume", {
-          detail: payload,
-        })
-      );
-    };
     const nodes: TreeNode[] = [];
     const artifactPath =
       branch.finalPath ?? branch.draftPath ?? branch.questionnairePath;
