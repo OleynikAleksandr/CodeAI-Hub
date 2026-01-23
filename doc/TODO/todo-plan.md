@@ -43,8 +43,8 @@
 1. [DONE] Feat(project-manager): `api.pickFolder()` возвращает `boolean` и диспатчит `pm:workspace:add-requested` (для детерминированного init) — scope: `src/client/project-manager/api.ts`; expected commit message: `feat(project-manager): add workspace picker fallback hooks`
 2. [DONE] Git Commit: `feat(project-manager): add workspace picker fallback hooks` (hash: d54d5edb)
 
-3. [TODO] Feat(project-manager): Add workspace работает без VS Code bridge (fallback: модалка ввода абсолютного пути + optional name) — scope: `src/client/project-manager/components/layout/main-layout.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `feat(project-manager): add add-workspace modal fallback`
-4. [TODO] Git Commit: `feat(project-manager): add add-workspace modal fallback` (hash: TBD)
+3. [DONE] Feat(project-manager): Add workspace работает без VS Code bridge (fallback: модалка ввода абсолютного пути + optional name) — scope: `src/client/project-manager/components/layout/main-layout.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `feat(project-manager): add add-workspace modal fallback`
+4. [DONE] Git Commit: `feat(project-manager): add add-workspace modal fallback` (hash: 5655a1bf)
 
 ### Stream: Worktree init on add
 1. [TODO] Feat(project-manager): init `.codeai-hub/<slug>` через `POST /api/v1/orchestrator/workspace-session` после add/activate workspace — scope: `src/client/project-manager/services/workspace-session-client.ts`, `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `feat(project-manager): init workflow worktree on add workspace`
