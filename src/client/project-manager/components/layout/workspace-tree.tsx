@@ -40,20 +40,24 @@ interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
   readonly workspacePath?: string;
+  readonly workspaceSlug?: string;
 }
 export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   selectedWorkspaceId,
   workspaceName,
   workspacePath,
+  workspaceSlug: resolvedWorkspaceSlug,
 }) => {
   const [expandedNodes, setExpandedNodes] = useState<Readonly<Record<string, boolean>>>({});
   const [workflowState, setWorkflowState] =
     useState<WorkflowStateSnapshot | null>(null);
   const baseIndent = 12;
   const depthIndent = 16 / 1.5;
-  const workspaceSlug = workspaceName && workspaceName.trim().length > 0
-    ? toWorkflowWorkspaceSlug(workspaceName)
-    : null;
+  const workspaceSlug =
+    resolvedWorkspaceSlug ??
+    (workspaceName && workspaceName.trim().length > 0
+      ? toWorkflowWorkspaceSlug(workspaceName)
+      : null);
   const canContinue = Boolean(workspaceSlug && workspacePath);
   useEffect(() => {
     if (!selectedWorkspaceId) {
