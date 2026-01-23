@@ -1,3 +1,7 @@
+## [1.1.478] - 2026-01-23
+### Fixed
+- Project Manager: после Add Workspace новый workspace автоматически становится активным.
+
 ## [1.1.477] - 2026-01-23
 ### Added
 - Project Manager: macOS Finder folder picker для Add Workspace в CEF (fallback ручного ввода пути сохранён).
