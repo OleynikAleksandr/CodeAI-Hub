@@ -8,6 +8,7 @@ export const WorkflowArtifactViewer: React.FC<{
   readonly workspaceSlug: string;
   readonly path: string;
   readonly label: string;
+  readonly refreshKey?: number;
   readonly onClose: () => void;
 }> = (props) => {
   const [content, setContent] = useState<string | null>(null);
@@ -63,7 +64,7 @@ export const WorkflowArtifactViewer: React.FC<{
     return () => {
       cancelled = true;
     };
-  }, [props.path, props.workspacePath, props.workspaceSlug]);
+  }, [props.path, props.refreshKey, props.workspacePath, props.workspaceSlug]);
 
   const showBackButton =
     props.label !== "description.md" &&
