@@ -37,27 +37,32 @@ export const MainLayout: React.FC = () => {
   useEffect(() => {
     const unsubscribe = api.onProjectsUpdate((updatedProjects) => {
       setProjects(updatedProjects);
+      let pendingWorkspaceId: string | undefined;
+      const pendingPath = pendingAddWorkspacePathRef.current;
+      if (pendingPath) {
+        const candidate = updatedProjects.find(
+          (workspace) => workspace.path === pendingPath
+        );
+        if (candidate) {
+          pendingWorkspaceId = candidate.id;
+          pendingAddWorkspacePathRef.current = null;
+          ensureWorkflowWorktree({
+            workspacePath: candidate.path,
+            workspaceSlug: candidate.slug,
+          }).catch(() => {
+            /* best effort */
+          });
+        }
+      }
+
       setSelectedWorkspaceId((current) => {
+        if (pendingWorkspaceId) {
+          return pendingWorkspaceId;
+        }
         if (current && updatedProjects.some((project) => project.id === current)) {
           return current;
         }
         return updatedProjects[0]?.id;
-      });
-
-      const pendingPath = pendingAddWorkspacePathRef.current;
-      if (!pendingPath) {
-        return;
-      }
-      const candidate = updatedProjects.find((workspace) => workspace.path === pendingPath);
-      if (!candidate) {
-        return;
-      }
-      pendingAddWorkspacePathRef.current = null;
-      ensureWorkflowWorktree({
-        workspacePath: candidate.path,
-        workspaceSlug: candidate.slug,
-      }).catch(() => {
-        /* best effort */
       });
     });
 
