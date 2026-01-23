@@ -9,7 +9,7 @@
 ## 1) Проблема
 Project Manager должен уметь работать с несколькими workspace.
 Сейчас UI содержит пункт **Add workspace**, но:
-- в CEF-режиме отсутствует folder picker (VS Code bridge может быть недоступен);
+- в CEF-режиме folder picker доступен только на macOS (Windows/Linux остаются без нативного диалога; VS Code bridge может быть недоступен);
 - добавление workspace не инициализирует “workflow worktree” (`.codeai-hub/<workspaceSlug>/...`);
 - `workspaceSlug` сейчас вычисляется из `workspaceName`, что не гарантирует уникальность (коллизии при одинаковых названиях → смешение состояния/событий).
 
@@ -21,7 +21,7 @@ Project Manager должен уметь работать с нескольким
 
 ## 3) Non-goals (вне MVP)
 - Полноценный `Fork workspace` (git clone / git worktree).
-- Нативный folder picker в CEF Launcher (вместо этого — UI-модалка с вводом пути).
+- Нативный folder picker в CEF Launcher на Windows/Linux (для них остаётся UI-модалка с вводом пути).
 - Авто-детект “корня репозитория” по вложенной папке.
 
 ## 4) Текущее состояние (as-is)
@@ -48,7 +48,8 @@ Project Manager должен уметь работать с нескольким
 ### 5.2 Add workspace (UI)
 Два режима выбора папки:
 - **VS Code bridge доступен**: использовать существующий `projects:pickFolder`.
-- **VS Code bridge недоступен (CEF)**: открыть модалку “Add workspace” с:
+- **CEF macOS**: нативный Finder picker в Launcher с возвратом абсолютного пути через `projects:folderPicked`.
+- **CEF fallback (Windows/Linux)**: модалка “Add workspace” с:
   - input для абсолютного пути;
   - (опционально) input для отображаемого имени;
   - базовой валидацией (не пусто, absolute path).
@@ -72,6 +73,12 @@ Project Manager должен уметь работать с нескольким
 ### 5.4 Переключение workspace и корректное дерево
 - `WorkspaceTree` и все сервисы, где требуется `workspaceSlug`, используют **workspace.slug**, а не производное от имени.
 - Polling `workflow-state` остаётся на выбранном workspace (как сейчас), но ключом становится slug.
+- При смене workspace UI сбрасывает выбранный артефакт/просмотрщик, чтобы не показывать артефакт из другого workspace.
+
+### 5.5 Clean workspace start
+- UI проверяет `workflow-state` выбранного workspace.
+- Если workspace пустой (нет артефактов/continuity и все стадии `idle`), UI автоматически переключается на этап **Description** и открывает анкету описания.
+- Авто-открытие выполняется один раз на каждую активацию workspace (после переключения/возврата).
 
 ## 6) Контракты/изменения API
 - WebSocket сообщения остаются прежними (`projects:add`, `projects:list`, ...), но payload `projects:update` теперь содержит `slug`.
@@ -79,7 +86,7 @@ Project Manager должен уметь работать с нескольким
 
 ## 7) Риски и меры
 - **Коллизии slug в existing installs**: решается миграцией + детерминированным суффиксом.
-- **CEF без folder picker**: решается модалкой с вводом пути.
+- **CEF без folder picker на Windows/Linux**: решается модалкой с вводом пути.
 - **Безопасность**: `workspace-session` уже требует абсолютный путь; UI должен дополнительно валидировать.
 
 ## 8) Verification (manual)
