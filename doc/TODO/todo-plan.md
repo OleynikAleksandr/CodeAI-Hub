@@ -26,3 +26,22 @@
 ### Stream: Verification
 1. [DONE] Gates + builds: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview` — scope: scripts; expected commit message: `chore: verify workflow artifact refresh`
 2. [DONE] Git Commit: `chore: verify workflow artifact refresh` (hash: 150608b7)
+
+---
+
+## Phase 77 — Release 1.1.475 (bugfix: artifact live refresh) (owner: Oleksandr, updated: 2026-01-23)
+
+### Stream: Release notes
+1. [TODO] Docs(changelog): добавить entry для `1.1.475` (artifact panel auto-refresh на `Final_Description.md`) — scope: `CHANGELOG.md`; expected commit message: `docs(changelog): v1.1.475`
+2. [TODO] Git Commit: `docs(changelog): v1.1.475` (hash: TBD)
+
+3. [TODO] Docs: обновить `README.md` и `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под релиз `1.1.475` (версии/артефакты/краткие изменения) — scope: `README.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update release docs for 1.1.475`
+4. [TODO] Git Commit: `docs: update release docs for 1.1.475` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] Release: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests; expected commit message: `chore(release): build next version`
+2. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+
+### Stream: Session report
+1. [TODO] Docs(session): создать отчет `Session049` и обновить `todo-plan.md` с hash/verify — scope: `doc/Sessions/Session049.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session049 release 1.1.475`
+2. [TODO] Git Commit: `docs(session): Session049 release 1.1.475` (hash: TBD)
