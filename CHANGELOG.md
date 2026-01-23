@@ -1,3 +1,11 @@
+## [1.1.476] - 2026-01-23
+### Added
+- Project Manager: Add workspace (CEF-safe) + multi-workspace switching по `workspace.slug`.
+- Project Manager: best-effort worktree init через `POST /api/v1/orchestrator/workspace-session` (создаёт `.codeai-hub/<workspaceSlug>/`).
+
+### Changed
+- Core: registry workspace теперь хранит стабильный `slug` (миграция старых записей и детерминированная уникализация).
+
 ## [1.1.475] - 2026-01-23
 ### Fixed
 - Core: `/api/v1/orchestrator/workflow-events` теперь отражает события workflow watcher (включая `workflow.artifact.written` с `filePath`).
