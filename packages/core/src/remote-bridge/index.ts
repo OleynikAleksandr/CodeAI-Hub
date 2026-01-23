@@ -20,6 +20,7 @@ import { SessionRequestHandler } from "./handlers/session-request-handler";
 import { SettingsRequestHandler } from "./handlers/settings-request-handler";
 import { SystemRequestHandler } from "./handlers/system-request-handler";
 import { WebSocketManager } from "./handlers/websocket-manager";
+import { WorkflowEventsService } from "./handlers/workflow-events-service";
 import {
   type BridgeEvent,
   type CoreStatePayload,
@@ -51,6 +52,7 @@ export class RemoteBridge {
   private readonly getTtlState?: () => CoreTtlState;
   private readonly fileDropService: FileDropService;
   private readonly sessionStorage: UnifiedSessionStorage;
+  private readonly workflowEventsService: WorkflowEventsService;
 
   private readonly projectHandler: ProjectRequestHandler;
   private readonly sessionHandler: SessionRequestHandler;
@@ -83,6 +85,9 @@ export class RemoteBridge {
     this.statusReporter = options.statusReporter;
     this.getTtlState = options.getTtlState;
     this.fileDropService = options.fileDropService;
+    this.workflowEventsService = new WorkflowEventsService({
+      logger: this.logger,
+    });
     this.sessionStorage = new UnifiedSessionStorage({
       workspaceSlug: this.config.claudeProjectSlug,
       logger: this.logger,
@@ -131,6 +136,9 @@ export class RemoteBridge {
       logger: this.logger,
       providerRegistry: this.providerRegistry,
       sessionHandler: this.sessionHandler,
+      onWatcherEvent: (event) => {
+        this.workflowEventsService.record(event);
+      },
     });
 
     this.latestStatus = this.statusReporter.snapshot();
@@ -156,6 +164,7 @@ export class RemoteBridge {
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
       logger: this.logger,
+      workflowEventsService: this.workflowEventsService,
       onWorkspaceSessionCreated: async (workspacePath, workspaceSlug) => {
         await this.workflowRuntime.connectWorkspace({
           workspaceRoot: workspacePath,
