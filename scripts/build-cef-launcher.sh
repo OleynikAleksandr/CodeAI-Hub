@@ -205,7 +205,7 @@ compute_sha1() {
 }
 
 resolve_manifest_version() {
-  node - <<'EOF'
+  node - "$1" "$2" <<'EOF'
 const { readFileSync } = require("node:fs");
 const path = process.argv[1];
 const platformKey = process.argv[2];
