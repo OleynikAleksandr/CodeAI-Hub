@@ -186,6 +186,17 @@ UI устанавливается в `~/.codeai-hub/packages/ui/project-manager/
 - Core: `~/.codeai-hub/logs/core/core.log`
 - Providers: `~/.codeai-hub/logs/<provider>/sdk-<provider>-<sessionId>.jsonl`
 
+### 5.5 Workspaces (Project Manager)
+
+- Список workspace хранится в Core registry `~/.codeai-hub/state/projects.json` и синхронизируется в UI через WebSocket (`projects:list` / `projects:update`).
+- Каждый workspace имеет стабильный `workspaceSlug` (source-of-truth в registry) и используется как ключ для:
+  - путей `.codeai-hub/<workspaceSlug>/...`;
+  - polling `workflow-state` / `workflow-events` в Project Manager.
+- Add workspace:
+  - VS Code bridge: `projects:pickFolder`;
+  - CEF fallback: модалка ввода абсолютного пути;
+  - после add/activate UI делает `POST /api/v1/orchestrator/workspace-session` (best effort), чтобы создать `.codeai-hub/<workspaceSlug>/` и включить watcher.
+
 ---
 
 ## 6. Providers
@@ -224,6 +235,8 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 │   ├── claude/1.1.475/
 │   ├── codex/1.1.475/
 │   └── gemini/1.1.475/
+├── state/
+│   └── projects.json
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceSlug>/<providerId>/<sessionId>.jsonl
