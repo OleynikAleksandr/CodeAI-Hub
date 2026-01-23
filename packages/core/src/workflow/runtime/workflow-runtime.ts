@@ -107,6 +107,7 @@ export class WorkflowRuntime {
   private readonly logger: Logger;
   private readonly providerRegistry: ProviderRegistry;
   private readonly sessionHandler: SessionRequestHandler;
+  private readonly onWatcherEvent?: (event: WorkflowWatcherEvent) => void;
   private readonly descriptionStepStore = new DescriptionStepStore();
   private readonly watchers = new Map<string, WorkflowWatcher>();
   private readonly startingReviewer = new Set<string>();
@@ -116,10 +117,12 @@ export class WorkflowRuntime {
     readonly logger: Logger;
     readonly providerRegistry: ProviderRegistry;
     readonly sessionHandler: SessionRequestHandler;
+    readonly onWatcherEvent?: (event: WorkflowWatcherEvent) => void;
   }) {
     this.logger = options.logger;
     this.providerRegistry = options.providerRegistry;
     this.sessionHandler = options.sessionHandler;
+    this.onWatcherEvent = options.onWatcherEvent;
   }
 
   async connectWorkspace(params: {
@@ -158,6 +161,7 @@ export class WorkflowRuntime {
     });
 
     watcher.subscribe((event) => {
+      this.onWatcherEvent?.(event);
       this.handleWorkflowEvent(params.workspaceRoot, event).catch((error) => {
         this.logger.warn("Workflow runtime handler failed", {
           workspaceSlug: params.workspaceSlug,
