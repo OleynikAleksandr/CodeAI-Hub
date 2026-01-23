@@ -30,6 +30,7 @@
 (ВАЖНО: этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `1e58390c fix(core): record workflow watcher events`
 - `380295bf fix(project-manager): refresh artifact viewer on workflow events`
+- `150608b7 chore: verify workflow artifact refresh`
 
 ---
 
@@ -41,7 +42,6 @@
 3. `doc/Sessions/Session048.md` (THIS REPORT)
 
 ## Plans for next session
-- Зафиксировать docs-commit для Phase 76 verification (и записать hash в `doc/TODO/todo-plan.md`).
 - Быстрый ручной чек в Project Manager:
   - открыть `Final_Description.md` в панели Artifacts;
   - изменить файл на диске (через reviewer или руками) и убедиться, что UI обновляется в течение ~2 секунд.
