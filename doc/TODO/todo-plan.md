@@ -32,15 +32,15 @@
 ## Phase 77 — Release 1.1.475 (bugfix: artifact live refresh) (owner: Oleksandr, updated: 2026-01-23)
 
 ### Stream: Release notes
-1. [TODO] Docs(changelog): добавить entry для `1.1.475` (artifact panel auto-refresh на `Final_Description.md`) — scope: `CHANGELOG.md`; expected commit message: `docs(changelog): v1.1.475`
-2. [TODO] Git Commit: `docs(changelog): v1.1.475` (hash: TBD)
+1. [DONE] Docs(changelog): добавить entry для `1.1.475` (artifact panel auto-refresh на `Final_Description.md`) — scope: `CHANGELOG.md`; expected commit message: `docs(changelog): v1.1.475`
+2. [DONE] Git Commit: `docs(changelog): v1.1.475` (hash: 632d8bd0)
 
-3. [TODO] Docs: обновить `README.md` и `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под релиз `1.1.475` (версии/артефакты/краткие изменения) — scope: `README.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update release docs for 1.1.475`
-4. [TODO] Git Commit: `docs: update release docs for 1.1.475` (hash: TBD)
+3. [DONE] Docs: обновить `README.md` и `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под релиз `1.1.475` (версии/артефакты/краткие изменения) — scope: `README.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update release docs for 1.1.475`
+4. [DONE] Git Commit: `docs: update release docs for 1.1.475` (hash: 67794e57)
 
 ### Stream: Release build
-1. [TODO] Release: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests; expected commit message: `chore(release): build next version`
-2. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+1. [DONE] Release: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests; expected commit message: `chore(release): build next version`
+2. [DONE] Git Commit: `chore(release): build next version` (hash: 8c67ef98)
 
 ### Stream: Session report
 1. [TODO] Docs(session): создать отчет `Session049` и обновить `todo-plan.md` с hash/verify — scope: `doc/Sessions/Session049.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session049 release 1.1.475`
