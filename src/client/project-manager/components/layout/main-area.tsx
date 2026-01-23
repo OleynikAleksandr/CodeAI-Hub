@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
 import { resolveQuestionnairePath } from "../../services/description-questionnaire-utils";
@@ -43,6 +43,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     readonly path: string;
     readonly label: string;
   } | null>(null);
+  const [artifactRefreshKey, setArtifactRefreshKey] = useState<number>(0);
   const [descriptionDocument, setDescriptionDocument] = useState<{
     readonly workspacePath: string;
     readonly workspaceSlug: string;
@@ -83,11 +84,37 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setActiveTool((current) => current ?? "Description");
   }, [activeWorkspace?.id]);
 
-  const handleWorkflowEvents = (events: readonly WorkflowEvent[]) => {
-    if (events.length > 0) {
-      setPreferredSessionId((current) => current ?? null);
-    }
-  };
+  const handleWorkflowEvents = useCallback(
+    (events: readonly WorkflowEvent[]) => {
+      if (events.length > 0) {
+        setPreferredSessionId((current) => current ?? null);
+      }
+
+      if (!selectedArtifact) {
+        return;
+      }
+
+      const normalizedSelectedPath = selectedArtifact.path.replace(/\\/g, "/");
+      const needsRefresh = events.some((event) => {
+        if (event.type !== "workflow.artifact.written") {
+          return false;
+        }
+        if (event.workspaceSlug !== selectedArtifact.workspaceSlug) {
+          return false;
+        }
+        if (!event.filePath) {
+          return true;
+        }
+        const normalizedFilePath = event.filePath.replace(/\\/g, "/");
+        return normalizedSelectedPath.endsWith(normalizedFilePath);
+      });
+
+      if (needsRefresh) {
+        setArtifactRefreshKey((current) => current + 1);
+      }
+    },
+    [selectedArtifact]
+  );
 
   useEffect(() => {
     if (!activeWorkspace?.name) {
@@ -102,11 +129,12 @@ export const MainArea: React.FC<MainAreaProps> = ({
       httpUrl,
       workspaceSlug,
       onEvents: handleWorkflowEvents,
+      intervalMs: selectedArtifact ? 2_000 : 10_000,
     });
     return () => {
       unsubscribe();
     };
-  }, [activeWorkspace?.name]);
+  }, [activeWorkspace?.name, handleWorkflowEvents, selectedArtifact]);
 
   useEffect(() => {
     if (!activeWorkspace?.name || !activeWorkspace.path) {
@@ -222,11 +250,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
 
   return (
     <main className="pm-main-area">
-      <Toolbar
-        activeTool={activeTool ?? undefined}
-        onToolSelect={setActiveTool}
-        tools={tools}
-      />
+      <Toolbar activeTool={activeTool ?? undefined} onToolSelect={setActiveTool} tools={tools} />
       <PanelContainer
         artifactContent={
           showArtifactViewer && selectedArtifact ? (
@@ -234,6 +258,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
               label={selectedArtifact.label}
               onClose={() => setSelectedArtifact(null)}
               path={selectedArtifact.path}
+              refreshKey={artifactRefreshKey}
               workspacePath={selectedArtifact.workspacePath}
               workspaceSlug={selectedArtifact.workspaceSlug}
             />
@@ -245,17 +270,11 @@ export const MainArea: React.FC<MainAreaProps> = ({
               workspacePath={activeWorkspace?.path}
             />
           ) : showVirtualSimulation ? (
-            <div className="pm-placeholder">
-              Шаг Virtual Simulation пока не подключен.
-            </div>
+            <div className="pm-placeholder">Шаг Virtual Simulation пока не подключен.</div>
           ) : showDiagramModules ? (
-            <div className="pm-placeholder">
-              Шаг Diagram Modules пока не подключен.
-            </div>
+            <div className="pm-placeholder">Шаг Diagram Modules пока не подключен.</div>
           ) : showDiagramFacades ? (
-            <div className="pm-placeholder">
-              Шаг Diagram Facades пока не подключен.
-            </div>
+            <div className="pm-placeholder">Шаг Diagram Facades пока не подключен.</div>
           ) : (
             <div className="pm-placeholder">Artifacts will appear here.</div>
           )
@@ -269,9 +288,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
         }
         sizes={sizes}
       />
-      <StatusBar
-        workspaceName={activeWorkspace?.name}
-      />
+      <StatusBar workspaceName={activeWorkspace?.name} />
     </main>
   );
 };
