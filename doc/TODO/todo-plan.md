@@ -62,4 +62,4 @@
 2. [DONE] Git Commit: `docs: document project-manager add-workspace` (hash: 7652498f)
 
 3. [DONE] Verification: прогнать гейты + таргетные сборки (`npm run build:core`, `npm run build:project-manager`, при необходимости `npm run typecheck:webview`) — scope: scripts; expected commit message: `chore: verify add workspace feature`
-4. [TODO] Git Commit: `chore: verify add workspace feature` (hash: TBD)
+4. [DONE] Git Commit: `chore: verify add workspace feature` (hash: aa770fdd)
