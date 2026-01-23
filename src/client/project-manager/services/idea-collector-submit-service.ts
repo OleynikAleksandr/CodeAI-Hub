@@ -239,6 +239,7 @@ const createIdeaCollectorSession = async (params: {
 export class IdeaCollectorSubmitService {
   async submitQuestionnaire(params: {
     readonly workspaceName?: string;
+    readonly workspaceSlug?: string;
     readonly workspacePath: string;
     readonly questionnairePath: string;
     readonly stage?: WorkflowStageId;
@@ -248,7 +249,10 @@ export class IdeaCollectorSubmitService {
       name: params.workspaceName,
       path: params.workspacePath,
     });
-    const initiativeSlug = toWorkspaceSlug(workspaceName);
+    const initiativeSlug =
+      typeof params.workspaceSlug === "string" && params.workspaceSlug.trim().length > 0
+        ? params.workspaceSlug.trim()
+        : toWorkspaceSlug(workspaceName);
     const stage = params.stage ?? "description";
     const session = await createIdeaCollectorSession({
       workspacePath: params.workspacePath,

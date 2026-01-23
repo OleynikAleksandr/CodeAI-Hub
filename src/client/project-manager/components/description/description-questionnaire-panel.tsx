@@ -62,6 +62,11 @@ export const DescriptionQuestionnairePanel: React.FC<
       ? workspaceName.trim()
       : "Workspace";
 
+  const resolvedWorkspaceSlug =
+    typeof workspaceSlug === "string" && workspaceSlug.trim().length > 0
+      ? workspaceSlug.trim()
+      : toWorkflowWorkspaceSlug(resolvedWorkspaceName);
+
   const canLoad =
     typeof workspacePath === "string" && workspacePath.trim().length > 0;
 
@@ -76,7 +81,11 @@ export const DescriptionQuestionnairePanel: React.FC<
 
     setPanelState({ status: "loading" });
     service
-      .load({ name: resolvedWorkspaceName, path: workspacePath })
+      .load({
+        name: resolvedWorkspaceName,
+        path: workspacePath,
+        slug: resolvedWorkspaceSlug,
+      })
       .then((result) => {
         if (cancelled) {
           return;
@@ -104,7 +113,7 @@ export const DescriptionQuestionnairePanel: React.FC<
     return () => {
       cancelled = true;
     };
-  }, [canLoad, resolvedWorkspaceName, workspacePath]);
+  }, [canLoad, resolvedWorkspaceName, resolvedWorkspaceSlug, workspacePath]);
 
   const title = useMemo(
     () => `Анкета описания — ${resolvedWorkspaceName}`,
@@ -161,6 +170,7 @@ export const DescriptionQuestionnairePanel: React.FC<
       );
       const sessionId = await ideaCollectorRef.current.submitQuestionnaire({
         workspaceName: resolvedWorkspaceName,
+        workspaceSlug: resolvedWorkspaceSlug,
         workspacePath: workspacePath ?? "",
         questionnairePath: panelState.questionnairePath,
         stage: "description",
@@ -168,14 +178,13 @@ export const DescriptionQuestionnairePanel: React.FC<
       });
       onIdeaSessionCreated?.(sessionId);
       if (workspacePath) {
-        const resolvedSlug = workspaceSlug ?? toWorkflowWorkspaceSlug(resolvedWorkspaceName);
         window.dispatchEvent(
           new CustomEvent("pm:artifact:selected", {
             detail: {
               label: "questionnaire.md",
               path: panelState.questionnairePath,
               workspacePath,
-              workspaceSlug: resolvedSlug,
+              workspaceSlug: resolvedWorkspaceSlug,
             },
           })
         );

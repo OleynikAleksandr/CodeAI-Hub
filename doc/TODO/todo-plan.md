@@ -51,8 +51,8 @@
 2. [DONE] Git Commit: `feat(project-manager): init workflow worktree on add workspace` (hash: 2bef80ba)
 
 ### Stream: Questionnaire + IdeaCollector use stable slug
-1. [TODO] Fix(project-manager): `DescriptionQuestionnaireService` использует `workspace.slug` для `initiativeSlug` и пути анкеты — scope: `src/client/project-manager/services/description-questionnaire-utils.ts`, `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `fix(project-manager): use workspace slug in questionnaire service`
-2. [TODO] Git Commit: `fix(project-manager): use workspace slug in questionnaire service` (hash: TBD)
+1. [DONE] Fix(project-manager): `DescriptionQuestionnaireService` использует `workspace.slug` для `initiativeSlug` и пути анкеты — scope: `src/client/project-manager/services/description-questionnaire-utils.ts`, `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `fix(project-manager): use workspace slug in questionnaire service`
+2. [DONE] Git Commit: `fix(project-manager): use workspace slug in questionnaire service` (hash: a8093fd8)
 
 3. [TODO] Fix(project-manager): `IdeaCollectorSubmitService` и `DescriptionQuestionnairePanel` прокидывают `workspaceSlug` и используют его для артефактов/сессий — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit message: `fix(project-manager): use workspace slug in idea collector`
 4. [TODO] Git Commit: `fix(project-manager): use workspace slug in idea collector` (hash: TBD)
