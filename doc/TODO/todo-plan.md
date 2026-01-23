@@ -22,8 +22,8 @@
 2. [DONE] Git Commit: `docs(todo): start Phase 78 plan` (hash: fe39a731)
 
 ### Stream: Design (approved)
-1. [TODO] Docs: добавить и утвердить архитектуру Add Workspace (MVP) — scope: `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs(project-manager): add add-workspace architecture`
-2. [TODO] Git Commit: `docs(project-manager): add add-workspace architecture` (hash: TBD)
+1. [DONE] Docs: добавить и утвердить архитектуру Add Workspace (MVP) — scope: `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs(project-manager): add add-workspace architecture`
+2. [DONE] Git Commit: `docs(project-manager): add add-workspace architecture` (hash: 00009a17)
 
 ### Stream: Core workspace registry (slug source-of-truth)
 1. [TODO] Feat(core): добавить `WorkspaceProject.slug` в registry + миграцию старых `projects.json` без slug — scope: `packages/core/src/services/project-registry/types.ts`, `packages/core/src/services/project-registry/project-registry.ts`; expected commit message: `feat(core): persist workspace slugs in registry`
