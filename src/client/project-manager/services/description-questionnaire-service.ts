@@ -153,10 +153,13 @@ const ensureWorkspaceSession = async (
 export class DescriptionQuestionnaireService {
   async load(workspace: WorkspaceInfo): Promise<QuestionnaireLoadResult> {
     const workspaceName = resolveWorkspaceName(workspace);
-    const initiativeSlug = toWorkspaceSlug(workspaceName);
+    const workspaceSlug =
+      typeof workspace.slug === "string" && workspace.slug.trim().length > 0
+        ? workspace.slug.trim()
+        : toWorkspaceSlug(workspaceName);
     const sessionId = await ensureWorkspaceSession(
       workspace.path,
-      initiativeSlug
+      workspaceSlug
     );
     if (!sessionId) {
       return { status: "error" };
@@ -166,7 +169,7 @@ export class DescriptionQuestionnaireService {
     const { questions, placeholders } =
       parseIdeaQuestionnaireTemplateFields(template);
 
-    const questionnairePath = resolveQuestionnairePath(workspaceName);
+    const questionnairePath = resolveQuestionnairePath(workspaceSlug);
     const existing = await readWorkspaceFile(sessionId, questionnairePath);
     const existingContent =
       existing.status === "ok" ? existing.file.content : null;

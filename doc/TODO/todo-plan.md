@@ -47,8 +47,8 @@
 4. [DONE] Git Commit: `feat(project-manager): add add-workspace modal fallback` (hash: 5655a1bf)
 
 ### Stream: Worktree init on add
-1. [TODO] Feat(project-manager): init `.codeai-hub/<slug>` через `POST /api/v1/orchestrator/workspace-session` после add/activate workspace — scope: `src/client/project-manager/services/workspace-session-client.ts`, `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `feat(project-manager): init workflow worktree on add workspace`
-2. [TODO] Git Commit: `feat(project-manager): init workflow worktree on add workspace` (hash: TBD)
+1. [DONE] Feat(project-manager): init `.codeai-hub/<slug>` через `POST /api/v1/orchestrator/workspace-session` после add/activate workspace — scope: `src/client/project-manager/services/workspace-session-client.ts`, `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `feat(project-manager): init workflow worktree on add workspace`
+2. [DONE] Git Commit: `feat(project-manager): init workflow worktree on add workspace` (hash: 2bef80ba)
 
 ### Stream: Questionnaire + IdeaCollector use stable slug
 1. [TODO] Fix(project-manager): `DescriptionQuestionnaireService` использует `workspace.slug` для `initiativeSlug` и пути анкеты — scope: `src/client/project-manager/services/description-questionnaire-utils.ts`, `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `fix(project-manager): use workspace slug in questionnaire service`
