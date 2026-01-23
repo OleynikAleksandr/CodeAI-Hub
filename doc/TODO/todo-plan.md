@@ -40,8 +40,8 @@
 6. [DONE] Git Commit: `fix(project-manager): use workspace slug in main area` (hash: 27180e19)
 
 ### Stream: Add workspace UI (CEF-safe)
-1. [TODO] Feat(project-manager): `api.pickFolder()` возвращает `boolean` и диспатчит `pm:workspace:add-requested` (для детерминированного init) — scope: `src/client/project-manager/api.ts`; expected commit message: `feat(project-manager): add workspace picker fallback hooks`
-2. [TODO] Git Commit: `feat(project-manager): add workspace picker fallback hooks` (hash: TBD)
+1. [DONE] Feat(project-manager): `api.pickFolder()` возвращает `boolean` и диспатчит `pm:workspace:add-requested` (для детерминированного init) — scope: `src/client/project-manager/api.ts`; expected commit message: `feat(project-manager): add workspace picker fallback hooks`
+2. [DONE] Git Commit: `feat(project-manager): add workspace picker fallback hooks` (hash: d54d5edb)
 
 3. [TODO] Feat(project-manager): Add workspace работает без VS Code bridge (fallback: модалка ввода абсолютного пути + optional name) — scope: `src/client/project-manager/components/layout/main-layout.tsx`, `packages/ui/project-manager/styles.css`; expected commit message: `feat(project-manager): add add-workspace modal fallback`
 4. [TODO] Git Commit: `feat(project-manager): add add-workspace modal fallback` (hash: TBD)
