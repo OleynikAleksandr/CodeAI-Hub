@@ -2,17 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.474
+## Current Release — v1.1.475
+- **Artifacts live refresh**: Project Manager авто‑обновляет открытый артефакт при изменении файла на диске (в т.ч. `Final_Description.md`).
 - **Continuity chains (lazy)**: `chain.json` создаётся только при первом outbound сообщении в провайдера (пассивное открытие сессии не плодит новые roots).
 - **Session labels**: для `description` сессий таб/дерево показывают `Description <Provider>` и `Reviewer <Provider>` (например `Description Codex`), без `Agent Codex` и без `session · codexCli`.
-- **Release 1.1.474**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+- **Release 1.1.475**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.474.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.474.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.474.tar.bz2`
-  - Providers: `claude-module-1.1.474.tar.bz2`, `codex-module-1.1.474.tar.bz2`, `gemini-module-1.1.474.tar.bz2`
-  - UI: `vscode-webview-1.1.474.tar.bz2`, `project-manager-1.1.474.tar.bz2`
+  - VSIX: `codeai-hub-1.1.475.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.475.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.475.tar.bz2`
+  - Providers: `claude-module-1.1.475.tar.bz2`, `codex-module-1.1.475.tar.bz2`, `gemini-module-1.1.475.tar.bz2`
+  - UI: `vscode-webview-1.1.475.tar.bz2`, `project-manager-1.1.475.tar.bz2`
   - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/description-agent`, `@codeai-hub/idea-collector`
 
 ## Features
