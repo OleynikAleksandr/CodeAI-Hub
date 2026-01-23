@@ -1,3 +1,12 @@
+## [1.1.477] - 2026-01-23
+### Added
+- Project Manager: macOS Finder folder picker для Add Workspace в CEF (fallback ручного ввода пути сохранён).
+- Project Manager: авто-открытие анкеты описания для пустого workspace.
+
+### Fixed
+- Project Manager: сброс артефакта и состояния анкеты при смене workspace.
+- Scripts: build CEF launcher читает версию из manifest.
+
 ## [1.1.476] - 2026-01-23
 ### Added
 - Project Manager: Add workspace (CEF-safe) + multi-workspace switching по `workspace.slug`.
