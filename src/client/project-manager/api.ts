@@ -28,6 +28,10 @@ type VscodeBridge = {
   postMessage: (message: unknown) => void;
 };
 
+type LauncherBridge = {
+  pickFolder: () => boolean;
+};
+
 const resolveVscodeBridge = (): VscodeBridge | null => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const acquire = (window as any).acquireVsCodeApi;
@@ -43,6 +47,15 @@ const resolveVscodeBridge = (): VscodeBridge | null => {
     return null;
   }
   return null;
+};
+
+const resolveLauncherBridge = (): LauncherBridge | null => {
+  const globalScope = window as Window & { codeaiLauncher?: LauncherBridge };
+  const bridge = globalScope.codeaiLauncher;
+  if (!bridge || typeof bridge.pickFolder !== "function") {
+    return null;
+  }
+  return bridge;
 };
 
 const vscode = resolveVscodeBridge();
@@ -124,6 +137,10 @@ export class ProjectManagerApi {
     if (vscode?.postMessage) {
       vscode.postMessage({ type: "projects:pickFolder" });
       return true;
+    }
+    const launcher = resolveLauncherBridge();
+    if (launcher) {
+      return launcher.pickFolder();
     }
     console.warn("[ProjectManagerApi] No folder picker available.");
     return false;
