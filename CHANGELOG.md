@@ -1,3 +1,8 @@
+## [1.1.475] - 2026-01-23
+### Fixed
+- Core: `/api/v1/orchestrator/workflow-events` теперь отражает события workflow watcher (включая `workflow.artifact.written` с `filePath`).
+- Project Manager: авто-обновление открытого артефакта при изменении файла на диске (в т.ч. `.codeai-hub/.../description/Final_Description.md`).
+
 ## [1.1.474] - 2026-01-22
 ### Fixed
 - Session UI: show `Description <Provider>` for Description agent sessions; align Project Manager tree labels with tabs.
