@@ -25,4 +25,4 @@
 
 ### Stream: Verification
 1. [DONE] Gates + builds: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview` — scope: scripts; expected commit message: `chore: verify workflow artifact refresh`
-2. [TODO] Git Commit: `chore: verify workflow artifact refresh` (hash: TBD)
+2. [DONE] Git Commit: `chore: verify workflow artifact refresh` (hash: 150608b7)
