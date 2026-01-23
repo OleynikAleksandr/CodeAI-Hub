@@ -1,14 +1,15 @@
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
-import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
+import { isEmptyWorkflowState } from "../../services/workflow-state-helpers";
 import {
   startWorkflowEventPolling,
   type WorkflowEvent,
 } from "../../services/workflow-events-client";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
+import { resolveWorkspaceSlug } from "./main-area-utils";
 import { PanelContainer } from "./panel-container";
 import { StatusBar } from "./status-bar";
 import { Toolbar } from "./toolbar";
@@ -19,19 +20,6 @@ interface MainAreaProps {
   onSizeChange: (index: 0, delta: number, containerWidth: number) => void;
   activeWorkspace?: WorkspaceProject;
 }
-
-const resolveWorkspaceSlug = (workspace?: WorkspaceProject): string | null => {
-  if (!workspace) {
-    return null;
-  }
-  if (workspace.slug && workspace.slug.trim().length > 0) {
-    return workspace.slug.trim();
-  }
-  if (workspace.name && workspace.name.trim().length > 0) {
-    return toWorkflowWorkspaceSlug(workspace.name);
-  }
-  return null;
-};
 
 /**
  * Main area component (Section 2)
@@ -49,6 +37,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const [artifactRefreshKey, setArtifactRefreshKey] = useState(0);
   const [descriptionDocument, setDescriptionDocument] = useState<{ readonly workspacePath: string; readonly workspaceSlug: string; readonly path: string; readonly label: "description.md" | "Final_Description.md" } | null>(null);
   const [questionnaireDocument, setQuestionnaireDocument] = useState<{ readonly workspacePath: string; readonly workspaceSlug: string; readonly path: string; readonly label: "questionnaire.md" } | null>(null);
+  const autoOpenedWorkspaceRef = useRef<string | null>(null);
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -67,11 +56,13 @@ export const MainArea: React.FC<MainAreaProps> = ({
   }, []);
 
   useEffect(() => {
+    setPreferredSessionId(null);
+    setSelectedArtifact(null);
+    setDescriptionDocument(null);
+    setQuestionnaireDocument(null);
+    autoOpenedWorkspaceRef.current = null;
     if (!activeWorkspace) {
       setActiveTool(null);
-      setPreferredSessionId(null);
-      setSelectedArtifact(null);
-      setQuestionnaireDocument(null);
       return;
     }
     setActiveTool((current) => current ?? "Description");
@@ -195,6 +186,14 @@ export const MainArea: React.FC<MainAreaProps> = ({
           ? { ...nextQuestionnaire, workspacePath, workspaceSlug }
           : null
       );
+
+      if (
+        isEmptyWorkflowState(state) &&
+        autoOpenedWorkspaceRef.current !== workspaceSlug
+      ) {
+        autoOpenedWorkspaceRef.current = workspaceSlug;
+        setActiveTool("Description");
+      }
     };
 
     loadState();
