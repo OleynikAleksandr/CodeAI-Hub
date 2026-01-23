@@ -41,3 +41,17 @@
 
 15. [DONE] Verification: прогнать гейты + таргетные сборки `npm run build:project-manager` и `./scripts/build-cef-launcher.sh` (macOS) — scope: scripts; expected commit message: `chore: verify add-workspace ux fixes`
 16. [DONE] Git Commit: `chore: verify add-workspace ux fixes` (hash: 583b3cf8)
+
+---
+
+## Phase 80 — Project Manager: auto-select added workspace (owner: Oleksandr, updated: 2026-01-23)
+
+### Stream: add workspace auto-select
+1. [DONE] Fix(project-manager): после Add Workspace автоматически выбирать добавленный workspace — scope: `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `fix(project-manager): auto-select added workspace`
+2. [DONE] Git Commit: `fix(project-manager): auto-select added workspace` (hash: f5ed100d)
+
+3. [DONE] Docs: обновить архитектуру под auto-select при Add Workspace — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document auto-select on add workspace`
+4. [DONE] Git Commit: `docs: document auto-select on add workspace` (hash: d2b8d76b)
+
+5. [DONE] Verification: прогнать гейты + таргетную сборку `npm run build:project-manager` — scope: scripts; expected commit message: `chore: verify auto-select add workspace`
+6. [DONE] Git Commit: `chore: verify auto-select add workspace` (hash: d804b32e)
