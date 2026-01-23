@@ -8,7 +8,8 @@
 class LauncherHandler : public CefClient,
                          public CefDisplayHandler,
                          public CefLifeSpanHandler,
-                         public CefLoadHandler {
+                         public CefLoadHandler,
+                         public CefRequestHandler {
  public:
   explicit LauncherHandler(bool use_views_style);
   ~LauncherHandler() override;
@@ -19,6 +20,7 @@ class LauncherHandler : public CefClient,
   CefRefPtr<CefDisplayHandler> GetDisplayHandler() override { return this; }
   CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override { return this; }
   CefRefPtr<CefLoadHandler> GetLoadHandler() override { return this; }
+  CefRefPtr<CefRequestHandler> GetRequestHandler() override { return this; }
 
   // CefDisplayHandler methods.
   void OnTitleChange(CefRefPtr<CefBrowser> browser,
@@ -35,6 +37,16 @@ class LauncherHandler : public CefClient,
                    ErrorCode errorCode,
                    const CefString& errorText,
                    const CefString& failedUrl) override;
+  void OnLoadEnd(CefRefPtr<CefBrowser> browser,
+                 CefRefPtr<CefFrame> frame,
+                 int httpStatusCode) override;
+
+  // CefRequestHandler methods.
+  bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
+                      CefRefPtr<CefFrame> frame,
+                      CefRefPtr<CefRequest> request,
+                      bool user_gesture,
+                      bool is_redirect) override;
 
   void ShowMainWindow();
   void CloseAllBrowsers(bool force_close);

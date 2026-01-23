@@ -2,6 +2,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#include <string>
+
 #import "window_state_persistence.h"
 #import "window_state_tracker.h"
 
@@ -17,6 +19,37 @@ NSWindow* GetWindowForBrowser(CefRefPtr<CefBrowser> browser) {
 }
 
 }  // namespace
+
+bool PickFolderFromFinder(std::string* out_path) {
+  if (!out_path) {
+    return false;
+  }
+
+  NSOpenPanel* panel = [NSOpenPanel openPanel];
+  [panel setCanChooseFiles:NO];
+  [panel setCanChooseDirectories:YES];
+  [panel setAllowsMultipleSelection:NO];
+  [panel setCanCreateDirectories:YES];
+  [panel setPrompt:@"Select"];
+
+  const NSInteger result = [panel runModal];
+  if (result != NSModalResponseOK) {
+    return false;
+  }
+
+  NSURL* url = [panel URL];
+  if (!url) {
+    return false;
+  }
+
+  const char* path = [[url path] fileSystemRepresentation];
+  if (!path) {
+    return false;
+  }
+
+  *out_path = std::string(path);
+  return true;
+}
 
 void LauncherHandler::PlatformTitleChange(CefRefPtr<CefBrowser> browser,
                                           const CefString& title) {
