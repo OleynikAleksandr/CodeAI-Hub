@@ -1,7 +1,8 @@
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../../api";
 import { usePanelSizes } from "../../hooks/use-panel-sizes";
+import { ensureWorkflowWorktree } from "../../services/workspace-session-client";
 import type { WorkspaceProject } from "../../types";
 import { MainArea } from "./main-area";
 import { Sidebar } from "./sidebar";
@@ -15,6 +16,10 @@ const isAbsolutePath = (value: string): boolean => {
   );
 };
 
+type AddWorkspaceRequestedDetail = {
+  readonly path: string;
+};
+
 /**
  * Main layout component (Grid container for Section 1 + Section 2)
  */
@@ -26,6 +31,8 @@ export const MainLayout: React.FC = () => {
   const [addWorkspacePath, setAddWorkspacePath] = useState("");
   const [addWorkspaceName, setAddWorkspaceName] = useState("");
   const [addWorkspaceError, setAddWorkspaceError] = useState<string | null>(null);
+  const pendingAddWorkspacePathRef = useRef<string | null>(null);
+  const initializedWorkspacesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const unsubscribe = api.onProjectsUpdate((updatedProjects) => {
@@ -36,12 +43,43 @@ export const MainLayout: React.FC = () => {
         }
         return updatedProjects[0]?.id;
       });
+
+      const pendingPath = pendingAddWorkspacePathRef.current;
+      if (!pendingPath) {
+        return;
+      }
+      const candidate = updatedProjects.find((workspace) => workspace.path === pendingPath);
+      if (!candidate) {
+        return;
+      }
+      pendingAddWorkspacePathRef.current = null;
+      ensureWorkflowWorktree({
+        workspacePath: candidate.path,
+        workspaceSlug: candidate.slug,
+      }).catch(() => {
+        /* best effort */
+      });
     });
 
     api.connect();
 
     return () => {
       unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<AddWorkspaceRequestedDetail>).detail;
+      if (!detail || typeof detail.path !== "string") {
+        return;
+      }
+      pendingAddWorkspacePathRef.current = detail.path;
+    };
+
+    window.addEventListener("pm:workspace:add-requested", handler);
+    return () => {
+      window.removeEventListener("pm:workspace:add-requested", handler);
     };
   }, []);
 
@@ -56,6 +94,25 @@ export const MainLayout: React.FC = () => {
   };
 
   const activeWorkspace = projects.find((p) => p.id === selectedWorkspaceId);
+
+  useEffect(() => {
+    if (!activeWorkspace) {
+      return;
+    }
+    if (initializedWorkspacesRef.current.has(activeWorkspace.id)) {
+      return;
+    }
+    ensureWorkflowWorktree({
+      workspacePath: activeWorkspace.path,
+      workspaceSlug: activeWorkspace.slug,
+    })
+      .then(() => {
+        initializedWorkspacesRef.current.add(activeWorkspace.id);
+      })
+      .catch(() => {
+        /* best effort */
+      });
+  }, [activeWorkspace?.id]);
 
   return (
     <div className="pm-layout">
@@ -89,6 +146,7 @@ export const MainLayout: React.FC = () => {
                   setAddWorkspaceError("Path must be absolute.");
                   return;
                 }
+                pendingAddWorkspacePathRef.current = resolvedPath;
                 api.addProject(
                   resolvedPath,
                   resolvedName.length > 0 ? resolvedName : undefined
