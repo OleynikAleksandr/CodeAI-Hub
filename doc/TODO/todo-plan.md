@@ -30,8 +30,8 @@
 2. [DONE] Git Commit: `feat(core): persist workspace slugs in registry` (hash: bbbb70ab)
 
 ### Stream: Project Manager uses slug (no name-derived collisions)
-1. [TODO] Fix(project-manager): `Sidebar` прокидывает `workspaceSlug` в `WorkspaceTree` (и дерево использует slug, если он есть) — scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): use workspace slugs in tree`
-2. [TODO] Git Commit: `fix(project-manager): use workspace slugs in tree` (hash: TBD)
+1. [DONE] Fix(project-manager): `Sidebar` прокидывает `workspaceSlug` в `WorkspaceTree` (и дерево использует slug, если он есть) — scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(project-manager): use workspace slugs in tree`
+2. [DONE] Git Commit: `fix(project-manager): use workspace slugs in tree` (hash: e5a46680)
 
 3. [TODO] Fix(project-manager): расширить `WorkspaceProject` тип полем `slug` (UI) — scope: `src/client/project-manager/types.ts`; expected commit message: `fix(project-manager): include workspace slug in ui types`
 4. [TODO] Git Commit: `fix(project-manager): include workspace slug in ui types` (hash: TBD)
