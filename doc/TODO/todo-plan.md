@@ -58,8 +58,8 @@
 4. [DONE] Git Commit: `fix(project-manager): use workspace slug in idea collector` (hash: 2b985f73)
 
 ### Stream: Docs sync + verification
-1. [TODO] Docs: обновить `SystemArchitecture.md` под Add Workspace (кратко: slug, modal fallback, worktree init) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: document project-manager add-workspace`
-2. [TODO] Git Commit: `docs: document project-manager add-workspace` (hash: TBD)
+1. [DONE] Docs: обновить `SystemArchitecture.md` под Add Workspace (кратко: slug, modal fallback, worktree init) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: document project-manager add-workspace`
+2. [DONE] Git Commit: `docs: document project-manager add-workspace` (hash: 7652498f)
 
-3. [TODO] Verification: прогнать гейты + таргетные сборки (`npm run build:core`, `npm run build:project-manager`, при необходимости `npm run typecheck:webview`) — scope: scripts; expected commit message: `chore: verify add workspace feature`
+3. [DONE] Verification: прогнать гейты + таргетные сборки (`npm run build:core`, `npm run build:project-manager`, при необходимости `npm run typecheck:webview`) — scope: scripts; expected commit message: `chore: verify add workspace feature`
 4. [TODO] Git Commit: `chore: verify add workspace feature` (hash: TBD)
