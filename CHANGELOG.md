@@ -1,3 +1,11 @@
+## [1.1.482] - 2026-02-01
+### Added
+- Claude: real-time context window usage reporting (tokens `used / total` + `remaining%`) for sessions.
+- Claude: Settings → Session Continuity threshold (default: 30% remaining) to auto-trigger session wrap/handoff.
+
+### Changed
+- Session UI: token percent now shows **remaining** context window percentage.
+
 ## [1.1.481] - 2026-02-01
 ### Fixed
 - Project Manager: анкета описания остаётся редактируемой до отправки (при возврате в workspace не открывается как read-only `questionnaire.md`).

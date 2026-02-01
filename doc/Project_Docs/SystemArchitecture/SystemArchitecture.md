@@ -112,6 +112,7 @@ Node.js сервис (`@codeai-hub/core@1.1.481`), упакованный как
 Для долгоживущих workflow-сессий в системе нужен механизм непрерывности: при исчерпании контекстного бюджета модель должна автоматически сформировать handoff-отчёт, после чего Core создаёт новую сессию и продолжает работу, подавая отчёт как входной контекст.
 
 Архитектура: `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`.
+Порог запуска handoff рассчитывается по token usage (used/limit) и может быть настроен per-provider (например, Claude: remaining% threshold, default 30%).
 
 ---
 
