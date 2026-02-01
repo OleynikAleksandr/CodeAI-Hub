@@ -8,6 +8,7 @@ import {
 } from "@codeai-hub/unified-session";
 import type { Session, SessionMessage } from "../session-manager";
 import type { Logger } from "../telemetry/logger";
+import { listUnifiedSessionWorkspaceSlugs } from "./workspace-slugs";
 
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 const sanitizeSessionId = (value: string): string =>
@@ -15,6 +16,7 @@ const sanitizeSessionId = (value: string): string =>
 
 type PendingSession = {
   readonly providerId: string;
+  readonly workspaceSlug: string;
   providerSessionId?: string;
   writer?: UnifiedSessionWriter;
   writerSessionId?: string;
@@ -23,11 +25,8 @@ type PendingSession = {
 
 export class UnifiedSessionStorage {
   private readonly logger: Logger;
-
-  private readonly workspaceSlug: string;
-
+  private readonly defaultWorkspaceSlug: string;
   private readonly rootDirectory: string;
-
   private readonly sessions = new Map<string, PendingSession>();
 
   constructor(options: {
@@ -36,21 +35,29 @@ export class UnifiedSessionStorage {
     readonly logger: Logger;
   }) {
     this.logger = options.logger;
-    this.workspaceSlug = options.workspaceSlug
+    this.defaultWorkspaceSlug = options.workspaceSlug
       ? sanitizeWorkspaceSlug(options.workspaceSlug)
       : "default-workspace";
     this.rootDirectory = options.rootDirectory ?? SESSION_ROOT;
   }
 
   register(session: Session): void {
+    const workspaceSlug =
+      sanitizeWorkspaceSlug(session.workspacePath) || this.defaultWorkspaceSlug;
     const entry: PendingSession = {
       providerId: session.providerId,
+      workspaceSlug,
       providerSessionId: session.providerSessionId,
       queue: [],
     };
     this.sessions.set(session.id, entry);
     if (session.providerSessionId) {
-      this.initializeWriter(session.id, entry, session.providerSessionId);
+      this.initializeWriter(
+        session.id,
+        entry,
+        workspaceSlug,
+        session.providerSessionId
+      );
     }
   }
 
@@ -63,7 +70,12 @@ export class UnifiedSessionStorage {
       return;
     }
     entry.providerSessionId = providerSessionId;
-    this.initializeWriter(sessionId, entry, providerSessionId);
+    this.initializeWriter(
+      sessionId,
+      entry,
+      entry.workspaceSlug,
+      providerSessionId
+    );
   }
 
   appendMessage(sessionId: string, message: SessionMessage): void {
@@ -130,33 +142,54 @@ export class UnifiedSessionStorage {
     }
 
     const sanitizedProviderSessionId = sanitizeSessionId(providerSessionId);
-    const filePath = buildSessionFilePath({
+    const preferredWorkspaceSlug =
+      entry?.workspaceSlug ||
+      sanitizeWorkspaceSlug(session.workspacePath) ||
+      this.defaultWorkspaceSlug;
+    const workspaceSlugs = await listUnifiedSessionWorkspaceSlugs({
       rootDirectory: this.rootDirectory,
-      workspaceSlug: this.workspaceSlug,
-      provider: session.providerId,
-      sessionId: sanitizedProviderSessionId,
+      logger: this.logger,
     });
+    const candidates = new Set<string>([
+      preferredWorkspaceSlug,
+      ...workspaceSlugs,
+    ]);
 
-    const records = await readSessionEvents(filePath);
-    const messages: SessionMessage[] = [];
-    for (const record of records) {
-      if (record.type !== "message") {
-        continue;
-      }
-      messages.push({
-        id: record.messageId,
-        role: record.role,
-        content: record.content,
-        sessionId: session.id,
-        timestamp: record.timestamp,
+    const messagesById = new Map<string, SessionMessage>();
+    for (const workspaceSlug of candidates) {
+      const filePath = buildSessionFilePath({
+        rootDirectory: this.rootDirectory,
+        workspaceSlug,
+        provider: session.providerId,
+        sessionId: sanitizedProviderSessionId,
       });
+      const records = await readSessionEvents(filePath);
+      for (const record of records) {
+        if (record.type !== "message") {
+          continue;
+        }
+        if (messagesById.has(record.messageId)) {
+          continue;
+        }
+        messagesById.set(record.messageId, {
+          id: record.messageId,
+          role: record.role,
+          content: record.content,
+          sessionId: session.id,
+          timestamp: record.timestamp,
+        });
+      }
     }
+
+    const messages = Array.from(messagesById.values());
+    messages.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
     return messages;
   }
 
   private initializeWriter(
     sessionId: string,
     entry: PendingSession,
+    workspaceSlug: string,
     providerSessionId: string
   ): void {
     const sanitizedProviderSessionId = sanitizeSessionId(providerSessionId);
@@ -197,7 +230,7 @@ export class UnifiedSessionStorage {
 
     entry.writer = new UnifiedSessionWriter({
       rootDirectory: this.rootDirectory,
-      workspaceSlug: this.workspaceSlug,
+      workspaceSlug,
       provider: entry.providerId,
       sessionId: sanitizedProviderSessionId,
     });
