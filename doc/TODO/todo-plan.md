@@ -47,8 +47,8 @@
 16. [DONE] Git Commit: `feat(ui): wire claude continuity threshold setting` (hash: b9a8d3f5)
 
 ### Stream: verification
-17. [TODO] Verification: прогнать гейты + таргетные сборки затронутых пакетов (`npm run build --workspace @codeai-hub/claude-module`, `npm run build --workspace @codeai-hub/core`, `npm run build:project-manager`, `npm run build:webview`) — scope: scripts; expected commit message: `chore: verify claude token usage + continuity threshold`
-18. [TODO] Git Commit: `chore: verify claude token usage + continuity threshold` (hash: TBD)
+17. [DONE] Verification: прогнать гейты + таргетные сборки затронутых пакетов (`npm run build --workspace @codeai-hub/claude-module`, `npm run build --workspace @codeai-hub/core`, `npm run build:project-manager`, `npm run build:webview`) — scope: scripts; expected commit message: `chore: verify claude token usage + continuity threshold`
+18. [DONE] Git Commit: `chore: verify claude token usage + continuity threshold` (hash: b6f11c16)
 
 ### Stream: release
 19. [TODO] Release: обновить `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под новую версию — scope: docs; expected commit message: `docs: update release notes`
