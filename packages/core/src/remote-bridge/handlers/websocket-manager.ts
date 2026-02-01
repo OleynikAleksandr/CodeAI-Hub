@@ -4,6 +4,13 @@ import { WebSocket, WebSocketServer } from "ws";
 import { extractTokenUsage } from "../../session-continuity/token-usage";
 import type { Logger } from "../../telemetry/logger";
 import type { BridgeEvent, IncomingMessage } from "../types";
+import {
+  extractProviderSessionIdFromStreamEvent,
+  extractSessionsFromInitialState,
+  loadTokenUsageCache,
+  persistTokenUsageCache,
+  type TokenUsageSnapshot,
+} from "./token-usage-cache";
 
 type ClientSocket = {
   readonly id: string;
@@ -30,12 +37,11 @@ export class WebSocketManager {
   private readonly deps: WebSocketManagerDependencies;
   private readonly lastTokenUsageBySessionId = new Map<
     string,
-    {
-      readonly used: number;
-      readonly limit: number;
-      readonly updatedAt: string;
-    }
+    TokenUsageSnapshot
   >();
+  private readonly tokenUsageByProviderSessionId = loadTokenUsageCache();
+  private readonly providerSessionIdBySessionId = new Map<string, string>();
+  private persistTimer: NodeJS.Timeout | null = null;
 
   constructor(deps: WebSocketManagerDependencies) {
     this.deps = deps;
@@ -98,10 +104,11 @@ export class WebSocketManager {
     });
 
     // Send initial state
+    const initialState = this.deps.getInitialState();
     socket.send(
       JSON.stringify({
         type: "core:state",
-        payload: this.deps.getInitialState(),
+        payload: initialState,
       })
     );
 
@@ -112,7 +119,7 @@ export class WebSocketManager {
       );
     }
 
-    this.replayTokenUsageSnapshots(socket);
+    this.replayTokenUsageSnapshots(socket, initialState);
   }
 
   private async processMessage(
@@ -140,33 +147,113 @@ export class WebSocketManager {
 
   private recordTokenUsageSnapshot(event: BridgeEvent): void {
     if (event.type === "session:deleted") {
-      this.lastTokenUsageBySessionId.delete(event.payload.sessionId);
+      this.handleSessionDeleted(event.payload.sessionId);
       return;
     }
 
-    if (event.type !== "session:stream") {
+    if (event.type === "session:binding") {
+      this.handleSessionBinding(
+        event.payload.sessionId,
+        event.payload.providerSessionId
+      );
       return;
     }
 
-    const snapshot = extractTokenUsage(event.payload.event);
+    if (event.type === "session:stream") {
+      this.handleSessionStream(event.payload.sessionId, event.payload.event);
+    }
+  }
+
+  private handleSessionDeleted(sessionId: string): void {
+    this.lastTokenUsageBySessionId.delete(sessionId);
+    const providerSessionId = this.providerSessionIdBySessionId.get(sessionId);
+    this.providerSessionIdBySessionId.delete(sessionId);
+    if (!providerSessionId) {
+      return;
+    }
+    this.tokenUsageByProviderSessionId.delete(providerSessionId);
+    this.schedulePersist();
+  }
+
+  private handleSessionBinding(
+    sessionId: string,
+    providerSessionIdRaw: string | null
+  ): void {
+    const providerSessionId = providerSessionIdRaw?.trim()
+      ? providerSessionIdRaw.trim()
+      : null;
+    if (!providerSessionId) {
+      this.providerSessionIdBySessionId.delete(sessionId);
+      return;
+    }
+
+    this.providerSessionIdBySessionId.set(sessionId, providerSessionId);
+    const persisted = this.tokenUsageByProviderSessionId.get(providerSessionId);
+    if (!persisted) {
+      return;
+    }
+    this.lastTokenUsageBySessionId.set(sessionId, persisted);
+  }
+
+  private handleSessionStream(sessionId: string, providerEvent: unknown): void {
+    const snapshot = extractTokenUsage(providerEvent);
     if (!snapshot) {
       return;
     }
 
-    this.lastTokenUsageBySessionId.set(event.payload.sessionId, snapshot);
+    this.lastTokenUsageBySessionId.set(sessionId, snapshot);
+
+    const providerSessionId =
+      this.providerSessionIdBySessionId.get(sessionId) ??
+      extractProviderSessionIdFromStreamEvent(providerEvent);
+    if (!providerSessionId) {
+      return;
+    }
+    this.providerSessionIdBySessionId.set(sessionId, providerSessionId);
+    this.tokenUsageByProviderSessionId.set(providerSessionId, snapshot);
+    this.schedulePersist();
   }
 
-  private replayTokenUsageSnapshots(socket: WebSocket): void {
+  private schedulePersist(): void {
+    if (this.persistTimer) {
+      return;
+    }
+    this.persistTimer = setTimeout(() => {
+      this.persistTimer = null;
+      persistTokenUsageCache(this.tokenUsageByProviderSessionId);
+    }, 500);
+  }
+
+  private replayTokenUsageSnapshots(
+    socket: WebSocket,
+    initialState: unknown
+  ): void {
     if (socket.readyState !== WebSocket.OPEN) {
       return;
     }
 
-    for (const [sessionId, snapshot] of this.lastTokenUsageBySessionId) {
+    const sessions = extractSessionsFromInitialState(initialState);
+    for (const session of sessions) {
+      const providerSessionId = session.providerSessionId;
+      if (providerSessionId) {
+        this.providerSessionIdBySessionId.set(session.id, providerSessionId);
+      }
+
+      const snapshot =
+        this.lastTokenUsageBySessionId.get(session.id) ??
+        (providerSessionId
+          ? this.tokenUsageByProviderSessionId.get(providerSessionId)
+          : undefined);
+      if (!snapshot) {
+        continue;
+      }
+      this.lastTokenUsageBySessionId.set(session.id, snapshot);
+
       socket.send(
         JSON.stringify({
           type: "session:stream",
           payload: {
-            sessionId,
+            sessionId: session.id,
             event: {
               type: "stream_event",
               tokenUsage: { used: snapshot.used, limit: snapshot.limit },
