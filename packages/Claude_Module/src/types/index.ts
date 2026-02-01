@@ -30,6 +30,8 @@ export type ClaudeStreamMessage = {
   readonly uuid?: string;
   readonly session_id?: string;
   readonly event?: unknown;
+  readonly modelUsage?: unknown;
+  readonly model_usage?: unknown;
   readonly message?: {
     readonly content?: unknown;
     readonly model?: string;

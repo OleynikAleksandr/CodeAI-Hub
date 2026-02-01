@@ -209,7 +209,7 @@ export class ClaudeSDKManager {
       permissionMode: "bypassPermissions",
       allowDangerouslySkipPermissions: true,
       additionalDirectories: [session.workspacePath, homedir()],
-      includePartialMessages: false,
+      includePartialMessages: true,
       projectPath,
       settingSources: ["user", "project", "local"],
       environment: this.deps.authManager.getAuthEnvironment(),
