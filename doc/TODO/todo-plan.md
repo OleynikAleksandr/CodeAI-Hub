@@ -40,8 +40,8 @@
 13. [DONE] Spike(claude-module): выяснить, какие данные нужны для `used/limit` как в Claude Code `/context`, и можно ли получать их без API вызова (локально через `claude -p --verbose --output-format stream-json --resume <sessionId> "/context"`) — scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`, (new) `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `feat(claude-module): read context usage via /context`
 14. [DONE] Git Commit: `feat(claude-module): read context usage via /context` (hash: a2724c16)
 
-15. [TODO] Fix(project-manager): отображать токены строго по tokenUsage (used/limit) из нового источника `/context` и верифицировать на 2 сессиях (например 43.8k и 84.1k) — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/status-panel.tsx`, `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`; expected commit message: `fix(ui): align claude tokens with /context`
-16. [TODO] Git Commit: `fix(ui): align claude tokens with /context` (hash: TBD)
+15. [DONE] Fix(project-manager): отображать токены строго по tokenUsage (used/limit) из нового источника `/context` и верифицировать на 2 сессиях (например 43.8k и 84.1k) — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/status-panel.tsx`, `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`; expected commit message: `fix(ui): align claude tokens with /context`
+16. [DONE] Git Commit: `fix(ui): align claude tokens with /context` (hash: f49c925d)
 
 ### Stream: release
 17. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
