@@ -7904,6 +7904,52 @@
     });
   };
 
+  // src/client/ui/src/session/token-usage-cache.ts
+  var TOKEN_USAGE_STORAGE_PREFIX = "codeaihub:lastTokenUsage:";
+  var getLocalStorage = () => {
+    try {
+      return "localStorage" in globalThis ? globalThis.localStorage : null;
+    } catch {
+      return null;
+    }
+  };
+  var isRecord = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var readNumber = (value) => typeof value === "number" && Number.isFinite(value) ? value : null;
+  var parseStoredTokenUsage = (raw) => {
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return null;
+    }
+    if (!isRecord(parsed)) {
+      return null;
+    }
+    const used = readNumber(parsed.used);
+    const limit = readNumber(parsed.limit);
+    const updatedAt = readNumber(parsed.updatedAt);
+    if (used === null || limit === null || updatedAt === null) {
+      return null;
+    }
+    if (used < 0 || limit <= 0 || updatedAt <= 0) {
+      return null;
+    }
+    return { used, limit, updatedAt };
+  };
+  var readLastKnownTokenUsage = (providerSessionId) => {
+    const storage = getLocalStorage();
+    if (!storage) {
+      return null;
+    }
+    const key = `${TOKEN_USAGE_STORAGE_PREFIX}${providerSessionId}`;
+    const raw = storage.getItem(key);
+    if (!raw) {
+      return null;
+    }
+    const stored = parseStoredTokenUsage(raw);
+    return stored ? { used: stored.used, limit: stored.limit } : null;
+  };
+
   // src/client/ui/src/session/helpers.ts
   var mergeCatalog = (catalog, providers) => {
     const nextCatalog = { ...catalog };
@@ -7994,12 +8040,13 @@
     ).join(" + ");
     const now = Date.now();
     const models = buildModelInfoList(session.providerIds, settings ?? null);
+    const cachedTokenUsage = session.binding.providerSessionId ? readLastKnownTokenUsage(session.binding.providerSessionId) : null;
     const status = {
       providerSummary: providersSummary,
       models,
       tokenUsage: {
-        used: 0,
-        limit: 2e5
+        used: cachedTokenUsage?.used ?? 0,
+        limit: cachedTokenUsage?.limit ?? 2e5
       },
       connectionState: "idle",
       updatedAt: now
@@ -8083,7 +8130,7 @@
   }));
 
   // src/client/ui/src/core-bridge/normalizers.ts
-  var isRecord = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord2 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var toNumberTimestamp = (value) => {
     if (!value) {
       return Date.now();
@@ -8193,7 +8240,7 @@
       return null;
     }
     const questionnaire = contract.questionnaire;
-    if (!isRecord(questionnaire)) {
+    if (!isRecord2(questionnaire)) {
       return null;
     }
     const templateMarkdown = questionnaire.templateMarkdown;
@@ -21931,7 +21978,7 @@ ${formattedPaths}`;
   };
 
   // src/client/ui/src/modules/drag-drop-module/message-handler.ts
-  var isRecord2 = (value) => typeof value === "object" && value !== null;
+  var isRecord3 = (value) => typeof value === "object" && value !== null;
   var MessageHandler = class {
     constructor(logger) {
       this.callbacks = {};
@@ -21970,7 +22017,7 @@ ${formattedPaths}`;
       vscode_default.postMessage(message);
     }
     handleMessage(message) {
-      if (!isRecord2(message) || typeof message.command !== "string") {
+      if (!isRecord3(message) || typeof message.command !== "string") {
         return;
       }
       if (message.command === "insertPath") {
@@ -22556,14 +22603,18 @@ ${path2}` : path2;
     }
     const { providerSummary, models, tokenUsage } = status;
     const tokenLimit = tokenUsage.limit > 0 ? tokenUsage.limit : null;
-    const remainingPercentage = Math.max(
+    const usedPercentage = Math.max(
       0,
       Math.min(
         MAX_PERCENTAGE,
         Math.round(
-          ((tokenLimit ?? MIN_TOKEN_LIMIT) - tokenUsage.used) / Math.max(tokenLimit ?? MIN_TOKEN_LIMIT, MIN_TOKEN_LIMIT) * PERCENT_SCALE
+          tokenUsage.used / Math.max(tokenLimit ?? MIN_TOKEN_LIMIT, MIN_TOKEN_LIMIT) * PERCENT_SCALE
         )
       )
+    );
+    const remainingPercentage = Math.max(
+      0,
+      Math.min(MAX_PERCENTAGE, MAX_PERCENTAGE - usedPercentage)
     );
     const modelsSummary = models && models.length > 0 ? formatModelSummary(models) : providerSummary;
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { className: "session-status session-panel", children: [
@@ -23260,7 +23311,7 @@ ${path2}` : path2;
   ] });
 
   // src/client/ui/src/services/idea-collector-artifact.ts
-  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
   var readNextAction = (data) => {
     let nextAction = null;
@@ -23293,7 +23344,7 @@ ${path2}` : path2;
     }
     const artifacts = [];
     for (const entry of data.artifacts) {
-      if (!isRecord3(entry)) {
+      if (!isRecord4(entry)) {
         return null;
       }
       const slot = readStringField(entry, "slot");
@@ -23306,11 +23357,11 @@ ${path2}` : path2;
     return artifacts;
   };
   var extractIdeaCollectorArtifact = (event) => {
-    if (!isRecord3(event)) {
+    if (!isRecord4(event)) {
       return null;
     }
     const data = event.data;
-    if (!isRecord3(data) || data.kind !== "structured_output") {
+    if (!isRecord4(data) || data.kind !== "structured_output") {
       return null;
     }
     const suggestedResponse = readSuggestedResponse(data);
@@ -23323,7 +23374,7 @@ ${path2}` : path2;
       return null;
     }
     const artifact = data.artifact;
-    if (!isRecord3(artifact)) {
+    if (!isRecord4(artifact)) {
       return null;
     }
     const { ideaMarkdown, virtualSimulationMarkdown } = readArtifactPayload(artifact);
@@ -23379,7 +23430,7 @@ ${path2}` : path2;
 
   // src/client/ui/src/services/idea-artifact-persistence.ts
   var ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
-  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var persistIdeaArtifacts = async (params) => {
     const payload = {
       sessionId: params.sessionId,
@@ -23410,7 +23461,7 @@ ${path2}` : path2;
   var tryReadCoreErrorDetails = async (response) => {
     try {
       const payload = await response.json();
-      if (isRecord4(payload) && typeof payload.error === "string") {
+      if (isRecord5(payload) && typeof payload.error === "string") {
         return payload.error;
       }
       return null;
@@ -23419,12 +23470,12 @@ ${path2}` : path2;
     }
   };
   var parseSavedArtifactUpserts = (payload) => {
-    if (!(isRecord4(payload) && Array.isArray(payload.saved))) {
+    if (!(isRecord5(payload) && Array.isArray(payload.saved))) {
       return null;
     }
     const saved = [];
     for (const entry of payload.saved) {
-      if (!isRecord4(entry)) {
+      if (!isRecord5(entry)) {
         return null;
       }
       if (typeof entry.slot !== "string" || typeof entry.path !== "string") {
@@ -23577,11 +23628,11 @@ ${path2}` : path2;
   );
 
   // src/client/ui/src/services/idea-collector-schema-utils.ts
-  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
   var strictifyProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord6(properties)) {
       return;
     }
     schema.required = Object.keys(properties);
@@ -23589,7 +23640,7 @@ ${path2}` : path2;
       schema.additionalProperties = false;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
+      if (isRecord6(value)) {
         strictifySchema(value);
       }
     }
@@ -23598,23 +23649,23 @@ ${path2}` : path2;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord5(item)) {
+        if (isRecord6(item)) {
           strictifySchema(item);
         }
       }
       return;
     }
-    if (isRecord5(items)) {
+    if (isRecord6(items)) {
       strictifySchema(items);
     }
   };
   var removeCombinatorsFromProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord6(properties)) {
       return;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
+      if (isRecord6(value)) {
         removeCombinators(value);
       }
     }
@@ -23623,13 +23674,13 @@ ${path2}` : path2;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord5(item)) {
+        if (isRecord6(item)) {
           removeCombinators(item);
         }
       }
       return;
     }
-    if (isRecord5(items)) {
+    if (isRecord6(items)) {
       removeCombinators(items);
     }
   };
@@ -23642,7 +23693,7 @@ ${path2}` : path2;
         continue;
       }
       for (const entry of entries) {
-        if (isRecord5(entry)) {
+        if (isRecord6(entry)) {
           removeCombinators(entry);
         }
       }
@@ -23659,19 +23710,19 @@ ${path2}` : path2;
       return schema;
     }
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord6(properties)) {
       return schema;
     }
     const artifact = properties.artifact;
-    if (!isRecord5(artifact)) {
+    if (!isRecord6(artifact)) {
       return schema;
     }
     const artifactProperties = artifact.properties;
-    if (!isRecord5(artifactProperties)) {
+    if (!isRecord6(artifactProperties)) {
       return schema;
     }
     const ideaMarkdown = artifactProperties.idea_markdown;
-    if (!isRecord5(ideaMarkdown)) {
+    if (!isRecord6(ideaMarkdown)) {
       return schema;
     }
     const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
@@ -23698,11 +23749,11 @@ ${template}`;
   };
   var sanitizeSchemaProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord5(properties)) {
+    if (!isRecord6(properties)) {
       return;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord5(value)) {
+      if (isRecord6(value)) {
         sanitizeSchemaKeywords(value);
       }
     }
@@ -23711,13 +23762,13 @@ ${template}`;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord5(item)) {
+        if (isRecord6(item)) {
           sanitizeSchemaKeywords(item);
         }
       }
       return;
     }
-    if (isRecord5(items)) {
+    if (isRecord6(items)) {
       sanitizeSchemaKeywords(items);
     }
   };
@@ -23740,12 +23791,12 @@ ${template}`;
     idea: ".codeai-hub/unknown-workspace/description/runs/000-unknown/description.md",
     virtualSimulation: ".codeai-hub/unknown-workspace/virtual_simulation/runs/000-unknown/virtual-simulation.md"
   };
-  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkflowContractPayload = (value) => {
-    if (!isRecord6(value)) {
+    if (!isRecord7(value)) {
       return false;
     }
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord6(value.schema);
+    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord7(value.schema);
   };
   var parseVersion = (payload) => typeof payload.version === "string" && payload.version.trim().length > 0 ? payload.version : null;
   var fetchWorkflowContract = async (endpoint) => {
@@ -23797,18 +23848,18 @@ ${template}`;
 
   // src/client/ui/src/services/idea-collector-finalize-utils.ts
   var FINALIZE_TRIGGER_PATTERN = /(^|[\s,.;:!?])(?:ок|ok|утверждаю|approve|approved)(?=$|[\s,.;:!?])/i;
-  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var cloneSchema2 = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
   var enforceArtifactsRequired = (schema) => {
     const next = cloneSchema2(schema);
     const properties = next.properties;
-    if (isRecord7(properties)) {
+    if (isRecord8(properties)) {
       const artifacts = properties.artifacts;
-      if (isRecord7(artifacts)) {
+      if (isRecord8(artifacts)) {
         artifacts.minItems = 1;
       }
       const questions = properties.questions;
-      if (isRecord7(questions)) {
+      if (isRecord8(questions)) {
         questions.maxItems = 0;
       }
     }
@@ -23910,9 +23961,9 @@ ${template}`;
     const remainingMessage = lines.slice(1).join("\n").trim();
     return { paths, remainingMessage };
   };
-  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse = (value) => {
-    if (!isRecord8(value)) {
+    if (!isRecord9(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -24507,9 +24558,9 @@ ${replacement}
   // src/client/ui/src/services/workspace-file-service.ts
   var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
   var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
-  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse2 = (value) => {
-    if (!isRecord9(value)) {
+    if (!isRecord10(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -27498,13 +27549,13 @@ ${replacement}
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord10 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord10(value)) {
+    if (!isRecord11(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -27546,7 +27597,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -27564,7 +27615,7 @@ ${replacement}
   });
   var mapClaudeContinuity = (value) => {
     const numericValue = Number(
-      isRecord11(value) ? value.remainingPercentThreshold : void 0
+      isRecord12(value) ? value.remainingPercentThreshold : void 0
     );
     const remainingPercentThreshold = Number.isFinite(numericValue) ? Math.min(
       MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
@@ -27593,7 +27644,7 @@ ${replacement}
     const nextReasoningByModel = {
       ...DEFAULT_CODEX_REASONING_BY_MODEL
     };
-    if (!isRecord11(value)) {
+    if (!isRecord12(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -28590,15 +28641,15 @@ ${replacement}
 
   // src/client/ui/src/api/orchestrator/initiatives-client.ts
   var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
-  var isRecord12 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord13 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isInitiativeSummary = (value) => {
-    if (!isRecord12(value)) {
+    if (!isRecord13(value)) {
       return false;
     }
     return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
   };
   var parseInitiatives = (value) => {
-    if (!isRecord12(value)) {
+    if (!isRecord13(value)) {
       return [];
     }
     const raw = value.initiatives;
@@ -28620,7 +28671,7 @@ ${replacement}
     return initiatives;
   };
   var parseCreatedInitiative = (value) => {
-    if (!isRecord12(value)) {
+    if (!isRecord13(value)) {
       return null;
     }
     const initiative = value.initiative;
