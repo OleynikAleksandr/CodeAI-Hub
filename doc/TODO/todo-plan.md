@@ -29,8 +29,8 @@
 6. [DONE] Git Commit: `feat(project-manager): apply token usage stream updates` (hash: 55dbaa9f)
 
 ### Stream: continuity threshold (default 30%, configurable)
-7. [TODO] Feat(core): использовать порог continuity из settings (default: 30%) при расчёте shouldHandoff — scope: `packages/core/src/config/index.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): configurable continuity remaining% threshold`
-8. [TODO] Git Commit: `feat(core): configurable continuity remaining% threshold` (hash: TBD)
+7. [DONE] Feat(core): использовать порог continuity из settings (default: 30%) при расчёте shouldHandoff — scope: `packages/core/src/config/index.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): configurable continuity remaining% threshold`
+8. [DONE] Git Commit: `feat(core): configurable continuity remaining% threshold` (hash: 7807cdb9)
 
 ### Stream: UI token label
 9. [TODO] Fix(ui): отображать `used / total (remaining%)` в статус-панели сессии — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): show remaining token percent`
