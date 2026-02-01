@@ -1,7 +1,7 @@
 # Session UI — Panels Architecture
 
 **Status:** Reference
-**Updated:** 2026-01-22
+**Updated:** 2026-02-01
 **Owner:** Oleksandr
 
 ---
@@ -34,7 +34,6 @@ MainLayout
     │   │       ├── SessionTabs
     │   │       ├── InfoPanel
     │   │       ├── DialogPanel (история сообщений)
-    │   │       ├── TodoPanel (чек-лист)
     │   │       ├── InputPanel (ввод)
     │   │       └── StatusPanel (статус/токены)
     │   │
@@ -56,7 +55,6 @@ MainLayout
 | **DialogPanel** | `src/client/ui/src/session/dialog-panel.tsx` | ~200 | История сообщений, thinking, автоскролл |
 | **InputPanel** | `src/client/ui/src/session/input-panel.tsx` | ~65 | Форма ввода сообщений, drag-n-drop файлов |
 | **InputTextarea** | `src/client/ui/src/session/input-textarea.tsx` | ~50 | Кастомная textarea с авторесайзом |
-| **TodoPanel** | `src/client/ui/src/session/todo-panel.tsx` | ~80 | Чек-лист задач сессии |
 | **StatusPanel** | `src/client/ui/src/session/status-panel.tsx` | ~80 | Статус провайдеров и токены |
 | **EmptyState** | `src/client/ui/src/session/empty-state.tsx` | ~30 | Заглушка при отсутствии сессий |
 | **MarkdownContent** | `src/client/ui/src/session/markdown-content.tsx` | ~100 | Рендеринг markdown сообщений |
@@ -104,7 +102,6 @@ AppHost
 │       ├── InfoPanel
 │       └── Content
 │           ├── DialogPanel
-│           ├── TodoPanel
 │           ├── InputPanel
 │           └── StatusPanel
 │
@@ -144,7 +141,6 @@ AppHost
 │  │ │ └─Final  │  │  │   (messages)      │  │  │  - diagrams          │  │
 │  │ │ └─Review │  │  │                   │  │  │                      │  │
 │  │ ├─VirtSim  │  │  ├───────────────────┤  │  │                      │  │
-│  │ ├─Modules  │  │  │   TodoPanel       │  │  │                      │  │
 │  │ └─Facades  │  │  ├───────────────────┤  │  │                      │  │
 │  │            │  │  │   InputPanel      │  │  │                      │  │
 │  └────────────┘  │  ├───────────────────┤  │  │                      │  │
@@ -159,6 +155,7 @@ AppHost
 
 ## 8. Notes
 
+- TodoPanel удалён (2026-02-01): чек-лист задач сессии больше не отображается в текущем UI.
 - Все компоненты следуют принципу микро-классов (< 300 строк)
 - Используется React hooks для управления состоянием
 - SessionView переиспользуется в обоих контекстах (Project Manager и Webview Client)
