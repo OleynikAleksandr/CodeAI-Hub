@@ -20,8 +20,8 @@
 1. [DONE] Docs(todo): заархивировать завершённый Phase 83 план и создать новый Phase 84 — scope: `doc/TODO/Archive/todo-plan-phase83.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): start Phase 84 claude token usage fix`
 2. [DONE] Git Commit: `docs(todo): start Phase 84 claude token usage fix` (hash: b1ccd52f)
 
-3. [TODO] Fix(claude-module): не перезаписывать token usage snapshot данными из `sdk:result.usage` (это totals по run), использовать только per-turn usage из `stream_event.message_delta.usage` — scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `fix(claude-module): use message_delta usage for context tokens`
-4. [TODO] Git Commit: `fix(claude-module): use message_delta usage for context tokens` (hash: TBD)
+3. [DONE] Fix(claude-module): не перезаписывать token usage snapshot данными из `sdk:result.usage` (это totals по run), использовать только per-turn usage из `stream_event.message_delta.usage` — scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `fix(claude-module): use message_delta usage for context tokens`
+4. [DONE] Git Commit: `fix(claude-module): use message_delta usage for context tokens` (hash: 4b085b8a)
 
 5. [TODO] Verification: прогнать гейты + таргетный билд Claude module — scope: scripts; expected commit message: `chore: verify claude token usage fix`
 6. [TODO] Git Commit: `chore: verify claude token usage fix` (hash: TBD)
