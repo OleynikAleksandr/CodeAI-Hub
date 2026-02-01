@@ -5,10 +5,14 @@ export type RawThinkingSettings = {
 export type RawAutoUpdateSettings = {
   readonly enabled?: unknown;
 };
+export type RawClaudeSessionContinuitySettings = {
+  readonly remainingPercentThreshold?: unknown;
+};
 export type RawClaudeSettings = {
   readonly thinking?: RawThinkingSettings;
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
+  readonly sessionContinuity?: RawClaudeSessionContinuitySettings;
 };
 export type RawCodexSettings = {
   readonly autoUpdate?: RawAutoUpdateSettings;
