@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { Server } from "node:http";
 import { WebSocket, WebSocketServer } from "ws";
+import { extractTokenUsage } from "../../session-continuity/token-usage";
 import type { Logger } from "../../telemetry/logger";
 import type { BridgeEvent, IncomingMessage } from "../types";
 
@@ -27,6 +28,14 @@ export class WebSocketManager {
   private wsServer?: WebSocketServer;
   private readonly clients = new Map<string, ClientSocket>();
   private readonly deps: WebSocketManagerDependencies;
+  private readonly lastTokenUsageBySessionId = new Map<
+    string,
+    {
+      readonly used: number;
+      readonly limit: number;
+      readonly updatedAt: string;
+    }
+  >();
 
   constructor(deps: WebSocketManagerDependencies) {
     this.deps = deps;
@@ -60,6 +69,7 @@ export class WebSocketManager {
   }
 
   broadcast(event: BridgeEvent): void {
+    this.recordTokenUsageSnapshot(event);
     const serialized = JSON.stringify(event);
     for (const { socket } of this.clients.values()) {
       if (socket.readyState === WebSocket.OPEN) {
@@ -101,6 +111,8 @@ export class WebSocketManager {
         JSON.stringify({ type: "core:loading-status", payload: status })
       );
     }
+
+    this.replayTokenUsageSnapshots(socket);
   }
 
   private async processMessage(
@@ -121,6 +133,52 @@ export class WebSocketManager {
         JSON.stringify({
           type: "session:error",
           payload: { message: "Invalid JSON payload" },
+        })
+      );
+    }
+  }
+
+  private recordTokenUsageSnapshot(event: BridgeEvent): void {
+    if (event.type === "session:deleted") {
+      this.lastTokenUsageBySessionId.delete(event.payload.sessionId);
+      return;
+    }
+
+    if (event.type !== "session:stream") {
+      return;
+    }
+
+    const snapshot = extractTokenUsage(event.payload.event);
+    if (!snapshot) {
+      return;
+    }
+
+    this.lastTokenUsageBySessionId.set(event.payload.sessionId, snapshot);
+  }
+
+  private replayTokenUsageSnapshots(socket: WebSocket): void {
+    if (socket.readyState !== WebSocket.OPEN) {
+      return;
+    }
+
+    for (const [sessionId, snapshot] of this.lastTokenUsageBySessionId) {
+      socket.send(
+        JSON.stringify({
+          type: "session:stream",
+          payload: {
+            sessionId,
+            event: {
+              type: "stream_event",
+              tokenUsage: { used: snapshot.used, limit: snapshot.limit },
+              data: {
+                kind: "token_usage",
+                used: snapshot.used,
+                limit: snapshot.limit,
+              },
+              uuid: "replay::token_usage",
+              timestamp: snapshot.updatedAt,
+            },
+          },
         })
       );
     }
