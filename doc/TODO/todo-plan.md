@@ -91,3 +91,7 @@
 ### Stream: release (verification 1.1.488)
 41. [DONE] Release: собрать новый релиз (фикс парсинга `**Tokens:**` из `/context`) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 42. [DONE] Git Commit: `chore(release): build next version` (hash: 1fb4fbb0)
+
+### Stream: ui token percent (remaining)
+43. [DONE] Fix(ui): показывать remaining% (100 - used%) вместо used% в панели статуса — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): show remaining token percent`
+44. [DONE] Git Commit: `fix(ui): show remaining token percent` (hash: 021bfbab)
