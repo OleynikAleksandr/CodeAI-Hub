@@ -18,8 +18,8 @@
 ## Phase 83 — Claude: real-time token usage + continuity trigger threshold (owner: Oleksandr, updated: 2026-02-01)
 
 ### Stream: bootstrap (docs + plan)
-1. [IN_PROGRESS] Docs(todo): заархивировать предыдущий `todo-plan.md`, создать новый план Phase 83 и добавить архитектурный документ по token usage — scope: `doc/TODO/Archive/todo-plan-phase82.md`, `doc/TODO/todo-plan.md`, `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`; expected commit message: `docs(todo): start Phase 83 claude token usage`
-2. [TODO] Git Commit: `docs(todo): start Phase 83 claude token usage` (hash: TBD)
+1. [DONE] Docs(todo): заархивировать предыдущий `todo-plan.md`, создать новый план Phase 83 и добавить архитектурный документ по token usage — scope: `doc/TODO/Archive/todo-plan-phase82.md`, `doc/TODO/todo-plan.md`, `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`; expected commit message: `docs(todo): start Phase 83 claude token usage`
+2. [DONE] Git Commit: `docs(todo): start Phase 83 claude token usage` (hash: 9bc8e363)
 
 ### Stream: token usage pipeline (Claude Agent SDK)
 3. [TODO] Feat(claude-module): включить stream events и публиковать token usage snapshots (used/limit) в provider events — scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/types/index.ts`; expected commit message: `feat(claude-module): stream real-time token usage`
