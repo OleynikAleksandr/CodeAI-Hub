@@ -5,7 +5,7 @@ export type ContextUsageSnapshot = {
 
 const COMPACT_NUMBER_PATTERN = /^([\d.,]+)\s*([kKmM])?$/;
 const TOKENS_SNAPSHOT_PATTERNS: readonly RegExp[] = [
-  /Tokens:\s*([\d.,]+)\s*([kKmM]?)\s*\/\s*([\d.,]+)\s*([kKmM]?)\s*\(\d+%\)/,
+  /\bTokens\b[^0-9]*([\d.,]+)\s*([kKmM]?)\s*\/\s*([\d.,]+)\s*([kKmM]?)\s*\(\d+%\)/,
   /\b([\d.,]+)\s*([kKmM]?)\s*\/\s*([\d.,]+)\s*([kKmM]?)\s*tokens\s*\(\d+%\)/,
 ];
 const LOCAL_COMMAND_STDOUT_PATTERN =
