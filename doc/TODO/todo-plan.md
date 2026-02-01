@@ -17,8 +17,8 @@
 ## Phase 84 — Claude: fix token usage (context window vs run totals) (owner: Oleksandr, updated: 2026-02-01)
 
 ### Stream: token usage correctness
-1. [IN_PROGRESS] Docs(todo): заархивировать завершённый Phase 83 план и создать новый Phase 84 — scope: `doc/TODO/Archive/todo-plan-phase83.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): start Phase 84 claude token usage fix`
-2. [TODO] Git Commit: `docs(todo): start Phase 84 claude token usage fix` (hash: TBD)
+1. [DONE] Docs(todo): заархивировать завершённый Phase 83 план и создать новый Phase 84 — scope: `doc/TODO/Archive/todo-plan-phase83.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): start Phase 84 claude token usage fix`
+2. [DONE] Git Commit: `docs(todo): start Phase 84 claude token usage fix` (hash: b1ccd52f)
 
 3. [TODO] Fix(claude-module): не перезаписывать token usage snapshot данными из `sdk:result.usage` (это totals по run), использовать только per-turn usage из `stream_event.message_delta.usage` — scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `fix(claude-module): use message_delta usage for context tokens`
 4. [TODO] Git Commit: `fix(claude-module): use message_delta usage for context tokens` (hash: TBD)
