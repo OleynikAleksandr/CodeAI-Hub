@@ -1,4 +1,3 @@
-import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { Uri } from "vscode";
@@ -6,25 +5,6 @@ import type { LauncherInstallInfo } from "./launcher-installer";
 import { ensureDirectory } from "./runtime-files";
 
 const CONFIG_FILE_NAME = "config.json";
-
-const buildLaunchArgs = (
-  indexFilePath: string,
-  configPath: string,
-  userDataDir?: string
-): string[] => {
-  const fileUrl = Uri.file(indexFilePath).toString();
-  const args = [
-    `--config=${configPath}`,
-    `--url=${fileUrl}`,
-    "--use-alloy-style",
-  ];
-
-  if (userDataDir) {
-    args.push(`--user-data-dir=${userDataDir}`);
-  }
-
-  return args;
-};
 
 const readExistingConfig = async (
   configPath: string
@@ -87,56 +67,3 @@ export const ensureProjectManagerConfig = (
     workspacePath,
     "project-manager.json"
   );
-
-export const launchCefClient = async (
-  launcher: LauncherInstallInfo,
-  indexFilePath: string,
-  workspacePath?: string,
-  userDataDir?: string
-): Promise<void> => {
-  const { executablePath: binaryPath } = launcher;
-
-  try {
-    await fs.access(binaryPath);
-  } catch {
-    throw new Error(
-      `CEF client binary is missing: ${path.relative(process.cwd(), binaryPath)}`
-    );
-  }
-
-  const configPath = await ensureLauncherWorkspaceConfig(
-    launcher,
-    indexFilePath,
-    workspacePath
-  );
-  const args = buildLaunchArgs(indexFilePath, configPath, userDataDir);
-  const workingDir = path.dirname(binaryPath);
-
-  const envVars: NodeJS.ProcessEnv = {
-    ...process.env,
-  };
-  if (workspacePath) {
-    envVars.CLAUDE_WORKSPACE_PATH = workspacePath;
-    envVars.CODEX_WORKSPACE_PATH = workspacePath;
-    envVars.GEMINI_WORKSPACE_PATH = workspacePath;
-  }
-
-  const child = spawn(binaryPath, args, {
-    cwd: workingDir,
-    detached: true,
-    stdio: "ignore",
-    env: envVars,
-  });
-
-  child.unref();
-};
-
-export const getCefClientTarget = (
-  launcher: LauncherInstallInfo,
-  indexFilePath: string,
-  userDataDir?: string
-): { path: string; args: readonly string[] } => {
-  const configPath = path.join(launcher.installDir, "config", CONFIG_FILE_NAME);
-  const args = buildLaunchArgs(indexFilePath, configPath, userDataDir);
-  return { path: launcher.executablePath, args };
-};
