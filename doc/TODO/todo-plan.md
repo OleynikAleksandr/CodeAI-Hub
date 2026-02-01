@@ -158,6 +158,6 @@
 8. [DONE] Git Commit: `docs: sync Project_Docs and SolidWorks-Flow for 1.1.493` (hash: 8e007210)
 9. [DONE] Docs(flow): актуализировать оставшиеся SolidWorks-Flow документы, чтобы все ссылки/anti-regression заметки по session history были согласованы — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(flow): sync SolidWorks-Flow session persistence notes`
 10. [DONE] Git Commit: `docs(flow): sync SolidWorks-Flow session persistence notes` (hash: 7cb53c94)
-11. [TODO] Docs(session): создать отчёт `doc/Sessions/Session067.md` по итоговому решению (history + docs) — scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): Session067 1.1.493 docs + github sync`
-12. [TODO] Git Commit: `docs(session): Session067 1.1.493 docs + github sync` (hash: TBD)
+11. [DONE] Docs(session): создать отчёт `doc/Sessions/Session067.md` по итоговому решению (history + docs) — scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): Session067 1.1.493 docs + github sync`
+12. [DONE] Git Commit: `docs(session): Session067 1.1.493 docs + github sync` (hash: 559f7269)
 13. [TODO] GitHub: push `main` (релиз `1.1.493` + docs) — scope: git; expected commit message: N/A
