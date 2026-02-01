@@ -69,3 +69,11 @@
 
 5. [DONE] Verification: прогнать гейты + таргетную сборку `npm run build:project-manager` — scope: scripts; expected commit message: `chore: verify workspace switch auto-select`
 6. [DONE] Git Commit: `chore: verify workspace switch auto-select` (hash: f2d3634a)
+
+---
+
+## Phase 82 — Project Manager: questionnaire stays editable until submit (owner: Oleksandr, updated: 2026-02-01)
+
+### Stream: questionnaire editor state
+1. [DONE] Fix(project-manager): не показывать `questionnaire.md` как read-only артефакт до отправки анкеты — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`; expected commit message: `fix(project-manager): keep questionnaire editable until submit`
+2. [DONE] Git Commit: `fix(project-manager): keep questionnaire editable until submit` (hash: 3f32e71f)
