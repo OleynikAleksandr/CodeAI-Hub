@@ -117,5 +117,5 @@
 54. [DONE] Git Commit: `fix(core): persist token usage across restarts` (hash: c05c28fe)
 
 ### Stream: release (verification)
-55. [TODO] Release: собрать новый релиз (Core tokenUsage disk persistence) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
-56. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+55. [DONE] Release: собрать новый релиз (Core tokenUsage disk persistence) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+56. [DONE] Git Commit: `chore(release): build next version` (hash: 6a94bd98)
