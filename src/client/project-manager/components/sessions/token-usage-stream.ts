@@ -3,8 +3,19 @@ import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const readNumber = (value: unknown): number | null =>
-  typeof value === "number" && Number.isFinite(value) ? value : null;
+const readNumber = (value: unknown): number | null => {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+  if (typeof value === "string") {
+    const normalized = value.replace(/,/g, "").trim();
+    const parsed = Number.parseFloat(normalized);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+  return null;
+};
 
 type TokenUsageSnapshot = {
   readonly used: number;
@@ -61,4 +72,3 @@ export const updateSnapshotsWithTokenUsage = (
     },
   };
 };
-

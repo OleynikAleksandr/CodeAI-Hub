@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-01
 **Scope:** Claude provider (Claude Agent SDK)
-**Status:** Draft for approval
+**Status:** Updated after /context parity decision
 
 ---
 
@@ -21,36 +21,29 @@
 
 ## 2) Ground Truth (источник истины)
 
-Мы работаем через **Claude Agent SDK**.
+Мы работаем через **Claude Agent SDK**, но считать «занятое контекстное окно» по SDK `usage` нельзя надёжно:
 
-Источник истины для real-time расхода контекста:
-- Stream events от Claude/SDK, содержащие usage-метрики (input/output/cache tokens) во время генерации.
+- `sdk:result.usage` — это **totals по run** и может расходиться с тем, что Claude считает «текущим контекстом».
+- Claude Code CLI `/context` — источник истины для авто‑компакта (и включает важные компоненты вроде system/tools/memory/skills/compact buffer).
 
-Источник истины для лимита контекстного окна:
-- `contextWindow` из payload (например, итоговый `sdk:result` содержит `modelUsage.<modelId>.contextWindow`), либо заранее известный лимит для модели.
+Поэтому источником истины для `used/total` считаем **вывод команды `/context`** (Claude Code CLI), а не попытки суммировать usage‑поля в наших логах.
+
+Ключевой факт: `/context` можно читать локально (через stream-json) без API вызова (`duration_api_ms: 0`).
 
 ---
 
 ## 3) Definitions
 
-### 3.1 Token usage snapshot
+### 3.1 Token usage snapshot (минимальный контракт)
 
-Нормализованная метрика, которую хранит Core и показывает UI:
+Нормализованная метрика, которую мы стримим в Core и показываем в UI:
 
-- `usedTokens`: number
-- `limitTokens`: number
-- `remainingTokens`: number
-- `remainingRatio`: number (0..1)
-- `remainingPercent`: number (0..100)
-- `updatedAt`: ISO timestamp
+- `tokenUsage.used`: number
+- `tokenUsage.limit`: number
 
-### 3.2 What counts as “used”
+`remaining%` вычисляется в UI как:
 
-Для целей «оставшегося контекста» считаем:
-
-`usedTokens = inputTokens + outputTokens + cacheReadInputTokens + cacheCreationInputTokens`
-
-Это соответствует суммарному объёму контента, который реально “съедает” контекстное окно во время сессии.
+`round((limit - used) / limit * 100)`
 
 ---
 
@@ -58,16 +51,22 @@
 
 ### 4.1 Provider → Core
 
-Claude provider module должен:
+Claude provider module:
 
-1) Включить стриминг “сырьевых” событий SDK (режим partial/stream events).
-2) На каждом событии, где доступен usage, публиковать в Core provider-event с нормализованным payload:
+1) После каждого завершённого turn (событие `result`) делает локальный запрос контекстного окна:
+
+   `claude -p --verbose --output-format stream-json --resume <sessionId> "/context"`
+
+2) Парсит из вывода строку вида:
+
+   - `Tokens: 43.8k / 200.0k (22%)`  (процент в CLI — used%, мы используем только `used/limit`)
+
+3) Публикует в Core provider-event с нормализованным payload:
 
 - `tokenUsage.used` (в токенах)
 - `tokenUsage.limit` (context window)
-- `tokenUsage.updatedAt`
 
-Важно: limit может быть неизвестен на ранних событиях; он должен быть получен как можно раньше (из modelUsage/contextWindow) и затем использоваться для всех последующих real-time апдейтов.
+Примечание: throttling обязателен, чтобы не спамить запуском CLI (в текущей реализации — минимум раз в ~1.5s на сессию).
 
 ### 4.2 Core
 
@@ -75,11 +74,7 @@ Core принимает provider events и:
 
 - обновляет `SessionStatusInfo.tokenUsage` для UI
 - обновляет internal ContinuityMonitor
-- при `remainingRatio <= threshold` инициирует handoff
-
-Threshold:
-- дефолт: `0.30` (30%)
-- переопределяется настройкой пользователя (Settings → Claude)
+- при `remaining% <= threshold` инициирует handoff
 
 ### 4.3 UI
 
@@ -87,24 +82,20 @@ UI отображает:
 
 - `used / limit (remaining%)`
 
-Где `remaining% = round((limit - used) / limit * 100)`.
-
 ---
 
 ## 5) Settings
 
-Добавить в Settings → Claude новый параметр:
+Параметр порога handoff:
 
-- `sessionContinuity.remainingPercentThreshold` (number)
+- `providers.claude.sessionContinuity.remainingPercentThreshold` (number)
   - default: 30
-  - range: 5..80 (предложение, можно уточнить)
   - описание: «Когда оставшееся контекстное окно падает до этого значения или ниже, Core автоматически запрашивает handoff-отчёт и начинает новую сессию.»
 
 ---
 
 ## 6) Rollout plan
 
-1) Claude: real-time token usage (SDK stream events) + корректный limit (200k для стартового MVP, затем per-model).
-2) UI: показывать remaining% вместо used%.
-3) Settings: порог handoff в Claude settings.
-4) (Позже) Codex/Gemini по аналогии, отдельными фазами.
+1) Claude: `/context` parity для `used/limit`.
+2) UI: показывать `remaining%` (не `used%`).
+3) (Позже) Codex/Gemini по аналогии, отдельными фазами.
