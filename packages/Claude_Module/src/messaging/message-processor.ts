@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { ClaudeContextUsageReader } from "../sdk/claude-context-usage-reader";
 import type { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage, ModuleReporter } from "../types";
@@ -73,69 +74,12 @@ const appendQuestionsToSuggestedResponse = (
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const readNumber = (value: unknown): number | null =>
-  typeof value === "number" && Number.isFinite(value) ? value : null;
-
-const DEFAULT_CONTEXT_WINDOW_LIMIT = 200_000;
-
-const extractContextWindowLimitFromModelUsage = (
-  modelUsage: unknown
-): number | null => {
-  if (!isRecord(modelUsage)) {
-    return null;
-  }
-
-  for (const value of Object.values(modelUsage)) {
-    if (!isRecord(value)) {
-      continue;
-    }
-    const limit = readNumber(value.contextWindow);
-    if (limit !== null && limit > 0) {
-      return limit;
-    }
-  }
-
-  return null;
+type ContextUsageReaderConfig = {
+  readonly executablePath: string;
+  readonly env: NodeJS.ProcessEnv;
 };
 
-const extractUsageTotals = (
-  usage: unknown
-): { readonly usedTokens: number } | null => {
-  if (!isRecord(usage)) {
-    return null;
-  }
-
-  const inputTokens = readNumber(usage.input_tokens) ?? 0;
-  const outputTokens = readNumber(usage.output_tokens) ?? 0;
-  const cacheCreationInputTokens =
-    readNumber(usage.cache_creation_input_tokens) ?? 0;
-  const cacheReadInputTokens = readNumber(usage.cache_read_input_tokens) ?? 0;
-
-  const usedTokens =
-    inputTokens +
-    outputTokens +
-    cacheCreationInputTokens +
-    cacheReadInputTokens;
-
-  if (usedTokens <= 0) {
-    return null;
-  }
-
-  return { usedTokens };
-};
-
-const extractUsageFromStreamEvent = (event: unknown): unknown => {
-  if (!isRecord(event)) {
-    return null;
-  }
-  if (isRecord(event.usage)) {
-    return event.usage;
-  }
-  if (isRecord(event.delta) && isRecord(event.delta.usage)) {
-    return event.delta.usage;
-  }
-  return null;
-};
+const MIN_REFRESH_INTERVAL_MS = 1500;
 
 const readStructuredOutput = (
   source: Record<string, unknown>
@@ -162,6 +106,9 @@ export class SDKMessageProcessor {
     string,
     { used: number; limit: number }
   >();
+  private contextUsageReader: ClaudeContextUsageReader | null = null;
+  private readonly contextUsageInFlight = new Map<string, Promise<void>>();
+  private readonly contextUsageLastAttemptAt = new Map<string, number>();
 
   constructor(
     sessionManager: SDKSessionManager,
@@ -169,6 +116,13 @@ export class SDKMessageProcessor {
   ) {
     this.sessionManager = sessionManager;
     this.options = options;
+  }
+
+  configureContextUsageReader(config: ContextUsageReaderConfig): void {
+    if (this.contextUsageReader) {
+      return;
+    }
+    this.contextUsageReader = new ClaudeContextUsageReader(config);
   }
 
   send(sessionId: string, content: string): void {
@@ -244,7 +198,6 @@ export class SDKMessageProcessor {
     }
 
     session?.logger?.logSDKMessage(message.type, message);
-    this.emitTokenUsageSnapshot(session, message);
 
     switch (message.type) {
       case "assistant": {
@@ -253,6 +206,7 @@ export class SDKMessageProcessor {
       }
       case "result": {
         this.handleResultMessage(session, message);
+        this.refreshTokenUsageFromContext(session, message.session_id);
         break;
       }
       default:
@@ -260,43 +214,65 @@ export class SDKMessageProcessor {
     }
   }
 
-  private emitTokenUsageSnapshot(
+  private refreshTokenUsageFromContext(
     session: ActiveSession,
-    message: ClaudeStreamMessage
+    claudeSessionId: string | null | undefined
   ): void {
-    if (message.type !== "stream_event") {
-      return;
-    }
-    const raw = message as Record<string, unknown>;
-    const limit =
-      extractContextWindowLimitFromModelUsage(raw.modelUsage) ??
-      extractContextWindowLimitFromModelUsage(raw.model_usage) ??
-      DEFAULT_CONTEXT_WINDOW_LIMIT;
-
-    const usage = extractUsageFromStreamEvent(raw.event);
-
-    const totals = extractUsageTotals(usage);
-    if (!totals) {
+    const reader = this.contextUsageReader;
+    if (!reader) {
       return;
     }
 
-    const used = totals.usedTokens;
-    const previous = this.tokenUsageCache.get(session.sessionId);
-    if (previous && previous.used === used && previous.limit === limit) {
+    const resolvedId = claudeSessionId ?? session.sessionId;
+    if (!resolvedId) {
       return;
     }
-    this.tokenUsageCache.set(session.sessionId, { used, limit });
 
-    session.eventEmitter.emit("message", {
-      type: "stream_event",
-      provider: "claude",
-      sessionId: session.sessionId,
-      claudeSessionId: message.session_id,
-      tokenUsage: { used, limit },
-      data: { kind: "token_usage", used, limit },
-      uuid: `${crypto.randomUUID()}::token_usage`,
-      timestamp: new Date().toISOString(),
-    });
+    const now = Date.now();
+    const lastAttempt = this.contextUsageLastAttemptAt.get(resolvedId);
+    if (lastAttempt && now - lastAttempt < MIN_REFRESH_INTERVAL_MS) {
+      return;
+    }
+    this.contextUsageLastAttemptAt.set(resolvedId, now);
+
+    if (this.contextUsageInFlight.has(resolvedId)) {
+      return;
+    }
+
+    const refreshPromise = reader
+      .read({ sessionId: resolvedId, cwd: session.workspacePath })
+      .then((snapshot) => {
+        if (!snapshot) {
+          return;
+        }
+        const { used, limit } = snapshot;
+        const previous = this.tokenUsageCache.get(session.sessionId);
+        if (previous && previous.used === used && previous.limit === limit) {
+          return;
+        }
+        this.tokenUsageCache.set(session.sessionId, { used, limit });
+        session.eventEmitter.emit("message", {
+          type: "stream_event",
+          provider: "claude",
+          sessionId: session.sessionId,
+          claudeSessionId: resolvedId,
+          tokenUsage: { used, limit },
+          data: { kind: "token_usage", used, limit },
+          uuid: `${crypto.randomUUID()}::token_usage`,
+          timestamp: new Date().toISOString(),
+        });
+      })
+      .catch((error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.options.reporter?.warn?.(
+          `Claude /context token read failed (session ${resolvedId}): ${message}`
+        );
+      })
+      .finally(() => {
+        this.contextUsageInFlight.delete(resolvedId);
+      });
+
+    this.contextUsageInFlight.set(resolvedId, refreshPromise);
   }
 
   private handleAssistantMessage(
