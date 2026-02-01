@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Правила выполнения (Execution Rules):
-- **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream с микрозадачами.
+- TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream с микрозадачами.
 - Каждая микрозадача затрагивает ≤ 3 файлов.
 - Каждая микрозадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
 - Gates после каждой микрозадачи: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка.
@@ -9,71 +9,53 @@
 
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`
-3. `doc/Sessions/Session051.md`
+2. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`
+3. `doc/Sessions/Session059.md`
 4. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
 
-## Phase 79 — Project Manager: Add Workspace UX fixes (owner: Oleksandr, updated: 2026-01-23)
+## Phase 83 — Claude: real-time token usage + continuity trigger threshold (owner: Oleksandr, updated: 2026-02-01)
 
-### Stream: macOS folder picker + clean workspace start
-1. [DONE] Feat(cef-launcher): macOS Finder folder picker для Add Workspace (вернуть абсолютный путь в UI) — scope: `packages/cef-launcher/src/launcher_handler.cc`, `packages/cef-launcher/src/platform/mac/launcher_handler_mac.mm`, `packages/cef-launcher/src/launcher_handler.h`; expected commit message: `feat(cef-launcher): mac folder picker for add workspace`
-2. [DONE] Git Commit: `feat(cef-launcher): mac folder picker for add workspace` (hash: 7d27ffd6)
+### Stream: bootstrap (docs + plan)
+1. [IN_PROGRESS] Docs(todo): заархивировать предыдущий `todo-plan.md`, создать новый план Phase 83 и добавить архитектурный документ по token usage — scope: `doc/TODO/Archive/todo-plan-phase82.md`, `doc/TODO/todo-plan.md`, `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`; expected commit message: `docs(todo): start Phase 83 claude token usage`
+2. [TODO] Git Commit: `docs(todo): start Phase 83 claude token usage` (hash: TBD)
 
-3. [DONE] Fix(project-manager): использовать macOS folder picker в `Add workspace` (fallback: ручной ввод пути оставить) — scope: `src/client/project-manager/api.ts`; expected commit message: `fix(project-manager): use mac folder picker in add workspace`
-4. [DONE] Git Commit: `fix(project-manager): use mac folder picker in add workspace` (hash: 6f25a3c0)
+### Stream: token usage pipeline (Claude Agent SDK)
+3. [TODO] Feat(claude-module): включить stream events и публиковать token usage snapshots (used/limit) в provider events — scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/types/index.ts`; expected commit message: `feat(claude-module): stream real-time token usage`
+4. [TODO] Git Commit: `feat(claude-module): stream real-time token usage` (hash: TBD)
 
-5. [DONE] Fix(project-manager): при смене workspace сбрасывать выбранный артефакт/просмотрщик (не показывать артефакт из другого workspace) — scope: `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `fix(project-manager): reset artifact on workspace switch`
-6. [DONE] Git Commit: `fix(project-manager): reset artifact on workspace switch` (hash: 69fb3723)
+5. [TODO] Feat(project-manager): применять `session:stream` token usage events к snapshot.status (used/limit) — scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `feat(project-manager): apply token usage stream updates`
+6. [TODO] Git Commit: `feat(project-manager): apply token usage stream updates` (hash: TBD)
 
-7. [DONE] Feat(project-manager): если выбранный workspace новый/чистый (нет артефактов в `.codeai-hub/<workspaceSlug>/`) — авто-открывать анкету описания и начинать процесс с нуля — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-utils.ts`, `src/client/project-manager/services/workflow-state-helpers.ts`; expected commit message: `feat(project-manager): open questionnaire on empty workspace`
-8. [DONE] Git Commit: `feat(project-manager): open questionnaire on empty workspace` (hash: 6f4d5af4)
+### Stream: continuity threshold (default 30%, configurable)
+7. [TODO] Feat(core): использовать порог continuity из settings (default: 30%) при расчёте shouldHandoff — scope: `packages/core/src/config/index.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): configurable continuity remaining% threshold`
+8. [TODO] Git Commit: `feat(core): configurable continuity remaining% threshold` (hash: TBD)
 
-9. [DONE] Fix(project-manager): сброс состояния анкеты при смене workspace — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit message: `fix(project-manager): reset questionnaire state on workspace change`
-10. [DONE] Git Commit: `fix(project-manager): reset questionnaire state on workspace change` (hash: d1686f90)
+### Stream: UI token label
+9. [TODO] Fix(ui): отображать `used / total (remaining%)` в статус-панели сессии — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): show remaining token percent`
+10. [TODO] Git Commit: `fix(ui): show remaining token percent` (hash: TBD)
 
-11. [DONE] Docs: обновить архитектуру под macOS picker + clean workspace start — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document add-workspace ux fixes`
-12. [DONE] Git Commit: `docs: document add-workspace ux fixes` (hash: 0afed1f2)
+### Stream: Settings (Claude)
+11. [TODO] Feat(settings): добавить и сохранять настройку Claude `remaining% threshold` (default: 30) — scope: `src/extension-module/settings/claude-settings.ts`, `src/extension-module/settings/types.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit message: `feat(settings): persist claude continuity threshold`
+12. [TODO] Git Commit: `feat(settings): persist claude continuity threshold` (hash: TBD)
 
-13. [DONE] Fix(scripts): корректно читать версию лаунчера из manifest — scope: `scripts/build-cef-launcher.sh`; expected commit message: `fix(scripts): resolve launcher version from manifest`
-14. [DONE] Git Commit: `fix(scripts): resolve launcher version from manifest` (hash: 66ccbbab)
+13. [TODO] Feat(ui): добавить в Settings → Claude UI-контрол для `remaining% threshold` и обновление state/save — scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `src/client/ui/src/components/settings/settings-state-helpers.ts`; expected commit message: `feat(ui): add claude continuity threshold control`
+14. [TODO] Git Commit: `feat(ui): add claude continuity threshold control` (hash: TBD)
 
-15. [DONE] Verification: прогнать гейты + таргетные сборки `npm run build:project-manager` и `./scripts/build-cef-launcher.sh` (macOS) — scope: scripts; expected commit message: `chore: verify add-workspace ux fixes`
-16. [DONE] Git Commit: `chore: verify add-workspace ux fixes` (hash: 583b3cf8)
+15. [TODO] Feat(ui): подключить control в Settings View (Claude section) и добавить handler в state hook — scope: `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/components/settings-view.tsx`, `src/client/ui/src/components/settings/settings-card.tsx`; expected commit message: `feat(ui): wire claude continuity threshold setting`
+16. [TODO] Git Commit: `feat(ui): wire claude continuity threshold setting` (hash: TBD)
 
----
+### Stream: verification
+17. [TODO] Verification: прогнать гейты + таргетные сборки затронутых пакетов (`npm run build --workspace @codeai-hub/claude-module`, `npm run build --workspace @codeai-hub/core`, `npm run build:project-manager`, `npm run build:webview`) — scope: scripts; expected commit message: `chore: verify claude token usage + continuity threshold`
+18. [TODO] Git Commit: `chore: verify claude token usage + continuity threshold` (hash: TBD)
 
-## Phase 80 — Project Manager: auto-select added workspace (owner: Oleksandr, updated: 2026-01-23)
+### Stream: release
+19. [TODO] Release: обновить `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под новую версию — scope: docs; expected commit message: `docs: update release notes`
+20. [TODO] Git Commit: `docs: update release notes` (hash: TBD)
 
-### Stream: add workspace auto-select
-1. [DONE] Fix(project-manager): после Add Workspace автоматически выбирать добавленный workspace — scope: `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `fix(project-manager): auto-select added workspace`
-2. [DONE] Git Commit: `fix(project-manager): auto-select added workspace` (hash: f5ed100d)
+21. [TODO] Release: собрать unified релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` (артефакты в `doc/tmp/releases/`) — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+22. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
 
-3. [DONE] Docs: обновить архитектуру под auto-select при Add Workspace — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document auto-select on add workspace`
-4. [DONE] Git Commit: `docs: document auto-select on add workspace` (hash: d2b8d76b)
-
-5. [DONE] Verification: прогнать гейты + таргетную сборку `npm run build:project-manager` — scope: scripts; expected commit message: `chore: verify auto-select add workspace`
-6. [DONE] Git Commit: `chore: verify auto-select add workspace` (hash: d804b32e)
-
----
-
-## Phase 81 — Project Manager: sync tree selection on workspace switch (owner: Oleksandr, updated: 2026-01-23)
-
-### Stream: auto-select session + artifact on workspace change
-1. [DONE] Fix(project-manager): при смене workspace автоматически выбирать последнюю сессию и артефакт из дерева — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`; expected commit message: `fix(project-manager): sync tree selection on workspace switch`
-2. [DONE] Git Commit: `fix(project-manager): sync tree selection on workspace switch` (hash: 08ef9b4c)
-
-3. [DONE] Docs: описать auto-select сессии/артефакта при смене workspace — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document workspace switch auto-select`
-4. [DONE] Git Commit: `docs: document workspace switch auto-select` (hash: 2a85c2f9)
-
-5. [DONE] Verification: прогнать гейты + таргетную сборку `npm run build:project-manager` — scope: scripts; expected commit message: `chore: verify workspace switch auto-select`
-6. [DONE] Git Commit: `chore: verify workspace switch auto-select` (hash: f2d3634a)
-
----
-
-## Phase 82 — Project Manager: questionnaire stays editable until submit (owner: Oleksandr, updated: 2026-02-01)
-
-### Stream: questionnaire editor state
-1. [DONE] Fix(project-manager): не показывать `questionnaire.md` как read-only артефакт до отправки анкеты — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`; expected commit message: `fix(project-manager): keep questionnaire editable until submit`
-2. [DONE] Git Commit: `fix(project-manager): keep questionnaire editable until submit` (hash: 3f32e71f)
+23. [TODO] Docs(session): создать отчёт `doc/Sessions/Session060.md` — scope: `doc/Sessions/Session060.md`; expected commit message: `docs(session): Session060 release`
+24. [TODO] Git Commit: `docs(session): Session060 release` (hash: TBD)
