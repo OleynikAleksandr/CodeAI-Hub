@@ -87,3 +87,7 @@
 ### Stream: fix /context parser (markdown Tokens)
 39. [DONE] Fix(claude-module): поддержать формат вывода `/context` с Markdown `**Tokens:**` (парсинг used/limit) — scope: `packages/Claude_Module/src/sdk/claude-context-usage-snapshot.ts`; expected commit message: `fix(claude-module): parse markdown /context tokens`
 40. [DONE] Git Commit: `fix(claude-module): parse markdown /context tokens` (hash: 8d3d4eb7)
+
+### Stream: release (verification 1.1.488)
+41. [DONE] Release: собрать новый релиз (фикс парсинга `**Tokens:**` из `/context`) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+42. [DONE] Git Commit: `chore(release): build next version` (hash: 1fb4fbb0)
