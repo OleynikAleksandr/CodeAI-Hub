@@ -15,28 +15,47 @@ export type ClaudeThinkingSettings = {
   readonly maxTokens: number;
 };
 
+export type ClaudeSessionContinuitySettings = {
+  readonly remainingPercentThreshold: number;
+};
+
 export type ClaudeSettings = {
   readonly thinking: ClaudeThinkingSettings;
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: ClaudeModelAliasId;
+  readonly sessionContinuity: ClaudeSessionContinuitySettings;
 };
 
 export const MIN_THINKING_TOKENS = 2000;
 export const MAX_THINKING_TOKENS = 32_000;
+export const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+export const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
 
 export const DEFAULT_CLAUDE_THINKING_SETTINGS: ClaudeThinkingSettings = {
   enabled: false,
   maxTokens: 4000,
 };
 
+export const DEFAULT_CLAUDE_SESSION_CONTINUITY_SETTINGS: ClaudeSessionContinuitySettings =
+  {
+    remainingPercentThreshold: 30,
+  };
+
 export const DEFAULT_CLAUDE_SETTINGS: ClaudeSettings = {
   thinking: DEFAULT_CLAUDE_THINKING_SETTINGS,
   autoUpdate: DEFAULT_AUTO_UPDATE_SETTINGS,
   defaultModel: DEFAULT_CLAUDE_MODEL_ALIAS,
+  sessionContinuity: DEFAULT_CLAUDE_SESSION_CONTINUITY_SETTINGS,
 };
 
 const clampThinkingTokens = (value: number): number =>
   Math.min(MAX_THINKING_TOKENS, Math.max(MIN_THINKING_TOKENS, value));
+
+const clampContinuityRemainingPercentThreshold = (value: number): number =>
+  Math.min(
+    MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+    Math.max(MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD, value)
+  );
 
 export const normalizeClaudeThinkingSettings = (
   value: unknown
@@ -60,6 +79,21 @@ export const normalizeClaudeThinkingSettings = (
   };
 };
 
+export const normalizeClaudeSessionContinuitySettings = (
+  value: unknown
+): ClaudeSessionContinuitySettings => {
+  if (!isRecord(value)) {
+    return DEFAULT_CLAUDE_SESSION_CONTINUITY_SETTINGS;
+  }
+
+  const numericValue = Number(value.remainingPercentThreshold);
+  const remainingPercentThreshold = Number.isFinite(numericValue)
+    ? clampContinuityRemainingPercentThreshold(numericValue)
+    : DEFAULT_CLAUDE_SESSION_CONTINUITY_SETTINGS.remainingPercentThreshold;
+
+  return { remainingPercentThreshold };
+};
+
 const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId => {
   if (typeof value !== "string") {
     return DEFAULT_CLAUDE_MODEL_ALIAS;
@@ -78,5 +112,8 @@ export const normalizeClaudeSettings = (value: unknown): ClaudeSettings => {
     thinking: normalizeClaudeThinkingSettings(value.thinking),
     autoUpdate: normalizeAutoUpdateSettings(value.autoUpdate),
     defaultModel: resolveClaudeDefaultModel(value.defaultModel),
+    sessionContinuity: normalizeClaudeSessionContinuitySettings(
+      value.sessionContinuity
+    ),
   };
 };
