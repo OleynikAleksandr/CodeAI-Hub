@@ -1,30 +1,11 @@
-import { execFile } from "node:child_process";
-import { access, readdir, readFile } from "node:fs/promises";
-import { homedir } from "node:os";
-import path from "node:path";
-import { promisify } from "node:util";
-
-const execFileAsync = promisify(execFile);
-
-const COMPACT_NUMBER_PATTERN = /^([\d.,]+)\s*([kKmM])?$/;
-const TOKENS_SNAPSHOT_PATTERNS: readonly RegExp[] = [
-  /Tokens:\s*([\d.,]+)\s*([kKmM]?)\s*\/\s*([\d.,]+)\s*([kKmM]?)\s*\(\d+%\)/,
-  /\b([\d.,]+)\s*([kKmM]?)\s*\/\s*([\d.,]+)\s*([kKmM]?)\s*tokens\s*\(\d+%\)/,
-];
-const LOCAL_COMMAND_STDOUT_PATTERN =
-  /<local-command-stdout>([\s\S]*?)<\/local-command-stdout>/;
-
-const CLAUDE_PROJECTS_ROOT = path.join(homedir(), ".claude", "projects");
-const SESSIONS_INDEX_FILENAME = "sessions-index.json";
+import { spawn } from "node:child_process";
+import { resolveCwdForClaudeSession } from "./claude-context-usage-cwd-resolver";
+import type { ContextUsageSnapshot } from "./claude-context-usage-snapshot";
+import { extractSnapshotFromStreamJsonLine } from "./claude-context-usage-snapshot";
 
 type ContextUsageReaderOptions = {
   readonly executablePath: string;
   readonly env: NodeJS.ProcessEnv;
-};
-
-type ContextUsageSnapshot = {
-  readonly used: number;
-  readonly limit: number;
 };
 
 type ExecFailure = {
@@ -36,212 +17,9 @@ type ExecFailure = {
 };
 
 const isWindows = process.platform === "win32";
-
-const parseCompactNumber = (raw: string): number | null => {
-  const trimmed = raw.trim();
-  const match = COMPACT_NUMBER_PATTERN.exec(trimmed);
-  if (!match) {
-    return null;
-  }
-  const numeric = Number.parseFloat(match[1].replace(/,/g, ""));
-  if (!Number.isFinite(numeric)) {
-    return null;
-  }
-  const suffix = match[2]?.toLowerCase() ?? "";
-  let scale = 1;
-  if (suffix === "k") {
-    scale = 1000;
-  } else if (suffix === "m") {
-    scale = 1_000_000;
-  }
-  return Math.round(numeric * scale);
-};
-
-const extractTokensSnapshot = (text: string): ContextUsageSnapshot | null => {
-  for (const pattern of TOKENS_SNAPSHOT_PATTERNS) {
-    const match = pattern.exec(text);
-    if (!match) {
-      continue;
-    }
-    const used = parseCompactNumber(`${match[1]}${match[2] ?? ""}`);
-    const limit = parseCompactNumber(`${match[3]}${match[4] ?? ""}`);
-    if (used !== null && limit !== null && limit > 0) {
-      return { used, limit };
-    }
-  }
-
-  return null;
-};
-
-const extractLocalCommandStdout = (value: string): string | null => {
-  const match = LOCAL_COMMAND_STDOUT_PATTERN.exec(value);
-  if (!match) {
-    return null;
-  }
-  return match[1];
-};
-
-const collectStrings = (root: unknown): string[] => {
-  const out: string[] = [];
-  const queue: unknown[] = [root];
-  const visited = new Set<object>();
-
-  while (queue.length > 0) {
-    const current = queue.pop();
-    if (typeof current === "string") {
-      out.push(current);
-      continue;
-    }
-    if (!current || typeof current !== "object") {
-      continue;
-    }
-    if (visited.has(current)) {
-      continue;
-    }
-    visited.add(current);
-
-    if (Array.isArray(current)) {
-      for (const item of current) {
-        queue.push(item);
-      }
-      continue;
-    }
-
-    for (const value of Object.values(current as Record<string, unknown>)) {
-      queue.push(value);
-    }
-  }
-
-  return out;
-};
-
-const fileExists = async (filePath: string): Promise<boolean> => {
-  try {
-    await access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const readJsonFile = async (filePath: string): Promise<unknown | null> => {
-  try {
-    const content = await readFile(filePath, "utf8");
-    return JSON.parse(content) as unknown;
-  } catch {
-    return null;
-  }
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const resolveProjectPathFromSessionsIndex = (
-  index: unknown,
-  sessionId: string
-): string | null => {
-  if (!isRecord(index)) {
-    return null;
-  }
-  const entries = index.entries;
-  if (!Array.isArray(entries)) {
-    return null;
-  }
-  const match = entries.find(
-    (entry) =>
-      isRecord(entry) &&
-      typeof entry.sessionId === "string" &&
-      entry.sessionId === sessionId
-  );
-  if (!isRecord(match)) {
-    return null;
-  }
-  return typeof match.projectPath === "string" && match.projectPath.trim()
-    ? match.projectPath
-    : null;
-};
-
-const resolveCwdForSession = async (
-  sessionId: string,
-  fallbackCwd: string
-): Promise<string> => {
-  let candidates: string[] = [];
-  try {
-    candidates = (await readdir(CLAUDE_PROJECTS_ROOT, { withFileTypes: true }))
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => path.join(CLAUDE_PROJECTS_ROOT, entry.name));
-  } catch {
-    return fallbackCwd;
-  }
-
-  for (const projectDir of candidates) {
-    const sessionFilePath = path.join(projectDir, `${sessionId}.jsonl`);
-    if (!(await fileExists(sessionFilePath))) {
-      continue;
-    }
-    const sessionsIndexPath = path.join(projectDir, SESSIONS_INDEX_FILENAME);
-    const index = await readJsonFile(sessionsIndexPath);
-    const projectPath = resolveProjectPathFromSessionsIndex(index, sessionId);
-    if (projectPath) {
-      return projectPath;
-    }
-    return fallbackCwd;
-  }
-
-  return fallbackCwd;
-};
-
-const readContextOutputLines = (output: string): string[] => {
-  const combined = output.trim();
-  if (!combined) {
-    return [];
-  }
-  return combined.split(/\r?\n/g).map((line) => line.trim());
-};
-
-const extractSnapshotFromStreamJsonLine = (
-  line: string
-): ContextUsageSnapshot | null => {
-  if (!line.startsWith("{")) {
-    return null;
-  }
-
-  let parsed: unknown = null;
-  try {
-    parsed = JSON.parse(line) as unknown;
-  } catch {
-    return null;
-  }
-
-  for (const candidate of collectStrings(parsed)) {
-    const localStdout = extractLocalCommandStdout(candidate);
-    if (localStdout) {
-      const snapshot = extractTokensSnapshot(localStdout);
-      if (snapshot) {
-        return snapshot;
-      }
-    }
-
-    const snapshot = extractTokensSnapshot(candidate);
-    if (snapshot) {
-      return snapshot;
-    }
-  }
-
-  return null;
-};
-
-const readContextOutputSnapshot = (
-  output: string
-): ContextUsageSnapshot | null => {
-  for (const line of readContextOutputLines(output)) {
-    const snapshot = extractSnapshotFromStreamJsonLine(line);
-    if (snapshot) {
-      return snapshot;
-    }
-  }
-  return null;
-};
+const CONTEXT_READ_TIMEOUT_MS = 120_000;
+const PROCESS_KILL_GRACE_MS = 2000;
+const MAX_TAIL_CHARS = 4000;
 
 const resolveClaudeRunner = (payload: {
   readonly executablePath: string;
@@ -294,28 +72,200 @@ const formatExecFailure = (error: unknown): string => {
   return details.join(" | ");
 };
 
-const runClaudeCli = async (options: {
+const appendTail = (current: string, chunk: string): string => {
+  const combined = current + chunk;
+  return combined.length > MAX_TAIL_CHARS
+    ? combined.slice(combined.length - MAX_TAIL_CHARS)
+    : combined;
+};
+
+const readSnapshotFromStream = (payload: {
+  readonly chunk: string;
+  readonly buffer: string;
+}): {
+  readonly nextBuffer: string;
+  readonly snapshot: ContextUsageSnapshot | null;
+} => {
+  const combined = payload.buffer + payload.chunk;
+  const lines = combined.split(/\r?\n/g);
+  const nextBuffer = lines.pop() ?? "";
+
+  for (const line of lines) {
+    const snapshot = extractSnapshotFromStreamJsonLine(line);
+    if (snapshot) {
+      return { nextBuffer, snapshot };
+    }
+  }
+
+  return { nextBuffer, snapshot: null };
+};
+
+const runClaudeCliForContextSnapshot = (options: {
   readonly executablePath: string;
   readonly args: readonly string[];
   readonly cwd: string;
   readonly env: NodeJS.ProcessEnv;
-}): Promise<{ readonly stdout: string; readonly stderr: string }> => {
+}): Promise<ContextUsageSnapshot> => {
   const resolved = resolveClaudeRunner({
     executablePath: options.executablePath,
     args: options.args,
   });
 
-  try {
-    return await execFileAsync(resolved.runner, resolved.args, {
-      cwd: options.cwd,
-      env: options.env,
-      windowsHide: true,
-      timeout: 15_000,
-      maxBuffer: 2_000_000,
+  const start = process.hrtime.bigint();
+
+  let stdoutTail = "";
+  let stderrTail = "";
+  let stdoutBuffer = "";
+  let stderrBuffer = "";
+  let snapshot: ContextUsageSnapshot | null = null;
+  let killedByTimeout = false;
+
+  const child = spawn(resolved.runner, resolved.args, {
+    cwd: options.cwd,
+    env: options.env,
+    windowsHide: true,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+
+  return new Promise<ContextUsageSnapshot>((resolve, reject) => {
+    let settled = false;
+    let timeout: NodeJS.Timeout | null = null;
+    let killGrace: NodeJS.Timeout | null = null;
+
+    const safeKill = (signal?: NodeJS.Signals): void => {
+      try {
+        child.kill(signal);
+      } catch {
+        // ignore
+      }
+    };
+
+    const formatCommandForLogs = (): string =>
+      `${resolved.runner} ${resolved.args.map((arg) => JSON.stringify(arg)).join(" ")}`;
+
+    const clearTimers = (): void => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      if (killGrace) {
+        clearTimeout(killGrace);
+      }
+    };
+
+    const durationMs = (): number =>
+      Number(process.hrtime.bigint() - start) / 1_000_000;
+
+    const pushIf = (
+      target: string[],
+      condition: boolean,
+      value: string
+    ): void => {
+      if (condition) {
+        target.push(value);
+      }
+    };
+
+    const pushIfPresent = (
+      target: string[],
+      label: string,
+      value: string | null
+    ): void => {
+      if (!value?.trim()) {
+        return;
+      }
+      target.push(`${label}=${JSON.stringify(value.trim())}`);
+    };
+
+    const finishWithError = (
+      error: unknown,
+      meta?: {
+        readonly code?: number | null;
+        readonly signal?: NodeJS.Signals | null;
+      }
+    ): void => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      clearTimers();
+
+      const base = formatExecFailure(error);
+      const extras: string[] = [
+        `cwd=${JSON.stringify(options.cwd)}`,
+        `duration_ms=${Math.round(durationMs())}`,
+        `cmd=${JSON.stringify(formatCommandForLogs())}`,
+      ];
+      pushIf(extras, killedByTimeout, "timeout=true");
+      pushIf(
+        extras,
+        meta?.code !== undefined && meta.code !== null,
+        `code=${meta?.code}`
+      );
+      pushIf(extras, Boolean(meta?.signal), `signal=${meta?.signal}`);
+      pushIfPresent(extras, "stderr_tail", stderrTail);
+      pushIfPresent(extras, "stdout_tail", stdoutTail);
+      reject(new Error([base, ...extras].join(" | ")));
+    };
+
+    const finishWithSnapshot = (value: ContextUsageSnapshot): void => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      clearTimers();
+      resolve(value);
+    };
+
+    timeout = setTimeout(() => {
+      killedByTimeout = true;
+      safeKill("SIGTERM");
+      killGrace = setTimeout(() => {
+        safeKill("SIGKILL");
+      }, PROCESS_KILL_GRACE_MS);
+    }, CONTEXT_READ_TIMEOUT_MS);
+
+    child.on("error", (error) => {
+      finishWithError(error);
     });
-  } catch (error) {
-    throw new Error(formatExecFailure(error));
-  }
+
+    child.stdout?.on("data", (data: Buffer) => {
+      const chunk = data.toString("utf8");
+      stdoutTail = appendTail(stdoutTail, chunk);
+      const parsed = readSnapshotFromStream({ chunk, buffer: stdoutBuffer });
+      stdoutBuffer = parsed.nextBuffer;
+      if (parsed.snapshot) {
+        snapshot = parsed.snapshot;
+        safeKill("SIGTERM");
+      }
+    });
+
+    child.stderr?.on("data", (data: Buffer) => {
+      const chunk = data.toString("utf8");
+      stderrTail = appendTail(stderrTail, chunk);
+      const parsed = readSnapshotFromStream({ chunk, buffer: stderrBuffer });
+      stderrBuffer = parsed.nextBuffer;
+      if (parsed.snapshot) {
+        snapshot = parsed.snapshot;
+        safeKill("SIGTERM");
+      }
+    });
+
+    child.on("close", (code, signal) => {
+      if (snapshot) {
+        finishWithSnapshot(snapshot);
+        return;
+      }
+
+      const error: ExecFailure = {
+        message: "Claude /context did not produce token usage snapshot",
+        code,
+        signal,
+        stdout: stdoutTail,
+        stderr: stderrTail,
+      };
+      finishWithError(error, { code, signal });
+    });
+  });
 };
 
 export class ClaudeContextUsageReader {
@@ -329,11 +279,11 @@ export class ClaudeContextUsageReader {
     readonly sessionId: string;
     readonly cwd: string;
   }): Promise<ContextUsageSnapshot | null> {
-    const resolvedCwd = await resolveCwdForSession(
-      payload.sessionId,
-      payload.cwd
-    );
-    const { stdout, stderr } = await runClaudeCli({
+    const resolvedCwd = await resolveCwdForClaudeSession({
+      sessionId: payload.sessionId,
+      fallbackCwd: payload.cwd,
+    });
+    const snapshot = await runClaudeCliForContextSnapshot({
       executablePath: this.options.executablePath,
       args: [
         "-p",
@@ -347,7 +297,6 @@ export class ClaudeContextUsageReader {
       cwd: resolvedCwd,
       env: this.options.env,
     });
-
-    return readContextOutputSnapshot(`${stdout}\n${stderr}`);
+    return snapshot;
   }
 }
