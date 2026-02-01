@@ -22,12 +22,10 @@ import {
   normalizeBinding,
   removeSnapshot,
   type SessionSnapshots,
-  toggleTodoInSnapshots,
 } from "../session/helpers";
 import type { ProviderLabels } from "./provider-picker-state";
 import { useSettingsModelsSync } from "./use-settings-models-sync";
 
-type ToggleTodoHandler = (sessionId: string, todoId: string) => void;
 type SendMessageHandler = (sessionId: string, content: string) => void;
 type CloseSessionHandler = (sessionId: string) => void;
 type SelectSessionHandler = (sessionId: string) => void;
@@ -57,7 +55,6 @@ export type UseSessionStoreResult = {
   readonly focusLastSession: FocusLastSessionHandler;
   readonly selectSession: SelectSessionHandler;
   readonly closeSession: CloseSessionHandler;
-  readonly toggleTodo: ToggleTodoHandler;
   readonly sendMessage: SendMessageHandler;
 };
 export const useSessionStore = (
@@ -245,12 +242,6 @@ export const useSessionStore = (
     deleteSessionOnServer(sessionId);
   }, []);
 
-  const toggleTodo = useCallback<ToggleTodoHandler>((sessionId, todoId) => {
-    setSnapshots((previous) =>
-      toggleTodoInSnapshots(previous, sessionId, todoId)
-    );
-  }, []);
-
   const sendMessage = useCallback<SendMessageHandler>((sessionId, content) => {
     setSnapshots((previous) => {
       const current = previous[sessionId];
@@ -294,7 +285,6 @@ export const useSessionStore = (
     focusLastSession,
     selectSession,
     closeSession,
-    toggleTodo,
     sendMessage,
   };
 };

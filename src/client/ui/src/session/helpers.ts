@@ -259,27 +259,6 @@ export const mergeHistoryIntoSnapshots = (
   } satisfies SessionSnapshots;
 };
 
-export const toggleTodoInSnapshots = (
-  snapshots: SessionSnapshots,
-  sessionId: string,
-  todoId: string
-): SessionSnapshots => {
-  const snapshot = snapshots[sessionId];
-  if (!snapshot) {
-    return snapshots;
-  }
-  const todos = snapshot.todos.map((todo) =>
-    todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-  );
-  return {
-    ...snapshots,
-    [sessionId]: {
-      ...snapshot,
-      todos,
-    },
-  } satisfies SessionSnapshots;
-};
-
 export type ProviderTheme = "claude" | "codex" | "gemini";
 
 export const mapProviderTheme = (
