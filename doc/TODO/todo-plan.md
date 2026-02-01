@@ -148,8 +148,8 @@
 2. [DONE] Git Commit: `docs(flow): add unified session history workspace scoping guide` (hash: 2932738c)
 
 ### Stream: docs alignment (Project_Docs + SolidWorks-Flow + README/CHANGELOG)
-3. [TODO] Docs: актуализировать релизные и архитектурные документы, связанные с unified-session history и multi-workspace — scope: ≤3 файлов за микрозадачу; expected commit message: `docs: align unified session history docs`
-4. [TODO] Git Commit: `docs: align unified session history docs` (hash: TBD)
+3. [DONE] Docs: актуализировать релизные и архитектурные документы, связанные с unified-session history и multi-workspace — scope: ≤3 файлов за микрозадачу; expected commit message: `docs: align unified session history docs`
+4. [DONE] Git Commit: `docs: align unified session history docs` (hash: d5108a00)
 5. [TODO] Docs: обновить `README.md` и `CHANGELOG.md` под релиз `1.1.493` — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update README and changelog for 1.1.493`
 6. [TODO] Git Commit: `docs: update README and changelog for 1.1.493` (hash: TBD)
 
