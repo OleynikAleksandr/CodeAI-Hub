@@ -264,16 +264,16 @@ export class SDKMessageProcessor {
     session: ActiveSession,
     message: ClaudeStreamMessage
   ): void {
+    if (message.type !== "stream_event") {
+      return;
+    }
     const raw = message as Record<string, unknown>;
     const limit =
       extractContextWindowLimitFromModelUsage(raw.modelUsage) ??
       extractContextWindowLimitFromModelUsage(raw.model_usage) ??
       DEFAULT_CONTEXT_WINDOW_LIMIT;
 
-    const usage =
-      raw.usage ??
-      extractUsageFromStreamEvent(raw.event) ??
-      (isRecord(raw.message) ? raw.message.usage : null);
+    const usage = extractUsageFromStreamEvent(raw.event);
 
     const totals = extractUsageTotals(usage);
     if (!totals) {
