@@ -23,8 +23,8 @@
 3. [DONE] Fix(claude-module): не перезаписывать token usage snapshot данными из `sdk:result.usage` (это totals по run), использовать только per-turn usage из `stream_event.message_delta.usage` — scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `fix(claude-module): use message_delta usage for context tokens`
 4. [DONE] Git Commit: `fix(claude-module): use message_delta usage for context tokens` (hash: 4b085b8a)
 
-5. [TODO] Verification: прогнать гейты + таргетный билд Claude module — scope: scripts; expected commit message: `chore: verify claude token usage fix`
-6. [TODO] Git Commit: `chore: verify claude token usage fix` (hash: TBD)
+5. [DONE] Verification: прогнать гейты + таргетный билд Claude module — scope: scripts; expected commit message: `chore: verify claude token usage fix`
+6. [DONE] Git Commit: `chore: verify claude token usage fix` (hash: 9d806de1)
 
 ### Stream: release
 7. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
