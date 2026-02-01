@@ -25,6 +25,7 @@ import { useSessionVisibility } from "./session-visibility";
 import { useProjectManagerSessionStream } from "./session-stream";
 import { useReviewerSessionVisibility } from "./reviewer-session-visibility";
 import { useSessionMessageSender } from "./session-message-sender";
+import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
@@ -224,12 +225,19 @@ export const ProjectManagerSessionView = ({
     },
     []
   );
+  const handleSessionStream = useCallback(
+    (payload: { readonly sessionId: string; readonly event: unknown }) => {
+      setSnapshots((previous) => updateSnapshotsWithTokenUsage(previous, payload));
+    },
+    []
+  );
   useProjectManagerSessionStream({
     onSessionBinding: handleSessionBinding,
     onSessionCreated: handleSessionCreated,
     onSessionDeleted: handleSessionDeleted,
     onSessionHistory: handleSessionHistory,
     onSessionMessage: handleSessionMessage,
+    onSessionStream: handleSessionStream,
   });
   const connection = useProjectManagerCoreStatusHydrator({
     onHydrate: hydrateFromState,
