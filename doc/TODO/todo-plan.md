@@ -47,5 +47,5 @@
 17. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 18. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
 
-19. [TODO] Docs(session): создать отчёт `doc/Sessions/Session061.md` — scope: `doc/Sessions/Session061.md`; expected commit message: `docs(session): Session061 claude token usage parity`
-20. [TODO] Git Commit: `docs(session): Session061 claude token usage parity` (hash: TBD)
+19. [DONE] Docs(session): создать отчёт `doc/Sessions/Session061.md` — scope: `doc/Sessions/Session061.md`; expected commit message: `docs(session): Session061 claude /context parity planning`
+20. [DONE] Git Commit: `docs(session): Session061 claude /context parity planning` (hash: 56da59dd)
