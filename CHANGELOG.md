@@ -1,3 +1,7 @@
+## [1.1.481] - 2026-02-01
+### Fixed
+- Project Manager: анкета описания остаётся редактируемой до отправки (при возврате в workspace не открывается как read-only `questionnaire.md`).
+
 ## [1.1.480] - 2026-02-01
 ### Fixed
 - Docs: исправлена ссылка на Provider Setup Guide в README.
