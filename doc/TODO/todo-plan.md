@@ -128,5 +128,5 @@
 60. [DONE] Git Commit: `fix(core): drop token usage state file` (hash: c83d436f)
 
 ### Stream: release (verification)
-61. [TODO] Release: собрать новый релиз (tokenUsage persistence via continuity chain.json) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
-62. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+61. [DONE] Release: собрать новый релиз (tokenUsage persistence via continuity chain.json) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+62. [DONE] Git Commit: `chore(release): build next version` (hash: 5c4004de)
