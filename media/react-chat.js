@@ -22555,12 +22555,13 @@ ${path2}` : path2;
       ] });
     }
     const { providerSummary, models, tokenUsage } = status;
+    const tokenLimit = tokenUsage.limit > 0 ? tokenUsage.limit : null;
     const remainingPercentage = Math.max(
       0,
       Math.min(
         MAX_PERCENTAGE,
         Math.round(
-          (tokenUsage.limit - tokenUsage.used) / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT) * PERCENT_SCALE
+          ((tokenLimit ?? MIN_TOKEN_LIMIT) - tokenUsage.used) / Math.max(tokenLimit ?? MIN_TOKEN_LIMIT, MIN_TOKEN_LIMIT) * PERCENT_SCALE
         )
       )
     );
@@ -22576,7 +22577,7 @@ ${path2}` : path2;
           tokenUsage.used.toLocaleString(),
           " /",
           " ",
-          tokenUsage.limit.toLocaleString(),
+          tokenLimit ? tokenLimit.toLocaleString() : "\u2014",
           " (",
           remainingPercentage,
           "%)"
