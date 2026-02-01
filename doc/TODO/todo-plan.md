@@ -99,3 +99,7 @@
 ### Stream: ui token usage persistence
 45. [DONE] Fix(ui): сохранять last-known tokenUsage в localStorage и восстанавливать при загрузке сессий после рестарта PM — scope: `src/client/ui/src/session/helpers.ts`, `src/client/ui/src/session/token-usage-cache.ts`, `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `fix(ui): persist last token usage snapshot`
 46. [DONE] Git Commit: `fix(ui): persist last token usage snapshot` (hash: fe20d89b)
+
+### Stream: release (verification 1.1.489)
+47. [DONE] Release: собрать новый релиз (UI remaining% + tokenUsage cache) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+48. [DONE] Git Commit: `chore(release): build next version` (hash: f5c1d9a7)
