@@ -185,6 +185,10 @@ export class SessionRequestHandler {
     this.continuity = new SessionContinuityFacade({
       logger: this.logger,
       clock: options.continuityClock,
+      remainingRatioThreshold: Math.min(
+        1,
+        Math.max(0, this.config.claudeContinuityRemainingPercentThreshold / 100)
+      ),
       callbacks: {
         sendMessage: async (sessionId, content) =>
           this.sendInternalMessage(sessionId, content),

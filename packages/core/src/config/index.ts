@@ -30,6 +30,7 @@ export type CoreConfig = {
   readonly geminiSettingsPath: string;
   readonly geminiCredentialsDirectory?: string;
   readonly claudeDefaultModel: string;
+  readonly claudeContinuityRemainingPercentThreshold: number;
 };
 
 type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
@@ -70,6 +71,9 @@ const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
 ]);
 const CLAUDE_MODEL_ALIAS_SET = new Set(["default", "sonnet", "opus", "haiku"]);
 const DEFAULT_CLAUDE_MODEL_ALIAS = "default";
+const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
+const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
 const resolveClaudeDefaultModel = (value: string | undefined): string =>
   value && CLAUDE_MODEL_ALIAS_SET.has(value)
     ? value
@@ -82,6 +86,16 @@ const BOOLEAN_TRUTHY = new Set(["1", "true", "yes", "on"]);
 type CodexSettingsSnapshot = {
   readonly defaultModel?: unknown;
   readonly reasoningByModel?: unknown;
+};
+
+type ClaudeSettingsSnapshot = {
+  readonly providers?: {
+    readonly claude?: {
+      readonly sessionContinuity?: {
+        readonly remainingPercentThreshold?: unknown;
+      };
+    };
+  };
 };
 
 const toNumber = (value: string | undefined, fallback: number): number => {
@@ -113,6 +127,9 @@ const toBoolean = (value: string | undefined, fallback: boolean): boolean => {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
+
+const clampNumber = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, value));
 
 const normalizeCodexReasoningEffort = (
   value: unknown
@@ -248,6 +265,37 @@ const toApprovalMode = (
   return;
 };
 
+const loadClaudeSettingsSnapshot = (
+  settingsPath: string
+): ClaudeSettingsSnapshot | null => {
+  try {
+    const raw = readFileSync(settingsPath, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    if (!isRecord(parsed)) {
+      return null;
+    }
+    return parsed as ClaudeSettingsSnapshot;
+  } catch {
+    return null;
+  }
+};
+
+const resolveClaudeContinuityRemainingPercentThreshold = (
+  snapshot: ClaudeSettingsSnapshot | null
+): number => {
+  const value =
+    snapshot?.providers?.claude?.sessionContinuity?.remainingPercentThreshold;
+  const numeric = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numeric)) {
+    return DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
+  }
+  return clampNumber(
+    numeric,
+    MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+    MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD
+  );
+};
+
 export const loadConfig = (): CoreConfig => {
   const host = process.env.CORE_HOST ?? "127.0.0.1";
   const port = toNumber(process.env.CORE_PORT, DEFAULT_PORT);
@@ -307,6 +355,9 @@ export const loadConfig = (): CoreConfig => {
   const geminiThinkingLevelByModel = resolveGeminiThinkingFromSettings(
     geminiSettings?.thinkingLevelByModel
   );
+  const claudeSettings = loadClaudeSettingsSnapshot(claudeSettingsPath);
+  const claudeContinuityRemainingPercentThreshold =
+    resolveClaudeContinuityRemainingPercentThreshold(claudeSettings);
 
   return {
     host,
@@ -329,5 +380,6 @@ export const loadConfig = (): CoreConfig => {
     geminiThinkingLevelByModel,
     geminiSettingsPath,
     geminiCredentialsDirectory,
+    claudeContinuityRemainingPercentThreshold,
   };
 };
