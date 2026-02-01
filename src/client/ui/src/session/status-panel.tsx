@@ -47,16 +47,20 @@ const StatusPanel = ({
   const { providerSummary, models, tokenUsage } = status;
 
   const tokenLimit = tokenUsage.limit > 0 ? tokenUsage.limit : null;
-  const remainingPercentage = Math.max(
+  const usedPercentage = Math.max(
     0,
     Math.min(
       MAX_PERCENTAGE,
       Math.round(
-        (((tokenLimit ?? MIN_TOKEN_LIMIT) - tokenUsage.used) /
+        (tokenUsage.used /
           Math.max(tokenLimit ?? MIN_TOKEN_LIMIT, MIN_TOKEN_LIMIT)) *
           PERCENT_SCALE
       )
     )
+  );
+  const remainingPercentage = Math.max(
+    0,
+    Math.min(MAX_PERCENTAGE, MAX_PERCENTAGE - usedPercentage)
   );
 
   // Show model details if available, otherwise fall back to provider summary
