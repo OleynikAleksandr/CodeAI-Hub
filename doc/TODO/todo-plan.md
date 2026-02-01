@@ -19,12 +19,12 @@
 ## Phase 86 — Codex: token usage via CLI `/status` (owner: Oleksandr, updated: 2026-02-01)
 
 ### Stream: bootstrap (archive + new plan)
-1. [IN_PROGRESS] Docs(todo): заархивировать завершённый Phase 85 план и создать новый Phase 86 (Codex token usage) — scope: `doc/TODO/Archive/todo-plan-phase85-release-1.1.493-docs-github-sync-2026-02-01.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): start Phase 86 codex token usage via status`
-2. [TODO] Git Commit: `docs(todo): start Phase 86 codex token usage via status` (hash: TBD)
+1. [DONE] Docs(todo): заархивировать завершённый Phase 85 план и создать новый Phase 86 (Codex token usage) — scope: `doc/TODO/Archive/todo-plan-phase85-release-1.1.493-docs-github-sync-2026-02-01.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): start Phase 86 codex token usage via status`
+2. [DONE] Git Commit: `docs(todo): start Phase 86 codex token usage via status` (hash: 55932f99)
 
 ### Stream: design (architecture first)
-3. [TODO] Docs(architecture): добавить архитектурный документ Codex token usage (source-of-truth: `/status` строка `Context window: 82% left (55.3K used / 258K)`) + требования к throttling/persistence/restore — scope: `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md`; expected commit message: `docs: add Codex token usage architecture`
-4. [TODO] Git Commit: `docs: add Codex token usage architecture` (hash: TBD)
+3. [DONE] Docs(architecture): добавить архитектурный документ Codex token usage (source-of-truth: `/status` строка `Context window: 82% left (55.3K used / 258K)`) + требования к throttling/persistence/restore — scope: `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md`; expected commit message: `docs: add Codex token usage architecture`
+4. [DONE] Git Commit: `docs: add Codex token usage architecture` (hash: e041c966)
 5. [BLOCKED] Approval: согласовать `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md` до начала реализации — scope: docs; expected commit message: N/A
 
 ### Stream: spike (prove `/status` can be read safely)
