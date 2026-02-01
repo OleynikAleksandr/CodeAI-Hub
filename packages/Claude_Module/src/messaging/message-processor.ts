@@ -73,6 +73,70 @@ const appendQuestionsToSuggestedResponse = (
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const readNumber = (value: unknown): number | null =>
+  typeof value === "number" && Number.isFinite(value) ? value : null;
+
+const DEFAULT_CONTEXT_WINDOW_LIMIT = 200_000;
+
+const extractContextWindowLimitFromModelUsage = (
+  modelUsage: unknown
+): number | null => {
+  if (!isRecord(modelUsage)) {
+    return null;
+  }
+
+  for (const value of Object.values(modelUsage)) {
+    if (!isRecord(value)) {
+      continue;
+    }
+    const limit = readNumber(value.contextWindow);
+    if (limit !== null && limit > 0) {
+      return limit;
+    }
+  }
+
+  return null;
+};
+
+const extractUsageTotals = (
+  usage: unknown
+): { readonly usedTokens: number } | null => {
+  if (!isRecord(usage)) {
+    return null;
+  }
+
+  const inputTokens = readNumber(usage.input_tokens) ?? 0;
+  const outputTokens = readNumber(usage.output_tokens) ?? 0;
+  const cacheCreationInputTokens =
+    readNumber(usage.cache_creation_input_tokens) ?? 0;
+  const cacheReadInputTokens = readNumber(usage.cache_read_input_tokens) ?? 0;
+
+  const usedTokens =
+    inputTokens +
+    outputTokens +
+    cacheCreationInputTokens +
+    cacheReadInputTokens;
+
+  if (usedTokens <= 0) {
+    return null;
+  }
+
+  return { usedTokens };
+};
+
+const extractUsageFromStreamEvent = (event: unknown): unknown => {
+  if (!isRecord(event)) {
+    return null;
+  }
+  if (isRecord(event.usage)) {
+    return event.usage;
+  }
+  if (isRecord(event.delta) && isRecord(event.delta.usage)) {
+    return event.delta.usage;
+  }
+  return null;
+};
+
 const readStructuredOutput = (
   source: Record<string, unknown>
 ): Record<string, unknown> | null => {
@@ -94,6 +158,10 @@ type MessageProcessorOptions = {
 export class SDKMessageProcessor {
   private readonly sessionManager: SDKSessionManager;
   private readonly options: MessageProcessorOptions;
+  private readonly tokenUsageCache = new Map<
+    string,
+    { used: number; limit: number }
+  >();
 
   constructor(
     sessionManager: SDKSessionManager,
@@ -176,6 +244,7 @@ export class SDKMessageProcessor {
     }
 
     session?.logger?.logSDKMessage(message.type, message);
+    this.emitTokenUsageSnapshot(session, message);
 
     switch (message.type) {
       case "assistant": {
@@ -189,6 +258,45 @@ export class SDKMessageProcessor {
       default:
         break;
     }
+  }
+
+  private emitTokenUsageSnapshot(
+    session: ActiveSession,
+    message: ClaudeStreamMessage
+  ): void {
+    const raw = message as Record<string, unknown>;
+    const limit =
+      extractContextWindowLimitFromModelUsage(raw.modelUsage) ??
+      extractContextWindowLimitFromModelUsage(raw.model_usage) ??
+      DEFAULT_CONTEXT_WINDOW_LIMIT;
+
+    const usage =
+      raw.usage ??
+      extractUsageFromStreamEvent(raw.event) ??
+      (isRecord(raw.message) ? raw.message.usage : null);
+
+    const totals = extractUsageTotals(usage);
+    if (!totals) {
+      return;
+    }
+
+    const used = totals.usedTokens;
+    const previous = this.tokenUsageCache.get(session.sessionId);
+    if (previous && previous.used === used && previous.limit === limit) {
+      return;
+    }
+    this.tokenUsageCache.set(session.sessionId, { used, limit });
+
+    session.eventEmitter.emit("message", {
+      type: "stream_event",
+      provider: "claude",
+      sessionId: session.sessionId,
+      claudeSessionId: message.session_id,
+      tokenUsage: { used, limit },
+      data: { kind: "token_usage", used, limit },
+      uuid: `${crypto.randomUUID()}::token_usage`,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   private handleAssistantMessage(
