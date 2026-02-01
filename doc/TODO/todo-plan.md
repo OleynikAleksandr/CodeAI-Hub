@@ -111,3 +111,11 @@
 ### Stream: release (verification)
 51. [DONE] Release: собрать новый релиз (Core tokenUsage replay) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 52. [DONE] Git Commit: `chore(release): build next version` (hash: 1f359a9c)
+
+### Stream: core token usage persistence (Core restart)
+53. [DONE] Fix(core): сохранять last-known tokenUsage на диск и восстанавливать после рестарта Core (хранение в `~/.codeai-hub/state/token-usage-cache.json`, гидрация при WS connect по `providerSessionId`) — scope: `packages/core/src/remote-bridge/handlers/websocket-manager.ts`, `packages/core/src/remote-bridge/handlers/token-usage-cache.ts`; expected commit message: `fix(core): persist token usage across restarts`
+54. [DONE] Git Commit: `fix(core): persist token usage across restarts` (hash: c05c28fe)
+
+### Stream: release (verification)
+55. [TODO] Release: собрать новый релиз (Core tokenUsage disk persistence) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+56. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
