@@ -13,6 +13,7 @@
 - Обновлены документы релиза: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под версию `1.1.481`.
 - Собран unified релиз `1.1.481` через `./scripts/build-all.sh`.
 - Собран VSIX через `./scripts/build-release.sh --use-current-version`, артефакты скопированы в `doc/tmp/releases/`.
+- Push выполнен в `origin/main`.
 
 ## Release artifacts
 - VSIX: `codeai-hub-1.1.481.vsix` (также `doc/tmp/releases/codeai-hub-1.1.481.vsix`)
@@ -23,6 +24,7 @@
 - `3f32e71f fix(project-manager): keep questionnaire editable until submit`
 - `6ad8a1c7 docs(todo): add Phase 82 questionnaire editor state`
 - `a95e3351 chore(release): build next version`
+- `dbd4e7ed docs(session): Session059 release 1.1.481`
 
 ---
 
@@ -37,4 +39,3 @@
 
 ## Plans for next session
 - Manual smoke-test VSIX `codeai-hub-1.1.481.vsix`.
-- Push в `origin/main`.
