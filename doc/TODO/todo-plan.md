@@ -119,3 +119,14 @@
 ### Stream: release (verification)
 55. [DONE] Release: собрать новый релиз (Core tokenUsage disk persistence) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 56. [DONE] Git Commit: `chore(release): build next version` (hash: 6a94bd98)
+
+### Stream: core token usage persistence (via continuity chain.json)
+57. [DONE] Fix(core): хранить tokenUsage в `chain.json` (continuity) и пушить snapshot в UI при `session:binding` — scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): persist token usage in continuity chain`
+58. [DONE] Git Commit: `fix(core): persist token usage in continuity chain` (hash: 0a0ad46b)
+
+59. [DONE] Fix(core): удалить временный state-file/persistence (`token-usage-cache.json` под `~/.codeai-hub/state`) и оставить только replay при reopen PM (данные приходят из continuity на binding) — scope: `packages/core/src/remote-bridge/handlers/websocket-manager.ts`; expected commit message: `fix(core): drop token usage state file`
+60. [DONE] Git Commit: `fix(core): drop token usage state file` (hash: c83d436f)
+
+### Stream: release (verification)
+61. [TODO] Release: собрать новый релиз (tokenUsage persistence via continuity chain.json) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+62. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
