@@ -22555,10 +22555,13 @@ ${path2}` : path2;
       ] });
     }
     const { providerSummary, models, tokenUsage } = status;
-    const percentage = Math.min(
-      MAX_PERCENTAGE,
-      Math.round(
-        tokenUsage.used / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT) * PERCENT_SCALE
+    const remainingPercentage = Math.max(
+      0,
+      Math.min(
+        MAX_PERCENTAGE,
+        Math.round(
+          (tokenUsage.limit - tokenUsage.used) / Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT) * PERCENT_SCALE
+        )
       )
     );
     const modelsSummary = models && models.length > 0 ? formatModelSummary(models) : providerSummary;
@@ -22575,7 +22578,7 @@ ${path2}` : path2;
           " ",
           tokenUsage.limit.toLocaleString(),
           " (",
-          percentage,
+          remainingPercentage,
           "%)"
         ] })
       ] })
@@ -27414,6 +27417,19 @@ ${replacement}
       }
     }
   });
+  var updateClaudeContinuityRemainingPercentThreshold = (settings, remainingPercentThreshold) => ({
+    ...settings,
+    providers: {
+      ...settings.providers,
+      claude: {
+        ...settings.providers.claude,
+        sessionContinuity: {
+          ...settings.providers.claude.sessionContinuity,
+          remainingPercentThreshold
+        }
+      }
+    }
+  });
   var updateCodexDefaultModel = (settings, modelId) => ({
     ...settings,
     providers: {
@@ -27516,6 +27532,9 @@ ${replacement}
   var DEFAULT_THINKING_MAX_TOKENS = 4e3;
   var DEFAULT_AUTO_UPDATE_ENABLED = true;
   var DEFAULT_CORE_RESTART_ENABLED = true;
+  var DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
+  var MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+  var MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
   var CODEX_MODEL_IDS = new Set(
     CODEX_ALL_MODELS.map((model) => model.id)
   );
@@ -27542,10 +27561,24 @@ ${replacement}
       allowRestart: typeof value?.coreControls?.allowRestart === "boolean" ? value.coreControls.allowRestart : DEFAULT_CORE_RESTART_ENABLED
     }
   });
+  var mapClaudeContinuity = (value) => {
+    const numericValue = Number(
+      isRecord11(value) ? value.remainingPercentThreshold : void 0
+    );
+    const remainingPercentThreshold = Number.isFinite(numericValue) ? Math.min(
+      MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+      Math.max(
+        MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+        numericValue
+      )
+    ) : DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
+    return { remainingPercentThreshold };
+  };
   var mapClaudeSettings = (value) => ({
     thinking: mapThinkingSettings(value?.thinking),
     autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
-    defaultModel: resolveClaudeDefaultModel(value?.defaultModel)
+    defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
+    sessionContinuity: mapClaudeContinuity(value?.sessionContinuity)
   });
   var resolveCodexModelId = (value) => typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : DEFAULT_CODEX_MODEL_ID;
   var resolveClaudeDefaultModel = (value) => {
@@ -27595,7 +27628,7 @@ ${replacement}
     );
   };
   var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart;
-  var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel;
+  var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel);
   var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
@@ -27680,6 +27713,21 @@ ${replacement}
       },
       [settings, updateSettings]
     );
+    const handleClaudeContinuityRemainingPercentThresholdChange = (0, import_react23.useCallback)(
+      (remainingPercentThreshold) => {
+        if (!Number.isFinite(remainingPercentThreshold)) {
+          return;
+        }
+        const clamped = Math.min(
+          80,
+          Math.max(5, Math.round(remainingPercentThreshold))
+        );
+        updateSettings(
+          updateClaudeContinuityRemainingPercentThreshold(settings, clamped)
+        );
+      },
+      [settings, updateSettings]
+    );
     const handleCodexDefaultModelChange = (0, import_react23.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
@@ -27747,6 +27795,7 @@ ${replacement}
       resetting,
       versions,
       handleThinkingSettingsChange,
+      handleClaudeContinuityRemainingPercentThresholdChange,
       handleClaudeDefaultModelChange,
       handleCodexDefaultModelChange,
       handleGeminiDefaultModelChange,
@@ -27797,6 +27846,27 @@ ${replacement}
     flexDirection: "column",
     gap: "16px"
   };
+  var settingsLabelStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    fontSize: "12px",
+    color: "#cccccc"
+  };
+  var settingsDescriptionStyles = {
+    margin: 0,
+    fontSize: "12px",
+    lineHeight: 1.5,
+    color: "#aaaaaa"
+  };
+  var settingsInputStyles = {
+    width: "220px",
+    background: "#1e1e1e",
+    border: "1px solid #3c3c3c",
+    borderRadius: "6px",
+    padding: "8px 10px",
+    color: "#cccccc"
+  };
   var modeNoticeStyles = {
     margin: "16px 20px 0",
     padding: "12px 14px",
@@ -27831,6 +27901,7 @@ ${replacement}
       resetting,
       versions,
       handleThinkingSettingsChange,
+      handleClaudeContinuityRemainingPercentThresholdChange,
       handleCodexDefaultModelChange,
       handleClaudeDefaultModelChange,
       handleGeminiDefaultModelChange,
@@ -27887,7 +27958,26 @@ ${replacement}
                 maxTokens: settings.providers.claude.thinking.maxTokens,
                 onChange: handleThinkingSettingsChange
               }
-            )
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(settings_card_default, { title: "Claude Session Continuity", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
+              /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("label", { style: settingsLabelStyles, children: [
+                "Remaining context threshold (%)",
+                /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+                  "input",
+                  {
+                    max: 80,
+                    min: 5,
+                    onChange: (event) => handleClaudeContinuityRemainingPercentThresholdChange(
+                      Number(event.target.value)
+                    ),
+                    style: settingsInputStyles,
+                    type: "number",
+                    value: settings.providers.claude.sessionContinuity.remainingPercentThreshold
+                  }
+                )
+              ] })
+            ] })
           ] });
         }
         if (activeTab === "general") {
