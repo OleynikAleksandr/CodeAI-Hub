@@ -54,8 +54,8 @@
 19. [DONE] Release: обновить `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под новую версию — scope: docs; expected commit message: `docs: update release notes`
 20. [DONE] Git Commit: `docs: update release notes` (hash: 6888ef27)
 
-21. [TODO] Release: собрать unified релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` (артефакты в `doc/tmp/releases/`) — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
-22. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+21. [DONE] Release: собрать unified релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` (артефакты в `doc/tmp/releases/`) — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+22. [DONE] Git Commit: `chore(release): build next version` (hash: 6af2e938)
 
 23. [TODO] Docs(session): создать отчёт `doc/Sessions/Session060.md` — scope: `doc/Sessions/Session060.md`; expected commit message: `docs(session): Session060 release`
 24. [TODO] Git Commit: `docs(session): Session060 release` (hash: TBD)
