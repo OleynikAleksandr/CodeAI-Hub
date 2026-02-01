@@ -91,6 +91,7 @@ MVP-реальность: текущая реализация Workflow Tree жи
 - клик по `Step` открывает состояние шага (анкета/запуск, либо продолжение),
 - клик по `Artifact` открывает содержимое артефакта во **встроенном viewer** Project Manager (не VS Code editor tab),
 - клик по `Session` открывает полный диалог; после перезапуска Project Manager сессия должна восстанавливаться по persisted координатам (providerId + providerSessionId).
+  - анти-регрессия: история диалога берётся из unified-session JSONL (`~/.codeai-hub/sessions/...`) и должна восстанавливаться даже если Core стартовал из другого workspace (см. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`).
 
 Контракт `Resume` (без дублей):
 - клик по `Session` диспатчит intent **focus/resume** по `providerId + providerSessionId` (а не прямой `session:create`).

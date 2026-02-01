@@ -1,6 +1,6 @@
 # Project Docs — Единый источник правды
 
-**Last Updated:** 2026-01-19
+**Last Updated:** 2026-02-01 (release 1.1.493)
 
 Эта папка содержит **актуальные** проектные документы CodeAI Hub.
 
@@ -69,6 +69,7 @@ doc/Project_Docs/
 | Папка | Описание |
 |-------|----------|
 | `doc/SolidWorks-Flow/` | UI/UX Workflow Tree (SolidWorks-подобная визуализация) |
+| `doc/SolidWorks-Flow/knowledge/` | Практические заметки FLOW (anti-regression KB) |
 | `doc/TODO/` | Планы разработки |
 | `doc/Sessions/` | Отчёты сессий |
 
