@@ -14,6 +14,9 @@ import { extractTokenUsage } from "./token-usage";
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const readString = (value: unknown): string | null =>
+  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
 const extractMessageContent = (event: unknown): string | null => {
   if (!isRecord(event)) {
     return null;
@@ -25,6 +28,18 @@ const extractMessageContent = (event: unknown): string | null => {
     return event.data;
   }
   return null;
+};
+
+const extractProviderSessionId = (event: unknown): string | null => {
+  if (!isRecord(event)) {
+    return null;
+  }
+
+  return (
+    readString(event.providerSessionId) ??
+    readString(event.claudeSessionId) ??
+    null
+  );
 };
 
 type PendingHandoff = {
@@ -54,6 +69,35 @@ export class SessionContinuityFacade {
     readonly workspaceSlug: string;
   }): Promise<ContinuityChainSummary[]> {
     return readContinuityChains(options);
+  }
+
+  static async readLastTokenUsageSnapshot(options: {
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+    readonly providerSessionId: string;
+  }): Promise<import("./continuity-types").TokenUsageSnapshot | null> {
+    const chains = await readContinuityChains({
+      workspaceRoot: options.workspaceRoot,
+      workspaceSlug: options.workspaceSlug,
+    });
+
+    let best: import("./continuity-types").TokenUsageSnapshot | null = null;
+    for (const chain of chains) {
+      for (const segment of chain.segments) {
+        if (segment.providerSessionId !== options.providerSessionId) {
+          continue;
+        }
+        const snapshot = segment.tokenUsage ?? null;
+        if (!snapshot) {
+          continue;
+        }
+        if (!best || snapshot.updatedAt > best.updatedAt) {
+          best = snapshot;
+        }
+      }
+    }
+
+    return best;
   }
 
   private readonly logger: Logger;
@@ -115,6 +159,7 @@ export class SessionContinuityFacade {
 
     const usage = extractTokenUsage(event, this.clock());
     if (usage) {
+      await this.persistTokenUsageSnapshot(session, event, usage);
       const decision = this.monitor.record(sessionId, usage);
       if (decision.shouldHandoff) {
         await this.requestHandoff(session);
@@ -127,6 +172,37 @@ export class SessionContinuityFacade {
         await this.finalizeHandoff(session, content);
       }
     }
+  }
+
+  private async persistTokenUsageSnapshot(
+    session: Session,
+    event: unknown,
+    usage: import("./continuity-types").TokenUsageSnapshot
+  ): Promise<void> {
+    if (!session.initiativeSlug) {
+      return;
+    }
+
+    const providerSessionId =
+      session.providerSessionId ?? extractProviderSessionId(event);
+    if (!providerSessionId) {
+      return;
+    }
+
+    await this.tracker.ensureTrackedOnOutboundMessage({
+      sessionId: session.id,
+      providerSessionId,
+    });
+
+    const rootSessionId = this.tracker.getRootSessionId(session.id);
+    await this.tracker.updateChain(session, rootSessionId, (chain) => {
+      const updated = chain.segments.map((segment) =>
+        segment.providerSessionId === providerSessionId
+          ? { ...segment, tokenUsage: usage }
+          : segment
+      );
+      return { ...chain, segments: updated, updatedAt: this.clock() };
+    });
   }
 
   private async requestHandoff(session: Session): Promise<void> {

@@ -23,6 +23,7 @@ export type ContinuitySegment = {
   readonly providerSessionId: string;
   readonly createdAt: string;
   readonly handoffReportPath?: string;
+  readonly tokenUsage?: TokenUsageSnapshot;
 };
 
 export type ContinuityChain = {

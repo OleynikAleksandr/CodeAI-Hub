@@ -1040,6 +1040,50 @@ export class SessionRequestHandler {
       },
     });
     this.stateBroadcaster();
+
+    const providerSessionId = session.providerSessionId ?? null;
+    const workspaceSlug = session.initiativeSlug ?? null;
+    if (!(providerSessionId && workspaceSlug)) {
+      return;
+    }
+
+    SessionContinuityFacade.readLastTokenUsageSnapshot({
+      workspaceRoot: session.workspacePath,
+      workspaceSlug,
+      providerSessionId,
+    })
+      .then((snapshot) => {
+        if (!snapshot) {
+          return;
+        }
+        this.broadcaster({
+          type: "session:stream",
+          payload: {
+            sessionId,
+            event: {
+              type: "stream_event",
+              tokenUsage: { used: snapshot.used, limit: snapshot.limit },
+              data: {
+                kind: "token_usage",
+                used: snapshot.used,
+                limit: snapshot.limit,
+              },
+              uuid: "continuity::token_usage",
+              timestamp: snapshot.updatedAt,
+            },
+          },
+        });
+      })
+      .catch((error: unknown) => {
+        this.logger.warn(
+          "Failed to load token usage snapshot from continuity",
+          {
+            sessionId,
+            providerSessionId,
+            error: error instanceof Error ? error.message : String(error),
+          }
+        );
+      });
   }
 
   private handleSessionIdChangedEvent(
