@@ -6,6 +6,7 @@ import type {
 } from "../../../../../types/gemini-model-registry";
 import vscode from "../../vscode";
 import {
+  updateClaudeContinuityRemainingPercentThreshold,
   updateClaudeDefaultModel,
   updateCodexDefaultModel,
   updateCodexReasoning,
@@ -85,6 +86,9 @@ export type UseSettingsStateResult = {
   readonly handleThinkingSettingsChange: (
     enabled: boolean,
     maxTokens: number
+  ) => void;
+  readonly handleClaudeContinuityRemainingPercentThresholdChange: (
+    remainingPercentThreshold: number
   ) => void;
   readonly handleClaudeDefaultModelChange: (
     modelId: ClaudeModelAliasId
@@ -183,6 +187,22 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
+  const handleClaudeContinuityRemainingPercentThresholdChange = useCallback(
+    (remainingPercentThreshold: number) => {
+      if (!Number.isFinite(remainingPercentThreshold)) {
+        return;
+      }
+      const clamped = Math.min(
+        80,
+        Math.max(5, Math.round(remainingPercentThreshold))
+      );
+      updateSettings(
+        updateClaudeContinuityRemainingPercentThreshold(settings, clamped)
+      );
+    },
+    [settings, updateSettings]
+  );
+
   const handleCodexDefaultModelChange = useCallback(
     (modelId: CodexModelId) => {
       updateSettings(updateCodexDefaultModel(settings, modelId));
@@ -258,6 +278,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     resetting,
     versions,
     handleThinkingSettingsChange,
+    handleClaudeContinuityRemainingPercentThresholdChange,
     handleClaudeDefaultModelChange,
     handleCodexDefaultModelChange,
     handleGeminiDefaultModelChange,
