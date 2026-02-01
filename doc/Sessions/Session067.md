@@ -40,10 +40,15 @@
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 2. `doc/Project_Docs/SystemArchitecture/UnifiedSessionArchitecture.md`
-3. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
-4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session067.md` (THIS REPORT)
+3. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`
+4. `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
+5. `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
+6. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
+7. `doc/Sessions/Session065.md` (token usage persistence via continuity)
+8. `doc/Sessions/Session066.md` (session history restore across workspaces)
+9. `doc/TODO/todo-plan.md`
+10. `doc/Sessions/Session067.md` (THIS REPORT)
 
 ## Plans for next session
-- Выполнить `git push` и при необходимости оформить GitHub Release (только по явному запросу).
+- Подготовить и согласовать архитектурный документ для token usage (Codex/Gemini/новые провайдеры) по аналогии с Claude, включая persistence/restore, затем только после апрува — создать новый `doc/TODO/todo-plan.md`.
 - Если появятся новые провайдеры/режимы resume — пройти чеклист из KB и убедиться, что `providerId`/`providerSessionId` стабильны.
