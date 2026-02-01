@@ -65,3 +65,17 @@
 ### Stream: release (hotfix 2)
 27. [DONE] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 28. [DONE] Git Commit: `chore(release): build next version` (hash: 2d21d32d)
+
+### Stream: session report (close Session 62)
+29. [IN_PROGRESS] Docs(session): создать отчёт `doc/Sessions/Session062.md` с описанием проблемы (UI показывает `0 / 200,000 (100%)`, `/context` reader падает) — scope: `doc/Sessions/Session062.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session062 claude tokens stuck at 0`
+30. [TODO] Git Commit: `docs(session): Session062 claude tokens stuck at 0` (hash: TBD)
+
+### Stream: debug `/context` runtime (next session)
+31. [TODO] Fix(claude-module): сделать `/context` reader устойчивым (убрать/увеличить timeout, перейти на `spawn` + ранний выход при нахождении `Tokens:`) — scope: `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude-module): make /context reader resilient`
+32. [TODO] Git Commit: `fix(claude-module): make /context reader resilient` (hash: TBD)
+
+33. [TODO] Fix(ui): не показывать `0` при отсутствии snapshot; показывать `N/A` или last-known snapshot — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): avoid zero tokens when /context fails`
+34. [TODO] Git Commit: `fix(ui): avoid zero tokens when /context fails` (hash: TBD)
+
+35. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+36. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
