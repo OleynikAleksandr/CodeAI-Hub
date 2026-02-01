@@ -1,3 +1,11 @@
+## [1.1.493] - 2026-02-01
+### Fixed
+- Core: restore unified-session dialog history across Core restarts and multi-workspace runs (per-session workspace scoping + fallback bucket scan).
+
+## [1.1.492] - 2026-02-01
+### Fixed
+- Core: persist last-known token usage in continuity (`chain.json`) and restore on session binding (no extra state files).
+
 ## [1.1.482] - 2026-02-01
 ### Added
 - Claude: real-time context window usage reporting (tokens `used / total` + `remaining%`) for sessions.
