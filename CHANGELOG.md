@@ -1,3 +1,11 @@
+## [1.1.480] - 2026-02-01
+### Fixed
+- Docs: исправлена ссылка на Provider Setup Guide в README.
+
+### Removed
+- Webview/Project Manager: удалён неиспользуемый Session Todo UI и связанная проводка.
+- Extension: удалены неиспользуемые helper API (provider installer stubs, UI update checker, legacy CEF launcher helpers).
+
 ## [1.1.479] - 2026-01-23
 ### Fixed
 - Project Manager: при смене workspace автоматически выбираются последние сессия и артефакт.

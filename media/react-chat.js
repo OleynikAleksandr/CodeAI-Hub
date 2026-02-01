@@ -8052,22 +8052,6 @@
       }
     };
   };
-  var toggleTodoInSnapshots = (snapshots, sessionId, todoId) => {
-    const snapshot = snapshots[sessionId];
-    if (!snapshot) {
-      return snapshots;
-    }
-    const todos = snapshot.todos.map(
-      (todo) => todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-    );
-    return {
-      ...snapshots,
-      [sessionId]: {
-        ...snapshot,
-        todos
-      }
-    };
-  };
   var mapProviderTheme = (providerId) => {
     switch (providerId) {
       case "claudeCodeCli":
@@ -22621,8 +22605,7 @@ ${path2}` : path2;
     coreConnectionDetail,
     onSelectSession,
     onCloseSession,
-    onSendMessage,
-    onToggleTodo: _onToggleTodo
+    onSendMessage
   }) => {
     const activeSession = activeSessionId && snapshots[activeSessionId] ? snapshots[activeSessionId] : null;
     const activeRecord = sessions.find(
@@ -25026,7 +25009,6 @@ ${replacement}
           onCloseSession: sessionViewProps.onCloseSession,
           onSelectSession: sessionViewProps.onSelectSession,
           onSendMessage: sessionViewProps.onSendMessage,
-          onToggleTodo: sessionViewProps.onToggleTodo,
           providerLabels: sessionViewProps.providerLabels,
           sessions: sessionViewProps.sessions,
           showEmptyState: true,
@@ -25268,11 +25250,6 @@ ${replacement}
     const closeSession = (0, import_react13.useCallback)((sessionId) => {
       deleteSession(sessionId);
     }, []);
-    const toggleTodo = (0, import_react13.useCallback)((sessionId, todoId) => {
-      setSnapshots(
-        (previous3) => toggleTodoInSnapshots(previous3, sessionId, todoId)
-      );
-    }, []);
     const sendMessage = (0, import_react13.useCallback)((sessionId, content3) => {
       setSnapshots((previous3) => {
         const current = previous3[sessionId];
@@ -25313,7 +25290,6 @@ ${replacement}
       focusLastSession,
       selectSession,
       closeSession,
-      toggleTodo,
       sendMessage
     };
   };
@@ -28936,7 +28912,6 @@ ${replacement}
       focusLastSession,
       selectSession,
       closeSession,
-      toggleTodo,
       sendMessage
     } = useSessionStore(providerLabels, settings);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
@@ -29105,7 +29080,6 @@ ${replacement}
             onCloseSession: closeSession,
             onSelectSession: selectSession,
             onSendMessage: sendIdeaCollectorMessage,
-            onToggleTodo: toggleTodo,
             providerLabels,
             sessions,
             snapshots
