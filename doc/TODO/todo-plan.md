@@ -109,5 +109,5 @@
 50. [DONE] Git Commit: `fix(core): replay token usage on ws connect` (hash: 3cdbaa61)
 
 ### Stream: release (verification)
-51. [TODO] Release: собрать новый релиз (Core tokenUsage replay) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
-52. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+51. [DONE] Release: собрать новый релиз (Core tokenUsage replay) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+52. [DONE] Git Commit: `chore(release): build next version` (hash: 1f359a9c)
