@@ -154,6 +154,8 @@
 6. [DONE] Git Commit: `docs: update README and changelog for 1.1.493` (hash: 3abdc340)
 
 ### Stream: session report + push
-7. [TODO] Docs(session): создать отчёт `doc/Sessions/Session067.md` по итоговому решению (history + docs) — scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): Session067 1.1.493 docs + github sync`
-8. [TODO] Git Commit: `docs(session): Session067 1.1.493 docs + github sync` (hash: TBD)
-9. [TODO] GitHub: push `main` (релиз `1.1.493` + docs) — scope: git; expected commit message: N/A
+7. [DONE] Docs: синхронизировать `SystemArchitecture`/индексы доков и уточнить WorkflowTree resume контракт под `1.1.493` — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/README.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: sync Project_Docs and SolidWorks-Flow for 1.1.493`
+8. [DONE] Git Commit: `docs: sync Project_Docs and SolidWorks-Flow for 1.1.493` (hash: 8e007210)
+9. [TODO] Docs(session): создать отчёт `doc/Sessions/Session067.md` по итоговому решению (history + docs) — scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): Session067 1.1.493 docs + github sync`
+10. [TODO] Git Commit: `docs(session): Session067 1.1.493 docs + github sync` (hash: TBD)
+11. [TODO] GitHub: push `main` (релиз `1.1.493` + docs) — scope: git; expected commit message: N/A
