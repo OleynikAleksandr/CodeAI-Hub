@@ -67,8 +67,8 @@
 28. [DONE] Git Commit: `chore(release): build next version` (hash: 2d21d32d)
 
 ### Stream: session report (close Session 62)
-29. [IN_PROGRESS] Docs(session): создать отчёт `doc/Sessions/Session062.md` с описанием проблемы (UI показывает `0 / 200,000 (100%)`, `/context` reader падает) — scope: `doc/Sessions/Session062.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session062 claude tokens stuck at 0`
-30. [TODO] Git Commit: `docs(session): Session062 claude tokens stuck at 0` (hash: TBD)
+29. [DONE] Docs(session): создать отчёт `doc/Sessions/Session062.md` с описанием проблемы (UI показывает `0 / 200,000 (100%)`, `/context` reader падает) — scope: `doc/Sessions/Session062.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session062 claude tokens stuck at 0`
+30. [DONE] Git Commit: `docs(session): Session062 claude tokens stuck at 0` (hash: 5f114376)
 
 ### Stream: debug `/context` runtime (next session)
 31. [TODO] Fix(claude-module): сделать `/context` reader устойчивым (убрать/увеличить timeout, перейти на `spawn` + ранний выход при нахождении `Tokens:`) — scope: `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude-module): make /context reader resilient`
