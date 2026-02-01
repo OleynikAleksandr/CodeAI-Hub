@@ -25,8 +25,8 @@
 3. [DONE] Feat(claude-module): включить stream events и публиковать token usage snapshots (used/limit) в provider events — scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/types/index.ts`; expected commit message: `feat(claude-module): stream real-time token usage`
 4. [DONE] Git Commit: `feat(claude-module): stream real-time token usage` (hash: 91dd0b71)
 
-5. [TODO] Feat(project-manager): применять `session:stream` token usage events к snapshot.status (used/limit) — scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `feat(project-manager): apply token usage stream updates`
-6. [TODO] Git Commit: `feat(project-manager): apply token usage stream updates` (hash: TBD)
+5. [DONE] Feat(project-manager): применять `session:stream` token usage events к snapshot.status (used/limit) — scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `feat(project-manager): apply token usage stream updates`
+6. [DONE] Git Commit: `feat(project-manager): apply token usage stream updates` (hash: 55dbaa9f)
 
 ### Stream: continuity threshold (default 30%, configurable)
 7. [TODO] Feat(core): использовать порог continuity из settings (default: 30%) при расчёте shouldHandoff — scope: `packages/core/src/config/index.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): configurable continuity remaining% threshold`
