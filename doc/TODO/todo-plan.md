@@ -55,5 +55,5 @@
 22. [DONE] Git Commit: `fix(claude-module): resolve /context cwd via sessions-index` (hash: 51197299)
 
 ### Stream: release (hotfix)
-23. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
-24. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+23. [DONE] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+24. [DONE] Git Commit: `chore(release): build next version` (hash: dc67cab9)
