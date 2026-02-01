@@ -59,6 +59,7 @@ export class ClaudeSDKManager {
   private queryFunction: QueryFunction | null = null;
   private initialized = false;
   private readonly deps: ClaudeManagerDependencies;
+  private contextReaderConfigured = false;
 
   constructor(deps: ClaudeManagerDependencies) {
     this.deps = deps;
@@ -74,6 +75,13 @@ export class ClaudeSDKManager {
       readonly query: QueryFunction;
     }>();
     this.queryFunction = this.sdkModule.query;
+    if (!this.contextReaderConfigured) {
+      this.deps.processor.configureContextUsageReader({
+        executablePath: this.deps.installer.getExecutablePath(),
+        env: this.deps.authManager.getAuthEnvironment(),
+      });
+      this.contextReaderConfigured = true;
+    }
     this.initialized = true;
   }
 
