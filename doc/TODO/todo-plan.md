@@ -22,8 +22,8 @@
 2. [DONE] Git Commit: `docs(todo): start Phase 83 claude token usage` (hash: 9bc8e363)
 
 ### Stream: token usage pipeline (Claude Agent SDK)
-3. [TODO] Feat(claude-module): включить stream events и публиковать token usage snapshots (used/limit) в provider events — scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/types/index.ts`; expected commit message: `feat(claude-module): stream real-time token usage`
-4. [TODO] Git Commit: `feat(claude-module): stream real-time token usage` (hash: TBD)
+3. [DONE] Feat(claude-module): включить stream events и публиковать token usage snapshots (used/limit) в provider events — scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/types/index.ts`; expected commit message: `feat(claude-module): stream real-time token usage`
+4. [DONE] Git Commit: `feat(claude-module): stream real-time token usage` (hash: 91dd0b71)
 
 5. [TODO] Feat(project-manager): применять `session:stream` token usage events к snapshot.status (used/limit) — scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `feat(project-manager): apply token usage stream updates`
 6. [TODO] Git Commit: `feat(project-manager): apply token usage stream updates` (hash: TBD)
