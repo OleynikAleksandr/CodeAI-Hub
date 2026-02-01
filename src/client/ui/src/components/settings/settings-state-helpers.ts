@@ -42,6 +42,23 @@ export const updateClaudeDefaultModel = (
   },
 });
 
+export const updateClaudeContinuityRemainingPercentThreshold = (
+  settings: Settings,
+  remainingPercentThreshold: number
+): Settings => ({
+  ...settings,
+  providers: {
+    ...settings.providers,
+    claude: {
+      ...settings.providers.claude,
+      sessionContinuity: {
+        ...settings.providers.claude.sessionContinuity,
+        remainingPercentThreshold,
+      },
+    },
+  },
+});
+
 export const updateCodexDefaultModel = (
   settings: Settings,
   modelId: CodexModelId

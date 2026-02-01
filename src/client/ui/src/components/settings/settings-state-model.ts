@@ -49,12 +49,15 @@ type CoreControlsSettings = {
 type GeneralSettings = {
   readonly coreControls: CoreControlsSettings;
 };
+type ClaudeContinuitySettings = {
+  readonly remainingPercentThreshold: number;
+};
 type ClaudeSettings = {
   readonly thinking: ThinkingSettings;
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: ClaudeModelAliasId;
+  readonly sessionContinuity: ClaudeContinuitySettings;
 };
-
 export type CodexReasoningByModel = Readonly<
   Record<string, CodexReasoningLevel>
 >;
@@ -63,7 +66,6 @@ type CodexSettings = {
   readonly defaultModel: CodexModelId;
   readonly reasoningByModel: CodexReasoningByModel;
 };
-
 export type Settings = {
   readonly general: GeneralSettings;
   readonly providers: {
@@ -72,7 +74,6 @@ export type Settings = {
     readonly gemini: GeminiSettings;
   };
 };
-
 export type VersionEntry = {
   readonly packageName: string;
   readonly currentVersion: string | null;
@@ -80,7 +81,6 @@ export type VersionEntry = {
   readonly source: "global";
   readonly error?: string | null;
 };
-
 export type ProviderVersions = {
   readonly claude: {
     readonly cli: VersionEntry;
@@ -100,6 +100,9 @@ export type ProviderVersions = {
 const DEFAULT_THINKING_MAX_TOKENS = 4000;
 const DEFAULT_AUTO_UPDATE_ENABLED = true;
 const DEFAULT_CORE_RESTART_ENABLED = true;
+const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
+const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
 const CODEX_MODEL_IDS = new Set<string>(
   CODEX_ALL_MODELS.map((model) => model.id)
 );
@@ -148,12 +151,29 @@ const mapGeneralSettings = (
   },
 });
 
+const mapClaudeContinuity = (value: unknown): ClaudeContinuitySettings => {
+  const numericValue = Number(
+    isRecord(value) ? value.remainingPercentThreshold : undefined
+  );
+  const remainingPercentThreshold = Number.isFinite(numericValue)
+    ? Math.min(
+        MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+        Math.max(
+          MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+          numericValue
+        )
+      )
+    : DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
+  return { remainingPercentThreshold };
+};
+
 const mapClaudeSettings = (
   value: RawClaudeSettings | undefined
 ): ClaudeSettings => ({
   thinking: mapThinkingSettings(value?.thinking),
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
   defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
+  sessionContinuity: mapClaudeContinuity(value?.sessionContinuity),
 });
 
 const resolveCodexModelId = (value: unknown): CodexModelId =>
@@ -250,7 +270,9 @@ const areClaudeSettingsEqual = (
 ): boolean =>
   areThinkingSettingsEqual(left.thinking, right.thinking) &&
   areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
-  left.defaultModel === right.defaultModel;
+  left.defaultModel === right.defaultModel &&
+  left.sessionContinuity.remainingPercentThreshold ===
+    right.sessionContinuity.remainingPercentThreshold;
 
 const areCodexSettingsEqual = (
   left: CodexSettings,
