@@ -37,8 +37,8 @@
 10. [DONE] Git Commit: `fix(ui): show remaining token percent` (hash: 68b7ed45)
 
 ### Stream: Settings (Claude)
-11. [TODO] Feat(settings): добавить и сохранять настройку Claude `remaining% threshold` (default: 30) — scope: `src/extension-module/settings/claude-settings.ts`, `src/extension-module/settings/types.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit message: `feat(settings): persist claude continuity threshold`
-12. [TODO] Git Commit: `feat(settings): persist claude continuity threshold` (hash: TBD)
+11. [DONE] Feat(settings): добавить и сохранять настройку Claude `remaining% threshold` (default: 30) — scope: `src/extension-module/settings/claude-settings.ts`; expected commit message: `feat(settings): persist claude continuity threshold`
+12. [DONE] Git Commit: `feat(settings): persist claude continuity threshold` (hash: 0e3be063)
 
 13. [TODO] Feat(ui): добавить в Settings → Claude UI-контрол для `remaining% threshold` и обновление state/save — scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `src/client/ui/src/components/settings/settings-state-helpers.ts`; expected commit message: `feat(ui): add claude continuity threshold control`
 14. [TODO] Git Commit: `feat(ui): add claude continuity threshold control` (hash: TBD)
