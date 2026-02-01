@@ -73,6 +73,10 @@ export const useProjectManagerSessionStream = (params: {
   readonly onSessionHistory: (payload: SessionHistoryUpdate) => void;
   readonly onSessionBinding: (payload: SessionBindingUpdate) => void;
   readonly onSessionDeleted: (sessionId: string) => void;
+  readonly onSessionStream?: (payload: {
+    readonly sessionId: string;
+    readonly event: unknown;
+  }) => void;
 }) => {
   useEffect(() => {
     const unsubscribe = api.onCoreEvent((message: IncomingMessage) => {
@@ -163,6 +167,20 @@ export const useProjectManagerSessionStream = (params: {
         const payload = message.payload as { readonly sessionId?: unknown };
         if (payload && typeof payload.sessionId === "string") {
           params.onSessionDeleted(payload.sessionId);
+        }
+        return;
+      }
+
+      if (message.type === "session:stream") {
+        const payload = message.payload as {
+          readonly sessionId?: unknown;
+          readonly event?: unknown;
+        };
+        if (payload && typeof payload.sessionId === "string") {
+          params.onSessionStream?.({
+            sessionId: payload.sessionId,
+            event: payload.event,
+          });
         }
         return;
       }
