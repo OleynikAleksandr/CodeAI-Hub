@@ -79,3 +79,7 @@
 
 35. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 36. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+
+### Stream: release (verification 1.1.486)
+37. [DONE] Release: собрать новый релиз (проверка /context reader) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` (VSIX перемещён в `doc/tmp/releases/`) — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+38. [DONE] Git Commit: `chore(release): build next version` (hash: 43db0f86)
