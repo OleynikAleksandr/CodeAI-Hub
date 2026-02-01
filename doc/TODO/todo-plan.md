@@ -77,8 +77,8 @@
 33. [TODO] Fix(ui): не показывать `0` при отсутствии snapshot; показывать `N/A` или last-known snapshot — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): avoid zero tokens when /context fails`
 34. [TODO] Git Commit: `fix(ui): avoid zero tokens when /context fails` (hash: TBD)
 
-35. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
-36. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+35. [DONE] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+36. [DONE] Git Commit: `chore(release): build next version` (hash: b886ed43)
 
 ### Stream: release (verification 1.1.486)
 37. [DONE] Release: собрать новый релиз (проверка /context reader) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` (VSIX перемещён в `doc/tmp/releases/`) — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
