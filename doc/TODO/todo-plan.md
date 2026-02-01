@@ -49,3 +49,11 @@
 
 19. [DONE] Docs(session): создать отчёт `doc/Sessions/Session061.md` — scope: `doc/Sessions/Session061.md`; expected commit message: `docs(session): Session061 claude /context parity planning`
 20. [DONE] Git Commit: `docs(session): Session061 claude /context parity planning` (hash: 56da59dd)
+
+### Stream: fix /context cwd (hotfix)
+21. [DONE] Fix(claude-module): для `/context` резюма важно запускать CLI в cwd того же проекта; резолвить `cwd` по `~/.claude/projects/*/sessions-index.json` (поле `projectPath`) — scope: `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude-module): resolve /context cwd via sessions-index`
+22. [DONE] Git Commit: `fix(claude-module): resolve /context cwd via sessions-index` (hash: 51197299)
+
+### Stream: release (hotfix)
+23. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+24. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
