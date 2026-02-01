@@ -69,7 +69,6 @@ const FullAppHost = () => {
     focusLastSession,
     selectSession,
     closeSession,
-    toggleTodo,
     sendMessage,
   } = useSessionStore(providerLabels, settings);
   const { settingsVisible, openSettings, closeSettings } =
@@ -260,7 +259,6 @@ const FullAppHost = () => {
           onCloseSession: closeSession,
           onSelectSession: selectSession,
           onSendMessage: sendIdeaCollectorMessage,
-          onToggleTodo: toggleTodo,
           providerLabels,
           sessions,
           snapshots,

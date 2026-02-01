@@ -12,7 +12,6 @@ import {
   removeSnapshot,
   type ProviderCatalog,
   type SessionSnapshots,
-  toggleTodoInSnapshots,
 } from "../../../ui/src/session/helpers";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
@@ -272,11 +271,6 @@ export const ProjectManagerSessionView = ({
     [hideSession]
   );
   const handleSendMessage = useSessionMessageSender(sessionsRef);
-  const handleToggleTodo = useCallback((sessionId: string, todoId: string) => {
-    setSnapshots((previous) =>
-      toggleTodoInSnapshots(previous, sessionId, todoId)
-    );
-  }, []);
   return (
     <SessionView
       activeSessionId={activeSessionId}
@@ -285,7 +279,6 @@ export const ProjectManagerSessionView = ({
       onCloseSession={handleCloseSession}
       onSelectSession={setActiveSessionId}
       onSendMessage={handleSendMessage}
-      onToggleTodo={handleToggleTodo}
       providerLabels={providerLabels}
       sessions={visibleSessions}
       showEmptyState={showEmptyState}
