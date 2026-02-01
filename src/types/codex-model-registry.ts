@@ -1,9 +1,3 @@
-export const CODEX_MODEL_REGISTRY_METADATA = {
-  timestamp: "2025-12-20T17:00:00.000Z",
-  source: "https://developers.openai.com/codex/models/",
-  method: "Official Codex documentation",
-} as const;
-
 export type CodexModelPlatform =
   | "CLI"
   | "SDK"
