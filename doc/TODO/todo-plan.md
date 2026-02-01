@@ -51,8 +51,8 @@
 18. [DONE] Git Commit: `chore: verify claude token usage + continuity threshold` (hash: b6f11c16)
 
 ### Stream: release
-19. [TODO] Release: обновить `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под новую версию — scope: docs; expected commit message: `docs: update release notes`
-20. [TODO] Git Commit: `docs: update release notes` (hash: TBD)
+19. [DONE] Release: обновить `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под новую версию — scope: docs; expected commit message: `docs: update release notes`
+20. [DONE] Git Commit: `docs: update release notes` (hash: 6888ef27)
 
 21. [TODO] Release: собрать unified релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` (артефакты в `doc/tmp/releases/`) — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 22. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
