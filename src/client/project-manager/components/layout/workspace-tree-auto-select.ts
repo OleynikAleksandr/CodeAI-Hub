@@ -42,14 +42,21 @@ export const useWorkspaceTreeAutoSelect = (
         return;
       }
       const branch = state.description;
-      const artifactPath =
-        branch?.finalPath ?? branch?.draftPath ?? branch?.questionnairePath;
+      const hasDraftOrFinal = Boolean(branch?.finalPath || branch?.draftPath);
+      const hasUnsubmittedQuestionnaire = Boolean(
+        branch?.questionnairePath &&
+          !hasDraftOrFinal &&
+          !branch?.session?.providerSessionId
+      );
+
+      const artifactPath = branch?.finalPath ?? branch?.draftPath ?? null;
       const artifactLabel = branch?.finalPath
         ? "Final_Description.md"
         : branch?.draftPath
           ? "description.md"
-          : "questionnaire.md";
-      if (artifactPath) {
+          : null;
+
+      if (artifactPath && artifactLabel) {
         params.onSelectArtifact(artifactPath, artifactLabel);
       }
       if (branch?.session?.providerSessionId) {
@@ -66,7 +73,9 @@ export const useWorkspaceTreeAutoSelect = (
           runSlug: isReviewerSession ? "reviewer" : null,
         });
       }
-      if (artifactPath || branch?.session?.providerSessionId) {
+      if (hasUnsubmittedQuestionnaire) {
+        pendingWorkspaceIdRef.current = null;
+      } else if (artifactPath || branch?.session?.providerSessionId) {
         pendingWorkspaceIdRef.current = null;
       }
     },
