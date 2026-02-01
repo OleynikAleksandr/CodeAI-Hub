@@ -33,8 +33,8 @@
 8. [DONE] Git Commit: `feat(core): configurable continuity remaining% threshold` (hash: 7807cdb9)
 
 ### Stream: UI token label
-9. [TODO] Fix(ui): отображать `used / total (remaining%)` в статус-панели сессии — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): show remaining token percent`
-10. [TODO] Git Commit: `fix(ui): show remaining token percent` (hash: TBD)
+9. [DONE] Fix(ui): отображать `used / total (remaining%)` в статус-панели сессии — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): show remaining token percent`
+10. [DONE] Git Commit: `fix(ui): show remaining token percent` (hash: 68b7ed45)
 
 ### Stream: Settings (Claude)
 11. [TODO] Feat(settings): добавить и сохранять настройку Claude `remaining% threshold` (default: 30) — scope: `src/extension-module/settings/claude-settings.ts`, `src/extension-module/settings/types.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit message: `feat(settings): persist claude continuity threshold`
