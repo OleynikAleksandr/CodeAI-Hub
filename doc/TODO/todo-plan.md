@@ -130,3 +130,7 @@
 ### Stream: release (verification)
 61. [DONE] Release: собрать новый релиз (tokenUsage persistence via continuity chain.json) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 62. [DONE] Git Commit: `chore(release): build next version` (hash: 5c4004de)
+
+### Stream: core session history restore (Core restart)
+63. [DONE] Fix(core): читать unified-session history по `session.workspacePath` (а не по текущему `config.*Slug`) + fallback поиск по всем workspace roots в `~/.codeai-hub/sessions/*` — scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/unified-session/workspace-slugs.ts`; expected commit message: `fix(core): restore session history across workspaces`
+64. [DONE] Git Commit: `fix(core): restore session history across workspaces` (hash: 26c4b83e)
