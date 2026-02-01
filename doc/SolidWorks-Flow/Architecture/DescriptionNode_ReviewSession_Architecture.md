@@ -51,6 +51,7 @@
 1) **Храним только финальный артефакт** в узле `description`.
 2) Reviewer-сессии с resume: **только Claude/Codex**. Gemini — только разовые короткие сессии без гарантии resume.
 3) Источник истины истории — **unified session JSONL** (в `.codeai-hub/sessions/...`).
+   - анти-регрессия: storage истории должен быть привязан к workspace пер-сессионно, иначе после рестарта Core (особенно из другого workspace) диалог может стать пустым (см. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`).
 4) Финальный артефакт шага `Description` — файл `Final_Description.md`:
    - создаётся/перезаписывается Reviewer-агентом;
    - после появления `Final_Description.md` промежуточный `description.md` больше не нужен для Flow (допускается удаление).

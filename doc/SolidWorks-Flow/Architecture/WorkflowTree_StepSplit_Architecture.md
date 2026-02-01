@@ -1,8 +1,9 @@
 # Архитектура: Split шагов Workflow Tree и раздельные агенты
 
 **Date:** 2026-01-17
+**Updated:** 2026-02-01 (release 1.1.493)
 **Status:** Draft
-**Target release:** TBD
+**Target release:** 1.1.493+
 
 ---
 
@@ -37,6 +38,7 @@
 
 UI правило (для всех шагов):
 - каждый `Step` в Workflow Tree — раскрываемый узел с веткой “артефакты + сессии”, чтобы прогресс переживал перезапуск (см. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`).
+- история диалога сессий хранится в unified-session JSONL и должна восстанавливаться после рестарта Core/PM (см. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`).
 
 Примечание для `description`:
 - `description.md` существует как **черновик** (run output) между Description Agent и Reviewer.
