@@ -9,9 +9,6 @@ import InputPanel from "./input-panel";
 import SessionTabs from "./session-tabs";
 import StatusPanel from "./status-panel";
 
-// TODO: TodoPanel temporarily hidden, may be removed later
-// import TodoPanel from "./todo-panel";
-
 type SessionViewProps = {
   readonly sessions: readonly SessionRecord[];
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
@@ -88,13 +85,6 @@ const SessionView = ({
             />
           </div>
           <div className="session-app__rails">
-            {/* TODO: TodoPanel temporarily hidden — uncomment when needed
-            {_onToggleTodo ? (
-              <TodoPanel
-                items={activeSession.todos}
-                onToggle={(todoId) => _onToggleTodo(activeSessionId, todoId)}
-              />
-            ) : null} */}
             <InputPanel
               draft={activeSession.draft}
               onSubmit={(text) => onSendMessage(activeSessionId, text)}
