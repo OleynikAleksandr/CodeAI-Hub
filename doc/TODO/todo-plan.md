@@ -57,3 +57,11 @@
 ### Stream: release (hotfix)
 23. [DONE] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 24. [DONE] Git Commit: `chore(release): build next version` (hash: dc67cab9)
+
+### Stream: fix /context invocation (PATH / node) (hotfix)
+25. [DONE] Fix(claude-module): запускать Claude Code CLI через `process.execPath` (node) чтобы не зависеть от PATH GUI-процесса (в VS Code часто нет `/usr/local/bin`, из-за чего `#!/usr/bin/env node` падает) — scope: `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude-module): run claude via node to avoid PATH issues`
+26. [DONE] Git Commit: `fix(claude-module): run claude via node to avoid PATH issues` (hash: 38c2e546)
+
+### Stream: release (hotfix 2)
+27. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+28. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
