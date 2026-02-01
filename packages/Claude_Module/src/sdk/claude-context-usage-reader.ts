@@ -1,4 +1,7 @@
 import { execFile } from "node:child_process";
+import { access, readdir, readFile } from "node:fs/promises";
+import { homedir } from "node:os";
+import path from "node:path";
 import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
@@ -10,6 +13,9 @@ const TOKENS_SNAPSHOT_PATTERNS: readonly RegExp[] = [
 ];
 const LOCAL_COMMAND_STDOUT_PATTERN =
   /<local-command-stdout>([\s\S]*?)<\/local-command-stdout>/;
+
+const CLAUDE_PROJECTS_ROOT = path.join(homedir(), ".claude", "projects");
+const SESSIONS_INDEX_FILENAME = "sessions-index.json";
 
 type ContextUsageReaderOptions = {
   readonly executablePath: string;
@@ -99,6 +105,82 @@ const collectStrings = (root: unknown): string[] => {
   return out;
 };
 
+const fileExists = async (filePath: string): Promise<boolean> => {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const readJsonFile = async (filePath: string): Promise<unknown | null> => {
+  try {
+    const content = await readFile(filePath, "utf8");
+    return JSON.parse(content) as unknown;
+  } catch {
+    return null;
+  }
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const resolveProjectPathFromSessionsIndex = (
+  index: unknown,
+  sessionId: string
+): string | null => {
+  if (!isRecord(index)) {
+    return null;
+  }
+  const entries = index.entries;
+  if (!Array.isArray(entries)) {
+    return null;
+  }
+  const match = entries.find(
+    (entry) =>
+      isRecord(entry) &&
+      typeof entry.sessionId === "string" &&
+      entry.sessionId === sessionId
+  );
+  if (!isRecord(match)) {
+    return null;
+  }
+  return typeof match.projectPath === "string" && match.projectPath.trim()
+    ? match.projectPath
+    : null;
+};
+
+const resolveCwdForSession = async (
+  sessionId: string,
+  fallbackCwd: string
+): Promise<string> => {
+  let candidates: string[] = [];
+  try {
+    candidates = (await readdir(CLAUDE_PROJECTS_ROOT, { withFileTypes: true }))
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => path.join(CLAUDE_PROJECTS_ROOT, entry.name));
+  } catch {
+    return fallbackCwd;
+  }
+
+  for (const projectDir of candidates) {
+    const sessionFilePath = path.join(projectDir, `${sessionId}.jsonl`);
+    if (!(await fileExists(sessionFilePath))) {
+      continue;
+    }
+    const sessionsIndexPath = path.join(projectDir, SESSIONS_INDEX_FILENAME);
+    const index = await readJsonFile(sessionsIndexPath);
+    const projectPath = resolveProjectPathFromSessionsIndex(index, sessionId);
+    if (projectPath) {
+      return projectPath;
+    }
+    return fallbackCwd;
+  }
+
+  return fallbackCwd;
+};
+
 const readContextOutputLines = (output: string): string[] => {
   const combined = output.trim();
   if (!combined) {
@@ -162,6 +244,10 @@ export class ClaudeContextUsageReader {
     readonly sessionId: string;
     readonly cwd: string;
   }): Promise<ContextUsageSnapshot | null> {
+    const resolvedCwd = await resolveCwdForSession(
+      payload.sessionId,
+      payload.cwd
+    );
     const { stdout, stderr } = await execFileAsync(
       this.options.executablePath,
       [
@@ -174,7 +260,7 @@ export class ClaudeContextUsageReader {
         "/context",
       ],
       {
-        cwd: payload.cwd,
+        cwd: resolvedCwd,
         env: this.options.env,
         windowsHide: true,
         timeout: 15_000,
