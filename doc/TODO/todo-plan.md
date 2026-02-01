@@ -95,3 +95,7 @@
 ### Stream: ui token percent (remaining)
 43. [DONE] Fix(ui): показывать remaining% (100 - used%) вместо used% в панели статуса — scope: `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): show remaining token percent`
 44. [DONE] Git Commit: `fix(ui): show remaining token percent` (hash: 021bfbab)
+
+### Stream: ui token usage persistence
+45. [DONE] Fix(ui): сохранять last-known tokenUsage в localStorage и восстанавливать при загрузке сессий после рестарта PM — scope: `src/client/ui/src/session/helpers.ts`, `src/client/ui/src/session/token-usage-cache.ts`, `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `fix(ui): persist last token usage snapshot`
+46. [DONE] Git Commit: `fix(ui): persist last token usage snapshot` (hash: fe20d89b)
