@@ -1,7 +1,11 @@
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
+import { writeLastKnownTokenUsage } from "../../../ui/src/session/token-usage-cache";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readString = (value: unknown): string | null =>
+  typeof value === "string" && value.trim() ? value.trim() : null;
 
 const readNumber = (value: unknown): number | null => {
   if (typeof value === "number" && Number.isFinite(value)) {
@@ -20,6 +24,20 @@ const readNumber = (value: unknown): number | null => {
 type TokenUsageSnapshot = {
   readonly used: number;
   readonly limit: number;
+};
+
+const resolveProviderSessionIdForCache = (
+  snapshot: SessionSnapshots[string],
+  event: unknown
+): string | null => {
+  const fromBinding = snapshot.binding.providerSessionId;
+  if (fromBinding) {
+    return fromBinding;
+  }
+  if (!isRecord(event)) {
+    return null;
+  }
+  return readString(event.claudeSessionId);
 };
 
 const extractTokenUsage = (event: unknown): TokenUsageSnapshot | null => {
@@ -58,6 +76,14 @@ export const updateSnapshotsWithTokenUsage = (
   const tokenUsage = extractTokenUsage(payload.event);
   if (!tokenUsage) {
     return snapshots;
+  }
+
+  const providerSessionId = resolveProviderSessionIdForCache(
+    snapshot,
+    payload.event
+  );
+  if (providerSessionId) {
+    writeLastKnownTokenUsage(providerSessionId, tokenUsage);
   }
 
   return {

@@ -13,6 +13,7 @@ import type {
 import type { Settings } from "../components/settings/settings-state-model";
 import type { CoreBridgeSessionMessagePayload } from "../core-bridge/types";
 import { buildModelInfoList } from "./model-info-builder";
+import { readLastKnownTokenUsage } from "./token-usage-cache";
 
 export type ProviderCatalog = Partial<
   Record<ProviderStackId, ProviderStackDescriptor>
@@ -182,12 +183,16 @@ export const createInitialSnapshot = (
   const now = Date.now();
   const models = buildModelInfoList(session.providerIds, settings ?? null);
 
+  const cachedTokenUsage = session.binding.providerSessionId
+    ? readLastKnownTokenUsage(session.binding.providerSessionId)
+    : null;
+
   const status: SessionStatusInfo = {
     providerSummary: providersSummary,
     models,
     tokenUsage: {
-      used: 0,
-      limit: 200_000,
+      used: cachedTokenUsage?.used ?? 0,
+      limit: cachedTokenUsage?.limit ?? 200_000,
     },
     connectionState: "idle",
     updatedAt: now,
