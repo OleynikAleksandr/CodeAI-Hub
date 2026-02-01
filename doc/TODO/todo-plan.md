@@ -71,8 +71,8 @@
 30. [DONE] Git Commit: `docs(session): Session062 claude tokens stuck at 0` (hash: 5f114376)
 
 ### Stream: debug `/context` runtime (next session)
-31. [TODO] Fix(claude-module): сделать `/context` reader устойчивым (убрать/увеличить timeout, перейти на `spawn` + ранний выход при нахождении `Tokens:`) — scope: `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude-module): make /context reader resilient`
-32. [TODO] Git Commit: `fix(claude-module): make /context reader resilient` (hash: TBD)
+31. [DONE] Fix(claude-module): сделать `/context` reader устойчивым (убрать/увеличить timeout, перейти на `spawn` + ранний выход при нахождении `Tokens:`) — scope: `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude-module): make /context reader resilient`
+32. [DONE] Git Commit: `fix(claude-module): make /context reader resilient` (hash: f04cd9dd)
 
 33. [TODO] Fix(ui): не показывать `0` при отсутствии snapshot; показывать `N/A` или last-known snapshot — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): avoid zero tokens when /context fails`
 34. [TODO] Git Commit: `fix(ui): avoid zero tokens when /context fails` (hash: TBD)
