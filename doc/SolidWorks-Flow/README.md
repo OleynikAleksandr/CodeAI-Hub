@@ -9,6 +9,7 @@
 
 ## Обновления
 - 2026-02-01 (release 1.1.480): Session UI: удалён TodoPanel; документы синхронизированы с текущим UI.
+- 2026-02-01 (release 1.1.493): Session history: восстановление диалога после рестарта Core/Project Manager и при multi-workspace (unified-session workspace scoping).
 - 2026-01-22 (release 1.1.474): подписи session-узлов в Workflow Tree и табах унифицированы и укорочены: `Description <Provider>` / `Reviewer <Provider>`.
 - 2026-01-17: шаги Описание/Virtual Simulation/Диаграмма модулей/Диаграмма фасадов разделены, сущность Idea выведена из терминологии.
 - 2026-01-16 (release 1.1.424): Spec/Plan/Execute выровнены по оси модуля, Orchestration остаётся вложенным шагом.
