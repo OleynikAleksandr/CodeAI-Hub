@@ -63,5 +63,5 @@
 26. [DONE] Git Commit: `fix(claude-module): run claude via node to avoid PATH issues` (hash: 38c2e546)
 
 ### Stream: release (hotfix 2)
-27. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
-28. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
+27. [DONE] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+28. [DONE] Git Commit: `chore(release): build next version` (hash: 2d21d32d)
