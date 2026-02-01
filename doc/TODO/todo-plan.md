@@ -57,5 +57,5 @@
 21. [DONE] Release: собрать unified релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` (артефакты в `doc/tmp/releases/`) — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 22. [DONE] Git Commit: `chore(release): build next version` (hash: 6af2e938)
 
-23. [TODO] Docs(session): создать отчёт `doc/Sessions/Session060.md` — scope: `doc/Sessions/Session060.md`; expected commit message: `docs(session): Session060 release`
-24. [TODO] Git Commit: `docs(session): Session060 release` (hash: TBD)
+23. [DONE] Docs(session): создать отчёт `doc/Sessions/Session060.md` — scope: `doc/Sessions/Session060.md`; expected commit message: `docs(session): Session060 release`
+24. [DONE] Git Commit: `docs(session): Session060 release` (hash: 777eb396)
