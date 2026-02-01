@@ -103,3 +103,11 @@
 ### Stream: release (verification 1.1.489)
 47. [DONE] Release: собрать новый релиз (UI remaining% + tokenUsage cache) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 48. [DONE] Git Commit: `chore(release): build next version` (hash: f5c1d9a7)
+
+### Stream: core token usage replay (PM reopen)
+49. [DONE] Fix(core): запоминать последний tokenUsage и отправлять replay при новом WebSocket подключении (чтобы при закрытии/открытии Project Manager токены не сбрасывались в `0 / 200,000`) — scope: `packages/core/src/remote-bridge/handlers/websocket-manager.ts`; expected commit message: `fix(core): replay token usage on ws connect`
+50. [DONE] Git Commit: `fix(core): replay token usage on ws connect` (hash: 3cdbaa61)
+
+### Stream: release (verification)
+51. [TODO] Release: собрать новый релиз (Core tokenUsage replay) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
+52. [TODO] Git Commit: `chore(release): build next version` (hash: TBD)
