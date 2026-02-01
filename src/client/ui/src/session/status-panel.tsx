@@ -46,13 +46,14 @@ const StatusPanel = ({
 
   const { providerSummary, models, tokenUsage } = status;
 
+  const tokenLimit = tokenUsage.limit > 0 ? tokenUsage.limit : null;
   const remainingPercentage = Math.max(
     0,
     Math.min(
       MAX_PERCENTAGE,
       Math.round(
-        ((tokenUsage.limit - tokenUsage.used) /
-          Math.max(tokenUsage.limit, MIN_TOKEN_LIMIT)) *
+        (((tokenLimit ?? MIN_TOKEN_LIMIT) - tokenUsage.used) /
+          Math.max(tokenLimit ?? MIN_TOKEN_LIMIT, MIN_TOKEN_LIMIT)) *
           PERCENT_SCALE
       )
     )
@@ -72,7 +73,8 @@ const StatusPanel = ({
         <span className="session-status__label">Tokens</span>
         <span className="session-status__value">
           {tokenUsage.used.toLocaleString()} /{" "}
-          {tokenUsage.limit.toLocaleString()} ({remainingPercentage}%)
+          {tokenLimit ? tokenLimit.toLocaleString() : "—"} (
+          {remainingPercentage}%)
         </span>
       </div>
     </section>
