@@ -138,3 +138,22 @@
 ### Stream: release (verification 1.1.493)
 65. [DONE] Release: собрать новый релиз (unified-session history restore across workspaces) через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 66. [DONE] Git Commit: `chore(release): build next version` (hash: ac7aa183)
+
+---
+
+## Phase 85 — Release 1.1.493 docs + GitHub sync (owner: Oleksandr, updated: 2026-02-01)
+
+### Stream: SolidWorks-Flow knowledge (history persistence)
+1. [DONE] Docs(flow): добавить KB по unified-session history и workspace scoping (чтобы диалог не терялся после рестартов Core/PM и при multi-workspace) — scope: `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`; expected commit message: `docs(flow): add unified session history workspace scoping guide`
+2. [DONE] Git Commit: `docs(flow): add unified session history workspace scoping guide` (hash: 2932738c)
+
+### Stream: docs alignment (Project_Docs + SolidWorks-Flow + README/CHANGELOG)
+3. [TODO] Docs: актуализировать релизные и архитектурные документы, связанные с unified-session history и multi-workspace — scope: ≤3 файлов за микрозадачу; expected commit message: `docs: align unified session history docs`
+4. [TODO] Git Commit: `docs: align unified session history docs` (hash: TBD)
+5. [TODO] Docs: обновить `README.md` и `CHANGELOG.md` под релиз `1.1.493` — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update README and changelog for 1.1.493`
+6. [TODO] Git Commit: `docs: update README and changelog for 1.1.493` (hash: TBD)
+
+### Stream: session report + push
+7. [TODO] Docs(session): создать отчёт `doc/Sessions/Session067.md` по итоговому решению (history + docs) — scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): Session067 1.1.493 docs + github sync`
+8. [TODO] Git Commit: `docs(session): Session067 1.1.493 docs + github sync` (hash: TBD)
+9. [TODO] GitHub: push `main` (релиз `1.1.493` + docs) — scope: git; expected commit message: N/A
