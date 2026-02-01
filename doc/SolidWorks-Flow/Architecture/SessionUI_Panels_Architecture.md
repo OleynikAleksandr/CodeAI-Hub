@@ -156,6 +156,8 @@ AppHost
 ## 8. Notes
 
 - TodoPanel удалён (2026-02-01): чек-лист задач сессии больше не отображается в текущем UI.
+- DialogPanel показывает историю из unified-session JSONL (`~/.codeai-hub/sessions/...`) через Core endpoint `GET /api/v1/sessions/:sessionId/history`. Важно, чтобы storage был привязан к workspace **пер-сессионно** (иначе после рестарта Core диалог может стать пустым).
+- См. KB: `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
 - Все компоненты следуют принципу микро-классов (< 300 строк)
 - Используется React hooks для управления состоянием
 - SessionView переиспользуется в обоих контекстах (Project Manager и Webview Client)
