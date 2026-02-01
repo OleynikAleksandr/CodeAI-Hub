@@ -114,21 +114,8 @@ export const recordVsixVersion = async (options: {
     path: options.extensionPath,
   });
 
-export const readRuntimeRegistry = async (): Promise<RuntimeRegistry> =>
-  readRegistry();
-
 export const readPreferredCorePort = async (): Promise<number | undefined> => {
   const registry = await readRegistry();
   const port = registry.network?.corePort;
   return typeof port === "number" && Number.isFinite(port) ? port : undefined;
-};
-
-export const recordCorePortPreference = async (port: number): Promise<void> => {
-  const registry = await readRegistry();
-  registry.network = {
-    ...registry.network,
-    corePort: port,
-    updatedAt: new Date().toISOString(),
-  };
-  await writeRegistry(registry);
 };
