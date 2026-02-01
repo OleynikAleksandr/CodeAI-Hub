@@ -57,7 +57,7 @@ export class SessionContinuityFacade {
   }
 
   private readonly logger: Logger;
-  private readonly monitor = new ContinuityMonitor();
+  private readonly monitor: ContinuityMonitor;
   private readonly clock: () => string;
   private readonly callbacks: ContinuityCallbacks;
   private readonly tracker: ContinuityTracker;
@@ -67,11 +67,15 @@ export class SessionContinuityFacade {
   constructor(options: {
     readonly logger: Logger;
     readonly clock?: () => string;
+    readonly remainingRatioThreshold?: number;
     readonly callbacks: ContinuityCallbacks;
     readonly sessionLookup: (sessionId: string) => Session | undefined;
   }) {
     this.logger = options.logger;
     this.clock = options.clock ?? (() => new Date().toISOString());
+    this.monitor = new ContinuityMonitor({
+      remainingRatioThreshold: options.remainingRatioThreshold,
+    });
     this.callbacks = options.callbacks;
     this.sessionLookup = options.sessionLookup;
     this.tracker = new ContinuityTracker({
