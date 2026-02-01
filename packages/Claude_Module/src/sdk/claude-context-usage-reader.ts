@@ -27,6 +27,16 @@ type ContextUsageSnapshot = {
   readonly limit: number;
 };
 
+type ExecFailure = {
+  readonly code?: unknown;
+  readonly signal?: unknown;
+  readonly stdout?: unknown;
+  readonly stderr?: unknown;
+  readonly message?: unknown;
+};
+
+const isWindows = process.platform === "win32";
+
 const parseCompactNumber = (raw: string): number | null => {
   const trimmed = raw.trim();
   const match = COMPACT_NUMBER_PATTERN.exec(trimmed);
@@ -233,6 +243,81 @@ const readContextOutputSnapshot = (
   return null;
 };
 
+const resolveClaudeRunner = (payload: {
+  readonly executablePath: string;
+  readonly args: readonly string[];
+}): { readonly runner: string; readonly args: string[] } => {
+  if (isWindows) {
+    return { runner: payload.executablePath, args: [...payload.args] };
+  }
+  return {
+    runner: process.execPath,
+    args: [payload.executablePath, ...payload.args],
+  };
+};
+
+const toOptionalString = (value: unknown): string | null =>
+  typeof value === "string" ? value : null;
+
+const toOptionalCodeString = (value: unknown): string | null => {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(value);
+  }
+  if (typeof value === "string" && value.trim()) {
+    return value.trim();
+  }
+  return null;
+};
+
+const formatExecFailure = (error: unknown): string => {
+  const failure = error as ExecFailure;
+  const message = toOptionalString(failure.message) ?? String(error);
+  const stderr = toOptionalString(failure.stderr);
+  const stdout = toOptionalString(failure.stdout);
+  const code = toOptionalCodeString(failure.code);
+  const signal = toOptionalString(failure.signal);
+
+  const details: string[] = [message];
+  if (code) {
+    details.push(`code=${code}`);
+  }
+  if (signal) {
+    details.push(`signal=${signal}`);
+  }
+  if (stderr?.trim()) {
+    details.push(`stderr=${JSON.stringify(stderr.trim())}`);
+  }
+  if (stdout?.trim()) {
+    details.push(`stdout=${JSON.stringify(stdout.trim())}`);
+  }
+
+  return details.join(" | ");
+};
+
+const runClaudeCli = async (options: {
+  readonly executablePath: string;
+  readonly args: readonly string[];
+  readonly cwd: string;
+  readonly env: NodeJS.ProcessEnv;
+}): Promise<{ readonly stdout: string; readonly stderr: string }> => {
+  const resolved = resolveClaudeRunner({
+    executablePath: options.executablePath,
+    args: options.args,
+  });
+
+  try {
+    return await execFileAsync(resolved.runner, resolved.args, {
+      cwd: options.cwd,
+      env: options.env,
+      windowsHide: true,
+      timeout: 15_000,
+      maxBuffer: 2_000_000,
+    });
+  } catch (error) {
+    throw new Error(formatExecFailure(error));
+  }
+};
+
 export class ClaudeContextUsageReader {
   private readonly options: ContextUsageReaderOptions;
 
@@ -248,9 +333,9 @@ export class ClaudeContextUsageReader {
       payload.sessionId,
       payload.cwd
     );
-    const { stdout, stderr } = await execFileAsync(
-      this.options.executablePath,
-      [
+    const { stdout, stderr } = await runClaudeCli({
+      executablePath: this.options.executablePath,
+      args: [
         "-p",
         "--verbose",
         "--output-format",
@@ -259,14 +344,9 @@ export class ClaudeContextUsageReader {
         payload.sessionId,
         "/context",
       ],
-      {
-        cwd: resolvedCwd,
-        env: this.options.env,
-        windowsHide: true,
-        timeout: 15_000,
-        maxBuffer: 2_000_000,
-      }
-    );
+      cwd: resolvedCwd,
+      env: this.options.env,
+    });
 
     return readContextOutputSnapshot(`${stdout}\n${stderr}`);
   }
