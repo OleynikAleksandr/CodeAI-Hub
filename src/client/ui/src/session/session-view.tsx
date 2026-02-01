@@ -20,8 +20,6 @@ type SessionViewProps = {
   readonly onSelectSession: (sessionId: string) => void;
   readonly onCloseSession: (sessionId: string) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
-  // TODO: TodoPanel temporarily hidden — prop kept optional for future use
-  readonly onToggleTodo?: (sessionId: string, todoId: string) => void;
 };
 
 const SessionView = ({
@@ -35,7 +33,6 @@ const SessionView = ({
   onSelectSession,
   onCloseSession,
   onSendMessage,
-  onToggleTodo: _onToggleTodo,
 }: SessionViewProps) => {
   const activeSession =
     activeSessionId && snapshots[activeSessionId]

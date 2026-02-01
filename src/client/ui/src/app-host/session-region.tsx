@@ -24,7 +24,6 @@ type SessionRegionProps = {
     readonly onCloseSession: (sessionId: string) => void;
     readonly onSelectSession: (sessionId: string) => void;
     readonly onSendMessage: (sessionId: string, content: string) => void;
-    readonly onToggleTodo: (sessionId: string, todoId: string) => void;
     readonly providerLabels: ProviderLabels;
     readonly sessions: readonly SessionRecord[];
     readonly snapshots: SessionSnapshots;
@@ -96,7 +95,6 @@ export const SessionRegion = ({
           onCloseSession={sessionViewProps.onCloseSession}
           onSelectSession={sessionViewProps.onSelectSession}
           onSendMessage={sessionViewProps.onSendMessage}
-          onToggleTodo={sessionViewProps.onToggleTodo}
           providerLabels={sessionViewProps.providerLabels}
           sessions={sessionViewProps.sessions}
           showEmptyState
