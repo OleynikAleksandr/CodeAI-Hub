@@ -2,18 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.498
+## Current Release — v1.1.499
 - **Core**: core-driven auto-resume on workspace selection using persisted workflow `lastActive` (workspace-safe resume; no cross-workspace providerSessionId).
 - **Claude**: real-time token usage in sessions (`used / total (remaining%)`) + configurable session continuity threshold (default: 30% remaining).
-- **Webview**: Settings panel is full-size in VS Code Webview (no centered overlay; keeps vertical scroll when needed).
-- **Release 1.1.498**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+- **Webview**: Settings now fills the whole VS Code Webview (hotfix: `.settings-overlay` precedence in `session-view.css`).
+- **Release 1.1.499**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
 - **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.498.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.498.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.498.tar.bz2`
-  - Providers: `claude-module-1.1.498.tar.bz2`, `codex-module-1.1.498.tar.bz2`, `gemini-module-1.1.498.tar.bz2`
-  - UI: `vscode-webview-1.1.498.tar.bz2`, `project-manager-1.1.498.tar.bz2`
+  - VSIX: `codeai-hub-1.1.499.vsix`
+  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.499.tar.bz2`
+  - Core: `codeai-hub-core-darwin-arm64-1.1.499.tar.bz2`
+  - Providers: `claude-module-1.1.499.tar.bz2`, `codex-module-1.1.499.tar.bz2`, `gemini-module-1.1.499.tar.bz2`
+  - UI: `vscode-webview-1.1.499.tar.bz2`, `project-manager-1.1.499.tar.bz2`
   - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/description-agent`, `@codeai-hub/idea-collector`
 
 ## Features
