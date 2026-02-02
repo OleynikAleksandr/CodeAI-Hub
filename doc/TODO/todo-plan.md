@@ -18,9 +18,9 @@
 ## Phase 90 — VS Code Webview Settings: full-size layout (owner: Oleksandr, updated: 2026-02-02)
 
 ### Stream: design + approval
-1. [TODO] Docs(architecture): согласовать дизайн Settings full-size (убрать centered overlay, занять всю площадь Webview, сохранить vertical scroll) — scope: `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; expected commit message: `docs: approve webview settings full-size layout architecture`
-2. [TODO] Git Commit: `docs: approve webview settings full-size layout architecture` (hash: TBD)
-3. [TODO] Docs(todo): record Phase 90 design hash — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 90 design hash`
+1. [DONE] Docs(architecture): согласовать дизайн Settings full-size (убрать centered overlay, занять всю площадь Webview, сохранить vertical scroll) — scope: `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; expected commit message: `docs: approve webview settings full-size layout architecture`
+2. [DONE] Git Commit: `docs: approve webview settings full-size layout architecture` (hash: f6ee3167)
+3. [DONE] Docs(todo): record Phase 90 design hash — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 90 design hash`
 4. [TODO] Git Commit: `docs(todo): record Phase 90 design hash` (hash: TBD)
 
 ### Stream: implementation (webview)
