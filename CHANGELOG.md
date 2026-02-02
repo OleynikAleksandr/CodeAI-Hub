@@ -1,3 +1,13 @@
+## [1.1.497] - 2026-02-02
+### Added
+- Core: persisted workflow `lastActive` snapshot in `.codeai-hub/<workspaceSlug>/workflow/state.json` and exposed via `GET /api/v1/orchestrator/workflow-state`.
+- Core: `POST /api/v1/orchestrator/workspace-activate` to attach watcher for selected workspace and trigger core-driven resume.
+- Project Manager: trigger `workspace-activate` on workspace selection (Core becomes the single resume authority).
+
+### Fixed
+- Core: validate resume providerSessionId against workspaceKey (derived from workspacePath) with fallback scan, preventing cross-workspace resume.
+- Core: workspace activation resume no longer requires `sessionKind`; normalizes `runSlug`.
+
 ## [1.1.493] - 2026-02-01
 ### Fixed
 - Core: restore unified-session dialog history across Core restarts and multi-workspace runs (per-session workspace scoping + fallback bucket scan).
