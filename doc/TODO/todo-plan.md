@@ -55,5 +55,5 @@
 7. [DONE] Git Commit: `docs: update release notes for settings full-size hotfix` (hash: a0a43c7b)
 8. [DONE] Docs: update Project Docs index (1.1.499): `doc/Project_Docs/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for 1.1.499`
 9. [DONE] Git Commit: `docs: bump Project Docs index for 1.1.499` (hash: c70d50cb)
-10. [TODO] Docs(session): создать отчёт `doc/Sessions/Session075.md` (Phase 91 + релиз) — scope: `doc/Sessions/Session075.md`; expected commit message: `docs(session): add Session075 settings full-size hotfix release`
-11. [TODO] Git Commit: `docs(session): add Session075 settings full-size hotfix release` (hash: TBD)
+10. [DONE] Docs(session): создать отчёт `doc/Sessions/Session075.md` (Phase 91 + релиз) — scope: `doc/Sessions/Session075.md`; expected commit message: `docs(session): add Session075 settings full-size hotfix release`
+11. [DONE] Git Commit: `docs(session): add Session075 settings full-size hotfix release` (hash: 773e756a)
