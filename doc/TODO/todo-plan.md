@@ -43,8 +43,8 @@
 10. [DONE] Git Commit: `fix(core): core-driven lastActive resume with workspace validation` (hash: 352b503a)
 
 ### Stream: UI wiring (minimal)
-11. [TODO] Feat(ui): при выборе workspace вызывать workspace activation endpoint (вместо прямого auto-resume из workflow state) — scope: ≤3 файлов в `packages/ui/project-manager/**` (исходники/бандл согласно текущей сборке); expected commit message: `feat(project-manager): trigger core-driven auto-resume on workspace select`
-12. [TODO] Git Commit: `feat(project-manager): trigger core-driven auto-resume on workspace select` (hash: TBD)
+11. [DONE] Feat(ui): при выборе workspace вызывать workspace activation endpoint (вместо прямого auto-resume из workflow state) — scope: ≤3 файлов в `src/client/project-manager/components/layout/workspace-tree.tsx` и `src/client/project-manager/services/workspace-activate-client.ts`; expected commit message: `feat(project-manager): trigger core-driven auto-resume on workspace select`
+12. [DONE] Git Commit: `feat(project-manager): trigger core-driven auto-resume on workspace select` (hash: 4dbb7466)
 
 ### Stream: verification (owner-run)
 13. [TODO] Verification(owner): после рестарта Core Project Manager открывает lastActive session+artifact; cross-workspace resume невозможен; очистка workspace-local `.codeai-hub/**` корректно отключает resume — scope: manual; expected commit message: `chore: verify core-driven auto-resume lastActive`
