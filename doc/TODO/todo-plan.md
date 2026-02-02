@@ -33,7 +33,7 @@
 ### Stream: release build + docs sync (final)
 7. [DONE] Release: `./scripts/build-all.sh` (1.1.498) — scope: scripts + manifests/lockfiles; expected commit message: `chore(release): build-all next version`
 8. [DONE] Git Commit: `chore(release): build-all next version` (hash: 52779211)
-9. [DONE] Release: `./scripts/build-release.sh --use-current-version` (1.1.498) — scope: scripts + VSIX; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
+9. [DONE] Release: `./scripts/build-release.sh --use-current-version` (1.1.498) — scope: scripts + VSIX; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore) (hash: N/A - VSIX in .gitignore)
 10. [DONE] Docs: sync release docs (1.1.498) — scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update release notes for webview settings layout`
 11. [DONE] Git Commit: `docs: update release notes for webview settings layout` (hash: 300a697f)
 12. [DONE] Docs(session): `doc/Sessions/Session074.md` — scope: `doc/Sessions/Session074.md`; expected commit message: `docs(session): add Session074 webview settings full-size release`
@@ -50,7 +50,7 @@
 ### Stream: release build + docs sync (final)
 3. [DONE] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
 4. [DONE] Git Commit: `chore(release): build-all next version` (hash: b57f71a1)
-5. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
+5. [DONE] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
 6. [TODO] Docs: актуализировать релизные документы (строго после сборки): `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for settings full-size hotfix`
 7. [TODO] Git Commit: `docs: update release notes for settings full-size hotfix` (hash: TBD)
 8. [TODO] Docs(session): создать отчёт `doc/Sessions/Session075.md` (Phase 91 + релиз) — scope: `doc/Sessions/Session075.md`; expected commit message: `docs(session): add Session075 settings full-size hotfix release`
