@@ -39,8 +39,8 @@
 ### Stream: core-driven resume + validation
 7. [DONE] Fix(core): выровнять workspace validation при resume на `workspaceKey` (derived from `workspacePath`) + fallback scan по `~/.codeai-hub/sessions/*` — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): validate resume against workspaceKey`
 8. [DONE] Git Commit: `fix(core): validate resume against workspaceKey` (hash: f20c2df0)
-9. [TODO] Fix(core): на workspace activation Core делает pre-check принадлежности `providerSessionId` выбранному workspace (unified session history bucket + fallback scan), затем выполняет resume и бродкастит `session:created` — scope: ≤3 файлов в `packages/core/src/remote-bridge/handlers/**`; expected commit message: `fix(core): core-driven lastActive resume with workspace validation`
-10. [TODO] Git Commit: `fix(core): core-driven lastActive resume with workspace validation` (hash: TBD)
+9. [DONE] Fix(core): на workspace activation Core делает pre-check принадлежности `providerSessionId` выбранному workspace (unified session history bucket + fallback scan), затем выполняет resume и бродкастит `session:created` — scope: ≤3 файлов в `packages/core/src/remote-bridge/handlers/**`; expected commit message: `fix(core): core-driven lastActive resume with workspace validation`
+10. [DONE] Git Commit: `fix(core): core-driven lastActive resume with workspace validation` (hash: 352b503a)
 
 ### Stream: UI wiring (minimal)
 11. [TODO] Feat(ui): при выборе workspace вызывать workspace activation endpoint (вместо прямого auto-resume из workflow state) — scope: ≤3 файлов в `packages/ui/project-manager/**` (исходники/бандл согласно текущей сборке); expected commit message: `feat(project-manager): trigger core-driven auto-resume on workspace select`
