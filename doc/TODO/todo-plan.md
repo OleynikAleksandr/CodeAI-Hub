@@ -53,3 +53,23 @@
 ### Stream: session report
 15. [DONE] Docs(session): создать отчёт `doc/Sessions/Session072.md` (implementation + verification Phase 88) — scope: `doc/Sessions/Session072.md`; expected commit message: `docs(session): Session072 core-driven auto-resume lastActive`
 16. [DONE] Git Commit: `docs(session): Session072 core-driven auto-resume lastActive` (hash: 84aad329)
+
+---
+
+## Phase 89 — Stabilization + Release build (owner: Oleksandr, updated: 2026-02-02)
+
+### Stream: stabilization (post Phase 88)
+1. [DONE] Fix(core): не требовать `sessionKind` для core-driven resume при `workspace-activate`, нормализовать `runSlug` — scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`; expected commit message: `fix(core): relax workspace activate resume runSlug`
+2. [DONE] Git Commit: `fix(core): relax workspace activate resume runSlug` (hash: 8827ac38)
+3. [DONE] Chore(git): игнорировать локальный `.tmp/` чтобы релизные гейты/дерево были чистыми — scope: `.gitignore`; expected commit message: `chore(git): ignore .tmp workspace cache`
+4. [DONE] Git Commit: `chore(git): ignore .tmp workspace cache` (hash: 8dc9894e)
+
+### Stream: release build (build-all + build-release)
+5. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
+6. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+7. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
+8. [TODO] Git Commit: `chore(release): build VSIX for current version` (hash: TBD)
+
+### Stream: release report
+9. [TODO] Docs(session): создать `doc/Sessions/Session073.md` (релиз + результаты гейтов/сборок) — scope: `doc/Sessions/Session073.md`; expected commit message: `docs(session): add Session073 release build`
+10. [TODO] Git Commit: `docs(session): add Session073 release build` (hash: TBD)
