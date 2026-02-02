@@ -20,6 +20,7 @@ import type {
 import { handleWorkflowArtifactRead } from "./workflow-artifact-http-handler";
 import type { WorkflowEventsService } from "./workflow-events-service";
 import { WorkflowStateService } from "./workflow-state-service";
+import { handleWorkspaceActivate } from "./workspace-activate-service";
 import {
   handleWorkspaceFileRead,
   handleWorkspaceFileWrite,
@@ -46,6 +47,7 @@ const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const WORKSPACE_FILE_WRITE_ENDPOINT =
   "/api/v1/orchestrator/workspace-file-write";
 const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
+const WORKSPACE_ACTIVATE_ENDPOINT = "/api/v1/orchestrator/workspace-activate";
 const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
 const WORKFLOW_EVENTS_ENDPOINT = "/api/v1/orchestrator/workflow-events";
 const WORKFLOW_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/workflow-artifact";
@@ -190,6 +192,18 @@ export class HttpApiRouter {
           sessionManager: this.deps.sessionManager,
           logger: this.deps.logger,
           onWorkspaceSessionCreated: this.deps.onWorkspaceSessionCreated,
+        });
+      }
+    );
+
+    app.post(
+      WORKSPACE_ACTIVATE_ENDPOINT,
+      async (req: Request, res: Response) => {
+        await handleWorkspaceActivate({
+          req,
+          res,
+          logger: this.deps.logger,
+          onWorkspaceActivated: this.deps.onWorkspaceSessionCreated,
         });
       }
     );
