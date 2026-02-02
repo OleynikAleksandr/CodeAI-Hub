@@ -28,7 +28,7 @@
 
 ### Stream: verification (manual)
 5. [DONE] Verification(owner): подтверждено в VS Code (2026-02-02) на релизе `codeai-hub-1.1.500.vsix`: Settings занимает всю площадь Webview, resize ок, vertical scroll сохраняется. — scope: manual; expected commit message: `chore: verify webview settings full-size layout`
-6. [TODO] Git Commit: `chore: verify webview settings full-size layout` (hash: TBD)
+6. [DONE] Git Commit: `chore: verify webview settings full-size layout` (hash: b7025a8d)
 
 ### Stream: release build + docs sync (final)
 7. [DONE] Release: `./scripts/build-all.sh` (1.1.498) — scope: scripts + manifests/lockfiles; expected commit message: `chore(release): build-all next version`
