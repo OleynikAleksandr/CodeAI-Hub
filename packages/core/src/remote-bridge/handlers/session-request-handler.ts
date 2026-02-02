@@ -11,6 +11,7 @@ import { SessionContinuityFacade } from "../../session-continuity/session-contin
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import { listUnifiedSessionWorkspaceSlugs } from "../../unified-session/workspace-slugs";
 import { DescriptionStepStore } from "../../workflow/description";
 import { type BridgeEvent, serializeSession } from "../types";
 import { QuestionnaireCuratorFacade } from "./questionnaire-curator-facade";
@@ -216,63 +217,64 @@ export class SessionRequestHandler {
   }
 
   private buildSessionFilePathForValidation(
-    workspaceSlug: string,
+    workspaceKey: string,
     providerId: string,
     providerSessionId: string
   ): string {
     return buildSessionFilePath({
       rootDirectory: SESSION_ROOT,
-      workspaceSlug: sanitizeWorkspaceSlug(workspaceSlug),
+      workspaceSlug: sanitizeWorkspaceSlug(workspaceKey),
       provider: providerId,
       sessionId: sanitizeWorkspaceSlug(providerSessionId),
     });
   }
 
   private async validateProviderSessionExists(
-    workspaceSlug: string | null,
+    workspacePath: string,
     providerId: string,
     providerSessionId: string
   ): Promise<
     { readonly valid: true } | { readonly valid: false; readonly error: string }
   > {
-    if (!workspaceSlug) {
-      return {
-        valid: false,
-        error: "Cannot validate session: missing workspace slug",
-      };
+    const preferredWorkspaceKey =
+      sanitizeWorkspaceSlug(workspacePath) || "default-workspace";
+    const workspaceKeys = await listUnifiedSessionWorkspaceSlugs({
+      rootDirectory: SESSION_ROOT,
+      logger: this.logger,
+    });
+    const candidates = new Set<string>([
+      preferredWorkspaceKey,
+      ...workspaceKeys,
+    ]);
+
+    for (const workspaceKey of candidates) {
+      const filePath = this.buildSessionFilePathForValidation(
+        workspaceKey,
+        providerId,
+        providerSessionId
+      );
+      try {
+        await access(filePath);
+        return { valid: true };
+      } catch {
+        // continue
+      }
     }
 
-    const filePath = this.buildSessionFilePathForValidation(
-      workspaceSlug,
-      providerId,
-      providerSessionId
-    );
-
-    try {
-      await access(filePath);
-      return { valid: true };
-    } catch {
-      return {
-        valid: false,
-        error: `Provider session ${providerSessionId} does not exist in workspace ${workspaceSlug}`,
-      };
-    }
+    return {
+      valid: false,
+      error: `Provider session ${providerSessionId} does not exist for workspace ${workspacePath}`,
+    };
   }
 
   private async resolveProviderSessionId(options: {
     readonly adapter: ProviderAdapter;
     readonly providerId: string;
     readonly workspacePath: string;
-    readonly initiativeSlug: string | null;
     readonly requestedProviderSessionId: string | null;
   }): Promise<ProviderSessionResolution> {
-    const {
-      adapter,
-      providerId,
-      workspacePath,
-      initiativeSlug,
-      requestedProviderSessionId,
-    } = options;
+    const { adapter, providerId, workspacePath, requestedProviderSessionId } =
+      options;
     const shouldResume =
       typeof requestedProviderSessionId === "string" &&
       requestedProviderSessionId.trim().length > 0;
@@ -288,7 +290,7 @@ export class SessionRequestHandler {
 
       // Workspace validation: ensure providerSessionId belongs to current workspace
       const validation = await this.validateProviderSessionExists(
-        initiativeSlug,
+        workspacePath,
         providerId,
         trimmedSessionId
       );
@@ -334,7 +336,6 @@ export class SessionRequestHandler {
       adapter: options.adapter,
       providerId: options.providerId,
       workspacePath: options.workspacePath,
-      initiativeSlug: options.context.initiativeSlug,
       requestedProviderSessionId: options.context.providerSessionId,
     });
     if ("error" in providerSessionResolution) {
