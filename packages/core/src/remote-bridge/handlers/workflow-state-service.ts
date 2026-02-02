@@ -7,6 +7,7 @@ import {
   buildDescriptionBranchSnapshot,
   DescriptionStepStore,
 } from "../../workflow/description/description-step-store";
+import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-active-store";
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
 import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types";
@@ -34,6 +35,7 @@ export class WorkflowStateService {
   private readonly sessionManager?: SessionManager;
   private readonly stores = new Map<string, WorkflowStateFacade>();
   private readonly descriptionStepStore = new DescriptionStepStore();
+  private readonly lastActiveStore = new WorkflowLastActiveStore();
 
   constructor(options: {
     readonly logger: Logger;
@@ -64,7 +66,12 @@ export class WorkflowStateService {
     );
 
     if (!workspaceRoot) {
-      res.json({ state, continuity: { chains: [] }, description: null });
+      res.json({
+        state,
+        continuity: { chains: [] },
+        description: null,
+        lastActive: null,
+      });
       return;
     }
 
@@ -76,20 +83,29 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlugResult.value
     );
+    const lastActivePromise = this.lastActiveStore.read(
+      workspaceRoot,
+      workspaceSlugResult.value
+    );
 
-    Promise.all([continuityPromise, descriptionPromise])
-      .then(([chains, descriptionSnapshot]) => {
+    Promise.all([continuityPromise, descriptionPromise, lastActivePromise])
+      .then(([chains, descriptionSnapshot, lastActive]) => {
         const description = descriptionSnapshot
           ? buildDescriptionBranchSnapshot(descriptionSnapshot)
           : null;
-        res.json({ state, continuity: { chains }, description });
+        res.json({ state, continuity: { chains }, description, lastActive });
       })
       .catch((error) => {
         this.logger.warn("Failed to read workflow metadata", {
           workspaceSlug: workspaceSlugResult.value,
           error: error instanceof Error ? error.message : String(error),
         });
-        res.json({ state, continuity: { chains: [] }, description: null });
+        res.json({
+          state,
+          continuity: { chains: [] },
+          description: null,
+          lastActive: null,
+        });
       });
   }
 
