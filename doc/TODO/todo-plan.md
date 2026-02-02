@@ -21,7 +21,7 @@
 1. [DONE] Docs(architecture): согласовать дизайн Settings full-size (убрать centered overlay, занять всю площадь Webview, сохранить vertical scroll) — scope: `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; expected commit message: `docs: approve webview settings full-size layout architecture`
 2. [DONE] Git Commit: `docs: approve webview settings full-size layout architecture` (hash: f6ee3167)
 3. [DONE] Docs(todo): record Phase 90 design hash — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 90 design hash`
-4. [TODO] Git Commit: `docs(todo): record Phase 90 design hash` (hash: TBD)
+4. [DONE] Git Commit: `docs(todo): record Phase 90 design hash` (hash: 22138f9d)
 
 ### Stream: implementation (webview)
 5. [TODO] Fix(webview): Settings рендерится как full-size view (100% width/height) вместо centered overlay; vertical scroll сохранён — scope: `media/main-view.css`; expected commit message: `fix(webview): make settings full-size in webview`
