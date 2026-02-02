@@ -51,5 +51,5 @@
 14. [TODO] Git Commit: `chore: verify core-driven auto-resume lastActive` (hash: TBD)
 
 ### Stream: session report
-15. [TODO] Docs(session): создать отчёт `doc/Sessions/Session072.md` (implementation + verification Phase 88) — scope: `doc/Sessions/Session072.md`; expected commit message: `docs(session): Session072 core-driven auto-resume lastActive`
-16. [TODO] Git Commit: `docs(session): Session072 core-driven auto-resume lastActive` (hash: TBD)
+15. [DONE] Docs(session): создать отчёт `doc/Sessions/Session072.md` (implementation + verification Phase 88) — scope: `doc/Sessions/Session072.md`; expected commit message: `docs(session): Session072 core-driven auto-resume lastActive`
+16. [DONE] Git Commit: `docs(session): Session072 core-driven auto-resume lastActive` (hash: 84aad329)
