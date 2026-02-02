@@ -22,8 +22,8 @@
 2. [DONE] Git Commit: `docs: approve webview settings full-size layout architecture` (hash: f6ee3167)
 
 ### Stream: implementation (webview)
-3. [TODO] Fix(webview): Settings рендерится как full-size view (100% width/height) вместо centered overlay; vertical scroll сохранён — scope: `media/main-view.css`; expected commit message: `fix(webview): make settings full-size in webview`
-4. [TODO] Git Commit: `fix(webview): make settings full-size in webview` (hash: TBD)
+3. [DONE] Fix(webview): Settings рендерится как full-size view (100% width/height) вместо centered overlay; vertical scroll сохранён — scope: `media/main-view.css`; expected commit message: `fix(webview): make settings full-size in webview`
+4. [DONE] Git Commit: `fix(webview): make settings full-size in webview` (hash: de3e2ae3)
 
 ### Stream: verification (manual)
 5. [TODO] Verification(owner): `Open settings` → Settings занимает всю площадь Webview; resize работает; vertical scroll при необходимости; нет горизонтального скролла — scope: manual; expected commit message: `chore: verify webview settings full-size layout`
