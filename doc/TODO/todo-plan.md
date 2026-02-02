@@ -21,7 +21,7 @@
 
 ---
 
-## Phase 87 — Project Manager: reviewer auto-resume must be workspace-safe (owner: Oleksandr, updated: 2026-02-02)
+## Phase 87 — Project Manager: reviewer auto-resume must be workspace-safe (owner: Oleksandr, updated: 2026-02-02 12:45)
 
 ### Stream: design + approval
 1. [DONE] Docs(architecture): утвердить дизайн workspace validation для auto-resume (Core pre-check + optional snapshot hardening) — scope: `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`; expected commit message: `docs: approve reviewer auto-resume workspace validation`
@@ -36,10 +36,10 @@
 6. [DONE] Git Commit: `fix(core): validate description session ref workspacePath` (hash: 93d6e769)
 
 ### Stream: release build (build-all + build-release)
-7. [TODO] Release: после зелёных гейтов и чистого дерева запустить `./scripts/build-all.sh` (поднимет версии и пересоберёт пакеты) и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
-8. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
-9. [IN_PROGRESS] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать появление `codeai-hub-<version>.vsix` (артефакт в корне) — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
-10. [TODO] Git Commit: `chore(release): build VSIX for current version` (hash: TBD)
+7. [DONE] Release: после зелёных гейтов и чистого дерева запустить `./scripts/build-all.sh` (поднимет версии и пересоберёт пакеты) и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
+8. [DONE] Git Commit: `chore(release): build-all next version` (hash: 3f285e43)
+9. [DONE] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать появление `codeai-hub-<version>.vsix` (артефакт в корне) — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
+10. [DONE] Git Commit: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
 
 ### Stream: verification (owner-run)
 11. [TODO] Verification(owner): пользователь воспроизводит баг и подтверждает фикс (auto-resume включён); по итогам пишет подтверждение и короткие результаты (что проверил) — scope: manual; expected commit message: `chore: verify reviewer auto-resume workspace validation`
