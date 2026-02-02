@@ -6,6 +6,10 @@
 
 ---
 
+# Update (2026-02-02)
+
+В ходе практической проверки выяснилось, что `/status` — это TUI slash-команда и не может быть использована как программный source-of-truth в non-interactive режиме (`codex exec --json`/SDK). Актуальный источник истины для `used/limit` — событие `token_count` в rollout JSONL (см. `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md` и `doc/Sessions/Session069.md`).
+
 # 1. Work Done in This Session
 
 ## Work summary
