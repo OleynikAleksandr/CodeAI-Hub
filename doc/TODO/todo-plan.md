@@ -25,8 +25,8 @@
 ## Phase 88 — Core-driven auto-resume (Last Active) + workspace-safe validation (owner: Oleksandr, updated: 2026-02-02)
 
 ### Stream: design + approval
-1. [TODO] Docs(architecture): согласовать Core-driven auto-resume (lastActive в workflow state, workspace identity rules, validation) — scope: `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`; expected commit message: `docs: approve core-driven auto-resume lastActive architecture`
-2. [TODO] Git Commit: `docs: approve core-driven auto-resume lastActive architecture` (hash: TBD)
+1. [DONE] Docs(architecture): согласовать Core-driven auto-resume (lastActive в workflow state, workspace identity rules, validation) — scope: `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`; expected commit message: `docs: approve core-driven auto-resume lastActive architecture`
+2. [DONE] Git Commit: `docs: approve core-driven auto-resume lastActive architecture` (hash: 74017a2f)
 
 ### Stream: workflow state lastActive
 3. [TODO] Feat(core): добавить `lastActive` snapshot в workflow state (persist + read API) для выбранного workspace — scope: ≤3 файлов в `packages/core/src/workflow/state/**` и/или `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `feat(core): persist workflow lastActive snapshot`
