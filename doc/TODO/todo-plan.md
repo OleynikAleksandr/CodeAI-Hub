@@ -44,8 +44,8 @@
 ## Phase 91 — Hotfix: Settings full-size (override in session-view.css) + Release (owner: Oleksandr, updated: 2026-02-02)
 
 ### Stream: hotfix (webview css precedence)
-1. [TODO] Fix(webview): привести `.settings-overlay` в `media/session-view.css` к full-size (session-view.css загружается после main-view.css и перекрывает layout) — scope: `media/session-view.css`; expected commit message: `fix(webview): make settings overlay full-size (session-view css)`
-2. [TODO] Git Commit: `fix(webview): make settings overlay full-size (session-view css)` (hash: TBD)
+1. [DONE] Fix(webview): привести `.settings-overlay` в `media/session-view.css` к full-size (session-view.css загружается после main-view.css и перекрывает layout) — scope: `media/session-view.css`; expected commit message: `fix(webview): make settings overlay full-size (session-view css)`
+2. [DONE] Git Commit: `fix(webview): make settings overlay full-size (session-view css)` (hash: 07cc6982)
 
 ### Stream: release build + docs sync (final)
 3. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
