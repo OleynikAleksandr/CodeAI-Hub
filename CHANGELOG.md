@@ -1,3 +1,7 @@
+## [1.1.499] - 2026-02-02
+### Fixed
+- Webview: Settings overlay is full-size (fixed CSS precedence in `session-view.css` which loads after `main-view.css`).
+
 ## [1.1.498] - 2026-02-02
 ### Fixed
 - Webview: Settings panel now uses full Webview area (no centered overlay) and preserves vertical scrolling.
