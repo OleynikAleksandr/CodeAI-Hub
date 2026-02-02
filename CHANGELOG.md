@@ -1,3 +1,7 @@
+## [1.1.498] - 2026-02-02
+### Fixed
+- Webview: Settings panel now uses full Webview area (no centered overlay) and preserves vertical scrolling.
+
 ## [1.1.497] - 2026-02-02
 ### Added
 - Core: persisted workflow `lastActive` snapshot in `.codeai-hub/<workspaceSlug>/workflow/state.json` and exposed via `GET /api/v1/orchestrator/workflow-state`.
