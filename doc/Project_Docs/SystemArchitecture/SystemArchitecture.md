@@ -1,7 +1,7 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.493
-**Last Updated:** 2026-02-01
+**Version:** 1.1.497
+**Last Updated:** 2026-02-02
 **Status:** Active reference (source of truth)
 
 ---
@@ -76,7 +76,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.493`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.497`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -87,7 +87,7 @@ Node.js сервис (`@codeai-hub/core@1.1.493`), упакованный как
 
 Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
 
-### 2.2 UI Bundles (v1.1.493)
+### 2.2 UI Bundles (v1.1.497)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
 - `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
@@ -193,14 +193,16 @@ UI устанавливается в `~/.codeai-hub/packages/ui/project-manager/
 - Каждый workspace имеет стабильный `workspaceSlug` (source-of-truth в registry) и используется как ключ для:
   - путей `.codeai-hub/<workspaceSlug>/...`;
   - polling `workflow-state` / `workflow-events` в Project Manager.
+- Core хранит workflow state snapshot в `<workspaceRoot>/.codeai-hub/<workspaceSlug>/workflow/state.json` (включая `lastActive` для core-driven auto-resume).
 - Add workspace:
   - VS Code bridge: `projects:pickFolder`;
   - CEF macOS: нативный Finder folder picker (возвращает абсолютный путь через `projects:folderPicked`);
   - CEF fallback (Windows/Linux): модалка ввода абсолютного пути;
   - после add/activate UI делает `POST /api/v1/orchestrator/workspace-session` (best effort), чтобы создать `.codeai-hub/<workspaceSlug>/` и включить watcher.
+- При выборе workspace UI делает `POST /api/v1/orchestrator/workspace-activate` (best effort), чтобы Core мог инициировать core-driven auto-resume (resume authority = Core).
 - После добавления workspace UI автоматически выбирает новый workspace в Project Manager.
 - При смене workspace UI сбрасывает выбранный артефакт/просмотрщик.
-- При смене workspace UI автоматически выбирает последний артефакт и сессию из дерева выбранного workspace.
+- При смене workspace UI больше не инициирует resume напрямую (например, из `workflow-state` polling) — resume выполняется в Core и публикуется через `session:created`.
 - Для пустого workspace (нет артефактов/continuity, все стадии `idle`) UI авто-открывает анкету описания и начинает процесс с нуля.
 
 ---
@@ -224,36 +226,36 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/1.1.493/
+│   └── darwin-arm64/1.1.497/
 │       ├── node/
 │       ├── app/
 │       └── install.json
 ├── packages/
-│   ├── launcher/macos-arm64/1.1.493/
+│   ├── launcher/macos-arm64/1.1.497/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.493/
-│       │   └── current -> 1.1.493
+│       │   ├── 1.1.497/
+│       │   └── current -> 1.1.497
 │       └── project-manager/
-│           ├── 1.1.493/
-│           └── current -> 1.1.493
+│           ├── 1.1.497/
+│           └── current -> 1.1.497
 ├── providers/
-│   ├── claude/1.1.493/
-│   ├── codex/1.1.493/
-│   └── gemini/1.1.493/
+│   ├── claude/1.1.497/
+│   ├── codex/1.1.497/
+│   └── gemini/1.1.497/
 ├── state/
 │   └── projects.json
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.493.tar.bz2
-    ├── vscode-webview-1.1.493.tar.bz2
-    ├── project-manager-1.1.493.tar.bz2
-    ├── claude-module-1.1.493.tar.bz2
-    ├── codex-module-1.1.493.tar.bz2
-    ├── gemini-module-1.1.493.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.493.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.497.tar.bz2
+    ├── vscode-webview-1.1.497.tar.bz2
+    ├── project-manager-1.1.497.tar.bz2
+    ├── claude-module-1.1.497.tar.bz2
+    ├── codex-module-1.1.497.tar.bz2
+    ├── gemini-module-1.1.497.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.497.tar.bz2
 ```
 
 ---
@@ -262,12 +264,12 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.493 |
-| Core | 1.1.493 |
-| UI Bundles | 1.1.493 |
-| Claude Module | 1.1.493 |
-| Codex Module | 1.1.493 |
-| Gemini Module | 1.1.493 |
+| VSIX | 1.1.497 |
+| Core | 1.1.497 |
+| UI Bundles | 1.1.497 |
+| Claude Module | 1.1.497 |
+| Codex Module | 1.1.497 |
+| Gemini Module | 1.1.497 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |
