@@ -1,7 +1,7 @@
 # Project Manager — Add Workspace + Worktree Init (MVP Architecture)
 
 **Status:** Approved (MVP)
-**Updated:** 2026-01-23
+**Updated:** 2026-02-02
 **Owner:** Oleksandr + Codex
 
 ---
@@ -28,7 +28,9 @@ Project Manager должен уметь работать с нескольким
 - Core хранит список workspace в `~/.codeai-hub/state/projects.json` (ProjectRegistry).
 - UI получает список через WebSocket (`projects:list` / `projects:update`).
 - Workflow дерево (`WorkspaceTree`) использует `workspaceName -> toWorkflowWorkspaceSlug(workspaceName)` + `workspacePath`.
-- `.codeai-hub/<workspaceSlug>` создаётся только при `POST /api/v1/orchestrator/workspace-session`.
+- `.codeai-hub/<workspaceSlug>` создаётся при:
+  - `POST /api/v1/orchestrator/workspace-session` (worktree init),
+  - `POST /api/v1/orchestrator/workspace-activate` (workspace activation, best-effort attach + core-driven resume).
 
 ## 5) Решение (MVP)
 
@@ -73,7 +75,7 @@ Project Manager должен уметь работать с нескольким
 ### 5.4 Переключение workspace и корректное дерево
 - `WorkspaceTree` и все сервисы, где требуется `workspaceSlug`, используют **workspace.slug**, а не производное от имени.
 - Polling `workflow-state` остаётся на выбранном workspace (как сейчас), но ключом становится slug.
-- При смене workspace UI сбрасывает выбранный артефакт/просмотрщик и автоматически выбирает последний артефакт и сессию из дерева выбранного workspace.
+- При смене workspace UI сбрасывает выбранный артефакт/просмотрщик и делает `POST /api/v1/orchestrator/workspace-activate` (best effort); resume выполняется в Core и публикуется через `session:created`.
 
 ### 5.5 Clean workspace start
 - UI проверяет `workflow-state` выбранного workspace.
@@ -82,7 +84,9 @@ Project Manager должен уметь работать с нескольким
 
 ## 6) Контракты/изменения API
 - WebSocket сообщения остаются прежними (`projects:add`, `projects:list`, ...), но payload `projects:update` теперь содержит `slug`.
-- HTTP endpoint остаётся прежним: `POST /api/v1/orchestrator/workspace-session`.
+- HTTP endpoints:
+  - `POST /api/v1/orchestrator/workspace-session` — worktree init (создание `.codeai-hub/<workspaceSlug>/` + attach watcher).
+  - `POST /api/v1/orchestrator/workspace-activate` — workspace activation (attach watcher + core-driven resume).
 
 ## 7) Риски и меры
 - **Коллизии slug в existing installs**: решается миграцией + детерминированным суффиксом.
