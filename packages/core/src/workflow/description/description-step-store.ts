@@ -79,6 +79,7 @@ const parseSnapshot = (value: unknown): DescriptionStepSnapshot | null => {
     return null;
   }
   const workspaceSlug = readNonEmptyString(value.workspaceSlug);
+  const workspacePath = readNonEmptyString(value.workspacePath);
   const createdAt = readNonEmptyString(value.createdAt);
   const updatedAt = readNonEmptyString(value.updatedAt);
   if (!(workspaceSlug && createdAt && updatedAt)) {
@@ -96,6 +97,7 @@ const parseSnapshot = (value: unknown): DescriptionStepSnapshot | null => {
 
   return {
     workspaceSlug,
+    workspacePath: workspacePath ?? workspaceSlug,
     createdAt,
     updatedAt,
     questionnairePath,
@@ -167,7 +169,20 @@ export class DescriptionStepStore {
     if (!snapshot) {
       return null;
     }
-    return parseSnapshot(snapshot);
+    const parsed = parseSnapshot(snapshot);
+    if (!parsed) {
+      return null;
+    }
+    // Validate workspacePath matches current workspaceRoot
+    // If mismatch, treat session/sessionKind as stale (cross-workspace leak)
+    if (parsed.workspacePath !== workspaceRoot) {
+      return {
+        ...parsed,
+        session: undefined,
+        sessionKind: undefined,
+      };
+    }
+    return parsed;
   }
 
   async upsert(
@@ -183,6 +198,7 @@ export class DescriptionStepStore {
     );
     const next: DescriptionStepSnapshot = {
       workspaceSlug,
+      workspacePath: existing?.workspacePath ?? workspaceRoot,
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
       questionnairePath: resolveField(

@@ -8,6 +8,7 @@ export type DescriptionSessionKind = "collector" | "reviewer";
 
 export type DescriptionStepSnapshot = {
   readonly workspaceSlug: string;
+  readonly workspacePath: string;
   readonly createdAt: string;
   readonly updatedAt: string;
   readonly questionnairePath?: string;

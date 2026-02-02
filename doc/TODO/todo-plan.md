@@ -29,11 +29,11 @@
 
 ### Stream: core validation (block cross-workspace resumes)
 3. [DONE] Feat(core): перед resume по `providerSessionId` валидировать принадлежность к workspace (`~/.codeai-hub/sessions/<workspaceSlug>/<providerId>/<providerSessionId>.jsonl` должен существовать) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): validate workspace before resuming provider session`
-4. [DONE] Git Commit: `fix(core): validate workspace before resuming provider session` (hash: TBD)
+4. [DONE] Git Commit: `fix(core): validate workspace before resuming provider session` (hash: c3f10a03)
 
 ### Stream: description snapshot hardening (optional, но желательно)
-5. [TODO] Feat(core): расширить `description-step.json` полем `workspacePath` и валидировать его на read; при несовпадении — игнорировать `session/sessionKind` (treat as null) — scope: ≤3 файлов в `packages/core/src/workflow/description/`; expected commit message: `fix(core): validate description session ref workspacePath`
-6. [TODO] Git Commit: `fix(core): validate description session ref workspacePath` (hash: TBD)
+5. [DONE] Feat(core): расширить `description-step.json` полем `workspacePath` и валидировать его на read; при несовпадении — игнорировать `session/sessionKind` (treat as null) — scope: `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-types.ts`; expected commit message: `fix(core): validate description session ref workspacePath`
+6. [DONE] Git Commit: `fix(core): validate description session ref workspacePath` (hash: TBD)
 
 ### Stream: release build (build-all + build-release)
 7. [TODO] Release: после зелёных гейтов и чистого дерева запустить `./scripts/build-all.sh` (поднимет версии и пересоберёт пакеты) и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
