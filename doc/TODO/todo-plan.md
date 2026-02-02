@@ -67,8 +67,8 @@
 ### Stream: release build (build-all + build-release)
 5. [DONE] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
 6. [DONE] Git Commit: `chore(release): build-all next version` (hash: 4face963)
-7. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
-8. [TODO] Git Commit: `chore(release): build VSIX for current version` (hash: TBD)
+7. [DONE] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
+8. [DONE] Git Commit: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
 
 ### Stream: release report
 9. [TODO] Docs(session): создать `doc/Sessions/Session073.md` (релиз + результаты гейтов/сборок) — scope: `doc/Sessions/Session073.md`; expected commit message: `docs(session): add Session073 release build`
