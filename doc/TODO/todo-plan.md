@@ -47,8 +47,8 @@
 12. [DONE] Git Commit: `feat(project-manager): trigger core-driven auto-resume on workspace select` (hash: 4dbb7466)
 
 ### Stream: verification (owner-run)
-13. [TODO] Verification(owner): после рестарта Core Project Manager открывает lastActive session+artifact; cross-workspace resume невозможен; очистка workspace-local `.codeai-hub/**` корректно отключает resume — scope: manual; expected commit message: `chore: verify core-driven auto-resume lastActive`
-14. [TODO] Git Commit: `chore: verify core-driven auto-resume lastActive` (hash: TBD)
+13. [DONE] Verification(owner): после рестарта Core Project Manager открывает lastActive session+artifact; cross-workspace resume невозможен; очистка workspace-local `.codeai-hub/**` корректно отключает resume — scope: manual; expected commit message: `chore: verify core-driven auto-resume lastActive`
+14. [DONE] Git Commit: `chore: verify core-driven auto-resume lastActive` (hash: 149f1647)
 
 ### Stream: session report
 15. [DONE] Docs(session): создать отчёт `doc/Sessions/Session072.md` (implementation + verification Phase 88) — scope: `doc/Sessions/Session072.md`; expected commit message: `docs(session): Session072 core-driven auto-resume lastActive`
