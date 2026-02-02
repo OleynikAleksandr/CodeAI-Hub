@@ -1,75 +1,49 @@
 # План разработки (Development TODO Plan)
 
 ## Правила выполнения (Execution Rules):
-- TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream с микрозадачами.
-- Каждая микрозадача затрагивает ≤ 3 файлов.
+- **TODO Plan** состоит из Phase (Фаз). В каждой Phase — Stream (стрим) с микрозадачами.
+- Каждая микрозадача затрагивает **≤ 3 файлов**.
 - Каждая микрозадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
-- Gates после каждой микрозадачи: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка.
-- Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
+- **Gates после каждой микрозадачи**: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка затронутого пакета.
+- После коммита хеш фиксируем отдельным `docs(todo): ...` коммитом (сам коммит не может содержать свой хеш).
 
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`
-3. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
-4. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
-5. `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md` (THIS DESIGN)
-6. `packages/core/src/unified-session/storage.ts` (workspaceKey rules)
-7. `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`
-8. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
-9. `packages/core/src/workflow/description/description-step-store.ts`
-10. `packages/ui/project-manager/dist/app.js` (current: UI-driven auto-resume)
-11. `doc/Sessions/Session071.md` (THIS REPORT)
+2. `doc/Project_Docs/Stacks/UI_Modules.md`
+3. `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md` (THIS DESIGN)
+4. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
 
-## Phase 88 — Core-driven auto-resume (Last Active) + workspace-safe validation (owner: Oleksandr, updated: 2026-02-02)
+## Phase 90 — VS Code Webview Settings: full-size layout (owner: Oleksandr, updated: 2026-02-02)
 
 ### Stream: design + approval
-1. [DONE] Docs(architecture): согласовать Core-driven auto-resume (lastActive в workflow state, workspace identity rules, validation) — scope: `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`; expected commit message: `docs: approve core-driven auto-resume lastActive architecture`
-2. [DONE] Git Commit: `docs: approve core-driven auto-resume lastActive architecture` (hash: 74017a2f)
+1. [TODO] Docs(architecture): согласовать дизайн Settings full-size (убрать centered overlay, занять всю площадь Webview, сохранить vertical scroll) — scope: `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; expected commit message: `docs: approve webview settings full-size layout architecture`
+2. [TODO] Git Commit: `docs: approve webview settings full-size layout architecture` (hash: TBD)
+3. [TODO] Docs(todo): record Phase 90 design hash — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 90 design hash`
+4. [TODO] Git Commit: `docs(todo): record Phase 90 design hash` (hash: TBD)
 
-### Stream: workflow state lastActive
-3. [DONE] Feat(core): добавить `lastActive` snapshot в workflow state (persist + read API) для выбранного workspace — scope: ≤3 файлов в `packages/core/src/workflow/state/**` и/или `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `feat(core): persist workflow lastActive snapshot`
-4. [DONE] Git Commit: `feat(core): persist workflow lastActive snapshot` (hash: 17196214)
+### Stream: implementation (webview)
+5. [TODO] Fix(webview): Settings рендерится как full-size view (100% width/height) вместо centered overlay; vertical scroll сохранён — scope: `media/main-view.css`; expected commit message: `fix(webview): make settings full-size in webview`
+6. [TODO] Git Commit: `fix(webview): make settings full-size in webview` (hash: TBD)
+7. [TODO] Docs(todo): record Phase 90 settings layout hash — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 90 settings layout hash`
+8. [TODO] Git Commit: `docs(todo): record Phase 90 settings layout hash` (hash: TBD)
 
-### Stream: workspace activation API
-5. [DONE] Feat(core): добавить/расширить API, чтобы Project Manager сообщал выбранный workspace (workspace activated) и Core мог инициировать resume lastActive — scope: ≤3 файлов в `packages/core/src/remote-bridge/**`; expected commit message: `feat(core): add workspace activate endpoint for auto-resume`
-6. [DONE] Git Commit: `feat(core): add workspace activate endpoint for auto-resume` (hash: 19d9e6a8)
+### Stream: verification (manual)
+9. [TODO] Verification(owner): `Open settings` → Settings занимает всю площадь Webview; resize работает; vertical scroll при необходимости; нет горизонтального скролла — scope: manual; expected commit message: `chore: verify webview settings full-size layout`
+10. [TODO] Git Commit: `chore: verify webview settings full-size layout` (hash: TBD)
+11. [TODO] Docs(todo): record Phase 90 verification hash — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 90 verification hash`
+12. [TODO] Git Commit: `docs(todo): record Phase 90 verification hash` (hash: TBD)
 
-### Stream: core-driven resume + validation
-7. [DONE] Fix(core): выровнять workspace validation при resume на `workspaceKey` (derived from `workspacePath`) + fallback scan по `~/.codeai-hub/sessions/*` — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): validate resume against workspaceKey`
-8. [DONE] Git Commit: `fix(core): validate resume against workspaceKey` (hash: f20c2df0)
-9. [DONE] Fix(core): на workspace activation Core делает pre-check принадлежности `providerSessionId` выбранному workspace (unified session history bucket + fallback scan), затем выполняет resume и бродкастит `session:created` — scope: ≤3 файлов в `packages/core/src/remote-bridge/handlers/**`; expected commit message: `fix(core): core-driven lastActive resume with workspace validation`
-10. [DONE] Git Commit: `fix(core): core-driven lastActive resume with workspace validation` (hash: 352b503a)
-
-### Stream: UI wiring (minimal)
-11. [DONE] Feat(ui): при выборе workspace вызывать workspace activation endpoint (вместо прямого auto-resume из workflow state) — scope: ≤3 файлов в `src/client/project-manager/components/layout/workspace-tree.tsx` и `src/client/project-manager/services/workspace-activate-client.ts`; expected commit message: `feat(project-manager): trigger core-driven auto-resume on workspace select`
-12. [DONE] Git Commit: `feat(project-manager): trigger core-driven auto-resume on workspace select` (hash: 4dbb7466)
-
-### Stream: verification (owner-run)
-13. [DONE] Verification(owner): после рестарта Core Project Manager открывает lastActive session+artifact; cross-workspace resume невозможен; очистка workspace-local `.codeai-hub/**` корректно отключает resume — scope: manual; expected commit message: `chore: verify core-driven auto-resume lastActive`
-14. [DONE] Git Commit: `chore: verify core-driven auto-resume lastActive` (hash: 149f1647)
-
-### Stream: session report
-15. [DONE] Docs(session): создать отчёт `doc/Sessions/Session072.md` (implementation + verification Phase 88) — scope: `doc/Sessions/Session072.md`; expected commit message: `docs(session): Session072 core-driven auto-resume lastActive`
-16. [DONE] Git Commit: `docs(session): Session072 core-driven auto-resume lastActive` (hash: 84aad329)
-
----
-
-## Phase 89 — Stabilization + Release build (owner: Oleksandr, updated: 2026-02-02)
-
-### Stream: stabilization (post Phase 88)
-1. [DONE] Fix(core): не требовать `sessionKind` для core-driven resume при `workspace-activate`, нормализовать `runSlug` — scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`; expected commit message: `fix(core): relax workspace activate resume runSlug`
-2. [DONE] Git Commit: `fix(core): relax workspace activate resume runSlug` (hash: 8827ac38)
-3. [DONE] Chore(git): игнорировать локальный `.tmp/` чтобы релизные гейты/дерево были чистыми — scope: `.gitignore`; expected commit message: `chore(git): ignore .tmp workspace cache`
-4. [DONE] Git Commit: `chore(git): ignore .tmp workspace cache` (hash: 8dc9894e)
-
-### Stream: release build (build-all + build-release)
-5. [DONE] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
-6. [DONE] Git Commit: `chore(release): build-all next version` (hash: 4face963)
-7. [DONE] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
-8. [DONE] Git Commit: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
-
-### Stream: release report
-9. [DONE] Docs(session): создать `doc/Sessions/Session073.md` (релиз + результаты гейтов/сборок) — scope: `doc/Sessions/Session073.md`; expected commit message: `docs(session): add Session073 release build`
-10. [DONE] Git Commit: `docs(session): add Session073 release build` (hash: 14590f55)
+### Stream: release build + docs sync (final)
+13. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
+14. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+15. [TODO] Docs(todo): record Phase 90 build-all hash — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 90 build-all hash`
+16. [TODO] Git Commit: `docs(todo): record Phase 90 build-all hash` (hash: TBD)
+17. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
+18. [TODO] Docs(todo): mark Phase 90 build-release done (VSIX ignored) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): mark Phase 90 build-release done`
+19. [TODO] Git Commit: `docs(todo): mark Phase 90 build-release done` (hash: TBD)
+20. [TODO] Docs: актуализировать релизные документы (после сборки): `README.md`, `CHANGELOG.md`, при необходимости `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for webview settings layout`
+21. [TODO] Git Commit: `docs: update release notes for webview settings layout` (hash: TBD)
+22. [TODO] Docs(session): создать отчёт `doc/Sessions/Session074.md` (Phase 90 + релиз) — scope: `doc/Sessions/Session074.md`; expected commit message: `docs(session): add Session074 webview settings full-size release`
+23. [TODO] Git Commit: `docs(session): add Session074 webview settings full-size release` (hash: TBD)
