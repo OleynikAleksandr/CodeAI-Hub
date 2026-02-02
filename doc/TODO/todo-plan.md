@@ -37,17 +37,19 @@
 6. [DONE] Git Commit: `feat(core): add workspace activate endpoint for auto-resume` (hash: 19d9e6a8)
 
 ### Stream: core-driven resume + validation
-7. [TODO] Fix(core): на workspace activation Core делает pre-check принадлежности `providerSessionId` выбранному workspace (unified session history bucket + fallback scan), затем выполняет resume и бродкастит `session:created` — scope: ≤3 файлов в `packages/core/src/remote-bridge/handlers/**`; expected commit message: `fix(core): core-driven lastActive resume with workspace validation`
-8. [TODO] Git Commit: `fix(core): core-driven lastActive resume with workspace validation` (hash: TBD)
+7. [DONE] Fix(core): выровнять workspace validation при resume на `workspaceKey` (derived from `workspacePath`) + fallback scan по `~/.codeai-hub/sessions/*` — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): validate resume against workspaceKey`
+8. [DONE] Git Commit: `fix(core): validate resume against workspaceKey` (hash: f20c2df0)
+9. [TODO] Fix(core): на workspace activation Core делает pre-check принадлежности `providerSessionId` выбранному workspace (unified session history bucket + fallback scan), затем выполняет resume и бродкастит `session:created` — scope: ≤3 файлов в `packages/core/src/remote-bridge/handlers/**`; expected commit message: `fix(core): core-driven lastActive resume with workspace validation`
+10. [TODO] Git Commit: `fix(core): core-driven lastActive resume with workspace validation` (hash: TBD)
 
 ### Stream: UI wiring (minimal)
-9. [TODO] Feat(ui): при выборе workspace вызывать workspace activation endpoint (вместо прямого auto-resume из workflow state) — scope: ≤3 файлов в `packages/ui/project-manager/**` (исходники/бандл согласно текущей сборке); expected commit message: `feat(project-manager): trigger core-driven auto-resume on workspace select`
-10. [TODO] Git Commit: `feat(project-manager): trigger core-driven auto-resume on workspace select` (hash: TBD)
+11. [TODO] Feat(ui): при выборе workspace вызывать workspace activation endpoint (вместо прямого auto-resume из workflow state) — scope: ≤3 файлов в `packages/ui/project-manager/**` (исходники/бандл согласно текущей сборке); expected commit message: `feat(project-manager): trigger core-driven auto-resume on workspace select`
+12. [TODO] Git Commit: `feat(project-manager): trigger core-driven auto-resume on workspace select` (hash: TBD)
 
 ### Stream: verification (owner-run)
-11. [TODO] Verification(owner): после рестарта Core Project Manager открывает lastActive session+artifact; cross-workspace resume невозможен; очистка workspace-local `.codeai-hub/**` корректно отключает resume — scope: manual; expected commit message: `chore: verify core-driven auto-resume lastActive`
-12. [TODO] Git Commit: `chore: verify core-driven auto-resume lastActive` (hash: TBD)
+13. [TODO] Verification(owner): после рестарта Core Project Manager открывает lastActive session+artifact; cross-workspace resume невозможен; очистка workspace-local `.codeai-hub/**` корректно отключает resume — scope: manual; expected commit message: `chore: verify core-driven auto-resume lastActive`
+14. [TODO] Git Commit: `chore: verify core-driven auto-resume lastActive` (hash: TBD)
 
 ### Stream: session report
-13. [TODO] Docs(session): создать отчёт `doc/Sessions/Session072.md` (implementation + verification Phase 88) — scope: `doc/Sessions/Session072.md`; expected commit message: `docs(session): Session072 core-driven auto-resume lastActive`
-14. [TODO] Git Commit: `docs(session): Session072 core-driven auto-resume lastActive` (hash: TBD)
+15. [TODO] Docs(session): создать отчёт `doc/Sessions/Session072.md` (implementation + verification Phase 88) — scope: `doc/Sessions/Session072.md`; expected commit message: `docs(session): Session072 core-driven auto-resume lastActive`
+16. [TODO] Git Commit: `docs(session): Session072 core-driven auto-resume lastActive` (hash: TBD)
