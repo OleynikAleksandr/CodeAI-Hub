@@ -1,3 +1,7 @@
+## [1.1.500] - 2026-02-02
+### Fixed
+- Webview: Settings-only landing page background now uses VS Code theme variables (no hard-coded black).
+
 ## [1.1.499] - 2026-02-02
 ### Fixed
 - Webview: Settings overlay is full-size (fixed CSS precedence in `session-view.css` which loads after `main-view.css`).
