@@ -48,8 +48,8 @@
 2. [DONE] Git Commit: `fix(webview): make settings overlay full-size (session-view css)` (hash: 07cc6982)
 
 ### Stream: release build + docs sync (final)
-3. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
-4. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+3. [DONE] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
+4. [DONE] Git Commit: `chore(release): build-all next version` (hash: b57f71a1)
 5. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
 6. [TODO] Docs: актуализировать релизные документы (строго после сборки): `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for settings full-size hotfix`
 7. [TODO] Git Commit: `docs: update release notes for settings full-size hotfix` (hash: TBD)
