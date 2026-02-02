@@ -48,8 +48,8 @@
 8. [DONE] Git Commit: `feat(codex-module): read token usage from rollout jsonl` (hash: `6685a33a` — объединено с resolver)
 
 ### Stream: provider → core event wiring
-9. [IN_PROGRESS] Feat(codex-module): после завершения turn обновлять tokenUsage через rollout reader и эмитить `stream_event` с `tokenUsage` (как в Claude); не путать per-turn `event.usage` с context-window `used/limit` — scope: ≤3 файлов в `packages/Codex_Module/src/`; expected commit message: `feat(codex-module): emit token usage stream events`
-10. [TODO] Git Commit: `feat(codex-module): emit token usage stream events` (hash: TBD)
+9. [DONE] Feat(codex-module): после завершения turn обновлять tokenUsage через rollout reader и эмитить `stream_event` с `tokenUsage` (как в Claude); не путать per-turn `event.usage` с context-window `used/limit` — scope: 1 файл `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex-module): emit token usage stream events`
+10. [DONE] Git Commit: `feat(codex-module): emit token usage stream events` (hash: `b42b72bc`)
 
 ### Stream: verification
 11. [TODO] Verification: прогнать гейты + таргетный билд `npm run build --workspace @codeai-hub/codex-module`; ручная проверка:
