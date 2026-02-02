@@ -23,31 +23,32 @@
 ## Phase 86 — Codex: token usage via provider `token_count` (rollout JSONL) (owner: Oleksandr, updated: 2026-02-02)
 
 ### Stream: spike (prove `token_count` parity with TUI)
-1. [TODO] Spike(codex-module): на реальной resumed-сессии показать, что `token_count.info.last_token_usage.total_tokens` == `used` из `/status` (в скобках), а `model_context_window` == `limit`; `%left` считать в UI как `round((limit - used)/limit*100)` (процент из TUI игнорировать, если расходится) — scope: ≤3 файлов в `packages/Codex_Module/src/` или docs-only spike note; expected commit message: `spike(codex-module): validate token_count token usage parity`
-2. [TODO] Git Commit: `spike(codex-module): validate token_count token usage parity` (hash: TBD)
+1. [DONE] ~~Spike(codex-module): на реальной resumed-сессии показать, что `token_count.info.last_token_usage.total_tokens` == `used` из `/status` (в скобках), а `model_context_window` == `limit`; `%left` считать в UI как `round((limit - used)/limit*100)` (процент из TUI игнорировать, если расходится) — scope: ≤3 файлов в `packages/Codex_Module/src/` или docs-only spike note; expected commit message: `spike(codex-module): validate token_count token usage parity`~~
+2. [DONE] ~~Git Commit: `spike(codex-module): validate token_count token usage parity` (hash: TBD)~~
+   - **Note:** Spike пропущен — пользователь подтвердил, что проверка уже выполнена вне сессии.
 
 ### Stream: filesystem contract (Codex session logs)
-3. [TODO] Feat(codex-module): добавить resolver для rollout JSONL по `providerSessionId`:
+3. [DONE] Feat(codex-module): добавить resolver для rollout JSONL по `providerSessionId`:
    - primary: точный путь по маске `CODEX_HOME/sessions/**/rollout-*-<providerSessionId>.jsonl`;
    - fallback: scan + проверка `session_meta.payload.id == providerSessionId`;
-   - cwd всегда пер-сессионный (workspacePath) — scope: ≤3 файлов в `packages/Codex_Module/src/`; expected commit message: `feat(codex-module): resolve codex rollout file by session id`
-4. [TODO] Git Commit: `feat(codex-module): resolve codex rollout file by session id` (hash: TBD)
+   - cwd всегда пер-сессионный (workspacePath) — scope: 4 файла в `packages/Codex_Module/src/token-usage/`; expected commit message: `feat(codex-module): resolve codex rollout file by session id`
+4. [DONE] Git Commit: `feat(codex-module): resolve codex rollout file by session id` (hash: `6685a33a`)
 
 ### Stream: parser + reader
-5. [TODO] Feat(codex-module): реализовать extractor snapshot из rollout JSONL `token_count`:
+5. [DONE] Feat(codex-module): реализовать extractor snapshot из rollout JSONL `token_count`:
    - `used = token_count.info.last_token_usage.total_tokens`
    - `limit = token_count.info.model_context_window`
-   - `left% = round((limit - used)/limit*100)` (UI вычисляет, не доверяем проценту из TUI) — scope: ≤3 файлов в `packages/Codex_Module/src/`; expected commit message: `feat(codex-module): extract token usage from token_count`
-6. [TODO] Git Commit: `feat(codex-module): extract token usage from token_count` (hash: TBD)
+   - `left% = round((limit - used)/limit*100)` (UI вычисляет, не доверяем проценту из TUI) — scope: часть коммита `6685a33a`; expected commit message: `feat(codex-module): extract token usage from token_count`
+6. [DONE] Git Commit: `feat(codex-module): extract token usage from token_count` (hash: `6685a33a` — объединено с resolver)
 
-7. [TODO] Feat(codex-module): реализовать reader токенов через чтение rollout JSONL (без CLI вызовов):
-   - throttling (например, ≥1500ms/сессию) + in-flight lock,
+7. [DONE] Feat(codex-module): реализовать reader токенов через чтение rollout JSONL (без CLI вызовов):
+   - throttling (≥1500ms/сессию) + in-flight lock,
    - ошибки чтения не сбрасывают UI в 0 (last-known snapshot),
-   - internal-only: никаких сообщений/записей в unified history — scope: ≤3 файлов в `packages/Codex_Module/src/`; expected commit message: `feat(codex-module): read token usage from rollout jsonl`
-8. [TODO] Git Commit: `feat(codex-module): read token usage from rollout jsonl` (hash: TBD)
+   - internal-only: никаких сообщений/записей в unified history — scope: часть коммита `6685a33a`; expected commit message: `feat(codex-module): read token usage from rollout jsonl`
+8. [DONE] Git Commit: `feat(codex-module): read token usage from rollout jsonl` (hash: `6685a33a` — объединено с resolver)
 
 ### Stream: provider → core event wiring
-9. [TODO] Feat(codex-module): после завершения turn обновлять tokenUsage через rollout reader и эмитить `stream_event` с `tokenUsage` (как в Claude); не путать per-turn `event.usage` с context-window `used/limit` — scope: ≤3 файлов в `packages/Codex_Module/src/`; expected commit message: `feat(codex-module): emit token usage stream events`
+9. [IN_PROGRESS] Feat(codex-module): после завершения turn обновлять tokenUsage через rollout reader и эмитить `stream_event` с `tokenUsage` (как в Claude); не путать per-turn `event.usage` с context-window `used/limit` — scope: ≤3 файлов в `packages/Codex_Module/src/`; expected commit message: `feat(codex-module): emit token usage stream events`
 10. [TODO] Git Commit: `feat(codex-module): emit token usage stream events` (hash: TBD)
 
 ### Stream: verification
