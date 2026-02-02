@@ -47,9 +47,10 @@
 - ✅ `npm run build:project-manager`
 
 ## Manual verification (owner)
-- [ ] После рестарта Core: при выборе workspace в Project Manager автоматом резюмится lastActive description-сессия (если валидна) и открывается последний артефакт.
-- [ ] Cross-workspace resume невозможен (workspace A не может поднять providerSessionId из workspace B).
-- [ ] Очистка workspace-local `.codeai-hub/<workspaceSlug>/**` корректно отключает resume (нет sessionRef/lastActive).
+- **Verified:** 2026-02-02 (owner confirmation)
+- [x] После рестарта Core: при выборе workspace в Project Manager автоматом резюмится lastActive description-сессия (если валидна) и открывается последний артефакт.
+- [x] Cross-workspace resume невозможен (workspace A не может поднять providerSessionId из workspace B).
+- [x] Очистка workspace-local `.codeai-hub/<workspaceSlug>/**` корректно отключает resume (нет sessionRef/lastActive).
 
 ---
 
@@ -62,5 +63,5 @@
 4. `doc/Sessions/Session072.md` (THIS REPORT)
 
 ## Plans for next session
-- Выполнить ручной чеклист (Manual verification выше) и закрыть пункты 13–14 в `doc/TODO/todo-plan.md` отдельным коммитом.
+- Ручная верификация выполнена (см. чеклист выше). Закрыть пункты 13–14 в `doc/TODO/todo-plan.md` отдельным коммитом.
 - При необходимости — фикс найденных багов (микро‑задачами ≤3 файлов).
