@@ -2,7 +2,10 @@
 
 **Date:** 2026-02-02
 **Scope:** Project Manager (CEF UI) + Core (workflow state / session create)
-**Status:** Approved
+**Status:** Superseded (see `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`)
+
+> NOTE: This document describes the earlier UI-driven auto-resume validation. The current direction is Core-driven auto-resume via workflow `lastActive` (see `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`).
+
 
 ---
 
