@@ -1,7 +1,7 @@
 # Архитектура унифицированных сессий (актуально)
 
 **Status:** Active reference
-**Updated:** 2026-02-01 (release 1.1.493)
+**Updated:** 2026-02-02 (release 1.1.497)
 
 ---
 
@@ -38,6 +38,7 @@ Core создаёт `Session`, затем **обязан** зарегистри�
 - `packages/core/src/unified-session/storage.ts:44` (`register(session)`)
 
 В `1.1.493` workspaceKey берётся как `sanitizeWorkspaceSlug(session.workspacePath)` (fallback: `defaultWorkspaceSlug`), чтобы **не зависеть** от того, из какого workspace был запущен Core.
+В `1.1.497` этот же принцип используется в resume validation (чтобы исключить cross-workspace resume по чужому `providerSessionId`).
 
 ### 3) Чтение истории (HTTP API)
 

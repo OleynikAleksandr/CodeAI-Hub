@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-02
 **Scope:** Core (workflow state + session management) + Project Manager (CEF UI)
-**Status:** Draft
+**Status:** Approved (implemented in release 1.1.497)
 
 ---
 
@@ -75,9 +75,10 @@
 
 - `lastActive.stage` (например: `description`)
 - `lastActive.artifactPath` (например: `.codeai-hub/<workspaceSlug>/description/Final_Description.md`)
-- `lastActive.sessionRef`:
-  - `{ providerId, providerSessionId }`
-  - (опционально) `sessionKind` (`reviewer|collector`)
+
+Примечание:
+- `lastActive` используется как UX-навигация (какой артефакт/ветку открыть).
+- Данные для resume сессии (`providerId/providerSessionId/sessionKind`) хранятся в stage snapshot (`.codeai-hub/<workspaceSlug>/description/description-step.json`).
 
 Core обновляет `lastActive`:
 - при кликах/выборе узла в UI (через Core API),
@@ -89,19 +90,18 @@ Core обновляет `lastActive`:
 При выборе workspace в Project Manager UI отправляет в Core «workspace activated» (новый endpoint или расширение существующего).
 
 Core:
-1) читает workflow state для workspace,
-2) определяет `lastActive`,
-3) валидирует, что `sessionRef` принадлежит выбранному workspace (через unified session history check + fallback),
-4) если валидно — создаёт/резюмирует сессию и бродкастит `session:created`/`session:binding` в UI,
-5) дополнительно стримит рекомендацию UI по открытию артефакта (или включает `artifactPath` в workflow state ответ).
+1) читает workflow state (`lastActive`) и stage snapshot (например, `description-step.json`) для выбранного workspace,
+2) валидирует, что `providerSessionId` принадлежит выбранному workspace (через unified session history check + fallback scan),
+3) если валидно — создаёт/резюмирует сессию и бродкастит `session:created`/`session:binding` в UI,
+4) UI открывает артефакт согласно `lastActive.artifactPath` (current-only).
 
 ---
 
 ## 6) Validation rules
 
 - Resume разрешён только если:
-  - `providerSessionId` существует в unified history bucket для текущего workspace (или найден fallback scan),
-  - и/или `description-step.json`/workflow state содержит `workspacePath` подпись, совпадающую с активным workspacePath.
+  - `providerSessionId` существует в unified history bucket для текущего workspaceKey (derived from workspacePath) или найден через fallback scan,
+  - и `description-step.json` содержит `workspacePath`, совпадающий с активным workspacePath (anti cross-workspace).
 
 На fail:
 - не резюмить;
