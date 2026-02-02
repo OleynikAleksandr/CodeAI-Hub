@@ -12,6 +12,7 @@ import type {
 } from "@openai/codex-sdk";
 import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
+import { CodexTokenUsageReader, type TokenUsageSnapshot } from "../token-usage";
 import type { CodexTurnOptions, ModuleReporter } from "../types";
 import type { CodexStartupLockRelease } from "./codex-startup-lock";
 import { codexStartupLock } from "./codex-startup-lock";
@@ -64,6 +65,11 @@ export class CodexMessageProcessor {
   private readonly options?: MessageProcessorOptions;
   private readonly structuredOutput = new StructuredOutputStreamController();
   private readonly reasoningStreams = new Map<string, Map<string, string>>();
+  private readonly tokenUsageReader: CodexTokenUsageReader;
+  private readonly tokenUsageCache = new Map<
+    string,
+    { used: number; limit: number }
+  >();
 
   constructor(
     sessionManager: CodexSessionManager,
@@ -71,6 +77,7 @@ export class CodexMessageProcessor {
   ) {
     this.sessionManager = sessionManager;
     this.options = options;
+    this.tokenUsageReader = new CodexTokenUsageReader();
   }
 
   initializeSession(session: ActiveSession, thread: Thread): void {
@@ -424,8 +431,46 @@ export class CodexMessageProcessor {
       usage: event.usage,
       timestamp: new Date().toISOString(),
     });
+    this.refreshTokenUsage(session);
     this.structuredOutput.clear(session.sessionId);
     this.clearReasoningSession(session.sessionId);
+  }
+
+  private refreshTokenUsage(session: ActiveSession): void {
+    const providerSessionId = session.codexThreadId;
+    if (!providerSessionId) {
+      return;
+    }
+
+    this.tokenUsageReader
+      .read({ providerSessionId })
+      .then((snapshot: TokenUsageSnapshot | null) => {
+        if (!snapshot) {
+          return;
+        }
+        const { used, limit } = snapshot;
+        const previous = this.tokenUsageCache.get(session.sessionId);
+        if (previous && previous.used === used && previous.limit === limit) {
+          return;
+        }
+        this.tokenUsageCache.set(session.sessionId, { used, limit });
+        session.eventEmitter.emit("message", {
+          type: "stream_event",
+          provider: PROVIDER,
+          sessionId: session.sessionId,
+          threadId: session.codexThreadId,
+          tokenUsage: { used, limit },
+          data: { kind: "token_usage", used, limit },
+          uuid: `${crypto.randomUUID()}::token_usage`,
+          timestamp: new Date().toISOString(),
+        });
+      })
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.options?.reporter?.warn?.(
+          `Codex token usage read failed (session ${providerSessionId}): ${message}`
+        );
+      });
   }
 
   private handleTurnFailed(
