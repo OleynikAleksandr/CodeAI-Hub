@@ -35,5 +35,5 @@
 9. [DONE] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
 10. [DONE] Docs: актуализировать релизные документы (строго после сборки): `README.md`, `CHANGELOG.md`, при необходимости `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for webview settings layout`
 11. [DONE] Git Commit: `docs: update release notes for webview settings layout` (hash: 300a697f)
-12. [TODO] Docs(session): создать отчёт `doc/Sessions/Session074.md` (Phase 90 + релиз) — scope: `doc/Sessions/Session074.md`; expected commit message: `docs(session): add Session074 webview settings full-size release`
-13. [TODO] Git Commit: `docs(session): add Session074 webview settings full-size release` (hash: TBD)
+12. [DONE] Docs(session): создать отчёт `doc/Sessions/Session074.md` (Phase 90 + релиз) — scope: `doc/Sessions/Session074.md`; expected commit message: `docs(session): add Session074 webview settings full-size release`
+13. [DONE] Git Commit: `docs(session): add Session074 webview settings full-size release` (hash: c125db1f)
