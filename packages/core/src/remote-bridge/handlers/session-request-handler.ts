@@ -1,3 +1,4 @@
+import { access } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import {
@@ -214,12 +215,64 @@ export class SessionRequestHandler {
     };
   }
 
-  private async resolveProviderSessionId(
-    adapter: ProviderAdapter,
+  private buildSessionFilePathForValidation(
+    workspaceSlug: string,
     providerId: string,
-    workspacePath: string,
-    requestedProviderSessionId: string | null
-  ): Promise<ProviderSessionResolution> {
+    providerSessionId: string
+  ): string {
+    return buildSessionFilePath({
+      rootDirectory: SESSION_ROOT,
+      workspaceSlug: sanitizeWorkspaceSlug(workspaceSlug),
+      provider: providerId,
+      sessionId: sanitizeWorkspaceSlug(providerSessionId),
+    });
+  }
+
+  private async validateProviderSessionExists(
+    workspaceSlug: string | null,
+    providerId: string,
+    providerSessionId: string
+  ): Promise<
+    { readonly valid: true } | { readonly valid: false; readonly error: string }
+  > {
+    if (!workspaceSlug) {
+      return {
+        valid: false,
+        error: "Cannot validate session: missing workspace slug",
+      };
+    }
+
+    const filePath = this.buildSessionFilePathForValidation(
+      workspaceSlug,
+      providerId,
+      providerSessionId
+    );
+
+    try {
+      await access(filePath);
+      return { valid: true };
+    } catch {
+      return {
+        valid: false,
+        error: `Provider session ${providerSessionId} does not exist in workspace ${workspaceSlug}`,
+      };
+    }
+  }
+
+  private async resolveProviderSessionId(options: {
+    readonly adapter: ProviderAdapter;
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly initiativeSlug: string | null;
+    readonly requestedProviderSessionId: string | null;
+  }): Promise<ProviderSessionResolution> {
+    const {
+      adapter,
+      providerId,
+      workspacePath,
+      initiativeSlug,
+      requestedProviderSessionId,
+    } = options;
     const shouldResume =
       typeof requestedProviderSessionId === "string" &&
       requestedProviderSessionId.trim().length > 0;
@@ -231,8 +284,21 @@ export class SessionRequestHandler {
         };
       }
 
+      const trimmedSessionId = requestedProviderSessionId.trim();
+
+      // Workspace validation: ensure providerSessionId belongs to current workspace
+      const validation = await this.validateProviderSessionExists(
+        initiativeSlug,
+        providerId,
+        trimmedSessionId
+      );
+
+      if (!validation.valid) {
+        return { error: validation.error };
+      }
+
       const providerSessionId = await adapter.resumeSession(
-        requestedProviderSessionId.trim(),
+        trimmedSessionId,
         workspacePath
       );
 
@@ -264,12 +330,13 @@ export class SessionRequestHandler {
     };
     readonly rootSessionId?: string | null;
   }): Promise<Session | null> {
-    const providerSessionResolution = await this.resolveProviderSessionId(
-      options.adapter,
-      options.providerId,
-      options.workspacePath,
-      options.context.providerSessionId
-    );
+    const providerSessionResolution = await this.resolveProviderSessionId({
+      adapter: options.adapter,
+      providerId: options.providerId,
+      workspacePath: options.workspacePath,
+      initiativeSlug: options.context.initiativeSlug,
+      requestedProviderSessionId: options.context.providerSessionId,
+    });
     if ("error" in providerSessionResolution) {
       this.broadcaster({
         type: "session:error",
