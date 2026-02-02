@@ -33,7 +33,7 @@
 
 ### Stream: description snapshot hardening (optional, но желательно)
 5. [DONE] Feat(core): расширить `description-step.json` полем `workspacePath` и валидировать его на read; при несовпадении — игнорировать `session/sessionKind` (treat as null) — scope: `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-types.ts`; expected commit message: `fix(core): validate description session ref workspacePath`
-6. [DONE] Git Commit: `fix(core): validate description session ref workspacePath` (hash: TBD)
+6. [DONE] Git Commit: `fix(core): validate description session ref workspacePath` (hash: 93d6e769)
 
 ### Stream: release build (build-all + build-release)
 7. [TODO] Release: после зелёных гейтов и чистого дерева запустить `./scripts/build-all.sh` (поднимет версии и пересоберёт пакеты) и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
