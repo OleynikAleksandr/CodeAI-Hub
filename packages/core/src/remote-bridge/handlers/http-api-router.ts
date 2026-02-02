@@ -13,6 +13,7 @@ import {
   buildVirtualSimulationContract,
 } from "./idea-contract-service";
 import { InitiativesHttpHandler } from "./initiatives-http-handler";
+import type { SessionRequestHandler } from "./session-request-handler";
 import type {
   StatusInfo,
   SystemRequestHandler,
@@ -68,6 +69,7 @@ export type RouterDependencies = {
   readonly app: Express;
   readonly systemHandler: SystemRequestHandler;
   readonly fileDropService: FileDropService;
+  readonly sessionHandler: SessionRequestHandler;
   readonly sessionManager: SessionManager;
   readonly sessionStorage: UnifiedSessionStorage;
   readonly logger: Logger;
@@ -204,6 +206,7 @@ export class HttpApiRouter {
           res,
           logger: this.deps.logger,
           onWorkspaceActivated: this.deps.onWorkspaceSessionCreated,
+          sessionHandler: this.deps.sessionHandler,
         });
       }
     );
