@@ -23,12 +23,24 @@ const extractTokenCountFromEvent = (
     return null;
   }
 
-  // Look for token_count event type
-  if (event.type !== "token_count") {
+  // Codex rollout JSONL structure: event.type === "event_msg"
+  // The actual token_count type is inside event.payload.type
+  if (event.type !== "event_msg") {
     return null;
   }
 
-  const info = isRecord(event.info) ? event.info : null;
+  const payload = isRecord(event.payload) ? event.payload : null;
+  if (!payload) {
+    return null;
+  }
+
+  // Check for token_count type in payload
+  if (payload.type !== "token_count") {
+    return null;
+  }
+
+  // Info is inside payload.info, not event.info
+  const info = isRecord(payload.info) ? payload.info : null;
   if (!info) {
     return null;
   }
