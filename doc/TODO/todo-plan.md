@@ -7,57 +7,44 @@
 - Gates после каждой микрозадачи: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка.
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
-## Required documents to review before work (Codex only)
+## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
-3. `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md` (revised: source-of-truth = `token_count` in rollout JSONL)
-4. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md` (reference pattern + pitfalls)
-5. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md` (workspace scoping pitfalls)
-6. `doc/Sessions/Session065.md` (token usage persistence via continuity)
-7. `doc/Sessions/Session068.md` (historical; `/status` approach superseded)
-8. `doc/Sessions/Session069.md` (plan cleanup + reading checklist)
-9. `doc/TODO/todo-plan.md` (THIS FILE)
+2. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
+3. `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md` (THIS DESIGN)
+4. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md` (context: workflow state/events)
+5. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md` (context: restore + snapshots)
+6. `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`
+7. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
+8. `packages/core/src/workflow/description/description-step-store.ts`
+9. `packages/ui/project-manager/dist/app.js` (auto-resume: `useWorkspaceTreeAutoSelect`)
+10. `doc/Sessions/Session070.md` (THIS REPORT)
 
 ---
 
-## Phase 86 — Codex: token usage via provider `token_count` (rollout JSONL) (owner: Oleksandr, updated: 2026-02-02)
+## Phase 87 — Project Manager: reviewer auto-resume must be workspace-safe (owner: Oleksandr, updated: 2026-02-02)
 
-### Stream: spike (prove `token_count` parity with TUI)
-1. [DONE] ~~Spike(codex-module): на реальной resumed-сессии показать, что `token_count.info.last_token_usage.total_tokens` == `used` из `/status` (в скобках), а `model_context_window` == `limit`; `%left` считать в UI как `round((limit - used)/limit*100)` (процент из TUI игнорировать, если расходится) — scope: ≤3 файлов в `packages/Codex_Module/src/` или docs-only spike note; expected commit message: `spike(codex-module): validate token_count token usage parity`~~
-2. [DONE] ~~Git Commit: `spike(codex-module): validate token_count token usage parity` (hash: TBD)~~
-   - **Note:** Spike пропущен — пользователь подтвердил, что проверка уже выполнена вне сессии.
+### Stream: design + approval
+1. [DONE] Docs(architecture): утвердить дизайн workspace validation для auto-resume (Core pre-check + optional snapshot hardening) — scope: `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`; expected commit message: `docs: approve reviewer auto-resume workspace validation`
+2. [DONE] Git Commit: `docs: approve reviewer auto-resume workspace validation` (hash: N/A - docs only, included in next commit)
 
-### Stream: filesystem contract (Codex session logs)
-3. [DONE] Feat(codex-module): добавить resolver для rollout JSONL по `providerSessionId`:
-   - primary: точный путь по маске `CODEX_HOME/sessions/**/rollout-*-<providerSessionId>.jsonl`;
-   - fallback: scan + проверка `session_meta.payload.id == providerSessionId`;
-   - cwd всегда пер-сессионный (workspacePath) — scope: 4 файла в `packages/Codex_Module/src/token-usage/`; expected commit message: `feat(codex-module): resolve codex rollout file by session id`
-4. [DONE] Git Commit: `feat(codex-module): resolve codex rollout file by session id` (hash: `6685a33a`)
+### Stream: core validation (block cross-workspace resumes)
+3. [DONE] Feat(core): перед resume по `providerSessionId` валидировать принадлежность к workspace (`~/.codeai-hub/sessions/<workspaceSlug>/<providerId>/<providerSessionId>.jsonl` должен существовать) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): validate workspace before resuming provider session`
+4. [DONE] Git Commit: `fix(core): validate workspace before resuming provider session` (hash: TBD)
 
-### Stream: parser + reader
-5. [DONE] Feat(codex-module): реализовать extractor snapshot из rollout JSONL `token_count`:
-   - `used = token_count.info.last_token_usage.total_tokens`
-   - `limit = token_count.info.model_context_window`
-   - `left% = round((limit - used)/limit*100)` (UI вычисляет, не доверяем проценту из TUI) — scope: часть коммита `6685a33a`; expected commit message: `feat(codex-module): extract token usage from token_count`
-6. [DONE] Git Commit: `feat(codex-module): extract token usage from token_count` (hash: `6685a33a` — объединено с resolver)
+### Stream: description snapshot hardening (optional, но желательно)
+5. [TODO] Feat(core): расширить `description-step.json` полем `workspacePath` и валидировать его на read; при несовпадении — игнорировать `session/sessionKind` (treat as null) — scope: ≤3 файлов в `packages/core/src/workflow/description/`; expected commit message: `fix(core): validate description session ref workspacePath`
+6. [TODO] Git Commit: `fix(core): validate description session ref workspacePath` (hash: TBD)
 
-7. [DONE] Feat(codex-module): реализовать reader токенов через чтение rollout JSONL (без CLI вызовов):
-   - throttling (≥1500ms/сессию) + in-flight lock,
-   - ошибки чтения не сбрасывают UI в 0 (last-known snapshot),
-   - internal-only: никаких сообщений/записей в unified history — scope: часть коммита `6685a33a`; expected commit message: `feat(codex-module): read token usage from rollout jsonl`
-8. [DONE] Git Commit: `feat(codex-module): read token usage from rollout jsonl` (hash: `6685a33a` — объединено с resolver)
+### Stream: release build (build-all + build-release)
+7. [TODO] Release: после зелёных гейтов и чистого дерева запустить `./scripts/build-all.sh` (поднимет версии и пересоберёт пакеты) и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
+8. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+9. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать появление `codeai-hub-<version>.vsix` (артефакт в корне) — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
+10. [TODO] Git Commit: `chore(release): build VSIX for current version` (hash: TBD)
 
-### Stream: provider → core event wiring
-9. [DONE] Feat(codex-module): после завершения turn обновлять tokenUsage через rollout reader и эмитить `stream_event` с `tokenUsage` (как в Claude); не путать per-turn `event.usage` с context-window `used/limit` — scope: 1 файл `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex-module): emit token usage stream events`
-10. [DONE] Git Commit: `feat(codex-module): emit token usage stream events` (hash: `b42b72bc`)
+### Stream: verification (owner-run)
+11. [TODO] Verification(owner): пользователь воспроизводит баг и подтверждает фикс (auto-resume включён); по итогам пишет подтверждение и короткие результаты (что проверил) — scope: manual; expected commit message: `chore: verify reviewer auto-resume workspace validation`
+12. [TODO] Git Commit: `chore: verify reviewer auto-resume workspace validation` (hash: TBD)
 
-### Stream: verification
-11. [TODO] Verification: прогнать гейты + таргетный билд `npm run build --workspace @codeai-hub/codex-module`; ручная проверка:
-   - `used/limit` из UI == `/status` (только значения в скобках, процент TUI игнорируем),
-   - restore после Core restart,
-   - multi-workspace (workspace A → restart из B) — scope: scripts/manual; expected commit message: `chore: verify codex token_count token usage`
-12. [TODO] Git Commit: `chore: verify codex token_count token usage` (hash: TBD)
-
-### Stream: session report (after implementation)
-13. [TODO] Docs(session): создать отчёт `doc/Sessions/Session070.md` (Codex token usage via `token_count` — implementation + verification) — scope: `doc/Sessions/Session070.md`; expected commit message: `docs(session): Session070 codex token_count token usage`
-14. [TODO] Git Commit: `docs(session): Session070 codex token_count token usage` (hash: TBD)
+### Stream: session report
+13. [TODO] Docs(session): создать отчёт `doc/Sessions/Session071.md` (implementation + verification Phase 87) — scope: `doc/Sessions/Session071.md`; expected commit message: `docs(session): Session071 reviewer auto-resume workspace validation`
+14. [TODO] Git Commit: `docs(session): Session071 reviewer auto-resume workspace validation` (hash: TBD)
