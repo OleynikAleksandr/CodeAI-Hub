@@ -59,19 +59,19 @@ export class WebviewHtmlGenerator {
       : "";
 
     return `<!DOCTYPE html>
-<html lang="en" style="background-color: #1e1e1e !important;">
+<html lang="en" style="background-color: var(--vscode-editor-background, #1e1e1e) !important;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="${csp}">
   <style>
     html {
-      background-color: rgba(31, 31, 31, 1) !important;
+      background-color: var(--vscode-editor-background, #1e1e1e) !important;
     }
     body {
       margin: 0;
       padding: 0;
-      background-color: rgba(31, 31, 31, 1) !important;
+      background-color: var(--vscode-editor-background, #1e1e1e) !important;
       color: var(--vscode-editor-foreground, #cccccc);
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
@@ -81,10 +81,11 @@ export class WebviewHtmlGenerator {
     }
     #app {
       min-height: 100vh;
-      background-color: rgba(31, 31, 31, 1);
+      background-color: var(--vscode-editor-background, #1e1e1e);
     }
     #root {
       min-height: 100vh;
+      background-color: var(--vscode-editor-background, #1e1e1e);
     }
     /* Aggressive focus reset for Settings model cards */
     [role="radio"]:focus,

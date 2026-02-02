@@ -13,8 +13,8 @@ const settingsOnlyLayoutStyles: CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   padding: "32px 24px",
-  background: "#0f0f10",
-  color: "#cccccc",
+  background: "var(--vscode-editor-background, #1e1e1e)",
+  color: "var(--vscode-editor-foreground, #cccccc)",
 };
 
 const settingsOnlyCardStyles: CSSProperties = {
@@ -22,8 +22,8 @@ const settingsOnlyCardStyles: CSSProperties = {
   maxWidth: "520px",
   borderRadius: "16px",
   padding: "24px",
-  background: "#1b1b1c",
-  border: "1px solid #2a2a2a",
+  background: "var(--vscode-editorWidget-background, #252526)",
+  border: "1px solid var(--vscode-editorWidget-border, #2a2a2a)",
   boxShadow: "0 12px 32px rgba(0, 0, 0, 0.35)",
   display: "flex",
   flexDirection: "column",
@@ -34,7 +34,7 @@ const settingsOnlyTitleStyles: CSSProperties = {
   margin: 0,
   fontSize: "20px",
   fontWeight: 600,
-  color: "#ffffff",
+  color: "var(--vscode-editor-foreground, #ffffff)",
 };
 
 const settingsOnlyBodyStyles: CSSProperties = {
@@ -46,7 +46,7 @@ const settingsOnlyBodyStyles: CSSProperties = {
 const settingsOnlyHintStyles: CSSProperties = {
   margin: 0,
   fontSize: "12px",
-  color: "#9aa0a6",
+  color: "var(--vscode-descriptionForeground, #9aa0a6)",
 };
 
 const settingsOnlyButtonStyles: CSSProperties = {
