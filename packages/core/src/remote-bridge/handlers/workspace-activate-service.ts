@@ -87,14 +87,16 @@ export const handleWorkspaceActivate = async (params: {
       workspaceSlug
     );
 
-    if (descriptionSnapshot?.session && descriptionSnapshot.sessionKind) {
+    if (descriptionSnapshot?.session) {
+      const runSlug =
+        descriptionSnapshot.sessionKind === "reviewer" ? "reviewer" : null;
       await params.sessionHandler.handleCreate(
         descriptionSnapshot.session.providerId,
         workspacePath,
         {
           initiativeSlug: workspaceSlug,
           stage: "description",
-          runSlug: descriptionSnapshot.sessionKind,
+          runSlug,
           providerSessionId: descriptionSnapshot.session.providerSessionId,
         }
       );
