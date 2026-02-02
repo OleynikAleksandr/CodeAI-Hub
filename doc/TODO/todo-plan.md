@@ -57,3 +57,22 @@
 9. [DONE] Git Commit: `docs: bump Project Docs index for 1.1.499` (hash: c70d50cb)
 10. [DONE] Docs(session): создать отчёт `doc/Sessions/Session075.md` (Phase 91 + релиз) — scope: `doc/Sessions/Session075.md`; expected commit message: `docs(session): add Session075 settings full-size hotfix release`
 11. [DONE] Git Commit: `docs(session): add Session075 settings full-size hotfix release` (hash: 773e756a)
+
+---
+
+## Phase 92 — Webview: Settings-only background uses VS Code theme + Release (owner: Oleksandr, updated: 2026-02-02)
+
+### Stream: UI polish (settings-only)
+1. [TODO] Fix(webview): заменить чёрный фон стартового экрана (карточка с кнопкой `Open settings`) на цвет из VS Code theme variables — scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `src/core/webview-module/webview-html-generator.ts`; expected commit message: `fix(webview): align settings-only background with VS Code theme`
+2. [TODO] Git Commit: `fix(webview): align settings-only background with VS Code theme` (hash: TBD)
+
+### Stream: release build + docs sync (final)
+3. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
+4. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+5. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
+6. [TODO] Docs: sync release docs (strictly after build): `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for settings-only theme background`
+7. [TODO] Git Commit: `docs: update release notes for settings-only theme background` (hash: TBD)
+8. [TODO] Docs: update Project Docs index (new release): `doc/Project_Docs/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for latest release`
+9. [TODO] Git Commit: `docs: bump Project Docs index for latest release` (hash: TBD)
+10. [TODO] Docs(session): создать отчёт `doc/Sessions/Session076.md` (Phase 92 + релиз) — scope: `doc/Sessions/Session076.md`; expected commit message: `docs(session): add Session076 settings-only theme background release`
+11. [TODO] Git Commit: `docs(session): add Session076 settings-only theme background release` (hash: TBD)
