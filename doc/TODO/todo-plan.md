@@ -9,42 +9,45 @@
 
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
-3. `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md` (THIS DESIGN)
-4. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md` (context: workflow state/events)
-5. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md` (context: restore + snapshots)
-6. `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`
-7. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
-8. `packages/core/src/workflow/description/description-step-store.ts`
-9. `packages/ui/project-manager/dist/app.js` (auto-resume: `useWorkspaceTreeAutoSelect`)
-10. `doc/Sessions/Session070.md` (THIS REPORT)
+2. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`
+3. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+4. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
+5. `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md` (THIS DESIGN)
+6. `packages/core/src/unified-session/storage.ts` (workspaceKey rules)
+7. `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`
+8. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
+9. `packages/core/src/workflow/description/description-step-store.ts`
+10. `packages/ui/project-manager/dist/app.js` (current: UI-driven auto-resume)
+11. `doc/Sessions/Session071.md` (THIS REPORT)
 
 ---
 
-## Phase 87 — Project Manager: reviewer auto-resume must be workspace-safe (owner: Oleksandr, updated: 2026-02-02 12:45)
+## Phase 88 — Core-driven auto-resume (Last Active) + workspace-safe validation (owner: Oleksandr, updated: 2026-02-02)
 
 ### Stream: design + approval
-1. [DONE] Docs(architecture): утвердить дизайн workspace validation для auto-resume (Core pre-check + optional snapshot hardening) — scope: `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`; expected commit message: `docs: approve reviewer auto-resume workspace validation`
-2. [DONE] Git Commit: `docs: approve reviewer auto-resume workspace validation` (hash: N/A - docs only, included in next commit)
+1. [TODO] Docs(architecture): согласовать Core-driven auto-resume (lastActive в workflow state, workspace identity rules, validation) — scope: `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`; expected commit message: `docs: approve core-driven auto-resume lastActive architecture`
+2. [TODO] Git Commit: `docs: approve core-driven auto-resume lastActive architecture` (hash: TBD)
 
-### Stream: core validation (block cross-workspace resumes)
-3. [DONE] Feat(core): перед resume по `providerSessionId` валидировать принадлежность к workspace (`~/.codeai-hub/sessions/<workspaceSlug>/<providerId>/<providerSessionId>.jsonl` должен существовать) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): validate workspace before resuming provider session`
-4. [DONE] Git Commit: `fix(core): validate workspace before resuming provider session` (hash: c3f10a03)
+### Stream: workflow state lastActive
+3. [TODO] Feat(core): добавить `lastActive` snapshot в workflow state (persist + read API) для выбранного workspace — scope: ≤3 файлов в `packages/core/src/workflow/state/**` и/или `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `feat(core): persist workflow lastActive snapshot`
+4. [TODO] Git Commit: `feat(core): persist workflow lastActive snapshot` (hash: TBD)
 
-### Stream: description snapshot hardening (optional, но желательно)
-5. [DONE] Feat(core): расширить `description-step.json` полем `workspacePath` и валидировать его на read; при несовпадении — игнорировать `session/sessionKind` (treat as null) — scope: `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-types.ts`; expected commit message: `fix(core): validate description session ref workspacePath`
-6. [DONE] Git Commit: `fix(core): validate description session ref workspacePath` (hash: 93d6e769)
+### Stream: workspace activation API
+5. [TODO] Feat(core): добавить/расширить API, чтобы Project Manager сообщал выбранный workspace (workspace activated) и Core мог инициировать resume lastActive — scope: ≤3 файлов в `packages/core/src/remote-bridge/**`; expected commit message: `feat(core): add workspace activate endpoint for auto-resume`
+6. [TODO] Git Commit: `feat(core): add workspace activate endpoint for auto-resume` (hash: TBD)
 
-### Stream: release build (build-all + build-release)
-7. [DONE] Release: после зелёных гейтов и чистого дерева запустить `./scripts/build-all.sh` (поднимет версии и пересоберёт пакеты) и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
-8. [DONE] Git Commit: `chore(release): build-all next version` (hash: 3f285e43)
-9. [DONE] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать появление `codeai-hub-<version>.vsix` (артефакт в корне) — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
-10. [DONE] Git Commit: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
+### Stream: core-driven resume + validation
+7. [TODO] Fix(core): на workspace activation Core делает pre-check принадлежности `providerSessionId` выбранному workspace (unified session history bucket + fallback scan), затем выполняет resume и бродкастит `session:created` — scope: ≤3 файлов в `packages/core/src/remote-bridge/handlers/**`; expected commit message: `fix(core): core-driven lastActive resume with workspace validation`
+8. [TODO] Git Commit: `fix(core): core-driven lastActive resume with workspace validation` (hash: TBD)
+
+### Stream: UI wiring (minimal)
+9. [TODO] Feat(ui): при выборе workspace вызывать workspace activation endpoint (вместо прямого auto-resume из workflow state) — scope: ≤3 файлов в `packages/ui/project-manager/**` (исходники/бандл согласно текущей сборке); expected commit message: `feat(project-manager): trigger core-driven auto-resume on workspace select`
+10. [TODO] Git Commit: `feat(project-manager): trigger core-driven auto-resume on workspace select` (hash: TBD)
 
 ### Stream: verification (owner-run)
-11. [TODO] Verification(owner): пользователь воспроизводит баг и подтверждает фикс (auto-resume включён); по итогам пишет подтверждение и короткие результаты (что проверил) — scope: manual; expected commit message: `chore: verify reviewer auto-resume workspace validation`
-12. [TODO] Git Commit: `chore: verify reviewer auto-resume workspace validation` (hash: TBD)
+11. [TODO] Verification(owner): после рестарта Core Project Manager открывает lastActive session+artifact; cross-workspace resume невозможен; очистка workspace-local `.codeai-hub/**` корректно отключает resume — scope: manual; expected commit message: `chore: verify core-driven auto-resume lastActive`
+12. [TODO] Git Commit: `chore: verify core-driven auto-resume lastActive` (hash: TBD)
 
 ### Stream: session report
-13. [TODO] Docs(session): создать отчёт `doc/Sessions/Session071.md` (implementation + verification Phase 87) — scope: `doc/Sessions/Session071.md`; expected commit message: `docs(session): Session071 reviewer auto-resume workspace validation`
-14. [TODO] Git Commit: `docs(session): Session071 reviewer auto-resume workspace validation` (hash: TBD)
+13. [TODO] Docs(session): создать отчёт `doc/Sessions/Session072.md` (implementation + verification Phase 88) — scope: `doc/Sessions/Session072.md`; expected commit message: `docs(session): Session072 core-driven auto-resume lastActive`
+14. [TODO] Git Commit: `docs(session): Session072 core-driven auto-resume lastActive` (hash: TBD)
