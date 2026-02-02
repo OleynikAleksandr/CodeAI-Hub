@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-02 (local)
 **Branch:** main
-**Version:** 1.1.495
+**Version:** 1.1.494
 
 ---
 
