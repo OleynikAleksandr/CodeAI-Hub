@@ -2,6 +2,7 @@ import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import { api } from "../../api";
+import { activateWorkspace } from "../../services/workspace-activate-client";
 import {
   WORKFLOW_STAGE_ORDER,
   toWorkflowWorkspaceSlug,
@@ -36,7 +37,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     (workspaceName && workspaceName.trim().length > 0
       ? toWorkflowWorkspaceSlug(workspaceName)
       : null);
-  const canContinue = Boolean(workspaceSlug && workspacePath);
 
   const selectArtifact = useCallback(
     (artifactPath: string, label: string) => {
@@ -66,7 +66,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       workspacePath,
       workspaceSlug,
       onSelectArtifact: selectArtifact,
-      onResumeSession: dispatchSessionResumeIntent,
+      onResumeSession: () => {},
     });
 
   useEffect(() => {
@@ -77,10 +77,14 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       return;
     }
     markWorkspaceChanged();
+    const httpUrl = api.getHttpUrl();
+    if (workspaceSlug && workspacePath && httpUrl) {
+      activateWorkspace({ httpUrl, workspacePath, workspaceSlug }).catch(() => {});
+    }
     setExpandedNodes({
       workspace: true,
     });
-  }, [markWorkspaceChanged, resetPendingSelection, selectedWorkspaceId]);
+  }, [markWorkspaceChanged, resetPendingSelection, selectedWorkspaceId, workspacePath, workspaceSlug]);
   useEffect(() => {
     if (!selectedWorkspaceId || !workspaceSlug) {
       setWorkflowState(null);
