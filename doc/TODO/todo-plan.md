@@ -65,8 +65,8 @@
 4. [DONE] Git Commit: `chore(git): ignore .tmp workspace cache` (hash: 8dc9894e)
 
 ### Stream: release build (build-all + build-release)
-5. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
-6. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+5. [DONE] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
+6. [DONE] Git Commit: `chore(release): build-all next version` (hash: 4face963)
 7. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version`
 8. [TODO] Git Commit: `chore(release): build VSIX for current version` (hash: TBD)
 
