@@ -71,5 +71,5 @@
 8. [DONE] Git Commit: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
 
 ### Stream: release report
-9. [TODO] Docs(session): создать `doc/Sessions/Session073.md` (релиз + результаты гейтов/сборок) — scope: `doc/Sessions/Session073.md`; expected commit message: `docs(session): add Session073 release build`
-10. [TODO] Git Commit: `docs(session): add Session073 release build` (hash: TBD)
+9. [DONE] Docs(session): создать `doc/Sessions/Session073.md` (релиз + результаты гейтов/сборок) — scope: `doc/Sessions/Session073.md`; expected commit message: `docs(session): add Session073 release build`
+10. [DONE] Git Commit: `docs(session): add Session073 release build` (hash: 14590f55)
