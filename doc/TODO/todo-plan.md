@@ -63,8 +63,8 @@
 ## Phase 92 — Webview: Settings-only background uses VS Code theme + Release (owner: Oleksandr, updated: 2026-02-02)
 
 ### Stream: UI polish (settings-only)
-1. [TODO] Fix(webview): заменить чёрный фон стартового экрана (карточка с кнопкой `Open settings`) на цвет из VS Code theme variables — scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `src/core/webview-module/webview-html-generator.ts`; expected commit message: `fix(webview): align settings-only background with VS Code theme`
-2. [TODO] Git Commit: `fix(webview): align settings-only background with VS Code theme` (hash: TBD)
+1. [DONE] Fix(webview): заменить чёрный фон стартового экрана (карточка с кнопкой `Open settings`) на цвет из VS Code theme variables — scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `src/core/webview-module/webview-html-generator.ts`; expected commit message: `fix(webview): align settings-only background with VS Code theme`
+2. [DONE] Git Commit: `fix(webview): align settings-only background with VS Code theme` (hash: 2ca30a9c)
 
 ### Stream: release build + docs sync (final)
 3. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
