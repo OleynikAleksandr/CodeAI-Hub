@@ -216,7 +216,7 @@ Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source 
   - `turn.failed` / `error` → propagate to error channel.
 - Handle resume: on real `thread.started` events, capture `thread_id`; support `resumeSession(threadId)` for future reconnects.
 - Provide sandbox orchestration: map Hub approvals to CLI `--sandbox` + (future) approval mode using config file edits until official flag is exposed.
-- При необходимости поддерживать сервисные проверки (например, `/status`), они отправляются вручную; по умолчанию Codex ждёт реального пользовательского сообщения перед запуском первой turn.
+- Token usage: для отображения контекстного окна в UI не используем `/status` (это TUI slash-команда и недоступна через `codex exec --json`/SDK). Source-of-truth берём из rollout JSONL событий `token_count` (`used=last_token_usage.total_tokens`, `limit=model_context_window`). `/status` оставляем только как ручную валидацию `used/limit` (процент в TUI может расходиться).
 
 **Message processor (`message-processor.ts`):**
 - Maintain per-session outbound queue feeding `thread.runStreamed`.
