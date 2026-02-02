@@ -27,7 +27,7 @@
 4. [DONE] Git Commit: `fix(webview): make settings full-size in webview` (hash: de3e2ae3)
 
 ### Stream: verification (manual)
-5. [BLOCKED] Verification(owner): в VS Code UI не изменился (окно осталось centered). Root cause: `.settings-overlay` перекрывается стилями из `media/session-view.css` (он подключается после `main-view.css`). — scope: manual; expected commit message: `chore: verify webview settings full-size layout`
+5. [DONE] Verification(owner): подтверждено в VS Code (2026-02-02) на релизе `codeai-hub-1.1.500.vsix`: Settings занимает всю площадь Webview, resize ок, vertical scroll сохраняется. — scope: manual; expected commit message: `chore: verify webview settings full-size layout`
 6. [TODO] Git Commit: `chore: verify webview settings full-size layout` (hash: TBD)
 
 ### Stream: release build + docs sync (final)
