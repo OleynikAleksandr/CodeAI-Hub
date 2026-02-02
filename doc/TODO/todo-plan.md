@@ -29,8 +29,8 @@
 2. [DONE] Git Commit: `docs: approve core-driven auto-resume lastActive architecture` (hash: 74017a2f)
 
 ### Stream: workflow state lastActive
-3. [TODO] Feat(core): добавить `lastActive` snapshot в workflow state (persist + read API) для выбранного workspace — scope: ≤3 файлов в `packages/core/src/workflow/state/**` и/или `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `feat(core): persist workflow lastActive snapshot`
-4. [TODO] Git Commit: `feat(core): persist workflow lastActive snapshot` (hash: TBD)
+3. [DONE] Feat(core): добавить `lastActive` snapshot в workflow state (persist + read API) для выбранного workspace — scope: ≤3 файлов в `packages/core/src/workflow/state/**` и/или `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit message: `feat(core): persist workflow lastActive snapshot`
+4. [DONE] Git Commit: `feat(core): persist workflow lastActive snapshot` (hash: 17196214)
 
 ### Stream: workspace activation API
 5. [TODO] Feat(core): добавить/расширить API, чтобы Project Manager сообщал выбранный workspace (workspace activated) и Core мог инициировать resume lastActive — scope: ≤3 файлов в `packages/core/src/remote-bridge/**`; expected commit message: `feat(core): add workspace activate endpoint for auto-resume`
