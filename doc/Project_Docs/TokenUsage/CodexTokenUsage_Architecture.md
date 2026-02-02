@@ -1,8 +1,8 @@
-# Codex Token Usage (Real-time) — Architecture (DRAFT)
+# Codex Token Usage (Real-time) — Architecture (DRAFT, revised)
 
-**Date:** 2026-02-01
+**Date:** 2026-02-02
 **Scope:** Codex provider (`@codeai-hub/codex-module`)
-**Status:** Draft
+**Status:** Draft (revised after validating `/status` limitations)
 
 ---
 
@@ -15,21 +15,31 @@
 - `limit` — размер контекстного окна текущей модели
 - `remaining%` вычисляется как `round((limit - used) / limit * 100)`
 
-Ключевое требование: это должно соответствовать тому, что показывает Codex CLI (а не «totals по run»).
+Ключевое требование: метрика должна быть консистентной и восстанавливаемой после рестартов Core (через continuity).
 
 ---
 
 ## 2) Ground Truth (источник истины)
 
-У Codex CLI нет `/context`, но есть `/status`, который выводит строку:
+### 2.1 Почему не `/status`
 
-`Context window: 82% left (55.3K used / 258K)`
+`/status` — это TUI slash-команда интерактивного Codex CLI.
 
-Эта строка содержит ровно те данные, которые нужны продукту: **used / limit** для текущего контекстного окна.
+Практическая проверка показала:
+- в non-interactive режиме (`codex exec --json` / SDK) строка `Context window: ...` **не возвращается**;
+- отправка текста `"/status"` в `codex exec` трактуется как обычный prompt и **портит контекст**.
 
-Важно:
-- Нельзя подменять этот показатель totals из событий run (`total_token_usage.total_tokens` и т.п.), потому что это другая метрика.
-- `/status` должен рассматриваться как source-of-truth для UI token usage (аналогично подходу Claude → `/context`).
+Следовательно, `/status` нельзя использовать как программный source-of-truth внутри `@codeai-hub/codex-module`.
+
+### 2.2 Source-of-truth: provider `token_count` (rollout JSONL)
+
+Codex CLI пишет в rollout JSONL события `token_count`, которые появляются в конце turn.
+
+Именно они содержат все нужные значения:
+- `used` берём из `token_count.info.last_token_usage.total_tokens`
+- `limit` берём из `token_count.info.model_context_window`
+
+Важно: поле `total_token_usage` — накопительная метрика по run/сессии и **не должно** использоваться для `used`.
 
 ---
 
@@ -37,20 +47,17 @@
 
 ### 3.1 Token usage snapshot (нормализованный контракт)
 
-Внутренний контракт, который Codex module стримит в Core:
+Контракт, который Codex module стримит в Core:
 
 - `tokenUsage.used: number`
 - `tokenUsage.limit: number`
 
-UI рассчитывает `remaining%` из этих значений.
+### 3.2 remaining% (единственная формула для UI)
 
-### 3.2 Parsing rules (K/M суффиксы)
+`remaining% = round((limit - used) / limit * 100)`
 
-`/status` использует компактные числа:
-- `55.3K` → `55300`
-- `258K` → `258000`
-- поддержка `M` (миллионы) обязательна
-- десятичные дроби допустимы (`55.3K`)
+Примечание: процент, который показывает интерактивный TUI `/status`, может не совпадать с арифметикой по `used/limit`.
+Для продукта авторитетны именно `used/limit` и вычисление процента по формуле выше.
 
 ---
 
@@ -58,16 +65,16 @@ UI рассчитывает `remaining%` из этих значений.
 
 ### 4.1 Provider (Codex module) → Core
 
-1) После завершения каждого turn (критерий: событие завершения turn в event stream / SDK callback), Codex module инициирует чтение `/status`.
-2) Чтение выполняется **только для resumed session** (нужен `providerSessionId`/thread id).
-3) Результат парсится, нормализуется в `{ used, limit }`.
-4) Если snapshot изменился относительно последнего (или ещё не было snapshot) — отправляется provider-event в Core:
+1) После завершения каждого turn (событие `turn.completed` в SDK event stream) Codex module инициирует refresh token usage.
+2) Refresh читает rollout JSONL для текущей resumed session (`providerSessionId` = thread id).
+3) Извлекает последний `token_count` snapshot → `{ used, limit }`.
+4) Если snapshot изменился относительно последнего (или ещё не было snapshot) — отправляет provider-event в Core:
    - `stream_event` с `tokenUsage: { used, limit }`
 
 ### 4.2 Throttling
 
-Чтобы не спамить запуском CLI, нужен throttling:
-- минимум 1 попытка на сессию раз в ~1.5s (или больше)
+Чтобы не спамить файловым I/O и избежать гонок:
+- throttling: минимум 1 попытка на сессию раз в ~1500ms (или больше)
 - параллельные попытки для одного `providerSessionId` запрещены (in-flight lock)
 
 ### 4.3 Core → UI
@@ -79,42 +86,46 @@ Core принимает `tokenUsage` события и:
 
 ---
 
-## 5) Codex session logs (filesystem contract)
+## 5) Codex rollout logs (filesystem contract)
 
-Codex внутри CodeAI Hub работает с `CODEX_HOME`:
+### 5.1 CODEX_HOME
+
+CodeAI Hub запускает Codex с изолированным домом:
 
 - `CODEX_HOME=~/.codeai-hub/providers/codex/home`
+
+### 5.2 Rollout JSONL path
 
 Сессии Codex CLI пишутся в:
 
 - `~/.codeai-hub/providers/codex/home/sessions/YYYY/MM/DD/rollout-<timestamp>-<providerSessionId>.jsonl`
 
-Примечания:
-- `providerSessionId` — это UUID сессии Codex (thread id), который отображается в `/status` как `Session: ...`.
-- Внутри `rollout-*.jsonl` присутствует `session_meta.payload.id` и `session_meta.payload.cwd`, что можно использовать для диагностики и (при необходимости) для корректного выбора cwd.
+Внутри файла присутствует `session_meta.payload.id` (тот же `providerSessionId`).
 
-### 5.1 Resolver по `providerSessionId`
+### 5.3 Resolver по `providerSessionId`
 
 Нужен устойчивый resolver, который по `providerSessionId` находит rollout JSONL:
 
-1) Предпочтительный путь: быстрый поиск по известным датам в пределах года (например, `sessions/2026/**/rollout-*-<id>.jsonl`).
-2) Fallback: ограниченный scan по `CODEX_HOME/sessions` (с лимитами глубины/количества файлов), чтобы поддержать migrations/legacy.
-
-Цель: обеспечить корректный `cwd` для CLI-вызовов и возможность debug (не источник истины для tokenUsage).
+1) Primary: поиск точного пути по маске:
+   - `CODEX_HOME/sessions/**/rollout-*-<providerSessionId>.jsonl`
+2) Fallback: ограниченный scan по `CODEX_HOME/sessions` и подтверждение кандидата:
+   - `session_meta.payload.id == providerSessionId`
 
 ---
 
 ## 6) Anti-regression правила
 
-1. **Не использовать totals по run как “context used”.**
-2. `/status` parsing должен быть устойчив к форматированию (пробелы, рамки TUI, разные проценты).
-3. Token usage update должен быть “silent” для UI: результат `/status` не должен появляться как пользовательское/ассистентское сообщение в истории.
-4. На ошибках `/status` нельзя сбрасывать UI в `0` — только “нет обновления” (используем last-known snapshot).
+1) **Не использовать** `total_token_usage` как “context used” — только `last_token_usage.total_tokens`.
+2) **Не вызывать** `/status` через `codex exec` (SDK) — это не команда, а prompt.
+3) `%remaining` считаем **только** по формуле `round((limit - used)/limit*100)`.
+4) На ошибках чтения rollout JSONL нельзя сбрасывать UI в `0` — только “нет обновления” (используем last-known snapshot).
+5) Refresh должен быть internal-only: чтение rollout JSONL не должно создавать сообщений/записей в unified session history.
 
 ---
 
 ## 7) Verification checklist
 
-- В активной Codex-сессии UI показывает значения, совпадающие с `/status` (например, `55.3K / 258K`).
+- `used/limit` в UI совпадает со значениями в скобках интерактивного `/status` для той же resumed session.
+- `%remaining` в UI совпадает с арифметикой по `used/limit`.
 - После рестарта Core и повторного `session:binding` UI показывает last-known token usage (не 0).
-- В multi-workspace сценарии token usage не “пропадает” (потому что он persistится в continuity по `providerSessionId`).
+- В multi-workspace сценарии token usage не “пропадает” (persistence/restore работает по `providerSessionId`).
