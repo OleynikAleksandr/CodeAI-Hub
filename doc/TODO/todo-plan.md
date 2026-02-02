@@ -74,5 +74,5 @@
 7. [DONE] Git Commit: `docs: update release notes for settings-only theme background` (hash: 082e49f8)
 8. [DONE] Docs: update Project Docs index (new release): `doc/Project_Docs/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for latest release`
 9. [DONE] Git Commit: `docs: bump Project Docs index for latest release` (hash: 568cad79)
-10. [TODO] Docs(session): создать отчёт `doc/Sessions/Session076.md` (Phase 92 + релиз) — scope: `doc/Sessions/Session076.md`; expected commit message: `docs(session): add Session076 settings-only theme background release`
-11. [TODO] Git Commit: `docs(session): add Session076 settings-only theme background release` (hash: TBD)
+10. [DONE] Docs(session): создать отчёт `doc/Sessions/Session076.md` (Phase 92 + релиз) — scope: `doc/Sessions/Session076.md`; expected commit message: `docs(session): add Session076 settings-only theme background release`
+11. [DONE] Git Commit: `docs(session): add Session076 settings-only theme background release` (hash: a886febd)
