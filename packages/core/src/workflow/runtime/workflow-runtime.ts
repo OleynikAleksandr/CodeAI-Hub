@@ -5,6 +5,7 @@ import type { ProviderRegistry } from "../../provider-registry";
 import type { SessionRequestHandler } from "../../remote-bridge/handlers/session-request-handler";
 import type { Logger } from "../../telemetry/logger";
 import { DescriptionStepStore } from "../description/description-step-store";
+import { WorkflowLastActiveStore } from "../state/workflow-last-active-store";
 import type { WorkflowWatcherEvent } from "../watcher/watcher-types";
 import { WorkflowWatcher } from "../watcher/workflow-watcher";
 
@@ -109,6 +110,7 @@ export class WorkflowRuntime {
   private readonly sessionHandler: SessionRequestHandler;
   private readonly onWatcherEvent?: (event: WorkflowWatcherEvent) => void;
   private readonly descriptionStepStore = new DescriptionStepStore();
+  private readonly lastActiveStore = new WorkflowLastActiveStore();
   private readonly watchers = new Map<string, WorkflowWatcher>();
   private readonly startingReviewer = new Set<string>();
   private readonly workspaces = new Map<string, string>();
@@ -205,6 +207,13 @@ export class WorkflowRuntime {
           ),
         }
       );
+      await this.lastActiveStore.upsert(workspaceRoot, event.workspaceSlug, {
+        stage: "description",
+        artifactPath: buildWorkflowRelativePath(
+          event.workspaceSlug,
+          relativePath
+        ),
+      });
       return;
     }
 
@@ -222,6 +231,13 @@ export class WorkflowRuntime {
           ),
         }
       );
+      await this.lastActiveStore.upsert(workspaceRoot, event.workspaceSlug, {
+        stage: "description",
+        artifactPath: buildWorkflowRelativePath(
+          event.workspaceSlug,
+          relativePath
+        ),
+      });
       return;
     }
 
@@ -234,6 +250,13 @@ export class WorkflowRuntime {
 
     await this.descriptionStepStore.upsert(workspaceRoot, event.workspaceSlug, {
       draftPath: buildWorkflowRelativePath(event.workspaceSlug, relativePath),
+    });
+    await this.lastActiveStore.upsert(workspaceRoot, event.workspaceSlug, {
+      stage: "description",
+      artifactPath: buildWorkflowRelativePath(
+        event.workspaceSlug,
+        relativePath
+      ),
     });
 
     await this.maybeAutoStartReviewer({
