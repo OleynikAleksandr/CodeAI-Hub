@@ -1,6 +1,6 @@
-# Session 69 — Phase 86 preflight: clean plan + reading checklist
+# Session 69 — Codex token usage: `/status` invalid via `exec`, pivot to `token_count`
 
-**Date:** 2026-02-02  (local)
+**Date:** 2026-02-02 (local)
 **Branch:** main
 **Version:** 1.1.493
 
@@ -9,14 +9,21 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Привели `doc/TODO/todo-plan.md` (Phase 86) к исполнению: удалили ранее выполненные пункты (bootstrap/design/session report), оставили только задачи, которые реально нужно выполнять в следующей сессии (spike → implementation → verification).
-- Усилили preflight-контекст для Codex token usage по аналогии с Claude (/context):
-  - подчеркнули различие между per-turn `usage` и context-window `used/limit` (source-of-truth: Codex CLI `/status`),
-  - явно включили требования: throttling + in-flight lock и «internal-only» (не загрязнять UI/UnifiedSession history).
-- Зафиксировали, что реализация будет делаться в следующей сессии (в этой — только план + подготовка материалов к чтению).
+- Проверили на практике, что `/status` — это TUI slash-команда и **не может** быть надёжным источником истины в non-interactive режиме (`codex exec --json`/SDK): строка `Context window: ...` не возвращается, а отправка `"/status"` трактуется как обычный prompt (и портит контекст).
+- Нашли программный источник истины без CLI-вызовов: в rollout JSONL присутствует событие `token_count` в конце turn.
+  - `used = token_count.info.last_token_usage.total_tokens`
+  - `limit = token_count.info.model_context_window`
+  - `%remaining` для продукта считаем сами: `round((limit - used) / limit * 100)`.
+  - Процент из TUI `/status` может расходиться с арифметикой — верифицируем только `used/limit` (значения в скобках).
+- Синхронизировали документы и план Phase 86 под новый source-of-truth (rollout `token_count`).
 
 ## Git commits
 - `7b7e774c docs(todo): clean Phase 86 plan for execution`
+- `678753dc docs(session): Session069 Phase 86 preflight`
+- `23bca730 docs(todo): pivot Phase 86 to token_count rollout source`
+- `d6d851b7 docs: revise Codex token usage architecture to token_count`
+- `70e1a951 docs(todo): remove completed design steps after token_count pivot`
+- `b668580b docs: clarify Codex token usage via token_count`
 
 ---
 
@@ -25,27 +32,23 @@
 ## Required documents to review before work (read in this order)
 
 ### A) Architecture (source of truth)
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (multi-tenant: `workspacePath` — свойство Session, не глобальный)
-2. `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md` (APPROVED: source-of-truth — `/status` → `Context window: ... (used / limit)`)
-3. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md` (pitfalls: totals по run ≠ context window; throttling; internal-only)
+1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (multi-tenant: `workspacePath` — свойство Session)
+2. `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md` (revised: source-of-truth = rollout `token_count`)
+3. `doc/Project_Docs/Stacks/Codex_SDK_Module.md` (revised note: `/status` TUI-only; token usage via `token_count`)
+4. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md` (reference pattern: throttling + in-flight lock + internal-only + continuity)
 
 ### B) Multi-workspace / history pitfalls (обязательно)
-4. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md` (главная ошибка: глобальный workspaceKey ломает history; всё привязано к Session)
+5. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md` (workspaceKey должен быть пер-сессионный)
 
 ### C) Session continuity / persistence
-5. `doc/Sessions/Session065.md` (tokenUsage persistence/restore через continuity `chain.json`, без отдельного state файла)
+6. `doc/Sessions/Session065.md` (tokenUsage persistence/restore через continuity `chain.json`)
 
-### D) Контекст предыдущего решения
-6. `doc/Sessions/Session068.md` (дизайн Codex token usage + первичный план Phase 86)
-7. `doc/Sessions/Session069.md` (THIS REPORT)
+### D) Контекст (история решений)
+7. `doc/Sessions/Session068.md` (historical: `/status` approach; superseded)
+8. `doc/Sessions/Session069.md` (THIS REPORT)
 
-### E) План исполнения (источник операционной правды)
-8. `doc/TODO/todo-plan.md` (THIS FILE)
-
-## Optional (high-signal code references for implementation)
-- `packages/Claude_Module/src/messaging/message-processor.ts` (как сделан throttling + in-flight lock + `stream_event` с `tokenUsage` после turn)
-- `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts` и `packages/Claude_Module/src/sdk/claude-context-usage-snapshot.ts` (паттерн reader+parser)
-- `packages/Codex_Module/src/messaging/message-processor.ts` (точка интеграции: `turn.completed`)
+### E) План исполнения
+9. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ## Plans for next session
 - Выполнить Phase 86 из `doc/TODO/todo-plan.md` (начиная со Stream: spike) строго микрозадачами ≤3 файлов + отдельный коммит после каждой микрозадачи.
