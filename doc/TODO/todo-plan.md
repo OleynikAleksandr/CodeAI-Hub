@@ -33,8 +33,8 @@
 4. [DONE] Git Commit: `feat(core): persist workflow lastActive snapshot` (hash: 17196214)
 
 ### Stream: workspace activation API
-5. [TODO] Feat(core): добавить/расширить API, чтобы Project Manager сообщал выбранный workspace (workspace activated) и Core мог инициировать resume lastActive — scope: ≤3 файлов в `packages/core/src/remote-bridge/**`; expected commit message: `feat(core): add workspace activate endpoint for auto-resume`
-6. [TODO] Git Commit: `feat(core): add workspace activate endpoint for auto-resume` (hash: TBD)
+5. [DONE] Feat(core): добавить/расширить API, чтобы Project Manager сообщал выбранный workspace (workspace activated) и Core мог инициировать resume lastActive — scope: ≤3 файлов в `packages/core/src/remote-bridge/**`; expected commit message: `feat(core): add workspace activate endpoint for auto-resume`
+6. [DONE] Git Commit: `feat(core): add workspace activate endpoint for auto-resume` (hash: 19d9e6a8)
 
 ### Stream: core-driven resume + validation
 7. [TODO] Fix(core): на workspace activation Core делает pre-check принадлежности `providerSessionId` выбранному workspace (unified session history bucket + fallback scan), затем выполняет resume и бродкастит `session:created` — scope: ≤3 файлов в `packages/core/src/remote-bridge/handlers/**`; expected commit message: `fix(core): core-driven lastActive resume with workspace validation`
