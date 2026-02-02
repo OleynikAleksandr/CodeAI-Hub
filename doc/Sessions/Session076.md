@@ -28,8 +28,8 @@
 
 ## Verification status
 - ✅ Release gates прошли в рамках `build-release.sh` (architecture, typecheck/compile, SDK exclusions, links, duplication, VSIX packaging).
-- ⏳ Manual verification (owner) требуется после установки **именно** `codeai-hub-1.1.500.vsix`:
-  - стартовый экран Settings-only имеет нормальный фон (как у обычных окон VS Code темы);
+- ✅ Manual verification (owner): подтверждено в VS Code (2026-02-02) после установки `codeai-hub-1.1.500.vsix`:
+  - стартовый экран Settings-only использует фон VS Code темы;
   - `Open settings` → Settings занимает всю площадь Webview;
   - resize работает; vertical scroll сохраняется.
 
@@ -57,5 +57,4 @@
 5. `doc/Sessions/Session076.md` (THIS REPORT)
 
 ## Plans for next session
-- Установить `codeai-hub-1.1.500.vsix` и подтвердить визуально: фон стартового Settings-only экрана и full-size Settings в Webview.
-- После успешной проверки закрыть manual verification в `doc/TODO/todo-plan.md` отдельным коммитом.
+- Закрыть manual verification в `doc/TODO/todo-plan.md` отдельным коммитом (подтверждение уже получено).
