@@ -7,6 +7,7 @@ import {
   DescriptionStepStore,
 } from "../../workflow/description/description-step-store";
 import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-active-store";
+import type { SessionRequestHandler } from "./session-request-handler";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_INTERNAL_ERROR = 500;
@@ -52,6 +53,7 @@ export const handleWorkspaceActivate = async (params: {
   readonly req: Request;
   readonly res: Response;
   readonly logger: Logger;
+  readonly sessionHandler: SessionRequestHandler;
   readonly onWorkspaceActivated?: (
     workspacePath: string,
     workspaceSlug: string
@@ -84,6 +86,19 @@ export const handleWorkspaceActivate = async (params: {
       workspacePath,
       workspaceSlug
     );
+
+    if (descriptionSnapshot?.session && descriptionSnapshot.sessionKind) {
+      await params.sessionHandler.handleCreate(
+        descriptionSnapshot.session.providerId,
+        workspacePath,
+        {
+          initiativeSlug: workspaceSlug,
+          stage: "description",
+          runSlug: descriptionSnapshot.sessionKind,
+          providerSessionId: descriptionSnapshot.session.providerSessionId,
+        }
+      );
+    }
 
     params.res.json({
       workspaceSlug,

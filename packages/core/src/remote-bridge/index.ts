@@ -161,6 +161,7 @@ export class RemoteBridge {
       app,
       systemHandler: this.systemHandler,
       fileDropService: this.fileDropService,
+      sessionHandler: this.sessionHandler,
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
       logger: this.logger,
