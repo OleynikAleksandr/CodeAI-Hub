@@ -37,7 +37,7 @@
 ### Stream: release build + docs sync (verification build)
 11. [DONE] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
 12. [DONE] Git Commit: `chore(release): build-all next version` (hash: 4a6278f4)
-13. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
+13. [DONE] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
 14. [TODO] Docs: sync release docs (strictly after build): `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for codex session continuity setting`
 15. [TODO] Git Commit: `docs: update release notes for codex session continuity setting` (hash: TBD)
 16. [TODO] Docs: update Project Docs index (new release): `doc/Project_Docs/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for latest release`
