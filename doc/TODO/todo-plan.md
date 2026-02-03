@@ -9,56 +9,57 @@
 
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`
-4. `doc/Project_Docs/Stacks/UI_Modules.md`
-5. `doc/TODO/todo-plan.md` (THIS FILE)
+2. `doc/Project_Docs/Stacks/UI_Modules.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`
+4. `doc/SolidWorks-Flow/SessionContinuity/ContinuityReport_Contracts.md`
+5. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
+6. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
 
-## Phase 94 — Settings: Codex Session Continuity threshold (future trigger) (owner: Oleksandr, updated: 2026-02-03)
+## Phase 96 — FLOW: Node Infinite Session (Continuity) MVP (owner: Oleksandr, updated: 2026-02-03)
 
-### Stream: design + approval
-1. [DONE] Docs(architecture): согласовать дизайн Codex Session Continuity threshold — scope: `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`; expected commit message: `docs: approve codex session continuity settings architecture`
-2. [DONE] Git Commit: `docs: approve codex session continuity settings architecture` (hash: 0a1a57b0)
+### MVP Definition (must)
+- **Scope:** только “user-facing” сессии узлов (т.е. те, что показываются в ветках Workflow Tree).
+- **MVP node:** `Описание → Reviewer`.
+- **Filter (MVP):** `stage=description` + `runSlug=reviewer`.
+- **Providers:** модуль провайдер‑agnostic, но auto‑rollover “по порогу” работает только там, где есть `tokenUsage.used/limit`.
+- **Report IO:** Core ничего не пишет; continuity‑отчёт создаёт и читает агент по пути, который задаёт Core.
+- **UX:** во время rollover UI показывает “готовлю продолжение…” (spinner) и блокирует отправку сообщений.
 
-### Stream: implementation (extension settings schema)
-3. [DONE] Feat(settings): добавить `providers.codex.sessionContinuity.remainingPercentThreshold` (default 30, clamp 5..80) — scope: `src/extension-module/settings/codex-settings.ts`; expected commit message: `feat(settings): add codex session continuity threshold`
-4. [DONE] Git Commit: `feat(settings): add codex session continuity threshold` (hash: 5fb32c54)
+### Stream: docs sync
+1. [TODO] Docs(flow): добавить `SessionContinuity/` в `doc/SolidWorks-Flow/README.md` — scope: `doc/SolidWorks-Flow/README.md`; expected commit message: `docs(flow): document node session continuity`
+2. [TODO] Git Commit: `docs(flow): document node session continuity` (hash: TBD)
 
-### Stream: implementation (webview state + UI)
-5. [DONE] Feat(webview): добавить `sessionContinuity` в raw/model mapping для Codex — scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `media/react-chat.js`; expected commit message: `feat(webview): add codex continuity settings state`
-6. [DONE] Git Commit: `feat(webview): add codex continuity settings state` (hash: 879281f4)
-7. [DONE] Feat(webview): добавить helpers + handler для Codex continuity threshold — scope: `src/client/ui/src/components/settings/settings-state-helpers.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `media/react-chat.js`; expected commit message: `feat(webview): add codex continuity settings handlers`
-8. [DONE] Git Commit: `feat(webview): add codex continuity settings handlers` (hash: 1b32e5d0)
-9. [DONE] Feat(webview): добавить SettingsCard "Codex Session Continuity" в Codex tab — scope: `src/client/ui/src/components/settings-view.tsx`, `src/client/ui/src/components/settings/session-continuity-card.tsx`, `media/react-chat.js`; expected commit message: `feat(webview): add Codex Session Continuity card`
-10. [DONE] Git Commit: `feat(webview): add Codex Session Continuity card` (hash: f2f0510b)
+### Stream: templates (continuity prompts)
+3. [TODO] Docs(flow): зафиксировать контракт шаблонов промтов (IDs, placeholders, default path `~/.codeai-hub/templates/`) — scope: `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/ContinuityReport_Contracts.md`; expected commit message: `docs(flow): define continuity prompt templates contract`
+4. [TODO] Git Commit: `docs(flow): define continuity prompt templates contract` (hash: TBD)
+5. [TODO] Feat(core): добавить `templatesDir` (default `~/.codeai-hub/templates`) + loader с fallback на встроенные шаблоны — scope: `packages/core/src/config/index.ts`, `packages/core/src/flow-node-continuity/template-loader.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`; expected commit message: `feat(core): add continuity prompt template loader`
+6. [TODO] Git Commit: `feat(core): add continuity prompt template loader` (hash: TBD)
 
-### Stream: release build + docs sync (verification build)
-11. [DONE] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
-12. [DONE] Git Commit: `chore(release): build-all next version` (hash: 4a6278f4)
-13. [DONE] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
-14. [DONE] Docs: sync release docs (strictly after build): `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for codex session continuity setting`
-15. [DONE] Git Commit: `docs: update release notes for codex session continuity setting` (hash: e92ef2c9)
-16. [DONE] Docs: update Project Docs index (new release): `doc/Project_Docs/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for latest release`
-17. [DONE] Git Commit: `docs: bump Project Docs index for latest release` (hash: 95658668)
+### Stream: core safety (disable legacy auto-handoff)
+7. [TODO] Feat(core): отключить legacy auto-handoff (оставить persistence tokenUsage/continuity chain для UI) — scope: `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): disable legacy handoff automation`
+8. [TODO] Git Commit: `feat(core): disable legacy handoff automation` (hash: TBD)
 
-### Stream: verification (manual)
-18. [DONE] Verification(owner): в VS Code Settings → Codex появился блок "Codex Session Continuity"; значение сохраняется/восстанавливается из `~/.codeai-hub/settings/settings.json` — scope: manual; expected commit message: `chore: verify codex session continuity setting`
-19. [DONE] Git Commit: `chore: verify codex session continuity setting` (hash: c097141f)
+### Stream: core module (FlowNodeContinuity)
+9. [TODO] Feat(core): создать модуль `FlowNodeContinuity` (facade + types, без интеграции) — scope: `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-types.ts`, `packages/core/src/flow-node-continuity/index.ts`; expected commit message: `feat(core): add flow node continuity module skeleton`
+10. [TODO] Git Commit: `feat(core): add flow node continuity module skeleton` (hash: TBD)
+11. [TODO] Feat(core): добавить генерацию `reportPath` + ожидание финального файла отчёта (`.tmp` → `rename`) — scope: `packages/core/src/flow-node-continuity/report-path.ts`, `packages/core/src/flow-node-continuity/report-waiter.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`; expected commit message: `feat(core): add continuity report waiting`
+12. [TODO] Git Commit: `feat(core): add continuity report waiting` (hash: TBD)
+13. [TODO] Feat(core): интегрировать rollover (tokenUsage → request report → wait → new segment → instruct read report) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`, `packages/core/src/session-continuity/token-usage.ts`; expected commit message: `feat(core): wire flow node continuity rollover`
+14. [TODO] Git Commit: `feat(core): wire flow node continuity rollover` (hash: TBD)
+15. [TODO] Feat(core): ограничить rollout на MVP-фильтр (`stage=description` + `runSlug=reviewer`) — scope: `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-types.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): limit flow continuity to reviewer sessions`
+16. [TODO] Git Commit: `feat(core): limit flow continuity to reviewer sessions` (hash: TBD)
 
----
+### Stream: UI (Project Manager) — баннер + блок ввода
+17. [TODO] Feat(ui): показывать “готовлю продолжение…” и блокировать send при `connectionState="blocked"` — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`; expected commit message: `feat(ui): show continuity rollover banner and disable send`
+18. [TODO] Git Commit: `feat(ui): show continuity rollover banner and disable send` (hash: TBD)
 
-## Phase 95 — Docs: remove obsolete Project_Docs refactor designs (owner: Oleksandr, updated: 2026-02-03)
+### Stream: release build (for tests)
+19. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
+20. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+21. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и собрать `codeai-hub-<version>.vsix` — scope: release artifacts only; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
 
-### Stream: docs hygiene (Project_Docs)
-1. [DONE] Docs: удалить устаревшие архитектурные документы, подготовленные под уже завершённые рефакторинги (часть 1) — scope: `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`, `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`, `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`; expected commit message: `docs: remove superseded refactor architecture docs`
-2. [DONE] Git Commit: `docs: remove superseded refactor architecture docs` (hash: 507717f6)
-3. [DONE] Docs: удалить устаревшие документы Project Manager (часть 2) — scope: `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`, `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: remove legacy project-manager architecture docs`
-4. [DONE] Git Commit: `docs: remove legacy project-manager architecture docs` (hash: 97a64bcd)
-5. [DONE] Docs: удалить TokenUsage дизайн-доки и неапрувнутый draft (часть 3) — scope: `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`, `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md`, `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; expected commit message: `docs: remove obsolete token-usage and draft docs`
-6. [DONE] Git Commit: `docs: remove obsolete token-usage and draft docs` (hash: 9109bf78)
-
-### Stream: session report
-7. [DONE] Docs(session): создать отчёт `doc/Sessions/Session079.md` (docs cleanup + GitHub push) — scope: `doc/Sessions/Session079.md`; expected commit message: `docs(session): add Session079 docs cleanup and GitHub publish`
-8. [DONE] Git Commit: `docs(session): add Session079 docs cleanup and GitHub publish` (hash: c0d210ea)
+### Stream: verification (target)
+22. [TODO] Verification: вручную проверить MVP на узле `Описание → Reviewer` (rollover по порогу, отчёт создаёт агент, UI показывает баннер/блок ввода, новая сессия читает отчёт) — scope: manual; expected commit message: `chore: verify flow node continuity MVP`
+23. [TODO] Git Commit: `chore: verify flow node continuity MVP` (hash: TBD)
