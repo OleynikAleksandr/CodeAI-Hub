@@ -8,6 +8,9 @@ export type RawAutoUpdateSettings = {
 export type RawClaudeSessionContinuitySettings = {
   readonly remainingPercentThreshold?: unknown;
 };
+export type RawCodexSessionContinuitySettings = {
+  readonly remainingPercentThreshold?: unknown;
+};
 export type RawClaudeSettings = {
   readonly thinking?: RawThinkingSettings;
   readonly autoUpdate?: RawAutoUpdateSettings;
@@ -18,6 +21,7 @@ export type RawCodexSettings = {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
   readonly reasoningByModel?: Record<string, unknown>;
+  readonly sessionContinuity?: RawCodexSessionContinuitySettings;
 };
 export type RawGeminiSettings = {
   readonly autoUpdate?: RawAutoUpdateSettings;

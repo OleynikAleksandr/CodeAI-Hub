@@ -3,13 +3,11 @@ import {
   type ClaudeModelAliasId,
   DEFAULT_CLAUDE_MODEL_ALIAS,
 } from "../../../../../types/claude-model-registry";
-import type {
-  CodexModelId,
-  CodexReasoningLevel,
-} from "../../../../../types/codex-model-registry";
 import {
   CODEX_ALL_MODELS,
   CODEX_REASONING_LEVELS,
+  type CodexModelId,
+  type CodexReasoningLevel,
   DEFAULT_CODEX_MODEL_ID,
   DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../../types/codex-model-registry";
@@ -49,14 +47,14 @@ type CoreControlsSettings = {
 type GeneralSettings = {
   readonly coreControls: CoreControlsSettings;
 };
-type ClaudeContinuitySettings = {
+type ContinuitySettings = {
   readonly remainingPercentThreshold: number;
 };
 type ClaudeSettings = {
   readonly thinking: ThinkingSettings;
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: ClaudeModelAliasId;
-  readonly sessionContinuity: ClaudeContinuitySettings;
+  readonly sessionContinuity: ContinuitySettings;
 };
 export type CodexReasoningByModel = Readonly<
   Record<string, CodexReasoningLevel>
@@ -65,6 +63,7 @@ type CodexSettings = {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: CodexModelId;
   readonly reasoningByModel: CodexReasoningByModel;
+  readonly sessionContinuity: ContinuitySettings;
 };
 export type Settings = {
   readonly general: GeneralSettings;
@@ -151,7 +150,7 @@ const mapGeneralSettings = (
   },
 });
 
-const mapClaudeContinuity = (value: unknown): ClaudeContinuitySettings => {
+const mapContinuity = (value: unknown): ContinuitySettings => {
   const numericValue = Number(
     isRecord(value) ? value.remainingPercentThreshold : undefined
   );
@@ -173,7 +172,7 @@ const mapClaudeSettings = (
   thinking: mapThinkingSettings(value?.thinking),
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
   defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
-  sessionContinuity: mapClaudeContinuity(value?.sessionContinuity),
+  sessionContinuity: mapContinuity(value?.sessionContinuity),
 });
 
 const resolveCodexModelId = (value: unknown): CodexModelId =>
@@ -191,9 +190,7 @@ const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId => {
 };
 
 const mapCodexReasoningByModel = (value: unknown): CodexReasoningByModel => {
-  const nextReasoningByModel = {
-    ...DEFAULT_CODEX_REASONING_BY_MODEL,
-  };
+  const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
 
   if (!isRecord(value)) {
     return nextReasoningByModel;
@@ -217,6 +214,7 @@ const mapCodexSettings = (
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
   defaultModel: resolveCodexModelId(value?.defaultModel),
   reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
+  sessionContinuity: mapContinuity(value?.sessionContinuity),
 });
 
 export const mapSettingsSnapshot = (
@@ -280,7 +278,9 @@ const areCodexSettingsEqual = (
 ): boolean =>
   areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
   left.defaultModel === right.defaultModel &&
-  areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel);
+  areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) &&
+  left.sessionContinuity.remainingPercentThreshold ===
+    right.sessionContinuity.remainingPercentThreshold;
 
 const areGeminiSettingsEqual = (
   left: GeminiSettings,
