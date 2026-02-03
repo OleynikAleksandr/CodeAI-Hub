@@ -76,5 +76,5 @@
 31. [DONE] Git Commit: `feat(ui): show continuation index in session header` (hash: b626d81b)
 
 ### Stream: rollover UX messages
-32. [TODO] Feat(ui): улучшить текст баннера rollover (фазы + до ~6 минут) и показывать “агент восстанавливает контекст…” в новой сессии до первого ответа — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `feat(ui): improve rollover status messaging`
-33. [TODO] Git Commit: `feat(ui): improve rollover status messaging` (hash: TBD)
+32. [DONE] Feat(ui): улучшить текст баннера rollover (фазы + до ~6 минут) и показывать “агент восстанавливает контекст…” в новой сессии до первого ответа — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `feat(ui): improve rollover status messaging`
+33. [DONE] Git Commit: `feat(ui): improve rollover status messaging` (hash: d56ecd6d)
