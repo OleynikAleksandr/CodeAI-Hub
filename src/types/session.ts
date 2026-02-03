@@ -59,6 +59,7 @@ export type SessionRecord = {
   readonly stage?: string | null;
   readonly runSlug?: string | null;
   readonly sessionKind?: SessionKind | null;
+  readonly continuationParentId?: string | null;
   readonly createdAt: number;
   readonly binding: SessionBindingInfo;
 };
