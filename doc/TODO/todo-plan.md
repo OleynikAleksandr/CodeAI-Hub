@@ -19,8 +19,8 @@
 ## Phase 94 — Settings: Codex Session Continuity threshold (future trigger) (owner: Oleksandr, updated: 2026-02-03)
 
 ### Stream: design + approval
-1. [TODO] Docs(architecture): согласовать дизайн Codex Session Continuity threshold — scope: `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`; expected commit message: `docs: approve codex session continuity settings architecture`
-2. [TODO] Git Commit: `docs: approve codex session continuity settings architecture` (hash: TBD)
+1. [DONE] Docs(architecture): согласовать дизайн Codex Session Continuity threshold — scope: `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`; expected commit message: `docs: approve codex session continuity settings architecture`
+2. [DONE] Git Commit: `docs: approve codex session continuity settings architecture` (hash: 0a1a57b0)
 
 ### Stream: implementation (extension settings schema)
 3. [TODO] Feat(settings): добавить `providers.codex.sessionContinuity.remainingPercentThreshold` (default 30, clamp 5..80) — scope: `src/extension-module/settings/codex-settings.ts`; expected commit message: `feat(settings): add codex session continuity threshold`
