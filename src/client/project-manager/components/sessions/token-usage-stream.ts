@@ -26,6 +26,16 @@ type TokenUsageSnapshot = {
   readonly limit: number;
 };
 
+const FLOW_NODE_CONTINUITY_REMAINING_PERCENT_BLOCK_THRESHOLD = 30;
+
+const computeRemainingPercent = (usage: TokenUsageSnapshot): number => {
+  const remaining = usage.limit - usage.used;
+  if (!Number.isFinite(remaining) || usage.limit <= 0) {
+    return 0;
+  }
+  return Math.round((remaining / usage.limit) * 100);
+};
+
 const resolveProviderSessionIdForCache = (
   snapshot: SessionSnapshots[string],
   event: unknown
@@ -86,6 +96,12 @@ export const updateSnapshotsWithTokenUsage = (
     writeLastKnownTokenUsage(providerSessionId, tokenUsage);
   }
 
+  const remainingPercent = computeRemainingPercent(tokenUsage);
+  const connectionState =
+    remainingPercent <= FLOW_NODE_CONTINUITY_REMAINING_PERCENT_BLOCK_THRESHOLD
+      ? "blocked"
+      : "idle";
+
   return {
     ...snapshots,
     [payload.sessionId]: {
@@ -93,6 +109,7 @@ export const updateSnapshotsWithTokenUsage = (
       status: {
         ...snapshot.status,
         tokenUsage,
+        connectionState,
         updatedAt: Date.now(),
       },
     },

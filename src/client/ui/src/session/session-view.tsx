@@ -82,8 +82,14 @@ const SessionView = ({
             />
           </div>
           <div className="session-app__rails">
+            {activeSession.status.connectionState === "blocked" ? (
+              <output aria-live="polite" className="session-panel">
+                Подготавливаю продолжение… (rollover)
+              </output>
+            ) : null}
             <InputPanel
               draft={activeSession.draft}
+              isBlocked={activeSession.status.connectionState === "blocked"}
               onSubmit={(text) => onSendMessage(activeSessionId, text)}
             />
             <StatusPanel
