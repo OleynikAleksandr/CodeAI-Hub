@@ -6,6 +6,8 @@
 
 ## Структура
 - `Architecture/` — архитектура и правила Workflow Tree (узлы, статусы, зависимости, “rebuild/simulation”).
+- `SessionContinuity/` — дизайн бесконечных сессий узлов (continuity/rollover).
+- `Rebuild/` — дизайн пропагации rebuild (OUTDATED/impacted узлы).
 
 ## Обновления
 - 2026-02-01 (release 1.1.480): Session UI: удалён TodoPanel; документы синхронизированы с текущим UI.
