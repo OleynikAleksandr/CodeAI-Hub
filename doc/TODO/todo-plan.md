@@ -32,8 +32,8 @@
 2. [DONE] Git Commit: `docs(flow): document node session continuity` (hash: 2fb022d8)
 
 ### Stream: templates (continuity prompts)
-3. [TODO] Docs(flow): зафиксировать контракт шаблонов промтов (IDs, placeholders, default path `~/.codeai-hub/templates/`) — scope: `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/ContinuityReport_Contracts.md`; expected commit message: `docs(flow): define continuity prompt templates contract`
-4. [TODO] Git Commit: `docs(flow): define continuity prompt templates contract` (hash: TBD)
+3. [DONE] Docs(flow): зафиксировать контракт шаблонов промтов (IDs, placeholders, default path `~/.codeai-hub/templates/`) — scope: `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/ContinuityReport_Contracts.md`; expected commit message: `docs(flow): define continuity prompt templates contract`
+4. [DONE] Git Commit: `docs(flow): define continuity prompt templates contract` (hash: 9fe16266)
 5. [TODO] Feat(core): добавить `templatesDir` (default `~/.codeai-hub/templates`) + loader с fallback на встроенные шаблоны — scope: `packages/core/src/config/index.ts`, `packages/core/src/flow-node-continuity/template-loader.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`; expected commit message: `feat(core): add continuity prompt template loader`
 6. [TODO] Git Commit: `feat(core): add continuity prompt template loader` (hash: TBD)
 
