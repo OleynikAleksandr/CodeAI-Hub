@@ -34,7 +34,15 @@
 9. [TODO] Feat(webview): добавить SettingsCard "Codex Session Continuity" в Codex tab — scope: `src/client/ui/src/components/settings-view.tsx`; expected commit message: `feat(webview): add Codex Session Continuity card`
 10. [TODO] Git Commit: `feat(webview): add Codex Session Continuity card` (hash: TBD)
 
-### Stream: verification (manual)
-11. [TODO] Verification(owner): в VS Code Settings → Codex появился блок "Codex Session Continuity"; значение сохраняется/восстанавливается из `~/.codeai-hub/settings/settings.json` — scope: manual; expected commit message: `chore: verify codex session continuity setting`
-12. [TODO] Git Commit: `chore: verify codex session continuity setting` (hash: TBD)
+### Stream: release build + docs sync (verification build)
+11. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
+12. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+13. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
+14. [TODO] Docs: sync release docs (strictly after build): `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for codex session continuity setting`
+15. [TODO] Git Commit: `docs: update release notes for codex session continuity setting` (hash: TBD)
+16. [TODO] Docs: update Project Docs index (new release): `doc/Project_Docs/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for latest release`
+17. [TODO] Git Commit: `docs: bump Project Docs index for latest release` (hash: TBD)
 
+### Stream: verification (manual)
+18. [TODO] Verification(owner): в VS Code Settings → Codex появился блок "Codex Session Continuity"; значение сохраняется/восстанавливается из `~/.codeai-hub/settings/settings.json` — scope: manual; expected commit message: `chore: verify codex session continuity setting`
+19. [TODO] Git Commit: `chore: verify codex session continuity setting` (hash: TBD)
