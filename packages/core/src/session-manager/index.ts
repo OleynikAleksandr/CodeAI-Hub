@@ -17,6 +17,7 @@ export type Session = {
   readonly initiativeSlug: string | null;
   readonly stage: string | null;
   readonly runSlug: string | null;
+  readonly continuationParentId: string | null;
   readonly title: string;
   readonly createdAt: string;
   updatedAt: string;
@@ -29,6 +30,7 @@ export type SessionInitiativeContext = {
   readonly initiativeSlug?: string | null;
   readonly stage?: string | null;
   readonly runSlug?: string | null;
+  readonly continuationParentId?: string | null;
 };
 
 const SESSION_TITLE_PREFIX_LENGTH = 4;
@@ -59,6 +61,7 @@ export class SessionManager {
       initiativeSlug: context?.initiativeSlug ?? null,
       stage: context?.stage ?? null,
       runSlug: context?.runSlug ?? null,
+      continuationParentId: context?.continuationParentId ?? null,
       title: `Mock session ${id.slice(0, SESSION_TITLE_PREFIX_LENGTH)}`,
       createdAt: now,
       updatedAt: now,
