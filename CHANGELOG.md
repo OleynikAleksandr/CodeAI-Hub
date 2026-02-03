@@ -1,3 +1,7 @@
+## [1.1.502] - 2026-02-03
+### Added
+- Codex: Settings → Session Continuity threshold (default: 30% remaining) for future auto wrap/handoff trigger.
+
 ## [1.1.501] - 2026-02-03
 ### Fixed
 - Webview: default background set to `rgb(24, 24, 24)` (common extension webview background).
