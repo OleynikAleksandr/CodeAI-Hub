@@ -63,3 +63,18 @@
 ### Stream: verification (target)
 22. [TODO] Verification: вручную проверить MVP на узле `Описание → Reviewer` (rollover по порогу, отчёт создаёт агент, UI показывает баннер/блок ввода, новая сессия читает отчёт) — scope: manual; expected commit message: `chore: verify flow node continuity MVP`
 23. [TODO] Git Commit: `chore: verify flow node continuity MVP` (hash: TBD)
+### Stream: rollover stability (single report)
+24. [TODO] Fix(core): предотвратить повторные rollover для одного provider-segment (1 отчёт на сегмент) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): prevent repeated flow node rollovers`
+25. [TODO] Git Commit: `fix(core): prevent repeated flow node rollovers` (hash: TBD)
+
+### Stream: continuation index in UI header
+26. [TODO] Feat(core): экспортировать `continuationParentId` (prev segment id) в serialized session для UI — scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): expose flow continuation parent id`
+27. [TODO] Git Commit: `feat(core): expose flow continuation parent id` (hash: TBD)
+28. [TODO] Feat(ui): прокинуть `continuationParentId` в `SessionRecord` — scope: `src/types/session.ts`, `src/client/ui/src/core-bridge/types.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `feat(ui): propagate continuation parent id`
+29. [TODO] Git Commit: `feat(ui): propagate continuation parent id` (hash: TBD)
+30. [TODO] Feat(ui): показывать заголовок `Продолжение #N  Session ID: <id>` (N>=2) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `feat(ui): show continuation index in session header`
+31. [TODO] Git Commit: `feat(ui): show continuation index in session header` (hash: TBD)
+
+### Stream: rollover UX messages
+32. [TODO] Feat(ui): улучшить текст баннера rollover (фазы + до ~6 минут) и показывать “агент восстанавливает контекст…” в новой сессии до первого ответа — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `feat(ui): improve rollover status messaging`
+33. [TODO] Git Commit: `feat(ui): improve rollover status messaging` (hash: TBD)
