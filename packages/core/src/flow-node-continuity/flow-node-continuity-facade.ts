@@ -1,3 +1,7 @@
+import type {
+  FlowNodeContinuityTemplateId,
+  FlowNodeContinuityTemplateVariables,
+} from "./flow-node-continuity-types";
 import { TemplateLoader } from "./template-loader";
 
 const escapeRegExp = (value: string): string =>
@@ -16,13 +20,13 @@ export class FlowNodeContinuityFacade {
     });
   }
 
-  loadTemplate(templateId: string): string {
+  loadTemplate(templateId: FlowNodeContinuityTemplateId): string {
     return this.#templateLoader.load(templateId);
   }
 
   renderTemplate(
-    templateId: string,
-    variables: Readonly<Record<string, string>>
+    templateId: FlowNodeContinuityTemplateId,
+    variables: FlowNodeContinuityTemplateVariables
   ): string {
     let content = this.loadTemplate(templateId);
     for (const [key, value] of Object.entries(variables)) {
