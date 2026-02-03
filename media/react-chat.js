@@ -27505,6 +27505,19 @@ ${replacement}
       }
     }
   });
+  var updateCodexContinuityRemainingPercentThreshold = (settings, remainingPercentThreshold) => ({
+    ...settings,
+    providers: {
+      ...settings.providers,
+      codex: {
+        ...settings.providers.codex,
+        sessionContinuity: {
+          ...settings.providers.codex.sessionContinuity,
+          remainingPercentThreshold
+        }
+      }
+    }
+  });
   var updateProviderAutoUpdate = (settings, provider, enabled) => ({
     ...settings,
     providers: {
@@ -27689,12 +27702,7 @@ ${replacement}
 
   // src/client/ui/src/components/settings/use-settings-state.ts
   var RESET_DELAY_MS = 100;
-  var createDefaultVersionsState = () => ({
-    data: null,
-    loading: true,
-    error: null,
-    updatingTargets: []
-  });
+  var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
   var isIncomingMessage = (message) => {
     if (!message || typeof message !== "object") {
       return false;
@@ -27708,9 +27716,12 @@ ${replacement}
     const [hasChanges, setHasChanges] = (0, import_react23.useState)(false);
     const [saving, setSaving] = (0, import_react23.useState)(false);
     const [resetting, setResetting] = (0, import_react23.useState)(false);
-    const [versions, setVersions] = (0, import_react23.useState)(
-      createDefaultVersionsState
-    );
+    const [versions, setVersions] = (0, import_react23.useState)(() => ({
+      data: null,
+      loading: true,
+      error: null,
+      updatingTargets: []
+    }));
     (0, import_react23.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
@@ -27769,12 +27780,21 @@ ${replacement}
         if (!Number.isFinite(remainingPercentThreshold)) {
           return;
         }
-        const clamped = Math.min(
-          80,
-          Math.max(5, Math.round(remainingPercentThreshold))
-        );
+        const clamped = clampRemainingPercentThreshold(remainingPercentThreshold);
         updateSettings(
           updateClaudeContinuityRemainingPercentThreshold(settings, clamped)
+        );
+      },
+      [settings, updateSettings]
+    );
+    const handleCodexContinuityRemainingPercentThresholdChange = (0, import_react23.useCallback)(
+      (remainingPercentThreshold) => {
+        if (!Number.isFinite(remainingPercentThreshold)) {
+          return;
+        }
+        const clamped = clampRemainingPercentThreshold(remainingPercentThreshold);
+        updateSettings(
+          updateCodexContinuityRemainingPercentThreshold(settings, clamped)
         );
       },
       [settings, updateSettings]
@@ -27847,6 +27867,7 @@ ${replacement}
       versions,
       handleThinkingSettingsChange,
       handleClaudeContinuityRemainingPercentThresholdChange,
+      handleCodexContinuityRemainingPercentThresholdChange,
       handleClaudeDefaultModelChange,
       handleCodexDefaultModelChange,
       handleGeminiDefaultModelChange,

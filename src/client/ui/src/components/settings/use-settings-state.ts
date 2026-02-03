@@ -8,6 +8,7 @@ import vscode from "../../vscode";
 import {
   updateClaudeContinuityRemainingPercentThreshold,
   updateClaudeDefaultModel,
+  updateCodexContinuityRemainingPercentThreshold,
   updateCodexDefaultModel,
   updateCodexReasoning,
   updateGeminiDefaultModel,
@@ -34,35 +35,24 @@ type VersionsState = {
   readonly updatingTargets: readonly string[];
 };
 
-type SettingsLoadedMessage = {
-  readonly type: "settings:loaded";
-  readonly settings: RawSettingsSnapshot;
-};
-
-type SettingsSavedMessage = {
-  readonly type: "settings:saved";
-  readonly settings?: RawSettingsSnapshot;
-};
-
-type VersionsLoadedMessage = {
-  readonly type: "settings:versions";
-  readonly versions?: ProviderVersions;
-  readonly error?: string;
-};
-
 type IncomingMessage =
-  | SettingsLoadedMessage
-  | SettingsSavedMessage
-  | VersionsLoadedMessage;
+  | {
+      readonly type: "settings:loaded";
+      readonly settings: RawSettingsSnapshot;
+    }
+  | {
+      readonly type: "settings:saved";
+      readonly settings?: RawSettingsSnapshot;
+    }
+  | {
+      readonly type: "settings:versions";
+      readonly versions?: ProviderVersions;
+      readonly error?: string;
+    };
 
 const RESET_DELAY_MS = 100;
-
-const createDefaultVersionsState = (): VersionsState => ({
-  data: null,
-  loading: true,
-  error: null,
-  updatingTargets: [],
-});
+const clampRemainingPercentThreshold = (value: number): number =>
+  Math.min(80, Math.max(5, Math.round(value)));
 
 const isIncomingMessage = (message: unknown): message is IncomingMessage => {
   if (!message || typeof message !== "object") {
@@ -88,6 +78,9 @@ export type UseSettingsStateResult = {
     maxTokens: number
   ) => void;
   readonly handleClaudeContinuityRemainingPercentThresholdChange: (
+    remainingPercentThreshold: number
+  ) => void;
+  readonly handleCodexContinuityRemainingPercentThresholdChange: (
     remainingPercentThreshold: number
   ) => void;
   readonly handleClaudeDefaultModelChange: (
@@ -121,9 +114,12 @@ export const useSettingsState = (): UseSettingsStateResult => {
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
-  const [versions, setVersions] = useState<VersionsState>(
-    createDefaultVersionsState
-  );
+  const [versions, setVersions] = useState<VersionsState>(() => ({
+    data: null,
+    loading: true,
+    error: null,
+    updatingTargets: [],
+  }));
 
   useEffect(() => {
     vscode.postMessage({
@@ -192,12 +188,22 @@ export const useSettingsState = (): UseSettingsStateResult => {
       if (!Number.isFinite(remainingPercentThreshold)) {
         return;
       }
-      const clamped = Math.min(
-        80,
-        Math.max(5, Math.round(remainingPercentThreshold))
-      );
+      const clamped = clampRemainingPercentThreshold(remainingPercentThreshold);
       updateSettings(
         updateClaudeContinuityRemainingPercentThreshold(settings, clamped)
+      );
+    },
+    [settings, updateSettings]
+  );
+
+  const handleCodexContinuityRemainingPercentThresholdChange = useCallback(
+    (remainingPercentThreshold: number) => {
+      if (!Number.isFinite(remainingPercentThreshold)) {
+        return;
+      }
+      const clamped = clampRemainingPercentThreshold(remainingPercentThreshold);
+      updateSettings(
+        updateCodexContinuityRemainingPercentThreshold(settings, clamped)
       );
     },
     [settings, updateSettings]
@@ -279,6 +285,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     versions,
     handleThinkingSettingsChange,
     handleClaudeContinuityRemainingPercentThresholdChange,
+    handleCodexContinuityRemainingPercentThresholdChange,
     handleClaudeDefaultModelChange,
     handleCodexDefaultModelChange,
     handleGeminiDefaultModelChange,

@@ -91,6 +91,23 @@ export const updateCodexReasoning = (
   },
 });
 
+export const updateCodexContinuityRemainingPercentThreshold = (
+  settings: Settings,
+  remainingPercentThreshold: number
+): Settings => ({
+  ...settings,
+  providers: {
+    ...settings.providers,
+    codex: {
+      ...settings.providers.codex,
+      sessionContinuity: {
+        ...settings.providers.codex.sessionContinuity,
+        remainingPercentThreshold,
+      },
+    },
+  },
+});
+
 export const updateProviderAutoUpdate = (
   settings: Settings,
   provider: ProviderId,
