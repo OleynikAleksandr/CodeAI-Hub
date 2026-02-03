@@ -6,3 +6,14 @@ export type FlowNodeContinuityTemplateId =
 export type FlowNodeContinuityTemplateVariables = Readonly<
   Record<string, string>
 >;
+
+export type FlowNodeContinuityRolloverFilter = Readonly<{
+  stageId: string;
+  runSlug: string;
+}>;
+
+export const FLOW_NODE_CONTINUITY_MVP_FILTER: FlowNodeContinuityRolloverFilter =
+  {
+    stageId: "description",
+    runSlug: "reviewer",
+  } as const;
