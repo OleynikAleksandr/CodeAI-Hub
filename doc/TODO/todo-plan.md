@@ -23,8 +23,8 @@
 2. [DONE] Git Commit: `docs: approve codex session continuity settings architecture` (hash: 0a1a57b0)
 
 ### Stream: implementation (extension settings schema)
-3. [TODO] Feat(settings): добавить `providers.codex.sessionContinuity.remainingPercentThreshold` (default 30, clamp 5..80) — scope: `src/extension-module/settings/codex-settings.ts`; expected commit message: `feat(settings): add codex session continuity threshold`
-4. [TODO] Git Commit: `feat(settings): add codex session continuity threshold` (hash: TBD)
+3. [DONE] Feat(settings): добавить `providers.codex.sessionContinuity.remainingPercentThreshold` (default 30, clamp 5..80) — scope: `src/extension-module/settings/codex-settings.ts`; expected commit message: `feat(settings): add codex session continuity threshold`
+4. [DONE] Git Commit: `feat(settings): add codex session continuity threshold` (hash: 5fb32c54)
 
 ### Stream: implementation (webview state + UI)
 5. [TODO] Feat(webview): добавить `sessionContinuity` в raw/model mapping для Codex — scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`; expected commit message: `feat(webview): add codex continuity settings state`
