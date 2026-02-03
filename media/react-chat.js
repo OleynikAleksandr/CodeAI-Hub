@@ -27613,7 +27613,7 @@ ${replacement}
       allowRestart: typeof value?.coreControls?.allowRestart === "boolean" ? value.coreControls.allowRestart : DEFAULT_CORE_RESTART_ENABLED
     }
   });
-  var mapClaudeContinuity = (value) => {
+  var mapContinuity = (value) => {
     const numericValue = Number(
       isRecord12(value) ? value.remainingPercentThreshold : void 0
     );
@@ -27630,7 +27630,7 @@ ${replacement}
     thinking: mapThinkingSettings(value?.thinking),
     autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
     defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
-    sessionContinuity: mapClaudeContinuity(value?.sessionContinuity)
+    sessionContinuity: mapContinuity(value?.sessionContinuity)
   });
   var resolveCodexModelId = (value) => typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : DEFAULT_CODEX_MODEL_ID;
   var resolveClaudeDefaultModel = (value) => {
@@ -27641,9 +27641,7 @@ ${replacement}
     return CLAUDE_MODEL_ALIAS_SET.has(alias) ? alias : DEFAULT_CLAUDE_MODEL_ALIAS;
   };
   var mapCodexReasoningByModel = (value) => {
-    const nextReasoningByModel = {
-      ...DEFAULT_CODEX_REASONING_BY_MODEL
-    };
+    const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
     if (!isRecord12(value)) {
       return nextReasoningByModel;
     }
@@ -27657,7 +27655,8 @@ ${replacement}
   var mapCodexSettings = (value) => ({
     autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
     defaultModel: resolveCodexModelId(value?.defaultModel),
-    reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel)
+    reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
+    sessionContinuity: mapContinuity(value?.sessionContinuity)
   });
   var mapSettingsSnapshot = (value) => ({
     general: mapGeneralSettings(value?.general),
@@ -27681,7 +27680,7 @@ ${replacement}
   };
   var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart;
   var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel);
+  var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
     right.thinkingLevelByModel
