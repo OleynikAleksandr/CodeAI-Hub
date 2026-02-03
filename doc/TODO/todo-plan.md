@@ -72,8 +72,8 @@
 27. [DONE] Git Commit: `feat(core): expose flow continuation parent id` (hash: 26f7c4cd)
 28. [DONE] Feat(ui): прокинуть `continuationParentId` в `SessionRecord` — scope: `src/types/session.ts`, `src/client/ui/src/core-bridge/types.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `feat(ui): propagate continuation parent id`
 29. [DONE] Git Commit: `feat(ui): propagate continuation parent id` (hash: a3211548)
-30. [TODO] Feat(ui): показывать заголовок `Продолжение #N  Session ID: <id>` (N>=2) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `feat(ui): show continuation index in session header`
-31. [TODO] Git Commit: `feat(ui): show continuation index in session header` (hash: TBD)
+30. [DONE] Feat(ui): показывать заголовок `Продолжение #N  Session ID: <id>` (N>=2) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `feat(ui): show continuation index in session header`
+31. [DONE] Git Commit: `feat(ui): show continuation index in session header` (hash: b626d81b)
 
 ### Stream: rollover UX messages
 32. [TODO] Feat(ui): улучшить текст баннера rollover (фазы + до ~6 минут) и показывать “агент восстанавливает контекст…” в новой сессии до первого ответа — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `feat(ui): improve rollover status messaging`
