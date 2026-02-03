@@ -29,8 +29,8 @@
 ### Stream: implementation (webview state + UI)
 5. [DONE] Feat(webview): добавить `sessionContinuity` в raw/model mapping для Codex — scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `media/react-chat.js`; expected commit message: `feat(webview): add codex continuity settings state`
 6. [DONE] Git Commit: `feat(webview): add codex continuity settings state` (hash: 879281f4)
-7. [TODO] Feat(webview): добавить helpers + handler для Codex continuity threshold — scope: `src/client/ui/src/components/settings/settings-state-helpers.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`; expected commit message: `feat(webview): add codex continuity settings handlers`
-8. [TODO] Git Commit: `feat(webview): add codex continuity settings handlers` (hash: TBD)
+7. [DONE] Feat(webview): добавить helpers + handler для Codex continuity threshold — scope: `src/client/ui/src/components/settings/settings-state-helpers.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `media/react-chat.js`; expected commit message: `feat(webview): add codex continuity settings handlers`
+8. [DONE] Git Commit: `feat(webview): add codex continuity settings handlers` (hash: 1b32e5d0)
 9. [TODO] Feat(webview): добавить SettingsCard "Codex Session Continuity" в Codex tab — scope: `src/client/ui/src/components/settings-view.tsx`; expected commit message: `feat(webview): add Codex Session Continuity card`
 10. [TODO] Git Commit: `feat(webview): add Codex Session Continuity card` (hash: TBD)
 
