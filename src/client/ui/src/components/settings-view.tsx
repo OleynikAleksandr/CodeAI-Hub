@@ -4,7 +4,7 @@ import CodexDefaultModelCard from "./settings/codex-default-model/codex-default-
 import GeminiDefaultModelCard from "./settings/gemini-default-model/gemini-default-model-card";
 import GeneralSettings from "./settings/general-settings";
 import ProviderVersions from "./settings/provider-versions";
-import SettingsCard from "./settings/settings-card";
+import SessionContinuityCard from "./settings/session-continuity-card";
 import SettingsFooter from "./settings/settings-footer";
 import SettingsHeader from "./settings/settings-header";
 import ThinkingSettings from "./settings/thinking-settings";
@@ -60,30 +60,6 @@ const stackStyles: React.CSSProperties = {
   gap: "16px",
 };
 
-const settingsLabelStyles: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px",
-  fontSize: "12px",
-  color: "#cccccc",
-};
-
-const settingsDescriptionStyles: React.CSSProperties = {
-  margin: 0,
-  fontSize: "12px",
-  lineHeight: 1.5,
-  color: "#aaaaaa",
-};
-
-const settingsInputStyles: React.CSSProperties = {
-  width: "220px",
-  background: "#1e1e1e",
-  border: "1px solid #3c3c3c",
-  borderRadius: "6px",
-  padding: "8px 10px",
-  color: "#cccccc",
-};
-
 const modeNoticeStyles: React.CSSProperties = {
   margin: "16px 20px 0",
   padding: "12px 14px",
@@ -125,6 +101,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     versions,
     handleThinkingSettingsChange,
     handleClaudeContinuityRemainingPercentThresholdChange,
+    handleCodexContinuityRemainingPercentThresholdChange,
     handleCodexDefaultModelChange,
     handleClaudeDefaultModelChange,
     handleGeminiDefaultModelChange,
@@ -183,31 +160,16 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                   maxTokens={settings.providers.claude.thinking.maxTokens}
                   onChange={handleThinkingSettingsChange}
                 />
-                <SettingsCard title="Claude Session Continuity">
-                  <p style={settingsDescriptionStyles}>
-                    When the remaining context window drops to or below this
-                    percentage, CodeAI Hub can automatically wrap up the current
-                    session (with a report) and start a new one. Default: 30%.
-                  </p>
-                  <label style={settingsLabelStyles}>
-                    Remaining context threshold (%)
-                    <input
-                      max={80}
-                      min={5}
-                      onChange={(event) =>
-                        handleClaudeContinuityRemainingPercentThresholdChange(
-                          Number(event.target.value)
-                        )
-                      }
-                      style={settingsInputStyles}
-                      type="number"
-                      value={
-                        settings.providers.claude.sessionContinuity
-                          .remainingPercentThreshold
-                      }
-                    />
-                  </label>
-                </SettingsCard>
+                <SessionContinuityCard
+                  onRemainingPercentThresholdChange={
+                    handleClaudeContinuityRemainingPercentThresholdChange
+                  }
+                  remainingPercentThreshold={
+                    settings.providers.claude.sessionContinuity
+                      .remainingPercentThreshold
+                  }
+                  title="Claude Session Continuity"
+                />
               </div>
             );
           }
@@ -235,6 +197,16 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                   onUpdate={handleUpdateProvider}
                   provider="codex"
                   versions={versions}
+                />
+                <SessionContinuityCard
+                  onRemainingPercentThresholdChange={
+                    handleCodexContinuityRemainingPercentThresholdChange
+                  }
+                  remainingPercentThreshold={
+                    settings.providers.codex.sessionContinuity
+                      .remainingPercentThreshold
+                  }
+                  title="Codex Session Continuity"
                 />
               </div>
             );
