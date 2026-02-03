@@ -80,8 +80,8 @@
 33. [DONE] Git Commit: `feat(ui): improve rollover status messaging` (hash: d56ecd6d)
 
 ### Stream: settings hot reload (threshold)
-34. [TODO] Fix(core): применять `remainingPercentThreshold` без перезапуска Core (перечитывать settings.json / кеш по mtime) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): live reload continuity threshold`
-35. [TODO] Git Commit: `fix(core): live reload continuity threshold` (hash: TBD)
+34. [DONE] Fix(core): применять `remainingPercentThreshold` без перезапуска Core (перечитывать settings.json / кеш по mtime) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): live reload continuity threshold`
+35. [DONE] Git Commit: `fix(core): live reload continuity threshold` (hash: 996eeb32)
 36. [TODO] Docs(todo): зафиксировать хеш (Stream settings hot reload) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 96 live threshold reload hash`
 37. [TODO] Git Commit: `docs(todo): record Phase 96 live threshold reload hash` (hash: TBD)
 
