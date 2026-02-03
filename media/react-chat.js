@@ -22431,19 +22431,26 @@ ${path2}` : path2;
   // src/client/ui/src/session/input-panel.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   var MAX_TEXTAREA_HEIGHT = 200;
-  var InputPanel = ({ draft, onSubmit }) => {
+  var InputPanel = ({
+    draft,
+    isBlocked = false,
+    onSubmit
+  }) => {
     const [value, setValue] = (0, import_react7.useState)(draft);
     (0, import_react7.useEffect)(() => {
       setValue(draft);
     }, [draft]);
     const sendMessage = (0, import_react7.useCallback)(() => {
+      if (isBlocked) {
+        return;
+      }
       const trimmed = value.trim();
       if (!trimmed) {
         return;
       }
       onSubmit(trimmed);
       setValue("");
-    }, [onSubmit, value]);
+    }, [isBlocked, onSubmit, value]);
     const handleSubmit = (0, import_react7.useCallback)(
       (event) => {
         event.preventDefault();
@@ -22459,23 +22466,30 @@ ${path2}` : path2;
         onSubmit: handleSubmit,
         children: [
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-            InputTextarea,
+            "fieldset",
             {
-              classes: {
-                container: "session-input__container",
-                containerDragging: "session-input__container--dragging",
-                textarea: "session-input__textarea",
-                textareaFocused: "session-input__textarea--focused",
-                overlay: "session-input__overlay"
-              },
-              maxHeight: MAX_TEXTAREA_HEIGHT,
-              onSubmit: sendMessage,
-              onValueChange: setValue,
-              placeholder: "Type your request or drag files with Shift held...",
-              value
+              disabled: isBlocked,
+              style: { border: 0, padding: 0, margin: 0 },
+              children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+                InputTextarea,
+                {
+                  classes: {
+                    container: "session-input__container",
+                    containerDragging: "session-input__container--dragging",
+                    textarea: "session-input__textarea",
+                    textareaFocused: "session-input__textarea--focused",
+                    overlay: "session-input__overlay"
+                  },
+                  maxHeight: MAX_TEXTAREA_HEIGHT,
+                  onSubmit: sendMessage,
+                  onValueChange: setValue,
+                  placeholder: "Type your request or drag files with Shift held...",
+                  value
+                }
+              )
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-input__hint", children: isBlocked ? "Preparing continuation\u2026" : "Press Enter to send, Shift+Enter for a new line" }) })
         ]
       }
     );
@@ -22696,10 +22710,12 @@ ${path2}` : path2;
           }
         ) }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app__rails", children: [
+          activeSession.status.connectionState === "blocked" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("output", { "aria-live": "polite", className: "session-panel", children: "\u041F\u043E\u0434\u0433\u043E\u0442\u0430\u0432\u043B\u0438\u0432\u0430\u044E \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0435\u043D\u0438\u0435\u2026 (rollover)" }) : null,
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             input_panel_default,
             {
               draft: activeSession.draft,
+              isBlocked: activeSession.status.connectionState === "blocked",
               onSubmit: (text7) => onSendMessage(activeSessionId, text7)
             }
           ),
