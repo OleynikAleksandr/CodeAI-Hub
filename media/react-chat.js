@@ -28390,7 +28390,7 @@ ${replacement}
     alignItems: "center",
     justifyContent: "center",
     padding: "32px 24px",
-    background: "var(--vscode-editor-background, #1e1e1e)",
+    background: "rgb(24, 24, 24)",
     color: "var(--vscode-editor-foreground, #cccccc)"
   };
   var settingsOnlyCardStyles = {
