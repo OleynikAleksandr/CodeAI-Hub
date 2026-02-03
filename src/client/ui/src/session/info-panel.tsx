@@ -2,19 +2,24 @@ import type { SessionBindingInfo } from "../../../../types/session";
 
 type InfoPanelProps = {
   readonly binding: SessionBindingInfo;
+  readonly continuationIndex?: number | null;
 };
 
-const InfoPanel = ({ binding }: InfoPanelProps) => {
+const InfoPanel = ({ binding, continuationIndex }: InfoPanelProps) => {
   let displayText = "Session information unavailable";
   let titleText: string | undefined;
+  const continuationPrefix =
+    typeof continuationIndex === "number" && continuationIndex >= 2
+      ? `Продолжение #${continuationIndex}  `
+      : "";
 
   if (binding.status === "ready" && binding.providerSessionId) {
-    displayText = `Session ID: ${binding.providerSessionId}`;
+    displayText = `${continuationPrefix}Session ID: ${binding.providerSessionId}`;
     titleText = binding.providerSessionId;
   } else if (binding.status === "pending") {
-    displayText = "Waiting for provider session ID…";
+    displayText = `${continuationPrefix}Waiting for provider session ID…`;
   } else if (binding.status === "failed") {
-    displayText = "Session failed to initialize";
+    displayText = `${continuationPrefix}Session failed to initialize`;
   }
 
   return (

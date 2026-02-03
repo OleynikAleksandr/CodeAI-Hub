@@ -41,6 +41,32 @@ const SessionView = ({
   const activeRecord = sessions.find(
     (session) => session.id === activeSessionId
   );
+  const continuationIndex = (() => {
+    if (!activeRecord) {
+      return null;
+    }
+    if (!activeRecord.continuationParentId) {
+      return 1;
+    }
+    const sessionsById = new Map(
+      sessions.map((session) => [session.id, session] as const)
+    );
+    const visited = new Set<string>();
+    let index = 1;
+    let cursor: SessionRecord | undefined = activeRecord;
+    while (cursor?.continuationParentId) {
+      if (visited.has(cursor.id)) {
+        break;
+      }
+      visited.add(cursor.id);
+      index += 1;
+      cursor = sessionsById.get(cursor.continuationParentId);
+      if (!cursor) {
+        break;
+      }
+    }
+    return Math.max(index, 2);
+  })();
   const primaryProviderId = activeRecord?.providerIds[0] ?? null;
   const providerTheme = mapProviderTheme(primaryProviderId);
   const providerDisplayLabel =
@@ -68,7 +94,10 @@ const SessionView = ({
           sessions={sessions}
         />
         {activeSession && activeSessionId ? (
-          <InfoPanel binding={activeSession.binding} />
+          <InfoPanel
+            binding={activeSession.binding}
+            continuationIndex={continuationIndex}
+          />
         ) : null}
       </div>
 
