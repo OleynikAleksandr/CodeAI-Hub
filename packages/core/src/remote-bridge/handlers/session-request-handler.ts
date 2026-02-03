@@ -343,6 +343,7 @@ export class SessionRequestHandler {
       readonly providerSessionId: string | null;
     };
     readonly rootSessionId?: string | null;
+    readonly continuationParentId?: string | null;
   }): Promise<Session | null> {
     const providerSessionResolution = await this.resolveProviderSessionId({
       adapter: options.adapter,
@@ -369,6 +370,7 @@ export class SessionRequestHandler {
         initiativeSlug: options.context.initiativeSlug,
         stage: options.context.stage,
         runSlug: options.context.runSlug ?? null,
+        continuationParentId: options.continuationParentId ?? null,
       }
     );
     if (!supportsImmediateBinding) {
@@ -1008,6 +1010,7 @@ export class SessionRequestHandler {
         providerSessionId: null,
       },
       rootSessionId: session.id,
+      continuationParentId: session.id,
     });
 
     if (!nextSession) {
