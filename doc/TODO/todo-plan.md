@@ -35,8 +35,8 @@
 10. [DONE] Git Commit: `feat(webview): add Codex Session Continuity card` (hash: f2f0510b)
 
 ### Stream: release build + docs sync (verification build)
-11. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
-12. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+11. [DONE] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
+12. [DONE] Git Commit: `chore(release): build-all next version` (hash: 4a6278f4)
 13. [TODO] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
 14. [TODO] Docs: sync release docs (strictly after build): `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for codex session continuity setting`
 15. [TODO] Git Commit: `docs: update release notes for codex session continuity setting` (hash: TBD)
