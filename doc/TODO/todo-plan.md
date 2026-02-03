@@ -64,8 +64,8 @@
 22. [TODO] Verification: вручную проверить MVP на узле `Описание → Reviewer` (rollover по порогу, отчёт создаёт агент, UI показывает баннер/блок ввода, новая сессия читает отчёт) — scope: manual; expected commit message: `chore: verify flow node continuity MVP`
 23. [TODO] Git Commit: `chore: verify flow node continuity MVP` (hash: TBD)
 ### Stream: rollover stability (single report)
-24. [TODO] Fix(core): предотвратить повторные rollover для одного provider-segment (1 отчёт на сегмент) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): prevent repeated flow node rollovers`
-25. [TODO] Git Commit: `fix(core): prevent repeated flow node rollovers` (hash: TBD)
+24. [DONE] Fix(core): предотвратить повторные rollover для одного provider-segment (1 отчёт на сегмент) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): prevent repeated flow node rollovers`
+25. [DONE] Git Commit: `fix(core): prevent repeated flow node rollovers` (hash: 061eb1f9)
 
 ### Stream: continuation index in UI header
 26. [TODO] Feat(core): экспортировать `continuationParentId` (prev segment id) в serialized session для UI — scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): expose flow continuation parent id`
