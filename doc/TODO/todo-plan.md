@@ -54,8 +54,8 @@
 ### Stream: docs hygiene (Project_Docs)
 1. [DONE] Docs: удалить устаревшие архитектурные документы, подготовленные под уже завершённые рефакторинги (часть 1) — scope: `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`, `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`, `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`; expected commit message: `docs: remove superseded refactor architecture docs`
 2. [DONE] Git Commit: `docs: remove superseded refactor architecture docs` (hash: 507717f6)
-3. [TODO] Docs: удалить устаревшие документы Project Manager (часть 2) — scope: `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`, `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: remove legacy project-manager architecture docs`
-4. [TODO] Git Commit: `docs: remove legacy project-manager architecture docs` (hash: TBD)
+3. [DONE] Docs: удалить устаревшие документы Project Manager (часть 2) — scope: `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`, `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: remove legacy project-manager architecture docs`
+4. [DONE] Git Commit: `docs: remove legacy project-manager architecture docs` (hash: 97a64bcd)
 5. [TODO] Docs: удалить TokenUsage дизайн-доки и неапрувнутый draft (часть 3) — scope: `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`, `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md`, `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; expected commit message: `docs: remove obsolete token-usage and draft docs`
 6. [TODO] Git Commit: `docs: remove obsolete token-usage and draft docs` (hash: TBD)
 
