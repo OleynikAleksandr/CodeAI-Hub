@@ -38,8 +38,8 @@
 6. [DONE] Git Commit: `feat(core): add continuity prompt template loader` (hash: 5c57cf2e)
 
 ### Stream: core safety (disable legacy auto-handoff)
-7. [TODO] Feat(core): отключить legacy auto-handoff (оставить persistence tokenUsage/continuity chain для UI) — scope: `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): disable legacy handoff automation`
-8. [TODO] Git Commit: `feat(core): disable legacy handoff automation` (hash: TBD)
+7. [DONE] Feat(core): отключить legacy auto-handoff (оставить persistence tokenUsage/continuity chain для UI) — scope: `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): disable legacy handoff automation`
+8. [DONE] Git Commit: `feat(core): disable legacy handoff automation` (hash: 1a424b58)
 
 ### Stream: core module (FlowNodeContinuity)
 9. [TODO] Feat(core): создать модуль `FlowNodeContinuity` (facade + types, без интеграции) — scope: `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-types.ts`, `packages/core/src/flow-node-continuity/index.ts`; expected commit message: `feat(core): add flow node continuity module skeleton`
