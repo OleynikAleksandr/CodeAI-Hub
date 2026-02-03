@@ -82,6 +82,6 @@
 ### Stream: settings hot reload (threshold)
 34. [DONE] Fix(core): применять `remainingPercentThreshold` без перезапуска Core (перечитывать settings.json / кеш по mtime) — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): live reload continuity threshold`
 35. [DONE] Git Commit: `fix(core): live reload continuity threshold` (hash: 996eeb32)
-36. [TODO] Docs(todo): зафиксировать хеш (Stream settings hot reload) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 96 live threshold reload hash`
-37. [TODO] Git Commit: `docs(todo): record Phase 96 live threshold reload hash` (hash: TBD)
+36. [DONE] Docs(todo): зафиксировать хеш (Stream settings hot reload) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 96 live threshold reload hash`
+37. [DONE] Git Commit: `docs(todo): record Phase 96 live threshold reload hash` (hash: a43d423a)
 
