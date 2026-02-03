@@ -3,12 +3,17 @@ import { InputTextarea } from "./input-textarea";
 
 type InputPanelProps = {
   readonly draft: string;
+  readonly isBlocked?: boolean;
   readonly onSubmit: (text: string) => void;
 };
 
 const MAX_TEXTAREA_HEIGHT = 200;
 
-const InputPanel = ({ draft, onSubmit }: InputPanelProps) => {
+const InputPanel = ({
+  draft,
+  isBlocked = false,
+  onSubmit,
+}: InputPanelProps) => {
   const [value, setValue] = useState(draft);
 
   useEffect(() => {
@@ -16,13 +21,16 @@ const InputPanel = ({ draft, onSubmit }: InputPanelProps) => {
   }, [draft]);
 
   const sendMessage = useCallback(() => {
+    if (isBlocked) {
+      return;
+    }
     const trimmed = value.trim();
     if (!trimmed) {
       return;
     }
     onSubmit(trimmed);
     setValue("");
-  }, [onSubmit, value]);
+  }, [isBlocked, onSubmit, value]);
 
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
@@ -38,24 +46,31 @@ const InputPanel = ({ draft, onSubmit }: InputPanelProps) => {
       className="session-input session-panel"
       onSubmit={handleSubmit}
     >
-      <InputTextarea
-        classes={{
-          container: "session-input__container",
-          containerDragging: "session-input__container--dragging",
-          textarea: "session-input__textarea",
-          textareaFocused: "session-input__textarea--focused",
-          overlay: "session-input__overlay",
-        }}
-        maxHeight={MAX_TEXTAREA_HEIGHT}
-        onSubmit={sendMessage}
-        onValueChange={setValue}
-        placeholder="Type your request or drag files with Shift held..."
-        value={value}
-      />
+      <fieldset
+        disabled={isBlocked}
+        style={{ border: 0, padding: 0, margin: 0 }}
+      >
+        <InputTextarea
+          classes={{
+            container: "session-input__container",
+            containerDragging: "session-input__container--dragging",
+            textarea: "session-input__textarea",
+            textareaFocused: "session-input__textarea--focused",
+            overlay: "session-input__overlay",
+          }}
+          maxHeight={MAX_TEXTAREA_HEIGHT}
+          onSubmit={sendMessage}
+          onValueChange={setValue}
+          placeholder="Type your request or drag files with Shift held..."
+          value={value}
+        />
+      </fieldset>
 
       <div className="session-input__footer">
         <span className="session-input__hint">
-          Press Enter to send, Shift+Enter for a new line
+          {isBlocked
+            ? "Preparing continuation…"
+            : "Press Enter to send, Shift+Enter for a new line"}
         </span>
       </div>
     </form>
