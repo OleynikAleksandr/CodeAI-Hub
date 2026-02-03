@@ -169,6 +169,10 @@ export const sanitizeSession = (
     stage: typeof session.stage === "string" ? session.stage : null,
     runSlug,
     sessionKind,
+    continuationParentId:
+      typeof session.continuationParentId === "string"
+        ? session.continuationParentId
+        : null,
     createdAt: toNumberTimestamp(session.createdAt),
     binding: normalizeBinding(bindingCandidate),
   };
