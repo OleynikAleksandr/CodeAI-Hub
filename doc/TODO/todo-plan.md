@@ -28,8 +28,8 @@
 - **UX:** во время rollover UI показывает “готовлю продолжение…” (spinner) и блокирует отправку сообщений.
 
 ### Stream: docs sync
-1. [TODO] Docs(flow): добавить `SessionContinuity/` в `doc/SolidWorks-Flow/README.md` — scope: `doc/SolidWorks-Flow/README.md`; expected commit message: `docs(flow): document node session continuity`
-2. [TODO] Git Commit: `docs(flow): document node session continuity` (hash: TBD)
+1. [DONE] Docs(flow): добавить `SessionContinuity/` в `doc/SolidWorks-Flow/README.md` — scope: `doc/SolidWorks-Flow/README.md`; expected commit message: `docs(flow): document node session continuity`
+2. [DONE] Git Commit: `docs(flow): document node session continuity` (hash: 2fb022d8)
 
 ### Stream: templates (continuity prompts)
 3. [TODO] Docs(flow): зафиксировать контракт шаблонов промтов (IDs, placeholders, default path `~/.codeai-hub/templates/`) — scope: `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/ContinuityReport_Contracts.md`; expected commit message: `docs(flow): define continuity prompt templates contract`
