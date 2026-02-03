@@ -44,5 +44,5 @@
 17. [DONE] Git Commit: `docs: bump Project Docs index for latest release` (hash: 95658668)
 
 ### Stream: verification (manual)
-18. [TODO] Verification(owner): в VS Code Settings → Codex появился блок "Codex Session Continuity"; значение сохраняется/восстанавливается из `~/.codeai-hub/settings/settings.json` — scope: manual; expected commit message: `chore: verify codex session continuity setting`
+18. [DONE] Verification(owner): в VS Code Settings → Codex появился блок "Codex Session Continuity"; значение сохраняется/восстанавливается из `~/.codeai-hub/settings/settings.json` — scope: manual; expected commit message: `chore: verify codex session continuity setting`
 19. [TODO] Git Commit: `chore: verify codex session continuity setting` (hash: TBD)
