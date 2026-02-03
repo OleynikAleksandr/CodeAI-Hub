@@ -882,6 +882,15 @@ export class SessionRequestHandler {
       return;
     }
 
+    if (
+      !this.flowNodeContinuity.isEligibleForRollover({
+        stageId: session.stage,
+        runSlug: session.runSlug,
+      })
+    ) {
+      return;
+    }
+
     if (this.flowNodeRolloverInFlight.has(sessionId)) {
       return;
     }
