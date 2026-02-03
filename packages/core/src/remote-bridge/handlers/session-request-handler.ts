@@ -6,8 +6,13 @@ import {
   sanitizeWorkspaceSlug,
 } from "@codeai-hub/unified-session";
 import type { CoreConfig } from "../../config";
+import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
+import {
+  extractTokenUsage,
+  isBelowRemainingPercentThreshold,
+} from "../../session-continuity/token-usage";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
@@ -171,6 +176,8 @@ export class SessionRequestHandler {
   private readonly stateBroadcaster: () => void;
   private readonly continuity: SessionContinuityFacade;
   private readonly descriptionStepStore = new DescriptionStepStore();
+  private readonly flowNodeContinuity: FlowNodeContinuityFacade;
+  private readonly flowNodeRolloverInFlight = new Set<string>();
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -198,6 +205,9 @@ export class SessionRequestHandler {
         createSession: async (request) => this.createContinuitySession(request),
       },
       sessionLookup: (sessionId) => this.sessionManager.getSession(sessionId),
+    });
+    this.flowNodeContinuity = new FlowNodeContinuityFacade({
+      templatesDir: this.config.templatesDir,
     });
   }
 
@@ -829,6 +839,15 @@ export class SessionRequestHandler {
       });
     });
 
+    this.handleFlowNodeContinuityProviderEvent(sessionId, event).catch(
+      (error) => {
+        this.logger.warn("Flow node continuity handler failed", {
+          sessionId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    );
+
     if (typeof event === "string") {
       this.updateBindingWithResolvedId(sessionId, event);
       return;
@@ -837,6 +856,171 @@ export class SessionRequestHandler {
       return;
     }
     this.handleTypedProviderEvent(sessionId, event as ProviderEventEnvelope);
+  }
+
+  private async handleFlowNodeContinuityProviderEvent(
+    sessionId: string,
+    event: unknown
+  ): Promise<void> {
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      return;
+    }
+
+    const usage = extractTokenUsage(event);
+    if (!usage) {
+      return;
+    }
+
+    if (!(session.initiativeSlug && session.stage)) {
+      return;
+    }
+
+    const remainingPercentThreshold =
+      this.config.claudeContinuityRemainingPercentThreshold;
+    if (!isBelowRemainingPercentThreshold(usage, remainingPercentThreshold)) {
+      return;
+    }
+
+    if (this.flowNodeRolloverInFlight.has(sessionId)) {
+      return;
+    }
+
+    this.flowNodeRolloverInFlight.add(sessionId);
+    try {
+      await this.rolloverFlowNodeSession(session);
+    } finally {
+      this.flowNodeRolloverInFlight.delete(sessionId);
+    }
+  }
+
+  private toSafeTimestamp(value: string): string {
+    return (
+      value
+        .trim()
+        .replace(/[^a-zA-Z0-9]/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/-$/g, "") || "unknown"
+    );
+  }
+
+  private resolveDescriptionReviewerFinalArtifactPath(
+    session: Session
+  ): string {
+    const relativePath = path.join(
+      ".codeai-hub",
+      session.initiativeSlug ?? "default-workspace",
+      "description",
+      "Final_Description.md"
+    );
+    return path.resolve(session.workspacePath, relativePath);
+  }
+
+  private async rolloverFlowNodeSession(session: Session): Promise<void> {
+    const adapter = this.providerRegistry.getAdapter(session.providerId);
+    if (!adapter) {
+      return;
+    }
+
+    const workspaceSlug = session.initiativeSlug;
+    const stageId = session.stage;
+    if (!(workspaceSlug && stageId)) {
+      return;
+    }
+
+    const nodeId = session.runSlug ? `${stageId}/${session.runSlug}` : stageId;
+    const role = session.runSlug
+      ? `${session.runSlug.slice(0, 1).toUpperCase()}${session.runSlug.slice(1)}`
+      : "Agent";
+    const timestamp = this.toSafeTimestamp(new Date().toISOString());
+
+    const reportPaths = this.flowNodeContinuity.buildReportPaths({
+      workspaceRoot: session.workspacePath,
+      workspaceSlug,
+      nodeId,
+      role,
+      providerId: session.providerId,
+      timestamp,
+    });
+
+    const canonicalArtifactPath =
+      stageId === "description" && session.runSlug === "reviewer"
+        ? this.resolveDescriptionReviewerFinalArtifactPath(session)
+        : "";
+
+    const templateId =
+      stageId === "description" && session.runSlug === "reviewer"
+        ? "flow/continuity/create-report-doc.md"
+        : "flow/continuity/create-report-code.md";
+
+    const createReportPrompt = this.flowNodeContinuity.renderTemplate(
+      templateId,
+      {
+        nodeId,
+        role,
+        reportPath: reportPaths.reportPath,
+        canonicalArtifactPath,
+      }
+    );
+
+    const wrappedCreateReportPrompt = [
+      "INTERNAL: Context budget is low. Prepare continuity report and save it on disk.",
+      `- Temp path: \`${reportPaths.tmpReportPath}\``,
+      `- Final path: \`${reportPaths.reportPath}\``,
+      "",
+      createReportPrompt.trim(),
+    ].join("\n");
+
+    await this.sendInternalMessage(session.id, wrappedCreateReportPrompt);
+
+    await this.flowNodeContinuity.waitForReport({
+      reportPath: reportPaths.reportPath,
+      timeoutMs: 60_000,
+      pollIntervalMs: 250,
+    });
+
+    const nextSession = await this.createAndRegisterSession({
+      providerId: session.providerId,
+      workspacePath: session.workspacePath,
+      adapter,
+      context: {
+        initiativeSlug: workspaceSlug,
+        stage: stageId,
+        runSlug: session.runSlug,
+        providerSessionId: null,
+      },
+      rootSessionId: session.id,
+    });
+
+    if (!nextSession) {
+      return;
+    }
+
+    const resumePrompt = this.flowNodeContinuity.renderTemplate(
+      "flow/continuity/resume.md",
+      {
+        nodeId,
+        role,
+        reportPath: reportPaths.reportPath,
+      }
+    );
+
+    const reviewerBootstrap =
+      stageId === "description" && session.runSlug === "reviewer"
+        ? [
+            "You are a Reviewer Agent for the Description step.",
+            "Convert draft description.md to Final_Description.md.",
+            `Final target: \`${this.resolveDescriptionReviewerFinalArtifactPath(
+              session
+            )}\``,
+          ].join("\n")
+        : null;
+
+    const wrappedResumePrompt = reviewerBootstrap
+      ? [reviewerBootstrap, "", resumePrompt.trim()].join("\n")
+      : resumePrompt.trim();
+
+    await this.sendInternalMessage(nextSession.id, wrappedResumePrompt);
   }
 
   private handleTypedProviderEvent(
