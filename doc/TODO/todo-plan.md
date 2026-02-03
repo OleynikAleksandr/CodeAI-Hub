@@ -85,3 +85,8 @@
 36. [DONE] Docs(todo): зафиксировать хеш (Stream settings hot reload) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record Phase 96 live threshold reload hash`
 37. [DONE] Git Commit: `docs(todo): record Phase 96 live threshold reload hash` (hash: a43d423a)
 
+### Stream: docs + session report (wrap-up)
+38. [TODO] Docs(flow): задокументировать live reload порога `remainingPercentThreshold` + дедуп rollover (1 отчёт на сегмент) — scope: `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`, `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`; expected commit message: `docs(flow): document live continuity threshold reload`
+39. [TODO] Git Commit: `docs(flow): document live continuity threshold reload` (hash: TBD)
+40. [TODO] Report: создать `doc/Sessions/Session081.md` (итоги Phase 96 + коммиты) — scope: `doc/Sessions/Session081.md`; expected commit message: `docs(session): add Session081 report`
+41. [TODO] Git Commit: `docs(session): add Session081 report` (hash: TBD)
