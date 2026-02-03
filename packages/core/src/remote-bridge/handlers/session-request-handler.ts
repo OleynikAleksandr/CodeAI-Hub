@@ -178,6 +178,7 @@ export class SessionRequestHandler {
   private readonly descriptionStepStore = new DescriptionStepStore();
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeRolloverInFlight = new Set<string>();
+  private readonly flowNodeRolloverStarted = new Set<string>();
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -867,6 +868,10 @@ export class SessionRequestHandler {
       return;
     }
 
+    if (this.flowNodeRolloverStarted.has(sessionId)) {
+      return;
+    }
+
     const usage = extractTokenUsage(event);
     if (!usage) {
       return;
@@ -896,8 +901,12 @@ export class SessionRequestHandler {
     }
 
     this.flowNodeRolloverInFlight.add(sessionId);
+    this.flowNodeRolloverStarted.add(sessionId);
     try {
       await this.rolloverFlowNodeSession(session);
+    } catch (error) {
+      this.flowNodeRolloverStarted.delete(sessionId);
+      throw error;
     } finally {
       this.flowNodeRolloverInFlight.delete(sessionId);
     }
