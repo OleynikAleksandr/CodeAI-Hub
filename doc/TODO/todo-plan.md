@@ -88,5 +88,5 @@
 ### Stream: docs + session report (wrap-up)
 38. [DONE] Docs(flow): задокументировать live reload порога `remainingPercentThreshold` + дедуп rollover (1 отчёт на сегмент) — scope: `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`, `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`; expected commit message: `docs(flow): document live continuity threshold reload`
 39. [DONE] Git Commit: `docs(flow): document live continuity threshold reload` (hash: 5fe9394d)
-40. [TODO] Report: создать `doc/Sessions/Session081.md` (итоги Phase 96 + коммиты) — scope: `doc/Sessions/Session081.md`; expected commit message: `docs(session): add Session081 report`
-41. [TODO] Git Commit: `docs(session): add Session081 report` (hash: TBD)
+40. [DONE] Report: создать `doc/Sessions/Session081.md` (итоги Phase 96 + коммиты) — scope: `doc/Sessions/Session081.md`; expected commit message: `docs(session): add Session081 report`
+41. [DONE] Git Commit: `docs(session): add Session081 report` (hash: 059d4c7a)
