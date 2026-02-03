@@ -8,6 +8,7 @@ export type CoreConfig = {
   readonly shutdownGracePeriodMs: number;
   readonly idleTtlMinutes: number | null;
   readonly managedMode: string | null;
+  readonly templatesDir: string;
   readonly claudeWorkspacePath?: string;
   readonly claudeProjectSlug: string;
   readonly claudeSettingsPath: string;
@@ -38,6 +39,7 @@ type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
 const DEFAULT_PORT = 8080;
 const DEFAULT_GRACE_MS = 3_600_000;
 const MILLISECONDS_IN_MINUTE = 60_000;
+const DEFAULT_TEMPLATES_DIR = path.join(homedir(), ".codeai-hub", "templates");
 const CLAUDE_SETTINGS_DIR = path.join(homedir(), ".codeai-hub", "settings");
 const CLAUDE_SETTINGS_FILE = path.join(CLAUDE_SETTINGS_DIR, "settings.json");
 const LEGACY_CLAUDE_SETTINGS_FILE = path.join(
@@ -308,6 +310,7 @@ export const loadConfig = (): CoreConfig => {
       ? null
       : Math.round(shutdownGracePeriodMs / MILLISECONDS_IN_MINUTE);
   const managedMode = process.env.CORE_MANAGED_MODE ?? null;
+  const templatesDir = process.env.CORE_TEMPLATES_DIR ?? DEFAULT_TEMPLATES_DIR;
   const workspacePath = process.env.CLAUDE_WORKSPACE_PATH;
   const slug =
     process.env.CLAUDE_PROJECT_SLUG ??
@@ -365,6 +368,7 @@ export const loadConfig = (): CoreConfig => {
     shutdownGracePeriodMs,
     idleTtlMinutes,
     managedMode,
+    templatesDir,
     claudeWorkspacePath: workspacePath,
     claudeProjectSlug: slug,
     claudeSettingsPath,
