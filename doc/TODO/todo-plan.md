@@ -82,8 +82,8 @@
 ## Phase 93 — Webview: default background rgb(24,24,24) + Release (owner: Oleksandr, updated: 2026-02-03)
 
 ### Stream: UI polish (webview background)
-1. [TODO] Fix(webview): поставить дефолтный фон Webview как у большинства расширений (`rgb(24, 24, 24)`) — scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `src/core/webview-module/webview-html-generator.ts`, `media/react-chat.js`; expected commit message: `fix(webview): set default webview background to rgb(24,24,24)`
-2. [TODO] Git Commit: `fix(webview): set default webview background to rgb(24,24,24)` (hash: TBD)
+1. [DONE] Fix(webview): поставить дефолтный фон Webview как у большинства расширений (`rgb(24, 24, 24)`) — scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `src/core/webview-module/webview-html-generator.ts`, `media/react-chat.js`; expected commit message: `fix(webview): set default webview background to rgb(24,24,24)`
+2. [DONE] Git Commit: `fix(webview): set default webview background to rgb(24,24,24)` (hash: b222a0ed)
 
 ### Stream: release build + docs sync (final)
 3. [TODO] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
