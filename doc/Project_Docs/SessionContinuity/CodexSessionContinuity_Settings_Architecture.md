@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-03
 **Scope:** Settings UI + Settings Snapshot (`providers.codex`) 
-**Status:** Draft (needs approval)
+**Status:** Approved (Phase 94)
 **Owner:** Oleksandr + Codex
 
 ---
@@ -88,4 +88,3 @@
   3) стартовать новую сессию, используя отчёт как входной контекст
 
 Эта архитектура **не реализуется** в данной фазе — сейчас добавляем только настройку/контракт.
-
