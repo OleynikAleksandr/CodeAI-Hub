@@ -1,4 +1,4 @@
-import { access } from "node:fs/promises";
+import { access, readFile, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import {
@@ -96,6 +96,74 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
 
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 
+const DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
+const MIN_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+const MAX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
+
+const clampNumber = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, value));
+
+const normalizeContinuityThresholdPercent = (options: {
+  readonly raw: unknown;
+  readonly fallback: number;
+}): number => {
+  const numeric =
+    typeof options.raw === "number" ? options.raw : Number(options.raw);
+  if (!Number.isFinite(numeric)) {
+    return clampNumber(
+      options.fallback,
+      MIN_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+      MAX_CONTINUITY_REMAINING_PERCENT_THRESHOLD
+    );
+  }
+  return clampNumber(
+    numeric,
+    MIN_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+    MAX_CONTINUITY_REMAINING_PERCENT_THRESHOLD
+  );
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const extractContinuityThresholdPercentFromSettings = (options: {
+  readonly settings: unknown;
+  readonly providerKey: "claude" | "codex";
+  readonly fallback: number;
+}): number => {
+  if (!isRecord(options.settings)) {
+    return normalizeContinuityThresholdPercent({
+      raw: undefined,
+      fallback: options.fallback,
+    });
+  }
+  const providers = options.settings.providers;
+  if (!isRecord(providers)) {
+    return normalizeContinuityThresholdPercent({
+      raw: undefined,
+      fallback: options.fallback,
+    });
+  }
+  const provider = providers[options.providerKey];
+  if (!isRecord(provider)) {
+    return normalizeContinuityThresholdPercent({
+      raw: undefined,
+      fallback: options.fallback,
+    });
+  }
+  const sessionContinuity = provider.sessionContinuity;
+  if (!isRecord(sessionContinuity)) {
+    return normalizeContinuityThresholdPercent({
+      raw: undefined,
+      fallback: options.fallback,
+    });
+  }
+  return normalizeContinuityThresholdPercent({
+    raw: sessionContinuity.remainingPercentThreshold,
+    fallback: options.fallback,
+  });
+};
+
 const FINALIZE_TRIGGER_PATTERN =
   /(^|[\s,.;:!?])(?:ок|ok|утверждаю|approve|approved)(?=$|[\s,.;:!?])/i;
 
@@ -179,6 +247,10 @@ export class SessionRequestHandler {
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeRolloverInFlight = new Set<string>();
   private readonly flowNodeRolloverStarted = new Set<string>();
+  private flowNodeContinuitySettingsCache: {
+    readonly mtimeMs: number;
+    readonly settings: unknown;
+  } | null = null;
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -884,7 +956,7 @@ export class SessionRequestHandler {
     }
 
     const remainingPercentThreshold =
-      this.config.claudeContinuityRemainingPercentThreshold;
+      await this.resolveLiveContinuityRemainingPercentThreshold(session);
     if (!isBelowRemainingPercentThreshold(usage, remainingPercentThreshold)) {
       return;
     }
@@ -922,6 +994,45 @@ export class SessionRequestHandler {
         .replace(/-+/g, "-")
         .replace(/-$/g, "") || "unknown"
     );
+  }
+
+  private resolveSettingsProviderKey(providerId: string): "claude" | "codex" {
+    return providerId.startsWith("codex") ? "codex" : "claude";
+  }
+
+  private async loadContinuitySettingsSnapshot(): Promise<unknown> {
+    const settingsPath = this.config.claudeSettingsPath;
+    try {
+      const fileStat = await stat(settingsPath);
+      const mtimeMs = fileStat.mtimeMs;
+      if (
+        this.flowNodeContinuitySettingsCache &&
+        this.flowNodeContinuitySettingsCache.mtimeMs === mtimeMs
+      ) {
+        return this.flowNodeContinuitySettingsCache.settings;
+      }
+
+      const raw = await readFile(settingsPath, "utf8");
+      const parsed = JSON.parse(raw) as unknown;
+      this.flowNodeContinuitySettingsCache = { mtimeMs, settings: parsed };
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
+  private async resolveLiveContinuityRemainingPercentThreshold(
+    session: Session
+  ): Promise<number> {
+    const providerKey = this.resolveSettingsProviderKey(session.providerId);
+    const settings = await this.loadContinuitySettingsSnapshot();
+    return extractContinuityThresholdPercentFromSettings({
+      settings,
+      providerKey,
+      fallback:
+        this.config.claudeContinuityRemainingPercentThreshold ??
+        DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+    });
   }
 
   private resolveDescriptionReviewerFinalArtifactPath(
