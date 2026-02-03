@@ -105,6 +105,7 @@ export class SessionContinuityFacade {
   private readonly clock: () => string;
   private readonly callbacks: ContinuityCallbacks;
   private readonly tracker: ContinuityTracker;
+  private readonly enableLegacyHandoff: boolean;
   private readonly pending = new Map<string, PendingHandoff>();
   private readonly sessionLookup: (sessionId: string) => Session | undefined;
 
@@ -112,6 +113,7 @@ export class SessionContinuityFacade {
     readonly logger: Logger;
     readonly clock?: () => string;
     readonly remainingRatioThreshold?: number;
+    readonly enableLegacyHandoff?: boolean;
     readonly callbacks: ContinuityCallbacks;
     readonly sessionLookup: (sessionId: string) => Session | undefined;
   }) {
@@ -122,6 +124,7 @@ export class SessionContinuityFacade {
     });
     this.callbacks = options.callbacks;
     this.sessionLookup = options.sessionLookup;
+    this.enableLegacyHandoff = options.enableLegacyHandoff ?? false;
     this.tracker = new ContinuityTracker({
       logger: options.logger,
       clock: this.clock,
@@ -160,13 +163,15 @@ export class SessionContinuityFacade {
     const usage = extractTokenUsage(event, this.clock());
     if (usage) {
       await this.persistTokenUsageSnapshot(session, event, usage);
-      const decision = this.monitor.record(sessionId, usage);
-      if (decision.shouldHandoff) {
-        await this.requestHandoff(session);
+      if (this.enableLegacyHandoff) {
+        const decision = this.monitor.record(sessionId, usage);
+        if (decision.shouldHandoff) {
+          await this.requestHandoff(session);
+        }
       }
     }
 
-    if (this.pending.has(sessionId)) {
+    if (this.enableLegacyHandoff && this.pending.has(sessionId)) {
       const content = extractMessageContent(event);
       if (content) {
         await this.finalizeHandoff(session, content);
