@@ -113,3 +113,33 @@ Core отправляет агенту короткий prompt, который �
 В новой сессии Core отправляет:
 - стандартный узло‑специфичный стартовый prompt;
 - коротко: “прочти последний отчёт по пути `<path>` и продолжай”.
+
+## 6) Prompt Templates (IDs / placeholders / storage)
+
+### 6.1 Default path
+
+- `templatesDir` (default): `~/.codeai-hub/templates/`
+
+### 6.2 Template IDs (MVP)
+
+- `flow/continuity/create-report-doc.md`
+- `flow/continuity/create-report-code.md`
+- `flow/continuity/resume.md`
+
+### 6.3 Required placeholders
+
+- `{{nodeId}}`
+- `{{role}}`
+- `{{reportPath}}`
+- `{{canonicalArtifactPath}}` (doc-node only)
+
+### 6.4 Storage rule
+
+- Пользователь может переопределять шаблоны, просто положив файл по пути:
+  - `<templatesDir>/<templateId>`
+- Если файла нет — используется встроенный шаблон.
+
+### 6.5 Hard requirements inside templates
+
+- Требование атомарной записи: писать в `*.tmp.md`, затем `rename` → финальный `*.md`.
+- Запрет на вставку переписки и больших вставок артефактов.
