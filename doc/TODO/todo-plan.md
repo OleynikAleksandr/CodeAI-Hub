@@ -45,4 +45,4 @@
 
 ### Stream: verification (manual)
 18. [DONE] Verification(owner): в VS Code Settings → Codex появился блок "Codex Session Continuity"; значение сохраняется/восстанавливается из `~/.codeai-hub/settings/settings.json` — scope: manual; expected commit message: `chore: verify codex session continuity setting`
-19. [TODO] Git Commit: `chore: verify codex session continuity setting` (hash: TBD)
+19. [DONE] Git Commit: `chore: verify codex session continuity setting` (hash: c097141f)
