@@ -124,3 +124,34 @@ Core:
 
 - Prompt‑шаблоны (bootstrap) должны быть узло‑специфичными и отправляться Core “от лица пользователя” как стартовое сообщение.
 - Continuity‑инструкция — короткая и узконаправленная: “составь отчёт” или “прочти отчёт”.
+
+## 10) Prompt Templates (contract)
+
+### 10.1 Default templates directory
+
+- **Default:** `~/.codeai-hub/templates/`
+- **Resolution:** `templateId` всегда резолвится как относительный путь внутри `templatesDir`.
+
+### 10.2 Template IDs (MVP)
+
+1) `flow/continuity/create-report-doc.md`
+- Назначение: внутренняя инструкция агенту — составить **doc-node** continuity report и сохранить его по `reportPath`.
+
+2) `flow/continuity/create-report-code.md`
+- Назначение: внутренняя инструкция агенту — составить **code-node** continuity report и сохранить его по `reportPath`.
+
+3) `flow/continuity/resume.md`
+- Назначение: первое сообщение в новом segment — “прочитай последний отчёт по `reportPath` и продолжай работу в этом узле”.
+
+### 10.3 Placeholders
+
+Подстановки выполняет Core простым replace (без логики шаблонизации).
+
+- `{{nodeId}}` — идентификатор узла дерева
+- `{{role}}` — роль агента (например `Reviewer`)
+- `{{reportPath}}` — абсолютный путь, куда агент обязан записать финальный отчёт
+- `{{canonicalArtifactPath}}` — абсолютный путь к каноническому артефакту узла (только для doc-node)
+
+### 10.4 Fallback rule
+
+Если файл шаблона отсутствует в `templatesDir`, Core использует **встроенный** (bundled) шаблон по тому же `templateId`.
