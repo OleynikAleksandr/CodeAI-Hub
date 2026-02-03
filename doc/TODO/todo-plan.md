@@ -46,3 +46,19 @@
 ### Stream: verification (manual)
 18. [DONE] Verification(owner): в VS Code Settings → Codex появился блок "Codex Session Continuity"; значение сохраняется/восстанавливается из `~/.codeai-hub/settings/settings.json` — scope: manual; expected commit message: `chore: verify codex session continuity setting`
 19. [DONE] Git Commit: `chore: verify codex session continuity setting` (hash: c097141f)
+
+---
+
+## Phase 95 — Docs: remove obsolete Project_Docs refactor designs (owner: Oleksandr, updated: 2026-02-03)
+
+### Stream: docs hygiene (Project_Docs)
+1. [TODO] Docs: удалить устаревшие архитектурные документы, подготовленные под уже завершённые рефакторинги (часть 1) — scope: `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`, `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`, `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`; expected commit message: `docs: remove superseded refactor architecture docs`
+2. [TODO] Git Commit: `docs: remove superseded refactor architecture docs` (hash: TBD)
+3. [TODO] Docs: удалить устаревшие документы Project Manager (часть 2) — scope: `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`, `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: remove legacy project-manager architecture docs`
+4. [TODO] Git Commit: `docs: remove legacy project-manager architecture docs` (hash: TBD)
+5. [TODO] Docs: удалить TokenUsage дизайн-доки и неапрувнутый draft (часть 3) — scope: `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`, `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md`, `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; expected commit message: `docs: remove obsolete token-usage and draft docs`
+6. [TODO] Git Commit: `docs: remove obsolete token-usage and draft docs` (hash: TBD)
+
+### Stream: session report
+7. [TODO] Docs(session): создать отчёт `doc/Sessions/Session079.md` (docs cleanup + GitHub push) — scope: `doc/Sessions/Session079.md`; expected commit message: `docs(session): add Session079 docs cleanup and GitHub publish`
+8. [TODO] Git Commit: `docs(session): add Session079 docs cleanup and GitHub publish` (hash: TBD)
