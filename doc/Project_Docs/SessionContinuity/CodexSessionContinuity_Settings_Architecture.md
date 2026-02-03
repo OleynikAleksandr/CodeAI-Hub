@@ -7,6 +7,12 @@
 
 ---
 
+## Update (Phase 96 — Flow Node Continuity MVP)
+
+- Порог `providers.*.sessionContinuity.remainingPercentThreshold` теперь реально используется Core для auto-rollover узла `Описание → Reviewer`.
+- Значение применяется **без перезапуска Core**: Core перечитывает `~/.codeai-hub/settings/settings.json` при изменении (кеш по `mtime`).
+- Выбор источника порога: `providerId`, начинающийся с `codex` → `providers.codex...`, иначе → `providers.claude...`.
+
 ## 1) Problem
 
 Для Claude уже есть настройка **Session Continuity** (порог оставшегося контекстного окна в процентах), которая будет использоваться в будущем для автозавершения текущей сессии отчётом (handoff) и автоматического старта новой сессии с чтением этого отчёта.
@@ -25,7 +31,7 @@
 
 ## 3) Non-goals
 
-- Не реализуем сам триггер/автоматизацию continuity в этой фазе.
+- В Phase 94 не реализовывали сам триггер/автоматизацию continuity; начиная с Phase 96 auto-rollover реализован для Flow Node Continuity (MVP).
 - Не меняем логику подсчёта token usage для Codex.
 - Не меняем протоколы/контракты Core Bridge.
 

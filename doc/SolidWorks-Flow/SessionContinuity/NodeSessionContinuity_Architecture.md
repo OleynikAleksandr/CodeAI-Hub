@@ -93,6 +93,14 @@
 - затем `rename` → `report.md`.
 Core watcher реагирует только на финальное имя `report.md`.
 
+### 6.3 Threshold + live settings reload (Phase 96)
+- Rollover проверяется на provider events, где удалось извлечь `tokenUsage` (used/limit).
+- Порог берётся из `~/.codeai-hub/settings/settings.json` (live reload, кеш по `mtime`):
+  - `providers.claude.sessionContinuity.remainingPercentThreshold` — для non-codex провайдеров;
+  - `providers.codex.sessionContinuity.remainingPercentThreshold` — для `providerId`, начинающихся с `codex`.
+- Диапазон clamp: 5..80, fallback: 30 (если настройка отсутствует/некорректна).
+- Защита от дубликатов: для каждого provider segment rollover запускается не более 1 раза (1 отчёт на segment).
+
 ---
 
 ## 7) Report Storage Layout (рекомендуемая схема)
