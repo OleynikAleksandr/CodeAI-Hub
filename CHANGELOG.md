@@ -1,3 +1,7 @@
+## [1.1.501] - 2026-02-03
+### Fixed
+- Webview: default background set to `rgb(24, 24, 24)` (common extension webview background).
+
 ## [1.1.500] - 2026-02-02
 ### Fixed
 - Webview: Settings-only landing page background now uses VS Code theme variables (no hard-coded black).
