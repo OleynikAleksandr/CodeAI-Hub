@@ -2,6 +2,10 @@ import type {
   FlowNodeContinuityTemplateId,
   FlowNodeContinuityTemplateVariables,
 } from "./flow-node-continuity-types";
+import type { ContinuityReportPaths } from "./report-path";
+import { buildContinuityReportPaths } from "./report-path";
+import type { WaitForReportResult } from "./report-waiter";
+import { ContinuityReportWaiter } from "./report-waiter";
 import { TemplateLoader } from "./template-loader";
 
 const escapeRegExp = (value: string): string =>
@@ -9,15 +13,18 @@ const escapeRegExp = (value: string): string =>
 
 export type FlowNodeContinuityFacadeOptions = {
   readonly templatesDir: string;
+  readonly clock?: () => number;
 };
 
 export class FlowNodeContinuityFacade {
   readonly #templateLoader: TemplateLoader;
+  readonly #reportWaiter: ContinuityReportWaiter;
 
   constructor(options: FlowNodeContinuityFacadeOptions) {
     this.#templateLoader = new TemplateLoader({
       templatesDir: options.templatesDir,
     });
+    this.#reportWaiter = new ContinuityReportWaiter(options.clock);
   }
 
   loadTemplate(templateId: FlowNodeContinuityTemplateId): string {
@@ -36,5 +43,24 @@ export class FlowNodeContinuityFacade {
       );
     }
     return content;
+  }
+
+  buildReportPaths(options: {
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+    readonly nodeId: string;
+    readonly role: string;
+    readonly providerId: string;
+    readonly timestamp: string;
+  }): ContinuityReportPaths {
+    return buildContinuityReportPaths(options);
+  }
+
+  waitForReport(options: {
+    readonly reportPath: string;
+    readonly timeoutMs: number;
+    readonly pollIntervalMs: number;
+  }): Promise<WaitForReportResult> {
+    return this.#reportWaiter.waitForReport(options);
   }
 }
