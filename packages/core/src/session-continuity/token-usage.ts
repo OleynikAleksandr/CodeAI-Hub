@@ -99,3 +99,17 @@ export const extractTokenUsage = (
     updatedAt: timestamp,
   };
 };
+
+export const computeRemainingPercent = (usage: TokenUsageSnapshot): number => {
+  const remaining = usage.limit - usage.used;
+  if (!Number.isFinite(remaining) || usage.limit <= 0) {
+    return 0;
+  }
+  const ratio = remaining / usage.limit;
+  return Math.round(ratio * 100);
+};
+
+export const isBelowRemainingPercentThreshold = (
+  usage: TokenUsageSnapshot,
+  remainingPercentThreshold: number
+): boolean => computeRemainingPercent(usage) <= remainingPercentThreshold;
