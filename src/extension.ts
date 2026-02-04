@@ -29,6 +29,7 @@ import {
   applyDefaultModelsEnv,
   loadSettingsSnapshot,
 } from "./extension-module/settings/settings-storage";
+import { ensureFlowNodeContinuityTemplatesInstalled } from "./extension-module/templates/flow-node-continuity-template-installer";
 import { ensureIdeaCollectorPromptInstalled } from "./extension-module/templates/idea-collector-prompt-installer";
 import { ensureIdeaQuestionnaireTemplateInstalled } from "./extension-module/templates/idea-questionnaire-template-installer";
 import { prepareUIBundles } from "./extension-module/ui/ui-activation";
@@ -161,6 +162,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   await ensureIdeaCollectorPromptInstalled(context, logger);
   await ensureIdeaQuestionnaireTemplateInstalled(context, logger);
+  await ensureFlowNodeContinuityTemplatesInstalled(context, logger);
 
   await prepareLocalRuntime(
     context,
