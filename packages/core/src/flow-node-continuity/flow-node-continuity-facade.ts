@@ -15,6 +15,7 @@ const escapeRegExp = (value: string): string =>
 
 export type FlowNodeContinuityFacadeOptions = {
   readonly templatesDir: string;
+  readonly preemptRemainingPercentThreshold: number;
   readonly clock?: () => number;
 };
 
@@ -22,6 +23,7 @@ export class FlowNodeContinuityFacade {
   readonly #templateLoader: TemplateLoader;
   readonly #reportWaiter: ContinuityReportWaiter;
   readonly #filter: FlowNodeContinuityRolloverFilter;
+  readonly #preemptRemainingPercentThreshold: number;
 
   constructor(options: FlowNodeContinuityFacadeOptions) {
     this.#templateLoader = new TemplateLoader({
@@ -29,6 +31,10 @@ export class FlowNodeContinuityFacade {
     });
     this.#reportWaiter = new ContinuityReportWaiter(options.clock);
     this.#filter = FLOW_NODE_CONTINUITY_MVP_FILTER;
+    this.#preemptRemainingPercentThreshold = Math.min(
+      100,
+      Math.max(0, Math.round(options.preemptRemainingPercentThreshold))
+    );
   }
 
   loadTemplate(templateId: FlowNodeContinuityTemplateId): string {
@@ -76,5 +82,24 @@ export class FlowNodeContinuityFacade {
       options.stageId === this.#filter.stageId &&
       options.runSlug === this.#filter.runSlug
     );
+  }
+
+  shouldStartSilentPreemptiveRollover(options: {
+    readonly stageId: string | null;
+    readonly runSlug: string | null;
+    readonly remainingPercent: number;
+  }): boolean {
+    if (this.#preemptRemainingPercentThreshold <= 0) {
+      return false;
+    }
+    if (
+      !this.isEligibleForRollover({
+        stageId: options.stageId,
+        runSlug: options.runSlug,
+      })
+    ) {
+      return false;
+    }
+    return options.remainingPercent <= this.#preemptRemainingPercentThreshold;
   }
 }
