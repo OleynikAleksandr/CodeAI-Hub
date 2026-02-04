@@ -7609,11 +7609,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react34 = __toESM(require_react());
+  var import_react35 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host.tsx
-  var import_react33 = __toESM(require_react());
+  var import_react34 = __toESM(require_react());
 
   // src/client/ui/src/app-host/loading-messages.ts
   var MESSAGE_ORDER = [
@@ -8222,6 +8222,7 @@
       runSlug,
       sessionKind,
       continuationParentId: typeof session.continuationParentId === "string" ? session.continuationParentId : null,
+      continuationIndex: typeof session.continuationIndex === "number" ? session.continuationIndex : null,
       createdAt: toNumberTimestamp(session.createdAt),
       binding: normalizeBinding(bindingCandidate)
     };
@@ -8815,7 +8816,10 @@
   };
 
   // src/client/ui/src/app-host/session-region.tsx
-  var import_react11 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
+
+  // src/client/ui/src/session/session-view.tsx
+  var import_react8 = __toESM(require_react());
 
   // src/client/ui/src/session/dialog-panel.tsx
   var import_react4 = __toESM(require_react());
@@ -21650,7 +21654,7 @@
           children: expanded ? "\u25BE" : "\u25B8"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__role", children: label })
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(ThinkingRoleLabel, { label })
     ] }),
     expanded ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
       markdown_content_default,
@@ -21709,6 +21713,32 @@ ${message.content}`
     }
     return result;
   };
+  var ThinkingRoleLabel = ({ label }) => {
+    const dots = useAnimatedDots(true);
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("span", { className: "session-dialog__role", children: [
+      label,
+      dots
+    ] });
+  };
+  var DOTS = ["", ".", "..", "..."];
+  var useAnimatedDots = (enabled) => {
+    const [tick, setTick] = (0, import_react4.useState)(0);
+    (0, import_react4.useEffect)(() => {
+      if (!enabled) {
+        return;
+      }
+      const timer = window.setInterval(() => {
+        setTick((current) => current + 1);
+      }, 500);
+      return () => {
+        window.clearInterval(timer);
+      };
+    }, [enabled]);
+    if (!enabled) {
+      return "";
+    }
+    return DOTS[tick % DOTS.length];
+  };
 
   // src/client/ui/src/session/empty-state.tsx
   var import_jsx_runtime5 = __toESM(require_jsx_runtime());
@@ -21723,7 +21753,7 @@ ${message.content}`
   var InfoPanel = ({ binding, continuationIndex }) => {
     let displayText = "Session information unavailable";
     let titleText;
-    const continuationPrefix = typeof continuationIndex === "number" && continuationIndex >= 2 ? `\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0435\u043D\u0438\u0435 #${continuationIndex}  ` : "";
+    const continuationPrefix = typeof continuationIndex === "number" && continuationIndex >= 2 ? `Continuation #${continuationIndex}  ` : "";
     if (binding.status === "ready" && binding.providerSessionId) {
       displayText = `${continuationPrefix}Session ID: ${binding.providerSessionId}`;
       titleText = binding.providerSessionId;
@@ -22707,22 +22737,27 @@ ${path2}` : path2;
   };
   var buildSessionBanner = (options) => {
     const isRolloverBlocked = options.session.status.connectionState === "blocked";
-    const remainingPercent = computeRemainingPercent(
+    const rollover = options.session.status.rollover ?? null;
+    const fallbackRemainingPercent = computeRemainingPercent(
       options.session.status.tokenUsage
     );
+    const remainingPercent = typeof rollover?.remainingPercent === "number" ? rollover.remainingPercent : fallbackRemainingPercent;
+    const thresholdPercent = typeof rollover?.thresholdPercent === "number" ? rollover.thresholdPercent : null;
     const shouldShowRestoringBanner = !isRolloverBlocked && typeof options.continuationIndex === "number" && options.continuationIndex >= 2 && !options.session.messages.some((message) => message.role === "assistant");
     if (isRolloverBlocked) {
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("output", { "aria-live": "polite", className: "session-panel", children: [
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
-          "\u041A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u043F\u043E\u0447\u0442\u0438 \u0438\u0441\u0447\u0435\u0440\u043F\u0430\u043D (\u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C ~",
+          "Context is running low (~",
           remainingPercent,
-          "%). \u0421\u0435\u0439\u0447\u0430\u0441 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0443 \u0440\u0430\u0431\u043E\u0442\u0443 \u0432 \u043D\u043E\u0432\u044B\u0439 \u0441\u0435\u0433\u043C\u0435\u043D\u0442, \u0447\u0442\u043E\u0431\u044B \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0431\u0435\u0437 \u043F\u043E\u0442\u0435\u0440\u0438 \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u0430."
+          "% remaining",
+          thresholdPercent !== null ? `, threshold ${thresholdPercent}%` : "",
+          "). I'll now automatically move this work into a new segment to continue without losing quality."
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { children: "\u0428\u0430\u0433\u0438: 1) \u0441\u043E\u0437\u0434\u0430\u0451\u0442\u0441\u044F Continuity Report 2) \u043E\u0442\u043A\u0440\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u043D\u043E\u0432\u0430\u044F \u0441\u0435\u0441\u0441\u0438\u044F 3) \u0430\u0433\u0435\u043D\u0442 \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u0430\u0432\u043B\u0438\u0432\u0430\u0435\u0442 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 (\u044D\u0442\u043E \u043C\u043E\u0436\u0435\u0442 \u0437\u0430\u043D\u044F\u0442\u044C \u0434\u043E ~6 \u043C\u0438\u043D\u0443\u0442)." })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { children: "Steps: 1) generate a Continuity Report 2) open a new session 3) restore context (this can take up to ~6 minutes)." })
       ] });
     }
     if (shouldShowRestoringBanner) {
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("output", { "aria-live": "polite", className: "session-panel", children: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u043D\u043E. \u0410\u0433\u0435\u043D\u0442 \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u0430\u0432\u043B\u0438\u0432\u0430\u0435\u0442 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 (\u0447\u0438\u0442\u0430\u0435\u0442 Continuity Report \u0438 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0435 \u0444\u0430\u0439\u043B\u044B)\u2026 \u041E\u0431\u044B\u0447\u043D\u043E 1\u20136 \u043C\u0438\u043D\u0443\u0442." });
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("output", { "aria-live": "polite", className: "session-panel", children: "Continuation created. The agent is restoring context (reading the Continuity Report and key files)\u2026 Usually 1\u20136 minutes." });
     }
     return null;
   };
@@ -22741,16 +22776,31 @@ ${path2}` : path2;
     const activeRecord = sessions.find(
       (session) => session.id === activeSessionId
     );
-    const continuationIndex = computeContinuationIndex(
-      activeRecord ?? null,
-      sessions
-    );
+    const continuationIndex = typeof activeRecord?.continuationIndex === "number" ? activeRecord.continuationIndex : computeContinuationIndex(activeRecord ?? null, sessions);
     const primaryProviderId = activeRecord?.providerIds[0] ?? null;
     const providerTheme = mapProviderTheme(primaryProviderId);
     const providerDisplayLabel = resolveProviderDisplayLabel({
       providerId: primaryProviderId,
       providerLabels
     });
+    const [showAgentWorkingIndicator, setShowAgentWorkingIndicator] = (0, import_react8.useState)(false);
+    const lastMessage = activeSession?.messages.at(-1) ?? null;
+    const lastMessageRole = lastMessage?.role ?? null;
+    const lastMessageCreatedAt = lastMessage?.createdAt ?? null;
+    (0, import_react8.useEffect)(() => {
+      setShowAgentWorkingIndicator(false);
+      if (!activeSessionId || lastMessageRole !== "user" || !lastMessageCreatedAt) {
+        return;
+      }
+      const elapsedMs = Date.now() - lastMessageCreatedAt;
+      const delayMs = Math.max(0, 1e4 - elapsedMs);
+      const timer = window.setTimeout(() => {
+        setShowAgentWorkingIndicator(true);
+      }, delayMs);
+      return () => {
+        window.clearTimeout(timer);
+      };
+    }, [activeSessionId, lastMessageCreatedAt, lastMessageRole]);
     const header = /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app__header", children: [
       /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         session_tabs_default,
@@ -22781,6 +22831,7 @@ ${path2}` : path2;
       continuationIndex
     });
     const isRolloverBlocked = activeSession.status.connectionState === "blocked";
+    const agentWorkingBanner = showAgentWorkingIndicator && !isRolloverBlocked ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("output", { "aria-live": "polite", className: "session-panel", children: "Agent is working\u2026" }) : null;
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app", children: [
       header,
       /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app__content", children: [
@@ -22794,6 +22845,7 @@ ${path2}` : path2;
         ) }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app__rails", children: [
           banner,
+          agentWorkingBanner,
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             input_panel_default,
             {
@@ -22823,7 +22875,7 @@ ${path2}` : path2;
   var session_view_default = SessionView;
 
   // src/client/ui/src/components/flow-wizard/flow-stage.tsx
-  var import_react8 = __toESM(require_react());
+  var import_react9 = __toESM(require_react());
 
   // src/client/ui/src/components/flow-wizard/styles.ts
   var flowWizardContainerStyles = {
@@ -22904,8 +22956,8 @@ ${path2}` : path2;
     disabled,
     onStageClick
   }) => {
-    const [hovered, setHovered] = (0, import_react8.useState)(false);
-    const [focused, setFocused] = (0, import_react8.useState)(false);
+    const [hovered, setHovered] = (0, import_react9.useState)(false);
+    const [focused, setFocused] = (0, import_react9.useState)(false);
     const interactive = !disabled;
     const showHoverStyles = interactive && (hovered || focused);
     let hoverStyles = {};
@@ -23038,10 +23090,10 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/app-host/idea-questionnaire-panel.tsx
-  var import_react10 = __toESM(require_react());
+  var import_react11 = __toESM(require_react());
 
   // src/client/ui/src/components/idea-questionnaire/question-block.tsx
-  var import_react9 = __toESM(require_react());
+  var import_react10 = __toESM(require_react());
 
   // src/client/ui/src/components/idea-questionnaire/styles.ts
   var questionnairePageStyles = {
@@ -23210,12 +23262,12 @@ ${path2}` : path2;
     value,
     onChange
   }) => {
-    const [isFocused, setIsFocused] = (0, import_react9.useState)(false);
-    const [userMinHeight, setUserMinHeight] = (0, import_react9.useState)(null);
-    const textareaRef = (0, import_react9.useRef)(null);
-    const containerRef = (0, import_react9.useRef)(null);
-    const lastWidthRef = (0, import_react9.useRef)(null);
-    const adjustTextareaHeight2 = (0, import_react9.useCallback)(() => {
+    const [isFocused, setIsFocused] = (0, import_react10.useState)(false);
+    const [userMinHeight, setUserMinHeight] = (0, import_react10.useState)(null);
+    const textareaRef = (0, import_react10.useRef)(null);
+    const containerRef = (0, import_react10.useRef)(null);
+    const lastWidthRef = (0, import_react10.useRef)(null);
+    const adjustTextareaHeight2 = (0, import_react10.useCallback)(() => {
       const textarea = textareaRef.current;
       if (!textarea) {
         return;
@@ -23226,7 +23278,7 @@ ${path2}` : path2;
       const targetHeight = Math.max(textarea.scrollHeight, minHeight);
       textarea.style.height = `${targetHeight}px`;
     }, [userMinHeight]);
-    const applyExternalValue = (0, import_react9.useCallback)(
+    const applyExternalValue = (0, import_react10.useCallback)(
       (nextValue) => {
         onChange(question.id, nextValue);
         requestAnimationFrame(() => {
@@ -23241,13 +23293,13 @@ ${path2}` : path2;
       textareaRef,
       onValueChange: applyExternalValue
     });
-    const handleChange = (0, import_react9.useCallback)(
+    const handleChange = (0, import_react10.useCallback)(
       (event) => {
         onChange(question.id, event.target.value);
       },
       [onChange, question.id]
     );
-    const handleResizeCommit = (0, import_react9.useCallback)(() => {
+    const handleResizeCommit = (0, import_react10.useCallback)(() => {
       const textarea = textareaRef.current;
       if (!textarea) {
         return;
@@ -23260,7 +23312,7 @@ ${path2}` : path2;
         setUserMinHeight(nextMinHeight);
       }
     }, [userMinHeight]);
-    const insertTextAtSelection = (0, import_react9.useCallback)(
+    const insertTextAtSelection = (0, import_react10.useCallback)(
       (text7) => {
         const textarea = textareaRef.current;
         if (!textarea) {
@@ -23283,14 +23335,14 @@ ${path2}` : path2;
       },
       [adjustTextareaHeight2, onChange, question.id]
     );
-    const syncTextareaValue = (0, import_react9.useCallback)(() => {
+    const syncTextareaValue = (0, import_react10.useCallback)(() => {
       const textarea = textareaRef.current;
       if (!textarea) {
         return;
       }
       onChange(question.id, textarea.value);
     }, [onChange, question.id]);
-    const { handlePaste, handleCopy } = (0, import_react9.useMemo)(
+    const { handlePaste, handleCopy } = (0, import_react10.useMemo)(
       () => createClipboardHandlers({
         textareaRef,
         insertTextAtSelection,
@@ -23298,7 +23350,7 @@ ${path2}` : path2;
       }),
       [insertTextAtSelection, syncTextareaValue]
     );
-    (0, import_react9.useEffect)(() => {
+    (0, import_react10.useEffect)(() => {
       const nextValue = value;
       requestAnimationFrame(() => {
         const textarea = textareaRef.current;
@@ -23308,7 +23360,7 @@ ${path2}` : path2;
         adjustTextareaHeight2();
       });
     }, [adjustTextareaHeight2, value]);
-    (0, import_react9.useEffect)(() => {
+    (0, import_react10.useEffect)(() => {
       const textarea = textareaRef.current;
       if (!textarea || typeof ResizeObserver === "undefined") {
         return;
@@ -24937,13 +24989,13 @@ ${replacement}
     pickerVisible,
     onQuestionnaireVisibleChange
   }) => {
-    const ideaCollectorRef = (0, import_react10.useRef)(new IdeaCollectorService());
-    const questionnaireServiceRef = (0, import_react10.useRef)(new IdeaQuestionnaireService());
-    const [questionnaireSnapshot, setQuestionnaireSnapshot] = (0, import_react10.useState)(null);
-    const [questionnaireVisible, setQuestionnaireVisible] = (0, import_react10.useState)(false);
+    const ideaCollectorRef = (0, import_react11.useRef)(new IdeaCollectorService());
+    const questionnaireServiceRef = (0, import_react11.useRef)(new IdeaQuestionnaireService());
+    const [questionnaireSnapshot, setQuestionnaireSnapshot] = (0, import_react11.useState)(null);
+    const [questionnaireVisible, setQuestionnaireVisible] = (0, import_react11.useState)(false);
     const ideaCollector = ideaCollectorRef.current;
     const questionnaireService = questionnaireServiceRef.current;
-    const handleAnswerChange = (0, import_react10.useCallback)(
+    const handleAnswerChange = (0, import_react11.useCallback)(
       (questionId, value) => {
         setQuestionnaireSnapshot((current) => {
           if (!current) {
@@ -24965,7 +25017,7 @@ ${replacement}
       },
       [questionnaireService]
     );
-    const handleQuestionnaireSubmit = (0, import_react10.useCallback)(async () => {
+    const handleQuestionnaireSubmit = (0, import_react11.useCallback)(async () => {
       if (!questionnaireSnapshot) {
         return;
       }
@@ -25001,7 +25053,7 @@ ${replacement}
       } catch {
       }
     }, [ideaCollector, questionnaireService, questionnaireSnapshot, sessions]);
-    const handleQuestionnaireCancel = (0, import_react10.useCallback)(() => {
+    const handleQuestionnaireCancel = (0, import_react11.useCallback)(() => {
       if (!questionnaireSnapshot) {
         setQuestionnaireVisible(false);
         return;
@@ -25020,7 +25072,7 @@ ${replacement}
         setQuestionnaireVisible(false);
       });
     }, [questionnaireService, questionnaireSnapshot]);
-    const handleQuestionnaireResume = (0, import_react10.useCallback)(() => {
+    const handleQuestionnaireResume = (0, import_react11.useCallback)(() => {
       if (!activeSessionId) {
         return;
       }
@@ -25035,7 +25087,7 @@ ${replacement}
       }).catch(() => {
       });
     }, [activeSessionId, questionnaireService, questionnaireSnapshot, sessions]);
-    (0, import_react10.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       if (!activeSessionId) {
         return;
       }
@@ -25061,7 +25113,7 @@ ${replacement}
       questionnaireVisible && questionnaireSnapshot && activeSessionId && questionnaireSnapshot.sessionId === activeSessionId
     );
     const showQuestionnaireResume = Boolean(activeSessionId) && hasPendingQuestionnaire && !showQuestionnaire && !pickerVisible;
-    (0, import_react10.useEffect)(() => {
+    (0, import_react11.useEffect)(() => {
       onQuestionnaireVisibleChange(showQuestionnaire);
     }, [onQuestionnaireVisibleChange, showQuestionnaire]);
     if (!(showQuestionnaire || showQuestionnaireResume)) {
@@ -25111,8 +25163,8 @@ ${replacement}
     cancelSelection,
     sessionViewProps
   }) => {
-    const pendingQuestionnaireRef = (0, import_react11.useRef)(false);
-    const [questionnaireActive, setQuestionnaireActive] = (0, import_react11.useState)(false);
+    const pendingQuestionnaireRef = (0, import_react12.useRef)(false);
+    const [questionnaireActive, setQuestionnaireActive] = (0, import_react12.useState)(false);
     const activeSessionId = sessionViewProps.activeSessionId;
     const handleProviderConfirm = (providerIds) => {
       if (selectedStage === "idea") {
@@ -25179,7 +25231,7 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/session-store.ts
-  var import_react13 = __toESM(require_react());
+  var import_react14 = __toESM(require_react());
 
   // src/client/ui/src/services/idea-collector-schema-cache.ts
   var cachedSchemas = /* @__PURE__ */ new Map();
@@ -25209,9 +25261,9 @@ ${replacement}
   var loadIdeaCollectorSchemaCached = () => loadDescriptionSchemaCached();
 
   // src/client/ui/src/app-host/use-settings-models-sync.ts
-  var import_react12 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
   var useSettingsModelsSync = (sessions, settings, setSnapshots) => {
-    (0, import_react12.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       if (!settings || sessions.length === 0) {
         return;
       }
@@ -25242,15 +25294,15 @@ ${replacement}
 
   // src/client/ui/src/app-host/session-store.ts
   var useSessionStore = (providerLabels, settings) => {
-    const [sessions, setSessions] = (0, import_react13.useState)([]);
-    const [snapshots, setSnapshots] = (0, import_react13.useState)({});
-    const [activeSessionId, setActiveSessionId] = (0, import_react13.useState)(null);
-    const sessionsRef = (0, import_react13.useRef)([]);
-    const pendingBindingsRef = (0, import_react13.useRef)({});
-    const syncSessionsRef = (0, import_react13.useCallback)((current) => {
+    const [sessions, setSessions] = (0, import_react14.useState)([]);
+    const [snapshots, setSnapshots] = (0, import_react14.useState)({});
+    const [activeSessionId, setActiveSessionId] = (0, import_react14.useState)(null);
+    const sessionsRef = (0, import_react14.useRef)([]);
+    const pendingBindingsRef = (0, import_react14.useRef)({});
+    const syncSessionsRef = (0, import_react14.useCallback)((current) => {
       sessionsRef.current = current;
     }, []);
-    const applyPendingBinding = (0, import_react13.useCallback)(
+    const applyPendingBinding = (0, import_react14.useCallback)(
       (session) => {
         const pending = pendingBindingsRef.current[session.id];
         if (!pending) {
@@ -25261,7 +25313,7 @@ ${replacement}
       },
       []
     );
-    const handleSessionCreated = (0, import_react13.useCallback)(
+    const handleSessionCreated = (0, import_react14.useCallback)(
       (session) => {
         const sessionWithBinding = applyPendingBinding(session);
         setSessions((previous3) => {
@@ -25292,7 +25344,7 @@ ${replacement}
       },
       [applyPendingBinding, providerLabels, settings, syncSessionsRef]
     );
-    const hydrateFromCoreState = (0, import_react13.useCallback)(
+    const hydrateFromCoreState = (0, import_react14.useCallback)(
       (payload) => {
         const nextSessions = payload.sessions.map(
           (record) => applyPendingBinding(record)
@@ -25317,19 +25369,19 @@ ${replacement}
       },
       [applyPendingBinding, providerLabels, settings, syncSessionsRef]
     );
-    const handleSessionMessageEvent2 = (0, import_react13.useCallback)(
+    const handleSessionMessageEvent2 = (0, import_react14.useCallback)(
       (payload) => {
         setSnapshots((previous3) => appendMessageToSnapshots(previous3, payload));
       },
       []
     );
-    const handleSessionHistoryEvent = (0, import_react13.useCallback)(
+    const handleSessionHistoryEvent = (0, import_react14.useCallback)(
       (payload) => {
         setSnapshots((previous3) => mergeHistoryIntoSnapshots(previous3, payload));
       },
       []
     );
-    const handleSessionBindingUpdate = (0, import_react13.useCallback)(
+    const handleSessionBindingUpdate = (0, import_react14.useCallback)(
       (payload) => {
         const binding = normalizeBinding({
           providerSessionId: payload.providerSessionId,
@@ -25368,7 +25420,7 @@ ${replacement}
       },
       [syncSessionsRef]
     );
-    const clearSessions = (0, import_react13.useCallback)(() => {
+    const clearSessions = (0, import_react14.useCallback)(() => {
       setSessions(() => {
         syncSessionsRef([]);
         return [];
@@ -25376,16 +25428,16 @@ ${replacement}
       setSnapshots({});
       setActiveSessionId(null);
     }, [syncSessionsRef]);
-    const focusLastSession = (0, import_react13.useCallback)(() => {
+    const focusLastSession = (0, import_react14.useCallback)(() => {
       const last = sessionsRef.current.at(-1);
       if (last) {
         setActiveSessionId(last.id);
       }
     }, []);
-    const selectSession = (0, import_react13.useCallback)((sessionId) => {
+    const selectSession = (0, import_react14.useCallback)((sessionId) => {
       setActiveSessionId(sessionId);
     }, []);
-    const handleSessionDeleted = (0, import_react13.useCallback)(
+    const handleSessionDeleted = (0, import_react14.useCallback)(
       (payload) => {
         const { sessionId } = payload;
         setSessions((previous3) => {
@@ -25407,10 +25459,10 @@ ${replacement}
       },
       [syncSessionsRef]
     );
-    const closeSession = (0, import_react13.useCallback)((sessionId) => {
+    const closeSession = (0, import_react14.useCallback)((sessionId) => {
       deleteSession(sessionId);
     }, []);
-    const sendMessage = (0, import_react13.useCallback)((sessionId, content3) => {
+    const sendMessage = (0, import_react14.useCallback)((sessionId, content3) => {
       setSnapshots((previous3) => {
         const current = previous3[sessionId];
         if (!current) {
@@ -25455,13 +25507,13 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/settings-only-host.tsx
-  var import_react28 = __toESM(require_react());
+  var import_react29 = __toESM(require_react());
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_react25 = __toESM(require_react());
+  var import_react26 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_react14 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
 
   // src/types/claude-model-registry.ts
   var CLAUDE_MODEL_ALIASES = [
@@ -25622,7 +25674,7 @@ ${replacement}
     defaultModel,
     onDefaultModelChange
   }) => {
-    const [hoveredAlias, setHoveredAlias] = (0, import_react14.useState)(
+    const [hoveredAlias, setHoveredAlias] = (0, import_react15.useState)(
       null
     );
     const handleRowClick = (model) => {
@@ -25682,10 +25734,10 @@ ${replacement}
       /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
     ] });
   };
-  var claude_default_model_card_default = (0, import_react14.memo)(ClaudeDefaultModelCard);
+  var claude_default_model_card_default = (0, import_react15.memo)(ClaudeDefaultModelCard);
 
   // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_react16 = __toESM(require_react());
+  var import_react17 = __toESM(require_react());
 
   // src/types/codex-model-registry.ts
   var CODEX_RECOMMENDED_MODELS = [
@@ -25843,7 +25895,7 @@ ${replacement}
   };
 
   // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
-  var import_react15 = __toESM(require_react());
+  var import_react16 = __toESM(require_react());
   var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   var overlayStyles = {
     position: "fixed",
@@ -25973,7 +26025,7 @@ ${replacement}
     onSave,
     onCancel
   }) => {
-    const [selectedReasoning, setSelectedReasoning] = (0, import_react15.useState)(initialReasoning);
+    const [selectedReasoning, setSelectedReasoning] = (0, import_react16.useState)(initialReasoning);
     return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
       "div",
       {
@@ -26064,15 +26116,15 @@ ${replacement}
     onDefaultModelChange,
     onReasoningChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react16.useState)(null);
-    const [hoveredRowId, setHoveredRowId] = (0, import_react16.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react16.useState)(
+    const [activeModelId, setActiveModelId] = (0, import_react17.useState)(null);
+    const [hoveredRowId, setHoveredRowId] = (0, import_react17.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react17.useState)(
       null
     );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react16.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react17.useState)(
       null
     );
-    const recommendedModelIds = (0, import_react16.useMemo)(
+    const recommendedModelIds = (0, import_react17.useMemo)(
       () => new Set(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
       []
     );
@@ -26183,10 +26235,10 @@ ${replacement}
       ) : null
     ] });
   };
-  var codex_default_model_card_default = (0, import_react16.memo)(CodexDefaultModelCard);
+  var codex_default_model_card_default = (0, import_react17.memo)(CodexDefaultModelCard);
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_react18 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
 
   // src/types/gemini-model-registry.ts
   var GEMINI_RECOMMENDED_MODELS = [
@@ -26306,7 +26358,7 @@ ${replacement}
   };
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
-  var import_react17 = __toESM(require_react());
+  var import_react18 = __toESM(require_react());
   var import_jsx_runtime24 = __toESM(require_jsx_runtime());
   var overlayStyles2 = {
     position: "fixed",
@@ -26436,7 +26488,7 @@ ${replacement}
     onSave,
     onCancel
   }) => {
-    const [selectedLevel, setSelectedLevel] = (0, import_react17.useState)(initialLevel);
+    const [selectedLevel, setSelectedLevel] = (0, import_react18.useState)(initialLevel);
     return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: overlayStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
       "div",
       {
@@ -26529,14 +26581,14 @@ ${replacement}
     onDefaultModelChange,
     onThinkingChange
   }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react18.useState)(
+    const [activeModelId, setActiveModelId] = (0, import_react19.useState)(
       null
     );
-    const [hoveredRowId, setHoveredRowId] = (0, import_react18.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react18.useState)(
+    const [hoveredRowId, setHoveredRowId] = (0, import_react19.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react19.useState)(
       null
     );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react18.useState)(
+    const [pressedButtonId, setPressedButtonId] = (0, import_react19.useState)(
       null
     );
     const activeModel = GEMINI_RECOMMENDED_MODELS.find(
@@ -26643,10 +26695,10 @@ ${replacement}
       ) : null
     ] });
   };
-  var gemini_default_model_card_default = (0, import_react18.memo)(GeminiDefaultModelCard);
+  var gemini_default_model_card_default = (0, import_react19.memo)(GeminiDefaultModelCard);
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_react19 = __toESM(require_react());
+  var import_react20 = __toESM(require_react());
   var import_jsx_runtime26 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     marginBottom: "30px"
@@ -26676,13 +26728,13 @@ ${replacement}
       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { onClick: handleRestartCore, style: buttonStyles2, type: "button", children: "Restart Core" })
     ] }) });
   };
-  var general_settings_default = (0, import_react19.memo)(GeneralSettings);
+  var general_settings_default = (0, import_react20.memo)(GeneralSettings);
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_react21 = __toESM(require_react());
+  var import_react22 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react20 = __toESM(require_react());
+  var import_react21 = __toESM(require_react());
   var import_jsx_runtime27 = __toESM(require_jsx_runtime());
   var rowStyles = {
     display: "flex",
@@ -26797,7 +26849,7 @@ ${replacement}
       ) : /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { style: chipStyles, children: latestLabel })
     ] });
   };
-  var VersionRowItem = (0, import_react20.memo)(VersionRowItemComponent);
+  var VersionRowItem = (0, import_react21.memo)(VersionRowItemComponent);
 
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
   var import_jsx_runtime28 = __toESM(require_jsx_runtime());
@@ -26964,9 +27016,9 @@ ${replacement}
     onAutoUpdateChange,
     onUpdate
   }) => {
-    const [pendingTarget, setPendingTarget] = (0, import_react21.useState)(null);
+    const [pendingTarget, setPendingTarget] = (0, import_react22.useState)(null);
     const snapshot = versions.data;
-    const rows = (0, import_react21.useMemo)(() => {
+    const rows = (0, import_react22.useMemo)(() => {
       if (!snapshot) {
         return [];
       }
@@ -27016,7 +27068,7 @@ ${replacement}
         }
       ];
     }, [provider, snapshot]);
-    const hasProviderVersions = (0, import_react21.useMemo)(() => {
+    const hasProviderVersions = (0, import_react22.useMemo)(() => {
       if (!snapshot) {
         return false;
       }
@@ -27028,11 +27080,11 @@ ${replacement}
     const isBusy = versions.loading || versions.updatingTargets.length > 0;
     const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
     const isPending = (target) => pendingTarget === `${provider}:${target}`;
-    const providerUpdateTargets = (0, import_react21.useMemo)(() => {
+    const providerUpdateTargets = (0, import_react22.useMemo)(() => {
       const prefix = `${provider}:`;
       return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
     }, [provider, versions.updatingTargets]);
-    const manualUpdateStatus = (0, import_react21.useMemo)(() => {
+    const manualUpdateStatus = (0, import_react22.useMemo)(() => {
       if (providerUpdateTargets.length === 0) {
         return null;
       }
@@ -27041,7 +27093,7 @@ ${replacement}
       );
       return `Manual update in progress: ${labels.join(", ")}`;
     }, [provider, providerUpdateTargets]);
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       if (versions.updatingTargets.length === 0) {
         setPendingTarget(null);
       }
@@ -27099,10 +27151,10 @@ ${replacement}
       }
     );
   };
-  var provider_versions_default = (0, import_react21.memo)(ProviderVersions);
+  var provider_versions_default = (0, import_react22.memo)(ProviderVersions);
 
   // src/client/ui/src/components/settings/session-continuity-card.tsx
-  var import_react22 = __toESM(require_react());
+  var import_react23 = __toESM(require_react());
   var import_jsx_runtime30 = __toESM(require_jsx_runtime());
   var settingsLabelStyles = {
     display: "flex",
@@ -27146,7 +27198,7 @@ ${replacement}
       )
     ] })
   ] });
-  var session_continuity_card_default = import_react22.default.memo(SessionContinuityCard);
+  var session_continuity_card_default = import_react23.default.memo(SessionContinuityCard);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
   var import_jsx_runtime31 = __toESM(require_jsx_runtime());
@@ -27367,7 +27419,7 @@ ${replacement}
   var settings_header_default = SettingsHeader;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react23 = __toESM(require_react());
+  var import_react24 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
@@ -27592,10 +27644,10 @@ ${replacement}
       ] })
     ] });
   };
-  var thinking_settings_default = (0, import_react23.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react24.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var import_react24 = __toESM(require_react());
+  var import_react25 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/settings-state-helpers.ts
   var updateThinkingSettings = (settings, enabled, maxTokens) => ({
@@ -27863,18 +27915,18 @@ ${replacement}
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions";
   };
   var useSettingsState = () => {
-    const initialSettingsRef = (0, import_react24.useRef)(createDefaultSettings());
-    const [settings, setSettings] = (0, import_react24.useState)(createDefaultSettings);
-    const [hasChanges, setHasChanges] = (0, import_react24.useState)(false);
-    const [saving, setSaving] = (0, import_react24.useState)(false);
-    const [resetting, setResetting] = (0, import_react24.useState)(false);
-    const [versions, setVersions] = (0, import_react24.useState)(() => ({
+    const initialSettingsRef = (0, import_react25.useRef)(createDefaultSettings());
+    const [settings, setSettings] = (0, import_react25.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react25.useState)(false);
+    const [saving, setSaving] = (0, import_react25.useState)(false);
+    const [resetting, setResetting] = (0, import_react25.useState)(false);
+    const [versions, setVersions] = (0, import_react25.useState)(() => ({
       data: null,
       loading: true,
       error: null,
       updatingTargets: []
     }));
-    (0, import_react24.useEffect)(() => {
+    (0, import_react25.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
       });
@@ -27911,23 +27963,23 @@ ${replacement}
         window.removeEventListener("message", handleMessage);
       };
     }, []);
-    const updateSettings = (0, import_react24.useCallback)((nextSettings) => {
+    const updateSettings = (0, import_react25.useCallback)((nextSettings) => {
       setSettings(nextSettings);
       setHasChanges(!areSettingsEqual(nextSettings, initialSettingsRef.current));
     }, []);
-    const handleThinkingSettingsChange = (0, import_react24.useCallback)(
+    const handleThinkingSettingsChange = (0, import_react25.useCallback)(
       (enabled, maxTokens) => {
         updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
       },
       [settings, updateSettings]
     );
-    const handleClaudeDefaultModelChange = (0, import_react24.useCallback)(
+    const handleClaudeDefaultModelChange = (0, import_react25.useCallback)(
       (modelId) => {
         updateSettings(updateClaudeDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleClaudeContinuityRemainingPercentThresholdChange = (0, import_react24.useCallback)(
+    const handleClaudeContinuityRemainingPercentThresholdChange = (0, import_react25.useCallback)(
       (remainingPercentThreshold) => {
         if (!Number.isFinite(remainingPercentThreshold)) {
           return;
@@ -27939,7 +27991,7 @@ ${replacement}
       },
       [settings, updateSettings]
     );
-    const handleCodexContinuityRemainingPercentThresholdChange = (0, import_react24.useCallback)(
+    const handleCodexContinuityRemainingPercentThresholdChange = (0, import_react25.useCallback)(
       (remainingPercentThreshold) => {
         if (!Number.isFinite(remainingPercentThreshold)) {
           return;
@@ -27951,44 +28003,44 @@ ${replacement}
       },
       [settings, updateSettings]
     );
-    const handleCodexDefaultModelChange = (0, import_react24.useCallback)(
+    const handleCodexDefaultModelChange = (0, import_react25.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexReasoningChange = (0, import_react24.useCallback)(
+    const handleCodexReasoningChange = (0, import_react25.useCallback)(
       (modelId, reasoning) => {
         updateSettings(updateCodexReasoning(settings, modelId, reasoning));
       },
       [settings, updateSettings]
     );
-    const handleProviderAutoUpdateChange = (0, import_react24.useCallback)(
+    const handleProviderAutoUpdateChange = (0, import_react25.useCallback)(
       (provider, enabled) => {
         updateSettings(updateProviderAutoUpdate(settings, provider, enabled));
       },
       [settings, updateSettings]
     );
-    const handleGeminiDefaultModelChange = (0, import_react24.useCallback)(
+    const handleGeminiDefaultModelChange = (0, import_react25.useCallback)(
       (modelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleGeminiThinkingChange = (0, import_react24.useCallback)(
+    const handleGeminiThinkingChange = (0, import_react25.useCallback)(
       (modelId, level) => {
         updateSettings(updateGeminiThinking(settings, modelId, level));
       },
       [settings, updateSettings]
     );
-    const handleSave = (0, import_react24.useCallback)(() => {
+    const handleSave = (0, import_react25.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
         type: "settings:save",
         settings
       });
     }, [settings]);
-    const handleReset = (0, import_react24.useCallback)(() => {
+    const handleReset = (0, import_react25.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
         vscode_default.postMessage({
@@ -27996,7 +28048,7 @@ ${replacement}
         });
       }, RESET_DELAY_MS);
     }, []);
-    const handleUpdateProvider = (0, import_react24.useCallback)(
+    const handleUpdateProvider = (0, import_react25.useCallback)(
       (provider, target) => {
         const targetKey = `${provider}:${target}`;
         setVersions((prev) => ({
@@ -28096,7 +28148,7 @@ ${replacement}
     onClose,
     mode = "full"
   }) => {
-    const [activeTab, setActiveTab] = (0, import_react25.useState)("claude");
+    const [activeTab, setActiveTab] = (0, import_react26.useState)("claude");
     const {
       settings,
       hasChanges,
@@ -28242,7 +28294,7 @@ ${replacement}
       )
     ] });
   };
-  var settings_view_default = import_react25.default.memo(SettingsView);
+  var settings_view_default = import_react26.default.memo(SettingsView);
 
   // src/client/ui/src/root-dom.ts
   var activateRoot = () => {
@@ -28253,13 +28305,13 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/settings-visibility.ts
-  var import_react26 = __toESM(require_react());
+  var import_react27 = __toESM(require_react());
   var useSettingsVisibility = () => {
-    const [settingsVisible, setSettingsVisible] = (0, import_react26.useState)(false);
-    const openSettings = (0, import_react26.useCallback)(() => {
+    const [settingsVisible, setSettingsVisible] = (0, import_react27.useState)(false);
+    const openSettings = (0, import_react27.useCallback)(() => {
       setSettingsVisible(true);
     }, []);
-    const closeSettings = (0, import_react26.useCallback)(() => {
+    const closeSettings = (0, import_react27.useCallback)(() => {
       setSettingsVisible(false);
       postVsCodeMessage({ type: "settings:closed" });
     }, []);
@@ -28271,7 +28323,7 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/webview-message-handler.ts
-  var import_react27 = __toESM(require_react());
+  var import_react28 = __toESM(require_react());
 
   // src/client/ui/src/app-host/webview-message-types.ts
   var isIncomingMessage2 = (value) => Boolean(value && typeof value === "object" && "type" in value);
@@ -28489,7 +28541,7 @@ ${replacement}
     onSessionHistory,
     onUseProjectManager
   }) => {
-    (0, import_react27.useEffect)(() => {
+    (0, import_react28.useEffect)(() => {
       const handleIncomingMessage = (event) => {
         if (isUseProjectManagerMessage(event.data)) {
           onUseProjectManager?.();
@@ -28589,11 +28641,11 @@ ${replacement}
   };
   var SettingsOnlyHost = () => {
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const handleShowSettings = (0, import_react28.useCallback)(() => {
+    const handleShowSettings = (0, import_react29.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    (0, import_react28.useEffect)(() => {
+    (0, import_react29.useEffect)(() => {
       activateRoot();
     }, []);
     useWebviewMessageHandler({
@@ -28623,13 +28675,13 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/use-idea-collector.ts
-  var import_react29 = __toESM(require_react());
+  var import_react30 = __toESM(require_react());
   var useIdeaCollector = (fallbackSendMessage) => {
-    const serviceRef = (0, import_react29.useRef)(new IdeaCollectorService());
-    const questionnaireServiceRef = (0, import_react29.useRef)(new IdeaQuestionnaireService());
+    const serviceRef = (0, import_react30.useRef)(new IdeaCollectorService());
+    const questionnaireServiceRef = (0, import_react30.useRef)(new IdeaQuestionnaireService());
     const service = serviceRef.current;
     const questionnaireService = questionnaireServiceRef.current;
-    (0, import_react29.useEffect)(() => {
+    (0, import_react30.useEffect)(() => {
       const handleStreamEvent = (candidate) => {
         if (candidate.type !== "session:stream") {
           return false;
@@ -28670,13 +28722,13 @@ ${replacement}
         window.removeEventListener("message", handleSessionEvent);
       };
     }, [service]);
-    const startCollection = (0, import_react29.useCallback)(
+    const startCollection = (0, import_react30.useCallback)(
       (sessionId) => {
         service.startCollection(sessionId);
       },
       [service]
     );
-    const sendMessage = (0, import_react29.useCallback)(
+    const sendMessage = (0, import_react30.useCallback)(
       (sessionId, content3) => {
         if (service.isIdeaCollectorSession(sessionId)) {
           if (!service.isQuestionnairePending(sessionId)) {
@@ -28703,9 +28755,9 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/use-provider-picker-open-handler.ts
-  var import_react30 = __toESM(require_react());
+  var import_react31 = __toESM(require_react());
   var isFlowStageId = (value) => value === "chat" || value === "idea" || value === "spec" || value === "plan" || value === "execute";
-  var useProviderPickerOpenHandler = (openPicker, selectStage, lockStageSelection) => (0, import_react30.useCallback)(
+  var useProviderPickerOpenHandler = (openPicker, selectStage, lockStageSelection) => (0, import_react31.useCallback)(
     (providers, stage) => {
       activateRoot();
       if (providers.length === 0) {
@@ -28721,7 +28773,7 @@ ${replacement}
   );
 
   // src/client/ui/src/components/action-bar/index.tsx
-  var import_react32 = __toESM(require_react());
+  var import_react33 = __toESM(require_react());
 
   // src/client/ui/src/components/action-bar/context-form.tsx
   var import_jsx_runtime39 = __toESM(require_jsx_runtime());
@@ -28786,7 +28838,7 @@ ${replacement}
   ] });
 
   // src/client/ui/src/components/action-bar/use-initiative-context.ts
-  var import_react31 = __toESM(require_react());
+  var import_react32 = __toESM(require_react());
 
   // src/client/ui/src/api/orchestrator/initiatives-client.ts
   var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
@@ -28895,16 +28947,16 @@ ${replacement}
     return workspacePath;
   };
   var useInitiativeContext = (disabled) => {
-    const [initiatives, setInitiatives] = (0, import_react31.useState)([]);
-    const [selectedInitiativeSlug, setSelectedInitiativeSlug] = (0, import_react31.useState)(null);
-    const [statusMessage, setStatusMessage] = (0, import_react31.useState)(null);
-    const coreHttpUrl = (0, import_react31.useMemo)(() => resolveCoreHttpUrl(), []);
-    const workspacePath = (0, import_react31.useMemo)(() => resolveWorkspacePath(), []);
+    const [initiatives, setInitiatives] = (0, import_react32.useState)([]);
+    const [selectedInitiativeSlug, setSelectedInitiativeSlug] = (0, import_react32.useState)(null);
+    const [statusMessage, setStatusMessage] = (0, import_react32.useState)(null);
+    const coreHttpUrl = (0, import_react32.useMemo)(() => resolveCoreHttpUrl(), []);
+    const workspacePath = (0, import_react32.useMemo)(() => resolveWorkspacePath(), []);
     const hasWorkspace = Boolean(coreHttpUrl && workspacePath);
-    const clearStatus = (0, import_react31.useCallback)(() => {
+    const clearStatus = (0, import_react32.useCallback)(() => {
       setStatusMessage(null);
     }, []);
-    const refreshInitiatives = (0, import_react31.useCallback)(
+    const refreshInitiatives = (0, import_react32.useCallback)(
       async (preferredSlug) => {
         if (!(coreHttpUrl && workspacePath)) {
           return;
@@ -28923,28 +28975,28 @@ ${replacement}
       },
       [coreHttpUrl, selectedInitiativeSlug, workspacePath]
     );
-    (0, import_react31.useEffect)(() => {
+    (0, import_react32.useEffect)(() => {
       if (disabled || !hasWorkspace) {
         return;
       }
       refreshInitiatives().catch(() => {
       });
     }, [disabled, hasWorkspace, refreshInitiatives]);
-    const selectedInitiative = (0, import_react31.useMemo)(
+    const selectedInitiative = (0, import_react32.useMemo)(
       () => initiatives.find(
         (initiative) => initiative.initiativeSlug === selectedInitiativeSlug
       ) ?? null,
       [initiatives, selectedInitiativeSlug]
     );
     const initiativeTitle = selectedInitiative ? [selectedInitiative.displayName, selectedInitiative.description].filter(Boolean).join(" \u2014 ") : "Select initiative";
-    const handleInitiativeChange = (0, import_react31.useCallback)(
+    const handleInitiativeChange = (0, import_react32.useCallback)(
       (event) => {
         const nextSlug = event.target.value;
         setSelectedInitiativeSlug(nextSlug.length > 0 ? nextSlug : null);
       },
       []
     );
-    const createInitiative2 = (0, import_react31.useCallback)(
+    const createInitiative2 = (0, import_react32.useCallback)(
       async (input) => {
         if (!(coreHttpUrl && workspacePath)) {
           setStatusMessage("Workspace path is unavailable.");
@@ -29005,23 +29057,23 @@ ${replacement}
       createInitiative: createInitiative2,
       clearStatus
     } = useInitiativeContext(disabled);
-    const [createMode, setCreateMode] = (0, import_react32.useState)(null);
-    const [draftName, setDraftName] = (0, import_react32.useState)("");
-    const [draftDescription, setDraftDescription] = (0, import_react32.useState)("");
+    const [createMode, setCreateMode] = (0, import_react33.useState)(null);
+    const [draftName, setDraftName] = (0, import_react33.useState)("");
+    const [draftDescription, setDraftDescription] = (0, import_react33.useState)("");
     const initiativePlaceholder = initiatives.length === 0 ? "No initiatives yet" : "Select initiative";
     const formTitle = "New initiative";
-    const handleStartCreateInitiative = (0, import_react32.useCallback)(() => {
+    const handleStartCreateInitiative = (0, import_react33.useCallback)(() => {
       clearStatus();
       setCreateMode("initiative");
       setDraftName("");
       setDraftDescription("");
     }, [clearStatus]);
-    const handleCancelCreate = (0, import_react32.useCallback)(() => {
+    const handleCancelCreate = (0, import_react33.useCallback)(() => {
       setCreateMode(null);
       setDraftName("");
       setDraftDescription("");
     }, []);
-    const handleSubmitCreate = (0, import_react32.useCallback)(
+    const handleSubmitCreate = (0, import_react33.useCallback)(
       async (event) => {
         event.preventDefault();
         if (!createMode) {
@@ -29040,7 +29092,7 @@ ${replacement}
       },
       [createInitiative2, createMode, draftDescription, draftName]
     );
-    const handleClick = (0, import_react32.useCallback)(
+    const handleClick = (0, import_react33.useCallback)(
       (command) => {
         if (command !== "startChat" && !canStartFlow) {
           return;
@@ -29168,13 +29220,13 @@ ${replacement}
   var import_jsx_runtime41 = __toESM(require_jsx_runtime());
   var SETTINGS_ONLY_MODE = true;
   var FullAppHost = () => {
-    const [coreStatus, setCoreStatus] = (0, import_react33.useState)("connecting");
-    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react33.useState)();
-    const [coreFinalized, setCoreFinalized] = (0, import_react33.useState)(false);
-    const [messages, setMessages] = (0, import_react33.useState)(
+    const [coreStatus, setCoreStatus] = (0, import_react34.useState)("connecting");
+    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react34.useState)();
+    const [coreFinalized, setCoreFinalized] = (0, import_react34.useState)(false);
+    const [messages, setMessages] = (0, import_react34.useState)(
       createDefaultMessages
     );
-    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react33.useState)(0);
+    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react34.useState)(0);
     const {
       pickerState,
       providerLabels,
@@ -29206,7 +29258,7 @@ ${replacement}
       sendMessage
     } = useSessionStore(providerLabels, settings);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const shouldKickoffIdeaRef = (0, import_react33.useRef)(false);
+    const shouldKickoffIdeaRef = (0, import_react34.useRef)(false);
     const {
       startCollection: startIdeaCollection,
       sendMessage: sendIdeaCollectorMessage
@@ -29216,14 +29268,14 @@ ${replacement}
       selectStage,
       lockStageSelection
     );
-    const confirmSelectionFromUi = (0, import_react33.useCallback)(
+    const confirmSelectionFromUi = (0, import_react34.useCallback)(
       (providerIds) => {
         shouldKickoffIdeaRef.current = selectedStage === "idea" && (providerIds[0] === "codexCli" || providerIds[0] === "claudeCodeCli");
         confirmSelection(providerIds);
       },
       [confirmSelection, selectedStage]
     );
-    const handleSessionCreatedMessage2 = (0, import_react33.useCallback)(
+    const handleSessionCreatedMessage2 = (0, import_react34.useCallback)(
       (session) => {
         activateRoot();
         resetPicker();
@@ -29237,39 +29289,39 @@ ${replacement}
       },
       [handleSessionCreated, resetPicker, startIdeaCollection]
     );
-    const handleShowSettings = (0, import_react33.useCallback)(() => {
+    const handleShowSettings = (0, import_react34.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    const handleCoreState = (0, import_react33.useCallback)(
+    const handleCoreState = (0, import_react34.useCallback)(
       (payload) => {
         activateRoot();
         hydrateFromCoreState(payload);
       },
       [hydrateFromCoreState]
     );
-    const handleSessionMessage = (0, import_react33.useCallback)(
+    const handleSessionMessage = (0, import_react34.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionMessageEvent2(payload);
       },
       [handleSessionMessageEvent2]
     );
-    const handleSessionHistory = (0, import_react33.useCallback)(
+    const handleSessionHistory = (0, import_react34.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionHistoryEvent(payload);
       },
       [handleSessionHistoryEvent]
     );
-    const handleSessionDeletedMessage2 = (0, import_react33.useCallback)(
+    const handleSessionDeletedMessage2 = (0, import_react34.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionDeleted(payload);
       },
       [handleSessionDeleted]
     );
-    const handleSessionBindingMessage2 = (0, import_react33.useCallback)(
+    const handleSessionBindingMessage2 = (0, import_react34.useCallback)(
       (payload) => {
         activateRoot();
         handleSessionBindingUpdate(payload);
@@ -29322,7 +29374,7 @@ ${replacement}
       onSessionHistory: handleSessionHistory
     });
     const isCoreReady = coreStatus === "ready" && coreFinalized;
-    (0, import_react33.useEffect)(() => {
+    (0, import_react34.useEffect)(() => {
       if (isCoreReady) {
         return;
       }
@@ -29335,11 +29387,11 @@ ${replacement}
         window.clearInterval(timer);
       };
     }, [isCoreReady]);
-    const currentMessage = (0, import_react33.useMemo)(() => {
+    const currentMessage = (0, import_react34.useMemo)(() => {
       const messageId = MESSAGE_ORDER[activeMessageIndex];
       return messages[messageId] ?? DEFAULT_MESSAGES[messageId];
     }, [activeMessageIndex, messages]);
-    const { headlineText, statusLine, detailLine } = (0, import_react33.useMemo)(() => {
+    const { headlineText, statusLine, detailLine } = (0, import_react34.useMemo)(() => {
       if (coreStatus === "error") {
         return {
           headlineText: "Please hold on - we are getting CodeAI Hub ready.",
@@ -29403,7 +29455,7 @@ ${replacement}
     activateRoot();
     const root4 = (0, import_client.createRoot)(rootElement);
     root4.render(
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(import_react34.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(import_react35.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(app_host_default, {}) })
     );
   };
   mount();
