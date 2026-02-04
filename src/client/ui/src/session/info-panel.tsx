@@ -8,18 +8,22 @@ type InfoPanelProps = {
 const InfoPanel = ({ binding, continuationIndex }: InfoPanelProps) => {
   let displayText = "Session information unavailable";
   let titleText: string | undefined;
-  const continuationPrefix =
+  const continuationLabel =
     typeof continuationIndex === "number" && continuationIndex >= 2
-      ? `Continuation #${continuationIndex}  `
-      : "";
+      ? `Continuation #${continuationIndex}`
+      : null;
 
   if (binding.status === "ready" && binding.providerSessionId) {
-    displayText = `${continuationPrefix}Session ID: ${binding.providerSessionId}`;
-    titleText = binding.providerSessionId;
+    displayText = `Session ID: ${binding.providerSessionId}`;
+    titleText = continuationLabel
+      ? `${continuationLabel} · ${binding.providerSessionId}`
+      : binding.providerSessionId;
   } else if (binding.status === "pending") {
-    displayText = `${continuationPrefix}Waiting for provider session ID…`;
+    displayText = "Waiting for provider session ID…";
+    titleText = continuationLabel ?? undefined;
   } else if (binding.status === "failed") {
-    displayText = `${continuationPrefix}Session failed to initialize`;
+    displayText = "Session failed to initialize";
+    titleText = continuationLabel ?? undefined;
   }
 
   return (
