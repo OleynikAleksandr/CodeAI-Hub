@@ -200,3 +200,13 @@
 ### Stream: status panel cleanup (remove noisy debug copy)
 112. [DONE] Fix(ui): оставить `Segments` только как dev-debug, но привести формат к короткому виду `#1 45% | #2 65%` (remaining%) — scope: `src/client/ui/src/session/virtual-conversation.tsx`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): compact segments token summary`
 113. [DONE] Git Commit: `fix(ui): compact segments token summary` (hash: 4217920c)
+
+## Phase 100 — Release build for QA verification (owner: Oleksandr, updated: 2026-02-04)
+
+### Stream: build artifacts (local)
+114. [TODO] Release: run `./scripts/build-all.sh` (bump versions + tarballs) — scope: repo-wide (commands + version bumps); expected commit message: `chore(release): build-all next version`
+115. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+116. [TODO] Release: run `./scripts/build-release.sh --use-current-version` (VSIX) — scope: repo-wide (commands only); expected commit message: `chore(release): build vsix`
+117. [TODO] Git Commit: `chore(release): build vsix` (hash: TBD)
+118. [TODO] Docs(session): создать `doc/Sessions/Session087.md` (Phase 99 fixes + release artifacts) — scope: `doc/Sessions/Session087.md`; expected commit message: `docs(session): add Session087 report`
+119. [TODO] Git Commit: `docs(session): add Session087 report` (hash: TBD)
