@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SessionMessage } from "../../../../types/session";
+import { AnimatedDots } from "./animated-dots";
 import type { ProviderTheme } from "./helpers";
 import MarkdownContent from "./markdown-content";
 
@@ -17,6 +18,7 @@ type ThinkingMessageProps = {
   readonly onToggle: (messageId: string) => void;
   readonly label: string;
   readonly className: string;
+  readonly providerTheme: ProviderTheme | null;
 };
 
 type StandardMessageProps = {
@@ -122,6 +124,7 @@ const DialogPanel = ({
                 label={label}
                 message={message}
                 onToggle={toggleThinking}
+                providerTheme={providerTheme}
               />
             );
           }
@@ -178,6 +181,7 @@ const ThinkingMessage = ({
   onToggle,
   label,
   className,
+  providerTheme,
 }: ThinkingMessageProps) => (
   <article className={className}>
     <header className="session-dialog__message-header session-dialog__message-header--thinking">
@@ -195,7 +199,7 @@ const ThinkingMessage = ({
       >
         {expanded ? "▾" : "▸"}
       </button>
-      <ThinkingRoleLabel label={label} />
+      <ThinkingRoleLabel label={label} providerTheme={providerTheme} />
     </header>
     {expanded ? (
       <MarkdownContent
@@ -255,35 +259,14 @@ const mergeThinkingMessages = (
   return result;
 };
 
-const ThinkingRoleLabel = ({ label }: { readonly label: string }) => {
-  const dots = useAnimatedDots(true);
-  return (
-    <span className="session-dialog__role">
-      {label}
-      {dots}
-    </span>
-  );
-};
-
-const DOTS = ["", ".", "..", "..."] as const;
-
-const useAnimatedDots = (enabled: boolean): string => {
-  const [tick, setTick] = useState(0);
-
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-    const timer = window.setInterval(() => {
-      setTick((current) => current + 1);
-    }, 500);
-    return () => {
-      window.clearInterval(timer);
-    };
-  }, [enabled]);
-
-  if (!enabled) {
-    return "";
-  }
-  return DOTS[tick % DOTS.length];
-};
+const ThinkingRoleLabel = ({
+  label,
+  providerTheme,
+}: {
+  readonly label: string;
+  readonly providerTheme: ProviderTheme | null;
+}) => (
+  <span className="session-dialog__role">
+    {label} <AnimatedDots theme={providerTheme} />
+  </span>
+);
