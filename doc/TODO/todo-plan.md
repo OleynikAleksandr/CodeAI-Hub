@@ -118,3 +118,49 @@
 61. [DONE] Git Commit: `chore(release): build vsix` (hash: c1444f4e)
 62. [DONE] Docs(session): создать `doc/Sessions/Session083.md` (итоги + артефакты релиза) — scope: `doc/Sessions/Session083.md`; expected commit message: `docs(session): add Session083 report`
 63. [DONE] Git Commit: `docs(session): add Session083 report` (hash: 0c78d281)
+
+## Phase 97 — Session UX: Seamless Continuity (virtual conversation) + Input Lock (owner: Oleksandr, updated: 2026-02-04)
+
+### Stream: design (approve before execute)
+64. [TODO] Docs(arch): описать целевую модель «виртуальная беседа» (одна UI-лента сообщений) + «физические сегменты» (continuation под капотом) + правила UX (без упоминаний времени; `Agent is working…` — единственная индикация ожидания; поведение при Send до готовности background rollover) — scope: `doc/Project_Docs/SessionContinuity/VirtualConversation_SeamlessContinuity_Architecture.md`; expected commit message: `docs(arch): define virtual conversation continuity`
+65. [TODO] Git Commit: `docs(arch): define virtual conversation continuity` (hash: TBD)
+
+### Stream: provider turn lifecycle (foundation)
+66. [TODO] Feat(claude): эмитить turn lifecycle на каждый user-turn: `turn_started` (после принятия user prompt) и `turn_completed` (на `type="result"` из SDK), строго 1× `turn_completed` на turn — scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `feat(claude): emit turn lifecycle events`
+67. [TODO] Git Commit: `feat(claude): emit turn lifecycle events` (hash: TBD)
+68. [TODO] Feat(gemini): эмитить `turn_started`/`turn_completed` на каждый user-turn (аналогично Claude; `turn_completed` только после финального assistant response и cleanup) — scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`; expected commit message: `feat(gemini): emit turn lifecycle events`
+69. [TODO] Git Commit: `feat(gemini): emit turn lifecycle events` (hash: TBD)
+70. [TODO] Chore(codex): выровнять turn lifecycle contract: гарантировать `turn_started` и `turn_completed` на каждый user-turn (без дубликатов; payload стабилен) — scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `chore(codex): align turn lifecycle events`
+71. [TODO] Git Commit: `chore(codex): align turn lifecycle events` (hash: TBD)
+
+### Stream: core → UI turn state (single source of truth)
+72. [TODO] Feat(core): нормализовать provider turn lifecycle в единый `session:stream` event (`data.kind="turn_state"`, `data.state="running"|"idle"`, опц. `data.providerId`); приоритет статусов: `blocked` (rollover) > `running` > `idle` — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): stream turn state events`
+73. [TODO] Git Commit: `feat(core): stream turn state events` (hash: TBD)
+
+### Stream: UI input lock (no queue baseline)
+74. [TODO] Fix(ui): сделать один in-flight запрос: блокировать ввод (textarea) и отправку, пока `connectionState !== "idle"` (`running` или `blocked`), разблокировать строго по `turn_state=idle` (без эвристик); убрать эвристику `lastMessageRole=user` для баннера `Agent is working…` — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): lock input while turn in-flight`
+75. [TODO] Git Commit: `fix(ui): lock input while turn in-flight` (hash: TBD)
+
+### Stream: waiting indicators (V2)
+76. [TODO] Feat(ui): добавить `AnimatedDots` (крупнее/контрастнее, fading, цвет провайдера) и переиспользовать в местах ожидания — scope: `src/client/ui/src/session/animated-dots.tsx`, `src/client/ui/src/session/session-view.css`, `src/client/ui/src/session/dialog-panel.tsx`; expected commit message: `feat(ui): add prominent animated dots indicator`
+77. [TODO] Git Commit: `feat(ui): add prominent animated dots indicator` (hash: TBD)
+78. [TODO] Fix(ui): анимировать dots только у последнего “Thinking”, который ещё не “закрыт” появлением любого `assistant` ПОСЛЕ него; для остальных Thinking анимация выключена — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): animate only pending thinking`
+79. [TODO] Git Commit: `fix(ui): animate only pending thinking` (hash: TBD)
+80. [TODO] Fix(ui): баннер `Agent is working…` показывать, если `connectionState="running"` и 10s нет новых `thinking`/`assistant`; сбрасывать таймер на каждое новое `thinking`/`assistant`; скрывать при `turn_completed`; при `blocked` показывать только rollover баннер; баннер всегда с `AnimatedDots` и цветом провайдера — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/animated-dots.tsx`; expected commit message: `fix(ui): improve agent working indicator`
+81. [TODO] Git Commit: `fix(ui): improve agent working indicator` (hash: TBD)
+
+### Stream: rollover UX polish (current approach)
+82. [TODO] Fix(ui): rollover-уведомления — цвет провайдера + шрифт меньше (~в 1.5 раза) + убрать упоминания времени ("1–6 минут") и лишние детали; текст короткий и спокойный — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view.css`; expected commit message: `fix(ui): polish rollover banner copy`
+83. [TODO] Git Commit: `fix(ui): polish rollover banner copy` (hash: TBD)
+84. [TODO] Fix(ui): `Continuation #N` не должен быть обязательным “шумом” — по умолчанию скрыть, оставить в debug/деталях (tooltip/копирование) — scope: `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): hide continuation numbering by default`
+85. [TODO] Git Commit: `fix(ui): hide continuation numbering by default` (hash: TBD)
+
+### Stream: silent preemptive rollover (behind flag)
+86. [TODO] Feat(core): добавить preempt порог (default 50% remaining) `continuity.preemptRemainingPercentThreshold` и запускать background rollover только ПОСЛЕ `turn_completed`, если `remaining<=preempt` (без UI/без user-facing сообщений; дедуп in-flight) — scope: `packages/core/src/config/index.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): add silent preemptive rollover`
+87. [TODO] Git Commit: `feat(core): add silent preemptive rollover` (hash: TBD)
+88. [TODO] Fix(ui): если пользователь нажал Send до готовности background rollover — не показывать “создаю новую сессию/проценты/время”, удержать сообщение и отправить автоматически после готовности; пока сообщение не отправлено — input заблокирован (без очереди); UI использует стандартный `Agent is working…` — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): queue send behind rollover`
+89. [TODO] Git Commit: `fix(ui): queue send behind rollover` (hash: TBD)
+
+### Stream: verification + release
+90. [TODO] Release: прогнать обязательные Gates + таргетные сборки `project-manager` и `build:webview` — scope: repo-wide (commands only); expected commit message: `chore(release): verify seamless continuity UX`
+91. [TODO] Git Commit: `chore(release): verify seamless continuity UX` (hash: TBD)
