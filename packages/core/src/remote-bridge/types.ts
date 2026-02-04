@@ -117,3 +117,9 @@ export const serializeSession = (session: Session): SerializedSession => ({
   providerSessionId: session.providerSessionId ?? null,
   providerSessionStatus: session.providerSessionStatus,
 });
+
+export type TurnStateStreamData = {
+  readonly kind: "turn_state";
+  readonly state: "running" | "idle";
+  readonly providerId?: string;
+};

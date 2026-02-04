@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { access, readFile, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
@@ -290,6 +291,33 @@ export class SessionRequestHandler {
           ...notification,
           timestamp: new Date().toISOString(),
         } satisfies FlowNodeRolloverNotification,
+      },
+    });
+  }
+
+  private emitTurnStateEvent(options: {
+    readonly sessionId: string;
+    readonly state: "running" | "idle";
+  }): void {
+    const session = this.sessionManager.getSession(options.sessionId);
+    const providerId = session?.providerId ?? null;
+
+    this.broadcaster({
+      type: "session:stream",
+      payload: {
+        sessionId: options.sessionId,
+        event: {
+          type: "stream_event",
+          provider: providerId ?? "core",
+          sessionId: options.sessionId,
+          data: {
+            kind: "turn_state",
+            state: options.state,
+            ...(providerId ? { providerId } : {}),
+          },
+          uuid: `${crypto.randomUUID()}::turn_state`,
+          timestamp: new Date().toISOString(),
+        },
       },
     });
   }
@@ -1321,7 +1349,16 @@ export class SessionRequestHandler {
       case "realSessionId":
         this.handleRealSessionIdEvent(sessionId, event.payload);
         break;
+      case "turn_started":
+        this.emitTurnStateEvent({ sessionId, state: "running" });
+        break;
+      case "turn_completed":
+        this.emitTurnStateEvent({ sessionId, state: "idle" });
+        break;
       case "turn_failed":
+        this.emitTurnStateEvent({ sessionId, state: "idle" });
+        this.broadcastProviderError(sessionId, event);
+        break;
       case "stream_error":
       case "error":
         this.broadcastProviderError(sessionId, event);
