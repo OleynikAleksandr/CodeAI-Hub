@@ -11,6 +11,7 @@ export type SerializedSession = {
   readonly stage: string | null;
   readonly runSlug: string | null;
   readonly continuationParentId: string | null;
+  readonly continuationIndex: number;
   readonly title: string;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -109,6 +110,7 @@ export const serializeSession = (session: Session): SerializedSession => ({
   stage: session.stage,
   runSlug: session.runSlug ?? null,
   continuationParentId: session.continuationParentId,
+  continuationIndex: session.continuationIndex,
   title: session.title,
   createdAt: session.createdAt,
   updatedAt: session.updatedAt,
