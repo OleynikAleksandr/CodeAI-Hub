@@ -194,8 +194,8 @@
 107. [TODO] Git Commit: `fix(ui): make animated dots resilient to missing css` (hash: TBD)
 108. [TODO] Fix(ui): унифицировать “ожидание без ответа” — если есть `Thinking` до assistant ответа, всегда показывать индикатор (либо на `Thinking`, либо в `Agent is working…`, без дублирования) — scope: `src/client/ui/src/session/dialog-panel-pending-thinking.ts`, `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): unify waiting indicator for pending thinking`
 109. [TODO] Git Commit: `fix(ui): unify waiting indicator for pending thinking` (hash: TBD)
-110. [TODO] Feat(ui): увеличить `AnimatedDots` до 6 точек + настроить staggered задержки (2..6), чтобы анимация была заметнее и “богаче” — scope: `src/client/ui/src/session/animated-dots.tsx`, `media/session-view.css`; expected commit message: `feat(ui): expand animated dots to six`
-111. [TODO] Git Commit: `feat(ui): expand animated dots to six` (hash: TBD)
+110. [DONE] Feat(ui): увеличить `AnimatedDots` до 6 точек + настроить staggered задержки (2..6), чтобы анимация была заметнее и “богаче” — scope: `src/client/ui/src/session/animated-dots.tsx`, `media/session-view.css`; expected commit message: `feat(ui): expand animated dots to six`
+111. [DONE] Git Commit: `feat(ui): expand animated dots to six` (hash: 574cd268)
 
 ### Stream: status panel cleanup (remove noisy debug copy)
 112. [DONE] Fix(ui): оставить `Segments` только как dev-debug, но привести формат к короткому виду `#1 45% | #2 65%` (remaining%) — scope: `src/client/ui/src/session/virtual-conversation.tsx`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): compact segments token summary`
