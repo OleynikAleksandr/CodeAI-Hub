@@ -24,6 +24,9 @@ export const AnimatedDots = ({
       <span className="animated-dots__dot" />
       <span className="animated-dots__dot animated-dots__dot--2" />
       <span className="animated-dots__dot animated-dots__dot--3" />
+      <span className="animated-dots__dot animated-dots__dot--4" />
+      <span className="animated-dots__dot animated-dots__dot--5" />
+      <span className="animated-dots__dot animated-dots__dot--6" />
     </span>
   );
 };

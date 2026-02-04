@@ -306,11 +306,23 @@
 }
 
 .animated-dots__dot--2 {
-  animation-delay: 0.15s;
+  animation-delay: 0.12s;
 }
 
 .animated-dots__dot--3 {
-  animation-delay: 0.3s;
+  animation-delay: 0.24s;
+}
+
+.animated-dots__dot--4 {
+  animation-delay: 0.36s;
+}
+
+.animated-dots__dot--5 {
+  animation-delay: 0.48s;
+}
+
+.animated-dots__dot--6 {
+  animation-delay: 0.6s;
 }
 
 @keyframes animated-dots-pulse {
