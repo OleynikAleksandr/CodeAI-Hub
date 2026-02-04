@@ -186,8 +186,8 @@
 ### Stream: agent working indicator (AnimatedDots + correct lifecycle)
 102. [TODO] Fix(ui): вернуть/починить `AnimatedDots` в плашке `Agent is working…` (видимо и анимировано; цвет соответствует провайдеру) — scope: `src/client/ui/src/session/animated-dots.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`, `media/session-view.css`; expected commit message: `fix(ui): restore animated dots in agent working banner`
 103. [TODO] Git Commit: `fix(ui): restore animated dots in agent working banner` (hash: TBD)
-104. [TODO] Fix(ui): починить lifecycle плашки `Agent is working…` (не появляется после `turn_completed`; показывать только при `running`/`blocked` или queued-send) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`, `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `fix(ui): align agent working banner with turn state`
-105. [TODO] Git Commit: `fix(ui): align agent working banner with turn state` (hash: TBD)
+104. [DONE] Fix(ui): починить lifecycle плашки `Agent is working…` (не появляется после `turn_completed`; показывать только при `running`/`blocked` или queued-send) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`, `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `fix(ui): align agent working banner with turn state`
+105. [DONE] Git Commit: `fix(ui): align agent working banner with turn state` (hash: de57c234)
 
 ### Stream: waiting indicators (Thinking + fallback animation)
 106. [DONE] Fix(ui): сделать `AnimatedDots` самодостаточным (JS fallback/inline цвета), чтобы точки были видимы/анимированы даже если CSS не подгрузился (покрывает и `Thinking`, и `Agent is working…`) — scope: `src/client/ui/src/session/animated-dots.tsx`, `src/client/ui/src/session/helpers.ts`, `media/session-view.css`; expected commit message: `fix(ui): make animated dots resilient to missing css`
