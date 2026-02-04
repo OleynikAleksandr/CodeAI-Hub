@@ -134,8 +134,8 @@
 71. [DONE] Git Commit: `chore(codex): align turn lifecycle events` (hash: 681c7fb9)
 
 ### Stream: core → UI turn state (single source of truth)
-72. [TODO] Feat(core): нормализовать provider turn lifecycle в единый `session:stream` event (`data.kind="turn_state"`, `data.state="running"|"idle"`, опц. `data.providerId`); приоритет статусов: `blocked` (rollover) > `running` > `idle` — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): stream turn state events`
-73. [TODO] Git Commit: `feat(core): stream turn state events` (hash: TBD)
+72. [DONE] Feat(core): нормализовать provider turn lifecycle в единый `session:stream` event (`data.kind="turn_state"`, `data.state="running"|"idle"`, опц. `data.providerId`); приоритет статусов: `blocked` (rollover) > `running` > `idle` — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): stream turn state events`
+73. [DONE] Git Commit: `feat(core): stream turn state events` (hash: bd8ed670)
 
 ### Stream: UI input lock (no queue baseline)
 74. [TODO] Fix(ui): сделать один in-flight запрос: блокировать ввод (textarea) и отправку, пока `connectionState !== "idle"` (`running` или `blocked`), разблокировать строго по `turn_state=idle` (без эвристик); убрать эвристику `lastMessageRole=user` для баннера `Agent is working…` — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): lock input while turn in-flight`
