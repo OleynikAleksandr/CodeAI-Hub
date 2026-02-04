@@ -19,12 +19,14 @@ type StatusPanelProps = {
   readonly status: SessionStatusInfo | null;
   readonly connectionStatus: CoreConnectionStatus;
   readonly connectionDetail?: string;
+  readonly tokenDebugSummary?: string;
 };
 
 const StatusPanel = ({
   status,
   connectionStatus,
   connectionDetail,
+  tokenDebugSummary,
 }: StatusPanelProps) => {
   if (!status || connectionStatus !== "ready") {
     return (
@@ -81,6 +83,12 @@ const StatusPanel = ({
           {remainingPercentage}%)
         </span>
       </div>
+      {tokenDebugSummary ? (
+        <div className="session-status__row">
+          <span className="session-status__label">Segments</span>
+          <span className="session-status__value">{tokenDebugSummary}</span>
+        </div>
+      ) : null}
     </section>
   );
 };
