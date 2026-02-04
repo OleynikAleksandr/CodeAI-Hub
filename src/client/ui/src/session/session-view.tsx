@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
-import { AnimatedDots } from "./animated-dots";
 import DialogPanel from "./dialog-panel";
 import EmptyState from "./empty-state";
 import { mapProviderTheme } from "./helpers";
 import InputPanel from "./input-panel";
+import {
+  buildAgentWorkingBanner,
+  resolveVisibleBanner,
+  useQueuedSend,
+} from "./session-view-helpers";
 import StatusPanel from "./status-panel";
 import {
   buildTokenDebugSummary,
@@ -17,22 +21,9 @@ import {
   SessionHeader,
 } from "./virtual-conversation";
 
-type TokenUsage = {
-  readonly used: number;
-  readonly limit: number;
-};
-
 const AGENT_WORKING_SILENCE_MS = 10_000;
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
-
-const computeRemainingPercent = (usage: TokenUsage): number => {
-  const remaining = usage.limit - usage.used;
-  if (!Number.isFinite(remaining) || usage.limit <= 0) {
-    return 0;
-  }
-  return Math.round((remaining / usage.limit) * 100);
-};
 
 const buildSessionBanner = (options: {
   readonly session: SessionSnapshot;
@@ -41,18 +32,6 @@ const buildSessionBanner = (options: {
 }): JSX.Element | null => {
   const isRolloverBlocked =
     options.session.status.connectionState === "blocked";
-  const rollover = options.session.status.rollover ?? null;
-  const fallbackRemainingPercent = computeRemainingPercent(
-    options.session.status.tokenUsage
-  );
-  const remainingPercent =
-    typeof rollover?.remainingPercent === "number"
-      ? rollover.remainingPercent
-      : fallbackRemainingPercent;
-  const thresholdPercent =
-    typeof rollover?.thresholdPercent === "number"
-      ? rollover.thresholdPercent
-      : null;
   const shouldShowRestoringBanner =
     !isRolloverBlocked &&
     typeof options.continuationIndex === "number" &&
@@ -69,11 +48,7 @@ const buildSessionBanner = (options: {
   if (isRolloverBlocked) {
     return (
       <output aria-live="polite" className={bannerClasses}>
-        <div>
-          Context is running low (~{remainingPercent}% remaining
-          {thresholdPercent !== null ? `, threshold ${thresholdPercent}%` : ""}
-          ). Preparing a continuation to keep quality high.
-        </div>
+        Preparing a continuation…
       </output>
     );
   }
@@ -168,6 +143,11 @@ const SessionViewBody = ({
     useState(false);
   const previousConnectionStateRef = useRef<ConnectionState>(connectionState);
   const runningStartedAtRef = useRef<number | null>(null);
+  const { queuedMessage, isQueued, submitMessage } = useQueuedSend({
+    activeSessionId,
+    connectionState,
+    onSendMessage,
+  });
 
   const continuationChain =
     activeRecord && activeSessionId
@@ -234,14 +214,14 @@ const SessionViewBody = ({
     continuationIndex,
     providerTheme,
   });
+  const visibleBanner = resolveVisibleBanner({ banner, queuedMessage });
 
-  const agentWorkingBanner =
-    showAgentWorkingIndicator && !isRolloverBlocked ? (
-      <output aria-live="polite" className="session-panel">
-        <span>Agent is working</span>
-        <AnimatedDots theme={providerTheme} />
-      </output>
-    ) : null;
+  const agentWorkingBanner = buildAgentWorkingBanner({
+    queuedMessage,
+    showAgentWorkingIndicator,
+    isRolloverBlocked,
+    providerTheme,
+  });
 
   return (
     <div className="session-app">
@@ -255,12 +235,13 @@ const SessionViewBody = ({
           />
         </div>
         <div className="session-app__rails">
-          {banner}
+          {visibleBanner}
           {agentWorkingBanner}
           <InputPanel
             connectionState={connectionState}
             draft={activeSession.draft}
-            onSubmit={(text) => onSendMessage(activeSessionId, text)}
+            isQueued={isQueued}
+            onSubmit={submitMessage}
           />
           <StatusPanel
             connectionDetail={coreConnectionDetail}
