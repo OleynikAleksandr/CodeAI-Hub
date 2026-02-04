@@ -138,8 +138,8 @@
 73. [DONE] Git Commit: `feat(core): stream turn state events` (hash: bd8ed670)
 
 ### Stream: UI input lock (no queue baseline)
-74. [TODO] Fix(ui): сделать один in-flight запрос: блокировать ввод (textarea) и отправку, пока `connectionState !== "idle"` (`running` или `blocked`), разблокировать строго по `turn_state=idle` (без эвристик); убрать эвристику `lastMessageRole=user` для баннера `Agent is working…` — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): lock input while turn in-flight`
-75. [TODO] Git Commit: `fix(ui): lock input while turn in-flight` (hash: TBD)
+74. [DONE] Fix(ui): сделать один in-flight запрос: блокировать ввод (textarea) и отправку, пока `connectionState !== "idle"` (`running` или `blocked`), разблокировать строго по `turn_state=idle` (без эвристик); убрать эвристику `lastMessageRole=user` для баннера `Agent is working…` — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): lock input while turn in-flight`
+75. [DONE] Git Commit: `fix(ui): lock input while turn in-flight` (hash: e8e448e9)
 
 ### Stream: waiting indicators (V2)
 76. [TODO] Feat(ui): добавить `AnimatedDots` (крупнее/контрастнее, fading, цвет провайдера) и переиспользовать в местах ожидания — scope: `src/client/ui/src/session/animated-dots.tsx`, `src/client/ui/src/session/session-view.css`, `src/client/ui/src/session/dialog-panel.tsx`; expected commit message: `feat(ui): add prominent animated dots indicator`
