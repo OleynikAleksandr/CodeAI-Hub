@@ -144,8 +144,8 @@
 ### Stream: waiting indicators (V2)
 76. [DONE] Feat(ui): добавить `AnimatedDots` (крупнее/контрастнее, fading, цвет провайдера) и переиспользовать в местах ожидания — scope: `src/client/ui/src/session/animated-dots.tsx`, `media/session-view.css`, `src/client/ui/src/session/dialog-panel.tsx`; expected commit message: `feat(ui): add prominent animated dots indicator`
 77. [DONE] Git Commit: `feat(ui): add prominent animated dots indicator` (hash: 6ff52283)
-78. [TODO] Fix(ui): анимировать dots только у последнего “Thinking”, который ещё не “закрыт” появлением любого `assistant` ПОСЛЕ него; для остальных Thinking анимация выключена — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): animate only pending thinking`
-79. [TODO] Git Commit: `fix(ui): animate only pending thinking` (hash: TBD)
+78. [DONE] Fix(ui): анимировать dots только у последнего “Thinking”, который ещё не “закрыт” появлением любого `assistant` ПОСЛЕ него; для остальных Thinking анимация выключена — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/dialog-panel-pending-thinking.ts`; expected commit message: `fix(ui): animate only pending thinking`
+79. [DONE] Git Commit: `fix(ui): animate only pending thinking` (hash: 128123d1)
 80. [TODO] Fix(ui): баннер `Agent is working…` показывать, если `connectionState="running"` и 10s нет новых `thinking`/`assistant`; сбрасывать таймер на каждое новое `thinking`/`assistant`; скрывать при `turn_completed`; при `blocked` показывать только rollover баннер; баннер всегда с `AnimatedDots` и цветом провайдера — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/animated-dots.tsx`; expected commit message: `fix(ui): improve agent working indicator`
 81. [TODO] Git Commit: `fix(ui): improve agent working indicator` (hash: TBD)
 
