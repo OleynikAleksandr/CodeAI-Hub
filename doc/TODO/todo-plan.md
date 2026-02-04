@@ -96,8 +96,8 @@
 43. [DONE] Git Commit: `fix(core): compute continuation index` (hash: 31353b82)
 44. [DONE] Fix(core): отправлять UI явные события rollover lifecycle (start/create-report/wait/new-session/resume) с `remaining%` и threshold — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `fix(core): emit rollover notifications`
 45. [DONE] Git Commit: `fix(core): emit rollover notifications` (hash: 53483e3e)
-46. [TODO] Feat(ui): прокинуть `continuationIndex` (из Core) в `SessionRecord` — scope: `src/types/session.ts`, `src/client/ui/src/core-bridge/types.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `feat(ui): propagate continuation index`
-47. [TODO] Git Commit: `feat(ui): propagate continuation index` (hash: TBD)
+46. [DONE] Feat(ui): прокинуть `continuationIndex` (из Core) в `SessionRecord` — scope: `src/types/session.ts`, `src/client/ui/src/core-bridge/types.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `feat(ui): propagate continuation index`
+47. [DONE] Git Commit: `feat(ui): propagate continuation index` (hash: ee6d7f31)
 48. [TODO] Fix(ui): использовать `continuationIndex` из Core в заголовке (и для restoring-banner) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): use core continuation index`
 49. [TODO] Git Commit: `fix(ui): use core continuation index` (hash: TBD)
 50. [TODO] Fix(ui): убрать hardcode 30% и драйвить блокировку/баннер от Core rollover notifications (`kind=flow_node_rollover`) — scope: `src/types/session.ts`, `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): drive rollover UX from notifications`
