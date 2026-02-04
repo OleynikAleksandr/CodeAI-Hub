@@ -166,7 +166,7 @@
 91. [TODO] Git Commit: `chore(release): verify seamless continuity UX` (hash: TBD)
 
 ### Stream: virtual conversation feed (one UI ribbon)
-92. [DONE] Feat(ui): сделать одну сквозную ленту сообщений (агрегация сообщений по continuation chain, включая скрытые сегменты); отправка — в active segment — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/virtual-conversation.ts`; expected commit message: `feat(ui): render virtual conversation feed`
+92. [DONE] Feat(ui): сделать одну сквозную ленту сообщений (агрегация сообщений по continuation chain, включая скрытые сегменты); отправка — в active segment — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `feat(ui): render virtual conversation feed`
 93. [DONE] Git Commit: `feat(ui): render virtual conversation feed` (hash: 7419e6b8)
 94. [DONE] Feat(ui): показать debug токены по реальным сегментам (active + summary по chain) — scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `feat(ui): show per-segment token debug list`
 95. [DONE] Git Commit: `feat(ui): show per-segment token debug list` (hash: 305f12f9)
