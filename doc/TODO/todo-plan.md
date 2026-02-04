@@ -130,8 +130,8 @@
 67. [DONE] Git Commit: `feat(claude): emit turn lifecycle events` (hash: 5351390a)
 68. [DONE] Feat(gemini): эмитить `turn_started`/`turn_completed` на каждый user-turn (аналогично Claude; `turn_completed` только после финального assistant response и cleanup) — scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`; expected commit message: `feat(gemini): emit turn lifecycle events`
 69. [DONE] Git Commit: `feat(gemini): emit turn lifecycle events` (hash: ab27e6a3)
-70. [TODO] Chore(codex): выровнять turn lifecycle contract: гарантировать `turn_started` и `turn_completed` на каждый user-turn (без дубликатов; payload стабилен) — scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `chore(codex): align turn lifecycle events`
-71. [TODO] Git Commit: `chore(codex): align turn lifecycle events` (hash: TBD)
+70. [DONE] Chore(codex): выровнять turn lifecycle contract: гарантировать `turn_started` и `turn_completed` на каждый user-turn (без дубликатов; payload стабилен) — scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `chore(codex): align turn lifecycle events`
+71. [DONE] Git Commit: `chore(codex): align turn lifecycle events` (hash: 681c7fb9)
 
 ### Stream: core → UI turn state (single source of truth)
 72. [TODO] Feat(core): нормализовать provider turn lifecycle в единый `session:stream` event (`data.kind="turn_state"`, `data.state="running"|"idle"`, опц. `data.providerId`); приоритет статусов: `blocked` (rollover) > `running` > `idle` — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): stream turn state events`
