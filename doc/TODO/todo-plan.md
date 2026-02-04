@@ -110,8 +110,8 @@
 55. [DONE] Git Commit: `chore(ui): translate session UI copy to English` (hash: 17363ecb)
 
 ### Stream: release — build VSIX + tarballs (Phase 96 wrap-up)
-56. [TODO] Release: завершить все TODO в Phase 96 (42–55) + прогнать обязательные Gates и таргетные сборки затронутых пакетов — scope: repo-wide (commands only); expected commit message: `chore(release): verify gates for Phase 96`
-57. [TODO] Git Commit: `chore(release): verify gates for Phase 96` (hash: TBD)
+56. [DONE] Release: завершить все TODO в Phase 96 (42–55) + прогнать обязательные Gates и таргетные сборки затронутых пакетов — scope: repo-wide (commands only); expected commit message: `chore(release): verify gates for Phase 96`
+57. [DONE] Git Commit: `chore(release): verify gates for Phase 96` (hash: ec694daf)
 58. [TODO] Release: выполнить `./scripts/build-all.sh` (авто bump версий + tarball’ы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`) — scope: repo-wide (automated version bump/manifests); expected commit message: `chore(release): build-all next version`
 59. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
 60. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version` и проверить, что VSIX создан в корне — scope: repo root artifact (`codeai-hub-<version>.vsix`); expected commit message: `chore(release): build vsix`
