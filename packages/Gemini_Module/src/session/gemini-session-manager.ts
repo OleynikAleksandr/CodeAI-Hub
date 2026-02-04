@@ -242,6 +242,16 @@ export class GeminiSessionManager {
     session.status = "streaming";
 
     const timestamp = new Date().toISOString();
+    session.eventEmitter.emit("message", {
+      type: "turn_started",
+      provider: "gemini",
+      sessionId: session.sessionId,
+      uuid: `${randomUUID()}::turn_started`,
+      timestamp,
+      data: {
+        promptId,
+      },
+    });
     session.logger?.logUserInput({
       promptId,
       content: trimmed,
@@ -260,6 +270,7 @@ export class GeminiSessionManager {
       },
     ]);
 
+    let didComplete = false;
     try {
       const result = await this.processTurns({
         session,
@@ -302,6 +313,7 @@ export class GeminiSessionManager {
           },
         },
       ]);
+      didComplete = true;
     } catch (error) {
       session.logger?.logError({
         error,
@@ -322,6 +334,18 @@ export class GeminiSessionManager {
       }
       session.abortController = null;
       session.status = "idle";
+      if (didComplete) {
+        session.eventEmitter.emit("message", {
+          type: "turn_completed",
+          provider: "gemini",
+          sessionId: session.sessionId,
+          uuid: `${randomUUID()}::turn_completed`,
+          timestamp: new Date().toISOString(),
+          data: {
+            promptId,
+          },
+        });
+      }
     }
   }
 
