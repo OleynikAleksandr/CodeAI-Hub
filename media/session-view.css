@@ -188,6 +188,24 @@
   color: rgba(204, 204, 204, 1);
 }
 
+.session-banner {
+  font-size: 12px;
+  line-height: 1.25;
+  padding: 8px 10px;
+}
+
+.session-banner--claude {
+  border-left: 4px solid #ff9105;
+}
+
+.session-banner--codex {
+  border-left: 4px solid #01f0d8;
+}
+
+.session-banner--gemini {
+  border-left: 4px solid #ab34cb;
+}
+
 .session-info {
   display: flex;
   flex-direction: column;
