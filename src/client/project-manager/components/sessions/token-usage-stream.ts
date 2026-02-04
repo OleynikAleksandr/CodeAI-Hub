@@ -34,12 +34,31 @@ type FlowNodeRolloverNotification = {
   readonly reportPath?: unknown;
 };
 
+type TurnStateStreamEvent = {
+  readonly data?: unknown;
+};
+
 const isFlowNodeRolloverNotification = (
   event: unknown
 ): event is FlowNodeRolloverNotification =>
   isRecord(event) &&
   event.kind === "flow_node_rollover" &&
   typeof event.phase === "string";
+
+const extractTurnState = (event: unknown): "running" | "idle" | null => {
+  if (!isRecord(event)) {
+    return null;
+  }
+  const candidate = event as TurnStateStreamEvent;
+  if (!isRecord(candidate.data) || candidate.data.kind !== "turn_state") {
+    return null;
+  }
+  const raw = readString(candidate.data.state);
+  if (raw === "running" || raw === "idle") {
+    return raw;
+  }
+  return null;
+};
 
 const resolveProviderSessionIdForCache = (
   snapshot: SessionSnapshots[string],
@@ -116,6 +135,26 @@ export const updateSnapshotsWithTokenUsage = (
             ...(reportPath === null ? {} : { reportPath }),
             updatedAt: Date.now(),
           },
+          updatedAt: Date.now(),
+        },
+      },
+    };
+  }
+
+  const turnState = extractTurnState(payload.event);
+  if (turnState) {
+    const current = snapshot.status.connectionState;
+    const nextConnectionState = current === "blocked" ? "blocked" : turnState;
+    if (nextConnectionState === current) {
+      return snapshots;
+    }
+    return {
+      ...snapshots,
+      [payload.sessionId]: {
+        ...snapshot,
+        status: {
+          ...snapshot.status,
+          connectionState: nextConnectionState,
           updatedAt: Date.now(),
         },
       },
