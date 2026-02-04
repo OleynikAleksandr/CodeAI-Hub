@@ -195,7 +195,7 @@ const ThinkingMessage = ({
       >
         {expanded ? "▾" : "▸"}
       </button>
-      <span className="session-dialog__role">{label}</span>
+      <ThinkingRoleLabel label={label} />
     </header>
     {expanded ? (
       <MarkdownContent
@@ -253,4 +253,37 @@ const mergeThinkingMessages = (
     result.push(message);
   }
   return result;
+};
+
+const ThinkingRoleLabel = ({ label }: { readonly label: string }) => {
+  const dots = useAnimatedDots(true);
+  return (
+    <span className="session-dialog__role">
+      {label}
+      {dots}
+    </span>
+  );
+};
+
+const DOTS = ["", ".", "..", "..."] as const;
+
+const useAnimatedDots = (enabled: boolean): string => {
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+    const timer = window.setInterval(() => {
+      setTick((current) => current + 1);
+    }, 500);
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [enabled]);
+
+  if (!enabled) {
+    return "";
+  }
+  return DOTS[tick % DOTS.length];
 };
