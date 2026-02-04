@@ -122,8 +122,8 @@
 ## Phase 97 — Session UX: Seamless Continuity (virtual conversation) + Input Lock (owner: Oleksandr, updated: 2026-02-04)
 
 ### Stream: design (approve before execute)
-64. [TODO] Docs(arch): описать целевую модель «виртуальная беседа» (одна UI-лента сообщений) + «физические сегменты» (continuation под капотом) + правила UX (без упоминаний времени; `Agent is working…` — единственная индикация ожидания; поведение при Send до готовности background rollover) — scope: `doc/Project_Docs/SessionContinuity/VirtualConversation_SeamlessContinuity_Architecture.md`; expected commit message: `docs(arch): define virtual conversation continuity`
-65. [TODO] Git Commit: `docs(arch): define virtual conversation continuity` (hash: TBD)
+64. [DONE] Docs(arch): описать целевую модель «виртуальная беседа» (одна UI-лента сообщений) + «физические сегменты» (continuation под капотом) + правила UX (без упоминаний времени; `Agent is working…` — единственная индикация ожидания; поведение при Send до готовности background rollover) — scope: `doc/Project_Docs/SessionContinuity/VirtualConversation_SeamlessContinuity_Architecture.md`; expected commit message: `docs(arch): define virtual conversation continuity`
+65. [DONE] Git Commit: `docs(arch): define virtual conversation continuity` (hash: 06857c2e)
 
 ### Stream: provider turn lifecycle (foundation)
 66. [TODO] Feat(claude): эмитить turn lifecycle на каждый user-turn: `turn_started` (после принятия user prompt) и `turn_completed` (на `type="result"` из SDK), строго 1× `turn_completed` на turn — scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `feat(claude): emit turn lifecycle events`
@@ -164,3 +164,9 @@
 ### Stream: verification + release
 90. [TODO] Release: прогнать обязательные Gates + таргетные сборки `project-manager` и `build:webview` — scope: repo-wide (commands only); expected commit message: `chore(release): verify seamless continuity UX`
 91. [TODO] Git Commit: `chore(release): verify seamless continuity UX` (hash: TBD)
+
+### Stream: virtual conversation feed (one UI ribbon)
+92. [TODO] Feat(ui): сделать одну сквозную ленту сообщений (агрегация сообщений по continuation chain, включая скрытые сегменты); отправка — в active segment — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/virtual-conversation.ts`; expected commit message: `feat(ui): render virtual conversation feed`
+93. [TODO] Git Commit: `feat(ui): render virtual conversation feed` (hash: TBD)
+94. [TODO] Feat(ui): показать debug токены по реальным сегментам (active + summary по chain) — scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `feat(ui): show per-segment token debug list`
+95. [TODO] Git Commit: `feat(ui): show per-segment token debug list` (hash: TBD)
