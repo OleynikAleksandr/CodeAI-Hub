@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SessionMessage } from "../../../../types/session";
 import { AnimatedDots } from "./animated-dots";
+import { resolvePendingThinkingMessageId } from "./dialog-panel-pending-thinking";
 import type { ProviderTheme } from "./helpers";
 import MarkdownContent from "./markdown-content";
 
@@ -19,6 +20,7 @@ type ThinkingMessageProps = {
   readonly label: string;
   readonly className: string;
   readonly providerTheme: ProviderTheme | null;
+  readonly showIndicator: boolean;
 };
 
 type StandardMessageProps = {
@@ -41,6 +43,10 @@ const DialogPanel = ({
     Record<string, boolean>
   >({});
   const [pinnedToBottom, setPinnedToBottom] = useState(true);
+  const pendingThinkingMessageId = useMemo(
+    () => resolvePendingThinkingMessageId(displayMessages),
+    [displayMessages]
+  );
 
   useEffect(() => {
     setExpandedThinking((previous) => {
@@ -116,6 +122,7 @@ const DialogPanel = ({
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
+            const showIndicator = message.id === pendingThinkingMessageId;
             return (
               <ThinkingMessage
                 className={className}
@@ -125,6 +132,7 @@ const DialogPanel = ({
                 message={message}
                 onToggle={toggleThinking}
                 providerTheme={providerTheme}
+                showIndicator={showIndicator}
               />
             );
           }
@@ -182,6 +190,7 @@ const ThinkingMessage = ({
   label,
   className,
   providerTheme,
+  showIndicator,
 }: ThinkingMessageProps) => (
   <article className={className}>
     <header className="session-dialog__message-header session-dialog__message-header--thinking">
@@ -199,7 +208,11 @@ const ThinkingMessage = ({
       >
         {expanded ? "▾" : "▸"}
       </button>
-      <ThinkingRoleLabel label={label} providerTheme={providerTheme} />
+      <ThinkingRoleLabel
+        label={label}
+        providerTheme={providerTheme}
+        showIndicator={showIndicator}
+      />
     </header>
     {expanded ? (
       <MarkdownContent
@@ -262,11 +275,14 @@ const mergeThinkingMessages = (
 const ThinkingRoleLabel = ({
   label,
   providerTheme,
+  showIndicator,
 }: {
   readonly label: string;
   readonly providerTheme: ProviderTheme | null;
+  readonly showIndicator: boolean;
 }) => (
   <span className="session-dialog__role">
-    {label} <AnimatedDots theme={providerTheme} />
+    {label}
+    {showIndicator ? <AnimatedDots theme={providerTheme} /> : null}
   </span>
 );
