@@ -146,8 +146,8 @@
 77. [DONE] Git Commit: `feat(ui): add prominent animated dots indicator` (hash: 6ff52283)
 78. [DONE] Fix(ui): анимировать dots только у последнего “Thinking”, который ещё не “закрыт” появлением любого `assistant` ПОСЛЕ него; для остальных Thinking анимация выключена — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/dialog-panel-pending-thinking.ts`; expected commit message: `fix(ui): animate only pending thinking`
 79. [DONE] Git Commit: `fix(ui): animate only pending thinking` (hash: 128123d1)
-80. [TODO] Fix(ui): баннер `Agent is working…` показывать, если `connectionState="running"` и 10s нет новых `thinking`/`assistant`; сбрасывать таймер на каждое новое `thinking`/`assistant`; скрывать при `turn_completed`; при `blocked` показывать только rollover баннер; баннер всегда с `AnimatedDots` и цветом провайдера — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/animated-dots.tsx`; expected commit message: `fix(ui): improve agent working indicator`
-81. [TODO] Git Commit: `fix(ui): improve agent working indicator` (hash: TBD)
+80. [DONE] Fix(ui): баннер `Agent is working…` показывать, если `connectionState="running"` и 10s нет новых `thinking`/`assistant`; сбрасывать таймер на каждое новое `thinking`/`assistant`; скрывать при `turn_completed`; при `blocked` показывать только rollover баннер; баннер всегда с `AnimatedDots` и цветом провайдера — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/animated-dots.tsx`; expected commit message: `fix(ui): improve agent working indicator`
+81. [DONE] Git Commit: `fix(ui): improve agent working indicator` (hash: cf3cb891)
 
 ### Stream: rollover UX polish (current approach)
 82. [TODO] Fix(ui): rollover-уведомления — цвет провайдера + шрифт меньше (~в 1.5 раза) + убрать упоминания времени ("1–6 минут") и лишние детали; текст короткий и спокойный — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view.css`; expected commit message: `fix(ui): polish rollover banner copy`
