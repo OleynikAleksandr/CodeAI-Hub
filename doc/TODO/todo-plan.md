@@ -100,8 +100,8 @@
 47. [DONE] Git Commit: `feat(ui): propagate continuation index` (hash: ee6d7f31)
 48. [DONE] Fix(ui): использовать `continuationIndex` из Core в заголовке (и для restoring-banner) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): use core continuation index`
 49. [DONE] Git Commit: `fix(ui): use core continuation index` (hash: 8a86f8dc)
-50. [TODO] Fix(ui): убрать hardcode 30% и драйвить блокировку/баннер от Core rollover notifications (`kind=flow_node_rollover`) — scope: `src/types/session.ts`, `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): drive rollover UX from notifications`
-51. [TODO] Git Commit: `fix(ui): drive rollover UX from notifications` (hash: TBD)
+50. [DONE] Fix(ui): убрать hardcode 30% и драйвить блокировку/баннер от Core rollover notifications (`kind=flow_node_rollover`) — scope: `src/types/session.ts`, `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): drive rollover UX from notifications`
+51. [DONE] Git Commit: `fix(ui): drive rollover UX from notifications` (hash: 98c58f67)
 
 ### Stream: session UI — agent activity indicators + English copy (MVP)
 52. [TODO] Feat(ui): добавить индикатор "agent working" при тишине 10s (без thinking/assistant output) + анимацию для "Thinking" плашки — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `feat(ui): add agent working indicator`
