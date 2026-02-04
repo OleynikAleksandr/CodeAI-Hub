@@ -104,8 +104,8 @@
 51. [DONE] Git Commit: `fix(ui): drive rollover UX from notifications` (hash: 98c58f67)
 
 ### Stream: session UI — agent activity indicators + English copy (MVP)
-52. [TODO] Feat(ui): добавить индикатор "agent working" при тишине 10s (без thinking/assistant output) + анимацию для "Thinking" плашки — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `feat(ui): add agent working indicator`
-53. [TODO] Git Commit: `feat(ui): add agent working indicator` (hash: TBD)
+52. [DONE] Feat(ui): добавить индикатор "agent working" при тишине 10s (без thinking/assistant output) + анимацию для "Thinking" плашки — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `feat(ui): add agent working indicator`
+53. [DONE] Git Commit: `feat(ui): add agent working indicator` (hash: 70b6c227)
 54. [TODO] Chore(ui): перевести UI-копирайтинг сессии на EN (MVP, без i18n) — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `chore(ui): translate session UI copy to English`
 55. [TODO] Git Commit: `chore(ui): translate session UI copy to English` (hash: TBD)
 
