@@ -3,11 +3,13 @@ import type { ProviderTheme } from "./helpers";
 type AnimatedDotsProps = {
   readonly theme?: ProviderTheme | null;
   readonly className?: string;
+  readonly ariaHidden?: boolean;
 };
 
 export const AnimatedDots = ({
   theme = null,
   className,
+  ariaHidden = true,
 }: AnimatedDotsProps) => {
   const themeClass =
     theme === "claude" || theme === "codex" || theme === "gemini"
@@ -18,7 +20,7 @@ export const AnimatedDots = ({
     .join(" ");
 
   return (
-    <span aria-hidden="true" className={classes}>
+    <span aria-hidden={ariaHidden} className={classes}>
       <span className="animated-dots__dot" />
       <span className="animated-dots__dot animated-dots__dot--2" />
       <span className="animated-dots__dot animated-dots__dot--3" />

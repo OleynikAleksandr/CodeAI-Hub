@@ -1,5 +1,7 @@
+import { useEffect, useRef, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
+import { AnimatedDots } from "./animated-dots";
 import DialogPanel from "./dialog-panel";
 import EmptyState from "./empty-state";
 import { mapProviderTheme } from "./helpers";
@@ -19,6 +21,10 @@ type TokenUsage = {
   readonly used: number;
   readonly limit: number;
 };
+
+const AGENT_WORKING_SILENCE_MS = 10_000;
+
+type ConnectionState = SessionSnapshot["status"]["connectionState"];
 
 const computeRemainingPercent = (usage: TokenUsage): number => {
   const remaining = usage.limit - usage.used;
@@ -78,6 +84,18 @@ const buildSessionBanner = (options: {
     );
   }
 
+  return null;
+};
+
+const resolveLastThinkingOrAssistantAt = (
+  messages: readonly SessionSnapshot["messages"][number][]
+): number | null => {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const message = messages[index];
+    if (message?.role === "thinking" || message?.role === "assistant") {
+      return message.createdAt;
+    }
+  }
   return null;
 };
 
@@ -141,6 +159,58 @@ const SessionViewBody = ({
     />
   );
 
+  const connectionState: ConnectionState =
+    activeSession?.status.connectionState ?? "idle";
+  const isRolloverBlocked = connectionState === "blocked";
+  const [showAgentWorkingIndicator, setShowAgentWorkingIndicator] =
+    useState(false);
+  const previousConnectionStateRef = useRef<ConnectionState>(connectionState);
+  const runningStartedAtRef = useRef<number | null>(null);
+
+  const continuationChain =
+    activeRecord && activeSessionId
+      ? resolveContinuationChain({ sessions: allSessions, activeSessionId })
+      : [];
+  const virtualConversationMessages =
+    activeSession && activeSessionId && continuationChain.length > 1
+      ? buildVirtualConversationMessages({
+          chain: continuationChain,
+          snapshots,
+        })
+      : (activeSession?.messages ?? []);
+  const lastThinkingOrAssistantAt = resolveLastThinkingOrAssistantAt(
+    virtualConversationMessages
+  );
+
+  useEffect(() => {
+    const previous = previousConnectionStateRef.current;
+    if (connectionState === "running" && previous !== "running") {
+      runningStartedAtRef.current = Date.now();
+    }
+    if (connectionState !== "running") {
+      runningStartedAtRef.current = null;
+    }
+    previousConnectionStateRef.current = connectionState;
+  }, [connectionState]);
+
+  useEffect(() => {
+    setShowAgentWorkingIndicator(false);
+    if (connectionState !== "running" || isRolloverBlocked) {
+      return;
+    }
+
+    const runningStartedAt = runningStartedAtRef.current ?? Date.now();
+    const baseAt = Math.max(runningStartedAt, lastThinkingOrAssistantAt ?? 0);
+    const elapsedMs = Date.now() - baseAt;
+    const delayMs = Math.max(0, AGENT_WORKING_SILENCE_MS - elapsedMs);
+    const timer = window.setTimeout(() => {
+      setShowAgentWorkingIndicator(true);
+    }, delayMs);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [connectionState, isRolloverBlocked, lastThinkingOrAssistantAt]);
+
   if (!(activeSession && activeSessionId)) {
     return (
       <div className="session-app">
@@ -149,16 +219,6 @@ const SessionViewBody = ({
       </div>
     );
   }
-  const continuationChain = activeRecord
-    ? resolveContinuationChain({ sessions: allSessions, activeSessionId })
-    : [];
-  const virtualConversationMessages =
-    continuationChain.length <= 1
-      ? activeSession.messages
-      : buildVirtualConversationMessages({
-          chain: continuationChain,
-          snapshots,
-        });
 
   const tokenDebugSummary =
     buildTokenDebugSummary({
@@ -171,14 +231,12 @@ const SessionViewBody = ({
     session: activeSession,
     continuationIndex,
   });
-  const connectionState = activeSession.status.connectionState;
-  const isRolloverBlocked = connectionState === "blocked";
-  const showAgentWorkingIndicator = connectionState === "running";
 
   const agentWorkingBanner =
     showAgentWorkingIndicator && !isRolloverBlocked ? (
       <output aria-live="polite" className="session-panel">
-        Agent is working…
+        <span>Agent is working</span>
+        <AnimatedDots theme={providerTheme} />
       </output>
     ) : null;
 
