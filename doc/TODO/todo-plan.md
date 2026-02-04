@@ -208,5 +208,5 @@
 115. [DONE] Git Commit: `chore(release): build-all next version` (hash: 777e7c23)
 116. [DONE] Release: run `./scripts/build-release.sh --use-current-version` (VSIX) — scope: repo-wide (commands only); expected commit message: `chore(release): build vsix`
 117. [DONE] Git Commit: `chore(release): build vsix` (hash: c7a96d3d)
-118. [TODO] Docs(session): создать `doc/Sessions/Session087.md` (Phase 99 fixes + release artifacts) — scope: `doc/Sessions/Session087.md`; expected commit message: `docs(session): add Session087 report`
-119. [TODO] Git Commit: `docs(session): add Session087 report` (hash: TBD)
+118. [DONE] Docs(session): создать `doc/Sessions/Session087.md` (Phase 99 fixes + release artifacts) — scope: `doc/Sessions/Session087.md`; expected commit message: `docs(session): add Session087 report`
+119. [DONE] Git Commit: `docs(session): add Session087 report` (hash: 06d50d90)
