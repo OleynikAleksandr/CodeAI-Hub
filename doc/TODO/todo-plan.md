@@ -150,8 +150,8 @@
 81. [DONE] Git Commit: `fix(ui): improve agent working indicator` (hash: cf3cb891)
 
 ### Stream: rollover UX polish (current approach)
-82. [TODO] Fix(ui): rollover-уведомления — цвет провайдера + шрифт меньше (~в 1.5 раза) + убрать упоминания времени ("1–6 минут") и лишние детали; текст короткий и спокойный — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view.css`; expected commit message: `fix(ui): polish rollover banner copy`
-83. [TODO] Git Commit: `fix(ui): polish rollover banner copy` (hash: TBD)
+82. [DONE] Fix(ui): rollover-уведомления — цвет провайдера + шрифт меньше (~в 1.5 раза) + убрать упоминания времени ("1–6 минут") и лишние детали; текст короткий и спокойный — scope: `src/client/ui/src/session/session-view.tsx`, `media/session-view.css`; expected commit message: `fix(ui): polish rollover banner copy`
+83. [DONE] Git Commit: `fix(ui): polish rollover banner copy` (hash: e6168415)
 84. [TODO] Fix(ui): `Continuation #N` не должен быть обязательным “шумом” — по умолчанию скрыть, оставить в debug/деталях (tooltip/копирование) — scope: `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): hide continuation numbering by default`
 85. [TODO] Git Commit: `fix(ui): hide continuation numbering by default` (hash: TBD)
 
