@@ -8221,6 +8221,7 @@
       stage: typeof session.stage === "string" ? session.stage : null,
       runSlug,
       sessionKind,
+      continuationParentId: typeof session.continuationParentId === "string" ? session.continuationParentId : null,
       createdAt: toNumberTimestamp(session.createdAt),
       binding: normalizeBinding(bindingCandidate)
     };
@@ -21719,16 +21720,17 @@ ${message.content}`
 
   // src/client/ui/src/session/info-panel.tsx
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-  var InfoPanel = ({ binding }) => {
+  var InfoPanel = ({ binding, continuationIndex }) => {
     let displayText = "Session information unavailable";
     let titleText;
+    const continuationPrefix = typeof continuationIndex === "number" && continuationIndex >= 2 ? `\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0435\u043D\u0438\u0435 #${continuationIndex}  ` : "";
     if (binding.status === "ready" && binding.providerSessionId) {
-      displayText = `Session ID: ${binding.providerSessionId}`;
+      displayText = `${continuationPrefix}Session ID: ${binding.providerSessionId}`;
       titleText = binding.providerSessionId;
     } else if (binding.status === "pending") {
-      displayText = "Waiting for provider session ID\u2026";
+      displayText = `${continuationPrefix}Waiting for provider session ID\u2026`;
     } else if (binding.status === "failed") {
-      displayText = "Session failed to initialize";
+      displayText = `${continuationPrefix}Session failed to initialize`;
     }
     return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("section", { className: "session-panel session-info session-info--single-line", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-status__row", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-info__text", title: titleText, children: displayText }) }) });
   };
@@ -22664,12 +22666,71 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/session-view.tsx
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
-  var SessionView = ({
+  var resolveProviderDisplayLabel = (options) => {
+    if (!options.providerId) {
+      return null;
+    }
+    return options.providerLabels.get(options.providerId) ?? getDefaultProviderTitle(options.providerId);
+  };
+  var computeRemainingPercent = (usage) => {
+    const remaining = usage.limit - usage.used;
+    if (!Number.isFinite(remaining) || usage.limit <= 0) {
+      return 0;
+    }
+    return Math.round(remaining / usage.limit * 100);
+  };
+  var computeContinuationIndex = (record, sessions) => {
+    if (!record) {
+      return null;
+    }
+    if (!record.continuationParentId) {
+      return 1;
+    }
+    const sessionsById = new Map(
+      sessions.map((session) => [session.id, session])
+    );
+    const visited = /* @__PURE__ */ new Set();
+    let index2 = 1;
+    let cursor = record;
+    while (cursor?.continuationParentId) {
+      if (visited.has(cursor.id)) {
+        break;
+      }
+      visited.add(cursor.id);
+      index2 += 1;
+      cursor = sessionsById.get(cursor.continuationParentId);
+      if (!cursor) {
+        break;
+      }
+    }
+    return Math.max(index2, 2);
+  };
+  var buildSessionBanner = (options) => {
+    const isRolloverBlocked = options.session.status.connectionState === "blocked";
+    const remainingPercent = computeRemainingPercent(
+      options.session.status.tokenUsage
+    );
+    const shouldShowRestoringBanner = !isRolloverBlocked && typeof options.continuationIndex === "number" && options.continuationIndex >= 2 && !options.session.messages.some((message) => message.role === "assistant");
+    if (isRolloverBlocked) {
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("output", { "aria-live": "polite", className: "session-panel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+          "\u041A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u043F\u043E\u0447\u0442\u0438 \u0438\u0441\u0447\u0435\u0440\u043F\u0430\u043D (\u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C ~",
+          remainingPercent,
+          "%). \u0421\u0435\u0439\u0447\u0430\u0441 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0443 \u0440\u0430\u0431\u043E\u0442\u0443 \u0432 \u043D\u043E\u0432\u044B\u0439 \u0441\u0435\u0433\u043C\u0435\u043D\u0442, \u0447\u0442\u043E\u0431\u044B \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0431\u0435\u0437 \u043F\u043E\u0442\u0435\u0440\u0438 \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u0430."
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { children: "\u0428\u0430\u0433\u0438: 1) \u0441\u043E\u0437\u0434\u0430\u0451\u0442\u0441\u044F Continuity Report 2) \u043E\u0442\u043A\u0440\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u043D\u043E\u0432\u0430\u044F \u0441\u0435\u0441\u0441\u0438\u044F 3) \u0430\u0433\u0435\u043D\u0442 \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u0430\u0432\u043B\u0438\u0432\u0430\u0435\u0442 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 (\u044D\u0442\u043E \u043C\u043E\u0436\u0435\u0442 \u0437\u0430\u043D\u044F\u0442\u044C \u0434\u043E ~6 \u043C\u0438\u043D\u0443\u0442)." })
+      ] });
+    }
+    if (shouldShowRestoringBanner) {
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("output", { "aria-live": "polite", className: "session-panel", children: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u043D\u043E. \u0410\u0433\u0435\u043D\u0442 \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u0430\u0432\u043B\u0438\u0432\u0430\u0435\u0442 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 (\u0447\u0438\u0442\u0430\u0435\u0442 Continuity Report \u0438 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0435 \u0444\u0430\u0439\u043B\u044B)\u2026 \u041E\u0431\u044B\u0447\u043D\u043E 1\u20136 \u043C\u0438\u043D\u0443\u0442." });
+    }
+    return null;
+  };
+  var SessionViewBody = ({
     sessions,
     providerLabels,
     activeSessionId,
     snapshots,
-    showEmptyState,
     coreConnectionStatus,
     coreConnectionDetail,
     onSelectSession,
@@ -22680,27 +22741,49 @@ ${path2}` : path2;
     const activeRecord = sessions.find(
       (session) => session.id === activeSessionId
     );
+    const continuationIndex = computeContinuationIndex(
+      activeRecord ?? null,
+      sessions
+    );
     const primaryProviderId = activeRecord?.providerIds[0] ?? null;
     const providerTheme = mapProviderTheme(primaryProviderId);
-    const providerDisplayLabel = primaryProviderId != null ? providerLabels.get(primaryProviderId) ?? getDefaultProviderTitle(primaryProviderId) : null;
-    if (sessions.length === 0 && showEmptyState) {
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(empty_state_default, {}) });
+    const providerDisplayLabel = resolveProviderDisplayLabel({
+      providerId: primaryProviderId,
+      providerLabels
+    });
+    const header = /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app__header", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        session_tabs_default,
+        {
+          activeSessionId,
+          onClose: onCloseSession,
+          onSelect: onSelectSession,
+          providerLabels,
+          sessions
+        }
+      ),
+      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        info_panel_default,
+        {
+          binding: activeSession.binding,
+          continuationIndex
+        }
+      ) : null
+    ] });
+    if (!(activeSession && activeSessionId)) {
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app", children: [
+        header,
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-app__content" })
+      ] });
     }
+    const banner = buildSessionBanner({
+      session: activeSession,
+      continuationIndex
+    });
+    const isRolloverBlocked = activeSession.status.connectionState === "blocked";
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app__header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-          session_tabs_default,
-          {
-            activeSessionId,
-            onClose: onCloseSession,
-            onSelect: onSelectSession,
-            providerLabels,
-            sessions
-          }
-        ),
-        activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(info_panel_default, { binding: activeSession.binding }) : null
-      ] }),
-      activeSession && activeSessionId ? /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app__content", children: [
+      header,
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app__content", children: [
         /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
           dialog_panel_default,
           {
@@ -22710,12 +22793,12 @@ ${path2}` : path2;
           }
         ) }),
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-app__rails", children: [
-          activeSession.status.connectionState === "blocked" ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("output", { "aria-live": "polite", className: "session-panel", children: "\u041F\u043E\u0434\u0433\u043E\u0442\u0430\u0432\u043B\u0438\u0432\u0430\u044E \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0435\u043D\u0438\u0435\u2026 (rollover)" }) : null,
+          banner,
           /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             input_panel_default,
             {
               draft: activeSession.draft,
-              isBlocked: activeSession.status.connectionState === "blocked",
+              isBlocked: isRolloverBlocked,
               onSubmit: (text7) => onSendMessage(activeSessionId, text7)
             }
           ),
@@ -22728,8 +22811,14 @@ ${path2}` : path2;
             }
           )
         ] })
-      ] }) : null
+      ] })
     ] });
+  };
+  var SessionView = (props) => {
+    if (props.sessions.length === 0 && props.showEmptyState) {
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(empty_state_default, {}) });
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(SessionViewBody, { ...props });
   };
   var session_view_default = SessionView;
 
