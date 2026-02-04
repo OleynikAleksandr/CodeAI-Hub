@@ -173,6 +173,10 @@ export const sanitizeSession = (
       typeof session.continuationParentId === "string"
         ? session.continuationParentId
         : null,
+    continuationIndex:
+      typeof session.continuationIndex === "number"
+        ? session.continuationIndex
+        : null,
     createdAt: toNumberTimestamp(session.createdAt),
     binding: normalizeBinding(bindingCandidate),
   };
