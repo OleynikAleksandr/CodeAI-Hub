@@ -9,6 +9,10 @@ import InfoPanel from "./info-panel";
 import InputPanel from "./input-panel";
 import SessionTabs from "./session-tabs";
 import StatusPanel from "./status-panel";
+import {
+  buildVirtualConversationMessages,
+  resolveContinuationChain,
+} from "./virtual-conversation";
 
 type TokenUsage = {
   readonly used: number;
@@ -123,6 +127,7 @@ const buildSessionBanner = (options: {
 };
 
 type SessionViewProps = {
+  readonly allSessions?: readonly SessionRecord[];
   readonly sessions: readonly SessionRecord[];
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
   readonly activeSessionId: string | null;
@@ -137,6 +142,7 @@ type SessionViewProps = {
 
 const SessionViewBody = ({
   sessions,
+  allSessions: allSessionsProp,
   providerLabels,
   activeSessionId,
   snapshots,
@@ -146,17 +152,18 @@ const SessionViewBody = ({
   onCloseSession,
   onSendMessage,
 }: SessionViewProps) => {
+  const allSessions = allSessionsProp ?? sessions;
   const activeSession =
     activeSessionId && snapshots[activeSessionId]
       ? snapshots[activeSessionId]
       : null;
-  const activeRecord = sessions.find(
+  const activeRecord = allSessions.find(
     (session) => session.id === activeSessionId
   );
   const continuationIndex =
     typeof activeRecord?.continuationIndex === "number"
       ? activeRecord.continuationIndex
-      : computeContinuationIndex(activeRecord ?? null, sessions);
+      : computeContinuationIndex(activeRecord ?? null, allSessions);
   const primaryProviderId = activeRecord?.providerIds[0] ?? null;
   const providerTheme = mapProviderTheme(primaryProviderId);
   const providerDisplayLabel = resolveProviderDisplayLabel({
@@ -218,6 +225,22 @@ const SessionViewBody = ({
       </div>
     );
   }
+  const virtualConversationMessages = (() => {
+    if (!activeRecord) {
+      return activeSession.messages;
+    }
+    const chain = resolveContinuationChain({
+      sessions: allSessions,
+      activeSessionId,
+    });
+    if (chain.length <= 1) {
+      return activeSession.messages;
+    }
+    return buildVirtualConversationMessages({
+      chain,
+      snapshots,
+    });
+  })();
 
   const banner = buildSessionBanner({
     session: activeSession,
@@ -238,7 +261,7 @@ const SessionViewBody = ({
       <div className="session-app__content">
         <div className="session-app__dialog">
           <DialogPanel
-            messages={activeSession.messages}
+            messages={virtualConversationMessages}
             providerLabel={providerDisplayLabel}
             providerTheme={providerTheme}
           />

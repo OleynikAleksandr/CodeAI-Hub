@@ -282,6 +282,7 @@ export const ProjectManagerSessionView = ({
   return (
     <SessionView
       activeSessionId={activeSessionId}
+      allSessions={sessions}
       coreConnectionDetail={connection.detail}
       coreConnectionStatus={connection.status}
       onCloseSession={handleCloseSession}
