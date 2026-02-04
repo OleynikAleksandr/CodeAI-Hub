@@ -1,35 +1,24 @@
-import { useEffect, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
-import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
 import EmptyState from "./empty-state";
 import { mapProviderTheme } from "./helpers";
-import InfoPanel from "./info-panel";
 import InputPanel from "./input-panel";
-import SessionTabs from "./session-tabs";
 import StatusPanel from "./status-panel";
 import {
+  buildTokenDebugSummary,
   buildVirtualConversationMessages,
+  computeFallbackContinuationIndex,
+  resolveActiveSessionSnapshot,
   resolveContinuationChain,
+  resolveProviderDisplayLabel,
+  SessionHeader,
+  useAgentWorkingIndicator,
 } from "./virtual-conversation";
 
 type TokenUsage = {
   readonly used: number;
   readonly limit: number;
-};
-
-const resolveProviderDisplayLabel = (options: {
-  readonly providerId: ProviderStackId | null;
-  readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
-}): string | null => {
-  if (!options.providerId) {
-    return null;
-  }
-  return (
-    options.providerLabels.get(options.providerId) ??
-    getDefaultProviderTitle(options.providerId)
-  );
 };
 
 const computeRemainingPercent = (usage: TokenUsage): number => {
@@ -38,39 +27,6 @@ const computeRemainingPercent = (usage: TokenUsage): number => {
     return 0;
   }
   return Math.round((remaining / usage.limit) * 100);
-};
-
-const computeContinuationIndex = (
-  record: SessionRecord | null,
-  sessions: readonly SessionRecord[]
-): number | null => {
-  if (!record) {
-    return null;
-  }
-  if (!record.continuationParentId) {
-    return 1;
-  }
-
-  const sessionsById = new Map(
-    sessions.map((session) => [session.id, session] as const)
-  );
-  const visited = new Set<string>();
-  let index = 1;
-  let cursor: SessionRecord | undefined = record;
-
-  while (cursor?.continuationParentId) {
-    if (visited.has(cursor.id)) {
-      break;
-    }
-    visited.add(cursor.id);
-    index += 1;
-    cursor = sessionsById.get(cursor.continuationParentId);
-    if (!cursor) {
-      break;
-    }
-  }
-
-  return Math.max(index, 2);
 };
 
 const buildSessionBanner = (options: {
@@ -153,17 +109,20 @@ const SessionViewBody = ({
   onSendMessage,
 }: SessionViewProps) => {
   const allSessions = allSessionsProp ?? sessions;
-  const activeSession =
-    activeSessionId && snapshots[activeSessionId]
-      ? snapshots[activeSessionId]
-      : null;
+  const activeSession = resolveActiveSessionSnapshot({
+    activeSessionId,
+    snapshots,
+  });
   const activeRecord = allSessions.find(
     (session) => session.id === activeSessionId
   );
   const continuationIndex =
     typeof activeRecord?.continuationIndex === "number"
       ? activeRecord.continuationIndex
-      : computeContinuationIndex(activeRecord ?? null, allSessions);
+      : computeFallbackContinuationIndex({
+          record: activeRecord ?? null,
+          sessions: allSessions,
+        });
   const primaryProviderId = activeRecord?.providerIds[0] ?? null;
   const providerTheme = mapProviderTheme(primaryProviderId);
   const providerDisplayLabel = resolveProviderDisplayLabel({
@@ -171,50 +130,24 @@ const SessionViewBody = ({
     providerLabels,
   });
 
-  const [showAgentWorkingIndicator, setShowAgentWorkingIndicator] =
-    useState(false);
   const lastMessage = activeSession?.messages.at(-1) ?? null;
   const lastMessageRole = lastMessage?.role ?? null;
   const lastMessageCreatedAt = lastMessage?.createdAt ?? null;
-
-  useEffect(() => {
-    setShowAgentWorkingIndicator(false);
-
-    if (
-      !activeSessionId ||
-      lastMessageRole !== "user" ||
-      !lastMessageCreatedAt
-    ) {
-      return;
-    }
-
-    const elapsedMs = Date.now() - lastMessageCreatedAt;
-    const delayMs = Math.max(0, 10_000 - elapsedMs);
-    const timer = window.setTimeout(() => {
-      setShowAgentWorkingIndicator(true);
-    }, delayMs);
-
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [activeSessionId, lastMessageCreatedAt, lastMessageRole]);
-
+  const showAgentWorkingIndicator = useAgentWorkingIndicator({
+    activeSessionId,
+    lastMessageRole,
+    lastMessageCreatedAt,
+  });
   const header = (
-    <div className="session-app__header">
-      <SessionTabs
-        activeSessionId={activeSessionId}
-        onClose={onCloseSession}
-        onSelect={onSelectSession}
-        providerLabels={providerLabels}
-        sessions={sessions}
-      />
-      {activeSession && activeSessionId ? (
-        <InfoPanel
-          binding={activeSession.binding}
-          continuationIndex={continuationIndex}
-        />
-      ) : null}
-    </div>
+    <SessionHeader
+      activeSession={activeSession}
+      activeSessionId={activeSessionId}
+      continuationIndex={continuationIndex}
+      onCloseSession={onCloseSession}
+      onSelectSession={onSelectSession}
+      providerLabels={providerLabels}
+      sessions={sessions}
+    />
   );
 
   if (!(activeSession && activeSessionId)) {
@@ -225,22 +158,23 @@ const SessionViewBody = ({
       </div>
     );
   }
-  const virtualConversationMessages = (() => {
-    if (!activeRecord) {
-      return activeSession.messages;
-    }
-    const chain = resolveContinuationChain({
-      sessions: allSessions,
-      activeSessionId,
-    });
-    if (chain.length <= 1) {
-      return activeSession.messages;
-    }
-    return buildVirtualConversationMessages({
-      chain,
+  const continuationChain = activeRecord
+    ? resolveContinuationChain({ sessions: allSessions, activeSessionId })
+    : [];
+  const virtualConversationMessages =
+    continuationChain.length <= 1
+      ? activeSession.messages
+      : buildVirtualConversationMessages({
+          chain: continuationChain,
+          snapshots,
+        });
+
+  const tokenDebugSummary =
+    buildTokenDebugSummary({
+      chain: continuationChain,
       snapshots,
-    });
-  })();
+      activeSessionId,
+    }) ?? undefined;
 
   const banner = buildSessionBanner({
     session: activeSession,
@@ -278,6 +212,7 @@ const SessionViewBody = ({
             connectionDetail={coreConnectionDetail}
             connectionStatus={coreConnectionStatus}
             status={activeSession.status}
+            tokenDebugSummary={tokenDebugSummary}
           />
         </div>
       </div>
