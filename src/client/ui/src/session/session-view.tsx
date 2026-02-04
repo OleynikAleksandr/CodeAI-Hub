@@ -13,7 +13,6 @@ import {
   resolveContinuationChain,
   resolveProviderDisplayLabel,
   SessionHeader,
-  useAgentWorkingIndicator,
 } from "./virtual-conversation";
 
 type TokenUsage = {
@@ -130,14 +129,6 @@ const SessionViewBody = ({
     providerLabels,
   });
 
-  const lastMessage = activeSession?.messages.at(-1) ?? null;
-  const lastMessageRole = lastMessage?.role ?? null;
-  const lastMessageCreatedAt = lastMessage?.createdAt ?? null;
-  const showAgentWorkingIndicator = useAgentWorkingIndicator({
-    activeSessionId,
-    lastMessageRole,
-    lastMessageCreatedAt,
-  });
   const header = (
     <SessionHeader
       activeSession={activeSession}
@@ -180,7 +171,9 @@ const SessionViewBody = ({
     session: activeSession,
     continuationIndex,
   });
-  const isRolloverBlocked = activeSession.status.connectionState === "blocked";
+  const connectionState = activeSession.status.connectionState;
+  const isRolloverBlocked = connectionState === "blocked";
+  const showAgentWorkingIndicator = connectionState === "running";
 
   const agentWorkingBanner =
     showAgentWorkingIndicator && !isRolloverBlocked ? (
@@ -204,8 +197,8 @@ const SessionViewBody = ({
           {banner}
           {agentWorkingBanner}
           <InputPanel
+            connectionState={connectionState}
             draft={activeSession.draft}
-            isBlocked={isRolloverBlocked}
             onSubmit={(text) => onSendMessage(activeSessionId, text)}
           />
           <StatusPanel

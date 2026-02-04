@@ -3,7 +3,7 @@ import { InputTextarea } from "./input-textarea";
 
 type InputPanelProps = {
   readonly draft: string;
-  readonly isBlocked?: boolean;
+  readonly connectionState?: "idle" | "running" | "blocked";
   readonly onSubmit: (text: string) => void;
 };
 
@@ -11,9 +11,19 @@ const MAX_TEXTAREA_HEIGHT = 200;
 
 const InputPanel = ({
   draft,
-  isBlocked = false,
+  connectionState = "idle",
   onSubmit,
 }: InputPanelProps) => {
+  const isBlocked = connectionState !== "idle";
+  const hint = (() => {
+    if (connectionState === "blocked") {
+      return "Preparing continuation…";
+    }
+    if (connectionState === "running") {
+      return "Waiting for the agent…";
+    }
+    return "Press Enter to send, Shift+Enter for a new line";
+  })();
   const [value, setValue] = useState(draft);
 
   useEffect(() => {
@@ -67,11 +77,7 @@ const InputPanel = ({
       </fieldset>
 
       <div className="session-input__footer">
-        <span className="session-input__hint">
-          {isBlocked
-            ? "Preparing continuation…"
-            : "Press Enter to send, Shift+Enter for a new line"}
-        </span>
+        <span className="session-input__hint">{hint}</span>
       </div>
     </form>
   );
