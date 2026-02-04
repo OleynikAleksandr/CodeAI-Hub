@@ -174,8 +174,8 @@
 ## Phase 98 — Release build for local verification (owner: Oleksandr, updated: 2026-02-04)
 
 ### Stream: build artifacts (local)
-96. [TODO] Release: run `./scripts/build-all.sh` (bump versions + tarballs) — scope: repo-wide (commands + version bumps); expected commit message: `chore(release): build-all next version`
-97. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+96. [DONE] Release: run `./scripts/build-all.sh` (bump versions + tarballs) — scope: repo-wide (commands + version bumps); expected commit message: `chore(release): build-all next version`
+97. [DONE] Git Commit: `chore(release): build-all next version` (hash: 5d40eedb)
 98. [TODO] Release: run `./scripts/build-release.sh --use-current-version` (VSIX) — scope: repo-wide (commands only); expected commit message: `chore(release): build vsix`
 99. [TODO] Git Commit: `chore(release): build vsix` (hash: TBD)
 100. [TODO] Docs(session): создать `doc/Sessions/Session086.md` (release artifacts + commands) — scope: `doc/Sessions/Session086.md`; expected commit message: `docs(session): add Session086 report`
