@@ -184,8 +184,8 @@
 ## Phase 99 — UI refactor after QA feedback (owner: Oleksandr, updated: 2026-02-04)
 
 ### Stream: agent working indicator (AnimatedDots + correct lifecycle)
-102. [TODO] Fix(ui): вернуть/починить `AnimatedDots` в плашке `Agent is working…` (видимо и анимировано; цвет соответствует провайдеру) — scope: `src/client/ui/src/session/animated-dots.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`, `media/session-view.css`; expected commit message: `fix(ui): restore animated dots in agent working banner`
-103. [TODO] Git Commit: `fix(ui): restore animated dots in agent working banner` (hash: TBD)
+102. [DONE] Fix(ui): вернуть/починить `AnimatedDots` в плашке `Agent is working…` (видимо и анимировано; цвет соответствует провайдеру) — scope: `src/client/ui/src/session/animated-dots.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`, `media/session-view.css`; expected commit message: `fix(ui): restore animated dots in agent working banner`
+103. [DONE] Git Commit: `fix(ui): restore animated dots in agent working banner` (hash: 399aac93)
 104. [DONE] Fix(ui): починить lifecycle плашки `Agent is working…` (не появляется после `turn_completed`; показывать только при `running`/`blocked` или queued-send) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`, `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `fix(ui): align agent working banner with turn state`
 105. [DONE] Git Commit: `fix(ui): align agent working banner with turn state` (hash: de57c234)
 
