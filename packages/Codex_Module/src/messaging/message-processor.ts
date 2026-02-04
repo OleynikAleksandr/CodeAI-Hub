@@ -55,6 +55,11 @@ type StartupLockContext = {
   readonly threadStartedTimeoutMs: number;
   readonly ownerSessionId: string;
 };
+
+type TurnLifecycleState = {
+  started: boolean;
+  ended: boolean;
+};
 type AgentMessageItem = ThreadItem & { readonly type: "agent_message" };
 
 const isAgentMessageItem = (item: ThreadItem): item is AgentMessageItem =>
@@ -69,6 +74,10 @@ export class CodexMessageProcessor {
   private readonly tokenUsageCache = new Map<
     string,
     { used: number; limit: number }
+  >();
+  private readonly userTurnLifecycle = new WeakMap<
+    ActiveSession,
+    TurnLifecycleState
   >();
 
   constructor(
@@ -148,6 +157,9 @@ export class CodexMessageProcessor {
   private async processTurn(context: ProcessTurnContext): Promise<void> {
     const { session, thread, message } = context;
     session.internalTurn = message.internal ?? false;
+    if (!session.internalTurn) {
+      this.userTurnLifecycle.set(session, { started: false, ended: false });
+    }
     let startupLock: StartupLockContext | null = null;
     try {
       const turnOptions = message.turnOptions ?? {};
@@ -166,6 +178,7 @@ export class CodexMessageProcessor {
       const { events } = await thread.runStreamed(prompt, runOptions);
       await this.consumeEvents(session, events, startupLock);
     } catch (error) {
+      this.maybeEmitTurnFailed(session, error);
       this.options?.reporter?.error?.("Codex turn execution failed", error);
       session.eventEmitter.emit("error", {
         type: "turn_execution",
@@ -189,6 +202,7 @@ export class CodexMessageProcessor {
       }
       await this.consumeEventsWithIdleTimeout(session, events);
     } catch (error) {
+      this.maybeEmitTurnFailed(session, error);
       this.options?.reporter?.error?.("Codex event stream failed", error);
       session.eventEmitter.emit("error", { type: "event_stream", error });
     }
@@ -348,13 +362,7 @@ export class CodexMessageProcessor {
         this.handleThreadStarted(session, event.thread_id);
         break;
       case "turn.started":
-        this.emitMessage(session, {
-          type: "turn_started",
-          provider: PROVIDER,
-          sessionId: session.sessionId,
-          threadId: session.codexThreadId,
-          timestamp: new Date().toISOString(),
-        });
+        this.maybeEmitTurnStarted(session);
         if (!session.internalTurn) {
           session.structuredOutputUuids = new Set();
           this.emitDialogMessage(session, "thinking", THINKING_PLACEHOLDER);
@@ -423,17 +431,75 @@ export class CodexMessageProcessor {
     session: ActiveSession,
     event: TurnCompletedEvent
   ): void {
+    this.maybeEmitTurnCompleted(session, event.usage);
+    this.refreshTokenUsage(session);
+    this.structuredOutput.clear(session.sessionId);
+    this.clearReasoningSession(session.sessionId);
+  }
+
+  private maybeEmitTurnStarted(session: ActiveSession): void {
+    const state = this.userTurnLifecycle.get(session);
+    if (!state || state.started || state.ended) {
+      return;
+    }
+    state.started = true;
+
+    this.emitMessage(session, {
+      type: "turn_started",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId ?? undefined,
+      uuid: `${crypto.randomUUID()}::turn_started`,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  private maybeEmitTurnCompleted(session: ActiveSession, usage: unknown): void {
+    const state = this.userTurnLifecycle.get(session);
+    if (!state || state.ended) {
+      return;
+    }
+
+    if (!state.started) {
+      this.maybeEmitTurnStarted(session);
+    }
+
+    state.ended = true;
+
     this.emitMessage(session, {
       type: "turn_completed",
       provider: PROVIDER,
       sessionId: session.sessionId,
-      threadId: session.codexThreadId,
-      usage: event.usage,
+      threadId: session.codexThreadId ?? undefined,
+      uuid: `${crypto.randomUUID()}::turn_completed`,
+      timestamp: new Date().toISOString(),
+      usage: usage ?? undefined,
+    });
+  }
+
+  private maybeEmitTurnFailed(session: ActiveSession, error: unknown): void {
+    const state = this.userTurnLifecycle.get(session);
+    if (!state || state.ended) {
+      return;
+    }
+
+    if (!state.started) {
+      this.maybeEmitTurnStarted(session);
+    }
+
+    state.ended = true;
+
+    const message = error instanceof Error ? error.message : String(error);
+    this.emitMessage(session, {
+      type: "turn_failed",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId ?? undefined,
+      message,
+      error,
+      uuid: `${crypto.randomUUID()}::turn_failed`,
       timestamp: new Date().toISOString(),
     });
-    this.refreshTokenUsage(session);
-    this.structuredOutput.clear(session.sessionId);
-    this.clearReasoningSession(session.sessionId);
   }
 
   private refreshTokenUsage(session: ActiveSession): void {
@@ -477,14 +543,7 @@ export class CodexMessageProcessor {
     session: ActiveSession,
     event: TurnFailedEvent
   ): void {
-    this.emitMessage(session, {
-      type: "turn_failed",
-      provider: PROVIDER,
-      sessionId: session.sessionId,
-      threadId: session.codexThreadId,
-      error: event.error,
-      timestamp: new Date().toISOString(),
-    });
+    this.maybeEmitTurnFailed(session, event.error);
     this.structuredOutput.clear(session.sessionId);
     this.clearReasoningSession(session.sessionId);
   }
