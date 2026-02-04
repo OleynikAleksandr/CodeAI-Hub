@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
+import { resolvePendingThinkingMessageId } from "./dialog-panel-pending-thinking";
 import EmptyState from "./empty-state";
 import { mapProviderTheme } from "./helpers";
 import InputPanel from "./input-panel";
@@ -236,12 +237,15 @@ const SessionViewBody = ({
   const isWaitingForAssistant = resolveIsWaitingForAssistant(
     virtualConversationMessages
   );
+  const hasPendingThinkingIndicator =
+    resolvePendingThinkingMessageId(virtualConversationMessages) !== null;
   const agentWorkingBanner = buildAgentWorkingBanner({
     queuedMessage,
     showAgentWorkingIndicator,
     isRolloverBlocked,
     providerTheme,
     isWaitingForAssistant,
+    hasPendingThinkingIndicator,
   });
 
   return (

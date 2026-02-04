@@ -17,7 +17,12 @@ export const buildAgentWorkingBanner = (options: {
   readonly isRolloverBlocked: boolean;
   readonly providerTheme: ProviderTheme;
   readonly isWaitingForAssistant: boolean;
+  readonly hasPendingThinkingIndicator: boolean;
 }): JSX.Element | null => {
+  if (options.hasPendingThinkingIndicator && !options.queuedMessage) {
+    return null;
+  }
+
   if (
     options.queuedMessage ||
     (options.showAgentWorkingIndicator &&
