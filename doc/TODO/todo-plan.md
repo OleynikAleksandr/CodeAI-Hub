@@ -180,3 +180,23 @@
 99. [DONE] Git Commit: `chore(release): build vsix` (hash: bf28f2e3)
 100. [DONE] Docs(session): создать `doc/Sessions/Session086.md` (release artifacts + commands) — scope: `doc/Sessions/Session086.md`; expected commit message: `docs(session): add Session086 report`
 101. [DONE] Git Commit: `docs(session): add Session086 report` (hash: fb73d17e)
+
+## Phase 99 — UI refactor after QA feedback (owner: Oleksandr, updated: 2026-02-04)
+
+### Stream: agent working indicator (AnimatedDots + correct lifecycle)
+102. [TODO] Fix(ui): вернуть/починить `AnimatedDots` в плашке `Agent is working…` (видимо и анимировано; цвет соответствует провайдеру) — scope: `src/client/ui/src/session/animated-dots.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`, `media/session-view.css`; expected commit message: `fix(ui): restore animated dots in agent working banner`
+103. [TODO] Git Commit: `fix(ui): restore animated dots in agent working banner` (hash: TBD)
+104. [TODO] Fix(ui): починить lifecycle плашки `Agent is working…` (не появляется после `turn_completed`; показывать только при `running`/`blocked` или queued-send) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`, `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `fix(ui): align agent working banner with turn state`
+105. [TODO] Git Commit: `fix(ui): align agent working banner with turn state` (hash: TBD)
+
+### Stream: waiting indicators (Thinking + fallback animation)
+106. [TODO] Fix(ui): сделать `AnimatedDots` самодостаточным (JS fallback/inline цвета), чтобы точки были видимы/анимированы даже если CSS не подгрузился (покрывает и `Thinking`, и `Agent is working…`) — scope: `src/client/ui/src/session/animated-dots.tsx`, `src/client/ui/src/session/helpers.ts`, `media/session-view.css`; expected commit message: `fix(ui): make animated dots resilient to missing css`
+107. [TODO] Git Commit: `fix(ui): make animated dots resilient to missing css` (hash: TBD)
+108. [TODO] Fix(ui): унифицировать “ожидание без ответа” — если есть `Thinking` до assistant ответа, всегда показывать индикатор (либо на `Thinking`, либо в `Agent is working…`, без дублирования) — scope: `src/client/ui/src/session/dialog-panel-pending-thinking.ts`, `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): unify waiting indicator for pending thinking`
+109. [TODO] Git Commit: `fix(ui): unify waiting indicator for pending thinking` (hash: TBD)
+110. [TODO] Feat(ui): увеличить `AnimatedDots` до 6 точек + настроить staggered задержки (2..6), чтобы анимация была заметнее и “богаче” — scope: `src/client/ui/src/session/animated-dots.tsx`, `media/session-view.css`; expected commit message: `feat(ui): expand animated dots to six`
+111. [TODO] Git Commit: `feat(ui): expand animated dots to six` (hash: TBD)
+
+### Stream: status panel cleanup (remove noisy debug copy)
+112. [DONE] Fix(ui): оставить `Segments` только как dev-debug, но привести формат к короткому виду `#1 45% | #2 65%` (remaining%) — scope: `src/client/ui/src/session/virtual-conversation.tsx`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `fix(ui): compact segments token summary`
+113. [DONE] Git Commit: `fix(ui): compact segments token summary` (hash: 4217920c)
