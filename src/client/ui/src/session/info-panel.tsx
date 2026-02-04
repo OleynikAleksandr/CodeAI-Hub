@@ -10,7 +10,7 @@ const InfoPanel = ({ binding, continuationIndex }: InfoPanelProps) => {
   let titleText: string | undefined;
   const continuationPrefix =
     typeof continuationIndex === "number" && continuationIndex >= 2
-      ? `Продолжение #${continuationIndex}  `
+      ? `Continuation #${continuationIndex}  `
       : "";
 
   if (binding.status === "ready" && binding.providerSessionId) {
