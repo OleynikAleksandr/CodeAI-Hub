@@ -152,8 +152,8 @@
 ### Stream: rollover UX polish (current approach)
 82. [DONE] Fix(ui): rollover-уведомления — цвет провайдера + шрифт меньше (~в 1.5 раза) + убрать упоминания времени ("1–6 минут") и лишние детали; текст короткий и спокойный — scope: `src/client/ui/src/session/session-view.tsx`, `media/session-view.css`; expected commit message: `fix(ui): polish rollover banner copy`
 83. [DONE] Git Commit: `fix(ui): polish rollover banner copy` (hash: e6168415)
-84. [TODO] Fix(ui): `Continuation #N` не должен быть обязательным “шумом” — по умолчанию скрыть, оставить в debug/деталях (tooltip/копирование) — scope: `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): hide continuation numbering by default`
-85. [TODO] Git Commit: `fix(ui): hide continuation numbering by default` (hash: TBD)
+84. [DONE] Fix(ui): `Continuation #N` не должен быть обязательным “шумом” — по умолчанию скрыть, оставить в debug/деталях (tooltip/копирование) — scope: `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): hide continuation numbering by default`
+85. [DONE] Git Commit: `fix(ui): hide continuation numbering by default` (hash: 3b564c9d)
 
 ### Stream: silent preemptive rollover (behind flag)
 86. [TODO] Feat(core): добавить preempt порог (default 50% remaining) `continuity.preemptRemainingPercentThreshold` и запускать background rollover только ПОСЛЕ `turn_completed`, если `remaining<=preempt` (без UI/без user-facing сообщений; дедуп in-flight) — scope: `packages/core/src/config/index.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): add silent preemptive rollover`
