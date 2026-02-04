@@ -60,6 +60,7 @@ export type SessionRecord = {
   readonly runSlug?: string | null;
   readonly sessionKind?: SessionKind | null;
   readonly continuationParentId?: string | null;
+  readonly continuationIndex?: number | null;
   readonly createdAt: number;
   readonly binding: SessionBindingInfo;
 };
