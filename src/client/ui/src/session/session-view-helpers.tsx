@@ -16,10 +16,13 @@ export const buildAgentWorkingBanner = (options: {
   readonly showAgentWorkingIndicator: boolean;
   readonly isRolloverBlocked: boolean;
   readonly providerTheme: ProviderTheme;
+  readonly isWaitingForAssistant: boolean;
 }): JSX.Element | null => {
   if (
     options.queuedMessage ||
-    (options.showAgentWorkingIndicator && !options.isRolloverBlocked)
+    (options.showAgentWorkingIndicator &&
+      options.isWaitingForAssistant &&
+      !options.isRolloverBlocked)
   ) {
     return (
       <output aria-live="polite" className="session-panel">

@@ -25,6 +25,23 @@ const AGENT_WORKING_SILENCE_MS = 10_000;
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
 
+const resolveIsWaitingForAssistant = (
+  messages: readonly SessionSnapshot["messages"][number][]
+): boolean => {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const message = messages[index];
+    if (
+      message?.role !== "assistant" &&
+      message?.role !== "user" &&
+      message?.role !== "thinking"
+    ) {
+      continue;
+    }
+    return message.role !== "assistant";
+  }
+  return true;
+};
+
 const buildSessionBanner = (options: {
   readonly session: SessionSnapshot;
   readonly continuationIndex: number | null;
@@ -216,11 +233,15 @@ const SessionViewBody = ({
   });
   const visibleBanner = resolveVisibleBanner({ banner, queuedMessage });
 
+  const isWaitingForAssistant = resolveIsWaitingForAssistant(
+    virtualConversationMessages
+  );
   const agentWorkingBanner = buildAgentWorkingBanner({
     queuedMessage,
     showAgentWorkingIndicator,
     isRolloverBlocked,
     providerTheme,
+    isWaitingForAssistant,
   });
 
   return (
