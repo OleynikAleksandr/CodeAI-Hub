@@ -116,5 +116,5 @@
 59. [DONE] Git Commit: `chore(release): build-all next version` (hash: c2dd3543)
 60. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version` и проверить, что VSIX создан в корне — scope: repo root artifact (`codeai-hub-<version>.vsix`); expected commit message: `chore(release): build vsix`
 61. [DONE] Git Commit: `chore(release): build vsix` (hash: c1444f4e)
-62. [TODO] Docs(session): создать `doc/Sessions/Session083.md` (итоги + артефакты релиза) — scope: `doc/Sessions/Session083.md`; expected commit message: `docs(session): add Session083 report`
-63. [TODO] Git Commit: `docs(session): add Session083 report` (hash: TBD)
+62. [DONE] Docs(session): создать `doc/Sessions/Session083.md` (итоги + артефакты релиза) — scope: `doc/Sessions/Session083.md`; expected commit message: `docs(session): add Session083 report`
+63. [DONE] Git Commit: `docs(session): add Session083 report` (hash: 0c78d281)
