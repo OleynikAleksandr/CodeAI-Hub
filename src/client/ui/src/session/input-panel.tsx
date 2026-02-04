@@ -4,6 +4,7 @@ import { InputTextarea } from "./input-textarea";
 type InputPanelProps = {
   readonly draft: string;
   readonly connectionState?: "idle" | "running" | "blocked";
+  readonly isQueued?: boolean;
   readonly onSubmit: (text: string) => void;
 };
 
@@ -12,12 +13,16 @@ const MAX_TEXTAREA_HEIGHT = 200;
 const InputPanel = ({
   draft,
   connectionState = "idle",
+  isQueued = false,
   onSubmit,
 }: InputPanelProps) => {
-  const isBlocked = connectionState !== "idle";
+  const isDisabled = connectionState === "running" || isQueued;
   const hint = (() => {
+    if (isQueued) {
+      return "Message queued. Sending as soon as it is ready…";
+    }
     if (connectionState === "blocked") {
-      return "Preparing continuation…";
+      return "Preparing continuation… Press Enter to queue your next message.";
     }
     if (connectionState === "running") {
       return "Waiting for the agent…";
@@ -31,7 +36,7 @@ const InputPanel = ({
   }, [draft]);
 
   const sendMessage = useCallback(() => {
-    if (isBlocked) {
+    if (isDisabled) {
       return;
     }
     const trimmed = value.trim();
@@ -40,7 +45,7 @@ const InputPanel = ({
     }
     onSubmit(trimmed);
     setValue("");
-  }, [isBlocked, onSubmit, value]);
+  }, [isDisabled, onSubmit, value]);
 
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
@@ -57,7 +62,7 @@ const InputPanel = ({
       onSubmit={handleSubmit}
     >
       <fieldset
-        disabled={isBlocked}
+        disabled={isDisabled}
         style={{ border: 0, padding: 0, margin: 0 }}
       >
         <InputTextarea
