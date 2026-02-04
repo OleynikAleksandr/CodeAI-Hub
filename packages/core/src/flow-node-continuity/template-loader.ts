@@ -14,6 +14,8 @@ Hard rules:
 - Do NOT paste large parts of artifacts (no full docs/code/diffs).
 - Use only short bullets and file paths.
 - Atomic write: write to a temporary file first, then rename to the final path.
+- Create EXACTLY ONE report per Create Report instruction.
+- Do NOT create or update any other continuity reports unless Core sends another explicit Create Report instruction with explicit temp/final paths.
 
 Required structure:
 
@@ -41,6 +43,8 @@ Hard rules:
 - Do NOT paste code/diffs/logs.
 - Use only short bullets, file paths, and command names.
 - Atomic write: write to a temporary file first, then rename to the final path.
+- Create EXACTLY ONE report per Create Report instruction.
+- Do NOT create or update any other continuity reports unless Core sends another explicit Create Report instruction with explicit temp/final paths.
 
 Required structure:
 
@@ -79,6 +83,13 @@ Read the latest continuity report:
 - \`{{reportPath}}\`
 
 Continue work in node \`{{nodeId}}\` as role \`{{role}}\`.
+
+Hard rules (MUST):
+- Do NOT write or update any continuity report files on your own.
+- The ONLY time you may write a continuity report is when Core sends an explicit instruction titled "Flow Node Continuity — Create Report ..." AND it includes BOTH a temp path and a final report path to write.
+- If you did not receive that Create Report instruction, you MUST NOT create/update any files under \`.codeai-hub/**/flow/nodes/**/continuity/reports/\`.
+- Do NOT invent timestamps/paths for reports.
+- If you finish your work, reply in chat with a short status and wait for the user.
 `,
   ],
 ]);
@@ -116,9 +127,9 @@ const resolveTemplatePath = (
   return resolved;
 };
 
-export type TemplateLoaderOptions = {
+export interface TemplateLoaderOptions {
   readonly templatesDir: string;
-};
+}
 
 export class TemplateLoader {
   readonly #templatesDir: string;
