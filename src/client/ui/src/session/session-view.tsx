@@ -74,9 +74,18 @@ const buildSessionBanner = (options: {
 }): JSX.Element | null => {
   const isRolloverBlocked =
     options.session.status.connectionState === "blocked";
-  const remainingPercent = computeRemainingPercent(
+  const rollover = options.session.status.rollover ?? null;
+  const fallbackRemainingPercent = computeRemainingPercent(
     options.session.status.tokenUsage
   );
+  const remainingPercent =
+    typeof rollover?.remainingPercent === "number"
+      ? rollover.remainingPercent
+      : fallbackRemainingPercent;
+  const thresholdPercent =
+    typeof rollover?.thresholdPercent === "number"
+      ? rollover.thresholdPercent
+      : null;
   const shouldShowRestoringBanner =
     !isRolloverBlocked &&
     typeof options.continuationIndex === "number" &&
@@ -87,9 +96,10 @@ const buildSessionBanner = (options: {
     return (
       <output aria-live="polite" className="session-panel">
         <div>
-          Контекст почти исчерпан (осталось ~{remainingPercent}%). Сейчас
-          автоматически перенесу работу в новый сегмент, чтобы продолжить без
-          потери качества.
+          Контекст почти исчерпан (осталось ~{remainingPercent}%
+          {thresholdPercent !== null ? `, порог ${thresholdPercent}%` : ""}).
+          Сейчас автоматически перенесу работу в новый сегмент, чтобы продолжить
+          без потери качества.
         </div>
         <div>
           Шаги: 1) создаётся Continuity Report 2) открывается новая сессия 3)

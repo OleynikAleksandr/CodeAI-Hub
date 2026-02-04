@@ -35,11 +35,20 @@ export type ModelInfo = {
 export type SessionStatusInfo = {
   readonly providerSummary: string;
   readonly models?: readonly ModelInfo[];
+  readonly rollover?: FlowNodeRolloverInfo | null;
   readonly tokenUsage: {
     readonly used: number;
     readonly limit: number;
   };
   readonly connectionState: "idle" | "running" | "blocked";
+  readonly updatedAt: number;
+};
+
+export type FlowNodeRolloverInfo = {
+  readonly phase: string;
+  readonly remainingPercent?: number;
+  readonly thresholdPercent?: number;
+  readonly reportPath?: string;
   readonly updatedAt: number;
 };
 

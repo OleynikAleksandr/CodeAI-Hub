@@ -26,15 +26,20 @@ type TokenUsageSnapshot = {
   readonly limit: number;
 };
 
-const FLOW_NODE_CONTINUITY_REMAINING_PERCENT_BLOCK_THRESHOLD = 30;
-
-const computeRemainingPercent = (usage: TokenUsageSnapshot): number => {
-  const remaining = usage.limit - usage.used;
-  if (!Number.isFinite(remaining) || usage.limit <= 0) {
-    return 0;
-  }
-  return Math.round((remaining / usage.limit) * 100);
+type FlowNodeRolloverNotification = {
+  readonly kind: "flow_node_rollover";
+  readonly phase: string;
+  readonly remainingPercent?: unknown;
+  readonly thresholdPercent?: unknown;
+  readonly reportPath?: unknown;
 };
+
+const isFlowNodeRolloverNotification = (
+  event: unknown
+): event is FlowNodeRolloverNotification =>
+  isRecord(event) &&
+  event.kind === "flow_node_rollover" &&
+  typeof event.phase === "string";
 
 const resolveProviderSessionIdForCache = (
   snapshot: SessionSnapshots[string],
@@ -83,6 +88,40 @@ export const updateSnapshotsWithTokenUsage = (
     return snapshots;
   }
 
+  if (isFlowNodeRolloverNotification(payload.event)) {
+    const phase = payload.event.phase;
+    const nextConnectionState =
+      phase === "start" ||
+      phase === "create_report_sent" ||
+      phase === "waiting_for_report" ||
+      phase === "report_ready"
+        ? "blocked"
+        : "idle";
+
+    const remainingPercent = readNumber(payload.event.remainingPercent);
+    const thresholdPercent = readNumber(payload.event.thresholdPercent);
+    const reportPath = readString(payload.event.reportPath);
+
+    return {
+      ...snapshots,
+      [payload.sessionId]: {
+        ...snapshot,
+        status: {
+          ...snapshot.status,
+          connectionState: nextConnectionState,
+          rollover: {
+            phase,
+            ...(remainingPercent === null ? {} : { remainingPercent }),
+            ...(thresholdPercent === null ? {} : { thresholdPercent }),
+            ...(reportPath === null ? {} : { reportPath }),
+            updatedAt: Date.now(),
+          },
+          updatedAt: Date.now(),
+        },
+      },
+    };
+  }
+
   const tokenUsage = extractTokenUsage(payload.event);
   if (!tokenUsage) {
     return snapshots;
@@ -96,12 +135,6 @@ export const updateSnapshotsWithTokenUsage = (
     writeLastKnownTokenUsage(providerSessionId, tokenUsage);
   }
 
-  const remainingPercent = computeRemainingPercent(tokenUsage);
-  const connectionState =
-    remainingPercent <= FLOW_NODE_CONTINUITY_REMAINING_PERCENT_BLOCK_THRESHOLD
-      ? "blocked"
-      : "idle";
-
   return {
     ...snapshots,
     [payload.sessionId]: {
@@ -109,7 +142,7 @@ export const updateSnapshotsWithTokenUsage = (
       status: {
         ...snapshot.status,
         tokenUsage,
-        connectionState,
+        connectionState: snapshot.status.connectionState,
         updatedAt: Date.now(),
       },
     },
