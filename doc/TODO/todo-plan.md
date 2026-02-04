@@ -106,8 +106,8 @@
 ### Stream: session UI — agent activity indicators + English copy (MVP)
 52. [DONE] Feat(ui): добавить индикатор "agent working" при тишине 10s (без thinking/assistant output) + анимацию для "Thinking" плашки — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `feat(ui): add agent working indicator`
 53. [DONE] Git Commit: `feat(ui): add agent working indicator` (hash: 70b6c227)
-54. [TODO] Chore(ui): перевести UI-копирайтинг сессии на EN (MVP, без i18n) — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `chore(ui): translate session UI copy to English`
-55. [TODO] Git Commit: `chore(ui): translate session UI copy to English` (hash: TBD)
+54. [DONE] Chore(ui): перевести UI-копирайтинг сессии на EN (MVP, без i18n) — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `chore(ui): translate session UI copy to English`
+55. [DONE] Git Commit: `chore(ui): translate session UI copy to English` (hash: 17363ecb)
 
 ### Stream: release — build VSIX + tarballs (Phase 96 wrap-up)
 56. [TODO] Release: завершить все TODO в Phase 96 (42–55) + прогнать обязательные Gates и таргетные сборки затронутых пакетов — scope: repo-wide (commands only); expected commit message: `chore(release): verify gates for Phase 96`
