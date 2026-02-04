@@ -97,14 +97,14 @@ const buildSessionBanner = (options: {
     return (
       <output aria-live="polite" className="session-panel">
         <div>
-          Контекст почти исчерпан (осталось ~{remainingPercent}%
-          {thresholdPercent !== null ? `, порог ${thresholdPercent}%` : ""}).
-          Сейчас автоматически перенесу работу в новый сегмент, чтобы продолжить
-          без потери качества.
+          Context is running low (~{remainingPercent}% remaining
+          {thresholdPercent !== null ? `, threshold ${thresholdPercent}%` : ""}
+          ). I'll now automatically move this work into a new segment to
+          continue without losing quality.
         </div>
         <div>
-          Шаги: 1) создаётся Continuity Report 2) открывается новая сессия 3)
-          агент восстанавливает контекст (это может занять до ~6 минут).
+          Steps: 1) generate a Continuity Report 2) open a new session 3)
+          restore context (this can take up to ~6 minutes).
         </div>
       </output>
     );
@@ -113,8 +113,8 @@ const buildSessionBanner = (options: {
   if (shouldShowRestoringBanner) {
     return (
       <output aria-live="polite" className="session-panel">
-        Продолжение создано. Агент восстанавливает контекст (читает Continuity
-        Report и ключевые файлы)… Обычно 1–6 минут.
+        Continuation created. The agent is restoring context (reading the
+        Continuity Report and key files)… Usually 1–6 minutes.
       </output>
     );
   }
@@ -228,7 +228,7 @@ const SessionViewBody = ({
   const agentWorkingBanner =
     showAgentWorkingIndicator && !isRolloverBlocked ? (
       <output aria-live="polite" className="session-panel">
-        Агент обрабатывает запрос…
+        Agent is working…
       </output>
     ) : null;
 
