@@ -127,9 +127,9 @@ const resolveTemplatePath = (
   return resolved;
 };
 
-export interface TemplateLoaderOptions {
+export type TemplateLoaderOptions = {
   readonly templatesDir: string;
-}
+};
 
 export class TemplateLoader {
   readonly #templatesDir: string;
