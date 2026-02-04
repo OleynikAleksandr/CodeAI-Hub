@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
@@ -163,6 +164,34 @@ const SessionViewBody = ({
     providerLabels,
   });
 
+  const [showAgentWorkingIndicator, setShowAgentWorkingIndicator] =
+    useState(false);
+  const lastMessage = activeSession?.messages.at(-1) ?? null;
+  const lastMessageRole = lastMessage?.role ?? null;
+  const lastMessageCreatedAt = lastMessage?.createdAt ?? null;
+
+  useEffect(() => {
+    setShowAgentWorkingIndicator(false);
+
+    if (
+      !activeSessionId ||
+      lastMessageRole !== "user" ||
+      !lastMessageCreatedAt
+    ) {
+      return;
+    }
+
+    const elapsedMs = Date.now() - lastMessageCreatedAt;
+    const delayMs = Math.max(0, 10_000 - elapsedMs);
+    const timer = window.setTimeout(() => {
+      setShowAgentWorkingIndicator(true);
+    }, delayMs);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [activeSessionId, lastMessageCreatedAt, lastMessageRole]);
+
   const header = (
     <div className="session-app__header">
       <SessionTabs
@@ -196,6 +225,13 @@ const SessionViewBody = ({
   });
   const isRolloverBlocked = activeSession.status.connectionState === "blocked";
 
+  const agentWorkingBanner =
+    showAgentWorkingIndicator && !isRolloverBlocked ? (
+      <output aria-live="polite" className="session-panel">
+        Агент обрабатывает запрос…
+      </output>
+    ) : null;
+
   return (
     <div className="session-app">
       {header}
@@ -209,6 +245,7 @@ const SessionViewBody = ({
         </div>
         <div className="session-app__rails">
           {banner}
+          {agentWorkingBanner}
           <InputPanel
             draft={activeSession.draft}
             isBlocked={isRolloverBlocked}
