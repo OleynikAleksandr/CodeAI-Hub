@@ -90,3 +90,27 @@
 39. [DONE] Git Commit: `docs(flow): document live continuity threshold reload` (hash: 5fe9394d)
 40. [DONE] Report: создать `doc/Sessions/Session081.md` (итоги Phase 96 + коммиты) — scope: `doc/Sessions/Session081.md`; expected commit message: `docs(session): add Session081 report`
 41. [DONE] Git Commit: `docs(session): add Session081 report` (hash: 059d4c7a)
+
+### Stream: rollover UX parity + continuation index (post-verification)
+42. [TODO] Fix(core): добавить `continuationIndex` (variant A, 1-based) в serialized session, рассчитывать по `continuationParentId` chain — scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): compute continuation index`
+43. [TODO] Git Commit: `fix(core): compute continuation index` (hash: TBD)
+44. [TODO] Fix(core): отправлять UI явные события rollover lifecycle (start/create-report/wait/new-session/resume) с `remaining%` и threshold — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `fix(core): emit rollover notifications`
+45. [TODO] Git Commit: `fix(core): emit rollover notifications` (hash: TBD)
+46. [TODO] Fix(ui): показывать баннер/блокировку ввода по rollover notifications (а не по hardcode 30%) + использовать `continuationIndex` из Core в заголовке — scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): drive rollover UX from core notifications`
+47. [TODO] Git Commit: `fix(ui): drive rollover UX from core notifications` (hash: TBD)
+
+### Stream: session UI — agent activity indicators + English copy (MVP)
+48. [TODO] Feat(ui): добавить индикатор "agent working" при тишине 10s (без thinking/assistant output) + анимацию для "Thinking" плашки — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/status-panel.tsx`; expected commit message: `feat(ui): add agent working indicator`
+49. [TODO] Git Commit: `feat(ui): add agent working indicator` (hash: TBD)
+50. [TODO] Chore(ui): перевести UI-копирайтинг сессии на EN (MVP, без i18n) — scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `chore(ui): translate session UI copy to English`
+51. [TODO] Git Commit: `chore(ui): translate session UI copy to English` (hash: TBD)
+
+### Stream: release — build VSIX + tarballs (Phase 96 wrap-up)
+52. [TODO] Release: завершить все TODO в Phase 96 (42–51) + прогнать обязательные Gates и таргетные сборки затронутых пакетов — scope: repo-wide (commands only); expected commit message: `chore(release): verify gates for Phase 96`
+53. [TODO] Git Commit: `chore(release): verify gates for Phase 96` (hash: TBD)
+54. [TODO] Release: выполнить `./scripts/build-all.sh` (авто bump версий + tarball’ы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`) — scope: repo-wide (automated version bump/manifests); expected commit message: `chore(release): build-all next version`
+55. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+56. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version` и проверить, что VSIX создан в корне — scope: repo root artifact (`codeai-hub-<version>.vsix`); expected commit message: `chore(release): build vsix`
+57. [TODO] Git Commit: `chore(release): build vsix` (hash: TBD)
+58. [TODO] Docs(session): создать `doc/Sessions/Session083.md` (итоги + артефакты релиза) — scope: `doc/Sessions/Session083.md`; expected commit message: `docs(session): add Session083 report`
+59. [TODO] Git Commit: `docs(session): add Session083 report` (hash: TBD)
