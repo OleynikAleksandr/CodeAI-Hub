@@ -156,8 +156,8 @@
 85. [DONE] Git Commit: `fix(ui): hide continuation numbering by default` (hash: 3b564c9d)
 
 ### Stream: silent preemptive rollover (behind flag)
-86. [TODO] Feat(core): добавить preempt порог (default 50% remaining) `continuity.preemptRemainingPercentThreshold` и запускать background rollover только ПОСЛЕ `turn_completed`, если `remaining<=preempt` (без UI/без user-facing сообщений; дедуп in-flight) — scope: `packages/core/src/config/index.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): add silent preemptive rollover`
-87. [TODO] Git Commit: `feat(core): add silent preemptive rollover` (hash: TBD)
+86. [DONE] Feat(core): добавить preempt порог (default 50% remaining) `continuity.preemptRemainingPercentThreshold` и запускать background rollover только ПОСЛЕ `turn_completed`, если `remaining<=preempt` (без UI/без user-facing сообщений; дедуп in-flight) — scope: `packages/core/src/config/index.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): add silent preemptive rollover`
+87. [DONE] Git Commit: `feat(core): add silent preemptive rollover` (hash: d32031fc)
 88. [TODO] Fix(ui): если пользователь нажал Send до готовности background rollover — не показывать “создаю новую сессию/проценты/время”, удержать сообщение и отправить автоматически после готовности; пока сообщение не отправлено — input заблокирован (без очереди); UI использует стандартный `Agent is working…` — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): queue send behind rollover`
 89. [TODO] Git Commit: `fix(ui): queue send behind rollover` (hash: TBD)
 
