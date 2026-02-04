@@ -162,8 +162,8 @@
 89. [DONE] Git Commit: `fix(ui): queue send behind rollover` (hash: 6087efa3)
 
 ### Stream: verification + release
-90. [TODO] Release: прогнать обязательные Gates + таргетные сборки `project-manager` и `build:webview` — scope: repo-wide (commands only); expected commit message: `chore(release): verify seamless continuity UX`
-91. [TODO] Git Commit: `chore(release): verify seamless continuity UX` (hash: TBD)
+90. [DONE] Release: прогнать обязательные Gates + таргетные сборки `project-manager` и `build:webview` — scope: repo-wide (commands only); expected commit message: `chore(release): verify seamless continuity UX`
+91. [DONE] Git Commit: `chore(release): verify seamless continuity UX` (hash: 190daca6)
 
 ### Stream: virtual conversation feed (one UI ribbon)
 92. [DONE] Feat(ui): сделать одну сквозную ленту сообщений (агрегация сообщений по continuation chain, включая скрытые сегменты); отправка — в active segment — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `feat(ui): render virtual conversation feed`
