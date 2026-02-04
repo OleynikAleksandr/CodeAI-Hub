@@ -10,6 +10,7 @@ import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-c
 import type { ProviderRegistry } from "../../provider-registry";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import {
+  computeRemainingPercent,
   extractTokenUsage,
   isBelowRemainingPercentThreshold,
 } from "../../session-continuity/token-usage";
@@ -71,6 +72,31 @@ type ProviderErrorEnvelope = {
   readonly error?: unknown;
   readonly payload?: unknown;
   readonly type?: unknown;
+};
+
+type FlowNodeRolloverPhase =
+  | "start"
+  | "create_report_sent"
+  | "waiting_for_report"
+  | "report_ready"
+  | "new_session_created"
+  | "resume_sent"
+  | "failed";
+
+type FlowNodeRolloverNotification = {
+  readonly kind: "flow_node_rollover";
+  readonly phase: FlowNodeRolloverPhase;
+  readonly sourceSessionId: string;
+  readonly nextSessionId?: string;
+  readonly providerId: string;
+  readonly stageId: string;
+  readonly runSlug: string | null;
+  readonly remainingPercent?: number;
+  readonly thresholdPercent?: number;
+  readonly reportPath?: string;
+  readonly tmpReportPath?: string;
+  readonly error?: string;
+  readonly timestamp: string;
 };
 
 type WorkflowStageId =
@@ -251,6 +277,22 @@ export class SessionRequestHandler {
     readonly mtimeMs: number;
     readonly settings: unknown;
   } | null = null;
+
+  private emitFlowNodeRolloverNotification(
+    sessionId: string,
+    notification: Omit<FlowNodeRolloverNotification, "timestamp">
+  ): void {
+    this.broadcaster({
+      type: "session:stream",
+      payload: {
+        sessionId,
+        event: {
+          ...notification,
+          timestamp: new Date().toISOString(),
+        } satisfies FlowNodeRolloverNotification,
+      },
+    });
+  }
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -976,10 +1018,35 @@ export class SessionRequestHandler {
 
     this.flowNodeRolloverInFlight.add(sessionId);
     this.flowNodeRolloverStarted.add(sessionId);
+    const remainingPercent = computeRemainingPercent(usage);
+    this.emitFlowNodeRolloverNotification(sessionId, {
+      kind: "flow_node_rollover",
+      phase: "start",
+      sourceSessionId: sessionId,
+      providerId: session.providerId,
+      stageId: session.stage,
+      runSlug: session.runSlug ?? null,
+      remainingPercent,
+      thresholdPercent: remainingPercentThreshold,
+    });
     try {
-      await this.rolloverFlowNodeSession(session);
+      await this.rolloverFlowNodeSession(session, {
+        remainingPercent,
+        thresholdPercent: remainingPercentThreshold,
+      });
     } catch (error) {
       this.flowNodeRolloverStarted.delete(sessionId);
+      this.emitFlowNodeRolloverNotification(sessionId, {
+        kind: "flow_node_rollover",
+        phase: "failed",
+        sourceSessionId: sessionId,
+        providerId: session.providerId,
+        stageId: session.stage,
+        runSlug: session.runSlug ?? null,
+        remainingPercent,
+        thresholdPercent: remainingPercentThreshold,
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     } finally {
       this.flowNodeRolloverInFlight.delete(sessionId);
@@ -1047,7 +1114,65 @@ export class SessionRequestHandler {
     return path.resolve(session.workspacePath, relativePath);
   }
 
-  private async rolloverFlowNodeSession(session: Session): Promise<void> {
+  private resolveFlowNodeId(stageId: string, runSlug: string | null): string {
+    return runSlug ? `${stageId}/${runSlug}` : stageId;
+  }
+
+  private resolveFlowNodeRole(runSlug: string | null): string {
+    if (!runSlug) {
+      return "Agent";
+    }
+    return `${runSlug.slice(0, 1).toUpperCase()}${runSlug.slice(1)}`;
+  }
+
+  private resolveFlowNodeContinuityTemplate(options: {
+    readonly session: Session;
+    readonly stageId: string;
+  }): {
+    readonly templateId:
+      | "flow/continuity/create-report-doc.md"
+      | "flow/continuity/create-report-code.md";
+    readonly canonicalArtifactPath: string;
+    readonly isReviewerBootstrapEligible: boolean;
+  } {
+    const isReviewerBootstrapEligible =
+      options.stageId === "description" &&
+      options.session.runSlug === "reviewer";
+
+    if (isReviewerBootstrapEligible) {
+      return {
+        templateId: "flow/continuity/create-report-doc.md",
+        canonicalArtifactPath: this.resolveDescriptionReviewerFinalArtifactPath(
+          options.session
+        ),
+        isReviewerBootstrapEligible,
+      };
+    }
+
+    return {
+      templateId: "flow/continuity/create-report-code.md",
+      canonicalArtifactPath: "",
+      isReviewerBootstrapEligible,
+    };
+  }
+
+  private buildReviewerBootstrapPrompt(session: Session): string {
+    return [
+      "You are a Reviewer Agent for the Description step.",
+      "Convert draft description.md to Final_Description.md.",
+      `Final target: \`${this.resolveDescriptionReviewerFinalArtifactPath(
+        session
+      )}\``,
+    ].join("\n");
+  }
+
+  private async rolloverFlowNodeSession(
+    session: Session,
+    rollover: {
+      readonly remainingPercent: number;
+      readonly thresholdPercent: number;
+    }
+  ): Promise<void> {
     const adapter = this.providerRegistry.getAdapter(session.providerId);
     if (!adapter) {
       return;
@@ -1059,10 +1184,9 @@ export class SessionRequestHandler {
       return;
     }
 
-    const nodeId = session.runSlug ? `${stageId}/${session.runSlug}` : stageId;
-    const role = session.runSlug
-      ? `${session.runSlug.slice(0, 1).toUpperCase()}${session.runSlug.slice(1)}`
-      : "Agent";
+    const runSlug = session.runSlug ?? null;
+    const nodeId = this.resolveFlowNodeId(stageId, runSlug);
+    const role = this.resolveFlowNodeRole(runSlug);
     const timestamp = this.toSafeTimestamp(new Date().toISOString());
 
     const reportPaths = this.flowNodeContinuity.buildReportPaths({
@@ -1074,15 +1198,25 @@ export class SessionRequestHandler {
       timestamp,
     });
 
-    const canonicalArtifactPath =
-      stageId === "description" && session.runSlug === "reviewer"
-        ? this.resolveDescriptionReviewerFinalArtifactPath(session)
-        : "";
+    const notificationBase = {
+      kind: "flow_node_rollover",
+      sourceSessionId: session.id,
+      providerId: session.providerId,
+      stageId,
+      runSlug,
+      remainingPercent: rollover.remainingPercent,
+      thresholdPercent: rollover.thresholdPercent,
+    } as const;
 
-    const templateId =
-      stageId === "description" && session.runSlug === "reviewer"
-        ? "flow/continuity/create-report-doc.md"
-        : "flow/continuity/create-report-code.md";
+    this.emitFlowNodeRolloverNotification(session.id, {
+      ...notificationBase,
+      phase: "create_report_sent",
+      reportPath: reportPaths.reportPath,
+      tmpReportPath: reportPaths.tmpReportPath,
+    });
+
+    const { canonicalArtifactPath, templateId, isReviewerBootstrapEligible } =
+      this.resolveFlowNodeContinuityTemplate({ session, stageId });
 
     const createReportPrompt = this.flowNodeContinuity.renderTemplate(
       templateId,
@@ -1104,10 +1238,23 @@ export class SessionRequestHandler {
 
     await this.sendInternalMessage(session.id, wrappedCreateReportPrompt);
 
+    this.emitFlowNodeRolloverNotification(session.id, {
+      ...notificationBase,
+      phase: "waiting_for_report",
+      reportPath: reportPaths.reportPath,
+      tmpReportPath: reportPaths.tmpReportPath,
+    });
+
     await this.flowNodeContinuity.waitForReport({
       reportPath: reportPaths.reportPath,
       timeoutMs: 60_000,
       pollIntervalMs: 250,
+    });
+
+    this.emitFlowNodeRolloverNotification(session.id, {
+      ...notificationBase,
+      phase: "report_ready",
+      reportPath: reportPaths.reportPath,
     });
 
     const nextSession = await this.createAndRegisterSession({
@@ -1128,6 +1275,12 @@ export class SessionRequestHandler {
       return;
     }
 
+    this.emitFlowNodeRolloverNotification(session.id, {
+      ...notificationBase,
+      phase: "new_session_created",
+      nextSessionId: nextSession.id,
+    });
+
     const resumePrompt = this.flowNodeContinuity.renderTemplate(
       "flow/continuity/resume.md",
       {
@@ -1137,22 +1290,24 @@ export class SessionRequestHandler {
       }
     );
 
-    const reviewerBootstrap =
-      stageId === "description" && session.runSlug === "reviewer"
-        ? [
-            "You are a Reviewer Agent for the Description step.",
-            "Convert draft description.md to Final_Description.md.",
-            `Final target: \`${this.resolveDescriptionReviewerFinalArtifactPath(
-              session
-            )}\``,
-          ].join("\n")
-        : null;
-
-    const wrappedResumePrompt = reviewerBootstrap
-      ? [reviewerBootstrap, "", resumePrompt.trim()].join("\n")
-      : resumePrompt.trim();
+    const resumePromptTrimmed = resumePrompt.trim();
+    let wrappedResumePrompt = resumePromptTrimmed;
+    if (isReviewerBootstrapEligible) {
+      wrappedResumePrompt = [
+        this.buildReviewerBootstrapPrompt(session),
+        "",
+        resumePromptTrimmed,
+      ].join("\n");
+    }
 
     await this.sendInternalMessage(nextSession.id, wrappedResumePrompt);
+
+    this.emitFlowNodeRolloverNotification(nextSession.id, {
+      ...notificationBase,
+      phase: "resume_sent",
+      nextSessionId: nextSession.id,
+      reportPath: reportPaths.reportPath,
+    });
   }
 
   private handleTypedProviderEvent(
