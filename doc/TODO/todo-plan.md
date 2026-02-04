@@ -112,8 +112,8 @@
 ### Stream: release — build VSIX + tarballs (Phase 96 wrap-up)
 56. [DONE] Release: завершить все TODO в Phase 96 (42–55) + прогнать обязательные Gates и таргетные сборки затронутых пакетов — scope: repo-wide (commands only); expected commit message: `chore(release): verify gates for Phase 96`
 57. [DONE] Git Commit: `chore(release): verify gates for Phase 96` (hash: ec694daf)
-58. [TODO] Release: выполнить `./scripts/build-all.sh` (авто bump версий + tarball’ы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`) — scope: repo-wide (automated version bump/manifests); expected commit message: `chore(release): build-all next version`
-59. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+58. [DONE] Release: выполнить `./scripts/build-all.sh` (авто bump версий + tarball’ы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`) — scope: repo-wide (automated version bump/manifests); expected commit message: `chore(release): build-all next version`
+59. [DONE] Git Commit: `chore(release): build-all next version` (hash: c2dd3543)
 60. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version` и проверить, что VSIX создан в корне — scope: repo root artifact (`codeai-hub-<version>.vsix`); expected commit message: `chore(release): build vsix`
 61. [TODO] Git Commit: `chore(release): build vsix` (hash: TBD)
 62. [TODO] Docs(session): создать `doc/Sessions/Session083.md` (итоги + артефакты релиза) — scope: `doc/Sessions/Session083.md`; expected commit message: `docs(session): add Session083 report`
