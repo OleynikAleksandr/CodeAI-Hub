@@ -106,6 +106,7 @@ export class SDKMessageProcessor {
     string,
     { used: number; limit: number }
   >();
+  private readonly pendingTurnsBySession = new WeakMap<ActiveSession, number>();
   private contextUsageReader: ClaudeContextUsageReader | null = null;
   private readonly contextUsageInFlight = new Map<string, Promise<void>>();
   private readonly contextUsageLastAttemptAt = new Map<string, number>();
@@ -147,6 +148,7 @@ export class SDKMessageProcessor {
       resolver(targetSession.messageController.pendingMessages.shift() ?? null);
     }
 
+    this.markTurnStarted(targetSession, sessionId);
     targetSession.eventEmitter.emit("message", {
       type: "user_input",
       content,
@@ -206,12 +208,50 @@ export class SDKMessageProcessor {
       }
       case "result": {
         this.handleResultMessage(session, message);
+        this.maybeMarkTurnCompleted(session, message.session_id);
         this.refreshTokenUsageFromContext(session, message.session_id);
         break;
       }
       default:
         break;
     }
+  }
+
+  private markTurnStarted(
+    session: ActiveSession,
+    claudeSessionId: string
+  ): void {
+    const pending = this.pendingTurnsBySession.get(session) ?? 0;
+    this.pendingTurnsBySession.set(session, pending + 1);
+
+    session.eventEmitter.emit("message", {
+      type: "turn_started",
+      provider: "claude",
+      sessionId: session.sessionId,
+      claudeSessionId,
+      uuid: `${crypto.randomUUID()}::turn_started`,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  private maybeMarkTurnCompleted(
+    session: ActiveSession,
+    claudeSessionId: string | null | undefined
+  ): void {
+    const pending = this.pendingTurnsBySession.get(session) ?? 0;
+    if (pending <= 0) {
+      return;
+    }
+    this.pendingTurnsBySession.set(session, pending - 1);
+
+    session.eventEmitter.emit("message", {
+      type: "turn_completed",
+      provider: "claude",
+      sessionId: session.sessionId,
+      claudeSessionId: claudeSessionId ?? session.sessionId,
+      uuid: `${crypto.randomUUID()}::turn_completed`,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   private refreshTokenUsageFromContext(
