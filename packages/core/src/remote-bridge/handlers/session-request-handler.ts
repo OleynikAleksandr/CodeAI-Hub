@@ -9,6 +9,7 @@ import {
 import type { CoreConfig } from "../../config";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
+import type { TokenUsageSnapshot } from "../../session-continuity/continuity-types";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import {
   computeRemainingPercent,
@@ -274,6 +275,10 @@ export class SessionRequestHandler {
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeRolloverInFlight = new Set<string>();
   private readonly flowNodeRolloverStarted = new Set<string>();
+  private readonly flowNodeTokenUsageSnapshots = new Map<
+    string,
+    TokenUsageSnapshot
+  >();
   private flowNodeContinuitySettingsCache: {
     readonly mtimeMs: number;
     readonly settings: unknown;
@@ -351,6 +356,8 @@ export class SessionRequestHandler {
     });
     this.flowNodeContinuity = new FlowNodeContinuityFacade({
       templatesDir: this.config.templatesDir,
+      preemptRemainingPercentThreshold:
+        this.config.continuityPreemptRemainingPercentThreshold,
     });
   }
 
@@ -1020,6 +1027,7 @@ export class SessionRequestHandler {
     if (!usage) {
       return;
     }
+    this.flowNodeTokenUsageSnapshots.set(sessionId, usage);
 
     if (!(session.initiativeSlug && session.stage)) {
       return;
@@ -1058,10 +1066,14 @@ export class SessionRequestHandler {
       thresholdPercent: remainingPercentThreshold,
     });
     try {
-      await this.rolloverFlowNodeSession(session, {
-        remainingPercent,
-        thresholdPercent: remainingPercentThreshold,
-      });
+      await this.rolloverFlowNodeSession(
+        session,
+        {
+          remainingPercent,
+          thresholdPercent: remainingPercentThreshold,
+        },
+        { silent: false }
+      );
     } catch (error) {
       this.flowNodeRolloverStarted.delete(sessionId);
       this.emitFlowNodeRolloverNotification(sessionId, {
@@ -1075,6 +1087,62 @@ export class SessionRequestHandler {
         thresholdPercent: remainingPercentThreshold,
         error: error instanceof Error ? error.message : String(error),
       });
+      throw error;
+    } finally {
+      this.flowNodeRolloverInFlight.delete(sessionId);
+    }
+  }
+
+  private async handleFlowNodeContinuitySilentPreemptiveRollover(
+    sessionId: string
+  ): Promise<void> {
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      return;
+    }
+
+    if (!(session.initiativeSlug && session.stage)) {
+      return;
+    }
+
+    if (this.flowNodeRolloverStarted.has(sessionId)) {
+      return;
+    }
+
+    if (this.flowNodeRolloverInFlight.has(sessionId)) {
+      return;
+    }
+
+    const usage = this.flowNodeTokenUsageSnapshots.get(sessionId);
+    if (!usage) {
+      return;
+    }
+
+    const remainingPercent = computeRemainingPercent(usage);
+    if (
+      !this.flowNodeContinuity.shouldStartSilentPreemptiveRollover({
+        stageId: session.stage,
+        runSlug: session.runSlug ?? null,
+        remainingPercent,
+      })
+    ) {
+      return;
+    }
+
+    this.flowNodeRolloverInFlight.add(sessionId);
+    this.flowNodeRolloverStarted.add(sessionId);
+    try {
+      await this.rolloverFlowNodeSession(
+        session,
+        {
+          remainingPercent,
+          thresholdPercent:
+            this.config.continuityPreemptRemainingPercentThreshold,
+        },
+        { silent: true }
+      );
+    } catch (error) {
+      this.flowNodeRolloverStarted.delete(sessionId);
       throw error;
     } finally {
       this.flowNodeRolloverInFlight.delete(sessionId);
@@ -1199,7 +1267,8 @@ export class SessionRequestHandler {
     rollover: {
       readonly remainingPercent: number;
       readonly thresholdPercent: number;
-    }
+    },
+    options?: { readonly silent: boolean }
   ): Promise<void> {
     const adapter = this.providerRegistry.getAdapter(session.providerId);
     if (!adapter) {
@@ -1236,12 +1305,14 @@ export class SessionRequestHandler {
       thresholdPercent: rollover.thresholdPercent,
     } as const;
 
-    this.emitFlowNodeRolloverNotification(session.id, {
-      ...notificationBase,
-      phase: "create_report_sent",
-      reportPath: reportPaths.reportPath,
-      tmpReportPath: reportPaths.tmpReportPath,
-    });
+    if (!options?.silent) {
+      this.emitFlowNodeRolloverNotification(session.id, {
+        ...notificationBase,
+        phase: "create_report_sent",
+        reportPath: reportPaths.reportPath,
+        tmpReportPath: reportPaths.tmpReportPath,
+      });
+    }
 
     const { canonicalArtifactPath, templateId, isReviewerBootstrapEligible } =
       this.resolveFlowNodeContinuityTemplate({ session, stageId });
@@ -1266,12 +1337,14 @@ export class SessionRequestHandler {
 
     await this.sendInternalMessage(session.id, wrappedCreateReportPrompt);
 
-    this.emitFlowNodeRolloverNotification(session.id, {
-      ...notificationBase,
-      phase: "waiting_for_report",
-      reportPath: reportPaths.reportPath,
-      tmpReportPath: reportPaths.tmpReportPath,
-    });
+    if (!options?.silent) {
+      this.emitFlowNodeRolloverNotification(session.id, {
+        ...notificationBase,
+        phase: "waiting_for_report",
+        reportPath: reportPaths.reportPath,
+        tmpReportPath: reportPaths.tmpReportPath,
+      });
+    }
 
     await this.flowNodeContinuity.waitForReport({
       reportPath: reportPaths.reportPath,
@@ -1279,11 +1352,13 @@ export class SessionRequestHandler {
       pollIntervalMs: 250,
     });
 
-    this.emitFlowNodeRolloverNotification(session.id, {
-      ...notificationBase,
-      phase: "report_ready",
-      reportPath: reportPaths.reportPath,
-    });
+    if (!options?.silent) {
+      this.emitFlowNodeRolloverNotification(session.id, {
+        ...notificationBase,
+        phase: "report_ready",
+        reportPath: reportPaths.reportPath,
+      });
+    }
 
     const nextSession = await this.createAndRegisterSession({
       providerId: session.providerId,
@@ -1303,11 +1378,13 @@ export class SessionRequestHandler {
       return;
     }
 
-    this.emitFlowNodeRolloverNotification(session.id, {
-      ...notificationBase,
-      phase: "new_session_created",
-      nextSessionId: nextSession.id,
-    });
+    if (!options?.silent) {
+      this.emitFlowNodeRolloverNotification(session.id, {
+        ...notificationBase,
+        phase: "new_session_created",
+        nextSessionId: nextSession.id,
+      });
+    }
 
     const resumePrompt = this.flowNodeContinuity.renderTemplate(
       "flow/continuity/resume.md",
@@ -1330,12 +1407,14 @@ export class SessionRequestHandler {
 
     await this.sendInternalMessage(nextSession.id, wrappedResumePrompt);
 
-    this.emitFlowNodeRolloverNotification(nextSession.id, {
-      ...notificationBase,
-      phase: "resume_sent",
-      nextSessionId: nextSession.id,
-      reportPath: reportPaths.reportPath,
-    });
+    if (!options?.silent) {
+      this.emitFlowNodeRolloverNotification(nextSession.id, {
+        ...notificationBase,
+        phase: "resume_sent",
+        nextSessionId: nextSession.id,
+        reportPath: reportPaths.reportPath,
+      });
+    }
   }
 
   private handleTypedProviderEvent(
@@ -1354,6 +1433,14 @@ export class SessionRequestHandler {
         break;
       case "turn_completed":
         this.emitTurnStateEvent({ sessionId, state: "idle" });
+        this.handleFlowNodeContinuitySilentPreemptiveRollover(sessionId).catch(
+          (error) => {
+            this.logger.warn("Silent preemptive rollover failed", {
+              sessionId,
+              error: error instanceof Error ? error.message : String(error),
+            });
+          }
+        );
         break;
       case "turn_failed":
         this.emitTurnStateEvent({ sessionId, state: "idle" });

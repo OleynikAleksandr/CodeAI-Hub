@@ -32,6 +32,7 @@ export type CoreConfig = {
   readonly geminiCredentialsDirectory?: string;
   readonly claudeDefaultModel: string;
   readonly claudeContinuityRemainingPercentThreshold: number;
+  readonly continuityPreemptRemainingPercentThreshold: number;
 };
 
 type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
@@ -74,8 +75,11 @@ const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
 const CLAUDE_MODEL_ALIAS_SET = new Set(["default", "sonnet", "opus", "haiku"]);
 const DEFAULT_CLAUDE_MODEL_ALIAS = "default";
 const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
+const DEFAULT_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD = 50;
 const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
+const MIN_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD = 0;
+const MAX_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD = 100;
 const resolveClaudeDefaultModel = (value: string | undefined): string =>
   value && CLAUDE_MODEL_ALIAS_SET.has(value)
     ? value
@@ -361,6 +365,14 @@ export const loadConfig = (): CoreConfig => {
   const claudeSettings = loadClaudeSettingsSnapshot(claudeSettingsPath);
   const claudeContinuityRemainingPercentThreshold =
     resolveClaudeContinuityRemainingPercentThreshold(claudeSettings);
+  const continuityPreemptRemainingPercentThreshold = clampNumber(
+    toNumber(
+      process.env.CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD,
+      DEFAULT_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD
+    ),
+    MIN_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD,
+    MAX_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD
+  );
 
   return {
     host,
@@ -385,5 +397,6 @@ export const loadConfig = (): CoreConfig => {
     geminiSettingsPath,
     geminiCredentialsDirectory,
     claudeContinuityRemainingPercentThreshold,
+    continuityPreemptRemainingPercentThreshold,
   };
 };
