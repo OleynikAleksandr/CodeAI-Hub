@@ -142,10 +142,10 @@ const SessionViewBody = ({
   const activeRecord = sessions.find(
     (session) => session.id === activeSessionId
   );
-  const continuationIndex = computeContinuationIndex(
-    activeRecord ?? null,
-    sessions
-  );
+  const continuationIndex =
+    typeof activeRecord?.continuationIndex === "number"
+      ? activeRecord.continuationIndex
+      : computeContinuationIndex(activeRecord ?? null, sessions);
   const primaryProviderId = activeRecord?.providerIds[0] ?? null;
   const providerTheme = mapProviderTheme(primaryProviderId);
   const providerDisplayLabel = resolveProviderDisplayLabel({
