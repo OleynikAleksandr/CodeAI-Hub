@@ -92,8 +92,8 @@
 41. [DONE] Git Commit: `docs(session): add Session081 report` (hash: 059d4c7a)
 
 ### Stream: rollover UX parity + continuation index (post-verification)
-42. [TODO] Fix(core): добавить `continuationIndex` (variant A, 1-based) в serialized session, рассчитывать по `continuationParentId` chain — scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): compute continuation index`
-43. [TODO] Git Commit: `fix(core): compute continuation index` (hash: TBD)
+42. [DONE] Fix(core): добавить `continuationIndex` (variant A, 1-based) в serialized session, рассчитывать по `continuationParentId` chain — scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): compute continuation index`
+43. [DONE] Git Commit: `fix(core): compute continuation index` (hash: 31353b82)
 44. [TODO] Fix(core): отправлять UI явные события rollover lifecycle (start/create-report/wait/new-session/resume) с `remaining%` и threshold — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `fix(core): emit rollover notifications`
 45. [TODO] Git Commit: `fix(core): emit rollover notifications` (hash: TBD)
 46. [TODO] Fix(ui): показывать баннер/блокировку ввода по rollover notifications (а не по hardcode 30%) + использовать `continuationIndex` из Core в заголовке — scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/info-panel.tsx`; expected commit message: `fix(ui): drive rollover UX from core notifications`
