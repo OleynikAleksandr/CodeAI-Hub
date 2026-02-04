@@ -222,6 +222,27 @@ export const buildTokenDebugSummary = (params: {
     return null;
   }
 
+  const formatRemainingPercent = (options: {
+    readonly used: number;
+    readonly limit: number;
+  }): string => {
+    if (!(Number.isFinite(options.used) && Number.isFinite(options.limit))) {
+      return "—";
+    }
+    if (options.limit <= 0) {
+      return "—";
+    }
+    const usedPercentage = Math.max(
+      0,
+      Math.min(100, Math.round((options.used / options.limit) * 100))
+    );
+    const remainingPercentage = Math.max(
+      0,
+      Math.min(100, 100 - usedPercentage)
+    );
+    return `${remainingPercentage}%`;
+  };
+
   const parts: string[] = [];
   for (const [index, segment] of params.chain.entries()) {
     const snapshot = params.snapshots[segment.id];
@@ -229,14 +250,11 @@ export const buildTokenDebugSummary = (params: {
       continue;
     }
 
-    const used = snapshot.status.tokenUsage.used;
-    const limit = snapshot.status.tokenUsage.limit;
-    const displayLimit = limit > 0 ? limit : null;
-    const label =
-      segment.id === params.activeSessionId
-        ? `#${index + 1}*`
-        : `#${index + 1}`;
-    const formatted = `${label} ${used.toLocaleString()}/${displayLimit ? displayLimit.toLocaleString() : "—"}`;
+    const label = `#${index + 1}`;
+    const formatted = `${label} ${formatRemainingPercent({
+      used: snapshot.status.tokenUsage.used,
+      limit: snapshot.status.tokenUsage.limit,
+    })}`;
     parts.push(formatted);
   }
 
