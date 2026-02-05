@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const BUNDLED_TEMPLATES = new Map<string, string>([
@@ -12,12 +12,9 @@ Create a short continuity report for node \`{{nodeId}}\` (\`{{role}}\`) and save
 Hard rules:
 - Do NOT include chat history.
 - Do NOT paste large parts of artifacts (no full docs/code/diffs).
-- Use only short bullets and file paths.
-- Atomic write: write to a temporary file first, then rename to the final path.
-- Create EXACTLY ONE report per Create Report instruction.
-- Do NOT create or update any other continuity reports unless Core sends another explicit Create Report instruction with explicit temp/final paths.
-- Do NOT post any status or progress messages to the user chat.
-- When the report is written, reply with EXACTLY ONE line: \`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__\` (and nothing else).
+- Write ONLY the report file (atomic write: tmp -> rename).
+- Do NOT send any user-facing chat messages.
+- When done, reply with EXACTLY ONE line: \`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__\`.
 
 Required structure:
 
@@ -43,12 +40,9 @@ Create a short continuity report for node \`{{nodeId}}\` (\`{{role}}\`) and save
 Hard rules:
 - Do NOT include chat history.
 - Do NOT paste code/diffs/logs.
-- Use only short bullets, file paths, and command names.
-- Atomic write: write to a temporary file first, then rename to the final path.
-- Create EXACTLY ONE report per Create Report instruction.
-- Do NOT create or update any other continuity reports unless Core sends another explicit Create Report instruction with explicit temp/final paths.
-- Do NOT post any status or progress messages to the user chat.
-- When the report is written, reply with EXACTLY ONE line: \`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__\` (and nothing else).
+- Write ONLY the report file (atomic write: tmp -> rename).
+- Do NOT send any user-facing chat messages.
+- When done, reply with EXACTLY ONE line: \`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__\`.
 
 Required structure:
 
@@ -93,8 +87,8 @@ Hard rules (MUST):
 - The ONLY time you may write a continuity report is when Core sends an explicit instruction titled "Flow Node Continuity — Create Report ..." AND it includes BOTH a temp path and a final report path to write.
 - If you did not receive that Create Report instruction, you MUST NOT create/update any files under \`.codeai-hub/**/flow/nodes/**/continuity/reports/\`.
 - Do NOT invent timestamps/paths for reports.
-- Do NOT post any status or progress messages to the user chat.
-- When you are ready for the next instruction, reply with EXACTLY ONE line: \`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__\` (and nothing else).
+- Do NOT send any user-facing chat messages.
+- When ready, reply with EXACTLY ONE line: \`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__\`.
 `,
   ],
 ]);
@@ -141,6 +135,7 @@ export class TemplateLoader {
 
   constructor(options: TemplateLoaderOptions) {
     this.#templatesDir = options.templatesDir;
+    this.#syncBundledTemplatesToDisk();
   }
 
   load(templateId: string): string {
@@ -163,5 +158,26 @@ export class TemplateLoader {
       throw new Error(`Unknown continuity templateId: ${templateId}`);
     }
     return bundled;
+  }
+
+  #syncBundledTemplatesToDisk(): void {
+    const templatesRoot = path.resolve(this.#templatesDir);
+    for (const [templateId, content] of BUNDLED_TEMPLATES.entries()) {
+      const templatePath = resolveTemplatePath(templatesRoot, templateId);
+      mkdirSync(path.dirname(templatePath), { recursive: true });
+
+      let existing: string | null = null;
+      if (existsSync(templatePath)) {
+        try {
+          existing = readFileSync(templatePath, "utf8");
+        } catch {
+          existing = null;
+        }
+      }
+      if (existing === content) {
+        continue;
+      }
+      writeFileSync(templatePath, content, "utf8");
+    }
   }
 }
