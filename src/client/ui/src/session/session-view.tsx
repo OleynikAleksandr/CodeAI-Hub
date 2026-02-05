@@ -241,6 +241,7 @@ const SessionViewBody = ({
   const hasPendingThinkingIndicator =
     resolvePendingThinkingMessageId(virtualConversationMessages) !== null;
   const shouldShowWorkingCopy =
+    lastRelevantRole === "user" ||
     hasPendingThinkingIndicator ||
     (showAgentWorkingIndicator &&
       !isRolloverBlocked &&
