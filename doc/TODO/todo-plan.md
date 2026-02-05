@@ -278,6 +278,8 @@
 167. [DONE] Fix(ui): не показывать continuity‑служебный `thinking` в текущем сегменте во время rollover (когда chain ещё = 1) и не показывать `thinking` в parent‑сегментах (чтобы не “всплывал” в истории после rollover) — scope: `src/client/ui/src/session/session-view-helpers.tsx`, `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(ui): suppress rollover thinking messages`
 168. [DONE] Git Commit: `fix(ui): suppress rollover thinking messages` (hash: fd6698f3)
 169. [DONE] Docs(todo): отметить статус/хеш для suppress rollover thinking — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record rollover thinking suppression hash`
-170. [DONE] Git Commit: `docs(todo): record rollover thinking suppression hash` (hash: TBD)
-171. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
-172. [TODO] Docs(todo): отметить хеши релиза в этом Stream — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record release hashes`
+170. [DONE] Git Commit: `docs(todo): record rollover thinking suppression hash` (hash: 89e04a07)
+171. [DONE] Release: run `./scripts/build-all.sh` (bump versions + tarballs) — scope: repo-wide; expected commit message: `chore(release): build-all next version`
+172. [DONE] Git Commit: `chore(release): build-all next version` (hash: 265d514b)
+173. [DONE] Release: run `./scripts/build-release.sh --use-current-version` (VSIX) — scope: repo-wide; expected commit message: `chore(release): build vsix`
+174. [DONE] Git Commit: `chore(release): build vsix` (hash: 85d84beb)
