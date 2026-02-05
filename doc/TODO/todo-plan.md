@@ -210,3 +210,22 @@
 117. [DONE] Git Commit: `chore(release): build vsix` (hash: c7a96d3d)
 118. [DONE] Docs(session): создать `doc/Sessions/Session087.md` (Phase 99 fixes + release artifacts) — scope: `doc/Sessions/Session087.md`; expected commit message: `docs(session): add Session087 report`
 119. [DONE] Git Commit: `docs(session): add Session087 report` (hash: 06d50d90)
+
+---
+
+## Phase 101 — UI seamless session UX (working strip + silent continuity) (owner: Oleksandr, updated: 2026-02-05)
+
+### Stream: persistent working strip + seamless continuity
+120. [DONE] Feat(ui): сделать “working”-плашку постоянной (всегда присутствует в UI), но показывать текст “Агент работает…” только в 2 случаях (pending Thinking без ответа assistant; silence-after-assistant) + сократить silence trigger до 5s — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/working-strip.tsx`, `media/session-view.css`; expected commit message: `feat(ui): add persistent working strip`
+121. [DONE] Git Commit: `feat(ui): add persistent working strip` (hash: e6b1c6d6)
+122. [DONE] Fix(ui): убрать анимацию точек из `Thinking` (единственный user-facing индикатор ожидания — working‑плашка) — scope: `src/client/ui/src/session/dialog-panel.tsx`; expected commit message: `fix(ui): remove thinking dots indicator`
+123. [DONE] Git Commit: `fix(ui): remove thinking dots indicator` (hash: ab95f712)
+124. [DONE] Fix(ui): убрать текст статусов под полем ввода при blocked/running/queued и переносить статус в placeholder инпута — scope: `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): move blocked copy into input placeholder`
+125. [DONE] Git Commit: `fix(ui): move blocked copy into input placeholder` (hash: 049921c0)
+126. [DONE] Feat(ui): изменить анимацию точек (6 точек, не “волна”: последовательное плавное появление; каждая следующая −5% размер и тусклее; цикл 1→6; цвет — provider) — scope: `src/client/ui/src/session/animated-dots.tsx`, `media/session-view.css`; expected commit message: `feat(ui): redesign provider dots animation`
+127. [DONE] Git Commit: `feat(ui): redesign provider dots animation` (hash: 9140165b)
+128. [DONE] Fix(core): изменить continuity prompt templates так, чтобы агент не писал служебные сообщения в чат пользователю при rollover/start session (silent execution + machine-readable ACK) — scope: `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `fix(core): silence continuity prompts`
+129. [DONE] Git Commit: `fix(core): silence continuity prompts` (hash: 8cadb229)
+130. [DONE] Fix(ui): подавлять/скрывать внутренние служебные ACK сообщения continuity (если они всё же попадают в историю) — scope: `src/client/ui/src/session/virtual-conversation.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): hide continuity internal messages`
+131. [DONE] Git Commit: `fix(ui): hide continuity internal messages` (hash: 888934ad)
+132. [TODO] Release: собрать новый релиз для QA (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide (commands + version bumps + VSIX); expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
