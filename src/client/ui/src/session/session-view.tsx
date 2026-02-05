@@ -6,11 +6,7 @@ import { resolvePendingThinkingMessageId } from "./dialog-panel-pending-thinking
 import EmptyState from "./empty-state";
 import { mapProviderTheme } from "./helpers";
 import InputPanel from "./input-panel";
-import {
-  buildAgentWorkingBanner,
-  resolveVisibleBanner,
-  useQueuedSend,
-} from "./session-view-helpers";
+import { resolveVisibleBanner, useQueuedSend } from "./session-view-helpers";
 import StatusPanel from "./status-panel";
 import {
   buildTokenDebugSummary,
@@ -21,14 +17,17 @@ import {
   resolveProviderDisplayLabel,
   SessionHeader,
 } from "./virtual-conversation";
+import { WorkingStrip } from "./working-strip";
 
-const AGENT_WORKING_SILENCE_MS = 10_000;
+const AGENT_WORKING_SILENCE_MS = 5000;
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
 
-const resolveIsWaitingForAssistant = (
+type SessionMessageRole = "assistant" | "user" | "thinking";
+
+const resolveLastRelevantRole = (
   messages: readonly SessionSnapshot["messages"][number][]
-): boolean => {
+): SessionMessageRole | null => {
   for (let index = messages.length - 1; index >= 0; index -= 1) {
     const message = messages[index];
     if (
@@ -38,9 +37,9 @@ const resolveIsWaitingForAssistant = (
     ) {
       continue;
     }
-    return message.role !== "assistant";
+    return message.role;
   }
-  return true;
+  return null;
 };
 
 const buildSessionBanner = (options: {
@@ -234,19 +233,15 @@ const SessionViewBody = ({
   });
   const visibleBanner = resolveVisibleBanner({ banner, queuedMessage });
 
-  const isWaitingForAssistant = resolveIsWaitingForAssistant(
-    virtualConversationMessages
-  );
+  const lastRelevantRole = resolveLastRelevantRole(virtualConversationMessages);
   const hasPendingThinkingIndicator =
     resolvePendingThinkingMessageId(virtualConversationMessages) !== null;
-  const agentWorkingBanner = buildAgentWorkingBanner({
-    queuedMessage,
-    showAgentWorkingIndicator,
-    isRolloverBlocked,
-    providerTheme,
-    isWaitingForAssistant,
-    hasPendingThinkingIndicator,
-  });
+  const shouldShowWorkingCopy =
+    hasPendingThinkingIndicator ||
+    (showAgentWorkingIndicator &&
+      !isRolloverBlocked &&
+      connectionState === "running" &&
+      lastRelevantRole === "assistant");
 
   return (
     <div className="session-app">
@@ -261,7 +256,10 @@ const SessionViewBody = ({
         </div>
         <div className="session-app__rails">
           {visibleBanner}
-          {agentWorkingBanner}
+          <WorkingStrip
+            isWorking={shouldShowWorkingCopy}
+            providerTheme={providerTheme}
+          />
           <InputPanel
             connectionState={connectionState}
             draft={activeSession.draft}
