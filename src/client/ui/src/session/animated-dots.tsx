@@ -28,12 +28,24 @@ const ensureFallbackStyles = (): void => {
 .animated-dots__dot--4{--animated-dots-scale:.85;--animated-dots-alpha:.85;animation-name:animated-dots-reveal-4}
 .animated-dots__dot--5{--animated-dots-scale:.8;--animated-dots-alpha:.8;animation-name:animated-dots-reveal-5}
 .animated-dots__dot--6{--animated-dots-scale:.75;--animated-dots-alpha:.75;animation-name:animated-dots-reveal-6}
-@keyframes animated-dots-reveal-1{0%{opacity:0}8%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
-@keyframes animated-dots-reveal-2{0%,16.67%{opacity:0}24.67%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
-@keyframes animated-dots-reveal-3{0%,33.33%{opacity:0}41.33%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
-@keyframes animated-dots-reveal-4{0%,50%{opacity:0}58%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
-@keyframes animated-dots-reveal-5{0%,66.67%{opacity:0}74.67%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
-@keyframes animated-dots-reveal-6{0%,83.33%{opacity:0}91.33%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+.animated-dots__dot--7{--animated-dots-scale:.7;--animated-dots-alpha:.7;animation-name:animated-dots-reveal-7}
+.animated-dots__dot--8{--animated-dots-scale:.65;--animated-dots-alpha:.65;animation-name:animated-dots-reveal-8}
+.animated-dots__dot--9{--animated-dots-scale:.6;--animated-dots-alpha:.6;animation-name:animated-dots-reveal-9}
+.animated-dots__dot--10{--animated-dots-scale:.55;--animated-dots-alpha:.55;animation-name:animated-dots-reveal-10}
+.animated-dots__dot--11{--animated-dots-scale:.5;--animated-dots-alpha:.5;animation-name:animated-dots-reveal-11}
+.animated-dots__dot--12{--animated-dots-scale:.45;--animated-dots-alpha:.45;animation-name:animated-dots-reveal-12}
+@keyframes animated-dots-reveal-1{0%{opacity:0}4%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-2{0%,8.33%{opacity:0}12.33%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-3{0%,16.67%{opacity:0}20.67%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-4{0%,25%{opacity:0}29%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-5{0%,33.33%{opacity:0}37.33%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-6{0%,41.67%{opacity:0}45.67%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-7{0%,50%{opacity:0}54%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-8{0%,58.33%{opacity:0}62.33%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-9{0%,66.67%{opacity:0}70.67%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-10{0%,75%{opacity:0}79%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-11{0%,83.33%{opacity:0}87.33%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-12{0%,91.67%{opacity:0}95.67%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
 `;
   document.head.append(style);
 };
@@ -81,6 +93,12 @@ export const AnimatedDots = ({
       <span className="animated-dots__dot animated-dots__dot--4" />
       <span className="animated-dots__dot animated-dots__dot--5" />
       <span className="animated-dots__dot animated-dots__dot--6" />
+      <span className="animated-dots__dot animated-dots__dot--7" />
+      <span className="animated-dots__dot animated-dots__dot--8" />
+      <span className="animated-dots__dot animated-dots__dot--9" />
+      <span className="animated-dots__dot animated-dots__dot--10" />
+      <span className="animated-dots__dot animated-dots__dot--11" />
+      <span className="animated-dots__dot animated-dots__dot--12" />
     </span>
   );
 };
