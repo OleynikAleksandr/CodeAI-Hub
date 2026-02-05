@@ -242,7 +242,7 @@
 
 ### Stream: continuity seamlessness (ban banners + overwrite templates + hide segment preface)
 141. [TODO] Fix(ui): полностью убрать баннеры между сессиями (`Preparing a continuation…`, `Restoring context…`) — оставить только working‑плашку и placeholder у инпута — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): remove continuation banners`
-142. [TODO] Git Commit: `fix(ui): remove continuation banners` (hash: TBD)
+142. [DONE] Git Commit: `fix(ui): remove continuation banners` (hash: fc872a8f)
 143. [TODO] Docs(todo): отметить статус/хеш для удаления continuation баннеров — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuation banner removal hash`
 144. [TODO] Git Commit: `docs(todo): record continuation banner removal hash` (hash: TBD)
 145. [TODO] Fix(core): новый релиз всегда синхронизирует (перезаписывает при изменениях) continuity templates в `~/.codeai-hub/templates` и приводит их к новым “silent+ACK” правилам (сократить инструкции для экономии токенов) — scope: `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `fix(core): sync bundled continuity templates to disk`
