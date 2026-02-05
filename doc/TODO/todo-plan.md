@@ -265,5 +265,5 @@
 160. [DONE] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix` (hash: 4ac2808b + d642a263)
 
 ### Stream: dialog shadow clearance
-161. [TODO] Fix(ui): увеличить нижний зазор в ленте сообщений, чтобы тень у последней “плашки” (assistant/user) не срезалась у нижнего края диалога (padding-bottom = shadowSize + 10px) — scope: `media/session-view.css`; expected commit message: `fix(ui): add dialog bottom padding for message shadow`
-162. [TODO] Git Commit: `fix(ui): add dialog bottom padding for message shadow` (hash: TBD)
+161. [DONE] Fix(ui): увеличить нижний зазор в ленте сообщений, чтобы тень у последней “плашки” (assistant/user) не срезалась у нижнего края диалога (padding-bottom = shadowSize + 10px) — scope: `media/session-view.css`; expected commit message: `fix(ui): add dialog bottom padding for message shadow`
+162. [DONE] Git Commit: `fix(ui): add dialog bottom padding for message shadow` (hash: 19754dab)
