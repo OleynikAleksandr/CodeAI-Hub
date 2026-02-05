@@ -23123,10 +23123,22 @@ ${path2}` : path2;
   var WorkingStrip = ({
     isWorking,
     providerTheme
-  }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("output", { "aria-live": "polite", className: "session-panel session-working-strip", children: isWorking ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "Agent is working. Please wait." }),
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(AnimatedDots, { theme: providerTheme })
-  ] }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "session-working-strip__spacer" }) });
+  }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("output", { "aria-live": "polite", className: "session-panel session-working-strip", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      "span",
+      {
+        className: isWorking ? "session-working-strip__text" : "session-working-strip__text session-working-strip__text--hidden",
+        children: "Agent is working. Please wait."
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      "span",
+      {
+        className: isWorking ? "session-working-strip__dots" : "session-working-strip__dots session-working-strip__dots--hidden",
+        children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(AnimatedDots, { theme: providerTheme })
+      }
+    )
+  ] });
 
   // src/client/ui/src/session/session-view.tsx
   var import_jsx_runtime15 = __toESM(require_jsx_runtime());
