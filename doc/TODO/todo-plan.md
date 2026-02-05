@@ -233,8 +233,8 @@
 ### Stream: working strip polish (post-release QA)
 133. [DONE] Fix(ui): уменьшить шрифт текста в `Agent is working. Please wait.` — scope: `media/session-view.css`; expected commit message: `fix(ui): reduce working strip copy size`
 134. [DONE] Git Commit: `fix(ui): reduce working strip copy size` (hash: 83f927cf)
-135. [TODO] Docs(todo): отметить статус/хеш для уменьшения шрифта — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip font tweak hash`
-136. [TODO] Git Commit: `docs(todo): record working strip font tweak hash` (hash: TBD)
+135. [DONE] Docs(todo): отметить статус/хеш для уменьшения шрифта — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip font tweak hash`
+136. [DONE] Git Commit: `docs(todo): record working strip font tweak hash` (hash: a744f3c0)
 137. [TODO] Fix(ui): показывать working‑надпись сразу после отправки запроса пользователя и скрывать при первом assistant ответе (дальше — текущая логика 5s silence) — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): show working strip while awaiting first reply`
 138. [TODO] Git Commit: `fix(ui): show working strip while awaiting first reply` (hash: TBD)
 139. [TODO] Docs(todo): отметить статус/хеш для “awaiting first reply” — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip immediate show hash`
