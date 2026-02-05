@@ -217,6 +217,9 @@ export const buildVirtualConversationMessages = (params: {
     if (!snapshot) {
       continue;
     }
+    const shouldSuppressRolloverThinking =
+      snapshot.status.rollover !== null &&
+      snapshot.status.rollover !== undefined;
     const firstUserIndex =
       segmentIndex > 0
         ? snapshot.messages.findIndex((message) => message.role === "user")
@@ -225,6 +228,9 @@ export const buildVirtualConversationMessages = (params: {
       continue;
     }
     for (const message of snapshot.messages.slice(firstUserIndex)) {
+      if (shouldSuppressRolloverThinking && message.role === "thinking") {
+        continue;
+      }
       collected.push({ message, segmentIndex });
     }
   }
