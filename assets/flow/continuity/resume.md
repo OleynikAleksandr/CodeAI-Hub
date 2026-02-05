@@ -10,4 +10,5 @@ Hard rules (MUST):
 - The ONLY time you may write a continuity report is when Core sends an explicit instruction titled "Flow Node Continuity — Create Report ..." AND it includes BOTH a temp path and a final report path to write.
 - If you did not receive that Create Report instruction, you MUST NOT create/update any files under `.codeai-hub/**/flow/nodes/**/continuity/reports/`.
 - Do NOT invent timestamps/paths for reports.
-- If you finish your work in this node, reply in chat with a short status and wait for the user.
+- Do NOT send any user-facing chat messages.
+- When ready, reply with EXACTLY ONE line: `__CODEAIHUB_INTERNAL_CONTINUITY_ACK__`.

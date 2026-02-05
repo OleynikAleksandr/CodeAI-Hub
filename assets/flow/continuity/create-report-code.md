@@ -6,10 +6,9 @@ Create a short continuity report for node `{{nodeId}}` (`{{role}}`) and save it 
 Hard rules:
 - Do NOT include chat history.
 - Do NOT paste code/diffs/logs.
-- Use only short bullets, file paths, and command names.
-- Atomic write: write to a temporary file first, then rename to the final path.
-- Create EXACTLY ONE report per Create Report instruction.
-- Do NOT create or update any other continuity reports unless Core sends another explicit Create Report instruction with explicit temp/final paths.
+- Write ONLY the report file (atomic write: tmp -> rename).
+- Do NOT send any user-facing chat messages.
+- When done, reply with EXACTLY ONE line: `__CODEAIHUB_INTERNAL_CONTINUITY_ACK__`.
 
 Required structure:
 
