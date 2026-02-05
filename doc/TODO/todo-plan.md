@@ -229,3 +229,13 @@
 130. [DONE] Fix(ui): подавлять/скрывать внутренние служебные ACK сообщения continuity (если они всё же попадают в историю) — scope: `src/client/ui/src/session/virtual-conversation.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): hide continuity internal messages`
 131. [DONE] Git Commit: `fix(ui): hide continuity internal messages` (hash: 888934ad)
 132. [DONE] Release: собрать новый релиз для QA (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide (commands + version bumps + VSIX); expected commit message: `chore(release): build-all next version` (hash: 300631bd) + `chore(release): build vsix` (hash: 4b6222b1)
+
+### Stream: working strip polish (post-release QA)
+133. [TODO] Fix(ui): уменьшить шрифт текста в `Agent is working. Please wait.` — scope: `media/session-view.css`; expected commit message: `fix(ui): reduce working strip copy size`
+134. [TODO] Git Commit: `fix(ui): reduce working strip copy size` (hash: TBD)
+135. [TODO] Docs(todo): отметить статус/хеш для уменьшения шрифта — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip font tweak hash`
+136. [TODO] Git Commit: `docs(todo): record working strip font tweak hash` (hash: TBD)
+137. [TODO] Fix(ui): показывать working‑надпись сразу после отправки запроса пользователя и скрывать при первом assistant ответе (дальше — текущая логика 5s silence) — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): show working strip while awaiting first reply`
+138. [TODO] Git Commit: `fix(ui): show working strip while awaiting first reply` (hash: TBD)
+139. [TODO] Docs(todo): отметить статус/хеш для “awaiting first reply” — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip immediate show hash`
+140. [TODO] Git Commit: `docs(todo): record working strip immediate show hash` (hash: TBD)
