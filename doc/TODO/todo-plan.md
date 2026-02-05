@@ -228,4 +228,4 @@
 129. [DONE] Git Commit: `fix(core): silence continuity prompts` (hash: 8cadb229)
 130. [DONE] Fix(ui): подавлять/скрывать внутренние служебные ACK сообщения continuity (если они всё же попадают в историю) — scope: `src/client/ui/src/session/virtual-conversation.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): hide continuity internal messages`
 131. [DONE] Git Commit: `fix(ui): hide continuity internal messages` (hash: 888934ad)
-132. [TODO] Release: собрать новый релиз для QA (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide (commands + version bumps + VSIX); expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
+132. [DONE] Release: собрать новый релиз для QA (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide (commands + version bumps + VSIX); expected commit message: `chore(release): build-all next version` (hash: 300631bd) + `chore(release): build vsix` (hash: 4b6222b1)
