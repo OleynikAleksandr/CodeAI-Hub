@@ -271,5 +271,5 @@
 ### Stream: rollover UX polish
 163. [DONE] Fix(ui): не показывать continuity‑служебный `Thinking` в конце старой сессии (создание report/resume) — scope: `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(ui): suppress continuity rollover thinking`
 164. [DONE] Git Commit: `fix(ui): suppress continuity rollover thinking` (hash: 76bde88e)
-165. [TODO] Fix(ui): при смене сессии не держать “Agent is working…” бесконечно — показывать только когда `connectionState` = `running/blocked` (снимается на `idle`) — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): hide working strip when idle`
-166. [TODO] Git Commit: `fix(ui): hide working strip when idle` (hash: TBD)
+165. [DONE] Fix(ui): при смене сессии не держать “Agent is working…” бесконечно — показывать только когда `connectionState` = `running/blocked` (снимается на `idle`) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): hide working strip when idle`
+166. [DONE] Git Commit: `fix(ui): hide working strip when idle` (hash: d77e75f9)
