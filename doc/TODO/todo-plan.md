@@ -237,5 +237,24 @@
 136. [DONE] Git Commit: `docs(todo): record working strip font tweak hash` (hash: a744f3c0)
 137. [DONE] Fix(ui): показывать working‑надпись сразу после отправки запроса пользователя и скрывать при первом assistant ответе (дальше — текущая логика 5s silence) — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): show working strip while awaiting first reply`
 138. [DONE] Git Commit: `fix(ui): show working strip while awaiting first reply` (hash: 08af3025)
-139. [TODO] Docs(todo): отметить статус/хеш для “awaiting first reply” — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip immediate show hash`
-140. [TODO] Git Commit: `docs(todo): record working strip immediate show hash` (hash: TBD)
+139. [DONE] Docs(todo): отметить статус/хеш для “awaiting first reply” — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip immediate show hash`
+140. [DONE] Git Commit: `docs(todo): record working strip immediate show hash` (hash: 0707f6e3)
+
+### Stream: continuity seamlessness (ban banners + overwrite templates + hide segment preface)
+141. [TODO] Fix(ui): полностью убрать баннеры между сессиями (`Preparing a continuation…`, `Restoring context…`) — оставить только working‑плашку и placeholder у инпута — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): remove continuation banners`
+142. [TODO] Git Commit: `fix(ui): remove continuation banners` (hash: TBD)
+143. [TODO] Docs(todo): отметить статус/хеш для удаления continuation баннеров — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuation banner removal hash`
+144. [TODO] Git Commit: `docs(todo): record continuation banner removal hash` (hash: TBD)
+145. [TODO] Fix(core): новый релиз всегда синхронизирует (перезаписывает при изменениях) continuity templates в `~/.codeai-hub/templates` и приводит их к новым “silent+ACK” правилам (сократить инструкции для экономии токенов) — scope: `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `fix(core): sync bundled continuity templates to disk`
+146. [TODO] Git Commit: `fix(core): sync bundled continuity templates to disk` (hash: TBD)
+147. [TODO] Docs(todo): отметить статус/хеш для синхронизации continuity templates — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuity template sync hash`
+148. [TODO] Git Commit: `docs(todo): record continuity template sync hash` (hash: TBD)
+149. [TODO] Fix(ui): UX‑щит — не показывать assistant/thinking сообщения нового сегмента continuity до первого user сообщения в этом сегменте — scope: `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(ui): hide continuity segment preface messages`
+150. [TODO] Git Commit: `fix(ui): hide continuity segment preface messages` (hash: TBD)
+151. [TODO] Docs(todo): отметить статус/хеш для фильтра continuity segment preface — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuity segment filter hash`
+152. [TODO] Git Commit: `docs(todo): record continuity segment filter hash` (hash: TBD)
+153. [TODO] Feat(ui): увеличить индикатор до 12 точек (та же прогрессия масштаба и яркости, sequential reveal, provider color) — scope: `src/client/ui/src/session/animated-dots.tsx`, `media/session-view.css`; expected commit message: `feat(ui): expand animated dots to twelve`
+154. [TODO] Git Commit: `feat(ui): expand animated dots to twelve` (hash: TBD)
+155. [TODO] Docs(todo): отметить статус/хеш для 12-точечного индикатора — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 12-dot indicator hash`
+156. [TODO] Git Commit: `docs(todo): record 12-dot indicator hash` (hash: TBD)
+157. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
