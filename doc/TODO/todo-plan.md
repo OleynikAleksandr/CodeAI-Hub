@@ -251,10 +251,10 @@
 148. [DONE] Git Commit: `docs(todo): record continuity template sync hash` (hash: d9d78c47)
 149. [DONE] Fix(ui): UX‑щит — не показывать assistant/thinking сообщения нового сегмента continuity до первого user сообщения в этом сегменте — scope: `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(ui): hide continuity segment preface messages`
 150. [DONE] Git Commit: `fix(ui): hide continuity segment preface messages` (hash: db415be2)
-151. [TODO] Docs(todo): отметить статус/хеш для фильтра continuity segment preface — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuity segment filter hash`
-152. [TODO] Git Commit: `docs(todo): record continuity segment filter hash` (hash: TBD)
-153. [TODO] Feat(ui): увеличить индикатор до 12 точек (та же прогрессия масштаба и яркости, sequential reveal, provider color) — scope: `src/client/ui/src/session/animated-dots.tsx`, `media/session-view.css`; expected commit message: `feat(ui): expand animated dots to twelve`
-154. [TODO] Git Commit: `feat(ui): expand animated dots to twelve` (hash: TBD)
-155. [TODO] Docs(todo): отметить статус/хеш для 12-точечного индикатора — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 12-dot indicator hash`
+151. [DONE] Docs(todo): отметить статус/хеш для фильтра continuity segment preface — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuity segment filter hash`
+152. [DONE] Git Commit: `docs(todo): record continuity segment filter hash` (hash: 963db942)
+153. [DONE] Feat(ui): увеличить индикатор до 12 точек (та же прогрессия масштаба и яркости, sequential reveal, provider color) — scope: `src/client/ui/src/session/animated-dots.tsx`, `media/session-view.css`; expected commit message: `feat(ui): expand animated dots to twelve`
+154. [DONE] Git Commit: `feat(ui): expand animated dots to twelve` (hash: 08c8a2fc)
+155. [IN_PROGRESS] Docs(todo): отметить статус/хеш для 12-точечного индикатора — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 12-dot indicator hash`
 156. [TODO] Git Commit: `docs(todo): record 12-dot indicator hash` (hash: TBD)
 157. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
