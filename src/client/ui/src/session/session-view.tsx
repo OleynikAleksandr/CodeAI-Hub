@@ -12,6 +12,7 @@ import {
   buildTokenDebugSummary,
   buildVirtualConversationMessages,
   computeFallbackContinuationIndex,
+  filterContinuityInternalMessages,
   resolveActiveSessionSnapshot,
   resolveContinuationChain,
   resolveProviderDisplayLabel,
@@ -170,13 +171,16 @@ const SessionViewBody = ({
     activeRecord && activeSessionId
       ? resolveContinuationChain({ sessions: allSessions, activeSessionId })
       : [];
-  const virtualConversationMessages =
+  const rawConversationMessages =
     activeSession && activeSessionId && continuationChain.length > 1
       ? buildVirtualConversationMessages({
           chain: continuationChain,
           snapshots,
         })
       : (activeSession?.messages ?? []);
+  const virtualConversationMessages = filterContinuityInternalMessages(
+    rawConversationMessages
+  );
   const lastThinkingOrAssistantAt = resolveLastThinkingOrAssistantAt(
     virtualConversationMessages
   );

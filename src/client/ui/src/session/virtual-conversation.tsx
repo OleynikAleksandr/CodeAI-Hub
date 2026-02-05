@@ -9,6 +9,28 @@ import type {
 import InfoPanel from "./info-panel";
 import SessionTabs from "./session-tabs";
 
+const CONTINUITY_INTERNAL_ACK = "__CODEAIHUB_INTERNAL_CONTINUITY_ACK__";
+
+export const filterContinuityInternalMessages = (
+  messages: readonly SessionMessage[]
+): readonly SessionMessage[] => {
+  for (const message of messages) {
+    if (
+      message.role === "assistant" &&
+      message.content.trim() === CONTINUITY_INTERNAL_ACK
+    ) {
+      return messages.filter(
+        (candidate) =>
+          !(
+            candidate.role === "assistant" &&
+            candidate.content.trim() === CONTINUITY_INTERNAL_ACK
+          )
+      );
+    }
+  }
+  return messages;
+};
+
 export const resolveActiveSessionSnapshot = (options: {
   readonly activeSessionId: string | null;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
@@ -210,7 +232,9 @@ export const buildVirtualConversationMessages = (params: {
     return compareMessageIds(left.message.id, right.message.id);
   });
 
-  return collected.map((entry) => entry.message);
+  return filterContinuityInternalMessages(
+    collected.map((entry) => entry.message)
+  );
 };
 
 export const buildTokenDebugSummary = (params: {
