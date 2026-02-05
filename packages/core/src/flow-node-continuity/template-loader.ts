@@ -16,6 +16,8 @@ Hard rules:
 - Atomic write: write to a temporary file first, then rename to the final path.
 - Create EXACTLY ONE report per Create Report instruction.
 - Do NOT create or update any other continuity reports unless Core sends another explicit Create Report instruction with explicit temp/final paths.
+- Do NOT post any status or progress messages to the user chat.
+- When the report is written, reply with EXACTLY ONE line: \`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__\` (and nothing else).
 
 Required structure:
 
@@ -45,6 +47,8 @@ Hard rules:
 - Atomic write: write to a temporary file first, then rename to the final path.
 - Create EXACTLY ONE report per Create Report instruction.
 - Do NOT create or update any other continuity reports unless Core sends another explicit Create Report instruction with explicit temp/final paths.
+- Do NOT post any status or progress messages to the user chat.
+- When the report is written, reply with EXACTLY ONE line: \`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__\` (and nothing else).
 
 Required structure:
 
@@ -89,7 +93,8 @@ Hard rules (MUST):
 - The ONLY time you may write a continuity report is when Core sends an explicit instruction titled "Flow Node Continuity — Create Report ..." AND it includes BOTH a temp path and a final report path to write.
 - If you did not receive that Create Report instruction, you MUST NOT create/update any files under \`.codeai-hub/**/flow/nodes/**/continuity/reports/\`.
 - Do NOT invent timestamps/paths for reports.
-- If you finish your work, reply in chat with a short status and wait for the user.
+- Do NOT post any status or progress messages to the user chat.
+- When you are ready for the next instruction, reply with EXACTLY ONE line: \`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__\` (and nothing else).
 `,
   ],
 ]);
