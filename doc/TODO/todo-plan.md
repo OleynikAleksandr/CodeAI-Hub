@@ -220,10 +220,10 @@
 121. [DONE] Git Commit: `feat(ui): add persistent working strip` (hash: e6b1c6d6)
 
 ### Stream: working strip fixed height (no layout jump)
-122. [TODO] Fix(ui): зафиксировать высоту working‑плашки (одинаковая с/без текста), чтобы при появлении “Agent is working…” не менялась высота rails и не «пряталась» последняя плашка в диалоге — scope: `src/client/ui/src/session/working-strip.tsx`, `media/session-view.css`; expected commit message: `fix(ui): lock working strip height`
-123. [TODO] Git Commit: `fix(ui): lock working strip height` (hash: TBD)
-124. [TODO] Docs(todo): отметить статус/хеш для working strip fixed height — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip height fix hash`
-125. [TODO] Git Commit: `docs(todo): record working strip height fix hash` (hash: TBD)
+122. [DONE] Fix(ui): зафиксировать высоту working‑плашки (одинаковая с/без текста), чтобы при появлении “Agent is working…” не менялась высота rails и не «пряталась» последняя плашка в диалоге — scope: `src/client/ui/src/session/working-strip.tsx`, `media/session-view.css`; expected commit message: `fix(ui): lock working strip height`
+123. [DONE] Git Commit: `fix(ui): lock working strip height` (hash: dd8728cc)
+124. [DONE] Docs(todo): отметить статус/хеш для working strip fixed height — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip height fix hash`
+125. [DONE] Git Commit: `docs(todo): record working strip height fix hash` (hash: TBD)
 126. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
 122. [DONE] Fix(ui): убрать анимацию точек из `Thinking` (единственный user-facing индикатор ожидания — working‑плашка) — scope: `src/client/ui/src/session/dialog-panel.tsx`; expected commit message: `fix(ui): remove thinking dots indicator`
 123. [DONE] Git Commit: `fix(ui): remove thinking dots indicator` (hash: ab95f712)
