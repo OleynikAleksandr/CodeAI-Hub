@@ -223,8 +223,11 @@
 122. [DONE] Fix(ui): зафиксировать высоту working‑плашки (одинаковая с/без текста), чтобы при появлении “Agent is working…” не менялась высота rails и не «пряталась» последняя плашка в диалоге — scope: `src/client/ui/src/session/working-strip.tsx`, `media/session-view.css`; expected commit message: `fix(ui): lock working strip height`
 123. [DONE] Git Commit: `fix(ui): lock working strip height` (hash: dd8728cc)
 124. [DONE] Docs(todo): отметить статус/хеш для working strip fixed height — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip height fix hash`
-125. [DONE] Git Commit: `docs(todo): record working strip height fix hash` (hash: TBD)
-126. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
+125. [DONE] Git Commit: `docs(todo): record working strip height fix hash` (hash: b06e5546)
+126. [DONE] Release: run `./scripts/build-all.sh` (bump versions + tarballs) — scope: repo-wide; expected commit message: `chore(release): build-all next version`
+127. [DONE] Git Commit: `chore(release): build-all next version` (hash: 84204ea0)
+128. [DONE] Release: run `./scripts/build-release.sh --use-current-version` (VSIX) — scope: repo-wide; expected commit message: `chore(release): build vsix`
+129. [DONE] Git Commit: `chore(release): build vsix` (hash: 4eabf8aa)
 122. [DONE] Fix(ui): убрать анимацию точек из `Thinking` (единственный user-facing индикатор ожидания — working‑плашка) — scope: `src/client/ui/src/session/dialog-panel.tsx`; expected commit message: `fix(ui): remove thinking dots indicator`
 123. [DONE] Git Commit: `fix(ui): remove thinking dots indicator` (hash: ab95f712)
 124. [DONE] Fix(ui): убрать текст статусов под полем ввода при blocked/running/queued и переносить статус в placeholder инпута — scope: `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): move blocked copy into input placeholder`
