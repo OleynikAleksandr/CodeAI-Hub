@@ -257,4 +257,4 @@
 154. [DONE] Git Commit: `feat(ui): expand animated dots to twelve` (hash: 08c8a2fc)
 155. [DONE] Docs(todo): отметить статус/хеш для 12-точечного индикатора — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 12-dot indicator hash`
 156. [DONE] Git Commit: `docs(todo): record 12-dot indicator hash` (hash: cb45743b)
-157. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
+157. [DONE] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix` (hash: 18db6fe2 + 8b451376)
