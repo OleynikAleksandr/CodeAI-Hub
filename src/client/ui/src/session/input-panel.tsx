@@ -17,17 +17,17 @@ const InputPanel = ({
   onSubmit,
 }: InputPanelProps) => {
   const isDisabled = connectionState === "running" || isQueued;
-  const hint = (() => {
+  const placeholder = (() => {
     if (isQueued) {
       return "Message queued. Sending as soon as it is ready…";
     }
     if (connectionState === "blocked") {
-      return "Preparing continuation… Press Enter to queue your next message.";
+      return "Agent is preparing a continuation… Please wait.";
     }
     if (connectionState === "running") {
-      return "Waiting for the agent…";
+      return "Agent is working… Please wait.";
     }
-    return "Press Enter to send, Shift+Enter for a new line";
+    return "Type your request or drag files with Shift held...";
   })();
   const [value, setValue] = useState(draft);
 
@@ -76,14 +76,18 @@ const InputPanel = ({
           maxHeight={MAX_TEXTAREA_HEIGHT}
           onSubmit={sendMessage}
           onValueChange={setValue}
-          placeholder="Type your request or drag files with Shift held..."
+          placeholder={placeholder}
           value={value}
         />
       </fieldset>
 
-      <div className="session-input__footer">
-        <span className="session-input__hint">{hint}</span>
-      </div>
+      {connectionState === "idle" && !isQueued ? (
+        <div className="session-input__footer">
+          <span className="session-input__hint">
+            Press Enter to send, Shift+Enter for a new line
+          </span>
+        </div>
+      ) : null}
     </form>
   );
 };
