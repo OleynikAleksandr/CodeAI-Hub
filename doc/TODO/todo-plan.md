@@ -262,4 +262,4 @@
 ### Stream: continuity templates overwrite (bundled assets)
 158. [DONE] Fix(templates): обновить continuity templates в `assets/flow/continuity/` под “silent+ACK” правила (чтобы VSIX при активации реально перезаписывал `~/.codeai-hub/templates/...`) — scope: `assets/flow/continuity/resume.md`, `assets/flow/continuity/create-report-doc.md`, `assets/flow/continuity/create-report-code.md`; expected commit message: `fix(templates): update continuity prompt templates`
 159. [DONE] Git Commit: `fix(templates): update continuity prompt templates` (hash: f727922a)
-160. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
+160. [DONE] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix` (hash: 4ac2808b + d642a263)
