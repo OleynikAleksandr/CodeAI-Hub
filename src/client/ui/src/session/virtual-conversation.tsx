@@ -217,7 +217,14 @@ export const buildVirtualConversationMessages = (params: {
     if (!snapshot) {
       continue;
     }
-    for (const message of snapshot.messages) {
+    const firstUserIndex =
+      segmentIndex > 0
+        ? snapshot.messages.findIndex((message) => message.role === "user")
+        : 0;
+    if (segmentIndex > 0 && firstUserIndex < 0) {
+      continue;
+    }
+    for (const message of snapshot.messages.slice(firstUserIndex)) {
       collected.push({ message, segmentIndex });
     }
   }
