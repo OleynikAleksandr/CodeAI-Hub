@@ -218,6 +218,13 @@
 ### Stream: persistent working strip + seamless continuity
 120. [DONE] Feat(ui): сделать “working”-плашку постоянной (всегда присутствует в UI), но показывать текст “Агент работает…” только в 2 случаях (pending Thinking без ответа assistant; silence-after-assistant) + сократить silence trigger до 5s — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/working-strip.tsx`, `media/session-view.css`; expected commit message: `feat(ui): add persistent working strip`
 121. [DONE] Git Commit: `feat(ui): add persistent working strip` (hash: e6b1c6d6)
+
+### Stream: working strip fixed height (no layout jump)
+122. [TODO] Fix(ui): зафиксировать высоту working‑плашки (одинаковая с/без текста), чтобы при появлении “Agent is working…” не менялась высота rails и не «пряталась» последняя плашка в диалоге — scope: `src/client/ui/src/session/working-strip.tsx`, `media/session-view.css`; expected commit message: `fix(ui): lock working strip height`
+123. [TODO] Git Commit: `fix(ui): lock working strip height` (hash: TBD)
+124. [TODO] Docs(todo): отметить статус/хеш для working strip fixed height — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record working strip height fix hash`
+125. [TODO] Git Commit: `docs(todo): record working strip height fix hash` (hash: TBD)
+126. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
 122. [DONE] Fix(ui): убрать анимацию точек из `Thinking` (единственный user-facing индикатор ожидания — working‑плашка) — scope: `src/client/ui/src/session/dialog-panel.tsx`; expected commit message: `fix(ui): remove thinking dots indicator`
 123. [DONE] Git Commit: `fix(ui): remove thinking dots indicator` (hash: ab95f712)
 124. [DONE] Fix(ui): убрать текст статусов под полем ввода при blocked/running/queued и переносить статус в placeholder инпута — scope: `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): move blocked copy into input placeholder`
