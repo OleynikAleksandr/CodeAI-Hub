@@ -11,13 +11,23 @@ export const WorkingStrip = ({
   providerTheme,
 }: WorkingStripProps) => (
   <output aria-live="polite" className="session-panel session-working-strip">
-    {isWorking ? (
-      <>
-        <span>Agent is working. Please wait.</span>
-        <AnimatedDots theme={providerTheme} />
-      </>
-    ) : (
-      <span className="session-working-strip__spacer" />
-    )}
+    <span
+      className={
+        isWorking
+          ? "session-working-strip__text"
+          : "session-working-strip__text session-working-strip__text--hidden"
+      }
+    >
+      Agent is working. Please wait.
+    </span>
+    <span
+      className={
+        isWorking
+          ? "session-working-strip__dots"
+          : "session-working-strip__dots session-working-strip__dots--hidden"
+      }
+    >
+      <AnimatedDots theme={providerTheme} />
+    </span>
   </output>
 );
