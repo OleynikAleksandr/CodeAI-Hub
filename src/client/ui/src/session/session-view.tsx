@@ -6,7 +6,7 @@ import { resolvePendingThinkingMessageId } from "./dialog-panel-pending-thinking
 import EmptyState from "./empty-state";
 import { mapProviderTheme } from "./helpers";
 import InputPanel from "./input-panel";
-import { resolveVisibleBanner, useQueuedSend } from "./session-view-helpers";
+import { useQueuedSend } from "./session-view-helpers";
 import StatusPanel from "./status-panel";
 import {
   buildTokenDebugSummary,
@@ -40,45 +40,6 @@ const resolveLastRelevantRole = (
     }
     return message.role;
   }
-  return null;
-};
-
-const buildSessionBanner = (options: {
-  readonly session: SessionSnapshot;
-  readonly continuationIndex: number | null;
-  readonly providerTheme: ReturnType<typeof mapProviderTheme>;
-}): JSX.Element | null => {
-  const isRolloverBlocked =
-    options.session.status.connectionState === "blocked";
-  const shouldShowRestoringBanner =
-    !isRolloverBlocked &&
-    typeof options.continuationIndex === "number" &&
-    options.continuationIndex >= 2 &&
-    !options.session.messages.some((message) => message.role === "assistant");
-  const bannerClasses = [
-    "session-panel",
-    "session-banner",
-    options.providerTheme ? `session-banner--${options.providerTheme}` : null,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  if (isRolloverBlocked) {
-    return (
-      <output aria-live="polite" className={bannerClasses}>
-        Preparing a continuation…
-      </output>
-    );
-  }
-
-  if (shouldShowRestoringBanner) {
-    return (
-      <output aria-live="polite" className={bannerClasses}>
-        Continuation created. Restoring context…
-      </output>
-    );
-  }
-
   return null;
 };
 
@@ -161,7 +122,7 @@ const SessionViewBody = ({
     useState(false);
   const previousConnectionStateRef = useRef<ConnectionState>(connectionState);
   const runningStartedAtRef = useRef<number | null>(null);
-  const { queuedMessage, isQueued, submitMessage } = useQueuedSend({
+  const { isQueued, submitMessage } = useQueuedSend({
     activeSessionId,
     connectionState,
     onSendMessage,
@@ -230,19 +191,13 @@ const SessionViewBody = ({
       activeSessionId,
     }) ?? undefined;
 
-  const banner = buildSessionBanner({
-    session: activeSession,
-    continuationIndex,
-    providerTheme,
-  });
-  const visibleBanner = resolveVisibleBanner({ banner, queuedMessage });
-
   const lastRelevantRole = resolveLastRelevantRole(virtualConversationMessages);
   const hasPendingThinkingIndicator =
     resolvePendingThinkingMessageId(virtualConversationMessages) !== null;
   const shouldShowWorkingCopy =
     lastRelevantRole === "user" ||
     hasPendingThinkingIndicator ||
+    connectionState === "blocked" ||
     (showAgentWorkingIndicator &&
       !isRolloverBlocked &&
       connectionState === "running" &&
@@ -260,7 +215,6 @@ const SessionViewBody = ({
           />
         </div>
         <div className="session-app__rails">
-          {visibleBanner}
           <WorkingStrip
             isWorking={shouldShowWorkingCopy}
             providerTheme={providerTheme}
