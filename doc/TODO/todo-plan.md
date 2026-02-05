@@ -273,3 +273,11 @@
 164. [DONE] Git Commit: `fix(ui): suppress continuity rollover thinking` (hash: 76bde88e)
 165. [DONE] Fix(ui): при смене сессии не держать “Agent is working…” бесконечно — показывать только когда `connectionState` = `running/blocked` (снимается на `idle`) — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): hide working strip when idle`
 166. [DONE] Git Commit: `fix(ui): hide working strip when idle` (hash: d77e75f9)
+
+### Stream: rollover thinking suppression (chain=1 + history)
+167. [TODO] Fix(ui): не показывать continuity‑служебный `thinking` в текущем сегменте во время rollover (когда chain ещё = 1) и не показывать `thinking` в parent‑сегментах (чтобы не “всплывал” в истории после rollover) — scope: `src/client/ui/src/session/session-view-helpers.tsx`, `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(ui): suppress rollover thinking messages`
+168. [TODO] Git Commit: `fix(ui): suppress rollover thinking messages` (hash: TBD)
+169. [TODO] Docs(todo): отметить статус/хеш для suppress rollover thinking — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record rollover thinking suppression hash`
+170. [TODO] Git Commit: `docs(todo): record rollover thinking suppression hash` (hash: TBD)
+171. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
+172. [TODO] Docs(todo): отметить хеши релиза в этом Stream — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record release hashes`
