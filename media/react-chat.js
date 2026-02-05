@@ -22541,12 +22541,24 @@ ${path2}` : path2;
 .animated-dots__dot--4{--animated-dots-scale:.85;--animated-dots-alpha:.85;animation-name:animated-dots-reveal-4}
 .animated-dots__dot--5{--animated-dots-scale:.8;--animated-dots-alpha:.8;animation-name:animated-dots-reveal-5}
 .animated-dots__dot--6{--animated-dots-scale:.75;--animated-dots-alpha:.75;animation-name:animated-dots-reveal-6}
-@keyframes animated-dots-reveal-1{0%{opacity:0}8%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
-@keyframes animated-dots-reveal-2{0%,16.67%{opacity:0}24.67%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
-@keyframes animated-dots-reveal-3{0%,33.33%{opacity:0}41.33%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
-@keyframes animated-dots-reveal-4{0%,50%{opacity:0}58%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
-@keyframes animated-dots-reveal-5{0%,66.67%{opacity:0}74.67%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
-@keyframes animated-dots-reveal-6{0%,83.33%{opacity:0}91.33%{opacity:var(--animated-dots-alpha)}92%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+.animated-dots__dot--7{--animated-dots-scale:.7;--animated-dots-alpha:.7;animation-name:animated-dots-reveal-7}
+.animated-dots__dot--8{--animated-dots-scale:.65;--animated-dots-alpha:.65;animation-name:animated-dots-reveal-8}
+.animated-dots__dot--9{--animated-dots-scale:.6;--animated-dots-alpha:.6;animation-name:animated-dots-reveal-9}
+.animated-dots__dot--10{--animated-dots-scale:.55;--animated-dots-alpha:.55;animation-name:animated-dots-reveal-10}
+.animated-dots__dot--11{--animated-dots-scale:.5;--animated-dots-alpha:.5;animation-name:animated-dots-reveal-11}
+.animated-dots__dot--12{--animated-dots-scale:.45;--animated-dots-alpha:.45;animation-name:animated-dots-reveal-12}
+@keyframes animated-dots-reveal-1{0%{opacity:0}4%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-2{0%,8.33%{opacity:0}12.33%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-3{0%,16.67%{opacity:0}20.67%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-4{0%,25%{opacity:0}29%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-5{0%,33.33%{opacity:0}37.33%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-6{0%,41.67%{opacity:0}45.67%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-7{0%,50%{opacity:0}54%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-8{0%,58.33%{opacity:0}62.33%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-9{0%,66.67%{opacity:0}70.67%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-10{0%,75%{opacity:0}79%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-11{0%,83.33%{opacity:0}87.33%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
+@keyframes animated-dots-reveal-12{0%,91.67%{opacity:0}95.67%{opacity:var(--animated-dots-alpha)}96%{opacity:var(--animated-dots-alpha)}100%{opacity:0}}
 `;
     document.head.append(style);
   };
@@ -22585,7 +22597,13 @@ ${path2}` : path2;
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--3" }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--4" }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--5" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--6" })
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--6" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--7" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--8" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--9" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--10" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--11" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "animated-dots__dot animated-dots__dot--12" })
         ]
       }
     );
@@ -22593,7 +22611,6 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/session-view-helpers.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-  var resolveVisibleBanner = (options) => options.queuedMessage ? null : options.banner;
   var useQueuedSend = (options) => {
     const [queuedMessage, setQueuedMessage] = (0, import_react9.useState)(null);
     (0, import_react9.useEffect)(() => {
@@ -22942,7 +22959,11 @@ ${path2}` : path2;
       if (!snapshot) {
         continue;
       }
-      for (const message of snapshot.messages) {
+      const firstUserIndex = segmentIndex > 0 ? snapshot.messages.findIndex((message) => message.role === "user") : 0;
+      if (segmentIndex > 0 && firstUserIndex < 0) {
+        continue;
+      }
+      for (const message of snapshot.messages.slice(firstUserIndex)) {
         collected.push({ message, segmentIndex });
       }
     }
@@ -23019,22 +23040,6 @@ ${path2}` : path2;
     }
     return null;
   };
-  var buildSessionBanner = (options) => {
-    const isRolloverBlocked = options.session.status.connectionState === "blocked";
-    const shouldShowRestoringBanner = !isRolloverBlocked && typeof options.continuationIndex === "number" && options.continuationIndex >= 2 && !options.session.messages.some((message) => message.role === "assistant");
-    const bannerClasses = [
-      "session-panel",
-      "session-banner",
-      options.providerTheme ? `session-banner--${options.providerTheme}` : null
-    ].filter(Boolean).join(" ");
-    if (isRolloverBlocked) {
-      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("output", { "aria-live": "polite", className: bannerClasses, children: "Preparing a continuation\u2026" });
-    }
-    if (shouldShowRestoringBanner) {
-      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("output", { "aria-live": "polite", className: bannerClasses, children: "Continuation created. Restoring context\u2026" });
-    }
-    return null;
-  };
   var resolveLastThinkingOrAssistantAt = (messages) => {
     for (let index2 = messages.length - 1; index2 >= 0; index2 -= 1) {
       const message = messages[index2];
@@ -23091,7 +23096,7 @@ ${path2}` : path2;
     const [showAgentWorkingIndicator, setShowAgentWorkingIndicator] = (0, import_react11.useState)(false);
     const previousConnectionStateRef = (0, import_react11.useRef)(connectionState);
     const runningStartedAtRef = (0, import_react11.useRef)(null);
-    const { queuedMessage, isQueued, submitMessage } = useQueuedSend({
+    const { isQueued, submitMessage } = useQueuedSend({
       activeSessionId,
       connectionState,
       onSendMessage
@@ -23144,15 +23149,9 @@ ${path2}` : path2;
       snapshots,
       activeSessionId
     }) ?? void 0;
-    const banner = buildSessionBanner({
-      session: activeSession,
-      continuationIndex,
-      providerTheme
-    });
-    const visibleBanner = resolveVisibleBanner({ banner, queuedMessage });
     const lastRelevantRole = resolveLastRelevantRole(virtualConversationMessages);
     const hasPendingThinkingIndicator = resolvePendingThinkingMessageId(virtualConversationMessages) !== null;
-    const shouldShowWorkingCopy = hasPendingThinkingIndicator || showAgentWorkingIndicator && !isRolloverBlocked && connectionState === "running" && lastRelevantRole === "assistant";
+    const shouldShowWorkingCopy = lastRelevantRole === "user" || hasPendingThinkingIndicator || connectionState === "blocked" || showAgentWorkingIndicator && !isRolloverBlocked && connectionState === "running" && lastRelevantRole === "assistant";
     return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "session-app", children: [
       header,
       /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "session-app__content", children: [
@@ -23165,7 +23164,6 @@ ${path2}` : path2;
           }
         ) }),
         /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "session-app__rails", children: [
-          visibleBanner,
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
             WorkingStrip,
             {
