@@ -114,6 +114,28 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 Архитектура: `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`.
 Порог запуска handoff рассчитывается по token usage (used/limit) и может быть настроен per-provider (например, Claude и Codex: remaining% threshold, default 30%).
 
+### 2.7 Turn-finish + Handoff UI Contract (CRITICAL)
+
+Чтобы исключить залипания working-strip после финального сообщения агента, UI следует каноническому контракту stream-событий:
+
+1. `turn_state` (`running|idle`) — единственный источник истины о состоянии turn.
+2. `handoff_state` (`start|ready`) — отдельный lifecycle continuity handoff; не user-facing сообщение.
+3. `turn_state=idle` имеет приоритет над прошлым `blocked` и всегда переводит ожидание в режим ввода пользователя.
+
+State-table для Session UI:
+
+| Stream marker | Session status.connectionState | Input/Send | Working strip |
+|---|---|---|---|
+| `turn_state=running` | `running` | заблокирован (send) | показываем по правилам running |
+| `turn_state=idle` | `idle` | доступен | скрываем "Agent is working..." |
+| `handoff_state=start` | `blocked` | заблокирован (input+send) | показываем |
+| `handoff_state=ready` | снять handoff-lock, вернуть `idle` если был `blocked` | доступен (если нет running) | скрываем |
+
+Инварианты:
+- Handoff lock не заменяет lifecycle turn и не должен жить дольше handoff.
+- Handoff события передаются как `session:stream` и не добавляются в историю пользовательских сообщений.
+- События handoff должны быть детерминированны: на каждый `handoff:start` должен приходить `handoff:ready` (включая failure-path) для снятия lock.
+
 ---
 
 ## 3. Extension Host Layer
