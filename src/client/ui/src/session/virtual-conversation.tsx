@@ -212,14 +212,13 @@ export const buildVirtualConversationMessages = (params: {
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
 }): readonly SessionMessage[] => {
   const collected: MessageWithSegmentIndex[] = [];
+  const lastSegmentIndex = Math.max(0, params.chain.length - 1);
   for (const [segmentIndex, segment] of params.chain.entries()) {
     const snapshot = params.snapshots[segment.id];
     if (!snapshot) {
       continue;
     }
-    const shouldSuppressRolloverThinking =
-      snapshot.status.rollover !== null &&
-      snapshot.status.rollover !== undefined;
+    const shouldSuppressThinking = segmentIndex < lastSegmentIndex;
     const firstUserIndex =
       segmentIndex > 0
         ? snapshot.messages.findIndex((message) => message.role === "user")
@@ -228,7 +227,7 @@ export const buildVirtualConversationMessages = (params: {
       continue;
     }
     for (const message of snapshot.messages.slice(firstUserIndex)) {
-      if (shouldSuppressRolloverThinking && message.role === "thinking") {
+      if (shouldSuppressThinking && message.role === "thinking") {
         continue;
       }
       collected.push({ message, segmentIndex });

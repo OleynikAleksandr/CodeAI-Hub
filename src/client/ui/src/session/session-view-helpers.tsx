@@ -226,7 +226,13 @@ export const resolveVirtualConversationMessages = (options: {
           snapshots: options.snapshots,
         })
       : (options.activeSession?.messages ?? []);
-  return filterContinuityInternalMessages(base);
+  const shouldSuppressRolloverThinking =
+    options.activeSession?.status.connectionState === "blocked";
+  const filtered =
+    shouldSuppressRolloverThinking && base.length > 0
+      ? base.filter((message) => message.role !== "thinking")
+      : base;
+  return filterContinuityInternalMessages(filtered);
 };
 
 export const computeShouldShowWorkingCopy = (options: {
