@@ -39,17 +39,30 @@
 }
 
 .session-working-strip {
-  min-height: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 11px;
   color: rgba(204, 204, 204, 1);
+  overflow: hidden;
 }
 
-.session-working-strip__spacer {
-  display: block;
-  flex: 1 1 auto;
+.session-working-strip__text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 0 1 auto;
+}
+
+.session-working-strip__dots {
+  flex: 0 0 auto;
+}
+
+.session-working-strip__text--hidden,
+.session-working-strip__dots--hidden {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .session-tabs {
