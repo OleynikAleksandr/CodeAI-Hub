@@ -17,6 +17,17 @@
 - Вывод по причине: SDK корректно завершает turn; залипание `Agent is working. Please wait.` возникает не в Claude SDK, а на стыке Core/UI (интерпретация/приоритет маркеров состояния после завершения turn и/или handoff lifecycle).
 - В `doc/TODO/todo-plan.md` добавлен новый подробный Stream c микро‑задачами для системного исправления (пункты `182–196`) без реализации кода в этой сессии.
 
+## Turn-finish timeline (problem case baseline)
+- Источник: `/Users/oleksandroliinyk/.codeai-hub/logs/claude/sdk-claude-03af35ce-30a0-4f6c-95e6-270b2a5fca65.jsonl`.
+- Лог-факты (SDK):
+  - `line 682`: `sdk:assistant` (финальный ответ с вопросами пользователю), `timestamp=1770319345939` (`2026-02-05T19:22:25.939Z`).
+  - `line 684`: `sdk:stream_event.message_delta.stop_reason=end_turn`, `timestamp=1770319345987` (`2026-02-05T19:22:25.987Z`).
+  - `line 686`: `sdk:result subtype=success`, `timestamp=1770319345991` (`2026-02-05T19:22:25.991Z`).
+- Core/UI контракт (code-path, после SDK `result`):
+  - Claude provider эмитит `turn_completed` в `packages/Claude_Module/src/messaging/message-processor.ts` (ветка `case "result"`).
+  - Core транслирует `turn_completed -> turn_state=idle` в `packages/core/src/remote-bridge/handlers/session-request-handler.ts` (`handleTypedProviderEvent`, `case "turn_completed"`).
+- Вывод: финал turn подтверждается в пределах одного интервала ~52ms между `assistant` и `result`; далее UI обязан снимать working-state по `turn_state=idle`, независимо от предыдущего `blocked`.
+
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `No commits in this session (documentation planning only)`
