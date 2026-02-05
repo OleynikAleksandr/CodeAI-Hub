@@ -247,10 +247,10 @@
 144. [DONE] Git Commit: `docs(todo): record continuation banner removal hash` (hash: b04cb0c2)
 145. [DONE] Fix(core): новый релиз всегда синхронизирует (перезаписывает при изменениях) continuity templates в `~/.codeai-hub/templates` и приводит их к новым “silent+ACK” правилам (сократить инструкции для экономии токенов) — scope: `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `fix(core): sync bundled continuity templates to disk`
 146. [DONE] Git Commit: `fix(core): sync bundled continuity templates to disk` (hash: deebe9f7)
-147. [TODO] Docs(todo): отметить статус/хеш для синхронизации continuity templates — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuity template sync hash`
-148. [TODO] Git Commit: `docs(todo): record continuity template sync hash` (hash: TBD)
-149. [TODO] Fix(ui): UX‑щит — не показывать assistant/thinking сообщения нового сегмента continuity до первого user сообщения в этом сегменте — scope: `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(ui): hide continuity segment preface messages`
-150. [TODO] Git Commit: `fix(ui): hide continuity segment preface messages` (hash: TBD)
+147. [DONE] Docs(todo): отметить статус/хеш для синхронизации continuity templates — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuity template sync hash`
+148. [DONE] Git Commit: `docs(todo): record continuity template sync hash` (hash: d9d78c47)
+149. [DONE] Fix(ui): UX‑щит — не показывать assistant/thinking сообщения нового сегмента continuity до первого user сообщения в этом сегменте — scope: `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(ui): hide continuity segment preface messages`
+150. [DONE] Git Commit: `fix(ui): hide continuity segment preface messages` (hash: db415be2)
 151. [TODO] Docs(todo): отметить статус/хеш для фильтра continuity segment preface — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuity segment filter hash`
 152. [TODO] Git Commit: `docs(todo): record continuity segment filter hash` (hash: TBD)
 153. [TODO] Feat(ui): увеличить индикатор до 12 точек (та же прогрессия масштаба и яркости, sequential reveal, provider color) — scope: `src/client/ui/src/session/animated-dots.tsx`, `media/session-view.css`; expected commit message: `feat(ui): expand animated dots to twelve`
