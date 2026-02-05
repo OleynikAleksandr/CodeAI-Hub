@@ -267,3 +267,9 @@
 ### Stream: dialog shadow clearance
 161. [DONE] Fix(ui): увеличить нижний зазор в ленте сообщений, чтобы тень у последней “плашки” (assistant/user) не срезалась у нижнего края диалога (padding-bottom = shadowSize + 10px) — scope: `media/session-view.css`; expected commit message: `fix(ui): add dialog bottom padding for message shadow`
 162. [DONE] Git Commit: `fix(ui): add dialog bottom padding for message shadow` (hash: 19754dab)
+
+### Stream: rollover UX polish
+163. [TODO] Fix(ui): не показывать continuity‑служебный `Thinking` в конце старой сессии (создание report/resume) — scope: `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(ui): suppress continuity rollover thinking`
+164. [TODO] Git Commit: `fix(ui): suppress continuity rollover thinking` (hash: TBD)
+165. [TODO] Fix(ui): при смене сессии не держать “Agent is working…” бесконечно — показывать только когда `connectionState` = `running/blocked` (снимается на `idle`) — scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): hide working strip when idle`
+166. [TODO] Git Commit: `fix(ui): hide working strip when idle` (hash: TBD)
