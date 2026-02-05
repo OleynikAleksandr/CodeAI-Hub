@@ -241,12 +241,12 @@
 140. [DONE] Git Commit: `docs(todo): record working strip immediate show hash` (hash: 0707f6e3)
 
 ### Stream: continuity seamlessness (ban banners + overwrite templates + hide segment preface)
-141. [TODO] Fix(ui): полностью убрать баннеры между сессиями (`Preparing a continuation…`, `Restoring context…`) — оставить только working‑плашку и placeholder у инпута — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): remove continuation banners`
+141. [DONE] Fix(ui): полностью убрать баннеры между сессиями (`Preparing a continuation…`, `Restoring context…`) — оставить только working‑плашку и placeholder у инпута — scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): remove continuation banners`
 142. [DONE] Git Commit: `fix(ui): remove continuation banners` (hash: fc872a8f)
-143. [TODO] Docs(todo): отметить статус/хеш для удаления continuation баннеров — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuation banner removal hash`
-144. [TODO] Git Commit: `docs(todo): record continuation banner removal hash` (hash: TBD)
-145. [TODO] Fix(core): новый релиз всегда синхронизирует (перезаписывает при изменениях) continuity templates в `~/.codeai-hub/templates` и приводит их к новым “silent+ACK” правилам (сократить инструкции для экономии токенов) — scope: `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `fix(core): sync bundled continuity templates to disk`
-146. [TODO] Git Commit: `fix(core): sync bundled continuity templates to disk` (hash: TBD)
+143. [DONE] Docs(todo): отметить статус/хеш для удаления continuation баннеров — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuation banner removal hash`
+144. [DONE] Git Commit: `docs(todo): record continuation banner removal hash` (hash: b04cb0c2)
+145. [DONE] Fix(core): новый релиз всегда синхронизирует (перезаписывает при изменениях) continuity templates в `~/.codeai-hub/templates` и приводит их к новым “silent+ACK” правилам (сократить инструкции для экономии токенов) — scope: `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `fix(core): sync bundled continuity templates to disk`
+146. [DONE] Git Commit: `fix(core): sync bundled continuity templates to disk` (hash: deebe9f7)
 147. [TODO] Docs(todo): отметить статус/хеш для синхронизации continuity templates — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record continuity template sync hash`
 148. [TODO] Git Commit: `docs(todo): record continuity template sync hash` (hash: TBD)
 149. [TODO] Fix(ui): UX‑щит — не показывать assistant/thinking сообщения нового сегмента continuity до первого user сообщения в этом сегменте — scope: `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(ui): hide continuity segment preface messages`
