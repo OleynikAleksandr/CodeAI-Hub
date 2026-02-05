@@ -258,3 +258,8 @@
 155. [DONE] Docs(todo): отметить статус/хеш для 12-точечного индикатора — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 12-dot indicator hash`
 156. [DONE] Git Commit: `docs(todo): record 12-dot indicator hash` (hash: cb45743b)
 157. [DONE] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix` (hash: 18db6fe2 + 8b451376)
+
+### Stream: continuity templates overwrite (bundled assets)
+158. [TODO] Fix(templates): обновить continuity templates в `assets/flow/continuity/` под “silent+ACK” правила (чтобы VSIX при активации реально перезаписывал `~/.codeai-hub/templates/...`) — scope: `assets/flow/continuity/resume.md`, `assets/flow/continuity/create-report-doc.md`, `assets/flow/continuity/create-report-code.md`; expected commit message: `fix(templates): update continuity prompt templates`
+159. [TODO] Git Commit: `fix(templates): update continuity prompt templates` (hash: TBD)
+160. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
