@@ -293,3 +293,12 @@
 172. [DONE] Git Commit: `chore(release): build-all next version` (hash: 265d514b)
 173. [DONE] Release: run `./scripts/build-release.sh --use-current-version` (VSIX) — scope: repo-wide; expected commit message: `chore(release): build vsix`
 174. [DONE] Git Commit: `chore(release): build vsix` (hash: 85d84beb)
+
+### Stream: turn idle markers (Claude/Codex/Gemini) + handoff send lock
+175. [TODO] Fix(ui): считать `turn_state=idle` (по provider `turn_completed`) единственным маркером “агент ждёт пользователя” и снимать `Agent is working…` всегда, даже если ранее UI попал в `blocked` — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): clear working banner on turn idle`
+176. [TODO] Git Commit: `fix(ui): clear working banner on turn idle` (hash: TBD)
+177. [TODO] Fix(ui): во время continuity handoff (смены сессии) запретить **отправку** (submit), но разрешить ввод текста (draft); queued‑send должен уходить в новую active‑сессию, а не в старую — scope: `src/client/ui/src/session/session-view-helpers.tsx`, `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): disable send until continuation ready`
+178. [TODO] Git Commit: `fix(ui): disable send until continuation ready` (hash: TBD)
+179. [TODO] Feat(core): дать UI явный stream‑контракт “handoff state” (start/ready) для continuity, чтобы можно было (a) блокировать send до готовности новой сессии, (b) не путать это с `turn_state` — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): expose continuity handoff state`
+180. [TODO] Git Commit: `feat(core): expose continuity handoff state` (hash: TBD)
+181. [TODO] Release: собрать новый релиз для тестов (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
