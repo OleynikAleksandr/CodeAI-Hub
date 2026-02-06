@@ -115,4 +115,4 @@
 49. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех Stream Phase 100 и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after phase100 continuity ux`)
 50. [DONE] Git Commit: `chore(release): build-all after phase100 continuity ux` (hash: 1dfbc8ef)
 51. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в новом session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after phase100 continuity ux`)
-52. [DONE] Git Commit: `chore(release): build vsix after phase100 continuity ux` (hash: TBD)
+52. [DONE] Git Commit: `chore(release): build vsix after phase100 continuity ux` (hash: 09085593)

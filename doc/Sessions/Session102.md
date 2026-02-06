@@ -39,7 +39,7 @@
 - `233825b2 docs(release): prepare notes for phase100 continuity ux release`
 - `4c0477b6 docs(session): add Session101 phase100 handoff plan`
 - `1dfbc8ef chore(release): build-all after phase100 continuity ux`
-- `TBD chore(release): build vsix after phase100 continuity ux`
+- `09085593 chore(release): build vsix after phase100 continuity ux`
 
 ---
 
