@@ -111,8 +111,8 @@
 
 ### Stream: release build for ui-strip reset + sdk-log filtering
 57. [DONE] Docs(release): обновить `README.md` и `CHANGELOG.md` под новый релиз после закрытия stream `45–56` (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update README and CHANGELOG for next release`)
-58. [IN_PROGRESS] Git Commit: `docs(release): update README and CHANGELOG for next release` (hash: TBD)
-59. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` после зелёных гейтов по stream `45–56` (scope: repo-wide automated release files; expected commit message: `chore(release): build-all next version`)
-60. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+58. [DONE] Git Commit: `docs(release): update README and CHANGELOG for next release` (hash: 58cd68a3)
+59. [DONE] Release: собрать новый релиз через `./scripts/build-all.sh` после зелёных гейтов по stream `45–56` (scope: repo-wide automated release files; expected commit message: `chore(release): build-all next version`)
+60. [IN_PROGRESS] Git Commit: `chore(release): build-all next version` (hash: TBD)
 61. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-<version>.vsix` и зафиксировать артефакты в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix for ui-strip and sdk-log updates`)
 62. [TODO] Git Commit: `chore(release): build vsix for ui-strip and sdk-log updates` (hash: TBD)
