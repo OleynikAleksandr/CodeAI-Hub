@@ -52,7 +52,7 @@
 17. [DONE] Test(pm-ui): добавить регрессионный тест, что ввод остаётся заблокированным до unlock-события (scope: `src/client/project-manager/components/sessions/token-usage-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `test(ui): guard input lock during continuity session switch`)
 18. [DONE] Git Commit: `test(ui): guard input lock during continuity session switch` (hash: 1fb2a1ba)
 19. [DONE] Verify(qa): прогнать обязательные Gates + таргетные команды (`build --workspace core`, `build:project-manager`, `build:webview`, `typecheck:webview`) и зафиксировать результаты в документах (scope: repo-wide commands + docs); expected commit message: `chore(qa): verify continuity lock contract gates`)
-20. [IN_PROGRESS] Git Commit: `chore(qa): verify continuity lock contract gates` (hash: TBD)
+20. [DONE] Git Commit: `chore(qa): verify continuity lock contract gates` (hash: 30399b11)
 
 #### QA results (2026-02-06)
 - `./scripts/check-architecture.sh`: PASS (warnings only; 22 файлов в зоне 250-300 строк, нарушений >300 нет).
@@ -68,8 +68,8 @@
 - `npx tsx --test src/client/project-manager/components/sessions/token-usage-stream.test.ts src/client/ui/src/session/input-panel.test.tsx`: PASS (`6/6`).
 
 ### Stream: wrap-up and release-readiness
-21. [TODO] Docs(system): синхронизировать `SystemArchitecture.md` и continuity docs под новый `continuity_lock` контракт (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(system): document continuity lock contract`)
-22. [TODO] Git Commit: `docs(system): document continuity lock contract` (hash: TBD)
+21. [DONE] Docs(system): синхронизировать `SystemArchitecture.md` и continuity docs под новый `continuity_lock` контракт (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(system): document continuity lock contract`)
+22. [IN_PROGRESS] Git Commit: `docs(system): document continuity lock contract` (hash: TBD)
 23. [TODO] Docs(session): подготовить следующий session report с таймлайном событий lock/unlock и QA выводом (scope: `doc/Sessions/Session099.md`; expected commit message: `docs(session): add Session099 continuity lock implementation report`)
 24. [TODO] Git Commit: `docs(session): add Session099 continuity lock implementation report` (hash: TBD)
 

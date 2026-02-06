@@ -45,7 +45,7 @@
 2) Триггер: `remainingRatio <= 0.25` (или эквивалент `usedRatio >= 0.75`).
 3) Формат handoff-отчёта — Markdown с жёсткой структурой.
 4) Handoff-отчёт должен учитывать **инструкции конкретного агента** и текущий контекст workflow (stage/step).
-5) Handoff lifecycle передаётся stream-only (`handoff:start`/`handoff:ready`) и не попадает в user-facing сообщения.
+5) Для flow-node rollover lifecycle блокировки ввода передаётся stream-only через `continuity_lock(locked|unlocked)`; legacy `handoff:start|ready` допускается только как backward-compatibility path.
 6) Turn lifecycle для UI нормализуется через `turn_state` (`running|idle`), где `idle` всегда снимает ожидание пользователя.
 
 ---
@@ -141,7 +141,7 @@ MVP-целевой путь хранения отчёта (workspace артеф�
 ### 9.3 UI (Project Manager)
 - Показывает, что сессия “переключилась” (handoff) и предоставляет доступ к `handoff-report.md`.
 - Может визуализировать цепочку сессий как историю под одним Step.
-- Управляет блокировкой ввода по stream-событиям: `turn_state` + `handoff_state`, без эвристик по тексту сообщений.
+- Управляет блокировкой ввода по stream-событиям: `turn_state` + `continuity_lock` (legacy fallback: `handoff_state`), без эвристик по тексту сообщений.
 
 ---
 
