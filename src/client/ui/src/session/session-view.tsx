@@ -135,6 +135,7 @@ const SessionViewBody = ({
             draft={activeSession.draft}
             isQueued={isQueued}
             onSubmit={submitMessage}
+            providerTheme={providerTheme}
           />
           <StatusPanel
             connectionDetail={coreConnectionDetail}

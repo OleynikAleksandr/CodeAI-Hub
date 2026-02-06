@@ -269,7 +269,6 @@ export const mergeHistoryIntoSnapshots = (
 };
 
 export type ProviderTheme = "claude" | "codex" | "gemini";
-
 export const mapProviderTheme = (
   providerId: ProviderStackId | null
 ): ProviderTheme | null => {
@@ -282,5 +281,20 @@ export const mapProviderTheme = (
       return "gemini";
     default:
       return null;
+  }
+};
+
+export const resolveProviderWaitColor = (
+  providerTheme: ProviderTheme | null
+): string => {
+  switch (providerTheme) {
+    case "claude":
+      return "rgba(255, 145, 5, 0.70)";
+    case "codex":
+      return "rgba(1, 240, 216, 0.70)";
+    case "gemini":
+      return "rgba(171, 52, 203, 0.70)";
+    default:
+      return "rgba(127, 140, 141, 0.70)";
   }
 };
