@@ -88,7 +88,8 @@ export class SDKSessionLoggerFacade implements SessionLogger {
     this.logFilePath = filePath;
     this.fileReady = false;
     fs.mkdir(LOG_ROOT, { recursive: true })
-      .then(() => fs.writeFile(filePath, "", { flag: "w" }))
+      .then(() => fs.open(filePath, "a"))
+      .then((handle) => handle.close())
       .then(() => {
         this.fileReady = true;
         this.flushBuffer();
