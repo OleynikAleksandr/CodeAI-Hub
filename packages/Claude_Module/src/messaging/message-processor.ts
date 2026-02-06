@@ -89,6 +89,14 @@ const readStructuredOutput = (
   return isRecord(candidate) ? candidate : null;
 };
 
+const shouldSkipSDKMessageLog = (message: ClaudeStreamMessage): boolean => {
+  if (message.type !== "stream_event") {
+    return false;
+  }
+  const event = message.event;
+  return isRecord(event) && event.type === "content_block_delta";
+};
+
 type ProcessResponseOptions = {
   readonly sessionId: string;
   readonly iterator: AsyncIterable<ClaudeStreamMessage>;
@@ -323,7 +331,9 @@ export class SDKMessageProcessor {
       return;
     }
 
-    session?.logger?.logSDKMessage(message.type, message);
+    if (!shouldSkipSDKMessageLog(message)) {
+      session?.logger?.logSDKMessage(message.type, message);
+    }
 
     switch (message.type) {
       case "assistant": {
