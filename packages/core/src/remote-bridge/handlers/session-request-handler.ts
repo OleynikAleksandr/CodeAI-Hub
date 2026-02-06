@@ -101,6 +101,28 @@ type FlowNodeRolloverNotification = {
   readonly timestamp: string;
 };
 
+type ContinuityLockState = "locked" | "unlocked";
+
+type ContinuityLockReason =
+  | "threshold_reached"
+  | "report_in_progress"
+  | "resume_bootstrap"
+  | "resume_ready"
+  | "resume_failed"
+  | "resume_timeout";
+
+type ContinuityLockPayload = {
+  readonly kind: "continuity_lock";
+  readonly state: ContinuityLockState;
+  readonly rolloverId: string;
+  readonly sourceSessionId: string;
+  readonly targetSessionId?: string;
+  readonly stageId: string;
+  readonly runSlug: string | null;
+  readonly reason: ContinuityLockReason;
+  readonly timestamp: string;
+};
+
 type WorkflowStageId =
   | "description"
   | "virtual_simulation"
@@ -322,6 +344,49 @@ export class SessionRequestHandler {
           },
           uuid: `${crypto.randomUUID()}::turn_state`,
           timestamp: new Date().toISOString(),
+        },
+      },
+    });
+  }
+
+  emitContinuityLockEvent(options: {
+    readonly sessionId: string;
+    readonly rolloverId: string;
+    readonly sourceSessionId: string;
+    readonly targetSessionId?: string;
+    readonly stageId: string;
+    readonly runSlug: string | null;
+    readonly state: ContinuityLockState;
+    readonly reason: ContinuityLockReason;
+  }): void {
+    const session = this.sessionManager.getSession(options.sessionId);
+    const providerId = session?.providerId ?? null;
+    const timestamp = new Date().toISOString();
+    const payload = {
+      kind: "continuity_lock",
+      state: options.state,
+      rolloverId: options.rolloverId,
+      sourceSessionId: options.sourceSessionId,
+      ...(options.targetSessionId
+        ? { targetSessionId: options.targetSessionId }
+        : {}),
+      stageId: options.stageId,
+      runSlug: options.runSlug,
+      reason: options.reason,
+      timestamp,
+    } satisfies ContinuityLockPayload;
+
+    this.broadcaster({
+      type: "session:stream",
+      payload: {
+        sessionId: options.sessionId,
+        event: {
+          type: "stream_event",
+          provider: providerId ?? "core",
+          sessionId: options.sessionId,
+          data: payload,
+          uuid: `${crypto.randomUUID()}::continuity_lock`,
+          timestamp,
         },
       },
     });
