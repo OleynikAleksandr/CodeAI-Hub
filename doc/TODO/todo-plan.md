@@ -50,9 +50,22 @@
 15. [DONE] Test(core): добавить регрессионный тест последовательности lock/unlock для flow-node rollover old->new session (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `test(core): cover continuity lock lifecycle across session rollover`)
 16. [DONE] Git Commit: `test(core): cover continuity lock lifecycle across session rollover` (hash: f278d0ad)
 17. [DONE] Test(pm-ui): добавить регрессионный тест, что ввод остаётся заблокированным до unlock-события (scope: `src/client/project-manager/components/sessions/token-usage-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `test(ui): guard input lock during continuity session switch`)
-18. [IN_PROGRESS] Git Commit: `test(ui): guard input lock during continuity session switch` (hash: TBD)
-19. [TODO] Verify(qa): прогнать обязательные Gates + таргетные команды (`build --workspace core`, `build:project-manager`, `build:webview`, `typecheck:webview`) и зафиксировать результаты в документах (scope: repo-wide commands + docs); expected commit message: `chore(qa): verify continuity lock contract gates`)
-20. [TODO] Git Commit: `chore(qa): verify continuity lock contract gates` (hash: TBD)
+18. [DONE] Git Commit: `test(ui): guard input lock during continuity session switch` (hash: 1fb2a1ba)
+19. [DONE] Verify(qa): прогнать обязательные Gates + таргетные команды (`build --workspace core`, `build:project-manager`, `build:webview`, `typecheck:webview`) и зафиксировать результаты в документах (scope: repo-wide commands + docs); expected commit message: `chore(qa): verify continuity lock contract gates`)
+20. [IN_PROGRESS] Git Commit: `chore(qa): verify continuity lock contract gates` (hash: TBD)
+
+#### QA results (2026-02-06)
+- `./scripts/check-architecture.sh`: PASS (warnings only; 22 файлов в зоне 250-300 строк, нарушений >300 нет).
+- `npx ultracite check`: PASS.
+- `npx ts-prune`: PASS (baseline report unchanged).
+- `npx jscpd --threshold 3 ...`: PASS (`2.41%`).
+- `npm run check:links`: PASS.
+- `npm run build --workspace @codeai-hub/core`: PASS.
+- `npm run build:project-manager`: PASS.
+- `npm run build:webview`: PASS.
+- `npm run typecheck:webview`: PASS.
+- `npm run test --workspace @codeai-hub/core`: PASS (`3/3`).
+- `npx tsx --test src/client/project-manager/components/sessions/token-usage-stream.test.ts src/client/ui/src/session/input-panel.test.tsx`: PASS (`6/6`).
 
 ### Stream: wrap-up and release-readiness
 21. [TODO] Docs(system): синхронизировать `SystemArchitecture.md` и continuity docs под новый `continuity_lock` контракт (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(system): document continuity lock contract`)
