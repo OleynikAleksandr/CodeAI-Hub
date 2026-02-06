@@ -79,9 +79,9 @@
 33. [DONE] Test(claude): добавить unit tests на очередь turn-ов и lifecycle (`started/completed/failed`) (scope: `packages/Claude_Module/src/messaging/message-processor.test.ts`, `packages/Claude_Module/package.json`; expected commit message: `test(claude): cover one-shot queue lifecycle`)
 34. [DONE] Git Commit: `test(claude): cover one-shot queue lifecycle` (hash: 4a26d26a)
 35. [DONE] Test(claude): добавить unit tests для logger resume/append semantics (scope: `packages/Claude_Module/src/logging/sdk-session-logger.test.ts`, `packages/Claude_Module/package.json`; expected commit message: `test(claude): cover logger append semantics`)
-36. [TODO] Git Commit: `test(claude): cover logger append semantics` (hash: TBD)
-37. [TODO] Test(core-bridge): добавить regression tests на совместимость Claude one-shot с continuity/turn-state контрактом (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/package.json`; expected commit message: `test(core): guard continuity contract for claude one-shot`)
-38. [TODO] Git Commit: `test(core): guard continuity contract for claude one-shot` (hash: TBD)
+36. [DONE] Git Commit: `test(claude): cover logger append semantics` (hash: 1b116739)
+37. [DONE] Test(core-bridge): добавить regression tests на совместимость Claude one-shot с continuity/turn-state контрактом (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/package.json`; expected commit message: `test(core): guard continuity contract for claude one-shot`)
+38. [DONE] Git Commit: `test(core): guard continuity contract for claude one-shot` (hash: TBD)
 
 ### Stream: verification + build
 39. [TODO] Verify: прогнать обязательные Gates + таргетные сборки затронутых пакетов (`Claude_Module`, `core`, `build:webview`, `typecheck:webview`) и зафиксировать результаты в session report (scope: repo-wide commands + docs; expected commit message: `chore(qa): verify claude one-shot migration gates`)
