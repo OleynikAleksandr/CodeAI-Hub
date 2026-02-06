@@ -1,3 +1,12 @@
+## [1.1.514] - 2026-02-06
+### Fixed
+- Core continuity: emit deterministic stream-only handoff lifecycle markers (`handoff_state=start|ready`) with explicit unlock path.
+- Session UI: derive working-strip state from canonical turn markers (`turn_state`, handoff lifecycle, queued-send) to prevent stale "Agent is working" after final assistant message.
+- Session UI: input/send lock is now tied only to handoff lifecycle; `turn_state=idle` always unlocks user input.
+
+### Added
+- Targeted regression tests for `idle after blocked` and `handoff start/ready` working-strip lifecycle.
+
 ## [1.1.502] - 2026-02-03
 ### Added
 - Codex: Settings → Session Continuity threshold (default: 30% remaining) for future auto wrap/handoff trigger.
