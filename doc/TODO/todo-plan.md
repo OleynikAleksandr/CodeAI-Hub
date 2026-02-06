@@ -79,4 +79,4 @@
 27. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех Stream Phase 99 и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after phase99 continuity lock`)
 28. [DONE] Git Commit: `chore(release): build-all after phase99 continuity lock` (hash: ad4cd7e7)
 29. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after phase99 continuity lock`)
-30. [DONE] Git Commit: `chore(release): build vsix after phase99 continuity lock` (hash: TBD)
+30. [DONE] Git Commit: `chore(release): build vsix after phase99 continuity lock` (hash: d5c53f7f)
