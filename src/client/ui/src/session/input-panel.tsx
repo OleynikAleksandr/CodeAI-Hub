@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ProviderTheme } from "./helpers";
 import { resolveProviderWaitColor } from "./helpers";
-import {
-  createInputLockMatrixRain,
-  type InputLockMatrixRainController,
-} from "./input-lock-matrix-rain";
 import { InputTextarea } from "./input-textarea";
 
 type InputPanelProps = {
@@ -27,17 +23,9 @@ const InputPanel = ({
   onSubmit,
 }: InputPanelProps) => {
   const inputLocked = connectionState !== "idle" || isQueued;
-  const matrixActive =
-    connectionState === "running" || connectionState === "blocked";
   const waitCopyActive = inputLocked && !isQueued;
   const waitCopyColor = resolveProviderWaitColor(providerTheme);
-  const formClassName = [
-    "session-input",
-    matrixActive ? "session-input--matrix-active" : "",
-    "session-panel",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const formClassName = "session-input session-panel";
   const placeholder = (() => {
     if (isQueued) {
       return "Message queued. Sending as soon as it is ready…";
@@ -52,36 +40,10 @@ const InputPanel = ({
   })();
   const [value, setValue] = useState(draft);
   const formRef = useRef<HTMLFormElement | null>(null);
-  const matrixRainRef = useRef<InputLockMatrixRainController | null>(null);
 
   useEffect(() => {
     setValue(draft);
   }, [draft]);
-
-  useEffect(() => {
-    const form = formRef.current;
-    if (!form) {
-      return;
-    }
-
-    const container = form.querySelector<HTMLElement>(
-      ".session-input__container"
-    );
-    if (!container) {
-      return;
-    }
-
-    const controller = createInputLockMatrixRain(container);
-    matrixRainRef.current = controller;
-    return () => {
-      controller.dispose();
-      matrixRainRef.current = null;
-    };
-  }, []);
-
-  useEffect(() => {
-    matrixRainRef.current?.setActive(matrixActive);
-  }, [matrixActive]);
 
   useEffect(() => {
     const form = formRef.current;
