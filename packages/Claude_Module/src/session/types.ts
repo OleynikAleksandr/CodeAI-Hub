@@ -1,4 +1,5 @@
 import type { EventEmitter } from "node:events";
+import type { ClaudeStreamMessage } from "../types";
 
 export type MessageController = {
   pendingMessages: unknown[];
@@ -50,6 +51,20 @@ export type ActiveSession = {
   queryInstance?: AsyncIterableIterator<unknown> & {
     interrupt?: () => Promise<void>;
   };
+};
+
+export type ClaudeTurnProcessorHooks = {
+  readonly createIterator: (payload: {
+    readonly session: ActiveSession;
+    readonly turn: ClaudeQueuedTurn;
+  }) => AsyncIterableIterator<ClaudeStreamMessage> & {
+    interrupt?: () => Promise<void>;
+  };
+  readonly onRealSessionId: (payload: {
+    readonly session: ActiveSession;
+    readonly previousSessionId: string;
+    readonly realSessionId: string;
+  }) => void;
 };
 
 export type SessionCreationResult = {

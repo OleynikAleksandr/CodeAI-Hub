@@ -141,16 +141,33 @@ export class ClaudeSDKManager {
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);
     }
-    this.deps.sessions.enqueueTurn(session.sessionId, {
-      content,
-      turnOptions,
-      internal: false,
-      enqueuedAt: Date.now(),
-    });
-    this.consumeTurnQueue(session).catch((error) => {
-      this.deps.reporter?.error?.("Claude turn queue processing failed", error);
-      session.eventEmitter.emit("error", { type: "dispatch", error });
-    });
+    this.deps.processor.enqueueTurn(
+      session.sessionId,
+      {
+        content,
+        turnOptions,
+        internal: false,
+        enqueuedAt: Date.now(),
+      },
+      {
+        createIterator: (payload) => {
+          const outputSchema = readOutputSchema(payload.turn.turnOptions);
+          payload.session.structuredOutputSchema = outputSchema;
+          return this.invokeQuery({
+            session: payload.session,
+            prompt: payload.turn.content,
+            outputSchema,
+          });
+        },
+        onRealSessionId: (payload) => {
+          this.promoteSessionId(
+            payload.previousSessionId,
+            payload.realSessionId,
+            payload.session
+          );
+        },
+      }
+    );
   }
 
   async closeSession(sessionId: string): Promise<void> {
@@ -161,71 +178,14 @@ export class ClaudeSDKManager {
     return this.deps.sessions.getSession(sessionId);
   }
 
-  private async consumeTurnQueue(session: ActiveSession): Promise<void> {
-    const queueState = session.turnQueue;
-    if (
-      !(queueState && !queueState.processing && !queueState.shutdownRequested)
-    ) {
-      return;
-    }
-    queueState.processing = true;
-    try {
-      for (;;) {
-        if (queueState.shutdownRequested) {
-          return;
-        }
-        const turn = this.deps.sessions.takeNextTurn(session.sessionId);
-        if (!turn) {
-          return;
-        }
-        this.deps.sessions.beginTurn(session.sessionId, {
-          internal: turn.internal,
-        });
-        const outputSchema = readOutputSchema(turn.turnOptions);
-        session.structuredOutputSchema = outputSchema;
-        this.deps.processor.send(session.sessionId, turn.content);
-        session.messageController.pendingMessages.length = 0;
-
-        const queryInstance = this.invokeQuery({
-          session,
-          prompt: turn.content,
-          outputSchema,
-        });
-        session.queryInstance = queryInstance;
-
-        const turnSessionId = session.sessionId;
-        await this.deps.processor.processResponses({
-          sessionId: turnSessionId,
-          iterator: queryInstance,
-          onRealSessionId: (realId) => {
-            if (!realId || realId === session.sessionId) {
-              return;
-            }
-            this.promoteSessionId(session.sessionId, realId, session);
-          },
-        });
-        this.deps.sessions.clearInFlightTurn(session.sessionId);
-      }
-    } finally {
-      queueState.processing = false;
-      session.queryInstance = undefined;
-      if (queueState.pending.length > 0 && !queueState.shutdownRequested) {
-        this.consumeTurnQueue(session).catch((error) => {
-          this.deps.reporter?.error?.(
-            "Claude turn queue follow-up processing failed",
-            error
-          );
-          session.eventEmitter.emit("error", { type: "dispatch", error });
-        });
-      }
-    }
-  }
-
   private promoteSessionId(
     tempId: string,
     realId: string,
     session?: ActiveSession
   ): void {
+    if (tempId === realId) {
+      return;
+    }
     this.deps.sessions.updateSessionId(tempId, realId);
     const targetSession = session ?? this.deps.sessions.getSession(realId);
     targetSession?.eventEmitter.emit("sessionIdChanged", {

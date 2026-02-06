@@ -53,10 +53,10 @@
 15. [DONE] Refactor(claude-sdk): выделить детерминированный билдер query options и сохранить все full-access флаги + output schema/thinking/model (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`; expected commit message: `refactor(claude): preserve full-access query options in one-shot mode`)
 16. [DONE] Git Commit: `refactor(claude): preserve full-access query options in one-shot mode` (hash: 58af0acd)
 17. [DONE] Fix(claude-sdk): жёстко зафиксировать resume semantics `resume=<providerSessionId>` без fork и без file-discovery зависимости (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/messaging/session-file-discovery.ts`; expected commit message: `fix(claude): use sdk session id as resume source of truth`)
-18. [TODO] Git Commit: `fix(claude): use sdk session id as resume source of truth` (hash: TBD)
+18. [DONE] Git Commit: `fix(claude): use sdk session id as resume source of truth` (hash: ffad6ae5)
 
 ### Stream: Claude message processor one-shot engine
-19. [TODO] Refactor(claude-messaging): внедрить FIFO queue + consume/process turn loop (аналог Codex orchestration) (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/session/types.ts`; expected commit message: `refactor(claude): add one-shot turn queue processor`)
+19. [DONE] Refactor(claude-messaging): внедрить FIFO queue + consume/process turn loop (аналог Codex orchestration) (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/session/types.ts`; expected commit message: `refactor(claude): add one-shot turn queue processor`)
 20. [TODO] Git Commit: `refactor(claude): add one-shot turn queue processor` (hash: TBD)
 21. [TODO] Fix(claude-messaging): обеспечить lifecycle state machine 1x `turn_started` и 1x completion/failure на user turn (scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `fix(claude): enforce deterministic turn lifecycle events`)
 22. [TODO] Git Commit: `fix(claude): enforce deterministic turn lifecycle events` (hash: TBD)
