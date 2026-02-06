@@ -1,70 +1,97 @@
 # Стек Claude для CodeAI-Hub
 
+**Версия стека:** 1.1.514  
+**Обновлено:** 2026-02-06  
+**Статус:** Active (one-shot session model)
+
 ## Обзор
-Приватный модуль стека Claude (`@codeai-hub/claude-module@1.1.444`) предоставляет серверную интеграцию для CodeAI-Hub: управляет установкой CLI/SDK Anthropic, авторизацией пользователя и адаптацией потоковых событий Claude к унифицированному контракту расширения. Фронтенд вебвью наследуется из open source проекта `claude-code-fusion`, а стек Claude фокусируется на бэкенде и совместимости с мультистековой архитектурой. Начиная с релиза 1.1.326 ProviderVersionService читает версии CLI/SDK из глобального npm; манифест `assets/providers/claude/manifest.json` используется только для установки провайдера. Начиная с 1.1.443 при `bypassPermissions` расширен доступ к директориям (включая домашнюю) для чтения шаблонов из `~/.codeai-hub/templates/**`, а workflow prompts перешли на provider-native file access (без `/read`).
+`@codeai-hub/claude-module` — провайдерный модуль Claude для Core. Начиная с Phase 98 модуль работает в **one-shot turn model**:
+- один turn = один `query(...)` запуск;
+- очередь turn-ов FIFO (user + internal continuity);
+- lifecycle-события turn (`turn_started`, `turn_completed`, `turn_failed`) эмитятся детерминированно;
+- resume использует тот же `providerSessionId` через `options.resume` без `forkSession`.
 
-## Взаимодействие с CodeAI-Hub
-- **Open source расширение** переиспользует React-вебвью и фасады состояния из `claude-code-fusion`, модифицируя их под общий UI.
-- **Приватный модуль Claude** подключается через реестр провайдеров CodeAI-Hub и реализует контракт `installOrUpdate → configure → startSession → streamEvents → stopSession → capabilities`.
-- **Коммуникация** между ядром и модулем происходит через унифицированные DTO; отличия Claude нормализуются адаптерами и фасадами сообщений.
+Цель модели: parity с Codex orchestration при сохранении Claude-specific SDK опций и continuity-контракта Core/UI.
 
-## Основные компоненты стека
-- **ClaudeInstallerFacade** – проверяет наличие `claude-code` CLI и `@anthropic-ai/claude-agent-sdk`, инициирует глобальную установку/обновление и при включённом автообновлении подтягивает latest из npm.
-- **SDKManagerFacade** – инициализирует SDK, управляет пулом сессий, синхронизирует настройку `settingSources` и следит за refresh токенами.
-- **AuthWorkflowFacade** – запрашивает авторизацию пользователя, поддерживает повторное подтверждение, хранит токены в защищённом keychain (через core-сервис CodeAI-Hub).
-- **SessionAdapterFacade** – преобразует события SDK (stream, result, tool_use) в унифицированные сообщения UI, поддерживает resume через JSONL-источник.
-- **PersistenceModule** – сохраняет историю сессий и черновики (путь по умолчанию `~/.claude/projects/`), экспортирует resume-потоки для MultiSessionResumer.
-- **ToolUsePipeline** – нормализует `tool_use` карточки Claude и маршрутизирует их в общий рендерер инструментов CodeAI-Hub.
-- **DiagnosticsLogger** – агрегирует логи установки, авторизации и SDK событий, передаёт их в систему логирования core.
+## Контракт с Core
+Модуль реализует стандартный provider-контракт CodeAI-Hub:
+- `initialize()`
+- `createSession(workspacePath?)`
+- `resumeSession(providerSessionId, workspacePath?)`
+- `sendMessage(sessionId, content, turnOptions?)`
+- `closeSession(sessionId)`
+- `subscribe(sessionId, listener)`
 
-## Жизненный цикл
-1. **Установка**: при первом подключении модуль скачивается из приватного репозитория, проверяет CLI/SDK и устанавливает их глобально с флагом `-g`.
-2. **Авторизация**: пользователь проходит OAuth/TOTP в соответствии с политикой Anthropic; результаты сохраняются в keychain.
-3. **Конфигурация**: ядро передаёт settings (регион, лимиты, режимы stream/thinking). Модуль валидирует параметры и загружает defaults из `claude-code-fusion`.
-4. **Запуск сессии**: создаётся `sessionId`, открывается поток SDK, запускаются адаптеры streaming/resume.
-5. **Эксплуатация**: модуль поддерживает мультисессионность, персистентность вкладок и resume после перезапуска VS Code.
-6. **Дефолтная модель**: с версии 1.1.339 Settings UI сохраняет alias в `~/.codeai-hub/settings/settings.json` → `providers.claude.defaultModel`, расширение одновременно обновляет `CLAUDE_DEFAULT_MODEL` и `CLAUDE_SETTINGS_PATH`, core передаёт alias в `ClaudeWorkspaceOptions`, а SDK перечитывает JSON перед каждым `query`, чтобы alias и thinking-настройки применялись на следующих сессиях без ручного вмешательства.
-   - Значения, отображаемые в карточках, берутся из `CLAUDE_MODEL_ALIASES` (`src/types/claude-model-registry.ts`): `default`/Sonnet 4.5, `opus`/Opus 4.5 и `haiku`/Haiku 4.5, с теми же описаниями что и в интерфейсе.
-   - `claude-default-model-card.tsx` переиспользует `shared-model-card-styles.ts` (`src/client/ui/src/components/settings/shared-model-card-styles.ts`): те же цвета/паддинги, hover/selected states, `tabIndex={-1}`/`role="radio"`, `outline: none`/`boxShadow: none` и логика `rowButtonResetStyles`, что применяются и для Codex, потому изменений в `doc/Project_Docs/knowledge/kb/css-border-shorthand-react-inline-styles.md` уже достаточно, и карточка выглядит идентично, как и карточки Codex.
-7. **Обновления**: при старте CodeAI-Hub Auto Update Service проверяет latest CLI/SDK и, если включено автообновление, инициирует глобальный апдейт.
-8. **Завершение**: при остановке сессии освобождаются ресурсы SDK, сохраняются финальные JSONL и черновики, очищаются временные файлы.
+Source-of-truth привязки сессии:
+- `providerSessionId` берётся из SDK stream-сообщений (`session_id`).
+- File discovery (`session-file-discovery`) не является binding-источником и используется только как best-effort диагностика.
 
-## Контракт с ядром
-- `installOrUpdate(context)` – возвращает состояние установки, список действий (установлено, обновлено, требуется авторизация).
-- `configure(settings)` – принимает рабочие режимы (streaming, thinking, tool_use), пути к хранилищам, лимиты по токенам.
-- `startSession(payload)` – создаёт контекст, включает поток событий и возвращает дескриптор для UI.
-- `streamEvents(descriptor)` – асинхронный итератор, выдающий унифицированные сообщения (`user`, `assistant`, `tool_call`, `tool_result`, `status`).
-- `stopSession(sessionId)` – корректно закрывает поток, инициирует финальное сохранение и публикацию логов.
-- `capabilities()` – описывает поддерживаемые функции (streaming, tool_use, файловые операции, resume), минимальную версию CLI/SDK и специфичные лимиты Claude.
+## Ключевые компоненты
+- `ClaudeProviderAdapter` (`packages/Claude_Module/src/provider/claude-provider-adapter.ts`)
+  - фасад модуля для Core;
+  - подписки/роутинг событий;
+  - alias-резолвинг при promotion `temp -> real sessionId`.
 
-## Хранение и конфигурация
-- **CLI/SDK**: глобальная установка через `npm`/`brew` (в зависимости от ОС); версии управляются автообновлением (latest из npm при включённом флаге).
-- **Конфиги модуля**: `~/.config/Code/User/globalStorage/codeai-hub/claude/` (метаданные, кеш, telemetry) и `~/.codeai-hub/settings/settings.json` — файл, который хранит `providers.claude.defaultModel`.
-- **Стандартный поток параметров**: при загрузке extension host читает `settings.json`, выставляет `CLAUDE_SETTINGS_PATH`, синхронизирует `CLAUDE_DEFAULT_MODEL`, и Core/Claude SDK используют эти значения, чтобы alias и thinking-настройки сразу применялись к новым сессиям. Этот путь на 1.1.339 — новая точка входа для выбранной модели и thinking-конфигурации, поэтому `doc/Project_Docs/knowledge/model-reference/Claude_Model_Aliases.md` теперь описывает точную copy/paste цепочку.
-- **Данные провайдера**: `~/.claude/projects/` (JSONL истории, вложения), отдельный namespace для CodeAI-Hub.
-- **Секреты**: системный keychain/VS Code Secret Storage, доступ через core-сервис `SecretsFacade`.
-- **Логи**: `~/Library/Logs/CodeAI-Hub/claude/` (macOS пример), ротация и сбор по запросу пользователя.
+- `ClaudeSDKManager` (`packages/Claude_Module/src/sdk/claude-sdk-manager.ts`)
+  - инициализация SDK/CLI;
+  - сборка query options на turn;
+  - создание/resume провайдерных сессий;
+  - применение full-access runtime флагов.
 
-## Обработка ошибок и лимитов
-- Провайдер/SDK может делать собственные ретраи при сетевых сбоях, падении CLI или истечении токена (внутреннее поведение стека).
-- В Workflow MVP (Flow/Execute) автоматический retry/rollback не включён: падение task/gates помечает run как failed/blocked, повтор запускается вручную.
-- Предупреждения пользователю при приближении к тарифным лимитам Anthropic, рекомендация переключиться на резервный провайдер.
-- Фатальные ошибки логируются, в UI появляются actionable уведомления с советами (перезагрузить VS Code, переавторизоваться, отключить провайдера временно).
-- Дубликаты запросов предотвращаются через idempotency ключи на уровне SDK.
+- `SDKMessageProcessor` (`packages/Claude_Module/src/messaging/message-processor.ts`)
+  - обработка stream-сообщений SDK;
+  - эмиссия `assistant`, `dialog_message(thinking)`, `stream_event`;
+  - lifecycle turn-событий;
+  - token usage refresh pipeline.
 
-## Безопасность
-- Авторизационные данные не кэшируются в plain-text, доступ ограничен core-сервисами.
-- CLI запускаются в пользовательской среде без повышения привилегий, команды логируются с маскированием токенов.
-- JSONL истории очищаются по требованию пользователя; поддерживается автоматическая ротация по размеру/возрасту.
+- `SDKSessionManager` + lifecycle (`packages/Claude_Module/src/session/*`)
+  - реестр активных сессий;
+  - контроллеры очереди turn-ов;
+  - shutdown/cleanup.
 
-## Зависимости
-- `claude-code` CLI ≥ 1.22.x (streaming + tool_use поддержка).
-- `@anthropic-ai/claude-agent-sdk` (глобальная установка, версии синхронизируются с модулем).
-- Вспомогательные пакеты: `node-fetch`, `ws`, `keytar` (через зависимости модуля).
-- Требуемая версия Node.js ≥ 20.
+- `SDKSessionLoggerFacade` (`packages/Claude_Module/src/logging/sdk-session-logger.ts`)
+  - JSONL-логирование в `~/.codeai-hub/logs/claude/`;
+  - append-safe поведение при resume/rebind.
 
-## План развития
-1. Унификация рендера инструментов с новыми UX-паттернами CodeAI-Hub.
-2. Поддержка смешанных сессий (Claude + другие провайдеры) с общим инспектором состояний.
-3. Расширение визардов подготовки спецификаций: повторное использование `Wizard` фасадов из open source части, адаптация под мультиагентные сценарии.
-4. Интеграция с будущим Remote Bridge после стабилизации базовой архитектуры.
+- `ClaudeContextUsageReader` (`packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`)
+  - чтение `/context` usage snapshot для `token_usage` stream events.
+
+## One-shot lifecycle
+1. Core создаёт hub session (временный id).
+2. `sendMessage` ставит turn в очередь и запускает отдельный `query(...)` для этого turn.
+3. На старте turn эмитится `turn_started`.
+4. Во время обработки публикуются:
+   - `assistant` сообщения,
+   - `dialog_message` (`thinking`),
+   - `stream_event` (`structured_output`, `token_usage`).
+5. По финальному SDK `result` эмитится `turn_completed`; при ошибке — `turn_failed`.
+6. При получении реального `session_id` происходит promotion `temp -> real` с `sessionIdChanged`.
+7. Для resumed session все turn-ы используют `options.resume=<providerSessionId>`.
+
+## Continuity-совместимость
+- Internal continuity prompts (`sendInternalMessage` из Core) проходят через ту же очередь turn-ов.
+- Internal turn-ы не должны засорять user-facing диалоговые события.
+- Handoff lifecycle (`handoff:start`/`handoff:ready`) живёт на Core уровне как `session:stream` события.
+
+## Runtime flags (must keep)
+При формировании turn options модуль сохраняет рабочие флаги полного доступа:
+- `permissionMode: "bypassPermissions"`
+- `allowDangerouslySkipPermissions: true`
+- `additionalDirectories`
+- `settingSources`
+- `environment`
+- `pathToClaudeCodeExecutable`
+- `includePartialMessages`
+- `model` + thinking + output schema (если запрошены)
+
+## Хранение и логи
+- Settings: `~/.codeai-hub/settings/settings.json`
+- Provider sessions: `~/.codeai-hub/sessions/<workspace>/<provider>/<providerSessionId>.jsonl`
+- Claude logs: `~/.codeai-hub/logs/claude/sdk-claude-<sessionId>.jsonl`
+
+Требование: при resume/rebind для того же `providerSessionId` лог **дописывается**, а не переинициализируется с truncate.
+
+## Ошибки и диагностика
+- Ошибки SDK/stream пробрасываются в provider error channel (`stream_error`/`error`).
+- Ошибки обработчика turn не должны ломать очередь всей сессии.
+- Context usage read failures логируются как warning и не блокируют turn completion.
