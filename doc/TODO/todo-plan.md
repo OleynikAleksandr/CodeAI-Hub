@@ -71,11 +71,11 @@
 21. [DONE] Docs(system): синхронизировать `SystemArchitecture.md` и continuity docs под новый `continuity_lock` контракт (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(system): document continuity lock contract`)
 22. [DONE] Git Commit: `docs(system): document continuity lock contract` (hash: 782ce757)
 23. [DONE] Docs(session): подготовить следующий session report с таймлайном событий lock/unlock и QA выводом (scope: `doc/Sessions/Session099.md`; expected commit message: `docs(session): add Session099 continuity lock implementation report`)
-24. [IN_PROGRESS] Git Commit: `docs(session): add Session099 continuity lock implementation report` (hash: TBD)
+24. [DONE] Git Commit: `docs(session): add Session099 continuity lock implementation report` (hash: 9e64be11)
 
 ### Stream: phase-complete release build
-25. [TODO] Docs(release): перед релизной сборкой актуализировать `README.md` и `CHANGELOG.md` под итог Phase 99 (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): prepare notes for continuity lock release`)
-26. [TODO] Git Commit: `docs(release): prepare notes for continuity lock release` (hash: TBD)
+25. [DONE] Docs(release): перед релизной сборкой актуализировать `README.md` и `CHANGELOG.md` под итог Phase 99 (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): prepare notes for continuity lock release`)
+26. [IN_PROGRESS] Git Commit: `docs(release): prepare notes for continuity lock release` (hash: TBD)
 27. [TODO] Release: выполнить `./scripts/build-all.sh` после закрытия всех Stream Phase 99 и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after phase99 continuity lock`)
 28. [TODO] Git Commit: `chore(release): build-all after phase99 continuity lock` (hash: TBD)
 29. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after phase99 continuity lock`)

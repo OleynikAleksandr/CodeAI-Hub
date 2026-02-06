@@ -9,6 +9,13 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Regression coverage**: added targeted test for SDK log filtering (`content_block_delta` suppressed, `result` preserved).
 - **Release 1.1.516**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
 
+## Upcoming Release Candidate — Phase 99 (Continuity Lock Contract)
+- **Core continuity**: introduced stream contract `continuity_lock` (`locked|unlocked`) for flow-node rollover bootstrap windows.
+- **Core safety**: added deterministic unlock path (`resume_ready`, `resume_failed`, `resume_timeout`) to prevent input dead-lock.
+- **PM/UI consumption**: `token-usage-stream` now consumes `continuity_lock` and preserves blocked state across rollover/new-session switch.
+- **Session UI**: input placeholder and queue behavior are continuity-lock-aware during bootstrap.
+- **Regression coverage**: added core + PM/UI tests for lock/unlock lifecycle and input lock semantics.
+
 - **Artifact bundle**
   - VSIX: `codeai-hub-1.1.516.vsix`
   - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.516.tar.bz2`
