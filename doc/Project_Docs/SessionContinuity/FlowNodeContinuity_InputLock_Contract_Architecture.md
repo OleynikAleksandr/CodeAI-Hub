@@ -1,7 +1,7 @@
 # Flow Node Continuity Input Lock Contract Architecture
 
-**Date:** 2026-02-06 15:52 (CET)
-**Status:** Draft for implementation (Phase 99)
+**Date:** 2026-02-06 18:40 (CET)
+**Status:** Active baseline for Phase 100 copy/lock sync
 **Scope:** `description/reviewer` rollover (with reusable contract for other flow nodes)
 
 ---
@@ -115,9 +115,17 @@ Optional additive hardening:
 
 ### 4.3 Placeholder policy
 
-When `continuityLock.active` is true, input placeholder must show continuation-wait copy (equivalent to current blocked copy):
+Approved copy set for Phase 100:
 
-- `Agent is preparing a continuation… Please wait.`
+- continuity handoff lock (`continuityLock.active === true` or effective `blocked`):
+  - `Agent is resuming your session… Please wait.`
+- regular running turn (`connectionState === "running"` without continuity lock):
+  - `Agent is working… Please wait.`
+
+Display rule:
+
+- Placeholder/copy and `disabled` state must be driven by the same derived lock flag.
+- It is forbidden to show handoff wait-copy while input is already enabled.
 
 ### 4.4 Queue behavior while lock is active
 
@@ -127,6 +135,17 @@ User submit during continuity lock must not be dropped:
 - hard reject with visible system message.
 
 MVP target: reuse queued-send behavior.
+
+### 4.5 Internal continuity ACK policy
+
+The internal resume acknowledgement phrase is standardized as:
+
+- `Ready to continue working.`
+
+Rule:
+
+- This phrase is an internal protocol signal only and must be hidden from user-visible conversation history.
+- If legacy ACK token messages are encountered in old history, they remain filtered out the same way.
 
 ---
 
@@ -172,4 +191,3 @@ MVP target: reuse queued-send behavior.
 1. Should Core emit lock updates to source session after target session exists, or only to target session?
 2. Should unlock be emitted exactly once, or can repeated idempotent unlock events be allowed?
 3. Should `blocked` be retained as a separate visible state once lock contract is active, or mapped to lock semantics only?
-

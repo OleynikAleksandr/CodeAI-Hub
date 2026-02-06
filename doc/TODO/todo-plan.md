@@ -80,3 +80,39 @@
 28. [DONE] Git Commit: `chore(release): build-all after phase99 continuity lock` (hash: ad4cd7e7)
 29. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after phase99 continuity lock`)
 30. [DONE] Git Commit: `chore(release): build vsix after phase99 continuity lock` (hash: d5c53f7f)
+
+---
+
+## Phase 100 — Continuity UX sync and copy polishing (owner: Oleksandr, updated: 2026-02-06)
+
+### Stream: seamless handoff messaging and input lock
+Утверждённые тексты для реализации:
+- user-facing wait copy: `Agent is resuming your session… Please wait.`
+- internal continuity ACK phrase: `Ready to continue working.`
+
+31. [DONE] Docs(copy): зафиксировать утверждённые тексты continuity handoff и правило их показа в архитектурной документации (scope: `doc/TODO/todo-plan.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`; expected commit message: `docs(ux): define continuity handoff copy and display rules`)
+32. [DONE] Git Commit: `docs(ux): define continuity handoff copy and display rules` (hash: TBD)
+33. [TODO] Fix(ui-lock): устранить эффект «поле ввода уже разблокировано, но copy ещё просит ждать» через синхронизацию условий disabled/placeholder (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `fix(ui): synchronize input lock and continuity wait copy`)
+34. [TODO] Git Commit: `fix(ui): synchronize input lock and continuity wait copy` (hash: TBD)
+35. [TODO] Fix(continuity-template): заменить служебный ACK-token в continuity resume template на `Ready to continue working.` и синхронизировать скрытие internal continuity message в UI (scope: `assets/flow/continuity/resume.md`, `packages/core/src/flow-node-continuity/template-loader.ts`, `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(continuity): replace internal ack token with handoff phrase`)
+36. [TODO] Git Commit: `fix(continuity): replace internal ack token with handoff phrase` (hash: TBD)
+37. [TODO] Verify(runtime-template): после таргетной сборки проверить, что установленный шаблон `~/.codeai-hub/templates/flow/continuity/resume.md` синхронизирован с новым текстом, и фраза не попадает в видимый диалог (scope: `doc/Sessions/Session100.md`, `doc/TODO/todo-plan.md`; expected commit message: `chore(qa): verify installed continuity resume template sync`)
+38. [TODO] Git Commit: `chore(qa): verify installed continuity resume template sync` (hash: TBD)
+
+### Stream: matrix-rain background animation for locked input
+39. [TODO] Docs(design): подготовить отдельный архитектурный документ по Matrix Rain-анимации (Rezmason-inspired) для заблокированного поля ввода: визуальные требования, fixed matrix-green color model (`#00ff41`, `alpha: 0.30`), provider-colored wait-copy (`alpha: 0.70`), адаптация плотности колонок к ширине поля, производительность и accessibility (scope: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_MatrixRain_InputField_Animation_Architecture.md`; expected commit message: `docs(ux): define matrix rain lock animation architecture`)
+40. [TODO] Git Commit: `docs(ux): define matrix rain lock animation architecture` (hash: TBD)
+41. [TODO] Fix(ui-render): реализовать фоновый Matrix Rain слой внутри контейнера ввода (очень тусклый, бесшовный цикл, активен только при `running/blocked`) без влияния на редактирование текста (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-lock-matrix-rain.ts`, `media/session-view.css`; expected commit message: `feat(ui): add subtle matrix rain background for locked input`)
+42. [TODO] Git Commit: `feat(ui): add subtle matrix rain background for locked input` (hash: TBD)
+43. [TODO] Fix(ui-theme): зафиксировать единый цвет matrix-глифов для всех провайдеров (тускло-зелёный Matrix, base `#00ff41`, `alpha: 0.30`), а wait-copy (`Agent is resuming your session… Please wait.` и `Agent is working… Please wait.`) рендерить в provider-color из табов с приглушением на 30% (`alpha: 0.70`); передать theme из `SessionView` в `InputPanel` (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/helpers.ts`; expected commit message: `fix(ui): align lock animation and copy with provider colors`)
+44. [TODO] Git Commit: `fix(ui): align lock animation and copy with provider colors` (hash: TBD)
+45. [TODO] Test(ux): добавить тесты/проверки на lock-state UX (нет рассинхрона copy/disabled), адаптацию количества колонок при изменении ширины и отсутствие утечки RAF-циклов (scope: `src/client/ui/src/session/input-panel.test.tsx`, `src/client/ui/src/session/input-lock-matrix-rain.test.ts`, `doc/Sessions/Session100.md`; expected commit message: `test(ui): verify matrix rain lock behavior and responsiveness`)
+46. [TODO] Git Commit: `test(ui): verify matrix rain lock behavior and responsiveness` (hash: TBD)
+
+### Stream: phase-complete release build (phase 100)
+47. [TODO] Docs(release): перед релизной сборкой актуализировать `README.md`, `CHANGELOG.md` и session report под итог Phase 100 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session100.md`; expected commit message: `docs(release): prepare notes for phase100 continuity ux release`)
+48. [TODO] Git Commit: `docs(release): prepare notes for phase100 continuity ux release` (hash: TBD)
+49. [TODO] Release: выполнить `./scripts/build-all.sh` после закрытия всех Stream Phase 100 и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after phase100 continuity ux`)
+50. [TODO] Git Commit: `chore(release): build-all after phase100 continuity ux` (hash: TBD)
+51. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в новом session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after phase100 continuity ux`)
+52. [TODO] Git Commit: `chore(release): build vsix after phase100 continuity ux` (hash: TBD)
