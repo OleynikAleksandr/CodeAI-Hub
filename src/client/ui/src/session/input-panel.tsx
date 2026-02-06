@@ -18,16 +18,13 @@ const InputPanel = ({
   isQueued = false,
   onSubmit,
 }: InputPanelProps) => {
-  const isDisabled = connectionState === "running" || isQueued;
+  const inputLocked = connectionState !== "idle" || isQueued;
   const placeholder = (() => {
     if (isQueued) {
       return "Message queued. Sending as soon as it is ready…";
     }
-    if (continuityLockActive) {
-      return "Agent is preparing a continuation… Please wait.";
-    }
-    if (connectionState === "blocked") {
-      return "Agent is preparing a continuation… Please wait.";
+    if (continuityLockActive || connectionState === "blocked") {
+      return "Agent is resuming your session… Please wait.";
     }
     if (connectionState === "running") {
       return "Agent is working… Please wait.";
@@ -41,7 +38,7 @@ const InputPanel = ({
   }, [draft]);
 
   const sendMessage = useCallback(() => {
-    if (isDisabled) {
+    if (inputLocked) {
       return;
     }
     const trimmed = value.trim();
@@ -50,7 +47,7 @@ const InputPanel = ({
     }
     onSubmit(trimmed);
     setValue("");
-  }, [isDisabled, onSubmit, value]);
+  }, [inputLocked, onSubmit, value]);
 
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
@@ -67,7 +64,7 @@ const InputPanel = ({
       onSubmit={handleSubmit}
     >
       <fieldset
-        disabled={isDisabled}
+        disabled={inputLocked}
         style={{ border: 0, padding: 0, margin: 0 }}
       >
         <InputTextarea
@@ -86,13 +83,13 @@ const InputPanel = ({
         />
       </fieldset>
 
-      {connectionState === "idle" && !isQueued ? (
+      {inputLocked ? null : (
         <div className="session-input__footer">
           <span className="session-input__hint">
             Press Enter to send, Shift+Enter for a new line
           </span>
         </div>
-      ) : null}
+      )}
     </form>
   );
 };

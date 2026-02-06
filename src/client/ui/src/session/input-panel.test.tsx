@@ -68,7 +68,7 @@ test("InputPanel shows continuity placeholder when continuity lock is active", a
   });
 
   assert.equal(
-    html.includes("Agent is preparing a continuation… Please wait."),
+    html.includes("Agent is resuming your session… Please wait."),
     true
   );
 });
@@ -85,7 +85,7 @@ test("InputPanel prioritizes queued placeholder over continuity placeholder", as
     true
   );
   assert.equal(
-    html.includes("Agent is preparing a continuation… Please wait."),
+    html.includes("Agent is resuming your session… Please wait."),
     false
   );
 });
@@ -96,4 +96,16 @@ test("InputPanel disables fieldset while running", async () => {
   });
 
   assert.equal(html.includes("disabled"), true);
+});
+
+test("InputPanel disables fieldset while blocked", async () => {
+  const html = await renderInputPanel({
+    connectionState: "blocked",
+  });
+
+  assert.equal(html.includes("disabled"), true);
+  assert.equal(
+    html.includes("Agent is resuming your session… Please wait."),
+    true
+  );
 });
