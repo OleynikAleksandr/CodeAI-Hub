@@ -52,13 +52,11 @@ export const useQueuedSend = (options: {
       if (!options.activeSessionId) {
         return;
       }
-      if (options.connectionState === "blocked") {
+      if (options.connectionState !== "idle") {
         setQueuedMessage((previous) => previous ?? text);
         return;
       }
-      if (options.connectionState === "idle") {
-        options.onSendMessage(options.activeSessionId, text);
-      }
+      options.onSendMessage(options.activeSessionId, text);
     },
   };
 };
