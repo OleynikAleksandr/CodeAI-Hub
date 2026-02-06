@@ -67,8 +67,8 @@
 
 ### Stream: logging parity (no truncation on resume)
 27. [DONE] Fix(claude-logging): сделать logger append-safe для resume/rebind в тот же `providerSessionId` (без truncate существующего файла) (scope: `packages/Claude_Module/src/logging/sdk-session-logger.ts`; expected commit message: `fix(claude): append logs on resume without truncation`)
-28. [TODO] Git Commit: `fix(claude): append logs on resume without truncation` (hash: TBD)
-29. [TODO] Fix(claude-logging): стабилизировать rename/promotion path temp->real без потери buffered entries (scope: `packages/Claude_Module/src/logging/sdk-session-logger.ts`; expected commit message: `fix(claude): preserve buffered logs during session promotion`)
+28. [DONE] Git Commit: `fix(claude): append logs on resume without truncation` (hash: 8687ea20)
+29. [DONE] Fix(claude-logging): стабилизировать rename/promotion path temp->real без потери buffered entries (scope: `packages/Claude_Module/src/logging/sdk-session-logger.ts`; expected commit message: `fix(claude): preserve buffered logs during session promotion`)
 30. [TODO] Git Commit: `fix(claude): preserve buffered logs during session promotion` (hash: TBD)
 
 ### Stream: provider adapter compatibility

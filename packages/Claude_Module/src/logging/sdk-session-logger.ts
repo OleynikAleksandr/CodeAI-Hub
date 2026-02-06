@@ -130,11 +130,12 @@ export class SDKSessionLoggerFacade implements SessionLogger {
   }
 
   private enqueueWrite(payload: string): void {
-    if (!this.logFilePath) {
+    const filePath = this.logFilePath;
+    if (!filePath) {
       return;
     }
     this.writeQueue = this.writeQueue
-      .then(() => fs.appendFile(this.logFilePath as string, payload, "utf8"))
+      .then(() => fs.appendFile(filePath, payload, "utf8"))
       .catch(() => {
         /* ignore log append errors */
       });
