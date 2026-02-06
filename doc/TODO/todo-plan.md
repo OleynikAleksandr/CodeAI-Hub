@@ -92,3 +92,27 @@
 ### Stream: session wrap-up
 43. [DONE] Docs(session): подготовить новый session report с timeline, списком commit hash и статусом continuity совместимости (scope: `doc/Sessions/Session095.md`; expected commit message: `docs(session): add Session095 claude one-shot report`)
 44. [DONE] Git Commit: `docs(session): add Session095 claude one-shot report` (hash: 8e3a0a78)
+
+### Stream: claude sdk-log noise filtering
+45. [TODO] Refactor(claude-logging): отфильтровать из debug JSONL события `sdk:stream_event` с `event.type=content_block_delta`, сохранив запись `sdk:assistant`, `sdk:result`, `sdk:error` и прочих важных lifecycle-маркеров (scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `chore(claude): filter content_block_delta noise from sdk log`)
+46. [TODO] Git Commit: `chore(claude): filter content_block_delta noise from sdk log` (hash: TBD)
+47. [TODO] Test(claude): добавить regression test на фильтрацию `content_block_delta` в logger с проверкой, что `result` продолжает логироваться (scope: `packages/Claude_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(claude): cover sdk log filtering for stream deltas`)
+48. [TODO] Git Commit: `test(claude): cover sdk log filtering for stream deltas` (hash: TBD)
+
+### Stream: ui working-strip reset (remove `Agent is working. Please wait.` banner)
+49. [DONE] Refactor(ui-session): удалить компонент `WorkingStrip` из Session rails и все его импорты/вызовы, не затрагивая `InputPanel` логику и placeholder copy (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/working-strip.tsx`; expected commit message: `refactor(ui): remove working-strip banner component`)
+50. [IN_PROGRESS] Git Commit: `refactor(ui): remove working-strip banner component` (hash: TBD)
+51. [TODO] Refactor(ui-session): удалить legacy helper-код для старого баннера (`buildAgentWorkingBanner`/`resolveVisibleBanner`) и связанный мёртвый код, сохранив `useQueuedSend` для input очереди (scope: `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `refactor(ui): drop legacy agent-working banner helpers`)
+52. [TODO] Git Commit: `refactor(ui): drop legacy agent-working banner helpers` (hash: TBD)
+53. [TODO] Style(ui-session): удалить CSS-блоки `.session-working-strip*`, не затрагивая `.animated-dots*` (12-dot animation остаётся) (scope: `media/session-view.css`; expected commit message: `style(ui): remove working-strip styles keep animated dots`)
+54. [TODO] Git Commit: `style(ui): remove working-strip styles keep animated dots` (hash: TBD)
+55. [TODO] Verify(ui): таргетно проверить, что строка `Agent is working. Please wait.` отсутствует в source и generated UI bundle после сборки (`build:webview`, `build:project-manager`) при сохранении работы input-блокировки (scope: repo-wide search + ui build commands; expected commit message: `chore(ui): verify working-strip banner removal`)
+56. [TODO] Git Commit: `chore(ui): verify working-strip banner removal` (hash: TBD)
+
+### Stream: release build for ui-strip reset + sdk-log filtering
+57. [TODO] Docs(release): обновить `README.md` и `CHANGELOG.md` под новый релиз после закрытия stream `45–56` (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update README and CHANGELOG for next release`)
+58. [TODO] Git Commit: `docs(release): update README and CHANGELOG for next release` (hash: TBD)
+59. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` после зелёных гейтов по stream `45–56` (scope: repo-wide automated release files; expected commit message: `chore(release): build-all next version`)
+60. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
+61. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-<version>.vsix` и зафиксировать артефакты в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix for ui-strip and sdk-log updates`)
+62. [TODO] Git Commit: `chore(release): build vsix for ui-strip and sdk-log updates` (hash: TBD)

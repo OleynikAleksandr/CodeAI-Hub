@@ -5,12 +5,9 @@ import EmptyState from "./empty-state";
 import { mapProviderTheme } from "./helpers";
 import InputPanel from "./input-panel";
 import {
-  computeShouldShowWorkingCopy,
   resolveContinuationChainOrEmpty,
   resolveContinuationIndex,
-  resolveLastThinkingOrAssistantAt,
   resolveVirtualConversationMessages,
-  useAgentWorkingSilenceIndicator,
   useQueuedSend,
 } from "./session-view-helpers";
 import StatusPanel from "./status-panel";
@@ -20,9 +17,6 @@ import {
   resolveProviderDisplayLabel,
   SessionHeader,
 } from "./virtual-conversation";
-import { WorkingStrip } from "./working-strip";
-
-const AGENT_WORKING_SILENCE_MS = 5000;
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
 
@@ -85,7 +79,6 @@ const SessionViewBody = ({
 
   const connectionState: ConnectionState =
     activeSession?.status.connectionState ?? "idle";
-  const isRolloverBlocked = connectionState === "blocked";
   const { isQueued, submitMessage } = useQueuedSend({
     activeSessionId,
     connectionState,
@@ -101,15 +94,6 @@ const SessionViewBody = ({
     activeSession,
     continuationChain,
     snapshots,
-  });
-  const lastThinkingOrAssistantAt = resolveLastThinkingOrAssistantAt(
-    virtualConversationMessages
-  );
-  const showAgentWorkingIndicator = useAgentWorkingSilenceIndicator({
-    connectionState,
-    isRolloverBlocked,
-    lastThinkingOrAssistantAt,
-    silenceMs: AGENT_WORKING_SILENCE_MS,
   });
 
   if (!(activeSession && activeSessionId)) {
@@ -128,13 +112,6 @@ const SessionViewBody = ({
       activeSessionId,
     }) ?? undefined;
 
-  const shouldShowWorkingCopy = computeShouldShowWorkingCopy({
-    connectionState,
-    isRolloverBlocked,
-    showAgentWorkingIndicator,
-    virtualConversationMessages,
-  });
-
   return (
     <div className="session-app">
       {header}
@@ -147,10 +124,6 @@ const SessionViewBody = ({
           />
         </div>
         <div className="session-app__rails">
-          <WorkingStrip
-            isWorking={shouldShowWorkingCopy}
-            providerTheme={providerTheme}
-          />
           <InputPanel
             connectionState={connectionState}
             draft={activeSession.draft}
