@@ -256,9 +256,6 @@ export class ClaudeSDKManager {
   }
 
   private resolveResumeSessionId(session: ActiveSession): string | null {
-    if (session.resumeSessionId) {
-      return session.resumeSessionId;
-    }
     if (session.sessionId.startsWith(TEMP_SESSION_PREFIX)) {
       return null;
     }
