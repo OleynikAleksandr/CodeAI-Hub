@@ -115,13 +115,14 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 Порог запуска handoff рассчитывается по token usage (used/limit) и может быть настроен per-provider (например, Claude и Codex: remaining% threshold, default 30%).
 Внутренние handoff-инструкции отправляются через `sendInternalMessage` и не должны попадать в user-facing историю.
 
-### 2.7 Turn-finish + Handoff UI Contract (CRITICAL)
+### 2.7 Turn-state + Continuity Lock UI Contract (CRITICAL)
 
 Чтобы исключить залипания working-strip после финального сообщения агента, UI следует каноническому контракту stream-событий:
 
 1. `turn_state` (`running|idle`) — единственный источник истины о состоянии turn.
-2. `handoff_state` (`start|ready`) — отдельный lifecycle continuity handoff; не user-facing сообщение.
-3. `turn_state=idle` имеет приоритет над прошлым `blocked` и всегда переводит ожидание в режим ввода пользователя.
+2. `continuity_lock` (`locked|unlocked`) — source-of-truth блокировки ввода на окно bootstrap continuity rollover (`threshold_reached` -> `report_in_progress` -> `resume_bootstrap` -> `resume_ready|resume_failed|resume_timeout`).
+3. `turn_state=idle` снимает ожидание только при неактивном `continuity_lock`.
+4. Legacy `handoff_state` сохраняется для обратной совместимости старых handoff-path, но для flow-node rollover приоритет у `continuity_lock`.
 
 State-table для Session UI:
 
@@ -129,13 +130,13 @@ State-table для Session UI:
 |---|---|---|---|
 | `turn_state=running` | `running` | заблокирован (send) | показываем по правилам running |
 | `turn_state=idle` | `idle` | доступен | скрываем "Agent is working..." |
-| `handoff_state=start` | `blocked` | заблокирован (input+send) | показываем |
-| `handoff_state=ready` | снять handoff-lock, вернуть `idle` если был `blocked` | доступен (если нет running) | скрываем |
+| `continuity_lock=locked` | `blocked` | заблокирован (input+send) | показываем |
+| `continuity_lock=unlocked` | снять continuity-lock, вернуть `idle` если нет running | доступен (если нет running) | скрываем |
 
 Инварианты:
-- Handoff lock не заменяет lifecycle turn и не должен жить дольше handoff.
-- Handoff события передаются как `session:stream` и не добавляются в историю пользовательских сообщений.
-- События handoff должны быть детерминированны: на каждый `handoff:start` должен приходить `handoff:ready` (включая failure-path) для снятия lock.
+- Continuity lock не заменяет lifecycle turn и не должен жить дольше bootstrap-turn новой сессии.
+- `continuity_lock` передаётся как `session:stream`/`stream_event` и не добавляется в историю пользовательских сообщений.
+- Unlock должен быть детерминированным: для каждого `locked` должен приходить `unlocked` по success/failure/timeout, иначе UI останется в dead-lock.
 
 ### 2.8 Claude One-Shot Session Contract (Phase 98)
 
