@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test dist/messaging/message-processor.test.js"
   },
   "engines": {
     "node": ">=20.0.0"
