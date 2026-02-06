@@ -1,3 +1,14 @@
+## [Unreleased] - 2026-02-06
+### Fixed
+- Flow-node continuity rollover: added explicit `continuity_lock` stream lifecycle (`locked`/`unlocked`) to remove the input unlock gap between `new_session_created` and bootstrap completion of the new session.
+- Core: deterministic continuity unlock on bootstrap completion/failure plus timeout fallback (`resume_ready`, `resume_failed`, `resume_timeout`).
+- PM/UI: `token-usage-stream` now applies `continuity_lock` state and preserves blocked input semantics during session switch.
+- Session UI: input placeholder + queue behavior aligned with active continuity lock state.
+
+### Added
+- Core regression test covering continuity lock sequence across old->new session rollover.
+- PM/UI regression tests for continuity lock handling (`token-usage-stream`) and continuity placeholder behavior in `InputPanel`.
+
 ## [1.1.516] - 2026-02-06
 ### Fixed
 - Session UI: removed the standalone rails banner `Agent is working. Please wait.` while preserving input-panel queue/lock behavior.
