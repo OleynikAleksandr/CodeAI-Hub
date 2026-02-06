@@ -44,11 +44,11 @@
 11. [DONE] Fix(ui-input): блокировать `InputPanel` при активном continuity lock и показывать continuation placeholder на период bootstrap (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): keep input locked during continuity bootstrap`)
 12. [DONE] Git Commit: `fix(ui): keep input locked during continuity bootstrap` (hash: f4bd3144)
 13. [DONE] Fix(ui-queue): маршрутизировать submit во время continuity lock в queued-send path (без потери пользовательского текста) (scope: `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): queue messages while continuity lock is active`)
-14. [IN_PROGRESS] Git Commit: `fix(ui): queue messages while continuity lock is active` (hash: TBD)
+14. [DONE] Git Commit: `fix(ui): queue messages while continuity lock is active` (hash: cbe1e3b7)
 
 ### Stream: tests and verification
-15. [TODO] Test(core): добавить регрессионный тест последовательности lock/unlock для flow-node rollover old->new session (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `test(core): cover continuity lock lifecycle across session rollover`)
-16. [TODO] Git Commit: `test(core): cover continuity lock lifecycle across session rollover` (hash: TBD)
+15. [DONE] Test(core): добавить регрессионный тест последовательности lock/unlock для flow-node rollover old->new session (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `test(core): cover continuity lock lifecycle across session rollover`)
+16. [IN_PROGRESS] Git Commit: `test(core): cover continuity lock lifecycle across session rollover` (hash: TBD)
 17. [TODO] Test(pm-ui): добавить регрессионный тест, что ввод остаётся заблокированным до unlock-события (scope: `src/client/project-manager/components/sessions/token-usage-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `test(ui): guard input lock during continuity session switch`)
 18. [TODO] Git Commit: `test(ui): guard input lock during continuity session switch` (hash: TBD)
 19. [TODO] Verify(qa): прогнать обязательные Gates + таргетные команды (`build --workspace core`, `build:project-manager`, `build:webview`, `typecheck:webview`) и зафиксировать результаты в документах (scope: repo-wide commands + docs); expected commit message: `chore(qa): verify continuity lock contract gates`)
