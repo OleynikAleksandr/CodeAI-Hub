@@ -26,12 +26,15 @@
 
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/TODO/todo-plan.md`
-3. `doc/Sessions/Session094.md` (THIS REPORT)
+2. `doc/Project_Docs/Stacks/Claude.md`
+3. `doc/TODO/todo-plan.md`
+4. `doc/Sessions/Session094.md` (THIS REPORT)
 
 ## Plans for next session
-- Выполнить force-sync в GitHub из окружения, где `git push` не заблокирован:
-  - `git push --force origin main`
-  - `git push --force origin refs/tags/v1.1.514`
-- Создать/обновить GitHub Release `v1.1.514` и прикрепить `codeai-hub-1.1.514.vsix`.
-- После успешной публикации зафиксировать hash/ссылки в `doc/TODO/todo-plan.md` и новом session-report.
+- Изменить протокол работы Модуля Claude с Streaming Input Mode - как сделано сейчас, на -
+Single Message Input — “one-shot queries”.
+https://platform.claude.com/docs/en/agent-sdk/streaming-vs-single-mode
+
+Для получения полностью аналогичной архитектуры сессии через резюмэ как и у провайдера Codex -
+
+`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Project_Docs/Stacks/Codex_SDK_Module.md`
