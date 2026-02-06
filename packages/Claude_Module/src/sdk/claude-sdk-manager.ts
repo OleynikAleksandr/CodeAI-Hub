@@ -55,6 +55,25 @@ type ClaudeSettingsSnapshot = {
   readonly defaultModel?: unknown;
 };
 
+type ClaudeQueryOptions = {
+  cwd: string;
+  permissionMode: "bypassPermissions";
+  allowDangerouslySkipPermissions: boolean;
+  additionalDirectories: string[];
+  includePartialMessages: boolean;
+  projectPath: string;
+  settingSources: string[];
+  environment: NodeJS.ProcessEnv;
+  pathToClaudeCodeExecutable: string;
+  model?: string;
+  maxThinkingTokens?: number;
+  resume?: string;
+  outputFormat?: {
+    type: "json_schema";
+    schema: Record<string, unknown>;
+  };
+};
+
 export class ClaudeSDKManager {
   private sdkModule: { readonly query: QueryFunction } | null = null;
   private queryFunction: QueryFunction | null = null;
@@ -228,36 +247,7 @@ export class ClaudeSDKManager {
       throw new Error("SDK query function not initialized");
     }
     const { outputSchema, prompt, session } = payload;
-    const projectPath = this.resolveProjectPath();
-    const settingsSnapshot = this.loadClaudeSettingsSnapshot();
-    const defaultModelOverride =
-      this.resolveDefaultModelFromSnapshot(settingsSnapshot);
-    const thinkingOptions = this.resolveThinkingOptions(settingsSnapshot);
-    const resolvedModel =
-      defaultModelOverride ?? this.deps.workspace.defaultModel;
-    const resumeSessionId = this.resolveResumeSessionId(session);
-    const options = {
-      cwd: session.workspacePath,
-      permissionMode: "bypassPermissions",
-      allowDangerouslySkipPermissions: true,
-      additionalDirectories: [session.workspacePath, homedir()],
-      includePartialMessages: true,
-      projectPath,
-      settingSources: ["user", "project", "local"],
-      environment: this.deps.authManager.getAuthEnvironment(),
-      pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
-      ...(resolvedModel ? { model: resolvedModel } : {}),
-      ...thinkingOptions,
-      ...(resumeSessionId ? { resume: resumeSessionId } : {}),
-      ...(outputSchema
-        ? {
-            outputFormat: {
-              type: "json_schema",
-              schema: outputSchema,
-            },
-          }
-        : {}),
-    };
+    const options = this.buildQueryOptions({ session, outputSchema });
     const queryInstance = this.queryFunction({
       prompt,
       options,
@@ -273,6 +263,47 @@ export class ClaudeSDKManager {
       return null;
     }
     return session.sessionId;
+  }
+
+  private buildQueryOptions(payload: {
+    readonly session: ActiveSession;
+    readonly outputSchema: Record<string, unknown> | null;
+  }): ClaudeQueryOptions {
+    const { outputSchema, session } = payload;
+    const settingsSnapshot = this.loadClaudeSettingsSnapshot();
+    const defaultModelOverride =
+      this.resolveDefaultModelFromSnapshot(settingsSnapshot);
+    const resolvedModel =
+      defaultModelOverride ?? this.deps.workspace.defaultModel;
+    const thinkingOptions = this.resolveThinkingOptions(settingsSnapshot);
+    const resumeSessionId = this.resolveResumeSessionId(session);
+    const options: ClaudeQueryOptions = {
+      cwd: session.workspacePath,
+      permissionMode: "bypassPermissions",
+      allowDangerouslySkipPermissions: true,
+      additionalDirectories: [session.workspacePath, homedir()],
+      includePartialMessages: true,
+      projectPath: this.resolveProjectPath(),
+      settingSources: ["user", "project", "local"],
+      environment: this.deps.authManager.getAuthEnvironment(),
+      pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
+    };
+    if (resolvedModel) {
+      options.model = resolvedModel;
+    }
+    if (typeof thinkingOptions.maxThinkingTokens === "number") {
+      options.maxThinkingTokens = thinkingOptions.maxThinkingTokens;
+    }
+    if (resumeSessionId) {
+      options.resume = resumeSessionId;
+    }
+    if (outputSchema) {
+      options.outputFormat = {
+        type: "json_schema",
+        schema: outputSchema,
+      };
+    }
+    return options;
   }
 
   private resolveProjectPath(): string {
