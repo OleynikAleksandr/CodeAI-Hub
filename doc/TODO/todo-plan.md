@@ -101,9 +101,9 @@
 
 ### Stream: ui working-strip reset (remove `Agent is working. Please wait.` banner)
 49. [DONE] Refactor(ui-session): удалить компонент `WorkingStrip` из Session rails и все его импорты/вызовы, не затрагивая `InputPanel` логику и placeholder copy (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/working-strip.tsx`; expected commit message: `refactor(ui): remove working-strip banner component`)
-50. [IN_PROGRESS] Git Commit: `refactor(ui): remove working-strip banner component` (hash: TBD)
-51. [TODO] Refactor(ui-session): удалить legacy helper-код для старого баннера (`buildAgentWorkingBanner`/`resolveVisibleBanner`) и связанный мёртвый код, сохранив `useQueuedSend` для input очереди (scope: `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `refactor(ui): drop legacy agent-working banner helpers`)
-52. [TODO] Git Commit: `refactor(ui): drop legacy agent-working banner helpers` (hash: TBD)
+50. [DONE] Git Commit: `refactor(ui): remove working-strip banner component` (hash: 3331cd93)
+51. [DONE] Refactor(ui-session): удалить legacy helper-код для старого баннера (`buildAgentWorkingBanner`/`resolveVisibleBanner`) и связанный мёртвый код, сохранив `useQueuedSend` для input очереди (scope: `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `refactor(ui): drop legacy agent-working banner helpers`)
+52. [IN_PROGRESS] Git Commit: `refactor(ui): drop legacy agent-working banner helpers` (hash: TBD)
 53. [TODO] Style(ui-session): удалить CSS-блоки `.session-working-strip*`, не затрагивая `.animated-dots*` (12-dot animation остаётся) (scope: `media/session-view.css`; expected commit message: `style(ui): remove working-strip styles keep animated dots`)
 54. [TODO] Git Commit: `style(ui): remove working-strip styles keep animated dots` (hash: TBD)
 55. [TODO] Verify(ui): таргетно проверить, что строка `Agent is working. Please wait.` отсутствует в source и generated UI bundle после сборки (`build:webview`, `build:project-manager`) при сохранении работы input-блокировки (scope: repo-wide search + ui build commands; expected commit message: `chore(ui): verify working-strip banner removal`)

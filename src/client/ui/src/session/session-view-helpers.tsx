@@ -4,9 +4,7 @@ import type {
   SessionRecord,
   SessionSnapshot,
 } from "../../../../types/session";
-import { AnimatedDots } from "./animated-dots";
 import { resolvePendingThinkingMessageId } from "./dialog-panel-pending-thinking";
-import type { mapProviderTheme } from "./helpers";
 import {
   buildVirtualConversationMessages,
   computeFallbackContinuationIndex,
@@ -15,40 +13,6 @@ import {
 } from "./virtual-conversation";
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
-type ProviderTheme = ReturnType<typeof mapProviderTheme>;
-
-export const resolveVisibleBanner = (options: {
-  readonly banner: JSX.Element | null;
-  readonly queuedMessage: string | null;
-}): JSX.Element | null => (options.queuedMessage ? null : options.banner);
-
-export const buildAgentWorkingBanner = (options: {
-  readonly queuedMessage: string | null;
-  readonly showAgentWorkingIndicator: boolean;
-  readonly isRolloverBlocked: boolean;
-  readonly providerTheme: ProviderTheme;
-  readonly isWaitingForAssistant: boolean;
-  readonly hasPendingThinkingIndicator: boolean;
-}): JSX.Element | null => {
-  if (options.hasPendingThinkingIndicator && !options.queuedMessage) {
-    return null;
-  }
-
-  if (
-    options.queuedMessage ||
-    (options.showAgentWorkingIndicator &&
-      options.isWaitingForAssistant &&
-      !options.isRolloverBlocked)
-  ) {
-    return (
-      <output aria-live="polite" className="session-panel">
-        <span>Agent is working</span>
-        <AnimatedDots theme={options.providerTheme} />
-      </output>
-    );
-  }
-  return null;
-};
 
 export const useQueuedSend = (options: {
   readonly activeSessionId: string | null;
