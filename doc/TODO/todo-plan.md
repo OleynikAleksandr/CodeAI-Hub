@@ -48,9 +48,9 @@
 
 ### Stream: tests and verification
 15. [DONE] Test(core): добавить регрессионный тест последовательности lock/unlock для flow-node rollover old->new session (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `test(core): cover continuity lock lifecycle across session rollover`)
-16. [IN_PROGRESS] Git Commit: `test(core): cover continuity lock lifecycle across session rollover` (hash: TBD)
-17. [TODO] Test(pm-ui): добавить регрессионный тест, что ввод остаётся заблокированным до unlock-события (scope: `src/client/project-manager/components/sessions/token-usage-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `test(ui): guard input lock during continuity session switch`)
-18. [TODO] Git Commit: `test(ui): guard input lock during continuity session switch` (hash: TBD)
+16. [DONE] Git Commit: `test(core): cover continuity lock lifecycle across session rollover` (hash: f278d0ad)
+17. [DONE] Test(pm-ui): добавить регрессионный тест, что ввод остаётся заблокированным до unlock-события (scope: `src/client/project-manager/components/sessions/token-usage-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `test(ui): guard input lock during continuity session switch`)
+18. [IN_PROGRESS] Git Commit: `test(ui): guard input lock during continuity session switch` (hash: TBD)
 19. [TODO] Verify(qa): прогнать обязательные Gates + таргетные команды (`build --workspace core`, `build:project-manager`, `build:webview`, `typecheck:webview`) и зафиксировать результаты в документах (scope: repo-wide commands + docs); expected commit message: `chore(qa): verify continuity lock contract gates`)
 20. [TODO] Git Commit: `chore(qa): verify continuity lock contract gates` (hash: TBD)
 
