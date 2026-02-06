@@ -123,6 +123,14 @@ type ContinuityLockPayload = {
   readonly timestamp: string;
 };
 
+type FlowNodeContinuityLockContext = {
+  readonly rolloverId: string;
+  readonly sourceSessionId: string;
+  readonly targetSessionId?: string;
+  readonly stageId: string;
+  readonly runSlug: string | null;
+};
+
 type WorkflowStageId =
   | "description"
   | "virtual_simulation"
@@ -301,6 +309,10 @@ export class SessionRequestHandler {
     string,
     TokenUsageSnapshot
   >();
+  private readonly flowNodeContinuityLockContexts = new Map<
+    string,
+    FlowNodeContinuityLockContext
+  >();
   private flowNodeContinuitySettingsCache: {
     readonly mtimeMs: number;
     readonly settings: unknown;
@@ -349,7 +361,7 @@ export class SessionRequestHandler {
     });
   }
 
-  emitContinuityLockEvent(options: {
+  private emitContinuityLockEvent(options: {
     readonly sessionId: string;
     readonly rolloverId: string;
     readonly sourceSessionId: string;
@@ -390,6 +402,16 @@ export class SessionRequestHandler {
         },
       },
     });
+  }
+
+  private registerFlowNodeContinuityLockContext(
+    context: FlowNodeContinuityLockContext
+  ): FlowNodeContinuityLockContext {
+    this.flowNodeContinuityLockContexts.set(context.sourceSessionId, context);
+    if (context.targetSessionId) {
+      this.flowNodeContinuityLockContexts.set(context.targetSessionId, context);
+    }
+    return context;
   }
 
   constructor(options: SessionRequestHandlerOptions) {
@@ -1120,6 +1142,21 @@ export class SessionRequestHandler {
     this.flowNodeRolloverInFlight.add(sessionId);
     this.flowNodeRolloverStarted.add(sessionId);
     const remainingPercent = computeRemainingPercent(usage);
+    const continuityLockContext = this.registerFlowNodeContinuityLockContext({
+      rolloverId: crypto.randomUUID(),
+      sourceSessionId: sessionId,
+      stageId: session.stage,
+      runSlug: session.runSlug ?? null,
+    });
+    this.emitContinuityLockEvent({
+      sessionId,
+      rolloverId: continuityLockContext.rolloverId,
+      sourceSessionId: continuityLockContext.sourceSessionId,
+      stageId: continuityLockContext.stageId,
+      runSlug: continuityLockContext.runSlug,
+      state: "locked",
+      reason: "threshold_reached",
+    });
     this.emitFlowNodeRolloverNotification(sessionId, {
       kind: "flow_node_rollover",
       phase: "start",
@@ -1136,6 +1173,7 @@ export class SessionRequestHandler {
         {
           remainingPercent,
           thresholdPercent: remainingPercentThreshold,
+          rolloverId: continuityLockContext.rolloverId,
         },
         { silent: false }
       );
@@ -1196,6 +1234,21 @@ export class SessionRequestHandler {
 
     this.flowNodeRolloverInFlight.add(sessionId);
     this.flowNodeRolloverStarted.add(sessionId);
+    const continuityLockContext = this.registerFlowNodeContinuityLockContext({
+      rolloverId: crypto.randomUUID(),
+      sourceSessionId: sessionId,
+      stageId: session.stage,
+      runSlug: session.runSlug ?? null,
+    });
+    this.emitContinuityLockEvent({
+      sessionId,
+      rolloverId: continuityLockContext.rolloverId,
+      sourceSessionId: continuityLockContext.sourceSessionId,
+      stageId: continuityLockContext.stageId,
+      runSlug: continuityLockContext.runSlug,
+      state: "locked",
+      reason: "threshold_reached",
+    });
     try {
       await this.rolloverFlowNodeSession(
         session,
@@ -1203,6 +1256,7 @@ export class SessionRequestHandler {
           remainingPercent,
           thresholdPercent:
             this.config.continuityPreemptRemainingPercentThreshold,
+          rolloverId: continuityLockContext.rolloverId,
         },
         { silent: true }
       );
@@ -1332,6 +1386,7 @@ export class SessionRequestHandler {
     rollover: {
       readonly remainingPercent: number;
       readonly thresholdPercent: number;
+      readonly rolloverId: string;
     },
     options?: { readonly silent: boolean }
   ): Promise<void> {
@@ -1369,6 +1424,22 @@ export class SessionRequestHandler {
       remainingPercent: rollover.remainingPercent,
       thresholdPercent: rollover.thresholdPercent,
     } as const;
+
+    const sourceLockContext = this.registerFlowNodeContinuityLockContext({
+      rolloverId: rollover.rolloverId,
+      sourceSessionId: session.id,
+      stageId,
+      runSlug,
+    });
+    this.emitContinuityLockEvent({
+      sessionId: session.id,
+      rolloverId: sourceLockContext.rolloverId,
+      sourceSessionId: sourceLockContext.sourceSessionId,
+      stageId: sourceLockContext.stageId,
+      runSlug: sourceLockContext.runSlug,
+      state: "locked",
+      reason: "report_in_progress",
+    });
 
     if (!options?.silent) {
       this.emitFlowNodeRolloverNotification(session.id, {
@@ -1443,6 +1514,14 @@ export class SessionRequestHandler {
       return;
     }
 
+    const targetLockContext = this.registerFlowNodeContinuityLockContext({
+      rolloverId: rollover.rolloverId,
+      sourceSessionId: session.id,
+      targetSessionId: nextSession.id,
+      stageId,
+      runSlug,
+    });
+
     if (!options?.silent) {
       this.emitFlowNodeRolloverNotification(session.id, {
         ...notificationBase,
@@ -1450,6 +1529,17 @@ export class SessionRequestHandler {
         nextSessionId: nextSession.id,
       });
     }
+
+    this.emitContinuityLockEvent({
+      sessionId: nextSession.id,
+      rolloverId: targetLockContext.rolloverId,
+      sourceSessionId: targetLockContext.sourceSessionId,
+      targetSessionId: targetLockContext.targetSessionId,
+      stageId: targetLockContext.stageId,
+      runSlug: targetLockContext.runSlug,
+      state: "locked",
+      reason: "resume_bootstrap",
+    });
 
     const resumePrompt = this.flowNodeContinuity.renderTemplate(
       "flow/continuity/resume.md",
