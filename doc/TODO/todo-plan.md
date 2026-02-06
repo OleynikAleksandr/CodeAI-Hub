@@ -57,8 +57,8 @@
 
 ### Stream: Claude message processor one-shot engine
 19. [DONE] Refactor(claude-messaging): внедрить FIFO queue + consume/process turn loop (аналог Codex orchestration) (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/session/types.ts`; expected commit message: `refactor(claude): add one-shot turn queue processor`)
-20. [TODO] Git Commit: `refactor(claude): add one-shot turn queue processor` (hash: TBD)
-21. [TODO] Fix(claude-messaging): обеспечить lifecycle state machine 1x `turn_started` и 1x completion/failure на user turn (scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `fix(claude): enforce deterministic turn lifecycle events`)
+20. [DONE] Git Commit: `refactor(claude): add one-shot turn queue processor` (hash: ce0074d2)
+21. [DONE] Fix(claude-messaging): обеспечить lifecycle state machine 1x `turn_started` и 1x completion/failure на user turn (scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `fix(claude): enforce deterministic turn lifecycle events`)
 22. [TODO] Git Commit: `fix(claude): enforce deterministic turn lifecycle events` (hash: TBD)
 23. [TODO] Refactor(claude-messaging): перенести текущую обработку assistant/thinking/structured-output без регрессий на one-shot loop (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`, `packages/Claude_Module/src/messaging/structured-output-utils.ts`; expected commit message: `refactor(claude): keep structured and thinking pipeline in one-shot mode`)
 24. [TODO] Git Commit: `refactor(claude): keep structured and thinking pipeline in one-shot mode` (hash: TBD)
