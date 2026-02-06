@@ -85,10 +85,10 @@
 
 ### Stream: verification + build
 39. [DONE] Verify: прогнать обязательные Gates + таргетные сборки затронутых пакетов (`Claude_Module`, `core`, `build:webview`, `typecheck:webview`) и зафиксировать результаты в session report (scope: repo-wide commands + docs; expected commit message: `chore(qa): verify claude one-shot migration gates`)
-40. [DONE] Git Commit: `chore(qa): verify claude one-shot migration gates` (hash: TBD)
-41. [TODO] Release: собрать QA релиз (`./scripts/build-all.sh` -> `./scripts/build-release.sh --use-current-version`) после зелёных гейтов (scope: repo-wide automated release files; expected commit message: `chore(release): build artifacts for claude one-shot qa`)
-42. [TODO] Git Commit: `chore(release): build artifacts for claude one-shot qa` (hash: TBD)
+40. [DONE] Git Commit: `chore(qa): verify claude one-shot migration gates` (hash: 4fdad35e)
+41. [DONE] Release: собрать QA релиз (`./scripts/build-all.sh` -> `./scripts/build-release.sh --use-current-version`) после зелёных гейтов (scope: repo-wide automated release files; expected commit message: `chore(release): build artifacts for claude one-shot qa`)
+42. [DONE] Git Commit: `chore(release): build artifacts for claude one-shot qa` (hash: a9621a6c)
 
 ### Stream: session wrap-up
-43. [TODO] Docs(session): подготовить новый session report с timeline, списком commit hash и статусом continuity совместимости (scope: `doc/Sessions/Session095.md`; expected commit message: `docs(session): add Session095 claude one-shot report`)
-44. [TODO] Git Commit: `docs(session): add Session095 claude one-shot report` (hash: TBD)
+43. [DONE] Docs(session): подготовить новый session report с timeline, списком commit hash и статусом continuity совместимости (scope: `doc/Sessions/Session095.md`; expected commit message: `docs(session): add Session095 claude one-shot report`)
+44. [DONE] Git Commit: `docs(session): add Session095 claude one-shot report` (hash: TBD)
