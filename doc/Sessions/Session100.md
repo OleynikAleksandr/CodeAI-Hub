@@ -68,3 +68,18 @@
   - проверена реакция на resize callback (обновление размеров canvas).
 - Результат таргетного прогона:
   - `npx tsx --test src/client/ui/src/session/input-panel.test.tsx src/client/ui/src/session/input-lock-matrix-rain.test.ts` -> PASS.
+
+---
+
+# 5. Release Docs Prep (Phase 100 task 47)
+
+**Date:** 2026-02-06 19:48 (CET)
+
+- `README.md` обновлён:
+  - Current Release выровнен на `v1.1.517`;
+  - добавлен блок Upcoming RC для Phase 100 (copy sync, ACK phrase, Matrix Rain, provider-aware wait-copy color, тестовое покрытие).
+- `CHANGELOG.md` (`[Unreleased]`) дополнен пунктами по итогам Phase 100:
+  - lock/copy синхронизация,
+  - ACK phrase standardization,
+  - provider-aware wait-copy colors,
+  - Matrix Rain + тесты адаптации/RAF lifecycle.
