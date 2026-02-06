@@ -4,10 +4,15 @@
 - Core: deterministic continuity unlock on bootstrap completion/failure plus timeout fallback (`resume_ready`, `resume_failed`, `resume_timeout`).
 - PM/UI: `token-usage-stream` now applies `continuity_lock` state and preserves blocked input semantics during session switch.
 - Session UI: input placeholder + queue behavior aligned with active continuity lock state.
+- Session UI: eliminated lock-copy desync (`disabled` and wait-copy now use unified lock branch).
+- Continuity templates/UI filter: internal ACK standardized to `Ready to continue working.` (legacy token remains suppressed).
+- Session UI: wait-copy color aligned with active provider tab palette (`alpha: 0.70`).
 
 ### Added
 - Core regression test covering continuity lock sequence across old->new session rollover.
 - PM/UI regression tests for continuity lock handling (`token-usage-stream`) and continuity placeholder behavior in `InputPanel`.
+- Session UI: subtle Matrix Rain lock background for `running`/`blocked` states (fixed matrix green `#00ff41`, dimmed alpha).
+- PM/UI tests: matrix column adaptation and RAF lifecycle cleanup coverage.
 
 ## [1.1.516] - 2026-02-06
 ### Fixed
