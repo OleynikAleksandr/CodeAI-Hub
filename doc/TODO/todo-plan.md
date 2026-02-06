@@ -42,9 +42,9 @@
 9. [DONE] Feat(pm-stream): научить `token-usage-stream` обрабатывать `continuity_lock` и не терять lock при фазах rollover/new session switch (scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `feat(pm): consume continuity lock stream events`)
 10. [DONE] Git Commit: `feat(pm): consume continuity lock stream events` (hash: 9541d337)
 11. [DONE] Fix(ui-input): блокировать `InputPanel` при активном continuity lock и показывать continuation placeholder на период bootstrap (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): keep input locked during continuity bootstrap`)
-12. [IN_PROGRESS] Git Commit: `fix(ui): keep input locked during continuity bootstrap` (hash: TBD)
-13. [TODO] Fix(ui-queue): маршрутизировать submit во время continuity lock в queued-send path (без потери пользовательского текста) (scope: `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): queue messages while continuity lock is active`)
-14. [TODO] Git Commit: `fix(ui): queue messages while continuity lock is active` (hash: TBD)
+12. [DONE] Git Commit: `fix(ui): keep input locked during continuity bootstrap` (hash: f4bd3144)
+13. [DONE] Fix(ui-queue): маршрутизировать submit во время continuity lock в queued-send path (без потери пользовательского текста) (scope: `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): queue messages while continuity lock is active`)
+14. [IN_PROGRESS] Git Commit: `fix(ui): queue messages while continuity lock is active` (hash: TBD)
 
 ### Stream: tests and verification
 15. [TODO] Test(core): добавить регрессионный тест последовательности lock/unlock для flow-node rollover old->new session (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `test(core): cover continuity lock lifecycle across session rollover`)
