@@ -8,13 +8,36 @@ export type VariantBArtifact = {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const readStructuredOutputPayload = (
+  source: Record<string, unknown>
+): Record<string, unknown> | null => {
+  const direct =
+    (source.structured_output as unknown) ??
+    (source.structuredOutput as unknown);
+  if (isRecord(direct)) {
+    return direct;
+  }
+  const payload = source.payload;
+  if (isRecord(payload)) {
+    const payloadDirect =
+      (payload.structured_output as unknown) ??
+      (payload.structuredOutput as unknown);
+    if (isRecord(payloadDirect)) {
+      return payloadDirect;
+    }
+  }
+  const result = source.result;
+  if (isRecord(result)) {
+    return readStructuredOutputPayload(result);
+  }
+  return null;
+};
+
 export const extractVariantBArtifacts = (
   message: ClaudeStreamMessage
 ): VariantBArtifact[] | null => {
-  const payload =
-    (message.structured_output as unknown) ??
-    (message.structuredOutput as unknown);
-  if (!(isRecord(payload) && Array.isArray(payload.artifacts))) {
+  const payload = readStructuredOutputPayload(message);
+  if (!(payload && Array.isArray(payload.artifacts))) {
     return null;
   }
 

@@ -13,6 +13,8 @@ export type IdeaCollectorStructuredOutput = {
   readonly artifact: Record<string, unknown> | null;
 };
 
+const CODE_FENCE_PATTERN = /```(?:json)?\s*([\s\S]*?)```/i;
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -47,18 +49,58 @@ const parseIdeaCollectorOutput = (
   };
 };
 
-export const parseIdeaCollectorOutputFromText = (
-  text: string
+const parseIdeaCollectorOutputFromJson = (
+  raw: string
 ): IdeaCollectorStructuredOutput | null => {
-  if (!text.trim().startsWith("{")) {
-    return null;
-  }
   try {
-    const parsed = JSON.parse(text) as unknown;
+    const parsed = JSON.parse(raw) as unknown;
     return isRecord(parsed) ? parseIdeaCollectorOutput(parsed) : null;
   } catch {
     return null;
   }
+};
+
+const readStructuredOutputPayload = (
+  source: Record<string, unknown>
+): Record<string, unknown> | null => {
+  const direct =
+    (source.structured_output as unknown) ??
+    (source.structuredOutput as unknown);
+  if (isRecord(direct)) {
+    return direct;
+  }
+  const payload = source.payload;
+  if (isRecord(payload)) {
+    const payloadDirect =
+      (payload.structured_output as unknown) ??
+      (payload.structuredOutput as unknown);
+    if (isRecord(payloadDirect)) {
+      return payloadDirect;
+    }
+  }
+  const result = source.result;
+  if (isRecord(result)) {
+    return readStructuredOutputPayload(result);
+  }
+  return null;
+};
+
+export const parseIdeaCollectorOutputFromText = (
+  text: string
+): IdeaCollectorStructuredOutput | null => {
+  const trimmed = text.trim();
+  const direct =
+    trimmed.startsWith("{") || trimmed.startsWith("[")
+      ? parseIdeaCollectorOutputFromJson(trimmed)
+      : null;
+  if (direct) {
+    return direct;
+  }
+  const fenced = CODE_FENCE_PATTERN.exec(trimmed)?.[1];
+  if (!fenced) {
+    return null;
+  }
+  return parseIdeaCollectorOutputFromJson(fenced.trim());
 };
 
 export const parseIdeaCollectorOutputFromResultMessage = (
@@ -67,8 +109,6 @@ export const parseIdeaCollectorOutputFromResultMessage = (
   if (!isRecord(message)) {
     return null;
   }
-  const payload =
-    (message.structured_output as unknown) ??
-    (message.structuredOutput as unknown);
-  return isRecord(payload) ? parseIdeaCollectorOutput(payload) : null;
+  const payload = readStructuredOutputPayload(message);
+  return payload ? parseIdeaCollectorOutput(payload) : null;
 };
