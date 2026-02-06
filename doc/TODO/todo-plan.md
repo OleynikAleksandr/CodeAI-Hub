@@ -115,4 +115,4 @@
 59. [DONE] Release: собрать новый релиз через `./scripts/build-all.sh` после зелёных гейтов по stream `45–56` (scope: repo-wide automated release files; expected commit message: `chore(release): build-all next version`)
 60. [DONE] Git Commit: `chore(release): build-all next version` (hash: 5f010753)
 61. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-<version>.vsix` и зафиксировать артефакты в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix for ui-strip and sdk-log updates`)
-62. [IN_PROGRESS] Git Commit: `chore(release): build vsix for ui-strip and sdk-log updates` (hash: TBD)
+62. [DONE] Git Commit: `chore(release): build vsix for ui-strip and sdk-log updates` (hash: b98265dc)
