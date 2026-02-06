@@ -91,4 +91,4 @@
 
 ### Stream: session wrap-up
 43. [DONE] Docs(session): подготовить новый session report с timeline, списком commit hash и статусом continuity совместимости (scope: `doc/Sessions/Session095.md`; expected commit message: `docs(session): add Session095 claude one-shot report`)
-44. [DONE] Git Commit: `docs(session): add Session095 claude one-shot report` (hash: TBD)
+44. [DONE] Git Commit: `docs(session): add Session095 claude one-shot report` (hash: 8e3a0a78)
