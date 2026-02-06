@@ -14,13 +14,14 @@ import type {
 } from "../types";
 
 export type QueryFunction = (payload: {
-  readonly prompt: AsyncGenerator<unknown>;
+  readonly prompt: string;
   readonly options: Record<string, unknown>;
 }) => AsyncIterableIterator<ClaudeStreamMessage> & {
   interrupt?: () => Promise<void>;
 };
 
 const SHORT_ID_LENGTH = 8;
+const TEMP_SESSION_PREFIX = "temp_";
 
 type ClaudeManagerDependencies = {
   readonly installer: SDKInstaller;
@@ -116,8 +117,21 @@ export class ClaudeSDKManager {
     content: string,
     turnOptions?: Record<string, unknown>
   ): Promise<void> {
-    await this.ensureSessionStarted(sessionId, turnOptions);
-    this.deps.processor.send(sessionId, content);
+    await this.initialize();
+    const session = this.deps.sessions.getSession(sessionId);
+    if (!session) {
+      throw new Error(`Session ${sessionId} not found`);
+    }
+    this.deps.sessions.enqueueTurn(session.sessionId, {
+      content,
+      turnOptions,
+      internal: false,
+      enqueuedAt: Date.now(),
+    });
+    this.consumeTurnQueue(session).catch((error) => {
+      this.deps.reporter?.error?.("Claude turn queue processing failed", error);
+      session.eventEmitter.emit("error", { type: "dispatch", error });
+    });
   }
 
   async closeSession(sessionId: string): Promise<void> {
@@ -128,58 +142,64 @@ export class ClaudeSDKManager {
     return this.deps.sessions.getSession(sessionId);
   }
 
-  private async ensureSessionStarted(
-    sessionId: string,
-    turnOptions?: Record<string, unknown>
-  ): Promise<void> {
-    const session = this.deps.sessions.getSession(sessionId);
-    if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
-    }
-    if (session.queryInstance) {
+  private async consumeTurnQueue(session: ActiveSession): Promise<void> {
+    const queueState = session.turnQueue;
+    if (
+      !(queueState && !queueState.processing && !queueState.shutdownRequested)
+    ) {
       return;
     }
-    await this.initialize();
-
-    const outputSchema = readOutputSchema(turnOptions);
-    if (outputSchema) {
-      session.structuredOutputSchema = outputSchema;
-    }
-
-    const filesBefore = this.deps.processor.getSDKFilesBefore();
-    const tempId = session.sessionId;
-    const queryInstance = this.invokeQuery(session);
-    session.queryInstance = queryInstance;
-
-    this.deps.processor
-      .processResponses({
-        sessionId: tempId,
-        iterator: queryInstance,
-        onRealSessionId: () => {
-          /* sessionId promotion is handled via realSessionId event */
-        },
-      })
-      .catch((error) => {
-        this.deps.reporter?.error?.("Claude response processing failed", error);
-      });
-
-    this.deps.processor
-      .getSessionIdFromSDKFiles(filesBefore)
-      .then((fileSessionId) => {
-        if (fileSessionId) {
-          session.eventEmitter.emit("realSessionId", fileSessionId);
+    queueState.processing = true;
+    try {
+      for (;;) {
+        if (queueState.shutdownRequested) {
+          return;
         }
-      })
-      .catch((error) => {
-        this.deps.reporter?.error?.("Failed to read SDK session files", error);
-      });
+        const turn = this.deps.sessions.takeNextTurn(session.sessionId);
+        if (!turn) {
+          return;
+        }
+        this.deps.sessions.beginTurn(session.sessionId, {
+          internal: turn.internal,
+        });
+        const outputSchema = readOutputSchema(turn.turnOptions);
+        session.structuredOutputSchema = outputSchema;
+        this.deps.processor.send(session.sessionId, turn.content);
+        session.messageController.pendingMessages.length = 0;
 
-    session.eventEmitter.once("realSessionId", (realId: string) => {
-      if (!realId || realId === tempId) {
-        return;
+        const queryInstance = this.invokeQuery({
+          session,
+          prompt: turn.content,
+          outputSchema,
+        });
+        session.queryInstance = queryInstance;
+
+        const turnSessionId = session.sessionId;
+        await this.deps.processor.processResponses({
+          sessionId: turnSessionId,
+          iterator: queryInstance,
+          onRealSessionId: (realId) => {
+            if (!realId || realId === session.sessionId) {
+              return;
+            }
+            this.promoteSessionId(session.sessionId, realId, session);
+          },
+        });
+        this.deps.sessions.clearInFlightTurn(session.sessionId);
       }
-      this.promoteSessionId(tempId, realId, session);
-    });
+    } finally {
+      queueState.processing = false;
+      session.queryInstance = undefined;
+      if (queueState.pending.length > 0 && !queueState.shutdownRequested) {
+        this.consumeTurnQueue(session).catch((error) => {
+          this.deps.reporter?.error?.(
+            "Claude turn queue follow-up processing failed",
+            error
+          );
+          session.eventEmitter.emit("error", { type: "dispatch", error });
+        });
+      }
+    }
   }
 
   private promoteSessionId(
@@ -197,14 +217,17 @@ export class ClaudeSDKManager {
     targetSession?.logger?.renameSession?.(tempId, realId);
   }
 
-  private invokeQuery(
-    session: ActiveSession
-  ): AsyncIterableIterator<ClaudeStreamMessage> & {
+  private invokeQuery(payload: {
+    readonly session: ActiveSession;
+    readonly prompt: string;
+    readonly outputSchema: Record<string, unknown> | null;
+  }): AsyncIterableIterator<ClaudeStreamMessage> & {
     interrupt?: () => Promise<void>;
   } {
-    if (!(this.queryFunction && session.messageGenerator)) {
+    if (!this.queryFunction) {
       throw new Error("SDK query function not initialized");
     }
+    const { outputSchema, prompt, session } = payload;
     const projectPath = this.resolveProjectPath();
     const settingsSnapshot = this.loadClaudeSettingsSnapshot();
     const defaultModelOverride =
@@ -212,6 +235,7 @@ export class ClaudeSDKManager {
     const thinkingOptions = this.resolveThinkingOptions(settingsSnapshot);
     const resolvedModel =
       defaultModelOverride ?? this.deps.workspace.defaultModel;
+    const resumeSessionId = this.resolveResumeSessionId(session);
     const options = {
       cwd: session.workspacePath,
       permissionMode: "bypassPermissions",
@@ -224,21 +248,31 @@ export class ClaudeSDKManager {
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
       ...(resolvedModel ? { model: resolvedModel } : {}),
       ...thinkingOptions,
-      ...(session.resumeSessionId ? { resume: session.resumeSessionId } : {}),
-      ...(session.structuredOutputSchema
+      ...(resumeSessionId ? { resume: resumeSessionId } : {}),
+      ...(outputSchema
         ? {
             outputFormat: {
               type: "json_schema",
-              schema: session.structuredOutputSchema,
+              schema: outputSchema,
             },
           }
         : {}),
     };
     const queryInstance = this.queryFunction({
-      prompt: session.messageGenerator as AsyncGenerator<unknown>,
+      prompt,
       options,
     });
     return queryInstance;
+  }
+
+  private resolveResumeSessionId(session: ActiveSession): string | null {
+    if (session.resumeSessionId) {
+      return session.resumeSessionId;
+    }
+    if (session.sessionId.startsWith(TEMP_SESSION_PREFIX)) {
+      return null;
+    }
+    return session.sessionId;
   }
 
   private resolveProjectPath(): string {

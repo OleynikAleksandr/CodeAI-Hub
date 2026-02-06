@@ -45,10 +45,10 @@
 9. [DONE] Refactor(claude-session): адаптировать session manager под queue-driven модель создания/резюма сессий (scope: `packages/Claude_Module/src/session/session-manager.ts`, `packages/Claude_Module/src/session/session-lifecycle.ts`; expected commit message: `refactor(claude): align session manager with one-shot queue`)
 10. [DONE] Git Commit: `refactor(claude): align session manager with one-shot queue` (hash: c342f951)
 11. [DONE] Refactor(claude-session): убрать зависимость закрытия от long-lived query generator и ввести корректный shutdown pending turns (scope: `packages/Claude_Module/src/session/session-lifecycle.ts`, `packages/Claude_Module/src/session/types.ts`; expected commit message: `refactor(claude): harden one-shot session shutdown`)
-12. [TODO] Git Commit: `refactor(claude): harden one-shot session shutdown` (hash: TBD)
+12. [DONE] Git Commit: `refactor(claude): harden one-shot session shutdown` (hash: 7f936f57)
 
 ### Stream: Claude SDK manager one-shot orchestration
-13. [TODO] Refactor(claude-sdk): удалить long-lived `ensureSessionStarted/queryInstance` bootstrap и маршрутизировать send в очередь процессора turn-ов (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/session/types.ts`; expected commit message: `refactor(claude): switch sdk manager to one-shot dispatch`)
+13. [DONE] Refactor(claude-sdk): удалить long-lived `ensureSessionStarted/queryInstance` bootstrap и маршрутизировать send в очередь процессора turn-ов (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/session/types.ts`; expected commit message: `refactor(claude): switch sdk manager to one-shot dispatch`)
 14. [TODO] Git Commit: `refactor(claude): switch sdk manager to one-shot dispatch` (hash: TBD)
 15. [TODO] Refactor(claude-sdk): выделить детерминированный билдер query options и сохранить все full-access флаги + output schema/thinking/model (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`; expected commit message: `refactor(claude): preserve full-access query options in one-shot mode`)
 16. [TODO] Git Commit: `refactor(claude): preserve full-access query options in one-shot mode` (hash: TBD)
