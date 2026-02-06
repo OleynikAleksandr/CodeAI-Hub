@@ -36,11 +36,21 @@ export type SessionStatusInfo = {
   readonly providerSummary: string;
   readonly models?: readonly ModelInfo[];
   readonly rollover?: FlowNodeRolloverInfo | null;
+  readonly continuityLock?: SessionContinuityLockInfo;
   readonly tokenUsage: {
     readonly used: number;
     readonly limit: number;
   };
   readonly connectionState: "idle" | "running" | "blocked";
+  readonly updatedAt: number;
+};
+
+export type SessionContinuityLockInfo = {
+  readonly active: boolean;
+  readonly rolloverId?: string;
+  readonly sourceSessionId?: string;
+  readonly targetSessionId?: string;
+  readonly reason?: string;
   readonly updatedAt: number;
 };
 
