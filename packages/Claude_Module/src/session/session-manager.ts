@@ -3,6 +3,8 @@ import { SDKSessionLifecycle } from "./session-lifecycle";
 import { SDKSessionRegistry } from "./session-registry";
 import type {
   ActiveSession,
+  ClaudeQueuedTurn,
+  ClaudeTurnQueueState,
   SessionCreationResult,
   SessionLogger,
 } from "./types";
@@ -33,6 +35,7 @@ export class SDKSessionManager {
       eventEmitter,
       messageController: controller,
       logger: logger ?? new SDKSessionLoggerFacade(),
+      turnQueue: this.lifecycle.createTurnQueueState(),
     };
     session.messageGenerator =
       this.lifecycle.createMessageGenerator(controller);
@@ -56,6 +59,7 @@ export class SDKSessionManager {
       messageController: controller,
       logger: logger ?? new SDKSessionLoggerFacade(),
       resumeSessionId: sessionId,
+      turnQueue: this.lifecycle.createTurnQueueState(),
     };
     session.messageGenerator =
       this.lifecycle.createMessageGenerator(controller);
@@ -70,6 +74,58 @@ export class SDKSessionManager {
 
   getSession(sessionId: string): ActiveSession | undefined {
     return this.registry.get(sessionId);
+  }
+
+  getTurnQueue(sessionId: string): ClaudeTurnQueueState | null {
+    return this.registry.get(sessionId)?.turnQueue ?? null;
+  }
+
+  enqueueTurn(sessionId: string, turn: ClaudeQueuedTurn): void {
+    const session = this.registry.get(sessionId);
+    if (!session?.turnQueue) {
+      return;
+    }
+    this.lifecycle.enqueueTurn(session.turnQueue, turn);
+  }
+
+  takeNextTurn(sessionId: string): ClaudeQueuedTurn | null {
+    const session = this.registry.get(sessionId);
+    if (!session?.turnQueue) {
+      return null;
+    }
+    return this.lifecycle.takeNextTurn(session.turnQueue);
+  }
+
+  beginTurn(sessionId: string, options: { readonly internal: boolean }): void {
+    const session = this.registry.get(sessionId);
+    if (!session?.turnQueue) {
+      return;
+    }
+    this.lifecycle.beginTurn(session.turnQueue, options);
+  }
+
+  markTurnStarted(sessionId: string): void {
+    const session = this.registry.get(sessionId);
+    if (!session?.turnQueue) {
+      return;
+    }
+    this.lifecycle.markTurnStarted(session.turnQueue);
+  }
+
+  markTurnEnded(sessionId: string): void {
+    const session = this.registry.get(sessionId);
+    if (!session?.turnQueue) {
+      return;
+    }
+    this.lifecycle.markTurnEnded(session.turnQueue);
+  }
+
+  clearInFlightTurn(sessionId: string): void {
+    const session = this.registry.get(sessionId);
+    if (!session?.turnQueue) {
+      return;
+    }
+    this.lifecycle.clearInFlightTurn(session.turnQueue);
   }
 
   async closeSession(sessionId: string): Promise<void> {
