@@ -73,10 +73,10 @@
 
 ### Stream: provider adapter compatibility
 31. [DONE] Refactor(claude-provider): проверить и закрепить routing listener-ов/alias-ов под one-shot promotion path (`sessionIdChanged`/`realSessionId`) (scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`; expected commit message: `refactor(claude): stabilize provider listener routing in one-shot mode`)
-32. [TODO] Git Commit: `refactor(claude): stabilize provider listener routing in one-shot mode` (hash: TBD)
+32. [DONE] Git Commit: `refactor(claude): stabilize provider listener routing in one-shot mode` (hash: 0a6a6911)
 
 ### Stream: tests (targeted regression)
-33. [TODO] Test(claude): добавить unit tests на очередь turn-ов и lifecycle (`started/completed/failed`) (scope: `packages/Claude_Module/src/messaging/message-processor.test.ts`, `packages/Claude_Module/package.json`; expected commit message: `test(claude): cover one-shot queue lifecycle`)
+33. [DONE] Test(claude): добавить unit tests на очередь turn-ов и lifecycle (`started/completed/failed`) (scope: `packages/Claude_Module/src/messaging/message-processor.test.ts`, `packages/Claude_Module/package.json`; expected commit message: `test(claude): cover one-shot queue lifecycle`)
 34. [TODO] Git Commit: `test(claude): cover one-shot queue lifecycle` (hash: TBD)
 35. [TODO] Test(claude): добавить unit tests для logger resume/append semantics (scope: `packages/Claude_Module/src/logging/sdk-session-logger.test.ts`, `packages/Claude_Module/package.json`; expected commit message: `test(claude): cover logger append semantics`)
 36. [TODO] Git Commit: `test(claude): cover logger append semantics` (hash: TBD)
