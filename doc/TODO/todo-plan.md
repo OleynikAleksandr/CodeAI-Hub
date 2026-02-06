@@ -29,8 +29,8 @@
 - Гарантировать снятие lock в success/failure/timeout сценариях (без deadlock в UI).
 
 ### Stream: core continuity lock contract
-1. [TODO] Feat(core-contract): добавить контракт stream-event `data.kind=continuity_lock` и helper-эмиттер в `SessionRequestHandler` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): add continuity_lock stream contract`)
-2. [TODO] Git Commit: `feat(core): add continuity_lock stream contract` (hash: TBD)
+1. [DONE] Feat(core-contract): добавить контракт stream-event `data.kind=continuity_lock` и helper-эмиттер в `SessionRequestHandler` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): add continuity_lock stream contract`)
+2. [IN_PROGRESS] Git Commit: `feat(core): add continuity_lock stream contract` (hash: TBD)
 3. [TODO] Feat(core-rollover): интегрировать lock-lifecycle в flow-node rollover (`locked` на trigger/report/bootstrap, хранение rollover-id/target-session context) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): wire continuity lock lifecycle into flow-node rollover`)
 4. [TODO] Git Commit: `feat(core): wire continuity lock lifecycle into flow-node rollover` (hash: TBD)
 5. [TODO] Feat(core-rollover): реализовать deterministic unlock (`resume_ready` на first bootstrap completion, `resume_failed`/`resume_timeout` fallback) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): unlock continuity lock on bootstrap completion and fallback`)
@@ -59,3 +59,11 @@
 22. [TODO] Git Commit: `docs(system): document continuity lock contract` (hash: TBD)
 23. [TODO] Docs(session): подготовить следующий session report с таймлайном событий lock/unlock и QA выводом (scope: `doc/Sessions/Session099.md`; expected commit message: `docs(session): add Session099 continuity lock implementation report`)
 24. [TODO] Git Commit: `docs(session): add Session099 continuity lock implementation report` (hash: TBD)
+
+### Stream: phase-complete release build
+25. [TODO] Docs(release): перед релизной сборкой актуализировать `README.md` и `CHANGELOG.md` под итог Phase 99 (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): prepare notes for continuity lock release`)
+26. [TODO] Git Commit: `docs(release): prepare notes for continuity lock release` (hash: TBD)
+27. [TODO] Release: выполнить `./scripts/build-all.sh` после закрытия всех Stream Phase 99 и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after phase99 continuity lock`)
+28. [TODO] Git Commit: `chore(release): build-all after phase99 continuity lock` (hash: TBD)
+29. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after phase99 continuity lock`)
+30. [TODO] Git Commit: `chore(release): build vsix after phase99 continuity lock` (hash: TBD)
