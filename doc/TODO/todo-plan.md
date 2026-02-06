@@ -97,7 +97,7 @@
 45. [DONE] Refactor(claude-logging): отфильтровать из debug JSONL события `sdk:stream_event` с `event.type=content_block_delta`, сохранив запись `sdk:assistant`, `sdk:result`, `sdk:error` и прочих важных lifecycle-маркеров (scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `chore(claude): filter content_block_delta noise from sdk log`)
 46. [DONE] Git Commit: `chore(claude): filter content_block_delta noise from sdk log` (hash: 346cc065)
 47. [DONE] Test(claude): добавить regression test на фильтрацию `content_block_delta` в logger с проверкой, что `result` продолжает логироваться (scope: `packages/Claude_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(claude): cover sdk log filtering for stream deltas`)
-48. [IN_PROGRESS] Git Commit: `test(claude): cover sdk log filtering for stream deltas` (hash: TBD)
+48. [DONE] Git Commit: `test(claude): cover sdk log filtering for stream deltas` (hash: 08bcaf65)
 
 ### Stream: ui working-strip reset (remove `Agent is working. Please wait.` banner)
 49. [DONE] Refactor(ui-session): удалить компонент `WorkingStrip` из Session rails и все его импорты/вызовы, не затрагивая `InputPanel` логику и placeholder copy (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/working-strip.tsx`; expected commit message: `refactor(ui): remove working-strip banner component`)
@@ -110,8 +110,8 @@
 56. [DONE] Git Commit: `chore(ui): verify working-strip banner removal` (hash: 156409c0)
 
 ### Stream: release build for ui-strip reset + sdk-log filtering
-57. [TODO] Docs(release): обновить `README.md` и `CHANGELOG.md` под новый релиз после закрытия stream `45–56` (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update README and CHANGELOG for next release`)
-58. [TODO] Git Commit: `docs(release): update README and CHANGELOG for next release` (hash: TBD)
+57. [DONE] Docs(release): обновить `README.md` и `CHANGELOG.md` под новый релиз после закрытия stream `45–56` (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update README and CHANGELOG for next release`)
+58. [IN_PROGRESS] Git Commit: `docs(release): update README and CHANGELOG for next release` (hash: TBD)
 59. [TODO] Release: собрать новый релиз через `./scripts/build-all.sh` после зелёных гейтов по stream `45–56` (scope: repo-wide automated release files; expected commit message: `chore(release): build-all next version`)
 60. [TODO] Git Commit: `chore(release): build-all next version` (hash: TBD)
 61. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-<version>.vsix` и зафиксировать артефакты в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix for ui-strip and sdk-log updates`)
