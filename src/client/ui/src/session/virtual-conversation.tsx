@@ -9,22 +9,24 @@ import type {
 import InfoPanel from "./info-panel";
 import SessionTabs from "./session-tabs";
 
-const CONTINUITY_INTERNAL_ACK = "__CODEAIHUB_INTERNAL_CONTINUITY_ACK__";
+const CONTINUITY_INTERNAL_ACK = "Ready to continue working.";
+const LEGACY_CONTINUITY_INTERNAL_ACK = "__CODEAIHUB_INTERNAL_CONTINUITY_ACK__";
+const CONTINUITY_INTERNAL_MESSAGES = new Set<string>([
+  CONTINUITY_INTERNAL_ACK,
+  LEGACY_CONTINUITY_INTERNAL_ACK,
+]);
+
+const isContinuityInternalMessage = (message: SessionMessage): boolean =>
+  message.role === "assistant" &&
+  CONTINUITY_INTERNAL_MESSAGES.has(message.content.trim());
 
 export const filterContinuityInternalMessages = (
   messages: readonly SessionMessage[]
 ): readonly SessionMessage[] => {
   for (const message of messages) {
-    if (
-      message.role === "assistant" &&
-      message.content.trim() === CONTINUITY_INTERNAL_ACK
-    ) {
+    if (isContinuityInternalMessage(message)) {
       return messages.filter(
-        (candidate) =>
-          !(
-            candidate.role === "assistant" &&
-            candidate.content.trim() === CONTINUITY_INTERNAL_ACK
-          )
+        (candidate) => !isContinuityInternalMessage(candidate)
       );
     }
   }

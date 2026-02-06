@@ -88,7 +88,7 @@ Hard rules (MUST):
 - If you did not receive that Create Report instruction, you MUST NOT create/update any files under \`.codeai-hub/**/flow/nodes/**/continuity/reports/\`.
 - Do NOT invent timestamps/paths for reports.
 - Do NOT send any user-facing chat messages.
-- When ready, reply with EXACTLY ONE line: \`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__\`.
+- When ready, reply with EXACTLY ONE line: \`Ready to continue working.\`.
 `,
   ],
 ]);
