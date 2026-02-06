@@ -1,17 +1,17 @@
 import crypto from "node:crypto";
 import { ClaudeContextUsageReader } from "../sdk/claude-context-usage-reader";
 import type { SDKSessionManager } from "../session/session-manager";
-import type { ActiveSession } from "../session/types";
+import type {
+  ActiveSession,
+  ClaudeQueuedTurn,
+  ClaudeTurnProcessorHooks,
+} from "../session/types";
 import type { ClaudeStreamMessage, ModuleReporter } from "../types";
 import type { IdeaCollectorStructuredOutput } from "./idea-collector-structured-output";
 import {
   parseIdeaCollectorOutputFromResultMessage,
   parseIdeaCollectorOutputFromText,
 } from "./idea-collector-structured-output";
-import {
-  getSDKFilesBefore,
-  getSessionIdFromSDKFiles,
-} from "./session-file-discovery";
 import { extractVariantBArtifacts } from "./structured-output-utils";
 
 const QUESTION_SLOT_PATTERN = /^question\d*$/i;
@@ -126,13 +126,119 @@ export class SDKMessageProcessor {
     this.contextUsageReader = new ClaudeContextUsageReader(config);
   }
 
-  send(sessionId: string, content: string): void {
+  enqueueTurn(
+    sessionId: string,
+    turn: ClaudeQueuedTurn,
+    hooks: ClaudeTurnProcessorHooks
+  ): void {
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      throw new Error(`Session ${sessionId} not found`);
+    }
+    this.sessionManager.enqueueTurn(session.sessionId, turn);
+    this.startQueueLoop(session, hooks);
+  }
+
+  private startQueueLoop(
+    session: ActiveSession,
+    hooks: ClaudeTurnProcessorHooks
+  ): void {
+    if (session.processingLoop) {
+      return;
+    }
+    const loop = this.consumeTurnQueue(session, hooks)
+      .catch((error) => {
+        this.options.reporter?.error?.("Claude queue processing failed", error);
+        session.eventEmitter.emit("error", { type: "processor", error });
+      })
+      .finally(() => {
+        session.processingLoop = undefined;
+        if (
+          session.turnQueue &&
+          session.turnQueue.pending.length > 0 &&
+          !session.turnQueue.shutdownRequested
+        ) {
+          this.startQueueLoop(session, hooks);
+        }
+      });
+    session.processingLoop = loop;
+  }
+
+  private async consumeTurnQueue(
+    session: ActiveSession,
+    hooks: ClaudeTurnProcessorHooks
+  ): Promise<void> {
+    const queueState = session.turnQueue;
+    if (
+      !(queueState && !queueState.processing && !queueState.shutdownRequested)
+    ) {
+      return;
+    }
+    queueState.processing = true;
+    try {
+      for (;;) {
+        if (queueState.shutdownRequested) {
+          return;
+        }
+        const turn = this.sessionManager.takeNextTurn(session.sessionId);
+        if (!turn) {
+          return;
+        }
+        this.sessionManager.beginTurn(session.sessionId, {
+          internal: turn.internal,
+        });
+        try {
+          this.send(session.sessionId, turn.content, {
+            internal: turn.internal,
+          });
+          session.messageController.pendingMessages.length = 0;
+          const iterator = hooks.createIterator({ session, turn });
+          session.queryInstance = iterator;
+          const processingSessionId = session.sessionId;
+          await this.processResponses({
+            sessionId: processingSessionId,
+            iterator,
+            onRealSessionId: (realSessionId) => {
+              const previousSessionId = session.sessionId;
+              if (!realSessionId || realSessionId === previousSessionId) {
+                return;
+              }
+              hooks.onRealSessionId({
+                session,
+                previousSessionId,
+                realSessionId,
+              });
+            },
+          });
+        } catch (error) {
+          this.options.reporter?.error?.(
+            "Claude turn processing failed",
+            error
+          );
+          session.eventEmitter.emit("error", { type: "dispatch", error });
+        } finally {
+          this.sessionManager.clearInFlightTurn(session.sessionId);
+          session.queryInstance = undefined;
+        }
+      }
+    } finally {
+      queueState.processing = false;
+    }
+  }
+
+  send(
+    sessionId: string,
+    content: string,
+    options?: { readonly internal?: boolean }
+  ): void {
     const targetSession = this.sessionManager.getSession(sessionId);
     if (!targetSession) {
       throw new Error(`Session ${sessionId} not found`);
     }
-
-    targetSession.logger?.logUserInput(content);
+    const internal = options?.internal ?? false;
+    if (!internal) {
+      targetSession.logger?.logUserInput(content);
+    }
 
     targetSession.messageController.pendingMessages.push({
       type: "user",
@@ -147,15 +253,16 @@ export class SDKMessageProcessor {
       targetSession.messageController.resolveNext = null;
       resolver(targetSession.messageController.pendingMessages.shift() ?? null);
     }
-
-    this.markTurnStarted(targetSession, sessionId);
-    targetSession.eventEmitter.emit("message", {
-      type: "user_input",
-      content,
-      uuid: crypto.randomUUID(),
-      claudeSessionId: sessionId,
-      timestamp: new Date().toISOString(),
-    });
+    if (!internal) {
+      this.markTurnStarted(targetSession, sessionId);
+      targetSession.eventEmitter.emit("message", {
+        type: "user_input",
+        content,
+        uuid: crypto.randomUUID(),
+        claudeSessionId: sessionId,
+        timestamp: new Date().toISOString(),
+      });
+    }
   }
 
   async processResponses(options: ProcessResponseOptions): Promise<void> {
@@ -524,17 +631,5 @@ export class SDKMessageProcessor {
       return null;
     }
     return parts.join("\n\n");
-  }
-
-  getSDKFilesBefore(): string[] {
-    return getSDKFilesBefore(this.options.projectPath, this.options.reporter);
-  }
-
-  getSessionIdFromSDKFiles(previousFiles: string[]): Promise<string | null> {
-    return getSessionIdFromSDKFiles(
-      this.options.projectPath,
-      previousFiles,
-      this.options.reporter
-    );
   }
 }
