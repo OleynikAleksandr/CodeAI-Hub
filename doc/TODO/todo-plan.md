@@ -75,7 +75,7 @@
 
 ### Stream: phase-complete release build
 25. [DONE] Docs(release): перед релизной сборкой актуализировать `README.md` и `CHANGELOG.md` под итог Phase 99 (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): prepare notes for continuity lock release`)
-26. [IN_PROGRESS] Git Commit: `docs(release): prepare notes for continuity lock release` (hash: TBD)
+26. [DONE] Git Commit: `docs(release): prepare notes for continuity lock release` (hash: f23c95a8)
 27. [TODO] Release: выполнить `./scripts/build-all.sh` после закрытия всех Stream Phase 99 и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after phase99 continuity lock`)
 28. [TODO] Git Commit: `chore(release): build-all after phase99 continuity lock` (hash: TBD)
 29. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after phase99 continuity lock`)
