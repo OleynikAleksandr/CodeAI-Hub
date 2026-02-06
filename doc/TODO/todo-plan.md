@@ -105,9 +105,9 @@
 51. [DONE] Refactor(ui-session): удалить legacy helper-код для старого баннера (`buildAgentWorkingBanner`/`resolveVisibleBanner`) и связанный мёртвый код, сохранив `useQueuedSend` для input очереди (scope: `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `refactor(ui): drop legacy agent-working banner helpers`)
 52. [DONE] Git Commit: `refactor(ui): drop legacy agent-working banner helpers` (hash: 7f0fc61b)
 53. [DONE] Style(ui-session): удалить CSS-блоки `.session-working-strip*`, не затрагивая `.animated-dots*` (12-dot animation остаётся) (scope: `media/session-view.css`; expected commit message: `style(ui): remove working-strip styles keep animated dots`)
-54. [IN_PROGRESS] Git Commit: `style(ui): remove working-strip styles keep animated dots` (hash: TBD)
-55. [TODO] Verify(ui): таргетно проверить, что строка `Agent is working. Please wait.` отсутствует в source и generated UI bundle после сборки (`build:webview`, `build:project-manager`) при сохранении работы input-блокировки (scope: repo-wide search + ui build commands; expected commit message: `chore(ui): verify working-strip banner removal`)
-56. [TODO] Git Commit: `chore(ui): verify working-strip banner removal` (hash: TBD)
+54. [DONE] Git Commit: `style(ui): remove working-strip styles keep animated dots` (hash: 1250344b)
+55. [DONE] Verify(ui): таргетно проверить, что строка `Agent is working. Please wait.` отсутствует в source и generated UI bundle после сборки (`build:webview`, `build:project-manager`) при сохранении работы input-блокировки (scope: repo-wide search + ui build commands; expected commit message: `chore(ui): verify working-strip banner removal`)
+56. [IN_PROGRESS] Git Commit: `chore(ui): verify working-strip banner removal` (hash: TBD)
 
 ### Stream: release build for ui-strip reset + sdk-log filtering
 57. [TODO] Docs(release): обновить `README.md` и `CHANGELOG.md` под новый релиз после закрытия stream `45–56` (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update README and CHANGELOG for next release`)
