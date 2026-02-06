@@ -29,6 +29,7 @@ export class SDKSessionLifecycle {
       internalTurn: false,
       lifecycle: { started: false, ended: false },
       processing: false,
+      shutdownRequested: false,
     };
   }
 
@@ -67,6 +68,18 @@ export class SDKSessionLifecycle {
     queueState.lifecycle.ended = false;
   }
 
+  requestShutdown(queueState: ClaudeTurnQueueState): void {
+    queueState.shutdownRequested = true;
+    queueState.pending.length = 0;
+    if (!queueState.inFlight) {
+      this.clearInFlightTurn(queueState);
+    }
+  }
+
+  isShutdownRequested(queueState: ClaudeTurnQueueState): boolean {
+    return queueState.shutdownRequested;
+  }
+
   createMessageGenerator(
     controller: MessageController
   ): AsyncGenerator<unknown> {
@@ -89,19 +102,24 @@ export class SDKSessionLifecycle {
     return generator();
   }
 
-  async closeSession(session: ActiveSession): Promise<void> {
+  closeSession(session: ActiveSession): void {
+    if (session.turnQueue) {
+      this.requestShutdown(session.turnQueue);
+      session.turnQueue.processing = false;
+    }
     if (session.messageController.resolveNext) {
       session.messageController.resolveNext(null);
       session.messageController.resolveNext = null;
     } else {
+      session.messageController.pendingMessages.length = 0;
       session.messageController.pendingMessages.push(null);
     }
-    if (session.turnQueue) {
-      session.turnQueue.pending.length = 0;
-      this.clearInFlightTurn(session.turnQueue);
-      session.turnQueue.processing = false;
+    const interruptPromise = session.queryInstance?.interrupt?.();
+    if (interruptPromise) {
+      interruptPromise.catch(() => null);
     }
+    session.queryInstance = undefined;
+    session.messageGenerator = undefined;
     session.eventEmitter.removeAllListeners();
-    await session.queryInstance?.interrupt?.();
   }
 }
