@@ -194,6 +194,10 @@ export const createInitialSnapshot = (
       used: cachedTokenUsage?.used ?? 0,
       limit: cachedTokenUsage?.limit ?? 200_000,
     },
+    continuityLock: {
+      active: false,
+      updatedAt: now,
+    },
     connectionState: "idle",
     updatedAt: now,
   };
