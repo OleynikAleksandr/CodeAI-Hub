@@ -81,11 +81,11 @@
 35. [DONE] Test(claude): добавить unit tests для logger resume/append semantics (scope: `packages/Claude_Module/src/logging/sdk-session-logger.test.ts`, `packages/Claude_Module/package.json`; expected commit message: `test(claude): cover logger append semantics`)
 36. [DONE] Git Commit: `test(claude): cover logger append semantics` (hash: 1b116739)
 37. [DONE] Test(core-bridge): добавить regression tests на совместимость Claude one-shot с continuity/turn-state контрактом (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/package.json`; expected commit message: `test(core): guard continuity contract for claude one-shot`)
-38. [DONE] Git Commit: `test(core): guard continuity contract for claude one-shot` (hash: TBD)
+38. [DONE] Git Commit: `test(core): guard continuity contract for claude one-shot` (hash: 346f0a02)
 
 ### Stream: verification + build
-39. [TODO] Verify: прогнать обязательные Gates + таргетные сборки затронутых пакетов (`Claude_Module`, `core`, `build:webview`, `typecheck:webview`) и зафиксировать результаты в session report (scope: repo-wide commands + docs; expected commit message: `chore(qa): verify claude one-shot migration gates`)
-40. [TODO] Git Commit: `chore(qa): verify claude one-shot migration gates` (hash: TBD)
+39. [DONE] Verify: прогнать обязательные Gates + таргетные сборки затронутых пакетов (`Claude_Module`, `core`, `build:webview`, `typecheck:webview`) и зафиксировать результаты в session report (scope: repo-wide commands + docs; expected commit message: `chore(qa): verify claude one-shot migration gates`)
+40. [DONE] Git Commit: `chore(qa): verify claude one-shot migration gates` (hash: TBD)
 41. [TODO] Release: собрать QA релиз (`./scripts/build-all.sh` -> `./scripts/build-release.sh --use-current-version`) после зелёных гейтов (scope: repo-wide automated release files; expected commit message: `chore(release): build artifacts for claude one-shot qa`)
 42. [TODO] Git Commit: `chore(release): build artifacts for claude one-shot qa` (hash: TBD)
 
