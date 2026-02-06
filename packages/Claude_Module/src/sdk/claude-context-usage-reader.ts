@@ -20,6 +20,7 @@ const isWindows = process.platform === "win32";
 const CONTEXT_READ_TIMEOUT_MS = 120_000;
 const PROCESS_KILL_GRACE_MS = 2000;
 const MAX_TAIL_CHARS = 4000;
+const TEMP_SESSION_PREFIX = "temp_";
 
 const resolveClaudeRunner = (payload: {
   readonly executablePath: string;
@@ -279,6 +280,9 @@ export class ClaudeContextUsageReader {
     readonly sessionId: string;
     readonly cwd: string;
   }): Promise<ContextUsageSnapshot | null> {
+    if (payload.sessionId.startsWith(TEMP_SESSION_PREFIX)) {
+      return null;
+    }
     const resolvedCwd = await resolveCwdForClaudeSession({
       sessionId: payload.sessionId,
       fallbackCwd: payload.cwd,
