@@ -61,8 +61,8 @@
 21. [DONE] Fix(claude-messaging): обеспечить lifecycle state machine 1x `turn_started` и 1x completion/failure на user turn (scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `fix(claude): enforce deterministic turn lifecycle events`)
 22. [DONE] Git Commit: `fix(claude): enforce deterministic turn lifecycle events` (hash: 81e73f09)
 23. [DONE] Refactor(claude-messaging): перенести текущую обработку assistant/thinking/structured-output без регрессий на one-shot loop (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`, `packages/Claude_Module/src/messaging/structured-output-utils.ts`; expected commit message: `refactor(claude): keep structured and thinking pipeline in one-shot mode`)
-24. [TODO] Git Commit: `refactor(claude): keep structured and thinking pipeline in one-shot mode` (hash: TBD)
-25. [TODO] Fix(claude-messaging): сохранить token usage refresh после `result` с текущим throttling и event shape `token_usage` (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude): preserve token usage stream in one-shot mode`)
+24. [DONE] Git Commit: `refactor(claude): keep structured and thinking pipeline in one-shot mode` (hash: 5a61d582)
+25. [DONE] Fix(claude-messaging): сохранить token usage refresh после `result` с текущим throttling и event shape `token_usage` (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude): preserve token usage stream in one-shot mode`)
 26. [TODO] Git Commit: `fix(claude): preserve token usage stream in one-shot mode` (hash: TBD)
 
 ### Stream: logging parity (no truncation on resume)

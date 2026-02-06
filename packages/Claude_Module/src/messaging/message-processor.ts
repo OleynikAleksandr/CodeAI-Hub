@@ -80,6 +80,7 @@ type ContextUsageReaderConfig = {
 };
 
 const MIN_REFRESH_INTERVAL_MS = 1500;
+const TEMP_SESSION_PREFIX = "temp_";
 
 const readStructuredOutput = (
   source: Record<string, unknown>
@@ -424,7 +425,10 @@ export class SDKMessageProcessor {
       return;
     }
 
-    const resolvedId = claudeSessionId ?? session.sessionId;
+    const resolvedId = this.resolveTokenUsageSessionId(
+      session,
+      claudeSessionId
+    );
     if (!resolvedId) {
       return;
     }
@@ -447,11 +451,11 @@ export class SDKMessageProcessor {
           return;
         }
         const { used, limit } = snapshot;
-        const previous = this.tokenUsageCache.get(session.sessionId);
+        const previous = this.tokenUsageCache.get(resolvedId);
         if (previous && previous.used === used && previous.limit === limit) {
           return;
         }
-        this.tokenUsageCache.set(session.sessionId, { used, limit });
+        this.tokenUsageCache.set(resolvedId, { used, limit });
         session.eventEmitter.emit("message", {
           type: "stream_event",
           provider: "claude",
@@ -474,6 +478,17 @@ export class SDKMessageProcessor {
       });
 
     this.contextUsageInFlight.set(resolvedId, refreshPromise);
+  }
+
+  private resolveTokenUsageSessionId(
+    session: ActiveSession,
+    claudeSessionId: string | null | undefined
+  ): string | null {
+    const candidate = claudeSessionId ?? session.sessionId;
+    if (!candidate || candidate.startsWith(TEMP_SESSION_PREFIX)) {
+      return null;
+    }
+    return candidate;
   }
 
   private handleAssistantMessage(
