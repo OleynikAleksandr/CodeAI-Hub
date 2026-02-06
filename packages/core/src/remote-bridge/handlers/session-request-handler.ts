@@ -129,6 +129,7 @@ type FlowNodeContinuityLockContext = {
   readonly targetSessionId?: string;
   readonly stageId: string;
   readonly runSlug: string | null;
+  readonly awaitingBootstrapTurn: boolean;
 };
 
 type WorkflowStageId =
@@ -157,6 +158,7 @@ const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 const DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
 const MIN_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
+const FLOW_NODE_CONTINUITY_RESUME_TIMEOUT_MS = 90_000;
 
 const clampNumber = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
@@ -313,6 +315,10 @@ export class SessionRequestHandler {
     string,
     FlowNodeContinuityLockContext
   >();
+  private readonly flowNodeContinuityLockTimeouts = new Map<
+    string,
+    NodeJS.Timeout
+  >();
   private flowNodeContinuitySettingsCache: {
     readonly mtimeMs: number;
     readonly settings: unknown;
@@ -407,11 +413,117 @@ export class SessionRequestHandler {
   private registerFlowNodeContinuityLockContext(
     context: FlowNodeContinuityLockContext
   ): FlowNodeContinuityLockContext {
+    const previous = this.flowNodeContinuityLockContexts.get(
+      context.sourceSessionId
+    );
+    if (
+      previous?.targetSessionId &&
+      previous.targetSessionId !== context.targetSessionId
+    ) {
+      this.flowNodeContinuityLockContexts.delete(previous.targetSessionId);
+    }
     this.flowNodeContinuityLockContexts.set(context.sourceSessionId, context);
     if (context.targetSessionId) {
       this.flowNodeContinuityLockContexts.set(context.targetSessionId, context);
     }
     return context;
+  }
+
+  private clearFlowNodeContinuityLockTimeout(rolloverId: string): void {
+    const timeout = this.flowNodeContinuityLockTimeouts.get(rolloverId);
+    if (!timeout) {
+      return;
+    }
+    clearTimeout(timeout);
+    this.flowNodeContinuityLockTimeouts.delete(rolloverId);
+  }
+
+  private scheduleFlowNodeContinuityLockTimeout(
+    context: FlowNodeContinuityLockContext
+  ): void {
+    const targetSessionId = context.targetSessionId;
+    if (!(targetSessionId && context.awaitingBootstrapTurn)) {
+      return;
+    }
+    this.clearFlowNodeContinuityLockTimeout(context.rolloverId);
+    const timeout = setTimeout(() => {
+      this.logger.warn("Flow node continuity lock timeout reached", {
+        rolloverId: context.rolloverId,
+        sourceSessionId: context.sourceSessionId,
+        targetSessionId,
+        stageId: context.stageId,
+        runSlug: context.runSlug,
+        timeoutMs: FLOW_NODE_CONTINUITY_RESUME_TIMEOUT_MS,
+      });
+      this.finalizeFlowNodeContinuityLock({
+        sessionId: targetSessionId,
+        reason: "resume_timeout",
+      });
+    }, FLOW_NODE_CONTINUITY_RESUME_TIMEOUT_MS);
+    this.flowNodeContinuityLockTimeouts.set(context.rolloverId, timeout);
+  }
+
+  private finalizeFlowNodeContinuityLock(options: {
+    readonly sessionId: string;
+    readonly reason: Extract<
+      ContinuityLockReason,
+      "resume_ready" | "resume_failed" | "resume_timeout"
+    >;
+  }): void {
+    const context = this.flowNodeContinuityLockContexts.get(options.sessionId);
+    if (!context) {
+      return;
+    }
+    const targetSessionId = context.targetSessionId ?? context.sourceSessionId;
+    const payloadBase = {
+      rolloverId: context.rolloverId,
+      sourceSessionId: context.sourceSessionId,
+      ...(context.targetSessionId
+        ? { targetSessionId: context.targetSessionId }
+        : {}),
+      stageId: context.stageId,
+      runSlug: context.runSlug,
+      state: "unlocked" as const,
+      reason: options.reason,
+    };
+    this.emitContinuityLockEvent({
+      sessionId: targetSessionId,
+      ...payloadBase,
+    });
+    if (context.sourceSessionId !== targetSessionId) {
+      this.emitContinuityLockEvent({
+        sessionId: context.sourceSessionId,
+        ...payloadBase,
+      });
+    }
+    this.clearFlowNodeContinuityLockTimeout(context.rolloverId);
+    this.flowNodeContinuityLockContexts.delete(context.sourceSessionId);
+    if (context.targetSessionId) {
+      this.flowNodeContinuityLockContexts.delete(context.targetSessionId);
+    }
+  }
+
+  private finalizeFlowNodeContinuityLockOnBootstrapTurn(options: {
+    readonly sessionId: string;
+    readonly reason: Extract<
+      ContinuityLockReason,
+      "resume_ready" | "resume_failed"
+    >;
+  }): void {
+    const context = this.flowNodeContinuityLockContexts.get(options.sessionId);
+    if (
+      !(
+        context &&
+        context.targetSessionId === options.sessionId &&
+        context.awaitingBootstrapTurn
+      )
+    ) {
+      return;
+    }
+    this.finalizeFlowNodeContinuityLock({
+      sessionId: options.sessionId,
+      reason: options.reason,
+    });
   }
 
   constructor(options: SessionRequestHandlerOptions) {
@@ -1147,6 +1259,7 @@ export class SessionRequestHandler {
       sourceSessionId: sessionId,
       stageId: session.stage,
       runSlug: session.runSlug ?? null,
+      awaitingBootstrapTurn: false,
     });
     this.emitContinuityLockEvent({
       sessionId,
@@ -1178,6 +1291,10 @@ export class SessionRequestHandler {
         { silent: false }
       );
     } catch (error) {
+      this.finalizeFlowNodeContinuityLock({
+        sessionId,
+        reason: "resume_failed",
+      });
       this.flowNodeRolloverStarted.delete(sessionId);
       this.emitFlowNodeRolloverNotification(sessionId, {
         kind: "flow_node_rollover",
@@ -1239,6 +1356,7 @@ export class SessionRequestHandler {
       sourceSessionId: sessionId,
       stageId: session.stage,
       runSlug: session.runSlug ?? null,
+      awaitingBootstrapTurn: false,
     });
     this.emitContinuityLockEvent({
       sessionId,
@@ -1261,6 +1379,10 @@ export class SessionRequestHandler {
         { silent: true }
       );
     } catch (error) {
+      this.finalizeFlowNodeContinuityLock({
+        sessionId,
+        reason: "resume_failed",
+      });
       this.flowNodeRolloverStarted.delete(sessionId);
       throw error;
     } finally {
@@ -1392,12 +1514,20 @@ export class SessionRequestHandler {
   ): Promise<void> {
     const adapter = this.providerRegistry.getAdapter(session.providerId);
     if (!adapter) {
+      this.finalizeFlowNodeContinuityLock({
+        sessionId: session.id,
+        reason: "resume_failed",
+      });
       return;
     }
 
     const workspaceSlug = session.initiativeSlug;
     const stageId = session.stage;
     if (!(workspaceSlug && stageId)) {
+      this.finalizeFlowNodeContinuityLock({
+        sessionId: session.id,
+        reason: "resume_failed",
+      });
       return;
     }
 
@@ -1430,6 +1560,7 @@ export class SessionRequestHandler {
       sourceSessionId: session.id,
       stageId,
       runSlug,
+      awaitingBootstrapTurn: false,
     });
     this.emitContinuityLockEvent({
       sessionId: session.id,
@@ -1511,6 +1642,10 @@ export class SessionRequestHandler {
     });
 
     if (!nextSession) {
+      this.finalizeFlowNodeContinuityLock({
+        sessionId: session.id,
+        reason: "resume_failed",
+      });
       return;
     }
 
@@ -1520,6 +1655,7 @@ export class SessionRequestHandler {
       targetSessionId: nextSession.id,
       stageId,
       runSlug,
+      awaitingBootstrapTurn: true,
     });
 
     if (!options?.silent) {
@@ -1561,6 +1697,7 @@ export class SessionRequestHandler {
     }
 
     await this.sendInternalMessage(nextSession.id, wrappedResumePrompt);
+    this.scheduleFlowNodeContinuityLockTimeout(targetLockContext);
 
     if (!options?.silent) {
       this.emitFlowNodeRolloverNotification(nextSession.id, {
@@ -1588,6 +1725,10 @@ export class SessionRequestHandler {
         break;
       case "turn_completed":
         this.emitTurnStateEvent({ sessionId, state: "idle" });
+        this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
+          sessionId,
+          reason: "resume_ready",
+        });
         this.handleFlowNodeContinuitySilentPreemptiveRollover(sessionId).catch(
           (error) => {
             this.logger.warn("Silent preemptive rollover failed", {
@@ -1599,10 +1740,18 @@ export class SessionRequestHandler {
         break;
       case "turn_failed":
         this.emitTurnStateEvent({ sessionId, state: "idle" });
+        this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
+          sessionId,
+          reason: "resume_failed",
+        });
         this.broadcastProviderError(sessionId, event);
         break;
       case "stream_error":
       case "error":
+        this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
+          sessionId,
+          reason: "resume_failed",
+        });
         this.broadcastProviderError(sessionId, event);
         break;
       case "stream_event":
