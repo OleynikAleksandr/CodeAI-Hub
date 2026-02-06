@@ -4,6 +4,7 @@ import { InputTextarea } from "./input-textarea";
 type InputPanelProps = {
   readonly draft: string;
   readonly connectionState?: "idle" | "running" | "blocked";
+  readonly continuityLockActive?: boolean;
   readonly isQueued?: boolean;
   readonly onSubmit: (text: string) => void;
 };
@@ -13,6 +14,7 @@ const MAX_TEXTAREA_HEIGHT = 200;
 const InputPanel = ({
   draft,
   connectionState = "idle",
+  continuityLockActive = false,
   isQueued = false,
   onSubmit,
 }: InputPanelProps) => {
@@ -20,6 +22,9 @@ const InputPanel = ({
   const placeholder = (() => {
     if (isQueued) {
       return "Message queued. Sending as soon as it is ready…";
+    }
+    if (continuityLockActive) {
+      return "Agent is preparing a continuation… Please wait.";
     }
     if (connectionState === "blocked") {
       return "Agent is preparing a continuation… Please wait.";
