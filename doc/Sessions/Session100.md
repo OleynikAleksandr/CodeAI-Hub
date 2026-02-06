@@ -39,3 +39,17 @@
 ## Plans for next session
 - Выполнить smoke-check установки `codeai-hub-1.1.517.vsix` в VS Code.
 - При необходимости подготовить следующий `todo-plan.md` и новую фазу (после архивирования полностью завершённого текущего плана).
+
+---
+
+# 3. Runtime Template Verification (Phase 100 task 37)
+
+**Date:** 2026-02-06 19:15 (CET)
+
+- Проверен установленный runtime template:
+  - `/Users/oleksandroliinyk/.codeai-hub/templates/flow/continuity/resume.md`
+- До синхронизации файл содержал legacy-ACK `__CODEAIHUB_INTERNAL_CONTINUITY_ACK__`.
+- Выполнена синхронизация через `TemplateLoader` из обновлённого core-кода.
+- После синхронизации в установленном template зафиксирована новая фраза:
+  - `Ready to continue working.`
+- Проверка UI-filter логики (`filterContinuityInternalMessages`) подтверждает скрытие internal continuity message из user-visible диалога (`FILTER_OK`).
