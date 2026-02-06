@@ -122,11 +122,12 @@ export class ClaudeProviderAdapter {
   }
 
   private dispatchMessage(sessionId: string, payload: unknown): void {
-    const target = this.listeners.get(sessionId);
+    const resolvedId = this.resolveSessionAlias(sessionId);
+    const target = this.listeners.get(resolvedId);
     if (!target) {
-      const queue = this.pendingEvents.get(sessionId) ?? [];
+      const queue = this.pendingEvents.get(resolvedId) ?? [];
       queue.push(payload);
-      this.pendingEvents.set(sessionId, queue);
+      this.pendingEvents.set(resolvedId, queue);
       return;
     }
     for (const listener of target) {
@@ -138,6 +139,8 @@ export class ClaudeProviderAdapter {
     if (oldId === newId) {
       return;
     }
+    this.rebindPendingEvents(oldId, newId);
+    this.rebindSessionAliases(oldId, newId);
     const set = this.listeners.get(oldId);
     if (set) {
       this.listeners.delete(oldId);
@@ -149,6 +152,25 @@ export class ClaudeProviderAdapter {
       this.listeners.set(newId, destination);
     }
     this.flushPendingEvents(newId);
+  }
+
+  private rebindPendingEvents(oldId: string, newId: string): void {
+    const queued = this.pendingEvents.get(oldId);
+    if (!queued || queued.length === 0) {
+      return;
+    }
+    this.pendingEvents.delete(oldId);
+    const destination = this.pendingEvents.get(newId) ?? [];
+    destination.push(...queued);
+    this.pendingEvents.set(newId, destination);
+  }
+
+  private rebindSessionAliases(oldId: string, newId: string): void {
+    for (const [alias, target] of this.sessionIdAliases.entries()) {
+      if (target === oldId) {
+        this.sessionIdAliases.set(alias, newId);
+      }
+    }
   }
 
   private resolveProjectPath(slug: string): string {

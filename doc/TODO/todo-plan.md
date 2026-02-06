@@ -69,10 +69,10 @@
 27. [DONE] Fix(claude-logging): сделать logger append-safe для resume/rebind в тот же `providerSessionId` (без truncate существующего файла) (scope: `packages/Claude_Module/src/logging/sdk-session-logger.ts`; expected commit message: `fix(claude): append logs on resume without truncation`)
 28. [DONE] Git Commit: `fix(claude): append logs on resume without truncation` (hash: 8687ea20)
 29. [DONE] Fix(claude-logging): стабилизировать rename/promotion path temp->real без потери buffered entries (scope: `packages/Claude_Module/src/logging/sdk-session-logger.ts`; expected commit message: `fix(claude): preserve buffered logs during session promotion`)
-30. [TODO] Git Commit: `fix(claude): preserve buffered logs during session promotion` (hash: TBD)
+30. [DONE] Git Commit: `fix(claude): preserve buffered logs during session promotion` (hash: 2f420558)
 
 ### Stream: provider adapter compatibility
-31. [TODO] Refactor(claude-provider): проверить и закрепить routing listener-ов/alias-ов под one-shot promotion path (`sessionIdChanged`/`realSessionId`) (scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`; expected commit message: `refactor(claude): stabilize provider listener routing in one-shot mode`)
+31. [DONE] Refactor(claude-provider): проверить и закрепить routing listener-ов/alias-ов под one-shot promotion path (`sessionIdChanged`/`realSessionId`) (scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`; expected commit message: `refactor(claude): stabilize provider listener routing in one-shot mode`)
 32. [TODO] Git Commit: `refactor(claude): stabilize provider listener routing in one-shot mode` (hash: TBD)
 
 ### Stream: tests (targeted regression)
