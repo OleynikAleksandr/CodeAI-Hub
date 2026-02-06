@@ -94,8 +94,8 @@
 44. [DONE] Git Commit: `docs(session): add Session095 claude one-shot report` (hash: 8e3a0a78)
 
 ### Stream: claude sdk-log noise filtering
-45. [TODO] Refactor(claude-logging): отфильтровать из debug JSONL события `sdk:stream_event` с `event.type=content_block_delta`, сохранив запись `sdk:assistant`, `sdk:result`, `sdk:error` и прочих важных lifecycle-маркеров (scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `chore(claude): filter content_block_delta noise from sdk log`)
-46. [TODO] Git Commit: `chore(claude): filter content_block_delta noise from sdk log` (hash: TBD)
+45. [DONE] Refactor(claude-logging): отфильтровать из debug JSONL события `sdk:stream_event` с `event.type=content_block_delta`, сохранив запись `sdk:assistant`, `sdk:result`, `sdk:error` и прочих важных lifecycle-маркеров (scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `chore(claude): filter content_block_delta noise from sdk log`)
+46. [IN_PROGRESS] Git Commit: `chore(claude): filter content_block_delta noise from sdk log` (hash: TBD)
 47. [TODO] Test(claude): добавить regression test на фильтрацию `content_block_delta` в logger с проверкой, что `result` продолжает логироваться (scope: `packages/Claude_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(claude): cover sdk log filtering for stream deltas`)
 48. [TODO] Git Commit: `test(claude): cover sdk log filtering for stream deltas` (hash: TBD)
 
@@ -107,7 +107,7 @@
 53. [DONE] Style(ui-session): удалить CSS-блоки `.session-working-strip*`, не затрагивая `.animated-dots*` (12-dot animation остаётся) (scope: `media/session-view.css`; expected commit message: `style(ui): remove working-strip styles keep animated dots`)
 54. [DONE] Git Commit: `style(ui): remove working-strip styles keep animated dots` (hash: 1250344b)
 55. [DONE] Verify(ui): таргетно проверить, что строка `Agent is working. Please wait.` отсутствует в source и generated UI bundle после сборки (`build:webview`, `build:project-manager`) при сохранении работы input-блокировки (scope: repo-wide search + ui build commands; expected commit message: `chore(ui): verify working-strip banner removal`)
-56. [IN_PROGRESS] Git Commit: `chore(ui): verify working-strip banner removal` (hash: TBD)
+56. [DONE] Git Commit: `chore(ui): verify working-strip banner removal` (hash: 156409c0)
 
 ### Stream: release build for ui-strip reset + sdk-log filtering
 57. [TODO] Docs(release): обновить `README.md` и `CHANGELOG.md` под новый релиз после закрытия stream `45–56` (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update README and CHANGELOG for next release`)
