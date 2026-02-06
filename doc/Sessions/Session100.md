@@ -53,3 +53,18 @@
 - После синхронизации в установленном template зафиксирована новая фраза:
   - `Ready to continue working.`
 - Проверка UI-filter логики (`filterContinuityInternalMessages`) подтверждает скрытие internal continuity message из user-visible диалога (`FILTER_OK`).
+
+---
+
+# 4. Matrix Rain UX Test Verification (Phase 100 task 45)
+
+**Date:** 2026-02-06 19:37 (CET)
+
+- `src/client/ui/src/session/input-panel.test.tsx`:
+  - подтверждён lock-state UX (`blocked/running` -> `disabled` + корректный wait-copy).
+- `src/client/ui/src/session/input-lock-matrix-rain.test.ts`:
+  - проверен clamp/adaptive расчёт числа колонок (`computeMatrixColumnCount`);
+  - проверен lifecycle анимации без duplicate RAF loops;
+  - проверена реакция на resize callback (обновление размеров canvas).
+- Результат таргетного прогона:
+  - `npx tsx --test src/client/ui/src/session/input-panel.test.tsx src/client/ui/src/session/input-lock-matrix-rain.test.ts` -> PASS.

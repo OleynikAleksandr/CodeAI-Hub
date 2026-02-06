@@ -25,16 +25,15 @@ const resolveReduceMotion = (): boolean =>
   typeof window.matchMedia === "function" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+export const computeMatrixColumnCount = (width: number): number =>
+  clamp(Math.floor(width / COLUMN_WIDTH), MIN_COLUMNS, MAX_COLUMNS);
+
 const buildColumns = (width: number, height: number): MatrixColumn[] => {
   if (width <= 0 || height <= 0) {
     return [];
   }
 
-  const columnCount = clamp(
-    Math.floor(width / COLUMN_WIDTH),
-    MIN_COLUMNS,
-    MAX_COLUMNS
-  );
+  const columnCount = computeMatrixColumnCount(width);
   const spacing = width / columnCount;
 
   return Array.from({ length: columnCount }, (_, index) => ({
