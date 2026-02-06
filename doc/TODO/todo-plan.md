@@ -35,8 +35,8 @@
 1. [DONE] Docs(arch): согласовать и зафиксировать архитектуру one-shot Claude на базе `Claude_OneShot_Session_Architecture.md` (scope: `doc/Project_Docs/SessionContinuity/Claude_OneShot_Session_Architecture.md`; expected commit message: `docs(arch): approve claude one-shot session architecture`)
 2. [DONE] Git Commit: `docs(arch): approve claude one-shot session architecture` (hash: 5a4efdd5)
 3. [DONE] Docs(system): синхронизировать SystemArchitecture с новым Claude one-shot контрактом и continuity-инвариантами (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(system): align continuity contract for claude one-shot`)
-4. [TODO] Git Commit: `docs(system): align continuity contract for claude one-shot` (hash: TBD)
-5. [TODO] Docs(stack): обновить стек Claude с описанием one-shot session lifecycle и resume semantics (scope: `doc/Project_Docs/Stacks/Claude.md`; expected commit message: `docs(stack): document claude one-shot session lifecycle`)
+4. [DONE] Git Commit: `docs(system): align continuity contract for claude one-shot` (hash: 02c0e518)
+5. [DONE] Docs(stack): обновить стек Claude с описанием one-shot session lifecycle и resume semantics (scope: `doc/Project_Docs/Stacks/Claude.md`; expected commit message: `docs(stack): document claude one-shot session lifecycle`)
 6. [TODO] Git Commit: `docs(stack): document claude one-shot session lifecycle` (hash: TBD)
 
 ### Stream: Claude session scaffold (queue-ready)
