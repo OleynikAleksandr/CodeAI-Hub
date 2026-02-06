@@ -38,12 +38,33 @@ type TurnStateStreamEvent = {
   readonly data?: unknown;
 };
 
+type ContinuityLockStreamEvent = {
+  readonly data?: unknown;
+};
+
 const isFlowNodeRolloverNotification = (
   event: unknown
 ): event is FlowNodeRolloverNotification =>
   isRecord(event) &&
   event.kind === "flow_node_rollover" &&
   typeof event.phase === "string";
+
+const isFlowNodeRolloverBlockingPhase = (phase: string): boolean =>
+  phase === "start" ||
+  phase === "create_report_sent" ||
+  phase === "waiting_for_report" ||
+  phase === "report_ready";
+
+const isLegacyRolloverBlocked = (
+  snapshot: SessionSnapshots[string]
+): boolean => {
+  const phase = snapshot.status.rollover?.phase;
+  return typeof phase === "string" && isFlowNodeRolloverBlockingPhase(phase);
+};
+
+const isContinuityLockActive = (
+  snapshot: SessionSnapshots[string]
+): boolean => snapshot.status.continuityLock?.active === true;
 
 const extractTurnState = (event: unknown): "running" | "idle" | null => {
   if (!isRecord(event)) {
@@ -58,6 +79,37 @@ const extractTurnState = (event: unknown): "running" | "idle" | null => {
     return raw;
   }
   return null;
+};
+
+const extractContinuityLock = (
+  event: unknown
+):
+  | {
+      readonly active: boolean;
+      readonly rolloverId: string | null;
+      readonly sourceSessionId: string | null;
+      readonly targetSessionId: string | null;
+      readonly reason: string | null;
+    }
+  | null => {
+  if (!isRecord(event)) {
+    return null;
+  }
+  const candidate = event as ContinuityLockStreamEvent;
+  if (!isRecord(candidate.data) || candidate.data.kind !== "continuity_lock") {
+    return null;
+  }
+  const rawState = readString(candidate.data.state);
+  if (rawState !== "locked" && rawState !== "unlocked") {
+    return null;
+  }
+  return {
+    active: rawState === "locked",
+    rolloverId: readString(candidate.data.rolloverId),
+    sourceSessionId: readString(candidate.data.sourceSessionId),
+    targetSessionId: readString(candidate.data.targetSessionId),
+    reason: readString(candidate.data.reason),
+  };
 };
 
 const resolveProviderSessionIdForCache = (
@@ -110,10 +162,7 @@ export const updateSnapshotsWithTokenUsage = (
   if (isFlowNodeRolloverNotification(payload.event)) {
     const phase = payload.event.phase;
     const nextConnectionState =
-      phase === "start" ||
-      phase === "create_report_sent" ||
-      phase === "waiting_for_report" ||
-      phase === "report_ready"
+      isContinuityLockActive(snapshot) || isFlowNodeRolloverBlockingPhase(phase)
         ? "blocked"
         : "idle";
 
@@ -141,10 +190,54 @@ export const updateSnapshotsWithTokenUsage = (
     };
   }
 
+  const continuityLock = extractContinuityLock(payload.event);
+  if (continuityLock) {
+    const now = Date.now();
+    const previous = snapshot.status.continuityLock;
+    const nextContinuityLock = {
+      ...(previous ?? {}),
+      active: continuityLock.active,
+      ...(continuityLock.rolloverId === null
+        ? {}
+        : { rolloverId: continuityLock.rolloverId }),
+      ...(continuityLock.sourceSessionId === null
+        ? {}
+        : { sourceSessionId: continuityLock.sourceSessionId }),
+      ...(continuityLock.targetSessionId === null
+        ? {}
+        : { targetSessionId: continuityLock.targetSessionId }),
+      ...(continuityLock.reason === null ? {} : { reason: continuityLock.reason }),
+      updatedAt: now,
+    };
+
+    const nextConnectionState = continuityLock.active
+      ? "blocked"
+      : snapshot.status.connectionState === "blocked" &&
+          !isLegacyRolloverBlocked(snapshot)
+        ? "idle"
+        : snapshot.status.connectionState;
+
+    return {
+      ...snapshots,
+      [payload.sessionId]: {
+        ...snapshot,
+        status: {
+          ...snapshot.status,
+          continuityLock: nextContinuityLock,
+          connectionState: nextConnectionState,
+          updatedAt: now,
+        },
+      },
+    };
+  }
+
   const turnState = extractTurnState(payload.event);
   if (turnState) {
     const current = snapshot.status.connectionState;
-    const nextConnectionState = current === "blocked" ? "blocked" : turnState;
+    const nextConnectionState =
+      isContinuityLockActive(snapshot) || isLegacyRolloverBlocked(snapshot)
+        ? "blocked"
+        : turnState;
     if (nextConnectionState === current) {
       return snapshots;
     }
