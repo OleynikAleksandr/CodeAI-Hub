@@ -39,6 +39,8 @@ const createHarness = (): HandlerHarness => {
   Object.assign(handler, {
     providerSessions,
     sessionManager,
+    flowNodeContinuityLockContexts: new Map(),
+    flowNodeContinuityLockTimeouts: new Map(),
     sessionStorage: {
       promote: (sessionId: string, providerSessionId: string) => {
         promoted.push({ sessionId, providerSessionId });
@@ -160,5 +162,89 @@ test("SessionRequestHandler updates provider binding on sessionIdChanged", () =>
     (bindingEvents[0].payload as { readonly providerSessionId?: string })
       ?.providerSessionId,
     "real-session-123"
+  );
+});
+
+test("SessionRequestHandler unlocks continuity lock after bootstrap turn completion", () => {
+  const harness = createHarness();
+  const sourceSession = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-continuity-source"
+  );
+  const targetSession = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-continuity-target"
+  );
+
+  (harness.handler as any).registerFlowNodeContinuityLockContext({
+    rolloverId: "rollover-1",
+    sourceSessionId: sourceSession.id,
+    targetSessionId: targetSession.id,
+    stageId: "description",
+    runSlug: "reviewer",
+    awaitingBootstrapTurn: true,
+  });
+
+  (harness.handler as any).emitContinuityLockEvent({
+    sessionId: targetSession.id,
+    rolloverId: "rollover-1",
+    sourceSessionId: sourceSession.id,
+    targetSessionId: targetSession.id,
+    stageId: "description",
+    runSlug: "reviewer",
+    state: "locked",
+    reason: "resume_bootstrap",
+  });
+
+  (harness.handler as any).handleProviderEvent(targetSession.id, {
+    type: "turn_completed",
+  });
+
+  const continuityLockEvents = harness.events.filter(
+    (event) =>
+      event.type === "session:stream" &&
+      (
+        event.payload as {
+          readonly event?: { readonly data?: { readonly kind?: string } };
+        }
+      )?.event?.data?.kind === "continuity_lock"
+  );
+
+  assert.equal(continuityLockEvents.length, 3);
+
+  const unlockEvents = continuityLockEvents.slice(1).map((event) => {
+    const payload = event.payload as {
+      readonly sessionId?: string;
+      readonly event?: {
+        readonly data?: { readonly state?: string; readonly reason?: string };
+      };
+    };
+    return {
+      sessionId: payload.sessionId,
+      state: payload.event?.data?.state,
+      reason: payload.event?.data?.reason,
+    };
+  });
+
+  assert.deepEqual(unlockEvents, [
+    {
+      sessionId: targetSession.id,
+      state: "unlocked",
+      reason: "resume_ready",
+    },
+    {
+      sessionId: sourceSession.id,
+      state: "unlocked",
+      reason: "resume_ready",
+    },
+  ]);
+
+  assert.equal(
+    (
+      harness.handler as unknown as {
+        readonly flowNodeContinuityLockContexts: Map<string, unknown>;
+      }
+    ).flowNodeContinuityLockContexts.size,
+    0
   );
 });
