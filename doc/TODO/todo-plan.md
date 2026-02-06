@@ -95,9 +95,9 @@
 
 ### Stream: claude sdk-log noise filtering
 45. [DONE] Refactor(claude-logging): отфильтровать из debug JSONL события `sdk:stream_event` с `event.type=content_block_delta`, сохранив запись `sdk:assistant`, `sdk:result`, `sdk:error` и прочих важных lifecycle-маркеров (scope: `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `chore(claude): filter content_block_delta noise from sdk log`)
-46. [IN_PROGRESS] Git Commit: `chore(claude): filter content_block_delta noise from sdk log` (hash: TBD)
-47. [TODO] Test(claude): добавить regression test на фильтрацию `content_block_delta` в logger с проверкой, что `result` продолжает логироваться (scope: `packages/Claude_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(claude): cover sdk log filtering for stream deltas`)
-48. [TODO] Git Commit: `test(claude): cover sdk log filtering for stream deltas` (hash: TBD)
+46. [DONE] Git Commit: `chore(claude): filter content_block_delta noise from sdk log` (hash: 346cc065)
+47. [DONE] Test(claude): добавить regression test на фильтрацию `content_block_delta` в logger с проверкой, что `result` продолжает логироваться (scope: `packages/Claude_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(claude): cover sdk log filtering for stream deltas`)
+48. [IN_PROGRESS] Git Commit: `test(claude): cover sdk log filtering for stream deltas` (hash: TBD)
 
 ### Stream: ui working-strip reset (remove `Agent is working. Please wait.` banner)
 49. [DONE] Refactor(ui-session): удалить компонент `WorkingStrip` из Session rails и все его импорты/вызовы, не затрагивая `InputPanel` логику и placeholder copy (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/working-strip.tsx`; expected commit message: `refactor(ui): remove working-strip banner component`)

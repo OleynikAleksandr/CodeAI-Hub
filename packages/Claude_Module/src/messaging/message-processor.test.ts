@@ -179,3 +179,71 @@ test("SDKMessageProcessor emits turn_failed exactly once on stream error", async
   const failureEvent = events.find((event) => event.type === "turn_failed");
   assert.equal(failureEvent?.message, "stream exploded");
 });
+
+test("SDKMessageProcessor filters content_block_delta from sdk logger and keeps result logs", async () => {
+  const loggedSDKEvents: { type: string; eventType: string | null }[] = [];
+  const logger: SessionLogger = {
+    start: () => {
+      // noop
+    },
+    end: () => {
+      // noop
+    },
+    logUserInput: () => {
+      // noop
+    },
+    logSDKMessage: (type: string, payload: unknown) => {
+      const eventType =
+        isRecord(payload) && typeof payload.event === "object"
+          ? ((payload.event as { readonly type?: unknown }).type ?? null)
+          : null;
+      loggedSDKEvents.push({
+        type,
+        eventType: typeof eventType === "string" ? eventType : null,
+      });
+    },
+  };
+
+  const sessionManager = new SDKSessionManager();
+  const { tempId, session } = sessionManager.createSession(
+    "/tmp/claude-test-log-filter",
+    logger
+  );
+  const processor = new SDKMessageProcessor(sessionManager, {
+    projectPath: "/tmp/claude-test-log-filter",
+  });
+
+  processor.enqueueTurn(
+    tempId,
+    { content: "log-filter", internal: false, enqueuedAt: Date.now() },
+    {
+      createIterator: () =>
+        createIterator([
+          {
+            type: "stream_event",
+            session_id: "real-session-log-filter",
+            event: { type: "content_block_delta", text: "..." },
+          },
+          { type: "result", session_id: "real-session-log-filter" },
+        ]),
+      onRealSessionId: ({ previousSessionId, realSessionId }) => {
+        sessionManager.updateSessionId(previousSessionId, realSessionId);
+      },
+    }
+  );
+
+  await waitForQueueDrain(session);
+
+  assert.equal(
+    loggedSDKEvents.some(
+      (event) =>
+        event.type === "stream_event" &&
+        event.eventType === "content_block_delta"
+    ),
+    false
+  );
+  assert.equal(
+    loggedSDKEvents.some((event) => event.type === "result"),
+    true
+  );
+});
