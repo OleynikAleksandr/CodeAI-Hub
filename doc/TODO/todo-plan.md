@@ -69,9 +69,9 @@
 
 ### Stream: wrap-up and release-readiness
 21. [DONE] Docs(system): синхронизировать `SystemArchitecture.md` и continuity docs под новый `continuity_lock` контракт (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(system): document continuity lock contract`)
-22. [IN_PROGRESS] Git Commit: `docs(system): document continuity lock contract` (hash: TBD)
-23. [TODO] Docs(session): подготовить следующий session report с таймлайном событий lock/unlock и QA выводом (scope: `doc/Sessions/Session099.md`; expected commit message: `docs(session): add Session099 continuity lock implementation report`)
-24. [TODO] Git Commit: `docs(session): add Session099 continuity lock implementation report` (hash: TBD)
+22. [DONE] Git Commit: `docs(system): document continuity lock contract` (hash: 782ce757)
+23. [DONE] Docs(session): подготовить следующий session report с таймлайном событий lock/unlock и QA выводом (scope: `doc/Sessions/Session099.md`; expected commit message: `docs(session): add Session099 continuity lock implementation report`)
+24. [IN_PROGRESS] Git Commit: `docs(session): add Session099 continuity lock implementation report` (hash: TBD)
 
 ### Stream: phase-complete release build
 25. [TODO] Docs(release): перед релизной сборкой актуализировать `README.md` и `CHANGELOG.md` под итог Phase 99 (scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): prepare notes for continuity lock release`)
