@@ -13,6 +13,26 @@ export type SessionLogger = {
   readonly renameSession?: (oldId: string, newId: string) => void;
 };
 
+export type ClaudeTurnLifecycleState = {
+  started: boolean;
+  ended: boolean;
+};
+
+export type ClaudeQueuedTurn = {
+  readonly content: string;
+  readonly turnOptions?: Record<string, unknown>;
+  readonly internal: boolean;
+  readonly enqueuedAt: number;
+};
+
+export type ClaudeTurnQueueState = {
+  readonly pending: ClaudeQueuedTurn[];
+  inFlight: ClaudeQueuedTurn | null;
+  internalTurn: boolean;
+  lifecycle: ClaudeTurnLifecycleState;
+  processing: boolean;
+};
+
 export type ActiveSession = {
   sessionId: string;
   readonly workspacePath: string;
@@ -23,6 +43,8 @@ export type ActiveSession = {
   readonly resumeSessionId?: string;
   structuredOutputSchema?: Record<string, unknown> | null;
   structuredOutputUuids?: Set<string>;
+  turnQueue?: ClaudeTurnQueueState;
+  processingLoop?: Promise<void>;
   messageGenerator?: AsyncGenerator<unknown>;
   queryInstance?: AsyncIterableIterator<unknown> & {
     interrupt?: () => Promise<void>;
