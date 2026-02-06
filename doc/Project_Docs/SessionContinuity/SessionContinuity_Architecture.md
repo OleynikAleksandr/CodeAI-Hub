@@ -1,8 +1,8 @@
 # Session Continuity Architecture — Auto-Handoff on Context Budget (CRITICAL)
 
-**Version:** 1.0
-**Date:** 2026-01-20
-**Status:** Draft
+**Version:** 1.1
+**Date:** 2026-02-06
+**Status:** Active baseline (Phase 98 continuity contract)
 
 ---
 
@@ -33,7 +33,8 @@
 ## 3. Non-Goals
 
 - Не делаем “идеальный” подсчёт токенов на стороне Core для всех провайдеров. MVP использует доступные метрики `used/limit`.
-- Не реализуем “вечный” resume одного provider thread. Наоборот: цель — безопасно переходить на новую сессию.
+- Не реализуем “вечный” runtime на одном и том же provider thread. Цель — безопасно переходить на новую provider-сессию при handoff.
+- Resume в пределах текущего provider segment (например, reconnect/reattach с тем же `providerSessionId`) допустим и не считается handoff.
 - Не делаем автокоммит/автогейты в рамках этого модуля (это отдельный поток работы).
 
 ---
@@ -44,6 +45,8 @@
 2) Триггер: `remainingRatio <= 0.25` (или эквивалент `usedRatio >= 0.75`).
 3) Формат handoff-отчёта — Markdown с жёсткой структурой.
 4) Handoff-отчёт должен учитывать **инструкции конкретного агента** и текущий контекст workflow (stage/step).
+5) Handoff lifecycle передаётся stream-only (`handoff:start`/`handoff:ready`) и не попадает в user-facing сообщения.
+6) Turn lifecycle для UI нормализуется через `turn_state` (`running|idle`), где `idle` всегда снимает ожидание пользователя.
 
 ---
 
@@ -113,7 +116,7 @@ MVP-целевой путь хранения отчёта (workspace артеф�
 1) `Session Continuity Monitor` регулярно оценивает `remainingRatio`.
 2) Когда `remainingRatio <= 0.25`, система переводит сессию в режим **handoff pending**.
 3) Система запускает “handoff prompt” для текущего агента (на основе его инструкций + текущего workflow контекста) и требует вывести `handoff-report.md` по контракту.
-4) Core сохраняет отчёт как артефакт, закрывает текущую сессию и создаёт новую.
+4) Core дожидается появления отчёта (watcher), затем закрывает текущую сессию и создаёт новую.
 5) Новая сессия стартует с:
    - системных инструкций агента (как обычно);
    - контекста workflow;
@@ -131,11 +134,14 @@ MVP-целевой путь хранения отчёта (workspace артеф�
 
 ### 9.2 Providers
 - Поставляют метрики token usage (или их приближение).
-- Не требуется поддержка resume; rollover создаёт новую сессию.
+- Должны эмитить turn lifecycle (`turn_started`, `turn_completed`, `turn_failed`) для корректного `turn_state` в UI.
+- В рамках одного segment поддерживается resume/rebind с тем же `providerSessionId` (без создания нового сегмента).
+- При rollover создаётся новый provider segment (новый `providerSessionId`).
 
 ### 9.3 UI (Project Manager)
 - Показывает, что сессия “переключилась” (handoff) и предоставляет доступ к `handoff-report.md`.
 - Может визуализировать цепочку сессий как историю под одним Step.
+- Управляет блокировкой ввода по stream-событиям: `turn_state` + `handoff_state`, без эвристик по тексту сообщений.
 
 ---
 

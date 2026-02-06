@@ -1,7 +1,7 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.502
-**Last Updated:** 2026-02-03
+**Version:** 1.1.514
+**Last Updated:** 2026-02-06
 **Status:** Active reference (source of truth)
 
 ---
@@ -113,6 +113,7 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 
 Архитектура: `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`.
 Порог запуска handoff рассчитывается по token usage (used/limit) и может быть настроен per-provider (например, Claude и Codex: remaining% threshold, default 30%).
+Внутренние handoff-инструкции отправляются через `sendInternalMessage` и не должны попадать в user-facing историю.
 
 ### 2.7 Turn-finish + Handoff UI Contract (CRITICAL)
 
@@ -135,6 +136,16 @@ State-table для Session UI:
 - Handoff lock не заменяет lifecycle turn и не должен жить дольше handoff.
 - Handoff события передаются как `session:stream` и не добавляются в историю пользовательских сообщений.
 - События handoff должны быть детерминированны: на каждый `handoff:start` должен приходить `handoff:ready` (включая failure-path) для снятия lock.
+
+### 2.8 Claude One-Shot Session Contract (Phase 98)
+
+Для `Claude_Module` целевая модель исполнения выровнена с Codex:
+
+1. Один user/internal turn = один отдельный `query(...)` запуск (one-shot), обработка через FIFO очередь.
+2. Source-of-truth `providerSessionId` — только stream-события SDK (`session_id`), а не file discovery.
+3. Resume существующей Claude-сессии выполняется через `options.resume=<providerSessionId>` без `forkSession`.
+4. Для каждого user turn обязателен lifecycle-контракт `turn_started` -> (`turn_completed` | `turn_failed`) ровно один раз.
+5. Logger при resume/rebind дописывает существующий session лог (`append`), без truncate уже накопленных записей.
 
 ---
 
