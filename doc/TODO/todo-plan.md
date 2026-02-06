@@ -32,7 +32,7 @@
 - Все текущие Claude-логи продолжают писаться; resume/rebind не должен обнулять лог-файл.
 
 ### Stream: design sync + docs freeze
-1. [TODO] Docs(arch): согласовать и зафиксировать архитектуру one-shot Claude на базе `Claude_OneShot_Session_Architecture.md` (scope: `doc/Project_Docs/SessionContinuity/Claude_OneShot_Session_Architecture.md`; expected commit message: `docs(arch): approve claude one-shot session architecture`)
+1. [DONE] Docs(arch): согласовать и зафиксировать архитектуру one-shot Claude на базе `Claude_OneShot_Session_Architecture.md` (scope: `doc/Project_Docs/SessionContinuity/Claude_OneShot_Session_Architecture.md`; expected commit message: `docs(arch): approve claude one-shot session architecture`)
 2. [TODO] Git Commit: `docs(arch): approve claude one-shot session architecture` (hash: TBD)
 3. [TODO] Docs(system): синхронизировать SystemArchitecture с новым Claude one-shot контрактом и continuity-инвариантами (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(system): align continuity contract for claude one-shot`)
 4. [TODO] Git Commit: `docs(system): align continuity contract for claude one-shot` (hash: TBD)

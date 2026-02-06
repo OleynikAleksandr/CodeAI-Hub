@@ -1,6 +1,6 @@
 # Claude Module — One-Shot Session Architecture (Codex Parity)
 
-**Status:** Draft (for approval before execution)
+**Status:** Approved (execution baseline for Phase 98)
 **Updated:** 2026-02-06
 **Owner:** Oleksandr + Codex
 
@@ -46,6 +46,12 @@
 - логи Claude продолжают писаться в `~/.codeai-hub/logs/claude/`;
 - без потери записей на resume/rebind;
 - без ротации в новый файл при том же `providerSessionId`.
+6. Зафиксировать source-of-truth для session binding:
+- источник `providerSessionId` только из SDK stream событий;
+- `session-file-discovery` не влияет на binding и используется только как best-effort диагностика.
+7. Сохранить compatibility с turn/handoff контрактом Core/UI:
+- one-shot Claude обязан эмитить `turn_started`/`turn_completed`/`turn_failed` в детерминированной последовательности;
+- continuity handoff (`handoff:start`/`handoff:ready`) остаётся stream-only и не попадает в user-facing диалог.
 
 ---
 
@@ -96,6 +102,7 @@
 2. `turn_completed` эмитится после финального `result` SDK.
 3. `token_usage` обновляется после `result` без изменения публичного event shape.
 4. Internal continuity prompts (`sendInternalMessage` из Core) не должны ломать очередь и не должны засорять user-facing stream.
+5. Повторный `resume` той же сессии не должен создавать новый provider session id и не должен приводить к перезаписи существующего лог-файла.
 
 ---
 
