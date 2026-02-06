@@ -834,11 +834,24 @@
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
+  isolation: isolate;
 }
 
 .session-input__container--dragging {
   border-color: rgba(255, 152, 0, 0.8);
   box-shadow: inset 0 0 0 1px rgba(255, 152, 0, 0.35);
+}
+
+.session-input__container--matrix-active {
+  border-color: rgba(24, 83, 45, 0.82);
+}
+
+.session-input__matrix-rain {
+  position: absolute;
+  inset: 6px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .session-input__textarea {
@@ -860,6 +873,12 @@
     box-shadow 0.2s ease,
     background-color 0.2s ease;
   box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+.session-input--matrix-active .session-input__textarea {
+  background-color: rgba(14, 20, 16, 0.64);
 }
 
 .session-input__textarea--focused {
@@ -882,7 +901,7 @@
   display: block;
   pointer-events: none;
   white-space: nowrap;
-  z-index: 1;
+  z-index: 2;
 }
 
 .session-input__footer {
@@ -891,6 +910,21 @@
   align-items: center;
   font-size: 11px;
   color: rgba(189, 189, 189, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .session-input__matrix-rain {
+    display: none;
+  }
+
+  .session-input--matrix-active .session-input__textarea {
+    background-color: rgba(16, 21, 17, 0.78);
+    background-image: linear-gradient(
+      180deg,
+      rgba(0, 255, 65, 0.05) 0%,
+      rgba(0, 255, 65, 0.02) 100%
+    );
+  }
 }
 
 .session-status__row {
