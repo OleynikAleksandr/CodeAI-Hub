@@ -38,9 +38,9 @@
 
 ### Stream: pm/ui lock consumption
 7. [DONE] Refactor(types-ui): расширить `SessionStatusInfo` и default snapshot полем `continuityLock` (scope: `src/types/session.ts`, `src/client/ui/src/session/helpers.ts`; expected commit message: `refactor(ui): add continuity lock state to session snapshot`)
-8. [IN_PROGRESS] Git Commit: `refactor(ui): add continuity lock state to session snapshot` (hash: TBD)
-9. [TODO] Feat(pm-stream): научить `token-usage-stream` обрабатывать `continuity_lock` и не терять lock при фазах rollover/new session switch (scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `feat(pm): consume continuity lock stream events`)
-10. [TODO] Git Commit: `feat(pm): consume continuity lock stream events` (hash: TBD)
+8. [DONE] Git Commit: `refactor(ui): add continuity lock state to session snapshot` (hash: 167bd828)
+9. [DONE] Feat(pm-stream): научить `token-usage-stream` обрабатывать `continuity_lock` и не терять lock при фазах rollover/new session switch (scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `feat(pm): consume continuity lock stream events`)
+10. [IN_PROGRESS] Git Commit: `feat(pm): consume continuity lock stream events` (hash: TBD)
 11. [TODO] Fix(ui-input): блокировать `InputPanel` при активном continuity lock и показывать continuation placeholder на период bootstrap (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`; expected commit message: `fix(ui): keep input locked during continuity bootstrap`)
 12. [TODO] Git Commit: `fix(ui): keep input locked during continuity bootstrap` (hash: TBD)
 13. [TODO] Fix(ui-queue): маршрутизировать submit во время continuity lock в queued-send path (без потери пользовательского текста) (scope: `src/client/ui/src/session/session-view-helpers.tsx`; expected commit message: `fix(ui): queue messages while continuity lock is active`)
