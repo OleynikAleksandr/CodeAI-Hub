@@ -37,10 +37,10 @@
 3. [DONE] Docs(system): синхронизировать SystemArchitecture с новым Claude one-shot контрактом и continuity-инвариантами (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(system): align continuity contract for claude one-shot`)
 4. [DONE] Git Commit: `docs(system): align continuity contract for claude one-shot` (hash: 02c0e518)
 5. [DONE] Docs(stack): обновить стек Claude с описанием one-shot session lifecycle и resume semantics (scope: `doc/Project_Docs/Stacks/Claude.md`; expected commit message: `docs(stack): document claude one-shot session lifecycle`)
-6. [TODO] Git Commit: `docs(stack): document claude one-shot session lifecycle` (hash: TBD)
+6. [DONE] Git Commit: `docs(stack): document claude one-shot session lifecycle` (hash: eb8a92b6)
 
 ### Stream: Claude session scaffold (queue-ready)
-7. [TODO] Refactor(claude-session): расширить session types под one-shot queue state (`inFlight/internalTurn/lifecycle`) без breaking изменений контракта (scope: `packages/Claude_Module/src/session/types.ts`; expected commit message: `refactor(claude): extend session types for one-shot queue`)
+7. [DONE] Refactor(claude-session): расширить session types под one-shot queue state (`inFlight/internalTurn/lifecycle`) без breaking изменений контракта (scope: `packages/Claude_Module/src/session/types.ts`; expected commit message: `refactor(claude): extend session types for one-shot queue`)
 8. [TODO] Git Commit: `refactor(claude): extend session types for one-shot queue` (hash: TBD)
 9. [TODO] Refactor(claude-session): адаптировать session manager под queue-driven модель создания/резюма сессий (scope: `packages/Claude_Module/src/session/session-manager.ts`, `packages/Claude_Module/src/session/session-lifecycle.ts`; expected commit message: `refactor(claude): align session manager with one-shot queue`)
 10. [TODO] Git Commit: `refactor(claude): align session manager with one-shot queue` (hash: TBD)
