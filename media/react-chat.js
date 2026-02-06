@@ -8115,6 +8115,18 @@
         return null;
     }
   };
+  var resolveProviderWaitColor = (providerTheme) => {
+    switch (providerTheme) {
+      case "claude":
+        return "rgba(255, 145, 5, 0.70)";
+      case "codex":
+        return "rgba(1, 240, 216, 0.70)";
+      case "gemini":
+        return "rgba(171, 52, 203, 0.70)";
+      default:
+        return "rgba(127, 140, 141, 0.70)";
+    }
+  };
 
   // src/client/ui/src/core-bridge/constants.ts
   var DEFAULT_CONFIG = {
@@ -21726,6 +21738,181 @@ ${message.content}`
   // src/client/ui/src/session/input-panel.tsx
   var import_react7 = __toESM(require_react());
 
+  // src/client/ui/src/session/input-lock-matrix-rain.ts
+  var MATRIX_GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]{}<>+-=";
+  var MATRIX_BASE_RGB = "0, 255, 65";
+  var COLUMN_WIDTH = 13;
+  var MIN_COLUMNS = 10;
+  var MAX_COLUMNS = 140;
+  var FRAME_INTERVAL_MS = 1e3 / 30;
+  var GLYPH_LINE_HEIGHT = 14;
+  var clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+  var randomBetween = (min, max) => min + Math.random() * (max - min);
+  var resolveReduceMotion = () => typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var computeMatrixColumnCount = (width) => clamp(Math.floor(width / COLUMN_WIDTH), MIN_COLUMNS, MAX_COLUMNS);
+  var buildColumns = (width, height) => {
+    if (width <= 0 || height <= 0) {
+      return [];
+    }
+    const columnCount = computeMatrixColumnCount(width);
+    const spacing = width / columnCount;
+    return Array.from({ length: columnCount }, (_, index2) => ({
+      x: Math.floor(index2 * spacing + spacing * 0.5),
+      y: randomBetween(0, height),
+      speed: randomBetween(24, 64),
+      length: Math.floor(randomBetween(7, 16)),
+      glyphSeed: Math.floor(randomBetween(0, 1e4))
+    }));
+  };
+  var isGlyphVisible = (glyphY, height) => glyphY >= -GLYPH_LINE_HEIGHT && glyphY <= height + GLYPH_LINE_HEIGHT;
+  var resolveGlyphAlpha = (row) => row === 0 ? 0.36 : Math.max(0.08, 0.3 - row * 0.025);
+  var resolveGlyph = (column, row) => {
+    const glyphIndex = (column.glyphSeed + Math.floor(column.y / GLYPH_LINE_HEIGHT) + row * 5) % MATRIX_GLYPHS.length;
+    return MATRIX_GLYPHS[glyphIndex] ?? "0";
+  };
+  var drawColumn = (options) => {
+    for (let row = 0; row < options.column.length; row += 1) {
+      const glyphY = options.column.y - row * GLYPH_LINE_HEIGHT;
+      if (!isGlyphVisible(glyphY, options.height)) {
+        continue;
+      }
+      options.context.fillStyle = `rgba(${MATRIX_BASE_RGB}, ${resolveGlyphAlpha(
+        row
+      ).toFixed(3)})`;
+      options.context.fillText(
+        resolveGlyph(options.column, row),
+        options.column.x,
+        glyphY
+      );
+    }
+  };
+  var advanceColumn = (options) => {
+    options.column.y += options.column.speed * options.deltaSeconds;
+    if (options.column.y - options.column.length * GLYPH_LINE_HEIGHT <= options.height) {
+      return;
+    }
+    options.column.y = -randomBetween(GLYPH_LINE_HEIGHT, options.height * 0.35);
+    options.column.speed = randomBetween(24, 64);
+    options.column.length = Math.floor(randomBetween(7, 16));
+    options.column.glyphSeed = Math.floor(randomBetween(0, 1e4));
+  };
+  var createInputLockMatrixRain = (container) => {
+    const canvas = document.createElement("canvas");
+    canvas.className = "session-input__matrix-rain";
+    container.prepend(canvas);
+    const context = canvas.getContext("2d");
+    const reducedMotion = resolveReduceMotion();
+    let width = 0;
+    let height = 0;
+    let isActive = false;
+    let lastFrameAt = 0;
+    let rafId = null;
+    let resizeObserver = null;
+    let columns = [];
+    const applyCanvasSize = () => {
+      const rect = container.getBoundingClientRect();
+      const nextWidth = Math.max(0, Math.floor(rect.width - 12));
+      const nextHeight = Math.max(0, Math.floor(rect.height - 12));
+      if (nextWidth === width && nextHeight === height) {
+        return;
+      }
+      width = nextWidth;
+      height = nextHeight;
+      const dpr = Math.max(1, Math.floor(window.devicePixelRatio ?? 1));
+      canvas.width = Math.max(1, width * dpr);
+      canvas.height = Math.max(1, height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      if (context) {
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        context.textBaseline = "top";
+        context.font = "12px ui-monospace, SFMono-Regular, Menlo, monospace";
+      }
+      columns = buildColumns(width, height);
+    };
+    const clearCanvas = () => {
+      if (!(context && width > 0 && height > 0)) {
+        return;
+      }
+      context.clearRect(0, 0, width, height);
+    };
+    const drawFrame = (deltaSeconds) => {
+      if (!(context && width > 0 && height > 0 && columns.length > 0)) {
+        return;
+      }
+      context.fillStyle = "rgba(2, 8, 5, 0.12)";
+      context.fillRect(0, 0, width, height);
+      for (const column of columns) {
+        drawColumn({ context, column, height });
+        advanceColumn({ column, deltaSeconds, height });
+      }
+    };
+    const stopLoop = () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    };
+    const tick = (timestamp) => {
+      if (!isActive || reducedMotion) {
+        return;
+      }
+      if (lastFrameAt === 0) {
+        lastFrameAt = timestamp;
+      }
+      const elapsed = timestamp - lastFrameAt;
+      if (elapsed >= FRAME_INTERVAL_MS) {
+        lastFrameAt = timestamp;
+        drawFrame(elapsed / 1e3);
+      }
+      rafId = window.requestAnimationFrame(tick);
+    };
+    const setActive = (active) => {
+      if (isActive === active) {
+        return;
+      }
+      isActive = active;
+      container.classList.toggle(
+        "session-input__container--matrix-active",
+        active
+      );
+      if (!active) {
+        stopLoop();
+        clearCanvas();
+        return;
+      }
+      applyCanvasSize();
+      if (reducedMotion) {
+        return;
+      }
+      lastFrameAt = 0;
+      stopLoop();
+      rafId = window.requestAnimationFrame(tick);
+    };
+    applyCanvasSize();
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => {
+        applyCanvasSize();
+      });
+      resizeObserver.observe(container);
+    } else {
+      window.addEventListener("resize", applyCanvasSize);
+    }
+    return {
+      setActive,
+      dispose: () => {
+        setActive(false);
+        if (resizeObserver) {
+          resizeObserver.disconnect();
+        } else {
+          window.removeEventListener("resize", applyCanvasSize);
+        }
+        canvas.remove();
+        container.classList.remove("session-input__container--matrix-active");
+      }
+    };
+  };
+
   // src/client/ui/src/session/input-textarea.tsx
   var import_react6 = __toESM(require_react());
 
@@ -22425,18 +22612,24 @@ ${path2}` : path2;
     connectionState = "idle",
     continuityLockActive = false,
     isQueued = false,
+    providerTheme = null,
     onSubmit
   }) => {
-    const isDisabled = connectionState === "running" || isQueued;
+    const inputLocked = connectionState !== "idle" || isQueued;
+    const matrixActive = connectionState === "running" || connectionState === "blocked";
+    const waitCopyActive = inputLocked && !isQueued;
+    const waitCopyColor = resolveProviderWaitColor(providerTheme);
+    const formClassName = [
+      "session-input",
+      matrixActive ? "session-input--matrix-active" : "",
+      "session-panel"
+    ].filter(Boolean).join(" ");
     const placeholder = (() => {
       if (isQueued) {
         return "Message queued. Sending as soon as it is ready\u2026";
       }
-      if (continuityLockActive) {
-        return "Agent is preparing a continuation\u2026 Please wait.";
-      }
-      if (connectionState === "blocked") {
-        return "Agent is preparing a continuation\u2026 Please wait.";
+      if (continuityLockActive || connectionState === "blocked") {
+        return "Agent is resuming your session\u2026 Please wait.";
       }
       if (connectionState === "running") {
         return "Agent is working\u2026 Please wait.";
@@ -22444,11 +22637,54 @@ ${path2}` : path2;
       return "Type your request or drag files with Shift held...";
     })();
     const [value, setValue] = (0, import_react7.useState)(draft);
+    const formRef = (0, import_react7.useRef)(null);
+    const matrixRainRef = (0, import_react7.useRef)(null);
     (0, import_react7.useEffect)(() => {
       setValue(draft);
     }, [draft]);
+    (0, import_react7.useEffect)(() => {
+      const form = formRef.current;
+      if (!form) {
+        return;
+      }
+      const container = form.querySelector(
+        ".session-input__container"
+      );
+      if (!container) {
+        return;
+      }
+      const controller = createInputLockMatrixRain(container);
+      matrixRainRef.current = controller;
+      return () => {
+        controller.dispose();
+        matrixRainRef.current = null;
+      };
+    }, []);
+    (0, import_react7.useEffect)(() => {
+      matrixRainRef.current?.setActive(matrixActive);
+    }, [matrixActive]);
+    (0, import_react7.useEffect)(() => {
+      const form = formRef.current;
+      if (!form) {
+        return;
+      }
+      form.style.setProperty("--session-input-wait-color", waitCopyColor);
+      const textarea = form.querySelector(
+        ".session-input__textarea"
+      );
+      if (!textarea) {
+        return;
+      }
+      if (!waitCopyActive) {
+        textarea.style.removeProperty("color");
+        textarea.style.removeProperty("caret-color");
+        return;
+      }
+      textarea.style.setProperty("color", waitCopyColor);
+      textarea.style.setProperty("caret-color", waitCopyColor);
+    }, [waitCopyActive, waitCopyColor]);
     const sendMessage = (0, import_react7.useCallback)(() => {
-      if (isDisabled) {
+      if (inputLocked) {
         return;
       }
       const trimmed = value.trim();
@@ -22457,7 +22693,7 @@ ${path2}` : path2;
       }
       onSubmit(trimmed);
       setValue("");
-    }, [isDisabled, onSubmit, value]);
+    }, [inputLocked, onSubmit, value]);
     const handleSubmit = (0, import_react7.useCallback)(
       (event) => {
         event.preventDefault();
@@ -22469,13 +22705,14 @@ ${path2}` : path2;
       "form",
       {
         "aria-label": "Message input",
-        className: "session-input session-panel",
+        className: formClassName,
         onSubmit: handleSubmit,
+        ref: formRef,
         children: [
           /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
             "fieldset",
             {
-              disabled: isDisabled,
+              disabled: inputLocked,
               style: { border: 0, padding: 0, margin: 0 },
               children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
                 InputTextarea,
@@ -22496,7 +22733,7 @@ ${path2}` : path2;
               )
             }
           ),
-          connectionState === "idle" && !isQueued ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) }) : null
+          inputLocked ? null : /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "session-input__footer", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" }) })
         ]
       }
     );
@@ -22626,12 +22863,18 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/virtual-conversation.tsx
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
-  var CONTINUITY_INTERNAL_ACK = "__CODEAIHUB_INTERNAL_CONTINUITY_ACK__";
+  var CONTINUITY_INTERNAL_ACK = "Ready to continue working.";
+  var LEGACY_CONTINUITY_INTERNAL_ACK = "__CODEAIHUB_INTERNAL_CONTINUITY_ACK__";
+  var CONTINUITY_INTERNAL_MESSAGES = /* @__PURE__ */ new Set([
+    CONTINUITY_INTERNAL_ACK,
+    LEGACY_CONTINUITY_INTERNAL_ACK
+  ]);
+  var isContinuityInternalMessage = (message) => message.role === "assistant" && CONTINUITY_INTERNAL_MESSAGES.has(message.content.trim());
   var filterContinuityInternalMessages = (messages) => {
     for (const message of messages) {
-      if (message.role === "assistant" && message.content.trim() === CONTINUITY_INTERNAL_ACK) {
+      if (isContinuityInternalMessage(message)) {
         return messages.filter(
-          (candidate) => !(candidate.role === "assistant" && candidate.content.trim() === CONTINUITY_INTERNAL_ACK)
+          (candidate) => !isContinuityInternalMessage(candidate)
         );
       }
     }
@@ -22992,10 +23235,10 @@ ${path2}` : path2;
     );
     const connectionState = activeSession?.status.connectionState ?? "idle";
     const continuityLockActive = activeSession?.status.continuityLock?.active === true;
-    const effectiveConnectionState = continuityLockActive ? "blocked" : connectionState;
+    const inputConnectionState = continuityLockActive ? "blocked" : connectionState;
     const { isQueued, submitMessage } = useQueuedSend({
       activeSessionId,
-      connectionState: effectiveConnectionState,
+      connectionState: inputConnectionState,
       onSendMessage
     });
     const continuationChain = resolveContinuationChainOrEmpty({
@@ -23034,11 +23277,12 @@ ${path2}` : path2;
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             input_panel_default,
             {
-              connectionState: effectiveConnectionState,
+              connectionState: inputConnectionState,
               continuityLockActive,
               draft: activeSession.draft,
               isQueued,
-              onSubmit: submitMessage
+              onSubmit: submitMessage,
+              providerTheme
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
