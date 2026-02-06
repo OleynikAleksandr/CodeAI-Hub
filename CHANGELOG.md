@@ -1,3 +1,11 @@
+## [1.1.516] - 2026-02-06
+### Fixed
+- Session UI: removed the standalone rails banner `Agent is working. Please wait.` while preserving input-panel queue/lock behavior.
+- Claude debug logs: filtered `sdk:stream_event` noise for `event.type=content_block_delta`, keeping `sdk:result` and other lifecycle-relevant records.
+
+### Added
+- Claude module regression test covering SDK log filtering (`content_block_delta` suppressed, `result` still logged).
+
 ## [1.1.514] - 2026-02-06
 ### Fixed
 - Core continuity: emit deterministic stream-only handoff lifecycle markers (`handoff_state=start|ready`) with explicit unlock path.
