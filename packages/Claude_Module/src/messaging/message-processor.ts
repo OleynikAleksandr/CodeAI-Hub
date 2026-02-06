@@ -106,7 +106,6 @@ export class SDKMessageProcessor {
     string,
     { used: number; limit: number }
   >();
-  private readonly pendingTurnsBySession = new WeakMap<ActiveSession, number>();
   private contextUsageReader: ClaudeContextUsageReader | null = null;
   private readonly contextUsageInFlight = new Map<string, Promise<void>>();
   private readonly contextUsageLastAttemptAt = new Map<string, number>();
@@ -211,6 +210,7 @@ export class SDKMessageProcessor {
             },
           });
         } catch (error) {
+          this.maybeEmitTurnFailed(session, error, session.sessionId);
           this.options.reporter?.error?.(
             "Claude turn processing failed",
             error
@@ -254,7 +254,7 @@ export class SDKMessageProcessor {
       resolver(targetSession.messageController.pendingMessages.shift() ?? null);
     }
     if (!internal) {
-      this.markTurnStarted(targetSession, sessionId);
+      this.maybeEmitTurnStarted(targetSession, sessionId);
       targetSession.eventEmitter.emit("message", {
         type: "user_input",
         content,
@@ -280,8 +280,23 @@ export class SDKMessageProcessor {
         }
         this.dispatchMessage(activeSession, message);
       }
+      const session = this.resolveSession(options.sessionId, promotedSessionId);
+      if (session) {
+        this.maybeEmitTurnFailed(
+          session,
+          new Error("Claude stream ended without result"),
+          promotedSessionId ?? options.sessionId
+        );
+      }
     } catch (error) {
       const session = this.resolveSession(options.sessionId, promotedSessionId);
+      if (session) {
+        this.maybeEmitTurnFailed(
+          session,
+          error,
+          promotedSessionId ?? options.sessionId
+        );
+      }
       session?.eventEmitter.emit("error", { type: "processing", error });
       this.options.reporter?.error?.("Claude stream processing failed", error);
     }
@@ -315,7 +330,7 @@ export class SDKMessageProcessor {
       }
       case "result": {
         this.handleResultMessage(session, message);
-        this.maybeMarkTurnCompleted(session, message.session_id);
+        this.maybeEmitTurnCompleted(session, message.session_id);
         this.refreshTokenUsageFromContext(session, message.session_id);
         break;
       }
@@ -324,13 +339,20 @@ export class SDKMessageProcessor {
     }
   }
 
-  private markTurnStarted(
+  private maybeEmitTurnStarted(
     session: ActiveSession,
     claudeSessionId: string
   ): void {
-    const pending = this.pendingTurnsBySession.get(session) ?? 0;
-    this.pendingTurnsBySession.set(session, pending + 1);
-
+    const queueState = session.turnQueue;
+    if (
+      !queueState ||
+      queueState.internalTurn ||
+      queueState.lifecycle.started ||
+      queueState.lifecycle.ended
+    ) {
+      return;
+    }
+    queueState.lifecycle.started = true;
     session.eventEmitter.emit("message", {
       type: "turn_started",
       provider: "claude",
@@ -341,22 +363,52 @@ export class SDKMessageProcessor {
     });
   }
 
-  private maybeMarkTurnCompleted(
+  private maybeEmitTurnCompleted(
     session: ActiveSession,
     claudeSessionId: string | null | undefined
   ): void {
-    const pending = this.pendingTurnsBySession.get(session) ?? 0;
-    if (pending <= 0) {
+    const queueState = session.turnQueue;
+    if (!queueState || queueState.internalTurn || queueState.lifecycle.ended) {
       return;
     }
-    this.pendingTurnsBySession.set(session, pending - 1);
-
+    const resolvedSessionId = claudeSessionId ?? session.sessionId;
+    if (!queueState.lifecycle.started) {
+      this.maybeEmitTurnStarted(session, resolvedSessionId);
+    }
+    queueState.lifecycle.ended = true;
     session.eventEmitter.emit("message", {
       type: "turn_completed",
       provider: "claude",
       sessionId: session.sessionId,
-      claudeSessionId: claudeSessionId ?? session.sessionId,
+      claudeSessionId: resolvedSessionId,
       uuid: `${crypto.randomUUID()}::turn_completed`,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  private maybeEmitTurnFailed(
+    session: ActiveSession,
+    error: unknown,
+    claudeSessionId: string | null | undefined
+  ): void {
+    const queueState = session.turnQueue;
+    if (!queueState || queueState.internalTurn || queueState.lifecycle.ended) {
+      return;
+    }
+    const resolvedSessionId = claudeSessionId ?? session.sessionId;
+    if (!queueState.lifecycle.started) {
+      this.maybeEmitTurnStarted(session, resolvedSessionId);
+    }
+    queueState.lifecycle.ended = true;
+    const message = error instanceof Error ? error.message : String(error);
+    session.eventEmitter.emit("message", {
+      type: "turn_failed",
+      provider: "claude",
+      sessionId: session.sessionId,
+      claudeSessionId: resolvedSessionId,
+      message,
+      error,
+      uuid: `${crypto.randomUUID()}::turn_failed`,
       timestamp: new Date().toISOString(),
     });
   }
