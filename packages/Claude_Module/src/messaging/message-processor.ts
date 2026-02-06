@@ -186,6 +186,7 @@ export class SDKMessageProcessor {
         this.sessionManager.beginTurn(session.sessionId, {
           internal: turn.internal,
         });
+        session.structuredOutputUuids?.clear();
         try {
           this.send(session.sessionId, turn.content, {
             internal: turn.internal,
@@ -329,6 +330,7 @@ export class SDKMessageProcessor {
         break;
       }
       case "result": {
+        this.emitThinkingChunks(session, message);
         this.handleResultMessage(session, message);
         this.maybeEmitTurnCompleted(session, message.session_id);
         this.refreshTokenUsageFromContext(session, message.session_id);
