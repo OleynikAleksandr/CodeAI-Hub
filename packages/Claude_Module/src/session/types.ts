@@ -31,6 +31,7 @@ export type ClaudeTurnQueueState = {
   internalTurn: boolean;
   lifecycle: ClaudeTurnLifecycleState;
   processing: boolean;
+  shutdownRequested: boolean;
 };
 
 export type ActiveSession = {
