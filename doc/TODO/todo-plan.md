@@ -51,8 +51,8 @@
 13. [DONE] Refactor(claude-sdk): удалить long-lived `ensureSessionStarted/queryInstance` bootstrap и маршрутизировать send в очередь процессора turn-ов (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/session/types.ts`; expected commit message: `refactor(claude): switch sdk manager to one-shot dispatch`)
 14. [DONE] Git Commit: `refactor(claude): switch sdk manager to one-shot dispatch` (hash: bcccb0de)
 15. [DONE] Refactor(claude-sdk): выделить детерминированный билдер query options и сохранить все full-access флаги + output schema/thinking/model (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`; expected commit message: `refactor(claude): preserve full-access query options in one-shot mode`)
-16. [TODO] Git Commit: `refactor(claude): preserve full-access query options in one-shot mode` (hash: TBD)
-17. [TODO] Fix(claude-sdk): жёстко зафиксировать resume semantics `resume=<providerSessionId>` без fork и без file-discovery зависимости (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/messaging/session-file-discovery.ts`; expected commit message: `fix(claude): use sdk session id as resume source of truth`)
+16. [DONE] Git Commit: `refactor(claude): preserve full-access query options in one-shot mode` (hash: 58af0acd)
+17. [DONE] Fix(claude-sdk): жёстко зафиксировать resume semantics `resume=<providerSessionId>` без fork и без file-discovery зависимости (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/messaging/session-file-discovery.ts`; expected commit message: `fix(claude): use sdk session id as resume source of truth`)
 18. [TODO] Git Commit: `fix(claude): use sdk session id as resume source of truth` (hash: TBD)
 
 ### Stream: Claude message processor one-shot engine

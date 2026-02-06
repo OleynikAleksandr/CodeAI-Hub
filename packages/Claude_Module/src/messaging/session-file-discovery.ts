@@ -36,8 +36,9 @@ export const getSDKFilesBefore = (
 export const getSessionIdFromSDKFiles = async (
   projectPath: string,
   previousFiles: string[],
-  reporter?: ModuleReporter
+  _reporter?: ModuleReporter
 ): Promise<string | null> => {
+  // Best-effort diagnostics only. Runtime session binding must rely on SDK events.
   if (!fs.existsSync(projectPath)) {
     return null;
   }
@@ -55,21 +56,7 @@ export const getSessionIdFromSDKFiles = async (
       (filePath) => !previousFiles.includes(filePath)
     );
     if (newFile) {
-      const sessionId = path.basename(newFile, SESSION_FILE_EXTENSION);
-      try {
-        const content = fs.readFileSync(newFile, "utf8");
-        const firstLine = content
-          .split("\n")
-          .find((line) => line.trim().length > 0);
-        if (!firstLine) {
-          return sessionId;
-        }
-        const parsed = JSON.parse(firstLine) as { readonly sessionId?: string };
-        return parsed.sessionId ?? sessionId;
-      } catch (error) {
-        reporter?.error?.("Failed to inspect SDK session file", error);
-        return sessionId;
-      }
+      return path.basename(newFile, SESSION_FILE_EXTENSION);
     }
     await delay(SESSION_DISCOVERY_POLL_INTERVAL_MS);
   }
