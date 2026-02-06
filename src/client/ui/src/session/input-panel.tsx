@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { ProviderTheme } from "./helpers";
+import { resolveProviderWaitColor } from "./helpers";
 import {
   createInputLockMatrixRain,
   type InputLockMatrixRainController,
@@ -10,6 +12,7 @@ type InputPanelProps = {
   readonly connectionState?: "idle" | "running" | "blocked";
   readonly continuityLockActive?: boolean;
   readonly isQueued?: boolean;
+  readonly providerTheme?: ProviderTheme | null;
   readonly onSubmit: (text: string) => void;
 };
 
@@ -20,11 +23,14 @@ const InputPanel = ({
   connectionState = "idle",
   continuityLockActive = false,
   isQueued = false,
+  providerTheme = null,
   onSubmit,
 }: InputPanelProps) => {
   const inputLocked = connectionState !== "idle" || isQueued;
   const matrixActive =
     connectionState === "running" || connectionState === "blocked";
+  const waitCopyActive = inputLocked && !isQueued;
+  const waitCopyColor = resolveProviderWaitColor(providerTheme);
   const formClassName = [
     "session-input",
     matrixActive ? "session-input--matrix-active" : "",
@@ -76,6 +82,30 @@ const InputPanel = ({
   useEffect(() => {
     matrixRainRef.current?.setActive(matrixActive);
   }, [matrixActive]);
+
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) {
+      return;
+    }
+
+    form.style.setProperty("--session-input-wait-color", waitCopyColor);
+    const textarea = form.querySelector<HTMLTextAreaElement>(
+      ".session-input__textarea"
+    );
+    if (!textarea) {
+      return;
+    }
+
+    if (!waitCopyActive) {
+      textarea.style.removeProperty("color");
+      textarea.style.removeProperty("caret-color");
+      return;
+    }
+
+    textarea.style.setProperty("color", waitCopyColor);
+    textarea.style.setProperty("caret-color", waitCopyColor);
+  }, [waitCopyActive, waitCopyColor]);
 
   const sendMessage = useCallback(() => {
     if (inputLocked) {
