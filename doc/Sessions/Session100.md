@@ -25,7 +25,7 @@
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `ad4cd7e7 chore(release): build-all after phase99 continuity lock`
 - `a1fc97a3 docs(todo): sync build-all hash and start release step`
-- `TBD chore(release): build vsix after phase99 continuity lock`
+- `d5c53f7f chore(release): build vsix after phase99 continuity lock`
 
 ---
 
