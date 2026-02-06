@@ -8048,6 +8048,10 @@
         used: cachedTokenUsage?.used ?? 0,
         limit: cachedTokenUsage?.limit ?? 2e5
       },
+      continuityLock: {
+        active: false,
+        updatedAt: now
+      },
       connectionState: "idle",
       updatedAt: now
     };
@@ -22419,6 +22423,7 @@ ${path2}` : path2;
   var InputPanel = ({
     draft,
     connectionState = "idle",
+    continuityLockActive = false,
     isQueued = false,
     onSubmit
   }) => {
@@ -22426,6 +22431,9 @@ ${path2}` : path2;
     const placeholder = (() => {
       if (isQueued) {
         return "Message queued. Sending as soon as it is ready\u2026";
+      }
+      if (continuityLockActive) {
+        return "Agent is preparing a continuation\u2026 Please wait.";
       }
       if (connectionState === "blocked") {
         return "Agent is preparing a continuation\u2026 Please wait.";
@@ -22823,13 +22831,11 @@ ${path2}` : path2;
         if (!options.activeSessionId) {
           return;
         }
-        if (options.connectionState === "blocked") {
+        if (options.connectionState !== "idle") {
           setQueuedMessage((previous3) => previous3 ?? text7);
           return;
         }
-        if (options.connectionState === "idle") {
-          options.onSendMessage(options.activeSessionId, text7);
-        }
+        options.onSendMessage(options.activeSessionId, text7);
       }
     };
   };
@@ -22985,9 +22991,11 @@ ${path2}` : path2;
       }
     );
     const connectionState = activeSession?.status.connectionState ?? "idle";
+    const continuityLockActive = activeSession?.status.continuityLock?.active === true;
+    const effectiveConnectionState = continuityLockActive ? "blocked" : connectionState;
     const { isQueued, submitMessage } = useQueuedSend({
       activeSessionId,
-      connectionState,
+      connectionState: effectiveConnectionState,
       onSendMessage
     });
     const continuationChain = resolveContinuationChainOrEmpty({
@@ -23026,7 +23034,8 @@ ${path2}` : path2;
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             input_panel_default,
             {
-              connectionState,
+              connectionState: effectiveConnectionState,
+              continuityLockActive,
               draft: activeSession.draft,
               isQueued,
               onSubmit: submitMessage
