@@ -93,9 +93,9 @@
 31. [DONE] Docs(copy): зафиксировать утверждённые тексты continuity handoff и правило их показа в архитектурной документации (scope: `doc/TODO/todo-plan.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`; expected commit message: `docs(ux): define continuity handoff copy and display rules`)
 32. [DONE] Git Commit: `docs(ux): define continuity handoff copy and display rules` (hash: ca65ba7c)
 33. [DONE] Fix(ui-lock): устранить эффект «поле ввода уже разблокировано, но copy ещё просит ждать» через синхронизацию условий disabled/placeholder (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `fix(ui): synchronize input lock and continuity wait copy`)
-34. [DONE] Git Commit: `fix(ui): synchronize input lock and continuity wait copy` (hash: TBD)
-35. [TODO] Fix(continuity-template): заменить служебный ACK-token в continuity resume template на `Ready to continue working.` и синхронизировать скрытие internal continuity message в UI (scope: `assets/flow/continuity/resume.md`, `packages/core/src/flow-node-continuity/template-loader.ts`, `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(continuity): replace internal ack token with handoff phrase`)
-36. [TODO] Git Commit: `fix(continuity): replace internal ack token with handoff phrase` (hash: TBD)
+34. [DONE] Git Commit: `fix(ui): synchronize input lock and continuity wait copy` (hash: d8b782a2)
+35. [DONE] Fix(continuity-template): заменить служебный ACK-token в continuity resume template на `Ready to continue working.` и синхронизировать скрытие internal continuity message в UI (scope: `assets/flow/continuity/resume.md`, `packages/core/src/flow-node-continuity/template-loader.ts`, `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(continuity): replace internal ack token with handoff phrase`)
+36. [DONE] Git Commit: `fix(continuity): replace internal ack token with handoff phrase` (hash: TBD)
 37. [TODO] Verify(runtime-template): после таргетной сборки проверить, что установленный шаблон `~/.codeai-hub/templates/flow/continuity/resume.md` синхронизирован с новым текстом, и фраза не попадает в видимый диалог (scope: `doc/Sessions/Session100.md`, `doc/TODO/todo-plan.md`; expected commit message: `chore(qa): verify installed continuity resume template sync`)
 38. [TODO] Git Commit: `chore(qa): verify installed continuity resume template sync` (hash: TBD)
 
