@@ -63,10 +63,10 @@
 23. [DONE] Refactor(claude-messaging): перенести текущую обработку assistant/thinking/structured-output без регрессий на one-shot loop (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`, `packages/Claude_Module/src/messaging/structured-output-utils.ts`; expected commit message: `refactor(claude): keep structured and thinking pipeline in one-shot mode`)
 24. [DONE] Git Commit: `refactor(claude): keep structured and thinking pipeline in one-shot mode` (hash: 5a61d582)
 25. [DONE] Fix(claude-messaging): сохранить token usage refresh после `result` с текущим throttling и event shape `token_usage` (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude): preserve token usage stream in one-shot mode`)
-26. [TODO] Git Commit: `fix(claude): preserve token usage stream in one-shot mode` (hash: TBD)
+26. [DONE] Git Commit: `fix(claude): preserve token usage stream in one-shot mode` (hash: f88046a7)
 
 ### Stream: logging parity (no truncation on resume)
-27. [TODO] Fix(claude-logging): сделать logger append-safe для resume/rebind в тот же `providerSessionId` (без truncate существующего файла) (scope: `packages/Claude_Module/src/logging/sdk-session-logger.ts`; expected commit message: `fix(claude): append logs on resume without truncation`)
+27. [DONE] Fix(claude-logging): сделать logger append-safe для resume/rebind в тот же `providerSessionId` (без truncate существующего файла) (scope: `packages/Claude_Module/src/logging/sdk-session-logger.ts`; expected commit message: `fix(claude): append logs on resume without truncation`)
 28. [TODO] Git Commit: `fix(claude): append logs on resume without truncation` (hash: TBD)
 29. [TODO] Fix(claude-logging): стабилизировать rename/promotion path temp->real без потери buffered entries (scope: `packages/Claude_Module/src/logging/sdk-session-logger.ts`; expected commit message: `fix(claude): preserve buffered logs during session promotion`)
 30. [TODO] Git Commit: `fix(claude): preserve buffered logs during session promotion` (hash: TBD)
