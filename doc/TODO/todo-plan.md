@@ -32,9 +32,9 @@
 1. [DONE] Feat(core-contract): добавить контракт stream-event `data.kind=continuity_lock` и helper-эмиттер в `SessionRequestHandler` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): add continuity_lock stream contract`)
 2. [DONE] Git Commit: `feat(core): add continuity_lock stream contract` (hash: c1f7cffb)
 3. [DONE] Feat(core-rollover): интегрировать lock-lifecycle в flow-node rollover (`locked` на trigger/report/bootstrap, хранение rollover-id/target-session context) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): wire continuity lock lifecycle into flow-node rollover`)
-4. [IN_PROGRESS] Git Commit: `feat(core): wire continuity lock lifecycle into flow-node rollover` (hash: TBD)
-5. [TODO] Feat(core-rollover): реализовать deterministic unlock (`resume_ready` на first bootstrap completion, `resume_failed`/`resume_timeout` fallback) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): unlock continuity lock on bootstrap completion and fallback`)
-6. [TODO] Git Commit: `fix(core): unlock continuity lock on bootstrap completion and fallback` (hash: TBD)
+4. [DONE] Git Commit: `feat(core): wire continuity lock lifecycle into flow-node rollover` (hash: 42233ceb)
+5. [DONE] Feat(core-rollover): реализовать deterministic unlock (`resume_ready` на first bootstrap completion, `resume_failed`/`resume_timeout` fallback) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): unlock continuity lock on bootstrap completion and fallback`)
+6. [IN_PROGRESS] Git Commit: `fix(core): unlock continuity lock on bootstrap completion and fallback` (hash: TBD)
 
 ### Stream: pm/ui lock consumption
 7. [TODO] Refactor(types-ui): расширить `SessionStatusInfo` и default snapshot полем `continuityLock` (scope: `src/types/session.ts`, `src/client/ui/src/session/helpers.ts`; expected commit message: `refactor(ui): add continuity lock state to session snapshot`)
