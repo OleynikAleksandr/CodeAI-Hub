@@ -79,9 +79,13 @@ const SessionViewBody = ({
 
   const connectionState: ConnectionState =
     activeSession?.status.connectionState ?? "idle";
+  const rolloverPending =
+    typeof activeSession?.status.rollover?.phase === "string" &&
+    activeSession.status.rollover.phase !== "failed";
   const continuityLockActive =
     activeSession?.status.continuityLock?.active === true;
-  const inputConnectionState: ConnectionState = continuityLockActive
+  const effectiveContinuityLockActive = continuityLockActive || rolloverPending;
+  const inputConnectionState: ConnectionState = effectiveContinuityLockActive
     ? "blocked"
     : connectionState;
   const { isQueued, submitMessage } = useQueuedSend({
@@ -131,7 +135,7 @@ const SessionViewBody = ({
         <div className="session-app__rails">
           <InputPanel
             connectionState={inputConnectionState}
-            continuityLockActive={continuityLockActive}
+            continuityLockActive={effectiveContinuityLockActive}
             draft={activeSession.draft}
             isQueued={isQueued}
             onSubmit={submitMessage}
