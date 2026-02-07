@@ -1151,14 +1151,15 @@ export class SessionRequestHandler {
       return;
     }
 
-    await this.continuity.ensureTrackedOnOutboundMessage({
-      sessionId,
-      providerSessionId: binding.providerSessionId,
-    });
-
-    this.logDispatchingMessageToProvider(sessionId, binding, content.length);
-
+    this.emitTurnStateEvent({ sessionId, state: "running" });
     try {
+      await this.continuity.ensureTrackedOnOutboundMessage({
+        sessionId,
+        providerSessionId: binding.providerSessionId,
+      });
+
+      this.logDispatchingMessageToProvider(sessionId, binding, content.length);
+
       const workflowTurnOptions = await resolveWorkflowTurnOptions({
         stage: session.stage,
         content,
