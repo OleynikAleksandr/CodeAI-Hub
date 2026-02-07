@@ -84,7 +84,7 @@
 10. [DONE] Git Commit: `test(ui): enforce provider-agnostic immediate input lock parity` (hash: 864d3119)
 11. [DONE] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под итог Phase 103 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session108.md`; expected commit message: `docs(release): prepare notes for immediate input lock parity release`)
 12. [TODO] Git Commit: `docs(release): prepare notes for immediate input lock parity release` (hash: TBD)
-13. [TODO] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after immediate lock parity`)
+13. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after immediate lock parity`)
 14. [TODO] Git Commit: `chore(release): build-all after immediate lock parity` (hash: TBD)
 15. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after immediate lock parity`)
 16. [TODO] Git Commit: `chore(release): build vsix after immediate lock parity` (hash: TBD)
