@@ -52,8 +52,8 @@
 20. [DONE] Git Commit: `fix(non-regression): keep restart resume compatibility with scoped workspace isolation` (hash: f6120a0b)
 
 ### Stream: release build (Phase 104)
-21. [TODO] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под итог Phase 104 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session110.md`; expected commit message: `docs(release): prepare notes for workspace-scoped session isolation release`)
-22. [TODO] Git Commit: `docs(release): prepare notes for workspace-scoped session isolation release` (hash: TBD)
+21. [DONE] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под итог Phase 104 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session110.md`; expected commit message: `docs(release): prepare notes for workspace-scoped session isolation release`)
+22. [DONE] Git Commit: `docs(release): prepare notes for workspace-scoped session isolation release` (hash: 0de83e53)
 23. [TODO] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after workspace-scoped session isolation`)
 24. [TODO] Git Commit: `chore(release): build-all after workspace-scoped session isolation` (hash: TBD)
 25. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after workspace-scoped session isolation`)
