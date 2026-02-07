@@ -42,7 +42,7 @@
 12. [DONE] Git Commit: `fix(core): scope session event delivery by selected workspace for pm clients` (hash: 1952b667)
 13. [DONE] Feat(pm-scope-sync): при выборе workspace отправлять в Core актуальный scope немедленно и ДО `workspace-activate`; повторять `workspace:scope:set` после reconnect (initial handshake) и сбрасывать scope при отсутствии выбранного workspace (scope: `src/client/project-manager/components/layout/main-layout.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `feat(pm): sync selected workspace scope to core bridge`)
 14. [DONE] Git Commit: `feat(pm): sync selected workspace scope to core bridge` (hash: c12afc43)
-15. [TODO] Test(core-bridge): покрыть тестами scoped delivery при конкурентных сессиях в нескольких workspace (никаких cross-workspace `session:created/session:stream` утечек в PM scope) (scope: `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts`, `packages/core/src/remote-bridge/index.test.ts`; expected commit message: `test(core): validate workspace-scoped bridge delivery under concurrent sessions`)
+15. [DONE] Test(core-bridge): покрыть тестами scoped delivery при конкурентных сессиях в нескольких workspace (никаких cross-workspace `session:created/session:stream` утечек в PM scope) (scope: `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts`, `packages/core/src/remote-bridge/index.test.ts`; expected commit message: `test(core): validate workspace-scoped bridge delivery under concurrent sessions`)
 16. [TODO] Git Commit: `test(core): validate workspace-scoped bridge delivery under concurrent sessions` (hash: TBD)
 
 ### Stream: non-regression — reopen/resume sessions after restart must remain intact
