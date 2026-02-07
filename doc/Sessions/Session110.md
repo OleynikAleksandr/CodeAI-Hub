@@ -47,6 +47,8 @@
 - `d0eb6d36 docs(todo): record build-all release commit hash`
 - `baea5036 chore(release): sync core and ui manifests for 1.1.523`
 - `27f50d0a chore(release): sync launcher manifest for 1.1.523`
+- `cd3cc87f chore(release): build vsix after workspace-scoped session isolation`
+- `091d00dc docs(todo): record build-release commit hash`
 
 ---
 
