@@ -22544,6 +22544,22 @@ ${path2}` : path2;
   // src/client/ui/src/session/virtual-conversation.tsx
   var import_react8 = __toESM(require_react());
 
+  // src/client/ui/src/session/continuity-internal-message.ts
+  var CONTINUITY_INTERNAL_ACK = "Ready to continue working.";
+  var LEGACY_CONTINUITY_INTERNAL_ACK = "__CODEAIHUB_INTERNAL_CONTINUITY_ACK__";
+  var CONTINUITY_INTERNAL_MESSAGES = /* @__PURE__ */ new Set([
+    CONTINUITY_INTERNAL_ACK,
+    LEGACY_CONTINUITY_INTERNAL_ACK
+  ]);
+  var INLINE_MARKDOWN_CODE_PATTERN = /^`([^`]+)`$/;
+  var normalizeContinuityInternalContent = (content3) => {
+    const trimmed = content3.trim();
+    return INLINE_MARKDOWN_CODE_PATTERN.exec(trimmed)?.[1]?.trim() ?? trimmed;
+  };
+  var isContinuityInternalMessage = (message) => message.role === "assistant" && CONTINUITY_INTERNAL_MESSAGES.has(
+    normalizeContinuityInternalContent(message.content)
+  );
+
   // src/client/ui/src/session/info-panel.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   var InfoPanel = ({ binding, continuationIndex }) => {
@@ -22661,13 +22677,6 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/virtual-conversation.tsx
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
-  var CONTINUITY_INTERNAL_ACK = "Ready to continue working.";
-  var LEGACY_CONTINUITY_INTERNAL_ACK = "__CODEAIHUB_INTERNAL_CONTINUITY_ACK__";
-  var CONTINUITY_INTERNAL_MESSAGES = /* @__PURE__ */ new Set([
-    CONTINUITY_INTERNAL_ACK,
-    LEGACY_CONTINUITY_INTERNAL_ACK
-  ]);
-  var isContinuityInternalMessage = (message) => message.role === "assistant" && CONTINUITY_INTERNAL_MESSAGES.has(message.content.trim());
   var filterContinuityInternalMessages = (messages) => {
     for (const message of messages) {
       if (isContinuityInternalMessage(message)) {
@@ -22989,6 +22998,16 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/session-view.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var FLOW_NODE_ROLLOVER_PENDING_PHASES = /* @__PURE__ */ new Set([
+    "start",
+    "create_report_sent",
+    "waiting_for_report",
+    "report_ready",
+    "new_session_created",
+    "resume_sent"
+  ]);
+  var isFlowNodeRolloverPendingPhase = (phase) => FLOW_NODE_ROLLOVER_PENDING_PHASES.has(phase);
+  var isTerminalContinuityUnlockReason = (reason) => reason === "resume_ready" || reason === "resume_failed" || reason === "resume_timeout";
   var SessionViewBody = ({
     sessions,
     allSessions: allSessionsProp,
@@ -23032,7 +23051,10 @@ ${path2}` : path2;
       }
     );
     const connectionState = activeSession?.status.connectionState ?? "idle";
-    const rolloverPending = typeof activeSession?.status.rollover?.phase === "string" && activeSession.status.rollover.phase !== "failed";
+    const rolloverPhase = activeSession?.status.rollover?.phase;
+    const continuityLockReason = activeSession?.status.continuityLock?.reason;
+    const terminalContinuityUnlockObserved = activeSession?.status.continuityLock?.active === false && isTerminalContinuityUnlockReason(continuityLockReason);
+    const rolloverPending = typeof rolloverPhase === "string" && isFlowNodeRolloverPendingPhase(rolloverPhase) && !terminalContinuityUnlockObserved;
     const continuityLockActive = activeSession?.status.continuityLock?.active === true;
     const effectiveContinuityLockActive = continuityLockActive || rolloverPending;
     const inputConnectionState = effectiveContinuityLockActive ? "blocked" : connectionState;
