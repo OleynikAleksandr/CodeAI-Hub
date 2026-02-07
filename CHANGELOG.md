@@ -1,5 +1,9 @@
-## [Unreleased] - 2026-02-06
+## [Unreleased] - 2026-02-07
 ### Fixed
+- Core: turn-end continuity arbitration now decides rollover before `turn_state=idle`, preventing `unlock -> relock` gaps on threshold crossings.
+- Core: server-side guard rejects sends in source session while continuity rollover is pending (`continuity_rollover_pending`).
+- PM: rollover pending phases (`start` ... `resume_sent`) keep snapshot state blocked until continuity unlock is observed.
+- UI: `SessionView`/`InputPanel` use an effective continuity lock predicate that also respects rollover-pending state.
 - Flow-node continuity rollover: added explicit `continuity_lock` stream lifecycle (`locked`/`unlocked`) to remove the input unlock gap between `new_session_created` and bootstrap completion of the new session.
 - Core: deterministic continuity unlock on bootstrap completion/failure plus timeout fallback (`resume_ready`, `resume_failed`, `resume_timeout`).
 - PM/UI: `token-usage-stream` now applies `continuity_lock` state and preserves blocked input semantics during session switch.
@@ -10,6 +14,8 @@
 - Session UI: removed experimental Matrix Rain input lock background due rendering regressions; restored stable input panel visuals.
 
 ### Added
+- Core regression tests for turn-end atomicity: no idle before continuity lock on rollover start; old-session send guard coverage.
+- PM/UI regression tests for rollover-pending blocked state and continuity-lock disabled fieldset behavior in `InputPanel`.
 - Core regression test covering continuity lock sequence across old->new session rollover.
 - PM/UI regression tests for continuity lock handling (`token-usage-stream`) and continuity placeholder behavior in `InputPanel`.
 
