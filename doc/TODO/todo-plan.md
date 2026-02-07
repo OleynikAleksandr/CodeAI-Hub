@@ -47,7 +47,7 @@
 
 ### Stream: non-regression — reopen/resume sessions after restart must remain intact
 17. [DONE] Test(non-regression): покрыть reopen/resume из дерева после перезапуска (workspace selection -> `workspace:scope:set` -> `workspace-activate` -> deterministic resume/visibility reviewer session); зафиксировать, что изоляция не ломает текущий path `workspace-activate` + `reviewer-session-visibility` + resume intent (scope: `src/client/project-manager/components/sessions/reviewer-session-visibility.test.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts`; expected commit message: `test(non-regression): preserve workspace-tree reopen and reviewer resume after restart`)
-18. [TODO] Git Commit: `test(non-regression): preserve workspace-tree reopen and reviewer resume after restart` (hash: TBD)
+18. [DONE] Git Commit: `test(non-regression): preserve workspace-tree reopen and reviewer resume after restart` (hash: 56473a09)
 19. [DONE] Fix(non-regression): добавить явный `workspace:scope:set -> workspace:scope:ack` handshake перед `pm:session:resume` (focus/create только после `ack(applied)` в нужный `workspacePath`) и унифицировать scope-sync helper для `workspace-activate` и resume ordering (scope: `src/client/project-manager/services/workspace-scope-handshake.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `src/client/project-manager/components/sessions/session-resume-intent.ts`; expected commit message: `fix(non-regression): keep restart resume compatibility with scoped workspace isolation`)
 20. [DONE] Git Commit: `fix(non-regression): keep restart resume compatibility with scoped workspace isolation` (hash: f6120a0b)
 
