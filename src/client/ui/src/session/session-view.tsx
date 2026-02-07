@@ -19,6 +19,22 @@ import {
 } from "./virtual-conversation";
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
+const FLOW_NODE_ROLLOVER_PENDING_PHASES = new Set<string>([
+  "start",
+  "create_report_sent",
+  "waiting_for_report",
+  "report_ready",
+  "new_session_created",
+  "resume_sent",
+]);
+const isFlowNodeRolloverPendingPhase = (phase: string): boolean =>
+  FLOW_NODE_ROLLOVER_PENDING_PHASES.has(phase);
+const isTerminalContinuityUnlockReason = (
+  reason: string | undefined
+): boolean =>
+  reason === "resume_ready" ||
+  reason === "resume_failed" ||
+  reason === "resume_timeout";
 
 type SessionViewProps = {
   readonly allSessions?: readonly SessionRecord[];
@@ -79,9 +95,15 @@ const SessionViewBody = ({
 
   const connectionState: ConnectionState =
     activeSession?.status.connectionState ?? "idle";
+  const rolloverPhase = activeSession?.status.rollover?.phase;
+  const continuityLockReason = activeSession?.status.continuityLock?.reason;
+  const terminalContinuityUnlockObserved =
+    activeSession?.status.continuityLock?.active === false &&
+    isTerminalContinuityUnlockReason(continuityLockReason);
   const rolloverPending =
-    typeof activeSession?.status.rollover?.phase === "string" &&
-    activeSession.status.rollover.phase !== "failed";
+    typeof rolloverPhase === "string" &&
+    isFlowNodeRolloverPendingPhase(rolloverPhase) &&
+    !terminalContinuityUnlockObserved;
   const continuityLockActive =
     activeSession?.status.continuityLock?.active === true;
   const effectiveContinuityLockActive = continuityLockActive || rolloverPending;

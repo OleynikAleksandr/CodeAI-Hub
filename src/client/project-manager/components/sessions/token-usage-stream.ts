@@ -59,7 +59,9 @@ const isFlowNodeRolloverPendingPhase = (phase: string): boolean =>
 const isLegacyRolloverBlockedByPhase = (phase: string | undefined): boolean =>
   typeof phase === "string" && isFlowNodeRolloverPendingPhase(phase);
 
-const isTerminalContinuityUnlockReason = (reason: string | null): boolean =>
+const isTerminalContinuityUnlockReason = (
+  reason: string | null
+): reason is "resume_ready" | "resume_failed" | "resume_timeout" =>
   reason !== null && TERMINAL_CONTINUITY_UNLOCK_REASONS.has(reason);
 
 const isLegacyRolloverBlocked = (
