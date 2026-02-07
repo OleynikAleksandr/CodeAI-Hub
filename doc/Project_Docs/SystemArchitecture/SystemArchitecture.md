@@ -123,6 +123,8 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 2. `continuity_lock` (`locked|unlocked`) — source-of-truth блокировки ввода на окно bootstrap continuity rollover (`threshold_reached` -> `report_in_progress` -> `resume_bootstrap` -> `resume_ready|resume_failed|resume_timeout`).
 3. `turn_state=idle` снимает ожидание только при неактивном `continuity_lock`.
 4. Legacy `handoff_state` сохраняется для обратной совместимости старых handoff-path, но для flow-node rollover приоритет у `continuity_lock`.
+5. На границе `turn_completed` применяется атомарный arbitration: Core сначала решает continuity rollover, и только потом выбирает `turn_state=idle` или continuity lock-path (без `idle -> locked` окна).
+6. Пока flow-node rollover pending/active, send в old session блокируется на стороне Core (MVP policy: reject с bridge-error `continuity_rollover_pending`).
 
 State-table для Session UI:
 
@@ -137,6 +139,9 @@ State-table для Session UI:
 - Continuity lock не заменяет lifecycle turn и не должен жить дольше bootstrap-turn новой сессии.
 - `continuity_lock` передаётся как `session:stream`/`stream_event` и не добавляется в историю пользовательских сообщений.
 - Unlock должен быть детерминированным: для каждого `locked` должен приходить `unlocked` по success/failure/timeout, иначе UI останется в dead-lock.
+- Запрещён user-visible сценарий `running -> idle/unlocked -> continuity_lock(locked)` для одного и того же turn completion.
+
+Референс реализации Phase 101: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`.
 
 ### 2.8 Claude One-Shot Session Contract (Phase 98)
 
