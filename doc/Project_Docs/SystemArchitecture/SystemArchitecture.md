@@ -1,7 +1,7 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.514
-**Last Updated:** 2026-02-06
+**Version:** 1.1.522
+**Last Updated:** 2026-02-07
 **Status:** Active reference (source of truth)
 
 ---
@@ -250,6 +250,19 @@ UI устанавливается в `~/.codeai-hub/packages/ui/project-manager/
 
 ---
 
+### 5.6 Workspace-Scoped Session/Event Isolation (Phase 104)
+
+`session:*` доставка в PM должна быть строго scoped по выбранному `workspacePath` (absolute path).
+
+Критические инварианты:
+- PM отправляет `workspace:scope:set` и ждёт `workspace:scope:ack` **до** `workspace-activate`/resume/create.
+- `workspaceSlug` используется как workflow/metadata id, но не как ключ изоляции доставки.
+- Для scoped PM клиента Core доставляет `session:*` только для сессий `session.workspacePath === client.workspacePath`.
+- При `workspacePath=null` Core не доставляет `session:*` в scoped PM клиент.
+- UI обязуется соблюдать defence-in-depth: не фокусить, не рендерить и не отправлять в out-of-scope session.
+
+Детальный контракт: `doc/Project_Docs/SessionIsolation/ProjectManager_WorkspaceScopedSessionIsolation_Architecture.md`.
+
 ## 6. Providers
 
 ### 6.1 Claude & Codex
@@ -374,6 +387,7 @@ VSIX не содержит JS/CSS бандлов. UI собирается в н�
 
 - **Stacks:** `doc/Project_Docs/Stacks/` (CoreOrchestrator, Claude, Codex, Gemini, UI_Modules, Launcher_CEF)
 - **Workflow:** `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+- **Session Isolation (Phase 104):** `doc/Project_Docs/SessionIsolation/ProjectManager_WorkspaceScopedSessionIsolation_Architecture.md`
 - **Agent Packages:** `doc/Project_Docs/AgentPackages_Architecture.md`
 - **SolidWorks Flow:** `doc/SolidWorks-Flow/`
 - **Knowledge:** `doc/Project_Docs/knowledge/`
