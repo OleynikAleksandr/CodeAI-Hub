@@ -1,24 +1,16 @@
 import { useEffect, useState } from "react";
-import type { ProviderStackId } from "../../../../types/provider";
-import { getDefaultProviderTitle } from "../../../../types/provider";
+import {
+  getDefaultProviderTitle,
+  type ProviderStackId,
+} from "../../../../types/provider";
 import type {
   SessionMessage,
   SessionRecord,
   SessionSnapshot,
 } from "../../../../types/session";
+import { isContinuityInternalMessage } from "./continuity-internal-message";
 import InfoPanel from "./info-panel";
 import SessionTabs from "./session-tabs";
-
-const CONTINUITY_INTERNAL_ACK = "Ready to continue working.";
-const LEGACY_CONTINUITY_INTERNAL_ACK = "__CODEAIHUB_INTERNAL_CONTINUITY_ACK__";
-const CONTINUITY_INTERNAL_MESSAGES = new Set<string>([
-  CONTINUITY_INTERNAL_ACK,
-  LEGACY_CONTINUITY_INTERNAL_ACK,
-]);
-
-const isContinuityInternalMessage = (message: SessionMessage): boolean =>
-  message.role === "assistant" &&
-  CONTINUITY_INTERNAL_MESSAGES.has(message.content.trim());
 
 export const filterContinuityInternalMessages = (
   messages: readonly SessionMessage[]
