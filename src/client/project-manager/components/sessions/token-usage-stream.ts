@@ -49,17 +49,14 @@ const isFlowNodeRolloverNotification = (
   event.kind === "flow_node_rollover" &&
   typeof event.phase === "string";
 
-const isFlowNodeRolloverBlockingPhase = (phase: string): boolean =>
-  phase === "start" ||
-  phase === "create_report_sent" ||
-  phase === "waiting_for_report" ||
-  phase === "report_ready";
+const isFlowNodeRolloverPendingPhase = (phase: string): boolean =>
+  phase !== "failed";
 
 const isLegacyRolloverBlocked = (
   snapshot: SessionSnapshots[string]
 ): boolean => {
   const phase = snapshot.status.rollover?.phase;
-  return typeof phase === "string" && isFlowNodeRolloverBlockingPhase(phase);
+  return typeof phase === "string" && isFlowNodeRolloverPendingPhase(phase);
 };
 
 const isContinuityLockActive = (
@@ -162,7 +159,7 @@ export const updateSnapshotsWithTokenUsage = (
   if (isFlowNodeRolloverNotification(payload.event)) {
     const phase = payload.event.phase;
     const nextConnectionState =
-      isContinuityLockActive(snapshot) || isFlowNodeRolloverBlockingPhase(phase)
+      isContinuityLockActive(snapshot) || isFlowNodeRolloverPendingPhase(phase)
         ? "blocked"
         : "idle";
 
