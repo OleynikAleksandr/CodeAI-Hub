@@ -22,7 +22,8 @@ const InputPanel = ({
   providerTheme = null,
   onSubmit,
 }: InputPanelProps) => {
-  const inputLocked = connectionState !== "idle" || isQueued;
+  const inputLocked =
+    connectionState !== "idle" || continuityLockActive || isQueued;
   const waitCopyActive = inputLocked && !isQueued;
   const waitCopyColor = resolveProviderWaitColor(providerTheme);
   const formClassName = "session-input session-panel";
