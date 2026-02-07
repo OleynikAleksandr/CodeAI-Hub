@@ -48,8 +48,8 @@
 ## Phase 102 — Continuity Unlock + ACK Normalization Hotfix (owner: Oleksandr, updated: 2026-02-07)
 
 ### Stream: fix target-session unlock regression + normalize continuity ACK + release
-1. [TODO] Docs(design): зафиксировать hotfix-контракт по снятию lock после `continuity_lock=unlocked` и унификации internal ACK-фразы во всех continuity templates (scope: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`; expected commit message: `docs(continuity): define unlock resolution and ack normalization hotfix contract`)
-2. [TODO] Git Commit: `docs(continuity): define unlock resolution and ack normalization hotfix contract` (hash: TBD)
+1. [DONE] Docs(design): зафиксировать hotfix-контракт по снятию lock после `continuity_lock=unlocked` и унификации internal ACK-фразы во всех continuity templates (scope: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`; expected commit message: `docs(continuity): define unlock resolution and ack normalization hotfix contract`)
+2. [DONE] Git Commit: `docs(continuity): define unlock resolution and ack normalization hotfix contract` (hash: TBD)
 3. [TODO] Fix(pm-rollover): устранить залипание `blocked` в новой session после `continuity_lock=unlocked` при `rollover.phase=resume_sent` (scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `fix(pm): clear rollover pending state after continuity unlock`)
 4. [TODO] Git Commit: `fix(pm): clear rollover pending state after continuity unlock` (hash: TBD)
 5. [TODO] Fix(ui-lock): синхронизировать lock-предикат SessionView с terminal-семантикой rollover после unlock (без вечного pending по `resume_sent`) (scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): resolve effective lock after rollover unlock`)

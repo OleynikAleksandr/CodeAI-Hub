@@ -147,6 +147,20 @@ Rule:
 - This phrase is an internal protocol signal only and must be hidden from user-visible conversation history.
 - If legacy ACK token messages are encountered in old history, they remain filtered out the same way.
 
+### 4.6 Phase 102 Hotfix — ACK normalization + unlock release
+
+To remove runtime drift between templates and UI filtering, Phase 102 defines:
+
+1. All continuity templates must use one target ACK phrase:
+   - `Ready to continue working.`
+2. UI must suppress internal ACK in all supported wire forms:
+   - plain new phrase (`Ready to continue working.`),
+   - legacy token (`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__`),
+   - markdown-inline backtick wrapper (for example `` `__CODEAIHUB_INTERNAL_CONTINUITY_ACK__` ``).
+3. Unlock precedence:
+   - when `continuity_lock(state=unlocked)` arrives with terminal reason (`resume_ready|resume_failed|resume_timeout`), effective input lock must be released unless regular turn-state lock applies.
+4. It is forbidden to keep `blocked` only because stale `rollover.phase=resume_sent` remains in snapshot after terminal unlock.
+
 ---
 
 ## 5. Core Integration Plan

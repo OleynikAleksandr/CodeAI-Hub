@@ -1,7 +1,7 @@
 # Flow Node Continuity Turn-End Atomic Lock Architecture
 
 **Date:** 2026-02-07 20:35 (CET)
-**Status:** Approved baseline for implementation (Phase 101)
+**Status:** Approved baseline + Phase 102 hotfix addendum
 **Scope:** prevent transient input unlock between `turn_completed` and continuity handoff lock decision
 
 ---
@@ -75,6 +75,36 @@ At `turn_completed` boundary, Core executes arbitration in this order:
    - emit canonical `turn_state=idle`.
 
 This preserves atomicity and removes the user-visible unlock window.
+
+### 3.5 Phase 102 Hotfix — Unlock Resolution Semantics
+
+Regression context:
+
+- PM/UI treated rollover pending too broadly (`phase !== "failed"`).
+- Target session could stay `blocked` even after `continuity_lock(state=unlocked)` if `rollover.phase` stayed `resume_sent`.
+
+Required contract for Phase 102:
+
+1. `continuity_lock(state=unlocked)` is terminal for bootstrap lock resolution on that session.
+2. After unlock, pending fallback based on rollover phase MUST NOT keep the session blocked forever.
+3. PM/UI pending fallback must use an explicit pending-phase set (not negative broad checks like `phase !== "failed"`).
+
+Approved pending-phase set:
+
+- `start`
+- `create_report_sent`
+- `waiting_for_report`
+- `report_ready`
+- `new_session_created`
+- `resume_sent`
+
+Approved terminal unlock reasons:
+
+- `resume_ready`
+- `resume_failed`
+- `resume_timeout`
+
+`continuity_lock=unlocked` with one of terminal reasons must release effective lock for target session unless normal turn constraints keep it locked (`running` or queued-send path).
 
 ---
 
