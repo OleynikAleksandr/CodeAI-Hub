@@ -13,6 +13,7 @@ import type {
   IncomingMessage,
   OutgoingMessage,
   ProjectUpdatePayload,
+  WorkspaceScopeSetPayload,
 } from "./core-stream-message-types";
 import type { WorkspaceProject } from "./types";
 
@@ -160,6 +161,10 @@ export class ProjectManagerApi {
 
   removeProject(id: string): void {
     this.send({ type: "projects:remove", payload: { id } });
+  }
+
+  setWorkspaceScope(payload: WorkspaceScopeSetPayload): void {
+    this.send({ type: "workspace:scope:set", payload });
   }
 
   createSession(params: {

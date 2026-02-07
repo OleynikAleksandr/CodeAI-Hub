@@ -3,6 +3,25 @@ import type { WorkspaceProject } from "../services/project-registry/types";
 import type { Session } from "../session-manager";
 import type { RuntimeStatusEvent } from "../status/runtime-status-reporter";
 
+export type WorkspaceScopeSyncReason =
+  | "workspace_selected"
+  | "reconnect"
+  | "workspace_cleared";
+
+export type WorkspaceScopeSetPayload = {
+  readonly workspacePath: string | null;
+  readonly workspaceSlug?: string | null;
+  readonly requestId: string;
+  readonly reason: WorkspaceScopeSyncReason;
+};
+
+export type WorkspaceScopeAckPayload = {
+  readonly requestId: string;
+  readonly status: "applied" | "rejected";
+  readonly workspacePath: string | null;
+  readonly error?: string | null;
+};
+
 export type SerializedSession = {
   readonly id: string;
   readonly providerId: string;
@@ -60,6 +79,10 @@ export type BridgeEvent =
   | {
       readonly type: "projects:update";
       readonly payload: { readonly projects: readonly WorkspaceProject[] };
+    }
+  | {
+      readonly type: "workspace:scope:ack";
+      readonly payload: WorkspaceScopeAckPayload;
     };
 
 export type IncomingMessage =
@@ -100,6 +123,10 @@ export type IncomingMessage =
   | {
       readonly type: "projects:remove";
       readonly payload: { readonly id: string };
+    }
+  | {
+      readonly type: "workspace:scope:set";
+      readonly payload: WorkspaceScopeSetPayload;
     };
 
 export const serializeSession = (session: Session): SerializedSession => ({

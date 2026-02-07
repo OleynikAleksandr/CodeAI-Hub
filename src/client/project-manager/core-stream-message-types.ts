@@ -1,5 +1,24 @@
 import type { WorkspaceProject } from "./types";
 
+export type WorkspaceScopeSyncReason =
+  | "workspace_selected"
+  | "reconnect"
+  | "workspace_cleared";
+
+export type WorkspaceScopeSetPayload = {
+  readonly workspacePath: string | null;
+  readonly workspaceSlug?: string | null;
+  readonly requestId: string;
+  readonly reason: WorkspaceScopeSyncReason;
+};
+
+export type WorkspaceScopeAckPayload = {
+  readonly requestId: string;
+  readonly status: "applied" | "rejected";
+  readonly workspacePath: string | null;
+  readonly error?: string | null;
+};
+
 export type OutgoingMessage =
   | { readonly type: "projects:list" }
   | {
@@ -35,12 +54,15 @@ export type OutgoingMessage =
       };
     }
   | { readonly type: "session:delete"; readonly payload: { readonly sessionId: string } }
+  | {
+      readonly type: "workspace:scope:set";
+      readonly payload: WorkspaceScopeSetPayload;
+    }
   | { readonly type: "settings:load" };
 
-export type IncomingMessage = {
-  readonly type: string;
-  readonly payload?: unknown;
-};
+export type IncomingMessage =
+  | { readonly type: "workspace:scope:ack"; readonly payload: WorkspaceScopeAckPayload }
+  | { readonly type: string; readonly payload?: unknown };
 
 export type CoreStatePayload = {
   readonly providers?: unknown;
@@ -49,4 +71,3 @@ export type CoreStatePayload = {
 export type ProjectUpdatePayload = {
   readonly projects: readonly WorkspaceProject[];
 };
-
