@@ -38,6 +38,7 @@
 - `38652a43 test(ui): cover rollover unlock release and continuity ack suppression`
 - `d901b6d6 docs(release): prepare notes for continuity unlock and ack hotfix`
 - `5b380aaf chore(release): build-all after continuity hotfix`
+- `2ba89f9b chore(release): build vsix after continuity hotfix`
 
 ---
 
