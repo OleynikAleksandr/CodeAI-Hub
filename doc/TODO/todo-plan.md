@@ -57,4 +57,4 @@
 23. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after workspace-scoped session isolation`)
 24. [DONE] Git Commit: `chore(release): build-all after workspace-scoped session isolation` (hash: af9fea48)
 25. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after workspace-scoped session isolation`)
-26. [TODO] Git Commit: `chore(release): build vsix after workspace-scoped session isolation` (hash: TBD)
+26. [DONE] Git Commit: `chore(release): build vsix after workspace-scoped session isolation` (hash: cd3cc87f)
