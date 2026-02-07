@@ -6,6 +6,7 @@ import { ensureWorkflowWorktree } from "../../services/workspace-session-client"
 import type { WorkspaceProject } from "../../types";
 import { MainArea } from "./main-area";
 import { Sidebar } from "./sidebar";
+import { useWorkspaceScopeSync } from "./workspace-scope-sync";
 
 const isAbsolutePath = (value: string): boolean => {
   const trimmed = value.trim();
@@ -99,6 +100,7 @@ export const MainLayout: React.FC = () => {
   };
 
   const activeWorkspace = projects.find((p) => p.id === selectedWorkspaceId);
+  useWorkspaceScopeSync(activeWorkspace);
 
   useEffect(() => {
     if (!activeWorkspace) {
