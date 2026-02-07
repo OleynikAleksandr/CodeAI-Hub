@@ -1194,6 +1194,7 @@ export class SessionRequestHandler {
           });
       }
     } catch (error) {
+      this.emitTurnStateEvent({ sessionId, state: "idle" });
       this.logProviderSendMessageFailed(sessionId, binding, error);
       this.handleProviderFailure(binding.providerId, error, sessionId);
     }
