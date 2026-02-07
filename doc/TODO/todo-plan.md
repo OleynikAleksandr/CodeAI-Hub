@@ -65,4 +65,4 @@
 15. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after continuity hotfix`)
 16. [DONE] Git Commit: `chore(release): build-all after continuity hotfix` (hash: 5b380aaf)
 17. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after continuity hotfix`)
-18. [DONE] Git Commit: `chore(release): build vsix after continuity hotfix` (hash: TBD)
+18. [DONE] Git Commit: `chore(release): build vsix after continuity hotfix` (hash: 2ba89f9b)
