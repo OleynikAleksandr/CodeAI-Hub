@@ -1,5 +1,9 @@
-## [Unreleased] - 2026-02-07
+## [1.1.523] - 2026-02-07
 ### Fixed
+- PM/Core bridge: `session:*` delivery теперь строго scoped по выбранному `workspacePath` (absolute path), устранены cross-workspace ghost events.
+- Project Manager: автофокус/рендер/отправка сообщений в out-of-scope сессии заблокированы (active-session reconciliation + hard send guard).
+- Project Manager/Core ordering: `workspace:scope:set` + `workspace:scope:ack` handshake выполняется до `workspace-activate` и перед resume/create.
+- Reconnect/restart path: сохранена совместимость reopen/resume из дерева workspace после рестарта Core/компьютера.
 - Core: accepted user submit now emits immediate `turn_state=running` before provider `sendMessage`, removing provider-specific late-lock windows.
 - Core: provider send failure now rolls back session state to `turn_state=idle`, preventing stuck input lock after send errors.
 - PM: terminal continuity unlock (`resume_ready|resume_failed|resume_timeout`) now clears stale rollover pending (`resume_sent`) and restores idle state.
@@ -20,6 +24,8 @@
 - Session UI: removed experimental Matrix Rain input lock background due rendering regressions; restored stable input panel visuals.
 
 ### Added
+- Core regression tests for workspace-scoped bridge delivery and `workspace:scope:ack` handshake contract.
+- PM/Core non-regression tests for restart reopen/resume path (`workspace-activate` + reviewer visibility).
 - Core regression tests for immediate `running` lock emission and `idle` rollback on provider send failure.
 - PM/UI regression tests for provider-agnostic immediate lock parity (`turn_state=running` handling + running placeholder contract).
 - PM/UI regression tests for terminal unlock release (`resume_sent + continuity_lock(unlocked)`) and internal ACK suppression variants.

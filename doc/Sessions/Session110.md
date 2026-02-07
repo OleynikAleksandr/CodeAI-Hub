@@ -1,6 +1,6 @@
-# Session 110 — Phase 104 planning: workspace-scoped session/event isolation
+# Session 110 — Phase 104: workspace-scoped isolation, handshake и release prep
 
-**Date:** 2026-02-07 14:34 (CET)
+**Date:** 2026-02-07 16:26 (CET)
 **Branch:** main
 **Version:** 1.1.522
 
@@ -9,22 +9,31 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Заархивирован завершённый план предыдущей фазы в `doc/TODO/Archive/todo-plan-phase103-workspace-isolation-prep-2026-02-07.md`.
-- Создан новый `doc/TODO/todo-plan.md` с `Phase 104 — Project Manager Workspace-Scoped Session/Event Isolation`.
-- В новый план добавлены критические инварианты изоляции:
-  - scope-key = абсолютный `workspacePath`;
-  - `workspaceSlug` используется как metadata/workflow id, но не как ключ изоляции;
-  - defence-in-depth: UI не имеет права рендерить/фокусить/отправлять в out-of-scope session.
-- В план включены обязательные пункты race-ordering/reconnect:
-  - `workspace:scope:set` должен отправляться до `workspace-activate`/resume/create;
-  - повторная отправка scope после reconnect;
-  - явный anti-race контракт, чтобы не терять `session:created`/resume при переключении scope.
-- Добавлен отдельный stream non-regression для сохранения текущего рабочего сценария reopen/resume после перезапуска.
-- Добавлен релизный stream в конце `Phase 104` (`build-all` + `build-release`).
+- Реализована строгая workspace-изоляция PM/Core по ключу `workspacePath` (absolute path) для `session:*` событий.
+- Введён явный handshake `workspace:scope:set -> workspace:scope:ack` и ordering перед `workspace-activate`/resume/create.
+- Добавлены PM/UI guard'ы (no auto-focus/render/send в out-of-scope session) и deterministic reconciliation `activeSessionId`.
+- Реализована scoped delivery логика в Core bridge для PM клиентов.
+- Добавлены targeted regression тесты (PM/Core bridge + restart reopen/resume non-regression).
+- `doc/TODO/todo-plan.md` обновлялся в реальном времени; закрыты stream'ы реализации/тестов Phase 104 (пункты 1-20).
+- Начата подготовка release stream (синхронизация release-доков под v1.1.523).
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
-- `fe7398e9 docs(plan): archive phase103 todo and open phase104 workspace-scoped isolation`
+- `438d063c docs(session): add Session110 handoff for phase104 workspace isolation`
+- `5ae2d255 docs(architecture): define workspace-scoped session isolation contract for project manager`
+- `9cb9b650 fix(pm): prevent cross-workspace auto-focus on foreign session-created events`
+- `02b4ef57 fix(pm): enforce active-session scope reconciliation and out-of-scope guards`
+- `38f89788 test(pm): cover cross-workspace ghost-session prevention on stream events`
+- `3745f892 feat(bridge): add workspace scope message contract for project manager clients`
+- `1952b667 fix(core): scope session event delivery by selected workspace for pm clients`
+- `c12afc43 feat(pm): sync selected workspace scope to core bridge`
+- `59eeaa34 docs(plan): sync phase104 progress after workspace scope sync`
+- `f6120a0b fix(non-regression): keep restart resume compatibility with scoped workspace isolation`
+- `55fd62f0 docs(todo): record workspace-scope resume handshake commit hash`
+- `fdfb039f test(core): validate workspace-scoped bridge delivery under concurrent sessions`
+- `dfc60328 docs(todo): record core scoped-delivery test commit hash`
+- `56473a09 test(non-regression): preserve workspace-tree reopen and reviewer resume after restart`
+- `d42b5639 docs(todo): record non-regression test commit hash`
 
 ---
 
@@ -33,29 +42,9 @@
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
-3. `doc/TODO/Archive/todo-plan-phase103-workspace-isolation-prep-2026-02-07.md`
-4. `doc/Sessions/Session109.md`
-5. `doc/Sessions/Session110.md` (THIS REPORT)
-
-## Runtime/code artifacts to read for fast context restore (Phase 104)
-1. `src/client/project-manager/components/sessions/project-manager-session-view.tsx`
-2. `src/client/project-manager/components/sessions/session-stream.ts`
-3. `src/client/project-manager/components/sessions/session-visibility.ts`
-4. `src/client/project-manager/components/sessions/session-message-sender.ts`
-5. `src/client/ui/src/session/session-view.tsx`
-6. `src/client/project-manager/components/layout/main-layout.tsx`
-7. `src/client/project-manager/components/layout/workspace-tree.tsx`
-8. `src/client/project-manager/api.ts`
-9. `src/client/project-manager/core-stream-message-types.ts`
-10. `packages/core/src/remote-bridge/types.ts`
-11. `packages/core/src/remote-bridge/handlers/websocket-manager.ts`
-12. `packages/core/src/remote-bridge/index.ts`
-13. `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`
-14. `src/client/project-manager/components/sessions/reviewer-session-visibility.ts`
-15. `src/client/project-manager/services/idea-collector-submit-service.ts`
+3. `doc/Sessions/Session110.md` (THIS REPORT)
 
 ## Plans for next session
-- Выполнить `Phase 104` строго по stream-порядку из `doc/TODO/todo-plan.md`.
-- Начать с docs/design контракта (`workspacePath`-scoped изоляция, ordering, race-avoidance), затем перейти к PM/Core реализации и тестам.
-- Отдельно проверить non-regression reopen/resume path после перезапуска (workspace tree -> resume -> reviewer visibility).
-- После закрытия stream’ов выполнить release stream и зафиксировать артефакты в новом session report.
+- Закрыть release stream Phase 104: `docs(release)` -> `build-all` -> `build-release --use-current-version`.
+- Проверить и зафиксировать артефакты (`doc/tmp/releases/*`, `codeai-hub-<version>.vsix`) в session report.
+- После релиза выполнить smoke-check установки VSIX и зафиксировать результаты отдельным session report.
