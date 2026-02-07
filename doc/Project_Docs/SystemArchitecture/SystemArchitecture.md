@@ -125,6 +125,8 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 4. Legacy `handoff_state` сохраняется для обратной совместимости старых handoff-path, но для flow-node rollover приоритет у `continuity_lock`.
 5. На границе `turn_completed` применяется атомарный arbitration: Core сначала решает continuity rollover, и только потом выбирает `turn_state=idle` или continuity lock-path (без `idle -> locked` окна).
 6. Пока flow-node rollover pending/active, send в old session блокируется на стороне Core (MVP policy: reject с bridge-error `continuity_rollover_pending`).
+7. На accepted user submit Core обязан эмитить `turn_state=running` немедленно (до `adapter.sendMessage`) для provider-agnostic мгновенного lock.
+8. Если `adapter.sendMessage` завершается ошибкой, Core обязан выполнить rollback: `turn_state=idle` + стандартный `session:error` (без залипания lock).
 
 State-table для Session UI:
 
@@ -140,6 +142,8 @@ State-table для Session UI:
 - `continuity_lock` передаётся как `session:stream`/`stream_event` и не добавляется в историю пользовательских сообщений.
 - Unlock должен быть детерминированным: для каждого `locked` должен приходить `unlocked` по success/failure/timeout, иначе UI останется в dead-lock.
 - Запрещён user-visible сценарий `running -> idle/unlocked -> continuity_lock(locked)` для одного и того же turn completion.
+- Запрещён provider-specific late-lock сценарий: accepted submit без немедленного `turn_state=running` до первого provider marker.
+- Запрещён send-failure сценарий без `turn_state=idle` rollback (stuck `running/blocked` после ошибки отправки).
 
 Референс реализации Phase 101: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`.
 

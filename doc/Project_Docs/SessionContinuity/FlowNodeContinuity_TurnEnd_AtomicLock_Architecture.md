@@ -106,6 +106,38 @@ Approved terminal unlock reasons:
 
 `continuity_lock=unlocked` with one of terminal reasons must release effective lock for target session unless normal turn constraints keep it locked (`running` or queued-send path).
 
+### 3.6 Phase 103 — Core-first Immediate Lock + Send-error Rollback
+
+Regression context:
+
+- Provider behavior differs at send start:
+  - Claude path can emit `turn_started` optimistically at send call.
+  - Codex path emits `turn_started` only after SDK `turn.started`.
+- Because UI lock is derived from `turn_state`/`continuity_lock`, Codex has a visible late-lock window between submit and first provider marker.
+
+Required contract for Phase 103:
+
+1. Core is the source of truth for immediate submit lock:
+   - on accepted user send, Core MUST emit `turn_state=running` before `adapter.sendMessage(...)`.
+2. This immediate running emission is provider-agnostic and must apply identically to Claude/Codex/Gemini paths.
+3. If `adapter.sendMessage(...)` throws, Core MUST rollback lock state with `turn_state=idle` for the same session.
+4. Rollback must keep existing error flow intact:
+   - `session:error` still emitted with provider failure details.
+5. Duplicate `running` markers are acceptable:
+   - provider-level `turn_started` may arrive later and is treated as idempotent reinforcement, not a state regression.
+
+Event-order invariants for one accepted send:
+
+- Success path:
+  - `user submit accepted` -> `turn_state=running (core-immediate)` -> provider stream lifecycle -> terminal (`turn_completed|turn_failed`) -> `turn_state=idle`.
+- Send-failure path:
+  - `user submit accepted` -> `turn_state=running (core-immediate)` -> `adapter.sendMessage` error -> `turn_state=idle (rollback)` -> `session:error`.
+
+Forbidden behavior:
+
+- `user submit accepted` -> no `running` until provider marker (provider-specific late lock).
+- `adapter.sendMessage` error without rollback to `idle` (stuck input lock).
+
 ---
 
 ## 4. UI/PM Consumption Rules
