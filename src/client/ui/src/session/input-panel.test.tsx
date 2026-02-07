@@ -73,6 +73,15 @@ test("InputPanel shows continuity placeholder when continuity lock is active", a
   );
 });
 
+test("InputPanel keeps fieldset disabled while continuity lock is active", async () => {
+  const html = await renderInputPanel({
+    connectionState: "idle",
+    continuityLockActive: true,
+  });
+
+  assert.equal(html.includes("disabled"), true);
+});
+
 test("InputPanel prioritizes queued placeholder over continuity placeholder", async () => {
   const html = await renderInputPanel({
     connectionState: "blocked",
