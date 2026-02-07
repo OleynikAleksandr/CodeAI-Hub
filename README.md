@@ -2,18 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.519
+## Current Release — v1.1.520
 - **Turn-end atomicity**: Core принимает continuity решение на границе `turn_completed` до `idle` (без `unlock -> relock` окна).
 - **Old-session safety**: send в source-session блокируется во время rollover pending (`continuity_rollover_pending`).
 - **PM fallback**: `token-usage-stream` удерживает `blocked` на всех pending фазах rollover до явного unlock.
 - **Session UI lock predicate**: `SessionView` и `InputPanel` учитывают continuity decision pending и не включают ввод раньше времени.
 - **Regression coverage**: добавлены Core + PM/UI тесты на отсутствие transient unlock и на send-guard в old session.
 
-## Release Candidate — Phase 101 (Turn-End Continuity Lock Atomicity)
-- **Core arbitration**: turn-end path делает preemptive rollover decision до публикации `turn_state=idle`.
-- **Continuity guard**: old-session messages during rollover блокируются на сервере даже при late/out-of-order UI stream events.
-- **UI consistency**: блокировка ввода учитывает continuity lock и rollover pending единым предикатом.
-- **Validation scope**: обязательные quality gates + таргетные build/test прогнаны для Core, PM и UI.
+## Release Candidate — Phase 102 (Continuity Unlock + ACK Normalization Hotfix)
+- **PM unlock resolution**: `resume_sent` больше не удерживает `blocked` после terminal `continuity_lock=unlocked`.
+- **Session UI lock predicate**: `SessionView` учитывает terminal continuity unlock и снимает rollover-pending lock детерминированно.
+- **Template parity**: все continuity templates используют единый internal ACK `Ready to continue working.`.
+- **Dialog hygiene**: virtual conversation скрывает legacy/new internal ACK, включая markdown backtick-вариант legacy token.
+- **Regression coverage**: добавлены тесты на unlock release (`resume_sent + unlocked`) и suppression internal ACK variants.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
