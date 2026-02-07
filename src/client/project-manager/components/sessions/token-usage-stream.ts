@@ -21,11 +21,7 @@ const readNumber = (value: unknown): number | null => {
   return null;
 };
 
-type TokenUsageSnapshot = {
-  readonly used: number;
-  readonly limit: number;
-};
-
+type TokenUsageSnapshot = { readonly used: number; readonly limit: number };
 type FlowNodeRolloverNotification = {
   readonly kind: "flow_node_rollover";
   readonly phase: string;
@@ -33,14 +29,8 @@ type FlowNodeRolloverNotification = {
   readonly thresholdPercent?: unknown;
   readonly reportPath?: unknown;
 };
-
-type TurnStateStreamEvent = {
-  readonly data?: unknown;
-};
-
-type ContinuityLockStreamEvent = {
-  readonly data?: unknown;
-};
+type TurnStateStreamEvent = { readonly data?: unknown };
+type ContinuityLockStreamEvent = { readonly data?: unknown };
 
 const isFlowNodeRolloverNotification = (
   event: unknown
@@ -49,14 +39,33 @@ const isFlowNodeRolloverNotification = (
   event.kind === "flow_node_rollover" &&
   typeof event.phase === "string";
 
+const FLOW_NODE_ROLLOVER_PENDING_PHASES = new Set<string>([
+  "start",
+  "create_report_sent",
+  "waiting_for_report",
+  "report_ready",
+  "new_session_created",
+  "resume_sent",
+]);
+const TERMINAL_CONTINUITY_UNLOCK_REASONS = new Set<string>([
+  "resume_ready",
+  "resume_failed",
+  "resume_timeout",
+]);
+
 const isFlowNodeRolloverPendingPhase = (phase: string): boolean =>
-  phase !== "failed";
+  FLOW_NODE_ROLLOVER_PENDING_PHASES.has(phase);
+
+const isLegacyRolloverBlockedByPhase = (phase: string | undefined): boolean =>
+  typeof phase === "string" && isFlowNodeRolloverPendingPhase(phase);
+
+const isTerminalContinuityUnlockReason = (reason: string | null): boolean =>
+  reason !== null && TERMINAL_CONTINUITY_UNLOCK_REASONS.has(reason);
 
 const isLegacyRolloverBlocked = (
   snapshot: SessionSnapshots[string]
 ): boolean => {
-  const phase = snapshot.status.rollover?.phase;
-  return typeof phase === "string" && isFlowNodeRolloverPendingPhase(phase);
+  return isLegacyRolloverBlockedByPhase(snapshot.status.rollover?.phase);
 };
 
 const isContinuityLockActive = (
@@ -127,7 +136,6 @@ const extractTokenUsage = (event: unknown): TokenUsageSnapshot | null => {
   if (!isRecord(event)) {
     return null;
   }
-
   if (isRecord(event.tokenUsage)) {
     const used = readNumber(event.tokenUsage.used);
     const limit = readNumber(event.tokenUsage.limit);
@@ -191,6 +199,16 @@ export const updateSnapshotsWithTokenUsage = (
   if (continuityLock) {
     const now = Date.now();
     const previous = snapshot.status.continuityLock;
+    const nextRollover =
+      !continuityLock.active &&
+      isTerminalContinuityUnlockReason(continuityLock.reason) &&
+      snapshot.status.rollover
+        ? {
+            ...snapshot.status.rollover,
+            phase: continuityLock.reason,
+            updatedAt: now,
+          }
+        : snapshot.status.rollover;
     const nextContinuityLock = {
       ...(previous ?? {}),
       active: continuityLock.active,
@@ -210,7 +228,7 @@ export const updateSnapshotsWithTokenUsage = (
     const nextConnectionState = continuityLock.active
       ? "blocked"
       : snapshot.status.connectionState === "blocked" &&
-          !isLegacyRolloverBlocked(snapshot)
+          !isLegacyRolloverBlockedByPhase(nextRollover?.phase)
         ? "idle"
         : snapshot.status.connectionState;
 
@@ -221,6 +239,7 @@ export const updateSnapshotsWithTokenUsage = (
         status: {
           ...snapshot.status,
           continuityLock: nextContinuityLock,
+          ...(nextRollover ? { rollover: nextRollover } : {}),
           connectionState: nextConnectionState,
           updatedAt: now,
         },
@@ -271,7 +290,6 @@ export const updateSnapshotsWithTokenUsage = (
       status: {
         ...snapshot.status,
         tokenUsage,
-        connectionState: snapshot.status.connectionState,
         updatedAt: Date.now(),
       },
     },
