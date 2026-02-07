@@ -110,9 +110,11 @@ export class RemoteBridge {
       broadcaster: (event) => {
         this.broadcast(event as BridgeEvent);
       },
-      stateBroadcaster: () => {
-        this.broadcastInitialState();
-      },
+      stateBroadcaster: () =>
+        this.broadcast({
+          type: "core:state",
+          payload: this.buildInitialState(),
+        }),
     });
 
     this.systemHandler = new SystemRequestHandler(
@@ -175,7 +177,7 @@ export class RemoteBridge {
       getStatusInfo: () => ({
         clientCount: this.wsManager?.getClientCount() ?? 0,
         ttlState: this.getTtlState?.(),
-        sessionData: this.serializeSessions(),
+        sessionData: this.buildInitialState().sessions,
         providerData: this.providerRegistry.listProviders(),
       }),
     });
@@ -185,14 +187,11 @@ export class RemoteBridge {
     this.wsManager = new WebSocketManager({
       httpServer: this.httpServer,
       logger: this.logger,
-      onIncomingMessage: (clientId, socket, msg) =>
-        this.handleIncomingMessage(clientId, socket, msg),
-      onClientConnected: (id, total) => {
-        this.hooks.onClientConnected?.(id, total);
-      },
-      onClientDisconnected: (id, total) => {
-        this.hooks.onClientDisconnected?.(id, total);
-      },
+      onIncomingMessage: this.handleIncomingMessage.bind(this),
+      onClientConnected: (id, count) =>
+        this.hooks.onClientConnected?.(id, count),
+      onClientDisconnected: (id, count) =>
+        this.hooks.onClientDisconnected?.(id, count),
       getInitialState: () => this.buildInitialState(),
       getLatestStatus: () =>
         this.latestStatus ?? this.statusReporter.snapshot(),
@@ -227,25 +226,17 @@ export class RemoteBridge {
     this.wsManager?.broadcast(event);
   }
 
-  private broadcastInitialState(): void {
-    this.broadcast({ type: "core:state", payload: this.buildInitialState() });
-  }
-
   private buildInitialState(): CoreStatePayload {
     return {
-      sessions: this.serializeSessions(),
+      sessions: this.sessionManager
+        .listSessions()
+        .map((session) => serializeSession(session)),
       providers: this.providerRegistry.listProviders(),
     };
   }
 
-  private serializeSessions() {
-    return this.sessionManager
-      .listSessions()
-      .map((session) => serializeSession(session));
-  }
-
   private async handleIncomingMessage(
-    _clientId: string,
+    clientId: string,
     _socket: WebSocket,
     incoming: IncomingMessage
   ): Promise<void> {
@@ -286,8 +277,23 @@ export class RemoteBridge {
       case "projects:remove":
         this.projectHandler.handleRemove(incoming.payload.id);
         break;
+      case "workspace:scope:set":
+        this.handleWorkspaceScopeSet(clientId, incoming.payload);
+        break;
       default:
         break;
     }
+  }
+
+  private handleWorkspaceScopeSet(clientId: string, payload: unknown): void {
+    const wsManager = this.wsManager;
+    if (!wsManager) {
+      return;
+    }
+    const ack = wsManager.setWorkspaceScope(clientId, payload);
+    wsManager.sendToClient(clientId, {
+      type: "workspace:scope:ack",
+      payload: ack,
+    });
   }
 }

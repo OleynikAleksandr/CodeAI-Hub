@@ -3,11 +3,26 @@ import type { Server } from "node:http";
 import { WebSocket, WebSocketServer } from "ws";
 import { extractTokenUsage } from "../../session-continuity/token-usage";
 import type { Logger } from "../../telemetry/logger";
-import type { BridgeEvent, IncomingMessage } from "../types";
+import type {
+  BridgeEvent,
+  IncomingMessage,
+  WorkspaceScopeAckPayload,
+} from "../types";
+import {
+  finalizeSessionWorkspaceSnapshot,
+  parseWorkspaceScopeSetPayload,
+  recordSessionWorkspaceSnapshot,
+  shouldDeliverEventForScope,
+  shouldDeliverTokenUsageForScope,
+} from "./websocket-session-scope";
 
 type ClientSocket = {
   readonly id: string;
   readonly socket: WebSocket;
+  scope: {
+    enabled: boolean;
+    workspacePath: string | null;
+  };
 };
 
 type TokenUsageSnapshot = {
@@ -38,6 +53,7 @@ export class WebSocketManager {
     string,
     TokenUsageSnapshot
   >();
+  private readonly sessionWorkspaceById = new Map<string, string>();
 
   constructor(deps: WebSocketManagerDependencies) {
     this.deps = deps;
@@ -71,22 +87,82 @@ export class WebSocketManager {
   }
 
   broadcast(event: BridgeEvent): void {
+    recordSessionWorkspaceSnapshot({
+      event,
+      sessionWorkspaceById: this.sessionWorkspaceById,
+    });
     this.recordTokenUsageSnapshot(event);
     const serialized = JSON.stringify(event);
-    for (const { socket } of this.clients.values()) {
+    for (const client of this.clients.values()) {
+      if (
+        !shouldDeliverEventForScope({
+          event,
+          scope: client.scope,
+          sessionWorkspaceById: this.sessionWorkspaceById,
+        })
+      ) {
+        continue;
+      }
+      const { socket } = client;
       if (socket.readyState === WebSocket.OPEN) {
         socket.send(serialized);
       }
     }
+    finalizeSessionWorkspaceSnapshot({
+      event,
+      sessionWorkspaceById: this.sessionWorkspaceById,
+    });
   }
 
   getClientCount(): number {
     return this.clients.size;
   }
 
+  setWorkspaceScope(
+    clientId: string,
+    payload: unknown
+  ): WorkspaceScopeAckPayload {
+    const client = this.clients.get(clientId);
+    const rejected = (
+      reqId: string,
+      error: string
+    ): WorkspaceScopeAckPayload => ({
+      requestId: reqId,
+      status: "rejected",
+      workspacePath: null,
+      error,
+    });
+    if (!client) {
+      return rejected("missing-client", "Client not connected");
+    }
+    const parsed = parseWorkspaceScopeSetPayload(payload);
+    if (!parsed.ok) {
+      return rejected(parsed.requestId, parsed.error);
+    }
+    client.scope = { enabled: true, workspacePath: parsed.workspacePath };
+    return {
+      requestId: parsed.requestId,
+      status: "applied",
+      workspacePath: parsed.workspacePath,
+      error: null,
+    };
+  }
+
+  sendToClient(clientId: string, event: BridgeEvent): void {
+    const client = this.clients.get(clientId);
+    if (!client || client.socket.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    client.socket.send(JSON.stringify(event));
+  }
+
   private handleConnection(socket: WebSocket): void {
     const clientId = randomUUID();
-    this.clients.set(clientId, { id: clientId, socket });
+    this.clients.set(clientId, {
+      id: clientId,
+      socket,
+      scope: { enabled: false, workspacePath: null },
+    });
 
     this.deps.onClientConnected(clientId, this.clients.size);
 
@@ -115,7 +191,7 @@ export class WebSocketManager {
       );
     }
 
-    this.replayTokenUsageSnapshots(socket);
+    this.replayTokenUsageSnapshots(clientId);
   }
 
   private async processMessage(
@@ -156,17 +232,27 @@ export class WebSocketManager {
     }
   }
 
-  private replayTokenUsageSnapshots(socket: WebSocket): void {
-    if (socket.readyState !== WebSocket.OPEN) {
+  private replayTokenUsageSnapshots(clientId: string): void {
+    const client = this.clients.get(clientId);
+    if (!client || client.socket.readyState !== WebSocket.OPEN) {
       return;
     }
 
     for (const [sessionId, snapshot] of this.lastTokenUsageBySessionId) {
-      if (!snapshot) {
+      if (
+        !(
+          snapshot &&
+          shouldDeliverTokenUsageForScope({
+            scope: client.scope,
+            sessionId,
+            sessionWorkspaceById: this.sessionWorkspaceById,
+          })
+        )
+      ) {
         continue;
       }
 
-      socket.send(
+      client.socket.send(
         JSON.stringify({
           type: "session:stream",
           payload: {
