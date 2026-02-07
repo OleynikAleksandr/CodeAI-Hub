@@ -1315,27 +1315,27 @@ export class SessionRequestHandler {
 
   private async handleFlowNodeContinuitySilentPreemptiveRollover(
     sessionId: string
-  ): Promise<void> {
+  ): Promise<boolean> {
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
-      return;
+      return false;
     }
 
     if (!(session.initiativeSlug && session.stage)) {
-      return;
+      return false;
     }
 
     if (this.flowNodeRolloverStarted.has(sessionId)) {
-      return;
+      return false;
     }
 
     if (this.flowNodeRolloverInFlight.has(sessionId)) {
-      return;
+      return false;
     }
 
     const usage = this.flowNodeTokenUsageSnapshots.get(sessionId);
     if (!usage) {
-      return;
+      return false;
     }
 
     const remainingPercent = computeRemainingPercent(usage);
@@ -1346,7 +1346,7 @@ export class SessionRequestHandler {
         remainingPercent,
       })
     ) {
-      return;
+      return false;
     }
 
     this.flowNodeRolloverInFlight.add(sessionId);
@@ -1378,6 +1378,7 @@ export class SessionRequestHandler {
         },
         { silent: true }
       );
+      return true;
     } catch (error) {
       this.finalizeFlowNodeContinuityLock({
         sessionId,
@@ -1388,6 +1389,19 @@ export class SessionRequestHandler {
     } finally {
       this.flowNodeRolloverInFlight.delete(sessionId);
     }
+  }
+
+  private async handleTurnCompletedEvent(sessionId: string): Promise<void> {
+    const rolloverStarted =
+      await this.handleFlowNodeContinuitySilentPreemptiveRollover(sessionId);
+    if (rolloverStarted) {
+      return;
+    }
+    this.emitTurnStateEvent({ sessionId, state: "idle" });
+    this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
+      sessionId,
+      reason: "resume_ready",
+    });
   }
 
   private toSafeTimestamp(value: string): string {
@@ -1724,19 +1738,17 @@ export class SessionRequestHandler {
         this.emitTurnStateEvent({ sessionId, state: "running" });
         break;
       case "turn_completed":
-        this.emitTurnStateEvent({ sessionId, state: "idle" });
-        this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
-          sessionId,
-          reason: "resume_ready",
+        this.handleTurnCompletedEvent(sessionId).catch((error) => {
+          this.logger.warn("Turn completion arbitration failed", {
+            sessionId,
+            error: error instanceof Error ? error.message : String(error),
+          });
+          this.emitTurnStateEvent({ sessionId, state: "idle" });
+          this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
+            sessionId,
+            reason: "resume_ready",
+          });
         });
-        this.handleFlowNodeContinuitySilentPreemptiveRollover(sessionId).catch(
-          (error) => {
-            this.logger.warn("Silent preemptive rollover failed", {
-              sessionId,
-              error: error instanceof Error ? error.message : String(error),
-            });
-          }
-        );
         break;
       case "turn_failed":
         this.emitTurnStateEvent({ sessionId, state: "idle" });
