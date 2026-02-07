@@ -1,10 +1,12 @@
 import { useEffect, useRef, type MutableRefObject } from "react";
 import type { SessionRecord } from "../../../../types/session";
+import { syncWorkspaceScopeWithAck } from "../../services/workspace-scope-handshake";
 
 type SessionResumeIntent = {
   readonly providerId: string;
   readonly providerSessionId: string | null;
   readonly workspacePath: string;
+  readonly workspaceSlug?: string;
   readonly initiativeSlug: string | null;
   readonly stage: string | null;
   readonly sessionKind: "collector" | "reviewer" | null;
@@ -31,6 +33,21 @@ type SessionResumeCreatePayload = {
   readonly stage: string | null;
   readonly sessionKind: "collector" | "reviewer" | null;
   readonly runSlug: string | null;
+};
+
+const ensureWorkspaceScopeBeforeResume = async (
+  detail: SessionResumeIntent
+): Promise<boolean> => {
+  const ack = await syncWorkspaceScopeWithAck({
+    workspacePath: detail.workspacePath,
+    workspaceSlug: detail.workspaceSlug ?? detail.initiativeSlug,
+    reason: "workspace_selected",
+  });
+  return (
+    Boolean(ack) &&
+    ack?.status === "applied" &&
+    ack.workspacePath === detail.workspacePath
+  );
 };
 
 export const useSessionResumeIntent = (params: {
@@ -60,36 +77,44 @@ export const useSessionResumeIntent = (params: {
         }
       }
 
-      const existing = params.sessionsRef.current.find(
-        (session) =>
-          session.workspacePath === detail.workspacePath &&
-          session.providerIds.some(
-            (providerId) => providerId === detail.providerId
-          ) &&
-          session.binding.providerSessionId === detail.providerSessionId
-      );
-      if (existing) {
-        inFlight.current.delete(buildInFlightKey(detail));
-        params.focusSession(existing.id);
-        return;
-      }
-
       const inFlightKey = buildInFlightKey(detail);
       if (inFlight.current.has(inFlightKey)) {
         return;
       }
       inFlight.current.set(inFlightKey, now);
 
-      params.createSession({
-        providerId: detail.providerId,
-        providerSessionId: detail.providerSessionId,
-        workspacePath: detail.workspacePath,
-        initiativeSlug: detail.initiativeSlug,
-        stage: detail.stage,
-        sessionKind: detail.sessionKind,
-        runSlug: detail.runSlug,
+      void ensureWorkspaceScopeBeforeResume(detail).then((scopeReady) => {
+        if (!scopeReady) {
+          inFlight.current.delete(inFlightKey);
+          return;
+        }
+
+        const existing = params.sessionsRef.current.find(
+          (session) =>
+            session.workspacePath === detail.workspacePath &&
+            session.providerIds.some(
+              (providerId) => providerId === detail.providerId
+            ) &&
+            session.binding.providerSessionId === detail.providerSessionId
+        );
+        if (existing) {
+          inFlight.current.delete(inFlightKey);
+          params.focusSession(existing.id);
+          return;
+        }
+
+        params.createSession({
+          providerId: detail.providerId,
+          providerSessionId: detail.providerSessionId,
+          workspacePath: detail.workspacePath,
+          initiativeSlug: detail.initiativeSlug,
+          stage: detail.stage,
+          sessionKind: detail.sessionKind,
+          runSlug: detail.runSlug,
+        });
       });
     };
+
     window.addEventListener("pm:session:resume", handler);
     return () => {
       window.removeEventListener("pm:session:resume", handler);
