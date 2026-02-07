@@ -105,6 +105,11 @@ test("InputPanel disables fieldset while running", async () => {
   });
 
   assert.equal(html.includes("disabled"), true);
+  assert.equal(html.includes("Agent is working… Please wait."), true);
+  assert.equal(
+    html.includes("Agent is resuming your session… Please wait."),
+    false
+  );
 });
 
 test("InputPanel disables fieldset while blocked", async () => {

@@ -196,3 +196,24 @@ test("updateSnapshotsWithTokenUsage clears resume_sent pending state on terminal
   assert.equal(next.s1.status.rollover?.phase, "resume_ready");
   assert.equal(next.s1.status.connectionState, "idle");
 });
+
+test("updateSnapshotsWithTokenUsage immediately applies running turn_state from stream event", () => {
+  const snapshot = createSnapshot();
+
+  const next = updateSnapshotsWithTokenUsage(
+    { s1: snapshot },
+    {
+      sessionId: "s1",
+      event: {
+        type: "stream_event",
+        provider: "codex",
+        data: {
+          kind: "turn_state",
+          state: "running",
+        },
+      },
+    }
+  );
+
+  assert.equal(next.s1.status.connectionState, "running");
+});
