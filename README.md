@@ -2,27 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.517
-- **Core continuity**: stream-contract `continuity_lock` (`locked|unlocked`) устраняет окно разблокировки ввода во время rollover bootstrap.
-- **Core safety**: детерминированный unlock path (`resume_ready`, `resume_failed`, `resume_timeout`) предотвращает dead-lock UI.
-- **PM/UI**: `token-usage-stream` сохраняет blocked-state во время switch old->new session.
-- **Session UI**: ввод и очередь синхронизированы с continuity lock до завершения bootstrap.
-- **Release 1.1.517**: Built via `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+## Current Release — v1.1.519
+- **Turn-end atomicity**: Core принимает continuity решение на границе `turn_completed` до `idle` (без `unlock -> relock` окна).
+- **Old-session safety**: send в source-session блокируется во время rollover pending (`continuity_rollover_pending`).
+- **PM fallback**: `token-usage-stream` удерживает `blocked` на всех pending фазах rollover до явного unlock.
+- **Session UI lock predicate**: `SessionView` и `InputPanel` учитывают continuity decision pending и не включают ввод раньше времени.
+- **Regression coverage**: добавлены Core + PM/UI тесты на отсутствие transient unlock и на send-guard в old session.
 
-## Upcoming Release Candidate — Phase 100 (Continuity UX sync + Matrix Rain)
-- **Continuity UX copy**: wait-copy синхронизирован с lock-state (`resuming`/`working`) без рассинхрона disabled/placeholder.
-- **Internal ACK**: resume-template и UI фильтрация переведены на `Ready to continue working.` (legacy token остаётся скрыт).
-- **Input animation**: добавлен subtle Matrix Rain фон для lock-state (`running`/`blocked`) с lifecycle cleanup (`RAF`/`ResizeObserver`).
-- **Provider-aware wait color**: wait-copy рендерится в цвете активного provider tab с приглушением (`alpha: 0.70`).
-- **Regression coverage**: добавлены тесты matrix column adaptation и RAF lifecycle + lock-state UX тесты input panel.
-
-- **Artifact bundle**
-  - VSIX: `codeai-hub-1.1.517.vsix`
-  - Launcher: `CodeAIHubLauncher-macos-arm64-1.1.517.tar.bz2`
-  - Core: `codeai-hub-core-darwin-arm64-1.1.517.tar.bz2`
-  - Providers: `claude-module-1.1.517.tar.bz2`, `codex-module-1.1.517.tar.bz2`, `gemini-module-1.1.517.tar.bz2`
-  - UI: `vscode-webview-1.1.517.tar.bz2`, `project-manager-1.1.517.tar.bz2`
-  - Agent Packages: `@codeai-hub/agent-shared`, `@codeai-hub/description-agent`, `@codeai-hub/idea-collector`
+## Release Candidate — Phase 101 (Turn-End Continuity Lock Atomicity)
+- **Core arbitration**: turn-end path делает preemptive rollover decision до публикации `turn_state=idle`.
+- **Continuity guard**: old-session messages during rollover блокируются на сервере даже при late/out-of-order UI stream events.
+- **UI consistency**: блокировка ввода учитывает continuity lock и rollover pending единым предикатом.
+- **Validation scope**: обязательные quality gates + таргетные build/test прогнаны для Core, PM и UI.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
