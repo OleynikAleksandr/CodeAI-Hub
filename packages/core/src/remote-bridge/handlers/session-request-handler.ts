@@ -23,6 +23,11 @@ import { listUnifiedSessionWorkspaceSlugs } from "../../unified-session/workspac
 import { DescriptionStepStore } from "../../workflow/description";
 import { type BridgeEvent, serializeSession } from "../types";
 import { QuestionnaireCuratorFacade } from "./questionnaire-curator-facade";
+import {
+  CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
+  CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
+  type FlowNodeRolloverSendGuardDecision,
+} from "./session-request-handler.types";
 
 type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
@@ -796,6 +801,22 @@ export class SessionRequestHandler {
     }
   }
 
+  private resolveFlowNodeRolloverSendGuard(
+    sessionId: string
+  ): FlowNodeRolloverSendGuardDecision {
+    const context = this.flowNodeContinuityLockContexts.get(sessionId);
+    if (!(context && context.sourceSessionId === sessionId)) {
+      return { allowed: true };
+    }
+    return {
+      allowed: false,
+      code: CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
+      message: CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
+      sourceSessionId: context.sourceSessionId,
+      targetSessionId: context.targetSessionId ?? null,
+    };
+  }
+
   private async sendInternalMessage(
     sessionId: string,
     content: string
@@ -1077,6 +1098,27 @@ export class SessionRequestHandler {
     }
 
     this.logResolvedSessionForIncomingMessage(sessionId, session);
+
+    const rolloverSendGuard = this.resolveFlowNodeRolloverSendGuard(sessionId);
+    if (!rolloverSendGuard.allowed) {
+      this.logger.warn("Blocked send while flow-node rollover is pending", {
+        sessionId,
+        sourceSessionId: rolloverSendGuard.sourceSessionId,
+        targetSessionId: rolloverSendGuard.targetSessionId,
+        code: rolloverSendGuard.code,
+      });
+      this.broadcaster({
+        type: "session:error",
+        payload: {
+          sessionId,
+          message: rolloverSendGuard.message,
+          code: rolloverSendGuard.code,
+          sourceSessionId: rolloverSendGuard.sourceSessionId,
+          targetSessionId: rolloverSendGuard.targetSessionId,
+        },
+      });
+      return;
+    }
 
     const userMessage = this.sessionManager.appendMessage(
       sessionId,
