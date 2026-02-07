@@ -1,5 +1,9 @@
 ## [Unreleased] - 2026-02-07
 ### Fixed
+- PM: terminal continuity unlock (`resume_ready|resume_failed|resume_timeout`) now clears stale rollover pending (`resume_sent`) and restores idle state.
+- UI: `SessionView` rollover-pending predicate now respects terminal continuity unlock (no stuck `blocked` after unlock).
+- Core continuity templates: normalized internal ACK to `Ready to continue working.` in all create/resume templates.
+- Session UI: virtual conversation suppresses internal ACK variants including markdown backtick-wrapped legacy token.
 - Core: turn-end continuity arbitration now decides rollover before `turn_state=idle`, preventing `unlock -> relock` gaps on threshold crossings.
 - Core: server-side guard rejects sends in source session while continuity rollover is pending (`continuity_rollover_pending`).
 - PM: rollover pending phases (`start` ... `resume_sent`) keep snapshot state blocked until continuity unlock is observed.
@@ -14,6 +18,7 @@
 - Session UI: removed experimental Matrix Rain input lock background due rendering regressions; restored stable input panel visuals.
 
 ### Added
+- PM/UI regression tests for terminal unlock release (`resume_sent + continuity_lock(unlocked)`) and internal ACK suppression variants.
 - Core regression tests for turn-end atomicity: no idle before continuity lock on rollover start; old-session send guard coverage.
 - PM/UI regression tests for rollover-pending blocked state and continuity-lock disabled fieldset behavior in `InputPanel`.
 - Core regression test covering continuity lock sequence across old->new session rollover.
