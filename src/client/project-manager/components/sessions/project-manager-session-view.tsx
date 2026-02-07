@@ -187,15 +187,12 @@ export const ProjectManagerSessionView = ({
       });
       setSnapshots((previous) => removeSnapshot(previous, sessionId));
       removeHiddenSession(sessionId);
-      setActiveSessionId((current) => {
-        if (current !== sessionId) {
-          return current;
-        }
-        const remaining = sessionsRef.current.filter(
-          (session) => session.id !== sessionId
-        );
-        return remaining.at(-1)?.id ?? null;
-      });
+      setActiveSessionId((current) =>
+        current !== sessionId
+          ? current
+          : sessionsRef.current.filter((session) => session.id !== sessionId).at(-1)?.id ??
+            null
+      );
     },
     [removeHiddenSession, syncSessionsRef]
   );
@@ -243,9 +240,8 @@ export const ProjectManagerSessionView = ({
     onSessionDeleted: handleSessionDeleted,
     onSessionHistory: handleSessionHistory,
     onSessionMessage: handleSessionMessage,
-    onSessionStream: (payload) => {
-      setSnapshots((previous) => updateSnapshotsWithTokenUsage(previous, payload));
-    },
+    onSessionStream: (payload) =>
+      setSnapshots((previous) => updateSnapshotsWithTokenUsage(previous, payload)),
   });
   const connection = useProjectManagerCoreStatusHydrator({
     onHydrate: hydrateFromState,
@@ -264,36 +260,40 @@ export const ProjectManagerSessionView = ({
     showSession(reviewerSessionId);
   }, [reviewerSessionId, showSession]);
   useEffect(() => {
-    if (!activeSessionId || !forcedHiddenSessionIds.has(activeSessionId)) {
+    if (!activeSessionId) {
+      setActiveSessionId(visibleSessions.at(-1)?.id ?? null);
+      return;
+    }
+    const isVisible = visibleSessions.some((session) => session.id === activeSessionId);
+    if (!(forcedHiddenSessionIds.has(activeSessionId) || !isVisible)) {
       return;
     }
     setActiveSessionId(visibleSessions.at(-1)?.id ?? null);
   }, [activeSessionId, forcedHiddenSessionIds, visibleSessions]);
   useSettingsModelsSync(sessions, settings, setSnapshots);
-  const focusSession = useCallback((sessionId: string) => {
-    showSession(sessionId);
-    setActiveSessionId(sessionId);
-  }, [showSession]);
   useSessionResumeIntent({
     sessionsRef,
-    focusSession,
-    createSession: (payload) => api.createSession(payload),
+    focusSession: (sessionId) => {
+      showSession(sessionId);
+      setActiveSessionId(sessionId);
+    },
+    createSession: api.createSession,
   });
-  const showEmptyState = Boolean(workspacePath);
-  const handleCloseSession = useCallback(hideSession, [hideSession]);
-  const handleSendMessage = useSessionMessageSender(sessionsRef);
+  const scopedActiveSessionId =
+    visibleSessions.some((session) => session.id === activeSessionId) ? activeSessionId : null;
+  const handleSendMessage = useSessionMessageSender(sessionsRef, workspacePath);
   return (
     <SessionView
-      activeSessionId={activeSessionId}
+      activeSessionId={scopedActiveSessionId}
       allSessions={sessions}
       coreConnectionDetail={connection.detail}
       coreConnectionStatus={connection.status}
-      onCloseSession={handleCloseSession}
+      onCloseSession={hideSession}
       onSelectSession={setActiveSessionId}
       onSendMessage={handleSendMessage}
       providerLabels={providerLabels}
       sessions={visibleSessions}
-      showEmptyState={showEmptyState}
+      showEmptyState={Boolean(workspacePath)}
       snapshots={snapshots}
     />
   );
