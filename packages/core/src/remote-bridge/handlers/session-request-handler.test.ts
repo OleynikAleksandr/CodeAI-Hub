@@ -400,7 +400,7 @@ test("SessionRequestHandler emits immediate running before provider send resolve
     "/tmp/core-immediate-running"
   );
 
-  let resolveSend: (() => void) | null = null;
+  let resolveSend: () => void = noop;
   const sendPromise = new Promise<void>((resolve) => {
     resolveSend = resolve;
   });
@@ -430,7 +430,7 @@ test("SessionRequestHandler emits immediate running before provider send resolve
   assert.deepEqual(turnStatesBeforeResolve, ["running"]);
   assert.deepEqual(sendCalls, ["hello"]);
 
-  resolveSend?.();
+  resolveSend();
   await pendingSend;
 });
 
