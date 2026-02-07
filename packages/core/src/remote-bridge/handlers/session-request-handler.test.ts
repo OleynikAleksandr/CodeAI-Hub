@@ -25,6 +25,17 @@ const noop = (): void => {
   // noop
 };
 
+const flushAsyncWork = async (): Promise<void> => {
+  await Promise.resolve();
+  await Promise.resolve();
+  await new Promise<void>((resolve) => {
+    setImmediate(() => resolve());
+  });
+  await new Promise<void>((resolve) => {
+    setImmediate(() => resolve());
+  });
+};
+
 const createHarness = (): HandlerHarness => {
   const sessionManager = new SessionManager();
   const providerSessions = new Map<string, ProviderSessionBinding>();
@@ -79,7 +90,7 @@ const createHarness = (): HandlerHarness => {
   };
 };
 
-test("SessionRequestHandler emits turn_state events for provider lifecycle", () => {
+test("SessionRequestHandler emits turn_state events for provider lifecycle", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
     "claudeCodeCli",
@@ -92,6 +103,7 @@ test("SessionRequestHandler emits turn_state events for provider lifecycle", () 
   (harness.handler as any).handleProviderEvent(session.id, {
     type: "turn_completed",
   });
+  await flushAsyncWork();
 
   const turnStateEvents = harness.events.filter(
     (event) =>
@@ -165,7 +177,7 @@ test("SessionRequestHandler updates provider binding on sessionIdChanged", () =>
   );
 });
 
-test("SessionRequestHandler unlocks continuity lock after bootstrap turn completion", () => {
+test("SessionRequestHandler unlocks continuity lock after bootstrap turn completion", async () => {
   const harness = createHarness();
   const sourceSession = harness.sessionManager.createSession(
     "claudeCodeCli",
@@ -199,6 +211,7 @@ test("SessionRequestHandler unlocks continuity lock after bootstrap turn complet
   (harness.handler as any).handleProviderEvent(targetSession.id, {
     type: "turn_completed",
   });
+  await flushAsyncWork();
 
   const continuityLockEvents = harness.events.filter(
     (event) =>
@@ -247,4 +260,112 @@ test("SessionRequestHandler unlocks continuity lock after bootstrap turn complet
     ).flowNodeContinuityLockContexts.size,
     0
   );
+});
+
+test("SessionRequestHandler does not emit idle before continuity lock when rollover starts at turn end", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-turn-end-arbitration",
+    "provider-session-1",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+      runSlug: "reviewer",
+    }
+  );
+
+  (harness.handler as any).handleFlowNodeContinuitySilentPreemptiveRollover =
+    () => {
+      (harness.handler as any).emitContinuityLockEvent({
+        sessionId: session.id,
+        rolloverId: "rollover-atomic",
+        sourceSessionId: session.id,
+        stageId: "description",
+        runSlug: "reviewer",
+        state: "locked",
+        reason: "threshold_reached",
+      });
+      return Promise.resolve(true);
+    };
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "turn_completed",
+  });
+  await flushAsyncWork();
+
+  const turnIdleEvents = harness.events.filter((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: {
+        readonly data?: { readonly kind?: string; readonly state?: string };
+      };
+    };
+    return (
+      payload.event?.data?.kind === "turn_state" &&
+      payload.event.data.state === "idle"
+    );
+  });
+
+  const lockEvents = harness.events.filter((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: { readonly data?: { readonly kind?: string } };
+    };
+    return payload.event?.data?.kind === "continuity_lock";
+  });
+
+  assert.equal(lockEvents.length, 1);
+  assert.equal(turnIdleEvents.length, 0);
+});
+
+test("SessionRequestHandler blocks old-session sends while rollover is pending", async () => {
+  const harness = createHarness();
+  const sourceSession = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-send-guard",
+    "provider-session-2",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+      runSlug: "reviewer",
+    }
+  );
+  const targetSession = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-send-guard"
+  );
+
+  (harness.handler as any).registerFlowNodeContinuityLockContext({
+    rolloverId: "rollover-guard",
+    sourceSessionId: sourceSession.id,
+    targetSessionId: targetSession.id,
+    stageId: "description",
+    runSlug: "reviewer",
+    awaitingBootstrapTurn: true,
+  });
+
+  await (harness.handler as any).handleMessage(sourceSession.id, "hello");
+
+  const blockedSendEvent = harness.events.find((event) => {
+    if (event.type !== "session:error") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly code?: string;
+      readonly sessionId?: string;
+    };
+    return (
+      payload.code === "continuity_rollover_pending" &&
+      payload.sessionId === sourceSession.id
+    );
+  });
+
+  assert.ok(blockedSendEvent);
+  const sessionAfter = harness.sessionManager.getSession(sourceSession.id);
+  assert.equal(sessionAfter?.messages.length ?? 0, 0);
 });
