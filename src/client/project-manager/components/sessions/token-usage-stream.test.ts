@@ -152,3 +152,47 @@ test("updateSnapshotsWithTokenUsage unlocks continuity lock and restores idle st
   assert.equal(next.s1.status.continuityLock?.active, false);
   assert.equal(next.s1.status.connectionState, "idle");
 });
+
+test("updateSnapshotsWithTokenUsage clears resume_sent pending state on terminal continuity unlock", () => {
+  const snapshot = createSnapshot();
+  const pendingSnapshot: SessionSnapshot = {
+    ...snapshot,
+    status: {
+      ...snapshot.status,
+      connectionState: "blocked",
+      rollover: {
+        phase: "resume_sent",
+        updatedAt: Date.now(),
+      },
+      continuityLock: {
+        active: true,
+        rolloverId: "rollover-2",
+        sourceSessionId: "s1",
+        reason: "resume_bootstrap",
+        updatedAt: Date.now(),
+      },
+      updatedAt: Date.now(),
+    },
+  };
+
+  const next = updateSnapshotsWithTokenUsage(
+    { s1: pendingSnapshot },
+    {
+      sessionId: "s1",
+      event: {
+        type: "stream_event",
+        data: {
+          kind: "continuity_lock",
+          state: "unlocked",
+          rolloverId: "rollover-2",
+          sourceSessionId: "s1",
+          reason: "resume_ready",
+        },
+      },
+    }
+  );
+
+  assert.equal(next.s1.status.continuityLock?.active, false);
+  assert.equal(next.s1.status.rollover?.phase, "resume_ready");
+  assert.equal(next.s1.status.connectionState, "idle");
+});

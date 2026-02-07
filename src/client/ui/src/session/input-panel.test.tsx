@@ -118,3 +118,17 @@ test("InputPanel disables fieldset while blocked", async () => {
     true
   );
 });
+
+test("InputPanel enables fieldset when continuity unlock is resolved", async () => {
+  const html = await renderInputPanel({
+    connectionState: "idle",
+    continuityLockActive: false,
+    isQueued: false,
+  });
+
+  assert.equal(html.includes("disabled"), false);
+  assert.equal(
+    html.includes("Agent is resuming your session… Please wait."),
+    false
+  );
+});
