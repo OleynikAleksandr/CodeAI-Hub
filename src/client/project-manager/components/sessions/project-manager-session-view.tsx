@@ -108,7 +108,10 @@ export const ProjectManagerSessionView = ({
   );
   const handleSessionCreated = useCallback(
     (session: SessionRecord) => {
-      showSession(session.id);
+      const isInScope = Boolean(workspacePath) && session.workspacePath === workspacePath;
+      if (isInScope) {
+        showSession(session.id);
+      }
       setSessions((previous) => {
         const next =
           previous.some((candidate) => candidate.id === session.id)
@@ -135,7 +138,9 @@ export const ProjectManagerSessionView = ({
           [session.id]: createInitialSnapshot(session, providerLabels, settings),
         };
       });
-      setActiveSessionId(session.id);
+      if (isInScope) {
+        setActiveSessionId(session.id);
+      }
       const config = resolveProjectManagerCoreConfig();
       if (!config) {
         return;
@@ -146,7 +151,14 @@ export const ProjectManagerSessionView = ({
         // ignore
       });
     },
-    [handleSessionHistory, providerLabels, settings, showSession, syncSessionsRef]
+    [
+      handleSessionHistory,
+      providerLabels,
+      settings,
+      showSession,
+      syncSessionsRef,
+      workspacePath,
+    ]
   );
   const handleSessionMessage = useCallback(
     (payload: { readonly sessionId: string; readonly message: SessionMessage }) => {
@@ -225,19 +237,15 @@ export const ProjectManagerSessionView = ({
     },
     []
   );
-  const handleSessionStream = useCallback(
-    (payload: { readonly sessionId: string; readonly event: unknown }) => {
-      setSnapshots((previous) => updateSnapshotsWithTokenUsage(previous, payload));
-    },
-    []
-  );
   useProjectManagerSessionStream({
     onSessionBinding: handleSessionBinding,
     onSessionCreated: handleSessionCreated,
     onSessionDeleted: handleSessionDeleted,
     onSessionHistory: handleSessionHistory,
     onSessionMessage: handleSessionMessage,
-    onSessionStream: handleSessionStream,
+    onSessionStream: (payload) => {
+      setSnapshots((previous) => updateSnapshotsWithTokenUsage(previous, payload));
+    },
   });
   const connection = useProjectManagerCoreStatusHydrator({
     onHydrate: hydrateFromState,
@@ -272,12 +280,7 @@ export const ProjectManagerSessionView = ({
     createSession: (payload) => api.createSession(payload),
   });
   const showEmptyState = Boolean(workspacePath);
-  const handleCloseSession = useCallback(
-    (sessionId: string) => {
-      hideSession(sessionId);
-    },
-    [hideSession]
-  );
+  const handleCloseSession = useCallback(hideSession, [hideSession]);
   const handleSendMessage = useSessionMessageSender(sessionsRef);
   return (
     <SessionView
