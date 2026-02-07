@@ -1,7 +1,7 @@
 # Flow Node Continuity Turn-End Atomic Lock Architecture
 
 **Date:** 2026-02-07 20:35 (CET)
-**Status:** Draft for implementation planning (Phase 101)
+**Status:** Approved baseline for implementation (Phase 101)
 **Scope:** prevent transient input unlock between `turn_completed` and continuity handoff lock decision
 
 ---
@@ -48,7 +48,7 @@ Core becomes the single source of truth for final turn-end lock decision.
 While rollover is pending/active:
 
 - Core rejects or queues sends targeting old session (configurable policy).
-- Preferred MVP: queue and route message only after continuity target session is ready.
+- Phase 101 MVP policy: reject send in old session with explicit bridge error (`continuity_rollover_pending`) until lock is released.
 
 This guard protects correctness even if UI receives late/out-of-order stream events.
 
@@ -61,6 +61,20 @@ For a turn where continuity is required, allowed sequence is:
 Forbidden sequence:
 
 - `running` -> `idle/unlocked` -> `continuity_lock(locked)`
+
+### 3.4 Approved Runtime Arbitration (Phase 101)
+
+At `turn_completed` boundary, Core executes arbitration in this order:
+
+1. Resolve if silent/preemptive continuity rollover must start for current session.
+2. If rollover starts:
+   - emit/keep `continuity_lock=locked` first;
+   - do not emit intermediate unlock state;
+   - keep old session sends blocked by rollover guard.
+3. If rollover does not start:
+   - emit canonical `turn_state=idle`.
+
+This preserves atomicity and removes the user-visible unlock window.
 
 ---
 
@@ -127,3 +141,10 @@ Unlock is allowed only when:
 2. No successful send into old session while continuity handoff is pending.
 3. Continuity handoff still completes with existing resume flow and copy contract.
 4. Mandatory quality gates and target builds pass before release build.
+
+---
+
+## 9. Cross-Document Links
+
+- System source of truth: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (section 2.7).
+- Continuity lock baseline: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`.
