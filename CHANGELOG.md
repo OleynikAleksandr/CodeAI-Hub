@@ -1,5 +1,7 @@
 ## [Unreleased] - 2026-02-07
 ### Fixed
+- Core: accepted user submit now emits immediate `turn_state=running` before provider `sendMessage`, removing provider-specific late-lock windows.
+- Core: provider send failure now rolls back session state to `turn_state=idle`, preventing stuck input lock after send errors.
 - PM: terminal continuity unlock (`resume_ready|resume_failed|resume_timeout`) now clears stale rollover pending (`resume_sent`) and restores idle state.
 - UI: `SessionView` rollover-pending predicate now respects terminal continuity unlock (no stuck `blocked` after unlock).
 - Core continuity templates: normalized internal ACK to `Ready to continue working.` in all create/resume templates.
@@ -18,6 +20,8 @@
 - Session UI: removed experimental Matrix Rain input lock background due rendering regressions; restored stable input panel visuals.
 
 ### Added
+- Core regression tests for immediate `running` lock emission and `idle` rollback on provider send failure.
+- PM/UI regression tests for provider-agnostic immediate lock parity (`turn_state=running` handling + running placeholder contract).
 - PM/UI regression tests for terminal unlock release (`resume_sent + continuity_lock(unlocked)`) and internal ACK suppression variants.
 - Core regression tests for turn-end atomicity: no idle before continuity lock on rollover start; old-session send guard coverage.
 - PM/UI regression tests for rollover-pending blocked state and continuity-lock disabled fieldset behavior in `InputPanel`.
