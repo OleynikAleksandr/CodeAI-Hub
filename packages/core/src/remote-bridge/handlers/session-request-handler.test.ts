@@ -53,18 +53,25 @@ const createHarness = (): HandlerHarness => {
     flowNodeContinuityLockContexts: new Map(),
     flowNodeContinuityLockTimeouts: new Map(),
     sessionStorage: {
+      appendMessage: noop,
+      close: noop,
       promote: (sessionId: string, providerSessionId: string) => {
         promoted.push({ sessionId, providerSessionId });
       },
     },
     continuity: {
       handleProviderEvent: async () => Promise.resolve(),
+      ensureTrackedOnOutboundMessage: async () => Promise.resolve(),
       updateProviderSessionId: (
         sessionId: string,
         providerSessionId: string
       ) => {
         continuityUpdates.push({ sessionId, providerSessionId });
       },
+    },
+    providerRegistry: {
+      getAdapter: () => null,
+      handleRuntimeFailure: noop,
     },
     logger: {
       info: noop,
@@ -89,6 +96,22 @@ const createHarness = (): HandlerHarness => {
     continuityUpdates,
   };
 };
+
+const collectTurnStateSequence = (events: readonly BridgeEvent[]): string[] =>
+  events
+    .filter((event) => event.type === "session:stream")
+    .map((event) => {
+      const payload = event.payload as {
+        readonly event?: {
+          readonly data?: { readonly kind?: string; readonly state?: string };
+        };
+      };
+      if (payload.event?.data?.kind !== "turn_state") {
+        return null;
+      }
+      return payload.event.data.state ?? null;
+    })
+    .filter((state): state is string => typeof state === "string");
 
 test("SessionRequestHandler emits turn_state events for provider lifecycle", async () => {
   const harness = createHarness();
@@ -368,4 +391,70 @@ test("SessionRequestHandler blocks old-session sends while rollover is pending",
   assert.ok(blockedSendEvent);
   const sessionAfter = harness.sessionManager.getSession(sourceSession.id);
   assert.equal(sessionAfter?.messages.length ?? 0, 0);
+});
+
+test("SessionRequestHandler emits immediate running before provider send resolves", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-immediate-running"
+  );
+
+  let resolveSend: (() => void) | null = null;
+  const sendPromise = new Promise<void>((resolve) => {
+    resolveSend = resolve;
+  });
+  const sendCalls: string[] = [];
+  (harness.handler as any).providerRegistry = {
+    getAdapter: () => ({
+      sendMessage: (_providerSessionId: string, content: string) => {
+        sendCalls.push(content);
+        return sendPromise;
+      },
+    }),
+    handleRuntimeFailure: noop,
+  };
+  harness.providerSessions.set(session.id, {
+    providerId: "claudeCodeCli",
+    providerSessionId: "provider-session-3",
+    unsubscribe: noop,
+  });
+
+  const pendingSend = (harness.handler as any).handleMessage(
+    session.id,
+    "hello"
+  );
+  await flushAsyncWork();
+
+  const turnStatesBeforeResolve = collectTurnStateSequence(harness.events);
+  assert.deepEqual(turnStatesBeforeResolve, ["running"]);
+  assert.deepEqual(sendCalls, ["hello"]);
+
+  resolveSend?.();
+  await pendingSend;
+});
+
+test("SessionRequestHandler rolls back running state to idle on provider send failure", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-running-rollback"
+  );
+
+  (harness.handler as any).providerRegistry = {
+    getAdapter: () => ({
+      sendMessage: () => Promise.reject(new Error("simulated send failure")),
+    }),
+    handleRuntimeFailure: noop,
+  };
+  harness.providerSessions.set(session.id, {
+    providerId: "claudeCodeCli",
+    providerSessionId: "provider-session-4",
+    unsubscribe: noop,
+  });
+
+  await (harness.handler as any).handleMessage(session.id, "rollback me");
+
+  const turnStates = collectTurnStateSequence(harness.events);
+  assert.deepEqual(turnStates, ["running", "idle"]);
 });

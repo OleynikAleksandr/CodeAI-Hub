@@ -78,7 +78,7 @@
 4. [TODO] Git Commit: `fix(core): emit immediate running state before provider send` (hash: TBD)
 5. [DONE] Fix(core-rollback): на ошибке `adapter.sendMessage` выполнять rollback состояния (`turn_state=idle`) и сохранять корректный error-flow без stuck-lock (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): rollback running state on provider send failure`)
 6. [TODO] Git Commit: `fix(core): rollback running state on provider send failure` (hash: TBD)
-7. [TODO] Test(core): добавить регрессии на (a) immediate lock до stream `turn_started` и (b) rollback в `idle` при provider send failure (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `test(core): cover immediate lock and send-error rollback`)
+7. [DONE] Test(core): добавить регрессии на (a) immediate lock до stream `turn_started` и (b) rollback в `idle` при provider send failure (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `test(core): cover immediate lock and send-error rollback`)
 8. [TODO] Git Commit: `test(core): cover immediate lock and send-error rollback` (hash: TBD)
 9. [TODO] Test(pm-ui): добавить интеграционные регрессии parity Claude/Codex по блокировке поля ввода сразу после submit (до первого provider stream marker) (scope: `src/client/project-manager/components/sessions/token-usage-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `test(ui): enforce provider-agnostic immediate input lock parity`)
 10. [TODO] Git Commit: `test(ui): enforce provider-agnostic immediate input lock parity` (hash: TBD)
