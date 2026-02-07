@@ -2,12 +2,12 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.521
-- **Turn-end atomicity**: Core принимает continuity решение на границе `turn_completed` до `idle` (без `unlock -> relock` окна).
-- **Unlock resolution hotfix**: terminal `continuity_lock=unlocked` корректно снимает pending-lock даже при stale `rollover.phase=resume_sent`.
-- **ACK normalization**: continuity templates и UI фильтрация синхронизированы на internal ACK `Ready to continue working.`.
-- **Dialog hygiene**: virtual conversation подавляет internal ACK (legacy/new + markdown backtick variant).
-- **Regression coverage**: добавлены Core + PM/UI тесты на unlock release, continuity ACK suppression и lock predicate consistency.
+## Current Release — v1.1.523
+- **Workspace-scoped isolation**: PM/Core доставляют и обрабатывают `session:*` строго в рамках выбранного `workspacePath` (absolute path), без cross-workspace утечек.
+- **Scope handshake**: добавлен явный протокол `workspace:scope:set -> workspace:scope:ack`; PM ждёт `ack(applied)` перед `workspace-activate` и resume/create.
+- **Defence-in-depth guards**: PM не автофокусит, не рендерит и не отправляет сообщения в out-of-scope сессии даже при гонках/ошибках доставки.
+- **Restart non-regression**: сохранён deterministic reopen/resume path после перезапуска Core (`workspace-activate` + reviewer visibility + resume intent).
+- **Regression coverage**: добавлены targeted тесты PM/Core bridge на scoped delivery, handshake ordering и reopen/resume совместимость.
 
 ## Release Candidate — Phase 103 (Core-first Immediate Input Lock Parity)
 - **Immediate lock parity**: Core эмитит `turn_state=running` сразу на accepted submit до `adapter.sendMessage` (provider-agnostic для Claude/Codex/Gemini).
