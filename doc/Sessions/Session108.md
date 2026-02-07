@@ -34,6 +34,7 @@
 - `fe7db5e5 docs(release): prepare notes for immediate input lock parity release`
 - `eb425406 test(core): fix immediate-lock test callback typing`
 - `5a64cac5 chore(release): build-all after immediate lock parity`
+- `4d83fe05 chore(release): build vsix after immediate lock parity`
 
 ---
 
