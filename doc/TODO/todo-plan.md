@@ -87,4 +87,4 @@
 13. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after immediate lock parity`)
 14. [DONE] Git Commit: `chore(release): build-all after immediate lock parity` (hash: 5a64cac5)
 15. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after immediate lock parity`)
-16. [DONE] Git Commit: `chore(release): build vsix after immediate lock parity` (hash: TBD)
+16. [DONE] Git Commit: `chore(release): build vsix after immediate lock parity` (hash: 4d83fe05)
