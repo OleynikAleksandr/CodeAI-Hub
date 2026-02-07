@@ -78,6 +78,42 @@ test("updateSnapshotsWithTokenUsage keeps blocked state while continuity lock is
   assert.equal(next.s1.status.continuityLock?.active, true);
 });
 
+test("updateSnapshotsWithTokenUsage keeps blocked state while rollover phase is pending", () => {
+  const snapshot = createSnapshot();
+  const rolloverPendingSnapshot: SessionSnapshot = {
+    ...snapshot,
+    status: {
+      ...snapshot.status,
+      connectionState: "blocked",
+      rollover: {
+        phase: "resume_sent",
+        updatedAt: Date.now(),
+      },
+      continuityLock: {
+        active: false,
+        updatedAt: Date.now(),
+      },
+      updatedAt: Date.now(),
+    },
+  };
+
+  const next = updateSnapshotsWithTokenUsage(
+    { s1: rolloverPendingSnapshot },
+    {
+      sessionId: "s1",
+      event: {
+        type: "stream_event",
+        data: {
+          kind: "turn_state",
+          state: "idle",
+        },
+      },
+    }
+  );
+
+  assert.equal(next.s1.status.connectionState, "blocked");
+});
+
 test("updateSnapshotsWithTokenUsage unlocks continuity lock and restores idle state", () => {
   const snapshot = createSnapshot();
   const lockedSnapshot: SessionSnapshot = {
