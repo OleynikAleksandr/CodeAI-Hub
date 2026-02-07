@@ -22440,7 +22440,7 @@ ${path2}` : path2;
     providerTheme = null,
     onSubmit
   }) => {
-    const inputLocked = connectionState !== "idle" || isQueued;
+    const inputLocked = connectionState !== "idle" || continuityLockActive || isQueued;
     const waitCopyActive = inputLocked && !isQueued;
     const waitCopyColor = resolveProviderWaitColor(providerTheme);
     const formClassName = "session-input session-panel";
@@ -23032,8 +23032,10 @@ ${path2}` : path2;
       }
     );
     const connectionState = activeSession?.status.connectionState ?? "idle";
+    const rolloverPending = typeof activeSession?.status.rollover?.phase === "string" && activeSession.status.rollover.phase !== "failed";
     const continuityLockActive = activeSession?.status.continuityLock?.active === true;
-    const inputConnectionState = continuityLockActive ? "blocked" : connectionState;
+    const effectiveContinuityLockActive = continuityLockActive || rolloverPending;
+    const inputConnectionState = effectiveContinuityLockActive ? "blocked" : connectionState;
     const { isQueued, submitMessage } = useQueuedSend({
       activeSessionId,
       connectionState: inputConnectionState,
@@ -23076,7 +23078,7 @@ ${path2}` : path2;
             input_panel_default,
             {
               connectionState: inputConnectionState,
-              continuityLockActive,
+              continuityLockActive: effectiveContinuityLockActive,
               draft: activeSession.draft,
               isQueued,
               onSubmit: submitMessage,
