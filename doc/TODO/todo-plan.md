@@ -42,3 +42,27 @@
 18. [DONE] Git Commit: `chore(release): build-all after turn-end lock atomicity` (hash: a24af8f2)
 19. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after turn-end lock atomicity`)
 20. [DONE] Git Commit: `chore(release): build vsix after turn-end lock atomicity` (hash: 863fb0f4)
+
+---
+
+## Phase 102 — Continuity Unlock + ACK Normalization Hotfix (owner: Oleksandr, updated: 2026-02-07)
+
+### Stream: fix target-session unlock regression + normalize continuity ACK + release
+1. [TODO] Docs(design): зафиксировать hotfix-контракт по снятию lock после `continuity_lock=unlocked` и унификации internal ACK-фразы во всех continuity templates (scope: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`; expected commit message: `docs(continuity): define unlock resolution and ack normalization hotfix contract`)
+2. [TODO] Git Commit: `docs(continuity): define unlock resolution and ack normalization hotfix contract` (hash: TBD)
+3. [TODO] Fix(pm-rollover): устранить залипание `blocked` в новой session после `continuity_lock=unlocked` при `rollover.phase=resume_sent` (scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `fix(pm): clear rollover pending state after continuity unlock`)
+4. [TODO] Git Commit: `fix(pm): clear rollover pending state after continuity unlock` (hash: TBD)
+5. [TODO] Fix(ui-lock): синхронизировать lock-предикат SessionView с terminal-семантикой rollover после unlock (без вечного pending по `resume_sent`) (scope: `src/client/ui/src/session/session-view.tsx`; expected commit message: `fix(ui): resolve effective lock after rollover unlock`)
+6. [TODO] Git Commit: `fix(ui): resolve effective lock after rollover unlock` (hash: TBD)
+7. [TODO] Fix(core-templates): перевести continuity ACK на `Ready to continue working.` во всех трёх flow continuity templates (источник релизной синхронизации templatesDir) (scope: `packages/core/src/flow-node-continuity/template-loader.ts`, `assets/flow/continuity/create-report-doc.md`, `assets/flow/continuity/create-report-code.md`; expected commit message: `fix(core): normalize continuity ack phrase across all templates`)
+8. [TODO] Git Commit: `fix(core): normalize continuity ack phrase across all templates` (hash: TBD)
+9. [TODO] Fix(ui-filter): расширить фильтрацию internal continuity ACK (включая markdown-backtick вариант legacy token), чтобы служебная фраза не появлялась в диалоге (scope: `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(ui): suppress legacy continuity ack token variants in virtual conversation`)
+10. [TODO] Git Commit: `fix(ui): suppress legacy continuity ack token variants in virtual conversation` (hash: TBD)
+11. [TODO] Test(pm-ui): добавить регрессии на (a) unlock после `resume_sent + continuity_lock(unlocked)` и (b) suppression legacy/new ACK variants в virtual conversation (scope: `src/client/project-manager/components/sessions/token-usage-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`, `src/client/ui/src/session/virtual-conversation.test.tsx`; expected commit message: `test(ui): cover rollover unlock release and continuity ack suppression`)
+12. [TODO] Git Commit: `test(ui): cover rollover unlock release and continuity ack suppression` (hash: TBD)
+13. [TODO] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под hotfix Phase 102 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session105.md`; expected commit message: `docs(release): prepare notes for continuity unlock and ack hotfix`)
+14. [TODO] Git Commit: `docs(release): prepare notes for continuity unlock and ack hotfix` (hash: TBD)
+15. [TODO] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after continuity hotfix`)
+16. [TODO] Git Commit: `chore(release): build-all after continuity hotfix` (hash: TBD)
+17. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/артефакты и зафиксировать пути в session report (scope: repo-wide release artifacts + docs; expected commit message: `chore(release): build vsix after continuity hotfix`)
+18. [TODO] Git Commit: `chore(release): build vsix after continuity hotfix` (hash: TBD)
