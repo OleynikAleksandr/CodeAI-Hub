@@ -8,7 +8,7 @@ Hard rules:
 - Do NOT paste code/diffs/logs.
 - Write ONLY the report file (atomic write: tmp -> rename).
 - Do NOT send any user-facing chat messages.
-- When done, reply with EXACTLY ONE line: `__CODEAIHUB_INTERNAL_CONTINUITY_ACK__`.
+- When done, reply with EXACTLY ONE line: `Ready to continue working.`.
 
 Required structure:
 
