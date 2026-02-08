@@ -1,3 +1,12 @@
+## [1.1.533] - 2026-02-08
+### Fixed
+- Core: `turn_completed` больше не может эмитить `idle` до завершения async flow-node continuity arbitration по тому же provider event.
+- Core/PM: устранён transient `unlock -> relock` между source session final turn и rollover bootstrap, когда threshold-trigger приходит асинхронно.
+
+### Added
+- Core regression: тест на atomic turn-end dual-gate (`turn_completed` ждёт завершения rollover arbitration перед unlock-решением).
+- Architecture docs: зафиксирован Phase 114 инвариант атомарной арбитрации `turn_completed` + continuity threshold.
+
 ## [1.1.532] - 2026-02-08
 ### Fixed
 - Core/PM: устранён unlock-gap после `turn_completed` при context-threshold rollover — `idle/no_rollover_needed` не эмитятся, если rollover уже pending/in-flight; PM удерживает `blocked` для `resume_via_rollover` до terminal `resume_ready`.

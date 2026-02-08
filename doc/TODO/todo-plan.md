@@ -64,10 +64,10 @@
 
 ### Stream: Docs + QA Gates
 1. [DONE] Синхронно обновить архитектурные документы и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates`)
-2. [TODO] Git Commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates` (hash: TBD)
+2. [DONE] Git Commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates` (hash: 1484df60)
 
 ### Stream: Release Build
-1. [TODO] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 114 atomic dual-gate fix`)
+1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 114 atomic dual-gate fix`)
 2. [TODO] Git Commit: `docs(release): prepare release notes for phase 114 atomic dual-gate fix` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 114 atomic dual-gate fix`)
 4. [TODO] Git Commit: `chore(release): run build-all for phase 114 atomic dual-gate fix` (hash: TBD)
