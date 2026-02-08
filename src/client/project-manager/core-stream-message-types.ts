@@ -33,6 +33,25 @@ export type WorkspaceSelectAckPayload = {
   readonly error?: string | null;
 };
 
+export type WorkspaceSnapshotContinuityLockReason =
+  | "threshold_reached"
+  | "report_in_progress"
+  | "resume_bootstrap"
+  | "resume_ready"
+  | "resume_failed"
+  | "resume_timeout";
+
+export type WorkspaceSnapshotContinuityLockTransition = {
+  readonly rolloverId: string;
+  readonly sourceSessionId: string;
+  readonly targetSessionId?: string;
+  readonly stageId?: string;
+  readonly runSlug?: string | null;
+  readonly reason: WorkspaceSnapshotContinuityLockReason;
+  readonly awaitingBootstrapTurn: boolean;
+  readonly updatedAt: string;
+};
+
 export type WorkspaceSnapshot = {
   readonly workspaceRoot: string;
   readonly loadState: "loading" | "ready" | "error";
@@ -47,6 +66,8 @@ export type WorkspaceSnapshot = {
         readonly nodeId: string;
         readonly turnState: "idle" | "running";
         readonly continuityLockActive: boolean;
+        readonly continuityLockReason?: WorkspaceSnapshotContinuityLockReason;
+        readonly continuityLockTransition?: WorkspaceSnapshotContinuityLockTransition;
         readonly lastHeartbeatAt?: string;
         readonly providerId?: string;
         readonly providerSessionId?: string;
