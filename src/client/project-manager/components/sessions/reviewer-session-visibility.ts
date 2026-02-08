@@ -14,6 +14,7 @@ type ReviewerSessionVisibility = {
 type DescriptionSessionSnapshot = {
   readonly kind: "collector" | "reviewer";
   readonly session: DescriptionSessionRef;
+  readonly terminalNoResume: boolean;
 };
 
 const resolveDescriptionSessionSnapshot = (
@@ -23,7 +24,12 @@ const resolveDescriptionSessionSnapshot = (
   if (!description?.session || !description.sessionKind) {
     return null;
   }
-  return { kind: description.sessionKind, session: description.session };
+  return {
+    kind: description.sessionKind,
+    session: description.session,
+    terminalNoResume:
+      description.sessionKind === "collector" && Boolean(description.draftPath),
+  };
 };
 
 const resolveWorkspaceSlug = (
@@ -86,16 +92,20 @@ const buildForcedHiddenSessionIds = (params: {
   readonly sessions: readonly SessionRecord[];
   readonly workspacePath?: string;
   readonly reviewerSessionId: string | null;
+  readonly descriptionSessionSnapshot: DescriptionSessionSnapshot | null;
 }): ReadonlySet<string> => {
-  if (!params.workspacePath || !params.reviewerSessionId) {
+  if (!params.workspacePath) {
     return new Set();
   }
   const hidden = new Set<string>();
+  const hideTerminalCollectors =
+    params.reviewerSessionId === null &&
+    params.descriptionSessionSnapshot?.terminalNoResume === true;
   for (const session of params.sessions) {
     if (
       session.workspacePath === params.workspacePath &&
       session.stage === "description" &&
-      session.id !== params.reviewerSessionId
+      (hideTerminalCollectors || session.id !== params.reviewerSessionId)
     ) {
       hidden.add(session.id);
     }
@@ -161,8 +171,14 @@ export const useReviewerSessionVisibility = (params: {
         sessions: params.sessions,
         workspacePath: params.workspacePath,
         reviewerSessionId,
+        descriptionSessionSnapshot,
       }),
-    [params.sessions, params.workspacePath, reviewerSessionId]
+    [
+      descriptionSessionSnapshot,
+      params.sessions,
+      params.workspacePath,
+      reviewerSessionId,
+    ]
   );
 
   return { forcedHiddenSessionIds, reviewerSessionId };

@@ -104,9 +104,9 @@
 
 ### Stream: PM/UI Enforcement
 1. [DONE] Применить lock-контракт в PM Session stream: `turnState=idle` не unlock сам по себе; учитывать `resumeMode`, `finalTurnCompleted` и rollover reason без промежуточного unlock (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/services/workspace-snapshot-store.ts`; expected commit: `fix(pm): enforce resume-mode lock gates from workspace snapshot`)
-2. [DONE] Git Commit: `fix(pm): enforce resume-mode lock gates from workspace snapshot` (hash: TBD)
-3. [TODO] Зафиксировать no-resume UX: read-only input copy и запрет resume/focus для terminal collector-сессий в tree/session UI (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/project-manager/components/sessions/reviewer-session-visibility.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `feat(ui): render no-resume sessions as terminal read-only`)
-4. [TODO] Git Commit: `feat(ui): render no-resume sessions as terminal read-only` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): enforce resume-mode lock gates from workspace snapshot` (hash: d0d4918f)
+3. [DONE] Зафиксировать no-resume UX: read-only input copy и запрет resume/focus для terminal collector-сессий в tree/session UI (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/project-manager/components/sessions/reviewer-session-visibility.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `feat(ui): render no-resume sessions as terminal read-only`)
+4. [DONE] Git Commit: `feat(ui): render no-resume sessions as terminal read-only` (hash: TBD)
 
 ### Stream: Non-Regression Tests
 1. [TODO] Добавить core-тесты на новые инварианты: `no_resume` never unlock, `resume_in_place` dual-gate, `resume_via_rollover` unlock только после bootstrap answer (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`, `packages/core/src/workspace-runtime/session-runtime.test.ts`; expected commit: `test(core): cover resume-mode lock lifecycle invariants`)
