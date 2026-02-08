@@ -113,13 +113,14 @@
 ## 6. Синхронизация с lock-copy
 
 Нужно ввести единый derived-флаг `inputLocked` (источник истины для UX):
-- `inputLocked = connectionState !== "idle" || isQueued`
+- `inputLocked = connectionState !== "idle" || continuityLockActive || awaitingBootstrapTurn || isQueued || sessionTerminalReadOnly`
 - `placeholder` и `fieldset disabled` используют один и тот же `inputLocked`/state branch.
 
 Копирайтинг:
 - при continuity handoff (`blocked`): `Agent is resuming your session… Please wait.`
 - при обычном `running`: `Agent is working… Please wait.`
 - при queued: `Message queued. Sending as soon as it is ready…`
+- для terminal/no-resume: отдельный read-only copy без unlock.
 
 ---
 

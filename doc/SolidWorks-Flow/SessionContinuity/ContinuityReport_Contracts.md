@@ -113,6 +113,7 @@ Core отправляет агенту короткий prompt, который �
 В новой сессии Core отправляет:
 - стандартный узло‑специфичный стартовый prompt;
 - коротко: “прочти последний отчёт по пути `<path>` и продолжай”.
+- первый assistant bootstrap answer считается служебным unlock-gate (до него input остаётся locked в old/new segment).
 
 ## 6) Prompt Templates (IDs / placeholders / storage)
 

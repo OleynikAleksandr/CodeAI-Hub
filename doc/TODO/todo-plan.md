@@ -9,7 +9,7 @@
 
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Sessions/Session113.md`
+2. `doc/Sessions/Session118.md`
 3. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -84,3 +84,48 @@
 2. [DONE] Git Commit: `chore(release): run build-all for phase 108 snapshot-lock monotonicity` (hash: d621156d)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 108 snapshot-lock monotonicity`; result: `codeai-hub-1.1.527.vsix` собран, `Verifying SDK exclusions` и `Package created` подтверждены)
 4. [DONE] Git Commit: `chore(release): build and verify vsix for phase 108 snapshot-lock monotonicity` (hash: 82802ae6, allow-empty if no file changes)
+
+---
+
+## Phase 109 — Input Lock Contract Completion (owner: Oleksandr, updated: 2026-02-08)
+
+**Problem (manual regression):**
+- В `description collector` и `reviewer` остаются окна преждевременного unlock.
+- Текущий unlock не везде привязан к dual-gate (`final turn completed` + `no rollover needed`).
+- В rollover-path unlock может происходить до безопасного bootstrap-gate новой сессии.
+
+### Stream: Core Lock Lifecycle Contract
+1. [TODO] Ввести режимы `no_resume | resume_in_place | resume_via_rollover` в runtime-lock арбитрации и зафиксировать terminal/read-only поведение для `no_resume` сессий (scope: `packages/core/src/workspace-runtime/workspace-runtime-types.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workflow/runtime/workflow-runtime.ts`; expected commit: `feat(core): add resume-mode-aware lock lifecycle and terminal no-resume state`)
+2. [TODO] Git Commit: `feat(core): add resume-mode-aware lock lifecycle and terminal no-resume state` (hash: TBD)
+3. [TODO] Реализовать unlock dual-gate для `resume_in_place`: unlock только после финального `turn_completed` и явного результата Core `no rollover needed`; при threshold exceeded оставлять lock и менять только reason (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/session-runtime.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `fix(core): enforce dual-gate unlock for resume-in-place sessions`)
+4. [TODO] Git Commit: `fix(core): enforce dual-gate unlock for resume-in-place sessions` (hash: TBD)
+5. [TODO] Для `resume_via_rollover` снять lock только после первого bootstrap assistant ответа в target session; `resume_failed|resume_timeout` не должны выполнять unlock (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/workspace-runtime-types.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `fix(core): unlock rollover sessions only after bootstrap assistant gate`)
+6. [TODO] Git Commit: `fix(core): unlock rollover sessions only after bootstrap assistant gate` (hash: TBD)
+
+### Stream: PM/UI Enforcement
+1. [TODO] Применить lock-контракт в PM Session stream: `turnState=idle` не unlock сам по себе; учитывать `resumeMode`, `finalTurnCompleted` и rollover reason без промежуточного unlock (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/services/workspace-snapshot-store.ts`; expected commit: `fix(pm): enforce resume-mode lock gates from workspace snapshot`)
+2. [TODO] Git Commit: `fix(pm): enforce resume-mode lock gates from workspace snapshot` (hash: TBD)
+3. [TODO] Зафиксировать no-resume UX: read-only input copy и запрет resume/focus для terminal collector-сессий в tree/session UI (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/project-manager/components/sessions/reviewer-session-visibility.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `feat(ui): render no-resume sessions as terminal read-only`)
+4. [TODO] Git Commit: `feat(ui): render no-resume sessions as terminal read-only` (hash: TBD)
+
+### Stream: Non-Regression Tests
+1. [TODO] Добавить core-тесты на новые инварианты: `no_resume` never unlock, `resume_in_place` dual-gate, `resume_via_rollover` unlock только после bootstrap answer (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`, `packages/core/src/workspace-runtime/session-runtime.test.ts`; expected commit: `test(core): cover resume-mode lock lifecycle invariants`)
+2. [TODO] Git Commit: `test(core): cover resume-mode lock lifecycle invariants` (hash: TBD)
+3. [TODO] Добавить PM/UI тесты против unlock-gap в reviewer до артефакта и до bootstrap-гейта новой сессии (scope: `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`, `src/client/project-manager/components/sessions/reviewer-session-visibility.test.ts`; expected commit: `test(ui): prevent premature unlock before artifact and bootstrap gates`)
+4. [TODO] Git Commit: `test(ui): prevent premature unlock before artifact and bootstrap gates` (hash: TBD)
+
+### Stream: Docs Sync
+1. [TODO] Синхронно обновить архитектурные документы после реализации контрактов (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`; expected commit: `docs(architecture): sync implemented resume-mode lock contract`)
+2. [TODO] Git Commit: `docs(architecture): sync implemented resume-mode lock contract` (hash: TBD)
+
+### Stream: QA Gates
+1. [TODO] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 109 resume-mode lock contract gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
+2. [TODO] Git Commit: `chore(qa): validate phase 109 resume-mode lock contract gates` (hash: TBD)
+
+### Stream: Release Build
+1. [TODO] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 109`)
+2. [TODO] Git Commit: `docs(release): prepare release notes for phase 109` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 109 resume-mode lock contract`)
+4. [TODO] Git Commit: `chore(release): run build-all for phase 109 resume-mode lock contract` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 109 resume-mode lock contract`)
+6. [TODO] Git Commit: `chore(release): build and verify vsix for phase 109 resume-mode lock contract` (hash: TBD)

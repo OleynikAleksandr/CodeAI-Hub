@@ -29,7 +29,7 @@
 
 | Step (UI) | stageId | Агент | Артефакт | Slot |
 |---|---|---|---|---|
-| Описание | `description` | Description Agent → Reviewer Agent (auto) | `Final_Description.md` | `workspace.description` |
+| Описание | `description` | Description Agent (one-shot/no-resume) → Reviewer Agent (auto, resume) | `Final_Description.md` | `workspace.description` |
 | Virtual Simulation | `virtual_simulation` | Virtual Simulation Agent | `virtual-simulation.md` | `workspace.virtual_simulation` |
 | Диаграмма модулей | `diagram_modules` | Module Diagram Agent | `modules-diagram.mmd` | `diagram.modules` |
 | Interface Map (Диаграмма фасадов) | `diagram_facades` | Facades Diagram Agent | `facades-graph.mmd` | `diagram.facades` |
@@ -43,6 +43,7 @@ UI правило (для всех шагов):
 Примечание для `description`:
 - `description.md` существует как **черновик** (run output) между Description Agent и Reviewer.
 - `Final_Description.md` — **единственный** финальный артефакт, который читают downstream шаги.
+- `Description Agent` после финального ответа переходит в terminal/read-only (input не unlock); дальнейшее общение идёт только через `Reviewer`.
 
 UI последствия:
 - В дереве разработки Project Manager вместо двух узлов (Описание/Диаграмма) отображаются четыре: Описание, Virtual Simulation, Диаграмма модулей, Диаграмма фасадов.

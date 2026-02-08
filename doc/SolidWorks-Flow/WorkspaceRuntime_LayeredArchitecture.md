@@ -9,7 +9,7 @@
 
 Зафиксировать **минимально необходимую** архитектуру, которая:
 - изолирует состояние нескольких workspace в одном процессе (без пересечений);
-- предотвращает “вечный lock” при потере terminal-событий;
+- предотвращает некорректный unlock (включая rollover/terminal read-only кейсы);
 - масштабируется на workflow tree (узлы, сессии, артефакты) без роста числа связей.
 
 Документ разделяет:
@@ -22,7 +22,7 @@
 
 Текущая модель выросла из глобального runtime, где изоляция workspace достигается фильтрацией событий.
 
-Это опасно: если terminal-маркер (`turn_state=idle` и/или unlock) не дошёл до scoped-клиента, UI остаётся в `running/blocked` и блокирует ввод.
+Это опасно: если terminal-маркер или lock-reason не дошёл до scoped-клиента, UI может либо зависнуть в `running/blocked`, либо разблокировать input раньше времени.
 
 Вывод: изоляция должна делаться **шардированием состояния**, а не post-filter доставкой событий.
 
@@ -106,20 +106,33 @@ UI получает и отображает только `WorkspaceSnapshot`.
 
 ## 8. Session/Turn contract (MVP)
 
-### 8.1 Канонический маркер
-- `turn_state = running | idle` — единственный источник истины для input lock.
+### 8.1 Канонические маркеры
+- `turn_state = running | idle` — маркер состояния текущего turn.
+- `resume_mode = no_resume | resume_in_place | resume_via_rollover` — режим жизненного цикла сессии.
+- `continuity_lock.active` + `continuity_lock.reason` — серверный lock-gate для continuity/rollover/bootstrap.
 
 ### 8.2 Формула блокировки
 Lock вычисляется так:
-- server-driven lock: `inputLocked = (turn_state != idle) OR (continuity_lock.active)`
+- server-driven lock: `inputLocked = session_terminal OR (turn_state != idle) OR (continuity_lock.active)`
 - client-local доп. lock (если поддерживаем очередь сообщений): `inputLocked = serverLock OR (queuedMessage != null)`
 
 Важно: `queuedMessage` — клиентское состояние, не часть snapshot.
 
-### 8.3 Watchdog + heartbeat
+Где:
+- `session_terminal = (resume_mode == no_resume) AND final_turn_completed`.
+
+### 8.3 Unlock contract (обязательный)
+- `no_resume`: после финального ответа input **никогда** не unlock; сессия terminal/read-only.
+- `resume_in_place`: unlock **только когда одновременно**:
+  - пришёл `turn_completed` (`turn_state=idle`);
+  - Core подтвердил `no_rollover_needed` (контекстный порог не превышен).
+- если контекст исчерпан/нужен rollover: input остаётся locked; меняется только `continuity_lock.reason`.
+- `resume_via_rollover`: input locked в старом и новом segment; unlock только после первого bootstrap assistant answer в новом segment (системный, скрытый от пользователя).
+
+### 8.4 Watchdog + heartbeat
 - heartbeat: любой stream chunk/пинг во время активного turn;
 - watchdog: если heartbeat отсутствует > `M` секунд, принудительно фиксируем terminal:
-  - `turn_state=idle` + `turn_error(timeout)`.
+  - `turn_state=idle` + `turn_error(timeout)` + пересчёт lock по правилам `8.3` (без авто-unlock для `no_resume` и rollover-pending).
 
 Параметры `M` на MVP фиксируются консервативно (чтобы не ломать долгие ответы).
 
@@ -167,5 +180,5 @@ Graceful cancellation mid-stream — отдельная future фича (не ч
 
 1. Невозможен cross-workspace apply: никакое событие/команда не применяется без `workspaceRoot`.
 2. Переключение workspace всегда делает snapshot-first: stale `running/blocked` исчезает.
-3. Любой accepted send приводит к terminal `turn_state=idle` (через normal path или watchdog).
+3. Любой accepted send завершает turn до `turn_state=idle` (через normal path или watchdog), но unlock разрешён только по контракту `8.3`.
 4. `OUTDATED` корректно блокирует downstream новые send (без mid-stream cancel на MVP).

@@ -90,14 +90,16 @@ MVP-реальность: текущая реализация Workflow Tree жи
 Правила поведения:
 - клик по `Step` открывает состояние шага (анкета/запуск, либо продолжение),
 - клик по `Artifact` открывает содержимое артефакта во **встроенном viewer** Project Manager (не VS Code editor tab),
-- клик по `Session` открывает полный диалог; после перезапуска Project Manager сессия должна восстанавливаться по persisted координатам (providerId + providerSessionId).
+- клик по `Session` открывает полный диалог; для `resume`-сессий после перезапуска Project Manager состояние восстанавливается по persisted координатам (providerId + providerSessionId).
   - анти-регрессия: история диалога берётся из unified-session JSONL (`~/.codeai-hub/sessions/...`) и должна восстанавливаться даже если Core стартовал из другого workspace (см. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`).
 
 Контракт `Resume` (без дублей):
-- клик по `Session` диспатчит intent **focus/resume** по `providerId + providerSessionId` (а не прямой `session:create`).
+- клик по `Session` сначала проверяет `resumeMode`:
+  - `resume_in_place` / `resume_via_rollover`: intent **focus/resume** по `providerId + providerSessionId` (а не прямой `session:create`);
+  - `no_resume`: открыть transcript в read-only (без `session:create` и без unlock input).
 - если сессия с тем же `providerId + providerSessionId` **уже есть** в списке — **фокус** на неё (не создаём новую).
 - если такая сессия была “закрыта” в UI — она **показывается снова** (local hide → show).
-- если сессии нет — создаём/resume новую и **после `session:created` подгружаем историю** из unified-session JSONL.
+- если сессии нет и режим поддерживает resume — создаём/resume новую и **после `session:created` подгружаем историю** из unified-session JSONL.
 - `Close` в UI = **скрыть локально**, не удалять session record в Core.
 
 Примечание по `Session Continuity`:
@@ -134,7 +136,7 @@ MVP-реальность: текущая реализация Workflow Tree жи
 Workspace: App
 ├─ Описание (Step)
 │  ├─ Artifact: questionnaire.md
-│  ├─ Description <Provider> (resume session)
+│  ├─ Description <Provider> (one-shot/no-resume; read-only после финального ответа)
 │  ├─ Artifact: description.md (draft, run output)
 │  ├─ Reviewer <Provider> (resume session)
 │  └─ Artifact: Final_Description.md
@@ -161,6 +163,7 @@ Workspace: App
 
 Рекомендация MVP:
 - `Session` отображается как дочерний узел под `Step` (для resume/продолжения работы).
+- Для `no_resume` сессий (`Description <Provider>`) узел остаётся в дереве как read-only история и не разблокирует input после финального ответа.
 - Один `Session` может быть показан под несколькими `Artifact` как “ссылка” (один и тот же ID), если сессия породила/изменила несколько артефактов.
 
 Критично (vNext инфраструктура): длительные сессии должны поддерживать “handoff” при исчерпании контекстного окна (цепочка сессий под одним шагом). См. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`.
@@ -182,7 +185,7 @@ Workspace: App
 - `Описание` (`stageId=description`)
   - в процессе шага (пока `IN_PROGRESS`) должны быть доступны:
     1) `questionnaire.md` (persisted, чтобы пережить перезапуск)
-    2) `Description <Provider>` (resume)
+    2) `Description <Provider>` (one-shot/no-resume; terminal/read-only после финального ответа)
     3) `description.md` (draft, результат run)
     4) `Reviewer <Provider>` (resume; авто-старт после появления draft)
   - результат шага (источник истины для downstream): `Final_Description.md`
@@ -306,6 +309,7 @@ Payload (MVP):
 ### 9.4. Привязка SessionID к шагу
 Для шага хранится “resume-точка” (SessionRef) на активную сессию агента (например Reviewer).
 История диалогов/перезапусков обеспечивается `Session Continuity` (handoff цепочки), а не `runs`.
+Для `no_resume` сессий SessionRef не используется как точка возобновления ввода.
 
 ---
 

@@ -67,7 +67,8 @@ Downstream агент получает только:
 - по политике может инициировать **Continuity Refresh**:
   - попросить агента сформировать continuity‑отчёт;
   - открыть новый provider segment;
-  - первым действием нового segment попросить прочитать upstream обновления и продолжить.
+  - первым действием нового segment попросить прочитать upstream обновления и продолжить;
+  - держать input locked до первого bootstrap assistant answer нового segment (не unlock по одному `turn_completed` старого segment).
 
 ---
 
