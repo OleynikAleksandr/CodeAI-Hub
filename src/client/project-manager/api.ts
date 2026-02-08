@@ -13,6 +13,8 @@ import type {
   IncomingMessage,
   OutgoingMessage,
   ProjectUpdatePayload,
+  WorkspaceSelectPayload,
+  WorkspaceSnapshotRequestPayload,
   WorkspaceScopeSetPayload,
 } from "./core-stream-message-types";
 import type { WorkspaceProject } from "./types";
@@ -21,7 +23,6 @@ type ApiConfig = {
   readonly wsUrl: string;
   readonly httpUrl: string;
 };
-
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
 type CoreEventListener = (message: IncomingMessage) => void;
 
@@ -70,36 +71,35 @@ export class ProjectManagerApi {
   private readonly config: ApiConfig;
 
   constructor() {
-    // Expect config to be injected by the host environment
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.config = (window as any).codeaiBridgeConfig || {
       wsUrl: "ws://127.0.0.1:8080",
       httpUrl: "http://127.0.0.1:8080",
     };
 
-	    window.addEventListener("message", (event) => {
-	      const message = event.data;
-	      if (
-	        message &&
+    window.addEventListener("message", (event) => {
+      const message = event.data;
+      if (
+        message &&
         typeof message === "object" &&
         "type" in message &&
         message.type === "projects:folderPicked"
       ) {
-	        const payload = "payload" in message ? message.payload : null;
-	        if (payload && typeof payload === "object" && "path" in payload) {
-	          const path = payload.path;
-	          if (typeof path === "string") {
-	            window.dispatchEvent(
-	              new CustomEvent("pm:workspace:add-requested", {
-	                detail: { path },
-	              })
-	            );
-	            this.addProject(path);
-	          }
-	        }
-	      }
-	    });
-	  }
+        const payload = "payload" in message ? message.payload : null;
+        if (payload && typeof payload === "object" && "path" in payload) {
+          const path = payload.path;
+          if (typeof path === "string") {
+            window.dispatchEvent(
+              new CustomEvent("pm:workspace:add-requested", {
+                detail: { path },
+              })
+            );
+            this.addProject(path);
+          }
+        }
+      }
+    });
+  }
 
   connect(): void {
     if (this.socket?.readyState === WebSocket.OPEN) {
@@ -165,6 +165,14 @@ export class ProjectManagerApi {
 
   setWorkspaceScope(payload: WorkspaceScopeSetPayload): void {
     this.send({ type: "workspace:scope:set", payload });
+  }
+
+  selectWorkspace(payload: WorkspaceSelectPayload): void {
+    this.send({ type: "workspace:select", payload });
+  }
+
+  requestWorkspaceSnapshot(payload: WorkspaceSnapshotRequestPayload): void {
+    this.send({ type: "workspace:snapshot:request", payload });
   }
 
   createSession(params: {
