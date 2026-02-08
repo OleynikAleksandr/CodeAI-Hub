@@ -1056,16 +1056,32 @@ export class SessionRequestHandler {
       return;
     }
 
-    await this.continuity.ensureTrackedOnOutboundMessage({
-      sessionId,
-      providerSessionId: binding.providerSessionId,
-    });
+    // Internal workflow messages must participate in the same turn lifecycle as
+    // user-submitted messages; otherwise PM/UI can incorrectly unlock input while
+    // the provider is still working (some providers do not emit `turn_started`
+    // for these internal dispatches).
+    this.emitTurnStateEvent({ sessionId, state: "running" });
+    try {
+      await this.continuity.ensureTrackedOnOutboundMessage({
+        sessionId,
+        providerSessionId: binding.providerSessionId,
+      });
+    } catch (error) {
+      this.emitTurnStateEvent({ sessionId, state: "idle" });
+      this.logger.warn("Continuity tracking failed for internal message", {
+        sessionId,
+        providerId: binding.providerId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return;
+    }
 
     this.logDispatchingMessageToProvider(sessionId, binding, content.length);
 
     try {
       await adapter.sendMessage(binding.providerSessionId, content);
     } catch (error) {
+      this.emitTurnStateEvent({ sessionId, state: "idle" });
       this.logProviderSendMessageFailed(sessionId, binding, error);
       this.handleProviderFailure(binding.providerId, error, sessionId);
     }
