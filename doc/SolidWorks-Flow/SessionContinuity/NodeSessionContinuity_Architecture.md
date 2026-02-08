@@ -1,7 +1,7 @@
 # SolidWorks Flow — Node Session Continuity (Architecture)
 
 **Status:** Draft
-**Updated:** 2026-02-03
+**Updated:** 2026-02-08
 **Owner:** Oleksandr + Codex
 
 ---
@@ -75,9 +75,11 @@
 - `no_resume` сессии: после финального ответа переходят в terminal/read-only, input не unlock никогда.
 - `resume_in_place` сессии: unlock только когда одновременно выполнены:
   - `turn_completed` (текущий turn действительно завершён);
-  - Core подтвердил `no_rollover_needed` (контекстный порог не превышен).
+  - Core подтвердил `no_rollover_needed` (контекстный порог не превышен; это canonical unlock reason).
 - если threshold exceeded / rollover required: input остаётся locked, меняется только причина lock.
-- `resume_via_rollover`: старый и новый segment locked; unlock после первого bootstrap assistant answer в новом segment.
+- `resume_via_rollover`: старый и новый segment locked; unlock после первого bootstrap assistant answer в новом segment (`resume_ready`).
+- `resume_failed|resume_timeout` не unlock'ят input; меняют только reason/copy.
+- `continuityLockTransition.awaitingBootstrapTurn=true` удерживает lock на обеих сторонах handoff (source + target), даже если отдельный snapshot уже показывает `continuityLockActive=false`.
 
 ---
 
@@ -96,7 +98,7 @@
 7. **Resume bootstrap:** Core стартует новый segment и первым сообщением отправляет:
    - стандартный prompt‑шаблон узла/роли;
    - короткую инструкцию “прочти последний отчёт по пути X и продолжай”.
-8. **Unlock gate:** Core снимает lock только после первого assistant bootstrap answer нового segment (скрытый служебный шаг, не отображается как пользовательский ответ).
+8. **Unlock gate:** Core снимает lock только после первого assistant bootstrap answer нового segment (скрытый служебный шаг, не отображается как пользовательский ответ), публикуя terminal unlock reason `resume_ready`.
 
 ### 6.2 Надёжность watcher’а
 Рекомендуется атомарная запись отчёта агентом:

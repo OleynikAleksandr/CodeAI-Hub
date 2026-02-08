@@ -119,11 +119,11 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 
 Чтобы исключить unlock-gap на границах `turn_completed`/continuity, UI и PM следуют unified input-lock контракту (snapshot-first):
 
-1. Source-of-truth lock state — только `workspace:snapshot` (`turnState`, `continuityLockActive`, `continuityLockReason`, `continuityLockTransition.awaitingBootstrapTurn`); `session:stream` не мутирует lock.
+1. Source-of-truth lock state — только `workspace:snapshot` (`turnState`, `resumeMode`, `finalTurnCompleted`, `continuityLockActive`, `continuityLockReason`, `terminalLockReason`, `continuityLockTransition.awaitingBootstrapTurn`); `session:stream` не мутирует lock.
 2. **No-resume session**: после финального ответа сессия становится terminal/read-only; input больше не unlock.
 3. **Resume-in-place session**: unlock разрешён только когда одновременно выполнены оба условия:
    - получен финальный `turn_completed` для текущего turn;
-   - Core завершил continuity arbitration с результатом `no rollover` (context threshold OK).
+   - Core завершил continuity arbitration с явным snapshot-result `continuityLockReason=no_rollover_needed` (context threshold OK).
 4. Если threshold exceeded и нужен rollover, input остаётся locked; разрешено менять только `continuityLockReason` (без `unlock -> relock` окна).
 5. **Resume-via-rollover session**: lock удерживается и в old session, и в newly created session; unlock допустим только после первого bootstrap assistant answer в new session (этот bootstrap-turn скрыт от пользователя).
 6. **Description collector one-shot / no-resume** всегда остаётся в locked terminal/read-only после финального ответа.
@@ -137,11 +137,12 @@ State-table для Session UI:
 |---|---|---|---|
 | `turnState=running` | `running` | заблокирован | показываем `working` |
 | `turnState=idle` + `continuityLockActive=true`/`awaitingBootstrapTurn=true` | `blocked` | заблокирован | показываем `resuming/locked` |
-| `turnState=idle` + Core arbitration `no rollover` | `idle` | доступен | скрываем |
+| `turnState=idle` + `resumeMode=resume_in_place` + `finalTurnCompleted=true` + `continuityLockReason=no_rollover_needed` | `idle` | доступен | скрываем |
 | terminal no-resume (например description collector) | terminal/read-only | заблокирован навсегда | скрываем wait-strip, показываем terminal-copy |
 
 Инварианты:
 - `turn_completed` или `turnState=idle` сами по себе не дают unlock.
+- В lock lifecycle разрешены только два terminal unlock-reason: `no_rollover_needed` (resume-in-place) и `resume_ready` (resume-via-rollover).
 - Запрещён user-visible сценарий `running -> idle/unlocked -> locked` для одного и того же turn completion.
 - При rollover `resume_failed|resume_timeout` меняют только reason/copy, но не открывают input.
 - Unlock в rollover-path разрешён только после первого bootstrap assistant answer в target session.
@@ -266,7 +267,9 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
   - `WorkspaceRuntimeFacade`: единая точка интеграции для bridge/handlers, hydration из `SessionManager`, debounce/coalesce snapshot push.
 - **Snapshot-first lock**: PM вычисляет server-lock из `workspace:snapshot` (`turnState` + `continuityLockActive`), а не из поштучных `session:stream` `turn_state`.
 - **Phase 107 lock transition contract**:
-  - `workspace:snapshot.sessions[sessionId].continuityLockReason` — canonical reason последнего lock шага (`threshold_reached`, `report_in_progress`, `resume_bootstrap`, `resume_ready`, `resume_failed`, `resume_timeout`, terminal/no-resume причины);
+  - `workspace:snapshot.sessions[sessionId].resumeMode` + `finalTurnCompleted` — explicit resume arbitration mode (`no_resume`, `resume_in_place`, `resume_via_rollover`) и dual-gate readiness;
+  - `workspace:snapshot.sessions[sessionId].continuityLockReason` — canonical reason последнего lock шага (`threshold_reached`, `report_in_progress`, `resume_bootstrap`, `no_rollover_needed`, `resume_ready`, `resume_failed`, `resume_timeout`, `terminal_no_resume`);
+  - `workspace:snapshot.sessions[sessionId].terminalLockReason` — terminal/read-only marker для one-shot no-resume flow;
   - `workspace:snapshot.sessions[sessionId].continuityLockTransition` — transition metadata (`rolloverId`, source/target session ids, stage/run, `awaitingBootstrapTurn`, `updatedAt`);
   - если `awaitingBootstrapTurn=true`, PM обязан удерживать input lock даже при `continuityLockActive=false`, причём на обеих сторонах handoff (`sourceSessionId` + `targetSessionId`);
   - для rollover-path unlock разрешён только после первого bootstrap assistant answer в target session; `resume_failed|resume_timeout` не снимают lock автоматически.
