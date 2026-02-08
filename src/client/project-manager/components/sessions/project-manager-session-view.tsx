@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
+import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 import { sanitizeMessage } from "../../../ui/src/core-bridge/normalizers";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
 import {
@@ -16,13 +17,10 @@ import {
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
-import {
-  resolveProjectManagerCoreConfig,
-  useProjectManagerCoreStatusHydrator,
-} from "./status-hydrator";
+import { resolveProjectManagerCoreConfig, useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import { useSessionResumeIntent } from "./session-resume-intent";
 import { useSessionVisibility } from "./session-visibility";
-import { useProjectManagerSessionStream } from "./session-stream";
+import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } from "./session-stream";
 import { useReviewerSessionVisibility } from "./reviewer-session-visibility";
 import { useSessionMessageSender } from "./session-message-sender";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
@@ -30,15 +28,9 @@ type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
 };
-export const ProjectManagerSessionView = ({
-  workspacePath,
-  preferredSessionId,
-}: ProjectManagerSessionViewProps) => {
+export const ProjectManagerSessionView = ({ workspacePath, preferredSessionId }: ProjectManagerSessionViewProps) => {
   const [providerCatalog, setProviderCatalog] = useState<ProviderCatalog>({});
-  const providerLabels = useMemo(
-    () => buildProviderLabels(providerCatalog),
-    [providerCatalog]
-  );
+  const providerLabels = useMemo(() => buildProviderLabels(providerCatalog), [providerCatalog]);
   const { settings } = useProjectManagerSettings();
   const [sessions, setSessions] = useState<readonly SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
@@ -47,19 +39,19 @@ export const ProjectManagerSessionView = ({
   const syncSessionsRef = useCallback((current: readonly SessionRecord[]) => {
     sessionsRef.current = current;
   }, []);
-  const { forcedHiddenSessionIds, reviewerSessionId } =
-    useReviewerSessionVisibility({
-      sessions,
-      workspacePath,
-    });
-  const { hideSession, removeHiddenSession, showSession, visibleSessions } =
-    useSessionVisibility({
+  const { forcedHiddenSessionIds, reviewerSessionId } = useReviewerSessionVisibility({
+    sessions,
+    workspacePath,
+  });
+  const { hideSession, removeHiddenSession, showSession, visibleSessions } = useSessionVisibility(
+    {
       sessions,
       sessionsRef,
       workspacePath,
       forcedHiddenSessionIds,
       setActiveSessionId,
-    });
+    }
+  );
   const hydrateFromState = useCallback(
     (payload: {
       readonly providers: readonly ProviderStackDescriptor[];
@@ -242,6 +234,10 @@ export const ProjectManagerSessionView = ({
     onSessionMessage: handleSessionMessage,
     onSessionStream: (payload) =>
       setSnapshots((previous) => updateSnapshotsWithTokenUsage(previous, payload)),
+    onWorkspaceSnapshot: (payload) => {
+      workspaceSnapshotStore.applySnapshot(payload);
+      setSnapshots((previous) => applyWorkspaceSnapshotToSnapshots(previous, payload));
+    },
   });
   const connection = useProjectManagerCoreStatusHydrator({
     onHydrate: hydrateFromState,

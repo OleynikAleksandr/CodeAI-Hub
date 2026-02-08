@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
+import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import {
   sanitizeMessage,
   sanitizeSession,
 } from "../../../ui/src/core-bridge/normalizers";
+import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 
 type IncomingMessage = {
   readonly type: string;
@@ -25,6 +27,49 @@ type SessionMessageUpdate = {
 type SessionHistoryUpdate = {
   readonly sessionId: string;
   readonly messages: readonly unknown[];
+};
+
+const resolveConnectionState = (
+  session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
+): "idle" | "running" | "blocked" =>
+  session.continuityLockActive ? "blocked" : session.turnState;
+
+export const applyWorkspaceSnapshotToSnapshots = (
+  snapshots: SessionSnapshots,
+  payload: WorkspaceSnapshotPushPayload
+): SessionSnapshots => {
+  let changed = false;
+  const nextSnapshots: SessionSnapshots = { ...snapshots };
+  for (const [sessionId, session] of Object.entries(payload.snapshot.sessions)) {
+    const current = snapshots[sessionId];
+    if (!current) {
+      continue;
+    }
+    const nextConnectionState = resolveConnectionState(session);
+    const currentLockActive = current.status.continuityLock?.active === true;
+    if (
+      current.status.connectionState === nextConnectionState &&
+      currentLockActive === session.continuityLockActive
+    ) {
+      continue;
+    }
+    changed = true;
+    const now = Date.now();
+    nextSnapshots[sessionId] = {
+      ...current,
+      status: {
+        ...current.status,
+        connectionState: nextConnectionState,
+        continuityLock: {
+          ...(current.status.continuityLock ?? { active: false, updatedAt: now }),
+          active: session.continuityLockActive,
+          updatedAt: now,
+        },
+        updatedAt: now,
+      },
+    };
+  }
+  return changed ? nextSnapshots : snapshots;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -77,6 +122,7 @@ export const useProjectManagerSessionStream = (params: {
     readonly sessionId: string;
     readonly event: unknown;
   }) => void;
+  readonly onWorkspaceSnapshot?: (payload: WorkspaceSnapshotPushPayload) => void;
 }) => {
   useEffect(() => {
     const unsubscribe = api.onCoreEvent((message: IncomingMessage) => {
@@ -185,6 +231,21 @@ export const useProjectManagerSessionStream = (params: {
         return;
       }
 
+      if (message.type === "workspace:snapshot") {
+        const payload = message.payload as WorkspaceSnapshotPushPayload;
+        if (
+          payload &&
+          typeof payload.workspaceRoot === "string" &&
+          typeof payload.selectionId === "string" &&
+          typeof payload.sequence === "number" &&
+          isRecord(payload.snapshot) &&
+          isRecord(payload.snapshot.sessions)
+        ) {
+          params.onWorkspaceSnapshot?.(payload);
+        }
+        return;
+      }
+
       if (message.type === "session:error") {
         const resolved = resolveServerErrorMessage(message.payload);
         if (!resolved) {
@@ -211,5 +272,6 @@ export const useProjectManagerSessionStream = (params: {
     params.onSessionDeleted,
     params.onSessionHistory,
     params.onSessionMessage,
+    params.onWorkspaceSnapshot,
   ]);
 };
