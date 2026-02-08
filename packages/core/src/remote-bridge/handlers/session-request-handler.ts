@@ -1037,6 +1037,14 @@ export class SessionRequestHandler {
     };
   }
 
+  private isFlowNodeRolloverPending(sessionId: string): boolean {
+    return (
+      this.flowNodeRolloverStarted?.has(sessionId) === true ||
+      this.flowNodeRolloverInFlight?.has(sessionId) === true ||
+      this.flowNodeContinuityLockContexts?.has(sessionId) === true
+    );
+  }
+
   private async sendInternalMessage(
     sessionId: string,
     content: string
@@ -1735,9 +1743,16 @@ export class SessionRequestHandler {
       this.handleNoResumeTurnCompleted(session);
       return;
     }
+    if (this.isFlowNodeRolloverPending(sessionId)) {
+      this.updateSessionResumeLifecycleState(session, {
+        finalTurnCompleted: true,
+        terminalLockReason: null,
+      });
+      return;
+    }
     const rolloverStarted =
       await this.handleFlowNodeContinuitySilentPreemptiveRollover(sessionId);
-    if (rolloverStarted) {
+    if (rolloverStarted || this.isFlowNodeRolloverPending(sessionId)) {
       this.updateSessionResumeLifecycleState(session, {
         finalTurnCompleted: true,
         terminalLockReason: null,
@@ -2095,7 +2110,9 @@ export class SessionRequestHandler {
             sessionId,
             error: error instanceof Error ? error.message : String(error),
           });
-          this.emitTurnStateEvent({ sessionId, state: "idle" });
+          if (!this.isFlowNodeRolloverPending(sessionId)) {
+            this.emitTurnStateEvent({ sessionId, state: "idle" });
+          }
           this.finalizeFlowNodeContinuityLockOnBootstrapGate({
             sessionId,
             reason: "resume_failed",
