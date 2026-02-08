@@ -1858,6 +1858,16 @@ export class SessionRequestHandler {
         this.broadcastProviderError(sessionId, event);
         break;
       case "stream_event":
+        {
+          const session = this.sessionManager.getSession(sessionId);
+          if (session) {
+            this.workspaceRuntime?.recordHeartbeat({
+              workspaceRoot: session.workspacePath,
+              nodeId: session.stage ?? "session",
+              sessionId: session.id,
+            });
+          }
+        }
         this.broadcaster({
           type: "session:stream",
           payload: { sessionId, event },
