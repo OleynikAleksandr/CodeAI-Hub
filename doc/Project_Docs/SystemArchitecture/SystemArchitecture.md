@@ -1,7 +1,7 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.522
-**Last Updated:** 2026-02-07
+**Version:** 1.1.525
+**Last Updated:** 2026-02-08
 **Status:** Active reference (source of truth)
 
 ---
@@ -127,6 +127,7 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 6. Пока flow-node rollover pending/active, send в old session блокируется на стороне Core (MVP policy: reject с bridge-error `continuity_rollover_pending`).
 7. На accepted user submit Core обязан эмитить `turn_state=running` немедленно (до `adapter.sendMessage`) для provider-agnostic мгновенного lock.
 8. Если `adapter.sendMessage` завершается ошибкой, Core обязан выполнить rollback: `turn_state=idle` + стандартный `session:error` (без залипания lock).
+9. Начиная с Phase 107 PM/UI считают runtime-lock исключительно из `workspace:snapshot` (`turnState`, `continuityLockActive`, `continuityLockTransition.awaitingBootstrapTurn`), а `session:stream` не может мутировать lock state.
 
 State-table для Session UI:
 
@@ -261,6 +262,13 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
   - `SessionRuntime`: turn-state FSM (`idle`/`running`), heartbeat tracking, watchdog timeout rollback;
   - `WorkspaceRuntimeFacade`: единая точка интеграции для bridge/handlers, hydration из `SessionManager`, debounce/coalesce snapshot push.
 - **Snapshot-first lock**: PM вычисляет server-lock из `workspace:snapshot` (`turnState` + `continuityLockActive`), а не из поштучных `session:stream` `turn_state`.
+- **Phase 107 lock transition contract**:
+  - `workspace:snapshot.sessions[sessionId].continuityLockReason` — canonical reason последнего lock/unlock шага (`threshold_reached`, `report_in_progress`, `resume_bootstrap`, `resume_ready`, `resume_failed`, `resume_timeout`);
+  - `workspace:snapshot.sessions[sessionId].continuityLockTransition` — transition metadata (`rolloverId`, source/target session ids, stage/run, `awaitingBootstrapTurn`, `updatedAt`);
+  - если `awaitingBootstrapTurn=true`, PM обязан удерживать input lock даже при `continuityLockActive=false`, пока snapshot не зафиксирует terminal transition (`resume_ready|resume_failed|resume_timeout`).
+- **Strict pipeline split (PM/UI)**:
+  - `workspace:snapshot` — единственный канал state transitions для `connectionState` и continuity lock lifecycle;
+  - `session:stream` — только token usage и контент, без lock/connection mutation.
 - **Scope sync**: Core синхронизирует client scope через `workspace:select` и применяет ingress guard для `session:create|session:message|session:delete`.
 
 Статус legacy:
