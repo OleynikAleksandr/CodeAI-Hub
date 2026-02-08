@@ -18,7 +18,7 @@
 
 Дополнительно, Workflow Tree (Project Manager) должен быть устойчив к “пауze/выключение компьютера” на любом под-этапе шага:
 - незаполненная анкета должна быть доступна после перезапуска;
-- начатая сессия агента должна быть доступна для resume;
+- начатая reviewer-сессия должна быть доступна для resume;
 - текущий артефакт шага должен быть доступен для просмотра и как источник входа для следующих шагов.
 
 ---
@@ -56,6 +56,7 @@
    - создаётся/перезаписывается Reviewer-агентом;
    - после появления `Final_Description.md` промежуточный `description.md` больше не нужен для Flow (допускается удаление).
 5) Reviewer-сессия стартует **автоматически** после того, как появился первый `description.md` (draft) от Description Agent.
+6) Сессия `Description Agent` — `one-shot/no-resume`: после финального ответа становится terminal/read-only; input не unlock.
 
 ---
 
@@ -65,7 +66,7 @@
 
 `Description Step/Node` — раскрываемый шаг, который отображает под-ветку “актуальных сущностей”:
 - `questionnaire.md` (пока draft не создан)
-- `Description <Provider>` (пока draft не создан и/или пока не стартовал reviewer)
+- `Description <Provider>` (one-shot/no-resume; terminal/read-only после финального ответа)
 - `description.md` (draft; существует между Description Agent и Reviewer)
 - `Reviewer <Provider>` (resume; основная долговременная сессия шага)
 - `Final_Description.md` (финальный артефакт; источник истины для downstream шагов)
@@ -112,7 +113,7 @@ Unified session storage хранит события в:
 
 Цель: даже если пользователь закрыл компьютер, при следующем запуске Project Manager анкета открывается и продолжается с места остановки.
 
-### 6.2 Build Draft Description (one-shot, no questions)
+### 6.2 Build Draft Description (one-shot, no-resume, no questions)
 
 1) Пользователь заполняет `questionnaire.md`.
 2) `Description Agent` получает только пути (path-first):
@@ -123,7 +124,8 @@ Unified session storage хранит события в:
 
 Результат: `description.md` (черновой, но структурированный).
 
-UI следствие: сразу после старта сессии появляется дочерний узел `Description <Provider>` (resume).
+UI следствие: сразу после старта сессии появляется дочерний узел `Description <Provider>` (one-shot/no-resume).
+Контракт lock: после финального ответа `Description <Provider>` input не unlock; эта сессия остаётся read-only до автоперехода в Reviewer.
 
 ### 6.3 Auto-start Reviewer + produce Final_Description.md
 
@@ -161,6 +163,7 @@ UI следствие: сразу после старта сессии появ�
 - Ветка `Description` показывает **только актуальные** сущности шага (без вложенных подпапок/цепочек).
 - Клик по артефакту открывает **встроенный viewer** Project Manager (панель Artifacts).
 - Клик по строке `Session` создаёт/возобновляет сессию по persisted координатам (providerId + providerSessionId) и открывает полный диалог в панели Sessions.
+- Для `Description <Provider>` (one-shot/no-resume) клик открывает только read-only историю без возобновления ввода.
 - UI не показывает `Session Continuity` / `handoff chains` в дереве: это инфраструктура ядра и не является частью UX ветки шага.
 
 Правила состава ветки:
@@ -171,7 +174,7 @@ UI следствие: сразу после старта сессии появ�
 
 - Промежуточные сущности отображаются только до появления `Final_Description.md`:
   - `description.md` показываем только пока финал не создан
-  - `Description <Provider>` показываем только пока не создана `Reviewer <Provider>`
+  - `Description <Provider>` (terminal/read-only) показываем только пока не создана `Reviewer <Provider>`
 
 - UI должен явно предупреждать:
   - “Изменения в этом узле могут сделать последующие узлы устаревшими (OUTDATED).”
@@ -182,7 +185,8 @@ UI следствие: сразу после старта сессии появ�
 
 - Core должен уметь:
   - гарантировать наличие `questionnaire.md` для шага `Description` при старте/открытии шага;
-  - хранить `SessionRef` активной сессии (Description Agent или Reviewer) рядом с состоянием шага, чтобы Project Manager мог возобновлять сессию после перезапуска;
+  - хранить `SessionRef` активной resume-сессии (`Reviewer`) рядом с состоянием шага, чтобы Project Manager мог возобновлять сессию после перезапуска;
+  - маркировать `Description Agent` как `no_resume` (terminal/read-only после финального ответа);
   - резюмировать сессию по `providerId + providerSessionId` (уже есть `resumeSession` для поддерживаемых провайдеров);
   - помечать downstream узлы как `OUTDATED` при изменении артефакта раннего узла.
   - автоматически запускать Reviewer-сессию после появления `description.md` и переключать “active session” в состоянии шага.
@@ -200,4 +204,4 @@ UI следствие: сразу после старта сессии появ�
 
 - “Questionnaire Curator” становится опциональным и не является механизмом повышения качества артефакта.
 - Повышение качества делается через последовательность:
-  - `questionnaire.md` → one-shot `description.md` → auto reviewer → `Final_Description.md`.
+  - `questionnaire.md` → one-shot/no-resume `description.md` → auto reviewer (resume) → `Final_Description.md`.

@@ -83,7 +83,7 @@
 - `packages/core/src/remote-bridge/handlers/session-request-handler.ts:1431`  
   На `turn_started` эмитится `running`
 - `packages/core/src/remote-bridge/handlers/session-request-handler.ts:1434`  
-  На `turn_completed` эмитится `idle`
+  На `turn_completed` эмитится `idle` (это **не** самостоятельный unlock-сигнал)
 - `packages/core/src/remote-bridge/handlers/session-request-handler.ts:1445`  
   На `turn_failed` эмитится `idle`
 
@@ -126,6 +126,17 @@
   `isQueued = queuedMessage !== null`
 - `src/client/ui/src/session/session-view-helpers.tsx:64`  
   Queue автоматически отправляется, когда состояние снова `idle`.
+
+### 4.6 Нормативный lock/unlock контракт (target)
+
+- `no_resume` сессии: после финального ответа input остаётся locked навсегда (terminal/read-only).
+- `resume_in_place`: unlock только когда выполнены оба условия:
+  - пришёл `turn_completed`;
+  - Core подтвердил `no_rollover_needed` (context threshold OK).
+- Если threshold exceeded / rollover required:
+  - input остаётся locked;
+  - меняется только lock reason/placeholder copy (`preparing continuation` и т.п.).
+- `resume_via_rollover`: старый и новый segment locked; unlock только после первого bootstrap assistant answer в новом segment (служебный шаг, скрыт от пользователя).
 
 ---
 
@@ -228,4 +239,3 @@ flowchart TD
 - `src/client/project-manager/components/sessions/session-stream.ts`
 - `src/client/project-manager/components/sessions/project-manager-session-view.tsx`
 - `src/types/session.ts`
-

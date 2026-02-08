@@ -106,7 +106,11 @@
   - `data.providerId?`
 
 UI:
-- блокирует ввод при `connectionState !== "idle"` (running/blocked), разблокирует строго по `turn_state=idle`.
+- блокирует ввод при `connectionState !== "idle"` и при активном continuity/terminal lock;
+- unlock не привязан напрямую к `turn_state=idle` и допускается только по contract gates:
+  - `turn_completed` + Core `no rollover` (resume-in-place),
+  - либо после первого bootstrap assistant answer в target session (resume-via-rollover);
+- для one-shot/no-resume (например description collector) input остаётся terminal/read-only после финального ответа.
 
 (Это описывает foundation-часть Phase 97; реализация идёт отдельными микрозадачами.)
 
@@ -137,4 +141,3 @@ UI:
 1. При rollover создаётся новый сегмент, но UI показывает **одну** ленту, где видны сообщения и из старого, и из нового сегмента.
 2. Видимых вкладок не становится больше (сегменты не “засоряют” navigation).
 3. В UI присутствует индикатор токенов **реальных** сегментов (хотя бы для active + debug-list по chain).
-

@@ -117,32 +117,35 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 
 ### 2.7 Turn-state + Continuity Lock UI Contract (CRITICAL)
 
-Чтобы исключить залипания working-strip после финального сообщения агента, UI следует каноническому контракту stream-событий:
+Чтобы исключить unlock-gap на границах `turn_completed`/continuity, UI и PM следуют unified input-lock контракту (snapshot-first):
 
-1. `turn_state` (`running|idle`) — единственный источник истины о состоянии turn.
-2. `continuity_lock` (`locked|unlocked`) — source-of-truth блокировки ввода на окно bootstrap continuity rollover (`threshold_reached` -> `report_in_progress` -> `resume_bootstrap` -> `resume_ready|resume_failed|resume_timeout`).
-3. `turn_state=idle` снимает ожидание только при неактивном `continuity_lock`.
-4. Legacy `handoff_state` сохраняется для обратной совместимости старых handoff-path, но для flow-node rollover приоритет у `continuity_lock`.
-5. На границе `turn_completed` применяется атомарный arbitration: Core сначала решает continuity rollover, и только потом выбирает `turn_state=idle` или continuity lock-path (без `idle -> locked` окна).
-6. Пока flow-node rollover pending/active, send в old session блокируется на стороне Core (MVP policy: reject с bridge-error `continuity_rollover_pending`).
-7. На accepted user submit Core обязан эмитить `turn_state=running` немедленно (до `adapter.sendMessage`) для provider-agnostic мгновенного lock.
-8. Если `adapter.sendMessage` завершается ошибкой, Core обязан выполнить rollback: `turn_state=idle` + стандартный `session:error` (без залипания lock).
-9. Начиная с Phase 107 PM/UI считают runtime-lock исключительно из `workspace:snapshot` (`turnState`, `continuityLockActive`, `continuityLockTransition.awaitingBootstrapTurn`), а `session:stream` не может мутировать lock state.
+1. Source-of-truth lock state — только `workspace:snapshot` (`turnState`, `continuityLockActive`, `continuityLockReason`, `continuityLockTransition.awaitingBootstrapTurn`); `session:stream` не мутирует lock.
+2. **No-resume session**: после финального ответа сессия становится terminal/read-only; input больше не unlock.
+3. **Resume-in-place session**: unlock разрешён только когда одновременно выполнены оба условия:
+   - получен финальный `turn_completed` для текущего turn;
+   - Core завершил continuity arbitration с результатом `no rollover` (context threshold OK).
+4. Если threshold exceeded и нужен rollover, input остаётся locked; разрешено менять только `continuityLockReason` (без `unlock -> relock` окна).
+5. **Resume-via-rollover session**: lock удерживается и в old session, и в newly created session; unlock допустим только после первого bootstrap assistant answer в new session (этот bootstrap-turn скрыт от пользователя).
+6. **Description collector one-shot / no-resume** всегда остаётся в locked terminal/read-only после финального ответа.
+7. Legacy `handoff_state` сохраняется только как backward-compatibility path; приоритет у snapshot continuity-lock контракта.
+8. На accepted user submit Core обязан эмитить `turn_state=running` немедленно (до `adapter.sendMessage`) для provider-agnostic мгновенного lock.
+9. Если `adapter.sendMessage` завершается ошибкой, Core обязан выполнить rollback: `turn_state=idle` + стандартный `session:error` (без залипания lock).
 
 State-table для Session UI:
 
-| Stream marker | Session status.connectionState | Input/Send | Working strip |
+| Snapshot signals | Session status.connectionState | Input/Send | Working strip |
 |---|---|---|---|
-| `turn_state=running` | `running` | заблокирован (send) | показываем по правилам running |
-| `turn_state=idle` | `idle` | доступен | скрываем "Agent is working..." |
-| `continuity_lock=locked` | `blocked` | заблокирован (input+send) | показываем |
-| `continuity_lock=unlocked` | снять continuity-lock, вернуть `idle` если нет running | доступен (если нет running) | скрываем |
+| `turnState=running` | `running` | заблокирован | показываем `working` |
+| `turnState=idle` + `continuityLockActive=true`/`awaitingBootstrapTurn=true` | `blocked` | заблокирован | показываем `resuming/locked` |
+| `turnState=idle` + Core arbitration `no rollover` | `idle` | доступен | скрываем |
+| terminal no-resume (например description collector) | terminal/read-only | заблокирован навсегда | скрываем wait-strip, показываем terminal-copy |
 
 Инварианты:
-- Continuity lock не заменяет lifecycle turn и не должен жить дольше bootstrap-turn новой сессии.
-- `continuity_lock` передаётся как `session:stream`/`stream_event` и не добавляется в историю пользовательских сообщений.
-- Unlock должен быть детерминированным: для каждого `locked` должен приходить `unlocked` по success/failure/timeout, иначе UI останется в dead-lock.
-- Запрещён user-visible сценарий `running -> idle/unlocked -> continuity_lock(locked)` для одного и того же turn completion.
+- `turn_completed` или `turnState=idle` сами по себе не дают unlock.
+- Запрещён user-visible сценарий `running -> idle/unlocked -> locked` для одного и того же turn completion.
+- При rollover `resume_failed|resume_timeout` меняют только reason/copy, но не открывают input.
+- Unlock в rollover-path разрешён только после первого bootstrap assistant answer в target session.
+- Description collector one-shot/no-resume не возвращается в editable state.
 - Запрещён provider-specific late-lock сценарий: accepted submit без немедленного `turn_state=running` до первого provider marker.
 - Запрещён send-failure сценарий без `turn_state=idle` rollback (stuck `running/blocked` после ошибки отправки).
 
@@ -263,9 +266,10 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
   - `WorkspaceRuntimeFacade`: единая точка интеграции для bridge/handlers, hydration из `SessionManager`, debounce/coalesce snapshot push.
 - **Snapshot-first lock**: PM вычисляет server-lock из `workspace:snapshot` (`turnState` + `continuityLockActive`), а не из поштучных `session:stream` `turn_state`.
 - **Phase 107 lock transition contract**:
-  - `workspace:snapshot.sessions[sessionId].continuityLockReason` — canonical reason последнего lock/unlock шага (`threshold_reached`, `report_in_progress`, `resume_bootstrap`, `resume_ready`, `resume_failed`, `resume_timeout`);
+  - `workspace:snapshot.sessions[sessionId].continuityLockReason` — canonical reason последнего lock шага (`threshold_reached`, `report_in_progress`, `resume_bootstrap`, `resume_ready`, `resume_failed`, `resume_timeout`, terminal/no-resume причины);
   - `workspace:snapshot.sessions[sessionId].continuityLockTransition` — transition metadata (`rolloverId`, source/target session ids, stage/run, `awaitingBootstrapTurn`, `updatedAt`);
-  - если `awaitingBootstrapTurn=true`, PM обязан удерживать input lock даже при `continuityLockActive=false`, пока snapshot не зафиксирует terminal transition (`resume_ready|resume_failed|resume_timeout`).
+  - если `awaitingBootstrapTurn=true`, PM обязан удерживать input lock даже при `continuityLockActive=false`, причём на обеих сторонах handoff (`sourceSessionId` + `targetSessionId`);
+  - для rollover-path unlock разрешён только после первого bootstrap assistant answer в target session; `resume_failed|resume_timeout` не снимают lock автоматически.
 - **Strict pipeline split (PM/UI)**:
   - `workspace:snapshot` — единственный канал state transitions для `connectionState` и continuity lock lifecycle;
   - `session:stream` — только token usage и контент, без lock/connection mutation.

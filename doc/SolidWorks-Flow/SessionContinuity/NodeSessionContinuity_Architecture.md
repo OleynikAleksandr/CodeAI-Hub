@@ -25,7 +25,7 @@
 2. **Node‑aware:** восстановление контекста привязано к текущему узлу дерева и активной роли агента.
 3. **Zero core persistence for reports:** Core **не пишет** и **не сохраняет** continuity‑отчёты; этим занимается агент.
 4. **Minimal context:** в новый segment попадает только то, что нужно для продолжения процесса, без переписки и без больших вставок.
-5. **UI transparency:** во время rollover пользователь видит короткий системный индикатор и не может “потерять” ввод.
+5. **UI transparency:** во время rollover пользователь видит короткий системный индикатор; input остаётся locked до безопасного момента unlock.
 
 ---
 
@@ -68,24 +68,35 @@
 В момент rollover:
 - показать временный баннер/тост “Контекст исчерпан — готовлю продолжение…” + индикатор;
 - запретить отправку сообщений (или ставить в очередь до готовности нового segment);
-- убрать индикатор сразу после готовности нового segment.
+- не снимать lock только по факту `turn_completed`;
+- снять lock только после первого bootstrap assistant answer в новом segment (служебный, скрытый от пользователя).
+
+### 5.4 Единый lock/unlock контракт
+- `no_resume` сессии: после финального ответа переходят в terminal/read-only, input не unlock никогда.
+- `resume_in_place` сессии: unlock только когда одновременно выполнены:
+  - `turn_completed` (текущий turn действительно завершён);
+  - Core подтвердил `no_rollover_needed` (контекстный порог не превышен).
+- если threshold exceeded / rollover required: input остаётся locked, меняется только причина lock.
+- `resume_via_rollover`: старый и новый segment locked; unlock после первого bootstrap assistant answer в новом segment.
 
 ---
 
 ## 6) Flow (Rollover внутри узла)
 
 ### 6.1 High‑level шаги
-1. **Turn completed:** пользователь видит ответ агента.
-2. **Threshold reached:** Core решает, что нужен rollover (по tokenUsage).
-3. **Create report:** Core отправляет агенту внутреннюю инструкцию:
+1. **Turn completed:** текущий ответ завершён, но unlock ещё не гарантирован.
+2. **Threshold decision:** Core проверяет tokenUsage.
+3. **Branch A (resume-in-place, threshold OK):** Core выставляет `no_rollover_needed`, снимает continuity lock, input unlock.
+4. **Branch B (rollover required):** Core сохраняет lock и отправляет агенту внутреннюю инструкцию:
    - шаблон отчёта (зависит от типа узла: doc vs code);
    - точный путь для сохранения;
    - ограничения по размеру и запреты (без переписки/без вставок артефактов).
-4. **Watcher:** Core ждёт появления финального файла отчёта в целевой папке.
-5. **Switch segment:** Core закрывает старый provider segment и создаёт новый.
-6. **Resume:** Core стартует новый segment и первым сообщением отправляет:
+5. **Watcher:** Core ждёт появления финального файла отчёта в целевой папке.
+6. **Switch segment:** Core закрывает старый provider segment и создаёт новый (input остаётся locked).
+7. **Resume bootstrap:** Core стартует новый segment и первым сообщением отправляет:
    - стандартный prompt‑шаблон узла/роли;
    - короткую инструкцию “прочти последний отчёт по пути X и продолжай”.
+8. **Unlock gate:** Core снимает lock только после первого assistant bootstrap answer нового segment (скрытый служебный шаг, не отображается как пользовательский ответ).
 
 ### 6.2 Надёжность watcher’а
 Рекомендуется атомарная запись отчёта агентом:

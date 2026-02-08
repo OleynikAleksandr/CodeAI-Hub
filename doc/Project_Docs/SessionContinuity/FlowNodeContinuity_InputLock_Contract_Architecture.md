@@ -54,7 +54,7 @@ Event transport remains `session:stream` with `event.type = "stream_event"`.
 `event.data.kind = "continuity_lock"` payload:
 
 - `kind`: `"continuity_lock"`
-- `state`: `"locked" | "unlocked"`
+- `state`: `"locked" | "unlocked"` (`unlocked` допустим только для разрешённых unlock-path, см. lifecycle rules)
 - `rolloverId`: string (stable id for one rollover transaction)
 - `sourceSessionId`: string (session that started rollover)
 - `targetSessionId?`: string (newly created continuation session)
@@ -63,27 +63,37 @@ Event transport remains `session:stream` with `event.type = "stream_event"`.
 - `reason`: one of
   - `threshold_reached`
   - `report_in_progress`
+  - `turn_complete_no_rollover`
   - `resume_bootstrap`
   - `resume_ready`
   - `resume_failed`
   - `resume_timeout`
+  - `terminal_no_resume`
 - `timestamp`: ISO string
 
 ### 3.2 Lifecycle rules
 
 1. On threshold trigger, Core emits `continuity_lock(state=locked, reason=threshold_reached)` for source session.
 2. During report creation/waiting, Core may emit additional `locked` updates (`report_in_progress`).
-3. Right after new continuation session creation, Core emits `locked` for target session with same `rolloverId` and `reason=resume_bootstrap`.
-4. Core keeps lock active until new session emits first terminal bootstrap lifecycle signal:
-   - first `turn_completed` OR `turn_failed` for resume bootstrap turn.
-5. On success, Core emits `continuity_lock(state=unlocked, reason=resume_ready)` for target session (and optionally source session finalization event).
-6. On error/timeout, Core emits `continuity_lock(state=unlocked, reason=resume_failed|resume_timeout)`.
+3. **Resume-in-place** unlock path:
+   - Core emits `continuity_lock(state=unlocked, reason=turn_complete_no_rollover)` только когда одновременно выполнены:
+     - финальный `turn_completed` текущего turn уже получен;
+     - continuity arbitration завершён как `no rollover` (context threshold OK).
+4. **Resume-via-rollover** lock path:
+   - сразу после создания continuation session Core удерживает `locked` на source и target с `reason=resume_bootstrap`;
+   - пока `awaitingBootstrapTurn=true`, lock не снимается даже если `continuityLockActive=false` в отдельном snapshot.
+5. Для rollover unlock разрешён только после первого bootstrap assistant answer в target session (этот bootstrap-turn скрыт от user-visible диалога): `continuity_lock(state=unlocked, reason=resume_ready)`.
+6. При `resume_failed|resume_timeout` lock остаётся `locked`; меняется только reason/copy (unlock запрещён).
+7. **No-resume session** после финального ответа переходит в terminal/read-only (`reason=terminal_no_resume`) и больше не emit `unlocked`.
+8. **Description collector one-shot/no-resume** всегда следует правилу terminal/read-only (без unlock).
 
 ### 3.3 Safety requirements
 
 - Lock state must never be inferred from `flow_node_rollover.phase` only.
 - `resume_sent` does not imply unlock.
-- Unlock must be tied to observed bootstrap completion/failure signal in the new session.
+- `turn_completed` без результата continuity arbitration (`no rollover`) не даёт unlock.
+- Unlock в rollover-path must be tied to observed first bootstrap assistant answer in the new session.
+- `resume_failed|resume_timeout` never unlock input.
 
 ---
 
@@ -108,6 +118,7 @@ Input must be disabled when any of these is true:
 - `continuityLock.active === true`
 - `connectionState === "running"`
 - `isQueued === true`
+- `sessionTerminalReadOnly === true`
 
 Optional additive hardening:
 
@@ -147,7 +158,7 @@ Rule:
 - This phrase is an internal protocol signal only and must be hidden from user-visible conversation history.
 - If legacy ACK token messages are encountered in old history, they remain filtered out the same way.
 
-### 4.6 Phase 102 Hotfix — ACK normalization + unlock release
+### 4.6 Phase 102+ Hotfix — ACK normalization + unlock gate
 
 To remove runtime drift between templates and UI filtering, Phase 102 defines:
 
@@ -158,8 +169,11 @@ To remove runtime drift between templates and UI filtering, Phase 102 defines:
    - legacy token (`__CODEAIHUB_INTERNAL_CONTINUITY_ACK__`),
    - markdown-inline backtick wrapper (for example `` `__CODEAIHUB_INTERNAL_CONTINUITY_ACK__` ``).
 3. Unlock precedence:
-   - when `continuity_lock(state=unlocked)` arrives with terminal reason (`resume_ready|resume_failed|resume_timeout`), effective input lock must be released unless regular turn-state lock applies.
-4. It is forbidden to keep `blocked` only because stale `rollover.phase=resume_sent` remains in snapshot after terminal unlock.
+   - unlock возможен только если выполнено одно из условий:
+     - `turn_completed` уже произошёл и Core подтвердил `no rollover`;
+     - для rollover получен первый bootstrap assistant answer в target session (`reason=resume_ready`).
+4. `resume_failed|resume_timeout` не являются unlock-условием: input остаётся locked, меняется только reason/copy.
+5. Stale `rollover.phase=resume_sent` не должен ни преждевременно unlock, ни бессрочно блокировать сессию без смены canonical reason в snapshot.
 
 ---
 
@@ -168,8 +182,8 @@ To remove runtime drift between templates and UI filtering, Phase 102 defines:
 1. Add continuity lock emitter helper in `SessionRequestHandler`.
 2. Track per-rollover bootstrap state (rollover id + target session id + locked/unlocked status).
 3. Emit lock events for both old and new sessions at deterministic points.
-4. Hook unlock emission into new session bootstrap lifecycle completion (`turn_completed`/`turn_failed`).
-5. Add timeout fallback unlock to avoid dead-lock.
+4. Hook unlock emission into first bootstrap assistant answer in the new session (not into generic `turn_failed`).
+5. Add timeout/failure fallback reason updates (`resume_timeout|resume_failed`) without unlock.
 
 ---
 
@@ -180,14 +194,14 @@ To remove runtime drift between templates and UI filtering, Phase 102 defines:
 - Unit regression for rollover sequence:
   - threshold trigger -> locked
   - new session created -> locked on target
-  - resume bootstrap completed -> unlocked
+  - first bootstrap assistant answer in target -> unlocked
 - Failure path:
-  - resume failure/timeout -> unlocked with failure reason
+  - resume failure/timeout -> still locked with failure reason
 
 ### 6.2 PM/UI
 
 - Reducer/stream tests for `continuity_lock` event application.
-- UI test: input remains disabled across session switch until unlock event.
+- UI test: input remains disabled across session switch until allowed unlock gate is met.
 - Regression: `__CODEAIHUB_INTERNAL_CONTINUITY_ACK__` remains hidden from dialog.
 
 ---

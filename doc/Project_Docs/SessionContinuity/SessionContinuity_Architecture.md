@@ -46,7 +46,13 @@
 3) Формат handoff-отчёта — Markdown с жёсткой структурой.
 4) Handoff-отчёт должен учитывать **инструкции конкретного агента** и текущий контекст workflow (stage/step).
 5) Для flow-node rollover lifecycle блокировки ввода передаётся stream-only через `continuity_lock(locked|unlocked)`; legacy `handoff:start|ready` допускается только как backward-compatibility path.
-6) Turn lifecycle для UI нормализуется через `turn_state` (`running|idle`), где `idle` всегда снимает ожидание пользователя.
+6) Turn lifecycle для UI нормализуется через `turn_state` (`running|idle`), но `idle` сам по себе не гарантирует unlock.
+7) Unlock-mode contract:
+   - **no-resume**: после финального ответа session terminal/read-only, unlock запрещён;
+   - **resume-in-place**: unlock только после `turn_completed` + explicit Core confirmation `no rollover`;
+   - **resume-via-rollover**: unlock только после первого bootstrap assistant answer в новой сессии.
+8) При `resume_failed|resume_timeout` input не unlock; меняется только lock reason/copy.
+9) Для description collector one-shot/no-resume всегда действует terminal/read-only policy.
 
 ---
 
@@ -141,7 +147,7 @@ MVP-целевой путь хранения отчёта (workspace артеф�
 ### 9.3 UI (Project Manager)
 - Показывает, что сессия “переключилась” (handoff) и предоставляет доступ к `handoff-report.md`.
 - Может визуализировать цепочку сессий как историю под одним Step.
-- Управляет блокировкой ввода по stream-событиям: `turn_state` + `continuity_lock` (legacy fallback: `handoff_state`), без эвристик по тексту сообщений.
+- Управляет блокировкой ввода snapshot-first (`turnState`, `continuityLockActive`, `continuityLockReason`, `continuityLockTransition.awaitingBootstrapTurn`) без эвристик по тексту сообщений.
 
 ---
 

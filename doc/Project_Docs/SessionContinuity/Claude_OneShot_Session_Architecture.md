@@ -103,6 +103,7 @@
 3. `token_usage` обновляется после `result` без изменения публичного event shape.
 4. Internal continuity prompts (`sendInternalMessage` из Core) не должны ломать очередь и не должны засорять user-facing stream.
 5. Повторный `resume` той же сессии не должен создавать новый provider session id и не должен приводить к перезаписи существующего лог-файла.
+6. Для one-shot/no-resume сценариев (например description collector) после финального ответа сессия считается terminal/read-only; unlock для input не допускается.
 
 ---
 

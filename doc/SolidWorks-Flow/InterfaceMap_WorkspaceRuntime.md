@@ -240,8 +240,10 @@ type CommandError = {
 
 | Триггер | Push full snapshot? | Примечание |
 |---|---:|---|
-| `turnState` change (`idle`↔`running`) | да | High priority: не дебаунсить заметно, иначе будет лаг lock/unlock. |
-| `continuityLockActive` change | да | High priority: влияет на input lock. |
+| `turnState` change (`idle`↔`running`) | да | High priority: влияет на lock, но сам по себе не гарантирует unlock. |
+| `continuityLockActive` change | да | High priority: прямой lock-gate. |
+| `lockReason` change | да | High priority: при rollover/context exceeded меняется причина lock без unlock. |
+| `resumeMode` / `finalTurnCompleted` change | да | High priority: определяет terminal read-only для no-resume. |
 | `bindingStatus` / `providerSessionId` change | да | Влияет на видимость/диагностику состояния сессии. |
 | `NodeStatus` change | да | Основной драйвер workflow tree UI. |
 | `loadState` change (`loading`→`ready`/`error`) | да | UX: переход между состояниями загрузки. |
@@ -252,7 +254,7 @@ type CommandError = {
 
 Debounce/coalesce:
 - допускается coalesce нескольких триггеров в один снапшот (например, 25–100ms окно);
-- для `turnState`/`continuityLockActive` рекомендуется flush без заметной задержки.
+- для `turnState`/`continuityLockActive`/`lockReason` рекомендуется flush без заметной задержки.
 
 
 ---
@@ -279,11 +281,22 @@ type NodeSnapshot = {
 };
 
 type SessionTurnState = "idle" | "running";
+type SessionResumeMode = "no_resume" | "resume_in_place" | "resume_via_rollover";
+type SessionLockReason =
+  | "running"
+  | "threshold_check"
+  | "rollover_required"
+  | "bootstrap_pending"
+  | "terminal_read_only"
+  | null;
 
 type SessionSnapshot = {
   nodeId: string;
   turnState: SessionTurnState;
+  resumeMode: SessionResumeMode;
+  finalTurnCompleted: boolean;
   continuityLockActive: boolean;
+  lockReason: SessionLockReason;
   lastHeartbeatAt?: string;       // optional: ISO
   providerId?: string;            // optional
   providerSessionId?: string;     // optional
@@ -358,14 +371,22 @@ sequenceDiagram
   PM->>Core: session:send(sessionKey, content)
   Core-->>PM: workspace:snapshot(turnState=running)
   Note over Core: provider stream / heartbeat updates
-  Core-->>PM: workspace:snapshot(turnState=idle)
+  Core-->>PM: workspace:snapshot(turnState=idle, lockReason=threshold_check|terminal_read_only|null)
+  Note over Core,PM: unlock не равен просто turnState=idle
+  Core-->>PM: workspace:snapshot(lockReason=rollover_required|bootstrap_pending|null)
 ```
 
 Lock вычисляется так:
-- server-driven lock: `inputLocked = (turnState != idle) OR (continuityLockActive)`
+- server-driven lock: `inputLocked = sessionTerminal OR (turnState != idle) OR continuityLockActive`
 - client-local доп. lock (если поддерживаем очередь сообщений): `inputLocked = serverLock OR (queuedMessage != null)`
 
 Важно: `queuedMessage` — клиентское состояние, не часть snapshot.
+
+Unlock contract:
+- `resumeMode=no_resume`: после `finalTurnCompleted=true` input не unlock (terminal/read-only).
+- `resumeMode=resume_in_place`: unlock только если `turnState=idle` **и** `continuityLockActive=false` **и** `lockReason=null` (Core подтвердил `no_rollover_needed`).
+- если context threshold exceeded: `continuityLockActive=true`, input остаётся locked; меняется только `lockReason`.
+- `resumeMode=resume_via_rollover`: старый и новый segment остаются locked до первого bootstrap assistant answer в новом segment (служебный, скрыт от пользователя); после него `lockReason=null`, `continuityLockActive=false`.
 
 ---
 

@@ -24,6 +24,7 @@ Input lock arbitration must be atomic at turn end:
 
 - Core MUST evaluate continuity threshold before emitting effective unlock.
 - If continuity is required, Core MUST keep lock active and transition directly to continuity handoff lock state.
+- If session is no-resume, Core MUST keep lock active and mark session terminal/read-only after final answer.
 - UI MUST never observe intermediate unlocked state when continuity handoff is pending.
 
 In short: no `unlock -> relock` sequence for the same turn completion.
@@ -38,8 +39,9 @@ At turn completion boundary:
 
 1. Evaluate continuity thresholds and rollover preconditions.
 2. Branch:
-   - `continuity_required = false` -> emit normal unlock/idle state.
-   - `continuity_required = true` -> keep lock and emit continuity lock pending/active state.
+   - `session_mode = no_resume` -> keep lock, mark terminal/read-only (no unlock path).
+   - `session_mode = resumable` and `continuity_required = false` -> unlock/idle only after final `turn_completed` + explicit Core confirmation `no rollover`.
+   - `session_mode = resumable` and `continuity_required = true` -> keep lock and emit continuity lock pending/active state.
 
 Core becomes the single source of truth for final turn-end lock decision.
 
@@ -56,7 +58,7 @@ This guard protects correctness even if UI receives late/out-of-order stream eve
 
 For a turn where continuity is required, allowed sequence is:
 
-- `running` -> `continuity_lock(locked)` -> rollover flow -> `continuity_lock(unlocked)`
+- `running` -> `continuity_lock(locked)` -> rollover flow -> first bootstrap assistant answer in target -> `continuity_lock(unlocked, reason=resume_ready)`
 
 Forbidden sequence:
 
@@ -72,22 +74,25 @@ At `turn_completed` boundary, Core executes arbitration in this order:
    - do not emit intermediate unlock state;
    - keep old session sends blocked by rollover guard.
 3. If rollover does not start:
-   - emit canonical `turn_state=idle`.
+   - unlock только после dual gate: final `turn_completed` + Core `no rollover` decision.
 
 This preserves atomicity and removes the user-visible unlock window.
 
-### 3.5 Phase 102 Hotfix — Unlock Resolution Semantics
+### 3.5 Phase 102+ Hotfix — Unlock Resolution Semantics
 
 Regression context:
 
 - PM/UI treated rollover pending too broadly (`phase !== "failed"`).
 - Target session could stay `blocked` even after `continuity_lock(state=unlocked)` if `rollover.phase` stayed `resume_sent`.
 
-Required contract for Phase 102:
+Required contract for Phase 102+:
 
-1. `continuity_lock(state=unlocked)` is terminal for bootstrap lock resolution on that session.
-2. After unlock, pending fallback based on rollover phase MUST NOT keep the session blocked forever.
-3. PM/UI pending fallback must use an explicit pending-phase set (not negative broad checks like `phase !== "failed"`).
+1. `continuity_lock(state=unlocked)` допустим только для разрешённых unlock-path:
+   - `turn_complete_no_rollover` (resume-in-place),
+   - `resume_ready` (rollover path after first bootstrap assistant answer).
+2. `resume_failed|resume_timeout` не являются unlock-сигналами: lock остаётся активным, меняется только reason/copy.
+3. После разрешённого unlock pending fallback по rollover phase MUST NOT keep the session blocked forever.
+4. PM/UI pending fallback must use an explicit pending-phase set (not negative broad checks like `phase !== "failed"`).
 
 Approved pending-phase set:
 
@@ -98,13 +103,12 @@ Approved pending-phase set:
 - `new_session_created`
 - `resume_sent`
 
-Approved terminal unlock reasons:
+Approved unlock reasons:
 
+- `turn_complete_no_rollover`
 - `resume_ready`
-- `resume_failed`
-- `resume_timeout`
 
-`continuity_lock=unlocked` with one of terminal reasons must release effective lock for target session unless normal turn constraints keep it locked (`running` or queued-send path).
+`continuity_lock=unlocked` with one of approved unlock reasons must release effective lock unless normal turn constraints keep it locked (`running` or queued-send path).
 
 ### 3.6 Phase 103 — Core-first Immediate Lock + Send-error Rollback
 
@@ -161,7 +165,10 @@ Session rollover state (Core-side) should explicitly represent:
 Unlock is allowed only when:
 
 - `continuityDecisionPending = false`
-- `rolloverPending = false`
+- `sessionMode != no_resume`
+- one of:
+  - `continuityRequired = false` and final `turn_completed` already observed;
+  - `continuityRequired = true`, `rolloverPending = false`, and first bootstrap assistant answer in target observed;
 - normal turn constraints permit idle.
 
 ---
@@ -172,12 +179,13 @@ Unlock is allowed only when:
 
 - Regression: threshold exceeded at turn end does not emit intermediate unlock.
 - Regression: old-session send during rollover pending is blocked/queued.
-- Regression: no-threshold path unlocks normally.
+- Regression: no-threshold path unlocks only after dual gate (`turn_completed` + Core `no rollover`).
+- Regression: no-resume session remains terminal/read-only after final answer.
 
 ### 6.2 PM/UI
 
 - Stream reducer test: no unlocked snapshot appears between `turn_completed` and continuity lock.
-- Input panel test: disabled remains true until continuity unlock event.
+- Input panel test: disabled remains true until allowed unlock gate is met.
 
 ### 6.3 End-to-End
 
@@ -189,7 +197,7 @@ Unlock is allowed only when:
 ## 7. Risks and Mitigations
 
 1. **Risk:** deadlock if continuity decision never resolves.
-   - **Mitigation:** timeout fallback with deterministic unlock reason (`resume_timeout`).
+   - **Mitigation:** timeout fallback updates reason (`resume_timeout`) without unlock; session stays safely locked/read-only.
 2. **Risk:** duplicate lock events.
    - **Mitigation:** idempotent lock state updates by `rolloverId` + monotonic `updatedAt`.
 3. **Risk:** legacy UI fallback paths may still unlock on `idle`.

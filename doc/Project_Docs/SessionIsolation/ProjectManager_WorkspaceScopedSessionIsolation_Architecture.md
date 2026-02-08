@@ -22,8 +22,10 @@
 Дополнительно к Phase 105 введён расширенный snapshot-контракт для continuity handoff collector -> reviewer:
 1. `workspace:snapshot.sessions[sessionId].continuityLockReason` фиксирует canonical reason lock/unlock transition.
 2. `workspace:snapshot.sessions[sessionId].continuityLockTransition` содержит `rolloverId`, source/target, stage/run и флаг `awaitingBootstrapTurn`.
-3. PM/UI обязаны удерживать lock, пока `awaitingBootstrapTurn=true`, даже если `continuityLockActive=false`.
+3. PM/UI обязаны удерживать lock, пока `awaitingBootstrapTurn=true`, даже если `continuityLockActive=false`, и применять это к обеим сторонам handoff (`sourceSessionId` + `targetSessionId`).
 4. `session:stream` не участвует в lock-state mutation (только token usage + content transport).
+5. Для resume-via-rollover unlock допустим только после первого bootstrap assistant answer в target session; `resume_failed|resume_timeout` меняют только reason/copy без unlock.
+6. Для one-shot/no-resume (включая description collector) финальное состояние всегда terminal/read-only без unlock.
 
 Эти правила устраняют transient unlock-gap между записью collector-артефакта и автозапуском reviewer.
 
