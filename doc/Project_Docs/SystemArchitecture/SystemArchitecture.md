@@ -278,6 +278,8 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
   - `session:stream` — только token usage и контент, без lock/connection mutation.
 - **Phase 110 PM visibility guard**:
   - принудительное скрытие description-сессий в центральной панели PM разрешено только после явного `reviewerSessionId` (handoff реально состоялся), чтобы collector-сессия оставалась видимой сразу после отправки анкеты.
+- **Phase 111 internal workflow turn-state**:
+  - internal dispatch (`sendInternalMessage`) теперь эмитит `turn_state=running`, чтобы PM/UI не разблокировали ввод в `idle` во время workflow/collector turn до получения terminal событий провайдера.
 - **Scope sync**: Core синхронизирует client scope через `workspace:select` и применяет ingress guard для `session:create|session:message|session:delete`.
 
 Статус legacy:
