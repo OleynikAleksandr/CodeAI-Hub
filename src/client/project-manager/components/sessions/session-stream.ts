@@ -39,6 +39,17 @@ export const applyWorkspaceSnapshotToSnapshots = (
 ): SessionSnapshots => {
   let changed = false;
   const nextSnapshots: SessionSnapshots = { ...snapshots };
+  const heldLockReasonBySessionId = new Map<string, string>();
+  for (const session of Object.values(payload.snapshot.sessions)) {
+    const transition = session.continuityLockTransition;
+    if (transition?.awaitingBootstrapTurn !== true) {
+      continue;
+    }
+    heldLockReasonBySessionId.set(transition.sourceSessionId, transition.reason);
+    if (transition.targetSessionId) {
+      heldLockReasonBySessionId.set(transition.targetSessionId, transition.reason);
+    }
+  }
   for (const [sessionId, session] of Object.entries(payload.snapshot.sessions)) {
     const current = snapshots[sessionId];
     if (!current) {
@@ -46,8 +57,11 @@ export const applyWorkspaceSnapshotToSnapshots = (
     }
     const awaitingBootstrapTurn =
       session.continuityLockTransition?.awaitingBootstrapTurn === true;
-    let nextLockActive = resolveContinuityLockActive(session);
-    const nextLockReason = resolveContinuityLockReason(session);
+    const graphHeldReason = heldLockReasonBySessionId.get(sessionId);
+    let nextLockActive =
+      resolveContinuityLockActive(session) ||
+      heldLockReasonBySessionId.has(sessionId);
+    const nextLockReason = resolveContinuityLockReason(session) ?? graphHeldReason;
     let nextConnectionState: "idle" | "running" | "blocked" = nextLockActive
       ? "blocked"
       : session.turnState;

@@ -67,9 +67,9 @@
 
 ### Stream: Snapshot Lock Monotonicity (PM/UI)
 1. [DONE] Добавить snapshot-only anti-flicker: `workspace:snapshot` может **усиливать** lock немедленно, но **ослаблять** (`blocked → idle`) только при наблюдении terminal continuity unlock в snapshot (`resume_ready|resume_failed|resume_timeout`) и отсутствии `continuityLockTransition.awaitingBootstrapTurn` (scope: `src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `fix(pm): prevent premature unlock from non-terminal snapshot states`)
-2. [DONE] Git Commit: `fix(pm): prevent premature unlock from non-terminal snapshot states` (hash: TBD)
-3. [TODO] Удерживать lock на обеих сторонах handoff: если любой session в snapshot содержит `continuityLockTransition.awaitingBootstrapTurn=true`, то PM считает lock активным и для `sourceSessionId` и для `targetSessionId` (даже если у source `continuityLockActive=false`) (scope: `src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `fix(pm): hold lock across continuity handoff transition graph`)
-4. [TODO] Git Commit: `fix(pm): hold lock across continuity handoff transition graph` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): prevent premature unlock from non-terminal snapshot states` (hash: 204a2139)
+3. [DONE] Удерживать lock на обеих сторонах handoff: если любой session в snapshot содержит `continuityLockTransition.awaitingBootstrapTurn=true`, то PM считает lock активным и для `sourceSessionId` и для `targetSessionId` (даже если у source `continuityLockActive=false`) (scope: `src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `fix(pm): hold lock across continuity handoff transition graph`)
+4. [DONE] Git Commit: `fix(pm): hold lock across continuity handoff transition graph` (hash: TBD)
 
 ### Stream: Non-Regression Tests (PM/UI)
 1. [TODO] Добавить тесты на монотонность lock: запрет `blocked → idle → blocked` на snapshot-последовательностях при handoff/auto-start reviewer и на post-answer continuity triggers (scope: `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit: `test(ui): prevent snapshot-driven unlock flicker across continuity lifecycle`)
