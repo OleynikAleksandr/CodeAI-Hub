@@ -250,18 +250,26 @@ UI устанавливается в `~/.codeai-hub/packages/ui/project-manager/
 
 ---
 
-### 5.6 Workspace-Scoped Session/Event Isolation (Phase 104)
+### 5.6 Workspace Runtime Snapshot Isolation (Phase 105)
 
-`session:*` доставка в PM должна быть строго scoped по выбранному `workspacePath` (absolute path).
+Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и переводит PM/Core на snapshot-first протокол.
 
-Критические инварианты:
-- PM отправляет `workspace:scope:set` и ждёт `workspace:scope:ack` **до** `workspace-activate`/resume/create.
-- `workspaceSlug` используется как workflow/metadata id, но не как ключ изоляции доставки.
-- Для scoped PM клиента Core доставляет `session:*` только для сессий `session.workspacePath === client.workspacePath`.
-- При `workspacePath=null` Core не доставляет `session:*` в scoped PM клиент.
-- UI обязуется соблюдать defence-in-depth: не фокусить, не рендерить и не отправлять в out-of-scope session.
+Ключевые элементы:
+- **Wire protocol**: `workspace:select` -> `workspace:select:ack` (+ `selectionId`) и `workspace:snapshot` (`selectionId` + `sequence`).
+- **Core runtime module**:
+  - `WorkspaceStore`: sharded state `Map<workspaceRoot, WorkspaceState>`;
+  - `SessionRuntime`: turn-state FSM (`idle`/`running`), heartbeat tracking, watchdog timeout rollback;
+  - `WorkspaceRuntimeFacade`: единая точка интеграции для bridge/handlers, hydration из `SessionManager`, debounce/coalesce snapshot push.
+- **Snapshot-first lock**: PM вычисляет server-lock из `workspace:snapshot` (`turnState` + `continuityLockActive`), а не из поштучных `session:stream` `turn_state`.
+- **Scope sync**: Core синхронизирует client scope через `workspace:select` и применяет ingress guard для `session:create|session:message|session:delete`.
 
-Детальный контракт: `doc/Project_Docs/SessionIsolation/ProjectManager_WorkspaceScopedSessionIsolation_Architecture.md`.
+Статус legacy:
+- `workspace:scope:set` (Phase 104 handshake) считается deprecated transitional path.
+- Депрекация и remove-plan: `doc/SolidWorks-Flow/Phase104_LegacyDeprecationChecklist.md`.
+
+Детальный контракт Phase 105:
+- `doc/SolidWorks-Flow/WorkspaceRuntime_LayeredArchitecture.md`
+- `doc/SolidWorks-Flow/InterfaceMap_WorkspaceRuntime.md`
 
 ## 6. Providers
 
