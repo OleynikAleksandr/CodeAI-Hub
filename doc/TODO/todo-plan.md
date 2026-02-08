@@ -40,8 +40,8 @@
 
 ### Stream: Release Build
 1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 113 rollover unlock guard`)
-2. [TODO] Git Commit: `docs(release): prepare release notes for phase 113 rollover unlock guard` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 113 rollover unlock guard`)
-4. [TODO] Git Commit: `chore(release): run build-all for phase 113 rollover unlock guard` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 113 rollover unlock guard`)
-6. [TODO] Git Commit: `chore(release): build and verify vsix for phase 113 rollover unlock guard` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prepare release notes for phase 113 rollover unlock guard` (hash: fede609e)
+3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 113 rollover unlock guard`)
+4. [DONE] Git Commit: `chore(release): run build-all for phase 113 rollover unlock guard` (hash: 61053122)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 113 rollover unlock guard`; result: `codeai-hub-1.1.532.vsix` собран, `Verifying SDK exclusions` и `Package created` подтверждены)
+6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 113 rollover unlock guard` (hash: 4f70bbfe)
