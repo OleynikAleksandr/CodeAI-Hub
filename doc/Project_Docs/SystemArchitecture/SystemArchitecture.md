@@ -276,6 +276,8 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
 - **Strict pipeline split (PM/UI)**:
   - `workspace:snapshot` — единственный канал state transitions для `connectionState` и continuity lock lifecycle;
   - `session:stream` — только token usage и контент, без lock/connection mutation.
+- **Phase 110 PM visibility guard**:
+  - принудительное скрытие description-сессий в центральной панели PM разрешено только после явного `reviewerSessionId` (handoff реально состоялся), чтобы collector-сессия оставалась видимой сразу после отправки анкеты.
 - **Scope sync**: Core синхронизирует client scope через `workspace:select` и применяет ingress guard для `session:create|session:message|session:delete`.
 
 Статус legacy:

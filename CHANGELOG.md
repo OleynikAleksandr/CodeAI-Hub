@@ -1,3 +1,11 @@
+## [1.1.529] - 2026-02-08
+### Fixed
+- Project Manager: восстановлена видимость `Description` session в центральной панели до появления `reviewerSessionId` (forced-hide больше не применяется преждевременно).
+- PM visibility guard: принудительное скрытие description-сессий снова включается только после фактического handoff к reviewer.
+
+### Added
+- PM regression check: тест на guard `!reviewerSessionId` в `reviewer-session-visibility`.
+
 ## [1.1.528] - 2026-02-08
 ### Added
 - Core/PM snapshot contract: добавлены `resumeMode`, `finalTurnCompleted` и `terminalLockReason` как обязательные сигналы lifecycle для input lock arbitration.
