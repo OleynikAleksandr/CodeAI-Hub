@@ -83,3 +83,26 @@ test("updateSnapshotsWithTokenUsage ignores continuity_lock stream events", () =
 
   assert.equal(next, snapshots);
 });
+
+test("updateSnapshotsWithTokenUsage supports nested tokenUsage payload and keeps lock fields untouched", () => {
+  const snapshots = { s1: createSnapshot() };
+
+  const next = updateSnapshotsWithTokenUsage(snapshots, {
+    sessionId: "s1",
+    event: {
+      type: "stream_event",
+      data: {
+        tokenUsage: {
+          used: 128,
+          limit: 256,
+        },
+      },
+    },
+  });
+
+  assert.equal(next.s1.status.tokenUsage.used, 128);
+  assert.equal(next.s1.status.tokenUsage.limit, 256);
+  assert.equal(next.s1.status.connectionState, "running");
+  assert.equal(next.s1.status.continuityLock?.active, true);
+  assert.equal(next.s1.status.rollover?.phase, "resume_sent");
+});
