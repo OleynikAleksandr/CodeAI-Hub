@@ -37,9 +37,16 @@ export type WorkspaceSnapshotContinuityLockReason =
   | "threshold_reached"
   | "report_in_progress"
   | "resume_bootstrap"
+  | "no_rollover_needed"
   | "resume_ready"
   | "resume_failed"
-  | "resume_timeout";
+  | "resume_timeout"
+  | "terminal_no_resume";
+
+export type WorkspaceSnapshotSessionResumeMode =
+  | "no_resume"
+  | "resume_in_place"
+  | "resume_via_rollover";
 
 export type WorkspaceSnapshotContinuityLockTransition = {
   readonly rolloverId: string;
@@ -68,6 +75,9 @@ export type WorkspaceSnapshot = {
         readonly continuityLockActive: boolean;
         readonly continuityLockReason?: WorkspaceSnapshotContinuityLockReason;
         readonly continuityLockTransition?: WorkspaceSnapshotContinuityLockTransition;
+        readonly resumeMode?: WorkspaceSnapshotSessionResumeMode;
+        readonly finalTurnCompleted?: boolean;
+        readonly terminalLockReason?: "terminal_no_resume";
         readonly lastHeartbeatAt?: string;
         readonly providerId?: string;
         readonly providerSessionId?: string;

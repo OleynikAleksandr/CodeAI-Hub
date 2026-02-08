@@ -69,10 +69,24 @@ export class WorkspaceSnapshotStore {
     if (!session) {
       return false;
     }
+    const awaitingBootstrapTurn =
+      session.continuityLockTransition?.awaitingBootstrapTurn === true;
+    const terminalNoResume =
+      session.resumeMode === "no_resume" && session.finalTurnCompleted === true;
+    if (terminalNoResume) {
+      return true;
+    }
+    if (
+      session.resumeMode === "resume_in_place" &&
+      session.finalTurnCompleted === true &&
+      session.continuityLockReason !== "no_rollover_needed"
+    ) {
+      return true;
+    }
     return (
       session.turnState !== "idle" ||
       session.continuityLockActive ||
-      session.continuityLockTransition?.awaitingBootstrapTurn === true
+      awaitingBootstrapTurn
     );
   }
 
