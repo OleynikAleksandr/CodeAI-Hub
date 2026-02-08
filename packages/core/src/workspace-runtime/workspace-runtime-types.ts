@@ -31,10 +31,31 @@ export type SessionTurnState = "idle" | "running";
 
 export type SessionBindingStatus = "pending" | "ready" | "failed";
 
+export type SessionContinuityLockReason =
+  | "threshold_reached"
+  | "report_in_progress"
+  | "resume_bootstrap"
+  | "resume_ready"
+  | "resume_failed"
+  | "resume_timeout";
+
+export type SessionContinuityLockTransition = {
+  readonly rolloverId: string;
+  readonly sourceSessionId: string;
+  readonly targetSessionId?: string;
+  readonly stageId?: string;
+  readonly runSlug?: string | null;
+  readonly reason: SessionContinuityLockReason;
+  readonly awaitingBootstrapTurn: boolean;
+  readonly updatedAt: string;
+};
+
 export type SessionSnapshot = {
   readonly nodeId: string;
   readonly turnState: SessionTurnState;
   readonly continuityLockActive: boolean;
+  readonly continuityLockReason?: SessionContinuityLockReason;
+  readonly continuityLockTransition?: SessionContinuityLockTransition;
   readonly lastHeartbeatAt?: string;
   readonly providerId?: string;
   readonly providerSessionId?: string;

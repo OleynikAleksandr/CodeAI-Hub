@@ -1,4 +1,7 @@
-import type { WorkspaceSnapshot } from "./workspace-runtime-types";
+import type {
+  SessionContinuityLockTransition,
+  WorkspaceSnapshot,
+} from "./workspace-runtime-types";
 
 export type WorkspaceSelectReason =
   | "workspace_selected"
@@ -52,6 +55,9 @@ export type WorkspaceSnapshotPush = {
   readonly type: "workspace:snapshot";
   readonly payload: WorkspaceSnapshotPushPayload;
 };
+
+export type WorkspaceSnapshotSessionTransition =
+  SessionContinuityLockTransition;
 
 export type CommandErrorPayload = {
   readonly requestId: string;
