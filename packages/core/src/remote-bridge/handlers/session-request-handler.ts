@@ -354,6 +354,16 @@ export class SessionRequestHandler {
   }): void {
     const session = this.sessionManager.getSession(options.sessionId);
     const providerId = session?.providerId ?? null;
+    if (session) {
+      this.workspaceRuntime?.notifyTurnStateChanged(
+        {
+          workspaceRoot: session.workspacePath,
+          nodeId: session.stage ?? "session",
+          sessionId: session.id,
+        },
+        options.state
+      );
+    }
 
     this.broadcaster({
       type: "session:stream",
@@ -387,6 +397,16 @@ export class SessionRequestHandler {
   }): void {
     const session = this.sessionManager.getSession(options.sessionId);
     const providerId = session?.providerId ?? null;
+    if (session) {
+      this.workspaceRuntime?.notifyLockChanged(
+        {
+          workspaceRoot: session.workspacePath,
+          nodeId: session.stage ?? "session",
+          sessionId: session.id,
+        },
+        options.state === "locked"
+      );
+    }
     const timestamp = new Date().toISOString();
     const payload = {
       kind: "continuity_lock",
