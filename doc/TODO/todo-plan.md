@@ -70,6 +70,6 @@
 1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 114 atomic dual-gate fix`)
 2. [DONE] Git Commit: `docs(release): prepare release notes for phase 114 atomic dual-gate fix` (hash: 42fcac0b)
 3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 114 atomic dual-gate fix`)
-4. [TODO] Git Commit: `chore(release): run build-all for phase 114 atomic dual-gate fix` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 114 atomic dual-gate fix`)
+4. [DONE] Git Commit: `chore(release): run build-all for phase 114 atomic dual-gate fix` (hash: cfc19b9d)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 114 atomic dual-gate fix`; result: `codeai-hub-1.1.533.vsix` собран, `Verifying SDK exclusions` и `Package created` подтверждены)
 6. [TODO] Git Commit: `chore(release): build and verify vsix for phase 114 atomic dual-gate fix` (hash: TBD)
