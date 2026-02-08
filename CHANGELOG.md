@@ -1,3 +1,11 @@
+## [1.1.532] - 2026-02-08
+### Fixed
+- Core/PM: устранён unlock-gap после `turn_completed` при context-threshold rollover — `idle/no_rollover_needed` не эмитятся, если rollover уже pending/in-flight; PM удерживает `blocked` для `resume_via_rollover` до terminal `resume_ready`.
+
+### Added
+- Runtime snapshot contract: `continuityLockTransition.rolloverPending` добавлен как явный сигнал rollover-in-progress для PM/UI.
+- Regression tests: Core/PM покрытие на запрет transient `blocked -> idle -> blocked` при старте rollover после terminal turn.
+
 ## [1.1.531] - 2026-02-08
 ### Fixed
 - Core/PM: отключен session runtime watchdog auto-idle по умолчанию (раньше 120s), чтобы PM/UI не разблокировали ввод в середине долгих/"тихих" turn (например, в Description collector) до реального завершения turn.

@@ -2,7 +2,8 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.531
+## Current Release — v1.1.532
+- **Phase 113 rollover unlock guard hotfix**: после `turn_completed` Core больше не снимает input lock, если rollover уже pending/in-flight; PM/UI дополнительно удерживают `blocked` до terminal `resume_ready` без transient unlock-gap.
 - **Phase 112 watchdog disable hotfix**: отключен session runtime watchdog auto-idle по умолчанию, чтобы PM не снимал блокировку ввода в середине долгих/"тихих" turn до реального завершения turn.
 - **Phase 111 internal workflow lock fix**: internal workflow dispatch теперь эмитит `turn_state=running`, поэтому ввод в PM не разблокируется до завершения turn (включая Description collector и reviewer bootstrap).
 - **Phase 110 visibility hotfix**: исправлено преждевременное скрытие `Description` session в PM до определения `reviewerSessionId`; сессия снова стабильно видна сразу после отправки анкеты.
