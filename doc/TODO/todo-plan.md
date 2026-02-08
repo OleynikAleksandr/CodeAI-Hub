@@ -46,7 +46,7 @@
 3. [DONE] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 107 snapshot-lock hardening gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
 4. [DONE] Git Commit: `chore(qa): validate phase 107 snapshot-lock hardening gates` (hash: 3b7e9852)
 5. [DONE] Подготовить отчёт сессии после закрытия Phase 107 (scope: `doc/Sessions/Session115.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record phase 107 completion`)
-6. [DONE] Git Commit: `docs(session): record phase 107 completion` (hash: TBD)
+6. [DONE] Git Commit: `docs(session): record phase 107 completion` (hash: 2388decc)
 
 ### Stream: Release Build
 1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 107`)
