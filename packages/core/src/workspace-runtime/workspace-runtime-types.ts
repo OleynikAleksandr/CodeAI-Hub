@@ -31,13 +31,21 @@ export type SessionTurnState = "idle" | "running";
 
 export type SessionBindingStatus = "pending" | "ready" | "failed";
 
+export type SessionResumeMode =
+  | "no_resume"
+  | "resume_in_place"
+  | "resume_via_rollover";
+
+export type SessionTerminalLockReason = "terminal_no_resume";
+
 export type SessionContinuityLockReason =
   | "threshold_reached"
   | "report_in_progress"
   | "resume_bootstrap"
   | "resume_ready"
   | "resume_failed"
-  | "resume_timeout";
+  | "resume_timeout"
+  | SessionTerminalLockReason;
 
 export type SessionContinuityLockTransition = {
   readonly rolloverId: string;
@@ -47,6 +55,9 @@ export type SessionContinuityLockTransition = {
   readonly runSlug?: string | null;
   readonly reason: SessionContinuityLockReason;
   readonly awaitingBootstrapTurn: boolean;
+  readonly resumeMode?: SessionResumeMode;
+  readonly finalTurnCompleted?: boolean;
+  readonly terminalLockReason?: SessionTerminalLockReason;
   readonly updatedAt: string;
 };
 
@@ -56,6 +67,9 @@ export type SessionSnapshot = {
   readonly continuityLockActive: boolean;
   readonly continuityLockReason?: SessionContinuityLockReason;
   readonly continuityLockTransition?: SessionContinuityLockTransition;
+  readonly resumeMode?: SessionResumeMode;
+  readonly finalTurnCompleted?: boolean;
+  readonly terminalLockReason?: SessionTerminalLockReason;
   readonly lastHeartbeatAt?: string;
   readonly providerId?: string;
   readonly providerSessionId?: string;
