@@ -1,13 +1,22 @@
-import type { SessionKey, SessionTurnState } from "./workspace-runtime-types";
+import type {
+  SessionContinuityLockReason,
+  SessionContinuityLockTransition,
+  SessionKey,
+  SessionTurnState,
+} from "./workspace-runtime-types";
 
 export type SessionRuntimeChangedField =
   | "turnState"
   | "continuityLockActive"
+  | "continuityLockReason"
+  | "continuityLockTransition"
   | "lastHeartbeatAt";
 
 export type SessionRuntimeStateSnapshot = {
   readonly turnState: SessionTurnState;
   readonly continuityLockActive: boolean;
+  readonly continuityLockReason: SessionContinuityLockReason | null;
+  readonly continuityLockTransition: SessionContinuityLockTransition | null;
   readonly lastHeartbeatAt: number | null;
 };
 
@@ -15,6 +24,8 @@ type SessionRuntimeEntry = {
   readonly key: SessionKey;
   turnState: SessionTurnState;
   continuityLockActive: boolean;
+  continuityLockReason: SessionContinuityLockReason | null;
+  continuityLockTransition: SessionContinuityLockTransition | null;
   lastHeartbeatAt: number | null;
   runningSince: number | null;
 };
@@ -38,6 +49,8 @@ const toSnapshot = (
 ): SessionRuntimeStateSnapshot => ({
   turnState: entry.turnState,
   continuityLockActive: entry.continuityLockActive,
+  continuityLockReason: entry.continuityLockReason,
+  continuityLockTransition: entry.continuityLockTransition,
   lastHeartbeatAt: entry.lastHeartbeatAt,
 });
 
@@ -45,6 +58,8 @@ const createEntry = (key: SessionKey): SessionRuntimeEntry => ({
   key,
   turnState: "idle",
   continuityLockActive: false,
+  continuityLockReason: null,
+  continuityLockTransition: null,
   lastHeartbeatAt: null,
   runningSince: null,
 });
@@ -107,6 +122,37 @@ export class SessionRuntime {
     }
     entry.continuityLockActive = active;
     this.notify(entry, "continuityLockActive");
+  }
+
+  setLockReason(
+    key: SessionKey,
+    reason: SessionContinuityLockReason | null
+  ): void {
+    const entry = this.getOrCreateEntry(key);
+    if (entry.continuityLockReason === reason) {
+      return;
+    }
+    entry.continuityLockReason = reason;
+    this.notify(entry, "continuityLockReason");
+  }
+
+  setLockTransition(
+    key: SessionKey,
+    transition: SessionContinuityLockTransition | null
+  ): void {
+    const entry = this.getOrCreateEntry(key);
+    if (
+      entry.continuityLockTransition?.rolloverId === transition?.rolloverId &&
+      entry.continuityLockTransition?.reason === transition?.reason &&
+      entry.continuityLockTransition?.awaitingBootstrapTurn ===
+        transition?.awaitingBootstrapTurn &&
+      entry.continuityLockTransition?.targetSessionId ===
+        transition?.targetSessionId
+    ) {
+      return;
+    }
+    entry.continuityLockTransition = transition;
+    this.notify(entry, "continuityLockTransition");
   }
 
   getState(key: SessionKey): SessionRuntimeStateSnapshot {

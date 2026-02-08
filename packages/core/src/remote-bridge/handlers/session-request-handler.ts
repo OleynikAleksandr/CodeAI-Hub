@@ -22,6 +22,10 @@ import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { listUnifiedSessionWorkspaceSlugs } from "../../unified-session/workspace-slugs";
 import { DescriptionStepStore } from "../../workflow/description";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
+import type {
+  SessionContinuityLockReason,
+  SessionContinuityLockTransition,
+} from "../../workspace-runtime/workspace-runtime-types";
 import { type BridgeEvent, serializeSession } from "../types";
 import { QuestionnaireCuratorFacade } from "./questionnaire-curator-facade";
 import {
@@ -109,13 +113,7 @@ type FlowNodeRolloverNotification = {
 
 type ContinuityLockState = "locked" | "unlocked";
 
-type ContinuityLockReason =
-  | "threshold_reached"
-  | "report_in_progress"
-  | "resume_bootstrap"
-  | "resume_ready"
-  | "resume_failed"
-  | "resume_timeout";
+type ContinuityLockReason = SessionContinuityLockReason;
 
 type ContinuityLockPayload = {
   readonly kind: "continuity_lock";
@@ -397,6 +395,22 @@ export class SessionRequestHandler {
   }): void {
     const session = this.sessionManager.getSession(options.sessionId);
     const providerId = session?.providerId ?? null;
+    const timestamp = new Date().toISOString();
+    const lockTransition: SessionContinuityLockTransition | null =
+      options.state === "locked"
+        ? {
+            rolloverId: options.rolloverId,
+            sourceSessionId: options.sourceSessionId,
+            ...(options.targetSessionId
+              ? { targetSessionId: options.targetSessionId }
+              : {}),
+            stageId: options.stageId,
+            runSlug: options.runSlug,
+            reason: options.reason,
+            awaitingBootstrapTurn: options.reason === "resume_bootstrap",
+            updatedAt: timestamp,
+          }
+        : null;
     if (session) {
       this.workspaceRuntime?.notifyLockChanged(
         {
@@ -404,10 +418,13 @@ export class SessionRequestHandler {
           nodeId: session.stage ?? "session",
           sessionId: session.id,
         },
-        options.state === "locked"
+        {
+          active: options.state === "locked",
+          reason: options.reason,
+          transition: lockTransition,
+        }
       );
     }
-    const timestamp = new Date().toISOString();
     const payload = {
       kind: "continuity_lock",
       state: options.state,
