@@ -171,3 +171,69 @@ test("WorkspaceRuntimeFacade flushes turn state with high priority", async () =>
 
   facade.dispose();
 });
+
+test("WorkspaceRuntimeFacade publishes lock transition metadata in snapshot", async () => {
+  const events: WorkspaceSnapshotPush[] = [];
+  const facade = new WorkspaceRuntimeFacade({
+    snapshotDebounceMs: 25,
+    selectionIdFactory: () => "sel-lock-transition",
+  });
+
+  facade.subscribe("client-1", (message) => {
+    events.push(message);
+  });
+
+  const sessionKey = createSessionKey(workspaceA, "session-lock-transition");
+  facade.select({
+    clientId: "client-1",
+    request: {
+      requestId: "req-1",
+      workspaceRoot: workspaceA,
+      reason: "workspace_selected",
+    },
+  });
+  facade.notifySessionCreated(sessionKey, { providerId: "claudeCodeCli" });
+  await wait(40);
+
+  facade.notifyLockChanged(sessionKey, {
+    active: true,
+    reason: "resume_bootstrap",
+    transition: {
+      rolloverId: "rollover-1",
+      sourceSessionId: "source-session",
+      targetSessionId: sessionKey.sessionId,
+      stageId: "description",
+      runSlug: "reviewer",
+      reason: "resume_bootstrap",
+      awaitingBootstrapTurn: true,
+      updatedAt: new Date().toISOString(),
+    },
+  });
+  await wait(5);
+
+  const lockedSnapshot =
+    events.at(-1)?.payload.snapshot.sessions[sessionKey.sessionId];
+  assert.ok(lockedSnapshot);
+  assert.equal(lockedSnapshot.continuityLockActive, true);
+  assert.equal(lockedSnapshot.continuityLockReason, "resume_bootstrap");
+  assert.equal(
+    lockedSnapshot.continuityLockTransition?.awaitingBootstrapTurn,
+    true
+  );
+
+  facade.notifyLockChanged(sessionKey, {
+    active: false,
+    reason: "resume_ready",
+    transition: null,
+  });
+  await wait(5);
+
+  const unlockedSnapshot =
+    events.at(-1)?.payload.snapshot.sessions[sessionKey.sessionId];
+  assert.ok(unlockedSnapshot);
+  assert.equal(unlockedSnapshot.continuityLockActive, false);
+  assert.equal(unlockedSnapshot.continuityLockReason, "resume_ready");
+  assert.equal(unlockedSnapshot.continuityLockTransition, undefined);
+
+  facade.dispose();
+});

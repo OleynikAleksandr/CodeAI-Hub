@@ -56,6 +56,11 @@ test("RemoteBridge handles workspace:select and routes through runtime facade", 
     "select handler must delegate selection to workspace runtime facade"
   );
   assert.equal(
+    source.includes("workspaceRuntime: this.workspaceRuntime,"),
+    true,
+    "session request handler wiring must receive runtime facade instance"
+  );
+  assert.equal(
     source.includes('type: "workspace:select:ack",'),
     true,
     "workspace select handler must send explicit ack to the same client"
