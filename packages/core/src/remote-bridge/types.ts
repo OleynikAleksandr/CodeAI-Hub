@@ -2,6 +2,13 @@ import type { ProviderRegistry } from "../provider-registry";
 import type { WorkspaceProject } from "../services/project-registry/types";
 import type { Session } from "../session-manager";
 import type { RuntimeStatusEvent } from "../status/runtime-status-reporter";
+import type {
+  CommandErrorPayload,
+  WorkspaceSelectAckPayload,
+  WorkspaceSelectPayload,
+  WorkspaceSnapshotPushPayload,
+  WorkspaceSnapshotRequestPayload,
+} from "../workspace-runtime/workspace-wire-types";
 
 export type WorkspaceScopeSyncReason =
   | "workspace_selected"
@@ -83,6 +90,18 @@ export type BridgeEvent =
   | {
       readonly type: "workspace:scope:ack";
       readonly payload: WorkspaceScopeAckPayload;
+    }
+  | {
+      readonly type: "workspace:select:ack";
+      readonly payload: WorkspaceSelectAckPayload;
+    }
+  | {
+      readonly type: "workspace:snapshot";
+      readonly payload: WorkspaceSnapshotPushPayload;
+    }
+  | {
+      readonly type: "command:error";
+      readonly payload: CommandErrorPayload;
     };
 
 export type IncomingMessage =
@@ -127,6 +146,14 @@ export type IncomingMessage =
   | {
       readonly type: "workspace:scope:set";
       readonly payload: WorkspaceScopeSetPayload;
+    }
+  | {
+      readonly type: "workspace:select";
+      readonly payload: WorkspaceSelectPayload;
+    }
+  | {
+      readonly type: "workspace:snapshot:request";
+      readonly payload: WorkspaceSnapshotRequestPayload;
     };
 
 export const serializeSession = (session: Session): SerializedSession => ({
