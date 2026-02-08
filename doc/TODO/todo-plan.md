@@ -60,10 +60,10 @@
 
 ### Stream: Non-Regression Tests
 1. [DONE] Добавить тест на async-race: `turn_completed` не может эмитить `idle` до завершения rollover arbitration, даже если lock устанавливается с задержкой (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): prevent turn-completed idle before async rollover arbitration resolves`)
-2. [TODO] Git Commit: `test(core): prevent turn-completed idle before async rollover arbitration resolves` (hash: TBD)
+2. [DONE] Git Commit: `test(core): prevent turn-completed idle before async rollover arbitration resolves` (hash: 8adc1a51)
 
 ### Stream: Docs + QA Gates
-1. [TODO] Синхронно обновить архитектурные документы и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates`)
+1. [DONE] Синхронно обновить архитектурные документы и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates`)
 2. [TODO] Git Commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates` (hash: TBD)
 
 ### Stream: Release Build
