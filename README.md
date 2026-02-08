@@ -2,7 +2,8 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.530
+## Current Release — v1.1.531
+- **Phase 112 watchdog disable hotfix**: отключен session runtime watchdog auto-idle по умолчанию, чтобы PM не снимал блокировку ввода в середине долгих/"тихих" turn до реального завершения turn.
 - **Phase 111 internal workflow lock fix**: internal workflow dispatch теперь эмитит `turn_state=running`, поэтому ввод в PM не разблокируется до завершения turn (включая Description collector и reviewer bootstrap).
 - **Phase 110 visibility hotfix**: исправлено преждевременное скрытие `Description` session в PM до определения `reviewerSessionId`; сессия снова стабильно видна сразу после отправки анкеты.
 - **Workspace Runtime MVP**: добавлен модуль Core `workspace-runtime` (sharded store + facade + snapshot builder) с `workspace:select`/`workspace:snapshot` протоколом.
@@ -10,7 +11,7 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Phase 107 lock transition contract**: snapshot расширен полями `continuityLockReason` и `continuityLockTransition.awaitingBootstrapTurn`, чтобы убрать unlock-gap между collector artifact write и reviewer bootstrap.
 - **Phase 109 resume-mode contract**: Core/PM/UI синхронизированы по `resumeMode` (`no_resume|resume_in_place|resume_via_rollover`), dual-gate unlock (`no_rollover_needed`) и bootstrap gate (`resume_ready`) без premature unlock.
 - **Strict PM pipeline split**: `workspace:snapshot` стал единственным источником lock/connection lifecycle; `session:stream` оставлен только для token usage и контента.
-- **Watchdog terminal rollback**: в Core включён session runtime watchdog с heartbeat, чтобы `running` состояние не могло залипнуть бесконечно при потере terminal markers.
+- **Watchdog auto-idle**: отключен по умолчанию; turn lifecycle определяется только явными provider lifecycle событиями (без таймаутного принудительного `idle`).
 - **Scope sync hardening**: ingress guard для `session:create|session:message|session:delete` и scoped delivery привязаны к `workspace:select` (legacy `workspace:scope:set` оставлен только как deprecated transition path в Core).
 - **Regression coverage**: добавлены targeted тесты Core/PM для routing `workspace:select`, snapshot-driven lock и ack-gating в switch/resume path.
 

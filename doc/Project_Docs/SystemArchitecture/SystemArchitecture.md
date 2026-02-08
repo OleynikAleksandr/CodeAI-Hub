@@ -263,7 +263,7 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
 - **Wire protocol**: `workspace:select` -> `workspace:select:ack` (+ `selectionId`) и `workspace:snapshot` (`selectionId` + `sequence`).
 - **Core runtime module**:
   - `WorkspaceStore`: sharded state `Map<workspaceRoot, WorkspaceState>`;
-  - `SessionRuntime`: turn-state FSM (`idle`/`running`), heartbeat tracking, watchdog timeout rollback;
+  - `SessionRuntime`: turn-state FSM (`idle`/`running`), heartbeat tracking; watchdog auto-idle отключен по умолчанию (может быть включён явно);
   - `WorkspaceRuntimeFacade`: единая точка интеграции для bridge/handlers, hydration из `SessionManager`, debounce/coalesce snapshot push.
 - **Snapshot-first lock**: PM вычисляет server-lock из `workspace:snapshot` (`turnState` + `continuityLockActive`), а не из поштучных `session:stream` `turn_state`.
 - **Phase 107-109 lock transition contract**:
@@ -280,6 +280,8 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
   - принудительное скрытие description-сессий в центральной панели PM разрешено только после явного `reviewerSessionId` (handoff реально состоялся), чтобы collector-сессия оставалась видимой сразу после отправки анкеты.
 - **Phase 111 internal workflow turn-state**:
   - internal dispatch (`sendInternalMessage`) теперь эмитит `turn_state=running`, чтобы PM/UI не разблокировали ввод в `idle` во время workflow/collector turn до получения terminal событий провайдера.
+- **Phase 112 runtime watchdog**:
+  - watchdog auto-idle отключен по умолчанию, чтобы долгие/"тихие" turn не могли сбрасывать `turnState` в `idle` по таймауту.
 - **Scope sync**: Core синхронизирует client scope через `workspace:select` и применяет ingress guard для `session:create|session:message|session:delete`.
 
 Статус legacy:
