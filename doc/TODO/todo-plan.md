@@ -96,9 +96,9 @@
 
 ### Stream: Core Lock Lifecycle Contract
 1. [DONE] Ввести режимы `no_resume | resume_in_place | resume_via_rollover` в runtime-lock арбитрации и зафиксировать terminal/read-only поведение для `no_resume` сессий (scope: `packages/core/src/workspace-runtime/workspace-runtime-types.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workflow/runtime/workflow-runtime.ts`; expected commit: `feat(core): add resume-mode-aware lock lifecycle and terminal no-resume state`)
-2. [DONE] Git Commit: `feat(core): add resume-mode-aware lock lifecycle and terminal no-resume state` (hash: TBD)
-3. [TODO] Реализовать unlock dual-gate для `resume_in_place`: unlock только после финального `turn_completed` и явного результата Core `no rollover needed`; при threshold exceeded оставлять lock и менять только reason (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/session-runtime.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `fix(core): enforce dual-gate unlock for resume-in-place sessions`)
-4. [TODO] Git Commit: `fix(core): enforce dual-gate unlock for resume-in-place sessions` (hash: TBD)
+2. [DONE] Git Commit: `feat(core): add resume-mode-aware lock lifecycle and terminal no-resume state` (hash: d4e41ffe)
+3. [DONE] Реализовать unlock dual-gate для `resume_in_place`: unlock только после финального `turn_completed` и явного результата Core `no rollover needed`; при threshold exceeded оставлять lock и менять только reason (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/session-runtime.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `fix(core): enforce dual-gate unlock for resume-in-place sessions`)
+4. [DONE] Git Commit: `fix(core): enforce dual-gate unlock for resume-in-place sessions` (hash: TBD)
 5. [TODO] Для `resume_via_rollover` снять lock только после первого bootstrap assistant ответа в target session; `resume_failed|resume_timeout` не должны выполнять unlock (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/workspace-runtime-types.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `fix(core): unlock rollover sessions only after bootstrap assistant gate`)
 6. [TODO] Git Commit: `fix(core): unlock rollover sessions only after bootstrap assistant gate` (hash: TBD)
 

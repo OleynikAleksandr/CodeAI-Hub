@@ -10,6 +10,7 @@ export type SessionRuntimeChangedField =
   | "continuityLockActive"
   | "continuityLockReason"
   | "continuityLockTransition"
+  | "finalTurnCompleted"
   | "lastHeartbeatAt";
 
 export type SessionRuntimeStateSnapshot = {
@@ -17,6 +18,7 @@ export type SessionRuntimeStateSnapshot = {
   readonly continuityLockActive: boolean;
   readonly continuityLockReason: SessionContinuityLockReason | null;
   readonly continuityLockTransition: SessionContinuityLockTransition | null;
+  readonly finalTurnCompleted: boolean;
   readonly lastHeartbeatAt: number | null;
 };
 
@@ -26,6 +28,7 @@ type SessionRuntimeEntry = {
   continuityLockActive: boolean;
   continuityLockReason: SessionContinuityLockReason | null;
   continuityLockTransition: SessionContinuityLockTransition | null;
+  finalTurnCompleted: boolean;
   lastHeartbeatAt: number | null;
   runningSince: number | null;
 };
@@ -51,6 +54,7 @@ const toSnapshot = (
   continuityLockActive: entry.continuityLockActive,
   continuityLockReason: entry.continuityLockReason,
   continuityLockTransition: entry.continuityLockTransition,
+  finalTurnCompleted: entry.finalTurnCompleted,
   lastHeartbeatAt: entry.lastHeartbeatAt,
 });
 
@@ -60,6 +64,7 @@ const createEntry = (key: SessionKey): SessionRuntimeEntry => ({
   continuityLockActive: false,
   continuityLockReason: null,
   continuityLockTransition: null,
+  finalTurnCompleted: false,
   lastHeartbeatAt: null,
   runningSince: null,
 });
@@ -153,6 +158,15 @@ export class SessionRuntime {
     }
     entry.continuityLockTransition = transition;
     this.notify(entry, "continuityLockTransition");
+  }
+
+  setFinalTurnCompleted(key: SessionKey, finalTurnCompleted: boolean): void {
+    const entry = this.getOrCreateEntry(key);
+    if (entry.finalTurnCompleted === finalTurnCompleted) {
+      return;
+    }
+    entry.finalTurnCompleted = finalTurnCompleted;
+    this.notify(entry, "finalTurnCompleted");
   }
 
   getState(key: SessionKey): SessionRuntimeStateSnapshot {
