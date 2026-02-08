@@ -148,6 +148,33 @@ export class WebSocketManager {
     };
   }
 
+  setWorkspaceScopeForClient(
+    clientId: string,
+    workspacePath: string | null
+  ): void {
+    const client = this.clients.get(clientId);
+    if (!client) {
+      return;
+    }
+    client.scope = {
+      enabled: true,
+      workspacePath,
+    };
+  }
+
+  getWorkspaceScope(clientId: string): ClientSocket["scope"] | null {
+    return this.clients.get(clientId)?.scope ?? null;
+  }
+
+  populateSessionWorkspaceScope(
+    workspacePath: string,
+    sessionIds: readonly string[]
+  ): void {
+    for (const sessionId of sessionIds) {
+      this.sessionWorkspaceById.set(sessionId, workspacePath);
+    }
+  }
+
   sendToClient(clientId: string, event: BridgeEvent): void {
     const client = this.clients.get(clientId);
     if (!client || client.socket.readyState !== WebSocket.OPEN) {
