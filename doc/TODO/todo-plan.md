@@ -77,10 +77,10 @@
 
 ### Stream: QA Gates
 1. [DONE] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 108 snapshot-lock monotonicity gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
-2. [DONE] Git Commit: `chore(qa): validate phase 108 snapshot-lock monotonicity gates` (hash: TBD)
+2. [DONE] Git Commit: `chore(qa): validate phase 108 snapshot-lock monotonicity gates` (hash: d139eb00)
 
 ### Stream: Release Build (Test)
-1. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 108 snapshot-lock monotonicity`)
-2. [TODO] Git Commit: `chore(release): run build-all for phase 108 snapshot-lock monotonicity` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 108 snapshot-lock monotonicity`; result: unified version bumped to `1.1.527`, release tarballs generated in `~/.codeai-hub/releases/`)
+2. [DONE] Git Commit: `chore(release): run build-all for phase 108 snapshot-lock monotonicity` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 108 snapshot-lock monotonicity`)
 4. [TODO] Git Commit: `chore(release): build and verify vsix for phase 108 snapshot-lock monotonicity` (hash: TBD, allow-empty if no file changes)
