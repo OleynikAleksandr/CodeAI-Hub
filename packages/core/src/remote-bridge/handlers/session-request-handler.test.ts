@@ -197,6 +197,62 @@ test("SessionRequestHandler emits turn_state events for provider lifecycle", asy
   );
 });
 
+test("SessionRequestHandler marks internal messages as running turns", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-internal-running"
+  );
+
+  harness.providerSessions.set(session.id, {
+    providerId: "claudeCodeCli",
+    providerSessionId: "temp_123",
+    unsubscribe: noop,
+  });
+
+  const adapter = {
+    sendMessage: async () => Promise.resolve(),
+  };
+  (harness.handler as any).providerRegistry = {
+    getAdapter: () => adapter,
+    handleRuntimeFailure: noop,
+  };
+
+  await (harness.handler as any).sendInternalMessage(session.id, "INTERNAL");
+
+  const turnStates = collectTurnStateSequence(harness.events);
+  assert.deepEqual(turnStates, ["running"]);
+});
+
+test("SessionRequestHandler resets internal turn state when adapter send fails", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-internal-failure"
+  );
+
+  harness.providerSessions.set(session.id, {
+    providerId: "claudeCodeCli",
+    providerSessionId: "temp_123",
+    unsubscribe: noop,
+  });
+
+  const adapter = {
+    sendMessage: () => {
+      throw new Error("kaboom");
+    },
+  };
+  (harness.handler as any).providerRegistry = {
+    getAdapter: () => adapter,
+    handleRuntimeFailure: noop,
+  };
+
+  await (harness.handler as any).sendInternalMessage(session.id, "INTERNAL");
+
+  const turnStates = collectTurnStateSequence(harness.events);
+  assert.deepEqual(turnStates, ["running", "idle"]);
+});
+
 test("SessionRequestHandler updates provider binding on sessionIdChanged", () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
