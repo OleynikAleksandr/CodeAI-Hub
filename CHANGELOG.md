@@ -1,3 +1,16 @@
+## [1.1.524] - 2026-02-08
+### Added
+- Core: `workspace-runtime` модуль (`WorkspaceStore`, `SessionRuntime`, `WorkspaceRuntimeFacade`) с sharded state и snapshot-first delivery.
+- Core/PM wire protocol: `workspace:select`, `workspace:select:ack`, `workspace:snapshot`, `workspace:snapshot:request`, `command:error`.
+- PM snapshot store: client-side `selectionId/sequence` gating для atomic workspace switch и stale snapshot ignore.
+- Core watchdog: heartbeat-driven timeout rollback для `turn_state` в `idle`, чтобы исключить вечный `running`.
+
+### Fixed
+- PM: workspace switch и resume path теперь блокируются до `workspace:select:ack(status=applied)`.
+- PM: input lock/unlock берётся из `workspace:snapshot`; `token-usage-stream` больше не меняет `connectionState`/continuity lock из `session:stream`.
+- Core bridge: routing `workspace:select` синхронизирует per-client scope и ingress guard для out-of-scope `session:*` команд.
+- Legacy cleanup: `workspace:scope:set` fallback убран из runtime-пути PM; Phase 104 legacy path задокументирован и помечен deprecated в Core.
+
 ## [1.1.523] - 2026-02-07
 ### Fixed
 - PM/Core bridge: `session:*` delivery теперь строго scoped по выбранному `workspacePath` (absolute path), устранены cross-workspace ghost events.

@@ -2,12 +2,12 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.523
-- **Workspace-scoped isolation**: PM/Core доставляют и обрабатывают `session:*` строго в рамках выбранного `workspacePath` (absolute path), без cross-workspace утечек.
-- **Scope handshake**: добавлен явный протокол `workspace:scope:set -> workspace:scope:ack`; PM ждёт `ack(applied)` перед `workspace-activate` и resume/create.
-- **Defence-in-depth guards**: PM не автофокусит, не рендерит и не отправляет сообщения в out-of-scope сессии даже при гонках/ошибках доставки.
-- **Restart non-regression**: сохранён deterministic reopen/resume path после перезапуска Core (`workspace-activate` + reviewer visibility + resume intent).
-- **Regression coverage**: добавлены targeted тесты PM/Core bridge на scoped delivery, handshake ordering и reopen/resume совместимость.
+## Current Release — v1.1.524
+- **Workspace Runtime MVP**: добавлен модуль Core `workspace-runtime` (sharded store + facade + snapshot builder) с `workspace:select`/`workspace:snapshot` протоколом.
+- **Snapshot-first lock authority**: блокировка ввода в PM теперь server-driven из `workspace:snapshot` (`turnState` + `continuityLockActive`), без зависимости от одиночных `session:stream` terminal-событий.
+- **Watchdog terminal rollback**: в Core включён session runtime watchdog с heartbeat, чтобы `running` состояние не могло залипнуть бесконечно при потере terminal markers.
+- **Scope sync hardening**: ingress guard для `session:create|session:message|session:delete` и scoped delivery привязаны к `workspace:select` (legacy `workspace:scope:set` оставлен только как deprecated transition path в Core).
+- **Regression coverage**: добавлены targeted тесты Core/PM для routing `workspace:select`, snapshot-driven lock и ack-gating в switch/resume path.
 
 ## Release Candidate — Phase 103 (Core-first Immediate Input Lock Parity)
 - **Immediate lock parity**: Core эмитит `turn_state=running` сразу на accepted submit до `adapter.sendMessage` (provider-agnostic для Claude/Codex/Gemini).
