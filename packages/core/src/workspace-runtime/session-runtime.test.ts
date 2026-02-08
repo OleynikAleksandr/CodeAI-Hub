@@ -59,6 +59,21 @@ test("SessionRuntime watchdog sets running session to idle on timeout", async ()
   runtime.dispose();
 });
 
+test("SessionRuntime does not auto-idle running session by default", async () => {
+  let now = 0;
+  const runtime = new SessionRuntime({
+    watchdogTickMs: 5,
+    now: () => now,
+  });
+
+  runtime.markRunning(sessionKey);
+  now = 1_000_000;
+  await wait(20);
+
+  assert.equal(runtime.getState(sessionKey).turnState, "running");
+  runtime.dispose();
+});
+
 test("SessionRuntime heartbeat resets watchdog timeout window", async () => {
   let now = 0;
   const runtime = new SessionRuntime({
