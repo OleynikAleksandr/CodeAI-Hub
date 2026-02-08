@@ -178,4 +178,4 @@
 3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 111 internal workflow turn-state fix`)
 4. [DONE] Git Commit: `chore(release): run build-all for phase 111 internal workflow turn-state fix` (hash: 597b6478)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 111 internal workflow turn-state fix`)
-6. [TODO] Git Commit: `chore(release): build and verify vsix for phase 111 internal workflow turn-state fix` (hash: TBD)
+6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 111 internal workflow turn-state fix` (hash: 8df9fd53)
