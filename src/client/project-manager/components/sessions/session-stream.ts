@@ -32,7 +32,18 @@ type SessionHistoryUpdate = {
 const resolveConnectionState = (
   session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
 ): "idle" | "running" | "blocked" =>
-  session.continuityLockActive ? "blocked" : session.turnState;
+  resolveContinuityLockActive(session) ? "blocked" : session.turnState;
+
+const resolveContinuityLockActive = (
+  session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
+): boolean =>
+  session.continuityLockActive ||
+  session.continuityLockTransition?.awaitingBootstrapTurn === true;
+
+const resolveContinuityLockReason = (
+  session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
+): string | undefined =>
+  session.continuityLockReason ?? session.continuityLockTransition?.reason;
 
 export const applyWorkspaceSnapshotToSnapshots = (
   snapshots: SessionSnapshots,
@@ -46,10 +57,14 @@ export const applyWorkspaceSnapshotToSnapshots = (
       continue;
     }
     const nextConnectionState = resolveConnectionState(session);
+    const nextLockActive = resolveContinuityLockActive(session);
+    const nextLockReason = resolveContinuityLockReason(session);
     const currentLockActive = current.status.continuityLock?.active === true;
+    const currentLockReason = current.status.continuityLock?.reason;
     if (
       current.status.connectionState === nextConnectionState &&
-      currentLockActive === session.continuityLockActive
+      currentLockActive === nextLockActive &&
+      currentLockReason === nextLockReason
     ) {
       continue;
     }
@@ -62,7 +77,8 @@ export const applyWorkspaceSnapshotToSnapshots = (
         connectionState: nextConnectionState,
         continuityLock: {
           ...(current.status.continuityLock ?? { active: false, updatedAt: now }),
-          active: session.continuityLockActive,
+          active: nextLockActive,
+          ...(nextLockReason ? { reason: nextLockReason } : {}),
           updatedAt: now,
         },
         updatedAt: now,

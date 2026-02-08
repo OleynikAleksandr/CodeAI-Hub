@@ -69,7 +69,11 @@ export class WorkspaceSnapshotStore {
     if (!session) {
       return false;
     }
-    return session.turnState !== "idle" || session.continuityLockActive;
+    return (
+      session.turnState !== "idle" ||
+      session.continuityLockActive ||
+      session.continuityLockTransition?.awaitingBootstrapTurn === true
+    );
   }
 
   clear(): void {
