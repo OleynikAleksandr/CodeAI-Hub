@@ -193,7 +193,7 @@
 
 ### Stream: QA Gates
 1. [DONE] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 112 watchdog disable gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run test --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
-2. [TODO] Git Commit: `chore(qa): validate phase 112 watchdog disable gates` (hash: TBD)
+2. [DONE] Git Commit: `chore(qa): validate phase 112 watchdog disable gates` (hash: 5a0c1890)
 
 ### Stream: Release Build
 1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 112 watchdog disable hotfix`)
@@ -201,4 +201,4 @@
 3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 112 watchdog disable hotfix`)
 4. [DONE] Git Commit: `chore(release): run build-all for phase 112 watchdog disable hotfix` (hash: 864b4364)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 112 watchdog disable hotfix`)
-6. [TODO] Git Commit: `chore(release): build and verify vsix for phase 112 watchdog disable hotfix` (hash: TBD)
+6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 112 watchdog disable hotfix` (hash: 9ab75aaf)
