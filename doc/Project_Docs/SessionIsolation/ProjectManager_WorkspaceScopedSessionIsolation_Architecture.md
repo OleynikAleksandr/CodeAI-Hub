@@ -17,6 +17,16 @@
 
 С версии Phase 105 runtime path в PM/Core переведён на `workspace:select` + `workspace:snapshot`; legacy handshake рассматривается только как transitional deprecated path до финального удаления.
 
+### Phase 107 Addendum: Snapshot-First Lock Transition Lifecycle
+
+Дополнительно к Phase 105 введён расширенный snapshot-контракт для continuity handoff collector -> reviewer:
+1. `workspace:snapshot.sessions[sessionId].continuityLockReason` фиксирует canonical reason lock/unlock transition.
+2. `workspace:snapshot.sessions[sessionId].continuityLockTransition` содержит `rolloverId`, source/target, stage/run и флаг `awaitingBootstrapTurn`.
+3. PM/UI обязаны удерживать lock, пока `awaitingBootstrapTurn=true`, даже если `continuityLockActive=false`.
+4. `session:stream` не участвует в lock-state mutation (только token usage + content transport).
+
+Эти правила устраняют transient unlock-gap между записью collector-артефакта и автозапуском reviewer.
+
 ---
 
 ## 1. Problem Statement
