@@ -55,3 +55,32 @@
 4. [DONE] Git Commit: `chore(release): run build-all for phase 107` (hash: 026b83fd)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 107`; result: `codeai-hub-1.1.526.vsix` собран, `Verifying SDK exclusions` и `Package created` подтверждены)
 6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 107` (hash: 7b9037a2, allow-empty)
+
+---
+
+## Phase 108 — Snapshot-First Lock Monotonicity Hardening (owner: Oleksandr, updated: 2026-02-08)
+
+**Problem (observed in manual testing):** input lock снимается раньше, чем должен, с фликером `unlocked → locked`:
+- на границе handoff `Description → Reviewer` (после записи `description.md` до старта reviewer);
+- во время reviewer (unlock происходит до того, как агент отдаёт вопросы/ответ);
+- на post-answer контекстных триггерах (unlock-gap перед новым lock).
+
+### Stream: Snapshot Lock Monotonicity (PM/UI)
+1. [DONE] Добавить snapshot-only anti-flicker: `workspace:snapshot` может **усиливать** lock немедленно, но **ослаблять** (`blocked → idle`) только при наблюдении terminal continuity unlock в snapshot (`resume_ready|resume_failed|resume_timeout`) и отсутствии `continuityLockTransition.awaitingBootstrapTurn` (scope: `src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `fix(pm): prevent premature unlock from non-terminal snapshot states`)
+2. [DONE] Git Commit: `fix(pm): prevent premature unlock from non-terminal snapshot states` (hash: TBD)
+3. [TODO] Удерживать lock на обеих сторонах handoff: если любой session в snapshot содержит `continuityLockTransition.awaitingBootstrapTurn=true`, то PM считает lock активным и для `sourceSessionId` и для `targetSessionId` (даже если у source `continuityLockActive=false`) (scope: `src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `fix(pm): hold lock across continuity handoff transition graph`)
+4. [TODO] Git Commit: `fix(pm): hold lock across continuity handoff transition graph` (hash: TBD)
+
+### Stream: Non-Regression Tests (PM/UI)
+1. [TODO] Добавить тесты на монотонность lock: запрет `blocked → idle → blocked` на snapshot-последовательностях при handoff/auto-start reviewer и на post-answer continuity triggers (scope: `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit: `test(ui): prevent snapshot-driven unlock flicker across continuity lifecycle`)
+2. [TODO] Git Commit: `test(ui): prevent snapshot-driven unlock flicker across continuity lifecycle` (hash: TBD)
+
+### Stream: QA Gates
+1. [TODO] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 108 snapshot-lock monotonicity gates`)
+2. [TODO] Git Commit: `chore(qa): validate phase 108 snapshot-lock monotonicity gates` (hash: TBD)
+
+### Stream: Release Build (Test)
+1. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 108 snapshot-lock monotonicity`)
+2. [TODO] Git Commit: `chore(release): run build-all for phase 108 snapshot-lock monotonicity` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 108 snapshot-lock monotonicity`)
+4. [TODO] Git Commit: `chore(release): build and verify vsix for phase 108 snapshot-lock monotonicity` (hash: TBD, allow-empty if no file changes)
