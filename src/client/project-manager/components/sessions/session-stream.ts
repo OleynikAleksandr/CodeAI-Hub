@@ -7,44 +7,32 @@ import {
   sanitizeSession,
 } from "../../../ui/src/core-bridge/normalizers";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
-
 type IncomingMessage = {
   readonly type: string;
   readonly payload?: unknown;
 };
-
 type SessionBindingUpdate = {
   readonly sessionId: string;
   readonly providerSessionId: string | null;
   readonly status: "pending" | "ready" | "failed";
 };
-
 type SessionMessageUpdate = {
   readonly sessionId: string;
   readonly message: SessionMessage;
 };
-
 type SessionHistoryUpdate = {
   readonly sessionId: string;
   readonly messages: readonly unknown[];
 };
-
-const resolveConnectionState = (
-  session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
-): "idle" | "running" | "blocked" =>
-  resolveContinuityLockActive(session) ? "blocked" : session.turnState;
-
 const resolveContinuityLockActive = (
   session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
 ): boolean =>
   session.continuityLockActive ||
   session.continuityLockTransition?.awaitingBootstrapTurn === true;
-
 const resolveContinuityLockReason = (
   session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
 ): string | undefined =>
   session.continuityLockReason ?? session.continuityLockTransition?.reason;
-
 export const applyWorkspaceSnapshotToSnapshots = (
   snapshots: SessionSnapshots,
   payload: WorkspaceSnapshotPushPayload
@@ -56,11 +44,27 @@ export const applyWorkspaceSnapshotToSnapshots = (
     if (!current) {
       continue;
     }
-    const nextConnectionState = resolveConnectionState(session);
-    const nextLockActive = resolveContinuityLockActive(session);
+    const awaitingBootstrapTurn =
+      session.continuityLockTransition?.awaitingBootstrapTurn === true;
+    let nextLockActive = resolveContinuityLockActive(session);
     const nextLockReason = resolveContinuityLockReason(session);
+    let nextConnectionState: "idle" | "running" | "blocked" = nextLockActive
+      ? "blocked"
+      : session.turnState;
     const currentLockActive = current.status.continuityLock?.active === true;
     const currentLockReason = current.status.continuityLock?.reason;
+    const terminalUnlockReason =
+      nextLockReason === "resume_ready" ||
+      nextLockReason === "resume_failed" ||
+      nextLockReason === "resume_timeout";
+    if (
+      current.status.connectionState === "blocked" &&
+      nextConnectionState === "idle" &&
+      (!terminalUnlockReason || awaitingBootstrapTurn)
+    ) {
+      nextLockActive = true;
+      nextConnectionState = "blocked";
+    }
     if (
       current.status.connectionState === nextConnectionState &&
       currentLockActive === nextLockActive &&
@@ -87,10 +91,8 @@ export const applyWorkspaceSnapshotToSnapshots = (
   }
   return changed ? nextSnapshots : snapshots;
 };
-
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
 const resolveServerErrorMessage = (
   payload: unknown
 ): { readonly sessionId: string; readonly message: string } | null => {
@@ -117,7 +119,6 @@ const resolveServerErrorMessage = (
       : "Unknown error.";
   return { sessionId, message: `${providerLabel}${message}` };
 };
-
 const generateLocalMessageId = (): string => {
   if (
     typeof globalThis.crypto !== "undefined" &&
@@ -127,7 +128,6 @@ const generateLocalMessageId = (): string => {
   }
   return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
-
 export const useProjectManagerSessionStream = (params: {
   readonly onSessionCreated: (session: SessionRecord) => void;
   readonly onSessionMessage: (payload: SessionMessageUpdate) => void;
@@ -149,13 +149,11 @@ export const useProjectManagerSessionStream = (params: {
         }
         return;
       }
-
       if (message.type === "session:message") {
         const candidate = message.payload as {
           readonly sessionId?: unknown;
           readonly message?: unknown;
         };
-
         if (isRecord(candidate) && isRecord(candidate.message)) {
           const sessionId =
             typeof candidate.sessionId === "string" ? candidate.sessionId : null;
@@ -168,7 +166,6 @@ export const useProjectManagerSessionStream = (params: {
           }
           return;
         }
-
         const sanitized = sanitizeMessage(message.payload as never);
         if (sanitized && typeof candidate?.sessionId === "string") {
           params.onSessionMessage({
@@ -178,7 +175,6 @@ export const useProjectManagerSessionStream = (params: {
         }
         return;
       }
-
       if (message.type === "session:history") {
         const payload = message.payload as {
           readonly sessionId?: unknown;
@@ -196,7 +192,6 @@ export const useProjectManagerSessionStream = (params: {
         }
         return;
       }
-
       if (message.type === "session:binding") {
         const payload = message.payload as {
           readonly sessionId?: unknown;
@@ -224,7 +219,6 @@ export const useProjectManagerSessionStream = (params: {
         params.onSessionBinding({ sessionId, providerSessionId, status });
         return;
       }
-
       if (message.type === "session:deleted") {
         const payload = message.payload as { readonly sessionId?: unknown };
         if (payload && typeof payload.sessionId === "string") {
@@ -232,7 +226,6 @@ export const useProjectManagerSessionStream = (params: {
         }
         return;
       }
-
       if (message.type === "session:stream") {
         const payload = message.payload as {
           readonly sessionId?: unknown;
@@ -246,7 +239,6 @@ export const useProjectManagerSessionStream = (params: {
         }
         return;
       }
-
       if (message.type === "workspace:snapshot") {
         const payload = message.payload as WorkspaceSnapshotPushPayload;
         if (
@@ -261,7 +253,6 @@ export const useProjectManagerSessionStream = (params: {
         }
         return;
       }
-
       if (message.type === "session:error") {
         const resolved = resolveServerErrorMessage(message.payload);
         if (!resolved) {
@@ -278,7 +269,6 @@ export const useProjectManagerSessionStream = (params: {
         });
       }
     });
-
     return () => {
       unsubscribe();
     };
