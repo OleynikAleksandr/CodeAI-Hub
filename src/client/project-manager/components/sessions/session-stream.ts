@@ -3,6 +3,11 @@ import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import {
+  isRolloverPendingAfterTerminalTurn,
+  resolveContinuityLockActive,
+  resolveContinuityLockReason,
+} from "./session-lock-guards";
+import {
   sanitizeMessage,
   sanitizeSession,
 } from "../../../ui/src/core-bridge/normalizers";
@@ -21,17 +26,6 @@ type SessionHistoryUpdate = {
   readonly sessionId: string;
   readonly messages: readonly unknown[];
 };
-const resolveContinuityLockActive = (
-  session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
-): boolean =>
-  session.continuityLockActive ||
-  session.continuityLockTransition?.awaitingBootstrapTurn === true;
-const resolveContinuityLockReason = (
-  session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
-): string | undefined =>
-  session.continuityLockReason ??
-  session.terminalLockReason ??
-  session.continuityLockTransition?.reason;
 export const applyWorkspaceSnapshotToSnapshots = (
   snapshots: SessionSnapshots,
   payload: WorkspaceSnapshotPushPayload
@@ -57,27 +51,32 @@ export const applyWorkspaceSnapshotToSnapshots = (
     const awaitingBootstrapTurn =
       session.continuityLockTransition?.awaitingBootstrapTurn === true;
     const graphHeldReason = heldLockReasonBySessionId.get(sessionId);
+    const nextLockReason = resolveContinuityLockReason(session) ?? graphHeldReason;
+    const rolloverPending = isRolloverPendingAfterTerminalTurn(
+      session,
+      nextLockReason
+    );
     let nextLockActive =
       resolveContinuityLockActive(session) ||
+      rolloverPending ||
       heldLockReasonBySessionId.has(sessionId) ||
       (session.resumeMode === "no_resume" &&
         session.finalTurnCompleted === true);
-    const nextLockReason = resolveContinuityLockReason(session) ?? graphHeldReason;
     let nextConnectionState: "idle" | "running" | "blocked" = nextLockActive
       ? "blocked"
       : session.turnState;
     const currentLockActive = current.status.continuityLock?.active === true;
     const currentLockReason = current.status.continuityLock?.reason;
+    const allowIdleUnlock =
+      nextLockReason === "resume_ready" ||
+      (nextLockReason === "no_rollover_needed" &&
+        session.resumeMode !== "resume_via_rollover");
     if (
       (current.status.connectionState === "blocked" ||
         (session.resumeMode === "resume_in_place" &&
           current.status.connectionState === "running")) &&
       nextConnectionState === "idle" &&
-      (!(
-        nextLockReason === "no_rollover_needed" ||
-        nextLockReason === "resume_ready"
-      ) ||
-        awaitingBootstrapTurn)
+      (!allowIdleUnlock || awaitingBootstrapTurn)
     ) {
       nextLockActive = true;
       nextConnectionState = "blocked";
