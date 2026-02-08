@@ -14,206 +14,72 @@ const createSnapshot = (): SessionSnapshot => ({
   status: {
     providerSummary: "Claude",
     tokenUsage: { used: 0, limit: 200_000 },
-    connectionState: "idle",
+    connectionState: "running",
     continuityLock: {
-      active: false,
+      active: true,
+      updatedAt: Date.now(),
+    },
+    rollover: {
+      phase: "resume_sent",
       updatedAt: Date.now(),
     },
     updatedAt: Date.now(),
   },
 });
 
-test("updateSnapshotsWithTokenUsage activates continuity lock and blocks input", () => {
-  const next = updateSnapshotsWithTokenUsage(
-    { s1: createSnapshot() },
-    {
-      sessionId: "s1",
-      event: {
-        type: "stream_event",
-        data: {
-          kind: "continuity_lock",
-          state: "locked",
-          rolloverId: "rollover-1",
-          sourceSessionId: "s1",
-          reason: "resume_bootstrap",
-        },
-      },
-    }
-  );
+test("updateSnapshotsWithTokenUsage updates token usage but keeps lock state from snapshot", () => {
+  const snapshots = { s1: createSnapshot() };
 
-  assert.equal(next.s1.status.continuityLock?.active, true);
-  assert.equal(next.s1.status.connectionState, "blocked");
-});
-
-test("updateSnapshotsWithTokenUsage keeps blocked state while continuity lock is active", () => {
-  const snapshot = createSnapshot();
-  const lockedSnapshot: SessionSnapshot = {
-    ...snapshot,
-    status: {
-      ...snapshot.status,
-      connectionState: "blocked",
-      continuityLock: {
-        active: true,
-        rolloverId: "rollover-1",
-        sourceSessionId: "s1",
-        reason: "resume_bootstrap",
-        updatedAt: Date.now(),
+  const next = updateSnapshotsWithTokenUsage(snapshots, {
+    sessionId: "s1",
+    event: {
+      type: "stream_event",
+      data: {
+        kind: "token_usage",
+        used: 42,
+        limit: 100,
       },
-      updatedAt: Date.now(),
     },
-  };
+  });
 
-  const next = updateSnapshotsWithTokenUsage(
-    { s1: lockedSnapshot },
-    {
-      sessionId: "s1",
-      event: {
-        kind: "flow_node_rollover",
-        phase: "resume_sent",
-      },
-    }
-  );
-
-  assert.equal(next.s1.status.connectionState, "blocked");
-  assert.equal(next.s1.status.continuityLock?.active, true);
-});
-
-test("updateSnapshotsWithTokenUsage keeps blocked state while rollover phase is pending", () => {
-  const snapshot = createSnapshot();
-  const rolloverPendingSnapshot: SessionSnapshot = {
-    ...snapshot,
-    status: {
-      ...snapshot.status,
-      connectionState: "blocked",
-      rollover: {
-        phase: "resume_sent",
-        updatedAt: Date.now(),
-      },
-      continuityLock: {
-        active: false,
-        updatedAt: Date.now(),
-      },
-      updatedAt: Date.now(),
-    },
-  };
-
-  const next = updateSnapshotsWithTokenUsage(
-    { s1: rolloverPendingSnapshot },
-    {
-      sessionId: "s1",
-      event: {
-        type: "stream_event",
-        data: {
-          kind: "turn_state",
-          state: "idle",
-        },
-      },
-    }
-  );
-
-  assert.equal(next.s1.status.connectionState, "blocked");
-});
-
-test("updateSnapshotsWithTokenUsage unlocks continuity lock and restores idle state", () => {
-  const snapshot = createSnapshot();
-  const lockedSnapshot: SessionSnapshot = {
-    ...snapshot,
-    status: {
-      ...snapshot.status,
-      connectionState: "blocked",
-      continuityLock: {
-        active: true,
-        rolloverId: "rollover-1",
-        sourceSessionId: "s1",
-        reason: "resume_bootstrap",
-        updatedAt: Date.now(),
-      },
-      updatedAt: Date.now(),
-    },
-  };
-
-  const next = updateSnapshotsWithTokenUsage(
-    { s1: lockedSnapshot },
-    {
-      sessionId: "s1",
-      event: {
-        type: "stream_event",
-        data: {
-          kind: "continuity_lock",
-          state: "unlocked",
-          rolloverId: "rollover-1",
-          sourceSessionId: "s1",
-          reason: "resume_ready",
-        },
-      },
-    }
-  );
-
-  assert.equal(next.s1.status.continuityLock?.active, false);
-  assert.equal(next.s1.status.connectionState, "idle");
-});
-
-test("updateSnapshotsWithTokenUsage clears resume_sent pending state on terminal continuity unlock", () => {
-  const snapshot = createSnapshot();
-  const pendingSnapshot: SessionSnapshot = {
-    ...snapshot,
-    status: {
-      ...snapshot.status,
-      connectionState: "blocked",
-      rollover: {
-        phase: "resume_sent",
-        updatedAt: Date.now(),
-      },
-      continuityLock: {
-        active: true,
-        rolloverId: "rollover-2",
-        sourceSessionId: "s1",
-        reason: "resume_bootstrap",
-        updatedAt: Date.now(),
-      },
-      updatedAt: Date.now(),
-    },
-  };
-
-  const next = updateSnapshotsWithTokenUsage(
-    { s1: pendingSnapshot },
-    {
-      sessionId: "s1",
-      event: {
-        type: "stream_event",
-        data: {
-          kind: "continuity_lock",
-          state: "unlocked",
-          rolloverId: "rollover-2",
-          sourceSessionId: "s1",
-          reason: "resume_ready",
-        },
-      },
-    }
-  );
-
-  assert.equal(next.s1.status.continuityLock?.active, false);
-  assert.equal(next.s1.status.rollover?.phase, "resume_ready");
-  assert.equal(next.s1.status.connectionState, "idle");
-});
-
-test("updateSnapshotsWithTokenUsage immediately applies running turn_state from stream event", () => {
-  const snapshot = createSnapshot();
-
-  const next = updateSnapshotsWithTokenUsage(
-    { s1: snapshot },
-    {
-      sessionId: "s1",
-      event: {
-        type: "stream_event",
-        provider: "codex",
-        data: {
-          kind: "turn_state",
-          state: "running",
-        },
-      },
-    }
-  );
-
+  assert.equal(next.s1.status.tokenUsage.used, 42);
+  assert.equal(next.s1.status.tokenUsage.limit, 100);
   assert.equal(next.s1.status.connectionState, "running");
+  assert.equal(next.s1.status.continuityLock?.active, true);
+  assert.equal(next.s1.status.rollover?.phase, "resume_sent");
+});
+
+test("updateSnapshotsWithTokenUsage ignores turn_state stream events", () => {
+  const snapshots = { s1: createSnapshot() };
+
+  const next = updateSnapshotsWithTokenUsage(snapshots, {
+    sessionId: "s1",
+    event: {
+      type: "stream_event",
+      data: {
+        kind: "turn_state",
+        state: "idle",
+      },
+    },
+  });
+
+  assert.equal(next, snapshots);
+});
+
+test("updateSnapshotsWithTokenUsage ignores continuity_lock stream events", () => {
+  const snapshots = { s1: createSnapshot() };
+
+  const next = updateSnapshotsWithTokenUsage(snapshots, {
+    sessionId: "s1",
+    event: {
+      type: "stream_event",
+      data: {
+        kind: "continuity_lock",
+        state: "unlocked",
+        reason: "resume_ready",
+      },
+    },
+  });
+
+  assert.equal(next, snapshots);
 });

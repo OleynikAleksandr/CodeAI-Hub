@@ -14,5 +14,7 @@ test("session-stream remains a transport layer for session events", async () => 
   assert.equal(source.includes('if (message.type === "session:created")'), true);
   assert.equal(source.includes("params.onSessionCreated(normalized);"), true);
   assert.equal(source.includes('if (message.type === "session:stream")'), true);
+  assert.equal(source.includes('if (message.type === "workspace:snapshot")'), true);
+  assert.equal(source.includes("params.onWorkspaceSnapshot?.(payload);"), true);
   assert.equal(source.includes("setActiveSessionId"), false);
 });
