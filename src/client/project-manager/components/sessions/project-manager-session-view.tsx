@@ -236,6 +236,7 @@ export const ProjectManagerSessionView = ({ workspacePath, preferredSessionId }:
       setSnapshots((previous) => updateSnapshotsWithTokenUsage(previous, payload)),
     onWorkspaceSnapshot: (payload) => {
       workspaceSnapshotStore.applySnapshot(payload);
+      // workspace:snapshot is authoritative for runtime lock lifecycle in PM.
       setSnapshots((previous) => applyWorkspaceSnapshotToSnapshots(previous, payload));
     },
   });

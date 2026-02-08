@@ -137,3 +137,17 @@ test("InputPanel enables fieldset when continuity unlock is resolved", async () 
     false
   );
 });
+
+test("InputPanel keeps handoff lock until final reviewer snapshot unlocks it", async () => {
+  const handoffHtml = await renderInputPanel({
+    connectionState: "blocked",
+    continuityLockActive: true,
+  });
+  const reviewerCompletedHtml = await renderInputPanel({
+    connectionState: "idle",
+    continuityLockActive: false,
+  });
+
+  assert.equal(handoffHtml.includes("disabled"), true);
+  assert.equal(reviewerCompletedHtml.includes("disabled"), false);
+});
