@@ -14,7 +14,6 @@ type ReviewerSessionVisibility = {
 type DescriptionSessionSnapshot = {
   readonly kind: "collector" | "reviewer";
   readonly session: DescriptionSessionRef;
-  readonly terminalNoResume: boolean;
 };
 
 const resolveDescriptionSessionSnapshot = (
@@ -27,8 +26,6 @@ const resolveDescriptionSessionSnapshot = (
   return {
     kind: description.sessionKind,
     session: description.session,
-    terminalNoResume:
-      description.sessionKind === "collector" && Boolean(description.draftPath),
   };
 };
 
@@ -94,18 +91,15 @@ const buildForcedHiddenSessionIds = (params: {
   readonly reviewerSessionId: string | null;
   readonly descriptionSessionSnapshot: DescriptionSessionSnapshot | null;
 }): ReadonlySet<string> => {
-  if (!params.workspacePath) {
+  if (!params.workspacePath || !params.reviewerSessionId) {
     return new Set();
   }
   const hidden = new Set<string>();
-  const hideTerminalCollectors =
-    params.reviewerSessionId === null &&
-    params.descriptionSessionSnapshot?.terminalNoResume === true;
   for (const session of params.sessions) {
     if (
       session.workspacePath === params.workspacePath &&
       session.stage === "description" &&
-      (hideTerminalCollectors || session.id !== params.reviewerSessionId)
+      session.id !== params.reviewerSessionId
     ) {
       hidden.add(session.id);
     }
