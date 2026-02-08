@@ -146,10 +146,10 @@
 
 ### Stream: QA Gates
 1. [DONE] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 110 description-session visibility hotfix gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
-2. [TODO] Git Commit: `chore(qa): validate phase 110 description-session visibility hotfix gates` (hash: TBD)
+2. [DONE] Git Commit: `chore(qa): validate phase 110 description-session visibility hotfix gates` (hash: 86fd936c)
 
 ### Stream: Release Build
-1. [TODO] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 110 visibility hotfix`)
+1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 110 visibility hotfix`)
 2. [TODO] Git Commit: `docs(release): prepare release notes for phase 110 visibility hotfix` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 110 visibility hotfix`)
 4. [TODO] Git Commit: `chore(release): run build-all for phase 110 visibility hotfix` (hash: TBD)
