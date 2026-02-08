@@ -55,7 +55,11 @@ export type WorkspaceSnapshotContinuityLockTransition = {
   readonly stageId?: string;
   readonly runSlug?: string | null;
   readonly reason: WorkspaceSnapshotContinuityLockReason;
+  readonly rolloverPending?: boolean;
   readonly awaitingBootstrapTurn: boolean;
+  readonly resumeMode?: WorkspaceSnapshotSessionResumeMode;
+  readonly finalTurnCompleted?: boolean;
+  readonly terminalLockReason?: "terminal_no_resume";
   readonly updatedAt: string;
 };
 

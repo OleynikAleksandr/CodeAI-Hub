@@ -55,6 +55,7 @@ export type SessionContinuityLockTransition = {
   readonly stageId?: string;
   readonly runSlug?: string | null;
   readonly reason: SessionContinuityLockReason;
+  readonly rolloverPending?: boolean;
   readonly awaitingBootstrapTurn: boolean;
   readonly resumeMode?: SessionResumeMode;
   readonly finalTurnCompleted?: boolean;
