@@ -223,7 +223,7 @@ test("WorkspaceRuntimeFacade publishes lock transition metadata in snapshot", as
 
   facade.notifyLockChanged(sessionKey, {
     active: false,
-    reason: "resume_ready",
+    reason: "no_rollover_needed",
     transition: null,
   });
   await wait(5);
@@ -232,8 +232,48 @@ test("WorkspaceRuntimeFacade publishes lock transition metadata in snapshot", as
     events.at(-1)?.payload.snapshot.sessions[sessionKey.sessionId];
   assert.ok(unlockedSnapshot);
   assert.equal(unlockedSnapshot.continuityLockActive, false);
-  assert.equal(unlockedSnapshot.continuityLockReason, "resume_ready");
+  assert.equal(unlockedSnapshot.continuityLockReason, "no_rollover_needed");
   assert.equal(unlockedSnapshot.continuityLockTransition, undefined);
+
+  facade.dispose();
+});
+
+test("WorkspaceRuntimeFacade keeps continuity lock active for resume timeout", async () => {
+  const events: WorkspaceSnapshotPush[] = [];
+  const facade = new WorkspaceRuntimeFacade({
+    snapshotDebounceMs: 25,
+    selectionIdFactory: () => "sel-lock-timeout",
+  });
+
+  facade.subscribe("client-1", (message) => {
+    events.push(message);
+  });
+
+  const sessionKey = createSessionKey(workspaceA, "session-lock-timeout");
+  facade.select({
+    clientId: "client-1",
+    request: {
+      requestId: "req-1",
+      workspaceRoot: workspaceA,
+      reason: "workspace_selected",
+    },
+  });
+  facade.notifySessionCreated(sessionKey, { providerId: "claudeCodeCli" });
+  await wait(40);
+
+  facade.notifyLockChanged(sessionKey, {
+    active: true,
+    reason: "resume_timeout",
+    transition: null,
+  });
+  await wait(5);
+
+  const timeoutSnapshot =
+    events.at(-1)?.payload.snapshot.sessions[sessionKey.sessionId];
+  assert.ok(timeoutSnapshot);
+  assert.equal(timeoutSnapshot.continuityLockActive, true);
+  assert.equal(timeoutSnapshot.continuityLockReason, "resume_timeout");
+  assert.equal(timeoutSnapshot.continuityLockTransition, undefined);
 
   facade.dispose();
 });

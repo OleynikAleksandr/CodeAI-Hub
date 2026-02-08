@@ -42,6 +42,7 @@ export type SessionContinuityLockReason =
   | "threshold_reached"
   | "report_in_progress"
   | "resume_bootstrap"
+  | "no_rollover_needed"
   | "resume_ready"
   | "resume_failed"
   | "resume_timeout"
