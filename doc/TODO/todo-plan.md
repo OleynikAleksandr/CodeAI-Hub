@@ -116,10 +116,10 @@
 
 ### Stream: Docs Sync
 1. [DONE] Синхронно обновить архитектурные документы после реализации контрактов (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`; expected commit: `docs(architecture): sync implemented resume-mode lock contract`)
-2. [TODO] Git Commit: `docs(architecture): sync implemented resume-mode lock contract` (hash: TBD)
+2. [DONE] Git Commit: `docs(architecture): sync implemented resume-mode lock contract` (hash: 5c8152a4)
 
 ### Stream: QA Gates
-1. [TODO] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 109 resume-mode lock contract gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
+1. [DONE] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 109 resume-mode lock contract gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
 2. [TODO] Git Commit: `chore(qa): validate phase 109 resume-mode lock contract gates` (hash: TBD)
 
 ### Stream: Release Build
