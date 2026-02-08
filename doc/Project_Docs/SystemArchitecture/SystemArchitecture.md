@@ -336,12 +336,12 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.502 |
-| Core | 1.1.502 |
-| UI Bundles | 1.1.502 |
-| Claude Module | 1.1.502 |
-| Codex Module | 1.1.502 |
-| Gemini Module | 1.1.502 |
+| VSIX | 1.1.525 |
+| Core | 1.1.525 |
+| UI Bundles | 1.1.525 |
+| Claude Module | 1.1.525 |
+| Codex Module | 1.1.525 |
+| Gemini Module | 1.1.525 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |
