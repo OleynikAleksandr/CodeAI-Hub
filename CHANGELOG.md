@@ -1,3 +1,10 @@
+## [1.1.531] - 2026-02-08
+### Fixed
+- Core/PM: отключен session runtime watchdog auto-idle по умолчанию (раньше 120s), чтобы PM/UI не разблокировали ввод в середине долгих/"тихих" turn (например, в Description collector) до реального завершения turn.
+
+### Added
+- Core: regression test, подтверждающий что `SessionRuntime` по умолчанию не выполняет auto-idle по таймауту без явной конфигурации.
+
 ## [1.1.530] - 2026-02-08
 ### Fixed
 - Core/PM: internal workflow dispatch теперь эмитит `turn_state=running`, предотвращая преждевременную разблокировку ввода в PM (например, в Description collector) до фактического завершения turn.
