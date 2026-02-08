@@ -25,6 +25,8 @@ import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-r
 import type {
   SessionContinuityLockReason,
   SessionContinuityLockTransition,
+  SessionResumeMode,
+  SessionTerminalLockReason,
 } from "../../workspace-runtime/workspace-runtime-types";
 import { type BridgeEvent, serializeSession } from "../types";
 import { QuestionnaireCuratorFacade } from "./questionnaire-curator-facade";
@@ -134,6 +136,16 @@ type FlowNodeContinuityLockContext = {
   readonly stageId: string;
   readonly runSlug: string | null;
   readonly awaitingBootstrapTurn: boolean;
+};
+
+type SessionResumeLifecycleState = {
+  readonly mode: SessionResumeMode;
+  readonly finalTurnCompleted: boolean;
+  readonly terminalLockReason: SessionTerminalLockReason | null;
+};
+
+type SessionResumeLifecycleStoreHost = {
+  sessionResumeLifecycleStates?: Map<string, SessionResumeLifecycleState>;
 };
 
 type WorkflowStageId =
@@ -325,10 +337,142 @@ export class SessionRequestHandler {
     string,
     NodeJS.Timeout
   >();
+  private readonly sessionResumeLifecycleStates = new Map<
+    string,
+    SessionResumeLifecycleState
+  >();
   private flowNodeContinuitySettingsCache: {
     readonly mtimeMs: number;
     readonly settings: unknown;
   } | null = null;
+
+  private getSessionResumeLifecycleStore(): Map<
+    string,
+    SessionResumeLifecycleState
+  > {
+    const host = this as unknown as SessionResumeLifecycleStoreHost;
+    if (host.sessionResumeLifecycleStates) {
+      return host.sessionResumeLifecycleStates;
+    }
+    host.sessionResumeLifecycleStates = new Map<
+      string,
+      SessionResumeLifecycleState
+    >();
+    return host.sessionResumeLifecycleStates;
+  }
+
+  private resolveInitialResumeMode(options: {
+    readonly stage: string | null;
+    readonly runSlug: string | null;
+    readonly explicitMode?: SessionResumeMode | null;
+  }): SessionResumeMode {
+    if (options.explicitMode) {
+      return options.explicitMode;
+    }
+    if (options.stage === "description" && options.runSlug !== "reviewer") {
+      return "no_resume";
+    }
+    return "resume_in_place";
+  }
+
+  private getSessionResumeLifecycleState(
+    session: Session
+  ): SessionResumeLifecycleState {
+    const existing = this.getSessionResumeLifecycleStore().get(session.id);
+    if (existing) {
+      return existing;
+    }
+    return {
+      mode: this.resolveInitialResumeMode({
+        stage: session.stage,
+        runSlug: session.runSlug,
+      }),
+      finalTurnCompleted: false,
+      terminalLockReason: null,
+    };
+  }
+
+  private broadcastSessionResumeLifecycleState(
+    session: Session,
+    state: SessionResumeLifecycleState
+  ): void {
+    const patch = {
+      resumeMode: state.mode,
+      finalTurnCompleted: state.finalTurnCompleted,
+      terminalLockReason: state.terminalLockReason ?? undefined,
+    } as unknown as Parameters<
+      WorkspaceRuntimeFacade["notifySessionCreated"]
+    >[1];
+    this.workspaceRuntime?.notifySessionCreated(
+      {
+        workspaceRoot: session.workspacePath,
+        nodeId: session.stage ?? "session",
+        sessionId: session.id,
+      },
+      patch
+    );
+  }
+
+  private updateSessionResumeLifecycleState(
+    session: Session,
+    patch: Partial<SessionResumeLifecycleState>
+  ): SessionResumeLifecycleState {
+    const current = this.getSessionResumeLifecycleState(session);
+    const next: SessionResumeLifecycleState = {
+      mode: patch.mode ?? current.mode,
+      finalTurnCompleted:
+        patch.finalTurnCompleted ?? current.finalTurnCompleted,
+      terminalLockReason:
+        patch.terminalLockReason === undefined
+          ? current.terminalLockReason
+          : patch.terminalLockReason,
+    };
+    if (
+      next.mode === current.mode &&
+      next.finalTurnCompleted === current.finalTurnCompleted &&
+      next.terminalLockReason === current.terminalLockReason
+    ) {
+      return current;
+    }
+    this.getSessionResumeLifecycleStore().set(session.id, next);
+    this.broadcastSessionResumeLifecycleState(session, next);
+    return next;
+  }
+
+  private elevateSessionToRolloverResumeMode(session: Session): void {
+    this.updateSessionResumeLifecycleState(session, {
+      mode: "resume_via_rollover",
+      finalTurnCompleted: false,
+      terminalLockReason: null,
+    });
+  }
+
+  private handleNoResumeTurnCompleted(session: Session): void {
+    const state = this.getSessionResumeLifecycleState(session);
+    if (
+      state.finalTurnCompleted &&
+      state.terminalLockReason === "terminal_no_resume"
+    ) {
+      return;
+    }
+    const rolloverId = crypto.randomUUID();
+    const stageId = session.stage ?? "session";
+    const runSlug = session.runSlug ?? null;
+    this.updateSessionResumeLifecycleState(session, {
+      mode: "no_resume",
+      finalTurnCompleted: true,
+      terminalLockReason: "terminal_no_resume",
+    });
+    this.emitContinuityLockEvent({
+      sessionId: session.id,
+      rolloverId,
+      sourceSessionId: session.id,
+      stageId,
+      runSlug,
+      state: "locked",
+      reason: "terminal_no_resume",
+    });
+  }
 
   private emitFlowNodeRolloverNotification(
     sessionId: string,
@@ -395,6 +539,9 @@ export class SessionRequestHandler {
   }): void {
     const session = this.sessionManager.getSession(options.sessionId);
     const providerId = session?.providerId ?? null;
+    const lifecycleState = session
+      ? this.getSessionResumeLifecycleState(session)
+      : null;
     const timestamp = new Date().toISOString();
     const lockTransition: SessionContinuityLockTransition | null =
       options.state === "locked"
@@ -408,6 +555,9 @@ export class SessionRequestHandler {
             runSlug: options.runSlug,
             reason: options.reason,
             awaitingBootstrapTurn: options.reason === "resume_bootstrap",
+            resumeMode: lifecycleState?.mode,
+            finalTurnCompleted: lifecycleState?.finalTurnCompleted,
+            terminalLockReason: lifecycleState?.terminalLockReason ?? undefined,
             updatedAt: timestamp,
           }
         : null;
@@ -730,6 +880,7 @@ export class SessionRequestHandler {
     readonly providerId: string;
     readonly workspacePath: string;
     readonly adapter: ProviderAdapter;
+    readonly resumeMode?: SessionResumeMode;
     readonly context: {
       readonly initiativeSlug: string | null;
       readonly stage: string | null;
@@ -809,6 +960,20 @@ export class SessionRequestHandler {
         bindingStatus: session.providerSessionStatus,
       }
     );
+    const initialLifecycleState: SessionResumeLifecycleState = {
+      mode: this.resolveInitialResumeMode({
+        stage: session.stage,
+        runSlug: session.runSlug,
+        explicitMode: options.resumeMode ?? null,
+      }),
+      finalTurnCompleted: false,
+      terminalLockReason: null,
+    };
+    this.getSessionResumeLifecycleStore().set(
+      session.id,
+      initialLifecycleState
+    );
+    this.broadcastSessionResumeLifecycleState(session, initialLifecycleState);
 
     this.broadcaster({
       type: "session:created",
@@ -1100,6 +1265,7 @@ export class SessionRequestHandler {
       readonly initiativeSlug: string;
       readonly stage: string;
       readonly runSlug?: string | null;
+      readonly resumeMode?: SessionResumeMode;
     };
   }): Promise<Session | null> {
     const adapter = this.providerRegistry.getAdapter(options.providerId);
@@ -1115,6 +1281,7 @@ export class SessionRequestHandler {
         providerId: options.providerId,
         workspacePath: options.workspacePath,
         adapter,
+        resumeMode: options.context.resumeMode,
         context: {
           initiativeSlug: options.context.initiativeSlug,
           stage: options.context.stage,
@@ -1152,6 +1319,32 @@ export class SessionRequestHandler {
     }
 
     this.logResolvedSessionForIncomingMessage(sessionId, session);
+    const lifecycleState = this.getSessionResumeLifecycleState(session);
+    if (
+      lifecycleState.mode === "no_resume" &&
+      lifecycleState.finalTurnCompleted
+    ) {
+      this.broadcaster({
+        type: "session:error",
+        payload: {
+          sessionId,
+          code: "session_terminal_read_only",
+          message:
+            "This session is terminal and read-only. Create a new session to continue.",
+        },
+      });
+      return;
+    }
+
+    if (
+      lifecycleState.finalTurnCompleted ||
+      lifecycleState.terminalLockReason !== null
+    ) {
+      this.updateSessionResumeLifecycleState(session, {
+        finalTurnCompleted: false,
+        terminalLockReason: null,
+      });
+    }
 
     const rolloverSendGuard = this.resolveFlowNodeRolloverSendGuard(sessionId);
     if (!rolloverSendGuard.allowed) {
@@ -1282,6 +1475,7 @@ export class SessionRequestHandler {
     }
 
     this.sessionStorage.close(sessionId, "session-deleted");
+    this.getSessionResumeLifecycleStore().delete(sessionId);
     this.workspaceRuntime?.notifySessionDeleted({
       workspaceRoot: session.workspacePath,
       nodeId: session.stage ?? "session",
@@ -1361,6 +1555,7 @@ export class SessionRequestHandler {
 
     this.flowNodeRolloverInFlight.add(sessionId);
     this.flowNodeRolloverStarted.add(sessionId);
+    this.elevateSessionToRolloverResumeMode(session);
     const remainingPercent = computeRemainingPercent(usage);
     const continuityLockContext = this.registerFlowNodeContinuityLockContext({
       rolloverId: crypto.randomUUID(),
@@ -1459,6 +1654,7 @@ export class SessionRequestHandler {
 
     this.flowNodeRolloverInFlight.add(sessionId);
     this.flowNodeRolloverStarted.add(sessionId);
+    this.elevateSessionToRolloverResumeMode(session);
     const continuityLockContext = this.registerFlowNodeContinuityLockContext({
       rolloverId: crypto.randomUUID(),
       sourceSessionId: sessionId,
@@ -1500,6 +1696,16 @@ export class SessionRequestHandler {
   }
 
   private async handleTurnCompletedEvent(sessionId: string): Promise<void> {
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      return;
+    }
+    const resumeMode = this.getSessionResumeLifecycleState(session).mode;
+    if (resumeMode === "no_resume") {
+      this.emitTurnStateEvent({ sessionId, state: "idle" });
+      this.handleNoResumeTurnCompleted(session);
+      return;
+    }
     const rolloverStarted =
       await this.handleFlowNodeContinuitySilentPreemptiveRollover(sessionId);
     if (rolloverStarted) {
@@ -1753,6 +1959,7 @@ export class SessionRequestHandler {
       providerId: session.providerId,
       workspacePath: session.workspacePath,
       adapter,
+      resumeMode: "resume_via_rollover",
       context: {
         initiativeSlug: workspaceSlug,
         stage: stageId,

@@ -305,6 +305,7 @@ export class WorkflowRuntime {
           initiativeSlug: params.workspaceSlug,
           stage: "description",
           runSlug: "reviewer",
+          resumeMode: "resume_in_place",
         },
       });
 
