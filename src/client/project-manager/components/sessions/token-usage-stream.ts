@@ -41,6 +41,8 @@ const extractTokenUsage = (event: unknown): TokenUsageSnapshot | null => {
   if (!isRecord(event)) {
     return null;
   }
+  // Snapshot pipeline is authoritative for lock/turn state.
+  // Stream pipeline only updates token usage cache and message content.
   if (isRecord(event.tokenUsage)) {
     const used = readNumber(event.tokenUsage.used);
     const limit = readNumber(event.tokenUsage.limit);
@@ -52,6 +54,13 @@ const extractTokenUsage = (event: unknown): TokenUsageSnapshot | null => {
   if (isRecord(event.data) && event.data.kind === "token_usage") {
     const used = readNumber(event.data.used);
     const limit = readNumber(event.data.limit);
+    if (used !== null && limit !== null && limit > 0) {
+      return { used, limit };
+    }
+  }
+  if (isRecord(event.data) && isRecord(event.data.tokenUsage)) {
+    const used = readNumber(event.data.tokenUsage.used);
+    const limit = readNumber(event.data.tokenUsage.limit);
     if (used !== null && limit !== null && limit > 0) {
       return { used, limit };
     }
