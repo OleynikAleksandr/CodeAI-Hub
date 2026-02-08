@@ -35,19 +35,9 @@ test("reviewer-session-visibility keeps deterministic reopen/resume matching wit
     "fallback must deterministically pick latest description session"
   );
   assert.equal(
-    source.includes("terminalNoResume"),
+    source.includes("!params.workspacePath || !params.reviewerSessionId"),
     true,
-    "terminal no-resume marker must stay in visibility snapshot contract"
-  );
-  assert.equal(
-    source.includes("hideTerminalCollectors"),
-    true,
-    "terminal collector sessions must be excluded from focus path"
-  );
-  assert.equal(
-    source.includes("params.reviewerSessionId === null"),
-    true,
-    "terminal collector hiding must be enabled only when no reviewer session is resolved"
+    "description sessions must not be force-hidden before reviewer session is resolved"
   );
 });
 
