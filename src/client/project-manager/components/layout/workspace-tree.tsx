@@ -147,6 +147,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     if (session) {
       const isReviewerSession =
         branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
+      const isTerminalCollector = !isReviewerSession && Boolean(branch.draftPath);
       const providerTitle =
         session.providerId === "claudeCodeCli" ||
         session.providerId === "codexCli" ||
@@ -155,14 +156,14 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           : session.providerId;
       const label = isReviewerSession
         ? `Reviewer ${providerTitle}`
-        : `Description ${providerTitle}`;
+        : `Description ${providerTitle}${isTerminalCollector ? " (read-only)" : ""}`;
       const runSlug = isReviewerSession ? "reviewer" : null;
       nodes.push({
         id: "workflow:description:session",
         label,
-        status: "active",
+        status: isTerminalCollector ? "blocked" : "active",
         visualDepth: 2,
-        onSelect: () => {
+        onSelect: isTerminalCollector ? undefined : () => {
           if (!(workspaceSlug && workspacePath)) {
             return;
           }

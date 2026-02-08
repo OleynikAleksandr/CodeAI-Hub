@@ -23041,7 +23041,8 @@ ${path2}` : path2;
       }
     );
     const connectionState = activeSession?.status.connectionState ?? "idle";
-    const continuityLockActive = activeSession?.status.continuityLock?.active === true || connectionState === "blocked";
+    const terminalNoResume = activeSession?.status.continuityLock?.reason === "terminal_no_resume";
+    const continuityLockActive = activeSession?.status.continuityLock?.active === true || connectionState === "blocked" || terminalNoResume;
     const effectiveContinuityLockActive = continuityLockActive;
     const inputConnectionState = effectiveContinuityLockActive ? "blocked" : connectionState;
     const { isQueued, submitMessage } = useQueuedSend({
@@ -23082,6 +23083,7 @@ ${path2}` : path2;
           }
         ) }),
         /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app__rails", children: [
+          terminalNoResume ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-input__hint", children: "This session is complete and read-only." }) : null,
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             input_panel_default,
             {

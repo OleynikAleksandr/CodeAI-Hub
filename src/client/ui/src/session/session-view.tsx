@@ -79,9 +79,12 @@ const SessionViewBody = ({
 
   const connectionState: ConnectionState =
     activeSession?.status.connectionState ?? "idle";
+  const terminalNoResume =
+    activeSession?.status.continuityLock?.reason === "terminal_no_resume";
   const continuityLockActive =
     activeSession?.status.continuityLock?.active === true ||
-    connectionState === "blocked";
+    connectionState === "blocked" ||
+    terminalNoResume;
   const effectiveContinuityLockActive = continuityLockActive;
   const inputConnectionState: ConnectionState = effectiveContinuityLockActive
     ? "blocked"
@@ -131,6 +134,11 @@ const SessionViewBody = ({
           />
         </div>
         <div className="session-app__rails">
+          {terminalNoResume ? (
+            <div className="session-input__hint">
+              This session is complete and read-only.
+            </div>
+          ) : null}
           <InputPanel
             connectionState={inputConnectionState}
             continuityLockActive={effectiveContinuityLockActive}
