@@ -73,11 +73,11 @@
 
 ### Stream: Non-Regression Tests (PM/UI)
 1. [DONE] Добавить тесты на монотонность lock: запрет `blocked → idle → blocked` на snapshot-последовательностях при handoff/auto-start reviewer и на post-answer continuity triggers (scope: `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit: `test(ui): prevent snapshot-driven unlock flicker across continuity lifecycle`)
-2. [DONE] Git Commit: `test(ui): prevent snapshot-driven unlock flicker across continuity lifecycle` (hash: TBD)
+2. [DONE] Git Commit: `test(ui): prevent snapshot-driven unlock flicker across continuity lifecycle` (hash: b166a648)
 
 ### Stream: QA Gates
-1. [TODO] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 108 snapshot-lock monotonicity gates`)
-2. [TODO] Git Commit: `chore(qa): validate phase 108 snapshot-lock monotonicity gates` (hash: TBD)
+1. [DONE] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 108 snapshot-lock monotonicity gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
+2. [DONE] Git Commit: `chore(qa): validate phase 108 snapshot-lock monotonicity gates` (hash: TBD)
 
 ### Stream: Release Build (Test)
 1. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 108 snapshot-lock monotonicity`)
