@@ -46,6 +46,11 @@ const resolveScopeAckPayload = (
   };
 };
 
+/**
+ * @deprecated Phase 105: use `workspace:select` via `api.selectWorkspace(...)`.
+ * Kept only as transition fallback for legacy cores that do not support
+ * workspace runtime selection protocol yet.
+ */
 export const syncWorkspaceScopeWithAck = async (params: {
   readonly workspacePath: string | null;
   readonly workspaceSlug?: string | null;
