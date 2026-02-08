@@ -45,3 +45,31 @@
 4. [DONE] Git Commit: `chore(release): run build-all for phase 113 rollover unlock guard` (hash: 61053122)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 113 rollover unlock guard`; result: `codeai-hub-1.1.532.vsix` собран, `Verifying SDK exclusions` и `Package created` подтверждены)
 6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 113 rollover unlock guard` (hash: 4f70bbfe)
+
+---
+
+## Phase 114 — Atomic Turn-End Dual-Gate Arbitration (owner: Oleksandr, updated: 2026-02-08)
+
+**Problem (manual regression):**
+- Короткий unlock-gap всё ещё возможен между `turn_completed` в source session и началом rollover/report pipeline.
+- Причина: race между async threshold-check (`handleFlowNodeContinuityProviderEvent`) и веткой `turn_completed`, где `idle` может эмититься раньше pending-lock.
+
+### Stream: Core Atomic Dual-Gate
+1. [DONE] Убрать race в `turn_completed`: выполнять continuity/threshold arbitration атомарно до `idle` (и не эмитить unlock, пока Core не примет явное решение `no_rollover_needed` либо `rollover_pending`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(core): make turn-completed unlock depend on atomic rollover arbitration`)
+2. [TODO] Git Commit: `fix(core): make turn-completed unlock depend on atomic rollover arbitration` (hash: TBD)
+
+### Stream: Non-Regression Tests
+1. [TODO] Добавить тест на async-race: `turn_completed` не может эмитить `idle` до завершения rollover arbitration, даже если lock устанавливается с задержкой (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): prevent turn-completed idle before async rollover arbitration resolves`)
+2. [TODO] Git Commit: `test(core): prevent turn-completed idle before async rollover arbitration resolves` (hash: TBD)
+
+### Stream: Docs + QA Gates
+1. [TODO] Синхронно обновить архитектурные документы и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates`)
+2. [TODO] Git Commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates` (hash: TBD)
+
+### Stream: Release Build
+1. [TODO] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 114 atomic dual-gate fix`)
+2. [TODO] Git Commit: `docs(release): prepare release notes for phase 114 atomic dual-gate fix` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 114 atomic dual-gate fix`)
+4. [TODO] Git Commit: `chore(release): run build-all for phase 114 atomic dual-gate fix` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 114 atomic dual-gate fix`)
+6. [TODO] Git Commit: `chore(release): build and verify vsix for phase 114 atomic dual-gate fix` (hash: TBD)

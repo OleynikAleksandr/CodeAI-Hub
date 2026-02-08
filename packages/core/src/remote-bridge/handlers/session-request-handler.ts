@@ -1522,23 +1522,75 @@ export class SessionRequestHandler {
       });
     });
 
-    this.handleFlowNodeContinuityProviderEvent(sessionId, event).catch(
-      (error) => {
-        this.logger.warn("Flow node continuity handler failed", {
-          sessionId,
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
+    const flowNodeContinuityTask = this.handleFlowNodeContinuityProviderEvent(
+      sessionId,
+      event
     );
 
     if (typeof event === "string") {
+      flowNodeContinuityTask.catch((error) => {
+        this.logFlowNodeContinuityHandlerFailed(sessionId, error);
+      });
       this.updateBindingWithResolvedId(sessionId, event);
       return;
     }
     if (!event || typeof event !== "object") {
+      flowNodeContinuityTask.catch((error) => {
+        this.logFlowNodeContinuityHandlerFailed(sessionId, error);
+      });
       return;
     }
-    this.handleTypedProviderEvent(sessionId, event as ProviderEventEnvelope);
+    const typedEvent = event as ProviderEventEnvelope;
+    if (typedEvent.type === "turn_completed") {
+      this.handleTurnCompletedWithFlowNodeArbitration(
+        sessionId,
+        flowNodeContinuityTask
+      );
+      return;
+    }
+    flowNodeContinuityTask.catch((error) => {
+      this.logFlowNodeContinuityHandlerFailed(sessionId, error);
+    });
+    this.handleTypedProviderEvent(sessionId, typedEvent);
+  }
+
+  private logFlowNodeContinuityHandlerFailed(
+    sessionId: string,
+    error: unknown
+  ): void {
+    this.logger.warn("Flow node continuity handler failed", {
+      sessionId,
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+
+  private handleTurnCompletedWithFlowNodeArbitration(
+    sessionId: string,
+    flowNodeContinuityTask: Promise<void>
+  ): void {
+    flowNodeContinuityTask
+      .catch((error) => {
+        this.logFlowNodeContinuityHandlerFailed(sessionId, error);
+      })
+      .finally(() => {
+        this.runTurnCompletedArbitration(sessionId);
+      });
+  }
+
+  private runTurnCompletedArbitration(sessionId: string): void {
+    this.handleTurnCompletedEvent(sessionId).catch((error) => {
+      this.logger.warn("Turn completion arbitration failed", {
+        sessionId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      if (!this.isFlowNodeRolloverPending(sessionId)) {
+        this.emitTurnStateEvent({ sessionId, state: "idle" });
+      }
+      this.finalizeFlowNodeContinuityLockOnBootstrapGate({
+        sessionId,
+        reason: "resume_failed",
+      });
+    });
   }
 
   private async handleFlowNodeContinuityProviderEvent(
@@ -2110,19 +2162,7 @@ export class SessionRequestHandler {
         this.emitTurnStateEvent({ sessionId, state: "running" });
         break;
       case "turn_completed":
-        this.handleTurnCompletedEvent(sessionId).catch((error) => {
-          this.logger.warn("Turn completion arbitration failed", {
-            sessionId,
-            error: error instanceof Error ? error.message : String(error),
-          });
-          if (!this.isFlowNodeRolloverPending(sessionId)) {
-            this.emitTurnStateEvent({ sessionId, state: "idle" });
-          }
-          this.finalizeFlowNodeContinuityLockOnBootstrapGate({
-            sessionId,
-            reason: "resume_failed",
-          });
-        });
+        this.runTurnCompletedArbitration(sessionId);
         break;
       case "turn_failed":
         this.emitTurnStateEvent({ sessionId, state: "idle" });
