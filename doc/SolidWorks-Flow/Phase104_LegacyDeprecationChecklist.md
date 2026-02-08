@@ -13,9 +13,9 @@
 
 ## 2. PM protocol migration gates
 
-- [ ] PM больше не отправляет `workspace:scope:set` ни в одном runtime-пути.
-- [ ] Все переключения workspace и resync идут через `workspace:select` / `workspace:snapshot:request`.
-- [ ] Resume/create flow блокируются до `workspace:select:ack(status=applied)`.
+- [x] PM больше не отправляет `workspace:scope:set` ни в одном runtime-пути (runtime fallback удалён, commit `3515853a`).
+- [x] Все переключения workspace и resync идут через `workspace:select` / `workspace:snapshot:request`.
+- [x] Resume/create flow блокируются до `workspace:select:ack(status=applied)`.
 
 ## 3. Remove plan (после закрытия gate-ов)
 
