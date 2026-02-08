@@ -112,9 +112,10 @@ test("InputPanel disables fieldset while running", async () => {
   );
 });
 
-test("InputPanel disables fieldset while blocked", async () => {
+test("InputPanel keeps read-only mode when connection stays blocked after continuity flag clears", async () => {
   const html = await renderInputPanel({
     connectionState: "blocked",
+    continuityLockActive: false,
   });
 
   assert.equal(html.includes("disabled"), true);

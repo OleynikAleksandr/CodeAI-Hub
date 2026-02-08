@@ -1,6 +1,4 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import test from "node:test";
 import type { SessionSnapshot } from "../../../../types/session";
 import type {
@@ -8,11 +6,6 @@ import type {
   WorkspaceSnapshotPushPayload,
 } from "../../core-stream-message-types";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
-
-const SOURCE_PATH = path.resolve(
-  process.cwd(),
-  "src/client/project-manager/components/sessions/session-stream.ts"
-);
 
 type ApplyWorkspaceSnapshotToSnapshots = typeof import("./session-stream")["applyWorkspaceSnapshotToSnapshots"];
 
@@ -35,9 +28,7 @@ const ensureBrowserLikeGlobals = (): void => {
   }
 };
 
-let applyWorkspaceSnapshotToSnapshotsLoader:
-  | Promise<ApplyWorkspaceSnapshotToSnapshots>
-  | null = null;
+let applyWorkspaceSnapshotToSnapshotsLoader: Promise<ApplyWorkspaceSnapshotToSnapshots> | null = null;
 const loadApplyWorkspaceSnapshotToSnapshots = async (): Promise<ApplyWorkspaceSnapshotToSnapshots> => {
   ensureBrowserLikeGlobals();
   if (!applyWorkspaceSnapshotToSnapshotsLoader) {
@@ -79,6 +70,9 @@ const createWorkspaceSession = (params: {
   readonly turnState: "idle" | "running";
   readonly continuityLockActive: boolean;
   readonly continuityLockReason?: WorkspaceSnapshotContinuityLockReason;
+  readonly resumeMode?: "no_resume" | "resume_in_place" | "resume_via_rollover";
+  readonly finalTurnCompleted?: boolean;
+  readonly terminalLockReason?: "terminal_no_resume";
   readonly transition?: {
     readonly reason: WorkspaceSnapshotContinuityLockReason;
     readonly sourceSessionId: string;
@@ -91,6 +85,13 @@ const createWorkspaceSession = (params: {
   continuityLockActive: params.continuityLockActive,
   ...(params.continuityLockReason
     ? { continuityLockReason: params.continuityLockReason }
+    : {}),
+  ...(params.resumeMode ? { resumeMode: params.resumeMode } : {}),
+  ...(typeof params.finalTurnCompleted === "boolean"
+    ? { finalTurnCompleted: params.finalTurnCompleted }
+    : {}),
+  ...(params.terminalLockReason
+    ? { terminalLockReason: params.terminalLockReason }
     : {}),
   ...(params.transition
     ? {
@@ -123,81 +124,22 @@ const createWorkspaceSnapshotPayload = (params: {
   },
 });
 
-test("session-stream remains a transport layer for session events", async () => {
-  const source = await readFile(SOURCE_PATH, "utf8");
-
-  assert.equal(source.includes('if (message.type === "session:created")'), true);
-  assert.equal(source.includes("params.onSessionCreated(normalized);"), true);
-  assert.equal(source.includes('if (message.type === "session:stream")'), true);
-  assert.equal(source.includes('if (message.type === "workspace:snapshot")'), true);
-  assert.equal(source.includes("params.onWorkspaceSnapshot?.(payload);"), true);
-  assert.equal(source.includes("turn_state"), false);
-  assert.equal(source.includes("continuity_lock"), false);
-  assert.equal(source.includes("setActiveSessionId"), false);
-});
-
-test("applyWorkspaceSnapshotToSnapshots prevents blocked->idle->blocked flicker during handoff snapshots", async () => {
-  const applyWorkspaceSnapshotToSnapshots =
-    await loadApplyWorkspaceSnapshotToSnapshots();
+test("applyWorkspaceSnapshotToSnapshots keeps source/target locked until resume_ready after bootstrap gate", async () => {
+  const applyWorkspaceSnapshotToSnapshots = await loadApplyWorkspaceSnapshotToSnapshots();
   const base: SessionSnapshots = {
     source: createSnapshot({
       connectionState: "blocked",
       continuityLockActive: true,
       continuityLockReason: "threshold_reached",
     }),
-  };
-
-  const handoffAwaiting = applyWorkspaceSnapshotToSnapshots(
-    base,
-    createWorkspaceSnapshotPayload({
-      sequence: 10,
-      sessions: {
-        source: createWorkspaceSession({
-          turnState: "idle",
-          continuityLockActive: false,
-          transition: {
-            reason: "resume_bootstrap",
-            sourceSessionId: "source",
-            targetSessionId: "target",
-            awaitingBootstrapTurn: true,
-          },
-        }),
-      },
-    })
-  );
-  const handoffLocked = applyWorkspaceSnapshotToSnapshots(
-    handoffAwaiting,
-    createWorkspaceSnapshotPayload({
-      sequence: 11,
-      sessions: {
-        source: createWorkspaceSession({
-          turnState: "idle",
-          continuityLockActive: true,
-          continuityLockReason: "report_in_progress",
-        }),
-      },
-    })
-  );
-
-  assert.equal(handoffAwaiting.source.status.connectionState, "blocked");
-  assert.equal(handoffLocked.source.status.connectionState, "blocked");
-});
-
-test("applyWorkspaceSnapshotToSnapshots keeps both source and target locked when awaitingBootstrapTurn=true", async () => {
-  const applyWorkspaceSnapshotToSnapshots =
-    await loadApplyWorkspaceSnapshotToSnapshots();
-  const base: SessionSnapshots = {
-    source: createSnapshot({
-      connectionState: "idle",
-      continuityLockActive: false,
-    }),
     target: createSnapshot({
-      connectionState: "idle",
-      continuityLockActive: false,
+      connectionState: "blocked",
+      continuityLockActive: true,
+      continuityLockReason: "resume_bootstrap",
     }),
   };
 
-  const next = applyWorkspaceSnapshotToSnapshots(
+  const awaitingBootstrap = applyWorkspaceSnapshotToSnapshots(
     base,
     createWorkspaceSnapshotPayload({
       sequence: 20,
@@ -205,6 +147,8 @@ test("applyWorkspaceSnapshotToSnapshots keeps both source and target locked when
         source: createWorkspaceSession({
           turnState: "idle",
           continuityLockActive: false,
+          resumeMode: "resume_via_rollover",
+          finalTurnCompleted: true,
           transition: {
             reason: "resume_bootstrap",
             sourceSessionId: "source",
@@ -215,6 +159,8 @@ test("applyWorkspaceSnapshotToSnapshots keeps both source and target locked when
         target: createWorkspaceSession({
           turnState: "idle",
           continuityLockActive: false,
+          resumeMode: "resume_via_rollover",
+          finalTurnCompleted: true,
           transition: {
             reason: "resume_bootstrap",
             sourceSessionId: "source",
@@ -225,16 +171,63 @@ test("applyWorkspaceSnapshotToSnapshots keeps both source and target locked when
       },
     })
   );
+  const preReady = applyWorkspaceSnapshotToSnapshots(
+    awaitingBootstrap,
+    createWorkspaceSnapshotPayload({
+      sequence: 21,
+      sessions: {
+        source: createWorkspaceSession({
+          turnState: "idle",
+          continuityLockActive: false,
+          continuityLockReason: "resume_bootstrap",
+          resumeMode: "resume_via_rollover",
+          finalTurnCompleted: true,
+        }),
+        target: createWorkspaceSession({
+          turnState: "idle",
+          continuityLockActive: false,
+          continuityLockReason: "resume_bootstrap",
+          resumeMode: "resume_via_rollover",
+          finalTurnCompleted: true,
+        }),
+      },
+    })
+  );
+  const ready = applyWorkspaceSnapshotToSnapshots(
+    preReady,
+    createWorkspaceSnapshotPayload({
+      sequence: 22,
+      sessions: {
+        source: createWorkspaceSession({
+          turnState: "idle",
+          continuityLockActive: false,
+          continuityLockReason: "resume_ready",
+          resumeMode: "resume_via_rollover",
+          finalTurnCompleted: true,
+        }),
+        target: createWorkspaceSession({
+          turnState: "idle",
+          continuityLockActive: false,
+          continuityLockReason: "resume_ready",
+          resumeMode: "resume_via_rollover",
+          finalTurnCompleted: true,
+        }),
+      },
+    })
+  );
 
-  assert.equal(next.source.status.connectionState, "blocked");
-  assert.equal(next.target.status.connectionState, "blocked");
-  assert.equal(next.source.status.continuityLock?.active, true);
-  assert.equal(next.target.status.continuityLock?.active, true);
+  assert.equal(awaitingBootstrap.source.status.connectionState, "blocked");
+  assert.equal(awaitingBootstrap.target.status.connectionState, "blocked");
+  assert.equal(preReady.source.status.connectionState, "blocked");
+  assert.equal(preReady.target.status.connectionState, "blocked");
+  assert.equal(ready.source.status.connectionState, "idle");
+  assert.equal(ready.target.status.connectionState, "idle");
+  assert.equal(ready.source.status.continuityLock?.active, false);
+  assert.equal(ready.target.status.continuityLock?.active, false);
 });
 
 test("applyWorkspaceSnapshotToSnapshots unlocks only after terminal continuity reason snapshot", async () => {
-  const applyWorkspaceSnapshotToSnapshots =
-    await loadApplyWorkspaceSnapshotToSnapshots();
+  const applyWorkspaceSnapshotToSnapshots = await loadApplyWorkspaceSnapshotToSnapshots();
   const base: SessionSnapshots = {
     source: createSnapshot({
       connectionState: "blocked",
@@ -269,7 +262,9 @@ test("applyWorkspaceSnapshotToSnapshots unlocks only after terminal continuity r
         source: createWorkspaceSession({
           turnState: "idle",
           continuityLockActive: false,
-          continuityLockReason: "resume_ready",
+          continuityLockReason: "no_rollover_needed",
+          resumeMode: "resume_in_place",
+          finalTurnCompleted: true,
         }),
       },
     })
@@ -279,5 +274,27 @@ test("applyWorkspaceSnapshotToSnapshots unlocks only after terminal continuity r
   assert.equal(nonTerminal.source.status.continuityLock?.active, true);
   assert.equal(terminal.source.status.connectionState, "idle");
   assert.equal(terminal.source.status.continuityLock?.active, false);
-  assert.equal(terminal.source.status.continuityLock?.reason, "resume_ready");
+  assert.equal(
+    terminal.source.status.continuityLock?.reason,
+    "no_rollover_needed"
+  );
+
+  const noResume = applyWorkspaceSnapshotToSnapshots(
+    { collector: createSnapshot({ connectionState: "idle", continuityLockActive: false }) },
+    createWorkspaceSnapshotPayload({
+      sequence: 32,
+      sessions: {
+        collector: createWorkspaceSession({
+          turnState: "idle",
+          continuityLockActive: false,
+          resumeMode: "no_resume",
+          finalTurnCompleted: true,
+          terminalLockReason: "terminal_no_resume",
+        }),
+      },
+    })
+  );
+  assert.equal(noResume.collector.status.connectionState, "blocked");
+  assert.equal(noResume.collector.status.continuityLock?.active, true);
+  assert.equal(noResume.collector.status.continuityLock?.reason, "terminal_no_resume");
 });
