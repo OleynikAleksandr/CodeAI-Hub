@@ -1,6 +1,7 @@
 import { useEffect, useRef, type MutableRefObject } from "react";
 import type { SessionRecord } from "../../../../types/session";
-import { syncWorkspaceScopeWithAck } from "../../services/workspace-scope-handshake";
+import { api } from "../../api";
+import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 
 type SessionResumeIntent = {
   readonly providerId: string;
@@ -14,6 +15,7 @@ type SessionResumeIntent = {
 };
 
 const IN_FLIGHT_TTL_MS = 30_000;
+const WORKSPACE_SELECT_ACK_TIMEOUT_MS = 3000;
 
 const buildInFlightKey = (detail: SessionResumeIntent): string =>
   [
@@ -35,20 +37,64 @@ type SessionResumeCreatePayload = {
   readonly runSlug: string | null;
 };
 
-const ensureWorkspaceScopeBeforeResume = async (
+const createRequestId = (): string => {
+  if (
+    typeof globalThis.crypto !== "undefined" &&
+    "randomUUID" in globalThis.crypto
+  ) {
+    return globalThis.crypto.randomUUID();
+  }
+  return `workspace-select-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const ensureWorkspaceSelectedBeforeResume = async (
   detail: SessionResumeIntent
 ): Promise<boolean> => {
-  const ack = await syncWorkspaceScopeWithAck({
-    workspacePath: detail.workspacePath,
-    workspaceSlug: detail.workspaceSlug ?? detail.initiativeSlug,
+  const requestId = createRequestId();
+  api.selectWorkspace({
+    requestId,
+    workspaceRoot: detail.workspacePath,
     reason: "workspace_selected",
   });
-  return (
-    Boolean(ack) &&
-    ack?.status === "applied" &&
-    ack.workspacePath === detail.workspacePath
-  );
+
+  return new Promise<boolean>((resolve) => {
+    const timeout = window.setTimeout(() => {
+      unsubscribe();
+      resolve(false);
+    }, WORKSPACE_SELECT_ACK_TIMEOUT_MS);
+    const unsubscribe = api.onCoreEvent((message) => {
+      if (message.type !== "workspace:select:ack") {
+        return;
+      }
+      const payload = message.payload as {
+        readonly requestId?: unknown;
+        readonly status?: unknown;
+        readonly workspaceRoot?: unknown;
+        readonly selectionId?: unknown;
+      };
+      if (payload?.requestId !== requestId) {
+        return;
+      }
+      window.clearTimeout(timeout);
+      unsubscribe();
+      const isApplied =
+        payload?.status === "applied" &&
+        payload.workspaceRoot === detail.workspacePath;
+      if (isApplied) {
+        workspaceSnapshotStore.applySelectAck({
+          requestId,
+          status: "applied",
+          workspaceRoot: detail.workspacePath,
+          selectionId:
+            typeof payload.selectionId === "string" ? payload.selectionId : null,
+          error: null,
+        });
+      }
+      resolve(isApplied);
+    });
+  });
 };
+
 
 export const useSessionResumeIntent = (params: {
   readonly sessionsRef: MutableRefObject<readonly SessionRecord[]>;
@@ -83,8 +129,8 @@ export const useSessionResumeIntent = (params: {
       }
       inFlight.current.set(inFlightKey, now);
 
-      void ensureWorkspaceScopeBeforeResume(detail).then((scopeReady) => {
-        if (!scopeReady) {
+      void ensureWorkspaceSelectedBeforeResume(detail).then((selectionReady) => {
+        if (!selectionReady) {
           inFlight.current.delete(inFlightKey);
           return;
         }
