@@ -266,7 +266,7 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
   - `SessionRuntime`: turn-state FSM (`idle`/`running`), heartbeat tracking, watchdog timeout rollback;
   - `WorkspaceRuntimeFacade`: единая точка интеграции для bridge/handlers, hydration из `SessionManager`, debounce/coalesce snapshot push.
 - **Snapshot-first lock**: PM вычисляет server-lock из `workspace:snapshot` (`turnState` + `continuityLockActive`), а не из поштучных `session:stream` `turn_state`.
-- **Phase 107 lock transition contract**:
+- **Phase 107-109 lock transition contract**:
   - `workspace:snapshot.sessions[sessionId].resumeMode` + `finalTurnCompleted` — explicit resume arbitration mode (`no_resume`, `resume_in_place`, `resume_via_rollover`) и dual-gate readiness;
   - `workspace:snapshot.sessions[sessionId].continuityLockReason` — canonical reason последнего lock шага (`threshold_reached`, `report_in_progress`, `resume_bootstrap`, `no_rollover_needed`, `resume_ready`, `resume_failed`, `resume_timeout`, `terminal_no_resume`);
   - `workspace:snapshot.sessions[sessionId].terminalLockReason` — terminal/read-only marker для one-shot no-resume flow;

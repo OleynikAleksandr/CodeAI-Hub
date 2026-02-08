@@ -1,3 +1,13 @@
+## [1.1.528] - 2026-02-08
+### Added
+- Core/PM snapshot contract: добавлены `resumeMode`, `finalTurnCompleted` и `terminalLockReason` как обязательные сигналы lifecycle для input lock arbitration.
+- PM/UI regression coverage: тесты на bootstrap-gate (`resume_via_rollover`) и terminal no-resume lock invariants до разрешённого unlock.
+
+### Fixed
+- Core: `resume_in_place` теперь unlock'ится только по dual-gate (`final turn completed` + `no_rollover_needed`), без промежуточного `idle/unlocked` окна.
+- Core: `resume_via_rollover` unlock переносится строго на первый bootstrap assistant answer (`resume_ready`); `resume_failed|resume_timeout` не выполняют unlock.
+- PM/UI: terminal collector (`no_resume`) отображается как read-only и не может преждевременно вернуться в editable state.
+
 ## [1.1.525] - 2026-02-08
 ### Added
 - Core/PM snapshot contract: добавлены transition lock поля `continuityLockReason` и `continuityLockTransition` для handoff lifecycle collector -> reviewer.

@@ -2,10 +2,11 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.525
+## Current Release — v1.1.528
 - **Workspace Runtime MVP**: добавлен модуль Core `workspace-runtime` (sharded store + facade + snapshot builder) с `workspace:select`/`workspace:snapshot` протоколом.
 - **Snapshot-first lock authority**: блокировка ввода в PM теперь server-driven из `workspace:snapshot` (`turnState` + `continuityLockActive`), без зависимости от одиночных `session:stream` terminal-событий.
 - **Phase 107 lock transition contract**: snapshot расширен полями `continuityLockReason` и `continuityLockTransition.awaitingBootstrapTurn`, чтобы убрать unlock-gap между collector artifact write и reviewer bootstrap.
+- **Phase 109 resume-mode contract**: Core/PM/UI синхронизированы по `resumeMode` (`no_resume|resume_in_place|resume_via_rollover`), dual-gate unlock (`no_rollover_needed`) и bootstrap gate (`resume_ready`) без premature unlock.
 - **Strict PM pipeline split**: `workspace:snapshot` стал единственным источником lock/connection lifecycle; `session:stream` оставлен только для token usage и контента.
 - **Watchdog terminal rollback**: в Core включён session runtime watchdog с heartbeat, чтобы `running` состояние не могло залипнуть бесконечно при потере terminal markers.
 - **Scope sync hardening**: ingress guard для `session:create|session:message|session:delete` и scoped delivery привязаны к `workspace:select` (legacy `workspace:scope:set` оставлен только как deprecated transition path в Core).
