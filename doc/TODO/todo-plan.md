@@ -56,10 +56,10 @@
 
 ### Stream: Core Atomic Dual-Gate
 1. [DONE] Убрать race в `turn_completed`: выполнять continuity/threshold arbitration атомарно до `idle` (и не эмитить unlock, пока Core не примет явное решение `no_rollover_needed` либо `rollover_pending`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(core): make turn-completed unlock depend on atomic rollover arbitration`)
-2. [TODO] Git Commit: `fix(core): make turn-completed unlock depend on atomic rollover arbitration` (hash: TBD)
+2. [DONE] Git Commit: `fix(core): make turn-completed unlock depend on atomic rollover arbitration` (hash: 0d575809)
 
 ### Stream: Non-Regression Tests
-1. [TODO] Добавить тест на async-race: `turn_completed` не может эмитить `idle` до завершения rollover arbitration, даже если lock устанавливается с задержкой (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): prevent turn-completed idle before async rollover arbitration resolves`)
+1. [DONE] Добавить тест на async-race: `turn_completed` не может эмитить `idle` до завершения rollover arbitration, даже если lock устанавливается с задержкой (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): prevent turn-completed idle before async rollover arbitration resolves`)
 2. [TODO] Git Commit: `test(core): prevent turn-completed idle before async rollover arbitration resolves` (hash: TBD)
 
 ### Stream: Docs + QA Gates

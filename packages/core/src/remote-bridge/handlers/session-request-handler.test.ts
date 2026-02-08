@@ -155,6 +155,43 @@ const collectTurnStateSequence = (events: readonly BridgeEvent[]): string[] =>
     })
     .filter((state): state is string => typeof state === "string");
 
+const countIdleTurnStateEvents = (events: readonly BridgeEvent[]): number =>
+  events.filter((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: {
+        readonly data?: { readonly kind?: string; readonly state?: string };
+      };
+    };
+    return (
+      payload.event?.data?.kind === "turn_state" &&
+      payload.event.data.state === "idle"
+    );
+  }).length;
+
+const countNoRolloverUnlockEvents = (events: readonly BridgeEvent[]): number =>
+  events.filter((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: {
+        readonly data?: {
+          readonly kind?: string;
+          readonly state?: string;
+          readonly reason?: string;
+        };
+      };
+    };
+    return (
+      payload.event?.data?.kind === "continuity_lock" &&
+      payload.event.data.state === "unlocked" &&
+      payload.event.data.reason === "no_rollover_needed"
+    );
+  }).length;
+
 test("SessionRequestHandler emits turn_state events for provider lifecycle", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
@@ -565,6 +602,54 @@ test("SessionRequestHandler does not emit no-rollover unlock while rollover cont
 
   assert.equal(turnIdleEvents.length, 0);
   assert.equal(noRolloverUnlockEvents.length, 0);
+});
+
+test("SessionRequestHandler defers turn-completed unlock until async rollover arbitration resolves", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-turn-completed-async-dual-gate",
+    "provider-session-async-dual-gate",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+      runSlug: "reviewer",
+    }
+  );
+  (harness.handler as any).getSessionResumeLifecycleStore().set(session.id, {
+    mode: "resume_in_place",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
+
+  let resolveFlowNodeArbitration: () => void = noop;
+  (harness.handler as any).handleFlowNodeContinuityProviderEvent = () =>
+    new Promise<void>((resolve) => {
+      resolveFlowNodeArbitration = () => {
+        (harness.handler as any).registerFlowNodeContinuityLockContext({
+          rolloverId: "rollover-async-dual-gate",
+          sourceSessionId: session.id,
+          stageId: "description",
+          runSlug: "reviewer",
+          awaitingBootstrapTurn: false,
+        });
+        resolve();
+      };
+    });
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "turn_completed",
+  });
+  await flushAsyncWork();
+
+  assert.equal(countIdleTurnStateEvents(harness.events), 0);
+  assert.equal(countNoRolloverUnlockEvents(harness.events), 0);
+
+  resolveFlowNodeArbitration();
+  await flushAsyncWork();
+
+  assert.equal(countIdleTurnStateEvents(harness.events), 0);
+  assert.equal(countNoRolloverUnlockEvents(harness.events), 0);
 });
 
 test("SessionRequestHandler enforces no_resume terminal lock and read-only send guard", async () => {
