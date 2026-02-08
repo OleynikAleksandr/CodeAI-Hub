@@ -1,3 +1,10 @@
+## [1.1.530] - 2026-02-08
+### Fixed
+- Core/PM: internal workflow dispatch теперь эмитит `turn_state=running`, предотвращая преждевременную разблокировку ввода в PM (например, в Description collector) до фактического завершения turn.
+
+### Added
+- Core regression tests: покрытие turn-state lifecycle для internal сообщений (running emission + idle rollback при ошибке отправки).
+
 ## [1.1.529] - 2026-02-08
 ### Fixed
 - Project Manager: восстановлена видимость `Description` session в центральной панели до появления `reviewerSessionId` (forced-hide больше не применяется преждевременно).
