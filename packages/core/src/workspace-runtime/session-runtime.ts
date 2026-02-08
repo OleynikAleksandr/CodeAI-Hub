@@ -44,7 +44,10 @@ type SessionRuntimeDeps = {
   ) => void;
 };
 
-const DEFAULT_WATCHDOG_TIMEOUT_MS = 120_000;
+// Watchdog is an escape hatch for stuck sessions, but it must never unlock
+// a session mid-turn by default. Disable auto-idle unless explicitly enabled
+// via deps.watchdogTimeoutMs.
+const DEFAULT_WATCHDOG_TIMEOUT_MS = Number.POSITIVE_INFINITY;
 const DEFAULT_WATCHDOG_TICK_MS = 1000;
 
 const toSnapshot = (
@@ -74,7 +77,7 @@ export class SessionRuntime {
   private readonly now: () => number;
   private readonly onStateChanged;
   private readonly watchdogTimeoutMs: number;
-  private readonly timer: NodeJS.Timeout;
+  private readonly timer: NodeJS.Timeout | null;
 
   constructor(deps: SessionRuntimeDeps = {}) {
     this.now = deps.now ?? Date.now;
@@ -82,11 +85,15 @@ export class SessionRuntime {
     this.watchdogTimeoutMs =
       deps.watchdogTimeoutMs ?? DEFAULT_WATCHDOG_TIMEOUT_MS;
 
-    const watchdogTickMs = deps.watchdogTickMs ?? DEFAULT_WATCHDOG_TICK_MS;
-    this.timer = setInterval(() => {
-      this.tickWatchdog();
-    }, watchdogTickMs);
-    this.timer.unref?.();
+    if (Number.isFinite(this.watchdogTimeoutMs)) {
+      const watchdogTickMs = deps.watchdogTickMs ?? DEFAULT_WATCHDOG_TICK_MS;
+      this.timer = setInterval(() => {
+        this.tickWatchdog();
+      }, watchdogTickMs);
+      this.timer.unref?.();
+    } else {
+      this.timer = null;
+    }
   }
 
   markRunning(key: SessionKey): void {
@@ -174,7 +181,9 @@ export class SessionRuntime {
   }
 
   dispose(): void {
-    clearInterval(this.timer);
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
   }
 
   private getOrCreateEntry(key: SessionKey): SessionRuntimeEntry {
@@ -188,6 +197,9 @@ export class SessionRuntime {
   }
 
   private tickWatchdog(): void {
+    if (!Number.isFinite(this.watchdogTimeoutMs)) {
+      return;
+    }
     const now = this.now();
     for (const entry of this.entriesBySessionId.values()) {
       if (entry.turnState !== "running") {
