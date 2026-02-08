@@ -16,10 +16,7 @@ type SessionBindingUpdate = {
   readonly providerSessionId: string | null;
   readonly status: "pending" | "ready" | "failed";
 };
-type SessionMessageUpdate = {
-  readonly sessionId: string;
-  readonly message: SessionMessage;
-};
+type SessionMessageUpdate = { readonly sessionId: string; readonly message: SessionMessage };
 type SessionHistoryUpdate = {
   readonly sessionId: string;
   readonly messages: readonly unknown[];
@@ -32,7 +29,9 @@ const resolveContinuityLockActive = (
 const resolveContinuityLockReason = (
   session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
 ): string | undefined =>
-  session.continuityLockReason ?? session.continuityLockTransition?.reason;
+  session.continuityLockReason ??
+  session.terminalLockReason ??
+  session.continuityLockTransition?.reason;
 export const applyWorkspaceSnapshotToSnapshots = (
   snapshots: SessionSnapshots,
   payload: WorkspaceSnapshotPushPayload
@@ -60,21 +59,25 @@ export const applyWorkspaceSnapshotToSnapshots = (
     const graphHeldReason = heldLockReasonBySessionId.get(sessionId);
     let nextLockActive =
       resolveContinuityLockActive(session) ||
-      heldLockReasonBySessionId.has(sessionId);
+      heldLockReasonBySessionId.has(sessionId) ||
+      (session.resumeMode === "no_resume" &&
+        session.finalTurnCompleted === true);
     const nextLockReason = resolveContinuityLockReason(session) ?? graphHeldReason;
     let nextConnectionState: "idle" | "running" | "blocked" = nextLockActive
       ? "blocked"
       : session.turnState;
     const currentLockActive = current.status.continuityLock?.active === true;
     const currentLockReason = current.status.continuityLock?.reason;
-    const terminalUnlockReason =
-      nextLockReason === "resume_ready" ||
-      nextLockReason === "resume_failed" ||
-      nextLockReason === "resume_timeout";
     if (
-      current.status.connectionState === "blocked" &&
+      (current.status.connectionState === "blocked" ||
+        (session.resumeMode === "resume_in_place" &&
+          current.status.connectionState === "running")) &&
       nextConnectionState === "idle" &&
-      (!terminalUnlockReason || awaitingBootstrapTurn)
+      (!(
+        nextLockReason === "no_rollover_needed" ||
+        nextLockReason === "resume_ready"
+      ) ||
+        awaitingBootstrapTurn)
     ) {
       nextLockActive = true;
       nextConnectionState = "blocked";
