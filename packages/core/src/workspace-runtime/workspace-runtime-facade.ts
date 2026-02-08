@@ -4,6 +4,8 @@ import type {
   ArtifactPointer,
   NodeKey,
   SessionBindingStatus,
+  SessionContinuityLockReason,
+  SessionContinuityLockTransition,
   SessionKey,
   SessionSnapshot,
   SessionTurnState,
@@ -48,6 +50,8 @@ type NotifySessionPatch = Partial<
     | "bindingStatus"
     | "turnState"
     | "continuityLockActive"
+    | "continuityLockReason"
+    | "continuityLockTransition"
     | "lastHeartbeatAt"
   >
 >;
@@ -93,13 +97,19 @@ export class WorkspaceRuntimeFacade {
             nodeId: sessionKey.nodeId,
             turnState: snapshot.turnState,
             continuityLockActive: snapshot.continuityLockActive,
+            continuityLockReason: snapshot.continuityLockReason ?? undefined,
+            continuityLockTransition:
+              snapshot.continuityLockTransition ?? undefined,
             lastHeartbeatAt:
               snapshot.lastHeartbeatAt === null
                 ? undefined
                 : new Date(snapshot.lastHeartbeatAt).toISOString(),
           });
           const priority =
-            field === "turnState" || field === "continuityLockActive";
+            field === "turnState" ||
+            field === "continuityLockActive" ||
+            field === "continuityLockReason" ||
+            field === "continuityLockTransition";
           this.scheduleSnapshot(sessionKey.workspaceRoot, priority);
         },
       });
@@ -211,8 +221,21 @@ export class WorkspaceRuntimeFacade {
     this.sessionRuntime.markIdle(sessionKey);
   }
 
-  notifyLockChanged(sessionKey: SessionKey, active: boolean): void {
-    this.sessionRuntime.setLock(sessionKey, active);
+  notifyLockChanged(
+    sessionKey: SessionKey,
+    options: {
+      readonly active: boolean;
+      readonly reason?: SessionContinuityLockReason | null;
+      readonly transition?: SessionContinuityLockTransition | null;
+    }
+  ): void {
+    this.sessionRuntime.setLock(sessionKey, options.active);
+    if (options.reason !== undefined) {
+      this.sessionRuntime.setLockReason(sessionKey, options.reason);
+    }
+    if (options.transition !== undefined) {
+      this.sessionRuntime.setLockTransition(sessionKey, options.transition);
+    }
   }
 
   notifySessionCreated(
@@ -226,6 +249,8 @@ export class WorkspaceRuntimeFacade {
       bindingStatus: patch.bindingStatus,
       turnState: patch.turnState,
       continuityLockActive: patch.continuityLockActive,
+      continuityLockReason: patch.continuityLockReason,
+      continuityLockTransition: patch.continuityLockTransition,
       lastHeartbeatAt: patch.lastHeartbeatAt,
     });
     this.scheduleSnapshot(sessionKey.workspaceRoot, false);
