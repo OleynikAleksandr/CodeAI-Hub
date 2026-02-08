@@ -24,6 +24,13 @@ type WorkspaceRuntimeFacadeDeps = {
   readonly nowIso?: () => string;
   readonly store?: WorkspaceStore;
   readonly sessionRuntime?: SessionRuntime;
+  readonly hydrateWorkspaceSessions?: (workspaceRoot: string) => readonly {
+    sessionId: string;
+    nodeId: string;
+    providerId?: string;
+    providerSessionId?: string | null;
+    bindingStatus?: SessionBindingStatus;
+  }[];
 };
 
 type ClientSelection = {
@@ -61,6 +68,7 @@ export class WorkspaceRuntimeFacade {
   private readonly snapshotDebounceMs: number;
   private readonly selectionIdFactory: () => string;
   private readonly nowIso: () => string;
+  private readonly hydrateWorkspaceSessions;
   private readonly selectionByClientId = new Map<string, ClientSelection>();
   private readonly subscriberByClientId = new Map<
     string,
@@ -75,6 +83,7 @@ export class WorkspaceRuntimeFacade {
     this.selectionIdFactory =
       deps.selectionIdFactory ?? fallbackSelectionIdFactory;
     this.nowIso = deps.nowIso ?? (() => new Date().toISOString());
+    this.hydrateWorkspaceSessions = deps.hydrateWorkspaceSessions;
 
     this.sessionRuntime =
       deps.sessionRuntime ??
@@ -141,7 +150,23 @@ export class WorkspaceRuntimeFacade {
     const workspaceRoot = request.workspaceRoot;
     const selectionId = this.selectionIdFactory();
 
-    this.store.getOrCreate(workspaceRoot);
+    this.store.setLoadState(workspaceRoot, "ready");
+    const hydrateRows = this.hydrateWorkspaceSessions?.(workspaceRoot) ?? [];
+    for (const row of hydrateRows) {
+      this.store.updateSession(
+        {
+          workspaceRoot,
+          nodeId: row.nodeId,
+          sessionId: row.sessionId,
+        },
+        {
+          nodeId: row.nodeId,
+          providerId: row.providerId,
+          providerSessionId: row.providerSessionId ?? undefined,
+          bindingStatus: row.bindingStatus,
+        }
+      );
+    }
     this.selectionByClientId.set(clientId, {
       workspaceRoot,
       selectionId,

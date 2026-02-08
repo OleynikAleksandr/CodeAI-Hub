@@ -71,6 +71,12 @@ export class SessionManager {
     return Array.from(this.sessions.values());
   }
 
+  getSessionsByWorkspacePath(workspacePath: string): Session[] {
+    return this.listSessions().filter(
+      (session) => session.workspacePath === workspacePath
+    );
+  }
+
   getSession(sessionId: string): Session | undefined {
     return this.sessions.get(sessionId);
   }
