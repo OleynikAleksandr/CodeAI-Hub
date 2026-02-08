@@ -60,6 +60,8 @@ const createHarness = (): HandlerHarness => {
   Object.assign(handler, {
     providerSessions,
     sessionManager,
+    flowNodeRolloverInFlight: new Set(),
+    flowNodeRolloverStarted: new Set(),
     flowNodeContinuityLockContexts: new Map(),
     flowNodeContinuityLockTimeouts: new Map(),
     sessionStorage: {
@@ -495,6 +497,74 @@ test("SessionRequestHandler does not emit idle before continuity lock when rollo
 
   assert.equal(lockEvents.length, 1);
   assert.equal(turnIdleEvents.length, 0);
+});
+
+test("SessionRequestHandler does not emit no-rollover unlock while rollover context is pending", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-rollover-pending-unlock-guard",
+    "provider-session-pending",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+      runSlug: "reviewer",
+    }
+  );
+  (harness.handler as any).getSessionResumeLifecycleStore().set(session.id, {
+    mode: "resume_in_place",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
+  (harness.handler as any).registerFlowNodeContinuityLockContext({
+    rolloverId: "rollover-pending",
+    sourceSessionId: session.id,
+    stageId: "description",
+    runSlug: "reviewer",
+    awaitingBootstrapTurn: false,
+  });
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "turn_completed",
+  });
+  await flushAsyncWork();
+
+  const turnIdleEvents = harness.events.filter((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: {
+        readonly data?: { readonly kind?: string; readonly state?: string };
+      };
+    };
+    return (
+      payload.event?.data?.kind === "turn_state" &&
+      payload.event.data.state === "idle"
+    );
+  });
+  const noRolloverUnlockEvents = harness.events.filter((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: {
+        readonly data?: {
+          readonly kind?: string;
+          readonly state?: string;
+          readonly reason?: string;
+        };
+      };
+    };
+    return (
+      payload.event?.data?.kind === "continuity_lock" &&
+      payload.event.data.state === "unlocked" &&
+      payload.event.data.reason === "no_rollover_needed"
+    );
+  });
+
+  assert.equal(turnIdleEvents.length, 0);
+  assert.equal(noRolloverUnlockEvents.length, 0);
 });
 
 test("SessionRequestHandler enforces no_resume terminal lock and read-only send guard", async () => {
