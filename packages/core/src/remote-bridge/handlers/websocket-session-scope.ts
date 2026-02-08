@@ -99,6 +99,10 @@ export const resolveEventWorkspacePath = (
   return sessionWorkspaceById.get(sessionId) ?? null;
 };
 
+/**
+ * @deprecated Phase 105+: keep only for transition while legacy
+ * `workspace:scope:set` clients are still supported.
+ */
 export const shouldDeliverEventForScope = (params: {
   readonly event: BridgeEvent;
   readonly scope: ClientScopeState;
@@ -137,6 +141,10 @@ export const shouldDeliverTokenUsageForScope = (params: {
   );
 };
 
+/**
+ * @deprecated Phase 105+: keep only for legacy scoped-delivery bookkeeping.
+ * New routing should rely on `workspace:select` and workspace runtime snapshots.
+ */
 export const recordSessionWorkspaceSnapshot = (params: {
   readonly event: BridgeEvent;
   readonly sessionWorkspaceById: Map<string, string>;

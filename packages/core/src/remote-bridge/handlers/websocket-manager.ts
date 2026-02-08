@@ -118,6 +118,10 @@ export class WebSocketManager {
     return this.clients.size;
   }
 
+  /**
+   * @deprecated Phase 105+: use `setWorkspaceScopeForClient()` as the runtime
+   * scope sync path driven by `workspace:select`.
+   */
   setWorkspaceScope(
     clientId: string,
     payload: unknown
