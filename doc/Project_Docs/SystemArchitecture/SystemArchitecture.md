@@ -282,6 +282,9 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
   - internal dispatch (`sendInternalMessage`) теперь эмитит `turn_state=running`, чтобы PM/UI не разблокировали ввод в `idle` во время workflow/collector turn до получения terminal событий провайдера.
 - **Phase 112 runtime watchdog**:
   - watchdog auto-idle отключен по умолчанию, чтобы долгие/"тихие" turn не могли сбрасывать `turnState` в `idle` по таймауту.
+- **Phase 113 turn-completion rollover guard**:
+  - при `turn_completed` Core не эмитит `idle`/`no_rollover_needed`, если rollover уже pending/in-flight; unlock разрешён только при terminal `resume_ready` (rollover path) или `no_rollover_needed` без pending rollover (resume-in-place path).
+  - в `continuityLockTransition` добавлен явный маркер `rolloverPending`, чтобы PM/UI мог удерживать lock без промежуточного `idle`-фликера между сессиями.
 - **Scope sync**: Core синхронизирует client scope через `workspace:select` и применяет ingress guard для `session:create|session:message|session:delete`.
 
 Статус legacy:

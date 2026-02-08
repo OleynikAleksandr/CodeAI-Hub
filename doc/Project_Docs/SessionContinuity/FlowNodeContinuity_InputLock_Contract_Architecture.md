@@ -1,7 +1,7 @@
 # Flow Node Continuity Input Lock Contract Architecture
 
 **Date:** 2026-02-08 15:20 (CET)
-**Status:** Active baseline for Phase 109 resume-mode lock contract
+**Status:** Active baseline (Phase 109-113 resume/rollover lock contract)
 **Scope:** `description/reviewer` rollover (with reusable contract for other flow nodes)
 
 ---
@@ -63,7 +63,7 @@ Source-of-truth контракта — `workspace:snapshot`; PM/UI читают 
   - `resume_failed`
   - `resume_timeout`
 - `terminalLockReason`: `terminal_no_resume` (для terminal/read-only)
-- `continuityLockTransition`: `{ rolloverId, sourceSessionId, targetSessionId, reason, awaitingBootstrapTurn, updatedAt }`
+- `continuityLockTransition`: `{ rolloverId, sourceSessionId, targetSessionId, reason, rolloverPending, awaitingBootstrapTurn, updatedAt }`
 
 ### 3.2 Lifecycle rules
 
@@ -72,7 +72,8 @@ Source-of-truth контракта — `workspace:snapshot`; PM/UI читают 
 3. **Resume-in-place** unlock path:
    - Core переводит сессию в unlocked (`continuityLockActive=false`) только когда одновременно выполнены:
      - финальный `turn_completed` текущего turn уже получен;
-     - continuity arbitration завершён как `no rollover` (snapshot reason = `no_rollover_needed`).
+     - continuity arbitration завершён как `no rollover` (snapshot reason = `no_rollover_needed`);
+     - rollover pending/in-flight не обнаружен (guard против transient unlock-gap).
 4. **Resume-via-rollover** lock path:
    - сразу после создания continuation session Core удерживает `locked` на source и target с `reason=resume_bootstrap`;
    - пока `awaitingBootstrapTurn=true`, lock не снимается даже если `continuityLockActive=false` в отдельном snapshot.
@@ -86,6 +87,7 @@ Source-of-truth контракта — `workspace:snapshot`; PM/UI читают 
 - Lock state must never be inferred from `flow_node_rollover.phase` only.
 - `resume_sent` does not imply unlock.
 - `turn_completed` без результата continuity arbitration (`no rollover`) не даёт unlock.
+- `turn_completed` не может эмитить `idle/no_rollover_needed`, если rollover уже pending/in-flight.
 - Unlock в rollover-path must be tied to observed first bootstrap assistant answer in the new session.
 - `no_rollover_needed` и `resume_ready` — единственные допустимые unlock-reason.
 - `resume_failed|resume_timeout` never unlock input.
