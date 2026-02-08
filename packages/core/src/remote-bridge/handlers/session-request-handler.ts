@@ -676,16 +676,19 @@ export class SessionRequestHandler {
         : {}),
       stageId: context.stageId,
       runSlug: context.runSlug,
-      state: "unlocked" as const,
       reason: options.reason,
     };
+    const state: ContinuityLockState =
+      options.reason === "resume_ready" ? "unlocked" : "locked";
     this.emitContinuityLockEvent({
       sessionId: targetSessionId,
+      state,
       ...payloadBase,
     });
     if (context.sourceSessionId !== targetSessionId) {
       this.emitContinuityLockEvent({
         sessionId: context.sourceSessionId,
+        state,
         ...payloadBase,
       });
     }
@@ -696,11 +699,11 @@ export class SessionRequestHandler {
     }
   }
 
-  private finalizeFlowNodeContinuityLockOnBootstrapTurn(options: {
+  private finalizeFlowNodeContinuityLockOnBootstrapGate(options: {
     readonly sessionId: string;
     readonly reason: Extract<
       ContinuityLockReason,
-      "resume_ready" | "resume_failed"
+      "resume_ready" | "resume_failed" | "resume_timeout"
     >;
   }): void {
     const context = this.flowNodeContinuityLockContexts.get(options.sessionId);
@@ -1701,7 +1704,7 @@ export class SessionRequestHandler {
       stageId: session.stage ?? "session",
       runSlug: session.runSlug ?? null,
       state: "unlocked",
-      reason: "resume_ready",
+      reason: "no_rollover_needed",
     });
   }
 
@@ -1734,10 +1737,6 @@ export class SessionRequestHandler {
       this.emitResumeInPlaceNoRolloverUnlock(session);
       return;
     }
-    this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
-      sessionId,
-      reason: "resume_ready",
-    });
   }
 
   private toSafeTimestamp(value: string): string {
@@ -2081,15 +2080,15 @@ export class SessionRequestHandler {
             error: error instanceof Error ? error.message : String(error),
           });
           this.emitTurnStateEvent({ sessionId, state: "idle" });
-          this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
+          this.finalizeFlowNodeContinuityLockOnBootstrapGate({
             sessionId,
-            reason: "resume_ready",
+            reason: "resume_failed",
           });
         });
         break;
       case "turn_failed":
         this.emitTurnStateEvent({ sessionId, state: "idle" });
-        this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
+        this.finalizeFlowNodeContinuityLockOnBootstrapGate({
           sessionId,
           reason: "resume_failed",
         });
@@ -2097,7 +2096,7 @@ export class SessionRequestHandler {
         break;
       case "stream_error":
       case "error":
-        this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
+        this.finalizeFlowNodeContinuityLockOnBootstrapGate({
           sessionId,
           reason: "resume_failed",
         });
@@ -2120,6 +2119,10 @@ export class SessionRequestHandler {
         });
         break;
       case "assistant":
+        this.finalizeFlowNodeContinuityLockOnBootstrapGate({
+          sessionId,
+          reason: "resume_ready",
+        });
         this.appendProviderMessage(sessionId, "assistant", event);
         break;
       case "thinking":
