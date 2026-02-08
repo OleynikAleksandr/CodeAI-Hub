@@ -112,10 +112,10 @@
 1. [DONE] Добавить core-тесты на новые инварианты: `no_resume` never unlock, `resume_in_place` dual-gate, `resume_via_rollover` unlock только после bootstrap answer (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`, `packages/core/src/workspace-runtime/session-runtime.test.ts`; expected commit: `test(core): cover resume-mode lock lifecycle invariants`)
 2. [DONE] Git Commit: `test(core): cover resume-mode lock lifecycle invariants` (hash: d1a27ed7)
 3. [DONE] Добавить PM/UI тесты против unlock-gap в reviewer до артефакта и до bootstrap-гейта новой сессии (scope: `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`, `src/client/project-manager/components/sessions/reviewer-session-visibility.test.ts`; expected commit: `test(ui): prevent premature unlock before artifact and bootstrap gates`)
-4. [TODO] Git Commit: `test(ui): prevent premature unlock before artifact and bootstrap gates` (hash: TBD)
+4. [DONE] Git Commit: `test(ui): prevent premature unlock before artifact and bootstrap gates` (hash: ff9cdb2a)
 
 ### Stream: Docs Sync
-1. [TODO] Синхронно обновить архитектурные документы после реализации контрактов (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`; expected commit: `docs(architecture): sync implemented resume-mode lock contract`)
+1. [DONE] Синхронно обновить архитектурные документы после реализации контрактов (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`; expected commit: `docs(architecture): sync implemented resume-mode lock contract`)
 2. [TODO] Git Commit: `docs(architecture): sync implemented resume-mode lock contract` (hash: TBD)
 
 ### Stream: QA Gates

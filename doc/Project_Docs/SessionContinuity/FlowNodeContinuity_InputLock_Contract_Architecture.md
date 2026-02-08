@@ -1,7 +1,7 @@
 # Flow Node Continuity Input Lock Contract Architecture
 
-**Date:** 2026-02-06 18:40 (CET)
-**Status:** Active baseline for Phase 100 copy/lock sync
+**Date:** 2026-02-08 15:20 (CET)
+**Status:** Active baseline for Phase 109 resume-mode lock contract
 **Scope:** `description/reviewer` rollover (with reusable contract for other flow nodes)
 
 ---
@@ -45,46 +45,40 @@ Observed sequence:
 
 ## 3. Target Contract (Variant 2)
 
-Introduce explicit continuity lock stream events from Core, consumed by PM/UI as the source of truth for input locking during rollover bootstrap.
+Source-of-truth контракта — `workspace:snapshot`; PM/UI читают lock lifecycle только из snapshot и не вычисляют unlock из `session:stream`/`rollover.phase`.
 
-### 3.1 New stream event payload
+### 3.1 Snapshot payload contract
 
-Event transport remains `session:stream` with `event.type = "stream_event"`.
-
-`event.data.kind = "continuity_lock"` payload:
-
-- `kind`: `"continuity_lock"`
-- `state`: `"locked" | "unlocked"` (`unlocked` допустим только для разрешённых unlock-path, см. lifecycle rules)
-- `rolloverId`: string (stable id for one rollover transaction)
-- `sourceSessionId`: string (session that started rollover)
-- `targetSessionId?`: string (newly created continuation session)
-- `stageId`: string
-- `runSlug?`: string | null
-- `reason`: one of
+`workspace:snapshot.sessions[sessionId]` должен публиковать поля:
+- `turnState`: `idle | running`
+- `resumeMode`: `no_resume | resume_in_place | resume_via_rollover`
+- `finalTurnCompleted`: boolean
+- `continuityLockActive`: boolean
+- `continuityLockReason`: one of
   - `threshold_reached`
   - `report_in_progress`
-  - `turn_complete_no_rollover`
   - `resume_bootstrap`
+  - `no_rollover_needed`
   - `resume_ready`
   - `resume_failed`
   - `resume_timeout`
-  - `terminal_no_resume`
-- `timestamp`: ISO string
+- `terminalLockReason`: `terminal_no_resume` (для terminal/read-only)
+- `continuityLockTransition`: `{ rolloverId, sourceSessionId, targetSessionId, reason, awaitingBootstrapTurn, updatedAt }`
 
 ### 3.2 Lifecycle rules
 
-1. On threshold trigger, Core emits `continuity_lock(state=locked, reason=threshold_reached)` for source session.
-2. During report creation/waiting, Core may emit additional `locked` updates (`report_in_progress`).
+1. On threshold trigger, Core публикует в snapshot lock-state для source session (`continuityLockActive=true`, `continuityLockReason=threshold_reached`).
+2. During report creation/waiting, Core может публиковать дополнительные lock updates (`report_in_progress`).
 3. **Resume-in-place** unlock path:
-   - Core emits `continuity_lock(state=unlocked, reason=turn_complete_no_rollover)` только когда одновременно выполнены:
+   - Core переводит сессию в unlocked (`continuityLockActive=false`) только когда одновременно выполнены:
      - финальный `turn_completed` текущего turn уже получен;
-     - continuity arbitration завершён как `no rollover` (context threshold OK).
+     - continuity arbitration завершён как `no rollover` (snapshot reason = `no_rollover_needed`).
 4. **Resume-via-rollover** lock path:
    - сразу после создания continuation session Core удерживает `locked` на source и target с `reason=resume_bootstrap`;
    - пока `awaitingBootstrapTurn=true`, lock не снимается даже если `continuityLockActive=false` в отдельном snapshot.
-5. Для rollover unlock разрешён только после первого bootstrap assistant answer в target session (этот bootstrap-turn скрыт от user-visible диалога): `continuity_lock(state=unlocked, reason=resume_ready)`.
+5. Для rollover unlock разрешён только после первого bootstrap assistant answer в target session (этот bootstrap-turn скрыт от user-visible диалога): `continuityLockReason=resume_ready`, `awaitingBootstrapTurn=false`, `continuityLockActive=false`.
 6. При `resume_failed|resume_timeout` lock остаётся `locked`; меняется только reason/copy (unlock запрещён).
-7. **No-resume session** после финального ответа переходит в terminal/read-only (`reason=terminal_no_resume`) и больше не emit `unlocked`.
+7. **No-resume session** после финального ответа переходит в terminal/read-only (`resumeMode=no_resume`, `finalTurnCompleted=true`, `terminalLockReason=terminal_no_resume`) и больше не unlock.
 8. **Description collector one-shot/no-resume** всегда следует правилу terminal/read-only (без unlock).
 
 ### 3.3 Safety requirements
@@ -93,29 +87,31 @@ Event transport remains `session:stream` with `event.type = "stream_event"`.
 - `resume_sent` does not imply unlock.
 - `turn_completed` без результата continuity arbitration (`no rollover`) не даёт unlock.
 - Unlock в rollover-path must be tied to observed first bootstrap assistant answer in the new session.
+- `no_rollover_needed` и `resume_ready` — единственные допустимые unlock-reason.
 - `resume_failed|resume_timeout` never unlock input.
 
 ---
 
 ## 4. UI/PM Consumption Rules
 
-### 4.1 Snapshot model extension
+### 4.1 Snapshot consumption baseline
 
-Extend `SessionStatusInfo` with continuity lock state:
-
-- `continuityLock: {`
-- `  active: boolean;`
-- `  rolloverId?: string;`
-- `  sourceSessionId?: string;`
-- `  reason?: string;`
-- `  updatedAt: number;`
-- `}`
+PM/UI обязаны рассчитывать effective lock только из `workspace:snapshot`:
+- `turnState`
+- `resumeMode`
+- `finalTurnCompleted`
+- `continuityLockActive`
+- `continuityLockReason`
+- `terminalLockReason`
+- `continuityLockTransition.awaitingBootstrapTurn`
 
 ### 4.2 Effective input lock predicate
 
 Input must be disabled when any of these is true:
 
 - `continuityLock.active === true`
+- `resumeMode === "no_resume" && finalTurnCompleted === true`
+- `continuityLockTransition.awaitingBootstrapTurn === true` (и для source, и для target session графа rollover)
 - `connectionState === "running"`
 - `isQueued === true`
 - `sessionTerminalReadOnly === true`
@@ -170,7 +166,7 @@ To remove runtime drift between templates and UI filtering, Phase 102 defines:
    - markdown-inline backtick wrapper (for example `` `__CODEAIHUB_INTERNAL_CONTINUITY_ACK__` ``).
 3. Unlock precedence:
    - unlock возможен только если выполнено одно из условий:
-     - `turn_completed` уже произошёл и Core подтвердил `no rollover`;
+     - `turn_completed` уже произошёл и Core подтвердил `no rollover` (`no_rollover_needed`);
      - для rollover получен первый bootstrap assistant answer в target session (`reason=resume_ready`).
 4. `resume_failed|resume_timeout` не являются unlock-условием: input остаётся locked, меняется только reason/copy.
 5. Stale `rollover.phase=resume_sent` не должен ни преждевременно unlock, ни бессрочно блокировать сессию без смены canonical reason в snapshot.
@@ -200,7 +196,7 @@ To remove runtime drift between templates and UI filtering, Phase 102 defines:
 
 ### 6.2 PM/UI
 
-- Reducer/stream tests for `continuity_lock` event application.
+- Reducer/stream tests for `workspace:snapshot` lock application (`resumeMode`/`finalTurnCompleted`/`awaitingBootstrapTurn`).
 - UI test: input remains disabled across session switch until allowed unlock gate is met.
 - Regression: `__CODEAIHUB_INTERNAL_CONTINUITY_ACK__` remains hidden from dialog.
 
@@ -209,8 +205,8 @@ To remove runtime drift between templates and UI filtering, Phase 102 defines:
 ## 7. Backward Compatibility
 
 - Existing `flow_node_rollover` notifications remain for status/debug timeline.
-- UI lock source of truth becomes `continuity_lock` event.
-- If lock event is missing (older core), fallback behavior remains current (`running/queued`).
+- UI lock source of truth is `workspace:snapshot` continuity contract.
+- If snapshot lock fields are missing (older core), fallback behavior remains current (`running/queued`).
 
 ---
 
