@@ -179,3 +179,26 @@
 4. [DONE] Git Commit: `chore(release): run build-all for phase 111 internal workflow turn-state fix` (hash: 597b6478)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 111 internal workflow turn-state fix`)
 6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 111 internal workflow turn-state fix` (hash: 8df9fd53)
+
+---
+
+## Phase 112 — Disable SessionRuntime Watchdog Auto-Idle (owner: Oleksandr, updated: 2026-02-08)
+
+**Problem (manual regression):**
+- В PM/UI поле ввода разблокируется и исчезает `Agent is working... Please wait.` во время долгих/"тихих" turn, потому что Core `SessionRuntime` принудительно переводит `turnState` из `running` в `idle` по watchdog таймауту (раньше было 120s) без учёта реального статуса провайдера.
+
+### Stream: Core Watchdog
+1. [DONE] Отключить watchdog auto-idle по умолчанию (чтобы `turnState` менялся только по явным provider lifecycle событиям) (scope: `packages/core/src/workspace-runtime/session-runtime.ts`, `packages/core/src/workspace-runtime/session-runtime.test.ts`; expected commit: `fix(core): disable session runtime watchdog auto-idle by default`)
+2. [DONE] Git Commit: `fix(core): disable session runtime watchdog auto-idle by default` (hash: 277d80ca)
+
+### Stream: QA Gates
+1. [DONE] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 112 watchdog disable gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run test --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
+2. [TODO] Git Commit: `chore(qa): validate phase 112 watchdog disable gates` (hash: TBD)
+
+### Stream: Release Build
+1. [TODO] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 112 watchdog disable hotfix`)
+2. [TODO] Git Commit: `docs(release): prepare release notes for phase 112 watchdog disable hotfix` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 112 watchdog disable hotfix`)
+4. [TODO] Git Commit: `chore(release): run build-all for phase 112 watchdog disable hotfix` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 112 watchdog disable hotfix`)
+6. [TODO] Git Commit: `chore(release): build and verify vsix for phase 112 watchdog disable hotfix` (hash: TBD)
