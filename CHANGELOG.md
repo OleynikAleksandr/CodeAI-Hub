@@ -1,3 +1,14 @@
+## [1.1.525] - 2026-02-08
+### Added
+- Core/PM snapshot contract: добавлены transition lock поля `continuityLockReason` и `continuityLockTransition` для handoff lifecycle collector -> reviewer.
+- Core runtime tests: покрытие continuity transition metadata в `WorkspaceRuntimeFacade` и публикации lock transition через `SessionRequestHandler`.
+- PM/UI non-regression: тесты на strict pipeline split (`workspace:snapshot` vs `session:stream`) и handoff lock удержание до финального reviewer snapshot.
+
+### Fixed
+- Core: `workspace:snapshot` теперь публикует continuity transition metadata вместе с lock state, чтобы исключить transient unlock-gap на auto reviewer handoff.
+- PM: input lock вычисляется только из snapshot transition contract; `session:stream` больше не может менять lock/connection state.
+- UI: `SessionView` убрал legacy rollover эвристики и использует snapshot-derived lock state.
+
 ## [1.1.524] - 2026-02-08
 ### Added
 - Core: `workspace-runtime` модуль (`WorkspaceStore`, `SessionRuntime`, `WorkspaceRuntimeFacade`) с sharded state и snapshot-first delivery.
