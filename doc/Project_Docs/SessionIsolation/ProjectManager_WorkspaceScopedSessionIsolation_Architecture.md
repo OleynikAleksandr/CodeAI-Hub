@@ -1,8 +1,21 @@
 # Project Manager Workspace-Scoped Session Isolation Architecture
 
-**Status:** Draft baseline for Phase 104 implementation  
-**Last Updated:** 2026-02-07  
+**Status:** Deprecated (superseded by Phase 105 Workspace Runtime)  
+**Last Updated:** 2026-02-08  
 **Owner:** Project Manager + Remote Bridge
+
+---
+
+## Deprecation Notice (Phase 105)
+
+Документ сохранён как historical reference для Phase 104 handshake (`workspace:scope:set/ack`).
+
+Актуальный source-of-truth:
+1. `doc/SolidWorks-Flow/WorkspaceRuntime_LayeredArchitecture.md`
+2. `doc/SolidWorks-Flow/InterfaceMap_WorkspaceRuntime.md`
+3. `doc/SolidWorks-Flow/Phase104_LegacyDeprecationChecklist.md`
+
+С версии Phase 105 runtime path в PM/Core переведён на `workspace:select` + `workspace:snapshot`; legacy handshake рассматривается только как transitional deprecated path до финального удаления.
 
 ---
 
