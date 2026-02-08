@@ -52,6 +52,9 @@ type NotifySessionPatch = Partial<
     | "continuityLockActive"
     | "continuityLockReason"
     | "continuityLockTransition"
+    | "resumeMode"
+    | "finalTurnCompleted"
+    | "terminalLockReason"
     | "lastHeartbeatAt"
   >
 >;
@@ -100,6 +103,7 @@ export class WorkspaceRuntimeFacade {
             continuityLockReason: snapshot.continuityLockReason ?? undefined,
             continuityLockTransition:
               snapshot.continuityLockTransition ?? undefined,
+            finalTurnCompleted: snapshot.finalTurnCompleted,
             lastHeartbeatAt:
               snapshot.lastHeartbeatAt === null
                 ? undefined
@@ -109,7 +113,8 @@ export class WorkspaceRuntimeFacade {
             field === "turnState" ||
             field === "continuityLockActive" ||
             field === "continuityLockReason" ||
-            field === "continuityLockTransition";
+            field === "continuityLockTransition" ||
+            field === "finalTurnCompleted";
           this.scheduleSnapshot(sessionKey.workspaceRoot, priority);
         },
       });
@@ -236,6 +241,13 @@ export class WorkspaceRuntimeFacade {
     if (options.transition !== undefined) {
       this.sessionRuntime.setLockTransition(sessionKey, options.transition);
     }
+  }
+
+  notifyFinalTurnCompleted(
+    sessionKey: SessionKey,
+    finalTurnCompleted: boolean
+  ): void {
+    this.sessionRuntime.setFinalTurnCompleted(sessionKey, finalTurnCompleted);
   }
 
   notifySessionCreated(

@@ -396,20 +396,18 @@ export class SessionRequestHandler {
     session: Session,
     state: SessionResumeLifecycleState
   ): void {
-    const patch = {
+    const sessionKey = {
+      workspaceRoot: session.workspacePath,
+      nodeId: session.stage ?? "session",
+      sessionId: session.id,
+    };
+    this.workspaceRuntime?.notifySessionCreated(sessionKey, {
       resumeMode: state.mode,
-      finalTurnCompleted: state.finalTurnCompleted,
       terminalLockReason: state.terminalLockReason ?? undefined,
-    } as unknown as Parameters<
-      WorkspaceRuntimeFacade["notifySessionCreated"]
-    >[1];
-    this.workspaceRuntime?.notifySessionCreated(
-      {
-        workspaceRoot: session.workspacePath,
-        nodeId: session.stage ?? "session",
-        sessionId: session.id,
-      },
-      patch
+    });
+    this.workspaceRuntime?.notifyFinalTurnCompleted(
+      sessionKey,
+      state.finalTurnCompleted
     );
   }
 
@@ -1695,6 +1693,18 @@ export class SessionRequestHandler {
     }
   }
 
+  private emitResumeInPlaceNoRolloverUnlock(session: Session): void {
+    this.emitContinuityLockEvent({
+      sessionId: session.id,
+      rolloverId: crypto.randomUUID(),
+      sourceSessionId: session.id,
+      stageId: session.stage ?? "session",
+      runSlug: session.runSlug ?? null,
+      state: "unlocked",
+      reason: "resume_ready",
+    });
+  }
+
   private async handleTurnCompletedEvent(sessionId: string): Promise<void> {
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
@@ -1709,9 +1719,21 @@ export class SessionRequestHandler {
     const rolloverStarted =
       await this.handleFlowNodeContinuitySilentPreemptiveRollover(sessionId);
     if (rolloverStarted) {
+      this.updateSessionResumeLifecycleState(session, {
+        finalTurnCompleted: true,
+        terminalLockReason: null,
+      });
       return;
     }
     this.emitTurnStateEvent({ sessionId, state: "idle" });
+    this.updateSessionResumeLifecycleState(session, {
+      finalTurnCompleted: true,
+      terminalLockReason: null,
+    });
+    if (resumeMode === "resume_in_place") {
+      this.emitResumeInPlaceNoRolloverUnlock(session);
+      return;
+    }
     this.finalizeFlowNodeContinuityLockOnBootstrapTurn({
       sessionId,
       reason: "resume_ready",
