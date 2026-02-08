@@ -21,6 +21,7 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { listUnifiedSessionWorkspaceSlugs } from "../../unified-session/workspace-slugs";
 import { DescriptionStepStore } from "../../workflow/description";
+import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import { type BridgeEvent, serializeSession } from "../types";
 import { QuestionnaireCuratorFacade } from "./questionnaire-curator-facade";
 import {
@@ -295,6 +296,7 @@ export type SessionRequestHandlerOptions = {
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly stateBroadcaster: () => void;
   readonly continuityClock?: () => string;
+  readonly workspaceRuntime?: WorkspaceRuntimeFacade;
 };
 
 export class SessionRequestHandler {
@@ -307,6 +309,7 @@ export class SessionRequestHandler {
   private readonly questionnaireCurator: QuestionnaireCuratorFacade;
   private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
+  private readonly workspaceRuntime?: WorkspaceRuntimeFacade;
   private readonly continuity: SessionContinuityFacade;
   private readonly descriptionStepStore = new DescriptionStepStore();
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
@@ -543,6 +546,7 @@ export class SessionRequestHandler {
     });
     this.broadcaster = options.broadcaster;
     this.stateBroadcaster = options.stateBroadcaster;
+    this.workspaceRuntime = options.workspaceRuntime;
     this.continuity = new SessionContinuityFacade({
       logger: this.logger,
       clock: options.continuityClock,
@@ -755,6 +759,19 @@ export class SessionRequestHandler {
       providerSessionId,
       rootSessionId: options.rootSessionId ?? null,
     });
+    this.workspaceRuntime?.notifySessionCreated(
+      {
+        workspaceRoot: session.workspacePath,
+        nodeId: session.stage ?? "session",
+        sessionId: session.id,
+      },
+      {
+        nodeId: session.stage ?? "session",
+        providerId: session.providerId,
+        providerSessionId: session.providerSessionId ?? undefined,
+        bindingStatus: session.providerSessionStatus,
+      }
+    );
 
     this.broadcaster({
       type: "session:created",
@@ -1201,6 +1218,15 @@ export class SessionRequestHandler {
   }
 
   async handleDelete(sessionId: string): Promise<void> {
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      this.broadcaster({
+        type: "session:error",
+        payload: { sessionId, message: "Session not found" },
+      });
+      return;
+    }
+
     const binding = this.providerSessions.get(sessionId);
     if (binding) {
       const adapter = this.providerRegistry.getAdapter(binding.providerId);
@@ -1215,14 +1241,15 @@ export class SessionRequestHandler {
 
     const deleted = this.sessionManager.deleteSession(sessionId);
     if (!deleted) {
-      this.broadcaster({
-        type: "session:error",
-        payload: { sessionId, message: "Session not found" },
-      });
       return;
     }
 
     this.sessionStorage.close(sessionId, "session-deleted");
+    this.workspaceRuntime?.notifySessionDeleted({
+      workspaceRoot: session.workspacePath,
+      nodeId: session.stage ?? "session",
+      sessionId: session.id,
+    });
     this.broadcaster({ type: "session:deleted", payload: { sessionId } });
   }
 
@@ -2063,6 +2090,18 @@ export class SessionRequestHandler {
         status: session.providerSessionStatus,
       },
     });
+    this.workspaceRuntime?.notifyBindingChanged(
+      {
+        workspaceRoot: session.workspacePath,
+        nodeId: session.stage ?? "session",
+        sessionId: session.id,
+      },
+      {
+        providerId: session.providerId,
+        providerSessionId: session.providerSessionId ?? null,
+        bindingStatus: session.providerSessionStatus,
+      }
+    );
     this.stateBroadcaster();
 
     const providerSessionId = session.providerSessionId ?? null;
