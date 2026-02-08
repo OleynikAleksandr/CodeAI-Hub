@@ -12,6 +12,14 @@ type BindingUpdate = {
   readonly providerSessionId: string;
 };
 
+type RuntimeLockUpdate = {
+  readonly sessionId: string;
+  readonly active: boolean;
+  readonly reason: string | null;
+  readonly transitionRolloverId: string | null;
+  readonly awaitingBootstrapTurn: boolean;
+};
+
 type HandlerHarness = {
   readonly handler: SessionRequestHandler;
   readonly sessionManager: SessionManager;
@@ -19,6 +27,7 @@ type HandlerHarness = {
   readonly events: BridgeEvent[];
   readonly promoted: BindingUpdate[];
   readonly continuityUpdates: BindingUpdate[];
+  readonly runtimeLockUpdates: RuntimeLockUpdate[];
 };
 
 const noop = (): void => {
@@ -42,6 +51,7 @@ const createHarness = (): HandlerHarness => {
   const events: BridgeEvent[] = [];
   const promoted: BindingUpdate[] = [];
   const continuityUpdates: BindingUpdate[] = [];
+  const runtimeLockUpdates: RuntimeLockUpdate[] = [];
 
   const handler = Object.create(
     SessionRequestHandler.prototype
@@ -78,6 +88,34 @@ const createHarness = (): HandlerHarness => {
       warn: noop,
       error: noop,
     },
+    workspaceRuntime: {
+      notifyTurnStateChanged: noop,
+      notifyLockChanged: (
+        sessionKey: { readonly sessionId: string },
+        options: {
+          readonly active: boolean;
+          readonly reason?: string | null;
+          readonly transition?: {
+            readonly rolloverId: string;
+            readonly awaitingBootstrapTurn: boolean;
+          } | null;
+        }
+      ) => {
+        runtimeLockUpdates.push({
+          sessionId: sessionKey.sessionId,
+          active: options.active,
+          reason: options.reason ?? null,
+          transitionRolloverId: options.transition?.rolloverId ?? null,
+          awaitingBootstrapTurn:
+            options.transition?.awaitingBootstrapTurn ?? false,
+        });
+      },
+      notifySessionCreated: noop,
+      notifyBindingChanged: noop,
+      notifySessionDeleted: noop,
+      notifyArtifactWritten: noop,
+      recordHeartbeat: noop,
+    },
     broadcaster: (event: BridgeEvent) => {
       events.push(event);
     },
@@ -94,6 +132,7 @@ const createHarness = (): HandlerHarness => {
     events,
     promoted,
     continuityUpdates,
+    runtimeLockUpdates,
   };
 };
 
@@ -282,6 +321,32 @@ test("SessionRequestHandler unlocks continuity lock after bootstrap turn complet
       }
     ).flowNodeContinuityLockContexts.size,
     0
+  );
+
+  const targetRuntimeUpdates = harness.runtimeLockUpdates.filter(
+    (entry) => entry.sessionId === targetSession.id
+  );
+  assert.deepEqual(
+    targetRuntimeUpdates.map((entry) => ({
+      active: entry.active,
+      reason: entry.reason,
+      transitionRolloverId: entry.transitionRolloverId,
+      awaitingBootstrapTurn: entry.awaitingBootstrapTurn,
+    })),
+    [
+      {
+        active: true,
+        reason: "resume_bootstrap",
+        transitionRolloverId: "rollover-1",
+        awaitingBootstrapTurn: true,
+      },
+      {
+        active: false,
+        reason: "resume_ready",
+        transitionRolloverId: null,
+        awaitingBootstrapTurn: false,
+      },
+    ]
   );
 });
 
