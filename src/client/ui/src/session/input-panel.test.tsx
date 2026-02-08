@@ -151,3 +151,25 @@ test("InputPanel keeps handoff lock until final reviewer snapshot unlocks it", a
   assert.equal(handoffHtml.includes("disabled"), true);
   assert.equal(reviewerCompletedHtml.includes("disabled"), false);
 });
+
+test("InputPanel stays locked on post-answer continuity trigger when idle + continuityLockActive=true", async () => {
+  const answerDeliveredHtml = await renderInputPanel({
+    connectionState: "idle",
+    continuityLockActive: false,
+    isQueued: false,
+  });
+  const postAnswerContinuityHtml = await renderInputPanel({
+    connectionState: "idle",
+    continuityLockActive: true,
+    isQueued: false,
+  });
+
+  assert.equal(answerDeliveredHtml.includes("disabled"), false);
+  assert.equal(postAnswerContinuityHtml.includes("disabled"), true);
+  assert.equal(
+    postAnswerContinuityHtml.includes(
+      "Agent is resuming your session… Please wait."
+    ),
+    true
+  );
+});
