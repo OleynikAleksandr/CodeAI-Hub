@@ -45,8 +45,8 @@
 2. [DONE] Git Commit: `docs(architecture): document snapshot-first lock lifecycle and transition semantics` (hash: 76b5bc64)
 3. [DONE] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 107 snapshot-lock hardening gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
 4. [DONE] Git Commit: `chore(qa): validate phase 107 snapshot-lock hardening gates` (hash: 3b7e9852)
-5. [TODO] Подготовить отчёт сессии после закрытия Phase 107 (scope: `doc/Sessions/Session114.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record phase 107 completion`)
-6. [TODO] Git Commit: `docs(session): record phase 107 completion` (hash: TBD)
+5. [DONE] Подготовить отчёт сессии после закрытия Phase 107 (scope: `doc/Sessions/Session115.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record phase 107 completion`)
+6. [DONE] Git Commit: `docs(session): record phase 107 completion` (hash: TBD)
 
 ### Stream: Release Build
 1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 107`)
@@ -54,4 +54,4 @@
 3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 107`)
 4. [DONE] Git Commit: `chore(release): run build-all for phase 107` (hash: 026b83fd)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 107`; result: `codeai-hub-1.1.526.vsix` собран, `Verifying SDK exclusions` и `Package created` подтверждены)
-6. [IN_PROGRESS] Git Commit: `chore(release): build and verify vsix for phase 107` (hash: TBD, allow-empty if no file changes)
+6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 107` (hash: 7b9037a2, allow-empty)
