@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef } from "react";
 import { api } from "../../api";
 import type { WorkspaceSelectAckPayload } from "../../core-stream-message-types";
 import { activateWorkspace } from "../../services/workspace-activate-client";
-import { syncWorkspaceScopeWithAck } from "../../services/workspace-scope-handshake";
 import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 import type { WorkspaceProject } from "../../types";
 
@@ -78,7 +77,7 @@ const waitWorkspaceSelectAck = async (
     });
   });
 
-const syncWorkspaceSelectWithFallback = async (params: {
+const syncWorkspaceSelectWithAck = async (params: {
   readonly workspace: WorkspaceProject | null;
   readonly reason: "workspace_selected" | "workspace_cleared" | "reconnect";
 }): Promise<WorkspaceSelectAckPayload | null> => {
@@ -101,28 +100,8 @@ const syncWorkspaceSelectWithFallback = async (params: {
         reason: "resync",
       });
     }
-    return ack;
   }
-
-  const legacyAck = await syncWorkspaceScopeWithAck({
-    workspacePath: params.workspace?.path ?? null,
-    workspaceSlug: params.workspace?.slug ?? null,
-    reason: params.reason,
-  });
-  if (!legacyAck) {
-    return ack;
-  }
-  const fallbackAck: WorkspaceSelectAckPayload = {
-    requestId,
-    status: legacyAck.status,
-    workspaceRoot: legacyAck.workspacePath,
-    selectionId: ack?.selectionId ?? null,
-    error: legacyAck.error ?? null,
-  };
-  if (fallbackAck.status === "applied") {
-    workspaceSnapshotStore.applySelectAck(fallbackAck);
-  }
-  return fallbackAck;
+  return ack;
 };
 
 export const useWorkspaceScopeSync = (activeWorkspace?: WorkspaceProject) => {
@@ -136,7 +115,7 @@ export const useWorkspaceScopeSync = (activeWorkspace?: WorkspaceProject) => {
       readonly activateAfterAck: boolean;
     }) => {
       const syncToken = ++latestScopeSyncTokenRef.current;
-      const ack = await syncWorkspaceSelectWithFallback({
+      const ack = await syncWorkspaceSelectWithAck({
         workspace: params.workspace,
         reason: params.reason,
       });
