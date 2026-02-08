@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import http from "node:http";
 import cors from "cors";
 import express from "express";
@@ -14,6 +15,8 @@ import type {
 import type { Logger } from "../telemetry/logger";
 import { UnifiedSessionStorage } from "../unified-session/storage";
 import { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
+import { WorkspaceRuntimeFacade } from "../workspace-runtime/workspace-runtime-facade";
+import type { WorkspaceSnapshotRequestPayload } from "../workspace-runtime/workspace-wire-types";
 import { HttpApiRouter } from "./handlers/http-api-router";
 import { ProjectRequestHandler } from "./handlers/project-request-handler";
 import { SessionRequestHandler } from "./handlers/session-request-handler";
@@ -53,6 +56,11 @@ export class RemoteBridge {
   private readonly fileDropService: FileDropService;
   private readonly sessionStorage: UnifiedSessionStorage;
   private readonly workflowEventsService: WorkflowEventsService;
+  private readonly workspaceRuntime: WorkspaceRuntimeFacade;
+  private readonly workspaceRuntimeUnsubscribeByClient = new Map<
+    string,
+    () => void
+  >();
 
   private readonly projectHandler: ProjectRequestHandler;
   private readonly sessionHandler: SessionRequestHandler;
@@ -92,6 +100,18 @@ export class RemoteBridge {
       workspaceSlug: this.config.claudeProjectSlug,
       logger: this.logger,
     });
+    this.workspaceRuntime = new WorkspaceRuntimeFacade({
+      hydrateWorkspaceSessions: (workspaceRoot) =>
+        this.sessionManager
+          .getSessionsByWorkspacePath(workspaceRoot)
+          .map((session) => ({
+            sessionId: session.id,
+            nodeId: session.stage ?? "session",
+            providerId: session.providerId,
+            providerSessionId: session.providerSessionId ?? null,
+            bindingStatus: session.providerSessionStatus,
+          })),
+    });
 
     this.projectHandler = new ProjectRequestHandler(
       options.projectRegistry,
@@ -107,6 +127,7 @@ export class RemoteBridge {
       sessionStorage: this.sessionStorage,
       logger: this.logger,
       continuityClock: () => new Date().toISOString(),
+      workspaceRuntime: this.workspaceRuntime,
       broadcaster: (event) => {
         this.broadcast(event as BridgeEvent);
       },
@@ -188,10 +209,20 @@ export class RemoteBridge {
       httpServer: this.httpServer,
       logger: this.logger,
       onIncomingMessage: this.handleIncomingMessage.bind(this),
-      onClientConnected: (id, count) =>
-        this.hooks.onClientConnected?.(id, count),
-      onClientDisconnected: (id, count) =>
-        this.hooks.onClientDisconnected?.(id, count),
+      onClientConnected: (id, count) => {
+        this.workspaceRuntimeUnsubscribeByClient.set(
+          id,
+          this.workspaceRuntime.subscribe(id, (message) => {
+            this.wsManager?.sendToClient(id, message);
+          })
+        );
+        this.hooks.onClientConnected?.(id, count);
+      },
+      onClientDisconnected: (id, count) => {
+        this.workspaceRuntimeUnsubscribeByClient.get(id)?.();
+        this.workspaceRuntimeUnsubscribeByClient.delete(id);
+        this.hooks.onClientDisconnected?.(id, count);
+      },
       getInitialState: () => this.buildInitialState(),
       getLatestStatus: () =>
         this.latestStatus ?? this.statusReporter.snapshot(),
@@ -211,6 +242,11 @@ export class RemoteBridge {
 
   async stop(): Promise<void> {
     this.unsubscribeStatus?.();
+    for (const unsubscribe of this.workspaceRuntimeUnsubscribeByClient.values()) {
+      unsubscribe();
+    }
+    this.workspaceRuntimeUnsubscribeByClient.clear();
+    this.workspaceRuntime.dispose();
     this.wsManager?.stop();
     if (this.httpServer) {
       await new Promise<void>((resolve) => {
@@ -240,11 +276,16 @@ export class RemoteBridge {
     _socket: WebSocket,
     incoming: IncomingMessage
   ): Promise<void> {
+    if (!this.ensureMessageAllowedForScope(clientId, incoming)) {
+      return;
+    }
     switch (incoming.type) {
       case "session:create":
         await this.sessionHandler.handleCreate(
           incoming.payload?.providerId,
-          incoming.payload?.workspacePath,
+          incoming.payload?.workspacePath ??
+            this.wsManager?.getWorkspaceScope(clientId)?.workspacePath ??
+            undefined,
           {
             initiativeSlug: incoming.payload?.initiativeSlug ?? null,
             providerSessionId: incoming.payload?.providerSessionId ?? null,
@@ -280,9 +321,88 @@ export class RemoteBridge {
       case "workspace:scope:set":
         this.handleWorkspaceScopeSet(clientId, incoming.payload);
         break;
+      case "workspace:select":
+        this.handleWorkspaceSelect(clientId, incoming.payload);
+        break;
+      case "workspace:snapshot:request":
+        this.handleWorkspaceSnapshotRequest(clientId, incoming.payload);
+        break;
       default:
         break;
     }
+  }
+
+  private ensureMessageAllowedForScope(
+    clientId: string,
+    incoming: IncomingMessage
+  ): boolean {
+    const scope = this.wsManager?.getWorkspaceScope(clientId);
+    if (!scope?.enabled) {
+      return true;
+    }
+
+    if (incoming.type === "session:create") {
+      if (!scope.workspacePath) {
+        this.sendScopeViolation(
+          clientId,
+          incoming.type,
+          "Workspace scope is not selected"
+        );
+        return false;
+      }
+      const requestedWorkspacePath =
+        incoming.payload?.workspacePath ?? scope.workspacePath;
+      if (requestedWorkspacePath !== scope.workspacePath) {
+        this.sendScopeViolation(
+          clientId,
+          incoming.type,
+          "session:create rejected for out-of-scope workspace"
+        );
+        return false;
+      }
+    }
+
+    if (
+      incoming.type === "session:message" ||
+      incoming.type === "session:delete"
+    ) {
+      if (!scope.workspacePath) {
+        this.sendScopeViolation(
+          clientId,
+          incoming.type,
+          "Workspace scope is not selected"
+        );
+        return false;
+      }
+      const sessionId = incoming.payload.sessionId;
+      const session = this.sessionManager.getSession(sessionId);
+      if (session && session.workspacePath !== scope.workspacePath) {
+        this.sendScopeViolation(
+          clientId,
+          incoming.type,
+          "Session command rejected for out-of-scope workspace"
+        );
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private sendScopeViolation(
+    clientId: string,
+    command: string,
+    message: string
+  ): void {
+    this.wsManager?.sendToClient(clientId, {
+      type: "command:error",
+      payload: {
+        requestId: randomUUID(),
+        command,
+        message,
+        code: "workspace_scope_violation",
+      },
+    });
   }
 
   private handleWorkspaceScopeSet(clientId: string, payload: unknown): void {
@@ -295,5 +415,93 @@ export class RemoteBridge {
       type: "workspace:scope:ack",
       payload: ack,
     });
+  }
+
+  private handleWorkspaceSelect(clientId: string, payload: unknown): void {
+    const wsManager = this.wsManager;
+    if (!wsManager) {
+      return;
+    }
+    const requestRecord =
+      payload && typeof payload === "object" && !Array.isArray(payload)
+        ? (payload as {
+            readonly requestId?: unknown;
+            readonly workspaceRoot?: unknown;
+            readonly reason?: unknown;
+          })
+        : null;
+    const parsedWorkspaceRoot =
+      requestRecord?.workspaceRoot === null ||
+      typeof requestRecord?.workspaceRoot === "string"
+        ? requestRecord.workspaceRoot
+        : null;
+    const parsedReason =
+      requestRecord?.reason === "workspace_selected" ||
+      requestRecord?.reason === "reconnect" ||
+      requestRecord?.reason === "workspace_cleared"
+        ? requestRecord.reason
+        : "workspace_selected";
+    const ack = this.workspaceRuntime.select({
+      clientId,
+      request: {
+        requestId:
+          typeof requestRecord?.requestId === "string"
+            ? requestRecord.requestId
+            : randomUUID(),
+        workspaceRoot: parsedWorkspaceRoot,
+        reason: parsedReason,
+      },
+    });
+    wsManager.sendToClient(clientId, {
+      type: "workspace:select:ack",
+      payload: ack,
+    });
+    if (ack.status !== "applied") {
+      return;
+    }
+    wsManager.setWorkspaceScopeForClient(clientId, ack.workspaceRoot);
+    if (!ack.workspaceRoot) {
+      return;
+    }
+    const scopedSessionIds = this.sessionManager
+      .getSessionsByWorkspacePath(ack.workspaceRoot)
+      .map((session) => session.id);
+    wsManager.populateSessionWorkspaceScope(
+      ack.workspaceRoot,
+      scopedSessionIds
+    );
+  }
+
+  private handleWorkspaceSnapshotRequest(
+    clientId: string,
+    payload: WorkspaceSnapshotRequestPayload
+  ): void {
+    const wsManager = this.wsManager;
+    if (!wsManager) {
+      return;
+    }
+    const scope = wsManager.getWorkspaceScope(clientId);
+    if (
+      scope?.enabled &&
+      scope.workspacePath &&
+      payload.workspaceRoot !== scope.workspacePath
+    ) {
+      this.sendScopeViolation(
+        clientId,
+        "workspace:snapshot:request",
+        "workspace:snapshot:request rejected for out-of-scope workspace"
+      );
+      return;
+    }
+    const message = this.workspaceRuntime.requestSnapshot(clientId);
+    if (!message) {
+      this.sendScopeViolation(
+        clientId,
+        "workspace:snapshot:request",
+        "No active workspace selection"
+      );
+      return;
+    }
+    wsManager.sendToClient(clientId, message);
   }
 }

@@ -266,6 +266,26 @@ export class WorkspaceRuntimeFacade {
     this.sessionRuntime.recordHeartbeat(sessionKey);
   }
 
+  requestSnapshot(clientId: string): WorkspaceSnapshotPush | null {
+    const selection = this.selectionByClientId.get(clientId);
+    if (!(selection?.workspaceRoot && selection.selectionId)) {
+      return null;
+    }
+    const state = this.store.getOrCreate(selection.workspaceRoot);
+    const snapshot = buildSnapshot(selection.workspaceRoot, state);
+    selection.sequence += 1;
+    return {
+      type: "workspace:snapshot",
+      payload: {
+        workspaceRoot: selection.workspaceRoot,
+        selectionId: selection.selectionId,
+        sequence: selection.sequence,
+        generatedAt: this.nowIso(),
+        snapshot,
+      },
+    };
+  }
+
   dispose(): void {
     this.sessionRuntime.dispose();
     for (const timer of this.snapshotTimers.values()) {
