@@ -552,6 +552,11 @@ export class SessionRequestHandler {
             stageId: options.stageId,
             runSlug: options.runSlug,
             reason: options.reason,
+            rolloverPending:
+              options.state === "locked" &&
+              (options.reason === "threshold_reached" ||
+                options.reason === "report_in_progress" ||
+                options.reason === "resume_bootstrap"),
             awaitingBootstrapTurn: options.reason === "resume_bootstrap",
             resumeMode: lifecycleState?.mode,
             finalTurnCompleted: lifecycleState?.finalTurnCompleted,
