@@ -155,3 +155,27 @@
 4. [DONE] Git Commit: `chore(release): run build-all for phase 110 visibility hotfix` (hash: 4a07ece8)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 110 visibility hotfix`)
 6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 110 visibility hotfix` (hash: 54be8bf2)
+
+---
+
+## Phase 111 — Internal Workflow TurnState Lock Fix (owner: Oleksandr, updated: 2026-02-08)
+
+**Problem (manual regression):**
+- В PM UI поле ввода может оставаться активным во время workflow/internal prompt (особенно в Description collector), потому что `workspace:snapshot` остаётся в `turnState=idle`.
+- Ожидаемое поведение: ввод разблокируется только после завершения turn (когда агент реально ждёт следующий запрос пользователя), а для collector/no-resume сессий ввод не должен становиться доступным вовсе.
+
+### Stream: Core Turn Lifecycle
+1. [DONE] Эмитить `turn_state=running` для internal сообщений (и откатывать в `idle` при ошибке); добавить тесты (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix(core): emit running turn state for internal messages`)
+2. [DONE] Git Commit: `fix(core): emit running turn state for internal messages` (hash: 06e468f2)
+
+### Stream: QA Gates
+1. [DONE] Прогнать обязательные гейты + таргетные сборки (`packages/core`, `webview/project-manager`) и зафиксировать итог в TODO (scope: `doc/TODO/todo-plan.md`; expected commit: `chore(qa): validate phase 111 internal message turn-state fix gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run test --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
+2. [TODO] Git Commit: `chore(qa): validate phase 111 internal message turn-state fix gates` (hash: TBD)
+
+### Stream: Release Build
+1. [TODO] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 111 internal workflow turn-state fix`)
+2. [TODO] Git Commit: `docs(release): prepare release notes for phase 111 internal workflow turn-state fix` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 111 internal workflow turn-state fix`)
+4. [TODO] Git Commit: `chore(release): run build-all for phase 111 internal workflow turn-state fix` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 111 internal workflow turn-state fix`)
+6. [TODO] Git Commit: `chore(release): build and verify vsix for phase 111 internal workflow turn-state fix` (hash: TBD)
