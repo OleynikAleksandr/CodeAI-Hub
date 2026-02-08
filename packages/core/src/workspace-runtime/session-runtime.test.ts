@@ -101,6 +101,25 @@ test("SessionRuntime emits lock transitions", () => {
   runtime.dispose();
 });
 
+test("SessionRuntime tracks finalTurnCompleted transitions", () => {
+  const values: boolean[] = [];
+  const runtime = new SessionRuntime({
+    watchdogTimeoutMs: 1000,
+    watchdogTickMs: 20,
+    onStateChanged: (_key, field, snapshot) => {
+      if (field === "finalTurnCompleted") {
+        values.push(snapshot.finalTurnCompleted);
+      }
+    },
+  });
+
+  runtime.setFinalTurnCompleted(sessionKey, true);
+  runtime.setFinalTurnCompleted(sessionKey, false);
+
+  assert.deepEqual(values, [true, false]);
+  runtime.dispose();
+});
+
 test("SessionRuntime invokes callback with latest heartbeat state", () => {
   let now = 100;
   const heartbeatTimestamps: number[] = [];

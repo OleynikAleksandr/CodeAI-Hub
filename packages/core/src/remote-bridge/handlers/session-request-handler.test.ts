@@ -90,6 +90,7 @@ const createHarness = (): HandlerHarness => {
     },
     workspaceRuntime: {
       notifyTurnStateChanged: noop,
+      notifyFinalTurnCompleted: noop,
       notifyLockChanged: (
         sessionKey: { readonly sessionId: string },
         options: {
@@ -239,7 +240,7 @@ test("SessionRequestHandler updates provider binding on sessionIdChanged", () =>
   );
 });
 
-test("SessionRequestHandler unlocks continuity lock after bootstrap turn completion", async () => {
+test("SessionRequestHandler unlocks continuity lock only after bootstrap assistant message", async () => {
   const harness = createHarness();
   const sourceSession = harness.sessionManager.createSession(
     "claudeCodeCli",
@@ -249,6 +250,19 @@ test("SessionRequestHandler unlocks continuity lock after bootstrap turn complet
     "claudeCodeCli",
     "/tmp/core-continuity-target"
   );
+  const lifecycleStore = (
+    harness.handler as any
+  ).getSessionResumeLifecycleStore();
+  lifecycleStore.set(sourceSession.id, {
+    mode: "resume_via_rollover",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
+  lifecycleStore.set(targetSession.id, {
+    mode: "resume_via_rollover",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
 
   (harness.handler as any).registerFlowNodeContinuityLockContext({
     rolloverId: "rollover-1",
@@ -274,8 +288,24 @@ test("SessionRequestHandler unlocks continuity lock after bootstrap turn complet
     type: "turn_completed",
   });
   await flushAsyncWork();
+  let continuityLockEvents = harness.events.filter(
+    (event) =>
+      event.type === "session:stream" &&
+      (
+        event.payload as {
+          readonly event?: { readonly data?: { readonly kind?: string } };
+        }
+      )?.event?.data?.kind === "continuity_lock"
+  );
+  assert.equal(continuityLockEvents.length, 1);
 
-  const continuityLockEvents = harness.events.filter(
+  (harness.handler as any).handleProviderEvent(targetSession.id, {
+    type: "assistant",
+    payload: "bootstrap complete",
+  });
+  await flushAsyncWork();
+
+  continuityLockEvents = harness.events.filter(
     (event) =>
       event.type === "session:stream" &&
       (
@@ -409,6 +439,195 @@ test("SessionRequestHandler does not emit idle before continuity lock when rollo
 
   assert.equal(lockEvents.length, 1);
   assert.equal(turnIdleEvents.length, 0);
+});
+
+test("SessionRequestHandler enforces no_resume terminal lock and read-only send guard", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-no-resume-terminal",
+    "provider-session-no-resume",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+    }
+  );
+  (harness.handler as any).getSessionResumeLifecycleStore().set(session.id, {
+    mode: "no_resume",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "turn_completed",
+  });
+  await flushAsyncWork();
+
+  const terminalLockEvent = harness.events.find((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: {
+        readonly data?: {
+          readonly kind?: string;
+          readonly state?: string;
+          readonly reason?: string;
+        };
+      };
+    };
+    return (
+      payload.event?.data?.kind === "continuity_lock" &&
+      payload.event.data.state === "locked" &&
+      payload.event.data.reason === "terminal_no_resume"
+    );
+  });
+  assert.ok(terminalLockEvent);
+
+  await (harness.handler as any).handleMessage(session.id, "follow-up");
+  const terminalReadOnlyError = harness.events.find((event) => {
+    if (event.type !== "session:error") {
+      return false;
+    }
+    const payload = event.payload as { readonly code?: string };
+    return payload.code === "session_terminal_read_only";
+  });
+  assert.ok(terminalReadOnlyError);
+});
+
+test("SessionRequestHandler emits no-rollover unlock decision for resume_in_place sessions", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-resume-in-place"
+  );
+  (harness.handler as any).getSessionResumeLifecycleStore().set(session.id, {
+    mode: "resume_in_place",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "turn_completed",
+  });
+  await flushAsyncWork();
+
+  const decisionEvent = harness.events.find((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: {
+        readonly data?: {
+          readonly kind?: string;
+          readonly state?: string;
+          readonly reason?: string;
+        };
+      };
+    };
+    return (
+      payload.event?.data?.kind === "continuity_lock" &&
+      payload.event.data.state === "unlocked" &&
+      payload.event.data.reason === "no_rollover_needed"
+    );
+  });
+  assert.ok(decisionEvent);
+});
+
+test("SessionRequestHandler keeps lock active for resume_failed and resume_timeout", async () => {
+  const harness = createHarness();
+  const sourceSession = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-failed-timeout-source"
+  );
+  const targetSession = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-failed-timeout-target"
+  );
+  const registerContext = () =>
+    (harness.handler as any).registerFlowNodeContinuityLockContext({
+      rolloverId: "rollover-failure",
+      sourceSessionId: sourceSession.id,
+      targetSessionId: targetSession.id,
+      stageId: "description",
+      runSlug: "reviewer",
+      awaitingBootstrapTurn: true,
+    });
+
+  registerContext();
+  (harness.handler as any).emitContinuityLockEvent({
+    sessionId: targetSession.id,
+    rolloverId: "rollover-failure",
+    sourceSessionId: sourceSession.id,
+    targetSessionId: targetSession.id,
+    stageId: "description",
+    runSlug: "reviewer",
+    state: "locked",
+    reason: "resume_bootstrap",
+  });
+  (harness.handler as any).handleProviderEvent(targetSession.id, {
+    type: "turn_failed",
+  });
+  await flushAsyncWork();
+
+  const failureEvents = harness.events.filter((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: {
+        readonly data?: {
+          readonly kind?: string;
+          readonly state?: string;
+          readonly reason?: string;
+        };
+      };
+    };
+    return (
+      payload.event?.data?.kind === "continuity_lock" &&
+      payload.event.data.state === "locked" &&
+      payload.event.data.reason === "resume_failed"
+    );
+  });
+  assert.equal(failureEvents.length, 2);
+
+  registerContext();
+  (harness.handler as any).emitContinuityLockEvent({
+    sessionId: targetSession.id,
+    rolloverId: "rollover-failure",
+    sourceSessionId: sourceSession.id,
+    targetSessionId: targetSession.id,
+    stageId: "description",
+    runSlug: "reviewer",
+    state: "locked",
+    reason: "resume_bootstrap",
+  });
+  (harness.handler as any).finalizeFlowNodeContinuityLock({
+    sessionId: targetSession.id,
+    reason: "resume_timeout",
+  });
+  await flushAsyncWork();
+
+  const timeoutEvents = harness.events.filter((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: {
+        readonly data?: {
+          readonly kind?: string;
+          readonly state?: string;
+          readonly reason?: string;
+        };
+      };
+    };
+    return (
+      payload.event?.data?.kind === "continuity_lock" &&
+      payload.event.data.state === "locked" &&
+      payload.event.data.reason === "resume_timeout"
+    );
+  });
+  assert.equal(timeoutEvents.length, 2);
 });
 
 test("SessionRequestHandler blocks old-session sends while rollover is pending", async () => {

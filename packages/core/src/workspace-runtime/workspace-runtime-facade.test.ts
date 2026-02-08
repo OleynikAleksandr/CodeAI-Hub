@@ -277,3 +277,37 @@ test("WorkspaceRuntimeFacade keeps continuity lock active for resume timeout", a
 
   facade.dispose();
 });
+
+test("WorkspaceRuntimeFacade publishes finalTurnCompleted flag in snapshot", async () => {
+  const events: WorkspaceSnapshotPush[] = [];
+  const facade = new WorkspaceRuntimeFacade({
+    snapshotDebounceMs: 25,
+    selectionIdFactory: () => "sel-final-turn",
+  });
+
+  facade.subscribe("client-1", (message) => {
+    events.push(message);
+  });
+
+  const sessionKey = createSessionKey(workspaceA, "session-final-turn");
+  facade.select({
+    clientId: "client-1",
+    request: {
+      requestId: "req-1",
+      workspaceRoot: workspaceA,
+      reason: "workspace_selected",
+    },
+  });
+  facade.notifySessionCreated(sessionKey, { providerId: "claudeCodeCli" });
+  await wait(40);
+
+  facade.notifyFinalTurnCompleted(sessionKey, true);
+  await wait(5);
+
+  const finalTurnSnapshot =
+    events.at(-1)?.payload.snapshot.sessions[sessionKey.sessionId];
+  assert.ok(finalTurnSnapshot);
+  assert.equal(finalTurnSnapshot.finalTurnCompleted, true);
+
+  facade.dispose();
+});
