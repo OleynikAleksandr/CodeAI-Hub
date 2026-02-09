@@ -1,7 +1,7 @@
 # Flow Node Continuity Input Lock Contract Architecture
 
 **Date:** 2026-02-09 09:45 (CET)
-**Status:** Active baseline (Phase 109-115 resume/rollover lock contract)
+**Status:** Active baseline (Phase 109-116 resume/rollover lock contract)
 **Scope:** `description/reviewer` rollover (with reusable contract for other flow nodes)
 
 ---
@@ -81,6 +81,8 @@ Source-of-truth контракта — `workspace:snapshot`; PM/UI читают 
    - сразу после создания continuation session Core удерживает `locked` на source и target с `reason=resume_bootstrap`;
    - пока `awaitingBootstrapTurn=true`, lock не снимается даже если `continuityLockActive=false` в отдельном snapshot.
 5. Для rollover unlock разрешён только после первого bootstrap assistant answer в target session (этот bootstrap-turn скрыт от user-visible диалога): `continuityLockReason=resume_ready`, `awaitingBootstrapTurn=false`, `continuityLockActive=false`.
+   - immediately after `resume_ready`, Core очищает rollover pending-флаги и lock-контекст для source+target;
+   - target lifecycle нормализуется в `resumeMode=resume_in_place` (с `finalTurnCompleted=false`) до первого обычного turn.
 6. При `resume_failed|resume_timeout` lock остаётся `locked`; меняется только reason/copy (unlock запрещён).
 7. **No-resume session** после финального ответа переходит в terminal/read-only (`resumeMode=no_resume`, `finalTurnCompleted=true`, `terminalLockReason=terminal_no_resume`) и больше не unlock.
 8. **Description collector one-shot/no-resume** всегда следует правилу terminal/read-only (без unlock).
@@ -94,6 +96,7 @@ Source-of-truth контракта — `workspace:snapshot`; PM/UI читают 
 - `turn_completed` не может эмитить `idle/no_rollover_needed`, если rollover уже pending/in-flight.
 - `turn_completed` не может эмитить `idle` до завершения async arbitration по этому же provider event (исключается race `unlock -> relock` между сессиями).
 - Unlock в rollover-path must be tied to observed first bootstrap assistant answer in the new session.
+- после `resume_ready` target не может оставаться в `resume_via_rollover` для последующих обычных turn.
 - `no_rollover_needed` и `resume_ready` — единственные допустимые unlock-reason.
 - `resume_failed|resume_timeout` never unlock input.
 
