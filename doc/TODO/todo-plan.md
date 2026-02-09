@@ -72,14 +72,14 @@
 3. На чистой установке (`~/.codeai-hub` удалён) Project Manager поднимается без ручных восстановлений runtime.
 
 ### Stream: Runtime Integrity Guard
-1. [IN_PROGRESS] Внедрить runtime integrity checker для launcher-install (обязательные файлы по платформам) и self-copy guard в legacy migration path (scope: `src/extension-module/cef/launcher-runtime-integrity.ts`, `src/extension-module/cef/launcher-install-helpers.ts`, `src/extension-module/cef/launcher-installer.ts`; expected commit: `fix(launcher): enforce runtime integrity and guard legacy self-copy on macos`)
-2. [TODO] Git Commit: `fix(launcher): enforce runtime integrity and guard legacy self-copy on macos` (hash: TBD)
+1. [DONE] Внедрить runtime integrity checker для launcher-install (обязательные файлы по платформам) и self-copy guard в legacy migration path (scope: `src/extension-module/cef/launcher-runtime-integrity.ts`, `src/extension-module/cef/launcher-install-helpers.ts`, `src/extension-module/cef/launcher-installer.ts`; expected commit: `fix(launcher): enforce runtime integrity and guard legacy self-copy on macos`)
+2. [DONE] Git Commit: `fix(launcher): enforce runtime integrity and guard legacy self-copy on macos` (hash: a1b11b8c)
 
 ### Stream: Docs + Validation
-1. [IN_PROGRESS] Синхронизировать архитектурные документы по инвариантам launcher runtime integrity (scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document launcher runtime integrity guardrails`)
-2. [TODO] Git Commit: `docs(architecture): document launcher runtime integrity guardrails` (hash: TBD)
-3. [TODO] Прогнать обязательные гейты + таргетные сборки (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds`)
-4. [TODO] Git Commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds` (hash: TBD)
+1. [DONE] Синхронизировать архитектурные документы по инвариантам launcher runtime integrity (scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document launcher runtime integrity guardrails`; note: зафиксировано совместно с кодовым hotfix-коммитом)
+2. [DONE] Git Commit: `docs(architecture): document launcher runtime integrity guardrails` (hash: a1b11b8c)
+3. [DONE] Прогнать обязательные гейты + таргетные сборки (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run compile`)
+4. [IN_PROGRESS] Git Commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds` (hash: TBD)
 
 ### Stream: Release Build
 1. [TODO] Подготовить release notes под hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for launcher runtime integrity hotfix`)
