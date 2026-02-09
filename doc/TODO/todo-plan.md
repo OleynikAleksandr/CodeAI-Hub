@@ -90,8 +90,8 @@
 
 ### Stream: Release Build
 1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix`)
-2. [IN_PROGRESS] Git Commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 116 rollover flag reset hotfix`)
-4. [TODO] Git Commit: `chore(release): run build-all for phase 116 rollover flag reset hotfix` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix` (hash: 6b333cc1)
+3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 116 rollover flag reset hotfix`)
+4. [IN_PROGRESS] Git Commit: `chore(release): run build-all for phase 116 rollover flag reset hotfix` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 116 rollover flag reset hotfix`)
 6. [TODO] Git Commit: `chore(release): build and verify vsix for phase 116 rollover flag reset hotfix` (hash: TBD)
