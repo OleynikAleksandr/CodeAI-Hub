@@ -327,6 +327,10 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 - `GeminiSessionManager` выполняет tool-calls через фасад `GeminiToolExecutorFacade`, который унифицирует execution path для разных layout версий `@google/gemini-cli-core`.
 - Ошибки module layout compatibility классифицируются отдельно от auth/login ошибок на уровнях installer/provider.
 
+**Phase 119 reviewer resume contract:**
+- `GeminiProviderAdapter` поддерживает `resumeSession(sessionId, workspacePath?)`; runtime `GeminiSessionManager` передаёт `argv.resume` в CLI-конфигурацию для resume-path.
+- В workflow-ветке `description/reviewer` Core сохраняет preferred provider (`snapshot.session.providerId`) при доступном resume у адаптера; при fallback публикуется явная диагностика причины.
+
 ---
 
 ## 7. Artifact Layout
