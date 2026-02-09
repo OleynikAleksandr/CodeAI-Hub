@@ -175,6 +175,33 @@ test("InputPanel stays locked on post-answer continuity trigger when idle + cont
   );
 });
 
+test("InputPanel always renders hint footer in DOM even when locked", async () => {
+  const lockedHtml = await renderInputPanel({
+    connectionState: "running",
+    continuityLockActive: false,
+  });
+  const unlockedHtml = await renderInputPanel({
+    connectionState: "idle",
+    continuityLockActive: false,
+  });
+
+  assert.equal(
+    lockedHtml.includes("Press Enter to send, Shift+Enter for a new line"),
+    true,
+    "Hint footer must be in DOM when locked (visibility:hidden)"
+  );
+  assert.equal(
+    unlockedHtml.includes("Press Enter to send, Shift+Enter for a new line"),
+    true,
+    "Hint footer must be in DOM when unlocked"
+  );
+  assert.equal(
+    lockedHtml.includes("visibility:hidden"),
+    true,
+    "Hint footer must be hidden via visibility when locked"
+  );
+});
+
 test("InputPanel does not restore resuming placeholder after resume_ready and first normal turn", async () => {
   const bootstrapLockHtml = await renderInputPanel({
     connectionState: "blocked",
