@@ -23,6 +23,7 @@
 - `7bb4485f docs(qa): validate gemini compatibility gates and targeted builds`
 - `82b4eb82 docs(release): prepare release notes for gemini runtime compatibility hotfix`
 - `37366687 chore(release): run build-all for gemini runtime compatibility hotfix`
+- `c5e7696b chore(release): build and validate vsix for gemini runtime compatibility hotfix`
 
 ---
 
