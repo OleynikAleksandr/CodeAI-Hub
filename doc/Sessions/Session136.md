@@ -32,8 +32,8 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/TODO/todo-plan.md`
-2. `doc/SolidWorks-Flow/System/SessionUI_Layout_Stability.md`
+1. `doc/SolidWorks-Flow/System/SessionUI_Layout_Stability.md` (PHASE 120 SOURCE OF TRUTH)
+2. `doc/TODO/todo-plan.md`
 3. `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
 4. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 
