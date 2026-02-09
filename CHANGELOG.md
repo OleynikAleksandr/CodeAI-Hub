@@ -1,3 +1,12 @@
+## [1.1.534] - 2026-02-09
+### Fixed
+- Core: после `turn_completed` разблокировка ввода запрещена, пока не получено явное post-turn решение контекста для текущего turn; добавлено обязательное состояние `context_check_pending`.
+- Claude/Core/PM: устранён transient unlock-gap между `turn_completed` и поздним token-usage/context решением; PM удерживает `blocked`, пока не получен canonical unlock (`no_rollover_needed` или `resume_ready`).
+
+### Added
+- Core и PM regression тесты на строгий dual-confirmation unlock gate (`turn_completed` + explicit context decision) без сценария `blocked -> idle -> blocked`.
+- Архитектурные документы дополнены инвариантами Phase 115 для post-turn арбитрации и `context_check_pending`.
+
 ## [1.1.533] - 2026-02-08
 ### Fixed
 - Core: `turn_completed` больше не может эмитить `idle` до завершения async flow-node continuity arbitration по тому же provider event.
