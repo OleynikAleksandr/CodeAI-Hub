@@ -1,3 +1,12 @@
+## [1.1.535] - 2026-02-09
+### Fixed
+- Core: после `resume_ready` rollover pending-флаги и lock-контексты для source/target очищаются, target lifecycle нормализуется в `resume_in_place` перед первым обычным turn.
+- Core/PM/UI: устранён post-bootstrap relock на первом обычном turn target-сессии; больше нет повторного `resuming`-залипания после успешного bootstrap unlock.
+
+### Added
+- Core regression на реальный порядок `assistant -> turn_completed` после rollover с проверкой отсутствия post-resume relock.
+- PM/UI regression тесты на сценарий `resume_ready -> first normal turn` без повторного `blocked(resuming)` placeholder.
+
 ## [1.1.534] - 2026-02-09
 ### Fixed
 - Core: после `turn_completed` разблокировка ввода запрещена, пока не получено явное post-turn решение контекста для текущего turn; добавлено обязательное состояние `context_check_pending`.
