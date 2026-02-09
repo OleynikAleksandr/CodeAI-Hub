@@ -79,6 +79,11 @@ type ContextUsageReaderConfig = {
   readonly env: NodeJS.ProcessEnv;
 };
 
+type TokenUsageSnapshot = {
+  readonly used: number;
+  readonly limit: number;
+};
+
 const MIN_REFRESH_INTERVAL_MS = 1500;
 const TEMP_SESSION_PREFIX = "temp_";
 
@@ -116,7 +121,10 @@ export class SDKMessageProcessor {
     { used: number; limit: number }
   >();
   private contextUsageReader: ClaudeContextUsageReader | null = null;
-  private readonly contextUsageInFlight = new Map<string, Promise<void>>();
+  private readonly contextUsageInFlight = new Map<
+    string,
+    Promise<TokenUsageSnapshot | null>
+  >();
   private readonly contextUsageLastAttemptAt = new Map<string, number>();
 
   constructor(
@@ -288,7 +296,7 @@ export class SDKMessageProcessor {
           activeSession?.eventEmitter.emit("realSessionId", promotedSessionId);
           options.onRealSessionId(promotedSessionId);
         }
-        this.dispatchMessage(activeSession, message);
+        await this.dispatchMessage(activeSession, message);
       }
       const session = this.resolveSession(options.sessionId, promotedSessionId);
       if (session) {
@@ -322,10 +330,10 @@ export class SDKMessageProcessor {
     );
   }
 
-  private dispatchMessage(
+  private async dispatchMessage(
     session: ActiveSession | undefined,
     message: ClaudeStreamMessage
-  ): void {
+  ): Promise<void> {
     const emitter = session?.eventEmitter;
     if (!emitter) {
       return;
@@ -341,15 +349,26 @@ export class SDKMessageProcessor {
         break;
       }
       case "result": {
-        this.emitThinkingChunks(session, message);
-        this.handleResultMessage(session, message);
-        this.maybeEmitTurnCompleted(session, message.session_id);
-        this.refreshTokenUsageFromContext(session, message.session_id);
+        await this.handleResultLifecycle(session, message);
         break;
       }
       default:
         break;
     }
+  }
+
+  private async handleResultLifecycle(
+    session: ActiveSession,
+    message: ClaudeStreamMessage
+  ): Promise<void> {
+    this.emitThinkingChunks(session, message);
+    this.handleResultMessage(session, message);
+    const tokenUsage = await this.refreshTokenUsageFromContext(
+      session,
+      message.session_id,
+      { force: true }
+    );
+    this.maybeEmitTurnCompleted(session, message.session_id, tokenUsage);
   }
 
   private maybeEmitTurnStarted(
@@ -378,7 +397,8 @@ export class SDKMessageProcessor {
 
   private maybeEmitTurnCompleted(
     session: ActiveSession,
-    claudeSessionId: string | null | undefined
+    claudeSessionId: string | null | undefined,
+    tokenUsage?: TokenUsageSnapshot | null
   ): void {
     const queueState = session.turnQueue;
     if (!queueState || queueState.internalTurn || queueState.lifecycle.ended) {
@@ -394,6 +414,12 @@ export class SDKMessageProcessor {
       provider: "claude",
       sessionId: session.sessionId,
       claudeSessionId: resolvedSessionId,
+      ...(tokenUsage
+        ? {
+            tokenUsage,
+            usage: tokenUsage,
+          }
+        : {}),
       uuid: `${crypto.randomUUID()}::turn_completed`,
       timestamp: new Date().toISOString(),
     });
@@ -426,13 +452,14 @@ export class SDKMessageProcessor {
     });
   }
 
-  private refreshTokenUsageFromContext(
+  private async refreshTokenUsageFromContext(
     session: ActiveSession,
-    claudeSessionId: string | null | undefined
-  ): void {
+    claudeSessionId: string | null | undefined,
+    options: { readonly force?: boolean } = {}
+  ): Promise<TokenUsageSnapshot | null> {
     const reader = this.contextUsageReader;
     if (!reader) {
-      return;
+      return null;
     }
 
     const resolvedId = this.resolveTokenUsageSessionId(
@@ -440,54 +467,66 @@ export class SDKMessageProcessor {
       claudeSessionId
     );
     if (!resolvedId) {
-      return;
+      return null;
     }
 
     const now = Date.now();
     const lastAttempt = this.contextUsageLastAttemptAt.get(resolvedId);
-    if (lastAttempt && now - lastAttempt < MIN_REFRESH_INTERVAL_MS) {
-      return;
+    if (
+      !options.force &&
+      lastAttempt &&
+      now - lastAttempt < MIN_REFRESH_INTERVAL_MS
+    ) {
+      return null;
     }
     this.contextUsageLastAttemptAt.set(resolvedId, now);
 
-    if (this.contextUsageInFlight.has(resolvedId)) {
-      return;
+    const inFlight = this.contextUsageInFlight.get(resolvedId);
+    if (inFlight) {
+      if (options.force) {
+        await inFlight;
+      }
+      return this.tokenUsageCache.get(resolvedId) ?? null;
     }
 
     const refreshPromise = reader
       .read({ sessionId: resolvedId, cwd: session.workspacePath })
       .then((snapshot) => {
         if (!snapshot) {
-          return;
+          return null;
         }
         const { used, limit } = snapshot;
+        const nextUsage = { used, limit } satisfies TokenUsageSnapshot;
         const previous = this.tokenUsageCache.get(resolvedId);
         if (previous && previous.used === used && previous.limit === limit) {
-          return;
+          return previous;
         }
-        this.tokenUsageCache.set(resolvedId, { used, limit });
+        this.tokenUsageCache.set(resolvedId, nextUsage);
         session.eventEmitter.emit("message", {
           type: "stream_event",
           provider: "claude",
           sessionId: session.sessionId,
           claudeSessionId: resolvedId,
-          tokenUsage: { used, limit },
+          tokenUsage: nextUsage,
           data: { kind: "token_usage", used, limit },
           uuid: `${crypto.randomUUID()}::token_usage`,
           timestamp: new Date().toISOString(),
         });
+        return nextUsage;
       })
       .catch((error) => {
         const message = error instanceof Error ? error.message : String(error);
         this.options.reporter?.warn?.(
           `Claude /context token read failed (session ${resolvedId}): ${message}`
         );
+        return null;
       })
       .finally(() => {
         this.contextUsageInFlight.delete(resolvedId);
       });
 
     this.contextUsageInFlight.set(resolvedId, refreshPromise);
+    return await refreshPromise;
   }
 
   private resolveTokenUsageSessionId(

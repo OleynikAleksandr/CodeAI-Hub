@@ -29,11 +29,11 @@
 
 ### Stream: Core Strict Dual-Confirmation State Machine
 1. [DONE] Внедрить явную post-turn арбитрацию в `SessionRequestHandler`: состояние `context_check_pending` до финального решения `no_rollover|rollover_required`, запрет `idle` до второго подтверждения (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/workspace-runtime-types.ts`, `packages/core/src/workspace-runtime/session-runtime.ts`; expected commit: `fix(core): require explicit context decision before unlock after turn completion`)
-2. [IN_PROGRESS] Git Commit: `fix(core): require explicit context decision before unlock after turn completion` (hash: TBD)
+2. [DONE] Git Commit: `fix(core): require explicit context decision before unlock after turn completion` (hash: 61463ecc)
 
 ### Stream: Provider Post-Turn Decision Delivery (Claude)
-1. [TODO] Обеспечить детерминированную доставку post-turn context decision в Core для текущего турна (без окна между `turn_completed` и отдельным поздним usage-event) (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(claude-core): deliver post-turn context decision for strict unlock gate`)
-2. [TODO] Git Commit: `fix(claude-core): deliver post-turn context decision for strict unlock gate` (hash: TBD)
+1. [DONE] Обеспечить детерминированную доставку post-turn context decision в Core для текущего турна (без окна между `turn_completed` и отдельным поздним usage-event) (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(claude-core): deliver post-turn context decision for strict unlock gate`)
+2. [IN_PROGRESS] Git Commit: `fix(claude-core): deliver post-turn context decision for strict unlock gate` (hash: TBD)
 
 ### Stream: PM/UI Lock Contract Enforcement
 1. [TODO] Зафиксировать блокировку UI в состоянии `context_check_pending` и снять её только по canonical unlock-решению snapshot (`no_rollover_needed` или `resume_ready`) (scope: `src/client/project-manager/components/sessions/session-lock-guards.ts`, `src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `fix(pm): keep input blocked while context decision is pending`)
