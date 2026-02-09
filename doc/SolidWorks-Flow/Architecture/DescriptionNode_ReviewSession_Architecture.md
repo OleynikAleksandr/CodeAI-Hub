@@ -1,7 +1,7 @@
 # Workflow Tree — Description Step/Node: Questionnaire → Draft → Auto-Review → Final
 
 **Version:** 1.1
-**Date:** 2026-01-22
+**Date:** 2026-02-09
 **Status:** Draft (refined lifecycle + UI semantics)
 
 ---
@@ -41,7 +41,7 @@
 
 - Не делаем “триггеры” по ключевым словам (approve/ok/утверждаю) для кураторов/сборщиков.
 - Не дублируем Q/A в `questionnaire.md` как обязательный слой данных.
-- Не поддерживаем resume для Gemini на этом этапе (исключаем из “длинных” reviewer-сессий).
+- Не развиваем новые Gemini-specific continuity/rollover эвристики до появления надёжной telemetry remaining context window (пауза расширения, не bugfix).
 - Не пытаемся “сохранить все исторические артефакты в ветке узла”: промежуточные документы могут существовать на диске, но в дереве остаются только актуальные для текущего состояния шага.
 
 ---
@@ -49,7 +49,7 @@
 ## 4. Key Decisions (approved)
 
 1) **Храним только финальный артефакт** в узле `description`.
-2) Reviewer-сессии с resume: **только Claude/Codex**. Gemini — только разовые короткие сессии без гарантии resume.
+2) Reviewer-сессии с resume поддерживаются для **Claude/Codex/Gemini**; для Gemini дальнейшее развитие механики временно поставлено на паузу до внедрения telemetry remaining context window.
 3) Источник истины истории — **unified session JSONL** (в `.codeai-hub/sessions/...`).
    - анти-регрессия: storage истории должен быть привязан к workspace пер-сессионно, иначе после рестарта Core (особенно из другого workspace) диалог может стать пустым (см. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`).
 4) Финальный артефакт шага `Description` — файл `Final_Description.md`:
@@ -75,7 +75,7 @@
 
 Минимальная структура ссылки на возобновляемую сессию:
 
-- `providerId`: `claudeCli` | `codexCli`
+- `providerId`: `claudeCli` | `codexCli` | `geminiCli`
 - `providerSessionId`: строка (provider-native id; используется для resume)
 - `jsonlPath`: абсолютный путь к unified session JSONL
 
@@ -129,7 +129,7 @@ UI следствие: сразу после старта сессии появ�
 
 ### 6.3 Auto-start Reviewer + produce Final_Description.md
 
-1) Как только `description.md` (draft) появился, система автоматически создаёт сессию Reviewer (Claude/Codex) и фиксирует `SessionRef`.
+1) Как только `description.md` (draft) появился, система автоматически создаёт сессию Reviewer (Claude/Codex/Gemini) и фиксирует `SessionRef`.
 2) В ветке `Description` сессия Description Agent заменяется на `Reviewer <Provider>` (описательный/черновой агент больше не является “активной” сессией шага).
 3) Reviewer читает `description.md`, задаёт вопросы пользователю и пишет первую версию `Final_Description.md`.
 4) Как только появился `Final_Description.md`:

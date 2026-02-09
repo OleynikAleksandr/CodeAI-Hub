@@ -10,6 +10,7 @@
 - `Rebuild/` — дизайн пропагации rebuild (OUTDATED/impacted узлы).
 
 ## Обновления
+- 2026-02-09 (release 1.1.538): Gemini path `Description(one-shot) -> Reviewer(resume)` подтверждён рабочим; дальнейшие Gemini-модификации временно поставлены на паузу до внедрения надёжной telemetry remaining context window.
 - 2026-02-01 (release 1.1.480): Session UI: удалён TodoPanel; документы синхронизированы с текущим UI.
 - 2026-02-01 (release 1.1.493): Session history: восстановление диалога после рестарта Core/Project Manager и при multi-workspace (unified-session workspace scoping).
 - 2026-01-22 (release 1.1.474): подписи session-узлов в Workflow Tree и табах унифицированы и укорочены: `Description <Provider>` / `Reviewer <Provider>`.
