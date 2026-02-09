@@ -39,6 +39,7 @@ export type SessionResumeMode =
 export type SessionTerminalLockReason = "terminal_no_resume";
 
 export type SessionContinuityLockReason =
+  | "context_check_pending"
   | "threshold_reached"
   | "report_in_progress"
   | "resume_bootstrap"
