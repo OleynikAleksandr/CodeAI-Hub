@@ -55,4 +55,4 @@
 3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 115 strict dual-confirmation unlock gate`)
 4. [DONE] Git Commit: `chore(release): run build-all for phase 115 strict dual-confirmation unlock gate` (hash: b7f5d885)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 115 strict dual-confirmation unlock gate`)
-6. [IN_PROGRESS] Git Commit: `chore(release): build and verify vsix for phase 115 strict dual-confirmation unlock gate` (hash: TBD)
+6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 115 strict dual-confirmation unlock gate` (hash: 3bced189)
