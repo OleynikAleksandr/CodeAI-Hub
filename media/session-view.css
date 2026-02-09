@@ -853,8 +853,8 @@
 }
 
 .session-input__textarea--focused {
-  border-color: rgba(255, 152, 0, 1);
-  box-shadow: 0 0 0 1px rgba(255, 152, 0, 0.35);
+  border-color: transparent;
+  box-shadow: none;
   background-color: rgba(32, 32, 32, 1);
 }
 
