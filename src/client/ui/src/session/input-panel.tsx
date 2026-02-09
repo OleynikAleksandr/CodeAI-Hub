@@ -117,13 +117,14 @@ const InputPanel = ({
         />
       </fieldset>
 
-      {inputLocked ? null : (
-        <div className="session-input__footer">
-          <span className="session-input__hint">
-            Press Enter to send, Shift+Enter for a new line
-          </span>
-        </div>
-      )}
+      <div
+        className="session-input__footer"
+        style={inputLocked ? { visibility: "hidden" } : undefined}
+      >
+        <span className="session-input__hint">
+          Press Enter to send, Shift+Enter for a new line
+        </span>
+      </div>
     </form>
   );
 };
