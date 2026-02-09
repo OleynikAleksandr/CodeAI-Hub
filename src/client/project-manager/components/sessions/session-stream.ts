@@ -3,14 +3,12 @@ import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import {
+  isContextDecisionPending,
   isRolloverPendingAfterTerminalTurn,
   resolveContinuityLockActive,
   resolveContinuityLockReason,
 } from "./session-lock-guards";
-import {
-  sanitizeMessage,
-  sanitizeSession,
-} from "../../../ui/src/core-bridge/normalizers";
+import { sanitizeMessage, sanitizeSession } from "../../../ui/src/core-bridge/normalizers";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 type IncomingMessage = {
   readonly type: string;
@@ -52,12 +50,14 @@ export const applyWorkspaceSnapshotToSnapshots = (
       session.continuityLockTransition?.awaitingBootstrapTurn === true;
     const graphHeldReason = heldLockReasonBySessionId.get(sessionId);
     const nextLockReason = resolveContinuityLockReason(session) ?? graphHeldReason;
+    const contextDecisionPending = isContextDecisionPending(session, nextLockReason);
     const rolloverPending = isRolloverPendingAfterTerminalTurn(
       session,
       nextLockReason
     );
     let nextLockActive =
       resolveContinuityLockActive(session) ||
+      contextDecisionPending ||
       rolloverPending ||
       heldLockReasonBySessionId.has(sessionId) ||
       (session.resumeMode === "no_resume" &&
@@ -73,8 +73,7 @@ export const applyWorkspaceSnapshotToSnapshots = (
         session.resumeMode !== "resume_via_rollover");
     if (
       (current.status.connectionState === "blocked" ||
-        (session.resumeMode === "resume_in_place" &&
-          current.status.connectionState === "running")) &&
+        current.status.connectionState === "running") &&
       nextConnectionState === "idle" &&
       (!allowIdleUnlock || awaitingBootstrapTurn)
     ) {
