@@ -6,7 +6,6 @@ import { mapProviderTheme } from "./helpers";
 import InputPanel from "./input-panel";
 import {
   resolveContinuationChainOrEmpty,
-  resolveContinuationIndex,
   resolveVirtualConversationMessages,
   useQueuedSend,
 } from "./session-view-helpers";
@@ -54,10 +53,6 @@ const SessionViewBody = ({
   const activeRecord = allSessions.find(
     (session) => session.id === activeSessionId
   );
-  const continuationIndex = resolveContinuationIndex({
-    record: activeRecord ?? null,
-    sessions: allSessions,
-  });
   const primaryProviderId = activeRecord?.providerIds[0] ?? null;
   const providerTheme = mapProviderTheme(primaryProviderId);
   const providerDisplayLabel = resolveProviderDisplayLabel({
@@ -67,9 +62,7 @@ const SessionViewBody = ({
 
   const header = (
     <SessionHeader
-      activeSession={activeSession}
       activeSessionId={activeSessionId}
-      continuationIndex={continuationIndex}
       onCloseSession={onCloseSession}
       onSelectSession={onSelectSession}
       providerLabels={providerLabels}

@@ -3,6 +3,8 @@ import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionKind, SessionRecord } from "../../../../types/session";
 import { mapProviderTheme } from "./helpers";
 
+const SESSION_ID_PREFIX_LENGTH = 8;
+
 /**
  * Get display label for session agent based on sessionKind.
  * Falls back to stage/runSlug heuristics for backward compatibility.
@@ -28,6 +30,78 @@ const getAgentLabel = (
   return null;
 };
 
+type TabDisplayData = {
+  readonly displaySummary: readonly string[];
+  readonly spokenSummary: string;
+  readonly fullSummary: string;
+  readonly tabClassName: string;
+};
+
+const buildTabDisplayData = (
+  session: SessionRecord,
+  providerLabels: ReadonlyMap<ProviderStackId, string>,
+  isActive: boolean
+): TabDisplayData => {
+  const agentLabel = getAgentLabel(
+    session.sessionKind,
+    session.stage,
+    session.runSlug
+  );
+  const providerNames = session.providerIds.map((providerId) => {
+    const label =
+      providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);
+    const [primaryToken] = label.split(" ");
+    return primaryToken ?? label;
+  });
+  const hasTwoProviders = providerNames.length === 2;
+  let primaryLineLength: number;
+  if (hasTwoProviders) {
+    primaryLineLength = 2;
+  } else if (providerNames.length <= 2) {
+    primaryLineLength = 1;
+  } else {
+    primaryLineLength = Math.ceil(providerNames.length / 2);
+  }
+  const providerLine = providerNames.slice(0, primaryLineLength).join("+");
+  const basePrimaryLine = agentLabel
+    ? `${agentLabel} ${providerLine}`
+    : providerLine;
+  const sessionIdShort = session.binding.providerSessionId
+    ? `${session.binding.providerSessionId.slice(0, SESSION_ID_PREFIX_LENGTH)}-\u2026`
+    : null;
+  const primaryLine = sessionIdShort
+    ? `${basePrimaryLine} \u2014 ID: ${sessionIdShort}`
+    : basePrimaryLine;
+  const secondaryTokens = providerNames.slice(primaryLineLength);
+  const secondaryLine =
+    secondaryTokens.length > 0 ? `+${secondaryTokens.join("+")}` : "";
+  const displaySummary = secondaryLine
+    ? [primaryLine, secondaryLine]
+    : [primaryLine];
+  const spokenSummary = agentLabel
+    ? `${agentLabel} ${providerNames.join(", ")}`
+    : providerNames.join(", ");
+  const providerFullNames = session.providerIds
+    .map(
+      (providerId) =>
+        providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId)
+    )
+    .join(" + ");
+  const fullSummary = agentLabel
+    ? `${agentLabel}: ${providerFullNames}`
+    : providerFullNames;
+  const primaryProviderId = session.providerIds[0] ?? null;
+  const tabProviderTheme = mapProviderTheme(primaryProviderId);
+  const tabClassName = [
+    "session-tab",
+    isActive ? "session-tab--active" : null,
+    tabProviderTheme ? `session-tab--${tabProviderTheme}` : null,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  return { displaySummary, spokenSummary, fullSummary, tabClassName };
+};
+
 type SessionTabsProps = {
   readonly sessions: readonly SessionRecord[];
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
@@ -51,63 +125,8 @@ const SessionTabs = ({
     <div className="session-tabs">
       {sessions.map((session) => {
         const isActive = session.id === activeSessionId;
-        const agentLabel = getAgentLabel(
-          session.sessionKind,
-          session.stage,
-          session.runSlug
-        );
-        const providerNames = session.providerIds.map((providerId) => {
-          const label =
-            providerLabels.get(providerId) ??
-            getDefaultProviderTitle(providerId);
-          const [primaryToken] = label.split(" ");
-          return primaryToken ?? label;
-        });
-        const hasTwoProviders = providerNames.length === 2;
-        let primaryLineLength: number;
-        if (hasTwoProviders) {
-          primaryLineLength = 2;
-        } else if (providerNames.length <= 2) {
-          primaryLineLength = 1;
-        } else {
-          primaryLineLength = Math.ceil(providerNames.length / 2);
-        }
-        const providerLine = providerNames
-          .slice(0, primaryLineLength)
-          .join("+");
-        // Prepend agent label if available: "Reviewer Codex" or "Agent Claude"
-        const primaryLine = agentLabel
-          ? `${agentLabel} ${providerLine}`
-          : providerLine;
-        const secondaryTokens = providerNames.slice(primaryLineLength);
-        const secondaryLine =
-          secondaryTokens.length > 0 ? `+${secondaryTokens.join("+")}` : "";
-        const displaySummary = secondaryLine
-          ? [primaryLine, secondaryLine]
-          : [primaryLine];
-        const spokenSummary = agentLabel
-          ? `${agentLabel} ${providerNames.join(", ")}`
-          : providerNames.join(", ");
-        const providerFullNames = session.providerIds
-          .map(
-            (providerId) =>
-              providerLabels.get(providerId) ??
-              getDefaultProviderTitle(providerId)
-          )
-          .join(" + ");
-        const fullSummary = agentLabel
-          ? `${agentLabel}: ${providerFullNames}`
-          : providerFullNames;
-
-        const primaryProviderId = session.providerIds[0] ?? null;
-        const tabProviderTheme = mapProviderTheme(primaryProviderId);
-        const tabClassName = [
-          "session-tab",
-          isActive ? "session-tab--active" : null,
-          tabProviderTheme ? `session-tab--${tabProviderTheme}` : null,
-        ]
-          .filter(Boolean)
-          .join(" ");
+        const { displaySummary, spokenSummary, fullSummary, tabClassName } =
+          buildTabDisplayData(session, providerLabels, isActive);
 
         return (
           <div className={tabClassName} key={session.id}>
