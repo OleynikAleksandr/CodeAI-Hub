@@ -1,6 +1,7 @@
 import path from "node:path";
 import { GeminiInstaller } from "../installer/gemini-installer";
 import { GeminiSessionLogger } from "../logging/session-logger";
+import { isGeminiCliCompatibilityError } from "../runtime/cli-bridge";
 import type { GeminiCliBridge } from "../runtime/cli-types";
 import { GeminiSessionManager } from "../session/gemini-session-manager";
 import type { GeminiModuleOptions } from "../types";
@@ -26,12 +27,26 @@ export class GeminiProviderAdapter {
   }
 
   async initialize(): Promise<void> {
-    this.cliBridge = await this.installer.ensureCliBridge();
-    this.sessionManager = new GeminiSessionManager(this.cliBridge.modules);
-    this.options.reporter?.info?.("Gemini provider initialized", {
-      cliVersion: this.cliBridge.metadata.version,
-      preparedAt: this.cliBridge.metadata.preparedAt,
-    });
+    try {
+      this.cliBridge = await this.installer.ensureCliBridge();
+      this.sessionManager = new GeminiSessionManager(
+        this.cliBridge.modules,
+        this.options.reporter
+      );
+      this.options.reporter?.info?.("Gemini provider initialized", {
+        cliVersion: this.cliBridge.metadata.version,
+        preparedAt: this.cliBridge.metadata.preparedAt,
+      });
+    } catch (error) {
+      if (isGeminiCliCompatibilityError(error)) {
+        this.options.reporter?.error?.(
+          "Gemini provider initialization failed due to CLI runtime module compatibility mismatch",
+          error,
+          { reason: "module_compatibility" }
+        );
+      }
+      throw error;
+    }
   }
 
   async createSession(workspacePath?: string): Promise<string> {
