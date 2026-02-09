@@ -331,6 +331,11 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 - `GeminiProviderAdapter` поддерживает `resumeSession(sessionId, workspacePath?)`; runtime `GeminiSessionManager` передаёт `argv.resume` в CLI-конфигурацию для resume-path.
 - В workflow-ветке `description/reviewer` Core сохраняет preferred provider (`snapshot.session.providerId`) при доступном resume у адаптера; при fallback публикуется явная диагностика причины.
 
+**Operational freeze (2026-02-09):**
+- сценарий `Description(one-shot) -> Reviewer(resume)` на Gemini подтверждён рабочим в `1.1.538`;
+- дальнейшее развитие Gemini continuity/rollover поставлено на паузу до внедрения надёжной telemetry по фактическому remaining context window;
+- в период паузы разрешены только стабилизационные bugfix-изменения.
+
 ---
 
 ## 7. Artifact Layout

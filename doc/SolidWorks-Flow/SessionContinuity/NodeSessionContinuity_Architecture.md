@@ -1,7 +1,7 @@
 # SolidWorks Flow — Node Session Continuity (Architecture)
 
 **Status:** Draft
-**Updated:** 2026-02-08
+**Updated:** 2026-02-09
 **Owner:** Oleksandr + Codex
 
 ---
@@ -145,6 +145,7 @@ Core:
 
 - Prompt‑шаблоны (bootstrap) должны быть узло‑специфичными и отправляться Core “от лица пользователя” как стартовое сообщение.
 - Continuity‑инструкция — короткая и узконаправленная: “составь отчёт” или “прочти отчёт”.
+- 2026-02-09: для Gemini подтверждён рабочий resume-path в `Description -> Reviewer`, но расширение Gemini continuity-механик временно на паузе до внедрения надёжной telemetry remaining context window.
 
 ## 10) Prompt Templates (contract)
 

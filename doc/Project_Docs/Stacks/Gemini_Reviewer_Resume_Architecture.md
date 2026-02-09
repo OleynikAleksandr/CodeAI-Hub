@@ -2,7 +2,15 @@
 
 **Date:** 2026-02-09  
 **Owner:** Oleksandr  
-**Status:** Draft for implementation
+**Status:** Implemented in release 1.1.538
+
+---
+
+## 0. Operational Note (Pause)
+
+- Реализация reviewer resume для Gemini подтверждена рабочей.
+- Дальнейшие Gemini-изменения временно заморожены до появления надёжного runtime-механизма контроля остатка контекстного окна.
+- До снятия паузы допускаются только bugfix-изменения без расширения функционала.
 
 ---
 

@@ -8,6 +8,15 @@
 
 ---
 
+## 0. Operational Status Note (2026-02-09)
+
+- В `1.1.538` подтверждён рабочий path: `Description (one-shot)` + `Reviewer (resume)` на Gemini.
+- Фаза активного развития Gemini временно приостановлена.
+- Причина: пока нет надёжного runtime-контракта чтения и контроля фактического остатка контекстного окна (при номинально большом окне ~1M токенов).
+- До снятия паузы допустимы только bugfix-правки без расширения Gemini-функционала.
+
+---
+
 ## 1. Purpose
 This document captures the requirements and integration notes for adding Google Gemini CLI support to CodeAI Hub. It complements the Claude and Codex module guides and serves as the architectural reference for the upcoming `Gemini_Module` package.
 
@@ -131,6 +140,7 @@ Important flags:
 ---
 
 ## 12. Change Log
+- **2026-02-09:** `1.1.538` — подтверждён рабочий reviewer resume path для Gemini; дальнейшие Gemini-модификации поставлены на паузу до внедрения надёжной telemetry remaining context window.
 - **2026-02-09:** Phase 117 implementation — добавлена runtime compatibility стратегия для `@google/gemini-cli-core` (`legacy_non_interactive` + `scheduler_fallback`), фасад `GeminiToolExecutorFacade`, диагностика module compatibility в installer/provider и regression tests для loader/facade.
 - **2025-12-21:** Released v1.1.326 — подтверждена глобальная установка CLI/Core, автообновление при старте и корректная инициализация сервиса обновлений.
 - **2025-12-20:** Released v1.1.325 — switched Gemini CLI/Core to global-only installs (no vendor cache) and added startup auto-update checks driven by provider auto-update settings. Settings UI now reads versions from global npm.
