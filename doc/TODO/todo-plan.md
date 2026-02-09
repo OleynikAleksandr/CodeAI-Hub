@@ -30,24 +30,24 @@
 4. После фикса проходит полный релизный цикл и smoke-проверка reviewer path.
 
 ### Stream: Architecture Sync + Contracts
-1. [TODO] Зафиксировать архитектурный контракт Gemini reviewer resume и синхронизировать system docs (scope: `doc/Project_Docs/Stacks/Gemini_Reviewer_Resume_Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): define gemini reviewer resume contract`)
-2. [TODO] Git Commit: `docs(architecture): define gemini reviewer resume contract` (hash: TBD)
+1. [DONE] Зафиксировать архитектурный контракт Gemini reviewer resume и синхронизировать system docs (scope: `doc/Project_Docs/Stacks/Gemini_Reviewer_Resume_Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): define gemini reviewer resume contract`; note: предыдущий план Phase 118 заархивирован в `doc/TODO/Archive/todo-plan-phase118-launcher-runtime-integrity-release-1.1.537-2026-02-09.md`)
+2. [DONE] Git Commit: `docs(architecture): define gemini reviewer resume contract` (hash: 590d1076)
 
 ### Stream: Gemini Resume Runtime
-1. [TODO] Реализовать `resumeSession` в Gemini adapter/session manager и подключить `argv.resume` для runtime resume-path (scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/session/types.ts`; expected commit: `feat(gemini): add provider resumeSession support for workflow continuity`)
-2. [TODO] Git Commit: `feat(gemini): add provider resumeSession support for workflow continuity` (hash: TBD)
+1. [DONE] Реализовать `resumeSession` в Gemini adapter/session manager и подключить `argv.resume` для runtime resume-path (scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/session/types.ts`; expected commit: `feat(gemini): add provider resumeSession support for workflow continuity`)
+2. [DONE] Git Commit: `feat(gemini): add provider resumeSession support for workflow continuity` (hash: 61026030)
 
 ### Stream: Reviewer Provider Selection in Core
-1. [TODO] Обновить reviewer provider selection/diagnostics, чтобы preferred Gemini корректно выбирался при доступном resume-path (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/provider-registry/index.ts`; expected commit: `fix(core): keep reviewer on preferred gemini provider when resume is supported`)
-2. [TODO] Git Commit: `fix(core): keep reviewer on preferred gemini provider when resume is supported` (hash: TBD)
+1. [DONE] Обновить reviewer provider selection/diagnostics, чтобы preferred Gemini корректно выбирался при доступном resume-path (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`; expected commit: `fix(core): keep reviewer on preferred gemini provider when resume is supported`; note: добавлена явная диагностика fallback, поведение выбора сохраняет preferred provider при наличии `resumeSession`)
+2. [DONE] Git Commit: `fix(core): keep reviewer on preferred gemini provider when resume is supported` (hash: 61026030)
 
 ### Stream: Regression Coverage
-1. [TODO] Добавить regression-тесты на сценарии `collector(gemini) -> reviewer(gemini)` и fallback при недоступном resume (scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`; expected commit: `test(gemini-core): cover reviewer resume selection and fallback paths`)
-2. [TODO] Git Commit: `test(gemini-core): cover reviewer resume selection and fallback paths` (hash: TBD)
+1. [DONE] Добавить regression-тесты на сценарии `collector(gemini) -> reviewer(gemini)` и fallback при недоступном resume (scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`; expected commit: `test(gemini-core): cover reviewer resume selection and fallback paths`)
+2. [DONE] Git Commit: `test(gemini-core): cover reviewer resume selection and fallback paths` (hash: 61026030)
 
 ### Stream: QA Gates + Targeted Builds
-1. [TODO] Прогнать обязательные гейты и таргетные сборки для затронутых модулей (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate gemini reviewer resume gates and targeted builds`)
-2. [TODO] Git Commit: `docs(qa): validate gemini reviewer resume gates and targeted builds` (hash: TBD)
+1. [DONE] Прогнать обязательные гейты и таргетные сборки для затронутых модулей (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate gemini reviewer resume gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"`, `npm run check:links`, `npm run build --workspace @codeai-hub/gemini-module`, `npm run build --workspace @codeai-hub/core`, `node --test packages/Gemini_Module/dist/session/gemini-session-manager.test.js packages/Gemini_Module/dist/provider/gemini-provider-adapter.test.js packages/core/dist/workflow/runtime/workflow-runtime.test.js`; result: all commands passed)
+2. [IN_PROGRESS] Git Commit: `docs(qa): validate gemini reviewer resume gates and targeted builds` (hash: TBD)
 
 ### Stream: Release Notes
 1. [TODO] Подготовить release docs под Phase 119 hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for gemini reviewer resume integration`)
