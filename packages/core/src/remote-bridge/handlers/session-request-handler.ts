@@ -795,6 +795,44 @@ export class SessionRequestHandler {
     if (context.targetSessionId) {
       this.flowNodeContinuityLockContexts.delete(context.targetSessionId);
     }
+    if (options.reason === "resume_ready") {
+      this.finalizePostBootstrapRolloverLifecycle(context);
+    }
+  }
+
+  private finalizePostBootstrapRolloverLifecycle(
+    context: FlowNodeContinuityLockContext
+  ): void {
+    const sessionIds = [
+      context.sourceSessionId,
+      context.targetSessionId,
+    ].filter(
+      (candidate): candidate is string =>
+        typeof candidate === "string" && candidate.length > 0
+    );
+    for (const sessionId of sessionIds) {
+      this.flowNodeRolloverStarted.delete(sessionId);
+      this.flowNodeRolloverInFlight.delete(sessionId);
+      this.clearPostTurnContextDecision(sessionId);
+    }
+    if (!context.targetSessionId) {
+      return;
+    }
+    const targetSession = this.sessionManager.getSession(
+      context.targetSessionId
+    );
+    if (!targetSession) {
+      return;
+    }
+    const lifecycleState = this.getSessionResumeLifecycleState(targetSession);
+    if (lifecycleState.mode === "no_resume") {
+      return;
+    }
+    this.updateSessionResumeLifecycleState(targetSession, {
+      mode: "resume_in_place",
+      finalTurnCompleted: false,
+      terminalLockReason: null,
+    });
   }
 
   private finalizeFlowNodeContinuityLockOnBootstrapGate(options: {
