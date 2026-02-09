@@ -1,3 +1,12 @@
+## [1.1.536] - 2026-02-09
+### Fixed
+- Gemini provider runtime: устранено падение инициализации на `@google/gemini-cli-core@0.27.x` (`ERR_MODULE_NOT_FOUND` для `nonInteractiveToolExecutor`); `cli-bridge` теперь выбирает совместимый backend (`legacy_non_interactive` или `scheduler_fallback`).
+- Gemini installer/provider diagnostics: module-layout compatibility ошибки теперь классифицируются отдельно от auth/login и проходят через post-update self-check.
+
+### Added
+- Gemini tool execution facade (`GeminiToolExecutorFacade`) для единого execution path между legacy и новым layout CLI Core.
+- Regression тесты на loader fallback и unified tool execution в `Gemini_Module`.
+
 ## [1.1.535] - 2026-02-09
 ### Fixed
 - Core: после `resume_ready` rollover pending-флаги и lock-контексты для source/target очищаются, target lifecycle нормализуется в `resume_in_place` перед первым обычным turn.
