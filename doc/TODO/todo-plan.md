@@ -41,9 +41,9 @@
 
 ### Stream: Non-Regression Tests
 1. [DONE] Добавить core regression на out-of-band последовательность `turn_completed -> delayed token usage`: отсутствие `idle/unlock` до explicit `no_rollover` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): block unlock until explicit post-turn context decision`)
-2. [IN_PROGRESS] Git Commit: `test(core): block unlock until explicit post-turn context decision` (hash: TBD)
-3. [TODO] Добавить PM regression на отсутствие transient `blocked -> idle -> blocked` между завершением турна и стартом rollover (scope: `src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`; expected commit: `test(pm): prevent unlock gap while context decision pending`)
-4. [TODO] Git Commit: `test(pm): prevent unlock gap while context decision pending` (hash: TBD)
+2. [DONE] Git Commit: `test(core): block unlock until explicit post-turn context decision` (hash: 07a0b984)
+3. [DONE] Добавить PM regression на отсутствие transient `blocked -> idle -> blocked` между завершением турна и стартом rollover (scope: `src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`; expected commit: `test(pm): prevent unlock gap while context decision pending`)
+4. [IN_PROGRESS] Git Commit: `test(pm): prevent unlock gap while context decision pending` (hash: TBD)
 
 ### Stream: Docs + QA Gates
 1. [TODO] Синхронно обновить архитектурные документы и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document strict dual-confirmation unlock gate and validate gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
