@@ -207,22 +207,6 @@
   border-left: 4px solid #ab34cb;
 }
 
-.session-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.session-info__text {
-  color: inherit;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.session-info__spacer {
-  visibility: hidden;
-  pointer-events: none;
-}
-
 .session-dialog {
   display: flex;
   flex-direction: column;
