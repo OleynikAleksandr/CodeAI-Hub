@@ -1,7 +1,7 @@
 # Flow Node Continuity Input Lock Contract Architecture
 
-**Date:** 2026-02-08 15:20 (CET)
-**Status:** Active baseline (Phase 109-114 resume/rollover lock contract)
+**Date:** 2026-02-09 09:45 (CET)
+**Status:** Active baseline (Phase 109-115 resume/rollover lock contract)
 **Scope:** `description/reviewer` rollover (with reusable contract for other flow nodes)
 
 ---
@@ -55,6 +55,7 @@ Source-of-truth контракта — `workspace:snapshot`; PM/UI читают 
 - `finalTurnCompleted`: boolean
 - `continuityLockActive`: boolean
 - `continuityLockReason`: one of
+  - `context_check_pending`
   - `threshold_reached`
   - `report_in_progress`
   - `resume_bootstrap`
@@ -70,6 +71,7 @@ Source-of-truth контракта — `workspace:snapshot`; PM/UI читают 
 1. On threshold trigger, Core публикует в snapshot lock-state для source session (`continuityLockActive=true`, `continuityLockReason=threshold_reached`).
 2. During report creation/waiting, Core может публиковать дополнительные lock updates (`report_in_progress`).
 3. **Resume-in-place** unlock path:
+   - после `turn_completed` Core публикует `context_check_pending` и удерживает lock до explicit context-decision для этого же turn.
    - Core переводит сессию в unlocked (`continuityLockActive=false`) только когда одновременно выполнены:
      - финальный `turn_completed` текущего turn уже получен;
      - continuity arbitration завершён как `no rollover` (snapshot reason = `no_rollover_needed`);
@@ -88,6 +90,7 @@ Source-of-truth контракта — `workspace:snapshot`; PM/UI читают 
 - Lock state must never be inferred from `flow_node_rollover.phase` only.
 - `resume_sent` does not imply unlock.
 - `turn_completed` без результата continuity arbitration (`no rollover`) не даёт unlock.
+- `context_check_pending` обязателен после `turn_completed` до explicit решения `no_rollover_needed|rollover_required`.
 - `turn_completed` не может эмитить `idle/no_rollover_needed`, если rollover уже pending/in-flight.
 - `turn_completed` не может эмитить `idle` до завершения async arbitration по этому же provider event (исключается race `unlock -> relock` между сессиями).
 - Unlock в rollover-path must be tied to observed first bootstrap assistant answer in the new session.
@@ -114,6 +117,7 @@ PM/UI обязаны рассчитывать effective lock только из `
 Input must be disabled when any of these is true:
 
 - `continuityLock.active === true`
+- `continuityLock.reason === "context_check_pending"`
 - `resumeMode === "no_resume" && finalTurnCompleted === true`
 - `continuityLockTransition.awaitingBootstrapTurn === true` (и для source, и для target session графа rollover)
 - `connectionState === "running"`
@@ -172,6 +176,7 @@ To remove runtime drift between templates and UI filtering, Phase 102 defines:
    - unlock возможен только если выполнено одно из условий:
      - `turn_completed` уже произошёл и Core подтвердил `no rollover` (`no_rollover_needed`);
      - для rollover получен первый bootstrap assistant answer в target session (`reason=resume_ready`).
+   - промежуточное состояние `context_check_pending` после `turn_completed` не является unlock-условием.
 4. `resume_failed|resume_timeout` не являются unlock-условием: input остаётся locked, меняется только reason/copy.
 5. Stale `rollover.phase=resume_sent` не должен ни преждевременно unlock, ни бессрочно блокировать сессию без смены canonical reason в snapshot.
 
