@@ -62,6 +62,7 @@ const createHarness = (): HandlerHarness => {
     sessionManager,
     flowNodeRolloverInFlight: new Set(),
     flowNodeRolloverStarted: new Set(),
+    flowNodeTokenUsageSnapshots: new Map(),
     flowNodeContinuityLockContexts: new Map(),
     flowNodeContinuityLockTimeouts: new Map(),
     postTurnContextDecisionPendingSessions: new Set(),
@@ -501,6 +502,129 @@ test("SessionRequestHandler unlocks continuity lock only after bootstrap assista
       },
     ]
   );
+});
+
+test("SessionRequestHandler normalizes target lifecycle after resume_ready and avoids post-resume relock", async () => {
+  const harness = createHarness();
+  const sourceSession = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-post-resume-source",
+    "provider-session-post-resume-source",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+      runSlug: "reviewer",
+    }
+  );
+  const targetSession = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-post-resume-target",
+    "provider-session-post-resume-target",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+      runSlug: "reviewer",
+    }
+  );
+  const lifecycleStore = (
+    harness.handler as any
+  ).getSessionResumeLifecycleStore();
+  lifecycleStore.set(sourceSession.id, {
+    mode: "resume_via_rollover",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
+  lifecycleStore.set(targetSession.id, {
+    mode: "resume_via_rollover",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
+  (
+    harness.handler as unknown as { flowNodeRolloverStarted: Set<string> }
+  ).flowNodeRolloverStarted.add(sourceSession.id);
+  (
+    harness.handler as unknown as { flowNodeRolloverStarted: Set<string> }
+  ).flowNodeRolloverStarted.add(targetSession.id);
+  (
+    harness.handler as unknown as { flowNodeRolloverInFlight: Set<string> }
+  ).flowNodeRolloverInFlight.add(sourceSession.id);
+  (
+    harness.handler as unknown as { flowNodeRolloverInFlight: Set<string> }
+  ).flowNodeRolloverInFlight.add(targetSession.id);
+
+  (harness.handler as any).registerFlowNodeContinuityLockContext({
+    rolloverId: "rollover-post-resume",
+    sourceSessionId: sourceSession.id,
+    targetSessionId: targetSession.id,
+    stageId: "description",
+    runSlug: "reviewer",
+    awaitingBootstrapTurn: true,
+  });
+
+  (harness.handler as any).emitContinuityLockEvent({
+    sessionId: targetSession.id,
+    rolloverId: "rollover-post-resume",
+    sourceSessionId: sourceSession.id,
+    targetSessionId: targetSession.id,
+    stageId: "description",
+    runSlug: "reviewer",
+    state: "locked",
+    reason: "resume_bootstrap",
+  });
+  (harness.handler as any).handleFlowNodeContinuityProviderEvent = (
+    SessionRequestHandler.prototype as any
+  ).handleFlowNodeContinuityProviderEvent.bind(harness.handler);
+  (harness.handler as any).resolveLiveContinuityRemainingPercentThreshold =
+    async () => 30;
+
+  (harness.handler as any).handleProviderEvent(targetSession.id, {
+    type: "assistant",
+    payload: "bootstrap complete",
+  });
+  await flushAsyncWork();
+
+  const targetLifecycleAfterResume = lifecycleStore.get(targetSession.id);
+  assert.equal(targetLifecycleAfterResume.mode, "resume_in_place");
+  assert.equal(targetLifecycleAfterResume.finalTurnCompleted, false);
+  assert.equal(
+    (
+      harness.handler as unknown as { flowNodeRolloverStarted: Set<string> }
+    ).flowNodeRolloverStarted.has(sourceSession.id),
+    false
+  );
+  assert.equal(
+    (
+      harness.handler as unknown as { flowNodeRolloverStarted: Set<string> }
+    ).flowNodeRolloverStarted.has(targetSession.id),
+    false
+  );
+  assert.equal(
+    (
+      harness.handler as unknown as { flowNodeRolloverInFlight: Set<string> }
+    ).flowNodeRolloverInFlight.has(sourceSession.id),
+    false
+  );
+  assert.equal(
+    (
+      harness.handler as unknown as { flowNodeRolloverInFlight: Set<string> }
+    ).flowNodeRolloverInFlight.has(targetSession.id),
+    false
+  );
+
+  (harness.handler as any).handleProviderEvent(targetSession.id, {
+    type: "turn_completed",
+    tokenUsage: { used: 50_000, limit: 200_000 },
+    usage: { used: 50_000, limit: 200_000 },
+  });
+  await flushAsyncWork();
+
+  const targetLockUpdates = harness.runtimeLockUpdates.filter(
+    (entry) => entry.sessionId === targetSession.id
+  );
+  const lastTargetLockUpdate = targetLockUpdates.at(-1);
+  assert.equal(lastTargetLockUpdate?.active, false);
+  assert.equal(lastTargetLockUpdate?.reason, "no_rollover_needed");
+  assert.equal(countNoRolloverUnlockEvents(harness.events), 1);
 });
 
 test("SessionRequestHandler does not emit idle before continuity lock when rollover starts at turn end", async () => {
