@@ -64,6 +64,8 @@ const createHarness = (): HandlerHarness => {
     flowNodeRolloverStarted: new Set(),
     flowNodeContinuityLockContexts: new Map(),
     flowNodeContinuityLockTimeouts: new Map(),
+    postTurnContextDecisionPendingSessions: new Set(),
+    postTurnContextDecisionBySessionId: new Map(),
     sessionStorage: {
       appendMessage: noop,
       close: noop,
@@ -80,6 +82,9 @@ const createHarness = (): HandlerHarness => {
       ) => {
         continuityUpdates.push({ sessionId, providerSessionId });
       },
+    },
+    flowNodeContinuity: {
+      isEligibleForRollover: () => true,
     },
     providerRegistry: {
       getAdapter: () => null,
@@ -189,6 +194,29 @@ const countNoRolloverUnlockEvents = (events: readonly BridgeEvent[]): number =>
       payload.event?.data?.kind === "continuity_lock" &&
       payload.event.data.state === "unlocked" &&
       payload.event.data.reason === "no_rollover_needed"
+    );
+  }).length;
+
+const countContextCheckPendingLockEvents = (
+  events: readonly BridgeEvent[]
+): number =>
+  events.filter((event) => {
+    if (event.type !== "session:stream") {
+      return false;
+    }
+    const payload = event.payload as {
+      readonly event?: {
+        readonly data?: {
+          readonly kind?: string;
+          readonly state?: string;
+          readonly reason?: string;
+        };
+      };
+    };
+    return (
+      payload.event?.data?.kind === "continuity_lock" &&
+      payload.event.data.state === "locked" &&
+      payload.event.data.reason === "context_check_pending"
     );
   }).length;
 
@@ -650,6 +678,65 @@ test("SessionRequestHandler defers turn-completed unlock until async rollover ar
 
   assert.equal(countIdleTurnStateEvents(harness.events), 0);
   assert.equal(countNoRolloverUnlockEvents(harness.events), 0);
+});
+
+test("SessionRequestHandler keeps turn-completed locked until delayed no-rollover context decision arrives", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-turn-completed-delayed-no-rollover",
+    "provider-session-delayed-no-rollover",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+      runSlug: "reviewer",
+    }
+  );
+  (harness.handler as any).getSessionResumeLifecycleStore().set(session.id, {
+    mode: "resume_in_place",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
+  (harness.handler as any).handleFlowNodeContinuityProviderEvent = (
+    scopedSessionId: string,
+    event: unknown
+  ): Promise<void> => {
+    const typedEvent = event as {
+      readonly type?: string;
+      readonly data?: { readonly kind?: string };
+    };
+    if (
+      scopedSessionId === session.id &&
+      typedEvent.type === "stream_event" &&
+      typedEvent.data?.kind === "token_usage"
+    ) {
+      (harness.handler as any).recordPostTurnContextDecision(
+        session.id,
+        "no_rollover"
+      );
+      (harness.handler as any).finalizePendingTurnCompletion(session.id);
+    }
+    return Promise.resolve();
+  };
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "turn_completed",
+  });
+  await flushAsyncWork();
+
+  assert.equal(countIdleTurnStateEvents(harness.events), 0);
+  assert.equal(countNoRolloverUnlockEvents(harness.events), 0);
+  assert.equal(countContextCheckPendingLockEvents(harness.events), 1);
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "stream_event",
+    data: { kind: "token_usage", used: 50_000, limit: 200_000 },
+    tokenUsage: { used: 50_000, limit: 200_000 },
+  });
+  await flushAsyncWork();
+
+  assert.equal(countIdleTurnStateEvents(harness.events), 1);
+  assert.equal(countNoRolloverUnlockEvents(harness.events), 1);
 });
 
 test("SessionRequestHandler enforces no_resume terminal lock and read-only send guard", async () => {
