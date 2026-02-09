@@ -10,7 +10,7 @@
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
 2. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
-3. `doc/Sessions/Session125.md`
+3. `doc/Sessions/Session126.md`
 4. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -56,3 +56,42 @@
 4. [DONE] Git Commit: `chore(release): run build-all for phase 115 strict dual-confirmation unlock gate` (hash: b7f5d885)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 115 strict dual-confirmation unlock gate`)
 6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 115 strict dual-confirmation unlock gate` (hash: 3bced189)
+
+---
+
+## Phase 116 — Rollover Flag Reset After Bootstrap Unlock (owner: Oleksandr, updated: 2026-02-09)
+
+**Problem (post-release smoke):**
+- После успешного rollover (`resume_ready`) новая target-сессия на следующем обычном turn снова получает lock `context_check_pending`.
+- UI повторно показывает `Agent is resuming your session… Please wait.` даже при достаточном контекстном окне.
+- Это указывает на неполный lifecycle cleanup rollover-флагов и отсутствие нормализации `resumeMode` после bootstrap unlock.
+
+**Target invariant:**
+- После первого bootstrap assistant ответа в новой сессии и публикации `resume_ready`:
+  1. rollover pending-флаги source/target очищены;
+  2. target-сессия больше не живёт в режиме `resume_via_rollover` для последующих обычных turn;
+  3. следующий `turn_completed` в target при достаточном контексте проходит как `resume_in_place` (без повторного `resuming` lock).
+
+### Stream: Core Rollover Lifecycle Normalization
+1. [TODO] Нормализовать lifecycle после `resume_ready`: очистить rollover pending-флаги/контексты для source+target и перевести target в post-rollover режим обычных turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/workspace-runtime-types.ts`; expected commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock`)
+2. [TODO] Git Commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock` (hash: TBD)
+
+### Stream: Core Regression for Real Event Order
+1. [TODO] Добавить regression на реальный порядок событий (`assistant -> turn_completed`) после rollover и проверить, что первый обычный turn в target не возвращает `context_check_pending/resuming` lock (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): prevent post-resume relock after first normal turn`)
+2. [TODO] Git Commit: `test(core): prevent post-resume relock after first normal turn` (hash: TBD)
+
+### Stream: PM/UI Non-Regression
+1. [TODO] Добавить PM/UI regression, подтверждающий что после `resume_ready` и первого обычного turn не появляется повторный `blocked(resuming)` placeholder (scope: `src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit: `test(pm-ui): ensure no resuming relock after rollover bootstrap completion`)
+2. [TODO] Git Commit: `test(pm-ui): ensure no resuming relock after rollover bootstrap completion` (hash: TBD)
+
+### Stream: Docs + QA Gates
+1. [TODO] Обновить архитектурные документы под post-bootstrap lifecycle нормализацию и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document post-bootstrap rollover flag reset contract`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
+2. [TODO] Git Commit: `docs(architecture): document post-bootstrap rollover flag reset contract` (hash: TBD)
+
+### Stream: Release Build
+1. [TODO] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix`)
+2. [TODO] Git Commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 116 rollover flag reset hotfix`)
+4. [TODO] Git Commit: `chore(release): run build-all for phase 116 rollover flag reset hotfix` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 116 rollover flag reset hotfix`)
+6. [TODO] Git Commit: `chore(release): build and verify vsix for phase 116 rollover flag reset hotfix` (hash: TBD)
