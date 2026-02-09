@@ -2,7 +2,8 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.535
+## Current Release — v1.1.536
+- **Phase 117 Gemini runtime compatibility hotfix**: Gemini provider теперь корректно инициализируется на `@google/gemini-cli-core` layout ветках `0.17.x` и `0.27.x`; при отсутствии legacy `nonInteractiveToolExecutor` автоматически включается `scheduler_fallback`, ошибки module-compatibility диагностируются отдельно от auth.
 - **Phase 116 rollover lifecycle normalization hotfix**: после `resume_ready` Core очищает rollover pending-флаги source/target, переводит target в `resume_in_place`, и первый обычный turn завершается без повторного `resuming` lock.
 - **Phase 115 strict dual-confirmation unlock gate**: после `turn_completed` ввод остаётся заблокированным до явного post-turn context decision (`no_rollover_needed|rollover_required`) в этом же турне; устранён transient `unlock -> relock` при асинхронных usage-событиях.
 - **Phase 113 rollover unlock guard hotfix**: после `turn_completed` Core больше не снимает input lock, если rollover уже pending/in-flight; PM/UI дополнительно удерживают `blocked` до terminal `resume_ready` без transient unlock-gap.

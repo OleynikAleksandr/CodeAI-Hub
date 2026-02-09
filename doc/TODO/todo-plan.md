@@ -48,11 +48,11 @@
 1. [DONE] Добавить regression-тесты на loader fallback и unified tool execution facade для legacy/new CLI Core API (scope: `packages/Gemini_Module/src/runtime/cli-bridge.test.ts`, `packages/Gemini_Module/src/session/gemini-tool-executor-facade.test.ts`, `packages/Gemini_Module/package.json`; expected commit: `test(gemini): cover runtime loader fallback and unified tool execution`)
 2. [DONE] Git Commit: `test(gemini): cover runtime loader fallback and unified tool execution` (hash: 10cd0cfb)
 3. [DONE] Прогнать обязательные гейты + таргетные сборки (`@codeai-hub/gemini-module`, `@codeai-hub/core`, `webview/project-manager`) и синхронно обновить доки/план (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate gemini compatibility gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/gemini-module`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run build:project-manager`, `npm run typecheck:webview`)
-4. [IN_PROGRESS] Git Commit: `docs(qa): validate gemini compatibility gates and targeted builds` (hash: TBD)
+4. [DONE] Git Commit: `docs(qa): validate gemini compatibility gates and targeted builds` (hash: 7bb4485f)
 
 ### Stream: Release Build
-1. [TODO] Подготовить release docs перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for gemini runtime compatibility hotfix`)
-2. [TODO] Git Commit: `docs(release): prepare release notes for gemini runtime compatibility hotfix` (hash: TBD)
+1. [DONE] Подготовить release docs перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for gemini runtime compatibility hotfix`)
+2. [IN_PROGRESS] Git Commit: `docs(release): prepare release notes for gemini runtime compatibility hotfix` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for gemini runtime compatibility hotfix`)
 4. [TODO] Git Commit: `chore(release): run build-all for gemini runtime compatibility hotfix` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и smoke Gemini provider в установленном runtime (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session130.md`; expected commit: `chore(release): build and validate vsix for gemini runtime compatibility hotfix`)
