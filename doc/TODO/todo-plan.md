@@ -74,11 +74,11 @@
 
 ### Stream: Core Rollover Lifecycle Normalization
 1. [DONE] Нормализовать lifecycle после `resume_ready`: очистить rollover pending-флаги/контексты для source+target и перевести target в post-rollover режим обычных turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/workspace-runtime-types.ts`; expected commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock`)
-2. [IN_PROGRESS] Git Commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock` (hash: TBD)
+2. [DONE] Git Commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock` (hash: 4e4e507d)
 
 ### Stream: Core Regression for Real Event Order
-1. [TODO] Добавить regression на реальный порядок событий (`assistant -> turn_completed`) после rollover и проверить, что первый обычный turn в target не возвращает `context_check_pending/resuming` lock (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): prevent post-resume relock after first normal turn`)
-2. [TODO] Git Commit: `test(core): prevent post-resume relock after first normal turn` (hash: TBD)
+1. [DONE] Добавить regression на реальный порядок событий (`assistant -> turn_completed`) после rollover и проверить, что первый обычный turn в target не возвращает `context_check_pending/resuming` lock (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): prevent post-resume relock after first normal turn`)
+2. [IN_PROGRESS] Git Commit: `test(core): prevent post-resume relock after first normal turn` (hash: TBD)
 
 ### Stream: PM/UI Non-Regression
 1. [TODO] Добавить PM/UI regression, подтверждающий что после `resume_ready` и первого обычного turn не появляется повторный `blocked(resuming)` placeholder (scope: `src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit: `test(pm-ui): ensure no resuming relock after rollover bootstrap completion`)
