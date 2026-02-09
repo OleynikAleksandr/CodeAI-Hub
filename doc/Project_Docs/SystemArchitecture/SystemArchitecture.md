@@ -1,7 +1,7 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.525
-**Last Updated:** 2026-02-08
+**Version:** 1.1.534
+**Last Updated:** 2026-02-09
 **Status:** Active reference (source of truth)
 
 ---
@@ -294,6 +294,10 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
   - после `turn_completed` Core всегда переводит lifecycle в `context_check_pending` и не эмитит `idle/unlock`, пока не получит explicit context decision для этого же turn.
   - Claude pipeline доставляет post-turn usage decision детерминированно в `turn_completed` payload (`tokenUsage/usage`) и дублирует его stream-event fallback; unlock разрешён только при canonical `no_rollover_needed`.
   - PM/UI удерживают `blocked` на `context_check_pending` и снимают lock только при `no_rollover_needed` (resume-in-place) или `resume_ready` (rollover bootstrap completed).
+- **Phase 116 post-bootstrap lifecycle normalization**:
+  - после `resume_ready` Core обязан очищать rollover pending-флаги (`flowNodeRolloverStarted|flowNodeRolloverInFlight`) и continuity lock context для source+target.
+  - target session после bootstrap unlock переводится из `resume_via_rollover` в `resume_in_place` (сброс `finalTurnCompleted=false`) до первого обычного user turn.
+  - первый обычный `turn_completed` в target после bootstrap должен проходить по canonical resume-in-place path (`context_check_pending -> no_rollover_needed`) без повторного залипания в `resuming` lock.
 - **Scope sync**: Core синхронизирует client scope через `workspace:select` и применяет ingress guard для `session:create|session:message|session:delete`.
 
 Статус legacy:
