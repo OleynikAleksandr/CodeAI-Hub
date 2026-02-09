@@ -1,6 +1,6 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.534
+**Version:** 1.1.535
 **Last Updated:** 2026-02-09
 **Status:** Active reference (source of truth)
 
@@ -319,6 +319,11 @@ CommonJS модули, tarballs через `npm pack`. Инсталляторы 
 ### 6.2 Gemini
 
 CommonJS модуль с динамическим `import()` для ESM-пакетов. Глобальная установка `@google/gemini-cli` и `@google/gemini-cli-core`.
+
+**Phase 117 runtime compatibility contract:**
+- `cli-bridge` больше не зависит исключительно от legacy `nonInteractiveToolExecutor`; при его отсутствии используется `scheduler_fallback` backend.
+- `GeminiSessionManager` выполняет tool-calls через фасад `GeminiToolExecutorFacade`, который унифицирует execution path для разных layout версий `@google/gemini-cli-core`.
+- Ошибки module layout compatibility классифицируются отдельно от auth/login ошибок на уровнях installer/provider.
 
 ---
 
