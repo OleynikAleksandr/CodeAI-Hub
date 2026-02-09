@@ -87,4 +87,4 @@
 3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated версии/манифесты (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for launcher runtime integrity hotfix`)
 4. [DONE] Git Commit: `chore(release): run build-all for launcher runtime integrity hotfix` (hash: ecab5327)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и сценарий clean install (`~/.codeai-hub` пустой) + запуск Project Manager (scope: `codeai-hub-1.1.537.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session131.md`; expected commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix`; executed: `./scripts/build-release.sh --use-current-version`, `node -e "...installFromArchive/verifyExistingInstall..."`; result: `CLEAN_INSTALL_SMOKE_OK`, `INTEGRITY_GUARD_OK`, VSIX created)
-6. [DONE] Git Commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix` (hash: TBD)
+6. [DONE] Git Commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix` (hash: c30dce21)
