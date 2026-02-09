@@ -28,7 +28,7 @@
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `91c474ef docs: restructure documentation (SolidWorks-Flow canon)`
-- `d98ad229 docs(session): add Session135 report`
+- `23080538 docs(session): add Session135 report`
 
 ---
 
