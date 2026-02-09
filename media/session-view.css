@@ -824,22 +824,10 @@
 
 .session-input__container {
   position: relative;
-  border: 1px solid rgba(55, 55, 55, 1);
-  border-radius: 6px;
-  background-color: rgba(37, 37, 38, 1);
-  padding: 6px;
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
   isolation: isolate;
-}
-
-.session-input__container--dragging {
-  border-color: rgba(255, 152, 0, 0.8);
-  box-shadow: inset 0 0 0 1px rgba(255, 152, 0, 0.35);
 }
 
 .session-input__textarea {
@@ -868,6 +856,11 @@
   border-color: rgba(255, 152, 0, 1);
   box-shadow: 0 0 0 1px rgba(255, 152, 0, 0.35);
   background-color: rgba(32, 32, 32, 1);
+}
+
+.session-input__container--dragging .session-input__textarea {
+  border-color: rgba(255, 152, 0, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(255, 152, 0, 0.35);
 }
 
 .session-input__overlay {
