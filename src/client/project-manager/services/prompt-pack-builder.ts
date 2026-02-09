@@ -91,7 +91,6 @@ export const buildWorkflowPromptPack = (
   );
   const instructionLines = [
     `Этап: ${WORKFLOW_STAGE_LABELS[params.stage]}.`,
-    "Если нужны уточнения, задай 1–3 вопроса и дождись OK/approve перед записью.",
     `Целевой путь (relative): \`${relativePath}\``,
     `Целевой путь (absolute): \`${absolutePath}\``,
     `Анкета (relative): \`${normalizeRelativePath(params.questionnairePath)}\``,
