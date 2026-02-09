@@ -94,11 +94,36 @@ export class GeminiSessionManager {
     return this.sessions.get(sessionId);
   }
 
-  async createSession(
+  createSession(
+    options: SessionCreationOptions
+  ): Promise<SessionCreationResult> {
+    return this.startSession(options);
+  }
+
+  resumeSession(
+    sessionId: string,
+    options: Omit<SessionCreationOptions, "resumeSessionId">
+  ): Promise<SessionCreationResult> {
+    const normalizedSessionId = sessionId.trim();
+    if (normalizedSessionId.length === 0) {
+      throw new Error("Cannot resume Gemini session with an empty session id.");
+    }
+    return this.startSession({
+      ...options,
+      resumeSessionId: normalizedSessionId,
+    });
+  }
+
+  private async startSession(
     options: SessionCreationOptions
   ): Promise<SessionCreationResult> {
     const workspacePath = options.workspacePath;
-    const sessionId = randomUUID();
+    const requestedResumeSessionId =
+      typeof options.resumeSessionId === "string" &&
+      options.resumeSessionId.trim().length > 0
+        ? options.resumeSessionId.trim()
+        : undefined;
+    const sessionId = requestedResumeSessionId ?? randomUUID();
     const eventEmitter = new EventEmitter();
 
     const settings = this.modules.settings.loadSettings(workspacePath);
@@ -131,6 +156,7 @@ export class GeminiSessionManager {
 
     const argv = this.createArgv({
       ...options,
+      resumeSessionId: requestedResumeSessionId,
       defaultModel: resolvedModel,
       thinkingLevel: resolvedThinkingLevel,
     });
@@ -665,7 +691,7 @@ export class GeminiSessionManager {
       experimentalAcp: false,
       extensions: undefined,
       listExtensions: false,
-      resume: undefined,
+      resume: options.resumeSessionId,
       listSessions: false,
       deleteSession: undefined,
       includeDirectories,
