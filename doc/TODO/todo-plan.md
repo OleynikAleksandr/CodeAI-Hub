@@ -55,10 +55,10 @@
 
 ### Stream: Release Notes
 1. [DONE] Подготовить release docs под Phase 119 hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for gemini reviewer resume integration`)
-2. [IN_PROGRESS] Git Commit: `docs(release): prepare release notes for gemini reviewer resume integration` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prepare release notes for gemini reviewer resume integration` (hash: 530124f1)
 
 ### Stream: Release Build (Final)
-1. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for gemini reviewer resume integration`)
-2. [TODO] Git Commit: `chore(release): run build-all for gemini reviewer resume integration` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for gemini reviewer resume integration`; result: script completed successfully with version bump to `1.1.538` and regenerated manifests/packages)
+2. [IN_PROGRESS] Git Commit: `chore(release): run build-all for gemini reviewer resume integration` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и smoke сценарий `description(gemini) -> reviewer(gemini)` на чистом runtime (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session132.md`; expected commit: `chore(release): build and validate vsix for gemini reviewer resume integration`)
 4. [TODO] Git Commit: `chore(release): build and validate vsix for gemini reviewer resume integration` (hash: TBD)
