@@ -9,7 +9,6 @@ import type {
   SessionSnapshot,
 } from "../../../../types/session";
 import { isContinuityInternalMessage } from "./continuity-internal-message";
-import InfoPanel from "./info-panel";
 import SessionTabs from "./session-tabs";
 
 export const filterContinuityInternalMessages = (
@@ -76,8 +75,6 @@ type SessionHeaderProps = {
   readonly sessions: readonly SessionRecord[];
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
   readonly activeSessionId: string | null;
-  readonly activeSession: SessionSnapshot | null;
-  readonly continuationIndex: number | null;
   readonly onSelectSession: (sessionId: string) => void;
   readonly onCloseSession: (sessionId: string) => void;
 };
@@ -86,8 +83,6 @@ export const SessionHeader = ({
   sessions,
   providerLabels,
   activeSessionId,
-  activeSession,
-  continuationIndex,
   onSelectSession,
   onCloseSession,
 }: SessionHeaderProps) => (
@@ -99,12 +94,6 @@ export const SessionHeader = ({
       providerLabels={providerLabels}
       sessions={sessions}
     />
-    {activeSession && activeSessionId ? (
-      <InfoPanel
-        binding={activeSession.binding}
-        continuationIndex={continuationIndex}
-      />
-    ) : null}
   </div>
 );
 
