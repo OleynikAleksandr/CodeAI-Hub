@@ -37,11 +37,11 @@ const StatusPanel = ({
             {describeConnectionStatus(connectionStatus)}
           </span>
         </div>
-        {connectionDetail ? (
-          <div className="session-status__row session-status__row--muted">
+        <div className="session-status__row session-status__row--reserved">
+          {connectionDetail ? (
             <span className="session-status__value">{connectionDetail}</span>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </section>
     );
   }
@@ -65,30 +65,23 @@ const StatusPanel = ({
     Math.min(MAX_PERCENTAGE, MAX_PERCENTAGE - usedPercentage)
   );
 
-  // Show model details if available, otherwise fall back to provider summary
   const modelsSummary =
     models && models.length > 0 ? formatModelSummary(models) : providerSummary;
+
+  const tokensSummary = `${tokenUsage.used.toLocaleString()} / ${tokenLimit ? tokenLimit.toLocaleString() : "\u2014"} (${remainingPercentage}%)`;
 
   return (
     <section className="session-status session-panel">
       <div className="session-status__row">
-        <span className="session-status__label">Models</span>
-        <span className="session-status__value">{modelsSummary}</span>
-      </div>
-      <div className="session-status__row">
-        <span className="session-status__label">Tokens</span>
         <span className="session-status__value">
-          {tokenUsage.used.toLocaleString()} /{" "}
-          {tokenLimit ? tokenLimit.toLocaleString() : "—"} (
-          {remainingPercentage}%)
+          {`Models: ${modelsSummary}  |  Tokens: ${tokensSummary}`}
         </span>
       </div>
-      {tokenDebugSummary ? (
-        <div className="session-status__row">
-          <span className="session-status__label">Segments</span>
+      <div className="session-status__row session-status__row--reserved">
+        {tokenDebugSummary ? (
           <span className="session-status__value">{tokenDebugSummary}</span>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </section>
   );
 };
