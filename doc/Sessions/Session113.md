@@ -52,10 +52,10 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/SolidWorks-Flow/WorkspaceRuntime_LayeredArchitecture.md`
-2. `doc/SolidWorks-Flow/InterfaceMap_WorkspaceRuntime.md`
+1. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+2. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
 3. `doc/SolidWorks-Flow/Phase104_LegacyDeprecationChecklist.md`
-4. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+4. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session113.md` (THIS REPORT)
 

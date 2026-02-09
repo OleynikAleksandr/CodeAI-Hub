@@ -8,7 +8,7 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md` (THIS FILE)
 3. `doc/Sessions/Session042.md`
 

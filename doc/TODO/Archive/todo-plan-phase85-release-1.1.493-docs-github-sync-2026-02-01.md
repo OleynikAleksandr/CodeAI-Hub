@@ -8,7 +8,7 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/Sessions/Session060.md`
 3. `doc/TODO/todo-plan.md` (THIS FILE)
 
@@ -40,7 +40,7 @@
 13. [DONE] Spike(claude-module): выяснить, какие данные нужны для `used/limit` как в Claude Code `/context`, и можно ли получать их без API вызова (локально через `claude -p --verbose --output-format stream-json --resume <sessionId> "/context"`) — scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`, (new) `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `feat(claude-module): read context usage via /context`
 14. [DONE] Git Commit: `feat(claude-module): read context usage via /context` (hash: a2724c16)
 
-15. [DONE] Fix(project-manager): отображать токены строго по tokenUsage (used/limit) из нового источника `/context` и верифицировать на 2 сессиях (например 43.8k и 84.1k) — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/status-panel.tsx`, `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`; expected commit message: `fix(ui): align claude tokens with /context`
+15. [DONE] Fix(project-manager): отображать токены строго по tokenUsage (used/limit) из нового источника `/context` и верифицировать на 2 сессиях (например 43.8k и 84.1k) — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/ui/src/session/status-panel.tsx`, `doc/SolidWorks-Flow/System/TokenUsage/ClaudeTokenUsage_Architecture.md`; expected commit message: `fix(ui): align claude tokens with /context`
 16. [DONE] Git Commit: `fix(ui): align claude tokens with /context` (hash: f49c925d)
 
 ### Stream: release
@@ -144,7 +144,7 @@
 ## Phase 85 — Release 1.1.493 docs + GitHub sync (owner: Oleksandr, updated: 2026-02-01)
 
 ### Stream: SolidWorks-Flow knowledge (history persistence)
-1. [DONE] Docs(flow): добавить KB по unified-session history и workspace scoping (чтобы диалог не терялся после рестартов Core/PM и при multi-workspace) — scope: `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`; expected commit message: `docs(flow): add unified session history workspace scoping guide`
+1. [DONE] Docs(flow): добавить KB по unified-session history и workspace scoping (чтобы диалог не терялся после рестартов Core/PM и при multi-workspace) — scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`; expected commit message: `docs(flow): add unified session history workspace scoping guide`
 2. [DONE] Git Commit: `docs(flow): add unified session history workspace scoping guide` (hash: 2932738c)
 
 ### Stream: docs alignment (Project_Docs + SolidWorks-Flow + README/CHANGELOG)
@@ -154,9 +154,9 @@
 6. [DONE] Git Commit: `docs: update README and changelog for 1.1.493` (hash: 3abdc340)
 
 ### Stream: session report + push
-7. [DONE] Docs: синхронизировать `SystemArchitecture`/индексы доков и уточнить WorkflowTree resume контракт под `1.1.493` — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/README.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: sync Project_Docs and SolidWorks-Flow for 1.1.493`
+7. [DONE] Docs: синхронизировать `SystemArchitecture`/индексы доков и уточнить WorkflowTree resume контракт под `1.1.493` — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/System/README.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: sync Project_Docs and SolidWorks-Flow for 1.1.493`
 8. [DONE] Git Commit: `docs: sync Project_Docs and SolidWorks-Flow for 1.1.493` (hash: 8e007210)
-9. [DONE] Docs(flow): актуализировать оставшиеся SolidWorks-Flow документы, чтобы все ссылки/anti-regression заметки по session history были согласованы — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(flow): sync SolidWorks-Flow session persistence notes`
+9. [DONE] Docs(flow): актуализировать оставшиеся SolidWorks-Flow документы, чтобы все ссылки/anti-regression заметки по session history были согласованы — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(flow): sync SolidWorks-Flow session persistence notes`
 10. [DONE] Git Commit: `docs(flow): sync SolidWorks-Flow session persistence notes` (hash: 7cb53c94)
 11. [DONE] Docs(session): создать отчёт `doc/Sessions/Session067.md` по итоговому решению (history + docs) — scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): Session067 1.1.493 docs + github sync`
 12. [DONE] Git Commit: `docs(session): Session067 1.1.493 docs + github sync` (hash: 559f7269)

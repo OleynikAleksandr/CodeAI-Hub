@@ -13,7 +13,7 @@
 - Выполнен релизный пайплайн:
   - `./scripts/build-all.sh` → поднял версии до `1.1.498`, пересобрал Core/Providers/UI/Launcher и скопировал tarball’ы в `doc/tmp/releases/`.
   - `./scripts/build-release.sh --use-current-version` → собрал `codeai-hub-1.1.498.vsix` в корне репозитория.
-- Актуализированы релизные документы: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/README.md`.
+- Актуализированы релизные документы: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/System/Docs_Index.md`.
 
 ## Artifacts (local)
 - VSIX (root): `codeai-hub-1.1.498.vsix` (в `.gitignore`)
@@ -48,9 +48,9 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/UI_Modules.md`
-3. `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/UI_Modules.md`
+3. `doc/SolidWorks-Flow/WebviewSettings_FullSize_Layout_Architecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session074.md` (THIS REPORT)
 

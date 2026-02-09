@@ -54,9 +54,9 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+1. `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
 2. `doc/Architecture/Architecture.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session001.md` (THIS REPORT)
 

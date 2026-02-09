@@ -1,6 +1,6 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.535
+**Version:** 1.1.538
 **Last Updated:** 2026-02-09
 **Status:** Active reference (source of truth)
 
@@ -15,7 +15,7 @@
 - CEF Launcher
 - Провайдерные модули (Claude, Codex, Gemini)
 
-Детальная документация по отдельным стекам вынесена в `doc/Project_Docs/Stacks/`.
+Детальная документация по отдельным стекам вынесена в `doc/SolidWorks-Flow/Stacks/`.
 
 ---
 
@@ -76,7 +76,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.538`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -87,7 +87,7 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 
 Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
 
-### 2.2 UI Bundles (v1.1.502)
+### 2.2 UI Bundles (v1.1.538)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
 - `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
@@ -111,7 +111,7 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 
 Для долгоживущих workflow-сессий в системе нужен механизм непрерывности: при исчерпании контекстного бюджета модель должна автоматически сформировать handoff-отчёт, после чего Core создаёт новую сессию и продолжает работу, подавая отчёт как входной контекст.
 
-Архитектура: `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`.
+Архитектура: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`.
 Порог запуска handoff рассчитывается по token usage (used/limit) и может быть настроен per-provider (например, Claude и Codex: remaining% threshold, default 30%).
 Внутренние handoff-инструкции отправляются через `sendInternalMessage` и не должны попадать в user-facing историю.
 
@@ -152,7 +152,7 @@ State-table для Session UI:
 - Запрещён provider-specific late-lock сценарий: accepted submit без немедленного `turn_state=running` до первого provider marker.
 - Запрещён send-failure сценарий без `turn_state=idle` rollback (stuck `running/blocked` после ошибки отправки).
 
-Референс реализации Phase 101: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`.
+Референс реализации Phase 101: `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`.
 
 ### 2.8 Claude One-Shot Session Contract (Phase 98)
 
@@ -304,11 +304,10 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
 
 Статус legacy:
 - `workspace:scope:set` (Phase 104 handshake) считается deprecated transitional path.
-- Депрекация и remove-plan: `doc/SolidWorks-Flow/Phase104_LegacyDeprecationChecklist.md`.
 
 Детальный контракт Phase 105:
-- `doc/SolidWorks-Flow/WorkspaceRuntime_LayeredArchitecture.md`
-- `doc/SolidWorks-Flow/InterfaceMap_WorkspaceRuntime.md`
+- `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+- `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
 
 ## 6. Providers
 
@@ -343,36 +342,36 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/1.1.502/
+│   └── darwin-arm64/1.1.538/
 │       ├── node/
 │       ├── app/
 │       └── install.json
 ├── packages/
-│   ├── launcher/macos-arm64/1.1.502/
+│   ├── launcher/macos-arm64/1.1.538/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.502/
-│       │   └── current -> 1.1.502
+│       │   ├── 1.1.538/
+│       │   └── current -> 1.1.538
 │       └── project-manager/
-│           ├── 1.1.502/
-│           └── current -> 1.1.502
+│           ├── 1.1.538/
+│           └── current -> 1.1.538
 ├── providers/
-│   ├── claude/1.1.502/
-│   ├── codex/1.1.502/
-│   └── gemini/1.1.502/
+│   ├── claude/1.1.538/
+│   ├── codex/1.1.538/
+│   └── gemini/1.1.538/
 ├── state/
 │   └── projects.json
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.502.tar.bz2
-    ├── vscode-webview-1.1.502.tar.bz2
-    ├── project-manager-1.1.502.tar.bz2
-    ├── claude-module-1.1.502.tar.bz2
-    ├── codex-module-1.1.502.tar.bz2
-    ├── gemini-module-1.1.502.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.502.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.538.tar.bz2
+    ├── vscode-webview-1.1.538.tar.bz2
+    ├── project-manager-1.1.538.tar.bz2
+    ├── claude-module-1.1.538.tar.bz2
+    ├── codex-module-1.1.538.tar.bz2
+    ├── gemini-module-1.1.538.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.538.tar.bz2
 ```
 
 ---
@@ -381,12 +380,12 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.525 |
-| Core | 1.1.525 |
-| UI Bundles | 1.1.525 |
-| Claude Module | 1.1.525 |
-| Codex Module | 1.1.525 |
-| Gemini Module | 1.1.525 |
+| VSIX | 1.1.538 |
+| Core | 1.1.538 |
+| UI Bundles | 1.1.538 |
+| Claude Module | 1.1.538 |
+| Codex Module | 1.1.538 |
+| Gemini Module | 1.1.538 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |
@@ -402,7 +401,7 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 - Артефакты пишутся напрямую в `.codeai-hub/<workspaceSlug>/<stage>/...` (сущность `runs` удаляется)
 - Watcher отслеживает файлы и обновляет workflow state для UI gating
 
-**Подробнее:** `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+**Подробнее:** `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
 
 ---
 
@@ -446,9 +445,8 @@ VSIX не содержит JS/CSS бандлов. UI собирается в н�
 
 ## 12. Related Documents
 
-- **Stacks:** `doc/Project_Docs/Stacks/` (CoreOrchestrator, Claude, Codex, Gemini, UI_Modules, Launcher_CEF)
-- **Workflow:** `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
-- **Session Isolation (Phase 104):** `doc/Project_Docs/SessionIsolation/ProjectManager_WorkspaceScopedSessionIsolation_Architecture.md`
-- **Agent Packages:** `doc/Project_Docs/AgentPackages_Architecture.md`
+- **Stacks:** `doc/SolidWorks-Flow/Stacks/` (CoreOrchestrator, Claude, Codex, Gemini, UI_Modules, Launcher_CEF)
+- **Workflow:** `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+- **Agent Packages:** `doc/SolidWorks-Flow/System/AgentPackages_Architecture.md`
 - **SolidWorks Flow:** `doc/SolidWorks-Flow/`
-- **Knowledge:** `doc/Project_Docs/knowledge/`
+- **Knowledge:** `doc/SolidWorks-Flow/knowledge/`

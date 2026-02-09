@@ -32,7 +32,7 @@
 ## Required documents to review before work
 1. `doc/TODO/todo-plan.md`
 2. `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`
 4. `doc/Sessions/Session081.md` (THIS REPORT)
 
 ## Plans for next session

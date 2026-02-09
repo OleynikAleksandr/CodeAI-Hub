@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Актуализированы документы в `doc/SolidWorks-Flow/` и `doc/Project_Docs/` под уже принятые решения:
+- Актуализированы документы в `doc/SolidWorks-Flow/` и `doc/SolidWorks-Flow/` под уже принятые решения:
   - Project Manager (CEF) — единственный активный UI‑клиент Core на период активной разработки FLOW.
   - `vscode-webview` — Settings-only (без сессий/чатов/подключения к Core) на период FLOW.
   - `web-client` — legacy UI, принят план полного удаления (Phase 65) вместе со сборкой/инсталляторами/ссылками.
@@ -32,10 +32,10 @@
 
 ## Required documents to review before work
 1. `doc/TODO/todo-plan.md` (Phase 65)
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-3. `doc/Project_Docs/SystemArchitecture/ProjectStructureMap.md`
-4. `doc/Project_Docs/Stacks/UI_Modules.md`
-5. `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
+2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/System/ProjectStructureMap.md`
+4. `doc/SolidWorks-Flow/Stacks/UI_Modules.md`
+5. `doc/SolidWorks-Flow/Stacks/Launcher_CEF_Module.md`
 6. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 7. `doc/SolidWorks-Flow/README.md`
 8. `doc/Sessions/Session034.md`

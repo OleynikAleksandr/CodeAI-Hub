@@ -10,7 +10,7 @@
 
 ## Work summary
 - Заархивирован старый `doc/TODO/todo-plan.md` и создан новый план Phase 78.
-- Утверждена архитектура `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`.
+- Утверждена архитектура `doc/SolidWorks-Flow/ProjectManager/AddWorkspace_Architecture.md`.
 - Core registry: добавлен стабильный `WorkspaceProject.slug` + миграция старых записей.
 - Project Manager: дерево/пулинг/анкета/IdeaCollector переведены на `workspace.slug` (без коллизий от имени).
 - Add Workspace: добавлен CEF-safe fallback (модалка ввода absolute path) и worktree init через `POST /api/v1/orchestrator/workspace-session`.
@@ -38,11 +38,11 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/ProjectManager/AddWorkspace_Architecture.md`
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session050.md` (THIS REPORT)
 
 ## Plans for next session
-- Сделать manual verification по чеклисту из `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md` (2 workspace, коллизии имён, создание `.codeai-hub/<slug>/`).
+- Сделать manual verification по чеклисту из `doc/SolidWorks-Flow/ProjectManager/AddWorkspace_Architecture.md` (2 workspace, коллизии имён, создание `.codeai-hub/<slug>/`).
 - При необходимости — push в origin.

@@ -36,9 +36,9 @@
 2. `doc/TODO/todo-plan.md`
 3. `doc/Sessions/Session095.md`
 4. `doc/Sessions/Session096.md` (THIS REPORT)
-5. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-6. `doc/Project_Docs/SessionContinuity/VirtualConversation_SeamlessContinuity_Architecture.md`
-7. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
+5. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+6. `doc/SolidWorks-Flow/SessionContinuity/VirtualConversation_SeamlessContinuity_Architecture.md`
+7. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
 
 ## Plans for next session
 - Закрыть Stream `49–56` из `todo-plan.md`:

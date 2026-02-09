@@ -8,8 +8,8 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/System/SessionUI_SessionKind_And_Settings_Architecture.md`
 3. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -19,7 +19,7 @@
 ### Stream 0: Design approval
 **Goal:** Утвердить контракт: runSlug в session:create + settings:load через Core Remote Bridge.
 
-1. [DONE] Docs(arch): review/approve `SessionUI_SessionKind_And_Settings_Architecture.md` — scope: `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`; expected commit message: `docs(arch): approve session metadata + PM settings contract`
+1. [DONE] Docs(arch): review/approve `SessionUI_SessionKind_And_Settings_Architecture.md` — scope: `doc/SolidWorks-Flow/System/SessionUI_SessionKind_And_Settings_Architecture.md`; expected commit message: `docs(arch): approve session metadata + PM settings contract`
 2. [DONE] Git Commit: `docs(arch): approve session metadata + PM settings contract` (hash: 73c638c2)
 
 ---

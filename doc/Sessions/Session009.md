@@ -11,21 +11,21 @@
 ## Work summary
 
 - **Консолидация архитектурных документов:**
-  - Слит `doc/Architecture/Architecture.md` в `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+  - Слит `doc/Architecture/Architecture.md` в `doc/SolidWorks-Flow/System/SystemArchitecture.md`
   - Удалена папка `doc/Architecture/` (устранено дублирование)
   - Удалён `UI_Modularization_Architecture.md` (дубль `Stacks/UI_Modules.md`)
   - Актуализирован `ProviderSetupGuide.md`
   - Обновлены ссылки в `CLAUDE.md` и `todo-plan.md`
 
 - **Реорганизация Knowledge base:**
-  - Объединены `doc/Knowledge/` и `doc/Project_Docs/knowledge/` в единое место
+  - Объединены `doc/Knowledge/` и `doc/SolidWorks-Flow/knowledge/` в единое место
   - Создана структура: `guides/`, `model-reference/`, `kb/`
   - Удалены устаревшие документы: `git-worktree-guide`, `hive-mind-protocol`, `postmortem`
   - Обновлены ссылки в `Stacks/Claude.md` и `Stacks/Codex_SDK_Module.md`
 
 - **Навигация:**
   - Создан `doc/README.md` — корневой навигатор по документации
-  - Обновлён `doc/Project_Docs/README.md`
+  - Обновлён `doc/SolidWorks-Flow/System/Docs_Index.md`
 
 ## Quality gates
 - `./scripts/check-architecture.sh` ✅
@@ -43,7 +43,7 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
 3. `doc/Sessions/Session009.md` (THIS REPORT)
 

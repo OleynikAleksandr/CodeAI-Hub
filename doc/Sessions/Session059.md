@@ -10,7 +10,7 @@
 
 ## Work summary
 - Исправлен баг Project Manager: незаполненная/неотправленная анкета Description больше не деградирует в read-only markdown при возврате в workspace.
-- Обновлены документы релиза: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под версию `1.1.481`.
+- Обновлены документы релиза: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под версию `1.1.481`.
 - Собран unified релиз `1.1.481` через `./scripts/build-all.sh`.
 - Собран VSIX через `./scripts/build-release.sh --use-current-version`, артефакты скопированы в `doc/tmp/releases/`.
 - Push выполнен в `origin/main`.
@@ -33,7 +33,7 @@
 ## Required documents to review before work
 1. `README.md`
 2. `CHANGELOG.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session059.md` (THIS REPORT)
 

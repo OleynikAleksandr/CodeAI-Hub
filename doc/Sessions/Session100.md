@@ -32,7 +32,7 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
 3. `doc/Sessions/Session100.md` (THIS REPORT)
 

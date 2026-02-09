@@ -49,9 +49,9 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session099.md` (THIS REPORT)
 

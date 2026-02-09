@@ -9,8 +9,8 @@
 - **Real-time Docs**: любые изменения протоколов/архитектуры требуют синхронного обновления документов из `doc/` **до** коммита.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
 3. `doc/TODO/todo-plan.md`
 
 ---
@@ -20,9 +20,9 @@
 Цель: отказаться от structured-output для стадий Description/Virtual Simulation/Diagrams и перейти на **file-first** артефакты (агент пишет файл через CLI tools), а состояние/гейтинг строится через Watcher.
 
 ### Stream: Design approval + docs alignment
-1. [DONE] Docs: согласовать архитектуру перехода (decision: no structured-output для стадий + Watcher) — scope: `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`; expected commit message: `docs: approve workflow cli+watcher architecture`
+1. [DONE] Docs: согласовать архитектуру перехода (decision: no structured-output для стадий + Watcher) — scope: `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`; expected commit message: `docs: approve workflow cli+watcher architecture`
 2. [DONE] Git Commit: `docs: approve workflow cli+watcher architecture` (hash: b1bcd53d)
-3. [DONE] Docs: синхронизировать общие архитектурные документы под новый подход — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: document workflow file-first artifacts`
+3. [DONE] Docs: синхронизировать общие архитектурные документы под новый подход — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: document workflow file-first artifacts`
 4. [DONE] Git Commit: `docs: document workflow file-first artifacts` (hash: fdf9eec1)
 
 ### Stream: Core — Watcher foundation (events + state)
@@ -48,17 +48,17 @@
 4. [DONE] Git Commit: `feat(project-manager): live workflow updates` (hash: a30d1450)
 
 ### Stream: Workflow Steps — CLI tools вместо structured-output (Description/Virtual Simulation/Diagrams)
-1. [DONE] Refactor(core): отключить structured-output контракт для стадий description/virtual_simulation/diagram_* и перейти на file-first — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `refactor(core): switch workflow steps to file-first`
+1. [DONE] Refactor(core): отключить structured-output контракт для стадий description/virtual_simulation/diagram_* и перейти на file-first — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `refactor(core): switch workflow steps to file-first`
 2. [DONE] Git Commit: `refactor(core): switch workflow steps to file-first` (hash: a80ae3dc)
 3. [DONE] Refactor(project-manager): стартовый «Prompt Pack» за один turn (инструкция + анкета + шаблон + target path) — scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit message: `refactor(project-manager): add single-turn prompt pack`
 4. [DONE] Git Commit: `refactor(project-manager): add single-turn prompt pack` (hash: 92e2151b)
 
 ### Stream: Automation — watcher-driven gates
-1. [DONE] Feat(core): запуск гейтов по событию `workflow.stage.completed` (конфигурируемо) — scope: `packages/core/src/workflow/gates/workflow-gates-facade.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `feat(core): add watcher-driven workflow gates`
+1. [DONE] Feat(core): запуск гейтов по событию `workflow.stage.completed` (конфигурируемо) — scope: `packages/core/src/workflow/gates/workflow-gates-facade.ts`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `feat(core): add watcher-driven workflow gates`
 2. [DONE] Git Commit: `feat(core): add watcher-driven workflow gates` (hash: 3695d33b)
 
 ### Stream: Verification (Codex + Claude)
-1. [TODO] Test(manual): прогнать стадии description → virtual_simulation → diagram_modules → diagram_facades на Codex и Claude (file-first запись) — scope: `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: document workflow file-first verification`
+1. [TODO] Test(manual): прогнать стадии description → virtual_simulation → diagram_modules → diagram_facades на Codex и Claude (file-first запись) — scope: `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: document workflow file-first verification`
 2. [TODO] Git Commit: `docs: document workflow file-first verification` (hash: TBD)
 
 ---
@@ -86,11 +86,11 @@
 2. [DONE] Git Commit: `refactor(project-manager): align file-first workflow messaging` (hash: 697cda52)
 
 ### Stream: Docs — workflow templates cleanup
-1. [DONE] Обновить Architecture/SystemArchitecture под file-first шаблоны — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: align workflow templates in architecture`
+1. [DONE] Обновить Architecture/SystemArchitecture под file-first шаблоны — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: align workflow templates in architecture`
 2. [DONE] Git Commit: `docs: align workflow templates in architecture` (hash: d0601bb1)
-3. [DONE] Обновить SolidWorks docs по списку шаблонов — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs: update solidworks workflow templates`
+3. [DONE] Обновить SolidWorks docs по списку шаблонов — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: update solidworks workflow templates`
 4. [DONE] Git Commit: `docs: update solidworks workflow templates` (hash: 7287a401)
-5. [DONE] Обновить AgentPackages по списку шаблонов — scope: `doc/Project_Docs/AgentPackages_Architecture.md`; expected commit message: `docs: update agent package templates`
+5. [DONE] Обновить AgentPackages по списку шаблонов — scope: `doc/SolidWorks-Flow/System/AgentPackages_Architecture.md`; expected commit message: `docs: update agent package templates`
 6. [DONE] Git Commit: `docs: update agent package templates` (hash: c95867b9)
 
 ### Stream: Release build

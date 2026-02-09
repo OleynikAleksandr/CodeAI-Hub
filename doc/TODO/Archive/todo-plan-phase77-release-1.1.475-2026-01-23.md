@@ -8,7 +8,7 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -35,7 +35,7 @@
 1. [DONE] Docs(changelog): добавить entry для `1.1.475` (artifact panel auto-refresh на `Final_Description.md`) — scope: `CHANGELOG.md`; expected commit message: `docs(changelog): v1.1.475`
 2. [DONE] Git Commit: `docs(changelog): v1.1.475` (hash: 632d8bd0)
 
-3. [DONE] Docs: обновить `README.md` и `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под релиз `1.1.475` (версии/артефакты/краткие изменения) — scope: `README.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update release docs for 1.1.475`
+3. [DONE] Docs: обновить `README.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под релиз `1.1.475` (версии/артефакты/краткие изменения) — scope: `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update release docs for 1.1.475`
 4. [DONE] Git Commit: `docs: update release docs for 1.1.475` (hash: 67794e57)
 
 ### Stream: Release build

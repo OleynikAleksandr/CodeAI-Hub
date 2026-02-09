@@ -11,9 +11,9 @@
 - **Real-time Документация**: любое изменение протоколов/архитектуры требует синхронного обновления документов из `doc/` **до** коммита.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/ProjectManager_SessionPlacement_And_RunsPath_Architecture.md`
+1. `doc/SolidWorks-Flow/System/ProjectManager_SessionPlacement_And_RunsPath_Architecture.md`
 2. `doc/Architecture/Architecture.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 
 ---
@@ -23,9 +23,9 @@
 Цель UX: в дереве Project Manager и верхнем сайдбаре вместо двух шагов (Описание/Диаграмма) должны быть четыре — Описание, Virtual Simulation, Диаграмма модулей, Диаграмма фасадов.
 
 ### Stream: Architecture docs
-1. [DONE] Docs: обновить SolidWorks-Flow архитектуру (4 шага, новые пути/шаблоны) — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/README.md`; expected commit message: `docs: add workflow step split architecture`
+1. [DONE] Docs: обновить SolidWorks-Flow архитектуру (4 шага, новые пути/шаблоны) — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/README.md`; expected commit message: `docs: add workflow step split architecture`
 2. [DONE] Git Commit: `docs: add workflow step split architecture` (hash: 47de620c)
-3. [DONE] Docs: добавить указатель в Project_Docs — scope: `doc/Project_Docs/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs: add workflow step split architecture`
+3. [DONE] Docs: добавить указатель в Project_Docs — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs: add workflow step split architecture`
 4. [DONE] Git Commit: `docs: add workflow step split architecture` (hash: 47de620c)
 
 ### Stream: Core template namespace
@@ -81,7 +81,7 @@
 4. [DONE] Git Commit: `refactor(project-manager): add workflow step tools` (hash: 0b592e91)
 
 ### Stream: Cleanup idea naming
-1. [DONE] Refactor: удалить упоминания idea/full-development-flow из docs и типов — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/AgentPackages_Architecture.md`; expected commit message: `docs: remove idea naming from architecture`
+1. [DONE] Refactor: удалить упоминания idea/full-development-flow из docs и типов — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/System/AgentPackages_Architecture.md`; expected commit message: `docs: remove idea naming from architecture`
 2. [DONE] Git Commit: `docs: remove idea naming from architecture` (hash: 343f4ac4)
 
 ---
@@ -89,7 +89,7 @@
 ## Phase 54 — Workflow output schema enforcement (owner: Oleksandr, updated: 2026-01-18)
 
 ### Stream: Core enforcement
-1. [DONE] Fix(core): гарантировать outputSchema + finalize artifacts на стороне Core — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): enforce workflow output schema`
+1. [DONE] Fix(core): гарантировать outputSchema + finalize artifacts на стороне Core — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `fix(core): enforce workflow output schema`
 2. [DONE] Git Commit: `fix(core): enforce workflow output schema` (hash: aa1452d7)
 
 ---
@@ -97,7 +97,7 @@
 ## Phase 55 — Codex turn timeout guard (owner: Oleksandr, updated: 2026-01-18)
 
 ### Stream: Codex watchdog
-1. [DONE] Fix(codex): прерывать зависший поток событий при отсутствии активности > 180s — scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(codex): add turn timeout guard`
+1. [DONE] Fix(codex): прерывать зависший поток событий при отсутствии активности > 180s — scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `fix(codex): add turn timeout guard`
 2. [DONE] Git Commit: `fix(codex): add turn timeout guard` (hash: 07b2ce53)
 
 ---
@@ -105,9 +105,9 @@
 ## Phase 56 — Workflow question artifact guard (owner: Oleksandr, updated: 2026-01-18)
 
 ### Stream: Codex question artifacts
-1. [DONE] Fix(codex): трактовать `question*` артефакты как вопросы + фильтр allowlist — scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(codex): treat question artifacts as questions`
+1. [DONE] Fix(codex): трактовать `question*` артефакты как вопросы + фильтр allowlist — scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `fix(codex): treat question artifacts as questions`
 2. [DONE] Git Commit: `fix(codex): treat question artifacts as questions` (hash: 9d45c712)
 
 ### Stream: Claude question artifacts
-1. [DONE] Fix(claude): трактовать `question*` артефакты как вопросы + доп. вопросы в suggested response — scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(claude): treat question artifacts as questions`
+1. [DONE] Fix(claude): трактовать `question*` артефакты как вопросы + доп. вопросы в suggested response — scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `fix(claude): treat question artifacts as questions`
 2. [DONE] Git Commit: `fix(claude): treat question artifacts as questions` (hash: 79ad788c)

@@ -14,9 +14,9 @@
 - Выполнен релизный пайплайн:
   - `./scripts/build-all.sh` → поднял версии до `1.1.497`, пересобрал Core/Providers/UI/Launcher и скопировал tarball’ы в `doc/tmp/releases/`.
   - `./scripts/build-release.sh --use-current-version` → собрал `codeai-hub-1.1.497.vsix` в корне репозитория.
-- Актуализированы релизные документы: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`.
+- Актуализированы релизные документы: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`.
 - Верификация Phase 88 выполнена пользователем и зафиксирована в `doc/Sessions/Session072.md` + `doc/TODO/todo-plan.md`.
-- Проведён аудит актуальности `doc/Project_Docs/**` под релиз `1.1.497` (обновлены статусы/updated и отражён `workspace-activate`).
+- Проведён аудит актуальности `doc/SolidWorks-Flow/**` под релиз `1.1.497` (обновлены статусы/updated и отражён `workspace-activate`).
 - Изменения запушены в `origin/main`.
 
 ## Artifacts (local)
@@ -54,15 +54,15 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SystemArchitecture/UnifiedSessionArchitecture.md`
-3. `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`
-4. `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
+3. `doc/SolidWorks-Flow/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`
+4. `doc/SolidWorks-Flow/ProjectManager/AddWorkspace_Architecture.md`
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session072.md`
 7. `doc/Sessions/Session073.md` (THIS REPORT)
 
 ## Plans for next session
-- Сформулировать следующий приоритет (Phase 90) и зафиксировать дизайн-док в `doc/Project_Docs/`.
+- Сформулировать следующий приоритет (Phase 90) и зафиксировать дизайн-док в `doc/SolidWorks-Flow/`.
 - После согласования дизайн-дока — нарезать `doc/TODO/todo-plan.md` на Phase/Stream микрозадачами ≤3 файлов + отдельный commit после каждой подзадачи.
 

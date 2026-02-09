@@ -25,7 +25,7 @@
 
 ### Stream: Архитектурный документ и согласование
 
-1. [DONE] Создать архитектурный документ Agent Packages (scope: `doc/Project_Docs/AgentPackages_Architecture.md`; expected: описана проблема, целевая архитектура, миграционный план; commit: `docs(agents): add agent packages architecture`) (date: 2026-01-06)
+1. [DONE] Создать архитектурный документ Agent Packages (scope: `doc/SolidWorks-Flow/System/AgentPackages_Architecture.md`; expected: описана проблема, целевая архитектура, миграционный план; commit: `docs(agents): add agent packages architecture`) (date: 2026-01-06)
 2. [DONE] Git Commit: `docs(agents): add agent packages architecture` (hash: 045ab7c) (date: 2026-01-06)
 
 ### Stream: Shared Agent Package
@@ -123,7 +123,7 @@
 
 ### Stream: Documentation & Release
 
-7. [DONE] Обновить Architecture.md (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/AgentPackages_Architecture.md`; expected: описание Agent Packages архитектуры) (date: 2026-01-06)
+7. [DONE] Обновить Architecture.md (scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/System/AgentPackages_Architecture.md`; expected: описание Agent Packages архитектуры) (date: 2026-01-06)
 8. [DONE] Git Commit: `docs(architecture): document agent packages structure` (hash: 946501d) (date: 2026-01-06)
 
 9. [DONE] Обновить README + CHANGELOG (scope: `README.md`, `CHANGELOG.md`; expected: release notes для рефакторинга) (date: 2026-01-06)
@@ -138,7 +138,7 @@
 
 ## Notes
 
-- Архитектурный документ: `doc/Project_Docs/AgentPackages_Architecture.md`
+- Архитектурный документ: `doc/SolidWorks-Flow/System/AgentPackages_Architecture.md`
 - Каждый агент-пакет имеет ЕДИНУЮ точку входа — Facade
 - UI компоненты остаются в `src/client/ui/` (webview-specific)
 - Assets синхронизируются в `~/.codeai-hub/templates/` через Core

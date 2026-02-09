@@ -27,9 +27,9 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
 4. `doc/TODO/todo-plan.md` (Phase 103, Stream: `centralize immediate lock on send in Core + rollback on provider send error`)
 5. `doc/Sessions/Session106.md`
 6. `doc/Sessions/Session107.md` (THIS REPORT)

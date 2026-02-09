@@ -10,8 +10,8 @@
 ## Required documents to review before work
 1. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 2. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-4. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
+4. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 5. `doc/Sessions/Session027.md`
 6. `doc/TODO/Archive/todo-plan-phase63-2026-01-21.md` (архив предыдущего плана)
 7. `doc/TODO/todo-plan.md` (THIS FILE)
@@ -103,7 +103,7 @@
 3. [DONE] Docs(release): обновить `README.md` + `CHANGELOG.md` под 1.1.463 (описать фикс дублей pre-binding click) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update 1.1.463 notes`
 4. [DONE] Git Commit: `docs(release): update 1.1.463 notes` (hash: af7dde74)
 
-5. [DONE] Docs(arch): обновить `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (versions table) под 1.1.463 — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): bump SystemArchitecture to 1.1.463`
+5. [DONE] Docs(arch): обновить `doc/SolidWorks-Flow/System/SystemArchitecture.md` (versions table) под 1.1.463 — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(arch): bump SystemArchitecture to 1.1.463`
 6. [DONE] Git Commit: `docs(arch): bump SystemArchitecture to 1.1.463` (hash: 45d8fbab)
 
 7. [DONE] Docs(todo): зафиксировать релиз 1.1.463 в плане (DONE+hash) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 1.1.463 verification release`
@@ -119,7 +119,7 @@
 3. [DONE] Docs(release): обновить `README.md` + `CHANGELOG.md` под 1.1.464 (описать фикс дублей в vscode-webview) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs(release): update 1.1.464 notes`
 4. [DONE] Git Commit: `docs(release): update 1.1.464 notes` (hash: cf894518)
 
-5. [DONE] Docs(arch): обновить `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (versions table) под 1.1.464 — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): bump SystemArchitecture to 1.1.464`
+5. [DONE] Docs(arch): обновить `doc/SolidWorks-Flow/System/SystemArchitecture.md` (versions table) под 1.1.464 — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(arch): bump SystemArchitecture to 1.1.464`
 6. [DONE] Git Commit: `docs(arch): bump SystemArchitecture to 1.1.464` (hash: 066d11aa)
 
 7. [DONE] Docs(todo): зафиксировать релиз 1.1.464 в плане (DONE+hash) — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record 1.1.464 verification release`

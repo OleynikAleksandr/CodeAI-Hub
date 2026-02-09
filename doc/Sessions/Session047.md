@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Синхронизированы релизные документы под `1.1.474`: обновлены `README.md` и `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`.
+- Синхронизированы релизные документы под `1.1.474`: обновлены `README.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md`.
 - Синхронизированы SolidWorks-Flow документы под актуальные UI-лейблы сессий: `Description <Provider>` / `Reviewer <Provider>`.
 - Обновлён `doc/TODO/todo-plan.md`: Phase 75 отмечена статусами и hash.
 
@@ -26,7 +26,7 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
 3. `doc/Sessions/Session047.md` (THIS REPORT)
 

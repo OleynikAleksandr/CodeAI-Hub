@@ -1,8 +1,8 @@
 # UI Modules Stack
 
-**Status:** Active (v1.1.444)
+**Status:** Active (1.1.538)
 **Owner:** Codex
-**Context:** Модульная система UI, позволяющая обновлять интерфейс независимо от VSIX и обеспечивающая единый источник правды для FLOW через Project Manager (CEF). На период активной разработки FLOW `vscode-webview` используется только для Settings (Settings-only), а legacy `web-client` запланирован к полному удалению (Phase 65).
+**Context:** Модульная система UI, позволяющая обновлять интерфейс независимо от VSIX и обеспечивающая единый источник правды для FLOW через Project Manager (CEF). На период активной разработки FLOW `vscode-webview` используется только для Settings (Settings-only).
 
 ---
 
@@ -10,10 +10,12 @@
 
 UI Modules — это набор пакетов, отвечающих за визуальную часть CodeAI Hub. Они собираются в независимые артефакты (`.tar.bz2`) и устанавливаются в `~/.codeai-hub/packages/ui/`, откуда загружаются хост-приложениями (VS Code Extension и CEF Launcher).
 
+
+See also: `doc/SolidWorks-Flow/Stacks/Project_Manager.md` (Project Manager architecture).
+
 ### Key Components
 - **vscode-webview**: React-приложение для панели в VS Code (Settings-only на период разработки FLOW).
 - **project-manager**: Standalone UI для управления проектами (CEF) — основной UI-клиент Core для FLOW.
-- **web-client**: legacy PWA/CEF UI (будет удалён полностью в Phase 65).
 - **Shared UI Library**: общие компоненты, хуки и стили (`src/client/ui/src`), обеспечивающие идентичный UX.
 
 ---
@@ -22,7 +24,7 @@ UI Modules — это набор пакетов, отвечающих за ви�
 
 ### 2.1. Distribution Model
 Вместо упаковки JS/CSS файлов внутрь VSIX, они распространяются как отдельные модули:
-1. **Build**: `./scripts/build-all.sh` (release) или `npm run build:webview` / `npm run build:project-manager` (dev) собирают UI артефакты. Legacy: `npm run build:web-client` (будет удалён в Phase 65).
+1. **Build**: `./scripts/build-all.sh` (release) или `npm run build:webview` / `npm run build:project-manager` (dev) собирают UI артефакты.
 2. **Manifest**: `assets/ui/manifest.json` описывает доступные версии и хеши.
 3. **Installation**: При старте расширения `UIBundleInstaller` проверяет наличие бандлов и распаковывает их в `~/.codeai-hub/packages/ui/<bundleId>/<version>/`.
 4. **Symlinking**: Создается симлинк `current` -> `<version>`, который используется хост-приложениями.
@@ -35,7 +37,7 @@ UI Modules — это набор пакетов, отвечающих за ви�
 
 ### 2.3. Host Integration
 - **VS Code**: `HomeViewProvider` настраивает `localResourceRoots` на `packages/ui/vscode-webview/current` и загружает HTML, ссылающийся на `react-chat.js` и CSS из этого пути.
-- **CEF Launcher**: Получает путь к `packages/ui/project-manager/current/index.html` через аргументы запуска или конфиг. Legacy: `web-client/current` (Phase 65 removal).
+- **CEF Launcher**: Получает путь к `packages/ui/project-manager/current/index.html` через аргументы запуска или конфиг.
 
 ---
 
@@ -50,13 +52,6 @@ vscode-webview-<version>/
 └── react-chat.css      # Специфичные стили чата
 ```
 
-### web-client (legacy)
-```
-web-client-<version>/
-├── index.html          # Точка входа (PWA shell)
-├── app.js              # Скомпилированное приложение
-└── ...assets           # Иконки, манифесты PWA
-```
 
 ### project-manager
 ```

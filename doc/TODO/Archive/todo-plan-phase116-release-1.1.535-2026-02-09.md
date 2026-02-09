@@ -8,8 +8,8 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
 3. `doc/Sessions/Session126.md`
 4. `doc/TODO/todo-plan.md` (THIS FILE)
 
@@ -46,7 +46,7 @@
 4. [DONE] Git Commit: `test(pm): prevent unlock gap while context decision pending` (hash: bd00b66b)
 
 ### Stream: Docs + QA Gates
-1. [DONE] Синхронно обновить архитектурные документы и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document strict dual-confirmation unlock gate and validate gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
+1. [DONE] Синхронно обновить архитектурные документы и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document strict dual-confirmation unlock gate and validate gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
 2. [DONE] Git Commit: `docs(architecture): document strict dual-confirmation unlock gate and validate gates` (hash: a958f198)
 
 ### Stream: Release Build
@@ -85,7 +85,7 @@
 2. [DONE] Git Commit: `test(pm-ui): ensure no resuming relock after rollover bootstrap completion` (hash: a50b021a)
 
 ### Stream: Docs + QA Gates
-1. [DONE] Обновить архитектурные документы под post-bootstrap lifecycle нормализацию и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document post-bootstrap rollover flag reset contract`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run build:project-manager`, `npm run typecheck:webview`)
+1. [DONE] Обновить архитектурные документы под post-bootstrap lifecycle нормализацию и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document post-bootstrap rollover flag reset contract`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run build:project-manager`, `npm run typecheck:webview`)
 2. [DONE] Git Commit: `docs(architecture): document post-bootstrap rollover flag reset contract` (hash: 23cb35dc)
 
 ### Stream: Release Build

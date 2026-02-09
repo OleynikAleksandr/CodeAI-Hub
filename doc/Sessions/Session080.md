@@ -41,8 +41,8 @@
 3. `doc/SolidWorks-Flow/SessionContinuity/ContinuityReport_Contracts.md`
 4. `doc/SolidWorks-Flow/Rebuild/FlowRebuildPropagation_Architecture.md`
 5. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
-6. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-7. `doc/Project_Docs/Stacks/UI_Modules.md`
+6. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+7. `doc/SolidWorks-Flow/Stacks/UI_Modules.md`
 8. `doc/Sessions/Session080.md` (THIS REPORT)
 
 ## Working tree state to restore

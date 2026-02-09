@@ -19,7 +19,7 @@
 
 ## Phase 4_1 — Project Manager Layout Implementation (owner: Claude, updated: 2025-11-28)
 
-**Цель**: Реализовать 6-секционный layout согласно `doc/Project_Docs/NewFeature_Architecture.md`
+**Цель**: Реализовать 6-секционный layout согласно `doc/SolidWorks-Flow/System/NewFeature_Architecture.md`
 
 **Затрагиваемые пакеты**: `src/client/project-manager/`, `packages/ui/project-manager/`
 

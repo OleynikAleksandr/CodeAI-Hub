@@ -11,7 +11,7 @@
 ## Work summary
 - Собран unified релиз `1.1.476` через `./scripts/build-all.sh` (providers/core/ui/launcher) + копирование tarball’ов в `doc/tmp/releases/`.
 - Собран VSIX через `./scripts/build-release.sh --use-current-version`.
-- Обновлены `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под `1.1.476`.
+- Обновлены `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под `1.1.476`.
 - Заархивирован завершённый `doc/TODO/todo-plan.md` Phase 78 и создан новый `doc/TODO/todo-plan.md` для следующих задач.
 
 ## Release artifacts
@@ -30,7 +30,7 @@
 ## Required documents to review before work
 1. `README.md`
 2. `CHANGELOG.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session051.md` (THIS REPORT)
 

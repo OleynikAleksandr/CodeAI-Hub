@@ -8,7 +8,7 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md` (THIS FILE)
 3. `doc/Sessions/Session033.md`
 
@@ -17,11 +17,11 @@
 ## Phase 65 — Decommission web-client + vscode-webview Settings-only (owner: Oleksandr, updated: 2026-01-21)
 
 ### Stream: Design — контракт отключения UI клиентов
-1. [DONE] Docs: зафиксировать контракт: единственный активный UI-клиент Core во время разработки FLOW = Project Manager; `vscode-webview` работает только как Settings UI (без сессий/чатов/подключения к Core); `web-client` удаляем полностью — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SystemArchitecture/ProjectStructureMap.md`; expected commit message: `docs(arch): align docs with web-client deprecation`
+1. [DONE] Docs: зафиксировать контракт: единственный активный UI-клиент Core во время разработки FLOW = Project Manager; `vscode-webview` работает только как Settings UI (без сессий/чатов/подключения к Core); `web-client` удаляем полностью — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/System/ProjectStructureMap.md`; expected commit message: `docs(arch): align docs with web-client deprecation`
 2. [DONE] Git Commit: `docs(arch): align docs with web-client deprecation` (hash: 834f865d)
 3. [DONE] Docs: выровнять SolidWorks-Flow docs под Project Manager-only режим — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/README.md`; expected commit message: `docs(solidworks-flow): reflect project-manager-only mode`
 4. [DONE] Git Commit: `docs(solidworks-flow): reflect project-manager-only mode` (hash: 02a3e466)
-5. [DONE] Docs: зафиксировать deprecate `web-client` в UI/CEF документации — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`, `doc/Project_Docs/Stacks/UI_Modules.md`, `doc/Project_Docs/knowledge/guides/Local_Artifacts_Workflow.md`; expected commit message: `docs(ui): deprecate web-client in docs`
+5. [DONE] Docs: зафиксировать deprecate `web-client` в UI/CEF документации — scope: `doc/SolidWorks-Flow/Stacks/Launcher_CEF_Module.md`, `doc/SolidWorks-Flow/Stacks/UI_Modules.md`, `doc/SolidWorks-Flow/knowledge/guides/Local_Artifacts_Workflow.md`; expected commit message: `docs(ui): deprecate web-client in docs`
 6. [DONE] Git Commit: `docs(ui): deprecate web-client in docs` (hash: f5dd78c1)
 
 ### Stream: Remove — web-client (полная зачистка)
@@ -104,5 +104,5 @@
 4. [DONE] Git Commit: `chore(release): build 1.1.466` (hash: ea73836b)
 
 ### Stream: Docs — SystemArchitecture alignment
-1. [DONE] Docs: убрать legacy `web-client`, обновить версии и роли UI (Settings-only webview, Project Manager основной) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(arch): align SystemArchitecture with Phase65`
+1. [DONE] Docs: убрать legacy `web-client`, обновить версии и роли UI (Settings-only webview, Project Manager основной) — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(arch): align SystemArchitecture with Phase65`
 2. [DONE] Git Commit: `docs(arch): align SystemArchitecture with Phase65` (hash: 332345c9)

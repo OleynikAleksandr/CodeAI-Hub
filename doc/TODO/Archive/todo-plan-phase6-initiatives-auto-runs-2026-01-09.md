@@ -57,5 +57,5 @@
 
 ### Stream: Docs sync
 
-23. [DONE] Обновить системную архитектуру под новые пути/авто‑runs (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): update auto-run paths`) (date: 2026-01-09)
+23. [DONE] Обновить системную архитектуру под новые пути/авто‑runs (scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; commit: `docs(architecture): update auto-run paths`) (date: 2026-01-09)
 24. [DONE] Git Commit: `docs(architecture): update auto-run paths` (hash: acc23e81) (date: 2026-01-09)

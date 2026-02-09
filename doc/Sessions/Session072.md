@@ -57,8 +57,8 @@
 # 3. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session072.md` (THIS REPORT)
 

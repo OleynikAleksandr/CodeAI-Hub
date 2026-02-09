@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Исследована архитектура UI сессий — создан документ `doc/SolidWorks-Flow/Architecture/SessionUI_Panels_Architecture.md`
+- Исследована архитектура UI сессий — создан документ `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
 - Реализована Phase 68 — Session UI Panels Cleanup & Enhancement:
   - **Stream 1:** TodoPanel закомментирована (может быть удалена позже)
   - **Stream 2:** InfoPanel переделана в одну строку: `Session ID: <uuid>`
@@ -40,7 +40,7 @@
 - `src/client/ui/src/session/model-info-builder.ts` — NEW: builds ModelInfo array
 - `src/client/ui/src/session/helpers.ts` — createInitialSnapshot accepts settings
 - `src/types/session.ts` — ModelInfo type added
-- `doc/SolidWorks-Flow/Architecture/SessionUI_Panels_Architecture.md` — NEW: UI architecture doc
+- `doc/SolidWorks-Flow/Stacks/Project_Manager.md` — NEW: UI architecture doc
 - `doc/TODO/todo-plan.md` — Phase 68 completed, Phase 69-70 added
 
 ---
@@ -49,8 +49,8 @@
 
 ## Required documents to review before work
 1. `doc/TODO/todo-plan.md` — Phase 69 (Settings propagation) и Phase 70 (Release build)
-2. `doc/SolidWorks-Flow/Architecture/SessionUI_Panels_Architecture.md` — архитектура UI сессий
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — общая архитектура
+2. `doc/SolidWorks-Flow/Stacks/Project_Manager.md` — архитектура UI сессий
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md` — общая архитектура
 4. `doc/Sessions/Session041.md` (THIS REPORT)
 
 ## Plans for next session

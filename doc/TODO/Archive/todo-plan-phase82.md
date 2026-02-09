@@ -8,8 +8,8 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/System/ProjectManager/AddWorkspace_Architecture.md`
 3. `doc/Sessions/Session051.md`
 4. `doc/TODO/todo-plan.md` (THIS FILE)
 
@@ -33,7 +33,7 @@
 9. [DONE] Fix(project-manager): сброс состояния анкеты при смене workspace — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit message: `fix(project-manager): reset questionnaire state on workspace change`
 10. [DONE] Git Commit: `fix(project-manager): reset questionnaire state on workspace change` (hash: d1686f90)
 
-11. [DONE] Docs: обновить архитектуру под macOS picker + clean workspace start — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document add-workspace ux fixes`
+11. [DONE] Docs: обновить архитектуру под macOS picker + clean workspace start — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/System/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document add-workspace ux fixes`
 12. [DONE] Git Commit: `docs: document add-workspace ux fixes` (hash: 0afed1f2)
 
 13. [DONE] Fix(scripts): корректно читать версию лаунчера из manifest — scope: `scripts/build-cef-launcher.sh`; expected commit message: `fix(scripts): resolve launcher version from manifest`
@@ -50,7 +50,7 @@
 1. [DONE] Fix(project-manager): после Add Workspace автоматически выбирать добавленный workspace — scope: `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `fix(project-manager): auto-select added workspace`
 2. [DONE] Git Commit: `fix(project-manager): auto-select added workspace` (hash: f5ed100d)
 
-3. [DONE] Docs: обновить архитектуру под auto-select при Add Workspace — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document auto-select on add workspace`
+3. [DONE] Docs: обновить архитектуру под auto-select при Add Workspace — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/System/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document auto-select on add workspace`
 4. [DONE] Git Commit: `docs: document auto-select on add workspace` (hash: d2b8d76b)
 
 5. [DONE] Verification: прогнать гейты + таргетную сборку `npm run build:project-manager` — scope: scripts; expected commit message: `chore: verify auto-select add workspace`
@@ -64,7 +64,7 @@
 1. [DONE] Fix(project-manager): при смене workspace автоматически выбирать последнюю сессию и артефакт из дерева — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`; expected commit message: `fix(project-manager): sync tree selection on workspace switch`
 2. [DONE] Git Commit: `fix(project-manager): sync tree selection on workspace switch` (hash: 08ef9b4c)
 
-3. [DONE] Docs: описать auto-select сессии/артефакта при смене workspace — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document workspace switch auto-select`
+3. [DONE] Docs: описать auto-select сессии/артефакта при смене workspace — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/System/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: document workspace switch auto-select`
 4. [DONE] Git Commit: `docs: document workspace switch auto-select` (hash: 2a85c2f9)
 
 5. [DONE] Verification: прогнать гейты + таргетную сборку `npm run build:project-manager` — scope: scripts; expected commit message: `chore: verify workspace switch auto-select`

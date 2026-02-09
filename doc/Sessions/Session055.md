@@ -10,7 +10,7 @@
 
 ## Work summary
 - Собран unified релиз `1.1.478` через `./scripts/build-all.sh`.
-- Обновлены `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под версию `1.1.478`.
+- Обновлены `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под версию `1.1.478`.
 - Собран VSIX через `./scripts/build-release.sh --use-current-version`, артефакты скопированы в `doc/tmp/releases/`.
 
 ## Release artifacts
@@ -28,7 +28,7 @@
 ## Required documents to review before work
 1. `README.md`
 2. `CHANGELOG.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session055.md` (THIS REPORT)
 

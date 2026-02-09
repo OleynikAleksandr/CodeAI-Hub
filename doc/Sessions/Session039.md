@@ -10,7 +10,7 @@
 
 ## Work summary
 - Project Manager: типографика Markdown-артефактов в правой панели выровнена под размер текста диалогов сессий слева.
-- Docs(release): обновлены `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под релиз 1.1.467.
+- Docs(release): обновлены `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под релиз 1.1.467.
 - Release 1.1.467: собраны tarball'ы (`build-all`) и VSIX (`build-release`).
 - Design: добавлен архитектурный документ для MVP-фикса быстрого восстановления workflow дерева после рестарта Core.
 - TODO: заархивирован выполненный `doc/TODO/todo-plan.md` (Phase 65–66) и создан новый план (Phase 67) под MVP-фикс.
@@ -38,8 +38,8 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/WorkflowStateFastRestore_Architecture.md`
+2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session039.md` (THIS REPORT)
 

@@ -36,10 +36,10 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/AgentPackages_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/AgentPackages_Architecture.md`
 3. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
-4. `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`
+4. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 5. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md` (THIS SESSION)
 6. `doc/TODO/todo-plan.md`
 7. `doc/TODO/Archive/todo-plan-phase61-2026-01-19.md`

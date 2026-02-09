@@ -51,7 +51,7 @@
 1) **Храним только финальный артефакт** в узле `description`.
 2) Reviewer-сессии с resume поддерживаются для **Claude/Codex/Gemini**; для Gemini дальнейшее развитие механики временно поставлено на паузу до внедрения telemetry remaining context window.
 3) Источник истины истории — **unified session JSONL** (в `.codeai-hub/sessions/...`).
-   - анти-регрессия: storage истории должен быть привязан к workspace пер-сессионно, иначе после рестарта Core (особенно из другого workspace) диалог может стать пустым (см. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`).
+   - анти-регрессия: storage истории должен быть привязан к workspace пер-сессионно, иначе после рестарта Core (особенно из другого workspace) диалог может стать пустым (см. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`).
 4) Финальный артефакт шага `Description` — файл `Final_Description.md`:
    - создаётся/перезаписывается Reviewer-агентом;
    - после появления `Final_Description.md` промежуточный `description.md` больше не нужен для Flow (допускается удаление).
@@ -75,7 +75,7 @@
 
 Минимальная структура ссылки на возобновляемую сессию:
 
-- `providerId`: `claudeCli` | `codexCli` | `geminiCli`
+- `providerId`: `claudeCodeCli` | `codexCli` | `geminiCli`
 - `providerSessionId`: строка (provider-native id; используется для resume)
 - `jsonlPath`: абсолютный путь к unified session JSONL
 
@@ -190,7 +190,7 @@ UI следствие: сразу после старта сессии появ�
   - резюмировать сессию по `providerId + providerSessionId` (уже есть `resumeSession` для поддерживаемых провайдеров);
   - помечать downstream узлы как `OUTDATED` при изменении артефакта раннего узла.
   - автоматически запускать Reviewer-сессию после появления `description.md` и переключать “active session” в состоянии шага.
-  - поддерживать “handoff” для долгих reviewer-сессий (авто-отчёт при 25% контекста и продолжение в новой сессии): `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`.
+  - поддерживать “handoff” для долгих reviewer-сессий (авто-отчёт по порогу remaining% из настроек per-provider; default 30% — см. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`).
 
 ---
 

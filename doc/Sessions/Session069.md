@@ -32,13 +32,13 @@
 ## Required documents to review before work (read in this order)
 
 ### A) Architecture (source of truth)
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (multi-tenant: `workspacePath` — свойство Session)
-2. `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md` (revised: source-of-truth = rollout `token_count`)
-3. `doc/Project_Docs/Stacks/Codex_SDK_Module.md` (revised note: `/status` TUI-only; token usage via `token_count`)
-4. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md` (reference pattern: throttling + in-flight lock + internal-only + continuity)
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md` (multi-tenant: `workspacePath` — свойство Session)
+2. `doc/SolidWorks-Flow/TokenUsage/CodexTokenUsage_Architecture.md` (revised: source-of-truth = rollout `token_count`)
+3. `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md` (revised note: `/status` TUI-only; token usage via `token_count`)
+4. `doc/SolidWorks-Flow/TokenUsage/ClaudeTokenUsage_Architecture.md` (reference pattern: throttling + in-flight lock + internal-only + continuity)
 
 ### B) Multi-workspace / history pitfalls (обязательно)
-5. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md` (workspaceKey должен быть пер-сессионный)
+5. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md` (workspaceKey должен быть пер-сессионный)
 
 ### C) Session continuity / persistence
 6. `doc/Sessions/Session065.md` (tokenUsage persistence/restore через continuity `chain.json`)

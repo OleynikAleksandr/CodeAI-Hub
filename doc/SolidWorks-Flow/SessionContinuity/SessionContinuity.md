@@ -1,0 +1,231 @@
+# Session Continuity (SolidWorks-Flow) — Rollover / Auto-Handoff (Source of Truth)
+
+**Status:** Active
+**Updated:** 2026-02-09 (release 1.1.538)
+**Owner:** Oleksandr + Codex
+
+---
+
+## 0) Scope
+
+Этот документ — **единственный источник правды** для continuity/rollover поведения сессий в FLOW:
+- когда и как система принимает решение о rollover по фактическому remaining context window;
+- как выглядит UX “бесконечной” сессии в узле Workflow Tree;
+- контракт continuity‑отчёта (report) и правил его хранения;
+- базовые требования к провайдерам (turn lifecycle + token usage events);
+- взаимодействие с lock/unlock контрактом Workspace Runtime.
+
+Связанные каноны:
+- Workspace Runtime (lock/unlock, snapshot-first): `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+- Description → Reviewer (узловая специфика): `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
+
+---
+
+## 1) Problem
+
+Провайдерные threads/sessions имеют ограниченное контекстное окно. В долгоживущих узловых сессиях (например, `Reviewer`, `Spec/Plan/Execute`) при исчерпании бюджета нужно **автоматически**:
+- зафиксировать краткий handoff‑контекст;
+- открыть новый provider segment;
+- восстановить контекст так, чтобы для пользователя это выглядело как продолжение работы **внутри того же узла**.
+
+Нельзя переносить “весь диалог” — это шум и гарантированное сжигание окна.
+
+---
+
+## 2) Terms
+
+- **Node (узел):** единица работы в Workflow Tree (`description`, `virtual_simulation`, `diagram_modules`, …).
+- **Role/Agent:** роль внутри узла (например, `Reviewer`).
+- **Provider segment:** один реальный provider session/thread (`providerSessionId`) для конкретного `providerId`.
+- **Rollover:** переключение на новый provider segment внутри того же узла.
+- **Continuity Report:** единственный мост между сегментами (короткий Markdown‑отчёт).
+
+Важно: **Node bootstrap** (переход на другой узел/роль) ≠ Continuity.
+
+---
+
+## 3) Key Decisions
+
+### 3.1 Отчёт пишет и читает агент
+- Агент **сам** пишет continuity‑отчёт по указанному пути.
+- Агент **сам** читает предыдущий отчёт в новом segment.
+- Core:
+  - принимает решение о rollover (по token usage);
+  - отправляет агенту внутреннюю инструкцию “как составить отчёт + куда сохранить”;
+  - watcher’ом ждёт появления файла;
+  - выполняет переключение сегмента.
+
+### 3.2 Отчёт — единственный мост
+В новый segment не переносится переписка/полная история. Всё критичное для продолжения процесса должно быть кратко зафиксировано в отчёте.
+
+### 3.3 Единый lock/unlock контракт
+Lock/unlock вычисляется **только** по `workspace:snapshot` (snapshot-first). `turnState=idle` сам по себе не гарантирует unlock.
+Нормативный контракт — в `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`.
+
+### 3.4 Operational freeze: Gemini
+- `Description(one-shot) -> Reviewer(resume)` на Gemini подтверждён рабочим в `1.1.538`.
+- Дальнейшее развитие Gemini continuity/rollover эвристик заморожено до появления надёжного runtime‑контракта remaining context window telemetry.
+- В период паузы допустимы только bugfix‑изменения без расширения Gemini‑функционала.
+
+---
+
+## 4) Trigger Policy (Source of Truth = runtime events)
+
+### 4.1 Token usage extraction
+Core извлекает `used/limit` из provider событий (поддерживаются разные ключи: `token_count`, `total_tokens`, `prompt_tokens+completion_tokens`, …).
+
+См. реализацию: `packages/core/src/session-continuity/token-usage.ts`.
+
+### 4.2 Threshold = remaining percent (per provider)
+Решение о rollover принимается по условию:
+
+- `computeRemainingPercent(usage) <= remainingPercentThreshold`
+
+Где:
+- `computeRemainingPercent` возвращает целое число 0..100;
+- `remainingPercentThreshold` берётся из live settings (clamp 5..80).
+
+Defaults (если настройка отсутствует):
+- Claude: `30`
+- Codex: `30`
+
+См. нормализацию settings:
+- `src/extension-module/settings/claude-settings.ts`
+- `src/extension-module/settings/codex-settings.ts`
+
+---
+
+## 5) Rollover Flow (MVP)
+
+1. Core получает token usage (used/limit) и обновляет snapshot.
+2. После завершения turn Core выполняет post-turn arbitration:
+   - если threshold не достигнут → `no_rollover_needed`.
+   - если threshold достигнут → `rollover_required` и включается continuity lock.
+3. Core отправляет агенту internal message: “составь continuity report по шаблону и сохрани по `reportPath`”.
+4. Агент пишет отчёт **атомарно**: `report.tmp.md` → `rename` → `report.md`.
+5. Core watcher ждёт финальный файл.
+6. Core закрывает старый provider segment и создаёт новый.
+7. Core стартует новый segment и первым сообщением отправляет:
+   - узло‑специфичный prompt (обычный старт);
+   - короткую инструкцию: “прочитай последний отчёт по `reportPath` и продолжай”.
+8. Unlock gate: input остаётся locked до первого bootstrap assistant answer в новом segment (служебный шаг).
+
+---
+
+## 6) Report Storage Layout
+
+Continuity‑отчёты хранятся рядом с артефактами узла и остаются на диске.
+
+Рекомендуемая схема пути:
+
+- `<workspaceRoot>/.codeai-hub/<workspaceSlug>/flow/nodes/<nodeId>/continuity/reports/<ISO_TIMESTAMP>-<role>-<providerId>.md`
+
+Core:
+- не создаёт папки заранее;
+- не пишет файлы;
+- только ждёт появление отчёта по объявленному пути.
+
+---
+
+## 7) Continuity Report Contract
+
+### 7.1 Global rules (mandatory)
+1. **Никакой переписки:** нельзя вставлять историю чата.
+2. **Никаких больших вставок артефактов:** нельзя копировать `Final_Description.md`, большие diff’ы, исходники.
+3. **Только ссылки/пути + минимальные буллеты.**
+4. **Отчёт короткий:** ориентир ~200 строк максимум.
+5. **Атомарная запись:** `*.tmp.md` → `rename` → `*.md`.
+
+### 7.2 Doc Node report (пример: Reviewer)
+Обязательные секции:
+
+```md
+# Continuity Report — <nodeId> / Reviewer
+
+## Canonical Artifact
+- <path>: `Final_Description.md`
+
+## References To Read (only if needed)
+- <path>: <1 строка “зачем это читать”>
+
+## Pending From User
+- <вопрос/ожидание 1>
+- <вопрос/ожидание 2>
+```
+
+### 7.3 Code Node report (пример: Spec/Plan/Execute)
+
+```md
+# Continuity Report — <nodeId> / <role>
+
+## Current Task
+- What: <кратко>
+- Scope: <файлы/пакеты>
+- Acceptance: <критерии>
+
+## Required Reads (ordered)
+1. <path>: <зачем>
+2. <path>: <зачем>
+
+## Repo Context
+- Branch: <name>
+- Base commit (if known): <hash>
+- Last relevant commits:
+  - <hash>: <message>
+
+## Gates / Builds (last known)
+- `./scripts/check-architecture.sh`: <OK/FAIL/NOT RUN>
+- `npx ultracite check`: <OK/FAIL/NOT RUN>
+- `npx ts-prune`: <OK/FAIL/NOT RUN>
+- `npx jscpd ...`: <OK/FAIL/NOT RUN>
+- `npm run check:links`: <OK/FAIL/NOT RUN>
+- Target build: <команда>: <OK/FAIL/NOT RUN>
+
+## Open Issues / Risks
+- <кратко>
+
+## Next Step
+- <следующее действие на 1 шаг>
+```
+
+---
+
+## 8) Templates (IDs / placeholders)
+
+Default templates directory:
+- `~/.codeai-hub/templates/`
+
+Template IDs (MVP):
+- `flow/continuity/create-report-doc.md`
+- `flow/continuity/create-report-code.md`
+- `flow/continuity/resume.md`
+
+Placeholders:
+- `{{nodeId}}`
+- `{{role}}`
+- `{{reportPath}}`
+- `{{canonicalArtifactPath}}` (doc-node only)
+
+Fallback rule:
+- если пользовательский файл шаблона отсутствует, Core использует bundled template с тем же `templateId`.
+
+---
+
+## 9) Unified Session History (source-of-truth для UI)
+
+История диалога в UI читается **не из провайдерных логов**, а из unified-session JSONL:
+
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl`
+
+Критичный инвариант: `workspaceKey` должен быть **пер‑сессионным**, иначе в multi-workspace режиме после рестарта Core диалог может “пропасть” (история окажется в другом bucket’е).
+
+Референс реализации:
+- `packages/core/src/remote-bridge/handlers/session-request-handler.ts` (register + bind)
+- `packages/core/src/unified-session/storage.ts` (workspaceKey, promote, fallback)
+- `packages/core/src/remote-bridge/handlers/http-api-router.ts` (`GET /api/v1/sessions/:sessionId/history`)
+
+Anti‑regression правила:
+1. `providerId` должен быть стабильной строкой (участвует в пути).
+2. `providerSessionId` является именем файла истории.
+3. При promotion/alias (temp → real session id) Core обязан вызывать `sessionStorage.promote(...)`.
+4. Нельзя привязывать history к “текущему” workspace Core; только к `session.workspacePath`.

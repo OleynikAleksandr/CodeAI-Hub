@@ -6,14 +6,14 @@
 - Каждая микрозадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
 - **Gates после каждой микрозадачи**: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка/тест затронутых пакетов.
 - После зелёных гейтов — Git Commit, затем сразу обновляем статусы/хеши в `doc/TODO/todo-plan.md`.
-- Любые изменения логики/архитектуры синхронно отражаются в документации (`doc/Project_Docs/**`) в том же коммите.
+- Любые изменения логики/архитектуры синхронно отражаются в документации (`doc/SolidWorks-Flow/System/**`) в том же коммите.
 - Любая фаза завершается только после чистого `git status` и фиксации session report.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/VirtualConversation_SeamlessContinuity_Architecture.md`
-4. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Core/VirtualConversation_SeamlessContinuity_Architecture.md`
+4. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 6. `doc/Sessions/Session097.md`
 7. `doc/Sessions/Session098.md`
@@ -68,7 +68,7 @@
 - `npx tsx --test src/client/project-manager/components/sessions/token-usage-stream.test.ts src/client/ui/src/session/input-panel.test.tsx`: PASS (`6/6`).
 
 ### Stream: wrap-up and release-readiness
-21. [DONE] Docs(system): синхронизировать `SystemArchitecture.md` и continuity docs под новый `continuity_lock` контракт (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(system): document continuity lock contract`)
+21. [DONE] Docs(system): синхронизировать `SystemArchitecture.md` и continuity docs под новый `continuity_lock` контракт (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`; expected commit message: `docs(system): document continuity lock contract`)
 22. [DONE] Git Commit: `docs(system): document continuity lock contract` (hash: 782ce757)
 23. [DONE] Docs(session): подготовить следующий session report с таймлайном событий lock/unlock и QA выводом (scope: `doc/Sessions/Session099.md`; expected commit message: `docs(session): add Session099 continuity lock implementation report`)
 24. [DONE] Git Commit: `docs(session): add Session099 continuity lock implementation report` (hash: 9e64be11)
@@ -90,7 +90,7 @@
 - user-facing wait copy: `Agent is resuming your session… Please wait.`
 - internal continuity ACK phrase: `Ready to continue working.`
 
-31. [DONE] Docs(copy): зафиксировать утверждённые тексты continuity handoff и правило их показа в архитектурной документации (scope: `doc/TODO/todo-plan.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`; expected commit message: `docs(ux): define continuity handoff copy and display rules`)
+31. [DONE] Docs(copy): зафиксировать утверждённые тексты continuity handoff и правило их показа в архитектурной документации (scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`; expected commit message: `docs(ux): define continuity handoff copy and display rules`)
 32. [DONE] Git Commit: `docs(ux): define continuity handoff copy and display rules` (hash: ca65ba7c)
 33. [DONE] Fix(ui-lock): устранить эффект «поле ввода уже разблокировано, но copy ещё просит ждать» через синхронизацию условий disabled/placeholder (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `fix(ui): synchronize input lock and continuity wait copy`)
 34. [DONE] Git Commit: `fix(ui): synchronize input lock and continuity wait copy` (hash: d8b782a2)
@@ -100,7 +100,7 @@
 38. [DONE] Git Commit: `chore(qa): verify installed continuity resume template sync` (hash: 0a5dbbb0)
 
 ### Stream: matrix-rain background animation for locked input
-39. [DONE] Docs(design): подготовить отдельный архитектурный документ по Matrix Rain-анимации (Rezmason-inspired) для заблокированного поля ввода: визуальные требования, fixed matrix-green color model (`#00ff41`, `alpha: 0.30`), provider-colored wait-copy (`alpha: 0.70`), адаптация плотности колонок к ширине поля, производительность и accessibility (scope: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_MatrixRain_InputField_Animation_Architecture.md`; expected commit message: `docs(ux): define matrix rain lock animation architecture`)
+39. [DONE] Docs(design): подготовить отдельный архитектурный документ по Matrix Rain-анимации (Rezmason-inspired) для заблокированного поля ввода: визуальные требования, fixed matrix-green color model (`#00ff41`, `alpha: 0.30`), provider-colored wait-copy (`alpha: 0.70`), адаптация плотности колонок к ширине поля, производительность и accessibility (scope: `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_MatrixRain_InputField_Animation_Architecture.md`; expected commit message: `docs(ux): define matrix rain lock animation architecture`)
 40. [DONE] Git Commit: `docs(ux): define matrix rain lock animation architecture` (hash: 4b8a2443)
 41. [DONE] Fix(ui-render): реализовать фоновый Matrix Rain слой внутри контейнера ввода (очень тусклый, бесшовный цикл, активен только при `running/blocked`) без влияния на редактирование текста (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-lock-matrix-rain.ts`, `media/session-view.css`; expected commit message: `feat(ui): add subtle matrix rain background for locked input`)
 42. [DONE] Git Commit: `feat(ui): add subtle matrix rain background for locked input` (hash: b662cab7)

@@ -8,8 +8,8 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/System/ProjectManager/AddWorkspace_Architecture.md`
 3. `doc/Sessions/Session049.md`
 4. `doc/TODO/todo-plan.md` (THIS FILE)
 
@@ -22,7 +22,7 @@
 2. [DONE] Git Commit: `docs(todo): start Phase 78 plan` (hash: fe39a731)
 
 ### Stream: Design (approved)
-1. [DONE] Docs: добавить и утвердить архитектуру Add Workspace (MVP) — scope: `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs(project-manager): add add-workspace architecture`
+1. [DONE] Docs: добавить и утвердить архитектуру Add Workspace (MVP) — scope: `doc/SolidWorks-Flow/System/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs(project-manager): add add-workspace architecture`
 2. [DONE] Git Commit: `docs(project-manager): add add-workspace architecture` (hash: 00009a17)
 
 ### Stream: Core workspace registry (slug source-of-truth)
@@ -58,7 +58,7 @@
 4. [DONE] Git Commit: `fix(project-manager): use workspace slug in idea collector` (hash: 2b985f73)
 
 ### Stream: Docs sync + verification
-1. [DONE] Docs: обновить `SystemArchitecture.md` под Add Workspace (кратко: slug, modal fallback, worktree init) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: document project-manager add-workspace`
+1. [DONE] Docs: обновить `SystemArchitecture.md` под Add Workspace (кратко: slug, modal fallback, worktree init) — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: document project-manager add-workspace`
 2. [DONE] Git Commit: `docs: document project-manager add-workspace` (hash: 7652498f)
 
 3. [DONE] Verification: прогнать гейты + таргетные сборки (`npm run build:core`, `npm run build:project-manager`, при необходимости `npm run typecheck:webview`) — scope: scripts; expected commit message: `chore: verify add workspace feature`

@@ -46,17 +46,17 @@
 ### Stream: Packages layout migration (`~/.codeai-hub/packages/**`) (миграция в layout packages)
 1. [DONE] Реализовать первичное зеркалирование из `~/.codeai-hub/ui/**` в `~/.codeai-hub/packages/ui/**` в инсталлере — scope: `src/extension-module/ui/ui-bundle-installer.ts`; target commit: `feat: mirror ui bundles into packages layout` (COMMIT_HASH)
 2. [DONE] Обновить установщик/конфиг Launcher CEF для чтения лаунчера из `~/.codeai-hub/packages/launcher/**` (с сохранением совместимости со старым layout) — scope: `src/extension-module/cef/launcher-installer.ts`, `src/extension-module/cef/launcher.ts`; target commit: `feat: support launcher packages layout` (b9cacb1)
-3. [DONE] Согласовать `Local_Artifacts_Workflow.md` с семантикой layout  `packages` (core/providers/launcher/ui) — scope: `doc/Project_Docs/knowledge/Local_Artifacts_Workflow.md`; target commit: `docs: document packages layout migration` (678b997)
+3. [DONE] Согласовать `Local_Artifacts_Workflow.md` с семантикой layout  `packages` (core/providers/launcher/ui) — scope: `doc/SolidWorks-Flow/knowledge/Local_Artifacts_Workflow.md`; target commit: `docs: document packages layout migration` (678b997)
 4. [DONE] Добавить валидацию в `UIRegistry`/installer для поддержки смешанного layout `ui/` и `packages/ui/` во время миграции — scope: `src/extension-module/ui/ui-registry.ts`, `src/extension-module/ui/ui-bundle-installer.ts`; target commit: `feat: harden ui bundle layout resolution` (f4da74f)
 
 ### Stream: Documentation & architecture alignment (документация и синхронизация архитектуры)
-1. [DONE] Завершить стек-документ `UI_Modules` для UI-пакетов — scope: `doc/Project_Docs/Stacks/UI_Modules.md`; target commit: `docs: add ui modules stack`
+1. [DONE] Завершить стек-документ `UI_Modules` для UI-пакетов — scope: `doc/SolidWorks-Flow/Stacks/UI_Modules.md`; target commit: `docs: add ui modules stack`
 2. [DONE] Синхронизировать UI-раздел в `Architecture.md` с планом модульного UI и офлайн-ограничениями — scope: `doc/Architecture/Architecture.md`; target commit: `docs: align architecture with ui modularization`
-3. [DONE] Синхронизировать `SystemArchitecture.md` с UI-бандлами и layout `packages` (core/providers/launcher/ui) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; target commit: `docs: describe ui bundles in system architecture`
-4. [DONE] Убедиться, что `UI_Modularization_Architecture.md` отражает фактически реализованные installer/update-потоки — scope: `doc/Project_Docs/UI_Modularization_Architecture.md`; target commit: `docs: update ui modularization architecture post-implementation`
+3. [DONE] Синхронизировать `SystemArchitecture.md` с UI-бандлами и layout `packages` (core/providers/launcher/ui) — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`; target commit: `docs: describe ui bundles in system architecture`
+4. [DONE] Убедиться, что `UI_Modularization_Architecture.md` отражает фактически реализованные installer/update-потоки — scope: `doc/SolidWorks-Flow/System/UI_Modularization_Architecture.md`; target commit: `docs: update ui modularization architecture post-implementation`
 
 ### Stream: End-to-end verification & release prep (e2e-проверка и подготовка релиза)
 1. [DONE] Запустить таргетные сборки для UI-воркспейсов и webview (`npm run build --workspace <ui packages>`, `npm run build:webview`, `npm run typecheck:webview`) — scope: `package.json`, CI/build notes`; target commit: `chore: verify ui builds and typechecking`
 2. [DONE] Провести ручной e2e: свежая установка VSIX при наличии локальных UI-бандлов в `~/.codeai-hub/releases/` — scope: `doc/Sessions/SessionXXX.md`; target commit: `docs: record ui modularization e2e results`
-3. [DONE] Проверить, что лаунчер и VS Code webview оба читают UI из `~/.codeai-hub/packages/ui/**`, не опираясь на встроенные ассеты — scope: `doc/Sessions/SessionXXX.md`, `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`; target commit: `docs: confirm ui shared packages layout`
+3. [DONE] Проверить, что лаунчер и VS Code webview оба читают UI из `~/.codeai-hub/packages/ui/**`, не опираясь на встроенные ассеты — scope: `doc/Sessions/SessionXXX.md`, `doc/SolidWorks-Flow/Stacks/Launcher_CEF_Module.md`; target commit: `docs: confirm ui shared packages layout`
 4. [DONE] Закрыть Фазу 3, выполнив `./scripts/build-all.sh` на чистом дереве, и зафиксировать итоговые версии/tarball’ы — scope: `doc/Sessions/SessionXXX.md`, `doc/tmp/releases/**`; target commit: `chore: ui modularization phase 3 complete`

@@ -164,7 +164,7 @@
    - Добавлено описание механизма Gemini Update
    - Документированы vendor vs global пути установки
    - Обновлена секция Settings UI с описанием строк Gemini
-   - Обновлён `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
+   - Обновлён `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`
 
 #### Stream 8.2: Обновление README и CHANGELOG
 1. [DONE] Обновить `README.md`

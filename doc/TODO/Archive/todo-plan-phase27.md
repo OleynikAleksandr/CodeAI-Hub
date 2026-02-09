@@ -17,7 +17,7 @@
 
 ## Required documents to review before work
 1. `doc/Architecture/Architecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session086.md`
 
@@ -31,9 +31,9 @@
 6. [DONE] Git Commit: `chore(release): bump 1.1.403` (hash: a6f43bf3)
 7. [DONE] Обновить релизные документы (README/CHANGELOG/Architecture/SystemArchitecture/Project docs) — scope: `README.md`, `CHANGELOG.md`, `doc/**`; ожидаемый commit message: `docs: update 1.1.403 release notes`
 8. [DONE] Git Commit: `docs: update 1.1.403 release notes` (hash: 955af64d)
-9. [DONE] Синхронизировать архитектурные документы под 1.1.403 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; ожидаемый commit message: `docs: update architecture for 1.1.403`
+9. [DONE] Синхронизировать архитектурные документы под 1.1.403 — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: update architecture for 1.1.403`
 10. [DONE] Git Commit: `docs: update architecture for 1.1.403` (hash: d8c657b4)
-11. [DONE] Уточнить описание Runs-архитектуры (provider binding) — scope: `doc/Project_Docs/Initiative_Description_Runs_Architecture.md`; ожидаемый commit message: `docs: record run provider session binding`
+11. [DONE] Уточнить описание Runs-архитектуры (provider binding) — scope: `doc/SolidWorks-Flow/System/Initiative_Description_Runs_Architecture.md`; ожидаемый commit message: `docs: record run provider session binding`
 12. [DONE] Git Commit: `docs: record run provider session binding` (hash: 9c92e00f)
 13. [DONE] Собрать VSIX (build-release) — scope: `scripts/build-release.sh`; ожидаемый commit message: `docs: add session 87 report`
 14. [DONE] Git Commit: `docs: add session 87 report` (hash: f1c9b7db)
@@ -44,7 +44,7 @@
 2. [DONE] Git Commit: `chore(release): bump 1.1.404` (hash: 6f0634fc)
 3. [DONE] Update release notes (README + CHANGELOG + todo-plan) — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: update 1.1.404 release notes`
 4. [DONE] Git Commit: `docs: update 1.1.404 release notes` (hash: f05db65a)
-5. [DONE] Update architecture docs for 1.1.404 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.404`
+5. [DONE] Update architecture docs for 1.1.404 — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.404`
 6. [DONE] Git Commit: `docs: update architecture for 1.1.404` (hash: 060a28f9)
 7. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 89 report`
 8. [DONE] Git Commit: `docs: add session 89 report` (hash: 76eecd0a)
@@ -57,7 +57,7 @@
 4. [DONE] Git Commit: `chore(release): bump 1.1.405` (hash: 5d2c1346)
 5. [DONE] Update release notes (README + CHANGELOG + todo-plan) — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: update 1.1.405 release notes`
 6. [DONE] Git Commit: `docs: update 1.1.405 release notes` (hash: f5f2142e)
-7. [DONE] Update architecture docs for 1.1.405 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.405`
+7. [DONE] Update architecture docs for 1.1.405 — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.405`
 8. [DONE] Git Commit: `docs: update architecture for 1.1.405` (hash: db28f6c5)
 9. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 90 report`
 10. [DONE] Git Commit: `docs: add session 90 report` (hash: 1dd1bc52)
@@ -72,7 +72,7 @@
 6. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: bd8fcca6)
 7. [DONE] Build artifacts and bump version to 1.1.406 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.406`
 8. [DONE] Git Commit: `chore(release): bump 1.1.406` (hash: 3d714331)
-9. [DONE] Update release notes (README/CHANGELOG/Architecture/SystemArchitecture) — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.406 release notes`
+9. [DONE] Update release notes (README/CHANGELOG/Architecture/SystemArchitecture) — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update 1.1.406 release notes`
 10. [DONE] Git Commit: `docs: update 1.1.406 release notes` (hash: f3a9ae0b)
 11. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 91 report`
 12. [DONE] Git Commit: `docs: add session 91 report` (hash: dee13aeb)
@@ -91,7 +91,7 @@
 10. [DONE] Git Commit: `chore(release): bump 1.1.407` (hash: 705c1452)
 11. [DONE] Update release notes (README/CHANGELOG) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.407 release notes`
 12. [DONE] Git Commit: `docs: update 1.1.407 release notes` (hash: d4842eee)
-13. [DONE] Update architecture docs for 1.1.407 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.407`
+13. [DONE] Update architecture docs for 1.1.407 — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.407`
 14. [DONE] Git Commit: `docs: update architecture for 1.1.407` (hash: 8cf7a60d)
 15. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 92 report`
 16. [DONE] Git Commit: `docs: add session 92 report` (hash: da21792f)
@@ -108,7 +108,7 @@
 8. [DONE] Git Commit: `chore(release): bump 1.1.408` (hash: 3753e4ab)
 9. [DONE] Update release notes (README/CHANGELOG) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.408 release notes`
 10. [DONE] Git Commit: `docs: update 1.1.408 release notes` (hash: a6034f0b)
-11. [DONE] Update architecture docs for 1.1.408 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.408`
+11. [DONE] Update architecture docs for 1.1.408 — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.408`
 12. [DONE] Git Commit: `docs: update architecture for 1.1.408` (hash: 47823009)
 13. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 93 report`
 14. [DONE] Git Commit: `docs: add session 93 report` (hash: d1ecbbc7)
@@ -125,7 +125,7 @@
 6. [DONE] Git Commit: `chore(release): bump 1.1.409` (hash: 0c50386f)
 7. [DONE] Update release notes (README/CHANGELOG) — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.409 release notes`
 8. [DONE] Git Commit: `docs: update 1.1.409 release notes` (hash: 3e095e19)
-9. [DONE] Update architecture docs for 1.1.409 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.409`
+9. [DONE] Update architecture docs for 1.1.409 — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update architecture for 1.1.409`
 10. [DONE] Git Commit: `docs: update architecture for 1.1.409` (hash: f7756b6b)
 11. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 94 report`
 12. [DONE] Git Commit: `docs: add session 94 report` (hash: 323b40ea)
@@ -138,16 +138,16 @@
 4. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: c098d57e)
 5. [DONE] Build artifacts and bump version to 1.1.410 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.410`
 6. [DONE] Git Commit: `chore(release): bump 1.1.410` (hash: 6dad1c38)
-7. [DONE] Update release notes (README/CHANGELOG/Architecture/SystemArchitecture) — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.410 release notes`
+7. [DONE] Update release notes (README/CHANGELOG/Architecture/SystemArchitecture) — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update 1.1.410 release notes`
 8. [DONE] Git Commit: `docs: update 1.1.410 release notes` (hash: c0d3d68f)
 9. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 95 report`
 10. [DONE] Git Commit: `docs: add session 95 report` (hash: 1a477e9a)
 
 ## Phase 24 — Refine existing provider guard + questionnaire mirror (owner: Oleksandr, updated: 2026-01-12)
 ### Stream: Idea refine existing hardening
-1. [DONE] Fail-fast on provider mismatch for refine existing run — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): fail-fast on refine provider mismatch`
+1. [DONE] Fail-fast on provider mismatch for refine existing run — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `fix(core): fail-fast on refine provider mismatch`
 2. [DONE] Git Commit: `fix(core): fail-fast on refine provider mismatch` (hash: 31ae4865)
-3. [DONE] Mirror run questionnaire to initiative copy on each save/append — scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(core): mirror run questionnaire to initiative copy`
+3. [DONE] Mirror run questionnaire to initiative copy on each save/append — scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `fix(core): mirror run questionnaire to initiative copy`
 4. [DONE] Git Commit: `fix(core): mirror run questionnaire to initiative copy` (hash: b41126ea)
 5. [DONE] Add session 96 report — scope: `doc/Sessions/Session096.md`; expected commit message: `docs: add session 96 report`
 6. [DONE] Git Commit: `docs: add session 96 report` (hash: 8db7a1e3)
@@ -163,13 +163,13 @@
 
 ## Phase 26 — Safe idea artifact revisions (owner: Oleksandr, updated: 2026-01-12)
 ### Stream: Revise artifacts flow
-1. [DONE] Contract: добавить `revise_artifacts` и `artifact.patch` — scope: `packages/agents/idea-collector/assets/idea-collector-schema.json`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `doc/Project_Docs/IdeaCollector_Slim_Structured_Output.md`; ожидаемый commit message: `feat(idea): add revise_artifacts to structured output contract`
+1. [DONE] Contract: добавить `revise_artifacts` и `artifact.patch` — scope: `packages/agents/idea-collector/assets/idea-collector-schema.json`, `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `doc/SolidWorks-Flow/System/IdeaCollector_Slim_Structured_Output.md`; ожидаемый commit message: `feat(idea): add revise_artifacts to structured output contract`
 2. [DONE] Git Commit: `feat(idea): add revise_artifacts to structured output contract` (hash: 1cd18df8)
 3. [DONE] Prompt: добавить строгие правила ревизии — scope: `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `src/client/ui/src/app-host/idea-kickoff-prompt.ts`; ожидаемый commit message: `docs(idea): clarify artifact revision rules`
 4. [DONE] Git Commit: `docs(idea): clarify artifact revision rules` (hash: a1532f64)
 5. [DONE] UI: сохранять артефакты на `revise_artifacts` + поддержка patch/full markdown — scope: `src/client/ui/src/services/idea-collector-artifact.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-artifact-persistence.ts`; ожидаемый commit message: `feat(ui): persist idea artifacts on revise_artifacts`
 6. [DONE] Git Commit: `feat(ui): persist idea artifacts on revise_artifacts` (hash: 7733d850)
-7. [DONE] Core: backup + валидация + patch apply — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; ожидаемый commit message: `feat(core): safe idea artifact overwrite (backup+validation)`
+7. [DONE] Core: backup + валидация + patch apply — scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; ожидаемый commit message: `feat(core): safe idea artifact overwrite (backup+validation)`
 8. [DONE] Git Commit: `feat(core): safe idea artifact overwrite (backup+validation)` (hash: 587fb6d9)
 9. [DONE] Обновить fallback webview bundle — scope: `media/react-chat.js`; ожидаемый commit message: `chore(ui): refresh webview fallback bundle`
 10. [DONE] Git Commit: `chore(ui): refresh webview fallback bundle` (hash: b139b060)
@@ -180,7 +180,7 @@
 ### Stream: 1.1.412 release
 1. [DONE] Build artifacts and bump version to 1.1.412 (build-all) — scope: manifests + package.json; expected commit message: `chore(release): bump 1.1.412`
 2. [DONE] Git Commit: `chore(release): bump 1.1.412` (hash: c15b035c)
-3. [DONE] Update release notes (README/CHANGELOG/Architecture/SystemArchitecture) — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.412 release notes`
+3. [DONE] Update release notes (README/CHANGELOG/Architecture/SystemArchitecture) — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update 1.1.412 release notes`
 4. [DONE] Git Commit: `docs: update 1.1.412 release notes` (hash: e0ee7c86)
 5. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 100 report`
 6. [DONE] Git Commit: `docs: add session 100 report` (hash: aa4571db)

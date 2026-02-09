@@ -11,9 +11,9 @@
 - **Real-time Документация**: любое изменение протоколов/архитектуры требует синхронного обновления документов из `doc/` **до** коммита.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/ProjectManager_SessionPlacement_And_RunsPath_Architecture.md`
+1. `doc/SolidWorks-Flow/System/ProjectManager_SessionPlacement_And_RunsPath_Architecture.md`
 2. `doc/Architecture/Architecture.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 
 ---
@@ -21,7 +21,7 @@
 ## Phase 46 — Project Manager: UI-сессия слева + анкета как артефакт справа (owner: Oleksandr, updated: 2026-01-17)
 
 ### Stream: Design approval
-1. [DONE] Docs: утвердить решения (двойное открытие OK, миграции runs нет) — scope: `doc/Project_Docs/ProjectManager_SessionPlacement_And_RunsPath_Architecture.md`; expected commit message: `docs: approve pm session placement + runs path design`
+1. [DONE] Docs: утвердить решения (двойное открытие OK, миграции runs нет) — scope: `doc/SolidWorks-Flow/System/ProjectManager_SessionPlacement_And_RunsPath_Architecture.md`; expected commit message: `docs: approve pm session placement + runs path design`
 2. [DONE] Git Commit: `docs: approve pm session placement + runs path design` (hash: 38a6aeb2)
 
 ### Stream: Questionnaire placement
@@ -59,7 +59,7 @@
 
 ## Phase 48 — Release 1.1.431 (owner: Oleksandr, updated: 2026-01-17)
 ### Stream: Release notes
-1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.431 release notes`
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update 1.1.431 release notes`
 2. [DONE] Git Commit: `docs: update 1.1.431 release notes` (hash: d64ddb88)
 
 ### Stream: Release build
@@ -80,7 +80,7 @@
 4. [DONE] Git Commit: `style(project-manager): mirror webview session css` (hash: 5f5be757)
 
 ### Stream: Release notes
-1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.432 release notes`
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update 1.1.432 release notes`
 2. [DONE] Git Commit: `docs: update 1.1.432 release notes` (hash: f17dcec1)
 
 ### Stream: Release build
@@ -101,7 +101,7 @@
 4. [DONE] Git Commit: `fix(project-manager): keep idea collector schema on chat` (hash: a91b2f6a)
 
 ### Stream: Release notes
-1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.433 release notes`
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update 1.1.433 release notes`
 2. [DONE] Git Commit: `docs: update 1.1.433 release notes` (hash: 1980a2cc)
 
 ### Stream: Release build
@@ -120,7 +120,7 @@
 2. [DONE] Git Commit: `fix(webview): keep idea collector schema on idea sessions` (hash: 6f1264b3)
 
 ### Stream: Release notes
-1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.434 release notes`
+1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update 1.1.434 release notes`
 2. [DONE] Git Commit: `docs: update 1.1.434 release notes` (hash: 190f85b5)
 
 ### Stream: Release build
@@ -136,11 +136,11 @@
 ## Phase 52 — Claude: structured_output из result → stream_event + Release 1.1.435 (owner: Oleksandr, updated: 2026-01-17)
 
 ### Stream: Design approval
-1. [DONE] Docs: зафиксировать архитектуру для Claude result structured_output — scope: `doc/Project_Docs/Claude_Result_StructuredOutput_Pipeline_Architecture.md`; expected commit message: `docs: add claude structured output pipeline design`
+1. [DONE] Docs: зафиксировать архитектуру для Claude result structured_output — scope: `doc/SolidWorks-Flow/System/Claude_Result_StructuredOutput_Pipeline_Architecture.md`; expected commit message: `docs: add claude structured output pipeline design`
 2. [DONE] Git Commit: `docs: add claude structured output pipeline design` (hash: d8cd4544)
 
 ### Stream: Claude result normalization
-1. [DONE] Fix: нормализовать structured_output из result → stream_event + summary — scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `fix(claude-module): normalize result structured output pipeline`
+1. [DONE] Fix: нормализовать structured_output из result → stream_event + summary — scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `fix(claude-module): normalize result structured output pipeline`
 2. [DONE] Git Commit: `fix(claude-module): normalize result structured output pipeline` (hash: d05ba8df)
 
 ### Stream: Release notes

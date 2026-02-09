@@ -40,7 +40,7 @@
 1. `doc/TODO/todo-plan.md`
 2. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 3. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
-4. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+4. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 5. `doc/Sessions/Session030.md` (THIS REPORT)
 
 ## Plans for next session

@@ -13,7 +13,7 @@
   - `no_resume`: input никогда не разблокируется, сессия уходит в terminal/read-only.
   - `resume_in_place`: unlock только при dual-gate (`final turn_completed` + подтверждение Core `no rollover needed`).
   - `resume_via_rollover`: input остаётся locked в старой и новой сессиях, unlock только после первого bootstrap assistant ответа в новой сессии (скрытый служебный шаг).
-- Обновлены архитектурные артефакты в `doc/Project_Docs/` и `doc/SolidWorks-Flow/` для синхронизации с этим контрактом.
+- Обновлены архитектурные артефакты в `doc/SolidWorks-Flow/` и `doc/SolidWorks-Flow/` для синхронизации с этим контрактом.
 - В `doc/TODO/todo-plan.md` добавлен новый `Phase 109 — Input Lock Contract Completion` со Stream’ами реализации, тестов, QA-gates и финальной release-сборки.
 - Реализация кода и прогон гейтов/сборок перенесены в следующую сессию по вашему запросу.
 
@@ -29,13 +29,13 @@
 1. `doc/TODO/todo-plan.md` (Phase 109 — основной план реализации)
 2. `doc/Sessions/Session118.md` (THIS REPORT)
 3. `doc/Sessions/Session117.md`
-4. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-5. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
-6. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
-7. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
+4. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+5. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
+6. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
+7. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
 8. `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`
-9. `doc/SolidWorks-Flow/InterfaceMap_WorkspaceRuntime.md`
-10. `doc/SolidWorks-Flow/WorkspaceRuntime_LayeredArchitecture.md`
+9. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+10. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
 11. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
 12. `doc/SolidWorks-Flow/SessionUI_AgentWorking_TraceMap.md`
 

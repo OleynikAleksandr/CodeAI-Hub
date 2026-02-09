@@ -12,12 +12,12 @@
 
 ## Required documents to review before work
 1. `doc/Architecture/Architecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md`
 
 ## Phase 29 — Artifact Upsert Protocol (Variant B) (owner: Oleksandr, updated: 2026-01-13)
 ### Stream: Design approval
-1. [DONE] Утвердить архитектуру Variant B — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: approve artifact upsert protocol vB`
+1. [DONE] Утвердить архитектуру Variant B — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: approve artifact upsert protocol vB`
 2. [DONE] Git Commit: `docs: approve artifact upsert protocol vB` (hash: b24f798b)
 
 ### Stream: Core slot→path + upsert endpoint (MVP)
@@ -75,7 +75,7 @@
 ### Stream: Release 1.1.423 docs
 1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.423 release notes`
 2. [DONE] Git Commit: `docs: update 1.1.423 release notes` (hash: 310da73d)
-3. [DONE] Docs: обновить системную архитектуру под 1.1.423 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.423 architecture notes`
+3. [DONE] Docs: обновить системную архитектуру под 1.1.423 — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update 1.1.423 architecture notes`
 4. [DONE] Git Commit: `docs: update 1.1.423 architecture notes` (hash: 92a84498)
 
 ### Stream: Release 1.1.423 build
@@ -90,7 +90,7 @@
 ### Stream: Release 1.1.424 docs
 1. [DONE] Docs: обновить релизные заметки — scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: update 1.1.424 release notes`
 2. [DONE] Git Commit: `docs: update 1.1.424 release notes` (hash: 4e556a10)
-3. [DONE] Docs: обновить системную архитектуру под 1.1.424 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.424 architecture notes`
+3. [DONE] Docs: обновить системную архитектуру под 1.1.424 — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update 1.1.424 architecture notes`
 4. [DONE] Git Commit: `docs: update 1.1.424 architecture notes` (hash: 4b6381bf)
 
 ### Stream: Release 1.1.424 build
@@ -156,7 +156,7 @@
 2. [DONE] Git Commit: `docs: update 1.1.426 release notes` (hash: 2ecc4521)
 
 ### Stream: Release architecture docs
-1. [DONE] Docs: обновить системную архитектуру под 1.1.426 — scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update 1.1.426 architecture notes`
+1. [DONE] Docs: обновить системную архитектуру под 1.1.426 — scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update 1.1.426 architecture notes`
 2. [DONE] Git Commit: `docs: update 1.1.426 architecture notes` (hash: 759a20cd)
 
 ### Stream: Release 1.1.426 build

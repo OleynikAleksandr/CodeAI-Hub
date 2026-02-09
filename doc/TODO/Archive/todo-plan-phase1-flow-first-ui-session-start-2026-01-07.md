@@ -23,7 +23,7 @@
 
 ### Stream: Design Doc
 
-1. [DONE] Описать UX и модель состояния для step-first старта (scope: `doc/Project_Docs/UIFlow_EntrySelection_Architecture.md`; expected: цели/ограничения, state model, provider filtering; commit: `docs(ui): document flow-first start picker`) (date: 2026-01-07)
+1. [DONE] Описать UX и модель состояния для step-first старта (scope: `doc/SolidWorks-Flow/System/UIFlow_EntrySelection_Architecture.md`; expected: цели/ограничения, state model, provider filtering; commit: `docs(ui): document flow-first start picker`) (date: 2026-01-07)
 2. [DONE] Git Commit: `docs(ui): document flow-first start picker` (hash: df8e3f8) (date: 2026-01-07)
 
 ### Stream: UI — Step selection (5 buttons)

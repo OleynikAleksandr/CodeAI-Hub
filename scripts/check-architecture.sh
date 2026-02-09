@@ -17,6 +17,8 @@ HAS_VIOLATIONS=0
 HAS_WARNINGS=0
 
 # Collect TS/TSX file lengths safely (handles large arg lists and spaces)
+# Note: this check intentionally targets runtime code only (src/**).
+# Documentation under doc/** is excluded and may exceed 300 lines.
 collect_file_lengths() {
   find src -type f \( -name "*.ts" -o -name "*.tsx" \) -not -path "*/node_modules/*" -print0 \
     | while IFS= read -r -d '' file; do

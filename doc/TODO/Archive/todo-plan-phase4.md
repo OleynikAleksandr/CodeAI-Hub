@@ -30,8 +30,8 @@
 ### Stream: Multi-Instance Support
 1. [DONE] Update `launcher.ts` to support `userDataDir` argument — scope: `src/extension-module/cef/launcher.ts`
 2. [DONE] Update `launcher-setup.ts` to pass unique data dirs — scope: `src/extension-module/cef/launcher-setup.ts`
-3. [DONE] Update architecture docs with multi-instance/tab notes — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
+3. [DONE] Update architecture docs with multi-instance/tab notes — scope: `doc/SolidWorks-Flow/Stacks/Launcher_CEF_Module.md`
 
 ### Stream: Window State Persistence (Binary Copy)
 1. [DONE] Refactor `shortcut-manager.ts` to implement Binary Copy strategy — scope: `src/extension-module/web-client/shortcut-manager.ts`
-2. [DONE] Update architecture docs to document Binary Copy — scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`
+2. [DONE] Update architecture docs to document Binary Copy — scope: `doc/SolidWorks-Flow/Stacks/Launcher_CEF_Module.md`
