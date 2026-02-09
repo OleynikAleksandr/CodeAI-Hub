@@ -227,6 +227,8 @@ UI устанавливается в `~/.codeai-hub/packages/ui/project-manager/
 
 Модули `runtime-installer.ts` и `launcher-installer.ts` скачивают архивы в `~/.codeai-hub/cef/` и `~/.codeai-hub/packages/launcher/`.
 
+`launcher-installer` валидирует целостность runtime перед reuse: обязательны launcher executable и (на macOS) бинарник `Chromium Embedded Framework.framework/Chromium Embedded Framework`. При отсутствии обязательных файлов инсталляция считается повреждённой и переустанавливается.
+
 ### 5.3 Standalone Bootstrap
 
 При запуске `CodeAIHubLauncher` проверяет core. Если не запущен — поднимает bundled Node runtime и стартует `app/dist/index.js`.
