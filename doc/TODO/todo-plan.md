@@ -49,9 +49,13 @@
 1. [DONE] Прогнать обязательные гейты и таргетные сборки для затронутых модулей (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate gemini reviewer resume gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"`, `npm run check:links`, `npm run build --workspace @codeai-hub/gemini-module`, `npm run build --workspace @codeai-hub/core`, `node --test packages/Gemini_Module/dist/session/gemini-session-manager.test.js packages/Gemini_Module/dist/provider/gemini-provider-adapter.test.js packages/core/dist/workflow/runtime/workflow-runtime.test.js`; result: all commands passed)
 2. [DONE] Git Commit: `docs(qa): validate gemini reviewer resume gates and targeted builds` (hash: 70b857c7)
 
+### Stream: Description One-Shot Prompt Copy Hotfix
+1. [DONE] Убрать из prompt-pack для `description` инструкцию про уточняющие вопросы и ожидание `OK/approve`, конфликтующую с one-shot/no-resume контрактом (scope: `src/client/project-manager/services/prompt-pack-builder.ts`; expected commit: `fix(project-manager): remove clarification wait instruction from description prompt pack`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"`, `npm run check:links`, `npm run build:project-manager`; result: all commands passed)
+2. [DONE] Git Commit: `fix(project-manager): remove clarification wait instruction from description prompt pack` (hash: d2701b9c)
+
 ### Stream: Release Notes
-1. [TODO] Подготовить release docs под Phase 119 hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for gemini reviewer resume integration`)
-2. [TODO] Git Commit: `docs(release): prepare release notes for gemini reviewer resume integration` (hash: TBD)
+1. [DONE] Подготовить release docs под Phase 119 hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for gemini reviewer resume integration`)
+2. [IN_PROGRESS] Git Commit: `docs(release): prepare release notes for gemini reviewer resume integration` (hash: TBD)
 
 ### Stream: Release Build (Final)
 1. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for gemini reviewer resume integration`)

@@ -1,3 +1,11 @@
+## [1.1.538] - 2026-02-09
+### Fixed
+- Gemini reviewer continuity: `description/reviewer` auto-start now stays on preferred `geminiCli` provider when resume-path is available, instead of dropping to Claude fallback due to missing adapter resume contract.
+- Description prompt-pack: removed clarification/wait-for-approval instruction that conflicted with one-shot/no-resume description session contract.
+
+### Added
+- Gemini provider resume contract: `GeminiProviderAdapter.resumeSession(...)` + `GeminiSessionManager` CLI resume wiring (`argv.resume`) with regression coverage for reviewer provider selection and fallback diagnostics.
+
 ## [1.1.537] - 2026-02-09
 ### Fixed
 - Launcher installer: reuse existing installation now requires runtime integrity checks for required launcher artifacts; on macOS this includes `Chromium Embedded Framework.framework/Chromium Embedded Framework`, preventing broken installs that fail with `Failed to load CEF framework`.
