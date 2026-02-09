@@ -22,6 +22,7 @@
 - `b4ebf25c docs(qa): validate launcher integrity hotfix gates and targeted builds`
 - `5608d20b docs(release): prepare release notes for launcher runtime integrity hotfix`
 - `ecab5327 chore(release): run build-all for launcher runtime integrity hotfix`
+- `c30dce21 chore(release): build and validate vsix for launcher runtime integrity hotfix`
 
 ---
 
