@@ -4,7 +4,11 @@ import { homedir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type { GeminiCliBridgeMetadata, ModuleReporter } from "../types";
-import type { GeminiCliBridge, GeminiCliModules } from "./cli-types";
+import type {
+  GeminiCliBridge,
+  GeminiCliModules,
+  GeminiToolExecutionBackend,
+} from "./cli-types";
 
 const { createRequire } = nodeModule;
 const moduleGlobalPaths =
@@ -13,10 +17,13 @@ const moduleGlobalPaths =
 
 const GEMINI_CLI_PACKAGE = "@google/gemini-cli";
 const GEMINI_CLI_CORE_PACKAGE = "@google/gemini-cli-core";
+const GEMINI_CLI_COMPATIBILITY_ERROR_CODE = "GEMINI_CLI_COMPATIBILITY_ERROR";
 const GEMINI_BINARY_NAMES =
   process.platform === "win32"
     ? ["gemini.cmd", "gemini.exe", "gemini.bat", "gemini"]
     : ["gemini"];
+
+type ErrorWithCode = Error & { code?: string; cause?: unknown };
 
 const toModuleUrl = (root: string, ...segments: readonly string[]): string => {
   const absolutePath = path.join(root, ...segments);
@@ -53,6 +60,63 @@ const findAndLoadModule = async <T>(
       .join("\n")}`
   );
 };
+
+const isModuleNotFoundError = (error: unknown): boolean => {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  const withCode = error as { code?: string };
+  if (withCode.code === "ERR_MODULE_NOT_FOUND") {
+    return true;
+  }
+  return error.message.includes("ERR_MODULE_NOT_FOUND");
+};
+
+const findAndLoadOptionalModule = async <T>(
+  root: string,
+  candidates: readonly (readonly string[])[]
+): Promise<T | null> => {
+  for (const segments of candidates) {
+    try {
+      return await loadEsmModule<T>(root, ...segments);
+    } catch (error) {
+      if (isModuleNotFoundError(error)) {
+        continue;
+      }
+      throw error;
+    }
+  }
+  return null;
+};
+
+export const resolveToolExecutionBackend = (
+  toolExecutor: GeminiCliModules["toolExecutor"]
+): GeminiToolExecutionBackend => {
+  const executeToolCall = (toolExecutor as { executeToolCall?: unknown } | null)
+    ?.executeToolCall;
+  return typeof executeToolCall === "function"
+    ? "legacy_non_interactive"
+    : "scheduler_fallback";
+};
+
+const createGeminiCliCompatibilityError = (
+  error: unknown,
+  options: { readonly cliRoot: string; readonly cliCoreRoot: string }
+): ErrorWithCode => {
+  const baseMessage =
+    error instanceof Error ? error.message : `Unknown error: ${String(error)}`;
+  const wrapped = new Error(
+    `Gemini CLI runtime compatibility failure. The installed @google/gemini-cli-core package layout does not match the expected runtime modules. cliRoot=${options.cliRoot}, cliCoreRoot=${options.cliCoreRoot}. Root error: ${baseMessage}`
+  ) as ErrorWithCode;
+  wrapped.name = "GeminiCliCompatibilityError";
+  wrapped.code = GEMINI_CLI_COMPATIBILITY_ERROR_CODE;
+  wrapped.cause = error;
+  return wrapped;
+};
+
+export const isGeminiCliCompatibilityError = (error: unknown): boolean =>
+  error instanceof Error &&
+  (error as { code?: string }).code === GEMINI_CLI_COMPATIBILITY_ERROR_CODE;
 
 const normalizeCandidate = (candidate: string): string => {
   if (candidate.endsWith("package.json")) {
@@ -285,7 +349,6 @@ const loadGeminiModules = async (
     extensionEnablement,
     contentGenerator,
     toolScheduler,
-    toolExecutor,
     turn,
     thoughtUtils,
   ] = await Promise.all([
@@ -326,12 +389,6 @@ const loadGeminiModules = async (
       ["dist", "core", "coreToolScheduler.js"],
     ]),
     findAndLoadModule<
-      typeof import("@google/gemini-cli-core/dist/src/core/nonInteractiveToolExecutor")
-    >(cliCoreRoot, [
-      ["dist", "src", "core", "nonInteractiveToolExecutor.js"],
-      ["dist", "core", "nonInteractiveToolExecutor.js"],
-    ]),
-    findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/turn")
     >(cliCoreRoot, [
       ["dist", "src", "core", "turn.js"],
@@ -345,6 +402,14 @@ const loadGeminiModules = async (
     ]),
   ]);
 
+  const toolExecutor = await findAndLoadOptionalModule<
+    typeof import("@google/gemini-cli-core/dist/src/core/nonInteractiveToolExecutor")
+  >(cliCoreRoot, [
+    ["dist", "src", "core", "nonInteractiveToolExecutor.js"],
+    ["dist", "core", "nonInteractiveToolExecutor.js"],
+  ]);
+  const toolExecutionBackend = resolveToolExecutionBackend(toolExecutor);
+
   return {
     config,
     settings,
@@ -353,6 +418,7 @@ const loadGeminiModules = async (
     contentGenerator,
     toolScheduler,
     toolExecutor,
+    toolExecutionBackend,
     turn,
     thoughtUtils,
   };
@@ -385,26 +451,12 @@ export const loadCliBridgeFromGlobal = async (
       throw error;
     });
 
-  const metadata: GeminiCliBridgeMetadata = {
-    version: resolvedCliVersion,
-    preparedAt: new Date().toISOString(),
-    source: "global",
-    cli: {
-      package: GEMINI_CLI_PACKAGE,
-      requiredVersion: options.expectedCliVersion,
-      resolvedVersion: resolvedCliVersion,
-      location: cliRoot,
-    },
-    cliCore: {
-      package: GEMINI_CLI_CORE_PACKAGE,
-      version: resolvedCoreVersion,
-    },
-  };
-
-  const { cli } = metadata;
-  if (cli?.requiredVersion && cli.requiredVersion !== resolvedCliVersion) {
+  if (
+    options.expectedCliVersion &&
+    options.expectedCliVersion !== resolvedCliVersion
+  ) {
     options.reporter?.warn?.("Gemini CLI version mismatch detected", {
-      expected: cli.requiredVersion,
+      expected: options.expectedCliVersion,
       found: resolvedCliVersion,
       location: cliRoot,
     });
@@ -421,7 +473,46 @@ export const loadCliBridgeFromGlobal = async (
     });
   }
 
-  const modules = await loadGeminiModules(cliRoot, cliCoreRoot);
+  const modules = await loadGeminiModules(cliRoot, cliCoreRoot).catch(
+    (error: unknown) => {
+      const compatibilityError = createGeminiCliCompatibilityError(error, {
+        cliRoot,
+        cliCoreRoot,
+      });
+      options.reporter?.error?.(
+        "Gemini CLI runtime module compatibility check failed",
+        compatibilityError
+      );
+      throw compatibilityError;
+    }
+  );
+
+  const metadata: GeminiCliBridgeMetadata = {
+    version: resolvedCliVersion,
+    preparedAt: new Date().toISOString(),
+    source: "global",
+    cli: {
+      package: GEMINI_CLI_PACKAGE,
+      requiredVersion: options.expectedCliVersion,
+      resolvedVersion: resolvedCliVersion,
+      location: cliRoot,
+    },
+    cliCore: {
+      package: GEMINI_CLI_CORE_PACKAGE,
+      version: resolvedCoreVersion,
+      toolExecutionBackend: modules.toolExecutionBackend,
+    },
+  };
+  if (modules.toolExecutionBackend === "scheduler_fallback") {
+    options.reporter?.warn?.(
+      "Gemini CLI Core legacy nonInteractiveToolExecutor is unavailable; using scheduler fallback backend",
+      {
+        cliRoot,
+        cliCoreRoot,
+        coreVersion: resolvedCoreVersion,
+      }
+    );
+  }
 
   return {
     modules,

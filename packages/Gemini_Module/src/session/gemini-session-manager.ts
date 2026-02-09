@@ -13,7 +13,8 @@ import type {
 import type { Part, UsageMetadata } from "@google/genai";
 import { GeminiMessageProcessor } from "../messaging/message-processor";
 import type { GeminiCliModules } from "../runtime/cli-types";
-import type { GeminiSessionEvent } from "../types";
+import type { GeminiSessionEvent, ModuleReporter } from "../types";
+import { GeminiToolExecutorFacade } from "./gemini-tool-executor-facade";
 import type {
   ActiveSession,
   SessionCreationOptions,
@@ -74,9 +75,14 @@ export class GeminiSessionManager {
   private readonly sessionAliases = new Map<string, string>();
 
   private readonly modules: GeminiCliModules;
+  private readonly toolExecutorFacade: GeminiToolExecutorFacade;
 
-  constructor(modules: GeminiCliModules) {
+  constructor(modules: GeminiCliModules, reporter?: ModuleReporter) {
     this.modules = modules;
+    this.toolExecutorFacade = new GeminiToolExecutorFacade(
+      this.modules,
+      reporter
+    );
     this.sanitizeEnvironment();
   }
 
@@ -529,7 +535,7 @@ export class GeminiSessionManager {
       });
 
       try {
-        const completedCall = await this.modules.toolExecutor.executeToolCall(
+        const completedCall = await this.toolExecutorFacade.execute(
           session.config,
           request,
           signal

@@ -3,7 +3,10 @@ import https from "node:https";
 import { homedir } from "node:os";
 import path from "node:path";
 
-import { loadCliBridgeFromGlobal } from "../runtime/cli-bridge";
+import {
+  isGeminiCliCompatibilityError,
+  loadCliBridgeFromGlobal,
+} from "../runtime/cli-bridge";
 import type { GeminiCliBridge } from "../runtime/cli-types";
 import type {
   GeminiInstallerPaths,
@@ -58,10 +61,9 @@ export class GeminiInstaller {
     this.emitProgress("Gemini CLI components ready.", { phase: "provider" });
     await this.verifyCliExecutable();
 
-    this.bridge = await loadCliBridgeFromGlobal({
+    this.bridge = await this.loadBridgeWithDiagnostics({
       expectedCliVersion: this.currentCliVersion ?? undefined,
       expectedCoreVersion: this.currentCoreVersion ?? undefined,
-      reporter: this.reporter,
     });
     return this.bridge;
   }
@@ -85,6 +87,11 @@ export class GeminiInstaller {
       "core"
     );
     await this.installPackage(GEMINI_CLI_PACKAGE, latestCliVersion, "cli");
+    this.bridge = null;
+    await this.loadBridgeWithDiagnostics({
+      expectedCliVersion: latestCliVersion,
+      expectedCoreVersion: latestCoreVersion,
+    });
 
     return {
       cliVersion: latestCliVersion,
@@ -320,5 +327,32 @@ export class GeminiInstaller {
       npmExecutable: this.npmExecutable,
       env: this.buildNpmEnv(),
     });
+  }
+
+  private async loadBridgeWithDiagnostics(options: {
+    readonly expectedCliVersion?: string;
+    readonly expectedCoreVersion?: string;
+  }): Promise<GeminiCliBridge> {
+    try {
+      return await loadCliBridgeFromGlobal({
+        expectedCliVersion: options.expectedCliVersion,
+        expectedCoreVersion: options.expectedCoreVersion,
+        reporter: this.reporter,
+      });
+    } catch (error) {
+      if (isGeminiCliCompatibilityError(error)) {
+        this.reporter?.error?.(
+          "Gemini CLI runtime module compatibility check failed",
+          error,
+          {
+            reason: "module_compatibility",
+            npmPrefix: this.npmPrefix,
+            expectedCliVersion: options.expectedCliVersion,
+            expectedCoreVersion: options.expectedCoreVersion,
+          }
+        );
+      }
+      throw error;
+    }
   }
 }
