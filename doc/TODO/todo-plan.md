@@ -9,56 +9,48 @@
 - Реализованный план переносится в `doc/TODO/Archive/` с префиксом завершённой Phase.
 
 ## Required documents to review before work
-1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
-2. `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`
-3. `doc/SolidWorks-Flow/Stacks/Gemini_Reviewer_Resume_Architecture.md`
-4. `doc/Sessions/Session131.md`
-5. `doc/TODO/todo-plan.md` (THIS FILE)
+1. `doc/SolidWorks-Flow/System/SessionUI_Layout_Stability.md`
+2. `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+4. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+5. `doc/Sessions/Session136.md` (THIS REPORT)
+6. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
 
-## Phase 119 — Gemini Reviewer Resume Integration + Release (owner: Oleksandr, updated: 2026-02-09)
+## Phase 120 — Session UI Stability (fixed heights + ID in tabs) + Release (owner: Oleksandr, updated: 2026-02-09)
 
-**Problem (workflow mismatch):**
-- Gemini CLI поддерживает resume-сессии, но в CodeAI Hub `description/reviewer` ветка не выбирает Gemini для reviewer auto-start.
-- В результате `description` может идти через `geminiCli`, а `reviewer` уходит в `claudeCodeCli` fallback.
+**Goal:** убрать “прыжки” диалога (стабильные высоты панелей) и перенести Session ID в табы.
 
-**Target invariant:**
-1. Если collector-ветка `description` выполнена на `geminiCli`, reviewer auto-start остаётся на `geminiCli` при доступном адаптере.
-2. `GeminiProviderAdapter` реализует `resumeSession` в контракте Core ProviderAdapter.
-3. Gemini runtime получает `resume` в CLI args при resume-path.
-4. После фикса проходит полный релизный цикл и smoke-проверка reviewer path.
+**Design / Source of truth:**
+- `doc/SolidWorks-Flow/System/SessionUI_Layout_Stability.md`
 
-### Stream: Architecture Sync + Contracts
-1. [DONE] Зафиксировать архитектурный контракт Gemini reviewer resume и синхронизировать system docs (scope: `doc/SolidWorks-Flow/Stacks/Gemini_Reviewer_Resume_Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): define gemini reviewer resume contract`; note: предыдущий план Phase 118 заархивирован в `doc/TODO/Archive/todo-plan-phase118-launcher-runtime-integrity-release-1.1.537-2026-02-09.md`)
-2. [DONE] Git Commit: `docs(architecture): define gemini reviewer resume contract` (hash: 590d1076)
+### Stream: Status Panel (Models/Tokens line) — fixed height
+1. [TODO] Сконсолидировать Models+Tokens в 1 строку и зарезервировать 2-ю строку под continuity/rollover; фиксированная высота панели (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/ui/src/session/token-usage-cache.ts`; expected commit: `fix(ui): stabilize status panel layout and consolidate models/tokens`)
+2. [TODO] Git Commit: `fix(ui): stabilize status panel layout and consolidate models/tokens` (hash: TBD)
 
-### Stream: Gemini Resume Runtime
-1. [DONE] Реализовать `resumeSession` в Gemini adapter/session manager и подключить `argv.resume` для runtime resume-path (scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/session/types.ts`; expected commit: `feat(gemini): add provider resumeSession support for workflow continuity`)
-2. [DONE] Git Commit: `feat(gemini): add provider resumeSession support for workflow continuity` (hash: 61026030)
+### Stream: Input Panel (remove extra layer) — fixed height + no orange focus
+1. [TODO] Увеличить input textarea до “второй снизу” плашки, удалить промежуточный слой, не ломая скругления/фон (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-textarea.tsx`, `src/client/ui/src/session/dialog-panel.tsx`; expected commit: `fix(ui): simplify input panel layers and expand textarea`)
+2. [TODO] Git Commit: `fix(ui): simplify input panel layers and expand textarea` (hash: TBD)
+3. [TODO] Зафиксировать высоту input panel в unlocked состоянии (с подсказкой) и не менять при locked (подсказку скрывать без коллапса); убрать оранжевую окантовку при фокусе (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-textarea.tsx`, `src/client/ui/src/styles/session.css`; expected commit: `fix(ui): lock input panel height and unify textarea border color`)
+4. [TODO] Git Commit: `fix(ui): lock input panel height and unify textarea border color` (hash: TBD)
 
-### Stream: Reviewer Provider Selection in Core
-1. [DONE] Обновить reviewer provider selection/diagnostics, чтобы preferred Gemini корректно выбирался при доступном resume-path (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`; expected commit: `fix(core): keep reviewer on preferred gemini provider when resume is supported`; note: добавлена явная диагностика fallback, поведение выбора сохраняет preferred provider при наличии `resumeSession`)
-2. [DONE] Git Commit: `fix(core): keep reviewer on preferred gemini provider when resume is supported` (hash: 61026030)
+### Stream: Session Tabs (move Session ID into tab label)
+1. [TODO] Убрать верхнюю плашку `Session ID: ...` и перенести `ID: <8chars-...>` в таб рядом с именем агента/провайдера; увеличить ширину таба (scope: `src/client/ui/src/session/info-panel.tsx`, `src/client/ui/src/session/session-tabs.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit: `fix(ui): move session id to tab label and remove info panel`)
+2. [TODO] Git Commit: `fix(ui): move session id to tab label and remove info panel` (hash: TBD)
 
 ### Stream: Regression Coverage
-1. [DONE] Добавить regression-тесты на сценарии `collector(gemini) -> reviewer(gemini)` и fallback при недоступном resume (scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`; expected commit: `test(gemini-core): cover reviewer resume selection and fallback paths`)
-2. [DONE] Git Commit: `test(gemini-core): cover reviewer resume selection and fallback paths` (hash: 61026030)
+1. [TODO] Обновить/добавить тесты snapshot UI (минимум): стабильность DOM для подсказки и отсутствие focus-border изменения (scope: `src/client/ui/src/session/input-panel.test.tsx`, `src/client/ui/src/session/virtual-conversation.test.tsx`, `src/client/ui/src/session/input-textarea.tsx`; expected commit: `test(ui): cover fixed heights and no focus border regression`)
+2. [TODO] Git Commit: `test(ui): cover fixed heights and no focus border regression` (hash: TBD)
 
 ### Stream: QA Gates + Targeted Builds
-1. [DONE] Прогнать обязательные гейты и таргетные сборки для затронутых модулей (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate gemini reviewer resume gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"`, `npm run check:links`, `npm run build --workspace @codeai-hub/gemini-module`, `npm run build --workspace @codeai-hub/core`, `node --test packages/Gemini_Module/dist/session/gemini-session-manager.test.js packages/Gemini_Module/dist/provider/gemini-provider-adapter.test.js packages/core/dist/workflow/runtime/workflow-runtime.test.js`; result: all commands passed)
-2. [DONE] Git Commit: `docs(qa): validate gemini reviewer resume gates and targeted builds` (hash: 70b857c7)
-
-### Stream: Description One-Shot Prompt Copy Hotfix
-1. [DONE] Убрать из prompt-pack для `description` инструкцию про уточняющие вопросы и ожидание `OK/approve`, конфликтующую с one-shot/no-resume контрактом (scope: `src/client/project-manager/services/prompt-pack-builder.ts`; expected commit: `fix(project-manager): remove clarification wait instruction from description prompt pack`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"`, `npm run check:links`, `npm run build:project-manager`; result: all commands passed)
-2. [DONE] Git Commit: `fix(project-manager): remove clarification wait instruction from description prompt pack` (hash: d2701b9c)
-
-### Stream: Release Notes
-1. [DONE] Подготовить release docs под Phase 119 hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for gemini reviewer resume integration`)
-2. [DONE] Git Commit: `docs(release): prepare release notes for gemini reviewer resume integration` (hash: 530124f1)
+1. [TODO] Прогнать гейты и таргетные сборки UI (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate gates for session ui stability`)
+   - Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`
+   - Target builds: `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview`
+2. [TODO] Git Commit: `docs(qa): validate gates for session ui stability` (hash: TBD)
 
 ### Stream: Release Build (Final)
-1. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for gemini reviewer resume integration`; result: script completed successfully with version bump to `1.1.538` and regenerated manifests/packages)
-2. [DONE] Git Commit: `chore(release): run build-all for gemini reviewer resume integration` (hash: 9bc7b69c)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и smoke сценарий `description(gemini) -> reviewer(gemini)` на чистом runtime (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session132.md`; expected commit: `chore(release): build and validate vsix for gemini reviewer resume integration`; result: release build passed, `codeai-hub-1.1.538.vsix` created, tarballs `1.1.538` present in `doc/tmp/releases/`)
-4. [DONE] Git Commit: `chore(release): build and validate vsix for gemini reviewer resume integration` (hash: 3333a220)
+1. [TODO] Выполнить `./scripts/build-all.sh` и закоммитить auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for session ui stability`)
+2. [TODO] Git Commit: `chore(release): run build-all for session ui stability` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и smoke UI (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/SessionXXX.md`; expected commit: `chore(release): build and validate vsix for session ui stability`)
+4. [TODO] Git Commit: `chore(release): build and validate vsix for session ui stability` (hash: TBD)
