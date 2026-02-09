@@ -102,6 +102,33 @@ const createContextPendingPayload = (
   },
 });
 
+const createPostResumePayload = (
+  sequence: number,
+  reason: "resume_ready" | "no_rollover_needed",
+  finalTurnCompleted: boolean
+): WorkspaceSnapshotPushPayload => ({
+  workspaceRoot: "/workspace",
+  selectionId: "selection-1",
+  sequence,
+  generatedAt: "2026-01-01T00:00:00.000Z",
+  snapshot: {
+    workspaceRoot: "/workspace",
+    loadState: "ready",
+    workflow: { nodes: {} },
+    sessions: {
+      source: {
+        nodeId: "node-1",
+        turnState: "idle",
+        continuityLockActive: false,
+        continuityLockReason: reason,
+        resumeMode: "resume_in_place",
+        finalTurnCompleted,
+      },
+    },
+    artifacts: { currentByNodeId: {} },
+  },
+});
+
 test("applyWorkspaceSnapshotToSnapshots keeps resume_via_rollover blocked until resume_ready", async () => {
   const applyWorkspaceSnapshotToSnapshots =
     await loadApplyWorkspaceSnapshotToSnapshots();
@@ -147,6 +174,31 @@ test("applyWorkspaceSnapshotToSnapshots keeps blocked while context decision is 
   assert.equal(unlocked.source.status.continuityLock?.active, false);
   assert.equal(
     unlocked.source.status.continuityLock?.reason,
+    "no_rollover_needed"
+  );
+});
+
+test("applyWorkspaceSnapshotToSnapshots keeps session unlocked after resume_ready on first normal turn", async () => {
+  const applyWorkspaceSnapshotToSnapshots =
+    await loadApplyWorkspaceSnapshotToSnapshots();
+  const base: SessionSnapshots = { source: createSnapshot() };
+
+  const resumeReady = applyWorkspaceSnapshotToSnapshots(
+    base,
+    createPostResumePayload(1, "resume_ready", false)
+  );
+  const firstNormalTurn = applyWorkspaceSnapshotToSnapshots(
+    resumeReady,
+    createPostResumePayload(2, "no_rollover_needed", true)
+  );
+
+  assert.equal(resumeReady.source.status.connectionState, "idle");
+  assert.equal(resumeReady.source.status.continuityLock?.active, false);
+  assert.equal(resumeReady.source.status.continuityLock?.reason, "resume_ready");
+  assert.equal(firstNormalTurn.source.status.connectionState, "idle");
+  assert.equal(firstNormalTurn.source.status.continuityLock?.active, false);
+  assert.equal(
+    firstNormalTurn.source.status.continuityLock?.reason,
     "no_rollover_needed"
   );
 });
