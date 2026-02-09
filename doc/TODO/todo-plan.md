@@ -78,11 +78,11 @@
 
 ### Stream: Core Regression for Real Event Order
 1. [DONE] Добавить regression на реальный порядок событий (`assistant -> turn_completed`) после rollover и проверить, что первый обычный turn в target не возвращает `context_check_pending/resuming` lock (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): prevent post-resume relock after first normal turn`)
-2. [IN_PROGRESS] Git Commit: `test(core): prevent post-resume relock after first normal turn` (hash: TBD)
+2. [DONE] Git Commit: `test(core): prevent post-resume relock after first normal turn` (hash: 8d0655b0)
 
 ### Stream: PM/UI Non-Regression
-1. [TODO] Добавить PM/UI regression, подтверждающий что после `resume_ready` и первого обычного turn не появляется повторный `blocked(resuming)` placeholder (scope: `src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit: `test(pm-ui): ensure no resuming relock after rollover bootstrap completion`)
-2. [TODO] Git Commit: `test(pm-ui): ensure no resuming relock after rollover bootstrap completion` (hash: TBD)
+1. [DONE] Добавить PM/UI regression, подтверждающий что после `resume_ready` и первого обычного turn не появляется повторный `blocked(resuming)` placeholder (scope: `src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit: `test(pm-ui): ensure no resuming relock after rollover bootstrap completion`)
+2. [IN_PROGRESS] Git Commit: `test(pm-ui): ensure no resuming relock after rollover bootstrap completion` (hash: TBD)
 
 ### Stream: Docs + QA Gates
 1. [TODO] Обновить архитектурные документы под post-bootstrap lifecycle нормализацию и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document post-bootstrap rollover flag reset contract`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)

@@ -174,3 +174,37 @@ test("InputPanel stays locked on post-answer continuity trigger when idle + cont
     true
   );
 });
+
+test("InputPanel does not restore resuming placeholder after resume_ready and first normal turn", async () => {
+  const bootstrapLockHtml = await renderInputPanel({
+    connectionState: "blocked",
+    continuityLockActive: true,
+    isQueued: false,
+  });
+  const resumeReadyHtml = await renderInputPanel({
+    connectionState: "idle",
+    continuityLockActive: false,
+    isQueued: false,
+  });
+  const firstNormalTurnCompletedHtml = await renderInputPanel({
+    connectionState: "idle",
+    continuityLockActive: false,
+    isQueued: false,
+  });
+
+  assert.equal(
+    bootstrapLockHtml.includes("Agent is resuming your session… Please wait."),
+    true
+  );
+  assert.equal(
+    resumeReadyHtml.includes("Agent is resuming your session… Please wait."),
+    false
+  );
+  assert.equal(
+    firstNormalTurnCompletedHtml.includes(
+      "Agent is resuming your session… Please wait."
+    ),
+    false
+  );
+  assert.equal(firstNormalTurnCompletedHtml.includes("disabled"), false);
+});
