@@ -73,8 +73,8 @@
   3. следующий `turn_completed` в target при достаточном контексте проходит как `resume_in_place` (без повторного `resuming` lock).
 
 ### Stream: Core Rollover Lifecycle Normalization
-1. [TODO] Нормализовать lifecycle после `resume_ready`: очистить rollover pending-флаги/контексты для source+target и перевести target в post-rollover режим обычных turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/workspace-runtime-types.ts`; expected commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock`)
-2. [TODO] Git Commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock` (hash: TBD)
+1. [DONE] Нормализовать lifecycle после `resume_ready`: очистить rollover pending-флаги/контексты для source+target и перевести target в post-rollover режим обычных turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/workspace-runtime-types.ts`; expected commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock`)
+2. [IN_PROGRESS] Git Commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock` (hash: TBD)
 
 ### Stream: Core Regression for Real Event Order
 1. [TODO] Добавить regression на реальный порядок событий (`assistant -> turn_completed`) после rollover и проверить, что первый обычный turn в target не возвращает `context_check_pending/resuming` lock (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): prevent post-resume relock after first normal turn`)
