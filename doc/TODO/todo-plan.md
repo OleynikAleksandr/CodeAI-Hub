@@ -18,7 +18,7 @@
 
 ---
 
-## Phase 121 — Dead Code Cleanup (post-Phase 120) + Release (owner: Oleksandr, updated: 2026-02-09)
+## Phase 121 — Dead Code Cleanup (post-Phase 120) + Release (owner: Oleksandr, updated: 2026-02-09) ✅ COMPLETE
 
 **Goal:** удалить мёртвый код, оставшийся после Phase 120 (InfoPanel), и собрать чистый релиз.
 
@@ -31,7 +31,7 @@
 2. [DONE] Git Commit: included in 0c5bb40f (gates passed in pre-commit hooks)
 
 ### Stream: Release Build (Final)
-1. [TODO] Выполнить `./scripts/build-all.sh`
-2. [TODO] Git Commit: `chore(release): run build-all for dead code cleanup` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX
-4. [TODO] Git Commit: `chore(release): build and validate vsix for dead code cleanup` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` v1.1.540
+2. [DONE] Git Commit: `chore(release): run build-all for dead code cleanup v1.1.540` (hash: 0456b328)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX codeai-hub-1.1.540.vsix (1.0M)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for dead code cleanup` (hash: TBD — this commit)
