@@ -18,7 +18,7 @@
 
 ---
 
-## Phase 120 — Session UI Stability (fixed heights + ID in tabs) + Release (owner: Oleksandr, updated: 2026-02-09)
+## Phase 120 — Session UI Stability (fixed heights + ID in tabs) + Release (owner: Oleksandr, updated: 2026-02-09) ✅ COMPLETE
 
 **Goal:** убрать "прыжки" диалога (стабильные высоты панелей) и перенести Session ID в табы.
 
@@ -45,10 +45,10 @@
 
 ### Stream: QA Gates + Targeted Builds
 1. [DONE] Все гейты зелёные; таргетные сборки: build:webview, typecheck:webview, build:project-manager — PASSED
-2. [IN_PROGRESS] Git Commit: `docs(qa): validate gates for session ui stability` (hash: TBD)
+2. [DONE] Git Commit: `docs(qa): validate gates for session ui stability` (hash: fb7d73e1)
 
 ### Stream: Release Build (Final)
-1. [TODO] Выполнить `./scripts/build-all.sh` и закоммитить auto-generated version/manifest изменения
-2. [TODO] Git Commit: `chore(release): run build-all for session ui stability` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball
-4. [TODO] Git Commit: `chore(release): build and validate vsix for session ui stability` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` v1.1.539
+2. [DONE] Git Commit: `chore(release): run build-all for session ui stability v1.1.539` (hash: 3e239bd0)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX codeai-hub-1.1.539.vsix (1.0M)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for session ui stability` (hash: TBD — this commit)
