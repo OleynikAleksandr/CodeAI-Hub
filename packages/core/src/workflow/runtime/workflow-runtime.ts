@@ -285,13 +285,29 @@ export class WorkflowRuntime {
       return;
     }
 
+    const preferredProviderId = snapshot.session?.providerId ?? null;
     const providerId = resolvePreferredReviewerProviderId(
       this.providerRegistry,
-      snapshot.session?.providerId ?? null
+      preferredProviderId
     );
+    if (
+      preferredProviderId &&
+      providerId &&
+      providerId !== preferredProviderId
+    ) {
+      this.logger.warn(
+        "Reviewer auto-start switched provider due resume support",
+        {
+          workspaceSlug: params.workspaceSlug,
+          preferredProviderId,
+          selectedProviderId: providerId,
+        }
+      );
+    }
     if (!providerId) {
       this.logger.warn("Reviewer auto-start skipped: no resumable provider", {
         workspaceSlug: params.workspaceSlug,
+        preferredProviderId,
       });
       return;
     }

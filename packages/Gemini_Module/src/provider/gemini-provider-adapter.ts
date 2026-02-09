@@ -49,7 +49,25 @@ export class GeminiProviderAdapter {
     }
   }
 
-  async createSession(workspacePath?: string): Promise<string> {
+  createSession(workspacePath?: string): Promise<string> {
+    return this.startManagedSession({ workspacePath });
+  }
+
+  resumeSession(sessionId: string, workspacePath?: string): Promise<string> {
+    const normalizedSessionId = sessionId.trim();
+    if (normalizedSessionId.length === 0) {
+      throw new Error("Cannot resume Gemini session with an empty session id.");
+    }
+    return this.startManagedSession({
+      workspacePath,
+      resumeSessionId: normalizedSessionId,
+    });
+  }
+
+  private async startManagedSession(options: {
+    readonly workspacePath?: string;
+    readonly resumeSessionId?: string;
+  }): Promise<string> {
     const manager = this.requireSessionManager();
     const logger = new GeminiSessionLogger(this.options.reporter);
     const defaultModel = this.options.workspace.defaultModel;
@@ -57,15 +75,27 @@ export class GeminiProviderAdapter {
       ? this.options.workspace.thinkingLevelByModel?.[defaultModel]
       : undefined;
 
-    const resolvedWorkspacePath = this.resolveWorkspacePath(workspacePath);
-    const { sessionId, session } = await manager.createSession({
-      workspacePath: resolvedWorkspacePath,
-      defaultModel,
-      thinkingLevel,
-      settingsPath: this.options.workspace.settingsPath,
-      reporter: this.options.reporter,
-      logger,
-    });
+    const resolvedWorkspacePath = this.resolveWorkspacePath(
+      options.workspacePath
+    );
+    const sessionResult = options.resumeSessionId
+      ? await manager.resumeSession(options.resumeSessionId, {
+          workspacePath: resolvedWorkspacePath,
+          defaultModel,
+          thinkingLevel,
+          settingsPath: this.options.workspace.settingsPath,
+          reporter: this.options.reporter,
+          logger,
+        })
+      : await manager.createSession({
+          workspacePath: resolvedWorkspacePath,
+          defaultModel,
+          thinkingLevel,
+          settingsPath: this.options.workspace.settingsPath,
+          reporter: this.options.reporter,
+          logger,
+        });
+    const { sessionId, session } = sessionResult;
     let currentSessionId = sessionId;
     const forwardMessage = (payload: unknown): void => {
       this.dispatchMessage(currentSessionId, payload);

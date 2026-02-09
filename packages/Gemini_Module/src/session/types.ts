@@ -19,6 +19,7 @@ export type ActiveSession = {
 
 export type SessionCreationOptions = {
   readonly workspacePath: string;
+  readonly resumeSessionId?: string;
   readonly defaultModel?: string;
   readonly thinkingLevel?: string;
   readonly settingsPath?: string;
