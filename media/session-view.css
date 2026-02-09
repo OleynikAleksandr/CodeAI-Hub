@@ -906,6 +906,10 @@
   margin-bottom: 0;
 }
 
+.session-status__row--reserved {
+  min-height: 14px;
+}
+
 .session-status__label {
   color: #bdbdbd;
 }
