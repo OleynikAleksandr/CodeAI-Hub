@@ -76,6 +76,32 @@ const createPayload = (
   },
 });
 
+const createContextPendingPayload = (
+  sequence: number,
+  reason: "context_check_pending" | "no_rollover_needed"
+): WorkspaceSnapshotPushPayload => ({
+  workspaceRoot: "/workspace",
+  selectionId: "selection-1",
+  sequence,
+  generatedAt: "2026-01-01T00:00:00.000Z",
+  snapshot: {
+    workspaceRoot: "/workspace",
+    loadState: "ready",
+    workflow: { nodes: {} },
+    sessions: {
+      source: {
+        nodeId: "node-1",
+        turnState: "idle",
+        continuityLockActive: false,
+        continuityLockReason: reason,
+        resumeMode: "resume_in_place",
+        finalTurnCompleted: true,
+      },
+    },
+    artifacts: { currentByNodeId: {} },
+  },
+});
+
 test("applyWorkspaceSnapshotToSnapshots keeps resume_via_rollover blocked until resume_ready", async () => {
   const applyWorkspaceSnapshotToSnapshots =
     await loadApplyWorkspaceSnapshotToSnapshots();
@@ -95,4 +121,32 @@ test("applyWorkspaceSnapshotToSnapshots keeps resume_via_rollover blocked until 
   assert.equal(ready.source.status.connectionState, "idle");
   assert.equal(ready.source.status.continuityLock?.active, false);
   assert.equal(ready.source.status.continuityLock?.reason, "resume_ready");
+});
+
+test("applyWorkspaceSnapshotToSnapshots keeps blocked while context decision is pending", async () => {
+  const applyWorkspaceSnapshotToSnapshots =
+    await loadApplyWorkspaceSnapshotToSnapshots();
+  const base: SessionSnapshots = { source: createSnapshot() };
+
+  const pending = applyWorkspaceSnapshotToSnapshots(
+    base,
+    createContextPendingPayload(1, "context_check_pending")
+  );
+  const unlocked = applyWorkspaceSnapshotToSnapshots(
+    pending,
+    createContextPendingPayload(2, "no_rollover_needed")
+  );
+
+  assert.equal(pending.source.status.connectionState, "blocked");
+  assert.equal(pending.source.status.continuityLock?.active, true);
+  assert.equal(
+    pending.source.status.continuityLock?.reason,
+    "context_check_pending"
+  );
+  assert.equal(unlocked.source.status.connectionState, "idle");
+  assert.equal(unlocked.source.status.continuityLock?.active, false);
+  assert.equal(
+    unlocked.source.status.continuityLock?.reason,
+    "no_rollover_needed"
+  );
 });
