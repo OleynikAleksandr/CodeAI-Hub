@@ -4,6 +4,8 @@ export const resolveContinuityLockActive = (
   session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
 ): boolean =>
   session.continuityLockActive ||
+  session.continuityLockReason === "context_check_pending" ||
+  session.continuityLockTransition?.reason === "context_check_pending" ||
   session.continuityLockTransition?.awaitingBootstrapTurn === true;
 
 export const resolveContinuityLockReason = (
@@ -20,3 +22,9 @@ export const isRolloverPendingAfterTerminalTurn = (
   session.resumeMode === "resume_via_rollover" &&
   session.finalTurnCompleted === true &&
   lockReason !== "resume_ready";
+
+export const isContextDecisionPending = (
+  session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string],
+  lockReason: string | undefined
+): boolean =>
+  session.finalTurnCompleted === true && lockReason === "context_check_pending";

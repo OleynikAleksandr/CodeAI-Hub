@@ -34,6 +34,7 @@ export type WorkspaceSelectAckPayload = {
 };
 
 export type WorkspaceSnapshotContinuityLockReason =
+  | "context_check_pending"
   | "threshold_reached"
   | "report_in_progress"
   | "resume_bootstrap"

@@ -33,11 +33,11 @@
 
 ### Stream: Provider Post-Turn Decision Delivery (Claude)
 1. [DONE] Обеспечить детерминированную доставку post-turn context decision в Core для текущего турна (без окна между `turn_completed` и отдельным поздним usage-event) (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(claude-core): deliver post-turn context decision for strict unlock gate`)
-2. [IN_PROGRESS] Git Commit: `fix(claude-core): deliver post-turn context decision for strict unlock gate` (hash: TBD)
+2. [DONE] Git Commit: `fix(claude-core): deliver post-turn context decision for strict unlock gate` (hash: 45a315fb)
 
 ### Stream: PM/UI Lock Contract Enforcement
-1. [TODO] Зафиксировать блокировку UI в состоянии `context_check_pending` и снять её только по canonical unlock-решению snapshot (`no_rollover_needed` или `resume_ready`) (scope: `src/client/project-manager/components/sessions/session-lock-guards.ts`, `src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `fix(pm): keep input blocked while context decision is pending`)
-2. [TODO] Git Commit: `fix(pm): keep input blocked while context decision is pending` (hash: TBD)
+1. [DONE] Зафиксировать блокировку UI в состоянии `context_check_pending` и снять её только по canonical unlock-решению snapshot (`no_rollover_needed` или `resume_ready`) (scope: `src/client/project-manager/components/sessions/session-lock-guards.ts`, `src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `fix(pm): keep input blocked while context decision is pending`)
+2. [IN_PROGRESS] Git Commit: `fix(pm): keep input blocked while context decision is pending` (hash: TBD)
 
 ### Stream: Non-Regression Tests
 1. [TODO] Добавить core regression на out-of-band последовательность `turn_completed -> delayed token usage`: отсутствие `idle/unlock` до explicit `no_rollover` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): block unlock until explicit post-turn context decision`)
