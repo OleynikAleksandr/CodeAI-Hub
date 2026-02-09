@@ -1,3 +1,11 @@
+## [1.1.537] - 2026-02-09
+### Fixed
+- Launcher installer: reuse existing installation now requires runtime integrity checks for required launcher artifacts; on macOS this includes `Chromium Embedded Framework.framework/Chromium Embedded Framework`, preventing broken installs that fail with `Failed to load CEF framework`.
+- Launcher installer: legacy-to-primary migration now guards against symlink self-copy scenarios, preventing partial payload corruption during concurrent/legacy install transitions.
+
+### Added
+- New launcher runtime integrity module to centralize platform-specific required file checks for install/reuse validation.
+
 ## [1.1.536] - 2026-02-09
 ### Fixed
 - Gemini provider runtime: устранено падение инициализации на `@google/gemini-cli-core@0.27.x` (`ERR_MODULE_NOT_FOUND` для `nonInteractiveToolExecutor`); `cli-bridge` теперь выбирает совместимый backend (`legacy_non_interactive` или `scheduler_fallback`).

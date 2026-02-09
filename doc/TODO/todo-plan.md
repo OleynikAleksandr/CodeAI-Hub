@@ -79,11 +79,11 @@
 1. [DONE] Синхронизировать архитектурные документы по инвариантам launcher runtime integrity (scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document launcher runtime integrity guardrails`; note: зафиксировано совместно с кодовым hotfix-коммитом)
 2. [DONE] Git Commit: `docs(architecture): document launcher runtime integrity guardrails` (hash: a1b11b8c)
 3. [DONE] Прогнать обязательные гейты + таргетные сборки (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run compile`)
-4. [IN_PROGRESS] Git Commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds` (hash: TBD)
+4. [DONE] Git Commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds` (hash: b4ebf25c)
 
 ### Stream: Release Build
-1. [TODO] Подготовить release notes под hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for launcher runtime integrity hotfix`)
-2. [TODO] Git Commit: `docs(release): prepare release notes for launcher runtime integrity hotfix` (hash: TBD)
+1. [DONE] Подготовить release notes под hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for launcher runtime integrity hotfix`)
+2. [IN_PROGRESS] Git Commit: `docs(release): prepare release notes for launcher runtime integrity hotfix` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated версии/манифесты (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for launcher runtime integrity hotfix`)
 4. [TODO] Git Commit: `chore(release): run build-all for launcher runtime integrity hotfix` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и сценарий clean install (`~/.codeai-hub` пустой) + запуск Project Manager (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session131.md`; expected commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix`)
