@@ -2,7 +2,7 @@
 
 **Status:** Active (CommonJS bridge)
 
-**Last Updated:** 2026-01-18
+**Last Updated:** 2026-02-09
 
 **Maintainer:** Codex / CodeAI Hub Core Team
 
@@ -34,6 +34,7 @@ Additional references to monitor:
 - **Runtime updates (v1.1.326):** при каждом старте ядра Auto Update Service проверяет свежие версии (по настройкам автообновления) и вызывает `GeminiInstaller.updateToLatest()` для глобального обновления CLI/Core. Settings UI по‑прежнему может запускать обновление вручную через `ProviderVersionService.updateGeminiAll()`.
 - **Runtime requirements:** Node.js ≥ 20.0.0 (используется bundled runtime ядра), macOS/Linux/Windows поддерживаются CLI.
 - **Version policy:** фиксированной версии нет — используются глобально установленные пакеты. Если registry недоступен или автообновление выключено, остаётся текущая версия из глобального npm.
+- **Runtime compatibility policy (Phase 117):** `cli-bridge` обязан поддерживать и legacy layout (`nonInteractiveToolExecutor`, ветка `0.17.x`), и новый layout без legacy executor (ветка `0.27.x`) через scheduler fallback backend.
 - **Settings telemetry (1.1.326+)**: ProviderVersionService читает установленные версии напрямую из глобального npm prefix (через `npm list -g` и `npm view`) и больше не зависит от vendor-кэша внутри `.codeai-hub`.
 - **Credential store:** `~/.gemini/`
   - `credentials.json` — OAuth токены (refresh/access).
@@ -83,10 +84,10 @@ Important flags:
 ---
 
 ## 7. Implementation Status
-- ✅ **Installer** — обеспечивает глобальную установку `@google/gemini-cli` и `@google/gemini-cli-core` в npm prefix, валидирует доступность бинаря `gemini` и загружает `cli-bridge` напрямую из глобального `node_modules`. Эмитит `reporter.progress`, чтобы RemoteBridge показывал стадии «загрузка», «подготовка зависимостей», «готово».
+- ✅ **Installer** — обеспечивает глобальную установку `@google/gemini-cli` и `@google/gemini-cli-core` в npm prefix, валидирует доступность бинаря `gemini` и загружает `cli-bridge` напрямую из глобального `node_modules`. Эмитит `reporter.progress`, чтобы RemoteBridge показывал стадии «загрузка», «подготовка зависимостей», «готово». В post-update/self-check классифицирует module compatibility ошибки отдельно от auth.
 - ✅ **Runtime Updater (v1.1.326)** — `updateToLatest()` обновляет оба пакета через `npm install -g` и используется автообновлением при старте ядра или вручную из Settings UI.
-- ✅ **CLI Bridge (`src/runtime/cli-bridge.ts`)** — использует динамический `import()` через `Function("return import(specifier);")`, конвертирует пути в file URL и загружает ESM-модули CLI/Core без `require()` (устранён `ERR_REQUIRE_ESM`).
-- ✅ **Session Manager** — работает поверх официального CLI Core (`contentGenerator`, `toolScheduler` и т.д.), управляет потоками, журналирует события, очищает окружение от конфликтующих `GOOGLE_*` переменных.
+- ✅ **CLI Bridge (`src/runtime/cli-bridge.ts`)** — использует динамический `import()` через `Function("return import(specifier);")`, конвертирует пути в file URL и загружает ESM-модули CLI/Core без `require()` (устранён `ERR_REQUIRE_ESM`). Для tool execution реализован backend selection: legacy `nonInteractiveToolExecutor` либо `scheduler_fallback` при новом layout CLI Core.
+- ✅ **Session Manager** — работает поверх официального CLI Core (`contentGenerator`, `toolScheduler` и т.д.), управляет потоками, журналирует события, очищает окружение от конфликтующих `GOOGLE_*` переменных. Tool execution вынесен в совместимый фасад `GeminiToolExecutorFacade`.
 - ✅ **Provider Adapter** — интегрирован с `ProviderRegistry`, отправляет события, обрабатывает подписчиков, транслирует системные сообщения (инициализация, ошибки аутентификации).
 - ✅ **UI Integration** — provider picker отображает статус Gemini; при ошибке инициализации модуль переводится в `inactive`, ядро продолжает работу.
 - 🚧 **Расширенный логгер/health-check** — основная аутентификация по-прежнему вручена CLI (`gemini login`), сбор логов и health-check до запуска ядра в планах.
@@ -130,6 +131,7 @@ Important flags:
 ---
 
 ## 12. Change Log
+- **2026-02-09:** Phase 117 implementation — добавлена runtime compatibility стратегия для `@google/gemini-cli-core` (`legacy_non_interactive` + `scheduler_fallback`), фасад `GeminiToolExecutorFacade`, диагностика module compatibility в installer/provider и regression tests для loader/facade.
 - **2025-12-21:** Released v1.1.326 — подтверждена глобальная установка CLI/Core, автообновление при старте и корректная инициализация сервиса обновлений.
 - **2025-12-20:** Released v1.1.325 — switched Gemini CLI/Core to global-only installs (no vendor cache) and added startup auto-update checks driven by provider auto-update settings. Settings UI now reads versions from global npm.
 - **2025-11-29:** Released v1.1.320 — implemented `updateToLatest()` method for runtime CLI/Core updates. Settings UI now displays both Gemini CLI and CLI Core versions with a single Update button. CLI is installed globally to `~/.npm-global/` for user convenience.

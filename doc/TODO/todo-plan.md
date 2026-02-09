@@ -9,89 +9,51 @@
 
 ## Required documents to review before work
 1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
-3. `doc/Sessions/Session126.md`
-4. `doc/TODO/todo-plan.md` (THIS FILE)
+2. `doc/Project_Docs/Stacks/Gemini_CLI_Runtime_Compatibility_Architecture.md`
+3. `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
+4. `doc/Sessions/Session129.md`
+5. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
 
-## Phase 115 — Strict Dual-Confirmation Unlock Gate (owner: Oleksandr, updated: 2026-02-09)
+## Phase 117 — Gemini CLI Core Runtime Compatibility + Release (owner: Oleksandr, updated: 2026-02-09)
 
-**Problem (manual regression):**
-- После `turn_completed` всё ещё возникает кратковременный unlock до последующей блокировки rollover.
-- Причина: текущая логика не требует обязательного второго подтверждения (явного решения Core по контекстному окну в текущем турне) перед unlock.
-
-**Target invariant:**
-- Разблокировка допустима только при одновременном выполнении двух условий:
-  1. финальный `turn_completed` получен для текущего турна;
-  2. Core получил и зафиксировал явное решение `context decision = no_rollover` для этого же турна.
-- Если второе подтверждение не получено — unlock запрещён.
-
-### Stream: Core Strict Dual-Confirmation State Machine
-1. [DONE] Внедрить явную post-turn арбитрацию в `SessionRequestHandler`: состояние `context_check_pending` до финального решения `no_rollover|rollover_required`, запрет `idle` до второго подтверждения (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/workspace-runtime-types.ts`, `packages/core/src/workspace-runtime/session-runtime.ts`; expected commit: `fix(core): require explicit context decision before unlock after turn completion`)
-2. [DONE] Git Commit: `fix(core): require explicit context decision before unlock after turn completion` (hash: 61463ecc)
-
-### Stream: Provider Post-Turn Decision Delivery (Claude)
-1. [DONE] Обеспечить детерминированную доставку post-turn context decision в Core для текущего турна (без окна между `turn_completed` и отдельным поздним usage-event) (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(claude-core): deliver post-turn context decision for strict unlock gate`)
-2. [DONE] Git Commit: `fix(claude-core): deliver post-turn context decision for strict unlock gate` (hash: 45a315fb)
-
-### Stream: PM/UI Lock Contract Enforcement
-1. [DONE] Зафиксировать блокировку UI в состоянии `context_check_pending` и снять её только по canonical unlock-решению snapshot (`no_rollover_needed` или `resume_ready`) (scope: `src/client/project-manager/components/sessions/session-lock-guards.ts`, `src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `fix(pm): keep input blocked while context decision is pending`)
-2. [DONE] Git Commit: `fix(pm): keep input blocked while context decision is pending` (hash: 334d4537)
-
-### Stream: Non-Regression Tests
-1. [DONE] Добавить core regression на out-of-band последовательность `turn_completed -> delayed token usage`: отсутствие `idle/unlock` до explicit `no_rollover` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): block unlock until explicit post-turn context decision`)
-2. [DONE] Git Commit: `test(core): block unlock until explicit post-turn context decision` (hash: 07a0b984)
-3. [DONE] Добавить PM regression на отсутствие transient `blocked -> idle -> blocked` между завершением турна и стартом rollover (scope: `src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`; expected commit: `test(pm): prevent unlock gap while context decision pending`)
-4. [DONE] Git Commit: `test(pm): prevent unlock gap while context decision pending` (hash: bd00b66b)
-
-### Stream: Docs + QA Gates
-1. [DONE] Синхронно обновить архитектурные документы и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document strict dual-confirmation unlock gate and validate gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
-2. [DONE] Git Commit: `docs(architecture): document strict dual-confirmation unlock gate and validate gates` (hash: a958f198)
-
-### Stream: Release Build
-1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for phase 115 strict dual-confirmation unlock gate`)
-2. [DONE] Git Commit: `docs(release): prepare release notes for phase 115 strict dual-confirmation unlock gate` (hash: 29bd337d)
-3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 115 strict dual-confirmation unlock gate`)
-4. [DONE] Git Commit: `chore(release): run build-all for phase 115 strict dual-confirmation unlock gate` (hash: b7f5d885)
-5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 115 strict dual-confirmation unlock gate`)
-6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 115 strict dual-confirmation unlock gate` (hash: 3bced189)
-
----
-
-## Phase 116 — Rollover Flag Reset After Bootstrap Unlock (owner: Oleksandr, updated: 2026-02-09)
-
-**Problem (post-release smoke):**
-- После успешного rollover (`resume_ready`) новая target-сессия на следующем обычном turn снова получает lock `context_check_pending`.
-- UI повторно показывает `Agent is resuming your session… Please wait.` даже при достаточном контекстном окне.
-- Это указывает на неполный lifecycle cleanup rollover-флагов и отсутствие нормализации `resumeMode` после bootstrap unlock.
+**Problem (runtime regression):**
+- В установленном провайдере `gemini@1.1.535` инициализация падает с `ERR_MODULE_NOT_FOUND` из-за жёсткой загрузки `nonInteractiveToolExecutor.js`.
+- В актуальном `@google/gemini-cli-core@0.27.x` legacy entrypoint удалён, из-за чего провайдер становится `UNAVAILABLE` до этапа auth.
 
 **Target invariant:**
-- После первого bootstrap assistant ответа в новой сессии и публикации `resume_ready`:
-  1. rollover pending-флаги source/target очищены;
-  2. target-сессия больше не живёт в режиме `resume_via_rollover` для последующих обычных turn;
-  3. следующий `turn_completed` в target при достаточном контексте проходит как `resume_in_place` (без повторного `resuming` lock).
+1. Gemini provider успешно инициализируется на `@google/gemini-cli-core` ветках `0.17.x` и `0.27.x`.
+2. Tool-call execution идёт через единый фасад с runtime backend detection.
+3. Диагностика чётко разделяет `auth/login` и `module compatibility` ошибки.
+4. После фикса выполнен полный релизный цикл и smoke-проверка Gemini в установленном runtime.
 
-### Stream: Core Rollover Lifecycle Normalization
-1. [DONE] Нормализовать lifecycle после `resume_ready`: очистить rollover pending-флаги/контексты для source+target и перевести target в post-rollover режим обычных turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/workspace-runtime/workspace-runtime-types.ts`; expected commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock`)
-2. [DONE] Git Commit: `fix(core): reset rollover flags and normalize lifecycle after bootstrap unlock` (hash: 4e4e507d)
+### Stream: Architecture Contract + Docs Baseline
+1. [DONE] Зафиксировать архитектурный контракт совместимости Gemini CLI Core (loader fallback, unified tool-executor facade, error taxonomy) и синхронизировать stack/system docs (scope: `doc/Project_Docs/Stacks/Gemini_CLI_Runtime_Compatibility_Architecture.md`, `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(architecture): define gemini cli-core runtime compatibility contract`)
+2. [IN_PROGRESS] Git Commit: `docs(architecture): define gemini cli-core runtime compatibility contract` (hash: TBD)
 
-### Stream: Core Regression for Real Event Order
-1. [DONE] Добавить regression на реальный порядок событий (`assistant -> turn_completed`) после rollover и проверить, что первый обычный turn в target не возвращает `context_check_pending/resuming` lock (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): prevent post-resume relock after first normal turn`)
-2. [DONE] Git Commit: `test(core): prevent post-resume relock after first normal turn` (hash: 8d0655b0)
+### Stream: Runtime Bridge Compatibility Loader
+1. [DONE] Внедрить multi-path загрузку backend для tool execution (legacy `nonInteractiveToolExecutor` + scheduler fallback через `coreToolScheduler`) и публиковать выбранный backend в bridge metadata (scope: `packages/Gemini_Module/src/runtime/cli-bridge.ts`, `packages/Gemini_Module/src/runtime/cli-types.ts`, `packages/Gemini_Module/src/session/types.ts`; expected commit: `fix(gemini): support cli-core module layout variants in runtime bridge`)
+2. [IN_PROGRESS] Git Commit: `fix(gemini): support cli-core module layout variants in runtime bridge` (hash: TBD)
 
-### Stream: PM/UI Non-Regression
-1. [DONE] Добавить PM/UI regression, подтверждающий что после `resume_ready` и первого обычного turn не появляется повторный `blocked(resuming)` placeholder (scope: `src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit: `test(pm-ui): ensure no resuming relock after rollover bootstrap completion`)
-2. [DONE] Git Commit: `test(pm-ui): ensure no resuming relock after rollover bootstrap completion` (hash: a50b021a)
+### Stream: Unified Tool Execution Facade
+1. [DONE] Добавить фасад `GeminiToolExecutorFacade` и переключить `GeminiSessionManager` на единый контракт исполнения tool-calls независимо от backend (scope: `packages/Gemini_Module/src/session/gemini-tool-executor-facade.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/runtime/cli-types.ts`; expected commit: `fix(gemini): execute tool calls via compatibility facade across cli-core APIs`)
+2. [IN_PROGRESS] Git Commit: `fix(gemini): execute tool calls via compatibility facade across cli-core APIs` (hash: TBD)
 
-### Stream: Docs + QA Gates
-1. [DONE] Обновить архитектурные документы под post-bootstrap lifecycle нормализацию и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document post-bootstrap rollover flag reset contract`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run build:project-manager`, `npm run typecheck:webview`)
-2. [DONE] Git Commit: `docs(architecture): document post-bootstrap rollover flag reset contract` (hash: 23cb35dc)
+### Stream: Installer Safety + Provider Diagnostics
+1. [DONE] Ужесточить post-update/self-check и классификацию ошибок в installer/provider, чтобы compatibility mismatch не маскировался под auth issue (scope: `packages/Gemini_Module/src/installer/gemini-installer.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Gemini_Module/src/runtime/cli-bridge.ts`; expected commit: `fix(gemini): harden installer self-check and compatibility diagnostics`)
+2. [IN_PROGRESS] Git Commit: `fix(gemini): harden installer self-check and compatibility diagnostics` (hash: TBD)
+
+### Stream: Non-Regression Validation
+1. [DONE] Добавить regression-тесты на loader fallback и unified tool execution facade для legacy/new CLI Core API (scope: `packages/Gemini_Module/src/runtime/cli-bridge.test.ts`, `packages/Gemini_Module/src/session/gemini-tool-executor-facade.test.ts`, `packages/Gemini_Module/package.json`; expected commit: `test(gemini): cover runtime loader fallback and unified tool execution`)
+2. [IN_PROGRESS] Git Commit: `test(gemini): cover runtime loader fallback and unified tool execution` (hash: TBD)
+3. [DONE] Прогнать обязательные гейты + таргетные сборки (`@codeai-hub/gemini-module`, `@codeai-hub/core`, `webview/project-manager`) и синхронно обновить доки/план (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate gemini compatibility gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/gemini-module`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run build:project-manager`, `npm run typecheck:webview`)
+4. [IN_PROGRESS] Git Commit: `docs(qa): validate gemini compatibility gates and targeted builds` (hash: TBD)
 
 ### Stream: Release Build
-1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix`)
-2. [DONE] Git Commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix` (hash: 6b333cc1)
-3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 116 rollover flag reset hotfix`)
-4. [DONE] Git Commit: `chore(release): run build-all for phase 116 rollover flag reset hotfix` (hash: e90772b5)
-5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 116 rollover flag reset hotfix`)
-6. [DONE] Git Commit: `chore(release): build and verify vsix for phase 116 rollover flag reset hotfix` (hash: 17602f6e)
+1. [TODO] Подготовить release docs перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for gemini runtime compatibility hotfix`)
+2. [TODO] Git Commit: `docs(release): prepare release notes for gemini runtime compatibility hotfix` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for gemini runtime compatibility hotfix`)
+4. [TODO] Git Commit: `chore(release): run build-all for gemini runtime compatibility hotfix` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и smoke Gemini provider в установленном runtime (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session130.md`; expected commit: `chore(release): build and validate vsix for gemini runtime compatibility hotfix`)
+6. [TODO] Git Commit: `chore(release): build and validate vsix for gemini runtime compatibility hotfix` (hash: TBD)
