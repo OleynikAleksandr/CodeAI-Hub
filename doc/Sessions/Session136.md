@@ -25,7 +25,7 @@
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `0238fa62 docs(todo): start Phase 120 session ui stability plan`
-- `TBD docs(session): add Session136 report`
+- `09dea74e docs(session): add Session136 report`
 
 ---
 
