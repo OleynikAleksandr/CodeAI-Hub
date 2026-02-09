@@ -47,7 +47,7 @@
 
 ### Stream: QA Gates + Targeted Builds
 1. [DONE] Прогнать обязательные гейты и таргетные сборки для затронутых модулей (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate gemini reviewer resume gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"`, `npm run check:links`, `npm run build --workspace @codeai-hub/gemini-module`, `npm run build --workspace @codeai-hub/core`, `node --test packages/Gemini_Module/dist/session/gemini-session-manager.test.js packages/Gemini_Module/dist/provider/gemini-provider-adapter.test.js packages/core/dist/workflow/runtime/workflow-runtime.test.js`; result: all commands passed)
-2. [IN_PROGRESS] Git Commit: `docs(qa): validate gemini reviewer resume gates and targeted builds` (hash: TBD)
+2. [DONE] Git Commit: `docs(qa): validate gemini reviewer resume gates and targeted builds` (hash: 70b857c7)
 
 ### Stream: Release Notes
 1. [TODO] Подготовить release docs под Phase 119 hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for gemini reviewer resume integration`)
