@@ -72,11 +72,49 @@ const mirrorLegacyInstall = async (
   await fs.cp(sourceDir, legacyInstallDir, { recursive: true });
 };
 
+const isSymlinkPointingTo = async (
+  sourcePath: string,
+  targetPath: string
+): Promise<boolean> => {
+  try {
+    const stats = await fs.lstat(sourcePath);
+    if (!stats.isSymbolicLink()) {
+      return false;
+    }
+    const linkTarget = await fs.readlink(sourcePath);
+    const resolvedLinkTarget = path.resolve(
+      path.dirname(sourcePath),
+      linkTarget
+    );
+    return resolvedLinkTarget === targetPath;
+  } catch {
+    return false;
+  }
+};
+
+const resolveRealPath = async (targetPath: string): Promise<string | null> => {
+  try {
+    return await fs.realpath(targetPath);
+  } catch {
+    return null;
+  }
+};
+
 const copyLegacyToPrimary = async (
   legacyInstallDir: string,
   installDir: string
 ): Promise<void> => {
   if (legacyInstallDir === installDir) {
+    return;
+  }
+  if (await isSymlinkPointingTo(legacyInstallDir, installDir)) {
+    return;
+  }
+  const [legacyRealPath, installRealPath] = await Promise.all([
+    resolveRealPath(legacyInstallDir),
+    resolveRealPath(installDir),
+  ]);
+  if (legacyRealPath && installRealPath && legacyRealPath === installRealPath) {
     return;
   }
   await fs.rm(installDir, { recursive: true, force: true });

@@ -57,3 +57,34 @@
 4. [DONE] Git Commit: `chore(release): run build-all for gemini runtime compatibility hotfix` (hash: 37366687)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и smoke Gemini provider в установленном runtime (scope: `codeai-hub-1.1.536.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session130.md`; expected commit: `chore(release): build and validate vsix for gemini runtime compatibility hotfix`; executed: `./scripts/build-release.sh --use-current-version`, `CODEAI_HUB_GEMINI_CLI_ROOT=/Users/oleksandroliinyk/.npm-global/lib/node_modules/@google/gemini-cli node -e "...loadCliBridgeFromGlobal..."`; result: `OK unknown scheduler_fallback`, VSIX created)
 6. [DONE] Git Commit: `chore(release): build and validate vsix for gemini runtime compatibility hotfix` (hash: c5e7696b)
+
+---
+
+## Phase 118 — Launcher Runtime Integrity Hotfix + Clean Install Release (owner: Oleksandr, updated: 2026-02-09)
+
+**Problem (regression):**
+- Project Manager `.app` может не стартовать с `Failed to load CEF framework`, если launcher-install считает установку валидной по одному executable, но CEF framework в install dir частично отсутствует/повреждён.
+- Дополнительно есть риск некорректного legacy→primary copy при symlink-self-reference, что может приводить к неполной payload-копии при параллельном старте.
+
+**Target invariant:**
+1. Reuse launcher-install разрешён только при целостном runtime (executable + CEF framework binary на macOS).
+2. Legacy→primary copy не может удалить/перекопировать install dir сам в себя через symlink-path.
+3. На чистой установке (`~/.codeai-hub` удалён) Project Manager поднимается без ручных восстановлений runtime.
+
+### Stream: Runtime Integrity Guard
+1. [IN_PROGRESS] Внедрить runtime integrity checker для launcher-install (обязательные файлы по платформам) и self-copy guard в legacy migration path (scope: `src/extension-module/cef/launcher-runtime-integrity.ts`, `src/extension-module/cef/launcher-install-helpers.ts`, `src/extension-module/cef/launcher-installer.ts`; expected commit: `fix(launcher): enforce runtime integrity and guard legacy self-copy on macos`)
+2. [TODO] Git Commit: `fix(launcher): enforce runtime integrity and guard legacy self-copy on macos` (hash: TBD)
+
+### Stream: Docs + Validation
+1. [IN_PROGRESS] Синхронизировать архитектурные документы по инвариантам launcher runtime integrity (scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document launcher runtime integrity guardrails`)
+2. [TODO] Git Commit: `docs(architecture): document launcher runtime integrity guardrails` (hash: TBD)
+3. [TODO] Прогнать обязательные гейты + таргетные сборки (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds`)
+4. [TODO] Git Commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds` (hash: TBD)
+
+### Stream: Release Build
+1. [TODO] Подготовить release notes под hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for launcher runtime integrity hotfix`)
+2. [TODO] Git Commit: `docs(release): prepare release notes for launcher runtime integrity hotfix` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated версии/манифесты (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for launcher runtime integrity hotfix`)
+4. [TODO] Git Commit: `chore(release): run build-all for launcher runtime integrity hotfix` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и сценарий clean install (`~/.codeai-hub` пустой) + запуск Project Manager (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session131.md`; expected commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix`)
+6. [TODO] Git Commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix` (hash: TBD)

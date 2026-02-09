@@ -15,11 +15,16 @@ Legacy note: the old standalone `web-client` (PWA/CEF) is deprecated and schedul
 1. On activation the extension calls `ensureCefRuntime` and `ensureLauncherInstalled`.
 2. The manifest entry (`baseUrl` → `file:///Users/oleksandroliinyk/.codeai-hub/releases/`) resolves to a tarball (`CodeAIHubLauncher-macos-arm64-1.1.464.tar.bz2`).
 3. The archive is downloaded or reused from the local cache, verified via SHA-1 and unpacked into `~/.codeai-hub/packages/launcher/darwin-arm64/1.1.464/`.
-4. Installation metadata is written to `install.json`, and downloads are mirrored under `downloads/` for reuse.
-5. The extension generates `config/project-manager.json` next to the binary, preserving any existing keys and updating `uiRoot`, `entry`, `url`, `generatedAt`, `workspacePath`.
+4. Runtime integrity check validates required launcher artifacts before reusing/installing:
+   - launcher executable (`CodeAIHubLauncher.app/Contents/MacOS/CodeAIHubLauncher`);
+   - macOS CEF framework binary (`Chromium Embedded Framework.framework/Chromium Embedded Framework`).
+   If any required file is missing, the installation is treated as invalid and is rebuilt from legacy mirror or archive.
+5. Installation metadata is written to `install.json`, and downloads are mirrored under `downloads/` for reuse.
+6. The extension generates `config/project-manager.json` next to the binary, preserving any existing keys and updating `uiRoot`, `entry`, `url`, `generatedAt`, `workspacePath`.
    - Legacy: `config/config.json` (web-client) is kept only until Phase 65 removal.
-6. The legacy path (`~/.codeai-hub/cef-launcher/...`) is symlinked or copied to keep older tooling working.
-7. Launch relies on `CodeAIHubLauncher.app/Contents/MacOS/CodeAIHubLauncher` with arguments `--config=<path>` `--url=file://...` `--use-alloy-style`.
+7. The legacy path (`~/.codeai-hub/cef-launcher/...`) is symlinked or copied to keep older tooling working.
+8. Legacy-to-primary copy is guarded against self-copy via symlinked version directories to prevent partial/invalid launcher payloads under concurrent startup.
+9. Launch relies on `CodeAIHubLauncher.app/Contents/MacOS/CodeAIHubLauncher` with arguments `--config=<path>` `--url=file://...` `--use-alloy-style`.
 
 ## Configuration & Autosave
 - On macOS the launcher calls `setFrameAutosaveName(@"CodeAIHubMainWindow")`. Window geometry is handled by AppKit and stored in `~/Library/Preferences/com.codeaihub.launcher.plist`.

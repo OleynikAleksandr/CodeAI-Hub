@@ -7,6 +7,7 @@ import type {
   LauncherManifestEntry,
 } from "./launcher-manifest";
 import { getLauncherExecutableRelativePath } from "./launcher-paths";
+import { collectMissingLauncherPaths } from "./launcher-runtime-integrity";
 import type { PlatformKey } from "./platform";
 import {
   downloadFile,
@@ -96,10 +97,12 @@ export const verifyExistingInstall = async (
   platform: PlatformKey
 ): Promise<boolean> => {
   const marker = await loadInstallMarker(installDir);
-  const executableExists = await pathExists(
-    getExecutablePath(installDir, platform)
+  const missingPaths = await collectMissingLauncherPaths(
+    installDir,
+    platform,
+    pathExists
   );
-  if (!executableExists) {
+  if (missingPaths.length > 0) {
     return false;
   }
   if (!marker) {
@@ -181,8 +184,16 @@ export const installFromArchive = async (
     const extractedRoot = path.join(extractRoot, extractedEntries[0]);
     await fs.rm(installDir, { recursive: true, force: true });
     await fs.rename(extractedRoot, installDir);
-    const executablePath = getExecutablePath(installDir, platform);
-    await fs.access(executablePath);
+    const missingPaths = await collectMissingLauncherPaths(
+      installDir,
+      platform,
+      pathExists
+    );
+    if (missingPaths.length > 0) {
+      throw new Error(
+        `Launcher runtime integrity check failed: missing required files:\n${missingPaths.join("\n")}`
+      );
+    }
   } finally {
     await fs.rm(extractRoot, { recursive: true, force: true }).catch(() => {
       /* ignore */
