@@ -8,7 +8,7 @@
 
 # Update (2026-02-02)
 
-В ходе практической проверки выяснилось, что `/status` — это TUI slash-команда и не может быть использована как программный source-of-truth в non-interactive режиме (`codex exec --json`/SDK). Актуальный источник истины для `used/limit` — событие `token_count` в rollout JSONL (см. `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md` и `doc/Sessions/Session069.md`).
+В ходе практической проверки выяснилось, что `/status` — это TUI slash-команда и не может быть использована как программный source-of-truth в non-interactive режиме (`codex exec --json`/SDK). Актуальный источник истины для `used/limit` — событие `token_count` в rollout JSONL (см. `doc/SolidWorks-Flow/TokenUsage/CodexTokenUsage_Architecture.md` и `doc/Sessions/Session069.md`).
 
 # 1. Work Done in This Session
 
@@ -21,7 +21,7 @@
 - В `todo-plan.md` проставили хеши bootstrap и архитектурного коммита.
 
 ## Approval
-- ✅ Апрув: `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md` (зафиксировать в `doc/TODO/todo-plan.md` на старте следующей сессии отдельной микрозадачей + коммит).
+- ✅ Апрув: `doc/SolidWorks-Flow/TokenUsage/CodexTokenUsage_Architecture.md` (зафиксировать в `doc/TODO/todo-plan.md` на старте следующей сессии отдельной микрозадачей + коммит).
 
 ## Git commits
 - `55932f99 docs(todo): start Phase 86 codex token usage via status`
@@ -33,10 +33,10 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
-3. `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md` (THIS APPROVED DESIGN)
-4. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md` (reference pattern)
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`
+3. `doc/SolidWorks-Flow/TokenUsage/CodexTokenUsage_Architecture.md` (THIS APPROVED DESIGN)
+4. `doc/SolidWorks-Flow/TokenUsage/ClaudeTokenUsage_Architecture.md` (reference pattern)
 5. `doc/Sessions/Session065.md` (token usage persistence via continuity `chain.json`)
 6. `doc/TODO/todo-plan.md`
 7. `doc/Sessions/Session068.md` (THIS REPORT)

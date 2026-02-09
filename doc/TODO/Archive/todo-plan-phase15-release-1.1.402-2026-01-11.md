@@ -16,9 +16,9 @@
 - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/Initiative_Description_Runs_Architecture.md`
+1. `doc/SolidWorks-Flow/System/Initiative_Description_Runs_Architecture.md`
 2. `doc/Architecture/Architecture.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `.codeai-hub/WORKFLOW_ARCHITECTURE.md`
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session085.md`

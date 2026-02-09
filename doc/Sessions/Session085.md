@@ -24,7 +24,7 @@
 1. `doc/TODO/todo-plan.md`
 2. `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`
 3. `doc/SolidWorks-Flow/SessionContinuity/ContinuityReport_Contracts.md`
-4. `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`
+4. `doc/SolidWorks-Flow/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`
 5. `doc/Sessions/Session083.md`
 6. `doc/Sessions/Session085.md` (THIS REPORT)
 

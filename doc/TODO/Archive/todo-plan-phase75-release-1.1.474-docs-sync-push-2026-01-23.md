@@ -8,7 +8,7 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -19,7 +19,7 @@
 1. [DONE] Fix(core): не писать `.codeai-hub/.../continuity/.../chain.json` при простом open/attach; создавать/обновлять цепочку только при первом outbound сообщении в провайдера (user/system) — scope: `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/session-continuity/continuity-tracker.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): defer continuity chain until first message`
 2. [DONE] Git Commit: `fix(core): defer continuity chain until first message` (hash: 83007e57)
 
-3. [DONE] Docs: описать семантику “lazy continuity chain activation” — scope: `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(continuity): document lazy chain activation`
+3. [DONE] Docs: описать семантику “lazy continuity chain activation” — scope: `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`; expected commit message: `docs(continuity): document lazy chain activation`
 4. [DONE] Git Commit: `docs(continuity): document lazy chain activation` (hash: cedab00a)
 
 5. [DONE] Docs(session): зафиксировать результаты и гейты — scope: `doc/Sessions/Session045.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session045 continuity activation`
@@ -52,7 +52,7 @@
 ## Phase 75 — Release 1.1.474 docs sync + push (owner: Oleksandr, updated: 2026-01-22)
 
 ### Stream: Docs alignment (release notes)
-1. [DONE] Docs: обновить `README.md` и `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под релиз `1.1.474` (версии/артефакты/краткие изменения) — scope: `README.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs: update release docs for 1.1.474`
+1. [DONE] Docs: обновить `README.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под релиз `1.1.474` (версии/артефакты/краткие изменения) — scope: `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update release docs for 1.1.474`
 2. [DONE] Git Commit: `docs: update release docs for 1.1.474` (hash: 2392e652)
 
 ### Stream: SolidWorks-Flow sync

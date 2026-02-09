@@ -8,11 +8,11 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work (Codex only)
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
-3. `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md` (revised: source-of-truth = `token_count` in rollout JSONL)
-4. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md` (reference pattern + pitfalls)
-5. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md` (workspace scoping pitfalls)
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`
+3. `doc/SolidWorks-Flow/System/TokenUsage/CodexTokenUsage_Architecture.md` (revised: source-of-truth = `token_count` in rollout JSONL)
+4. `doc/SolidWorks-Flow/System/TokenUsage/ClaudeTokenUsage_Architecture.md` (reference pattern + pitfalls)
+5. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md` (workspace scoping pitfalls)
 6. `doc/Sessions/Session065.md` (token usage persistence via continuity)
 7. `doc/Sessions/Session068.md` (historical; `/status` approach superseded)
 8. `doc/Sessions/Session069.md` (plan cleanup + reading checklist)

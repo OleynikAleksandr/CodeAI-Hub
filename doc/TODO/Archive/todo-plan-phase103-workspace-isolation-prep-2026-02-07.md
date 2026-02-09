@@ -6,13 +6,13 @@
 - Каждая микрозадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
 - **Gates после каждой микрозадачи**: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка/тест затронутых пакетов.
 - После зелёных гейтов — Git Commit, затем сразу обновляем статусы/хеши в `doc/TODO/todo-plan.md`.
-- Любые изменения логики/архитектуры синхронно отражаются в документации (`doc/Project_Docs/**`) в том же коммите.
+- Любые изменения логики/архитектуры синхронно отражаются в документации (`doc/SolidWorks-Flow/System/**`) в том же коммите.
 - Любая фаза завершается только после чистого `git status` и фиксации session report.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
 4. `doc/TODO/Archive/todo-plan-phase100-continuity-ux-release-2026-02-06.md`
 5. `doc/Sessions/Session104.md`
 6. `doc/TODO/todo-plan.md` (THIS FILE)
@@ -22,7 +22,7 @@
 ## Phase 101 — Turn-End Continuity Lock Atomicity (owner: Oleksandr, updated: 2026-02-07)
 
 ### Stream: eliminate unlock gap before continuity relock + release
-1. [DONE] Docs(design): утвердить архитектурный контракт атомарного turn-end lock arbitration и синхронизировать cross-links в continuity/system docs (scope: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(continuity): define turn-end atomic lock arbitration contract`)
+1. [DONE] Docs(design): утвердить архитектурный контракт атомарного turn-end lock arbitration и синхронизировать cross-links в continuity/system docs (scope: `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(continuity): define turn-end atomic lock arbitration contract`)
 2. [DONE] Git Commit: `docs(continuity): define turn-end atomic lock arbitration contract` (hash: b96c6485)
 3. [DONE] Feat(core-arbitration): перенести проверку threshold/continuity decision перед unlock на границе `turn_completed` (без sequence `unlock -> relock`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): decide continuity before turn-end unlock`)
 4. [DONE] Git Commit: `fix(core): decide continuity before turn-end unlock` (hash: b58d7904)
@@ -48,7 +48,7 @@
 ## Phase 102 — Continuity Unlock + ACK Normalization Hotfix (owner: Oleksandr, updated: 2026-02-07)
 
 ### Stream: fix target-session unlock regression + normalize continuity ACK + release
-1. [DONE] Docs(design): зафиксировать hotfix-контракт по снятию lock после `continuity_lock=unlocked` и унификации internal ACK-фразы во всех continuity templates (scope: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`; expected commit message: `docs(continuity): define unlock resolution and ack normalization hotfix contract`)
+1. [DONE] Docs(design): зафиксировать hotfix-контракт по снятию lock после `continuity_lock=unlocked` и унификации internal ACK-фразы во всех continuity templates (scope: `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`; expected commit message: `docs(continuity): define unlock resolution and ack normalization hotfix contract`)
 2. [DONE] Git Commit: `docs(continuity): define unlock resolution and ack normalization hotfix contract` (hash: 6527c30e)
 3. [DONE] Fix(pm-rollover): устранить залипание `blocked` в новой session после `continuity_lock=unlocked` при `rollover.phase=resume_sent` (scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`; expected commit message: `fix(pm): clear rollover pending state after continuity unlock`)
 4. [DONE] Git Commit: `fix(pm): clear rollover pending state after continuity unlock` (hash: 5b7dbc76)
@@ -72,7 +72,7 @@
 ## Phase 103 — Core-first Immediate Input Lock Parity (owner: Oleksandr, updated: 2026-02-07)
 
 ### Stream: centralize immediate lock on send in Core + rollback on provider send error
-1. [DONE] Docs(design): зафиксировать контракт Core-first мгновенного lock (`turn_state=running` до `adapter.sendMessage`) и rollback в `idle` при send-error; синхронизировать continuity/system docs (scope: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(continuity): define core-first immediate lock and send-error rollback contract`)
+1. [DONE] Docs(design): зафиксировать контракт Core-first мгновенного lock (`turn_state=running` до `adapter.sendMessage`) и rollback в `idle` при send-error; синхронизировать continuity/system docs (scope: `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(continuity): define core-first immediate lock and send-error rollback contract`)
 2. [DONE] Git Commit: `docs(continuity): define core-first immediate lock and send-error rollback contract` (hash: 8f008571)
 3. [DONE] Feat(core-lock): централизовать мгновенную блокировку в `handleMessage` (emit `turn_state=running` до вызова `adapter.sendMessage`) для унификации поведения всех провайдеров (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): emit immediate running state before provider send`)
 4. [DONE] Git Commit: `fix(core): emit immediate running state before provider send` (hash: 0600aaac)

@@ -178,9 +178,9 @@
 
 **Назначение:** Вернуть thinking summary для кастомных схем и восстановить native thinking поток.
 
-1. [DONE] W5.B.1 Всегда извлекать `reasoning_summary_ru` из structured output (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`; DoD: summary эмитится как thinking даже для Idea Collector/кастомных схем) (commit: `fix(codex): parse reasoning summary in custom outputs`) (date: 2025-12-30)
+1. [DONE] W5.B.1 Всегда извлекать `reasoning_summary_ru` из structured output (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `doc/SolidWorks-Flow/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md`; DoD: summary эмитится как thinking даже для Idea Collector/кастомных схем) (commit: `fix(codex): parse reasoning summary in custom outputs`) (date: 2025-12-30)
 2. [DONE] Git Commit: `fix(codex): parse reasoning summary in custom outputs` (hash: c9cea9e)
-3. [DONE] W5.B.2 Восстановить native thinking из Codex SDK (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: SDK reasoning/events пробрасываются в UI как `thinking`) (commit: `fix(codex): surface native reasoning stream`) (date: 2025-12-30)
+3. [DONE] W5.B.2 Восстановить native thinking из Codex SDK (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; DoD: SDK reasoning/events пробрасываются в UI как `thinking`) (commit: `fix(codex): surface native reasoning stream`) (date: 2025-12-30)
 4. [DONE] Git Commit: `fix(codex): surface native reasoning stream` (hash: be2ee83)
 
 ---
@@ -195,7 +195,7 @@
 
 1. [DONE] W6.A.1 Синхронизировать контракт при старте ядра и отказаться от чтения документов агентом (scope: `packages/core/src/...`; DoD: ядро читает шаблоны, формирует контракт и гарантирует его передачу в Structured Output; агенту запрещено опираться на внешние документы) (commit: `feat(core): sync idea contract at startup`) (date: 2025-12-30)
 2. [DONE] Git Commit: `feat(core): sync idea contract at startup` (hash: af3c91c)
-3. [DONE] W6.A.2 Обновить документ универсального контракта интервью (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`; DoD: универсальные принципы, адаптивный сценарий, обязательные/опциональные секции, критерии Spec-ready) (commit: `docs(orchestrator): define universal idea interview contract`) (date: 2025-12-30)
+3. [DONE] W6.A.2 Обновить документ универсального контракта интервью (scope: `doc/SolidWorks-Flow/System/IdeaCollector_Universal_Contract.md`; DoD: универсальные принципы, адаптивный сценарий, обязательные/опциональные секции, критерии Spec-ready) (commit: `docs(orchestrator): define universal idea interview contract`) (date: 2025-12-30)
 4. [DONE] Git Commit: `docs(orchestrator): define universal idea interview contract` (hash: 9ae16b7)
 5. [DONE] W6.A.3 Универсализировать idea-template (scope: `~/.codeai-hub/templates/flows/full-development-flow/idea-template.md`; DoD: убрать привязку к Flow, добавить формулировки для микро‑модулей и фич) (commit: `feat(orchestrator): universalize idea template`) (date: 2025-12-30)
 6. [DONE] Git Commit: `feat(orchestrator): universalize idea template` (hash: N/A (global))
@@ -220,7 +220,7 @@
 
 **Назначение:** зафиксировать главную цель Idea.md (помочь Spec-агенту), добавить честную оценку готовности, и финализировать так, чтобы в UI/чате показывалась только краткая выжимка + путь, без полного текста Idea.md.
 
-1. [DONE] W7.A.1 Обновить документ контракта v2 (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`; DoD: описаны принципы «контракт результата, не сценарий», критерии Spec-ready/Blockers, правила финализации “файл создан” без публикации полного Idea.md) (commit: `docs(orchestrator): refine idea collector contract v2`) (date: 2025-12-31)
+1. [DONE] W7.A.1 Обновить документ контракта v2 (scope: `doc/SolidWorks-Flow/System/IdeaCollector_Universal_Contract.md`; DoD: описаны принципы «контракт результата, не сценарий», критерии Spec-ready/Blockers, правила финализации “файл создан” без публикации полного Idea.md) (commit: `docs(orchestrator): refine idea collector contract v2`) (date: 2025-12-31)
 2. [DONE] Git Commit: `docs(orchestrator): refine idea collector contract v2` (hash: 2f16b57)
 3. [DONE] W7.A.2 Добавить в контракт поля handoff/готовности (scope: `~/.codeai-hub/templates/schemas/idea-collector-schema.json`; DoD: `readiness.ready_for_spec` + `readiness.blockers[]`; `handoff_for_spec` (assumptions/decisions/open_questions/next_steps) и запрет авто‑“[x] готово”, если есть блокеры) (commit: `feat(orchestrator): add spec handoff fields to idea contract`) (date: 2025-12-31)
 4. [DONE] Git Commit: `feat(orchestrator): add spec handoff fields to idea contract` (hash: N/A (global))
@@ -243,7 +243,7 @@
 
 1. [DONE] W8.A.1 Перенести schema в Flow и обновить Core path (scope: `~/.codeai-hub/templates/flows/full-development-flow/schemas/idea-collector-schema.json`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; DoD: Core читает schema из flow‑папки, старый путь не используется) (commit: `fix(core): read idea collector schema from flow folder`) (date: 2025-12-31)
 2. [DONE] Git Commit: `fix(core): read idea collector schema from flow folder` (hash: b2499e9)
-3. [DONE] W8.A.2 Обновить документацию по контракту и архитектуре (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: зафиксировано, что schema живёт в `flows/full-development-flow/schemas/`) (commit: `docs(orchestrator): align flow-local schema path`) (date: 2025-12-31)
+3. [DONE] W8.A.2 Обновить документацию по контракту и архитектуре (scope: `doc/SolidWorks-Flow/System/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; DoD: зафиксировано, что schema живёт в `flows/full-development-flow/schemas/`) (commit: `docs(orchestrator): align flow-local schema path`) (date: 2025-12-31)
 4. [DONE] Git Commit: `docs(orchestrator): align flow-local schema path` (hash: dde3848)
 
 ---
@@ -264,9 +264,9 @@
 6. [DONE] Git Commit: `docs(ui): sync idea collector fallback for virtual simulation` (hash: dc81247)
 7. [DONE] W9.A.4 Обновить global templates под новую структуру и второй артефакт (scope: `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-prompt.md`, `~/.codeai-hub/templates/full-development-flow/idea/idea-template.md`, `~/.codeai-hub/templates/full-development-flow/idea/idea-collector-schema.json`; DoD: prompt/ schema учитывают virtual-simulation.md, файлы лежат в flow/stage папке) (commit: `feat(orchestrator): add virtual simulation artifact to idea contract`) (date: 2025-12-31)
 8. [DONE] Git Commit: `feat(orchestrator): add virtual simulation artifact to idea contract` (hash: N/A (global))
-9. [DONE] W9.A.5 Обновить документацию контракта и архитектуры (scope: `doc/Project_Docs/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; DoD: отражены два артефакта и flow/stage пути) (commit: `docs(orchestrator): document virtual simulation artifact`) (date: 2025-12-31)
+9. [DONE] W9.A.5 Обновить документацию контракта и архитектуры (scope: `doc/SolidWorks-Flow/System/IdeaCollector_Universal_Contract.md`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; DoD: отражены два артефакта и flow/stage пути) (commit: `docs(orchestrator): document virtual simulation artifact`) (date: 2025-12-31)
 10. [DONE] Git Commit: `docs(orchestrator): document virtual simulation artifact` (hash: ef252aa)
-11. [DONE] W9.A.6 Обновить README/CHANGELOG и пример Plan.md (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/knowledge/Образец Plan.md.md`; DoD: новые пути артефактов и session reports) (commit: `docs: update flow artifact paths`) (date: 2025-12-31)
+11. [DONE] W9.A.6 Обновить README/CHANGELOG и пример Plan.md (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/knowledge/Образец Plan.md.md`; DoD: новые пути артефактов и session reports) (commit: `docs: update flow artifact paths`) (date: 2025-12-31)
 12. [DONE] Git Commit: `docs: update flow artifact paths` (hash: 410ba58)
 
 ---
@@ -304,10 +304,10 @@
 ## 7. Обновляемые документы
 
 - [TODO] `.codeai-hub/orchestrator/idea.md`
-- [TODO] `doc/Project_Docs/knowledge/Автоматизация Flow разработки на основе Plan.md.md`
+- [TODO] `doc/SolidWorks-Flow/knowledge/Автоматизация Flow разработки на основе Plan.md.md`
 - [DONE] `doc/Architecture/Architecture.md` (date: 2025-12-30)
-- [DONE] `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (date: 2025-12-30)
-- [DONE] `doc/Project_Docs/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md` (date: 2025-12-30)
+- [DONE] `doc/SolidWorks-Flow/System/SystemArchitecture.md` (date: 2025-12-30)
+- [DONE] `doc/SolidWorks-Flow/Stacks/Codex_Thinking_RU_Summary_Structured_Outputs.md` (date: 2025-12-30)
 - [DONE] `README.md` (date: 2025-12-29)
 
 ---

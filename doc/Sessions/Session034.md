@@ -26,7 +26,7 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md` (Phase 65)
 3. `doc/TODO/Archive/todo-plan-phase64-2026-01-21.md` (архив предыдущего плана)
 4. `doc/Sessions/Session033.md` (контекст фикса vscode-webview + релиз 1.1.464)

@@ -22,7 +22,7 @@
 
 1. [DONE] Обновить README/CHANGELOG под v1.1.400 (scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare v1.1.400 release notes`) (date: 2026-01-10)
 2. [DONE] Git Commit: `docs: prepare v1.1.400 release notes` (hash: 5dd793b1) (date: 2026-01-10)
-3. [DONE] Обновить архитектурные документы под v1.1.400 (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs: update architecture for v1.1.400`) (date: 2026-01-10)
+3. [DONE] Обновить архитектурные документы под v1.1.400 (scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; commit: `docs: update architecture for v1.1.400`) (date: 2026-01-10)
 4. [DONE] Git Commit: `docs: update architecture for v1.1.400` (hash: 78a499a6) (date: 2026-01-10)
 5. [DONE] Выполнить release build v1.1.400 (build-all; scope: auto-generated release manifests + `package.json`/`package-lock.json`; commit: `feat: v1.1.400 - release build`) (date: 2026-01-10)
 6. [DONE] Git Commit: `feat: v1.1.400 - release build` (hash: f372508f) (date: 2026-01-10)

@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Прочитана анкета `.codeai-hub/codeai-hub/description/questionnaire.md` и pre-read `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`.
+- Прочитана анкета `.codeai-hub/codeai-hub/description/questionnaire.md` и pre-read `doc/SolidWorks-Flow/System/SystemArchitecture.md`.
 - Сформирован артефакт стадии Description: `.codeai-hub/codeai-hub/description/description.md` (module map + dependency arrows + open questions).
 - Прогнаны гейты качества:
   - `./scripts/check-architecture.sh` (PASS; warnings: 22 файла в зоне 250–300 строк; duplication < 3%)
@@ -30,7 +30,7 @@
 ## Required documents to review before work
 1. `.codeai-hub/codeai-hub/description/description.md`
 2. `.codeai-hub/codeai-hub/description/questionnaire.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/Sessions/Session111.md` (THIS REPORT)
 
 ## Plans for next session

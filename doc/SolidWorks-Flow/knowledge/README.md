@@ -26,5 +26,3 @@
 | Файл | Описание |
 |------|----------|
 | `codex-thinking-display.md` | Отображение размышлений Codex в UI |
-| `css-border-shorthand-react-inline-styles.md` | CSS border issue в React inline styles |
-| `idea-artifacts-run-context.md` | Run-контекст для idea-артефактов |

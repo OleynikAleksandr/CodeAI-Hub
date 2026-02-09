@@ -11,7 +11,7 @@
 ## Work summary
 - Реализованы UX fixes для Add Workspace (macOS Finder picker, сброс артефакта/анкеты при смене workspace, авто-открытие анкеты для пустого workspace).
 - Исправлен build-cef-launcher: чтение версии лаунчера из manifest.
-- Обновлены `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под версию 1.1.477.
+- Обновлены `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под версию 1.1.477.
 - Собран unified релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version`, артефакты скопированы в `doc/tmp/releases/`.
 
 ## Release artifacts
@@ -38,7 +38,7 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
 3. `doc/Sessions/Session053.md` (THIS REPORT)
 

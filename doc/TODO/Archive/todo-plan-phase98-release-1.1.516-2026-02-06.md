@@ -6,15 +6,15 @@
 - Каждая микрозадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
 - **Gates после каждой микрозадачи**: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка затронутого пакета/клиента.
 - После зелёных гейтов — Git Commit, затем сразу обновляем статусы/хеши в `doc/TODO/todo-plan.md`.
-- Любые изменения логики/архитектуры синхронно отражаются в документации (`doc/Project_Docs/**`) в том же коммите.
+- Любые изменения логики/архитектуры синхронно отражаются в документации (`doc/SolidWorks-Flow/System/**`) в том же коммите.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/Claude.md`
-3. `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
-4. `doc/Project_Docs/SessionContinuity/Claude_OneShot_Session_Architecture.md`
-5. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-6. `doc/Project_Docs/SessionContinuity/VirtualConversation_SeamlessContinuity_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/Claude.md`
+3. `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`
+4. `doc/SolidWorks-Flow/SessionContinuity/Core/Claude_OneShot_Session_Architecture.md`
+5. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
+6. `doc/SolidWorks-Flow/SessionContinuity/Core/VirtualConversation_SeamlessContinuity_Architecture.md`
 7. `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`
 8. `doc/SolidWorks-Flow/SessionContinuity/ContinuityReport_Contracts.md`
 9. `doc/Sessions/Session094.md`
@@ -32,11 +32,11 @@
 - Все текущие Claude-логи продолжают писаться; resume/rebind не должен обнулять лог-файл.
 
 ### Stream: design sync + docs freeze
-1. [DONE] Docs(arch): согласовать и зафиксировать архитектуру one-shot Claude на базе `Claude_OneShot_Session_Architecture.md` (scope: `doc/Project_Docs/SessionContinuity/Claude_OneShot_Session_Architecture.md`; expected commit message: `docs(arch): approve claude one-shot session architecture`)
+1. [DONE] Docs(arch): согласовать и зафиксировать архитектуру one-shot Claude на базе `Claude_OneShot_Session_Architecture.md` (scope: `doc/SolidWorks-Flow/SessionContinuity/Core/Claude_OneShot_Session_Architecture.md`; expected commit message: `docs(arch): approve claude one-shot session architecture`)
 2. [DONE] Git Commit: `docs(arch): approve claude one-shot session architecture` (hash: 5a4efdd5)
-3. [DONE] Docs(system): синхронизировать SystemArchitecture с новым Claude one-shot контрактом и continuity-инвариантами (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(system): align continuity contract for claude one-shot`)
+3. [DONE] Docs(system): синхронизировать SystemArchitecture с новым Claude one-shot контрактом и continuity-инвариантами (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`; expected commit message: `docs(system): align continuity contract for claude one-shot`)
 4. [DONE] Git Commit: `docs(system): align continuity contract for claude one-shot` (hash: 02c0e518)
-5. [DONE] Docs(stack): обновить стек Claude с описанием one-shot session lifecycle и resume semantics (scope: `doc/Project_Docs/Stacks/Claude.md`; expected commit message: `docs(stack): document claude one-shot session lifecycle`)
+5. [DONE] Docs(stack): обновить стек Claude с описанием one-shot session lifecycle и resume semantics (scope: `doc/SolidWorks-Flow/Stacks/Claude.md`; expected commit message: `docs(stack): document claude one-shot session lifecycle`)
 6. [DONE] Git Commit: `docs(stack): document claude one-shot session lifecycle` (hash: eb8a92b6)
 
 ### Stream: Claude session scaffold (queue-ready)

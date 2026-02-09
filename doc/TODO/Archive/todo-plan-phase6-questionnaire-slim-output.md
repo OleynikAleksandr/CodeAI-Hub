@@ -25,7 +25,7 @@
 
 ### Stream: Дизайн и bootstrap шаблона (Extension)
 
-1. [DONE] Архитектурный документ под анкетирование (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_UI_Architecture.md`; expected: согласованный документ с путями/контрактами/UX; commit: `docs(orchestrator): add questionnaire ui architecture`) (date: 2026-01-04)
+1. [DONE] Архитектурный документ под анкетирование (scope: `doc/SolidWorks-Flow/System/IdeaCollector_Questionnaire_UI_Architecture.md`; expected: согласованный документ с путями/контрактами/UX; commit: `docs(orchestrator): add questionnaire ui architecture`) (date: 2026-01-04)
 2. [DONE] Git Commit: `docs(orchestrator): add questionnaire ui architecture` (hash: 19d326b) (date: 2026-01-04)
 
 3. [DONE] Заархивировать старый `doc/TODO/todo-plan.md` и завести новый план (scope: `doc/TODO/Archive/todo-plan-phase9-and-e2e-checklist.md`, `doc/TODO/todo-plan.md`; expected: старый план в архиве, новый план отражает Questionnaire MVP) (commit: `docs(todo): archive old plan and start questionnaire mvp plan`) (date: 2026-01-04)
@@ -86,7 +86,7 @@
 5. [DONE] Обновить релизные документы под prompt-апдейт (scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`; expected: релиз 1.1.381 отражает архитектурные принципы в Idea prompt) (commit: `docs: update idea prompt release notes`) (date: 2026-01-04)
 6. [DONE] Git Commit: `docs: update idea prompt release notes` (hash: f607f11) (date: 2026-01-04)
 
-7. [DONE] Обновить системную архитектуру и версии (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected: версии/Release 1.1.381) (commit: `docs(orchestrator): refresh system architecture 1.1.381`) (date: 2026-01-04)
+7. [DONE] Обновить системную архитектуру и версии (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected: версии/Release 1.1.381) (commit: `docs(orchestrator): refresh system architecture 1.1.381`) (date: 2026-01-04)
 8. [DONE] Git Commit: `docs(orchestrator): refresh system architecture 1.1.381` (hash: 4b966be) (date: 2026-01-04)
 
 9. [DONE] Подготовить релиз 1.1.381 (scope: версии/манифесты/locks; expected: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`) (commit: `chore(release): prepare 1.1.381`) (date: 2026-01-04)
@@ -96,7 +96,7 @@
 
 ### Stream: Startup lock на первый turn (Codex)
 
-1. [DONE] Архитектурный документ: Startup lock для получения «своего» thread_id (scope: `doc/Project_Docs/Codex_ThreadId_StartupLock_Architecture.md`; expected: описана стратегия global mutex на первый `thread.runStreamed` до получения `thread_id`, инварианты и сценарии retry) (commit: `docs(codex): add startup lock thread binding architecture`) (date: 2026-01-05)
+1. [DONE] Архитектурный документ: Startup lock для получения «своего» thread_id (scope: `doc/SolidWorks-Flow/System/Codex_ThreadId_StartupLock_Architecture.md`; expected: описана стратегия global mutex на первый `thread.runStreamed` до получения `thread_id`, инварианты и сценарии retry) (commit: `docs(codex): add startup lock thread binding architecture`) (date: 2026-01-05)
 2. [DONE] Git Commit: `docs(codex): add startup lock thread binding architecture` (hash: b25e33c) (date: 2026-01-05)
 
 3. [DONE] Реализовать global startup lock для Codex до первого `thread.started` (scope: `packages/Codex_Module/src/messaging/codex-startup-lock.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`; expected: первый turn сериализован между сессиями Codex, thread_id фиксируется при первом `thread.started`, далее без lock) (commit: `fix(codex): serialize first turn until thread id bound`) (date: 2026-01-05)
@@ -111,7 +111,7 @@
 
 ### Stream: Архитектура и план
 
-1. [DONE] Архитектурный документ pre-read auto-attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описаны pipeline, компоненты, лимиты; commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture`) (date: 2026-01-05)
+1. [DONE] Архитектурный документ pre-read auto-attach (scope: `doc/SolidWorks-Flow/System/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описаны pipeline, компоненты, лимиты; commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture`) (date: 2026-01-05)
 2. [DONE] Git Commit: `docs(orchestrator): add questionnaire pre-read auto-attach architecture` (hash: 9c79206) (date: 2026-01-05)
 
 ### Stream: UI single-turn submit
@@ -146,7 +146,7 @@
 
 ### Stream: Документация релиза
 
-19. [DONE] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: описаны single-turn submit, pre-read auto-attach, лимиты; commit: `docs(orchestrator): document questionnaire pre-read auto-attach`) (date: 2026-01-05)
+19. [DONE] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: описаны single-turn submit, pre-read auto-attach, лимиты; commit: `docs(orchestrator): document questionnaire pre-read auto-attach`) (date: 2026-01-05)
 20. [DONE] Git Commit: `docs(orchestrator): document questionnaire pre-read auto-attach` (hash: bd66733) (date: 2026-01-05)
 
 21. [DONE] Обновить README + CHANGELOG под релиз 1.1.385 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.385 notes`) (date: 2026-01-05)
@@ -161,12 +161,12 @@
 1. [DONE] Исправить auto-attach: игнорировать шаблонные пути с `<...>` (scope: `packages/core/src/remote-bridge/handlers/workspace-auto-attach-extractor.ts`, `doc/TODO/todo-plan.md`; expected: анкета прикрепляется при prompt+submit; commit: `fix(core): ignore placeholder paths in auto-attach`) (date: 2026-01-05)
 2. [DONE] Git Commit: `fix(core): ignore placeholder paths in auto-attach` (hash: f7a1def)
 
-3. [DONE] Обновить архитектурный документ pre-read attach (scope: `doc/Project_Docs/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описан guard для шаблонных путей; commit: `docs(orchestrator): clarify auto-attach placeholder guard`) (date: 2026-01-05)
+3. [DONE] Обновить архитектурный документ pre-read attach (scope: `doc/SolidWorks-Flow/System/IdeaCollector_Questionnaire_PreRead_AutoAttach.md`, `doc/TODO/todo-plan.md`; expected: описан guard для шаблонных путей; commit: `docs(orchestrator): clarify auto-attach placeholder guard`) (date: 2026-01-05)
 4. [DONE] Git Commit: `docs(orchestrator): clarify auto-attach placeholder guard` (hash: 36a9c89)
 
 ### Stream: Release 1.1.386
 
-5. [DONE] Обновить Architecture + SystemArchitecture под hotfix (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: версия 1.1.386 + запись изменений; commit: `docs(orchestrator): refresh system docs 1.1.386`) (date: 2026-01-05)
+5. [DONE] Обновить Architecture + SystemArchitecture под hotfix (scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: версия 1.1.386 + запись изменений; commit: `docs(orchestrator): refresh system docs 1.1.386`) (date: 2026-01-05)
 6. [DONE] Git Commit: `docs(orchestrator): refresh system docs 1.1.386` (hash: f647261)
 
 7. [DONE] Обновить README + CHANGELOG под релиз 1.1.386 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.386 notes`) (date: 2026-01-05)
@@ -181,7 +181,7 @@
 
 ### Stream: Архитектура и план
 
-1. [DONE] Утвердить архитектуру slim-контракта (scope: `doc/Project_Docs/IdeaCollector_Slim_Structured_Output.md`, `doc/TODO/todo-plan.md`; expected: статус Approved + план работ; commit: `docs(orchestrator): approve slim structured output plan`) (date: 2026-01-05)
+1. [DONE] Утвердить архитектуру slim-контракта (scope: `doc/SolidWorks-Flow/System/IdeaCollector_Slim_Structured_Output.md`, `doc/TODO/todo-plan.md`; expected: статус Approved + план работ; commit: `docs(orchestrator): approve slim structured output plan`) (date: 2026-01-05)
 2. [DONE] Git Commit: `docs(orchestrator): approve slim structured output plan` (hash: 97a425b)
 
 ### Stream: Slim schema
@@ -201,7 +201,7 @@
 
 ### Stream: Документация и релиз
 
-9. [DONE] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: релиз 1.1.387 + описание slim-контракта; commit: `docs(orchestrator): document slim idea collector contract`) (date: 2026-01-05)
+9. [DONE] Обновить Architecture + SystemArchitecture (scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected: релиз 1.1.387 + описание slim-контракта; commit: `docs(orchestrator): document slim idea collector contract`) (date: 2026-01-05)
 10. [DONE] Git Commit: `docs(orchestrator): document slim idea collector contract` (hash: 5d854e7)
 
 11. [DONE] Обновить README + CHANGELOG под релиз 1.1.387 (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected: release notes; commit: `docs(release): update 1.1.387 notes`) (date: 2026-01-05)

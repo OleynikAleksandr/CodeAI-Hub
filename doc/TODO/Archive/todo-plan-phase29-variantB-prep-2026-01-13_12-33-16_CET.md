@@ -17,7 +17,7 @@
 
 ## Required documents to review before work
 1. `doc/Architecture/Architecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md`
 
 ## Phase 29 — TBD (owner: Oleksandr, updated: 2026-01-13)

@@ -44,7 +44,7 @@
 
 ## Required documents to review before work
 1. `doc/TODO/todo-plan.md` — текущие задачи и backlog
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — общая архитектура
+2. `doc/SolidWorks-Flow/System/SystemArchitecture.md` — общая архитектура
 3. `doc/Sessions/Session042.md` (THIS REPORT)
 
 ## Plans for next session

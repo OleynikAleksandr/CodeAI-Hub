@@ -77,13 +77,13 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
-3. `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+3. `doc/SolidWorks-Flow/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
 4. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
-5. `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`
+5. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 6. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
-7. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
+7. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
 8. `doc/TODO/todo-plan.md`
 9. `README.md`
 10. `CHANGELOG.md`

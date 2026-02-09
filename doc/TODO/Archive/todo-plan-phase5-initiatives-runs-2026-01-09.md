@@ -20,7 +20,7 @@
 
 ### Stream: Design baseline
 
-1. [DONE] Зафиксировать MVP архитектуру Initiatives/Runs (модель, пути, API, UI entry) (scope: `doc/Project_Docs/Initiatives_Runs_UI_Entry_Architecture.md`; commit: `docs(architecture): add initiatives and runs entry design`) (date: 2026-01-09)
+1. [DONE] Зафиксировать MVP архитектуру Initiatives/Runs (модель, пути, API, UI entry) (scope: `doc/SolidWorks-Flow/System/Initiatives_Runs_UI_Entry_Architecture.md`; commit: `docs(architecture): add initiatives and runs entry design`) (date: 2026-01-09)
 2. [DONE] Git Commit: `docs(architecture): add initiatives and runs entry design` (hash: e890e7f)
 
 ### Stream: Core — Initiatives + Runs storage
@@ -69,5 +69,5 @@
 
 ### Stream: Docs
 
-27. [DONE] Обновить системную архитектуру под Initiatives/Runs (пути, API, UI entry) (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): document initiatives and runs model`) (date: 2026-01-09)
+27. [DONE] Обновить системную архитектуру под Initiatives/Runs (пути, API, UI entry) (scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; commit: `docs(architecture): document initiatives and runs model`) (date: 2026-01-09)
 28. [DONE] Git Commit: `docs(architecture): document initiatives and runs model` (hash: 2e91cfb) (date: 2026-01-09)

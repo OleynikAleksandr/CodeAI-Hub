@@ -50,9 +50,9 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/UI_Modules.md`
-3. `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/UI_Modules.md`
+3. `doc/SolidWorks-Flow/WebviewSettings_FullSize_Layout_Architecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session076.md` (THIS REPORT)
 

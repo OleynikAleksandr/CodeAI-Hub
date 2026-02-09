@@ -16,7 +16,7 @@
   - в ветке Description показывается только один актуальный артефакт (questionnaire → draft → final);
   - авто-открытие `description.md`/`Final_Description.md` и скрытие анкеты при появлении draft/final.
 - Release: выполнен чистый `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` для **v1.1.462**.
-- Документация: обновлены `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; зафиксирован `doc/Sessions/Session030.md`.
+- Документация: обновлены `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; зафиксирован `doc/Sessions/Session030.md`.
 
 ## Verification
 - `./scripts/check-architecture.sh` (PASS with warnings)
@@ -54,7 +54,7 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
 3. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 4. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`

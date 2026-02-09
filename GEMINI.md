@@ -44,7 +44,7 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
 3. `doc/Sessions/Session<N>.md` (THIS REPORT)
 
@@ -60,7 +60,7 @@
 
 ## 3. Этап Проектирования (Design Phase)
 **Перед тем как создать или обновить `todo-plan.md`, необходимо:**
-1. **Создать или обновить Архитектурный документ** в `doc/Project_Docs/` (например, `doc/Project_Docs/NewFeature_Architecture.md`).
+1. **Создать или обновить Архитектурный документ** в `doc/SolidWorks-Flow/System/` (например, `doc/SolidWorks-Flow/System/NewFeature_Architecture.md`).
 2. В этом документе утвердить: проблему, решение, структуру классов, контракты.
 3. Только **после утверждения** этого документа пользователем, мы берем его за основу и нарезаем на Фазы и Стримы в `todo-plan.md`.
 
@@ -87,7 +87,7 @@ doc/TODO/Archive/
   - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
   - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке (например, Claude → Codex → core), чтобы локализовать ошибки без запуска `build-all`.
   - **Real-time Документация**: 
-Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
+Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/SolidWorks-Flow/System/SystemArchitecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
   - Phase завершается на чистом дереве: 
 запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
   - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
@@ -104,7 +104,7 @@ doc/TODO/Archive/
 ## 5. Цикл выполнения (Гейт Качества)
 Для каждой подзадачи Stream из `todo-plan.md`:
 1.  **Реализация**: Пиши код (помни: Микро-классы, Фасады, классы не более 300 строк).
-2.  **Документация (Real-time)**: Если меняется логика или архитектура — **ОБНОВИ** `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` (или другие доки) **ПРЯМО СЕЙЧАС**. Коммит должен содержать и код, и обновленную документацию.
+2.  **Документация (Real-time)**: Если меняется логика или архитектура — **ОБНОВИ** `doc/SolidWorks-Flow/System/SystemArchitecture.md` (или другие доки) **ПРЯМО СЕЙЧАС**. Коммит должен содержать и код, и обновленную документацию.
 3.  **Верификация**: Запусти **Обязательные Гейты**:
     ```bash
     ./scripts/check-architecture.sh  # ДОЛЖЕН ПРОЙТИ
@@ -121,11 +121,11 @@ doc/TODO/Archive/
 ## 6. Критические правила
 - **НИКОГДА** не обходи `check-architecture.sh`.
 - **НИКОГДА** не редактируй версии в `package.json` вручную (используй `build-all.sh`).
-- **ВСЕГДА** держи doc/Project_Docs/SystemArchitecture/SystemArchitecture.md и другие связанные с подзадачей документы из папки - doc/ в синхронизации с изменениями кода (в том же коммите).
+- **ВСЕГДА** держи doc/SolidWorks-Flow/System/SystemArchitecture.md и другие связанные с подзадачей документы из папки - doc/ в синхронизации с изменениями кода (в том же коммите).
 
 ## 7. Release Build Checklist
 0. Перед сборкой релиза актуализируй документы: в первую очередь `README.md` и `CHANGELOG.md`, а также связанные архитектурные материалы из `doc/`. Релиз собирается только для версии, указанной в этих документах.
-1. Перед началом убедись, что `npm install` выполнен — отсутствие зависимостей ломает `build:webview`/`build:web-client`.
+1. Перед началом убедись, что `npm install` выполнен — отсутствие зависимостей ломает `build:webview`.
 2. Закрой все микро‑задачи/стримы: для затронутых пакетов должны пройти таргетные `npm run build --workspace …` (или `npm run build:webview`, `npm run typecheck:webview`) + полный набор гейтов (архитектура, Ultracite, ts-prune, jscpd, check:links). Только после этого чистим рабочее дерево.
 3. Проверь, что `git status` пустой (никаких staged/unstaged). Версии пакетов/манифестов руками не меняем — это сделает скрипт.
 4. Выполни `./scripts/build-all.sh` из корня. Скрипт поднимет версии, пересоберёт Claude/Codex/Gemini, core, CEF launcher, UI и соберёт tarball’ы в `~/.codeai-hub/releases` и `doc/tmp/releases/`. Если что-то упало — исправь проблему и перезапусти **только** `build-all.sh`.

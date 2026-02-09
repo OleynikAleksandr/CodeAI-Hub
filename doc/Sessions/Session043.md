@@ -28,8 +28,8 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/System/SessionUI_SessionKind_And_Settings_Architecture.md`
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session043.md` (THIS REPORT)
 5. (Контекст) `doc/Sessions/Session042.md`
@@ -48,4 +48,4 @@
 ## Files changed (uncommitted)
 - `doc/TODO/Archive/todo-plan-phase71-2026-01-22.md` (new)
 - `doc/TODO/todo-plan.md` (updated: Phase 72 план)
-- `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md` (new)
+- `doc/SolidWorks-Flow/System/SessionUI_SessionKind_And_Settings_Architecture.md` (new)

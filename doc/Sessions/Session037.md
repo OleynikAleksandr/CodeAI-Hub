@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Сформирован артефакт стадии `description`: `.codeai-hub/codeai-hub/description/description.md` на основе анкеты и `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`.
+- Сформирован артефакт стадии `description`: `.codeai-hub/codeai-hub/description/description.md` на основе анкеты и `doc/SolidWorks-Flow/System/SystemArchitecture.md`.
 - Код не изменялся; коммиты не создавались.
 
 ## Git commits
@@ -21,7 +21,7 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
 3. `.codeai-hub/codeai-hub/description/description.md`
 4. `doc/Sessions/Session037.md` (THIS REPORT)

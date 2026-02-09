@@ -55,7 +55,7 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SessionUI_SessionKind_And_Settings_Architecture.md`
 2. `doc/TODO/todo-plan.md`
 3. `doc/Sessions/Session044.md` (THIS REPORT)
 

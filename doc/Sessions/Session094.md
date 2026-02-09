@@ -25,8 +25,8 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/Claude.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/Claude.md`
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session094.md` (THIS REPORT)
 
@@ -37,4 +37,4 @@ https://platform.claude.com/docs/en/agent-sdk/streaming-vs-single-mode
 
 Для получения полностью аналогичной архитектуры сессии через резюмэ как и у провайдера Codex -
 
-`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Project_Docs/Stacks/Codex_SDK_Module.md`
+`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`

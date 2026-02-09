@@ -8,11 +8,11 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`
-3. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
-4. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
-5. `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md` (THIS DESIGN)
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/System/WorkflowStateFastRestore_Architecture.md`
+3. `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+4. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
+5. `doc/SolidWorks-Flow/System/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md` (THIS DESIGN)
 6. `packages/core/src/unified-session/storage.ts` (workspaceKey rules)
 7. `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`
 8. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
@@ -25,7 +25,7 @@
 ## Phase 88 — Core-driven auto-resume (Last Active) + workspace-safe validation (owner: Oleksandr, updated: 2026-02-02)
 
 ### Stream: design + approval
-1. [DONE] Docs(architecture): согласовать Core-driven auto-resume (lastActive в workflow state, workspace identity rules, validation) — scope: `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`; expected commit message: `docs: approve core-driven auto-resume lastActive architecture`
+1. [DONE] Docs(architecture): согласовать Core-driven auto-resume (lastActive в workflow state, workspace identity rules, validation) — scope: `doc/SolidWorks-Flow/System/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`; expected commit message: `docs: approve core-driven auto-resume lastActive architecture`
 2. [DONE] Git Commit: `docs: approve core-driven auto-resume lastActive architecture` (hash: 74017a2f)
 
 ### Stream: workflow state lastActive

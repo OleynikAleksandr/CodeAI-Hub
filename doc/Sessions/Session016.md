@@ -17,7 +17,7 @@
 - ✅ `doc/TODO/todo-plan.md` обновлялся в реальном времени (статусы + commit hash).
 
 ## Key files changed (context restore)
-1. `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
+1. `doc/SolidWorks-Flow/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
 2. `packages/core/src/unified-session/storage.ts`
 3. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
 4. `packages/core/src/remote-bridge/handlers/questionnaire-curator-facade.ts`
@@ -47,8 +47,8 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session015.md`
 5. `doc/Sessions/Session016.md` (THIS REPORT)

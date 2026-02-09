@@ -37,8 +37,8 @@
 
 ## Required documents to review before work
 1. `doc/TODO/todo-plan.md`
-2. `doc/Project_Docs/SessionContinuity/VirtualConversation_SeamlessContinuity_Architecture.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/VirtualConversation_SeamlessContinuity_Architecture.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/Sessions/Session085.md`
 5. `doc/Sessions/Session086.md` (THIS REPORT)
 

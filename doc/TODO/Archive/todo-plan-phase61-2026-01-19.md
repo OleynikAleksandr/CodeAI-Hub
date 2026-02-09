@@ -8,7 +8,7 @@
 - **Commit** — только после зелёных гейтов.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
 3. `doc/Sessions/Session010.md` ← **КРИТИЧНО: содержит детали бага**
 
@@ -66,7 +66,7 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 ## Phase 62 — Questionnaire Curator (auto-merge Q/A into questionnaire) (owner: Oleksandr, updated: 2026-01-19)
 
 ### Stream: Design — Curator architecture
-1. [DONE] Doc: описать архитектуру “Questionnaire Curator” (источник данных: transcript; цель: append-only updates в `questionnaire.md`; идемпотентность; триггеры `approve/OK`); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: add questionnaire curator architecture`
+1. [DONE] Doc: описать архитектуру “Questionnaire Curator” (источник данных: transcript; цель: append-only updates в `questionnaire.md`; идемпотентность; триггеры `approve/OK`); scope: `doc/SolidWorks-Flow/System/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: add questionnaire curator architecture`
 2. [DONE] Git Commit: `docs: add questionnaire curator architecture` (hash: cc44daae)
 
 ### Stream: Core — capture per-run transcript
@@ -94,7 +94,7 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 2. [DONE] Git Commit: `fix(curator): target initiative questionnaire + sanitize output` (hash: c2818cf1)
 3. [DONE] Docs(templates): запретить эхо входных секций в prompt куратора + обновить bundled template; scope: `packages/agents/description-agent/assets/questionnaire-curator.md`, `packages/core/src/templates/bundled-templates.ts`; commit message: `docs(curator): prevent prompt echo`
 4. [DONE] Git Commit: `docs(curator): prevent prompt echo` (hash: e4e17df3)
-5. [DONE] Docs: синхронизировать архитектуру (session vs artifact workspace slug, очистка вывода); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: clarify curator workspace slugs`
+5. [DONE] Docs: синхронизировать архитектуру (session vs artifact workspace slug, очистка вывода); scope: `doc/SolidWorks-Flow/System/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: clarify curator workspace slugs`
 6. [DONE] Git Commit: `docs: clarify curator workspace slugs` (hash: 62e25b63)
 
 ### Stream: Curator simplification (session JSONL, no run transcript, no markers)
@@ -104,5 +104,5 @@ Gemini CLI возвращает свой `providerSessionId` при создан
 4. [DONE] Git Commit: `refactor(curator): use session jsonl and raw response` (hash: 9004ade3)
 5. [DONE] Docs(templates): обновить prompt куратора (без маркеров) + обновить bundled template; scope: `packages/agents/description-agent/assets/questionnaire-curator.md`, `packages/core/src/templates/bundled-templates.ts`; commit message: `docs(curator): simplify prompt output rules`
 6. [DONE] Git Commit: `docs(curator): simplify prompt output rules` (hash: 45cc8b95)
-7. [DONE] Docs: обновить архитектуру Questionnaire Curator (источник JSONL, отсутствие run transcript/markers); scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: refresh curator architecture`
+7. [DONE] Docs: обновить архитектуру Questionnaire Curator (источник JSONL, отсутствие run transcript/markers); scope: `doc/SolidWorks-Flow/System/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; commit message: `docs: refresh curator architecture`
 8. [DONE] Git Commit: `docs: refresh curator architecture` (hash: a2ad9f15)

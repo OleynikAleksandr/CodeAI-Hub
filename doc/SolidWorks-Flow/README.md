@@ -1,28 +1,36 @@
-# SolidWorks-Flow (CodeAI Workflow)
+# SolidWorks-Flow (CodeAI Hub)
 
-Эта папка содержит дизайн‑документы по **SolidWorks‑подобному Workflow Tree** для разработки ПО с использованием AI‑агентов.
+Эта папка — **единый поток документации** для CodeAI Hub с уклоном в FLOW-приложение (Project Manager / Workflow Tree). Здесь живут:
+- системная архитектура (source of truth),
+- стеки модулей/провайдеров,
+- workflow file-first контракты,
+- UI/UX и runtime-контракты SolidWorks‑подобного Workflow Tree.
 
-Цель — описать UI/UX и правила “жёсткой” последовательности шагов (как в CAD), чтобы разработка не превращалась в хаотичное перемещение по задачам как в голом Git.
+---
 
 ## Структура
-- `Architecture/` — архитектура и правила Workflow Tree (узлы, статусы, зависимости, “rebuild/simulation”).
-- `SessionContinuity/` — дизайн бесконечных сессий узлов (continuity/rollover).
-- `Rebuild/` — дизайн пропагации rebuild (OUTDATED/impacted узлы).
 
-## Обновления
-- 2026-02-09 (release 1.1.538): Gemini path `Description(one-shot) -> Reviewer(resume)` подтверждён рабочим; дальнейшие Gemini-модификации временно поставлены на паузу до внедрения надёжной telemetry remaining context window.
-- 2026-02-01 (release 1.1.480): Session UI: удалён TodoPanel; документы синхронизированы с текущим UI.
-- 2026-02-01 (release 1.1.493): Session history: восстановление диалога после рестарта Core/Project Manager и при multi-workspace (unified-session workspace scoping).
-- 2026-01-22 (release 1.1.474): подписи session-узлов в Workflow Tree и табах унифицированы и укорочены: `Description <Provider>` / `Reviewer <Provider>`.
-- 2026-01-17: шаги Описание/Virtual Simulation/Диаграмма модулей/Диаграмма фасадов разделены, сущность Idea выведена из терминологии.
-- 2026-01-16 (release 1.1.424): Spec/Plan/Execute выровнены по оси модуля, Orchestration остаётся вложенным шагом.
+- `System/` — системные документы (source of truth, навигация, shared контракты)
+- `Archive/` — исторические чеклисты/дизайн-черновики (не source of truth)
+- `Stacks/` — документация по модулям (Core/Claude/Codex/Gemini/UI/Launcher)
+- `Workflow/` — workflow file-first, watcher, шаги
+- `Architecture/` — UI/UX архитектура Workflow Tree (узлы, шаги, правила)
+- `WorkspaceRuntime/` — wire‑контракты и layered архитектура multi-workspace runtime
+- `SessionContinuity/` — continuity/rollover (Core‑контракты + FLOW‑аспекты)
+- `knowledge/` — практические руководства и справочники
 
-## Принципы
-- MVP: “полный SolidWorks” (Workflow Tree Workbench) реализуется в `project-manager` (CEF) и является единственным активным UI‑клиентом Core на период разработки FLOW.
-- `vscode-webview` используется только для Settings (Settings‑only, без сессий/чатов/подключения к Core).
-- `web-client` — legacy UI (PWA/CEF), принят план полного удаления вместе со сборкой/инсталляторами/ссылками (Phase 65).
-- Верхний уровень всегда `Repo (Assembly)`.
-- Рабочий контекст задачи — `Workspace (Project)`.
-- Реализация ведётся в кластерно‑модульной архитектуре:
-  - Модуль = “деталь”, наружу — только `*facade`.
-  - Внутри — микро‑классы (≤300 строк) и строгая декомпозиция.
+---
+
+## Быстрый доступ
+
+- Архитектура (source of truth): `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+- Стеки: `doc/SolidWorks-Flow/Stacks/`
+- Workflow file-first: `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+- Description → Reviewer: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
+- Workspace Runtime: `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+
+---
+
+## Операционные пометки
+
+- Gemini: сценарий `Description(one-shot) -> Reviewer(resume)` подтверждён в `1.1.538`, но дальнейшие Gemini‑расширения заморожены до появления надёжной telemetry remaining context window. Источник правды: `doc/SolidWorks-Flow/Stacks/Gemini_Reviewer_Resume_Architecture.md`.

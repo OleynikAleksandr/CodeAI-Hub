@@ -13,7 +13,7 @@
 - Согласовано решение уровня Core: на границе завершения turn сначала принимаем continuity decision, и только после этого выбираем `unlock` или переход в новый continuity lock (без последовательности `unlock -> relock`).
 - Завершённый `doc/TODO/todo-plan.md` (Phase 99/100) заархивирован в `doc/TODO/Archive/`.
 - Подготовлен новый архитектурный документ для реализации фикса:
-  - `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
+  - `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
 - Сформирован новый `doc/TODO/todo-plan.md` с `Phase 101` и единым Stream, который покрывает:
   - Core turn-end arbitration,
   - guard отправки в old session при rollover pending,
@@ -31,9 +31,9 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
 4. `doc/TODO/todo-plan.md` (Phase 101 source of truth)
 5. `doc/TODO/Archive/todo-plan-phase100-continuity-ux-release-2026-02-06.md` (closed phase baseline)
 6. `doc/Sessions/Session102.md` (previous release context)

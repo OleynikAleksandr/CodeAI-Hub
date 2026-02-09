@@ -8,7 +8,7 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/Sessions/Session122.md`
 3. `doc/TODO/todo-plan.md` (THIS FILE)
 
@@ -35,11 +35,11 @@
 2. [DONE] Git Commit: `test(lock): prevent unlock flicker when rollover starts after terminal turn` (hash: 55e8da47)
 
 ### Stream: Docs + QA Gates
-1. [DONE] Синхронно обновить архитектурные документы по новому guard и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document rollover-pending unlock guard and validate gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
+1. [DONE] Синхронно обновить архитектурные документы по новому guard и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document rollover-pending unlock guard and validate gates`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`)
 2. [DONE] Git Commit: `docs(architecture): document rollover-pending unlock guard and validate gates` (hash: d8c89139)
 
 ### Stream: Release Build
-1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 113 rollover unlock guard`)
+1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 113 rollover unlock guard`)
 2. [DONE] Git Commit: `docs(release): prepare release notes for phase 113 rollover unlock guard` (hash: fede609e)
 3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 113 rollover unlock guard`)
 4. [DONE] Git Commit: `chore(release): run build-all for phase 113 rollover unlock guard` (hash: 61053122)
@@ -63,11 +63,11 @@
 2. [DONE] Git Commit: `test(core): prevent turn-completed idle before async rollover arbitration resolves` (hash: 8adc1a51)
 
 ### Stream: Docs + QA Gates
-1. [DONE] Синхронно обновить архитектурные документы и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates`)
+1. [DONE] Синхронно обновить архитектурные документы и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates`)
 2. [DONE] Git Commit: `docs(architecture): document atomic turn-end dual-gate arbitration and validate gates` (hash: 1484df60)
 
 ### Stream: Release Build
-1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 114 atomic dual-gate fix`)
+1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit: `docs(release): prepare release notes for phase 114 atomic dual-gate fix`)
 2. [DONE] Git Commit: `docs(release): prepare release notes for phase 114 atomic dual-gate fix` (hash: 42fcac0b)
 3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 114 atomic dual-gate fix`)
 4. [DONE] Git Commit: `chore(release): run build-all for phase 114 atomic dual-gate fix` (hash: cfc19b9d)

@@ -44,7 +44,7 @@
 12. [DONE] Обновить релизные документы (README/CHANGELOG) под 1.1.391 (scope: `README.md`, `CHANGELOG.md`; commit: `docs(release): add 1.1.391 notes`) (date: 2026-01-07)
 13. [DONE] Git Commit: `docs(release): add 1.1.391 notes` (hash: a218e83) (date: 2026-01-07)
 
-14. [DONE] Обновить архитектурные документы + дизайн-док под Action Bar (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/UIFlow_EntrySelection_Architecture.md`; commit: `docs(architecture): align docs with flow action bar`) (date: 2026-01-07)
+14. [DONE] Обновить архитектурные документы + дизайн-док под Action Bar (scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/System/UIFlow_EntrySelection_Architecture.md`; commit: `docs(architecture): align docs with flow action bar`) (date: 2026-01-07)
 15. [DONE] Git Commit: `docs(architecture): align docs with flow action bar` (hash: 818ce65) (date: 2026-01-07)
 
 ### Stream: Release 1.1.391
@@ -79,7 +79,7 @@
 9. [DONE] Поднять версии и собрать tarball'ы через `./scripts/build-all.sh` (scope: manifests + workspaces; commit: `chore(release): bump versions to 1.1.392`) (date: 2026-01-07)
 10. [DONE] Git Commit: `chore(release): bump versions to 1.1.392` (hash: 6b0cbbd) (date: 2026-01-07)
 
-11. [DONE] Обновить релизные и архитектурные документы под 1.1.392 (scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(release): add 1.1.392 back navigation fix`) (date: 2026-01-07)
+11. [DONE] Обновить релизные и архитектурные документы под 1.1.392 (scope: `README.md`, `CHANGELOG.md`, `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; commit: `docs(release): add 1.1.392 back navigation fix`) (date: 2026-01-07)
 12. [DONE] Git Commit: `docs(release): add 1.1.392 back navigation fix` (hash: f2d7c3f) (date: 2026-01-07)
 
 13. [DONE] Собрать VSIX: `./scripts/build-release.sh --use-current-version` (scope: release script; expected: `codeai-hub-1.1.392.vsix`) (date: 2026-01-07)
@@ -102,7 +102,7 @@
 
 ### Stream: Docs + Release
 
-7. [DONE] Обновить архитектурные документы под новый релиз (scope: `doc/Architecture/Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; commit: `docs(architecture): update workflow docs for next release`) (date: 2026-01-08)
+7. [DONE] Обновить архитектурные документы под новый релиз (scope: `doc/Architecture/Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; commit: `docs(architecture): update workflow docs for next release`) (date: 2026-01-08)
 8. [DONE] Git Commit: `docs(architecture): update workflow docs for next release` (hash: b6e087f)
 
 9. [DONE] Обновить релизные документы (scope: `README.md`, `CHANGELOG.md`; commit: `docs(release): add 1.1.393 notes`) (date: 2026-01-08)

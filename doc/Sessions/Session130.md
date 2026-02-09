@@ -30,9 +30,9 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/Gemini_CLI_Runtime_Compatibility_Architecture.md`
-3. `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md (Appendix A: Runtime Compatibility)`
+3. `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session130.md` (THIS REPORT)
 

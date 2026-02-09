@@ -8,11 +8,11 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
-3. `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md` (THIS DESIGN)
-4. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md` (context: workflow state/events)
-5. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md` (context: restore + snapshots)
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
+3. `doc/SolidWorks-Flow/System/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md` (THIS DESIGN)
+4. `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md` (context: workflow state/events)
+5. `doc/SolidWorks-Flow/System/WorkflowStateFastRestore_Architecture.md` (context: restore + snapshots)
 6. `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`
 7. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
 8. `packages/core/src/workflow/description/description-step-store.ts`
@@ -24,7 +24,7 @@
 ## Phase 87 — Project Manager: reviewer auto-resume must be workspace-safe (owner: Oleksandr, updated: 2026-02-02 12:45)
 
 ### Stream: design + approval
-1. [DONE] Docs(architecture): утвердить дизайн workspace validation для auto-resume (Core pre-check + optional snapshot hardening) — scope: `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`; expected commit message: `docs: approve reviewer auto-resume workspace validation`
+1. [DONE] Docs(architecture): утвердить дизайн workspace validation для auto-resume (Core pre-check + optional snapshot hardening) — scope: `doc/SolidWorks-Flow/System/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`; expected commit message: `docs: approve reviewer auto-resume workspace validation`
 2. [DONE] Git Commit: `docs: approve reviewer auto-resume workspace validation` (hash: N/A - docs only, included in next commit)
 
 ### Stream: core validation (block cross-workspace resumes)

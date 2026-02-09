@@ -20,14 +20,14 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
 3. `doc/Sessions/Session014.md`
 4. `doc/Sessions/Session015.md` (THIS REPORT)
 
 ## Plans for next session
 - Реализовать Phase 62 последовательно:
-  - Stream: Design — создать `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md` и зафиксировать контракты (триггеры approve/OK, формат append-only секции, идемпотентность, источник transcript).
+  - Stream: Design — создать `doc/SolidWorks-Flow/QuestionnaireCurator/QuestionnaireCurator_Architecture.md` и зафиксировать контракты (триггеры approve/OK, формат append-only секции, идемпотентность, источник transcript).
   - Stream: Core — сохранять per-run transcript в `.codeai-hub/<workspaceSlug>/<stage>/runs/<runSlug>/transcript.jsonl`.
   - Stream: Curator — запуск отдельного “curator” процесса после approve/OK: читает transcript + анкету и дописывает `Clarifications log`.
   - Stream: Manual verification — 2 последовательных run для `description` и проверка, что второй run видит дополненную анкету.

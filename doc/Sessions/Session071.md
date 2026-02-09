@@ -25,11 +25,11 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`
-3. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
-4. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
-5. `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md` (THIS DESIGN)
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/WorkflowStateFastRestore_Architecture.md`
+3. `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+4. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
+5. `doc/SolidWorks-Flow/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md` (THIS DESIGN)
 6. `packages/core/src/unified-session/storage.ts` (workspaceKey derivation + fallback scan)
 7. `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`
 8. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`

@@ -8,8 +8,8 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/System/TokenUsage/ClaudeTokenUsage_Architecture.md`
 3. `doc/Sessions/Session059.md`
 4. `doc/TODO/todo-plan.md` (THIS FILE)
 
@@ -18,7 +18,7 @@
 ## Phase 83 — Claude: real-time token usage + continuity trigger threshold (owner: Oleksandr, updated: 2026-02-01)
 
 ### Stream: bootstrap (docs + plan)
-1. [DONE] Docs(todo): заархивировать предыдущий `todo-plan.md`, создать новый план Phase 83 и добавить архитектурный документ по token usage — scope: `doc/TODO/Archive/todo-plan-phase82.md`, `doc/TODO/todo-plan.md`, `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`; expected commit message: `docs(todo): start Phase 83 claude token usage`
+1. [DONE] Docs(todo): заархивировать предыдущий `todo-plan.md`, создать новый план Phase 83 и добавить архитектурный документ по token usage — scope: `doc/TODO/Archive/todo-plan-phase82.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-Flow/System/TokenUsage/ClaudeTokenUsage_Architecture.md`; expected commit message: `docs(todo): start Phase 83 claude token usage`
 2. [DONE] Git Commit: `docs(todo): start Phase 83 claude token usage` (hash: 9bc8e363)
 
 ### Stream: token usage pipeline (Claude Agent SDK)
@@ -51,7 +51,7 @@
 18. [DONE] Git Commit: `chore: verify claude token usage + continuity threshold` (hash: b6f11c16)
 
 ### Stream: release
-19. [DONE] Release: обновить `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под новую версию — scope: docs; expected commit message: `docs: update release notes`
+19. [DONE] Release: обновить `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под новую версию — scope: docs; expected commit message: `docs: update release notes`
 20. [DONE] Git Commit: `docs: update release notes` (hash: 6888ef27)
 
 21. [DONE] Release: собрать unified релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` (артефакты в `doc/tmp/releases/`) — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`

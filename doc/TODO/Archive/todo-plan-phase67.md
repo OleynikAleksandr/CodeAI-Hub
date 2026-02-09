@@ -8,8 +8,8 @@
 - Коммит делаем только после зелёных гейтов; сразу обновляем статусы и hash.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/System/WorkflowStateFastRestore_Architecture.md`
+2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md` (THIS FILE)
 4. `doc/Sessions/Session039.md`
 
@@ -18,7 +18,7 @@
 ## Phase 67 — Workflow Tree fast restore after Core restart (owner: Oleksandr, updated: 2026-01-21)
 
 ### Stream: Design — MVP contract approval
-1. [DONE] Docs: утвердить MVP-контракт восстановления workflow дерева через `workspacePath` в `workflow-state` API; зафиксировать критерии решения по “сложному варианту” (persist workflow state) — scope: `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`; expected commit message: `docs(arch): approve workflow-state fast restore MVP`
+1. [DONE] Docs: утвердить MVP-контракт восстановления workflow дерева через `workspacePath` в `workflow-state` API; зафиксировать критерии решения по “сложному варианту” (persist workflow state) — scope: `doc/SolidWorks-Flow/System/WorkflowStateFastRestore_Architecture.md`; expected commit message: `docs(arch): approve workflow-state fast restore MVP`
 2. [DONE] Git Commit: `docs(arch): approve workflow-state fast restore MVP` (hash: ea850b5e)
 
 ### Stream: MVP Fix — pass workspacePath to workflow-state

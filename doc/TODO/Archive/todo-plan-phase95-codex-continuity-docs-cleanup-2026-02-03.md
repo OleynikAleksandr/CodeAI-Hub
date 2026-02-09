@@ -8,10 +8,10 @@
 - После зелёных гейтов — Git Commit, затем сразу обновляем статусы/хеши в `doc/TODO/todo-plan.md` отдельным коммитом.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`
-4. `doc/Project_Docs/Stacks/UI_Modules.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Core/CodexSessionContinuity_Settings_Architecture.md`
+4. `doc/SolidWorks-Flow/Stacks/UI_Modules.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -19,7 +19,7 @@
 ## Phase 94 — Settings: Codex Session Continuity threshold (future trigger) (owner: Oleksandr, updated: 2026-02-03)
 
 ### Stream: design + approval
-1. [DONE] Docs(architecture): согласовать дизайн Codex Session Continuity threshold — scope: `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`; expected commit message: `docs: approve codex session continuity settings architecture`
+1. [DONE] Docs(architecture): согласовать дизайн Codex Session Continuity threshold — scope: `doc/SolidWorks-Flow/SessionContinuity/Core/CodexSessionContinuity_Settings_Architecture.md`; expected commit message: `docs: approve codex session continuity settings architecture`
 2. [DONE] Git Commit: `docs: approve codex session continuity settings architecture` (hash: 0a1a57b0)
 
 ### Stream: implementation (extension settings schema)
@@ -38,9 +38,9 @@
 11. [DONE] Release: на чистом дереве запустить `./scripts/build-all.sh` и перенести tarball’ы в `doc/tmp/releases/` — scope: scripts + generated manifests/lockfiles; expected commit message: `chore(release): build-all next version`
 12. [DONE] Git Commit: `chore(release): build-all next version` (hash: 4a6278f4)
 13. [DONE] Release: на чистом дереве запустить `./scripts/build-release.sh --use-current-version` и зафиксировать `codeai-hub-<version>.vsix` — scope: scripts + release artifacts; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
-14. [DONE] Docs: sync release docs (strictly after build): `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for codex session continuity setting`
+14. [DONE] Docs: sync release docs (strictly after build): `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` — scope: docs-only; expected commit message: `docs: update release notes for codex session continuity setting`
 15. [DONE] Git Commit: `docs: update release notes for codex session continuity setting` (hash: e92ef2c9)
-16. [DONE] Docs: update Project Docs index (new release): `doc/Project_Docs/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for latest release`
+16. [DONE] Docs: update Project Docs index (new release): `doc/SolidWorks-Flow/System/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for latest release`
 17. [DONE] Git Commit: `docs: bump Project Docs index for latest release` (hash: 95658668)
 
 ### Stream: verification (manual)
@@ -52,11 +52,11 @@
 ## Phase 95 — Docs: remove obsolete Project_Docs refactor designs (owner: Oleksandr, updated: 2026-02-03)
 
 ### Stream: docs hygiene (Project_Docs)
-1. [DONE] Docs: удалить устаревшие архитектурные документы, подготовленные под уже завершённые рефакторинги (часть 1) — scope: `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`, `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`, `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`; expected commit message: `docs: remove superseded refactor architecture docs`
+1. [DONE] Docs: удалить устаревшие архитектурные документы, подготовленные под уже завершённые рефакторинги (часть 1) — scope: `doc/SolidWorks-Flow/System/WebviewSettings_FullSize_Layout_Architecture.md`, `doc/SolidWorks-Flow/System/WorkflowStateFastRestore_Architecture.md`, `doc/SolidWorks-Flow/System/SessionUI_SessionKind_And_Settings_Architecture.md`; expected commit message: `docs: remove superseded refactor architecture docs`
 2. [DONE] Git Commit: `docs: remove superseded refactor architecture docs` (hash: 507717f6)
-3. [DONE] Docs: удалить устаревшие документы Project Manager (часть 2) — scope: `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`, `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`, `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: remove legacy project-manager architecture docs`
+3. [DONE] Docs: удалить устаревшие документы Project Manager (часть 2) — scope: `doc/SolidWorks-Flow/System/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`, `doc/SolidWorks-Flow/System/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`, `doc/SolidWorks-Flow/System/ProjectManager/AddWorkspace_Architecture.md`; expected commit message: `docs: remove legacy project-manager architecture docs`
 4. [DONE] Git Commit: `docs: remove legacy project-manager architecture docs` (hash: 97a64bcd)
-5. [DONE] Docs: удалить TokenUsage дизайн-доки и неапрувнутый draft (часть 3) — scope: `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`, `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md`, `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; expected commit message: `docs: remove obsolete token-usage and draft docs`
+5. [DONE] Docs: удалить TokenUsage дизайн-доки и неапрувнутый draft (часть 3) — scope: `doc/SolidWorks-Flow/System/TokenUsage/ClaudeTokenUsage_Architecture.md`, `doc/SolidWorks-Flow/System/TokenUsage/CodexTokenUsage_Architecture.md`, `doc/SolidWorks-Flow/System/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; expected commit message: `docs: remove obsolete token-usage and draft docs`
 6. [DONE] Git Commit: `docs: remove obsolete token-usage and draft docs` (hash: 9109bf78)
 
 ### Stream: session report

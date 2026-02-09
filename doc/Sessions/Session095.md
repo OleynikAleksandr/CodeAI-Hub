@@ -44,9 +44,9 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/Claude.md`
-3. `doc/Project_Docs/SessionContinuity/Claude_OneShot_Session_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/Claude.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Claude_OneShot_Session_Architecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session095.md` (THIS REPORT)
 

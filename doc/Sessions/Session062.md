@@ -40,8 +40,8 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/TokenUsage/ClaudeTokenUsage_Architecture.md`
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session062.md` (THIS REPORT)
 

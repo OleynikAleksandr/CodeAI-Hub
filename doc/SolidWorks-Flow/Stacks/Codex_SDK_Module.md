@@ -68,7 +68,7 @@ CodeAI-Hub Core  →  Codex Provider Adapter  →  @openai/codex-sdk  →  codex
    - When CodeAI Hub has a saved per-model reasoning level, it passes `--config model_reasoning_effort=<level>` per turn (runtime override, no edits to `~/.codex/config.toml`).
 6. Inputs may be a simple prompt (`string`) or an array of `{ type: "text" | "local_image" }`. Text entries are concatenated; image paths are converted to repeated `--image` flags.
 7. Structured outputs require passing a JSON schema per turn; the SDK writes it to a temp file and cleans up afterward.
-8. Thinking в UI в MVP берётся из native reasoning событий провайдера; RU thinking summary через отдельное поле structured output не используется (подробнее: `doc/Project_Docs/knowledge/kb/codex-thinking-display.md`).
+8. Thinking в UI в MVP берётся из native reasoning событий провайдера; RU thinking summary через отдельное поле structured output не используется (подробнее: `doc/SolidWorks-Flow/knowledge/kb/codex-thinking-display.md`).
 
 Error handling:
 - CLI non-zero exit → SDK rejects with aggregated stderr (`Codex Exec exited with code ...`).
@@ -164,7 +164,7 @@ Implications for CodeAI-Hub:
 ---
 
 ## 12. Reference Links
-- CodeAI Hub structured outputs + thinking UX: `doc/Project_Docs/knowledge/kb/codex-thinking-display.md`
+- CodeAI Hub structured outputs + thinking UX: `doc/SolidWorks-Flow/knowledge/kb/codex-thinking-display.md`
 - Codex SDK overview: https://developers.openai.com/codex/sdk
 - TypeScript SDK docs: https://developers.openai.com/codex/sdk#typescript-library
 - GitHub repository: https://github.com/openai/codex

@@ -13,7 +13,7 @@
 - Подтверждён механизм: блокировка ввода зависит от `connectionState === "running"` (который обновляется из `turn_state` в `session:stream`). Если terminal-событие (`turn_state=idle`/unlock) теряется или не применяется, UI остаётся заблокирован.
 - Выявлена системная причина класса ошибок: изоляция через фильтрацию событий может приводить к потере terminal-маркеров для конкретного scoped-клиента, а stale runtime-состояние затем не пересчитывается автоматически.
 - Сформулирован правильный целевой подход: изоляция workspace по конструкции (шардирование runtime/store) + контракт `snapshot-first` (полный снапшот при выборе workspace, затем delta-stream с курсором), чтобы stale состояния автоматически исчезали при переподписке.
-- Создан и затем уточнён архитектурный документ под SolidWorks-Flow: `doc/SolidWorks-Flow/WorkspaceRuntime_LayeredArchitecture.md`.
+- Создан и затем уточнён архитектурный документ под SolidWorks-Flow: `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`.
 - Тесты/гейты в рамках этой сессии не запускались (изменения только в документации).
 
 ## Git commits
@@ -29,9 +29,9 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/SolidWorks-Flow/WorkspaceRuntime_LayeredArchitecture.md`
-2. `doc/Project_Docs/SessionIsolation/ProjectManager_WorkspaceScopedSessionIsolation_Architecture.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+2. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session112.md` (THIS REPORT)
 

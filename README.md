@@ -43,7 +43,7 @@ cd CodeAI-Hub
 npm install
 ```
 
-Перед запуском прочитайте [Provider Setup Guide](doc/Project_Docs/knowledge/guides/ProviderSetupGuide.md) и установите/аутентифицируйте необходимые CLI под своей учётной записью.
+Перед запуском прочитайте [Provider Setup Guide](doc/SolidWorks-Flow/knowledge/guides/ProviderSetupGuide.md) и установите/аутентифицируйте необходимые CLI под своей учётной записью.
 
 ## Development Workflow
 1. **Install dependencies**

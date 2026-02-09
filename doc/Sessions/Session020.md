@@ -26,19 +26,19 @@
   - убраны термины `Run/currentRunId` из доменной модели дерева
   - зафиксировано правило `Edit Step` вместо runs
   - обновлён канон путей `.codeai-hub/<workspaceSlug>/<stage>/<file>`
-- `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`
+- `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
   - цели: убрать runs, заменить на `Edit Step`
   - пути артефактов без `runs/`
 - `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
   - draft как временный файл `description.md`
   - финальный source-of-truth: `Final_Description.md`
   - добавлено правило: после `Final_Description.md` допустимо удалить `description.md`
-- `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+- `doc/SolidWorks-Flow/System/SystemArchitecture.md`
   - обновлено: file-first workflow пишет в `.codeai-hub/<workspaceSlug>/<stage>/...` (без runs)
-- `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+- `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
   - обновлено: watcher следит за `.codeai-hub/<workspaceSlug>/**` (без runs)
   - события `workflow.step.started/edited` вместо `workflow.run.created`
-- `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
+- `doc/SolidWorks-Flow/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
   - концептуально убран `runSlug` → curator должен работать по **checkpoint (session finalize)**
 
 ## 1.3. TODO Plan Sync (Phase 63)
@@ -118,12 +118,12 @@
 1. `doc/TODO/todo-plan.md` (Phase 63 — source of truth)
 2. `doc/Sessions/Session020.md` (THIS REPORT)
 3. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
-4. `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`
+4. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 5. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
-6. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-7. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
-8. `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
-9. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
+6. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+7. `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+8. `doc/SolidWorks-Flow/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
+9. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
 
 ## 4.2 Plan for next session (приоритет: убрать `runSlug` из session context)
 

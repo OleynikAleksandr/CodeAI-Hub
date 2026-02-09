@@ -18,8 +18,8 @@
   - internal ACK phrase: `Ready to continue working.`
   - Matrix Rain цвет: единый `#00ff41`, `alpha: 0.30` (приглушение 70%)
   - wait-copy цвет: provider color из табов, `alpha: 0.70` (приглушение 30%)
-- Создан отдельный архитектурный документ реализации Matrix Rain:
-  - `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_MatrixRain_InputField_Animation_Architecture.md`
+- Детали реализации Matrix Rain зафиксированы в каноническом документе:
+  - `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
@@ -30,10 +30,10 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
-4. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_MatrixRain_InputField_Animation_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
+3. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+4. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session100.md`
 7. `doc/Sessions/Session101.md` (THIS REPORT)
@@ -49,10 +49,10 @@
 
 ## A. Planning and architecture artifacts
 - [doc/TODO/todo-plan.md](../TODO/todo-plan.md)
-- [doc/Project_Docs/SystemArchitecture/SystemArchitecture.md](../Project_Docs/SystemArchitecture/SystemArchitecture.md)
-- [doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md](../Project_Docs/SessionContinuity/SessionContinuity_Architecture.md)
-- [doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md](../Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md)
-- [doc/Project_Docs/SessionContinuity/FlowNodeContinuity_MatrixRain_InputField_Animation_Architecture.md](../Project_Docs/SessionContinuity/FlowNodeContinuity_MatrixRain_InputField_Animation_Architecture.md)
+- [doc/SolidWorks-Flow/System/SystemArchitecture.md](../SolidWorks-Flow/System/SystemArchitecture.md)
+- [doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md](../SolidWorks-Flow/SessionContinuity/SessionContinuity.md)
+- [doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md](../SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md)
+- [doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md](../SolidWorks-Flow/SessionContinuity/SessionContinuity.md)
 
 ## B. Continuity templates and ACK pipeline artifacts
 - [assets/flow/continuity/resume.md](../../assets/flow/continuity/resume.md)
@@ -94,7 +94,7 @@
 # 4. Current Working Tree State
 
 - Modified: `doc/TODO/todo-plan.md`
-- New: `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_MatrixRain_InputField_Animation_Architecture.md`
+- Updated: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
 - New: `doc/Sessions/Session101.md`
 
 Recommendation for next session start:

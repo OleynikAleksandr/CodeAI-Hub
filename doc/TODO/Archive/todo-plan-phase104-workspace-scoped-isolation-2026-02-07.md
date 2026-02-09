@@ -6,16 +6,16 @@
 - Каждая микрозадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
 - **Gates после каждой микрозадачи**: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка/тест затронутых пакетов.
 - После зелёных гейтов — Git Commit, затем сразу обновляем статусы/хеши в `doc/TODO/todo-plan.md`.
-- Любые изменения логики/архитектуры синхронно отражаются в документации (`doc/Project_Docs/**`) в том же коммите.
+- Любые изменения логики/архитектуры синхронно отражаются в документации (`doc/SolidWorks-Flow/System/**`) в том же коммите.
 - Любая фаза завершается только после чистого `git status` и фиксации session report.
 - **Критический non-regression**: нельзя ломать возможность открыть любую существующую сессию из дерева workspace после перезапуска Core/компьютера.
 - **Workspace scope (CRITICAL)**: в Project Manager любые `session:*` события, вкладки и активная сессия должны быть строго scoped по выбранному `workspacePath` (абсолютный путь). `workspaceSlug` — metadata/workflow id, но не ключ изоляции.
 - **Defence-in-depth (CRITICAL)**: даже при ошибке bridge или гонках событий UI не должен рендерить/фокусить/отправлять сообщения в out-of-scope сессию.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
 4. `doc/Sessions/Session109.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 
@@ -24,7 +24,7 @@
 ## Phase 104 — Project Manager Workspace-Scoped Session/Event Isolation (owner: Oleksandr, updated: 2026-02-07)
 
 ### Stream: design contract for strict workspace isolation + persistence non-regression
-1. [DONE] Docs(design): зафиксировать архитектурный контракт строгой workspace-изоляции для PM/Core (видимость только выбранного workspace; scope key = `workspacePath` absolute; scoped delivery всех `session:*` включая `session:created|message|history|binding|deleted|stream|error`; active session invariants + reconciliation; hard send guard; defence-in-depth UI-side filter; ordering: PM отправляет `workspace:scope:set` немедленно при выборе workspace и ДО `workspace-activate`/resume/create, повторяет на reconnect и сбрасывает при отсутствии выбранного workspace; race-avoidance: определить детерминированный способ не потерять resume/`session:created` при переключении scope, например через ack/handshake или через возврат resumed session в HTTP-ответе `workspace-activate`) и синхронизировать SystemArchitecture (scope: `doc/Project_Docs/SessionIsolation/ProjectManager_WorkspaceScopedSessionIsolation_Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(architecture): define workspace-scoped session isolation contract for project manager`)
+1. [DONE] Docs(design): зафиксировать архитектурный контракт строгой workspace-изоляции для PM/Core (видимость только выбранного workspace; scope key = `workspacePath` absolute; scoped delivery всех `session:*` включая `session:created|message|history|binding|deleted|stream|error`; active session invariants + reconciliation; hard send guard; defence-in-depth UI-side filter; ordering: PM отправляет `workspace:scope:set` немедленно при выборе workspace и ДО `workspace-activate`/resume/create, повторяет на reconnect и сбрасывает при отсутствии выбранного workspace; race-avoidance: определить детерминированный способ не потерять resume/`session:created` при переключении scope, например через ack/handshake или через возврат resumed session в HTTP-ответе `workspace-activate`) и синхронизировать SystemArchitecture (scope: `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(architecture): define workspace-scoped session isolation contract for project manager`)
 2. [DONE] Git Commit: `docs(architecture): define workspace-scoped session isolation contract for project manager` (hash: 5ae2d255)
 
 ### Stream: PM UI hard guards against cross-workspace session focus leaks

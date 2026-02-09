@@ -16,8 +16,8 @@ src/
 
 ## Current Status
 - Base package scaffold + source layout created.
-- Architecture reference: `doc/Project_Docs/Stacks/Claude_Agent_SDK_Module.md`.
-- Task tracker: `doc/TODO/todo-plan_Claude_Module.md`.
+- Architecture reference: `doc/SolidWorks-Flow/Stacks/Claude.md`.
+- Task tracker: `doc/TODO/todo-plan.md`.
 
 ## Next Steps
 1. Plug in real SDK runner (load @anthropic-ai/claude-agent-sdk query function, capture async iterator).

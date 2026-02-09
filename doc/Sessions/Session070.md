@@ -106,8 +106,8 @@ const info = payload.info;  // correct
 # 4. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/TokenUsage/CodexTokenUsage_Architecture.md`
 3. `doc/Sessions/Session070.md` (THIS REPORT)
 
 ## Plans for next session

@@ -7,13 +7,13 @@
 - Gates после каждой микрозадачи: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`
-3. `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
+3. `doc/SolidWorks-Flow/System/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`
 4. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
-5. `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`
+5. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 6. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
-7. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
+7. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
 8. `doc/TODO/todo-plan.md`
 
 ---
@@ -29,21 +29,21 @@
 2. [DONE] Git Commit: `docs: add session 019 and phase 62 plan` (hash: 4840a5e8)
 
 ### Stream: Design — Description lifecycle (tree UI + persisted progress)
-1. [DONE] Doc: уточнить алгоритм шага `Description` (треугольник + цвета TODO/IN_PROGRESS/DONE, persisted `questionnaire.md`, resume sessions, авто-старт reviewer, `Final_Description.md` как единственный source-of-truth; статусы BLOCKED/ERROR/OUTDATED — отложить) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs(workflow-tree): refine description step lifecycle`
+1. [DONE] Doc: уточнить алгоритм шага `Description` (треугольник + цвета TODO/IN_PROGRESS/DONE, persisted `questionnaire.md`, resume sessions, авто-старт reviewer, `Final_Description.md` как единственный source-of-truth; статусы BLOCKED/ERROR/OUTDATED — отложить) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(workflow-tree): refine description step lifecycle`
 2. [DONE] Git Commit: `docs(workflow-tree): refine description step lifecycle` (hash: b8ccbbe2)
 
 ### Stream: Design — Runs policy (history vs current)
-1. [DONE] Doc: уточнить политику `runs` (0..N как история; в UI показывать только текущий артефакт; vNext: pruning до последнего run) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`; expected commit message: `docs(workflow-tree): clarify runs policy` (obsolete: superseded by Phase 63)
+1. [DONE] Doc: уточнить политику `runs` (0..N как история; в UI показывать только текущий артефакт; vNext: pruning до последнего run) — scope: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(workflow-tree): clarify runs policy` (obsolete: superseded by Phase 63)
 2. [DONE] Git Commit: `docs(workflow-tree): clarify runs policy` (hash: f14a1ccf)
 
 ### Stream: Docs — Step branches for all steps
-1. [DONE] Doc: зафиксировать правило “каждый Step — треугольник + ветка актуальных артефактов/сессий (persisted), ветка обновляется по мере прохождения” — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(workflow-tree): apply step branch pattern`
+1. [DONE] Doc: зафиксировать правило “каждый Step — треугольник + ветка актуальных артефактов/сессий (persisted), ветка обновляется по мере прохождения” — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(workflow-tree): apply step branch pattern`
 2. [DONE] Git Commit: `docs(workflow-tree): apply step branch pattern` (hash: 4c6eeaed)
 
 ### Stream: Design — Session Continuity (CRITICAL)
-1. [DONE] Doc: описать модуль `Session Continuity` (handoff-отчёт при <=25% контекста, rollover в новую сессию, agent-specific instructions) — scope: `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`; expected commit message: `docs(session-continuity): add architecture`
+1. [DONE] Doc: описать модуль `Session Continuity` (handoff-отчёт при <=25% контекста, rollover в новую сессию, agent-specific instructions) — scope: `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`; expected commit message: `docs(session-continuity): add architecture`
 2. [DONE] Git Commit: `docs(session-continuity): add architecture` (hash: 40285931)
-3. [DONE] Doc: отметить `Session Continuity` как критичную инфраструктуру Core — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit message: `docs(system): mark session continuity as critical`
+3. [DONE] Doc: отметить `Session Continuity` как критичную инфраструктуру Core — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(system): mark session continuity as critical`
 4. [DONE] Git Commit: `docs(system): mark session continuity as critical` (hash: b3461817)
 5. [DONE] Feat(core): добавить модели continuity chain + file-store — scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/index.ts`; expected commit message: `feat(core): add session continuity store`
 6. [DONE] Git Commit: `feat(core): add session continuity store` (hash: c7dd5e7a)
@@ -100,11 +100,11 @@
 ## Phase 63 — Remove RUNS entity (use Edit Step + single current artifacts) (owner: Oleksandr, updated: 2026-01-20)
 
 ### Stream: Design — Remove runs (docs sync)
-1. [DONE] Doc: зафиксировать “без runs” для Workflow Tree (Edit Step, канон путей без `runs/`, без `currentRunId`) — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_StepSplit_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(workflow-tree): remove runs (use edit)`
+1. [DONE] Doc: зафиксировать “без runs” для Workflow Tree (Edit Step, канон путей без `runs/`, без `currentRunId`) — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(workflow-tree): remove runs (use edit)`
 2. [DONE] Git Commit: `docs(workflow-tree): remove runs (use edit)` (hash: fe2f5218)
-3. [DONE] Doc: убрать `runs` из file-first workflow (SystemArchitecture + Watcher Architecture) — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/Workflow_CLI_Steps_And_Watcher_Architecture.md`; expected commit message: `docs(core): remove runs from file-first workflow`
+3. [DONE] Doc: убрать `runs` из file-first workflow (SystemArchitecture + Watcher Architecture) — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`; expected commit message: `docs(core): remove runs from file-first workflow`
 4. [DONE] Git Commit: `docs(core): remove runs from file-first workflow` (hash: 98c2caf0)
-5. [DONE] Doc: убрать `runSlug` из Questionnaire Curator (использовать session checkpoints) — scope: `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; expected commit message: `docs(curator): remove runSlug (use session checkpoints)`
+5. [DONE] Doc: убрать `runSlug` из Questionnaire Curator (использовать session checkpoints) — scope: `doc/SolidWorks-Flow/System/QuestionnaireCurator/QuestionnaireCurator_Architecture.md`; expected commit message: `docs(curator): remove runSlug (use session checkpoints)`
 6. [DONE] Git Commit: `docs(curator): remove runSlug (use session checkpoints)` (hash: 50844126)
 
 ### Stream: Implementation — Initiatives storage without runs

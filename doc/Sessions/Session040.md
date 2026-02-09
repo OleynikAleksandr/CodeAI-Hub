@@ -13,7 +13,7 @@
 - Core: `workflow-state` принимает `workspacePath` query и использует абсолютный путь для чтения description/continuity.
 - Project Manager: workflow-state fetch принимает `workspacePath`, polling передает путь из UI, initial refresh ускорен (3s до первого ответа, затем 10/15s).
 - Verify(manual): дерево Description восстанавливается сразу вместе с UI Project Manager после рестарта Core.
-- Docs(release): обновлены `README.md`, `CHANGELOG.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` под 1.1.468.
+- Docs(release): обновлены `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под 1.1.468.
 - Release 1.1.468 (verification): `build-all` + `build-release` выполнены с `--allow-dirty`, артефакты собраны.
 - TODO Plan: Phase 67 обновлен (статусы/хэши, ручная проверка закрыта).
 
@@ -42,8 +42,8 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`
-2. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/WorkflowStateFastRestore_Architecture.md`
+2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session040.md` (THIS REPORT)
 

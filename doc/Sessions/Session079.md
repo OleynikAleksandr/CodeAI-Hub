@@ -11,20 +11,20 @@
 ## Work summary
 - Verification (owner): подтверждён релиз `1.1.502` и корректность настройки **Codex Session Continuity** (threshold %, default 30, clamp 5..80).
 - GitHub: запушены `main` и тег релиза `v1.1.502`.
-- Docs hygiene: удалены устаревшие/шумные дизайн-доки из `doc/Project_Docs/`, которые готовились под уже завершённые рефакторинги и не являются текущим source-of-truth.
+- Docs hygiene: удалены устаревшие/шумные дизайн-доки из `doc/SolidWorks-Flow/`, которые готовились под уже завершённые рефакторинги и не являются текущим source-of-truth.
   - Removed: 
-    - `doc/Project_Docs/WebviewSettings_FullSize_Layout_Architecture.md`
-    - `doc/Project_Docs/WorkflowStateFastRestore_Architecture.md`
-    - `doc/Project_Docs/SystemArchitecture/SessionUI_SessionKind_And_Settings_Architecture.md`
-    - `doc/Project_Docs/ProjectManager/AddWorkspace_Architecture.md`
-    - `doc/Project_Docs/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`
-    - `doc/Project_Docs/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`
-    - `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`
-    - `doc/Project_Docs/TokenUsage/CodexTokenUsage_Architecture.md`
-    - `doc/Project_Docs/QuestionnaireCurator/QuestionnaireCurator_Architecture.md` (draft)
+    - `doc/SolidWorks-Flow/WebviewSettings_FullSize_Layout_Architecture.md`
+    - `doc/SolidWorks-Flow/WorkflowStateFastRestore_Architecture.md`
+    - `doc/SolidWorks-Flow/System/SessionUI_SessionKind_And_Settings_Architecture.md`
+    - `doc/SolidWorks-Flow/ProjectManager/AddWorkspace_Architecture.md`
+    - `doc/SolidWorks-Flow/ProjectManager/CoreDriven_AutoResume_LastActive_Architecture.md`
+    - `doc/SolidWorks-Flow/ProjectManager/ReviewerAutoResume_WorkspaceValidation_Architecture.md`
+    - `doc/SolidWorks-Flow/TokenUsage/ClaudeTokenUsage_Architecture.md`
+    - `doc/SolidWorks-Flow/TokenUsage/CodexTokenUsage_Architecture.md`
+    - `doc/SolidWorks-Flow/QuestionnaireCurator/QuestionnaireCurator_Architecture.md` (draft)
 
 ## Notes
-- Source-of-truth для актуальной архитектуры остаётся: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` + `doc/Project_Docs/Stacks/*`.
+- Source-of-truth для актуальной архитектуры остаётся: `doc/SolidWorks-Flow/System/SystemArchitecture.md` + `doc/SolidWorks-Flow/Stacks/*`.
 - Все ссылки в `doc/` проверены через `npm run check:links` (OK).
 
 ## Git commits
@@ -44,10 +44,10 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/UI_Modules.md`
-3. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-4. `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/UI_Modules.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
+4. `doc/SolidWorks-Flow/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session079.md` (THIS REPORT)
 

@@ -9,9 +9,9 @@
 - Реализованный план переносится в `doc/TODO/Archive/` с префиксом завершённой Phase.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
-3. `doc/Project_Docs/Stacks/Gemini_Reviewer_Resume_Architecture.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`
+3. `doc/SolidWorks-Flow/Stacks/Gemini_Reviewer_Resume_Architecture.md`
 4. `doc/Sessions/Session131.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 
@@ -30,7 +30,7 @@
 4. После фикса проходит полный релизный цикл и smoke-проверка reviewer path.
 
 ### Stream: Architecture Sync + Contracts
-1. [DONE] Зафиксировать архитектурный контракт Gemini reviewer resume и синхронизировать system docs (scope: `doc/Project_Docs/Stacks/Gemini_Reviewer_Resume_Architecture.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): define gemini reviewer resume contract`; note: предыдущий план Phase 118 заархивирован в `doc/TODO/Archive/todo-plan-phase118-launcher-runtime-integrity-release-1.1.537-2026-02-09.md`)
+1. [DONE] Зафиксировать архитектурный контракт Gemini reviewer resume и синхронизировать system docs (scope: `doc/SolidWorks-Flow/Stacks/Gemini_Reviewer_Resume_Architecture.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): define gemini reviewer resume contract`; note: предыдущий план Phase 118 заархивирован в `doc/TODO/Archive/todo-plan-phase118-launcher-runtime-integrity-release-1.1.537-2026-02-09.md`)
 2. [DONE] Git Commit: `docs(architecture): define gemini reviewer resume contract` (hash: 590d1076)
 
 ### Stream: Gemini Resume Runtime

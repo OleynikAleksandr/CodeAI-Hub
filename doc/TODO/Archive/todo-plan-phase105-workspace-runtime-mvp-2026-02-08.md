@@ -6,13 +6,13 @@
 - Каждая микрозадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
 - **Gates после каждой микрозадачи**: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка/тест затронутых пакетов.
 - После зелёных гейтов — Git Commit, затем сразу обновляем статусы/хеши в `doc/TODO/todo-plan.md`.
-- Любые изменения логики/архитектуры синхронно отражаются в документации (`doc/Project_Docs/**`) в том же коммите.
+- Любые изменения логики/архитектуры синхронно отражаются в документации (`doc/SolidWorks-Flow/System/**`) в том же коммите.
 - Любая фаза завершается только после чистого `git status` и фиксации session report.
 
 ## Required documents to review before work
-1. `doc/SolidWorks-Flow/WorkspaceRuntime_LayeredArchitecture.md`
-2. `doc/SolidWorks-Flow/InterfaceMap_WorkspaceRuntime.md`
-3. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+1. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+2. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ## Ключевые принципы Phase 105
@@ -137,13 +137,13 @@
 
 ### Stream 15: Documentation
 
-49. [DONE] Обновить `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md` — новый модуль `workspace-runtime` (sharded store, snapshot-first, compound keys, watchdog, facade). Явно отметить Phase 104 `workspace:scope:set` как legacy/deprecated (scope: 1 файл; expected commit: `docs(architecture): document workspace runtime module in system architecture`)
+49. [DONE] Обновить `doc/SolidWorks-Flow/System/SystemArchitecture.md` — новый модуль `workspace-runtime` (sharded store, snapshot-first, compound keys, watchdog, facade). Явно отметить Phase 104 `workspace:scope:set` как legacy/deprecated (scope: 1 файл; expected commit: `docs(architecture): document workspace runtime module in system architecture`)
 50. [DONE] Git Commit: `docs(architecture): document workspace runtime module in system architecture` (hash: bc8f9926)
 
 51. [DONE] Обновить `README.md` и `CHANGELOG.md` — отразить workspace runtime MVP, snapshot-first изоляцию, watchdog terminal rollback (scope: 2 файла; expected commit: `docs(release): update README and CHANGELOG for workspace runtime MVP`)
 52. [DONE] Git Commit: `docs(release): update README and CHANGELOG for workspace runtime MVP` (hash: 40913c99)
 
-53. [DONE] Обновить Phase 104 doc как legacy: `doc/Project_Docs/SessionIsolation/ProjectManager_WorkspaceScopedSessionIsolation_Architecture.md` — пометить `workspace:scope:set/ack` как deprecated и сослаться на `workspace:select + workspace:snapshot` (Phase 105) и `Phase104_LegacyDeprecationChecklist.md` (scope: 1 файл; expected commit: `docs(legacy): mark workspace scope handshake doc as deprecated`)
+53. [DONE] Обновить Phase 104 doc как legacy: `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md` — пометить `workspace:scope:set/ack` как deprecated и сослаться на `workspace:select + workspace:snapshot` (Phase 105) и `Phase104_LegacyDeprecationChecklist.md` (scope: 1 файл; expected commit: `docs(legacy): mark workspace scope handshake doc as deprecated`)
 54. [DONE] Git Commit: `docs(legacy): mark workspace scope handshake doc as deprecated` (hash: 5a9c9625)
 
 55. [DONE] Создать session report `doc/Sessions/Session113.md` (scope: 1 файл; expected commit: `docs(session): create session 113 report`)

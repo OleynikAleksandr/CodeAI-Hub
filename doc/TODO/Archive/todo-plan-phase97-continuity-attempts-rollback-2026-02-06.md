@@ -8,8 +8,8 @@
 - После зелёных гейтов — Git Commit, затем сразу обновляем статусы/хеши в `doc/TODO/todo-plan.md` отдельным коммитом.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/UI_Modules.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/UI_Modules.md`
 3. `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`
 4. `doc/SolidWorks-Flow/SessionContinuity/ContinuityReport_Contracts.md`
 5. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
@@ -86,7 +86,7 @@
 37. [DONE] Git Commit: `docs(todo): record Phase 96 live threshold reload hash` (hash: a43d423a)
 
 ### Stream: docs + session report (wrap-up)
-38. [DONE] Docs(flow): задокументировать live reload порога `remainingPercentThreshold` + дедуп rollover (1 отчёт на сегмент) — scope: `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`, `doc/Project_Docs/SessionContinuity/CodexSessionContinuity_Settings_Architecture.md`; expected commit message: `docs(flow): document live continuity threshold reload`
+38. [DONE] Docs(flow): задокументировать live reload порога `remainingPercentThreshold` + дедуп rollover (1 отчёт на сегмент) — scope: `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/CodexSessionContinuity_Settings_Architecture.md`; expected commit message: `docs(flow): document live continuity threshold reload`
 39. [DONE] Git Commit: `docs(flow): document live continuity threshold reload` (hash: 5fe9394d)
 40. [DONE] Report: создать `doc/Sessions/Session081.md` (итоги Phase 96 + коммиты) — scope: `doc/Sessions/Session081.md`; expected commit message: `docs(session): add Session081 report`
 41. [DONE] Git Commit: `docs(session): add Session081 report` (hash: 059d4c7a)
@@ -122,7 +122,7 @@
 ## Phase 97 — Session UX: Seamless Continuity (virtual conversation) + Input Lock (owner: Oleksandr, updated: 2026-02-04)
 
 ### Stream: design (approve before execute)
-64. [DONE] Docs(arch): описать целевую модель «виртуальная беседа» (одна UI-лента сообщений) + «физические сегменты» (continuation под капотом) + правила UX (без упоминаний времени; `Agent is working…` — единственная индикация ожидания; поведение при Send до готовности background rollover) — scope: `doc/Project_Docs/SessionContinuity/VirtualConversation_SeamlessContinuity_Architecture.md`; expected commit message: `docs(arch): define virtual conversation continuity`
+64. [DONE] Docs(arch): описать целевую модель «виртуальная беседа» (одна UI-лента сообщений) + «физические сегменты» (continuation под капотом) + правила UX (без упоминаний времени; `Agent is working…` — единственная индикация ожидания; поведение при Send до готовности background rollover) — scope: `doc/SolidWorks-Flow/SessionContinuity/Core/VirtualConversation_SeamlessContinuity_Architecture.md`; expected commit message: `docs(arch): define virtual conversation continuity`
 65. [DONE] Git Commit: `docs(arch): define virtual conversation continuity` (hash: 06857c2e)
 
 ### Stream: provider turn lifecycle (foundation)
@@ -306,7 +306,7 @@
 ### Stream: stuck working banner after final assistant message (root-cause hardening)
 182. [DONE] Analyze(logs): зафиксировать эталонную последовательность событий по проблемному кейсу (Claude задаёт вопрос и ждёт пользователя) и выписать таймлайн `assistant final` -> `sdk:result` -> `turn_completed` -> `turn_state=idle` с привязкой к timestamp/line — scope: `/Users/oleksandroliinyk/.codeai-hub/logs/claude/sdk-claude-03af35ce-30a0-4f6c-95e6-270b2a5fca65.jsonl`, `doc/Sessions/Session093.md`; expected commit message: `docs(analysis): capture claude turn-finish timeline`
 183. [DONE] Git Commit: `docs(analysis): capture claude turn-finish timeline` (hash: 8353b6d3)
-184. [DONE] Design(core+ui): утвердить единый контракт завершения turn для UI (приоритет: `turn_state=idle` > `connectionState=blocked`; handoff lock отдельно), зафиксировать state-table и инварианты в архитектурной доке — scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(architecture): define turn-finish and working-strip invariants`
+184. [DONE] Design(core+ui): утвердить единый контракт завершения turn для UI (приоритет: `turn_state=idle` > `connectionState=blocked`; handoff lock отдельно), зафиксировать state-table и инварианты в архитектурной доке — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(architecture): define turn-finish and working-strip invariants`
 185. [DONE] Git Commit: `docs(architecture): define turn-finish and working-strip invariants` (hash: TBD)
 186. [TODO] Fix(core): гарантировать отправку handoff lifecycle событий как stream-only (`handoff:start`, `handoff:ready`) в continuity-потоке, без user-facing сообщений, и с явным завершением handoff — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `fix(core): emit deterministic handoff lifecycle events`
 187. [TODO] Git Commit: `fix(core): emit deterministic handoff lifecycle events` (hash: TBD)

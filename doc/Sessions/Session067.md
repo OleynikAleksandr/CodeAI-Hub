@@ -38,12 +38,12 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/SystemArchitecture/UnifiedSessionArchitecture.md`
-3. `doc/Project_Docs/TokenUsage/ClaudeTokenUsage_Architecture.md`
-4. `doc/Project_Docs/Stacks/Codex_SDK_Module.md`
-5. `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
-6. `doc/SolidWorks-Flow/knowledge/UnifiedSession_History_WorkspaceScoping.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
+3. `doc/SolidWorks-Flow/TokenUsage/ClaudeTokenUsage_Architecture.md`
+4. `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`
+5. `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`
+6. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
 7. `doc/Sessions/Session065.md` (token usage persistence via continuity)
 8. `doc/Sessions/Session066.md` (session history restore across workspaces)
 9. `doc/TODO/todo-plan.md`

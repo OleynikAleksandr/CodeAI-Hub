@@ -45,8 +45,8 @@
 ## Required documents to review before work
 1. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 2. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
-3. `doc/Project_Docs/SessionContinuity/SessionContinuity_Architecture.md`
-4. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
+4. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session028.md`
 7. `doc/Sessions/Session029.md` (THIS REPORT)

@@ -8,9 +8,9 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`
-2. `doc/Project_Docs/Stacks/Gemini_CLI_Runtime_Compatibility_Architecture.md`
-3. `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md (Appendix A: Runtime Compatibility)`
+3. `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`
 4. `doc/Sessions/Session129.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 
@@ -29,7 +29,7 @@
 4. После фикса выполнен полный релизный цикл и smoke-проверка Gemini в установленном runtime.
 
 ### Stream: Architecture Contract + Docs Baseline
-1. [DONE] Зафиксировать архитектурный контракт совместимости Gemini CLI Core (loader fallback, unified tool-executor facade, error taxonomy) и синхронизировать stack/system docs (scope: `doc/Project_Docs/Stacks/Gemini_CLI_Runtime_Compatibility_Architecture.md`, `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`; expected commit: `docs(architecture): define gemini cli-core runtime compatibility contract`)
+1. [DONE] Зафиксировать архитектурный контракт совместимости Gemini CLI Core (loader fallback, unified tool-executor facade, error taxonomy) и синхронизировать stack/system docs (scope: `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md (Appendix A: Runtime Compatibility)`, `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit: `docs(architecture): define gemini cli-core runtime compatibility contract`)
 2. [DONE] Git Commit: `docs(architecture): define gemini cli-core runtime compatibility contract` (hash: 838de7f1)
 
 ### Stream: Runtime Bridge Compatibility Loader
@@ -47,7 +47,7 @@
 ### Stream: Non-Regression Validation
 1. [DONE] Добавить regression-тесты на loader fallback и unified tool execution facade для legacy/new CLI Core API (scope: `packages/Gemini_Module/src/runtime/cli-bridge.test.ts`, `packages/Gemini_Module/src/session/gemini-tool-executor-facade.test.ts`, `packages/Gemini_Module/package.json`; expected commit: `test(gemini): cover runtime loader fallback and unified tool execution`)
 2. [DONE] Git Commit: `test(gemini): cover runtime loader fallback and unified tool execution` (hash: 10cd0cfb)
-3. [DONE] Прогнать обязательные гейты + таргетные сборки (`@codeai-hub/gemini-module`, `@codeai-hub/core`, `webview/project-manager`) и синхронно обновить доки/план (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/Stacks/Gemini_CLI_Module.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate gemini compatibility gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/gemini-module`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run build:project-manager`, `npm run typecheck:webview`)
+3. [DONE] Прогнать обязательные гейты + таргетные сборки (`@codeai-hub/gemini-module`, `@codeai-hub/core`, `webview/project-manager`) и синхронно обновить доки/план (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate gemini compatibility gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/gemini-module`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run build:project-manager`, `npm run typecheck:webview`)
 4. [DONE] Git Commit: `docs(qa): validate gemini compatibility gates and targeted builds` (hash: 7bb4485f)
 
 ### Stream: Release Build
@@ -76,7 +76,7 @@
 2. [DONE] Git Commit: `fix(launcher): enforce runtime integrity and guard legacy self-copy on macos` (hash: a1b11b8c)
 
 ### Stream: Docs + Validation
-1. [DONE] Синхронизировать архитектурные документы по инвариантам launcher runtime integrity (scope: `doc/Project_Docs/Stacks/Launcher_CEF_Module.md`, `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document launcher runtime integrity guardrails`; note: зафиксировано совместно с кодовым hotfix-коммитом)
+1. [DONE] Синхронизировать архитектурные документы по инвариантам launcher runtime integrity (scope: `doc/SolidWorks-Flow/Stacks/Launcher_CEF_Module.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document launcher runtime integrity guardrails`; note: зафиксировано совместно с кодовым hotfix-коммитом)
 2. [DONE] Git Commit: `docs(architecture): document launcher runtime integrity guardrails` (hash: a1b11b8c)
 3. [DONE] Прогнать обязательные гейты + таргетные сборки (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run compile`)
 4. [DONE] Git Commit: `docs(qa): validate launcher integrity hotfix gates and targeted builds` (hash: b4ebf25c)
