@@ -26,6 +26,7 @@
 - `d2701b9c fix(project-manager): remove clarification wait instruction from description prompt pack`
 - `530124f1 docs(release): prepare release notes for gemini reviewer resume integration`
 - `9bc7b69c chore(release): run build-all for gemini reviewer resume integration`
+- `3333a220 chore(release): build and validate vsix for gemini reviewer resume integration`
 
 ---
 
