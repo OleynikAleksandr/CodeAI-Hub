@@ -26,6 +26,8 @@
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `0238fa62 docs(todo): start Phase 120 session ui stability plan`
 - `09dea74e docs(session): add Session136 report`
+- `c0d81c9b docs(session): record Session136 commit hash`
+- `bf2f2519 docs(architecture): expand session ui layout stability spec`
 
 ---
 
