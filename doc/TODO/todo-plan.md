@@ -86,11 +86,11 @@
 
 ### Stream: Docs + QA Gates
 1. [DONE] Обновить архитектурные документы под post-bootstrap lifecycle нормализацию и прогнать обязательные гейты + таргетные сборки (`@codeai-hub/core`, `webview/project-manager`) (scope: `doc/Project_Docs/SystemArchitecture/SystemArchitecture.md`, `doc/Project_Docs/SessionContinuity/FlowNodeContinuity_InputLock_Contract_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): document post-bootstrap rollover flag reset contract`; executed: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run build:project-manager`, `npm run typecheck:webview`)
-2. [IN_PROGRESS] Git Commit: `docs(architecture): document post-bootstrap rollover flag reset contract` (hash: TBD)
+2. [DONE] Git Commit: `docs(architecture): document post-bootstrap rollover flag reset contract` (hash: 23cb35dc)
 
 ### Stream: Release Build
-1. [TODO] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix`)
-2. [TODO] Git Commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix` (hash: TBD)
+1. [DONE] Подготовить релизные документы перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix`)
+2. [IN_PROGRESS] Git Commit: `docs(release): prepare release notes for phase 116 rollover flag reset hotfix` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for phase 116 rollover flag reset hotfix`)
 4. [TODO] Git Commit: `chore(release): run build-all for phase 116 rollover flag reset hotfix` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`; expected commit: `chore(release): build and verify vsix for phase 116 rollover flag reset hotfix`)
