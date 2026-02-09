@@ -83,8 +83,8 @@
 
 ### Stream: Release Build
 1. [DONE] Подготовить release notes под hotfix (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for launcher runtime integrity hotfix`)
-2. [IN_PROGRESS] Git Commit: `docs(release): prepare release notes for launcher runtime integrity hotfix` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated версии/манифесты (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for launcher runtime integrity hotfix`)
-4. [TODO] Git Commit: `chore(release): run build-all for launcher runtime integrity hotfix` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prepare release notes for launcher runtime integrity hotfix` (hash: 5608d20b)
+3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated версии/манифесты (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for launcher runtime integrity hotfix`)
+4. [IN_PROGRESS] Git Commit: `chore(release): run build-all for launcher runtime integrity hotfix` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и сценарий clean install (`~/.codeai-hub` пустой) + запуск Project Manager (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session131.md`; expected commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix`)
 6. [TODO] Git Commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix` (hash: TBD)
