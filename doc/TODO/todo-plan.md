@@ -24,11 +24,11 @@
 
 ### Stream: InfoPanel Dead Code Removal
 1. [DONE] Удалить `src/client/ui/src/session/info-panel.tsx` (осиротевший, нигде не импортируется); удалить CSS-правила `.session-info`, `.session-info__text`, `.session-info__spacer` из `media/session-view.css` (scope: `info-panel.tsx`, `media/session-view.css`)
-2. [TODO] Git Commit: `refactor(ui): remove orphaned info-panel and dead css rules` (hash: TBD)
+2. [DONE] Git Commit: `refactor(ui): remove orphaned info-panel and dead css rules` (hash: 0c5bb40f)
 
 ### Stream: QA Gates + Targeted Builds
-1. [TODO] Все гейты зелёные; таргетные сборки: build:webview, typecheck:webview, build:project-manager
-2. [TODO] Git Commit: `docs(qa): validate gates for dead code cleanup` (hash: TBD)
+1. [DONE] Все гейты зелёные; таргетные сборки: build:webview, typecheck:webview, build:project-manager — PASSED
+2. [DONE] Git Commit: included in 0c5bb40f (gates passed in pre-commit hooks)
 
 ### Stream: Release Build (Final)
 1. [TODO] Выполнить `./scripts/build-all.sh`
