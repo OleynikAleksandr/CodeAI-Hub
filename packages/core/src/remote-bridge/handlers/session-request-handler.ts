@@ -148,6 +148,8 @@ type SessionResumeLifecycleStoreHost = {
   sessionResumeLifecycleStates?: Map<string, SessionResumeLifecycleState>;
 };
 
+type PostTurnContextDecision = "no_rollover" | "rollover_required";
+
 type WorkflowStageId =
   | "description"
   | "virtual_simulation"
@@ -341,6 +343,11 @@ export class SessionRequestHandler {
     string,
     SessionResumeLifecycleState
   >();
+  private readonly postTurnContextDecisionPendingSessions = new Set<string>();
+  private readonly postTurnContextDecisionBySessionId = new Map<
+    string,
+    PostTurnContextDecision
+  >();
   private flowNodeContinuitySettingsCache: {
     readonly mtimeMs: number;
     readonly settings: unknown;
@@ -470,6 +477,92 @@ export class SessionRequestHandler {
       state: "locked",
       reason: "terminal_no_resume",
     });
+  }
+
+  private markPostTurnContextDecisionPending(sessionId: string): void {
+    this.postTurnContextDecisionBySessionId.delete(sessionId);
+    this.postTurnContextDecisionPendingSessions.add(sessionId);
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      return;
+    }
+    const lifecycleState = this.getSessionResumeLifecycleState(session);
+    if (lifecycleState.mode === "no_resume") {
+      return;
+    }
+    if (this.isFlowNodeRolloverPending(sessionId)) {
+      return;
+    }
+    this.emitContinuityLockEvent({
+      sessionId: session.id,
+      rolloverId: crypto.randomUUID(),
+      sourceSessionId: session.id,
+      stageId: session.stage ?? "session",
+      runSlug: session.runSlug ?? null,
+      state: "locked",
+      reason: "context_check_pending",
+    });
+  }
+
+  private clearPostTurnContextDecision(sessionId: string): void {
+    this.postTurnContextDecisionPendingSessions.delete(sessionId);
+    this.postTurnContextDecisionBySessionId.delete(sessionId);
+  }
+
+  private recordPostTurnContextDecision(
+    sessionId: string,
+    decision: PostTurnContextDecision
+  ): void {
+    this.postTurnContextDecisionBySessionId.set(sessionId, decision);
+  }
+
+  private resolveImmediatePostTurnContextDecision(
+    session: Session
+  ): PostTurnContextDecision | null {
+    if (this.isFlowNodeRolloverPending(session.id)) {
+      return "rollover_required";
+    }
+    if (!(session.initiativeSlug && session.stage)) {
+      return "no_rollover";
+    }
+    if (
+      !this.flowNodeContinuity.isEligibleForRollover({
+        stageId: session.stage,
+        runSlug: session.runSlug,
+      })
+    ) {
+      return "no_rollover";
+    }
+    return null;
+  }
+
+  private resolveRecordedPostTurnContextDecision(
+    session: Session
+  ): PostTurnContextDecision | null {
+    const immediateDecision =
+      this.resolveImmediatePostTurnContextDecision(session);
+    if (immediateDecision) {
+      this.recordPostTurnContextDecision(session.id, immediateDecision);
+      return immediateDecision;
+    }
+    return this.postTurnContextDecisionBySessionId.get(session.id) ?? null;
+  }
+
+  private finalizePendingTurnCompletion(sessionId: string): void {
+    if (!this.postTurnContextDecisionPendingSessions.has(sessionId)) {
+      return;
+    }
+    this.runTurnCompletedArbitration(sessionId);
+  }
+
+  private registerPostTurnNoRolloverDecision(sessionId: string): void {
+    this.recordPostTurnContextDecision(sessionId, "no_rollover");
+    this.finalizePendingTurnCompletion(sessionId);
+  }
+
+  private registerPostTurnRolloverRequiredDecision(sessionId: string): void {
+    this.recordPostTurnContextDecision(sessionId, "rollover_required");
+    this.finalizePendingTurnCompletion(sessionId);
   }
 
   private emitFlowNodeRolloverNotification(
@@ -1029,6 +1122,15 @@ export class SessionRequestHandler {
   private resolveFlowNodeRolloverSendGuard(
     sessionId: string
   ): FlowNodeRolloverSendGuardDecision {
+    if (this.postTurnContextDecisionPendingSessions.has(sessionId)) {
+      return {
+        allowed: false,
+        code: CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
+        message: "Session continuity context decision is pending. Please wait.",
+        sourceSessionId: sessionId,
+        targetSessionId: null,
+      };
+    }
     const context = this.flowNodeContinuityLockContexts.get(sessionId);
     if (!(context && context.sourceSessionId === sessionId)) {
       return { allowed: true };
@@ -1375,6 +1477,7 @@ export class SessionRequestHandler {
         terminalLockReason: null,
       });
     }
+    this.clearPostTurnContextDecision(sessionId);
 
     const rolloverSendGuard = this.resolveFlowNodeRolloverSendGuard(sessionId);
     if (!rolloverSendGuard.allowed) {
@@ -1506,6 +1609,7 @@ export class SessionRequestHandler {
 
     this.sessionStorage.close(sessionId, "session-deleted");
     this.getSessionResumeLifecycleStore().delete(sessionId);
+    this.clearPostTurnContextDecision(sessionId);
     this.workspaceRuntime?.notifySessionDeleted({
       workspaceRoot: session.workspacePath,
       nodeId: session.stage ?? "session",
@@ -1522,25 +1626,31 @@ export class SessionRequestHandler {
       });
     });
 
-    const flowNodeContinuityTask = this.handleFlowNodeContinuityProviderEvent(
-      sessionId,
-      event
-    );
-
     if (typeof event === "string") {
-      flowNodeContinuityTask.catch((error) => {
-        this.logFlowNodeContinuityHandlerFailed(sessionId, error);
-      });
+      this.handleFlowNodeContinuityProviderEvent(sessionId, event).catch(
+        (error) => {
+          this.logFlowNodeContinuityHandlerFailed(sessionId, error);
+        }
+      );
       this.updateBindingWithResolvedId(sessionId, event);
       return;
     }
     if (!event || typeof event !== "object") {
-      flowNodeContinuityTask.catch((error) => {
-        this.logFlowNodeContinuityHandlerFailed(sessionId, error);
-      });
+      this.handleFlowNodeContinuityProviderEvent(sessionId, event).catch(
+        (error) => {
+          this.logFlowNodeContinuityHandlerFailed(sessionId, error);
+        }
+      );
       return;
     }
     const typedEvent = event as ProviderEventEnvelope;
+    if (typedEvent.type === "turn_completed") {
+      this.markPostTurnContextDecisionPending(sessionId);
+    }
+    const flowNodeContinuityTask = this.handleFlowNodeContinuityProviderEvent(
+      sessionId,
+      event
+    );
     if (typedEvent.type === "turn_completed") {
       this.handleTurnCompletedWithFlowNodeArbitration(
         sessionId,
@@ -1578,11 +1688,14 @@ export class SessionRequestHandler {
   }
 
   private runTurnCompletedArbitration(sessionId: string): void {
-    this.handleTurnCompletedEvent(sessionId).catch((error) => {
+    try {
+      this.handleTurnCompletedEvent(sessionId);
+    } catch (error) {
       this.logger.warn("Turn completion arbitration failed", {
         sessionId,
         error: error instanceof Error ? error.message : String(error),
       });
+      this.clearPostTurnContextDecision(sessionId);
       if (!this.isFlowNodeRolloverPending(sessionId)) {
         this.emitTurnStateEvent({ sessionId, state: "idle" });
       }
@@ -1590,7 +1703,7 @@ export class SessionRequestHandler {
         sessionId,
         reason: "resume_failed",
       });
-    });
+    }
   }
 
   private async handleFlowNodeContinuityProviderEvent(
@@ -1602,7 +1715,11 @@ export class SessionRequestHandler {
       return;
     }
 
-    if (this.flowNodeRolloverStarted.has(sessionId)) {
+    if (
+      this.flowNodeRolloverStarted.has(sessionId) ||
+      this.flowNodeRolloverInFlight.has(sessionId)
+    ) {
+      this.registerPostTurnRolloverRequiredDecision(sessionId);
       return;
     }
 
@@ -1613,41 +1730,63 @@ export class SessionRequestHandler {
     this.flowNodeTokenUsageSnapshots.set(sessionId, usage);
 
     if (!(session.initiativeSlug && session.stage)) {
+      this.registerPostTurnNoRolloverDecision(sessionId);
+      return;
+    }
+
+    const eligibleForRollover = this.flowNodeContinuity.isEligibleForRollover({
+      stageId: session.stage,
+      runSlug: session.runSlug,
+    });
+    if (!eligibleForRollover) {
+      this.registerPostTurnNoRolloverDecision(sessionId);
       return;
     }
 
     const remainingPercentThreshold =
       await this.resolveLiveContinuityRemainingPercentThreshold(session);
     if (!isBelowRemainingPercentThreshold(usage, remainingPercentThreshold)) {
-      return;
-    }
-
-    if (
-      !this.flowNodeContinuity.isEligibleForRollover({
-        stageId: session.stage,
-        runSlug: session.runSlug,
-      })
-    ) {
+      this.registerPostTurnNoRolloverDecision(sessionId);
       return;
     }
 
     if (this.flowNodeRolloverInFlight.has(sessionId)) {
+      this.registerPostTurnRolloverRequiredDecision(sessionId);
       return;
     }
 
-    this.flowNodeRolloverInFlight.add(sessionId);
-    this.flowNodeRolloverStarted.add(sessionId);
-    this.elevateSessionToRolloverResumeMode(session);
-    const remainingPercent = computeRemainingPercent(usage);
-    const continuityLockContext = this.registerFlowNodeContinuityLockContext({
-      rolloverId: crypto.randomUUID(),
-      sourceSessionId: sessionId,
+    await this.startFlowNodeRolloverFromUsage({
+      session,
+      sessionId,
       stageId: session.stage,
       runSlug: session.runSlug ?? null,
+      usage,
+      remainingPercentThreshold,
+    });
+  }
+
+  private async startFlowNodeRolloverFromUsage(options: {
+    readonly session: Session;
+    readonly sessionId: string;
+    readonly stageId: string;
+    readonly runSlug: string | null;
+    readonly usage: TokenUsageSnapshot;
+    readonly remainingPercentThreshold: number;
+  }): Promise<void> {
+    this.flowNodeRolloverInFlight.add(options.sessionId);
+    this.flowNodeRolloverStarted.add(options.sessionId);
+    this.registerPostTurnRolloverRequiredDecision(options.sessionId);
+    this.elevateSessionToRolloverResumeMode(options.session);
+    const remainingPercent = computeRemainingPercent(options.usage);
+    const continuityLockContext = this.registerFlowNodeContinuityLockContext({
+      rolloverId: crypto.randomUUID(),
+      sourceSessionId: options.sessionId,
+      stageId: options.stageId,
+      runSlug: options.runSlug,
       awaitingBootstrapTurn: false,
     });
     this.emitContinuityLockEvent({
-      sessionId,
+      sessionId: options.sessionId,
       rolloverId: continuityLockContext.rolloverId,
       sourceSessionId: continuityLockContext.sourceSessionId,
       stageId: continuityLockContext.stageId,
@@ -1655,125 +1794,46 @@ export class SessionRequestHandler {
       state: "locked",
       reason: "threshold_reached",
     });
-    this.emitFlowNodeRolloverNotification(sessionId, {
+    this.emitFlowNodeRolloverNotification(options.sessionId, {
       kind: "flow_node_rollover",
       phase: "start",
-      sourceSessionId: sessionId,
-      providerId: session.providerId,
-      stageId: session.stage,
-      runSlug: session.runSlug ?? null,
+      sourceSessionId: options.sessionId,
+      providerId: options.session.providerId,
+      stageId: options.stageId,
+      runSlug: options.runSlug,
       remainingPercent,
-      thresholdPercent: remainingPercentThreshold,
+      thresholdPercent: options.remainingPercentThreshold,
     });
     try {
       await this.rolloverFlowNodeSession(
-        session,
+        options.session,
         {
           remainingPercent,
-          thresholdPercent: remainingPercentThreshold,
+          thresholdPercent: options.remainingPercentThreshold,
           rolloverId: continuityLockContext.rolloverId,
         },
         { silent: false }
       );
     } catch (error) {
       this.finalizeFlowNodeContinuityLock({
-        sessionId,
+        sessionId: options.sessionId,
         reason: "resume_failed",
       });
-      this.flowNodeRolloverStarted.delete(sessionId);
-      this.emitFlowNodeRolloverNotification(sessionId, {
+      this.flowNodeRolloverStarted.delete(options.sessionId);
+      this.emitFlowNodeRolloverNotification(options.sessionId, {
         kind: "flow_node_rollover",
         phase: "failed",
-        sourceSessionId: sessionId,
-        providerId: session.providerId,
-        stageId: session.stage,
-        runSlug: session.runSlug ?? null,
+        sourceSessionId: options.sessionId,
+        providerId: options.session.providerId,
+        stageId: options.stageId,
+        runSlug: options.runSlug,
         remainingPercent,
-        thresholdPercent: remainingPercentThreshold,
+        thresholdPercent: options.remainingPercentThreshold,
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
     } finally {
-      this.flowNodeRolloverInFlight.delete(sessionId);
-    }
-  }
-
-  private async handleFlowNodeContinuitySilentPreemptiveRollover(
-    sessionId: string
-  ): Promise<boolean> {
-    const session = this.sessionManager.getSession(sessionId);
-    if (!session) {
-      return false;
-    }
-
-    if (!(session.initiativeSlug && session.stage)) {
-      return false;
-    }
-
-    if (this.flowNodeRolloverStarted.has(sessionId)) {
-      return false;
-    }
-
-    if (this.flowNodeRolloverInFlight.has(sessionId)) {
-      return false;
-    }
-
-    const usage = this.flowNodeTokenUsageSnapshots.get(sessionId);
-    if (!usage) {
-      return false;
-    }
-
-    const remainingPercent = computeRemainingPercent(usage);
-    if (
-      !this.flowNodeContinuity.shouldStartSilentPreemptiveRollover({
-        stageId: session.stage,
-        runSlug: session.runSlug ?? null,
-        remainingPercent,
-      })
-    ) {
-      return false;
-    }
-
-    this.flowNodeRolloverInFlight.add(sessionId);
-    this.flowNodeRolloverStarted.add(sessionId);
-    this.elevateSessionToRolloverResumeMode(session);
-    const continuityLockContext = this.registerFlowNodeContinuityLockContext({
-      rolloverId: crypto.randomUUID(),
-      sourceSessionId: sessionId,
-      stageId: session.stage,
-      runSlug: session.runSlug ?? null,
-      awaitingBootstrapTurn: false,
-    });
-    this.emitContinuityLockEvent({
-      sessionId,
-      rolloverId: continuityLockContext.rolloverId,
-      sourceSessionId: continuityLockContext.sourceSessionId,
-      stageId: continuityLockContext.stageId,
-      runSlug: continuityLockContext.runSlug,
-      state: "locked",
-      reason: "threshold_reached",
-    });
-    try {
-      await this.rolloverFlowNodeSession(
-        session,
-        {
-          remainingPercent,
-          thresholdPercent:
-            this.config.continuityPreemptRemainingPercentThreshold,
-          rolloverId: continuityLockContext.rolloverId,
-        },
-        { silent: true }
-      );
-      return true;
-    } catch (error) {
-      this.finalizeFlowNodeContinuityLock({
-        sessionId,
-        reason: "resume_failed",
-      });
-      this.flowNodeRolloverStarted.delete(sessionId);
-      throw error;
-    } finally {
-      this.flowNodeRolloverInFlight.delete(sessionId);
+      this.flowNodeRolloverInFlight.delete(options.sessionId);
     }
   }
 
@@ -1789,41 +1849,42 @@ export class SessionRequestHandler {
     });
   }
 
-  private async handleTurnCompletedEvent(sessionId: string): Promise<void> {
+  private handleTurnCompletedEvent(sessionId: string): void {
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
+      this.clearPostTurnContextDecision(sessionId);
       return;
     }
     const resumeMode = this.getSessionResumeLifecycleState(session).mode;
     if (resumeMode === "no_resume") {
+      this.clearPostTurnContextDecision(sessionId);
       this.emitTurnStateEvent({ sessionId, state: "idle" });
       this.handleNoResumeTurnCompleted(session);
       return;
     }
-    if (this.isFlowNodeRolloverPending(sessionId)) {
-      this.updateSessionResumeLifecycleState(session, {
-        finalTurnCompleted: true,
-        terminalLockReason: null,
-      });
-      return;
-    }
-    const rolloverStarted =
-      await this.handleFlowNodeContinuitySilentPreemptiveRollover(sessionId);
-    if (rolloverStarted || this.isFlowNodeRolloverPending(sessionId)) {
-      this.updateSessionResumeLifecycleState(session, {
-        finalTurnCompleted: true,
-        terminalLockReason: null,
-      });
-      return;
-    }
-    this.emitTurnStateEvent({ sessionId, state: "idle" });
+
     this.updateSessionResumeLifecycleState(session, {
       finalTurnCompleted: true,
       terminalLockReason: null,
     });
+
+    const contextDecision =
+      this.resolveRecordedPostTurnContextDecision(session);
+    if (!contextDecision) {
+      return;
+    }
+
+    this.clearPostTurnContextDecision(sessionId);
+    if (
+      contextDecision === "rollover_required" ||
+      this.isFlowNodeRolloverPending(sessionId)
+    ) {
+      return;
+    }
+
+    this.emitTurnStateEvent({ sessionId, state: "idle" });
     if (resumeMode === "resume_in_place") {
       this.emitResumeInPlaceNoRolloverUnlock(session);
-      return;
     }
   }
 
@@ -2162,9 +2223,11 @@ export class SessionRequestHandler {
         this.emitTurnStateEvent({ sessionId, state: "running" });
         break;
       case "turn_completed":
+        this.markPostTurnContextDecisionPending(sessionId);
         this.runTurnCompletedArbitration(sessionId);
         break;
       case "turn_failed":
+        this.clearPostTurnContextDecision(sessionId);
         this.emitTurnStateEvent({ sessionId, state: "idle" });
         this.finalizeFlowNodeContinuityLockOnBootstrapGate({
           sessionId,
