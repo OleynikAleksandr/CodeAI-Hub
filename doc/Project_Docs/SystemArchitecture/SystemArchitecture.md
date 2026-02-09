@@ -123,7 +123,8 @@ Node.js сервис (`@codeai-hub/core@1.1.502`), упакованный как
 2. **No-resume session**: после финального ответа сессия становится terminal/read-only; input больше не unlock.
 3. **Resume-in-place session**: unlock разрешён только когда одновременно выполнены оба условия:
    - получен финальный `turn_completed` для текущего turn;
-   - Core завершил continuity arbitration с явным snapshot-result `continuityLockReason=no_rollover_needed` (context threshold OK).
+   - Core завершил post-turn context arbitration с явным snapshot-result `continuityLockReason=no_rollover_needed` (context threshold OK).
+   - до явного решения Core удерживает `continuityLockReason=context_check_pending` (unlock запрещён).
 4. Если threshold exceeded и нужен rollover, input остаётся locked; разрешено менять только `continuityLockReason` (без `unlock -> relock` окна).
 5. **Resume-via-rollover session**: lock удерживается и в old session, и в newly created session; unlock допустим только после первого bootstrap assistant answer в new session (этот bootstrap-turn скрыт от пользователя).
 6. **Description collector one-shot / no-resume** всегда остаётся в locked terminal/read-only после финального ответа.
@@ -136,12 +137,13 @@ State-table для Session UI:
 | Snapshot signals | Session status.connectionState | Input/Send | Working strip |
 |---|---|---|---|
 | `turnState=running` | `running` | заблокирован | показываем `working` |
-| `turnState=idle` + `continuityLockActive=true`/`awaitingBootstrapTurn=true` | `blocked` | заблокирован | показываем `resuming/locked` |
+| `turnState=idle` + `continuityLockActive=true`/`awaitingBootstrapTurn=true`/`continuityLockReason=context_check_pending` | `blocked` | заблокирован | показываем `resuming/locked` |
 | `turnState=idle` + `resumeMode=resume_in_place` + `finalTurnCompleted=true` + `continuityLockReason=no_rollover_needed` | `idle` | доступен | скрываем |
 | terminal no-resume (например description collector) | terminal/read-only | заблокирован навсегда | скрываем wait-strip, показываем terminal-copy |
 
 Инварианты:
 - `turn_completed` или `turnState=idle` сами по себе не дают unlock.
+- После `turn_completed` Core обязан пройти `context_check_pending` до явного решения `no_rollover_needed|rollover_required`.
 - В lock lifecycle разрешены только два terminal unlock-reason: `no_rollover_needed` (resume-in-place) и `resume_ready` (resume-via-rollover).
 - Запрещён user-visible сценарий `running -> idle/unlocked -> locked` для одного и того же turn completion.
 - При rollover `resume_failed|resume_timeout` меняют только reason/copy, но не открывают input.
@@ -268,7 +270,7 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
 - **Snapshot-first lock**: PM вычисляет server-lock из `workspace:snapshot` (`turnState` + `continuityLockActive`), а не из поштучных `session:stream` `turn_state`.
 - **Phase 107-109 lock transition contract**:
   - `workspace:snapshot.sessions[sessionId].resumeMode` + `finalTurnCompleted` — explicit resume arbitration mode (`no_resume`, `resume_in_place`, `resume_via_rollover`) и dual-gate readiness;
-  - `workspace:snapshot.sessions[sessionId].continuityLockReason` — canonical reason последнего lock шага (`threshold_reached`, `report_in_progress`, `resume_bootstrap`, `no_rollover_needed`, `resume_ready`, `resume_failed`, `resume_timeout`, `terminal_no_resume`);
+- `workspace:snapshot.sessions[sessionId].continuityLockReason` — canonical reason последнего lock шага (`context_check_pending`, `threshold_reached`, `report_in_progress`, `resume_bootstrap`, `no_rollover_needed`, `resume_ready`, `resume_failed`, `resume_timeout`, `terminal_no_resume`);
   - `workspace:snapshot.sessions[sessionId].terminalLockReason` — terminal/read-only marker для one-shot no-resume flow;
   - `workspace:snapshot.sessions[sessionId].continuityLockTransition` — transition metadata (`rolloverId`, source/target session ids, stage/run, `awaitingBootstrapTurn`, `updatedAt`);
   - если `awaitingBootstrapTurn=true`, PM обязан удерживать input lock даже при `continuityLockActive=false`, причём на обеих сторонах handoff (`sourceSessionId` + `targetSessionId`);
@@ -288,6 +290,10 @@ Phase 105 вводит модуль `packages/core/src/workspace-runtime/` и п
 - **Phase 114 atomic turn-end arbitration**:
   - обработка `turn_completed` теперь проходит через атомарный dual-gate: Core сначала дожидается завершения flow-node continuity arbitration по этому же событию, затем принимает unlock-решение (`idle/no_rollover_needed` только при явном `no rollover`).
   - если за время arbitration выставлен `rollover pending`, `turn_completed` не может эмитить промежуточный `idle`; UI не получает `unlock -> relock` окно между старой и новой сессией.
+- **Phase 115 strict dual-confirmation unlock gate**:
+  - после `turn_completed` Core всегда переводит lifecycle в `context_check_pending` и не эмитит `idle/unlock`, пока не получит explicit context decision для этого же turn.
+  - Claude pipeline доставляет post-turn usage decision детерминированно в `turn_completed` payload (`tokenUsage/usage`) и дублирует его stream-event fallback; unlock разрешён только при canonical `no_rollover_needed`.
+  - PM/UI удерживают `blocked` на `context_check_pending` и снимают lock только при `no_rollover_needed` (resume-in-place) или `resume_ready` (rollover bootstrap completed).
 - **Scope sync**: Core синхронизирует client scope через `workspace:select` и применяет ingress guard для `session:create|session:message|session:delete`.
 
 Статус legacy:
