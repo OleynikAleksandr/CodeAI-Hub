@@ -37,11 +37,11 @@
 
 ### Stream: PM/UI Lock Contract Enforcement
 1. [DONE] Зафиксировать блокировку UI в состоянии `context_check_pending` и снять её только по canonical unlock-решению snapshot (`no_rollover_needed` или `resume_ready`) (scope: `src/client/project-manager/components/sessions/session-lock-guards.ts`, `src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `fix(pm): keep input blocked while context decision is pending`)
-2. [IN_PROGRESS] Git Commit: `fix(pm): keep input blocked while context decision is pending` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): keep input blocked while context decision is pending` (hash: 334d4537)
 
 ### Stream: Non-Regression Tests
-1. [TODO] Добавить core regression на out-of-band последовательность `turn_completed -> delayed token usage`: отсутствие `idle/unlock` до explicit `no_rollover` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): block unlock until explicit post-turn context decision`)
-2. [TODO] Git Commit: `test(core): block unlock until explicit post-turn context decision` (hash: TBD)
+1. [DONE] Добавить core regression на out-of-band последовательность `turn_completed -> delayed token usage`: отсутствие `idle/unlock` до explicit `no_rollover` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): block unlock until explicit post-turn context decision`)
+2. [IN_PROGRESS] Git Commit: `test(core): block unlock until explicit post-turn context decision` (hash: TBD)
 3. [TODO] Добавить PM regression на отсутствие transient `blocked -> idle -> blocked` между завершением турна и стартом rollover (scope: `src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`; expected commit: `test(pm): prevent unlock gap while context decision pending`)
 4. [TODO] Git Commit: `test(pm): prevent unlock gap while context decision pending` (hash: TBD)
 
