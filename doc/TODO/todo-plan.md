@@ -52,8 +52,8 @@
 
 ### Stream: Release Build
 1. [DONE] Подготовить release docs перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare release notes for gemini runtime compatibility hotfix`)
-2. [IN_PROGRESS] Git Commit: `docs(release): prepare release notes for gemini runtime compatibility hotfix` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for gemini runtime compatibility hotfix`)
-4. [TODO] Git Commit: `chore(release): run build-all for gemini runtime compatibility hotfix` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prepare release notes for gemini runtime compatibility hotfix` (hash: 82b4eb82)
+3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for gemini runtime compatibility hotfix`)
+4. [IN_PROGRESS] Git Commit: `chore(release): run build-all for gemini runtime compatibility hotfix` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и smoke Gemini provider в установленном runtime (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session130.md`; expected commit: `chore(release): build and validate vsix for gemini runtime compatibility hotfix`)
 6. [TODO] Git Commit: `chore(release): build and validate vsix for gemini runtime compatibility hotfix` (hash: TBD)
