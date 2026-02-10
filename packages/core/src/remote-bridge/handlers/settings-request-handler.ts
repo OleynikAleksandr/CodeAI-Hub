@@ -1,10 +1,44 @@
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
 import type { BridgeEvent } from "../types";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const DEFAULT_SETTINGS_SNAPSHOT = {
+  general: {
+    coreControls: {
+      allowRestart: true,
+    },
+  },
+  providers: {
+    claude: {
+      thinking: {
+        enabled: false,
+        maxTokens: 4000,
+      },
+      autoUpdate: { enabled: true },
+      defaultModel: "default",
+      sessionContinuity: { remainingPercentThreshold: 30 },
+    },
+    codex: {
+      autoUpdate: { enabled: true },
+      defaultModel: "gpt-5.2-codex",
+      reasoningByModel: {
+        "gpt-5.2-codex": "medium",
+      },
+      sessionContinuity: { remainingPercentThreshold: 30 },
+    },
+    gemini: {
+      autoUpdate: { enabled: true },
+      defaultModel: "gemini-3-pro-preview",
+      thinkingLevelByModel: {},
+      sessionContinuity: { remainingPercentThreshold: 30 },
+    },
+  },
+} as const;
 
 const toErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
@@ -19,6 +53,65 @@ const resolveErrorCode = (error: unknown): string | null => {
   }
   const code = error.code;
   return typeof code === "string" ? code : null;
+};
+
+const buildDefaultSettingsSnapshot = (
+  config: CoreConfig
+): Record<string, unknown> => {
+  const codexDefaultModel =
+    config.codexDefaultModel ??
+    DEFAULT_SETTINGS_SNAPSHOT.providers.codex.defaultModel;
+  const codexDefaultReasoning =
+    config.codexDefaultReasoningEffort ??
+    (DEFAULT_SETTINGS_SNAPSHOT.providers.codex.reasoningByModel[
+      DEFAULT_SETTINGS_SNAPSHOT.providers.codex.defaultModel
+    ] as string);
+  const remainingPercentThreshold =
+    Number.isFinite(config.claudeContinuityRemainingPercentThreshold) &&
+    config.claudeContinuityRemainingPercentThreshold > 0
+      ? config.claudeContinuityRemainingPercentThreshold
+      : DEFAULT_SETTINGS_SNAPSHOT.providers.claude.sessionContinuity
+          .remainingPercentThreshold;
+  const geminiDefaultModel =
+    config.geminiDefaultModel ??
+    DEFAULT_SETTINGS_SNAPSHOT.providers.gemini.defaultModel;
+
+  return {
+    ...DEFAULT_SETTINGS_SNAPSHOT,
+    providers: {
+      ...DEFAULT_SETTINGS_SNAPSHOT.providers,
+      claude: {
+        ...DEFAULT_SETTINGS_SNAPSHOT.providers.claude,
+        defaultModel: config.claudeDefaultModel,
+        sessionContinuity: { remainingPercentThreshold },
+      },
+      codex: {
+        ...DEFAULT_SETTINGS_SNAPSHOT.providers.codex,
+        defaultModel: codexDefaultModel,
+        reasoningByModel: {
+          ...DEFAULT_SETTINGS_SNAPSHOT.providers.codex.reasoningByModel,
+          [codexDefaultModel]: codexDefaultReasoning,
+        },
+        sessionContinuity: { remainingPercentThreshold },
+      },
+      gemini: {
+        ...DEFAULT_SETTINGS_SNAPSHOT.providers.gemini,
+        defaultModel: geminiDefaultModel,
+      },
+    },
+  };
+};
+
+const persistDefaultSettingsSnapshot = async (
+  settingsPath: string,
+  snapshot: Record<string, unknown>
+): Promise<void> => {
+  await mkdir(path.dirname(settingsPath), { recursive: true });
+  await writeFile(
+    settingsPath,
+    `${JSON.stringify(snapshot, null, 2)}\n`,
+    "utf8"
+  );
 };
 
 export class SettingsRequestHandler {
@@ -41,13 +134,15 @@ export class SettingsRequestHandler {
     try {
       const raw = await readFile(settingsPath, "utf8");
       const parsed = JSON.parse(raw) as unknown;
-      const settings = isRecord(parsed) ? parsed : null;
+      const settings = isRecord(parsed)
+        ? parsed
+        : buildDefaultSettingsSnapshot(this.config);
 
       this.broadcaster({
         type: "settings:loaded",
         payload: {
           settings,
-          error: settings ? null : "Invalid settings file format",
+          error: null,
         },
       });
     } catch (error: unknown) {
@@ -60,11 +155,23 @@ export class SettingsRequestHandler {
         error: label,
       });
 
+      const snapshot = buildDefaultSettingsSnapshot(this.config);
+      if (code === "ENOENT") {
+        try {
+          await persistDefaultSettingsSnapshot(settingsPath, snapshot);
+        } catch (persistError) {
+          this.logger.warn("Failed to persist default settings", {
+            settingsPath,
+            error: toErrorMessage(persistError),
+          });
+        }
+      }
+
       this.broadcaster({
         type: "settings:loaded",
         payload: {
-          settings: null,
-          error: label,
+          settings: snapshot,
+          error: null,
         },
       });
     }
