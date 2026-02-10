@@ -3,8 +3,6 @@ import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionKind, SessionRecord } from "../../../../types/session";
 import { mapProviderTheme } from "./helpers";
 
-const SESSION_ID_PREFIX_LENGTH = 8;
-
 /**
  * Get display label for session agent based on sessionKind.
  * Falls back to stage/runSlug heuristics for backward compatibility.
@@ -63,15 +61,9 @@ const buildTabDisplayData = (
     primaryLineLength = Math.ceil(providerNames.length / 2);
   }
   const providerLine = providerNames.slice(0, primaryLineLength).join("+");
-  const basePrimaryLine = agentLabel
+  const primaryLine = agentLabel
     ? `${agentLabel} ${providerLine}`
     : providerLine;
-  const sessionIdShort = session.binding.providerSessionId
-    ? `${session.binding.providerSessionId.slice(0, SESSION_ID_PREFIX_LENGTH)}-\u2026`
-    : null;
-  const primaryLine = sessionIdShort
-    ? `${basePrimaryLine} \u2014 ID: ${sessionIdShort}`
-    : basePrimaryLine;
   const secondaryTokens = providerNames.slice(primaryLineLength);
   const secondaryLine =
     secondaryTokens.length > 0 ? `+${secondaryTokens.join("+")}` : "";
