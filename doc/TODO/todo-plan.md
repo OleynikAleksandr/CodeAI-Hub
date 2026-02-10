@@ -172,8 +172,8 @@
 2. [DONE] Git Commit: `fix(session-dnd): harden launcher fallback routing and retry` (hash: d84dd2da)
 
 ### Stream: Release Build (Phase 129)
-1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream bugfix и зелёных гейтов (scope: scripts; expected commit message: `chore(release): run build-all for launcher dnd fallback hardening`)
-2. [TODO] Git Commit: `chore(release): run build-all for launcher dnd fallback hardening` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` после завершения stream bugfix и зелёных гейтов (scope: scripts; expected commit message: `chore(release): run build-all for launcher dnd fallback hardening`)
+2. [DONE] Git Commit: `chore(release): run build-all for launcher dnd fallback hardening` (hash: 38ea8f9b)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for launcher dnd fallback hardening`)
 4. [TODO] Git Commit: `chore(release): build and validate vsix for launcher dnd fallback hardening` (hash: TBD)
 
