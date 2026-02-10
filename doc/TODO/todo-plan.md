@@ -154,8 +154,8 @@
 ### Stream: Release Build (Phase 128)
 1. [DONE] Выполнить `./scripts/build-all.sh` после завершения stream bugfix и зелёных гейтов (scope: scripts; expected commit message: `chore(release): run build-all for session dnd launcher recovery`)
 2. [DONE] Git Commit: `chore(release): run build-all for session dnd launcher recovery` (hash: 01311c62)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session dnd launcher recovery`)
-4. [TODO] Git Commit: `chore(release): build and validate vsix for session dnd launcher recovery` (hash: TBD)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session dnd launcher recovery`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for session dnd launcher recovery` (hash: c16324f8)
 
 ### Stream: Post-Release Version Sync
 1. [TODO] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по dnd bugfix (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.547`)
