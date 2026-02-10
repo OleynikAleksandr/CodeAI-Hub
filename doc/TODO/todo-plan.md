@@ -61,11 +61,11 @@
 
 ### Stream: Questionnaire Path Policy Canonicalization
 1. [DONE] Перевести questionnaire flow на один canonical path policy без legacy-копий записи (scope: `src/client/ui/src/services/idea-questionnaire-paths.ts`, `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `refactor(questionnaire): canonicalize path policy and writes`)
-2. [DONE] Git Commit: `refactor(questionnaire): canonicalize path policy and writes` (hash: TBD)
+2. [DONE] Git Commit: `refactor(questionnaire): canonicalize path policy and writes` (hash: e8f45908)
 
 ### Stream: SSOT Guardrails for UI Styling
-1. [TODO] Добавить архитектурный guard, который блокирует появление второго источника для уже канонизированных UI-контуров (scope: `scripts/check-architecture.sh`, `scripts/check-architecture-rules/ui-style-ssot.sh`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `chore(architecture): enforce ui style single source guardrails`)
-2. [TODO] Git Commit: `chore(architecture): enforce ui style single source guardrails` (hash: TBD)
+1. [DONE] Добавить архитектурный guard, который блокирует появление второго источника для уже канонизированных UI-контуров (scope: `scripts/check-architecture.sh`, `scripts/check-architecture-rules/ui-style-ssot.sh`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `chore(architecture): enforce ui style single source guardrails`)
+2. [DONE] Git Commit: `chore(architecture): enforce ui style single source guardrails` (hash: TBD)
 
 ### Stream: QA Gates + Targeted Builds
 1. [TODO] Прогнать обязательные гейты и таргетные сборки для затронутых контуров (scope: `scripts/check-architecture.sh`, `src/client/ui`, `src/client/project-manager`; expected commit message: `docs(qa): validate ssot refactor gates and targeted builds`)
