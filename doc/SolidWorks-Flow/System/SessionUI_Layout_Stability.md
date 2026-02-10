@@ -1,7 +1,7 @@
 # Session UI — Layout Stability (Fixed Heights + Info Consolidation)
 
-**Status:** Active (Phase 120 — source of truth)
-**Updated:** 2026-02-09
+**Status:** Active (Phase 120 implemented; Phase 122 planned adjustments)
+**Updated:** 2026-02-10
 **Owner:** Oleksandr + Codex
 
 ---
@@ -34,7 +34,7 @@
 
 ---
 
-## 2) Target UX (Acceptance)
+## 2) Target UX (Acceptance) — Phase 120 (implemented)
 
 ### 2.1 Status panel: Models + Tokens в одну строку
 
@@ -107,7 +107,7 @@
 
 ---
 
-## 4) Session ID: убрать плашку, перенести в таб
+## 4) Session ID — Phase 120 (implemented)
 
 ### 4.1 Удалить верхнюю плашку Session ID
 
@@ -175,3 +175,54 @@
 - `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
 - `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
 - `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+
+---
+
+## 8) Phase 122 — Planned UI Adjustments (future refactor)
+
+Цель Phase 122 — внести корректировки в Session UI поверх Phase 120, без изменения runtime/lock логики.
+
+### 8.1 Session ID: вернуть отдельную плашку между Tabs и Dialog
+
+**Требование:** вернуть компактную плашку **между табами сессии и панелью диалога** и показывать в ней Session ID.
+
+Формат (строго):
+- `ID: 21280164-...`
+
+Правила:
+- показываем **первые 8 символов** UUID,
+- затем `-...`.
+
+Типографика:
+- шрифт/размер/цвет должны совпадать с текстом подсказки ввода:
+  - `Press Enter to send, Shift+Enter for a new line`
+
+### 8.2 Tabs: убрать Session ID из таба, оставить только имя агента
+
+**Требование:** в табе оставить только лейбл агента (например: `Reviewer Claude`) без `ID: ...`.
+
+Дополнительно:
+- уменьшить ширину (min-width) таба до компактного значения, чтобы не съедать место в UI.
+
+### 8.3 Status panel: одна строка, right-aligned continuity
+
+**Требование:** статус-панель сделать **однострочной** и уменьшить её высоту до высоты одной строки.
+
+Лэйаут:
+- слева: `Models: Opus | Tokens: 28,500 / 200,000 (86%)`
+- справа (по правому краю той же плашки): `#1 70% | #2 86%`
+
+Типографика:
+- выровнять шрифт (размер/вес) статус-панели до уровня текста input-hint (см. 8.1).
+
+### 8.4 Non-goals (Phase 122)
+
+- Не менять протокол и вычисление token usage.
+- Не менять логику lock/unlock, continuity pipeline.
+
+### 8.5 Expected touchpoints
+
+- `src/client/ui/src/session/session-view.tsx` (вставка плашки ID)
+- `src/client/ui/src/session/session-tabs.tsx` (компактные табы без ID)
+- `src/client/ui/src/session/status-panel.tsx` (однострочный layout)
+- `media/session-view.css` (layout + typography tokens)
