@@ -1,125 +1,75 @@
-# Session 001 — Архитектурный аудит: двойные источники правды (FULL)
+# Session 001 — Phase 124: Single Source of Truth Refactor + Release 1.1.543
 
-**Date:** 2026-02-10 10:34 (CET)
+**Date:** 2026-02-10 11:39 (CET)
 **Branch:** main
-**Version:** 1.1.542
+**Version:** 1.1.543
 
 ---
 
 # 1. Work Done in This Session
 
 ## Work summary
-- Выполнен целевой архитектурный аудит по запросу: найдены и документированы «двойные источники правды» (не только в Session UI, но и в runtime/build/protocol/state).
-- Подтверждён root-cause проблемы с типографикой Session UI: изменения в одном CSS-контуре не влияли на фактически используемый PM-контур.
-- Подготовлен полный перечень хвостов legacy-архитектуры с приоритетами (`P0/P1/P2`), доказательствами (файлы/точки входа) и рисками.
-- Код/архитектура в этой сессии не изменялись; это аналитическая сессия с фиксацией полного отчёта.
+- Выполнен полный цикл Phase 124: от архитектурной канонизации SSOT до финального релиза.
+- Закрыты все stream-ы с обязательными гейтами после каждой микро-задачи и отдельными коммитами.
+- Устранены двойные источники правды в ключевых контурах: Session UI styles, PM CSS pipeline, Settings token layer, UI runtime layout, session event normalizers, workspace protocol, questionnaire path policy.
+- Добавлен архитектурный guardrail `scripts/check-architecture-rules/ui-style-ssot.sh`, интегрированный в `scripts/check-architecture.sh`.
+- Выполнены релизные сборки: `./scripts/build-all.sh --allow-dirty` и `./scripts/build-release.sh --use-current-version --allow-dirty`.
+- Собран VSIX: `codeai-hub-1.1.543.vsix`.
 
-## Полный архитектурный анализ (FULL)
+## Полный анализ (выполнен и закрыт в рамках реализации)
 
-### Scope и метод
-- Проверены контуры: `UI styling`, `UI bundle runtime resolution`, `build/release pipeline`, `session event normalization`, `workspace protocol`, `questionnaire/contracts`, `state stores`, `settings`.
-- Анализ выполнен по цепочке «что реально рендерится/исполняется в runtime» vs «что меняется в исходниках».
+### Root-cause (подтверждено)
+- Причина расхождения UI-типографики была системной: один и тот же Session UI рендерился через разные style-source контуры.
+- Канонический session stylesheet (`media/session-view.css`) и PM stylesheet (`packages/ui/project-manager/styles.css`) не были жёстко синхронизированы на уровне guardrails.
 
-### Критичные находки
+### Что было двойным источником правды
+1. **Session styles:** `media/session-view.css` vs legacy `.session-*` в PM CSS.
+2. **UI runtime layout:** dual-layout install/resolve (`~/.codeai-hub/ui` и `~/.codeai-hub/packages/ui`).
+3. **Session event normalization:** отдельные normalizer-пайплайны в UI и PM.
+4. **Workspace protocol:** `workspace:select` рядом с legacy `workspace:scope:set`.
+5. **Questionnaire policy:** canonical path + legacy multi-copy writes.
+6. **Settings styling:** распределённые style-решения без жёсткого guardrail-контракта.
 
-#### P0 — Двойной источник стилей Session UI (прямой root-cause текущего бага)
-- Новый контур стилей Session лежит в `media/session-view.css`:
-  - `media/session-view.css:192` (`.session-id-bar`)
-  - `media/session-view.css:886` (`.session-input__hint`)
-  - `media/session-view.css:918` (`.session-status--single-line`)
-- Параллельно в PM существует отдельный старый контур в `packages/ui/project-manager/styles.css`:
-  - `packages/ui/project-manager/styles.css:1162` (`.session-info__text`)
-  - `packages/ui/project-manager/styles.css:1552` (`.session-status__value`)
-- PM билд инжектит именно `project-manager/styles.css`, а не `media/session-view.css`:
-  - `scripts/build-project-manager.js:63`
-- Следствие: визуальные правки в `media/session-view.css` не гарантируют эффект в PM Session UI.
+### Архитектурный результат
+- Для перечисленных контуров закреплён единый канонический owner.
+- Legacy fallback-ветки из active runtime path удалены или деактивированы.
+- Проверка SSOT автоматизирована и входит в обязательный архитектурный гейт.
 
-#### P1 — Двойной runtime-контур установки/резолва UI-бандлов
-- Инсталлятор одновременно поддерживает два layout:
-  - `~/.codeai-hub/ui/...` и `~/.codeai-hub/packages/ui/...`
-  - см. `src/extension-module/ui/ui-installer.ts:138` и `src/extension-module/ui/ui-installer.ts:141`
-- Резолвер читает сначала packages-layout, затем legacy registry-path:
-  - `src/extension-module/ui/ui-path-resolver.ts:20`
-  - `src/extension-module/ui/ui-path-resolver.ts:37`
-- Это поддерживает миграционный dual-mode и усложняет предсказуемость источника артефакта в runtime.
+### Остаточные хвосты (не блокируют релиз 1.1.543)
+- В ряде settings-компонентов остаются hardcoded style значения, не нарушающие текущий guardrail, но требующие отдельного stream-а для полной токенизации.
+- В рабочем дереве остаются пользовательские незафиксированные удаления `doc/Sessions/Session002.md ... Session142.md` и архивные untracked-файлы; они не включались в коммиты этой фазы.
 
-#### P1 — Два параллельных нормализатора одного event stream
-- UI-ветка (Webview) парсит серверные сообщения через:
-  - `src/client/ui/src/core-bridge/server-message-handler.ts:117`
-- PM-ветка повторно нормализует похожие события отдельно:
-  - `src/client/project-manager/components/sessions/session-stream.ts:146`
-- Риск: расхождение semantics по `session:error`, `session:binding`, `session:stream`, edge-cases и валидации payload.
-
-#### P1 — Двойной протокол workspace-синхронизации
-- Новый протокол: `workspace:select` / `workspace:select:ack`:
-  - `src/client/project-manager/api.ts:170`
-- Legacy fallback всё ещё активен в коде:
-  - `src/client/project-manager/services/workspace-scope-handshake.ts:50`
-- Риск: разные semantic expectations в разных частях UI при деградациях/переходных сценариях.
-
-#### P1 — Дублирующиеся контуры questionnaire/path migration
-- Канонический + legacy-path resolver и запись в несколько копий файла:
-  - `src/client/ui/src/services/idea-questionnaire-paths.ts:22`
-  - `src/client/ui/src/services/idea-questionnaire-paths.ts:99`
-  - `src/client/ui/src/services/idea-questionnaire-service.ts:240`
-- Параллельно PM имеет свой отдельный сервис загрузки/сохранения questionnaire:
-  - `src/client/project-manager/services/description-questionnaire-service.ts:133`
-- Риск: разный приоритет источников и возможные рассинхроны данных/форматов.
-
-#### P2 — Старый Session host-контур не удалён (только выключен флагом)
-- В `src/client/ui/src/app-host.tsx:31` установлен `SETTINGS_ONLY_MODE = true`, но полный Session host-контур остаётся в коде.
-- Одновременно PM рендерит `SessionView` через `ProjectManagerSessionView`:
-  - `src/client/project-manager/components/sessions/project-manager-session-view.tsx:18`
-- Риск: ментальная и архитектурная сложность, дублирующая ответственность за session UI lifecycle.
-
-### Отдельно подтверждённые факты по текущему багу шрифтов
-- Изменения в `media/session-view.css` присутствуют и корректны по целевым классам.
-- В PM runtime используются стили из `packages/ui/project-manager/styles.css` (через инлайн-инжект в PM bundle), где нужные новые классы отсутствуют.
-- Поэтому визуально остались различия размера/цвета/альфы между `ID`, `Models/Tokens/#n` и `Press Enter...`.
-
-### Классификация причин (системно)
-- Незавершённые миграции (`legacy/fallback`) оставлены в production-контурах.
-- Общие UI-компоненты (`SessionView`) подключены в двух разных delivery-контекстах с разными style-sources.
-- Build/release цепочка верифицирует артефакты, но не валидирует единственность источника истины для UI-стилей/протоколов.
-
-### Целевое архитектурное направление (без реализации в этой сессии)
-- Единый source of truth для Session UI styles (один файл/пакет/контур сборки).
-- Единый runtime layout для UI bundles (убрать dual install layout после миграции).
-- Единый message normalization pipeline для session events.
-- Удаление legacy workspace handshake после подтверждённого cutover.
-- Канонизация questionnaire pipeline вокруг одного сервиса и одного path-policy.
-- Физическое удаление выключенных legacy-контуров вместо флагового «хранения на потом».
-
-### Риски без рефакторинга
-- Повторяемость визуальных регрессий «исправлено в одном месте, не изменилось в другом».
-- Сложность диагностики runtime-поведения из-за hidden fallback-веток.
-- Рост стоимости изменений и тестирования каждой новой UI/PM задачи.
-
-### Инвентаризация SSOT (Phase 124 kickoff)
-
-#### Матрица «интерфейсный элемент → канонический владелец»
-
-| Контур | Элемент | Канонический владелец (target) | К удалению/деактивации |
-|---|---|---|---|
-| Session UI | Tabs/ID bar/Status/Input hint | `media/session-view.css` + единый consumer pipeline | дубли `.session-*` в `packages/ui/project-manager/styles.css` |
-| Project Manager UI | Grid/sidebar/toolbar/panels/tokens | `packages/ui/project-manager/styles.css` | `src/client/project-manager/styles/layout.css` |
-| Settings UI (VS Code) | Host/cards/dialogs/buttons | общий token-layer (`src/client/ui/src/components/settings/style-tokens.ts`, target) | hardcoded inline-стили в `settings-view.tsx`, `settings-only-host.tsx` и settings-компонентах |
-| Runtime UI delivery | install/resolve policy | единый layout policy в `ui-installer/ui-path-resolver` | dual layout fallback `~/.codeai-hub/ui` vs `~/.codeai-hub/packages/ui` |
-| Session event contract | payload normalization | единый normalizer в `src/client/ui/src/core-bridge/normalizers.ts` (target shared) | дублирующая normalizer-логика в PM stream |
-| Workspace protocol | выбор workspace | `workspace:select` + `workspace:select:ack` | `workspace:scope:set` fallback |
-| Questionnaire policy | path/write | единый canonical service policy | legacy multi-copy write paths |
-
-#### Список контуров для decommission в рамках Phase 124
-
-1. `src/client/project-manager/styles/layout.css` (legacy PM CSS source).
-2. Дубли `.session-*` / `.settings-overlay*` в `packages/ui/project-manager/styles.css` после cutover на канонический Session stylesheet.
-3. Legacy workspace handshake path (`workspace:scope:set`).
-4. Legacy dual UI bundle layout resolution fallback.
-5. Дублирующие session event normalizers вне shared canonical normalizer.
+## Gates / Build results
+- `./scripts/check-architecture.sh` — PASS (warnings only)
+- `npx ultracite check` — PASS
+- `npx ts-prune` — PASS (стандартный список потенциально неиспользуемых экспортов)
+- `npx jscpd --threshold 3 ...` — PASS (`2.36%`)
+- `npm run check:links` — PASS
+- Таргетные сборки — PASS:
+  - `npm run build:webview`
+  - `npm run typecheck:webview`
+  - `npm run build:project-manager`
+- Релизные сборки — PASS:
+  - `./scripts/build-all.sh --allow-dirty`
+  - `./scripts/build-release.sh --use-current-version --allow-dirty`
 
 ## Git commits
-(ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
-- `N/A` — в этой аналитической сессии новых коммитов не создавалось.
+(ВАЖНО: список нужен для восстановления контекста через `git show`)
+- `a12f06a1 docs(architecture): define single source of truth refactor baseline`
+- `c96dee4e docs(ui): register source-of-truth matrix for all interface elements`
+- `d0d19210 refactor(ui): unify session style source of truth`
+- `e2ba7ca8 refactor(build): align project-manager css pipeline with ssot`
+- `c33d9828 refactor(pm-ui): remove legacy layout css source`
+- `8b48c710 refactor(settings-ui): introduce canonical style token layer`
+- `48c9dded refactor(settings-ui): unify card and dialog style ownership`
+- `ff2beb5d refactor(runtime): unify ui bundle install and resolve layout`
+- `6cd2f421 refactor(core-bridge): consolidate session event normalization`
+- `db4a6f20 refactor(protocol): remove legacy workspace scope handshake`
+- `e8f45908 refactor(questionnaire): canonicalize path policy and writes`
+- `b4e63bbd chore(architecture): enforce ui style single source guardrails`
+- `8cdc8036 docs(qa): validate ssot refactor gates and targeted builds`
+- `50b4eb4d chore(release): run build-all for ssot refactor`
+- `00842fb4 chore(release): build and validate vsix for ssot refactor`
 
 ---
 
@@ -131,6 +81,6 @@
 3. `doc/Sessions/Session001.md` (THIS REPORT)
 
 ## Plans for next session
-- Зафиксировать архитектурный RFC «Single Source of Truth Elimination Program» для UI/PM/runtime layers.
-- Нарезать рефакторинг на микростримы (≤3 файлов на подзадачу) начиная с `P0` (Session UI styles source unification).
-- После утверждения RFC выполнить реализацию по фазам: стиль/бандл/runtime/event normalization/legacy protocol cleanup.
+- Провести пост-релизную проверку UI в runtime (Session/PM/Settings) на артефактах `1.1.543`.
+- Выделить отдельный stream на полную токенизацию оставшихся hardcoded styles в Settings UI.
+- Принять решение по пользовательским удалённым историческим сессионным отчётам (`Session002..142`) и зафиксировать их отдельным документальным коммитом при необходимости.
