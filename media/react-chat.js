@@ -23158,6 +23158,7 @@ ${path2}` : path2;
   var MIN_TOKEN_LIMIT = 1;
   var PERCENT_SCALE = 100;
   var SUPERVISOR_LABEL = "Core Supervisor";
+  var STATUS_SEPARATOR = "\xA0\xA0|\xA0\xA0";
   var formatModelSummary = (models) => models.map((model) => {
     const base = model.modelDisplayName;
     return model.reasoning ? `${base} (${model.reasoning})` : base;
@@ -23193,9 +23194,9 @@ ${path2}` : path2;
       Math.min(MAX_PERCENTAGE, MAX_PERCENTAGE - usedPercentage)
     );
     const modelsSummary = models && models.length > 0 ? formatModelSummary(models) : providerSummary;
-    const tokensSummary = `${tokenUsage.used.toLocaleString()} / ${tokenLimit ? tokenLimit.toLocaleString() : "\u2014"} (${remainingPercentage}%)`;
+    const tokensSummary = `${tokenUsage.used.toLocaleString()} (${remainingPercentage}%)`;
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("section", { className: "session-status session-status--single-line session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-status__row session-status__row--single-line", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-input__hint session-status__value session-status__value--primary", children: `Models: ${modelsSummary}  |  Tokens: ${tokensSummary}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-input__hint session-status__value session-status__value--primary", children: `Models: ${modelsSummary}${STATUS_SEPARATOR}Tokens: ${tokensSummary}` }),
       /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         "span",
         {
