@@ -1,6 +1,6 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.551
+**Version:** 1.1.552
 **Last Updated:** 2026-02-10
 **Status:** Active reference (source of truth)
 
@@ -87,7 +87,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.551`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.552`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -98,7 +98,7 @@ Node.js сервис (`@codeai-hub/core@1.1.551`), упакованный как
 
 Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
 
-### 2.2 UI Bundles (v1.1.551)
+### 2.2 UI Bundles (v1.1.552)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
 - `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
@@ -256,6 +256,10 @@ Phase 130 launcher drag-and-drop native file-drop bridge (same Session input pat
 - CEF uses `CefDragData::GetFilePaths()` to preserve absolute paths (not display names).
 - CEF launcher captures file paths from OS drag-data and exposes `window.codeaiLauncher.requestFileDrop()`; UI triggers it on `Shift + drop` when DataTransfer does not provide paths.
 - Project Manager blocks Chromium/CEF default navigation on file drop when Shift is not pressed (prevents replacing the SPA with the dropped file).
+
+Phase 133 session status panel improvements (same Session input path):
+- debug summary теперь отображает проценты в скобках: `#1 (78%) | #2 (81%)`;
+- для Claude моделей в имени показывается состояние Thinking (`thinking on/off`).
 
 ### 5.2 Runtime & Launcher Delivery
 
