@@ -13,7 +13,7 @@
 2. `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
 3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
-5. `doc/Sessions/Session139.md` (CURRENT REPORT)
+5. `doc/Sessions/Session140.md` (CURRENT REPORT)
 6. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -38,7 +38,7 @@
 
 ---
 
-## Phase 122 — Session UI Tweaks (Session ID bar + One-line Status) (owner: Oleksandr, updated: 2026-02-10)
+## Phase 122 — Session UI Tweaks (Session ID bar + One-line Status) (owner: Oleksandr, updated: 2026-02-10) ✅ COMPLETE
 
 **Goal:** вернуть плашку Session ID между Tabs и Dialog; сделать status panel однострочной (Models/Tokens + right-aligned continuity), выровнять типографику по input-hint.
 
@@ -69,4 +69,4 @@
 1. [DONE] Выполнить `./scripts/build-all.sh` v1.1.541 (scope: scripts; expected commit message: `chore(release): run build-all for session ui tweaks`)
 2. [DONE] Git Commit: `chore(release): run build-all for session ui tweaks` (hash: 89a604b9)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX `codeai-hub-1.1.541.vsix` (1.0M) (scope: scripts; expected commit message: `chore(release): build and validate vsix for session ui tweaks`)
-4. [DONE] Git Commit: `chore(release): build and validate vsix for session ui tweaks` (hash: TBD — this commit)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for session ui tweaks` (hash: 47b36509)
