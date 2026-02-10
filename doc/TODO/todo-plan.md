@@ -152,8 +152,8 @@
 2. [DONE] Git Commit: `fix(session-dnd): restore file-drop fallback for project-manager launcher` (hash: 0dbd19b6)
 
 ### Stream: Release Build (Phase 128)
-1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream bugfix и зелёных гейтов (scope: scripts; expected commit message: `chore(release): run build-all for session dnd launcher recovery`)
-2. [TODO] Git Commit: `chore(release): run build-all for session dnd launcher recovery` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` после завершения stream bugfix и зелёных гейтов (scope: scripts; expected commit message: `chore(release): run build-all for session dnd launcher recovery`)
+2. [DONE] Git Commit: `chore(release): run build-all for session dnd launcher recovery` (hash: 01311c62)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session dnd launcher recovery`)
 4. [TODO] Git Commit: `chore(release): build and validate vsix for session dnd launcher recovery` (hash: TBD)
 
