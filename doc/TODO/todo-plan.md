@@ -46,20 +46,20 @@
 - `doc/SolidWorks-Flow/System/SessionUI_Layout_Stability.md` (раздел "Phase 122 — Planned UI Adjustments")
 
 ### Stream: Session ID Bar (restore)
-1. [TODO] Добавить плашку `ID: <8chars>-...` между Tabs и Dialog; типографика как у input-hint (scope: `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/session-view.tsx`, `media/session-view.css`; expected commit message: `fix(ui): restore session id header bar`)
-2. [TODO] Git Commit: `fix(ui): restore session id header bar` (hash: TBD)
+1. [DONE] Добавить плашку `ID: <8chars>-...` между Tabs и Dialog; типографика как у input-hint (scope: `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/session-view.tsx`, `media/session-view.css`; expected commit message: `fix(ui): restore session id header bar`)
+2. [DONE] Git Commit: `fix(ui): restore session id header bar` (hash: 8cad1fee)
 
 ### Stream: Tabs (remove ID, compact width)
-1. [TODO] Убрать `ID: ...` из лейбла таба, оставить только имя агента (например: `Reviewer Claude`); уменьшить ширину таба (scope: `src/client/ui/src/session/session-tabs.tsx`, `media/session-view.css`; expected commit message: `fix(ui): revert tab labels to agent name only`)
-2. [TODO] Git Commit: `fix(ui): revert tab labels to agent name only` (hash: TBD)
+1. [DONE] Убрать `ID: ...` из лейбла таба, оставить только имя агента (например: `Reviewer Claude`); уменьшить ширину таба (scope: `src/client/ui/src/session/session-tabs.tsx`, `media/session-view.css`; expected commit message: `fix(ui): revert tab labels to agent name only`)
+2. [DONE] Git Commit: `fix(ui): revert tab labels to agent name only` (hash: c72a88f4)
 
 ### Stream: Status Panel (one-line + right aligned continuity)
-1. [TODO] Сконсолидировать Models/Tokens и `#1 ... | #2 ...` в одну строку; правый блок выровнять по правому краю; уменьшить высоту плашки до одной строки; типографика как у input-hint (scope: `src/client/ui/src/session/status-panel.tsx`, `media/session-view.css`; expected commit message: `fix(ui): make status panel single-line with right aligned continuity`)
-2. [TODO] Git Commit: `fix(ui): make status panel single-line with right aligned continuity` (hash: TBD)
+1. [DONE] Сконсолидировать Models/Tokens и `#1 ... | #2 ...` в одну строку; правый блок выровнять по правому краю; уменьшить высоту плашки до одной строки; типографика как у input-hint (scope: `src/client/ui/src/session/status-panel.tsx`, `media/session-view.css`; expected commit message: `fix(ui): make status panel single-line with right aligned continuity`)
+2. [DONE] Git Commit: `fix(ui): make status panel single-line with right aligned continuity` (hash: b709c19e)
 
 ### Stream: QA Gates + Targeted Builds
-1. [TODO] Все гейты зелёные; таргетные сборки: build:webview, typecheck:webview, build:project-manager — PASSED (scope: N/A; expected commit message: `docs(qa): validate gates for session ui tweaks`)
-2. [TODO] Git Commit: `docs(qa): validate gates for session ui tweaks` (hash: TBD)
+1. [DONE] Все гейты зелёные; таргетные сборки: build:webview, typecheck:webview, build:project-manager — PASSED (scope: N/A; expected commit message: `docs(qa): validate gates for session ui tweaks`)
+2. [DONE] Git Commit: `docs(qa): validate gates for session ui tweaks` (hash: TBD — this commit)
 
 ### Stream: Release Build (Final)
 1. [TODO] Выполнить `./scripts/build-all.sh` (scope: scripts; expected commit message: `chore(release): run build-all for session ui tweaks`)
