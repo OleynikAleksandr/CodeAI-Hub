@@ -21976,7 +21976,21 @@ ${formattedPaths}`;
   };
 
   // src/client/ui/src/modules/drag-drop-module/message-handler.ts
+  var FILE_DROP_ENDPOINT = "/api/v1/file-drop";
   var isRecord3 = (value) => typeof value === "object" && value !== null;
+  var resolveCoreHttpUrl = () => {
+    const globalScope2 = window;
+    const primaryUrl = globalScope2.__CODEAI_CORE_CONFIG?.httpUrl;
+    if (typeof primaryUrl === "string" && primaryUrl.length > 0) {
+      return primaryUrl;
+    }
+    const fallbackUrl = globalScope2.codeaiBridgeConfig?.httpUrl;
+    if (typeof fallbackUrl === "string" && fallbackUrl.length > 0) {
+      return fallbackUrl;
+    }
+    return null;
+  };
+  var joinUrl = (baseUrl, path2) => baseUrl.endsWith("/") ? `${baseUrl.slice(0, -1)}${path2}` : `${baseUrl}${path2}`;
   var MessageHandler = class {
     constructor(logger) {
       this.callbacks = {};
@@ -22001,18 +22015,32 @@ ${formattedPaths}`;
     }
     requestFilePathGrab() {
       const timestamp = Date.now();
-      this.sendMessage("grabFilePathFromDrop", { timestamp });
+      this.sendMessage("grabFilePathFromDrop", { timestamp }).catch((error) => {
+        this.logger?.("message-handler:request-file-path-grab-error", error);
+      });
     }
     clearClipboards() {
-      this.sendMessage("clearAllClipboards");
+      this.sendMessage("clearAllClipboards").catch((error) => {
+        this.logger?.("message-handler:clear-clipboards-error", error);
+      });
     }
-    sendMessage(command, payload) {
+    async sendMessage(command, payload) {
       const message = { command };
       if (payload) {
         Object.assign(message, payload);
       }
-      this.logger?.("message-handler:send", command, payload ?? null);
-      vscode_default.postMessage(message);
+      const vscodeApi = getVsCodeApi();
+      if (vscodeApi) {
+        this.logger?.("message-handler:send", command, payload ?? null);
+        vscodeApi.postMessage(message);
+        return;
+      }
+      this.logger?.("message-handler:fallback-send", command, payload ?? null);
+      if (command === "grabFilePathFromDrop") {
+        await this.captureFileDropViaHttp();
+        return;
+      }
+      await this.clearFileDropViaHttp();
     }
     handleMessage(message) {
       if (!isRecord3(message) || typeof message.command !== "string") {
@@ -22045,6 +22073,58 @@ ${formattedPaths}`;
       this.logger?.("message-handler:clipboard", content3);
       this.callbacks.onClipboardContent?.(content3);
       this.clearClipboards();
+    }
+    async captureFileDropViaHttp() {
+      const fileDropUrl = this.resolveFileDropUrl();
+      if (!fileDropUrl) {
+        return;
+      }
+      try {
+        const response = await fetch(fileDropUrl, {
+          method: "POST"
+        });
+        if (response.status === 204 || !response.ok) {
+          return;
+        }
+        const payload = await response.json();
+        const formatted = this.resolveFormattedPathPayload(payload);
+        if (formatted) {
+          this.handleInsertPath(formatted);
+        }
+      } catch (error) {
+        this.logger?.("message-handler:fallback-capture-error", error);
+      }
+    }
+    async clearFileDropViaHttp() {
+      const fileDropUrl = this.resolveFileDropUrl();
+      if (!fileDropUrl) {
+        return;
+      }
+      try {
+        await fetch(fileDropUrl, { method: "DELETE" });
+      } catch (error) {
+        this.logger?.("message-handler:fallback-clear-error", error);
+      }
+    }
+    resolveFileDropUrl() {
+      const httpUrl = resolveCoreHttpUrl();
+      return httpUrl ? joinUrl(httpUrl, FILE_DROP_ENDPOINT) : null;
+    }
+    resolveFormattedPathPayload(payload) {
+      if (typeof payload.formatted === "string" && payload.formatted.length > 0) {
+        return payload.formatted;
+      }
+      if (!Array.isArray(payload.paths) || payload.paths.length === 0) {
+        return "";
+      }
+      const normalizedPaths = payload.paths.filter(
+        (path2) => typeof path2 === "string" && path2.length > 0
+      );
+      if (normalizedPaths.length === 0) {
+        return "";
+      }
+      return `${normalizedPaths.map((path2) => `"${path2}"`).join("\n")}
+`;
     }
   };
 
@@ -23760,7 +23840,7 @@ ${path2}` : path2;
     }
     return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   };
-  var resolveCoreHttpUrl = () => {
+  var resolveCoreHttpUrl2 = () => {
     const globalScope2 = window;
     const httpUrl = globalScope2.__CODEAI_CORE_CONFIG?.httpUrl;
     if (typeof httpUrl !== "string" || httpUrl.length === 0) {
@@ -23768,7 +23848,7 @@ ${path2}` : path2;
     }
     return httpUrl;
   };
-  var joinUrl = (baseUrl, path2) => baseUrl.endsWith("/") ? `${baseUrl.slice(0, -1)}${path2}` : `${baseUrl}${path2}`;
+  var joinUrl2 = (baseUrl, path2) => baseUrl.endsWith("/") ? `${baseUrl.slice(0, -1)}${path2}` : `${baseUrl}${path2}`;
   var postSystemNotice = (sessionId, content3) => {
     window.postMessage(
       {
@@ -23796,7 +23876,7 @@ ${path2}` : path2;
       artifacts: params.artifact.artifacts
     };
     const response = await fetch(
-      joinUrl(params.httpUrl, ARTIFACT_UPSERT_ENDPOINT),
+      joinUrl2(params.httpUrl, ARTIFACT_UPSERT_ENDPOINT),
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -23848,7 +23928,7 @@ ${path2}` : path2;
 
   // src/client/ui/src/services/idea-collector-artifact-saver.ts
   var saveIdeaCollectorArtifacts = async (sessionId, artifact) => {
-    const httpUrl = resolveCoreHttpUrl();
+    const httpUrl = resolveCoreHttpUrl2();
     if (!httpUrl) {
       postSystemNotice(
         sessionId,
@@ -24159,12 +24239,12 @@ ${template}`;
   };
   var parseVersion = (payload) => typeof payload.version === "string" && payload.version.trim().length > 0 ? payload.version : null;
   var fetchWorkflowContract = async (endpoint) => {
-    const httpUrl = resolveCoreHttpUrl();
+    const httpUrl = resolveCoreHttpUrl2();
     if (!httpUrl) {
       return null;
     }
     try {
-      const response = await fetch(joinUrl(httpUrl, endpoint));
+      const response = await fetch(joinUrl2(httpUrl, endpoint));
       if (!response.ok) {
         return null;
       }
@@ -24328,12 +24408,12 @@ ${template}`;
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
   };
   var fetchWorkspaceFile = async (sessionId, relativePath) => {
-    const httpUrl = resolveCoreHttpUrl();
+    const httpUrl = resolveCoreHttpUrl2();
     if (!httpUrl) {
       return null;
     }
     try {
-      const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT), {
+      const response = await fetch(joinUrl2(httpUrl, WORKSPACE_FILE_ENDPOINT), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -24928,12 +25008,12 @@ ${replacement}
   };
   var WorkspaceFileService = class {
     async read(sessionId, path2, maxBytes) {
-      const httpUrl = resolveCoreHttpUrl();
+      const httpUrl = resolveCoreHttpUrl2();
       if (!httpUrl) {
         return { status: "error" };
       }
       try {
-        const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_ENDPOINT2), {
+        const response = await fetch(joinUrl2(httpUrl, WORKSPACE_FILE_ENDPOINT2), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ sessionId, path: path2, maxBytes })
@@ -24951,11 +25031,11 @@ ${replacement}
       }
     }
     async write(sessionId, path2, content3) {
-      const httpUrl = resolveCoreHttpUrl();
+      const httpUrl = resolveCoreHttpUrl2();
       if (!httpUrl) {
         return;
       }
-      await fetch(joinUrl(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT), {
+      await fetch(joinUrl2(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId, path: path2, content: content3 })
@@ -25017,7 +25097,7 @@ ${replacement}
       };
     }
     async loadQuestionnaire(sessionId, outputPathsOverride) {
-      const httpUrl = resolveCoreHttpUrl();
+      const httpUrl = resolveCoreHttpUrl2();
       if (!httpUrl) {
         return null;
       }
@@ -29113,7 +29193,7 @@ ${replacement}
     };
   };
   var buildInitiativesUrl = (httpUrl, workspacePath) => {
-    const url = new URL(joinUrl(httpUrl, INITIATIVES_ENDPOINT));
+    const url = new URL(joinUrl2(httpUrl, INITIATIVES_ENDPOINT));
     url.searchParams.set("workspacePath", workspacePath);
     return url.toString();
   };
@@ -29176,7 +29256,7 @@ ${replacement}
     const [initiatives, setInitiatives] = (0, import_react33.useState)([]);
     const [selectedInitiativeSlug, setSelectedInitiativeSlug] = (0, import_react33.useState)(null);
     const [statusMessage, setStatusMessage] = (0, import_react33.useState)(null);
-    const coreHttpUrl = (0, import_react33.useMemo)(() => resolveCoreHttpUrl(), []);
+    const coreHttpUrl = (0, import_react33.useMemo)(() => resolveCoreHttpUrl2(), []);
     const workspacePath = (0, import_react33.useMemo)(() => resolveWorkspacePath(), []);
     const hasWorkspace = Boolean(coreHttpUrl && workspacePath);
     const clearStatus = (0, import_react33.useCallback)(() => {
