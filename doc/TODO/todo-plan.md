@@ -128,8 +128,8 @@
 2. [DONE] Git Commit: `docs(flow): sync runtime and launcher stack docs for v1.1.545` (hash: be1f2021)
 
 ### Stream: SolidWorks Continuity and Core Stack Metadata
-1. [TODO] Актуализировать метаданные release/operational notes в continuity/core/gemini stack документах (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`; expected commit message: `docs(flow): refresh continuity and core stack metadata for v1.1.545`)
-2. [TODO] Git Commit: `docs(flow): refresh continuity and core stack metadata for v1.1.545` (hash: TBD)
+1. [DONE] Актуализировать метаданные release/operational notes в continuity/core/gemini stack документах (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`; expected commit message: `docs(flow): refresh continuity and core stack metadata for v1.1.545`)
+2. [DONE] Git Commit: `docs(flow): refresh continuity and core stack metadata for v1.1.545` (hash: 5014c85b)
 
 ### Stream: Release Build (Phase 127)
 1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream-ов фазы (scope: scripts; expected commit message: `chore(release): run build-all for documentation sync v1.1.545`)
