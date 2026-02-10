@@ -73,6 +73,6 @@
 
 ### Stream: Release Build (Final)
 1. [DONE] Выполнить `./scripts/build-all.sh` после завершения всех stream (scope: scripts; expected commit message: `chore(release): run build-all for ssot refactor`)
-2. [DONE] Git Commit: `chore(release): run build-all for ssot refactor` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for ssot refactor`)
-4. [TODO] Git Commit: `chore(release): build and validate vsix for ssot refactor` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): run build-all for ssot refactor` (hash: 50b4eb4d)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for ssot refactor`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for ssot refactor` (hash: TBD)
