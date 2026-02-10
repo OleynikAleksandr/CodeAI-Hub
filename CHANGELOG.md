@@ -1,3 +1,13 @@
+## [1.1.549] - 2026-02-10
+### Fixed
+- Session DnD (Project Manager / launcher runtime): вместо ненадежного угадывания dropped paths через selection/clipboard теперь используется нативный CEF bridge, который получает реальные пути файлов из drag-data и отправляет их в Session input по запросу.
+- Project Manager (launcher): drop файла без Shift больше не заменяет SPA на картинку/файл (предотвращена дефолтная навигация Chromium/CEF).
+- Clipboard: вставка file-link (`file://...`) и VS Code uri-list теперь нормализуется в путь и вставляется в input как file-path ссылка.
+
+### Added
+- CEF launcher bridge: `window.codeaiLauncher.requestFileDrop()` (перехват `codeai://file-drop`) для вставки путей dropped-файлов напрямую в UI.
+- Release artifacts: собран `codeai-hub-1.1.549.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.548] - 2026-02-10
 ### Fixed
 - Session DnD (Project Manager / launcher runtime): устранён сценарий, при котором drop-overlay показывался, но file-path ссылки не вставлялись в input после отпускания мыши.
