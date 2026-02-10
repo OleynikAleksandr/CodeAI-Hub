@@ -140,3 +140,23 @@
 ### Stream: Post-Release Version Sync (v1.1.546)
 1. [DONE] Синхронизировать корневые release-документы и системный архитектурный SoT после `build-all/build-release`, чтобы `README`, `CHANGELOG` и `SystemArchitecture` отражали фактический релиз `1.1.546` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.546`)
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.546` (hash: e06dcd94)
+
+---
+
+## Phase 128 — Launcher Session DnD Recovery + Release v1.1.547 (owner: Oleksandr, updated: 2026-02-10)
+
+**Goal:** восстановить вставку file-path ссылок при `Shift + drag-and-drop` в Session input внутри Project Manager (launcher runtime), затем собрать и опубликовать новый релизный артефакт.
+
+### Stream: Session DnD Launcher Fallback Recovery
+1. [DONE] Восстановить fallback вставки путей для drag-drop в launcher-режиме: при отсутствии VS Code bridge выполнять захват/очистку через Core HTTP API (`/api/v1/file-drop`), добавить регрессионный тест-контракт и пересобрать webview bundle (scope: `src/client/ui/src/modules/drag-drop-module/message-handler.ts`, `src/client/ui/src/modules/drag-drop-module/message-handler.test.ts`, `media/react-chat.js`; expected commit message: `fix(session-dnd): restore file-drop fallback for project-manager launcher`)
+2. [DONE] Git Commit: `fix(session-dnd): restore file-drop fallback for project-manager launcher` (hash: 0dbd19b6)
+
+### Stream: Release Build (Phase 128)
+1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream bugfix и зелёных гейтов (scope: scripts; expected commit message: `chore(release): run build-all for session dnd launcher recovery`)
+2. [TODO] Git Commit: `chore(release): run build-all for session dnd launcher recovery` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session dnd launcher recovery`)
+4. [TODO] Git Commit: `chore(release): build and validate vsix for session dnd launcher recovery` (hash: TBD)
+
+### Stream: Post-Release Version Sync
+1. [TODO] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по dnd bugfix (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.547`)
+2. [TODO] Git Commit: `docs(release): sync root notes and system architecture for v1.1.547` (hash: TBD)
