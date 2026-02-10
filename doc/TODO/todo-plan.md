@@ -80,3 +80,27 @@
 ### Stream: Session Report (Phase 134)
 1. [DONE] Создать `doc/Sessions/Session011.md` и зафиксировать итоги Phase 134 (scope: `doc/Sessions/Session011.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session011 and close phase134`)
 2. [DONE] Git Commit: `docs(session): add Session011 and close phase134` (hash: a6997b45)
+
+---
+
+## Phase 135 — Persist Default Settings on Clean Install (owner: Oleksandr, updated: 2026-02-10)
+
+**Goal:** при чистой установке настройки провайдера должны быть записаны на диск сразу, чтобы Session UI отображал полный default model label (например, `gpt-5.2-codex (medium)`), а не только provider id.
+
+### Stream: Settings Defaults Persistence
+1. [DONE] Исправить загрузку настроек: при отсутствии/битом `settings.json` возвращать и сохранять дефолтный snapshot (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit message: `fix(settings): persist defaults on first load`)
+2. [DONE] Git Commit: `fix(settings): persist defaults on first load` (hash: 8284c468)
+
+### Stream: Release Build (Phase 135)
+1. [DONE] Выполнить `./scripts/build-all.sh` (scope: manifests; expected commit message: `chore(release): run build-all for v1.1.554`)
+2. [DONE] Git Commit: `chore(release): run build-all for v1.1.554` (hash: 23c426d8)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.554`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.554` (hash: 18c0b649)
+
+### Stream: Post-Release Version Sync (Phase 135)
+1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.554`)
+2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.554` (hash: dc91b1fb)
+
+### Stream: Session Report (Phase 135)
+1. [IN_PROGRESS] Создать `doc/Sessions/Session012.md` и зафиксировать итоги Phase 135 (scope: `doc/Sessions/Session012.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session012 and close phase135`)
+2. [TODO] Git Commit: `docs(session): add Session012 and close phase135` (hash: TBD)
