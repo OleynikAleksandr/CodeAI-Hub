@@ -22561,7 +22561,7 @@ ${path2}` : path2;
     }
     return "ID: unavailable";
   };
-  var SessionIdBar = ({ binding }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("section", { className: "session-panel session-id-bar", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__text", children: resolveIdLabel(binding) }) });
+  var SessionIdBar = ({ binding }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("section", { className: "session-panel session-id-bar", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__text session-input__hint", children: resolveIdLabel(binding) }) });
   var session_id_bar_default = SessionIdBar;
 
   // src/client/ui/src/session/session-view-helpers.tsx
@@ -22899,10 +22899,10 @@ ${path2}` : path2;
     if (!status || connectionStatus !== "ready") {
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("section", { className: "session-status session-panel", children: [
         /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-status__row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__label", children: SUPERVISOR_LABEL }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__value", children: describeConnectionStatus(connectionStatus) })
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-input__hint session-status__label", children: SUPERVISOR_LABEL }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-input__hint session-status__value", children: describeConnectionStatus(connectionStatus) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-status__row session-status__row--reserved", children: connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__value", children: connectionDetail }) : null })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-status__row session-status__row--reserved", children: connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-input__hint session-status__value", children: connectionDetail }) : null })
       ] });
     }
     const { providerSummary, models, tokenUsage } = status;
@@ -22923,11 +22923,11 @@ ${path2}` : path2;
     const modelsSummary = models && models.length > 0 ? formatModelSummary(models) : providerSummary;
     const tokensSummary = `${tokenUsage.used.toLocaleString()} / ${tokenLimit ? tokenLimit.toLocaleString() : "\u2014"} (${remainingPercentage}%)`;
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("section", { className: "session-status session-status--single-line session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "session-status__row session-status__row--single-line", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-status__value session-status__value--primary", children: `Models: ${modelsSummary}  |  Tokens: ${tokensSummary}` }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-input__hint session-status__value session-status__value--primary", children: `Models: ${modelsSummary}  |  Tokens: ${tokensSummary}` }),
       /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         "span",
         {
-          className: `session-status__value session-status__value--debug ${tokenDebugSummary ? "" : "session-status__value--debug-hidden"}`,
+          className: `session-input__hint session-status__value session-status__value--debug ${tokenDebugSummary ? "" : "session-status__value--debug-hidden"}`,
           children: tokenDebugSummary ?? "#1 \u2014"
         }
       )
