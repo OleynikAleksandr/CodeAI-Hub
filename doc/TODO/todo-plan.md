@@ -84,8 +84,8 @@
 **Goal:** зафиксировать `Session ID Bar` на `32px`, добавить справа две placeholder-строки лимитов с progress-bar и выпустить новый релиз после QA.
 
 ### Stream: Session ID Bar 32px Placeholder Layout
-1. [TODO] Реализовать фиксированную высоту `32px` для `ID`-плашки: слева `ID: f38e9689-...` (14px, выравнивание по левому краю и по центру высоты), справа блок из 2 строк (`5 houers`, `weekly`) с серыми горизонтальными барами `80px x 4px`, выровненными по правому краю и по центру каждой строки (scope: `media/session-view.css`, `src/client/ui/src/session/session-id-bar.tsx`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `feat(session-ui): add fixed 32px id bar with placeholder limit rows`)
-2. [TODO] Git Commit: `feat(session-ui): add fixed 32px id bar with placeholder limit rows` (hash: TBD)
+1. [DONE] Реализовать фиксированную высоту `32px` для `ID`-плашки: слева `ID: f38e9689-...` (14px, выравнивание по левому краю и по центру высоты), справа блок из 2 строк (`5 houers`, `weekly`) с серыми горизонтальными барами `80px x 4px`, выровненными по правому краю и по центру каждой строки (scope: `media/session-view.css`, `src/client/ui/src/session/session-id-bar.tsx`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `feat(session-ui): add fixed 32px id bar with placeholder limit rows`)
+2. [DONE] Git Commit: `feat(session-ui): add fixed 32px id bar with placeholder limit rows` (hash: 74210bf8)
 
 ### Stream: Release Build (Phase 125)
 1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream-ов фазы (scope: scripts; expected commit message: `chore(release): run build-all for session id bar limits placeholder`)
