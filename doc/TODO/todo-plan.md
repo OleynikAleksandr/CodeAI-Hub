@@ -18,7 +18,7 @@
 **Goal:** улучшить читаемость строки `Models | Tokens` в Session UI: убрать отображение максимального окна и увеличить разделитель между Model и Tokens.
 
 ### Stream: Session Header
-1. [TODO] Обновить отображение Tokens: убрать `/<max>` и оставить `Tokens: <used> (<percent>)`; увеличить пробелы вокруг `|` в 2 раза (scope: `src/client/ui/src/session/...`; expected commit message: `fix(session-ui): simplify tokens label and widen separator`)
-2. [TODO] Git Commit: `fix(session-ui): simplify tokens label and widen separator` (hash: TBD)
-3. [TODO] Обновить документацию по Session UI (scope: `doc/SolidWorks-Flow/System/SessionUI_Layout_Stability.md`; expected commit message: `docs(session-ui): document models/tokens header formatting`)
-4. [TODO] Git Commit: `docs(session-ui): document models/tokens header formatting` (hash: TBD)
+1. [DONE] Обновить отображение Tokens: убрать `/<max>` и оставить `Tokens: <used> (<percent>)`; увеличить пробелы вокруг `|` в 2 раза (scope: `src/client/ui/src/session/status-panel.tsx`, `media/react-chat.js`; expected commit message: `fix(session-ui): simplify tokens label and widen separator`)
+2. [DONE] Git Commit: `fix(session-ui): simplify tokens label and widen separator` (hash: b9e97e28)
+3. [DONE] Обновить документацию по Session UI: формат строки `Models | Tokens` без `/<max>` (scope: `doc/SolidWorks-Flow/System/SessionUI_Layout_Stability.md`; expected commit message: `docs(plan): archive phase131 and open phase132`)
+4. [DONE] Git Commit: `docs(plan): archive phase131 and open phase132` (hash: 3c467435)
