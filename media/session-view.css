@@ -197,10 +197,8 @@
 }
 
 .session-id-bar__text {
-  font-size: 11px;
-  line-height: 1.25;
-  color: rgba(189, 189, 189, 1);
-  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
 }
 
 .session-banner {
@@ -883,8 +881,13 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
+}
+
+.session-input__hint {
   font-size: 11px;
+  line-height: 1.25;
   color: rgba(189, 189, 189, 1);
+  font-weight: 400;
 }
 
 .session-status__row {

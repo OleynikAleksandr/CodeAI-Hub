@@ -32,14 +32,18 @@ const StatusPanel = ({
     return (
       <section className="session-status session-panel">
         <div className="session-status__row">
-          <span className="session-status__label">{SUPERVISOR_LABEL}</span>
-          <span className="session-status__value">
+          <span className="session-input__hint session-status__label">
+            {SUPERVISOR_LABEL}
+          </span>
+          <span className="session-input__hint session-status__value">
             {describeConnectionStatus(connectionStatus)}
           </span>
         </div>
         <div className="session-status__row session-status__row--reserved">
           {connectionDetail ? (
-            <span className="session-status__value">{connectionDetail}</span>
+            <span className="session-input__hint session-status__value">
+              {connectionDetail}
+            </span>
           ) : null}
         </div>
       </section>
@@ -73,11 +77,11 @@ const StatusPanel = ({
   return (
     <section className="session-status session-status--single-line session-panel">
       <div className="session-status__row session-status__row--single-line">
-        <span className="session-status__value session-status__value--primary">
+        <span className="session-input__hint session-status__value session-status__value--primary">
           {`Models: ${modelsSummary}  |  Tokens: ${tokensSummary}`}
         </span>
         <span
-          className={`session-status__value session-status__value--debug ${tokenDebugSummary ? "" : "session-status__value--debug-hidden"}`}
+          className={`session-input__hint session-status__value session-status__value--debug ${tokenDebugSummary ? "" : "session-status__value--debug-hidden"}`}
         >
           {tokenDebugSummary ?? "#1 \u2014"}
         </span>

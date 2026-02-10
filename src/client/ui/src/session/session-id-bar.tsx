@@ -22,7 +22,9 @@ const resolveIdLabel = (binding: SessionBindingInfo): string => {
 
 const SessionIdBar = ({ binding }: SessionIdBarProps) => (
   <section className="session-panel session-id-bar">
-    <span className="session-id-bar__text">{resolveIdLabel(binding)}</span>
+    <span className="session-id-bar__text session-input__hint">
+      {resolveIdLabel(binding)}
+    </span>
   </section>
 );
 
