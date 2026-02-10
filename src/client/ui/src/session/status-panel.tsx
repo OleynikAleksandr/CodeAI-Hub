@@ -71,16 +71,16 @@ const StatusPanel = ({
   const tokensSummary = `${tokenUsage.used.toLocaleString()} / ${tokenLimit ? tokenLimit.toLocaleString() : "\u2014"} (${remainingPercentage}%)`;
 
   return (
-    <section className="session-status session-panel">
-      <div className="session-status__row">
-        <span className="session-status__value">
+    <section className="session-status session-status--single-line session-panel">
+      <div className="session-status__row session-status__row--single-line">
+        <span className="session-status__value session-status__value--primary">
           {`Models: ${modelsSummary}  |  Tokens: ${tokensSummary}`}
         </span>
-      </div>
-      <div className="session-status__row session-status__row--reserved">
-        {tokenDebugSummary ? (
-          <span className="session-status__value">{tokenDebugSummary}</span>
-        ) : null}
+        <span
+          className={`session-status__value session-status__value--debug ${tokenDebugSummary ? "" : "session-status__value--debug-hidden"}`}
+        >
+          {tokenDebugSummary ?? "#1 \u2014"}
+        </span>
       </div>
     </section>
   );
