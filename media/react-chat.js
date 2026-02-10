@@ -10457,11 +10457,11 @@
       }
     }
   }
-  function productionCreate(_, jsx44, jsxs40) {
+  function productionCreate(_, jsx44, jsxs41) {
     return create2;
     function create2(_2, type, props, key) {
       const isStaticChildren = Array.isArray(props.children);
-      const fn = isStaticChildren ? jsxs40 : jsx44;
+      const fn = isStaticChildren ? jsxs41 : jsx44;
       return key ? fn(type, props, key) : fn(type, props);
     }
   }
@@ -22558,7 +22558,26 @@ ${path2}` : path2;
     }
     return "ID: unavailable";
   };
-  var SessionIdBar = ({ binding }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("section", { className: "session-panel session-id-bar", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__text session-input__hint", children: resolveIdLabel(binding) }) });
+  var SessionIdBar = ({ binding }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+    "section",
+    {
+      "aria-label": `Session identifier ${resolveIdLabel(binding)}`,
+      className: "session-panel session-id-bar",
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__id", children: resolveIdLabel(binding) }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { "aria-hidden": true, className: "session-id-bar__limits", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-id-bar__limit-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-label", children: "5 houers" }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-bar" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-id-bar__limit-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-label", children: "weekly" }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-bar" })
+          ] })
+        ] })
+      ]
+    }
+  );
   var session_id_bar_default = SessionIdBar;
 
   // src/client/ui/src/session/session-view-helpers.tsx
