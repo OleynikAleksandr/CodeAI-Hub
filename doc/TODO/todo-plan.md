@@ -65,11 +65,11 @@
 
 ### Stream: SSOT Guardrails for UI Styling
 1. [DONE] Добавить архитектурный guard, который блокирует появление второго источника для уже канонизированных UI-контуров (scope: `scripts/check-architecture.sh`, `scripts/check-architecture-rules/ui-style-ssot.sh`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `chore(architecture): enforce ui style single source guardrails`)
-2. [DONE] Git Commit: `chore(architecture): enforce ui style single source guardrails` (hash: TBD)
+2. [DONE] Git Commit: `chore(architecture): enforce ui style single source guardrails` (hash: b4e63bbd)
 
 ### Stream: QA Gates + Targeted Builds
-1. [TODO] Прогнать обязательные гейты и таргетные сборки для затронутых контуров (scope: `scripts/check-architecture.sh`, `src/client/ui`, `src/client/project-manager`; expected commit message: `docs(qa): validate ssot refactor gates and targeted builds`)
-2. [TODO] Git Commit: `docs(qa): validate ssot refactor gates and targeted builds` (hash: TBD)
+1. [DONE] Прогнать обязательные гейты и таргетные сборки для затронутых контуров (scope: `scripts/check-architecture.sh`, `src/client/ui`, `src/client/project-manager`; expected commit message: `docs(qa): validate ssot refactor gates and targeted builds`)
+2. [DONE] Git Commit: `docs(qa): validate ssot refactor gates and targeted builds` (hash: TBD)
 
 ### Stream: Release Build (Final)
 1. [TODO] Выполнить `./scripts/build-all.sh` после завершения всех stream (scope: scripts; expected commit message: `chore(release): run build-all for ssot refactor`)
