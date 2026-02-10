@@ -1,4 +1,4 @@
-import { promises as fs, readFileSync } from "node:fs";
+import { existsSync, promises as fs, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import {
@@ -77,6 +77,7 @@ export const parseSettingsSnapshot = (
 };
 
 export const loadSettingsSnapshot = (): SettingsSnapshot => {
+  const hadSettingsFile = existsSync(SETTINGS_FILE);
   try {
     const raw = readFileSync(SETTINGS_FILE, "utf8");
     const parsed = JSON.parse(raw) as unknown;
@@ -104,6 +105,12 @@ export const loadSettingsSnapshot = (): SettingsSnapshot => {
       /* ignore persistence errors */
     });
     return migrated;
+  }
+
+  if (!hadSettingsFile) {
+    persistSettingsSnapshot(DEFAULT_SETTINGS_SNAPSHOT).catch(() => {
+      /* ignore persistence errors */
+    });
   }
 
   return DEFAULT_SETTINGS_SNAPSHOT;
