@@ -1,3 +1,18 @@
+## [1.1.545] - 2026-02-10
+### Fixed
+- Session UI: правый блок лимитов в `Session ID Bar` стал читаемее — label `5 houers`/`weekly` переведены на `9px`, уменьшены зазоры (`gap: 1px`, `column-gap: 6px`) при сохранении фиксированной высоты плашки `32px`.
+- Session UI: подсказочные/инфоплашки (`ID`, `Press Enter to send...`, `Models/Tokens`, debug summary справа) выровнены по единому цвету `rgba(140, 140, 140, 1)`.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.545.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
+## [1.1.544] - 2026-02-10
+### Added
+- Session UI: возвращена отдельная `Session ID Bar` между табами и диалогом; слева отображается `ID: <8-char-prefix>-...`, справа добавлены placeholder лимиты (`5 houers`, `weekly`) с прогресс-барами `80x4`.
+
+### Changed
+- Session UI: `Session ID Bar` зафиксирована по высоте `32px` (высота таба), layout выровнен по каноническому style-source (`media/session-view.css` + shared SessionView components).
+
 ## [1.1.538] - 2026-02-09
 ### Fixed
 - Gemini reviewer continuity: `description/reviewer` auto-start now stays on preferred `geminiCli` provider when resume-path is available, instead of dropping to Claude fallback due to missing adapter resume contract.
