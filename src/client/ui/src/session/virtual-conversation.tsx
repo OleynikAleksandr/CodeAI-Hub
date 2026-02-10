@@ -270,10 +270,11 @@ export const buildTokenDebugSummary = (params: {
     }
 
     const label = `#${index + 1}`;
-    const formatted = `${label} ${formatRemainingPercent({
+    const remainingPercent = formatRemainingPercent({
       used: snapshot.status.tokenUsage.used,
       limit: snapshot.status.tokenUsage.limit,
-    })}`;
+    });
+    const formatted = `${label} (${remainingPercent})`;
     parts.push(formatted);
   }
 

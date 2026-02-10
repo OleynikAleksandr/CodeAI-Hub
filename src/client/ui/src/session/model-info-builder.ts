@@ -66,7 +66,12 @@ export const buildModelInfoList = (
 
     // Get reasoning level for Codex or Gemini
     let reasoning: string | undefined;
-    if (providerKey === "codex") {
+    if (providerKey === "claude") {
+      const claudeSettings = settings.providers.claude;
+      reasoning = claudeSettings.thinking.enabled
+        ? "thinking on"
+        : "thinking off";
+    } else if (providerKey === "codex") {
       const codexSettings = settings.providers.codex;
       reasoning = codexSettings.reasoningByModel[modelId];
     } else if (providerKey === "gemini") {

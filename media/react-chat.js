@@ -7887,7 +7887,10 @@
       const modelId = providerSettings.defaultModel;
       const modelDisplayName = formatModelDisplayName(modelId);
       let reasoning;
-      if (providerKey === "codex") {
+      if (providerKey === "claude") {
+        const claudeSettings = settings.providers.claude;
+        reasoning = claudeSettings.thinking.enabled ? "thinking on" : "thinking off";
+      } else if (providerKey === "codex") {
         const codexSettings = settings.providers.codex;
         reasoning = codexSettings.reasoningByModel[modelId];
       } else if (providerKey === "gemini") {
@@ -23093,10 +23096,11 @@ ${path2}` : path2;
         continue;
       }
       const label = `#${index2 + 1}`;
-      const formatted = `${label} ${formatRemainingPercent({
+      const remainingPercent = formatRemainingPercent({
         used: snapshot.status.tokenUsage.used,
         limit: snapshot.status.tokenUsage.limit
-      })}`;
+      });
+      const formatted = `${label} (${remainingPercent})`;
       parts.push(formatted);
     }
     return parts.length > 0 ? parts.join(" | ") : null;
