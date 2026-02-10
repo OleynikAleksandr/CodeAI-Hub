@@ -1,6 +1,6 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.553
+**Version:** 1.1.554
 **Last Updated:** 2026-02-10
 **Status:** Active reference (source of truth)
 
@@ -87,7 +87,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.553`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.554`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -98,7 +98,7 @@ Node.js сервис (`@codeai-hub/core@1.1.553`), упакованный как
 
 Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
 
-### 2.2 UI Bundles (v1.1.553)
+### 2.2 UI Bundles (v1.1.554)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
 - `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
@@ -358,6 +358,8 @@ CommonJS модули, tarballs через `npm pack`. Инсталляторы 
 
 **Claude defaults:** `~/.codeai-hub/settings/settings.json` хранит `providers.claude.defaultModel`.
 
+При первом запуске на чистой установке `settings.json` создается автоматически с дефолтным snapshot, чтобы Project Manager и Session UI могли сразу отображать корректные значения default model/reasoning без ручного изменения настроек.
+
 ### 6.2 Gemini
 
 CommonJS модуль с динамическим `import()` для ESM-пакетов. Глобальная установка `@google/gemini-cli` и `@google/gemini-cli-core`.
@@ -383,36 +385,36 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/1.1.551/
+│   └── darwin-arm64/1.1.554/
 │       ├── node/
 │       ├── app/
 │       └── install.json
 ├── packages/
-│   ├── launcher/macos-arm64/1.1.551/
+│   ├── launcher/macos-arm64/1.1.554/
 │   └── ui/
 │       ├── vscode-webview/
 │       │   ├── 1.1.551/
-│       │   └── current -> 1.1.551
+│       │   └── current -> 1.1.554
 │       └── project-manager/
 │           ├── 1.1.551/
-│           └── current -> 1.1.551
+│           └── current -> 1.1.554
 ├── providers/
-│   ├── claude/1.1.551/
-│   ├── codex/1.1.551/
-│   └── gemini/1.1.551/
+│   ├── claude/1.1.554/
+│   ├── codex/1.1.554/
+│   └── gemini/1.1.554/
 ├── state/
 │   └── projects.json
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.551.tar.bz2
-    ├── vscode-webview-1.1.551.tar.bz2
-    ├── project-manager-1.1.551.tar.bz2
-    ├── claude-module-1.1.551.tar.bz2
-    ├── codex-module-1.1.551.tar.bz2
-    ├── gemini-module-1.1.551.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.551.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.554.tar.bz2
+    ├── vscode-webview-1.1.554.tar.bz2
+    ├── project-manager-1.1.554.tar.bz2
+    ├── claude-module-1.1.554.tar.bz2
+    ├── codex-module-1.1.554.tar.bz2
+    ├── gemini-module-1.1.554.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.554.tar.bz2
 ```
 
 ---
@@ -421,12 +423,12 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.551 |
-| Core | 1.1.551 |
-| UI Bundles | 1.1.551 |
-| Claude Module | 1.1.551 |
-| Codex Module | 1.1.551 |
-| Gemini Module | 1.1.551 |
+| VSIX | 1.1.554 |
+| Core | 1.1.554 |
+| UI Bundles | 1.1.554 |
+| Claude Module | 1.1.554 |
+| Codex Module | 1.1.554 |
+| Gemini Module | 1.1.554 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |
