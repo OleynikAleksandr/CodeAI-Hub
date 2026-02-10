@@ -1,44 +1,47 @@
 import { api } from "../api";
 import type {
-  WorkspaceScopeAckPayload,
+  WorkspaceSelectAckPayload,
   WorkspaceScopeSyncReason,
 } from "../core-stream-message-types";
 
 const SCOPE_ACK_TIMEOUT_MS = 3000;
 
-const createScopeRequestId = (): string => {
+export const createWorkspaceSelectRequestId = (): string => {
   if (
     typeof globalThis.crypto !== "undefined" &&
     "randomUUID" in globalThis.crypto
   ) {
     return globalThis.crypto.randomUUID();
   }
-  return `scope-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `workspace-select-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
 
-const resolveScopeAckPayload = (
+const resolveWorkspaceSelectAckPayload = (
   payload: unknown
-): WorkspaceScopeAckPayload | null => {
+): WorkspaceSelectAckPayload | null => {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
     return null;
   }
   const candidate = payload as {
     readonly requestId?: unknown;
     readonly status?: unknown;
-    readonly workspacePath?: unknown;
+    readonly workspaceRoot?: unknown;
+    readonly selectionId?: unknown;
     readonly error?: unknown;
   };
   if (
     typeof candidate.requestId !== "string" ||
     (candidate.status !== "applied" && candidate.status !== "rejected") ||
-    !(candidate.workspacePath === null || typeof candidate.workspacePath === "string")
+    !(candidate.workspaceRoot === null || typeof candidate.workspaceRoot === "string") ||
+    !(candidate.selectionId === null || typeof candidate.selectionId === "string")
   ) {
     return null;
   }
   return {
     requestId: candidate.requestId,
     status: candidate.status,
-    workspacePath: candidate.workspacePath,
+    workspaceRoot: candidate.workspaceRoot,
+    selectionId: candidate.selectionId,
     error:
       candidate.error === undefined || candidate.error === null
         ? null
@@ -46,35 +49,28 @@ const resolveScopeAckPayload = (
   };
 };
 
-/**
- * @deprecated Phase 105: use `workspace:select` via `api.selectWorkspace(...)`.
- * Kept only as transition fallback for legacy cores that do not support
- * workspace runtime selection protocol yet.
- */
-export const syncWorkspaceScopeWithAck = async (params: {
-  readonly workspacePath: string | null;
-  readonly workspaceSlug?: string | null;
+export const syncWorkspaceSelectWithAck = async (params: {
+  readonly workspaceRoot: string | null;
   readonly reason: WorkspaceScopeSyncReason;
-}): Promise<WorkspaceScopeAckPayload | null> => {
-  const requestId = createScopeRequestId();
+}): Promise<WorkspaceSelectAckPayload | null> => {
+  const requestId = createWorkspaceSelectRequestId();
 
-  api.setWorkspaceScope({
-    workspacePath: params.workspacePath,
-    workspaceSlug: params.workspaceSlug,
+  api.selectWorkspace({
     requestId,
+    workspaceRoot: params.workspaceRoot,
     reason: params.reason,
   });
 
-  return new Promise<WorkspaceScopeAckPayload | null>((resolve) => {
+  return new Promise<WorkspaceSelectAckPayload | null>((resolve) => {
     const timeout = window.setTimeout(() => {
       unsubscribe();
       resolve(null);
     }, SCOPE_ACK_TIMEOUT_MS);
     const unsubscribe = api.onCoreEvent((message) => {
-      if (message.type !== "workspace:scope:ack") {
+      if (message.type !== "workspace:select:ack") {
         return;
       }
-      const parsed = resolveScopeAckPayload(message.payload);
+      const parsed = resolveWorkspaceSelectAckPayload(message.payload);
       if (!parsed || parsed.requestId !== requestId) {
         return;
       }
