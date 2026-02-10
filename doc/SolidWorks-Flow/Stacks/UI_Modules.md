@@ -1,6 +1,6 @@
 # UI Modules Stack
 
-**Status:** Active (1.1.538)
+**Status:** Active (1.1.545)
 **Owner:** Codex
 **Context:** Модульная система UI, позволяющая обновлять интерфейс независимо от VSIX и обеспечивающая единый источник правды для FLOW через Project Manager (CEF). На период активной разработки FLOW `vscode-webview` используется только для Settings (Settings-only).
 
@@ -17,6 +17,11 @@ See also: `doc/SolidWorks-Flow/Stacks/Project_Manager.md` (Project Manager archi
 - **vscode-webview**: React-приложение для панели в VS Code (Settings-only на период разработки FLOW).
 - **project-manager**: Standalone UI для управления проектами (CEF) — основной UI-клиент Core для FLOW.
 - **Shared UI Library**: общие компоненты, хуки и стили (`src/client/ui/src`), обеспечивающие идентичный UX.
+
+Операционное обновление `1.1.545` (Phase 126):
+- `Session ID Bar` сохраняет фиксированную высоту `32px`;
+- правые label лимитов (`5 houers`, `weekly`) обновлены до `9px` с уменьшенными зазорами;
+- hint/status тексты (`ID`, `Press Enter...`, `Models/Tokens`, debug summary) унифицированы по цвету `rgba(140, 140, 140, 1)`.
 
 ---
 
