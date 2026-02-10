@@ -67,6 +67,6 @@
 
 ### Stream: Release Build (Final)
 1. [DONE] Выполнить `./scripts/build-all.sh` v1.1.541 (scope: scripts; expected commit message: `chore(release): run build-all for session ui tweaks`)
-2. [DONE] Git Commit: `chore(release): run build-all for session ui tweaks` (hash: TBD — this commit)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session ui tweaks`)
-4. [TODO] Git Commit: `chore(release): build and validate vsix for session ui tweaks` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): run build-all for session ui tweaks` (hash: 89a604b9)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX `codeai-hub-1.1.541.vsix` (1.0M) (scope: scripts; expected commit message: `chore(release): build and validate vsix for session ui tweaks`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for session ui tweaks` (hash: TBD — this commit)
