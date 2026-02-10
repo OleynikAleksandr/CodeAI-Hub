@@ -1,3 +1,13 @@
+## [1.1.548] - 2026-02-10
+### Fixed
+- Session DnD (Project Manager / launcher runtime): устранён сценарий, при котором drop-overlay показывался, но file-path ссылки не вставлялись в input после отпускания мыши.
+- Drag-drop message handler: при наличии `codeaiBridgeConfig.httpUrl` включён приоритетный HTTP fallback transport (`POST/DELETE /api/v1/file-drop`) независимо от bridge-shim, чтобы не уходить в нерабочий `postMessage`-контур launcher runtime.
+- File-drop fallback capture: добавлен короткий retry-цикл чтения `/api/v1/file-drop` для стабилизации захвата путей при тайминговом лаге между drop event и snapshot в Core.
+
+### Added
+- Regression contract test расширен под launcher-priority fallback + retry contract (`message-handler.test.ts`), webview/project-manager bundles пересобраны под обновлённый runtime.
+- Release artifacts: собран `codeai-hub-1.1.548.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.547] - 2026-02-10
 ### Fixed
 - Session DnD (Project Manager / launcher runtime): восстановлен fallback вставки file-path ссылок в input при `Shift + drag-and-drop`, когда VS Code bridge недоступен.

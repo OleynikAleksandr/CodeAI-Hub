@@ -1,6 +1,6 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.547
+**Version:** 1.1.548
 **Last Updated:** 2026-02-10
 **Status:** Active reference (source of truth)
 
@@ -87,7 +87,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.547`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.548`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -98,7 +98,7 @@ Node.js сервис (`@codeai-hub/core@1.1.547`), упакованный как
 
 Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
 
-### 2.2 UI Bundles (v1.1.547)
+### 2.2 UI Bundles (v1.1.548)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
 - `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
@@ -247,6 +247,10 @@ Phase 128 launcher drag-and-drop recovery (same Session input path):
 - if VS Code bridge is unavailable (Project Manager launcher runtime), drag-drop fallback resolves file paths via Core HTTP API `POST /api/v1/file-drop` and clears cache with `DELETE /api/v1/file-drop`;
 - canonical fallback implementation path: `src/client/ui/src/modules/drag-drop-module/message-handler.ts`.
 
+Phase 129 launcher drag-and-drop hardening (same Session input path):
+- for launcher runtime, message transport now prioritizes HTTP fallback when `codeaiBridgeConfig.httpUrl` is present, even if a VS Code bridge shim is defined in the window scope;
+- fallback path capture uses a short retry window for `POST /api/v1/file-drop` to tolerate drop-to-capture timing lag and prevent empty insertions.
+
 ### 5.2 Runtime & Launcher Delivery
 
 - `assets/cef/manifest.json` — CEF minimal-пакеты для Windows, macOS, Linux
@@ -369,36 +373,36 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/1.1.547/
+│   └── darwin-arm64/1.1.548/
 │       ├── node/
 │       ├── app/
 │       └── install.json
 ├── packages/
-│   ├── launcher/macos-arm64/1.1.547/
+│   ├── launcher/macos-arm64/1.1.548/
 │   └── ui/
 │       ├── vscode-webview/
-│       │   ├── 1.1.547/
-│       │   └── current -> 1.1.547
+│       │   ├── 1.1.548/
+│       │   └── current -> 1.1.548
 │       └── project-manager/
-│           ├── 1.1.547/
-│           └── current -> 1.1.547
+│           ├── 1.1.548/
+│           └── current -> 1.1.548
 ├── providers/
-│   ├── claude/1.1.547/
-│   ├── codex/1.1.547/
-│   └── gemini/1.1.547/
+│   ├── claude/1.1.548/
+│   ├── codex/1.1.548/
+│   └── gemini/1.1.548/
 ├── state/
 │   └── projects.json
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.547.tar.bz2
-    ├── vscode-webview-1.1.547.tar.bz2
-    ├── project-manager-1.1.547.tar.bz2
-    ├── claude-module-1.1.547.tar.bz2
-    ├── codex-module-1.1.547.tar.bz2
-    ├── gemini-module-1.1.547.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.547.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.548.tar.bz2
+    ├── vscode-webview-1.1.548.tar.bz2
+    ├── project-manager-1.1.548.tar.bz2
+    ├── claude-module-1.1.548.tar.bz2
+    ├── codex-module-1.1.548.tar.bz2
+    ├── gemini-module-1.1.548.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.548.tar.bz2
 ```
 
 ---
@@ -407,12 +411,12 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.547 |
-| Core | 1.1.547 |
-| UI Bundles | 1.1.547 |
-| Claude Module | 1.1.547 |
-| Codex Module | 1.1.547 |
-| Gemini Module | 1.1.547 |
+| VSIX | 1.1.548 |
+| Core | 1.1.548 |
+| UI Bundles | 1.1.548 |
+| Claude Module | 1.1.548 |
+| Codex Module | 1.1.548 |
+| Gemini Module | 1.1.548 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |
