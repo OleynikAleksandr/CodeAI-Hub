@@ -195,15 +195,22 @@ bool LauncherHandler::OnDragEnter(CefRefPtr<CefBrowser> browser,
     return false;
   }
 
-  std::vector<CefString> file_names;
-  dragData->GetFileNames(file_names);
-  if (file_names.empty()) {
+  std::vector<CefString> file_paths;
+  dragData->GetFilePaths(file_paths);
+  if (file_paths.empty()) {
+    // Fallback: may only provide display names in some OS contexts.
+    std::vector<CefString> file_names;
+    dragData->GetFileNames(file_names);
+    file_paths = file_names;
+  }
+
+  if (file_paths.empty()) {
     return false;
   }
 
-  last_drag_file_paths_.reserve(file_names.size());
-  for (const auto& name : file_names) {
-    const std::string candidate = name.ToString();
+  last_drag_file_paths_.reserve(file_paths.size());
+  for (const auto& entry : file_paths) {
+    const std::string candidate = entry.ToString();
     if (!candidate.empty()) {
       last_drag_file_paths_.push_back(candidate);
     }
