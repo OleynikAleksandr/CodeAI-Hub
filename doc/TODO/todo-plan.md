@@ -174,8 +174,8 @@
 ### Stream: Release Build (Phase 129)
 1. [DONE] Выполнить `./scripts/build-all.sh` после завершения stream bugfix и зелёных гейтов (scope: scripts; expected commit message: `chore(release): run build-all for launcher dnd fallback hardening`)
 2. [DONE] Git Commit: `chore(release): run build-all for launcher dnd fallback hardening` (hash: 38ea8f9b)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for launcher dnd fallback hardening`)
-4. [TODO] Git Commit: `chore(release): build and validate vsix for launcher dnd fallback hardening` (hash: TBD)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for launcher dnd fallback hardening`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for launcher dnd fallback hardening` (hash: 1d45bdc7)
 
 ### Stream: Post-Release Version Sync
 1. [TODO] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по launcher dnd hardening (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.548`)
