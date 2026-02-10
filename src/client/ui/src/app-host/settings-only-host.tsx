@@ -1,4 +1,10 @@
 import { type CSSProperties, useCallback, useEffect } from "react";
+import {
+  settingsColorTokens,
+  settingsRadiusTokens,
+  settingsSpacingTokens,
+  settingsTypographyTokens,
+} from "../components/settings/style-tokens";
 import SettingsView from "../components/settings-view";
 import { activateRoot } from "../root-dom";
 import { useSettingsVisibility } from "./settings-visibility";
@@ -13,17 +19,17 @@ const settingsOnlyLayoutStyles: CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   padding: "32px 24px",
-  background: "rgb(24, 24, 24)",
+  background: settingsColorTokens.surface,
   color: "var(--vscode-editor-foreground, #cccccc)",
 };
 
 const settingsOnlyCardStyles: CSSProperties = {
   width: "100%",
   maxWidth: "520px",
-  borderRadius: "16px",
-  padding: "24px",
+  borderRadius: settingsRadiusTokens.card,
+  padding: settingsSpacingTokens.cardPadding,
   background: "var(--vscode-editorWidget-background, #252526)",
-  border: "1px solid var(--vscode-editorWidget-border, #2a2a2a)",
+  border: `1px solid ${settingsColorTokens.borderSubtle}`,
   boxShadow: "0 12px 32px rgba(0, 0, 0, 0.35)",
   display: "flex",
   flexDirection: "column",
@@ -32,31 +38,31 @@ const settingsOnlyCardStyles: CSSProperties = {
 
 const settingsOnlyTitleStyles: CSSProperties = {
   margin: 0,
-  fontSize: "20px",
+  fontSize: settingsTypographyTokens.hostTitleFontSize,
   fontWeight: 600,
-  color: "var(--vscode-editor-foreground, #ffffff)",
+  color: settingsColorTokens.textPrimary,
 };
 
 const settingsOnlyBodyStyles: CSSProperties = {
   margin: 0,
-  fontSize: "14px",
+  fontSize: settingsTypographyTokens.hostBodyFontSize,
   lineHeight: 1.5,
 };
 
 const settingsOnlyHintStyles: CSSProperties = {
   margin: 0,
-  fontSize: "12px",
-  color: "var(--vscode-descriptionForeground, #9aa0a6)",
+  fontSize: settingsTypographyTokens.bodyFontSize,
+  color: settingsColorTokens.textMuted,
 };
 
 const settingsOnlyButtonStyles: CSSProperties = {
   alignSelf: "flex-start",
   marginTop: "4px",
   padding: "8px 14px",
-  borderRadius: "6px",
-  border: "1px solid #3a3a3a",
-  background: "#0e639c",
-  color: "#ffffff",
+  borderRadius: settingsRadiusTokens.control,
+  border: `1px solid ${settingsColorTokens.borderStrong}`,
+  background: settingsColorTokens.actionPrimary,
+  color: settingsColorTokens.actionPrimaryText,
   fontSize: "13px",
   cursor: "pointer",
 };
