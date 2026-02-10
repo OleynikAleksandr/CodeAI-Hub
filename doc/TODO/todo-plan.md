@@ -41,11 +41,11 @@
 
 ### Stream: Settings UI Style Token Canonicalization
 1. [DONE] Создать единый token-layer для Settings UI и перевести базовые контейнеры на него (scope: `src/client/ui/src/components/settings/style-tokens.ts`, `src/client/ui/src/components/settings-view.tsx`, `src/client/ui/src/app-host/settings-only-host.tsx`; expected commit message: `refactor(settings-ui): introduce canonical style token layer`)
-2. [IN_PROGRESS] Git Commit: `refactor(settings-ui): introduce canonical style token layer` (hash: TBD)
+2. [DONE] Git Commit: `refactor(settings-ui): introduce canonical style token layer` (hash: 8b48c710)
 
 ### Stream: Settings Cards Style Unification
-1. [TODO] Перевести карточки и диалоги Settings на общий набор токенов без дублирования color/border/font в каждом модуле (scope: `src/client/ui/src/components/settings/settings-card.tsx`, `src/client/ui/src/components/settings/shared-model-card-styles.ts`, `src/client/ui/src/components/settings/settings-footer.tsx`; expected commit message: `refactor(settings-ui): unify card and dialog style ownership`)
-2. [TODO] Git Commit: `refactor(settings-ui): unify card and dialog style ownership` (hash: TBD)
+1. [DONE] Перевести карточки и диалоги Settings на общий набор токенов без дублирования color/border/font в каждом модуле (scope: `src/client/ui/src/components/settings/settings-card.tsx`, `src/client/ui/src/components/settings/shared-model-card-styles.ts`, `src/client/ui/src/components/settings/settings-footer.tsx`; expected commit message: `refactor(settings-ui): unify card and dialog style ownership`)
+2. [IN_PROGRESS] Git Commit: `refactor(settings-ui): unify card and dialog style ownership` (hash: TBD)
 
 ### Stream: UI Bundle Runtime Layout Unification
 1. [TODO] Убрать dual-layout для UI bundle install/resolve и оставить единый runtime layout (scope: `src/extension-module/ui/ui-installer.ts`, `src/extension-module/ui/ui-path-resolver.ts`, `src/extension-module/ui/ui-activation.ts`; expected commit message: `refactor(runtime): unify ui bundle install and resolve layout`)
