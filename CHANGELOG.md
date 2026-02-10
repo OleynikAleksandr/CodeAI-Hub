@@ -1,3 +1,12 @@
+## [1.1.547] - 2026-02-10
+### Fixed
+- Session DnD (Project Manager / launcher runtime): восстановлен fallback вставки file-path ссылок в input при `Shift + drag-and-drop`, когда VS Code bridge недоступен.
+- Drag-drop message handler: добавлен HTTP fallback transport к Core API (`POST/DELETE /api/v1/file-drop`) для захвата и очистки dropped paths вне webview-контекста VS Code.
+
+### Added
+- Regression contract test для launcher fallback (`message-handler.test.ts`) и пересборка webview/project-manager bundle под новый runtime контур.
+- Release artifacts: собран `codeai-hub-1.1.547.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.546] - 2026-02-10
 ### Changed
 - Documentation sync release: обновлены архитектурные и стековые документы `doc/SolidWorks-Flow` под актуальный runtime/UI/launcher контур и текущий релиз.
