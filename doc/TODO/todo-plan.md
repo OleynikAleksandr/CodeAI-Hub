@@ -37,11 +37,11 @@
 
 ### Stream: Project Manager Legacy CSS Decommission
 1. [DONE] Деактивировать и удалить legacy-контур `layout.css`, закрепив единый источник PM layout-токенов (scope: `src/client/project-manager/styles/layout.css`, `packages/ui/project-manager/styles.css`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `refactor(pm-ui): remove legacy layout css source`)
-2. [IN_PROGRESS] Git Commit: `refactor(pm-ui): remove legacy layout css source` (hash: TBD)
+2. [DONE] Git Commit: `refactor(pm-ui): remove legacy layout css source` (hash: c33d9828)
 
 ### Stream: Settings UI Style Token Canonicalization
-1. [TODO] Создать единый token-layer для Settings UI и перевести базовые контейнеры на него (scope: `src/client/ui/src/components/settings/style-tokens.ts`, `src/client/ui/src/components/settings-view.tsx`, `src/client/ui/src/app-host/settings-only-host.tsx`; expected commit message: `refactor(settings-ui): introduce canonical style token layer`)
-2. [TODO] Git Commit: `refactor(settings-ui): introduce canonical style token layer` (hash: TBD)
+1. [DONE] Создать единый token-layer для Settings UI и перевести базовые контейнеры на него (scope: `src/client/ui/src/components/settings/style-tokens.ts`, `src/client/ui/src/components/settings-view.tsx`, `src/client/ui/src/app-host/settings-only-host.tsx`; expected commit message: `refactor(settings-ui): introduce canonical style token layer`)
+2. [IN_PROGRESS] Git Commit: `refactor(settings-ui): introduce canonical style token layer` (hash: TBD)
 
 ### Stream: Settings Cards Style Unification
 1. [TODO] Перевести карточки и диалоги Settings на общий набор токенов без дублирования color/border/font в каждом модуле (scope: `src/client/ui/src/components/settings/settings-card.tsx`, `src/client/ui/src/components/settings/shared-model-card-styles.ts`, `src/client/ui/src/components/settings/settings-footer.tsx`; expected commit message: `refactor(settings-ui): unify card and dialog style ownership`)

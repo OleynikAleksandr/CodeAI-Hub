@@ -7,6 +7,11 @@ import ProviderVersions from "./settings/provider-versions";
 import SessionContinuityCard from "./settings/session-continuity-card";
 import SettingsFooter from "./settings/settings-footer";
 import SettingsHeader from "./settings/settings-header";
+import {
+  settingsColorTokens,
+  settingsSpacingTokens,
+  settingsTypographyTokens,
+} from "./settings/style-tokens";
 import ThinkingSettings from "./settings/thinking-settings";
 import { useSettingsState } from "./settings/use-settings-state";
 
@@ -22,58 +27,58 @@ const containerStyles: React.CSSProperties = {
   height: "100%",
   display: "flex",
   flexDirection: "column",
-  background: "#1e1e1e",
-  color: "#cccccc",
+  background: settingsColorTokens.surface,
+  color: settingsColorTokens.textSecondary,
 };
 
 const tabBarStyles: React.CSSProperties = {
   display: "flex",
-  borderBottom: "1px solid #2d2d30",
-  padding: "0 20px",
+  borderBottom: `1px solid ${settingsColorTokens.borderSubtle}`,
+  padding: `0 ${settingsSpacingTokens.pagePadding}`,
   gap: "8px",
 };
 
 const tabButtonStyles: React.CSSProperties = {
   border: "none",
   background: "transparent",
-  color: "#cccccc",
-  fontSize: "12px",
-  padding: "10px 14px",
+  color: settingsColorTokens.textSecondary,
+  fontSize: settingsTypographyTokens.tabFontSize,
+  padding: settingsSpacingTokens.tabPadding,
   cursor: "pointer",
   borderBottom: "2px solid transparent",
 };
 
 const activeTabStyles: React.CSSProperties = {
-  color: "#ffffff",
-  borderBottomColor: "#0e639c",
+  color: settingsColorTokens.textPrimary,
+  borderBottomColor: settingsColorTokens.actionPrimary,
 };
 
 const contentStyles: React.CSSProperties = {
   flex: 1,
   overflowY: "auto",
-  padding: "20px",
+  padding: settingsSpacingTokens.pagePadding,
 };
 
 const stackStyles: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
-  gap: "16px",
+  gap: settingsSpacingTokens.containerGap,
 };
 
 const modeNoticeStyles: React.CSSProperties = {
-  margin: "16px 20px 0",
+  margin: `16px ${settingsSpacingTokens.pagePadding} 0`,
   padding: "12px 14px",
   borderRadius: "10px",
-  background: "#252526",
-  border: "1px solid #2d2d30",
-  color: "#cccccc",
-  fontSize: "12px",
+  background: settingsColorTokens.surfaceElevated,
+  border: `1px solid ${settingsColorTokens.borderSubtle}`,
+  color: settingsColorTokens.textSecondary,
+  fontSize: settingsTypographyTokens.bodyFontSize,
   lineHeight: 1.5,
 };
 
 const modeNoticeTitleStyles: React.CSSProperties = {
-  color: "#ffffff",
-  fontSize: "13px",
+  color: settingsColorTokens.textPrimary,
+  fontSize: settingsTypographyTokens.titleFontSize,
   fontWeight: 600,
   marginBottom: "4px",
 };
