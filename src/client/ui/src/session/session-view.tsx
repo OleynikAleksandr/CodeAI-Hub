@@ -4,6 +4,7 @@ import DialogPanel from "./dialog-panel";
 import EmptyState from "./empty-state";
 import { mapProviderTheme } from "./helpers";
 import InputPanel from "./input-panel";
+import SessionIdBar from "./session-id-bar";
 import {
   resolveContinuationChainOrEmpty,
   resolveVirtualConversationMessages,
@@ -118,6 +119,7 @@ const SessionViewBody = ({
   return (
     <div className="session-app">
       {header}
+      <SessionIdBar binding={activeSession.binding} />
       <div className="session-app__content">
         <div className="session-app__dialog">
           <DialogPanel

@@ -189,6 +189,20 @@
   color: rgba(204, 204, 204, 1);
 }
 
+.session-id-bar {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  min-height: 28px;
+}
+
+.session-id-bar__text {
+  font-size: 11px;
+  line-height: 1.25;
+  color: rgba(189, 189, 189, 1);
+  font-weight: 400;
+}
+
 .session-banner {
   font-size: 12px;
   line-height: 1.25;
