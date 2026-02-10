@@ -8,7 +8,13 @@ import {
   resolveContinuityLockActive,
   resolveContinuityLockReason,
 } from "./session-lock-guards";
-import { sanitizeMessage, sanitizeSession } from "../../../ui/src/core-bridge/normalizers";
+import {
+  createSystemSessionMessage,
+  sanitizeSession,
+  sanitizeSessionBindingPayload,
+  sanitizeSessionErrorPayload,
+  sanitizeSessionMessagePayload,
+} from "../../../ui/src/core-bridge/normalizers";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 type IncomingMessage = {
   readonly type: string;
@@ -108,41 +114,6 @@ export const applyWorkspaceSnapshotToSnapshots = (
 };
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-const resolveServerErrorMessage = (
-  payload: unknown
-): { readonly sessionId: string; readonly message: string } | null => {
-  if (!payload || typeof payload !== "object") {
-    return null;
-  }
-  const candidate = payload as {
-    readonly sessionId?: unknown;
-    readonly providerId?: unknown;
-    readonly message?: unknown;
-  };
-  const sessionId =
-    typeof candidate.sessionId === "string" ? candidate.sessionId : null;
-  if (!sessionId) {
-    return null;
-  }
-  const providerLabel =
-    typeof candidate.providerId === "string" && candidate.providerId.trim()
-      ? `[${candidate.providerId.trim()}] `
-      : "";
-  const message =
-    typeof candidate.message === "string" && candidate.message.trim()
-      ? candidate.message.trim()
-      : "Unknown error.";
-  return { sessionId, message: `${providerLabel}${message}` };
-};
-const generateLocalMessageId = (): string => {
-  if (
-    typeof globalThis.crypto !== "undefined" &&
-    "randomUUID" in globalThis.crypto
-  ) {
-    return globalThis.crypto.randomUUID();
-  }
-  return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-};
 export const useProjectManagerSessionStream = (params: {
   readonly onSessionCreated: (session: SessionRecord) => void;
   readonly onSessionMessage: (payload: SessionMessageUpdate) => void;
@@ -165,28 +136,9 @@ export const useProjectManagerSessionStream = (params: {
         return;
       }
       if (message.type === "session:message") {
-        const candidate = message.payload as {
-          readonly sessionId?: unknown;
-          readonly message?: unknown;
-        };
-        if (isRecord(candidate) && isRecord(candidate.message)) {
-          const sessionId =
-            typeof candidate.sessionId === "string" ? candidate.sessionId : null;
-          const sanitized = sanitizeMessage({
-            sessionId,
-            ...(candidate.message as Record<string, unknown>),
-          } as never);
-          if (sessionId && sanitized) {
-            params.onSessionMessage({ sessionId, message: sanitized });
-          }
-          return;
-        }
-        const sanitized = sanitizeMessage(message.payload as never);
-        if (sanitized && typeof candidate?.sessionId === "string") {
-          params.onSessionMessage({
-            sessionId: candidate.sessionId,
-            message: sanitized,
-          });
+        const normalized = sanitizeSessionMessagePayload(message.payload);
+        if (normalized) {
+          params.onSessionMessage(normalized);
         }
         return;
       }
@@ -208,30 +160,11 @@ export const useProjectManagerSessionStream = (params: {
         return;
       }
       if (message.type === "session:binding") {
-        const payload = message.payload as {
-          readonly sessionId?: unknown;
-          readonly providerSessionId?: unknown;
-          readonly status?: unknown;
-        };
-        const sessionId =
-          payload && typeof payload.sessionId === "string" ? payload.sessionId : null;
-        if (!sessionId) {
+        const normalized = sanitizeSessionBindingPayload(message.payload);
+        if (!normalized) {
           return;
         }
-        const providerSessionId =
-          payload &&
-          (payload.providerSessionId === null ||
-            typeof payload.providerSessionId === "string")
-            ? (payload.providerSessionId as string | null)
-            : null;
-        const status =
-          payload &&
-          (payload.status === "pending" ||
-            payload.status === "ready" ||
-            payload.status === "failed")
-            ? payload.status
-            : "pending";
-        params.onSessionBinding({ sessionId, providerSessionId, status });
+        params.onSessionBinding(normalized);
         return;
       }
       if (message.type === "session:deleted") {
@@ -269,18 +202,13 @@ export const useProjectManagerSessionStream = (params: {
         return;
       }
       if (message.type === "session:error") {
-        const resolved = resolveServerErrorMessage(message.payload);
+        const resolved = sanitizeSessionErrorPayload(message.payload);
         if (!resolved) {
           return;
         }
         params.onSessionMessage({
           sessionId: resolved.sessionId,
-          message: {
-            id: generateLocalMessageId(),
-            role: "system",
-            content: resolved.message,
-            createdAt: Date.now(),
-          },
+          message: createSystemSessionMessage(resolved.message),
         });
       }
     });
