@@ -1,3 +1,11 @@
+## [1.1.552] - 2026-02-10
+### Changed
+- Session UI: debug summary теперь показывает проценты в скобках: `#1 (78%) | #2 (81%)`.
+- Session UI (Claude): в имени модели отображается состояние Thinking (`thinking on/off`).
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.552.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.551] - 2026-02-10
 ### Changed
 - Session UI: строка статуса теперь показывает `Tokens: <used> (<percent>%)` без `/<max>`, и визуально сильнее разделяет `Models` и `Tokens` (увеличены пробелы вокруг `|`).
