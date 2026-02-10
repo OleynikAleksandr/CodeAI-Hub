@@ -1,3 +1,10 @@
+## [1.1.546] - 2026-02-10
+### Changed
+- Documentation sync release: обновлены архитектурные и стековые документы `doc/SolidWorks-Flow` под актуальный runtime/UI/launcher контур и текущий релиз.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.546.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.545] - 2026-02-10
 ### Fixed
 - Session UI: правый блок лимитов в `Session ID Bar` стал читаемее — label `5 houers`/`weekly` переведены на `9px`, уменьшены зазоры (`gap: 1px`, `column-gap: 6px`) при сохранении фиксированной высоты плашки `32px`.
