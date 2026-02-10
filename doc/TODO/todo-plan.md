@@ -202,3 +202,23 @@
 ### Stream: Post-Release Version Sync
 1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по launcher native file-drop (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.549`)
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.549` (hash: 015263a7)
+
+---
+
+## Phase 131 — Launcher File Paths via GetFilePaths + Release v1.1.550 (owner: Oleksandr, updated: 2026-02-10)
+
+**Goal:** исправить вставку путей dropped-файлов в CEF launcher: использовать `CefDragData::GetFilePaths()` вместо `GetFileNames()`, чтобы в Session input вставлялся абсолютный путь (а не display name).
+
+### Stream: Launcher File Drop Paths
+1. [DONE] Перевести нативный CEF file-drop bridge на `GetFilePaths()` (scope: `packages/cef-launcher/src/launcher_handler.cc`; expected commit message: `fix(launcher-dnd): use CEF GetFilePaths for dropped files`)
+2. [DONE] Git Commit: `fix(launcher-dnd): use CEF GetFilePaths for dropped files` (hash: 89dc4bbc)
+
+### Stream: Release Build (Phase 131)
+1. [DONE] Выполнить `./scripts/build-all.sh` (scope: manifests; expected commit message: `chore(release): run build-all for GetFilePaths dnd fix`)
+2. [DONE] Git Commit: `chore(release): run build-all for GetFilePaths dnd fix` (hash: 15d7f73c)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.550`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.550` (hash: 6900ee9d)
+
+### Stream: Post-Release Version Sync
+1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под версию `1.1.550` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.550`)
+2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.550` (hash: 966ba117)
