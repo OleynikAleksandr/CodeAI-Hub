@@ -108,3 +108,31 @@
 2. [DONE] Git Commit: `chore(release): run build-all for session hint color tune` (hash: b22b0786)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session hint color tune`)
 4. [DONE] Git Commit: `chore(release): build and validate vsix for session hint color tune` (hash: 1114e269)
+
+---
+
+## Phase 127 — Documentation Synchronization for v1.1.545 (owner: Oleksandr, updated: 2026-02-10)
+
+**Goal:** актуализировать документацию под UI-правки Session Hint/ID Bar и релиз `1.1.545` в `README.md`, `CHANGELOG.md` и документах `doc/SolidWorks-Flow`.
+
+### Stream: Public Release Notes Sync
+1. [DONE] Обновить публичные release notes и текущий релиз в корневых документах (`README.md`, `CHANGELOG.md`) и синхронизировать текущие версии/контракты в системном SoT (`doc/SolidWorks-Flow/System/SystemArchitecture.md`) под `v1.1.545` и Phase 126 UI tune (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.545`)
+2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.545` (hash: 1ee79e52)
+
+### Stream: SolidWorks Index and UI Stack Sync
+1. [DONE] Обновить индекс/обзорные документы SolidWorks-Flow и UI stack статус на релиз `1.1.545` (scope: `doc/SolidWorks-Flow/README.md`, `doc/SolidWorks-Flow/System/Docs_Index.md`, `doc/SolidWorks-Flow/Stacks/UI_Modules.md`; expected commit message: `docs(flow): sync index and ui stack metadata for v1.1.545`)
+2. [DONE] Git Commit: `docs(flow): sync index and ui stack metadata for v1.1.545` (hash: 50384c9d)
+
+### Stream: SolidWorks Runtime and Launcher Stack Sync
+1. [DONE] Обновить runtime/launcher-ориентированные документы SolidWorks-Flow под текущий релиз и актуальные артефактные примеры `1.1.545` (scope: `doc/SolidWorks-Flow/Stacks/Project_Manager.md`, `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`, `doc/SolidWorks-Flow/Stacks/Launcher_CEF_Module.md`; expected commit message: `docs(flow): sync runtime and launcher stack docs for v1.1.545`)
+2. [DONE] Git Commit: `docs(flow): sync runtime and launcher stack docs for v1.1.545` (hash: be1f2021)
+
+### Stream: SolidWorks Continuity and Core Stack Metadata
+1. [TODO] Актуализировать метаданные release/operational notes в continuity/core/gemini stack документах (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`; expected commit message: `docs(flow): refresh continuity and core stack metadata for v1.1.545`)
+2. [TODO] Git Commit: `docs(flow): refresh continuity and core stack metadata for v1.1.545` (hash: TBD)
+
+### Stream: Release Build (Phase 127)
+1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream-ов фазы (scope: scripts; expected commit message: `chore(release): run build-all for documentation sync v1.1.545`)
+2. [TODO] Git Commit: `chore(release): run build-all for documentation sync v1.1.545` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for documentation sync v1.1.545`)
+4. [TODO] Git Commit: `chore(release): build and validate vsix for documentation sync v1.1.545` (hash: TBD)
