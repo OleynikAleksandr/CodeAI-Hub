@@ -88,7 +88,7 @@
 2. [DONE] Git Commit: `feat(session-ui): add fixed 32px id bar with placeholder limit rows` (hash: 74210bf8)
 
 ### Stream: Release Build (Phase 125)
-1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream-ов фазы (scope: scripts; expected commit message: `chore(release): run build-all for session id bar limits placeholder`)
-2. [TODO] Git Commit: `chore(release): run build-all for session id bar limits placeholder` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session id bar limits placeholder`)
-4. [TODO] Git Commit: `chore(release): build and validate vsix for session id bar limits placeholder` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` после завершения stream-ов фазы (scope: scripts; expected commit message: `chore(release): run build-all for session id bar limits placeholder`)
+2. [DONE] Git Commit: `chore(release): run build-all for session id bar limits placeholder` (hash: 506cea20)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session id bar limits placeholder`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for session id bar limits placeholder` (hash: bf85af44)
