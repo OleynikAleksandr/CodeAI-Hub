@@ -21,10 +21,21 @@ const resolveIdLabel = (binding: SessionBindingInfo): string => {
 };
 
 const SessionIdBar = ({ binding }: SessionIdBarProps) => (
-  <section className="session-panel session-id-bar">
-    <span className="session-id-bar__text session-input__hint">
-      {resolveIdLabel(binding)}
-    </span>
+  <section
+    aria-label={`Session identifier ${resolveIdLabel(binding)}`}
+    className="session-panel session-id-bar"
+  >
+    <span className="session-id-bar__id">{resolveIdLabel(binding)}</span>
+    <div aria-hidden className="session-id-bar__limits">
+      <div className="session-id-bar__limit-row">
+        <span className="session-id-bar__limit-label">5 houers</span>
+        <span className="session-id-bar__limit-bar" />
+      </div>
+      <div className="session-id-bar__limit-row">
+        <span className="session-id-bar__limit-label">weekly</span>
+        <span className="session-id-bar__limit-bar" />
+      </div>
+    </div>
   </section>
 );
 
