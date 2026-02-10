@@ -1,3 +1,11 @@
+## [1.1.553] - 2026-02-10
+### Fixed
+- Core: flow-node continuity resume больше не может оставить UI навсегда заблокированным после `resume_timeout`/`resume_failed` (лок снимается, pending очищается).
+- Core: resume bootstrap prompt ужесточен, чтобы агент не выполнял работу до ack `Ready to continue working.`.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.553.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.552] - 2026-02-10
 ### Changed
 - Session UI: debug summary теперь показывает проценты в скобках: `#1 (78%) | #2 (81%)`.
