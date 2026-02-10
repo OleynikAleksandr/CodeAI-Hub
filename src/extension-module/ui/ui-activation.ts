@@ -17,12 +17,6 @@ export type UIActivationResult = {
   };
 };
 
-// Actually, the logic differs slightly per bundle.
-// webview: installed -> path, embedded -> dirname(path)
-// project-manager: installed -> path/index.html, embedded -> path
-
-// Let's just extract the try-catch block and resolution.
-
 async function tryResolveBundle(
   bundleId: "vscode-webview" | "project-manager",
   embeddedPath: string,
@@ -75,15 +69,10 @@ export async function prepareUIBundles(
     embeddedWebviewPath,
     logger
   );
-  let webviewUIRoot: string;
-  if (webviewResolved.source === "installed") {
-    webviewUIRoot = webviewResolved.path;
-  } else {
-    // For embedded, we need the directory for some reason?
-    // Original code: webviewUIRoot = path.dirname(resolved.path);
-    // But resolved.path is embeddedWebviewPath which is .../react-chat.js
-    webviewUIRoot = path.dirname(webviewResolved.path);
-  }
+  const webviewUIRoot =
+    webviewResolved.source === "installed"
+      ? webviewResolved.path
+      : path.dirname(webviewResolved.path);
 
   if (webviewResolved.source !== "embedded") {
     logger.log("extension:activate:ui-resolved:vscode-webview", {

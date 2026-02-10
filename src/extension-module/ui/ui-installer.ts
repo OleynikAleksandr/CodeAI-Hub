@@ -28,7 +28,7 @@ export class UIBundleInstaller {
       if (
         existing &&
         existing.version === bundle.version &&
-        (await this.hasRequiredLayouts(bundleId as UIBundleId, existing.path))
+        (await this.hasRequiredLayouts(bundleId as UIBundleId))
       ) {
         continue;
       }
@@ -95,10 +95,7 @@ export class UIBundleInstaller {
     return verifySha1(path, expectedSha1);
   }
 
-  private async hasRequiredLayouts(
-    bundleId: UIBundleId,
-    legacyPath?: string
-  ): Promise<boolean> {
+  private async hasRequiredLayouts(bundleId: UIBundleId): Promise<boolean> {
     const packagesCurrent = join(
       homedir(),
       ".codeai-hub",
@@ -112,19 +109,8 @@ export class UIBundleInstaller {
       await access(packagesCurrent);
       return true;
     } catch {
-      /* continue */
+      return false;
     }
-
-    if (legacyPath) {
-      try {
-        await access(legacyPath);
-        return true;
-      } catch {
-        /* ignore */
-      }
-    }
-
-    return false;
   }
 
   /**
@@ -135,28 +121,17 @@ export class UIBundleInstaller {
     archivePath: string,
     bundleId: UIBundleId
   ): Promise<void> {
-    const uiBaseDir = join(homedir(), ".codeai-hub", "ui");
-    const installDir = join(uiBaseDir, bundleId, bundle.version);
-
     const packagesBaseDir = join(homedir(), ".codeai-hub", "packages", "ui");
     const packagesInstallDir = join(packagesBaseDir, bundleId, bundle.version);
 
-    // Create installation directories
-    await mkdir(installDir, { recursive: true });
+    // Create installation directory
     await mkdir(packagesInstallDir, { recursive: true });
 
-    // Extract to primary location
-    await extractArchiveWithTar({
-      archivePath,
-      destination: installDir,
-      label: `UI bundle ${bundleId}`,
-    });
-
-    // Mirror to packages layout
+    // Extract to canonical packages layout
     await extractArchiveWithTar({
       archivePath,
       destination: packagesInstallDir,
-      label: `UI bundle ${bundleId} (packages)`,
+      label: `UI bundle ${bundleId}`,
     });
 
     // Create 'current' symlink in packages layout
@@ -173,7 +148,7 @@ export class UIBundleInstaller {
       bundleId,
       version: bundle.version,
       installedAt: Date.now(),
-      path: installDir,
+      path: packagesInstallDir,
     });
   }
 }
