@@ -1,7 +1,6 @@
 import { access } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { UIRegistry } from "./ui-registry";
 import type { UIBundleId } from "./ui-types";
 
 export type UIPathResolveResult = {
@@ -32,19 +31,6 @@ export async function resolveUIBundlePath(
     return { path: packagesPath, source: "installed" };
   } catch {
     // Installed bundle not found
-  }
-
-  // Try legacy layout via registry (during migration)
-  try {
-    const registry = new UIRegistry();
-    await registry.load();
-    const entry = registry.getBundle(bundleId);
-    if (entry?.path) {
-      await access(entry.path);
-      return { path: entry.path, source: "installed" };
-    }
-  } catch {
-    // ignore registry/legacy failures
   }
 
   // Fallback to embedded UI (for development)

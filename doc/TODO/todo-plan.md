@@ -45,11 +45,11 @@
 
 ### Stream: Settings Cards Style Unification
 1. [DONE] Перевести карточки и диалоги Settings на общий набор токенов без дублирования color/border/font в каждом модуле (scope: `src/client/ui/src/components/settings/settings-card.tsx`, `src/client/ui/src/components/settings/shared-model-card-styles.ts`, `src/client/ui/src/components/settings/settings-footer.tsx`; expected commit message: `refactor(settings-ui): unify card and dialog style ownership`)
-2. [IN_PROGRESS] Git Commit: `refactor(settings-ui): unify card and dialog style ownership` (hash: TBD)
+2. [DONE] Git Commit: `refactor(settings-ui): unify card and dialog style ownership` (hash: 48c9dded)
 
 ### Stream: UI Bundle Runtime Layout Unification
-1. [TODO] Убрать dual-layout для UI bundle install/resolve и оставить единый runtime layout (scope: `src/extension-module/ui/ui-installer.ts`, `src/extension-module/ui/ui-path-resolver.ts`, `src/extension-module/ui/ui-activation.ts`; expected commit message: `refactor(runtime): unify ui bundle install and resolve layout`)
-2. [TODO] Git Commit: `refactor(runtime): unify ui bundle install and resolve layout` (hash: TBD)
+1. [DONE] Убрать dual-layout для UI bundle install/resolve и оставить единый runtime layout (scope: `src/extension-module/ui/ui-installer.ts`, `src/extension-module/ui/ui-path-resolver.ts`, `src/extension-module/ui/ui-activation.ts`; expected commit message: `refactor(runtime): unify ui bundle install and resolve layout`)
+2. [DONE] Git Commit: `refactor(runtime): unify ui bundle install and resolve layout` (hash: TBD)
 
 ### Stream: Session Event Normalization Consolidation
 1. [TODO] Вынести единый нормализатор session event payload и подключить его в UI/PM без двойной логики парсинга (scope: `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `refactor(core-bridge): consolidate session event normalization`)
