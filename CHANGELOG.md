@@ -1,3 +1,10 @@
+## [1.1.550] - 2026-02-10
+### Fixed
+- Launcher Session DnD: нативный CEF bridge теперь использует `CefDragData::GetFilePaths()` (полный путь вместо имени файла).
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.550.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.549] - 2026-02-10
 ### Fixed
 - Session DnD (Project Manager / launcher runtime): вместо ненадежного угадывания dropped paths через selection/clipboard теперь используется нативный CEF bridge, который получает реальные пути файлов из drag-data и отправляет их в Session input по запросу.
