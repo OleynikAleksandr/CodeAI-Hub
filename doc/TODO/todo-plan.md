@@ -9,80 +9,70 @@
 - Реализованный план переносится в `doc/TODO/Archive/` с префиксом завершённой Phase.
 
 ## Required documents to review before work
-1. `doc/SolidWorks-Flow/System/SessionUI_Layout_Stability.md`
-2. `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
-3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
-4. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
-5. `doc/Sessions/Session141.md` (CURRENT REPORT)
-6. `doc/TODO/todo-plan.md` (THIS FILE)
+1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+2. `doc/Sessions/Session001.md` (архитектурный аудит двойных источников)
+3. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
 
-## Phase 121 — Dead Code Cleanup (post-Phase 120) + Release (owner: Oleksandr, updated: 2026-02-09) ✅ COMPLETE
+## Phase 124 — Single Source of Truth Refactor (owner: Oleksandr, updated: 2026-02-10)
 
-**Goal:** удалить мёртвый код, оставшийся после Phase 120 (InfoPanel), и собрать чистый релиз.
+**Goal:** устранить двойные источники правды в UI/Runtime/Protocol слоях и закрепить единые канонические контуры для Session UI, Project Manager UI, Settings UI, bundle resolution и workflow протоколов.
 
-### Stream: InfoPanel Dead Code Removal
-1. [DONE] Удалить `src/client/ui/src/session/info-panel.tsx` (осиротевший, нигде не импортируется); удалить CSS-правила `.session-info`, `.session-info__text`, `.session-info__spacer` из `media/session-view.css` (scope: `info-panel.tsx`, `media/session-view.css`)
-2. [DONE] Git Commit: `refactor(ui): remove orphaned info-panel and dead css rules` (hash: 0c5bb40f)
+### Stream: Architecture Canonicalization (design baseline)
+1. [DONE] Создать архитектурный RFC для рефакторинга SSOT и обновить системную карту владения модулями (scope: `doc/SolidWorks-Flow/System/SingleSourceOfTruth_Refactor.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(architecture): define single source of truth refactor baseline`)
+2. [IN_PROGRESS] Git Commit: `docs(architecture): define single source of truth refactor baseline` (hash: TBD)
+
+### Stream: UI Source-of-Truth Inventory (all interfaces)
+1. [TODO] Зафиксировать матрицу «UI элемент → единственный владелец стиля» для Session/PM/Settings и пометить legacy-контуры на удаление (scope: `doc/SolidWorks-Flow/System/SingleSourceOfTruth_Refactor.md`, `doc/Sessions/Session001.md`; expected commit message: `docs(ui): register source-of-truth matrix for all interface elements`)
+2. [TODO] Git Commit: `docs(ui): register source-of-truth matrix for all interface elements` (hash: TBD)
+
+### Stream: Session UI Style Source Unification
+1. [TODO] Выбрать один канонический источник стилей SessionView и удалить дублирующие правила из второго контура (scope: `packages/ui/project-manager/styles.css`, `media/session-view.css`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `refactor(ui): unify session style source of truth`)
+2. [TODO] Git Commit: `refactor(ui): unify session style source of truth` (hash: TBD)
+
+### Stream: Project Manager Build CSS Pipeline Cleanup
+1. [TODO] Обновить PM build pipeline так, чтобы стили Session подтягивались только из канонического источника без параллельных инжектов (scope: `scripts/build-project-manager.js`, `packages/ui/project-manager/index.html`; expected commit message: `refactor(build): align project-manager css pipeline with ssot`)
+2. [TODO] Git Commit: `refactor(build): align project-manager css pipeline with ssot` (hash: TBD)
+
+### Stream: Project Manager Legacy CSS Decommission
+1. [TODO] Деактивировать и удалить legacy-контур `layout.css`, закрепив единый источник PM layout-токенов (scope: `src/client/project-manager/styles/layout.css`, `packages/ui/project-manager/styles.css`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `refactor(pm-ui): remove legacy layout css source`)
+2. [TODO] Git Commit: `refactor(pm-ui): remove legacy layout css source` (hash: TBD)
+
+### Stream: Settings UI Style Token Canonicalization
+1. [TODO] Создать единый token-layer для Settings UI и перевести базовые контейнеры на него (scope: `src/client/ui/src/components/settings/style-tokens.ts`, `src/client/ui/src/components/settings-view.tsx`, `src/client/ui/src/app-host/settings-only-host.tsx`; expected commit message: `refactor(settings-ui): introduce canonical style token layer`)
+2. [TODO] Git Commit: `refactor(settings-ui): introduce canonical style token layer` (hash: TBD)
+
+### Stream: Settings Cards Style Unification
+1. [TODO] Перевести карточки и диалоги Settings на общий набор токенов без дублирования color/border/font в каждом модуле (scope: `src/client/ui/src/components/settings/settings-card.tsx`, `src/client/ui/src/components/settings/shared-model-card-styles.ts`, `src/client/ui/src/components/settings/settings-footer.tsx`; expected commit message: `refactor(settings-ui): unify card and dialog style ownership`)
+2. [TODO] Git Commit: `refactor(settings-ui): unify card and dialog style ownership` (hash: TBD)
+
+### Stream: UI Bundle Runtime Layout Unification
+1. [TODO] Убрать dual-layout для UI bundle install/resolve и оставить единый runtime layout (scope: `src/extension-module/ui/ui-installer.ts`, `src/extension-module/ui/ui-path-resolver.ts`, `src/extension-module/ui/ui-activation.ts`; expected commit message: `refactor(runtime): unify ui bundle install and resolve layout`)
+2. [TODO] Git Commit: `refactor(runtime): unify ui bundle install and resolve layout` (hash: TBD)
+
+### Stream: Session Event Normalization Consolidation
+1. [TODO] Вынести единый нормализатор session event payload и подключить его в UI/PM без двойной логики парсинга (scope: `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `refactor(core-bridge): consolidate session event normalization`)
+2. [TODO] Git Commit: `refactor(core-bridge): consolidate session event normalization` (hash: TBD)
+
+### Stream: Workspace Protocol Cleanup (remove legacy scope handshake)
+1. [TODO] Удалить deprecated fallback `workspace:scope:set` и закрепить единственный протокол `workspace:select` + `workspace:select:ack` (scope: `src/client/project-manager/services/workspace-scope-handshake.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `src/client/project-manager/api.ts`; expected commit message: `refactor(protocol): remove legacy workspace scope handshake`)
+2. [TODO] Git Commit: `refactor(protocol): remove legacy workspace scope handshake` (hash: TBD)
+
+### Stream: Questionnaire Path Policy Canonicalization
+1. [TODO] Перевести questionnaire flow на один canonical path policy без legacy-копий записи (scope: `src/client/ui/src/services/idea-questionnaire-paths.ts`, `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `refactor(questionnaire): canonicalize path policy and writes`)
+2. [TODO] Git Commit: `refactor(questionnaire): canonicalize path policy and writes` (hash: TBD)
+
+### Stream: SSOT Guardrails for UI Styling
+1. [TODO] Добавить архитектурный guard, который блокирует появление второго источника для уже канонизированных UI-контуров (scope: `scripts/check-architecture.sh`, `scripts/check-architecture-rules/ui-style-ssot.sh`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `chore(architecture): enforce ui style single source guardrails`)
+2. [TODO] Git Commit: `chore(architecture): enforce ui style single source guardrails` (hash: TBD)
 
 ### Stream: QA Gates + Targeted Builds
-1. [DONE] Все гейты зелёные; таргетные сборки: build:webview, typecheck:webview, build:project-manager — PASSED
-2. [DONE] Git Commit: included in 0c5bb40f (gates passed in pre-commit hooks)
+1. [TODO] Прогнать обязательные гейты и таргетные сборки для затронутых контуров (scope: `scripts/check-architecture.sh`, `src/client/ui`, `src/client/project-manager`; expected commit message: `docs(qa): validate ssot refactor gates and targeted builds`)
+2. [TODO] Git Commit: `docs(qa): validate ssot refactor gates and targeted builds` (hash: TBD)
 
 ### Stream: Release Build (Final)
-1. [DONE] Выполнить `./scripts/build-all.sh` v1.1.540
-2. [DONE] Git Commit: `chore(release): run build-all for dead code cleanup v1.1.540` (hash: 0456b328)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX codeai-hub-1.1.540.vsix (1.0M)
-4. [DONE] Git Commit: `chore(release): build and validate vsix for dead code cleanup` (hash: 78f9ab38)
-
----
-
-## Phase 122 — Session UI Tweaks (Session ID bar + One-line Status) (owner: Oleksandr, updated: 2026-02-10) ✅ COMPLETE
-
-**Goal:** вернуть плашку Session ID между Tabs и Dialog; сделать status panel однострочной (Models/Tokens + right-aligned continuity), выровнять типографику по input-hint.
-
-**Design / Source of truth:**
-- `doc/SolidWorks-Flow/System/SessionUI_Layout_Stability.md` (раздел "Phase 122 — Planned UI Adjustments")
-
-### Stream: Session ID Bar (restore)
-1. [DONE] Добавить плашку `ID: <8chars>-...` между Tabs и Dialog; типографика как у input-hint (scope: `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/session-view.tsx`, `media/session-view.css`; expected commit message: `fix(ui): restore session id header bar`)
-2. [DONE] Git Commit: `fix(ui): restore session id header bar` (hash: 8cad1fee)
-
-### Stream: Tabs (remove ID, compact width)
-1. [DONE] Убрать `ID: ...` из лейбла таба, оставить только имя агента (например: `Reviewer Claude`); уменьшить ширину таба (scope: `src/client/ui/src/session/session-tabs.tsx`, `media/session-view.css`; expected commit message: `fix(ui): revert tab labels to agent name only`)
-2. [DONE] Git Commit: `fix(ui): revert tab labels to agent name only` (hash: c72a88f4)
-
-### Stream: Status Panel (one-line + right aligned continuity)
-1. [DONE] Сконсолидировать Models/Tokens и `#1 ... | #2 ...` в одну строку; правый блок выровнять по правому краю; уменьшить высоту плашки до одной строки; типографика как у input-hint (scope: `src/client/ui/src/session/status-panel.tsx`, `media/session-view.css`; expected commit message: `fix(ui): make status panel single-line with right aligned continuity`)
-2. [DONE] Git Commit: `fix(ui): make status panel single-line with right aligned continuity` (hash: b709c19e)
-
-### Stream: QA Gates + Targeted Builds
-1. [DONE] Все гейты зелёные; таргетные сборки: build:webview, typecheck:webview, build:project-manager — PASSED (scope: N/A; expected commit message: `docs(qa): validate gates for session ui tweaks`)
-2. [DONE] Git Commit: `docs(qa): validate gates for session ui tweaks` (hash: 7771d722)
-
-### Stream: Build Artifacts Sync (pre-release)
-1. [DONE] Обновить `media/react-chat.js` после таргетной сборки webview, чтобы fallback UI bundle соответствовал Session UI изменениям (scope: `media/react-chat.js`; expected commit message: `chore(build): regenerate webview bundle for session ui tweaks`)
-2. [DONE] Git Commit: `chore(build): regenerate webview bundle for session ui tweaks` (hash: 0a89ca85)
-
-### Stream: Release Build (Final)
-1. [DONE] Выполнить `./scripts/build-all.sh` v1.1.541 (scope: scripts; expected commit message: `chore(release): run build-all for session ui tweaks`)
-2. [DONE] Git Commit: `chore(release): run build-all for session ui tweaks` (hash: 89a604b9)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX `codeai-hub-1.1.541.vsix` (1.0M) (scope: scripts; expected commit message: `chore(release): build and validate vsix for session ui tweaks`)
-4. [DONE] Git Commit: `chore(release): build and validate vsix for session ui tweaks` (hash: 47b36509)
-
----
-
-## Phase 123 — Session UI Typography Alignment Follow-up (owner: Oleksandr, updated: 2026-02-10) ✅ COMPLETE
-
-**Goal:** выровнять типографику `ID: <8chars>-...` и строки `Models/Tokens + #n %` строго под `Press Enter to send, Shift+Enter for a new line` (размер, цвет, alpha), сохранив высоту ID-плашки и вертикальное центрирование.
-
-### Stream: Typography Parity with Input Hint
-1. [DONE] Привести `session-id-bar` и `status-panel` к точной типографике `session-input__hint` (font-size, color, alpha); сохранить текущую высоту ID-плашки и центрирование текста по вертикали (scope: `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/status-panel.tsx`, `media/session-view.css`; expected commit message: `fix(ui): align id and status typography with input hint`)
-2. [DONE] Git Commit: `fix(ui): align id and status typography with input hint` (hash: 324ab1cc)
-
-### Stream: Release Build (Final)
-1. [DONE] Выполнить `./scripts/build-all.sh` (scope: scripts; expected commit message: `chore(release): run build-all for typography alignment`)
-2. [DONE] Git Commit: `chore(release): run build-all for typography alignment` (hash: 59cf48df)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX `codeai-hub-1.1.542.vsix` (1.0M) (scope: scripts; expected commit message: `chore(release): build and validate vsix for typography alignment`)
-4. [DONE] Git Commit: `chore(release): build and validate vsix for typography alignment` (hash: 8c23a278)
+1. [TODO] Выполнить `./scripts/build-all.sh` после завершения всех stream (scope: scripts; expected commit message: `chore(release): run build-all for ssot refactor`)
+2. [TODO] Git Commit: `chore(release): run build-all for ssot refactor` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for ssot refactor`)
+4. [TODO] Git Commit: `chore(release): build and validate vsix for ssot refactor` (hash: TBD)

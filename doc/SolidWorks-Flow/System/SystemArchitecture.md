@@ -1,7 +1,7 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.538
-**Last Updated:** 2026-02-09
+**Version:** 1.1.542
+**Last Updated:** 2026-02-10
 **Status:** Active reference (source of truth)
 
 ---
@@ -16,6 +16,15 @@
 - Провайдерные модули (Claude, Codex, Gemini)
 
 Детальная документация по отдельным стекам вынесена в `doc/SolidWorks-Flow/Stacks/`.
+
+### Активная архитектурная программа (Phase 124)
+
+С 2026-02-10 в системе активен рефакторинг **Single Source of Truth** для UI/Runtime/Protocol контуров:
+- базовый RFC: `doc/SolidWorks-Flow/System/SingleSourceOfTruth_Refactor.md`;
+- аудит исходных дублирований: `doc/Sessions/Session001.md`;
+- операционный план реализации: `doc/TODO/todo-plan.md` (Phase 124).
+
+Ключевая цель программы: для каждого UI-элемента и runtime-контракта закрепляется один канонический владелец; параллельные legacy/fallback источники переводятся в deprecation и удаляются поэтапно.
 
 ---
 
