@@ -104,7 +104,7 @@
 2. [DONE] Git Commit: `fix(session-ui): tune limit labels and unify hint color token` (hash: 7fa7a16a)
 
 ### Stream: Release Build (Phase 126)
-1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream-ов фазы (scope: scripts; expected commit message: `chore(release): run build-all for session hint color tune`)
-2. [TODO] Git Commit: `chore(release): run build-all for session hint color tune` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session hint color tune`)
-4. [TODO] Git Commit: `chore(release): build and validate vsix for session hint color tune` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` после завершения stream-ов фазы (scope: scripts; expected commit message: `chore(release): run build-all for session hint color tune`)
+2. [DONE] Git Commit: `chore(release): run build-all for session hint color tune` (hash: b22b0786)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session hint color tune`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for session hint color tune` (hash: 1114e269)
