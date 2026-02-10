@@ -73,7 +73,7 @@
 
 ---
 
-## Phase 123 — Session UI Typography Alignment Follow-up (owner: Oleksandr, updated: 2026-02-10)
+## Phase 123 — Session UI Typography Alignment Follow-up (owner: Oleksandr, updated: 2026-02-10) ✅ COMPLETE
 
 **Goal:** выровнять типографику `ID: <8chars>-...` и строки `Models/Tokens + #n %` строго под `Press Enter to send, Shift+Enter for a new line` (размер, цвет, alpha), сохранив высоту ID-плашки и вертикальное центрирование.
 
@@ -82,7 +82,7 @@
 2. [DONE] Git Commit: `fix(ui): align id and status typography with input hint` (hash: 324ab1cc)
 
 ### Stream: Release Build (Final)
-1. [TODO] Выполнить `./scripts/build-all.sh` (scope: scripts; expected commit message: `chore(release): run build-all for typography alignment`)
-2. [TODO] Git Commit: `chore(release): run build-all for typography alignment` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for typography alignment`)
-4. [TODO] Git Commit: `chore(release): build and validate vsix for typography alignment` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` (scope: scripts; expected commit message: `chore(release): run build-all for typography alignment`)
+2. [DONE] Git Commit: `chore(release): run build-all for typography alignment` (hash: 59cf48df)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX `codeai-hub-1.1.542.vsix` (1.0M) (scope: scripts; expected commit message: `chore(release): build and validate vsix for typography alignment`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for typography alignment` (hash: 8c23a278)
