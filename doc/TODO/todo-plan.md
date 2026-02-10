@@ -42,3 +42,17 @@
 ### Stream: Session Status Panel
 1. [DONE] Изменить debug summary формат: `#1 (78%) | #2 (81%)` вместо `#1 78% | #2 81%`; для Claude добавить в модельный label `thinking on/off` (scope: `src/client/ui/src/session/virtual-conversation.tsx`, `src/client/ui/src/session/model-info-builder.ts`, `media/react-chat.js`; expected commit message: `fix(session-ui): debug summary parens and claude thinking label`)
 2. [DONE] Git Commit: `fix(session-ui): debug summary parens and claude thinking label` (hash: 028caea5)
+
+### Stream: Release Build (Phase 133)
+1. [DONE] Выполнить `./scripts/build-all.sh` (scope: manifests; expected commit message: `chore(release): run build-all for phase133 session status panel`)
+2. [DONE] Git Commit: `chore(release): run build-all for phase133 session status panel` (hash: 3ece9cb3)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.552`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.552` (hash: b4ed115d)
+
+### Stream: Post-Release Version Sync (Phase 133)
+1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.552`)
+2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.552` (hash: 5994b7a7)
+
+### Stream: Session Report (Phase 133)
+1. [TODO] Создать `doc/Sessions/Session010.md` и зафиксировать итоги Phase 133 (scope: `doc/Sessions/Session010.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session010 and close phase133`)
+2. [TODO] Git Commit: `docs(session): add Session010 and close phase133` (hash: TBD)
