@@ -890,6 +890,8 @@
 .session-status__row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 8px;
   font-size: 11px;
   margin-bottom: 6px;
 }
@@ -903,11 +905,37 @@
 }
 
 .session-status__label {
-  color: #bdbdbd;
+  color: rgba(189, 189, 189, 1);
 }
 
 .session-status__value {
-  color: #f0f0f0;
+  color: rgba(189, 189, 189, 1);
+}
+
+.session-status--single-line {
+  padding: 6px 8px;
+}
+
+.session-status__row--single-line {
+  margin-bottom: 0;
+}
+
+.session-status__value--primary {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.session-status__value--debug {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.session-status__value--debug-hidden {
+  visibility: hidden;
 }
 
 .session-status__value--badge {
