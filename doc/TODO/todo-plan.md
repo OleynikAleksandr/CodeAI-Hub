@@ -29,11 +29,11 @@
 
 ### Stream: Session UI Style Source Unification
 1. [DONE] Выбрать один канонический источник стилей SessionView и удалить дублирующие правила из второго контура (scope: `packages/ui/project-manager/styles.css`, `media/session-view.css`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `refactor(ui): unify session style source of truth`)
-2. [IN_PROGRESS] Git Commit: `refactor(ui): unify session style source of truth` (hash: TBD)
+2. [DONE] Git Commit: `refactor(ui): unify session style source of truth` (hash: d0d19210)
 
 ### Stream: Project Manager Build CSS Pipeline Cleanup
-1. [TODO] Обновить PM build pipeline так, чтобы стили Session подтягивались только из канонического источника без параллельных инжектов (scope: `scripts/build-project-manager.js`, `packages/ui/project-manager/index.html`; expected commit message: `refactor(build): align project-manager css pipeline with ssot`)
-2. [TODO] Git Commit: `refactor(build): align project-manager css pipeline with ssot` (hash: TBD)
+1. [DONE] Обновить PM build pipeline так, чтобы стили Session подтягивались только из канонического источника без параллельных инжектов (scope: `scripts/build-project-manager.js`, `packages/ui/project-manager/index.html`; expected commit message: `refactor(build): align project-manager css pipeline with ssot`)
+2. [IN_PROGRESS] Git Commit: `refactor(build): align project-manager css pipeline with ssot` (hash: TBD)
 
 ### Stream: Project Manager Legacy CSS Decommission
 1. [TODO] Деактивировать и удалить legacy-контур `layout.css`, закрепив единый источник PM layout-токенов (scope: `src/client/project-manager/styles/layout.css`, `packages/ui/project-manager/styles.css`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `refactor(pm-ui): remove legacy layout css source`)

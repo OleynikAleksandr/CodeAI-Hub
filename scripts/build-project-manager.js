@@ -58,24 +58,40 @@ async function run() {
     // Process HTML
     const htmlTemplate = await fs.readFile(sourceHtml, "utf8");
 
-    // Inject styles
-    // We can reuse main-view.css and others if needed, or just project-manager specific styles.
-    // For now, let's inject styles.css from the package.
-    const stylesPath = path.join(
+    // Inject styles from canonical sources:
+    // 1) Project Manager base theme
+    // 2) Shared Session UI stylesheet
+    const projectManagerStylesPath = path.join(
       projectRoot,
       "packages",
       "ui",
       "project-manager",
       "styles.css"
     );
-    let css = "";
+    const sessionStylesPath = path.join(
+      projectRoot,
+      "media",
+      "session-view.css"
+    );
+    let projectManagerCss = "";
+    let sessionCss = "";
     try {
-      css = await fs.readFile(stylesPath, "utf8");
+      projectManagerCss = await fs.readFile(projectManagerStylesPath, "utf8");
     } catch (_e) {
       console.warn("No styles.css found, skipping injection");
     }
+    try {
+      sessionCss = await fs.readFile(sessionStylesPath, "utf8");
+    } catch (_e) {
+      console.warn(
+        "No session-view.css found, skipping session style injection"
+      );
+    }
 
-    const themeBlock = `<style id="codeai-hub-theme">\n${css}\n</style>`;
+    const themeBlock = [
+      `<style id="codeai-hub-theme">\n${projectManagerCss}\n</style>`,
+      `<style id="codeai-hub-session-theme">\n${sessionCss}\n</style>`,
+    ].join("\n");
     let htmlOutput;
     if (htmlTemplate.includes("<!--theme:inject-->")) {
       htmlOutput = htmlTemplate.replace("<!--theme:inject-->", themeBlock);
