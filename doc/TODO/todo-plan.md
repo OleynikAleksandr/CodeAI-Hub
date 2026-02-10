@@ -69,10 +69,10 @@
 
 ### Stream: QA Gates + Targeted Builds
 1. [DONE] Прогнать обязательные гейты и таргетные сборки для затронутых контуров (scope: `scripts/check-architecture.sh`, `src/client/ui`, `src/client/project-manager`; expected commit message: `docs(qa): validate ssot refactor gates and targeted builds`)
-2. [DONE] Git Commit: `docs(qa): validate ssot refactor gates and targeted builds` (hash: TBD)
+2. [DONE] Git Commit: `docs(qa): validate ssot refactor gates and targeted builds` (hash: 8cdc8036)
 
 ### Stream: Release Build (Final)
-1. [TODO] Выполнить `./scripts/build-all.sh` после завершения всех stream (scope: scripts; expected commit message: `chore(release): run build-all for ssot refactor`)
-2. [TODO] Git Commit: `chore(release): run build-all for ssot refactor` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` после завершения всех stream (scope: scripts; expected commit message: `chore(release): run build-all for ssot refactor`)
+2. [DONE] Git Commit: `chore(release): run build-all for ssot refactor` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for ssot refactor`)
 4. [TODO] Git Commit: `chore(release): build and validate vsix for ssot refactor` (hash: TBD)
