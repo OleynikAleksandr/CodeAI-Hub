@@ -53,11 +53,11 @@
 
 ### Stream: Session Event Normalization Consolidation
 1. [DONE] Вынести единый нормализатор session event payload и подключить его в UI/PM без двойной логики парсинга (scope: `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `refactor(core-bridge): consolidate session event normalization`)
-2. [DONE] Git Commit: `refactor(core-bridge): consolidate session event normalization` (hash: TBD)
+2. [DONE] Git Commit: `refactor(core-bridge): consolidate session event normalization` (hash: 6cd2f421)
 
 ### Stream: Workspace Protocol Cleanup (remove legacy scope handshake)
-1. [TODO] Удалить deprecated fallback `workspace:scope:set` и закрепить единственный протокол `workspace:select` + `workspace:select:ack` (scope: `src/client/project-manager/services/workspace-scope-handshake.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `src/client/project-manager/api.ts`; expected commit message: `refactor(protocol): remove legacy workspace scope handshake`)
-2. [TODO] Git Commit: `refactor(protocol): remove legacy workspace scope handshake` (hash: TBD)
+1. [DONE] Удалить deprecated fallback `workspace:scope:set` и закрепить единственный протокол `workspace:select` + `workspace:select:ack` (scope: `src/client/project-manager/services/workspace-scope-handshake.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `src/client/project-manager/api.ts`; expected commit message: `refactor(protocol): remove legacy workspace scope handshake`)
+2. [DONE] Git Commit: `refactor(protocol): remove legacy workspace scope handshake` (hash: TBD)
 
 ### Stream: Questionnaire Path Policy Canonicalization
 1. [TODO] Перевести questionnaire flow на один canonical path policy без legacy-копий записи (scope: `src/client/ui/src/services/idea-questionnaire-paths.ts`, `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `refactor(questionnaire): canonicalize path policy and writes`)
