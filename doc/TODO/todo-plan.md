@@ -32,3 +32,13 @@
 ### Stream: Post-Release Version Sync
 1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.551`)
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.551` (hash: 36d3d0a1)
+
+---
+
+## Phase 133 — Session Debug Summary + Claude Thinking Label (owner: Oleksandr, updated: 2026-02-10)
+
+**Goal:** улучшить информативность Session status panel: debug summary `#1/#2` показывает проценты в скобках, а для Claude в имени модели отображается состояние Thinking (on/off).
+
+### Stream: Session Status Panel
+1. [DONE] Изменить debug summary формат: `#1 (78%) | #2 (81%)` вместо `#1 78% | #2 81%`; для Claude добавить в модельный label `thinking on/off` (scope: `src/client/ui/src/session/virtual-conversation.tsx`, `src/client/ui/src/session/model-info-builder.ts`, `media/react-chat.js`; expected commit message: `fix(session-ui): debug summary parens and claude thinking label`)
+2. [DONE] Git Commit: `fix(session-ui): debug summary parens and claude thinking label` (hash: 028caea5)
