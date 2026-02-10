@@ -233,6 +233,12 @@ UI устанавливается в `~/.codeai-hub/packages/ui/project-manager/
 
 Начиная с Phase 124, единственный source-of-truth для layout/theme Project Manager — `packages/ui/project-manager/styles.css`; legacy-файл `src/client/project-manager/styles/layout.css` выведен из архитектуры.
 
+Phase 125 UI contract for Session panel:
+- `Session ID Bar` remains a fixed-height rail (`32px`, same as session tab height);
+- left slot renders `ID: <8-char-prefix>-...` from `providerSessionId`;
+- right slot renders two read-only placeholder rows (`5 houers`, `weekly`) with `80x4` grey progress bars;
+- canonical implementation path: `src/client/ui/src/session/session-id-bar.tsx` + `media/session-view.css`.
+
 ### 5.2 Runtime & Launcher Delivery
 
 - `assets/cef/manifest.json` — CEF minimal-пакеты для Windows, macOS, Linux
