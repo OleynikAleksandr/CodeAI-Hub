@@ -1,8 +1,9 @@
 import type { CSSProperties } from "react";
+import { settingsColorTokens } from "./style-tokens";
 
 export const descriptionStyles: CSSProperties = {
   margin: 0,
-  color: "#b0b0b0",
+  color: settingsColorTokens.textSecondary,
   fontSize: "12px",
   lineHeight: 1.5,
 };
@@ -28,7 +29,7 @@ export const rowBaseStyles: CSSProperties = {
   borderColor: "#2f2f2f",
   borderRadius: "6px",
   padding: "12px",
-  background: "#252526",
+  background: settingsColorTokens.surfaceElevated,
   cursor: "pointer",
   transition: "border-color 0.15s, background 0.15s",
   outline: "none",
@@ -36,7 +37,7 @@ export const rowBaseStyles: CSSProperties = {
 };
 
 export const rowSelectedStyles: CSSProperties = {
-  borderColor: "#0e639c",
+  borderColor: settingsColorTokens.actionPrimary,
   background: "#1f2a33",
 };
 
@@ -59,7 +60,7 @@ export const modelInfoStyles: CSSProperties = {
 export const modelTitleStyles: CSSProperties = {
   fontSize: "13px",
   fontWeight: 600,
-  color: "#e5e5e5",
+  color: settingsColorTokens.textPrimary,
 };
 
 export const aliasStyles: CSSProperties = {
@@ -92,12 +93,12 @@ export const radioCircleStyles: CSSProperties = {
 };
 
 export const radioCircleSelectedStyles: CSSProperties = {
-  borderColor: "#0e639c",
+  borderColor: settingsColorTokens.actionPrimary,
 };
 
 export const radioCircleInnerStyles: CSSProperties = {
   width: "8px",
   height: "8px",
   borderRadius: "50%",
-  background: "#0e639c",
+  background: settingsColorTokens.actionPrimary,
 };

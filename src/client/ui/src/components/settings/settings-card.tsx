@@ -1,10 +1,11 @@
 import type { CSSProperties, PropsWithChildren, ReactNode } from "react";
+import { settingsColorTokens, settingsRadiusTokens } from "./style-tokens";
 
 const cardStyles: CSSProperties = {
-  background: "#252526",
-  borderRadius: "6px",
+  background: settingsColorTokens.surfaceElevated,
+  borderRadius: settingsRadiusTokens.control,
   padding: "16px",
-  border: "1px solid #3c3c3c",
+  border: `1px solid ${settingsColorTokens.borderStrong}`,
   display: "flex",
   flexDirection: "column",
   gap: "10px",
@@ -21,7 +22,7 @@ const titleStyles: CSSProperties = {
   fontSize: "14px",
   fontWeight: 600,
   margin: 0,
-  color: "#e0e0e0",
+  color: settingsColorTokens.textPrimary,
 };
 
 type SettingsCardProps = {

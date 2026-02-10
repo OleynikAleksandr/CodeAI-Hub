@@ -4,6 +4,7 @@ import type {
   FocusEvent as ReactFocusEvent,
   MouseEvent as ReactMouseEvent,
 } from "react";
+import { settingsColorTokens, settingsTypographyTokens } from "./style-tokens";
 
 type SettingsFooterProps = {
   readonly hasChanges: boolean;
@@ -19,40 +20,40 @@ const containerStyles: CSSProperties = {
   justifyContent: "space-between",
   alignItems: "center",
   padding: "12px 20px",
-  borderTop: "1px solid #2d2d30",
+  borderTop: `1px solid ${settingsColorTokens.borderSubtle}`,
   flexShrink: 0,
 };
 
 const resetButtonStyles: CSSProperties = {
   padding: "6px 12px",
   background: "transparent",
-  border: "1px solid #3c3c3c",
+  border: `1px solid ${settingsColorTokens.borderStrong}`,
   borderRadius: "4px",
-  color: "#cccccc",
+  color: settingsColorTokens.textSecondary,
   cursor: "pointer",
-  fontSize: "12px",
+  fontSize: settingsTypographyTokens.tabFontSize,
   transition: "all 0.2s ease",
 };
 
 const closeButtonStyles: CSSProperties = {
   padding: "6px 16px",
   background: "transparent",
-  border: "1px solid #3c3c3c",
+  border: `1px solid ${settingsColorTokens.borderStrong}`,
   borderRadius: "4px",
-  color: "#cccccc",
+  color: settingsColorTokens.textSecondary,
   cursor: "pointer",
-  fontSize: "12px",
+  fontSize: settingsTypographyTokens.tabFontSize,
   transition: "all 0.2s ease",
 };
 
 const saveButtonStyles: CSSProperties = {
   padding: "6px 16px",
-  background: "#3c3c3c",
+  background: settingsColorTokens.borderStrong,
   border: "none",
   borderRadius: "4px",
   color: "#808080",
   cursor: "default",
-  fontSize: "12px",
+  fontSize: settingsTypographyTokens.tabFontSize,
   transition: "all 0.2s ease",
 };
 
@@ -62,6 +63,9 @@ const buttonGroupStyles: CSSProperties = {
 };
 
 const DISABLED_OPACITY = 0.6;
+const HOVER_SURFACE_COLOR = settingsColorTokens.borderSubtle;
+const HOVER_BORDER_COLOR = "#4c4c4c";
+const SAVE_HOVER_COLOR = "#1177bb";
 
 type ButtonMouseEvent = ReactMouseEvent<HTMLButtonElement, MouseEvent>;
 type ButtonFocusEvent = ReactFocusEvent<HTMLButtonElement>;
@@ -76,73 +80,73 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
 }) => {
   const handleResetMouseEnter = (event: ButtonMouseEvent) => {
     if (!resetting) {
-      event.currentTarget.style.background = "#2d2d30";
-      event.currentTarget.style.borderColor = "#4c4c4c";
+      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
     }
   };
 
   const handleResetMouseLeave = (event: ButtonMouseEvent) => {
     if (!resetting) {
       event.currentTarget.style.background = "transparent";
-      event.currentTarget.style.borderColor = "#3c3c3c";
+      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
     }
   };
 
   const handleResetFocus = (event: ButtonFocusEvent) => {
     if (!resetting) {
-      event.currentTarget.style.background = "#2d2d30";
-      event.currentTarget.style.borderColor = "#4c4c4c";
+      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
     }
   };
 
   const handleResetBlur = (event: ButtonFocusEvent) => {
     if (!resetting) {
       event.currentTarget.style.background = "transparent";
-      event.currentTarget.style.borderColor = "#3c3c3c";
+      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
     }
   };
 
   const handleCloseMouseEnter = (event: ButtonMouseEvent) => {
-    event.currentTarget.style.background = "#2d2d30";
-    event.currentTarget.style.borderColor = "#4c4c4c";
+    event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+    event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
   };
 
   const handleCloseMouseLeave = (event: ButtonMouseEvent) => {
     event.currentTarget.style.background = "transparent";
-    event.currentTarget.style.borderColor = "#3c3c3c";
+    event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
   };
 
   const handleCloseFocus = (event: ButtonFocusEvent) => {
-    event.currentTarget.style.background = "#2d2d30";
-    event.currentTarget.style.borderColor = "#4c4c4c";
+    event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+    event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
   };
 
   const handleCloseBlur = (event: ButtonFocusEvent) => {
     event.currentTarget.style.background = "transparent";
-    event.currentTarget.style.borderColor = "#3c3c3c";
+    event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
   };
 
   const handleSaveMouseEnter = (event: ButtonMouseEvent) => {
     if (hasChanges && !saving) {
-      event.currentTarget.style.background = "#1177bb";
+      event.currentTarget.style.background = SAVE_HOVER_COLOR;
     }
   };
 
   const handleSaveMouseLeave = (event: ButtonMouseEvent) => {
     if (hasChanges && !saving) {
-      event.currentTarget.style.background = "#0e639c";
+      event.currentTarget.style.background = settingsColorTokens.actionPrimary;
     }
   };
 
   const handleSaveFocus = (event: ButtonFocusEvent) => {
     if (hasChanges && !saving) {
-      event.currentTarget.style.background = "#1177bb";
+      event.currentTarget.style.background = SAVE_HOVER_COLOR;
     }
   };
 
   const handleSaveBlur = (event: ButtonFocusEvent) => {
     if (hasChanges && !saving) {
-      event.currentTarget.style.background = "#0e639c";
+      event.currentTarget.style.background = settingsColorTokens.actionPrimary;
     }
   };
 
@@ -157,8 +161,10 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
         onMouseLeave={handleResetMouseLeave}
         style={{
           ...resetButtonStyles,
-          background: resetting ? "#3c3c3c" : "transparent",
-          color: resetting ? "#808080" : "#cccccc",
+          background: resetting
+            ? settingsColorTokens.borderStrong
+            : "transparent",
+          color: resetting ? "#808080" : settingsColorTokens.textSecondary,
           cursor: resetting ? "default" : "pointer",
           opacity: resetting ? DISABLED_OPACITY : 1,
         }}
@@ -190,8 +196,12 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
           style={{
             ...saveButtonStyles,
             background:
-              hasChanges && !saving ? "#0e639c" : saveButtonStyles.background,
-            color: hasChanges ? "#ffffff" : saveButtonStyles.color,
+              hasChanges && !saving
+                ? settingsColorTokens.actionPrimary
+                : saveButtonStyles.background,
+            color: hasChanges
+              ? settingsColorTokens.actionPrimaryText
+              : saveButtonStyles.color,
             cursor: hasChanges && !saving ? "pointer" : "default",
             opacity: saving ? DISABLED_OPACITY : 1,
           }}
