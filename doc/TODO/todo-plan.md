@@ -25,11 +25,11 @@
 
 ### Stream: UI Source-of-Truth Inventory (all interfaces)
 1. [DONE] Зафиксировать матрицу «UI элемент → единственный владелец стиля» для Session/PM/Settings и пометить legacy-контуры на удаление (scope: `doc/SolidWorks-Flow/System/SingleSourceOfTruth_Refactor.md`, `doc/Sessions/Session001.md`; expected commit message: `docs(ui): register source-of-truth matrix for all interface elements`)
-2. [IN_PROGRESS] Git Commit: `docs(ui): register source-of-truth matrix for all interface elements` (hash: TBD)
+2. [DONE] Git Commit: `docs(ui): register source-of-truth matrix for all interface elements` (hash: c96dee4e)
 
 ### Stream: Session UI Style Source Unification
-1. [TODO] Выбрать один канонический источник стилей SessionView и удалить дублирующие правила из второго контура (scope: `packages/ui/project-manager/styles.css`, `media/session-view.css`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `refactor(ui): unify session style source of truth`)
-2. [TODO] Git Commit: `refactor(ui): unify session style source of truth` (hash: TBD)
+1. [DONE] Выбрать один канонический источник стилей SessionView и удалить дублирующие правила из второго контура (scope: `packages/ui/project-manager/styles.css`, `media/session-view.css`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `refactor(ui): unify session style source of truth`)
+2. [IN_PROGRESS] Git Commit: `refactor(ui): unify session style source of truth` (hash: TBD)
 
 ### Stream: Project Manager Build CSS Pipeline Cleanup
 1. [TODO] Обновить PM build pipeline так, чтобы стили Session подтягивались только из канонического источника без параллельных инжектов (scope: `scripts/build-project-manager.js`, `packages/ui/project-manager/index.html`; expected commit message: `refactor(build): align project-manager css pipeline with ssot`)
