@@ -17,6 +17,9 @@ test("message-handler supports launcher fallback via Core file-drop HTTP API", a
   );
   assert.equal(source.includes("codeaiBridgeConfig"), true);
   assert.equal(source.includes("getVsCodeApi()"), true);
+  assert.equal(source.includes("hasLauncherBridgeHttpConfig"), true);
+  assert.equal(source.includes("MAX_CAPTURE_ATTEMPTS"), true);
+  assert.equal(source.includes("CAPTURE_RETRY_DELAY_MS"), true);
   assert.equal(source.includes('method: "POST"'), true);
   assert.equal(source.includes('method: "DELETE"'), true);
 });

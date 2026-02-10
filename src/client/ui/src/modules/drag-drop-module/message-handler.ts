@@ -18,6 +18,8 @@ type FileDropResponse = {
 };
 
 const FILE_DROP_ENDPOINT = "/api/v1/file-drop";
+const MAX_CAPTURE_ATTEMPTS = 4;
+const CAPTURE_RETRY_DELAY_MS = 120;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
@@ -39,6 +41,16 @@ const resolveCoreHttpUrl = (): string | null => {
   }
 
   return null;
+};
+
+const hasLauncherBridgeHttpConfig = (): boolean => {
+  const globalScope = window as typeof window & {
+    codeaiBridgeConfig?: { readonly httpUrl?: string };
+  };
+  return (
+    typeof globalScope.codeaiBridgeConfig?.httpUrl === "string" &&
+    globalScope.codeaiBridgeConfig.httpUrl.length > 0
+  );
 };
 
 const joinUrl = (baseUrl: string, path: string): string =>
@@ -94,6 +106,21 @@ export class MessageHandler {
     const message: Record<string, unknown> = { command };
     if (payload) {
       Object.assign(message, payload);
+    }
+
+    const forceHttpFallback = hasLauncherBridgeHttpConfig();
+    if (forceHttpFallback) {
+      this.logger?.(
+        "message-handler:launcher-http-fallback",
+        command,
+        payload ?? null
+      );
+      if (command === "grabFilePathFromDrop") {
+        await this.captureFileDropViaHttp();
+        return;
+      }
+      await this.clearFileDropViaHttp();
+      return;
     }
 
     const vscodeApi = getVsCodeApi();
@@ -157,21 +184,18 @@ export class MessageHandler {
       return;
     }
 
-    try {
-      const response = await fetch(fileDropUrl, {
-        method: "POST",
-      });
-      if (response.status === 204 || !response.ok) {
+    for (let attempt = 1; attempt <= MAX_CAPTURE_ATTEMPTS; attempt += 1) {
+      const captureResult = await this.captureFileDropAttempt(
+        fileDropUrl,
+        attempt
+      );
+      if (captureResult === "abort") {
         return;
       }
-
-      const payload = (await response.json()) as FileDropResponse;
-      const formatted = this.resolveFormattedPathPayload(payload);
-      if (formatted) {
-        this.handleInsertPath(formatted);
+      if (captureResult) {
+        this.handleInsertPath(captureResult);
+        return;
       }
-    } catch (error) {
-      this.logger?.("message-handler:fallback-capture-error", error);
     }
   }
 
@@ -191,6 +215,53 @@ export class MessageHandler {
   private resolveFileDropUrl(): string | null {
     const httpUrl = resolveCoreHttpUrl();
     return httpUrl ? joinUrl(httpUrl, FILE_DROP_ENDPOINT) : null;
+  }
+
+  private async captureFileDropAttempt(
+    fileDropUrl: string,
+    attempt: number
+  ): Promise<string | null | "abort"> {
+    try {
+      const response = await fetch(fileDropUrl, {
+        method: "POST",
+      });
+      if (response.status === 204) {
+        await this.waitForNextCaptureAttempt(attempt);
+        return null;
+      }
+      if (!response.ok) {
+        return "abort";
+      }
+
+      const payload = (await response.json()) as FileDropResponse;
+      const formatted = this.resolveFormattedPathPayload(payload);
+      if (formatted) {
+        return formatted;
+      }
+
+      await this.waitForNextCaptureAttempt(attempt);
+      return null;
+    } catch (error) {
+      if (attempt >= MAX_CAPTURE_ATTEMPTS) {
+        this.logger?.("message-handler:fallback-capture-error", error);
+        return "abort";
+      }
+      await this.waitForNextCaptureAttempt(attempt);
+      return null;
+    }
+  }
+
+  private async waitForNextCaptureAttempt(attempt: number): Promise<void> {
+    if (attempt >= MAX_CAPTURE_ATTEMPTS) {
+      return;
+    }
+    await this.delay(CAPTURE_RETRY_DELAY_MS);
+  }
+
+  private async delay(ms: number): Promise<void> {
+    await new Promise<void>((resolve) => {
+      window.setTimeout(resolve, ms);
+    });
   }
 
   private resolveFormattedPathPayload(payload: FileDropResponse): string {
