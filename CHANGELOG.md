@@ -1,3 +1,10 @@
+## [1.1.555] - 2026-02-10
+### Added
+- Release artifacts: собран `codeai-hub-1.1.555.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
+### Changed
+- Release-only rebuild: изменений кода относительно `1.1.554` нет (нужен отдельный номер версии для чистой проверки установки).
+
 ## [1.1.554] - 2026-02-10
 ### Fixed
 - Settings: при отсутствии `~/.codeai-hub/settings/settings.json` Core/Extension теперь сохраняют дефолтный snapshot на диск, чтобы UI мог корректно отображать модели по умолчанию (например, `gpt-5.2-codex (medium)`).
