@@ -21975,6 +21975,26 @@ ${formattedPaths}`;
     }
   };
 
+  // src/client/ui/src/modules/drag-drop-module/launcher-file-drop-bridge.ts
+  var resolveLauncherBridge = () => {
+    const globalScope2 = window;
+    return globalScope2.codeaiLauncher ?? null;
+  };
+  var requestLauncherFileDrop = (logger) => {
+    const bridge = resolveLauncherBridge();
+    if (!bridge || typeof bridge.requestFileDrop !== "function") {
+      return false;
+    }
+    try {
+      bridge.requestFileDrop();
+      logger?.("message-handler:launcher-file-drop-request");
+      return true;
+    } catch (error) {
+      logger?.("message-handler:launcher-file-drop-request-error", error);
+      return false;
+    }
+  };
+
   // src/client/ui/src/modules/drag-drop-module/message-handler.ts
   var FILE_DROP_ENDPOINT = "/api/v1/file-drop";
   var MAX_CAPTURE_ATTEMPTS = 4;
@@ -22034,6 +22054,9 @@ ${formattedPaths}`;
       const message = { command };
       if (payload) {
         Object.assign(message, payload);
+      }
+      if (command === "grabFilePathFromDrop" && requestLauncherFileDrop(this.logger)) {
+        return;
       }
       const forceHttpFallback = hasLauncherBridgeHttpConfig();
       if (forceHttpFallback) {
@@ -22308,13 +22331,109 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/session/input-panel-clipboard.ts
+  var WINDOWS_PATH_PATTERN3 = /^[a-zA-Z]:[\\/]/;
+  var LINE_SPLIT_REGEX2 = /\r?\n/;
+  var normalizePathCandidate = (rawValue) => {
+    const value = rawValue.trim();
+    if (!value) {
+      return null;
+    }
+    if (value.startsWith("file://")) {
+      const withoutScheme = value.replace("file://", "");
+      try {
+        return decodeURIComponent(withoutScheme);
+      } catch {
+        return withoutScheme;
+      }
+    }
+    if (value.startsWith("/") || value.startsWith("~") || value.startsWith("./") || value.startsWith("../") || WINDOWS_PATH_PATTERN3.test(value)) {
+      return value;
+    }
+    return null;
+  };
+  var formatPathsForInsertion = (paths) => {
+    if (paths.length === 0) {
+      return "";
+    }
+    return `${paths.map((path2) => `"${path2}"`).join("\n")}
+`;
+  };
+  var pushUnique = (target, value) => {
+    if (!target.includes(value)) {
+      target.push(value);
+    }
+  };
+  var collectPathsFromUriList = (results, payload) => {
+    for (const line of payload.split(LINE_SPLIT_REGEX2)) {
+      const normalized = normalizePathCandidate(line);
+      if (normalized) {
+        pushUnique(results, normalized);
+      }
+    }
+  };
+  var collectPathsFromFileList = (results, files) => {
+    if (!files || files.length === 0) {
+      return;
+    }
+    for (const file of Array.from(files)) {
+      const candidate = file.path;
+      if (!candidate) {
+        continue;
+      }
+      const normalized = normalizePathCandidate(candidate);
+      if (normalized) {
+        pushUnique(results, normalized);
+      }
+    }
+  };
+  var collectPathsFromItems = (results, items) => {
+    if (typeof items === "undefined") {
+      return;
+    }
+    for (const item of Array.from(items)) {
+      if (item.kind !== "file") {
+        continue;
+      }
+      const file = item.getAsFile();
+      const candidate = file?.path;
+      if (!candidate) {
+        continue;
+      }
+      const normalized = normalizePathCandidate(candidate);
+      if (normalized) {
+        pushUnique(results, normalized);
+      }
+    }
+  };
+  var extractFilePathsFromClipboardData = (dataTransfer) => {
+    const results = [];
+    const uriListPayload = dataTransfer.getData("application/vnd.code.uri-list") || dataTransfer.getData("text/uri-list");
+    if (uriListPayload) {
+      collectPathsFromUriList(results, uriListPayload);
+    }
+    collectPathsFromFileList(results, dataTransfer.files);
+    collectPathsFromItems(results, dataTransfer.items);
+    return results;
+  };
   var handlePlainTextPaste = (event, insertText) => {
     const dataTransfer = event.clipboardData;
     if (!dataTransfer) {
       return false;
     }
+    const filePaths = extractFilePathsFromClipboardData(dataTransfer);
+    if (filePaths.length > 0) {
+      event.preventDefault();
+      insertText(formatPathsForInsertion(filePaths));
+      return true;
+    }
     const plainText = dataTransfer.getData("text/plain");
     if (plainText) {
+      const normalized = normalizePathCandidate(plainText);
+      if (normalized) {
+        event.preventDefault();
+        insertText(formatPathsForInsertion([normalized]));
+        return true;
+      }
       event.preventDefault();
       insertText(plainText);
       return true;

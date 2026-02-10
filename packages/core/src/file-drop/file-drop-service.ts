@@ -24,6 +24,7 @@ const decodeFileUri = (entry: string): string => {
 };
 
 const isPathCandidate = (value: string): boolean =>
+  value.startsWith("file://") ||
   value.startsWith("/") ||
   value.startsWith("~") ||
   value.startsWith("./") ||
@@ -224,8 +225,13 @@ export class FileDropService {
     try {
       const { stdout } = await execAsync("pbpaste");
       const candidate = sanitizeOutput(stdout);
-      if (candidate && isPathCandidate(candidate)) {
-        return candidate;
+      if (!candidate) {
+        return null;
+      }
+
+      const decoded = decodeFileUri(candidate);
+      if (decoded && isPathCandidate(decoded)) {
+        return decoded;
       }
     } catch {
       // ignore
@@ -245,8 +251,13 @@ export class FileDropService {
         { windowsHide: true }
       );
       const candidate = sanitizeOutput(stdout);
-      if (candidate && isPathCandidate(candidate)) {
-        return candidate;
+      if (!candidate) {
+        return null;
+      }
+
+      const decoded = decodeFileUri(candidate);
+      if (decoded && isPathCandidate(decoded)) {
+        return decoded;
       }
     } catch {
       // ignore
@@ -258,8 +269,13 @@ export class FileDropService {
     try {
       const { stdout } = await execAsync("xclip -selection clipboard -o");
       const candidate = sanitizeOutput(stdout);
-      if (candidate && isPathCandidate(candidate)) {
-        return candidate;
+      if (!candidate) {
+        return null;
+      }
+
+      const decoded = decodeFileUri(candidate);
+      if (decoded && isPathCandidate(decoded)) {
+        return decoded;
       }
     } catch {
       // ignore
