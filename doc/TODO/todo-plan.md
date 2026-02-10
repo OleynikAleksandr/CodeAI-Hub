@@ -49,11 +49,11 @@
 
 ### Stream: UI Bundle Runtime Layout Unification
 1. [DONE] Убрать dual-layout для UI bundle install/resolve и оставить единый runtime layout (scope: `src/extension-module/ui/ui-installer.ts`, `src/extension-module/ui/ui-path-resolver.ts`, `src/extension-module/ui/ui-activation.ts`; expected commit message: `refactor(runtime): unify ui bundle install and resolve layout`)
-2. [DONE] Git Commit: `refactor(runtime): unify ui bundle install and resolve layout` (hash: TBD)
+2. [DONE] Git Commit: `refactor(runtime): unify ui bundle install and resolve layout` (hash: ff2beb5d)
 
 ### Stream: Session Event Normalization Consolidation
-1. [TODO] Вынести единый нормализатор session event payload и подключить его в UI/PM без двойной логики парсинга (scope: `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `refactor(core-bridge): consolidate session event normalization`)
-2. [TODO] Git Commit: `refactor(core-bridge): consolidate session event normalization` (hash: TBD)
+1. [DONE] Вынести единый нормализатор session event payload и подключить его в UI/PM без двойной логики парсинга (scope: `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit message: `refactor(core-bridge): consolidate session event normalization`)
+2. [DONE] Git Commit: `refactor(core-bridge): consolidate session event normalization` (hash: TBD)
 
 ### Stream: Workspace Protocol Cleanup (remove legacy scope handshake)
 1. [TODO] Удалить deprecated fallback `workspace:scope:set` и закрепить единственный протокол `workspace:select` + `workspace:select:ack` (scope: `src/client/project-manager/services/workspace-scope-handshake.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `src/client/project-manager/api.ts`; expected commit message: `refactor(protocol): remove legacy workspace scope handshake`)

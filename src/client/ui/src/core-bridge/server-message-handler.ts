@@ -1,9 +1,14 @@
-import { sanitizeMessage, sanitizeSession } from "./normalizers";
+import {
+  createSystemSessionMessage,
+  sanitizeSession,
+  sanitizeSessionBindingPayload,
+  sanitizeSessionErrorPayload,
+  sanitizeSessionMessagePayload,
+} from "./normalizers";
 import type {
   CoreBridgeSessionBindingPayload,
   CoreBridgeSessionMessagePayload,
   ServerSession,
-  ServerSessionMessage,
 } from "./types";
 
 export type MessageNotifier = (message: Record<string, unknown>) => void;
@@ -24,27 +29,6 @@ type ServerEnvelope = {
 
 type DeletedPayload = { readonly sessionId: string };
 type StreamPayload = { readonly sessionId: string; readonly event?: unknown };
-type BindingPayload = {
-  readonly sessionId: string;
-  readonly providerSessionId?: string | null;
-  readonly status?: string;
-};
-
-type SessionErrorPayload = {
-  readonly sessionId?: string | null;
-  readonly providerId?: string;
-  readonly message?: string;
-};
-
-const generateLocalMessageId = (): string => {
-  if (
-    typeof globalThis.crypto !== "undefined" &&
-    "randomUUID" in globalThis.crypto
-  ) {
-    return globalThis.crypto.randomUUID();
-  }
-  return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-};
 
 const parseEnvelope = (raw: string): ServerEnvelope | null => {
   try {
@@ -82,56 +66,17 @@ const isStreamPayload = (payload: unknown): payload is StreamPayload =>
   payload !== null &&
   typeof (payload as { readonly sessionId?: unknown }).sessionId === "string";
 
-const isSessionErrorPayload = (
-  payload: unknown
-): payload is SessionErrorPayload =>
-  typeof payload === "object" && payload !== null;
-
-const isBindingPayload = (payload: unknown): payload is BindingPayload => {
-  if (
-    typeof payload !== "object" ||
-    payload === null ||
-    typeof (payload as { readonly sessionId?: unknown }).sessionId !== "string"
-  ) {
-    return false;
-  }
-  const candidate = payload as BindingPayload;
-  if (
-    candidate.providerSessionId !== null &&
-    typeof candidate.providerSessionId !== "string" &&
-    typeof candidate.providerSessionId !== "undefined"
-  ) {
-    return false;
-  }
-  if (
-    candidate.status &&
-    candidate.status !== "pending" &&
-    candidate.status !== "ready" &&
-    candidate.status !== "failed"
-  ) {
-    return false;
-  }
-  return true;
-};
-
 export const createServerMessageHandler = (
   notify: MessageNotifier
 ): ((raw: string) => void) => {
   const handleSessionMessage = (payload: unknown): void => {
-    const candidate = payload as ServerSessionMessage | undefined;
-    if (!candidate || typeof candidate.sessionId !== "string") {
-      return;
-    }
-    const normalized = sanitizeMessage(candidate);
+    const normalized = sanitizeSessionMessagePayload(payload);
     if (!normalized) {
       return;
     }
     notify({
       type: "session:message",
-      payload: {
-        sessionId: candidate.sessionId,
-        message: normalized,
-      } satisfies CoreBridgeSessionMessagePayload,
+      payload: normalized satisfies CoreBridgeSessionMessagePayload,
     });
   };
 
@@ -170,34 +115,16 @@ export const createServerMessageHandler = (
   };
 
   const handleSessionError = (payload: unknown): void => {
-    if (!isSessionErrorPayload(payload)) {
+    const normalized = sanitizeSessionErrorPayload(payload);
+    if (!normalized) {
       return;
     }
-    const candidate = payload as SessionErrorPayload;
-    const sessionId =
-      typeof candidate.sessionId === "string" ? candidate.sessionId : null;
-    if (!sessionId) {
-      return;
-    }
-    const providerLabel =
-      typeof candidate.providerId === "string" && candidate.providerId.trim()
-        ? `[${candidate.providerId.trim()}] `
-        : "";
-    const message =
-      typeof candidate.message === "string" && candidate.message.trim()
-        ? candidate.message.trim()
-        : "Unknown error.";
 
     notify({
       type: "session:message",
       payload: {
-        sessionId,
-        message: {
-          id: generateLocalMessageId(),
-          role: "system",
-          content: `${providerLabel}${message}`,
-          createdAt: Date.now(),
-        },
+        sessionId: normalized.sessionId,
+        message: createSystemSessionMessage(normalized.message),
       } satisfies CoreBridgeSessionMessagePayload,
     });
   };
@@ -215,24 +142,13 @@ export const createServerMessageHandler = (
       });
     },
     "session:binding": (payload) => {
-      if (!isBindingPayload(payload)) {
+      const normalized = sanitizeSessionBindingPayload(payload);
+      if (!normalized) {
         return;
       }
       notify({
         type: "session:binding",
-        payload: {
-          sessionId: payload.sessionId,
-          providerSessionId:
-            typeof payload.providerSessionId === "string"
-              ? payload.providerSessionId
-              : null,
-          status:
-            payload.status === "ready" ||
-            payload.status === "failed" ||
-            payload.status === "pending"
-              ? payload.status
-              : "pending",
-        } satisfies CoreBridgeSessionBindingPayload,
+        payload: normalized satisfies CoreBridgeSessionBindingPayload,
       });
     },
   };
