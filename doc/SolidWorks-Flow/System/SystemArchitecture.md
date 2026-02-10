@@ -229,6 +229,8 @@ Webview грузит JS/CSS из `~/.codeai-hub/packages/ui/vscode-webview/curre
 
 UI устанавливается в `~/.codeai-hub/packages/ui/project-manager/current`.
 
+Начиная с Phase 124, единственный source-of-truth для layout/theme Project Manager — `packages/ui/project-manager/styles.css`; legacy-файл `src/client/project-manager/styles/layout.css` выведен из архитектуры.
+
 ### 5.2 Runtime & Launcher Delivery
 
 - `assets/cef/manifest.json` — CEF minimal-пакеты для Windows, macOS, Linux

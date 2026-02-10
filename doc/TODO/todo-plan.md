@@ -33,11 +33,11 @@
 
 ### Stream: Project Manager Build CSS Pipeline Cleanup
 1. [DONE] Обновить PM build pipeline так, чтобы стили Session подтягивались только из канонического источника без параллельных инжектов (scope: `scripts/build-project-manager.js`, `packages/ui/project-manager/index.html`; expected commit message: `refactor(build): align project-manager css pipeline with ssot`)
-2. [IN_PROGRESS] Git Commit: `refactor(build): align project-manager css pipeline with ssot` (hash: TBD)
+2. [DONE] Git Commit: `refactor(build): align project-manager css pipeline with ssot` (hash: e2ba7ca8)
 
 ### Stream: Project Manager Legacy CSS Decommission
-1. [TODO] Деактивировать и удалить legacy-контур `layout.css`, закрепив единый источник PM layout-токенов (scope: `src/client/project-manager/styles/layout.css`, `packages/ui/project-manager/styles.css`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `refactor(pm-ui): remove legacy layout css source`)
-2. [TODO] Git Commit: `refactor(pm-ui): remove legacy layout css source` (hash: TBD)
+1. [DONE] Деактивировать и удалить legacy-контур `layout.css`, закрепив единый источник PM layout-токенов (scope: `src/client/project-manager/styles/layout.css`, `packages/ui/project-manager/styles.css`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `refactor(pm-ui): remove legacy layout css source`)
+2. [IN_PROGRESS] Git Commit: `refactor(pm-ui): remove legacy layout css source` (hash: TBD)
 
 ### Stream: Settings UI Style Token Canonicalization
 1. [TODO] Создать единый token-layer для Settings UI и перевести базовые контейнеры на него (scope: `src/client/ui/src/components/settings/style-tokens.ts`, `src/client/ui/src/components/settings-view.tsx`, `src/client/ui/src/app-host/settings-only-host.tsx`; expected commit message: `refactor(settings-ui): introduce canonical style token layer`)
