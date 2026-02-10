@@ -178,5 +178,5 @@
 4. [DONE] Git Commit: `chore(release): build and validate vsix for launcher dnd fallback hardening` (hash: 1d45bdc7)
 
 ### Stream: Post-Release Version Sync
-1. [TODO] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по launcher dnd hardening (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.548`)
-2. [TODO] Git Commit: `docs(release): sync root notes and system architecture for v1.1.548` (hash: TBD)
+1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по launcher dnd hardening (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.548`)
+2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.548` (hash: b62cf684)
