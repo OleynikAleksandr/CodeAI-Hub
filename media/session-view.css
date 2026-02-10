@@ -48,7 +48,7 @@
   display: flex;
   align-items: center;
   height: 32px;
-  min-width: 180px;
+  min-width: 136px;
   background-color: #222428;
   border: 1px solid #101317;
   border-radius: 4px;
@@ -78,7 +78,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 0 12px;
+  padding: 0 10px;
   font-size: 12px;
   line-height: 1.1;
   font-weight: 400;
