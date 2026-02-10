@@ -776,8 +776,10 @@ export class SessionRequestHandler {
       runSlug: context.runSlug,
       reason: options.reason,
     };
-    const state: ContinuityLockState =
-      options.reason === "resume_ready" ? "unlocked" : "locked";
+    // Resume bootstrap should never leave the UI hard-locked permanently.
+    // `resume_failed` / `resume_timeout` must unblock the UI and clear rollover
+    // pending flags so the user can retry or continue manually.
+    const state: ContinuityLockState = "unlocked";
     this.emitContinuityLockEvent({
       sessionId: targetSessionId,
       state,
@@ -795,13 +797,14 @@ export class SessionRequestHandler {
     if (context.targetSessionId) {
       this.flowNodeContinuityLockContexts.delete(context.targetSessionId);
     }
-    if (options.reason === "resume_ready") {
-      this.finalizePostBootstrapRolloverLifecycle(context);
-    }
+    this.finalizePostBootstrapRolloverLifecycle(context, {
+      updateResumeMode: options.reason === "resume_ready",
+    });
   }
 
   private finalizePostBootstrapRolloverLifecycle(
-    context: FlowNodeContinuityLockContext
+    context: FlowNodeContinuityLockContext,
+    options?: { readonly updateResumeMode?: boolean }
   ): void {
     const sessionIds = [
       context.sourceSessionId,
@@ -816,6 +819,9 @@ export class SessionRequestHandler {
       this.clearPostTurnContextDecision(sessionId);
     }
     if (!context.targetSessionId) {
+      return;
+    }
+    if (!options?.updateResumeMode) {
       return;
     }
     const targetSession = this.sessionManager.getSession(
@@ -2029,16 +2035,6 @@ export class SessionRequestHandler {
     };
   }
 
-  private buildReviewerBootstrapPrompt(session: Session): string {
-    return [
-      "You are a Reviewer Agent for the Description step.",
-      "Convert draft description.md to Final_Description.md.",
-      `Final target: \`${this.resolveDescriptionReviewerFinalArtifactPath(
-        session
-      )}\``,
-    ].join("\n");
-  }
-
   private async rolloverFlowNodeSession(
     session: Session,
     rollover: {
@@ -2117,7 +2113,7 @@ export class SessionRequestHandler {
       });
     }
 
-    const { canonicalArtifactPath, templateId, isReviewerBootstrapEligible } =
+    const { canonicalArtifactPath, templateId } =
       this.resolveFlowNodeContinuityTemplate({ session, stageId });
 
     const createReportPrompt = this.flowNodeContinuity.renderTemplate(
@@ -2224,16 +2220,7 @@ export class SessionRequestHandler {
     );
 
     const resumePromptTrimmed = resumePrompt.trim();
-    let wrappedResumePrompt = resumePromptTrimmed;
-    if (isReviewerBootstrapEligible) {
-      wrappedResumePrompt = [
-        this.buildReviewerBootstrapPrompt(session),
-        "",
-        resumePromptTrimmed,
-      ].join("\n");
-    }
-
-    await this.sendInternalMessage(nextSession.id, wrappedResumePrompt);
+    await this.sendInternalMessage(nextSession.id, resumePromptTrimmed);
     this.scheduleFlowNodeContinuityLockTimeout(targetLockContext);
 
     if (!options?.silent) {
