@@ -76,3 +76,19 @@
 2. [DONE] Git Commit: `chore(release): run build-all for ssot refactor` (hash: 50b4eb4d)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for ssot refactor`)
 4. [DONE] Git Commit: `chore(release): build and validate vsix for ssot refactor` (hash: 00842fb4)
+
+---
+
+## Phase 125 — Session ID Bar Limits Placeholder (owner: Oleksandr, updated: 2026-02-10)
+
+**Goal:** зафиксировать `Session ID Bar` на `32px`, добавить справа две placeholder-строки лимитов с progress-bar и выпустить новый релиз после QA.
+
+### Stream: Session ID Bar 32px Placeholder Layout
+1. [TODO] Реализовать фиксированную высоту `32px` для `ID`-плашки: слева `ID: f38e9689-...` (14px, выравнивание по левому краю и по центру высоты), справа блок из 2 строк (`5 houers`, `weekly`) с серыми горизонтальными барами `80px x 4px`, выровненными по правому краю и по центру каждой строки (scope: `media/session-view.css`, `src/client/ui/src/session/session-id-bar.tsx`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `feat(session-ui): add fixed 32px id bar with placeholder limit rows`)
+2. [TODO] Git Commit: `feat(session-ui): add fixed 32px id bar with placeholder limit rows` (hash: TBD)
+
+### Stream: Release Build (Phase 125)
+1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream-ов фазы (scope: scripts; expected commit message: `chore(release): run build-all for session id bar limits placeholder`)
+2. [TODO] Git Commit: `chore(release): run build-all for session id bar limits placeholder` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session id bar limits placeholder`)
+4. [TODO] Git Commit: `chore(release): build and validate vsix for session id bar limits placeholder` (hash: TBD)
