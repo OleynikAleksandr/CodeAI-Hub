@@ -4,6 +4,7 @@ const MAX_PERCENTAGE = 100;
 const MIN_TOKEN_LIMIT = 1;
 const PERCENT_SCALE = 100;
 const SUPERVISOR_LABEL = "Core Supervisor";
+const STATUS_SEPARATOR = "\u00A0\u00A0|\u00A0\u00A0";
 
 const formatModelSummary = (models: readonly ModelInfo[]): string =>
   models
@@ -72,13 +73,13 @@ const StatusPanel = ({
   const modelsSummary =
     models && models.length > 0 ? formatModelSummary(models) : providerSummary;
 
-  const tokensSummary = `${tokenUsage.used.toLocaleString()} / ${tokenLimit ? tokenLimit.toLocaleString() : "\u2014"} (${remainingPercentage}%)`;
+  const tokensSummary = `${tokenUsage.used.toLocaleString()} (${remainingPercentage}%)`;
 
   return (
     <section className="session-status session-status--single-line session-panel">
       <div className="session-status__row session-status__row--single-line">
         <span className="session-input__hint session-status__value session-status__value--primary">
-          {`Models: ${modelsSummary}  |  Tokens: ${tokensSummary}`}
+          {`Models: ${modelsSummary}${STATUS_SEPARATOR}Tokens: ${tokensSummary}`}
         </span>
         <span
           className={`session-input__hint session-status__value session-status__value--debug ${tokenDebugSummary ? "" : "session-status__value--debug-hidden"}`}
