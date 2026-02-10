@@ -102,7 +102,7 @@ const SessionViewBody = ({
 
   if (!(activeSession && activeSessionId)) {
     return (
-      <div className="session-app">
+      <div className="session-app" data-session-style-source="canonical">
         {header}
         <div className="session-app__content" />
       </div>
@@ -117,7 +117,7 @@ const SessionViewBody = ({
     }) ?? undefined;
 
   return (
-    <div className="session-app">
+    <div className="session-app" data-session-style-source="canonical">
       {header}
       <SessionIdBar binding={activeSession.binding} />
       <div className="session-app__content">
@@ -157,7 +157,7 @@ const SessionViewBody = ({
 const SessionView = (props: SessionViewProps) => {
   if (props.sessions.length === 0 && props.showEmptyState) {
     return (
-      <div className="session-app">
+      <div className="session-app" data-session-style-source="canonical">
         <EmptyState />
       </div>
     );
