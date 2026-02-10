@@ -13,7 +13,7 @@
 2. `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
 3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
-5. `doc/Sessions/Session140.md` (CURRENT REPORT)
+5. `doc/Sessions/Session141.md` (CURRENT REPORT)
 6. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -70,3 +70,13 @@
 2. [DONE] Git Commit: `chore(release): run build-all for session ui tweaks` (hash: 89a604b9)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX `codeai-hub-1.1.541.vsix` (1.0M) (scope: scripts; expected commit message: `chore(release): build and validate vsix for session ui tweaks`)
 4. [DONE] Git Commit: `chore(release): build and validate vsix for session ui tweaks` (hash: 47b36509)
+
+---
+
+## Phase 123 — Session UI Typography Alignment Follow-up (owner: Oleksandr, updated: 2026-02-10)
+
+**Goal:** выровнять типографику `ID: <8chars>-...` и строки `Models/Tokens + #n %` строго под `Press Enter to send, Shift+Enter for a new line` (размер, цвет, alpha), сохранив высоту ID-плашки и вертикальное центрирование.
+
+### Stream: Typography Parity with Input Hint
+1. [TODO] Привести `session-id-bar` и `status-panel` к точной типографике `session-input__hint` (font-size, color, alpha); сохранить текущую высоту ID-плашки и центрирование текста по вертикали (scope: `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/status-panel.tsx`, `media/session-view.css`; expected commit message: `fix(ui): align id and status typography with input hint`)
+2. [TODO] Git Commit: `fix(ui): align id and status typography with input hint` (hash: TBD)
