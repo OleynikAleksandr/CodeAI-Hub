@@ -158,5 +158,5 @@
 4. [DONE] Git Commit: `chore(release): build and validate vsix for session dnd launcher recovery` (hash: c16324f8)
 
 ### Stream: Post-Release Version Sync
-1. [TODO] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по dnd bugfix (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.547`)
-2. [TODO] Git Commit: `docs(release): sync root notes and system architecture for v1.1.547` (hash: TBD)
+1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по dnd bugfix (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.547`)
+2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.547` (hash: ec875428)
