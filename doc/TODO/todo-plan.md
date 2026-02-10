@@ -59,14 +59,14 @@
 
 ### Stream: QA Gates + Targeted Builds
 1. [DONE] Все гейты зелёные; таргетные сборки: build:webview, typecheck:webview, build:project-manager — PASSED (scope: N/A; expected commit message: `docs(qa): validate gates for session ui tweaks`)
-2. [DONE] Git Commit: `docs(qa): validate gates for session ui tweaks` (hash: TBD — this commit)
+2. [DONE] Git Commit: `docs(qa): validate gates for session ui tweaks` (hash: 7771d722)
 
 ### Stream: Build Artifacts Sync (pre-release)
 1. [DONE] Обновить `media/react-chat.js` после таргетной сборки webview, чтобы fallback UI bundle соответствовал Session UI изменениям (scope: `media/react-chat.js`; expected commit message: `chore(build): regenerate webview bundle for session ui tweaks`)
-2. [DONE] Git Commit: `chore(build): regenerate webview bundle for session ui tweaks` (hash: TBD — this commit)
+2. [DONE] Git Commit: `chore(build): regenerate webview bundle for session ui tweaks` (hash: 0a89ca85)
 
 ### Stream: Release Build (Final)
-1. [TODO] Выполнить `./scripts/build-all.sh` (scope: scripts; expected commit message: `chore(release): run build-all for session ui tweaks`)
-2. [TODO] Git Commit: `chore(release): run build-all for session ui tweaks` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` v1.1.541 (scope: scripts; expected commit message: `chore(release): run build-all for session ui tweaks`)
+2. [DONE] Git Commit: `chore(release): run build-all for session ui tweaks` (hash: TBD — this commit)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session ui tweaks`)
 4. [TODO] Git Commit: `chore(release): build and validate vsix for session ui tweaks` (hash: TBD)
