@@ -160,3 +160,23 @@
 ### Stream: Post-Release Version Sync
 1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по dnd bugfix (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.547`)
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.547` (hash: ec875428)
+
+---
+
+## Phase 129 — Launcher Session DnD Fallback Hardening + Release v1.1.548 (owner: Oleksandr, updated: 2026-02-10)
+
+**Goal:** исправить регрессию `Shift + drag-and-drop` в Session input для launcher runtime (fallback transport), затем собрать новый релизный артефакт.
+
+### Stream: Session DnD Launcher Fallback Hardening
+1. [DONE] Обновить drag-drop message handler для launcher runtime: принудительный HTTP fallback при наличии `codeaiBridgeConfig.httpUrl` и retry-захват dropped paths через `/api/v1/file-drop`, обновить регрессионный тест-контракт и пересобрать webview bundle (scope: `src/client/ui/src/modules/drag-drop-module/message-handler.ts`, `src/client/ui/src/modules/drag-drop-module/message-handler.test.ts`, `media/react-chat.js`; expected commit message: `fix(session-dnd): harden launcher fallback routing and retry`)
+2. [DONE] Git Commit: `fix(session-dnd): harden launcher fallback routing and retry` (hash: d84dd2da)
+
+### Stream: Release Build (Phase 129)
+1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream bugfix и зелёных гейтов (scope: scripts; expected commit message: `chore(release): run build-all for launcher dnd fallback hardening`)
+2. [TODO] Git Commit: `chore(release): run build-all for launcher dnd fallback hardening` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for launcher dnd fallback hardening`)
+4. [TODO] Git Commit: `chore(release): build and validate vsix for launcher dnd fallback hardening` (hash: TBD)
+
+### Stream: Post-Release Version Sync
+1. [TODO] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по launcher dnd hardening (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.548`)
+2. [TODO] Git Commit: `docs(release): sync root notes and system architecture for v1.1.548` (hash: TBD)
