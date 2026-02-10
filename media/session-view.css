@@ -1,7 +1,7 @@
 .session-app {
   --session-hint-font-size: 11px;
   --session-hint-line-height: 1.25;
-  --session-hint-color: rgba(189, 189, 189, 1);
+  --session-hint-color: rgba(140, 140, 140, 1);
   --session-hint-font-weight: 400;
   display: flex;
   flex-direction: column;
@@ -217,7 +217,7 @@
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
-  gap: 2px;
+  gap: 1px;
 }
 
 .session-id-bar__limit-row {
@@ -225,13 +225,13 @@
   grid-template-columns: auto 80px;
   align-items: center;
   justify-items: end;
-  column-gap: 8px;
+  column-gap: 6px;
   line-height: 1;
 }
 
 .session-id-bar__limit-label {
   color: var(--session-hint-color);
-  font-size: 7px;
+  font-size: 9px;
   font-weight: var(--session-hint-font-weight);
   letter-spacing: 0;
   white-space: nowrap;
@@ -951,11 +951,11 @@
 }
 
 .session-status__label {
-  color: rgba(189, 189, 189, 1);
+  color: var(--session-hint-color);
 }
 
 .session-status__value {
-  color: rgba(189, 189, 189, 1);
+  color: var(--session-hint-color);
 }
 
 .session-status--single-line {

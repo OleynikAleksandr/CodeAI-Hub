@@ -239,6 +239,10 @@ Phase 125 UI contract for Session panel:
 - right slot renders two read-only placeholder rows (`5 houers`, `weekly`) with `80x4` grey progress bars;
 - canonical implementation path: `src/client/ui/src/session/session-id-bar.tsx` + `media/session-view.css`.
 
+Phase 126 visual tuning (same canonical path):
+- right labels (`5 houers`, `weekly`) raised to `9px` for readability with tighter spacing (`gap: 1px`, `column-gap: 6px`);
+- hint/status text color unified to `rgba(140, 140, 140, 1)` for `Session ID Bar`, `Press Enter to send...`, `Models/Tokens` summary and right-side session debug summary.
+
 ### 5.2 Runtime & Launcher Delivery
 
 - `assets/cef/manifest.json` — CEF minimal-пакеты для Windows, macOS, Linux
