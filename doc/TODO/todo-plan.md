@@ -34,4 +34,35 @@
 1. [DONE] Выполнить `./scripts/build-all.sh` v1.1.540
 2. [DONE] Git Commit: `chore(release): run build-all for dead code cleanup v1.1.540` (hash: 0456b328)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX codeai-hub-1.1.540.vsix (1.0M)
-4. [DONE] Git Commit: `chore(release): build and validate vsix for dead code cleanup` (hash: TBD — this commit)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for dead code cleanup` (hash: 78f9ab38)
+
+---
+
+## Phase 122 — Session UI Tweaks (Session ID bar + One-line Status) (owner: Oleksandr, updated: 2026-02-10)
+
+**Goal:** вернуть плашку Session ID между Tabs и Dialog; сделать status panel однострочной (Models/Tokens + right-aligned continuity), выровнять типографику по input-hint.
+
+**Design / Source of truth:**
+- `doc/SolidWorks-Flow/System/SessionUI_Layout_Stability.md` (раздел "Phase 122 — Planned UI Adjustments")
+
+### Stream: Session ID Bar (restore)
+1. [TODO] Добавить плашку `ID: <8chars>-...` между Tabs и Dialog; типографика как у input-hint (scope: `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/session-view.tsx`, `media/session-view.css`; expected commit message: `fix(ui): restore session id header bar`)
+2. [TODO] Git Commit: `fix(ui): restore session id header bar` (hash: TBD)
+
+### Stream: Tabs (remove ID, compact width)
+1. [TODO] Убрать `ID: ...` из лейбла таба, оставить только имя агента (например: `Reviewer Claude`); уменьшить ширину таба (scope: `src/client/ui/src/session/session-tabs.tsx`, `media/session-view.css`; expected commit message: `fix(ui): revert tab labels to agent name only`)
+2. [TODO] Git Commit: `fix(ui): revert tab labels to agent name only` (hash: TBD)
+
+### Stream: Status Panel (one-line + right aligned continuity)
+1. [TODO] Сконсолидировать Models/Tokens и `#1 ... | #2 ...` в одну строку; правый блок выровнять по правому краю; уменьшить высоту плашки до одной строки; типографика как у input-hint (scope: `src/client/ui/src/session/status-panel.tsx`, `media/session-view.css`; expected commit message: `fix(ui): make status panel single-line with right aligned continuity`)
+2. [TODO] Git Commit: `fix(ui): make status panel single-line with right aligned continuity` (hash: TBD)
+
+### Stream: QA Gates + Targeted Builds
+1. [TODO] Все гейты зелёные; таргетные сборки: build:webview, typecheck:webview, build:project-manager — PASSED (scope: N/A; expected commit message: `docs(qa): validate gates for session ui tweaks`)
+2. [TODO] Git Commit: `docs(qa): validate gates for session ui tweaks` (hash: TBD)
+
+### Stream: Release Build (Final)
+1. [TODO] Выполнить `./scripts/build-all.sh` (scope: scripts; expected commit message: `chore(release): run build-all for session ui tweaks`)
+2. [TODO] Git Commit: `chore(release): run build-all for session ui tweaks` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for session ui tweaks`)
+4. [TODO] Git Commit: `chore(release): build and validate vsix for session ui tweaks` (hash: TBD)
