@@ -78,5 +78,11 @@
 **Goal:** выровнять типографику `ID: <8chars>-...` и строки `Models/Tokens + #n %` строго под `Press Enter to send, Shift+Enter for a new line` (размер, цвет, alpha), сохранив высоту ID-плашки и вертикальное центрирование.
 
 ### Stream: Typography Parity with Input Hint
-1. [TODO] Привести `session-id-bar` и `status-panel` к точной типографике `session-input__hint` (font-size, color, alpha); сохранить текущую высоту ID-плашки и центрирование текста по вертикали (scope: `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/status-panel.tsx`, `media/session-view.css`; expected commit message: `fix(ui): align id and status typography with input hint`)
-2. [TODO] Git Commit: `fix(ui): align id and status typography with input hint` (hash: TBD)
+1. [DONE] Привести `session-id-bar` и `status-panel` к точной типографике `session-input__hint` (font-size, color, alpha); сохранить текущую высоту ID-плашки и центрирование текста по вертикали (scope: `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/status-panel.tsx`, `media/session-view.css`; expected commit message: `fix(ui): align id and status typography with input hint`)
+2. [DONE] Git Commit: `fix(ui): align id and status typography with input hint` (hash: 324ab1cc)
+
+### Stream: Release Build (Final)
+1. [TODO] Выполнить `./scripts/build-all.sh` (scope: scripts; expected commit message: `chore(release): run build-all for typography alignment`)
+2. [TODO] Git Commit: `chore(release): run build-all for typography alignment` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` — VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for typography alignment`)
+4. [TODO] Git Commit: `chore(release): build and validate vsix for typography alignment` (hash: TBD)
