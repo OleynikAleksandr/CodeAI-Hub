@@ -180,3 +180,25 @@
 ### Stream: Post-Release Version Sync
 1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по launcher dnd hardening (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.548`)
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.548` (hash: b62cf684)
+
+---
+
+## Phase 130 — Launcher Native File-Drop Bridge + Release v1.1.549 (owner: Oleksandr, updated: 2026-02-10)
+
+**Goal:** вернуть корректную вставку file-path ссылок при `Shift + drag-and-drop` в Session input внутри Project Manager (launcher runtime) через нативный CEF bridge (без зависимости от clipboard/selection), а также заблокировать дефолтную навигацию Chromium/CEF при drop без Shift.
+
+### Stream: Launcher Native File Drop
+1. [DONE] Добавить нативный CEF bridge для file-drop: захват путей из drag-data (`CefDragHandler`) + `window.codeaiLauncher.requestFileDrop()` (перехват `codeai://file-drop`) + интеграция в Session drag-drop message-handler (scope: `packages/cef-launcher/src/launcher_handler.cc`, `packages/cef-launcher/src/launcher_handler.h`, `src/client/ui/src/modules/drag-drop-module/message-handler.ts`; expected commit message: `fix(launcher-dnd): native file drop bridge and clipboard paths`)
+2. [DONE] Git Commit: `fix(launcher-dnd): native file drop bridge and clipboard paths` (hash: a9f4f809)
+3. [DONE] Исправить clipboard вставку file-link (`file://...`) и VS Code uri-list в Session input + заблокировать навигацию при drop без Shift в Project Manager (scope: `packages/core/src/file-drop/file-drop-service.ts`, `src/client/ui/src/session/input-panel-clipboard.ts`, `src/client/project-manager/app.tsx`; expected commit message: `fix(launcher-dnd): native file drop bridge and clipboard paths`)
+4. [DONE] Git Commit: `fix(launcher-dnd): native file drop bridge and clipboard paths` (hash: a9f4f809)
+
+### Stream: Release Build (Phase 130)
+1. [DONE] Выполнить `./scripts/build-all.sh` после зелёных гейтов (scope: scripts/manifests; expected commit message: `chore(release): run build-all for launcher native file-drop`)
+2. [DONE] Git Commit: `chore(release): run build-all for launcher native file-drop` (hash: 50638688)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.549`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.549` (hash: d081301e)
+
+### Stream: Post-Release Version Sync
+1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` и зафиксировать release notes по launcher native file-drop (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.549`)
+2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.549` (hash: 015263a7)
