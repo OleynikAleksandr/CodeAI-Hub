@@ -132,7 +132,11 @@
 2. [DONE] Git Commit: `docs(flow): refresh continuity and core stack metadata for v1.1.545` (hash: 5014c85b)
 
 ### Stream: Release Build (Phase 127)
-1. [TODO] Выполнить `./scripts/build-all.sh` после завершения stream-ов фазы (scope: scripts; expected commit message: `chore(release): run build-all for documentation sync v1.1.545`)
-2. [TODO] Git Commit: `chore(release): run build-all for documentation sync v1.1.545` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for documentation sync v1.1.545`)
-4. [TODO] Git Commit: `chore(release): build and validate vsix for documentation sync v1.1.545` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` после завершения stream-ов фазы (scope: scripts; expected commit message: `chore(release): run build-all for documentation sync v1.1.545`)
+2. [DONE] Git Commit: `chore(release): run build-all for documentation sync v1.1.545` (hash: c0b6cbd1)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for documentation sync v1.1.545`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for documentation sync v1.1.545` (hash: c4f28066)
+
+### Stream: Post-Release Version Sync (v1.1.546)
+1. [DONE] Синхронизировать корневые release-документы и системный архитектурный SoT после `build-all/build-release`, чтобы `README`, `CHANGELOG` и `SystemArchitecture` отражали фактический релиз `1.1.546` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.546`)
+2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.546` (hash: e06dcd94)
