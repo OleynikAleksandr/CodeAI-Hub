@@ -1,5 +1,6 @@
 import { getVsCodeApi } from "../../vscode";
 import type { DragDropLogger } from "./data-transfer-file-extractor";
+import { requestLauncherFileDrop } from "./launcher-file-drop-bridge";
 
 export type MessageCallbacks = {
   readonly onPathInsert?: (path: string) => void;
@@ -106,6 +107,13 @@ export class MessageHandler {
     const message: Record<string, unknown> = { command };
     if (payload) {
       Object.assign(message, payload);
+    }
+
+    if (
+      command === "grabFilePathFromDrop" &&
+      requestLauncherFileDrop(this.logger)
+    ) {
+      return;
     }
 
     const forceHttpFallback = hasLauncherBridgeHttpConfig();

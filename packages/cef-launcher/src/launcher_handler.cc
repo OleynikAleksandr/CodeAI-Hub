@@ -6,6 +6,7 @@
 #include "base/cef_callback.h"
 #include "cef_app.h"
 #include "cef_parser.h"
+#include "include/cef_drag_data.h"
 #include "include/cef_values.h"
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
@@ -22,6 +23,7 @@ namespace {
 LauncherHandler* g_handler_instance = nullptr;
 constexpr char kLauncherScheme[] = "codeai";
 constexpr char kLauncherPickFolderHost[] = "pick-folder";
+constexpr char kLauncherFileDropHost[] = "file-drop";
 
 std::string ToDataUri(const std::string& data, const std::string& mime_type) {
   return "data:" + mime_type + ";base64," +
@@ -46,6 +48,23 @@ bool IsPickFolderRequest(const std::string& url) {
   return path == std::string("/") + kLauncherPickFolderHost;
 }
 
+bool IsFileDropRequest(const std::string& url) {
+  CefURLParts parts;
+  if (!CefParseURL(url, parts)) {
+    return false;
+  }
+  const std::string scheme = CefString(&parts.scheme);
+  if (scheme != kLauncherScheme) {
+    return false;
+  }
+  const std::string host = CefString(&parts.host);
+  if (host == kLauncherFileDropHost) {
+    return true;
+  }
+  const std::string path = CefString(&parts.path);
+  return path == std::string("/") + kLauncherFileDropHost;
+}
+
 void InjectLauncherBridge(CefRefPtr<CefFrame> frame) {
   if (!frame) {
     return;
@@ -55,13 +74,20 @@ void InjectLauncherBridge(CefRefPtr<CefFrame> frame) {
   if (typeof window.codeaiLauncher !== "object" || !window.codeaiLauncher) {
     window.codeaiLauncher = {};
   }
-  if (typeof window.codeaiLauncher.pickFolder === "function") {
-    return;
+
+  if (typeof window.codeaiLauncher.requestFileDrop !== "function") {
+    window.codeaiLauncher.requestFileDrop = () => {
+      window.location.href = "codeai://file-drop";
+      return true;
+    };
   }
-  window.codeaiLauncher.pickFolder = () => {
-    window.location.href = "codeai://pick-folder";
-    return true;
-  };
+
+	  if (typeof window.codeaiLauncher.pickFolder !== "function") {
+	    window.codeaiLauncher.pickFolder = () => {
+	      window.location.href = "codeai://pick-folder";
+	      return true;
+	    };
+	  }
 })()
 )JS";
   frame->ExecuteJavaScript(script, frame->GetURL(), 0);
@@ -80,6 +106,45 @@ void SendFolderPicked(CefRefPtr<CefBrowser> browser, const std::string& path) {
   CefRefPtr<CefDictionaryValue> message = CefDictionaryValue::Create();
   message->SetString("type", "projects:folderPicked");
   message->SetDictionary("payload", payload);
+  CefRefPtr<CefValue> message_value = CefValue::Create();
+  message_value->SetDictionary(message);
+  CefString json = CefWriteJSON(message_value, JSON_WRITER_DEFAULT);
+  std::string script = "window.postMessage(" + json.ToString() + ", '*');";
+  frame->ExecuteJavaScript(script, frame->GetURL(), 0);
+}
+
+std::string FormatDroppedPathsForInsert(
+    const std::vector<std::string>& paths) {
+  if (paths.empty()) {
+    return "";
+  }
+
+  std::ostringstream out;
+  for (size_t i = 0; i < paths.size(); ++i) {
+    out << "\"" << paths[i] << "\"";
+    if (i + 1 < paths.size()) {
+      out << "\n";
+    }
+  }
+  out << "\n";
+  return out.str();
+}
+
+void SendDroppedFiles(CefRefPtr<CefBrowser> browser,
+                      const std::vector<std::string>& paths) {
+  if (!browser || paths.empty()) {
+    return;
+  }
+
+  CefRefPtr<CefFrame> frame = browser->GetMainFrame();
+  if (!frame) {
+    return;
+  }
+
+  CefRefPtr<CefDictionaryValue> message = CefDictionaryValue::Create();
+  message->SetString("command", "insertPath");
+  message->SetString("path", FormatDroppedPathsForInsert(paths));
+
   CefRefPtr<CefValue> message_value = CefValue::Create();
   message_value->SetDictionary(message);
   CefString json = CefWriteJSON(message_value, JSON_WRITER_DEFAULT);
@@ -115,6 +180,36 @@ void LauncherHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
   } else if (use_views_style_) {
     PlatformTitleChange(browser, title);
   }
+}
+
+bool LauncherHandler::OnDragEnter(CefRefPtr<CefBrowser> browser,
+                                 CefRefPtr<CefDragData> dragData,
+                                 DragOperationsMask mask) {
+  CEF_REQUIRE_UI_THREAD();
+  static_cast<void>(browser);
+  static_cast<void>(mask);
+
+  last_drag_file_paths_.clear();
+
+  if (!dragData) {
+    return false;
+  }
+
+  std::vector<CefString> file_names;
+  dragData->GetFileNames(file_names);
+  if (file_names.empty()) {
+    return false;
+  }
+
+  last_drag_file_paths_.reserve(file_names.size());
+  for (const auto& name : file_names) {
+    const std::string candidate = name.ToString();
+    if (!candidate.empty()) {
+      last_drag_file_paths_.push_back(candidate);
+    }
+  }
+
+  return false;
 }
 
 void LauncherHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
@@ -186,11 +281,9 @@ void LauncherHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
   static_cast<void>(browser);
   static_cast<void>(httpStatusCode);
 
-#if defined(__APPLE__)
   if (frame && frame->IsMain()) {
     InjectLauncherBridge(frame);
   }
-#endif
 }
 
 bool LauncherHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
@@ -202,21 +295,30 @@ bool LauncherHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
   static_cast<void>(user_gesture);
   static_cast<void>(is_redirect);
 
-#if defined(__APPLE__)
   if (!frame || !frame->IsMain() || !request) {
     return false;
   }
   const std::string url = request->GetURL();
+
+  if (IsFileDropRequest(url)) {
+    SendDroppedFiles(browser, last_drag_file_paths_);
+    last_drag_file_paths_.clear();
+    return true;
+  }
+
   if (!IsPickFolderRequest(url)) {
     return false;
   }
+
+#if defined(__APPLE__)
   std::string selected_path;
   if (PickFolderFromFinder(&selected_path) && !selected_path.empty()) {
     SendFolderPicked(browser, selected_path);
   }
   return true;
 #else
-  return false;
+  // Unsupported on non-macOS. Cancel navigation to avoid breaking the SPA.
+  return true;
 #endif
 }
 

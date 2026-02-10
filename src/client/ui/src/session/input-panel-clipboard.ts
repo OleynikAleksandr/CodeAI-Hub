@@ -6,6 +6,122 @@ type ClipboardHandlersConfig = {
   readonly syncTextareaValue: () => void;
 };
 
+const WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
+
+const LINE_SPLIT_REGEX = /\r?\n/;
+
+const normalizePathCandidate = (rawValue: string): string | null => {
+  const value = rawValue.trim();
+  if (!value) {
+    return null;
+  }
+
+  if (value.startsWith("file://")) {
+    const withoutScheme = value.replace("file://", "");
+    try {
+      return decodeURIComponent(withoutScheme);
+    } catch {
+      return withoutScheme;
+    }
+  }
+
+  if (
+    value.startsWith("/") ||
+    value.startsWith("~") ||
+    value.startsWith("./") ||
+    value.startsWith("../") ||
+    WINDOWS_PATH_PATTERN.test(value)
+  ) {
+    return value;
+  }
+
+  return null;
+};
+
+const formatPathsForInsertion = (paths: readonly string[]): string => {
+  if (paths.length === 0) {
+    return "";
+  }
+  return `${paths.map((path) => `"${path}"`).join("\n")}\n`;
+};
+
+const pushUnique = (target: string[], value: string) => {
+  if (!target.includes(value)) {
+    target.push(value);
+  }
+};
+
+const collectPathsFromUriList = (results: string[], payload: string) => {
+  for (const line of payload.split(LINE_SPLIT_REGEX)) {
+    const normalized = normalizePathCandidate(line);
+    if (normalized) {
+      pushUnique(results, normalized);
+    }
+  }
+};
+
+const collectPathsFromFileList = (
+  results: string[],
+  files: FileList | null | undefined
+) => {
+  if (!files || files.length === 0) {
+    return;
+  }
+
+  for (const file of Array.from(files)) {
+    const candidate = (file as File & { path?: string }).path;
+    if (!candidate) {
+      continue;
+    }
+    const normalized = normalizePathCandidate(candidate);
+    if (normalized) {
+      pushUnique(results, normalized);
+    }
+  }
+};
+
+const collectPathsFromItems = (
+  results: string[],
+  items: DataTransferItemList | undefined
+) => {
+  if (typeof items === "undefined") {
+    return;
+  }
+
+  for (const item of Array.from(items)) {
+    if (item.kind !== "file") {
+      continue;
+    }
+    const file = item.getAsFile();
+    const candidate = (file as (File & { path?: string }) | null)?.path;
+    if (!candidate) {
+      continue;
+    }
+    const normalized = normalizePathCandidate(candidate);
+    if (normalized) {
+      pushUnique(results, normalized);
+    }
+  }
+};
+
+const extractFilePathsFromClipboardData = (
+  dataTransfer: DataTransfer
+): string[] => {
+  const results: string[] = [];
+
+  const uriListPayload =
+    dataTransfer.getData("application/vnd.code.uri-list") ||
+    dataTransfer.getData("text/uri-list");
+  if (uriListPayload) {
+    collectPathsFromUriList(results, uriListPayload);
+  }
+
+  collectPathsFromFileList(results, dataTransfer.files);
+  collectPathsFromItems(results, dataTransfer.items);
+
+  return results;
+};
+
 const handlePlainTextPaste = (
   event: ClipboardEvent<HTMLTextAreaElement>,
   insertText: (text: string) => void
@@ -15,8 +131,22 @@ const handlePlainTextPaste = (
     return false;
   }
 
+  const filePaths = extractFilePathsFromClipboardData(dataTransfer);
+  if (filePaths.length > 0) {
+    event.preventDefault();
+    insertText(formatPathsForInsertion(filePaths));
+    return true;
+  }
+
   const plainText = dataTransfer.getData("text/plain");
   if (plainText) {
+    const normalized = normalizePathCandidate(plainText);
+    if (normalized) {
+      event.preventDefault();
+      insertText(formatPathsForInsertion([normalized]));
+      return true;
+    }
+
     event.preventDefault();
     insertText(plainText);
     return true;
