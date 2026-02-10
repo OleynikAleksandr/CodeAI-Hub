@@ -1,3 +1,10 @@
+## [1.1.551] - 2026-02-10
+### Changed
+- Session UI: строка статуса теперь показывает `Tokens: <used> (<percent>%)` без `/<max>`, и визуально сильнее разделяет `Models` и `Tokens` (увеличены пробелы вокруг `|`).
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.551.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.550] - 2026-02-10
 ### Fixed
 - Launcher Session DnD: нативный CEF bridge теперь использует `CefDragData::GetFilePaths()` (полный путь вместо имени файла).
