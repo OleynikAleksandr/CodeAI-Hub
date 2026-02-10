@@ -68,7 +68,7 @@ export class IdeaQuestionnaireService {
   private async readQuestionnaireContent(
     sessionId: string,
     primaryPath: string,
-    legacyPaths: readonly string[]
+    readFallbackPaths: readonly string[]
   ): Promise<QuestionnaireReadResult> {
     const existing = await this.workspaceFiles.read(
       sessionId,
@@ -86,10 +86,10 @@ export class IdeaQuestionnaireService {
         resolvedContent: existingContent,
       };
     }
-    for (const legacyPath of legacyPaths) {
+    for (const fallbackPath of readFallbackPaths) {
       const legacyCopy = await this.workspaceFiles.read(
         sessionId,
-        legacyPath,
+        fallbackPath,
         QUESTIONNAIRE_READ_MAX_BYTES
       );
       const legacyContent =
@@ -127,7 +127,7 @@ export class IdeaQuestionnaireService {
       return null;
     }
 
-    const { primaryPath: questionnairePath, legacyPaths } =
+    const { primaryPath: questionnairePath, readFallbackPaths } =
       resolveQuestionnaireTargets(outputPaths.idea);
     const template =
       templateMarkdown && templateMarkdown.trim().length > 0
@@ -139,7 +139,7 @@ export class IdeaQuestionnaireService {
       await this.readQuestionnaireContent(
         sessionId,
         questionnairePath,
-        legacyPaths
+        readFallbackPaths
       );
     const content = resolvedContent ?? template;
     const migratedContent = migrateLegacyClarifications(content);
@@ -149,11 +149,10 @@ export class IdeaQuestionnaireService {
       migratedContent !== content;
 
     if (shouldWriteMigrated) {
-      await this.writeQuestionnaireCopies(
+      await this.writeQuestionnaire(
         sessionId,
         questionnairePath,
-        migratedContent,
-        legacyPaths
+        migratedContent
       );
     }
 
@@ -185,7 +184,7 @@ export class IdeaQuestionnaireService {
       window.clearTimeout(existing);
     }
     const timer = window.setTimeout(() => {
-      this.writeQuestionnaireCopies(sessionId, path, content).catch(() => {
+      this.writeQuestionnaire(sessionId, path, content).catch(() => {
         /* ignore save errors */
       });
     }, SAVE_DEBOUNCE_MS);
@@ -202,7 +201,7 @@ export class IdeaQuestionnaireService {
       window.clearTimeout(existing);
       this.saveTimers.delete(sessionId);
     }
-    await this.writeQuestionnaireCopies(sessionId, path, content);
+    await this.writeQuestionnaire(sessionId, path, content);
   }
 
   async appendClarificationAnswer(
@@ -211,12 +210,12 @@ export class IdeaQuestionnaireService {
     question: string | null,
     answer: string
   ): Promise<void> {
-    const { primaryPath: questionnairePath, legacyPaths } =
+    const { primaryPath: questionnairePath, readFallbackPaths } =
       resolveQuestionnaireTargets(outputPaths.idea);
     const { resolvedContent } = await this.readQuestionnaireContent(
       sessionId,
       questionnairePath,
-      legacyPaths
+      readFallbackPaths
     );
     if (!resolvedContent) {
       return;
@@ -229,26 +228,14 @@ export class IdeaQuestionnaireService {
     if (updated === resolvedContent) {
       return;
     }
-    await this.writeQuestionnaireCopies(
-      sessionId,
-      questionnairePath,
-      updated,
-      legacyPaths
-    );
+    await this.writeQuestionnaire(sessionId, questionnairePath, updated);
   }
 
-  private async writeQuestionnaireCopies(
+  private async writeQuestionnaire(
     sessionId: string,
     path: string,
-    content: string,
-    extraPaths: readonly string[] = []
+    content: string
   ): Promise<void> {
     await this.workspaceFiles.write(sessionId, path, content);
-    for (const extraPath of extraPaths) {
-      if (extraPath === path) {
-        continue;
-      }
-      await this.workspaceFiles.write(sessionId, extraPath, content);
-    }
   }
 }

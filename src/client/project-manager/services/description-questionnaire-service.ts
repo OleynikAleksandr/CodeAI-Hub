@@ -3,6 +3,7 @@ import {
   parseIdeaQuestionnaireTemplateFields,
   renderIdeaQuestionnaire,
 } from "../../ui/src/services/idea-questionnaire-template";
+import { buildCanonicalQuestionnairePath } from "../../ui/src/services/idea-questionnaire-paths";
 import {
   buildDefaults,
   isRecord,
@@ -10,7 +11,6 @@ import {
   isWorkspaceSessionResponse,
   joinUrl,
   resolveCoreHttpUrl,
-  resolveQuestionnairePath,
   resolveWorkspaceName,
   toWorkspaceSlug,
   type QuestionnaireLoadResult,
@@ -169,7 +169,7 @@ export class DescriptionQuestionnaireService {
     const { questions, placeholders } =
       parseIdeaQuestionnaireTemplateFields(template);
 
-    const questionnairePath = resolveQuestionnairePath(workspaceSlug);
+    const questionnairePath = buildCanonicalQuestionnairePath(workspaceSlug);
     const existing = await readWorkspaceFile(sessionId, questionnairePath);
     const existingContent =
       existing.status === "ok" ? existing.file.content : null;
