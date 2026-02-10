@@ -26,6 +26,8 @@
 
 Ключевая цель программы: для каждого UI-элемента и runtime-контракта закрепляется один канонический владелец; параллельные legacy/fallback источники переводятся в deprecation и удаляются поэтапно.
 
+Начиная с Phase 124, `scripts/check-architecture.sh` запускает guardrail `scripts/check-architecture-rules/ui-style-ssot.sh`, который блокирует возврат legacy style-source (включая `src/client/project-manager/styles/layout.css`) и дубли Session UI селекторов в `packages/ui/project-manager/styles.css`.
+
 ---
 
 ## 1. Architectural Overview

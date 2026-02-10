@@ -143,6 +143,14 @@ else
   echo -e "${GREEN}✅ Duplication within ${DUPLICATION_THRESHOLD}% threshold${NC}"
 fi
 
+# Check 7: UI style single-source guardrails
+echo ""
+echo "🎨 Running UI style SSOT guardrails..."
+echo "-----------------------------------"
+if ! bash scripts/check-architecture-rules/ui-style-ssot.sh; then
+  HAS_VIOLATIONS=1
+fi
+
 # Final verdict
 echo ""
 echo "================================"
