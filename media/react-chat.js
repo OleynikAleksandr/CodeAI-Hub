@@ -8148,10 +8148,7 @@
   // src/client/ui/src/core-bridge/normalizers.ts
   var isRecord2 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var toNumberTimestamp = (value) => {
-    if (!value) {
-      return Date.now();
-    }
-    const parsed = Date.parse(value);
+    const parsed = value ? Date.parse(value) : Number.NaN;
     return Number.isNaN(parsed) ? Date.now() : parsed;
   };
   var sanitizeProvider = (provider) => {
@@ -8162,12 +8159,11 @@
     if (!providerIdSet.has(providerId)) {
       return null;
     }
-    const isActive = provider.status === "active";
     return {
       id: providerId,
       title: provider.name ?? getDefaultProviderTitle(providerId),
       description: provider.description ?? getDefaultProviderDescription(providerId),
-      connected: isActive,
+      connected: provider.status === "active",
       statusMessage: typeof provider.statusMessage === "string" ? provider.statusMessage : null
     };
   };
@@ -8188,6 +8184,12 @@
       content: normalizedContent,
       createdAt: toNumberTimestamp(message.timestamp)
     };
+  };
+  var generateLocalMessageId = () => {
+    if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
+      return globalThis.crypto.randomUUID();
+    }
+    return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   };
   var extractIdeaCollectorResponse = (content3) => {
     if (!content3.trim().startsWith("{")) {
@@ -8221,22 +8223,19 @@
     if (!providerIdSet.has(providerId)) {
       return null;
     }
-    const sessionId = session.id;
     const bindingCandidate = {
       providerSessionId: typeof session.providerSessionId === "string" ? session.providerSessionId : null,
       status: session.providerSessionStatus === "ready" || session.providerSessionStatus === "failed" ? session.providerSessionStatus : "pending"
     };
-    const sessionKind = session.sessionKind === "collector" || session.sessionKind === "reviewer" ? session.sessionKind : null;
-    const runSlug = typeof session.runSlug === "string" && session.runSlug.trim().length > 0 ? session.runSlug.trim() : null;
     return {
-      id: sessionId,
+      id: session.id,
       title: session.title,
       providerIds: [providerId],
       workspacePath: session.workspacePath ?? "",
       initiativeSlug: typeof session.initiativeSlug === "string" ? session.initiativeSlug : null,
       stage: typeof session.stage === "string" ? session.stage : null,
-      runSlug,
-      sessionKind,
+      runSlug: typeof session.runSlug === "string" && session.runSlug.trim().length > 0 ? session.runSlug.trim() : null,
+      sessionKind: session.sessionKind === "collector" || session.sessionKind === "reviewer" ? session.sessionKind : null,
       continuationParentId: typeof session.continuationParentId === "string" ? session.continuationParentId : null,
       continuationIndex: typeof session.continuationIndex === "number" ? session.continuationIndex : null,
       createdAt: toNumberTimestamp(session.createdAt),
@@ -8253,28 +8252,61 @@
       providers
     };
   };
+  var sanitizeSessionMessagePayload = (payload) => {
+    if (!isRecord2(payload) || typeof payload.sessionId !== "string") {
+      return null;
+    }
+    const messageSource = isRecord2(payload.message) ? {
+      sessionId: payload.sessionId,
+      ...payload.message
+    } : payload;
+    const normalized = sanitizeMessage(messageSource);
+    if (!normalized) {
+      return null;
+    }
+    return { sessionId: payload.sessionId, message: normalized };
+  };
+  var sanitizeSessionBindingPayload = (payload) => {
+    if (!isRecord2(payload) || typeof payload.sessionId !== "string") {
+      return null;
+    }
+    const providerSessionId = payload.providerSessionId === null || typeof payload.providerSessionId === "string" ? payload.providerSessionId : null;
+    return {
+      sessionId: payload.sessionId,
+      providerSessionId,
+      status: payload.status === "pending" || payload.status === "ready" || payload.status === "failed" ? payload.status : "pending"
+    };
+  };
+  var sanitizeSessionErrorPayload = (payload) => {
+    if (!isRecord2(payload) || typeof payload.sessionId !== "string") {
+      return null;
+    }
+    const providerLabel = typeof payload.providerId === "string" && payload.providerId.trim().length > 0 ? `[${payload.providerId.trim()}] ` : "";
+    const message = typeof payload.message === "string" && payload.message.trim().length > 0 ? payload.message.trim() : "Unknown error.";
+    return {
+      sessionId: payload.sessionId,
+      message: `${providerLabel}${message}`
+    };
+  };
+  var createSystemSessionMessage = (content3) => ({
+    id: generateLocalMessageId(),
+    role: "system",
+    content: content3,
+    createdAt: Date.now()
+  });
   var extractIdeaContractQuestionnaireTemplate = (contract) => {
     if (!contract) {
       return null;
     }
-    const questionnaire = contract.questionnaire;
-    if (!isRecord2(questionnaire)) {
+    const questionnaire = isRecord2(contract.questionnaire) ? contract.questionnaire : null;
+    if (!questionnaire) {
       return null;
     }
     const templateMarkdown = questionnaire.templateMarkdown;
-    if (typeof templateMarkdown !== "string") {
-      return null;
-    }
-    return templateMarkdown.trim().length > 0 ? templateMarkdown : null;
+    return typeof templateMarkdown === "string" && templateMarkdown.trim().length > 0 ? templateMarkdown : null;
   };
 
   // src/client/ui/src/core-bridge/server-message-handler.ts
-  var generateLocalMessageId = () => {
-    if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
-      return globalThis.crypto.randomUUID();
-    }
-    return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  };
   var parseEnvelope = (raw) => {
     try {
       const parsed = JSON.parse(raw);
@@ -8291,36 +8323,15 @@
   };
   var isDeletedPayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string";
   var isStreamPayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string";
-  var isSessionErrorPayload = (payload) => typeof payload === "object" && payload !== null;
-  var isBindingPayload = (payload) => {
-    if (typeof payload !== "object" || payload === null || typeof payload.sessionId !== "string") {
-      return false;
-    }
-    const candidate = payload;
-    if (candidate.providerSessionId !== null && typeof candidate.providerSessionId !== "string" && typeof candidate.providerSessionId !== "undefined") {
-      return false;
-    }
-    if (candidate.status && candidate.status !== "pending" && candidate.status !== "ready" && candidate.status !== "failed") {
-      return false;
-    }
-    return true;
-  };
   var createServerMessageHandler = (notify) => {
     const handleSessionMessage = (payload) => {
-      const candidate = payload;
-      if (!candidate || typeof candidate.sessionId !== "string") {
-        return;
-      }
-      const normalized = sanitizeMessage(candidate);
+      const normalized = sanitizeSessionMessagePayload(payload);
       if (!normalized) {
         return;
       }
       notify({
         type: "session:message",
-        payload: {
-          sessionId: candidate.sessionId,
-          message: normalized
-        }
+        payload: normalized
       });
     };
     const handleSessionCreated = (payload) => {
@@ -8355,26 +8366,15 @@
       });
     };
     const handleSessionError = (payload) => {
-      if (!isSessionErrorPayload(payload)) {
+      const normalized = sanitizeSessionErrorPayload(payload);
+      if (!normalized) {
         return;
       }
-      const candidate = payload;
-      const sessionId = typeof candidate.sessionId === "string" ? candidate.sessionId : null;
-      if (!sessionId) {
-        return;
-      }
-      const providerLabel = typeof candidate.providerId === "string" && candidate.providerId.trim() ? `[${candidate.providerId.trim()}] ` : "";
-      const message = typeof candidate.message === "string" && candidate.message.trim() ? candidate.message.trim() : "Unknown error.";
       notify({
         type: "session:message",
         payload: {
-          sessionId,
-          message: {
-            id: generateLocalMessageId(),
-            role: "system",
-            content: `${providerLabel}${message}`,
-            createdAt: Date.now()
-          }
+          sessionId: normalized.sessionId,
+          message: createSystemSessionMessage(normalized.message)
         }
       });
     };
@@ -8391,16 +8391,13 @@
         });
       },
       "session:binding": (payload) => {
-        if (!isBindingPayload(payload)) {
+        const normalized = sanitizeSessionBindingPayload(payload);
+        if (!normalized) {
           return;
         }
         notify({
           type: "session:binding",
-          payload: {
-            sessionId: payload.sessionId,
-            providerSessionId: typeof payload.providerSessionId === "string" ? payload.providerSessionId : null,
-            status: payload.status === "ready" || payload.status === "failed" || payload.status === "pending" ? payload.status : "pending"
-          }
+          payload: normalized
         });
       }
     };
@@ -23004,7 +23001,7 @@ ${path2}` : path2;
       snapshots
     });
     if (!(activeSession && activeSessionId)) {
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app", children: [
+      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app", "data-session-style-source": "canonical", children: [
         header,
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app__content" })
       ] });
@@ -23014,7 +23011,7 @@ ${path2}` : path2;
       snapshots,
       activeSessionId
     }) ?? void 0;
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app", "data-session-style-source": "canonical", children: [
       header,
       /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(session_id_bar_default, { binding: activeSession.binding }),
       /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app__content", children: [
@@ -23054,7 +23051,7 @@ ${path2}` : path2;
   };
   var SessionView = (props) => {
     if (props.sessions.length === 0 && props.showEmptyState) {
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(empty_state_default, {}) });
+      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app", "data-session-style-source": "canonical", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(empty_state_default, {}) });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SessionViewBody, { ...props });
   };
@@ -24728,8 +24725,7 @@ ${updatedBody}
       const workspaceSlug2 = descriptionMatch[1];
       return {
         canonical: buildCanonicalQuestionnairePath(workspaceSlug2),
-        legacyRun: null,
-        legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug2)
+        legacyReadPaths: [buildLegacyInitiativeQuestionnairePath(workspaceSlug2)]
       };
     }
     const runMatch = DESCRIPTION_RUN_PATH_RE.exec(descriptionPath);
@@ -24738,8 +24734,10 @@ ${updatedBody}
       const runSlug2 = runMatch[2];
       return {
         canonical: buildCanonicalQuestionnairePath(workspaceSlug2),
-        legacyRun: buildLegacyRunQuestionnairePath(workspaceSlug2, runSlug2),
-        legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug2)
+        legacyReadPaths: [
+          buildLegacyRunQuestionnairePath(workspaceSlug2, runSlug2),
+          buildLegacyInitiativeQuestionnairePath(workspaceSlug2)
+        ]
       };
     }
     const legacyIdeaMatch = LEGACY_IDEA_PATH_RE.exec(descriptionPath);
@@ -24747,8 +24745,7 @@ ${updatedBody}
       const workspaceSlug2 = legacyIdeaMatch[1];
       return {
         canonical: buildCanonicalQuestionnairePath(workspaceSlug2),
-        legacyRun: null,
-        legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug2)
+        legacyReadPaths: [buildLegacyInitiativeQuestionnairePath(workspaceSlug2)]
       };
     }
     const legacyRunMatch = LEGACY_IDEA_RUN_PATH_RE.exec(descriptionPath);
@@ -24759,12 +24756,14 @@ ${updatedBody}
     const runSlug = legacyRunMatch[2];
     return {
       canonical: buildCanonicalQuestionnairePath(workspaceSlug),
-      legacyRun: buildLegacyRunQuestionnairePath(workspaceSlug, runSlug),
-      legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug)
+      legacyReadPaths: [
+        buildLegacyRunQuestionnairePath(workspaceSlug, runSlug),
+        buildLegacyInitiativeQuestionnairePath(workspaceSlug)
+      ]
     };
   };
   var resolveFallbackQuestionnairePath = (descriptionPath) => descriptionPath.replace(FALLBACK_PATH_SEGMENT_RE, "questionnaire.md");
-  var collectLegacyPaths = (paths, primaryPath) => {
+  var collectReadFallbackPaths = (paths, primaryPath) => {
     const unique = /* @__PURE__ */ new Set();
     for (const path2 of paths) {
       if (!path2 || path2 === primaryPath) {
@@ -24777,11 +24776,11 @@ ${updatedBody}
   var resolveQuestionnaireTargets = (descriptionPath) => {
     const pathSet = resolveQuestionnairePaths(descriptionPath);
     const primaryPath = pathSet?.canonical ?? resolveFallbackQuestionnairePath(descriptionPath);
-    const legacyPaths = collectLegacyPaths(
-      [pathSet?.legacyRun, pathSet?.legacyInitiative],
+    const readFallbackPaths = collectReadFallbackPaths(
+      pathSet?.legacyReadPaths ?? [],
       primaryPath
     );
-    return { primaryPath, legacyPaths };
+    return { primaryPath, readFallbackPaths };
   };
 
   // src/client/ui/src/services/idea-questionnaire-template.ts
@@ -24963,7 +24962,7 @@ ${replacement}
       this.workspaceFiles = new WorkspaceFileService();
       this.saveTimers = /* @__PURE__ */ new Map();
     }
-    async readQuestionnaireContent(sessionId, primaryPath, legacyPaths) {
+    async readQuestionnaireContent(sessionId, primaryPath, readFallbackPaths) {
       const existing = await this.workspaceFiles.read(
         sessionId,
         primaryPath,
@@ -24977,10 +24976,10 @@ ${replacement}
           resolvedContent: existingContent
         };
       }
-      for (const legacyPath of legacyPaths) {
+      for (const fallbackPath of readFallbackPaths) {
         const legacyCopy = await this.workspaceFiles.read(
           sessionId,
-          legacyPath,
+          fallbackPath,
           QUESTIONNAIRE_READ_MAX_BYTES
         );
         const legacyContent = legacyCopy.status === "ok" ? normalizeQuestionnaireContent(legacyCopy.file.content) : null;
@@ -25008,23 +25007,22 @@ ${replacement}
       if (!outputPaths) {
         return null;
       }
-      const { primaryPath: questionnairePath, legacyPaths } = resolveQuestionnaireTargets(outputPaths.idea);
+      const { primaryPath: questionnairePath, readFallbackPaths } = resolveQuestionnaireTargets(outputPaths.idea);
       const template = templateMarkdown && templateMarkdown.trim().length > 0 ? templateMarkdown : DEFAULT_TEMPLATE;
       const { questions, placeholders } = parseIdeaQuestionnaireTemplateFields(template);
       const { existingStatus, existingContent, resolvedContent } = await this.readQuestionnaireContent(
         sessionId,
         questionnairePath,
-        legacyPaths
+        readFallbackPaths
       );
       const content3 = resolvedContent ?? template;
       const migratedContent = migrateLegacyClarifications(content3);
       const shouldWriteMigrated = shouldWriteTemplate(existingStatus, existingContent) || migratedContent !== content3;
       if (shouldWriteMigrated) {
-        await this.writeQuestionnaireCopies(
+        await this.writeQuestionnaire(
           sessionId,
           questionnairePath,
-          migratedContent,
-          legacyPaths
+          migratedContent
         );
       }
       const answers = extractIdeaQuestionnaireAnswers(
@@ -25049,7 +25047,7 @@ ${replacement}
         window.clearTimeout(existing);
       }
       const timer = window.setTimeout(() => {
-        this.writeQuestionnaireCopies(sessionId, path2, content3).catch(() => {
+        this.writeQuestionnaire(sessionId, path2, content3).catch(() => {
         });
       }, SAVE_DEBOUNCE_MS);
       this.saveTimers.set(sessionId, timer);
@@ -25060,14 +25058,14 @@ ${replacement}
         window.clearTimeout(existing);
         this.saveTimers.delete(sessionId);
       }
-      await this.writeQuestionnaireCopies(sessionId, path2, content3);
+      await this.writeQuestionnaire(sessionId, path2, content3);
     }
     async appendClarificationAnswer(sessionId, outputPaths, question, answer) {
-      const { primaryPath: questionnairePath, legacyPaths } = resolveQuestionnaireTargets(outputPaths.idea);
+      const { primaryPath: questionnairePath, readFallbackPaths } = resolveQuestionnaireTargets(outputPaths.idea);
       const { resolvedContent } = await this.readQuestionnaireContent(
         sessionId,
         questionnairePath,
-        legacyPaths
+        readFallbackPaths
       );
       if (!resolvedContent) {
         return;
@@ -25080,21 +25078,10 @@ ${replacement}
       if (updated === resolvedContent) {
         return;
       }
-      await this.writeQuestionnaireCopies(
-        sessionId,
-        questionnairePath,
-        updated,
-        legacyPaths
-      );
+      await this.writeQuestionnaire(sessionId, questionnairePath, updated);
     }
-    async writeQuestionnaireCopies(sessionId, path2, content3, extraPaths = []) {
+    async writeQuestionnaire(sessionId, path2, content3) {
       await this.workspaceFiles.write(sessionId, path2, content3);
-      for (const extraPath of extraPaths) {
-        if (extraPath === path2) {
-          continue;
-        }
-        await this.workspaceFiles.write(sessionId, extraPath, content3);
-      }
     }
   };
 
@@ -25695,6 +25682,37 @@ ${replacement}
   // src/client/ui/src/app-host/settings-only-host.tsx
   var import_react30 = __toESM(require_react());
 
+  // src/client/ui/src/components/settings/style-tokens.ts
+  var settingsColorTokens = {
+    surface: "#1e1e1e",
+    surfaceElevated: "#252526",
+    borderSubtle: "#2d2d30",
+    borderStrong: "#3c3c3c",
+    textPrimary: "#ffffff",
+    textSecondary: "#cccccc",
+    textMuted: "#9aa0a6",
+    actionPrimary: "#0e639c",
+    actionPrimaryText: "#ffffff"
+  };
+  var settingsSpacingTokens = {
+    pagePadding: "20px",
+    cardPadding: "24px",
+    tabPadding: "10px 14px",
+    containerGap: "16px"
+  };
+  var settingsRadiusTokens = {
+    card: "16px",
+    panel: "10px",
+    control: "6px"
+  };
+  var settingsTypographyTokens = {
+    tabFontSize: "12px",
+    bodyFontSize: "12px",
+    titleFontSize: "13px",
+    hostTitleFontSize: "20px",
+    hostBodyFontSize: "14px"
+  };
+
   // src/client/ui/src/components/settings-view.tsx
   var import_react27 = __toESM(require_react());
 
@@ -25731,10 +25749,10 @@ ${replacement}
   // src/client/ui/src/components/settings/settings-card.tsx
   var import_jsx_runtime21 = __toESM(require_jsx_runtime());
   var cardStyles = {
-    background: "#252526",
-    borderRadius: "6px",
+    background: settingsColorTokens.surfaceElevated,
+    borderRadius: settingsRadiusTokens.control,
     padding: "16px",
-    border: "1px solid #3c3c3c",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
     display: "flex",
     flexDirection: "column",
     gap: "10px"
@@ -25749,7 +25767,7 @@ ${replacement}
     fontSize: "14px",
     fontWeight: 600,
     margin: 0,
-    color: "#e0e0e0"
+    color: settingsColorTokens.textPrimary
   };
   var SettingsCard = ({
     title,
@@ -25767,7 +25785,7 @@ ${replacement}
   // src/client/ui/src/components/settings/shared-model-card-styles.ts
   var descriptionStyles = {
     margin: 0,
-    color: "#b0b0b0",
+    color: settingsColorTokens.textSecondary,
     fontSize: "12px",
     lineHeight: 1.5
   };
@@ -25790,14 +25808,14 @@ ${replacement}
     borderColor: "#2f2f2f",
     borderRadius: "6px",
     padding: "12px",
-    background: "#252526",
+    background: settingsColorTokens.surfaceElevated,
     cursor: "pointer",
     transition: "border-color 0.15s, background 0.15s",
     outline: "none",
     boxShadow: "none"
   };
   var rowSelectedStyles = {
-    borderColor: "#0e639c",
+    borderColor: settingsColorTokens.actionPrimary,
     background: "#1f2a33"
   };
   var rowHoverStyles = {
@@ -25816,7 +25834,7 @@ ${replacement}
   var modelTitleStyles = {
     fontSize: "13px",
     fontWeight: 600,
-    color: "#e5e5e5"
+    color: settingsColorTokens.textPrimary
   };
   var aliasStyles = {
     fontSize: "11px",
@@ -25845,13 +25863,13 @@ ${replacement}
     boxShadow: "none"
   };
   var radioCircleSelectedStyles = {
-    borderColor: "#0e639c"
+    borderColor: settingsColorTokens.actionPrimary
   };
   var radioCircleInnerStyles = {
     width: "8px",
     height: "8px",
     borderRadius: "50%",
-    background: "#0e639c"
+    background: settingsColorTokens.actionPrimary
   };
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
@@ -27393,37 +27411,37 @@ ${replacement}
     justifyContent: "space-between",
     alignItems: "center",
     padding: "12px 20px",
-    borderTop: "1px solid #2d2d30",
+    borderTop: `1px solid ${settingsColorTokens.borderSubtle}`,
     flexShrink: 0
   };
   var resetButtonStyles = {
     padding: "6px 12px",
     background: "transparent",
-    border: "1px solid #3c3c3c",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
     borderRadius: "4px",
-    color: "#cccccc",
+    color: settingsColorTokens.textSecondary,
     cursor: "pointer",
-    fontSize: "12px",
+    fontSize: settingsTypographyTokens.tabFontSize,
     transition: "all 0.2s ease"
   };
   var closeButtonStyles3 = {
     padding: "6px 16px",
     background: "transparent",
-    border: "1px solid #3c3c3c",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
     borderRadius: "4px",
-    color: "#cccccc",
+    color: settingsColorTokens.textSecondary,
     cursor: "pointer",
-    fontSize: "12px",
+    fontSize: settingsTypographyTokens.tabFontSize,
     transition: "all 0.2s ease"
   };
   var saveButtonStyles3 = {
     padding: "6px 16px",
-    background: "#3c3c3c",
+    background: settingsColorTokens.borderStrong,
     border: "none",
     borderRadius: "4px",
     color: "#808080",
     cursor: "default",
-    fontSize: "12px",
+    fontSize: settingsTypographyTokens.tabFontSize,
     transition: "all 0.2s ease"
   };
   var buttonGroupStyles = {
@@ -27431,6 +27449,9 @@ ${replacement}
     gap: "8px"
   };
   var DISABLED_OPACITY = 0.6;
+  var HOVER_SURFACE_COLOR = settingsColorTokens.borderSubtle;
+  var HOVER_BORDER_COLOR = "#4c4c4c";
+  var SAVE_HOVER_COLOR = "#1177bb";
   var SettingsFooter = ({
     hasChanges,
     saving,
@@ -27441,62 +27462,62 @@ ${replacement}
   }) => {
     const handleResetMouseEnter = (event) => {
       if (!resetting) {
-        event.currentTarget.style.background = "#2d2d30";
-        event.currentTarget.style.borderColor = "#4c4c4c";
+        event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+        event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
       }
     };
     const handleResetMouseLeave = (event) => {
       if (!resetting) {
         event.currentTarget.style.background = "transparent";
-        event.currentTarget.style.borderColor = "#3c3c3c";
+        event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
       }
     };
     const handleResetFocus = (event) => {
       if (!resetting) {
-        event.currentTarget.style.background = "#2d2d30";
-        event.currentTarget.style.borderColor = "#4c4c4c";
+        event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+        event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
       }
     };
     const handleResetBlur = (event) => {
       if (!resetting) {
         event.currentTarget.style.background = "transparent";
-        event.currentTarget.style.borderColor = "#3c3c3c";
+        event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
       }
     };
     const handleCloseMouseEnter = (event) => {
-      event.currentTarget.style.background = "#2d2d30";
-      event.currentTarget.style.borderColor = "#4c4c4c";
+      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
     };
     const handleCloseMouseLeave = (event) => {
       event.currentTarget.style.background = "transparent";
-      event.currentTarget.style.borderColor = "#3c3c3c";
+      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
     };
     const handleCloseFocus = (event) => {
-      event.currentTarget.style.background = "#2d2d30";
-      event.currentTarget.style.borderColor = "#4c4c4c";
+      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
     };
     const handleCloseBlur = (event) => {
       event.currentTarget.style.background = "transparent";
-      event.currentTarget.style.borderColor = "#3c3c3c";
+      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
     };
     const handleSaveMouseEnter = (event) => {
       if (hasChanges && !saving) {
-        event.currentTarget.style.background = "#1177bb";
+        event.currentTarget.style.background = SAVE_HOVER_COLOR;
       }
     };
     const handleSaveMouseLeave = (event) => {
       if (hasChanges && !saving) {
-        event.currentTarget.style.background = "#0e639c";
+        event.currentTarget.style.background = settingsColorTokens.actionPrimary;
       }
     };
     const handleSaveFocus = (event) => {
       if (hasChanges && !saving) {
-        event.currentTarget.style.background = "#1177bb";
+        event.currentTarget.style.background = SAVE_HOVER_COLOR;
       }
     };
     const handleSaveBlur = (event) => {
       if (hasChanges && !saving) {
-        event.currentTarget.style.background = "#0e639c";
+        event.currentTarget.style.background = settingsColorTokens.actionPrimary;
       }
     };
     return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: containerStyles2, children: [
@@ -27511,8 +27532,8 @@ ${replacement}
           onMouseLeave: handleResetMouseLeave,
           style: {
             ...resetButtonStyles,
-            background: resetting ? "#3c3c3c" : "transparent",
-            color: resetting ? "#808080" : "#cccccc",
+            background: resetting ? settingsColorTokens.borderStrong : "transparent",
+            color: resetting ? "#808080" : settingsColorTokens.textSecondary,
             cursor: resetting ? "default" : "pointer",
             opacity: resetting ? DISABLED_OPACITY : 1
           },
@@ -27546,8 +27567,8 @@ ${replacement}
             onMouseLeave: handleSaveMouseLeave,
             style: {
               ...saveButtonStyles3,
-              background: hasChanges && !saving ? "#0e639c" : saveButtonStyles3.background,
-              color: hasChanges ? "#ffffff" : saveButtonStyles3.color,
+              background: hasChanges && !saving ? settingsColorTokens.actionPrimary : saveButtonStyles3.background,
+              color: hasChanges ? settingsColorTokens.actionPrimaryText : saveButtonStyles3.color,
               cursor: hasChanges && !saving ? "pointer" : "default",
               opacity: saving ? DISABLED_OPACITY : 1
             },
@@ -28276,51 +28297,51 @@ ${replacement}
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    background: "#1e1e1e",
-    color: "#cccccc"
+    background: settingsColorTokens.surface,
+    color: settingsColorTokens.textSecondary
   };
   var tabBarStyles = {
     display: "flex",
-    borderBottom: "1px solid #2d2d30",
-    padding: "0 20px",
+    borderBottom: `1px solid ${settingsColorTokens.borderSubtle}`,
+    padding: `0 ${settingsSpacingTokens.pagePadding}`,
     gap: "8px"
   };
   var tabButtonStyles = {
     border: "none",
     background: "transparent",
-    color: "#cccccc",
-    fontSize: "12px",
-    padding: "10px 14px",
+    color: settingsColorTokens.textSecondary,
+    fontSize: settingsTypographyTokens.tabFontSize,
+    padding: settingsSpacingTokens.tabPadding,
     cursor: "pointer",
     borderBottom: "2px solid transparent"
   };
   var activeTabStyles = {
-    color: "#ffffff",
-    borderBottomColor: "#0e639c"
+    color: settingsColorTokens.textPrimary,
+    borderBottomColor: settingsColorTokens.actionPrimary
   };
   var contentStyles = {
     flex: 1,
     overflowY: "auto",
-    padding: "20px"
+    padding: settingsSpacingTokens.pagePadding
   };
   var stackStyles = {
     display: "flex",
     flexDirection: "column",
-    gap: "16px"
+    gap: settingsSpacingTokens.containerGap
   };
   var modeNoticeStyles = {
-    margin: "16px 20px 0",
+    margin: `16px ${settingsSpacingTokens.pagePadding} 0`,
     padding: "12px 14px",
     borderRadius: "10px",
-    background: "#252526",
-    border: "1px solid #2d2d30",
-    color: "#cccccc",
-    fontSize: "12px",
+    background: settingsColorTokens.surfaceElevated,
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
+    color: settingsColorTokens.textSecondary,
+    fontSize: settingsTypographyTokens.bodyFontSize,
     lineHeight: 1.5
   };
   var modeNoticeTitleStyles = {
-    color: "#ffffff",
-    fontSize: "13px",
+    color: settingsColorTokens.textPrimary,
+    fontSize: settingsTypographyTokens.titleFontSize,
     fontWeight: 600,
     marginBottom: "4px"
   };
@@ -28777,16 +28798,16 @@ ${replacement}
     alignItems: "center",
     justifyContent: "center",
     padding: "32px 24px",
-    background: "rgb(24, 24, 24)",
+    background: settingsColorTokens.surface,
     color: "var(--vscode-editor-foreground, #cccccc)"
   };
   var settingsOnlyCardStyles = {
     width: "100%",
     maxWidth: "520px",
-    borderRadius: "16px",
-    padding: "24px",
+    borderRadius: settingsRadiusTokens.card,
+    padding: settingsSpacingTokens.cardPadding,
     background: "var(--vscode-editorWidget-background, #252526)",
-    border: "1px solid var(--vscode-editorWidget-border, #2a2a2a)",
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
     boxShadow: "0 12px 32px rgba(0, 0, 0, 0.35)",
     display: "flex",
     flexDirection: "column",
@@ -28794,28 +28815,28 @@ ${replacement}
   };
   var settingsOnlyTitleStyles = {
     margin: 0,
-    fontSize: "20px",
+    fontSize: settingsTypographyTokens.hostTitleFontSize,
     fontWeight: 600,
-    color: "var(--vscode-editor-foreground, #ffffff)"
+    color: settingsColorTokens.textPrimary
   };
   var settingsOnlyBodyStyles = {
     margin: 0,
-    fontSize: "14px",
+    fontSize: settingsTypographyTokens.hostBodyFontSize,
     lineHeight: 1.5
   };
   var settingsOnlyHintStyles = {
     margin: 0,
-    fontSize: "12px",
-    color: "var(--vscode-descriptionForeground, #9aa0a6)"
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    color: settingsColorTokens.textMuted
   };
   var settingsOnlyButtonStyles = {
     alignSelf: "flex-start",
     marginTop: "4px",
     padding: "8px 14px",
-    borderRadius: "6px",
-    border: "1px solid #3a3a3a",
-    background: "#0e639c",
-    color: "#ffffff",
+    borderRadius: settingsRadiusTokens.control,
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    background: settingsColorTokens.actionPrimary,
+    color: settingsColorTokens.actionPrimaryText,
     fontSize: "13px",
     cursor: "pointer"
   };
