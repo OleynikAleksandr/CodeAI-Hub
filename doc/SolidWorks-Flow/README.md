@@ -33,4 +33,4 @@
 
 ## Операционные пометки
 
-- Gemini: сценарий `Description(one-shot) -> Reviewer(resume)` подтверждён в `1.1.538`, но дальнейшие Gemini‑расширения заморожены до появления надёжной telemetry remaining context window. Источник правды: `doc/SolidWorks-Flow/Stacks/Gemini_Reviewer_Resume_Architecture.md`.
+- Gemini: сценарий `Description(one-shot) -> Reviewer(resume)` остаётся подтверждённым и валидирован в `1.1.545`, но дальнейшие Gemini‑расширения заморожены до появления надёжной telemetry remaining context window. Источник правды: `doc/SolidWorks-Flow/Stacks/Gemini_Reviewer_Resume_Architecture.md`.
