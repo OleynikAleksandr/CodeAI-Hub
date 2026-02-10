@@ -21,11 +21,11 @@
 
 ### Stream: Architecture Canonicalization (design baseline)
 1. [DONE] Создать архитектурный RFC для рефакторинга SSOT и обновить системную карту владения модулями (scope: `doc/SolidWorks-Flow/System/SingleSourceOfTruth_Refactor.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(architecture): define single source of truth refactor baseline`)
-2. [IN_PROGRESS] Git Commit: `docs(architecture): define single source of truth refactor baseline` (hash: TBD)
+2. [DONE] Git Commit: `docs(architecture): define single source of truth refactor baseline` (hash: a12f06a1)
 
 ### Stream: UI Source-of-Truth Inventory (all interfaces)
-1. [TODO] Зафиксировать матрицу «UI элемент → единственный владелец стиля» для Session/PM/Settings и пометить legacy-контуры на удаление (scope: `doc/SolidWorks-Flow/System/SingleSourceOfTruth_Refactor.md`, `doc/Sessions/Session001.md`; expected commit message: `docs(ui): register source-of-truth matrix for all interface elements`)
-2. [TODO] Git Commit: `docs(ui): register source-of-truth matrix for all interface elements` (hash: TBD)
+1. [DONE] Зафиксировать матрицу «UI элемент → единственный владелец стиля» для Session/PM/Settings и пометить legacy-контуры на удаление (scope: `doc/SolidWorks-Flow/System/SingleSourceOfTruth_Refactor.md`, `doc/Sessions/Session001.md`; expected commit message: `docs(ui): register source-of-truth matrix for all interface elements`)
+2. [IN_PROGRESS] Git Commit: `docs(ui): register source-of-truth matrix for all interface elements` (hash: TBD)
 
 ### Stream: Session UI Style Source Unification
 1. [TODO] Выбрать один канонический источник стилей SessionView и удалить дублирующие правила из второго контура (scope: `packages/ui/project-manager/styles.css`, `media/session-view.css`, `src/client/ui/src/session/session-view.tsx`; expected commit message: `refactor(ui): unify session style source of truth`)
