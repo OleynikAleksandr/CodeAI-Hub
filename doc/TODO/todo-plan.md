@@ -57,11 +57,11 @@
 
 ### Stream: Workspace Protocol Cleanup (remove legacy scope handshake)
 1. [DONE] Удалить deprecated fallback `workspace:scope:set` и закрепить единственный протокол `workspace:select` + `workspace:select:ack` (scope: `src/client/project-manager/services/workspace-scope-handshake.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `src/client/project-manager/api.ts`; expected commit message: `refactor(protocol): remove legacy workspace scope handshake`)
-2. [DONE] Git Commit: `refactor(protocol): remove legacy workspace scope handshake` (hash: TBD)
+2. [DONE] Git Commit: `refactor(protocol): remove legacy workspace scope handshake` (hash: db4a6f20)
 
 ### Stream: Questionnaire Path Policy Canonicalization
-1. [TODO] Перевести questionnaire flow на один canonical path policy без legacy-копий записи (scope: `src/client/ui/src/services/idea-questionnaire-paths.ts`, `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `refactor(questionnaire): canonicalize path policy and writes`)
-2. [TODO] Git Commit: `refactor(questionnaire): canonicalize path policy and writes` (hash: TBD)
+1. [DONE] Перевести questionnaire flow на один canonical path policy без legacy-копий записи (scope: `src/client/ui/src/services/idea-questionnaire-paths.ts`, `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/project-manager/services/description-questionnaire-service.ts`; expected commit message: `refactor(questionnaire): canonicalize path policy and writes`)
+2. [DONE] Git Commit: `refactor(questionnaire): canonicalize path policy and writes` (hash: TBD)
 
 ### Stream: SSOT Guardrails for UI Styling
 1. [TODO] Добавить архитектурный guard, который блокирует появление второго источника для уже канонизированных UI-контуров (scope: `scripts/check-architecture.sh`, `scripts/check-architecture-rules/ui-style-ssot.sh`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `chore(architecture): enforce ui style single source guardrails`)

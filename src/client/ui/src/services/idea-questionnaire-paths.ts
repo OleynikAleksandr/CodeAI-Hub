@@ -10,17 +10,17 @@ const FALLBACK_PATH_SEGMENT_RE = /[^/]+$/;
 
 type QuestionnairePathSet = {
   readonly canonical: string;
-  readonly legacyRun: string | null;
-  readonly legacyInitiative: string;
+  readonly legacyReadPaths: readonly string[];
 };
 
 export type QuestionnairePathTargets = {
   readonly primaryPath: string;
-  readonly legacyPaths: readonly string[];
+  readonly readFallbackPaths: readonly string[];
 };
 
-const buildCanonicalQuestionnairePath = (workspaceSlug: string): string =>
-  `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
+export const buildCanonicalQuestionnairePath = (
+  workspaceSlug: string
+): string => `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
 
 const buildLegacyInitiativeQuestionnairePath = (
   workspaceSlug: string
@@ -40,8 +40,7 @@ const resolveQuestionnairePaths = (
     const workspaceSlug = descriptionMatch[1];
     return {
       canonical: buildCanonicalQuestionnairePath(workspaceSlug),
-      legacyRun: null,
-      legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug),
+      legacyReadPaths: [buildLegacyInitiativeQuestionnairePath(workspaceSlug)],
     };
   }
 
@@ -51,8 +50,10 @@ const resolveQuestionnairePaths = (
     const runSlug = runMatch[2];
     return {
       canonical: buildCanonicalQuestionnairePath(workspaceSlug),
-      legacyRun: buildLegacyRunQuestionnairePath(workspaceSlug, runSlug),
-      legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug),
+      legacyReadPaths: [
+        buildLegacyRunQuestionnairePath(workspaceSlug, runSlug),
+        buildLegacyInitiativeQuestionnairePath(workspaceSlug),
+      ],
     };
   }
 
@@ -61,8 +62,7 @@ const resolveQuestionnairePaths = (
     const workspaceSlug = legacyIdeaMatch[1];
     return {
       canonical: buildCanonicalQuestionnairePath(workspaceSlug),
-      legacyRun: null,
-      legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug),
+      legacyReadPaths: [buildLegacyInitiativeQuestionnairePath(workspaceSlug)],
     };
   }
 
@@ -74,15 +74,17 @@ const resolveQuestionnairePaths = (
   const runSlug = legacyRunMatch[2];
   return {
     canonical: buildCanonicalQuestionnairePath(workspaceSlug),
-    legacyRun: buildLegacyRunQuestionnairePath(workspaceSlug, runSlug),
-    legacyInitiative: buildLegacyInitiativeQuestionnairePath(workspaceSlug),
+    legacyReadPaths: [
+      buildLegacyRunQuestionnairePath(workspaceSlug, runSlug),
+      buildLegacyInitiativeQuestionnairePath(workspaceSlug),
+    ],
   };
 };
 
 const resolveFallbackQuestionnairePath = (descriptionPath: string): string =>
   descriptionPath.replace(FALLBACK_PATH_SEGMENT_RE, "questionnaire.md");
 
-const collectLegacyPaths = (
+const collectReadFallbackPaths = (
   paths: readonly (string | null | undefined)[],
   primaryPath: string
 ): readonly string[] => {
@@ -102,9 +104,9 @@ export const resolveQuestionnaireTargets = (
   const pathSet = resolveQuestionnairePaths(descriptionPath);
   const primaryPath =
     pathSet?.canonical ?? resolveFallbackQuestionnairePath(descriptionPath);
-  const legacyPaths = collectLegacyPaths(
-    [pathSet?.legacyRun, pathSet?.legacyInitiative],
+  const readFallbackPaths = collectReadFallbackPaths(
+    pathSet?.legacyReadPaths ?? [],
     primaryPath
   );
-  return { primaryPath, legacyPaths };
+  return { primaryPath, readFallbackPaths };
 };
