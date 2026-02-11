@@ -35,7 +35,10 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
       autoUpdate: { enabled: true },
       defaultModel: "gemini-3-pro-preview",
       thinkingLevelByModel: {},
-      sessionContinuity: { remainingPercentThreshold: 30 },
+      sessionContinuity: {
+        remainingPercentThreshold: 30,
+        contextWindowTokenLimit: 300_000,
+      },
     },
   },
 } as const;
@@ -97,6 +100,10 @@ const buildDefaultSettingsSnapshot = (
       gemini: {
         ...DEFAULT_SETTINGS_SNAPSHOT.providers.gemini,
         defaultModel: geminiDefaultModel,
+        sessionContinuity: {
+          ...DEFAULT_SETTINGS_SNAPSHOT.providers.gemini.sessionContinuity,
+          remainingPercentThreshold,
+        },
       },
     },
   };
