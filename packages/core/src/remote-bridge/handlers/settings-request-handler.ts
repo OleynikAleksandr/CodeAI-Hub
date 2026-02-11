@@ -25,9 +25,9 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
     },
     codex: {
       autoUpdate: { enabled: true },
-      defaultModel: "gpt-5.2-codex",
+      defaultModel: "gpt-5.3-codex",
       reasoningByModel: {
-        "gpt-5.2-codex": "medium",
+        "gpt-5.3-codex": "medium",
       },
       sessionContinuity: { remainingPercentThreshold: 30 },
     },

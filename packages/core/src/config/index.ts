@@ -53,9 +53,10 @@ const CODEX_SETTINGS_PATH = path.join(
   "settings",
   "settings.json"
 );
-const DEFAULT_CODEX_MODEL_ID = "gpt-5.2-codex";
+const DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
 const DEFAULT_CODEX_REASONING_EFFORT: CodexReasoningEffort = "medium";
 const CODEX_MODEL_IDS = new Set([
+  "gpt-5.3-codex",
   "gpt-5.2-codex",
   "gpt-5.1-codex-max",
   "gpt-5.1-codex-mini",
