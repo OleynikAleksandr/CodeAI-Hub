@@ -242,6 +242,19 @@
   height: 4px;
   border-radius: 999px;
   background-color: rgba(130, 130, 130, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.session-id-bar__limit-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--limit-fill, 0%);
+  border-radius: 999px;
+  background-color: rgba(204, 204, 204, 0.75);
 }
 
 .session-banner {

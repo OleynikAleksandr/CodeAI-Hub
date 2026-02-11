@@ -119,7 +119,10 @@ const SessionViewBody = ({
   return (
     <div className="session-app" data-session-style-source="canonical">
       {header}
-      <SessionIdBar binding={activeSession.binding} />
+      <SessionIdBar
+        binding={activeSession.binding}
+        status={activeSession.status}
+      />
       <div className="session-app__content">
         <div className="session-app__dialog">
           <DialogPanel
