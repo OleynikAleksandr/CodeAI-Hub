@@ -147,10 +147,10 @@
 
 ### Stream: Extension Activation Cleanup (legacy full-development-flow templates)
 1. [DONE] Extension: удалить вызовы автоустановки legacy `idea-collector` шаблонов из активации + удалить неиспользуемые installers, формирующие `~/.codeai-hub/templates/full-development-flow/idea/*` (scope: `src/extension.ts`, `src/extension-module/templates/idea-collector-prompt-installer.ts`, `src/extension-module/templates/idea-questionnaire-template-installer.ts`; expected commit message: `refactor(extension): drop legacy full-development-flow template installers`)
-2. [TODO] Git Commit: `refactor(extension): drop legacy full-development-flow template installers` (hash: TBD)
+2. [DONE] Git Commit: `refactor(extension): drop legacy full-development-flow template installers` (hash: cf509a09)
 
 ### Stream: Verification + Release Build (Phase 141)
-1. [TODO] Прогнать обязательные гейты и таргетные проверки после cleanup (scope: `src/extension.ts`, `src/extension-module/templates`; expected commit message: `chore(checks): pass gates for phase 141 legacy template cleanup`)
+1. [DONE] Прогнать обязательные гейты и таргетные проверки после cleanup (scope: `src/extension.ts`, `src/extension-module/templates`; expected commit message: `chore(checks): pass gates for phase 141 legacy template cleanup`)
 2. [TODO] Git Commit: `chore(checks): pass gates for phase 141 legacy template cleanup` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh` (ожидаемая версия: `1.1.561`) после подтверждения чистой установки пользователем (scope: manifests; expected commit message: `chore(release): run build-all for phase 141 cleanup`)
 4. [TODO] Git Commit: `chore(release): run build-all for phase 141 cleanup` (hash: TBD)
