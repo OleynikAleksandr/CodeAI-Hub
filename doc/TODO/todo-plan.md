@@ -131,7 +131,7 @@
 
 ### Stream: Verification + Release Build (Phase 140)
 1. [DONE] Прогнать обязательные гейты и таргетные сборки по затронутым пакетам (scope: `packages/core`, `packages/agents/description-agent`, `packages/agents/reviewer-agent`; expected commit message: `chore(checks): pass gates for phase 140 cleanup`)
-2. [TODO] Git Commit: `chore(checks): pass gates for phase 140 cleanup` (hash: TBD)
+2. [DONE] Git Commit: `chore(checks): pass gates for phase 140 cleanup` (hash: 40d97ae3)
 3. [IN_PROGRESS] Выполнить `./scripts/build-all.sh` (ожидаемая версия: `1.1.560`) (scope: manifests; expected commit message: `chore(release): run build-all for phase 140 cleanup`)
 4. [TODO] Git Commit: `chore(release): run build-all for phase 140 cleanup` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.560`)
