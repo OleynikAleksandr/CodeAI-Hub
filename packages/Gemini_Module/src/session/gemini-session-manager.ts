@@ -66,9 +66,17 @@ type GeminiSettingsSnapshot = {
     readonly gemini?: {
       readonly defaultModel?: unknown;
       readonly thinkingLevelByModel?: Record<string, unknown>;
+      readonly sessionContinuity?: {
+        readonly contextWindowTokenLimit?: unknown;
+        readonly remainingPercentThreshold?: unknown;
+      };
     };
   };
 };
+
+const DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 300_000;
+const MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 10_000;
+const MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1_000_000;
 
 export class GeminiSessionManager {
   private readonly sessions = new Map<string, ActiveSession>();
@@ -203,6 +211,8 @@ export class GeminiSessionManager {
       config,
       client,
       workspacePath,
+      contextWindowTokenLimit:
+        this.resolveContextWindowTokenLimitFromSnapshot(settingsSnapshot),
       status: "idle",
       abortController: null,
       reporter: options.reporter,
@@ -303,6 +313,7 @@ export class GeminiSessionManager {
     ]);
 
     let didComplete = false;
+    let lastUsage: UsageMetadata | undefined;
     try {
       const result = await this.processTurns({
         session,
@@ -311,6 +322,7 @@ export class GeminiSessionManager {
         signal: abortController.signal,
         depth: 0,
       });
+      lastUsage = result.usage;
 
       if (result.depthExceeded) {
         this.emitEvents(session, [
@@ -367,12 +379,32 @@ export class GeminiSessionManager {
       session.abortController = null;
       session.status = "idle";
       if (didComplete) {
+        const completedTimestamp = new Date().toISOString();
+        const used = this.extractTokenUsageUsed(lastUsage);
+        if (used !== null) {
+          session.eventEmitter.emit("message", {
+            type: "stream_event",
+            provider: "gemini",
+            sessionId: session.sessionId,
+            uuid: `${randomUUID()}::token_usage`,
+            timestamp: completedTimestamp,
+            tokenUsage: {
+              used,
+              limit: session.contextWindowTokenLimit,
+            },
+            data: {
+              kind: "token_usage",
+              used,
+              limit: session.contextWindowTokenLimit,
+            },
+          });
+        }
         session.eventEmitter.emit("message", {
           type: "turn_completed",
           provider: "gemini",
           sessionId: session.sessionId,
           uuid: `${randomUUID()}::turn_completed`,
-          timestamp: new Date().toISOString(),
+          timestamp: completedTimestamp,
           data: {
             promptId,
           },
@@ -428,6 +460,33 @@ export class GeminiSessionManager {
     this.sessions.set(nextId, session);
     session.logger?.renameSession?.(previousId, nextId);
     return nextId;
+  }
+
+  private extractTokenUsageUsed(usage?: UsageMetadata): number | null {
+    const numeric = Number(usage?.totalTokenCount);
+    if (!Number.isFinite(numeric) || numeric < 0) {
+      return null;
+    }
+    return Math.floor(numeric);
+  }
+
+  private clampContextWindowTokenLimit(value: number): number {
+    return Math.min(
+      MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
+      Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
+    );
+  }
+
+  private resolveContextWindowTokenLimitFromSnapshot(
+    snapshot: GeminiSettingsSnapshot | null
+  ): number {
+    const raw =
+      snapshot?.providers?.gemini?.sessionContinuity?.contextWindowTokenLimit;
+    const numeric = typeof raw === "number" ? raw : Number(raw);
+    if (!Number.isFinite(numeric)) {
+      return DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT;
+    }
+    return this.clampContextWindowTokenLimit(numeric);
   }
 
   private async processTurns(
