@@ -1,3 +1,9 @@
+## [1.1.556] - 2026-02-11
+### Added
+- Gemini: добавлены настройки session continuity: `contextWindowTokenLimit` (default `300000`) и `remainingPercentThreshold` (default `30`).
+- Gemini: token usage нормализован в `token_usage` (`used/limit`) на основе `usageMetadata.totalTokenCount`.
+- Release artifacts: собран `codeai-hub-1.1.556.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.555] - 2026-02-10
 ### Added
 - Release artifacts: собран `codeai-hub-1.1.555.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
