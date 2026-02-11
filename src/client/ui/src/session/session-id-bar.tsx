@@ -1,9 +1,14 @@
-import type { SessionBindingInfo } from "../../../../types/session";
+import type { CSSProperties } from "react";
+import type {
+  SessionBindingInfo,
+  SessionStatusInfo,
+} from "../../../../types/session";
 
 const SESSION_ID_PREFIX_LENGTH = 8;
 
 type SessionIdBarProps = {
   readonly binding: SessionBindingInfo;
+  readonly status: SessionStatusInfo;
 };
 
 const resolveIdLabel = (binding: SessionBindingInfo): string => {
@@ -20,23 +25,82 @@ const resolveIdLabel = (binding: SessionBindingInfo): string => {
   return "ID: unavailable";
 };
 
-const SessionIdBar = ({ binding }: SessionIdBarProps) => (
-  <section
-    aria-label={`Session identifier ${resolveIdLabel(binding)}`}
-    className="session-panel session-id-bar"
-  >
-    <span className="session-id-bar__id">{resolveIdLabel(binding)}</span>
-    <div aria-hidden className="session-id-bar__limits">
-      <div className="session-id-bar__limit-row">
-        <span className="session-id-bar__limit-label">5 houers</span>
-        <span className="session-id-bar__limit-bar" />
+type LimitBarStyle = CSSProperties;
+
+const clampPercent = (value: number): number => {
+  if (value < 0) {
+    return 0;
+  }
+  if (value > 100) {
+    return 100;
+  }
+  return value;
+};
+
+const renderLimitLabel = (payload: {
+  readonly label: string;
+  readonly percentUsed: number | null;
+}): string =>
+  payload.percentUsed === null
+    ? payload.label
+    : `${payload.label} ${payload.percentUsed}%`;
+
+const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
+  const sessionPercent =
+    status.usageLimits?.currentSession?.percentUsed ?? null;
+  const sessionResetsAt = status.usageLimits?.currentSession?.resetsAt ?? null;
+  const weeklyPercent =
+    status.usageLimits?.currentWeekAllModels?.percentUsed ?? null;
+  const weeklyResetsAt =
+    status.usageLimits?.currentWeekAllModels?.resetsAt ?? null;
+
+  const sessionFillStyle: LimitBarStyle | undefined =
+    sessionPercent === null
+      ? undefined
+      : ({
+          "--limit-fill": `${clampPercent(sessionPercent)}%`,
+        } as unknown as CSSProperties);
+  const weeklyFillStyle: LimitBarStyle | undefined =
+    weeklyPercent === null
+      ? undefined
+      : ({
+          "--limit-fill": `${clampPercent(weeklyPercent)}%`,
+        } as unknown as CSSProperties);
+
+  return (
+    <section
+      aria-label={`Session identifier ${resolveIdLabel(binding)}`}
+      className="session-panel session-id-bar"
+    >
+      <span className="session-id-bar__id">{resolveIdLabel(binding)}</span>
+      <div aria-hidden className="session-id-bar__limits">
+        <div
+          className="session-id-bar__limit-row"
+          title={sessionResetsAt ? `Resets ${sessionResetsAt}` : undefined}
+        >
+          <span className="session-id-bar__limit-label">
+            {renderLimitLabel({
+              label: "5 hours",
+              percentUsed: sessionPercent,
+            })}
+          </span>
+          <span
+            className="session-id-bar__limit-bar"
+            style={sessionFillStyle}
+          />
+        </div>
+        <div
+          className="session-id-bar__limit-row"
+          title={weeklyResetsAt ? `Resets ${weeklyResetsAt}` : undefined}
+        >
+          <span className="session-id-bar__limit-label">
+            {renderLimitLabel({ label: "weekly", percentUsed: weeklyPercent })}
+          </span>
+          <span className="session-id-bar__limit-bar" style={weeklyFillStyle} />
+        </div>
       </div>
-      <div className="session-id-bar__limit-row">
-        <span className="session-id-bar__limit-label">weekly</span>
-        <span className="session-id-bar__limit-bar" />
-      </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default SessionIdBar;
