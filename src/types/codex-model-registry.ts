@@ -19,8 +19,8 @@ export type CodexRecommendedModelDescriptor = {
 
 export const CODEX_RECOMMENDED_MODELS = [
   {
-    id: "gpt-5.2-codex",
-    displayName: "GPT-5.2-Codex",
+    id: "gpt-5.3-codex",
+    displayName: "GPT-5.3-Codex",
     description:
       "Most advanced agentic coding model for real-world engineering",
     platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
@@ -66,6 +66,14 @@ export type CodexLegacyModelDescriptor = {
 };
 
 export const CODEX_LEGACY_MODELS = [
+  {
+    id: "gpt-5.2-codex",
+    displayName: "GPT-5.2-Codex",
+    description:
+      "Most advanced agentic coding model for real-world engineering",
+    status: "succeeded_by",
+    successor: "gpt-5.3-codex",
+  },
   {
     id: "gpt-5.1",
     displayName: "GPT-5.1",
@@ -116,7 +124,7 @@ export const CODEX_ALL_MODELS: readonly CodexModelDescriptor[] = [
   ...CODEX_LEGACY_MODELS,
 ];
 
-export const DEFAULT_CODEX_MODEL_ID: CodexRecommendedModelId = "gpt-5.2-codex";
+export const DEFAULT_CODEX_MODEL_ID: CodexRecommendedModelId = "gpt-5.3-codex";
 
 export type CodexReasoningLevel = "low" | "medium" | "high" | "xhigh";
 
