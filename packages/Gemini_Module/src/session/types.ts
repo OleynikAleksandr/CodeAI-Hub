@@ -11,6 +11,7 @@ export type ActiveSession = {
   readonly config: Config;
   readonly client: GeminiClient;
   readonly workspacePath: string;
+  readonly contextWindowTokenLimit: number;
   status: "idle" | "streaming" | "closing" | "closed";
   abortController: AbortController | null;
   logger?: GeminiSessionLogger;
