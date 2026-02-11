@@ -16,9 +16,19 @@ const SINGLE_DIGIT_REGEX = /^\d+$/;
 const DECIMAL_VERSION_REGEX = /^\d+\.\d+$/;
 const VERSION_JOIN_REGEX = /(\d+)\s+(\d+)/g;
 
+const formatClaudeSessionModelDisplayName = (modelId: string): string => {
+  // Claude uses alias ids in settings ("default", "sonnet", "opus", "haiku").
+  // In Session UI we want to show the effective family name, not "Default".
+  if (modelId === "default" || modelId === "sonnet") {
+    return "Sonnet";
+  }
+
+  return formatModelDisplayName(modelId);
+};
+
 const formatModelDisplayName = (modelId: string): string => {
   // Convert model IDs like "claude-opus-4-5" to "Claude Opus 4.5"
-  // or "gpt-5.2-codex" to "GPT 5.2 Codex"
+  // or "gpt-5.3-codex" to "GPT 5.3 Codex"
   return modelId
     .split("-")
     .map((part, index) => {
@@ -62,7 +72,10 @@ export const buildModelInfoList = (
     const providerSettings = settings.providers[providerKey];
 
     const modelId = providerSettings.defaultModel;
-    const modelDisplayName = formatModelDisplayName(modelId);
+    const modelDisplayName =
+      providerKey === "claude"
+        ? formatClaudeSessionModelDisplayName(modelId)
+        : formatModelDisplayName(modelId);
 
     // Get reasoning level for Codex or Gemini
     let reasoning: string | undefined;
