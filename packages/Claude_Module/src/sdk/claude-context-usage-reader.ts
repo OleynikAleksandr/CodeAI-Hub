@@ -22,6 +22,9 @@ const PROCESS_KILL_GRACE_MS = 2000;
 const MAX_TAIL_CHARS = 4000;
 const TEMP_SESSION_PREFIX = "temp_";
 
+// Service-only command: should be as cheap as possible.
+const SERVICE_MODEL_ALIAS = "haiku";
+
 const resolveClaudeRunner = (payload: {
   readonly executablePath: string;
   readonly args: readonly string[];
@@ -294,6 +297,8 @@ export class ClaudeContextUsageReader {
         "--verbose",
         "--output-format",
         "stream-json",
+        "--model",
+        SERVICE_MODEL_ALIAS,
         "--resume",
         payload.sessionId,
         "/context",
