@@ -27661,6 +27661,65 @@ ${replacement}
     padding: "8px 10px",
     color: "#cccccc"
   };
+  var UNSIGNED_INTEGER_RE = /^\d+$/;
+  var isUnsignedIntegerText = (value) => UNSIGNED_INTEGER_RE.test(value);
+  var clampInteger = (value, min, max) => Math.min(max, Math.max(min, value));
+  var ManualIntegerInput = ({
+    id,
+    value,
+    min,
+    max,
+    onCommit
+  }) => {
+    const [draft, setDraft] = import_react24.default.useState(() => String(value));
+    import_react24.default.useEffect(() => {
+      setDraft(String(value));
+    }, [value]);
+    const commitDraft = import_react24.default.useCallback(() => {
+      const trimmed = draft.trim();
+      if (trimmed.length === 0) {
+        setDraft(String(value));
+        return;
+      }
+      if (!isUnsignedIntegerText(trimmed)) {
+        setDraft(String(value));
+        return;
+      }
+      const parsed = Number(trimmed);
+      if (!Number.isFinite(parsed)) {
+        setDraft(String(value));
+        return;
+      }
+      const clamped = clampInteger(parsed, min, max);
+      onCommit(clamped);
+      setDraft(String(clamped));
+    }, [draft, max, min, onCommit, value]);
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+      "input",
+      {
+        autoComplete: "off",
+        id,
+        inputMode: "numeric",
+        onBlur: commitDraft,
+        onChange: (event) => setDraft(event.target.value),
+        onKeyDown: (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            event.currentTarget.blur();
+          }
+          if (event.key === "Escape") {
+            event.preventDefault();
+            setDraft(String(value));
+            event.currentTarget.blur();
+          }
+        },
+        pattern: "[0-9]*",
+        style: settingsInputStyles,
+        type: "text",
+        value: draft
+      }
+    );
+  };
   var SessionContinuityCard = ({
     title,
     remainingPercentThreshold,
@@ -27669,34 +27728,46 @@ ${replacement}
     onContextWindowTokenLimitChange
   }) => /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(settings_card_default, { title, children: [
     /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
-    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("label", { style: settingsLabelStyles, children: [
-      "Context window limit (tokens)",
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
-        "input",
-        {
-          max: 1e6,
-          min: 1e4,
-          onChange: (event) => onContextWindowTokenLimitChange(Number(event.target.value)),
-          style: settingsInputStyles,
-          type: "number",
-          value: contextWindowTokenLimit
-        }
-      )
-    ] }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("label", { style: settingsLabelStyles, children: [
-      "Remaining context threshold (%)",
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
-        "input",
-        {
-          max: 80,
-          min: 5,
-          onChange: (event) => onRemainingPercentThresholdChange(Number(event.target.value)),
-          style: settingsInputStyles,
-          type: "number",
-          value: remainingPercentThreshold
-        }
-      )
-    ] })
+    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
+      "label",
+      {
+        htmlFor: `${title}-context-window-token-limit`,
+        style: settingsLabelStyles,
+        children: [
+          "Context window limit (tokens)",
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+            ManualIntegerInput,
+            {
+              id: `${title}-context-window-token-limit`,
+              max: 1e6,
+              min: 1e4,
+              onCommit: onContextWindowTokenLimitChange,
+              value: contextWindowTokenLimit
+            }
+          )
+        ]
+      }
+    ) : null,
+    /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(
+      "label",
+      {
+        htmlFor: `${title}-remaining-percent-threshold`,
+        style: settingsLabelStyles,
+        children: [
+          "Remaining context threshold (%)",
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+            ManualIntegerInput,
+            {
+              id: `${title}-remaining-percent-threshold`,
+              max: 80,
+              min: 5,
+              onCommit: onRemainingPercentThresholdChange,
+              value: remainingPercentThreshold
+            }
+          )
+        ]
+      }
+    )
   ] });
   var session_continuity_card_default = import_react24.default.memo(SessionContinuityCard);
 
