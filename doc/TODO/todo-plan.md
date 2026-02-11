@@ -161,4 +161,4 @@
 1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию `1.1.561` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.561`)
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.561` (hash: 427ae1c8)
 3. [DONE] Docs: добавить session report `doc/Sessions/Session018.md` + обновить статус Phase 141 в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Session018.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session018 for v1.1.561`)
-4. [TODO] Git Commit: `docs(session): add Session018 for v1.1.561` (hash: TBD)
+4. [DONE] Git Commit: `docs(session): add Session018 for v1.1.561` (hash: 1b171dfe)
