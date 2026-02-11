@@ -112,9 +112,9 @@
 **Goal:** полностью удалить `Questionnaire Curator` из runtime, убрать побочные внутренние Gemini-сессии, и зафиксировать явное требование русского языка для `Description Agent` и `Reviewer Agent` (и артефакты, и ответы пользователю).
 
 ### Stream: Core Cleanup — Remove Questionnaire Curator
-1. [IN_PROGRESS] Core: удалить интеграцию curator из session handler (без finalize-trigger side effects) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `refactor(core): remove questionnaire curator hook from session handler`)
-2. [TODO] Git Commit: `refactor(core): remove questionnaire curator hook from session handler` (hash: TBD)
-3. [TODO] Core: удалить runtime-классы curator (facade/service/provider runner) (scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-facade.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-provider-runner.ts`; expected commit message: `refactor(core): remove questionnaire curator runtime services`)
+1. [DONE] Core: удалить интеграцию curator из session handler (без finalize-trigger side effects) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `refactor(core): remove questionnaire curator hook from session handler`)
+2. [DONE] Git Commit: `refactor(core): remove questionnaire curator hook from session handler` (hash: 2d3ea787)
+3. [IN_PROGRESS] Core: удалить runtime-классы curator (facade/service/provider runner) (scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-facade.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-provider-runner.ts`; expected commit message: `refactor(core): remove questionnaire curator runtime services`)
 4. [TODO] Git Commit: `refactor(core): remove questionnaire curator runtime services` (hash: TBD)
 5. [TODO] Core: удалить утилиты curator + шаблон curator (scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-append-sanitizer.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-transcript.ts`, `packages/agents/description-agent/assets/questionnaire-curator.md`; expected commit message: `refactor(core): remove questionnaire curator artifacts and helpers`)
 6. [TODO] Git Commit: `refactor(core): remove questionnaire curator artifacts and helpers` (hash: TBD)
