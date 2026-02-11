@@ -20,6 +20,7 @@
 - `e2f3764f chore(release): run build-all for gemini workspace tool access`
 - `15673506 chore(release): build and validate vsix for v1.1.557`
 - `caa96b6e docs(release): sync root notes and system architecture for v1.1.557`
+- `e4217265 docs(session): add Session013 for v1.1.557`
 
 ---
 
