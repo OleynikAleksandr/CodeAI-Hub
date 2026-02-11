@@ -1,3 +1,11 @@
+## [1.1.562] - 2026-02-11
+### Changed
+- Codex: дефолтная модель обновлена на `gpt-5.3-codex` (а `gpt-5.2-codex` переведена в legacy/succeeded-by).
+- Session UI (Claude): alias `default` теперь отображается как `Sonnet`, чтобы не путать пользователей меткой `Default`.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.562.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.561] - 2026-02-11
 ### Changed
 - Extension activation: удалена автоустановка legacy `idea-collector` шаблонов (`idea-collector-prompt.md`, `questionnaire-template.md`) в `~/.codeai-hub/templates/full-development-flow/idea/*`.
