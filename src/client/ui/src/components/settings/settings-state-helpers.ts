@@ -156,3 +156,37 @@ export const updateGeminiThinking = (
     },
   },
 });
+
+export const updateGeminiContinuityRemainingPercentThreshold = (
+  settings: Settings,
+  remainingPercentThreshold: number
+): Settings => ({
+  ...settings,
+  providers: {
+    ...settings.providers,
+    gemini: {
+      ...settings.providers.gemini,
+      sessionContinuity: {
+        ...settings.providers.gemini.sessionContinuity,
+        remainingPercentThreshold,
+      },
+    },
+  },
+});
+
+export const updateGeminiContextWindowTokenLimit = (
+  settings: Settings,
+  contextWindowTokenLimit: number
+): Settings => ({
+  ...settings,
+  providers: {
+    ...settings.providers,
+    gemini: {
+      ...settings.providers.gemini,
+      sessionContinuity: {
+        ...settings.providers.gemini.sessionContinuity,
+        contextWindowTokenLimit,
+      },
+    },
+  },
+});
