@@ -162,3 +162,32 @@
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.561` (hash: 427ae1c8)
 3. [DONE] Docs: добавить session report `doc/Sessions/Session018.md` + обновить статус Phase 141 в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Session018.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session018 for v1.1.561`)
 4. [DONE] Git Commit: `docs(session): add Session018 for v1.1.561` (hash: 1b171dfe)
+
+---
+
+## Phase 142 — Claude Usage Limits (/usage) + Session ID Bar + Release (owner: Oleksandr, updated: 2026-02-11)
+
+**Goal:** показывать 5-hour и weekly лимиты Claude (как в `/usage`) в Session UI и вызывать служебные `/context`/`/usage` через `haiku`.
+
+### Stream: Claude Usage Limits Snapshot
+1. [DONE] Claude: добавить reader/parsing `/usage` (session + current week all models), эмитить `usage_limits` в stream (scope: `packages/Claude_Module/src/sdk/claude-usage-limits-*.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `feat(claude): emit usage limits from /usage`)
+2. [DONE] Git Commit: `feat(claude): emit usage limits from /usage` (hash: d0768fb8)
+3. [DONE] Claude: выполнять `/context` через `--model haiku` (scope: `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude): run /context via haiku`)
+4. [DONE] Git Commit: `fix(claude): run /context via haiku` (hash: 24df873e)
+
+### Stream: Session UI Limits Bars
+1. [DONE] UI (PM): принимать `usage_limits` из `session:stream` и сохранять в snapshot.status (scope: `src/types/session.ts`, `src/client/project-manager/components/sessions/*.ts`; expected commit message: `feat(ui): track usage limits from stream`)
+2. [DONE] Git Commit: `feat(ui): track usage limits from stream` (hash: 03594a2c)
+3. [DONE] UI: отрисовать `session/weekly` bars в `Session ID Bar` (scope: `src/client/ui/src/session/session-id-bar.tsx`, `media/session-view.css`; expected commit message: `feat(ui): render session usage bars`)
+4. [DONE] Git Commit: `feat(ui): render session usage bars` (hash: 0562f238)
+5. [DONE] UI: добавить inline `(Resets ...)` в подписи `session/weekly`, weekly только `Current week (all models)` (scope: `src/client/ui/src/session/session-id-bar.tsx`, `packages/Claude_Module/src/sdk/claude-usage-limits-snapshot.ts`; expected commit message: `fix(ui): show resets inline for session/weekly`)
+6. [DONE] Git Commit: `fix(ui): show resets inline for session/weekly` (hash: 2d2ef7e6)
+7. [DONE] Webview: пересобрать bundle (scope: `media/react-chat.js`; expected commit message: `chore(webview): rebuild bundle`)
+8. [DONE] Git Commit: `chore(webview): rebuild bundle` (hash: 7dd03773)
+
+### Stream: Release Build (Phase 142)
+1. [DONE] Выполнить `./scripts/build-all.sh` (версия: `1.1.564`) (scope: manifests; expected commit message: `chore(release): run build-all for v1.1.564`)
+2. [DONE] Git Commit: `chore(release): run build-all for v1.1.564` (hash: 332a62b9)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать VSIX (`codeai-hub-1.1.564.vsix`) (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.564`)
+4. [DONE] Docs: синхронизировать `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под `1.1.564` (scope: docs; expected commit message: `docs(release): sync notes and system architecture for v1.1.564`)
+5. [DONE] Git Commit: `docs(release): sync notes and system architecture for v1.1.564` (hash: 846d6ba6)
