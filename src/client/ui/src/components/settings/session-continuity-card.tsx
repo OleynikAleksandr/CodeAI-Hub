@@ -125,16 +125,16 @@ const SessionContinuityCard: React.FC<SessionContinuityCardProps> = ({
     </p>
     {typeof contextWindowTokenLimit === "number" &&
     onContextWindowTokenLimitChange ? (
-      <label style={settingsLabelStyles}>
+      <label
+        htmlFor={`${title}-context-window-token-limit`}
+        style={settingsLabelStyles}
+      >
         Context window limit (tokens)
-        <input
+        <ManualIntegerInput
+          id={`${title}-context-window-token-limit`}
           max={1_000_000}
           min={10_000}
-          onChange={(event) =>
-            onContextWindowTokenLimitChange(Number(event.target.value))
-          }
-          style={settingsInputStyles}
-          type="number"
+          onCommit={onContextWindowTokenLimitChange}
           value={contextWindowTokenLimit}
         />
       </label>
