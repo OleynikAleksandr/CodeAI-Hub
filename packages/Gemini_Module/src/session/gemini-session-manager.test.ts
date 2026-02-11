@@ -91,6 +91,14 @@ test("GeminiSessionManager createSession keeps argv.resume undefined", async () 
   assert.equal(calls.length, 1);
   assert.equal(calls[0]?.workspacePath, "/tmp/workspace-created");
   assert.equal(calls[0]?.argv.resume, undefined);
+  assert.ok(
+    Array.isArray(calls[0]?.argv.includeDirectories),
+    "argv.includeDirectories is an array"
+  );
+  assert.ok(
+    calls[0]?.argv.includeDirectories.includes("/tmp/workspace-created"),
+    "workspacePath is included in argv.includeDirectories"
+  );
 });
 
 test("GeminiSessionManager resumeSession forwards requested session id to argv.resume", async () => {
@@ -108,4 +116,12 @@ test("GeminiSessionManager resumeSession forwards requested session id to argv.r
   assert.equal(calls[0]?.sessionId, "resume-session-123");
   assert.equal(calls[0]?.argv.resume, "resume-session-123");
   assert.equal(calls[0]?.workspacePath, "/tmp/workspace-resumed");
+  assert.ok(
+    Array.isArray(calls[0]?.argv.includeDirectories),
+    "argv.includeDirectories is an array"
+  );
+  assert.ok(
+    calls[0]?.argv.includeDirectories.includes("/tmp/workspace-resumed"),
+    "workspacePath is included in argv.includeDirectories"
+  );
 });

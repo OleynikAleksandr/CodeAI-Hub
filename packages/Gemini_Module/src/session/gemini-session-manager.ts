@@ -731,9 +731,10 @@ export class GeminiSessionManager {
   private createArgv(options: SessionCreationOptions): CliArgs {
     const includeDirectories = Array.from(
       new Set(
-        [path.join(homedir(), ".codeai-hub", "templates")].map((directory) =>
-          path.resolve(directory)
-        )
+        [
+          path.join(homedir(), ".codeai-hub", "templates"),
+          options.workspacePath,
+        ].map((directory) => path.resolve(directory))
       )
     );
     return {
