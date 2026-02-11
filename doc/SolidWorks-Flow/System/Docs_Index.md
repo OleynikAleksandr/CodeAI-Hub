@@ -1,10 +1,10 @@
 # Документация CodeAI Hub — единый индекс (SolidWorks-Flow)
 
-**Last Updated:** 2026-02-10 (release 1.1.545)
+**Last Updated:** 2026-02-11 (release 1.1.560)
 
 Эта папка (`doc/SolidWorks-Flow/`) — **единый поток документации** проекта.
 
-## Операционная пометка (2026-02-10)
+## Операционная пометка (2026-02-11)
 
 - Gemini подтверждён как рабочий для сценария `Description(one-shot) -> Reviewer(resume)`.
 - Дальнейшие Gemini‑модификации временно поставлены на паузу до появления надёжной telemetry remaining context window.

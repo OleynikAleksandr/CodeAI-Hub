@@ -1,7 +1,7 @@
 # Session Continuity (SolidWorks-Flow) — Rollover / Auto-Handoff (Source of Truth)
 
 **Status:** Active
-**Updated:** 2026-02-10 (release 1.1.545)
+**Updated:** 2026-02-11 (release 1.1.560)
 **Owner:** Oleksandr + Codex
 
 ---
@@ -63,7 +63,7 @@ Lock/unlock вычисляется **только** по `workspace:snapshot` (s
 Нормативный контракт — в `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`.
 
 ### 3.4 Operational freeze: Gemini
-- `Description(one-shot) -> Reviewer(resume)` на Gemini подтверждён рабочим в `1.1.538` и остаётся операционно валидированным в `1.1.545`.
+- `Description(one-shot) -> Reviewer(resume)` на Gemini подтверждён рабочим в `1.1.538` и остаётся операционно валидированным в `1.1.560`.
 - Дальнейшее развитие Gemini continuity/rollover эвристик заморожено до появления надёжного runtime‑контракта remaining context window telemetry.
 - В период паузы допустимы только bugfix‑изменения без расширения Gemini‑функционала.
 

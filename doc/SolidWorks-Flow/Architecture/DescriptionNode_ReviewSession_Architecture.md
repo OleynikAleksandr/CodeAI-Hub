@@ -1,7 +1,7 @@
 # Workflow Tree — Description Step/Node: Questionnaire → Draft → Auto-Review → Final
 
 **Version:** 1.1
-**Date:** 2026-02-09
+**Date:** 2026-02-11
 **Status:** Draft (refined lifecycle + UI semantics)
 
 ---
@@ -39,7 +39,7 @@
 
 ## 3. Non-Goals
 
-- Не делаем “триггеры” по ключевым словам (approve/ok/утверждаю) для кураторов/сборщиков.
+- Не делаем “триггеры” по ключевым словам (approve/ok/утверждаю) для скрытых промежуточных сервисов.
 - Не дублируем Q/A в `questionnaire.md` как обязательный слой данных.
 - Не развиваем новые Gemini-specific continuity/rollover эвристики до появления надёжной telemetry remaining context window (пауза расширения, не bugfix).
 - Не пытаемся “сохранить все исторические артефакты в ветке узла”: промежуточные документы могут существовать на диске, но в дереве остаются только актуальные для текущего состояния шага.
@@ -202,6 +202,6 @@ UI следствие: сразу после старта сессии появ�
 
 ## 10. Migration Notes
 
-- “Questionnaire Curator” становится опциональным и не является механизмом повышения качества артефакта.
+- Внутренний `Questionnaire Curator` удалён из runtime и не участвует в пайплайне `Description -> Reviewer`.
 - Повышение качества делается через последовательность:
   - `questionnaire.md` → one-shot/no-resume `description.md` → auto reviewer (resume) → `Final_Description.md`.
