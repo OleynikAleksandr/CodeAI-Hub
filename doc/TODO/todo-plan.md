@@ -124,9 +124,9 @@
 ### Stream: RU Language Contract for Description/Reviewer
 1. [DONE] Prompts: добавить явное требование русского языка (коммуникация + артефакты) в prompts Description/Reviewer (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/reviewer-agent/assets/reviewer-prompt.md`; expected commit message: `feat(agents): enforce russian language in description and reviewer prompts`)
 2. [DONE] Git Commit: `feat(agents): enforce russian language in description and reviewer prompts` (hash: c15acd9b)
-3. [IN_PROGRESS] Core: усилить fallback reviewer prompt явным RU-требованием (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`; expected commit message: `feat(core): enforce russian language in reviewer fallback prompt`)
-4. [TODO] Git Commit: `feat(core): enforce russian language in reviewer fallback prompt` (hash: TBD)
-5. [TODO] Core: обновить bundled prompts после изменений шаблонов (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit message: `chore(core): refresh bundled description and reviewer prompts`)
+3. [DONE] Core: усилить fallback reviewer prompt явным RU-требованием (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`; expected commit message: `feat(core): enforce russian language in reviewer fallback prompt`)
+4. [DONE] Git Commit: `feat(core): enforce russian language in reviewer fallback prompt` (hash: adaf29df)
+5. [IN_PROGRESS] Core: обновить bundled prompts после изменений шаблонов (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit message: `chore(core): refresh bundled description and reviewer prompts`)
 6. [TODO] Git Commit: `chore(core): refresh bundled description and reviewer prompts` (hash: TBD)
 
 ### Stream: Verification + Release Build (Phase 140)
