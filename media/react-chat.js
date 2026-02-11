@@ -22823,26 +22823,85 @@ ${path2}` : path2;
     }
     return "ID: unavailable";
   };
-  var SessionIdBar = ({ binding }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
-    "section",
-    {
-      "aria-label": `Session identifier ${resolveIdLabel(binding)}`,
-      className: "session-panel session-id-bar",
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__id", children: resolveIdLabel(binding) }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { "aria-hidden": true, className: "session-id-bar__limits", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-id-bar__limit-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-label", children: "5 houers" }),
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-bar" })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-id-bar__limit-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-label", children: "weekly" }),
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-bar" })
-          ] })
-        ] })
-      ]
+  var TIMEZONE_SUFFIX_PATTERN = /^(.*)\s+\([^)]+\)\s*$/;
+  var clampPercent = (value) => {
+    if (value < 0) {
+      return 0;
     }
-  );
+    if (value > 100) {
+      return 100;
+    }
+    return value;
+  };
+  var renderLimitLabel = (payload) => [
+    payload.percentUsed === null ? payload.label : `${payload.label} ${payload.percentUsed}%`,
+    payload.resetsAt ? `(Resets ${payload.resetsAt})` : null
+  ].filter((value) => Boolean(value)).join(" ");
+  var stripTimeZoneSuffix = (value) => {
+    const trimmed = value.trim();
+    const match = TIMEZONE_SUFFIX_PATTERN.exec(trimmed);
+    return match?.[1]?.trim() ? match[1].trim() : trimmed;
+  };
+  var SessionIdBar = ({ binding, status }) => {
+    const sessionPercent = status.usageLimits?.currentSession?.percentUsed ?? null;
+    const sessionResetsAt = status.usageLimits?.currentSession?.resetsAt ?? null;
+    const weeklyPercent = status.usageLimits?.currentWeekAllModels?.percentUsed ?? null;
+    const weeklyResetsAt = status.usageLimits?.currentWeekAllModels?.resetsAt ?? null;
+    const sessionFillStyle = sessionPercent === null ? void 0 : {
+      "--limit-fill": `${clampPercent(sessionPercent)}%`
+    };
+    const weeklyFillStyle = weeklyPercent === null ? void 0 : {
+      "--limit-fill": `${clampPercent(weeklyPercent)}%`
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+      "section",
+      {
+        "aria-label": `Session identifier ${resolveIdLabel(binding)}`,
+        className: "session-panel session-id-bar",
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__id", children: resolveIdLabel(binding) }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { "aria-hidden": true, className: "session-id-bar__limits", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+              "div",
+              {
+                className: "session-id-bar__limit-row",
+                title: sessionResetsAt ? `Resets ${sessionResetsAt}` : void 0,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-label", children: renderLimitLabel({
+                    label: "session",
+                    percentUsed: sessionPercent,
+                    resetsAt: sessionResetsAt ? stripTimeZoneSuffix(sessionResetsAt) : null
+                  }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+                    "span",
+                    {
+                      className: "session-id-bar__limit-bar",
+                      style: sessionFillStyle
+                    }
+                  )
+                ]
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+              "div",
+              {
+                className: "session-id-bar__limit-row",
+                title: weeklyResetsAt ? `Resets ${weeklyResetsAt}` : void 0,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-label", children: renderLimitLabel({
+                    label: "weekly",
+                    percentUsed: weeklyPercent,
+                    resetsAt: weeklyResetsAt ? stripTimeZoneSuffix(weeklyResetsAt) : null
+                  }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-bar", style: weeklyFillStyle })
+                ]
+              }
+            )
+          ] })
+        ]
+      }
+    );
+  };
   var session_id_bar_default = SessionIdBar;
 
   // src/client/ui/src/session/session-view-helpers.tsx
@@ -23299,7 +23358,13 @@ ${path2}` : path2;
     }) ?? void 0;
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app", "data-session-style-source": "canonical", children: [
       header,
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(session_id_bar_default, { binding: activeSession.binding }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        session_id_bar_default,
+        {
+          binding: activeSession.binding,
+          status: activeSession.status
+        }
+      ),
       /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app__content", children: [
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
           dialog_panel_default,
