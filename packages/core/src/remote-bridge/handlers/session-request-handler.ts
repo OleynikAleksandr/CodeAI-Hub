@@ -206,7 +206,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const extractContinuityThresholdPercentFromSettings = (options: {
   readonly settings: unknown;
-  readonly providerKey: "claude" | "codex";
+  readonly providerKey: "claude" | "codex" | "gemini";
   readonly fallback: number;
 }): number => {
   if (!isRecord(options.settings)) {
@@ -1942,8 +1942,16 @@ export class SessionRequestHandler {
     );
   }
 
-  private resolveSettingsProviderKey(providerId: string): "claude" | "codex" {
-    return providerId.startsWith("codex") ? "codex" : "claude";
+  private resolveSettingsProviderKey(
+    providerId: string
+  ): "claude" | "codex" | "gemini" {
+    if (providerId.startsWith("codex")) {
+      return "codex";
+    }
+    if (providerId.startsWith("gemini")) {
+      return "gemini";
+    }
+    return "claude";
   }
 
   private async loadContinuitySettingsSnapshot(): Promise<unknown> {
