@@ -1,6 +1,6 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.557
+**Version:** 1.1.558
 **Last Updated:** 2026-02-11
 **Status:** Active reference (source of truth)
 
@@ -87,7 +87,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.557`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.558`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -386,36 +386,36 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/1.1.557/
+│   └── darwin-arm64/1.1.558/
 │       ├── node/
 │       ├── app/
 │       └── install.json
 ├── packages/
-│   ├── launcher/macos-arm64/1.1.557/
+│   ├── launcher/macos-arm64/1.1.558/
 │   └── ui/
 │       ├── vscode-webview/
 │       │   ├── 1.1.551/
-│       │   └── current -> 1.1.557
+│       │   └── current -> 1.1.558
 │       └── project-manager/
 │           ├── 1.1.551/
-│           └── current -> 1.1.557
+│           └── current -> 1.1.558
 ├── providers/
-│   ├── claude/1.1.557/
-│   ├── codex/1.1.557/
-│   └── gemini/1.1.557/
+│   ├── claude/1.1.558/
+│   ├── codex/1.1.558/
+│   └── gemini/1.1.558/
 ├── state/
 │   └── projects.json
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.557.tar.bz2
-    ├── vscode-webview-1.1.557.tar.bz2
-    ├── project-manager-1.1.557.tar.bz2
-    ├── claude-module-1.1.557.tar.bz2
-    ├── codex-module-1.1.557.tar.bz2
-    ├── gemini-module-1.1.557.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.557.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.558.tar.bz2
+    ├── vscode-webview-1.1.558.tar.bz2
+    ├── project-manager-1.1.558.tar.bz2
+    ├── claude-module-1.1.558.tar.bz2
+    ├── codex-module-1.1.558.tar.bz2
+    ├── gemini-module-1.1.558.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.558.tar.bz2
 ```
 
 ---
@@ -424,12 +424,12 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.557 |
-| Core | 1.1.557 |
-| UI Bundles | 1.1.557 |
-| Claude Module | 1.1.557 |
-| Codex Module | 1.1.557 |
-| Gemini Module | 1.1.557 |
+| VSIX | 1.1.558 |
+| Core | 1.1.558 |
+| UI Bundles | 1.1.558 |
+| Claude Module | 1.1.558 |
+| Codex Module | 1.1.558 |
+| Gemini Module | 1.1.558 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |
