@@ -155,4 +155,10 @@
 3. [DONE] Выполнить `./scripts/build-all.sh` (ожидаемая версия: `1.1.561`) после подтверждения чистой установки пользователем (scope: manifests; expected commit message: `chore(release): run build-all for phase 141 cleanup`)
 4. [DONE] Git Commit: `chore(release): run build-all for phase 141 cleanup` (hash: 8aaa2a3a)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.561`)
-6. [TODO] Git Commit: `chore(release): build and validate vsix for v1.1.561` (hash: TBD)
+6. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.561` (hash: ac9234ae)
+
+### Stream: Release Docs + Session Report (Phase 141)
+1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию `1.1.561` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.561`)
+2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.561` (hash: 427ae1c8)
+3. [DONE] Docs: добавить session report `doc/Sessions/Session018.md` + обновить статус Phase 141 в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Session018.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session018 for v1.1.561`)
+4. [TODO] Git Commit: `docs(session): add Session018 for v1.1.561` (hash: TBD)
