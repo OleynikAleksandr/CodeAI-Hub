@@ -151,8 +151,8 @@
 
 ### Stream: Verification + Release Build (Phase 141)
 1. [DONE] Прогнать обязательные гейты и таргетные проверки после cleanup (scope: `src/extension.ts`, `src/extension-module/templates`; expected commit message: `chore(checks): pass gates for phase 141 legacy template cleanup`)
-2. [TODO] Git Commit: `chore(checks): pass gates for phase 141 legacy template cleanup` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` (ожидаемая версия: `1.1.561`) после подтверждения чистой установки пользователем (scope: manifests; expected commit message: `chore(release): run build-all for phase 141 cleanup`)
+2. [DONE] Git Commit: `chore(checks): pass gates for phase 141 legacy template cleanup` (hash: 6b64c4a1)
+3. [DONE] Выполнить `./scripts/build-all.sh` (ожидаемая версия: `1.1.561`) после подтверждения чистой установки пользователем (scope: manifests; expected commit message: `chore(release): run build-all for phase 141 cleanup`)
 4. [TODO] Git Commit: `chore(release): run build-all for phase 141 cleanup` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.561`)
 6. [TODO] Git Commit: `chore(release): build and validate vsix for v1.1.561` (hash: TBD)
