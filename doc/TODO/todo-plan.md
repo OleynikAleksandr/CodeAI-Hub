@@ -116,9 +116,9 @@
 2. [DONE] Git Commit: `refactor(core): remove questionnaire curator hook from session handler` (hash: 2d3ea787)
 3. [DONE] Core: удалить runtime-классы curator (facade/service/provider runner) (scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-facade.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-provider-runner.ts`; expected commit message: `refactor(core): remove questionnaire curator runtime services`)
 4. [DONE] Git Commit: `refactor(core): remove questionnaire curator runtime services` (hash: 777c445c)
-5. [IN_PROGRESS] Core: удалить утилиты curator + шаблон curator (scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-append-sanitizer.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-transcript.ts`, `packages/agents/description-agent/assets/questionnaire-curator.md`; expected commit message: `refactor(core): remove questionnaire curator artifacts and helpers`)
-6. [TODO] Git Commit: `refactor(core): remove questionnaire curator artifacts and helpers` (hash: TBD)
-7. [TODO] Core: убрать bundled template `description-questionnaire-curator` (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit message: `refactor(core): drop bundled description questionnaire curator template`)
+5. [DONE] Core: удалить утилиты curator + шаблон curator (scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-append-sanitizer.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-transcript.ts`, `packages/agents/description-agent/assets/questionnaire-curator.md`; expected commit message: `refactor(core): remove questionnaire curator artifacts and helpers`)
+6. [DONE] Git Commit: `refactor(core): remove questionnaire curator artifacts and helpers` (hash: abc23ddd)
+7. [IN_PROGRESS] Core: убрать bundled template `description-questionnaire-curator` (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit message: `refactor(core): drop bundled description questionnaire curator template`)
 8. [TODO] Git Commit: `refactor(core): drop bundled description questionnaire curator template` (hash: TBD)
 
 ### Stream: RU Language Contract for Description/Reviewer
