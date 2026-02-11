@@ -27664,9 +27664,25 @@ ${replacement}
   var SessionContinuityCard = ({
     title,
     remainingPercentThreshold,
-    onRemainingPercentThresholdChange
+    onRemainingPercentThresholdChange,
+    contextWindowTokenLimit,
+    onContextWindowTokenLimitChange
   }) => /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(settings_card_default, { title, children: [
     /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
+    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("label", { style: settingsLabelStyles, children: [
+      "Context window limit (tokens)",
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+        "input",
+        {
+          max: 1e6,
+          min: 1e4,
+          onChange: (event) => onContextWindowTokenLimitChange(Number(event.target.value)),
+          style: settingsInputStyles,
+          type: "number",
+          value: contextWindowTokenLimit
+        }
+      )
+    ] }) : null,
     /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("label", { style: settingsLabelStyles, children: [
       "Remaining context threshold (%)",
       /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
@@ -28244,17 +28260,70 @@ ${replacement}
       }
     }
   });
+  var updateGeminiContinuityRemainingPercentThreshold = (settings, remainingPercentThreshold) => ({
+    ...settings,
+    providers: {
+      ...settings.providers,
+      gemini: {
+        ...settings.providers.gemini,
+        sessionContinuity: {
+          ...settings.providers.gemini.sessionContinuity,
+          remainingPercentThreshold
+        }
+      }
+    }
+  });
+  var updateGeminiContextWindowTokenLimit = (settings, contextWindowTokenLimit) => ({
+    ...settings,
+    providers: {
+      ...settings.providers,
+      gemini: {
+        ...settings.providers.gemini,
+        sessionContinuity: {
+          ...settings.providers.gemini.sessionContinuity,
+          contextWindowTokenLimit
+        }
+      }
+    }
+  });
 
   // src/client/ui/src/components/settings/gemini-mapping.ts
   var GEMINI_THINKING_LEVEL_SET = new Set(
     GEMINI_THINKING_LEVELS.map((level) => level.name)
   );
+  var DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 3e5;
+  var MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1e4;
+  var MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1e6;
+  var DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
+  var MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+  var MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
   var DEFAULT_GEMINI_THINKING_BY_MODEL = GEMINI_RECOMMENDED_MODELS.reduce((accumulator, model) => {
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
   var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
+  var clampContinuityRemainingPercentThreshold = (value) => Math.min(
+    MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+    Math.max(MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD, value)
+  );
+  var clampContextWindowTokenLimit = (value) => Math.min(
+    MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
+    Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
+  );
+  var mapGeminiSessionContinuitySettings = (value) => {
+    if (!isRecord11(value)) {
+      return {
+        contextWindowTokenLimit: DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
+        remainingPercentThreshold: DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD
+      };
+    }
+    const numericLimit = Number(value.contextWindowTokenLimit);
+    const contextWindowTokenLimit = Number.isFinite(numericLimit) ? clampContextWindowTokenLimit(numericLimit) : DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT;
+    const numericThreshold = Number(value.remainingPercentThreshold);
+    const remainingPercentThreshold = Number.isFinite(numericThreshold) ? clampContinuityRemainingPercentThreshold(numericThreshold) : DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
+    return { contextWindowTokenLimit, remainingPercentThreshold };
+  };
   var mapGeminiThinkingLevelByModel = (value) => {
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
@@ -28274,6 +28343,9 @@ ${replacement}
     defaultModel: resolveGeminiModelId(value?.defaultModel),
     thinkingLevelByModel: mapGeminiThinkingLevelByModel(
       value?.thinkingLevelByModel
+    ),
+    sessionContinuity: mapGeminiSessionContinuitySettings(
+      value?.sessionContinuity
     )
   });
   var areGeminiThinkingLevelByModelEqual = (left, right) => {
@@ -28388,12 +28460,10 @@ ${replacement}
   var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
     right.thinkingLevelByModel
-  );
+  ) && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini);
 
-  // src/client/ui/src/components/settings/use-settings-state.ts
-  var RESET_DELAY_MS = 100;
-  var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
+  // src/client/ui/src/components/settings/use-settings-state-support.ts
   var isIncomingMessage = (message) => {
     if (!message || typeof message !== "object") {
       return false;
@@ -28401,6 +28471,11 @@ ${replacement}
     const candidate = message;
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions";
   };
+  var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
+  var clampGeminiContextWindowTokenLimit = (value) => Math.min(1e6, Math.max(1e4, Math.round(value)));
+
+  // src/client/ui/src/components/settings/use-settings-state.ts
+  var RESET_DELAY_MS = 100;
   var useSettingsState = () => {
     const initialSettingsRef = (0, import_react26.useRef)(createDefaultSettings());
     const [settings, setSettings] = (0, import_react26.useState)(createDefaultSettings);
@@ -28490,6 +28565,30 @@ ${replacement}
       },
       [settings, updateSettings]
     );
+    const handleGeminiContinuityRemainingPercentThresholdChange = (0, import_react26.useCallback)(
+      (remainingPercentThreshold) => {
+        if (!Number.isFinite(remainingPercentThreshold)) {
+          return;
+        }
+        const clamped = clampRemainingPercentThreshold(remainingPercentThreshold);
+        updateSettings(
+          updateGeminiContinuityRemainingPercentThreshold(settings, clamped)
+        );
+      },
+      [settings, updateSettings]
+    );
+    const handleGeminiContextWindowTokenLimitChange = (0, import_react26.useCallback)(
+      (contextWindowTokenLimit) => {
+        if (!Number.isFinite(contextWindowTokenLimit)) {
+          return;
+        }
+        const clamped = clampGeminiContextWindowTokenLimit(
+          contextWindowTokenLimit
+        );
+        updateSettings(updateGeminiContextWindowTokenLimit(settings, clamped));
+      },
+      [settings, updateSettings]
+    );
     const handleCodexDefaultModelChange = (0, import_react26.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
@@ -28559,6 +28658,8 @@ ${replacement}
       handleThinkingSettingsChange,
       handleClaudeContinuityRemainingPercentThresholdChange,
       handleCodexContinuityRemainingPercentThresholdChange,
+      handleGeminiContinuityRemainingPercentThresholdChange,
+      handleGeminiContextWindowTokenLimitChange,
       handleClaudeDefaultModelChange,
       handleCodexDefaultModelChange,
       handleGeminiDefaultModelChange,
@@ -28645,6 +28746,8 @@ ${replacement}
       handleThinkingSettingsChange,
       handleClaudeContinuityRemainingPercentThresholdChange,
       handleCodexContinuityRemainingPercentThresholdChange,
+      handleGeminiContinuityRemainingPercentThresholdChange,
+      handleGeminiContextWindowTokenLimitChange,
       handleCodexDefaultModelChange,
       handleClaudeDefaultModelChange,
       handleGeminiDefaultModelChange,
@@ -28764,6 +28867,16 @@ ${replacement}
               onUpdate: handleUpdateProvider,
               provider: "gemini",
               versions
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+            session_continuity_card_default,
+            {
+              contextWindowTokenLimit: settings.providers.gemini.sessionContinuity.contextWindowTokenLimit,
+              onContextWindowTokenLimitChange: handleGeminiContextWindowTokenLimitChange,
+              onRemainingPercentThresholdChange: handleGeminiContinuityRemainingPercentThresholdChange,
+              remainingPercentThreshold: settings.providers.gemini.sessionContinuity.remainingPercentThreshold,
+              title: "Gemini Session Continuity"
             }
           )
         ] });
