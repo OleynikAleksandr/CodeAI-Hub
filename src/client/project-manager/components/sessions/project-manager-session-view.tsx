@@ -24,6 +24,7 @@ import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } fro
 import { useReviewerSessionVisibility } from "./reviewer-session-visibility";
 import { useSessionMessageSender } from "./session-message-sender";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
+import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
@@ -233,7 +234,9 @@ export const ProjectManagerSessionView = ({ workspacePath, preferredSessionId }:
     onSessionHistory: handleSessionHistory,
     onSessionMessage: handleSessionMessage,
     onSessionStream: (payload) =>
-      setSnapshots((previous) => updateSnapshotsWithTokenUsage(previous, payload)),
+      setSnapshots((previous) =>
+        updateSnapshotsWithUsageLimits(updateSnapshotsWithTokenUsage(previous, payload), payload)
+      ),
     onWorkspaceSnapshot: (payload) => {
       workspaceSnapshotStore.applySnapshot(payload);
       // workspace:snapshot is authoritative for runtime lock lifecycle in PM.

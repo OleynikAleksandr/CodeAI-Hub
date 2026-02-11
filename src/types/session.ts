@@ -37,6 +37,20 @@ export type SessionStatusInfo = {
   readonly models?: readonly ModelInfo[];
   readonly rollover?: FlowNodeRolloverInfo | null;
   readonly continuityLock?: SessionContinuityLockInfo;
+  readonly usageLimits?: {
+    readonly currentSession?: {
+      readonly percentUsed: number;
+      readonly resetsAt?: string | null;
+    } | null;
+    readonly currentWeekAllModels?: {
+      readonly percentUsed: number;
+      readonly resetsAt?: string | null;
+    } | null;
+    readonly currentWeekSonnetOnly?: {
+      readonly percentUsed: number;
+      readonly resetsAt?: string | null;
+    } | null;
+  } | null;
   readonly tokenUsage: {
     readonly used: number;
     readonly limit: number;
