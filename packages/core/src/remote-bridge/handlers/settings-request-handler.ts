@@ -20,7 +20,7 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
         maxTokens: 4000,
       },
       autoUpdate: { enabled: true },
-      defaultModel: "default",
+      defaultModel: "sonnet",
       sessionContinuity: { remainingPercentThreshold: 30 },
     },
     codex: {
@@ -109,6 +109,42 @@ const buildDefaultSettingsSnapshot = (
   };
 };
 
+const migrateLegacyClaudeDefaultModel = (
+  settings: Record<string, unknown>
+): {
+  readonly migrated: boolean;
+  readonly settings: Record<string, unknown>;
+} => {
+  const providers = settings.providers;
+  if (!isRecord(providers)) {
+    return { migrated: false, settings };
+  }
+
+  const claude = providers.claude;
+  if (!isRecord(claude)) {
+    return { migrated: false, settings };
+  }
+
+  // We no longer persist "default". Migrate legacy configs to "sonnet".
+  if (claude.defaultModel !== "default") {
+    return { migrated: false, settings };
+  }
+
+  return {
+    migrated: true,
+    settings: {
+      ...settings,
+      providers: {
+        ...providers,
+        claude: {
+          ...claude,
+          defaultModel: "sonnet",
+        },
+      },
+    },
+  };
+};
+
 const persistDefaultSettingsSnapshot = async (
   settingsPath: string,
   snapshot: Record<string, unknown>
@@ -141,9 +177,22 @@ export class SettingsRequestHandler {
     try {
       const raw = await readFile(settingsPath, "utf8");
       const parsed = JSON.parse(raw) as unknown;
-      const settings = isRecord(parsed)
+      const baseSettings = isRecord(parsed)
         ? parsed
         : buildDefaultSettingsSnapshot(this.config);
+      const { migrated, settings } =
+        migrateLegacyClaudeDefaultModel(baseSettings);
+
+      if (migrated) {
+        try {
+          await persistDefaultSettingsSnapshot(settingsPath, settings);
+        } catch (persistError) {
+          this.logger.warn("Failed to persist settings migration", {
+            settingsPath,
+            error: toErrorMessage(persistError),
+          });
+        }
+      }
 
       this.broadcaster({
         type: "settings:loaded",

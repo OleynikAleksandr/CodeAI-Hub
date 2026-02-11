@@ -74,17 +74,23 @@ const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "xhigh",
 ]);
 const CLAUDE_MODEL_ALIAS_SET = new Set(["default", "sonnet", "opus", "haiku"]);
-const DEFAULT_CLAUDE_MODEL_ALIAS = "default";
+const DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
 const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
 const DEFAULT_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD = 50;
 const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
 const MIN_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD = 0;
 const MAX_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD = 100;
-const resolveClaudeDefaultModel = (value: string | undefined): string =>
-  value && CLAUDE_MODEL_ALIAS_SET.has(value)
+const resolveClaudeDefaultModel = (value: string | undefined): string => {
+  if (value === "default") {
+    // "default" is legacy. Persist and operate on explicit aliases.
+    return "sonnet";
+  }
+
+  return value && CLAUDE_MODEL_ALIAS_SET.has(value)
     ? value
     : DEFAULT_CLAUDE_MODEL_ALIAS;
+};
 const NON_ALPHANUMERIC_REGEX = /[^a-zA-Z0-9]/g;
 const MULTIPLE_DASHES_REGEX = /-+/g;
 const TRAILING_DASH_REGEX = /-$/;

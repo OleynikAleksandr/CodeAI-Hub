@@ -1,4 +1,4 @@
-export type ClaudeModelAliasId = "default" | "sonnet" | "opus" | "haiku";
+export type ClaudeModelAliasId = "sonnet" | "opus" | "haiku";
 
 export type ClaudeModelAliasDescriptor = {
   readonly alias: ClaudeModelAliasId;
@@ -9,10 +9,9 @@ export type ClaudeModelAliasDescriptor = {
 
 export const CLAUDE_MODEL_ALIASES: readonly ClaudeModelAliasDescriptor[] = [
   {
-    alias: "default",
-    displayName: "Default · Sonnet 4.5",
-    description:
-      "Best for everyday tasks. Alias `sonnet` maps to the same release (claude-sonnet-4-5-20250929).",
+    alias: "sonnet",
+    displayName: "Sonnet 4.5",
+    description: "Best for everyday tasks (claude-sonnet-4-5-20250929).",
     status: "active",
   },
   {
@@ -31,7 +30,6 @@ export const CLAUDE_MODEL_ALIASES: readonly ClaudeModelAliasDescriptor[] = [
 
 export const CLAUDE_MODEL_ALIAS_SET = new Set<ClaudeModelAliasId>([
   ...CLAUDE_MODEL_ALIASES.map((model) => model.alias),
-  "sonnet",
 ]);
 
-export const DEFAULT_CLAUDE_MODEL_ALIAS: ClaudeModelAliasId = "default";
+export const DEFAULT_CLAUDE_MODEL_ALIAS: ClaudeModelAliasId = "sonnet";
