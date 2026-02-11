@@ -118,11 +118,11 @@
 4. [DONE] Git Commit: `refactor(core): remove questionnaire curator runtime services` (hash: 777c445c)
 5. [DONE] Core: удалить утилиты curator + шаблон curator (scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-append-sanitizer.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-transcript.ts`, `packages/agents/description-agent/assets/questionnaire-curator.md`; expected commit message: `refactor(core): remove questionnaire curator artifacts and helpers`)
 6. [DONE] Git Commit: `refactor(core): remove questionnaire curator artifacts and helpers` (hash: abc23ddd)
-7. [IN_PROGRESS] Core: убрать bundled template `description-questionnaire-curator` (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit message: `refactor(core): drop bundled description questionnaire curator template`)
-8. [TODO] Git Commit: `refactor(core): drop bundled description questionnaire curator template` (hash: TBD)
+7. [DONE] Core: убрать bundled template `description-questionnaire-curator` (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit message: `refactor(core): drop bundled description questionnaire curator template`)
+8. [DONE] Git Commit: `refactor(core): drop bundled description questionnaire curator template` (hash: 98bb643f)
 
 ### Stream: RU Language Contract for Description/Reviewer
-1. [TODO] Prompts: добавить явное требование русского языка (коммуникация + артефакты) в prompts Description/Reviewer (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/reviewer-agent/assets/reviewer-prompt.md`; expected commit message: `feat(agents): enforce russian language in description and reviewer prompts`)
+1. [IN_PROGRESS] Prompts: добавить явное требование русского языка (коммуникация + артефакты) в prompts Description/Reviewer (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/reviewer-agent/assets/reviewer-prompt.md`; expected commit message: `feat(agents): enforce russian language in description and reviewer prompts`)
 2. [TODO] Git Commit: `feat(agents): enforce russian language in description and reviewer prompts` (hash: TBD)
 3. [TODO] Core: усилить fallback reviewer prompt явным RU-требованием (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`; expected commit message: `feat(core): enforce russian language in reviewer fallback prompt`)
 4. [TODO] Git Commit: `feat(core): enforce russian language in reviewer fallback prompt` (hash: TBD)
