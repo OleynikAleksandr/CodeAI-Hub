@@ -1,5 +1,7 @@
 import crypto from "node:crypto";
 import { ClaudeContextUsageReader } from "../sdk/claude-context-usage-reader";
+import { ClaudeUsageLimitsReader } from "../sdk/claude-usage-limits-reader";
+import type { UsageLimitsSnapshot } from "../sdk/claude-usage-limits-snapshot";
 import type { SDKSessionManager } from "../session/session-manager";
 import type {
   ActiveSession,
@@ -84,6 +86,27 @@ type TokenUsageSnapshot = {
   readonly limit: number;
 };
 
+const areUsageLimitsEqual = (
+  left: UsageLimitsSnapshot,
+  right: UsageLimitsSnapshot
+): boolean => {
+  const eqBucket = (
+    a: UsageLimitsSnapshot[keyof UsageLimitsSnapshot],
+    b: UsageLimitsSnapshot[keyof UsageLimitsSnapshot]
+  ): boolean => {
+    if (a === null || b === null) {
+      return a === b;
+    }
+    return a.percentUsed === b.percentUsed && a.resetsAt === b.resetsAt;
+  };
+
+  return (
+    eqBucket(left.currentSession, right.currentSession) &&
+    eqBucket(left.currentWeekAllModels, right.currentWeekAllModels) &&
+    eqBucket(left.currentWeekSonnetOnly, right.currentWeekSonnetOnly)
+  );
+};
+
 const MIN_REFRESH_INTERVAL_MS = 1500;
 const TEMP_SESSION_PREFIX = "temp_";
 
@@ -121,11 +144,18 @@ export class SDKMessageProcessor {
     { used: number; limit: number }
   >();
   private contextUsageReader: ClaudeContextUsageReader | null = null;
+  private usageLimitsReader: ClaudeUsageLimitsReader | null = null;
   private readonly contextUsageInFlight = new Map<
     string,
     Promise<TokenUsageSnapshot | null>
   >();
   private readonly contextUsageLastAttemptAt = new Map<string, number>();
+  private readonly usageLimitsCache = new Map<string, UsageLimitsSnapshot>();
+  private readonly usageLimitsInFlight = new Map<
+    string,
+    Promise<UsageLimitsSnapshot | null>
+  >();
+  private readonly usageLimitsLastAttemptAt = new Map<string, number>();
 
   constructor(
     sessionManager: SDKSessionManager,
@@ -140,6 +170,7 @@ export class SDKMessageProcessor {
       return;
     }
     this.contextUsageReader = new ClaudeContextUsageReader(config);
+    this.usageLimitsReader = new ClaudeUsageLimitsReader(config);
   }
 
   enqueueTurn(
@@ -368,7 +399,15 @@ export class SDKMessageProcessor {
       message.session_id,
       { force: true }
     );
-    this.maybeEmitTurnCompleted(session, message.session_id, tokenUsage);
+    const usageLimits = await this.refreshUsageLimitsFromUsage(
+      session,
+      message.session_id,
+      { force: true }
+    );
+    this.maybeEmitTurnCompleted(session, message.session_id, {
+      tokenUsage,
+      usageLimits,
+    });
   }
 
   private maybeEmitTurnStarted(
@@ -398,7 +437,10 @@ export class SDKMessageProcessor {
   private maybeEmitTurnCompleted(
     session: ActiveSession,
     claudeSessionId: string | null | undefined,
-    tokenUsage?: TokenUsageSnapshot | null
+    payload?: {
+      readonly tokenUsage?: TokenUsageSnapshot | null;
+      readonly usageLimits?: UsageLimitsSnapshot | null;
+    }
   ): void {
     const queueState = session.turnQueue;
     if (!queueState || queueState.internalTurn || queueState.lifecycle.ended) {
@@ -414,12 +456,13 @@ export class SDKMessageProcessor {
       provider: "claude",
       sessionId: session.sessionId,
       claudeSessionId: resolvedSessionId,
-      ...(tokenUsage
+      ...(payload?.tokenUsage
         ? {
-            tokenUsage,
-            usage: tokenUsage,
+            tokenUsage: payload.tokenUsage,
+            usage: payload.tokenUsage,
           }
         : {}),
+      ...(payload?.usageLimits ? { usageLimits: payload.usageLimits } : {}),
       uuid: `${crypto.randomUUID()}::turn_completed`,
       timestamp: new Date().toISOString(),
     });
@@ -526,6 +569,82 @@ export class SDKMessageProcessor {
       });
 
     this.contextUsageInFlight.set(resolvedId, refreshPromise);
+    return await refreshPromise;
+  }
+
+  private async refreshUsageLimitsFromUsage(
+    session: ActiveSession,
+    claudeSessionId: string | null | undefined,
+    options: { readonly force?: boolean } = {}
+  ): Promise<UsageLimitsSnapshot | null> {
+    const reader = this.usageLimitsReader;
+    if (!reader) {
+      return null;
+    }
+
+    const resolvedId = this.resolveTokenUsageSessionId(
+      session,
+      claudeSessionId
+    );
+    if (!resolvedId) {
+      return null;
+    }
+
+    const now = Date.now();
+    const lastAttempt = this.usageLimitsLastAttemptAt.get(resolvedId);
+    if (
+      !options.force &&
+      lastAttempt &&
+      now - lastAttempt < MIN_REFRESH_INTERVAL_MS
+    ) {
+      return null;
+    }
+    this.usageLimitsLastAttemptAt.set(resolvedId, now);
+
+    const inFlight = this.usageLimitsInFlight.get(resolvedId);
+    if (inFlight) {
+      if (options.force) {
+        await inFlight;
+      }
+      return this.usageLimitsCache.get(resolvedId) ?? null;
+    }
+
+    const refreshPromise = reader
+      .read({ sessionId: resolvedId, cwd: session.workspacePath })
+      .then((snapshot) => {
+        if (!snapshot) {
+          return null;
+        }
+        const nextUsage: UsageLimitsSnapshot = snapshot;
+        const previous = this.usageLimitsCache.get(resolvedId);
+        if (previous && areUsageLimitsEqual(previous, nextUsage)) {
+          return previous;
+        }
+        this.usageLimitsCache.set(resolvedId, nextUsage);
+        session.eventEmitter.emit("message", {
+          type: "stream_event",
+          provider: "claude",
+          sessionId: session.sessionId,
+          claudeSessionId: resolvedId,
+          usageLimits: nextUsage,
+          data: { kind: "usage_limits", usageLimits: nextUsage },
+          uuid: `${crypto.randomUUID()}::usage_limits`,
+          timestamp: new Date().toISOString(),
+        });
+        return nextUsage;
+      })
+      .catch((error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.options.reporter?.warn?.(
+          `Claude /usage limits read failed (session ${resolvedId}): ${message}`
+        );
+        return null;
+      })
+      .finally(() => {
+        this.usageLimitsInFlight.delete(resolvedId);
+      });
+
+    this.usageLimitsInFlight.set(resolvedId, refreshPromise);
     return await refreshPromise;
   }
 
