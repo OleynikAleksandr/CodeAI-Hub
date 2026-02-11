@@ -1,3 +1,10 @@
+## [1.1.557] - 2026-02-11
+### Fixed
+- Gemini: tool-calls CLI теперь разрешают доступ к workspace (`includeDirectories` включает `workspacePath`), чтобы `read_file`/`write_file` корректно работали с `.codeai-hub/**` артефактами (например, `description.md`).
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.557.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.556] - 2026-02-11
 ### Added
 - Gemini: добавлены настройки session continuity: `contextWindowTokenLimit` (default `300000`) и `remainingPercentThreshold` (default `30`).
