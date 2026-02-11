@@ -12,7 +12,6 @@ export type UsageLimitsSnapshot = {
 const PERCENT_PATTERN = /(\d+)\s*%/i;
 const CURRENT_SESSION_HEADER = /Current session/i;
 const CURRENT_WEEK_ALL_MODELS_HEADER = /Current week\s*\(all models\)/i;
-const CURRENT_WEEK_SONNET_ONLY_HEADER = /Current week\s*\(Sonnet only\)/i;
 
 const LOCAL_COMMAND_STDOUT_PATTERN =
   /<local-command-stdout>([\s\S]*?)<\/local-command-stdout>/;
@@ -106,12 +105,10 @@ const extractLimitsSnapshot = (text: string): UsageLimitsSnapshot | null => {
     text,
     CURRENT_WEEK_ALL_MODELS_HEADER
   );
-  const currentWeekSonnetOnly = parseBucket(
-    text,
-    CURRENT_WEEK_SONNET_ONLY_HEADER
-  );
+  // "Current week (Sonnet only)" is currently not used by CodeAI Hub.
+  const currentWeekSonnetOnly: UsageLimitBucket | null = null;
 
-  if (!(currentSession || currentWeekAllModels || currentWeekSonnetOnly)) {
+  if (!(currentSession || currentWeekAllModels)) {
     return null;
   }
 

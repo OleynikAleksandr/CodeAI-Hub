@@ -27,6 +27,8 @@ const resolveIdLabel = (binding: SessionBindingInfo): string => {
 
 type LimitBarStyle = CSSProperties;
 
+const TIMEZONE_SUFFIX_PATTERN = /^(.*)\s+\([^)]+\)\s*$/;
+
 const clampPercent = (value: number): number => {
   if (value < 0) {
     return 0;
@@ -40,10 +42,24 @@ const clampPercent = (value: number): number => {
 const renderLimitLabel = (payload: {
   readonly label: string;
   readonly percentUsed: number | null;
+  readonly resetsAt: string | null;
 }): string =>
-  payload.percentUsed === null
-    ? payload.label
-    : `${payload.label} ${payload.percentUsed}%`;
+  [
+    payload.percentUsed === null
+      ? payload.label
+      : `${payload.label} ${payload.percentUsed}%`,
+    payload.resetsAt ? `(Resets ${payload.resetsAt})` : null,
+  ]
+    .filter((value): value is string => Boolean(value))
+    .join(" ");
+
+const stripTimeZoneSuffix = (value: string): string => {
+  // Claude Code often includes a timezone suffix: "5pm (Europe/Madrid)".
+  // Inline labels should be short; keep the full string in the tooltip.
+  const trimmed = value.trim();
+  const match = TIMEZONE_SUFFIX_PATTERN.exec(trimmed);
+  return match?.[1]?.trim() ? match[1].trim() : trimmed;
+};
 
 const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
   const sessionPercent =
@@ -80,8 +96,11 @@ const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
         >
           <span className="session-id-bar__limit-label">
             {renderLimitLabel({
-              label: "5 hours",
+              label: "session",
               percentUsed: sessionPercent,
+              resetsAt: sessionResetsAt
+                ? stripTimeZoneSuffix(sessionResetsAt)
+                : null,
             })}
           </span>
           <span
@@ -94,7 +113,13 @@ const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
           title={weeklyResetsAt ? `Resets ${weeklyResetsAt}` : undefined}
         >
           <span className="session-id-bar__limit-label">
-            {renderLimitLabel({ label: "weekly", percentUsed: weeklyPercent })}
+            {renderLimitLabel({
+              label: "weekly",
+              percentUsed: weeklyPercent,
+              resetsAt: weeklyResetsAt
+                ? stripTimeZoneSuffix(weeklyResetsAt)
+                : null,
+            })}
           </span>
           <span className="session-id-bar__limit-bar" style={weeklyFillStyle} />
         </div>
