@@ -1,3 +1,10 @@
+## [1.1.559] - 2026-02-11
+### Fixed
+- Gemini: ошибки стрима теперь показывают реальное сообщение (из nested `error.message`), вместо `[object Object]`.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.559.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.558] - 2026-02-11
 ### Fixed
 - Settings: Session Continuity пороги теперь вводятся вручную (без spinner-стрелок) с bounded/clamp контролем пределов для всех провайдеров (remaining %) и для Gemini (context window tokens).
