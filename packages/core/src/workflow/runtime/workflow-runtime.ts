@@ -73,12 +73,12 @@ const resolveReviewerPromptPath = (): string | null => {
 const readReviewerPrompt = async (): Promise<string> => {
   const promptPath = resolveReviewerPromptPath();
   if (!promptPath) {
-    return "Ты — Reviewer Agent. Преобразуй draft description.md в Final_Description.md.";
+    return "Ты — Reviewer Agent. Преобразуй draft description.md в Final_Description.md. Общайся с пользователем только на русском и формируй артефакт только на русском языке.";
   }
   try {
     return await fs.readFile(promptPath, "utf8");
   } catch {
-    return "Ты — Reviewer Agent. Преобразуй draft description.md в Final_Description.md.";
+    return "Ты — Reviewer Agent. Преобразуй draft description.md в Final_Description.md. Общайся с пользователем только на русском и формируй артефакт только на русском языке.";
   }
 };
 
