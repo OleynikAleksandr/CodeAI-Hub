@@ -29,7 +29,6 @@ import type {
   SessionTerminalLockReason,
 } from "../../workspace-runtime/workspace-runtime-types";
 import { type BridgeEvent, serializeSession } from "../types";
-import { QuestionnaireCuratorFacade } from "./questionnaire-curator-facade";
 import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
   CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
@@ -160,7 +159,6 @@ type WorkflowTurnOptionsResolution = {
   readonly turnOptions?: Record<string, unknown>;
   readonly appliedSchema: boolean;
   readonly source: "turnOptions" | "template" | "none";
-  readonly finalize: boolean;
   readonly stageMatched: boolean;
 };
 
@@ -242,9 +240,6 @@ const extractContinuityThresholdPercentFromSettings = (options: {
   });
 };
 
-const FINALIZE_TRIGGER_PATTERN =
-  /(^|[\s,.;:!?])(?:ок|ok|утверждаю|approve|approved)(?=$|[\s,.;:!?])/i;
-
 const stripOutputSchema = (
   turnOptions?: Record<string, unknown>
 ): Record<string, unknown> | undefined => {
@@ -265,27 +260,16 @@ const resolveWorkflowStage = (
     ? (stage as WorkflowStageId)
     : null;
 
-const isFinalizeTrigger = (content: string): boolean => {
-  const normalized = content.trim().replace(/[\\/]/g, " ");
-  if (!normalized) {
-    return false;
-  }
-  return FINALIZE_TRIGGER_PATTERN.test(normalized);
-};
-
 const resolveWorkflowTurnOptions = (params: {
   readonly stage: string | null | undefined;
-  readonly content: string;
   readonly turnOptions?: Record<string, unknown>;
 }): WorkflowTurnOptionsResolution => {
   const stage = resolveWorkflowStage(params.stage);
-  const shouldFinalize = isFinalizeTrigger(params.content);
   if (!stage) {
     return {
       turnOptions: params.turnOptions,
       appliedSchema: false,
       source: "none",
-      finalize: shouldFinalize,
       stageMatched: false,
     };
   }
@@ -294,7 +278,6 @@ const resolveWorkflowTurnOptions = (params: {
     turnOptions: stripOutputSchema(params.turnOptions),
     appliedSchema: false,
     source: "none",
-    finalize: shouldFinalize,
     stageMatched: true,
   };
 };
@@ -318,7 +301,6 @@ export class SessionRequestHandler {
   private readonly providerRegistry: ProviderRegistry;
   private readonly sessionStorage: UnifiedSessionStorage;
   private readonly logger: Logger;
-  private readonly questionnaireCurator: QuestionnaireCuratorFacade;
   private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
   private readonly workspaceRuntime?: WorkspaceRuntimeFacade;
@@ -870,10 +852,6 @@ export class SessionRequestHandler {
     this.providerRegistry = options.providerRegistry;
     this.sessionStorage = options.sessionStorage;
     this.logger = options.logger;
-    this.questionnaireCurator = new QuestionnaireCuratorFacade({
-      config: options.config,
-      logger: options.logger,
-    });
     this.broadcaster = options.broadcaster;
     this.stateBroadcaster = options.stateBroadcaster;
     this.workspaceRuntime = options.workspaceRuntime;
@@ -1586,7 +1564,6 @@ export class SessionRequestHandler {
 
       const workflowTurnOptions = await resolveWorkflowTurnOptions({
         stage: session.stage,
-        content,
         turnOptions,
       });
       const providerTurnOptions = workflowTurnOptions.stageMatched
@@ -1596,7 +1573,6 @@ export class SessionRequestHandler {
         this.logger.info("Applied workflow output schema", {
           sessionId,
           stage: session.stage,
-          finalize: workflowTurnOptions.finalize,
           source: workflowTurnOptions.source,
         });
       }
@@ -1605,18 +1581,6 @@ export class SessionRequestHandler {
         content,
         providerTurnOptions
       );
-
-      if (workflowTurnOptions.finalize) {
-        this.questionnaireCurator
-          .maybeCurate(session, adapter)
-          .catch((error: unknown) => {
-            this.logger.warn("Questionnaire curator failed", {
-              sessionId,
-              providerId: binding.providerId,
-              error: error instanceof Error ? error.message : String(error),
-            });
-          });
-      }
     } catch (error) {
       this.emitTurnStateEvent({ sessionId, state: "idle" });
       this.logProviderSendMessageFailed(sessionId, binding, error);

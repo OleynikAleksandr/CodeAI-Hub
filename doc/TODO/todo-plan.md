@@ -104,3 +104,37 @@
 ### Stream: Session Report (Phase 139)
 1. [DONE] Docs: добавить session report `doc/Sessions/Session015.md` + обновить статус Phase 139 в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Session015.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session015 for v1.1.559`)
 2. [DONE] Git Commit: `docs(session): add Session015 for v1.1.559` (hash: fa080c05)
+
+---
+
+## Phase 140 — Description Flow Cleanup: Remove Curator + RU Prompts + Release (owner: Oleksandr, updated: 2026-02-11)
+
+**Goal:** полностью удалить `Questionnaire Curator` из runtime, убрать побочные внутренние Gemini-сессии, и зафиксировать явное требование русского языка для `Description Agent` и `Reviewer Agent` (и артефакты, и ответы пользователю).
+
+### Stream: Core Cleanup — Remove Questionnaire Curator
+1. [IN_PROGRESS] Core: удалить интеграцию curator из session handler (без finalize-trigger side effects) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `refactor(core): remove questionnaire curator hook from session handler`)
+2. [TODO] Git Commit: `refactor(core): remove questionnaire curator hook from session handler` (hash: TBD)
+3. [TODO] Core: удалить runtime-классы curator (facade/service/provider runner) (scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-facade.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-service.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-provider-runner.ts`; expected commit message: `refactor(core): remove questionnaire curator runtime services`)
+4. [TODO] Git Commit: `refactor(core): remove questionnaire curator runtime services` (hash: TBD)
+5. [TODO] Core: удалить утилиты curator + шаблон curator (scope: `packages/core/src/remote-bridge/handlers/questionnaire-curator-append-sanitizer.ts`, `packages/core/src/remote-bridge/handlers/questionnaire-curator-transcript.ts`, `packages/agents/description-agent/assets/questionnaire-curator.md`; expected commit message: `refactor(core): remove questionnaire curator artifacts and helpers`)
+6. [TODO] Git Commit: `refactor(core): remove questionnaire curator artifacts and helpers` (hash: TBD)
+7. [TODO] Core: убрать bundled template `description-questionnaire-curator` (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit message: `refactor(core): drop bundled description questionnaire curator template`)
+8. [TODO] Git Commit: `refactor(core): drop bundled description questionnaire curator template` (hash: TBD)
+
+### Stream: RU Language Contract for Description/Reviewer
+1. [TODO] Prompts: добавить явное требование русского языка (коммуникация + артефакты) в prompts Description/Reviewer (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/reviewer-agent/assets/reviewer-prompt.md`; expected commit message: `feat(agents): enforce russian language in description and reviewer prompts`)
+2. [TODO] Git Commit: `feat(agents): enforce russian language in description and reviewer prompts` (hash: TBD)
+3. [TODO] Core: усилить fallback reviewer prompt явным RU-требованием (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`; expected commit message: `feat(core): enforce russian language in reviewer fallback prompt`)
+4. [TODO] Git Commit: `feat(core): enforce russian language in reviewer fallback prompt` (hash: TBD)
+5. [TODO] Core: обновить bundled prompts после изменений шаблонов (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit message: `chore(core): refresh bundled description and reviewer prompts`)
+6. [TODO] Git Commit: `chore(core): refresh bundled description and reviewer prompts` (hash: TBD)
+
+### Stream: Verification + Release Build (Phase 140)
+1. [TODO] Прогнать обязательные гейты и таргетные сборки по затронутым пакетам (scope: `packages/core`, `packages/agents/description-agent`, `packages/agents/reviewer-agent`; expected commit message: `chore(checks): pass gates for phase 140 cleanup`)
+2. [TODO] Git Commit: `chore(checks): pass gates for phase 140 cleanup` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh` (ожидаемая версия: `1.1.560`) (scope: manifests; expected commit message: `chore(release): run build-all for phase 140 cleanup`)
+4. [TODO] Git Commit: `chore(release): run build-all for phase 140 cleanup` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.560`)
+6. [TODO] Git Commit: `chore(release): build and validate vsix for v1.1.560` (hash: TBD)
+7. [TODO] Синхронизировать `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` и сессионный отчет (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/Sessions/Session016.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): sync docs and session report for v1.1.560`)
+8. [TODO] Git Commit: `docs(release): sync docs and session report for v1.1.560` (hash: TBD)
