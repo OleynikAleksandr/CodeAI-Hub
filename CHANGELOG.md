@@ -1,3 +1,10 @@
+## [1.1.563] - 2026-02-11
+### Changed
+- Claude: defaultModel теперь хранится как `sonnet` (legacy `default` мигрируется на load), чтобы в Settings/Session UI не было неявного alias.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.563.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.562] - 2026-02-11
 ### Changed
 - Codex: дефолтная модель обновлена на `gpt-5.3-codex` (а `gpt-5.2-codex` переведена в legacy/succeeded-by).
