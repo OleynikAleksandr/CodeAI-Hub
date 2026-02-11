@@ -13,7 +13,7 @@ Codex supports multiple GPT-5 series models optimized for different coding scena
 
 | Model ID            | Display Name       | Description                                 | Best For                                 |
 |---------------------|--------------------|---------------------------------------------|------------------------------------------|
-| `gpt-5.2-codex`     | GPT-5.2-Codex      | Most advanced agentic coding model          | Complex engineering tasks, production code |
+| `gpt-5.3-codex`     | GPT-5.3-Codex      | Most advanced agentic coding model          | Complex engineering tasks, production code |
 | `gpt-5.1-codex-max` | GPT-5.1-Codex-Max  | Optimized for long-horizon agentic tasks    | Deep refactoring, large-scale changes    |
 | `gpt-5.1-codex-mini`| GPT-5.1-Codex-Mini | Smaller, cost-effective version             | Quick tasks, cost optimization           |
 | `gpt-5.2`           | GPT-5.2            | Best general agentic model                  | Cross-industry tasks, general coding     |
@@ -53,9 +53,9 @@ Use Settings → Codex to pick the default model and per-model reasoning. Stored
 {
   "providers": {
     "codex": {
-      "defaultModel": "gpt-5.2-codex",
+      "defaultModel": "gpt-5.3-codex",
       "reasoningByModel": {
-        "gpt-5.2-codex": "high",
+        "gpt-5.3-codex": "high",
         "gpt-5.1-codex-max": "medium",
         "gpt-5.1-codex-mini": "low"
       }
@@ -68,13 +68,13 @@ Use Settings → Codex to pick the default model and per-model reasoning. Stored
 
 ```bash
 # Select model via command line flag
-codex --model gpt-5.2-codex
+codex --model gpt-5.3-codex
 
 # With custom reasoning effort
-codex --model gpt-5.2-codex --config model_reasoning_effort=high
+codex --model gpt-5.3-codex --config model_reasoning_effort=high
 
 # Non-interactive example
-codex exec --model gpt-5.2-codex --config model_reasoning_effort=high \
+codex exec --model gpt-5.3-codex --config model_reasoning_effort=high \
   --sandbox read-only "Checking reasoning"
 
 # Interactive model selection
@@ -87,7 +87,7 @@ codex
 For standalone Codex CLI usage (CodeAI Hub does not edit this file), you can set defaults in `~/.codex/config.toml`:
 
 ```toml
-model = "gpt-5.2-codex"
+model = "gpt-5.3-codex"
 model_reasoning_effort = "medium"
 ```
 
@@ -99,7 +99,7 @@ import { Codex } from "@openai/codex-sdk";
 const codex = new Codex();
 
 const thread = codex.startThread({
-  model: "gpt-5.2-codex",
+  model: "gpt-5.3-codex",
   workingDirectory: process.cwd(),
 });
 
@@ -111,7 +111,7 @@ Note: In CodeAI Hub, the reasoning effort is applied by the CLI runner using `--
 ## Model Selection Strategy
 
 ### For Production Code
-→ Use `gpt-5.2-codex` with `medium` or `high` reasoning
+→ Use `gpt-5.3-codex` with `medium` or `high` reasoning
 
 ### For Quick Prototyping
 → Use `gpt-5.1-codex-mini` with `low` or `medium` reasoning

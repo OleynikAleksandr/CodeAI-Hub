@@ -10,7 +10,7 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Settings continuity inputs**: пороги continuity (% и Gemini tokens) вводятся вручную (без spinner-стрелок) с контролем пределов на blur/Enter.
 - **Gemini stream errors**: ошибки из Gemini теперь отображаются человеко-читаемо (извлекается nested `error.message`), вместо `[object Object]`.
 - **Session header tokens formatting**: `Tokens: <used> (<percent>%)` (без `/<max>`), увеличены пробелы вокруг `|` между Models и Tokens.
-- **Default settings persistence**: при чистой установке создается `~/.codeai-hub/settings/settings.json` с дефолтами, поэтому Session UI сразу показывает полный label модели (например, `gpt-5.2-codex (medium)`), а не только `codex`.
+- **Default settings persistence**: при чистой установке создается `~/.codeai-hub/settings/settings.json` с дефолтами, поэтому Session UI сразу показывает полный label модели (например, `gpt-5.3-codex (medium)`), а не только `codex`.
 - **Gemini token continuity**: добавлены настройки `contextWindowTokenLimit` (default `300000`) и `remainingPercentThreshold` (default `30%`); Gemini эмитит `token_usage` (`used/limit`) на основе `usageMetadata.totalTokenCount`.
 - **Flow continuity (Core)**: при `resume_timeout/resume_failed` UI больше не зависает на `Agent is resuming your session…`; лок снимается и rollover pending очищается.
 - **Session status panel debug summary**: проценты теперь показываются в скобках: `#1 (78%) | #2 (81%)`.
