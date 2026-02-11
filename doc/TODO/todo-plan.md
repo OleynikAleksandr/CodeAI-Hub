@@ -94,12 +94,12 @@
 2. [DONE] Git Commit: `fix(gemini): render nested stream error messages` (hash: ea8857ba)
 
 ### Stream: Release Build (Phase 139)
-1. [TODO] Выполнить `./scripts/build-all.sh` (scope: manifests; expected commit message: `chore(release): run build-all for gemini stream error messaging`)
-2. [TODO] Git Commit: `chore(release): run build-all for gemini stream error messaging` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for vNEXT`)
-4. [TODO] Git Commit: `chore(release): build and validate vsix for vNEXT` (hash: TBD)
-5. [TODO] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for vNEXT`)
-6. [TODO] Git Commit: `docs(release): sync root notes and system architecture for vNEXT` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` (версия: `1.1.559`) (scope: manifests; expected commit message: `chore(release): run build-all for gemini stream error messaging`)
+2. [DONE] Git Commit: `chore(release): run build-all for gemini stream error messaging` (hash: 1df7d0b3)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (`codeai-hub-1.1.559.vsix`) (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.559`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.559` (hash: a432af87)
+5. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.559`)
+6. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.559` (hash: 05779dfa)
 
 ### Stream: Session Report (Phase 139)
 1. [TODO] Docs: добавить session report `doc/Sessions/Session015.md` + обновить статус Phase 139 в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Session015.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session015 for vNEXT`)
