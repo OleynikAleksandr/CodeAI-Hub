@@ -7860,6 +7860,12 @@
   var SINGLE_DIGIT_REGEX = /^\d+$/;
   var DECIMAL_VERSION_REGEX = /^\d+\.\d+$/;
   var VERSION_JOIN_REGEX = /(\d+)\s+(\d+)/g;
+  var formatClaudeSessionModelDisplayName = (modelId) => {
+    if (modelId === "default" || modelId === "sonnet") {
+      return "Sonnet";
+    }
+    return formatModelDisplayName(modelId);
+  };
   var formatModelDisplayName = (modelId) => {
     return modelId.split("-").map((part, index2) => {
       if (SINGLE_DIGIT_REGEX.test(part)) {
@@ -7885,7 +7891,7 @@
       const providerName = getDefaultProviderTitle(providerId);
       const providerSettings = settings.providers[providerKey];
       const modelId = providerSettings.defaultModel;
-      const modelDisplayName = formatModelDisplayName(modelId);
+      const modelDisplayName = providerKey === "claude" ? formatClaudeSessionModelDisplayName(modelId) : formatModelDisplayName(modelId);
       let reasoning;
       if (providerKey === "claude") {
         const claudeSettings = settings.providers.claude;
@@ -26226,8 +26232,8 @@ ${replacement}
   // src/types/codex-model-registry.ts
   var CODEX_RECOMMENDED_MODELS = [
     {
-      id: "gpt-5.2-codex",
-      displayName: "GPT-5.2-Codex",
+      id: "gpt-5.3-codex",
+      displayName: "GPT-5.3-Codex",
       description: "Most advanced agentic coding model for real-world engineering",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
@@ -26259,6 +26265,13 @@ ${replacement}
     }
   ];
   var CODEX_LEGACY_MODELS = [
+    {
+      id: "gpt-5.2-codex",
+      displayName: "GPT-5.2-Codex",
+      description: "Most advanced agentic coding model for real-world engineering",
+      status: "succeeded_by",
+      successor: "gpt-5.3-codex"
+    },
     {
       id: "gpt-5.1",
       displayName: "GPT-5.1",
@@ -26299,7 +26312,7 @@ ${replacement}
     ...CODEX_RECOMMENDED_MODELS,
     ...CODEX_LEGACY_MODELS
   ];
-  var DEFAULT_CODEX_MODEL_ID = "gpt-5.2-codex";
+  var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
   var CODEX_REASONING_LEVELS = [
     {
       name: "low",
@@ -26612,6 +26625,9 @@ ${replacement}
       () => new Set(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
       []
     );
+    const fallbackModelDisplayName = CODEX_RECOMMENDED_MODELS.find(
+      (model) => model.id === DEFAULT_CODEX_MODEL_ID
+    )?.displayName ?? DEFAULT_CODEX_MODEL_ID;
     const selectedModelId = recommendedModelIds.has(defaultModel) ? defaultModel : DEFAULT_CODEX_MODEL_ID;
     const hasUnsupportedModel = !recommendedModelIds.has(defaultModel);
     const activeModel = CODEX_RECOMMENDED_MODELS.find(
@@ -26634,7 +26650,10 @@ ${replacement}
     return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(import_jsx_runtime24.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(settings_card_default, { title: "Codex Default model", children: [
         /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
-        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: warningStyles, children: "The saved default model is no longer available. Falling back to GPT-5.2-Codex." }) : null,
+        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: warningStyles, children: [
+          "The saved default model is no longer available. Falling back to",
+          ` ${fallbackModelDisplayName}.`
+        ] }) : null,
         /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: listStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
           const isSelected = selectedModelId === model.id;
           const isRowHovered = hoveredRowId === model.id;
