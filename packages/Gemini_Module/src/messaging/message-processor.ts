@@ -33,6 +33,59 @@ type EventHandler = (
   accumulator: TurnAccumulator
 ) => readonly GeminiSessionEvent[];
 
+const readNonEmptyString = (value: unknown): string | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
+const trySerializeValue = (value: unknown): string | null => {
+  try {
+    const serialized = JSON.stringify(value);
+    return serialized.length > 0 ? serialized : null;
+  } catch {
+    return null;
+  }
+};
+
+export const formatGeminiStreamErrorMessage = (
+  value: unknown
+): string | null => {
+  if (value instanceof Error) {
+    return readNonEmptyString(value.message);
+  }
+
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+
+  const directMessage = readNonEmptyString(record.message);
+  if (directMessage) {
+    return directMessage;
+  }
+
+  const errorValue = record.error;
+  const errorMessage = readNonEmptyString(errorValue);
+  if (errorMessage) {
+    return errorMessage;
+  }
+
+  if (errorValue && typeof errorValue === "object") {
+    const errorRecord = errorValue as Record<string, unknown>;
+    const nestedMessage = readNonEmptyString(errorRecord.message);
+    if (nestedMessage) {
+      return nestedMessage;
+    }
+    return trySerializeValue(errorValue);
+  }
+
+  return null;
+};
+
 export class GeminiMessageProcessor {
   private readonly reporter?: ModuleReporter;
 
@@ -372,14 +425,9 @@ export class GeminiMessageProcessor {
   }
 
   private toError(value: unknown): Error {
-    if (value instanceof Error) {
-      return value;
-    }
-    if (value && typeof value === "object" && "error" in value) {
-      const message = String((value as { error?: unknown }).error ?? "");
-      if (message.length > 0) {
-        return new Error(message);
-      }
+    const message = formatGeminiStreamErrorMessage(value);
+    if (typeof message === "string" && message.length > 0) {
+      return new Error(message);
     }
     const fallback = new Error("Gemini reported an error.");
     this.reporter?.error?.("Gemini stream error", fallback, { payload: value });
