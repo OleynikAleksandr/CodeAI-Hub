@@ -1,3 +1,12 @@
+## [1.1.560] - 2026-02-11
+### Changed
+- Description workflow: удалён внутренний `Questionnaire Curator` (session hook, runtime service, template и bundled source), чтобы после `ok/approve` не создавалась дополнительная provider-сессия и не появлялся лишний `sdk-gemini-*.jsonl`.
+- Description/Reviewer prompts: добавлено явное языковое правило — коммуникация с пользователем и артефакты (`description.md`, `Final_Description.md`) только на русском.
+- Core reviewer fallback prompt: синхронизирован с RU-контрактом на случай отсутствия файла prompt template.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.560.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.559] - 2026-02-11
 ### Fixed
 - Gemini: ошибки стрима теперь показывают реальное сообщение (из nested `error.message`), вместо `[object Object]`.
