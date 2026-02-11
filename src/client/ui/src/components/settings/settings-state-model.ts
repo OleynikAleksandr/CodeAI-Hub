@@ -32,6 +32,7 @@ export type {
 
 export type ProviderId = "claude" | "codex" | "gemini";
 
+export type { ProviderVersions, VersionEntry } from "./provider-versions-model";
 export type { RawSettingsSnapshot } from "./settings-state-raw";
 
 type ThinkingSettings = {
@@ -72,28 +73,6 @@ export type Settings = {
     readonly codex: CodexSettings;
     readonly gemini: GeminiSettings;
   };
-};
-export type VersionEntry = {
-  readonly packageName: string;
-  readonly currentVersion: string | null;
-  readonly latestVersion: string | null;
-  readonly source: "global";
-  readonly error?: string | null;
-};
-export type ProviderVersions = {
-  readonly claude: {
-    readonly cli: VersionEntry;
-    readonly sdk: VersionEntry;
-  };
-  readonly codex: {
-    readonly cli: VersionEntry;
-    readonly sdk: VersionEntry;
-  };
-  readonly gemini: {
-    readonly cli: VersionEntry;
-    readonly core: VersionEntry;
-  };
-  readonly checkedAt?: string;
 };
 
 const DEFAULT_THINKING_MAX_TOKENS = 4000;
@@ -291,7 +270,11 @@ const areGeminiSettingsEqual = (
   areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
     right.thinkingLevelByModel
-  );
+  ) &&
+  left.sessionContinuity.contextWindowTokenLimit ===
+    right.sessionContinuity.contextWindowTokenLimit &&
+  left.sessionContinuity.remainingPercentThreshold ===
+    right.sessionContinuity.remainingPercentThreshold;
 
 export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areGeneralSettingsEqual(left.general, right.general) &&
