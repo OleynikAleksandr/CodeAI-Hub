@@ -77,6 +77,10 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
     []
   );
 
+  const fallbackModelDisplayName =
+    CODEX_RECOMMENDED_MODELS.find(
+      (model) => model.id === DEFAULT_CODEX_MODEL_ID
+    )?.displayName ?? DEFAULT_CODEX_MODEL_ID;
   const selectedModelId = recommendedModelIds.has(defaultModel)
     ? defaultModel
     : DEFAULT_CODEX_MODEL_ID;
@@ -120,7 +124,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
         {hasUnsupportedModel ? (
           <div style={warningStyles}>
             The saved default model is no longer available. Falling back to
-            GPT-5.2-Codex.
+            {` ${fallbackModelDisplayName}.`}
           </div>
         ) : null}
         <div style={listStyles}>
