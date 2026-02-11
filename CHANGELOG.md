@@ -1,3 +1,12 @@
+## [1.1.564] - 2026-02-11
+### Changed
+- Claude: сервисные slash-команды `/context` и `/usage` выполняются через модель `haiku` (дешевле, инфо та же).
+- Session UI: правый блок лимитов в `Session ID Bar` теперь показывает `session/weekly` usage с `Resets ...` в подписи.
+
+### Added
+- Claude: добавлено чтение `/usage` (5-hour + weekly all-models) и эмит `usage_limits` в stream.
+- Release artifacts: собран `codeai-hub-1.1.564.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.563] - 2026-02-11
 ### Changed
 - Claude: defaultModel теперь хранится как `sonnet` (legacy `default` мигрируется на load), чтобы в Settings/Session UI не было неявного alias.
