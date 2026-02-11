@@ -44,3 +44,21 @@
 4. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.556` (hash: 3891af76)
 5. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.556`)
 6. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.556` (hash: 202eb9cc)
+
+---
+
+## Phase 137 — Gemini CLI Workspace Tool Access (owner: Oleksandr, updated: 2026-02-11)
+
+**Goal:** стабилизировать workflow-агентов Gemini (Description/Reviewer) — tool-calls (`read_file`/`write_file`) должны иметь доступ к workspace артефактам `.codeai-hub/**` без ошибок вида `Path not in workspace`.
+
+### Stream: Gemini CLI includeDirectories
+1. [DONE] Gemini: добавить `workspacePath` в `includeDirectories` CLI, чтобы tool-calls могли читать/писать `.codeai-hub/**` артефакты (scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`; expected commit message: `fix(gemini): allow workspace path in cli includeDirectories`)
+2. [DONE] Git Commit: `fix(gemini): allow workspace path in cli includeDirectories` (hash: 175de8fd)
+3. [DONE] Выполнить `./scripts/build-all.sh` (версия: `1.1.557`) (scope: manifests; expected commit message: `chore(release): run build-all for gemini workspace tool access`)
+4. [DONE] Git Commit: `chore(release): run build-all for gemini workspace tool access` (hash: e2f3764f)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (`codeai-hub-1.1.557.vsix`) (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.557`)
+6. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.557` (hash: 15673506)
+7. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию `1.1.557` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.557`)
+8. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.557` (hash: caa96b6e)
+9. [IN_PROGRESS] Docs: добавить session report `doc/Sessions/Session013.md` (scope: `doc/Sessions/Session013.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session013 for v1.1.557`)
+10. [TODO] Git Commit: `docs(session): add Session013 for v1.1.557` (hash: TBD)
