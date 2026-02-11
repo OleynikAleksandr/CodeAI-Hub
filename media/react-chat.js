@@ -26008,9 +26008,9 @@ ${replacement}
   // src/types/claude-model-registry.ts
   var CLAUDE_MODEL_ALIASES = [
     {
-      alias: "default",
-      displayName: "Default \xB7 Sonnet 4.5",
-      description: "Best for everyday tasks. Alias `sonnet` maps to the same release (claude-sonnet-4-5-20250929).",
+      alias: "sonnet",
+      displayName: "Sonnet 4.5",
+      description: "Best for everyday tasks (claude-sonnet-4-5-20250929).",
       status: "active"
     },
     {
@@ -26027,10 +26027,9 @@ ${replacement}
     }
   ];
   var CLAUDE_MODEL_ALIAS_SET = /* @__PURE__ */ new Set([
-    ...CLAUDE_MODEL_ALIASES.map((model) => model.alias),
-    "sonnet"
+    ...CLAUDE_MODEL_ALIASES.map((model) => model.alias)
   ]);
-  var DEFAULT_CLAUDE_MODEL_ALIAS = "default";
+  var DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
 
   // src/client/ui/src/components/settings/settings-card.tsx
   var import_jsx_runtime21 = __toESM(require_jsx_runtime());
