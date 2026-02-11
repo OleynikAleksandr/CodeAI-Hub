@@ -82,3 +82,25 @@
 4. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.558` (hash: bf118c75)
 5. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.558`)
 6. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.558` (hash: 0dc5b521)
+
+---
+
+## Phase 139 — Gemini UX: Human-Readable Stream Errors + Release (owner: Oleksandr, updated: 2026-02-11)
+
+**Goal:** исправить системные сообщения вида `[geminiCli] [object Object]` — извлекать человеко-читаемую ошибку из nested payload (`{ error: { message } }`).
+
+### Stream: Gemini Stream Error Formatting
+1. [DONE] Gemini: нормализовать сообщение stream error (nested `error.message` → строка), чтобы в UI отображалась реальная причина (scope: `packages/Gemini_Module/src/messaging/message-processor.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`; expected commit message: `fix(gemini): render nested stream error messages`)
+2. [DONE] Git Commit: `fix(gemini): render nested stream error messages` (hash: ea8857ba)
+
+### Stream: Release Build (Phase 139)
+1. [TODO] Выполнить `./scripts/build-all.sh` (scope: manifests; expected commit message: `chore(release): run build-all for gemini stream error messaging`)
+2. [TODO] Git Commit: `chore(release): run build-all for gemini stream error messaging` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for vNEXT`)
+4. [TODO] Git Commit: `chore(release): build and validate vsix for vNEXT` (hash: TBD)
+5. [TODO] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for vNEXT`)
+6. [TODO] Git Commit: `docs(release): sync root notes and system architecture for vNEXT` (hash: TBD)
+
+### Stream: Session Report (Phase 139)
+1. [TODO] Docs: добавить session report `doc/Sessions/Session015.md` + обновить статус Phase 139 в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Session015.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session015 for vNEXT`)
+2. [TODO] Git Commit: `docs(session): add Session015 for vNEXT` (hash: TBD)
