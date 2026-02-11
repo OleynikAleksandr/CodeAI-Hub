@@ -33,6 +33,83 @@ const settingsInputStyles: React.CSSProperties = {
   color: "#cccccc",
 };
 
+type ManualIntegerInputProps = {
+  readonly id: string;
+  readonly value: number;
+  readonly min: number;
+  readonly max: number;
+  readonly onCommit: (value: number) => void;
+};
+
+const UNSIGNED_INTEGER_RE = /^\d+$/;
+
+const isUnsignedIntegerText = (value: string): boolean =>
+  UNSIGNED_INTEGER_RE.test(value);
+
+const clampInteger = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, value));
+
+const ManualIntegerInput: React.FC<ManualIntegerInputProps> = ({
+  id,
+  value,
+  min,
+  max,
+  onCommit,
+}) => {
+  const [draft, setDraft] = React.useState(() => String(value));
+
+  React.useEffect(() => {
+    setDraft(String(value));
+  }, [value]);
+
+  const commitDraft = React.useCallback(() => {
+    const trimmed = draft.trim();
+    if (trimmed.length === 0) {
+      setDraft(String(value));
+      return;
+    }
+    if (!isUnsignedIntegerText(trimmed)) {
+      setDraft(String(value));
+      return;
+    }
+
+    const parsed = Number(trimmed);
+    if (!Number.isFinite(parsed)) {
+      setDraft(String(value));
+      return;
+    }
+
+    const clamped = clampInteger(parsed, min, max);
+    onCommit(clamped);
+    setDraft(String(clamped));
+  }, [draft, max, min, onCommit, value]);
+
+  return (
+    <input
+      autoComplete="off"
+      id={id}
+      inputMode="numeric"
+      onBlur={commitDraft}
+      onChange={(event) => setDraft(event.target.value)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          event.currentTarget.blur();
+        }
+        if (event.key === "Escape") {
+          event.preventDefault();
+          setDraft(String(value));
+          event.currentTarget.blur();
+        }
+      }}
+      pattern="[0-9]*"
+      style={settingsInputStyles}
+      type="text"
+      value={draft}
+    />
+  );
+};
+
 const SessionContinuityCard: React.FC<SessionContinuityCardProps> = ({
   title,
   remainingPercentThreshold,
@@ -62,16 +139,16 @@ const SessionContinuityCard: React.FC<SessionContinuityCardProps> = ({
         />
       </label>
     ) : null}
-    <label style={settingsLabelStyles}>
+    <label
+      htmlFor={`${title}-remaining-percent-threshold`}
+      style={settingsLabelStyles}
+    >
       Remaining context threshold (%)
-      <input
+      <ManualIntegerInput
+        id={`${title}-remaining-percent-threshold`}
         max={80}
         min={5}
-        onChange={(event) =>
-          onRemainingPercentThresholdChange(Number(event.target.value))
-        }
-        style={settingsInputStyles}
-        type="number"
+        onCommit={onRemainingPercentThresholdChange}
         value={remainingPercentThreshold}
       />
     </label>
