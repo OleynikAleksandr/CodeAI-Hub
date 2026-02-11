@@ -11,6 +11,10 @@ export type RawClaudeSessionContinuitySettings = {
 export type RawCodexSessionContinuitySettings = {
   readonly remainingPercentThreshold?: unknown;
 };
+export type RawGeminiSessionContinuitySettings = {
+  readonly contextWindowTokenLimit?: unknown;
+  readonly remainingPercentThreshold?: unknown;
+};
 export type RawClaudeSettings = {
   readonly thinking?: RawThinkingSettings;
   readonly autoUpdate?: RawAutoUpdateSettings;
@@ -27,6 +31,7 @@ export type RawGeminiSettings = {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
   readonly thinkingLevelByModel?: Record<string, unknown>;
+  readonly sessionContinuity?: RawGeminiSessionContinuitySettings;
 };
 export type RawCoreControlsSettings = {
   readonly allowRestart?: unknown;
