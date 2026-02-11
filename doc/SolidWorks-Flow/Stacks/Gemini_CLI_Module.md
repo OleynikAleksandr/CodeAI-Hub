@@ -2,15 +2,15 @@
 
 **Status:** Active (CommonJS bridge)
 
-**Last Updated:** 2026-02-10
+**Last Updated:** 2026-02-11
 
 **Maintainer:** Codex / CodeAI Hub Core Team
 
 ---
 
-## 0. Operational Status Note (2026-02-10)
+## 0. Operational Status Note (2026-02-11)
 
-- В `1.1.538` подтверждён рабочий path: `Description (one-shot)` + `Reviewer (resume)` на Gemini; статус повторно подтверждён как операционно стабильный в `1.1.545`.
+- В `1.1.538` подтверждён рабочий path: `Description (one-shot)` + `Reviewer (resume)` на Gemini; статус повторно подтверждён как операционно стабильный в `1.1.560`.
 - Фаза активного развития Gemini временно приостановлена.
 - Причина: пока нет надёжного runtime-контракта чтения и контроля фактического остатка контекстного окна (при номинально большом окне ~1M токенов).
 - До снятия паузы допустимы только bugfix-правки без расширения Gemini-функционала.
@@ -285,6 +285,7 @@ Important flags:
 
 
 ## 12. Change Log
+- **2026-02-11:** `1.1.560` — документация синхронизирована с текущей архитектурой; operational freeze сохранён без функциональных изменений Gemini runtime.
 - **2026-02-10:** `1.1.545` — документация синхронизирована; operational freeze сохранён без функциональных изменений Gemini runtime.
 - **2026-02-09:** `1.1.538` — подтверждён рабочий reviewer resume path для Gemini; дальнейшие Gemini-модификации поставлены на паузу до внедрения надёжной telemetry remaining context window.
 - **2026-02-09:** Phase 117 implementation — добавлена runtime compatibility стратегия для `@google/gemini-cli-core` (`legacy_non_interactive` + `scheduler_fallback`), фасад `GeminiToolExecutorFacade`, диагностика module compatibility в installer/provider и regression tests для loader/facade.

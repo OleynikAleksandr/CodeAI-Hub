@@ -1,7 +1,7 @@
 # Project Manager (CEF UI) — Architecture & Contracts
 
 **Status:** Active
-**Updated:** 2026-02-10 (release 1.1.545)
+**Updated:** 2026-02-11 (release 1.1.560)
 **Owner:** Oleksandr
 
 ---
