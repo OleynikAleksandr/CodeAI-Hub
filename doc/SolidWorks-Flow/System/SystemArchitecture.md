@@ -1,6 +1,6 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.560
+**Version:** 1.1.561
 **Last Updated:** 2026-02-11
 **Status:** Active reference (source of truth)
 
@@ -87,7 +87,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.560`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.561`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -98,7 +98,7 @@ Node.js сервис (`@codeai-hub/core@1.1.560`), упакованный как
 
 Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
 
-### 2.2 UI Bundles (v1.1.560)
+### 2.2 UI Bundles (v1.1.561)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
 - `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
@@ -378,6 +378,10 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 - В Core удален внутренний `Questionnaire Curator` (session hook + runtime service + template), поэтому после `ok/approve` больше не создается отдельная скрытая provider-сессия для автокурации анкеты.
 - Prompt templates для `Description Agent` и `Reviewer Agent` получили явное правило: ответы пользователю и финальные артефакты формируются только на русском языке.
 
+**Phase 141 legacy template cleanup:**
+- Extension activation больше не устанавливает legacy `idea-collector` шаблоны (`full-development-flow/idea/*`) в `~/.codeai-hub/templates`.
+- На чистой установке остаётся только актуальный набор runtime шаблонов (`description/*`, `virtual_simulation/*`, `diagram_*/*`, `flow/continuity/*`).
+
 **Operational freeze (2026-02-09):**
 - сценарий `Description(one-shot) -> Reviewer(resume)` на Gemini подтверждён рабочим в `1.1.538`;
 - дальнейшее развитие Gemini continuity/rollover поставлено на паузу до внедрения надёжной telemetry по фактическому remaining context window;
@@ -390,36 +394,36 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/1.1.560/
+│   └── darwin-arm64/1.1.561/
 │       ├── node/
 │       ├── app/
 │       └── install.json
 ├── packages/
-│   ├── launcher/macos-arm64/1.1.560/
+│   ├── launcher/macos-arm64/1.1.561/
 │   └── ui/
 │       ├── vscode-webview/
 │       │   ├── 1.1.551/
-│       │   └── current -> 1.1.560
+│       │   └── current -> 1.1.561
 │       └── project-manager/
 │           ├── 1.1.551/
-│           └── current -> 1.1.560
+│           └── current -> 1.1.561
 ├── providers/
-│   ├── claude/1.1.560/
-│   ├── codex/1.1.560/
-│   └── gemini/1.1.560/
+│   ├── claude/1.1.561/
+│   ├── codex/1.1.561/
+│   └── gemini/1.1.561/
 ├── state/
 │   └── projects.json
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.560.tar.bz2
-    ├── vscode-webview-1.1.560.tar.bz2
-    ├── project-manager-1.1.560.tar.bz2
-    ├── claude-module-1.1.560.tar.bz2
-    ├── codex-module-1.1.560.tar.bz2
-    ├── gemini-module-1.1.560.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.560.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.561.tar.bz2
+    ├── vscode-webview-1.1.561.tar.bz2
+    ├── project-manager-1.1.561.tar.bz2
+    ├── claude-module-1.1.561.tar.bz2
+    ├── codex-module-1.1.561.tar.bz2
+    ├── gemini-module-1.1.561.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.561.tar.bz2
 ```
 
 ---
@@ -428,12 +432,12 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.560 |
-| Core | 1.1.560 |
-| UI Bundles | 1.1.560 |
-| Claude Module | 1.1.560 |
-| Codex Module | 1.1.560 |
-| Gemini Module | 1.1.560 |
+| VSIX | 1.1.561 |
+| Core | 1.1.561 |
+| UI Bundles | 1.1.561 |
+| Claude Module | 1.1.561 |
+| Codex Module | 1.1.561 |
+| Gemini Module | 1.1.561 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |

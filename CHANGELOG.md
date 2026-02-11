@@ -1,3 +1,11 @@
+## [1.1.561] - 2026-02-11
+### Changed
+- Extension activation: удалена автоустановка legacy `idea-collector` шаблонов (`idea-collector-prompt.md`, `questionnaire-template.md`) в `~/.codeai-hub/templates/full-development-flow/idea/*`.
+- Runtime templates: сохранён только актуальный контур шаблонов (`description/*`, `virtual_simulation/*`, `diagram_*/*`, `flow/continuity/*`) без формирования legacy-папки `full-development-flow`.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.561.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.560] - 2026-02-11
 ### Changed
 - Description workflow: удалён внутренний `Questionnaire Curator` (session hook, runtime service, template и bundled source), чтобы после `ok/approve` не создавалась дополнительная provider-сессия и не появлялся лишний `sdk-gemini-*.jsonl`.
