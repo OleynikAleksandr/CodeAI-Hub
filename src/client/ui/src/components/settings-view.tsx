@@ -107,6 +107,8 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleThinkingSettingsChange,
     handleClaudeContinuityRemainingPercentThresholdChange,
     handleCodexContinuityRemainingPercentThresholdChange,
+    handleGeminiContinuityRemainingPercentThresholdChange,
+    handleGeminiContextWindowTokenLimitChange,
     handleCodexDefaultModelChange,
     handleClaudeDefaultModelChange,
     handleGeminiDefaultModelChange,
@@ -232,6 +234,23 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                 onUpdate={handleUpdateProvider}
                 provider="gemini"
                 versions={versions}
+              />
+              <SessionContinuityCard
+                contextWindowTokenLimit={
+                  settings.providers.gemini.sessionContinuity
+                    .contextWindowTokenLimit
+                }
+                onContextWindowTokenLimitChange={
+                  handleGeminiContextWindowTokenLimitChange
+                }
+                onRemainingPercentThresholdChange={
+                  handleGeminiContinuityRemainingPercentThresholdChange
+                }
+                remainingPercentThreshold={
+                  settings.providers.gemini.sessionContinuity
+                    .remainingPercentThreshold
+                }
+                title="Gemini Session Continuity"
               />
             </div>
           );

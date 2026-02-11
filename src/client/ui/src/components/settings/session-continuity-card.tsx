@@ -5,6 +5,8 @@ type SessionContinuityCardProps = {
   readonly title: string;
   readonly remainingPercentThreshold: number;
   readonly onRemainingPercentThresholdChange: (value: number) => void;
+  readonly contextWindowTokenLimit?: number;
+  readonly onContextWindowTokenLimitChange?: (value: number) => void;
 };
 
 const settingsLabelStyles: React.CSSProperties = {
@@ -35,6 +37,8 @@ const SessionContinuityCard: React.FC<SessionContinuityCardProps> = ({
   title,
   remainingPercentThreshold,
   onRemainingPercentThresholdChange,
+  contextWindowTokenLimit,
+  onContextWindowTokenLimitChange,
 }) => (
   <SettingsCard title={title}>
     <p style={settingsDescriptionStyles}>
@@ -42,6 +46,22 @@ const SessionContinuityCard: React.FC<SessionContinuityCardProps> = ({
       CodeAI Hub can automatically wrap up the current session (with a report)
       and start a new one. Default: 30%.
     </p>
+    {typeof contextWindowTokenLimit === "number" &&
+    onContextWindowTokenLimitChange ? (
+      <label style={settingsLabelStyles}>
+        Context window limit (tokens)
+        <input
+          max={1_000_000}
+          min={10_000}
+          onChange={(event) =>
+            onContextWindowTokenLimitChange(Number(event.target.value))
+          }
+          style={settingsInputStyles}
+          type="number"
+          value={contextWindowTokenLimit}
+        />
+      </label>
+    ) : null}
     <label style={settingsLabelStyles}>
       Remaining context threshold (%)
       <input
