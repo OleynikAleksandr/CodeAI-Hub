@@ -70,15 +70,15 @@
 **Goal:** улучшить UX ввода continuity thresholds в Settings: вместо стрелок (spinner) — ручной ввод с контролем пределов (клампы) и нормализацией.
 
 ### Stream: Settings UI (Webview) — Continuity Inputs
-1. [TODO] UI: заменить `type="number"` на ручной ввод без spinner для `remainingPercentThreshold` (все провайдеры) + применить bounded/clamp на commit (blur/Enter) (scope: `src/client/ui/src/components/settings/session-continuity-card.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`; expected commit message: `fix(ui): manual continuity percent input without spinners`)
-2. [TODO] Git Commit: `fix(ui): manual continuity percent input without spinners` (hash: TBD)
-3. [TODO] UI (Gemini): сделать ручной ввод без spinner для `contextWindowTokenLimit` (tokens) + bounded/clamp на commit (blur/Enter) (scope: `src/client/ui/src/components/settings/session-continuity-card.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`; expected commit message: `fix(ui): manual gemini context window limit input without spinners`)
-4. [TODO] Git Commit: `fix(ui): manual gemini context window limit input without spinners` (hash: TBD)
+1. [DONE] UI: заменить `type="number"` на ручной ввод без spinner для `remainingPercentThreshold` (все провайдеры) + применить bounded/clamp на commit (blur/Enter) (scope: `src/client/ui/src/components/settings/session-continuity-card.tsx`; expected commit message: `fix(ui): manual continuity percent input without spinners`)
+2. [DONE] Git Commit: `fix(ui): manual continuity percent input without spinners` (hash: e3366c1a)
+3. [DONE] UI (Gemini): сделать ручной ввод без spinner для `contextWindowTokenLimit` (tokens) + bounded/clamp на commit (blur/Enter) (scope: `src/client/ui/src/components/settings/session-continuity-card.tsx`; expected commit message: `fix(ui): manual gemini context window limit input without spinners`)
+4. [DONE] Git Commit: `fix(ui): manual gemini context window limit input without spinners` (hash: 72b3b206)
 
 ### Stream: Release Build (Phase 138)
-1. [TODO] Выполнить `./scripts/build-all.sh` (scope: manifests; expected commit message: `chore(release): run build-all for manual continuity inputs`)
-2. [TODO] Git Commit: `chore(release): run build-all for manual continuity inputs` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for vNEXT`)
-4. [TODO] Git Commit: `chore(release): build and validate vsix for vNEXT` (hash: TBD)
-5. [TODO] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for vNEXT`)
-6. [TODO] Git Commit: `docs(release): sync root notes and system architecture for vNEXT` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` (версия: `1.1.558`) (scope: manifests; expected commit message: `chore(release): run build-all for manual continuity inputs`)
+2. [DONE] Git Commit: `chore(release): run build-all for manual continuity inputs` (hash: 0c00b109)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (`codeai-hub-1.1.558.vsix`) (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.558`)
+4. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.558` (hash: bf118c75)
+5. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию после `build-all/build-release` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.558`)
+6. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.558` (hash: 0dc5b521)
