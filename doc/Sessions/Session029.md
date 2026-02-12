@@ -27,6 +27,8 @@
 - `5cd1a174 test(ui): cover usage reset local time formatting`
 - `9d062ff8 docs(release): sync docs for v1.1.574`
 - `8f32d4b9 chore(release): run build-all for v1.1.574`
+- `f8b37c24 docs(session): add session029 release report`
+- `1498a90a chore(todo): finalize phase148 status hashes`
 
 ---
 
