@@ -107,6 +107,17 @@ const areUsageLimitsEqual = (
   );
 };
 
+const normalizeUsageLimitsSnapshot = (
+  snapshot: UsageLimitsSnapshot
+): UsageLimitsSnapshot => {
+  return {
+    currentSession: snapshot.currentSession ?? null,
+    currentWeekAllModels: snapshot.currentWeekAllModels ?? null,
+    // Keep sonnet bucket disabled to preserve current UI contract.
+    currentWeekSonnetOnly: null,
+  };
+};
+
 const MIN_REFRESH_INTERVAL_MS = 1500;
 const TEMP_SESSION_PREFIX = "temp_";
 
@@ -615,7 +626,7 @@ export class SDKMessageProcessor {
         if (!snapshot) {
           return null;
         }
-        const nextUsage: UsageLimitsSnapshot = snapshot;
+        const nextUsage = normalizeUsageLimitsSnapshot(snapshot);
         const previous = this.usageLimitsCache.get(resolvedId);
         if (previous && areUsageLimitsEqual(previous, nextUsage)) {
           return previous;
@@ -636,7 +647,7 @@ export class SDKMessageProcessor {
       .catch((error) => {
         const message = error instanceof Error ? error.message : String(error);
         this.options.reporter?.warn?.(
-          `Claude /usage limits read failed (session ${resolvedId}): ${message}`
+          `Claude usage limits probe failed (session ${resolvedId}): ${message}`
         );
         return null;
       })
