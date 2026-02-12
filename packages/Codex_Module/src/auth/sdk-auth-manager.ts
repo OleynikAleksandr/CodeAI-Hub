@@ -1,9 +1,18 @@
-import { access, copyFile, mkdir } from "node:fs/promises";
+import {
+  access,
+  copyFile,
+  lstat,
+  mkdir,
+  readlink,
+  symlink,
+  unlink,
+} from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 
 const CODEX_LOGIN_HINT =
   "Codex authentication required. Run `codex login` in a terminal session.";
+const isWindows = process.platform === "win32";
 
 const LEGACY_CODEX_HOME = path.join(homedir(), ".codex");
 const CODEAI_CODEX_HOME = path.join(
@@ -45,52 +54,65 @@ export class CodexAuthManager {
   }
 
   private async migrateLegacyAuthIfNeeded(): Promise<void> {
-    try {
-      await access(path.join(this.codexHome, "auth.json"));
-      return;
-    } catch {
-      // auth missing in current CODEX_HOME; try migrating from legacy ~/.codex
-    }
+    await this.ensureLegacyFileLinked("auth.json");
+    await this.ensureLegacyFileLinked("config.toml");
+  }
+
+  private async ensureLegacyFileLinked(filename: string): Promise<void> {
+    const source = path.join(LEGACY_CODEX_HOME, filename);
+    const destination = path.join(this.codexHome, filename);
 
     try {
-      await access(path.join(LEGACY_CODEX_HOME, "auth.json"));
+      await access(source);
     } catch {
       return;
     }
 
     try {
       await mkdir(this.codexHome, { recursive: true });
-      await copyFile(
-        path.join(LEGACY_CODEX_HOME, "auth.json"),
-        path.join(this.codexHome, "auth.json")
-      );
-      await this.migrateLegacyConfigIfNeeded();
+      await this.ensureLinkedOrCopiedFile(source, destination);
     } catch {
       // ignore migration errors; ensureAuthenticated will surface missing auth
     }
   }
 
-  private async migrateLegacyConfigIfNeeded(): Promise<void> {
-    try {
-      await access(path.join(this.codexHome, "config.toml"));
-      return;
-    } catch {
-      // no config.toml in CODEX_HOME; try copying from legacy directory
-    }
-
-    try {
-      await access(path.join(LEGACY_CODEX_HOME, "config.toml"));
-    } catch {
+  private async ensureLinkedOrCopiedFile(
+    source: string,
+    destination: string
+  ): Promise<void> {
+    const existing = await this.readExistingLinkTarget(destination);
+    if (existing && path.resolve(existing) === path.resolve(source)) {
       return;
     }
 
+    if (existing !== null) {
+      await unlink(destination);
+    }
+
+    if (isWindows) {
+      await copyFile(source, destination);
+      return;
+    }
+
     try {
-      await copyFile(
-        path.join(LEGACY_CODEX_HOME, "config.toml"),
-        path.join(this.codexHome, "config.toml")
-      );
+      await symlink(source, destination);
     } catch {
-      // ignore copy errors
+      await copyFile(source, destination);
+    }
+  }
+
+  private async readExistingLinkTarget(
+    filePath: string
+  ): Promise<string | null> {
+    try {
+      const stats = await lstat(filePath);
+      if (stats.isSymbolicLink()) {
+        const linkTarget = await readlink(filePath);
+        return path.resolve(path.dirname(filePath), linkTarget);
+      }
+      return filePath;
+    } catch {
+      return null;
     }
   }
 }
