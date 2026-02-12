@@ -1,8 +1,7 @@
-import { homedir } from "node:os";
-import path from "node:path";
 import { SDKAuthManager } from "../auth/sdk-auth-manager";
 import { SDKInstaller } from "../installer/sdk-installer";
 import { SDKMessageProcessor } from "../messaging/message-processor";
+import { resolveClaudeProviderProjectDir } from "../sdk/claude-provider-home";
 import { ClaudeSDKManager } from "../sdk/claude-sdk-manager";
 import { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
@@ -174,7 +173,7 @@ export class ClaudeProviderAdapter {
   }
 
   private resolveProjectPath(slug: string): string {
-    return path.join(homedir(), ".claude", "projects", slug);
+    return resolveClaudeProviderProjectDir(slug);
   }
 
   private resolveSessionAlias(sessionId: string): string {
