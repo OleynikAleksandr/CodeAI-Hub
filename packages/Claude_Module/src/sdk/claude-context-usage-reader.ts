@@ -24,6 +24,7 @@ const TEMP_SESSION_PREFIX = "temp_";
 
 // Service-only command: should be as cheap as possible.
 const SERVICE_MODEL_ALIAS = "haiku";
+const CLAUDE_OAUTH_ENV_KEY = "CLAUDE_CODE_OAUTH_TOKEN";
 
 const resolveClaudeRunner = (payload: {
   readonly executablePath: string;
@@ -304,8 +305,19 @@ export class ClaudeContextUsageReader {
         "/context",
       ],
       cwd: resolvedCwd,
-      env: this.options.env,
+      env: this.resolveRuntimeEnv(),
     });
     return snapshot;
+  }
+
+  private resolveRuntimeEnv(): NodeJS.ProcessEnv {
+    const merged = { ...this.options.env };
+    if (!merged[CLAUDE_OAUTH_ENV_KEY]) {
+      const runtimeToken = process.env[CLAUDE_OAUTH_ENV_KEY]?.trim();
+      if (runtimeToken) {
+        merged[CLAUDE_OAUTH_ENV_KEY] = runtimeToken;
+      }
+    }
+    return merged;
   }
 }

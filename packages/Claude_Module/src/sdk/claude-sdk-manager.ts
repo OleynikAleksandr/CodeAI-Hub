@@ -98,7 +98,7 @@ export class ClaudeSDKManager {
     if (!this.contextReaderConfigured) {
       this.deps.processor.configureContextUsageReader({
         executablePath: this.deps.installer.getExecutablePath(),
-        env: this.deps.authManager.getAuthEnvironment(),
+        env: this.resolveAuthEnvironment(),
       });
       this.contextReaderConfigured = true;
     }
@@ -242,7 +242,7 @@ export class ClaudeSDKManager {
       includePartialMessages: true,
       projectPath: this.resolveProjectPath(),
       settingSources: ["user", "project", "local"],
-      env: this.deps.authManager.getAuthEnvironment(),
+      env: this.resolveAuthEnvironment(),
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
     };
     if (resolvedModel) {
@@ -267,6 +267,10 @@ export class ClaudeSDKManager {
     return resolveClaudeProviderProjectDir(
       this.deps.workspace.claudeProjectSlug
     );
+  }
+
+  private resolveAuthEnvironment(): NodeJS.ProcessEnv {
+    return { ...this.deps.authManager.getAuthEnvironment() };
   }
 
   private resolveThinkingOptions(snapshot: ClaudeSettingsSnapshot | null): {
