@@ -25,8 +25,8 @@
 6. [DONE] Git Commit: `fix(claude): resolve cwd from provider-home projects` (hash: 538ba22b)
 
 ### Stream: Release Build (Phase 143)
-1. [TODO] Выполнить `./scripts/build-all.sh` (версия: TBD) (scope: manifests; expected commit message: `chore(release): run build-all for phase143`)
-2. [TODO] Git Commit: `chore(release): run build-all for phase143` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` (версия: `1.1.565`) (scope: manifests; expected commit message: `chore(release): run build-all for phase143`)
+2. [DONE] Git Commit: `chore(release): run build-all for v1.1.565` (hash: 9b05bc28)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать VSIX (scope: scripts; expected commit message: `chore(release): build vsix for phase143`)
 4. [TODO] Git Commit: `chore(release): build vsix for phase143` (hash: TBD)
 
