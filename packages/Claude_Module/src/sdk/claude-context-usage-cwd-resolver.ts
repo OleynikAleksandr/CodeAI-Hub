@@ -1,8 +1,8 @@
 import { access, readdir, readFile } from "node:fs/promises";
-import { homedir } from "node:os";
 import path from "node:path";
+import { resolveClaudeProviderProjectsDir } from "./claude-provider-home";
 
-const CLAUDE_PROJECTS_ROOT = path.join(homedir(), ".claude", "projects");
+const CLAUDE_PROJECTS_ROOT = resolveClaudeProviderProjectsDir();
 const SESSIONS_INDEX_FILENAME = "sessions-index.json";
 
 const fileExists = async (filePath: string): Promise<boolean> => {
