@@ -1,6 +1,6 @@
 # Стек Claude для CodeAI-Hub
 
-**Версия стека:** 1.1.570  
+**Версия стека:** 1.1.571  
 **Обновлено:** 2026-02-12  
 **Статус:** Active (one-shot + provider-home auth bootstrap + ratelimit usage probe)
 

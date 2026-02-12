@@ -1,3 +1,10 @@
+## [1.1.571] - 2026-02-12
+### Fixed
+- Claude auth bootstrap: исправлен OAuth token reader для platform store (macOS Keychain/аналогичные сторы) — теперь payload сначала парсится как JSON и извлекает `accessToken`, а только потом применяет raw-token fallback. Это устраняет `401 Invalid bearer token` и состояние провайдера `UNAVAILABLE` после provider-home preflight.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.571.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.570] - 2026-02-12
 ### Changed
 - Claude usage limits (Phase 144): `usage_limits` больше не читается через slash-команду `/usage`; вместо этого выполняется lightweight probe к `https://api.anthropic.com/v1/messages` (`anthropic-beta: oauth-2025-04-20`) и парсинг ratelimit headers `anthropic-ratelimit-unified-5h-*` и `anthropic-ratelimit-unified-7d-*`.
