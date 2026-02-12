@@ -1,6 +1,6 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.566
+**Version:** 1.1.569
 **Last Updated:** 2026-02-12
 **Status:** Active reference (source of truth)
 
@@ -87,7 +87,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.566`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.569`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -98,7 +98,7 @@ Node.js сервис (`@codeai-hub/core@1.1.566`), упакованный как
 
 Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
 
-### 2.2 UI Bundles (v1.1.566)
+### 2.2 UI Bundles (v1.1.569)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
 - `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
@@ -174,6 +174,24 @@ State-table для Session UI:
 3. Resume существующей Claude-сессии выполняется через `options.resume=<providerSessionId>` без `forkSession`.
 4. Для каждого user turn обязателен lifecycle-контракт `turn_started` -> (`turn_completed` | `turn_failed`) ровно один раз.
 5. Logger при resume/rebind дописывает существующий session лог (`append`), без truncate уже накопленных записей.
+
+### 2.9 Claude Provider-Home Auth Bootstrap (Phase 146)
+
+Для стабильного запуска Claude в изолированном provider-home контуре (`HOME=~/.codeai-hub/providers/claude/home`) действует обязательный bootstrap pipeline:
+
+1. Auth state/link bootstrap (`.claude.json`) + credential migration (best effort).
+2. OAuth token resolution с fallback-приоритетом:
+   - `CLAUDE_CODE_OAUTH_TOKEN` (env),
+   - provider-home credentials file,
+   - legacy credentials file,
+   - platform store (macOS Keychain, service `Claude Code-credentials`).
+3. Runtime env injection: `CLAUDE_CODE_OAUTH_TOKEN` передаётся во все Claude процессы (`query`, `/context`, `/usage`).
+4. Preflight gate до первой рабочей Claude-сессии: non-interactive probe в provider-home.
+5. При первом фейле preflight выполняется retry после force-refresh token bootstrap.
+6. Только при повторном фейле UI получает recovery hint:  
+   `HOME=~/.codeai-hub/providers/claude/home claude login`.
+
+Инвариант: терминальный пользовательский `HOME` не переопределяется глобально и продолжает использовать `~/.claude/*`.
 
 ---
 
@@ -360,6 +378,12 @@ CommonJS модули, tarballs через `npm pack`. Инсталляторы 
 
 При первом запуске на чистой установке `settings.json` создается автоматически с дефолтным snapshot, чтобы Project Manager и Session UI могли сразу отображать корректные значения default model/reasoning без ручного изменения настроек.
 
+**Claude provider-home contract (Phase 143/145/146):**
+- Claude session transcripts, созданные из CodeAI Hub, пишутся только в `~/.codeai-hub/providers/claude/home/.claude/projects/*`.
+- Терминальные Claude CLI сессии остаются в стандартном `~/.claude/projects/*` и не смешиваются с Hub-сессиями.
+- `~/.codeai-hub/providers/claude/home/.claude.json` линкуется на `~/.claude.json` (Windows: fallback copy), чтобы использовать единый auth state.
+- До первого рабочего turn выполняется preflight auth gate + retry bootstrap; при неуспехе возвращается явная команда login для provider-home.
+
 ### 6.2 Gemini
 
 CommonJS модуль с динамическим `import()` для ESM-пакетов. Глобальная установка `@google/gemini-cli` и `@google/gemini-cli-core`.
@@ -394,36 +418,36 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/1.1.566/
+│   └── darwin-arm64/1.1.569/
 │       ├── node/
 │       ├── app/
 │       └── install.json
 ├── packages/
-│   ├── launcher/macos-arm64/1.1.566/
+│   ├── launcher/macos-arm64/1.1.569/
 │   └── ui/
 │       ├── vscode-webview/
 │       │   ├── 1.1.551/
-│       │   └── current -> 1.1.566
+│       │   └── current -> 1.1.569
 │       └── project-manager/
 │           ├── 1.1.551/
-│           └── current -> 1.1.566
+│           └── current -> 1.1.569
 ├── providers/
-│   ├── claude/1.1.566/
-│   ├── codex/1.1.566/
-│   └── gemini/1.1.566/
+│   ├── claude/1.1.569/
+│   ├── codex/1.1.569/
+│   └── gemini/1.1.569/
 ├── state/
 │   └── projects.json
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.566.tar.bz2
-    ├── vscode-webview-1.1.566.tar.bz2
-    ├── project-manager-1.1.566.tar.bz2
-    ├── claude-module-1.1.566.tar.bz2
-    ├── codex-module-1.1.566.tar.bz2
-    ├── gemini-module-1.1.566.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.566.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.569.tar.bz2
+    ├── vscode-webview-1.1.569.tar.bz2
+    ├── project-manager-1.1.569.tar.bz2
+    ├── claude-module-1.1.569.tar.bz2
+    ├── codex-module-1.1.569.tar.bz2
+    ├── gemini-module-1.1.569.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.569.tar.bz2
 ```
 
 ---
@@ -432,12 +456,12 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.566 |
-| Core | 1.1.566 |
-| UI Bundles | 1.1.566 |
-| Claude Module | 1.1.566 |
-| Codex Module | 1.1.566 |
-| Gemini Module | 1.1.566 |
+| VSIX | 1.1.569 |
+| Core | 1.1.569 |
+| UI Bundles | 1.1.569 |
+| Claude Module | 1.1.569 |
+| Codex Module | 1.1.569 |
+| Gemini Module | 1.1.569 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |

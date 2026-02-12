@@ -1,3 +1,12 @@
+## [1.1.569] - 2026-02-12
+### Fixed
+- Claude provider-home auth: добавлен OAuth bootstrap с автоматическим `CLAUDE_CODE_OAUTH_TOKEN` injection в runtime env, чтобы убрать `Not logged in · Please run /login` при запуске через provider-home.
+- Claude startup reliability: добавлен preflight gate до первой рабочей сессии (non-interactive probe + retry после refresh токена), с явным recovery-hint `HOME=~/.codeai-hub/providers/claude/home claude login` только при повторном фейле.
+- Claude provider-home probe: auth check переведен на `spawn` с закрытым stdin (`stdio: ["ignore", ...]`), чтобы исключить зависание non-interactive CLI проверки.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.569.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.566] - 2026-02-12
 ### Changed
 - Claude: provider-home auth state больше не копируется — `~/.codeai-hub/providers/claude/home/.claude.json` создается как symlink на `~/.claude.json` (Windows: fallback copy).
