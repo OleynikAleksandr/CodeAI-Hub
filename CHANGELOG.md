@@ -1,3 +1,11 @@
+## [1.1.566] - 2026-02-12
+### Changed
+- Claude: provider-home auth state больше не копируется — `~/.codeai-hub/providers/claude/home/.claude.json` создается как symlink на `~/.claude.json` (Windows: fallback copy).
+- Codex: provider-home `auth.json`/`config.toml` больше не копируются — используются symlink на `~/.codex/{auth.json,config.toml}` (Windows: fallback copy).
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.566.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.565] - 2026-02-12
 ### Changed
 - Claude: Claude Code CLI запускается с `HOME=~/.codeai-hub/providers/claude/home/`, поэтому сессии/транскрипты пишутся в provider-home и не смешиваются с `~/.claude/*`.
