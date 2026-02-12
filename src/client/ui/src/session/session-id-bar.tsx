@@ -4,6 +4,7 @@ import type {
   SessionStatusInfo,
 } from "../../../../types/session";
 import { buildResetLabel } from "./session-id-bar-reset-format";
+import { readLastKnownUsageLimits } from "./usage-limits-cache";
 
 const SESSION_ID_PREFIX_LENGTH = 8;
 
@@ -53,13 +54,15 @@ const renderLimitLabel = (payload: {
     .join(" ");
 
 const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
+  const resolvedUsageLimits =
+    status.usageLimits ?? readLastKnownUsageLimits(status.providerSummary);
   const sessionPercent =
-    status.usageLimits?.currentSession?.percentUsed ?? null;
-  const sessionResetsAt = status.usageLimits?.currentSession?.resetsAt ?? null;
+    resolvedUsageLimits?.currentSession?.percentUsed ?? null;
+  const sessionResetsAt = resolvedUsageLimits?.currentSession?.resetsAt ?? null;
   const weeklyPercent =
-    status.usageLimits?.currentWeekAllModels?.percentUsed ?? null;
+    resolvedUsageLimits?.currentWeekAllModels?.percentUsed ?? null;
   const weeklyResetsAt =
-    status.usageLimits?.currentWeekAllModels?.resetsAt ?? null;
+    resolvedUsageLimits?.currentWeekAllModels?.resetsAt ?? null;
   const sessionResetLabel = sessionResetsAt
     ? buildResetLabel(sessionResetsAt)
     : null;

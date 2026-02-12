@@ -1,9 +1,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { SessionSnapshot } from "../../../../types/session";
-import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
+import {
+  resolveLatestUsageLimitsForProvider,
+  updateSnapshotsWithUsageLimits,
+} from "./usage-limits-stream";
 
-const createSnapshot = (): SessionSnapshot => ({
+const createSnapshot = (options?: {
+  readonly providerSummary?: string;
+  readonly updatedAt?: number;
+  readonly usageLimits?: SessionSnapshot["status"]["usageLimits"];
+}): SessionSnapshot => ({
   messages: [],
   todos: [],
   draft: "",
@@ -12,14 +19,15 @@ const createSnapshot = (): SessionSnapshot => ({
     status: "pending",
   },
   status: {
-    providerSummary: "Claude",
+    providerSummary: options?.providerSummary ?? "Claude",
     tokenUsage: { used: 0, limit: 200_000 },
     connectionState: "running",
     continuityLock: {
       active: true,
-      updatedAt: Date.now(),
+      updatedAt: options?.updatedAt ?? Date.now(),
     },
-    updatedAt: Date.now(),
+    usageLimits: options?.usageLimits,
+    updatedAt: options?.updatedAt ?? Date.now(),
   },
 });
 
@@ -102,4 +110,64 @@ test("updateSnapshotsWithUsageLimits ignores malformed payloads", () => {
   });
 
   assert.equal(next, snapshots);
+});
+
+test("updateSnapshotsWithUsageLimits propagates latest limits to all sessions of same provider", () => {
+  const snapshots = {
+    s1: createSnapshot({ providerSummary: "Claude" }),
+    s2: createSnapshot({ providerSummary: "Claude" }),
+    s3: createSnapshot({ providerSummary: "Codex" }),
+  };
+
+  const next = updateSnapshotsWithUsageLimits(snapshots, {
+    sessionId: "s1",
+    event: {
+      usageLimits: {
+        currentSession: {
+          percentUsed: 9,
+          resetsAt: "2026-02-12T17:00:00.000Z",
+        },
+        currentWeekAllModels: {
+          percentUsed: 12,
+          resetsAt: "2026-02-15T07:00:00.000Z",
+        },
+      },
+    },
+  });
+
+  assert.equal(next.s1.status.usageLimits?.currentSession?.percentUsed, 9);
+  assert.equal(next.s2.status.usageLimits?.currentSession?.percentUsed, 9);
+  assert.equal(next.s3.status.usageLimits, undefined);
+});
+
+test("resolveLatestUsageLimitsForProvider returns newest limits in provider scope", () => {
+  const snapshots = {
+    s1: createSnapshot({
+      providerSummary: "Claude",
+      updatedAt: 10,
+      usageLimits: {
+        currentSession: { percentUsed: 6, resetsAt: "2026-02-12T16:00:00.000Z" },
+      },
+    }),
+    s2: createSnapshot({
+      providerSummary: "Claude",
+      updatedAt: 20,
+      usageLimits: {
+        currentSession: { percentUsed: 9, resetsAt: "2026-02-12T17:00:00.000Z" },
+      },
+    }),
+    s3: createSnapshot({
+      providerSummary: "Codex",
+      updatedAt: 30,
+      usageLimits: {
+        currentSession: { percentUsed: 88, resetsAt: "2026-02-13T10:00:00.000Z" },
+      },
+    }),
+  };
+
+  const latestClaude = resolveLatestUsageLimitsForProvider(snapshots, "Claude");
+  const latestCodex = resolveLatestUsageLimitsForProvider(snapshots, "Codex");
+
+  assert.equal(latestClaude?.currentSession?.percentUsed, 9);
+  assert.equal(latestCodex?.currentSession?.percentUsed, 88);
 });

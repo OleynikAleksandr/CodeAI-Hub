@@ -54,3 +54,17 @@
 3. [DONE] Git Commit: `chore(release): run build-all for v1.1.574` (hash: 8f32d4b9)
 4. [DONE] Создать session report по результатам релиза (scope: `doc/Sessions/Session029.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session029 release report`)
 5. [DONE] Git Commit: `docs(session): add session029 release report` (hash: f8b37c24)
+
+---
+
+## Phase 149 — Shared Usage Limits Across Claude Sessions (owner: Oleksandr, updated: 2026-02-12)
+
+**Goal:** сохранять последние полученные `usage_limits` между Claude-сессиями в рамках workspace: после получения фидбэка лимиты должны отображаться в любой Claude-сессии до следующего обновления.
+
+### Stream: Provider-scoped usage limits propagation
+1. [IN_PROGRESS] PM session pipeline: при получении `usage_limits` обновлять не только текущую сессию, но и все snapshot-сессии того же провайдера; при создании новой сессии подтягивать последние known usage limits этого провайдера из уже существующих snapshot (scope: `src/client/project-manager/components/sessions/usage-limits-stream.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(pm): keep latest usage limits across provider sessions`)
+2. [TODO] Git Commit: `fix(pm): keep latest usage limits across provider sessions` (hash: TBD)
+
+### Stream: Regression tests for cross-session limits persistence
+1. [TODO] Добавить targeted тесты на распространение/наследование usage limits между сессиями одного провайдера (scope: `src/client/project-manager/components/sessions/usage-limits-stream.test.ts`; expected commit message: `test(pm): cover shared usage limits across sessions`)
+2. [TODO] Git Commit: `test(pm): cover shared usage limits across sessions` (hash: TBD)
