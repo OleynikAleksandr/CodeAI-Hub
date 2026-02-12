@@ -1,6 +1,6 @@
 # Provider Setup Guide
 
-**Last Updated:** 2026-01-19
+**Last Updated:** 2026-02-12
 
 CodeAI Hub использует официальные CLI/SDK для каждого AI-провайдера. Расширение **автоматически устанавливает** эти инструменты глобально при первом запуске, но вы можете установить их вручную.
 
@@ -23,6 +23,14 @@ npm install -g @anthropic-ai/claude-code
 claude login
 ```
 Завершите OAuth flow в браузере. Credentials: `~/.claude/`.
+
+#### Provider-home (CodeAI Hub runtime)
+CodeAI Hub запускает Claude в изолированном `HOME=~/.codeai-hub/providers/claude/home` и автоматически пробрасывает OAuth токен в runtime env.
+
+Если preflight всё же не проходит, выполните одноразовый login именно для provider-home:
+```bash
+HOME=~/.codeai-hub/providers/claude/home claude login
+```
 
 ### Проверка
 ```bash
@@ -109,6 +117,7 @@ npm config get prefix
 1. Проверьте установку: `<cli> --version`
 2. Проверьте авторизацию: `<cli> whoami` или `<cli> login`
 3. Перезапустите VS Code
+4. Для Claude в provider-home режиме: `HOME=~/.codeai-hub/providers/claude/home claude login`
 
 ### Gemini: `ERR_REQUIRE_ESM`
 Убедитесь, что используете Node.js 20+ (ядро включает bundled runtime).
