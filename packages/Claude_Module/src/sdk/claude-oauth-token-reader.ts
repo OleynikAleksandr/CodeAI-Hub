@@ -15,6 +15,9 @@ const TOKEN_FIELD_CANDIDATES = [
   "token",
 ] as const;
 const WHITESPACE_PATTERN = /\s/;
+type ExtractTokenOptions = {
+  readonly allowRawToken?: boolean;
+};
 
 const isLikelyRawToken = (value: string): boolean => {
   const trimmed = value.trim();
@@ -50,22 +53,30 @@ const extractTokenFromCredentialPayload = (value: unknown): string | null => {
   return null;
 };
 
-const extractTokenFromRawPayload = (raw: string): string | null => {
+const extractTokenFromRawPayload = (
+  raw: string,
+  options?: ExtractTokenOptions
+): string | null => {
   const trimmed = raw.trim();
   if (!trimmed) {
     return null;
   }
 
-  if (isLikelyRawToken(trimmed)) {
+  try {
+    const parsed = JSON.parse(trimmed) as unknown;
+    const tokenFromJson = extractTokenFromCredentialPayload(parsed);
+    if (tokenFromJson) {
+      return tokenFromJson;
+    }
+  } catch {
+    // ignore and fallback to raw token detection below
+  }
+
+  if ((options?.allowRawToken ?? true) && isLikelyRawToken(trimmed)) {
     return trimmed;
   }
 
-  try {
-    const parsed = JSON.parse(trimmed) as unknown;
-    return extractTokenFromCredentialPayload(parsed);
-  } catch {
-    return null;
-  }
+  return null;
 };
 
 const readTokenFromCredentialsFile = async (
@@ -73,7 +84,7 @@ const readTokenFromCredentialsFile = async (
 ): Promise<string | null> => {
   try {
     const raw = await readFile(filePath, "utf8");
-    return extractTokenFromRawPayload(raw);
+    return extractTokenFromRawPayload(raw, { allowRawToken: true });
   } catch {
     return null;
   }
@@ -82,6 +93,7 @@ const readTokenFromCredentialsFile = async (
 const runCommandForToken = async (payload: {
   readonly command: string;
   readonly args: readonly string[];
+  readonly allowRawToken?: boolean;
 }): Promise<string | null> => {
   try {
     const { stdout } = await execFileAsync(payload.command, payload.args, {
@@ -89,16 +101,21 @@ const runCommandForToken = async (payload: {
       timeout: 5000,
       maxBuffer: 1024 * 1024,
     });
-    return extractTokenFromRawPayload(stdout);
+    return extractTokenFromRawPayload(stdout, {
+      allowRawToken: payload.allowRawToken,
+    });
   } catch {
     return null;
   }
 };
 
-const readTokenFromMacKeychain = async (): Promise<string | null> =>
+const readTokenFromMacKeychain = async (payload?: {
+  readonly allowRawToken?: boolean;
+}): Promise<string | null> =>
   await runCommandForToken({
     command: "security",
     args: ["find-generic-password", "-s", CLAUDE_OAUTH_STORE_SERVICE, "-w"],
+    allowRawToken: payload?.allowRawToken,
   });
 
 const LINUX_SECRET_LOOKUP_QUERIES: ReadonlyArray<readonly string[]> = [
@@ -107,11 +124,14 @@ const LINUX_SECRET_LOOKUP_QUERIES: ReadonlyArray<readonly string[]> = [
   ["target", CLAUDE_OAUTH_STORE_SERVICE],
 ];
 
-const readTokenFromLinuxSecretStore = async (): Promise<string | null> => {
+const readTokenFromLinuxSecretStore = async (payload?: {
+  readonly allowRawToken?: boolean;
+}): Promise<string | null> => {
   for (const query of LINUX_SECRET_LOOKUP_QUERIES) {
     const token = await runCommandForToken({
       command: "secret-tool",
       args: ["lookup", ...query],
+      allowRawToken: payload?.allowRawToken,
     });
     if (token) {
       return token;
@@ -144,7 +164,9 @@ const buildWindowsCredentialReadScript = (): string => {
   ].join(";");
 };
 
-const readTokenFromWindowsCredentialStore = async (): Promise<string | null> =>
+const readTokenFromWindowsCredentialStore = async (payload?: {
+  readonly allowRawToken?: boolean;
+}): Promise<string | null> =>
   await runCommandForToken({
     command: WINDOWS_POWERSHELL,
     args: [
@@ -153,23 +175,33 @@ const readTokenFromWindowsCredentialStore = async (): Promise<string | null> =>
       "-Command",
       buildWindowsCredentialReadScript(),
     ],
+    allowRawToken: payload?.allowRawToken,
   });
 
-const readTokenFromPlatformStore = async (): Promise<string | null> => {
+const readTokenFromPlatformStore = async (payload?: {
+  readonly allowRawToken?: boolean;
+}): Promise<string | null> => {
   if (process.platform === "darwin") {
-    return await readTokenFromMacKeychain();
+    return await readTokenFromMacKeychain({
+      allowRawToken: payload?.allowRawToken,
+    });
   }
   if (process.platform === "linux") {
-    return await readTokenFromLinuxSecretStore();
+    return await readTokenFromLinuxSecretStore({
+      allowRawToken: payload?.allowRawToken,
+    });
   }
   if (process.platform === "win32") {
-    return await readTokenFromWindowsCredentialStore();
+    return await readTokenFromWindowsCredentialStore({
+      allowRawToken: payload?.allowRawToken,
+    });
   }
   return null;
 };
 
 export const readClaudeOAuthToken = async (payload: {
   readonly credentialPaths: readonly string[];
+  readonly allowRawPlatformToken?: boolean;
 }): Promise<string | null> => {
   for (const filePath of payload.credentialPaths) {
     const token = await readTokenFromCredentialsFile(filePath);
@@ -178,5 +210,7 @@ export const readClaudeOAuthToken = async (payload: {
     }
   }
 
-  return await readTokenFromPlatformStore();
+  return await readTokenFromPlatformStore({
+    allowRawToken: payload.allowRawPlatformToken ?? true,
+  });
 };
