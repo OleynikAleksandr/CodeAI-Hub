@@ -2,7 +2,7 @@
 
 **Версия стека:** 1.1.569  
 **Обновлено:** 2026-02-12  
-**Статус:** Active (one-shot + provider-home auth bootstrap)
+**Статус:** Active (one-shot + provider-home auth bootstrap + ratelimit usage probe)
 
 ## Обзор
 `@codeai-hub/claude-module` — провайдерный модуль Claude для Core. Актуальный runtime-контур сочетает:
@@ -33,7 +33,7 @@ Source-of-truth привязки сессии:
 
 - `SDKAuthManager` (`packages/Claude_Module/src/auth/sdk-auth-manager.ts`)
   - provider-home auth state/link migration;
-  - OAuth token bootstrap (env -> credentials files -> platform store);
+  - OAuth token bootstrap (env -> credentials files -> platform stores);
   - `CLAUDE_CODE_OAUTH_TOKEN` injection в runtime env;
   - non-interactive preflight probe + retry и явный recovery hint.
 
@@ -51,7 +51,9 @@ Source-of-truth привязки сессии:
   - чтение `/context` snapshot для `token_usage`.
 
 - `ClaudeUsageLimitsReader` (`packages/Claude_Module/src/sdk/claude-usage-limits-reader.ts`)
-  - чтение `/usage` snapshot для `usage_limits` (`session` + `weekly all models`).
+  - lightweight probe в `https://api.anthropic.com/v1/messages` (`anthropic-beta: oauth-2025-04-20`);
+  - парсинг headers `anthropic-ratelimit-unified-5h-*` и `anthropic-ratelimit-unified-7d-*`;
+  - эмит `usage_limits` в прежнем UI-контракте (`session` + `weekly all models`).
 
 ## Auth + Runtime окружение (Phase 146)
 ### Provider-home
@@ -70,7 +72,7 @@ Claude запускается с:
    - env `CLAUDE_CODE_OAUTH_TOKEN`;
    - provider-home credentials file;
    - legacy credentials file;
-   - platform store (macOS Keychain service `Claude Code-credentials`).
+   - platform store (`security`/Keychain на macOS, `secret-tool` на Linux, Credential Manager best-effort на Windows).
 4. Preflight non-interactive probe в provider-home.
 5. При фейле: refresh token bootstrap + повторный probe.
 6. При повторном фейле: явный recovery-hint
