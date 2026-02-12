@@ -5,6 +5,7 @@ import {
   readClaudeOAuthToken,
 } from "./claude-oauth-token-reader";
 import { resolveClaudeProviderClaudeDir } from "./claude-provider-home";
+import { ClaudeUsageLimitsProbeLog } from "./claude-usage-limits-probe-log";
 import type { UsageLimitsSnapshot } from "./claude-usage-limits-snapshot";
 import { extractUsageLimitsFromRateLimitHeaders } from "./claude-usage-limits-snapshot";
 
@@ -22,6 +23,7 @@ const USAGE_PROBE_MODEL = "claude-haiku-4-5-20251001";
 const USAGE_PROBE_MAX_TOKENS = 1;
 const USAGE_PROBE_TIMEOUT_MS = 20_000;
 const MAX_RESPONSE_BODY_CHARS = 4000;
+const RATE_LIMIT_HEADER_PREFIX = "anthropic-ratelimit-unified";
 
 const getTokenFromEnvironment = (env: NodeJS.ProcessEnv): string | null => {
   const fromReaderEnv = env[CLAUDE_OAUTH_ENV_KEY]?.trim();
@@ -54,6 +56,18 @@ const toHeaderMap = (headers: Headers): ReadonlyMap<string, string> => {
     normalized.set(key.toLowerCase(), value);
   }
   return normalized;
+};
+
+const pickRateLimitHeaders = (
+  headers: ReadonlyMap<string, string>
+): Readonly<Record<string, string>> => {
+  const selected: Record<string, string> = {};
+  for (const [key, value] of headers.entries()) {
+    if (key.startsWith(RATE_LIMIT_HEADER_PREFIX)) {
+      selected[key] = value;
+    }
+  }
+  return selected;
 };
 
 const safeReadResponseBody = async (
@@ -102,6 +116,7 @@ const runUsageProbe = async (oauthToken: string): Promise<Response> => {
 
 export class ClaudeUsageLimitsReader {
   private readonly options: UsageLimitsReaderOptions;
+  private readonly probeLog = new ClaudeUsageLimitsProbeLog();
 
   constructor(options: UsageLimitsReaderOptions) {
     this.options = options;
@@ -111,7 +126,14 @@ export class ClaudeUsageLimitsReader {
     readonly sessionId: string;
     readonly cwd: string;
   }): Promise<UsageLimitsSnapshot | null> {
+    const startedAt = Date.now();
     if (payload.sessionId.startsWith(TEMP_SESSION_PREFIX)) {
+      this.probeLog.log({
+        sessionId: payload.sessionId,
+        cwd: payload.cwd,
+        result: "skipped_temp_session",
+        durationMs: Date.now() - startedAt,
+      });
       return null;
     }
 
@@ -122,20 +144,62 @@ export class ClaudeUsageLimitsReader {
       }));
 
     if (!oauthToken) {
+      this.probeLog.log({
+        sessionId: payload.sessionId,
+        cwd: payload.cwd,
+        result: "skipped_missing_token",
+        durationMs: Date.now() - startedAt,
+      });
       return null;
     }
 
-    const response = await runUsageProbe(oauthToken);
-    if (!response.ok) {
-      const body = await safeReadResponseBody(response);
-      const details = body
-        ? `status=${response.status} body=${JSON.stringify(body)}`
-        : `status=${response.status}`;
-      throw new Error(`Claude usage probe request failed: ${details}`);
-    }
+    let alreadyLoggedFailure = false;
+    try {
+      const response = await runUsageProbe(oauthToken);
+      const headers = toHeaderMap(response.headers);
+      const rateLimitHeaders = pickRateLimitHeaders(headers);
 
-    return extractUsageLimitsFromRateLimitHeaders(
-      toHeaderMap(response.headers)
-    );
+      if (!response.ok) {
+        const body = await safeReadResponseBody(response);
+        const details = body
+          ? `status=${response.status} body=${JSON.stringify(body)}`
+          : `status=${response.status}`;
+        alreadyLoggedFailure = true;
+        this.probeLog.log({
+          sessionId: payload.sessionId,
+          cwd: payload.cwd,
+          result: "http_error",
+          durationMs: Date.now() - startedAt,
+          httpStatus: response.status,
+          headers: rateLimitHeaders,
+          error: details,
+        });
+        throw new Error(`Claude usage probe request failed: ${details}`);
+      }
+
+      const snapshot = extractUsageLimitsFromRateLimitHeaders(headers);
+      this.probeLog.log({
+        sessionId: payload.sessionId,
+        cwd: payload.cwd,
+        result: snapshot ? "parsed_ok" : "parsed_empty",
+        durationMs: Date.now() - startedAt,
+        httpStatus: response.status,
+        headers: rateLimitHeaders,
+        snapshot,
+      });
+      return snapshot;
+    } catch (error) {
+      if (!alreadyLoggedFailure) {
+        const message = error instanceof Error ? error.message : String(error);
+        this.probeLog.log({
+          sessionId: payload.sessionId,
+          cwd: payload.cwd,
+          result: "request_error",
+          durationMs: Date.now() - startedAt,
+          error: message,
+        });
+      }
+      throw error;
+    }
   }
 }
