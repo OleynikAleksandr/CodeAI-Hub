@@ -1,3 +1,11 @@
+## [1.1.574] - 2026-02-12
+### Fixed
+- Session UI usage limits: `Session ID Bar` теперь рендерит reset-время лимитов в локальной timezone пользователя (вместо сырого UTC/ISO), что устраняет смещение времени на +/− час относительно локали.
+- Session UI usage limits: подпись reset-времени приведена к читабельному формату `Resets <Mon> <day> at <h><am/pm>` (например, `Resets Feb 12 at 6pm`).
+
+### Added
+- UI coverage: добавлены targeted тесты formatter-а reset-времени (`src/client/ui/src/session/session-id-bar-reset-format.test.ts`) для ISO/UTC и fallback-кейсов.
+
 ## [1.1.573] - 2026-02-12
 ### Fixed
 - Claude usage limits parser: восстановлено заполнение `session/weekly` в `Session ID Bar` для ratelimit-ответов, где Anthropic возвращает `anthropic-ratelimit-unified-5h-utilization` и `anthropic-ratelimit-unified-7d-utilization` (fallback на `limit/remaining` сохранён).
