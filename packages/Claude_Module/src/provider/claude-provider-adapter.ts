@@ -11,19 +11,23 @@ export type SessionListener = (payload: unknown) => void;
 
 export class ClaudeProviderAdapter {
   private readonly sdkManager: ClaudeSDKManager;
+  private readonly authManager: SDKAuthManager;
+  private readonly workspacePath: string;
   private readonly listeners = new Map<string, Set<SessionListener>>();
   private readonly pendingEvents = new Map<string, unknown[]>();
   private readonly sessionIdAliases = new Map<string, string>();
 
   constructor(options: ClaudeModuleOptions) {
     const reporter = options.reporter;
+    this.workspacePath = options.workspace.workspacePath;
     const projectPath = this.resolveProjectPath(
       options.workspace.claudeProjectSlug
     );
     const installer = new SDKInstaller(options.installerPaths, {
       logger: reporter,
     });
-    const authManager = new SDKAuthManager();
+    const authManager = new SDKAuthManager({ reporter });
+    this.authManager = authManager;
     const sessionManager = new SDKSessionManager();
     const messageProcessor = new SDKMessageProcessor(sessionManager, {
       projectPath,
@@ -42,6 +46,9 @@ export class ClaudeProviderAdapter {
 
   async initialize(): Promise<void> {
     await this.sdkManager.initialize();
+    await this.authManager.ensureProviderHomeSessionBootstrap({
+      workspacePath: this.workspacePath,
+    });
   }
 
   async createSession(workspacePath?: string): Promise<string> {
