@@ -71,7 +71,7 @@
 2. [DONE] Git Commit: `fix(codex): link auth/config into provider-home` (hash: bcea57b6)
 
 ### Stream: Release Build (Phase 145)
-1. [TODO] Выполнить `./scripts/build-all.sh` (версия: TBD) (scope: manifests; expected commit message: `chore(release): run build-all for phase145`)
-2. [TODO] Git Commit: `chore(release): run build-all for phase145` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать VSIX (scope: scripts; expected commit message: `chore(release): build vsix for phase145`)
+1. [DONE] Выполнить `./scripts/build-all.sh` (версия: `1.1.566`) (scope: manifests; expected commit message: `chore(release): run build-all for phase145`)
+2. [DONE] Git Commit: `chore(release): run build-all for v1.1.566` (hash: 77e7bedb)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать VSIX `codeai-hub-1.1.566.vsix` (scope: scripts; expected commit message: `chore(release): build vsix for phase145`)
 4. [TODO] Git Commit: `chore(release): build vsix for phase145` (hash: TBD)
