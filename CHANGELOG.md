@@ -1,3 +1,10 @@
+## [1.1.572] - 2026-02-12
+### Fixed
+- Core workflow runtime: исправлен автозапуск Reviewer после завершения Description. `RemoteBridge` теперь гарантированно подключает workflow watcher при `session:create`, когда переданы `workspacePath` и `initiativeSlug`, поэтому запись `description.md` снова стабильно триггерит переход `description -> reviewer`.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.572.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.571] - 2026-02-12
 ### Fixed
 - Claude auth bootstrap: исправлен OAuth token reader для platform store (macOS Keychain/аналогичные сторы) — теперь payload сначала парсится как JSON и извлекает `accessToken`, а только потом применяет raw-token fallback. Это устраняет `401 Invalid bearer token` и состояние провайдера `UNAVAILABLE` после provider-home preflight.
