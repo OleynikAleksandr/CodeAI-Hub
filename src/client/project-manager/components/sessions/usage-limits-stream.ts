@@ -1,4 +1,5 @@
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
+import { writeLastKnownUsageLimits } from "../../../ui/src/session/usage-limits-cache";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -27,6 +28,24 @@ type UsageLimits = {
   readonly currentWeekAllModels?: Bucket | null;
   readonly currentWeekSonnetOnly?: Bucket | null;
 };
+
+const normalizeProviderScopeKey = (value: string | null | undefined): string =>
+  value?.trim().toLowerCase() ?? "";
+
+const resolveProviderScopeKey = (
+  snapshot: SessionSnapshots[string]
+): string =>
+  normalizeProviderScopeKey(snapshot.status.providerSummary);
+
+const hasUsageLimits = (
+  usageLimits: SessionSnapshots[string]["status"]["usageLimits"]
+): usageLimits is NonNullable<SessionSnapshots[string]["status"]["usageLimits"]> =>
+  Boolean(
+    usageLimits &&
+      (usageLimits.currentSession ||
+        usageLimits.currentWeekAllModels ||
+        usageLimits.currentWeekSonnetOnly)
+  );
 
 const clampPercent = (value: number): number => {
   if (value < 0) {
@@ -94,8 +113,8 @@ export const updateSnapshotsWithUsageLimits = (
   snapshots: SessionSnapshots,
   payload: { readonly sessionId: string; readonly event: unknown }
 ): SessionSnapshots => {
-  const snapshot = snapshots[payload.sessionId];
-  if (!snapshot) {
+  const sourceSnapshot = snapshots[payload.sessionId];
+  if (!sourceSnapshot) {
     return snapshots;
   }
 
@@ -104,15 +123,67 @@ export const updateSnapshotsWithUsageLimits = (
     return snapshots;
   }
 
-  return {
-    ...snapshots,
-    [payload.sessionId]: {
+  writeLastKnownUsageLimits(sourceSnapshot.status.providerSummary, usageLimits);
+
+  const sourceProviderKey = resolveProviderScopeKey(sourceSnapshot);
+  const now = Date.now();
+  const nextSnapshots: SessionSnapshots = { ...snapshots };
+  let changed = false;
+
+  for (const [sessionId, snapshot] of Object.entries(snapshots)) {
+    const sameProviderScope =
+      sourceProviderKey.length > 0 &&
+      resolveProviderScopeKey(snapshot) === sourceProviderKey;
+    if (!(sameProviderScope || sessionId === payload.sessionId)) {
+      continue;
+    }
+    changed = true;
+    nextSnapshots[sessionId] = {
       ...snapshot,
       status: {
         ...snapshot.status,
         usageLimits,
-        updatedAt: Date.now(),
+        updatedAt: now,
       },
-    },
-  };
+    };
+  }
+
+  return changed ? nextSnapshots : snapshots;
+};
+
+export const resolveLatestUsageLimitsForProvider = (
+  snapshots: SessionSnapshots,
+  providerSummary: string
+): SessionSnapshots[string]["status"]["usageLimits"] | null => {
+  const providerKey = normalizeProviderScopeKey(providerSummary);
+  if (!providerKey) {
+    return null;
+  }
+
+  let latest:
+    | {
+        readonly usageLimits: NonNullable<
+          SessionSnapshots[string]["status"]["usageLimits"]
+        >;
+        readonly updatedAt: number;
+      }
+    | null = null;
+
+  for (const snapshot of Object.values(snapshots)) {
+    if (resolveProviderScopeKey(snapshot) !== providerKey) {
+      continue;
+    }
+    if (!hasUsageLimits(snapshot.status.usageLimits)) {
+      continue;
+    }
+    const updatedAt = snapshot.status.updatedAt;
+    if (!latest || updatedAt >= latest.updatedAt) {
+      latest = {
+        usageLimits: snapshot.status.usageLimits,
+        updatedAt,
+      };
+    }
+  }
+
+  return latest?.usageLimits ?? null;
 };
