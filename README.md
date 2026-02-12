@@ -2,7 +2,9 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.572
+## Current Release — v1.1.573
+- **Claude usage limits panel recovery (Phase 147)**: восстановлено заполнение `session/weekly` в `Session ID Bar` после Claude turn (включая Reviewer) за счёт поддержки `anthropic-ratelimit-unified-5h/7d-utilization` в parser-е лимитов.
+- **Claude usage limits probe diagnostics log**: добавлен отдельный JSONL лог `~/.codeai-hub/logs/claude/usage-limits-probe.jsonl`, чтобы видеть каждый probe-запрос лимитов, HTTP status, ratelimit headers и parsed snapshot/null.
 - **Workflow reviewer auto-start hotfix**: в Core исправлен bind workflow watcher для `session:create` с `workspacePath + initiativeSlug`; после записи `description.md` снова автоматически создаётся reviewer-сессия.
 - **Claude OAuth keychain parsing hotfix**: OAuth token reader для platform-store сначала извлекает `accessToken` из JSON payload (`claudeAiOauth.accessToken`), и только затем использует raw-token fallback, что устраняет `401 Invalid bearer token` в provider-home preflight.
 - **Claude provider-home OAuth bootstrap (Phase 146)**: перед первой рабочей Claude-сессией Core выполняет preflight non-interactive probe в `HOME=~/.codeai-hub/providers/claude/home`; при фейле делает retry после refresh токена и только потом поднимает явный login-hint.
@@ -33,7 +35,7 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Phase 128 launcher DnD recovery**: восстановлен fallback `Shift + drag-and-drop` для Session input в Project Manager (launcher runtime) — при отсутствии VS Code bridge модуль читает/очищает dropped paths через Core API `/api/v1/file-drop`.
 - **Phase 126 Session UI typography tune**: для `Session ID Bar` повышена читаемость правого блока лимитов (`5 houers`, `weekly`) — label `9px`, уменьшены зазоры (`gap: 1px`, `column-gap: 6px`) при сохранении фиксированной высоты плашки `32px`.
 - **Session hint color unification**: тексты `ID`-плашки, `Press Enter to send...`, `Models/Tokens` и правый debug summary переведены на единый цвет `rgba(140, 140, 140, 1)`.
-- **Release packaging**: собран и проверен артефакт `codeai-hub-1.1.572.vsix` вместе с обновлёнными tarball в `~/.codeai-hub/releases/`.
+- **Release packaging**: собран и проверен артефакт `codeai-hub-1.1.573.vsix` вместе с обновлёнными tarball в `~/.codeai-hub/releases/`.
 - **Phase 119 Gemini reviewer resume integration**: `GeminiProviderAdapter` теперь поддерживает `resumeSession`, `GeminiSessionManager` прокидывает `argv.resume`, и reviewer в ветке `description/reviewer` сохраняет preferred Gemini provider при доступном resume-path вместо fallback на Claude.
 - **Description one-shot prompt contract fix**: из prompt-pack удалена инструкция про уточняющие вопросы/ожидание `OK/approve`, чтобы контракт не конфликтовал с one-shot/no-resume поведением description-сессии.
 - **Phase 118 launcher runtime integrity hotfix**: installer теперь валидирует целостность launcher runtime перед reuse (включая macOS CEF framework binary), а legacy→primary migration защищена от self-copy через symlink-path; это устраняет сценарий `Failed to load CEF framework` в Project Manager после повреждённой/частичной установки.

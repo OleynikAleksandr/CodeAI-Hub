@@ -1,3 +1,10 @@
+## [1.1.573] - 2026-02-12
+### Fixed
+- Claude usage limits parser: восстановлено заполнение `session/weekly` в `Session ID Bar` для ratelimit-ответов, где Anthropic возвращает `anthropic-ratelimit-unified-5h-utilization` и `anthropic-ratelimit-unified-7d-utilization` (fallback на `limit/remaining` сохранён).
+
+### Added
+- Claude diagnostics: добавлен отдельный probe-лог `~/.codeai-hub/logs/claude/usage-limits-probe.jsonl` для каждого запроса лимитов (status, ключевые headers, parsed snapshot/null, error).
+
 ## [1.1.572] - 2026-02-12
 ### Fixed
 - Core workflow runtime: исправлен автозапуск Reviewer после завершения Description. `RemoteBridge` теперь гарантированно подключает workflow watcher при `session:create`, когда переданы `workspacePath` и `initiativeSlug`, поэтому запись `description.md` снова стабильно триггерит переход `description -> reviewer`.
