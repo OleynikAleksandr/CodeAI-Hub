@@ -14,6 +14,7 @@ type RateLimitWindow = "5h" | "7d";
 type ParsedWindowHeaders = {
   readonly limit: number | null;
   readonly remaining: number | null;
+  readonly utilizationPercent: number | null;
   readonly reset: string | null;
 };
 const DIGITS_ONLY_PATTERN = /^\d+$/;
@@ -41,6 +42,15 @@ const parseNumber = (value: string | null): number | null => {
     return null;
   }
   return parsed;
+};
+
+const parseUtilizationPercent = (value: string | null): number | null => {
+  const parsed = parseNumber(value);
+  if (parsed === null || parsed < 0) {
+    return null;
+  }
+  const percent = parsed <= 1 ? parsed * 100 : parsed;
+  return clampPercent(Math.round(percent));
 };
 
 const normalizeResetValue = (value: string | null): string | null => {
@@ -103,6 +113,13 @@ const parseWindowHeaders = (
       `${prefix}tokens-remaining`,
     ])
   );
+  const utilizationPercent = parseUtilizationPercent(
+    readHeader(headers, [
+      `${prefix}utilization`,
+      `${prefix}requests-utilization`,
+      `${prefix}tokens-utilization`,
+    ])
+  );
   const reset = normalizeResetValue(
     readHeader(headers, [
       `${prefix}reset`,
@@ -112,22 +129,29 @@ const parseWindowHeaders = (
     ])
   );
 
-  return { limit, remaining, reset };
+  return { limit, remaining, utilizationPercent, reset };
 };
 
 const buildBucket = (payload: ParsedWindowHeaders): UsageLimitBucket | null => {
   if (
-    payload.limit === null ||
-    payload.remaining === null ||
-    payload.limit <= 0
+    payload.limit !== null &&
+    payload.remaining !== null &&
+    payload.limit > 0
   ) {
+    const used = Math.max(0, payload.limit - payload.remaining);
+    const percentUsed = clampPercent(Math.round((used / payload.limit) * 100));
+    return {
+      percentUsed,
+      resetsAt: payload.reset,
+    };
+  }
+
+  if (payload.utilizationPercent === null) {
     return null;
   }
 
-  const used = Math.max(0, payload.limit - payload.remaining);
-  const percentUsed = clampPercent(Math.round((used / payload.limit) * 100));
   return {
-    percentUsed,
+    percentUsed: payload.utilizationPercent,
     resetsAt: payload.reset,
   };
 };
