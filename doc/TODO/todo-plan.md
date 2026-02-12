@@ -55,3 +55,23 @@
 2. [TODO] Git Commit: `chore(release): run build-all for phase144` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать VSIX (scope: scripts; expected commit message: `chore(release): build vsix for phase144`)
 4. [TODO] Git Commit: `chore(release): build vsix for phase144` (hash: TBD)
+
+---
+
+## Phase 145 — Provider Auth Symlinks (Claude + Codex) + Release (owner: Oleksandr, updated: 2026-02-12)
+
+**Goal:** изолировать provider-home для сессий, но не ломать терминальные сессии и не дублировать auth state: использовать симлинки на “родные” auth файлы там, где это возможно.
+
+### Stream: Claude Auth State Link
+1. [TODO] Claude: вместо копирования/создания отдельного auth state в provider-home, сделать link стратегии для `~/.claude.json` (на macOS/Linux: symlink provider-home `.claude.json` -> реальный `$HOME/.claude.json`; на Windows: fallback на copy) и проверить что `claude -p --resume ... /context` видит сессии, созданные CodeAI Hub (scope: `packages/Claude_Module/src/auth/sdk-auth-manager.ts` + при необходимости новый micro-helper в `packages/Claude_Module/src/sdk/*`; expected commit message: `fix(claude): link auth state into provider-home`).
+2. [TODO] Git Commit: `fix(claude): link auth state into provider-home` (hash: TBD)
+
+### Stream: Codex Auth/Config Links
+1. [TODO] Codex: заменить миграцию `auth.json`/`config.toml` из `~/.codex` на symlink стратегию (на macOS/Linux: symlink `~/.codeai-hub/providers/codex/home/{auth.json,config.toml}` -> `~/.codex/{auth.json,config.toml}`; на Windows: fallback на copy) (scope: `packages/Codex_Module/src/auth/sdk-auth-manager.ts`; expected commit message: `fix(codex): link auth/config into provider-home`).
+2. [TODO] Git Commit: `fix(codex): link auth/config into provider-home` (hash: TBD)
+
+### Stream: Release Build (Phase 145)
+1. [TODO] Выполнить `./scripts/build-all.sh` (версия: TBD) (scope: manifests; expected commit message: `chore(release): run build-all for phase145`)
+2. [TODO] Git Commit: `chore(release): run build-all for phase145` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать VSIX (scope: scripts; expected commit message: `chore(release): build vsix for phase145`)
+4. [TODO] Git Commit: `chore(release): build vsix for phase145` (hash: TBD)
