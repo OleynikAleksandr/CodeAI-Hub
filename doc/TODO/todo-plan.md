@@ -90,10 +90,10 @@
 
 ### Stream: Session Start Verification
 1. [DONE] Claude: проверить сценарий старта первой Анкеты в чистом provider-home (без ручного `/login`) и убедиться, что сессии пишутся в `~/.codeai-hub/providers/claude/home/.claude/projects/*`, а терминальный `HOME` остается независимым (scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `test(claude): verify provider-home auth bootstrap and session paths`).
-2. [IN_PROGRESS] Git Commit: `test(claude): verify provider-home auth bootstrap and session paths` (hash: TBD)
+2. [DONE] Git Commit: `test(claude): verify provider-home auth bootstrap and session paths` (hash: 58d61b9c)
 
 ### Stream: Release Build (Phase 146)
-1. [TODO] Выполнить `./scripts/build-all.sh` (версия: TBD) (scope: manifests; expected commit message: `chore(release): run build-all for phase146`)
-2. [TODO] Git Commit: `chore(release): run build-all for phase146` (hash: TBD)
+1. [DONE] Выполнить `./scripts/build-all.sh` (версия: `1.1.569`) (scope: manifests; expected commit message: `chore(release): run build-all for phase146`)
+2. [IN_PROGRESS] Git Commit: `chore(release): run build-all for phase146` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и собрать VSIX (scope: scripts; expected commit message: `chore(release): build vsix for phase146`)
 4. [TODO] Git Commit: `chore(release): build vsix for phase146` (hash: TBD)
