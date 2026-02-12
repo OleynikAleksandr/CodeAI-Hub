@@ -184,8 +184,8 @@ State-table для Session UI:
    - `CLAUDE_CODE_OAUTH_TOKEN` (env),
    - provider-home credentials file,
    - legacy credentials file,
-   - platform store (macOS Keychain, service `Claude Code-credentials`).
-3. Runtime env injection: `CLAUDE_CODE_OAUTH_TOKEN` передаётся во все Claude процессы (`query`, `/context`, `/usage`).
+   - platform store (`security`/Keychain на macOS, `secret-tool` на Linux, Credential Manager best-effort на Windows).
+3. Runtime env injection: `CLAUDE_CODE_OAUTH_TOKEN` передаётся во все Claude runtime процессы (`query`, `/context`, usage ratelimit probe).
 4. Preflight gate до первой рабочей Claude-сессии: non-interactive probe в provider-home.
 5. При первом фейле preflight выполняется retry после force-refresh token bootstrap.
 6. Только при повторном фейле UI получает recovery hint:  
@@ -383,6 +383,7 @@ CommonJS модули, tarballs через `npm pack`. Инсталляторы 
 - Терминальные Claude CLI сессии остаются в стандартном `~/.claude/projects/*` и не смешиваются с Hub-сессиями.
 - `~/.codeai-hub/providers/claude/home/.claude.json` линкуется на `~/.claude.json` (Windows: fallback copy), чтобы использовать единый auth state.
 - До первого рабочего turn выполняется preflight auth gate + retry bootstrap; при неуспехе возвращается явная команда login для provider-home.
+- Usage limits для Session UI берутся из ratelimit headers API-probe (`/v1/messages`) и публикуются в стабильном `usage_limits` контракте (`currentSession` + `currentWeekAllModels`).
 
 ### 6.2 Gemini
 
