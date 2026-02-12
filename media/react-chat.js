@@ -22882,6 +22882,80 @@ ${path2}` : path2;
     )}`;
   };
 
+  // src/client/ui/src/session/usage-limits-cache.ts
+  var USAGE_LIMITS_STORAGE_PREFIX = "codeaihub:lastUsageLimitsByProvider:";
+  var getLocalStorage2 = () => {
+    try {
+      return "localStorage" in globalThis ? globalThis.localStorage : null;
+    } catch {
+      return null;
+    }
+  };
+  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var normalizeProviderKey = (value) => value.trim().toLowerCase();
+  var readNumber2 = (value) => typeof value === "number" && Number.isFinite(value) ? value : null;
+  var readString = (value) => typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+  var parseBucket = (value) => {
+    if (!isRecord4(value)) {
+      return null;
+    }
+    const percentUsed = readNumber2(value.percentUsed);
+    if (percentUsed === null) {
+      return null;
+    }
+    return {
+      percentUsed,
+      resetsAt: readString(value.resetsAt)
+    };
+  };
+  var parseUsageLimits = (value) => {
+    if (!isRecord4(value)) {
+      return null;
+    }
+    const parsed = {
+      currentSession: parseBucket(value.currentSession),
+      currentWeekAllModels: parseBucket(value.currentWeekAllModels),
+      currentWeekSonnetOnly: parseBucket(value.currentWeekSonnetOnly)
+    };
+    if (!(parsed.currentSession || parsed.currentWeekAllModels || parsed.currentWeekSonnetOnly)) {
+      return null;
+    }
+    return parsed;
+  };
+  var parseStoredUsageLimits = (raw) => {
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return null;
+    }
+    if (!isRecord4(parsed)) {
+      return null;
+    }
+    const usageLimits = parseUsageLimits(parsed.usageLimits);
+    const updatedAt = readNumber2(parsed.updatedAt);
+    if (!usageLimits || updatedAt === null || updatedAt <= 0) {
+      return null;
+    }
+    return { usageLimits, updatedAt };
+  };
+  var readLastKnownUsageLimits = (providerSummary) => {
+    const storage = getLocalStorage2();
+    if (!storage) {
+      return null;
+    }
+    const providerKey = normalizeProviderKey(providerSummary);
+    if (!providerKey) {
+      return null;
+    }
+    const raw = storage.getItem(`${USAGE_LIMITS_STORAGE_PREFIX}${providerKey}`);
+    if (!raw) {
+      return null;
+    }
+    const stored = parseStoredUsageLimits(raw);
+    return stored?.usageLimits ?? null;
+  };
+
   // src/client/ui/src/session/session-id-bar.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   var SESSION_ID_PREFIX_LENGTH = 8;
@@ -22912,10 +22986,11 @@ ${path2}` : path2;
     payload.resetLabel ? `(${payload.resetLabel})` : null
   ].filter((value) => Boolean(value)).join(" ");
   var SessionIdBar = ({ binding, status }) => {
-    const sessionPercent = status.usageLimits?.currentSession?.percentUsed ?? null;
-    const sessionResetsAt = status.usageLimits?.currentSession?.resetsAt ?? null;
-    const weeklyPercent = status.usageLimits?.currentWeekAllModels?.percentUsed ?? null;
-    const weeklyResetsAt = status.usageLimits?.currentWeekAllModels?.resetsAt ?? null;
+    const resolvedUsageLimits = status.usageLimits ?? readLastKnownUsageLimits(status.providerSummary);
+    const sessionPercent = resolvedUsageLimits?.currentSession?.percentUsed ?? null;
+    const sessionResetsAt = resolvedUsageLimits?.currentSession?.resetsAt ?? null;
+    const weeklyPercent = resolvedUsageLimits?.currentWeekAllModels?.percentUsed ?? null;
+    const weeklyResetsAt = resolvedUsageLimits?.currentWeekAllModels?.resetsAt ?? null;
     const sessionResetLabel = sessionResetsAt ? buildResetLabel(sessionResetsAt) : null;
     const weeklyResetLabel = weeklyResetsAt ? buildResetLabel(weeklyResetsAt) : null;
     const sessionFillStyle = sessionPercent === null ? void 0 : {
@@ -24073,7 +24148,7 @@ ${path2}` : path2;
   ] });
 
   // src/client/ui/src/services/idea-collector-artifact.ts
-  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
   var readNextAction = (data) => {
     let nextAction = null;
@@ -24106,7 +24181,7 @@ ${path2}` : path2;
     }
     const artifacts = [];
     for (const entry of data.artifacts) {
-      if (!isRecord4(entry)) {
+      if (!isRecord5(entry)) {
         return null;
       }
       const slot = readStringField(entry, "slot");
@@ -24119,11 +24194,11 @@ ${path2}` : path2;
     return artifacts;
   };
   var extractIdeaCollectorArtifact = (event) => {
-    if (!isRecord4(event)) {
+    if (!isRecord5(event)) {
       return null;
     }
     const data = event.data;
-    if (!isRecord4(data) || data.kind !== "structured_output") {
+    if (!isRecord5(data) || data.kind !== "structured_output") {
       return null;
     }
     const suggestedResponse = readSuggestedResponse(data);
@@ -24136,7 +24211,7 @@ ${path2}` : path2;
       return null;
     }
     const artifact = data.artifact;
-    if (!isRecord4(artifact)) {
+    if (!isRecord5(artifact)) {
       return null;
     }
     const { ideaMarkdown, virtualSimulationMarkdown } = readArtifactPayload(artifact);
@@ -24192,7 +24267,7 @@ ${path2}` : path2;
 
   // src/client/ui/src/services/idea-artifact-persistence.ts
   var ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
-  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var persistIdeaArtifacts = async (params) => {
     const payload = {
       sessionId: params.sessionId,
@@ -24223,7 +24298,7 @@ ${path2}` : path2;
   var tryReadCoreErrorDetails = async (response) => {
     try {
       const payload = await response.json();
-      if (isRecord5(payload) && typeof payload.error === "string") {
+      if (isRecord6(payload) && typeof payload.error === "string") {
         return payload.error;
       }
       return null;
@@ -24232,12 +24307,12 @@ ${path2}` : path2;
     }
   };
   var parseSavedArtifactUpserts = (payload) => {
-    if (!(isRecord5(payload) && Array.isArray(payload.saved))) {
+    if (!(isRecord6(payload) && Array.isArray(payload.saved))) {
       return null;
     }
     const saved = [];
     for (const entry of payload.saved) {
-      if (!isRecord5(entry)) {
+      if (!isRecord6(entry)) {
         return null;
       }
       if (typeof entry.slot !== "string" || typeof entry.path !== "string") {
@@ -24390,11 +24465,11 @@ ${path2}` : path2;
   );
 
   // src/client/ui/src/services/idea-collector-schema-utils.ts
-  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
   var strictifyProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord6(properties)) {
+    if (!isRecord7(properties)) {
       return;
     }
     schema.required = Object.keys(properties);
@@ -24402,7 +24477,7 @@ ${path2}` : path2;
       schema.additionalProperties = false;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord6(value)) {
+      if (isRecord7(value)) {
         strictifySchema(value);
       }
     }
@@ -24411,23 +24486,23 @@ ${path2}` : path2;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord6(item)) {
+        if (isRecord7(item)) {
           strictifySchema(item);
         }
       }
       return;
     }
-    if (isRecord6(items)) {
+    if (isRecord7(items)) {
       strictifySchema(items);
     }
   };
   var removeCombinatorsFromProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord6(properties)) {
+    if (!isRecord7(properties)) {
       return;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord6(value)) {
+      if (isRecord7(value)) {
         removeCombinators(value);
       }
     }
@@ -24436,13 +24511,13 @@ ${path2}` : path2;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord6(item)) {
+        if (isRecord7(item)) {
           removeCombinators(item);
         }
       }
       return;
     }
-    if (isRecord6(items)) {
+    if (isRecord7(items)) {
       removeCombinators(items);
     }
   };
@@ -24455,7 +24530,7 @@ ${path2}` : path2;
         continue;
       }
       for (const entry of entries) {
-        if (isRecord6(entry)) {
+        if (isRecord7(entry)) {
           removeCombinators(entry);
         }
       }
@@ -24472,19 +24547,19 @@ ${path2}` : path2;
       return schema;
     }
     const properties = schema.properties;
-    if (!isRecord6(properties)) {
+    if (!isRecord7(properties)) {
       return schema;
     }
     const artifact = properties.artifact;
-    if (!isRecord6(artifact)) {
+    if (!isRecord7(artifact)) {
       return schema;
     }
     const artifactProperties = artifact.properties;
-    if (!isRecord6(artifactProperties)) {
+    if (!isRecord7(artifactProperties)) {
       return schema;
     }
     const ideaMarkdown = artifactProperties.idea_markdown;
-    if (!isRecord6(ideaMarkdown)) {
+    if (!isRecord7(ideaMarkdown)) {
       return schema;
     }
     const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
@@ -24511,11 +24586,11 @@ ${template}`;
   };
   var sanitizeSchemaProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord6(properties)) {
+    if (!isRecord7(properties)) {
       return;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord6(value)) {
+      if (isRecord7(value)) {
         sanitizeSchemaKeywords(value);
       }
     }
@@ -24524,13 +24599,13 @@ ${template}`;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord6(item)) {
+        if (isRecord7(item)) {
           sanitizeSchemaKeywords(item);
         }
       }
       return;
     }
-    if (isRecord6(items)) {
+    if (isRecord7(items)) {
       sanitizeSchemaKeywords(items);
     }
   };
@@ -24553,12 +24628,12 @@ ${template}`;
     idea: ".codeai-hub/unknown-workspace/description/runs/000-unknown/description.md",
     virtualSimulation: ".codeai-hub/unknown-workspace/virtual_simulation/runs/000-unknown/virtual-simulation.md"
   };
-  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkflowContractPayload = (value) => {
-    if (!isRecord7(value)) {
+    if (!isRecord8(value)) {
       return false;
     }
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord7(value.schema);
+    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord8(value.schema);
   };
   var parseVersion = (payload) => typeof payload.version === "string" && payload.version.trim().length > 0 ? payload.version : null;
   var fetchWorkflowContract = async (endpoint) => {
@@ -24610,18 +24685,18 @@ ${template}`;
 
   // src/client/ui/src/services/idea-collector-finalize-utils.ts
   var FINALIZE_TRIGGER_PATTERN = /(^|[\s,.;:!?])(?:ок|ok|утверждаю|approve|approved)(?=$|[\s,.;:!?])/i;
-  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var cloneSchema2 = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
   var enforceArtifactsRequired = (schema) => {
     const next = cloneSchema2(schema);
     const properties = next.properties;
-    if (isRecord8(properties)) {
+    if (isRecord9(properties)) {
       const artifacts = properties.artifacts;
-      if (isRecord8(artifacts)) {
+      if (isRecord9(artifacts)) {
         artifacts.minItems = 1;
       }
       const questions = properties.questions;
-      if (isRecord8(questions)) {
+      if (isRecord9(questions)) {
         questions.maxItems = 0;
       }
     }
@@ -24723,9 +24798,9 @@ ${template}`;
     const remainingMessage = lines.slice(1).join("\n").trim();
     return { paths, remainingMessage };
   };
-  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse = (value) => {
-    if (!isRecord9(value)) {
+    if (!isRecord10(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -25322,9 +25397,9 @@ ${replacement}
   // src/client/ui/src/services/workspace-file-service.ts
   var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
   var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
-  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord11 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse2 = (value) => {
-    if (!isRecord10(value)) {
+    if (!isRecord11(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -28526,7 +28601,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord11 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var clampContinuityRemainingPercentThreshold = (value) => Math.min(
     MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
@@ -28537,7 +28612,7 @@ ${replacement}
     Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
   );
   var mapGeminiSessionContinuitySettings = (value) => {
-    if (!isRecord11(value)) {
+    if (!isRecord12(value)) {
       return {
         contextWindowTokenLimit: DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
         remainingPercentThreshold: DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD
@@ -28553,7 +28628,7 @@ ${replacement}
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord11(value)) {
+    if (!isRecord12(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -28598,7 +28673,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord12 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord13 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -28616,7 +28691,7 @@ ${replacement}
   });
   var mapContinuity = (value) => {
     const numericValue = Number(
-      isRecord12(value) ? value.remainingPercentThreshold : void 0
+      isRecord13(value) ? value.remainingPercentThreshold : void 0
     );
     const remainingPercentThreshold = Number.isFinite(numericValue) ? Math.min(
       MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
@@ -28643,7 +28718,7 @@ ${replacement}
   };
   var mapCodexReasoningByModel = (value) => {
     const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
-    if (!isRecord12(value)) {
+    if (!isRecord13(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -29667,15 +29742,15 @@ ${replacement}
 
   // src/client/ui/src/api/orchestrator/initiatives-client.ts
   var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
-  var isRecord13 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord14 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isInitiativeSummary = (value) => {
-    if (!isRecord13(value)) {
+    if (!isRecord14(value)) {
       return false;
     }
     return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
   };
   var parseInitiatives = (value) => {
-    if (!isRecord13(value)) {
+    if (!isRecord14(value)) {
       return [];
     }
     const raw = value.initiatives;
@@ -29697,7 +29772,7 @@ ${replacement}
     return initiatives;
   };
   var parseCreatedInitiative = (value) => {
-    if (!isRecord13(value)) {
+    if (!isRecord14(value)) {
       return null;
     }
     const initiative = value.initiative;
