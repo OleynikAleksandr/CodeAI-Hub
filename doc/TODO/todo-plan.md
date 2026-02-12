@@ -17,7 +17,7 @@
 **Goal:** запускать Claude Code CLI так, чтобы его сессии/транскрипты не смешивались с пользовательскими терминальными сессиями: `HOME=~/.codeai-hub/providers/claude/home/`.
 
 ### Stream: Provider Home Wiring
-1. [TODO] Claude: добавить понятие provider-home для Claude (аналогично Codex), и запускать `claude` с `HOME=.../providers/claude/home` (scope: `packages/Claude_Module/*` runner/spawn, provider config; expected commit message: `feat(claude): isolate claude home under provider directory`)
+1. [IN_PROGRESS] Claude: добавить понятие provider-home для Claude (аналогично Codex), и запускать `claude` с `HOME=.../providers/claude/home` (scope: `packages/Claude_Module/*` runner/spawn, provider config; expected commit message: `feat(claude): isolate claude home under provider directory`)
 2. [TODO] Git Commit: `feat(claude): isolate claude home under provider directory` (hash: TBD)
 3. [TODO] Claude: убедиться что transcript/jsonl пути и resume/continue логика читают/пишут внутри provider-home, без регрессий на существующих путях (scope: `packages/Claude_Module/*` session/transcript paths, any path utilities; expected commit message: `fix(claude): use provider-home paths for transcripts and resume`)
 4. [TODO] Git Commit: `fix(claude): use provider-home paths for transcripts and resume` (hash: TBD)
