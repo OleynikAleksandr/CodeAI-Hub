@@ -281,18 +281,7 @@ export class RemoteBridge {
     }
     switch (incoming.type) {
       case "session:create":
-        await this.sessionHandler.handleCreate(
-          incoming.payload?.providerId,
-          incoming.payload?.workspacePath ??
-            this.wsManager?.getWorkspaceScope(clientId)?.workspacePath ??
-            undefined,
-          {
-            initiativeSlug: incoming.payload?.initiativeSlug ?? null,
-            providerSessionId: incoming.payload?.providerSessionId ?? null,
-            stage: incoming.payload?.stage ?? null,
-            runSlug: incoming.payload?.runSlug ?? null,
-          }
-        );
+        await this.handleSessionCreateMessage(clientId, incoming);
         break;
       case "settings:load":
         await this.settingsHandler.handleLoad();
@@ -503,5 +492,47 @@ export class RemoteBridge {
       return;
     }
     wsManager.sendToClient(clientId, message);
+  }
+
+  private async handleSessionCreateMessage(
+    clientId: string,
+    incoming: Extract<IncomingMessage, { readonly type: "session:create" }>
+  ): Promise<void> {
+    const resolvedWorkspacePath =
+      incoming.payload?.workspacePath ??
+      this.wsManager?.getWorkspaceScope(clientId)?.workspacePath ??
+      undefined;
+    const initiativeSlug = incoming.payload?.initiativeSlug ?? null;
+
+    await this.sessionHandler.handleCreate(
+      incoming.payload?.providerId,
+      resolvedWorkspacePath,
+      {
+        initiativeSlug,
+        providerSessionId: incoming.payload?.providerSessionId ?? null,
+        stage: incoming.payload?.stage ?? null,
+        runSlug: incoming.payload?.runSlug ?? null,
+      }
+    );
+
+    if (!(resolvedWorkspacePath && initiativeSlug)) {
+      return;
+    }
+
+    try {
+      await this.workflowRuntime.connectWorkspace({
+        workspaceRoot: resolvedWorkspacePath,
+        workspaceSlug: initiativeSlug,
+      });
+    } catch (error) {
+      this.logger.warn(
+        "Failed to connect workflow runtime from session:create",
+        {
+          workspacePath: resolvedWorkspacePath,
+          workspaceSlug: initiativeSlug,
+          error: error instanceof Error ? error.message : String(error),
+        }
+      );
+    }
   }
 }

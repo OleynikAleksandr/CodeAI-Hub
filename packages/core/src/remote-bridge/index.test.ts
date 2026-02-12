@@ -66,3 +66,28 @@ test("RemoteBridge handles workspace:select and routes through runtime facade", 
     "workspace select handler must send explicit ack to the same client"
   );
 });
+
+test("RemoteBridge binds workflow watcher on session:create with workspace context", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("const resolvedWorkspacePath ="),
+    true,
+    "session:create path must resolve workspace path before create"
+  );
+  assert.equal(
+    source.includes("const initiativeSlug = incoming.payload?.initiativeSlug"),
+    true,
+    "session:create path must capture initiative/workflow slug"
+  );
+  assert.equal(
+    source.includes("await this.workflowRuntime.connectWorkspace({"),
+    true,
+    "session:create path must connect workflow runtime when workspace context is present"
+  );
+  assert.equal(
+    source.includes('"Failed to connect workflow runtime from session:create"'),
+    true,
+    "session:create path must log workflow watcher bind failures without breaking create"
+  );
+});
