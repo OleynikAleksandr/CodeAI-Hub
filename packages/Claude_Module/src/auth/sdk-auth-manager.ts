@@ -1,4 +1,4 @@
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import {
   access,
   copyFile,
@@ -33,6 +33,9 @@ const CLAUDE_OAUTH_ENV_KEY = "CLAUDE_CODE_OAUTH_TOKEN";
 const CLAUDE_OAUTH_KEYCHAIN_SERVICE = "Claude Code-credentials";
 const AUTH_PROBE_MODEL_ALIAS = "haiku";
 const AUTH_PROBE_PROMPT = "Reply with OK only.";
+const AUTH_PROBE_TIMEOUT_MS = 20_000;
+const AUTH_PROBE_KILL_GRACE_MS = 2000;
+const MAX_PROBE_OUTPUT_CHARS = 4000;
 const TOKEN_FIELD_CANDIDATES = [
   "accessToken",
   "access_token",
@@ -45,6 +48,19 @@ type ExecFailure = {
   readonly message?: unknown;
   readonly stdout?: unknown;
   readonly stderr?: unknown;
+  readonly code?: unknown;
+  readonly signal?: unknown;
+  readonly killed?: unknown;
+};
+
+const toOptionalString = (value: unknown): string => {
+  if (typeof value === "string") {
+    return value;
+  }
+  if (Buffer.isBuffer(value)) {
+    return value.toString("utf8");
+  }
+  return "";
 };
 
 const toLowerText = (value: unknown): string =>
@@ -53,12 +69,12 @@ const toLowerText = (value: unknown): string =>
 const serializeExecFailure = (error: unknown): string => {
   const payload = error as ExecFailure;
   const chunks = [
-    payload.message,
-    payload.stderr,
-    payload.stdout,
+    toOptionalString(payload.message),
+    toOptionalString(payload.stderr),
+    toOptionalString(payload.stdout),
     error instanceof Error ? error.message : String(error),
   ]
-    .map((item) => (typeof item === "string" ? item.trim() : ""))
+    .map((item) => item.trim())
     .filter(Boolean);
   return chunks.join(" | ");
 };
@@ -71,6 +87,24 @@ const isAuthFailureMessage = (message: string): boolean => {
     lower.includes("not authenticated") ||
     lower.includes("authentication")
   );
+};
+
+const isProbeTimeoutFailure = (error: unknown): boolean => {
+  const payload = error as ExecFailure;
+  if (payload.killed === true) {
+    return true;
+  }
+  if (payload.signal === "SIGTERM" || payload.signal === "SIGKILL") {
+    return true;
+  }
+  return payload.code === 143;
+};
+
+const appendTail = (current: string, chunk: string): string => {
+  const merged = current + chunk;
+  return merged.length > MAX_PROBE_OUTPUT_CHARS
+    ? merged.slice(merged.length - MAX_PROBE_OUTPUT_CHARS)
+    : merged;
 };
 
 const extractTokenFromCredentialPayload = (value: unknown): string | null => {
@@ -143,18 +177,21 @@ export class SDKAuthManager {
   }
 
   getAuthEnvironment(): NodeJS.ProcessEnv {
-    const baseEnv = { ...process.env };
-    baseEnv.HOME = resolveClaudeProviderHome();
-    baseEnv.CLAUDE_USE_CLI_AUTH = "true";
-    baseEnv.CLAUDE_SUBSCRIPTION_MODE = "true";
+    const { ANTHROPIC_API_KEY: _anthropicApiKey, ...processEnv } = process.env;
+    const baseEnv: NodeJS.ProcessEnv = {
+      ...processEnv,
+      HOME: resolveClaudeProviderHome(),
+      CLAUDE_USE_CLI_AUTH: "true",
+      CLAUDE_SUBSCRIPTION_MODE: "true",
+    };
     const oauthToken = this.resolveOAuthTokenFromCacheOrEnvironment();
     if (oauthToken) {
       baseEnv[CLAUDE_OAUTH_ENV_KEY] = oauthToken;
-    } else {
-      delete baseEnv[CLAUDE_OAUTH_ENV_KEY];
+      return baseEnv;
     }
-    baseEnv.ANTHROPIC_API_KEY = undefined;
-    return baseEnv;
+    const { [CLAUDE_OAUTH_ENV_KEY]: _oauthToken, ...withoutOauthToken } =
+      baseEnv;
+    return withoutOauthToken;
   }
 
   private async linkLegacyCliStateIfNeeded(): Promise<void> {
@@ -341,32 +378,99 @@ export class SDKAuthManager {
   }
 
   private async runAuthProbe(workspacePath: string): Promise<boolean> {
-    try {
-      await execFileAsync(
-        this.npxExecutable,
-        [
-          "@anthropic-ai/claude-code",
-          "-p",
-          "--no-session-persistence",
-          "--model",
-          AUTH_PROBE_MODEL_ALIAS,
-          AUTH_PROBE_PROMPT,
-        ],
-        {
-          cwd: workspacePath,
-          env: this.getAuthEnvironment(),
-          windowsHide: true,
-          timeout: 20_000,
+    const args = [
+      "@anthropic-ai/claude-code",
+      "-p",
+      "--no-session-persistence",
+      "--model",
+      AUTH_PROBE_MODEL_ALIAS,
+      AUTH_PROBE_PROMPT,
+    ];
+    const child = spawn(this.npxExecutable, args, {
+      cwd: workspacePath,
+      env: this.getAuthEnvironment(),
+      windowsHide: true,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+
+    return await new Promise<boolean>((resolve, reject) => {
+      let stdoutTail = "";
+      let stderrTail = "";
+      let timedOut = false;
+      let timeout: NodeJS.Timeout | null = null;
+      let killGrace: NodeJS.Timeout | null = null;
+
+      const safeKill = (signal?: NodeJS.Signals): void => {
+        try {
+          child.kill(signal);
+        } catch {
+          // ignore
         }
-      );
-      return true;
-    } catch (error) {
-      const message = serializeExecFailure(error);
-      if (isAuthFailureMessage(message)) {
-        return false;
-      }
-      throw new Error(`Claude auth preflight failed: ${message}`);
-    }
+      };
+
+      const clearTimers = (): void => {
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+        if (killGrace) {
+          clearTimeout(killGrace);
+        }
+      };
+
+      timeout = setTimeout(() => {
+        timedOut = true;
+        safeKill("SIGTERM");
+        killGrace = setTimeout(() => {
+          safeKill("SIGKILL");
+        }, AUTH_PROBE_KILL_GRACE_MS);
+      }, AUTH_PROBE_TIMEOUT_MS);
+
+      child.on("error", (error) => {
+        clearTimers();
+        const message = serializeExecFailure(error);
+        if (isAuthFailureMessage(message) || isProbeTimeoutFailure(error)) {
+          resolve(false);
+          return;
+        }
+        reject(new Error(`Claude auth preflight failed: ${message}`));
+      });
+
+      child.stdout?.on("data", (data: Buffer) => {
+        stdoutTail = appendTail(stdoutTail, data.toString("utf8"));
+      });
+
+      child.stderr?.on("data", (data: Buffer) => {
+        stderrTail = appendTail(stderrTail, data.toString("utf8"));
+      });
+
+      child.on("close", (code, signal) => {
+        clearTimers();
+        if (code === 0) {
+          resolve(true);
+          return;
+        }
+
+        const failureMessage = [stderrTail, stdoutTail]
+          .map((chunk) => chunk.trim())
+          .filter(Boolean)
+          .join(" | ");
+        if (
+          timedOut ||
+          isAuthFailureMessage(failureMessage) ||
+          (signal !== null && signal !== undefined)
+        ) {
+          resolve(false);
+          return;
+        }
+
+        const codePart = code !== null ? `code=${code}` : "";
+        const signalPart = signal ? `signal=${signal}` : "";
+        const details = [failureMessage, codePart, signalPart]
+          .filter(Boolean)
+          .join(" | ");
+        reject(new Error(`Claude auth preflight failed: ${details}`));
+      });
+    });
   }
 
   private async checkAuthentication(): Promise<boolean> {
