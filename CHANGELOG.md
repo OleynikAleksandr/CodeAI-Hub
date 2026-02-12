@@ -1,3 +1,8 @@
+## [1.1.576] - 2026-02-12
+### Fixed
+- PM/Core usage limits delivery: `turn_completed` события теперь пробрасываются в `session:stream`, поэтому `usageLimits` гарантированно доходят в UI даже когда отдельный `usage_limits stream_event` не был доставлен.
+- Session snapshot hydration: новые Claude-сессии получают `usageLimits` из provider-scoped cache уже при создании snapshot, поэтому `Session ID Bar` показывает последние `session/weekly` значения сразу на старте новой сессии (до следующего turn update).
+
 ## [1.1.575] - 2026-02-12
 ### Fixed
 - Session UI / PM: `usage_limits` теперь сохраняются как последние известные значения для Claude и продолжают отображаться при переключении между Claude-сессиями, даже если в новой сессии ещё не пришёл первый usage-event.
