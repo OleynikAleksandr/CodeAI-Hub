@@ -1660,6 +1660,10 @@ export class SessionRequestHandler {
       event
     );
     if (typedEvent.type === "turn_completed") {
+      this.broadcaster({
+        type: "session:stream",
+        payload: { sessionId, event: typedEvent },
+      });
       this.handleTurnCompletedWithFlowNodeArbitration(
         sessionId,
         flowNodeContinuityTask

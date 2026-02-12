@@ -14,6 +14,7 @@ import type { Settings } from "../components/settings/settings-state-model";
 import type { CoreBridgeSessionMessagePayload } from "../core-bridge/types";
 import { buildModelInfoList } from "./model-info-builder";
 import { readLastKnownTokenUsage } from "./token-usage-cache";
+import { readLastKnownUsageLimits } from "./usage-limits-cache";
 
 export type ProviderCatalog = Partial<
   Record<ProviderStackId, ProviderStackDescriptor>
@@ -62,13 +63,10 @@ export const isProviderDescriptorCandidate = (
   if (!value || typeof value !== "object") {
     return false;
   }
-
   const candidate = value as Record<string, unknown>;
-
   if (typeof candidate.id !== "string") {
     return false;
   }
-
   const providerId = candidate.id as ProviderStackId;
   if (!providerIdSet.has(providerId)) {
     return false;
@@ -186,6 +184,7 @@ export const createInitialSnapshot = (
   const cachedTokenUsage = session.binding.providerSessionId
     ? readLastKnownTokenUsage(session.binding.providerSessionId)
     : null;
+  const cachedUsageLimits = readLastKnownUsageLimits(providersSummary);
 
   const status: SessionStatusInfo = {
     providerSummary: providersSummary,
@@ -194,6 +193,7 @@ export const createInitialSnapshot = (
       used: cachedTokenUsage?.used ?? 0,
       limit: cachedTokenUsage?.limit ?? 200_000,
     },
+    ...(cachedUsageLimits ? { usageLimits: cachedUsageLimits } : {}),
     continuityLock: {
       active: false,
       updatedAt: now,

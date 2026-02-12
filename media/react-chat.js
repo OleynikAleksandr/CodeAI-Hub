@@ -7959,6 +7959,80 @@
     return stored ? { used: stored.used, limit: stored.limit } : null;
   };
 
+  // src/client/ui/src/session/usage-limits-cache.ts
+  var USAGE_LIMITS_STORAGE_PREFIX = "codeaihub:lastUsageLimitsByProvider:";
+  var getLocalStorage2 = () => {
+    try {
+      return "localStorage" in globalThis ? globalThis.localStorage : null;
+    } catch {
+      return null;
+    }
+  };
+  var isRecord2 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var normalizeProviderKey = (value) => value.trim().toLowerCase();
+  var readNumber2 = (value) => typeof value === "number" && Number.isFinite(value) ? value : null;
+  var readString = (value) => typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+  var parseBucket = (value) => {
+    if (!isRecord2(value)) {
+      return null;
+    }
+    const percentUsed = readNumber2(value.percentUsed);
+    if (percentUsed === null) {
+      return null;
+    }
+    return {
+      percentUsed,
+      resetsAt: readString(value.resetsAt)
+    };
+  };
+  var parseUsageLimits = (value) => {
+    if (!isRecord2(value)) {
+      return null;
+    }
+    const parsed = {
+      currentSession: parseBucket(value.currentSession),
+      currentWeekAllModels: parseBucket(value.currentWeekAllModels),
+      currentWeekSonnetOnly: parseBucket(value.currentWeekSonnetOnly)
+    };
+    if (!(parsed.currentSession || parsed.currentWeekAllModels || parsed.currentWeekSonnetOnly)) {
+      return null;
+    }
+    return parsed;
+  };
+  var parseStoredUsageLimits = (raw) => {
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return null;
+    }
+    if (!isRecord2(parsed)) {
+      return null;
+    }
+    const usageLimits = parseUsageLimits(parsed.usageLimits);
+    const updatedAt = readNumber2(parsed.updatedAt);
+    if (!usageLimits || updatedAt === null || updatedAt <= 0) {
+      return null;
+    }
+    return { usageLimits, updatedAt };
+  };
+  var readLastKnownUsageLimits = (providerSummary) => {
+    const storage = getLocalStorage2();
+    if (!storage) {
+      return null;
+    }
+    const providerKey = normalizeProviderKey(providerSummary);
+    if (!providerKey) {
+      return null;
+    }
+    const raw = storage.getItem(`${USAGE_LIMITS_STORAGE_PREFIX}${providerKey}`);
+    if (!raw) {
+      return null;
+    }
+    const stored = parseStoredUsageLimits(raw);
+    return stored?.usageLimits ?? null;
+  };
+
   // src/client/ui/src/session/helpers.ts
   var mergeCatalog = (catalog, providers) => {
     const nextCatalog = { ...catalog };
@@ -8050,6 +8124,7 @@
     const now = Date.now();
     const models = buildModelInfoList(session.providerIds, settings ?? null);
     const cachedTokenUsage = session.binding.providerSessionId ? readLastKnownTokenUsage(session.binding.providerSessionId) : null;
+    const cachedUsageLimits = readLastKnownUsageLimits(providersSummary);
     const status = {
       providerSummary: providersSummary,
       models,
@@ -8057,6 +8132,7 @@
         used: cachedTokenUsage?.used ?? 0,
         limit: cachedTokenUsage?.limit ?? 2e5
       },
+      ...cachedUsageLimits ? { usageLimits: cachedUsageLimits } : {},
       continuityLock: {
         active: false,
         updatedAt: now
@@ -8155,7 +8231,7 @@
   }));
 
   // src/client/ui/src/core-bridge/normalizers.ts
-  var isRecord2 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var toNumberTimestamp = (value) => {
     const parsed = value ? Date.parse(value) : Number.NaN;
     return Number.isNaN(parsed) ? Date.now() : parsed;
@@ -8262,10 +8338,10 @@
     };
   };
   var sanitizeSessionMessagePayload = (payload) => {
-    if (!isRecord2(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord3(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
-    const messageSource = isRecord2(payload.message) ? {
+    const messageSource = isRecord3(payload.message) ? {
       sessionId: payload.sessionId,
       ...payload.message
     } : payload;
@@ -8276,7 +8352,7 @@
     return { sessionId: payload.sessionId, message: normalized };
   };
   var sanitizeSessionBindingPayload = (payload) => {
-    if (!isRecord2(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord3(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
     const providerSessionId = payload.providerSessionId === null || typeof payload.providerSessionId === "string" ? payload.providerSessionId : null;
@@ -8287,7 +8363,7 @@
     };
   };
   var sanitizeSessionErrorPayload = (payload) => {
-    if (!isRecord2(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord3(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
     const providerLabel = typeof payload.providerId === "string" && payload.providerId.trim().length > 0 ? `[${payload.providerId.trim()}] ` : "";
@@ -8307,7 +8383,7 @@
     if (!contract) {
       return null;
     }
-    const questionnaire = isRecord2(contract.questionnaire) ? contract.questionnaire : null;
+    const questionnaire = isRecord3(contract.questionnaire) ? contract.questionnaire : null;
     if (!questionnaire) {
       return null;
     }
@@ -22008,7 +22084,7 @@ ${formattedPaths}`;
   var FILE_DROP_ENDPOINT = "/api/v1/file-drop";
   var MAX_CAPTURE_ATTEMPTS = 4;
   var CAPTURE_RETRY_DELAY_MS = 120;
-  var isRecord3 = (value) => typeof value === "object" && value !== null;
+  var isRecord4 = (value) => typeof value === "object" && value !== null;
   var resolveCoreHttpUrl = () => {
     const globalScope2 = window;
     const primaryUrl = globalScope2.__CODEAI_CORE_CONFIG?.httpUrl;
@@ -22095,7 +22171,7 @@ ${formattedPaths}`;
       await this.clearFileDropViaHttp();
     }
     handleMessage(message) {
-      if (!isRecord3(message) || typeof message.command !== "string") {
+      if (!isRecord4(message) || typeof message.command !== "string") {
         return;
       }
       if (message.command === "insertPath") {
@@ -22880,80 +22956,6 @@ ${path2}` : path2;
       parsed,
       options
     )}`;
-  };
-
-  // src/client/ui/src/session/usage-limits-cache.ts
-  var USAGE_LIMITS_STORAGE_PREFIX = "codeaihub:lastUsageLimitsByProvider:";
-  var getLocalStorage2 = () => {
-    try {
-      return "localStorage" in globalThis ? globalThis.localStorage : null;
-    } catch {
-      return null;
-    }
-  };
-  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var normalizeProviderKey = (value) => value.trim().toLowerCase();
-  var readNumber2 = (value) => typeof value === "number" && Number.isFinite(value) ? value : null;
-  var readString = (value) => typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
-  var parseBucket = (value) => {
-    if (!isRecord4(value)) {
-      return null;
-    }
-    const percentUsed = readNumber2(value.percentUsed);
-    if (percentUsed === null) {
-      return null;
-    }
-    return {
-      percentUsed,
-      resetsAt: readString(value.resetsAt)
-    };
-  };
-  var parseUsageLimits = (value) => {
-    if (!isRecord4(value)) {
-      return null;
-    }
-    const parsed = {
-      currentSession: parseBucket(value.currentSession),
-      currentWeekAllModels: parseBucket(value.currentWeekAllModels),
-      currentWeekSonnetOnly: parseBucket(value.currentWeekSonnetOnly)
-    };
-    if (!(parsed.currentSession || parsed.currentWeekAllModels || parsed.currentWeekSonnetOnly)) {
-      return null;
-    }
-    return parsed;
-  };
-  var parseStoredUsageLimits = (raw) => {
-    let parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      return null;
-    }
-    if (!isRecord4(parsed)) {
-      return null;
-    }
-    const usageLimits = parseUsageLimits(parsed.usageLimits);
-    const updatedAt = readNumber2(parsed.updatedAt);
-    if (!usageLimits || updatedAt === null || updatedAt <= 0) {
-      return null;
-    }
-    return { usageLimits, updatedAt };
-  };
-  var readLastKnownUsageLimits = (providerSummary) => {
-    const storage = getLocalStorage2();
-    if (!storage) {
-      return null;
-    }
-    const providerKey = normalizeProviderKey(providerSummary);
-    if (!providerKey) {
-      return null;
-    }
-    const raw = storage.getItem(`${USAGE_LIMITS_STORAGE_PREFIX}${providerKey}`);
-    if (!raw) {
-      return null;
-    }
-    const stored = parseStoredUsageLimits(raw);
-    return stored?.usageLimits ?? null;
   };
 
   // src/client/ui/src/session/session-id-bar.tsx
