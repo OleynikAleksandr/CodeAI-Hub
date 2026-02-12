@@ -86,11 +86,11 @@
 1. [DONE] Claude: добавить в auth layer автоматическое получение OAuth access token и проброс `CLAUDE_CODE_OAUTH_TOKEN` в runtime env Claude-процессов (`HOME=~/.codeai-hub/providers/claude/home`), с безопасным fallback без логирования секрета (scope: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-context-usage-reader.ts`; expected commit message: `fix(claude): inject oauth token for provider-home sessions`).
 2. [DONE] Git Commit: `fix(claude): inject oauth token for provider-home sessions` (hash: 24f0460b)
 3. [DONE] Claude: добавить preflight gate перед первой рабочей сессией (до Анкеты): проверка non-interactive запроса в provider-home, при фейле запуск login-bootstrap flow и повторная проверка перед стартом сессии (scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/Claude_Module/src/auth/sdk-auth-manager.ts`, `packages/core/src/provider-registry/index.ts`; expected commit message: `feat(claude): add provider-home login preflight gate`).
-4. [IN_PROGRESS] Git Commit: `feat(claude): add provider-home login preflight gate` (hash: TBD)
+4. [DONE] Git Commit: `feat(claude): add provider-home login preflight gate` (hash: e40ca9cb)
 
 ### Stream: Session Start Verification
-1. [TODO] Claude: проверить сценарий старта первой Анкеты в чистом provider-home (без ручного `/login`) и убедиться, что сессии пишутся в `~/.codeai-hub/providers/claude/home/.claude/projects/*`, а терминальный `HOME` остается независимым (scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `test(claude): verify provider-home auth bootstrap and session paths`).
-2. [TODO] Git Commit: `test(claude): verify provider-home auth bootstrap and session paths` (hash: TBD)
+1. [DONE] Claude: проверить сценарий старта первой Анкеты в чистом provider-home (без ручного `/login`) и убедиться, что сессии пишутся в `~/.codeai-hub/providers/claude/home/.claude/projects/*`, а терминальный `HOME` остается независимым (scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit message: `test(claude): verify provider-home auth bootstrap and session paths`).
+2. [IN_PROGRESS] Git Commit: `test(claude): verify provider-home auth bootstrap and session paths` (hash: TBD)
 
 ### Stream: Release Build (Phase 146)
 1. [TODO] Выполнить `./scripts/build-all.sh` (версия: TBD) (scope: manifests; expected commit message: `chore(release): run build-all for phase146`)
