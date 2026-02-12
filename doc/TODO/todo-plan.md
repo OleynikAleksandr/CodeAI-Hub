@@ -74,4 +74,4 @@
 1. [DONE] Выполнить `./scripts/build-all.sh` (версия: `1.1.566`) (scope: manifests; expected commit message: `chore(release): run build-all for phase145`)
 2. [DONE] Git Commit: `chore(release): run build-all for v1.1.566` (hash: 77e7bedb)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать VSIX `codeai-hub-1.1.566.vsix` (scope: scripts; expected commit message: `chore(release): build vsix for phase145`)
-4. [TODO] Git Commit: `chore(release): build vsix for phase145` (hash: TBD)
+4. [DONE] Git Commit: `chore(release): build vsix for phase145` (hash: fe02a134)
