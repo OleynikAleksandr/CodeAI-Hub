@@ -62,9 +62,9 @@
 **Goal:** сохранять последние полученные `usage_limits` между Claude-сессиями в рамках workspace: после получения фидбэка лимиты должны отображаться в любой Claude-сессии до следующего обновления.
 
 ### Stream: Provider-scoped usage limits propagation
-1. [IN_PROGRESS] PM session pipeline: при получении `usage_limits` обновлять не только текущую сессию, но и все snapshot-сессии того же провайдера; при создании новой сессии подтягивать последние known usage limits этого провайдера из уже существующих snapshot (scope: `src/client/project-manager/components/sessions/usage-limits-stream.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(pm): keep latest usage limits across provider sessions`)
-2. [TODO] Git Commit: `fix(pm): keep latest usage limits across provider sessions` (hash: TBD)
+1. [DONE] PM/UI pipeline: при получении `usage_limits` обновлять snapshot-сессии того же провайдера и записывать latest provider-scoped cache; `Session ID Bar` должен читать cache как fallback, если текущая сессия ещё не получила собственный usage-event (scope: `src/client/project-manager/components/sessions/usage-limits-stream.ts`, `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/usage-limits-cache.ts`; expected commit message: `fix(pm): keep latest usage limits across provider sessions`)
+2. [DONE] Git Commit: `fix(pm): keep latest usage limits across provider sessions` (hash: 53cf577e)
 
 ### Stream: Regression tests for cross-session limits persistence
-1. [TODO] Добавить targeted тесты на распространение/наследование usage limits между сессиями одного провайдера (scope: `src/client/project-manager/components/sessions/usage-limits-stream.test.ts`; expected commit message: `test(pm): cover shared usage limits across sessions`)
-2. [TODO] Git Commit: `test(pm): cover shared usage limits across sessions` (hash: TBD)
+1. [DONE] Добавить targeted тесты на распространение/наследование usage limits между сессиями одного провайдера и fallback рендер в `Session ID Bar` из provider cache (scope: `src/client/project-manager/components/sessions/usage-limits-stream.test.ts`, `src/client/ui/src/session/session-id-bar.test.tsx`; expected commit message: `test(pm): cover shared usage limits across sessions`)
+2. [DONE] Git Commit: `test(pm): cover shared usage limits across sessions` (hash: 53cf577e)
