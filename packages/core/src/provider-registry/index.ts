@@ -833,7 +833,7 @@ export class ProviderRegistry {
       case "geminiCli":
         return "Gemini CLI is unavailable. Run `gemini login`, confirm credentials, then use Settings → General → Restart Core to retry";
       default:
-        return "Claude CLI is unavailable. Run `claude login`, check your limits, then use Settings → General → Restart Core to retry";
+        return "Claude CLI is unavailable. CodeAI Hub runs provider-home auth bootstrap automatically; if it still fails, run `HOME=~/.codeai-hub/providers/claude/home claude login`, then use Settings → General → Restart Core to retry";
     }
   }
 

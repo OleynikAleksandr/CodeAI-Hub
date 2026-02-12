@@ -101,6 +101,7 @@ export class SDKAuthManager {
     process.platform === "win32" ? "npx.cmd" : "npx";
   private readonly reporter?: ModuleReporter;
   private cachedOAuthToken: string | null = null;
+  private providerHomeBootstrapReady = false;
 
   constructor(options?: { readonly reporter?: ModuleReporter }) {
     this.reporter = options?.reporter;
@@ -119,8 +120,12 @@ export class SDKAuthManager {
   async ensureProviderHomeSessionBootstrap(payload: {
     readonly workspacePath: string;
   }): Promise<void> {
+    if (this.providerHomeBootstrapReady) {
+      return;
+    }
     const initialAttempt = await this.runAuthProbe(payload.workspacePath);
     if (initialAttempt) {
+      this.providerHomeBootstrapReady = true;
       return;
     }
 
@@ -130,6 +135,7 @@ export class SDKAuthManager {
     await this.bootstrapOAuthToken({ forceRefresh: true });
     const retryAttempt = await this.runAuthProbe(payload.workspacePath);
     if (retryAttempt) {
+      this.providerHomeBootstrapReady = true;
       return;
     }
 
