@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/codex-module",
-  "version": "1.1.567",
+  "version": "1.1.568",
   "description": "Codex provider integration for CodeAI Hub core",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
