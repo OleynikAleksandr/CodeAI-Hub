@@ -33,3 +33,24 @@
 ### Stream: Quality Gates + Targeted Build
 1. [DONE] Прогнать обязательные гейты + таргетные сборки для затронутых пакетов/клиента; обновить статусы в этом плане (scope: `packages/Claude_Module`, `src/client/project-manager`; expected commit message: `chore(todo): close phase147 usage-limits stream`)
 2. [DONE] Git Commit: `chore(todo): close phase147 usage-limits stream` (hash: af46a43a)
+
+---
+
+## Phase 148 — Usage Limits Reset Timezone + Readable Label + Release v1.1.574 (owner: Oleksandr, updated: 2026-02-12)
+
+**Goal:** исправить отображение reset-времени лимитов в локальной timezone пользователя и привести формат к читабельному виду (`Resets Feb 12 at 6pm`), затем собрать новый релиз.
+
+### Stream: Session ID Bar reset formatting
+1. [DONE] UI: заменить рендер сырого `resetsAt` на formatter локального времени с форматом `Resets <Mon> <day> at <h><am/pm>`, без потери fallback для нестандартных строк (scope: `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/session-id-bar-reset-format.ts`; expected commit message: `fix(ui): format usage reset times in local timezone`)
+2. [DONE] Git Commit: `fix(ui): format usage reset times in local timezone` (hash: ea85dc41)
+
+### Stream: Regression tests for reset formatter
+1. [IN_PROGRESS] Добавить targeted тесты для timezone conversion и readable label (`UTC Z`/`(UTC)` -> локальный формат), включая fallback кейсы (scope: `src/client/ui/src/session/session-id-bar-reset-format.test.ts`; expected commit message: `test(ui): cover usage reset local time formatting`)
+2. [TODO] Git Commit: `test(ui): cover usage reset local time formatting` (hash: TBD)
+
+### Stream: Quality gates + release build
+1. [TODO] Прогнать обязательные гейты и таргетные сборки затронутых модулей, обновить release docs до `1.1.574`, выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync docs for v1.1.574`)
+2. [TODO] Git Commit: `docs(release): sync docs for v1.1.574` (hash: TBD)
+3. [TODO] Git Commit: `chore(release): run build-all for v1.1.574` (hash: TBD)
+4. [TODO] Создать session report по результатам релиза (scope: `doc/Sessions/Session029.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session029 release report`)
+5. [TODO] Git Commit: `docs(session): add session029 release report` (hash: TBD)
