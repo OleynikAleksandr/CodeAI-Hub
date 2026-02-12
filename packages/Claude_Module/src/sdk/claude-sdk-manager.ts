@@ -63,7 +63,7 @@ type ClaudeQueryOptions = {
   includePartialMessages: boolean;
   projectPath: string;
   settingSources: string[];
-  environment: NodeJS.ProcessEnv;
+  env: NodeJS.ProcessEnv;
   pathToClaudeCodeExecutable: string;
   model?: string;
   maxThinkingTokens?: number;
@@ -242,7 +242,7 @@ export class ClaudeSDKManager {
       includePartialMessages: true,
       projectPath: this.resolveProjectPath(),
       settingSources: ["user", "project", "local"],
-      environment: this.deps.authManager.getAuthEnvironment(),
+      env: this.deps.authManager.getAuthEnvironment(),
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
     };
     if (resolvedModel) {
