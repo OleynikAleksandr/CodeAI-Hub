@@ -1,3 +1,11 @@
+## [1.1.575] - 2026-02-12
+### Fixed
+- Session UI / PM: `usage_limits` теперь сохраняются как последние известные значения для Claude и продолжают отображаться при переключении между Claude-сессиями, даже если в новой сессии ещё не пришёл первый usage-event.
+
+### Added
+- Session UI: добавлен provider-scoped cache usage limits (`Session ID Bar` использует fallback из cache до следующего обновления лимитов).
+- PM/UI tests: добавлены targeted тесты на распространение usage limits между сессиями одного провайдера и fallback-рендер в `Session ID Bar`.
+
 ## [1.1.574] - 2026-02-12
 ### Fixed
 - Session UI usage limits: `Session ID Bar` теперь рендерит reset-время лимитов в локальной timezone пользователя (вместо сырого UTC/ISO), что устраняет смещение времени на +/− час относительно локали.
