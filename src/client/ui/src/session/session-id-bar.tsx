@@ -3,6 +3,7 @@ import type {
   SessionBindingInfo,
   SessionStatusInfo,
 } from "../../../../types/session";
+import { buildResetLabel } from "./session-id-bar-reset-format";
 
 const SESSION_ID_PREFIX_LENGTH = 8;
 
@@ -27,8 +28,6 @@ const resolveIdLabel = (binding: SessionBindingInfo): string => {
 
 type LimitBarStyle = CSSProperties;
 
-const TIMEZONE_SUFFIX_PATTERN = /^(.*)\s+\([^)]+\)\s*$/;
-
 const clampPercent = (value: number): number => {
   if (value < 0) {
     return 0;
@@ -42,24 +41,16 @@ const clampPercent = (value: number): number => {
 const renderLimitLabel = (payload: {
   readonly label: string;
   readonly percentUsed: number | null;
-  readonly resetsAt: string | null;
+  readonly resetLabel: string | null;
 }): string =>
   [
     payload.percentUsed === null
       ? payload.label
       : `${payload.label} ${payload.percentUsed}%`,
-    payload.resetsAt ? `(Resets ${payload.resetsAt})` : null,
+    payload.resetLabel ? `(${payload.resetLabel})` : null,
   ]
     .filter((value): value is string => Boolean(value))
     .join(" ");
-
-const stripTimeZoneSuffix = (value: string): string => {
-  // Claude Code often includes a timezone suffix: "5pm (Europe/Madrid)".
-  // Inline labels should be short; keep the full string in the tooltip.
-  const trimmed = value.trim();
-  const match = TIMEZONE_SUFFIX_PATTERN.exec(trimmed);
-  return match?.[1]?.trim() ? match[1].trim() : trimmed;
-};
 
 const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
   const sessionPercent =
@@ -69,6 +60,12 @@ const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
     status.usageLimits?.currentWeekAllModels?.percentUsed ?? null;
   const weeklyResetsAt =
     status.usageLimits?.currentWeekAllModels?.resetsAt ?? null;
+  const sessionResetLabel = sessionResetsAt
+    ? buildResetLabel(sessionResetsAt)
+    : null;
+  const weeklyResetLabel = weeklyResetsAt
+    ? buildResetLabel(weeklyResetsAt)
+    : null;
 
   const sessionFillStyle: LimitBarStyle | undefined =
     sessionPercent === null
@@ -92,15 +89,13 @@ const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
       <div aria-hidden className="session-id-bar__limits">
         <div
           className="session-id-bar__limit-row"
-          title={sessionResetsAt ? `Resets ${sessionResetsAt}` : undefined}
+          title={sessionResetLabel ?? undefined}
         >
           <span className="session-id-bar__limit-label">
             {renderLimitLabel({
               label: "session",
               percentUsed: sessionPercent,
-              resetsAt: sessionResetsAt
-                ? stripTimeZoneSuffix(sessionResetsAt)
-                : null,
+              resetLabel: sessionResetLabel,
             })}
           </span>
           <span
@@ -110,15 +105,13 @@ const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
         </div>
         <div
           className="session-id-bar__limit-row"
-          title={weeklyResetsAt ? `Resets ${weeklyResetsAt}` : undefined}
+          title={weeklyResetLabel ?? undefined}
         >
           <span className="session-id-bar__limit-label">
             {renderLimitLabel({
               label: "weekly",
               percentUsed: weeklyPercent,
-              resetsAt: weeklyResetsAt
-                ? stripTimeZoneSuffix(weeklyResetsAt)
-                : null,
+              resetLabel: weeklyResetLabel,
             })}
           </span>
           <span className="session-id-bar__limit-bar" style={weeklyFillStyle} />
