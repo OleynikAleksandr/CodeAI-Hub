@@ -19,8 +19,10 @@
 ### Stream: Provider Home Wiring
 1. [DONE] Claude: добавить понятие provider-home для Claude (аналогично Codex), и запускать `claude` с `HOME=.../providers/claude/home` (scope: `packages/Claude_Module/*` runner/spawn, provider config; expected commit message: `feat(claude): isolate claude home under provider directory`)
 2. [DONE] Git Commit: `feat(claude): isolate claude home under provider directory` (hash: b4080324)
-3. [IN_PROGRESS] Claude: убедиться что transcript/jsonl пути и resume/continue логика читают/пишут внутри provider-home, без регрессий на существующих путях (scope: `packages/Claude_Module/*` session/transcript paths, any path utilities; expected commit message: `fix(claude): use provider-home paths for transcripts and resume`)
-4. [TODO] Git Commit: `fix(claude): use provider-home paths for transcripts and resume` (hash: TBD)
+3. [DONE] Claude: использовать provider-home для `projectPath` (чтобы сессии/транскрипты Claude не смешивались) (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/provider/claude-provider-adapter.ts`; expected commit message: `fix(claude): use provider-home for project paths`)
+4. [DONE] Git Commit: `fix(claude): use provider-home for project paths` (hash: a93fb122)
+5. [IN_PROGRESS] Claude: резолвить cwd по sessionId из provider-home `projects/` (scope: `packages/Claude_Module/src/sdk/claude-context-usage-cwd-resolver.ts`; expected commit message: `fix(claude): resolve cwd from provider-home projects`)
+6. [TODO] Git Commit: `fix(claude): resolve cwd from provider-home projects` (hash: TBD)
 
 ### Stream: Release Build (Phase 143)
 1. [TODO] Выполнить `./scripts/build-all.sh` (версия: TBD) (scope: manifests; expected commit message: `chore(release): run build-all for phase143`)
