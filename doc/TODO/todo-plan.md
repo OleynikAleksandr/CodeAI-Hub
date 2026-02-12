@@ -38,11 +38,11 @@
 
 ### Stream: OAuth Token Retrieval (Cross-Platform)
 1. [DONE] Claude: реализовать получение OAuth токена без логирования секрета: приоритет `~/.claude/.credentials.json`, далее platform-specific store (macOS Keychain `Claude Code-credentials`, Linux `secret-tool`, Windows Credential Manager), с graceful fallback (scope: `packages/Claude_Module/src/sdk/*` token reader utils; expected commit message: `feat(claude): read claude oauth token cross-platform`)
-2. [IN_PROGRESS] Git Commit: `feat(claude): read claude oauth token cross-platform` (hash: TBD)
+2. [DONE] Git Commit: `feat(claude): read claude oauth token cross-platform` (hash: 58f2a1dd)
 
 ### Stream: Usage Probe + Parsing (Headers)
-1. [TODO] Claude: заменить текущий `/usage` reader на probe-запрос к `https://api.anthropic.com/v1/messages` с `anthropic-beta: oauth-2025-04-20` (модель: `claude-haiku-4-5-20251001`, `max_tokens: 1`) и парсинг заголовков `anthropic-ratelimit-unified-5h-*` и `anthropic-ratelimit-unified-7d-*` (scope: `packages/Claude_Module/src/sdk/claude-usage-limits-*.ts`; expected commit message: `feat(claude): usage limits from ratelimit headers probe`)
-2. [TODO] Git Commit: `feat(claude): usage limits from ratelimit headers probe` (hash: TBD)
+1. [DONE] Claude: заменить текущий `/usage` reader на probe-запрос к `https://api.anthropic.com/v1/messages` с `anthropic-beta: oauth-2025-04-20` (модель: `claude-haiku-4-5-20251001`, `max_tokens: 1`) и парсинг заголовков `anthropic-ratelimit-unified-5h-*` и `anthropic-ratelimit-unified-7d-*` (scope: `packages/Claude_Module/src/sdk/claude-usage-limits-*.ts`; expected commit message: `feat(claude): usage limits from ratelimit headers probe`)
+2. [IN_PROGRESS] Git Commit: `feat(claude): usage limits from ratelimit headers probe` (hash: TBD)
 3. [TODO] Claude: эмитить в стрим ровно тот же формат `usage_limits`, который уже ожидает UI; weekly только "all models", sonnet-only игнорировать (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/sdk/*`; expected commit message: `fix(claude): keep usage_limits stream contract stable`)
 4. [TODO] Git Commit: `fix(claude): keep usage_limits stream contract stable` (hash: TBD)
 
