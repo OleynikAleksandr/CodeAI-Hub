@@ -22807,6 +22807,81 @@ ${path2}` : path2;
   };
   var input_panel_default = InputPanel;
 
+  // src/client/ui/src/session/session-id-bar-reset-format.ts
+  var TIMEZONE_SUFFIX_PATTERN = /^(.*)\s+\([^)]+\)\s*$/u;
+  var UTC_RESET_PATTERN = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})(?::(\d{2}))?\s*\((UTC|GMT)\)$/iu;
+  var stripTimeZoneSuffix = (value) => {
+    const trimmed = value.trim();
+    const match = TIMEZONE_SUFFIX_PATTERN.exec(trimmed);
+    return match?.[1]?.trim() ? match[1].trim() : trimmed;
+  };
+  var parseDate = (value) => {
+    const timestamp = Date.parse(value);
+    if (!Number.isFinite(timestamp)) {
+      return null;
+    }
+    return new Date(timestamp);
+  };
+  var parseResetDate = (value) => {
+    const utcMatch = UTC_RESET_PATTERN.exec(value);
+    if (utcMatch) {
+      const [, datePart, hhmmPart, secondsPart] = utcMatch;
+      const normalizedSeconds = secondsPart ?? "00";
+      return parseDate(`${datePart}T${hhmmPart}:${normalizedSeconds}Z`);
+    }
+    const direct = parseDate(value);
+    if (direct) {
+      return direct;
+    }
+    const stripped = stripTimeZoneSuffix(value);
+    if (stripped !== value) {
+      return parseDate(stripped);
+    }
+    return null;
+  };
+  var resolveLocale = (options) => options.locale ?? "en-US";
+  var resolveTimeZone = (options) => options.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+  var formatMonthDay = (date, options) => new Intl.DateTimeFormat(resolveLocale(options), {
+    month: "short",
+    day: "numeric",
+    timeZone: resolveTimeZone(options)
+  }).format(date);
+  var readNumericPart = (parts, partType) => {
+    const value = parts.find((part) => part.type === partType)?.value ?? "0";
+    const parsed = Number.parseInt(value, 10);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+  var formatClock = (date, options) => {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+      timeZone: resolveTimeZone(options)
+    }).formatToParts(date);
+    const hour24 = readNumericPart(parts, "hour");
+    const minute = readNumericPart(parts, "minute");
+    const meridiem = hour24 >= 12 ? "pm" : "am";
+    const hour12 = hour24 % 12 || 12;
+    if (minute === 0) {
+      return `${hour12}${meridiem}`;
+    }
+    return `${hour12}:${String(minute).padStart(2, "0")}${meridiem}`;
+  };
+  var buildResetLabel = (rawValue, options = {}) => {
+    const trimmed = rawValue.trim();
+    if (!trimmed) {
+      return "Resets";
+    }
+    const parsed = parseResetDate(trimmed);
+    if (!parsed) {
+      return `Resets ${stripTimeZoneSuffix(trimmed)}`;
+    }
+    return `Resets ${formatMonthDay(parsed, options)} at ${formatClock(
+      parsed,
+      options
+    )}`;
+  };
+
   // src/client/ui/src/session/session-id-bar.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   var SESSION_ID_PREFIX_LENGTH = 8;
@@ -22823,7 +22898,6 @@ ${path2}` : path2;
     }
     return "ID: unavailable";
   };
-  var TIMEZONE_SUFFIX_PATTERN = /^(.*)\s+\([^)]+\)\s*$/;
   var clampPercent = (value) => {
     if (value < 0) {
       return 0;
@@ -22835,18 +22909,15 @@ ${path2}` : path2;
   };
   var renderLimitLabel = (payload) => [
     payload.percentUsed === null ? payload.label : `${payload.label} ${payload.percentUsed}%`,
-    payload.resetsAt ? `(Resets ${payload.resetsAt})` : null
+    payload.resetLabel ? `(${payload.resetLabel})` : null
   ].filter((value) => Boolean(value)).join(" ");
-  var stripTimeZoneSuffix = (value) => {
-    const trimmed = value.trim();
-    const match = TIMEZONE_SUFFIX_PATTERN.exec(trimmed);
-    return match?.[1]?.trim() ? match[1].trim() : trimmed;
-  };
   var SessionIdBar = ({ binding, status }) => {
     const sessionPercent = status.usageLimits?.currentSession?.percentUsed ?? null;
     const sessionResetsAt = status.usageLimits?.currentSession?.resetsAt ?? null;
     const weeklyPercent = status.usageLimits?.currentWeekAllModels?.percentUsed ?? null;
     const weeklyResetsAt = status.usageLimits?.currentWeekAllModels?.resetsAt ?? null;
+    const sessionResetLabel = sessionResetsAt ? buildResetLabel(sessionResetsAt) : null;
+    const weeklyResetLabel = weeklyResetsAt ? buildResetLabel(weeklyResetsAt) : null;
     const sessionFillStyle = sessionPercent === null ? void 0 : {
       "--limit-fill": `${clampPercent(sessionPercent)}%`
     };
@@ -22865,12 +22936,12 @@ ${path2}` : path2;
               "div",
               {
                 className: "session-id-bar__limit-row",
-                title: sessionResetsAt ? `Resets ${sessionResetsAt}` : void 0,
+                title: sessionResetLabel ?? void 0,
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-label", children: renderLimitLabel({
                     label: "session",
                     percentUsed: sessionPercent,
-                    resetsAt: sessionResetsAt ? stripTimeZoneSuffix(sessionResetsAt) : null
+                    resetLabel: sessionResetLabel
                   }) }),
                   /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
                     "span",
@@ -22886,12 +22957,12 @@ ${path2}` : path2;
               "div",
               {
                 className: "session-id-bar__limit-row",
-                title: weeklyResetsAt ? `Resets ${weeklyResetsAt}` : void 0,
+                title: weeklyResetLabel ?? void 0,
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-label", children: renderLimitLabel({
                     label: "weekly",
                     percentUsed: weeklyPercent,
-                    resetsAt: weeklyResetsAt ? stripTimeZoneSuffix(weeklyResetsAt) : null
+                    resetLabel: weeklyResetLabel
                   }) }),
                   /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-id-bar__limit-bar", style: weeklyFillStyle })
                 ]
