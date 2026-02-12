@@ -1,3 +1,10 @@
+## [1.1.565] - 2026-02-12
+### Changed
+- Claude: Claude Code CLI запускается с `HOME=~/.codeai-hub/providers/claude/home/`, поэтому сессии/транскрипты пишутся в provider-home и не смешиваются с `~/.claude/*`.
+
+### Added
+- Release artifacts: собран `codeai-hub-1.1.565.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.564] - 2026-02-11
 ### Changed
 - Claude: сервисные slash-команды `/context` и `/usage` выполняются через модель `haiku` (дешевле, инфо та же).
