@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
 import type { SDKAuthManager } from "../auth/sdk-auth-manager";
 import type { SDKInstaller } from "../installer/sdk-installer";
 import { SDKSessionLoggerFacade } from "../logging/sdk-session-logger";
@@ -12,6 +11,7 @@ import type {
   ClaudeWorkspaceOptions,
   ModuleReporter,
 } from "../types";
+import { resolveClaudeProviderProjectDir } from "./claude-provider-home";
 
 export type QueryFunction = (payload: {
   readonly prompt: string;
@@ -264,10 +264,7 @@ export class ClaudeSDKManager {
   }
 
   private resolveProjectPath(): string {
-    return join(
-      homedir(),
-      ".claude",
-      "projects",
+    return resolveClaudeProviderProjectDir(
       this.deps.workspace.claudeProjectSlug
     );
   }
