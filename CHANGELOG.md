@@ -1,3 +1,13 @@
+## [1.1.570] - 2026-02-12
+### Changed
+- Claude usage limits (Phase 144): `usage_limits` больше не читается через slash-команду `/usage`; вместо этого выполняется lightweight probe к `https://api.anthropic.com/v1/messages` (`anthropic-beta: oauth-2025-04-20`) и парсинг ratelimit headers `anthropic-ratelimit-unified-5h-*` и `anthropic-ratelimit-unified-7d-*`.
+- Claude OAuth token retrieval: добавлен выделенный cross-platform reader для `CLAUDE_CODE_OAUTH_TOKEN` с fallback-порядком `env -> credentials files -> platform store` (macOS Keychain, Linux `secret-tool`, Windows Credential Manager best-effort).
+- Session UI contract stability: stream-payload `usage_limits` сохранён в прежнем формате (`currentSession` + `currentWeekAllModels`; `currentWeekSonnetOnly=null`), чтобы `Session ID Bar` работал без изменений формата.
+
+### Added
+- UI verification: добавлены тесты PM stream-pipeline для `usage_limits` (`src/client/project-manager/components/sessions/usage-limits-stream.test.ts`) с проверкой прямого и вложенного payload.
+- Release artifacts: собран `codeai-hub-1.1.570.vsix` и обновлены локальные tarball-пакеты (`core`, `launcher`, `ui`, `providers`) через `build-all`/`build-release`.
+
 ## [1.1.569] - 2026-02-12
 ### Fixed
 - Claude provider-home auth: добавлен OAuth bootstrap с автоматическим `CLAUDE_CODE_OAUTH_TOKEN` injection в runtime env, чтобы убрать `Not logged in · Please run /login` при запуске через provider-home.
