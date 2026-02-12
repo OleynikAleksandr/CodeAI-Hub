@@ -32,4 +32,4 @@
 
 ### Stream: Quality Gates + Targeted Build
 1. [DONE] Прогнать обязательные гейты + таргетные сборки для затронутых пакетов/клиента; обновить статусы в этом плане (scope: `packages/Claude_Module`, `src/client/project-manager`; expected commit message: `chore(todo): close phase147 usage-limits stream`)
-2. [TODO] Git Commit: `chore(todo): close phase147 usage-limits stream` (hash: TBD)
+2. [DONE] Git Commit: `chore(todo): close phase147 usage-limits stream` (hash: af46a43a)
