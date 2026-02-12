@@ -4,7 +4,6 @@ import {
   copyFile,
   lstat,
   mkdir,
-  readFile,
   readlink,
   symlink,
   unlink,
@@ -12,6 +11,10 @@ import {
 import { homedir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
+import {
+  CLAUDE_OAUTH_ENV_KEY,
+  readClaudeOAuthToken,
+} from "../sdk/claude-oauth-token-reader";
 import {
   resolveClaudeProviderClaudeDir,
   resolveClaudeProviderHome,
@@ -29,20 +32,11 @@ const isWindows = process.platform === "win32";
 const LEGACY_CLAUDE_DIR = path.join(homedir(), ".claude");
 const CREDENTIALS_FILENAME = ".credentials.json";
 const CLAUDE_STATE_FILENAME = ".claude.json";
-const CLAUDE_OAUTH_ENV_KEY = "CLAUDE_CODE_OAUTH_TOKEN";
-const CLAUDE_OAUTH_KEYCHAIN_SERVICE = "Claude Code-credentials";
 const AUTH_PROBE_MODEL_ALIAS = "haiku";
 const AUTH_PROBE_PROMPT = "Reply with OK only.";
 const AUTH_PROBE_TIMEOUT_MS = 20_000;
 const AUTH_PROBE_KILL_GRACE_MS = 2000;
 const MAX_PROBE_OUTPUT_CHARS = 4000;
-const TOKEN_FIELD_CANDIDATES = [
-  "accessToken",
-  "access_token",
-  "oauthToken",
-  "oauth_token",
-  "token",
-] as const;
 
 type ExecFailure = {
   readonly message?: unknown;
@@ -105,29 +99,6 @@ const appendTail = (current: string, chunk: string): string => {
   return merged.length > MAX_PROBE_OUTPUT_CHARS
     ? merged.slice(merged.length - MAX_PROBE_OUTPUT_CHARS)
     : merged;
-};
-
-const extractTokenFromCredentialPayload = (value: unknown): string | null => {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return null;
-  }
-
-  const record = value as Record<string, unknown>;
-  for (const field of TOKEN_FIELD_CANDIDATES) {
-    const candidate = record[field];
-    if (typeof candidate === "string" && candidate.trim().length > 0) {
-      return candidate.trim();
-    }
-  }
-
-  for (const nestedValue of Object.values(record)) {
-    const token = extractTokenFromCredentialPayload(nestedValue);
-    if (token) {
-      return token;
-    }
-  }
-
-  return null;
 };
 
 export class SDKAuthManager {
@@ -315,65 +286,16 @@ export class SDKAuthManager {
       CREDENTIALS_FILENAME
     );
 
-    const tokenFromFiles =
-      (await this.readOAuthTokenFromCredentialsFile(providerCredentials)) ??
-      (await this.readOAuthTokenFromCredentialsFile(legacyCredentials));
-    if (tokenFromFiles) {
-      this.cachedOAuthToken = tokenFromFiles;
-      return;
-    }
-
-    const tokenFromPlatform = await this.readOAuthTokenFromPlatformStore();
-    if (tokenFromPlatform) {
-      this.cachedOAuthToken = tokenFromPlatform;
+    const token = await readClaudeOAuthToken({
+      credentialPaths: [providerCredentials, legacyCredentials],
+    });
+    if (token) {
+      this.cachedOAuthToken = token;
       return;
     }
 
     if (options?.forceRefresh) {
       this.cachedOAuthToken = null;
-    }
-  }
-
-  private async readOAuthTokenFromCredentialsFile(
-    filePath: string
-  ): Promise<string | null> {
-    try {
-      const raw = await readFile(filePath, "utf8");
-      return this.extractOAuthTokenFromRawPayload(raw);
-    } catch {
-      return null;
-    }
-  }
-
-  private extractOAuthTokenFromRawPayload(raw: string): string | null {
-    const trimmed = raw.trim();
-    if (!trimmed) {
-      return null;
-    }
-    try {
-      const parsed = JSON.parse(trimmed) as unknown;
-      return extractTokenFromCredentialPayload(parsed);
-    } catch {
-      return null;
-    }
-  }
-
-  private async readOAuthTokenFromPlatformStore(): Promise<string | null> {
-    if (process.platform !== "darwin") {
-      return null;
-    }
-    try {
-      const { stdout } = await execFileAsync(
-        "security",
-        ["find-generic-password", "-s", CLAUDE_OAUTH_KEYCHAIN_SERVICE, "-w"],
-        {
-          windowsHide: true,
-          timeout: 5000,
-        }
-      );
-      return this.extractOAuthTokenFromRawPayload(stdout);
-    } catch {
-      return null;
     }
   }
 
