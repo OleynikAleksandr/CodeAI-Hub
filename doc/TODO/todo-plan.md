@@ -7,7 +7,7 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session027.md`
+1. `doc/Sessions/Session029.md`
 2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-Flow/Stacks/Claude.md`
 4. `doc/TODO/todo-plan.md` (THIS FILE)
@@ -53,4 +53,4 @@
 2. [DONE] Git Commit: `docs(release): sync docs for v1.1.574` (hash: 9d062ff8)
 3. [DONE] Git Commit: `chore(release): run build-all for v1.1.574` (hash: 8f32d4b9)
 4. [DONE] Создать session report по результатам релиза (scope: `doc/Sessions/Session029.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session029 release report`)
-5. [TODO] Git Commit: `docs(session): add session029 release report` (hash: TBD)
+5. [DONE] Git Commit: `docs(session): add session029 release report` (hash: f8b37c24)
