@@ -44,11 +44,11 @@
 1. [DONE] Claude: заменить текущий `/usage` reader на probe-запрос к `https://api.anthropic.com/v1/messages` с `anthropic-beta: oauth-2025-04-20` (модель: `claude-haiku-4-5-20251001`, `max_tokens: 1`) и парсинг заголовков `anthropic-ratelimit-unified-5h-*` и `anthropic-ratelimit-unified-7d-*` (scope: `packages/Claude_Module/src/sdk/claude-usage-limits-*.ts`; expected commit message: `feat(claude): usage limits from ratelimit headers probe`)
 2. [DONE] Git Commit: `feat(claude): usage limits from ratelimit headers probe` (hash: fb99c2d2)
 3. [DONE] Claude: эмитить в стрим ровно тот же формат `usage_limits`, который уже ожидает UI; weekly только "all models", sonnet-only игнорировать (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/sdk/*`; expected commit message: `fix(claude): keep usage_limits stream contract stable`)
-4. [IN_PROGRESS] Git Commit: `fix(claude): keep usage_limits stream contract stable` (hash: TBD)
+4. [DONE] Git Commit: `fix(claude): keep usage_limits stream contract stable` (hash: 31f7ae8c)
 
 ### Stream: Session UI Verification
-1. [TODO] UI: проверить, что текущий UI pipeline (PM + Session ID Bar) корректно обновляется от новых `usage_limits` данных, без изменений формата (scope: `src/client/project-manager/components/sessions/*`, `src/client/ui/src/session/session-id-bar.tsx`; expected commit message: `test(ui): verify usage limits render with header-based probe`)
-2. [TODO] Git Commit: `test(ui): verify usage limits render with header-based probe` (hash: TBD)
+1. [DONE] UI: проверить, что текущий UI pipeline (PM + Session ID Bar) корректно обновляется от новых `usage_limits` данных, без изменений формата (scope: `src/client/project-manager/components/sessions/*`, `src/client/ui/src/session/session-id-bar.tsx`; expected commit message: `test(ui): verify usage limits render with header-based probe`)
+2. [IN_PROGRESS] Git Commit: `test(ui): verify usage limits render with header-based probe` (hash: TBD)
 
 ### Stream: Release Build (Phase 144)
 1. [TODO] Выполнить `./scripts/build-all.sh` (версия: TBD) (scope: manifests; expected commit message: `chore(release): run build-all for phase144`)
