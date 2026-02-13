@@ -1358,8 +1358,29 @@ export class SessionRequestHandler {
       this.sessionManager.seedProviderSessionId(session.id, providerSessionId);
     }
 
-    this.sessionStorage.register(session);
-    this.updateDescriptionSessionRef(session, providerSessionId);
+    const descriptionDialog =
+      session.stage === "description" && session.initiativeSlug
+        ? await this.resolveDescriptionDialogSessionId({
+            session,
+            providerSessionId,
+          })
+        : null;
+
+    if (descriptionDialog?.shouldBackfill) {
+      await this.backfillDescriptionDialogHistory({
+        session,
+        dialogSessionId: descriptionDialog.dialogSessionId,
+        providerSessionId,
+      });
+    }
+
+    this.sessionStorage.register(
+      session,
+      descriptionDialog
+        ? { historySessionId: descriptionDialog.dialogSessionId }
+        : undefined
+    );
+    await this.updateDescriptionSessionRef(session, providerSessionId);
 
     const unsubscribe = options.adapter.subscribe(
       providerSessionId,
@@ -2912,7 +2933,14 @@ export class SessionRequestHandler {
     this.sessionStorage.promote(sessionId, providerSessionId);
     this.updateProviderBinding(sessionId, providerSessionId);
     this.continuity.updateProviderSessionId(sessionId, providerSessionId);
-    this.updateDescriptionSessionRef(session, providerSessionId);
+    this.updateDescriptionSessionRef(session, providerSessionId).catch(
+      (error: unknown) => {
+        this.logger.warn("Failed to persist updated description session ref", {
+          sessionId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    );
 
     this.broadcastSessionBinding(sessionId);
   }
@@ -3092,10 +3120,119 @@ export class SessionRequestHandler {
     });
   }
 
-  private updateDescriptionSessionRef(
+  private async resolveDescriptionDialogSessionId(options: {
+    readonly session: Session;
+    readonly providerSessionId: string;
+  }): Promise<{
+    readonly dialogSessionId: string;
+    readonly shouldBackfill: boolean;
+  }> {
+    const { session } = options;
+    if (session.stage !== "description") {
+      return {
+        dialogSessionId: options.providerSessionId,
+        shouldBackfill: false,
+      };
+    }
+    if (!session.initiativeSlug) {
+      return {
+        dialogSessionId: options.providerSessionId,
+        shouldBackfill: false,
+      };
+    }
+
+    const sessionKind =
+      session.runSlug === "reviewer" ? "reviewer" : ("collector" as const);
+
+    const snapshot = await this.descriptionStepStore.read(
+      session.workspacePath,
+      session.initiativeSlug
+    );
+
+    // Never let a collector "take over" the reviewer dialog id.
+    if (sessionKind === "collector" && snapshot?.sessionKind === "reviewer") {
+      return {
+        dialogSessionId: options.providerSessionId,
+        shouldBackfill: false,
+      };
+    }
+
+    const existingDialogSessionId = snapshot?.session?.dialogSessionId;
+    if (existingDialogSessionId) {
+      return {
+        dialogSessionId: existingDialogSessionId,
+        shouldBackfill: false,
+      };
+    }
+
+    // Backfill is needed when migrating from the old per-providerSessionId JSONL
+    // strategy, or when resuming after a Core restart without dialogSessionId.
+    const fallbackDialogSessionId =
+      snapshot?.session?.providerSessionId ?? options.providerSessionId;
+    return { dialogSessionId: fallbackDialogSessionId, shouldBackfill: true };
+  }
+
+  private async backfillDescriptionDialogHistory(options: {
+    readonly session: Session;
+    readonly dialogSessionId: string;
+    readonly providerSessionId: string;
+  }): Promise<void> {
+    const session = options.session;
+    if (session.stage !== "description" || !session.initiativeSlug) {
+      return;
+    }
+
+    const chains = await SessionContinuityFacade.readWorkspaceChains({
+      workspaceRoot: session.workspacePath,
+      workspaceSlug: session.initiativeSlug,
+    });
+
+    const sourceIds = new Set<string>([
+      options.dialogSessionId,
+      options.providerSessionId,
+    ]);
+    for (const chain of chains) {
+      if (chain.stage !== "description") {
+        continue;
+      }
+      for (const segment of chain.segments) {
+        if (segment.providerId !== session.providerId) {
+          continue;
+        }
+        sourceIds.add(segment.providerSessionId);
+      }
+    }
+
+    // Nothing to merge.
+    if (sourceIds.size <= 1) {
+      return;
+    }
+
+    const workspaceKey = sanitizeWorkspaceSlug(session.workspacePath);
+    await this.sessionStorage
+      .backfillHistory({
+        workspaceSlug: workspaceKey,
+        providerId: session.providerId,
+        historySessionId: options.dialogSessionId,
+        sourceSessionIds: Array.from(sourceIds),
+      })
+      .catch((error: unknown) => {
+        this.logger.warn(
+          "Failed to backfill description unified-session file",
+          {
+            sessionId: session.id,
+            providerId: session.providerId,
+            dialogSessionId: options.dialogSessionId,
+            error: error instanceof Error ? error.message : String(error),
+          }
+        );
+      });
+  }
+
+  private async updateDescriptionSessionRef(
     session: Session,
     providerSessionId?: string
-  ): void {
+  ): Promise<void> {
     if (session.stage !== "description") {
       return;
     }
@@ -3110,6 +3247,11 @@ export class SessionRequestHandler {
     const sessionKind =
       session.runSlug === "reviewer" ? "reviewer" : "collector";
 
+    const dialog = await this.resolveDescriptionDialogSessionId({
+      session,
+      providerSessionId: resolvedProviderSessionId,
+    });
+
     // Unified session history is stored under a workspace key derived from the
     // absolute workspace path (not the workflow slug/initiative slug).
     const workspaceKey = sanitizeWorkspaceSlug(session.workspacePath);
@@ -3118,24 +3260,29 @@ export class SessionRequestHandler {
       rootDirectory: SESSION_ROOT,
       workspaceSlug: workspaceKey,
       provider: session.providerId,
-      sessionId: sanitizeWorkspaceSlug(resolvedProviderSessionId),
+      sessionId: sanitizeWorkspaceSlug(dialog.dialogSessionId),
     });
 
-    this.descriptionStepStore
-      .upsert(session.workspacePath, session.initiativeSlug, {
-        session: {
-          providerId: session.providerId,
-          providerSessionId: resolvedProviderSessionId,
-          jsonlPath,
-        },
-        sessionKind,
-      })
-      .catch((error: unknown) => {
-        this.logger.warn("Failed to persist description session ref", {
-          sessionId: session.id,
-          error: error instanceof Error ? error.message : String(error),
-        });
+    try {
+      await this.descriptionStepStore.upsert(
+        session.workspacePath,
+        session.initiativeSlug,
+        {
+          session: {
+            providerId: session.providerId,
+            providerSessionId: resolvedProviderSessionId,
+            jsonlPath,
+            dialogSessionId: dialog.dialogSessionId,
+          },
+          sessionKind,
+        }
+      );
+    } catch (error: unknown) {
+      this.logger.warn("Failed to persist description session ref", {
+        sessionId: session.id,
+        error: error instanceof Error ? error.message : String(error),
       });
+    }
   }
 
   private getDefaultProviderId(): string {

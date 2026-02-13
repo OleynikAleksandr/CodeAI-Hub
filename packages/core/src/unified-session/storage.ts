@@ -1,4 +1,5 @@
 import { existsSync, renameSync } from "node:fs";
+import { mkdir, rename, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import {
@@ -203,6 +204,120 @@ export class UnifiedSessionStorage {
     const messages = Array.from(messagesById.values());
     messages.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
     return messages;
+  }
+
+  async backfillHistory(options: {
+    readonly workspaceSlug: string;
+    readonly providerId: string;
+    readonly historySessionId: string;
+    readonly sourceSessionIds: readonly string[];
+  }): Promise<void> {
+    const workspaceSlug = sanitizeWorkspaceSlug(options.workspaceSlug);
+    const providerId = options.providerId;
+    const historySessionId = sanitizeSessionId(options.historySessionId);
+    const sourceSessionIds = Array.from(
+      new Set(
+        options.sourceSessionIds
+          .map((value) => value.trim())
+          .filter((value) => value.length > 0)
+          .map(sanitizeSessionId)
+      )
+    );
+
+    if (historySessionId.length === 0 || sourceSessionIds.length === 0) {
+      return;
+    }
+
+    // Avoid rewriting a file that a live writer is actively appending to.
+    const sanitizedWriterId = sanitizeSessionId(historySessionId);
+    const inUse = Array.from(this.sessions.values()).some(
+      (entry) =>
+        entry.workspaceSlug === workspaceSlug &&
+        entry.providerId === providerId &&
+        entry.writer &&
+        entry.writerSessionId === sanitizedWriterId
+    );
+    if (inUse) {
+      this.logger.warn("Skipping unified-session backfill (writer in use)", {
+        providerId,
+        workspaceSlug,
+        historySessionId,
+      });
+      return;
+    }
+
+    const messageById = new Map<
+      string,
+      {
+        readonly messageId: string;
+        readonly role: SessionMessage["role"];
+        readonly content: string;
+        readonly timestamp: string;
+      }
+    >();
+
+    for (const sessionId of sourceSessionIds) {
+      const filePath = buildSessionFilePath({
+        rootDirectory: this.rootDirectory,
+        workspaceSlug,
+        provider: providerId,
+        sessionId,
+      });
+      const records = await readSessionEvents(filePath);
+      for (const record of records) {
+        if (record.type !== "message") {
+          continue;
+        }
+        if (messageById.has(record.messageId)) {
+          continue;
+        }
+        messageById.set(record.messageId, {
+          messageId: record.messageId,
+          role: record.role,
+          content: record.content,
+          timestamp: record.timestamp,
+        });
+      }
+    }
+
+    if (messageById.size === 0) {
+      return;
+    }
+
+    const merged = Array.from(messageById.values());
+    merged.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+
+    const targetPath = buildSessionFilePath({
+      rootDirectory: this.rootDirectory,
+      workspaceSlug,
+      provider: providerId,
+      sessionId: historySessionId,
+    });
+    const tmpPath = `${targetPath}.tmp-${Date.now()}`;
+
+    const openRecord = JSON.stringify({
+      type: "session-open",
+      timestamp: new Date().toISOString(),
+      provider: providerId,
+      sessionId: historySessionId,
+    });
+    const lines = [
+      openRecord,
+      ...merged.map((message) =>
+        JSON.stringify({
+          type: "message",
+          timestamp: message.timestamp,
+          provider: providerId,
+          messageId: message.messageId,
+          role: message.role,
+          content: message.content,
+        })
+      ),
+    ];
+
+    await mkdir(path.dirname(targetPath), { recursive: true });
+    await writeFile(tmpPath, `${lines.join("\n")}\n`, "utf8");
+    await rename(tmpPath, targetPath);
   }
 
   private initializeWriter(
