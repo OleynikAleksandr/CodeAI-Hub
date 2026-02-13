@@ -88,6 +88,17 @@ Project Manager обязан работать в режиме snapshot-first:
 
 Контракт (source of truth): `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`.
 
+## 4.1) Session History Source Of Truth (UI)
+
+Project Manager показывает историю сообщений, запрашивая Core endpoint:
+- `GET /api/v1/sessions/:sessionId/history`
+
+Core читает историю из unified-session storage:
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl`
+- `<workspaceKey>` = `sanitize(workspacePath)` (пример: `/Users/.../CodeAI-Hub` → `-Users-...-CodeAI-Hub`)
+
+Provider-home (`~/.codeai-hub/providers/<provider>/home/`) используется провайдерами для их собственных CLI logs/rollouts и не является источником UI истории сообщений.
+
 ---
 
 ## 5) Sessions / Input Lock UX
