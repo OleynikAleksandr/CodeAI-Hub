@@ -2691,9 +2691,13 @@ export class SessionRequestHandler {
     const sessionKind =
       session.runSlug === "reviewer" ? "reviewer" : "collector";
 
+    // Unified session history is stored under a workspace key derived from the
+    // absolute workspace path (not the workflow slug/initiative slug).
+    const workspaceKey = sanitizeWorkspaceSlug(session.workspacePath);
+
     const jsonlPath = buildSessionFilePath({
       rootDirectory: SESSION_ROOT,
-      workspaceSlug: sanitizeWorkspaceSlug(session.initiativeSlug),
+      workspaceSlug: workspaceKey,
       provider: session.providerId,
       sessionId: sanitizeWorkspaceSlug(resolvedProviderSessionId),
     });
