@@ -7,6 +7,7 @@ type InputPanelProps = {
   readonly draft: string;
   readonly connectionState?: "idle" | "running" | "blocked";
   readonly continuityLockActive?: boolean;
+  readonly continuityErrorCopy?: string | null;
   readonly isQueued?: boolean;
   readonly providerTheme?: ProviderTheme | null;
   readonly onSubmit: (text: string) => void;
@@ -18,6 +19,7 @@ const InputPanel = ({
   draft,
   connectionState = "idle",
   continuityLockActive = false,
+  continuityErrorCopy = null,
   isQueued = false,
   providerTheme = null,
   onSubmit,
@@ -36,6 +38,9 @@ const InputPanel = ({
     }
     if (connectionState === "running") {
       return "Agent is working… Please wait.";
+    }
+    if (continuityErrorCopy) {
+      return `Continuity failed: ${continuityErrorCopy}`;
     }
     return "Type your request or drag files with Shift held...";
   })();
