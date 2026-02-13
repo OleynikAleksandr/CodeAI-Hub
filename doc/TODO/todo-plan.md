@@ -44,8 +44,8 @@
 2. [DONE] Git Commit: `fix(pm): dedupe session messages when merging history and live stream` (hash: afc05237)
 
 ### Stream: Docs Sync
-1. [TODO] Docs: синхронизировать SolidWorks-Flow каноны: `dialogSessionId` теперь “1 agent = 1 file”; описать separation для collector/reviewer и правила миграции (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`; expected commit message: `docs(flow): document per-agent dialogSessionId separation`)
-2. [TODO] Git Commit: `docs(flow): document per-agent dialogSessionId separation` (hash: TBD)
+1. [DONE] Docs: синхронизировать SolidWorks-Flow каноны: `dialogSessionId` теперь “1 agent = 1 file”; описать separation для collector/reviewer и правила миграции (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`; expected commit message: `docs(flow): document per-agent dialogSessionId separation`)
+2. [DONE] Git Commit: `docs(flow): document per-agent dialogSessionId separation` (hash: 5705d587)
 
 ### Stream: Release Build (New Patch Release)
 1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки затронутых пакетов (scope: repo; expected commit message: `chore: quality gates before release`)
