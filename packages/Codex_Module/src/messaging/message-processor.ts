@@ -10,6 +10,11 @@ import type {
   TurnCompletedEvent,
   TurnFailedEvent,
 } from "@openai/codex-sdk";
+import { CodexUsageLimitsReader } from "../sdk/codex-usage-limits-reader";
+import type {
+  CodexUsageLimitBucket,
+  CodexUsageLimitsSnapshot,
+} from "../sdk/codex-usage-limits-snapshot";
 import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import { CodexTokenUsageReader, type TokenUsageSnapshot } from "../token-usage";
@@ -65,15 +70,41 @@ type AgentMessageItem = ThreadItem & { readonly type: "agent_message" };
 const isAgentMessageItem = (item: ThreadItem): item is AgentMessageItem =>
   item.type === "agent_message";
 
+const areUsageLimitBucketsEqual = (
+  left: CodexUsageLimitBucket | null,
+  right: CodexUsageLimitBucket | null
+): boolean =>
+  left?.percentUsed === right?.percentUsed &&
+  left?.resetsAt === right?.resetsAt;
+
+const areUsageLimitsSnapshotsEqual = (
+  left: CodexUsageLimitsSnapshot,
+  right: CodexUsageLimitsSnapshot
+): boolean =>
+  areUsageLimitBucketsEqual(left.currentSession, right.currentSession) &&
+  areUsageLimitBucketsEqual(
+    left.currentWeekAllModels,
+    right.currentWeekAllModels
+  ) &&
+  areUsageLimitBucketsEqual(
+    left.currentWeekSonnetOnly,
+    right.currentWeekSonnetOnly
+  );
+
 export class CodexMessageProcessor {
   private readonly sessionManager: CodexSessionManager;
   private readonly options?: MessageProcessorOptions;
   private readonly structuredOutput = new StructuredOutputStreamController();
   private readonly reasoningStreams = new Map<string, Map<string, string>>();
   private readonly tokenUsageReader: CodexTokenUsageReader;
+  private readonly usageLimitsReader: CodexUsageLimitsReader;
   private readonly tokenUsageCache = new Map<
     string,
     { used: number; limit: number }
+  >();
+  private readonly usageLimitsCache = new Map<
+    string,
+    CodexUsageLimitsSnapshot
   >();
   private readonly userTurnLifecycle = new WeakMap<
     ActiveSession,
@@ -87,6 +118,7 @@ export class CodexMessageProcessor {
     this.sessionManager = sessionManager;
     this.options = options;
     this.tokenUsageReader = new CodexTokenUsageReader();
+    this.usageLimitsReader = new CodexUsageLimitsReader();
   }
 
   initializeSession(session: ActiveSession, thread: Thread): void {
@@ -287,7 +319,7 @@ export class CodexMessageProcessor {
         }
 
         const event = result.value;
-        this.dispatchEvent(session, event);
+        await this.dispatchEvent(session, event);
 
         if (event.type === "thread.started") {
           safeRelease();
@@ -351,11 +383,14 @@ export class CodexMessageProcessor {
       if (result.done) {
         break;
       }
-      this.dispatchEvent(session, result.value);
+      await this.dispatchEvent(session, result.value);
     }
   }
 
-  private dispatchEvent(session: ActiveSession, event: ThreadEvent): void {
+  private async dispatchEvent(
+    session: ActiveSession,
+    event: ThreadEvent
+  ): Promise<void> {
     session.logger?.logSDKEvent(event.type, event);
     switch (event.type) {
       case "thread.started":
@@ -370,7 +405,7 @@ export class CodexMessageProcessor {
         }
         break;
       case "turn.completed":
-        this.handleTurnCompleted(session, event);
+        await this.handleTurnCompleted(session, event);
         break;
       case "turn.failed":
         this.handleTurnFailed(session, event);
@@ -427,11 +462,12 @@ export class CodexMessageProcessor {
     });
   }
 
-  private handleTurnCompleted(
+  private async handleTurnCompleted(
     session: ActiveSession,
     event: TurnCompletedEvent
-  ): void {
-    this.maybeEmitTurnCompleted(session, event.usage);
+  ): Promise<void> {
+    const usageLimits = await this.refreshUsageLimits(session, { force: true });
+    this.maybeEmitTurnCompleted(session, event.usage, usageLimits);
     this.refreshTokenUsage(session);
     this.structuredOutput.clear(session.sessionId);
     this.clearReasoningSession(session.sessionId);
@@ -454,7 +490,11 @@ export class CodexMessageProcessor {
     });
   }
 
-  private maybeEmitTurnCompleted(session: ActiveSession, usage: unknown): void {
+  private maybeEmitTurnCompleted(
+    session: ActiveSession,
+    usage: unknown,
+    usageLimits?: CodexUsageLimitsSnapshot | null
+  ): void {
     const state = this.userTurnLifecycle.get(session);
     if (!state || state.ended) {
       return;
@@ -474,6 +514,7 @@ export class CodexMessageProcessor {
       uuid: `${crypto.randomUUID()}::turn_completed`,
       timestamp: new Date().toISOString(),
       usage: usage ?? undefined,
+      usageLimits: usageLimits ?? undefined,
     });
   }
 
@@ -537,6 +578,62 @@ export class CodexMessageProcessor {
           `Codex token usage read failed (session ${providerSessionId}): ${message}`
         );
       });
+  }
+
+  private async refreshUsageLimits(
+    session: ActiveSession,
+    options: { readonly force?: boolean } = {}
+  ): Promise<CodexUsageLimitsSnapshot | null> {
+    const providerSessionId = session.codexThreadId;
+    if (!providerSessionId) {
+      return null;
+    }
+
+    const snapshot = await this.usageLimitsReader
+      .read({
+        providerSessionId,
+        force: options.force,
+      })
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.options?.reporter?.warn?.(
+          `Codex usage limits read failed (session ${providerSessionId}): ${message}`
+        );
+        return null;
+      });
+
+    if (!snapshot) {
+      return this.usageLimitsCache.get(providerSessionId) ?? null;
+    }
+
+    const previousSnapshot = this.usageLimitsCache.get(providerSessionId);
+    if (
+      previousSnapshot &&
+      areUsageLimitsSnapshotsEqual(previousSnapshot, snapshot)
+    ) {
+      return previousSnapshot;
+    }
+
+    this.usageLimitsCache.set(providerSessionId, snapshot);
+    this.emitUsageLimitsStreamEvent(session, providerSessionId, snapshot);
+    return snapshot;
+  }
+
+  private emitUsageLimitsStreamEvent(
+    session: ActiveSession,
+    providerSessionId: string,
+    usageLimits: CodexUsageLimitsSnapshot
+  ): void {
+    session.eventEmitter.emit("message", {
+      type: "stream_event",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: providerSessionId,
+      usageLimits,
+      data: { kind: "usage_limits", usageLimits },
+      uuid: `${crypto.randomUUID()}::usage_limits`,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   private handleTurnFailed(

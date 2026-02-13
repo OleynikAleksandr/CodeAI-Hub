@@ -85,10 +85,9 @@ const extractUsageLimits = (event: unknown): UsageLimits | null => {
       ? event.data
       : null;
 
-  const fromData =
-    root && isRecord(root) && root.kind === "usage_limits" && isRecord(root.usageLimits)
-      ? root.usageLimits
-      : root;
+  const fromData = isRecord(root) && isRecord(root.usageLimits)
+    ? root.usageLimits
+    : root;
 
   if (!isRecord(fromData)) {
     return null;
