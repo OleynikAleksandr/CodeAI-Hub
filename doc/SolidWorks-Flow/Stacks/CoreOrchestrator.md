@@ -74,6 +74,12 @@ Core Orchestrator — автономный Node.js сервис (`@codeai-hub/co
 
 Референс реализации: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`.
 
+## Flow Node Continuity: Resume Bootstrap Payload (reportBody)
+
+После успешного создания отчёта и rollover Core обязан стартовать новый provider segment и первым internal сообщением отправить `Flow Node Continuity — Resume`.
+
+Критичный инвариант: Core передаёт **не только** `reportPath`, но и **копию содержимого** отчёта как `reportBody` (в лимите, с явной пометкой truncation). Это делает resume bootstrap provider-agnostic и не требует от агента выполнять команды/инструменты для чтения файла.
+
 ## План развития
 - Расширить доставку ядра на остальные платформы (darwin-x64, linux-x64, win32-x64) с тем же workflow.
 - Добавить health-check провайдеров перед подключением клиентов.
