@@ -40,8 +40,10 @@
 2. [DONE] Git Commit: `fix(core): surface continuity failure and unblock session after retries` (hash: `95e67f18`)
 
 ### Stream: UI Error Message (universal)
-1. [TODO] UI: отобразить `continuity_failed` как явное сообщение/баннер в Session UI (в том же месте, где показывается `Agent is working…`), и гарантировать, что input разблокирован (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view-helpers.tsx` (или эквивалент), 1 файл теста; expected commit message: `fix(ui): show continuity failure message and unlock input`)
-2. [TODO] Git Commit: `fix(ui): show continuity failure message and unlock input` (hash: TBD)
+1. [DONE] PM: прокинуть `flow_node_rollover` (phase=failed) и `continuity_failed` в snapshot.status.rollover (error string), чтобы UI мог показать причину в поле ввода (scope: `src/types/session.ts`, `src/client/project-manager/components/sessions/token-usage-stream.ts`, 1 файл теста; expected commit message: `fix(pm): capture continuity failures in rollover status`)
+2. [DONE] Git Commit: `fix(pm): capture continuity failures in rollover status` (hash: `c2b6dcab`)
+3. [DONE] UI: отобразить `continuity_failed` как явное сообщение/баннер в Session UI (в том же месте, где показывается `Agent is working…`), и гарантировать, что input разблокирован (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, 1 файл теста; expected commit message: `fix(ui): show continuity failure message and unlock input`)
+4. [DONE] Git Commit: `fix(ui): show continuity failure message and unlock input` (hash: `3255f8a2`)
 
 ### Stream: Docs Sync + Smoke Checklist (CoreOrchestrator focus)
 1. [TODO] Docs: описать протокол ack/retry, 2-attempt policy и событие `continuity_failed` (SSOT) + обновить раздел CoreOrchestrator про internal turns/handshake (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/Stacks/Project_Manager.md`; expected commit message: `docs(system): document continuity ack/retry and failure surfacing`)
