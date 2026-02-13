@@ -61,15 +61,22 @@ type DirectoryEntry = {
   readonly path: string;
 };
 
+const sortByNameDescending = (
+  entries: readonly DirectoryEntry[]
+): DirectoryEntry[] =>
+  [...entries].sort((left, right) => right.name.localeCompare(left.name));
+
 const listDirectories = async (dirPath: string): Promise<DirectoryEntry[]> => {
   try {
     const entries = await readdir(dirPath, { withFileTypes: true });
-    return entries
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => ({
-        name: entry.name,
-        path: path.join(dirPath, entry.name),
-      }));
+    return sortByNameDescending(
+      entries
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => ({
+          name: entry.name,
+          path: path.join(dirPath, entry.name),
+        }))
+    );
   } catch {
     return [];
   }
@@ -78,12 +85,14 @@ const listDirectories = async (dirPath: string): Promise<DirectoryEntry[]> => {
 const listFiles = async (dirPath: string): Promise<DirectoryEntry[]> => {
   try {
     const entries = await readdir(dirPath, { withFileTypes: true });
-    return entries
-      .filter((entry) => entry.isFile())
-      .map((entry) => ({
-        name: entry.name,
-        path: path.join(dirPath, entry.name),
-      }));
+    return sortByNameDescending(
+      entries
+        .filter((entry) => entry.isFile())
+        .map((entry) => ({
+          name: entry.name,
+          path: path.join(dirPath, entry.name),
+        }))
+    );
   } catch {
     return [];
   }

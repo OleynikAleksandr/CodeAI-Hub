@@ -30,11 +30,11 @@
 
 ### Stream: Snapshot Parser (rate_limits -> usage_limits)
 1. [DONE] Codex: реализовать extractor `usage_limits` из rollout `token_count` событий (использовать `payload.rate_limits.primary/secondary`), с нормализацией `resets_at (unix seconds) -> ISO`, `used_percent -> percentUsed` (clamp/round) (scope: `packages/Codex_Module/src/sdk/codex-usage-limits-snapshot.ts`, `packages/Codex_Module/src/sdk/codex-usage-limits-snapshot.test.ts`; expected commit message: `feat(codex): parse usage limits from rollout rate_limits`)
-2. [IN_PROGRESS] Git Commit: `feat(codex): parse usage limits from rollout rate_limits` (hash: TBD)
+2. [DONE] Git Commit: `feat(codex): parse usage limits from rollout rate_limits` (hash: `a0fdf82c`)
 
 ### Stream: Reader (locate rollout in provider-home)
-1. [TODO] Codex: добавить reader, который через существующий `resolveRolloutFilePath()` читает JSONL и возвращает latest `usage_limits` snapshot (throttle + cache по `providerSessionId`) (scope: `packages/Codex_Module/src/sdk/codex-usage-limits-reader.ts`, `packages/Codex_Module/src/sdk/index.ts` (или `packages/Codex_Module/src/index.ts` если уместно), `packages/Codex_Module/src/token-usage/codex-token-usage-resolver.ts`; expected commit message: `feat(codex): add usage limits reader for provider-home rollouts`)
-2. [TODO] Git Commit: `feat(codex): add usage limits reader for provider-home rollouts` (hash: TBD)
+1. [DONE] Codex: добавить reader, который через существующий `resolveRolloutFilePath()` читает JSONL и возвращает latest `usage_limits` snapshot (throttle + cache по `providerSessionId`) (scope: `packages/Codex_Module/src/sdk/codex-usage-limits-reader.ts`, `packages/Codex_Module/src/sdk/index.ts` (или `packages/Codex_Module/src/index.ts` если уместно), `packages/Codex_Module/src/token-usage/codex-token-usage-resolver.ts`; expected commit message: `feat(codex): add usage limits reader for provider-home rollouts`)
+2. [IN_PROGRESS] Git Commit: `feat(codex): add usage limits reader for provider-home rollouts` (hash: TBD)
 
 ### Stream: Provider Delivery (stream_event + turn_completed)
 1. [TODO] Codex: при `turn_completed` публиковать `usageLimits` (a) в `turn_completed` payload, (b) как `stream_event` (`data.kind=usage_limits`) чтобы PM/UI pipeline записал provider-scoped cache и показал лимиты сразу при старте любой новой Codex-сессии (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/sdk/codex-usage-limits-reader.ts`, `src/client/project-manager/components/sessions/usage-limits-stream.ts`; expected commit message: `fix(codex): emit usage_limits per turn and keep latest across sessions`)
