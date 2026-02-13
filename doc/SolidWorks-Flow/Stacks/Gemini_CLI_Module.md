@@ -139,6 +139,16 @@ Important flags:
 
 ---
 
+## 12. Continuity Rollover Smoke Checklist (Phase 152)
+1. Выполнить обычный Gemini turn из Project Manager.
+2. Форсировать trigger continuity (например временно поднять remaining% threshold для быстрого теста).
+3. Убедиться, что при попытке handoff Core:
+   - отправляет internal `Create Report` в ту же provider session (resume в ту же сессию);
+   - делает retry при отсутствии ACK/отчёта (максимум 2 попытки).
+4. При failure UI не должен оставаться в `Agent is working… Please wait.` навсегда: input разблокирован, placeholder показывает `Continuity failed: <reason: error>`.
+
+---
+
 ---
 
 ## Appendix A — Runtime Compatibility (Phase 117)

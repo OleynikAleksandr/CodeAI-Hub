@@ -192,6 +192,10 @@ Delivery contract:
    - `turn_completed.usageLimits.currentSession/currentWeekAllModels`;
    - `stream_event.data.kind=usage_limits` с теми же значениями.
 5. Создать новую Codex-сессию и проверить, что `Session ID Bar` сразу показывает session/weekly проценты из last-known provider cache.
+6. Проверить continuity rollover (Phase 152):
+   - форсировать триггер (например временно поднять remaining% threshold для быстрого теста);
+   - убедиться, что internal `Create Report` идёт как resume в ту же provider session (без создания новой);
+   - при фейле handoff после 2 попыток UI не должен зависать в `Agent is working… Please wait.`: input разблокирован, а placeholder показывает `Continuity failed: <reason: error>`.
 
 ---
 

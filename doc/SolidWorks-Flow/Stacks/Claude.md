@@ -98,3 +98,11 @@ Claude запускается с:
 - Ошибки SDK/stream пробрасываются в provider error channel.
 - Ошибки context/usage readers не блокируют turn completion (warning-only).
 - Preflight auth ошибки возвращают user-facing recovery hint для provider-home login.
+
+## Continuity Rollover Smoke Checklist (Phase 152)
+1. Выполнить обычный Claude turn из Project Manager.
+2. Форсировать trigger continuity (например временно поднять remaining% threshold для быстрого теста).
+3. Убедиться, что Core отправляет internal `Create Report` в ту же provider session (resume), и до создания новой сессии появляется отчёт на диске.
+4. Если handoff отчёт не появляется:
+   - Core должен выполнить retry (без создания новой provider session).
+   - После 2 неуспешных попыток UI не должен зависать в `Agent is working… Please wait.`: input разблокирован, а placeholder показывает `Continuity failed: <reason: error>`.
