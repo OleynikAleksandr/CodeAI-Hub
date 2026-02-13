@@ -27,8 +27,8 @@
 2. [DONE] Git Commit: `feat(core): persist dialogSessionId in description step session ref` (hash: `8adacf55`)
 
 ### Stream: Unified Session Writer Uses Logical Dialog Id
-1. [TODO] Core: добавить возможность писать unified-session в “логический файл истории” (historySessionId override) вместо `providerSessionId` (scope: `packages/core/src/unified-session/storage.ts`; expected commit message: `feat(core): support logical unified-session history id`)
-2. [TODO] Git Commit: `feat(core): support logical unified-session history id` (hash: TBD)
+1. [DONE] Core: добавить возможность писать unified-session в “логический файл истории” (historySessionId override) вместо `providerSessionId` (scope: `packages/core/src/unified-session/storage.ts`; expected commit message: `feat(core): support logical unified-session history id`)
+2. [DONE] Git Commit: `feat(core): support logical unified-session history id` (hash: `c114e4a6`)
 
 ### Stream: Wire Description Session Ref to Unified Dialog File + Backfill
 1. [TODO] Core: при создании description reviewer/collector сессии выбирать/фиксировать `dialogSessionId` (первый providerSessionId либо уже сохраненный), писать/читать history в `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`, и выполнить backfill: собрать сообщения из всех сегментных `<providerSessionId>.jsonl` (по continuity chains) в один накопительный файл (дедуп по `messageId`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/unified-session/storage.ts`; expected commit message: `fix(core): stable dialog jsonl for description sessions with backfill`)
