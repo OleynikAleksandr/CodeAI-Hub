@@ -46,11 +46,11 @@
 4. [DONE] Git Commit: `fix(ui): show continuity failure message and unlock input` (hash: `3255f8a2`)
 
 ### Stream: Docs Sync + Smoke Checklist (CoreOrchestrator focus)
-1. [TODO] Docs: описать протокол ack/retry, 2-attempt policy и событие `continuity_failed` (SSOT) + обновить раздел CoreOrchestrator про internal turns/handshake (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/Stacks/Project_Manager.md`; expected commit message: `docs(system): document continuity ack/retry and failure surfacing`)
-2. [TODO] Git Commit: `docs(system): document continuity ack/retry and failure surfacing` (hash: TBD)
+1. [DONE] Docs: описать протокол ack/retry, 2-attempt policy и событие `continuity_failed` (SSOT) + обновить раздел CoreOrchestrator про internal turns/handshake (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/Stacks/Project_Manager.md`; expected commit message: `docs(system): document continuity ack/retry and failure surfacing`)
+2. [DONE] Git Commit: `docs(system): document continuity ack/retry and failure surfacing` (hash: `c578d5f6`)
 
-3. [TODO] Docs: обновить provider-спеки (как минимум Codex, и общие примечания для Claude/Gemini) + добавить smoke-чеклист воспроизведения/проверки для Codex/Claude/Gemini (scope: `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`, `doc/SolidWorks-Flow/Stacks/Claude.md`, `doc/SolidWorks-Flow/Stacks/Gemini.md`; expected commit message: `docs(stacks): add continuity smoke checklist across providers`)
-4. [TODO] Git Commit: `docs(stacks): add continuity smoke checklist across providers` (hash: TBD)
+3. [DONE] Docs: обновить provider-спеки (как минимум Codex, и общие примечания для Claude/Gemini) + добавить smoke-чеклист воспроизведения/проверки для Codex/Claude/Gemini (scope: `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`, `doc/SolidWorks-Flow/Stacks/Claude.md`, `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`; expected commit message: `docs(stacks): add continuity smoke checklist across providers`)
+4. [DONE] Git Commit: `docs(stacks): add continuity smoke checklist across providers` (hash: `42ef8076`)
 
 ### Stream: Quality Gates + Release Build
 1. [TODO] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (core + UI), обновить `README/CHANGELOG`, собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, docs в `doc/SolidWorks-Flow/`; expected commit message: `docs(release): sync docs for v<next>`)
