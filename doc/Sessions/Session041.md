@@ -25,6 +25,9 @@
 - `0f2ee300 fix(core): stable dialog jsonl for description sessions with backfill`
 - `5629bed8 chore(docs): update phase156 progress`
 - `e0d54a48 chore(release): build-all for next patch`
+- `a369e589 chore: quality gates for dialog jsonl`
+- `3552e1f3 chore(docs): update phase156 progress`
+- `0ac4ee96 chore(docs): archive phase156 todo plan`
 
 ---
 
