@@ -35,9 +35,9 @@
 2. [DONE] Git Commit: `fix(core): stable dialog jsonl for description sessions with backfill` (hash: `0f2ee300`)
 
 ### Stream: Verification
-1. [TODO] Gates: `./scripts/check-architecture.sh` + `npx ultracite check` + `npx ts-prune` + `npx jscpd ...` + `npm run check:links` + таргетные сборки (scope: repo; expected commit message: `chore: quality gates for dialog jsonl`)
+1. [DONE] Gates: `./scripts/check-architecture.sh` + `npx ultracite check` + `npx ts-prune` + `npx jscpd ...` + `npm run check:links` + таргетные сборки (scope: repo; expected commit message: `chore: quality gates for dialog jsonl`)
 2. [TODO] Git Commit: `chore: quality gates for dialog jsonl` (hash: TBD)
 
 ### Stream: Release
-1. [TODO] Build release: `./scripts/build-all.sh` затем `./scripts/build-release.sh --use-current-version` (scope: scripts; expected commit message: `chore(release): build-all for next patch`)
-2. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
+1. [DONE] Build release: `./scripts/build-all.sh` затем `./scripts/build-release.sh --use-current-version` (scope: scripts; expected commit message: `chore(release): build-all for next patch`)
+2. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: `e0d54a48`)
