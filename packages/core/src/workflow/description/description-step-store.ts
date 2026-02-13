@@ -71,7 +71,15 @@ const parseSessionRef = (value: unknown): DescriptionSessionRef | null => {
   if (!(providerId && providerSessionId && jsonlPath)) {
     return null;
   }
-  return { providerId, providerSessionId, jsonlPath };
+  const dialogSessionId = readNonEmptyString(
+    (value as { readonly dialogSessionId?: unknown }).dialogSessionId
+  );
+  return {
+    providerId,
+    providerSessionId,
+    jsonlPath,
+    dialogSessionId: dialogSessionId ?? undefined,
+  };
 };
 
 const parseSnapshot = (value: unknown): DescriptionStepSnapshot | null => {

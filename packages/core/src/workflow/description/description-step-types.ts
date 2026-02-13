@@ -2,6 +2,11 @@ export type DescriptionSessionRef = {
   readonly providerId: string;
   readonly providerSessionId: string;
   readonly jsonlPath: string;
+  /**
+   * Stable "logical dialog" id used for unified UI history JSONL.
+   * Unlike providerSessionId, this must not change across rollover/resume.
+   */
+  readonly dialogSessionId?: string;
 };
 
 export type DescriptionSessionKind = "collector" | "reviewer";
