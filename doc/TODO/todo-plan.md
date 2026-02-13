@@ -7,36 +7,25 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session039.md`
-2. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
-3. `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`
-4. `packages/Codex_Module/src/messaging/message-processor.ts`
+1. `doc/Sessions/Session040.md`
+2. `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`
+3. `packages/Codex_Module/src/messaging/message-processor.ts`
+4. `doc/TODO/Archive/todo-plan-phase154-release-1.1.582-2026-02-13.md`
 
 ---
 
-## Phase 154 — Codex Provider Turn Stall Diagnostics (owner: Oleksandr, updated: 2026-02-13)
+## Phase 155 — Codex Turn Stall Root Cause + Fix (owner: Oleksandr, updated: 2026-02-13)
 
-**Problem:** В CodeAI-Hub (workspace) фиксируется сценарий: Core dispatch'ит сообщение, в Codex SDK логах появляется `user_input`, но не появляется `sdk:turn.started`. UI может зависнуть в `Agent is working…`.
+**Goal:** По новым `sdk:processor.*` breadcrumbs локализовать точную причину зависания Codex (между `user_input` и `sdk:turn.started`) и реализовать устойчивое исправление.
 
-**Goal:** Добавить targeted диагностическое логирование в Codex_Module, чтобы детерминированно увидеть, где зависание:
-- message enqueue/dequeue (queue state),
-- вход/выход `thread.runStreamed(...)`,
-- ожидание первых событий.
+### Stream: Design (Docs First)
+1. [TODO] Docs: зафиксировать архитектуру и гипотезы в новом документе (scope: `doc/SolidWorks-Flow/`; expected commit message: `docs(architecture): codex stalled turn root cause and fix`)
+2. [TODO] Git Commit: `docs(architecture): codex stalled turn root cause and fix` (hash: TBD)
 
-**Acceptance:**
-- Для каждого user turn в `~/.codeai-hub/logs/codex/sdk-codex-<threadId>.jsonl` видны `sdk:processor.*` записи с timestamps, позволяющие понять стадию зависания.
-- При повторении бага будет понятно: очередь не потребляется или `runStreamed` завис/не вернул events, или event stream idle-timeout.
+### Stream: Implementation
+1. [TODO] Codex_Module/Core: реализовать фикс согласно утвержденной архитектуре (scope: TBD; expected commit message: `fix(codex): prevent stalled turns between enqueue and turn.started`)
+2. [TODO] Git Commit: `fix(codex): prevent stalled turns between enqueue and turn.started` (hash: TBD)
 
-### Stream: Provider Trace Logging (Codex_Module)
-1. [DONE] Codex_Module: добавить `sdk:processor.*` trace события вокруг enqueue/dequeue/processTurn/runStreamed/first-event (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex): add processor trace logs for stalled turns`)
-2. [DONE] Git Commit: `feat(codex): add processor trace logs for stalled turns` (hash: `e1eb153d`)
-
-### Stream: Docs (Release Notes)
-1. [DONE] Docs: обновить `CHANGELOG.md` + `README.md` под v1.1.582 (diagnostics: Codex stalled turn trace logs) (scope: `CHANGELOG.md`, `README.md`; expected commit message: `docs(release): add codex stalled turn diagnostics notes`)
-2. [DONE] Git Commit: `docs(release): add codex stalled turn diagnostics notes` (hash: `017dafa9`)
-
-### Stream: Quality Gates + Release Build
-1. [TODO] Release: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` (scope: versions/manifests via build scripts; expected commit message: `chore(release): run build-all for v1.1.582`)
-2. [TODO] Git Commit: `chore(release): run build-all for v1.1.582` (hash: TBD)
-3. [TODO] Todo: archive plan + session report update (scope: `doc/TODO/Archive/*`, `doc/Sessions/Session040.md`; expected commit message: `docs(session): add session040 phase154 codex diagnostics`)
-4. [TODO] Git Commit: `docs(session): add session040 phase154 codex diagnostics` (hash: TBD)
+### Stream: Verification + Release
+1. [TODO] Gates + Release: прогнать гейты и собрать новый релиз (scope: scripts; expected commit message: `chore(release): build-all for next patch`)
+2. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
