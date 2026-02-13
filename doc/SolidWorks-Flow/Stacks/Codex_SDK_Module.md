@@ -57,11 +57,13 @@ CodeAI-Hub Core  →  Codex Provider Adapter  →  @openai/codex-sdk  →  codex
 ### Unified Session History (UI dialog rendering)
 Важно различать два слоя хранения:
 - **Provider-home (CLI state)**: Codex CLI пишет свои sessions/rollouts в `$CODEX_HOME/sessions/**` (в Hub это `~/.codeai-hub/providers/codex/home/sessions/**`).
-- **Unified-session (UI history)**: Core параллельно пишет нормализованную историю диалога для UI в `~/.codeai-hub/sessions/<workspaceKey>/codexCli/<providerSessionId>.jsonl`, где `<workspaceKey>` = `sanitize(workspacePath)` (например `-Users-...-CodeAI-Hub`).
+- **Unified-session (UI history)**: Core параллельно пишет нормализованную историю диалога для UI в `~/.codeai-hub/sessions/<workspaceKey>/codexCli/<dialogSessionId>.jsonl`, где `<workspaceKey>` = `sanitize(workspacePath)` (например `-Users-...-CodeAI-Hub`).
+  - `providerSessionId` используется для `codex exec resume <threadId>`, но имя файла UI-истории должно быть стабильным `dialogSessionId` (1.1.585+), иначе после rollover/resume UI теряет “склейку” после рестарта Core.
 
 Promotion `temp id -> thread_id`:
 - При первом реальном `thread_id` Codex SDK может промотировать provisional id (например `codex-<uuid>`) в реальный `<thread_id>`.
-- Unified-session writer делает rename JSONL, чтобы сохранить **одну** историю (без split на `codex-*.jsonl` и `<thread_id>.jsonl`).
+- Для сессий без `dialogSessionId`-override unified-session writer может делать rename JSONL, чтобы сохранить **одну** историю (без split на `codex-*.jsonl` и `<thread_id>.jsonl`).
+- Для long-lived агентов (Reviewer и последующие агенты) Core должен использовать `dialogSessionId` и писать в один накопительный JSONL независимо от promotion.
 
 ---
 

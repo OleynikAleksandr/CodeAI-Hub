@@ -463,7 +463,7 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 │   └── projects.json
 ├── settings/
 │   └── settings.json
-├── sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl
+├── sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl
 └── releases/
     ├── CodeAIHubLauncher-macos-arm64-1.1.579.tar.bz2
     ├── vscode-webview-1.1.579.tar.bz2
@@ -477,7 +477,9 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 Примечания по `sessions/<workspaceKey>/...` (Unified Session History):
 - `<workspaceKey>` — это **sanitize(workspacePath)**, а не workflow slug. Пример: workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub` → `-Users-oleksandroliinyk-VSCODE-CodeAI-Hub`.
 - Эти JSONL файлы используются для восстановления **истории диалога в UI** (через Core `/api/v1/sessions/:sessionId/history`) и являются независимыми от provider-home файлов CLI.
-- В провайдерах возможна promotion схемы `temp id -> real providerSessionId` (например, Codex `codex-<uuid> -> <thread_id>`). Unified-session writer выполняет rename файла, чтобы история оставалась в одном JSONL и не “распадалась” на два файла.
+- `providerSessionId` остаётся provider-native id для resume/связки событий, но имя файла истории должно быть стабильным `dialogSessionId` (1.1.585+), иначе при rollover/resume история распадается на сегменты и после рестарта Core UI показывает только “последний кусок”.
+- В провайдерах возможна promotion схемы `temp id -> real providerSessionId` (например, Codex `codex-<uuid> -> <thread_id>`). Для сессий без `dialogSessionId`-override unified-session writer может выполнять rename файла, чтобы история оставалась в одном JSONL.
+- Требование на будущее: для всех **следующих агентов** (и новых flow-ноды/шагов) Core обязан выделять `dialogSessionId` и писать unified-session историю в один накопительный JSONL.
 
 ---
 
