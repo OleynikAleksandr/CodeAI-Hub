@@ -1,3 +1,12 @@
+## [1.1.577] - 2026-02-13
+### Fixed
+- Codex usage limits: `usage_limits` теперь читаются из provider-home rollout (`~/.codeai-hub/providers/codex/home/sessions/**/rollout-*.jsonl`) по `token_count.rate_limits.primary/secondary` с нормализацией `used_percent` и `resets_at`.
+- Codex delivery: на `turn_completed` Core получает `usageLimits` в payload и отдельный `stream_event` с `data.kind=usage_limits`, что сохраняет последние лимиты provider-wide и позволяет `Session ID Bar` показывать `session/weekly` сразу в новых Codex-сессиях.
+
+### Added
+- Codex parser coverage: добавлены targeted tests для snapshot extractor `rate_limits -> usage_limits`.
+- Архитектурная документация: зафиксирован provider-home e2e smoke checklist для верификации rollout/usage-limits pipeline (System + Codex stack docs).
+
 ## [1.1.576] - 2026-02-12
 ### Fixed
 - PM/Core usage limits delivery: `turn_completed` события теперь пробрасываются в `session:stream`, поэтому `usageLimits` гарантированно доходят в UI даже когда отдельный `usage_limits stream_event` не был доставлен.
