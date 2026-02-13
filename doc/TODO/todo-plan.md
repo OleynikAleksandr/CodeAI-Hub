@@ -7,54 +7,48 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session031.md` (THIS REPORT)
+1. `doc/Sessions/Session034.md` (THIS REPORT)
 2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
-3. `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`
-4. `doc/SolidWorks-Flow/Stacks/Claude.md` (как эталон подхода delivery/caching)
-5. `src/client/project-manager/components/sessions/usage-limits-stream.ts` (provider-scoped cache и распространение)
-6. `src/client/ui/src/session/usage-limits-cache.ts` (provider-scoped storage)
-7. `packages/core/src/remote-bridge/handlers/session-request-handler.ts` (re-broadcast `turn_completed` в `session:stream`)
+3. `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
+4. `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`
+5. `packages/core/src/remote-bridge/handlers/session-request-handler.ts` (контракт session metadata, события turn)
+6. `packages/core/src/unified-session/storage.ts` (unified-session history)
 
 ---
 
-## Phase 151 — Codex Usage Limits From Rollout JSONL (owner: Oleksandr, updated: 2026-02-13)
+## Phase 152 — Continuity Report Ack + Retry + User-Facing Error (owner: Oleksandr, updated: 2026-02-13)
 
-**Goal:** для провайдера Codex доставлять `usage_limits` в том же контракте, что у Claude (`currentSession` + `currentWeekAllModels`, `currentWeekSonnetOnly=null`), и гарантировать, что в любой новой Codex-сессии в `Session ID Bar` сразу отображаются **последние известные** лимиты, независимо от того, в какой сессии они были получены.
+**Problem:** в Codex иногда теряется internal turn `Flow Node Continuity — Create Report`, Core ждёт файл отчёта 60s, остаётся в состоянии `working`, и UI навсегда показывает `Agent is working… Please wait.` (блокирует ввод). Аналогичный класс ошибок должен быть обработан **универсально** для всех провайдеров.
 
-**Source of truth:** только provider-home:
-- `CODEX_HOME=~/.codeai-hub/providers/codex/home`
-- rollouts: `$CODEX_HOME/sessions/**/rollout-*.jsonl`
+**Goal:** сделать надёжный протокол финализации continuity‑отчёта:
+- Core должен подтверждать, что запрос `Create Report` **доставлен** и/или что агент на него **отреагировал**.
+- Если отчёт не получен и нет реакции, Core обязан **повторить** запрос в *той же* provider session (без rollover/new session) как минимум 1 раз.
+- Если и повтор не дал реакции/отчёта, Core должен:
+  - снять блокировку ввода;
+  - вывести в UI явную ошибку с причиной/контекстом (пока текстом в области ввода/инфо‑баннером), чтобы пользователь мог продолжить работу.
 
-Пример rollout (smoke-check источник):
-- `~/.codeai-hub/providers/codex/home/sessions/2026/02/12/rollout-2026-02-12T19-14-17-019c530f-9938-7331-8354-648600e6ea96.jsonl`
+### Stream: Core Continuity Handshake (delivery/ack)
+1. [TODO] Core: ввести `continuityRequestId` и явный этап `waiting_for_continuity_ack` для internal `Create Report`; фиксировать попытки/таймштампы в session state (scope: `packages/core/src/...` continuity handler, `packages/core/src/...` session state; expected commit message: `fix(core): add continuity create-report request id and ack stage`)
+2. [TODO] Git Commit: `fix(core): add continuity create-report request id and ack stage` (hash: TBD)
 
-### Stream: Snapshot Parser (rate_limits -> usage_limits)
-1. [DONE] Codex: реализовать extractor `usage_limits` из rollout `token_count` событий (использовать `payload.rate_limits.primary/secondary`), с нормализацией `resets_at (unix seconds) -> ISO`, `used_percent -> percentUsed` (clamp/round) (scope: `packages/Codex_Module/src/sdk/codex-usage-limits-snapshot.ts`, `packages/Codex_Module/src/sdk/codex-usage-limits-snapshot.test.ts`; expected commit message: `feat(codex): parse usage limits from rollout rate_limits`)
-2. [DONE] Git Commit: `feat(codex): parse usage limits from rollout rate_limits` (hash: `a0fdf82c`)
+3. [TODO] Core: добавить подтверждение доставки/старта internal turn (ack) и только после ack ждать файл отчёта; при отсутствии ack за timeout → retry в той же provider session (scope: ≤3 файлов в core continuity/adapter pipeline; expected commit message: `fix(core): retry continuity create-report when no ack received`)
+4. [TODO] Git Commit: `fix(core): retry continuity create-report when no ack received` (hash: TBD)
 
-### Stream: Reader (locate rollout in provider-home)
-1. [DONE] Codex: добавить reader, который через существующий `resolveRolloutFilePath()` читает JSONL и возвращает latest `usage_limits` snapshot (throttle + cache по `providerSessionId`) (scope: `packages/Codex_Module/src/sdk/codex-usage-limits-reader.ts`, `packages/Codex_Module/src/sdk/index.ts` (или `packages/Codex_Module/src/index.ts` если уместно), `packages/Codex_Module/src/token-usage/codex-token-usage-resolver.ts`; expected commit message: `feat(codex): add usage limits reader for provider-home rollouts`)
-2. [DONE] Git Commit: `feat(codex): add usage limits reader for provider-home rollouts` (hash: `19dbdec8`)
+### Stream: Core Retry Policy (2 attempts + failure surface)
+1. [TODO] Core: после 2 неуспешных попыток (нет ack и/или нет report file) — прекращать ожидание, переводить сессию в `ready` и эмитить в client stream событие `continuity_failed` с причиной (timeout, missing report path, provider id/session id, request id) (scope: core continuity handler + remote-bridge event; expected commit message: `fix(core): surface continuity failure and unblock session after retries`)
+2. [TODO] Git Commit: `fix(core): surface continuity failure and unblock session after retries` (hash: TBD)
 
-### Stream: Provider Delivery (stream_event + turn_completed)
-1. [DONE] Codex: при `turn_completed` публиковать `usageLimits` (a) в `turn_completed` payload, (b) как `stream_event` (`data.kind=usage_limits`) чтобы PM/UI pipeline записал provider-scoped cache и показал лимиты сразу при старте любой новой Codex-сессии (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/sdk/codex-usage-limits-reader.ts`, `src/client/project-manager/components/sessions/usage-limits-stream.ts`; expected commit message: `fix(codex): emit usage_limits per turn and keep latest across sessions`)
-2. [DONE] Git Commit: `fix(codex): emit usage_limits per turn and keep latest across sessions` (hash: `12106bdd`)
+### Stream: UI Error Message (universal)
+1. [TODO] UI: отобразить `continuity_failed` как явное сообщение/баннер в Session UI (в том же месте, где показывается `Agent is working…`), и гарантировать, что input разблокирован (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view-helpers.tsx` (или эквивалент), 1 файл теста; expected commit message: `fix(ui): show continuity failure message and unlock input`)
+2. [TODO] Git Commit: `fix(ui): show continuity failure message and unlock input` (hash: TBD)
 
-### Stream: End-to-End Verification (provider-home only)
-1. [DONE] Добавить e2e-smoke чек-лист (без изменения кода): запустить Codex workflow, убедиться что новый rollout появляется в `~/.codeai-hub/providers/codex/home/sessions/**`, что `session/weekly` заполняются сразу в новой сессии и не пустые до ответа агента (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`; expected commit message: `docs(codex): document provider-home rollout + usage limits flow`)
-2. [DONE] Git Commit: `docs(codex): document provider-home rollout + usage limits flow` (hash: `c58d5f22`)
+### Stream: Docs + Smoke Checklist
+1. [TODO] Docs: обновить `doc/SolidWorks-Flow/` (протокол ack/retry, 2-attempt policy, contract `continuity_failed`) + добавить короткий smoke-чеклист воспроизведения/проверки для Codex/Claude/Gemini (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Stacks/Project_Manager.md`, `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`; expected commit message: `docs(system): document continuity ack/retry and failure surfacing`)
+2. [TODO] Git Commit: `docs(system): document continuity ack/retry and failure surfacing` (hash: TBD)
 
 ### Stream: Quality Gates + Release Build
-1. [DONE] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (Codex module + UI/PM при необходимости), затем обновить release docs и собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync docs for v<next>`)
-2. [DONE] Git Commit: `docs(release): sync docs for v<next>` (hash: `79fcad7a`)
-3. [DONE] Git Commit: `chore(release): run build-all for v<next>` (hash: `1b6d20a6`)
-4. [DONE] Создать session report по результатам реализации Codex usage limits (scope: `doc/Sessions/Session032.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session032 codex usage limits report`)
-5. [DONE] Git Commit: `docs(session): add session032 codex usage limits report` (hash: `ccb9c467`)
-
-### Stream: Session ID Bar Usage Labels 12px + Rebuild Release
-1. [DONE] UI: увеличить `font-size` labels (`session/weekly`) в `Session ID Bar` до `12px` без изменения высоты панели (`32px`) и применить в общем Session UI (scope: `media/session-view.css`; expected commit message: `fix(ui): increase session id bar usage labels to 12px`)
-2. [DONE] Git Commit: `fix(ui): increase session id bar usage labels to 12px` (hash: `7b27a4fd`)
-3. [DONE] Обновить release docs под `v1.1.578` с фиксацией UI-изменения (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync docs for v1.1.578`)
-4. [DONE] Git Commit: `docs(release): sync docs for v1.1.578` (hash: `79fcad7a`)
-5. [DONE] Git Commit: `chore(release): run build-all for v1.1.578` (hash: `1b6d20a6`)
-6. [DONE] Финальная сборка VSIX из текущей версии: `./scripts/build-release.sh --use-current-version` (scope: `codeai-hub-1.1.578.vsix`; expected commit message: `N/A (artifact build step, no git changes)`)
+1. [TODO] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (core + UI), обновить `README/CHANGELOG`, собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, docs в `doc/SolidWorks-Flow/`; expected commit message: `docs(release): sync docs for v<next>`)
+2. [TODO] Git Commit: `docs(release): sync docs for v<next>` (hash: TBD)
+3. [TODO] Git Commit: `chore(release): run build-all for v<next>` (hash: TBD)
+4. [TODO] Создать session report по результатам (scope: `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session report for continuity ack/retry`)
+5. [TODO] Git Commit: `docs(session): add session report for continuity ack/retry` (hash: TBD)
