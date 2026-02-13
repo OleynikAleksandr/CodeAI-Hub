@@ -19,8 +19,8 @@
 **Goal:** По новым `sdk:processor.*` breadcrumbs локализовать точную причину зависания Codex (между `user_input` и `sdk:turn.started`) и реализовать устойчивое исправление.
 
 ### Stream: Diagnostics (More Breadcrumbs)
-1. [IN_PROGRESS] Codex_Module: добавить breadcrumbs вокруг `turn.completed` (begin/done) + `usage_limits.read` (begin/done/timeout) + `processor.turn.finally`, чтобы видеть зависание внутри handler-ов (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex): add turn completion breadcrumbs and usage limits timeout guard`)
-2. [TODO] Git Commit: `feat(codex): add turn completion breadcrumbs and usage limits timeout guard` (hash: TBD)
+1. [DONE] Codex_Module: добавить breadcrumbs вокруг `turn.completed` (begin/done) + `usage_limits.read` (begin/done/timeout) + `processor.turn.finally`, чтобы видеть зависание внутри handler-ов (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex): add turn completion breadcrumbs and usage limits timeout guard`)
+2. [DONE] Git Commit: `feat(codex): add turn completion breadcrumbs and usage limits timeout guard` (hash: `acfadadc`)
 
 ### Stream: Design (Docs First)
 1. [TODO] Docs: зафиксировать архитектуру и гипотезы в новом документе (scope: `doc/SolidWorks-Flow/`; expected commit message: `docs(architecture): codex stalled turn root cause and fix`)
