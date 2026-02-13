@@ -40,8 +40,8 @@
 2. [DONE] Git Commit: `fix(core): skip empty thinking records in unified-session` (hash: 2e3fd4f4)
 
 ### Stream: Project Manager UI — Message Dedupe
-1. [TODO] PM/UI: при подгрузке history и live-stream обновлениях делать dedupe по `messageId` (и не дублировать уже показанные сообщения после reconnect/restore) (scope: ≤3 файла в `src/client/project-manager/**` или `src/client/ui/**`; expected commit message: `fix(pm): dedupe session messages when merging history and live stream`)
-2. [TODO] Git Commit: `fix(pm): dedupe session messages when merging history and live stream` (hash: TBD)
+1. [DONE] PM/UI: при подгрузке history и live-stream обновлениях делать dedupe по `messageId` (и не дублировать уже показанные сообщения после reconnect/restore) (scope: ≤3 файла в `src/client/project-manager/**` или `src/client/ui/**`; expected commit message: `fix(pm): dedupe session messages when merging history and live stream`)
+2. [DONE] Git Commit: `fix(pm): dedupe session messages when merging history and live stream` (hash: afc05237)
 
 ### Stream: Docs Sync
 1. [TODO] Docs: синхронизировать SolidWorks-Flow каноны: `dialogSessionId` теперь “1 agent = 1 file”; описать separation для collector/reviewer и правила миграции (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`, `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`; expected commit message: `docs(flow): document per-agent dialogSessionId separation`)
