@@ -1,3 +1,8 @@
+## [1.1.579] - 2026-02-13
+### Fixed
+- Unified session history: `description-step.json` теперь сохраняет корректный `jsonlPath` под ключом `sanitize(workspacePath)` (совпадает с реальным layout `~/.codeai-hub/sessions/<workspaceKey>/...`), поэтому Reviewer сессии корректно резюмятся/открываются в Project Manager.
+- Unified session promotion: promotion `temp id -> real providerSessionId` (например Codex `codex-<uuid> -> <thread_id>`) больше не рвёт историю между двумя JSONL — Core выполняет rename файла и продолжает писать в один history JSONL.
+
 ## [1.1.578] - 2026-02-13
 ### Fixed
 - Session UI typography: в `Session ID Bar` увеличен размер шрифта labels `session/weekly` до `12px` без изменения высоты панели (`32px`), чтобы повысить читаемость лимитов для всех провайдеров.
