@@ -22774,6 +22774,7 @@ ${path2}` : path2;
     draft,
     connectionState = "idle",
     continuityLockActive = false,
+    continuityErrorCopy = null,
     isQueued = false,
     providerTheme = null,
     onSubmit
@@ -22791,6 +22792,9 @@ ${path2}` : path2;
       }
       if (connectionState === "running") {
         return "Agent is working\u2026 Please wait.";
+      }
+      if (continuityErrorCopy) {
+        return `Continuity failed: ${continuityErrorCopy}`;
       }
       return "Type your request or drag files with Shift held...";
     })();
@@ -23478,6 +23482,7 @@ ${path2}` : path2;
     const continuityLockActive = activeSession?.status.continuityLock?.active === true || connectionState === "blocked" || terminalNoResume;
     const effectiveContinuityLockActive = continuityLockActive;
     const inputConnectionState = effectiveContinuityLockActive ? "blocked" : connectionState;
+    const continuityErrorCopy = activeSession?.status.rollover?.phase === "failed" ? activeSession.status.rollover?.error ?? "Rollover failed." : null;
     const { isQueued, submitMessage } = useQueuedSend({
       activeSessionId,
       connectionState: inputConnectionState,
@@ -23528,6 +23533,7 @@ ${path2}` : path2;
             input_panel_default,
             {
               connectionState: inputConnectionState,
+              continuityErrorCopy,
               continuityLockActive: effectiveContinuityLockActive,
               draft: activeSession.draft,
               isQueued,
