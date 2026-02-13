@@ -29,14 +29,14 @@
   - вывести в UI явную ошибку с причиной/контекстом (пока текстом в области ввода/инфо‑баннером), чтобы пользователь мог продолжить работу.
 
 ### Stream: Core Continuity Handshake (delivery/ack)
-1. [TODO] Core: ввести `continuityRequestId` и явный этап `waiting_for_continuity_ack` для internal `Create Report`; фиксировать попытки/таймштампы в session state (scope: `packages/core/src/...` continuity handler, `packages/core/src/...` session state; expected commit message: `fix(core): add continuity create-report request id and ack stage`)
-2. [TODO] Git Commit: `fix(core): add continuity create-report request id and ack stage` (hash: TBD)
+1. [DONE] Core: ввести `continuityRequestId` и явный этап `waiting_for_continuity_ack` для internal `Create Report`; фиксировать попытки/таймштампы в session state (scope: `packages/core/src/...` continuity handler, `packages/core/src/...` session state; expected commit message: `fix(core): add continuity create-report request id and ack stage`)
+2. [DONE] Git Commit: `fix(core): add continuity create-report request id and ack stage` (hash: `b2e7d30a`)
 
-3. [TODO] Core: добавить подтверждение доставки/старта internal turn (ack) и только после ack ждать файл отчёта; при отсутствии ack за timeout → retry в той же provider session (scope: ≤3 файлов в core continuity/adapter pipeline; expected commit message: `fix(core): retry continuity create-report when no ack received`)
-4. [TODO] Git Commit: `fix(core): retry continuity create-report when no ack received` (hash: TBD)
+3. [DONE] Core: добавить подтверждение доставки/старта internal turn (ack) и только после ack ждать файл отчёта; при отсутствии ack за timeout → retry в той же provider session (scope: ≤3 файлов в core continuity/adapter pipeline; expected commit message: `fix(core): retry continuity create-report when no ack received`)
+4. [DONE] Git Commit: `fix(core): retry continuity create-report when no ack received` (hash: `7bc46864`)
 
 ### Stream: Core Retry Policy (2 attempts + failure surface)
-1. [TODO] Core: после 2 неуспешных попыток (нет ack и/или нет report file) — прекращать ожидание, переводить сессию в `ready` и эмитить в client stream событие `continuity_failed` с причиной (timeout, missing report path, provider id/session id, request id) (scope: core continuity handler + remote-bridge event; expected commit message: `fix(core): surface continuity failure and unblock session after retries`)
+1. [IN_PROGRESS] Core: после 2 неуспешных попыток (нет ack и/или нет report file) — прекращать ожидание, переводить сессию в `ready` и эмитить в client stream событие `continuity_failed` с причиной (timeout, missing report path, provider id/session id, request id) (scope: core continuity handler + remote-bridge event; expected commit message: `fix(core): surface continuity failure and unblock session after retries`)
 2. [TODO] Git Commit: `fix(core): surface continuity failure and unblock session after retries` (hash: TBD)
 
 ### Stream: UI Error Message (universal)

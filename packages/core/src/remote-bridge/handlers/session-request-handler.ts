@@ -633,6 +633,43 @@ export class SessionRequestHandler {
     });
   }
 
+  private emitContinuityFailedEvent(options: {
+    readonly sessionId: string;
+    readonly providerId: string | null;
+    readonly providerSessionId: string | null;
+    readonly request: FlowNodeContinuityCreateReportRequestState;
+    readonly reason: "ack_timeout" | "report_timeout" | "unknown";
+    readonly errorMessage: string;
+  }): void {
+    this.broadcaster({
+      type: "session:stream",
+      payload: {
+        sessionId: options.sessionId,
+        event: {
+          type: "stream_event",
+          provider: "core",
+          sessionId: options.sessionId,
+          data: {
+            kind: "continuity_failed",
+            reason: options.reason,
+            error: options.errorMessage,
+            requestId: options.request.requestId,
+            attempt: options.request.attempt,
+            stage: options.request.stage,
+            reportPath: options.request.reportPath,
+            tmpReportPath: options.request.tmpReportPath,
+            ...(options.providerId ? { providerId: options.providerId } : {}),
+            ...(options.providerSessionId
+              ? { providerSessionId: options.providerSessionId }
+              : {}),
+          },
+          uuid: `${crypto.randomUUID()}::continuity_failed`,
+          timestamp: new Date().toISOString(),
+        },
+      },
+    });
+  }
+
   private waitForFlowNodeContinuityCreateReportAck(options: {
     readonly sessionId: string;
     readonly requestId: string;
@@ -689,6 +726,13 @@ export class SessionRequestHandler {
     });
   }
 
+  private isContinuityReportTimeoutError(error: unknown): boolean {
+    return (
+      error instanceof Error &&
+      error.message.startsWith("Timed out waiting for continuity report:")
+    );
+  }
+
   private async dispatchFlowNodeContinuityCreateReportWithAck(options: {
     readonly sessionId: string;
     readonly requestId: string;
@@ -705,10 +749,17 @@ export class SessionRequestHandler {
     readonly reportPath: string;
     readonly tmpReportPath: string;
     readonly silent: boolean;
+    readonly startAttempt?: number;
+    readonly maxAttempts?: number;
   }): Promise<number> {
     const ackTimeoutMs = 15_000;
+    const startAttempt = Math.max(1, Math.floor(options.startAttempt ?? 1));
+    const maxAttempts = Math.max(
+      startAttempt,
+      Math.floor(options.maxAttempts ?? 2)
+    );
 
-    for (let attempt = 1; attempt <= 2; attempt += 1) {
+    for (let attempt = startAttempt; attempt <= maxAttempts; attempt += 1) {
       this.patchFlowNodeContinuityCreateReportRequest({
         sessionId: options.sessionId,
         requestId: options.requestId,
@@ -762,6 +813,59 @@ export class SessionRequestHandler {
     throw new Error(
       `Timed out waiting for continuity create-report ack (requestId=${options.requestId})`
     );
+  }
+
+  private async waitForFlowNodeContinuityReportWithRetry(options: {
+    readonly sessionId: string;
+    readonly requestId: string;
+    readonly prompt: string;
+    readonly notificationBase: Omit<
+      FlowNodeRolloverNotification,
+      | "timestamp"
+      | "phase"
+      | "continuityRequestId"
+      | "continuityAttempt"
+      | "reportPath"
+      | "tmpReportPath"
+    >;
+    readonly reportPath: string;
+    readonly tmpReportPath: string;
+    readonly silent: boolean;
+    readonly attempt: number;
+  }): Promise<number> {
+    try {
+      await this.flowNodeContinuity.waitForReport({
+        reportPath: options.reportPath,
+        timeoutMs: 60_000,
+        pollIntervalMs: 250,
+      });
+      return options.attempt;
+    } catch (error) {
+      if (options.attempt >= 2 || !this.isContinuityReportTimeoutError(error)) {
+        throw error;
+      }
+
+      const retryAttempt =
+        await this.dispatchFlowNodeContinuityCreateReportWithAck({
+          sessionId: options.sessionId,
+          requestId: options.requestId,
+          prompt: options.prompt,
+          notificationBase: options.notificationBase,
+          reportPath: options.reportPath,
+          tmpReportPath: options.tmpReportPath,
+          silent: options.silent,
+          startAttempt: options.attempt + 1,
+          maxAttempts: 2,
+        });
+
+      await this.flowNodeContinuity.waitForReport({
+        reportPath: options.reportPath,
+        timeoutMs: 60_000,
+        pollIntervalMs: 250,
+      });
+
+      return retryAttempt;
+    }
   }
 
   private ackFlowNodeContinuityCreateReportIfPending(sessionId: string): void {
@@ -2010,11 +2114,47 @@ export class SessionRequestHandler {
         { silent: false }
       );
     } catch (error) {
+      const request =
+        this.flowNodeContinuityCreateReportRequests.get(options.sessionId) ??
+        null;
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      const reason: "ack_timeout" | "report_timeout" | "unknown" = (() => {
+        if (
+          typeof errorMessage === "string" &&
+          errorMessage.startsWith(
+            "Timed out waiting for continuity create-report ack"
+          )
+        ) {
+          return "ack_timeout";
+        }
+        if (this.isContinuityReportTimeoutError(error)) {
+          return "report_timeout";
+        }
+        return "unknown";
+      })();
+
       this.finalizeFlowNodeContinuityLock({
         sessionId: options.sessionId,
         reason: "resume_failed",
       });
+      // Allow the user to keep working even when rollover fails.
+      this.updateSessionResumeLifecycleState(options.session, {
+        mode: "resume_in_place",
+        finalTurnCompleted: false,
+        terminalLockReason: null,
+      });
       this.emitTurnStateEvent({ sessionId: options.sessionId, state: "idle" });
+      if (request) {
+        this.emitContinuityFailedEvent({
+          sessionId: options.sessionId,
+          providerId: options.session.providerId ?? null,
+          providerSessionId: options.session.providerSessionId ?? null,
+          request,
+          reason,
+          errorMessage,
+        });
+      }
       this.flowNodeContinuityCreateReportRequests.delete(options.sessionId);
       const ackWaiter = this.flowNodeContinuityCreateReportAckWaiters.get(
         options.sessionId
@@ -2034,9 +2174,18 @@ export class SessionRequestHandler {
         runSlug: options.runSlug,
         remainingPercent,
         thresholdPercent: options.remainingPercentThreshold,
-        error: error instanceof Error ? error.message : String(error),
+        error: errorMessage,
       });
-      throw error;
+      this.logger.warn("Flow node rollover failed", {
+        sessionId: options.sessionId,
+        providerId: options.session.providerId,
+        providerSessionId: options.session.providerSessionId ?? null,
+        stageId: options.stageId,
+        runSlug: options.runSlug,
+        reason,
+        error: errorMessage,
+      });
+      return;
     } finally {
       this.flowNodeRolloverInFlight.delete(options.sessionId);
     }
@@ -2329,10 +2478,15 @@ export class SessionRequestHandler {
         silent: options?.silent === true,
       });
 
-    await this.flowNodeContinuity.waitForReport({
+    const finalAttempt = await this.waitForFlowNodeContinuityReportWithRetry({
+      sessionId: session.id,
+      requestId,
+      prompt: wrappedCreateReportPrompt,
+      notificationBase,
       reportPath: reportPaths.reportPath,
-      timeoutMs: 60_000,
-      pollIntervalMs: 250,
+      tmpReportPath: reportPaths.tmpReportPath,
+      silent: options?.silent === true,
+      attempt: ackedAttempt,
     });
 
     const completedRequestState =
@@ -2354,10 +2508,13 @@ export class SessionRequestHandler {
         ...notificationBase,
         phase: "report_ready",
         continuityRequestId: requestId,
-        continuityAttempt: ackedAttempt,
+        continuityAttempt: finalAttempt,
         reportPath: reportPaths.reportPath,
       });
     }
+    // Providers may sometimes miss `turn_completed` after internal prompts. Ensure
+    // the UI is not left in a perpetual "working" state once the report is ready.
+    this.emitTurnStateEvent({ sessionId: session.id, state: "idle" });
 
     const nextSession = await this.createAndRegisterSession({
       providerId: session.providerId,
@@ -2396,7 +2553,7 @@ export class SessionRequestHandler {
         ...notificationBase,
         phase: "new_session_created",
         continuityRequestId: requestId,
-        continuityAttempt: ackedAttempt,
+        continuityAttempt: finalAttempt,
         nextSessionId: nextSession.id,
       });
     }
@@ -2430,7 +2587,7 @@ export class SessionRequestHandler {
         ...notificationBase,
         phase: "resume_sent",
         continuityRequestId: requestId,
-        continuityAttempt: ackedAttempt,
+        continuityAttempt: finalAttempt,
         nextSessionId: nextSession.id,
         reportPath: reportPaths.reportPath,
       });
