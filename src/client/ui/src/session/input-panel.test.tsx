@@ -40,6 +40,7 @@ const ensureBrowserLikeGlobals = (): void => {
 const renderInputPanel = async (overrides?: {
   readonly connectionState?: "idle" | "running" | "blocked";
   readonly continuityLockActive?: boolean;
+  readonly continuityErrorCopy?: string | null;
   readonly isQueued?: boolean;
 }): Promise<string> => {
   ensureBrowserLikeGlobals();
@@ -52,6 +53,7 @@ const renderInputPanel = async (overrides?: {
       draft: "",
       connectionState: "idle",
       continuityLockActive: false,
+      continuityErrorCopy: null,
       isQueued: false,
       onSubmit: () => {
         // noop
@@ -200,6 +202,37 @@ test("InputPanel always renders hint footer in DOM even when locked", async () =
     true,
     "Hint footer must be hidden via visibility when locked"
   );
+});
+
+test("InputPanel shows continuity error placeholder when unlocked", async () => {
+  const html = await renderInputPanel({
+    connectionState: "idle",
+    continuityLockActive: false,
+    continuityErrorCopy:
+      "ack_timeout: Timed out waiting for continuity create-report ack",
+    isQueued: false,
+  });
+
+  assert.equal(html.includes("disabled"), false);
+  assert.equal(
+    html.includes(
+      "Continuity failed: ack_timeout: Timed out waiting for continuity create-report ack"
+    ),
+    true
+  );
+});
+
+test("InputPanel does not override working placeholder with continuity error", async () => {
+  const html = await renderInputPanel({
+    connectionState: "running",
+    continuityLockActive: false,
+    continuityErrorCopy:
+      "report_timeout: Timed out waiting for continuity report",
+    isQueued: false,
+  });
+
+  assert.equal(html.includes("Agent is working… Please wait."), true);
+  assert.equal(html.includes("Continuity failed:"), false);
 });
 
 test("InputPanel does not restore resuming placeholder after resume_ready and first normal turn", async () => {

@@ -83,6 +83,10 @@ const SessionViewBody = ({
   const inputConnectionState: ConnectionState = effectiveContinuityLockActive
     ? "blocked"
     : connectionState;
+  const continuityErrorCopy =
+    activeSession?.status.rollover?.phase === "failed"
+      ? (activeSession.status.rollover?.error ?? "Rollover failed.")
+      : null;
   const { isQueued, submitMessage } = useQueuedSend({
     activeSessionId,
     connectionState: inputConnectionState,
@@ -139,6 +143,7 @@ const SessionViewBody = ({
           ) : null}
           <InputPanel
             connectionState={inputConnectionState}
+            continuityErrorCopy={continuityErrorCopy}
             continuityLockActive={effectiveContinuityLockActive}
             draft={activeSession.draft}
             isQueued={isQueued}
