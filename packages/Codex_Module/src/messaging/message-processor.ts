@@ -32,6 +32,7 @@ const THINKING_PLACEHOLDER = "<!-- -->";
 const STARTUP_LOCK_ACQUIRE_TIMEOUT_MS = 30_000;
 const STARTUP_LOCK_THREAD_STARTED_TIMEOUT_MS = 30_000;
 const TURN_IDLE_TIMEOUT_MS = 180_000;
+const USAGE_LIMITS_READ_TIMEOUT_MS = 5000;
 
 type EnqueuedMessage = {
   readonly type: "user_input";
@@ -110,6 +111,28 @@ export class CodexMessageProcessor {
     ActiveSession,
     TurnLifecycleState
   >();
+
+  private async raceWithTimeout<T>(payload: {
+    readonly promise: Promise<T>;
+    readonly timeoutMs: number;
+  }): Promise<{ readonly timedOut: boolean; readonly result?: T }> {
+    const { promise, timeoutMs } = payload;
+    let timer: NodeJS.Timeout | null = null;
+    const timeoutPromise = new Promise<{ timedOut: true }>((resolve) => {
+      timer = setTimeout(() => resolve({ timedOut: true }), timeoutMs);
+    });
+    try {
+      const winner = (await Promise.race([
+        promise.then((result) => ({ timedOut: false as const, result })),
+        timeoutPromise,
+      ])) as { timedOut: boolean; result?: T };
+      return winner;
+    } finally {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    }
+  }
 
   constructor(
     sessionManager: CodexSessionManager,
@@ -285,6 +308,13 @@ export class CodexMessageProcessor {
         error,
       });
     } finally {
+      session.logger?.logSDKEvent("processor.turn.finally", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: session.internalTurn,
+        elapsedMs: Date.now() - turnStartedAt,
+        timestampIso: new Date().toISOString(),
+      });
       startupLock?.release();
       session.internalTurn = false;
     }
@@ -302,6 +332,13 @@ export class CodexMessageProcessor {
       }
       await this.consumeEventsWithIdleTimeout(session, events);
     } catch (error) {
+      session.logger?.logSDKEvent("processor.events.error", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: session.internalTurn ?? false,
+        message: error instanceof Error ? error.message : String(error),
+        timestampIso: new Date().toISOString(),
+      });
       this.maybeEmitTurnFailed(session, error);
       this.options?.reporter?.error?.("Codex event stream failed", error);
       session.eventEmitter.emit("error", { type: "event_stream", error });
@@ -556,11 +593,71 @@ export class CodexMessageProcessor {
     session: ActiveSession,
     event: TurnCompletedEvent
   ): Promise<void> {
-    const usageLimits = await this.refreshUsageLimits(session, { force: true });
+    const startedAt = Date.now();
+    session.logger?.logSDKEvent("processor.turn.completed.begin", {
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      internal: session.internalTurn ?? false,
+      timestampIso: new Date().toISOString(),
+    });
+
+    const usageLimits = await this.safeRefreshUsageLimits(session);
     this.maybeEmitTurnCompleted(session, event.usage, usageLimits);
     this.refreshTokenUsage(session);
     this.structuredOutput.clear(session.sessionId);
     this.clearReasoningSession(session.sessionId);
+
+    session.logger?.logSDKEvent("processor.turn.completed.done", {
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      internal: session.internalTurn ?? false,
+      elapsedMs: Date.now() - startedAt,
+      hasUsageLimits: Boolean(usageLimits),
+      timestampIso: new Date().toISOString(),
+    });
+  }
+
+  private async safeRefreshUsageLimits(
+    session: ActiveSession
+  ): Promise<CodexUsageLimitsSnapshot | null> {
+    const providerSessionId = session.codexThreadId;
+    if (!providerSessionId) {
+      return null;
+    }
+
+    const startedAt = Date.now();
+    session.logger?.logSDKEvent("processor.usage_limits.read.begin", {
+      sessionId: session.sessionId,
+      threadId: providerSessionId,
+      timeoutMs: USAGE_LIMITS_READ_TIMEOUT_MS,
+      force: true,
+      timestampIso: new Date().toISOString(),
+    });
+
+    const readPromise = this.refreshUsageLimits(session, { force: true });
+    const { timedOut, result } = await this.raceWithTimeout({
+      promise: readPromise,
+      timeoutMs: USAGE_LIMITS_READ_TIMEOUT_MS,
+    });
+
+    if (timedOut) {
+      session.logger?.logSDKEvent("processor.usage_limits.read.timeout", {
+        sessionId: session.sessionId,
+        threadId: providerSessionId,
+        elapsedMs: Date.now() - startedAt,
+        timestampIso: new Date().toISOString(),
+      });
+      return this.usageLimitsCache.get(providerSessionId) ?? null;
+    }
+
+    session.logger?.logSDKEvent("processor.usage_limits.read.done", {
+      sessionId: session.sessionId,
+      threadId: providerSessionId,
+      elapsedMs: Date.now() - startedAt,
+      hasSnapshot: Boolean(result),
+      timestampIso: new Date().toISOString(),
+    });
+    return result ?? null;
   }
 
   private maybeEmitTurnStarted(session: ActiveSession): void {
