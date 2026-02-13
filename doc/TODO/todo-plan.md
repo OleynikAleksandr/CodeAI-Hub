@@ -42,10 +42,10 @@
 
 ### Stream: End-to-End Verification (provider-home only)
 1. [DONE] Добавить e2e-smoke чек-лист (без изменения кода): запустить Codex workflow, убедиться что новый rollout появляется в `~/.codeai-hub/providers/codex/home/sessions/**`, что `session/weekly` заполняются сразу в новой сессии и не пустые до ответа агента (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`; expected commit message: `docs(codex): document provider-home rollout + usage limits flow`)
-2. [IN_PROGRESS] Git Commit: `docs(codex): document provider-home rollout + usage limits flow` (hash: TBD)
+2. [DONE] Git Commit: `docs(codex): document provider-home rollout + usage limits flow` (hash: `c58d5f22`)
 
 ### Stream: Quality Gates + Release Build
-1. [TODO] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (Codex module + UI/PM при необходимости), затем обновить release docs и собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync docs for v<next>`)
+1. [IN_PROGRESS] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (Codex module + UI/PM при необходимости), затем обновить release docs и собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync docs for v<next>`)
 2. [TODO] Git Commit: `docs(release): sync docs for v<next>` (hash: TBD)
 3. [TODO] Git Commit: `chore(release): run build-all for v<next>` (hash: TBD)
 4. [TODO] Создать session report по результатам реализации Codex usage limits (scope: `doc/Sessions/Session032.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session032 codex usage limits report`)
