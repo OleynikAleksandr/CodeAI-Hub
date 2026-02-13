@@ -90,6 +90,7 @@ type ProviderErrorEnvelope = {
 type FlowNodeRolloverPhase =
   | "start"
   | "create_report_sent"
+  | "waiting_for_report_ack"
   | "waiting_for_report"
   | "report_ready"
   | "new_session_created"
@@ -106,10 +107,28 @@ type FlowNodeRolloverNotification = {
   readonly runSlug: string | null;
   readonly remainingPercent?: number;
   readonly thresholdPercent?: number;
+  readonly continuityRequestId?: string;
+  readonly continuityAttempt?: number;
   readonly reportPath?: string;
   readonly tmpReportPath?: string;
   readonly error?: string;
   readonly timestamp: string;
+};
+
+type FlowNodeContinuityCreateReportRequestStage =
+  | "waiting_for_ack"
+  | "waiting_for_report"
+  | "completed"
+  | "failed";
+
+type FlowNodeContinuityCreateReportRequestState = {
+  readonly requestId: string;
+  readonly attempt: number;
+  readonly stage: FlowNodeContinuityCreateReportRequestStage;
+  readonly reportPath: string;
+  readonly tmpReportPath: string;
+  readonly createdAtIso: string;
+  readonly updatedAtIso: string;
 };
 
 type ContinuityLockState = "locked" | "unlocked";
@@ -320,6 +339,10 @@ export class SessionRequestHandler {
   private readonly flowNodeContinuityLockTimeouts = new Map<
     string,
     NodeJS.Timeout
+  >();
+  private readonly flowNodeContinuityCreateReportRequests = new Map<
+    string,
+    FlowNodeContinuityCreateReportRequestState
   >();
   private readonly sessionResumeLifecycleStates = new Map<
     string,
@@ -2043,6 +2066,8 @@ export class SessionRequestHandler {
     const nodeId = this.resolveFlowNodeId(stageId, runSlug);
     const role = this.resolveFlowNodeRole(runSlug);
     const timestamp = this.toSafeTimestamp(new Date().toISOString());
+    const requestId = crypto.randomUUID();
+    const requestAttempt = 1;
 
     const reportPaths = this.flowNodeContinuity.buildReportPaths({
       workspaceRoot: session.workspacePath,
@@ -2051,6 +2076,17 @@ export class SessionRequestHandler {
       role,
       providerId: session.providerId,
       timestamp,
+    });
+
+    const requestTimestampIso = new Date().toISOString();
+    this.flowNodeContinuityCreateReportRequests.set(session.id, {
+      requestId,
+      attempt: requestAttempt,
+      stage: "waiting_for_ack",
+      reportPath: reportPaths.reportPath,
+      tmpReportPath: reportPaths.tmpReportPath,
+      createdAtIso: requestTimestampIso,
+      updatedAtIso: requestTimestampIso,
     });
 
     const notificationBase = {
@@ -2084,6 +2120,8 @@ export class SessionRequestHandler {
       this.emitFlowNodeRolloverNotification(session.id, {
         ...notificationBase,
         phase: "create_report_sent",
+        continuityRequestId: requestId,
+        continuityAttempt: requestAttempt,
         reportPath: reportPaths.reportPath,
         tmpReportPath: reportPaths.tmpReportPath,
       });
@@ -2115,7 +2153,32 @@ export class SessionRequestHandler {
     if (!options?.silent) {
       this.emitFlowNodeRolloverNotification(session.id, {
         ...notificationBase,
+        phase: "waiting_for_report_ack",
+        continuityRequestId: requestId,
+        continuityAttempt: requestAttempt,
+        reportPath: reportPaths.reportPath,
+        tmpReportPath: reportPaths.tmpReportPath,
+      });
+    }
+
+    const requestState = this.flowNodeContinuityCreateReportRequests.get(
+      session.id
+    );
+    if (requestState && requestState.requestId === requestId) {
+      const updatedAtIso = new Date().toISOString();
+      this.flowNodeContinuityCreateReportRequests.set(session.id, {
+        ...requestState,
+        stage: "waiting_for_report",
+        updatedAtIso,
+      });
+    }
+
+    if (!options?.silent) {
+      this.emitFlowNodeRolloverNotification(session.id, {
+        ...notificationBase,
         phase: "waiting_for_report",
+        continuityRequestId: requestId,
+        continuityAttempt: requestAttempt,
         reportPath: reportPaths.reportPath,
         tmpReportPath: reportPaths.tmpReportPath,
       });
@@ -2127,10 +2190,26 @@ export class SessionRequestHandler {
       pollIntervalMs: 250,
     });
 
+    const completedRequestState =
+      this.flowNodeContinuityCreateReportRequests.get(session.id);
+    if (
+      completedRequestState &&
+      completedRequestState.requestId === requestId
+    ) {
+      const updatedAtIso = new Date().toISOString();
+      this.flowNodeContinuityCreateReportRequests.set(session.id, {
+        ...completedRequestState,
+        stage: "completed",
+        updatedAtIso,
+      });
+    }
+
     if (!options?.silent) {
       this.emitFlowNodeRolloverNotification(session.id, {
         ...notificationBase,
         phase: "report_ready",
+        continuityRequestId: requestId,
+        continuityAttempt: requestAttempt,
         reportPath: reportPaths.reportPath,
       });
     }
@@ -2171,6 +2250,8 @@ export class SessionRequestHandler {
       this.emitFlowNodeRolloverNotification(session.id, {
         ...notificationBase,
         phase: "new_session_created",
+        continuityRequestId: requestId,
+        continuityAttempt: requestAttempt,
         nextSessionId: nextSession.id,
       });
     }
@@ -2203,6 +2284,8 @@ export class SessionRequestHandler {
       this.emitFlowNodeRolloverNotification(nextSession.id, {
         ...notificationBase,
         phase: "resume_sent",
+        continuityRequestId: requestId,
+        continuityAttempt: requestAttempt,
         nextSessionId: nextSession.id,
         reportPath: reportPaths.reportPath,
       });
