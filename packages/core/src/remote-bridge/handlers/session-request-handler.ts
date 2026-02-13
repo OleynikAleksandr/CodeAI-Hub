@@ -3149,15 +3149,18 @@ export class SessionRequestHandler {
       session.initiativeSlug
     );
 
-    // Never let a collector "take over" the reviewer dialog id.
-    if (sessionKind === "collector" && snapshot?.sessionKind === "reviewer") {
-      return {
-        dialogSessionId: options.providerSessionId,
-        shouldBackfill: false,
-      };
-    }
+    // "1 agent = 1 dialog JSONL": collector and reviewer must never share the
+    // same unified-session history id, even if the provider thread id is reused.
+    const slot =
+      sessionKind === "reviewer"
+        ? snapshot?.reviewerSession
+        : snapshot?.collectorSession;
 
-    const existingDialogSessionId = snapshot?.session?.dialogSessionId;
+    const legacySlot =
+      snapshot?.sessionKind === sessionKind ? snapshot?.session : undefined;
+
+    const existingDialogSessionId =
+      slot?.dialogSessionId ?? legacySlot?.dialogSessionId ?? null;
     if (existingDialogSessionId) {
       return {
         dialogSessionId: existingDialogSessionId,
@@ -3165,11 +3168,18 @@ export class SessionRequestHandler {
       };
     }
 
-    // Backfill is needed when migrating from the old per-providerSessionId JSONL
-    // strategy, or when resuming after a Core restart without dialogSessionId.
-    const fallbackDialogSessionId =
-      snapshot?.session?.providerSessionId ?? options.providerSessionId;
-    return { dialogSessionId: fallbackDialogSessionId, shouldBackfill: true };
+    const baseSessionId =
+      slot?.providerSessionId ??
+      legacySlot?.providerSessionId ??
+      options.providerSessionId;
+
+    // New per-agent dialog id format.
+    return {
+      dialogSessionId: `${baseSessionId}__${sessionKind}`,
+      // Backfill/migration is handled explicitly in a dedicated stream to avoid
+      // mixing legacy collector+reviewer history into the new per-agent files.
+      shouldBackfill: false,
+    };
   }
 
   private async backfillDescriptionDialogHistory(options: {
@@ -3263,6 +3273,13 @@ export class SessionRequestHandler {
       sessionId: sanitizeWorkspaceSlug(dialog.dialogSessionId),
     });
 
+    const sessionRef = {
+      providerId: session.providerId,
+      providerSessionId: resolvedProviderSessionId,
+      jsonlPath,
+      dialogSessionId: dialog.dialogSessionId,
+    } as const;
+
     try {
       await this.descriptionStepStore.upsert(
         session.workspacePath,
@@ -3274,6 +3291,9 @@ export class SessionRequestHandler {
             jsonlPath,
             dialogSessionId: dialog.dialogSessionId,
           },
+          collectorSession:
+            sessionKind === "collector" ? sessionRef : undefined,
+          reviewerSession: sessionKind === "reviewer" ? sessionRef : undefined,
           sessionKind,
         }
       );
