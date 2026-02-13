@@ -33,6 +33,7 @@ const STARTUP_LOCK_ACQUIRE_TIMEOUT_MS = 30_000;
 const STARTUP_LOCK_THREAD_STARTED_TIMEOUT_MS = 30_000;
 const TURN_IDLE_TIMEOUT_MS = 180_000;
 const USAGE_LIMITS_READ_TIMEOUT_MS = 5000;
+const EVENTS_RETURN_TIMEOUT_MS = 1500;
 
 type EnqueuedMessage = {
   readonly type: "user_input";
@@ -127,6 +128,99 @@ export class CodexMessageProcessor {
         timeoutPromise,
       ])) as { timedOut: boolean; result?: T };
       return winner;
+    } finally {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    }
+  }
+
+  private async safeReturnEvents(payload: {
+    readonly session: ActiveSession;
+    readonly events: AsyncGenerator<ThreadEvent>;
+    readonly reason: string;
+  }): Promise<void> {
+    const { session, events, reason } = payload;
+    session.logger?.logSDKEvent("processor.events.return.begin", {
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      internal: session.internalTurn ?? false,
+      reason,
+      timeoutMs: EVENTS_RETURN_TIMEOUT_MS,
+      timestampIso: new Date().toISOString(),
+    });
+
+    try {
+      const { timedOut } = await this.raceWithTimeout({
+        promise: Promise.resolve(events.return(undefined)).then(() => ({})),
+        timeoutMs: EVENTS_RETURN_TIMEOUT_MS,
+      });
+      if (timedOut) {
+        session.logger?.logSDKEvent("processor.events.return.timeout", {
+          sessionId: session.sessionId,
+          threadId: session.codexThreadId,
+          internal: session.internalTurn ?? false,
+          reason,
+          timestampIso: new Date().toISOString(),
+        });
+        return;
+      }
+
+      session.logger?.logSDKEvent("processor.events.return.done", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: session.internalTurn ?? false,
+        reason,
+        timestampIso: new Date().toISOString(),
+      });
+    } catch (error) {
+      session.logger?.logSDKEvent("processor.events.return.error", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: session.internalTurn ?? false,
+        reason,
+        message: error instanceof Error ? error.message : String(error),
+        timestampIso: new Date().toISOString(),
+      });
+    }
+  }
+
+  private shouldStopConsumingAfterEvent(eventType: string): boolean {
+    return eventType === "turn.completed" || eventType === "turn.failed";
+  }
+
+  private async waitForNextEventOrTimeout(payload: {
+    readonly session: ActiveSession;
+    readonly events: AsyncGenerator<ThreadEvent>;
+  }): Promise<IteratorResult<ThreadEvent>> {
+    const { session, events } = payload;
+    const nextPromise = events.next();
+    let timer: NodeJS.Timeout | null = null;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => {
+        reject(
+          new Error(
+            `Codex turn timeout: no events received within ${TURN_IDLE_TIMEOUT_MS}ms (sessionId=${session.sessionId})`
+          )
+        );
+      }, TURN_IDLE_TIMEOUT_MS);
+    });
+
+    try {
+      return (await Promise.race([
+        nextPromise,
+        timeoutPromise,
+      ])) as IteratorResult<ThreadEvent>;
+    } catch (error) {
+      nextPromise.catch(() => {
+        // Ignore late generator failures after timeout.
+      });
+      await this.safeReturnEvents({
+        session,
+        events,
+        reason: "idle_timeout",
+      });
+      throw error;
     } finally {
       if (timer) {
         clearTimeout(timer);
@@ -412,7 +506,11 @@ export class CodexMessageProcessor {
               clearTimeout(timer);
             }
             try {
-              await events.return(undefined);
+              await this.safeReturnEvents({
+                session,
+                events,
+                reason: "startup_lock_timeout",
+              });
             } catch {
               // ignore cancellation errors
             }
@@ -435,6 +533,15 @@ export class CodexMessageProcessor {
           }
           break;
         }
+
+        if (this.shouldStopConsumingAfterEvent(event.type)) {
+          this.safeReturnEvents({
+            session,
+            events,
+            reason: `terminal_event:${event.type}`,
+          });
+          break;
+        }
       }
 
       await this.consumeEventsWithIdleTimeout(session, events);
@@ -452,47 +559,22 @@ export class CodexMessageProcessor {
   ): Promise<void> {
     const firstEvent = { logged: false as boolean };
     while (true) {
-      const nextPromise = events.next();
-      let timer: NodeJS.Timeout | null = null;
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        timer = setTimeout(() => {
-          reject(
-            new Error(
-              `Codex turn timeout: no events received within ${TURN_IDLE_TIMEOUT_MS}ms (sessionId=${session.sessionId})`
-            )
-          );
-        }, TURN_IDLE_TIMEOUT_MS);
-      });
-      let result: IteratorResult<ThreadEvent>;
-      try {
-        result = (await Promise.race([
-          nextPromise,
-          timeoutPromise,
-        ])) as IteratorResult<ThreadEvent>;
-      } catch (error) {
-        nextPromise.catch(() => {
-          // Ignore late generator failures after timeout.
-        });
-        if (timer) {
-          clearTimeout(timer);
-        }
-        try {
-          await events.return(undefined);
-        } catch {
-          // ignore cancellation errors
-        }
-        throw error;
-      } finally {
-        if (timer) {
-          clearTimeout(timer);
-        }
-      }
+      const result = await this.waitForNextEventOrTimeout({ session, events });
 
       if (result.done) {
         break;
       }
-      this.maybeLogFirstEvent(session, firstEvent, result.value.type);
+      const eventType = result.value.type;
+      this.maybeLogFirstEvent(session, firstEvent, eventType);
       await this.dispatchEvent(session, result.value);
+      if (this.shouldStopConsumingAfterEvent(eventType)) {
+        this.safeReturnEvents({
+          session,
+          events,
+          reason: `terminal_event:${eventType}`,
+        });
+        break;
+      }
     }
   }
 

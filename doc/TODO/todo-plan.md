@@ -22,6 +22,10 @@
 1. [DONE] Codex_Module: добавить breadcrumbs вокруг `turn.completed` (begin/done) + `usage_limits.read` (begin/done/timeout) + `processor.turn.finally`, чтобы видеть зависание внутри handler-ов (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex): add turn completion breadcrumbs and usage limits timeout guard`)
 2. [DONE] Git Commit: `feat(codex): add turn completion breadcrumbs and usage limits timeout guard` (hash: `acfadadc`)
 
+### Stream: Fix (Stop After Terminal Turn)
+1. [IN_PROGRESS] Codex_Module: прекращать чтение event-stream после `turn.completed/turn.failed` и делать best-effort `events.return()` с таймаутом (чтобы не залипала очередь и `enqueue` всегда приводил к `dequeue`) (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `fix(codex): stop consuming events after turn completion to prevent queue stalls`)
+2. [TODO] Git Commit: `fix(codex): stop consuming events after turn completion to prevent queue stalls` (hash: TBD)
+
 ### Stream: Design (Docs First)
 1. [TODO] Docs: зафиксировать архитектуру и гипотезы в новом документе (scope: `doc/SolidWorks-Flow/`; expected commit message: `docs(architecture): codex stalled turn root cause and fix`)
 2. [TODO] Git Commit: `docs(architecture): codex stalled turn root cause and fix` (hash: TBD)
