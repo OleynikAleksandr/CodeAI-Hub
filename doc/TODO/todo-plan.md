@@ -31,8 +31,8 @@
 2. [DONE] Git Commit: `feat(core): support logical unified-session history id` (hash: `c114e4a6`)
 
 ### Stream: Wire Description Session Ref to Unified Dialog File + Backfill
-1. [TODO] Core: при создании description reviewer/collector сессии выбирать/фиксировать `dialogSessionId` (первый providerSessionId либо уже сохраненный), писать/читать history в `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`, и выполнить backfill: собрать сообщения из всех сегментных `<providerSessionId>.jsonl` (по continuity chains) в один накопительный файл (дедуп по `messageId`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/unified-session/storage.ts`; expected commit message: `fix(core): stable dialog jsonl for description sessions with backfill`)
-2. [TODO] Git Commit: `fix(core): stable dialog jsonl for description sessions with backfill` (hash: TBD)
+1. [DONE] Core: при создании description reviewer/collector сессии выбирать/фиксировать `dialogSessionId` (первый providerSessionId либо уже сохраненный), писать/читать history в `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`, и выполнить backfill: собрать сообщения из всех сегментных `<providerSessionId>.jsonl` (по continuity chains) в один накопительный файл (дедуп по `messageId`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/unified-session/storage.ts`; expected commit message: `fix(core): stable dialog jsonl for description sessions with backfill`)
+2. [DONE] Git Commit: `fix(core): stable dialog jsonl for description sessions with backfill` (hash: `0f2ee300`)
 
 ### Stream: Verification
 1. [TODO] Gates: `./scripts/check-architecture.sh` + `npx ultracite check` + `npx ts-prune` + `npx jscpd ...` + `npm run check:links` + таргетные сборки (scope: repo; expected commit message: `chore: quality gates for dialog jsonl`)
