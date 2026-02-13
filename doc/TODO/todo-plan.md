@@ -36,8 +36,8 @@
 4. [DONE] Git Commit: `fix(core): retry continuity create-report when no ack received` (hash: `7bc46864`)
 
 ### Stream: Core Retry Policy (2 attempts + failure surface)
-1. [IN_PROGRESS] Core: после 2 неуспешных попыток (нет ack и/или нет report file) — прекращать ожидание, переводить сессию в `ready` и эмитить в client stream событие `continuity_failed` с причиной (timeout, missing report path, provider id/session id, request id) (scope: core continuity handler + remote-bridge event; expected commit message: `fix(core): surface continuity failure and unblock session after retries`)
-2. [TODO] Git Commit: `fix(core): surface continuity failure and unblock session after retries` (hash: TBD)
+1. [DONE] Core: после 2 неуспешных попыток (нет ack и/или нет report file) — прекращать ожидание, переводить сессию в `ready` и эмитить в client stream событие `continuity_failed` с причиной (timeout, missing report path, provider id/session id, request id) (scope: core continuity handler + remote-bridge event; expected commit message: `fix(core): surface continuity failure and unblock session after retries`)
+2. [DONE] Git Commit: `fix(core): surface continuity failure and unblock session after retries` (hash: `95e67f18`)
 
 ### Stream: UI Error Message (universal)
 1. [TODO] UI: отобразить `continuity_failed` как явное сообщение/баннер в Session UI (в том же месте, где показывается `Agent is working…`), и гарантировать, что input разблокирован (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view-helpers.tsx` (или эквивалент), 1 файл теста; expected commit message: `fix(ui): show continuity failure message and unlock input`)
