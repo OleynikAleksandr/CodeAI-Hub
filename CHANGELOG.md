@@ -1,3 +1,8 @@
+## [1.1.580] - 2026-02-13
+### Fixed
+- Continuity reliability (all providers): Core добавил delivery/ACK ожидание и retry-policy (2 попытки) для internal `Flow Node Continuity — Create Report`; при failure Core эмитит `continuity_failed`, снимает блокировку и не оставляет UI в вечном `Agent is working… Please wait.`.
+- UI/PM continuity failure surfacing: Project Manager сохраняет причину continuity failure в `status.rollover.error`, а Session UI показывает её в placeholder поля ввода (`Continuity failed: ...`) при разблокированном input.
+
 ## [1.1.579] - 2026-02-13
 ### Fixed
 - Unified session history: `description-step.json` теперь сохраняет корректный `jsonlPath` под ключом `sanitize(workspacePath)` (совпадает с реальным layout `~/.codeai-hub/sessions/<workspaceKey>/...`), поэтому Reviewer сессии корректно резюмятся/открываются в Project Manager.
