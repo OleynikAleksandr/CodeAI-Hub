@@ -36,8 +36,8 @@
 4. [TODO] Git Commit: `fix(core): backfill mixed dialog history into per-agent files` (hash: TBD)
 
 ### Stream: Core — Filter Noise Records
-1. [TODO] Core: отфильтровать мусорные записи unified-session (`thinking` с пустым/`<!-- -->` контентом) до записи в JSONL (scope: `packages/core/src/unified-session/storage.ts`; expected commit message: `fix(core): skip empty thinking records in unified-session`)
-2. [TODO] Git Commit: `fix(core): skip empty thinking records in unified-session` (hash: TBD)
+1. [DONE] Core: отфильтровать мусорные записи unified-session (`thinking` с пустым/`<!-- -->` контентом) до записи в JSONL (scope: `packages/core/src/unified-session/storage.ts`; expected commit message: `fix(core): skip empty thinking records in unified-session`)
+2. [DONE] Git Commit: `fix(core): skip empty thinking records in unified-session` (hash: 2e3fd4f4)
 
 ### Stream: Project Manager UI — Message Dedupe
 1. [TODO] PM/UI: при подгрузке history и live-stream обновлениях делать dedupe по `messageId` (и не дублировать уже показанные сообщения после reconnect/restore) (scope: ≤3 файла в `src/client/project-manager/**` или `src/client/ui/**`; expected commit message: `fix(pm): dedupe session messages when merging history and live stream`)
