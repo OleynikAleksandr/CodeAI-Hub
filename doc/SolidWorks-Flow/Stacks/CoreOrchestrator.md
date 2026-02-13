@@ -100,8 +100,12 @@ Core Orchestrator — автономный Node.js сервис (`@codeai-hub/co
 - Для нового диалога `dialogSessionId` фиксируется как **первый** `providerSessionId` (1-й сегмент). Это обеспечивает совместимость без миграции формата.
 - При последующих rollover/resume Core продолжает писать в файл первого сегмента, добавляя новые сообщения в тот же JSONL.
 
+Уточнение (Phase 158, обязательное для следующих агентов):
+- Контракт **1 агент = 1 JSONL**. Если в одном stage есть разные агенты (пример: `description: collector` и `description: reviewer`), они обязаны иметь **разные** `dialogSessionId` (например `<baseSessionId>__collector` и `<baseSessionId>__reviewer`), чтобы история не смешивалась.
+
 ### Backfill / миграция
 - Если на диске уже есть несколько сегментных `.../<providerSessionId>.jsonl`, Core выполняет backfill: собирает сообщения из всех сегментов в единый Agent Dialog JSONL (дедуп по `messageId`, сортировка по `timestamp`).
+  - Для legacy mixed истории без per-agent `dialogSessionId` (например `.../<baseSessionId>.jsonl`) Core делает best-effort migrate: при первом запуске агента выполняет rename `.../<baseSessionId>.jsonl` в `.../<baseSessionId>__<agentKind>.jsonl`.
 
 ## План развития
 - Расширить доставку ядра на остальные платформы (darwin-x64, linux-x64, win32-x64) с тем же workflow.
