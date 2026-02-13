@@ -2,7 +2,8 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.581
+## Current Release — v1.1.582
+- **Codex stalled turn diagnostics (Phase 154)**: `Codex_Module` пишет trace breadcrumbs `sdk:processor.*` (enqueue/dequeue/`runStreamed`/first-event) в `~/.codeai-hub/logs/codex/sdk-codex-<threadId>.jsonl`, чтобы разбирать зависания вида `user_input` без `turn.started`.
 - **Continuity resume report embedding (Phase 153)**: после rollover Core передаёт в `Flow Node Continuity — Resume` не только `reportPath`, но и `reportBody` (копию отчёта), поэтому агент не отвечает “я отчёт не читал” и может продолжать работу без выполнения команд/чтения файла в bootstrap-turn.
 - **Continuity report ACK/Retry (Phase 152)**: Core больше не зависает в `Agent is working… Please wait.` если internal `Create Report` был потерян или завершился без `turn_completed`. После 2 попыток UI разблокируется и показывает явную причину (`Continuity failed: ...`), а при успешном отчёте Core дополнительно эмитит `turn_state=idle` после `report_ready`.
 - **Claude usage limits startup hydration fix (Phase 150)**: после завершения turn лимиты `session/weekly` теперь сразу видны при старте любой следующей Claude-сессии (включая Reviewer), без ожидания нового ответа агента.
