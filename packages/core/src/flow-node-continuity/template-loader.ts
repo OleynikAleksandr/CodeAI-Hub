@@ -80,6 +80,12 @@ Required structure:
 Read the latest continuity report:
 - \`{{reportPath}}\`
 
+## Continuity Report (copied by Core)
+
+{{reportBody}}
+
+## Resume Bootstrap
+
 Continue work in node \`{{nodeId}}\` as role \`{{role}}\`.
 
 Hard rules (MUST):

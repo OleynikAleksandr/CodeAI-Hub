@@ -56,6 +56,8 @@ export type ProviderEventEnvelope = {
   readonly payload?: unknown;
 };
 
+const MAX_CONTINUITY_RESUME_REPORT_BODY_CHARS = 8000;
+
 export type DialogMessagePayload = {
   readonly role?: string;
   readonly content?: unknown;
@@ -731,6 +733,32 @@ export class SessionRequestHandler {
       error instanceof Error &&
       error.message.startsWith("Timed out waiting for continuity report:")
     );
+  }
+
+  private truncateContinuityResumeReportBody(value: string): string {
+    const normalized = value.trim();
+    if (normalized.length <= MAX_CONTINUITY_RESUME_REPORT_BODY_CHARS) {
+      return normalized;
+    }
+    return [
+      normalized.slice(0, MAX_CONTINUITY_RESUME_REPORT_BODY_CHARS),
+      "",
+      "[...truncated...]",
+    ].join("\n");
+  }
+
+  private async loadContinuityResumeReportBody(
+    reportPath: string
+  ): Promise<string> {
+    try {
+      const content = await readFile(reportPath, "utf8");
+      return this.truncateContinuityResumeReportBody(content);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return this.truncateContinuityResumeReportBody(
+        `Failed to read continuity report from disk (${reportPath}): ${message}`
+      );
+    }
   }
 
   private async dispatchFlowNodeContinuityCreateReportWithAck(options: {
@@ -2575,6 +2603,9 @@ export class SessionRequestHandler {
         nodeId,
         role,
         reportPath: reportPaths.reportPath,
+        reportBody: await this.loadContinuityResumeReportBody(
+          reportPaths.reportPath
+        ),
       }
     );
 
