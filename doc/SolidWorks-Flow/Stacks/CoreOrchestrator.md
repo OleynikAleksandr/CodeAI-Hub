@@ -80,6 +80,27 @@ Core Orchestrator — автономный Node.js сервис (`@codeai-hub/co
 
 Критичный инвариант: Core передаёт **не только** `reportPath`, но и **копию содержимого** отчёта как `reportBody` (в лимите, с явной пометкой truncation). Это делает resume bootstrap provider-agnostic и не требует от агента выполнять команды/инструменты для чтения файла.
 
+## Unified Session History: Agent Dialog JSONL (UI Source of Truth)
+
+Папка `~/.codeai-hub/sessions/**` используется **только** как стабильное хранилище истории для UI (Project Manager). SDK/transport логи `~/.codeai-hub/logs/**` остаются диагностическими и не являются контрактом для UI.
+
+### Проблема (до фикса)
+- Core писал JSONL историю по ключу `providerSessionId`, поэтому при rollover/resume создавались **разрозненные** файлы `.../<providerSessionId>.jsonl`.
+- `description-step.json` (и аналогичные step-state файлы) сохраняли `jsonlPath` на **последний** сегмент. После рестарта Core UI мог восстановить только последний кусок диалога.
+
+### Контракт (после фикса)
+- Для каждого логического диалога агента используется **один накопительный JSONL** файл ("Agent Dialog").
+- В step-state хранится `dialogSessionId` (стабильный идентификатор диалога), а `jsonlPath` указывает на:
+  - `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`
+- `providerSessionId` (реальная сессия провайдера) может меняться при rollover/resume, но `dialogSessionId` **не меняется**.
+
+### Правила выбора `dialogSessionId`
+- Для нового диалога `dialogSessionId` фиксируется как **первый** `providerSessionId` (1-й сегмент). Это обеспечивает совместимость без миграции формата.
+- При последующих rollover/resume Core продолжает писать в файл первого сегмента, добавляя новые сообщения в тот же JSONL.
+
+### Backfill / миграция
+- Если на диске уже есть несколько сегментных `.../<providerSessionId>.jsonl`, Core выполняет backfill: собирает сообщения из всех сегментов в единый Agent Dialog JSONL (дедуп по `messageId`, сортировка по `timestamp`).
+
 ## План развития
 - Расширить доставку ядра на остальные платформы (darwin-x64, linux-x64, win32-x64) с тем же workflow.
 - Добавить health-check провайдеров перед подключением клиентов.
