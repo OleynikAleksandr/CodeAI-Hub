@@ -1,3 +1,7 @@
+## [1.1.583] - 2026-02-13
+### Added
+- Codex diagnostics: добавлены breadcrumbs вокруг `turn.completed` + чтения `usage_limits` (`sdk:processor.turn.completed.*`, `sdk:processor.usage_limits.read.*`) и timeout-guard (5s), чтобы зависание в post-turn обработчиках не блокировало очередной `dequeue` и последующие user turns.
+
 ## [1.1.582] - 2026-02-13
 ### Added
 - Codex diagnostics: `Codex_Module` пишет trace breadcrumbs `sdk:processor.*` в per-thread JSONL (`~/.codeai-hub/logs/codex/sdk-codex-<threadId>.jsonl`) вокруг enqueue/dequeue/`runStreamed`, чтобы разбирать зависания вида `user_input` без `sdk:turn.started`.
