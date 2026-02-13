@@ -329,6 +329,30 @@ export class UnifiedSessionStorage {
     await rename(tmpPath, targetPath);
   }
 
+  promoteHistoryFile(options: {
+    readonly workspaceSlug: string;
+    readonly providerId: string;
+    readonly fromHistorySessionId: string;
+    readonly toHistorySessionId: string;
+  }): void {
+    const workspaceSlug = sanitizeWorkspaceSlug(options.workspaceSlug);
+    const providerId = options.providerId;
+    const fromSessionId = sanitizeSessionId(options.fromHistorySessionId);
+    const toSessionId = sanitizeSessionId(options.toHistorySessionId);
+    if (fromSessionId.length === 0 || toSessionId.length === 0) {
+      return;
+    }
+    if (fromSessionId === toSessionId) {
+      return;
+    }
+    this.tryPromoteSessionFile({
+      workspaceSlug,
+      providerId,
+      fromSessionId,
+      toSessionId,
+    });
+  }
+
   private initializeWriter(
     sessionId: string,
     entry: PendingSession,
