@@ -84,6 +84,51 @@ test("updateSnapshotsWithTokenUsage ignores continuity_lock stream events", () =
   assert.equal(next, snapshots);
 });
 
+test("updateSnapshotsWithTokenUsage records flow_node_rollover events", () => {
+  const snapshots = { s1: createSnapshot() };
+
+  const next = updateSnapshotsWithTokenUsage(snapshots, {
+    sessionId: "s1",
+    event: {
+      kind: "flow_node_rollover",
+      phase: "failed",
+      reportPath: "/tmp/report.md",
+      error: "Timed out waiting for continuity report: /tmp/report.md",
+      timestamp: new Date().toISOString(),
+    },
+  });
+
+  assert.equal(next.s1.status.rollover?.phase, "failed");
+  assert.equal(next.s1.status.rollover?.reportPath, "/tmp/report.md");
+  assert.equal(
+    next.s1.status.rollover?.error,
+    "Timed out waiting for continuity report: /tmp/report.md"
+  );
+});
+
+test("updateSnapshotsWithTokenUsage records continuity_failed stream events", () => {
+  const snapshots = { s1: createSnapshot() };
+
+  const next = updateSnapshotsWithTokenUsage(snapshots, {
+    sessionId: "s1",
+    event: {
+      type: "stream_event",
+      data: {
+        kind: "continuity_failed",
+        reason: "ack_timeout",
+        error: "Timed out waiting for continuity create-report ack (requestId=abc)",
+      },
+      timestamp: new Date().toISOString(),
+    },
+  });
+
+  assert.equal(next.s1.status.rollover?.phase, "failed");
+  assert.equal(
+    next.s1.status.rollover?.error,
+    "ack_timeout: Timed out waiting for continuity create-report ack (requestId=abc)"
+  );
+});
+
 test("updateSnapshotsWithTokenUsage supports nested tokenUsage payload and keeps lock fields untouched", () => {
   const snapshots = { s1: createSnapshot() };
 

@@ -73,6 +73,7 @@ export type FlowNodeRolloverInfo = {
   readonly remainingPercent?: number;
   readonly thresholdPercent?: number;
   readonly reportPath?: string;
+  readonly error?: string;
   readonly updatedAt: number;
 };
 
