@@ -45,8 +45,8 @@
 2. [DONE] Git Commit: `docs(core): update continuity resume template to include report body` (hash: `4b9d257d`)
 
 ### Stream: Docs Sync (SolidWorks-Flow)
-1. [TODO] Docs: зафиксировать, что resume-turn всегда включает report body (а не только path), и что чтение отчёта не требует команд в провайдере (scope: `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`; expected commit message: `docs(system): document continuity resume report embedding`)
-2. [TODO] Git Commit: `docs(system): document continuity resume report embedding` (hash: TBD)
+1. [DONE] Docs: зафиксировать, что resume-turn всегда включает report body (а не только path), и что чтение отчёта не требует команд в провайдере (scope: `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`; expected commit message: `docs(system): document continuity resume report embedding`)
+2. [DONE] Git Commit: `docs(system): document continuity resume report embedding` (hash: `116475c4`)
 
 ### Stream: Quality Gates + Release Build
 1. [TODO] Прогнать обязательные гейты + таргетные сборки (core + webview + project-manager) и собрать релиз:
