@@ -1,3 +1,4 @@
+import { existsSync, renameSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import {
@@ -212,20 +213,33 @@ export class UnifiedSessionStorage {
     }
 
     if (entry.writer && entry.writerSessionId !== sanitizedProviderSessionId) {
-      entry.writer
-        .close({ reason: "session-renamed" })
-        .catch((error: unknown) => {
-          this.logger.error(
-            "Failed to close previous unified session writer",
-            error as Error,
-            {
-              sessionId,
-              providerId: entry.providerId,
-            }
-          );
+      // Codex/Claude sessions may start with a provisional id and later "promote"
+      // to the real provider session id. Keep a single history file by renaming
+      // the existing JSONL instead of creating a second one.
+      if (entry.writerSessionId) {
+        this.tryPromoteSessionFile({
+          workspaceSlug,
+          providerId: entry.providerId,
+          fromSessionId: entry.writerSessionId,
+          toSessionId: sanitizedProviderSessionId,
         });
-      entry.writer = undefined;
-      entry.writerSessionId = undefined;
+      }
+
+      // Keep using the existing writer handle; only update our bookkeeping so
+      // reads and future flushes target the promoted session id.
+      entry.writerSessionId = sanitizedProviderSessionId;
+
+      this.flushQueue(entry).catch((error: unknown) => {
+        this.logger.error(
+          "Failed to flush unified session record",
+          error as Error,
+          {
+            sessionId,
+            providerId: entry.providerId,
+          }
+        );
+      });
+      return;
     }
 
     entry.writer = new UnifiedSessionWriter({
@@ -245,6 +259,42 @@ export class UnifiedSessionStorage {
         }
       );
     });
+  }
+
+  private tryPromoteSessionFile(options: {
+    readonly workspaceSlug: string;
+    readonly providerId: string;
+    readonly fromSessionId: string;
+    readonly toSessionId: string;
+  }): void {
+    const fromPath = buildSessionFilePath({
+      rootDirectory: this.rootDirectory,
+      workspaceSlug: options.workspaceSlug,
+      provider: options.providerId,
+      sessionId: options.fromSessionId,
+    });
+    const toPath = buildSessionFilePath({
+      rootDirectory: this.rootDirectory,
+      workspaceSlug: options.workspaceSlug,
+      provider: options.providerId,
+      sessionId: options.toSessionId,
+    });
+
+    if (!existsSync(fromPath) || existsSync(toPath)) {
+      return;
+    }
+
+    try {
+      renameSync(fromPath, toPath);
+    } catch (error) {
+      this.logger.warn("Failed to promote unified session log file", {
+        providerId: options.providerId,
+        workspaceSlug: options.workspaceSlug,
+        fromPath,
+        toPath,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   }
 
   private async flushQueue(entry: PendingSession): Promise<void> {
