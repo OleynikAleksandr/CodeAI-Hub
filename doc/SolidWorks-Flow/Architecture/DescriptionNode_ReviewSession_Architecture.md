@@ -78,10 +78,15 @@
 - `providerId`: `claudeCodeCli` | `codexCli` | `geminiCli`
 - `providerSessionId`: строка (provider-native id; используется для resume)
 - `jsonlPath`: абсолютный путь к unified session JSONL
-- `dialogSessionId`: стабильный id логического диалога для UI-истории (имя JSONL файла; не меняется при rollover/resume)
+- `dialogSessionId`: стабильный id логического диалога **конкретного агента** для UI-истории (имя JSONL файла; не меняется при rollover/resume)
 
 Примечание: `jsonlPath` не должен быть “вводимой пользователем” строкой — он вычисляется детерминированно из `providerId + dialogSessionId + workspaceKey`, где `workspaceKey = sanitize(workspacePath)`.
 Дополнение: `SessionRef` — техническая мета‑информация, которая хранится в метаданных шага/состоянии (например, `description-step.json`) и не должна попадать в `Final_Description.md`.
+
+Норматив (Phase 158):
+- Для stage `description` существует **минимум 2 SessionRef**: `collector` и `reviewer`.
+- Эти агенты не должны разделять один `dialogSessionId`: контракт **1 агент = 1 JSONL**.
+- Рекомендованный формат: `<baseSessionId>__collector` и `<baseSessionId>__reviewer`.
 
 ### 5.3 Session JSONL location
 

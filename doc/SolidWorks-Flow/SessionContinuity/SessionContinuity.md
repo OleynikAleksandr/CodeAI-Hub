@@ -229,6 +229,7 @@ Fallback rule:
 Важно (с 1.1.585):
 - Нельзя использовать `providerSessionId` как имя файла истории для long-lived агентов: это приводит к распаду истории на сегменты и потере склейки после рестарта Core.
 - Для всех **следующих агентов** и flow-ноды/шагов, где есть длительный диалог, Core обязан выделять `dialogSessionId` и писать unified-session в один накопительный JSONL.
+  - уточнение (Phase 158): **1 агент = 1 JSONL**. Если в рамках одного stage есть разные агенты (например `description: collector` и `description: reviewer`), у них обязаны быть **разные** `dialogSessionId` (и, соответственно, разные файлы истории).
 
 Критичный инвариант: `workspaceKey` должен быть **пер‑сессионным**, иначе в multi-workspace режиме после рестарта Core диалог может “пропасть” (история окажется в другом bucket’е).
 
@@ -242,4 +243,4 @@ Anti‑regression правила:
 2. `dialogSessionId` является именем файла истории.
 3. `dialogSessionId` не должен меняться при rollover/resume; `providerSessionId` может меняться.
 4. Нельзя привязывать history к “текущему” workspace Core; только к `session.workspacePath`.
-5. Backfill (миграция): если уже есть несколько сегментных `.../<providerSessionId>.jsonl`, Core должен объединить их в `.../<dialogSessionId>.jsonl` (дедуп по `messageId`, сортировка по `timestamp`).
+5. Backfill (миграция): для legacy истории без per-agent `dialogSessionId` (например смешанный файл `.../<baseSessionId>.jsonl`) Core выполняет best-effort migrate: при первом запуске агента промоутит/rename `.../<baseSessionId>.jsonl` в `.../<baseSessionId>__<agentKind>.jsonl` (например `__collector` или `__reviewer`).
