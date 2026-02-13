@@ -22,6 +22,7 @@ import { useSessionResumeIntent } from "./session-resume-intent";
 import { useSessionVisibility } from "./session-visibility";
 import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } from "./session-stream";
 import { useReviewerSessionVisibility } from "./reviewer-session-visibility";
+import { appendDedupedSessionMessageToSnapshots } from "./session-message-dedupe";
 import { useSessionMessageSender } from "./session-message-sender";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
@@ -155,19 +156,9 @@ export const ProjectManagerSessionView = ({ workspacePath, preferredSessionId }:
   );
   const handleSessionMessage = useCallback(
     (payload: { readonly sessionId: string; readonly message: SessionMessage }) => {
-      setSnapshots((previous) => {
-        const snapshot = previous[payload.sessionId];
-        if (!snapshot) {
-          return previous;
-        }
-        return {
-          ...previous,
-          [payload.sessionId]: {
-            ...snapshot,
-            messages: [...snapshot.messages, payload.message],
-          },
-        };
-      });
+      setSnapshots((previous) =>
+        appendDedupedSessionMessageToSnapshots(previous, payload)
+      );
     },
     []
   );
