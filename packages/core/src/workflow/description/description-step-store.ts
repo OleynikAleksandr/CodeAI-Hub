@@ -97,6 +97,12 @@ const parseSnapshot = (value: unknown): DescriptionStepSnapshot | null => {
     readNonEmptyString(value.questionnairePath) ?? undefined;
   const draftPath = readNonEmptyString(value.draftPath) ?? undefined;
   const finalPath = readNonEmptyString(value.finalPath) ?? undefined;
+  const collectorSession = parseSessionRef(
+    (value as { readonly collectorSession?: unknown }).collectorSession
+  );
+  const reviewerSession = parseSessionRef(
+    (value as { readonly reviewerSession?: unknown }).reviewerSession
+  );
   const session = parseSessionRef(value.session);
   const sessionKind =
     parseSessionKind(
@@ -111,6 +117,8 @@ const parseSnapshot = (value: unknown): DescriptionStepSnapshot | null => {
     questionnairePath,
     draftPath,
     finalPath,
+    collectorSession: collectorSession ?? undefined,
+    reviewerSession: reviewerSession ?? undefined,
     session: session ?? undefined,
     sessionKind,
   };
@@ -186,6 +194,8 @@ export class DescriptionStepStore {
     if (parsed.workspacePath !== workspaceRoot) {
       return {
         ...parsed,
+        collectorSession: undefined,
+        reviewerSession: undefined,
         session: undefined,
         sessionKind: undefined,
       };
@@ -215,6 +225,14 @@ export class DescriptionStepStore {
       ),
       draftPath: resolveField(existing?.draftPath, update.draftPath),
       finalPath: resolveField(existing?.finalPath, update.finalPath),
+      collectorSession: resolveSession(
+        existing?.collectorSession,
+        update.collectorSession
+      ),
+      reviewerSession: resolveSession(
+        existing?.reviewerSession,
+        update.reviewerSession
+      ),
       session: resolveSession(existing?.session, update.session, {
         currentKind: existing?.sessionKind,
         updateKind: update.sessionKind,
