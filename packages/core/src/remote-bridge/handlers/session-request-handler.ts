@@ -131,6 +131,12 @@ type FlowNodeContinuityCreateReportRequestState = {
   readonly updatedAtIso: string;
 };
 
+type FlowNodeContinuityAckWaiter = {
+  readonly requestId: string;
+  readonly timeoutId: NodeJS.Timeout;
+  readonly resolve: (acked: boolean) => void;
+};
+
 type ContinuityLockState = "locked" | "unlocked";
 
 type ContinuityLockReason = SessionContinuityLockReason;
@@ -343,6 +349,10 @@ export class SessionRequestHandler {
   private readonly flowNodeContinuityCreateReportRequests = new Map<
     string,
     FlowNodeContinuityCreateReportRequestState
+  >();
+  private readonly flowNodeContinuityCreateReportAckWaiters = new Map<
+    string,
+    FlowNodeContinuityAckWaiter
   >();
   private readonly sessionResumeLifecycleStates = new Map<
     string,
@@ -621,6 +631,156 @@ export class SessionRequestHandler {
         },
       },
     });
+  }
+
+  private waitForFlowNodeContinuityCreateReportAck(options: {
+    readonly sessionId: string;
+    readonly requestId: string;
+    readonly timeoutMs: number;
+  }): Promise<boolean> {
+    const existing = this.flowNodeContinuityCreateReportAckWaiters.get(
+      options.sessionId
+    );
+    if (existing) {
+      clearTimeout(existing.timeoutId);
+      existing.resolve(false);
+      this.flowNodeContinuityCreateReportAckWaiters.delete(options.sessionId);
+    }
+
+    return new Promise((resolve) => {
+      const timeoutId = setTimeout(
+        () => {
+          this.flowNodeContinuityCreateReportAckWaiters.delete(
+            options.sessionId
+          );
+          resolve(false);
+        },
+        Math.max(250, Math.floor(options.timeoutMs))
+      );
+
+      this.flowNodeContinuityCreateReportAckWaiters.set(options.sessionId, {
+        requestId: options.requestId,
+        timeoutId,
+        resolve,
+      });
+    });
+  }
+
+  private patchFlowNodeContinuityCreateReportRequest(options: {
+    readonly sessionId: string;
+    readonly requestId: string;
+    readonly patch: Partial<
+      Pick<FlowNodeContinuityCreateReportRequestState, "attempt" | "stage">
+    >;
+  }): void {
+    const request = this.flowNodeContinuityCreateReportRequests.get(
+      options.sessionId
+    );
+    if (!(request && request.requestId === options.requestId)) {
+      return;
+    }
+
+    const updatedAtIso = new Date().toISOString();
+    this.flowNodeContinuityCreateReportRequests.set(options.sessionId, {
+      ...request,
+      attempt: options.patch.attempt ?? request.attempt,
+      stage: options.patch.stage ?? request.stage,
+      updatedAtIso,
+    });
+  }
+
+  private async dispatchFlowNodeContinuityCreateReportWithAck(options: {
+    readonly sessionId: string;
+    readonly requestId: string;
+    readonly prompt: string;
+    readonly notificationBase: Omit<
+      FlowNodeRolloverNotification,
+      | "timestamp"
+      | "phase"
+      | "continuityRequestId"
+      | "continuityAttempt"
+      | "reportPath"
+      | "tmpReportPath"
+    >;
+    readonly reportPath: string;
+    readonly tmpReportPath: string;
+    readonly silent: boolean;
+  }): Promise<number> {
+    const ackTimeoutMs = 15_000;
+
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      this.patchFlowNodeContinuityCreateReportRequest({
+        sessionId: options.sessionId,
+        requestId: options.requestId,
+        patch: { attempt, stage: "waiting_for_ack" },
+      });
+
+      const ackPromise = this.waitForFlowNodeContinuityCreateReportAck({
+        sessionId: options.sessionId,
+        requestId: options.requestId,
+        timeoutMs: ackTimeoutMs,
+      });
+
+      await this.sendInternalMessage(options.sessionId, options.prompt);
+
+      if (!options.silent) {
+        this.emitFlowNodeRolloverNotification(options.sessionId, {
+          ...options.notificationBase,
+          phase: "waiting_for_report_ack",
+          continuityRequestId: options.requestId,
+          continuityAttempt: attempt,
+          reportPath: options.reportPath,
+          tmpReportPath: options.tmpReportPath,
+        });
+      }
+
+      const didAck = await ackPromise;
+      if (!didAck) {
+        continue;
+      }
+
+      this.patchFlowNodeContinuityCreateReportRequest({
+        sessionId: options.sessionId,
+        requestId: options.requestId,
+        patch: { attempt, stage: "waiting_for_report" },
+      });
+
+      if (!options.silent) {
+        this.emitFlowNodeRolloverNotification(options.sessionId, {
+          ...options.notificationBase,
+          phase: "waiting_for_report",
+          continuityRequestId: options.requestId,
+          continuityAttempt: attempt,
+          reportPath: options.reportPath,
+          tmpReportPath: options.tmpReportPath,
+        });
+      }
+
+      return attempt;
+    }
+
+    throw new Error(
+      `Timed out waiting for continuity create-report ack (requestId=${options.requestId})`
+    );
+  }
+
+  private ackFlowNodeContinuityCreateReportIfPending(sessionId: string): void {
+    const waiter = this.flowNodeContinuityCreateReportAckWaiters.get(sessionId);
+    if (!waiter) {
+      return;
+    }
+
+    const request = this.flowNodeContinuityCreateReportRequests.get(sessionId);
+    if (!(request && request.stage === "waiting_for_ack")) {
+      return;
+    }
+    if (request.requestId !== waiter.requestId) {
+      return;
+    }
+
+    clearTimeout(waiter.timeoutId);
+    this.flowNodeContinuityCreateReportAckWaiters.delete(sessionId);
+    waiter.resolve(true);
   }
 
   private emitContinuityLockEvent(options: {
@@ -1854,6 +2014,16 @@ export class SessionRequestHandler {
         sessionId: options.sessionId,
         reason: "resume_failed",
       });
+      this.emitTurnStateEvent({ sessionId: options.sessionId, state: "idle" });
+      this.flowNodeContinuityCreateReportRequests.delete(options.sessionId);
+      const ackWaiter = this.flowNodeContinuityCreateReportAckWaiters.get(
+        options.sessionId
+      );
+      if (ackWaiter) {
+        clearTimeout(ackWaiter.timeoutId);
+        ackWaiter.resolve(false);
+        this.flowNodeContinuityCreateReportAckWaiters.delete(options.sessionId);
+      }
       this.flowNodeRolloverStarted.delete(options.sessionId);
       this.emitFlowNodeRolloverNotification(options.sessionId, {
         kind: "flow_node_rollover",
@@ -2148,41 +2318,16 @@ export class SessionRequestHandler {
       createReportPrompt.trim(),
     ].join("\n");
 
-    await this.sendInternalMessage(session.id, wrappedCreateReportPrompt);
-
-    if (!options?.silent) {
-      this.emitFlowNodeRolloverNotification(session.id, {
-        ...notificationBase,
-        phase: "waiting_for_report_ack",
-        continuityRequestId: requestId,
-        continuityAttempt: requestAttempt,
+    const ackedAttempt =
+      await this.dispatchFlowNodeContinuityCreateReportWithAck({
+        sessionId: session.id,
+        requestId,
+        prompt: wrappedCreateReportPrompt,
+        notificationBase,
         reportPath: reportPaths.reportPath,
         tmpReportPath: reportPaths.tmpReportPath,
+        silent: options?.silent === true,
       });
-    }
-
-    const requestState = this.flowNodeContinuityCreateReportRequests.get(
-      session.id
-    );
-    if (requestState && requestState.requestId === requestId) {
-      const updatedAtIso = new Date().toISOString();
-      this.flowNodeContinuityCreateReportRequests.set(session.id, {
-        ...requestState,
-        stage: "waiting_for_report",
-        updatedAtIso,
-      });
-    }
-
-    if (!options?.silent) {
-      this.emitFlowNodeRolloverNotification(session.id, {
-        ...notificationBase,
-        phase: "waiting_for_report",
-        continuityRequestId: requestId,
-        continuityAttempt: requestAttempt,
-        reportPath: reportPaths.reportPath,
-        tmpReportPath: reportPaths.tmpReportPath,
-      });
-    }
 
     await this.flowNodeContinuity.waitForReport({
       reportPath: reportPaths.reportPath,
@@ -2209,7 +2354,7 @@ export class SessionRequestHandler {
         ...notificationBase,
         phase: "report_ready",
         continuityRequestId: requestId,
-        continuityAttempt: requestAttempt,
+        continuityAttempt: ackedAttempt,
         reportPath: reportPaths.reportPath,
       });
     }
@@ -2251,7 +2396,7 @@ export class SessionRequestHandler {
         ...notificationBase,
         phase: "new_session_created",
         continuityRequestId: requestId,
-        continuityAttempt: requestAttempt,
+        continuityAttempt: ackedAttempt,
         nextSessionId: nextSession.id,
       });
     }
@@ -2285,7 +2430,7 @@ export class SessionRequestHandler {
         ...notificationBase,
         phase: "resume_sent",
         continuityRequestId: requestId,
-        continuityAttempt: requestAttempt,
+        continuityAttempt: ackedAttempt,
         nextSessionId: nextSession.id,
         reportPath: reportPaths.reportPath,
       });
@@ -2296,6 +2441,9 @@ export class SessionRequestHandler {
     sessionId: string,
     event: ProviderEventEnvelope
   ): void {
+    if (event.type !== "sessionIdChanged" && event.type !== "realSessionId") {
+      this.ackFlowNodeContinuityCreateReportIfPending(sessionId);
+    }
     switch (event.type) {
       case "sessionIdChanged":
         this.handleSessionIdChangedEvent(sessionId, event.payload);
