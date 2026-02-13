@@ -466,6 +466,11 @@ CommonJS модуль с динамическим `import()` для ESM-паке
     └── codeai-hub-core-darwin-arm64-1.1.578.tar.bz2
 ```
 
+Примечания по `sessions/<workspaceKey>/...` (Unified Session History):
+- `<workspaceKey>` — это **sanitize(workspacePath)**, а не workflow slug. Пример: workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub` → `-Users-oleksandroliinyk-VSCODE-CodeAI-Hub`.
+- Эти JSONL файлы используются для восстановления **истории диалога в UI** (через Core `/api/v1/sessions/:sessionId/history`) и являются независимыми от provider-home файлов CLI.
+- В провайдерах возможна promotion схемы `temp id -> real providerSessionId` (например, Codex `codex-<uuid> -> <thread_id>`). Unified-session writer выполняет rename файла, чтобы история оставалась в одном JSONL и не “распадалась” на два файла.
+
 ---
 
 ## 8. Current Versions

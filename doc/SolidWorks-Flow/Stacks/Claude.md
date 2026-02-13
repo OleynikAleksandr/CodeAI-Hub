@@ -92,6 +92,7 @@ Claude запускается с:
 - Claude provider-home sessions: `~/.codeai-hub/providers/claude/home/.claude/projects/<workspaceSlug>/<sessionId>.jsonl`
 - Терминальные Claude sessions (вне CodeAI Hub): `~/.claude/projects/<workspaceSlug>/<sessionId>.jsonl`
 - Claude SDK logs: `~/.codeai-hub/logs/claude/sdk-claude-<sessionId>.jsonl`
+- Unified session history (UI): `~/.codeai-hub/sessions/<workspaceKey>/claudeCodeCli/<providerSessionId>.jsonl`, где `<workspaceKey>` = `sanitize(workspacePath)`. Это отдельный слой хранения, который Core использует для восстановления истории сообщений в Project Manager.
 
 ## Диагностика
 - Ошибки SDK/stream пробрасываются в provider error channel.

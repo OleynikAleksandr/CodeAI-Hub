@@ -13,7 +13,7 @@
 
 Key capabilities we must preserve when porting:
 1. Streaming JSONL event bridge on top of `codex exec --experimental-json`.
-2. Support for threaded conversations with resume semantics via `$CODEX_HOME/sessions` (CodeAI Hub sets `CODEX_HOME=~/.codeai-hub/providers/codex/home`, so Hub sessions must only be read from that provider-home).
+2. Support for threaded conversations with resume semantics via `$CODEX_HOME/sessions` (CodeAI Hub sets `CODEX_HOME=~/.codeai-hub/providers/codex/home`, so provider rollouts/sessions must only be read from that provider-home).
 3. Mixed text/image inputs and structured JSON outputs per turn (answer; structured output используется в legacy/Idea Collector потоках, а workflow стадии Description/Virtual Simulation/Diagrams работают в file-first режиме и пишут артефакты в runs).
 4. Sandbox controls (`read-only`, `workspace-write`, `danger-full-access`) and optional Git repository enforcement.
 5. Authentication via ChatGPT login or API key override (`CODEX_API_KEY`), with persistence under `$CODEX_HOME` (in Hub: `~/.codeai-hub/providers/codex/home`, with auth/config symlinked from `~/.codex`).
@@ -53,6 +53,15 @@ CodeAI-Hub Core  →  Codex Provider Adapter  →  @openai/codex-sdk  →  codex
 - `Thread` objects maintain conversation identity (`thread_id`), multiplexing consecutive turns over the same CLI command by passing `resume` arguments.
 - Event streaming is line-oriented: each stdout line is JSON encoded `ThreadEvent`. The SDK already parses lines and raises typed unions.
 - The CLI writes artifacts (sessions, config, auth) to `$CODEX_HOME`. CodeAI Hub defaults this to `~/.codeai-hub/providers/codex/home` (importing `~/.codex/auth.json` on first run) to isolate state from interactive CLI sessions; it can still be overridden via `CODEX_HOME`.
+
+### Unified Session History (UI dialog rendering)
+Важно различать два слоя хранения:
+- **Provider-home (CLI state)**: Codex CLI пишет свои sessions/rollouts в `$CODEX_HOME/sessions/**` (в Hub это `~/.codeai-hub/providers/codex/home/sessions/**`).
+- **Unified-session (UI history)**: Core параллельно пишет нормализованную историю диалога для UI в `~/.codeai-hub/sessions/<workspaceKey>/codexCli/<providerSessionId>.jsonl`, где `<workspaceKey>` = `sanitize(workspacePath)` (например `-Users-...-CodeAI-Hub`).
+
+Promotion `temp id -> thread_id`:
+- При первом реальном `thread_id` Codex SDK может промотировать provisional id (например `codex-<uuid>`) в реальный `<thread_id>`.
+- Unified-session writer делает rename JSONL, чтобы сохранить **одну** историю (без split на `codex-*.jsonl` и `<thread_id>.jsonl`).
 
 ---
 
