@@ -1,22 +1,22 @@
 # Codex SDK Module
 
-**Updated:** 2026-01-15  
+**Updated:** 2026-02-13  
 **Owner:** Codex  
 **Source Reference:** `https://github.com/openai/codex/tree/main/sdk/typescript`
 
 ---
 
 ## 1. Purpose & Scope
-- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.444` inside CodeAI-Hub Core.
+- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.576` inside CodeAI-Hub Core.
 - Capture the CLI/SDK contract (events, items, options) that we must adapt for RemoteBridge and UI streaming.
 - List integration prerequisites (authentication, binaries, storage layout) required to bootstrap Codex alongside the Claude module.
 
 Key capabilities we must preserve when porting:
 1. Streaming JSONL event bridge on top of `codex exec --experimental-json`.
-2. Support for threaded conversations with resume semantics via `~/.codex/sessions`.
+2. Support for threaded conversations with resume semantics via `$CODEX_HOME/sessions` (CodeAI Hub sets `CODEX_HOME=~/.codeai-hub/providers/codex/home`, so Hub sessions must only be read from that provider-home).
 3. Mixed text/image inputs and structured JSON outputs per turn (answer; structured output используется в legacy/Idea Collector потоках, а workflow стадии Description/Virtual Simulation/Diagrams работают в file-first режиме и пишут артефакты в runs).
 4. Sandbox controls (`read-only`, `workspace-write`, `danger-full-access`) and optional Git repository enforcement.
-5. Authentication via ChatGPT login or API key override (`CODEX_API_KEY`), with persistence under `~/.codex`.
+5. Authentication via ChatGPT login or API key override (`CODEX_API_KEY`), with persistence under `$CODEX_HOME` (in Hub: `~/.codeai-hub/providers/codex/home`, with auth/config symlinked from `~/.codex`).
 6. Graceful error propagation when CLI exits non-zero (surface `turn.failed`, `error` events, or exit messages).
 
 ---
@@ -65,7 +65,7 @@ CodeAI-Hub Core  →  Codex Provider Adapter  →  @openai/codex-sdk  →  codex
    - `codex exec --experimental-json [--model ...] [--config model_reasoning_effort=...] [--sandbox ...] [--cd ...] [--skip-git-repo-check] [--output-schema ...] [--image path...]`.
    - If resuming, appends `resume <thread_id>`.
    - Populates env (`CODEX_INTERNAL_ORIGINATOR_OVERRIDE=codex_sdk_ts`, optional `OPENAI_BASE_URL`, `CODEX_API_KEY`).
-   - When CodeAI Hub has a saved per-model reasoning level, it passes `--config model_reasoning_effort=<level>` per turn (runtime override, no edits to `~/.codex/config.toml`).
+   - When CodeAI Hub has a saved per-model reasoning level, it passes `--config model_reasoning_effort=<level>` per turn (runtime override, no edits to `$CODEX_HOME/config.toml`).
 6. Inputs may be a simple prompt (`string`) or an array of `{ type: "text" | "local_image" }`. Text entries are concatenated; image paths are converted to repeated `--image` flags.
 7. Structured outputs require passing a JSON schema per turn; the SDK writes it to a temp file and cleans up afterward.
 8. Thinking в UI в MVP берётся из native reasoning событий провайдера; RU thinking summary через отдельное поле structured output не используется (подробнее: `doc/SolidWorks-Flow/knowledge/kb/codex-thinking-display.md`).
@@ -81,7 +81,7 @@ Error handling:
 | --- | --- | --- |
 | `thread.started` | `{ thread_id }` | Emitted once per new thread or resume; update provider session mapping. |
 | `turn.started` | none | Marks beginning of a turn. |
-| `turn.completed` | `{ usage }` | Token usage (input, cached_input, output). |
+| `turn.completed` | `{ usage }` | Raw SDK turn usage (input, cached_input, output); CodeAI Hub дополнительно обогащает provider event payload полем `usageLimits` из rollout `rate_limits`. |
 | `turn.failed` | `{ error: { message } }` | Terminal failure; no further events for the turn. |
 | `item.started` / `item.updated` / `item.completed` | `{ item }` | Wraps one of the ThreadItem variants below. |
 | `error` | `{ message }` | Fatal stream error (distinct from `turn.failed`). |
@@ -101,9 +101,9 @@ These structures mirror the JSONL emitted by the CLI. CodeAI-Hub must translate 
 ---
 
 ## 6. Authentication & Storage
-- Primary flow: interactive ChatGPT login (`codex login`) storing credentials in `~/.codex/auth.json`.
+- Standalone primary flow: interactive ChatGPT login (`codex login`) storing credentials in `~/.codex/auth.json`.
 - Alternative: usage-based billing via API key – pass `CODEX_API_KEY` env or `codex login --with-api-key`. Requires Responses API write access.
-- Codex CLI defaults live in `~/.codex/config.toml`; CodeAI Hub does not edit this file and instead uses runtime `--config` overrides. Sessions persist under `~/.codex/sessions/` (thread JSONL transcripts).
+- CodeAI Hub flow: CLI state is isolated under `CODEX_HOME=~/.codeai-hub/providers/codex/home`. CodeAI Hub does not edit config files and instead uses runtime `--config` overrides; sessions/rollouts must be read from `$CODEX_HOME/sessions/**/rollout-*.jsonl`.
 - CLI expects a Git repository by default; global `skip git repo check` toggle via config or per-thread option.
 - Remote/headless login patterns: forward port 1455 or copy `auth.json` across machines (see docs/authentication.md).
 
@@ -113,14 +113,35 @@ Implications for CodeAI-Hub:
 
 ---
 
-## 7. Sandbox, Approvals & Safety Flags
+## 7. Usage Limits From Provider-Home Rollout (Phase 151)
+
+Source-of-truth для Codex usage limits в Hub — только rollout JSONL в provider-home:
+- path: `~/.codeai-hub/providers/codex/home/sessions/**/rollout-*.jsonl`;
+- event type: `event_msg.payload.type=token_count`;
+- source fields: `payload.rate_limits.primary|secondary`.
+
+Нормализация в UI-контракт `usage_limits`:
+- `primary.used_percent` -> `currentSession.percentUsed` (clamp + round 0..100);
+- `primary.resets_at` (unix seconds/ms) -> `currentSession.resetsAt` (ISO string);
+- `secondary.used_percent` -> `currentWeekAllModels.percentUsed`;
+- `secondary.resets_at` -> `currentWeekAllModels.resetsAt`;
+- `currentWeekSonnetOnly` всегда `null` (сохранение совместимости с текущим Session UI контрактом).
+
+Delivery contract:
+- на `turn_completed` Codex message-processor читает latest rollout snapshot и добавляет `usageLimits` в payload `turn_completed`;
+- тот же snapshot публикуется как `stream_event` с `data.kind=usage_limits`;
+- PM/UI сохраняет provider-scoped last-known cache и показывает лимиты в `Session ID Bar` сразу при старте новой Codex-сессии (до первого ответа).
+
+---
+
+## 8. Sandbox, Approvals & Safety Flags
 - `SandboxMode` options map to CLI `--sandbox` (`read-only`, `workspace-write`, `danger-full-access`).
 - Approvals: CLI exposes `--approval-mode` flags (`never`, `on-request`, `on-failure`, `untrusted`). The type is exported but not yet wired inside `ThreadOptions`; we may need to pass it via env/config until the SDK adds direct support.
 - Default (no sandbox flag) prohibits file edits/privileged commands; CodeAI-Hub should align with its own approval policy UI when invoking Codex.
 
 ---
 
-## 8. Installation & Binary Management
+## 9. Installation & Binary Management
 - `@openai/codex-sdk` ships prebuilt binaries under `vendor/<target triple>/codex/` for macOS (x86_64, arm64), Linux (x86_64, arm64), Windows (x86_64, arm64).
 - `CodexExec` auto-detects the current platform and selects the bundled binary; override via `codexPathOverride` to use a managed installation (e.g., CodeAI-Hub controlled path).
 - Global CLI installs place the executable at `${npm prefix}/bin/codex` (`/Users/oleksandroliinyk/.npm-global/bin/codex` locally).
@@ -128,7 +149,7 @@ Implications for CodeAI-Hub:
 
 ---
 
-## 9. Integration Guidelines for CodeAI-Hub
+## 10. Integration Guidelines for CodeAI-Hub
 1. Wrap the SDK inside `packages/Codex_Module/` mirroring Claude module layout (facades, installer, session manager, message processor).
 2. Provide an installer that either relies on bundled binaries or downloads official releases when absent, verifying integrity.
 3. Expose a Provider Adapter that:
@@ -144,7 +165,7 @@ Implications for CodeAI-Hub:
 
 ---
 
-## 10. Known Gaps & Risks
+## 11. Known Gaps & Risks
 - Approval mode currently lacks a direct setter in the SDK; may require manual flag injection (custom CLI wrapper or config edits) until bindings land.
 - Bundled binary approach increases package size; ensure our distribution strategy (manifests vs. direct bundling) stays compliant with project rules.
 - CLI expects Git repositories; non-repo workspaces must set `skipGitRepoCheck`, otherwise Codex exits early.
@@ -153,7 +174,19 @@ Implications for CodeAI-Hub:
 
 ---
 
-## 11. Next Steps for Phase 12
+## 12. Provider-Home E2E Smoke Checklist (Phase 151)
+
+1. Выполнить любой рабочий Codex turn из CodeAI Hub.
+2. Проверить появление/обновление rollout в `~/.codeai-hub/providers/codex/home/sessions/**/rollout-*.jsonl`.
+3. Убедиться, что в rollout есть `token_count.rate_limits.primary/secondary`.
+4. Проверить stream payload в Core/PM:
+   - `turn_completed.usageLimits.currentSession/currentWeekAllModels`;
+   - `stream_event.data.kind=usage_limits` с теми же значениями.
+5. Создать новую Codex-сессию и проверить, что `Session ID Bar` сразу показывает session/weekly проценты из last-known provider cache.
+
+---
+
+## 13. Next Steps for Phase 12
 1. Mirror directory scaffolding from `packages/Claude_Module` for Codex (facades, installer, session lifecycle, message processor).
 2. Define Provider Event Adapter transformations from `ThreadEvent`/`ThreadItem` to our unified message schema (basis for cross-provider wrapper).
 3. Implement authentication checks (detect `auth.json`, guide user through login).
@@ -163,7 +196,7 @@ Implications for CodeAI-Hub:
 
 ---
 
-## 12. Reference Links
+## 14. Reference Links
 - CodeAI Hub structured outputs + thinking UX: `doc/SolidWorks-Flow/knowledge/kb/codex-thinking-display.md`
 - Codex SDK overview: https://developers.openai.com/codex/sdk
 - TypeScript SDK docs: https://developers.openai.com/codex/sdk#typescript-library
@@ -176,7 +209,7 @@ Implications for CodeAI-Hub:
 
 ---
 
-## 13. Proposed Module Layout
+## 15. Proposed Module Layout
 | Area | Path | Responsibility |
 | --- | --- | --- |
 | SDK entry | `packages/Codex_Module/src/index.ts` | Re-export `CodexProviderAdapter` and shared option types. |
@@ -193,7 +226,7 @@ Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source 
 
 ---
 
-## 14. Installer & Provider Adapter Plan
+## 16. Installer & Provider Adapter Plan
 **Installer (`codex-installer.ts`):**
 - Read manifest (`assets/providers/codex/manifest.json`) describing versions and download URLs (mirrors Claude delivery).
 - Resolve platform-specific target triple; prefer managed cache under `~/.codeai-hub/providers/codex/<version>/codex`.
@@ -227,7 +260,7 @@ Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source 
 
 ---
 
-## 15. Build & Distribution
+## 17. Build & Distribution
 - Build script: `./scripts/build-codex-module.sh [--version <semver>] [--clean]`.
   - Compiles `packages/Codex_Module`, installs artifacts under `~/.codeai-hub/providers/codex/<version>/`, and creates `codex-module-<version>.tar.bz2` in `doc/tmp/releases/` and the shared local cache `~/.codeai-hub/releases/`.
   - Manifest auto-update: `assets/providers/codex/manifest.json` is rewritten with the archive name, size, and SHA-1 after each build; `baseUrl` in dev и внутренних релизах указывает на локальный cache `file://$HOME/.codeai-hub/releases/` (на основной dev‑машине — `file:///Users/oleksandroliinyk/.codeai-hub/releases/`).

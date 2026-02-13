@@ -385,6 +385,21 @@ CommonJS модули, tarballs через `npm pack`. Инсталляторы 
 - До первого рабочего turn выполняется preflight auth gate + retry bootstrap; при неуспехе возвращается явная команда login для provider-home.
 - Usage limits для Session UI берутся из ratelimit headers API-probe (`/v1/messages`) и публикуются в стабильном `usage_limits` контракте (`currentSession` + `currentWeekAllModels`).
 
+**Codex provider-home contract (Phase 146+):**
+- CodeAI Hub запускает Codex CLI/SDK с `CODEX_HOME=~/.codeai-hub/providers/codex/home`.
+- Codex session rollouts, созданные из CodeAI Hub, пишутся только в `$CODEX_HOME/sessions/**/rollout-*.jsonl` и должны читаться только оттуда.
+- Файлы `$CODEX_HOME/{auth.json,config.toml}` линкуются на `~/.codex/{auth.json,config.toml}` (Windows: fallback copy) для использования единого auth/config, но `~/.codex/sessions/**` не является источником правды для Hub-сессий.
+- На каждом `turn_completed` Codex reader читает latest `token_count.rate_limits` из provider-home rollout и публикует `usage_limits` в двух каналах: `turn_completed.usageLimits` и `stream_event` (`data.kind=usage_limits`).
+- Session UI хранит provider-scoped last-known `usage_limits` cache и показывает эти значения в `Session ID Bar` сразу при старте любой новой Codex-сессии (до первого ответа агента).
+
+**Codex provider-home e2e smoke checklist (Phase 151):**
+1. Запустить любой Codex workflow turn и убедиться, что появился новый файл `~/.codeai-hub/providers/codex/home/sessions/**/rollout-*.jsonl`.
+2. Проверить в rollout наличие событий `event_msg.payload.type=token_count` с `rate_limits.primary/secondary`.
+3. Убедиться, что в `session:stream` для этого turn присутствуют:
+   - `turn_completed` c `usageLimits.currentSession/currentWeekAllModels`;
+   - `stream_event` c `data.kind=usage_limits` и тем же payload.
+4. Открыть новую Codex-сессию в том же runtime и проверить, что `Session ID Bar` показывает `session/weekly` проценты сразу (без ожидания первого ответа агента).
+
 ### 6.2 Gemini
 
 CommonJS модуль с динамическим `import()` для ESM-пакетов. Глобальная установка `@google/gemini-cli` и `@google/gemini-cli-core`.
