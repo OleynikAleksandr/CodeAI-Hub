@@ -94,6 +94,8 @@ Core Orchestrator — автономный Node.js сервис (`@codeai-hub/co
   - `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`
 - `providerSessionId` (реальная сессия провайдера) может меняться при rollover/resume, но `dialogSessionId` **не меняется**.
 
+Требование на будущее: все новые агенты/flow-ноды должны сразу использовать этот контракт (стабильный `dialogSessionId` + один JSONL), а не писать историю по `providerSessionId`.
+
 ### Правила выбора `dialogSessionId`
 - Для нового диалога `dialogSessionId` фиксируется как **первый** `providerSessionId` (1-й сегмент). Это обеспечивает совместимость без миграции формата.
 - При последующих rollover/resume Core продолжает писать в файл первого сегмента, добавляя новые сообщения в тот же JSONL.
