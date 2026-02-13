@@ -31,7 +31,7 @@
 - Никаких дополнительных provider-сессий не создаётся из-за resume.
 
 ### Stream: Core Resume Payload (embed report body)
-1. [TODO] Core: перед отправкой `resume.md` прочитать `reportPath` и передать `reportBody` в render context; добавить ограничение по размеру (например max chars/bytes + безопасная пометка `...truncated...`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `fix(core): embed continuity report body into resume prompt`)
+1. [IN_PROGRESS] Core: перед отправкой `resume.md` прочитать `reportPath` и передать `reportBody` в render context; добавить ограничение по размеру (например max chars/bytes + безопасная пометка `...truncated...`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `fix(core): embed continuity report body into resume prompt`)
 2. [TODO] Git Commit: `fix(core): embed continuity report body into resume prompt` (hash: TBD)
 
 3. [TODO] Core: добавить targeted тест на формирование resume prompt (или на template render) с `reportBody` + truncation поведение (scope: +1 test file в `packages/core/src/flow-node-continuity/*` ИЛИ `packages/core/src/remote-bridge/handlers/*`; expected commit message: `test(core): cover continuity resume report embedding`)
