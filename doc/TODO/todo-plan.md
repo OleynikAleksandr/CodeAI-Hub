@@ -11,8 +11,9 @@
 2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
 4. `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`
-5. `packages/core/src/remote-bridge/handlers/session-request-handler.ts` (контракт session metadata, события turn)
-6. `packages/core/src/unified-session/storage.ts` (unified-session history)
+5. `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`
+6. `packages/core/src/remote-bridge/handlers/session-request-handler.ts` (контракт session metadata, события turn)
+7. `packages/core/src/unified-session/storage.ts` (unified-session history)
 
 ---
 
@@ -42,9 +43,12 @@
 1. [TODO] UI: отобразить `continuity_failed` как явное сообщение/баннер в Session UI (в том же месте, где показывается `Agent is working…`), и гарантировать, что input разблокирован (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view-helpers.tsx` (или эквивалент), 1 файл теста; expected commit message: `fix(ui): show continuity failure message and unlock input`)
 2. [TODO] Git Commit: `fix(ui): show continuity failure message and unlock input` (hash: TBD)
 
-### Stream: Docs + Smoke Checklist
-1. [TODO] Docs: обновить `doc/SolidWorks-Flow/` (протокол ack/retry, 2-attempt policy, contract `continuity_failed`) + добавить короткий smoke-чеклист воспроизведения/проверки для Codex/Claude/Gemini (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Stacks/Project_Manager.md`, `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`; expected commit message: `docs(system): document continuity ack/retry and failure surfacing`)
+### Stream: Docs Sync + Smoke Checklist (CoreOrchestrator focus)
+1. [TODO] Docs: описать протокол ack/retry, 2-attempt policy и событие `continuity_failed` (SSOT) + обновить раздел CoreOrchestrator про internal turns/handshake (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/Stacks/Project_Manager.md`; expected commit message: `docs(system): document continuity ack/retry and failure surfacing`)
 2. [TODO] Git Commit: `docs(system): document continuity ack/retry and failure surfacing` (hash: TBD)
+
+3. [TODO] Docs: обновить provider-спеки (как минимум Codex, и общие примечания для Claude/Gemini) + добавить smoke-чеклист воспроизведения/проверки для Codex/Claude/Gemini (scope: `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`, `doc/SolidWorks-Flow/Stacks/Claude.md`, `doc/SolidWorks-Flow/Stacks/Gemini.md`; expected commit message: `docs(stacks): add continuity smoke checklist across providers`)
+4. [TODO] Git Commit: `docs(stacks): add continuity smoke checklist across providers` (hash: TBD)
 
 ### Stream: Quality Gates + Release Build
 1. [TODO] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (core + UI), обновить `README/CHANGELOG`, собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, docs в `doc/SolidWorks-Flow/`; expected commit message: `docs(release): sync docs for v<next>`)
