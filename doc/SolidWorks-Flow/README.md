@@ -34,3 +34,4 @@
 ## Операционные пометки
 
 - Gemini: сценарий `Description(one-shot) -> Reviewer(resume)` остаётся подтверждённым и валидирован в `1.1.560`, но дальнейшие Gemini‑расширения заморожены до появления надёжной telemetry remaining context window. Источник правды: `doc/SolidWorks-Flow/Stacks/Gemini_Reviewer_Resume_Architecture.md`.
+- UI история диалога (Project Manager): `~/.codeai-hub/sessions/**` используется **только** как стабильное хранилище нормализованных сообщений для UI. Для long-lived агентов Core обязан использовать стабильный `dialogSessionId` и писать **один** накопительный JSONL `.../<dialogSessionId>.jsonl`, независимо от rollover/resume и количества provider-сегментов (обязательно для всех следующих агентов).

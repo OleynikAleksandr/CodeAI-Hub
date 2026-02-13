@@ -60,6 +60,9 @@
 ### 3.2 IDs
 - `nodeId: string` — идентификатор узла workflow tree (`description`, `virtual_simulation`, ...).
 - `sessionId: string` — UUID (генерируется Core).
+- `providerId: string` — id провайдера (например: `claudeCodeCli`, `codexCli`, `geminiCli`).
+- `providerSessionId: string` — provider-native id конкретного segment (используется для resume/focus и привязки provider events).
+- `dialogSessionId: string` — **стабильный** id логического диалога агента для UI-истории (не меняется при rollover/resume).
 - `artifactId: string` — id артефакта внутри узла (`draft`, `final`, `report`).
 
 ### 3.3 Compound keys
@@ -76,6 +79,15 @@ type SessionKey = {
   sessionId: string;
 };
 ```
+
+### 3.4 UI Session History (normative)
+
+История диалога в UI читается **не из провайдерных логов**, а из unified-session JSONL в `~/.codeai-hub/sessions/**`.
+
+Нормативные правила:
+- `providerSessionId` может меняться при rollover/resume, но `dialogSessionId` **не меняется**.
+- имя файла истории для UI должно быть `dialogSessionId` (иначе история распадается на сегменты и после рестарта Core/PM будет показываться только “последний кусок”).
+- это требование применяется для всех **следующих агентов** и flow-ноды/шагов, где диалог длительный и может переживать rollover/resume.
 
 ---
 
