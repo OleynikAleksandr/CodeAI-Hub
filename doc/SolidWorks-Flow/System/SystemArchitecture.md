@@ -126,6 +126,12 @@ Node.js сервис (`@codeai-hub/core@1.1.579`), упакованный как
 Порог запуска handoff рассчитывается по token usage (used/limit) и может быть настроен per-provider (например, Claude и Codex: remaining% threshold, default 30%).
 Внутренние handoff-инструкции отправляются через `sendInternalMessage` и не должны попадать в user-facing историю.
 
+Критичный контракт rollover bootstrap: при переходе на новый provider segment Core обязан отправить internal `Flow Node Continuity — Resume`, содержащий:
+- `reportPath` (путь на диске),
+- `reportBody` (копия отчёта, подготовленная Core; допускается truncation с явной пометкой).
+
+Это снимает зависимость от provider-specific команд/инструментов: на bootstrap-turn агент не должен выполнять команды и при этом обязан иметь достаточно контекста, чтобы продолжить работу.
+
 ### 2.7 Turn-state + Continuity Lock UI Contract (CRITICAL)
 
 Чтобы исключить unlock-gap на границах `turn_completed`/continuity, UI и PM следуют unified input-lock контракту (snapshot-first):
