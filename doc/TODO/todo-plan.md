@@ -28,8 +28,8 @@
 - При повторении бага будет понятно: очередь не потребляется или `runStreamed` завис/не вернул events, или event stream idle-timeout.
 
 ### Stream: Provider Trace Logging (Codex_Module)
-1. [TODO] Codex_Module: добавить `sdk:processor.*` trace события вокруг enqueue/dequeue/processTurn/runStreamed/first-event (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex): add processor trace logs for stalled turns`)
-2. [TODO] Git Commit: `feat(codex): add processor trace logs for stalled turns` (hash: TBD)
+1. [DONE] Codex_Module: добавить `sdk:processor.*` trace события вокруг enqueue/dequeue/processTurn/runStreamed/first-event (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex): add processor trace logs for stalled turns`)
+2. [DONE] Git Commit: `feat(codex): add processor trace logs for stalled turns` (hash: `e1eb153d`)
 
 ### Stream: Docs (Release Notes)
 1. [TODO] Docs: обновить `CHANGELOG.md` + `README.md` под v1.1.582 (diagnostics: Codex stalled turn trace logs) (scope: `CHANGELOG.md`, `README.md`; expected commit message: `docs(release): add codex stalled turn diagnostics notes`)
