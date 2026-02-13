@@ -78,16 +78,21 @@
 - `providerId`: `claudeCodeCli` | `codexCli` | `geminiCli`
 - `providerSessionId`: строка (provider-native id; используется для resume)
 - `jsonlPath`: абсолютный путь к unified session JSONL
+- `dialogSessionId`: стабильный id логического диалога для UI-истории (имя JSONL файла; не меняется при rollover/resume)
 
-Примечание: `jsonlPath` не должен быть “вводимой пользователем” строкой — он вычисляется детерминированно из `providerId + providerSessionId + workspaceSlug`.
+Примечание: `jsonlPath` не должен быть “вводимой пользователем” строкой — он вычисляется детерминированно из `providerId + dialogSessionId + workspaceKey`, где `workspaceKey = sanitize(workspacePath)`.
 Дополнение: `SessionRef` — техническая мета‑информация, которая хранится в метаданных шага/состоянии (например, `description-step.json`) и не должна попадать в `Final_Description.md`.
 
 ### 5.3 Session JSONL location
 
 Unified session storage хранит события в:
-- `~/.codeai-hub/sessions/<workspaceSlug>/<providerId>/<sanitizedProviderSessionId>.jsonl`
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<sanitizedDialogSessionId>.jsonl`
 
-Где `sanitizedProviderSessionId` нормализован под безопасный slug (см. `@codeai-hub/unified-session/sanitizeWorkspaceSlug`).
+Где:
+- `workspaceKey = sanitize(workspacePath)`;
+- `sanitizedDialogSessionId` нормализован под безопасный slug (см. `@codeai-hub/unified-session/sanitizeWorkspaceSlug`).
+
+Требование на будущее: этот подход (стабильный `dialogSessionId` для одного накопительного JSONL) обязателен для всех следующих агентов/шагов, иначе Project Manager после рестарта Core будет видеть только последний сегмент истории.
 
 ### 5.4 Artifacts (paths)
 
