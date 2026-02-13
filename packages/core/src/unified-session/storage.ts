@@ -19,6 +19,8 @@ type PendingSession = {
   readonly providerId: string;
   readonly workspaceSlug: string;
   providerSessionId?: string;
+  historySessionId: string;
+  readonly historySessionIdLocked: boolean;
   writer?: UnifiedSessionWriter;
   writerSessionId?: string;
   readonly queue: SessionMessage[];
@@ -42,13 +44,25 @@ export class UnifiedSessionStorage {
     this.rootDirectory = options.rootDirectory ?? SESSION_ROOT;
   }
 
-  register(session: Session): void {
+  register(
+    session: Session,
+    options?: { readonly historySessionId?: string | null }
+  ): void {
     const workspaceSlug =
       sanitizeWorkspaceSlug(session.workspacePath) || this.defaultWorkspaceSlug;
+    const overrideHistorySessionId =
+      options?.historySessionId && options.historySessionId.trim().length > 0
+        ? options.historySessionId.trim()
+        : null;
+    const initialHistorySessionId = sanitizeSessionId(
+      overrideHistorySessionId ?? session.providerSessionId ?? session.id
+    );
     const entry: PendingSession = {
       providerId: session.providerId,
       workspaceSlug,
       providerSessionId: session.providerSessionId,
+      historySessionId: initialHistorySessionId,
+      historySessionIdLocked: Boolean(overrideHistorySessionId),
       queue: [],
     };
     this.sessions.set(session.id, entry);
@@ -57,7 +71,7 @@ export class UnifiedSessionStorage {
         session.id,
         entry,
         workspaceSlug,
-        session.providerSessionId
+        entry.historySessionId
       );
     }
   }
@@ -71,11 +85,15 @@ export class UnifiedSessionStorage {
       return;
     }
     entry.providerSessionId = providerSessionId;
+    const desiredHistorySessionId = entry.historySessionIdLocked
+      ? entry.historySessionId
+      : sanitizeSessionId(providerSessionId);
+    entry.historySessionId = desiredHistorySessionId;
     this.initializeWriter(
       sessionId,
       entry,
       entry.workspaceSlug,
-      providerSessionId
+      desiredHistorySessionId
     );
   }
 
@@ -123,9 +141,10 @@ export class UnifiedSessionStorage {
 
   async readMessages(session: Session): Promise<SessionMessage[]> {
     const entry = this.sessions.get(session.id);
-    const providerSessionId =
-      entry?.providerSessionId ?? session.providerSessionId;
-    if (!providerSessionId) {
+    const historySessionId = sanitizeSessionId(
+      entry?.historySessionId ?? session.providerSessionId ?? session.id
+    );
+    if (!historySessionId) {
       return [];
     }
 
@@ -142,7 +161,6 @@ export class UnifiedSessionStorage {
       });
     }
 
-    const sanitizedProviderSessionId = sanitizeSessionId(providerSessionId);
     const preferredWorkspaceSlug =
       entry?.workspaceSlug ||
       sanitizeWorkspaceSlug(session.workspacePath) ||
@@ -162,7 +180,7 @@ export class UnifiedSessionStorage {
         rootDirectory: this.rootDirectory,
         workspaceSlug,
         provider: session.providerId,
-        sessionId: sanitizedProviderSessionId,
+        sessionId: historySessionId,
       });
       const records = await readSessionEvents(filePath);
       for (const record of records) {
@@ -191,13 +209,13 @@ export class UnifiedSessionStorage {
     sessionId: string,
     entry: PendingSession,
     workspaceSlug: string,
-    providerSessionId: string
+    historySessionId: string
   ): void {
-    const sanitizedProviderSessionId = sanitizeSessionId(providerSessionId);
+    const sanitizedHistorySessionId = sanitizeSessionId(historySessionId);
     if (
       entry.writer &&
-      entry.writerSessionId === sanitizedProviderSessionId &&
-      entry.providerSessionId === providerSessionId
+      entry.writerSessionId === sanitizedHistorySessionId &&
+      entry.historySessionId === historySessionId
     ) {
       this.flushQueue(entry).catch((error: unknown) => {
         this.logger.error(
@@ -212,22 +230,22 @@ export class UnifiedSessionStorage {
       return;
     }
 
-    if (entry.writer && entry.writerSessionId !== sanitizedProviderSessionId) {
+    if (entry.writer && entry.writerSessionId !== sanitizedHistorySessionId) {
       // Codex/Claude sessions may start with a provisional id and later "promote"
       // to the real provider session id. Keep a single history file by renaming
       // the existing JSONL instead of creating a second one.
-      if (entry.writerSessionId) {
+      if (entry.writerSessionId && !entry.historySessionIdLocked) {
         this.tryPromoteSessionFile({
           workspaceSlug,
           providerId: entry.providerId,
           fromSessionId: entry.writerSessionId,
-          toSessionId: sanitizedProviderSessionId,
+          toSessionId: sanitizedHistorySessionId,
         });
       }
 
       // Keep using the existing writer handle; only update our bookkeeping so
       // reads and future flushes target the promoted session id.
-      entry.writerSessionId = sanitizedProviderSessionId;
+      entry.writerSessionId = sanitizedHistorySessionId;
 
       this.flushQueue(entry).catch((error: unknown) => {
         this.logger.error(
@@ -246,9 +264,9 @@ export class UnifiedSessionStorage {
       rootDirectory: this.rootDirectory,
       workspaceSlug,
       provider: entry.providerId,
-      sessionId: sanitizedProviderSessionId,
+      sessionId: sanitizedHistorySessionId,
     });
-    entry.writerSessionId = sanitizedProviderSessionId;
+    entry.writerSessionId = sanitizedHistorySessionId;
     this.flushQueue(entry).catch((error: unknown) => {
       this.logger.error(
         "Failed to flush unified session record",
