@@ -162,6 +162,8 @@ State-table для Session UI:
 - Description collector one-shot/no-resume не возвращается в editable state.
 - Запрещён provider-specific late-lock сценарий: accepted submit без немедленного `turn_state=running` до первого provider marker.
 - Запрещён send-failure сценарий без `turn_state=idle` rollback (stuck `running/blocked` после ошибки отправки).
+- **Continuity report reliability:** internal `Create Report` turn обязан иметь delivery/ack + retry policy. При failure после 2 попыток Core обязан снять блокировку и эмитить `stream_event.data.kind=continuity_failed` (причина + контекст), а UI обязан показать явный failure copy в input области (пока как placeholder), не оставляя `Agent is working… Please wait.` навсегда.
+- **Provider-agnostic \"working\" safety:** после получения `report_ready` Core дополнительно эмитит `turn_state=idle` (независимо от `turn_completed`), т.к. некоторые провайдеры могут не прислать `turn_completed` для internal turns.
 
 Референс реализации Phase 101: `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`.
 

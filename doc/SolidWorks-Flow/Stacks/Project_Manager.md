@@ -115,6 +115,17 @@ Continuity/rollover (handoff) — отдельный pipeline:
 - `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
 - `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
 
+### 5.1 Continuity Failure UX (no-stuck-input)
+
+Если continuity rollover не может завершить handoff (после retry-policy), Core обязан:
+- снять `continuityLock` (reason: `resume_failed`) и вернуть `resumeMode` к `resume_in_place`;
+- эмитить `stream_event.data.kind=continuity_failed` (причина + контекст) и `flow_node_rollover phase=failed` (error string);
+- гарантировать `turn_state=idle` для исходной сессии, даже если провайдер не прислал `turn_completed` для internal turns.
+
+Project Manager должен показать причину в UI и не держать input заблокированным:
+- shared `InputPanel` показывает placeholder `Continuity failed: <reason: error>` когда input unlocked и получена failure-информация;
+- при активном lock (snapshot-first) placeholder остаётся \"resuming\" до unlock.
+
 ---
 
 ## 6) Workflow Tree & Artifacts
