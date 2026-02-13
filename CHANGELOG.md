@@ -1,3 +1,7 @@
+## [1.1.578] - 2026-02-13
+### Fixed
+- Session UI typography: в `Session ID Bar` увеличен размер шрифта labels `session/weekly` до `12px` без изменения высоты панели (`32px`), чтобы повысить читаемость лимитов для всех провайдеров.
+
 ## [1.1.577] - 2026-02-13
 ### Fixed
 - Codex usage limits: `usage_limits` теперь читаются из provider-home rollout (`~/.codeai-hub/providers/codex/home/sessions/**/rollout-*.jsonl`) по `token_count.rate_limits.primary/secondary` с нормализацией `used_percent` и `resets_at`.
