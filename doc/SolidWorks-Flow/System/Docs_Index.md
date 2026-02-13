@@ -1,6 +1,6 @@
 # Документация CodeAI Hub — единый индекс (SolidWorks-Flow)
 
-**Last Updated:** 2026-02-11 (release 1.1.560)
+**Last Updated:** 2026-02-13 (release 1.1.585)
 
 Эта папка (`doc/SolidWorks-Flow/`) — **единый поток документации** проекта.
 
@@ -64,3 +64,4 @@ doc/SolidWorks-Flow/
 | `Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md` | File-first workflow + watcher |
 | `Architecture/DescriptionNode_ReviewSession_Architecture.md` | Канон `Description → Reviewer` |
 | `WorkspaceRuntime/WorkspaceRuntime.md` | Multi-workspace runtime + lock/unlock контракты |
+| `SessionContinuity/SessionContinuity.md` | Continuity rollover + единая UI-история через `dialogSessionId` (обязательно для всех следующих агентов) |
