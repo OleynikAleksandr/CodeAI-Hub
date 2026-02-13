@@ -17,7 +17,7 @@
 
 ---
 
-## Phase 151 — Codex Usage Limits From Rollout JSONL (owner: Oleksandr, updated: 2026-02-12)
+## Phase 151 — Codex Usage Limits From Rollout JSONL (owner: Oleksandr, updated: 2026-02-13)
 
 **Goal:** для провайдера Codex доставлять `usage_limits` в том же контракте, что у Claude (`currentSession` + `currentWeekAllModels`, `currentWeekSonnetOnly=null`), и гарантировать, что в любой новой Codex-сессии в `Session ID Bar` сразу отображаются **последние известные** лимиты, независимо от того, в какой сессии они были получены.
 
@@ -46,7 +46,15 @@
 
 ### Stream: Quality Gates + Release Build
 1. [DONE] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (Codex module + UI/PM при необходимости), затем обновить release docs и собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync docs for v<next>`)
-2. [DONE] Git Commit: `docs(release): sync docs for v<next>` (hash: `1176021c`)
-3. [DONE] Git Commit: `chore(release): run build-all for v<next>` (hash: `1b412dac`)
+2. [DONE] Git Commit: `docs(release): sync docs for v<next>` (hash: `79fcad7a`)
+3. [DONE] Git Commit: `chore(release): run build-all for v<next>` (hash: `1b6d20a6`)
 4. [DONE] Создать session report по результатам реализации Codex usage limits (scope: `doc/Sessions/Session032.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session032 codex usage limits report`)
-5. [IN_PROGRESS] Git Commit: `docs(session): add session032 codex usage limits report` (hash: TBD)
+5. [DONE] Git Commit: `docs(session): add session032 codex usage limits report` (hash: `ccb9c467`)
+
+### Stream: Session ID Bar Usage Labels 12px + Rebuild Release
+1. [DONE] UI: увеличить `font-size` labels (`session/weekly`) в `Session ID Bar` до `12px` без изменения высоты панели (`32px`) и применить в общем Session UI (scope: `media/session-view.css`; expected commit message: `fix(ui): increase session id bar usage labels to 12px`)
+2. [DONE] Git Commit: `fix(ui): increase session id bar usage labels to 12px` (hash: `7b27a4fd`)
+3. [DONE] Обновить release docs под `v1.1.578` с фиксацией UI-изменения (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync docs for v1.1.578`)
+4. [DONE] Git Commit: `docs(release): sync docs for v1.1.578` (hash: `79fcad7a`)
+5. [DONE] Git Commit: `chore(release): run build-all for v1.1.578` (hash: `1b6d20a6`)
+6. [DONE] Финальная сборка VSIX из текущей версии: `./scripts/build-release.sh --use-current-version` (scope: `codeai-hub-1.1.578.vsix`; expected commit message: `N/A (artifact build step, no git changes)`)
