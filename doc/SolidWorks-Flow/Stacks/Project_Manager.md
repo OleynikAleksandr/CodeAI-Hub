@@ -94,10 +94,16 @@ Project Manager показывает историю сообщений, запр
 - `GET /api/v1/sessions/:sessionId/history`
 
 Core читает историю из unified-session storage:
-- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl`
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`
 - `<workspaceKey>` = `sanitize(workspacePath)` (пример: `/Users/.../CodeAI-Hub` → `-Users-...-CodeAI-Hub`)
 
+Где:
+- `providerSessionId` используется для resume/focus сессии (provider-native id).
+- `dialogSessionId` используется как имя JSONL файла UI-истории и **не меняется** при rollover/resume (иначе после рестарта Core история будет “обрезана” до последнего сегмента).
+
 Provider-home (`~/.codeai-hub/providers/<provider>/home/`) используется провайдерами для их собственных CLI logs/rollouts и не является источником UI истории сообщений.
+
+Требование на будущее: для всех следующих агентов Project Manager ожидает, что Core будет выдавать стабильный `dialogSessionId` и писать историю в один накопительный JSONL, независимо от количества provider сегментов.
 
 ---
 
