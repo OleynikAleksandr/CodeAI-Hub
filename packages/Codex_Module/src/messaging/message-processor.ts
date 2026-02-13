@@ -148,6 +148,17 @@ export class CodexMessageProcessor {
     if (!internal) {
       session.logger?.logUserInput(content);
     }
+    // Trace breadcrumbs for diagnosing stalled turns (e.g. user_input logged but no sdk:turn.started).
+    session.logger?.logSDKEvent("processor.enqueue", {
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      internal,
+      contentLength: content.length,
+      pendingCount: session.messageController.pendingMessages.length,
+      hasResolveNext: Boolean(session.messageController.resolveNext),
+      hasProcessingLoop: Boolean(session.processingLoop),
+      timestampIso: new Date().toISOString(),
+    });
     const controller = session.messageController;
     controller.pendingMessages.push({
       type: "user_input",
@@ -182,6 +193,14 @@ export class CodexMessageProcessor {
       if (!this.isEnqueuedMessage(raw)) {
         continue;
       }
+      session.logger?.logSDKEvent("processor.dequeue", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: raw.internal ?? false,
+        contentLength: raw.content.length,
+        remainingPendingCount: session.messageController.pendingMessages.length,
+        timestampIso: new Date().toISOString(),
+      });
       await this.processTurn({ session, thread, message: raw });
     }
   }
@@ -192,6 +211,14 @@ export class CodexMessageProcessor {
     if (!session.internalTurn) {
       this.userTurnLifecycle.set(session, { started: false, ended: false });
     }
+    const turnStartedAt = Date.now();
+    session.logger?.logSDKEvent("processor.turn.begin", {
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      internal: session.internalTurn,
+      pendingCountAtBegin: session.messageController.pendingMessages.length,
+      timestampIso: new Date().toISOString(),
+    });
     let startupLock: StartupLockContext | null = null;
     try {
       const turnOptions = message.turnOptions ?? {};
@@ -206,10 +233,51 @@ export class CodexMessageProcessor {
         );
         prompt = this.structuredOutput.applyPrompt(message.content, config);
       }
+      session.logger?.logSDKEvent("processor.turn.prompt_ready", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: session.internalTurn,
+        promptLength: prompt.length,
+        runOptionsKeys: Object.keys(runOptions ?? {}),
+        elapsedMs: Date.now() - turnStartedAt,
+        timestampIso: new Date().toISOString(),
+      });
       startupLock = await this.acquireStartupLockIfNeeded(session);
+      session.logger?.logSDKEvent("processor.turn.startup_lock", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: session.internalTurn,
+        acquired: Boolean(startupLock),
+        elapsedMs: Date.now() - turnStartedAt,
+        timestampIso: new Date().toISOString(),
+      });
+      const runStreamedStartedAt = Date.now();
+      session.logger?.logSDKEvent("processor.run_streamed.begin", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: session.internalTurn,
+        elapsedMs: runStreamedStartedAt - turnStartedAt,
+        timestampIso: new Date().toISOString(),
+      });
       const { events } = await thread.runStreamed(prompt, runOptions);
+      session.logger?.logSDKEvent("processor.run_streamed.ready", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: session.internalTurn,
+        elapsedMs: Date.now() - runStreamedStartedAt,
+        timestampIso: new Date().toISOString(),
+      });
       await this.consumeEvents(session, events, startupLock);
     } catch (error) {
+      session.logger?.logSDKEvent("processor.turn.error", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: session.internalTurn,
+        elapsedMs: Date.now() - turnStartedAt,
+        message:
+          error instanceof Error ? error.message : "Unknown processor error",
+        timestampIso: new Date().toISOString(),
+      });
       this.maybeEmitTurnFailed(session, error);
       this.options?.reporter?.error?.("Codex turn execution failed", error);
       session.eventEmitter.emit("error", {
@@ -269,6 +337,7 @@ export class CodexMessageProcessor {
     events: AsyncGenerator<ThreadEvent>,
     startupLock: StartupLockContext
   ): Promise<void> {
+    const firstEvent = { logged: false as boolean };
     let released = false;
     const safeRelease = (): void => {
       if (released) {
@@ -319,6 +388,7 @@ export class CodexMessageProcessor {
         }
 
         const event = result.value;
+        this.maybeLogFirstEvent(session, firstEvent, event.type);
         await this.dispatchEvent(session, event);
 
         if (event.type === "thread.started") {
@@ -343,6 +413,7 @@ export class CodexMessageProcessor {
     session: ActiveSession,
     events: AsyncGenerator<ThreadEvent>
   ): Promise<void> {
+    const firstEvent = { logged: false as boolean };
     while (true) {
       const nextPromise = events.next();
       let timer: NodeJS.Timeout | null = null;
@@ -383,8 +454,27 @@ export class CodexMessageProcessor {
       if (result.done) {
         break;
       }
+      this.maybeLogFirstEvent(session, firstEvent, result.value.type);
       await this.dispatchEvent(session, result.value);
     }
+  }
+
+  private maybeLogFirstEvent(
+    session: ActiveSession,
+    state: { logged: boolean },
+    eventType: string
+  ): void {
+    if (state.logged) {
+      return;
+    }
+    state.logged = true;
+    session.logger?.logSDKEvent("processor.first_event", {
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      internal: session.internalTurn ?? false,
+      eventType,
+      timestampIso: new Date().toISOString(),
+    });
   }
 
   private async dispatchEvent(
