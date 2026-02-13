@@ -103,6 +103,15 @@ export class UnifiedSessionStorage {
     if (!entry) {
       return;
     }
+    // Codex/SDK sometimes emits placeholder thinking markers (e.g. `<!-- -->`)
+    // that are not user-visible and only add noise to the UI transcript.
+    if (
+      message.role === "thinking" &&
+      (message.content.trim().length === 0 ||
+        message.content.trim() === "<!-- -->")
+    ) {
+      return;
+    }
     if (!entry.writer) {
       entry.queue.push(message);
       return;
