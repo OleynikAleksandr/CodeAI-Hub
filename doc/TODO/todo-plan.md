@@ -30,8 +30,8 @@
 **Goal:** Исправить регрессию: разные агенты (Description collector vs Reviewer) не должны писать историю в один JSONL; UI не должен дублировать сообщения при reconnect/restore.
 
 ### Stream: Core — 1 Agent = 1 Dialog JSONL
-1. [TODO] Core: разделить `dialogSessionId` по agent identity для stage `description` (collector vs reviewer), чтобы они писали в разные unified-session файлы; обновить persisted step-state схему (scope: `packages/core/src/workflow/description/*`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): separate dialogSessionId per description agent`)
-2. [TODO] Git Commit: `fix(core): separate dialogSessionId per description agent` (hash: TBD)
+1. [DONE] Core: разделить `dialogSessionId` по agent identity для stage `description` (collector vs reviewer), чтобы они писали в разные unified-session файлы; обновить persisted step-state схему (scope: `packages/core/src/workflow/description/*`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): separate dialogSessionId per description agent`)
+2. [DONE] Git Commit: `fix(core): separate dialogSessionId per description agent` (hash: b07fdd02)
 3. [TODO] Core: миграция/backfill: при наличии старого mixed JSONL (collector+reviewer в одном файле) сформировать новые файлы по агентам и зафиксировать правила выбора `dialogSessionId` на будущее (scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`; expected commit message: `fix(core): backfill mixed dialog history into per-agent files`)
 4. [TODO] Git Commit: `fix(core): backfill mixed dialog history into per-agent files` (hash: TBD)
 
