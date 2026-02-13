@@ -1,3 +1,7 @@
+## [1.1.584] - 2026-02-13
+### Fixed
+- Codex stalled turns: прекращаем consumption event-stream после terminal событий `turn.completed/turn.failed` и делаем best-effort cancel (`events.return()`) с таймаутом, чтобы очередь сообщений не залипала (сценарий `processor.enqueue` без `processor.dequeue`).
+
 ## [1.1.583] - 2026-02-13
 ### Added
 - Codex diagnostics: добавлены breadcrumbs вокруг `turn.completed` + чтения `usage_limits` (`sdk:processor.turn.completed.*`, `sdk:processor.usage_limits.read.*`) и timeout-guard (5s), чтобы зависание в post-turn обработчиках не блокировало очередной `dequeue` и последующие user turns.
