@@ -32,8 +32,8 @@
 2. [DONE] Git Commit: `feat(codex): add processor trace logs for stalled turns` (hash: `e1eb153d`)
 
 ### Stream: Docs (Release Notes)
-1. [TODO] Docs: обновить `CHANGELOG.md` + `README.md` под v1.1.582 (diagnostics: Codex stalled turn trace logs) (scope: `CHANGELOG.md`, `README.md`; expected commit message: `docs(release): add codex stalled turn diagnostics notes`)
-2. [TODO] Git Commit: `docs(release): add codex stalled turn diagnostics notes` (hash: TBD)
+1. [DONE] Docs: обновить `CHANGELOG.md` + `README.md` под v1.1.582 (diagnostics: Codex stalled turn trace logs) (scope: `CHANGELOG.md`, `README.md`; expected commit message: `docs(release): add codex stalled turn diagnostics notes`)
+2. [DONE] Git Commit: `docs(release): add codex stalled turn diagnostics notes` (hash: `017dafa9`)
 
 ### Stream: Quality Gates + Release Build
 1. [TODO] Release: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` (scope: versions/manifests via build scripts; expected commit message: `chore(release): run build-all for v1.1.582`)
