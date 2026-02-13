@@ -9,11 +9,51 @@
 ## Required documents to review before work
 1. `doc/Sessions/Session037.md` (THIS REPORT)
 2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+3. `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`
+4. `packages/core/src/flow-node-continuity/template-loader.ts` (bundled templates)
+5. `packages/core/src/remote-bridge/handlers/session-request-handler.ts` (rolloverFlowNodeSession)
 
 ---
 
-## Phase 153 — TBD (owner: Oleksandr, updated: 2026-02-13)
+## Phase 153 — Continuity Resume Must Include Report Content (owner: Oleksandr, updated: 2026-02-13)
 
-### Stream: TBD
-1. [TODO] Define next scope (scope: TBD; expected commit message: `docs(todo): define phase153`)
-2. [TODO] Git Commit: `docs(todo): define phase153` (hash: TBD)
+**Problem:** На первой смене сессии (rollover) Core отправляет internal `Flow Node Continuity — Resume` с путём к отчёту, но resume-инструкции запрещают выполнять команды/читать файлы. В результате агент может честно ACK-нуть (`Ready to continue working.`), но фактически **не прочитать** continuity report и потерять незавершённые действия из предыдущей сессии.
+
+**Goal:** Сделать resume bootstrap **самодостаточным** и provider-agnostic:
+- Core обязан передавать в resume-turn не только `reportPath`, но и **содержимое отчёта** (в разумном лимите) или явный excerpt.
+- Агент в resume-turn должен:
+  - подтвердить готовность (ACK),
+  - и иметь возможность восстановить контекст без выполнения команд.
+
+**Acceptance:**
+- После rollover в новой provider session в rollout всегда виден `Flow Node Continuity — Resume` с включённым содержимым отчёта.
+- Агент в новой сессии не отвечает пользователю «я отчёт не читал», потому что report body уже в prompt.
+- Никаких дополнительных provider-сессий не создаётся из-за resume.
+
+### Stream: Core Resume Payload (embed report body)
+1. [TODO] Core: перед отправкой `resume.md` прочитать `reportPath` и передать `reportBody` в render context; добавить ограничение по размеру (например max chars/bytes + безопасная пометка `...truncated...`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `fix(core): embed continuity report body into resume prompt`)
+2. [TODO] Git Commit: `fix(core): embed continuity report body into resume prompt` (hash: TBD)
+
+3. [TODO] Core: добавить targeted тест на формирование resume prompt (или на template render) с `reportBody` + truncation поведение (scope: +1 test file в `packages/core/src/flow-node-continuity/*` ИЛИ `packages/core/src/remote-bridge/handlers/*`; expected commit message: `test(core): cover continuity resume report embedding`)
+4. [TODO] Git Commit: `test(core): cover continuity resume report embedding` (hash: TBD)
+
+### Stream: Prompt Contract (hard rules sync)
+1. [TODO] Core templates: обновить bundled `flow/continuity/resume.md`, чтобы:
+   - явно содержал блок `## Continuity Report (from disk)` с `{{reportBody}}`;
+   - сохранял запрет на любые записи/патчи/артефакты на resume bootstrap;
+   - оставлял ответ ровно одной строкой `Ready to continue working.` (scope: `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `docs(core): update continuity resume template to include report body`)
+2. [TODO] Git Commit: `docs(core): update continuity resume template to include report body` (hash: TBD)
+
+### Stream: Docs Sync (SolidWorks-Flow)
+1. [TODO] Docs: зафиксировать, что resume-turn всегда включает report body (а не только path), и что чтение отчёта не требует команд в провайдере (scope: `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`; expected commit message: `docs(system): document continuity resume report embedding`)
+2. [TODO] Git Commit: `docs(system): document continuity resume report embedding` (hash: TBD)
+
+### Stream: Quality Gates + Release Build
+1. [TODO] Прогнать обязательные гейты + таргетные сборки (core + webview + project-manager) и собрать релиз:
+   - `./scripts/build-all.sh`
+   - `./scripts/build-release.sh --use-current-version`
+   (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/*`; expected commit message: `docs(release): sync docs for v<next>`)
+2. [TODO] Git Commit: `docs(release): sync docs for v<next>` (hash: TBD)
+3. [TODO] Git Commit: `chore(release): run build-all for v<next>` (hash: TBD)
+4. [TODO] Session report + archive todo plan (scope: `doc/Sessions/SessionXXX.md`, `doc/TODO/Archive/*`; expected commit message: `docs(session): add session report for phase153 continuity resume embedding`)
+5. [TODO] Git Commit: `docs(session): add session report for phase153 continuity resume embedding` (hash: TBD)
