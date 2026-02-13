@@ -57,6 +57,23 @@ Core Orchestrator — автономный Node.js сервис (`@codeai-hub/co
 - Каждый модуль обязан предоставить `initialize`, `createSession`, `sendMessage`, `closeSession`, `subscribe`.
 - Статус провайдера транслируется на UI; при ошибке инициализации (`ERR_REQUIRE_ESM` и т.п.) модуль отключается, но ядро продолжает работу.
 
+## Flow Node Continuity: Create-Report Handshake (ACK/Retry)
+
+Проблема (наблюдалось чаще у Codex): internal turn `Flow Node Continuity — Create Report` мог «теряться» или завершаться без финального `turn_completed`, из-за чего UI оставался в состоянии `Agent is working… Please wait.` и блокировал ввод.
+
+Решение в Core:
+- Core отправляет internal `Create Report` **в ту же provider session**, где сработал триггер rollover (resume в ту же сессию, без создания новой).
+- После отправки Core ждёт **ACK доставки/старта**: любой provider event (кроме `sessionIdChanged/realSessionId`) в пределах `~15s`.
+- Если ACK не пришёл, Core повторяет отправку **в той же provider session**. Максимум 2 попытки.
+- После ACK Core ждёт файл отчёта `reportPath` (polling `~60s`). Если это timeout на 1-й попытке, Core повторяет `Create Report` (ACK+waitForReport) и ждёт повторно.
+- Если после 2 попыток нет ACK и/или нет отчёта, Core:
+  - снимает continuity lock (`resume_failed`) и переводит `resumeMode` обратно в `resume_in_place` (чтобы пользователь мог продолжить работу);
+  - эмитит в session stream событие `stream_event.data.kind=continuity_failed` с причиной (`ack_timeout|report_timeout|unknown`) и контекстом (`requestId`, `attempt`, `stage`, `reportPath/tmpReportPath`, `providerId/providerSessionId`);
+  - эмитит `flow_node_rollover` уведомление с `phase=failed` и `error`;
+  - принудительно эмитит `turn_state=idle` после `report_ready`, чтобы не зависеть от provider-specific отсутствия `turn_completed` для internal turns.
+
+Референс реализации: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`.
+
 ## План развития
 - Расширить доставку ядра на остальные платформы (darwin-x64, linux-x64, win32-x64) с тем же workflow.
 - Добавить health-check провайдеров перед подключением клиентов.
