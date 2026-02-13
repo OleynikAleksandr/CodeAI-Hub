@@ -1,3 +1,10 @@
+## [1.1.581] - 2026-02-13
+### Fixed
+- Continuity resume bootstrap: internal `Flow Node Continuity — Resume` теперь включает `reportBody` (копию continuity-отчёта), чтобы агент мог продолжить работу без команд/инструментов чтения файла по `reportPath`. Для больших отчётов Core делает truncation с явной пометкой `[...]`.
+
+### Added
+- Core regression coverage: добавлен targeted test на embed `reportBody` + truncation в resume prompt.
+
 ## [1.1.580] - 2026-02-13
 ### Fixed
 - Continuity reliability (all providers): Core добавил delivery/ACK ожидание и retry-policy (2 попытки) для internal `Flow Node Continuity — Create Report`; при failure Core эмитит `continuity_failed`, снимает блокировку и не оставляет UI в вечном `Agent is working… Please wait.`.
