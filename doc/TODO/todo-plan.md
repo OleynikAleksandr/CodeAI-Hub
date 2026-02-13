@@ -9,35 +9,14 @@
 ## Required documents to review before work
 1. `doc/Sessions/Session041.md`
 2. `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`
-3. `packages/core/src/unified-session/storage.ts`
-4. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
+3. `doc/TODO/Archive/todo-plan-phase156-release-1.1.585-2026-02-13.md`
 
 ---
 
-## Phase 156 — Unified Agent Dialog JSONL (UI history survives Core restarts) (owner: Oleksandr, updated: 2026-02-13)
+## Phase 157 — Post-Release Verification (owner: Oleksandr, updated: 2026-02-13)
 
-**Goal:** Для каждого логического диалога агента хранить **один накопительный JSONL** для UI, который переживает rollover/resume и рестарты Core. Решение должно работать одинаково для всех провайдеров.
+**Goal:** После релиза 1.1.585 подтвердить, что unified Agent Dialog JSONL переживает рестарты Core и отображается в UI как единый диалог.
 
-### Stream: Design (Docs First)
-1. [DONE] Docs: описать новый контракт “Agent Dialog JSONL” (dialogSessionId, хранение, rehydrate, backfill) и связь с continuity/rollover (scope: `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`; expected commit message: `docs(core): agent dialog JSONL storage contract`)
-2. [DONE] Git Commit: `docs(core): agent dialog JSONL storage contract` (hash: `65463ea6`)
-
-### Stream: Persist Dialog Session Id in Description Step
-1. [DONE] Core: расширить `DescriptionSessionRef` новым полем `dialogSessionId` (optional), научить store читать/писать его (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`; expected commit message: `feat(core): persist dialogSessionId in description step session ref`)
-2. [DONE] Git Commit: `feat(core): persist dialogSessionId in description step session ref` (hash: `8adacf55`)
-
-### Stream: Unified Session Writer Uses Logical Dialog Id
-1. [DONE] Core: добавить возможность писать unified-session в “логический файл истории” (historySessionId override) вместо `providerSessionId` (scope: `packages/core/src/unified-session/storage.ts`; expected commit message: `feat(core): support logical unified-session history id`)
-2. [DONE] Git Commit: `feat(core): support logical unified-session history id` (hash: `c114e4a6`)
-
-### Stream: Wire Description Session Ref to Unified Dialog File + Backfill
-1. [DONE] Core: при создании description reviewer/collector сессии выбирать/фиксировать `dialogSessionId` (первый providerSessionId либо уже сохраненный), писать/читать history в `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`, и выполнить backfill: собрать сообщения из всех сегментных `<providerSessionId>.jsonl` (по continuity chains) в один накопительный файл (дедуп по `messageId`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/unified-session/storage.ts`; expected commit message: `fix(core): stable dialog jsonl for description sessions with backfill`)
-2. [DONE] Git Commit: `fix(core): stable dialog jsonl for description sessions with backfill` (hash: `0f2ee300`)
-
-### Stream: Verification
-1. [DONE] Gates: `./scripts/check-architecture.sh` + `npx ultracite check` + `npx ts-prune` + `npx jscpd ...` + `npm run check:links` + таргетные сборки (scope: repo; expected commit message: `chore: quality gates for dialog jsonl`)
-2. [DONE] Git Commit: `chore: quality gates for dialog jsonl` (hash: `a369e589`)
-
-### Stream: Release
-1. [DONE] Build release: `./scripts/build-all.sh` затем `./scripts/build-release.sh --use-current-version` (scope: scripts; expected commit message: `chore(release): build-all for next patch`)
-2. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: `e0d54a48`)
+### Stream: Manual Tests
+1. [TODO] QA: создать 2-3 rollover/resume сегмента для Reviewer Codex, перезапустить Core, убедиться что UI показывает полный диалог и что `description-step.json.session.dialogSessionId` заполнен (scope: runtime files; expected commit message: `docs(qa): verify unified dialog jsonl on core restart`)
+2. [TODO] Git Commit: `docs(qa): verify unified dialog jsonl on core restart` (hash: TBD)
