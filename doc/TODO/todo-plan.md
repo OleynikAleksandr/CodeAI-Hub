@@ -34,11 +34,11 @@
 
 ### Stream: Reader (locate rollout in provider-home)
 1. [DONE] Codex: добавить reader, который через существующий `resolveRolloutFilePath()` читает JSONL и возвращает latest `usage_limits` snapshot (throttle + cache по `providerSessionId`) (scope: `packages/Codex_Module/src/sdk/codex-usage-limits-reader.ts`, `packages/Codex_Module/src/sdk/index.ts` (или `packages/Codex_Module/src/index.ts` если уместно), `packages/Codex_Module/src/token-usage/codex-token-usage-resolver.ts`; expected commit message: `feat(codex): add usage limits reader for provider-home rollouts`)
-2. [IN_PROGRESS] Git Commit: `feat(codex): add usage limits reader for provider-home rollouts` (hash: TBD)
+2. [DONE] Git Commit: `feat(codex): add usage limits reader for provider-home rollouts` (hash: `19dbdec8`)
 
 ### Stream: Provider Delivery (stream_event + turn_completed)
-1. [TODO] Codex: при `turn_completed` публиковать `usageLimits` (a) в `turn_completed` payload, (b) как `stream_event` (`data.kind=usage_limits`) чтобы PM/UI pipeline записал provider-scoped cache и показал лимиты сразу при старте любой новой Codex-сессии (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/sdk/codex-usage-limits-reader.ts`, `src/client/project-manager/components/sessions/usage-limits-stream.ts`; expected commit message: `fix(codex): emit usage_limits per turn and keep latest across sessions`)
-2. [TODO] Git Commit: `fix(codex): emit usage_limits per turn and keep latest across sessions` (hash: TBD)
+1. [DONE] Codex: при `turn_completed` публиковать `usageLimits` (a) в `turn_completed` payload, (b) как `stream_event` (`data.kind=usage_limits`) чтобы PM/UI pipeline записал provider-scoped cache и показал лимиты сразу при старте любой новой Codex-сессии (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/sdk/codex-usage-limits-reader.ts`, `src/client/project-manager/components/sessions/usage-limits-stream.ts`; expected commit message: `fix(codex): emit usage_limits per turn and keep latest across sessions`)
+2. [IN_PROGRESS] Git Commit: `fix(codex): emit usage_limits per turn and keep latest across sessions` (hash: TBD)
 
 ### Stream: End-to-End Verification (provider-home only)
 1. [TODO] Добавить e2e-smoke чек-лист (без изменения кода): запустить Codex workflow, убедиться что новый rollout появляется в `~/.codeai-hub/providers/codex/home/sessions/**`, что `session/weekly` заполняются сразу в новой сессии и не пустые до ответа агента (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`; expected commit message: `docs(codex): document provider-home rollout + usage limits flow`)
