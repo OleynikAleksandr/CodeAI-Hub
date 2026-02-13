@@ -23,6 +23,15 @@ const readNumber = (value: unknown): number | null => {
 
 type TokenUsageSnapshot = { readonly used: number; readonly limit: number };
 
+type FlowNodeRolloverInfo = {
+  readonly phase: string;
+  readonly remainingPercent?: number;
+  readonly thresholdPercent?: number;
+  readonly reportPath?: string;
+  readonly error?: string;
+  readonly updatedAt: number;
+};
+
 const resolveProviderSessionIdForCache = (
   snapshot: SessionSnapshots[string],
   event: unknown
@@ -69,6 +78,60 @@ const extractTokenUsage = (event: unknown): TokenUsageSnapshot | null => {
   return null;
 };
 
+const readTimestampMs = (value: unknown): number | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const extractRolloverInfo = (event: unknown): FlowNodeRolloverInfo | null => {
+  if (!isRecord(event)) {
+    return null;
+  }
+
+  const updatedAt = readTimestampMs(event.timestamp) ?? Date.now();
+
+  // Flow node rollover notifications are sent as top-level events.
+  if (event.kind === "flow_node_rollover") {
+    const phase = readString(event.phase);
+    if (!phase) {
+      return null;
+    }
+    const remainingPercent = readNumber(event.remainingPercent);
+    const thresholdPercent = readNumber(event.thresholdPercent);
+    const reportPath = readString(event.reportPath);
+    const error = readString(event.error);
+    return {
+      phase,
+      ...(remainingPercent !== null ? { remainingPercent } : {}),
+      ...(thresholdPercent !== null ? { thresholdPercent } : {}),
+      ...(reportPath ? { reportPath } : {}),
+      ...(error ? { error } : {}),
+      updatedAt,
+    };
+  }
+
+  // Continuity failures are emitted as stream events from core.
+  if (event.type === "stream_event" && isRecord(event.data)) {
+    if (event.data.kind !== "continuity_failed") {
+      return null;
+    }
+    const error = readString(event.data.error);
+    const reason = readString(event.data.reason);
+    const composedError =
+      error && reason ? `${reason}: ${error}` : error ?? reason ?? null;
+    return {
+      phase: "failed",
+      ...(composedError ? { error: composedError } : {}),
+      updatedAt,
+    };
+  }
+
+  return null;
+};
+
 export const updateSnapshotsWithTokenUsage = (
   snapshots: SessionSnapshots,
   payload: { readonly sessionId: string; readonly event: unknown }
@@ -76,6 +139,21 @@ export const updateSnapshotsWithTokenUsage = (
   const snapshot = snapshots[payload.sessionId];
   if (!snapshot) {
     return snapshots;
+  }
+
+  const rollover = extractRolloverInfo(payload.event);
+  if (rollover) {
+    return {
+      ...snapshots,
+      [payload.sessionId]: {
+        ...snapshot,
+        status: {
+          ...snapshot.status,
+          rollover,
+          updatedAt: Date.now(),
+        },
+      },
+    };
   }
 
   const tokenUsage = extractTokenUsage(payload.event);
