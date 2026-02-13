@@ -54,6 +54,6 @@
    - `./scripts/build-release.sh --use-current-version`
    (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/*`; expected commit message: `docs(release): sync docs for v<next>`)
 2. [DONE] Git Commit: `docs(release): sync docs for v<next>` (hash: `fa9323dd`)
-3. [TODO] Git Commit: `chore(release): run build-all for v<next>` (hash: TBD)
+3. [DONE] Git Commit: `chore(release): run build-all for v<next>` (hash: `c6498958`)
 4. [TODO] Session report + archive todo plan (scope: `doc/Sessions/SessionXXX.md`, `doc/TODO/Archive/*`; expected commit message: `docs(session): add session report for phase153 continuity resume embedding`)
 5. [TODO] Git Commit: `docs(session): add session report for phase153 continuity resume embedding` (hash: TBD)
