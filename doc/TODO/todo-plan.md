@@ -53,8 +53,8 @@
 4. [DONE] Git Commit: `docs(stacks): add continuity smoke checklist across providers` (hash: `42ef8076`)
 
 ### Stream: Quality Gates + Release Build
-1. [TODO] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (core + UI), обновить `README/CHANGELOG`, собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, docs в `doc/SolidWorks-Flow/`; expected commit message: `docs(release): sync docs for v<next>`)
-2. [TODO] Git Commit: `docs(release): sync docs for v<next>` (hash: TBD)
-3. [TODO] Git Commit: `chore(release): run build-all for v<next>` (hash: TBD)
-4. [TODO] Создать session report по результатам (scope: `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session report for continuity ack/retry`)
-5. [TODO] Git Commit: `docs(session): add session report for continuity ack/retry` (hash: TBD)
+1. [DONE] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (core + UI), обновить `README/CHANGELOG`, собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (результат: `codeai-hub-1.1.580.vsix`) (scope: `CHANGELOG.md`, `README.md`, docs в `doc/SolidWorks-Flow/`; expected commit message: `docs(release): sync docs for v<next>`)
+2. [DONE] Git Commit: `docs(release): sync docs for v1.1.580` (hash: `cc6c4ad6`)
+3. [DONE] Git Commit: `chore(release): run build-all for v1.1.580` (hash: `588714bc`)
+4. [DONE] Создать session report по результатам (scope: `doc/Sessions/Session036.md`; expected commit message: `docs(session): add session036 continuity failure context`)
+5. [DONE] Git Commit: `docs(session): add session036 continuity failure context` (hash: `a3947b95`)
