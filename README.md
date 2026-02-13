@@ -2,7 +2,8 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.579
+## Current Release — v1.1.580
+- **Continuity report ACK/Retry (Phase 152)**: Core больше не зависает в `Agent is working… Please wait.` если internal `Create Report` был потерян или завершился без `turn_completed`. После 2 попыток UI разблокируется и показывает явную причину (`Continuity failed: ...`), а при успешном отчёте Core дополнительно эмитит `turn_state=idle` после `report_ready`.
 - **Claude usage limits startup hydration fix (Phase 150)**: после завершения turn лимиты `session/weekly` теперь сразу видны при старте любой следующей Claude-сессии (включая Reviewer), без ожидания нового ответа агента.
 - **Shared Claude usage limits across sessions (Phase 149)**: после первого полученного фидбэка лимиты `session/weekly` больше не обнуляются при переключении между Claude-сессиями; `Session ID Bar` показывает последние known values до следующего provider update.
 - **Session ID Bar reset time UX fix (Phase 148)**: подписи лимитов `session/weekly` теперь показывают reset-время в локальной timezone пользователя и в читабельном формате `Resets Feb 12 at 6pm` (без сырого ISO `...Z`).
