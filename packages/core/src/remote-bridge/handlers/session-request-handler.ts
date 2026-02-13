@@ -37,6 +37,8 @@ import {
 
 type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
+const DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX = /__(collector|reviewer)$/;
+
 type ProviderSessionResolution =
   | {
       readonly providerSessionId: string;
@@ -1366,13 +1368,16 @@ export class SessionRequestHandler {
           })
         : null;
 
-    if (descriptionDialog?.shouldBackfill) {
-      await this.backfillDescriptionDialogHistory({
-        session,
-        dialogSessionId: descriptionDialog.dialogSessionId,
-        providerSessionId,
-      });
-    }
+    this.maybePromoteLegacyDescriptionDialogHistory({
+      session,
+      dialogSessionId: descriptionDialog?.dialogSessionId ?? null,
+    });
+
+    await this.maybeBackfillDescriptionDialogHistory({
+      session,
+      providerSessionId,
+      dialog: descriptionDialog,
+    });
 
     this.sessionStorage.register(
       session,
@@ -3117,6 +3122,59 @@ export class SessionRequestHandler {
       providerId: binding.providerId,
       providerSessionId: binding.providerSessionId,
       error: message,
+    });
+  }
+
+  private maybePromoteLegacyDescriptionDialogHistory(options: {
+    readonly session: Session;
+    readonly dialogSessionId?: string | null;
+  }): void {
+    const session = options.session;
+    if (session.stage !== "description") {
+      return;
+    }
+    const dialogSessionId = options.dialogSessionId;
+    if (!dialogSessionId) {
+      return;
+    }
+    if (!DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX.test(dialogSessionId)) {
+      return;
+    }
+    const legacyDialogSessionId = dialogSessionId.replace(
+      DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX,
+      ""
+    );
+    if (
+      legacyDialogSessionId.length === 0 ||
+      legacyDialogSessionId === dialogSessionId
+    ) {
+      return;
+    }
+
+    const workspaceKey = sanitizeWorkspaceSlug(session.workspacePath);
+    this.sessionStorage.promoteHistoryFile({
+      workspaceSlug: workspaceKey,
+      providerId: session.providerId,
+      fromHistorySessionId: legacyDialogSessionId,
+      toHistorySessionId: dialogSessionId,
+    });
+  }
+
+  private async maybeBackfillDescriptionDialogHistory(options: {
+    readonly session: Session;
+    readonly providerSessionId: string;
+    readonly dialog: {
+      readonly dialogSessionId: string;
+      readonly shouldBackfill: boolean;
+    } | null;
+  }): Promise<void> {
+    if (!options.dialog?.shouldBackfill) {
+      return;
+    }
+    await this.backfillDescriptionDialogHistory({
+      session: options.session,
+      dialogSessionId: options.dialog.dialogSessionId,
+      providerSessionId: options.providerSessionId,
     });
   }
 
