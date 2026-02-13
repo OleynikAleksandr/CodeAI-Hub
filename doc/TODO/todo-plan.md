@@ -38,11 +38,11 @@
 4. [DONE] Git Commit: `test(core): cover continuity resume report embedding` (hash: `15181b01`)
 
 ### Stream: Prompt Contract (hard rules sync)
-1. [TODO] Core templates: обновить bundled `flow/continuity/resume.md`, чтобы:
+1. [DONE] Core templates: обновить bundled `flow/continuity/resume.md`, чтобы:
    - явно содержал блок `## Continuity Report (from disk)` с `{{reportBody}}`;
    - сохранял запрет на любые записи/патчи/артефакты на resume bootstrap;
    - оставлял ответ ровно одной строкой `Ready to continue working.` (scope: `packages/core/src/flow-node-continuity/template-loader.ts`; expected commit message: `docs(core): update continuity resume template to include report body`)
-2. [TODO] Git Commit: `docs(core): update continuity resume template to include report body` (hash: TBD)
+2. [DONE] Git Commit: `docs(core): update continuity resume template to include report body` (hash: `4b9d257d`)
 
 ### Stream: Docs Sync (SolidWorks-Flow)
 1. [TODO] Docs: зафиксировать, что resume-turn всегда включает report body (а не только path), и что чтение отчёта не требует команд в провайдере (scope: `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`; expected commit message: `docs(system): document continuity resume report embedding`)
