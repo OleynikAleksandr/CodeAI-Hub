@@ -46,7 +46,7 @@
 
 ### Stream: Quality Gates + Release Build
 1. [IN_PROGRESS] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (Codex module + UI/PM при необходимости), затем обновить release docs и собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync docs for v<next>`)
-2. [TODO] Git Commit: `docs(release): sync docs for v<next>` (hash: TBD)
-3. [TODO] Git Commit: `chore(release): run build-all for v<next>` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync docs for v<next>` (hash: `1176021c`)
+3. [IN_PROGRESS] Git Commit: `chore(release): run build-all for v<next>` (hash: TBD)
 4. [TODO] Создать session report по результатам реализации Codex usage limits (scope: `doc/Sessions/Session032.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session032 codex usage limits report`)
 5. [TODO] Git Commit: `docs(session): add session032 codex usage limits report` (hash: TBD)
