@@ -220,7 +220,15 @@ Fallback rule:
 
 История диалога в UI читается **не из провайдерных логов**, а из unified-session JSONL:
 
-- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<providerSessionId>.jsonl`
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`
+
+Где:
+- `providerSessionId` — provider-native id (используется для resume и для привязки provider events).
+- `dialogSessionId` — **стабильный** id логического диалога агента для UI-истории (не меняется при rollover/resume и переживает рестарты Core).
+
+Важно (с 1.1.585):
+- Нельзя использовать `providerSessionId` как имя файла истории для long-lived агентов: это приводит к распаду истории на сегменты и потере склейки после рестарта Core.
+- Для всех **следующих агентов** и flow-ноды/шагов, где есть длительный диалог, Core обязан выделять `dialogSessionId` и писать unified-session в один накопительный JSONL.
 
 Критичный инвариант: `workspaceKey` должен быть **пер‑сессионным**, иначе в multi-workspace режиме после рестарта Core диалог может “пропасть” (история окажется в другом bucket’е).
 
@@ -231,6 +239,7 @@ Fallback rule:
 
 Anti‑regression правила:
 1. `providerId` должен быть стабильной строкой (участвует в пути).
-2. `providerSessionId` является именем файла истории.
-3. При promotion/alias (temp → real session id) Core обязан вызывать `sessionStorage.promote(...)`.
+2. `dialogSessionId` является именем файла истории.
+3. `dialogSessionId` не должен меняться при rollover/resume; `providerSessionId` может меняться.
 4. Нельзя привязывать history к “текущему” workspace Core; только к `session.workspacePath`.
+5. Backfill (миграция): если уже есть несколько сегментных `.../<providerSessionId>.jsonl`, Core должен объединить их в `.../<dialogSessionId>.jsonl` (дедуп по `messageId`, сортировка по `timestamp`).
