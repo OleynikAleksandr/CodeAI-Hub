@@ -231,7 +231,7 @@
 
 .session-id-bar__limit-label {
   color: var(--session-hint-color);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: var(--session-hint-font-weight);
   letter-spacing: 0;
   white-space: nowrap;
