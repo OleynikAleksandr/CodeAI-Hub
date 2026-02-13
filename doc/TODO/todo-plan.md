@@ -36,7 +36,7 @@
 
 ### Stream: Verification
 1. [DONE] Gates: `./scripts/check-architecture.sh` + `npx ultracite check` + `npx ts-prune` + `npx jscpd ...` + `npm run check:links` + таргетные сборки (scope: repo; expected commit message: `chore: quality gates for dialog jsonl`)
-2. [TODO] Git Commit: `chore: quality gates for dialog jsonl` (hash: TBD)
+2. [DONE] Git Commit: `chore: quality gates for dialog jsonl` (hash: `a369e589`)
 
 ### Stream: Release
 1. [DONE] Build release: `./scripts/build-all.sh` затем `./scripts/build-release.sh --use-current-version` (scope: scripts; expected commit message: `chore(release): build-all for next patch`)
