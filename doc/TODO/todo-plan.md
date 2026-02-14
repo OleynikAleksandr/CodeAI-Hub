@@ -14,7 +14,7 @@
 
 ---
 
-## Phase 160 — PM Session Dialog: Reliable Restore + No Bootstrap Repeats (owner: Oleksandr, updated: 2026-02-14)
+-02-14)
 
 **Problem:** После изменений “unified agent dialog (1 agent = 1 JSONL)” поведение PM/UI стало нестабильным:
 - После закрытия Project Manager и остановки Core: сессия Reviewer может не появляться/не открываться в дереве.
@@ -44,6 +44,10 @@
 ### Stream: Docs — Contract For Cold Start + Hot Tail
 1. [DONE] Docs: описать контракт: cold-start из JSONL + hot-tail из live stream, правила dedupe и reconnect, а также что bootstrap повторы сегментов скрываются в UI (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(flow): document cold-start+tail contract and bootstrap suppression`)
 2. [DONE] Git Commit: `docs(flow): document cold-start+tail contract and bootstrap suppression` (hash: 9964c010)
+
+### Stream: PM — Reconnect Activation Without WS ACK
+1. [DONE] PM: при reconnect вызывать workspace-activate даже если workspace:select:ack не пришёл (timeout/гонки), чтобы после рестарта Core сессии всегда восстанавливались и открывались (scope: `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix(pm): force workspace-activate on reconnect without ack`)
+2. [DONE] Git Commit: `fix(pm): force workspace-activate on reconnect without ack` (hash: TBD)
 
 ### Stream: Release Build (New Patch Release)
 1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки затронутых пакетов (scope: repo; expected commit message: `chore: quality gates before release`)
