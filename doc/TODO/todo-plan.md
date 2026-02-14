@@ -115,10 +115,13 @@ Source of Truth (архитектура):
 ## Phase 176 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
 
 ### Stream: Release Build (New Patch Release)
-1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
-2. [TODO] Git Commit: `chore: quality gates before release` (hash: TBD or N/A)
-3. [TODO] Build: `./scripts/build-all.sh` (version bump) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
-4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
-5. [TODO] Build: `./scripts/build-release.sh --use-current-version` (VSIX in repo root) (scope: repo build)
-6. [TODO] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
+1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
+2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A)
+3. [DONE] Build: `./scripts/build-all.sh` (version bump -> `1.1.597`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
+4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: 5f9e6027)
+5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.597.vsix`) (scope: repo build)
+6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
+   - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.597.vsix`
+   - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.597.tar.bz2`
+   - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.597.tar.bz2`
 7. [TODO] Git Commit: `docs(todo): record patch release build` (hash: TBD)
