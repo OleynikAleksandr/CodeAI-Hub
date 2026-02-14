@@ -101,3 +101,24 @@ Source of Truth (архитектура):
    - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.596.tar.bz2`
    - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.596.tar.bz2`
 7. [DONE] Git Commit: `docs(todo): record patch release build` (hash: a13c5014)
+
+---
+
+## Phase 175 — Fix: Claude provider-home auth bootstrap (owner: Codex, updated: 2026-02-14)
+
+### Stream: Claude Module — Provider-Home OAuth Bootstrap
+1. [DONE] Fix: сделать bootstrap OAuth токена для Claude provider-home надёжным в GUI env (использовать `/usr/bin/security`, выполнить bootstrap до первого auth probe, добавить info-log без токена) (scope: `packages/Claude_Module/src/sdk/claude-oauth-token-reader.ts`, `packages/Claude_Module/src/auth/sdk-auth-manager.ts`; expected commit message: `fix(claude): provider-home auth bootstrap via keychain token`)
+2. [TODO] Git Commit: `fix(claude): provider-home auth bootstrap via keychain token` (hash: TBD)
+
+---
+
+## Phase 176 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
+
+### Stream: Release Build (New Patch Release)
+1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
+2. [TODO] Git Commit: `chore: quality gates before release` (hash: TBD or N/A)
+3. [TODO] Build: `./scripts/build-all.sh` (version bump) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
+4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
+5. [TODO] Build: `./scripts/build-release.sh --use-current-version` (VSIX in repo root) (scope: repo build)
+6. [TODO] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
+7. [TODO] Git Commit: `docs(todo): record patch release build` (hash: TBD)

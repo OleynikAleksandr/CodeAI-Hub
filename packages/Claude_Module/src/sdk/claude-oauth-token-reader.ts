@@ -6,6 +6,7 @@ const execFileAsync = promisify(execFile);
 
 export const CLAUDE_OAUTH_ENV_KEY = "CLAUDE_CODE_OAUTH_TOKEN";
 export const CLAUDE_OAUTH_STORE_SERVICE = "Claude Code-credentials";
+const MAC_SECURITY = "/usr/bin/security";
 const WINDOWS_POWERSHELL = "powershell.exe";
 const TOKEN_FIELD_CANDIDATES = [
   "accessToken",
@@ -98,7 +99,7 @@ const runCommandForToken = async (payload: {
   try {
     const { stdout } = await execFileAsync(payload.command, payload.args, {
       windowsHide: true,
-      timeout: 5000,
+      timeout: 10_000,
       maxBuffer: 1024 * 1024,
     });
     return extractTokenFromRawPayload(stdout, {
@@ -113,7 +114,8 @@ const readTokenFromMacKeychain = async (payload?: {
   readonly allowRawToken?: boolean;
 }): Promise<string | null> =>
   await runCommandForToken({
-    command: "security",
+    // In GUI-launched processes PATH can miss /usr/bin; avoid relying on PATH.
+    command: MAC_SECURITY,
     args: ["find-generic-password", "-s", CLAUDE_OAUTH_STORE_SERVICE, "-w"],
     allowRawToken: payload?.allowRawToken,
   });
