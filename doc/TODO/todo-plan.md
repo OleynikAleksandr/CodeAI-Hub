@@ -29,8 +29,8 @@
 2. [DONE] Git Commit: `fix(core): normalize workspacePath for workflow-state snapshot` (hash: d6f0b59c)
 
 ### Stream: Docs — Sync SolidWorks-Flow (core/workspacePath contract)
-1. [TODO] Docs: обновить описание контракта/поведения core для workspacePath (нормализация абсолютного пути, причины, влияние на восстановление PM) и отметить, что правило относится ко всем провайдерам и всем следующим агентам (scope: `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`; expected commit message: `docs(core): document workspacePath normalization for session restore`)
-2. [TODO] Git Commit: `docs(core): document workspacePath normalization for session restore` (hash: TBD)
+1. [DONE] Docs: обновить описание контракта/поведения core для workspacePath (нормализация абсолютного пути, причины, влияние на восстановление PM) и отметить, что правило относится ко всем провайдерам и всем следующим агентам (scope: `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`; expected commit message: `docs(core): document workspacePath normalization for session restore`)
+2. [DONE] Git Commit: `docs(core): document workspacePath normalization for session restore` (hash: d4c134e2)
 
 ### Stream: Release Build (New Patch Release)
 1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки (scope: repo; expected commit message: `chore: quality gates before release`)
