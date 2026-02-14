@@ -84,10 +84,6 @@
 
 Важно: Core должен уметь читать legacy путь без `dialogId`-каталога (старые UUID rootSessionId).
 
-Пример:
-
-`.../continuity/description/b2b1...__reviewer__codexCli/chain.json`
-
 Правило совместимости: Core должен уметь читать legacy путь без суффикса:
 
 `.../continuity/<stage>/<rootSessionId>/chain.json`
@@ -113,6 +109,17 @@
 - `dialogId/runSlug/providerId/historyJsonlPath` неизменны в рамках одного Agent Dialog.
 - Rollover/resume добавляет элемент в `segments[]`, а “текущий сегмент” определяется как последний элемент: `segments[segments.length - 1]`.
 
+### 4.4 Формат `dialogId` (простое правило, без коллизий)
+
+Используем уже проверенный паттерн, который читается человеком и не конфликтует:
+
+- `<provider>-<uuid>-<runSlug>`
+
+Пример:
+- `codex-65c6de0b-5f12-4373-869c-e768f21745c1-reviewer`
+
+`dialogId` назначает Core при создании нового диалога и возвращает PM. PM не генерирует `dialogId` сам.
+
 ---
 
 ## 5) UI История: один накопительный JSONL
@@ -136,8 +143,18 @@
 
 Важно: конкретизация механизма “показать диалог” будет в следующем подразделе (сейчас именно это место нестабильно и требует отдельного разбора/фикса).
 
+### 5.1.0 Минимальные интерфейсы (Core <-> PM)
+
+Чтобы алгоритм был реализуем, Core предоставляет PM минимальный набор операций, работающих по `dialogId`:
+
+- `dialog:list` (per-workspace): список известных диалогов с метаданными (минимум `dialogId`, `stage`, `runSlug`, `providerId`, `historyJsonlPath`).
+- `dialog:open` (by `dialogId`): вернуть метаданные диалога (минимум `historyJsonlPath`) и (опционально) последнюю отметку `updatedAt`.
+- `dialog:history` (by `dialogId`): вернуть сообщения из `<dialogId>.jsonl` (только `message` записи).
+- `dialog:send` (by `dialogId`): отправить user turn; Core сам берёт `segments[last].providerSessionId` из `chain.json` и делает resume.
+- Live stream event `dialog:message` (by `dialogId`): доставка новых сообщений в PM (см. 5.4).
+
 Черновой алгоритм (пока не канон):
-1. Получить метаданные диалога (минимум: `historyJsonlPath`, `dialogSessionId`, `stage/runSlug/providerId`).
+1. Получить метаданные диалога (минимум: `dialogId`, `historyJsonlPath`, `stage/runSlug/providerId`).
 2. Считать историю из JSONL и отрисовать.
 3. Подключить live-tail (WS) и добавлять новые события.
 
@@ -157,6 +174,16 @@
 
 Фиксируем, что “активный tab” определяется как `activeDialogId` (а не временный runtime session id).
 
+### 5.1.2 Persistence (PM, минимум для запуска)
+
+PM хранит и восстанавливает состояние вкладок (tabs) per-workspace из persistence (например `localStorage`):
+
+- `openDialogIds[]`: список открытых диалогов (`dialogId`).
+- `activeDialogId`: какой диалог активен сейчас.
+- `treeBindings`: связка “узел дерева/роль” -> `dialogId` (чтобы клик по дереву мог открыть тот же диалог даже если runtime sessions отсутствуют).
+
+Детали точного формата ключей/JSON значения будут уточнены на этапе реализации, но принцип неизменен: **persist хранит `dialogId`, а не `sessionId` Core**.
+
 ### 5.2 Единый пайплайн (Live + Replay)
 
 Цель: один и тот же “путь” формирует UI диалог и в real-time, и при восстановлении из JSONL.
@@ -172,6 +199,16 @@
 
 - Каждое UI-сообщение должно иметь стабильный `messageId`.
 - При replay/reconnect PM не добавляет повторяющиеся сообщения по `messageId`.
+- Источник `messageId` = Core (одно значение используется и в live событиях, и в записи `<dialogId>.jsonl`), поэтому replay и live совпадают по id.
+
+### 5.4 Live Stream Routing (обязательный контракт)
+
+Чтобы “единый пайплайн” работал, live stream события должны однозначно относиться к диалогу:
+
+- Каждое входящее live-сообщение должно содержать `dialogId`.
+- PM маршрутизирует live-сообщение в правильный tab по `dialogId` и прогоняет через тот же append/dedup слой.
+
+Нельзя полагаться на временный `sessionId` Core как на ключ диалога: после рестарта Core он меняется и не подходит для восстановления.
 
 ---
 
@@ -194,7 +231,7 @@
 
 ## 7) Миграция (без остановки мира)
 
-- Если legacy `chain.json` не содержит `runSlug/dialogSessionId/historyJsonlPath`:
+- Если legacy `chain.json` не содержит `runSlug/dialogId/historyJsonlPath`:
   - Core делает backfill при первом чтении:
     - вычисляет/берёт `runSlug` из контекста вызова (узел/роль, который инициировал chain),
     - фиксирует `dialogId` (как basename накопительного history JSONL),
