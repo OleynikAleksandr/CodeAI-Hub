@@ -55,8 +55,8 @@ Source of Truth (архитектура):
 2. [DONE] Git Commit: `feat(pm): send via dialogId` (hash: 83b773a2)
 
 ### Stream: PM — live dialog:message -> snapshots
-1. [TODO] Подписка/маршрутизация `dialog:message` (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-message-dedupe.ts`; expected commit message: `feat(pm): live dialog stream by dialogId`)
-2. [TODO] Git Commit: `feat(pm): live dialog stream by dialogId` (hash: TBD)
+1. [DONE] Подписка/маршрутизация `dialog:message` (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-message-dedupe.ts`; expected commit message: `feat(pm): live dialog stream by dialogId`)
+2. [DONE] Git Commit: `feat(pm): live dialog stream by dialogId` (hash: 7ac94d51)
 
 ### Stream: Phase Report (Phase 171)
 1. [TODO] Docs: Phase 171 report + update plan (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase171.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase171 report (pm live+send via dialogId)`)
