@@ -20,8 +20,8 @@ Source of Truth (архитектура):
 **Goal:** После рестарта Core при живом PM и при холодном старте PM клик по `Reviewer Codex` (и аналогам) открывает диалог, загружая историю из накопительного JSONL через Core `dialog:history`, без зависимости от runtime sessions.
 
 ### Stream: PM — WS протокол dialog:* (api + types)
-1. [TODO] Добавить в PM WS-протокол команды/ивенты `dialog:list`, `dialog:history`, `dialog:send`, `dialog:message` (scope: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/api.ts`; expected commit message: `feat(pm): add dialog WS commands to api`)
-2. [TODO] Git Commit: `feat(pm): add dialog WS commands to api` (hash: TBD)
+1. [DONE] Добавить в PM WS-протокол команды/ивенты `dialog:list`, `dialog:history`, `dialog:send`, `dialog:message` (scope: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/api.ts`; expected commit message: `feat(pm): add dialog WS commands to api`)
+2. [DONE] Git Commit: `feat(pm): add dialog WS commands to api` (hash: 6bc726d9)
 
 ### Stream: PM — persistence (openDialogIds/activeDialogId/treeBindings)
 1. [TODO] Добавить минимальный persistence-store для `dialogId` (open tabs + активный + bindings дерева) (scope: `src/client/project-manager/services/dialog-tabs-store.ts`; expected commit message: `feat(pm): persist dialog tabs by dialogId`)
