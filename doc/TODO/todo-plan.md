@@ -46,8 +46,8 @@
 2. [DONE] Git Commit: `docs(flow): document cold-start+tail contract and bootstrap suppression` (hash: 9964c010)
 
 ### Stream: Release Build (New Patch Release)
-1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки затронутых пакетов (scope: repo; expected commit message: `chore: quality gates before release`)
-2. [TODO] Git Commit: `chore: quality gates before release` (hash: N/A — без изменений в tracked files)
+1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки затронутых пакетов (scope: repo; expected commit message: `chore: quality gates before release`)
+2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A — без изменений в tracked files)
 3. [TODO] Build: `./scripts/build-all.sh` (version bump -> next patch) (scope: repo build; expected commit message: `chore(release): build-all for next patch`)
 4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
 5. [TODO] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-<version>.vsix`) (scope: repo build; expected commit message: `chore(release): build vsix`)
