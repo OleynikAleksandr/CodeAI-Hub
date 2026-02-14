@@ -55,6 +55,14 @@ export type BridgeEvent =
   | { readonly type: "session:created"; readonly payload: SerializedSession }
   | { readonly type: "session:message"; readonly payload: unknown }
   | {
+      readonly type: "dialog:message";
+      readonly payload: {
+        readonly dialogId: string;
+        readonly sessionId: string;
+        readonly message: unknown;
+      };
+    }
+  | {
       readonly type: "dialog:list:result";
       readonly payload: {
         readonly requestId: string;

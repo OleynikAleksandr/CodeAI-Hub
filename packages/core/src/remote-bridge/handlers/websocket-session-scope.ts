@@ -68,7 +68,8 @@ export const isSessionEvent = (event: BridgeEvent): boolean =>
   event.type === "session:binding" ||
   event.type === "session:deleted" ||
   event.type === "session:stream" ||
-  event.type === "session:error";
+  event.type === "session:error" ||
+  event.type === "dialog:message";
 
 export const resolveEventSessionId = (event: BridgeEvent): string | null => {
   if (
@@ -79,6 +80,10 @@ export const resolveEventSessionId = (event: BridgeEvent): string | null => {
     return event.payload.sessionId;
   }
   if (event.type === "session:error" || event.type === "session:message") {
+    const payload = event.payload as { readonly sessionId?: unknown };
+    return typeof payload?.sessionId === "string" ? payload.sessionId : null;
+  }
+  if (event.type === "dialog:message") {
     const payload = event.payload as { readonly sessionId?: unknown };
     return typeof payload?.sessionId === "string" ? payload.sessionId : null;
   }

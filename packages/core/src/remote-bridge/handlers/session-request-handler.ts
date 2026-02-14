@@ -16,7 +16,11 @@ import {
   extractTokenUsage,
   isBelowRemainingPercentThreshold,
 } from "../../session-continuity/token-usage";
-import type { Session, SessionManager } from "../../session-manager";
+import type {
+  Session,
+  SessionManager,
+  SessionMessage,
+} from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { listUnifiedSessionWorkspaceSlugs } from "../../unified-session/workspace-slugs";
@@ -2912,6 +2916,7 @@ export class SessionRequestHandler {
     if (message) {
       this.sessionStorage.appendMessage(sessionId, message);
       this.broadcaster({ type: "session:message", payload: message });
+      this.broadcastDialogMessage(sessionId, message);
     }
   }
 
@@ -2937,7 +2942,26 @@ export class SessionRequestHandler {
     if (message) {
       this.sessionStorage.appendMessage(sessionId, message);
       this.broadcaster({ type: "session:message", payload: message });
+      this.broadcastDialogMessage(sessionId, message);
     }
+  }
+
+  private broadcastDialogMessage(
+    sessionId: string,
+    message: SessionMessage
+  ): void {
+    const dialogId = this.continuityRootBySessionId.get(sessionId) ?? null;
+    if (!dialogId) {
+      return;
+    }
+    this.broadcaster({
+      type: "dialog:message",
+      payload: {
+        dialogId,
+        sessionId,
+        message,
+      },
+    });
   }
 
   private extractMessageContent(event: unknown): string | null {
