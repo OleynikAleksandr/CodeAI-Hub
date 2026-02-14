@@ -20,6 +20,7 @@
 
 ## Git commits
 - `3500a873 docs(todo): reset plan for dialogId continuity refactor`
+- `18b33c3f docs(session): add Session050 (dialogId refactor plan reset)`
 
 ---
 
