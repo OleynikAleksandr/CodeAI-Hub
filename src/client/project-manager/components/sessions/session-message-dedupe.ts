@@ -9,6 +9,14 @@ export const appendDedupedSessionMessageToSnapshots = (
   if (!snapshot) {
     return snapshots;
   }
+  const last = snapshot.messages.at(-1);
+  if (
+    last &&
+    last.role === payload.message.role &&
+    last.content === payload.message.content
+  ) {
+    return snapshots;
+  }
   if (snapshot.messages.some((message) => message.id === payload.message.id)) {
     return snapshots;
   }
@@ -20,4 +28,3 @@ export const appendDedupedSessionMessageToSnapshots = (
     },
   };
 };
-
