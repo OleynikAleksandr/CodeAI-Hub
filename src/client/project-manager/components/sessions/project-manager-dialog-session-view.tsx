@@ -4,6 +4,8 @@ import { api } from "../../api";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import SessionView from "../../../ui/src/session/session-view";
 import { createInitialSnapshot, mergeHistoryIntoSnapshots, type SessionSnapshots } from "../../../ui/src/session/helpers";
+import { sanitizeMessage } from "../../../ui/src/core-bridge/normalizers";
+import { appendDedupedSessionMessageToSnapshots } from "./session-message-dedupe";
 import {
   buildDialogSessionRecord,
   buildProviderLabels,
@@ -24,6 +26,13 @@ const createRequestId = (): string => {
   }
   return `pm-dialog-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
+
+const createSystemMessage = (content: string) => ({
+  id: `system-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  role: "system" as const,
+  content,
+  createdAt: Date.now(),
+});
 
 export const ProjectManagerDialogSessionView = (props: {
   readonly intent: DialogOpenIntent | null;
@@ -134,6 +143,58 @@ export const ProjectManagerDialogSessionView = (props: {
             messages: normalizedMessages,
           })
         );
+      }
+      if (message.type === "dialog:send:ack") {
+        const payload = message.payload as {
+          readonly workspaceSlug?: unknown;
+          readonly dialogId?: unknown;
+          readonly status?: unknown;
+          readonly error?: unknown;
+        };
+        if (!payload || typeof payload.workspaceSlug !== "string" || typeof payload.dialogId !== "string") {
+          return;
+        }
+        const intent = pendingIntentRef.current;
+        if (!intent || intent.workspaceSlug !== payload.workspaceSlug) {
+          return;
+        }
+        if (payload.status === "rejected") {
+          const errorCopy =
+            typeof payload.error === "string" && payload.error.trim().length > 0
+              ? payload.error
+              : "Dialog send rejected.";
+          setSnapshots((previous) =>
+            appendDedupedSessionMessageToSnapshots(previous, {
+              sessionId: payload.dialogId,
+              message: createSystemMessage(errorCopy),
+            })
+          );
+        }
+        return;
+      }
+      if (message.type === "dialog:message") {
+        const payload = message.payload as {
+          readonly dialogId?: unknown;
+          readonly sessionId?: unknown;
+          readonly message?: unknown;
+        };
+        if (!payload || typeof payload.dialogId !== "string") {
+          return;
+        }
+        if (!session || payload.dialogId !== session.id) {
+          return;
+        }
+        const normalized = sanitizeMessage(payload.message as never);
+        if (!normalized) {
+          return;
+        }
+        setSnapshots((previous) =>
+          appendDedupedSessionMessageToSnapshots(previous, {
+            sessionId: payload.dialogId,
+            message: normalized,
+          })
+        );
+        return;
       }
       if (message.type === "core:state") {
         const intent = pendingIntentRef.current;
