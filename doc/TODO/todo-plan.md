@@ -40,6 +40,10 @@
 1. [DONE] Core+PM: включить `collectorSession` + `reviewerSession` в workflow-state description snapshot (для восстановления/дерева после рестарта) (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `feat(flow): expose description collector/reviewer session refs in workflow state`)
 2. [DONE] Git Commit: `feat(flow): expose description collector/reviewer session refs in workflow state` (hash: 099dd0d4)
 
+### Stream: PM/UI — Live Tail Dedupe (Consecutive)
+1. [DONE] PM/UI: на live-tail пути не добавлять подряд идущие сообщения с одинаковыми `role+content` (гасит повторы от retry/reconnect, даже если `messageId` новый) (scope: `src/client/project-manager/components/sessions/session-message-dedupe.ts`; expected commit message: `fix(pm): skip consecutive duplicate session messages`)
+2. [DONE] Git Commit: `fix(pm): skip consecutive duplicate session messages` (hash: 798ea880)
+
 ### Stream: Spec And Invariants (Docs)
 1. [TODO] Docs: зафиксировать контракт «History (JSONL) + Tail (Live)»: стабильный `eventId/seq`, курсор, правила reconnect, и правило single subscription на `dialogSessionId` (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(flow): define history+tail dialog contract`)
 2. [TODO] Git Commit: `docs(flow): define history+tail dialog contract` (hash: TBD)
