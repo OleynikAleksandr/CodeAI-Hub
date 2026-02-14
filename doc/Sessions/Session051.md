@@ -1,61 +1,62 @@
-# Session 051 — PM Dialog Restore via dialogId (history replay)
+# Session 051 — PM Dialog Mode (history+send) + Patch Release 1.1.595
 
-**Date:** 2026-02-14 16:31 (CET)
+**Date:** 2026-02-14 17:20 (CET)
 **Branch:** codex/phase156-unified-agent-dialog
-**Version:** (TBD after release build)
+**Version:** 1.1.595
 
 ---
 
 # 1. Контекст и проблема
 
-Цель этой сессии разработки: довести до 100% рабочее восстановление диалогов агентных "бесконечных" сессий в Project Manager после:
-- перезапуска Core при живом PM;
-- холодного старта PM (когда PM сам поднимает Core);
-- закрытия вкладки (крестик) и повторного открытия через клик по дереву.
+Цель работ: сделать "бесконечные" сессии агентных диалогов в Project Manager стабильными и предсказуемыми.
 
-Ключевая поломка до фикса: PM опирался на runtime `session:*` (список сессий из `/api/v1/status` и `session:history`), поэтому после рестарта Core runtime-сессии пропадали и PM не мог открыть `Reviewer Codex` кликом (вкладка пустая / "No messages yet" / клик ничего не делает).
+Симптомы до рефакторинга:
+- После перезапуска Core (при живом PM) клики по `Reviewer Codex`/`Description` в дереве не открывали диалог, вкладка становилась пустой ("No messages yet") или ничего не происходило.
+- Поведение отличалось между провайдерами; у Codex чаще проявлялось "зависание" UI, отсутствие истории, дубли.
 
-Архитектурный источник правды для решения (обязателен к просмотру при продолжении):
+Корневая причина: PM пытался работать как с "живыми" runtime-сессиями (`session:*` / `session:history`), но после рестарта Core runtime-объекты исчезают, и PM терял возможность восстановить диалог.
+
+Архитектурный источник правды (обязателен к просмотру при продолжении):
 - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`
 
 ---
 
 # 2. Решение (вкратце)
 
-Разделили две задачи:
-1. Показать диалог: PM читает историю через Core команду `dialog:history` (Core читает накопительный JSONL `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`).
-2. Отправлять сообщения: оставлено на Phase 171 (`dialog:send` + live `dialog:message`).
+Разделили две задачи и сделали их "dialog-first":
 
-В Phase 170 реализовано открытие диалога по клику в дереве через intent `pm:dialog:open` и восстановление истории через `dialog:list` + `dialog:history`.
+1. **Показать диалог**
+- PM открывает вкладку не через runtime `sessionId`, а через `dialogId`.
+- История восстанавливается через Core по командам `dialog:list` + `dialog:history`.
+
+2. **Уметь отправлять и получать live**
+- Отправка сообщений пользователя: `dialog:send` (Core сам резюмирует правильную provider-сессию по chain/continuity).
+- Live-поток: Core шлет `dialog:message`, а PM мерджит их в отображение диалога с дедупликацией.
+
+Это позволяет после рестарта Core заново поднять UI диалога на основе накопленной истории (и продолжить live, когда Core снова активен).
 
 ---
 
 # 3. Work Done in This Session
 
 ## Work summary
-- Заархивирован старый `doc/TODO/todo-plan.md`, создан новый план под Phase 170-172.
-- Реализован PM протокол `dialog:*` на WebSocket уровне (типы + `api.dialogs.*`).
-- Добавлен `localStorage` store под `dialogId` (подготовка к cold start/restore).
-- Изменён клик по узлу `Reviewer <provider>`: теперь диспатчит `pm:dialog:open` вместо resume runtime session.
-- Реализован диалоговый режим отображения:
-  - рефакторинг: runtime-view вынесен в `ProjectManagerRuntimeSessionView`.
-  - новый `ProjectManagerDialogSessionView` восстанавливает диалог через `dialog:list` + `dialog:history` и показывает его даже после рестарта Core.
-- Добавлен Phase 170 report.
+- Phase 170: добавлен dialog-протокол в PM и режим открытия вкладки через intent `pm:dialog:open` с восстановлением истории через `dialog:history`.
+- Phase 171: добавлена отправка через `dialog:send` и live-обновления через `dialog:message` (dedupe/merge).
+- Phase 172: собран новый patch релиз **1.1.595**.
+  - Tarballs:
+    - `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.595.tar.bz2`
+    - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.595.tar.bz2`
+  - VSIX:
+    - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.595.vsix`
 
-## Git commits
-- `81dea4cb docs(todo): reset plan for Phase170 PM dialog restore`
-- `ec18aa8c docs(session): add Session051 (pm dialog restore plan)`
-- `6bc726d9 feat(pm): add dialog WS commands to api`
-- `860b8951 docs(todo): record Phase170 stream1 completion`
-- `296d386d feat(pm): persist dialog tabs by dialogId`
-- `7eb99bdc docs(todo): record Phase170 stream2 completion`
-- `a0285526 feat(pm): tree click opens dialog intent`
-- `4a6cd84c docs(todo): record Phase170 stream3 completion`
-- `881f113d refactor(pm): extract runtime session view`
+## Git commits (ключевые)
 - `c8b24fd7 feat(pm): restore dialogs via dialog history after core restart`
-- `000fbadc docs(todo): record Phase170 stream4 completion`
-- `c447c1b0 docs(flow): phase170 report (pm dialog restore via history)`
-- `04fe11fd docs(todo): record Phase170 report completion`
+- `83b773a2 feat(pm): send via dialogId`
+- `7ac94d51 feat(pm): live dialog stream by dialogId`
+- `8c4474bc fix(pm): satisfy webview typecheck for dialog events`
+- `d20b1547 chore(release): build-all for next patch`
+- `04e0f375 docs(todo): record patch release build`
+- `32d97892 docs(todo): finalize patch release build record`
 
 ---
 
@@ -64,9 +65,15 @@
 ## Required documents to review before work
 1. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`
 2. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase170.md`
-3. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/TODO/todo-plan.md`
-4. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session051.md`
+3. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase171.md`
+4. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase172.md`
+5. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/TODO/todo-plan.md`
+6. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session051.md`
 
 ## Plans for next session
-- Phase 171: реализовать `dialog:send` и обработку live `dialog:message` в PM (dedupe + merge в snapshots), снять read-only блокировку ввода.
-- Затем Phase 172: собрать новый patch release (`./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`).
+- Протестировать целевой сценарий, который раньше ломался:
+  1) открыть PM, открыть `Reviewer Codex`,
+  2) перезапустить Core при живом PM,
+  3) закрыть вкладку крестиком и открыть кликом по дереву,
+  4) убедиться, что история поднимается из `dialog:history` и ввод работает через `dialog:send`.
+- Если останутся сбои: логировать (точечно) входы/выходы `pm:dialog:open`, `dialog:list/history/send`, и факт выбора workspace перед dialog-командами.
