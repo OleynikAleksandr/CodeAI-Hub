@@ -72,8 +72,8 @@ Source of Truth (архитектура):
 3. [DONE] Build: `./scripts/build-all.sh` (version bump -> `1.1.595`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
 4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: d20b1547)
 5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.595.vsix`) (scope: repo build)
-6. [IN_PROGRESS] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
+6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
    - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.595.vsix`
    - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.595.tar.bz2`
    - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.595.tar.bz2`
-7. [TODO] Git Commit: `docs(todo): record patch release build` (hash: TBD)
+7. [DONE] Git Commit: `docs(todo): record patch release build` (hash: 04e0f375)
