@@ -12,12 +12,10 @@ test("session resume intent waits for workspace:select ack and does not use lega
   const source = await readFile(SOURCE_PATH, "utf8");
 
   assert.equal(source.includes("api.selectWorkspace({"), true);
-  assert.equal(source.includes('message.type !== "workspace:select:ack"'), true);
   assert.equal(
-    source.includes("payload?.status === \"applied\"") &&
-      source.includes("payload.workspaceRoot === detail.workspacePath"),
-    true,
-    "resume path must require applied ack for target workspace"
+    source.includes('message.type !== "workspace:select:ack"'),
+    false,
+    "resume intent must not hard-block on ws ack (dead click on cold start)"
   );
   assert.equal(
     source.includes("syncWorkspaceScopeWithAck"),
