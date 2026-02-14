@@ -11,6 +11,9 @@ type DialogPanelProps = {
   readonly providerLabel?: string | null;
 };
 
+const isSegmentBoundaryMessage = (message: SessionMessage): boolean =>
+  message.role === "system" && message.id.startsWith("segment-boundary:");
+
 type ThinkingMessageProps = {
   readonly message: SessionMessage;
   readonly expanded: boolean;
@@ -109,8 +112,30 @@ const DialogPanel = ({
         onScroll={updatePinnedState}
         ref={scrollContainerRef}
       >
-        {displayMessages.map((message) => {
-          const className = buildMessageClassNames(message, providerTheme);
+        {displayMessages.map((message, index) => {
+          if (isSegmentBoundaryMessage(message)) {
+            return (
+              <div
+                className="session-dialog__segment-boundary"
+                key={message.id}
+              >
+                <span className="session-dialog__segment-boundary-label">
+                  {message.content}
+                </span>
+              </div>
+            );
+          }
+
+          const next = displayMessages[index + 1] ?? null;
+          const isTerminalThinking =
+            message.role === "thinking" &&
+            next &&
+            isSegmentBoundaryMessage(next);
+
+          const classNameBase = buildMessageClassNames(message, providerTheme);
+          const className = isTerminalThinking
+            ? `${classNameBase} session-dialog__message--thinking-terminal`
+            : classNameBase;
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
