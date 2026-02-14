@@ -25,8 +25,8 @@
 - PM может восстановить сессии/диалоги из кумулятивного JSONL и продолжать live-tail без дублей.
 
 ### Stream: Core — Normalize Workspace Path (workflow-state stability)
-1. [TODO] Core: нормализовать сравнение workspace paths (trim/resolve), добавить тест на хвостовой `/`, и гарантировать каноническое сохранение `workspacePath` в snapshot (scope: `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit message: `fix(core): normalize workspacePath for workflow-state snapshot`)
-2. [TODO] Git Commit: `fix(core): normalize workspacePath for workflow-state snapshot` (hash: TBD)
+1. [DONE] Core: нормализовать сравнение workspace paths (trim/resolve), добавить тест на хвостовой `/`, и гарантировать каноническое сохранение `workspacePath` в snapshot (scope: `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit message: `fix(core): normalize workspacePath for workflow-state snapshot`)
+2. [DONE] Git Commit: `fix(core): normalize workspacePath for workflow-state snapshot` (hash: d6f0b59c)
 
 ### Stream: Docs — Sync SolidWorks-Flow (core/workspacePath contract)
 1. [TODO] Docs: обновить описание контракта/поведения core для workspacePath (нормализация абсолютного пути, причины, влияние на восстановление PM) и отметить, что правило относится ко всем провайдерам и всем следующим агентам (scope: `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`; expected commit message: `docs(core): document workspacePath normalization for session restore`)
