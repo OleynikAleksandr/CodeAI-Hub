@@ -45,6 +45,10 @@
 1. [DONE] Docs: описать контракт: cold-start из JSONL + hot-tail из live stream, правила dedupe и reconnect, а также что bootstrap повторы сегментов скрываются в UI (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(flow): document cold-start+tail contract and bootstrap suppression`)
 2. [DONE] Git Commit: `docs(flow): document cold-start+tail contract and bootstrap suppression` (hash: 9964c010)
 
+### Stream: PM — Queue WS Messages On Cold Start
+1. [DONE] PM: не дропать workspace:select на старте (когда WS еще не открыт): очередь сообщений + flush onopen, чтобы после рестарта Core PM мог выбрать workspace и восстановить сессии (scope: `src/client/project-manager/api.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix(pm): queue ws messages until connected`)
+2. [DONE] Git Commit: `fix(pm): queue ws messages until connected` (hash: 31f0d729)
+
 ### Stream: PM — Reconnect Activation Without WS ACK
 1. [DONE] PM: при reconnect вызывать workspace-activate даже если workspace:select:ack не пришёл (timeout/гонки), чтобы после рестарта Core сессии всегда восстанавливались и открывались (scope: `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix(pm): force workspace-activate on reconnect without ack`)
 2. [DONE] Git Commit: `fix(pm): force workspace-activate on reconnect without ack` (hash: 911dd60a)
