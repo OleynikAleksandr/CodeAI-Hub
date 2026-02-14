@@ -66,6 +66,9 @@ const createChain = (options: {
   readonly timestamp: string;
 }): ContinuityChain => ({
   rootSessionId: options.rootSessionId,
+  // Backward compatible: dialogId is the stable UI key. For now we default it to
+  // rootSessionId (legacy meaning), and let readers fall back when it's missing.
+  dialogId: options.rootSessionId,
   workspaceSlug: options.workspaceSlug,
   stage: normalizeStage(options.stage),
   segments: [],

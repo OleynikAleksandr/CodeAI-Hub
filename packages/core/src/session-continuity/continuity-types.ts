@@ -28,6 +28,11 @@ export type ContinuitySegment = {
 
 export type ContinuityChain = {
   readonly rootSessionId: string;
+  /**
+   * Stable UI dialog key. Legacy chains may omit this field; treat as
+   * `rootSessionId` when missing.
+   */
+  readonly dialogId?: string;
   readonly workspaceSlug: string;
   readonly stage: ContinuityStageId;
   readonly segments: readonly ContinuitySegment[];
@@ -36,6 +41,11 @@ export type ContinuityChain = {
 
 export type ContinuityChainSummary = {
   readonly rootSessionId: string;
+  /**
+   * Stable UI dialog key. Legacy chains may omit this field; treat as
+   * `rootSessionId` when missing.
+   */
+  readonly dialogId?: string;
   readonly workspaceSlug: string;
   readonly stage: ContinuityStageId;
   readonly segments: readonly ContinuitySegment[];
