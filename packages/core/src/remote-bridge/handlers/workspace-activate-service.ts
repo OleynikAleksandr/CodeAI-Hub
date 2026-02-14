@@ -87,19 +87,53 @@ export const handleWorkspaceActivate = async (params: {
       workspaceSlug
     );
 
-    if (descriptionSnapshot?.session) {
-      const runSlug =
-        descriptionSnapshot.sessionKind === "reviewer" ? "reviewer" : null;
-      await params.sessionHandler.handleCreate(
-        descriptionSnapshot.session.providerId,
-        workspacePath,
-        {
-          initiativeSlug: workspaceSlug,
-          stage: "description",
-          runSlug,
-          providerSessionId: descriptionSnapshot.session.providerSessionId,
-        }
-      );
+    if (descriptionSnapshot) {
+      // Prefer per-agent session refs when available (collector + reviewer).
+      // Fall back to legacy `session` + `sessionKind` for older snapshots.
+      const collector = descriptionSnapshot.collectorSession;
+      const reviewer = descriptionSnapshot.reviewerSession;
+      const legacy = descriptionSnapshot.session;
+
+      if (collector) {
+        await params.sessionHandler.handleCreate(
+          collector.providerId,
+          workspacePath,
+          {
+            initiativeSlug: workspaceSlug,
+            stage: "description",
+            runSlug: null,
+            providerSessionId: collector.providerSessionId,
+          }
+        );
+      }
+
+      if (reviewer) {
+        await params.sessionHandler.handleCreate(
+          reviewer.providerId,
+          workspacePath,
+          {
+            initiativeSlug: workspaceSlug,
+            stage: "description",
+            runSlug: "reviewer",
+            providerSessionId: reviewer.providerSessionId,
+          }
+        );
+      }
+
+      if (!(collector || reviewer) && legacy) {
+        const runSlug =
+          descriptionSnapshot.sessionKind === "reviewer" ? "reviewer" : null;
+        await params.sessionHandler.handleCreate(
+          legacy.providerId,
+          workspacePath,
+          {
+            initiativeSlug: workspaceSlug,
+            stage: "description",
+            runSlug,
+            providerSessionId: legacy.providerSessionId,
+          }
+        );
+      }
     }
 
     params.res.json({
