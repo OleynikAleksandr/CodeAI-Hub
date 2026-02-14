@@ -42,7 +42,7 @@
 2. [DONE] Git Commit: `fix(pm): dedupe replayed messages by createdAt+role+content` (hash: fc008dc1)
 
 ### Stream: Docs — Contract For Cold Start + Hot Tail
-1. [TODO] Docs: описать контракт: cold-start из JSONL + hot-tail из live stream, правила dedupe и reconnect, а также что bootstrap повторы сегментов скрываются в UI (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(flow): document cold-start+tail contract and bootstrap suppression`)
+1. [DONE] Docs: описать контракт: cold-start из JSONL + hot-tail из live stream, правила dedupe и reconnect, а также что bootstrap повторы сегментов скрываются в UI (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(flow): document cold-start+tail contract and bootstrap suppression`)
 2. [TODO] Git Commit: `docs(flow): document cold-start+tail contract and bootstrap suppression` (hash: TBD)
 
 ### Stream: Release Build (New Patch Release)
