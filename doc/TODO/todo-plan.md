@@ -42,8 +42,10 @@
 **Goal:** PM общается с Core не через runtime `sessionId`, а через `dialogId` (open/history/send/list) и live events.
 
 ### Stream: Core — dialog:list + dialog:open
-1. [TODO] Core: `dialog:list` (из `continuity/index.json`) и `dialog:open` (создать/вернуть runtime binding, но ключ = dialogId) (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`, `packages/core/src/remote-bridge/handlers/dialog-open-service.ts`, `packages/core/src/session-continuity/index-registry.ts`; expected commit message: `feat(core): dialog list+open (dialogId)`)
-2. [TODO] Git Commit: `feat(core): dialog list+open (dialogId)` (hash: TBD)
+1. [DONE] Core: `dialog:list` (index-backed) по workspace scope + `workspaceSlug` (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): dialog list (index-backed)`)
+2. [DONE] Git Commit: `feat(core): dialog list (index-backed)` (hash: 83ce4e10)
+3. [TODO] Core: `dialog:open` (создать/вернуть runtime binding, но ключ = dialogId) (scope: `packages/core/src/remote-bridge/handlers/dialog-open-service.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): dialog open (dialogId)`)
+4. [TODO] Git Commit: `feat(core): dialog open (dialogId)` (hash: TBD)
 
 ### Stream: Core — dialog:history (replay)
 1. [TODO] Core: `dialog:history` читает `<dialogId>.jsonl` и отдаёт нормализованные сообщения (без дублей) (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`, `packages/core/src/unified-session/history-reader.ts`, `packages/core/src/unified-session/history-format.ts`; expected commit message: `feat(core): dialog history (replay) by dialogId`)
