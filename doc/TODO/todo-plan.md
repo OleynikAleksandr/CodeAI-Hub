@@ -39,6 +39,10 @@
 1. [DONE] PM: убрать жесткую зависимость resume от `workspace:select:ack` (best-effort select), чтобы клик по `Reviewer Codex` после рестарта Core всегда открывал/создавал сессию (scope: `src/client/project-manager/components/sessions/session-resume-intent.ts`, `src/client/project-manager/components/sessions/session-resume-intent.test.ts`; expected commit message: `fix(pm): avoid dead click on session resume (best-effort workspace select)`)
 2. [DONE] Git Commit: `fix(pm): avoid dead click on session resume (best-effort workspace select)` (hash: e8358e0b)
 
+### Stream: PM — Rehydrate After Core Restart (No Empty Dialog)
+1. [DONE] PM: на ws reconnect (сигнал `core:state`) повторно гидрировать `/api/v1/status` + подгружать `session:history`, чтобы после рестарта Core при открытом PM не получали `No messages yet` и “мертвые” локальные sessionId (scope: `src/client/project-manager/components/sessions/status-hydrator.ts`; expected commit message: `fix(pm): rehydrate sessions on ws core:state (survive core restart)`)
+2. [DONE] Git Commit: `fix(pm): rehydrate sessions on ws core:state (survive core restart)` (hash: 0f1db8f2)
+
 ### Stream: Docs — Report + Plan
 1. [DONE] Docs: архивировать предыдущий план и завести новый план под Phase 160 + отчет сессии (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase159-dialog-ui-2026-02-14.md`, `doc/Sessions/Session045.md`; expected commit message: `docs(todo): start Phase160 (pm cold-start restore) + Session045`)
 2. [DONE] Git Commit: `docs(todo): start Phase160 (pm cold-start restore) + Session045` (hash: a5302ade)
