@@ -18,8 +18,8 @@
 **Goal:** Core становится единственным источником правды для маршрутизации (через `chain.json`) и хранения истории (через `<dialogId>.jsonl`) с восстановлением после рестартов.
 
 ### Stream: Core — chain.json segments + dialogId
-1. [TODO] Core: обновить модель continuity chain на `segments[]` и явный `dialogId`, где "живой" `providerSessionId` берётся как `segments[last].providerSessionId` (scope: `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/chain-model.ts`, `packages/core/src/session-continuity/chain-serializer.ts`; expected commit message: `feat(core): dialogId chain segments (last providerSessionId)`)
-2. [TODO] Git Commit: `feat(core): dialogId chain segments (last providerSessionId)` (hash: TBD)
+1. [DONE] Core: обновить модель continuity chain на `segments[]` и явный `dialogId`, где "живой" `providerSessionId` берётся как `segments[last].providerSessionId` (scope: `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/continuity-types.ts`; expected commit message: `feat(core): add dialogId to continuity chain`)
+2. [DONE] Git Commit: `feat(core): add dialogId to continuity chain` (hash: 48a5ad47)
 
 ### Stream: Core — history.jsonl writer (core-only writer)
 1. [TODO] Core: реализовать запись нормализованных сообщений в `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl` (только Core пишет, PM read-only) (scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/unified-session/history-writer.ts`, `packages/core/src/workspaces/workspace-key.ts`; expected commit message: `feat(core): core-only dialog history writer (dialogId)`)
