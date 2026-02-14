@@ -15,7 +15,6 @@ type SessionResumeIntent = {
 };
 
 const IN_FLIGHT_TTL_MS = 30_000;
-const WORKSPACE_SELECT_ACK_TIMEOUT_MS = 3000;
 
 const buildInFlightKey = (detail: SessionResumeIntent): string =>
   [
@@ -47,51 +46,16 @@ const createRequestId = (): string => {
   return `workspace-select-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
 
-const ensureWorkspaceSelectedBeforeResume = async (
-  detail: SessionResumeIntent
-): Promise<boolean> => {
-  const requestId = createRequestId();
+const requestWorkspaceSelection = (detail: SessionResumeIntent): void => {
+  // Best-effort: session resume should not become a “dead click” if ACK is late
+  // or lost. Core-side workspace scope is still selected via this message.
+  if (workspaceSnapshotStore.getState().activeWorkspaceRoot === detail.workspacePath) {
+    return;
+  }
   api.selectWorkspace({
-    requestId,
+    requestId: createRequestId(),
     workspaceRoot: detail.workspacePath,
     reason: "workspace_selected",
-  });
-
-  return new Promise<boolean>((resolve) => {
-    const timeout = window.setTimeout(() => {
-      unsubscribe();
-      resolve(false);
-    }, WORKSPACE_SELECT_ACK_TIMEOUT_MS);
-    const unsubscribe = api.onCoreEvent((message) => {
-      if (message.type !== "workspace:select:ack") {
-        return;
-      }
-      const payload = message.payload as {
-        readonly requestId?: unknown;
-        readonly status?: unknown;
-        readonly workspaceRoot?: unknown;
-        readonly selectionId?: unknown;
-      };
-      if (payload?.requestId !== requestId) {
-        return;
-      }
-      window.clearTimeout(timeout);
-      unsubscribe();
-      const isApplied =
-        payload?.status === "applied" &&
-        payload.workspaceRoot === detail.workspacePath;
-      if (isApplied) {
-        workspaceSnapshotStore.applySelectAck({
-          requestId,
-          status: "applied",
-          workspaceRoot: detail.workspacePath,
-          selectionId:
-            typeof payload.selectionId === "string" ? payload.selectionId : null,
-          error: null,
-        });
-      }
-      resolve(isApplied);
-    });
   });
 };
 
@@ -129,35 +93,28 @@ export const useSessionResumeIntent = (params: {
       }
       inFlight.current.set(inFlightKey, now);
 
-      void ensureWorkspaceSelectedBeforeResume(detail).then((selectionReady) => {
-        if (!selectionReady) {
-          inFlight.current.delete(inFlightKey);
-          return;
-        }
+      requestWorkspaceSelection(detail);
 
-        const existing = params.sessionsRef.current.find(
-          (session) =>
-            session.workspacePath === detail.workspacePath &&
-            session.providerIds.some(
-              (providerId) => providerId === detail.providerId
-            ) &&
-            session.binding.providerSessionId === detail.providerSessionId
-        );
-        if (existing) {
-          inFlight.current.delete(inFlightKey);
-          params.focusSession(existing.id);
-          return;
-        }
+      const existing = params.sessionsRef.current.find(
+        (session) =>
+          session.workspacePath === detail.workspacePath &&
+          session.providerIds.some((providerId) => providerId === detail.providerId) &&
+          session.binding.providerSessionId === detail.providerSessionId
+      );
+      if (existing) {
+        inFlight.current.delete(inFlightKey);
+        params.focusSession(existing.id);
+        return;
+      }
 
-        params.createSession({
-          providerId: detail.providerId,
-          providerSessionId: detail.providerSessionId,
-          workspacePath: detail.workspacePath,
-          initiativeSlug: detail.initiativeSlug,
-          stage: detail.stage,
-          sessionKind: detail.sessionKind,
-          runSlug: detail.runSlug,
-        });
+      params.createSession({
+        providerId: detail.providerId,
+        providerSessionId: detail.providerSessionId,
+        workspacePath: detail.workspacePath,
+        initiativeSlug: detail.initiativeSlug,
+        stage: detail.stage,
+        sessionKind: detail.sessionKind,
+        runSlug: detail.runSlug,
       });
     };
 
