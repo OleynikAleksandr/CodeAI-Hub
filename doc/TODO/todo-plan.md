@@ -154,4 +154,27 @@ Source of Truth (архитектура):
    - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.598.vsix`
    - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.598.tar.bz2`
    - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.598.tar.bz2`
-7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.598)` (hash: TBD)
+7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.598)` (hash: e274065a)
+
+---
+
+## Phase 179 — Codex: не писать/не показывать assistant сообщения из phase=commentary (owner: Codex, updated: 2026-02-14)
+
+**Goal:** Убрать дубликаты assistant сообщений в диалоге, возникающие из-за двух фаз Codex SDK (`commentary` + `final_answer`). В UI и history должны попадать только `final_answer`.
+
+### Stream: Codex Module — Suppress Commentary Agent Messages
+1. [DONE] Fix: игнорировать `agent_message` items с `phase=commentary`, чтобы не эмитить дубли в dialog history (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `fix(codex): suppress commentary phase agent messages`)
+2. [DONE] Git Commit: `fix(codex): suppress commentary phase agent messages` (hash: d5614311)
+
+---
+
+## Phase 180 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
+
+### Stream: Release Build (New Patch Release)
+1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npm run check:tsprune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
+2. [TODO] Git Commit: `chore: quality gates before release` (hash: N/A)
+3. [TODO] Build: `./scripts/build-all.sh` (version bump -> `1.1.599`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
+4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
+5. [TODO] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.599.vsix`) (scope: repo build)
+6. [TODO] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.599)`)
+7. [TODO] Git Commit: `docs(todo): record patch release build (1.1.599)` (hash: TBD)
