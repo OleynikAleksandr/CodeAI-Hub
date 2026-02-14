@@ -180,4 +180,27 @@ Source of Truth (архитектура):
    - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.599.vsix`
    - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.599.tar.bz2`
    - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.599.tar.bz2`
-7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.599)` (hash: TBD)
+7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.599)` (hash: bfb88e5b)
+
+---
+
+## Phase 181 — UI: разделитель между physical-сессиями, когда цепочка не доступна (dialogId single-record) (owner: Codex, updated: 2026-02-14)
+
+**Goal:** Даже когда `dialogId` представлен одним `SessionRecord` (без continuation chain), UI не должен “склеивать” последний `Thinking` предыдущей physical-сессии с первым `User` новой. Добавляем implicit divider `Новая сессия` и делаем thinking-terminal если next != assistant.
+
+### Stream: Session Dialog — Implicit Boundary For Thinking→User
+1. [DONE] Fix: вставить implicit divider после `thinking`, если следующее сообщение `user` (и нет явного segment-boundary), + terminal-thinking если next.role != assistant; вынести утилиты в отдельный micro-file для лимита 300 строк (scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/dialog-panel-message-utils.ts`; expected commit message: `fix(ui): insert implicit boundary after terminal thinking`)
+2. [DONE] Git Commit: `fix(ui): insert implicit boundary after terminal thinking` (hash: 40c88a1f)
+
+---
+
+## Phase 182 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
+
+### Stream: Release Build (New Patch Release)
+1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npm run check:tsprune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
+2. [TODO] Git Commit: `chore: quality gates before release` (hash: N/A)
+3. [TODO] Build: `./scripts/build-all.sh` (version bump -> `1.1.600`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
+4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
+5. [TODO] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.600.vsix`) (scope: repo build)
+6. [TODO] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.600)`)
+7. [TODO] Git Commit: `docs(todo): record patch release build (1.1.600)` (hash: TBD)
