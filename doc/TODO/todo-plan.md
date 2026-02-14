@@ -32,8 +32,8 @@
 2. [DONE] Git Commit: `feat(core): write continuity index.json on chain save` (hash: 9a07ae85)
 
 ### Stream: Phase Report (Phase 168)
-1. [TODO] Docs: Phase 168 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase168.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase168 report (core dialogId continuity+history+index)`)
-2. [TODO] Git Commit: `docs(flow): phase168 report (core dialogId continuity+history+index)` (hash: TBD)
+1. [DONE] Docs: Phase 168 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase168.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase168 report (core dialogId continuity+history+index)`)
+2. [DONE] Git Commit: `docs(flow): phase168 report (core dialogId continuity+history+index)` (hash: TBD)
 
 ---
 
