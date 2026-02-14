@@ -128,6 +128,13 @@ export class SDKAuthManager {
     if (this.providerHomeBootstrapReady) {
       return;
     }
+
+    // Best-effort: reuse existing auth without forcing users to re-login
+    // after we sandbox HOME for provider execution.
+    await this.linkLegacyCliStateIfNeeded();
+    await this.migrateLegacyCredentialsIfNeeded();
+    await this.bootstrapOAuthToken();
+
     const initialAttempt = await this.runAuthProbe(payload.workspacePath);
     if (initialAttempt) {
       this.providerHomeBootstrapReady = true;
@@ -291,6 +298,9 @@ export class SDKAuthManager {
     });
     if (token) {
       this.cachedOAuthToken = token;
+      this.reporter?.info?.(
+        "Claude OAuth token bootstrapped for provider-home"
+      );
       return;
     }
 
