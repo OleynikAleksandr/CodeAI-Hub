@@ -108,7 +108,7 @@ Source of Truth (архитектура):
 
 ### Stream: Claude Module — Provider-Home OAuth Bootstrap
 1. [DONE] Fix: сделать bootstrap OAuth токена для Claude provider-home надёжным в GUI env (использовать `/usr/bin/security`, выполнить bootstrap до первого auth probe, добавить info-log без токена) (scope: `packages/Claude_Module/src/sdk/claude-oauth-token-reader.ts`, `packages/Claude_Module/src/auth/sdk-auth-manager.ts`; expected commit message: `fix(claude): provider-home auth bootstrap via keychain token`)
-2. [TODO] Git Commit: `fix(claude): provider-home auth bootstrap via keychain token` (hash: TBD)
+2. [DONE] Git Commit: `fix(claude): provider-home auth bootstrap via keychain token` (hash: ab9c8aa2)
 
 ---
 
