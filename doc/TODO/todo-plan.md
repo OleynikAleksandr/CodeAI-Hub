@@ -22,11 +22,13 @@
 2. [DONE] Git Commit: `feat(core): add dialogId to continuity chain` (hash: 48a5ad47)
 
 ### Stream: Core — history.jsonl writer (core-only writer)
-1. [IN_PROGRESS] Core: реализовать запись нормализованных сообщений в `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl` (только Core пишет, PM read-only) (scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/unified-session/history-writer.ts`, `packages/core/src/workspaces/workspace-key.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): keep continuity root stable across rollovers`)
-2. [DONE] Git Commit: `fix(core): keep continuity root stable across rollovers` (hash: 36467297)
+1. [DONE] Core: core-only writer plumbing для стабильного `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl` (workspaceKey helper + dialog writer class) (scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/unified-session/history-writer.ts`, `packages/core/src/workspaces/workspace-key.ts`; expected commit message: `feat(core): add dialog history writer + workspace key`)
+2. [DONE] Git Commit: `feat(core): add dialog history writer + workspace key` (hash: 3f210d69)
+3. [DONE] Core: закрепить unified-session `historySessionId` на continuity root и не менять root при rollover (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): keep continuity root stable across rollovers`)
+4. [DONE] Git Commit: `fix(core): keep continuity root stable across rollovers` (hash: 36467297)
 
 ### Stream: Core — continuity index.json registry
-1. [IN_PROGRESS] Core: добавить `continuity/index.json` как ускоритель `dialog:list` (SOT остаётся `chain.json`), обновлять индекс при создании/обновлении chain (scope: `packages/core/src/session-continuity/index-registry.ts`, `packages/core/src/session-continuity/continuity-store.ts`; expected commit message: `feat(core): write continuity index.json on chain save`)
+1. [DONE] Core: добавить `continuity/index.json` как ускоритель `dialog:list` (SOT остаётся `chain.json`), обновлять индекс при создании/обновлении chain (scope: `packages/core/src/session-continuity/index-registry.ts`, `packages/core/src/session-continuity/continuity-store.ts`; expected commit message: `feat(core): write continuity index.json on chain save`)
 2. [DONE] Git Commit: `feat(core): write continuity index.json on chain save` (hash: 9a07ae85)
 
 ### Stream: Phase Report (Phase 168)
