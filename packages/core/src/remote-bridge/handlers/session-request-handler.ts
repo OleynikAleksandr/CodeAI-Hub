@@ -1606,6 +1606,7 @@ export class SessionRequestHandler {
     readonly workspacePath: string;
     readonly initiativeSlug: string | null;
     readonly stage: string | null;
+    readonly runSlug: string | null;
     readonly providerSessionId: string;
     readonly session: Session;
   }): boolean {
@@ -1617,6 +1618,9 @@ export class SessionRequestHandler {
       return false;
     }
     if (options.stage !== null && session.stage !== options.stage) {
+      return false;
+    }
+    if (options.runSlug !== null && session.runSlug !== options.runSlug) {
       return false;
     }
     if (
@@ -1633,10 +1637,12 @@ export class SessionRequestHandler {
     readonly workspacePath: string;
     readonly initiativeSlug: string | null;
     readonly stage: string | null;
+    readonly runSlug: string | null;
     readonly providerSessionId: string;
   }): Session | null {
     const stage = this.normalizeNullableToken(options.stage);
     const initiativeSlug = this.normalizeNullableToken(options.initiativeSlug);
+    const runSlug = this.normalizeNullableToken(options.runSlug);
     const providerSessionId = options.providerSessionId.trim();
 
     for (const session of this.sessionManager.listSessions()) {
@@ -1646,6 +1652,7 @@ export class SessionRequestHandler {
           providerId: options.providerId,
           workspacePath: options.workspacePath,
           stage,
+          runSlug,
           initiativeSlug,
           providerSessionId,
         })
@@ -1671,6 +1678,7 @@ export class SessionRequestHandler {
     readonly context?: {
       readonly initiativeSlug?: string | null;
       readonly stage?: string | null;
+      readonly runSlug?: string | null;
     };
   }): boolean {
     const providerSessionId = this.normalizeNullableToken(
@@ -1684,6 +1692,7 @@ export class SessionRequestHandler {
       workspacePath: options.workspacePath,
       initiativeSlug: options.context?.initiativeSlug ?? null,
       stage: options.context?.stage ?? null,
+      runSlug: options.context?.runSlug ?? null,
       providerSessionId,
     });
     if (!existing) {
@@ -1721,7 +1730,11 @@ export class SessionRequestHandler {
         providerId: actualProviderId,
         workspacePath: actualWorkspacePath,
         providerSessionId: runBound.providerSessionId,
-        context,
+        context: {
+          initiativeSlug: context?.initiativeSlug ?? null,
+          stage: context?.stage ?? null,
+          runSlug: context?.runSlug ?? null,
+        },
       })
     ) {
       return;
