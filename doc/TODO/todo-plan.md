@@ -27,11 +27,11 @@
 
 ### Stream: Report (Session)
 1. [DONE] Docs: создать отчет сессии с описанием проблемы/причин/решения (scope: `doc/Sessions/Session044.md`; expected commit message: `docs(sessions): start Session044 (pm dialog restore + dedupe plan)`)
-2. [DONE] Git Commit: `docs(sessions): start Session044 (pm dialog restore + dedupe plan)` (hash: TBD)
+2. [DONE] Git Commit: `docs(sessions): start Session044 (pm dialog restore + dedupe plan)` (hash: 41e7d84b)
 
 ### Stream: PM — Reconnect Must Activate Workspace
 1. [DONE] PM: на reconnect после рестарта Core обязательно дергать `workspace-activate`, чтобы восстановить runtime session registry и дерево (scope: `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix(pm): activate workspace after core reconnect`)
-2. [TODO] Git Commit: `fix(pm): activate workspace after core reconnect` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): activate workspace after core reconnect` (hash: 4bba2724)
 
 ### Stream: UI — Remove Continuity Segment Bootstrap Repeats
 1. [TODO] UI: при построении “virtual conversation” для continuity chain скрывать повторяющиеся bootstrap сообщения для segmentIndex>0 (system prompt + первичный ack), не трогая основной диалог (scope: `src/client/ui/src/session/virtual-conversation.tsx`, `doc/TODO/todo-plan.md`; expected commit message: `fix(ui): suppress continuity bootstrap repeats in virtual conversation`)
