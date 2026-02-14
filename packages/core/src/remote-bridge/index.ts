@@ -17,6 +17,7 @@ import { UnifiedSessionStorage } from "../unified-session/storage";
 import { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import { WorkspaceRuntimeFacade } from "../workspace-runtime/workspace-runtime-facade";
 import type { WorkspaceSnapshotRequestPayload } from "../workspace-runtime/workspace-wire-types";
+import { DialogListService } from "./handlers/dialog-list-service";
 import { HttpApiRouter } from "./handlers/http-api-router";
 import { ProjectRequestHandler } from "./handlers/project-request-handler";
 import { SessionRequestHandler } from "./handlers/session-request-handler";
@@ -63,6 +64,7 @@ export class RemoteBridge {
   >();
 
   private readonly projectHandler: ProjectRequestHandler;
+  private readonly dialogListService: DialogListService;
   private readonly sessionHandler: SessionRequestHandler;
   private readonly systemHandler: SystemRequestHandler;
   private readonly settingsHandler: SettingsRequestHandler;
@@ -119,6 +121,7 @@ export class RemoteBridge {
         this.broadcast(event);
       }
     );
+    this.dialogListService = new DialogListService({ logger: this.logger });
 
     this.sessionHandler = new SessionRequestHandler({
       config: this.config,
@@ -298,6 +301,9 @@ export class RemoteBridge {
       case "projects:list":
         this.projectHandler.handleList();
         break;
+      case "dialog:list":
+        await this.handleDialogList(clientId, incoming.payload);
+        break;
       case "projects:add":
         this.projectHandler.handleAdd(
           incoming.payload.path,
@@ -376,6 +382,44 @@ export class RemoteBridge {
     }
 
     return true;
+  }
+
+  private async handleDialogList(
+    clientId: string,
+    payload: { readonly requestId: string; readonly workspaceSlug: string }
+  ): Promise<void> {
+    const wsManager = this.wsManager;
+    if (!wsManager) {
+      return;
+    }
+    const scope = wsManager.getWorkspaceScope(clientId);
+    const workspaceRoot = scope?.workspacePath ?? null;
+    if (!workspaceRoot) {
+      this.sendScopeViolation(
+        clientId,
+        "dialog:list",
+        "Workspace scope is not selected"
+      );
+      return;
+    }
+    const workspaceSlug =
+      typeof payload.workspaceSlug === "string" ? payload.workspaceSlug : "";
+    if (workspaceSlug.trim().length === 0) {
+      this.sendScopeViolation(clientId, "dialog:list", "Missing workspaceSlug");
+      return;
+    }
+    const dialogs = await this.dialogListService.listDialogs({
+      workspaceRoot,
+      workspaceSlug,
+    });
+    wsManager.sendToClient(clientId, {
+      type: "dialog:list:result",
+      payload: {
+        requestId: payload.requestId,
+        workspaceSlug,
+        dialogs,
+      },
+    });
   }
 
   private sendScopeViolation(

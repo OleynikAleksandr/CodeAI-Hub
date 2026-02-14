@@ -55,6 +55,14 @@ export type BridgeEvent =
   | { readonly type: "session:created"; readonly payload: SerializedSession }
   | { readonly type: "session:message"; readonly payload: unknown }
   | {
+      readonly type: "dialog:list:result";
+      readonly payload: {
+        readonly requestId: string;
+        readonly workspaceSlug: string;
+        readonly dialogs: readonly unknown[];
+      };
+    }
+  | {
       readonly type: "settings:loaded";
       readonly payload: {
         readonly settings: Record<string, unknown> | null;
@@ -134,6 +142,13 @@ export type IncomingMessage =
     }
   | {
       readonly type: "projects:list";
+    }
+  | {
+      readonly type: "dialog:list";
+      readonly payload: {
+        readonly requestId: string;
+        readonly workspaceSlug: string;
+      };
     }
   | {
       readonly type: "projects:add";
