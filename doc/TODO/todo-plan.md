@@ -51,8 +51,8 @@ Source of Truth (архитектура):
 **Goal:** PM отправляет сообщения через `dialog:send` и принимает live `dialog:message`, мержит без дублей в тот же reducer, независимо от runtime sessionId.
 
 ### Stream: PM — send via dialogId
-1. [TODO] Переключить отправку сообщения на `dialog:send` по `activeDialogId` (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/sessions/session-message-sender.ts`; expected commit message: `feat(pm): send via dialogId`)
-2. [TODO] Git Commit: `feat(pm): send via dialogId` (hash: TBD)
+1. [DONE] Переключить отправку сообщения на `dialog:send` по `activeDialogId` (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/sessions/session-message-sender.ts`; expected commit message: `feat(pm): send via dialogId`)
+2. [DONE] Git Commit: `feat(pm): send via dialogId` (hash: 83b773a2)
 
 ### Stream: PM — live dialog:message -> snapshots
 1. [TODO] Подписка/маршрутизация `dialog:message` (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-message-dedupe.ts`; expected commit message: `feat(pm): live dialog stream by dialogId`)
