@@ -325,6 +325,7 @@ export type SessionRequestHandlerOptions = {
 
 export class SessionRequestHandler {
   private readonly providerSessions = new Map<string, ProviderSessionBinding>();
+  private readonly continuityRootBySessionId = new Map<string, string>();
   private readonly config: CoreConfig;
   private readonly sessionManager: SessionManager;
   private readonly providerRegistry: ProviderRegistry;
@@ -1356,6 +1357,8 @@ export class SessionRequestHandler {
         continuationParentId: options.continuationParentId ?? null,
       }
     );
+    const continuityRootSessionId = options.rootSessionId ?? session.id;
+    this.continuityRootBySessionId.set(session.id, continuityRootSessionId);
     if (!supportsImmediateBinding) {
       this.sessionManager.seedProviderSessionId(session.id, providerSessionId);
     }
@@ -1379,12 +1382,11 @@ export class SessionRequestHandler {
       dialog: descriptionDialog,
     });
 
-    this.sessionStorage.register(
-      session,
-      descriptionDialog
-        ? { historySessionId: descriptionDialog.dialogSessionId }
-        : undefined
-    );
+    // Keep a single UI transcript across continuity rollovers by pinning the
+    // unified-session history id to the continuity root.
+    this.sessionStorage.register(session, {
+      historySessionId: continuityRootSessionId,
+    });
     await this.updateDescriptionSessionRef(session, providerSessionId);
 
     const unsubscribe = options.adapter.subscribe(
@@ -1407,7 +1409,7 @@ export class SessionRequestHandler {
     this.continuity.registerSession({
       session,
       providerSessionId,
-      rootSessionId: options.rootSessionId ?? null,
+      rootSessionId: continuityRootSessionId,
     });
     this.workspaceRuntime?.notifySessionCreated(
       {
@@ -2594,7 +2596,8 @@ export class SessionRequestHandler {
         runSlug: session.runSlug,
         providerSessionId: null,
       },
-      rootSessionId: session.id,
+      rootSessionId:
+        this.continuityRootBySessionId.get(session.id) ?? session.id,
       continuationParentId: session.id,
     });
 
@@ -3327,11 +3330,8 @@ export class SessionRequestHandler {
     }
     const sessionKind =
       session.runSlug === "reviewer" ? "reviewer" : "collector";
-
-    const dialog = await this.resolveDescriptionDialogSessionId({
-      session,
-      providerSessionId: resolvedProviderSessionId,
-    });
+    const continuityRootSessionId =
+      this.continuityRootBySessionId.get(session.id) ?? session.id;
 
     // Unified session history is stored under a workspace key derived from the
     // absolute workspace path (not the workflow slug/initiative slug).
@@ -3341,14 +3341,14 @@ export class SessionRequestHandler {
       rootDirectory: SESSION_ROOT,
       workspaceSlug: workspaceKey,
       provider: session.providerId,
-      sessionId: sanitizeWorkspaceSlug(dialog.dialogSessionId),
+      sessionId: sanitizeWorkspaceSlug(continuityRootSessionId),
     });
 
     const sessionRef = {
       providerId: session.providerId,
       providerSessionId: resolvedProviderSessionId,
       jsonlPath,
-      dialogSessionId: dialog.dialogSessionId,
+      dialogSessionId: continuityRootSessionId,
     } as const;
 
     try {
@@ -3360,7 +3360,7 @@ export class SessionRequestHandler {
             providerId: session.providerId,
             providerSessionId: resolvedProviderSessionId,
             jsonlPath,
-            dialogSessionId: dialog.dialogSessionId,
+            dialogSessionId: continuityRootSessionId,
           },
           collectorSession:
             sessionKind === "collector" ? sessionRef : undefined,
