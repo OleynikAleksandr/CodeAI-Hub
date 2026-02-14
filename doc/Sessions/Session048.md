@@ -2,18 +2,17 @@
 
 **Date:** 2026-02-14 12:48 (CET)
 **Branch:** codex/phase156-unified-agent-dialog
-**Version:** 1.1.593
+**Version:** 1.1.594
 
 ---
 
 # 1. Work Done in This Session
 
 ## Work summary
-- [IN_PROGRESS] Разобрать причину, почему после перезапуска Core в Project Manager пропадает/не открывается сессия агента (например, `Reviewer Codex`).
-- [TODO] Исправить Core так, чтобы `workflow-state` не “терял” `description.sessionKind/session` из-за эквивалентных путей workspace (`/path/ws` vs `/path/ws/`).
-- [TODO] Добавить тест на нормализацию workspacePath.
-- [TODO] Синхронизировать документацию SolidWorks-Flow (контракт workspacePath, влияние на восстановление UI).
-- [TODO] Собрать новый patch релиз и передать на тест.
+- [DONE] Зафиксирована причина: строгая проверка `workspacePath` vs `workspaceRoot` в Core обнуляла session refs при эквивалентных путях (`/path/ws` vs `/path/ws/`), из-за чего PM после рестарта Core терял сессии/диалог.
+- [DONE] Core: нормализовано сравнение workspace paths + добавлен тест (включая fallback для legacy snapshot с не-абсолютным `workspacePath`).
+- [DONE] Docs: обновлён контракт/описание нормализации workspacePath в `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md` (универсально для всех провайдеров и следующих агентов).
+- [DONE] Собран новый patch релиз `1.1.594` (VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.594.vsix`; tarballs: `doc/tmp/releases/*1.1.594*.tar.bz2`, `~/.codeai-hub/releases/*1.1.594*.tar.bz2`).
 
 ## Key diagnosis (root cause)
 - Core хранит snapshot `.codeai-hub/<workspaceSlug>/description/description-step.json` с полем `workspacePath`.
@@ -22,6 +21,13 @@
 
 ## Git commits
 - `03047fc7 docs(todo): archive Phase160 plan; start Phase161 (core restart sessions)`
+- `e3f40dc9 docs(session): add Session048 (core restart sessions missing)`
+- `d6f0b59c fix(core): normalize workspacePath for workflow-state snapshot`
+- `6d903150 docs(todo): record core workspacePath normalization fix`
+- `d4c134e2 docs(core): document workspacePath normalization for session restore`
+- `fd17c870 docs(todo): record docs sync for workspacePath normalization`
+- `98c48432 chore(release): build-all for next patch`
+- `93f74b39 docs(todo): record patch release build`
 
 ---
 
@@ -34,5 +40,5 @@
 4. `doc/Sessions/Session048.md` (THIS REPORT)
 
 ## Plans for next session
-- Дофиксить `packages/core/src/workflow/description/description-step-store.ts`: нормализация путей, каноническое сохранение `workspacePath`, и тест.
-- Пересобрать patch release и проверить сценарий: закрыть PM, перезапустить Core, открыть PM, кликнуть `Reviewer Codex` и увидеть диалог из кумулятивного JSONL.
+- Протестировать в UI: закрыть PM, перезапустить Core, открыть PM (пусть PM стартует Core), кликнуть `Reviewer Codex` и убедиться, что сессия появляется и диалог восстанавливается из кумулятивного JSONL.
+- Если где-то ещё остаётся “нет сессии после рестарта”: собрать `workflow-state` с `workspacePath` (с/без `/`) и проверить, что `description.reviewerSession/sessionKind` больше не обнуляются.

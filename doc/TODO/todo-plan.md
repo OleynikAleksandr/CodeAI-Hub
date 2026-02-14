@@ -40,4 +40,4 @@
 5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.594.vsix`, path: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.594.vsix`) (scope: repo build; expected commit message: `chore(release): build vsix`)
 6. [DONE] Git Commit: `chore(release): build vsix` (hash: N/A — VSIX artifact only)
 7. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (tarballs: `doc/tmp/releases/*1.1.594*.tar.bz2`, `~/.codeai-hub/releases/*1.1.594*.tar.bz2`) (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
-8. [DONE] Git Commit: `docs(todo): record patch release build` (hash: TBD)
+8. [DONE] Git Commit: `docs(todo): record patch release build` (hash: 93f74b39)
