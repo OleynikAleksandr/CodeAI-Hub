@@ -21610,6 +21610,7 @@
   // src/client/ui/src/session/dialog-panel.tsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   var AUTO_SCROLL_EPSILON = 32;
+  var isSegmentBoundaryMessage = (message) => message.role === "system" && message.id.startsWith("segment-boundary:");
   var DialogPanel = ({
     messages,
     providerTheme = null,
@@ -21676,8 +21677,14 @@
         className: "session-dialog__scroll",
         onScroll: updatePinnedState,
         ref: scrollContainerRef,
-        children: displayMessages.map((message) => {
-          const className = buildMessageClassNames(message, providerTheme);
+        children: displayMessages.map((message, index2) => {
+          if (isSegmentBoundaryMessage(message)) {
+            return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "session-dialog__segment-boundary", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__segment-boundary-label", children: message.content }) }, message.id);
+          }
+          const next = displayMessages[index2 + 1] ?? null;
+          const isTerminalThinking = message.role === "thinking" && next && isSegmentBoundaryMessage(next);
+          const classNameBase = buildMessageClassNames(message, providerTheme);
+          const className = isTerminalThinking ? `${classNameBase} session-dialog__message--thinking-terminal` : classNameBase;
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
@@ -23337,10 +23344,32 @@ ${path2}` : path2;
       }
       return compareMessageIds(left.message.id, right.message.id);
     });
+    const withBoundaries = [];
+    const seenSegments = /* @__PURE__ */ new Set();
+    for (const entry of collected) {
+      if (entry.segmentIndex > 0 && !seenSegments.has(entry.segmentIndex)) {
+        withBoundaries.push(
+          createSegmentBoundaryMessage({
+            segmentIndex: entry.segmentIndex,
+            totalSegments: params.chain.length,
+            createdAt: entry.message.createdAt
+          })
+        );
+        seenSegments.add(entry.segmentIndex);
+      }
+      withBoundaries.push(entry.message);
+    }
     return dedupeVirtualConversationMessages(
-      filterContinuityInternalMessages(collected.map((entry) => entry.message))
+      filterContinuityInternalMessages(withBoundaries)
     );
   };
+  var createSegmentBoundaryMessage = (options) => ({
+    // UI-only marker to visually separate physical provider sessions.
+    id: `segment-boundary:${options.segmentIndex}:${options.createdAt}`,
+    role: "system",
+    content: `\u0421\u0435\u0441\u0441\u0438\u044F ${options.segmentIndex + 1} \u0438\u0437 ${options.totalSegments}`,
+    createdAt: options.createdAt
+  });
   var buildTokenDebugSummary = (params) => {
     if (params.chain.length <= 1) {
       return null;

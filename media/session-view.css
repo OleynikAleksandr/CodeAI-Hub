@@ -746,9 +746,43 @@
   z-index: 0;
 }
 
+.session-dialog__message--thinking-terminal {
+  margin: 0 80px 0 30px;
+  border-radius: 4px;
+}
+
 .session-dialog__message--thinking .session-dialog__role {
   color: #727272;
   font-weight: 200;
+}
+
+.session-dialog__segment-boundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  margin: 18px 24px;
+  gap: 10px;
+  color: rgba(173, 178, 186, 0.75);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-transform: none;
+}
+
+.session-dialog__segment-boundary::before,
+.session-dialog__segment-boundary::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: rgba(173, 178, 186, 0.22);
+}
+
+.session-dialog__segment-boundary-label {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(173, 178, 186, 0.18);
 }
 
 .session-dialog__thinking-toggle {

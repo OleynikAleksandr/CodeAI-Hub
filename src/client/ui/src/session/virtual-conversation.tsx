@@ -15,6 +15,8 @@ import {
   dedupeVirtualConversationMessages,
 } from "./virtual-conversation-message-utils";
 
+export { buildTokenDebugSummary } from "./token-debug-summary";
+
 export const filterContinuityInternalMessages = (
   messages: readonly SessionMessage[]
 ): readonly SessionMessage[] => {
@@ -225,56 +227,34 @@ export const buildVirtualConversationMessages = (params: {
     return compareMessageIds(left.message.id, right.message.id);
   });
 
+  const withBoundaries: SessionMessage[] = [];
+  const seenSegments = new Set<number>();
+  for (const entry of collected) {
+    if (entry.segmentIndex > 0 && !seenSegments.has(entry.segmentIndex)) {
+      seenSegments.add(entry.segmentIndex);
+      withBoundaries.push(
+        createSegmentBoundaryMessage(
+          entry.segmentIndex,
+          params.chain.length,
+          entry.message.createdAt
+        )
+      );
+    }
+    withBoundaries.push(entry.message);
+  }
+
   return dedupeVirtualConversationMessages(
-    filterContinuityInternalMessages(collected.map((entry) => entry.message))
+    filterContinuityInternalMessages(withBoundaries)
   );
 };
 
-export const buildTokenDebugSummary = (params: {
-  readonly chain: readonly SessionRecord[];
-  readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
-  readonly activeSessionId: string;
-}): string | null => {
-  if (params.chain.length <= 1) {
-    return null;
-  }
-
-  const formatRemainingPercent = (options: {
-    readonly used: number;
-    readonly limit: number;
-  }): string => {
-    if (!(Number.isFinite(options.used) && Number.isFinite(options.limit))) {
-      return "—";
-    }
-    if (options.limit <= 0) {
-      return "—";
-    }
-    const usedPercentage = Math.max(
-      0,
-      Math.min(100, Math.round((options.used / options.limit) * 100))
-    );
-    const remainingPercentage = Math.max(
-      0,
-      Math.min(100, 100 - usedPercentage)
-    );
-    return `${remainingPercentage}%`;
-  };
-
-  const parts: string[] = [];
-  for (const [index, segment] of params.chain.entries()) {
-    const snapshot = params.snapshots[segment.id];
-    if (!snapshot) {
-      continue;
-    }
-
-    const label = `#${index + 1}`;
-    const remainingPercent = formatRemainingPercent({
-      used: snapshot.status.tokenUsage.used,
-      limit: snapshot.status.tokenUsage.limit,
-    });
-    const formatted = `${label} (${remainingPercent})`;
-    parts.push(formatted);
-  }
-
-  return parts.length > 0 ? parts.join(" | ") : null;
-};
+const createSegmentBoundaryMessage = (
+  segmentIndex: number,
+  totalSegments: number,
+  createdAt: number
+): SessionMessage => ({
+  id: `segment-boundary:${segmentIndex}:${createdAt}`,
+  role: "system",
+  content: `Сессия ${segmentIndex + 1} из ${totalSegments}`,
+  createdAt,
+});
