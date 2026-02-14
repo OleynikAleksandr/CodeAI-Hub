@@ -10,6 +10,10 @@ import type {
 } from "../../../../types/session";
 import { isContinuityInternalMessage } from "./continuity-internal-message";
 import SessionTabs from "./session-tabs";
+import {
+  collectChainSegmentMessages,
+  dedupeVirtualConversationMessages,
+} from "./virtual-conversation-message-utils";
 
 export const filterContinuityInternalMessages = (
   messages: readonly SessionMessage[]
@@ -201,18 +205,12 @@ export const buildVirtualConversationMessages = (params: {
     if (!snapshot) {
       continue;
     }
-    const shouldSuppressThinking = segmentIndex < lastSegmentIndex;
-    const firstUserIndex =
-      segmentIndex > 0
-        ? snapshot.messages.findIndex((message) => message.role === "user")
-        : 0;
-    if (segmentIndex > 0 && firstUserIndex < 0) {
-      continue;
-    }
-    for (const message of snapshot.messages.slice(firstUserIndex)) {
-      if (shouldSuppressThinking && message.role === "thinking") {
-        continue;
-      }
+    const messages = collectChainSegmentMessages({
+      snapshot,
+      segmentIndex,
+      lastSegmentIndex,
+    });
+    for (const message of messages) {
       collected.push({ message, segmentIndex });
     }
   }
@@ -227,8 +225,8 @@ export const buildVirtualConversationMessages = (params: {
     return compareMessageIds(left.message.id, right.message.id);
   });
 
-  return filterContinuityInternalMessages(
-    collected.map((entry) => entry.message)
+  return dedupeVirtualConversationMessages(
+    filterContinuityInternalMessages(collected.map((entry) => entry.message))
   );
 };
 
