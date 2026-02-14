@@ -23177,6 +23177,65 @@ ${path2}` : path2;
   };
   var session_tabs_default = SessionTabs;
 
+  // src/client/ui/src/session/virtual-conversation-message-utils.ts
+  var SYSTEM_PROMPT_PREFIXES = ["# System Prompt", "System Prompt \u2014"];
+  var isSystemPromptBootstrapMessage = (message) => {
+    if (message.role !== "user") {
+      return false;
+    }
+    const trimmed = message.content.trimStart();
+    return SYSTEM_PROMPT_PREFIXES.some((prefix) => trimmed.startsWith(prefix));
+  };
+  var dedupeVirtualConversationMessages = (messages) => {
+    const seen = /* @__PURE__ */ new Set();
+    const unique = [];
+    for (const message of messages) {
+      const key = `${message.role}|${message.createdAt}|${message.content}`;
+      if (seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
+      unique.push(message);
+    }
+    return unique;
+  };
+  var resolveChainSegmentStartIndex = (options) => {
+    if (options.segmentIndex === 0) {
+      return 0;
+    }
+    const firstUserIndex = options.snapshot.messages.findIndex(
+      (message) => message.role === "user"
+    );
+    if (firstUserIndex < 0) {
+      return null;
+    }
+    let startIndex = firstUserIndex;
+    while (startIndex < options.snapshot.messages.length) {
+      const message = options.snapshot.messages[startIndex];
+      if (message && isSystemPromptBootstrapMessage(message)) {
+        startIndex += 1;
+        continue;
+      }
+      break;
+    }
+    return startIndex < options.snapshot.messages.length ? startIndex : null;
+  };
+  var collectChainSegmentMessages = (options) => {
+    const startIndex = resolveChainSegmentStartIndex({
+      snapshot: options.snapshot,
+      segmentIndex: options.segmentIndex
+    }) ?? null;
+    if (startIndex === null) {
+      return [];
+    }
+    const shouldSuppressThinking = options.segmentIndex < options.lastSegmentIndex;
+    const sliced = options.snapshot.messages.slice(startIndex);
+    if (!shouldSuppressThinking) {
+      return sliced;
+    }
+    return sliced.filter((message) => message.role !== "thinking");
+  };
+
   // src/client/ui/src/session/virtual-conversation.tsx
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var filterContinuityInternalMessages = (messages) => {
@@ -23260,15 +23319,12 @@ ${path2}` : path2;
       if (!snapshot) {
         continue;
       }
-      const shouldSuppressThinking = segmentIndex < lastSegmentIndex;
-      const firstUserIndex = segmentIndex > 0 ? snapshot.messages.findIndex((message) => message.role === "user") : 0;
-      if (segmentIndex > 0 && firstUserIndex < 0) {
-        continue;
-      }
-      for (const message of snapshot.messages.slice(firstUserIndex)) {
-        if (shouldSuppressThinking && message.role === "thinking") {
-          continue;
-        }
+      const messages = collectChainSegmentMessages({
+        snapshot,
+        segmentIndex,
+        lastSegmentIndex
+      });
+      for (const message of messages) {
         collected.push({ message, segmentIndex });
       }
     }
@@ -23281,8 +23337,8 @@ ${path2}` : path2;
       }
       return compareMessageIds(left.message.id, right.message.id);
     });
-    return filterContinuityInternalMessages(
-      collected.map((entry) => entry.message)
+    return dedupeVirtualConversationMessages(
+      filterContinuityInternalMessages(collected.map((entry) => entry.message))
     );
   };
   var buildTokenDebugSummary = (params) => {
