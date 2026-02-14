@@ -43,7 +43,7 @@
 
 ### Stream: Docs — Contract For Cold Start + Hot Tail
 1. [DONE] Docs: описать контракт: cold-start из JSONL + hot-tail из live stream, правила dedupe и reconnect, а также что bootstrap повторы сегментов скрываются в UI (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(flow): document cold-start+tail contract and bootstrap suppression`)
-2. [TODO] Git Commit: `docs(flow): document cold-start+tail contract and bootstrap suppression` (hash: TBD)
+2. [DONE] Git Commit: `docs(flow): document cold-start+tail contract and bootstrap suppression` (hash: 9964c010)
 
 ### Stream: Release Build (New Patch Release)
 1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки затронутых пакетов (scope: repo; expected commit message: `chore: quality gates before release`)
