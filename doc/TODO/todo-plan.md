@@ -58,8 +58,8 @@
 4. [DONE] Git Commit: `feat(core): dialog message live event by dialogId` (hash: fe238b17)
 
 ### Stream: Phase Report (Phase 169)
-1. [TODO] Docs: Phase 169 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase169.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase169 report (core dialog APIs by dialogId)`)
-2. [TODO] Git Commit: `docs(flow): phase169 report (core dialog APIs by dialogId)` (hash: TBD)
+1. [DONE] Docs: Phase 169 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase169.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase169 report (core dialog APIs by dialogId)`)
+2. [DONE] Git Commit: `docs(flow): phase169 report (core dialog APIs by dialogId)` (hash: TBD)
 
 ---
 
