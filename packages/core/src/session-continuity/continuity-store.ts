@@ -6,6 +6,7 @@ import type {
   ContinuitySegment,
   ContinuityStageId,
 } from "./continuity-types";
+import { ContinuityIndexRegistry } from "./index-registry";
 
 const CONTINUITY_ROOT = ".codeai-hub";
 const CONTINUITY_DIR = "continuity";
@@ -81,6 +82,7 @@ export class ContinuityChainStore {
   private readonly rootSessionId: string;
   private readonly stage: string | null | undefined;
   private readonly clock: () => string;
+  private readonly index: ContinuityIndexRegistry;
 
   constructor(options: {
     readonly workspaceRoot: string;
@@ -94,6 +96,11 @@ export class ContinuityChainStore {
     this.rootSessionId = options.rootSessionId;
     this.stage = options.stage;
     this.clock = options.clock ?? (() => new Date().toISOString());
+    this.index = new ContinuityIndexRegistry({
+      workspaceRoot: options.workspaceRoot,
+      workspaceSlug: options.workspaceSlug,
+      clock: this.clock,
+    });
   }
 
   read(): Promise<ContinuityChain | null> {
@@ -103,6 +110,7 @@ export class ContinuityChainStore {
 
   async save(chain: ContinuityChain): Promise<void> {
     await writeJson(this.buildPath(), chain);
+    await this.index.upsertFromChain(chain);
   }
 
   async appendSegment(segment: ContinuitySegment): Promise<ContinuityChain> {
