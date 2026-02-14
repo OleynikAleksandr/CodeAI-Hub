@@ -22,8 +22,8 @@
 2. [DONE] Git Commit: `feat(core): add dialogId to continuity chain` (hash: 48a5ad47)
 
 ### Stream: Core — history.jsonl writer (core-only writer)
-1. [TODO] Core: реализовать запись нормализованных сообщений в `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl` (только Core пишет, PM read-only) (scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/unified-session/history-writer.ts`, `packages/core/src/workspaces/workspace-key.ts`; expected commit message: `feat(core): core-only dialog history writer (dialogId)`)
-2. [TODO] Git Commit: `feat(core): core-only dialog history writer (dialogId)` (hash: TBD)
+1. [IN_PROGRESS] Core: реализовать запись нормализованных сообщений в `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl` (только Core пишет, PM read-only) (scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/unified-session/history-writer.ts`, `packages/core/src/workspaces/workspace-key.ts`; expected commit message: `feat(core): add dialog history writer + workspace key`)
+2. [DONE] Git Commit: `feat(core): add dialog history writer + workspace key` (hash: 3f210d69)
 
 ### Stream: Core — continuity index.json registry
 1. [TODO] Core: добавить `continuity/index.json` как ускоритель `dialog:list` (SOT остаётся `chain.json`), обновлять индекс при создании/обновлении chain (scope: `packages/core/src/session-continuity/index-registry.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`; expected commit message: `feat(core): continuity index.json registry (dialog list)`)
