@@ -77,3 +77,24 @@ Source of Truth (архитектура):
    - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.595.tar.bz2`
    - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.595.tar.bz2`
 7. [DONE] Git Commit: `docs(todo): record patch release build` (hash: 04e0f375)
+
+---
+
+## Phase 173 — Fix: dialog:send after continuity rollover (owner: Codex, updated: 2026-02-14)
+
+### Stream: Core — Resume Without Unified-Session Validation
+1. [DONE] Fix: разрешить resume providerSessionId после rollover для dialog-сессий (убрать валидацию через unified-session файл, добавить try/catch для resume/create) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): resume dialog session after continuity rollover`)
+2. [DONE] Git Commit: `fix(core): resume dialog session after continuity rollover` (hash: 529788cd)
+
+---
+
+## Phase 174 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
+
+### Stream: Release Build (New Patch Release)
+1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
+2. [TODO] Git Commit: `chore: quality gates before release` (hash: TBD or N/A)
+3. [TODO] Build: `./scripts/build-all.sh` (version bump) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
+4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
+5. [TODO] Build: `./scripts/build-release.sh --use-current-version` (VSIX in repo root) (scope: repo build)
+6. [TODO] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
+7. [TODO] Git Commit: `docs(todo): record patch release build` (hash: TBD)
