@@ -34,6 +34,15 @@ export type DescriptionBranchSnapshot = {
   readonly questionnairePath?: string;
   readonly draftPath?: string;
   readonly finalPath?: string;
+  /**
+   * Per-agent session refs for stage=description.
+   * These are used by clients to restore dialog history after restart.
+   */
+  readonly collectorSession?: DescriptionSessionRef;
+  readonly reviewerSession?: DescriptionSessionRef;
+  /**
+   * Legacy single-slot ref (kept for backward compatibility while migrating).
+   */
   readonly session?: DescriptionSessionRef;
   readonly sessionKind?: DescriptionSessionKind;
 };
