@@ -32,13 +32,13 @@ Source of Truth (архитектура):
 2. [DONE] Git Commit: `feat(pm): tree click opens dialog intent` (hash: a0285526)
 
 ### Stream: PM — Session Panel: dialog:list + dialog:history (cold start + core restart)
-1. [TODO] Прокинуть `workspaceSlug` в `ProjectManagerSessionView` и реализовать open/replay: 
+1. [DONE] Прокинуть `workspaceSlug` в `ProjectManagerSessionView` и реализовать open/replay: 
 - восстановить openDialogIds из persistence
 - получить `dialog:list`
 - по клику/intent открыть dialog tab (pseudo session = dialogId)
 - запросить `dialog:history` и смержить в snapshots
 (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-stream.ts`; expected commit message: `feat(pm): restore dialogs via dialog history after core restart`)
-2. [TODO] Git Commit: `feat(pm): restore dialogs via dialog history after core restart` (hash: TBD)
+2. [DONE] Git Commit: `feat(pm): restore dialogs via dialog history after core restart` (hash: c8b24fd7)
 
 ### Stream: Phase Report (Phase 170)
 1. [TODO] Docs: Phase 170 report + update plan (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase170.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase170 report (pm dialog restore via history)`)
