@@ -119,6 +119,30 @@ export type CommandErrorPayload = {
   readonly details?: unknown;
 };
 
+export type DialogListRequestPayload = {
+  readonly requestId: string;
+  readonly workspaceSlug: string;
+};
+
+export type DialogOpenRequestPayload = {
+  readonly requestId: string;
+  readonly workspaceSlug: string;
+  readonly dialogId: string;
+};
+
+export type DialogHistoryRequestPayload = {
+  readonly requestId: string;
+  readonly workspaceSlug: string;
+  readonly dialogId: string;
+};
+
+export type DialogSendRequestPayload = {
+  readonly requestId: string;
+  readonly workspaceSlug: string;
+  readonly dialogId: string;
+  readonly content: string;
+};
+
 export type OutgoingMessage =
   | { readonly type: "projects:list" }
   | {
@@ -166,6 +190,13 @@ export type OutgoingMessage =
       readonly type: "workspace:snapshot:request";
       readonly payload: WorkspaceSnapshotRequestPayload;
     }
+  | { readonly type: "dialog:list"; readonly payload: DialogListRequestPayload }
+  | { readonly type: "dialog:open"; readonly payload: DialogOpenRequestPayload }
+  | {
+      readonly type: "dialog:history";
+      readonly payload: DialogHistoryRequestPayload;
+    }
+  | { readonly type: "dialog:send"; readonly payload: DialogSendRequestPayload }
   | { readonly type: "settings:load" };
 
 export type IncomingMessage =
@@ -181,6 +212,52 @@ export type IncomingMessage =
   | {
       readonly type: "command:error";
       readonly payload: CommandErrorPayload;
+    }
+  | {
+      readonly type: "dialog:list:result";
+      readonly payload: {
+        readonly requestId: string;
+        readonly workspaceSlug: string;
+        readonly dialogs: readonly unknown[];
+      };
+    }
+  | {
+      readonly type: "dialog:open:result";
+      readonly payload: {
+        readonly requestId: string;
+        readonly workspaceSlug: string;
+        readonly dialogId: string;
+        readonly dialog: unknown | null;
+        readonly error: string | null;
+      };
+    }
+  | {
+      readonly type: "dialog:history:result";
+      readonly payload: {
+        readonly requestId: string;
+        readonly workspaceSlug: string;
+        readonly dialogId: string;
+        readonly messages: readonly unknown[];
+        readonly error: string | null;
+      };
+    }
+  | {
+      readonly type: "dialog:send:ack";
+      readonly payload: {
+        readonly requestId: string;
+        readonly workspaceSlug: string;
+        readonly dialogId: string;
+        readonly status: "sent" | "rejected";
+        readonly error: string | null;
+      };
+    }
+  | {
+      readonly type: "dialog:message";
+      readonly payload: {
+        readonly dialogId: string;
+        readonly sessionId: string;
+        readonly message: unknown;
+      };
     }
   | { readonly type: string; readonly payload?: unknown };
 
