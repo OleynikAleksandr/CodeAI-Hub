@@ -138,17 +138,20 @@ Source of Truth (архитектура):
 
 ### Stream: Phase 177 — Docs Update
 1. [DONE] Docs: обновить этот план статусами/датами/хешами (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record phase177 (dialog session boundary divider)`)
-2. [DONE] Git Commit: `docs(todo): record phase177 (dialog session boundary divider)` (hash: TBD)
+2. [DONE] Git Commit: `docs(todo): record phase177 (dialog session boundary divider)` (hash: 27c444f4)
 
 ---
 
 ## Phase 178 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
 
 ### Stream: Release Build (New Patch Release)
-1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
-2. [TODO] Git Commit: `chore: quality gates before release` (hash: N/A)
-3. [TODO] Build: `./scripts/build-all.sh` (version bump -> `1.1.598`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
-4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
-5. [TODO] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.598.vsix`) (scope: repo build)
-6. [TODO] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.598)`)
-7. [TODO] Git Commit: `docs(todo): record patch release build (1.1.598)` (hash: TBD)
+1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
+2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A)
+3. [DONE] Build: `./scripts/build-all.sh` (version bump -> `1.1.598`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
+4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: 453b6878)
+5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.598.vsix`) (scope: repo build)
+6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.598)`)
+   - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.598.vsix`
+   - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.598.tar.bz2`
+   - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.598.tar.bz2`
+7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.598)` (hash: TBD)
