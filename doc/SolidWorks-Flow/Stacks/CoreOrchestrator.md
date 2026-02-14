@@ -84,6 +84,14 @@ Core Orchestrator — автономный Node.js сервис (`@codeai-hub/co
 
 Папка `~/.codeai-hub/sessions/**` используется **только** как стабильное хранилище истории для UI (Project Manager). SDK/transport логи `~/.codeai-hub/logs/**` остаются диагностическими и не являются контрактом для UI.
 
+## Workspace Path Normalization (важно для восстановления сессий после рестарта)
+
+Core принимает `workspacePath` от клиентов (PM/launcher/CLI) и использует его как scope identity для восстановления `workflow-state` и session refs (например, `description.sessionKind/session`).
+
+Практический инвариант: пути вида `/path/to/ws` и `/path/to/ws/` (а также другие эквивалентные формы абсолютного пути) должны считаться **одинаковым** workspace. Поэтому Core обязан нормализовать `workspacePath` при чтении step-state snapshot'ов и при сравнении с текущим workspaceRoot (например, через `path.resolve()`), а также игнорировать не-абсолютные значения в legacy snapshot'ах, подставляя текущий `workspaceRoot`.
+
+Это правило относится **ко всем провайдерам** и **ко всем следующим агентам/flow-ноды**, потому что восстановление сессий/диалогов в PM зависит от корректного `workflow-state`.
+
 ### Проблема (до фикса)
 - Core писал JSONL историю по ключу `providerSessionId`, поэтому при rollover/resume создавались **разрозненные** файлы `.../<providerSessionId>.jsonl`.
 - `description-step.json` (и аналогичные step-state файлы) сохраняли `jsonlPath` на **последний** сегмент. После рестарта Core UI мог восстановить только последний кусок диалога.
