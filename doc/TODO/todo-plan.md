@@ -124,4 +124,31 @@ Source of Truth (архитектура):
    - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.597.vsix`
    - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.597.tar.bz2`
    - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.597.tar.bz2`
-7. [TODO] Git Commit: `docs(todo): record patch release build` (hash: TBD)
+7. [DONE] Git Commit: `docs(todo): record patch release build` (hash: 9b9ab19d)
+
+---
+
+## Phase 177 — UI: визуальная граница между physical-сессиями в общем диалоге (owner: Codex, updated: 2026-02-14)
+
+**Goal:** В общем UI-диалоге (virtual conversation) явно видна смена physical provider session: разделитель с линией/лейблом + дополнительные отступы, чтобы сообщение пользователя не “прилипало” к Thinking предыдущей сессии.
+
+### Stream: Session Dialog — Segment Boundary Divider
+1. [DONE] Добавить boundary-маркер между continuity сегментами и отрисовку разделителя в DialogPanel + убрать negative-margin для Thinking перед boundary (scope: `src/client/ui/src/session/virtual-conversation.tsx`, `src/client/ui/src/session/dialog-panel.tsx`, `media/session-view.css`, `src/client/ui/src/session/token-debug-summary.ts`; expected commit message: `feat(ui): add session boundary divider in dialog`)
+2. [DONE] Git Commit: `feat(ui): add session boundary divider in dialog` (hash: 2c7cb749)
+
+### Stream: Phase 177 — Docs Update
+1. [DONE] Docs: обновить этот план статусами/датами/хешами (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record phase177 (dialog session boundary divider)`)
+2. [DONE] Git Commit: `docs(todo): record phase177 (dialog session boundary divider)` (hash: TBD)
+
+---
+
+## Phase 178 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
+
+### Stream: Release Build (New Patch Release)
+1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
+2. [TODO] Git Commit: `chore: quality gates before release` (hash: N/A)
+3. [TODO] Build: `./scripts/build-all.sh` (version bump -> `1.1.598`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
+4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
+5. [TODO] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.598.vsix`) (scope: repo build)
+6. [TODO] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.598)`)
+7. [TODO] Git Commit: `docs(todo): record patch release build (1.1.598)` (hash: TBD)
