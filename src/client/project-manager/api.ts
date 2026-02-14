@@ -22,6 +22,7 @@ import {
   resolveLauncherBridge,
   resolveVscodeBridge,
 } from "./services/pm-bridges";
+import { createDialogApi, type DialogApi } from "./services/dialog-api";
 
 type ApiConfig = {
   readonly wsUrl: string;
@@ -40,6 +41,7 @@ export class ProjectManagerApi {
   private readonly outgoingQueue = new OutgoingMessageQueue();
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly config: ApiConfig;
+  readonly dialogs: DialogApi;
 
   constructor() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,6 +72,8 @@ export class ProjectManagerApi {
         }
       }
     });
+
+    this.dialogs = createDialogApi((message) => this.send(message));
   }
 
   connect(): void {
