@@ -36,6 +36,10 @@
 1. [DONE] PM/UI: не перезагружать history повторно при повторных `session:created` для одной и той же session (уменьшить риск дублей при reconnect/rehydrate) (scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(pm): avoid redundant history reloads to reduce transcript duplication`)
 2. [DONE] Git Commit: `fix(pm): avoid redundant history reloads to reduce transcript duplication` (hash: 6fa0947b)
 
+### Stream: Core+PM — Persisted Session Refs In Workflow State
+1. [DONE] Core+PM: включить `collectorSession` + `reviewerSession` в workflow-state description snapshot (для восстановления/дерева после рестарта) (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit message: `feat(flow): expose description collector/reviewer session refs in workflow state`)
+2. [DONE] Git Commit: `feat(flow): expose description collector/reviewer session refs in workflow state` (hash: 099dd0d4)
+
 ### Stream: Spec And Invariants (Docs)
 1. [TODO] Docs: зафиксировать контракт «History (JSONL) + Tail (Live)»: стабильный `eventId/seq`, курсор, правила reconnect, и правило single subscription на `dialogSessionId` (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(flow): define history+tail dialog contract`)
 2. [TODO] Git Commit: `docs(flow): define history+tail dialog contract` (hash: TBD)
