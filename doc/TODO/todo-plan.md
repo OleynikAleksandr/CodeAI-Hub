@@ -26,8 +26,8 @@
 2. [DONE] Git Commit: `feat(core): add dialog history writer + workspace key` (hash: 3f210d69)
 
 ### Stream: Core — continuity index.json registry
-1. [TODO] Core: добавить `continuity/index.json` как ускоритель `dialog:list` (SOT остаётся `chain.json`), обновлять индекс при создании/обновлении chain (scope: `packages/core/src/session-continuity/index-registry.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`; expected commit message: `feat(core): continuity index.json registry (dialog list)`)
-2. [TODO] Git Commit: `feat(core): continuity index.json registry (dialog list)` (hash: TBD)
+1. [IN_PROGRESS] Core: добавить `continuity/index.json` как ускоритель `dialog:list` (SOT остаётся `chain.json`), обновлять индекс при создании/обновлении chain (scope: `packages/core/src/session-continuity/index-registry.ts`, `packages/core/src/session-continuity/continuity-store.ts`; expected commit message: `feat(core): write continuity index.json on chain save`)
+2. [DONE] Git Commit: `feat(core): write continuity index.json on chain save` (hash: 9a07ae85)
 
 ### Stream: Phase Report (Phase 168)
 1. [TODO] Docs: Phase 168 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase168.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase168 report (core dialogId continuity+history+index)`)
