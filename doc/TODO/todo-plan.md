@@ -35,7 +35,7 @@
 
 ### Stream: UI — Remove Continuity Segment Bootstrap Repeats
 1. [DONE] UI: при построении “virtual conversation” для continuity chain скрывать повторяющиеся bootstrap сообщения для segmentIndex>0 (system prompt + первичный ack), не трогая основной диалог (scope: `src/client/ui/src/session/virtual-conversation.tsx`, `doc/TODO/todo-plan.md`; expected commit message: `fix(ui): suppress continuity bootstrap repeats in virtual conversation`)
-2. [TODO] Git Commit: `fix(ui): suppress continuity bootstrap repeats in virtual conversation` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): suppress continuity bootstrap repeats in virtual conversation` (hash: d7c0f3b9)
 
 ### Stream: PM/UI — Strong Dedupe For Replayed Messages
 1. [DONE] PM/UI: при пополнении snapshot по live stream игнорировать повторы по ключу `role+createdAt+content` (не только подряд), чтобы reconnect/replay не дублировал bootstrap и другие сообщения (scope: `src/client/project-manager/components/sessions/session-message-dedupe.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix(pm): dedupe replayed messages by createdAt+role+content`)
