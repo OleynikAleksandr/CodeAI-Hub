@@ -116,6 +116,19 @@ Defaults (если настройка отсутствует):
 
 ---
 
+### 5.1 UI Transcript Contract (Project Manager)
+
+Параллельно с provider continuity, Project Manager должен обеспечивать устойчивое отображение диалога агента:
+
+- **Cold start (после перезапуска Core/PM):** история диалога восстанавливается из unified JSONL (append-only) по `dialogSessionId`.
+  - Формат/путь: `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`, где `workspaceKey = sanitize(workspacePath)`.
+- **Hot mode (PM активен):** новые сообщения приходят как live stream (WS `session:message`) и добавляются в runtime snapshot.
+- **Dedupe (обязателен):** UI должен гасить replay/reconnect повторы:
+  - по `messageId` (строгая идентичность),
+  - и по ключу `role + createdAt + content` (tail dedupe), т.к. некоторые replays могут приходить с новыми id.
+- **Continuity chain UI:** когда один узел/роль состоит из нескольких provider segments, UI отображает их как один диалог. Bootstrap system prompt каждого continuation segment (segmentIndex > 0) не должен засорять диалог повторениями.
+- **Reconnect (Core restart):** после reconnect PM обязан повторно активировать workspace (`workspace-activate`), иначе runtime session registry остаётся пустым и сессии не открываются.
+
 ## 6) Report Storage Layout
 
 Continuity‑отчёты хранятся рядом с артефактами узла и остаются на диске.
