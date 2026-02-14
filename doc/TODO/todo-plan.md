@@ -24,8 +24,8 @@ Source of Truth (архитектура):
 2. [DONE] Git Commit: `feat(pm): add dialog WS commands to api` (hash: 6bc726d9)
 
 ### Stream: PM — persistence (openDialogIds/activeDialogId/treeBindings)
-1. [TODO] Добавить минимальный persistence-store для `dialogId` (open tabs + активный + bindings дерева) (scope: `src/client/project-manager/services/dialog-tabs-store.ts`; expected commit message: `feat(pm): persist dialog tabs by dialogId`)
-2. [TODO] Git Commit: `feat(pm): persist dialog tabs by dialogId` (hash: TBD)
+1. [DONE] Добавить минимальный persistence-store для `dialogId` (open tabs + активный + bindings дерева) (scope: `src/client/project-manager/services/dialog-tabs-store.ts`; expected commit message: `feat(pm): persist dialog tabs by dialogId`)
+2. [DONE] Git Commit: `feat(pm): persist dialog tabs by dialogId` (hash: 296d386d)
 
 ### Stream: PM — дерево: клик открывает диалог (не resume)
 1. [TODO] Перевести клик по узлу `Reviewer <provider>` в дереве на событие `pm:dialog:open` (dialog intent), без требования runtime session (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `feat(pm): tree click opens dialog intent`)
