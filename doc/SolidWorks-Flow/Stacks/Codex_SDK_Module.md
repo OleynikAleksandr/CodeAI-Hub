@@ -220,7 +220,7 @@ Delivery contract:
 - Non-interactive JSON mode: https://github.com/openai/codex/blob/main/docs/exec.md
 - Authentication guide: https://github.com/openai/codex/blob/main/docs/authentication.md
 - Sandbox & approvals: https://github.com/openai/codex/blob/main/docs/sandbox.md
-- GitHub Action example: https://github.com/openai/codex-action
+- GitHub Action example: `https://github.com/openai/codex-action`
 
 ---
 
