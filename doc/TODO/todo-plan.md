@@ -9,91 +9,91 @@
 ## Required documents to review before work
 1. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`
 2. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/System/SystemArchitecture.md`
-3. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
-4. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/TODO/Archive/todo-plan-phase161-core-restart-sessions-release-1.1.594-2026-02-14.md`
-5. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session049.md` (THIS REPORT)
+3. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/TODO/todo-plan.md`
 
 ---
 
-## Phase 162 — Core: dialogId + index.json + dialog:* APIs (owner: Codex, updated: 2026-02-14)
+## Phase 168 — Core: dialogId-first continuity + history store + index.json (owner: Codex, updated: 2026-02-14)
 
-**Goal:** реализовать минимальный Core контракт из `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`:
-- per-workspace `continuity/index.json` (dialog registry),
-- `chain.json` keyed by `dialogId`,
-- API/WS: `dialog:list/open/history/send` + live `dialog:message`.
+**Goal:** Core становится единственным источником правды для маршрутизации (через `chain.json`) и хранения истории (через `<dialogId>.jsonl`) с восстановлением после рестартов.
 
-### Stream: Core — Dialog Registry (index.json)
-1. [TODO] Core: добавить `continuity/index.json` store + запись/обновление при создании диалога и rollover (scope: `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`; expected commit message: `feat(core): add continuity index.json dialog registry`)
-2. [TODO] Git Commit: `feat(core): add continuity index.json dialog registry` (hash: TBD)
+### Stream: Core — chain.json segments + dialogId
+1. [TODO] Core: обновить модель continuity chain на `segments[]` и явный `dialogId`, где "живой" `providerSessionId` берётся как `segments[last].providerSessionId` (scope: `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/chain-model.ts`, `packages/core/src/session-continuity/chain-serializer.ts`; expected commit message: `feat(core): dialogId chain segments (last providerSessionId)`)
+2. [TODO] Git Commit: `feat(core): dialogId chain segments (last providerSessionId)` (hash: TBD)
 
-### Stream: Core — Dialog HTTP API (list/open/history/send)
-1. [TODO] Core: добавить HTTP endpoints `dialog:list/open/history/send` по `dialogId` (scope: `packages/core/src/remote-bridge/handlers/dialog-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): dialogId http api (list/open/history/send)`)
-2. [TODO] Git Commit: `feat(core): dialogId http api (list/open/history/send)` (hash: TBD)
+### Stream: Core — history.jsonl writer (core-only writer)
+1. [TODO] Core: реализовать запись нормализованных сообщений в `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl` (только Core пишет, PM read-only) (scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/unified-session/history-writer.ts`, `packages/core/src/workspaces/workspace-key.ts`; expected commit message: `feat(core): core-only dialog history writer (dialogId)`)
+2. [TODO] Git Commit: `feat(core): core-only dialog history writer (dialogId)` (hash: TBD)
 
-### Stream: Core — Dialog WS Event (dialog:message)
-1. [TODO] Core: добавить WS событие `dialog:message` с обязательным `dialogId` и каноническими полями сообщения (scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/websocket-session-scope.ts`; expected commit message: `feat(core): emit dialog:message with dialogId`)
-2. [TODO] Git Commit: `feat(core): emit dialog:message with dialogId` (hash: TBD)
+### Stream: Core — continuity index.json registry
+1. [TODO] Core: добавить `continuity/index.json` как ускоритель `dialog:list` (SOT остаётся `chain.json`), обновлять индекс при создании/обновлении chain (scope: `packages/core/src/session-continuity/index-registry.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`; expected commit message: `feat(core): continuity index.json registry (dialog list)`)
+2. [TODO] Git Commit: `feat(core): continuity index.json registry (dialog list)` (hash: TBD)
 
-### Stream: Phase Report (Phase 162)
-1. [TODO] Docs: Phase 162 report (короткий контекст + что сделано + что дальше) (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase162.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase162 report (core dialogId contracts)`)
-2. [TODO] Git Commit: `docs(flow): phase162 report (core dialogId contracts)` (hash: TBD)
+### Stream: Phase Report (Phase 168)
+1. [TODO] Docs: Phase 168 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase168.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase168 report (core dialogId continuity+history+index)`)
+2. [TODO] Git Commit: `docs(flow): phase168 report (core dialogId continuity+history+index)` (hash: TBD)
 
 ---
 
-## Phase 163 — PM: tabs persistence + open/replay by dialogId (owner: Codex, updated: 2026-02-14)
+## Phase 169 — Core Bridge: dialog:* APIs keyed by dialogId (owner: Codex, updated: 2026-02-14)
 
-**Goal:** PM открывает диалог без runtime sessions, используя `dialogId` как единственный ключ:
-- persistence tabs/treeBindings (`activeDialogId`, `openDialogIds[]`),
-- история грузится из `dialog:history`,
-- отправка идёт через `dialog:send`.
+**Goal:** PM общается с Core не через runtime `sessionId`, а через `dialogId` (open/history/send/list) и live events.
 
-### Stream: PM — Tabs Persistence (dialogId)
-1. [TODO] PM: добавить persistence для `openDialogIds[]/activeDialogId/treeBindings` (scope: `src/client/project-manager/services/dialog-tabs-store.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/layout/workspace-tree-model.ts`; expected commit message: `feat(pm): persist tabs + tree bindings by dialogId`)
+### Stream: Core — dialog:list + dialog:open
+1. [TODO] Core: `dialog:list` (из `continuity/index.json`) и `dialog:open` (создать/вернуть runtime binding, но ключ = dialogId) (scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`, `packages/core/src/remote-bridge/handlers/dialog-open-service.ts`, `packages/core/src/session-continuity/index-registry.ts`; expected commit message: `feat(core): dialog list+open (dialogId)`)
+2. [TODO] Git Commit: `feat(core): dialog list+open (dialogId)` (hash: TBD)
+
+### Stream: Core — dialog:history (replay)
+1. [TODO] Core: `dialog:history` читает `<dialogId>.jsonl` и отдаёт нормализованные сообщения (без дублей) (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`, `packages/core/src/unified-session/history-reader.ts`, `packages/core/src/unified-session/history-format.ts`; expected commit message: `feat(core): dialog history (replay) by dialogId`)
+2. [TODO] Git Commit: `feat(core): dialog history (replay) by dialogId` (hash: TBD)
+
+### Stream: Core — dialog:send + dialog:message (live)
+1. [TODO] Core: `dialog:send` (маршрут по chain.segments[last].providerSessionId) + live event `dialog:message` с `dialogId` (scope: `packages/core/src/remote-bridge/handlers/dialog-send-service.ts`, `packages/core/src/providers/provider-router.ts`, `packages/core/src/remote-bridge/events/dialog-message-event.ts`; expected commit message: `feat(core): dialog send + live dialog message event`)
+2. [TODO] Git Commit: `feat(core): dialog send + live dialog message event` (hash: TBD)
+
+### Stream: Phase Report (Phase 169)
+1. [TODO] Docs: Phase 169 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase169.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase169 report (core dialog APIs by dialogId)`)
+2. [TODO] Git Commit: `docs(flow): phase169 report (core dialog APIs by dialogId)` (hash: TBD)
+
+---
+
+## Phase 170 — PM: dialogId tabs + persistence + replay pipeline (owner: Codex, updated: 2026-02-14)
+
+**Goal:** PM после рестарта Core/PM всегда может открыть диалог по `dialogId`, загрузить историю через replay и затем перейти на live stream, не создавая дублей.
+
+### Stream: PM — tab persistence + tree bindings (dialogId)
+1. [TODO] PM: хранить `openDialogIds[]`, `activeDialogId`, `treeBindings` (nodeId -> dialogId) и восстанавливать на cold start (scope: `src/client/ui/src/services/dialog-tabs-store.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`, `src/client/ui/src/session/session-tabs.tsx`; expected commit message: `feat(pm): persist tabs + tree bindings by dialogId`)
 2. [TODO] Git Commit: `feat(pm): persist tabs + tree bindings by dialogId` (hash: TBD)
 
-### Stream: PM — History Replay (dialog:history)
-1. [TODO] PM: загрузка истории по `dialogId` и прогон через тот же append/dedupe слой, что live (scope: `src/client/project-manager/api.ts`, `src/client/ui/src/core-bridge/session-history.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `feat(pm): load dialog history by dialogId (replay)`)
-2. [TODO] Git Commit: `feat(pm): load dialog history by dialogId (replay)` (hash: TBD)
+### Stream: PM — history replay uses same normalizer/dedupe
+1. [TODO] PM: `dialog:history` -> прогон через тот же append/dedupe слой, что и live (replay не должен переписывать jsonl) (scope: `src/client/ui/src/core-bridge/dialog-history.ts`, `src/client/project-manager/components/sessions/session-message-dedupe.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `feat(pm): replay dialog history via live pipeline (no dupes)`)
+2. [TODO] Git Commit: `feat(pm): replay dialog history via live pipeline (no dupes)` (hash: TBD)
 
-### Stream: PM — Send (dialog:send)
-1. [TODO] PM: отправка сообщений через `dialog:send` по `activeDialogId` (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/sessions/session-message-sender.ts`; expected commit message: `feat(pm): send via dialogId`)
+### Stream: Phase Report (Phase 170)
+1. [TODO] Docs: Phase 170 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase170.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase170 report (pm dialogId persistence+replay)`)
+2. [TODO] Git Commit: `docs(flow): phase170 report (pm dialogId persistence+replay)` (hash: TBD)
+
+---
+
+## Phase 171 — PM: send + live stream by dialogId (owner: Codex, updated: 2026-02-14)
+
+**Goal:** PM отправляет сообщения и принимает live события строго по `dialogId` (без зависимости от runtime sessionId), включая кейсы "закрыть таб крестиком" и "рестарт Core".
+
+### Stream: PM — dialog:send by activeDialogId
+1. [TODO] PM: отправка пользовательского сообщения через `dialog:send` по `activeDialogId` (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/sessions/session-message-sender.ts`; expected commit message: `feat(pm): send via dialogId`)
 2. [TODO] Git Commit: `feat(pm): send via dialogId` (hash: TBD)
 
-### Stream: Phase Report (Phase 163)
-1. [TODO] Docs: Phase 163 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase163.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase163 report (pm dialogId tabs + replay)`)
-2. [TODO] Git Commit: `docs(flow): phase163 report (pm dialogId tabs + replay)` (hash: TBD)
-
----
-
-## Phase 164 — PM/Core: live stream routing by dialogId (owner: Codex, updated: 2026-02-14)
-
-**Goal:** live stream события маршрутизируются строго по `dialogId`, без зависимости от runtime `sessionId` Core.
-
-### Stream: PM — Live Dialog Stream
-1. [TODO] PM: подписка/обработка `dialog:message` и merge в активный диалог по `dialogId` (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-message-dedupe.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `feat(pm): live dialog stream by dialogId`)
+### Stream: PM — live dialog stream keyed by dialogId
+1. [TODO] PM: подписка/обработка `dialog:message` и merge в правильный диалог по `dialogId` (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-message-dedupe.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `feat(pm): live dialog stream by dialogId`)
 2. [TODO] Git Commit: `feat(pm): live dialog stream by dialogId` (hash: TBD)
 
-### Stream: Phase Report (Phase 164)
-1. [TODO] Docs: Phase 164 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase164.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase164 report (live routing by dialogId)`)
-2. [TODO] Git Commit: `docs(flow): phase164 report (live routing by dialogId)` (hash: TBD)
+### Stream: Phase Report (Phase 171)
+1. [TODO] Docs: Phase 171 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase171.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase171 report (pm live+send by dialogId)`)
+2. [TODO] Git Commit: `docs(flow): phase171 report (pm live+send by dialogId)` (hash: TBD)
 
 ---
 
-## Phase 165 — Migration: legacy chain/session -> dialogId (owner: Codex, updated: 2026-02-14)
-
-**Goal:** мягкая миграция старых continuity chain и UI history к `dialogId` контракту.
-
-### Stream: Core — Backfill/Migrate
-1. [TODO] Core: backfill legacy chain to `dialogId` + index rebuild (scope: `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/unified-session/storage.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`; expected commit message: `feat(core): migrate legacy continuity to dialogId`)
-2. [TODO] Git Commit: `feat(core): migrate legacy continuity to dialogId` (hash: TBD)
-
-### Stream: Phase Report (Phase 165)
-1. [TODO] Docs: Phase 165 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase165.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase165 report (migration to dialogId)`)
-2. [TODO] Git Commit: `docs(flow): phase165 report (migration to dialogId)` (hash: TBD)
-
----
-
-## Phase 166 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
+## Phase 172 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
 
 ### Stream: Release Build
 1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки (scope: repo; expected commit message: `chore: quality gates before release`)
