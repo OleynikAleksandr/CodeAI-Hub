@@ -21679,7 +21679,14 @@
         ref: scrollContainerRef,
         children: displayMessages.map((message, index2) => {
           if (isSegmentBoundaryMessage(message)) {
-            return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "session-dialog__segment-boundary", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__segment-boundary-label", children: message.content }) }, message.id);
+            return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+              "div",
+              {
+                className: "session-dialog__segment-boundary",
+                children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__segment-boundary-label", children: message.content })
+              },
+              message.id
+            );
           }
           const next = displayMessages[index2 + 1] ?? null;
           const isTerminalThinking = message.role === "thinking" && next && isSegmentBoundaryMessage(next);
@@ -23243,6 +23250,44 @@ ${path2}` : path2;
     return sliced.filter((message) => message.role !== "thinking");
   };
 
+  // src/client/ui/src/session/token-debug-summary.ts
+  var buildTokenDebugSummary = (params) => {
+    if (params.chain.length <= 1) {
+      return null;
+    }
+    const formatRemainingPercent = (options) => {
+      if (!(Number.isFinite(options.used) && Number.isFinite(options.limit))) {
+        return "\u2014";
+      }
+      if (options.limit <= 0) {
+        return "\u2014";
+      }
+      const usedPercentage = Math.max(
+        0,
+        Math.min(100, Math.round(options.used / options.limit * 100))
+      );
+      const remainingPercentage = Math.max(
+        0,
+        Math.min(100, 100 - usedPercentage)
+      );
+      return `${remainingPercentage}%`;
+    };
+    const parts = [];
+    for (const [index2, segment] of params.chain.entries()) {
+      const snapshot = params.snapshots[segment.id];
+      if (!snapshot) {
+        continue;
+      }
+      const label = `#${index2 + 1}`;
+      const remainingPercent = formatRemainingPercent({
+        used: snapshot.status.tokenUsage.used,
+        limit: snapshot.status.tokenUsage.limit
+      });
+      parts.push(`${label} (${remainingPercent})`);
+    }
+    return parts.length > 0 ? parts.join(" | ") : null;
+  };
+
   // src/client/ui/src/session/virtual-conversation.tsx
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var filterContinuityInternalMessages = (messages) => {
@@ -23348,14 +23393,14 @@ ${path2}` : path2;
     const seenSegments = /* @__PURE__ */ new Set();
     for (const entry of collected) {
       if (entry.segmentIndex > 0 && !seenSegments.has(entry.segmentIndex)) {
-        withBoundaries.push(
-          createSegmentBoundaryMessage({
-            segmentIndex: entry.segmentIndex,
-            totalSegments: params.chain.length,
-            createdAt: entry.message.createdAt
-          })
-        );
         seenSegments.add(entry.segmentIndex);
+        withBoundaries.push(
+          createSegmentBoundaryMessage(
+            entry.segmentIndex,
+            params.chain.length,
+            entry.message.createdAt
+          )
+        );
       }
       withBoundaries.push(entry.message);
     }
@@ -23363,50 +23408,12 @@ ${path2}` : path2;
       filterContinuityInternalMessages(withBoundaries)
     );
   };
-  var createSegmentBoundaryMessage = (options) => ({
-    // UI-only marker to visually separate physical provider sessions.
-    id: `segment-boundary:${options.segmentIndex}:${options.createdAt}`,
+  var createSegmentBoundaryMessage = (segmentIndex, totalSegments, createdAt) => ({
+    id: `segment-boundary:${segmentIndex}:${createdAt}`,
     role: "system",
-    content: `\u0421\u0435\u0441\u0441\u0438\u044F ${options.segmentIndex + 1} \u0438\u0437 ${options.totalSegments}`,
-    createdAt: options.createdAt
+    content: `\u0421\u0435\u0441\u0441\u0438\u044F ${segmentIndex + 1} \u0438\u0437 ${totalSegments}`,
+    createdAt
   });
-  var buildTokenDebugSummary = (params) => {
-    if (params.chain.length <= 1) {
-      return null;
-    }
-    const formatRemainingPercent = (options) => {
-      if (!(Number.isFinite(options.used) && Number.isFinite(options.limit))) {
-        return "\u2014";
-      }
-      if (options.limit <= 0) {
-        return "\u2014";
-      }
-      const usedPercentage = Math.max(
-        0,
-        Math.min(100, Math.round(options.used / options.limit * 100))
-      );
-      const remainingPercentage = Math.max(
-        0,
-        Math.min(100, 100 - usedPercentage)
-      );
-      return `${remainingPercentage}%`;
-    };
-    const parts = [];
-    for (const [index2, segment] of params.chain.entries()) {
-      const snapshot = params.snapshots[segment.id];
-      if (!snapshot) {
-        continue;
-      }
-      const label = `#${index2 + 1}`;
-      const remainingPercent = formatRemainingPercent({
-        used: snapshot.status.tokenUsage.used,
-        limit: snapshot.status.tokenUsage.limit
-      });
-      const formatted = `${label} (${remainingPercent})`;
-      parts.push(formatted);
-    }
-    return parts.length > 0 ? parts.join(" | ") : null;
-  };
 
   // src/client/ui/src/session/session-view-helpers.tsx
   var useQueuedSend = (options) => {
