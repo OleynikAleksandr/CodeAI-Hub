@@ -26,6 +26,12 @@
 - Переключение history -> live было детерминированным: через курсор/seq/eventId, а не через эвристику.
 - Решение работало для всех провайдеров (Claude/Codex/Gemini).
 
+### Stream: Core — Restore Description Sessions On Activate
+1. [DONE] Core: учитывать `runSlug` при reuse resume session (чтобы collector/reviewer с одинаковым providerSessionId не схлопывались в одну runtime session) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): include runSlug in resume session reuse matching`)
+2. [DONE] Git Commit: `fix(core): include runSlug in resume session reuse matching` (hash: d06aa1e1)
+3. [DONE] Core: при workspace activate восстанавливать обе description-сессии из persisted snapshot: `collectorSession` + `reviewerSession` (fallback: legacy `session`) (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`; expected commit message: `fix(core): restore description collector+reviewer sessions on workspace activate`)
+4. [DONE] Git Commit: `fix(core): restore description collector+reviewer sessions on workspace activate` (hash: bddc2f04)
+
 ### Stream: Spec And Invariants (Docs)
 1. [TODO] Docs: зафиксировать контракт «History (JSONL) + Tail (Live)»: стабильный `eventId/seq`, курсор, правила reconnect, и правило single subscription на `dialogSessionId` (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(flow): define history+tail dialog contract`)
 2. [TODO] Git Commit: `docs(flow): define history+tail dialog contract` (hash: TBD)
