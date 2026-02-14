@@ -10,6 +10,7 @@ import {
 } from "@codeai-hub/unified-session";
 import type { Session, SessionMessage } from "../session-manager";
 import type { Logger } from "../telemetry/logger";
+import { getWorkspaceKeyFromPath } from "../workspaces/workspace-key";
 import { listUnifiedSessionWorkspaceSlugs } from "./workspace-slugs";
 
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
@@ -49,8 +50,10 @@ export class UnifiedSessionStorage {
     session: Session,
     options?: { readonly historySessionId?: string | null }
   ): void {
-    const workspaceSlug =
-      sanitizeWorkspaceSlug(session.workspacePath) || this.defaultWorkspaceSlug;
+    const workspaceSlug = getWorkspaceKeyFromPath(
+      session.workspacePath,
+      this.defaultWorkspaceSlug
+    );
     const overrideHistorySessionId =
       options?.historySessionId && options.historySessionId.trim().length > 0
         ? options.historySessionId.trim()
@@ -173,8 +176,7 @@ export class UnifiedSessionStorage {
 
     const preferredWorkspaceSlug =
       entry?.workspaceSlug ||
-      sanitizeWorkspaceSlug(session.workspacePath) ||
-      this.defaultWorkspaceSlug;
+      getWorkspaceKeyFromPath(session.workspacePath, this.defaultWorkspaceSlug);
     const workspaceSlugs = await listUnifiedSessionWorkspaceSlugs({
       rootDirectory: this.rootDirectory,
       logger: this.logger,
