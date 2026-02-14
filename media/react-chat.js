@@ -8919,6 +8919,63 @@
   // src/client/ui/src/session/dialog-panel.tsx
   var import_react4 = __toESM(require_react());
 
+  // src/client/ui/src/session/dialog-panel-message-utils.ts
+  var isSegmentBoundaryMessage = (message) => message.role === "system" && message.id.startsWith("segment-boundary:");
+  var shouldRenderImplicitBoundaryAfter = (message, next) => {
+    if (message.role !== "thinking") {
+      return false;
+    }
+    if (!next) {
+      return false;
+    }
+    if (isSegmentBoundaryMessage(next)) {
+      return false;
+    }
+    return next.role === "user";
+  };
+  var buildMessageClassNames = (message, providerTheme) => {
+    const classes = [
+      "session-dialog__message",
+      `session-dialog__message--${message.role}`
+    ];
+    if (message.role === "assistant" && providerTheme) {
+      classes.push(`session-dialog__message--assistant-${providerTheme}`);
+    }
+    return classes.join(" ");
+  };
+  var resolveRoleLabel = (message, providerLabel) => {
+    if (message.role === "assistant") {
+      return providerLabel ?? "Assistant";
+    }
+    if (message.role === "user") {
+      return "User";
+    }
+    if (message.role === "thinking") {
+      return "Thinking";
+    }
+    return "System";
+  };
+  var mergeThinkingMessages = (source) => {
+    const result = [];
+    for (const message of source) {
+      if (message.role === "thinking") {
+        const previous3 = result.at(-1);
+        if (previous3?.role === "thinking") {
+          result[result.length - 1] = {
+            ...previous3,
+            content: `${previous3.content}
+${message.content}`
+          };
+          continue;
+        }
+        result.push({ ...message });
+        continue;
+      }
+      result.push(message);
+    }
+    return result;
+  };
+
   // node_modules/devlop/lib/default.js
   function ok() {
   }
@@ -21610,7 +21667,6 @@
   // src/client/ui/src/session/dialog-panel.tsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   var AUTO_SCROLL_EPSILON = 32;
-  var isSegmentBoundaryMessage = (message) => message.role === "system" && message.id.startsWith("segment-boundary:");
   var DialogPanel = ({
     messages,
     providerTheme = null,
@@ -21689,23 +21745,34 @@
             );
           }
           const next = displayMessages[index2 + 1] ?? null;
-          const isTerminalThinking = message.role === "thinking" && next && isSegmentBoundaryMessage(next);
+          const isTerminalThinking = message.role === "thinking" && next && (isSegmentBoundaryMessage(next) || next.role !== "assistant");
           const classNameBase = buildMessageClassNames(message, providerTheme);
           const className = isTerminalThinking ? `${classNameBase} session-dialog__message--thinking-terminal` : classNameBase;
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
-            return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-              ThinkingMessage,
-              {
-                className,
-                expanded,
-                label,
-                message,
-                onToggle: toggleThinking
-              },
-              message.id
-            );
+            const shouldInsertImplicitBoundary = shouldRenderImplicitBoundaryAfter(message, next);
+            return [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                ThinkingMessage,
+                {
+                  className,
+                  expanded,
+                  label,
+                  message,
+                  onToggle: toggleThinking
+                },
+                message.id
+              ),
+              shouldInsertImplicitBoundary ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+                "div",
+                {
+                  className: "session-dialog__segment-boundary",
+                  children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__segment-boundary-label", children: "\u041D\u043E\u0432\u0430\u044F \u0441\u0435\u0441\u0441\u0438\u044F" })
+                },
+                `${message.id}:implicit-boundary`
+              ) : null
+            ].filter(Boolean);
           }
           return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             StandardMessage,
@@ -21721,28 +21788,6 @@
     ) });
   };
   var dialog_panel_default = DialogPanel;
-  var buildMessageClassNames = (message, providerTheme) => {
-    const classes = [
-      "session-dialog__message",
-      `session-dialog__message--${message.role}`
-    ];
-    if (message.role === "assistant" && providerTheme) {
-      classes.push(`session-dialog__message--assistant-${providerTheme}`);
-    }
-    return classes.join(" ");
-  };
-  var resolveRoleLabel = (message, providerLabel) => {
-    if (message.role === "assistant") {
-      return providerLabel ?? "Assistant";
-    }
-    if (message.role === "user") {
-      return "User";
-    }
-    if (message.role === "thinking") {
-      return "Thinking";
-    }
-    return "System";
-  };
   var ThinkingMessage = ({
     message,
     expanded,
@@ -21801,26 +21846,6 @@
         }
       )
     ] });
-  };
-  var mergeThinkingMessages = (source) => {
-    const result = [];
-    for (const message of source) {
-      if (message.role === "thinking") {
-        const previous3 = result.at(-1);
-        if (previous3?.role === "thinking") {
-          result[result.length - 1] = {
-            ...previous3,
-            content: `${previous3.content}
-${message.content}`
-          };
-          continue;
-        }
-        result.push({ ...message });
-        continue;
-      }
-      result.push(message);
-    }
-    return result;
   };
 
   // src/client/ui/src/session/empty-state.tsx
