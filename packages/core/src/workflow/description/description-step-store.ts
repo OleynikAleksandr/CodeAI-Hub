@@ -82,7 +82,10 @@ const parseSessionRef = (value: unknown): DescriptionSessionRef | null => {
   };
 };
 
-const parseSnapshot = (value: unknown): DescriptionStepSnapshot | null => {
+const parseSnapshot = (
+  value: unknown,
+  fallbackWorkspacePath: string
+): DescriptionStepSnapshot | null => {
   if (!isRecord(value)) {
     return null;
   }
@@ -111,7 +114,13 @@ const parseSnapshot = (value: unknown): DescriptionStepSnapshot | null => {
 
   return {
     workspaceSlug,
-    workspacePath: workspacePath ?? workspaceSlug,
+    // Older snapshots may miss workspacePath or store a slug-ish value.
+    // Use the caller-provided absolute workspace root as a stable fallback.
+    workspacePath: normalizeWorkspacePath(
+      workspacePath && path.isAbsolute(workspacePath)
+        ? workspacePath
+        : fallbackWorkspacePath
+    ),
     createdAt,
     updatedAt,
     questionnairePath,
@@ -132,6 +141,12 @@ const buildStatePath = (workspaceRoot: string, workspaceSlug: string): string =>
     DESCRIPTION_DIR,
     STATE_FILE_NAME
   );
+
+const normalizeWorkspacePath = (value: string): string => {
+  // Keep comparisons stable across equivalent absolute paths such as
+  // `/path/to/ws` vs `/path/to/ws/`.
+  return path.resolve(value);
+};
 
 const readJson = async <T>(filePath: string): Promise<T | null> => {
   try {
@@ -189,13 +204,16 @@ export class DescriptionStepStore {
     if (!snapshot) {
       return null;
     }
-    const parsed = parseSnapshot(snapshot);
+    const parsed = parseSnapshot(snapshot, workspaceRoot);
     if (!parsed) {
       return null;
     }
     // Validate workspacePath matches current workspaceRoot
     // If mismatch, treat session/sessionKind as stale (cross-workspace leak)
-    if (parsed.workspacePath !== workspaceRoot) {
+    if (
+      normalizeWorkspacePath(parsed.workspacePath) !==
+      normalizeWorkspacePath(workspaceRoot)
+    ) {
       return {
         ...parsed,
         collectorSession: undefined,
@@ -220,7 +238,7 @@ export class DescriptionStepStore {
     );
     const next: DescriptionStepSnapshot = {
       workspaceSlug,
-      workspacePath: existing?.workspacePath ?? workspaceRoot,
+      workspacePath: normalizeWorkspacePath(workspaceRoot),
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
       questionnairePath: resolveField(
