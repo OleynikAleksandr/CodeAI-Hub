@@ -65,5 +65,5 @@
 5. [DONE] Git Commit: `chore(release): refresh provider manifest checksums` (hash: cfbba3d1)
 6. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.593.vsix`, path: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.593.vsix`) (scope: repo build; expected commit message: `chore(release): build vsix`)
 7. [DONE] Git Commit: `chore(release): build vsix` (hash: N/A — VSIX artifact only)
-8. [TODO] Docs: обновить этот план хешем коммита после апдейта (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record release 1.1.593 build stream`)
-9. [TODO] Git Commit: `docs(todo): record release 1.1.593 build stream` (hash: TBD)
+8. [DONE] Docs: обновить этот план хешем коммита после апдейта (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record release 1.1.593 build stream`)
+9. [DONE] Git Commit: `docs(todo): record release 1.1.593 build stream` (hash: c35f5bd3)
