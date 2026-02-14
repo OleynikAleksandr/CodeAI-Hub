@@ -30,7 +30,7 @@
 2. [DONE] Git Commit: `docs(sessions): start Session044 (pm dialog restore + dedupe plan)` (hash: TBD)
 
 ### Stream: PM — Reconnect Must Activate Workspace
-1. [TODO] PM: на reconnect после рестарта Core обязательно дергать `workspace-activate`, чтобы восстановить runtime session registry и дерево (scope: `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix(pm): activate workspace after core reconnect`)
+1. [DONE] PM: на reconnect после рестарта Core обязательно дергать `workspace-activate`, чтобы восстановить runtime session registry и дерево (scope: `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix(pm): activate workspace after core reconnect`)
 2. [TODO] Git Commit: `fix(pm): activate workspace after core reconnect` (hash: TBD)
 
 ### Stream: UI — Remove Continuity Segment Bootstrap Repeats

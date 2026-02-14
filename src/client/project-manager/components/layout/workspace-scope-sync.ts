@@ -97,7 +97,9 @@ export const useWorkspaceScopeSync = (activeWorkspace?: WorkspaceProject) => {
       void syncWorkspaceScope({
         workspace: activeWorkspace,
         reason: "reconnect",
-        activateAfterAck: false,
+        // After Core restart/reconnect we must re-activate the workspace,
+        // otherwise runtime session registry stays empty and PM can't open sessions.
+        activateAfterAck: true,
       });
     });
     return () => {
