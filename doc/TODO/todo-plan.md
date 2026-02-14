@@ -41,8 +41,8 @@ Source of Truth (архитектура):
 2. [DONE] Git Commit: `feat(pm): restore dialogs via dialog history after core restart` (hash: c8b24fd7)
 
 ### Stream: Phase Report (Phase 170)
-1. [TODO] Docs: Phase 170 report + update plan (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase170.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase170 report (pm dialog restore via history)`)
-2. [TODO] Git Commit: `docs(flow): phase170 report (pm dialog restore via history)` (hash: TBD)
+1. [DONE] Docs: Phase 170 report + update plan (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase170.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase170 report (pm dialog restore via history)`)
+2. [DONE] Git Commit: `docs(flow): phase170 report (pm dialog restore via history)` (hash: c447c1b0)
 
 ---
 
