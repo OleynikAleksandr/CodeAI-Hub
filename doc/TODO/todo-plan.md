@@ -35,6 +35,10 @@
 3. [DONE] PM: `workspace-activate` на cold start/reconnect без ожидания WS ACK (scope: `src/client/project-manager/components/layout/workspace-scope-sync.ts`; expected commit message: `fix(pm): activate workspace without waiting for ws ack`)
 4. [DONE] Git Commit: `fix(pm): activate workspace without waiting for ws ack` (hash: dfc2982f)
 
+### Stream: PM — Session Resume Click Must Not Dead-Click
+1. [DONE] PM: убрать жесткую зависимость resume от `workspace:select:ack` (best-effort select), чтобы клик по `Reviewer Codex` после рестарта Core всегда открывал/создавал сессию (scope: `src/client/project-manager/components/sessions/session-resume-intent.ts`, `src/client/project-manager/components/sessions/session-resume-intent.test.ts`; expected commit message: `fix(pm): avoid dead click on session resume (best-effort workspace select)`)
+2. [DONE] Git Commit: `fix(pm): avoid dead click on session resume (best-effort workspace select)` (hash: e8358e0b)
+
 ### Stream: Docs — Report + Plan
 1. [DONE] Docs: архивировать предыдущий план и завести новый план под Phase 160 + отчет сессии (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase159-dialog-ui-2026-02-14.md`, `doc/Sessions/Session045.md`; expected commit message: `docs(todo): start Phase160 (pm cold-start restore) + Session045`)
 2. [DONE] Git Commit: `docs(todo): start Phase160 (pm cold-start restore) + Session045` (hash: a5302ade)
@@ -42,9 +46,9 @@
 ### Stream: Release Build (New Patch Release)
 1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки (scope: repo; expected commit message: `chore: quality gates before release`)
 2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A — без изменений в tracked files)
-3. [DONE] Build: `./scripts/build-all.sh` (version bump -> 1.1.591) (scope: repo build; expected commit message: `chore(release): build-all for next patch`)
-4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: 0a21cf50)
-5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.591.vsix`, path: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.591.vsix`) (scope: repo build; expected commit message: `chore(release): build vsix`)
+3. [DONE] Build: `./scripts/build-all.sh` (version bump -> 1.1.592) (scope: repo build; expected commit message: `chore(release): build-all for next patch`)
+4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: ace28fde)
+5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.592.vsix`, path: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.592.vsix`) (scope: repo build; expected commit message: `chore(release): build vsix`)
 6. [DONE] Git Commit: `chore(release): build vsix` (hash: N/A — VSIX artifact only)
-7. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record release 1.1.591 build stream`)
-8. [DONE] Git Commit: `docs(todo): record release 1.1.591 build stream` (hash: c0f71f80)
+7. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record release 1.1.592 build stream`)
+8. [DONE] Git Commit: `docs(todo): record release 1.1.592 build stream` (hash: TBD)
