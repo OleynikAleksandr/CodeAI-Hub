@@ -65,6 +65,27 @@
 
 Для каждого Agent Dialog должен существовать **один** `chain.json`, в котором есть **вся необходимая идентичность** и routing-информация.
 
+### 4.0 Dialog Registry: `index.json` (обязательное)
+
+Чтобы PM мог быстро получить список диалогов (и восстановить tabs/дерево) без сканирования диска, Core ведёт per-workspace реестр диалогов:
+
+- `<workspaceRoot>/.codeai-hub/<workspaceSlug>/continuity/index.json`
+
+Назначение `index.json`:
+- реализация `dialog:list` (быстрый список);
+- связывание `dialogId` -> `chain.json`/`historyJsonlPath`/метаданные.
+
+`index.json` не заменяет `chain.json`. Он хранит только “каталог” (ускоритель), а все детали сегментов и routing остаются в `chain.json`.
+
+Минимальная запись в `index.json`:
+- `dialogId`
+- `stage`
+- `runSlug`
+- `providerId`
+- `chainPath`
+- `historyJsonlPath`
+- `updatedAt`
+
 ### 4.1 Где лежит (человекочитаемо)
 
 Ключевой принцип: стабильный идентификатор диалога (`dialogId`) совпадает с именем накопительного JSONL истории (без расширения) и используется как ключ для continuity chain.
