@@ -52,8 +52,10 @@
 2. [DONE] Git Commit: `feat(core): dialog history (jsonl replay)` (hash: d79ae6b3)
 
 ### Stream: Core — dialog:send + dialog:message (live)
-1. [TODO] Core: `dialog:send` (маршрут по chain.segments[last].providerSessionId) + live event `dialog:message` с `dialogId` (scope: `packages/core/src/remote-bridge/handlers/dialog-send-service.ts`, `packages/core/src/providers/provider-router.ts`, `packages/core/src/remote-bridge/events/dialog-message-event.ts`; expected commit message: `feat(core): dialog send + live dialog message event`)
-2. [TODO] Git Commit: `feat(core): dialog send + live dialog message event` (hash: TBD)
+1. [DONE] Core: `dialog:send` (lookup chain by `dialogId`, resume provider session if нужно, delegate to SessionRequestHandler) (scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): dialog send (resume + delegate to session handler)`)
+2. [DONE] Git Commit: `feat(core): dialog send (resume + delegate to session handler)` (hash: 7f7385f1)
+3. [TODO] Core: live event `dialog:message` с `dialogId` (scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/websocket-session-scope.ts`; expected commit message: `feat(core): dialog message live event by dialogId`)
+4. [TODO] Git Commit: `feat(core): dialog message live event by dialogId` (hash: TBD)
 
 ### Stream: Phase Report (Phase 169)
 1. [TODO] Docs: Phase 169 report (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase169.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase169 report (core dialog APIs by dialogId)`)
