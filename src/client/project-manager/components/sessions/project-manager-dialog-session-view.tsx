@@ -17,6 +17,8 @@ import {
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view-helpers";
 
+export type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
+
 const createRequestId = (): string => {
   if (
     typeof globalThis.crypto !== "undefined" &&
@@ -129,17 +131,24 @@ export const ProjectManagerDialogSessionView = (props: {
           readonly messages?: unknown;
           readonly error?: unknown;
         };
-        if (!payload || typeof payload.workspaceSlug !== "string" || typeof payload.dialogId !== "string" || !Array.isArray(payload.messages)) {
+        const workspaceSlug = payload?.workspaceSlug;
+        const dialogId = payload?.dialogId;
+        const messages = payload?.messages;
+        if (
+          typeof workspaceSlug !== "string" ||
+          typeof dialogId !== "string" ||
+          !Array.isArray(messages)
+        ) {
           return;
         }
         const intent = pendingIntentRef.current;
-        if (!intent || intent.workspaceSlug !== payload.workspaceSlug) {
+        if (!intent || intent.workspaceSlug !== workspaceSlug) {
           return;
         }
-        const normalizedMessages = convertHistoryToMessages(payload.messages);
+        const normalizedMessages = convertHistoryToMessages(messages);
         setSnapshots((previous) =>
           mergeHistoryIntoSnapshots(previous, {
-            sessionId: payload.dialogId,
+            sessionId: dialogId,
             messages: normalizedMessages,
           })
         );
@@ -151,11 +160,13 @@ export const ProjectManagerDialogSessionView = (props: {
           readonly status?: unknown;
           readonly error?: unknown;
         };
-        if (!payload || typeof payload.workspaceSlug !== "string" || typeof payload.dialogId !== "string") {
+        const workspaceSlug = payload?.workspaceSlug;
+        const dialogId = payload?.dialogId;
+        if (typeof workspaceSlug !== "string" || typeof dialogId !== "string") {
           return;
         }
         const intent = pendingIntentRef.current;
-        if (!intent || intent.workspaceSlug !== payload.workspaceSlug) {
+        if (!intent || intent.workspaceSlug !== workspaceSlug) {
           return;
         }
         if (payload.status === "rejected") {
@@ -165,7 +176,7 @@ export const ProjectManagerDialogSessionView = (props: {
               : "Dialog send rejected.";
           setSnapshots((previous) =>
             appendDedupedSessionMessageToSnapshots(previous, {
-              sessionId: payload.dialogId,
+              sessionId: dialogId,
               message: createSystemMessage(errorCopy),
             })
           );
@@ -178,10 +189,11 @@ export const ProjectManagerDialogSessionView = (props: {
           readonly sessionId?: unknown;
           readonly message?: unknown;
         };
-        if (!payload || typeof payload.dialogId !== "string") {
+        const dialogId = payload?.dialogId;
+        if (typeof dialogId !== "string") {
           return;
         }
-        if (!session || payload.dialogId !== session.id) {
+        if (!session || dialogId !== session.id) {
           return;
         }
         const normalized = sanitizeMessage(payload.message as never);
@@ -190,7 +202,7 @@ export const ProjectManagerDialogSessionView = (props: {
         }
         setSnapshots((previous) =>
           appendDedupedSessionMessageToSnapshots(previous, {
-            sessionId: payload.dialogId,
+            sessionId: dialogId,
             message: normalized,
           })
         );
