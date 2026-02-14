@@ -37,6 +37,7 @@ export const ProjectManagerSessionView = ({ workspacePath, preferredSessionId }:
   const [sessions, setSessions] = useState<readonly SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const loadedHistorySessionIdsRef = useRef<Set<string>>(new Set());
   const sessionsRef = useRef<readonly SessionRecord[]>([]);
   const syncSessionsRef = useCallback((current: readonly SessionRecord[]) => {
     sessionsRef.current = current;
@@ -91,6 +92,7 @@ export const ProjectManagerSessionView = ({ workspacePath, preferredSessionId }:
           normalized.push(converted);
         }
       }
+      loadedHistorySessionIdsRef.current.add(payload.sessionId);
       setSnapshots((previous) =>
         mergeHistoryIntoSnapshots(previous, {
           sessionId: payload.sessionId,
@@ -137,6 +139,9 @@ export const ProjectManagerSessionView = ({ workspacePath, preferredSessionId }:
       }
       const config = resolveProjectManagerCoreConfig();
       if (!config) {
+        return;
+      }
+      if (loadedHistorySessionIdsRef.current.has(session.id)) {
         return;
       }
       loadSessionHistories(config, [session], (payload) => {
