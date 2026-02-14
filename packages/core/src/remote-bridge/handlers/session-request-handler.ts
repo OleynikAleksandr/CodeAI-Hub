@@ -1768,6 +1768,77 @@ export class SessionRequestHandler {
     }
   }
 
+  async handleDialogSend(options: {
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+    readonly dialogId: string;
+    readonly content: string;
+  }): Promise<
+    { readonly ok: true } | { readonly ok: false; readonly error: string }
+  > {
+    const chains = await SessionContinuityFacade.readWorkspaceChains({
+      workspaceRoot: options.workspaceRoot,
+      workspaceSlug: options.workspaceSlug,
+    });
+    const chain = chains.find(
+      (candidate) =>
+        (candidate.dialogId ?? candidate.rootSessionId) === options.dialogId
+    );
+    if (!chain) {
+      return { ok: false, error: "Dialog chain not found" };
+    }
+    const last = chain.segments.at(-1) ?? null;
+    if (!last) {
+      return { ok: false, error: "Dialog has no segments" };
+    }
+
+    const existingSession = this.sessionManager
+      .getSessionsByWorkspacePath(options.workspaceRoot)
+      .find(
+        (candidate) =>
+          candidate.providerId === last.providerId &&
+          candidate.providerSessionId === last.providerSessionId
+      );
+
+    const adapter = this.providerRegistry.getAdapter(last.providerId);
+    if (!adapter) {
+      return { ok: false, error: `Provider ${last.providerId} unavailable` };
+    }
+
+    const resolvedSession =
+      existingSession ??
+      (await this.createAndRegisterSession({
+        providerId: last.providerId,
+        workspacePath: options.workspaceRoot,
+        adapter,
+        context: {
+          initiativeSlug: options.workspaceSlug,
+          stage: chain.stage === "unknown" ? null : chain.stage,
+          runSlug: this.inferRunSlugFromDialogId(options.dialogId),
+          providerSessionId: last.providerSessionId,
+        },
+        rootSessionId: options.dialogId,
+      }));
+
+    if (!resolvedSession) {
+      return { ok: false, error: "Failed to resume dialog session" };
+    }
+
+    await this.handleMessage(resolvedSession.id, options.content);
+    return { ok: true };
+  }
+
+  private inferRunSlugFromDialogId(dialogId: string): string | null {
+    const trimmed = dialogId.trim().toLowerCase();
+    if (trimmed.endsWith("__reviewer") || trimmed.endsWith("-reviewer")) {
+      return "reviewer";
+    }
+    if (trimmed.endsWith("__collector") || trimmed.endsWith("-collector")) {
+      return "collector";
+    }
+    return null;
+  }
+
   async createSessionForWorkflow(options: {
     readonly providerId: string;
     readonly workspacePath: string;
