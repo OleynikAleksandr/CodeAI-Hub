@@ -51,13 +51,16 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     [workspacePath, workspaceSlug]
   );
 
-  const dispatchSessionResumeIntent = useCallback((payload: SessionResumeIntent) => {
-    window.dispatchEvent(
-      new CustomEvent("pm:session:resume", {
-        detail: payload,
-      })
-    );
-  }, []);
+  const dispatchDialogOpenIntent = useCallback(
+    (payload: SessionResumeIntent) => {
+      window.dispatchEvent(
+        new CustomEvent("pm:dialog:open", {
+          detail: payload,
+        })
+      );
+    },
+    []
+  );
 
   const { handleStateUpdate, markWorkspaceChanged, resetPendingSelection } =
     useWorkspaceTreeAutoSelect({
@@ -167,7 +170,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           if (!(workspaceSlug && workspacePath)) {
             return;
           }
-          dispatchSessionResumeIntent({
+          dispatchDialogOpenIntent({
             providerId: session.providerId,
             providerSessionId: session.providerSessionId,
             workspacePath,
