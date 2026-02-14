@@ -17,6 +17,7 @@ import { UnifiedSessionStorage } from "../unified-session/storage";
 import { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import { WorkspaceRuntimeFacade } from "../workspace-runtime/workspace-runtime-facade";
 import type { WorkspaceSnapshotRequestPayload } from "../workspace-runtime/workspace-wire-types";
+import { DialogHistoryService } from "./handlers/dialog-history-service";
 import { DialogListService } from "./handlers/dialog-list-service";
 import { DialogOpenService } from "./handlers/dialog-open-service";
 import { HttpApiRouter } from "./handlers/http-api-router";
@@ -67,6 +68,7 @@ export class RemoteBridge {
   private readonly projectHandler: ProjectRequestHandler;
   private readonly dialogListService: DialogListService;
   private readonly dialogOpenService: DialogOpenService;
+  private readonly dialogHistoryService: DialogHistoryService;
   private readonly sessionHandler: SessionRequestHandler;
   private readonly systemHandler: SystemRequestHandler;
   private readonly settingsHandler: SettingsRequestHandler;
@@ -125,6 +127,9 @@ export class RemoteBridge {
     );
     this.dialogListService = new DialogListService({ logger: this.logger });
     this.dialogOpenService = new DialogOpenService({ logger: this.logger });
+    this.dialogHistoryService = new DialogHistoryService({
+      logger: this.logger,
+    });
 
     this.sessionHandler = new SessionRequestHandler({
       config: this.config,
@@ -310,6 +315,9 @@ export class RemoteBridge {
       case "dialog:open":
         await this.handleDialogOpen(clientId, incoming.payload);
         break;
+      case "dialog:history":
+        await this.handleDialogHistory(clientId, incoming.payload);
+        break;
       case "projects:add":
         this.projectHandler.handleAdd(
           incoming.payload.path,
@@ -494,6 +502,64 @@ export class RemoteBridge {
         dialogId,
         dialog,
         error: dialog ? null : "Dialog not found",
+      },
+    });
+  }
+
+  private async handleDialogHistory(
+    clientId: string,
+    payload: {
+      readonly requestId: string;
+      readonly workspaceSlug: string;
+      readonly dialogId: string;
+    }
+  ): Promise<void> {
+    const wsManager = this.wsManager;
+    if (!wsManager) {
+      return;
+    }
+    const scope = wsManager.getWorkspaceScope(clientId);
+    const workspaceRoot = scope?.workspacePath ?? null;
+    if (!workspaceRoot) {
+      this.sendScopeViolation(
+        clientId,
+        "dialog:history",
+        "Workspace scope is not selected"
+      );
+      return;
+    }
+    const workspaceSlug =
+      typeof payload.workspaceSlug === "string" ? payload.workspaceSlug : "";
+    const dialogId =
+      typeof payload.dialogId === "string" ? payload.dialogId : "";
+
+    if (workspaceSlug.trim().length === 0 || dialogId.trim().length === 0) {
+      wsManager.sendToClient(clientId, {
+        type: "dialog:history:result",
+        payload: {
+          requestId: payload.requestId,
+          workspaceSlug,
+          dialogId,
+          messages: [],
+          error: "Missing workspaceSlug or dialogId",
+        },
+      });
+      return;
+    }
+
+    const messages = await this.dialogHistoryService.readHistory({
+      workspaceRoot,
+      workspaceSlug,
+      dialogId,
+    });
+    wsManager.sendToClient(clientId, {
+      type: "dialog:history:result",
+      payload: {
+        requestId: payload.requestId,
+        workspaceSlug,
+        dialogId,
+        messages,
+        error: null,
       },
     });
   }

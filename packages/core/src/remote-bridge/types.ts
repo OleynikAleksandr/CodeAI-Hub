@@ -73,6 +73,16 @@ export type BridgeEvent =
       };
     }
   | {
+      readonly type: "dialog:history:result";
+      readonly payload: {
+        readonly requestId: string;
+        readonly workspaceSlug: string;
+        readonly dialogId: string;
+        readonly messages: readonly unknown[];
+        readonly error: string | null;
+      };
+    }
+  | {
       readonly type: "settings:loaded";
       readonly payload: {
         readonly settings: Record<string, unknown> | null;
@@ -162,6 +172,14 @@ export type IncomingMessage =
     }
   | {
       readonly type: "dialog:open";
+      readonly payload: {
+        readonly requestId: string;
+        readonly workspaceSlug: string;
+        readonly dialogId: string;
+      };
+    }
+  | {
+      readonly type: "dialog:history";
       readonly payload: {
         readonly requestId: string;
         readonly workspaceSlug: string;
