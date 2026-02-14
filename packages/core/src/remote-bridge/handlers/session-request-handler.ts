@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { access, readFile, stat } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import {
@@ -23,7 +23,6 @@ import type {
 } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
-import { listUnifiedSessionWorkspaceSlugs } from "../../unified-session/workspace-slugs";
 import { DescriptionStepStore } from "../../workflow/description";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type {
@@ -1215,57 +1214,6 @@ export class SessionRequestHandler {
     };
   }
 
-  private buildSessionFilePathForValidation(
-    workspaceKey: string,
-    providerId: string,
-    providerSessionId: string
-  ): string {
-    return buildSessionFilePath({
-      rootDirectory: SESSION_ROOT,
-      workspaceSlug: sanitizeWorkspaceSlug(workspaceKey),
-      provider: providerId,
-      sessionId: sanitizeWorkspaceSlug(providerSessionId),
-    });
-  }
-
-  private async validateProviderSessionExists(
-    workspacePath: string,
-    providerId: string,
-    providerSessionId: string
-  ): Promise<
-    { readonly valid: true } | { readonly valid: false; readonly error: string }
-  > {
-    const preferredWorkspaceKey =
-      sanitizeWorkspaceSlug(workspacePath) || "default-workspace";
-    const workspaceKeys = await listUnifiedSessionWorkspaceSlugs({
-      rootDirectory: SESSION_ROOT,
-      logger: this.logger,
-    });
-    const candidates = new Set<string>([
-      preferredWorkspaceKey,
-      ...workspaceKeys,
-    ]);
-
-    for (const workspaceKey of candidates) {
-      const filePath = this.buildSessionFilePathForValidation(
-        workspaceKey,
-        providerId,
-        providerSessionId
-      );
-      try {
-        await access(filePath);
-        return { valid: true };
-      } catch {
-        // continue
-      }
-    }
-
-    return {
-      valid: false,
-      error: `Provider session ${providerSessionId} does not exist for workspace ${workspacePath}`,
-    };
-  }
-
   private async resolveProviderSessionId(options: {
     readonly adapter: ProviderAdapter;
     readonly providerId: string;
@@ -1286,37 +1234,40 @@ export class SessionRequestHandler {
       }
 
       const trimmedSessionId = requestedProviderSessionId.trim();
-
-      // Workspace validation: ensure providerSessionId belongs to current workspace
-      const validation = await this.validateProviderSessionExists(
-        workspacePath,
-        providerId,
-        trimmedSessionId
-      );
-
-      if (!validation.valid) {
-        return { error: validation.error };
+      try {
+        const providerSessionId = await adapter.resumeSession(
+          trimmedSessionId,
+          workspacePath
+        );
+        return {
+          providerSessionId,
+          didResume: true,
+          supportsImmediateBinding: true,
+        };
+      } catch (error) {
+        return {
+          error: `Failed to resume ${providerId} session ${trimmedSessionId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        };
       }
-
-      const providerSessionId = await adapter.resumeSession(
-        trimmedSessionId,
-        workspacePath
-      );
-
-      return {
-        providerSessionId,
-        didResume: true,
-        supportsImmediateBinding: true,
-      };
     }
 
-    const providerSessionId = await adapter.createSession(workspacePath);
-    return {
-      providerSessionId,
-      didResume: false,
-      supportsImmediateBinding:
-        providerId === "geminiCli" && providerSessionId.length > 0,
-    };
+    try {
+      const providerSessionId = await adapter.createSession(workspacePath);
+      return {
+        providerSessionId,
+        didResume: false,
+        supportsImmediateBinding:
+          providerId === "geminiCli" && providerSessionId.length > 0,
+      };
+    } catch (error) {
+      return {
+        error: `Failed to create ${providerId} session: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      };
+    }
   }
 
   private async createAndRegisterSession(options: {
