@@ -37,6 +37,10 @@
 1. [TODO] UI: при построении “virtual conversation” для continuity chain скрывать повторяющиеся bootstrap сообщения для segmentIndex>0 (system prompt + первичный ack), не трогая основной диалог (scope: `src/client/ui/src/session/virtual-conversation.tsx`, `doc/TODO/todo-plan.md`; expected commit message: `fix(ui): suppress continuity bootstrap repeats in virtual conversation`)
 2. [TODO] Git Commit: `fix(ui): suppress continuity bootstrap repeats in virtual conversation` (hash: TBD)
 
+### Stream: PM/UI — Strong Dedupe For Replayed Messages
+1. [DONE] PM/UI: при пополнении snapshot по live stream игнорировать повторы по ключу `role+createdAt+content` (не только подряд), чтобы reconnect/replay не дублировал bootstrap и другие сообщения (scope: `src/client/project-manager/components/sessions/session-message-dedupe.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix(pm): dedupe replayed messages by createdAt+role+content`)
+2. [DONE] Git Commit: `fix(pm): dedupe replayed messages by createdAt+role+content` (hash: TBD)
+
 ### Stream: Docs — Contract For Cold Start + Hot Tail
 1. [TODO] Docs: описать контракт: cold-start из JSONL + hot-tail из live stream, правила dedupe и reconnect, а также что bootstrap повторы сегментов скрываются в UI (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(flow): document cold-start+tail contract and bootstrap suppression`)
 2. [TODO] Git Commit: `docs(flow): document cold-start+tail contract and bootstrap suppression` (hash: TBD)
