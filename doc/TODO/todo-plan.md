@@ -59,8 +59,8 @@ Source of Truth (архитектура):
 2. [DONE] Git Commit: `feat(pm): live dialog stream by dialogId` (hash: 7ac94d51)
 
 ### Stream: Phase Report (Phase 171)
-1. [TODO] Docs: Phase 171 report + update plan (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase171.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase171 report (pm live+send via dialogId)`)
-2. [TODO] Git Commit: `docs(flow): phase171 report (pm live+send via dialogId)` (hash: TBD)
+1. [DONE] Docs: Phase 171 report + update plan (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase171.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase171 report (pm live+send via dialogId)`)
+2. [DONE] Git Commit: `docs(flow): phase171 report (pm live+send via dialogId)` (hash: 9986edec)
 
 ---
 
