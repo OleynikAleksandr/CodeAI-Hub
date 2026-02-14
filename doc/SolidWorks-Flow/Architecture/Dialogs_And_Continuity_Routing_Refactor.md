@@ -97,7 +97,7 @@
 ### 4.3 Инварианты
 
 - `runSlug/providerId/dialogSessionId/historyJsonlPath` неизменны в рамках одного Agent Dialog.
-- Rollover/resume добавляет элемент в `segments[]`, а “текущий сегмент” = `segments[last]`.
+- Rollover/resume добавляет элемент в `segments[]`, а “текущий сегмент” определяется как последний элемент: `segments[segments.length - 1]`.
 
 ---
 
@@ -135,8 +135,10 @@
 Когда приходит user input для конкретного Agent Dialog:
 
 1. Core читает `chain.json`.
-2. Берёт текущий `providerSessionId = segments[last].providerSessionId`.
-3. Пытается отправить turn как resume в этот provider segment.
+2. Core вычисляет ТЕКУЩИЙ живой `providerSessionId` как последний сегмент в цепочке:
+   - `providerSessionId = segments[segments.length - 1].providerSessionId`
+   (для реальной отправки в провайдера Core использует именно это одно значение).
+3. Core отправляет turn как resume в provider session с этим `providerSessionId`.
 4. Если провайдер недоступен/segment не resume-able:
    - создать новый segment,
    - добавить в `segments[]`,
