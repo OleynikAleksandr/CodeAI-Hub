@@ -48,8 +48,8 @@
 4. [DONE] Git Commit: `feat(core): dialog open (index-backed)` (hash: 0bd8ddbb)
 
 ### Stream: Core — dialog:history (replay)
-1. [TODO] Core: `dialog:history` читает `<dialogId>.jsonl` и отдаёт нормализованные сообщения (без дублей) (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`, `packages/core/src/unified-session/history-reader.ts`, `packages/core/src/unified-session/history-format.ts`; expected commit message: `feat(core): dialog history (replay) by dialogId`)
-2. [TODO] Git Commit: `feat(core): dialog history (replay) by dialogId` (hash: TBD)
+1. [DONE] Core: `dialog:history` читает `<dialogId>.jsonl` и отдаёт нормализованные сообщения (без дублей) (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat(core): dialog history (jsonl replay)`)
+2. [DONE] Git Commit: `feat(core): dialog history (jsonl replay)` (hash: d79ae6b3)
 
 ### Stream: Core — dialog:send + dialog:message (live)
 1. [TODO] Core: `dialog:send` (маршрут по chain.segments[last].providerSessionId) + live event `dialog:message` с `dialogId` (scope: `packages/core/src/remote-bridge/handlers/dialog-send-service.ts`, `packages/core/src/providers/provider-router.ts`, `packages/core/src/remote-bridge/events/dialog-message-event.ts`; expected commit message: `feat(core): dialog send + live dialog message event`)
