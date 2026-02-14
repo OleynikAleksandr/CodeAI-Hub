@@ -34,7 +34,7 @@
 2. [DONE] Git Commit: `fix(pm): activate workspace after core reconnect` (hash: 4bba2724)
 
 ### Stream: UI — Remove Continuity Segment Bootstrap Repeats
-1. [TODO] UI: при построении “virtual conversation” для continuity chain скрывать повторяющиеся bootstrap сообщения для segmentIndex>0 (system prompt + первичный ack), не трогая основной диалог (scope: `src/client/ui/src/session/virtual-conversation.tsx`, `doc/TODO/todo-plan.md`; expected commit message: `fix(ui): suppress continuity bootstrap repeats in virtual conversation`)
+1. [DONE] UI: при построении “virtual conversation” для continuity chain скрывать повторяющиеся bootstrap сообщения для segmentIndex>0 (system prompt + первичный ack), не трогая основной диалог (scope: `src/client/ui/src/session/virtual-conversation.tsx`, `doc/TODO/todo-plan.md`; expected commit message: `fix(ui): suppress continuity bootstrap repeats in virtual conversation`)
 2. [TODO] Git Commit: `fix(ui): suppress continuity bootstrap repeats in virtual conversation` (hash: TBD)
 
 ### Stream: PM/UI — Strong Dedupe For Replayed Messages
