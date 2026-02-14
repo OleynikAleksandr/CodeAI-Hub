@@ -28,6 +28,7 @@
 - Workflow file-first: `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
 - Description → Reviewer: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
 - Workspace Runtime: `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
+- Dialog UI + Continuity Routing (refactor): `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`
 
 ---
 
