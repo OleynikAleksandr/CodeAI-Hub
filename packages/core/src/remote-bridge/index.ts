@@ -318,6 +318,9 @@ export class RemoteBridge {
       case "dialog:history":
         await this.handleDialogHistory(clientId, incoming.payload);
         break;
+      case "dialog:send":
+        await this.handleDialogSend(clientId, incoming.payload);
+        break;
       case "projects:add":
         this.projectHandler.handleAdd(
           incoming.payload.path,
@@ -560,6 +563,71 @@ export class RemoteBridge {
         dialogId,
         messages,
         error: null,
+      },
+    });
+  }
+
+  private async handleDialogSend(
+    clientId: string,
+    payload: {
+      readonly requestId: string;
+      readonly workspaceSlug: string;
+      readonly dialogId: string;
+      readonly content: string;
+    }
+  ): Promise<void> {
+    const wsManager = this.wsManager;
+    if (!wsManager) {
+      return;
+    }
+    const scope = wsManager.getWorkspaceScope(clientId);
+    const workspaceRoot = scope?.workspacePath ?? null;
+    if (!workspaceRoot) {
+      this.sendScopeViolation(
+        clientId,
+        "dialog:send",
+        "Workspace scope is not selected"
+      );
+      return;
+    }
+    const workspaceSlug =
+      typeof payload.workspaceSlug === "string" ? payload.workspaceSlug : "";
+    const dialogId =
+      typeof payload.dialogId === "string" ? payload.dialogId : "";
+    const content = typeof payload.content === "string" ? payload.content : "";
+
+    if (
+      workspaceSlug.trim().length === 0 ||
+      dialogId.trim().length === 0 ||
+      content.trim().length === 0
+    ) {
+      wsManager.sendToClient(clientId, {
+        type: "dialog:send:ack",
+        payload: {
+          requestId: payload.requestId,
+          workspaceSlug,
+          dialogId,
+          status: "rejected",
+          error: "Missing workspaceSlug/dialogId/content",
+        },
+      });
+      return;
+    }
+
+    const result = await this.sessionHandler.handleDialogSend({
+      workspaceRoot,
+      workspaceSlug,
+      dialogId,
+      content,
+    });
+    wsManager.sendToClient(clientId, {
+      type: "dialog:send:ack",
+      payload: {
+        requestId: payload.requestId,
+        workspaceSlug,
+        dialogId,
+        status: result.ok ? "sent" : "rejected",
+        error: result.ok ? null : result.error,
       },
     });
   }

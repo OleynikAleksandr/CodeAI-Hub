@@ -83,6 +83,16 @@ export type BridgeEvent =
       };
     }
   | {
+      readonly type: "dialog:send:ack";
+      readonly payload: {
+        readonly requestId: string;
+        readonly workspaceSlug: string;
+        readonly dialogId: string;
+        readonly status: "sent" | "rejected";
+        readonly error: string | null;
+      };
+    }
+  | {
       readonly type: "settings:loaded";
       readonly payload: {
         readonly settings: Record<string, unknown> | null;
@@ -184,6 +194,15 @@ export type IncomingMessage =
         readonly requestId: string;
         readonly workspaceSlug: string;
         readonly dialogId: string;
+      };
+    }
+  | {
+      readonly type: "dialog:send";
+      readonly payload: {
+        readonly requestId: string;
+        readonly workspaceSlug: string;
+        readonly dialogId: string;
+        readonly content: string;
       };
     }
   | {
