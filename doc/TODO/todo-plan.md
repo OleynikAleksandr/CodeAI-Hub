@@ -53,6 +53,6 @@
 1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки затронутых пакетов (scope: repo; expected commit message: `chore: quality gates before release`)
 2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A — без изменений в tracked files)
 3. [DONE] Build: `./scripts/build-all.sh` (version bump -> next patch) (scope: repo build; expected commit message: `chore(release): build-all for next patch`)
-4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: ba3c49cf)
-5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.589.vsix`) (scope: repo build; expected commit message: `chore(release): build vsix`)
+4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: 3ba80c21)
+5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.590.vsix`) (scope: repo build; expected commit message: `chore(release): build vsix`)
 6. [DONE] Git Commit: `chore(release): build vsix` (hash: N/A — VSIX artifact only)
