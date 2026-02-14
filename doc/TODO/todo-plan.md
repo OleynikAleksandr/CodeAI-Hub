@@ -32,6 +32,10 @@
 3. [DONE] Core: при workspace activate восстанавливать обе description-сессии из persisted snapshot: `collectorSession` + `reviewerSession` (fallback: legacy `session`) (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`; expected commit message: `fix(core): restore description collector+reviewer sessions on workspace activate`)
 4. [DONE] Git Commit: `fix(core): restore description collector+reviewer sessions on workspace activate` (hash: bddc2f04)
 
+### Stream: PM/UI — Reduce Redundant History Loads
+1. [DONE] PM/UI: не перезагружать history повторно при повторных `session:created` для одной и той же session (уменьшить риск дублей при reconnect/rehydrate) (scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit message: `fix(pm): avoid redundant history reloads to reduce transcript duplication`)
+2. [DONE] Git Commit: `fix(pm): avoid redundant history reloads to reduce transcript duplication` (hash: 6fa0947b)
+
 ### Stream: Spec And Invariants (Docs)
 1. [TODO] Docs: зафиксировать контракт «History (JSONL) + Tail (Live)»: стабильный `eventId/seq`, курсор, правила reconnect, и правило single subscription на `dialogSessionId` (scope: `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`, `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`; expected commit message: `docs(flow): define history+tail dialog contract`)
 2. [TODO] Git Commit: `docs(flow): define history+tail dialog contract` (hash: TBD)
