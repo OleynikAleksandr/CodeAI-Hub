@@ -72,6 +72,14 @@ type AgentMessageItem = ThreadItem & { readonly type: "agent_message" };
 const isAgentMessageItem = (item: ThreadItem): item is AgentMessageItem =>
   item.type === "agent_message";
 
+const resolveThreadItemPhase = (item: ThreadItem): string | null => {
+  const candidate = item as unknown as { readonly phase?: unknown };
+  return typeof candidate.phase === "string" ? candidate.phase : null;
+};
+
+const shouldSuppressAgentMessageItem = (item: ThreadItem): boolean =>
+  resolveThreadItemPhase(item) === "commentary";
+
 const areUsageLimitBucketsEqual = (
   left: CodexUsageLimitBucket | null,
   right: CodexUsageLimitBucket | null
@@ -982,6 +990,12 @@ export class CodexMessageProcessor {
     item: ThreadItem
   ): void {
     if (!isAgentMessageItem(item)) {
+      return;
+    }
+    // Codex emits an assistant message twice: once as a "commentary" phase and
+    // again as "final_answer". Commentary is internal and should not appear in
+    // the UI dialog history to avoid duplicates.
+    if (shouldSuppressAgentMessageItem(item)) {
       return;
     }
     if (event.type === "item.updated") {
