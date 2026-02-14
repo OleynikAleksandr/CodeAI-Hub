@@ -45,6 +45,26 @@ export const useWorkspaceScopeSync = (activeWorkspace?: WorkspaceProject) => {
         workspace: params.workspace,
         reason: params.reason,
       });
+      const httpUrl = api.getHttpUrl();
+      if (!httpUrl) {
+        return;
+      }
+
+      // After Core restart/reconnect we must activate the workspace even if the
+      // WS scope ACK didn't arrive yet (or timed out). Otherwise runtime session
+      // registry stays empty and PM can't open restored sessions.
+      if (
+        params.reason === "reconnect" &&
+        params.activateAfterAck &&
+        params.workspace &&
+        syncToken === latestScopeSyncTokenRef.current
+      ) {
+        activateWorkspace({
+          httpUrl,
+          workspacePath: params.workspace.path,
+          workspaceSlug: params.workspace.slug,
+        }).catch(() => {});
+      }
       if (
         !params.activateAfterAck ||
         !params.workspace ||
@@ -53,10 +73,6 @@ export const useWorkspaceScopeSync = (activeWorkspace?: WorkspaceProject) => {
         ack.workspaceRoot !== params.workspace.path ||
         syncToken !== latestScopeSyncTokenRef.current
       ) {
-        return;
-      }
-      const httpUrl = api.getHttpUrl();
-      if (!httpUrl) {
         return;
       }
       activateWorkspace({
