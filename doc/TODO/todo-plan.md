@@ -28,8 +28,8 @@ Source of Truth (архитектура):
 2. [DONE] Git Commit: `feat(pm): persist dialog tabs by dialogId` (hash: 296d386d)
 
 ### Stream: PM — дерево: клик открывает диалог (не resume)
-1. [TODO] Перевести клик по узлу `Reviewer <provider>` в дереве на событие `pm:dialog:open` (dialog intent), без требования runtime session (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `feat(pm): tree click opens dialog intent`)
-2. [TODO] Git Commit: `feat(pm): tree click opens dialog intent` (hash: TBD)
+1. [DONE] Перевести клик по узлу `Reviewer <provider>` в дереве на событие `pm:dialog:open` (dialog intent), без требования runtime session (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `feat(pm): tree click opens dialog intent`)
+2. [DONE] Git Commit: `feat(pm): tree click opens dialog intent` (hash: a0285526)
 
 ### Stream: PM — Session Panel: dialog:list + dialog:history (cold start + core restart)
 1. [TODO] Прокинуть `workspaceSlug` в `ProjectManagerSessionView` и реализовать open/replay: 
