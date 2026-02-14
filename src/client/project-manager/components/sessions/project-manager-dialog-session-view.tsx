@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
+import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import SessionView from "../../../ui/src/session/session-view";
@@ -14,6 +14,16 @@ import {
   type DialogIndexEntry,
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view-helpers";
+
+const createRequestId = (): string => {
+  if (
+    typeof globalThis.crypto !== "undefined" &&
+    "randomUUID" in globalThis.crypto
+  ) {
+    return globalThis.crypto.randomUUID();
+  }
+  return `pm-dialog-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
 
 export const ProjectManagerDialogSessionView = (props: {
   readonly intent: DialogOpenIntent | null;
@@ -51,6 +61,12 @@ export const ProjectManagerDialogSessionView = (props: {
       return;
     }
     pendingIntentRef.current = props.intent;
+    // Ensure Core scope is selected for this workspace so dialog commands are accepted.
+    api.selectWorkspace({
+      requestId: createRequestId(),
+      workspaceRoot: props.intent.workspacePath,
+      reason: "workspace_selected",
+    });
     requestDialogList(props.intent);
   }, [props.intent, requestDialogList]);
 
@@ -92,20 +108,7 @@ export const ProjectManagerDialogSessionView = (props: {
             return previous;
           }
           const base = createInitialSnapshot(nextSession, providerLabels);
-          const blocked: SessionSnapshot = {
-            ...base,
-            status: {
-              ...base.status,
-              connectionState: "blocked",
-              continuityLock: {
-                active: true,
-                reason: "dialog_mode_history_replay",
-                updatedAt: Date.now(),
-              },
-              updatedAt: Date.now(),
-            },
-          };
-          return { ...previous, [nextSession.id]: blocked };
+          return { ...previous, [nextSession.id]: base };
         });
         requestDialogHistory(intent, match.dialogId);
         return;
@@ -173,7 +176,13 @@ export const ProjectManagerDialogSessionView = (props: {
       coreConnectionStatus={connection.status}
       onCloseSession={() => props.onExit()}
       onSelectSession={() => {}}
-      onSendMessage={() => {}}
+      onSendMessage={(sessionId, content) => {
+        const intent = pendingIntentRef.current;
+        if (!intent) {
+          return;
+        }
+        api.dialogs.sendDialogMessage(intent.workspaceSlug, sessionId, content);
+      }}
       providerLabels={providerLabels}
       sessions={[session]}
       showEmptyState={true}
