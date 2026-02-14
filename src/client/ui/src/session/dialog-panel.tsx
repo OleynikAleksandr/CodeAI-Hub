@@ -1,5 +1,12 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SessionMessage } from "../../../../types/session";
+import {
+  buildMessageClassNames,
+  isSegmentBoundaryMessage,
+  mergeThinkingMessages,
+  resolveRoleLabel,
+  shouldRenderImplicitBoundaryAfter,
+} from "./dialog-panel-message-utils";
 import type { ProviderTheme } from "./helpers";
 import MarkdownContent from "./markdown-content";
 
@@ -10,9 +17,6 @@ type DialogPanelProps = {
   readonly providerTheme?: ProviderTheme | null;
   readonly providerLabel?: string | null;
 };
-
-const isSegmentBoundaryMessage = (message: SessionMessage): boolean =>
-  message.role === "system" && message.id.startsWith("segment-boundary:");
 
 type ThinkingMessageProps = {
   readonly message: SessionMessage;
@@ -130,7 +134,7 @@ const DialogPanel = ({
           const isTerminalThinking =
             message.role === "thinking" &&
             next &&
-            isSegmentBoundaryMessage(next);
+            (isSegmentBoundaryMessage(next) || next.role !== "assistant");
 
           const classNameBase = buildMessageClassNames(message, providerTheme);
           const className = isTerminalThinking
@@ -139,7 +143,9 @@ const DialogPanel = ({
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
-            return (
+            const shouldInsertImplicitBoundary =
+              shouldRenderImplicitBoundaryAfter(message, next);
+            return [
               <ThinkingMessage
                 className={className}
                 expanded={expanded}
@@ -147,8 +153,18 @@ const DialogPanel = ({
                 label={label}
                 message={message}
                 onToggle={toggleThinking}
-              />
-            );
+              />,
+              shouldInsertImplicitBoundary ? (
+                <div
+                  className="session-dialog__segment-boundary"
+                  key={`${message.id}:implicit-boundary`}
+                >
+                  <span className="session-dialog__segment-boundary-label">
+                    Новая сессия
+                  </span>
+                </div>
+              ) : null,
+            ].filter(Boolean);
           }
 
           return (
@@ -166,36 +182,6 @@ const DialogPanel = ({
 };
 
 export default DialogPanel;
-
-const buildMessageClassNames = (
-  message: SessionMessage,
-  providerTheme: ProviderTheme | null
-): string => {
-  const classes = [
-    "session-dialog__message",
-    `session-dialog__message--${message.role}`,
-  ];
-  if (message.role === "assistant" && providerTheme) {
-    classes.push(`session-dialog__message--assistant-${providerTheme}`);
-  }
-  return classes.join(" ");
-};
-
-const resolveRoleLabel = (
-  message: SessionMessage,
-  providerLabel: string | null
-): string => {
-  if (message.role === "assistant") {
-    return providerLabel ?? "Assistant";
-  }
-  if (message.role === "user") {
-    return "User";
-  }
-  if (message.role === "thinking") {
-    return "Thinking";
-  }
-  return "System";
-};
 
 const ThinkingMessage = ({
   message,
@@ -256,26 +242,4 @@ const StandardMessage = ({
       />
     </article>
   );
-};
-
-const mergeThinkingMessages = (
-  source: readonly SessionMessage[]
-): SessionMessage[] => {
-  const result: SessionMessage[] = [];
-  for (const message of source) {
-    if (message.role === "thinking") {
-      const previous = result.at(-1);
-      if (previous?.role === "thinking") {
-        result[result.length - 1] = {
-          ...previous,
-          content: `${previous.content}\n${message.content}`,
-        };
-        continue;
-      }
-      result.push({ ...message });
-      continue;
-    }
-    result.push(message);
-  }
-  return result;
 };
