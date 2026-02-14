@@ -65,9 +65,22 @@
 
 ### 4.1 Где лежит (человекочитаемо)
 
-Предлагаемый формат каталога:
+Ключевой принцип: стабильный идентификатор диалога (`dialogId`) совпадает с именем накопительного JSONL истории (без расширения) и используется как ключ для continuity chain.
 
-`<workspaceRoot>/.codeai-hub/<workspaceSlug>/continuity/<stage>/<rootSessionId>__<runSlug>__<providerId>/chain.json`
+Пример `dialogId` (из UI history JSONL):
+- `codex-65c6de0b-5f12-4373-869c-e768f21745c1-reviewer`
+
+Где лежит история (UI SOT):
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`
+  пример: `~/.codeai-hub/sessions/-Users-...-CodeAI-Hub/codexCli/<dialogId>.jsonl`
+
+Где лежит continuity chain (workflow routing SOT):
+- `<workspaceRoot>/.codeai-hub/<workspaceSlug>/continuity/<stage>/<dialogId>/chain.json`
+
+Для отладки допускается человекочитаемый суффикс каталога (не обязателен, т.к. `dialogId` уже содержит провайдера и роль):
+- `<dialogId>__<stage>/chain.json` (опционально)
+
+Важно: Core должен уметь читать legacy путь без `dialogId`-каталога (старые UUID rootSessionId).
 
 Пример:
 
@@ -79,14 +92,14 @@
 
 ### 4.2 Минимальная схема `chain.json` (обязательная)
 
-- `rootSessionId` (UUID)
+- `dialogId` (стабильный ID диалога; равен имени history JSONL без расширения)
 - `workspaceSlug`
 - `workspacePath` (нормализованный абсолютный)
 - `stage` (например `description`)
 - `runSlug` (например `reviewer` или `collector`)
 - `providerId` (например `codexCli`)
 - `dialogSessionId` (стабильный ID для UI-истории; не меняется при rollover)
-- `historyJsonlPath` (абсолютный путь к накопительному JSONL)
+- `historyJsonlPath` (абсолютный путь к накопительному JSONL: `.../<dialogId>.jsonl`)
 - `segments[]`:
   - `sessionId` (segment-local id, если нужен)
   - `providerSessionId`
@@ -152,7 +165,7 @@
 - Если legacy `chain.json` не содержит `runSlug/dialogSessionId/historyJsonlPath`:
   - Core делает backfill при первом чтении:
     - вычисляет/берёт `runSlug` из контекста вызова (узел/роль, который инициировал chain),
-    - фиксирует `dialogSessionId` (например: `<rootSessionId>__<runSlug>`),
+    - фиксирует `dialogSessionId` (например: `<dialogId>`),
     - выставляет `historyJsonlPath`.
   - затем переписывает `chain.json` в новой схеме (атомарно).
 
