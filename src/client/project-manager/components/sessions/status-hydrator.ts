@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
@@ -18,6 +18,8 @@ type HydratedState = {
   readonly providers: readonly ProviderStackDescriptor[];
   readonly sessions: readonly SessionRecord[];
 };
+
+const HYDRATE_THROTTLE_MS = 750;
 
 export const resolveProjectManagerCoreConfig = (): CoreBridgeConfig | null => {
   const httpUrl = api.getHttpUrl();
@@ -40,6 +42,70 @@ export const useProjectManagerCoreStatusHydrator = (params: {
   const [connection, setConnection] = useState<CoreConnectionState>({
     status: "connecting",
   });
+  const hasSuccessfulHydrationRef = useRef(false);
+  const lastHydrateAtRef = useRef(0);
+  const hydrateInFlightRef = useRef<Promise<void> | null>(null);
+
+  const hydrateFromStatus = useCallback(
+    (config: CoreBridgeConfig) => {
+      const now = Date.now();
+      if (now - lastHydrateAtRef.current < HYDRATE_THROTTLE_MS) {
+        return;
+      }
+      if (hydrateInFlightRef.current) {
+        return;
+      }
+      lastHydrateAtRef.current = now;
+
+      hydrateInFlightRef.current = (async () => {
+        try {
+          const response = await fetch(`${config.httpUrl}/api/v1/status`, {
+            method: "GET",
+          });
+          if (!response.ok) {
+            if (hasSuccessfulHydrationRef.current) {
+              setConnection({
+                status: "error",
+                detail: "Core status request failed.",
+              });
+            } else {
+              setConnection({
+                status: "connecting",
+                detail: "Waiting for CodeAI Hub core to respond…",
+              });
+            }
+            return;
+          }
+
+          const data = (await response.json()) as ServerStatusResponse;
+          const normalized = convertStatusResponse(data, FALLBACK_PROVIDERS);
+          hasSuccessfulHydrationRef.current = true;
+
+          params.onHydrate(normalized);
+          setConnection({ status: "ready" });
+
+          await loadSessionHistories(config, normalized.sessions, (payload) => {
+            params.onSessionHistory(payload);
+          });
+        } catch {
+          if (hasSuccessfulHydrationRef.current) {
+            setConnection({
+              status: "error",
+              detail: "Unable to reach CodeAI Hub core.",
+            });
+          } else {
+            setConnection({
+              status: "connecting",
+              detail: "Waiting for CodeAI Hub core to respond…",
+            });
+          }
+        }
+      })().finally(() => {
+        hydrateInFlightRef.current = null;
+      });
+    },
+    [params.onHydrate, params.onSessionHistory]
+  );
 
   useEffect(() => {
     const config = resolveProjectManagerCoreConfig();
@@ -48,40 +114,24 @@ export const useProjectManagerCoreStatusHydrator = (params: {
       return;
     }
 
-    setConnection({ status: "connecting" });
+    // Initial best-effort hydration.
+    hydrateFromStatus(config);
 
-    fetch(`${config.httpUrl}/api/v1/status`, { method: "GET" })
-      .then(async (response) => {
-        if (!response.ok) {
-          setConnection({
-            status: "error",
-            detail: "Core status request failed.",
-          });
-          return null;
-        }
-        const data = (await response.json()) as ServerStatusResponse;
-        return data;
-      })
-      .then((data) => {
-        if (!data) {
-          return;
-        }
-        const normalized = convertStatusResponse(data, FALLBACK_PROVIDERS);
-        params.onHydrate(normalized);
-        setConnection({ status: "ready" });
-        loadSessionHistories(config, normalized.sessions, (payload) => {
-          params.onSessionHistory(payload);
-        }).catch(() => {
-          // ignore
-        });
-      })
-      .catch(() => {
-        setConnection({
-          status: "error",
-          detail: "Unable to reach CodeAI Hub core.",
-        });
-      });
-  }, [params.onHydrate, params.onSessionHistory]);
+    // Critical: when Core restarts while PM stays open, WS reconnects and Core
+    // re-sends `core:state`. Use it as a signal to re-hydrate sessions and
+    // reload histories, otherwise the PM session list becomes stale and clicks
+    // can open “dead” sessions with empty history.
+    const unsubscribe = api.onCoreEvent((message) => {
+      if (message.type !== "core:state") {
+        return;
+      }
+      hydrateFromStatus(config);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [hydrateFromStatus]);
 
   return connection;
 };
