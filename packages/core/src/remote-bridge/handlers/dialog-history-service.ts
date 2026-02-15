@@ -17,6 +17,11 @@ export type DialogHistoryMessage = {
   readonly timestamp: string;
 };
 
+export type DialogHistoryResult = {
+  readonly messages: readonly DialogHistoryMessage[];
+  readonly lastCursor: number;
+};
+
 export class DialogHistoryService {
   private readonly logger: Logger;
   private readonly openService: DialogOpenService;
@@ -30,7 +35,8 @@ export class DialogHistoryService {
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
     readonly dialogId: string;
-  }): Promise<readonly DialogHistoryMessage[]> {
+    readonly cursor?: number | null;
+  }): Promise<DialogHistoryResult> {
     const dialog = await this.openService.openDialog({
       workspaceRoot: options.workspaceRoot,
       workspaceSlug: options.workspaceSlug,
@@ -38,7 +44,7 @@ export class DialogHistoryService {
     });
     const providerId = dialog?.providerId ?? null;
     if (!providerId) {
-      return [];
+      return { messages: [], lastCursor: 0 };
     }
 
     const workspaceKey = sanitizeWorkspaceSlug(options.workspaceRoot);
@@ -51,8 +57,15 @@ export class DialogHistoryService {
 
     try {
       const records = await readSessionEvents(filePath);
+      const lastCursor = records.length;
+      const requestedCursor =
+        typeof options.cursor === "number" && Number.isFinite(options.cursor)
+          ? Math.max(0, Math.min(Math.trunc(options.cursor), lastCursor))
+          : 0;
+      const slice =
+        requestedCursor > 0 ? records.slice(requestedCursor) : records;
       const byId = new Map<string, DialogHistoryMessage>();
-      for (const record of records) {
+      for (const record of slice) {
         if (record.type !== "message") {
           continue;
         }
@@ -68,14 +81,14 @@ export class DialogHistoryService {
       }
       const messages = Array.from(byId.values());
       messages.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-      return messages;
+      return { messages, lastCursor };
     } catch (error: unknown) {
       this.logger.warn("Failed to read dialog history", {
         workspaceSlug: options.workspaceSlug,
         dialogId: options.dialogId,
         error: error instanceof Error ? error.message : String(error),
       });
-      return [];
+      return { messages: [], lastCursor: 0 };
     }
   }
 }
