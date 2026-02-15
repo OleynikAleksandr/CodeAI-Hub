@@ -9,88 +9,85 @@
 
 Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
-Source of Truth (архитектура):
+Архитектурный источник правды (обязательно перечитать перед реализацией):
 - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`
 
 ---
 
-## Phase 190 — Design: Единый источник правды для панели диалога (owner: Oleksandr+Codex, updated: 2026-02-15)
+## Phase 200 — SSOT: единый источник правды для панели диалога (owner: Oleksandr+Codex, updated: 2026-02-15)
 
-**Goal (канон):** панель диалога в UI/PM (и после рестартов, и в реальном времени) отображает историю **только** из канонического JSONL:
+**Цель:** панель диалога в PM/UI (в real-time и после любых рестартов PM/Core) показывает ленту **только** из канонического JSONL:
 `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`
 
-**Симптомы, которые должны исчезнуть:**
-- user‑сообщения не появляются в real-time, но появляются после reload PM;
-- двойные/лишние divider’ы “Новая сессия” (из-за нескольких механизмов разметки);
-- token summary `#1 (..%) | #2 (..%) | ...` пропадает после рестартов;
-- разблокировка ввода происходит не в конце turn’а → можно отправить запрос “в никуда”.
+**Проблемы, которые закрываем этой фазой:**
+- пропажа user‑сообщений в real-time при живой работе PM;
+- пустой UI после рестарта PM+Core до клика по сессии в дереве (нет auto‑select/auto‑load);
+- расхождение “что показываем” между live‑режимом и cold start (должен быть 1 поток данных).
 
-### Stream: Архитектурный контракт “Dialog SSOT pipeline”
-1. [DONE] Docs: дописать контракт в архитектуру: (a) canonical JSONL как SSOT для ленты, (b) модель cursor/offset для догонки, (c) правила дедупликации/ID, (d) правила автоселекции после cold start (PM+Core restart), (e) что считается “стартом нового provider сегмента” и когда писать boundary+meta **идемпотентно** (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): add dialog ssot pipeline contract`)
-2. [DONE] Git Commit: `docs(flow): add dialog ssot pipeline contract` (hash: d3f9a7ba)
+### Stream: Live‑доставка сообщений из JSONL (cursor/tail) — без альтернативных источников
+1. [TODO] Fix: привести real-time обновление ленты к 1 механизму: сигнал `dialog:message` → запрос `dialog:history(cursor=lastCursor)` → append по cursor; убрать/запретить любые прямые добавления контента из runtime payload (scope: `src/client/project-manager/*` ≤3 файлов; expected commit message: `fix(pm): realtime dialog tail strictly from jsonl`)
+2. [TODO] Git Commit: `fix(pm): realtime dialog tail strictly from jsonl` (hash: TBD)
+3. [TODO] Fix: стабильные ключи/дедуп для UI элементов: дедуп только по (cursor|sequence), а не по message id, чтобы user‑сообщения не “затирались” коллизиями между сегментами (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): dedupe dialog items by cursor`)
+4. [TODO] Git Commit: `fix(ui): dedupe dialog items by cursor` (hash: TBD)
 
-### Stream: План миграции UI/PM (история vs live)
-1. [DONE] Docs: в плане зафиксировать, какие текущие источники данных отключаем/ограничиваем (snapshots/virtual conversation) и какие остаются только для статуса (locks/rollover/usage), чтобы лента не зависела от runtime chain (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): clarify ui data sources for dialog vs status`)
-2. [DONE] Git Commit: `docs(flow): clarify ui data sources for dialog vs status` (hash: beea3528)
-
----
-
-## Phase 191 — Core: История + tail из JSONL для UI/PM (owner: Codex, updated: 2026-02-15)
-
-### Stream: Core API — full history + tail (cursor)
-1. [DONE] Implement: Core отдаёт историю диалога по `dialogId` как full snapshot (с начала) + tail (с `cursor`) и возвращает `lastCursor` (scope: `packages/core/*` (≤3 файлов); expected commit message: `feat(core): dialog history + tail cursor api`)
-2. [DONE] Git Commit: `feat(core): dialog history + tail cursor api` (hash: 3bed3a86)
-
-### Stream: Core indexing — cold start (PM+Core restart)
-1. [DONE] Implement: после cold start Core умеет находить JSONL по `dialogId` без наличия активной runtime‑сессии (индексация/резолв пути), чтобы PM мог восстановить ленту без ручного клика (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): resolve dialog jsonl on cold start`)
-2. [DONE] Git Commit: `fix(core): resolve dialog jsonl on cold start` (hash: 08bcdd58)
-
-### Stream: Core write order — append then emit
-1. [DONE] Fix: идемпотентность для boundary/meta на старт нового provider сегмента (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): idempotent segment boundary meta`)
-2. [DONE] Git Commit: `fix(core): idempotent segment boundary meta` (hash: 1f5af7fc)
-3. [DONE] Fix: гарантировать порядок “append в JSONL → emit stream append event” (чтобы UI tail по cursor не читал “пусто” после live эвента) (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): jsonl append before broadcasts`)
-4. [DONE] Git Commit: `fix(core): jsonl append before broadcasts` (hash: afb6c401)
-
----
-
-## Phase 192 — PM/UI: Панель диалога только из JSONL (owner: Oleksandr+Codex, updated: 2026-02-15)
-
-### Stream: UI store — single source (history + append)
-1. [DONE] Implement: Session/PM dialog panel получает сообщения из одного канала: `history(full)` при открытии + `append(tail)` в real-time; snapshots/chain не используются для ленты (только для status) (scope: `src/client/ui/src/*` (≤3 файлов); expected commit message: `refactor(ui): dialog panel ssot via jsonl feed`)
-2. [DONE] Git Commit: `refactor(ui): dialog panel ssot via jsonl feed` (hash: a80ccb2a)
-
-### Stream: Дедуп/ID — устранить пропажу user‑сообщений
-1. [TODO] Fix: устранить дедуп/коллизии message id между сегментами, из-за которых user‑сообщения могут не отображаться в real-time (scope: `src/client/ui/src/*` (≤3 файлов); expected commit message: `fix(ui): stable dedupe for dialog appends`)
-2. [TODO] Git Commit: `fix(ui): stable dedupe for dialog appends` (hash: TBD)
-
-### Stream: Autoselect — убрать “пустую сессию” после cold start
-1. [TODO] Fix: после рестарта PM+Core восстановить last selected dialog (или выбрать reviewer dialog по умолчанию) и сразу загрузить full history (scope: `src/client/project-manager/*` (≤3 файлов); expected commit message: `fix(pm): restore last dialog selection on cold start`)
+### Stream: Cold start auto‑select/auto‑load
+1. [TODO] Fix: после рестарта PM+Core автоматически восстанавливать last selected dialog (или reviewer dialog по умолчанию) и сразу грузить full history из JSONL без ручного клика (scope: `src/client/project-manager/*` ≤3 файлов; expected commit message: `fix(pm): restore last dialog selection on cold start`)
 2. [TODO] Git Commit: `fix(pm): restore last dialog selection on cold start` (hash: TBD)
 
-### Stream: UI divider/summary — только explicit из JSONL
-1. [DONE] Fix: divider “Новая сессия” и summary `#1|#2|...` строятся/обновляются только из JSONL boundary/meta событий, без thinking‑хаков; после рестартов гарантированно восстанавливаются (scope: `src/client/ui/src/session/*` (≤3 файлов); expected commit message: `fix(ui): render boundaries and summary from jsonl only`)
-2. [DONE] Git Commit: `fix(ui): render boundaries and summary from jsonl only` (hash: dfcc8ecd)
+---
+
+## Phase 201 — Segment meta: boundary + #1|#2 пишутся по факту старта НОВОЙ физической сессии (owner: Oleksandr+Codex, updated: 2026-02-15)
+
+**Цель:** маркер “Новая сессия” и summary `#1 (..%) | #2 (..%) | ...` — это **метаданные сегментов** канонического JSONL.
+Они должны:
+- писаться **один раз** и **строго в начало** каждого нового сегмента;
+- триггериться **первичным фактом**: Core создал новую физическую сессию (rollover/context‑limit), а не косвенными симптомами (thinking/parsing сообщений);
+- восстанавливаться после любых рестартов из JSONL.
+
+### Stream: Core trigger — писать boundary/meta в момент создания новой физической сессии
+1. [TODO] Fix: привязать запись boundary/meta к событию/месту, где Core создаёт новую физическую сессию (rollover) и знает dialogId/agentId; убрать зависимости от парсеров/симптомов (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): write segment boundary on session creation`)
+2. [TODO] Git Commit: `fix(core): write segment boundary on session creation` (hash: TBD)
+3. [TODO] Fix: железная идемпотентность boundary/meta (защита от двойной записи при ретраях/повторах) + диагностика (лог/метрика) при попытке повторной записи (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): hard idempotency for segment meta`)
+4. [TODO] Git Commit: `fix(core): hard idempotency for segment meta` (hash: TBD)
+
+### Stream: UI render — только explicit boundary/meta из JSONL
+1. [TODO] Fix: финально убедиться, что UI никогда не вставляет divider имплицитно (thinking‑хак) и не имеет второго источника divider’ов; любые разделители/summary строятся только из событий JSONL (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): remove all implicit session dividers`)
+2. [TODO] Git Commit: `fix(ui): remove all implicit session dividers` (hash: TBD)
 
 ---
 
-## Phase 193 — Fix: input lock/unlock (turn boundaries) (owner: Oleksandr+Codex, updated: 2026-02-15)
+## Phase 202 — Input lock/unlock: нельзя отправить запрос “в никуда” (owner: Oleksandr+Codex, updated: 2026-02-15)
 
-### Stream: UI — блокировка ввода по “turn completed”
-1. [TODO] Fix: input разблокируется только после финального события завершения turn’а (а не по промежуточным сообщениям), чтобы нельзя было отправить запрос “в никуда” (scope: `src/client/ui/src/session/*` (≤3 файлов); expected commit message: `fix(ui): unlock input only after turn completion`)
+**Цель:** input lock контракт — единый и строгий.
+- UI разблокирует ввод **только** после `turn_completed` (последнего ответа агента в туре).
+- Core запрещает send, пока сегмент не готов (rollover/resume/continuity handshake).
+
+### Stream: Core — строгий контракт готовности к send
+1. [TODO] Fix: Core явно репортит состояние “можно/нельзя отправлять” и не допускает отправку до завершения bootstrap/rollover, чтобы UI не мог отправить “в никуда” (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): strict continuity lock contract for sends`)
+2. [TODO] Git Commit: `fix(core): strict continuity lock contract for sends` (hash: TBD)
+
+### Stream: UI — разблокировка ввода только по turn completion
+1. [TODO] Fix: UI игнорирует промежуточные события и снимает блокировку ввода только по финальному `turn_completed`/idle состоянию (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): unlock input only after turn completion`)
 2. [TODO] Git Commit: `fix(ui): unlock input only after turn completion` (hash: TBD)
 
-### Stream: Core — контракт блокировки (rollover/blocked)
-1. [DONE] Fix: bootstrap lock снимается только на `turn_completed` (а не на первом `assistant` событии), чтобы UI не мог отправить запрос “в никуда” во время bootstrap turn (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): unlock bootstrap gate on turn completion`)
-2. [DONE] Git Commit: `fix(core): unlock bootstrap gate on turn completion` (hash: 2f0e5543)
-3. [TODO] Fix: Core репортит блокировку/готовность так, чтобы UI не мог отправить, пока сегмент не готов (rollover/resume handshake) (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): strict continuity lock contract for sends`)
-4. [TODO] Git Commit: `fix(core): strict continuity lock contract for sends` (hash: TBD)
+---
+
+## Phase 203 — Naming/Continuity hygiene: корректные имена agent streams (owner: Oleksandr+Codex, updated: 2026-02-15)
+
+**Цель:** стабильные имена потоков и папок continuity.
+- Агент, который пишет description, должен именоваться `description`, а не `agent`.
+- У каждого агента (например reviewer) — одна бесконечная сессия и одна continuity‑папка.
+
+### Stream: Fix naming — description != agent
+1. [TODO] Fix: нормализовать именование per-agent JSONL/continuity директории: `*-description.jsonl` вместо `*-agent.jsonl` для description‑агента + миграция/alias чтения старого имени (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): correct description agent stream name`)
+2. [TODO] Git Commit: `fix(core): correct description agent stream name` (hash: TBD)
 
 ---
 
-## Phase 194 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-15)
+## Phase 204 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-15)
 
 ### Stream: Release Build (New Patch Release)
-1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки `npm run build:core`, `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
+1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки `npm run build --workspace core`, `npm run build --workspace project-manager`, `npm run build:webview`, `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
 2. [TODO] Git Commit: `chore: quality gates before release` (hash: TBD)
 3. [TODO] Build: `./scripts/build-all.sh` (version bump -> TBD) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
 4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
