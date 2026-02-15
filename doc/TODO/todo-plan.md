@@ -27,8 +27,8 @@
 ### Stream: Live‑доставка сообщений из JSONL (cursor/tail) — без альтернативных источников
 1. [DONE] Fix: привести real-time обновление ленты к 1 механизму: сигнал `dialog:message` → запрос `dialog:history(cursor=lastCursor)` → append по cursor; убрать/запретить любые прямые добавления контента из runtime payload (scope: `src/client/project-manager/*` ≤3 файлов; expected commit message: `fix(pm): realtime dialog tail strictly from jsonl`)
 2. [DONE] Git Commit: `fix(pm): realtime dialog tail strictly from jsonl` (hash: a8944e61)
-3. [TODO] Fix: стабильные ключи/дедуп для UI элементов: дедуп только по (cursor|sequence), а не по message id, чтобы user‑сообщения не “затирались” коллизиями между сегментами (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): dedupe dialog items by cursor`)
-4. [TODO] Git Commit: `fix(ui): dedupe dialog items by cursor` (hash: TBD)
+3. [DONE] Fix: стабилизировать id сообщений истории диалога (timestamp+role+messageId), чтобы дедуп по message.id не затирал user‑сообщения между сегментами (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts` ≤3 файлов; expected commit message: `fix(pm): stabilize dialog message ids across segments`)
+4. [DONE] Git Commit: `fix(pm): stabilize dialog message ids across segments` (hash: d94dc244)
 
 ### Stream: Cold start auto‑select/auto‑load
 1. [TODO] Fix: после рестарта PM+Core автоматически восстанавливать last selected dialog (или reviewer dialog по умолчанию) и сразу грузить full history из JSONL без ручного клика (scope: `src/client/project-manager/*` ≤3 файлов; expected commit message: `fix(pm): restore last dialog selection on cold start`)
