@@ -46,7 +46,13 @@ export class DialogListService {
     const indexPath = buildIndexPath(options);
     const index = await readJson<ContinuityIndex>(indexPath);
     if (index && index.workspaceSlug === options.workspaceSlug) {
-      return index.entries;
+      const needsLatestSessionIdBackfill = index.entries.some((entry) => {
+        const record = entry as unknown as Record<string, unknown>;
+        return !("latestSessionId" in record);
+      });
+      if (!needsLatestSessionIdBackfill) {
+        return index.entries;
+      }
     }
 
     // Fallback: derive entries by scanning chain.json files.
@@ -59,6 +65,7 @@ export class DialogListService {
           rootSessionId: chain.rootSessionId,
           dialogId: chain.dialogId ?? chain.rootSessionId,
           updatedAt: chain.updatedAt,
+          latestSessionId: last?.sessionId ?? null,
           providerId: last?.providerId ?? null,
           providerSessionId: last?.providerSessionId ?? null,
         };
