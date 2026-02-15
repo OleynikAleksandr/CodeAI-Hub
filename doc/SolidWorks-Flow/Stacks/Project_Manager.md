@@ -1,7 +1,7 @@
 # Project Manager (CEF UI) — Architecture & Contracts
 
 **Status:** Active
-**Updated:** 2026-02-11 (release 1.1.560)
+**Updated:** 2026-02-15 (release 1.1.606)
 **Owner:** Oleksandr
 
 ---
@@ -88,22 +88,30 @@ Project Manager обязан работать в режиме snapshot-first:
 
 Контракт (source of truth): `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`.
 
-## 4.1) Session History Source Of Truth (UI)
+## 4.1) Dialog History Source Of Truth (UI)
 
-Project Manager показывает историю сообщений, запрашивая Core endpoint:
-- `GET /api/v1/sessions/:sessionId/history`
+Project Manager показывает историю сообщений через WS bridge `dialog:*` по `dialogId`:
+- `dialog:list` / `dialog:open` — метаданные диалога + runtime binding (`latestSessionId`)
+- `dialog:history` — история сообщений из unified-session JSONL `<dialogId>.jsonl`
+- `dialog:send` — отправка user turn (Core сам маршрутизирует в текущий provider segment)
 
 Core читает историю из unified-session storage:
-- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`
 - `<workspaceKey>` = `sanitize(workspacePath)` (пример: `/Users/.../CodeAI-Hub` → `-Users-...-CodeAI-Hub`)
 
 Где:
 - `providerSessionId` используется для resume/focus сессии (provider-native id).
-- `dialogSessionId` используется как имя JSONL файла UI-истории и **не меняется** при rollover/resume (иначе после рестарта Core история будет “обрезана” до последнего сегмента).
+- `dialogId` используется как basename JSONL файла UI-истории и **не меняется** при rollover/resume (иначе после рестарта Core история будет “обрезана” до последнего сегмента).
 
 Provider-home (`~/.codeai-hub/providers/<provider>/home/`) используется провайдерами для их собственных CLI logs/rollouts и не является источником UI истории сообщений.
 
-Требование на будущее: для всех следующих агентов Project Manager ожидает, что Core будет выдавать стабильный `dialogSessionId` и писать историю в один накопительный JSONL, независимо от количества provider сегментов.
+Hybrid binding (норма для панели Sessions в PM):
+- **Messages** (лента диалога) — всегда по `dialogId`
+- **Status/Usage/Lock/Models** — по runtime `sessionId` (best‑effort `latestSessionId` из `dialog:list/open`)
+
+Примечание: `GET /api/v1/sessions/:sessionId/history` остаётся legacy/compat и не должен быть каноном для PM.
+
+Требование на будущее: для всех следующих агентов Project Manager ожидает, что Core будет выдавать стабильный `dialogId` и писать историю в один накопительный JSONL, независимо от количества provider сегментов.
 
 ---
 

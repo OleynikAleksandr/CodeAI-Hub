@@ -1,7 +1,7 @@
 # Refactor Architecture — Dialog UI + Continuity Routing (Core + Project Manager)
 
-**Status:** Draft (in discussion)
-**Updated:** 2026-02-14
+**Status:** Active (implemented baseline)
+**Updated:** 2026-02-15 (release 1.1.606)
 **Owner:** Oleksandr + Codex
 
 ---
@@ -59,6 +59,10 @@
 
 **Ключ:** `providerSessionId`.
 
+Важно: в Core каждый provider segment представлен отдельной runtime‑сессией с id `sessionId`
+(и этот `sessionId` меняется при rollover). UI использует `dialogId` для сообщений и `sessionId`
+для live status/usage/lock.
+
 ---
 
 ## 4) Single Source of Truth: `chain.json`
@@ -73,18 +77,18 @@
 
 Назначение `index.json`:
 - реализация `dialog:list` (быстрый список);
-- связывание `dialogId` -> `chain.json`/`historyJsonlPath`/метаданные.
+- связывание `dialogId` -> метаданные continuity chain + best‑effort runtime binding.
 
 `index.json` не заменяет `chain.json`. Он хранит только “каталог” (ускоритель), а все детали сегментов и routing остаются в `chain.json`.
 
-Минимальная запись в `index.json`:
-- `dialogId`
+Минимальная запись в `index.json` (как есть в реализации):
 - `stage`
-- `runSlug`
-- `providerId`
-- `chainPath`
-- `historyJsonlPath`
+- `rootSessionId`
+- `dialogId`
 - `updatedAt`
+- `latestSessionId` (core session id последнего сегмента; best‑effort)
+- `providerId` (последний сегмент; best‑effort)
+- `providerSessionId` (последний сегмент; best‑effort)
 
 ### 4.1 Где лежит (человекочитаемо)
 
@@ -111,23 +115,21 @@
 
 ### 4.2 Минимальная схема `chain.json` (обязательная)
 
-- `dialogId` (стабильный ID диалога; равен имени history JSONL без расширения)
+- `rootSessionId` (id первого сегмента в цепочке; legacy ключ)
+- `dialogId` (опционально; стабильный UI ключ. Для legacy chains может отсутствовать → трактуем как `rootSessionId`)
 - `workspaceSlug`
-- `workspacePath` (нормализованный абсолютный)
 - `stage` (например `description`)
-- `runSlug` (например `reviewer` или `collector`)
-- `providerId` (например `codexCli`)
-- `historyJsonlPath` (абсолютный путь к накопительному JSONL: `.../<dialogId>.jsonl`)
 - `segments[]`:
-  - `sessionId` (segment-local id, если нужен)
-  - `providerSessionId`
+  - `sessionId` (core runtime session id сегмента)
+  - `providerId`
+  - `providerSessionId` (provider-native id)
   - `createdAt`
   - `tokenUsage` (опционально)
 - `updatedAt`
 
 ### 4.3 Инварианты
 
-- `dialogId/runSlug/providerId/historyJsonlPath` неизменны в рамках одного Agent Dialog.
+- `dialogId` неизменен в рамках одного Agent Dialog.
 - Rollover/resume добавляет элемент в `segments[]`, а “текущий сегмент” определяется как последний элемент: `segments[segments.length - 1]`.
 
 ### 4.4 Формат `dialogId` (простое правило, без коллизий)
@@ -145,13 +147,19 @@
 
 ## 5) UI История: один накопительный JSONL
 
-Путь хранится в `chain.json` (`historyJsonlPath`). Это единственный JSONL, который PM использует для восстановления.
+Путь **не хранится** в `chain.json`. Он вычисляется детерминированно из:
+- `workspaceKey = sanitize(workspaceRoot)`
+- `providerId`
+- `dialogId` (sanitize-safe)
 
-Важно: сейчас именно этот механизм (стабильное восстановление диалога из накопительного JSONL после рестартов/закрытий) работает нестабильно; конкретизация и финальный контракт чтения/гидрации будут зафиксированы отдельным подразделом ниже после разбирательства.
+Канонический путь unified-session истории:
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`
+
+Это единственный источник правды для сообщений в панели диалога (PM).
 
 ### 5.0 Core Writes, PM Reads (обязательное правило)
 
-- **Пишет историю только Core.** Project Manager (CEF UI) работает с `historyJsonlPath` строго в режиме read-only.
+- **Пишет историю только Core.** Project Manager (CEF UI) получает историю **только** через `dialog:history` (read‑only).
 - PM не создаёт и не модифицирует `<dialogId>.jsonl`.
 - Любая запись в историю происходит в Core в результате обработки live событий/turn lifecycle.
 
@@ -168,16 +176,17 @@
 
 Чтобы алгоритм был реализуем, Core предоставляет PM минимальный набор операций, работающих по `dialogId`:
 
-- `dialog:list` (per-workspace): список известных диалогов с метаданными (минимум `dialogId`, `stage`, `runSlug`, `providerId`, `historyJsonlPath`).
-- `dialog:open` (by `dialogId`): вернуть метаданные диалога (минимум `historyJsonlPath`) и (опционально) последнюю отметку `updatedAt`.
-- `dialog:history` (by `dialogId`): вернуть сообщения из `<dialogId>.jsonl` (только `message` записи).
-- `dialog:send` (by `dialogId`): отправить user turn; Core сам берёт `segments[last].providerSessionId` из `chain.json` и делает resume.
-- Live stream event `dialog:message` (by `dialogId`): доставка новых сообщений в PM (см. 5.4).
+- `dialog:list` (per-workspace): список известных диалогов как `ContinuityIndexEntry[]`
+  (включая `dialogId`, `stage`, `updatedAt`, а также `latestSessionId/providerId/providerSessionId` как best‑effort поля для binding).
+- `dialog:open` (by `dialogId`): вернуть `ContinuityIndexEntry` (или `null`, если диалог не найден).
+- `dialog:history` (by `dialogId`, optional `cursor`): вернуть сообщения из `<dialogId>.jsonl` + `lastCursor` (для tail‑догонки).
+- `dialog:send` (by `dialogId`): отправить user turn; Core сам резолвит последний сегмент и обеспечивает runtime session для отправки.
+- Live stream event `dialog:message` (by `dialogId`): доставка новых сообщений (уже записанных Core в unified-session JSONL).
 
-Черновой алгоритм (пока не канон):
-1. Получить метаданные диалога (минимум: `dialogId`, `historyJsonlPath`, `stage/runSlug/providerId`).
-2. Считать историю из JSONL и отрисовать.
-3. Подключить live-tail (WS) и добавлять новые события.
+Алгоритм:
+1. Получить `ContinuityIndexEntry` через `dialog:open(dialogId)` (или взять из `dialog:list`).
+2. Считать историю через `dialog:history(dialogId)` и отрисовать.
+3. Подключить live-tail (WS) и добавлять `dialog:message` события по `dialogId`.
 
 Важно: шаг 3 не блокирует шаг 2.
 
@@ -231,41 +240,45 @@ PM хранит и восстанавливает состояние вклад�
 
 Нельзя полагаться на временный `sessionId` Core как на ключ диалога: после рестарта Core он меняется и не подходит для восстановления.
 
+### 5.5 Hybrid binding (Dialog messages ≠ Runtime status)
+
+Панель Sessions в PM содержит несколько независимых UI‑слоёв:
+- **Dialog panel** (лента сообщений) — грузится и обновляется **только** по `dialogId` через `dialog:history` + live `dialog:message`.
+- **Status/Usage/Lock/Binding/Models** — грузится и обновляется по **runtime session id**.
+
+Контракт binding:
+- `dialog:list`/`dialog:open` возвращает `latestSessionId` (core session id последнего сегмента).
+- PM привязывает status подписки (`workspace:snapshot` / `session:stream`) к `latestSessionId`.
+
+Именно это разделение устраняет класс регрессий “в диалоге одно, в статусе другое” и позволяет показывать реальную выбранную модель (например `GPT-5.3-Codex (medium)`), а не только provider label.
+
 ---
 
 ## 6) Алгоритм отправки сообщения пользователя (Core)
 
-Когда приходит user input для конкретного Agent Dialog:
+Когда приходит user input для конкретного Agent Dialog (`dialog:send`):
 
-1. Core читает `chain.json`.
-2. Core вычисляет ТЕКУЩИЙ живой `providerSessionId` как последний сегмент в цепочке:
-   - `providerSessionId = segments[segments.length - 1].providerSessionId`
-   (для реальной отправки в провайдера Core использует именно это одно значение).
-3. Core отправляет turn как resume в provider session с этим `providerSessionId`.
-4. Если провайдер недоступен/segment не resume-able:
-   - создать новый segment,
-   - добавить в `segments[]`,
-   - повторить отправку.
-5. Все новые сообщения (user/assistant/system) пишутся в `historyJsonlPath`.
+1. Core находит continuity chain по `dialogId` и берёт последний сегмент (`segments.at(-1)`).
+2. Core обеспечивает наличие runtime session для `(providerId, providerSessionId)` последнего сегмента:
+   - если runtime session уже существует в SessionManager — переиспользует;
+   - иначе создаёт/resume runtime session и привязывает её к `rootSessionId=dialogId`.
+3. Core применяет send-guard: если идёт continuity rollover/resume bootstrap (`awaitingBootstrapTurn`), запрос отклоняется (чтобы UI не отправил “в никуда”).
+4. Core диспатчит сообщение как обычный `session:message` в найденную runtime session.
+5. Все новые сообщения (user/assistant/thinking/system) append’ятся Core в unified-session JSONL `<dialogId>.jsonl` и транслируются в UI как live `dialog:message`.
 
 ---
 
 ## 7) Миграция (без остановки мира)
 
-- Если legacy `chain.json` не содержит `runSlug/dialogId/historyJsonlPath`:
-  - Core делает backfill при первом чтении:
-    - вычисляет/берёт `runSlug` из контекста вызова (узел/роль, который инициировал chain),
-    - фиксирует `dialogId` (как basename накопительного history JSONL),
-    - выставляет `historyJsonlPath`.
-  - затем переписывает `chain.json` в новой схеме (атомарно).
+- Legacy chains без `dialogId` поддерживаются: `dialogId` трактуется как `rootSessionId`.
+- Legacy `continuity/index.json` без поля `latestSessionId` backfill’ится через сканирование `chain.json` (best‑effort).
 
 ---
 
 ## 8) Открытые вопросы
 
-- Где канонично хранить реестр “диалогов” для быстрого списка в PM: сканирование `continuity/**/chain.json` или отдельный индекс-файл per-workspace.
-- Стандарт имени `runSlug`: `reviewer/collector` или более детальные (`description-reviewer`).
-- Единый формат JSONL-событий (минимум полей для PM) и правило генерации `messageId` (чтобы дедуп был строгим).
+- Стандарт имени ролей в `dialogId`: сейчас поддерживаем `reviewer/collector`, но нужно зафиксировать policy для новых ролей.
+- Cursor semantics: сейчас `cursor` в `dialog:history` = индекс записи в JSONL (replay‑safe), важно не “переизобретать” другой offset.
 
 ---
 
@@ -334,7 +347,7 @@ UI:
 
 ### 11.2 Модель загрузки
 - **Cold start**: UI запрашивает `history(full)` (вся история диалога) и получает `lastCursor`.
-- **Live**: Core после каждого append в JSONL эмитит `dialog:append` (или аналог) с тем же сообщением и `cursor`.
+- **Live**: Core после каждого append в JSONL эмитит `dialog:message` с тем же сообщением (UI при необходимости может догонять через `dialog:history(cursor)`).
 - **Re-sync**: если стрим потерян/подозрение на пропуск, UI запрашивает `history(tail, cursor)` и догоняет ленту.
 
 ### 11.3 Cursor / дедупликация

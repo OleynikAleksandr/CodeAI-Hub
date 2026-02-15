@@ -1,7 +1,7 @@
 # Session Continuity (SolidWorks-Flow) — Rollover / Auto-Handoff (Source of Truth)
 
 **Status:** Active
-**Updated:** 2026-02-11 (release 1.1.560)
+**Updated:** 2026-02-15 (release 1.1.606)
 **Owner:** Oleksandr + Codex
 
 ---
@@ -120,9 +120,9 @@ Defaults (если настройка отсутствует):
 
 Параллельно с provider continuity, Project Manager должен обеспечивать устойчивое отображение диалога агента:
 
-- **Cold start (после перезапуска Core/PM):** история диалога восстанавливается из unified JSONL (append-only) по `dialogSessionId`.
-  - Формат/путь: `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`, где `workspaceKey = sanitize(workspacePath)`.
-- **Hot mode (PM активен):** новые сообщения приходят как live stream (WS `session:message`) и добавляются в runtime snapshot.
+- **Cold start (после перезапуска Core/PM):** история диалога восстанавливается из unified JSONL (append-only) по `dialogId` (basename JSONL).
+  - Формат/путь: `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`, где `workspaceKey = sanitize(workspacePath)`.
+- **Hot mode (PM активен):** новые сообщения приходят как live stream `dialog:message` по `dialogId`, а статус/usage/lock обновляются через snapshot‑first по runtime session id (`latestSessionId`).
 - **Dedupe (обязателен):** UI должен гасить replay/reconnect повторы:
   - по `messageId` (строгая идентичность),
   - и по ключу `role + createdAt + content` (tail dedupe), т.к. некоторые replays могут приходить с новыми id.
@@ -233,27 +233,27 @@ Fallback rule:
 
 История диалога в UI читается **не из провайдерных логов**, а из unified-session JSONL:
 
-- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`
 
 Где:
 - `providerSessionId` — provider-native id (используется для resume и для привязки provider events).
-- `dialogSessionId` — **стабильный** id логического диалога агента для UI-истории (не меняется при rollover/resume и переживает рестарты Core).
+- `dialogId` — **стабильный** id логического диалога агента для UI-истории (не меняется при rollover/resume и переживает рестарты Core).
 
 Важно (с 1.1.585):
 - Нельзя использовать `providerSessionId` как имя файла истории для long-lived агентов: это приводит к распаду истории на сегменты и потере склейки после рестарта Core.
-- Для всех **следующих агентов** и flow-ноды/шагов, где есть длительный диалог, Core обязан выделять `dialogSessionId` и писать unified-session в один накопительный JSONL.
-  - уточнение (Phase 158): **1 агент = 1 JSONL**. Если в рамках одного stage есть разные агенты (например `description: collector` и `description: reviewer`), у них обязаны быть **разные** `dialogSessionId` (и, соответственно, разные файлы истории).
+- Для всех **следующих агентов** и flow-ноды/шагов, где есть длительный диалог, Core обязан выделять `dialogId` и писать unified-session в один накопительный JSONL.
+  - уточнение (Phase 158): **1 агент = 1 JSONL**. Если в рамках одного stage есть разные агенты (например `description: collector` и `description: reviewer`), у них обязаны быть **разные** `dialogId` (и, соответственно, разные файлы истории).
 
 Критичный инвариант: `workspaceKey` должен быть **пер‑сессионным**, иначе в multi-workspace режиме после рестарта Core диалог может “пропасть” (история окажется в другом bucket’е).
 
 Референс реализации:
 - `packages/core/src/remote-bridge/handlers/session-request-handler.ts` (register + bind)
 - `packages/core/src/unified-session/storage.ts` (workspaceKey, promote, fallback)
-- `packages/core/src/remote-bridge/handlers/http-api-router.ts` (`GET /api/v1/sessions/:sessionId/history`)
+- `packages/core/src/remote-bridge/handlers/dialog-history-service.ts` (`dialog:history`)
 
 Anti‑regression правила:
 1. `providerId` должен быть стабильной строкой (участвует в пути).
-2. `dialogSessionId` является именем файла истории.
-3. `dialogSessionId` не должен меняться при rollover/resume; `providerSessionId` может меняться.
+2. `dialogId` является именем файла истории.
+3. `dialogId` не должен меняться при rollover/resume; `providerSessionId` может меняться.
 4. Нельзя привязывать history к “текущему” workspace Core; только к `session.workspacePath`.
-5. Backfill (миграция): для legacy истории без per-agent `dialogSessionId` (например смешанный файл `.../<baseSessionId>.jsonl`) Core выполняет best-effort migrate: при первом запуске агента промоутит/rename `.../<baseSessionId>.jsonl` в `.../<baseSessionId>__<agentKind>.jsonl` (например `__collector` или `__reviewer`).
+5. Backfill (миграция): для legacy истории без per-agent `dialogId` (например смешанный файл `.../<baseSessionId>.jsonl`) Core выполняет best-effort migrate: при первом запуске агента промоутит/rename `.../<baseSessionId>.jsonl` в `.../<baseSessionId>__<agentKind>.jsonl` (например `__collector` или `__reviewer`).

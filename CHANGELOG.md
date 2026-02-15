@@ -1,3 +1,11 @@
+## [1.1.606] - 2026-02-15
+### Fixed
+- Project Manager: восстановлен real-time binding статуса/usage/lock/models к runtime `sessionId` (best-effort `latestSessionId`), при сохранении SSOT сообщений по `dialogId` через `dialog:history` + live `dialog:message`.
+- Session UI: строка `Models:` снова показывает выбранную модель (displayName, например `GPT-5.3-Codex (medium)`), а не только provider label.
+
+### Docs
+- SolidWorks-Flow: актуализированы документы по Dialog UI + Continuity routing под `1.1.606`; прогресс-репорты рефакторинга перенесены в `doc/SolidWorks-Flow/Archive/`.
+
 ## [1.1.603] - 2026-02-15
 ### Fixed
 - Session UI: убран двойной divider “Новая сессия” (не рендерим implicit divider после `thinking`, если в истории есть explicit boundary из JSONL).

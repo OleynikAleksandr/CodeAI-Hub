@@ -23173,13 +23173,57 @@ ${path2}` : path2;
     LEGACY_CONTINUITY_INTERNAL_ACK
   ]);
   var INLINE_MARKDOWN_CODE_PATTERN = /^`([^`]+)`$/;
+  var JSON_CODE_FENCE_PATTERN = /```(?:json)?\s*([\s\S]*?)\s*```/gi;
   var normalizeContinuityInternalContent = (content3) => {
     const trimmed = content3.trim();
     return INLINE_MARKDOWN_CODE_PATTERN.exec(trimmed)?.[1]?.trim() ?? trimmed;
   };
-  var isContinuityInternalMessage = (message) => message.role === "assistant" && CONTINUITY_INTERNAL_MESSAGES.has(
-    normalizeContinuityInternalContent(message.content)
-  );
+  var tryParseContinuityInternalAck = (content3) => {
+    const normalized = normalizeContinuityInternalContent(content3);
+    if (CONTINUITY_INTERNAL_MESSAGES.has(normalized)) {
+      return normalized;
+    }
+    const trimmed = content3.trim();
+    if (trimmed.includes(LEGACY_CONTINUITY_INTERNAL_ACK)) {
+      return LEGACY_CONTINUITY_INTERNAL_ACK;
+    }
+    const tryParseJson = (candidate) => {
+      const json = candidate.trim();
+      if (!(json.startsWith("{") && json.endsWith("}"))) {
+        return null;
+      }
+      try {
+        const parsed = JSON.parse(json);
+        if (!parsed || typeof parsed !== "object") {
+          return null;
+        }
+        const record = parsed;
+        if (typeof record.answer !== "string") {
+          return null;
+        }
+        const answer = record.answer.trim();
+        return CONTINUITY_INTERNAL_MESSAGES.has(answer) ? answer : null;
+      } catch {
+        return null;
+      }
+    };
+    const directJsonAck = tryParseJson(trimmed);
+    if (directJsonAck) {
+      return directJsonAck;
+    }
+    for (const match of trimmed.matchAll(JSON_CODE_FENCE_PATTERN)) {
+      const fenceBody = match[1];
+      if (typeof fenceBody !== "string") {
+        continue;
+      }
+      const fencedAck = tryParseJson(fenceBody);
+      if (fencedAck) {
+        return fencedAck;
+      }
+    }
+    return null;
+  };
+  var isContinuityInternalMessage = (message) => (message.role === "assistant" || message.role === "thinking") && tryParseContinuityInternalAck(message.content) !== null;
 
   // src/client/ui/src/session/session-tabs.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime());
@@ -23379,15 +23423,50 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/virtual-conversation.tsx
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
-  var filterContinuityInternalMessages = (messages) => {
-    for (const message of messages) {
-      if (isContinuityInternalMessage(message)) {
-        return messages.filter(
-          (candidate) => !isContinuityInternalMessage(candidate)
-        );
-      }
+  var filterContinuityInternalSegmentMessages = (segment) => {
+    if (segment.length === 0) {
+      return segment;
     }
-    return messages;
+    const containsInternalAck = segment.some(
+      (message) => isContinuityInternalMessage(message)
+    );
+    const withoutInternalAck = containsInternalAck ? segment.filter((message) => !isContinuityInternalMessage(message)) : segment;
+    if (!containsInternalAck) {
+      return withoutInternalAck;
+    }
+    const firstUserIndex = withoutInternalAck.findIndex(
+      (message) => message.role === "user"
+    );
+    if (firstUserIndex < 0) {
+      return withoutInternalAck.filter(
+        (message) => message.role !== "assistant" && message.role !== "thinking"
+      );
+    }
+    const prefix = withoutInternalAck.slice(0, firstUserIndex).filter(
+      (message) => message.role !== "assistant" && message.role !== "thinking"
+    );
+    if (prefix.length === 0) {
+      return withoutInternalAck;
+    }
+    return [...prefix, ...withoutInternalAck.slice(firstUserIndex)];
+  };
+  var filterContinuityInternalMessages = (messages) => {
+    if (!messages.some((message) => isContinuityInternalMessage(message))) {
+      return messages;
+    }
+    const next = [];
+    let segment = [];
+    for (const message of messages) {
+      if (isSegmentBoundaryMessage(message)) {
+        next.push(...filterContinuityInternalSegmentMessages(segment));
+        segment = [];
+        next.push(message);
+        continue;
+      }
+      segment.push(message);
+    }
+    next.push(...filterContinuityInternalSegmentMessages(segment));
+    return next;
   };
   var resolveActiveSessionSnapshot = (options) => {
     if (!options.activeSessionId) {

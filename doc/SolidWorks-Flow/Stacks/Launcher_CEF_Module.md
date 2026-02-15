@@ -4,7 +4,7 @@
 CodeAI Hub uses a dedicated Chromium Embedded Framework (CEF) launcher to run the standalone **Project Manager** outside VS Code. The launcher ships as a platform-specific binary (`CodeAIHubLauncher`) and is coupled with the official CEF minimal runtime published by Spotify CDN. The extension downloads, installs, and upgrades the launcher automatically based on `assets/launcher/manifest.json`.
 
 
-- **Current launcher version:** `CodeAIHubLauncher` 1.1.560 (macOS arm64)
+- **Current launcher version:** `CodeAIHubLauncher` 1.1.606 (macOS arm64)
 - **CEF distribution:** minimal build `141.0.10+g1d65b0d+chromium-141.0.7390.123`
 - **Primary install path:** `~/.codeai-hub/packages/launcher/<platform>/<version>/`
 - **Legacy fallback:** `~/.codeai-hub/cef-launcher/<platform>/<version>/` (mirrored for backward compatibility)
@@ -12,8 +12,8 @@ CodeAI Hub uses a dedicated Chromium Embedded Framework (CEF) launcher to run th
 
 ## Runtime Delivery
 1. On activation the extension calls `ensureCefRuntime` and `ensureLauncherInstalled`.
-2. The manifest entry (`baseUrl` → `file:///Users/oleksandroliinyk/.codeai-hub/releases/`) resolves to a tarball (`CodeAIHubLauncher-macos-arm64-1.1.560.tar.bz2`).
-3. The archive is downloaded or reused from the local cache, verified via SHA-1 and unpacked into `~/.codeai-hub/packages/launcher/darwin-arm64/1.1.560/`.
+2. The manifest entry (`baseUrl` → `file:///Users/oleksandroliinyk/.codeai-hub/releases/`) resolves to a tarball (`CodeAIHubLauncher-macos-arm64-1.1.606.tar.bz2`).
+3. The archive is downloaded or reused from the local cache, verified via SHA-1 and unpacked into `~/.codeai-hub/packages/launcher/darwin-arm64/1.1.606/`.
 4. Runtime integrity check validates required launcher artifacts before reusing/installing:
    - launcher executable (`CodeAIHubLauncher.app/Contents/MacOS/CodeAIHubLauncher`);
    - macOS CEF framework binary (`Chromium Embedded Framework.framework/Chromium Embedded Framework`).
@@ -48,28 +48,28 @@ On macOS we use a Thin Bundle + Binary Copy strategy:
 ```
 ~/.codeai-hub/
   packages/
-    launcher/
-      darwin-arm64/
-        1.1.560/
+        launcher/
+          darwin-arm64/
+        1.1.606/
           CodeAIHubLauncher.app
           config/
             project-manager.json
           install.json
-        current -> 1.1.560
+        current -> 1.1.606
     ui/
       project-manager/
-        1.1.560/
-        current -> 1.1.560
+        1.1.606/
+        current -> 1.1.606
       vscode-webview/
-        1.1.560/
-        current -> 1.1.560
+        1.1.606/
+        current -> 1.1.606
   cef-launcher/
     darwin-arm64/
-      1.1.560/  (legacy mirror)
+      1.1.606/  (legacy mirror)
   releases/
-    CodeAIHubLauncher-macos-arm64-1.1.560.tar.bz2
-    project-manager-1.1.560.tar.bz2
-    vscode-webview-1.1.560.tar.bz2
+    CodeAIHubLauncher-macos-arm64-1.1.606.tar.bz2
+    project-manager-1.1.606.tar.bz2
+    vscode-webview-1.1.606.tar.bz2
 ```
 
 

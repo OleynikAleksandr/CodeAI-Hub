@@ -1,7 +1,7 @@
 # Session UI — Layout Stability (Fixed Heights + Info Consolidation)
 
 **Status:** Active (Phase 120 implemented; Phase 122 planned adjustments)
-**Updated:** 2026-02-10
+**Updated:** 2026-02-15
 **Owner:** Oleksandr + Codex
 
 ---
@@ -47,7 +47,7 @@
 - `Models: Opus  |  Tokens: 0 (100%)`
 
 Правила отображения:
-- `<modelName>`: primary/активная модель (пример: `Opus`).
+- `<modelName>`: выбранная runtime модель (displayName), а не label провайдера (пример: `GPT-5.3-Codex (medium)`, а не `Codex`).
 - `<used>`: число с разделителем тысяч и запятой (`200,000`).
 - `<percent>`: процент оставшегося окна (как показано в UI), целое значение.
 
@@ -119,7 +119,7 @@
 **Требование:** ID должен отображаться в табе рядом с названием агента/провайдера.
 
 Норматив:
-- отображаемый ID должен быть **стабильным** `dialogSessionId` (Agent Dialog ID), чтобы он не менялся при continuity rollover/resume и не создавал путаницу в UI.
+- отображаемый ID должен быть **стабильным** `dialogId` (Agent Dialog ID), чтобы он не менялся при continuity rollover/resume и не создавал путаницу в UI.
 - `providerSessionId` может использоваться для resume/focus и может меняться между segment’ами; при необходимости его можно показывать отдельно (tooltip/secondary line), но не как единственный “Session ID”.
 
 Формат:
@@ -198,7 +198,7 @@
 - затем `-...`.
 
 Норматив:
-- показываем `dialogSessionId` (стабильный Agent Dialog ID), а не `providerSessionId`.
+- показываем `dialogId` (стабильный Agent Dialog ID), а не `providerSessionId`.
 
 Типографика:
 - шрифт/размер/цвет должны совпадать с текстом подсказки ввода:
