@@ -34,15 +34,26 @@ assert_file_exists "$ROOT_DIR/src/client/ui/src/components/settings/style-tokens
 
 assert_file_absent "$ROOT_DIR/src/client/project-manager/styles/layout.css" "Legacy PM layout source"
 
-if rg -n '\.session-|\.settings-overlay' "$ROOT_DIR/packages/ui/project-manager/styles.css" >/dev/null 2>&1; then
+search_file() {
+  local pattern="$1"
+  local file="$2"
+  if command -v rg >/dev/null 2>&1; then
+    rg -n "$pattern" "$file" >/dev/null 2>&1
+    return $?
+  fi
+
+  grep -nE "$pattern" "$file" >/dev/null 2>&1
+}
+
+if search_file '\\.session-|\\.settings-overlay' "$ROOT_DIR/packages/ui/project-manager/styles.css"; then
   violation "packages/ui/project-manager/styles.css must not define .session-* or .settings-overlay* selectors"
 fi
 
-if ! rg -n 'style-tokens' "$ROOT_DIR/src/client/ui/src/components/settings-view.tsx" >/dev/null 2>&1; then
+if ! search_file 'style-tokens' "$ROOT_DIR/src/client/ui/src/components/settings-view.tsx"; then
   violation "settings-view.tsx must consume settings style token layer"
 fi
 
-if ! rg -n 'style-tokens' "$ROOT_DIR/src/client/ui/src/app-host/settings-only-host.tsx" >/dev/null 2>&1; then
+if ! search_file 'style-tokens' "$ROOT_DIR/src/client/ui/src/app-host/settings-only-host.tsx"; then
   violation "settings-only-host.tsx must consume settings style token layer"
 fi
 
