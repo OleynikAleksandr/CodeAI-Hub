@@ -4,6 +4,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import {
   buildSessionFilePath,
+  readSessionEvents,
   sanitizeWorkspaceSlug,
 } from "@codeai-hub/unified-session";
 import type { CoreConfig } from "../../config";
@@ -45,6 +46,52 @@ type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 const DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX = /__(collector|reviewer)$/;
 const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
 const DIALOG_SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
+
+type UnifiedSessionSegmentSummaryPayload = {
+  readonly kind: "segment_summary";
+  readonly segments: readonly {
+    readonly index: number;
+    readonly remainingPercent?: number;
+  }[];
+};
+
+const isUnifiedSessionSegmentSummaryPayload = (
+  value: unknown
+): value is UnifiedSessionSegmentSummaryPayload => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const record = value as {
+    readonly kind?: unknown;
+    readonly segments?: unknown;
+  };
+  if (record.kind !== "segment_summary" || !Array.isArray(record.segments)) {
+    return false;
+  }
+  for (const segment of record.segments) {
+    if (!segment || typeof segment !== "object") {
+      return false;
+    }
+    const candidate = segment as {
+      readonly index?: unknown;
+      readonly remainingPercent?: unknown;
+    };
+    if (
+      typeof candidate.index !== "number" ||
+      !Number.isFinite(candidate.index)
+    ) {
+      return false;
+    }
+    if (
+      candidate.remainingPercent !== undefined &&
+      (typeof candidate.remainingPercent !== "number" ||
+        !Number.isFinite(candidate.remainingPercent))
+    ) {
+      return false;
+    }
+  }
+  return true;
+};
 
 type ProviderSessionResolution =
   | {
@@ -2829,6 +2876,14 @@ export class SessionRequestHandler {
       options.session.id;
 
     try {
+      const workspaceKey = sanitizeWorkspaceSlug(options.session.workspacePath);
+      const jsonlPath = buildSessionFilePath({
+        rootDirectory: SESSION_ROOT,
+        workspaceSlug: workspaceKey,
+        provider: options.session.providerId,
+        sessionId: sanitizeWorkspaceSlug(rootDialogId),
+      });
+
       await this.continuity.ensureTrackedOnOutboundMessage({
         sessionId: options.session.id,
         providerSessionId: options.session.providerSessionId,
@@ -2843,6 +2898,14 @@ export class SessionRequestHandler {
 
       const chain = await store.read();
       if (!chain || chain.segments.length <= 1) {
+        return;
+      }
+
+      const latestSummary = await this.readLatestSegmentSummary(jsonlPath);
+      if (
+        latestSummary &&
+        latestSummary.segments.length === chain.segments.length
+      ) {
         return;
       }
 
@@ -2879,6 +2942,50 @@ export class SessionRequestHandler {
         error: error instanceof Error ? error.message : String(error),
       });
     }
+  }
+
+  private tryParseSegmentSummaryPayloadFromBoundaryMessage(
+    content: string
+  ): UnifiedSessionSegmentSummaryPayload | null {
+    const lines = content.split("\n").map((line) => line.trim());
+    if (lines[0] !== DIALOG_SEGMENT_BOUNDARY_MARKER) {
+      return null;
+    }
+    const metaLine = lines.find((line) =>
+      line.startsWith(DIALOG_SEGMENT_META_MARKER)
+    );
+    if (!metaLine) {
+      return null;
+    }
+    const json = metaLine.slice(DIALOG_SEGMENT_META_MARKER.length).trim();
+    if (!json) {
+      return null;
+    }
+    try {
+      const parsed = JSON.parse(json) as unknown;
+      return isUnifiedSessionSegmentSummaryPayload(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private async readLatestSegmentSummary(
+    jsonlPath: string
+  ): Promise<UnifiedSessionSegmentSummaryPayload | null> {
+    const existingRecords = await readSessionEvents(jsonlPath);
+    let latestSummary: UnifiedSessionSegmentSummaryPayload | null = null;
+    for (const record of existingRecords) {
+      if (record.type !== "message" || record.role !== "system") {
+        continue;
+      }
+      const parsed = this.tryParseSegmentSummaryPayloadFromBoundaryMessage(
+        record.content
+      );
+      if (parsed) {
+        latestSummary = parsed;
+      }
+    }
+    return latestSummary;
   }
 
   private handleTypedProviderEvent(
