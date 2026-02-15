@@ -81,8 +81,8 @@
 - У каждого агента (например reviewer) — одна бесконечная сессия и одна continuity‑папка.
 
 ### Stream: Fix naming — description != agent
-1. [TODO] Fix: нормализовать именование per-agent JSONL/continuity директории: `*-description.jsonl` вместо `*-agent.jsonl` для description‑агента + миграция/alias чтения старого имени (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): correct description agent stream name`)
-2. [TODO] Git Commit: `fix(core): correct description agent stream name` (hash: TBD)
+1. [DONE] Fix: нормализовать именование per-agent JSONL/continuity директории: `*-description.jsonl` вместо `*-agent.jsonl` для description‑агента + миграция/alias чтения старого имени (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): correct description agent stream name`)
+2. [DONE] Git Commit: `fix(core): correct description agent stream name` (hash: 86641f11)
 
 ---
 
