@@ -98,7 +98,10 @@ export class UnifiedSessionStorage {
     }
   }
 
-  appendMessage(sessionId: string, message: SessionMessage): void {
+  async appendMessage(
+    sessionId: string,
+    message: SessionMessage
+  ): Promise<void> {
     const entry = this.sessions.get(sessionId);
     if (!entry) {
       return;
@@ -120,20 +123,12 @@ export class UnifiedSessionStorage {
         entry.historySessionId
       );
       if (!entry.writer) {
-        entry.queue.push(message);
-        return;
+        throw new Error(
+          `Unified session writer missing for ${entry.providerId} session ${sessionId}`
+        );
       }
     }
-    this.writeMessage(entry, message).catch((error: unknown) => {
-      this.logger.error(
-        "Failed to append unified session record",
-        error as Error,
-        {
-          sessionId,
-          providerId: entry.providerId,
-        }
-      );
-    });
+    await this.writeMessage(entry, message);
   }
 
   close(sessionId: string, reason?: string): void {
@@ -496,8 +491,9 @@ export class UnifiedSessionStorage {
     message: SessionMessage
   ): Promise<void> {
     if (!entry.writer) {
-      entry.queue.push(message);
-      return;
+      throw new Error(
+        `Unified session writer missing for ${entry.providerId} session ${message.sessionId}`
+      );
     }
     await entry.writer.appendMessage({
       messageId: message.id,
