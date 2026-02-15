@@ -43,6 +43,10 @@ const DialogPanel = ({
     () => mergeThinkingMessages(messages),
     [messages]
   );
+  const hasExplicitSegmentBoundaries = useMemo(
+    () => displayMessages.some(isSegmentBoundaryMessage),
+    [displayMessages]
+  );
   const [expandedThinking, setExpandedThinking] = useState<
     Record<string, boolean>
   >({});
@@ -145,6 +149,7 @@ const DialogPanel = ({
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
             const shouldInsertImplicitBoundary =
+              !hasExplicitSegmentBoundaries &&
               shouldRenderImplicitBoundaryAfter(message, next);
             return [
               <ThinkingMessage
