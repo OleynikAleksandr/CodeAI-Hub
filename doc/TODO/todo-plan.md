@@ -80,8 +80,10 @@ Source of Truth (архитектура):
 2. [TODO] Git Commit: `fix(ui): unlock input only after turn completion` (hash: TBD)
 
 ### Stream: Core — контракт блокировки (rollover/blocked)
-1. [TODO] Fix: Core репортит блокировку/готовность так, чтобы UI не мог отправить, пока сегмент не готов (rollover/resume handshake) (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): strict continuity lock contract for sends`)
-2. [TODO] Git Commit: `fix(core): strict continuity lock contract for sends` (hash: TBD)
+1. [DONE] Fix: bootstrap lock снимается только на `turn_completed` (а не на первом `assistant` событии), чтобы UI не мог отправить запрос “в никуда” во время bootstrap turn (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): unlock bootstrap gate on turn completion`)
+2. [DONE] Git Commit: `fix(core): unlock bootstrap gate on turn completion` (hash: 2f0e5543)
+3. [TODO] Fix: Core репортит блокировку/готовность так, чтобы UI не мог отправить, пока сегмент не готов (rollover/resume handshake) (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): strict continuity lock contract for sends`)
+4. [TODO] Git Commit: `fix(core): strict continuity lock contract for sends` (hash: TBD)
 
 ---
 
