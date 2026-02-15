@@ -97,4 +97,4 @@ Source of Truth (архитектура):
    - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.602.vsix`
    - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.602.tar.bz2`
    - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.602.tar.bz2`
-7. [TODO] Git Commit: `docs(todo): record patch release build (1.1.602)` (hash: TBD)
+7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.602)` (hash: ac8733a8)
