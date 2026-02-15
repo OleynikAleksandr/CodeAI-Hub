@@ -67,8 +67,10 @@
 2. [DONE] Git Commit: `fix(core): strict continuity lock contract for sends` (hash: 310c5273)
 
 ### Stream: UI — разблокировка ввода только по turn completion
-1. [TODO] Fix: UI игнорирует промежуточные события и снимает блокировку ввода только по финальному `turn_completed`/idle состоянию (scope: `src/client/ui/src/app-host/webview-message-dispatcher.ts`, `src/client/ui/src/app-host/webview-message-types.ts`, `src/client/ui/src/app-host/session-store.ts` ≤3 файлов; expected commit message: `fix(ui): unlock input only after turn completion`)
-2. [TODO] Git Commit: `fix(ui): unlock input only after turn completion` (hash: TBD)
+1. [TODO] Fix: пробросить `session:stream` события из core-bridge в основной message dispatcher, чтобы UI мог реагировать на `turn_state`/`continuity_lock`/`flow_node_rollover` (scope: `src/client/ui/src/app-host/webview-message-dispatcher.ts`, `src/client/ui/src/app-host/webview-message-types.ts`, `src/client/ui/src/app-host/webview-message-handler.ts` ≤3 файлов; expected commit message: `fix(ui): plumb session stream events`)
+2. [TODO] Git Commit: `fix(ui): plumb session stream events` (hash: TBD)
+3. [TODO] Fix: обновлять `snapshot.status.connectionState`/`continuityLock`/`rollover` на основе `session:stream` и разблокировать ввод только после `turn_state=idle` (scope: `src/client/ui/src/app-host/session-store.ts`, `src/client/ui/src/app-host.tsx` ≤3 файлов; expected commit message: `fix(ui): unlock input only after turn completion`)
+4. [TODO] Git Commit: `fix(ui): unlock input only after turn completion` (hash: TBD)
 
 ---
 
