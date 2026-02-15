@@ -306,9 +306,15 @@ PM хранит и восстанавливает состояние вклад�
 - Summary `#1 (..%) | #2 (..%)` показываем **в правой нижней Status панели**.
 
 ### 10.2 Запись в JSONL (однократно на старт сегмента)
-Core дописывает в `<dialogId>.jsonl` две записи (в указанном порядке):
-1) **Visible divider** — `role=system`, `messageId` с префиксом `segment-boundary:`.
-2) **Hidden meta** — `role=system`, `messageId` с префиксом `dialog-meta:` и содержимым, которое UI умеет распарсить и не отображать как сообщение.
+Core дописывает в `<dialogId>.jsonl` **одну** запись `role=system` (однократно на старт сегмента). В `content` — многострочный payload:
+1) Line 1: `__CODEAIHUB_SEGMENT_BOUNDARY__` (marker)
+2) Line 2: видимый label (например `Новая сессия`)
+3) Line 3: `__CODEAIHUB_SEGMENT_META__:` + JSON (segment summary)
+
+UI:
+- распознаёт divider по `messageId` с префиксом `segment-boundary:` **или** по marker в `content`;
+- отображает в ленте только label (Line 2), не показывая служебные строки;
+- восстанавливает summary `#1 (..%) | #2 (..%)` из `segment meta` при `dialog:history`.
 
 Частота записи: только на старт сегмента (не на каждый апдейт token usage).
 
