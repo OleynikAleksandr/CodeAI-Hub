@@ -47,8 +47,8 @@
 ### Stream: Core trigger — писать boundary/meta в момент создания новой физической сессии
 1. [DONE] Fix: привязать запись boundary/meta к событию/месту, где Core создаёт новую физическую сессию (rollover) и знает dialogId/agentId; убрать зависимости от парсеров/симптомов (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): write segment boundary on session creation`)
 2. [DONE] Git Commit: `fix(core): write segment boundary on session creation` (hash: 5aec6994)
-3. [TODO] Fix: железная идемпотентность boundary/meta (защита от двойной записи при ретраях/повторах) + диагностика (лог/метрика) при попытке повторной записи (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): hard idempotency for segment meta`)
-4. [TODO] Git Commit: `fix(core): hard idempotency for segment meta` (hash: TBD)
+3. [DONE] Fix: железная идемпотентность boundary/meta (защита от двойной записи при ретраях/повторах) + диагностика (лог/метрика) при попытке повторной записи (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): hard idempotency for segment meta`)
+4. [DONE] Git Commit: `fix(core): hard idempotency for segment meta` (hash: 22e94b6a)
 
 ### Stream: UI render — только explicit boundary/meta из JSONL
 1. [TODO] Fix: финально убедиться, что UI никогда не вставляет divider имплицитно (thinking‑хак) и не имеет второго источника divider’ов; любые разделители/summary строятся только из событий JSONL (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): remove all implicit session dividers`)
