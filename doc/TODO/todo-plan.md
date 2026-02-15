@@ -46,8 +46,10 @@ Source of Truth (архитектура):
 2. [DONE] Git Commit: `fix(core): resolve dialog jsonl on cold start` (hash: 08bcdd58)
 
 ### Stream: Core write order — append then emit
-1. [TODO] Fix: гарантировать порядок “append в JSONL → emit stream append event” + идемпотентность для boundary/meta на старт нового provider сегмента (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): jsonl append ordering and idempotent segment meta`)
-2. [TODO] Git Commit: `fix(core): jsonl append ordering and idempotent segment meta` (hash: TBD)
+1. [DONE] Fix: идемпотентность для boundary/meta на старт нового provider сегмента (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): idempotent segment boundary meta`)
+2. [DONE] Git Commit: `fix(core): idempotent segment boundary meta` (hash: 1f5af7fc)
+3. [TODO] Fix: гарантировать порядок “append в JSONL → emit stream append event” (чтобы UI tail по cursor не читал “пусто” после live эвента) (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): jsonl append before broadcasts`)
+4. [TODO] Git Commit: `fix(core): jsonl append before broadcasts` (hash: TBD)
 
 ---
 
