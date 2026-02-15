@@ -24,6 +24,7 @@ import {
   type SessionSnapshots,
 } from "../session/helpers";
 import type { ProviderLabels } from "./provider-picker-state";
+import { useSessionStreamStatusSync } from "./use-session-stream-status-sync";
 import { useSettingsModelsSync } from "./use-settings-models-sync";
 
 type SendMessageHandler = (sessionId: string, content: string) => void;
@@ -271,6 +272,7 @@ export const useSessionStore = (
       .catch(() => sendChatMessage(sessionId, content));
   }, []);
   useSettingsModelsSync(sessions, settings, setSnapshots);
+  useSessionStreamStatusSync(setSnapshots);
   return {
     sessions,
     snapshots,
