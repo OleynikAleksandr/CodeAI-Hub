@@ -14,7 +14,7 @@ Source of Truth (архитектура):
 
 ---
 
-## Phase 189 — Design: Единый источник правды для панели диалога (owner: Oleksandr+Codex, updated: 2026-02-15)
+## Phase 190 — Design: Единый источник правды для панели диалога (owner: Oleksandr+Codex, updated: 2026-02-15)
 
 **Goal (канон):** панель диалога в UI/PM (и после рестартов, и в реальном времени) отображает историю **только** из канонического JSONL:
 `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`
@@ -35,7 +35,7 @@ Source of Truth (архитектура):
 
 ---
 
-## Phase 190 — Core: История + tail из JSONL для UI/PM (owner: Codex, updated: 2026-02-15)
+## Phase 191 — Core: История + tail из JSONL для UI/PM (owner: Codex, updated: 2026-02-15)
 
 ### Stream: Core API — full history + tail (cursor)
 1. [TODO] Implement: Core отдаёт историю диалога по `dialogId` как full snapshot (с начала) + tail (с `cursor`) и возвращает `lastCursor` (scope: `packages/core/*` (≤3 файлов); expected commit message: `feat(core): dialog history + tail cursor api`)
@@ -51,7 +51,7 @@ Source of Truth (архитектура):
 
 ---
 
-## Phase 191 — PM/UI: Панель диалога только из JSONL (owner: Oleksandr+Codex, updated: 2026-02-15)
+## Phase 192 — PM/UI: Панель диалога только из JSONL (owner: Oleksandr+Codex, updated: 2026-02-15)
 
 ### Stream: UI store — single source (history + append)
 1. [TODO] Implement: Session/PM dialog panel получает сообщения из одного канала: `history(full)` при открытии + `append(tail)` в real-time; snapshots/chain не используются для ленты (только для status) (scope: `src/client/ui/src/*` (≤3 файлов); expected commit message: `refactor(ui): dialog panel ssot via jsonl feed`)
@@ -71,7 +71,7 @@ Source of Truth (архитектура):
 
 ---
 
-## Phase 192 — Fix: input lock/unlock (turn boundaries) (owner: Oleksandr+Codex, updated: 2026-02-15)
+## Phase 193 — Fix: input lock/unlock (turn boundaries) (owner: Oleksandr+Codex, updated: 2026-02-15)
 
 ### Stream: UI — блокировка ввода по “turn completed”
 1. [TODO] Fix: input разблокируется только после финального события завершения turn’а (а не по промежуточным сообщениям), чтобы нельзя было отправить запрос “в никуда” (scope: `src/client/ui/src/session/*` (≤3 файлов); expected commit message: `fix(ui): unlock input only after turn completion`)
@@ -83,7 +83,7 @@ Source of Truth (архитектура):
 
 ---
 
-## Phase 193 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-15)
+## Phase 194 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-15)
 
 ### Stream: Release Build (New Patch Release)
 1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки `npm run build:core`, `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
