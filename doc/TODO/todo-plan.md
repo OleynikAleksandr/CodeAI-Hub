@@ -115,15 +115,22 @@ Source of Truth (архитектура):
 1. [DONE] Docs: зафиксировать в архитектуре, что SessionView обязан парсить segment meta из JSONL и не использовать implicit divider при наличии explicit boundary (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): clarify replay-safe UI contract`)
 2. [DONE] Git Commit: `docs(flow): clarify replay-safe UI contract` (hash: f56da9f9)
 
+### Stream: Webview — обновить fallback bundle
+1. [DONE] Build: пересобрать fallback webview bundle (`media/react-chat.js`), чтобы fallback UI внутри VSIX соответствовал Session UI фиксам (scope: `media/react-chat.js`; expected commit message: `chore(webview): rebuild bundle`)
+2. [DONE] Git Commit: `chore(webview): rebuild bundle` (hash: 0d107a36)
+
 ---
 
 ## Phase 188 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-15)
 
 ### Stream: Release Build (New Patch Release)
-1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки `npm run build:core`, `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
-2. [TODO] Git Commit: `chore: quality gates before release` (hash: TBD)
-3. [TODO] Build: `./scripts/build-all.sh` (version bump -> TBD) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
-4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
-5. [TODO] Build: `./scripts/build-release.sh --use-current-version` (VSIX) (scope: repo build)
-6. [TODO] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (TBD)`)
-7. [TODO] Git Commit: `docs(todo): record patch release build (TBD)` (hash: TBD)
+1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки `npm run build:core`, `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
+2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A — clean tree)
+3. [DONE] Build: `./scripts/build-all.sh` (version bump -> `1.1.603`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
+4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: de6062e3)
+5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX) (scope: repo build)
+6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.603)`)
+   - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.603.vsix`
+   - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.603.tar.bz2`
+   - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.603.tar.bz2`
+7. [TODO] Git Commit: `docs(todo): record patch release build (1.1.603)` (hash: TBD)
