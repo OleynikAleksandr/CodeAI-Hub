@@ -42,8 +42,8 @@ Source of Truth (архитектура):
 2. [DONE] Git Commit: `feat(core): dialog history + tail cursor api` (hash: 3bed3a86)
 
 ### Stream: Core indexing — cold start (PM+Core restart)
-1. [TODO] Implement: после cold start Core умеет находить JSONL по `dialogId` без наличия активной runtime‑сессии (индексация/резолв пути), чтобы PM мог восстановить ленту без ручного клика (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): resolve dialog jsonl on cold start`)
-2. [TODO] Git Commit: `fix(core): resolve dialog jsonl on cold start` (hash: TBD)
+1. [DONE] Implement: после cold start Core умеет находить JSONL по `dialogId` без наличия активной runtime‑сессии (индексация/резолв пути), чтобы PM мог восстановить ленту без ручного клика (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): resolve dialog jsonl on cold start`)
+2. [DONE] Git Commit: `fix(core): resolve dialog jsonl on cold start` (hash: 08bcdd58)
 
 ### Stream: Core write order — append then emit
 1. [TODO] Fix: гарантировать порядок “append в JSONL → emit stream append event” + идемпотентность для boundary/meta на старт нового provider сегмента (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): jsonl append ordering and idempotent segment meta`)
