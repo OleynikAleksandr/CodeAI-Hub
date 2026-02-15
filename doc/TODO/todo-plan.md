@@ -38,8 +38,8 @@ Source of Truth (архитектура):
 ## Phase 191 — Core: История + tail из JSONL для UI/PM (owner: Codex, updated: 2026-02-15)
 
 ### Stream: Core API — full history + tail (cursor)
-1. [TODO] Implement: Core отдаёт историю диалога по `dialogId` как full snapshot (с начала) + tail (с `cursor`) и возвращает `lastCursor` (scope: `packages/core/*` (≤3 файлов); expected commit message: `feat(core): dialog history + tail cursor api`)
-2. [TODO] Git Commit: `feat(core): dialog history + tail cursor api` (hash: TBD)
+1. [DONE] Implement: Core отдаёт историю диалога по `dialogId` как full snapshot (с начала) + tail (с `cursor`) и возвращает `lastCursor` (scope: `packages/core/*` (≤3 файлов); expected commit message: `feat(core): dialog history + tail cursor api`)
+2. [DONE] Git Commit: `feat(core): dialog history + tail cursor api` (hash: 3bed3a86)
 
 ### Stream: Core indexing — cold start (PM+Core restart)
 1. [TODO] Implement: после cold start Core умеет находить JSONL по `dialogId` без наличия активной runtime‑сессии (индексация/резолв пути), чтобы PM мог восстановить ленту без ручного клика (scope: `packages/core/*` (≤3 файлов); expected commit message: `fix(core): resolve dialog jsonl on cold start`)
