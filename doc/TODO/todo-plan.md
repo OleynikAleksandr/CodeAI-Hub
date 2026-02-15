@@ -24,16 +24,24 @@ Source of Truth (архитектура):
 - Папки continuity становятся осмысленными (по `dialogId`), чтобы пользователь мог понять «что где».
 
 ### Stream: Design/Contracts (именование и миграция)
-1. [TODO] Docs: зафиксировать формат `dialogId` и правила миграции/обратной совместимости (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): dialogId naming contract`)
-2. [TODO] Git Commit: `docs(flow): dialogId naming contract` (hash: TBD)
+1. [DONE] Docs: зафиксировать формат `dialogId` и правила миграции/обратной совместимости (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): dialogId naming contract`)
+2. [DONE] Git Commit: `docs(flow): dialogId naming contract` (hash: 8c27a8b6)
 
 ### Stream: Core — генерация/нормализация `dialogId`
-1. [TODO] Implement: единый генератор/нормализатор `dialogId` (provider + uuid + role) и точка применения при создании/резюме диалога (scope: `packages/core/*` (≤3 файлов); expected commit message: `feat(core): human-readable dialogId format`)
-2. [TODO] Git Commit: `feat(core): human-readable dialogId format` (hash: TBD)
+1. [DONE] Implement: генератор `dialogId` (provider + uuid + role) + применение для flow‑сессий (continuity root) (scope: `packages/core/src/session-continuity/dialog-id.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): human-readable dialogId for flow sessions`)
+2. [DONE] Git Commit: `feat(core): human-readable dialogId for flow sessions` (hash: 7f2fd026)
 
-### Stream: Core — метаданные сегментов в `<dialogId>.jsonl` (replay-safe UI)
-1. [TODO] Implement: при старте нового provider-сегмента (rollover) Core дописывает в `<dialogId>.jsonl` разделитель сегмента + одноразовые метаданные для `#1 (..%) | #2 (..%)`; UI восстанавливает divider и token summary при `dialog:history` (scope: `packages/core/*`, `src/client/ui/*`, `src/client/project-manager/*` (разбить на микрозадачи ≤3 файлов); expected commit message: `feat(dialog): persist segment meta in dialog jsonl`)
-2. [TODO] Git Commit: `feat(dialog): persist segment meta in dialog jsonl` (hash: TBD)
+### Stream: Core — убрать «шумные» пустые unified-session JSONL
+1. [DONE] Fix: не создавать пустые `*.jsonl` (≈136 байт) с одним `session-open`, пока не пришло первое реальное сообщение (scope: `packages/core/src/unified-session/storage.ts`; expected commit message: `fix(core): lazy init unified-session writer`)
+2. [DONE] Git Commit: `fix(core): lazy init unified-session writer` (hash: d98152ef)
+
+### Stream: Dialog — segment meta в `<dialogId>.jsonl` (replay-safe UI)
+1. [DONE] Core: при старте нового provider‑сегмента (rollover) дописать marker+divider+meta в `<dialogId>.jsonl` **один раз** (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `feat(core): persist dialog segment meta in jsonl`)
+2. [DONE] Git Commit: `feat(core): persist dialog segment meta in jsonl` (hash: 660f1d3f)
+3. [DONE] UI: распознавать divider по marker в content, рендерить только label, и не инжектить implicit boundaries если в истории уже есть explicit divider (scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `feat(ui): render explicit dialog segment boundaries`)
+4. [DONE] Git Commit: `feat(ui): render explicit dialog segment boundaries` (hash: be607adc)
+5. [DONE] PM/UI: восстановление token summary `#1 (..%) | #2 (..%)` из boundary-meta при `dialog:history` + обновление в live по system‑сообщению (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, `src/client/project-manager/components/sessions/dialog-segment-meta.ts`; expected commit message: `feat(pm): restore token summary from segment meta`)
+6. [DONE] Git Commit: `feat(pm): restore token summary from segment meta` (hash: 9878a092)
 
 ### Stream: Core — миграция/alias для старых uuid-only dialogId
 1. [TODO] Implement: обеспечить чтение/открытие старых диалогов (uuid-only) + мягкая миграция/alias в `continuity/index.json` и `chain.json` (scope: `packages/core/*` (≤3 файлов); expected commit message: `feat(core): dialogId alias for legacy ids`)
