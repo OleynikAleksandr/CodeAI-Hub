@@ -1316,8 +1316,9 @@ export class SessionRequestHandler {
         continuationParentId: options.continuationParentId ?? null,
       }
     );
-    const continuityRootSessionId = this.resolveContinuityRootSessionId({
+    const continuityRootSessionId = await this.resolveContinuityRootSessionId({
       rootSessionIdOverride: options.rootSessionId ?? null,
+      workspaceRoot: options.workspacePath,
       providerId: options.providerId,
       sessionId: session.id,
       context: options.context,
@@ -1409,8 +1410,53 @@ export class SessionRequestHandler {
     return session;
   }
 
-  private resolveContinuityRootSessionId(options: {
+  private normalizeContinuityStageId(value: string | null): string {
+    const trimmed = value?.trim() ?? "";
+    if (
+      trimmed === "description" ||
+      trimmed === "virtual_simulation" ||
+      trimmed === "diagram_modules" ||
+      trimmed === "diagram_facades"
+    ) {
+      return trimmed;
+    }
+    return "unknown";
+  }
+
+  private async tryResolveExistingContinuityRootSessionId(options: {
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+    readonly stageId: string;
+    readonly providerSessionId: string;
+  }): Promise<string | null> {
+    const providerSessionId = options.providerSessionId.trim();
+    if (providerSessionId.length === 0) {
+      return null;
+    }
+
+    const stage = this.normalizeContinuityStageId(options.stageId);
+    const chains = await SessionContinuityFacade.readWorkspaceChains({
+      workspaceRoot: options.workspaceRoot,
+      workspaceSlug: options.workspaceSlug,
+    });
+    const match = chains.find((chain) => {
+      if (chain.stage !== stage) {
+        return false;
+      }
+      return chain.segments.some(
+        (segment) => segment.providerSessionId === providerSessionId
+      );
+    });
+    if (!match) {
+      return null;
+    }
+
+    return match.dialogId ?? match.rootSessionId ?? null;
+  }
+
+  private async resolveContinuityRootSessionId(options: {
     readonly rootSessionIdOverride: string | null;
+    readonly workspaceRoot: string;
     readonly providerId: string;
     readonly sessionId: string;
     readonly context: {
@@ -1419,15 +1465,32 @@ export class SessionRequestHandler {
       readonly runSlug: string | null;
       readonly providerSessionId: string | null;
     };
-  }): string {
+  }): Promise<string> {
     if (options.rootSessionIdOverride) {
       return options.rootSessionIdOverride;
     }
-    if (options.context.initiativeSlug && options.context.stage) {
+
+    const workspaceSlug = options.context.initiativeSlug;
+    const stageId = options.context.stage;
+    if (workspaceSlug && stageId) {
+      const requestedProviderSessionId = options.context.providerSessionId;
+      if (requestedProviderSessionId) {
+        const existingRoot =
+          await this.tryResolveExistingContinuityRootSessionId({
+            workspaceRoot: options.workspaceRoot,
+            workspaceSlug,
+            stageId,
+            providerSessionId: requestedProviderSessionId,
+          });
+        if (existingRoot) {
+          return existingRoot;
+        }
+      }
+
       return buildHumanReadableDialogId({
         providerId: options.providerId,
         uuid: options.sessionId,
-        agentRole: options.context.runSlug ?? null,
+        agentRole: options.context.runSlug ?? options.context.stage ?? null,
       });
     }
     return options.sessionId;
