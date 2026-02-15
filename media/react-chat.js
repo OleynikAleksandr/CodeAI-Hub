@@ -21688,6 +21688,10 @@ ${message.content}`
       () => mergeThinkingMessages(messages),
       [messages]
     );
+    const hasExplicitSegmentBoundaries = (0, import_react4.useMemo)(
+      () => displayMessages.some(isSegmentBoundaryMessage),
+      [displayMessages]
+    );
     const [expandedThinking, setExpandedThinking] = (0, import_react4.useState)({});
     const [pinnedToBottom, setPinnedToBottom] = (0, import_react4.useState)(true);
     (0, import_react4.useEffect)(() => {
@@ -21762,7 +21766,7 @@ ${message.content}`
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
-            const shouldInsertImplicitBoundary = shouldRenderImplicitBoundaryAfter(message, next);
+            const shouldInsertImplicitBoundary = !hasExplicitSegmentBoundaries && shouldRenderImplicitBoundaryAfter(message, next);
             return [
               /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
                 ThinkingMessage,
@@ -21857,6 +21861,82 @@ ${message.content}`
         }
       )
     ] });
+  };
+
+  // src/client/ui/src/session/dialog-segment-meta.ts
+  var SEGMENT_BOUNDARY_MARKER2 = "__CODEAIHUB_SEGMENT_BOUNDARY__";
+  var SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
+  var clampPercent = (value) => Math.max(0, Math.min(100, Math.round(value)));
+  var isSegmentSummaryPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const record = value;
+    if (record.kind !== "segment_summary" || !Array.isArray(record.segments)) {
+      return false;
+    }
+    for (const segment of record.segments) {
+      if (!segment || typeof segment !== "object") {
+        return false;
+      }
+      const candidate = segment;
+      if (typeof candidate.index !== "number" || !Number.isFinite(candidate.index)) {
+        return false;
+      }
+      if (candidate.remainingPercent !== void 0 && (typeof candidate.remainingPercent !== "number" || !Number.isFinite(candidate.remainingPercent))) {
+        return false;
+      }
+    }
+    return true;
+  };
+  var tryParseSegmentSummaryPayloadFromContent = (content3) => {
+    const lines = content3.split("\n").map((line) => line.trim());
+    if (lines[0] !== SEGMENT_BOUNDARY_MARKER2) {
+      return null;
+    }
+    const metaLine = lines.find((line) => line.startsWith(SEGMENT_META_MARKER));
+    if (!metaLine) {
+      return null;
+    }
+    const json = metaLine.slice(SEGMENT_META_MARKER.length).trim();
+    if (!json) {
+      return null;
+    }
+    try {
+      const parsed = JSON.parse(json);
+      return isSegmentSummaryPayload(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
+  };
+  var findLatestSegmentSummaryPayload = (messages) => {
+    let latestPayload = null;
+    for (const message of messages) {
+      if (message.role !== "system") {
+        continue;
+      }
+      const payload = tryParseSegmentSummaryPayloadFromContent(message.content);
+      if (payload) {
+        latestPayload = payload;
+      }
+    }
+    return latestPayload;
+  };
+  var formatSegmentSummaryPayload = (payload) => {
+    const parts = [];
+    for (const segment of payload.segments) {
+      const index2 = Number.isFinite(segment.index) ? segment.index : null;
+      if (index2 === null) {
+        continue;
+      }
+      const remaining = typeof segment.remainingPercent === "number" && Number.isFinite(segment.remainingPercent) ? `${clampPercent(segment.remainingPercent)}%` : "\u2014";
+      parts.push(`#${index2} (${remaining})`);
+    }
+    return parts.length > 0 ? parts.join(" | ") : null;
+  };
+  var buildTokenDebugSummaryFromMessages = (messages) => {
+    const payload = findLatestSegmentSummaryPayload(messages);
+    return payload ? formatSegmentSummaryPayload(payload) : null;
   };
 
   // src/client/ui/src/session/empty-state.tsx
@@ -23028,7 +23108,7 @@ ${path2}` : path2;
     }
     return "ID: unavailable";
   };
-  var clampPercent = (value) => {
+  var clampPercent2 = (value) => {
     if (value < 0) {
       return 0;
     }
@@ -23050,10 +23130,10 @@ ${path2}` : path2;
     const sessionResetLabel = sessionResetsAt ? buildResetLabel(sessionResetsAt) : null;
     const weeklyResetLabel = weeklyResetsAt ? buildResetLabel(weeklyResetsAt) : null;
     const sessionFillStyle = sessionPercent === null ? void 0 : {
-      "--limit-fill": `${clampPercent(sessionPercent)}%`
+      "--limit-fill": `${clampPercent2(sessionPercent)}%`
     };
     const weeklyFillStyle = weeklyPercent === null ? void 0 : {
-      "--limit-fill": `${clampPercent(weeklyPercent)}%`
+      "--limit-fill": `${clampPercent2(weeklyPercent)}%`
     };
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
       "section",
@@ -23645,7 +23725,7 @@ ${path2}` : path2;
       chain: continuationChain,
       snapshots,
       activeSessionId
-    }) ?? void 0;
+    }) ?? buildTokenDebugSummaryFromMessages(virtualConversationMessages) ?? void 0;
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app", "data-session-style-source": "canonical", children: [
       header,
       /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
