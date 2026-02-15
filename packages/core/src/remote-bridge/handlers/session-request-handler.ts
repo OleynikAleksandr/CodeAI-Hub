@@ -1326,6 +1326,7 @@ export class SessionRequestHandler {
     readonly workspacePath: string;
     readonly adapter: ProviderAdapter;
     readonly resumeMode?: SessionResumeMode;
+    readonly silent?: boolean;
     readonly context: {
       readonly initiativeSlug: string | null;
       readonly stage: string | null;
@@ -1420,6 +1421,22 @@ export class SessionRequestHandler {
       providerSessionId,
       rootSessionId: continuityRootSessionId,
     });
+
+    const workspaceSlug = session.initiativeSlug;
+    const stageId = session.stage;
+    if (
+      options.silent !== true &&
+      options.continuationParentId &&
+      workspaceSlug &&
+      stageId
+    ) {
+      await this.appendDialogSegmentBoundaryMeta({
+        session,
+        workspaceSlug,
+        stageId,
+        silent: false,
+      });
+    }
     this.workspaceRuntime?.notifySessionCreated(
       {
         workspaceRoot: session.workspacePath,
@@ -2797,6 +2814,7 @@ export class SessionRequestHandler {
       workspacePath: session.workspacePath,
       adapter,
       resumeMode: "resume_via_rollover",
+      silent: options?.silent === true,
       context: {
         initiativeSlug: workspaceSlug,
         stage: stageId,
@@ -2815,13 +2833,6 @@ export class SessionRequestHandler {
       });
       return;
     }
-
-    await this.appendDialogSegmentBoundaryMeta({
-      session: nextSession,
-      workspaceSlug,
-      stageId,
-      silent: options?.silent === true,
-    });
 
     const targetLockContext = this.registerFlowNodeContinuityLockContext({
       rolloverId: rollover.rolloverId,
