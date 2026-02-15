@@ -2508,6 +2508,10 @@ export class SessionRequestHandler {
       return;
     }
 
+    this.finalizeFlowNodeContinuityLockOnBootstrapGate({
+      sessionId,
+      reason: "resume_ready",
+    });
     this.emitTurnStateEvent({ sessionId, state: "idle" });
     if (resumeMode === "resume_in_place") {
       this.emitResumeInPlaceNoRolloverUnlock(session);
@@ -3069,10 +3073,6 @@ export class SessionRequestHandler {
         });
         break;
       case "assistant":
-        this.finalizeFlowNodeContinuityLockOnBootstrapGate({
-          sessionId,
-          reason: "resume_ready",
-        });
         this.appendProviderMessage(sessionId, "assistant", event);
         break;
       case "thinking":
