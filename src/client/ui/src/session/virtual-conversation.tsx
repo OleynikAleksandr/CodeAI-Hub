@@ -9,6 +9,7 @@ import type {
   SessionSnapshot,
 } from "../../../../types/session";
 import { isContinuityInternalMessage } from "./continuity-internal-message";
+import { isSegmentBoundaryMessage } from "./dialog-panel-message-utils";
 import SessionTabs from "./session-tabs";
 import {
   collectChainSegmentMessages,
@@ -226,6 +227,15 @@ export const buildVirtualConversationMessages = (params: {
     }
     return compareMessageIds(left.message.id, right.message.id);
   });
+
+  const hasExplicitBoundaries = collected.some((entry) =>
+    isSegmentBoundaryMessage(entry.message)
+  );
+  if (hasExplicitBoundaries) {
+    return dedupeVirtualConversationMessages(
+      filterContinuityInternalMessages(collected.map((entry) => entry.message))
+    );
+  }
 
   const withBoundaries: SessionMessage[] = [];
   const seenSegments = new Set<number>();
