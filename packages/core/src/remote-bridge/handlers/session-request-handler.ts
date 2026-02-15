@@ -10,6 +10,7 @@ import type { CoreConfig } from "../../config";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { TokenUsageSnapshot } from "../../session-continuity/continuity-types";
+import { buildHumanReadableDialogId } from "../../session-continuity/dialog-id";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import {
   computeRemainingPercent,
@@ -1312,19 +1313,21 @@ export class SessionRequestHandler {
         continuationParentId: options.continuationParentId ?? null,
       }
     );
-    const continuityRootSessionId = options.rootSessionId ?? session.id;
+    const continuityRootSessionId = this.resolveContinuityRootSessionId({
+      rootSessionIdOverride: options.rootSessionId ?? null,
+      providerId: options.providerId,
+      sessionId: session.id,
+      context: options.context,
+    });
     this.continuityRootBySessionId.set(session.id, continuityRootSessionId);
     if (!supportsImmediateBinding) {
       this.sessionManager.seedProviderSessionId(session.id, providerSessionId);
     }
 
-    const descriptionDialog =
-      session.stage === "description" && session.initiativeSlug
-        ? await this.resolveDescriptionDialogSessionId({
-            session,
-            providerSessionId,
-          })
-        : null;
+    const descriptionDialog = await this.resolveDescriptionDialog({
+      session,
+      providerSessionId,
+    });
 
     this.maybePromoteLegacyDescriptionDialogHistory({
       session,
@@ -1401,6 +1404,51 @@ export class SessionRequestHandler {
     this.broadcastSessionBinding(session.id);
 
     return session;
+  }
+
+  private resolveContinuityRootSessionId(options: {
+    readonly rootSessionIdOverride: string | null;
+    readonly providerId: string;
+    readonly sessionId: string;
+    readonly context: {
+      readonly initiativeSlug: string | null;
+      readonly stage: string | null;
+      readonly runSlug: string | null;
+      readonly providerSessionId: string | null;
+    };
+  }): string {
+    if (options.rootSessionIdOverride) {
+      return options.rootSessionIdOverride;
+    }
+    if (options.context.initiativeSlug && options.context.stage) {
+      return buildHumanReadableDialogId({
+        providerId: options.providerId,
+        uuid: options.sessionId,
+        agentRole: options.context.runSlug ?? null,
+      });
+    }
+    return options.sessionId;
+  }
+
+  private resolveDescriptionDialog(options: {
+    readonly session: Session;
+    readonly providerSessionId: string;
+  }): Promise<{
+    readonly dialogSessionId: string;
+    readonly shouldBackfill: boolean;
+  } | null> {
+    if (
+      !(
+        options.session.stage === "description" &&
+        options.session.initiativeSlug
+      )
+    ) {
+      return Promise.resolve(null);
+    }
+    return this.resolveDescriptionDialogSessionId({
+      session: options.session,
+      providerSessionId: options.providerSessionId,
+    });
   }
 
   private async createContinuitySession(options: {
