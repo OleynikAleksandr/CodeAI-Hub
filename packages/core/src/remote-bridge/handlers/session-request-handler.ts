@@ -380,6 +380,7 @@ export type SessionRequestHandlerOptions = {
 export class SessionRequestHandler {
   private readonly providerSessions = new Map<string, ProviderSessionBinding>();
   private readonly continuityRootBySessionId = new Map<string, string>();
+  private readonly dialogSegmentMetaWriteInFlight = new Set<string>();
   private readonly config: CoreConfig;
   private readonly sessionManager: SessionManager;
   private readonly providerRegistry: ProviderRegistry;
@@ -2932,50 +2933,72 @@ export class SessionRequestHandler {
         return;
       }
 
-      const latestSummary = await this.readLatestSegmentSummary(jsonlPath);
-      if (
-        latestSummary &&
-        latestSummary.segments.length === chain.segments.length
-      ) {
+      const inFlightKey = `${jsonlPath}#${chain.segments.length}`;
+      if (this.dialogSegmentMetaWriteInFlight.has(inFlightKey)) {
+        this.logger.warn("Skipping dialog segment meta append (in-flight)", {
+          dialogId: rootDialogId,
+          sessionId: options.session.id,
+          segments: chain.segments.length,
+        });
         return;
       }
+      this.dialogSegmentMetaWriteInFlight.add(inFlightKey);
+      try {
+        const latestSummary = await this.readLatestSegmentSummary(jsonlPath);
+        if (
+          latestSummary &&
+          latestSummary.segments.length === chain.segments.length
+        ) {
+          this.logger.info("Dialog segment meta already up-to-date", {
+            dialogId: rootDialogId,
+            sessionId: options.session.id,
+            segments: chain.segments.length,
+          });
+          return;
+        }
 
-      const segments = chain.segments.map((segment, index) => {
-        const snapshot = segment.tokenUsage ?? null;
-        const remainingPercent = snapshot
-          ? computeRemainingPercent(snapshot)
-          : null;
-        return {
-          index: index + 1,
-          providerId: segment.providerId,
-          providerSessionId: segment.providerSessionId,
-          ...(remainingPercent !== null ? { remainingPercent } : {}),
+        const segments = chain.segments.map((segment, index) => {
+          const snapshot = segment.tokenUsage ?? null;
+          const remainingPercent = snapshot
+            ? computeRemainingPercent(snapshot)
+            : null;
+          return {
+            index: index + 1,
+            providerId: segment.providerId,
+            providerSessionId: segment.providerSessionId,
+            ...(remainingPercent !== null ? { remainingPercent } : {}),
+          } as const;
+        });
+
+        const payload = {
+          kind: "segment_summary",
+          dialogId: rootDialogId,
+          segments,
         } as const;
-      });
 
-      const payload = {
-        kind: "segment_summary",
-        dialogId: rootDialogId,
-        segments,
-      } as const;
+        const content = [
+          DIALOG_SEGMENT_BOUNDARY_MARKER,
+          "Новая сессия",
+          `${DIALOG_SEGMENT_META_MARKER}${JSON.stringify(payload)}`,
+        ].join("\n");
 
-      const content = [
-        DIALOG_SEGMENT_BOUNDARY_MARKER,
-        "Новая сессия",
-        `${DIALOG_SEGMENT_META_MARKER}${JSON.stringify(payload)}`,
-      ].join("\n");
-
-      const metaMessage = this.sessionManager.appendMessage(
-        options.session.id,
-        "system",
-        content
-      );
-      if (!metaMessage) {
-        return;
+        const metaMessage = this.sessionManager.appendMessage(
+          options.session.id,
+          "system",
+          content
+        );
+        if (!metaMessage) {
+          return;
+        }
+        await this.sessionStorage.appendMessage(
+          options.session.id,
+          metaMessage
+        );
+        this.broadcaster({ type: "session:message", payload: metaMessage });
+        this.broadcastDialogMessage(options.session.id, metaMessage);
+      } finally {
+        this.dialogSegmentMetaWriteInFlight.delete(inFlightKey);
       }
-      await this.sessionStorage.appendMessage(options.session.id, metaMessage);
-      this.broadcaster({ type: "session:message", payload: metaMessage });
-      this.broadcastDialogMessage(options.session.id, metaMessage);
     } catch (error: unknown) {
       this.logger.warn("Failed to append dialog segment meta", {
         dialogId: rootDialogId,
