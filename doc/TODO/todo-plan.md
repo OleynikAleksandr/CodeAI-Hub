@@ -25,8 +25,8 @@
 - расхождение “что показываем” между live‑режимом и cold start (должен быть 1 поток данных).
 
 ### Stream: Live‑доставка сообщений из JSONL (cursor/tail) — без альтернативных источников
-1. [TODO] Fix: привести real-time обновление ленты к 1 механизму: сигнал `dialog:message` → запрос `dialog:history(cursor=lastCursor)` → append по cursor; убрать/запретить любые прямые добавления контента из runtime payload (scope: `src/client/project-manager/*` ≤3 файлов; expected commit message: `fix(pm): realtime dialog tail strictly from jsonl`)
-2. [TODO] Git Commit: `fix(pm): realtime dialog tail strictly from jsonl` (hash: TBD)
+1. [DONE] Fix: привести real-time обновление ленты к 1 механизму: сигнал `dialog:message` → запрос `dialog:history(cursor=lastCursor)` → append по cursor; убрать/запретить любые прямые добавления контента из runtime payload (scope: `src/client/project-manager/*` ≤3 файлов; expected commit message: `fix(pm): realtime dialog tail strictly from jsonl`)
+2. [DONE] Git Commit: `fix(pm): realtime dialog tail strictly from jsonl` (hash: a8944e61)
 3. [TODO] Fix: стабильные ключи/дедуп для UI элементов: дедуп только по (cursor|sequence), а не по message id, чтобы user‑сообщения не “затирались” коллизиями между сегментами (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): dedupe dialog items by cursor`)
 4. [TODO] Git Commit: `fix(ui): dedupe dialog items by cursor` (hash: TBD)
 
