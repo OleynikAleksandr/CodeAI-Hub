@@ -1,3 +1,13 @@
+## [1.1.603] - 2026-02-15
+### Fixed
+- Session UI: убран двойной divider “Новая сессия” (не рендерим implicit divider после `thinking`, если в истории есть explicit boundary из JSONL).
+- Session UI: после рестартов Core/PM token summary `#1 (..%) | #2 (..%)` восстанавливается из JSONL segment meta (fallback от runtime chain).
+
+## [1.1.602] - 2026-02-15
+### Fixed
+- Infinite session continuity: `session:create`/resume по `providerSessionId` больше не создаёт новый `dialogId` — JSONL и continuity chain продолжают писаться в исходный root.
+- Dialog naming: для description‑сессий `dialogId` получает роль `description`, а не `agent` (fallback derivation `runSlug → stage → agent`).
+
 ## [1.1.584] - 2026-02-13
 ### Fixed
 - Codex stalled turns: прекращаем consumption event-stream после terminal событий `turn.completed/turn.failed` и делаем best-effort cancel (`events.return()`) с таймаутом, чтобы очередь сообщений не залипала (сценарий `processor.enqueue` без `processor.dequeue`).
