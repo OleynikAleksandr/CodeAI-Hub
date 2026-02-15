@@ -34,6 +34,7 @@
 - `e527966b fix(arch): make ui-style-ssot work without rg`
 - `6199e955 docs(todo): record ui-style-ssot grep fallback`
 - `cee5e75e docs(todo): archive prior plan and start ssot phases`
+- `dbc5d3d6 docs: align ssot plan phase numbering`
 
 ---
 
