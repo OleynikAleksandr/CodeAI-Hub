@@ -266,3 +266,51 @@ PM хранит и восстанавливает состояние вклад�
 - Где канонично хранить реестр “диалогов” для быстрого списка в PM: сканирование `continuity/**/chain.json` или отдельный индекс-файл per-workspace.
 - Стандарт имени `runSlug`: `reviewer/collector` или более детальные (`description-reviewer`).
 - Единый формат JSONL-событий (минимум полей для PM) и правило генерации `messageId` (чтобы дедуп был строгим).
+
+---
+
+## 9) Contract (Approved) — Человекочитаемый `dialogId`
+
+**Решение:** `dialogId` становится человекочитаемым и используется как ключ для:
+- basename файла истории: `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`
+- continuity root (папка chain): `<workspaceRoot>/.codeai-hub/<workspaceSlug>/continuity/<stage>/<dialogId>/chain.json`
+- ключа вкладки (tab) в Project Manager.
+
+### 9.1 Формат
+`<providerSlug>-<uuid>-<agentRole>`
+
+Примеры:
+- `codex-7ef982bd-1eea-4cf9-b7a4-455dee496bd9-reviewer`
+- `claude-52fe963a-9b59-402c-9adb-47a50dd7f2d8-collector`
+
+### 9.2 Нормализация
+- Все символы — lowercase.
+- Допустимые символы: `a-z0-9-`.
+- `providerSlug` вычисляется из providerId (например `codexCli -> codex`, `claudeCodeCli -> claude`, `geminiCli -> gemini`).
+- `agentRole` берётся из `runSlug/sessionKind` (например `reviewer|collector`), иначе `agent`.
+
+### 9.3 Backward compatibility
+- Legacy `dialogId` вида «только uuid» поддерживаются для открытия/истории.
+- Для UI отображения допускается friendly label, но каноничный ключ остаётся `dialogId`.
+
+---
+
+## 10) Contract (Approved) — Segment meta в `<dialogId>.jsonl` (replay-safe UI)
+
+**Проблема:** после закрытия/переоткрытия вкладки и после рестартов Core/PM диалог восстанавливается из JSONL, но вспомогательная информация (границы сегментов + `#1 (..%) | #2 (..%)`) не должна зависеть от runtime chain.
+
+**Решение:** Core пишет минимальные метаданные **один раз на старт нового provider-сегмента** (rollover/новый providerSessionId), а UI считывает их при `dialog:history`.
+
+### 10.1 UI placement (фиксировано)
+- Divider сегмента показываем **в ленте диалога** (как визуальный разделитель).
+- Summary `#1 (..%) | #2 (..%)` показываем **в правой нижней Status панели**.
+
+### 10.2 Запись в JSONL (однократно на старт сегмента)
+Core дописывает в `<dialogId>.jsonl` две записи (в указанном порядке):
+1) **Visible divider** — `role=system`, `messageId` с префиксом `segment-boundary:`.
+2) **Hidden meta** — `role=system`, `messageId` с префиксом `dialog-meta:` и содержимым, которое UI умеет распарсить и не отображать как сообщение.
+
+Частота записи: только на старт сегмента (не на каждый апдейт token usage).
+
+### 10.3 Live updates
+Во время активной сессии token usage и прочий статус продолжают обновляться текущими механизмами (live stream / snapshots). JSONL meta используется только для восстановления после reopen/restart.
