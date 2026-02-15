@@ -40,6 +40,7 @@ export const ProjectManagerDialogSessionView = (props: {
   const loadedDialogIdsRef = useRef(new Set<string>());
   const dialogCursorRef = useRef(new Map<string, number>());
   const pendingHistoryCursorRef = useRef(new Map<string, number>());
+  const queuedHistoryRefreshRef = useRef(new Set<string>());
   const pendingIntentRef = useRef<DialogOpenIntent | null>(null);
   const connection = useProjectManagerCoreStatusHydrator({
     onHydrate: () => {},
@@ -53,18 +54,24 @@ export const ProjectManagerDialogSessionView = (props: {
     api.dialogs.listDialogs(intent.workspaceSlug);
   }, []);
   const requestDialogHistory = useCallback(
-    (intent: DialogOpenIntent, dialogId: string, cursor?: number | null) => {
+    (
+      intent: DialogOpenIntent,
+      dialogId: string,
+      cursor?: number | null,
+      options?: { readonly force?: boolean } | null
+    ) => {
       const resolvedCursor =
         typeof cursor === "number" && Number.isFinite(cursor)
           ? Math.max(0, Math.trunc(cursor))
           : 0;
       if (resolvedCursor === 0) {
-        if (loadedDialogIdsRef.current.has(dialogId)) {
+        if (!options?.force && loadedDialogIdsRef.current.has(dialogId)) {
           return;
         }
         loadedDialogIdsRef.current.add(dialogId);
       }
       if (pendingHistoryCursorRef.current.has(dialogId)) {
+        queuedHistoryRefreshRef.current.add(dialogId);
         return;
       }
       api.dialogs.requestDialogHistory(
@@ -165,18 +172,23 @@ export const ProjectManagerDialogSessionView = (props: {
               messages: normalizedMessages,
             })
           );
-          return;
+        } else {
+          setSnapshots((previous) => {
+            let updated = previous;
+            for (const normalized of normalizedMessages) {
+              updated = appendDedupedSessionMessageToSnapshots(updated, {
+                sessionId: dialogId,
+                message: normalized,
+              });
+            }
+            return updated;
+          });
         }
-        setSnapshots((previous) => {
-          let updated = previous;
-          for (const normalized of normalizedMessages) {
-            updated = appendDedupedSessionMessageToSnapshots(updated, {
-              sessionId: dialogId,
-              message: normalized,
-            });
-          }
-          return updated;
-        });
+        if (queuedHistoryRefreshRef.current.has(dialogId)) {
+          queuedHistoryRefreshRef.current.delete(dialogId);
+          const cursor = dialogCursorRef.current.get(dialogId) ?? 0;
+          requestDialogHistory(intent, dialogId, cursor, { force: cursor <= 0 });
+        }
         return;
       }
       if (message.type === "dialog:send:ack") {
@@ -192,7 +204,7 @@ export const ProjectManagerDialogSessionView = (props: {
         }
         if (payload?.status === "sent") {
           const cursor = dialogCursorRef.current.get(dialogId) ?? 0;
-          requestDialogHistory(intent, dialogId, cursor);
+          requestDialogHistory(intent, dialogId, cursor, { force: cursor <= 0 });
           return;
         }
         if (payload?.status === "rejected") {
@@ -223,10 +235,7 @@ export const ProjectManagerDialogSessionView = (props: {
           return;
         }
         const cursor = dialogCursorRef.current.get(dialogId) ?? 0;
-        if (cursor <= 0) {
-          return;
-        }
-        requestDialogHistory(intent, dialogId, cursor);
+        requestDialogHistory(intent, dialogId, cursor, { force: cursor <= 0 });
         return;
       }
       if (message.type === "core:state") {
