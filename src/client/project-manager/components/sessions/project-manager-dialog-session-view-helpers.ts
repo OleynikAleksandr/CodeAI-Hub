@@ -19,6 +19,7 @@ export type DialogIndexEntry = {
   readonly rootSessionId: string;
   readonly dialogId: string;
   readonly updatedAt: string;
+  readonly latestSessionId: string | null;
   readonly providerId: string | null;
   readonly providerSessionId: string | null;
 };
@@ -45,6 +46,10 @@ export const sanitizeDialogIndexEntry = (value: unknown): DialogIndexEntry | nul
   ) {
     return null;
   }
+  const latestSessionId =
+    value.latestSessionId === null || typeof value.latestSessionId === "string"
+      ? (value.latestSessionId as string | null)
+      : null;
   const providerId =
     value.providerId === null || typeof value.providerId === "string"
       ? (value.providerId as string | null)
@@ -58,6 +63,7 @@ export const sanitizeDialogIndexEntry = (value: unknown): DialogIndexEntry | nul
     rootSessionId: value.rootSessionId,
     dialogId: value.dialogId,
     updatedAt: value.updatedAt,
+    latestSessionId,
     providerId,
     providerSessionId,
   };
@@ -135,11 +141,12 @@ export const buildProviderLabels = (providerId: ProviderStackId | null) =>
 
 export const buildDialogSessionRecord = (options: {
   readonly dialogId: string;
+  readonly runtimeSessionId?: string | null;
   readonly providerId: ProviderStackId | null;
   readonly providerSessionId: string | null;
   readonly intent: DialogOpenIntent;
 }): SessionRecord => ({
-  id: options.dialogId,
+  id: options.runtimeSessionId ?? options.dialogId,
   title: `Dialog ${options.dialogId.slice(0, 8)}`,
   providerIds: options.providerId ? [options.providerId] : [],
   workspacePath: options.intent.workspacePath,
@@ -177,3 +184,23 @@ export const convertHistoryToMessages = (records: readonly unknown[]): SessionMe
   result.sort((a, b) => a.createdAt - b.createdAt);
   return result;
 };
+
+export const createDialogRequestId = (): string =>
+  typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto
+    ? globalThis.crypto.randomUUID()
+    : `pm-dialog-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+export const readDialogString = (value: unknown): string | null =>
+  typeof value === "string" ? value : null;
+
+export const readDialogCursor = (value: unknown): number | null =>
+  typeof value === "number" && Number.isFinite(value)
+    ? Math.max(0, Math.trunc(value))
+    : null;
+
+export const createDialogSystemMessage = (content: string): SessionMessage => ({
+  id: `system-${Date.now()}`,
+  role: "system",
+  content,
+  createdAt: Date.now(),
+});
