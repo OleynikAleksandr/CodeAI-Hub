@@ -5,6 +5,7 @@ import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import SessionView from "../../../ui/src/session/session-view";
 import { createInitialSnapshot, mergeHistoryIntoSnapshots, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { sanitizeMessage } from "../../../ui/src/core-bridge/normalizers";
+import { buildTokenDebugSummaryFromMessages } from "./dialog-segment-meta";
 import { appendDedupedSessionMessageToSnapshots } from "./session-message-dedupe";
 import {
   buildDialogSessionRecord,
@@ -42,6 +43,9 @@ export const ProjectManagerDialogSessionView = (props: {
 }) => {
   const [session, setSession] = useState<SessionRecord | null>(null);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
+  const [tokenDebugSummaryOverride, setTokenDebugSummaryOverride] = useState<
+    string | undefined
+  >(undefined);
   const loadedDialogIdsRef = useRef(new Set<string>());
   const pendingIntentRef = useRef<DialogOpenIntent | null>(null);
 
@@ -146,6 +150,8 @@ export const ProjectManagerDialogSessionView = (props: {
           return;
         }
         const normalizedMessages = convertHistoryToMessages(messages);
+        const summary = buildTokenDebugSummaryFromMessages(normalizedMessages);
+        setTokenDebugSummaryOverride(summary ?? undefined);
         setSnapshots((previous) =>
           mergeHistoryIntoSnapshots(previous, {
             sessionId: dialogId,
@@ -200,6 +206,12 @@ export const ProjectManagerDialogSessionView = (props: {
         if (!normalized) {
           return;
         }
+        if (normalized.role === "system") {
+          const updated = buildTokenDebugSummaryFromMessages([normalized]);
+          if (updated) {
+            setTokenDebugSummaryOverride(updated);
+          }
+        }
         setSnapshots((previous) =>
           appendDedupedSessionMessageToSnapshots(previous, {
             sessionId: dialogId,
@@ -237,6 +249,7 @@ export const ProjectManagerDialogSessionView = (props: {
         sessions={[]}
         showEmptyState={true}
         snapshots={{}}
+        tokenDebugSummaryOverride={undefined}
       />
     );
   }
@@ -260,6 +273,7 @@ export const ProjectManagerDialogSessionView = (props: {
       sessions={[session]}
       showEmptyState={true}
       snapshots={snapshots}
+      tokenDebugSummaryOverride={tokenDebugSummaryOverride}
     />
   );
 };

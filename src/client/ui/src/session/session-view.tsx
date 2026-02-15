@@ -29,6 +29,7 @@ type SessionViewProps = {
   readonly showEmptyState: boolean;
   readonly coreConnectionStatus: "connecting" | "ready" | "error";
   readonly coreConnectionDetail?: string;
+  readonly tokenDebugSummaryOverride?: string;
   readonly onSelectSession: (sessionId: string) => void;
   readonly onCloseSession: (sessionId: string) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
@@ -42,6 +43,7 @@ const SessionViewBody = ({
   snapshots,
   coreConnectionStatus,
   coreConnectionDetail,
+  tokenDebugSummaryOverride,
   onSelectSession,
   onCloseSession,
   onSendMessage,
@@ -114,11 +116,13 @@ const SessionViewBody = ({
   }
 
   const tokenDebugSummary =
+    tokenDebugSummaryOverride ??
     buildTokenDebugSummary({
       chain: continuationChain,
       snapshots,
       activeSessionId,
-    }) ?? undefined;
+    }) ??
+    undefined;
 
   return (
     <div className="session-app" data-session-style-source="canonical">
