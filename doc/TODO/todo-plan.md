@@ -134,3 +134,11 @@ Source of Truth (архитектура):
    - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.603.tar.bz2`
    - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.603.tar.bz2`
 7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.603)` (hash: 6949e960)
+
+---
+
+## Phase 189 — Fix(Arch): portable UI style guardrails (owner: Codex, updated: 2026-02-15)
+
+### Stream: Architecture gates — ui-style-ssot without `rg`
+1. [DONE] Fix: добавить `grep` fallback, если `rg` недоступен, чтобы `./scripts/check-architecture.sh` проходил в минимальных окружениях (scope: `scripts/check-architecture-rules/ui-style-ssot.sh`; expected commit message: `fix(arch): make ui-style-ssot work without rg`)
+2. [DONE] Git Commit: `fix(arch): make ui-style-ssot work without rg` (hash: e527966b)
