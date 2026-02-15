@@ -134,6 +134,7 @@ export type DialogHistoryRequestPayload = {
   readonly requestId: string;
   readonly workspaceSlug: string;
   readonly dialogId: string;
+  readonly cursor?: number;
 };
 
 export type DialogSendRequestPayload = {
@@ -237,6 +238,7 @@ export type IncomingMessage =
         readonly requestId: string;
         readonly workspaceSlug: string;
         readonly dialogId: string;
+        readonly lastCursor?: number;
         readonly messages: readonly unknown[];
         readonly error: string | null;
       };
