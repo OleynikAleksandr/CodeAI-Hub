@@ -63,8 +63,8 @@
 - Core запрещает send, пока сегмент не готов (rollover/resume/continuity handshake).
 
 ### Stream: Core — строгий контракт готовности к send
-1. [TODO] Fix: Core явно репортит состояние “можно/нельзя отправлять” и не допускает отправку до завершения bootstrap/rollover, чтобы UI не мог отправить “в никуда” (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): strict continuity lock contract for sends`)
-2. [TODO] Git Commit: `fix(core): strict continuity lock contract for sends` (hash: TBD)
+1. [DONE] Fix: Core явно репортит состояние “можно/нельзя отправлять” и не допускает отправку до завершения bootstrap/rollover, чтобы UI не мог отправить “в никуда” (scope: `packages/core/*` ≤3 файлов; expected commit message: `fix(core): strict continuity lock contract for sends`)
+2. [DONE] Git Commit: `fix(core): strict continuity lock contract for sends` (hash: 310c5273)
 
 ### Stream: UI — разблокировка ввода только по turn completion
 1. [TODO] Fix: UI игнорирует промежуточные события и снимает блокировку ввода только по финальному `turn_completed`/idle состоянию (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): unlock input only after turn completion`)
