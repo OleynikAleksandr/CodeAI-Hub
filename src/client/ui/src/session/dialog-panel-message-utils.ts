@@ -1,8 +1,23 @@
 import type { SessionMessage } from "../../../../types/session";
 import type { ProviderTheme } from "./helpers";
 
+const SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
+
 export const isSegmentBoundaryMessage = (message: SessionMessage): boolean =>
-  message.role === "system" && message.id.startsWith("segment-boundary:");
+  message.role === "system" &&
+  (message.id.startsWith("segment-boundary:") ||
+    message.content.trimStart().startsWith(SEGMENT_BOUNDARY_MARKER));
+
+export const extractSegmentBoundaryLabel = (content: string): string => {
+  const lines = content.split("\n").map((line) => line.trim());
+  if (lines.length === 0) {
+    return "";
+  }
+  if (lines[0] !== SEGMENT_BOUNDARY_MARKER) {
+    return content;
+  }
+  return lines[1] ?? "Новая сессия";
+};
 
 export const shouldRenderImplicitBoundaryAfter = (
   message: SessionMessage,

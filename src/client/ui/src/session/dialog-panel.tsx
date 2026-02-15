@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SessionMessage } from "../../../../types/session";
 import {
   buildMessageClassNames,
+  extractSegmentBoundaryLabel,
   isSegmentBoundaryMessage,
   mergeThinkingMessages,
   resolveRoleLabel,
@@ -124,7 +125,7 @@ const DialogPanel = ({
                 key={message.id}
               >
                 <span className="session-dialog__segment-boundary-label">
-                  {message.content}
+                  {extractSegmentBoundaryLabel(message.content)}
                 </span>
               </div>
             );
