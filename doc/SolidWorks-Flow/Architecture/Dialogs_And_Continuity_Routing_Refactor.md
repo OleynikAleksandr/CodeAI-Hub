@@ -314,7 +314,8 @@ Core дописывает в `<dialogId>.jsonl` **одну** запись `role=
 UI:
 - распознаёт divider по `messageId` с префиксом `segment-boundary:` **или** по marker в `content`;
 - отображает в ленте только label (Line 2), не показывая служебные строки;
-- восстанавливает summary `#1 (..%) | #2 (..%)` из `segment meta` при `dialog:history`.
+- восстанавливает summary `#1 (..%) | #2 (..%)` из `segment meta` при `dialog:history` (и в Project Manager, и в “основной” вкладке SessionView);
+- **не добавляет** дополнительных “implicit” разделителей (включая старый UI‑хак “divider после thinking”), если в истории уже есть explicit boundary‑сообщения.
 
 Частота записи: только на старт сегмента (не на каждый апдейт token usage).
 
