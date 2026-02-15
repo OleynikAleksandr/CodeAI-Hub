@@ -10,7 +10,7 @@ export type DialogApi = {
   readonly requestDialogHistory: (
     workspaceSlug: string,
     dialogId: string,
-    requestId?: string
+    options?: { readonly cursor?: number; readonly requestId?: string } | string
   ) => string;
   readonly sendDialogMessage: (
     workspaceSlug: string,
@@ -49,11 +49,25 @@ export const createDialogApi = (
     });
     return resolvedRequestId;
   },
-  requestDialogHistory: (workspaceSlug, dialogId, requestId) => {
+  requestDialogHistory: (workspaceSlug, dialogId, options) => {
+    const requestId =
+      typeof options === "string" ? options : options?.requestId ?? undefined;
     const resolvedRequestId = requestId ?? createRequestId("dialog-history");
+    const cursor =
+      typeof options === "object" &&
+      options &&
+      typeof options.cursor === "number" &&
+      Number.isFinite(options.cursor)
+        ? Math.max(0, Math.trunc(options.cursor))
+        : undefined;
     send({
       type: "dialog:history",
-      payload: { requestId: resolvedRequestId, workspaceSlug, dialogId },
+      payload: {
+        requestId: resolvedRequestId,
+        workspaceSlug,
+        dialogId,
+        ...(cursor !== undefined ? { cursor } : {}),
+      },
     });
     return resolvedRequestId;
   },
@@ -69,4 +83,3 @@ export const createDialogApi = (
     return resolvedRequestId;
   },
 });
-
