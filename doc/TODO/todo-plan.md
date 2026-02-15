@@ -66,3 +66,35 @@ Source of Truth (архитектура):
    - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.601.tar.bz2`
    - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.601.tar.bz2`
 7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.601)` (hash: 8f2d6232)
+
+---
+
+## Phase 185 — Fix: бесконечная сессия (resume не создаёт новый dialogId) + корректный role для Description (owner: Codex+Oleksandr, updated: 2026-02-15)
+
+### Stream: Core — привязка resume к существующему `dialogId`
+1. [DONE] Fix: при `session:create`/resume по `providerSessionId` находить существующий continuity root (`dialogId`) по `chain.json` и пинить unified-session `historySessionId` к нему (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): reuse dialogId when resuming provider session`)
+2. [DONE] Git Commit: `fix(core): reuse dialogId for provider session resumes` (hash: 14bc2096)
+
+### Stream: Core — role slug для Description (не `agent`)
+1. [DONE] Fix: если `runSlug` отсутствует, использовать `stage` как `agentRole` при генерации `dialogId` (чтобы Description сессия была `*-description`, а не `*-agent`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): derive dialog role from stage when runSlug missing`)
+2. [DONE] Git Commit: `fix(core): reuse dialogId for provider session resumes` (hash: 14bc2096)
+
+### Stream: Docs — обновить контракт `dialogId`
+1. [DONE] Docs: уточнить правило `agentRole` (runSlug иначе stage иначе agent) (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): clarify dialogId role derivation`)
+2. [DONE] Git Commit: `docs(flow): clarify dialogId role derivation` (hash: ce127f74)
+
+---
+
+## Phase 186 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-15)
+
+### Stream: Release Build (New Patch Release)
+1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетная сборка `npm run build:core` (scope: repo)
+2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A — pre-commit hooks + manual gates)
+3. [DONE] Build: `./scripts/build-all.sh --allow-dirty` (version bump -> `1.1.602`) (scope: repo)
+4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: 7566aba3)
+5. [DONE] Build: `./scripts/build-release.sh --use-current-version --allow-dirty` (VSIX) (scope: repo build)
+6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.602)`)
+   - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.602.vsix`
+   - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.602.tar.bz2`
+   - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.602.tar.bz2`
+7. [TODO] Git Commit: `docs(todo): record patch release build (1.1.602)` (hash: TBD)
