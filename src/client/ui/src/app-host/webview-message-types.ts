@@ -68,6 +68,11 @@ export type SessionHistoryMessage = {
   readonly payload?: unknown;
 };
 
+export type SessionStreamMessage = {
+  readonly type: "session:stream";
+  readonly payload?: unknown;
+};
+
 export type IncomingMessage =
   | ProviderPickerOpenMessage
   | SessionCreatedMessage
@@ -81,7 +86,8 @@ export type IncomingMessage =
   | CoreLoadingStatusMessage
   | SessionMessageEvent
   | SessionDeletedMessage
-  | SessionHistoryMessage;
+  | SessionHistoryMessage
+  | SessionStreamMessage;
 
 export const isIncomingMessage = (value: unknown): value is IncomingMessage =>
   Boolean(value && typeof value === "object" && "type" in value);
@@ -153,6 +159,16 @@ export const isSessionHistoryPayload = (
   return (
     typeof candidate.sessionId === "string" && Array.isArray(candidate.messages)
   );
+};
+
+export const isSessionStreamPayload = (
+  value: unknown
+): value is { readonly sessionId: string; readonly event?: unknown } => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return typeof candidate.sessionId === "string";
 };
 
 export const isUseProjectManagerMessage = (
