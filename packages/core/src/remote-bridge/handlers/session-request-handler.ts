@@ -1631,7 +1631,24 @@ export class SessionRequestHandler {
       };
     }
     const context = this.flowNodeContinuityLockContexts.get(sessionId);
-    if (!(context && context.sourceSessionId === sessionId)) {
+    if (!context) {
+      return { allowed: true };
+    }
+
+    if (
+      context.targetSessionId === sessionId &&
+      context.awaitingBootstrapTurn
+    ) {
+      return {
+        allowed: false,
+        code: CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
+        message: CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
+        sourceSessionId: context.sourceSessionId,
+        targetSessionId: context.targetSessionId ?? null,
+      };
+    }
+
+    if (context.sourceSessionId !== sessionId) {
       return { allowed: true };
     }
     return {
