@@ -51,8 +51,8 @@
 4. [DONE] Git Commit: `fix(core): hard idempotency for segment meta` (hash: 22e94b6a)
 
 ### Stream: UI render — только explicit boundary/meta из JSONL
-1. [TODO] Fix: финально убедиться, что UI никогда не вставляет divider имплицитно (thinking‑хак) и не имеет второго источника divider’ов; любые разделители/summary строятся только из событий JSONL (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): remove all implicit session dividers`)
-2. [TODO] Git Commit: `fix(ui): remove all implicit session dividers` (hash: TBD)
+1. [DONE] Fix: финально убедиться, что UI никогда не вставляет divider имплицитно (thinking‑хак) и не имеет второго источника divider’ов; любые разделители/summary строятся только из событий JSONL (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): remove all implicit session dividers`)
+2. [DONE] Git Commit: `fix(ui): remove all implicit session dividers` (hash: aa489c7d)
 
 ---
 
