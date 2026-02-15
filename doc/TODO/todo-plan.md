@@ -26,8 +26,8 @@ Source of Truth (архитектура):
 - разблокировка ввода происходит не в конце turn’а → можно отправить запрос “в никуда”.
 
 ### Stream: Архитектурный контракт “Dialog SSOT pipeline”
-1. [TODO] Docs: дописать контракт в архитектуру: (a) canonical JSONL как SSOT для ленты, (b) модель cursor/offset для догонки, (c) правила дедупликации/ID, (d) правила автоселекции после cold start (PM+Core restart), (e) что считается “стартом нового provider сегмента” и когда писать boundary+meta **идемпотентно** (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): add dialog ssot pipeline contract`)
-2. [TODO] Git Commit: `docs(flow): add dialog ssot pipeline contract` (hash: TBD)
+1. [DONE] Docs: дописать контракт в архитектуру: (a) canonical JSONL как SSOT для ленты, (b) модель cursor/offset для догонки, (c) правила дедупликации/ID, (d) правила автоселекции после cold start (PM+Core restart), (e) что считается “стартом нового provider сегмента” и когда писать boundary+meta **идемпотентно** (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): add dialog ssot pipeline contract`)
+2. [DONE] Git Commit: `docs(flow): add dialog ssot pipeline contract` (hash: d3f9a7ba)
 
 ### Stream: План миграции UI/PM (история vs live)
 1. [TODO] Docs: в плане зафиксировать, какие текущие источники данных отключаем/ограничиваем (snapshots/virtual conversation) и какие остаются только для статуса (locks/rollover/usage), чтобы лента не зависела от runtime chain (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): clarify ui data sources for dialog vs status`)
