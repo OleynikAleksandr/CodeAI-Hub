@@ -1,12 +1,11 @@
 # План разработки (Development TODO Plan)
 
-## Правила выполнения (Execution Rules):
-- TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream несколько микро‑задач.
-- Каждая микро‑задача затрагивает ≤ 3 файлов.
-- Каждая микро‑задача оформляется парой пунктов: (1) реализация/изменения, (2) Git Commit (отдельной строкой).
-- После каждой микро‑задачи прогоняем гейты: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка затронутого пакета.
+## Правила выполнения (Execution Rules)
+- TODO Plan состоит из Phase (Фаз). В каждой Phase — Stream (стримы) с микро‑задачами.
+- Каждая микро‑задача затрагивает **≤ 3 файлов** (или пакетов).
+- Каждая микро‑задача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
+- После каждой микро‑задачи прогоняем гейты: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем таргетная сборка затронутого пакета/клиента.
 - После зелёных гейтов: Git Commit + немедленный апдейт статусов/хешей в этом файле.
-- В конце каждой Phase: Phase Report (в `doc/SolidWorks-Flow/Architecture/`) + коммит.
 
 Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
@@ -15,195 +14,44 @@ Source of Truth (архитектура):
 
 ---
 
-## Phase 170 — PM: восстановление диалогов по dialogId после рестарта Core/PM (owner: Codex, updated: 2026-02-14)
+## Phase 183 — Осмысленные `dialogId` (имена файлов/папок) (owner: Codex+Oleksandr, updated: 2026-02-15)
 
-**Goal:** После рестарта Core при живом PM и при холодном старте PM клик по `Reviewer Codex` (и аналогам) открывает диалог, загружая историю из накопительного JSONL через Core `dialog:history`, без зависимости от runtime sessions.
+**Goal:**
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl` получает человекочитаемое имя, включающее:
+  - префикс провайдера (например `codex`, `claude`, `gemini` или `codexCli`, если решим оставить providerId),
+  - стабильный уникальный идентификатор (uuid),
+  - суффикс роли агента (`reviewer` / `collector`, и т.п.).
+- Папки continuity становятся осмысленными (по `dialogId`), чтобы пользователь мог понять «что где».
 
-### Stream: PM — WS протокол dialog:* (api + types)
-1. [DONE] Добавить в PM WS-протокол команды/ивенты `dialog:list`, `dialog:history`, `dialog:send`, `dialog:message` (scope: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/api.ts`; expected commit message: `feat(pm): add dialog WS commands to api`)
-2. [DONE] Git Commit: `feat(pm): add dialog WS commands to api` (hash: 6bc726d9)
+### Stream: Design/Contracts (именование и миграция)
+1. [TODO] Docs: зафиксировать формат `dialogId` и правила миграции/обратной совместимости (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): dialogId naming contract`)
+2. [TODO] Git Commit: `docs(flow): dialogId naming contract` (hash: TBD)
 
-### Stream: PM — persistence (openDialogIds/activeDialogId/treeBindings)
-1. [DONE] Добавить минимальный persistence-store для `dialogId` (open tabs + активный + bindings дерева) (scope: `src/client/project-manager/services/dialog-tabs-store.ts`; expected commit message: `feat(pm): persist dialog tabs by dialogId`)
-2. [DONE] Git Commit: `feat(pm): persist dialog tabs by dialogId` (hash: 296d386d)
+### Stream: Core — генерация/нормализация `dialogId`
+1. [TODO] Implement: единый генератор/нормализатор `dialogId` (provider + uuid + role) и точка применения при создании/резюме диалога (scope: `packages/core/*` (≤3 файлов); expected commit message: `feat(core): human-readable dialogId format`)
+2. [TODO] Git Commit: `feat(core): human-readable dialogId format` (hash: TBD)
 
-### Stream: PM — дерево: клик открывает диалог (не resume)
-1. [DONE] Перевести клик по узлу `Reviewer <provider>` в дереве на событие `pm:dialog:open` (dialog intent), без требования runtime session (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `feat(pm): tree click opens dialog intent`)
-2. [DONE] Git Commit: `feat(pm): tree click opens dialog intent` (hash: a0285526)
+### Stream: Core — метаданные сегментов в `<dialogId>.jsonl` (replay-safe UI)
+1. [TODO] Implement: при старте нового provider-сегмента (rollover) Core дописывает в `<dialogId>.jsonl` разделитель сегмента + одноразовые метаданные для `#1 (..%) | #2 (..%)`; UI восстанавливает divider и token summary при `dialog:history` (scope: `packages/core/*`, `src/client/ui/*`, `src/client/project-manager/*` (разбить на микрозадачи ≤3 файлов); expected commit message: `feat(dialog): persist segment meta in dialog jsonl`)
+2. [TODO] Git Commit: `feat(dialog): persist segment meta in dialog jsonl` (hash: TBD)
 
-### Stream: PM — Session Panel: dialog:list + dialog:history (cold start + core restart)
-1. [DONE] Прокинуть `workspaceSlug` в `ProjectManagerSessionView` и реализовать open/replay: 
-- восстановить openDialogIds из persistence
-- получить `dialog:list`
-- по клику/intent открыть dialog tab (pseudo session = dialogId)
-- запросить `dialog:history` и смержить в snapshots
-(scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-stream.ts`; expected commit message: `feat(pm): restore dialogs via dialog history after core restart`)
-2. [DONE] Git Commit: `feat(pm): restore dialogs via dialog history after core restart` (hash: c8b24fd7)
+### Stream: Core — миграция/alias для старых uuid-only dialogId
+1. [TODO] Implement: обеспечить чтение/открытие старых диалогов (uuid-only) + мягкая миграция/alias в `continuity/index.json` и `chain.json` (scope: `packages/core/*` (≤3 файлов); expected commit message: `feat(core): dialogId alias for legacy ids`)
+2. [TODO] Git Commit: `feat(core): dialogId alias for legacy ids` (hash: TBD)
 
-### Stream: Phase Report (Phase 170)
-1. [DONE] Docs: Phase 170 report + update plan (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase170.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase170 report (pm dialog restore via history)`)
-2. [DONE] Git Commit: `docs(flow): phase170 report (pm dialog restore via history)` (hash: c447c1b0)
-
----
-
-## Phase 171 — PM: live stream + send по dialogId (owner: Codex, updated: 2026-02-14)
-
-**Goal:** PM отправляет сообщения через `dialog:send` и принимает live `dialog:message`, мержит без дублей в тот же reducer, независимо от runtime sessionId.
-
-### Stream: PM — send via dialogId
-1. [DONE] Переключить отправку сообщения на `dialog:send` по `activeDialogId` (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/sessions/session-message-sender.ts`; expected commit message: `feat(pm): send via dialogId`)
-2. [DONE] Git Commit: `feat(pm): send via dialogId` (hash: 83b773a2)
-
-### Stream: PM — live dialog:message -> snapshots
-1. [DONE] Подписка/маршрутизация `dialog:message` (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-message-dedupe.ts`; expected commit message: `feat(pm): live dialog stream by dialogId`)
-2. [DONE] Git Commit: `feat(pm): live dialog stream by dialogId` (hash: 7ac94d51)
-
-### Stream: Phase Report (Phase 171)
-1. [DONE] Docs: Phase 171 report + update plan (scope: `doc/SolidWorks-Flow/Architecture/Refactor_Progress_Phase171.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(flow): phase171 report (pm live+send via dialogId)`)
-2. [DONE] Git Commit: `docs(flow): phase171 report (pm live+send via dialogId)` (hash: 9986edec)
+### Stream: PM — отображение «человеческого имени»
+1. [TODO] Implement: показать понятный label в UI (таб/заголовок) на базе `dialogId` (scope: `src/client/project-manager/*` (≤3 файлов); expected commit message: `feat(pm): display friendly dialog labels`)
+2. [TODO] Git Commit: `feat(pm): display friendly dialog labels` (hash: TBD)
 
 ---
 
-## Phase 172 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
+## Phase 184 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-15)
 
 ### Stream: Release Build (New Patch Release)
-1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
-2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A)
-3. [DONE] Build: `./scripts/build-all.sh` (version bump -> `1.1.595`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
-4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: d20b1547)
-5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.595.vsix`) (scope: repo build)
-6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
-   - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.595.vsix`
-   - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.595.tar.bz2`
-   - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.595.tar.bz2`
-7. [DONE] Git Commit: `docs(todo): record patch release build` (hash: 04e0f375)
-
----
-
-## Phase 173 — Fix: dialog:send after continuity rollover (owner: Codex, updated: 2026-02-14)
-
-### Stream: Core — Resume Without Unified-Session Validation
-1. [DONE] Fix: разрешить resume providerSessionId после rollover для dialog-сессий (убрать валидацию через unified-session файл, добавить try/catch для resume/create) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit message: `fix(core): resume dialog session after continuity rollover`)
-2. [DONE] Git Commit: `fix(core): resume dialog session after continuity rollover` (hash: 529788cd)
-
----
-
-## Phase 174 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
-
-### Stream: Release Build (New Patch Release)
-1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
-2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A)
-3. [DONE] Build: `./scripts/build-all.sh` (version bump -> `1.1.596`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
-4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: cf362b4e)
-5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.596.vsix`) (scope: repo build)
-6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
-   - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.596.vsix`
-   - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.596.tar.bz2`
-   - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.596.tar.bz2`
-7. [DONE] Git Commit: `docs(todo): record patch release build` (hash: a13c5014)
-
----
-
-## Phase 175 — Fix: Claude provider-home auth bootstrap (owner: Codex, updated: 2026-02-14)
-
-### Stream: Claude Module — Provider-Home OAuth Bootstrap
-1. [DONE] Fix: сделать bootstrap OAuth токена для Claude provider-home надёжным в GUI env (использовать `/usr/bin/security`, выполнить bootstrap до первого auth probe, добавить info-log без токена) (scope: `packages/Claude_Module/src/sdk/claude-oauth-token-reader.ts`, `packages/Claude_Module/src/auth/sdk-auth-manager.ts`; expected commit message: `fix(claude): provider-home auth bootstrap via keychain token`)
-2. [DONE] Git Commit: `fix(claude): provider-home auth bootstrap via keychain token` (hash: ab9c8aa2)
-
----
-
-## Phase 176 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
-
-### Stream: Release Build (New Patch Release)
-1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
-2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A)
-3. [DONE] Build: `./scripts/build-all.sh` (version bump -> `1.1.597`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
-4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: 5f9e6027)
-5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.597.vsix`) (scope: repo build)
-6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
-   - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.597.vsix`
-   - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.597.tar.bz2`
-   - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.597.tar.bz2`
-7. [DONE] Git Commit: `docs(todo): record patch release build` (hash: 9b9ab19d)
-
----
-
-## Phase 177 — UI: визуальная граница между physical-сессиями в общем диалоге (owner: Codex, updated: 2026-02-14)
-
-**Goal:** В общем UI-диалоге (virtual conversation) явно видна смена physical provider session: разделитель с линией/лейблом + дополнительные отступы, чтобы сообщение пользователя не “прилипало” к Thinking предыдущей сессии.
-
-### Stream: Session Dialog — Segment Boundary Divider
-1. [DONE] Добавить boundary-маркер между continuity сегментами и отрисовку разделителя в DialogPanel + убрать negative-margin для Thinking перед boundary (scope: `src/client/ui/src/session/virtual-conversation.tsx`, `src/client/ui/src/session/dialog-panel.tsx`, `media/session-view.css`, `src/client/ui/src/session/token-debug-summary.ts`; expected commit message: `feat(ui): add session boundary divider in dialog`)
-2. [DONE] Git Commit: `feat(ui): add session boundary divider in dialog` (hash: 2c7cb749)
-
-### Stream: Phase 177 — Docs Update
-1. [DONE] Docs: обновить этот план статусами/датами/хешами (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record phase177 (dialog session boundary divider)`)
-2. [DONE] Git Commit: `docs(todo): record phase177 (dialog session boundary divider)` (hash: 27c444f4)
-
----
-
-## Phase 178 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
-
-### Stream: Release Build (New Patch Release)
-1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
-2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A)
-3. [DONE] Build: `./scripts/build-all.sh` (version bump -> `1.1.598`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
-4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: 453b6878)
-5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.598.vsix`) (scope: repo build)
-6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.598)`)
-   - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.598.vsix`
-   - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.598.tar.bz2`
-   - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.598.tar.bz2`
-7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.598)` (hash: e274065a)
-
----
-
-## Phase 179 — Codex: не писать/не показывать assistant сообщения из phase=commentary (owner: Codex, updated: 2026-02-14)
-
-**Goal:** Убрать дубликаты assistant сообщений в диалоге, возникающие из-за двух фаз Codex SDK (`commentary` + `final_answer`). В UI и history должны попадать только `final_answer`.
-
-### Stream: Codex Module — Suppress Commentary Agent Messages
-1. [DONE] Fix: игнорировать `agent_message` items с `phase=commentary`, чтобы не эмитить дубли в dialog history (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `fix(codex): suppress commentary phase agent messages`)
-2. [DONE] Git Commit: `fix(codex): suppress commentary phase agent messages` (hash: d5614311)
-
----
-
-## Phase 180 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
-
-### Stream: Release Build (New Patch Release)
-1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npm run check:tsprune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
-2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A)
-3. [DONE] Build: `./scripts/build-all.sh` (version bump -> `1.1.599`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
-4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: 1175b1f2)
-5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.599.vsix`) (scope: repo build)
-6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.599)`)
-   - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.599.vsix`
-   - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.599.tar.bz2`
-   - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.599.tar.bz2`
-7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.599)` (hash: bfb88e5b)
-
----
-
-## Phase 181 — UI: разделитель между physical-сессиями, когда цепочка не доступна (dialogId single-record) (owner: Codex, updated: 2026-02-14)
-
-**Goal:** Даже когда `dialogId` представлен одним `SessionRecord` (без continuation chain), UI не должен “склеивать” последний `Thinking` предыдущей physical-сессии с первым `User` новой. Добавляем implicit divider `Новая сессия` и делаем thinking-terminal если next != assistant.
-
-### Stream: Session Dialog — Implicit Boundary For Thinking→User
-1. [DONE] Fix: вставить implicit divider после `thinking`, если следующее сообщение `user` (и нет явного segment-boundary), + terminal-thinking если next.role != assistant; вынести утилиты в отдельный micro-file для лимита 300 строк (scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/dialog-panel-message-utils.ts`; expected commit message: `fix(ui): insert implicit boundary after terminal thinking`)
-2. [DONE] Git Commit: `fix(ui): insert implicit boundary after terminal thinking` (hash: 40c88a1f)
-
----
-
-## Phase 182 — Release Build (New Patch Release) (owner: Codex, updated: 2026-02-14)
-
-### Stream: Release Build (New Patch Release)
-1. [DONE] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npm run check:tsprune`, `npx jscpd ...`, `npm run check:links` + `npm run typecheck:webview` (scope: repo; expected commit message: `chore: quality gates before release`)
-2. [DONE] Git Commit: `chore: quality gates before release` (hash: N/A)
-3. [DONE] Build: `./scripts/build-all.sh` (version bump -> `1.1.600`) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
-4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: ef2d9fc2)
-5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.600.vsix`) (scope: repo build)
-6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.600)`)
-   - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.600.vsix`
-   - Tarballs (release cache): `/Users/oleksandroliinyk/.codeai-hub/releases/*-1.1.600.tar.bz2`
-   - Tarballs (repo copy): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/*-1.1.600.tar.bz2`
-7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.600)` (hash: TBD)
+1. [TODO] Gates: `./scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd ...`, `npm run check:links` + таргетные сборки затронутых пакетов (scope: repo; expected commit message: `chore: quality gates before release`)
+2. [TODO] Git Commit: `chore: quality gates before release` (hash: TBD)
+3. [TODO] Build: `./scripts/build-all.sh` (version bump) (scope: repo; expected commit message: `chore(release): build-all for next patch`)
+4. [TODO] Git Commit: `chore(release): build-all for next patch` (hash: TBD)
+5. [TODO] Build: `./scripts/build-release.sh --use-current-version` (VSIX) (scope: repo build)
+6. [TODO] Docs: обновить этот план статусами/датами/путями артефактов релиза (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build`)
+7. [TODO] Git Commit: `docs(todo): record patch release build` (hash: TBD)
