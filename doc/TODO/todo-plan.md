@@ -30,8 +30,8 @@ Source of Truth (архитектура):
 2. [DONE] Git Commit: `docs(flow): add dialog ssot pipeline contract` (hash: d3f9a7ba)
 
 ### Stream: План миграции UI/PM (история vs live)
-1. [TODO] Docs: в плане зафиксировать, какие текущие источники данных отключаем/ограничиваем (snapshots/virtual conversation) и какие остаются только для статуса (locks/rollover/usage), чтобы лента не зависела от runtime chain (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): clarify ui data sources for dialog vs status`)
-2. [TODO] Git Commit: `docs(flow): clarify ui data sources for dialog vs status` (hash: TBD)
+1. [DONE] Docs: в плане зафиксировать, какие текущие источники данных отключаем/ограничиваем (snapshots/virtual conversation) и какие остаются только для статуса (locks/rollover/usage), чтобы лента не зависела от runtime chain (scope: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`; expected commit message: `docs(flow): clarify ui data sources for dialog vs status`)
+2. [DONE] Git Commit: `docs(flow): clarify ui data sources for dialog vs status` (hash: beea3528)
 
 ---
 
