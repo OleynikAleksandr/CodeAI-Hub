@@ -11,6 +11,12 @@ export type ContinuityIndexEntry = {
   readonly rootSessionId: string;
   readonly dialogId: string;
   readonly updatedAt: string;
+  /**
+   * Core session id of the latest continuity segment (best-effort).
+   * Used by clients to bind runtime status/lock/usage to the correct session id,
+   * while loading messages by `dialogId`.
+   */
+  readonly latestSessionId?: string | null;
   readonly providerId: string | null;
   readonly providerSessionId: string | null;
 };
@@ -90,6 +96,7 @@ export class ContinuityIndexRegistry {
       rootSessionId: chain.rootSessionId,
       dialogId: chain.dialogId ?? chain.rootSessionId,
       updatedAt: chain.updatedAt,
+      latestSessionId: last?.sessionId ?? null,
       providerId: last?.providerId ?? null,
       providerSessionId: last?.providerSessionId ?? null,
     };
