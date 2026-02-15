@@ -9,6 +9,7 @@ import {
 import type { CoreConfig } from "../../config";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
+import { ContinuityChainStore } from "../../session-continuity/continuity-store";
 import type { TokenUsageSnapshot } from "../../session-continuity/continuity-types";
 import { buildHumanReadableDialogId } from "../../session-continuity/dialog-id";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
@@ -42,6 +43,8 @@ import {
 type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
 const DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX = /__(collector|reviewer)$/;
+const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
+const DIALOG_SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
 
 type ProviderSessionResolution =
   | {
@@ -2683,6 +2686,13 @@ export class SessionRequestHandler {
       return;
     }
 
+    await this.appendDialogSegmentBoundaryMeta({
+      session: nextSession,
+      workspaceSlug,
+      stageId,
+      silent: options?.silent === true,
+    });
+
     const targetLockContext = this.registerFlowNodeContinuityLockContext({
       rolloverId: rollover.rolloverId,
       sourceSessionId: session.id,
@@ -2737,6 +2747,73 @@ export class SessionRequestHandler {
         continuityAttempt: finalAttempt,
         nextSessionId: nextSession.id,
         reportPath: reportPaths.reportPath,
+      });
+    }
+  }
+
+  private async appendDialogSegmentBoundaryMeta(options: {
+    readonly session: Session;
+    readonly workspaceSlug: string;
+    readonly stageId: string;
+    readonly silent: boolean;
+  }): Promise<void> {
+    if (options.silent) {
+      return;
+    }
+
+    const rootDialogId =
+      this.continuityRootBySessionId.get(options.session.id) ??
+      options.session.id;
+
+    try {
+      await this.continuity.ensureTrackedOnOutboundMessage({
+        sessionId: options.session.id,
+        providerSessionId: options.session.providerSessionId,
+      });
+
+      const store = new ContinuityChainStore({
+        workspaceRoot: options.session.workspacePath,
+        workspaceSlug: options.workspaceSlug,
+        stage: options.stageId,
+        rootSessionId: rootDialogId,
+      });
+
+      const chain = await store.read();
+      if (!chain || chain.segments.length <= 1) {
+        return;
+      }
+
+      const segments = chain.segments.map((segment, index) => {
+        const snapshot = segment.tokenUsage ?? null;
+        const remainingPercent = snapshot
+          ? computeRemainingPercent(snapshot)
+          : null;
+        return {
+          index: index + 1,
+          providerId: segment.providerId,
+          providerSessionId: segment.providerSessionId,
+          ...(remainingPercent !== null ? { remainingPercent } : {}),
+        } as const;
+      });
+
+      const payload = {
+        kind: "segment_summary",
+        dialogId: rootDialogId,
+        segments,
+      } as const;
+
+      const content = [
+        DIALOG_SEGMENT_BOUNDARY_MARKER,
+        "Новая сессия",
+        `${DIALOG_SEGMENT_META_MARKER}${JSON.stringify(payload)}`,
+      ].join("\n");
+
+      this.appendProviderMessage(options.session.id, "system", { content });
+    } catch (error: unknown) {
+      this.logger.warn("Failed to append dialog segment meta", {
+        dialogId: rootDialogId,
+        sessionId: options.session.id,
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
