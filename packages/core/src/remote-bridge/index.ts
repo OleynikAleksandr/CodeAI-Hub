@@ -515,6 +515,7 @@ export class RemoteBridge {
       readonly requestId: string;
       readonly workspaceSlug: string;
       readonly dialogId: string;
+      readonly cursor?: number;
     }
   ): Promise<void> {
     const wsManager = this.wsManager;
@@ -535,6 +536,10 @@ export class RemoteBridge {
       typeof payload.workspaceSlug === "string" ? payload.workspaceSlug : "";
     const dialogId =
       typeof payload.dialogId === "string" ? payload.dialogId : "";
+    const cursor =
+      typeof payload.cursor === "number" && Number.isFinite(payload.cursor)
+        ? payload.cursor
+        : null;
 
     if (workspaceSlug.trim().length === 0 || dialogId.trim().length === 0) {
       wsManager.sendToClient(clientId, {
@@ -543,6 +548,7 @@ export class RemoteBridge {
           requestId: payload.requestId,
           workspaceSlug,
           dialogId,
+          lastCursor: 0,
           messages: [],
           error: "Missing workspaceSlug or dialogId",
         },
@@ -550,10 +556,11 @@ export class RemoteBridge {
       return;
     }
 
-    const messages = await this.dialogHistoryService.readHistory({
+    const result = await this.dialogHistoryService.readHistory({
       workspaceRoot,
       workspaceSlug,
       dialogId,
+      cursor,
     });
     wsManager.sendToClient(clientId, {
       type: "dialog:history:result",
@@ -561,7 +568,8 @@ export class RemoteBridge {
         requestId: payload.requestId,
         workspaceSlug,
         dialogId,
-        messages,
+        lastCursor: result.lastCursor,
+        messages: result.messages,
         error: null,
       },
     });
