@@ -56,8 +56,8 @@ Source of Truth (архитектура):
 ## Phase 192 — PM/UI: Панель диалога только из JSONL (owner: Oleksandr+Codex, updated: 2026-02-15)
 
 ### Stream: UI store — single source (history + append)
-1. [TODO] Implement: Session/PM dialog panel получает сообщения из одного канала: `history(full)` при открытии + `append(tail)` в real-time; snapshots/chain не используются для ленты (только для status) (scope: `src/client/ui/src/*` (≤3 файлов); expected commit message: `refactor(ui): dialog panel ssot via jsonl feed`)
-2. [TODO] Git Commit: `refactor(ui): dialog panel ssot via jsonl feed` (hash: TBD)
+1. [DONE] Implement: Session/PM dialog panel получает сообщения из одного канала: `history(full)` при открытии + `append(tail)` в real-time; snapshots/chain не используются для ленты (только для status) (scope: `src/client/ui/src/*` (≤3 файлов); expected commit message: `refactor(ui): dialog panel ssot via jsonl feed`)
+2. [DONE] Git Commit: `refactor(ui): dialog panel ssot via jsonl feed` (hash: a80ccb2a)
 
 ### Stream: Дедуп/ID — устранить пропажу user‑сообщений
 1. [TODO] Fix: устранить дедуп/коллизии message id между сегментами, из-за которых user‑сообщения могут не отображаться в real-time (scope: `src/client/ui/src/*` (≤3 файлов); expected commit message: `fix(ui): stable dedupe for dialog appends`)
