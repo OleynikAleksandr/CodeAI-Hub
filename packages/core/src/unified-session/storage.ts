@@ -70,14 +70,6 @@ export class UnifiedSessionStorage {
       queue: [],
     };
     this.sessions.set(session.id, entry);
-    if (session.providerSessionId) {
-      this.initializeWriter(
-        session.id,
-        entry,
-        workspaceSlug,
-        entry.historySessionId
-      );
-    }
   }
 
   promote(sessionId: string, providerSessionId: string): void {
@@ -93,12 +85,17 @@ export class UnifiedSessionStorage {
       ? entry.historySessionId
       : sanitizeSessionId(providerSessionId);
     entry.historySessionId = desiredHistorySessionId;
-    this.initializeWriter(
-      sessionId,
-      entry,
-      entry.workspaceSlug,
-      desiredHistorySessionId
-    );
+    // Avoid creating empty JSONL files that only contain the session-open marker.
+    // A writer is initialized lazily (on first message) unless we already have a
+    // writer handle or queued messages that need flushing.
+    if (entry.writer || entry.queue.length > 0) {
+      this.initializeWriter(
+        sessionId,
+        entry,
+        entry.workspaceSlug,
+        desiredHistorySessionId
+      );
+    }
   }
 
   appendMessage(sessionId: string, message: SessionMessage): void {
@@ -116,8 +113,16 @@ export class UnifiedSessionStorage {
       return;
     }
     if (!entry.writer) {
-      entry.queue.push(message);
-      return;
+      this.initializeWriter(
+        sessionId,
+        entry,
+        entry.workspaceSlug,
+        entry.historySessionId
+      );
+      if (!entry.writer) {
+        entry.queue.push(message);
+        return;
+      }
     }
     this.writeMessage(entry, message).catch((error: unknown) => {
       this.logger.error(
