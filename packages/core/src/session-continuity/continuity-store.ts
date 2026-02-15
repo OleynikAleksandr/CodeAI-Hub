@@ -1,4 +1,5 @@
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type {
   ContinuityChain,
@@ -59,6 +60,54 @@ export const buildContinuityChainPath = (options: {
     options.rootSessionId,
     CHAIN_FILE_NAME
   );
+
+export const promoteContinuityChainRootIfPresent = async (options: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+  readonly stage: string | null | undefined;
+  readonly fromRootSessionId: string;
+  readonly toRootSessionId: string;
+}): Promise<boolean> => {
+  const fromChainPath = buildContinuityChainPath({
+    workspaceRoot: options.workspaceRoot,
+    workspaceSlug: options.workspaceSlug,
+    stage: options.stage,
+    rootSessionId: options.fromRootSessionId,
+  });
+  const toChainPath = buildContinuityChainPath({
+    workspaceRoot: options.workspaceRoot,
+    workspaceSlug: options.workspaceSlug,
+    stage: options.stage,
+    rootSessionId: options.toRootSessionId,
+  });
+
+  const fromDir = path.dirname(fromChainPath);
+  const toDir = path.dirname(toChainPath);
+  if (!existsSync(fromDir) || existsSync(toDir)) {
+    return false;
+  }
+
+  await mkdir(path.dirname(toDir), { recursive: true });
+  await rename(fromDir, toDir);
+
+  const migrated = await readJson<ContinuityChain>(toChainPath);
+  if (!migrated) {
+    return true;
+  }
+  if (
+    migrated.rootSessionId === options.toRootSessionId &&
+    migrated.dialogId === options.toRootSessionId
+  ) {
+    return true;
+  }
+
+  await writeJson(toChainPath, {
+    ...migrated,
+    rootSessionId: options.toRootSessionId,
+    dialogId: options.toRootSessionId,
+  } satisfies ContinuityChain);
+  return true;
+};
 
 const createChain = (options: {
   readonly rootSessionId: string;

@@ -10,7 +10,10 @@ import {
 import type { CoreConfig } from "../../config";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
-import { ContinuityChainStore } from "../../session-continuity/continuity-store";
+import {
+  ContinuityChainStore,
+  promoteContinuityChainRootIfPresent,
+} from "../../session-continuity/continuity-store";
 import type { TokenUsageSnapshot } from "../../session-continuity/continuity-types";
 import { buildHumanReadableDialogId } from "../../session-continuity/dialog-id";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
@@ -1532,7 +1535,14 @@ export class SessionRequestHandler {
     };
   }): Promise<string> {
     if (options.rootSessionIdOverride) {
-      return options.rootSessionIdOverride;
+      return await this.maybePromoteLegacyDescriptionAgentRootId({
+        rootSessionId: options.rootSessionIdOverride,
+        workspaceRoot: options.workspaceRoot,
+        providerId: options.providerId,
+        workspaceSlug: options.context.initiativeSlug,
+        stageId: options.context.stage,
+        runSlug: options.context.runSlug,
+      });
     }
 
     const workspaceSlug = options.context.initiativeSlug;
@@ -1548,7 +1558,14 @@ export class SessionRequestHandler {
             providerSessionId: requestedProviderSessionId,
           });
         if (existingRoot) {
-          return existingRoot;
+          return await this.maybePromoteLegacyDescriptionAgentRootId({
+            rootSessionId: existingRoot,
+            workspaceRoot: options.workspaceRoot,
+            providerId: options.providerId,
+            workspaceSlug: options.context.initiativeSlug,
+            stageId: options.context.stage,
+            runSlug: options.context.runSlug,
+          });
         }
       }
 
@@ -1559,6 +1576,58 @@ export class SessionRequestHandler {
       });
     }
     return options.sessionId;
+  }
+
+  private async maybePromoteLegacyDescriptionAgentRootId(options: {
+    readonly rootSessionId: string;
+    readonly workspaceRoot: string;
+    readonly providerId: string;
+    readonly workspaceSlug: string | null;
+    readonly stageId: string | null;
+    readonly runSlug: string | null;
+  }): Promise<string> {
+    if (options.stageId !== "description" || options.runSlug === "reviewer") {
+      return options.rootSessionId;
+    }
+    if (!options.rootSessionId.endsWith("-agent")) {
+      return options.rootSessionId;
+    }
+
+    const normalizedRootSessionId = `${options.rootSessionId.slice(
+      0,
+      Math.max(0, options.rootSessionId.length - "-agent".length)
+    )}-description`;
+
+    const workspaceKey = sanitizeWorkspaceSlug(options.workspaceRoot);
+    this.sessionStorage.promoteHistoryFile({
+      workspaceSlug: workspaceKey,
+      providerId: options.providerId,
+      fromHistorySessionId: options.rootSessionId,
+      toHistorySessionId: normalizedRootSessionId,
+    });
+
+    if (options.workspaceSlug) {
+      try {
+        await promoteContinuityChainRootIfPresent({
+          workspaceRoot: options.workspaceRoot,
+          workspaceSlug: options.workspaceSlug,
+          stage: options.stageId,
+          fromRootSessionId: options.rootSessionId,
+          toRootSessionId: normalizedRootSessionId,
+        });
+      } catch (error: unknown) {
+        this.logger.warn("Failed to promote continuity chain root session id", {
+          workspaceSlug: options.workspaceSlug,
+          stageId: options.stageId,
+          providerId: options.providerId,
+          fromRootSessionId: options.rootSessionId,
+          toRootSessionId: normalizedRootSessionId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+
+    return normalizedRootSessionId;
   }
 
   private resolveDescriptionDialog(options: {
