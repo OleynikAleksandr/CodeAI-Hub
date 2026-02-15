@@ -287,7 +287,7 @@ PM хранит и восстанавливает состояние вклад�
 - Все символы — lowercase.
 - Допустимые символы: `a-z0-9-`.
 - `providerSlug` вычисляется из providerId (например `codexCli -> codex`, `claudeCodeCli -> claude`, `geminiCli -> gemini`).
-- `agentRole` берётся из `runSlug/sessionKind` (например `reviewer|collector`), иначе `agent`.
+- `agentRole` берётся из `runSlug` (например `reviewer|collector`), иначе из `stage` (например `description`), иначе `agent`.
 
 ### 9.3 Backward compatibility
 - Legacy `dialogId` вида «только uuid» поддерживаются для открытия/истории.
