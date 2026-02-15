@@ -95,4 +95,4 @@
 4. [DONE] Git Commit: `chore(release): build-all for next patch` (hash: 35db34a3)
 5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.604.vsix`) (scope: repo build)
 6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (артефакты: `doc/tmp/releases/*-1.1.604.tar.bz2`, `~/.codeai-hub/releases/*-1.1.604.tar.bz2`, VSIX: `codeai-hub-1.1.604.vsix`) (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.604)`)
-7. [TODO] Git Commit: `docs(todo): record patch release build (1.1.604)` (hash: TBD)
+7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.604)` (hash: 224ad7ca)
