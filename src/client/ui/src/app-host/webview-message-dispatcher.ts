@@ -30,6 +30,7 @@ import {
   isSessionDeletedPayload,
   isSessionHistoryPayload,
   isSessionMessagePayload,
+  isSessionStreamPayload,
 } from "./webview-message-types";
 
 type ProviderPickerOpenHandler = (
@@ -55,6 +56,10 @@ type SessionDispatchHandlers = {
   readonly onSessionHistory?: (payload: {
     readonly sessionId: string;
     readonly messages: readonly SessionMessage[];
+  }) => void;
+  readonly onSessionStream?: (payload: {
+    readonly sessionId: string;
+    readonly event?: unknown;
   }) => void;
 };
 
@@ -136,6 +141,23 @@ const handleSessionHistoryMessage = (
   });
 };
 
+const handleSessionStreamMessage = (
+  message: IncomingMessage,
+  onSessionStream?: (payload: {
+    readonly sessionId: string;
+    readonly event?: unknown;
+  }) => void
+): void => {
+  if (!(onSessionStream && message.type === "session:stream")) {
+    return;
+  }
+  const payload = message.payload;
+  if (!isSessionStreamPayload(payload)) {
+    return;
+  }
+  onSessionStream(payload);
+};
+
 const handleSessionDeletedMessage = (
   message: SessionDeletedMessage,
   onSessionDeleted?: (payload: { readonly sessionId: string }) => void
@@ -195,6 +217,9 @@ const dispatchSessionMessage = (
     case "session:history":
       handleSessionHistoryMessage(message, handlers.onSessionHistory);
       return true;
+    case "session:stream":
+      handleSessionStreamMessage(message, handlers.onSessionStream);
+      return true;
     default:
       return false;
   }
@@ -222,6 +247,7 @@ export const dispatchWebviewMessage = (
       onSessionDeleted: handlers.onSessionDeleted,
       onSessionBinding: handlers.onSessionBinding,
       onSessionHistory: handlers.onSessionHistory,
+      onSessionStream: handlers.onSessionStream,
     })
   ) {
     return;

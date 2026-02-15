@@ -29439,6 +29439,13 @@ ${replacement}
     const candidate = value;
     return typeof candidate.sessionId === "string" && Array.isArray(candidate.messages);
   };
+  var isSessionStreamPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.sessionId === "string";
+  };
   var isUseProjectManagerMessage = (value) => Boolean(
     value && typeof value === "object" && value.type === "ui:useProjectManager"
   );
@@ -29504,6 +29511,16 @@ ${replacement}
       messages: normalized
     });
   };
+  var handleSessionStreamMessage = (message, onSessionStream) => {
+    if (!(onSessionStream && message.type === "session:stream")) {
+      return;
+    }
+    const payload = message.payload;
+    if (!isSessionStreamPayload(payload)) {
+      return;
+    }
+    onSessionStream(payload);
+  };
   var handleSessionDeletedMessage = (message, onSessionDeleted) => {
     if (!(onSessionDeleted && isSessionDeletedPayload(message.payload))) {
       return;
@@ -29545,6 +29562,9 @@ ${replacement}
       case "session:history":
         handleSessionHistoryMessage(message, handlers2.onSessionHistory);
         return true;
+      case "session:stream":
+        handleSessionStreamMessage(message, handlers2.onSessionStream);
+        return true;
       default:
         return false;
     }
@@ -29561,7 +29581,8 @@ ${replacement}
       onSessionMessage: handlers2.onSessionMessage,
       onSessionDeleted: handlers2.onSessionDeleted,
       onSessionBinding: handlers2.onSessionBinding,
-      onSessionHistory: handlers2.onSessionHistory
+      onSessionHistory: handlers2.onSessionHistory,
+      onSessionStream: handlers2.onSessionStream
     })) {
       return;
     }
@@ -29608,6 +29629,7 @@ ${replacement}
     onSessionDeleted,
     onSessionBinding,
     onSessionHistory,
+    onSessionStream,
     onUseProjectManager
   }) => {
     (0, import_react29.useEffect)(() => {
@@ -29628,7 +29650,8 @@ ${replacement}
           onSessionMessage,
           onSessionDeleted,
           onSessionBinding,
-          onSessionHistory
+          onSessionHistory,
+          onSessionStream
         });
       };
       window.addEventListener("message", handleIncomingMessage);
@@ -29648,6 +29671,7 @@ ${replacement}
       onSessionDeleted,
       onSessionBinding,
       onSessionHistory,
+      onSessionStream,
       onUseProjectManager
     ]);
   };
