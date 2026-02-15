@@ -68,8 +68,8 @@ Source of Truth (архитектура):
 2. [TODO] Git Commit: `fix(pm): restore last dialog selection on cold start` (hash: TBD)
 
 ### Stream: UI divider/summary — только explicit из JSONL
-1. [TODO] Fix: divider “Новая сессия” и summary `#1|#2|...` строятся/обновляются только из JSONL boundary/meta событий, без thinking‑хаков; после рестартов гарантированно восстанавливаются (scope: `src/client/ui/src/session/*` (≤3 файлов); expected commit message: `fix(ui): render boundaries and summary from jsonl only`)
-2. [TODO] Git Commit: `fix(ui): render boundaries and summary from jsonl only` (hash: TBD)
+1. [DONE] Fix: divider “Новая сессия” и summary `#1|#2|...` строятся/обновляются только из JSONL boundary/meta событий, без thinking‑хаков; после рестартов гарантированно восстанавливаются (scope: `src/client/ui/src/session/*` (≤3 файлов); expected commit message: `fix(ui): render boundaries and summary from jsonl only`)
+2. [DONE] Git Commit: `fix(ui): render boundaries and summary from jsonl only` (hash: dfcc8ecd)
 
 ---
 
