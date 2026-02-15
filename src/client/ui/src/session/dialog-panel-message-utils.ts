@@ -19,25 +19,6 @@ export const extractSegmentBoundaryLabel = (content: string): string => {
   return lines[1] ?? "Новая сессия";
 };
 
-export const shouldRenderImplicitBoundaryAfter = (
-  message: SessionMessage,
-  next: SessionMessage | null
-): boolean => {
-  if (message.role !== "thinking") {
-    return false;
-  }
-  if (!next) {
-    return false;
-  }
-  if (isSegmentBoundaryMessage(next)) {
-    return false;
-  }
-  // When a thinking "header" isn't followed by an assistant card, the canonical
-  // negative margin causes the next message to visually collide. In practice
-  // this often happens at physical session boundaries (continuity rollover).
-  return next.role === "user";
-};
-
 export const buildMessageClassNames = (
   message: SessionMessage,
   providerTheme: ProviderTheme | null

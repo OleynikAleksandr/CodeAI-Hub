@@ -6,7 +6,6 @@ import {
   isSegmentBoundaryMessage,
   mergeThinkingMessages,
   resolveRoleLabel,
-  shouldRenderImplicitBoundaryAfter,
 } from "./dialog-panel-message-utils";
 import type { ProviderTheme } from "./helpers";
 import MarkdownContent from "./markdown-content";
@@ -42,10 +41,6 @@ const DialogPanel = ({
   const displayMessages = useMemo(
     () => mergeThinkingMessages(messages),
     [messages]
-  );
-  const hasExplicitSegmentBoundaries = useMemo(
-    () => displayMessages.some(isSegmentBoundaryMessage),
-    [displayMessages]
   );
   const [expandedThinking, setExpandedThinking] = useState<
     Record<string, boolean>
@@ -148,10 +143,7 @@ const DialogPanel = ({
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
-            const shouldInsertImplicitBoundary =
-              !hasExplicitSegmentBoundaries &&
-              shouldRenderImplicitBoundaryAfter(message, next);
-            return [
+            return (
               <ThinkingMessage
                 className={className}
                 expanded={expanded}
@@ -159,18 +151,8 @@ const DialogPanel = ({
                 label={label}
                 message={message}
                 onToggle={toggleThinking}
-              />,
-              shouldInsertImplicitBoundary ? (
-                <div
-                  className="session-dialog__segment-boundary"
-                  key={`${message.id}:implicit-boundary`}
-                >
-                  <span className="session-dialog__segment-boundary-label">
-                    Новая сессия
-                  </span>
-                </div>
-              ) : null,
-            ].filter(Boolean);
+              />
+            );
           }
 
           return (

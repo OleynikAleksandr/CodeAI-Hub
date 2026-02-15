@@ -8932,18 +8932,6 @@
     }
     return lines[1] ?? "\u041D\u043E\u0432\u0430\u044F \u0441\u0435\u0441\u0441\u0438\u044F";
   };
-  var shouldRenderImplicitBoundaryAfter = (message, next) => {
-    if (message.role !== "thinking") {
-      return false;
-    }
-    if (!next) {
-      return false;
-    }
-    if (isSegmentBoundaryMessage(next)) {
-      return false;
-    }
-    return next.role === "user";
-  };
   var buildMessageClassNames = (message, providerTheme) => {
     const classes = [
       "session-dialog__message",
@@ -21688,10 +21676,6 @@ ${message.content}`
       () => mergeThinkingMessages(messages),
       [messages]
     );
-    const hasExplicitSegmentBoundaries = (0, import_react4.useMemo)(
-      () => displayMessages.some(isSegmentBoundaryMessage),
-      [displayMessages]
-    );
     const [expandedThinking, setExpandedThinking] = (0, import_react4.useState)({});
     const [pinnedToBottom, setPinnedToBottom] = (0, import_react4.useState)(true);
     (0, import_react4.useEffect)(() => {
@@ -21766,28 +21750,17 @@ ${message.content}`
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
             const expanded = expandedThinking[message.id] ?? false;
-            const shouldInsertImplicitBoundary = !hasExplicitSegmentBoundaries && shouldRenderImplicitBoundaryAfter(message, next);
-            return [
-              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-                ThinkingMessage,
-                {
-                  className,
-                  expanded,
-                  label,
-                  message,
-                  onToggle: toggleThinking
-                },
-                message.id
-              ),
-              shouldInsertImplicitBoundary ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-                "div",
-                {
-                  className: "session-dialog__segment-boundary",
-                  children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__segment-boundary-label", children: "\u041D\u043E\u0432\u0430\u044F \u0441\u0435\u0441\u0441\u0438\u044F" })
-                },
-                `${message.id}:implicit-boundary`
-              ) : null
-            ].filter(Boolean);
+            return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+              ThinkingMessage,
+              {
+                className,
+                expanded,
+                label,
+                message,
+                onToggle: toggleThinking
+              },
+              message.id
+            );
           }
           return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             StandardMessage,
