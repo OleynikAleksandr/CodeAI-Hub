@@ -1,6 +1,7 @@
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
+import { buildTokenDebugSummaryFromMessages } from "./dialog-segment-meta";
 import EmptyState from "./empty-state";
 import { mapProviderTheme } from "./helpers";
 import InputPanel from "./input-panel";
@@ -122,6 +123,7 @@ const SessionViewBody = ({
       snapshots,
       activeSessionId,
     }) ??
+    buildTokenDebugSummaryFromMessages(virtualConversationMessages) ??
     undefined;
 
   return (
