@@ -22,15 +22,17 @@
 ## Docs / planning
 - `doc/TODO/todo-plan.md` заархивирован по запросу пользователя в:
   - `doc/TODO/Archive/todo-plan-phase188-release-1.1.603-dialog-jsonl-ssot-2026-02-15.md`
-- Создан новый `doc/TODO/todo-plan.md` с фазами 189–193:
-  - Phase 189: дизайн/контракты SSOT pipeline;
-  - Phase 190: Core history+tail API + cold start resolve + append ordering;
-  - Phase 191: PM/UI переход на JSONL feed, дедуп/ID, автоселекция, divider/summary только из JSONL;
-  - Phase 192: строгий input lock/unlock по turn boundaries;
-  - Phase 193: release stream.
+- Создан новый `doc/TODO/todo-plan.md` с фазами 190–194 (Phase 189 уже использовалась в заархивированном плане для arch‑фикса ui-style-ssot):
+  - Phase 190: дизайн/контракты SSOT pipeline;
+  - Phase 191: Core history+tail API + cold start resolve + append ordering;
+  - Phase 192: PM/UI переход на JSONL feed, дедуп/ID, автоселекция, divider/summary только из JSONL;
+  - Phase 193: строгий input lock/unlock по turn boundaries;
+  - Phase 194: release stream.
 
 ## Git commits
 (ВАЖНО: по этим коммитам восстанавливаем контекст через `git show`)
+- `e527966b fix(arch): make ui-style-ssot work without rg`
+- `6199e955 docs(todo): record ui-style-ssot grep fallback`
 - `cee5e75e docs(todo): archive prior plan and start ssot phases`
 
 ---
@@ -39,8 +41,8 @@
 
 ## Required documents to review before work
 1. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session057.md` (THIS REPORT)
-2. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/TODO/todo-plan.md` (Phase 189–193)
+2. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/TODO/todo-plan.md` (Phase 190–194)
 3. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`
 
 ## Plans for next session
-- Выполнить Phase 189 (контракт SSOT pipeline) и начать Phase 190 (Core API history+tail + cold start resolve) — строго микрозадачами ≤3 файлов и с обязательными commit‑шагами.
+- Выполнить Phase 190 (контракт SSOT pipeline) и начать Phase 191 (Core API history+tail + cold start resolve) — строго микрозадачами ≤3 файлов и с обязательными commit‑шагами.
