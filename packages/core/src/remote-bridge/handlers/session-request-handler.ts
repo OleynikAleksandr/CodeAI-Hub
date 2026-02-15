@@ -2078,7 +2078,23 @@ export class SessionRequestHandler {
       return;
     }
 
-    this.sessionStorage.appendMessage(sessionId, userMessage);
+    try {
+      await this.sessionStorage.appendMessage(sessionId, userMessage);
+    } catch (error: unknown) {
+      this.logger.error(
+        "Failed to append unified session record",
+        error as Error,
+        {
+          sessionId,
+          providerId: session.providerId,
+        }
+      );
+      this.broadcaster({
+        type: "session:error",
+        payload: { sessionId, message: "Failed to persist message to history" },
+      });
+      return;
+    }
     this.broadcaster({ type: "session:message", payload: userMessage });
 
     const binding = this.providerSessions.get(sessionId);
@@ -2934,7 +2950,17 @@ export class SessionRequestHandler {
         `${DIALOG_SEGMENT_META_MARKER}${JSON.stringify(payload)}`,
       ].join("\n");
 
-      this.appendProviderMessage(options.session.id, "system", { content });
+      const metaMessage = this.sessionManager.appendMessage(
+        options.session.id,
+        "system",
+        content
+      );
+      if (!metaMessage) {
+        return;
+      }
+      await this.sessionStorage.appendMessage(options.session.id, metaMessage);
+      this.broadcaster({ type: "session:message", payload: metaMessage });
+      this.broadcastDialogMessage(options.session.id, metaMessage);
     } catch (error: unknown) {
       this.logger.warn("Failed to append dialog segment meta", {
         dialogId: rootDialogId,
@@ -3160,9 +3186,19 @@ export class SessionRequestHandler {
     }
     const message = this.sessionManager.appendMessage(sessionId, role, content);
     if (message) {
-      this.sessionStorage.appendMessage(sessionId, message);
-      this.broadcaster({ type: "session:message", payload: message });
-      this.broadcastDialogMessage(sessionId, message);
+      this.sessionStorage
+        .appendMessage(sessionId, message)
+        .then(() => {
+          this.broadcaster({ type: "session:message", payload: message });
+          this.broadcastDialogMessage(sessionId, message);
+        })
+        .catch((error: unknown) => {
+          this.logger.error(
+            "Failed to append unified session record",
+            error as Error,
+            { sessionId }
+          );
+        });
     }
   }
 
@@ -3186,9 +3222,19 @@ export class SessionRequestHandler {
       payload.timestamp
     );
     if (message) {
-      this.sessionStorage.appendMessage(sessionId, message);
-      this.broadcaster({ type: "session:message", payload: message });
-      this.broadcastDialogMessage(sessionId, message);
+      this.sessionStorage
+        .appendMessage(sessionId, message)
+        .then(() => {
+          this.broadcaster({ type: "session:message", payload: message });
+          this.broadcastDialogMessage(sessionId, message);
+        })
+        .catch((error: unknown) => {
+          this.logger.error(
+            "Failed to append unified session record",
+            error as Error,
+            { sessionId }
+          );
+        });
     }
   }
 
