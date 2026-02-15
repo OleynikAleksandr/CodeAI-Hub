@@ -321,3 +321,30 @@ UI:
 
 ### 10.3 Live updates
 Во время активной сессии token usage и прочий статус продолжают обновляться текущими механизмами (live stream / snapshots). JSONL meta используется только для восстановления после reopen/restart.
+
+---
+
+## 11) Contract (Draft) — Dialog SSOT pipeline (JSONL feed для live + рестартов)
+
+**Цель:** убрать рассинхронизации “в реальном времени одно, после reload другое” и сделать панель диалога детерминированной.
+
+### 11.1 Единственный источник правды (SSOT)
+- **Канон ленты диалога** = `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl` (append‑only).
+- UI (и Project Manager, и Session UI) **не склеивает** ленту диалога из runtime chain/snapshots. Эти источники остаются только для **Status** (lock/rollover/usage/connection), но не для сообщений.
+
+### 11.2 Модель загрузки
+- **Cold start**: UI запрашивает `history(full)` (вся история диалога) и получает `lastCursor`.
+- **Live**: Core после каждого append в JSONL эмитит `dialog:append` (или аналог) с тем же сообщением и `cursor`.
+- **Re-sync**: если стрим потерян/подозрение на пропуск, UI запрашивает `history(tail, cursor)` и догоняет ленту.
+
+### 11.3 Cursor / дедупликация
+- Дедупликация в UI должна опираться на монотонный `cursor` (offset/sequence), а не только на `messageId`, чтобы исключить коллизии между provider‑сегментами.
+- `messageId` остаётся стабильным идентификатором, но **не должен** быть единственным ключом дедупа между сегментами.
+
+### 11.4 Сегментные метаданные (boundary + summary)
+- “Новая сессия” divider и token summary `#1 (..%) | #2 (..%) | #3 (—)` считаются частью **канонического диалога** и должны попадать в JSONL как system‑сообщение на **старт нового provider‑сегмента**.
+- Запись boundary/meta должна быть **идемпотентной** по идентификатору сегмента (например `providerSessionId` + `segmentIndex`): один сегмент → одна запись.
+- UI рендерит divider/summary **только** из этих explicit JSONL событий. Legacy UI‑хаки (например divider “после thinking”) не используются как источник истины.
+
+### 11.5 Автовосстановление выбора (PM+Core cold start)
+- После рестарта PM+Core UI должен восстановить last selected `dialogId` (или применить согласованный default‑выбор) и автоматически выполнить `history(full)`, чтобы не показывать “пустую” сессию до клика пользователя.
