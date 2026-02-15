@@ -166,8 +166,9 @@ export const convertHistoryToMessages = (records: readonly unknown[]): SessionMe
     const createdAt = Number.isNaN(Date.parse(sanitized.timestamp))
       ? Date.now()
       : Date.parse(sanitized.timestamp);
+    const stableId = `${sanitized.timestamp}::${sanitized.role}::${sanitized.messageId}`;
     result.push({
-      id: sanitized.messageId,
+      id: stableId,
       role: sanitized.role,
       content: sanitized.content,
       createdAt,
@@ -176,4 +177,3 @@ export const convertHistoryToMessages = (records: readonly unknown[]): SessionMe
   result.sort((a, b) => a.createdAt - b.createdAt);
   return result;
 };
-
