@@ -75,6 +75,8 @@ export const applyWorkspaceSnapshotToSnapshots = (
     const currentLockReason = current.status.continuityLock?.reason;
     const allowIdleUnlock =
       nextLockReason === "resume_ready" ||
+      nextLockReason === "resume_failed" ||
+      nextLockReason === "resume_timeout" ||
       (nextLockReason === "no_rollover_needed" &&
         session.resumeMode !== "resume_via_rollover");
     if (

@@ -1,7 +1,7 @@
 # Core Orchestrator Module
 
 ## Overview
-Core Orchestrator — автономный Node.js сервис (`@codeai-hub/core@1.1.560`, Node 20 runtime) обрабатывающий все сессии, провайдерные модули и клиенты CodeAI Hub. Ядро запускается через Core Supervisor (CLI `codeai-core`) или вспомогательные скрипты, но продолжает работать после закрытия VS Code и лаунчера и предоставляет HTTP/WebSocket API для всех интерфейсов (webview, CEF‑клиент, будущие удалённые клиенты).
+Core Orchestrator — автономный Node.js сервис (`@codeai-hub/core@1.1.606`, Node 20 runtime) обрабатывающий все сессии, провайдерные модули и клиенты CodeAI Hub. Ядро запускается через Core Supervisor (CLI `codeai-core`) или вспомогательные скрипты, но продолжает работать после закрытия VS Code и лаунчера и предоставляет HTTP/WebSocket API для всех интерфейсов (webview, CEF‑клиент, будущие удалённые клиенты).
 
 - **Исполняемый путь:** `~/.codeai-hub/core/<platform>/<version>/`
 - **Runtime:** комплектный Node 20 + бандл `app/dist/index.js`
@@ -13,7 +13,7 @@ Core Orchestrator — автономный Node.js сервис (`@codeai-hub/co
   - `state/runtime-registry.json` — registry версий и выбранных портов
 
 ## Архитектура
-- **Remote UI Bridge** — HTTP/WebSocket шлюз (`/api/v1/health`, `/api/v1/status`, `/api/v1/sessions/:id/history`, WebSocket `/api/v1/stream`), раздаёт состояние ядра, список сессий и статусы провайдеров, а также принимает команды от UI.
+- **Remote UI Bridge** — HTTP/WebSocket шлюз (`/api/v1/health`, `/api/v1/status`, WebSocket `/api/v1/stream`), раздаёт состояние ядра, список сессий и статусы провайдеров, а также принимает команды от UI (включая `dialog:*` для UI‑диалогов).
 - **Provider Registry** — загружает провайдерные модули (Claude/Codex/Gemini) из файлового реестра `~/.codeai-hub/providers/**` и/или override‑переменных окружения, отслеживает их статус (`active/inactive/degraded`). Ошибки инициализации не валят ядро: провайдер помечается как `inactive`/`degraded`, а подробная диагностика отдаётся через `/api/v1/status`.
 - **Session Manager** — управляет жизненным циклом сессий: создание, стриминг, история JSONL, черновики, восстановление после перезапуска.
 - **Workflow Layer** — обрабатывает визарды и multi-agent сценарии, опираясь на унифицированные DTO провайдеров.
@@ -30,11 +30,11 @@ Core Orchestrator — автономный Node.js сервис (`@codeai-hub/co
 - **HTTP**
   - `GET /api/v1/health` — базовый статус ядра (версия, pid, uptime, количество активных WebSocket‑клиентов, режим управления).
   - `GET /api/v1/status` — расширенный статус: блок `core` (версия, TTL, состояние клиентов), список провайдеров с их статусами и диагностикой, список сессий и их метаданные.
-  - `GET /api/v1/sessions/:id/history` — история сообщений сессии из unified‑session storage.
+  - `GET /api/v1/sessions/:id/history` — **legacy/compat** история сообщений по runtime `sessionId` (не канон для PM).
   - `POST /api/v1/shutdown` — запрос на graceful shutdown ядра.
 - **WebSocket (`/api/v1/stream`)**
-  - События: `core:state` (снимок состояния ядра и сессий при подключении), `core:loading-status` (прогресс инициализации), `session:*` (создание, обновления, история), `provider:status`.
-  - Команды отправляются через HTTP+WebSocket‑мост из UI (создание/удаление сессий, отправка сообщений) и проксируются в Session Manager/ProviderRegistry.
+  - События: `core:state`, `core:loading-status`, `workspace:snapshot`, `session:binding`, `dialog:message`, `dialog:*:result`, `dialog:send:ack` и др.
+  - Команды (UI → Core): `workspace:select`, `workspace:snapshot:request`, `session:create`, `session:message`, `session:delete`, `dialog:list`, `dialog:open`, `dialog:history`, `dialog:send`.
 
 ## Хранилище и безопасность
 - Данные располагаются в `~/.codeai-hub/` под пользователем, права на запись не эскалируются.
@@ -98,22 +98,22 @@ Core принимает `workspacePath` от клиентов (PM/launcher/CLI) 
 
 ### Контракт (после фикса)
 - Для каждого логического диалога агента используется **один накопительный JSONL** файл ("Agent Dialog").
-- В step-state хранится `dialogSessionId` (стабильный идентификатор диалога), а `jsonlPath` указывает на:
-  - `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`
-- `providerSessionId` (реальная сессия провайдера) может меняться при rollover/resume, но `dialogSessionId` **не меняется**.
+- В step-state хранится `dialogId` (в legacy форматах поле может называться `dialogSessionId`), а `jsonlPath` указывает на:
+  - `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`
+- `providerSessionId` (реальная сессия провайдера) может меняться при rollover/resume, но `dialogId` **не меняется**.
 
-Требование на будущее: все новые агенты/flow-ноды должны сразу использовать этот контракт (стабильный `dialogSessionId` + один JSONL), а не писать историю по `providerSessionId`.
+Требование на будущее: все новые агенты/flow-ноды должны сразу использовать этот контракт (стабильный `dialogId` + один JSONL), а не писать историю по `providerSessionId`.
 
-### Правила выбора `dialogSessionId`
-- Для нового диалога `dialogSessionId` фиксируется как **первый** `providerSessionId` (1-й сегмент). Это обеспечивает совместимость без миграции формата.
-- При последующих rollover/resume Core продолжает писать в файл первого сегмента, добавляя новые сообщения в тот же JSONL.
+### Правила выбора `dialogId`
+- В FLOW‑контексте (`workspaceSlug + stage` доступны) Core формирует человекочитаемый `dialogId` как `<providerSlug>-<uuid>-<agentRole>` (см. `buildHumanReadableDialogId`).
+- Вне FLOW fallback: `dialogId = sessionId` (UUID).
 
 Уточнение (Phase 158, обязательное для следующих агентов):
-- Контракт **1 агент = 1 JSONL**. Если в одном stage есть разные агенты (пример: `description: collector` и `description: reviewer`), они обязаны иметь **разные** `dialogSessionId` (например `<baseSessionId>__collector` и `<baseSessionId>__reviewer`), чтобы история не смешивалась.
+- Контракт **1 агент = 1 JSONL**. Если в одном stage есть разные агенты (пример: `description: collector` и `description: reviewer`), они обязаны иметь **разные** `dialogId` (например `codex-<uuid>-description` и `codex-<uuid>-reviewer`), чтобы история не смешивалась.
 
 ### Backfill / миграция
 - Если на диске уже есть несколько сегментных `.../<providerSessionId>.jsonl`, Core выполняет backfill: собирает сообщения из всех сегментов в единый Agent Dialog JSONL (дедуп по `messageId`, сортировка по `timestamp`).
-  - Для legacy mixed истории без per-agent `dialogSessionId` (например `.../<baseSessionId>.jsonl`) Core делает best-effort migrate: при первом запуске агента выполняет rename `.../<baseSessionId>.jsonl` в `.../<baseSessionId>__<agentKind>.jsonl`.
+  - Для legacy mixed истории без per-agent `dialogId` (например `.../<baseSessionId>.jsonl`) Core делает best-effort migrate: при первом запуске агента выполняет rename `.../<baseSessionId>.jsonl` в `.../<baseSessionId>__<agentKind>.jsonl`.
 
 ## План развития
 - Расширить доставку ядра на остальные платформы (darwin-x64, linux-x64, win32-x64) с тем же workflow.

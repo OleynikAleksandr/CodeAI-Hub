@@ -1108,6 +1108,7 @@ export class SessionRequestHandler {
         sessionId: targetSessionId,
         reason: "resume_timeout",
       });
+      this.emitTurnStateEvent({ sessionId: targetSessionId, state: "idle" });
     }, FLOW_NODE_CONTINUITY_RESUME_TIMEOUT_MS);
     this.flowNodeContinuityLockTimeouts.set(context.rolloverId, timeout);
   }
@@ -1156,7 +1157,7 @@ export class SessionRequestHandler {
       this.flowNodeContinuityLockContexts.delete(context.targetSessionId);
     }
     this.finalizePostBootstrapRolloverLifecycle(context, {
-      updateResumeMode: options.reason === "resume_ready",
+      updateResumeMode: true,
     });
   }
 
@@ -2590,6 +2591,23 @@ export class SessionRequestHandler {
       this.clearPostTurnContextDecision(sessionId);
       this.emitTurnStateEvent({ sessionId, state: "idle" });
       this.handleNoResumeTurnCompleted(session);
+      return;
+    }
+
+    // Continuity resume bootstrap turns should unlock promptly once the provider
+    // reports completion; we cannot wait for context-decision arbitration here
+    // because the bootstrap session is still flagged as "rollover pending".
+    const lockContext = this.flowNodeContinuityLockContexts.get(sessionId);
+    if (
+      lockContext &&
+      lockContext.targetSessionId === sessionId &&
+      lockContext.awaitingBootstrapTurn
+    ) {
+      this.finalizeFlowNodeContinuityLock({
+        sessionId,
+        reason: "resume_ready",
+      });
+      this.emitTurnStateEvent({ sessionId, state: "idle" });
       return;
     }
 

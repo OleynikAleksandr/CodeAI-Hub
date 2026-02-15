@@ -9,6 +9,7 @@ import type {
   SessionSnapshot,
 } from "../../../../types/session";
 import { isContinuityInternalMessage } from "./continuity-internal-message";
+import { isSegmentBoundaryMessage } from "./dialog-panel-message-utils";
 import SessionTabs from "./session-tabs";
 import {
   collectChainSegmentMessages,
@@ -17,17 +18,66 @@ import {
 
 export { buildTokenDebugSummary } from "./token-debug-summary";
 
+const filterContinuityInternalSegmentMessages = (
+  segment: readonly SessionMessage[]
+): readonly SessionMessage[] => {
+  if (segment.length === 0) {
+    return segment;
+  }
+
+  const containsInternalAck = segment.some((message) =>
+    isContinuityInternalMessage(message)
+  );
+  const withoutInternalAck = containsInternalAck
+    ? segment.filter((message) => !isContinuityInternalMessage(message))
+    : segment;
+
+  if (!containsInternalAck) {
+    return withoutInternalAck;
+  }
+
+  const firstUserIndex = withoutInternalAck.findIndex(
+    (message) => message.role === "user"
+  );
+  if (firstUserIndex < 0) {
+    return withoutInternalAck.filter(
+      (message) => message.role !== "assistant" && message.role !== "thinking"
+    );
+  }
+
+  const prefix = withoutInternalAck
+    .slice(0, firstUserIndex)
+    .filter(
+      (message) => message.role !== "assistant" && message.role !== "thinking"
+    );
+  if (prefix.length === 0) {
+    return withoutInternalAck;
+  }
+
+  return [...prefix, ...withoutInternalAck.slice(firstUserIndex)];
+};
+
 export const filterContinuityInternalMessages = (
   messages: readonly SessionMessage[]
 ): readonly SessionMessage[] => {
-  for (const message of messages) {
-    if (isContinuityInternalMessage(message)) {
-      return messages.filter(
-        (candidate) => !isContinuityInternalMessage(candidate)
-      );
-    }
+  if (!messages.some((message) => isContinuityInternalMessage(message))) {
+    return messages;
   }
-  return messages;
+
+  const next: SessionMessage[] = [];
+  let segment: SessionMessage[] = [];
+  for (const message of messages) {
+    if (isSegmentBoundaryMessage(message)) {
+      next.push(...filterContinuityInternalSegmentMessages(segment));
+      segment = [];
+      next.push(message);
+      continue;
+    }
+    segment.push(message);
+  }
+  next.push(...filterContinuityInternalSegmentMessages(segment));
+
+  return next;
 };
 
 export const resolveActiveSessionSnapshot = (options: {

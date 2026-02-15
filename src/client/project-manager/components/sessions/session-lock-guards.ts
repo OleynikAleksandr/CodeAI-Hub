@@ -21,7 +21,9 @@ export const isRolloverPendingAfterTerminalTurn = (
 ): boolean =>
   session.resumeMode === "resume_via_rollover" &&
   session.finalTurnCompleted === true &&
-  lockReason !== "resume_ready";
+  lockReason !== "resume_ready" &&
+  lockReason !== "resume_failed" &&
+  lockReason !== "resume_timeout";
 
 export const isContextDecisionPending = (
   session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string],

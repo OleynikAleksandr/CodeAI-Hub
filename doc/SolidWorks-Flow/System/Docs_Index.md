@@ -1,6 +1,6 @@
 # Документация CodeAI Hub — единый индекс (SolidWorks-Flow)
 
-**Last Updated:** 2026-02-13 (release 1.1.585)
+**Last Updated:** 2026-02-15 (release 1.1.606)
 
 Эта папка (`doc/SolidWorks-Flow/`) — **единый поток документации** проекта.
 
@@ -37,6 +37,7 @@ doc/SolidWorks-Flow/
 ├── Architecture/                      # UI/UX Workflow Tree
 │   ├── WorkflowTree_UI_Architecture.md
 │   ├── DescriptionNode_ReviewSession_Architecture.md
+│   └── Dialogs_And_Continuity_Routing_Refactor.md
 ├── WorkspaceRuntime/
 │   ├── WorkspaceRuntime.md
 ├── SessionContinuity/
@@ -64,4 +65,5 @@ doc/SolidWorks-Flow/
 | `Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md` | File-first workflow + watcher |
 | `Architecture/DescriptionNode_ReviewSession_Architecture.md` | Канон `Description → Reviewer` |
 | `WorkspaceRuntime/WorkspaceRuntime.md` | Multi-workspace runtime + lock/unlock контракты |
-| `SessionContinuity/SessionContinuity.md` | Continuity rollover + единая UI-история через `dialogSessionId` (обязательно для всех следующих агентов) |
+| `SessionContinuity/SessionContinuity.md` | Continuity rollover + единая UI-история через `dialogId` (обязательно для всех следующих агентов) |
+| `Architecture/Dialogs_And_Continuity_Routing_Refactor.md` | Канон routing: messages по `dialogId`, status/usage/lock по runtime `sessionId` |

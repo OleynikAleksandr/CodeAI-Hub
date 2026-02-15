@@ -1,7 +1,7 @@
 # Workspace Runtime (SolidWorks-Flow) — Multi-workspace + Snapshot-first + Lock Contract (Source of Truth)
 
 **Status:** Active
-**Updated:** 2026-02-11 (release 1.1.560)
+**Updated:** 2026-02-15 (release 1.1.606)
 **Owner:** Oleksandr + Codex
 
 ---
@@ -62,7 +62,7 @@
 - `sessionId: string` — UUID (генерируется Core).
 - `providerId: string` — id провайдера (например: `claudeCodeCli`, `codexCli`, `geminiCli`).
 - `providerSessionId: string` — provider-native id конкретного segment (используется для resume/focus и привязки provider events).
-- `dialogSessionId: string` — **стабильный** id логического диалога агента для UI-истории (не меняется при rollover/resume).
+- `dialogId: string` — **стабильный** id логического диалога агента для UI-истории (basename JSONL; не меняется при rollover/resume).
 - `artifactId: string` — id артефакта внутри узла (`draft`, `final`, `report`).
 
 ### 3.3 Compound keys
@@ -85,8 +85,8 @@ type SessionKey = {
 История диалога в UI читается **не из провайдерных логов**, а из unified-session JSONL в `~/.codeai-hub/sessions/**`.
 
 Нормативные правила:
-- `providerSessionId` может меняться при rollover/resume, но `dialogSessionId` **не меняется**.
-- имя файла истории для UI должно быть `dialogSessionId` (иначе история распадается на сегменты и после рестарта Core/PM будет показываться только “последний кусок”).
+- `providerSessionId` может меняться при rollover/resume, но `dialogId` **не меняется**.
+- имя файла истории для UI должно быть `dialogId` (иначе история распадается на сегменты и после рестарта Core/PM будет показываться только “последний кусок”).
 - это требование применяется для всех **следующих агентов** и flow-ноды/шагов, где диалог длительный и может переживать rollover/resume.
 
 ---
@@ -160,25 +160,57 @@ type WorkspaceSnapshotRequest = {
 };
 ```
 
-### 6.3 `session:send`
+### 6.3 `session:message` (low-level)
 
 ```ts
-type SessionSend = {
-  type: "session:send";
+type SessionMessage = {
+  type: "session:message";
   payload: {
-    requestId: string;
-    sessionKey: SessionKey;
+    sessionId: string;
     content: string;
-    options?: {
-      outputSchema?: unknown;
-    };
   };
 };
 ```
 
-Требование: на accepted send Core должен синхронно перейти к `turnState="running"` (через ближайший `workspace:snapshot`).
+Примечание: это низкоуровневая отправка “в конкретную runtime‑сессию”. Для UI панели диалога в PM канонический путь — `dialog:send` по `dialogId` (см. ниже).
 
-### 6.4 `artifact:edit`
+### 6.4 `dialog:*` (канонический UI‑диалог)
+
+Все операции UI‑диалогов идут по `dialogId` (basename JSONL) и не зависят от runtime `sessionId`:
+
+```ts
+type DialogList = {
+  type: "dialog:list";
+  payload: { requestId: string; workspaceSlug: string };
+};
+
+type DialogOpen = {
+  type: "dialog:open";
+  payload: { requestId: string; workspaceSlug: string; dialogId: string };
+};
+
+type DialogHistory = {
+  type: "dialog:history";
+  payload: {
+    requestId: string;
+    workspaceSlug: string;
+    dialogId: string;
+    cursor?: number;
+  };
+};
+
+type DialogSend = {
+  type: "dialog:send";
+  payload: {
+    requestId: string;
+    workspaceSlug: string;
+    dialogId: string;
+    content: string;
+  };
+};
+```
+
+### 6.5 `artifact:edit`
 
 ```ts
 type ArtifactEdit = {
@@ -193,7 +225,7 @@ type ArtifactEdit = {
 };
 ```
 
-### 6.5 `workflow:rebuild`
+### 6.6 `workflow:rebuild`
 
 ```ts
 type WorkflowRebuild = {
@@ -280,6 +312,6 @@ Push full snapshot только на “значимые” изменения �
 
 Критичный инвариант: UI не должен показывать/применять события “не своего” workspace.
 
-- Любая команда к Core должна включать `workspaceRoot` (через `NodeKey`/`SessionKey` либо в envelope).
+- Любая команда к Core должна быть scoped к workspace: либо через `workspaceRoot`/`sessionId` в payload, либо через `workspaceSlug` для `dialog:*` (плюс активный workspace scope в bridge).
 - `workspace:select` должен быть atomic (unsubscribe old + subscribe new).
 - Snapshot-first обязателен при каждом выборе workspace.

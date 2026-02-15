@@ -90,10 +90,10 @@ MVP-реальность: текущая реализация Workflow Tree жи
 - клик по `Step` открывает состояние шага (анкета/запуск, либо продолжение),
 - клик по `Artifact` открывает содержимое артефакта во **встроенном viewer** Project Manager (не VS Code editor tab),
 - клик по `Session` открывает полный диалог; для `resume`-сессий после перезапуска Project Manager состояние восстанавливается по persisted координатам (providerId + providerSessionId).
-  - анти-регрессия: UI-история диалога берётся из unified-session JSONL (`~/.codeai-hub/sessions/.../<dialogSessionId>.jsonl`) и должна восстанавливаться даже если Core стартовал из другого workspace (см. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`).
+  - анти-регрессия: UI-история диалога берётся из unified-session JSONL (`~/.codeai-hub/sessions/.../<dialogId>.jsonl`) и должна восстанавливаться даже если Core стартовал из другого workspace (см. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`).
 
 #### 5.3.1 Contract: Cold Start + Hot Tail (PM UI)
-- **History SOT (cold start):** unified JSONL по `dialogSessionId`: `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogSessionId>.jsonl`, где `workspaceKey = sanitize(workspacePath)`.
+- **History SOT (cold start):** unified JSONL по `dialogId`: `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl`, где `workspaceKey = sanitize(workspacePath)`.
 - **Hot tail:** live stream событий Core (WS `session:message`) пополняет runtime snapshot, пока Project Manager активен.
 - **Dedupe:** UI подавляет replay/reconnect повторы по `messageId` и по ключу `role + createdAt + content` (tail dedupe).
 - **Continuity chain:** несколько provider segments одного шага/роли отображаются как единый диалог; bootstrap system prompt continuation segment (segmentIndex > 0) скрывается, чтобы не засорять диалог повторениями.

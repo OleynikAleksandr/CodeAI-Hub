@@ -1,8 +1,8 @@
 # Workflow Tree — Description Step/Node: Questionnaire → Draft → Auto-Review → Final
 
 **Version:** 1.1
-**Date:** 2026-02-11
-**Status:** Draft (refined lifecycle + UI semantics)
+**Date:** 2026-02-15
+**Status:** Active (current contract; updated for 1.1.606)
 
 ---
 
@@ -76,28 +76,28 @@
 Минимальная структура ссылки на возобновляемую сессию:
 
 - `providerId`: `claudeCodeCli` | `codexCli` | `geminiCli`
-- `providerSessionId`: строка (provider-native id; используется для resume)
-- `jsonlPath`: абсолютный путь к unified session JSONL
-- `dialogSessionId`: стабильный id логического диалога **конкретного агента** для UI-истории (имя JSONL файла; не меняется при rollover/resume)
+- `providerSessionId`: строка (provider-native id последнего segment; используется для resume/focus; может меняться при rollover/resume)
+- `dialogId`: стабильный id логического диалога **конкретного агента** для UI-истории (basename JSONL; не меняется при rollover/resume)
+- `latestSessionId`: (опционально) runtime `sessionId` последнего segment (best‑effort; нужен UI для binding status/usage/lock/models)
 
-Примечание: `jsonlPath` не должен быть “вводимой пользователем” строкой — он вычисляется детерминированно из `providerId + dialogSessionId + workspaceKey`, где `workspaceKey = sanitize(workspacePath)`.
+Примечание: `jsonlPath` не должен быть “вводимой пользователем” строкой — он вычисляется детерминированно из `providerId + dialogId + workspaceKey`, где `workspaceKey = sanitize(workspacePath)`.
 Дополнение: `SessionRef` — техническая мета‑информация, которая хранится в метаданных шага/состоянии (например, `description-step.json`) и не должна попадать в `Final_Description.md`.
 
 Норматив (Phase 158):
 - Для stage `description` существует **минимум 2 SessionRef**: `collector` и `reviewer`.
-- Эти агенты не должны разделять один `dialogSessionId`: контракт **1 агент = 1 JSONL**.
-- Рекомендованный формат: `<baseSessionId>__collector` и `<baseSessionId>__reviewer`.
+- Эти агенты не должны разделять один `dialogId`: контракт **1 агент = 1 JSONL**.
+- Рекомендованный формат (человекочитаемый): `<providerSlug>-<uuid>-<agentRole>` (например `codex-<uuid>-description` и `codex-<uuid>-reviewer`).
 
 ### 5.3 Session JSONL location
 
 Unified session storage хранит события в:
-- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<sanitizedDialogSessionId>.jsonl`
+- `~/.codeai-hub/sessions/<workspaceKey>/<providerId>/<sanitizedDialogId>.jsonl`
 
 Где:
 - `workspaceKey = sanitize(workspacePath)`;
-- `sanitizedDialogSessionId` нормализован под безопасный slug (см. `@codeai-hub/unified-session/sanitizeWorkspaceSlug`).
+- `sanitizedDialogId` нормализован под безопасный slug (см. `@codeai-hub/unified-session/sanitizeWorkspaceSlug`).
 
-Требование на будущее: этот подход (стабильный `dialogSessionId` для одного накопительного JSONL) обязателен для всех следующих агентов/шагов, иначе Project Manager после рестарта Core будет видеть только последний сегмент истории.
+Требование на будущее: этот подход (стабильный `dialogId` для одного накопительного JSONL) обязателен для всех следующих агентов/шагов, иначе Project Manager после рестарта Core будет видеть только последний сегмент истории.
 
 ### 5.4 Artifacts (paths)
 

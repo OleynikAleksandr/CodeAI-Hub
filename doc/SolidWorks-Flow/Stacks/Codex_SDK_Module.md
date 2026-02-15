@@ -1,13 +1,13 @@
 # Codex SDK Module
 
-**Updated:** 2026-02-13  
+**Updated:** 2026-02-15  
 **Owner:** Codex  
 **Source Reference:** `https://github.com/openai/codex/tree/main/sdk/typescript`
 
 ---
 
 ## 1. Purpose & Scope
-- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.579` inside CodeAI-Hub Core.
+- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.606` inside CodeAI-Hub Core.
 - Capture the CLI/SDK contract (events, items, options) that we must adapt for RemoteBridge and UI streaming.
 - List integration prerequisites (authentication, binaries, storage layout) required to bootstrap Codex alongside the Claude module.
 
@@ -57,13 +57,13 @@ CodeAI-Hub Core  →  Codex Provider Adapter  →  @openai/codex-sdk  →  codex
 ### Unified Session History (UI dialog rendering)
 Важно различать два слоя хранения:
 - **Provider-home (CLI state)**: Codex CLI пишет свои sessions/rollouts в `$CODEX_HOME/sessions/**` (в Hub это `~/.codeai-hub/providers/codex/home/sessions/**`).
-- **Unified-session (UI history)**: Core параллельно пишет нормализованную историю диалога для UI в `~/.codeai-hub/sessions/<workspaceKey>/codexCli/<dialogSessionId>.jsonl`, где `<workspaceKey>` = `sanitize(workspacePath)` (например `-Users-...-CodeAI-Hub`).
-  - `providerSessionId` используется для `codex exec resume <threadId>`, но имя файла UI-истории должно быть стабильным `dialogSessionId` (1.1.585+), иначе после rollover/resume UI теряет “склейку” после рестарта Core.
+- **Unified-session (UI history)**: Core параллельно пишет нормализованную историю диалога для UI в `~/.codeai-hub/sessions/<workspaceKey>/codexCli/<dialogId>.jsonl`, где `<workspaceKey>` = `sanitize(workspacePath)` (например `-Users-...-CodeAI-Hub`).
+  - `providerSessionId` используется для `codex exec resume <threadId>`, но basename UI-истории должен быть стабильным `dialogId` (1.1.585+), иначе после rollover/resume UI теряет “склейку” после рестарта Core.
 
 Promotion `temp id -> thread_id`:
 - При первом реальном `thread_id` Codex SDK может промотировать provisional id (например `codex-<uuid>`) в реальный `<thread_id>`.
-- Для сессий без `dialogSessionId`-override unified-session writer может делать rename JSONL, чтобы сохранить **одну** историю (без split на `codex-*.jsonl` и `<thread_id>.jsonl`).
-- Для long-lived агентов (Reviewer и последующие агенты) Core должен использовать `dialogSessionId` и писать в один накопительный JSONL независимо от promotion.
+- Для сессий без `dialogId`-override unified-session writer может делать rename JSONL, чтобы сохранить **одну** историю (без split на `codex-*.jsonl` и `<thread_id>.jsonl`).
+- Для long-lived агентов (Reviewer и последующие агенты) Core должен использовать `dialogId` и писать в один накопительный JSONL независимо от promotion.
 
 ---
 
