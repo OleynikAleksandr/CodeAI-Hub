@@ -31,8 +31,8 @@
 4. [DONE] Git Commit: `fix(pm): stabilize dialog message ids across segments` (hash: d94dc244)
 
 ### Stream: Cold start auto‑select/auto‑load
-1. [TODO] Fix: после рестарта PM+Core автоматически восстанавливать last selected dialog (или reviewer dialog по умолчанию) и сразу грузить full history из JSONL без ручного клика (scope: `src/client/project-manager/*` ≤3 файлов; expected commit message: `fix(pm): restore last dialog selection on cold start`)
-2. [TODO] Git Commit: `fix(pm): restore last dialog selection on cold start` (hash: TBD)
+1. [DONE] Fix: после рестарта PM+Core автоматически восстанавливать last selected dialog (или reviewer dialog по умолчанию) и сразу грузить full history из JSONL без ручного клика (scope: `src/client/project-manager/*` ≤3 файлов; expected commit message: `fix(pm): restore last dialog selection on cold start`)
+2. [DONE] Git Commit: `fix(pm): restore last dialog selection on cold start` (hash: a0288688)
 
 ---
 
