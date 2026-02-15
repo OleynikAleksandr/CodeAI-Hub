@@ -23478,39 +23478,10 @@ ${path2}` : path2;
       }
       return compareMessageIds(left.message.id, right.message.id);
     });
-    const hasExplicitBoundaries = collected.some(
-      (entry) => isSegmentBoundaryMessage(entry.message)
-    );
-    if (hasExplicitBoundaries) {
-      return dedupeVirtualConversationMessages(
-        filterContinuityInternalMessages(collected.map((entry) => entry.message))
-      );
-    }
-    const withBoundaries = [];
-    const seenSegments = /* @__PURE__ */ new Set();
-    for (const entry of collected) {
-      if (entry.segmentIndex > 0 && !seenSegments.has(entry.segmentIndex)) {
-        seenSegments.add(entry.segmentIndex);
-        withBoundaries.push(
-          createSegmentBoundaryMessage(
-            entry.segmentIndex,
-            params.chain.length,
-            entry.message.createdAt
-          )
-        );
-      }
-      withBoundaries.push(entry.message);
-    }
     return dedupeVirtualConversationMessages(
-      filterContinuityInternalMessages(withBoundaries)
+      filterContinuityInternalMessages(collected.map((entry) => entry.message))
     );
   };
-  var createSegmentBoundaryMessage = (segmentIndex, totalSegments, createdAt) => ({
-    id: `segment-boundary:${segmentIndex}:${createdAt}`,
-    role: "system",
-    content: `\u0421\u0435\u0441\u0441\u0438\u044F ${segmentIndex + 1} \u0438\u0437 ${totalSegments}`,
-    createdAt
-  });
 
   // src/client/ui/src/session/session-view-helpers.tsx
   var useQueuedSend = (options) => {
