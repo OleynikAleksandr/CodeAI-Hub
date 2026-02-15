@@ -348,3 +348,14 @@ UI:
 
 ### 11.5 Автовосстановление выбора (PM+Core cold start)
 - После рестарта PM+Core UI должен восстановить last selected `dialogId` (или применить согласованный default‑выбор) и автоматически выполнить `history(full)`, чтобы не показывать “пустую” сессию до клика пользователя.
+
+### 11.6 Разделение источников данных (Dialog vs Status)
+**Dialog (лента сообщений):**
+- `dialog history` / `dialog tail` (из JSONL) → единственный источник для сообщений в панели диалога.
+
+**Status (панель статуса, блокировки, прогресс):**
+- runtime `session snapshots` / `session:stream` → источник для lock/rollover/usage/connectionState и прочих статусных полей.
+
+**Запрещено:**
+- строить ленту сообщений из continuation chain/snapshots (иначе получаем “live ≠ reload”);
+- выводить divider/summary из UI‑эвристик (thinking‑хаков) вместо explicit JSONL событий.
