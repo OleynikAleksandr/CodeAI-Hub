@@ -51,7 +51,7 @@
 4. [DONE] Git Commit: `fix(core): hard idempotency for segment meta` (hash: 22e94b6a)
 
 ### Stream: UI render — только explicit boundary/meta из JSONL
-1. [DONE] Fix: финально убедиться, что UI никогда не вставляет divider имплицитно (thinking‑хак) и не имеет второго источника divider’ов; любые разделители/summary строятся только из событий JSONL (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): remove all implicit session dividers`)
+1. [DONE] Fix: финально убедиться, что UI никогда не вставляет divider имплицитно (thinking‑хак) и не имеет второго источника divider’ов; любые разделители/summary строятся только из событий JSONL (scope: `src/client/ui/src/app-host/webview-message-dispatcher.ts`, `src/client/ui/src/app-host/webview-message-types.ts`, `src/client/ui/src/app-host/session-store.ts` ≤3 файлов; expected commit message: `fix(ui): remove all implicit session dividers`)
 2. [DONE] Git Commit: `fix(ui): remove all implicit session dividers` (hash: aa489c7d)
 
 ---
@@ -67,7 +67,7 @@
 2. [DONE] Git Commit: `fix(core): strict continuity lock contract for sends` (hash: 310c5273)
 
 ### Stream: UI — разблокировка ввода только по turn completion
-1. [TODO] Fix: UI игнорирует промежуточные события и снимает блокировку ввода только по финальному `turn_completed`/idle состоянию (scope: `src/client/ui/src/session/*` ≤3 файлов; expected commit message: `fix(ui): unlock input only after turn completion`)
+1. [TODO] Fix: UI игнорирует промежуточные события и снимает блокировку ввода только по финальному `turn_completed`/idle состоянию (scope: `src/client/ui/src/app-host/webview-message-dispatcher.ts`, `src/client/ui/src/app-host/webview-message-types.ts`, `src/client/ui/src/app-host/session-store.ts` ≤3 файлов; expected commit message: `fix(ui): unlock input only after turn completion`)
 2. [TODO] Git Commit: `fix(ui): unlock input only after turn completion` (hash: TBD)
 
 ---
