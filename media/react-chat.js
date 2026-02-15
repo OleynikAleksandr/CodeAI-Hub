@@ -8920,7 +8920,18 @@
   var import_react4 = __toESM(require_react());
 
   // src/client/ui/src/session/dialog-panel-message-utils.ts
-  var isSegmentBoundaryMessage = (message) => message.role === "system" && message.id.startsWith("segment-boundary:");
+  var SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
+  var isSegmentBoundaryMessage = (message) => message.role === "system" && (message.id.startsWith("segment-boundary:") || message.content.trimStart().startsWith(SEGMENT_BOUNDARY_MARKER));
+  var extractSegmentBoundaryLabel = (content3) => {
+    const lines = content3.split("\n").map((line) => line.trim());
+    if (lines.length === 0) {
+      return "";
+    }
+    if (lines[0] !== SEGMENT_BOUNDARY_MARKER) {
+      return content3;
+    }
+    return lines[1] ?? "\u041D\u043E\u0432\u0430\u044F \u0441\u0435\u0441\u0441\u0438\u044F";
+  };
   var shouldRenderImplicitBoundaryAfter = (message, next) => {
     if (message.role !== "thinking") {
       return false;
@@ -21739,7 +21750,7 @@ ${message.content}`
               "div",
               {
                 className: "session-dialog__segment-boundary",
-                children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__segment-boundary-label", children: message.content })
+                children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__segment-boundary-label", children: extractSegmentBoundaryLabel(message.content) })
               },
               message.id
             );
@@ -23414,6 +23425,14 @@ ${path2}` : path2;
       }
       return compareMessageIds(left.message.id, right.message.id);
     });
+    const hasExplicitBoundaries = collected.some(
+      (entry) => isSegmentBoundaryMessage(entry.message)
+    );
+    if (hasExplicitBoundaries) {
+      return dedupeVirtualConversationMessages(
+        filterContinuityInternalMessages(collected.map((entry) => entry.message))
+      );
+    }
     const withBoundaries = [];
     const seenSegments = /* @__PURE__ */ new Set();
     for (const entry of collected) {
@@ -23566,6 +23585,7 @@ ${path2}` : path2;
     snapshots,
     coreConnectionStatus,
     coreConnectionDetail,
+    tokenDebugSummaryOverride,
     onSelectSession,
     onCloseSession,
     onSendMessage
@@ -23621,7 +23641,7 @@ ${path2}` : path2;
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app__content" })
       ] });
     }
-    const tokenDebugSummary = buildTokenDebugSummary({
+    const tokenDebugSummary = tokenDebugSummaryOverride ?? buildTokenDebugSummary({
       chain: continuationChain,
       snapshots,
       activeSessionId
