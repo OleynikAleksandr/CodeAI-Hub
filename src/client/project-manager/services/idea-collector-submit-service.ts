@@ -12,6 +12,7 @@ import {
   toWorkspaceSlug,
 } from "./description-questionnaire-utils";
 import { buildWorkflowPromptPack } from "./prompt-pack-builder";
+import { waitForSessionProviderBinding } from "./session-binding-waiter";
 
 const SESSION_CREATE_TIMEOUT_MS = 15000;
 const WORKFLOW_CONTRACT_ENDPOINTS = {
@@ -269,6 +270,7 @@ export class IdeaCollectorSubmitService {
       notifyMissingIdeaContext(session.id);
       return session.id;
     }
+    const bindingPromise = waitForSessionProviderBinding(session.id);
 
     try {
       const contract = await contractPromise;
@@ -281,6 +283,7 @@ export class IdeaCollectorSubmitService {
         questionnairePath: params.questionnairePath,
       });
 
+      await bindingPromise;
       api.sendSessionMessage(session.id, promptPack.content);
     } catch (error) {
       postSystemNotice(

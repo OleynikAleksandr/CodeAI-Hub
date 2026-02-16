@@ -104,6 +104,27 @@ type ProviderSessionResolution =
     }
   | { readonly error: string };
 
+type CreateAndRegisterSessionOptions = {
+  readonly providerId: string;
+  readonly workspacePath: string;
+  readonly adapter: ProviderAdapter;
+  readonly resumeMode?: SessionResumeMode;
+  readonly silent?: boolean;
+  readonly context: {
+    readonly initiativeSlug: string | null;
+    readonly stage: string | null;
+    readonly runSlug: string | null;
+    readonly providerSessionId: string | null;
+  };
+  readonly rootSessionId?: string | null;
+  readonly continuationParentId?: string | null;
+};
+
+type ShellSessionCreationResult = {
+  readonly session: Session;
+  readonly continuityRootSessionId: string;
+};
+
 export type ProviderSessionBinding = {
   readonly providerId: string;
   providerSessionId: string;
@@ -1326,38 +1347,119 @@ export class SessionRequestHandler {
     }
   }
 
-  private async createAndRegisterSession(options: {
-    readonly providerId: string;
-    readonly workspacePath: string;
-    readonly adapter: ProviderAdapter;
-    readonly resumeMode?: SessionResumeMode;
-    readonly silent?: boolean;
-    readonly context: {
-      readonly initiativeSlug: string | null;
-      readonly stage: string | null;
-      readonly runSlug: string | null;
-      readonly providerSessionId: string | null;
+  private shouldBroadcastCreatedEarly(
+    options: CreateAndRegisterSessionOptions
+  ): boolean {
+    return (
+      options.context.stage === "description" &&
+      options.context.runSlug !== "reviewer" &&
+      !options.context.providerSessionId
+    );
+  }
+
+  private notifyRuntimeSessionCreated(session: Session): void {
+    this.workspaceRuntime?.notifySessionCreated(
+      {
+        workspaceRoot: session.workspacePath,
+        nodeId: session.stage ?? "session",
+        sessionId: session.id,
+      },
+      {
+        nodeId: session.stage ?? "session",
+        providerId: session.providerId,
+        providerSessionId: session.providerSessionId ?? undefined,
+        bindingStatus: session.providerSessionStatus,
+      }
+    );
+  }
+
+  private registerInitialSessionLifecycle(
+    session: Session,
+    explicitMode?: SessionResumeMode
+  ): void {
+    const initialLifecycleState: SessionResumeLifecycleState = {
+      mode: this.resolveInitialResumeMode({
+        stage: session.stage,
+        runSlug: session.runSlug,
+        explicitMode: explicitMode ?? null,
+      }),
+      finalTurnCompleted: false,
+      terminalLockReason: null,
     };
-    readonly rootSessionId?: string | null;
-    readonly continuationParentId?: string | null;
-  }): Promise<Session | null> {
-    const providerSessionResolution = await this.resolveProviderSessionId({
-      adapter: options.adapter,
+    this.getSessionResumeLifecycleStore().set(
+      session.id,
+      initialLifecycleState
+    );
+    this.broadcastSessionResumeLifecycleState(session, initialLifecycleState);
+  }
+
+  private async createShellSession(
+    options: CreateAndRegisterSessionOptions
+  ): Promise<ShellSessionCreationResult> {
+    const session = this.sessionManager.createSession(
+      options.providerId,
+      options.workspacePath,
+      undefined,
+      {
+        initiativeSlug: options.context.initiativeSlug,
+        stage: options.context.stage,
+        runSlug: options.context.runSlug ?? null,
+        continuationParentId: options.continuationParentId ?? null,
+      }
+    );
+    const continuityRootSessionId = await this.resolveContinuityRootSessionId({
+      rootSessionIdOverride: options.rootSessionId ?? null,
+      workspaceRoot: options.workspacePath,
       providerId: options.providerId,
-      workspacePath: options.workspacePath,
-      requestedProviderSessionId: options.context.providerSessionId,
+      sessionId: session.id,
+      context: options.context,
     });
-    if ("error" in providerSessionResolution) {
-      this.broadcaster({
-        type: "session:error",
-        payload: { message: providerSessionResolution.error },
-      });
-      return null;
-    }
+    this.continuityRootBySessionId.set(session.id, continuityRootSessionId);
 
-    const { providerSessionId, supportsImmediateBinding } =
-      providerSessionResolution;
+    // Keep a single UI transcript across continuity rollovers by pinning the
+    // unified-session history id to the continuity root.
+    this.sessionStorage.register(session, {
+      historySessionId: continuityRootSessionId,
+    });
 
+    this.notifyRuntimeSessionCreated(session);
+    this.registerInitialSessionLifecycle(session, options.resumeMode);
+
+    this.broadcaster({
+      type: "session:created",
+      payload: serializeSession(session),
+    });
+    this.broadcastSessionBinding(session.id);
+
+    return { session, continuityRootSessionId };
+  }
+
+  private handleShellSessionProviderResolutionError(options: {
+    readonly session: Session;
+    readonly providerId: string;
+    readonly error: string;
+  }): void {
+    this.sessionManager.markProviderSessionFailed(options.session.id);
+    this.sessionStorage.close(
+      options.session.id,
+      "provider-session-create-failed"
+    );
+    this.broadcastSessionBinding(options.session.id);
+    this.broadcaster({
+      type: "session:error",
+      payload: {
+        sessionId: options.session.id,
+        providerId: options.providerId,
+        message: options.error,
+      },
+    });
+  }
+
+  private async createBoundSession(
+    options: CreateAndRegisterSessionOptions,
+    providerSessionId: string,
+    supportsImmediateBinding: boolean
+  ): Promise<Session> {
     const session = this.sessionManager.createSession(
       options.providerId,
       options.workspacePath,
@@ -1404,21 +1506,22 @@ export class SessionRequestHandler {
     });
     await this.updateDescriptionSessionRef(session, providerSessionId);
 
+    const sessionId = session.id;
     const unsubscribe = options.adapter.subscribe(
       providerSessionId,
       (event: unknown) => {
-        this.handleProviderEvent(session.id, event);
+        this.handleProviderEvent(sessionId, event);
       }
     );
 
-    this.providerSessions.set(session.id, {
+    this.providerSessions.set(sessionId, {
       providerId: options.providerId,
       providerSessionId,
       unsubscribe,
     });
 
     if (supportsImmediateBinding) {
-      this.updateProviderBinding(session.id, providerSessionId);
+      this.updateProviderBinding(sessionId, providerSessionId);
     }
 
     this.continuity.registerSession({
@@ -1442,33 +1545,9 @@ export class SessionRequestHandler {
         silent: false,
       });
     }
-    this.workspaceRuntime?.notifySessionCreated(
-      {
-        workspaceRoot: session.workspacePath,
-        nodeId: session.stage ?? "session",
-        sessionId: session.id,
-      },
-      {
-        nodeId: session.stage ?? "session",
-        providerId: session.providerId,
-        providerSessionId: session.providerSessionId ?? undefined,
-        bindingStatus: session.providerSessionStatus,
-      }
-    );
-    const initialLifecycleState: SessionResumeLifecycleState = {
-      mode: this.resolveInitialResumeMode({
-        stage: session.stage,
-        runSlug: session.runSlug,
-        explicitMode: options.resumeMode ?? null,
-      }),
-      finalTurnCompleted: false,
-      terminalLockReason: null,
-    };
-    this.getSessionResumeLifecycleStore().set(
-      session.id,
-      initialLifecycleState
-    );
-    this.broadcastSessionResumeLifecycleState(session, initialLifecycleState);
+
+    this.notifyRuntimeSessionCreated(session);
+    this.registerInitialSessionLifecycle(session, options.resumeMode);
 
     this.broadcaster({
       type: "session:created",
@@ -1477,6 +1556,132 @@ export class SessionRequestHandler {
     this.broadcastSessionBinding(session.id);
 
     return session;
+  }
+
+  private async bindShellSession(
+    options: CreateAndRegisterSessionOptions,
+    shell: ShellSessionCreationResult,
+    providerSessionId: string,
+    supportsImmediateBinding: boolean
+  ): Promise<Session> {
+    const session = shell.session;
+    if (supportsImmediateBinding) {
+      this.sessionManager.updateProviderSessionId(
+        session.id,
+        providerSessionId
+      );
+    } else {
+      this.sessionManager.seedProviderSessionId(session.id, providerSessionId);
+    }
+
+    const descriptionDialog = await this.resolveDescriptionDialog({
+      session,
+      providerSessionId,
+    });
+
+    this.maybePromoteLegacyDescriptionDialogHistory({
+      session,
+      dialogSessionId: descriptionDialog?.dialogSessionId ?? null,
+    });
+
+    await this.maybeBackfillDescriptionDialogHistory({
+      session,
+      providerSessionId,
+      dialog: descriptionDialog,
+    });
+
+    await this.updateDescriptionSessionRef(session, providerSessionId);
+
+    const sessionId = session.id;
+    const unsubscribe = options.adapter.subscribe(
+      providerSessionId,
+      (event: unknown) => {
+        this.handleProviderEvent(sessionId, event);
+      }
+    );
+
+    this.providerSessions.set(sessionId, {
+      providerId: options.providerId,
+      providerSessionId,
+      unsubscribe,
+    });
+
+    if (supportsImmediateBinding) {
+      this.updateProviderBinding(sessionId, providerSessionId);
+    }
+
+    this.continuity.registerSession({
+      session,
+      providerSessionId,
+      rootSessionId: shell.continuityRootSessionId,
+    });
+
+    const workspaceSlug = session.initiativeSlug;
+    const stageId = session.stage;
+    if (
+      options.silent !== true &&
+      options.continuationParentId &&
+      workspaceSlug &&
+      stageId
+    ) {
+      await this.appendDialogSegmentBoundaryMeta({
+        session,
+        workspaceSlug,
+        stageId,
+        silent: false,
+      });
+    }
+
+    this.broadcastSessionBinding(session.id);
+    return session;
+  }
+
+  private async createAndRegisterSession(
+    options: CreateAndRegisterSessionOptions
+  ): Promise<Session | null> {
+    const shell = this.shouldBroadcastCreatedEarly(options)
+      ? await this.createShellSession(options)
+      : null;
+
+    const providerSessionResolution = await this.resolveProviderSessionId({
+      adapter: options.adapter,
+      providerId: options.providerId,
+      workspacePath: options.workspacePath,
+      requestedProviderSessionId: options.context.providerSessionId,
+    });
+    if ("error" in providerSessionResolution) {
+      if (shell) {
+        this.handleShellSessionProviderResolutionError({
+          session: shell.session,
+          providerId: options.providerId,
+          error: providerSessionResolution.error,
+        });
+        return shell.session;
+      }
+      this.broadcaster({
+        type: "session:error",
+        payload: { message: providerSessionResolution.error },
+      });
+      return null;
+    }
+
+    const { providerSessionId, supportsImmediateBinding } =
+      providerSessionResolution;
+
+    if (shell) {
+      return await this.bindShellSession(
+        options,
+        shell,
+        providerSessionId,
+        supportsImmediateBinding
+      );
+    }
+
+    return await this.createBoundSession(
+      options,
+      providerSessionId,
+      supportsImmediateBinding
+    );
   }
 
   private normalizeContinuityStageId(value: string | null): string {
