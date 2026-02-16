@@ -1,3 +1,7 @@
+## [1.1.610] - 2026-02-16
+### Fixed
+- Session UI: лимиты `session/weekly` теперь обновляются после каждого turn из `session:stream` (`turn_completed`/`usage_limits stream_event`), а не только при смене сессии.
+
 ## [1.1.609] - 2026-02-16
 ### Changed
 - Patch rebuild: пересобран релиз `1.1.609` для повторной проверки fix-а отображения моделей в Session status.
