@@ -8079,32 +8079,12 @@
     }
   };
 
-  // src/client/ui/src/session/helpers.ts
-  var mergeCatalog = (catalog, providers) => {
-    const nextCatalog = { ...catalog };
-    for (const provider of providers) {
-      nextCatalog[provider.id] = provider;
-    }
-    return nextCatalog;
-  };
+  // src/client/ui/src/session/session-candidates.ts
   var providerIdSet = /* @__PURE__ */ new Set([
     "claudeCodeCli",
     "codexCli",
     "geminiCli"
   ]);
-  var createDefaultBinding = () => ({
-    providerSessionId: null,
-    status: "pending"
-  });
-  var normalizeBinding = (binding) => {
-    if (!binding) {
-      return createDefaultBinding();
-    }
-    return {
-      providerSessionId: binding.providerSessionId ?? null,
-      status: binding.status === "ready" || binding.status === "failed" ? binding.status : "pending"
-    };
-  };
   var isProviderDescriptorCandidate = (value) => {
     if (!value || typeof value !== "object") {
       return false;
@@ -8154,6 +8134,28 @@
     }
     return binding.status === "pending" || binding.status === "ready" || binding.status === "failed";
   };
+
+  // src/client/ui/src/session/helpers.ts
+  var mergeCatalog = (catalog, providers) => {
+    const nextCatalog = { ...catalog };
+    for (const provider of providers) {
+      nextCatalog[provider.id] = provider;
+    }
+    return nextCatalog;
+  };
+  var createDefaultBinding = () => ({
+    providerSessionId: null,
+    status: "pending"
+  });
+  var normalizeBinding = (binding) => {
+    if (!binding) {
+      return createDefaultBinding();
+    }
+    return {
+      providerSessionId: binding.providerSessionId ?? null,
+      status: binding.status === "ready" || binding.status === "failed" ? binding.status : "pending"
+    };
+  };
   var buildProviderLabels = (catalog) => {
     const entries = Object.entries(catalog);
     return new Map(
@@ -8183,7 +8185,7 @@
         active: false,
         updatedAt: now
       },
-      connectionState: "idle",
+      connectionState: session.stage === "description" && session.sessionKind === "collector" ? "running" : "idle",
       updatedAt: now
     };
     return {

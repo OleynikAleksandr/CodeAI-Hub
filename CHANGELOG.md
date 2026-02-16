@@ -1,3 +1,7 @@
+## [1.1.615] - 2026-02-16
+### Fixed
+- Session UI: one-shot `description` collector-сессия блокирует поле ввода сразу после открытия (до первого сообщения/снапшота), устраняя окно свободного ввода.
+
 ## [1.1.614] - 2026-02-16
 ### Fixed
 - Session UI: в one-shot `description` сессии во время выполнения turn показываем `Agent is working… Please wait.`, а `Agent is resuming your session… Please wait.` используем только для rollover/resume; terminal one-shot показывает read-only copy без `resuming`.

@@ -13,6 +13,7 @@
 |---:|:------:|------|------------------|----------|
 | BUG-2026-02-16-01 | FIXED | Core/PM | one‑shot `description`: input «unlock gap»/возможность второго запроса | 1.1.613 |
 | BUG-2026-02-16-02 | FIXED | PM/UI | one‑shot `description`: wait‑copy показывает `resuming` вместо `working` | 1.1.614 |
+| BUG-2026-02-16-03 | FIXED | UI | one‑shot `description` collector: input свободен до первых сообщений | 1.1.615 |
 
 ---
 
@@ -66,3 +67,26 @@
 **Guards:**
 - `node --test --import tsx src/client/ui/src/session/input-panel.test.tsx`
 - `node --test --import tsx src/client/project-manager/components/sessions/session-stream.test.ts`
+
+---
+
+## BUG-2026-02-16-03 — one‑shot `description` collector: input свободен до первых сообщений
+
+**Status:** FIXED
+
+**Symptom:** после `Send` анкеты и появления UI сессии поле ввода оставалось разблокированным до первых сообщений/снапшота от агента.
+
+**Root cause:**
+- Session UI создавал initial snapshot через `createInitialSnapshot()` с `connectionState="idle"`, поэтому InputPanel до первого `workspace:snapshot` считал сессию idle и позволял ввод.
+
+**Fix:**
+- Session UI: для `stage="description" + sessionKind="collector"` initial snapshot сразу выставляет `connectionState="running"`.
+- Добавлен regression‑тест на `createInitialSnapshot`.
+
+**Commits:**
+- `bc066638 fix(ui): lock description collector immediately`
+
+**Release:** `1.1.615`
+
+**Guards:**
+- `node --test --import tsx src/client/ui/src/session/helpers.initial-snapshot.test.ts`
