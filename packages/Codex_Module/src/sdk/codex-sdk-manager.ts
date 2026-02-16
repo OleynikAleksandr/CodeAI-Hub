@@ -26,6 +26,13 @@ const CODEX_SETTINGS_FILE = path.join(
   "settings",
   "settings.json"
 );
+const CODEX_MODELS_CACHE_FILE = "models_cache.json";
+const CODEX_CONFIG_FILE = "config.toml";
+const CODEX_MIGRATION_FROM = "gpt-5.2";
+const CODEX_MIGRATION_TO = "gpt-5.3-codex";
+const NEWLINE_SPLIT_REGEX = /\r?\n/u;
+const MIGRATION_LINE_REGEX =
+  /^\s*(["']?)gpt-5\.2\1\s*=\s*(["']?)gpt-5\.3-codex\2\s*(#.*)?$/u;
 const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "low",
   "medium",
@@ -79,6 +86,75 @@ const normalizeCodexReasoningByModel = (
   return normalized;
 };
 
+const removeModelMigrationFromConfigToml = (
+  raw: string
+): {
+  readonly changed: boolean;
+  readonly next: string;
+} => {
+  const lines = raw.split(NEWLINE_SPLIT_REGEX);
+  const nextLines: string[] = [];
+  let inModelMigrationsSection = false;
+  let changed = false;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      inModelMigrationsSection = trimmed === "[notice.model_migrations]";
+      nextLines.push(line);
+      continue;
+    }
+
+    if (inModelMigrationsSection && MIGRATION_LINE_REGEX.test(line)) {
+      changed = true;
+      continue;
+    }
+
+    nextLines.push(line);
+  }
+
+  return { changed, next: nextLines.join("\n") };
+};
+
+const sanitizeModelsCacheRecord = (
+  value: unknown
+): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const sanitizeModelsCacheEntry = (value: unknown): boolean => {
+  if (!sanitizeModelsCacheRecord(value)) {
+    return false;
+  }
+  if (value.slug !== CODEX_MIGRATION_FROM) {
+    return false;
+  }
+  const upgrade = value.upgrade;
+  if (!sanitizeModelsCacheRecord(upgrade)) {
+    return false;
+  }
+  if (upgrade.model !== CODEX_MIGRATION_TO) {
+    return false;
+  }
+  value.upgrade = undefined;
+  return true;
+};
+
+const sanitizeModelsCachePayload = (
+  payload: Record<string, unknown>
+): boolean => {
+  const models = payload.models;
+  if (!Array.isArray(models)) {
+    return false;
+  }
+  let changed = false;
+  for (const model of models) {
+    if (sanitizeModelsCacheEntry(model)) {
+      changed = true;
+    }
+  }
+  return changed;
+};
+
 export class CodexSDKManager {
   private codexInstance: CodexCtor | null = null;
   private initialized = false;
@@ -98,6 +174,7 @@ export class CodexSDKManager {
     await this.deps.installer.ensureInstalled();
     await this.deps.authManager.ensureAuthenticated();
     this.applyAuthEnvironment();
+    await this.sanitizeCodexHomeModelMigration();
     const loaded = await this.deps.installer.loadModule<{
       readonly Codex: typeof CodexCtor;
       readonly Thread: typeof import("@openai/codex-sdk").Thread;
@@ -111,6 +188,73 @@ export class CodexSDKManager {
       (this.codexInstance as unknown as { exec?: unknown }).exec
     );
     this.initialized = true;
+  }
+
+  private async sanitizeCodexHomeModelMigration(): Promise<void> {
+    const codexHome = process.env.CODEX_HOME;
+    if (!codexHome) {
+      return;
+    }
+
+    await Promise.all([
+      this.sanitizeConfigToml(codexHome),
+      this.sanitizeModelsCacheJson(codexHome),
+    ]);
+  }
+
+  private async sanitizeConfigToml(codexHome: string): Promise<void> {
+    const filePath = path.join(codexHome, CODEX_CONFIG_FILE);
+    try {
+      const raw = await fs.readFile(filePath, "utf8");
+      const { changed, next } = removeModelMigrationFromConfigToml(raw);
+      if (!changed) {
+        return;
+      }
+      await fs.writeFile(filePath, `${next.trimEnd()}\n`, "utf8");
+      this.deps.reporter?.info?.(
+        `Sanitized Codex config migration ${CODEX_MIGRATION_FROM} -> ${CODEX_MIGRATION_TO}`
+      );
+    } catch (error) {
+      const candidate = error as NodeJS.ErrnoException;
+      if (candidate.code === "ENOENT") {
+        return;
+      }
+      this.deps.reporter?.warn?.(
+        `Failed to sanitize Codex config.toml migrations: ${String(candidate.message ?? error)}`
+      );
+    }
+  }
+
+  private async sanitizeModelsCacheJson(codexHome: string): Promise<void> {
+    const filePath = path.join(codexHome, CODEX_MODELS_CACHE_FILE);
+    try {
+      const raw = await fs.readFile(filePath, "utf8");
+      const parsed = JSON.parse(raw) as unknown;
+      if (!isRecord(parsed)) {
+        return;
+      }
+      const changed = sanitizeModelsCachePayload(parsed);
+      if (!changed) {
+        return;
+      }
+
+      await fs.writeFile(
+        filePath,
+        `${JSON.stringify(parsed, null, 2)}\n`,
+        "utf8"
+      );
+      this.deps.reporter?.info?.(
+        `Sanitized Codex models_cache upgrade ${CODEX_MIGRATION_FROM} -> ${CODEX_MIGRATION_TO}`
+      );
+    } catch (error) {
+      const candidate = error as NodeJS.ErrnoException;
+      if (candidate.code === "ENOENT") {
+        return;
+      }
+      this.deps.reporter?.warn?.(
+        `Failed to sanitize Codex models_cache.json migrations: ${String(candidate.message ?? error)}`
+      );
+    }
   }
 
   async createSession(workspacePath?: string): Promise<string> {
@@ -136,6 +280,25 @@ export class CodexSDKManager {
     const actualWorkspacePath =
       workspacePath ?? this.deps.workspace.workspacePath;
     const logger = new CodexSessionLogger();
+
+    // Codex CLI treats the original thread model as sticky. In particular, when resuming a
+    // `gpt-5.3-codex` thread, passing `--model gpt-5.2` is not sufficient to force a downgrade.
+    // If the user selected `gpt-5.2` in Settings, prefer starting a fresh thread so the choice
+    // is respected.
+    if (this.workspaceDefaults.defaultModel === CODEX_MIGRATION_FROM) {
+      this.deps.reporter?.info?.(
+        `Codex resume skipped for thread ${threadId} because defaultModel=${CODEX_MIGRATION_FROM}; starting a new thread instead`
+      );
+      const { tempId, session: newSession } = this.deps.sessions.createSession(
+        actualWorkspacePath,
+        logger
+      );
+      const thread = this.createThread(newSession);
+      newSession.thread = thread;
+      this.deps.processor.initializeSession(newSession, thread);
+      return tempId;
+    }
+
     const session = this.deps.sessions.createResumedSession(
       actualWorkspacePath,
       threadId,

@@ -57,6 +57,26 @@ export const CODEX_RECOMMENDED_MODELS = [
 export type CodexRecommendedModelId =
   (typeof CODEX_RECOMMENDED_MODELS)[number]["id"];
 
+export const CODEX_SETTINGS_MODELS = [
+  {
+    id: "gpt-5.3-codex",
+    displayName: "GPT-5.3-Codex",
+    description:
+      "Most advanced agentic coding model for real-world engineering",
+    platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+    status: "active",
+    tier: "flagship",
+  },
+  {
+    id: "gpt-5.2",
+    displayName: "GPT-5.2",
+    description: "Best general agentic model for tasks across industries",
+    platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+    status: "active",
+    tier: "general",
+  },
+] as const satisfies readonly CodexRecommendedModelDescriptor[];
+
 export type CodexLegacyModelDescriptor = {
   readonly id: string;
   readonly displayName: string;

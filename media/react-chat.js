@@ -26874,6 +26874,24 @@ ${replacement}
       tier: "general"
     }
   ];
+  var CODEX_SETTINGS_MODELS = [
+    {
+      id: "gpt-5.3-codex",
+      displayName: "GPT-5.3-Codex",
+      description: "Most advanced agentic coding model for real-world engineering",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "flagship"
+    },
+    {
+      id: "gpt-5.2",
+      displayName: "GPT-5.2",
+      description: "Best general agentic model for tasks across industries",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "general"
+    }
+  ];
   var CODEX_LEGACY_MODELS = [
     {
       id: "gpt-5.2-codex",
@@ -27232,15 +27250,13 @@ ${replacement}
       null
     );
     const recommendedModelIds = (0, import_react19.useMemo)(
-      () => new Set(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
+      () => new Set(CODEX_SETTINGS_MODELS.map((model) => model.id)),
       []
     );
-    const fallbackModelDisplayName = CODEX_RECOMMENDED_MODELS.find(
-      (model) => model.id === DEFAULT_CODEX_MODEL_ID
-    )?.displayName ?? DEFAULT_CODEX_MODEL_ID;
+    const fallbackModelDisplayName = CODEX_SETTINGS_MODELS.find((model) => model.id === DEFAULT_CODEX_MODEL_ID)?.displayName ?? DEFAULT_CODEX_MODEL_ID;
     const selectedModelId = recommendedModelIds.has(defaultModel) ? defaultModel : DEFAULT_CODEX_MODEL_ID;
     const hasUnsupportedModel = !recommendedModelIds.has(defaultModel);
-    const activeModel = CODEX_RECOMMENDED_MODELS.find(
+    const activeModel = CODEX_SETTINGS_MODELS.find(
       (model) => model.id === activeModelId
     );
     const resolveReasoning = (modelId) => reasoningByModel[modelId] ?? DEFAULT_CODEX_REASONING_LEVEL;
@@ -27264,7 +27280,7 @@ ${replacement}
           "The saved default model is no longer available. Falling back to",
           ` ${fallbackModelDisplayName}.`
         ] }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: listStyles, children: CODEX_RECOMMENDED_MODELS.map((model) => {
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: listStyles, children: CODEX_SETTINGS_MODELS.map((model) => {
           const isSelected = selectedModelId === model.id;
           const isRowHovered = hoveredRowId === model.id;
           const reasoningLevel = resolveReasoning(model.id);
@@ -29064,12 +29080,12 @@ ${replacement}
   var MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
   var MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
   var CODEX_MODEL_IDS = new Set(
-    CODEX_ALL_MODELS.map((model) => model.id)
+    CODEX_SETTINGS_MODELS.map((model) => model.id)
   );
   var CODEX_REASONING_LEVEL_SET = new Set(
     CODEX_REASONING_LEVELS.map((level) => level.name)
   );
-  var DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_ALL_MODELS.reduce((accumulator, model) => {
+  var DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce((accumulator, model) => {
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
@@ -29122,7 +29138,7 @@ ${replacement}
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
-      if (typeof reasoning === "string" && CODEX_REASONING_LEVEL_SET.has(reasoning)) {
+      if (typeof reasoning === "string" && CODEX_MODEL_IDS.has(modelId) && CODEX_REASONING_LEVEL_SET.has(reasoning)) {
         nextReasoningByModel[modelId] = reasoning;
       }
     }

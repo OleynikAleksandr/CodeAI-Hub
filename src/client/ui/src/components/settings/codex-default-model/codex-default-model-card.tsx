@@ -1,7 +1,7 @@
 import type { CSSProperties, FC, KeyboardEvent } from "react";
 import { memo, useMemo, useState } from "react";
 import {
-  CODEX_RECOMMENDED_MODELS,
+  CODEX_SETTINGS_MODELS,
   type CodexModelId,
   type CodexReasoningLevel,
   DEFAULT_CODEX_MODEL_ID,
@@ -73,19 +73,18 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
   );
 
   const recommendedModelIds = useMemo(
-    () => new Set<string>(CODEX_RECOMMENDED_MODELS.map((model) => model.id)),
+    () => new Set<string>(CODEX_SETTINGS_MODELS.map((model) => model.id)),
     []
   );
 
   const fallbackModelDisplayName =
-    CODEX_RECOMMENDED_MODELS.find(
-      (model) => model.id === DEFAULT_CODEX_MODEL_ID
-    )?.displayName ?? DEFAULT_CODEX_MODEL_ID;
+    CODEX_SETTINGS_MODELS.find((model) => model.id === DEFAULT_CODEX_MODEL_ID)
+      ?.displayName ?? DEFAULT_CODEX_MODEL_ID;
   const selectedModelId = recommendedModelIds.has(defaultModel)
     ? defaultModel
     : DEFAULT_CODEX_MODEL_ID;
   const hasUnsupportedModel = !recommendedModelIds.has(defaultModel);
-  const activeModel = CODEX_RECOMMENDED_MODELS.find(
+  const activeModel = CODEX_SETTINGS_MODELS.find(
     (model) => model.id === activeModelId
   );
 
@@ -128,7 +127,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
           </div>
         ) : null}
         <div style={listStyles}>
-          {CODEX_RECOMMENDED_MODELS.map((model) => {
+          {CODEX_SETTINGS_MODELS.map((model) => {
             const isSelected = selectedModelId === model.id;
             const isRowHovered = hoveredRowId === model.id;
             const reasoningLevel = resolveReasoning(model.id);

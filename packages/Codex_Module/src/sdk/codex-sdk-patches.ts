@@ -6,6 +6,9 @@ import readline from "node:readline";
 import type { ThreadOptions } from "@openai/codex-sdk";
 
 const MODEL_REASONING_KEY = "model_reasoning_effort";
+const NOTICE_MODEL_MIGRATIONS_KEY = "notice.model_migrations";
+const MIGRATION_SANITIZE_MODEL_ID = "gpt-5.2";
+const EMPTY_INLINE_TABLE_TOML = "{}";
 const THREAD_PATCHED = Symbol("codex-reasoning-thread-patch");
 const EXEC_PATCHED = Symbol("codex-reasoning-exec-run");
 const INTERNAL_ORIGINATOR_ENV = "CODEX_INTERNAL_ORIGINATOR_OVERRIDE";
@@ -274,13 +277,21 @@ const patchedThreadRunStreamedInternal: ThreadRunStreamedInternal =
       skipGitRepoCheck: options?.skipGitRepoCheck,
       outputSchemaFile: schemaPath,
     };
+    const configOverrides: ConfigOverride[] = [];
+    if (options?.model === MIGRATION_SANITIZE_MODEL_ID) {
+      configOverrides.push({
+        key: NOTICE_MODEL_MIGRATIONS_KEY,
+        value: EMPTY_INLINE_TABLE_TOML,
+      });
+    }
     if (options?.modelReasoningEffort) {
-      execArgs.configOverrides = [
-        {
-          key: MODEL_REASONING_KEY,
-          value: options.modelReasoningEffort,
-        },
-      ];
+      configOverrides.push({
+        key: MODEL_REASONING_KEY,
+        value: options.modelReasoningEffort,
+      });
+    }
+    if (configOverrides.length > 0) {
+      execArgs.configOverrides = configOverrides;
     }
     const generator = this._exec.run(execArgs);
     try {
