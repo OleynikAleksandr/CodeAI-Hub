@@ -1,3 +1,11 @@
+## [1.1.607] - 2026-02-16
+### Fixed
+- Codex: выбор модели `gpt-5.2` в Settings теперь реально применяется в новых сессиях (исключаем неявный forced-upgrade до `gpt-5.3-codex` на стороне провайдера).
+- Settings: для Codex оставлены только две модели в UI (`gpt-5.2`, `gpt-5.3-codex`) с сохранением настройки reasoning effort по модели.
+
+### Added
+- Codex: best-effort санитайзер provider-home конфигов после автоапдейта (`config.toml`, `models_cache.json`) для удаления миграции `gpt-5.2 -> gpt-5.3-codex`.
+
 ## [1.1.606] - 2026-02-15
 ### Fixed
 - Project Manager: восстановлен real-time binding статуса/usage/lock/models к runtime `sessionId` (best-effort `latestSessionId`), при сохранении SSOT сообщений по `dialogId` через `dialog:history` + live `dialog:message`.

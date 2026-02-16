@@ -4,8 +4,8 @@ import {
   DEFAULT_CLAUDE_MODEL_ALIAS,
 } from "../../../../../types/claude-model-registry";
 import {
-  CODEX_ALL_MODELS,
   CODEX_REASONING_LEVELS,
+  CODEX_SETTINGS_MODELS,
   type CodexModelId,
   type CodexReasoningLevel,
   DEFAULT_CODEX_MODEL_ID,
@@ -82,12 +82,12 @@ const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
 const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
 const CODEX_MODEL_IDS = new Set<string>(
-  CODEX_ALL_MODELS.map((model) => model.id)
+  CODEX_SETTINGS_MODELS.map((model) => model.id)
 );
 const CODEX_REASONING_LEVEL_SET = new Set<string>(
   CODEX_REASONING_LEVELS.map((level) => level.name)
 );
-const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_ALL_MODELS.reduce<
+const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce<
   Record<string, CodexReasoningLevel>
 >((accumulator, model) => {
   accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
@@ -178,6 +178,7 @@ const mapCodexReasoningByModel = (value: unknown): CodexReasoningByModel => {
   for (const [modelId, reasoning] of Object.entries(value)) {
     if (
       typeof reasoning === "string" &&
+      CODEX_MODEL_IDS.has(modelId) &&
       CODEX_REASONING_LEVEL_SET.has(reasoning)
     ) {
       nextReasoningByModel[modelId] = reasoning as CodexReasoningLevel;
