@@ -7958,6 +7958,28 @@
     const stored = parseStoredTokenUsage(raw);
     return stored ? { used: stored.used, limit: stored.limit } : null;
   };
+  var writeLastKnownTokenUsage = (providerSessionId, tokenUsage) => {
+    const storage = getLocalStorage();
+    if (!storage) {
+      return;
+    }
+    if (!(Number.isFinite(tokenUsage.used) && Number.isFinite(tokenUsage.limit))) {
+      return;
+    }
+    if (tokenUsage.used < 0 || tokenUsage.limit <= 0) {
+      return;
+    }
+    const key = `${TOKEN_USAGE_STORAGE_PREFIX}${providerSessionId}`;
+    const payload = {
+      used: tokenUsage.used,
+      limit: tokenUsage.limit,
+      updatedAt: Date.now()
+    };
+    try {
+      storage.setItem(key, JSON.stringify(payload));
+    } catch {
+    }
+  };
 
   // src/client/ui/src/session/usage-limits-cache.ts
   var USAGE_LIMITS_STORAGE_PREFIX = "codeaihub:lastUsageLimitsByProvider:";
@@ -8031,6 +8053,30 @@
     }
     const stored = parseStoredUsageLimits(raw);
     return stored?.usageLimits ?? null;
+  };
+  var writeLastKnownUsageLimits = (providerSummary, usageLimits) => {
+    const storage = getLocalStorage2();
+    if (!storage) {
+      return;
+    }
+    const providerKey = normalizeProviderKey(providerSummary);
+    if (!providerKey) {
+      return;
+    }
+    const parsed = parseUsageLimits(usageLimits);
+    if (!parsed) {
+      return;
+    }
+    try {
+      storage.setItem(
+        `${USAGE_LIMITS_STORAGE_PREFIX}${providerKey}`,
+        JSON.stringify({
+          usageLimits: parsed,
+          updatedAt: Date.now()
+        })
+      );
+    } catch {
+    }
   };
 
   // src/client/ui/src/session/helpers.ts
@@ -26180,7 +26226,180 @@ ${replacement}
 
   // src/client/ui/src/app-host/use-session-stream-status-sync.ts
   var import_react14 = __toESM(require_react());
+
+  // src/client/ui/src/app-host/session-stream-usage-sync.ts
   var isRecord12 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var readNumber3 = (value) => {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value;
+    }
+    if (typeof value === "string") {
+      const normalized = value.replace(/,/g, "").trim();
+      const parsed = Number.parseFloat(normalized);
+      if (Number.isFinite(parsed)) {
+        return parsed;
+      }
+    }
+    return null;
+  };
+  var readString2 = (value) => typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+  var clampPercent3 = (value) => Math.max(0, Math.min(100, value));
+  var readTokenUsage = (value) => {
+    if (!isRecord12(value)) {
+      return null;
+    }
+    const used = readNumber3(value.used);
+    const limit = readNumber3(value.limit);
+    if (used === null || limit === null) {
+      return null;
+    }
+    if (used < 0 || limit <= 0) {
+      return null;
+    }
+    return { used: Math.round(used), limit: Math.round(limit) };
+  };
+  var extractTokenUsage = (event) => {
+    if (!isRecord12(event)) {
+      return null;
+    }
+    const direct = readTokenUsage(event.tokenUsage);
+    if (direct) {
+      return { tokenUsage: direct, threadId: readString2(event.threadId) };
+    }
+    const data = isRecord12(event.data) ? event.data : null;
+    if (!data || data.kind !== "token_usage") {
+      return null;
+    }
+    const tokenUsage = readTokenUsage(data);
+    if (!tokenUsage) {
+      return null;
+    }
+    return { tokenUsage, threadId: readString2(event.threadId) };
+  };
+  var readUsageLimitBucket = (value) => {
+    if (value === null) {
+      return null;
+    }
+    if (!isRecord12(value)) {
+      return null;
+    }
+    const percentUsed = readNumber3(value.percentUsed);
+    if (percentUsed === null) {
+      return null;
+    }
+    return {
+      percentUsed: clampPercent3(Math.round(percentUsed)),
+      resetsAt: readString2(value.resetsAt)
+    };
+  };
+  var extractUsageLimits = (event) => {
+    if (!isRecord12(event)) {
+      return null;
+    }
+    let root4 = null;
+    if (isRecord12(event.usageLimits)) {
+      root4 = event.usageLimits;
+    } else if (isRecord12(event.data)) {
+      root4 = event.data;
+    }
+    const candidate = isRecord12(root4) && isRecord12(root4.usageLimits) ? root4.usageLimits : root4;
+    if (!isRecord12(candidate)) {
+      return null;
+    }
+    const currentSession = readUsageLimitBucket(candidate.currentSession);
+    const currentWeekAllModels = readUsageLimitBucket(
+      candidate.currentWeekAllModels
+    );
+    const currentWeekSonnetOnly = readUsageLimitBucket(
+      candidate.currentWeekSonnetOnly
+    );
+    if (!(currentSession || currentWeekAllModels || currentWeekSonnetOnly)) {
+      return null;
+    }
+    return { currentSession, currentWeekAllModels, currentWeekSonnetOnly };
+  };
+  var areUsageLimitBucketsEqual = (left, right) => left?.percentUsed === right?.percentUsed && left?.resetsAt === right?.resetsAt;
+  var areUsageLimitsEqual = (left, right) => Boolean(
+    left && areUsageLimitBucketsEqual(left.currentSession, right.currentSession) && areUsageLimitBucketsEqual(
+      left.currentWeekAllModels,
+      right.currentWeekAllModels
+    ) && areUsageLimitBucketsEqual(
+      left.currentWeekSonnetOnly,
+      right.currentWeekSonnetOnly
+    )
+  );
+  var normalizeProviderKey2 = (value) => value.trim().toLowerCase();
+  var applyTokenUsageSyncFromStreamEvent = (payload) => {
+    const tokenUsagePayload = extractTokenUsage(payload.event);
+    if (!tokenUsagePayload) {
+      return { snapshots: payload.snapshots, snapshot: payload.snapshot };
+    }
+    const currentTokenUsage = payload.snapshot.status.tokenUsage;
+    if (currentTokenUsage.used === tokenUsagePayload.tokenUsage.used && currentTokenUsage.limit === tokenUsagePayload.tokenUsage.limit) {
+      return { snapshots: payload.snapshots, snapshot: payload.snapshot };
+    }
+    const providerSessionId = payload.snapshot.binding.providerSessionId ?? tokenUsagePayload.threadId;
+    if (providerSessionId) {
+      writeLastKnownTokenUsage(providerSessionId, tokenUsagePayload.tokenUsage);
+    }
+    const nextSnapshot = {
+      ...payload.snapshot,
+      status: {
+        ...payload.snapshot.status,
+        tokenUsage: tokenUsagePayload.tokenUsage,
+        updatedAt: payload.updatedAt
+      }
+    };
+    return {
+      snapshots: { ...payload.snapshots, [payload.sessionId]: nextSnapshot },
+      snapshot: nextSnapshot
+    };
+  };
+  var applyUsageLimitsSyncFromStreamEvent = (payload) => {
+    const usageLimits = extractUsageLimits(payload.event);
+    if (!usageLimits) {
+      return { snapshots: payload.snapshots, snapshot: payload.snapshot };
+    }
+    if (areUsageLimitsEqual(payload.snapshot.status.usageLimits, usageLimits)) {
+      return { snapshots: payload.snapshots, snapshot: payload.snapshot };
+    }
+    writeLastKnownUsageLimits(
+      payload.snapshot.status.providerSummary,
+      usageLimits
+    );
+    const providerKey = normalizeProviderKey2(
+      payload.snapshot.status.providerSummary
+    );
+    const nextSnapshots = { ...payload.snapshots };
+    let changed = false;
+    for (const [sessionId, candidate] of Object.entries(payload.snapshots)) {
+      if (sessionId !== payload.sessionId && (!providerKey || normalizeProviderKey2(candidate.status.providerSummary) !== providerKey)) {
+        continue;
+      }
+      if (areUsageLimitsEqual(candidate.status.usageLimits, usageLimits)) {
+        continue;
+      }
+      changed = true;
+      nextSnapshots[sessionId] = {
+        ...candidate,
+        status: {
+          ...candidate.status,
+          usageLimits,
+          updatedAt: payload.updatedAt
+        }
+      };
+    }
+    if (!changed) {
+      return { snapshots: payload.snapshots, snapshot: payload.snapshot };
+    }
+    return {
+      snapshots: nextSnapshots,
+      snapshot: nextSnapshots[payload.sessionId] ?? payload.snapshot
+    };
+  };
+
+  // src/client/ui/src/app-host/session-stream-snapshot-sync.ts
+  var isRecord13 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var toNumberTimestamp2 = (value) => {
     const parsed = typeof value === "string" ? Date.parse(value) : Number.NaN;
     return Number.isNaN(parsed) ? Date.now() : parsed;
@@ -26267,7 +26486,7 @@ ${replacement}
       return snapshot;
     }
     const data = event.data;
-    if (!isRecord12(data) || typeof data.kind !== "string") {
+    if (!isRecord13(data) || typeof data.kind !== "string") {
       return snapshot;
     }
     const updatedAt = toNumberTimestamp2(event.timestamp ?? data.timestamp);
@@ -26287,7 +26506,7 @@ ${replacement}
     }
   };
   var applyStreamEventToSnapshot = (snapshot, event) => {
-    if (!isRecord12(event)) {
+    if (!isRecord13(event)) {
       return snapshot;
     }
     if (event.kind === "flow_node_rollover") {
@@ -26295,22 +26514,48 @@ ${replacement}
     }
     return applyStreamEventEnvelopeToSnapshot(snapshot, event);
   };
-  var applyStreamEventToSnapshots = (snapshots, payload) => {
-    const snapshot = snapshots[payload.sessionId];
-    if (!snapshot) {
+  var applySessionStreamUpdateToSnapshots = (snapshots, payload) => {
+    const baseSnapshot = snapshots[payload.sessionId];
+    if (!baseSnapshot) {
       return snapshots;
     }
-    const nextSnapshot = applyStreamEventToSnapshot(snapshot, payload.event);
-    if (nextSnapshot === snapshot) {
-      return snapshots;
+    const updatedAt = toNumberTimestamp2(
+      isRecord13(payload.event) ? payload.event.timestamp : null
+    );
+    let nextSnapshots = snapshots;
+    let snapshot = baseSnapshot;
+    const streamUpdated = applyStreamEventToSnapshot(snapshot, payload.event);
+    if (streamUpdated !== snapshot) {
+      snapshot = streamUpdated;
+      nextSnapshots = { ...nextSnapshots, [payload.sessionId]: snapshot };
     }
-    return { ...snapshots, [payload.sessionId]: nextSnapshot };
+    const tokenResult = applyTokenUsageSyncFromStreamEvent({
+      snapshots: nextSnapshots,
+      sessionId: payload.sessionId,
+      snapshot,
+      event: payload.event,
+      updatedAt
+    });
+    nextSnapshots = tokenResult.snapshots;
+    snapshot = tokenResult.snapshot;
+    const usageResult = applyUsageLimitsSyncFromStreamEvent({
+      snapshots: nextSnapshots,
+      sessionId: payload.sessionId,
+      snapshot,
+      event: payload.event,
+      updatedAt
+    });
+    nextSnapshots = usageResult.snapshots;
+    return nextSnapshots;
   };
+
+  // src/client/ui/src/app-host/use-session-stream-status-sync.ts
+  var isRecord14 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var useSessionStreamStatusSync = (setSnapshots) => {
     (0, import_react14.useEffect)(() => {
       const handleIncoming = (event) => {
         const candidate = event.data;
-        if (candidate.type !== "session:stream" || !isRecord12(candidate.payload)) {
+        if (candidate.type !== "session:stream" || !isRecord14(candidate.payload)) {
           return;
         }
         const sessionId = candidate.payload.sessionId;
@@ -26319,7 +26564,10 @@ ${replacement}
         }
         const streamEvent = "event" in candidate.payload ? candidate.payload.event : void 0;
         setSnapshots(
-          (previous3) => applyStreamEventToSnapshots(previous3, { sessionId, event: streamEvent })
+          (previous3) => applySessionStreamUpdateToSnapshots(previous3, {
+            sessionId,
+            event: streamEvent
+          })
         );
       };
       window.addEventListener("message", handleIncoming);
@@ -29017,7 +29265,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord13 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord15 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var clampContinuityRemainingPercentThreshold = (value) => Math.min(
     MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
@@ -29028,7 +29276,7 @@ ${replacement}
     Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
   );
   var mapGeminiSessionContinuitySettings = (value) => {
-    if (!isRecord13(value)) {
+    if (!isRecord15(value)) {
       return {
         contextWindowTokenLimit: DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
         remainingPercentThreshold: DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD
@@ -29044,7 +29292,7 @@ ${replacement}
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord13(value)) {
+    if (!isRecord15(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -29089,7 +29337,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord14 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord16 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -29107,7 +29355,7 @@ ${replacement}
   });
   var mapContinuity = (value) => {
     const numericValue = Number(
-      isRecord14(value) ? value.remainingPercentThreshold : void 0
+      isRecord16(value) ? value.remainingPercentThreshold : void 0
     );
     const remainingPercentThreshold = Number.isFinite(numericValue) ? Math.min(
       MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
@@ -29134,7 +29382,7 @@ ${replacement}
   };
   var mapCodexReasoningByModel = (value) => {
     const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
-    if (!isRecord14(value)) {
+    if (!isRecord16(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -30179,15 +30427,15 @@ ${replacement}
 
   // src/client/ui/src/api/orchestrator/initiatives-client.ts
   var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
-  var isRecord15 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord17 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isInitiativeSummary = (value) => {
-    if (!isRecord15(value)) {
+    if (!isRecord17(value)) {
       return false;
     }
     return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
   };
   var parseInitiatives = (value) => {
-    if (!isRecord15(value)) {
+    if (!isRecord17(value)) {
       return [];
     }
     const raw = value.initiatives;
@@ -30209,7 +30457,7 @@ ${replacement}
     return initiatives;
   };
   var parseCreatedInitiative = (value) => {
-    if (!isRecord15(value)) {
+    if (!isRecord17(value)) {
       return null;
     }
     const initiative = value.initiative;
