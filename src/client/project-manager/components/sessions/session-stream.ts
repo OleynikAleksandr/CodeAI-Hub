@@ -68,9 +68,14 @@ export const applyWorkspaceSnapshotToSnapshots = (
       rolloverPending ||
       heldLockReasonBySessionId.has(sessionId) ||
       isNoResumeSession;
-    let nextConnectionState: "idle" | "running" | "blocked" = nextLockActive
-      ? "blocked"
-      : session.turnState;
+    let nextConnectionState: "idle" | "running" | "blocked";
+    if (session.turnState === "running") {
+      nextConnectionState = "running";
+    } else if (nextLockActive) {
+      nextConnectionState = "blocked";
+    } else {
+      nextConnectionState = "idle";
+    }
     const currentLockActive = current.status.continuityLock?.active === true;
     const currentLockReason = current.status.continuityLock?.reason;
     const allowIdleUnlock =
