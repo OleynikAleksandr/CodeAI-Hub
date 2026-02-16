@@ -625,6 +625,43 @@ body {
   line-height: 1.6;
 }
 
+.pm-session-create-pending {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 180px;
+  text-align: center;
+}
+
+.pm-session-create-pending__title {
+  color: var(--pm-text-primary);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.pm-session-create-pending__hint {
+  max-width: 520px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.pm-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-top-color: rgba(66, 201, 162, 0.9);
+  animation: pm-spinner-spin 900ms linear infinite;
+}
+
+@keyframes pm-spinner-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ========== Artifact Viewer (Markdown) ========== */
 .pm-details {
   display: flex;
