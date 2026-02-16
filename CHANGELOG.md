@@ -1,3 +1,7 @@
+## [1.1.609] - 2026-02-16
+### Changed
+- Patch rebuild: пересобран релиз `1.1.609` для повторной проверки fix-а отображения моделей в Session status.
+
 ## [1.1.608] - 2026-02-16
 ### Fixed
 - Project Manager: восстановлено отображение конкретной модели в строке `Models:` (Claude/Codex/Gemini) — PM гарантированно подгружает snapshot настроек даже если Session view смонтировался после initial `settings:loaded`.
