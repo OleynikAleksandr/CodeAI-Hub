@@ -321,7 +321,7 @@ Phase 133 session status panel improvements (same Session input path):
 - При выборе workspace UI делает `POST /api/v1/orchestrator/workspace-activate` (best effort), чтобы Core мог инициировать core-driven auto-resume (resume authority = Core).
 - После добавления workspace UI автоматически выбирает новый workspace в Project Manager.
 - При смене workspace UI сбрасывает выбранный артефакт/просмотрщик.
-- При смене workspace UI больше не инициирует resume напрямую (например, из `workflow-state` polling) — resume выполняется в Core и публикуется через `session:created`.
+- При смене workspace UI не инициирует core resume напрямую (resume выполняется в Core и публикуется через `session:created`), но auto-open'ит релевантную workflow-сессию в UI (dispatch `pm:dialog:open`) на основе `workflow-state`.
 - Для пустого workspace (нет артефактов/continuity, все стадии `idle`) UI авто-открывает анкету описания и начинает процесс с нуля.
 
 ---
