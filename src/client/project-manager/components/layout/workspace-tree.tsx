@@ -68,7 +68,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       workspacePath,
       workspaceSlug,
       onSelectArtifact: selectArtifact,
-      onResumeSession: () => {},
+      onResumeSession: dispatchDialogOpenIntent,
     });
 
   useEffect(() => {
