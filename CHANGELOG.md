@@ -1,3 +1,7 @@
+## [1.1.618] - 2026-02-16
+### Fixed
+- Project Manager: после `Send` анкеты показываем спиннер «Создаём сессию…» пока ядро создаёт workflow-сессию (убирает ощущение зависания при 8–10s задержке).
+
 ## [1.1.617] - 2026-02-16
 ### Fixed
 - Core: one-shot workflow `description` теперь эмитит `session:created` сразу (shell-сессия) — UI открывается без ожидания `adapter.createSession()`.
