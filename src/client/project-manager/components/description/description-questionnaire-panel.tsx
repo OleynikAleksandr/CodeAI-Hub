@@ -12,6 +12,7 @@ import type {
 import { api } from "../../api";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
 import { IdeaCollectorProviderPicker } from "./idea-collector-provider-picker";
+import { SessionCreatePendingPlaceholder } from "./session-create-pending-placeholder";
 
 const SAVE_DEBOUNCE_MS = 400;
 
@@ -48,6 +49,9 @@ export const DescriptionQuestionnairePanel: React.FC<
   const serviceRef = useRef(new DescriptionQuestionnaireService());
   const ideaCollectorRef = useRef(new IdeaCollectorSubmitService());
   const [panelState, setPanelState] = useState<PanelState>({ status: "idle" });
+  const [submitPendingProviderTitle, setSubmitPendingProviderTitle] = useState<
+    string | null
+  >(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [providerPickerOpen, setProviderPickerOpen] = useState(false);
   const [providerOptions, setProviderOptions] = useState<
@@ -81,6 +85,7 @@ export const DescriptionQuestionnairePanel: React.FC<
 
     setAnswers({});
     setSubmitError(null);
+    setSubmitPendingProviderTitle(null);
     setProviderPickerOpen(false);
     submitInFlightRef.current = false;
     setPanelState({ status: "loading" });
@@ -160,6 +165,10 @@ export const DescriptionQuestionnairePanel: React.FC<
     }
     submitInFlightRef.current = true;
     setSubmitError(null);
+    const providerTitle =
+      providerOptions.find((provider) => provider.id === providerId)?.title ??
+      null;
+    setSubmitPendingProviderTitle(providerTitle ?? providerId);
     if (saveTimerRef.current) {
       window.clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
@@ -199,6 +208,7 @@ export const DescriptionQuestionnairePanel: React.FC<
           ? error.message
           : "Не удалось отправить анкету."
       );
+      setSubmitPendingProviderTitle(null);
     } finally {
       submitInFlightRef.current = false;
     }
@@ -248,6 +258,14 @@ export const DescriptionQuestionnairePanel: React.FC<
 
   if (panelState.status !== "ready") {
     return null;
+  }
+
+  if (submitPendingProviderTitle) {
+    return (
+      <SessionCreatePendingPlaceholder
+        providerTitle={submitPendingProviderTitle}
+      />
+    );
   }
 
   return (
