@@ -2,6 +2,7 @@ import type { ProviderStackId } from "../../../types/provider";
 import { api } from "../api";
 import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "../../ui/src/services/idea-collector-fallback-schema";
 import { normalizeIdeaCollectorSchema } from "../../ui/src/services/idea-collector-schema-utils";
+import { postSystemNotice } from "../../ui/src/services/idea-collector-support";
 import { notifyMissingIdeaContext } from "../../ui/src/services/idea-questionnaire-messages";
 import {
   isRecord,
@@ -244,6 +245,7 @@ export class IdeaCollectorSubmitService {
     readonly questionnairePath: string;
     readonly stage?: WorkflowStageId;
     readonly providerId?: ProviderStackId;
+    readonly onSessionCreated?: (sessionId: string) => void;
   }): Promise<string> {
     const workspaceName = resolveWorkspaceName({
       name: params.workspaceName,
@@ -254,29 +256,38 @@ export class IdeaCollectorSubmitService {
         ? params.workspaceSlug.trim()
         : toWorkspaceSlug(workspaceName);
     const stage = params.stage ?? "description";
+    const contractPromise = loadWorkflowContract(stage);
     const session = await createIdeaCollectorSession({
       workspacePath: params.workspacePath,
       initiativeSlug,
       stage,
       providerId: params.providerId,
     });
+    params.onSessionCreated?.(session.id);
     const resolvedInitiativeSlug = session.initiativeSlug ?? initiativeSlug;
     if (!resolvedInitiativeSlug) {
       notifyMissingIdeaContext(session.id);
-      throw new Error("Workflow run context unavailable.");
+      return session.id;
     }
 
-    const contract = await loadWorkflowContract(stage);
-    const promptPack = buildWorkflowPromptPack({
-      stage,
-      workspacePath: params.workspacePath,
-      workspaceSlug: resolvedInitiativeSlug,
-      prompt: contract.prompt,
-      templatePath: contract.paths.template,
-      questionnairePath: params.questionnairePath,
-    });
+    try {
+      const contract = await contractPromise;
+      const promptPack = buildWorkflowPromptPack({
+        stage,
+        workspacePath: params.workspacePath,
+        workspaceSlug: resolvedInitiativeSlug,
+        prompt: contract.prompt,
+        templatePath: contract.paths.template,
+        questionnairePath: params.questionnairePath,
+      });
 
-    api.sendSessionMessage(session.id, promptPack.content);
+      api.sendSessionMessage(session.id, promptPack.content);
+    } catch (error) {
+      postSystemNotice(
+        session.id,
+        error instanceof Error ? error.message : "Не удалось отправить анкету."
+      );
+    }
 
     return session.id;
   }

@@ -172,15 +172,15 @@ export const DescriptionQuestionnairePanel: React.FC<
         panelState.placeholders,
         answers
       );
-      const sessionId = await ideaCollectorRef.current.submitQuestionnaire({
+      await ideaCollectorRef.current.submitQuestionnaire({
         workspaceName: resolvedWorkspaceName,
         workspaceSlug: resolvedWorkspaceSlug,
         workspacePath: workspacePath ?? "",
         questionnairePath: panelState.questionnairePath,
         stage: "description",
         providerId,
+        onSessionCreated: onIdeaSessionCreated,
       });
-      onIdeaSessionCreated?.(sessionId);
       if (workspacePath) {
         window.dispatchEvent(
           new CustomEvent("pm:artifact:selected", {
