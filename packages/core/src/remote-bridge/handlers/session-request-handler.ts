@@ -2589,8 +2589,8 @@ export class SessionRequestHandler {
     const resumeMode = this.getSessionResumeLifecycleState(session).mode;
     if (resumeMode === "no_resume") {
       this.clearPostTurnContextDecision(sessionId);
-      this.emitTurnStateEvent({ sessionId, state: "idle" });
       this.handleNoResumeTurnCompleted(session);
+      this.emitTurnStateEvent({ sessionId, state: "idle" });
       return;
     }
 

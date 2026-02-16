@@ -263,6 +263,9 @@ export class WorkspaceRuntimeFacade {
       continuityLockActive: patch.continuityLockActive,
       continuityLockReason: patch.continuityLockReason,
       continuityLockTransition: patch.continuityLockTransition,
+      resumeMode: patch.resumeMode,
+      finalTurnCompleted: patch.finalTurnCompleted,
+      terminalLockReason: patch.terminalLockReason,
       lastHeartbeatAt: patch.lastHeartbeatAt,
     });
     this.scheduleSnapshot(sessionKey.workspaceRoot, false);
