@@ -123,3 +123,14 @@
 5. [DONE] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.610.vsix`) (scope: repo build)
 6. [DONE] Docs: добавить отчёт сессии (scope: `doc/Sessions/Session065.md`; expected commit message: `docs(session): add Session065 report`)
 7. [DONE] Git Commit: `docs(session): add Session065 report` (hash: 51a3b0e0)
+
+---
+
+## Phase 207 — PM: auto-select последней сессии при рестарте/смене workspace (owner: Oleksandr+Codex, updated: 2026-02-16)
+
+### Stream: Auto-select latest session
+1. [DONE] Fix: выбирать активную сессию детерминированно по `createdAt` (предпочтительно `sessionKind=reviewer`) при hydrate/смене workspace, чтобы после рестарта PM или смены workspace не требовался ручной клик по сессии (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/runtime-session-auto-select.ts`; expected commit message: `fix(pm): auto-select latest session on workspace change`)
+2. [DONE] Git Commit: `fix(pm): auto-select latest session on workspace change` (hash: de430e6c)
+3. [TODO] Release: `./scripts/build-all.sh` (version bump -> TBD) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v<version> - pm auto-select latest session`)
+4. [TODO] Git Commit: `feat(release): v<version> - pm auto-select latest session` (hash: TBD)
+5. [TODO] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-<version>.vsix`) (scope: repo build)
