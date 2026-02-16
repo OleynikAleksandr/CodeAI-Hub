@@ -1,3 +1,7 @@
+## [1.1.616] - 2026-02-16
+### Fixed
+- Project Manager: workflow `description` открывает UI сессии сразу после `session:created` (без ожидания загрузки workflow-контракта/prompt-pack) — меньше задержка после `Send` анкеты.
+
 ## [1.1.615] - 2026-02-16
 ### Fixed
 - Session UI: one-shot `description` collector-сессия блокирует поле ввода сразу после открытия (до первого сообщения/снапшота), устраняя окно свободного ввода.

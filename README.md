@@ -2,11 +2,12 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.615
+## Current Release — v1.1.616
 - **Dialog SSOT + hybrid binding (Phase 156)**: сообщения грузятся по `dialogId` (`dialog:history` + live `dialog:message`), а status/usage/lock/models обновляются по runtime `sessionId` (best-effort `latestSessionId` из `dialog:list/open`), поэтому UI снова показывает выбранную модель (например `GPT-5.3-Codex (medium)`) и не теряет `session/weekly`.
 - **Session usage limits realtime sync**: `Session ID Bar` обновляет `session/weekly` после каждого turn (по `session:stream`), без необходимости смены сессии.
 - **PM auto-select latest session**: при рестарте Project Manager или смене workspace автоматически открывается последняя сессия (по `createdAt`), с приоритетом `reviewer`, без ручного клика в списке сессий.
 - **PM workflow tree auto-open**: при рестарте PM/смене workspace и после отправки анкеты (`Send`) автоматически открывается актуальная workflow-сессия из дерева (Description/Reviewer), без ручного клика по узлу в sidebar.
+- **PM fast open after Send**: после отправки анкеты и выбора провайдера сессия открывается сразу на `session:created` (без ожидания загрузки workflow-контракта/prompt-pack).
 - **PM one-shot input lock**: one-shot `description` сессии (`resumeMode=no_resume`) держат поле ввода заблокированным до конца; больше нет промежуточных “unlock” окон.
 - **PM one-shot wait copy**: one-shot `description` во время работы агента показывает `Agent is working… Please wait.` (не `resuming`); после завершения — read-only copy.
 - **Session UI description collector pre-lock**: one-shot `description` collector sessions lock input immediately on open (before the first snapshot/agent message), removing the initial free-input window.
