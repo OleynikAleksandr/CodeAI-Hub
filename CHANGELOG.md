@@ -1,3 +1,7 @@
+## [1.1.608] - 2026-02-16
+### Fixed
+- Project Manager: восстановлено отображение конкретной модели в строке `Models:` (Claude/Codex/Gemini) — PM гарантированно подгружает snapshot настроек даже если Session view смонтировался после initial `settings:loaded`.
+
 ## [1.1.607] - 2026-02-16
 ### Fixed
 - Codex: выбор модели `gpt-5.2` в Settings теперь реально применяется в новых сессиях (исключаем неявный forced-upgrade до `gpt-5.3-codex` на стороне провайдера).
