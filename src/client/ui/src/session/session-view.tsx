@@ -83,16 +83,17 @@ const SessionViewBody = ({
     connectionState === "blocked" ||
     terminalNoResume;
   const effectiveContinuityLockActive = continuityLockActive;
-  const inputConnectionState: ConnectionState = effectiveContinuityLockActive
-    ? "blocked"
-    : connectionState;
+  const queueConnectionState: ConnectionState =
+    effectiveContinuityLockActive && connectionState !== "running"
+      ? "blocked"
+      : connectionState;
   const continuityErrorCopy =
     activeSession?.status.rollover?.phase === "failed"
       ? (activeSession.status.rollover?.error ?? "Rollover failed.")
       : null;
   const { isQueued, submitMessage } = useQueuedSend({
     activeSessionId,
-    connectionState: inputConnectionState,
+    connectionState: queueConnectionState,
     onSendMessage,
   });
 
@@ -148,13 +149,14 @@ const SessionViewBody = ({
             </div>
           ) : null}
           <InputPanel
-            connectionState={inputConnectionState}
+            connectionState={connectionState}
             continuityErrorCopy={continuityErrorCopy}
             continuityLockActive={effectiveContinuityLockActive}
             draft={activeSession.draft}
             isQueued={isQueued}
             onSubmit={submitMessage}
             providerTheme={providerTheme}
+            terminalNoResume={terminalNoResume}
           />
           <StatusPanel
             connectionDetail={coreConnectionDetail}

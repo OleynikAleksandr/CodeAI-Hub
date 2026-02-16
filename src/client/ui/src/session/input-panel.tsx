@@ -10,6 +10,7 @@ type InputPanelProps = {
   readonly continuityErrorCopy?: string | null;
   readonly isQueued?: boolean;
   readonly providerTheme?: ProviderTheme | null;
+  readonly terminalNoResume?: boolean;
   readonly onSubmit: (text: string) => void;
 };
 
@@ -22,6 +23,7 @@ const InputPanel = ({
   continuityErrorCopy = null,
   isQueued = false,
   providerTheme = null,
+  terminalNoResume = false,
   onSubmit,
 }: InputPanelProps) => {
   const inputLocked =
@@ -33,11 +35,14 @@ const InputPanel = ({
     if (isQueued) {
       return "Message queued. Sending as soon as it is ready…";
     }
-    if (continuityLockActive || connectionState === "blocked") {
-      return "Agent is resuming your session… Please wait.";
+    if (terminalNoResume) {
+      return "This session is complete and read-only.";
     }
     if (connectionState === "running") {
       return "Agent is working… Please wait.";
+    }
+    if (continuityLockActive || connectionState === "blocked") {
+      return "Agent is resuming your session… Please wait.";
     }
     if (continuityErrorCopy) {
       return `Continuity failed: ${continuityErrorCopy}`;
