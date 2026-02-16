@@ -135,4 +135,4 @@
 4. [DONE] Git Commit: `feat(release): v1.1.611 - pm auto-select latest session` (hash: 45d85a54)
 5. [DONE] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.611.vsix`) (scope: repo build)
 6. [DONE] Docs: добавить отчёт сессии (scope: `doc/Sessions/Session066.md`; expected commit message: `docs(session): add Session066 report`)
-7. [TODO] Git Commit: `docs(session): add Session066 report` (hash: TBD)
+7. [DONE] Git Commit: `docs(session): add Session066 report` (hash: 4a05c4a9)
