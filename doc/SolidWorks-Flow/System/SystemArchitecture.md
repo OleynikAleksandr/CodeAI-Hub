@@ -1,6 +1,6 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.610
+**Version:** 1.1.611
 **Last Updated:** 2026-02-16
 **Status:** Active reference (source of truth)
 
@@ -87,7 +87,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.610`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.611`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -98,7 +98,7 @@ Node.js сервис (`@codeai-hub/core@1.1.610`), упакованный как
 
 Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
 
-### 2.2 UI Bundles (v1.1.610)
+### 2.2 UI Bundles (v1.1.611)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
 - `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
@@ -442,36 +442,36 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/1.1.610/
+│   └── darwin-arm64/1.1.611/
 │       ├── node/
 │       ├── app/
 │       └── install.json
 ├── packages/
-│   ├── launcher/macos-arm64/1.1.610/
+│   ├── launcher/macos-arm64/1.1.611/
 │   └── ui/
 │       ├── vscode-webview/
 │       │   ├── 1.1.551/
-│       │   └── current -> 1.1.610
+│       │   └── current -> 1.1.611
 │       └── project-manager/
 │           ├── 1.1.551/
-│           └── current -> 1.1.610
+│           └── current -> 1.1.611
 ├── providers/
-│   ├── claude/1.1.610/
-│   ├── codex/1.1.610/
-│   └── gemini/1.1.610/
+│   ├── claude/1.1.611/
+│   ├── codex/1.1.611/
+│   └── gemini/1.1.611/
 ├── state/
 │   └── projects.json
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.610.tar.bz2
-    ├── vscode-webview-1.1.610.tar.bz2
-    ├── project-manager-1.1.610.tar.bz2
-    ├── claude-module-1.1.610.tar.bz2
-    ├── codex-module-1.1.610.tar.bz2
-    ├── gemini-module-1.1.610.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.610.tar.bz2
+    ├── CodeAIHubLauncher-macos-arm64-1.1.611.tar.bz2
+    ├── vscode-webview-1.1.611.tar.bz2
+    ├── project-manager-1.1.611.tar.bz2
+    ├── claude-module-1.1.611.tar.bz2
+    ├── codex-module-1.1.611.tar.bz2
+    ├── gemini-module-1.1.611.tar.bz2
+    └── codeai-hub-core-darwin-arm64-1.1.611.tar.bz2
 ```
 
 Примечания по `sessions/<workspaceKey>/...` (Unified Session History):
@@ -487,12 +487,12 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.610 |
-| Core | 1.1.610 |
-| UI Bundles | 1.1.610 |
-| Claude Module | 1.1.610 |
-| Codex Module | 1.1.610 |
-| Gemini Module | 1.1.610 |
+| VSIX | 1.1.611 |
+| Core | 1.1.611 |
+| UI Bundles | 1.1.611 |
+| Claude Module | 1.1.611 |
+| Codex Module | 1.1.611 |
+| Gemini Module | 1.1.611 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |

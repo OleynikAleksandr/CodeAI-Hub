@@ -1,3 +1,7 @@
+## [1.1.611] - 2026-02-16
+### Fixed
+- Project Manager: при рестарте PM или смене workspace автоматически выбирается и открывается последняя сессия (по `createdAt`), с приоритетом `reviewer`.
+
 ## [1.1.610] - 2026-02-16
 ### Fixed
 - Session UI: лимиты `session/weekly` теперь обновляются после каждого turn из `session:stream` (`turn_completed`/`usage_limits stream_event`), а не только при смене сессии.
