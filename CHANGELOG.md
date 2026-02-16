@@ -1,3 +1,8 @@
+## [1.1.617] - 2026-02-16
+### Fixed
+- Core: one-shot workflow `description` теперь эмитит `session:created` сразу (shell-сессия) — UI открывается без ожидания `adapter.createSession()`.
+- Project Manager: отправка prompt-pack теперь ждёт `session:binding` с `providerSessionId`, чтобы первый message не терялся пока сессия ещё биндингится.
+
 ## [1.1.616] - 2026-02-16
 ### Fixed
 - Project Manager: workflow `description` открывает UI сессии сразу после `session:created` (без ожидания загрузки workflow-контракта/prompt-pack) — меньше задержка после `Send` анкеты.
