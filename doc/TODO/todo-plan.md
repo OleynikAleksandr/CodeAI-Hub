@@ -96,3 +96,17 @@
 5. [DONE] Build: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.604.vsix`) (scope: repo build)
 6. [DONE] Docs: обновить этот план статусами/датами/путями артефактов релиза (артефакты: `doc/tmp/releases/*-1.1.604.tar.bz2`, `~/.codeai-hub/releases/*-1.1.604.tar.bz2`, VSIX: `codeai-hub-1.1.604.vsix`) (scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record patch release build (1.1.604)`)
 7. [DONE] Git Commit: `docs(todo): record patch release build (1.1.604)` (hash: 224ad7ca)
+
+---
+
+## Phase 205 — PM/UI: восстановить отображение моделей в Session status + релиз 1.1.608 (owner: Oleksandr+Codex, updated: 2026-02-16)
+
+### Stream: Session status model labels
+1. [DONE] Fix: Project Manager гарантированно подгружает settings snapshot при монтировании Session view, чтобы `Models:` показывал реальную модель (scope: `src/client/project-manager/components/settings/use-project-manager-settings.ts`; expected commit message: `fix(pm): ensure settings loaded for model display`)
+2. [DONE] Git Commit: `fix(pm): ensure settings loaded for model display` (hash: 8598bf35)
+3. [DONE] Docs: добавить отчёт прошлой сессии (scope: `doc/Sessions/Session063.md`; expected commit message: `docs(session): add Session063 report`)
+4. [DONE] Git Commit: `docs(session): add Session063 report` (hash: 87bc93a1)
+5. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.608`) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v1.1.608 - restore session model labels`)
+6. [DONE] Git Commit: `feat(release): v1.1.608 - restore session model labels` (hash: 458f1db6)
+7. [DONE] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.608.vsix`) (scope: repo build)
+8. [DONE] Артефакты: tarballs в `doc/tmp/releases/*-1.1.608.tar.bz2` и `~/.codeai-hub/releases/*-1.1.608.tar.bz2`; VSIX в `codeai-hub-1.1.608.vsix` (scope: filesystem)
