@@ -31,5 +31,8 @@
 ### Справочники моделей
 → [`SolidWorks-Flow/knowledge/model-reference/`](SolidWorks-Flow/knowledge/model-reference/)
 
+### Реестр багов
+→ [`BugRegistry.md`](BugRegistry.md)
+
 ### Текущий план
 → [`TODO/todo-plan.md`](TODO/todo-plan.md)
