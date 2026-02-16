@@ -3,7 +3,6 @@ import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
-import { sanitizeMessage } from "../../../ui/src/core-bridge/normalizers";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
 import {
   buildProviderLabels,
@@ -26,6 +25,7 @@ import { appendDedupedSessionMessageToSnapshots } from "./session-message-dedupe
 import { useSessionMessageSender } from "./session-message-sender";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
+import { normalizeSessionHistoryMessages, resolveMostRecentVisibleSessionId, resolveMostRecentWorkspaceSessionId } from "./runtime-session-auto-select";
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
@@ -79,7 +79,12 @@ export const ProjectManagerRuntimeSessionView = ({
         }
         setSnapshots(nextSnapshots);
         setActiveSessionId(
-          (currentActive) => currentActive ?? nextSessions.at(-1)?.id ?? null
+          (currentActive) =>
+            currentActive ??
+            resolveMostRecentWorkspaceSessionId({
+              sessions: nextSessions,
+              workspacePath,
+            })
         );
         return merged;
       });
@@ -88,13 +93,7 @@ export const ProjectManagerRuntimeSessionView = ({
   );
   const handleSessionHistory = useCallback(
     (payload: { readonly sessionId: string; readonly messages: readonly unknown[] }) => {
-      const normalized: SessionMessage[] = [];
-      for (const message of payload.messages) {
-        const converted = sanitizeMessage(message as never);
-        if (converted) {
-          normalized.push(converted);
-        }
-      }
+      const normalized = normalizeSessionHistoryMessages(payload.messages);
       loadedHistorySessionIdsRef.current.add(payload.sessionId);
       setSnapshots((previous) =>
         mergeHistoryIntoSnapshots(previous, {
@@ -260,14 +259,14 @@ export const ProjectManagerRuntimeSessionView = ({
   }, [reviewerSessionId, showSession]);
   useEffect(() => {
     if (!activeSessionId) {
-      setActiveSessionId(visibleSessions.at(-1)?.id ?? null);
+      setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessions));
       return;
     }
     const isVisible = visibleSessions.some((session) => session.id === activeSessionId);
     if (!(forcedHiddenSessionIds.has(activeSessionId) || !isVisible)) {
       return;
     }
-    setActiveSessionId(visibleSessions.at(-1)?.id ?? null);
+    setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessions));
   }, [activeSessionId, forcedHiddenSessionIds, visibleSessions]);
   useSettingsModelsSync(sessions, settings, setSnapshots);
   useSessionResumeIntent({
