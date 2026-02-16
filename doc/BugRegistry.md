@@ -12,7 +12,7 @@
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
 | BUG-2026-02-16-01 | FIXED | Core/PM | one‑shot `description`: input «unlock gap»/возможность второго запроса | 1.1.613 |
-| BUG-2026-02-16-02 | OPEN | PM/UI | one‑shot `description`: wait‑copy показывает `resuming` вместо `working` | — |
+| BUG-2026-02-16-02 | FIXED | PM/UI | one‑shot `description`: wait‑copy показывает `resuming` вместо `working` | 1.1.614 |
 
 ---
 
@@ -45,10 +45,24 @@
 
 ## BUG-2026-02-16-02 — one‑shot `description`: wait‑copy показывает `resuming` вместо `working`
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:** в one‑shot `description` сессии во время работы агента вместо `Agent is working… Please wait.` показывается `Agent is resuming your session… Please wait.`
 
-**Expected:** `Agent is working… Please wait.` (copy `resuming` уместен только для меж‑сессионного rollover/resume).
+**Root cause:**
+- PM сводил `no_resume` input‑lock к `connectionState=blocked`, из‑за чего Session UI трактовал это как “resuming”.
+- Session UI дополнительно принудительно передавал `connectionState=blocked` в InputPanel при любом lock, теряя сигнал “агент реально работает”.
 
-**Notes / hypothesis:** `no_resume` input‑lock не должен превращать «работу агента» в UI‑состояние `resuming`.
+**Fix:**
+- PM: `connectionState=running` всегда отражает `turnState=running` (даже когда input locked); `blocked` применяется только для `turnState=idle + lock`.
+- Session UI: InputPanel получает реальный `connectionState` для wait‑copy (а очередь/submit остаётся заблокированной через отдельный `queueConnectionState`).
+- InputPanel: `running` приоритетнее lock‑copy; для terminal one‑shot показывается read‑only copy.
+
+**Commits:**
+- `39d13e8d fix(pm/ui): correct wait copy for one-shot sessions`
+
+**Release:** `1.1.614`
+
+**Guards:**
+- `node --test --import tsx src/client/ui/src/session/input-panel.test.tsx`
+- `node --test --import tsx src/client/project-manager/components/sessions/session-stream.test.ts`

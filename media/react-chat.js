@@ -22926,6 +22926,7 @@ ${path2}` : path2;
     continuityErrorCopy = null,
     isQueued = false,
     providerTheme = null,
+    terminalNoResume = false,
     onSubmit
   }) => {
     const inputLocked = connectionState !== "idle" || continuityLockActive || isQueued;
@@ -22936,11 +22937,14 @@ ${path2}` : path2;
       if (isQueued) {
         return "Message queued. Sending as soon as it is ready\u2026";
       }
-      if (continuityLockActive || connectionState === "blocked") {
-        return "Agent is resuming your session\u2026 Please wait.";
+      if (terminalNoResume) {
+        return "This session is complete and read-only.";
       }
       if (connectionState === "running") {
         return "Agent is working\u2026 Please wait.";
+      }
+      if (continuityLockActive || connectionState === "blocked") {
+        return "Agent is resuming your session\u2026 Please wait.";
       }
       if (continuityErrorCopy) {
         return `Continuity failed: ${continuityErrorCopy}`;
@@ -23767,11 +23771,11 @@ ${path2}` : path2;
     const terminalNoResume = activeSession?.status.continuityLock?.reason === "terminal_no_resume";
     const continuityLockActive = activeSession?.status.continuityLock?.active === true || connectionState === "blocked" || terminalNoResume;
     const effectiveContinuityLockActive = continuityLockActive;
-    const inputConnectionState = effectiveContinuityLockActive ? "blocked" : connectionState;
+    const queueConnectionState = effectiveContinuityLockActive && connectionState !== "running" ? "blocked" : connectionState;
     const continuityErrorCopy = activeSession?.status.rollover?.phase === "failed" ? activeSession.status.rollover?.error ?? "Rollover failed." : null;
     const { isQueued, submitMessage } = useQueuedSend({
       activeSessionId,
-      connectionState: inputConnectionState,
+      connectionState: queueConnectionState,
       onSendMessage
     });
     const continuationChain = resolveContinuationChainOrEmpty({
@@ -23818,13 +23822,14 @@ ${path2}` : path2;
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             input_panel_default,
             {
-              connectionState: inputConnectionState,
+              connectionState,
               continuityErrorCopy,
               continuityLockActive: effectiveContinuityLockActive,
               draft: activeSession.draft,
               isQueued,
               onSubmit: submitMessage,
-              providerTheme
+              providerTheme,
+              terminalNoResume
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
