@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api";
 import {
+  createDefaultSettings,
   mapSettingsSnapshot,
   type RawSettingsSnapshot,
   type Settings,
@@ -20,11 +21,11 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 export const useProjectManagerSettings = (): {
-  readonly settings: Settings | null;
+  readonly settings: Settings;
   readonly error: string | null;
   readonly reload: () => void;
 } => {
-  const [settings, setSettings] = useState<Settings | null>(null);
+  const [settings, setSettings] = useState<Settings>(createDefaultSettings);
   const [error, setError] = useState<string | null>(null);
 
   const reload = useCallback(() => {
@@ -38,7 +39,7 @@ export const useProjectManagerSettings = (): {
       }
 
       if (!isRecord(message.payload)) {
-        setSettings(null);
+        setSettings(createDefaultSettings());
         setError("Invalid settings payload");
         return;
       }
@@ -47,7 +48,7 @@ export const useProjectManagerSettings = (): {
       const rawSettings = payload.settings;
 
       if (!isRecord(rawSettings)) {
-        setSettings(null);
+        setSettings(createDefaultSettings());
         setError(typeof payload.error === "string" ? payload.error : null);
         return;
       }
@@ -56,11 +57,16 @@ export const useProjectManagerSettings = (): {
       setError(null);
     });
 
+    // `api.connect()` triggers a settings load on WS open, but this hook can be
+    // mounted later (e.g. when opening a Session view) and miss the earlier
+    // `settings:loaded` response. Request settings on mount to guarantee we
+    // have the latest snapshot for model display and reasoning labels.
+    reload();
+
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [reload]);
 
   return { settings, error, reload };
 };
-
