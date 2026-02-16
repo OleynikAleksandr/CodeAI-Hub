@@ -14,6 +14,7 @@
 | BUG-2026-02-16-01 | FIXED | Core/PM | one‑shot `description`: input «unlock gap»/возможность второго запроса | 1.1.613 |
 | BUG-2026-02-16-02 | FIXED | PM/UI | one‑shot `description`: wait‑copy показывает `resuming` вместо `working` | 1.1.614 |
 | BUG-2026-02-16-03 | FIXED | UI | one‑shot `description` collector: input свободен до первых сообщений | 1.1.615 |
+| BUG-2026-02-16-04 | FIXED | PM/UI | workflow `description`: медленно открывается Session UI после Send | 1.1.616 |
 
 ---
 
@@ -92,3 +93,28 @@
 
 **Guards:**
 - `node --test --import tsx src/client/ui/src/session/helpers.initial-snapshot.test.ts`
+
+---
+
+## BUG-2026-02-16-04 — workflow `description`: медленно открывается Session UI после Send
+
+**Status:** FIXED
+
+**Symptom:** после нажатия `Отправить анкету` и выбора провайдера UI сессии открывался заметно позже (ожидание до завершения вспомогательных шагов), из‑за чего казалось, что отправка «зависла».
+
+**Root cause:**
+- `IdeaCollectorSubmitService.submitQuestionnaire()` ждал загрузки workflow‑контракта и сборки prompt‑pack перед тем, как уведомить UI об `id` созданной сессии.
+- `DescriptionQuestionnairePanel` открывал сессию только после завершения `submitQuestionnaire()`.
+
+**Fix:**
+- `IdeaCollectorSubmitService`: добавлен `onSessionCreated`, вызывается сразу после `session:created`.
+- `DescriptionQuestionnairePanel`: передаёт `onIdeaSessionCreated` в `onSessionCreated`, поэтому сессия открывается сразу.
+- Загрузка контракта запускается параллельно (`contractPromise`), ошибки после создания сессии пробрасываются в сессию через system‑notice.
+
+**Commits:**
+- `c7554efa fix(pm): open description session immediately`
+
+**Release:** `1.1.616`
+
+**Guards:**
+- `node --test --import tsx src/client/project-manager/services/idea-collector-submit-service.open-fast.test.ts`
