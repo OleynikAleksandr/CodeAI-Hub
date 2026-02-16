@@ -147,5 +147,5 @@
 3. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.612`) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v1.1.612 - pm auto-open workflow session`)
 4. [DONE] Git Commit: `feat(release): v1.1.612 - pm auto-open workflow session` (hash: 6f99ed4b)
 5. [DONE] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.612.vsix`) (scope: repo build)
-6. [TODO] Docs: добавить отчёт сессии (scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): add Session067 report`)
-7. [TODO] Git Commit: `docs(session): add Session067 report` (hash: TBD)
+6. [DONE] Docs: добавить отчёт сессии (scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): add Session067 report`)
+7. [DONE] Git Commit: `docs(session): add Session067 report` (hash: c3c95d07)
