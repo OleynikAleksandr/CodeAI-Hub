@@ -88,5 +88,7 @@
 
 **Release:** `1.1.615`
 
+**Verified:** 2026-02-16 — подтверждено в релизе `1.1.615` (Claude, Codex)
+
 **Guards:**
 - `node --test --import tsx src/client/ui/src/session/helpers.initial-snapshot.test.ts`
