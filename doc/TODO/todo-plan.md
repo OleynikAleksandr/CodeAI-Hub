@@ -144,8 +144,8 @@
 ### Stream: Auto-open latest workflow session
 1. [DONE] Fix: включить auto-resume сессии из workflow tree (dispatch `pm:dialog:open`) + не сбрасывать pending selection при наличии неотправленной анкеты, чтобы после `Send` сессия открывалась автоматически (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`; expected commit message: `fix(pm): auto-open workflow session from tree`)
 2. [DONE] Git Commit: `fix(pm): auto-open workflow session from tree` (hash: 01ed82d4)
-3. [TODO] Release: `./scripts/build-all.sh` (version bump -> TBD) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v<version> - pm auto-open workflow session`)
-4. [TODO] Git Commit: `feat(release): v<version> - pm auto-open workflow session` (hash: TBD)
-5. [TODO] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-<version>.vsix`) (scope: repo build)
+3. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.612`) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v1.1.612 - pm auto-open workflow session`)
+4. [DONE] Git Commit: `feat(release): v1.1.612 - pm auto-open workflow session` (hash: 6f99ed4b)
+5. [DONE] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.612.vsix`) (scope: repo build)
 6. [TODO] Docs: добавить отчёт сессии (scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): add Session067 report`)
 7. [TODO] Git Commit: `docs(session): add Session067 report` (hash: TBD)
