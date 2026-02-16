@@ -74,8 +74,9 @@ export const useWorkspaceTreeAutoSelect = (
         });
       }
       if (hasUnsubmittedQuestionnaire) {
-        pendingWorkspaceIdRef.current = null;
-      } else if (artifactPath || branch?.session?.providerSessionId) {
+        return;
+      }
+      if (artifactPath || branch?.session?.providerSessionId) {
         pendingWorkspaceIdRef.current = null;
       }
     },
