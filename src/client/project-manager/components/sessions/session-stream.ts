@@ -61,13 +61,13 @@ export const applyWorkspaceSnapshotToSnapshots = (
       session,
       nextLockReason
     );
+    const isNoResumeSession = session.resumeMode === "no_resume";
     let nextLockActive =
       resolveContinuityLockActive(session) ||
       contextDecisionPending ||
       rolloverPending ||
       heldLockReasonBySessionId.has(sessionId) ||
-      (session.resumeMode === "no_resume" &&
-        session.finalTurnCompleted === true);
+      isNoResumeSession;
     let nextConnectionState: "idle" | "running" | "blocked" = nextLockActive
       ? "blocked"
       : session.turnState;
