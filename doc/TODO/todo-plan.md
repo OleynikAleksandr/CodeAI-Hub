@@ -118,8 +118,8 @@
 ### Stream: Usage limits realtime
 1. [DONE] Fix: применять `usageLimits`/`tokenUsage` из `session:stream` (`turn_completed`/`stream_event`) к snapshots + cache, чтобы Session ID Bar обновлял `session`/`weekly` без смены сессии (scope: `src/client/ui/src/app-host/use-session-stream-status-sync.ts`, `src/client/ui/src/app-host/session-stream-snapshot-sync.ts`, `src/client/ui/src/app-host/session-stream-usage-sync.ts`; expected commit message: `fix(ui): refresh usage limits after each turn`)
 2. [DONE] Git Commit: `fix(ui): refresh usage limits after each turn` (hash: 97d86261)
-3. [TODO] Release: `./scripts/build-all.sh` (version bump -> TBD) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v<version> - refresh session/weekly usage limits`)
-4. [TODO] Git Commit: `feat(release): v<version> - refresh session/weekly usage limits` (hash: TBD)
-5. [TODO] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-<version>.vsix`) (scope: repo build)
+3. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.610`) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v1.1.610 - refresh session/weekly usage limits`)
+4. [DONE] Git Commit: `feat(release): v1.1.610 - refresh session/weekly usage limits` (hash: 7717a2c7)
+5. [DONE] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.610.vsix`) (scope: repo build)
 6. [TODO] Docs: добавить отчёт сессии (scope: `doc/Sessions/Session065.md`; expected commit message: `docs(session): add Session065 report`)
 7. [TODO] Git Commit: `docs(session): add Session065 report` (hash: TBD)
