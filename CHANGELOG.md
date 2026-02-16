@@ -1,3 +1,8 @@
+## [1.1.613] - 2026-02-16
+### Fixed
+- Project Manager: one-shot `description` сессии (`resumeMode=no_resume`) больше не разблокируют поле ввода “на мгновение” — ввод остаётся заблокированным до конца.
+- Core: `workspace:snapshot` теперь реально содержит `resumeMode`/`terminalLockReason`, чтобы PM/UI могли корректно применять no-resume/read-only политику.
+
 ## [1.1.612] - 2026-02-16
 ### Fixed
 - Project Manager: workflow tree теперь автоматически открывает актуальную workflow-сессию (Description/Reviewer) при рестарте PM/смене workspace и после отправки анкеты (`Send`) — без ручного клика по узлу в дереве.
