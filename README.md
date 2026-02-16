@@ -2,12 +2,13 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.613
+## Current Release — v1.1.614
 - **Dialog SSOT + hybrid binding (Phase 156)**: сообщения грузятся по `dialogId` (`dialog:history` + live `dialog:message`), а status/usage/lock/models обновляются по runtime `sessionId` (best-effort `latestSessionId` из `dialog:list/open`), поэтому UI снова показывает выбранную модель (например `GPT-5.3-Codex (medium)`) и не теряет `session/weekly`.
 - **Session usage limits realtime sync**: `Session ID Bar` обновляет `session/weekly` после каждого turn (по `session:stream`), без необходимости смены сессии.
 - **PM auto-select latest session**: при рестарте Project Manager или смене workspace автоматически открывается последняя сессия (по `createdAt`), с приоритетом `reviewer`, без ручного клика в списке сессий.
 - **PM workflow tree auto-open**: при рестарте PM/смене workspace и после отправки анкеты (`Send`) автоматически открывается актуальная workflow-сессия из дерева (Description/Reviewer), без ручного клика по узлу в sidebar.
 - **PM one-shot input lock**: one-shot `description` сессии (`resumeMode=no_resume`) держат поле ввода заблокированным до конца; больше нет промежуточных “unlock” окон.
+- **PM one-shot wait copy**: one-shot `description` во время работы агента показывает `Agent is working… Please wait.` (не `resuming`); после завершения — read-only copy.
 - **Session status model label fix**: восстановлено отображение конкретных моделей (Claude/Codex/Gemini) в строке `Models:` — Project Manager гарантированно подгружает snapshot настроек, даже если Session view смонтировался после initial `settings:loaded`.
 - **Codex model selection fix**: при выборе `gpt-5.2` в Settings новые Codex-сессии больше не “переезжают” на `gpt-5.3-codex` из-за provider-side upgrade/migration; в UI доступны только `gpt-5.2` и `gpt-5.3-codex` с reasoning effort для каждой.
 - **Codex stalled turn diagnostics (Phase 155)**: `Codex_Module` пишет trace breadcrumbs `sdk:processor.*` (enqueue/dequeue/`runStreamed`/first-event) и дополнительные breadcrumbs вокруг `turn.completed` + чтения `usage_limits` (`sdk:processor.turn.completed.*`, `sdk:processor.usage_limits.read.*`) в `~/.codeai-hub/logs/codex/sdk-codex-<threadId>.jsonl`, плюс timeout-guard (5s), чтобы расследовать и не блокировать очередь при зависаниях post-turn.

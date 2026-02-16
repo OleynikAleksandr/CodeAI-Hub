@@ -1,3 +1,7 @@
+## [1.1.614] - 2026-02-16
+### Fixed
+- Session UI: в one-shot `description` сессии во время выполнения turn показываем `Agent is working… Please wait.`, а `Agent is resuming your session… Please wait.` используем только для rollover/resume; terminal one-shot показывает read-only copy без `resuming`.
+
 ## [1.1.613] - 2026-02-16
 ### Fixed
 - Project Manager: one-shot `description` сессии (`resumeMode=no_resume`) больше не разблокируют поле ввода “на мгновение” — ввод остаётся заблокированным до конца.
