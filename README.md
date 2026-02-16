@@ -2,7 +2,7 @@
 
 CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers behind a single, type-safe experience. The project enforces strict quality and architecture rules through Ultracite, keeping the codebase ready for multi-agent orchestration.
 
-## Current Release — v1.1.608
+## Current Release — v1.1.609
 - **Dialog SSOT + hybrid binding (Phase 156)**: сообщения грузятся по `dialogId` (`dialog:history` + live `dialog:message`), а status/usage/lock/models обновляются по runtime `sessionId` (best-effort `latestSessionId` из `dialog:list/open`), поэтому UI снова показывает выбранную модель (например `GPT-5.3-Codex (medium)`) и не теряет `session/weekly`.
 - **Session status model label fix**: восстановлено отображение конкретных моделей (Claude/Codex/Gemini) в строке `Models:` — Project Manager гарантированно подгружает snapshot настроек, даже если Session view смонтировался после initial `settings:loaded`.
 - **Codex model selection fix**: при выборе `gpt-5.2` в Settings новые Codex-сессии больше не “переезжают” на `gpt-5.3-codex` из-за provider-side upgrade/migration; в UI доступны только `gpt-5.2` и `gpt-5.3-codex` с reasoning effort для каждой.
@@ -45,7 +45,7 @@ CodeAI Hub is a Visual Studio Code extension that unifies multiple AI providers 
 - **Session ID Bar usage label readability (Phase 151 follow-up)**: для правого блока лимитов (`session`, `weekly`) label увеличен до `12px` (вместо `9px`) при сохранении фиксированной высоты плашки `32px`; стиль общий и применяется для всех провайдеров.
 - **Unified session history fixes (Codex/Claude)**: `description-step.json` теперь сохраняет корректный `jsonlPath` под ключом `sanitize(workspacePath)`, а promotion `temp -> real providerSessionId` больше не рвёт историю между двумя JSONL (Core делает rename и хранит диалог в одном файле), поэтому Reviewer Codex корректно появляется/открывается с историей в Project Manager.
 - **Session hint color unification**: тексты `ID`-плашки, `Press Enter to send...`, `Models/Tokens` и правый debug summary переведены на единый цвет `rgba(140, 140, 140, 1)`.
-- **Release packaging**: собран и проверен артефакт `codeai-hub-1.1.608.vsix` вместе с обновлёнными tarball в `~/.codeai-hub/releases/`.
+- **Release packaging**: собран и проверен артефакт `codeai-hub-1.1.609.vsix` вместе с обновлёнными tarball в `~/.codeai-hub/releases/`.
 - **Phase 119 Gemini reviewer resume integration**: `GeminiProviderAdapter` теперь поддерживает `resumeSession`, `GeminiSessionManager` прокидывает `argv.resume`, и reviewer в ветке `description/reviewer` сохраняет preferred Gemini provider при доступном resume-path вместо fallback на Claude.
 - **Description one-shot prompt contract fix**: из prompt-pack удалена инструкция про уточняющие вопросы/ожидание `OK/approve`, чтобы контракт не конфликтовал с one-shot/no-resume поведением description-сессии.
 - **Phase 118 launcher runtime integrity hotfix**: installer теперь валидирует целостность launcher runtime перед reuse (включая macOS CEF framework binary), а legacy→primary migration защищена от self-copy через symlink-path; это устраняет сценарий `Failed to load CEF framework` в Project Manager после повреждённой/частичной установки.
