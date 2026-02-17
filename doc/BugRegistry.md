@@ -176,6 +176,8 @@
 - `3e5438b4 fix(pm): auto-focus reviewer after description completes` (attempt; insufficient alone)
 - `e3202ab2 fix(pm): resolve reviewer session during live handoff`
 
+**Test Release:** `1.1.624` (pending user verification)
+
 **Where to look (SSOT):**
 - Selection owner: Project Manager runtime session view / dialog selection.
 - Workflow node contract: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`.
