@@ -32,6 +32,17 @@ type FlowNodeRolloverInfo = {
   readonly updatedAt: number;
 };
 
+const resolveProviderSessionIdFromEvent = (event: unknown): string | null => {
+  if (!isRecord(event)) {
+    return null;
+  }
+  return (
+    readString(event.threadId) ??
+    readString(event.claudeSessionId) ??
+    readString(event.providerSessionId)
+  );
+};
+
 const resolveProviderSessionIdForCache = (
   snapshot: SessionSnapshots[string],
   event: unknown
@@ -40,10 +51,7 @@ const resolveProviderSessionIdForCache = (
   if (fromBinding) {
     return fromBinding;
   }
-  if (!isRecord(event)) {
-    return null;
-  }
-  return readString(event.claudeSessionId);
+  return resolveProviderSessionIdFromEvent(event);
 };
 
 const extractTokenUsage = (event: unknown): TokenUsageSnapshot | null => {
@@ -136,13 +144,12 @@ export const updateSnapshotsWithTokenUsage = (
   snapshots: SessionSnapshots,
   payload: { readonly sessionId: string; readonly event: unknown }
 ): SessionSnapshots => {
-  const snapshot = snapshots[payload.sessionId];
-  if (!snapshot) {
-    return snapshots;
-  }
-
   const rollover = extractRolloverInfo(payload.event);
   if (rollover) {
+    const snapshot = snapshots[payload.sessionId];
+    if (!snapshot) {
+      return snapshots;
+    }
     return {
       ...snapshots,
       [payload.sessionId]: {
@@ -161,12 +168,43 @@ export const updateSnapshotsWithTokenUsage = (
     return snapshots;
   }
 
-  const providerSessionId = resolveProviderSessionIdForCache(
-    snapshot,
-    payload.event
-  );
+  const snapshot = snapshots[payload.sessionId];
+  const providerSessionId = snapshot
+    ? resolveProviderSessionIdForCache(snapshot, payload.event)
+    : resolveProviderSessionIdFromEvent(payload.event);
   if (providerSessionId) {
     writeLastKnownTokenUsage(providerSessionId, tokenUsage);
+  }
+
+  if (!snapshot) {
+    if (!providerSessionId) {
+      return snapshots;
+    }
+
+    const fallbackSessionId = Object.entries(snapshots).find(
+      ([, candidate]) => candidate.binding.providerSessionId === providerSessionId
+    )?.[0];
+
+    if (!fallbackSessionId) {
+      return snapshots;
+    }
+
+    const fallbackSnapshot = snapshots[fallbackSessionId];
+    if (!fallbackSnapshot) {
+      return snapshots;
+    }
+
+    return {
+      ...snapshots,
+      [fallbackSessionId]: {
+        ...fallbackSnapshot,
+        status: {
+          ...fallbackSnapshot.status,
+          tokenUsage,
+          updatedAt: Date.now(),
+        },
+      },
+    };
   }
 
   return {

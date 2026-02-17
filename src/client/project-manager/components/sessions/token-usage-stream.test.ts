@@ -151,3 +151,31 @@ test("updateSnapshotsWithTokenUsage supports nested tokenUsage payload and keeps
   assert.equal(next.s1.status.continuityLock?.active, true);
   assert.equal(next.s1.status.rollover?.phase, "resume_sent");
 });
+
+test("updateSnapshotsWithTokenUsage falls back to providerSessionId when sessionId snapshot is missing", () => {
+  const snapshots = {
+    root: {
+      ...createSnapshot(),
+      binding: {
+        providerSessionId: "thread-123",
+        status: "ready" as const,
+      },
+    },
+  };
+
+  const next = updateSnapshotsWithTokenUsage(snapshots, {
+    sessionId: "latest",
+    event: {
+      type: "stream_event",
+      threadId: "thread-123",
+      data: {
+        kind: "token_usage",
+        used: 256,
+        limit: 512,
+      },
+    },
+  });
+
+  assert.equal(next.root.status.tokenUsage.used, 256);
+  assert.equal(next.root.status.tokenUsage.limit, 512);
+});
