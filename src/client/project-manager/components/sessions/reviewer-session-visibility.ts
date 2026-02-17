@@ -69,11 +69,29 @@ const resolveReviewerSessionId = (params: {
     params.descriptionSessionSnapshot.session.providerSessionId;
   const matchesProvider = (session: SessionRecord) =>
     session.providerIds.some((id) => id === providerId);
-  let matched = candidates.find(
+
+  const reviewerCandidates = candidates.filter(
     (session) =>
       matchesProvider(session) &&
-      session.binding.providerSessionId === providerSessionId
+      (session.sessionKind === "reviewer" || session.runSlug === "reviewer")
   );
+
+  let matched = reviewerCandidates.find(
+    (session) => session.binding.providerSessionId === providerSessionId
+  );
+  if (!matched && reviewerCandidates.length > 0) {
+    matched = reviewerCandidates.reduce((latest, session) =>
+      session.createdAt > latest.createdAt ? session : latest
+    );
+  }
+
+  if (!matched) {
+    matched = candidates.find(
+      (session) =>
+        matchesProvider(session) &&
+        session.binding.providerSessionId === providerSessionId
+    );
+  }
   if (!matched) {
     matched = candidates.find((session) => matchesProvider(session));
   }
@@ -82,6 +100,7 @@ const resolveReviewerSessionId = (params: {
       session.createdAt > latest.createdAt ? session : latest
     );
   }
+
   return matched.id;
 };
 

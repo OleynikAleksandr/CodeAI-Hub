@@ -7,9 +7,9 @@ const SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/reviewer-session-visibility.ts"
 );
-const SESSION_VIEW_SOURCE_PATH = path.resolve(
+const RUNTIME_SESSION_VIEW_SOURCE_PATH = path.resolve(
   process.cwd(),
-  "src/client/project-manager/components/sessions/project-manager-session-view.tsx"
+  "src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx"
 );
 
 test("reviewer-session-visibility keeps deterministic reopen/resume matching within selected workspace", async () => {
@@ -19,6 +19,16 @@ test("reviewer-session-visibility keeps deterministic reopen/resume matching wit
     source.includes("session.workspacePath === params.workspacePath &&"),
     true,
     "reviewer candidate resolution must stay scoped to selected workspace"
+  );
+  assert.equal(
+    source.includes('session.sessionKind === "reviewer"'),
+    true,
+    "reviewer resolution must prefer explicit reviewer sessionKind"
+  );
+  assert.equal(
+    source.includes('session.runSlug === "reviewer"'),
+    true,
+    "reviewer resolution must prefer explicit reviewer runSlug"
   );
   assert.equal(
     source.includes(
@@ -41,8 +51,8 @@ test("reviewer-session-visibility keeps deterministic reopen/resume matching wit
   );
 });
 
-test("project-manager-session-view applies workspace snapshot lock state during handoff", async () => {
-  const source = await readFile(SESSION_VIEW_SOURCE_PATH, "utf8");
+test("project-manager-runtime-session-view applies workspace snapshot lock state during handoff", async () => {
+  const source = await readFile(RUNTIME_SESSION_VIEW_SOURCE_PATH, "utf8");
 
   assert.equal(
     source.includes("workspaceSnapshotStore.applySnapshot(payload);"),
