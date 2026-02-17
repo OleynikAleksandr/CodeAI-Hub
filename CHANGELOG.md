@@ -2,6 +2,11 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.623] - 2026-02-17
+### Fixed
+- Project Manager: live auto-handoff now focuses `Reviewer` session after one-shot `Description` completes (without manual click in workflow tree).
+- Guardrail: reviewer auto-focus is scoped to `description/collector` transition to avoid stealing focus from unrelated active sessions.
+
 ## [1.1.622] - 2026-02-17
 ### Fixed
 - Project Manager / Session UI: show a spinner in the left session area while a workflow session is being created (so the UI does not look frozen).

@@ -21964,20 +21964,11 @@ ${message.content}`
   var import_jsx_runtime5 = __toESM(require_jsx_runtime());
   var EmptyState = (props) => {
     if (props.pending) {
-      return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
-        "div",
-        {
-          "aria-live": "polite",
-          "aria-busy": "true",
-          className: "session-empty",
-          role: "status",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { "aria-hidden": "true", className: "session-spinner" }),
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Creating session\u2026" }),
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: "This can take 5\u201310 seconds. Please wait." })
-          ]
-        }
-      );
+      return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("output", { "aria-busy": "true", "aria-live": "polite", className: "session-empty", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { "aria-hidden": "true", className: "session-spinner" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Creating session\u2026" }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: "This can take 5\u201310 seconds. Please wait." })
+      ] });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "session-empty", children: [
       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
