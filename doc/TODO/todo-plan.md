@@ -32,54 +32,57 @@
 - Footer всегда видим (не скрывается при блокировке).
 - Два состояния кнопки: 🔒 (ввод заблокирован) → клик разблокирует; 🔓 (forceUnlocked) → клик возвращает блокировку.
 - При forceUnlocked=true placeholder показывает стандартный текст.
-- В one-shot (terminal_no_resume) кнопка не показывается.
+- В collector (Description) и terminal_no_resume сессиях кнопка не показывается.
 - Убрать `ForceUnlockButton` из `session-view.tsx`.
 
 ---
 
 ### Stream 1: Fix — кнопка не должна появляться в one-shot (Description) сессии
 
-1. [TODO] Диагностировать: почему `terminalNoResume` не срабатывает для Description сессии.
-   Исправить условие видимости кнопки в `session-view.tsx` (showForceUnlock).
-   Также удалить `ForceUnlockButton` компонент и его JSX из `session-view.tsx` — кнопка переедет в InputPanel (Stream 2).
-   Scope: `src/client/ui/src/session/session-view.tsx` (1 файл).
+1. [DONE] Диагностировать: почему `terminalNoResume` не срабатывает для Description сессии.
+   Root cause: `terminalNoResume` выставляется только ПОСЛЕ turn. Fix: не передавать `onForceUnlock`/`onRelock` когда `sessionKind === "collector"`.
+   Удалить `ForceUnlockButton` компонент и его JSX из `session-view.tsx`.
+   Scope: `src/client/ui/src/session/session-view.tsx` + `input-panel.tsx` + `session-view.css` (3 файла).
 
-2. [TODO] Git Commit: `fix(ui): remove force-unlock button from session-view` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): move lock toggle to InputPanel footer, fix collector session` (hash: 27cfc688)
 
 ---
 
 ### Stream 2: Редизайн — кнопка 🔒/🔓 внутри InputPanel footer (справа)
 
-1. [TODO] Добавить в `InputPanelProps`: `onForceUnlock: () => void` и `onRelock: () => void`.
-   В footer InputPanel: слева надпись `Press Enter to send...`, справа — кнопка 🔒 (когда inputLocked && !terminalNoResume) или 🔓 (когда forceUnlocked).
-   Footer всегда видим (убрать `visibility: hidden`; только надпись слева скрывается при блокировке).
-   При forceUnlocked=true — placeholder стандартный (`Type your request or drag files with Shift held...`).
+1. [DONE] Добавлены `onForceUnlock?: () => void` и `onRelock?: () => void` в `InputPanelProps`.
+   `resolvePlaceholder()` вынесена в pure helper; при `forceUnlocked=true` — стандартный placeholder.
+   Footer: `visibility: hidden` только на hint-тексте, кнопка всегда видна.
+   `showLockToggle = !terminalNoResume && (inputLocked || forceUnlocked) && (onForceUnlock != null || onRelock != null)`.
    Scope: `src/client/ui/src/session/input-panel.tsx` (1 файл).
 
-2. [TODO] Git Commit: `feat(ui): move lock toggle into InputPanel footer` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): move lock toggle to InputPanel footer, fix collector session` (hash: 27cfc688)
 
 ---
 
 ### Stream 3: Подключение callbacks в SessionView + CSS
 
-1. [TODO] В `session-view.tsx`: передать `onForceUnlock={handleForceUnlock}` и `onRelock={() => setForceUnlocked(false)}` в InputPanel.
-   В `media/session-view.css`: удалить стили `.session-app__force-unlock`; при необходимости добавить стили для кнопки внутри footer InputPanel.
+1. [DONE] В `session-view.tsx`: `handleRelock = () => setForceUnlocked(false)`.
+   `onForceUnlock={isCollectorSession ? undefined : handleForceUnlock}` — collector сессии без кнопки.
+   В `media/session-view.css`: удалены стили `.session-app__force-unlock`; footer → `justify-content: space-between`; добавлен `.session-input__lock-toggle`.
    Scope: `src/client/ui/src/session/session-view.tsx` + `media/session-view.css` (2 файла).
 
-2. [TODO] Git Commit: `feat(ui): wire force-unlock callbacks and update css` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): move lock toggle to InputPanel footer, fix collector session` (hash: 27cfc688)
 
 ---
 
 ### Stream 4: Таргетная сборка + Release
 
-1. [TODO] `npm run build:webview` + `npm run typecheck:webview`.
-   Устранить ошибки сборки.
+1. [DONE] `npm run build:webview` + `npm run typecheck:webview` — зелёные.
+   Scope: webview build.
 
-2. [TODO] Git Commit: `chore(build): verify webview after force-unlock ux fixes` (hash: TBD)
+2. [DONE] Git Commit: `chore(build): verify webview after force-unlock ux fixes` (hash: 9daf6408)
 
-3. [TODO] `./scripts/build-all.sh` — полный релизный build (v1.1.628).
-   Переложить tarballs в `doc/tmp/releases/`.
-   Обновить `doc/Sessions/Session077.md` или создать `Session078.md`.
+3. [DONE] `./scripts/build-all.sh` — v1.1.628. Tarballs в `~/.codeai-hub/releases/`.
+   Session078.md создан.
 
-4. [TODO] Git Commit: `feat(release): v1.1.628 - force unlock ux fixes` (hash: TBD)
+4. [DONE] Git Commit: `feat(release): v1.1.628 - force unlock ux fixes` (hash: 0c575c29)
+   Git Commit: `docs(release): record v1.1.628 build` (hash: 6d743bb5)
+
+**Phase 213 COMPLETED — 2026-02-17**
 
