@@ -1,20 +1,21 @@
 # Codex SDK Module
 
-**Updated:** 2026-02-15  
+**Status:** Active (reference)
+**Updated:** 2026-02-17 (release 1.1.622)
 **Owner:** Codex  
 **Source Reference:** `https://github.com/openai/codex/tree/main/sdk/typescript`
 
 ---
 
 ## 1. Purpose & Scope
-- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.606` inside CodeAI-Hub Core.
+- Document the structure and behaviour of the Codex TypeScript SDK so we can implement and maintain provider module `@codeai-hub/codex-module@1.1.622` inside CodeAI-Hub Core.
 - Capture the CLI/SDK contract (events, items, options) that we must adapt for RemoteBridge and UI streaming.
 - List integration prerequisites (authentication, binaries, storage layout) required to bootstrap Codex alongside the Claude module.
 
 Key capabilities we must preserve when porting:
 1. Streaming JSONL event bridge on top of `codex exec --experimental-json`.
 2. Support for threaded conversations with resume semantics via `$CODEX_HOME/sessions` (CodeAI Hub sets `CODEX_HOME=~/.codeai-hub/providers/codex/home`, so provider rollouts/sessions must only be read from that provider-home).
-3. Mixed text/image inputs and structured JSON outputs per turn (answer; structured output используется в legacy/Idea Collector потоках, а workflow стадии Description/Virtual Simulation/Diagrams работают в file-first режиме и пишут артефакты в runs).
+3. Mixed text/image inputs and structured JSON outputs per turn (answer; structured output используется в legacy/Idea Collector потоках, а workflow стадии Description/Virtual Simulation/Diagrams работают в file-first режиме и пишут артефакты напрямую в `.codeai-hub/<workspaceSlug>/<stage>/**`).
 4. Sandbox controls (`read-only`, `workspace-write`, `danger-full-access`) and optional Git repository enforcement.
 5. Authentication via ChatGPT login or API key override (`CODEX_API_KEY`), with persistence under `$CODEX_HOME` (in Hub: `~/.codeai-hub/providers/codex/home`, with auth/config symlinked from `~/.codex`).
 6. Graceful error propagation when CLI exits non-zero (surface `turn.failed`, `error` events, or exit messages).
@@ -206,7 +207,6 @@ Delivery contract:
 2. Define Provider Event Adapter transformations from `ThreadEvent`/`ThreadItem` to our unified message schema (basis for cross-provider wrapper).
 3. Implement authentication checks (detect `auth.json`, guide user through login).
 4. Add smoke tests invoking `thread.runStreamed` against a fixture workspace; capture sample event logs for wrapper design.
-5. Update `doc/TODO/todo-plan_Codex_Module.md` once module scaffolding is ready (Phase 12 tracking).
 6. Capture protocol diffs vs. Claude in a comparison matrix to inform wrapper design.
 
 ---
@@ -224,20 +224,21 @@ Delivery contract:
 
 ---
 
-## 15. Proposed Module Layout
+## 15. Module Layout (current)
 | Area | Path | Responsibility |
 | --- | --- | --- |
-| SDK entry | `packages/Codex_Module/src/index.ts` | Re-export `CodexProviderAdapter` and shared option types. |
-| Provider adapter | `packages/Codex_Module/src/provider/codex-provider-adapter.ts` | Public facade for Core: session lifecycle orchestration, listener registry, deferred start until the first user message. |
-| Installer | `packages/Codex_Module/src/installer/*` | `codex-installer.ts` (binary acquisition + integrity checks), `npm-runner.ts` (fallback to global npm), `codex-paths.ts` (manifest-driven paths). |
-| Auth | `packages/Codex_Module/src/auth/*` | `sdk-auth-manager.ts` detects `auth.json`, prompts RemoteBridge for login guidance, exposes environment variables. |
-| Session management | `packages/Codex_Module/src/session/*` | Registry, lifecycle, controller types; mirrors Claude structures with Codex-specific resume hooks. |
-| Messaging | `packages/Codex_Module/src/messaging/*` | `message-processor.ts` плюс `structured-output-stream-controller.ts`/`answer-json-stream-extractor.ts` стримят `answer`, транслируют native reasoning как `dialog_message(role=\"thinking\")`, и публикуют structured output (включая flow `artifacts[]`). |
-| Logging | `packages/Codex_Module/src/logging/*` | Session logger writing Codex JSONL transcripts under `~/.codeai-hub/logs/codex/`. |
-| CLI bridge | `packages/Codex_Module/src/cli/*` | Thin wrapper around `@openai/codex-sdk` (thread factory, stream subscriptions, structured output helpers). |
-| Types | `packages/Codex_Module/src/types/*` | Shared types (`CodexModuleOptions`, `CodexInstallerPaths`, normalized event/item shapes, reporter interface). |
+| SDK entry | `packages/Codex_Module/src/index.ts` | Re-export `CodexProviderAdapter` + public types. |
+| Provider adapter | `packages/Codex_Module/src/provider/codex-provider-adapter.ts` | Public facade for Core: session lifecycle, event listeners, binding. |
+| Installer | `packages/Codex_Module/src/installer/` | `codex-installer.ts` (managed install + integrity), `npm-runner.ts` (global npm fallback). |
+| Auth | `packages/Codex_Module/src/auth/` | `sdk-auth-manager.ts`: resolves/migrates auth, prepares env (`CODEX_HOME`, `CODEX_API_KEY`, etc). |
+| SDK bridge | `packages/Codex_Module/src/sdk/` | Wrapper around `@openai/codex-sdk` + patches + usage-limits readers (provider-home rollout JSONL). |
+| Session management | `packages/Codex_Module/src/session/` | Registry/manager/lifecycle for provider sessions + mapping to Hub runtime sessions. |
+| Messaging | `packages/Codex_Module/src/messaging/` | Normalization of streamed events/items, structured-output controllers, startup lock. |
+| Token usage | `packages/Codex_Module/src/token-usage/` | Parse/resolve token usage for UI and continuity triggers. |
+| Logging | `packages/Codex_Module/src/logging/` | Session logger writing Codex transcripts under `~/.codeai-hub/logs/codex/`. |
+| Types | `packages/Codex_Module/src/types/` | Shared DTO/types for Codex module internals. |
 
-Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source layout. A dedicated `package.json` and `tsconfig.json` will align with existing module conventions.
+Build outputs (generated) reside under `packages/Codex_Module/dist/` mirroring the source layout (эта папка может отсутствовать в git-дереве до сборки).
 
 ---
 
@@ -278,7 +279,7 @@ Build outputs reside under `packages/Codex_Module/dist/**` mirroring the source 
 ## 17. Build & Distribution
 - Build script: `./scripts/build-codex-module.sh [--version <semver>] [--clean]`.
   - Compiles `packages/Codex_Module`, installs artifacts under `~/.codeai-hub/providers/codex/<version>/`, and creates `codex-module-<version>.tar.bz2` in `doc/tmp/releases/` and the shared local cache `~/.codeai-hub/releases/`.
-  - Manifest auto-update: `assets/providers/codex/manifest.json` is rewritten with the archive name, size, and SHA-1 after each build; `baseUrl` in dev и внутренних релизах указывает на локальный cache `file://$HOME/.codeai-hub/releases/` (на основной dev‑машине — `file:///Users/oleksandroliinyk/.codeai-hub/releases/`).
+  - Manifest auto-update: `assets/providers/codex/manifest.json` is rewritten with the archive name, size, and SHA-1 after each build; `baseUrl` in dev и внутренних релизах указывает на локальный cache `file://$HOME/.codeai-hub/releases/`.
 - Managed installs: extension activation (или Core Supervisor в целевой архитектуре) вызывает `ensureProviderModuleInstalled` (shared installer: `src/extension-module/provider/shared/install-provider-module.ts`), который читает манифест из VSIX, ищет архивы в локальных кешах (`downloads/` модуля, затем `~/.codeai-hub/releases/`) и только при необходимости обращается к удалённому URL. В текущей схеме разработки `baseUrl` всегда указывает на локальный `file://` cache, поэтому сетевые загрузки для Codex модуля не используются.
 - Release checklist:
   1. Run `npm run build --workspace=@codeai-hub/codex-module`.

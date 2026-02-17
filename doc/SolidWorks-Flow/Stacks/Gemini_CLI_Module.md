@@ -2,7 +2,7 @@
 
 **Status:** Active (CommonJS bridge)
 
-**Last Updated:** 2026-02-11
+**Last Updated:** 2026-02-17
 
 **Maintainer:** Codex / CodeAI Hub Core Team
 
@@ -20,7 +20,7 @@
 ## 1. Purpose
 This document captures the requirements and integration notes for adding Google Gemini CLI support to CodeAI Hub. It complements the Claude and Codex module guides and serves as the architectural reference for the upcoming `Gemini_Module` package.
 
-Validated in release `1.1.444` (runtime installs + provider registry wiring are stable; exact CLI versions remain user-managed via global npm + optional auto-update).
+Validated baseline in release `1.1.444` (runtime installs + provider registry wiring are stable; exact CLI versions remain user-managed via global npm + optional auto-update).
 
 ---
 
@@ -95,7 +95,7 @@ Important flags:
 ## 7. Implementation Status
 - ✅ **Installer** — обеспечивает глобальную установку `@google/gemini-cli` и `@google/gemini-cli-core` в npm prefix, валидирует доступность бинаря `gemini` и загружает `cli-bridge` напрямую из глобального `node_modules`. Эмитит `reporter.progress`, чтобы RemoteBridge показывал стадии «загрузка», «подготовка зависимостей», «готово». В post-update/self-check классифицирует module compatibility ошибки отдельно от auth.
 - ✅ **Runtime Updater (v1.1.326)** — `updateToLatest()` обновляет оба пакета через `npm install -g` и используется автообновлением при старте ядра или вручную из Settings UI.
-- ✅ **CLI Bridge (`src/runtime/cli-bridge.ts`)** — использует динамический `import()` через `Function("return import(specifier);")`, конвертирует пути в file URL и загружает ESM-модули CLI/Core без `require()` (устранён `ERR_REQUIRE_ESM`). Для tool execution реализован backend selection: legacy `nonInteractiveToolExecutor` либо `scheduler_fallback` при новом layout CLI Core.
+- ✅ **CLI Bridge (`packages/Gemini_Module/src/runtime/cli-bridge.ts`)** — использует динамический `import()` через `Function("return import(specifier);")`, конвертирует пути в file URL и загружает ESM-модули CLI/Core без `require()` (устранён `ERR_REQUIRE_ESM`). Для tool execution реализован backend selection: legacy `nonInteractiveToolExecutor` либо `scheduler_fallback` при новом layout CLI Core.
 - ✅ **Session Manager** — работает поверх официального CLI Core (`contentGenerator`, `toolScheduler` и т.д.), управляет потоками, журналирует события, очищает окружение от конфликтующих `GOOGLE_*` переменных. Tool execution вынесен в совместимый фасад `GeminiToolExecutorFacade`.
 - ✅ **Provider Adapter** — интегрирован с `ProviderRegistry`, отправляет события, обрабатывает подписчиков, транслирует системные сообщения (инициализация, ошибки аутентификации).
 - ✅ **UI Integration** — provider picker отображает статус Gemini; при ошибке инициализации модуль переводится в `inactive`, ядро продолжает работу.
@@ -164,8 +164,8 @@ Important flags:
 
 Корневая причина:
 - runtime bridge в `packages/Gemini_Module/src/runtime/cli-bridge.ts` жёстко ожидает legacy модуль:
-  - `dist/src/core/nonInteractiveToolExecutor.js` или `dist/core/nonInteractiveToolExecutor.js`.
-- в `@google/gemini-cli-core@0.27.x` этот entrypoint удалён; актуальный backend переехал в `dist/src/scheduler/tool-executor.js` (и используется через `coreToolScheduler`).
+  - `@google/gemini-cli-core/dist/src/core/nonInteractiveToolExecutor.js` или `@google/gemini-cli-core/dist/core/nonInteractiveToolExecutor.js`.
+- в `@google/gemini-cli-core@0.27.x` этот entrypoint удалён; актуальный backend переехал в `@google/gemini-cli-core/dist/src/scheduler/tool-executor.js` (и используется через `coreToolScheduler`).
 
 Следствие:
 - провайдер не инициализируется, хотя `gemini login` и credentials могут быть валидными.
@@ -306,3 +306,30 @@ Important flags:
 - **2025-10-28:** Rebuilt the module as v0.1.2, updated core manifests (core v0.2.9) and Gemini installer logs to warn on missing credentials instead of aborting startup.
 - **2025-10-28:** Implemented installer/session/message/provider adapters, added graceful downgrade path when CLI is absent, and exposed Gemini in the provider picker UI.
 - **2025-10-27:** Initial draft outlining CLI usage, integration hooks, and TODOs.
+
+---
+
+## Appendix B — Reviewer resume baseline (Phase 119)
+
+**Status:** Implemented baseline (archived phase record)
+
+Этот раздел фиксирует минимальный контракт, который уже реализован и должен сохраняться при дальнейших bugfix-правках.
+
+### Симптом (исторический)
+`description` collector мог работать на `geminiCli`, но reviewer auto-start переключался на другой провайдер.
+
+### Root cause (исторический)
+- Ветка выбора reviewer-провайдера отбрасывала адаптеры без `resumeSession`.
+- `GeminiProviderAdapter` не реализовывал `resumeSession`, поэтому preferred Gemini не проходил фильтр.
+
+### Решение (текущее)
+- Gemini реализует `resumeSession(...)` и использует CLI resume-path.
+- Reviewer auto-start остаётся на `geminiCli`, если collector был на Gemini и resume доступен.
+
+### Где смотреть в коде
+- `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`
+- `packages/Gemini_Module/src/session/gemini-session-manager.ts`
+- `packages/core/src/workflow/runtime/workflow-runtime.ts`
+
+Исторический документ Phase 119 (не контракт):
+- `doc/SolidWorks-Flow/Archive/Refactor_Progress/Gemini_Reviewer_Resume_Architecture.md`

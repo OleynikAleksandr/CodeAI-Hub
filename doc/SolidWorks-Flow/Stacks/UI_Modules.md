@@ -1,6 +1,7 @@
 # UI Modules Stack
 
-**Status:** Active (1.1.606)
+**Status:** Active
+**Updated:** 2026-02-17 (release 1.1.622)
 **Owner:** Codex
 **Context:** Модульная система UI, позволяющая обновлять интерфейс независимо от VSIX и обеспечивающая единый источник правды для FLOW через Project Manager (CEF). На период активной разработки FLOW `vscode-webview` используется только для Settings (Settings-only).
 
@@ -18,9 +19,9 @@ See also: `doc/SolidWorks-Flow/Stacks/Project_Manager.md` (Project Manager archi
 - **project-manager**: Standalone UI для управления проектами (CEF) — основной UI-клиент Core для FLOW.
 - **Shared UI Library**: общие компоненты, хуки и стили (`src/client/ui/src`), обеспечивающие идентичный UX.
 
-Операционная валидация `1.1.606` (без изменения состава изменений Phase 126):
+Операционная валидация `1.1.622` (без изменения состава изменений Phase 126):
 - `Session ID Bar` сохраняет фиксированную высоту `32px`;
-- правые label лимитов (`5 houers`, `weekly`) обновлены до `9px` с уменьшенными зазорами;
+- правые label лимитов (`session`, `weekly`) обновлены до `9px` с уменьшенными зазорами;
 - hint/status тексты (`ID`, `Press Enter...`, `Models/Tokens`, debug summary) унифицированы по цвету `rgba(140, 140, 140, 1)`.
 
 ---
@@ -41,8 +42,8 @@ See also: `doc/SolidWorks-Flow/Stacks/Project_Manager.md` (Project Manager archi
 3. Если не найдено (dev mode) — возвращает путь к локальным исходникам (`media/`).
 
 ### 2.3. Host Integration
-- **VS Code**: `HomeViewProvider` настраивает `localResourceRoots` на `packages/ui/vscode-webview/current` и загружает HTML, ссылающийся на `react-chat.js` и CSS из этого пути.
-- **CEF Launcher**: Получает путь к `packages/ui/project-manager/current/index.html` через аргументы запуска или конфиг.
+- **VS Code**: `HomeViewProvider` настраивает `localResourceRoots` на `~/.codeai-hub/packages/ui/vscode-webview/current` и загружает HTML, ссылающийся на `react-chat.js` и CSS из этого пути.
+- **CEF Launcher**: Получает путь к `~/.codeai-hub/packages/ui/project-manager/current/index.html` через аргументы запуска или конфиг.
 
 ---
 

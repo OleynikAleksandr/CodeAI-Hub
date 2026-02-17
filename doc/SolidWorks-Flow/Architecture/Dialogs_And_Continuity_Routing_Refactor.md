@@ -1,7 +1,7 @@
 # Refactor Architecture — Dialog UI + Continuity Routing (Core + Project Manager)
 
 **Status:** Active (implemented baseline)
-**Updated:** 2026-02-15 (release 1.1.606)
+**Updated:** 2026-02-17 (release 1.1.622)
 **Owner:** Oleksandr + Codex
 
 ---

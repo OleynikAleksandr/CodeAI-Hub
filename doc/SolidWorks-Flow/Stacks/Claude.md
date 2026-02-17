@@ -1,8 +1,9 @@
 # Стек Claude для CodeAI-Hub
 
-**Версия стека:** 1.1.573  
-**Обновлено:** 2026-02-12  
-**Статус:** Active (one-shot + provider-home auth bootstrap + ratelimit usage probe)
+**Status:** Active (one-shot + provider-home auth bootstrap + ratelimit usage probe)
+**Updated:** 2026-02-17 (release 1.1.622)
+**Stack Version:** 1.1.622
+**Owner:** Oleksandr + Codex
 
 ## Обзор
 `@codeai-hub/claude-module` — провайдерный модуль Claude для Core. Актуальный runtime-контур сочетает:

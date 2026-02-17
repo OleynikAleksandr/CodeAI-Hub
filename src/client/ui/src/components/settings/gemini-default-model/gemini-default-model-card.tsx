@@ -107,7 +107,7 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
         <p style={descriptionStyles}>
           Select the Gemini model to use for new sessions. Each model can store
           its own thinking level. More details in the knowledge base:
-          doc/Knowledge/Gemini_Model_Selection.md
+          doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md
         </p>
         <div style={listStyles}>
           {GEMINI_RECOMMENDED_MODELS.map((model) => {

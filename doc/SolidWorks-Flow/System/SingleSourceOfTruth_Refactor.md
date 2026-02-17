@@ -3,7 +3,7 @@
 **Status:** Approved baseline for implementation  
 **Owner:** Oleksandr  
 **Phase:** 124  
-**Last updated:** 2026-02-10
+**Last updated:** 2026-02-17
 
 ---
 
@@ -60,7 +60,7 @@ Refactor покрывает:
 
 | UI элемент | Канонический style owner (target) | Канонический runtime consumer | Legacy источник на удаление |
 |---|---|---|---|
-| PM layout/grid/sidebar/panels | `packages/ui/project-manager/styles.css` | PM bundle (`dist/index.html`) | `src/client/project-manager/styles/layout.css` |
+| PM layout/grid/sidebar/panels | `packages/ui/project-manager/styles.css` | PM bundle (`dist/index.html`) | `src/client/project-manager/styles/layout.css` (removed in 1.1.622; guardrail blocks reintroduction) |
 | PM token palette (`--pm-*`) | `packages/ui/project-manager/styles.css` | PM bundle | Дубли token definitions в других CSS |
 
 ## 5.3 Settings UI (VS Code)

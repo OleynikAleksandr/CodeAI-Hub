@@ -7,6 +7,7 @@ import ProjectManagerRuntimeSessionView from "./project-manager-runtime-session-
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
+  readonly pendingSessionCreate?: { readonly providerTitle: string } | null;
 };
 
 type ViewMode = "runtime" | "dialog";
@@ -94,6 +95,7 @@ const saveLastDialogIntent = (intent: DialogOpenIntent): void => {
 export const ProjectManagerSessionView = ({
   workspacePath,
   preferredSessionId,
+  pendingSessionCreate = null,
 }: ProjectManagerSessionViewProps) => {
   const [viewMode, setViewMode] = useState<ViewMode>("runtime");
   const [dialogIntent, setDialogIntent] = useState<DialogOpenIntent | null>(
@@ -141,6 +143,7 @@ export const ProjectManagerSessionView = ({
   if (viewMode === "dialog") {
     return (
       <ProjectManagerDialogSessionView
+        emptyStatePending={Boolean(pendingSessionCreate)}
         intent={dialogIntent}
         onExit={() => setViewMode("runtime")}
       />
@@ -149,6 +152,7 @@ export const ProjectManagerSessionView = ({
 
   return (
     <ProjectManagerRuntimeSessionView
+      emptyStatePending={Boolean(pendingSessionCreate)}
       preferredSessionId={preferredSessionId}
       workspacePath={workspacePath}
     />

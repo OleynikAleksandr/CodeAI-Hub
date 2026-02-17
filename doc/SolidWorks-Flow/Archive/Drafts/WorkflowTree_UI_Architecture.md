@@ -1,8 +1,10 @@
 # Workflow Tree UI (SolidWorks-подобная визуализация разработки)
 
-**Status:** Draft (v0.7)
-**Updated:** 2026-01-22
+**Status:** ARCHIVED DRAFT (was Draft v0.7)
+**Archived:** 2026-02-17
 **Owner:** Oleksandr + Codex
+
+Этот документ перенесён в `Archive/` как концептуальный черновик UI. В папке `Architecture/` остаются только актуальные contract-документы (например `DescriptionNode_ReviewSession_Architecture.md`, `Dialogs_And_Continuity_Routing_Refactor.md`).
 
 ---
 
@@ -387,7 +389,7 @@ Payload (MVP):
 Ключевой инвариант: **агент не пытается писать два артефакта в одном ответе**.
 
 UI правило (для всех шагов):
-- каждый `Step` в Workflow Tree — раскрываемый узел с веткой “артефакты + сессии”, чтобы прогресс переживал перезапуск (см. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`).
+- каждый `Step` в Workflow Tree — раскрываемый узел с веткой “артефакты + сессии”, чтобы прогресс переживал перезапуск (см. `doc/SolidWorks-Flow/Archive/Drafts/WorkflowTree_UI_Architecture.md`).
 - история диалога сессий хранится в unified-session JSONL и должна восстанавливаться после рестарта Core/PM (см. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`).
 
 Примечание для `description`:

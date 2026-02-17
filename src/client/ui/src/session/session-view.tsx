@@ -28,6 +28,7 @@ type SessionViewProps = {
   readonly activeSessionId: string | null;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
   readonly showEmptyState: boolean;
+  readonly emptyStatePending?: boolean;
   readonly coreConnectionStatus: "connecting" | "ready" | "error";
   readonly coreConnectionDetail?: string;
   readonly tokenDebugSummaryOverride?: string;
@@ -174,7 +175,7 @@ const SessionView = (props: SessionViewProps) => {
   if (props.sessions.length === 0 && props.showEmptyState) {
     return (
       <div className="session-app" data-session-style-source="canonical">
-        <EmptyState />
+        <EmptyState pending={props.emptyStatePending === true} />
       </div>
     );
   }

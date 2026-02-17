@@ -21962,10 +21962,28 @@ ${message.content}`
 
   // src/client/ui/src/session/empty-state.tsx
   var import_jsx_runtime5 = __toESM(require_jsx_runtime());
-  var EmptyState = () => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "session-empty", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
-  ] });
+  var EmptyState = (props) => {
+    if (props.pending) {
+      return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+        "div",
+        {
+          "aria-live": "polite",
+          "aria-busy": "true",
+          className: "session-empty",
+          role: "status",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { "aria-hidden": "true", className: "session-spinner" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Creating session\u2026" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: "This can take 5\u201310 seconds. Please wait." })
+          ]
+        }
+      );
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "session-empty", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
+    ] });
+  };
   var empty_state_default = EmptyState;
 
   // src/client/ui/src/session/input-panel.tsx
@@ -23849,7 +23867,7 @@ ${path2}` : path2;
   };
   var SessionView = (props) => {
     if (props.sessions.length === 0 && props.showEmptyState) {
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app", "data-session-style-source": "canonical", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(empty_state_default, {}) });
+      return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app", "data-session-style-source": "canonical", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(empty_state_default, { pending: props.emptyStatePending === true }) });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SessionViewBody, { ...props });
   };
@@ -27042,7 +27060,7 @@ ${replacement}
       }
     };
     return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(settings_card_default, { title: "Claude Default model", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/Knowledge/Claude_Model_Aliases.md" }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md" }),
       /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
         const isSelected = defaultModel === model.alias;
         const rowStyle = {
@@ -27994,7 +28012,7 @@ ${replacement}
     };
     return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/Knowledge/Gemini_Model_Selection.md" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md" }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
           const isSelected = defaultModel === model.id;
           const isRowHovered = hoveredRowId === model.id;

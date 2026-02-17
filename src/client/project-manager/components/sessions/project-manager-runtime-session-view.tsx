@@ -4,15 +4,7 @@ import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
-import {
-  buildProviderLabels,
-  createInitialSnapshot,
-  mergeCatalog,
-  mergeHistoryIntoSnapshots,
-  removeSnapshot,
-  type ProviderCatalog,
-  type SessionSnapshots,
-} from "../../../ui/src/session/helpers";
+import { buildProviderLabels, createInitialSnapshot, mergeCatalog, mergeHistoryIntoSnapshots, removeSnapshot, type ProviderCatalog, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
@@ -29,10 +21,12 @@ import { normalizeSessionHistoryMessages, resolveMostRecentVisibleSessionId, res
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
+  readonly emptyStatePending?: boolean;
 };
 export const ProjectManagerRuntimeSessionView = ({
   workspacePath,
   preferredSessionId,
+  emptyStatePending = false,
 }: ProjectManagerSessionViewProps) => {
   const [providerCatalog, setProviderCatalog] = useState<ProviderCatalog>({});
   const providerLabels = useMemo(() => buildProviderLabels(providerCatalog), [providerCatalog]);
@@ -289,6 +283,7 @@ export const ProjectManagerRuntimeSessionView = ({
       onCloseSession={hideSession}
       onSelectSession={setActiveSessionId}
       onSendMessage={handleSendMessage}
+      emptyStatePending={emptyStatePending}
       providerLabels={providerLabels}
       sessions={visibleSessions}
       showEmptyState={Boolean(workspacePath)}

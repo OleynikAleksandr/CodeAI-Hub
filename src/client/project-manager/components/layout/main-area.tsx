@@ -58,6 +58,9 @@ export const MainArea: React.FC<MainAreaProps> = ({
   } | null>(null);
   const [hasDescriptionSession, setHasDescriptionSession] =
     useState<boolean>(false);
+  const [pendingSessionCreate, setPendingSessionCreate] = useState<{
+    readonly providerTitle: string;
+  } | null>(null);
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -81,6 +84,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setDescriptionDocument(null);
     setQuestionnaireDocument(null);
     setHasDescriptionSession(false);
+    setPendingSessionCreate(null);
     if (!activeWorkspace) {
       setActiveTool(null);
       return;
@@ -233,6 +237,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
           ) : showDescriptionQuestionnaire ? (
             <DescriptionQuestionnairePanel
               onClose={() => setActiveTool(null)}
+              onIdeaSessionCreatePendingChange={setPendingSessionCreate}
               onIdeaSessionCreated={handleIdeaSessionCreated}
               workspaceName={activeWorkspace?.name}
               workspacePath={activeWorkspace?.path}
@@ -251,6 +256,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
         onSizeChange={onSizeChange}
         sessionContent={
           <ProjectManagerSessionView
+            pendingSessionCreate={pendingSessionCreate}
             preferredSessionId={preferredSessionId}
             workspacePath={activeWorkspace?.path}
           />

@@ -1,5 +1,10 @@
 # Контролируемое отображение размышлений в Codex
 
+**Status:** Active (kb; optional technique)
+**Updated:** 2026-02-17 (release 1.1.622)
+**Owner:** Oleksandr + Codex
+
+
 ## (Internal Reasoning + Russian Summary через Structured Outputs)
 
 ## Цель метода

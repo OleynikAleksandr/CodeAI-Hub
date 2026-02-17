@@ -54,7 +54,7 @@ const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
       <p style={descriptionStyles}>
         Choose the Claude alias that will be applied when new sessions start.
         More details in the knowledge base:
-        doc/Knowledge/Claude_Model_Aliases.md
+        doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md
       </p>
       <div style={listStyles}>
         {CLAUDE_MODEL_ALIASES.map((model) => {
