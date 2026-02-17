@@ -161,22 +161,22 @@
 - Если перезагрузить Project Manager или сменить workspace и вернуться — `Reviewer` появляется/фокусируется (работает cold-start auto-select).
 - В live‑режиме после auto-start reviewer — фокуса нет.
 
-**Root cause (confirmed): reviewer неверно резолвился и скрывался самим PM**
-- Хук `useReviewerSessionVisibility()` вычислял `reviewerSessionId` через `resolveReviewerSessionId()` по эвристике `providerSessionId` + fallback “первый session того же provider”.
-- В момент live handoff `Reviewer` runtime‑сессия ещё могла быть **без binding.providerSessionId** (или появлялась позже, чем workflow-state успевал показать `sessionKind=reviewer`), из-за чего fallback выбирал **collector**-сессию как “reviewer”.
-- Далее `buildForcedHiddenSessionIds()` форс‑скрывал все `stage=description` сессии, кроме ошибочного `reviewerSessionId`, то есть **скрывал реального Reviewer** и оставлял видимой/активной завершённую Description.
-- Поэтому в дереве уже есть `Reviewer …`, но в Session UI остаётся `Description …` до ручного клика/перезагрузки (cold start позже резолвит корректно, когда binding уже готов).
+**Root cause (confirmed): нет live-триггера “как клик по Reviewer в дереве”**
+- После `Send` анкеты Session UI открывается в runtime-режиме (по `preferredSessionId`) и остаётся на terminal `Description`.
+- Когда Core авто‑стартует `Reviewer`, он появляется в workflow tree (через workflow-state), но Project Manager **не диспатчит** намерение открытия reviewer-диалога.
+- Единственный гарантированный путь “показать Reviewer вместо Description” — это событие `pm:dialog:open`, которое сейчас эмитится **только** при ручном клике по узлу `Reviewer …` в дереве.
+- Это подтверждается наблюдением: клик по `Reviewer` мгновенно переключает Session UI, без ожидания дополнительных runtime‑событий.
 
 **Fix (pending user validation):**
-- `resolveReviewerSessionId()` теперь **сначала** предпочитает явные reviewer runtime‑сессии (`sessionKind="reviewer"` или `runSlug="reviewer"`) и только потом применяет матч по `providerSessionId`.
-- Это предотвращает скрытие реального reviewer в live‑окне до готовности binding.
-- Дополнительно остаётся guard/auto-focus слой (см. commits ниже), но ключевой блокер был именно в visibility/forcedHidden.
+- В `useMainAreaWorkflowState` (poll workflow-state) добавлен live handoff триггер: как только `description.sessionKind === "reviewer"` и активный инструмент — `Description`, PM автоматически диспатчит `pm:dialog:open` с intent reviewer (stage=`description`, `sessionKind=reviewer`, `runSlug=reviewer`).
+- Guard: дедуп по `providerSessionId` (dispatch 1 раз на reviewer-сессию), чтобы не спамить событие каждые 3 секунды polling’а.
 
 **Commits:**
 - `3e5438b4 fix(pm): auto-focus reviewer after description completes` (attempt; insufficient alone)
 - `e3202ab2 fix(pm): resolve reviewer session during live handoff`
+- `5efbd970 fix(pm): auto-open reviewer dialog on handoff`
 
-**Test Release:** `1.1.624` (pending user verification)
+**Test Release:** `1.1.625` (pending user verification)
 
 **Where to look (SSOT):**
 - Selection owner: Project Manager runtime session view / dialog selection.
