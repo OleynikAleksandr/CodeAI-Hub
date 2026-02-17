@@ -17,7 +17,7 @@ import { appendDedupedSessionMessageToSnapshots } from "./session-message-dedupe
 import { useSessionMessageSender } from "./session-message-sender";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
-import { normalizeSessionHistoryMessages, resolveMostRecentVisibleSessionId, resolveMostRecentWorkspaceSessionId } from "./runtime-session-auto-select";
+import { normalizeSessionHistoryMessages, resolveMostRecentVisibleSessionId, resolveMostRecentWorkspaceSessionId, resolveReviewerAutoFocusSessionId } from "./runtime-session-auto-select";
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
@@ -231,7 +231,6 @@ export const ProjectManagerRuntimeSessionView = ({
       ),
     onWorkspaceSnapshot: (payload) => {
       workspaceSnapshotStore.applySnapshot(payload);
-      // workspace:snapshot is authoritative for runtime lock lifecycle in PM.
       setSnapshots((previous) => applyWorkspaceSnapshotToSnapshots(previous, payload));
     },
   });
@@ -250,7 +249,15 @@ export const ProjectManagerRuntimeSessionView = ({
       return;
     }
     showSession(reviewerSessionId);
-  }, [reviewerSessionId, showSession]);
+    setActiveSessionId((current) =>
+      resolveReviewerAutoFocusSessionId({
+        reviewerSessionId,
+        activeSessionId: current,
+        sessions: sessionsRef.current,
+        workspacePath,
+      }) ?? current
+    );
+  }, [reviewerSessionId, showSession, workspacePath]);
   useEffect(() => {
     if (!activeSessionId) {
       setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessions));
@@ -271,8 +278,7 @@ export const ProjectManagerRuntimeSessionView = ({
     },
     createSession: api.createSession,
   });
-  const scopedActiveSessionId =
-    visibleSessions.some((session) => session.id === activeSessionId) ? activeSessionId : null;
+  const scopedActiveSessionId = visibleSessions.some((session) => session.id === activeSessionId) ? activeSessionId : null;
   const handleSendMessage = useSessionMessageSender(sessionsRef, workspacePath);
   return (
     <SessionView

@@ -37,6 +37,31 @@ export const resolveMostRecentWorkspaceSessionId = (params: {
   return resolveMostRecentVisibleSessionId(inScope);
 };
 
+export const resolveReviewerAutoFocusSessionId = (params: {
+  readonly reviewerSessionId: string | null;
+  readonly activeSessionId: string | null;
+  readonly sessions: readonly SessionRecord[];
+  readonly workspacePath?: string;
+}): string | null => {
+  if (!params.reviewerSessionId) {
+    return null;
+  }
+  if (!params.activeSessionId || params.activeSessionId === params.reviewerSessionId) {
+    return params.reviewerSessionId;
+  }
+  const activeSession = params.sessions.find(
+    (session) => session.id === params.activeSessionId
+  );
+  if (!activeSession) {
+    return null;
+  }
+  const isDescriptionCollector =
+    activeSession.workspacePath === params.workspacePath &&
+    activeSession.stage === "description" &&
+    activeSession.sessionKind === "collector";
+  return isDescriptionCollector ? params.reviewerSessionId : null;
+};
+
 export const normalizeSessionHistoryMessages = (
   messages: readonly unknown[]
 ): SessionMessage[] => {
@@ -49,4 +74,3 @@ export const normalizeSessionHistoryMessages = (
   }
   return normalized;
 };
-
