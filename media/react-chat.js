@@ -22933,6 +22933,27 @@ ${path2}` : path2;
   // src/client/ui/src/session/input-panel.tsx
   var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   var MAX_TEXTAREA_HEIGHT = 200;
+  var resolvePlaceholder = (options) => {
+    if (options.isQueued) {
+      return "Message queued. Sending as soon as it is ready\u2026";
+    }
+    if (options.terminalNoResume) {
+      return "This session is complete and read-only.";
+    }
+    if (options.forceUnlocked) {
+      return "Type your request or drag files with Shift held...";
+    }
+    if (options.connectionState === "running") {
+      return "Agent is working\u2026 Please wait.";
+    }
+    if (options.continuityLockActive || options.connectionState === "blocked") {
+      return "Agent is resuming your session\u2026 Please wait.";
+    }
+    if (options.continuityErrorCopy) {
+      return `Continuity failed: ${options.continuityErrorCopy}`;
+    }
+    return "Type your request or drag files with Shift held...";
+  };
   var InputPanel = ({
     draft,
     connectionState = "idle",
@@ -22942,30 +22963,23 @@ ${path2}` : path2;
     providerTheme = null,
     terminalNoResume = false,
     forceUnlocked = false,
+    onForceUnlock,
+    onRelock,
     onSubmit
   }) => {
     const inputLocked = !forceUnlocked && (connectionState !== "idle" || continuityLockActive || isQueued);
     const waitCopyActive = inputLocked && !isQueued;
     const waitCopyColor = resolveProviderWaitColor(providerTheme);
     const formClassName = "session-input session-panel";
-    const placeholder = (() => {
-      if (isQueued) {
-        return "Message queued. Sending as soon as it is ready\u2026";
-      }
-      if (terminalNoResume) {
-        return "This session is complete and read-only.";
-      }
-      if (connectionState === "running") {
-        return "Agent is working\u2026 Please wait.";
-      }
-      if (continuityLockActive || connectionState === "blocked") {
-        return "Agent is resuming your session\u2026 Please wait.";
-      }
-      if (continuityErrorCopy) {
-        return `Continuity failed: ${continuityErrorCopy}`;
-      }
-      return "Type your request or drag files with Shift held...";
-    })();
+    const placeholder = resolvePlaceholder({
+      isQueued,
+      terminalNoResume,
+      forceUnlocked,
+      connectionState,
+      continuityLockActive,
+      continuityErrorCopy
+    });
+    const showLockToggle = !terminalNoResume && (inputLocked || forceUnlocked) && (onForceUnlock != null || onRelock != null);
     const [value, setValue] = (0, import_react7.useState)(draft);
     const formRef = (0, import_react7.useRef)(null);
     (0, import_react7.useEffect)(() => {
@@ -23009,6 +23023,9 @@ ${path2}` : path2;
       },
       [sendMessage]
     );
+    const lockToggleHandler = forceUnlocked ? onRelock : onForceUnlock;
+    const lockToggleTitle = forceUnlocked ? "Re-lock input" : "Force unlock input";
+    const lockToggleIcon = forceUnlocked ? "\u{1F513}" : "\u{1F512}";
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
       "form",
       {
@@ -23041,14 +23058,26 @@ ${path2}` : path2;
               )
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-            "div",
-            {
-              className: "session-input__footer",
-              style: inputLocked ? { visibility: "hidden" } : void 0,
-              children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "session-input__hint", children: "Press Enter to send, Shift+Enter for a new line" })
-            }
-          )
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "session-input__footer", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+              "span",
+              {
+                className: "session-input__hint",
+                style: inputLocked ? { visibility: "hidden" } : void 0,
+                children: "Press Enter to send, Shift+Enter for a new line"
+              }
+            ),
+            showLockToggle ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+              "button",
+              {
+                className: "session-input__lock-toggle",
+                onClick: lockToggleHandler,
+                title: lockToggleTitle,
+                type: "button",
+                children: lockToggleIcon
+              }
+            ) : null
+          ] })
         ]
       }
     );
@@ -23746,9 +23775,6 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/session-view.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  var ForceUnlockButton = ({
-    onForceUnlock
-  }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app__force-unlock", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { onClick: onForceUnlock, title: "Force unlock input", type: "button", children: "\u{1F513}" }) });
   var resolveContinuityErrorCopy = (activeSession) => {
     if (activeSession?.status.rollover?.phase !== "failed") {
       return null;
@@ -23816,6 +23842,9 @@ ${path2}` : path2;
       setForceUnlocked(true);
       clearQueuedMessage();
     }, [clearQueuedMessage]);
+    const handleRelock = (0, import_react10.useCallback)(() => {
+      setForceUnlocked(false);
+    }, []);
     const continuationChain = resolveContinuationChainOrEmpty({
       sessions: allSessions,
       activeSessionId
@@ -23837,8 +23866,7 @@ ${path2}` : path2;
       snapshots,
       activeSessionId
     }) ?? buildTokenDebugSummaryFromMessages(virtualConversationMessages) ?? void 0;
-    const coreLocked = connectionState !== "idle" || effectiveContinuityLockActive || isQueued;
-    const showForceUnlock = coreLocked && !terminalNoResume && !forceUnlocked;
+    const isCollectorSession = activeRecord?.sessionKind === "collector";
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app", "data-session-style-source": "canonical", children: [
       header,
       /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
@@ -23859,7 +23887,6 @@ ${path2}` : path2;
         ) }),
         /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "session-app__rails", children: [
           terminalNoResume ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-input__hint", children: "This session is complete and read-only." }) : null,
-          showForceUnlock ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ForceUnlockButton, { onForceUnlock: handleForceUnlock }) : null,
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             input_panel_default,
             {
@@ -23869,6 +23896,8 @@ ${path2}` : path2;
               draft: activeSession.draft,
               forceUnlocked,
               isQueued,
+              onForceUnlock: isCollectorSession ? void 0 : handleForceUnlock,
+              onRelock: isCollectorSession ? void 0 : handleRelock,
               onSubmit: submitMessage,
               providerTheme,
               terminalNoResume
