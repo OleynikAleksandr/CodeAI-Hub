@@ -6,6 +6,7 @@ export type { DialogOpenIntent } from "./project-manager-dialog-session-view-hel
 export const ProjectManagerDialogSessionView = (props: {
   readonly intent: DialogOpenIntent | null;
   readonly onExit: () => void;
+  readonly emptyStatePending?: boolean;
 }) => {
   const { connection, providerLabels, session, snapshots, tokenDebugSummaryOverride, sendMessage } =
     useProjectManagerDialogSessionController(props.intent);
@@ -20,6 +21,7 @@ export const ProjectManagerDialogSessionView = (props: {
         onCloseSession={() => props.onExit()}
         onSelectSession={() => {}}
         onSendMessage={() => {}}
+        emptyStatePending={props.emptyStatePending === true}
         providerLabels={new Map()}
         sessions={[]}
         showEmptyState={true}

@@ -1,8 +1,11 @@
 # Gemini Reviewer Resume Architecture (Phase 119)
 
-**Date:** 2026-02-09  
-**Owner:** Oleksandr  
-**Status:** Implemented in release 1.1.538
+**Status:** ARCHIVED (implemented baseline; historical)
+**Archived:** 2026-02-17
+**Owner:** Oleksandr
+
+Этот документ перенесён в `Archive/Refactor_Progress/` как историческая фиксация Phase 119.
+Актуальный SSOT-референс по Gemini провайдеру: `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md` (Appendix: Reviewer resume baseline).
 
 ---
 

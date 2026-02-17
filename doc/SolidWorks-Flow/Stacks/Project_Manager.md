@@ -1,7 +1,7 @@
 # Project Manager (CEF UI) — Architecture & Contracts
 
 **Status:** Active
-**Updated:** 2026-02-15 (release 1.1.606)
+**Updated:** 2026-02-17 (release 1.1.622)
 **Owner:** Oleksandr
 
 ---
@@ -9,7 +9,7 @@
 ## 0) Purpose
 
 `Project Manager` — основной UI‑клиент CodeAI Hub для FLOW:
-- отображает Workflow Tree (узлы/статусы/OUTDATED);
+- отображает Workflow Tree (узлы, статусы, downstream-гейтинг через `OUTDATED`);
 - управляет сессиями и артефактами в рамках выбранного workspace;
 - подключается к Core по WebSocket и работает по snapshot-first контракту.
 
@@ -19,8 +19,11 @@
 
 Канонические документы:
 - Workspace Runtime (wire + lock): `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
-- Workflow Tree UI/UX: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 - Description → Reviewer: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
+- Dialog routing (messages vs status): `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`
+
+Архивный концепт (не contract, не источник правды):
+- `doc/SolidWorks-Flow/Archive/Drafts/WorkflowTree_UI_Architecture.md`
 
 ---
 
@@ -32,7 +35,7 @@ Project Manager доставляется как UI bundle (`.tar.bz2`) и уст
 Источник версий/sha1:
 - `assets/ui/manifest.json`
 
-CEF Launcher читает `config/project-manager.json` и открывает `file://.../packages/ui/project-manager/current/index.html`.
+CEF Launcher читает `config/project-manager.json` и открывает `file://.../.codeai-hub/packages/ui/project-manager/current/index.html`.
 См. launcher спецификацию: `doc/SolidWorks-Flow/Stacks/Launcher_CEF_Module.md`.
 
 ---
@@ -149,7 +152,8 @@ Workflow Tree — единственная “ось” прогресса. Ка
 - `Edit` upstream узла помечает downstream как `OUTDATED`.
 
 См.:
-- `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
+- `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md` (актуальный contract для `Description`)
+- `doc/SolidWorks-Flow/Archive/Drafts/WorkflowTree_UI_Architecture.md` (концепт, не contract)
 
 ---
 

@@ -1,18 +1,12 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { IdeaQuestionnaireView } from "../../../ui/src/components/idea-questionnaire/idea-questionnaire-view";
-import {
-  DescriptionQuestionnaireService,
-} from "../../services/description-questionnaire-service";
+import { DescriptionQuestionnaireService } from "../../services/description-questionnaire-service";
 import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
-import type {
-  ProviderStackDescriptor,
-  ProviderStackId,
-} from "../../../../types/provider";
+import type { ProviderStackDescriptor, ProviderStackId } from "../../../../types/provider";
 import { api } from "../../api";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
 import { IdeaCollectorProviderPicker } from "./idea-collector-provider-picker";
-import { SessionCreatePendingPlaceholder } from "./session-create-pending-placeholder";
 
 const SAVE_DEBOUNCE_MS = 400;
 
@@ -22,6 +16,9 @@ interface DescriptionQuestionnairePanelProps {
   readonly workspaceSlug?: string;
   readonly onClose?: () => void;
   readonly onIdeaSessionCreated?: (sessionId: string) => void;
+  readonly onIdeaSessionCreatePendingChange?: (
+    payload: { readonly providerTitle: string } | null
+  ) => void;
 }
 
 type PanelState =
@@ -45,13 +42,17 @@ type PanelState =
 
 export const DescriptionQuestionnairePanel: React.FC<
   DescriptionQuestionnairePanelProps
-> = ({ workspaceName, workspacePath, workspaceSlug, onClose, onIdeaSessionCreated }) => {
+> = ({
+  workspaceName,
+  workspacePath,
+  workspaceSlug,
+  onClose,
+  onIdeaSessionCreated,
+  onIdeaSessionCreatePendingChange,
+}) => {
   const serviceRef = useRef(new DescriptionQuestionnaireService());
   const ideaCollectorRef = useRef(new IdeaCollectorSubmitService());
   const [panelState, setPanelState] = useState<PanelState>({ status: "idle" });
-  const [submitPendingProviderTitle, setSubmitPendingProviderTitle] = useState<
-    string | null
-  >(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [providerPickerOpen, setProviderPickerOpen] = useState(false);
   const [providerOptions, setProviderOptions] = useState<
@@ -73,7 +74,6 @@ export const DescriptionQuestionnairePanel: React.FC<
 
   const canLoad =
     typeof workspacePath === "string" && workspacePath.trim().length > 0;
-
   useEffect(() => {
     if (!canLoad) {
       setPanelState({ status: "idle" });
@@ -85,7 +85,7 @@ export const DescriptionQuestionnairePanel: React.FC<
 
     setAnswers({});
     setSubmitError(null);
-    setSubmitPendingProviderTitle(null);
+    onIdeaSessionCreatePendingChange?.(null);
     setProviderPickerOpen(false);
     submitInFlightRef.current = false;
     setPanelState({ status: "loading" });
@@ -122,12 +122,15 @@ export const DescriptionQuestionnairePanel: React.FC<
     return () => {
       cancelled = true;
     };
-  }, [canLoad, resolvedWorkspaceName, resolvedWorkspaceSlug, workspacePath]);
+  }, [
+    canLoad,
+    onIdeaSessionCreatePendingChange,
+    resolvedWorkspaceName,
+    resolvedWorkspaceSlug,
+    workspacePath,
+  ]);
 
-  const title = useMemo(
-    () => `Анкета описания — ${resolvedWorkspaceName}`,
-    [resolvedWorkspaceName]
-  );
+  const title = useMemo(() => `Анкета описания — ${resolvedWorkspaceName}`, [resolvedWorkspaceName]);
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers((current) => ({ ...current, [questionId]: value }));
@@ -168,7 +171,9 @@ export const DescriptionQuestionnairePanel: React.FC<
     const providerTitle =
       providerOptions.find((provider) => provider.id === providerId)?.title ??
       null;
-    setSubmitPendingProviderTitle(providerTitle ?? providerId);
+    onIdeaSessionCreatePendingChange?.({
+      providerTitle: providerTitle ?? providerId,
+    });
     if (saveTimerRef.current) {
       window.clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
@@ -208,7 +213,7 @@ export const DescriptionQuestionnairePanel: React.FC<
           ? error.message
           : "Не удалось отправить анкету."
       );
-      setSubmitPendingProviderTitle(null);
+      onIdeaSessionCreatePendingChange?.(null);
     } finally {
       submitInFlightRef.current = false;
     }
@@ -228,26 +233,15 @@ export const DescriptionQuestionnairePanel: React.FC<
     void submitQuestionnaire(providerId);
   };
 
-  const handleProviderCancel = () => {
-    setProviderPickerOpen(false);
-  };
-
-  const handleCancel = () => {
-    onClose?.();
-  };
+  const handleProviderCancel = () => setProviderPickerOpen(false);
+  const handleCancel = () => onClose?.();
 
   if (!canLoad) {
-    return (
-      <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>
-    );
+    return <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>;
   }
-
   if (panelState.status === "loading") {
-    return (
-      <div className="pm-placeholder">Загружаем анкету описания...</div>
-    );
+    return <div className="pm-placeholder">Загружаем анкету описания...</div>;
   }
-
   if (panelState.status === "error") {
     return (
       <div className="pm-placeholder">
@@ -255,19 +249,9 @@ export const DescriptionQuestionnairePanel: React.FC<
       </div>
     );
   }
-
   if (panelState.status !== "ready") {
     return null;
   }
-
-  if (submitPendingProviderTitle) {
-    return (
-      <SessionCreatePendingPlaceholder
-        providerTitle={submitPendingProviderTitle}
-      />
-    );
-  }
-
   return (
     <div className="pm-questionnaire-wrapper">
       {submitError ? (

@@ -1,7 +1,7 @@
 # Session Continuity (SolidWorks-Flow) — Rollover / Auto-Handoff (Source of Truth)
 
 **Status:** Active
-**Updated:** 2026-02-15 (release 1.1.606)
+**Updated:** 2026-02-17 (release 1.1.622)
 **Owner:** Oleksandr + Codex
 
 ---

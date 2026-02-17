@@ -1,10 +1,17 @@
 # Workflow Tree — Description Step/Node: Questionnaire → Draft → Auto-Review → Final
 
 **Version:** 1.1
-**Date:** 2026-02-15
-**Status:** Active (current contract; updated for 1.1.606)
+**Date:** 2026-02-17
+**Status:** Active (current contract; validated for 1.1.622)
 
 ---
+
+
+## 0.1 Операционные изменения после 1.1.606 (важно для UX)
+
+- PM: после `Send` анкеты узел `Description` автоматически открывает создаваемую сессию (без ручного клика по дереву).
+- Session UI: в пустом состоянии вместо `Create your first session…` показывается спиннер `Creating session…` до гидратации UI сессии.
+- One-shot Description: input блокируется сразу и остаётся read-only до конца (без «unlock gap»).
 
 ## 1. Problem Statement
 

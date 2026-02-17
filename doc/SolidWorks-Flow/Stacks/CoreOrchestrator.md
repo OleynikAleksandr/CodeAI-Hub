@@ -1,7 +1,12 @@
 # Core Orchestrator Module
 
+**Status:** Active (reference)
+**Updated:** 2026-02-17 (release 1.1.622)
+**Owner:** Oleksandr + Codex
+
+
 ## Overview
-Core Orchestrator — автономный Node.js сервис (`@codeai-hub/core@1.1.606`, Node 20 runtime) обрабатывающий все сессии, провайдерные модули и клиенты CodeAI Hub. Ядро запускается через Core Supervisor (CLI `codeai-core`) или вспомогательные скрипты, но продолжает работать после закрытия VS Code и лаунчера и предоставляет HTTP/WebSocket API для всех интерфейсов (webview, CEF‑клиент, будущие удалённые клиенты).
+Core Orchestrator — автономный Node.js сервис (`@codeai-hub/core@1.1.622`, Node 20 runtime) обрабатывающий все сессии, провайдерные модули и клиенты CodeAI Hub. Ядро запускается через Core Supervisor (CLI `codeai-core`) или вспомогательные скрипты, но продолжает работать после закрытия VS Code и лаунчера и предоставляет HTTP/WebSocket API для всех интерфейсов (webview, CEF‑клиент, будущие удалённые клиенты).
 
 - **Исполняемый путь:** `~/.codeai-hub/core/<platform>/<version>/`
 - **Runtime:** комплектный Node 20 + бандл `app/dist/index.js`

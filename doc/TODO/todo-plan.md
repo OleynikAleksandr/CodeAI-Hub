@@ -10,6 +10,7 @@
 Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 Архитектурный источник правды (обязательно перечитать перед реализацией):
+- `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Workflow/FacadeClassDiagram_DesignAndMaintenance.md`
 - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`
 
 ---

@@ -1,7 +1,7 @@
 # CodeAI-Hub System Architecture
 
-**Version:** 1.1.611
-**Last Updated:** 2026-02-16
+**Version:** 1.1.622
+**Last Updated:** 2026-02-17
 **Status:** Active reference (source of truth)
 
 ---
@@ -17,16 +17,16 @@
 
 Детальная документация по отдельным стекам вынесена в `doc/SolidWorks-Flow/Stacks/`.
 
-### Активная архитектурная программа (Phase 124)
+### Активная архитектурная программа — SSOT (инициирована Phase 124)
 
-С 2026-02-10 в системе активен рефакторинг **Single Source of Truth** для UI/Runtime/Protocol контуров:
+С 2026-02-10 в системе идёт программа **Single Source of Truth** для UI/Runtime/Protocol контуров:
 - базовый RFC: `doc/SolidWorks-Flow/System/SingleSourceOfTruth_Refactor.md`;
 - аудит исходных дублирований: `doc/Sessions/Session001.md`;
-- операционный план реализации: `doc/TODO/todo-plan.md` (Phase 124).
+- актуальный операционный план: `doc/TODO/todo-plan.md` (текущие фазы Phase 200+).
 
-Ключевая цель программы: для каждого UI-элемента и runtime-контракта закрепляется один канонический владелец; параллельные legacy/fallback источники переводятся в deprecation и удаляются поэтапно.
+Ключевая цель: для каждого UI-элемента и runtime-контракта закрепляется один канонический владелец; любые legacy/fallback источники переводятся в deprecation и удаляются поэтапно.
 
-Начиная с Phase 124, `scripts/check-architecture.sh` запускает guardrail `scripts/check-architecture-rules/ui-style-ssot.sh`, который блокирует возврат legacy style-source (включая `src/client/project-manager/styles/layout.css`) и дубли Session UI селекторов в `packages/ui/project-manager/styles.css`.
+Guardrail: `scripts/check-architecture.sh` включает `scripts/check-architecture-rules/ui-style-ssot.sh`, который блокирует возврат удалённых/legacy style-source (например `src/client/project-manager/styles/layout.css`, удалён в 1.1.622) и дубли Session UI селекторов в `packages/ui/project-manager/styles.css`.
 
 ---
 
@@ -34,12 +34,14 @@
 
 CodeAI-Hub — автономная платформа управления AI-сессиями. VS Code расширение — один из клиентов, подключающийся к общему ядру.
 
+### Project Structure Map (visual)
+
 ```mermaid
 graph TD
     subgraph "Clients (UI Layer)"
         VSCode["VS Code Extension"]
         Launcher["CEF Launcher"]
-        Webview["VS Code Webview (Settings-only in FLOW dev)"]
+        Webview["VS Code Webview"]
         ProjectManager["Project Manager"]
     end
 
@@ -55,6 +57,12 @@ graph TD
         Claude["Claude Module"]
         Codex["Codex Module"]
         Gemini["Gemini Module"]
+    end
+
+    subgraph "Storage & State"
+        Settings["Settings JSON"]
+        Sessions["Session Logs (JSONL)"]
+        Packages["Local Packages (~/.codeai-hub)"]
     end
 
     %% Client Connections
@@ -73,7 +81,26 @@ graph TD
     Registry -->|Loads| Claude
     Registry -->|Loads| Codex
     Registry -->|Loads| Gemini
+
+    %% Data Flow
+    SessionMgr -->|Reads/Writes| Sessions
+    Orchestrator -->|Reads| Settings
+    Supervisor -->|Installs/Reads| Packages
+    
+    %% Styling
+    classDef client fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000;
+    classDef core fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000;
+    classDef provider fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000;
+    classDef storage fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000;
+
+    class VSCode,Launcher,Webview,ProjectManager client;
+    class Orchestrator,Supervisor,Bridge,SessionMgr,Registry core;
+    class Claude,Codex,Gemini provider;
+    class Settings,Sessions,Packages storage;
 ```
+
+Примечание: это визуальная карта; канонические контракты и SSOT по компонентам — в разделах ниже и в стеке документов `doc/SolidWorks-Flow/Stacks/`.
+
 
 ### Три слоя компонентов
 
@@ -87,7 +114,7 @@ graph TD
 
 ### 2.1 Автономное ядро
 
-Node.js сервис (`@codeai-hub/core@1.1.611`), упакованный как JS-бандл + официальный Node 20 runtime.
+Node.js сервис (`@codeai-hub/core@1.1.622`), упакованный как JS-бандл + официальный Node 20 runtime.
 
 **Установка:** `~/.codeai-hub/core/<platform>/<version>/`
 
@@ -98,7 +125,7 @@ Node.js сервис (`@codeai-hub/core@1.1.611`), упакованный как
 
 Переменные окружения: `CORE_HOST`, `CORE_PORT`, `CORE_MANAGED_MODE`, `*_WORKSPACE_PATH`, `*_MODULE_PATH`.
 
-### 2.2 UI Bundles (v1.1.611)
+### 2.2 UI Bundles (v1.1.622)
 
 Интерфейсы вынесены из VSIX в отдельные пакеты:
 - `vscode-webview`: React-приложение для панели VS Code (на период разработки FLOW — Settings-only)
@@ -442,36 +469,35 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 ```
 ~/.codeai-hub/
 ├── core/
-│   └── darwin-arm64/1.1.611/
+│   └── <platform>/<version>/
 │       ├── node/
 │       ├── app/
 │       └── install.json
 ├── packages/
-│   ├── launcher/macos-arm64/1.1.611/
+│   ├── launcher/<platform>/<version>/
+│   │   └── current -> 1.1.622
 │   └── ui/
-│       ├── vscode-webview/
-│       │   ├── 1.1.551/
-│       │   └── current -> 1.1.611
-│       └── project-manager/
-│           ├── 1.1.551/
-│           └── current -> 1.1.611
+│       ├── vscode-webview/<version>/
+│       │   └── current -> 1.1.622
+│       └── project-manager/<version>/
+│           └── current -> 1.1.622
 ├── providers/
-│   ├── claude/1.1.611/
-│   ├── codex/1.1.611/
-│   └── gemini/1.1.611/
+│   ├── claude/<version>/
+│   ├── codex/<version>/
+│   └── gemini/<version>/
 ├── state/
 │   └── projects.json
 ├── settings/
 │   └── settings.json
 ├── sessions/<workspaceKey>/<providerId>/<dialogId>.jsonl
 └── releases/
-    ├── CodeAIHubLauncher-macos-arm64-1.1.611.tar.bz2
-    ├── vscode-webview-1.1.611.tar.bz2
-    ├── project-manager-1.1.611.tar.bz2
-    ├── claude-module-1.1.611.tar.bz2
-    ├── codex-module-1.1.611.tar.bz2
-    ├── gemini-module-1.1.611.tar.bz2
-    └── codeai-hub-core-darwin-arm64-1.1.611.tar.bz2
+    ├── CodeAIHubLauncher-<platform>-1.1.622.tar.bz2
+    ├── vscode-webview-1.1.622.tar.bz2
+    ├── project-manager-1.1.622.tar.bz2
+    ├── claude-module-1.1.622.tar.bz2
+    ├── codex-module-1.1.622.tar.bz2
+    ├── gemini-module-1.1.622.tar.bz2
+    └── codeai-hub-core-<platform>-1.1.622.tar.bz2
 ```
 
 Примечания по `sessions/<workspaceKey>/...` (Unified Session History):
@@ -487,17 +513,19 @@ CommonJS модуль с динамическим `import()` для ESM-паке
 
 | Component | Version |
 |-----------|---------|
-| VSIX | 1.1.611 |
-| Core | 1.1.611 |
-| UI Bundles | 1.1.611 |
-| Claude Module | 1.1.611 |
-| Codex Module | 1.1.611 |
-| Gemini Module | 1.1.611 |
+| VSIX | 1.1.622 |
+| Core | 1.1.622 |
+| UI Bundles | 1.1.622 |
+| Claude Module | 1.1.622 |
+| Codex Module | 1.1.622 |
+| Gemini Module | 1.1.622 |
 | Agent Shared | 1.1.387 |
 | Description Agent | 1.1.387 |
 | Virtual Simulation Agent | 1.1.387 |
 | Diagram Modules Agent | 1.1.387 |
 | Diagram Facades Agent | 1.1.387 |
+
+Примечание: пакеты `packages/agents/*` существуют как scaffolding/вектор, но **не являются SSOT** для текущих workflow‑контрактов (1.1.622). Канон по контрактам/шаблонам сейчас в `packages/core/src/templates/` и `packages/core/src/remote-bridge/handlers/idea-contract-service.ts` (см. также `doc/SolidWorks-Flow/Archive/Drafts/AgentPackages_Architecture.md`).
 
 ---
 
@@ -546,7 +574,7 @@ VSIX не содержит JS/CSS бандлов. UI собирается в н�
 
 ### 11.3 Adding New Modules
 
-Любой новый пакет должен быть подключён к pipeline сборки через `scripts/build-<module>.sh` или добавлен в `scripts/build-all.sh`. Gate перед релизом: `curl http://127.0.0.1:<port>/api/v1/health`.
+Любой новый пакет должен быть подключён к pipeline сборки через `scripts/build-*.sh` (например `scripts/build-core.sh`, `scripts/build-claude-module.sh`, `scripts/build-codex-module.sh`, `scripts/build-cef-launcher.sh`) или добавлен в `scripts/build-all.sh`. Gate перед релизом: `curl http://127.0.0.1:<port>/api/v1/health`.
 
 ---
 
@@ -554,6 +582,6 @@ VSIX не содержит JS/CSS бандлов. UI собирается в н�
 
 - **Stacks:** `doc/SolidWorks-Flow/Stacks/` (CoreOrchestrator, Claude, Codex, Gemini, UI_Modules, Launcher_CEF)
 - **Workflow:** `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
-- **Agent Packages:** `doc/SolidWorks-Flow/System/AgentPackages_Architecture.md`
+- **Archived targets / drafts:** `doc/SolidWorks-Flow/Archive/Drafts/`
 - **SolidWorks Flow:** `doc/SolidWorks-Flow/`
 - **Knowledge:** `doc/SolidWorks-Flow/knowledge/`
