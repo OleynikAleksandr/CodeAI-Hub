@@ -18,7 +18,7 @@
 | BUG-2026-02-16-04 | FIXED | PM/UI | workflow `description`: медленно открывается Session UI после Send | 1.1.616 |
 | BUG-2026-02-17-01 | FIXED | PM/UI | пустой EmptyState без спиннера при создании сессии ("Create your first session…") | 1.1.622 |
 | BUG-2026-02-17-02 | FIXED | PM/UI | description→reviewer: reviewer auto-started but not auto-focused in live UI | 1.1.625 |
-| BUG-2026-02-17-03 | OPEN | PM/UI | token usage не обновляется после turn completion (до смены workspace) | TBD |
+| BUG-2026-02-17-03 | FIXED | PM/UI | token usage не обновляется после turn completion (до смены workspace) | 1.1.626 |
 
 ---
 
@@ -192,7 +192,7 @@
 
 ## BUG-2026-02-17-03 — Session UI: token usage не обновляется после turn completion (до смены workspace)
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:** в активной сессии (особенно `Reviewer` в dialog-mode) индикатор `Tokens: …` иногда не обновляется после завершения turn (после последнего ответа агента). После смены workspace и возврата цифры появляются/обновляются.
 
@@ -210,7 +210,9 @@
 - `29c1ddea fix(pm): sync token usage after turns`
 - `5edb563d feat(release): v1.1.626 - token usage sync`
 
-**Test Release:** `1.1.626` (pending user verification)
+**Release:** `1.1.626`
+
+**Verified:** 2026-02-17 — подтверждено пользователем (token usage обновляется без смены workspace)
 
 **Guards:**
 - `node --test --import tsx src/client/project-manager/components/sessions/token-usage-stream.test.ts`
