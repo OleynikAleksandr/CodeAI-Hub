@@ -22,6 +22,7 @@ export const useQueuedSend = (options: {
   readonly queuedMessage: string | null;
   readonly isQueued: boolean;
   readonly submitMessage: (text: string) => void;
+  readonly clearQueuedMessage: () => void;
 } => {
   const [queuedMessage, setQueuedMessage] = useState<string | null>(null);
 
@@ -48,6 +49,7 @@ export const useQueuedSend = (options: {
   return {
     queuedMessage,
     isQueued: queuedMessage !== null,
+    clearQueuedMessage: () => setQueuedMessage(null),
     submitMessage: (text: string) => {
       if (!options.activeSessionId) {
         return;

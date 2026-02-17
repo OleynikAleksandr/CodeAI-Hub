@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
@@ -35,6 +36,27 @@ type SessionViewProps = {
   readonly onSelectSession: (sessionId: string) => void;
   readonly onCloseSession: (sessionId: string) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
+};
+
+const ForceUnlockButton = ({
+  onForceUnlock,
+}: {
+  readonly onForceUnlock: () => void;
+}) => (
+  <div className="session-app__force-unlock">
+    <button onClick={onForceUnlock} title="Force unlock input" type="button">
+      🔓
+    </button>
+  </div>
+);
+
+const resolveContinuityErrorCopy = (
+  activeSession: SessionSnapshot | null
+): string | null => {
+  if (activeSession?.status.rollover?.phase !== "failed") {
+    return null;
+  }
+  return activeSession.status.rollover?.error ?? "Rollover failed.";
 };
 
 const SessionViewBody = ({
@@ -88,15 +110,28 @@ const SessionViewBody = ({
     effectiveContinuityLockActive && connectionState !== "running"
       ? "blocked"
       : connectionState;
-  const continuityErrorCopy =
-    activeSession?.status.rollover?.phase === "failed"
-      ? (activeSession.status.rollover?.error ?? "Rollover failed.")
-      : null;
-  const { isQueued, submitMessage } = useQueuedSend({
+  const continuityErrorCopy = resolveContinuityErrorCopy(activeSession);
+  const { isQueued, submitMessage, clearQueuedMessage } = useQueuedSend({
     activeSessionId,
     connectionState: queueConnectionState,
     onSendMessage,
   });
+
+  const [forceUnlocked, setForceUnlocked] = useState(false);
+  const prevConnectionStateRef = useRef<ConnectionState>(connectionState);
+
+  useEffect(() => {
+    const prev = prevConnectionStateRef.current;
+    if (connectionState === "running" && prev !== "running") {
+      setForceUnlocked(false);
+    }
+    prevConnectionStateRef.current = connectionState;
+  }, [connectionState]);
+
+  const handleForceUnlock = useCallback(() => {
+    setForceUnlocked(true);
+    clearQueuedMessage();
+  }, [clearQueuedMessage]);
 
   const continuationChain = resolveContinuationChainOrEmpty({
     sessions: allSessions,
@@ -128,6 +163,10 @@ const SessionViewBody = ({
     buildTokenDebugSummaryFromMessages(virtualConversationMessages) ??
     undefined;
 
+  const coreLocked =
+    connectionState !== "idle" || effectiveContinuityLockActive || isQueued;
+  const showForceUnlock = coreLocked && !terminalNoResume && !forceUnlocked;
+
   return (
     <div className="session-app" data-session-style-source="canonical">
       {header}
@@ -149,11 +188,15 @@ const SessionViewBody = ({
               This session is complete and read-only.
             </div>
           ) : null}
+          {showForceUnlock ? (
+            <ForceUnlockButton onForceUnlock={handleForceUnlock} />
+          ) : null}
           <InputPanel
             connectionState={connectionState}
             continuityErrorCopy={continuityErrorCopy}
             continuityLockActive={effectiveContinuityLockActive}
             draft={activeSession.draft}
+            forceUnlocked={forceUnlocked}
             isQueued={isQueued}
             onSubmit={submitMessage}
             providerTheme={providerTheme}
