@@ -45,3 +45,19 @@
 ### Stream: Release (follow-up)
 1. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.625`) + `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.625.vsix`; tarballs: `doc/tmp/releases/*-1.1.625.tar.bz2`, `~/.codeai-hub/releases/*-1.1.625.tar.bz2`) (scope: repo)
 2. [DONE] Git Commit: `feat(release): v1.1.625 - auto-open reviewer dialog on handoff` (hash: `0d40f576`)
+
+**Validated:** 2026-02-17 — verified in release `1.1.625` (Codex, Claude)
+
+---
+
+## Phase 210 — PM/UI: token usage refresh after turns (owner: Oleksandr+Codex, updated: 2026-02-17)
+
+**Problem (validated):** `Tokens: …` in Session UI does not always refresh after turn completion (numbers appear only after switching workspace / reopening PM).
+
+**Goal:** token usage is updated after each completed turn, including dialog sessions that hydrate snapshots after stream events.
+
+### Stream: Fix + Release
+1. [DONE] Fix: accept token usage stream events even when snapshot is missing; fallback by `binding.providerSessionId` and write last-known cache (scope: `src/client/project-manager/components/sessions/token-usage-stream.ts`, `src/client/project-manager/components/sessions/token-usage-stream.test.ts`; expected commit message: `fix(pm): sync token usage after turns`)
+2. [DONE] Git Commit: `fix(pm): sync token usage after turns` (hash: `29c1ddea`)
+3. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.626`) + `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.626.vsix`; tarballs: `doc/tmp/releases/*-1.1.626.tar.bz2`, `~/.codeai-hub/releases/*-1.1.626.tar.bz2`) (scope: repo)
+4. [DONE] Git Commit: `feat(release): v1.1.626 - token usage sync` (hash: `5edb563d`)

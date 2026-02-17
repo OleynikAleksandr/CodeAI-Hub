@@ -17,7 +17,8 @@
 | BUG-2026-02-16-03 | FIXED | UI | one‑shot `description` collector: input свободен до первых сообщений | 1.1.615 |
 | BUG-2026-02-16-04 | FIXED | PM/UI | workflow `description`: медленно открывается Session UI после Send | 1.1.616 |
 | BUG-2026-02-17-01 | FIXED | PM/UI | пустой EmptyState без спиннера при создании сессии ("Create your first session…") | 1.1.622 |
-| BUG-2026-02-17-02 | OPEN | PM/UI | description→reviewer: reviewer auto-started but not auto-focused in live UI | TBD |
+| BUG-2026-02-17-02 | FIXED | PM/UI | description→reviewer: reviewer auto-started but not auto-focused in live UI | 1.1.625 |
+| BUG-2026-02-17-03 | OPEN | PM/UI | token usage не обновляется после turn completion (до смены workspace) | TBD |
 
 ---
 
@@ -153,7 +154,7 @@
 
 ## BUG-2026-02-17-02 — description→reviewer: reviewer auto-started but not auto-focused (live)
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:** после завершения one-shot `Description` (создан `description.md`) Core автоматически запускает `Reviewer` (сессия видна в дереве), но Project Manager не переключает активную сессию: в области Session UI остаётся `Description` до ручного клика по `Reviewer` в дереве.
 
@@ -167,7 +168,7 @@
 - Единственный гарантированный путь “показать Reviewer вместо Description” — это событие `pm:dialog:open`, которое сейчас эмитится **только** при ручном клике по узлу `Reviewer …` в дереве.
 - Это подтверждается наблюдением: клик по `Reviewer` мгновенно переключает Session UI, без ожидания дополнительных runtime‑событий.
 
-**Fix (pending user validation):**
+**Fix:**
 - В `useMainAreaWorkflowState` (poll workflow-state) добавлен live handoff триггер: как только `description.sessionKind === "reviewer"` и активный инструмент — `Description`, PM автоматически диспатчит `pm:dialog:open` с intent reviewer (stage=`description`, `sessionKind=reviewer`, `runSlug=reviewer`).
 - Guard: дедуп по `providerSessionId` (dispatch 1 раз на reviewer-сессию), чтобы не спамить событие каждые 3 секунды polling’а.
 
@@ -176,7 +177,9 @@
 - `e3202ab2 fix(pm): resolve reviewer session during live handoff`
 - `5efbd970 fix(pm): auto-open reviewer dialog on handoff`
 
-**Test Release:** `1.1.625` (pending user verification)
+**Release:** `1.1.625`
+
+**Verified:** 2026-02-17 — подтверждено пользователем (Codex, Claude)
 
 **Where to look (SSOT):**
 - Selection owner: Project Manager runtime session view / dialog selection.
@@ -184,3 +187,30 @@
 - Dialog routing SSOT: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`.
 
 **Logs to confirm:** `~/.codeai-hub/logs/` (PM + core bridge events around `description complete` and `reviewer created`).
+
+---
+
+## BUG-2026-02-17-03 — Session UI: token usage не обновляется после turn completion (до смены workspace)
+
+**Status:** OPEN
+
+**Symptom:** в активной сессии (особенно `Reviewer` в dialog-mode) индикатор `Tokens: …` иногда не обновляется после завершения turn (после последнего ответа агента). После смены workspace и возврата цифры появляются/обновляются.
+
+**Root cause (confirmed):**
+- `session:stream` события с `token_usage` могут приходить до того, как PM успеет создать snapshot для `sessionId` (hydration dialog history + snapshot init).
+- Текущий обработчик `updateSnapshotsWithTokenUsage` обновлял token usage **только** если snapshot уже существует по `payload.sessionId`, иначе событие тихо игнорировалось.
+
+**Fix:**
+- `updateSnapshotsWithTokenUsage` теперь:
+  - всегда пытается извлечь `tokenUsage` + `providerSessionId` из события;
+  - пишет last-known token usage в cache по `providerSessionId` даже если snapshot ещё не создан;
+  - если snapshot по `payload.sessionId` отсутствует — делает fallback update snapshot по совпадающему `binding.providerSessionId` (чтобы UI обновлялся без смены workspace).
+
+**Commits:**
+- `29c1ddea fix(pm): sync token usage after turns`
+- `5edb563d feat(release): v1.1.626 - token usage sync`
+
+**Test Release:** `1.1.626` (pending user verification)
+
+**Guards:**
+- `node --test --import tsx src/client/project-manager/components/sessions/token-usage-stream.test.ts`
