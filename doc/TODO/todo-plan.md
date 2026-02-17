@@ -61,3 +61,5 @@
 2. [DONE] Git Commit: `fix(pm): sync token usage after turns` (hash: `29c1ddea`)
 3. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.626`) + `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.626.vsix`; tarballs: `doc/tmp/releases/*-1.1.626.tar.bz2`, `~/.codeai-hub/releases/*-1.1.626.tar.bz2`) (scope: repo)
 4. [DONE] Git Commit: `feat(release): v1.1.626 - token usage sync` (hash: `5edb563d`)
+
+**Validated:** 2026-02-17 — verified in release `1.1.626` (token usage refresh after each turn)
