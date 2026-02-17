@@ -6,12 +6,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - System SSOT: `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.624
-- PM workflow handoff: fix live `Description → Reviewer` transition by correctly resolving the reviewer runtime session (prevents hiding the real reviewer before binding is ready).
-- PM workflow handoff: after `Description` completes and `Reviewer` is auto-started, Session UI auto-focuses reviewer in live mode (no manual tree click).
+## Current Release — v1.1.625
+- PM workflow handoff: when `Description` completes and `Reviewer` is auto-started, PM auto-opens the reviewer dialog in Session UI (same behavior as clicking `Reviewer …` in the workflow tree).
 - Session UI: keeps spinner in the left session area while a workflow session is being created (replaces stale `Create your first session…` empty card).
 - One-shot `description` collector: input remains locked for the entire run and keeps correct wait copy (`Agent is working… Please wait.`).
-- SolidWorks-Flow docs: bug registry + TODO/session reports updated for Phase 209 reviewer auto-handoff (incl. live visibility fix).
+- SolidWorks-Flow docs: bug registry + TODO/session reports updated for Phase 209 reviewer auto-handoff.
 
 Previous releases (summary): the `1.1.57x–1.1.62x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, and continuity/resume reliability across providers. For the full history, use `git log` / tags.
 
