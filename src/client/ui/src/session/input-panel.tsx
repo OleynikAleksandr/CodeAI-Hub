@@ -11,6 +11,7 @@ type InputPanelProps = {
   readonly isQueued?: boolean;
   readonly providerTheme?: ProviderTheme | null;
   readonly terminalNoResume?: boolean;
+  readonly forceUnlocked?: boolean;
   readonly onSubmit: (text: string) => void;
 };
 
@@ -24,10 +25,12 @@ const InputPanel = ({
   isQueued = false,
   providerTheme = null,
   terminalNoResume = false,
+  forceUnlocked = false,
   onSubmit,
 }: InputPanelProps) => {
   const inputLocked =
-    connectionState !== "idle" || continuityLockActive || isQueued;
+    !forceUnlocked &&
+    (connectionState !== "idle" || continuityLockActive || isQueued);
   const waitCopyActive = inputLocked && !isQueued;
   const waitCopyColor = resolveProviderWaitColor(providerTheme);
   const formClassName = "session-input session-panel";
