@@ -38,18 +38,6 @@ type SessionViewProps = {
   readonly onSendMessage: (sessionId: string, content: string) => void;
 };
 
-const ForceUnlockButton = ({
-  onForceUnlock,
-}: {
-  readonly onForceUnlock: () => void;
-}) => (
-  <div className="session-app__force-unlock">
-    <button onClick={onForceUnlock} title="Force unlock input" type="button">
-      🔓
-    </button>
-  </div>
-);
-
 const resolveContinuityErrorCopy = (
   activeSession: SessionSnapshot | null
 ): string | null => {
@@ -133,6 +121,10 @@ const SessionViewBody = ({
     clearQueuedMessage();
   }, [clearQueuedMessage]);
 
+  const handleRelock = useCallback(() => {
+    setForceUnlocked(false);
+  }, []);
+
   const continuationChain = resolveContinuationChainOrEmpty({
     sessions: allSessions,
     activeSessionId,
@@ -163,9 +155,8 @@ const SessionViewBody = ({
     buildTokenDebugSummaryFromMessages(virtualConversationMessages) ??
     undefined;
 
-  const coreLocked =
-    connectionState !== "idle" || effectiveContinuityLockActive || isQueued;
-  const showForceUnlock = coreLocked && !terminalNoResume && !forceUnlocked;
+  // Collector sessions (one-shot description) do not expose the lock toggle.
+  const isCollectorSession = activeRecord?.sessionKind === "collector";
 
   return (
     <div className="session-app" data-session-style-source="canonical">
@@ -188,9 +179,6 @@ const SessionViewBody = ({
               This session is complete and read-only.
             </div>
           ) : null}
-          {showForceUnlock ? (
-            <ForceUnlockButton onForceUnlock={handleForceUnlock} />
-          ) : null}
           <InputPanel
             connectionState={connectionState}
             continuityErrorCopy={continuityErrorCopy}
@@ -198,6 +186,8 @@ const SessionViewBody = ({
             draft={activeSession.draft}
             forceUnlocked={forceUnlocked}
             isQueued={isQueued}
+            onForceUnlock={isCollectorSession ? undefined : handleForceUnlock}
+            onRelock={isCollectorSession ? undefined : handleRelock}
             onSubmit={submitMessage}
             providerTheme={providerTheme}
             terminalNoResume={terminalNoResume}

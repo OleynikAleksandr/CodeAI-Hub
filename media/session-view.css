@@ -42,27 +42,6 @@
   flex-shrink: 0;
 }
 
-.session-app__force-unlock {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.session-app__force-unlock button {
-  background: none;
-  border: 1px solid var(--vscode-button-border, transparent);
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
-  opacity: 0.7;
-  padding: 2px 6px;
-  transition: opacity 0.15s;
-}
-
-.session-app__force-unlock button:hover {
-  opacity: 1;
-}
-
 .session-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -990,8 +969,23 @@
 
 .session-input__footer {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
+}
+
+.session-input__lock-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.6;
+  padding: 0 2px;
+  transition: opacity 0.15s;
+}
+
+.session-input__lock-toggle:hover {
+  opacity: 1;
 }
 
 .session-input__hint {

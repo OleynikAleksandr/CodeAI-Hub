@@ -12,10 +12,41 @@ type InputPanelProps = {
   readonly providerTheme?: ProviderTheme | null;
   readonly terminalNoResume?: boolean;
   readonly forceUnlocked?: boolean;
+  readonly onForceUnlock?: () => void;
+  readonly onRelock?: () => void;
   readonly onSubmit: (text: string) => void;
 };
 
 const MAX_TEXTAREA_HEIGHT = 200;
+
+const resolvePlaceholder = (options: {
+  readonly isQueued: boolean;
+  readonly terminalNoResume: boolean;
+  readonly forceUnlocked: boolean;
+  readonly connectionState: string;
+  readonly continuityLockActive: boolean;
+  readonly continuityErrorCopy: string | null;
+}): string => {
+  if (options.isQueued) {
+    return "Message queued. Sending as soon as it is ready…";
+  }
+  if (options.terminalNoResume) {
+    return "This session is complete and read-only.";
+  }
+  if (options.forceUnlocked) {
+    return "Type your request or drag files with Shift held...";
+  }
+  if (options.connectionState === "running") {
+    return "Agent is working… Please wait.";
+  }
+  if (options.continuityLockActive || options.connectionState === "blocked") {
+    return "Agent is resuming your session… Please wait.";
+  }
+  if (options.continuityErrorCopy) {
+    return `Continuity failed: ${options.continuityErrorCopy}`;
+  }
+  return "Type your request or drag files with Shift held...";
+};
 
 const InputPanel = ({
   draft,
@@ -26,6 +57,8 @@ const InputPanel = ({
   providerTheme = null,
   terminalNoResume = false,
   forceUnlocked = false,
+  onForceUnlock,
+  onRelock,
   onSubmit,
 }: InputPanelProps) => {
   const inputLocked =
@@ -34,24 +67,20 @@ const InputPanel = ({
   const waitCopyActive = inputLocked && !isQueued;
   const waitCopyColor = resolveProviderWaitColor(providerTheme);
   const formClassName = "session-input session-panel";
-  const placeholder = (() => {
-    if (isQueued) {
-      return "Message queued. Sending as soon as it is ready…";
-    }
-    if (terminalNoResume) {
-      return "This session is complete and read-only.";
-    }
-    if (connectionState === "running") {
-      return "Agent is working… Please wait.";
-    }
-    if (continuityLockActive || connectionState === "blocked") {
-      return "Agent is resuming your session… Please wait.";
-    }
-    if (continuityErrorCopy) {
-      return `Continuity failed: ${continuityErrorCopy}`;
-    }
-    return "Type your request or drag files with Shift held...";
-  })();
+  const placeholder = resolvePlaceholder({
+    isQueued,
+    terminalNoResume,
+    forceUnlocked,
+    connectionState,
+    continuityLockActive,
+    continuityErrorCopy,
+  });
+
+  const showLockToggle =
+    !terminalNoResume &&
+    (inputLocked || forceUnlocked) &&
+    (onForceUnlock != null || onRelock != null);
+
   const [value, setValue] = useState(draft);
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -103,6 +132,12 @@ const InputPanel = ({
     [sendMessage]
   );
 
+  const lockToggleHandler = forceUnlocked ? onRelock : onForceUnlock;
+  const lockToggleTitle = forceUnlocked
+    ? "Re-lock input"
+    : "Force unlock input";
+  const lockToggleIcon = forceUnlocked ? "🔓" : "🔒";
+
   return (
     <form
       aria-label="Message input"
@@ -130,13 +165,23 @@ const InputPanel = ({
         />
       </fieldset>
 
-      <div
-        className="session-input__footer"
-        style={inputLocked ? { visibility: "hidden" } : undefined}
-      >
-        <span className="session-input__hint">
+      <div className="session-input__footer">
+        <span
+          className="session-input__hint"
+          style={inputLocked ? { visibility: "hidden" } : undefined}
+        >
           Press Enter to send, Shift+Enter for a new line
         </span>
+        {showLockToggle ? (
+          <button
+            className="session-input__lock-toggle"
+            onClick={lockToggleHandler}
+            title={lockToggleTitle}
+            type="button"
+          >
+            {lockToggleIcon}
+          </button>
+        ) : null}
       </div>
     </form>
   );
