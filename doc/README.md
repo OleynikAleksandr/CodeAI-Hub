@@ -10,7 +10,7 @@
 
 | Папка | Назначение | Ключевой файл |
 |-------|------------|---------------|
-| **`SolidWorks-Flow/`** | Единый поток документации: система, стеки, workflow, UI/UX FLOW | `README.md` |
+| **`SolidWorks-WorkFlow/`** | Каноническая SSOT-документация (system → clusters → modules → contracts) | `Docs_Index.md` |
 | **`Sessions/`** | Отчёты сессий разработки | `Session00X.md` |
 | **`TODO/`** | Планы и todo-списки | `todo-plan.md` |
 | **`tmp/`** | Временные файлы, релизные артефакты | — |
@@ -19,17 +19,20 @@
 
 ## Быстрый доступ
 
-### Архитектура (source of truth)
-→ [`SolidWorks-Flow/System/SystemArchitecture.md`](SolidWorks-Flow/System/SystemArchitecture.md)
+### Docs index (SSOT навигация)
+→ [`SolidWorks-WorkFlow/Docs_Index.md`](SolidWorks-WorkFlow/Docs_Index.md)
 
-### Workflow file-first
-→ [`SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`](SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md)
+### Архитектура системы (System SSOT)
+→ [`SolidWorks-WorkFlow/System/SystemArchitecture.md`](SolidWorks-WorkFlow/System/SystemArchitecture.md)
 
-### Стеки провайдеров
-→ [`SolidWorks-Flow/Stacks/`](SolidWorks-Flow/Stacks/) (Claude, Codex, Gemini, Core, Launcher, UI)
+### Контракты (Contracts SSOT)
+→ [`SolidWorks-WorkFlow/Contracts/`](SolidWorks-WorkFlow/Contracts/)
 
-### Справочники моделей
-→ [`SolidWorks-Flow/knowledge/model-reference/`](SolidWorks-Flow/knowledge/model-reference/)
+### Кластеры (Clusters SSOT)
+→ [`SolidWorks-WorkFlow/Clusters/`](SolidWorks-WorkFlow/Clusters/)
+
+### Модули (Modules SSOT)
+→ [`SolidWorks-WorkFlow/Modules/`](SolidWorks-WorkFlow/Modules/)
 
 ### Реестр багов
 → [`BugRegistry.md`](BugRegistry.md)

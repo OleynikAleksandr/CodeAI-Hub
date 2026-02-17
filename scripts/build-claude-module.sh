@@ -72,7 +72,7 @@ mkdir -p "$TARGET_DIR"
 cp -R "$STAGE_DIR"/* "$TARGET_DIR"
 echo -n "$MODULE_VERSION" > "$INSTALL_ROOT/latest"
 
-find "$INSTALL_ROOT" -mindepth 1 -maxdepth 1 -type d ! -name "$MODULE_VERSION" -exec rm -rf {} +
+find "$INSTALL_ROOT" -mindepth 1 -maxdepth 1 -type d ! -name "$MODULE_VERSION" ! -name "home" -exec rm -rf {} +
 rm -rf "$INSTALL_ROOT/downloads"
 
 ARCHIVE_NAME="claude-module-$MODULE_VERSION.tar.bz2"

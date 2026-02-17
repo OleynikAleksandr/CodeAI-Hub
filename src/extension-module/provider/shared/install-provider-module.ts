@@ -42,6 +42,7 @@ type EnsureProviderModuleOptions = {
 
 const INSTALL_MARKER = "install.json";
 const LATEST_POINTER = "latest";
+const PROVIDERS_WITH_HOME = new Set(["claude", "codex"]);
 
 const toErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
@@ -106,6 +107,11 @@ export const ensureProviderModuleInstalled = async (
   );
   const downloadsDir = path.join(installRoot, "downloads");
   const manifest = await readManifest(context, options.manifestRelativePath);
+  if (manifest.module.version === "home") {
+    throw new Error(
+      `${options.label} manifest version is invalid ("home" is reserved).`
+    );
+  }
   const targetDir = path.join(installRoot, manifest.module.version);
 
   if (await isInstallValid(targetDir, manifest.module, options.entryPoints)) {
@@ -119,6 +125,9 @@ export const ensureProviderModuleInstalled = async (
 
   await ensureDirectory(installRoot);
   await ensureDirectory(downloadsDir);
+  if (PROVIDERS_WITH_HOME.has(options.providerId)) {
+    await ensureDirectory(path.join(installRoot, "home"));
+  }
 
   await fs.rm(targetDir, { recursive: true, force: true });
   await ensureDirectory(targetDir);

@@ -3,7 +3,7 @@
 Накопительный реестр багов и фиксов (чтобы уменьшать регрессии и не «чинить одно — ломая другое»).
 
 ## Правила ведения
-- **Required reading перед любым UI/оркестрационным фиксом:** `doc/SolidWorks-Flow/Workflow/FacadeClassDiagram_DesignAndMaintenance.md`
+- **Required reading перед любым UI/оркестрационным фиксом:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - **Добавляем запись сразу** при обнаружении бага (Status: `OPEN`).
 - **Любой фикс** обновляет запись: `Root cause`, `Fix`, `Commits`, `Release`, `Guards`.
 - Для багов на стыке Core/PM/UI обязательны **guards** (минимум: тест или воспроизводимый smoke‑чек).
@@ -19,6 +19,9 @@
 | BUG-2026-02-17-01 | FIXED | PM/UI | пустой EmptyState без спиннера при создании сессии ("Create your first session…") | 1.1.622 |
 | BUG-2026-02-17-02 | FIXED | PM/UI | description→reviewer: reviewer auto-started but not auto-focused in live UI | 1.1.625 |
 | BUG-2026-02-17-03 | FIXED | PM/UI | token usage не обновляется после turn completion (до смены workspace) | 1.1.626 |
+| BUG-2026-02-17-04 | OPEN | PM/UI | input остаётся заблокированным после Claude 401 (нет recovery UI) | TBD |
+| BUG-2026-02-17-05 | OPEN | PM/UI | после Core restart агент отвечает, но input остаётся разблокированным во время turn | TBD |
+| BUG-2026-02-17-06 | OPEN | Core/Provider | Claude 401 должен завершать turn (turn_failed + turn_state=idle), иначе UI залипает в working | TBD |
 
 ---
 
@@ -141,7 +144,7 @@
 - Источник `emptyStatePending` связан с workflow‑действием `Send` анкеты (PM‑контур) и действует именно в момент, когда `sessions.length === 0`.
 
 **Docs / Reference:**
-- `doc/SolidWorks-Flow/Workflow/FacadeClassDiagram_DesignAndMaintenance.md` (раздел «Реальный пример: спиннер загрузки UI Сессии»)
+- `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md` (раздел «Реальный пример: спиннер загрузки UI Сессии»)
 
 **Release:** `1.1.622` (локальный релиз для проверки)
 
@@ -183,8 +186,8 @@
 
 **Where to look (SSOT):**
 - Selection owner: Project Manager runtime session view / dialog selection.
-- Workflow node contract: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`.
-- Dialog routing SSOT: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`.
+- Workflow node contract: `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`.
+- Dialog routing SSOT: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`.
 
 **Logs to confirm:** `~/.codeai-hub/logs/` (PM + core bridge events around `description complete` and `reviewer created`).
 
@@ -216,3 +219,51 @@
 
 **Guards:**
 - `node --test --import tsx src/client/project-manager/components/sessions/token-usage-stream.test.ts`
+
+---
+
+## BUG-2026-02-17-04 — PM/UI: input остаётся заблокированным после Claude 401 (нет recovery UI)
+
+**Status:** OPEN
+
+**Symptom:** при ошибке Claude `401 authentication_error` UI показывает ошибку, но поле ввода остаётся в состоянии `Agent is working… Please wait.` (input locked). Пользователь не может повторить отправку/продолжить без ручных действий.
+
+**Expected:** UI переходит в recoverable состояние: input unlocked (или явный режим retry), показан понятный recovery hint и действия.
+
+**Workaround (current):** выполнить login в provider-home и перезапустить Core, затем повторить сообщение.
+
+**Fix (planned):**
+- Добавить recovery действия прямо в Project Manager: `Restart Core` + `Retry/Reconnect`.
+- При `Core unavailable` не оставлять UI в бесконечном `working` без возможности восстановиться.
+
+**Release:** TBD
+
+---
+
+## BUG-2026-02-17-05 — PM/UI: после Core restart агент отвечает, но input остаётся разблокированным во время turn
+
+**Status:** OPEN
+
+**Symptom:** после recovery (restart Core) и повторной отправки сообщения агент начинает отвечать, но input остаётся разблокированным (можно отправлять новые сообщения), хотя turn явно выполняется.
+
+**Expected:** input должен быть locked на весь период выполнения turn (`turn_state=running`) и разблокироваться только после `turn_completed`/явного fail.
+
+**Root cause (suspected):** рассинхрон активного `sessionId`/snapshot hydration и локального состояния UI после Core restart (история диалога восстановилась, но turn/lock сигналы применяются к другой/неактивной сессии).
+
+**Fix (planned):** optimistic lock на submit (локально) + ресинхронизация lock/active-session mapping после Core restart/rehydration.
+
+**Release:** TBD
+
+---
+
+## BUG-2026-02-17-06 — Core/Provider: Claude 401 должен завершать turn (turn_failed + turn_state=idle), иначе UI залипает в working
+
+**Status:** OPEN
+
+**Symptom:** Claude возвращает `401 OAuth token has expired`, после чего UI может остаться в `working/blocked` состоянии (turn не завершён корректно для UI).
+
+**Expected:** любой auth/transport failure должен завершать turn: `turn_failed` + rollback `turn_state=idle` + user-facing hint (без вечного `Agent is working…`).
+
+**Fix (planned):** гарантировать корректный failure lifecycle в Core/Claude adapter при `authentication_error`.
+
+**Release:** TBD
