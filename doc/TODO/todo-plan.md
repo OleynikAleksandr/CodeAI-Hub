@@ -23,12 +23,12 @@
 2. [TODO] Git Commit: `docs(pm): describe live auto-handoff trigger for reviewer` (hash: TBD)
 
 ### Stream: Реализация auto-handoff (live)
-1. [TODO] Fix: добавить live авто‑handoff правило “terminal Description → focus Reviewer” на уровне того компонента/фасада, который владеет `selected dialog` (scope: `src/client/project-manager/**` ≤3 файлов; expected commit message: `fix(pm): auto-focus reviewer after description completes`)
-2. [TODO] Git Commit: `fix(pm): auto-focus reviewer after description completes` (hash: TBD)
+1. [DONE] Fix: добавить live авто‑handoff правило “terminal Description → focus Reviewer” на уровне owner выбора active session (`ProjectManagerRuntimeSessionView` + `runtime-session-auto-select`) (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/runtime-session-auto-select.ts`; expected commit message: `fix(pm): auto-focus reviewer after description completes`)
+2. [DONE] Git Commit: `fix(pm): auto-focus reviewer after description completes` (hash: `3e5438b4`)
 
 ### Stream: Guards
-1. [TODO] Test/Smoke: добавить regression (минимум unit/logic) на условие “не воровать фокус если пользователь переключился” + smoke‑чек сценария (scope: `src/client/project-manager/**` ≤3 файлов; expected commit message: `test(pm): guard auto-handoff focus rules`)
-2. [TODO] Git Commit: `test(pm): guard auto-handoff focus rules` (hash: TBD)
+1. [DONE] Test/Smoke: добавить regression (unit/logic) на условие “не воровать фокус если пользователь переключился” (scope: `src/client/project-manager/components/sessions/runtime-session-auto-select.test.ts`; expected commit message: `test(pm): guard auto-handoff focus rules`)
+2. [DONE] Git Commit: `test(pm): guard auto-handoff focus rules` (hash: `3e5438b4`)
 
 ### Stream: Release
 1. [TODO] Release: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` (scope: repo; expected commit message: `feat(release): v1.1.623 - pm auto-handoff to reviewer`)
