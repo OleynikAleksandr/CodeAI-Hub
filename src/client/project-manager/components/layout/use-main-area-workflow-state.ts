@@ -3,6 +3,7 @@ import { api } from "../../api";
 import { isEmptyWorkflowState } from "../../services/workflow-state-helpers";
 import type { WorkspaceProject } from "../../types";
 import { resolveWorkspaceSlug } from "./main-area-utils";
+import type { ProviderStackId } from "../../../../types/provider";
 
 type DescriptionDocument = {
   readonly workspacePath: string;
@@ -20,6 +21,7 @@ type QuestionnaireDocument = {
 
 type UseMainAreaWorkflowStateParams = {
   readonly activeWorkspace?: WorkspaceProject;
+  readonly activeTool?: string | null;
   readonly setActiveTool: (value: string) => void;
   readonly setDescriptionDocument: (value: DescriptionDocument | null) => void;
   readonly setQuestionnaireDocument: (value: QuestionnaireDocument | null) => void;
@@ -30,6 +32,12 @@ export const useMainAreaWorkflowState = (
   params: UseMainAreaWorkflowStateParams
 ): void => {
   const autoOpenedWorkspaceRef = useRef<string | null>(null);
+  const autoOpenedReviewerRef = useRef<string | null>(null);
+  const activeToolRef = useRef<string | null>(params.activeTool ?? null);
+
+  useEffect(() => {
+    activeToolRef.current = params.activeTool ?? null;
+  }, [params.activeTool]);
 
   useEffect(() => {
     if (!params.activeWorkspace?.path) {
@@ -37,6 +45,7 @@ export const useMainAreaWorkflowState = (
       params.setQuestionnaireDocument(null);
       params.setHasDescriptionSession(false);
       autoOpenedWorkspaceRef.current = null;
+      autoOpenedReviewerRef.current = null;
       return;
     }
 
@@ -46,6 +55,7 @@ export const useMainAreaWorkflowState = (
       params.setQuestionnaireDocument(null);
       params.setHasDescriptionSession(false);
       autoOpenedWorkspaceRef.current = null;
+      autoOpenedReviewerRef.current = null;
       return;
     }
 
@@ -53,6 +63,7 @@ export const useMainAreaWorkflowState = (
     let cancelled = false;
     let timer = 0;
     let fastPolling = true;
+    autoOpenedReviewerRef.current = null;
 
     const loadState = async () => {
       const state = await api.getWorkflowState(workspaceSlug, workspacePath);
@@ -99,6 +110,33 @@ export const useMainAreaWorkflowState = (
       );
 
       if (
+        activeToolRef.current === "Description" &&
+        branch?.sessionKind === "reviewer" &&
+        branch.session?.providerId &&
+        branch.session.providerSessionId &&
+        branch.session.providerSessionId.trim().length > 0
+      ) {
+        const reviewerKey = `${workspaceSlug}:${branch.session.providerSessionId}`;
+        if (autoOpenedReviewerRef.current !== reviewerKey) {
+          autoOpenedReviewerRef.current = reviewerKey;
+          window.dispatchEvent(
+            new CustomEvent("pm:dialog:open", {
+              detail: {
+                providerId: branch.session.providerId as ProviderStackId,
+                providerSessionId: branch.session.providerSessionId,
+                workspacePath,
+                workspaceSlug,
+                initiativeSlug: workspaceSlug,
+                stage: "description",
+                sessionKind: "reviewer",
+                runSlug: "reviewer",
+              },
+            })
+          );
+        }
+      }
+
+      if (
         isEmptyWorkflowState(state) &&
         autoOpenedWorkspaceRef.current !== workspaceSlug
       ) {
@@ -124,4 +162,3 @@ export const useMainAreaWorkflowState = (
     params.setQuestionnaireDocument,
   ]);
 };
-
