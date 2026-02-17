@@ -84,8 +84,11 @@ doc/TODO/Archive/
   - Каждая подзадача должна затрагивать не более 3 файлов.
   - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
   - Если по факту разработки оказывается, что конкретная подзазача Stream затрагивает больше 3 файлов - такая задача должна быть разбита на более мелкие и список задач в Стриме переписывается.
-  - **Gates**: после выполнения каждой подзадачи прогоняется Гейт Качества -
-`scripts/check-architecture.sh`, `npx ultracite check`, `npx ts-prune`, `npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**"`, `npm run check:links`, затем выполняем таргетную сборку (`npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`).
+- **Gates (автоматически через Husky hooks):**
+  - `git commit` → `.husky/pre-commit`: `npm test`, `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:tsprune`, `npx ultracite fix`
+  - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
+  - Ручной прогон этих команд обычно не нужен (только для диагностики).
+- **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент, и обязательно перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
   - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
   - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке (например, Claude → Codex → core), чтобы локализовать ошибки без запуска `build-all`.
   - **Real-time Документация**: 
@@ -107,28 +110,29 @@ doc/TODO/Archive/
 Для каждой подзадачи Stream из `todo-plan.md`:
 1.  **Реализация**: Пиши код (помни: Микро-классы, Фасады, классы не более 300 строк).
 2.  **Документация (Real-time)**: Если меняется логика или архитектура — **ОБНОВИ** `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (или другие доки) **ПРЯМО СЕЙЧАС**. Коммит должен содержать и код, и обновленную документацию.
-3.  **Верификация**: Запусти **Обязательные Гейты**:
+3.  **Верификация**: Гейты запускаются автоматически через Husky (`.husky/pre-commit`, `.husky/pre-push`). Ручной прогон нужен только для диагностики:
     ```bash
-    ./scripts/check-architecture.sh  # ДОЛЖЕН ПРОЙТИ
-    npx ultracite check              # Линтинг/Форматирование
-    npx ts-prune                     # Мертвый код
-    npx jscpd --threshold 3 --silent --reporters console src --ignore "**/node_modules/**" # Дублирование < 3%
-    npm run check:links              # Битые ссылки
-    npm run build --workspace <package> # Таргетная сборка
+    npm test
+    ./scripts/check-architecture.sh
+    npm run lint
+    npm run check:tsprune
+    npx ultracite fix
+    npm run check:dup
+    npm run check:links
     ```
 4.  **Коммит**: ТОЛЬКО после зеленых гейтов.
     - Формат сообщения: `feat: <описание>` или `fix: <описание>`
     - **Авто-обновление**: Сразу отметь пункт как `[DONE]`  в `todo-plan.md`, если фича завершена.
 
 ## 6. Критические правила
-- **НИКОГДА** не обходи `check-architecture.sh`.
+- **НИКОГДА** не обходи Husky hooks / quality gates (например `git commit --no-verify`) и `check-architecture.sh`.
 - **НИКОГДА** не редактируй версии в `package.json` вручную (используй `build-all.sh`).
 - **ВСЕГДА** держи `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и другие связанные с подзадачей документы из папки - doc/ в синхронизации с изменениями кода (в том же коммите).
 
 ## 7. Release Build Checklist
 0. Перед сборкой релиза актуализируй документы: в первую очередь `README.md` и `CHANGELOG.md`, а также связанные архитектурные материалы из `doc/`. Релиз собирается только для версии, указанной в этих документах.
 1. Перед началом убедись, что `npm install` выполнен — отсутствие зависимостей ломает `build:webview`.
-2. Закрой все микро‑задачи/стримы: для затронутых пакетов должны пройти таргетные `npm run build --workspace …` (или `npm run build:webview`, `npm run typecheck:webview`) + полный набор гейтов (архитектура, Ultracite, ts-prune, jscpd, check:links). Только после этого чистим рабочее дерево.
+2. Закрой все микро‑задачи/стримы: для затронутых пакетов должны пройти таргетные `npm run build --workspace …` (или `npm run build:webview`, `npm run typecheck:webview`) + гейты качества (обычно автоматически через `.husky/pre-commit` и `.husky/pre-push`). Только после этого чистим рабочее дерево.
 3. Проверь, что `git status` пустой (никаких staged/unstaged). Версии пакетов/манифестов руками не меняем — это сделает скрипт.
 4. Выполни `./scripts/build-all.sh` из корня. Скрипт поднимет версии, пересоберёт Claude/Codex/Gemini, core, CEF launcher, UI и соберёт tarball’ы в `~/.codeai-hub/releases` и `doc/tmp/releases/`. Если что-то упало — исправь проблему и перезапусти **только** `build-all.sh`.
 5. Снова убедись, что `git status` пустой (все изменения от `build-all.sh` закоммичены, если это отдельная итерация).
