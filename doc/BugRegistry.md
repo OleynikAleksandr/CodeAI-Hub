@@ -17,6 +17,7 @@
 | BUG-2026-02-16-03 | FIXED | UI | one‑shot `description` collector: input свободен до первых сообщений | 1.1.615 |
 | BUG-2026-02-16-04 | FIXED | PM/UI | workflow `description`: медленно открывается Session UI после Send | 1.1.616 |
 | BUG-2026-02-17-01 | FIXED | PM/UI | пустой EmptyState без спиннера при создании сессии ("Create your first session…") | 1.1.622 |
+| BUG-2026-02-17-02 | OPEN | PM/UI | description→reviewer: reviewer auto-started but not auto-focused in live UI | TBD |
 
 ---
 
@@ -147,4 +148,32 @@
 
 **Guards (smoke чек):**
 - Workflow `Description` → нажать `Send` анкету → слева мгновенно появляется спиннер на месте `Create your first session…` → исчезает после загрузки UI сессии.
+
+---
+
+## BUG-2026-02-17-02 — description→reviewer: reviewer auto-started but not auto-focused (live)
+
+**Status:** OPEN
+
+**Symptom:** после завершения one-shot `Description` (создан `description.md`) Core автоматически запускает `Reviewer` (сессия видна в дереве), но Project Manager не переключает активную сессию: в области Session UI остаётся `Description` до ручного клика по `Reviewer` в дереве.
+
+**Observed behavior:**
+- Если перезагрузить Project Manager или сменить workspace и вернуться — `Reviewer` появляется/фокусируется (работает cold-start auto-select).
+- В live‑режиме после auto-start reviewer — фокуса нет.
+
+**Root cause (hypothesis; to confirm with logs):**
+- SSOT selection в PM — локальный `selected dialog` (вкладка/active session) — обновляется по (а) user click, (б) cold-start/workspace-activate авто‑select.
+- Auto-start reviewer от Core обновляет список сессий/дерево, но не эмитит (или PM не интерпретирует) событие уровня UX «handoff: focus reviewer now».
+- В результате Reviewer существует, но не становится active, пока пользователь не кликнет.
+
+**Proposed fix (PM/UI):**
+- Добавить live правило auto-handoff: если активная сессия — `Description collector` и она стала terminal/read‑only, и при этом в workflow/`dialog:list` появился `Reviewer` для того же узла/workspace — автоматически переключить активную сессию на Reviewer.
+- Guard: не воровать фокус, если пользователь уже переключился на другую сессию вручную.
+
+**Where to look (SSOT):**
+- Selection owner: Project Manager runtime session view / dialog selection.
+- Workflow node contract: `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`.
+- Dialog routing SSOT: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`.
+
+**Logs to confirm:** `~/.codeai-hub/logs/` (PM + core bridge events around `description complete` and `reviewer created`).
 
