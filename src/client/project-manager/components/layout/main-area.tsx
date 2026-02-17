@@ -161,6 +161,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
 
   useMainAreaWorkflowState({
     activeWorkspace,
+    activeTool,
     setActiveTool,
     setDescriptionDocument,
     setQuestionnaireDocument,
