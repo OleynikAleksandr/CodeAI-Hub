@@ -204,9 +204,12 @@ clean_local_artifacts() {
   done
 
   if [[ -d "$providers_root" ]]; then
-    find "$providers_root" -mindepth 1 -maxdepth 1 ! -name "codex" -exec rm -rf {} +
+    find "$providers_root" -mindepth 1 -maxdepth 1 ! -name "codex" ! -name "claude" -exec rm -rf {} +
     if [[ -d "$providers_root/codex" ]]; then
       find "$providers_root/codex" -mindepth 1 -maxdepth 1 ! -name "home" -exec rm -rf {} +
+    fi
+    if [[ -d "$providers_root/claude" ]]; then
+      find "$providers_root/claude" -mindepth 1 -maxdepth 1 ! -name "home" -exec rm -rf {} +
     fi
   fi
 }
