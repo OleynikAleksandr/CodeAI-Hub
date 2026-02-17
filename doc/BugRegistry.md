@@ -161,14 +161,17 @@
 - Если перезагрузить Project Manager или сменить workspace и вернуться — `Reviewer` появляется/фокусируется (работает cold-start auto-select).
 - В live‑режиме после auto-start reviewer — фокуса нет.
 
-**Root cause (hypothesis; to confirm with logs):**
-- SSOT selection в PM — локальный `selected dialog` (вкладка/active session) — обновляется по (а) user click, (б) cold-start/workspace-activate авто‑select.
-- Auto-start reviewer от Core обновляет список сессий/дерево, но не эмитит (или PM не интерпретирует) событие уровня UX «handoff: focus reviewer now».
-- В результате Reviewer существует, но не становится active, пока пользователь не кликнет.
+**Root cause (confirmed in PM runtime owner):**
+- В live-контуре `ProjectManagerRuntimeSessionView` при обнаружении reviewer выполнялся только `showSession(reviewerSessionId)` (снятие hidden), но не обновлялся `activeSessionId`.
+- Поэтому reviewer появлялся в списке/дереве, но активная вкладка оставалась на `Description` до ручного выбора.
 
-**Proposed fix (PM/UI):**
-- Добавить live правило auto-handoff: если активная сессия — `Description collector` и она стала terminal/read‑only, и при этом в workflow/`dialog:list` появился `Reviewer` для того же узла/workspace — автоматически переключить активную сессию на Reviewer.
-- Guard: не воровать фокус, если пользователь уже переключился на другую сессию вручную.
+**Implemented fix (pending user validation):**
+- Добавлен resolver `resolveReviewerAutoFocusSessionId(...)` с guard: авто‑фокус reviewer разрешён только если текущая активная сессия — `stage=description` + `sessionKind=collector` (или active пустой).
+- В `ProjectManagerRuntimeSessionView` reviewer‑эффект теперь после `showSession(...)` обновляет `activeSessionId` через этот resolver.
+- Добавлен regression‑тест на guard и на применение resolver в runtime owner.
+
+**Commits:**
+- `3e5438b4 fix(pm): auto-focus reviewer after description completes`
 
 **Where to look (SSOT):**
 - Selection owner: Project Manager runtime session view / dialog selection.
@@ -176,4 +179,3 @@
 - Dialog routing SSOT: `doc/SolidWorks-Flow/Architecture/Dialogs_And_Continuity_Routing_Refactor.md`.
 
 **Logs to confirm:** `~/.codeai-hub/logs/` (PM + core bridge events around `description complete` and `reviewer created`).
-
