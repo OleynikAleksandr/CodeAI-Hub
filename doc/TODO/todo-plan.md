@@ -30,6 +30,10 @@
 1. [DONE] Test/Smoke: добавить regression (unit/logic) на условие “не воровать фокус если пользователь переключился” (scope: `src/client/project-manager/components/sessions/runtime-session-auto-select.test.ts`; expected commit message: `test(pm): guard auto-handoff focus rules`)
 2. [DONE] Git Commit: `test(pm): guard auto-handoff focus rules` (hash: `3e5438b4`)
 
+### Stream: Fix reviewer visibility (forcedHidden)
+1. [DONE] Fix: при `sessionKind=reviewer` корректно резолвить `reviewerSessionId` (предпочитать `sessionKind/runSlug=reviewer` до binding), чтобы PM не скрывал реального Reviewer и не оставлял активной terminal Description (scope: `src/client/project-manager/components/sessions/reviewer-session-visibility.ts`, `src/client/project-manager/components/sessions/reviewer-session-visibility.test.ts`; expected commit message: `fix(pm): resolve reviewer session during live handoff`)
+2. [DONE] Git Commit: `fix(pm): resolve reviewer session during live handoff` (hash: `e3202ab2`)
+
 ### Stream: Release
-1. [TODO] Release: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` (scope: repo; expected commit message: `feat(release): v1.1.623 - pm auto-handoff to reviewer`)
-2. [TODO] Git Commit: `feat(release): v1.1.623 - pm auto-handoff to reviewer` (hash: TBD)
+1. [TODO] Release: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` (scope: repo; expected commit message: `feat(release): v1.1.624 - pm auto-handoff to reviewer (live)`)
+2. [TODO] Git Commit: `feat(release): v1.1.624 - pm auto-handoff to reviewer (live)` (hash: TBD)

@@ -161,17 +161,20 @@
 - Если перезагрузить Project Manager или сменить workspace и вернуться — `Reviewer` появляется/фокусируется (работает cold-start auto-select).
 - В live‑режиме после auto-start reviewer — фокуса нет.
 
-**Root cause (confirmed in PM runtime owner):**
-- В live-контуре `ProjectManagerRuntimeSessionView` при обнаружении reviewer выполнялся только `showSession(reviewerSessionId)` (снятие hidden), но не обновлялся `activeSessionId`.
-- Поэтому reviewer появлялся в списке/дереве, но активная вкладка оставалась на `Description` до ручного выбора.
+**Root cause (confirmed): reviewer неверно резолвился и скрывался самим PM**
+- Хук `useReviewerSessionVisibility()` вычислял `reviewerSessionId` через `resolveReviewerSessionId()` по эвристике `providerSessionId` + fallback “первый session того же provider”.
+- В момент live handoff `Reviewer` runtime‑сессия ещё могла быть **без binding.providerSessionId** (или появлялась позже, чем workflow-state успевал показать `sessionKind=reviewer`), из-за чего fallback выбирал **collector**-сессию как “reviewer”.
+- Далее `buildForcedHiddenSessionIds()` форс‑скрывал все `stage=description` сессии, кроме ошибочного `reviewerSessionId`, то есть **скрывал реального Reviewer** и оставлял видимой/активной завершённую Description.
+- Поэтому в дереве уже есть `Reviewer …`, но в Session UI остаётся `Description …` до ручного клика/перезагрузки (cold start позже резолвит корректно, когда binding уже готов).
 
-**Implemented fix (pending user validation):**
-- Добавлен resolver `resolveReviewerAutoFocusSessionId(...)` с guard: авто‑фокус reviewer разрешён только если текущая активная сессия — `stage=description` + `sessionKind=collector` (или active пустой).
-- В `ProjectManagerRuntimeSessionView` reviewer‑эффект теперь после `showSession(...)` обновляет `activeSessionId` через этот resolver.
-- Добавлен regression‑тест на guard и на применение resolver в runtime owner.
+**Fix (pending user validation):**
+- `resolveReviewerSessionId()` теперь **сначала** предпочитает явные reviewer runtime‑сессии (`sessionKind="reviewer"` или `runSlug="reviewer"`) и только потом применяет матч по `providerSessionId`.
+- Это предотвращает скрытие реального reviewer в live‑окне до готовности binding.
+- Дополнительно остаётся guard/auto-focus слой (см. commits ниже), но ключевой блокер был именно в visibility/forcedHidden.
 
 **Commits:**
-- `3e5438b4 fix(pm): auto-focus reviewer after description completes`
+- `3e5438b4 fix(pm): auto-focus reviewer after description completes` (attempt; insufficient alone)
+- `e3202ab2 fix(pm): resolve reviewer session during live handoff`
 
 **Where to look (SSOT):**
 - Selection owner: Project Manager runtime session view / dialog selection.
