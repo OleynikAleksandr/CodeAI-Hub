@@ -43,5 +43,5 @@
 2. [DONE] Git Commit: `feat(release): v1.1.624 - pm auto-handoff to reviewer (live)` (hash: `1fe34f60`)
 
 ### Stream: Release (follow-up)
-1. [TODO] Release: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` (scope: repo; expected commit message: `feat(release): v1.1.625 - auto-open reviewer dialog on handoff`)
-2. [TODO] Git Commit: `feat(release): v1.1.625 - auto-open reviewer dialog on handoff` (hash: TBD)
+1. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.625`) + `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.625.vsix`; tarballs: `doc/tmp/releases/*-1.1.625.tar.bz2`, `~/.codeai-hub/releases/*-1.1.625.tar.bz2`) (scope: repo)
+2. [DONE] Git Commit: `feat(release): v1.1.625 - auto-open reviewer dialog on handoff` (hash: `0d40f576`)
