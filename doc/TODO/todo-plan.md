@@ -34,6 +34,14 @@
 1. [DONE] Fix: при `sessionKind=reviewer` корректно резолвить `reviewerSessionId` (предпочитать `sessionKind/runSlug=reviewer` до binding), чтобы PM не скрывал реального Reviewer и не оставлял активной terminal Description (scope: `src/client/project-manager/components/sessions/reviewer-session-visibility.ts`, `src/client/project-manager/components/sessions/reviewer-session-visibility.test.ts`; expected commit message: `fix(pm): resolve reviewer session during live handoff`)
 2. [DONE] Git Commit: `fix(pm): resolve reviewer session during live handoff` (hash: `e3202ab2`)
 
+### Stream: Auto-open reviewer dialog (handoff trigger)
+1. [DONE] Fix: при переходе workflow-state `description.sessionKind=reviewer` автоматически диспатчить `pm:dialog:open` (как клик по узлу дерева) с guard `activeTool=Description` + дедуп по `providerSessionId`, чтобы reviewer появлялся в Session UI без ручного клика (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`; expected commit message: `fix(pm): auto-open reviewer dialog on handoff`)
+2. [DONE] Git Commit: `fix(pm): auto-open reviewer dialog on handoff` (hash: `5efbd970`)
+
 ### Stream: Release
 1. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.624`) + `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.624.vsix`; tarballs: `doc/tmp/releases/*-1.1.624.tar.bz2`, `~/.codeai-hub/releases/*-1.1.624.tar.bz2`) (scope: repo)
 2. [DONE] Git Commit: `feat(release): v1.1.624 - pm auto-handoff to reviewer (live)` (hash: `1fe34f60`)
+
+### Stream: Release (follow-up)
+1. [TODO] Release: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` (scope: repo; expected commit message: `feat(release): v1.1.625 - auto-open reviewer dialog on handoff`)
+2. [TODO] Git Commit: `feat(release): v1.1.625 - auto-open reviewer dialog on handoff` (hash: TBD)
