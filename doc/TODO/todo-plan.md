@@ -92,7 +92,7 @@
 2. [DONE] Git Commit: `docs(bug-registry): verify reviewer template sync` (hash: 0b4687a6)
 
 ### Stream 2: UI — вернуть вторую надпись блокировки при смене сессии
-1. [TODO] UI: при `binding.status=pending` и `connectionState=running` показывать placeholder “resuming session…”, а не “agent working…”.
+1. [DONE] UI: при `binding.status=pending` и `connectionState=running` показывать placeholder “resuming session…”, а не “agent working…”.
    Scope: `src/client/ui/src/session/session-view.tsx` (1 файл); ожидаемый commit message: `fix(ui): show resuming copy during session binding`
 2. [TODO] Git Commit: `fix(ui): show resuming copy during session binding` (hash: TBD)
 
