@@ -2,6 +2,14 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.635] - 2026-02-18
+### Fixed
+- Project Manager / Dialog sessions: prevent stuck-locked input by replaying the latest `workspace:snapshot` after dialog session hydration / rollover.
+
+## [1.1.634] - 2026-02-18
+### Fixed
+- Core / Workspace snapshots: preserve session lock fields during partial updates (fixes missed unlock after continuity rollover).
+
 ## [1.1.626] - 2026-02-17
 ### Fixed
 - Project Manager / Session UI: token usage now refreshes reliably after turns (including dialog sessions that hydrate snapshots after stream events).
