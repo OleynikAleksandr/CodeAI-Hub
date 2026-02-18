@@ -28,6 +28,7 @@
 | BUG-2026-02-18-04 | FIXED | Core/UI | Reviewer input не разблокируется после turn completion | TBD |
 | BUG-2026-02-18-05 | FIXED | PM/UI | Dialog Reviewer: input остаётся locked до workspace switch / reload (гонка snapshot vs hydration) | 1.1.635 |
 | BUG-2026-02-18-06 | FIXED | Core/Templates | Reviewer prompt упоминает `reviewer-template.md`, но файл/путь не доступен → агент тратит время на поиск | 1.1.637 |
+| BUG-2026-02-18-07 | OPEN | Session UI | При смене/привязке workflow-сессии не показывается wait-copy “resuming…”, остаётся “Agent is working…” | TBD |
 
 ---
 
@@ -466,3 +467,20 @@
 - Открыть reviewer‑сессию → в первой инструкции должна быть строка `Reviewer template (absolute): ...` и агент не должен писать “template not found”.
 
 **Verified (manual):** 2026-02-18 — подтверждено: при старте reviewer‑сессии агент видит `reviewer-template.md` (перечисляет его среди доступных файлов) и не сообщает “template not found”.
+
+---
+
+## BUG-2026-02-18-07 — При смене сессии не появляется wait-copy “resuming…”
+
+**Status:** OPEN
+
+**Symptom:** Во время смены/привязки workflow-сессии поле ввода остаётся заблокированным, но placeholder не переключается на “Agent is resuming your session… Please wait.” и продолжает показывать “Agent is working… Please wait.” Это визуально выглядит как зависание.
+
+**Observed (manual):**
+- Новая сессия и отчёт создаются, но в фазе ожидания продолжает отображаться “working” вместо “resuming”.
+
+**Expected:**
+- В фазе смены/привязки сессии (handoff/hydration/binding pending) UI должен показывать `resuming`-copy, а не `working`-copy.
+
+**Next step:**
+- Завтра провести root-cause анализ порядка snapshot/stream/binding событий в Session UI и восстановить корректный критерий для отображения `resuming`-placeholder.
