@@ -25,6 +25,7 @@
 | BUG-2026-02-18-01 | OPEN | Session UI | workflow-сессия открывается с unlocked input до первого snapshot от Core | TBD |
 | BUG-2026-02-18-02 | FIXED | Claude/Auth | auth probe "nested session" когда VSCode запущен из Claude Code CLI терминала | TBD |
 | BUG-2026-02-18-03 | OPEN | Claude/Auth | macOS диалог "Keychain Not Found" при запуске VSCode (cosmetic, не блокирует) | TBD |
+| BUG-2026-02-18-04 | FIXED | Core/UI | Reviewer input не разблокируется после turn completion | TBD |
 
 ---
 
@@ -366,4 +367,34 @@
    тогда Claude пишет в нативный home и Keychain dialog не нужен.
 
 **Release:** TBD
+
+
+## BUG-2026-02-18-04 — Reviewer input не разблокируется после turn completion
+
+**Status:** FIXED
+
+**Severity:** Critical — пользователь не может ответить Reviewer без ручного форс-анлока.
+
+**Symptom:** После того как Reviewer Agent задал свои вопросы (завершил первый turn), поле ввода остаётся заблокированным. Placeholder показывает "Agent is working… Please wait." или "Agent is resuming your session… Please wait." Кнопка замочка позволяла обойти блокировку вручную, но автоматическая разблокировка не происходила.
+
+**Root cause (Core):**
+- В `handleFlowNodeContinuityProviderEvent`, когда `turn_completed` событие не содержит token usage (`extractTokenUsage(event) = null`), функция делала ранний `return` без записи `contextDecision`.
+- Следствие: `handleTurnCompletedEvent` получал `contextDecision = null` → ранний return → `emitTurnStateEvent("idle")` и `emitResumeInPlaceNoRolloverUnlock` никогда не вызывались.
+- Workspace runtime: `turnState` оставался "running", `continuityLockActive = true` (context_check_pending не снят) → UI заблокирован навсегда.
+
+**Root cause (UI):**
+- В `applyTurnStateStreamDataToSnapshot`, `turn_state:idle` stream event игнорировался при `connectionState === "blocked"` (строгая защита от ложных unlock при rollover).
+- Даже если Core всё-таки посылал `turn_state:idle`, UI не мог разблокироваться через stream path.
+
+**Fix:**
+- Core (`session-request-handler.ts`): при `!usage` → вызов `registerPostTurnNoRolloverDecision(sessionId)` вместо пустого return. Fallback: нет данных usage = rollover невозможен = разблокировка.
+- UI (`session-stream-snapshot-sync.ts`): смягчение условия — `turn_state:idle` разрешён разблокировать "blocked" если `continuityLock.active !== true` в snapshot.
+
+**Commits:**
+- `d449725d fix(core/ui): unlock reviewer input after turn completion`
+
+**Release:** TBD (Phase 215)
+
+**Guards (smoke):**
+- Запустить workflow Description → Reviewer → Reviewer задаёт вопросы → input должен автоматически разблокироваться → пользователь вводит ответ → Reviewer продолжает.
 

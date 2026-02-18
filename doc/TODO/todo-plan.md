@@ -52,3 +52,33 @@
 
 **Phase 214 COMPLETED — 2026-02-18**
 
+---
+
+## Phase 215 — Reviewer unlock fix (owner: Oleksandr+Claude, updated: 2026-02-18)
+
+**Проблема (BUG-2026-02-18-04):** Reviewer Agent не разблокирует input после завершения своего первого turn (задал вопросы пользователю). Пользователь не может ответить без ручного форс-анлока.
+
+**Root cause:**
+- Core: `handleFlowNodeContinuityProviderEvent` делал ранний `return` при `!usage` (нет token usage в turn_completed) без записи `contextDecision`. Следствие: `handleTurnCompletedEvent` не мог разблокировать UI.
+- UI: `applyTurnStateStreamDataToSnapshot` игнорировал `turn_state:idle` если `connectionState === "blocked"`, даже когда `continuityLock.active = false`.
+
+---
+
+### Stream 1: Core + UI фикс разблокировки
+
+1. [DONE] Core: в `handleFlowNodeContinuityProviderEvent` при `!usage` → `registerPostTurnNoRolloverDecision(sessionId)` вместо пустого return.
+   UI: в `applyTurnStateStreamDataToSnapshot` — разрешить idle event разблокировать "blocked" если `continuityLock.active !== true`.
+   Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts` + `src/client/ui/src/app-host/session-stream-snapshot-sync.ts` (2 файла).
+
+2. [DONE] Git Commit: `fix(core/ui): unlock reviewer input after turn completion` (hash: d449725d)
+
+---
+
+### Stream 2: Release
+
+1. [TODO] `npm run build --workspace packages/core` + `npm run build:webview` — зелёные (уже выполнены выше).
+2. [TODO] `./scripts/build-all.sh` — v1.1.632.
+3. [TODO] Git Commit: `feat(release): v1.1.632 - fix reviewer unlock after turn`
+
+**Phase 215 IN PROGRESS — 2026-02-18**
+
